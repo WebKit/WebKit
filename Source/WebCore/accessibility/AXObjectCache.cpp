@@ -910,7 +910,7 @@ void AXObjectCache::notificationPostTimerFired()
         // Notifications should only be sent after the renderer has finished
         if (is<AccessibilityRenderObject>(*obj)) {
             if (auto* renderer = downcast<AccessibilityRenderObject>(*obj).renderer())
-                ASSERT(!renderer->view().layoutState());
+                ASSERT(!renderer->view().frameView().layoutContext().layoutState());
         }
 #endif
 

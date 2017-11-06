@@ -35,6 +35,8 @@ class Document;
 class Frame;
 class FrameView;
 class LayoutScope;
+class LayoutState;
+class RenderBlockFlow;
 class RenderElement;
 class RenderView;
     
@@ -86,8 +88,30 @@ public:
 
     void flushAsynchronousTasks();
 
+    // Subtree push/pop
+    void pushLayoutState(RenderElement&);
+    bool pushLayoutStateForPaginationIfNeeded(RenderBlockFlow&);
+    void popLayoutState(RenderObject&);
+    LayoutState* layoutState() const { return m_layoutState.get(); }
+    // Returns true if layoutState should be used for its cached offset and clip.
+    bool layoutStateEnabled() const { return !m_layoutStateDisableCount && m_layoutState; }
+#ifndef NDEBUG
+    void checkLayoutState();
+#endif
+    // layoutDelta is used transiently during layout to store how far an object has moved from its
+    // last layout location, in order to repaint correctly.
+    // If we're doing a full repaint m_layoutState will be 0, but in that case layoutDelta doesn't matter.
+    LayoutSize layoutDelta() const;
+    void addLayoutDelta(const LayoutSize& delta);
+#if !ASSERT_DISABLED
+    bool layoutDeltaMatches(const LayoutSize& delta);
+#endif
+
 private:
     friend class LayoutScope;
+    friend class LayoutStateMaintainer;
+    friend class LayoutStateDisabler;
+    friend class SubtreeLayoutStateMaintainer;
 
     bool canPerformLayout() const;
     bool layoutDisallowed() const { return m_layoutDisallowedCount; }
@@ -107,6 +131,18 @@ private:
 
     bool handleLayoutWithFrameFlatteningIfNeeded();
     void startLayoutAtMainFrameViewIfNeeded();
+
+    // These functions may only be accessed by LayoutStateMaintainer.
+    bool pushLayoutState(RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false);
+    void popLayoutState();
+
+    // Suspends the LayoutState optimization. Used under transforms that cannot be represented by
+    // LayoutState (common in SVG) and when manipulating the render tree during layout in ways
+    // that can trigger repaint of a non-child (e.g. when a list item moves its list marker around).
+    // Note that even when disabled, LayoutState is still used to store layoutDelta.
+    // These functions may only be accessed by LayoutStateMaintainer or LayoutStateDisabler.
+    void disableLayoutState() { m_layoutStateDisableCount++; }
+    void enableLayoutState() { ASSERT(m_layoutStateDisableCount > 0); m_layoutStateDisableCount--; }
 
     Frame& frame() const;
     FrameView& view() const;
@@ -130,6 +166,8 @@ private:
     unsigned m_disableSetNeedsLayoutCount { 0 };
     int m_layoutDisallowedCount { 0 };
     WeakPtr<RenderElement> m_subtreeLayoutRoot;
+    std::unique_ptr<LayoutState> m_layoutState;
+    unsigned m_layoutStateDisableCount { 0 };
 };
 
 } // namespace WebCore

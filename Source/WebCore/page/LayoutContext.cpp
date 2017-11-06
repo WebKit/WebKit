@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "FrameView.h"
 #include "InspectorInstrumentation.h"
+#include "LayoutState.h"
 #include "Logging.h"
 #include "NoEventDispatchAssertion.h"
 #include "RenderElement.h"
@@ -531,6 +532,82 @@ void LayoutContext::startLayoutAtMainFrameViewIfNeeded()
     LOG(Layout, "  frame flattening, starting from root");
     parentView->layoutContext().layout();
 }
+
+LayoutSize LayoutContext::layoutDelta() const
+{
+    if (!m_layoutState)
+        return { };
+    return m_layoutState->m_layoutDelta;
+}
+    
+void LayoutContext::addLayoutDelta(const LayoutSize& delta)
+{
+    if (!m_layoutState)
+        return;
+    
+    m_layoutState->m_layoutDelta += delta;
+#if !ASSERT_DISABLED
+    m_layoutState->m_layoutDeltaXSaturated |= m_layoutState->m_layoutDelta.width() == LayoutUnit::max() || m_layoutState->m_layoutDelta.width() == LayoutUnit::min();
+    m_layoutState->m_layoutDeltaYSaturated |= m_layoutState->m_layoutDelta.height() == LayoutUnit::max() || m_layoutState->m_layoutDelta.height() == LayoutUnit::min();
+#endif
+}
+    
+#if !ASSERT_DISABLED
+bool LayoutContext::layoutDeltaMatches(const LayoutSize& delta)
+{
+    if (!m_layoutState)
+        return false;
+    return (delta.width() == m_layoutState->m_layoutDelta.width() || m_layoutState->m_layoutDeltaXSaturated) && (delta.height() == m_layoutState->m_layoutDelta.height() || m_layoutState->m_layoutDeltaYSaturated);
+}
+#endif
+    
+void LayoutContext::pushLayoutState(RenderElement& root)
+{
+    ASSERT(!m_layoutStateDisableCount);
+    ASSERT(!m_layoutState);
+
+    m_layoutState = std::make_unique<LayoutState>(root);
+}
+
+bool LayoutContext::pushLayoutStateForPaginationIfNeeded(RenderBlockFlow& layoutRoot)
+{
+    if (m_layoutState)
+        return false;
+    m_layoutState = std::make_unique<LayoutState>(layoutRoot);
+    m_layoutState->m_isPaginated = true;
+    // This is just a flag for known page height (see RenderBlockFlow::checkForPaginationLogicalHeightChange).
+    m_layoutState->m_pageLogicalHeight = 1;
+    return true;
+}
+    
+void LayoutContext::popLayoutState(RenderObject&)
+{
+    return popLayoutState();
+}
+    
+bool LayoutContext::pushLayoutState(RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged)
+{
+    // We push LayoutState even if layoutState is disabled because it stores layoutDelta too.
+    if (!m_layoutState || !needsFullRepaint() || m_layoutState->isPaginated() || renderer.enclosingFragmentedFlow()
+        || m_layoutState->lineGrid() || (renderer.style().lineGrid() != RenderStyle::initialLineGrid() && renderer.isRenderBlockFlow())) {
+        m_layoutState = std::make_unique<LayoutState>(WTFMove(m_layoutState), renderer, offset, pageHeight, pageHeightChanged);
+        return true;
+    }
+    return false;
+}
+    
+void LayoutContext::popLayoutState()
+{
+    m_layoutState = WTFMove(m_layoutState->m_ancestor);
+}
+    
+#ifndef NDEBUG
+void LayoutContext::checkLayoutState()
+{
+    ASSERT(layoutDeltaMatches(LayoutSize()));
+    ASSERT(!m_layoutStateDisableCount);
+}
+#endif
 
 Frame& LayoutContext::frame() const
 {

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutState.h"
 
+#include "LayoutContext.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
@@ -65,8 +66,10 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> ancestor, RenderBox& rende
     , m_renderer(&renderer)
 #endif
 {
-    computeOffsets(renderer, offset);
-    computeClipRect(renderer);
+    if (m_ancestor) {
+        computeOffsets(renderer, offset);
+        computeClipRect(renderer);
+    }
     computePaginationInformation(renderer, pageLogicalHeight, pageLogicalHeightChanged);
 }
 
@@ -113,7 +116,7 @@ void LayoutState::computeClipRect(RenderBox& renderer)
     if (!renderer.hasOverflowClip())
         return;
 
-    LayoutRect clipRect(toLayoutPoint(m_paintOffset) + renderer.view().layoutDelta(), renderer.cachedSizeForOverflowClip());
+    LayoutRect clipRect(toLayoutPoint(m_paintOffset) + renderer.view().frameView().layoutContext().layoutDelta(), renderer.cachedSizeForOverflowClip());
     if (m_clipped)
         m_clipRect.intersect(clipRect);
     else
@@ -209,14 +212,14 @@ void LayoutState::establishLineGrid(RenderBlockFlow& renderer)
 }
 
 LayoutStateMaintainer::LayoutStateMaintainer(RenderBox& root, LayoutSize offset, bool disableState, LayoutUnit pageHeight, bool pageHeightChanged)
-    : m_view(root.view())
+    : m_layoutContext(root.view().frameView().layoutContext())
     , m_disabled(disableState)
 {
     push(root, offset, pageHeight, pageHeightChanged);
 }
 
-LayoutStateMaintainer::LayoutStateMaintainer(RenderView& view)
-    : m_view(view)
+LayoutStateMaintainer::LayoutStateMaintainer(LayoutContext& layoutContext)
+    : m_layoutContext(layoutContext)
 {
 }
 
@@ -230,11 +233,11 @@ void LayoutStateMaintainer::push(RenderBox& root, LayoutSize offset, LayoutUnit 
     ASSERT(!m_didCallPush);
     m_didCallPush = true;
     // We push state even if disabled, because we still need to store layoutDelta
-    m_didPushLayoutState = m_view.pushLayoutState(root, offset, pageHeight, pageHeightChanged);
+    m_didPushLayoutState = m_layoutContext.pushLayoutState(root, offset, pageHeight, pageHeightChanged);
     if (!m_didPushLayoutState)
         return;
     if (m_disabled)
-        m_view.disableLayoutState();
+        m_layoutContext.disableLayoutState();
 }
 
 void LayoutStateMaintainer::pop()
@@ -245,20 +248,20 @@ void LayoutStateMaintainer::pop()
         return;
     if (!m_didPushLayoutState)
         return;
-    m_view.popLayoutState();
+    m_layoutContext.popLayoutState();
     if (m_disabled)
-        m_view.enableLayoutState();
+        m_layoutContext.enableLayoutState();
 }
 
-LayoutStateDisabler::LayoutStateDisabler(RenderView& view)
-    : m_view(view)
+LayoutStateDisabler::LayoutStateDisabler(LayoutContext& layoutContext)
+    : m_layoutContext(layoutContext)
 {
-    m_view.disableLayoutState();
+    m_layoutContext.disableLayoutState();
 }
 
 LayoutStateDisabler::~LayoutStateDisabler()
 {
-    m_view.enableLayoutState();
+    m_layoutContext.enableLayoutState();
 }
 
 static bool shouldDisableLayoutStateForSubtree(RenderElement& subtreeLayoutRoot)
@@ -274,10 +277,10 @@ SubtreeLayoutStateMaintainer::SubtreeLayoutStateMaintainer(RenderElement* subtre
     : m_subtreeLayoutRoot(subtreeLayoutRoot)
 {
     if (m_subtreeLayoutRoot) {
-        RenderView& view = m_subtreeLayoutRoot->view();
-        view.pushLayoutState(*m_subtreeLayoutRoot);
+        auto& layoutContext = m_subtreeLayoutRoot->view().frameView().layoutContext();
+        layoutContext.pushLayoutState(*m_subtreeLayoutRoot);
         if (shouldDisableLayoutStateForSubtree(*m_subtreeLayoutRoot)) {
-            view.disableLayoutState();
+            layoutContext.disableLayoutState();
             m_didDisableLayoutState = true;
         }
     }
@@ -286,23 +289,23 @@ SubtreeLayoutStateMaintainer::SubtreeLayoutStateMaintainer(RenderElement* subtre
 SubtreeLayoutStateMaintainer::~SubtreeLayoutStateMaintainer()
 {
     if (m_subtreeLayoutRoot) {
-        RenderView& view = m_subtreeLayoutRoot->view();
-        view.popLayoutState(*m_subtreeLayoutRoot);
+        auto& layoutContext = m_subtreeLayoutRoot->view().frameView().layoutContext();
+        layoutContext.popLayoutState(*m_subtreeLayoutRoot);
         if (m_didDisableLayoutState)
-            view.enableLayoutState();
+            layoutContext.enableLayoutState();
     }
 }
 
 PaginatedLayoutStateMaintainer::PaginatedLayoutStateMaintainer(RenderBlockFlow& flow)
     : m_flow(flow)
-    , m_pushed(flow.view().pushLayoutStateForPaginationIfNeeded(flow))
+    , m_pushed(flow.view().frameView().layoutContext().pushLayoutStateForPaginationIfNeeded(flow))
 {
 }
 
 PaginatedLayoutStateMaintainer::~PaginatedLayoutStateMaintainer()
 {
     if (m_pushed)
-        m_flow.view().popLayoutState(m_flow);
+        m_flow.view().frameView().layoutContext().popLayoutState(m_flow);
 }
 
 } // namespace WebCore

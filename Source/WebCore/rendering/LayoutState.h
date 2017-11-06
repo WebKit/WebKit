@@ -30,12 +30,12 @@
 
 namespace WebCore {
 
+class LayoutContext;
 class RenderBlockFlow;
 class RenderBox;
 class RenderElement;
 class RenderFragmentedFlow;
 class RenderObject;
-class RenderView;
 
 class LayoutState {
     WTF_MAKE_NONCOPYABLE(LayoutState); WTF_MAKE_FAST_ALLOCATED;
@@ -134,7 +134,7 @@ public:
     // Constructor to push now.
     explicit LayoutStateMaintainer(RenderBox&, LayoutSize offset, bool disableState = false, LayoutUnit pageHeight = 0, bool pageHeightChanged = false);
     // Constructor to maybe push later.
-    explicit LayoutStateMaintainer(RenderView&);
+    explicit LayoutStateMaintainer(LayoutContext&);
     ~LayoutStateMaintainer();
 
     void push(RenderBox& root, LayoutSize offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false);
@@ -142,7 +142,7 @@ public:
     bool didPush() const { return m_didCallPush; }
 
 private:
-    RenderView& m_view;
+    LayoutContext& m_layoutContext;
     bool m_disabled { false };
     bool m_didCallPush { false };
     bool m_didCallPop { false };
@@ -162,11 +162,11 @@ private:
 class LayoutStateDisabler {
     WTF_MAKE_NONCOPYABLE(LayoutStateDisabler);
 public:
-    LayoutStateDisabler(RenderView&);
+    LayoutStateDisabler(LayoutContext&);
     ~LayoutStateDisabler();
 
 private:
-    RenderView& m_view;
+    LayoutContext& m_layoutContext;
 };
 
 class PaginatedLayoutStateMaintainer {
