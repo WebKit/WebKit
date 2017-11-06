@@ -35,7 +35,6 @@
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
 #include "LayoutRepainter.h"
-#include "LayoutState.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
 #include "RenderDescendantIterator.h"
@@ -581,9 +580,8 @@ void RenderTable::layout()
 
     statePusher.pop();
 
-    auto* layoutState = view().frameView().layoutContext().layoutState();
-    if (layoutState->pageLogicalHeight())
-        setPageLogicalOffset(layoutState->pageLogicalOffset(this, logicalTop()));
+    if (view().layoutState()->pageLogicalHeight())
+        setPageLogicalOffset(view().layoutState()->pageLogicalOffset(this, logicalTop()));
 
     bool didFullRepaint = repainter.repaintAfterLayout();
     // Repaint with our new bounds if they are different from our old bounds.
@@ -594,7 +592,7 @@ void RenderTable::layout()
             repaintRectangle(LayoutRect(movedSectionLogicalTop, visualOverflowRect().y(), visualOverflowRect().maxX() - movedSectionLogicalTop, visualOverflowRect().height()));
     }
 
-    bool paginated = layoutState && layoutState->isPaginated();
+    bool paginated = view().layoutState() && view().layoutState()->isPaginated();
     if (sectionMoved && paginated) {
         // FIXME: Table layout should always stabilize even when section moves (see webkit.org/b/174412).
         if (!m_inRecursiveSectionMovedWithPagination) {
@@ -1602,8 +1600,7 @@ const BorderValue& RenderTable::tableEndBorderAdjoiningCell(const RenderTableCel
 
 void RenderTable::markForPaginationRelayoutIfNeeded()
 {
-    auto* layoutState = view().frameView().layoutContext().layoutState();
-    if (!layoutState->isPaginated() || (!layoutState->pageLogicalHeightChanged() && (!layoutState->pageLogicalHeight() || layoutState->pageLogicalOffset(this, logicalTop()) == pageLogicalOffset())))
+    if (!view().layoutState()->isPaginated() || (!view().layoutState()->pageLogicalHeightChanged() && (!view().layoutState()->pageLogicalHeight() || view().layoutState()->pageLogicalOffset(this, logicalTop()) == pageLogicalOffset())))
         return;
     
     // When a table moves, we have to dirty all of the sections too.

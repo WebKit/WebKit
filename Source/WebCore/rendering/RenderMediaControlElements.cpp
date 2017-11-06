@@ -30,7 +30,6 @@
 #if ENABLE(VIDEO)
 #include "RenderMediaControlElements.h"
 
-#include "LayoutState.h"
 #include "MediaControlElements.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -52,7 +51,7 @@ void RenderMediaVolumeSliderContainer::layout()
     RenderBox& buttonBox = downcast<RenderBox>(*nextSibling());
     int absoluteOffsetTop = buttonBox.localToAbsolute(FloatPoint(0, -size().height())).y();
 
-    LayoutStateDisabler layoutStateDisabler(view().frameView().layoutContext());
+    LayoutStateDisabler layoutStateDisabler(view());
 
     // If the slider would be rendered outside the page, it should be moved below the controls.
     if (UNLIKELY(absoluteOffsetTop < 0))
@@ -74,7 +73,7 @@ void RenderMediaControlTimelineContainer::layout()
 {
     RenderFlexibleBox::layout();
 
-    LayoutStateDisabler layoutStateDisabler(view().frameView().layoutContext());
+    LayoutStateDisabler layoutStateDisabler(view());
     MediaControlTimelineContainerElement* container = static_cast<MediaControlTimelineContainerElement*>(element());
     container->setTimeDisplaysHidden(width().toInt() < minWidthToDisplayTimeDisplays);
 }
@@ -96,7 +95,7 @@ void RenderTextTrackContainerElement::layout()
 
     ASSERT(mediaControlElementType(element()) == MediaTextTrackDisplayContainer);
 
-    LayoutStateDisabler layoutStateDisabler(view().frameView().layoutContext());
+    LayoutStateDisabler layoutStateDisabler(view());
     static_cast<MediaControlTextTrackContainerElement*>(element())->updateSizes();
 }
 

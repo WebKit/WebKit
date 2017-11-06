@@ -28,7 +28,6 @@
 #include "Document.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
-#include "LayoutState.h"
 #include "PaintInfo.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
@@ -179,11 +178,10 @@ void RenderTableRow::layout()
     // Table rows do not add translation.
     LayoutStateMaintainer statePusher(*this, LayoutSize(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
 
-    auto* layoutState = view().frameView().layoutContext().layoutState();
-    bool paginated = layoutState->isPaginated();
+    bool paginated = view().layoutState()->isPaginated();
                 
     for (RenderTableCell* cell = firstCell(); cell; cell = cell->nextCell()) {
-        if (!cell->needsLayout() && paginated && (layoutState->pageLogicalHeightChanged() || (layoutState->pageLogicalHeight() && layoutState->pageLogicalOffset(cell, cell->logicalTop()) != cell->pageLogicalOffset())))
+        if (!cell->needsLayout() && paginated && (view().layoutState()->pageLogicalHeightChanged() || (view().layoutState()->pageLogicalHeight() && view().layoutState()->pageLogicalOffset(cell, cell->logicalTop()) != cell->pageLogicalOffset())))
             cell->setChildNeedsLayout(MarkOnlyThis);
 
         if (cell->needsLayout()) {

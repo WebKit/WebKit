@@ -297,7 +297,7 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     m_stretchingChildren = false;
 
 #if !ASSERT_DISABLED
-    LayoutSize oldLayoutDelta = view().frameView().layoutContext().layoutDelta();
+    LayoutSize oldLayoutDelta = view().layoutDelta();
 #endif
 
     // Fieldsets need to find their legend and position it inside the border of the object.
@@ -314,7 +314,7 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
         layoutVerticalBox(relayoutChildren);
 
     repaintChildrenDuringLayoutIfMoved(this, oldChildRects);
-    ASSERT(view().frameView().layoutContext().layoutDeltaMatches(oldLayoutDelta));
+    ASSERT(view().layoutDeltaMatches(oldLayoutDelta));
 
     LayoutUnit oldClientAfterEdge = clientLogicalBottom();
     updateLogicalHeight();
@@ -330,8 +330,8 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     updateLayerTransform();
 
-    if (view().frameView().layoutContext().layoutState()->pageLogicalHeight())
-        setPageLogicalOffset(view().frameView().layoutContext().layoutState()->pageLogicalOffset(this, logicalTop()));
+    if (view().layoutState()->pageLogicalHeight())
+        setPageLogicalOffset(view().layoutState()->pageLogicalOffset(this, logicalTop()));
 
     // Update our scrollbars if we're overflow:auto/scroll/hidden now that we know if
     // we overflow or not.
@@ -371,9 +371,9 @@ static void layoutChildIfNeededApplyingDelta(RenderBox* child, const LayoutSize&
     if (!child->needsLayout())
         return;
     
-    child->view().frameView().layoutContext().addLayoutDelta(layoutDelta);
+    child->view().addLayoutDelta(layoutDelta);
     child->layoutIfNeeded();
-    child->view().frameView().layoutContext().addLayoutDelta(-layoutDelta);
+    child->view().addLayoutDelta(-layoutDelta);
 }
 
 void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)

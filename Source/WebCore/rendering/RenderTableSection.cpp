@@ -28,7 +28,6 @@
 #include "Document.h"
 #include "HitTestResult.h"
 #include "HTMLNames.h"
-#include "LayoutState.h"
 #include "PaintInfo.h"
 #include "RenderChildIterator.h"
 #include "RenderTableCell.h"
@@ -275,7 +274,7 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
     if (this == table()->topSection())
         spacing = table()->vBorderSpacing();
 
-    LayoutStateMaintainer statePusher(view().frameView().layoutContext());
+    LayoutStateMaintainer statePusher(view());
 
     m_rowPos.resize(m_grid.size() + 1);
     m_rowPos[0] = spacing;
@@ -387,7 +386,7 @@ void RenderTableSection::layout()
     m_grid.shrinkToFit();
 
     LayoutStateMaintainer statePusher(*this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
-    bool paginated = view().frameView().layoutContext().layoutState()->isPaginated();
+    bool paginated = view().layoutState()->isPaginated();
     
     const Vector<LayoutUnit>& columnPos = table()->columnPositions();
     
@@ -414,7 +413,7 @@ void RenderTableSection::layout()
         }
 
         if (RenderTableRow* rowRenderer = m_grid[r].rowRenderer) {
-            if (!rowRenderer->needsLayout() && paginated && view().frameView().layoutContext().layoutState()->pageLogicalHeightChanged())
+            if (!rowRenderer->needsLayout() && paginated && view().layoutState()->pageLogicalHeightChanged())
                 rowRenderer->setChildNeedsLayout(MarkOnlyThis);
 
             rowRenderer->layoutIfNeeded();
@@ -637,14 +636,13 @@ void RenderTableSection::layoutRows()
 
             setLogicalPositionForCell(cell, c);
 
-            auto* layoutState = view().frameView().layoutContext().layoutState();
-            if (!cell->needsLayout() && layoutState->pageLogicalHeight() && layoutState->pageLogicalOffset(cell, cell->logicalTop()) != cell->pageLogicalOffset())
+            if (!cell->needsLayout() && view().layoutState()->pageLogicalHeight() && view().layoutState()->pageLogicalOffset(cell, cell->logicalTop()) != cell->pageLogicalOffset())
                 cell->setChildNeedsLayout(MarkOnlyThis);
 
             cell->layoutIfNeeded();
 
             // FIXME: Make pagination work with vertical tables.
-            if (layoutState->pageLogicalHeight() && cell->logicalHeight() != rHeight) {
+            if (view().layoutState()->pageLogicalHeight() && cell->logicalHeight() != rHeight) {
                 // FIXME: Pagination might have made us change size. For now just shrink or grow the cell to fit without doing a relayout.
                 // We'll also do a basic increase of the row height to accommodate the cell if it's bigger, but this isn't quite right
                 // either. It's at least stable though and won't result in an infinite # of relayouts that may never stabilize.
@@ -655,7 +653,7 @@ void RenderTableSection::layoutRows()
 
             LayoutSize childOffset(cell->location() - oldCellRect.location());
             if (childOffset.width() || childOffset.height()) {
-                view().frameView().layoutContext().addLayoutDelta(childOffset);
+                view().addLayoutDelta(childOffset);
 
                 // If the child moved, we have to repaint it as well as any floating/positioned
                 // descendants.  An exception is if we need a layout.  In this case, we know we're going to
@@ -1616,7 +1614,7 @@ void RenderTableSection::setLogicalPositionForCell(RenderTableCell* cell, unsign
         cellLocation.setX(table()->columnPositions()[effectiveColumn] + horizontalBorderSpacing);
 
     cell->setLogicalLocation(cellLocation);
-    view().frameView().layoutContext().addLayoutDelta(oldCellLocation - cell->location());
+    view().addLayoutDelta(oldCellLocation - cell->location());
 }
 
 } // namespace WebCore

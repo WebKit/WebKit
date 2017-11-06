@@ -22,6 +22,7 @@
 #pragma once
 
 #include "FrameView.h"
+#include "LayoutState.h"
 #include "Region.h"
 #include "RenderBlockFlow.h"
 #include "RenderWidget.h"
@@ -33,7 +34,6 @@
 namespace WebCore {
 
 class ImageQualityController;
-class LayoutState;
 class RenderLayerCompositor;
 class RenderQuote;
 
@@ -89,6 +89,44 @@ public:
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
     LayoutRect viewRect() const;
+
+    // layoutDelta is used transiently during layout to store how far an object has moved from its
+    // last layout location, in order to repaint correctly.
+    // If we're doing a full repaint m_layoutState will be 0, but in that case layoutDelta doesn't matter.
+    LayoutSize layoutDelta() const
+    {
+        return m_layoutState ? m_layoutState->m_layoutDelta : LayoutSize();
+    }
+    void addLayoutDelta(const LayoutSize& delta) 
+    {
+        if (m_layoutState) {
+            m_layoutState->m_layoutDelta += delta;
+#if !ASSERT_DISABLED
+            m_layoutState->m_layoutDeltaXSaturated |= m_layoutState->m_layoutDelta.width() == LayoutUnit::max() || m_layoutState->m_layoutDelta.width() == LayoutUnit::min();
+            m_layoutState->m_layoutDeltaYSaturated |= m_layoutState->m_layoutDelta.height() == LayoutUnit::max() || m_layoutState->m_layoutDelta.height() == LayoutUnit::min();
+#endif
+        }
+    }
+
+#if !ASSERT_DISABLED
+    bool layoutDeltaMatches(const LayoutSize& delta)
+    {
+        if (!m_layoutState)
+            return false;
+        return (delta.width() == m_layoutState->m_layoutDelta.width() || m_layoutState->m_layoutDeltaXSaturated) && (delta.height() == m_layoutState->m_layoutDelta.height() || m_layoutState->m_layoutDeltaYSaturated);
+    }
+#endif
+
+    bool doingFullRepaint() const { return frameView().layoutContext().needsFullRepaint(); }
+
+    // Subtree push/pop
+    void pushLayoutState(RenderElement&);
+    bool pushLayoutStateForPaginationIfNeeded(RenderBlockFlow&);
+    void popLayoutState(RenderObject&) { return popLayoutState(); } // Just doing this to keep popLayoutState() private and to make the subtree calls symmetrical.
+
+    // Returns true if layoutState should be used for its cached offset and clip.
+    bool layoutStateEnabled() const { return m_layoutStateDisableCount == 0 && m_layoutState; }
+    LayoutState* layoutState() const { return m_layoutState.get(); }
 
     void updateHitTestResult(HitTestResult&, const LayoutPoint&) override;
 
@@ -204,12 +242,46 @@ protected:
     bool requiresColumns(int desiredColumnCount) const override;
 
 private:
+    void initializeLayoutState(LayoutState&);
+
     void computeColumnCountAndWidth() override;
 
     bool shouldRepaint(const LayoutRect&) const;
     void flushAccumulatedRepaintRegion() const;
 
+    // These functions may only be accessed by LayoutStateMaintainer.
+    bool pushLayoutState(RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false)
+    {
+        // We push LayoutState even if layoutState is disabled because it stores layoutDelta too.
+        if (!doingFullRepaint() || m_layoutState->isPaginated() || renderer.enclosingFragmentedFlow()
+            || m_layoutState->lineGrid() || (renderer.style().lineGrid() != RenderStyle::initialLineGrid() && renderer.isRenderBlockFlow())) {
+            m_layoutState = std::make_unique<LayoutState>(WTFMove(m_layoutState), renderer, offset, pageHeight, pageHeightChanged);
+            return true;
+        }
+        return false;
+    }
+
+    void popLayoutState()
+    {
+        m_layoutState = WTFMove(m_layoutState->m_ancestor);
+    }
+
+    // Suspends the LayoutState optimization. Used under transforms that cannot be represented by
+    // LayoutState (common in SVG) and when manipulating the render tree during layout in ways
+    // that can trigger repaint of a non-child (e.g. when a list item moves its list marker around).
+    // Note that even when disabled, LayoutState is still used to store layoutDelta.
+    // These functions may only be accessed by LayoutStateMaintainer or LayoutStateDisabler.
+    void disableLayoutState() { m_layoutStateDisableCount++; }
+    void enableLayoutState() { ASSERT(m_layoutStateDisableCount > 0); m_layoutStateDisableCount--; }
+
     void layoutContent(const LayoutState&);
+#ifndef NDEBUG
+    void checkLayoutState(const LayoutState&);
+#endif
+
+    friend class LayoutStateMaintainer;
+    friend class LayoutStateDisabler;
+    friend class SubtreeLayoutStateMaintainer;
 
     bool isScrollableOrRubberbandableBox() const override;
 
@@ -245,6 +317,8 @@ private:
     std::unique_ptr<ImageQualityController> m_imageQualityController;
     std::optional<LayoutSize> m_pageLogicalSize;
     bool m_pageLogicalHeightChanged { false };
+    std::unique_ptr<LayoutState> m_layoutState;
+    unsigned m_layoutStateDisableCount { 0 };
     std::unique_ptr<RenderLayerCompositor> m_compositor;
 
     bool m_hasQuotesNeedingUpdate { false };

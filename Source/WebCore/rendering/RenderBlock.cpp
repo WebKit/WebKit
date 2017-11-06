@@ -1210,11 +1210,11 @@ void RenderBlock::setLogicalLeftForChild(RenderBox& child, LayoutUnit logicalLef
 {
     if (isHorizontalWritingMode()) {
         if (applyDelta == ApplyLayoutDelta)
-            view().frameView().layoutContext().addLayoutDelta(LayoutSize(child.x() - logicalLeft, 0));
+            view().addLayoutDelta(LayoutSize(child.x() - logicalLeft, 0));
         child.setX(logicalLeft);
     } else {
         if (applyDelta == ApplyLayoutDelta)
-            view().frameView().layoutContext().addLayoutDelta(LayoutSize(0, child.y() - logicalLeft));
+            view().addLayoutDelta(LayoutSize(0, child.y() - logicalLeft));
         child.setY(logicalLeft);
     }
 }
@@ -1223,11 +1223,11 @@ void RenderBlock::setLogicalTopForChild(RenderBox& child, LayoutUnit logicalTop,
 {
     if (isHorizontalWritingMode()) {
         if (applyDelta == ApplyLayoutDelta)
-            view().frameView().layoutContext().addLayoutDelta(LayoutSize(0, child.y() - logicalTop));
+            view().addLayoutDelta(LayoutSize(0, child.y() - logicalTop));
         child.setY(logicalTop);
     } else {
         if (applyDelta == ApplyLayoutDelta)
-            view().frameView().layoutContext().addLayoutDelta(LayoutSize(child.x() - logicalTop, 0));
+            view().addLayoutDelta(LayoutSize(child.x() - logicalTop, 0));
         child.setX(logicalTop);
     }
 }
@@ -1440,7 +1440,7 @@ void RenderBlock::layoutPositionedObject(RenderBox& r, bool relayoutChildren, bo
     // If we are paginated or in a line grid, compute a vertical position for our object now.
     // If it's wrong we'll lay out again.
     LayoutUnit oldLogicalTop = 0;
-    bool needsBlockDirectionLocationSetBeforeLayout = r.needsLayout() && view().frameView().layoutContext().layoutState()->needsBlockDirectionLocationSetBeforeLayout();
+    bool needsBlockDirectionLocationSetBeforeLayout = r.needsLayout() && view().layoutState()->needsBlockDirectionLocationSetBeforeLayout();
     if (needsBlockDirectionLocationSetBeforeLayout) {
         if (isHorizontalWritingMode() == r.isHorizontalWritingMode())
             r.updateLogicalHeight();
@@ -1499,11 +1499,10 @@ void RenderBlock::markPositionedObjectsForLayout()
 
 void RenderBlock::markForPaginationRelayoutIfNeeded()
 {
-    auto* layoutState = view().frameView().layoutContext().layoutState();
-    if (needsLayout() || !layoutState->isPaginated())
+    if (needsLayout() || !view().layoutState()->isPaginated())
         return;
 
-    if (layoutState->pageLogicalHeightChanged() || (layoutState->pageLogicalHeight() && layoutState->pageLogicalOffset(this, logicalTop()) != pageLogicalOffset()))
+    if (view().layoutState()->pageLogicalHeightChanged() || (view().layoutState()->pageLogicalHeight() && view().layoutState()->pageLogicalOffset(this, logicalTop()) != pageLogicalOffset()))
         setChildNeedsLayout(MarkOnlyThis);
 }
 
@@ -2315,7 +2314,7 @@ LayoutUnit RenderBlock::adjustLogicalLeftOffsetForLine(LayoutUnit offsetFromFloa
         return left;
     
     // Push in our left offset so that it is aligned with the character grid.
-    auto* layoutState = view().frameView().layoutContext().layoutState();
+    LayoutState* layoutState = view().layoutState();
     if (!layoutState)
         return left;
 
@@ -2355,7 +2354,7 @@ LayoutUnit RenderBlock::adjustLogicalRightOffsetForLine(LayoutUnit offsetFromFlo
         return right;
     
     // Push in our right offset so that it is aligned with the character grid.
-    auto* layoutState = view().frameView().layoutContext().layoutState();
+    LayoutState* layoutState = view().layoutState();
     if (!layoutState)
         return right;
 
@@ -3329,7 +3328,7 @@ RenderPtr<RenderBlock> RenderBlock::createAnonymousBlockWithStyleAndDisplay(Docu
 
 LayoutUnit RenderBlock::offsetFromLogicalTopOfFirstPage() const
 {
-    auto* layoutState = view().frameView().layoutContext().layoutState();
+    LayoutState* layoutState = view().layoutState();
     if (layoutState && !layoutState->isPaginated())
         return 0;
 
@@ -3375,7 +3374,7 @@ bool RenderBlock::childBoxIsUnsplittableForFragmentation(const RenderBox& child)
 {
     RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
     bool checkColumnBreaks = fragmentedFlow && fragmentedFlow->shouldCheckColumnBreaks();
-    bool checkPageBreaks = !checkColumnBreaks && view().frameView().layoutContext().layoutState()->m_pageLogicalHeight;
+    bool checkPageBreaks = !checkColumnBreaks && view().layoutState()->m_pageLogicalHeight;
     return child.isUnsplittableForPagination() || child.style().breakInside() == AvoidBreakInside
         || (checkColumnBreaks && child.style().breakInside() == AvoidColumnBreakInside)
         || (checkPageBreaks && child.style().breakInside() == AvoidPageBreakInside);

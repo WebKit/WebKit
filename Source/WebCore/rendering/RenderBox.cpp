@@ -47,7 +47,6 @@
 #include "HTMLTextAreaElement.h"
 #include "HitTestResult.h"
 #include "InlineElementBox.h"
-#include "LayoutState.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "PaintInfo.h"
@@ -697,7 +696,7 @@ LayoutRect RenderBox::outlineBoundsForRepaint(const RenderLayerModelObject* repa
     
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
-    box.move(view().frameView().layoutContext().layoutDelta());
+    box.move(view().layoutDelta());
 
     return LayoutRect(snapRectToDevicePixels(box, document().deviceScaleFactor()));
 }
@@ -1922,8 +1921,8 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
     if (repaintContainer == this)
         return;
 
-    if (view().frameView().layoutContext().layoutStateEnabled() && !repaintContainer) {
-        auto* layoutState = view().frameView().layoutContext().layoutState();
+    if (view().layoutStateEnabled() && !repaintContainer) {
+        LayoutState* layoutState = view().layoutState();
         LayoutSize offset = layoutState->m_paintOffset + locationOffset();
         if (style().hasInFlowPosition() && layer())
             offset += layer()->offsetForInFlowPosition();
@@ -2108,7 +2107,7 @@ LayoutRect RenderBox::clippedOverflowRectForRepaint(const RenderLayerModelObject
     LayoutRect r = visualOverflowRect();
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
-    r.move(view().frameView().layoutContext().layoutDelta());
+    r.move(view().layoutDelta());
     return computeRectForRepaint(r, repaintContainer);
 }
 
@@ -2138,8 +2137,8 @@ LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const Render
     LayoutRect adjustedRect = rect;
     const RenderStyle& styleToUse = style();
     // LayoutState is only valid for root-relative, non-fixed position repainting
-    if (view().frameView().layoutContext().layoutStateEnabled() && !repaintContainer && styleToUse.position() != FixedPosition) {
-        auto* layoutState = view().frameView().layoutContext().layoutState();
+    if (view().layoutStateEnabled() && !repaintContainer && styleToUse.position() != FixedPosition) {
+        LayoutState* layoutState = view().layoutState();
 
         if (layer() && layer()->transform())
             adjustedRect = LayoutRect(encloseRectToDevicePixels(layer()->transform()->mapRect(adjustedRect), document().deviceScaleFactor()));
@@ -4955,7 +4954,7 @@ RenderObject* RenderBox::splitAnonymousBoxesAroundChild(RenderObject* beforeChil
 
 LayoutUnit RenderBox::offsetFromLogicalTopOfFirstPage() const
 {
-    auto* layoutState = view().frameView().layoutContext().layoutState();
+    LayoutState* layoutState = view().layoutState();
     if ((layoutState && !layoutState->isPaginated()) || (!layoutState && !enclosingFragmentedFlow()))
         return 0;
 
