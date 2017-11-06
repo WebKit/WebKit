@@ -1,3 +1,25 @@
+2017-11-05  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r224416. rdar://problem/35339831
+
+    2017-11-03  Keith Miller  <keith_miller@apple.com>
+
+            PutProperytSlot should inform the IC about the property before effects.
+            https://bugs.webkit.org/show_bug.cgi?id=179262
+
+            Reviewed by Mark Lam.
+
+            This patch fixes an issue where we choose to cache setters based on
+            incorrect information. If we did so we might end up OSR exiting
+            more than we would otherwise need to. The new model is that the
+            PutPropertySlot should inform the IC of what the property looked
+            like before any potential side effects might have occurred.
+
+            * runtime/JSObject.cpp:
+            (JSC::JSObject::putInlineSlow):
+            * runtime/Lookup.h:
+            (JSC::putEntry):
+
 2017-11-02  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r224366. rdar://problem/35329721
