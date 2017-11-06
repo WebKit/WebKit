@@ -1,3 +1,17 @@
+2017-11-06  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r224497.
+        https://bugs.webkit.org/show_bug.cgi?id=179335
+
+        It is breaking internal builds (Requested by youenn on
+        #webkit).
+
+        Reverted changeset:
+
+        "Use VCP H264 encoder for platforms supporting it"
+        https://bugs.webkit.org/show_bug.cgi?id=179076
+        https://trac.webkit.org/changeset/224497
+
 2017-11-06  Youenn Fablet  <youenn@apple.com>
 
         Use VCP H264 encoder for platforms supporting it

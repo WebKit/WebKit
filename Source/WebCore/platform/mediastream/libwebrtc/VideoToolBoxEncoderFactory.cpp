@@ -29,7 +29,6 @@
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
 
 #include "H264VideoToolBoxEncoder.h"
-#include <webrtc/sdk/objc/Framework/Classes/VideoToolbox/encoder.h>
 
 namespace WebCore {
 
@@ -39,17 +38,13 @@ void VideoToolboxVideoEncoderFactory::setActive(bool isActive)
         return;
 
     m_isActive = isActive;
-    for (auto& encoder : m_encoders)
-        encoder.get().SetActive(isActive);
+    for (H264VideoToolboxEncoder& encoder : m_encoders)
+        encoder.SetActive(isActive);
 }
 
 webrtc::VideoEncoder* VideoToolboxVideoEncoderFactory::CreateSupportedVideoEncoder(const cricket::VideoCodec& codec)
 {
-#if ENABLE_VCP_ENCODER
-    auto* encoder = webrtc::createH264VideoToolboxEncoderVCP(codec);
-#else
     auto* encoder = new H264VideoToolboxEncoder(codec);
-#endif
     m_encoders.append(*encoder);
 
     return encoder;
@@ -58,16 +53,10 @@ webrtc::VideoEncoder* VideoToolboxVideoEncoderFactory::CreateSupportedVideoEncod
 void VideoToolboxVideoEncoderFactory::DestroyVideoEncoder(webrtc::VideoEncoder* encoder)
 {
     m_encoders.removeFirstMatching([&] (const auto& item) {
-        auto result = &item.get() == encoder;
-        if (result) {
-#if ENABLE_VCP_ENCODER
-            webrtc::deleteH264VideoToolboxEncoderVCP(&item.get());
-#else
-            delete encoder;
-#endif
-        }
-        return result;
+        return &item.get() == encoder;
     });
+
+    delete encoder;
 }
 
 }
