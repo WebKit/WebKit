@@ -520,7 +520,6 @@
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-#define USE_CAIRO 1
 #define USE_GLIB 1
 #define USE_FREETYPE 1
 #define USE_HARFBUZZ 1

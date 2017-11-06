@@ -46,8 +46,8 @@ WEBKIT_OPTION_BEGIN()
 
 include(GStreamerDefinitions)
 
-set(USE_CAIRO ON)
-set(USE_XDGMIME ON)
+SET_AND_EXPOSE_TO_BUILD(USE_CAIRO TRUE)
+SET_AND_EXPOSE_TO_BUILD(USE_XDGMIME TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_GCRYPT TRUE)
 
 # For old versions of HarfBuzz that do not expose an API for the OpenType MATH
