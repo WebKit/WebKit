@@ -69,7 +69,7 @@ PASS Encoding argument supported for decode: iso-2022-jp
 PASS Encoding argument not considered for encode: iso-2022-jp 
 PASS Encoding argument supported for decode: shift_jis 
 PASS Encoding argument not considered for encode: shift_jis 
-FAIL Encoding argument supported for decode: euc-kr assert_equals: expected "euc-kr" but got "windows-949"
+PASS Encoding argument supported for decode: euc-kr 
 PASS Encoding argument not considered for encode: euc-kr 
 PASS Encoding argument not considered for encode: replacement 
 PASS Encoding argument supported for decode: utf-16be 

@@ -1,3 +1,13 @@
+2017-11-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Canonical name of EUC-KR encoding should be EUC-KR, not windows-949
+        https://bugs.webkit.org/show_bug.cgi?id=179305
+
+        Reviewed by Alexey Proskuryakov.
+
+        * web-platform-tests/encoding/textdecoder-labels-expected.txt: Updated expected results. The test already correctly covered this.
+        * web-platform-tests/encoding/textencoder-constructor-non-utf-expected.txt: ditto
+
 2017-11-05  Chris Dumez  <cdumez@apple.com>
 
         Implement ServiceWorkerRegistration.update()

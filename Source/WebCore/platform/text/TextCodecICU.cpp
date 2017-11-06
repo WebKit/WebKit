@@ -93,7 +93,7 @@ DECLARE_ALIASES(KOI8_R, "cskoi8r", "koi", "koi8", "koi8_r");
 DECLARE_ALIASES(KOI8_U, "koi8-ru");
 DECLARE_ALIASES(macintosh, "csmacintosh", "mac", "x-mac-roman", "macroman", "x-macroman");
 DECLARE_ALIASES(windows_874, "dos-874", "iso-8859-11", "iso8859-11", "iso885911", "tis-620");
-DECLARE_ALIASES(windows_949, "euc-kr", "cseuckr", "csksc56011987", "iso-ir-149", "korean", "ks_c_5601-1987", "ks_c_5601-1989", "ksc5601", "ksc_5601", "ms949", "x-KSC5601", "x-windows-949", "x-uhc");
+DECLARE_ALIASES(EUC_KR, "windows-949", "cseuckr", "csksc56011987", "iso-ir-149", "korean", "ks_c_5601-1987", "ks_c_5601-1989", "ksc5601", "ksc_5601", "ms949", "x-KSC5601", "x-windows-949", "x-uhc");
 DECLARE_ALIASES(windows_1250, "cp1250", "x-cp1250", "winlatin2");
 DECLARE_ALIASES(windows_1251, "cp1251", "wincyrillic", "x-cp1251");
 DECLARE_ALIASES(windows_1253, "wingreek", "cp1253", "x-cp1253");
@@ -147,7 +147,7 @@ static const struct EncodingName {
     DECLARE_ENCODING_NAME("KOI8-U", KOI8_U),
     DECLARE_ENCODING_NAME("macintosh", macintosh),
     DECLARE_ENCODING_NAME("windows-874", windows_874),
-    DECLARE_ENCODING_NAME("windows-949", windows_949),
+    DECLARE_ENCODING_NAME("EUC-KR", EUC_KR),
     DECLARE_ENCODING_NAME("windows-1250", windows_1250),
     DECLARE_ENCODING_NAME("windows-1251", windows_1251),
     DECLARE_ENCODING_NAME("windows-1253", windows_1253),
@@ -232,6 +232,10 @@ void TextCodecICU::registerCodecs(TextCodecRegistrar registrar)
         }
         if (!strcmp(encodingName.name, "x-mac-turkish")) {
             registrar(encodingName.name, create, "macos-35-10.2");
+            continue;
+        }
+        if (!strcmp(encodingName.name, "EUC-KR")) {
+            registrar(encodingName.name, create, "windows-949");
             continue;
         }
 
