@@ -66,7 +66,7 @@ void BlobDownloadClient::didDecideDownloadDestination(const String& destinationP
     }
 
     m_destinationPath = destinationPath;
-    m_destinationFile = FileSystem::openFile(m_destinationPath, FileSystem::OpenForWrite);
+    m_destinationFile = FileSystem::openFile(m_destinationPath, FileSystem::FileOpenMode::OpenForWrite);
     m_download.didCreateDestination(m_destinationPath);
 
     m_download.continueDidReceiveResponse();

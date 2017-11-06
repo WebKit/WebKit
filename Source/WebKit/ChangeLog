@@ -1,3 +1,19 @@
+2017-11-06  Christopher Reid  <chris.reid@sony.com>
+
+        Use enum classes within FileSystem
+        https://bugs.webkit.org/show_bug.cgi?id=175172
+
+        Reviewed by Myles C. Maxfield.
+
+        * NetworkProcess/Downloads/BlobDownloadClient.cpp:
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        * NetworkProcess/capture/NetworkCaptureManager.cpp:
+        * NetworkProcess/capture/NetworkCaptureRecorder.cpp:
+        * Shared/WebMemorySampler.cpp:
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.cpp:
+
 2017-11-06  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Properly use SYSTEM_INCLUDE_DIRECTORIES for WebKit build target

@@ -131,7 +131,7 @@ void Recorder::recordFinish(const WebCore::ResourceError& error)
 void Recorder::writeEvents()
 {
     auto path = Manager::singleton().requestToPath(m_initialRequest);
-    auto handle = Manager::singleton().openCacheFile(path, WebCore::FileSystem::OpenForWrite);
+    auto handle = Manager::singleton().openCacheFile(path, WebCore::FileSystem::FileOpenMode::OpenForWrite);
     if (!handle)
         return;
 

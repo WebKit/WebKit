@@ -103,7 +103,7 @@ void CurlCacheManager::loadIndex()
     String indexFilePath(m_cacheDir);
     indexFilePath.append("index.dat");
 
-    FileSystem::PlatformFileHandle indexFile = FileSystem::openFile(indexFilePath, FileSystem::OpenForRead);
+    FileSystem::PlatformFileHandle indexFile = FileSystem::openFile(indexFilePath, FileSystem::FileOpenMode::OpenForRead);
     if (!FileSystem::isHandleValid(indexFile)) {
         LOG(Network, "Cache Warning: Could not open %s for read\n", indexFilePath.latin1().data());
         return;
@@ -165,7 +165,7 @@ void CurlCacheManager::saveIndex()
     indexFilePath.append("index.dat");
 
     FileSystem::deleteFile(indexFilePath);
-    FileSystem::PlatformFileHandle indexFile = FileSystem::openFile(indexFilePath, FileSystem::OpenForWrite);
+    FileSystem::PlatformFileHandle indexFile = FileSystem::openFile(indexFilePath, FileSystem::FileOpenMode::OpenForWrite);
     if (!FileSystem::isHandleValid(indexFile)) {
         LOG(Network, "Cache Error: Could not open %s for write\n", indexFilePath.latin1().data());
         return;

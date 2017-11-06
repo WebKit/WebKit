@@ -44,6 +44,7 @@
 #include <wtf/persistence/PersistentEncoder.h>
 
 using namespace WebKit::NetworkCache;
+using namespace WebCore::FileSystem;
 
 namespace API {
     
@@ -85,7 +86,7 @@ ContentRuleListStore::ContentRuleListStore(const WTF::String& storePath, bool le
     , m_removeQueue(WorkQueue::create("ContentRuleListStore Remove Queue"))
     , m_legacyFilename(legacyFilename)
 {
-    WebCore::FileSystem::makeAllDirectories(storePath);
+    makeAllDirectories(storePath);
 }
 
 ContentRuleListStore::~ContentRuleListStore()
@@ -108,7 +109,7 @@ static const String constructedPathFilter(bool legacyFilename)
 
 static String constructedPath(const String& base, const String& identifier, bool legacyFilename)
 {
-    return WebCore::FileSystem::pathByAppendingComponent(base, makeString(constructedPathPrefix(legacyFilename), WebCore::FileSystem::encodeForFileName(identifier)));
+    return pathByAppendingComponent(base, makeString(constructedPathPrefix(legacyFilename), encodeForFileName(identifier)));
 }
 
 // The size and offset of the densely packed bytes in the file, not sizeof and offsetof, which would
@@ -184,7 +185,7 @@ static bool decodeContentRuleListMetaData(ContentRuleListMetaData& metaData, con
 
 static bool openAndMapContentRuleList(const String& path, ContentRuleListMetaData& metaData, Data& fileData)
 {
-    fileData = mapFile(WebCore::FileSystem::fileSystemRepresentation(path).data());
+    fileData = mapFile(fileSystemRepresentation(path).data());
     if (fileData.isNull())
         return false;
 
@@ -194,11 +195,11 @@ static bool openAndMapContentRuleList(const String& path, ContentRuleListMetaDat
     return true;
 }
 
-static bool writeDataToFile(const Data& fileData, WebCore::FileSystem::PlatformFileHandle fd)
+static bool writeDataToFile(const Data& fileData, PlatformFileHandle fd)
 {
     bool success = true;
     fileData.apply([fd, &success](const uint8_t* data, size_t size) {
-        if (WebCore::FileSystem::writeToFile(fd, (const char*)data, size) == -1) {
+        if (writeToFile(fd, (const char*)data, size) == -1) {
             success = false;
             return false;
         }
@@ -214,7 +215,7 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
 
     class CompilationClient final : public ContentExtensionCompilationClient {
     public:
-        CompilationClient(WebCore::FileSystem::PlatformFileHandle fileHandle, ContentRuleListMetaData& metaData)
+        CompilationClient(PlatformFileHandle fileHandle, ContentRuleListMetaData& metaData)
             : m_fileHandle(fileHandle)
             , m_metaData(metaData)
         {
@@ -287,8 +288,8 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
             m_metaData.conditionsApplyOnlyToDomain = m_conditionsApplyOnlyToDomain;
             
             Data header = encodeContentRuleListMetaData(m_metaData);
-            if (!m_fileError && WebCore::FileSystem::seekFile(m_fileHandle, 0ll, WebCore::FileSystem::FileSeekOrigin::SeekFromBeginning) == -1) {
-                WebCore::FileSystem::closeFile(m_fileHandle);
+            if (!m_fileError && seekFile(m_fileHandle, 0ll, FileSeekOrigin::SeekFromBeginning) == -1) {
+                closeFile(m_fileHandle);
                 m_fileError = true;
             }
             writeToFile(header);
@@ -304,12 +305,12 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
         void writeToFile(const Data& data)
         {
             if (!m_fileError && !writeDataToFile(data, m_fileHandle)) {
-                WebCore::FileSystem::closeFile(m_fileHandle);
+                closeFile(m_fileHandle);
                 m_fileError = true;
             }
         }
         
-        WebCore::FileSystem::PlatformFileHandle m_fileHandle;
+        PlatformFileHandle m_fileHandle;
         ContentRuleListMetaData& m_metaData;
         size_t m_filtersWithoutConditionsBytecodeWritten { 0 };
         size_t m_filtersWithConditionBytecodeWritten { 0 };
@@ -320,27 +321,27 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
         bool m_fileError { false };
     };
 
-    auto temporaryFileHandle = WebCore::FileSystem::invalidPlatformFileHandle;
-    String temporaryFilePath = WebCore::FileSystem::openTemporaryFile("ContentRuleList", temporaryFileHandle);
-    if (temporaryFileHandle == WebCore::FileSystem::invalidPlatformFileHandle)
+    auto temporaryFileHandle = invalidPlatformFileHandle;
+    String temporaryFilePath = openTemporaryFile("ContentRuleList", temporaryFileHandle);
+    if (temporaryFileHandle == invalidPlatformFileHandle)
         return ContentRuleListStore::Error::CompileFailed;
     
     char invalidHeader[ContentRuleListFileHeaderSize];
     memset(invalidHeader, 0xFF, sizeof(invalidHeader));
     // This header will be rewritten in CompilationClient::finalize.
-    if (WebCore::FileSystem::writeToFile(temporaryFileHandle, invalidHeader, sizeof(invalidHeader)) == -1) {
-        WebCore::FileSystem::closeFile(temporaryFileHandle);
+    if (writeToFile(temporaryFileHandle, invalidHeader, sizeof(invalidHeader)) == -1) {
+        closeFile(temporaryFileHandle);
         return ContentRuleListStore::Error::CompileFailed;
     }
 
     CompilationClient compilationClient(temporaryFileHandle, metaData);
     
     if (auto compilerError = compileRuleList(compilationClient, WTFMove(json))) {
-        WebCore::FileSystem::closeFile(temporaryFileHandle);
+        closeFile(temporaryFileHandle);
         return compilerError;
     }
     if (compilationClient.hadErrorWhileWritingToFile()) {
-        WebCore::FileSystem::closeFile(temporaryFileHandle);
+        closeFile(temporaryFileHandle);
         return ContentRuleListStore::Error::CompileFailed;
     }
     
@@ -348,7 +349,7 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
     if (mappedData.isNull())
         return ContentRuleListStore::Error::CompileFailed;
 
-    if (!WebCore::FileSystem::moveFile(temporaryFilePath, finalFilePath))
+    if (!moveFile(temporaryFilePath, finalFilePath))
         return ContentRuleListStore::Error::CompileFailed;
 
     return { };
@@ -412,12 +413,12 @@ void ContentRuleListStore::getAvailableContentRuleListIdentifiers(Function<void(
 {
     m_readQueue->dispatch([protectedThis = makeRef(*this), storePath = m_storePath.isolatedCopy(), legacyFilename = m_legacyFilename, completionHandler = WTFMove(completionHandler)]() mutable {
 
-        Vector<String> fullPaths = WebCore::FileSystem::listDirectory(storePath, constructedPathFilter(legacyFilename));
+        Vector<String> fullPaths = listDirectory(storePath, constructedPathFilter(legacyFilename));
         Vector<String> identifiers;
         identifiers.reserveInitialCapacity(fullPaths.size());
         const auto prefixLength = constructedPathPrefix(legacyFilename).length();
         for (const auto& path : fullPaths)
-            identifiers.uncheckedAppend(WebCore::FileSystem::decodeFromFilename(path.substring(path.reverseFind('/') + 1 + prefixLength)));
+            identifiers.uncheckedAppend(decodeFromFilename(path.substring(path.reverseFind('/') + 1 + prefixLength)));
 
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), identifiers = WTFMove(identifiers)]() mutable {
             completionHandler(WTFMove(identifiers));
@@ -454,7 +455,7 @@ void ContentRuleListStore::removeContentRuleList(const WTF::String& identifier, 
     m_removeQueue->dispatch([protectedThis = makeRef(*this), identifier = identifier.isolatedCopy(), storePath = m_storePath.isolatedCopy(), legacyFilename = m_legacyFilename, completionHandler = WTFMove(completionHandler)]() mutable {
         auto path = constructedPath(storePath, identifier, legacyFilename);
 
-        if (!WebCore::FileSystem::deleteFile(path)) {
+        if (!deleteFile(path)) {
             RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] {
                 completionHandler(Error::RemoveFailed);
             });
@@ -469,19 +470,19 @@ void ContentRuleListStore::removeContentRuleList(const WTF::String& identifier, 
 
 void ContentRuleListStore::synchronousRemoveAllContentRuleLists()
 {
-    for (const auto& path : WebCore::FileSystem::listDirectory(m_storePath, "*"))
-        WebCore::FileSystem::deleteFile(path);
+    for (const auto& path : listDirectory(m_storePath, "*"))
+        deleteFile(path);
 }
 
 void ContentRuleListStore::invalidateContentRuleListVersion(const WTF::String& identifier)
 {
-    auto file = WebCore::FileSystem::openFile(constructedPath(m_storePath, identifier, m_legacyFilename), WebCore::FileSystem::OpenForWrite);
-    if (file == WebCore::FileSystem::invalidPlatformFileHandle)
+    auto file = openFile(constructedPath(m_storePath, identifier, m_legacyFilename), FileOpenMode::OpenForWrite);
+    if (file == invalidPlatformFileHandle)
         return;
     ContentRuleListMetaData invalidHeader = {0, 0, 0, 0, 0, 0};
-    auto bytesWritten = WebCore::FileSystem::writeToFile(file, reinterpret_cast<const char*>(&invalidHeader), sizeof(invalidHeader));
+    auto bytesWritten = writeToFile(file, reinterpret_cast<const char*>(&invalidHeader), sizeof(invalidHeader));
     ASSERT_UNUSED(bytesWritten, bytesWritten == sizeof(invalidHeader));
-    WebCore::FileSystem::closeFile(file);
+    closeFile(file);
 }
 
 void ContentRuleListStore::getContentRuleListSource(const WTF::String& identifier, Function<void(WTF::String)> completionHandler)

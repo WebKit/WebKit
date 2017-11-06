@@ -59,6 +59,12 @@ constexpr auto isValidEnum(T t) -> std::enable_if_t<std::is_enum<E>::value, bool
     return EnumValueChecker<T, typename EnumTraits<E>::values>::isValidEnum(t);
 }
 
+template<typename E>
+constexpr auto enumToUnderlyingType(E e)
+{
+    return static_cast<std::underlying_type_t<E>>(e);
+}
+
 }
 
 using WTF::isValidEnum;

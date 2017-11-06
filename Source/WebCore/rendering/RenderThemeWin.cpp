@@ -1058,7 +1058,7 @@ String RenderThemeWin::stringWithContentsOfFile(CFStringRef name, CFStringRef ty
     if (!CFURLGetFileSystemRepresentation(requestedURLRef.get(), false, requestedFilePath, MAX_PATH))
         return String();
 
-    FileSystem::PlatformFileHandle requestedFileHandle = FileSystem::openFile(requestedFilePath, FileSystem::OpenForRead);
+    FileSystem::PlatformFileHandle requestedFileHandle = FileSystem::openFile(requestedFilePath, FileSystem::FileOpenMode::OpenForRead);
     if (!FileSystem::isHandleValid(requestedFileHandle))
         return String();
 

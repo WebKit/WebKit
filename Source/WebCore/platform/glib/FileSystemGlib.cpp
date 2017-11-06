@@ -30,6 +30,7 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <sys/file.h>
+#include <wtf/EnumTraits.h>
 #include <wtf/UUID.h>
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GRefPtr.h>
@@ -362,9 +363,9 @@ PlatformFileHandle openFile(const String& path, FileOpenMode mode)
 
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(filename.get()));
     GFileIOStream* ioStream = 0;
-    if (mode == OpenForRead)
+    if (mode == FileOpenMode::OpenForRead)
         ioStream = g_file_open_readwrite(file.get(), 0, 0);
-    else if (mode == OpenForWrite) {
+    else if (mode == FileOpenMode::OpenForWrite) {
         if (g_file_test(filename.get(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR)))
             ioStream = g_file_open_readwrite(file.get(), 0, 0);
         else
@@ -388,13 +389,13 @@ long long seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin o
 {
     GSeekType seekType = G_SEEK_SET;
     switch (origin) {
-    case SeekFromBeginning:
+    case FileSeekOrigin::SeekFromBeginning:
         seekType = G_SEEK_SET;
         break;
-    case SeekFromCurrent:
+    case FileSeekOrigin::SeekFromCurrent:
         seekType = G_SEEK_CUR;
         break;
-    case SeekFromEnd:
+    case FileSeekOrigin::SeekFromEnd:
         seekType = G_SEEK_END;
         break;
     default:
@@ -482,11 +483,11 @@ std::optional<int32_t> getFileDeviceId(const CString& fsFile)
 #if USE(FILE_LOCK)
 bool lockFile(PlatformFileHandle handle, FileLockMode lockMode)
 {
-    COMPILE_ASSERT(LOCK_SH == LockShared, LockSharedEncodingIsAsExpected);
-    COMPILE_ASSERT(LOCK_EX == LockExclusive, LockExclusiveEncodingIsAsExpected);
-    COMPILE_ASSERT(LOCK_NB == LockNonBlocking, LockNonBlockingEncodingIsAsExpected);
+    COMPILE_ASSERT(LOCK_SH == WTF::enumToUnderlyingType(FileLockMode::LockShared), LockSharedEncodingIsAsExpected);
+    COMPILE_ASSERT(LOCK_EX == WTF::enumToUnderlyingType(FileLockMode::LockExclusive), LockExclusiveEncodingIsAsExpected);
+    COMPILE_ASSERT(LOCK_NB == WTF::enumToUnderlyingType(FileLockMode::LockNonBlocking), LockNonBlockingEncodingIsAsExpected);
     auto* inputStream = g_io_stream_get_input_stream(G_IO_STREAM(handle));
-    int result = flock(g_file_descriptor_based_get_fd(G_FILE_DESCRIPTOR_BASED(inputStream)), lockMode);
+    int result = flock(g_file_descriptor_based_get_fd(G_FILE_DESCRIPTOR_BASED(inputStream)), WTF::enumToUnderlyingType(lockMode));
     return result != -1;
 }
 

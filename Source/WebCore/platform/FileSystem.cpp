@@ -207,7 +207,7 @@ String lastComponentOfPathIgnoringTrailingSlash(const String& path)
 
 bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle& target)
 {
-    auto source = openFile(path, OpenForRead);
+    auto source = openFile(path, FileOpenMode::OpenForRead);
 
     if (!isHandleValid(source))
         return false;

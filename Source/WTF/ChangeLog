@@ -1,3 +1,14 @@
+2017-11-06  Christopher Reid  <chris.reid@sony.com>
+
+        Use enum classes within FileSystem
+        https://bugs.webkit.org/show_bug.cgi?id=175172
+
+        Reviewed by Myles C. Maxfield.
+
+        Adding a helper function for converting enum classes to their underlying type when necessary.
+
+        * wtf/EnumTraits.h:
+
 2017-11-06  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Always use SET_AND_EXPOSE_TO_BUILD to set build variables

@@ -49,6 +49,7 @@
 #endif
 
 using namespace std::literals::chrono_literals;
+using namespace WebCore::FileSystem;
 
 namespace WebKit {
 namespace NetworkCache {
@@ -111,7 +112,7 @@ Cache::Cache(Ref<Storage>&& storage, OptionSet<Option> options)
 #endif
 #if PLATFORM(GTK)
         // Triggers with "touch $cachePath/dump".
-        CString dumpFilePath = WebCore::FileSystem::fileSystemRepresentation(WebCore::FileSystem::pathByAppendingComponent(m_storage->basePath(), "dump"));
+        CString dumpFilePath = fileSystemRepresentation(pathByAppendingComponent(m_storage->basePath(), "dump"));
         GRefPtr<GFile> dumpFile = adoptGRef(g_file_new_for_path(dumpFilePath.data()));
         GFileMonitor* monitor = g_file_monitor_file(dumpFile.get(), G_FILE_MONITOR_NONE, nullptr, nullptr);
         g_signal_connect_swapped(monitor, "changed", G_CALLBACK(dumpFileChanged), this);
@@ -537,16 +538,16 @@ void Cache::traverse(Function<void (const TraversalEntry*)>&& traverseHandler)
 
 String Cache::dumpFilePath() const
 {
-    return WebCore::FileSystem::pathByAppendingComponent(m_storage->versionPath(), "dump.json");
+    return pathByAppendingComponent(m_storage->versionPath(), "dump.json");
 }
 
 void Cache::dumpContentsToFile()
 {
-    auto fd = WebCore::FileSystem::openFile(dumpFilePath(), WebCore::FileSystem::OpenForWrite);
-    if (!WebCore::FileSystem::isHandleValid(fd))
+    auto fd = openFile(dumpFilePath(), FileOpenMode::OpenForWrite);
+    if (!isHandleValid(fd))
         return;
     auto prologue = String("{\n\"entries\": [\n").utf8();
-    WebCore::FileSystem::writeToFile(fd, prologue.data(), prologue.length());
+    writeToFile(fd, prologue.data(), prologue.length());
 
     struct Totals {
         unsigned count { 0 };
@@ -575,8 +576,8 @@ void Cache::dumpContentsToFile()
             epilogue.appendLiteral("\n");
             epilogue.appendLiteral("}\n}\n");
             auto writeData = epilogue.toString().utf8();
-            WebCore::FileSystem::writeToFile(fd, writeData.data(), writeData.length());
-            WebCore::FileSystem::closeFile(fd);
+            writeToFile(fd, writeData.data(), writeData.length());
+            closeFile(fd);
             return;
         }
         auto entry = Entry::decodeStorageRecord(*record);
@@ -590,14 +591,14 @@ void Cache::dumpContentsToFile()
         entry->asJSON(json, info);
         json.appendLiteral(",\n");
         auto writeData = json.toString().utf8();
-        WebCore::FileSystem::writeToFile(fd, writeData.data(), writeData.length());
+        writeToFile(fd, writeData.data(), writeData.length());
     });
 }
 
 void Cache::deleteDumpFile()
 {
     WorkQueue::create("com.apple.WebKit.Cache.delete")->dispatch([path = dumpFilePath().isolatedCopy()] {
-        WebCore::FileSystem::deleteFile(path);
+        deleteFile(path);
     });
 }
 

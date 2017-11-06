@@ -480,7 +480,7 @@ void PluginDatabase::loadPersistentMetadataCache()
 
     FileSystem::PlatformFileHandle file;
     String absoluteCachePath = FileSystem::pathByAppendingComponent(persistentMetadataCachePath(), persistentPluginMetadataCacheFilename);
-    file = FileSystem::openFile(absoluteCachePath, FileSystem::OpenForRead);
+    file = FileSystem::openFile(absoluteCachePath, FileSystem::FileOpenMode::OpenForRead);
 
     if (!FileSystem::isHandleValid(file))
         return;
@@ -566,7 +566,7 @@ void PluginDatabase::updatePersistentMetadataCache()
         return;
 
     FileSystem::PlatformFileHandle file;
-    file = FileSystem::openFile(absoluteCachePath, FileSystem::OpenForWrite);
+    file = FileSystem::openFile(absoluteCachePath, FileSystem::FileOpenMode::OpenForWrite);
 
     if (!FileSystem::isHandleValid(file)) {
         LOG_ERROR("Unable to open plugin metadata cache for saving");

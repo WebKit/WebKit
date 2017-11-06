@@ -145,7 +145,7 @@ bool getFileCreationTime(const String& path, time_t& time)
 
 static String getFinalPathName(const String& path)
 {
-    auto handle = openFile(path, OpenForRead);
+    auto handle = openFile(path, FileOpenMode::OpenForRead);
     if (!isHandleValid(handle))
         return String();
 
@@ -418,12 +418,12 @@ PlatformFileHandle openFile(const String& path, FileOpenMode mode)
     DWORD creationDisposition = 0;
     DWORD shareMode = 0;
     switch (mode) {
-    case OpenForRead:
+    case FileOpenMode::OpenForRead:
         desiredAccess = GENERIC_READ;
         creationDisposition = OPEN_EXISTING;
         shareMode = FILE_SHARE_READ;
         break;
-    case OpenForWrite:
+    case FileOpenMode::OpenForWrite:
         desiredAccess = GENERIC_WRITE;
         creationDisposition = CREATE_ALWAYS;
         break;
@@ -447,9 +447,9 @@ long long seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin o
 {
     DWORD moveMethod = FILE_BEGIN;
 
-    if (origin == SeekFromCurrent)
+    if (origin == FileSeekOrigin::SeekFromCurrent)
         moveMethod = FILE_CURRENT;
-    else if (origin == SeekFromEnd)
+    else if (origin == FileSeekOrigin::SeekFromEnd)
         moveMethod = FILE_END;
 
     LARGE_INTEGER largeOffset;
@@ -530,7 +530,7 @@ bool getVolumeFreeSpace(const String&, uint64_t&)
 
 std::optional<int32_t> getFileDeviceId(const CString& fsFile)
 {
-    auto handle = openFile(fsFile.data(), OpenForRead);
+    auto handle = openFile(fsFile.data(), FileOpenMode::OpenForRead);
     if (!isHandleValid(handle))
         return std::nullopt;
 
