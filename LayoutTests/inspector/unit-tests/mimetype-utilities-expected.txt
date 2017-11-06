@@ -1,6 +1,7 @@
 
 == Running test suite: MIMETypeUtilities
 -- Running test case: fileExtensionForURL
+PASS: File extension for null URL should be null.
 PASS: File extension for invalid URL should be null.
 PASS: File extension for URL without last path component should be null.
 PASS: File extension for URL without last path component should be null.
@@ -14,6 +15,7 @@ PASS: File extension for "script.js" should be "js".
 PASS: File extension for "script.min.js" should be "js".
 
 -- Running test case: fileExtensionForMIMEType
+PASS: File extension for null mime type should be null.
 PASS: File extension for invalid mime type should be null.
 PASS: File extension for unknown mime type should be null.
 PASS: File extension for "image/jpeg" should be "jpg".

@@ -10,6 +10,7 @@ function test()
     suite.addTestCase({
         name: "fileExtensionForURL",
         test() {
+            InspectorTest.expectEqual(WI.fileExtensionForURL(null), null, `File extension for null URL should be null.`);
             InspectorTest.expectEqual(WI.fileExtensionForURL("invalid-url"), null, `File extension for invalid URL should be null.`);
             InspectorTest.expectEqual(WI.fileExtensionForURL("https://example.com"), null, `File extension for URL without last path component should be null.`);
             InspectorTest.expectEqual(WI.fileExtensionForURL("https://example.com/"), null, `File extension for URL without last path component should be null.`);
@@ -31,6 +32,7 @@ function test()
     suite.addTestCase({
         name: "fileExtensionForMIMEType",
         test() {
+            InspectorTest.expectEqual(WI.fileExtensionForMIMEType(null), null, `File extension for null mime type should be null.`);
             InspectorTest.expectEqual(WI.fileExtensionForMIMEType("invalid-mimetype"), null, `File extension for invalid mime type should be null.`);
             InspectorTest.expectEqual(WI.fileExtensionForMIMEType("application/unknown"), null, `File extension for unknown mime type should be null.`);
 

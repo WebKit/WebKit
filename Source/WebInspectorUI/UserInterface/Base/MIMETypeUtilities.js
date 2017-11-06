@@ -84,6 +84,9 @@ WI.mimeTypeForFileExtension = function(extension)
 
 WI.fileExtensionForMIMEType = function(mimeType)
 {
+    if (!mimeType)
+        return null;
+
     const mimeTypeToExtension = {
         // Document types.
         "text/html": "html",
@@ -134,6 +137,9 @@ WI.fileExtensionForMIMEType = function(mimeType)
 
 WI.shouldTreatMIMETypeAsText = function(mimeType)
 {
+    if (!mimeType)
+        return false;
+
     if (mimeType.startsWith("text/"))
         return true;
 

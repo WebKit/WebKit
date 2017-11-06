@@ -1,5 +1,18 @@
 2017-11-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Uncaught Exception: TypeError: null is not an object (evaluating 'mimeType.endsWith')
+        https://bugs.webkit.org/show_bug.cgi?id=179325
+        <rdar://problem/35366896>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/MIMETypeUtilities.js:
+        (WI.fileExtensionForMIMEType):
+        (WI.shouldTreatMIMETypeAsText):
+        Handle null mime types.
+
+2017-11-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Selecting a DOM Search Result in Search Tab unexpectedly changes Tabs
         https://bugs.webkit.org/show_bug.cgi?id=179223
         <rdar://problem/33949556>
