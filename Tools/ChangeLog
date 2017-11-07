@@ -1,3 +1,12 @@
+2017-11-07  Aakash Jain  <aakash_jain@apple.com>
+
+        Enable webkitpy EWS bubbles
+        https://bugs.webkit.org/show_bug.cgi?id=178539
+
+        Reviewed by Alexey Proskuryakov.
+
+        * QueueStatusServer/config/queues.py: Added webkitpy EWS.
+
 2017-11-07  Don Olmstead  <don.olmstead@sony.com>
 
         Add a WinCairo EWS queue
