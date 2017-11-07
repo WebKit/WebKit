@@ -42,12 +42,9 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         this._paintFlashingButtonNavigationItem.activated = PageAgent.setShowPaintRects && WI.showPaintRectsSetting.value;
         this._paintFlashingButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
-        WI.layerTreeManager.addEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, this._layerTreeDidChange, this);
-
         this._layers = [];
         this._layerGroupsById = new Map;
         this._selectedLayerGroup = null;
-        this._layersChangedWhileHidden = false;
 
         this._renderer = null;
         this._camera = null;
@@ -78,18 +75,16 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
 
         this._updateCompositingBordersButtonState();
 
-        if (this._layersChangedWhileHidden) {
-            this._layersChangedWhileHidden = false;
-
-            this.updateLayout();
-        }
-
+        this.updateLayout();
+        WI.layerTreeManager.addEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, this._layerTreeDidChange, this);
+        
         if (this.didInitialLayout)
             this._animate();
     }
 
     hidden()
     {
+        WI.layerTreeManager.removeEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, this._layerTreeDidChange, this);
         this._stopAnimation();
 
         super.hidden();
@@ -98,7 +93,6 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
     closed()
     {
         WI.showPaintRectsSetting.removeEventListener(WI.Setting.Event.Changed, this._showPaintRectsSettingChanged, this);
-        WI.layerTreeManager.removeEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, this._layerTreeDidChange, this);
 
         super.closed();
     }
@@ -175,11 +169,6 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
 
     _layerTreeDidChange(event)
     {
-        if (!this.visible) {
-            this._layersChangedWhileHidden = true;
-            return;
-        }
-
         this.needsLayout();
     }
 

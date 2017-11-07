@@ -68,9 +68,10 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
             return;
 
         const suppressEvent = true;
-        if (node)
+        if (node) {
             node.revealAndSelect(suppressEvent);
-        else if (this._dataGrid.selectedNode)
+            this._showPopoverForSelectedNode();
+        } else if (this._dataGrid.selectedNode)
             this._dataGrid.selectedNode.deselect(suppressEvent);
     }
 

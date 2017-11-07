@@ -1,3 +1,23 @@
+2017-11-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: Two little Layers tab fixes
+        https://bugs.webkit.org/show_bug.cgi?id=179273
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/LayerDetailsSidebarPanel.js:
+        (WI.LayerDetailsSidebarPanel.prototype.selectNodeByLayerId):
+        Even when we suppress refire of the selected event, we still want a popover.
+
+        * UserInterface/Views/Layers3DContentView.js:
+        (WI.Layers3DContentView):
+        (WI.Layers3DContentView.prototype.shown):
+        (WI.Layers3DContentView.prototype.hidden):
+        (WI.Layers3DContentView.prototype.closed):
+        (WI.Layers3DContentView.prototype._layerTreeDidChange):
+        Opening WI directly to the Layers tab wasn't fetching layers right away. Let's fetch on every shown() and
+        prune the hacky logic we were previously using -- it's overkill anyway, now that we're tracking mutations.
+
 2017-11-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: no way to navigate from Resource tree element to its entry in Network Tab
