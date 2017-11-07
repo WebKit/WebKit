@@ -35,20 +35,6 @@
 #import <UIKit/UIDragInteraction.h>
 #import <UIKit/UIDragItem.h>
 #import <UIKit/UIInteraction.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <UIKit/UIDragSession.h>
-#import <UIKit/UIDragging.h>
-#else
-
-@protocol UIDraggingInfo <NSObject>
-@end
-
-@interface UIDraggingSession : NSObject <UIDraggingInfo>
-@end
-
-#endif
-
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFocusedElementInfo.h>
 #import <WebKit/_WKFormInputSession.h>
@@ -198,11 +184,6 @@ NSString * const DataInteractionStartEventName = @"dragstart";
         [items addObject:[[[UIDragItem alloc] initWithItemProvider:itemProvider] autorelease]];
 
     return [super initWithItems:items.get() location:locationInWindow window:window allowMove:allowMove];
-}
-
-- (UIDraggingSession *)session
-{
-    return nil;
 }
 
 - (BOOL)isLocal

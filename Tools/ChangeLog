@@ -1,5 +1,15 @@
 2017-11-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, fix the internal build after updating to a newer SDK
+
+        There shouldn't be any need to include and implement these method stubs anymore,
+        even when building against the shipping iOS 11 SDK.
+
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (-[MockDropSession session]): Deleted.
+
+2017-11-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [Attachment Support] Implement delegate hooks for attachment element insertion and removal
         https://bugs.webkit.org/show_bug.cgi?id=179016
         <rdar://problem/35250890>
