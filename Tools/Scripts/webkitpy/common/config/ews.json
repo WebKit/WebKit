@@ -66,6 +66,14 @@
         "runTests": true,
         "shouldBuild": false
     },
+    "WinCairo EWS": {
+        "port": "wincairo",
+        "name": "wincairo-ews",
+        "runTests": false,
+        "watchers": [
+            "SIE-WebKit-EWS@am.sony.com"
+        ]
+    },
     "WPE EWS": {
         "port": "wpe",
         "watchers": [

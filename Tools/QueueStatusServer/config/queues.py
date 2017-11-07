@@ -43,6 +43,7 @@ all_queue_names = [
     "mac-debug-ews",
     "mac-32bit-ews",
     "win-ews",
+    "wincairo-ews",
     "wpe-ews",
 ]
 

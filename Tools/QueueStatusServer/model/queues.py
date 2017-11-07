@@ -81,6 +81,7 @@ class Queue(object):
         display_name = display_name.replace("Jsc", "JSC")
         display_name = display_name.replace("Wpe", "WPE")
         display_name = display_name.replace("Gtk", "GTK")
+        display_name = display_name.replace("Wincairo", "WinCairo")
         return display_name
 
     _dash_regexp = re.compile("-")

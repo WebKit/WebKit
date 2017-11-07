@@ -204,6 +204,7 @@ MOCK: update_status: %(name)s Checked relevance of patch
             'webkitpy-ews',
             'win-ews',
             'wpe-ews',
+            'wincairo-ews',
         }
         classes = AbstractEarlyWarningSystem.load_ews_classes()
         names = {cls.name for cls in classes}
