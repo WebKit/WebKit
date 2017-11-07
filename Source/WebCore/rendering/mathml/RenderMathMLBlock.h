@@ -40,6 +40,7 @@ class RenderMathMLOperator;
 class MathMLPresentationElement;
 
 class RenderMathMLBlock : public RenderBlock {
+    WTF_MAKE_ISO_ALLOCATED(RenderMathMLBlock);
 public:
     RenderMathMLBlock(MathMLPresentationElement&, RenderStyle&&);
     RenderMathMLBlock(Document&, RenderStyle&&);
@@ -96,6 +97,7 @@ private:
 };
 
 class RenderMathMLTable final : public RenderTable {
+    WTF_MAKE_ISO_ALLOCATED(RenderMathMLTable);
 public:
     explicit RenderMathMLTable(MathMLElement& element, RenderStyle&& style)
         : RenderTable(element, WTFMove(style))

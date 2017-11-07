@@ -36,6 +36,7 @@ class InlineTextBox;
 struct GlyphOverflow;
 
 class RenderText : public RenderObject {
+    WTF_MAKE_ISO_ALLOCATED(RenderText);
 public:
     RenderText(Text&, const String&);
     RenderText(Document&, const String&);

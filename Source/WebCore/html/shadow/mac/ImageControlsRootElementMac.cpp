@@ -33,10 +33,12 @@
 #include "RenderBlockFlow.h"
 #include "RenderImage.h"
 #include "RenderStyle.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 class RenderImageControls final : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED_INLINE(RenderImageControls);
 public:
     RenderImageControls(HTMLElement&, RenderStyle&&);
     virtual ~RenderImageControls();

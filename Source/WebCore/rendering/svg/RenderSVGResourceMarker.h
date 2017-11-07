@@ -28,6 +28,7 @@ class AffineTransform;
 class RenderObject;
 
 class RenderSVGResourceMarker final : public RenderSVGResourceContainer {
+    WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceMarker);
 public:
     RenderSVGResourceMarker(SVGMarkerElement&, RenderStyle&&);
     virtual ~RenderSVGResourceMarker();

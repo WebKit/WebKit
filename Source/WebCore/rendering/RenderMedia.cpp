@@ -30,9 +30,12 @@
 
 #include "RenderFragmentedFlow.h"
 #include "RenderView.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMedia);
 
 RenderMedia::RenderMedia(HTMLMediaElement& element, RenderStyle&& style)
     : RenderImage(element, WTFMove(style))

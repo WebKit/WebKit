@@ -53,6 +53,7 @@ private:
 };
 
 class RenderFrameSet final : public RenderBox {
+    WTF_MAKE_ISO_ALLOCATED(RenderFrameSet);
 public:
     RenderFrameSet(HTMLFrameSetElement&, RenderStyle&&);
     virtual ~RenderFrameSet();

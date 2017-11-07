@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class RenderMathMLFencedOperator final : public RenderMathMLOperator {
+    WTF_MAKE_ISO_ALLOCATED(RenderMathMLFencedOperator);
 public:
     RenderMathMLFencedOperator(Document&, RenderStyle&&, const String& operatorString, MathMLOperatorDictionary::Form, unsigned short flags = 0);
     void updateOperatorContent(const String&);

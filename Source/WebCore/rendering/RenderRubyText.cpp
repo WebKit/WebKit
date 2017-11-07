@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderRubyText);
+
 RenderRubyText::RenderRubyText(Element& element, RenderStyle&& style)
     : RenderBlockFlow(element, WTFMove(style))
 {

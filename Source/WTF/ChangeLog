@@ -1,3 +1,18 @@
+2017-10-31  Filip Pizlo  <fpizlo@apple.com>
+
+        bmalloc should support strictly type-segregated isolated heaps
+        https://bugs.webkit.org/show_bug.cgi?id=178108
+
+        Reviewed by Saam Barati, Simon Fraser, and Ryosuke Niwa.
+        
+        This just adds an easy way of using the bmalloc IsoHeap API in WebKit. If bmalloc is not
+        enabled, these macros will just make the object FastMalloced.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/FastTLS.h:
+        * wtf/IsoMalloc.h: Added.
+        * wtf/IsoMallocInlines.h: Added.
+
 2017-11-06  Christopher Reid  <chris.reid@sony.com>
 
         Use enum classes within FileSystem

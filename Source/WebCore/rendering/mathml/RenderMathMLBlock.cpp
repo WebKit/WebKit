@@ -36,6 +36,7 @@
 #include "MathMLNames.h"
 #include "MathMLPresentationElement.h"
 #include "RenderView.h"
+#include <wtf/IsoMallocInlines.h>
 
 #if ENABLE(DEBUG_MATH_LAYOUT)
 #include "PaintInfo.h"
@@ -44,6 +45,9 @@
 namespace WebCore {
 
 using namespace MathMLNames;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLBlock);
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLTable);
 
 RenderMathMLBlock::RenderMathMLBlock(MathMLPresentationElement& container, RenderStyle&& style)
     : RenderBlock(container, WTFMove(style), 0)

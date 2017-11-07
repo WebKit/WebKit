@@ -38,6 +38,7 @@ class RenderLayerCompositor;
 class RenderQuote;
 
 class RenderView final : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderView);
 public:
     RenderView(Document&, RenderStyle&&);
     virtual ~RenderView();

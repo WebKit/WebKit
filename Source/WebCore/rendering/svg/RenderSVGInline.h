@@ -26,6 +26,7 @@
 namespace WebCore {
 
 class RenderSVGInline : public RenderInline {
+    WTF_MAKE_ISO_ALLOCATED(RenderSVGInline);
 public:
     RenderSVGInline(SVGGraphicsElement&, RenderStyle&&);
 

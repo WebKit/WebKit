@@ -42,6 +42,7 @@ class TableLayout;
 enum SkipEmptySectionsValue { DoNotSkipEmptySections, SkipEmptySections };
 
 class RenderTable : public RenderBlock {
+    WTF_MAKE_ISO_ALLOCATED(RenderTable);
 public:
     RenderTable(Element&, RenderStyle&&);
     RenderTable(Document&, RenderStyle&&);

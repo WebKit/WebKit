@@ -39,12 +39,15 @@
 #include "ScaleTransformOperation.h"
 #include "TransformOperations.h"
 #include <cmath>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
 using namespace MathMLNames;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLOperator);
 
 RenderMathMLOperator::RenderMathMLOperator(MathMLOperatorElement& element, RenderStyle&& style)
     : RenderMathMLToken(element, WTFMove(style))

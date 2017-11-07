@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class RenderMedia : public RenderImage {
+    WTF_MAKE_ISO_ALLOCATED(RenderMedia);
 public:
     RenderMedia(HTMLMediaElement&, RenderStyle&&);
     RenderMedia(HTMLMediaElement&, RenderStyle&&, const IntSize& intrinsicSize);

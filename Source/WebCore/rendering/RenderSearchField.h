@@ -31,6 +31,7 @@ namespace WebCore {
 class HTMLInputElement;
 
 class RenderSearchField final : public RenderTextControlSingleLine, private PopupMenuClient {
+    WTF_MAKE_ISO_ALLOCATED(RenderSearchField);
 public:
     RenderSearchField(HTMLInputElement&, RenderStyle&&);
     virtual ~RenderSearchField();

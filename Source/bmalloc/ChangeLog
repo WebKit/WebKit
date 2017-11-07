@@ -1,3 +1,300 @@
+2017-10-31  Filip Pizlo  <fpizlo@apple.com>
+
+        bmalloc should support strictly type-segregated isolated heaps
+        https://bugs.webkit.org/show_bug.cgi?id=178108
+
+        Reviewed by Saam Barati, Simon Fraser, and Ryosuke Niwa.
+        
+        This introduces a new allocation API in bmalloc called IsoHeap. An IsoHeap is templatized by
+        type and created in static storage. When unused, it takes only a few words. When you do use
+        it, each IsoHeap gets a bag of virtual pages unique to it. This prevents use-after-free bugs
+        in one IsoHeap from affecting any other memory. At worst, two pointers of the same type will
+        point to the same object even though they should not have.
+        
+        IsoHeaps allocate using a first-fit discipline that combines ideas from bmalloc and Riptide
+        (the JSC GC):
+        
+        Like Riptide, it uses a bump'n'pop allocator. What Riptide calls blocks, IsoHeaps calls
+        pages. Pages are collected into directories. Directories track pages using bitvectors, so
+        that it's easy to quickly find a completely free page or one that has at least one free
+        object. I think that the bump'n'pop allocator is as fast as the bmalloc Immix-style (page and
+        line) allocator, but is better at allocating in holes. It's guaranteed to follow a first-fit
+        discipline. However, the real reason why I wrote it that was is that this is what I'm more
+        familiar with. This is a part of the design I want to revisit (bug 179278).
+        
+        Like bmalloc, it uses a deallocation log. This means that the internal IsoHeap data
+        structures can be locked with a coarse-grained lock, since the deallocator only grabs it when
+        flushing the log. Similarly, the allocator only grabs it when refilling the bump'n'pop
+        FreeList.
+        
+        This adds a unit test for IsoHeaps. In this change, IsoHeaps are adopted only by WebCore's
+        RenderObject.
+        
+        Note that despite the use of GC concepts, it's not a goal to make this code directly sharable
+        with GC. The GC will probably have to do isolated heaps its own way (likely a special
+        Subspace or something like that).
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Algorithm.h:
+        (bmalloc::findBitInWord):
+        * bmalloc/AllIsoHeaps.cpp: Added.
+        (bmalloc::AllIsoHeaps::AllIsoHeaps):
+        (bmalloc::AllIsoHeaps::add):
+        (bmalloc::AllIsoHeaps::head):
+        * bmalloc/AllIsoHeaps.h: Added.
+        * bmalloc/AllIsoHeapsInlines.h: Added.
+        (bmalloc::AllIsoHeaps::forEach):
+        * bmalloc/BMalloced.h: Added.
+        * bmalloc/Bits.h: Added.
+        (bmalloc::bitsArrayLength):
+        (bmalloc::BitsWordView::BitsWordView):
+        (bmalloc::BitsWordView::numBits const):
+        (bmalloc::BitsWordView::word const):
+        (bmalloc::BitsWordOwner::BitsWordOwner):
+        (bmalloc::BitsWordOwner::view const):
+        (bmalloc::BitsWordOwner::operator=):
+        (bmalloc::BitsWordOwner::setAll):
+        (bmalloc::BitsWordOwner::clearAll):
+        (bmalloc::BitsWordOwner::set):
+        (bmalloc::BitsWordOwner::numBits const):
+        (bmalloc::BitsWordOwner::arrayLength const):
+        (bmalloc::BitsWordOwner::word const):
+        (bmalloc::BitsWordOwner::word):
+        (bmalloc::BitsWordOwner::words const):
+        (bmalloc::BitsWordOwner::words):
+        (bmalloc::BitsAndWords::BitsAndWords):
+        (bmalloc::BitsAndWords::view const):
+        (bmalloc::BitsAndWords::numBits const):
+        (bmalloc::BitsAndWords::word const):
+        (bmalloc::BitsOrWords::BitsOrWords):
+        (bmalloc::BitsOrWords::view const):
+        (bmalloc::BitsOrWords::numBits const):
+        (bmalloc::BitsOrWords::word const):
+        (bmalloc::BitsNotWords::BitsNotWords):
+        (bmalloc::BitsNotWords::view const):
+        (bmalloc::BitsNotWords::numBits const):
+        (bmalloc::BitsNotWords::word const):
+        (bmalloc::BitsImpl::BitsImpl):
+        (bmalloc::BitsImpl::numBits const):
+        (bmalloc::BitsImpl::size const):
+        (bmalloc::BitsImpl::arrayLength const):
+        (bmalloc::BitsImpl::operator== const):
+        (bmalloc::BitsImpl::operator!= const):
+        (bmalloc::BitsImpl::at const):
+        (bmalloc::BitsImpl::operator[] const):
+        (bmalloc::BitsImpl::isEmpty const):
+        (bmalloc::BitsImpl::operator& const):
+        (bmalloc::BitsImpl::operator| const):
+        (bmalloc::BitsImpl::operator~ const):
+        (bmalloc::BitsImpl::forEachSetBit const):
+        (bmalloc::BitsImpl::forEachClearBit const):
+        (bmalloc::BitsImpl::forEachBit const):
+        (bmalloc::BitsImpl::findBit const):
+        (bmalloc::BitsImpl::findSetBit const):
+        (bmalloc::BitsImpl::findClearBit const):
+        (bmalloc::BitsImpl::wordView const):
+        (bmalloc::BitsImpl::atImpl const):
+        (bmalloc::Bits::Bits):
+        (bmalloc::Bits::operator=):
+        (bmalloc::Bits::resize):
+        (bmalloc::Bits::setAll):
+        (bmalloc::Bits::clearAll):
+        (bmalloc::Bits::setAndCheck):
+        (bmalloc::Bits::operator|=):
+        (bmalloc::Bits::operator&=):
+        (bmalloc::Bits::at const):
+        (bmalloc::Bits::operator[] const):
+        (bmalloc::Bits::BitReference::BitReference):
+        (bmalloc::Bits::BitReference::operator bool const):
+        (bmalloc::Bits::BitReference::operator=):
+        (bmalloc::Bits::at):
+        (bmalloc::Bits::operator[]):
+        * bmalloc/CryptoRandom.cpp: Replaced with Source/bmalloc/bmalloc/CryptoRandom.cpp.
+        (bmalloc::cryptoRandom):
+        * bmalloc/CryptoRandom.h: Replaced with Source/bmalloc/bmalloc/CryptoRandom.h.
+        * bmalloc/DeferredDecommit.h: Added.
+        * bmalloc/DeferredDecommitInlines.h: Added.
+        (bmalloc::DeferredDecommit::DeferredDecommit):
+        * bmalloc/DeferredTrigger.h: Added.
+        (bmalloc::DeferredTrigger::DeferredTrigger):
+        * bmalloc/DeferredTriggerInlines.h: Added.
+        (bmalloc::DeferredTrigger<trigger>::didBecome):
+        (bmalloc::DeferredTrigger<trigger>::handleDeferral):
+        * bmalloc/EligibilityResult.h: Added.
+        (bmalloc::EligibilityResult::EligibilityResult):
+        * bmalloc/EligibilityResultInlines.h: Added.
+        (bmalloc::EligibilityResult<Config>::EligibilityResult):
+        * bmalloc/FixedVector.h:
+        * bmalloc/FreeList.cpp: Added.
+        (bmalloc::FreeList::FreeList):
+        (bmalloc::FreeList::~FreeList):
+        (bmalloc::FreeList::clear):
+        (bmalloc::FreeList::initializeList):
+        (bmalloc::FreeList::initializeBump):
+        (bmalloc::FreeList::contains const):
+        * bmalloc/FreeList.h: Added.
+        (bmalloc::FreeCell::scramble):
+        (bmalloc::FreeCell::descramble):
+        (bmalloc::FreeCell::setNext):
+        (bmalloc::FreeCell::next const):
+        (bmalloc::FreeList::allocationWillFail const):
+        (bmalloc::FreeList::allocationWillSucceed const):
+        (bmalloc::FreeList::originalSize const):
+        (bmalloc::FreeList::head const):
+        * bmalloc/FreeListInlines.h: Added.
+        (bmalloc::FreeList::allocate):
+        (bmalloc::FreeList::forEach const):
+        * bmalloc/IsoAllocator.h: Added.
+        * bmalloc/IsoAllocatorInlines.h: Added.
+        (bmalloc::IsoAllocator<Config>::IsoAllocator):
+        (bmalloc::IsoAllocator<Config>::~IsoAllocator):
+        (bmalloc::IsoAllocator<Config>::allocate):
+        (bmalloc::IsoAllocator<Config>::allocateSlow):
+        (bmalloc::IsoAllocator<Config>::scavenge):
+        * bmalloc/IsoConfig.h: Added.
+        * bmalloc/IsoDeallocator.h: Added.
+        * bmalloc/IsoDeallocatorInlines.h: Added.
+        (bmalloc::IsoDeallocator<Config>::IsoDeallocator):
+        (bmalloc::IsoDeallocator<Config>::~IsoDeallocator):
+        (bmalloc::IsoDeallocator<Config>::deallocate):
+        (bmalloc::IsoDeallocator<Config>::scavenge):
+        * bmalloc/IsoDirectory.h: Added.
+        (bmalloc::IsoDirectoryBaseBase::IsoDirectoryBaseBase):
+        (bmalloc::IsoDirectoryBaseBase::~IsoDirectoryBaseBase):
+        (bmalloc::IsoDirectoryBase::heap):
+        * bmalloc/IsoDirectoryInlines.h: Added.
+        (bmalloc::IsoDirectoryBase<Config>::IsoDirectoryBase):
+        (bmalloc::passedNumPages>::IsoDirectory):
+        (bmalloc::passedNumPages>::takeFirstEligible):
+        (bmalloc::passedNumPages>::didBecome):
+        (bmalloc::passedNumPages>::didDecommit):
+        (bmalloc::passedNumPages>::scavenge):
+        (bmalloc::passedNumPages>::forEachCommittedPage):
+        * bmalloc/IsoDirectoryPage.h: Added.
+        (bmalloc::IsoDirectoryPage::index const):
+        * bmalloc/IsoDirectoryPageInlines.h: Added.
+        (bmalloc::IsoDirectoryPage<Config>::IsoDirectoryPage):
+        (bmalloc::IsoDirectoryPage<Config>::pageFor):
+        * bmalloc/IsoHeap.h: Added.
+        (bmalloc::api::IsoHeap::allocatorOffset):
+        (bmalloc::api::IsoHeap::setAllocatorOffset):
+        (bmalloc::api::IsoHeap::deallocatorOffset):
+        (bmalloc::api::IsoHeap::setDeallocatorOffset):
+        * bmalloc/IsoHeapImpl.cpp: Added.
+        (bmalloc::IsoHeapImplBase::IsoHeapImplBase):
+        (bmalloc::IsoHeapImplBase::~IsoHeapImplBase):
+        (bmalloc::IsoHeapImplBase::scavengeNow):
+        (bmalloc::IsoHeapImplBase::finishScavenging):
+        * bmalloc/IsoHeapImpl.h: Added.
+        * bmalloc/IsoHeapImplInlines.h: Added.
+        (bmalloc::IsoHeapImpl<Config>::IsoHeapImpl):
+        (bmalloc::IsoHeapImpl<Config>::takeFirstEligible):
+        (bmalloc::IsoHeapImpl<Config>::didBecomeEligible):
+        (bmalloc::IsoHeapImpl<Config>::scavenge):
+        (bmalloc::IsoHeapImpl<Config>::allocatorOffset):
+        (bmalloc::IsoHeapImpl<Config>::deallocatorOffset):
+        (bmalloc::IsoHeapImpl<Config>::numLiveObjects):
+        (bmalloc::IsoHeapImpl<Config>::numCommittedPages):
+        (bmalloc::IsoHeapImpl<Config>::forEachDirectory):
+        (bmalloc::IsoHeapImpl<Config>::forEachCommittedPage):
+        (bmalloc::IsoHeapImpl<Config>::forEachLiveObject):
+        * bmalloc/IsoHeapInlines.h: Added.
+        (bmalloc::api::IsoHeap<Type>::allocate):
+        (bmalloc::api::IsoHeap<Type>::tryAllocate):
+        (bmalloc::api::IsoHeap<Type>::deallocate):
+        (bmalloc::api::IsoHeap<Type>::scavenge):
+        (bmalloc::api::IsoHeap<Type>::isInitialized):
+        (bmalloc::api::IsoHeap<Type>::impl):
+        * bmalloc/IsoPage.h: Added.
+        (bmalloc::IsoPage::index const):
+        (bmalloc::IsoPage::directory):
+        (bmalloc::IsoPage::isInUseForAllocation const):
+        (bmalloc::IsoPage::indexOfFirstObject):
+        * bmalloc/IsoPageInlines.h: Added.
+        (bmalloc::IsoPage<Config>::tryCreate):
+        (bmalloc::IsoPage<Config>::IsoPage):
+        (bmalloc::IsoPage<Config>::free):
+        (bmalloc::IsoPage<Config>::startAllocating):
+        (bmalloc::IsoPage<Config>::stopAllocating):
+        (bmalloc::IsoPage<Config>::forEachLiveObject):
+        * bmalloc/IsoPageTrigger.h: Added.
+        * bmalloc/IsoTLS.cpp: Added.
+        (bmalloc::IsoTLS::scavenge):
+        (bmalloc::IsoTLS::IsoTLS):
+        (bmalloc::IsoTLS::ensureEntries):
+        (bmalloc::IsoTLS::destructor):
+        (bmalloc::IsoTLS::sizeForCapacity):
+        (bmalloc::IsoTLS::capacityForSize):
+        (bmalloc::IsoTLS::size):
+        (bmalloc::IsoTLS::forEachEntry):
+        * bmalloc/IsoTLS.h: Added.
+        * bmalloc/IsoTLSAllocatorEntry.h: Added.
+        * bmalloc/IsoTLSAllocatorEntryInlines.h: Added.
+        (bmalloc::IsoTLSAllocatorEntry<Config>::IsoTLSAllocatorEntry):
+        (bmalloc::IsoTLSAllocatorEntry<Config>::~IsoTLSAllocatorEntry):
+        (bmalloc::IsoTLSAllocatorEntry<Config>::construct):
+        * bmalloc/IsoTLSDeallocatorEntry.h: Added.
+        * bmalloc/IsoTLSDeallocatorEntryInlines.h: Added.
+        (bmalloc::IsoTLSDeallocatorEntry<Config>::IsoTLSDeallocatorEntry):
+        (bmalloc::IsoTLSDeallocatorEntry<Config>::~IsoTLSDeallocatorEntry):
+        (bmalloc::IsoTLSDeallocatorEntry<Config>::construct):
+        * bmalloc/IsoTLSEntry.cpp: Added.
+        (bmalloc::IsoTLSEntry::IsoTLSEntry):
+        (bmalloc::IsoTLSEntry::~IsoTLSEntry):
+        * bmalloc/IsoTLSEntry.h: Added.
+        (bmalloc::IsoTLSEntry::offset const):
+        (bmalloc::IsoTLSEntry::alignment const):
+        (bmalloc::IsoTLSEntry::size const):
+        (bmalloc::IsoTLSEntry::extent const):
+        * bmalloc/IsoTLSEntryInlines.h: Added.
+        (bmalloc::IsoTLSEntry::walkUpToInclusive):
+        (bmalloc::DefaultIsoTLSEntry<EntryType>::DefaultIsoTLSEntry):
+        (bmalloc::DefaultIsoTLSEntry<EntryType>::~DefaultIsoTLSEntry):
+        (bmalloc::DefaultIsoTLSEntry<EntryType>::move):
+        (bmalloc::DefaultIsoTLSEntry<EntryType>::destruct):
+        (bmalloc::DefaultIsoTLSEntry<EntryType>::scavenge):
+        * bmalloc/IsoTLSInlines.h: Added.
+        (bmalloc::IsoTLS::allocate):
+        (bmalloc::IsoTLS::deallocate):
+        (bmalloc::IsoTLS::scavenge):
+        (bmalloc::IsoTLS::allocator):
+        (bmalloc::IsoTLS::deallocator):
+        (bmalloc::IsoTLS::get):
+        (bmalloc::IsoTLS::set):
+        (bmalloc::IsoTLS::ensureHeap):
+        (bmalloc::IsoTLS::ensureHeapAndEntries):
+        * bmalloc/IsoTLSLayout.cpp: Added.
+        (bmalloc::IsoTLSLayout::IsoTLSLayout):
+        (bmalloc::IsoTLSLayout::add):
+        * bmalloc/IsoTLSLayout.h: Added.
+        (bmalloc::IsoTLSLayout::head const):
+        * bmalloc/PerHeapKind.h:
+        * bmalloc/PerProcess.h:
+        (bmalloc::PerProcess<T>::getFastCase):
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::scavenge):
+        * bmalloc/Scavenger.h:
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::scavengeThisThread):
+        * test: Added.
+        * test/testbmalloc.cpp: Added.
+        (hiddenTruthBecauseNoReturnIsStupid):
+        (usage):
+        (assertEmptyPointerSet):
+        (assertHasObjects):
+        (assertHasOnlyObjects):
+        (assertClean):
+        (testIsoSimple):
+        (testIsoSimpleScavengeBeforeDealloc):
+        (testIsoFlipFlopFragmentedPages):
+        (testIsoFlipFlopFragmentedPagesScavengeInMiddle):
+        (BisoMalloced::BisoMalloced):
+        (testBisoMalloced):
+        (BisoMallocedInline::BisoMallocedInline):
+        (testBisoMallocedInline):
+        (run):
+        (main):
+
 2017-10-30  Zan Dobersek  <zdobersek@igalia.com>
 
         [ARM64][Linux] Re-enable Gigacage

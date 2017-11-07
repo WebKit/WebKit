@@ -38,12 +38,15 @@
 #include "RenderView.h"
 #include "StyleInheritedData.h"
 #include <limits>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/HashSet.h>
 #include <wtf/StackStats.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTableSection);
 
 // Those 2 variables are used to balance the memory consumption vs the repaint time on big tables.
 static const unsigned gMinTableSizeToUseFastPaintPathWithOverflowingCell = 75 * 75;

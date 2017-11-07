@@ -43,6 +43,7 @@ class RenderFragmentedFlow;
 // FIXME: For now we derive from RenderFragmentContainer, but this may change at some point.
 
 class RenderFragmentContainerSet : public RenderFragmentContainer {
+    WTF_MAKE_ISO_ALLOCATED(RenderFragmentContainerSet);
 public:
     void expandToEncompassFragmentedFlowContentsIfNeeded();
 

@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class RenderVideo final : public RenderMedia {
+    WTF_MAKE_ISO_ALLOCATED(RenderVideo);
 public:
     RenderVideo(HTMLVideoElement&, RenderStyle&&);
     virtual ~RenderVideo();

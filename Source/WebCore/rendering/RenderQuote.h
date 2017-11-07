@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class RenderQuote final : public RenderInline {
+    WTF_MAKE_ISO_ALLOCATED(RenderQuote);
 public:
     RenderQuote(Document&, RenderStyle&&, QuoteType);
     virtual ~RenderQuote();

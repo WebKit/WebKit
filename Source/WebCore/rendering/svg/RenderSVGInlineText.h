@@ -31,6 +31,7 @@ namespace WebCore {
 class SVGInlineTextBox;
 
 class RenderSVGInlineText final : public RenderText {
+    WTF_MAKE_ISO_ALLOCATED(RenderSVGInlineText);
 public:
     RenderSVGInlineText(Text&, const String&);
 

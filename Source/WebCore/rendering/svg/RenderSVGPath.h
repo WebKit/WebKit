@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class RenderSVGPath final : public RenderSVGShape {
+    WTF_MAKE_ISO_ALLOCATED(RenderSVGPath);
 public:
     RenderSVGPath(SVGGraphicsElement&, RenderStyle&&);
     virtual ~RenderSVGPath();

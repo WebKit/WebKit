@@ -37,6 +37,7 @@ struct RepaintLayoutRects {
 };
 
 class RenderLayerModelObject : public RenderElement {
+    WTF_MAKE_ISO_ALLOCATED(RenderLayerModelObject);
 public:
     virtual ~RenderLayerModelObject();
 

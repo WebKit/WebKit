@@ -68,6 +68,7 @@
 #include "ShapeOutsideInfo.h"
 #include "TransformState.h"
 
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
 #include <wtf/SetForScope.h>
@@ -79,6 +80,8 @@ using namespace WTF;
 using namespace Unicode;
 
 using namespace HTMLNames;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderBlock);
 
 struct SameSizeAsRenderBlock : public RenderBox {
 };

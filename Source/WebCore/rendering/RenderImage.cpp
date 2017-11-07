@@ -51,6 +51,7 @@
 #include "RenderImageResourceStyleImage.h"
 #include "RenderView.h"
 #include "SVGImage.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 
 #if PLATFORM(IOS)
@@ -64,6 +65,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderImage);
 
 #if PLATFORM(IOS)
 // FIXME: This doesn't behave correctly for floating or positioned images, but WebCore doesn't handle those well

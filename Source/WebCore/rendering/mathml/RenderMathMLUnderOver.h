@@ -35,6 +35,7 @@ namespace WebCore {
 class MathMLUnderOverElement;
 
 class RenderMathMLUnderOver final : public RenderMathMLScripts {
+    WTF_MAKE_ISO_ALLOCATED(RenderMathMLUnderOver);
 public:
     RenderMathMLUnderOver(MathMLUnderOverElement&, RenderStyle&&);
 

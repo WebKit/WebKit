@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class RenderMathMLPadded final : public RenderMathMLRow {
+    WTF_MAKE_ISO_ALLOCATED(RenderMathMLPadded);
 public:
     RenderMathMLPadded(MathMLPaddedElement&, RenderStyle&&);
 

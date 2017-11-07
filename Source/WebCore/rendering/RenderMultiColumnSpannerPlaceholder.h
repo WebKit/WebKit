@@ -36,6 +36,7 @@ namespace WebCore {
 class RenderMultiColumnFlow;
 
 class RenderMultiColumnSpannerPlaceholder final : public RenderBox {
+    WTF_MAKE_ISO_ALLOCATED(RenderMultiColumnSpannerPlaceholder);
 public:
     static RenderPtr<RenderMultiColumnSpannerPlaceholder> createAnonymous(RenderMultiColumnFlow&, RenderBox& spanner, const RenderStyle& parentStyle);
 

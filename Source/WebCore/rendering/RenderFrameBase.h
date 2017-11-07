@@ -35,6 +35,7 @@ class RenderView;
 
 // Base class for RenderFrame and RenderIFrame
 class RenderFrameBase : public RenderWidget {
+    WTF_MAKE_ISO_ALLOCATED(RenderFrameBase);
 protected:
     RenderFrameBase(HTMLFrameElementBase&, RenderStyle&&);
 

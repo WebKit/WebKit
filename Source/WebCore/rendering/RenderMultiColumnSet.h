@@ -43,6 +43,7 @@ namespace WebCore {
 // Column spans result in the creation of new column sets as well, since a spanning fragment has to be placed in between the column sets that
 // come before and after the span.
 class RenderMultiColumnSet final : public RenderFragmentContainerSet {
+    WTF_MAKE_ISO_ALLOCATED(RenderMultiColumnSet);
 public:
     RenderMultiColumnSet(RenderFragmentedFlow&, RenderStyle&&);
 

@@ -33,12 +33,15 @@
 #include "RootInlineBox.h"
 #include "SimpleLineLayoutFunctions.h"
 #include "VisiblePosition.h"
+#include <wtf/IsoMallocInlines.h>
 
 #if PLATFORM(IOS)
 #include "SelectionRect.h"
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderLineBreak);
 
 static const int invalidLineHeight = -1;
 

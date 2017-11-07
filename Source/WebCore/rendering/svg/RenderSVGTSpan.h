@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class RenderSVGTSpan final : public RenderSVGInline {
+    WTF_MAKE_ISO_ALLOCATED(RenderSVGTSpan);
 public:
     explicit RenderSVGTSpan(SVGTextPositioningElement& element, RenderStyle&& style)
         : RenderSVGInline(element, WTFMove(style))

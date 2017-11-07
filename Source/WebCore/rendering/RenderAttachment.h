@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class RenderAttachment final : public RenderReplaced {
+    WTF_MAKE_ISO_ALLOCATED(RenderAttachment);
 public:
     RenderAttachment(HTMLAttachmentElement&, RenderStyle&&);
 

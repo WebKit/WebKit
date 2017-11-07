@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class RenderFullScreen final : public RenderFlexibleBox {
+    WTF_MAKE_ISO_ALLOCATED(RenderFullScreen);
 public:
     RenderFullScreen(Document&, RenderStyle&&);
 

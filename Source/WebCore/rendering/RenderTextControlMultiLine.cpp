@@ -29,8 +29,11 @@
 #include "ShadowRoot.h"
 #include "StyleInheritedData.h"
 #include "TextControlInnerElements.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextControlMultiLine);
 
 RenderTextControlMultiLine::RenderTextControlMultiLine(HTMLTextAreaElement& element, RenderStyle&& style)
     : RenderTextControl(element, WTFMove(style))

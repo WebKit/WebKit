@@ -28,6 +28,7 @@
 #include "CachedImage.h"
 #include "CachedResourceHandle.h"
 #include "StyleImage.h"
+#include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 
@@ -35,7 +36,7 @@ class CachedImage;
 class RenderElement;
 
 class RenderImageResource {
-    WTF_MAKE_NONCOPYABLE(RenderImageResource); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(RenderImageResource); WTF_MAKE_ISO_ALLOCATED(RenderImageResource);
 public:
     RenderImageResource();
     virtual ~RenderImageResource() = default;

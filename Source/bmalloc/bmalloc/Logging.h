@@ -25,12 +25,13 @@
 
 #pragma once
 
+#include "BExport.h"
 #include "BPlatform.h"
 #include <stddef.h>
 
 namespace bmalloc {
 
-void logVMFailure(size_t vmSize);
+BEXPORT void logVMFailure(size_t vmSize);
 
 #if !BUSE(OS_LOG)
 void reportAssertionFailureWithMessage(const char* file, int line, const char* function, const char* format, ...) BATTRIBUTE_PRINTF(4, 5);

@@ -53,6 +53,7 @@ public:
 };
 
 class RenderTableSection final : public RenderBox {
+    WTF_MAKE_ISO_ALLOCATED(RenderTableSection);
 public:
     RenderTableSection(Element&, RenderStyle&&);
     RenderTableSection(Document&, RenderStyle&&);

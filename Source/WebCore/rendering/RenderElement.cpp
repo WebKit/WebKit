@@ -73,12 +73,15 @@
 #include "StylePendingResources.h"
 #include "StyleResolver.h"
 #include "TextAutoSizing.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StackStats.h>
 
 #include "RenderGrid.h"
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderElement);
 
 struct SameSizeAsRenderElement : public RenderObject {
     unsigned bitfields : 25;

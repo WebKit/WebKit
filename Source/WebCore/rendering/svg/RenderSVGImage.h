@@ -33,6 +33,7 @@ class RenderImageResource;
 class SVGImageElement;
 
 class RenderSVGImage final : public RenderSVGModelObject {
+    WTF_MAKE_ISO_ALLOCATED(RenderSVGImage);
 public:
     RenderSVGImage(SVGImageElement&, RenderStyle&&);
     virtual ~RenderSVGImage();

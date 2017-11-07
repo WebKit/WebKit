@@ -29,6 +29,7 @@ namespace WebCore {
 class SVGElement;
 
 class RenderSVGContainer : public RenderSVGModelObject {
+    WTF_MAKE_ISO_ALLOCATED(RenderSVGContainer);
 public:
     virtual ~RenderSVGContainer();
 

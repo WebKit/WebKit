@@ -26,6 +26,7 @@
 #pragma once
 
 #include "HeapKind.h"
+#include <array>
 
 namespace bmalloc {
 

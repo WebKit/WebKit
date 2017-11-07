@@ -43,6 +43,7 @@ class RenderSVGResource;
 class SVGGraphicsElement;
 
 class RenderSVGShape : public RenderSVGModelObject {
+    WTF_MAKE_ISO_ALLOCATED(RenderSVGShape);
 public:
     RenderSVGShape(SVGGraphicsElement&, RenderStyle&&);
     virtual ~RenderSVGShape();

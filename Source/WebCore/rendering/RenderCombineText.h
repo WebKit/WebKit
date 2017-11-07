@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class RenderCombineText final : public RenderText {
+    WTF_MAKE_ISO_ALLOCATED(RenderCombineText);
 public:
     RenderCombineText(Text&, const String&);
 

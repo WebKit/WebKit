@@ -34,8 +34,15 @@
 #include "MediaControlElements.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMediaVolumeSliderContainer);
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMediaControlTimelineContainer);
+#if ENABLE(VIDEO_TRACK)
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextTrackContainerElement);
+#endif
 
 RenderMediaVolumeSliderContainer::RenderMediaVolumeSliderContainer(Element& element, RenderStyle&& style)
     : RenderBlockFlow(element, WTFMove(style))

@@ -49,7 +49,7 @@ public:
     void unlock();
 
 private:
-    void lockSlowCase();
+    BEXPORT void lockSlowCase();
 
     std::atomic_flag m_flag;
     std::atomic_flag m_isSpinning;

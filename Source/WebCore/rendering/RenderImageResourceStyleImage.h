@@ -34,6 +34,7 @@ namespace WebCore {
 class RenderElement;
 
 class RenderImageResourceStyleImage final : public RenderImageResource {
+    WTF_MAKE_ISO_ALLOCATED(RenderImageResourceStyleImage);
 public:
     explicit RenderImageResourceStyleImage(StyleImage&);
 

@@ -158,6 +158,26 @@ inline constexpr unsigned long log2(unsigned long value)
     return bitCount<unsigned long>() - 1 - __builtin_clzl(value);
 }
 
+#define BOFFSETOF(class, field) (reinterpret_cast<ptrdiff_t>(&(reinterpret_cast<class*>(0x4000)->field)) - 0x4000)
+
+template<typename T>
+bool findBitInWord(T word, size_t& index, size_t endIndex, bool value)
+{
+    static_assert(std::is_unsigned<T>::value, "Type used in findBitInWord must be unsigned");
+    
+    word >>= index;
+    
+    while (index < endIndex) {
+        if ((word & 1) == static_cast<T>(value))
+            return true;
+        index++;
+        word >>= 1;
+    }
+    
+    index = endIndex;
+    return false;
+}
+
 } // namespace bmalloc
 
 #endif // Algorithm_h

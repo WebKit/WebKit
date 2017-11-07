@@ -33,8 +33,11 @@
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderView.h"
 #include "TransformState.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMultiColumnFlow);
 
 bool RenderMultiColumnFlow::gShiftingSpanner = false;
 

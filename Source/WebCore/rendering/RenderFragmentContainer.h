@@ -42,6 +42,7 @@ class RenderBoxFragmentInfo;
 class RenderFragmentedFlow;
 
 class RenderFragmentContainer : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderFragmentContainer);
 public:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 

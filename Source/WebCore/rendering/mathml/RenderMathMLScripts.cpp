@@ -33,8 +33,11 @@
 #include "MathMLElement.h"
 #include "MathMLScriptsElement.h"
 #include "RenderMathMLOperator.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLScripts);
 
 static bool isPrescriptDelimiter(const RenderObject& renderObject)
 {

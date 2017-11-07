@@ -37,6 +37,7 @@ class VTTCue;
 class VTTCueBox;
 
 class RenderVTTCue final : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderVTTCue);
 public:
     RenderVTTCue(VTTCueBox&, RenderStyle&&);
 

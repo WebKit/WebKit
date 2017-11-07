@@ -57,6 +57,7 @@
 #include "ScrollingConstraints.h"
 #include "Settings.h"
 #include "TransformState.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #if !ASSERT_DISABLED
 #include <wtf/SetForScope.h>
@@ -69,6 +70,8 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderBoxModelObject);
 
 // The HashMap for storing continuation pointers.
 // An inline can be split with blocks occuring in between the inline content.

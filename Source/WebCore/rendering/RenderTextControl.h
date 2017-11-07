@@ -30,6 +30,7 @@ class TextControlInnerTextElement;
 class HTMLTextFormControlElement;
 
 class RenderTextControl : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderTextControl);
 public:
     virtual ~RenderTextControl();
 
@@ -87,6 +88,7 @@ private:
 // baseline definition, and then inputs of different types wouldn't line up
 // anymore.
 class RenderTextControlInnerContainer final : public RenderFlexibleBox {
+    WTF_MAKE_ISO_ALLOCATED(RenderTextControlInnerContainer);
 public:
     explicit RenderTextControlInnerContainer(Element& element, RenderStyle&& style)
         : RenderFlexibleBox(element, WTFMove(style))

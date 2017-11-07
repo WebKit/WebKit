@@ -35,6 +35,7 @@ namespace WebCore {
 class MathMLRowElement;
 
 class RenderMathMLRow : public RenderMathMLBlock {
+    WTF_MAKE_ISO_ALLOCATED(RenderMathMLRow);
 public:
     RenderMathMLRow(MathMLRowElement&, RenderStyle&&);
     MathMLRowElement& element() const;

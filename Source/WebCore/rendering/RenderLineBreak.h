@@ -30,6 +30,7 @@ class HTMLElement;
 class Position;
 
 class RenderLineBreak final : public RenderBoxModelObject {
+    WTF_MAKE_ISO_ALLOCATED(RenderLineBreak);
 public:
     RenderLineBreak(HTMLElement&, RenderStyle&&);
     virtual ~RenderLineBreak();

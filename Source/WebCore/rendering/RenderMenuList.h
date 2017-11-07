@@ -40,7 +40,7 @@ class HTMLSelectElement;
 class RenderText;
 
 class RenderMenuList final : public RenderFlexibleBox, private PopupMenuClient {
-
+    WTF_MAKE_ISO_ALLOCATED(RenderMenuList);
 public:
     RenderMenuList(HTMLSelectElement&, RenderStyle&&);
     virtual ~RenderMenuList();

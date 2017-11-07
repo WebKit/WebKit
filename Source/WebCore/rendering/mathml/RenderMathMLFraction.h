@@ -37,6 +37,7 @@ namespace WebCore {
 class MathMLFractionElement;
 
 class RenderMathMLFraction final : public RenderMathMLBlock {
+    WTF_MAKE_ISO_ALLOCATED(RenderMathMLFraction);
 public:
     RenderMathMLFraction(MathMLFractionElement&, RenderStyle&&);
 

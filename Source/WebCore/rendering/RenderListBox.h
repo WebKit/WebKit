@@ -39,6 +39,7 @@ namespace WebCore {
 class HTMLSelectElement;
 
 class RenderListBox final : public RenderBlockFlow, public ScrollableArea {
+    WTF_MAKE_ISO_ALLOCATED(RenderListBox);
 public:
     RenderListBox(HTMLSelectElement&, RenderStyle&&);
     virtual ~RenderListBox();

@@ -28,6 +28,7 @@
 namespace WebCore {
 
 class RenderTextControlSingleLine : public RenderTextControl {
+    WTF_MAKE_ISO_ALLOCATED(RenderTextControlSingleLine);
 public:
     RenderTextControlSingleLine(HTMLInputElement&, RenderStyle&&);
     virtual ~RenderTextControlSingleLine();
@@ -84,6 +85,7 @@ inline HTMLElement* RenderTextControlSingleLine::innerBlockElement() const
 // ----------------------------
 
 class RenderTextControlInnerBlock final : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderTextControlInnerBlock);
 public:
     RenderTextControlInnerBlock(Element& element, RenderStyle&& style)
         : RenderBlockFlow(element, WTFMove(style))

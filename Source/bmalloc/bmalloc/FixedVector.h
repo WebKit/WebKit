@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,9 +39,6 @@ template<typename T, size_t Capacity>
 class FixedVector {
     static_assert(std::is_trivially_destructible<T>::value, "FixedVector must have a trivial destructor.");
 public:
-    FixedVector(const FixedVector&) = delete;
-    FixedVector& operator=(const FixedVector&) = delete;
-
     FixedVector();
 
     const T* begin() const { return &m_buffer[0]; }

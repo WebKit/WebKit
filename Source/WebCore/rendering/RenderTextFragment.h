@@ -31,6 +31,7 @@ namespace WebCore {
 // We cache offsets so that text transformations can be applied in such a way that we can recover
 // the original unaltered string from our corresponding DOM node.
 class RenderTextFragment final : public RenderText {
+    WTF_MAKE_ISO_ALLOCATED(RenderTextFragment);
 public:
     RenderTextFragment(Text&, const String&, int startOffset, int length);
     RenderTextFragment(Document&, const String&, int startOffset, int length);

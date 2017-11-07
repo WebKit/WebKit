@@ -27,6 +27,7 @@ namespace WebCore {
 class HTMLProgressElement;
 
 class RenderProgress final : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderProgress);
 public:
     RenderProgress(HTMLElement&, RenderStyle&&);
     virtual ~RenderProgress();

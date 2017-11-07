@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class RenderReplica final : public RenderBox {
+    WTF_MAKE_ISO_ALLOCATED(RenderReplica);
 public:
     RenderReplica(Document&, RenderStyle&&);
     virtual ~RenderReplica();

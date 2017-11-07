@@ -31,6 +31,7 @@ class HTMLInputElement;
 // associated with it to receive click/hover events.
 
 class RenderFileUploadControl final : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderFileUploadControl);
 public:
     RenderFileUploadControl(HTMLInputElement&, RenderStyle&&);
     virtual ~RenderFileUploadControl();

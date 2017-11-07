@@ -59,6 +59,7 @@ public:
 class GraphicsContext;
 
 class RenderSVGResourceFilter final : public RenderSVGResourceContainer {
+    WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceFilter);
 public:
     RenderSVGResourceFilter(SVGFilterElement&, RenderStyle&&);
     virtual ~RenderSVGResourceFilter();

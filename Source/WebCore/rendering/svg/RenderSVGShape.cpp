@@ -43,9 +43,12 @@
 #include "SVGResourcesCache.h"
 #include "SVGURIReference.h"
 #include "StrokeStyleApplier.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGShape);
 
 class BoundingRectStrokeStyleApplier final : public StrokeStyleApplier {
 public:

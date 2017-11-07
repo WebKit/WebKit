@@ -51,6 +51,7 @@ namespace WebCore {
 
 // <ruby> when used as 'display:inline'
 class RenderRubyAsInline final : public RenderInline {
+    WTF_MAKE_ISO_ALLOCATED(RenderRubyAsInline);
 public:
     RenderRubyAsInline(Element&, RenderStyle&&);
     virtual ~RenderRubyAsInline();
@@ -69,6 +70,7 @@ private:
 
 // <ruby> when used as 'display:block' or 'display:inline-block'
 class RenderRubyAsBlock final : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderRubyAsBlock);
 public:
     RenderRubyAsBlock(Element&, RenderStyle&&);
     virtual ~RenderRubyAsBlock();

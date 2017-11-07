@@ -69,6 +69,7 @@
 #include "TransformState.h"
 #include <algorithm>
 #include <stdio.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/text/TextStream.h>
 
@@ -79,6 +80,8 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderObject);
 
 #ifndef NDEBUG
 

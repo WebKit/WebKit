@@ -37,6 +37,7 @@ class MathMLScriptsElement;
 
 // Render a base with scripts.
 class RenderMathMLScripts : public RenderMathMLBlock {
+    WTF_MAKE_ISO_ALLOCATED(RenderMathMLScripts);
 public:
     RenderMathMLScripts(MathMLScriptsElement&, RenderStyle&&);
     RenderMathMLOperator* unembellishedOperator() final;

@@ -33,6 +33,7 @@ class RenderTable;
 class RenderTableCell;
 
 class RenderTableCol final : public RenderBox {
+    WTF_MAKE_ISO_ALLOCATED(RenderTableCol);
 public:
     RenderTableCol(Element&, RenderStyle&&);
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }

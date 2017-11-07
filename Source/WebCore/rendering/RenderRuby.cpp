@@ -36,9 +36,13 @@
 #include "RenderRubyRun.h"
 #include "RenderStyle.h"
 #include "StyleInheritedData.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderRubyAsInline);
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderRubyAsBlock);
 
 //=== generic helper functions to avoid excessive code duplication ===
 

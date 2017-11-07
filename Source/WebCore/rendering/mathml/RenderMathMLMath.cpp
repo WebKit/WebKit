@@ -30,10 +30,13 @@
 
 #include "MathMLNames.h"
 #include "MathMLRowElement.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 using namespace MathMLNames;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLMath);
 
 RenderMathMLMath::RenderMathMLMath(MathMLRowElement& element, RenderStyle&& style)
     : RenderMathMLRow(element, WTFMove(style))

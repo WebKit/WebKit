@@ -73,7 +73,7 @@ private:
 template<typename T>
 BINLINE T* PerProcess<T>::getFastCase()
 {
-    return s_object.load(std::memory_order_consume);
+    return s_object.load(std::memory_order_relaxed);
 }
 
 template<typename T>

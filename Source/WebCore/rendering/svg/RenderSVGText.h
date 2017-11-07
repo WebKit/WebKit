@@ -32,6 +32,7 @@ class SVGTextElement;
 class RenderSVGInlineText;
 
 class RenderSVGText final : public RenderSVGBlock {
+    WTF_MAKE_ISO_ALLOCATED(RenderSVGText);
 public:
     RenderSVGText(SVGTextElement&, RenderStyle&&);
     virtual ~RenderSVGText();

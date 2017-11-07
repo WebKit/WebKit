@@ -5,6 +5,7 @@ set(bmalloc_INCLUDE_DIRECTORIES
 )
 
 set(bmalloc_SOURCES
+    bmalloc/AllIsoHeaps.cpp
     bmalloc/Allocator.cpp
     bmalloc/AvailableMemory.cpp
     bmalloc/Cache.cpp
@@ -12,15 +13,21 @@ set(bmalloc_SOURCES
     bmalloc/Deallocator.cpp
     bmalloc/DebugHeap.cpp
     bmalloc/Environment.cpp
+    bmalloc/FreeList.cpp
     bmalloc/Gigacage.cpp
     bmalloc/Heap.cpp
     bmalloc/HeapKind.cpp
+    bmalloc/IsoHeapImpl.cpp
+    bmalloc/IsoTLS.cpp
+    bmalloc/IsoTLSEntry.cpp
+    bmalloc/IsoTLSLayout.cpp
     bmalloc/LargeMap.cpp
     bmalloc/Logging.cpp
     bmalloc/ObjectType.cpp
     bmalloc/Scavenger.cpp
     bmalloc/StaticMutex.cpp
     bmalloc/VMHeap.cpp
+    bmalloc/bmalloc.cpp
     bmalloc/mbmalloc.cpp
 )
 

@@ -31,8 +31,11 @@
 #include "RenderBlockFlow.h"
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFullScreen);
 
 class RenderFullScreenPlaceholder final : public RenderBlockFlow {
 public:

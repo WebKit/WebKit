@@ -28,6 +28,7 @@ class HTMLInputElement;
 class MouseEvent;
 
 class RenderSlider final : public RenderFlexibleBox {
+    WTF_MAKE_ISO_ALLOCATED(RenderSlider);
 public:
     static const int defaultTrackLength;
 

@@ -38,6 +38,7 @@ enum ImageSizeChangeType {
 };
 
 class RenderImage : public RenderReplaced {
+    WTF_MAKE_ISO_ALLOCATED(RenderImage);
 public:
     RenderImage(Element&, RenderStyle&&, StyleImage* = nullptr, const float = 1.0f);
     RenderImage(Document&, RenderStyle&&, StyleImage* = nullptr);

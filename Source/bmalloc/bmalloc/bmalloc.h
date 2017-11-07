@@ -23,10 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#pragma once
+
 #include "AvailableMemory.h"
 #include "Cache.h"
 #include "Gigacage.h"
 #include "Heap.h"
+#include "IsoTLS.h"
 #include "PerHeapKind.h"
 #include "PerProcess.h"
 #include "Scavenger.h"
@@ -46,6 +49,8 @@ inline void* malloc(size_t size, HeapKind kind = HeapKind::Primary)
 {
     return Cache::allocate(kind, size);
 }
+
+BEXPORT void* mallocOutOfLine(size_t size, HeapKind kind = HeapKind::Primary);
 
 // Returns null on failure.
 inline void* tryMemalign(size_t alignment, size_t size, HeapKind kind = HeapKind::Primary)
@@ -79,6 +84,8 @@ inline void free(void* object, HeapKind kind = HeapKind::Primary)
     Cache::deallocate(kind, object);
 }
 
+BEXPORT void freeOutOfLine(void* object, HeapKind kind = HeapKind::Primary);
+
 inline void freeLargeVirtual(void* object, HeapKind kind = HeapKind::Primary)
 {
     kind = mapToActiveHeapKind(kind);
@@ -91,6 +98,7 @@ inline void scavengeThisThread()
 {
     for (unsigned i = numHeaps; i--;)
         Cache::scavenge(static_cast<HeapKind>(i));
+    IsoTLS::scavenge();
 }
 
 inline void scavenge()

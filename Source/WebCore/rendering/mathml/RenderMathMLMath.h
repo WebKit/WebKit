@@ -34,6 +34,7 @@ namespace WebCore {
 class MathMLRowElement;
 
 class RenderMathMLMath final : public RenderMathMLRow {
+    WTF_MAKE_ISO_ALLOCATED(RenderMathMLMath);
 public:
     RenderMathMLMath(MathMLRowElement&, RenderStyle&&);
 

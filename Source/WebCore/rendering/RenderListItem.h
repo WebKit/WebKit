@@ -30,6 +30,7 @@ namespace WebCore {
 class HTMLOListElement;
 
 class RenderListItem final : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderListItem);
 public:
     RenderListItem(Element&, RenderStyle&&);
     virtual ~RenderListItem();

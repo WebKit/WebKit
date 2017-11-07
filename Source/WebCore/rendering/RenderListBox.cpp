@@ -64,11 +64,14 @@
 #include "StyleTreeResolver.h"
 #include "WheelEventTestTrigger.h"
 #include <math.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderListBox);
  
 const int rowSpacing = 1;
 

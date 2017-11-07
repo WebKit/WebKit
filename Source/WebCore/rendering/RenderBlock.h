@@ -54,6 +54,7 @@ enum TextRunFlag {
 typedef unsigned TextRunFlags;
 
 class RenderBlock : public RenderBox {
+    WTF_MAKE_ISO_ALLOCATED(RenderBlock);
 public:
     friend class LineLayoutState;
     virtual ~RenderBlock();

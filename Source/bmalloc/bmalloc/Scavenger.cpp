@@ -25,6 +25,7 @@
 
 #include "Scavenger.h"
 
+#include "AllIsoHeapsInlines.h"
 #include "AvailableMemory.h"
 #include "Heap.h"
 #include <thread>
@@ -116,12 +117,23 @@ void Scavenger::schedule(size_t bytes)
 
 void Scavenger::scavenge()
 {
-    std::lock_guard<StaticMutex> lock(Heap::mutex());
-    for (unsigned i = numHeaps; i--;) {
-        if (!isActiveHeapKind(static_cast<HeapKind>(i)))
-            continue;
-        PerProcess<PerHeapKind<Heap>>::get()->at(i).scavenge(lock);
+    {
+        std::lock_guard<StaticMutex> lock(Heap::mutex());
+        for (unsigned i = numHeaps; i--;) {
+            if (!isActiveHeapKind(static_cast<HeapKind>(i)))
+                continue;
+            PerProcess<PerHeapKind<Heap>>::get()->at(i).scavenge(lock);
+        }
     }
+    
+    std::lock_guard<Mutex> locker(m_isoScavengeLock);
+    RELEASE_BASSERT(!m_deferredDecommits.size());
+    PerProcess<AllIsoHeaps>::get()->forEach(
+        [&] (IsoHeapImplBase& heap) {
+            heap.scavenge(m_deferredDecommits);
+        });
+    IsoHeapImplBase::finishScavenging(m_deferredDecommits);
+    m_deferredDecommits.shrink(0);
 }
 
 void Scavenger::threadEntryPoint(Scavenger* scavenger)

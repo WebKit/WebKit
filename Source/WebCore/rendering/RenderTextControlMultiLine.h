@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class RenderTextControlMultiLine final : public RenderTextControl {
+    WTF_MAKE_ISO_ALLOCATED(RenderTextControlMultiLine);
 public:
     RenderTextControlMultiLine(HTMLTextAreaElement&, RenderStyle&&);
     virtual ~RenderTextControlMultiLine();

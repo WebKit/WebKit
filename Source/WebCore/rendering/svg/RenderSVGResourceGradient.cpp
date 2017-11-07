@@ -27,8 +27,11 @@
 #include "GraphicsContext.h"
 #include "RenderSVGText.h"
 #include "SVGRenderingContext.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceGradient);
 
 RenderSVGResourceGradient::RenderSVGResourceGradient(SVGGradientElement& node, RenderStyle&& style)
     : RenderSVGResourceContainer(node, WTFMove(style))

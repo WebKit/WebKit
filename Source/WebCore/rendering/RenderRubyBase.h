@@ -37,6 +37,7 @@ namespace WebCore {
 class RenderRubyRun;
 
 class RenderRubyBase final : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderRubyBase);
 public:
     RenderRubyBase(Document&, RenderStyle&&);
     virtual ~RenderRubyBase();

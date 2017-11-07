@@ -41,6 +41,7 @@ class RenderRubyText;
 // See RenderRuby.h for further comments on the structure
 
 class RenderRubyRun final : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderRubyRun);
 public:
     RenderRubyRun(Document&, RenderStyle&&);
     virtual ~RenderRubyRun();

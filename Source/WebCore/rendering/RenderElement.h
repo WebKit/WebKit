@@ -31,6 +31,7 @@ class ControlStates;
 class RenderBlock;
 
 class RenderElement : public RenderObject {
+    WTF_MAKE_ISO_ALLOCATED(RenderElement);
 public:
     virtual ~RenderElement();
 

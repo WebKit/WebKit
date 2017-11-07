@@ -39,8 +39,11 @@
 #include "SVGRenderingContext.h"
 #include "Settings.h"
 #include "SourceGraphic.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceFilter);
 
 RenderSVGResourceFilter::RenderSVGResourceFilter(SVGFilterElement& element, RenderStyle&& style)
     : RenderSVGResourceContainer(element, WTFMove(style))

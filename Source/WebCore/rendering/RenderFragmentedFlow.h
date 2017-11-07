@@ -53,6 +53,7 @@ typedef HashMap<const RootInlineBox*, RenderFragmentContainer*> ContainingFragme
 // of the RenderFragmentedFlow.
 
 class RenderFragmentedFlow: public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderFragmentedFlow);
 public:
     virtual ~RenderFragmentedFlow() = default;
 

@@ -32,6 +32,7 @@ class RenderTextFragment;
 // For inputs, they will also generate an anonymous RenderText and keep its style and content up
 // to date as the button changes.
 class RenderButton final : public RenderFlexibleBox {
+    WTF_MAKE_ISO_ALLOCATED(RenderButton);
 public:
     RenderButton(HTMLFormControlElement&, RenderStyle&&);
     virtual ~RenderButton();

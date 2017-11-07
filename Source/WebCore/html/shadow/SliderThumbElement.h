@@ -116,6 +116,7 @@ inline Ref<SliderThumbElement> SliderThumbElement::create(Document& document)
 // --------------------------------
 
 class RenderSliderThumb final : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderSliderThumb);
 public:
     RenderSliderThumb(SliderThumbElement&, RenderStyle&&);
     void updateAppearance(const RenderStyle* parentStyle);

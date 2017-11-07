@@ -30,8 +30,11 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "StyleScrollSnapPoints.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderLayerModelObject);
 
 bool RenderLayerModelObject::s_wasFloating = false;
 bool RenderLayerModelObject::s_hadLayer = false;

@@ -25,8 +25,11 @@
 #include "RenderSVGResource.h"
 #include "SVGResourcesCache.h"
 #include "StyleInheritedData.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGBlock);
 
 RenderSVGBlock::RenderSVGBlock(SVGGraphicsElement& element, RenderStyle&& style)
     : RenderBlockFlow(element, WTFMove(style))

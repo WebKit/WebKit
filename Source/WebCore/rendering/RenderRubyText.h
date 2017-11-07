@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class RenderRubyText final : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderRubyText);
 public:
     RenderRubyText(Element&, RenderStyle&&);
     virtual ~RenderRubyText();

@@ -41,6 +41,7 @@ enum GridAxisPosition {GridAxisStart, GridAxisEnd, GridAxisCenter};
 enum GridAxis { GridRowAxis, GridColumnAxis };
 
 class RenderGrid final : public RenderBlock {
+    WTF_MAKE_ISO_ALLOCATED(RenderGrid);
 public:
     RenderGrid(Element&, RenderStyle&&);
     virtual ~RenderGrid();

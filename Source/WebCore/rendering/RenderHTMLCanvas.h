@@ -32,6 +32,7 @@ namespace WebCore {
 class HTMLCanvasElement;
 
 class RenderHTMLCanvas final : public RenderReplaced {
+    WTF_MAKE_ISO_ALLOCATED(RenderHTMLCanvas);
 public:
     RenderHTMLCanvas(HTMLCanvasElement&, RenderStyle&&);
 

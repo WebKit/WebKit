@@ -25,12 +25,13 @@
 
 #pragma once
 
+#include "BExport.h"
 #include <cstddef>
 #include <inttypes.h>
 
 namespace bmalloc {
 
-void cryptoRandom(unsigned char* buffer, size_t length);
+BEXPORT void cryptoRandom(void* buffer, size_t length);
 
 }
 

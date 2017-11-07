@@ -38,6 +38,7 @@ namespace WebCore {
 class FlexItem;
     
 class RenderFlexibleBox : public RenderBlock {
+    WTF_MAKE_ISO_ALLOCATED(RenderFlexibleBox);
 public:
     RenderFlexibleBox(Element&, RenderStyle&&);
     RenderFlexibleBox(Document&, RenderStyle&&);

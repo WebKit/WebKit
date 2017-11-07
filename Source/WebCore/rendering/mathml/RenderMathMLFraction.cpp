@@ -34,8 +34,11 @@
 #include "MathMLFractionElement.h"
 #include "PaintInfo.h"
 #include <cmath>
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLFraction);
 
 RenderMathMLFraction::RenderMathMLFraction(MathMLFractionElement& element, RenderStyle&& style)
     : RenderMathMLBlock(element, WTFMove(style))

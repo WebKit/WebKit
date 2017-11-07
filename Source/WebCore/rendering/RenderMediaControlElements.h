@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class RenderMediaVolumeSliderContainer final : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderMediaVolumeSliderContainer);
 public:
     RenderMediaVolumeSliderContainer(Element&, RenderStyle&&);
 
@@ -45,6 +46,7 @@ private:
 // ----------------------------
 
 class RenderMediaControlTimelineContainer final : public RenderFlexibleBox {
+    WTF_MAKE_ISO_ALLOCATED(RenderMediaControlTimelineContainer);
 public:
     RenderMediaControlTimelineContainer(Element&, RenderStyle&&);
 
@@ -58,6 +60,7 @@ private:
 #if ENABLE(VIDEO_TRACK)
 
 class RenderTextTrackContainerElement final : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderTextTrackContainerElement);
 public:
     RenderTextTrackContainerElement(Element&, RenderStyle&&);
 

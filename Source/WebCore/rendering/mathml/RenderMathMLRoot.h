@@ -37,7 +37,7 @@ class MathMLRowElement;
 
 // Render base^(1/index), or sqrt(base) using radical notation.
 class RenderMathMLRoot final : public RenderMathMLRow {
-
+    WTF_MAKE_ISO_ALLOCATED(RenderMathMLRoot);
 public:
     RenderMathMLRoot(MathMLRowElement&, RenderStyle&&);
     void updateStyle();

@@ -33,6 +33,7 @@
 #include "RenderListMarker.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(TREE_DEBUGGING)
@@ -42,6 +43,8 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderCounter);
 
 typedef HashMap<AtomicString, RefPtr<CounterNode>> CounterMap;
 typedef HashMap<const RenderElement*, std::unique_ptr<CounterMap>> CounterMaps;

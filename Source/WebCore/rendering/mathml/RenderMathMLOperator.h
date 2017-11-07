@@ -36,6 +36,7 @@ namespace WebCore {
 class MathMLOperatorElement;
 
 class RenderMathMLOperator : public RenderMathMLToken {
+    WTF_MAKE_ISO_ALLOCATED(RenderMathMLOperator);
 public:
     RenderMathMLOperator(MathMLOperatorElement&, RenderStyle&&);
     RenderMathMLOperator(Document&, RenderStyle&&);

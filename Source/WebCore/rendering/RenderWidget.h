@@ -54,6 +54,7 @@ private:
 };
     
 class RenderWidget : public RenderReplaced, private OverlapTestRequestClient {
+    WTF_MAKE_ISO_ALLOCATED(RenderWidget);
 public:
     virtual ~RenderWidget();
 

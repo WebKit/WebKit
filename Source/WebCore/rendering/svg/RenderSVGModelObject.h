@@ -44,6 +44,7 @@ namespace WebCore {
 class SVGElement;
 
 class RenderSVGModelObject : public RenderElement {
+    WTF_MAKE_ISO_ALLOCATED(RenderSVGModelObject);
 public:
     LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const override;
     FloatRect computeFloatRectForRepaint(const FloatRect&, const RenderLayerModelObject* repaintContainer, bool fixed = false) const final;

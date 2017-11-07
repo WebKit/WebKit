@@ -33,7 +33,8 @@
 
 namespace WebCore {
 
-class RenderMathMLMenclose final: public RenderMathMLRow {
+class RenderMathMLMenclose final : public RenderMathMLRow {
+    WTF_MAKE_ISO_ALLOCATED(RenderMathMLMenclose);
 public:
     RenderMathMLMenclose(MathMLMencloseElement&, RenderStyle&&);
 

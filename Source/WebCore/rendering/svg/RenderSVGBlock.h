@@ -27,6 +27,7 @@ namespace WebCore {
 class SVGElement;
 
 class RenderSVGBlock : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderSVGBlock);
 public:
     LayoutRect visualOverflowRect() const final;
 

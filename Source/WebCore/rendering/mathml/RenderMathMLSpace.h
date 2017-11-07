@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class RenderMathMLSpace final : public RenderMathMLBlock {
+    WTF_MAKE_ISO_ALLOCATED(RenderMathMLSpace);
 public:
     RenderMathMLSpace(MathMLSpaceElement&, RenderStyle&&);
     MathMLSpaceElement& element() const { return static_cast<MathMLSpaceElement&>(nodeForNonAnonymous()); }

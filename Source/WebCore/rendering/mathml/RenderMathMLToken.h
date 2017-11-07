@@ -36,6 +36,7 @@ namespace WebCore {
 class MathMLTokenElement;
 
 class RenderMathMLToken : public RenderMathMLBlock {
+    WTF_MAKE_ISO_ALLOCATED(RenderMathMLToken);
 public:
     RenderMathMLToken(MathMLTokenElement&, RenderStyle&&);
     RenderMathMLToken(Document&, RenderStyle&&);
