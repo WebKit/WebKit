@@ -1,3 +1,14 @@
+2017-11-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove stray logging from a newly added API test
+
+        This was only for debugging purposes, and should have been removed before landing.
+
+        Rubber-stamped by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+
 2017-11-06  Jonathan Bedard  <jbedard@apple.com>
 
         Only build ImageDiff for mac

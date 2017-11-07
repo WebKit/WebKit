@@ -265,7 +265,6 @@ TEST(WKAttachmentTests, AttachmentUpdatesWhenInsertingLists)
         ObserveAttachmentUpdatesForScope observer(webView.get());
         attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"foo.txt" contentType:@"text/plain" data:testHTMLData() options:nil]);
         observer.expectAttachmentUpdates(@[ ], @[attachment.get()]);
-        NSLog(@"The markup is now %@", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
     }
     [webView expectUpdatesAfterCommand:@"InsertOrderedList" withArgument:nil expectedRemovals:@[] expectedInsertions:@[]];
     // This edit command behaves more like a "toggle", and will actually break us out of the list we just inserted.
