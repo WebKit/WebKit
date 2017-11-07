@@ -30,7 +30,8 @@
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.common.host import Host
 from webkitpy.common.host_mock import MockHost
-from webkitpy.common.net.bindingstestresults import BindingsTestResults
+from webkitpy.common.net.generictestresults import BindingsTestResults
+from webkitpy.common.net.generictestresults import WebkitpyTestResults
 from webkitpy.common.net.jsctestresults import JSCTestResults
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.system.outputcapture import OutputCapture
@@ -63,6 +64,12 @@ class TestBindingsEWS(AbstractEarlyWarningSystem):
     _group = "bindings"
 
 
+class TestWebkitpyEWS(AbstractEarlyWarningSystem):
+    port_name = "mac"
+    _build_style = None
+    _group = "webkitpy"
+
+
 class AbstractEarlyWarningSystemTest(QueuesTest):
     def _test_message(self, ews, results, message):
         ews.bind_to_tool(MockTool())
@@ -92,6 +99,12 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
         ews = TestBindingsEWS()
         results = lambda a: BindingsTestResults(["(JS) TestMapLike.idl", "(JS) TestNode.idl"])
         message = "New failing tests:\n(JS) TestMapLike.idl\n(JS) TestNode.idl"
+        self._test_message(ews, results, message)
+
+    def test_failing_webkitpy_tests_message(self):
+        ews = TestWebkitpyEWS()
+        results = lambda a: WebkitpyTestResults(["webkitpy.tool.commands.earlywarningsystem_unittest.EarlyWarningSystemTest.test_ews_name"])
+        message = "New failing tests:\nwebkitpy.tool.commands.earlywarningsystem_unittest.EarlyWarningSystemTest.test_ews_name"
         self._test_message(ews, results, message)
 
 
@@ -179,16 +192,17 @@ MOCK: update_status: %(name)s Checked relevance of patch
     def test_ews_name(self):
         # These are the names EWS's infrastructure expects, check that they work
         expected_names = {
+            'bindings-ews',
             'gtk-wk2-ews',
-            'win-ews',
             'ios-ews',
             'ios-sim-ews',
+            'jsc-ews',
+            'mac-32bit-ews',
+            'mac-debug-ews',
             'mac-ews',
             'mac-wk2-ews',
-            'mac-debug-ews',
-            'mac-32bit-ews',
-            'bindings-ews',
-            'jsc-ews',
+            'webkitpy-ews',
+            'win-ews',
             'wpe-ews',
         }
         classes = AbstractEarlyWarningSystem.load_ews_classes()

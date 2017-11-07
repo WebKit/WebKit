@@ -20,40 +20,22 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import logging
+import unittest
 
-from webkitpy.common.net.abstracttestresults import AbstractTestResults
-
-_log = logging.getLogger(__name__)
+from webkitpy.common.net.generictestresults import GenericTestResults
 
 
-class BindingsTestResults(AbstractTestResults):
-    def __init__(self, failures):
-        self._failures = failures
+class GenericTestResultsTest(unittest.TestCase):
+    def test_results_from_string(self):
+        incomplete_json = '{"key2": []}'
+        self.assertEqual(None, GenericTestResults.results_from_string(incomplete_json))
 
-    @classmethod
-    def results_from_string(cls, string):
-        parsed_results = cls.parse_json_string(string)
-        if not parsed_results:
-            return None
+    def test_results_from_string_success(self):
+        no_failures_string = '{"failures": []}'
+        no_failures_results = GenericTestResults([])
+        self.assertTrue(no_failures_results.equals(GenericTestResults.results_from_string(no_failures_string)))
+        self.assertTrue(no_failures_results.all_passed())
 
-        if 'failures' not in parsed_results:
-            return None
-
-        return cls(parsed_results['failures'])
-
-    def is_subset(self, other):
-        return set(self._failures) <= set(other._failures)
-
-    def equals(self, other):
-        return set(self._failures) == set(other._failures)
-
-    def all_passed(self):
-        return not self._failures
-
-    def failing_tests(self):
-        return self._failures
-
-    # No defined failure limit for bindings tests.
-    def did_exceed_test_failure_limit(self):
-        return False
+        test_string = '{"failures": ["failure1"]}'
+        test_results = GenericTestResults(["failure1"])
+        self.assertTrue(test_results.equals(GenericTestResults.results_from_string(test_string)))

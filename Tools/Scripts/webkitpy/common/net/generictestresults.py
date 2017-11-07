@@ -22,14 +22,46 @@
 
 import logging
 
-from webkitpy.common.net.generictestresults import BindingsTestResults
-from webkitpy.tool.bot.abstracttestresultsreader import AbstractTestResultsReader
+from webkitpy.common.net.abstracttestresults import AbstractTestResults
 
 _log = logging.getLogger(__name__)
 
 
-class BindingsTestResultsReader(AbstractTestResultsReader):
-    def results(self):
-        results_path = self._host.filesystem.join(self._results_directory, 'bindings_test_results.json')
-        contents = self._read_file_contents(results_path)
-        return BindingsTestResults.results_from_string(contents)
+class GenericTestResults(AbstractTestResults):
+    def __init__(self, failures):
+        self._failures = failures
+
+    @classmethod
+    def results_from_string(cls, string):
+        parsed_results = cls.parse_json_string(string)
+        if not parsed_results:
+            return None
+
+        if 'failures' not in parsed_results:
+            return None
+
+        return cls(parsed_results['failures'])
+
+    def is_subset(self, other):
+        return set(self._failures) <= set(other._failures)
+
+    def equals(self, other):
+        return set(self._failures) == set(other._failures)
+
+    def all_passed(self):
+        return not self._failures
+
+    def failing_tests(self):
+        return self._failures
+
+    # No defined failure limit for bindings tests.
+    def did_exceed_test_failure_limit(self):
+        return False
+
+
+class BindingsTestResults(GenericTestResults):
+    pass
+
+
+class WebkitpyTestResults(GenericTestResults):
+    pass

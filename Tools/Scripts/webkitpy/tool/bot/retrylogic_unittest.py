@@ -23,7 +23,7 @@
 import logging
 import unittest
 
-from webkitpy.common.net.bindingstestresults import BindingsTestResults
+from webkitpy.common.net.generictestresults import BindingsTestResults
 from webkitpy.common.net.jsctestresults import JSCTestResults
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.patchanalysistask import *

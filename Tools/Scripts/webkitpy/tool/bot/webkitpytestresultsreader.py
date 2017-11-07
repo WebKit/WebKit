@@ -20,22 +20,16 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+import logging
 
-from webkitpy.common.net.bindingstestresults import BindingsTestResults
+from webkitpy.common.net.generictestresults import WebkitpyTestResults
+from webkitpy.tool.bot.abstracttestresultsreader import AbstractTestResultsReader
+
+_log = logging.getLogger(__name__)
 
 
-class BindingsTestResultsTest(unittest.TestCase):
-    def test_results_from_string(self):
-        incomplete_json = '{"key2": []}'
-        self.assertEqual(None, BindingsTestResults.results_from_string(incomplete_json))
-
-    def test_results_from_string_success(self):
-        no_failures_string = '{"failures": []}'
-        no_failures_results = BindingsTestResults([])
-        self.assertTrue(no_failures_results.equals(BindingsTestResults.results_from_string(no_failures_string)))
-        self.assertTrue(no_failures_results.all_passed())
-
-        test_string = '{"failures": ["failure1"]}'
-        test_results = BindingsTestResults(["failure1"])
-        self.assertTrue(test_results.equals(BindingsTestResults.results_from_string(test_string)))
+class WebkitpyTestResultsReader(AbstractTestResultsReader):
+    def results(self):
+        results_path = self._host.filesystem.join(self._results_directory, 'webkitpy_test_results.json')
+        contents = self._read_file_contents(results_path)
+        return WebkitpyTestResults.results_from_string(contents)
