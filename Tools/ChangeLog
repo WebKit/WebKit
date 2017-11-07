@@ -1,3 +1,13 @@
+2017-11-06  Jonathan Bedard  <jbedard@apple.com>
+
+        Only build ImageDiff for mac
+        https://bugs.webkit.org/show_bug.cgi?id=179349
+        <rdar://problem/35376237>
+
+        Reviewed by Tim Horton.
+
+        * ImageDiff/Makefile:
+
 2017-11-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the internal build after updating to a newer SDK
