@@ -263,10 +263,26 @@ void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const
     jobDidFinish(job);
 }
 
-class FireUpdateFoundEventMicrotask final : public Microtask {
+void ServiceWorkerContainer::fireUpdateFoundEvent(const ServiceWorkerRegistrationKey& key)
+{
+    if (isStopped())
+        return;
+
+    auto* registration = m_registrations.get(key);
+    if (!registration)
+        return;
+
+    scriptExecutionContext()->postTask([container = makeRef(*this), registration = makeRef(*registration)] (ScriptExecutionContext&) {
+        if (container->isStopped())
+            return;
+        registration->dispatchEvent(Event::create(eventNames().updatefoundEvent, false, false));
+    });
+}
+
+class FirePostInstallEventsMicrotask final : public Microtask {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit FireUpdateFoundEventMicrotask(Ref<ServiceWorkerContainer>&& container, Ref<ServiceWorkerRegistration>&& registration)
+    explicit FirePostInstallEventsMicrotask(Ref<ServiceWorkerContainer>&& container, Ref<ServiceWorkerRegistration>&& registration)
         : m_container(WTFMove(container))
         , m_registration(WTFMove(registration))
     {
@@ -274,27 +290,26 @@ public:
 private:
     Result run() final
     {
-        callOnMainThread([container = WTFMove(m_container), registration = WTFMove(m_registration)] () mutable {
+        auto* serviceWorker = m_registration->installing();
+        if (!serviceWorker)
+            return Result::Done;
+
+        callOnMainThread([container = WTFMove(m_container), registration = WTFMove(m_registration), serviceWorker = makeRef(*serviceWorker)] () mutable {
             if (container->isStopped())
                 return;
-
-            registration->dispatchEvent(Event::create(eventNames().updatefoundEvent, false, false));
-
-            // FIXME: We currently fake a few events to make it look like we are installing and activating the service worker.
-            callOnMainThread([registration = WTFMove(registration)] () mutable {
-                if (!registration->installing())
+            registration->setInstallingWorker(nullptr);
+            registration->setWaitingWorker(serviceWorker.copyRef());
+            serviceWorker->setState(ServiceWorker::State::Installed);
+            callOnMainThread([container = WTFMove(container), registration = WTFMove(registration), serviceWorker = WTFMove(serviceWorker)] () mutable {
+                if (container->isStopped())
                     return;
-
-                registration->setWaitingWorker(registration->installing());
-                registration->setInstallingWorker(nullptr);
-                registration->waiting()->setState(ServiceWorker::State::Installed);
-                callOnMainThread([registration = WTFMove(registration)] () mutable {
-                    registration->setActiveWorker(registration->waiting());
-                    registration->setWaitingWorker(nullptr);
-                    registration->active()->setState(ServiceWorker::State::Activating);
-                    callOnMainThread([registration = WTFMove(registration)] () mutable {
-                        registration->active()->setState(ServiceWorker::State::Activated);
-                    });
+                registration->setWaitingWorker(nullptr);
+                registration->setActiveWorker(serviceWorker.copyRef());
+                serviceWorker->setState(ServiceWorker::State::Activating);
+                callOnMainThread([container = WTFMove(container), serviceWorker = WTFMove(serviceWorker)] () mutable {
+                    if (container->isStopped())
+                        return;
+                    serviceWorker->setState(ServiceWorker::State::Activated);
                 });
             });
         });
@@ -305,7 +320,8 @@ private:
     Ref<ServiceWorkerRegistration> m_registration;
 };
 
-void ServiceWorkerContainer::fireUpdateFoundEvent(const ServiceWorkerRegistrationKey& key)
+// FIXME: This method is only use to mimick service worker activation and will do away once we implement it.
+void ServiceWorkerContainer::firePostInstallEvents(const ServiceWorkerRegistrationKey& key)
 {
     if (isStopped())
         return;
@@ -314,7 +330,7 @@ void ServiceWorkerContainer::fireUpdateFoundEvent(const ServiceWorkerRegistratio
     if (!registration)
         return;
 
-    MicrotaskQueue::mainThreadQueue().append(std::make_unique<FireUpdateFoundEventMicrotask>(*this, *registration));
+    MicrotaskQueue::mainThreadQueue().append(std::make_unique<FirePostInstallEventsMicrotask>(*this, *registration));
 }
 
 void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, ServiceWorkerRegistrationData&& data)

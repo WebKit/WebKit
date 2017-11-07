@@ -60,11 +60,13 @@ public:
 
         WEBCORE_EXPORT void scriptContextFailedToStart(const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier, const String& message);
         WEBCORE_EXPORT void scriptContextStarted(const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier);
+        WEBCORE_EXPORT void didFinishInstall(const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier, bool wasSuccessful);
         const SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const { return m_server.doRegistrationMatching(topOrigin, clientURL); }
 
         // Messages to the client WebProcess
         virtual void updateRegistrationStateInClient(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, std::optional<ServiceWorkerIdentifier>) = 0;
         virtual void fireUpdateFoundEvent(const ServiceWorkerRegistrationKey&) = 0;
+        virtual void firePostInstallEvents(const ServiceWorkerRegistrationKey&) = 0;
 
     protected:
         WEBCORE_EXPORT Connection(SWServer&, uint64_t identifier);
@@ -84,6 +86,7 @@ public:
 
         // Messages to the SW host WebProcess
         virtual void updateServiceWorkerContext(const ServiceWorkerContextData&) = 0;
+        virtual void fireInstallEvent(ServiceWorkerIdentifier) = 0;
 
         SWServer& m_server;
     };
@@ -107,6 +110,7 @@ public:
     void postTaskReply(CrossThreadTask&&);
 
     Ref<SWServerWorker> updateWorker(Connection&, const ServiceWorkerRegistrationKey&, const URL&, const String& script, WorkerType);
+    void fireInstallEvent(Connection&, ServiceWorkerIdentifier);
     
     Connection* getConnection(uint64_t identifier) { return m_connections.get(identifier); }
 
@@ -120,6 +124,7 @@ private:
     void scriptFetchFinished(Connection&, const ServiceWorkerFetchResult&);
     void scriptContextFailedToStart(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier, const String& message);
     void scriptContextStarted(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier);
+    void didFinishInstall(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier, bool wasSuccessful);
 
     void addClientServiceWorkerRegistration(Connection&, const ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier);
     void removeClientServiceWorkerRegistration(Connection&, const ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier);

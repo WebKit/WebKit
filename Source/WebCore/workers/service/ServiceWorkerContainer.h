@@ -67,6 +67,7 @@ public:
     void getRegistration(const String& clientURL, Ref<DeferredPromise>&&);
     void updateRegistration(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerIdentifier>&);
     void fireUpdateFoundEvent(const ServiceWorkerRegistrationKey&);
+    void firePostInstallEvents(const ServiceWorkerRegistrationKey&);
 
     using RegistrationsPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<ServiceWorkerRegistration>>>;
     void getRegistrations(RegistrationsPromise&&);

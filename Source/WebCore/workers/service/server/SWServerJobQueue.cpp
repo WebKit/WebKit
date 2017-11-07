@@ -78,7 +78,7 @@ void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, con
     // text, then:
     if (newestWorker && equalIgnoringFragmentIdentifier(newestWorker->scriptURL(), job.scriptURL) && result.script == newestWorker->script()) {
         // FIXME: if script is a classic script, and script's module record's [[ECMAScriptCode]] is a byte-for-byte
-        // match with newestWorker’s script resource's module record's [[ECMAScriptCode]] otherwise.
+        // match with newestWorker's script resource's module record's [[ECMAScriptCode]] otherwise.
 
         // Invoke Resolve Job Promise with job and registration.
         m_server.resolveRegistrationJob(job, registration->data());
@@ -98,7 +98,7 @@ void SWServerJobQueue::scriptContextFailedToStart(SWServer::Connection&, Service
     ASSERT(registration);
 
     // FIXME: Install has failed. Run the install failed substeps
-    // Run the Update Worker State algorithm passing registration’s installing worker and redundant as the arguments.
+    // Run the Update Worker State algorithm passing registration's installing worker and redundant as the arguments.
     // Run the Update Registration State algorithm passing registration, "installing" and null as the arguments.
 
     // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
@@ -109,17 +109,17 @@ void SWServerJobQueue::scriptContextFailedToStart(SWServer::Connection&, Service
     UNUSED_PARAM(message);
 }
 
-void SWServerJobQueue::scriptContextStarted(SWServer::Connection&, ServiceWorkerIdentifier identifier)
+void SWServerJobQueue::scriptContextStarted(SWServer::Connection& connection, ServiceWorkerIdentifier identifier)
 {
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
     registration->setActiveServiceWorkerIdentifier(identifier);
 
-    install(*registration);
+    install(*registration, connection, identifier);
 }
 
 // https://w3c.github.io/ServiceWorker/#install
-void SWServerJobQueue::install(SWServerRegistration& registration)
+void SWServerJobQueue::install(SWServerRegistration& registration, SWServer::Connection& connection, ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     // Invoke Resolve Job Promise with job and registration.
     m_server.resolveRegistrationJob(firstJob(), registration.data());
@@ -128,6 +128,31 @@ void SWServerJobQueue::install(SWServerRegistration& registration)
     // for all the service worker clients whose creation URL matches registration's scope url and
     // all the service workers whose containing service worker registration is registration.
     registration.fireUpdateFoundEvent(firstJob().connectionIdentifier());
+
+    // Queue a task to fire the InstallEvent.
+    m_server.fireInstallEvent(connection, serviceWorkerIdentifier);
+}
+
+// https://w3c.github.io/ServiceWorker/#install
+void SWServerJobQueue::didFinishInstall(SWServer::Connection&, ServiceWorkerIdentifier, bool wasSuccessful)
+{
+    auto* registration = m_server.getRegistration(m_registrationKey);
+    ASSERT(registration);
+
+    if (!wasSuccessful) {
+        // FIXME: Run the Update Worker State algorithm passing registration's installing worker and redundant as the arguments.
+        // FIXME: Run the Update Registration State algorithm passing registration, "installing" and null as the arguments.
+
+        // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
+        if (!registration->getNewestWorker())
+            clearRegistration(*registration);
+        // Invoke Finish Job with job and abort these steps.
+        finishCurrentJob();
+        return;
+    }
+
+    // FIXME: Implement real post 'install' event steps of the Install algorithm (steps 14+).
+    registration->firePostInstallEvents(firstJob().connectionIdentifier());
 
     finishCurrentJob();
 }
@@ -166,11 +191,11 @@ void SWServerJobQueue::runRegisterJob(const ServiceWorkerJobData& job)
     if (!shouldTreatAsPotentiallyTrustworthy(job.scriptURL))
         return rejectCurrentJob(ExceptionData { SecurityError, ASCIILiteral("Script URL is not potentially trustworthy") });
 
-    // If the origin of job’s script url is not job’s referrer's origin, then:
+    // If the origin of job's script url is not job's referrer's origin, then:
     if (!protocolHostAndPortAreEqual(job.scriptURL, job.clientCreationURL))
         return rejectCurrentJob(ExceptionData { SecurityError, ASCIILiteral("Script origin does not match the registering client's origin") });
 
-    // If the origin of job’s scope url is not job’s referrer's origin, then:
+    // If the origin of job's scope url is not job's referrer's origin, then:
     if (!protocolHostAndPortAreEqual(job.scopeURL, job.clientCreationURL))
         return rejectCurrentJob(ExceptionData { SecurityError, ASCIILiteral("Scope origin does not match the registering client's origin") });
 
@@ -194,11 +219,11 @@ void SWServerJobQueue::runRegisterJob(const ServiceWorkerJobData& job)
 // https://w3c.github.io/ServiceWorker/#unregister-algorithm
 void SWServerJobQueue::runUnregisterJob(const ServiceWorkerJobData& job)
 {
-    // If the origin of job’s scope url is not job's client's origin, then:
+    // If the origin of job's scope url is not job's client's origin, then:
     if (!protocolHostAndPortAreEqual(job.scopeURL, job.clientCreationURL))
         return rejectCurrentJob(ExceptionData { SecurityError, ASCIILiteral("Origin of scope URL does not match the client's origin") });
 
-    // Let registration be the result of running "Get Registration" algorithm passing job’s scope url as the argument.
+    // Let registration be the result of running "Get Registration" algorithm passing job's scope url as the argument.
     auto* registration = m_server.getRegistration(m_registrationKey);
 
     // If registration is null, then:
@@ -209,7 +234,7 @@ void SWServerJobQueue::runUnregisterJob(const ServiceWorkerJobData& job)
         return;
     }
 
-    // Set registration’s uninstalling flag.
+    // Set registration's uninstalling flag.
     registration->setIsUninstalling(true);
 
     // Invoke Resolve Job Promise with job and true.
@@ -240,10 +265,10 @@ void SWServerJobQueue::clearRegistration(SWServerRegistration& registration)
 // https://w3c.github.io/ServiceWorker/#update-algorithm
 void SWServerJobQueue::runUpdateJob(const ServiceWorkerJobData& job)
 {
-    // Let registration be the result of running the Get Registration algorithm passing job’s scope url as the argument.
+    // Let registration be the result of running the Get Registration algorithm passing job's scope url as the argument.
     auto* registration = m_server.getRegistration(m_registrationKey);
 
-    // If registration is null (in our parlance "empty") or registration’s uninstalling flag is set, then:
+    // If registration is null (in our parlance "empty") or registration's uninstalling flag is set, then:
     if (!registration)
         return rejectCurrentJob(ExceptionData { TypeError, ASCIILiteral("Cannot update a null/nonexistent service worker registration") });
     if (registration->isUninstalling())
@@ -252,7 +277,7 @@ void SWServerJobQueue::runUpdateJob(const ServiceWorkerJobData& job)
     // Let newestWorker be the result of running Get Newest Worker algorithm passing registration as the argument.
     auto* newestWorker = registration->getNewestWorker();
 
-    // If job's type is update, and newestWorker's script url does not equal job’s script url with the exclude fragments flag set, then:
+    // If job's type is update, and newestWorker's script url does not equal job's script url with the exclude fragments flag set, then:
     if (job.type == ServiceWorkerJobType::Update && newestWorker && !equalIgnoringFragmentIdentifier(job.scriptURL, newestWorker->scriptURL()))
         return rejectCurrentJob(ExceptionData { TypeError, ASCIILiteral("Cannot update a service worker with a requested script URL whose newest worker has a different script URL") });
 

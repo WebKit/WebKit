@@ -1,3 +1,18 @@
+2017-11-07  Chris Dumez  <cdumez@apple.com>
+
+        [Service Workers] Add support for "install" event
+        https://bugs.webkit.org/show_bug.cgi?id=179338
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * http/tests/workers/service/basic-install-event-expected.txt: Added.
+        * http/tests/workers/service/basic-install-event.html: Added.
+        * http/tests/workers/service/resources/basic-install-event-worker.js: Added.
+        * http/tests/workers/service/resources/sw-test-pre.js:
+        (waitForState):
+
 2017-11-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r224498.

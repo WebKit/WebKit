@@ -1,0 +1,23 @@
+<html>
+<head>
+<script src="resources/sw-test-pre.js"></script>
+</head>
+<body>
+<script>
+navigator.serviceWorker.addEventListener("message", function(event) {
+    if (event.data)
+        log("PASS: service worker received install event");
+    else
+        log("FAIL: service worker did not receive install event");
+
+    finishSWTest();
+});
+
+navigator.serviceWorker.register("resources/basic-install-event-worker.js", { }).then(function(registration) {
+     waitForState(registration.installing, "installed").then(function() {
+         registration.waiting.postMessage("CheckReceivedPageState");
+     });
+});
+</script>
+</body>
+</html>

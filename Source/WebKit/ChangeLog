@@ -1,3 +1,25 @@
+2017-11-07  Chris Dumez  <cdumez@apple.com>
+
+        [Service Workers] Add support for "install" event
+        https://bugs.webkit.org/show_bug.cgi?id=179338
+
+        Reviewed by Youenn Fablet.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::firePostInstallEvents):
+        (WebKit::WebSWServerConnection::fireInstallEvent):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::didFinishServiceWorkerInstall):
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageProcess.messages.in:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::fireInstallEvent):
+        (WebKit::WebSWContextManagerConnection::didFinishInstall):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2017-11-07  Youenn Fablet  <youenn@apple.com>
 
         Support the case of fetch events that are not responded

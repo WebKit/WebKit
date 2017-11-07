@@ -1,6 +1,6 @@
 
-FAIL Registering script with no MIME type assert_unreached: Should have rejected: Registration of no MIME type script should fail. Reached unreachable code
-FAIL Registering script with bad MIME type assert_unreached: Should have rejected: Registration of plain text script should fail. Reached unreachable code
+PASS Registering script with no MIME type 
+PASS Registering script with bad MIME type 
 FAIL Registering script that imports script with no MIME type assert_unreached: Should have rejected: Registration of no MIME type imported script should fail. Reached unreachable code
 FAIL Registering script that imports script with bad MIME type assert_unreached: Should have rejected: Registration of plain text imported script should fail. Reached unreachable code
 PASS Registering script with good MIME type application/ecmascript 

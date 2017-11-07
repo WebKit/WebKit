@@ -99,6 +99,20 @@ void SWServerRegistration::fireUpdateFoundEvent(uint64_t connectionIdentifier)
     }
 }
 
+// FIXME: This will do away once we correctly update the registration state after install.
+void SWServerRegistration::firePostInstallEvents(uint64_t connectionIdentifier)
+{
+    // No matter what, we send the event to the connection that scheduled the job. The client registration
+    // may not have gotten a chance to register itself yet.
+    if (auto* connection = m_server.getConnection(connectionIdentifier))
+        connection->firePostInstallEvents(m_registrationKey);
+
+    for (auto& connectionIdentifierWithClients : m_clientRegistrationsByConnection.keys()) {
+        if (auto* connection = m_server.getConnection(connectionIdentifierWithClients))
+            connection->firePostInstallEvents(m_registrationKey);
+    }
+}
+
 ServiceWorkerRegistrationData SWServerRegistration::data() const
 {
     return { m_registrationKey, identifier(), m_activeServiceWorkerIdentifier, m_scopeURL, m_scriptURL, m_updateViaCache };

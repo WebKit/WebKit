@@ -106,12 +106,22 @@ void WebSWServerConnection::fireUpdateFoundEvent(const ServiceWorkerRegistration
     send(Messages::WebSWClientConnection::FireUpdateFoundEvent(key));
 }
 
+void WebSWServerConnection::firePostInstallEvents(const ServiceWorkerRegistrationKey& key)
+{
+    send(Messages::WebSWClientConnection::FirePostInstallEvents(key));
+}
+
 void WebSWServerConnection::updateServiceWorkerContext(const ServiceWorkerContextData& data)
 {
     if (sendToContextProcess(Messages::WebSWContextManagerConnection::UpdateServiceWorker(identifier(), data)))
         return;
 
     m_pendingContextDatas.append(data);
+}
+
+void WebSWServerConnection::fireInstallEvent(ServiceWorkerIdentifier serviceWorkerIdentifier)
+{
+    sendToContextProcess(Messages::WebSWContextManagerConnection::FireInstallEvent(identifier(), serviceWorkerIdentifier));
 }
 
 void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier, const ResourceRequest& request, const FetchOptions& options)

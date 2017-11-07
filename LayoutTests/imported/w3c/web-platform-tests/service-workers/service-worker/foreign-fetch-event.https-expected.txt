@@ -1,5 +1,13 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS ForeignFetchEvent constructor 
+FAIL ForeignFetchEvent constructor with no init dict assert_throws: function "function () {
+            new ForeignFetchEvent('type');
+          }" threw object "ReferenceError: Can't find variable: ForeignFetchEvent" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL ForeignFetchEvent constructor with empty init dict assert_throws: function "function () {
+            new ForeignFetchEvent('type', {});
+          }" threw object "ReferenceError: Can't find variable: ForeignFetchEvent" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL ForeignFetchEvent constructor with null request assert_throws: function "function () {
+            new ForeignFetchEvent('type', { request: null });
+          }" threw object "ReferenceError: Can't find variable: ForeignFetchEvent" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL ForeignFetchEvent constructor with all init dict members Can't find variable: ForeignFetchEvent
 

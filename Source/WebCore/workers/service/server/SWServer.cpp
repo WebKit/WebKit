@@ -112,6 +112,11 @@ void SWServer::Connection::finishFetchingScriptInServer(const ServiceWorkerFetch
     m_server.scriptFetchFinished(*this, result);
 }
 
+void SWServer::Connection::didFinishInstall(const ServiceWorkerRegistrationKey& key, ServiceWorkerIdentifier serviceWorkerIdentifier, bool wasSuccessful)
+{
+    m_server.didFinishInstall(*this, key, serviceWorkerIdentifier, wasSuccessful);
+}
+
 void SWServer::Connection::addServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey& key, uint64_t clientRegistrationIdentifier)
 {
     m_server.addClientServiceWorkerRegistration(*this, key, clientRegistrationIdentifier);
@@ -224,6 +229,14 @@ void SWServer::scriptContextStarted(Connection& connection, const ServiceWorkerR
         jobQueue->scriptContextStarted(connection, identifier);
 }
 
+void SWServer::didFinishInstall(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey, ServiceWorkerIdentifier serviceWorkerIdentifier, bool wasSuccessful)
+{
+    ASSERT(m_connections.contains(connection.identifier()));
+
+    if (auto* jobQueue = m_jobQueues.get(registrationKey))
+        jobQueue->didFinishInstall(connection, serviceWorkerIdentifier, wasSuccessful);
+}
+
 void SWServer::addClientServiceWorkerRegistration(Connection& connection, const ServiceWorkerRegistrationKey& key, uint64_t registrationIdentifier)
 {
     auto* registration = m_registrations.get(key);
@@ -256,6 +269,11 @@ Ref<SWServerWorker> SWServer::updateWorker(Connection& connection, const Service
     connection.updateServiceWorkerContext({ registrationKey, serviceWorkerIdentifier, script, url });
     
     return result.iterator->value.get();
+}
+
+void SWServer::fireInstallEvent(Connection& connection, ServiceWorkerIdentifier serviceWorkerIdentifier)
+{
+    connection.fireInstallEvent(serviceWorkerIdentifier);
 }
 
 void SWServer::taskThreadEntryPoint()

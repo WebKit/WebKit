@@ -59,6 +59,7 @@ public:
 
     void updateRegistrationState(ServiceWorkerRegistrationState, SWServerWorker*);
     void fireUpdateFoundEvent(uint64_t connectionIdentifier);
+    void firePostInstallEvents(uint64_t connectionIdentifier);
 
     void addClientServiceWorkerRegistration(uint64_t connectionIdentifier, uint64_t clientRegistrationIdentifier);
     void removeClientServiceWorkerRegistration(uint64_t connectionIdentifier, uint64_t clientRegistrationIdentifier);

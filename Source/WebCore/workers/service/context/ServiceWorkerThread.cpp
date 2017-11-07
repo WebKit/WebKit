@@ -30,6 +30,7 @@
 
 #include "CacheStorageProvider.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
+#include "EventNames.h"
 #include "ExtendableMessageEvent.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorkerFetch.h"
@@ -110,6 +111,22 @@ void ServiceWorkerThread::postMessageToServiceWorkerGlobalScope(Ref<SerializedSc
         ExtendableMessageEventSource source = RefPtr<ServiceWorkerClient> { ServiceWorkerWindowClient::create(context, sourceIdentifier) };
         serviceWorkerGlobalScope.dispatchEvent(ExtendableMessageEvent::create(WTFMove(ports), WTFMove(message), sourceOrigin, { }, WTFMove(source)));
         serviceWorkerGlobalScope.thread().workerObjectProxy().confirmMessageFromWorkerObject(serviceWorkerGlobalScope.hasPendingActivity());
+    });
+    runLoop().postTask(WTFMove(task));
+}
+
+void ServiceWorkerThread::fireInstallEvent()
+{
+    ScriptExecutionContext::Task task([serviceWorkerIdentifier = this->identifier()] (ScriptExecutionContext& context) mutable {
+        auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
+        auto installEvent = ExtendableEvent::create(eventNames().installEvent, { }, ExtendableEvent::IsTrusted::Yes);
+        serviceWorkerGlobalScope.dispatchEvent(installEvent);
+
+        // FIXME: We are supposed to wait for all installEvent's extend lifetime promises.
+        callOnMainThread([serviceWorkerIdentifier] () mutable {
+            if (auto* connection = SWContextManager::singleton().connection())
+                connection->didFinishInstall(serviceWorkerIdentifier, true);
+        });
     });
     runLoop().postTask(WTFMove(task));
 }

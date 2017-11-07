@@ -36,6 +36,7 @@ namespace WebCore {
 class ResourceError;
 class SecurityOrigin;
 class SerializedScriptValue;
+class ServiceWorkerContainer;
 class ServiceWorkerRegistration;
 class SharedBuffer;
 enum class ServiceWorkerRegistrationState;
@@ -68,12 +69,14 @@ protected:
     WEBCORE_EXPORT void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerIdentifier source, const String& sourceOrigin);
     WEBCORE_EXPORT void updateRegistrationState(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, std::optional<ServiceWorkerIdentifier>);
     WEBCORE_EXPORT void fireUpdateFoundEvent(const ServiceWorkerRegistrationKey&);
+    WEBCORE_EXPORT void firePostInstallEvents(const ServiceWorkerRegistrationKey&);
 
 private:
     virtual void scheduleJobInServer(const ServiceWorkerJobData&) = 0;
     virtual void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) = 0;
     virtual void addServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier) = 0;
     virtual void removeServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier) = 0;
+    void forEachContainer(const WTF::Function<void(ServiceWorkerContainer&)>& apply);
 
     HashMap<uint64_t, RefPtr<ServiceWorkerJob>> m_scheduledJobs;
 };

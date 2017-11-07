@@ -149,9 +149,24 @@ void WebSWContextManagerConnection::postMessageToServiceWorkerGlobalScope(Servic
     SWContextManager::singleton().postMessageToServiceWorkerGlobalScope(destinationIdentifier, SerializedScriptValue::adopt(message.vector()), sourceIdentifier, sourceOrigin);
 }
 
+void WebSWContextManagerConnection::fireInstallEvent(uint64_t serverConnectionIdentifier, ServiceWorkerIdentifier identifier)
+{
+    UNUSED_PARAM(serverConnectionIdentifier);
+    SWContextManager::singleton().fireInstallEvent(identifier);
+}
+
 void WebSWContextManagerConnection::postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
 {
     m_connectionToStorageProcess->send(Messages::StorageProcess::PostMessageToServiceWorkerClient(destinationIdentifier, IPC::DataReference { message->data() }, sourceIdentifier, sourceOrigin), 0);
+}
+
+void WebSWContextManagerConnection::didFinishInstall(ServiceWorkerIdentifier serviceWorkerIdentifier, bool wasSuccessful)
+{
+    auto* threadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier);
+    ASSERT(threadProxy);
+
+    auto& data = threadProxy->thread().contextData();
+    m_connectionToStorageProcess->send(Messages::StorageProcess::DidFinishServiceWorkerInstall(threadProxy->thread().serverConnectionIdentifier(), data.registrationKey, serviceWorkerIdentifier, wasSuccessful), 0);
 }
 
 } // namespace WebCore

@@ -140,8 +140,6 @@ imported/w3c/web-platform-tests/secure-contexts/shared-worker-insecure-first.htt
 imported/w3c/web-platform-tests/secure-contexts/shared-worker-secure-first.https.html [ Skip ]
 
 # Skip service worker tests that are timing out.
-imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/close.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event-constructor.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/unregister.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/update.https.html [ Skip ]

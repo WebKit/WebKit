@@ -453,6 +453,12 @@ void StorageProcess::postMessageToServiceWorkerClient(const ServiceWorkerClientI
         connection->postMessageToServiceWorkerClient(destinationIdentifier.scriptExecutionContextIdentifier, message, sourceIdentifier, sourceOrigin);
 }
 
+void StorageProcess::didFinishServiceWorkerInstall(uint64_t serverConnectionIdentifier, const ServiceWorkerRegistrationKey& registrationKey, ServiceWorkerIdentifier serviceWorkerIdentifier, bool wasSuccessful)
+{
+    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
+        connection->didFinishInstall(registrationKey, serviceWorkerIdentifier, wasSuccessful);
+}
+
 void StorageProcess::registerSWServerConnection(WebSWServerConnection& connection)
 {
     ASSERT(!m_swServerConnections.contains(connection.identifier()));

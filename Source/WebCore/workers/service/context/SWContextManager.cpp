@@ -74,6 +74,15 @@ void SWContextManager::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdenti
     serviceWorker->thread().postMessageToServiceWorkerGlobalScope(WTFMove(message), nullptr, sourceIdentifier, sourceOrigin);
 }
 
+void SWContextManager::fireInstallEvent(ServiceWorkerIdentifier identifier)
+{
+    auto* serviceWorker = m_workerMap.get(identifier);
+    if (!serviceWorker)
+        return;
+
+    serviceWorker->thread().fireInstallEvent();
+}
+
 } // namespace WebCore
 
 #endif

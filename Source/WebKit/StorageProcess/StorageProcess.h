@@ -128,6 +128,7 @@ private:
     void didFailFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier);
     void didNotHandleFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier);
 
+    void didFinishServiceWorkerInstall(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerIdentifier, bool wasSuccessful);
     void postMessageToServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier& destinationIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin);
 #endif
 #if ENABLE(INDEXED_DATABASE)

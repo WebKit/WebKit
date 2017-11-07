@@ -138,22 +138,34 @@ void SWClientConnection::postMessageToServiceWorkerClient(uint64_t destinationSc
     container->dispatchEvent(messageEvent);
 }
 
-void SWClientConnection::updateRegistrationState(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationState state, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier)
+void SWClientConnection::forEachContainer(const WTF::Function<void(ServiceWorkerContainer&)>& apply)
 {
     // FIXME: We should iterate over all service worker clients, not only documents.
     for (auto& document : Document::allDocuments()) {
         if (auto* container = document->serviceWorkerContainer())
-            container->updateRegistration(key, state, serviceWorkerIdentifier);
+            apply(*container);
     }
+}
+
+void SWClientConnection::updateRegistrationState(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationState state, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier)
+{
+    forEachContainer([&](ServiceWorkerContainer& container) {
+        container.updateRegistration(key, state, serviceWorkerIdentifier);
+    });
 }
 
 void SWClientConnection::fireUpdateFoundEvent(const ServiceWorkerRegistrationKey& key)
 {
-    // FIXME: We should iterate over all service worker clients, not only documents.
-    for (auto& document : Document::allDocuments()) {
-        if (auto* container = document->serviceWorkerContainer())
-            container->fireUpdateFoundEvent(key);
-    }
+    forEachContainer([&](ServiceWorkerContainer& container) {
+        container.fireUpdateFoundEvent(key);
+    });
+}
+
+void SWClientConnection::firePostInstallEvents(const ServiceWorkerRegistrationKey& key)
+{
+    forEachContainer([&](ServiceWorkerContainer& container) {
+        container.firePostInstallEvents(key);
+    });
 }
 
 } // namespace WebCore

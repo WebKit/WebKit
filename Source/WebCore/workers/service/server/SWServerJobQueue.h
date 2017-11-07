@@ -50,6 +50,7 @@ public:
     void scriptFetchFinished(SWServer::Connection&, const ServiceWorkerFetchResult&);
     void scriptContextFailedToStart(SWServer::Connection&, ServiceWorkerIdentifier, const String& message);
     void scriptContextStarted(SWServer::Connection&, ServiceWorkerIdentifier);
+    void didFinishInstall(SWServer::Connection&, ServiceWorkerIdentifier, bool wasSuccessful);
 
 private:
     void jobTimerFired();
@@ -63,7 +64,7 @@ private:
 
     void tryClearRegistration(SWServerRegistration&);
     void clearRegistration(SWServerRegistration&);
-    void install(SWServerRegistration&);
+    void install(SWServerRegistration&, SWServer::Connection&, ServiceWorkerIdentifier);
 
     Deque<ServiceWorkerJobData> m_jobQueue;
 
