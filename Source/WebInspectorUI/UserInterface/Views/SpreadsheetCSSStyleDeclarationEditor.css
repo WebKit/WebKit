@@ -29,7 +29,8 @@
 }
 
 .spreadsheet-style-declaration-editor .property {
-    padding-left: 17px;
+    padding-right: var(--css-declaration-side-padding);
+    padding-left: calc(var(--css-declaration-side-padding) + 17px);
 }
 
 .spreadsheet-style-declaration-editor .name {
@@ -59,7 +60,7 @@
 .spreadsheet-style-declaration-editor .property-toggle {
     visibility: hidden;
     position: absolute;
-    left: 1px;
+    left: calc(var(--css-declaration-side-padding) + 1px);
     width: 10px;
     height: 10px;
     margin: 0;
@@ -87,6 +88,31 @@
 .spreadsheet-style-declaration-editor .property.invalid-value:not(.disabled) .value {
     text-decoration: line-through;
     -webkit-text-decoration-color: hsla(0, 100%, 50%, 0.5);
+}
+
+.spreadsheet-style-declaration-editor .property.has-warning {
+    background-color: hsl(51, 87%, 93%);
+}
+
+.spreadsheet-style-declaration-editor .property .warning {
+    display: none;
+}
+
+.spreadsheet-style-declaration-editor .property.has-warning .warning {
+    position: absolute;
+    right: 0;
+    display: inline-block;
+    width: calc(20px + var(--css-declaration-side-padding));
+    height: 13px;
+
+    background-image: url(../Images/Warning.svg);
+    background-color: hsl(43, 97%, 84%);
+    background-repeat: no-repeat;
+    background-size: 9px;
+    background-position-y: center;
+    background-position-x: 7px;
+
+    -webkit-clip-path: polygon(0% 50%, 6px 0%, 100% 0%, 100% 100%, 6px 100%);
 }
 
 .spreadsheet-style-declaration-editor .property.not-inherited {

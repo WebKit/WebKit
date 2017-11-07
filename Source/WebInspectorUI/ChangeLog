@@ -1,3 +1,45 @@
+2017-11-06  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: Display warnings
+        https://bugs.webkit.org/show_bug.cgi?id=179215
+
+        Reviewed by Brian Burg.
+
+        Display warning icons on the right of the property.
+
+        For now, the warning icons have only three title messages:
+        - Invalid property name;
+        - Invalid property value;
+        - Duplicate property.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .property):
+        (.spreadsheet-style-declaration-editor .property-toggle):
+        (.spreadsheet-style-declaration-editor .property.invalid-value:not(.disabled) .value):
+        (.spreadsheet-style-declaration-editor .property.has-warning):
+        (.spreadsheet-style-declaration-editor .property .warning):
+        Draw the warning arrow and icon using only one HTML element.
+        Don't set "top" property so the element remains vertically where it would be if it had "position: static".
+
+        (.spreadsheet-style-declaration-editor .property.has-warning .warning):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._propertiesChanged):
+        (WI.SpreadsheetCSSStyleDeclarationEditor):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.css:
+        (.spreadsheet-css-declaration):
+        (.spreadsheet-css-declaration :matches(.header, .header-media)):
+        (.spreadsheet-css-declaration .close-brace):
+        Make properties span the entire width of the styles sidebar. Unsupported properties have yellow
+        background. There should be no gaps between the property element and sidebar left and right edges.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty):
+        (WI.SpreadsheetStyleProperty.prototype.updateStatus):
+        (WI.SpreadsheetStyleProperty.prototype._update):
+        (WI.SpreadsheetStyleProperty.prototype.updateClassNames): Deleted.
+        Rename updateClassNames to updateStatus since it modifies title attribute of the warning element.
+
 2017-11-06  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Two little Layers tab fixes

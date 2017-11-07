@@ -25,12 +25,18 @@
 
 .spreadsheet-css-declaration {
     margin: 0;
-    padding: 4px 6px;
+    padding: 4px 0;
     font-family: Menlo, monospace;
     color: hsl(0, 0%, 70%);
     background: white;
     border-bottom: 0.5px solid hsla(0, 0%, 0%, 0.2);
     -webkit-user-select: text;
+
+    --css-declaration-side-padding: 6px;
+}
+
+.spreadsheet-css-declaration :matches(.header, .header-media) {
+    padding: 0 var(--css-declaration-side-padding);
 }
 
 .spreadsheet-css-declaration .media-label {
@@ -101,4 +107,9 @@
 .spreadsheet-css-declaration .selector.spreadsheet-selector-field.editing {
     box-shadow: hsla(0, 0%, 0%, 0.5) 0 1px 3px;
     outline: none !important;
+}
+
+.spreadsheet-css-declaration .close-brace {
+    display: inline-block;
+    padding-left: var(--css-declaration-side-padding);
 }

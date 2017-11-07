@@ -236,7 +236,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
     {
         if (this.isFocused()) {
             for (let propertyView of this._propertyViews)
-                propertyView.updateClassNames();
+                propertyView.updateStatus();
         } else
             this.needsLayout();
     }
