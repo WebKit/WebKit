@@ -1,0 +1,15 @@
+<div id=test></div>
+<script>
+const shadow = test.attachShadow({mode: 'open'});
+shadow.innerHTML = `
+    <style>
+    @media (min-width:200px) {
+        div { color: green }
+    }
+    @media (max-width:200px) {
+        div { color: red }
+    }
+    </style>
+    <div>Text</div>
+`;
+</script>

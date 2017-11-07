@@ -479,13 +479,8 @@ void LayoutContext::updateStyleForLayout()
 {
     Document& document = *frame().document();
     // Viewport-dependent media queries may cause us to need completely different style information.
-    auto* styleResolver = document.styleScope().resolverIfExists();
-    if (!styleResolver || styleResolver->hasMediaQueriesAffectedByViewportChange()) {
-        LOG(Layout, "  hasMediaQueriesAffectedByViewportChange, enqueueing style recalc");
-        document.styleScope().didChangeStyleSheetEnvironment();
-        // FIXME: This instrumentation event is not strictly accurate since cached media query results do not persist across StyleResolver rebuilds.
-        InspectorInstrumentation::mediaQueryResultChanged(document);
-    }
+    document.styleScope().evaluateMediaQueriesForViewportChange();
+
     document.evaluateMediaQueryList();
     // If there is any pagination to apply, it will affect the RenderView's style, so we should
     // take care of that now.

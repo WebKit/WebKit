@@ -1,3 +1,14 @@
+2017-11-07  Antti Koivisto  <antti@apple.com>
+
+        Dynamic media queries don't update in shadow tree stylesheets
+        https://bugs.webkit.org/show_bug.cgi?id=179324
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/shadow-dom/media-query-in-shadow-style-expected.html: Added.
+        * fast/shadow-dom/media-query-in-shadow-style.html: Added.
+        * fast/shadow-dom/resources/media-query-in-shadow-style-frame.html: Added.
+
 2017-11-07  Youenn Fablet  <youenn@apple.com>
 
         Support the case of fetch events that are not responded

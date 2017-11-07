@@ -600,6 +600,36 @@ void Scope::scheduleUpdate(UpdateType update)
     m_pendingUpdateTimer.startOneShot(0_s);
 }
 
+void Scope::evaluateMediaQueriesForViewportChange()
+{
+    evaluateMediaQueries([] (StyleResolver& resolver) {
+        return resolver.hasMediaQueriesAffectedByViewportChange();
+    });
+}
+
+void Scope::evaluateMediaQueriesForAccessibilitySettingsChange()
+{
+    evaluateMediaQueries([] (StyleResolver& resolver) {
+        return resolver.hasMediaQueriesAffectedByAccessibilitySettingsChange();
+    });
+}
+
+template <typename TestFunction>
+void Scope::evaluateMediaQueries(TestFunction&& testFunction)
+{
+    if (!m_shadowRoot) {
+        for (auto* descendantShadowRoot : m_document.inDocumentShadowRoots())
+            descendantShadowRoot->styleScope().evaluateMediaQueries(testFunction);
+    }
+    auto* resolver = resolverIfExists();
+    if (!resolver)
+        return;
+    if (!testFunction(*resolver))
+        return;
+    scheduleUpdate(UpdateType::ContentsOrInterpretation);
+    InspectorInstrumentation::mediaQueryResultChanged(m_document);
+}
+
 void Scope::didChangeActiveStyleSheetCandidates()
 {
     scheduleUpdate(UpdateType::ActiveSet);

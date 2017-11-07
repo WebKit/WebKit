@@ -2280,23 +2280,12 @@ void Page::setCaptionUserPreferencesStyleSheet(const String& styleSheet)
 
 void Page::accessibilitySettingsDidChange()
 {
-    bool neededRecalc = false;
-
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (Document* document = frame->document()) {
-            auto* styleResolver = document->styleScope().resolverIfExists();
-            if (styleResolver && styleResolver->hasMediaQueriesAffectedByAccessibilitySettingsChange()) {
-                document->styleScope().didChangeStyleSheetEnvironment();
-                document->evaluateMediaQueryList();
-                neededRecalc = true;
-                // FIXME: This instrumentation event is not strictly accurate since cached media query results do not persist across StyleResolver rebuilds.
-                InspectorInstrumentation::mediaQueryResultChanged(*document);
-            }
+        if (auto* document = frame->document()) {
+            document->styleScope().evaluateMediaQueriesForAccessibilitySettingsChange();
+            document->evaluateMediaQueryList();
         }
     }
-
-    if (neededRecalc)
-        LOG(Layout, "hasMediaQueriesAffectedByAccessibilitySettingsChange, enqueueing style recalc");
 }
 
 void Page::setUnobscuredSafeAreaInsets(const FloatBoxExtent& insets)

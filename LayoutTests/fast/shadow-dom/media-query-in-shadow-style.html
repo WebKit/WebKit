@@ -1,0 +1,19 @@
+<iframe src=resources/media-query-in-shadow-style-frame.html width=150 height=50></iframe><br>
+<iframe src=resources/media-query-in-shadow-style-frame.html width=300 height=50></iframe><br>
+<iframe src=resources/media-query-in-shadow-style-frame.html width=300 height=50 onload='resize(event.target, 150)'></iframe><br>
+<iframe src=resources/media-query-in-shadow-style-frame.html width=150 height=50 onload='resize(event.target, 300)'></iframe><br>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+let resizeCount = 2;
+
+function resize(frame, size)
+{
+    setTimeout(() => {
+        frame.width = size;
+        if (!--resizeCount)
+            testRunner.notifyDone();
+    }, 10);
+}
+</script>
