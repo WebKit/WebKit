@@ -1,3 +1,15 @@
+2017-11-07  Michael Saboff  <msaboff@apple.com>
+
+        Add SPI function pointers qualifiers for CPU(ARM64E)
+        https://bugs.webkit.org/show_bug.cgi?id=179383
+
+        Reviewed by Mark Lam.
+
+        For ARM64E, use the appropriate SPI qualifiers for helper function pointers.
+
+        * wtf/BlockPtr.h:
+        (WTF::BlockPtr<R):
+
 2017-10-31  Filip Pizlo  <fpizlo@apple.com>
 
         bmalloc should support strictly type-segregated isolated heaps

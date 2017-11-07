@@ -26,6 +26,13 @@
 #pragma once
 
 #include <Block.h>
+#if CPU(ARM64E)
+#include <WebKitAdditions/BlockQualifiers.h>
+#else
+#define WTF_COPY_FUNCTION_POINTER_QUALIFIER
+#define WTF_DISPOSE_FUNCTION_POINTER_QUALIFIER
+#define WTF_INVOKE_FUNCTION_POINTER_QUALIFIER
+#endif
 #include <utility>
 #include <wtf/Assertions.h>
 
@@ -46,15 +53,15 @@ public:
         struct Descriptor {
             uintptr_t reserved;
             uintptr_t size;
-            void (*copy)(void *dst, const void *src);
-            void (*dispose)(const void *);
+            void (*WTF_COPY_FUNCTION_POINTER_QUALIFIER copy)(void *dst, const void *src);
+            void (*WTF_DISPOSE_FUNCTION_POINTER_QUALIFIER dispose)(const void *);
         };
 
         struct Block {
             void* isa;
             int32_t flags;
             int32_t reserved;
-            R (*invoke)(void *, Args...);
+            R (*WTF_INVOKE_FUNCTION_POINTER_QUALIFIER invoke)(void *, Args...);
             const struct Descriptor* descriptor;
             F f;
         };
