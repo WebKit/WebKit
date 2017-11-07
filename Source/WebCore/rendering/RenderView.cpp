@@ -239,7 +239,6 @@ void RenderView::layout()
 #ifndef NDEBUG
     frameView().layoutContext().checkLayoutState();
 #endif
-    statePusher.pop();
     clearNeedsLayout();
 }
 

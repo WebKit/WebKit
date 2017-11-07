@@ -281,60 +281,61 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
         return;
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
-    LayoutStateMaintainer statePusher(*this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
+    {
+        LayoutStateMaintainer statePusher(*this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
 
-    preparePaginationBeforeBlockLayout(relayoutChildren);
+        preparePaginationBeforeBlockLayout(relayoutChildren);
 
-    LayoutSize previousSize = size();
+        LayoutSize previousSize = size();
 
-    updateLogicalWidth();
-    updateLogicalHeight();
+        updateLogicalWidth();
+        updateLogicalHeight();
 
-    if (previousSize != size()
-        || (parent()->isDeprecatedFlexibleBox() && parent()->style().boxOrient() == HORIZONTAL
-        && parent()->style().boxAlign() == BSTRETCH))
-        relayoutChildren = true;
+        if (previousSize != size()
+            || (parent()->isDeprecatedFlexibleBox() && parent()->style().boxOrient() == HORIZONTAL
+                && parent()->style().boxAlign() == BSTRETCH))
+            relayoutChildren = true;
 
-    setHeight(0);
+        setHeight(0);
 
-    m_stretchingChildren = false;
+        m_stretchingChildren = false;
 
 #if !ASSERT_DISABLED
-    LayoutSize oldLayoutDelta = view().frameView().layoutContext().layoutDelta();
+        LayoutSize oldLayoutDelta = view().frameView().layoutContext().layoutDelta();
 #endif
 
-    // Fieldsets need to find their legend and position it inside the border of the object.
-    // The legend then gets skipped during normal layout. The same is true for ruby text.
-    // It doesn't get included in the normal layout process but is instead skipped.
-    layoutExcludedChildren(relayoutChildren);
+        // Fieldsets need to find their legend and position it inside the border of the object.
+        // The legend then gets skipped during normal layout. The same is true for ruby text.
+        // It doesn't get included in the normal layout process but is instead skipped.
+        layoutExcludedChildren(relayoutChildren);
 
-    ChildFrameRects oldChildRects;
-    appendChildFrameRects(this, oldChildRects);
+        ChildFrameRects oldChildRects;
+        appendChildFrameRects(this, oldChildRects);
 
-    if (isHorizontal())
-        layoutHorizontalBox(relayoutChildren);
-    else
-        layoutVerticalBox(relayoutChildren);
+        if (isHorizontal())
+            layoutHorizontalBox(relayoutChildren);
+        else
+            layoutVerticalBox(relayoutChildren);
 
-    repaintChildrenDuringLayoutIfMoved(this, oldChildRects);
-    ASSERT(view().frameView().layoutContext().layoutDeltaMatches(oldLayoutDelta));
+        repaintChildrenDuringLayoutIfMoved(this, oldChildRects);
+        ASSERT(view().frameView().layoutContext().layoutDeltaMatches(oldLayoutDelta));
 
-    LayoutUnit oldClientAfterEdge = clientLogicalBottom();
-    updateLogicalHeight();
+        LayoutUnit oldClientAfterEdge = clientLogicalBottom();
+        updateLogicalHeight();
 
-    if (previousSize.height() != height())
-        relayoutChildren = true;
+        if (previousSize.height() != height())
+            relayoutChildren = true;
 
-    layoutPositionedObjects(relayoutChildren || isDocumentElementRenderer());
+        layoutPositionedObjects(relayoutChildren || isDocumentElementRenderer());
 
-    computeOverflow(oldClientAfterEdge);
-
-    statePusher.pop();
+        computeOverflow(oldClientAfterEdge);
+    }
 
     updateLayerTransform();
 
-    if (view().frameView().layoutContext().layoutState()->pageLogicalHeight())
-        setPageLogicalOffset(view().frameView().layoutContext().layoutState()->pageLogicalOffset(this, logicalTop()));
+    auto* layoutState = view().frameView().layoutContext().layoutState();
+    if (layoutState && layoutState->pageLogicalHeight())
+        setPageLogicalOffset(layoutState->pageLogicalOffset(this, logicalTop()));
 
     // Update our scrollbars if we're overflow:auto/scroll/hidden now that we know if
     // we overflow or not.

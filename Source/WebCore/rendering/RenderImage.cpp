@@ -746,8 +746,6 @@ void RenderImage::layoutShadowControls(const LayoutSize& oldSize)
     controlsRenderer->setNeedsLayout(MarkOnlyThis);
     controlsRenderer->layout();
     clearChildNeedsLayout();
-
-    statePusher.pop();
 }
 
 void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const

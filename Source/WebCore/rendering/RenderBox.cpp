@@ -518,7 +518,6 @@ void RenderBox::layout()
         ASSERT(!child->needsLayout());
         child = child->nextSibling();
     }
-    statePusher.pop();
     invalidateBackgroundObscurationStatus();
     clearNeedsLayout();
 }

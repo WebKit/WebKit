@@ -232,6 +232,9 @@ LayoutStateMaintainer::LayoutStateMaintainer(LayoutContext& layoutContext)
 
 LayoutStateMaintainer::~LayoutStateMaintainer()
 {
+    // FIXME: Remove conditional push/pop.
+    if (m_didCallPush && !m_didCallPop)
+        pop();
     ASSERT(!m_didCallPush || m_didCallPush == m_didCallPop);
 }
 

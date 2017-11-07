@@ -372,8 +372,6 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
 
     ASSERT(!needsLayout());
 
-    statePusher.pop();
-
     return m_rowPos[m_grid.size()];
 }
 
@@ -423,8 +421,6 @@ void RenderTableSection::layout()
             rowRenderer->layoutIfNeeded();
         }
     }
-
-    statePusher.pop();
     clearNeedsLayout();
 }
 
@@ -683,8 +679,6 @@ void RenderTableSection::layoutRows()
     setLogicalHeight(m_rowPos[totalRows]);
 
     computeOverflowFromCells(totalRows, nEffCols);
-
-    statePusher.pop();
 }
 
 void RenderTableSection::computeOverflowFromCells()

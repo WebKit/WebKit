@@ -475,88 +475,89 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
     bool pageLogicalHeightChanged = false;
     checkForPaginationLogicalHeightChange(relayoutChildren, pageLogicalHeight, pageLogicalHeightChanged);
 
-    const RenderStyle& styleToUse = style();
-    LayoutStateMaintainer statePusher(*this, locationOffset(), hasTransform() || hasReflection() || styleToUse.isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged);
-
-    preparePaginationBeforeBlockLayout(relayoutChildren);
-
-    // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
-    // our current maximal positive and negative margins. These values are used when we
-    // are collapsed with adjacent blocks, so for example, if you have block A and B
-    // collapsing together, then you'd take the maximal positive margin from both A and B
-    // and subtract it from the maximal negative margin from both A and B to get the
-    // true collapsed margin. This algorithm is recursive, so when we finish layout()
-    // our block knows its current maximal positive/negative values.
-    //
-    // Start out by setting our margin values to our current margins. Table cells have
-    // no margins, so we don't fill in the values for table cells.
-    bool isCell = isTableCell();
-    if (!isCell) {
-        initMaxMarginValues();
-        
-        setHasMarginBeforeQuirk(styleToUse.hasMarginBeforeQuirk());
-        setHasMarginAfterQuirk(styleToUse.hasMarginAfterQuirk());
-        setPaginationStrut(0);
-    }
-
     LayoutUnit repaintLogicalTop = 0;
     LayoutUnit repaintLogicalBottom = 0;
-    LayoutUnit maxFloatLogicalBottom = 0;
-    if (!firstChild() && !isAnonymousBlock())
-        setChildrenInline(true);
-    if (childrenInline())
-        layoutInlineChildren(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
-    else
-        layoutBlockChildren(relayoutChildren, maxFloatLogicalBottom);
+    const RenderStyle& styleToUse = style();
+    {
+        LayoutStateMaintainer statePusher(*this, locationOffset(), hasTransform() || hasReflection() || styleToUse.isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged);
 
-    // Expand our intrinsic height to encompass floats.
-    LayoutUnit toAdd = borderAndPaddingAfter() + scrollbarLogicalHeight();
-    if (lowestFloatLogicalBottom() > (logicalHeight() - toAdd) && createsNewFormattingContext())
-        setLogicalHeight(lowestFloatLogicalBottom() + toAdd);
-    
-    if (relayoutForPagination(statePusher) || relayoutToAvoidWidows(statePusher)) {
-        ASSERT(!shouldBreakAtLineToAvoidWidow());
-        return;
-    }
+        preparePaginationBeforeBlockLayout(relayoutChildren);
 
-    // Calculate our new height.
-    LayoutUnit oldHeight = logicalHeight();
-    LayoutUnit oldClientAfterEdge = clientLogicalBottom();
+        // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
+        // our current maximal positive and negative margins. These values are used when we
+        // are collapsed with adjacent blocks, so for example, if you have block A and B
+        // collapsing together, then you'd take the maximal positive margin from both A and B
+        // and subtract it from the maximal negative margin from both A and B to get the
+        // true collapsed margin. This algorithm is recursive, so when we finish layout()
+        // our block knows its current maximal positive/negative values.
+        //
+        // Start out by setting our margin values to our current margins. Table cells have
+        // no margins, so we don't fill in the values for table cells.
+        bool isCell = isTableCell();
+        if (!isCell) {
+            initMaxMarginValues();
 
-    // Before updating the final size of the flow thread make sure a forced break is applied after the content.
-    // This ensures the size information is correctly computed for the last auto-height fragment receiving content.
-    if (is<RenderFragmentedFlow>(*this))
-        downcast<RenderFragmentedFlow>(*this).applyBreakAfterContent(oldClientAfterEdge);
+            setHasMarginBeforeQuirk(styleToUse.hasMarginBeforeQuirk());
+            setHasMarginAfterQuirk(styleToUse.hasMarginAfterQuirk());
+            setPaginationStrut(0);
+        }
 
-    updateLogicalHeight();
-    LayoutUnit newHeight = logicalHeight();
-    if (oldHeight != newHeight) {
-        if (oldHeight > newHeight && maxFloatLogicalBottom > newHeight && !childrenInline()) {
-            // One of our children's floats may have become an overhanging float for us. We need to look for it.
-            for (auto& blockFlow : childrenOfType<RenderBlockFlow>(*this)) {
-                if (blockFlow.isFloatingOrOutOfFlowPositioned())
-                    continue;
-                if (blockFlow.lowestFloatLogicalBottom() + blockFlow.logicalTop() > newHeight)
-                    addOverhangingFloats(blockFlow, false);
+        LayoutUnit maxFloatLogicalBottom = 0;
+        if (!firstChild() && !isAnonymousBlock())
+            setChildrenInline(true);
+        if (childrenInline())
+            layoutInlineChildren(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+        else
+            layoutBlockChildren(relayoutChildren, maxFloatLogicalBottom);
+
+        // Expand our intrinsic height to encompass floats.
+        LayoutUnit toAdd = borderAndPaddingAfter() + scrollbarLogicalHeight();
+        if (lowestFloatLogicalBottom() > (logicalHeight() - toAdd) && createsNewFormattingContext())
+            setLogicalHeight(lowestFloatLogicalBottom() + toAdd);
+
+        if (relayoutForPagination(statePusher) || relayoutToAvoidWidows(statePusher)) {
+            ASSERT(!shouldBreakAtLineToAvoidWidow());
+            return;
+        }
+
+        // Calculate our new height.
+        LayoutUnit oldHeight = logicalHeight();
+        LayoutUnit oldClientAfterEdge = clientLogicalBottom();
+
+        // Before updating the final size of the flow thread make sure a forced break is applied after the content.
+        // This ensures the size information is correctly computed for the last auto-height fragment receiving content.
+        if (is<RenderFragmentedFlow>(*this))
+            downcast<RenderFragmentedFlow>(*this).applyBreakAfterContent(oldClientAfterEdge);
+
+        updateLogicalHeight();
+        LayoutUnit newHeight = logicalHeight();
+        if (oldHeight != newHeight) {
+            if (oldHeight > newHeight && maxFloatLogicalBottom > newHeight && !childrenInline()) {
+                // One of our children's floats may have become an overhanging float for us. We need to look for it.
+                for (auto& blockFlow : childrenOfType<RenderBlockFlow>(*this)) {
+                    if (blockFlow.isFloatingOrOutOfFlowPositioned())
+                        continue;
+                    if (blockFlow.lowestFloatLogicalBottom() + blockFlow.logicalTop() > newHeight)
+                        addOverhangingFloats(blockFlow, false);
+                }
             }
         }
+
+        bool heightChanged = (previousHeight != newHeight);
+        if (heightChanged)
+            relayoutChildren = true;
+
+        layoutPositionedObjects(relayoutChildren || isDocumentElementRenderer());
+
+        // Add overflow from children (unless we're multi-column, since in that case all our child overflow is clipped anyway).
+        computeOverflow(oldClientAfterEdge);
+
+        fitBorderToLinesIfNeeded();
     }
 
-    bool heightChanged = (previousHeight != newHeight);
-    if (heightChanged)
-        relayoutChildren = true;
-
-    layoutPositionedObjects(relayoutChildren || isDocumentElementRenderer());
-
-    // Add overflow from children (unless we're multi-column, since in that case all our child overflow is clipped anyway).
-    computeOverflow(oldClientAfterEdge);
-    
-    statePusher.pop();
-
-    fitBorderToLinesIfNeeded();
-
-    if (view().frameView().layoutContext().layoutState()->m_pageLogicalHeight)
-        setPageLogicalOffset(view().frameView().layoutContext().layoutState()->pageLogicalOffset(this, logicalTop()));
+    auto* state = view().frameView().layoutContext().layoutState();
+    if (state && state->m_pageLogicalHeight)
+        setPageLogicalOffset(state->pageLogicalOffset(this, logicalTop()));
 
     updateLayerTransform();
 

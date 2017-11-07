@@ -275,48 +275,46 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     LayoutUnit previousHeight = logicalHeight();
     setLogicalHeight(borderAndPaddingLogicalHeight() + scrollbarLogicalHeight());
+    {
+        LayoutStateMaintainer statePusher(*this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
 
-    LayoutStateMaintainer statePusher(*this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
+        preparePaginationBeforeBlockLayout(relayoutChildren);
 
-    preparePaginationBeforeBlockLayout(relayoutChildren);
+        m_numberOfInFlowChildrenOnFirstLine = -1;
 
-    m_numberOfInFlowChildrenOnFirstLine = -1;
+        beginUpdateScrollInfoAfterLayoutTransaction();
 
-    beginUpdateScrollInfoAfterLayoutTransaction();
+        prepareOrderIteratorAndMargins();
 
-    prepareOrderIteratorAndMargins();
+        // Fieldsets need to find their legend and position it inside the border of the object.
+        // The legend then gets skipped during normal layout. The same is true for ruby text.
+        // It doesn't get included in the normal layout process but is instead skipped.
+        layoutExcludedChildren(relayoutChildren);
 
-    // Fieldsets need to find their legend and position it inside the border of the object.
-    // The legend then gets skipped during normal layout. The same is true for ruby text.
-    // It doesn't get included in the normal layout process but is instead skipped.
-    layoutExcludedChildren(relayoutChildren);
+        ChildFrameRects oldChildRects;
+        appendChildFrameRects(oldChildRects);
 
-    ChildFrameRects oldChildRects;
-    appendChildFrameRects(oldChildRects);
+        layoutFlexItems(relayoutChildren);
 
-    layoutFlexItems(relayoutChildren);
+        endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 
-    endAndCommitUpdateScrollInfoAfterLayoutTransaction();
+        if (logicalHeight() != previousHeight)
+            relayoutChildren = true;
 
-    if (logicalHeight() != previousHeight)
-        relayoutChildren = true;
+        layoutPositionedObjects(relayoutChildren || isDocumentElementRenderer());
 
-    layoutPositionedObjects(relayoutChildren || isDocumentElementRenderer());
-
-    repaintChildrenDuringLayoutIfMoved(oldChildRects);
-    // FIXME: css3/flexbox/repaint-rtl-column.html seems to repaint more overflow than it needs to.
-    computeOverflow(clientLogicalBottomAfterRepositioning());
-    statePusher.pop();
-
+        repaintChildrenDuringLayoutIfMoved(oldChildRects);
+        // FIXME: css3/flexbox/repaint-rtl-column.html seems to repaint more overflow than it needs to.
+        computeOverflow(clientLogicalBottomAfterRepositioning());
+    }
     updateLayerTransform();
-    
+
     // We have to reset this, because changes to our ancestors' style can affect
     // this value. Also, this needs to be before we call updateAfterLayout, as
     // that function may re-enter this one.
     m_hasDefiniteHeight = SizeDefiniteness::Unknown;
 
-    // Update our scroll information if we're overflow:auto/scroll/hidden now that we know if
-    // we overflow or not.
+    // Update our scroll information if we're overflow:auto/scroll/hidden now that we know if we overflow or not.
     updateScrollInfoAfterLayout();
 
     repainter.repaintAfterLayout();

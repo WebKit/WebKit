@@ -1321,10 +1321,8 @@ bool RenderBlock::simplifiedLayout()
         return false;
 
     LayoutStateMaintainer statePusher(*this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
-    if (needsPositionedMovementLayout() && !tryLayoutDoingPositionedMovementOnly()) {
-        statePusher.pop();
+    if (needsPositionedMovementLayout() && !tryLayoutDoingPositionedMovementOnly())
         return false;
-    }
 
     // Lay out positioned descendants or objects that just need to recompute overflow.
     if (needsSimplifiedNormalFlowLayout())
@@ -1354,8 +1352,6 @@ bool RenderBlock::simplifiedLayout()
     LayoutUnit oldClientAfterEdge = hasRenderOverflow() ? m_overflow->layoutClientAfterEdge() : clientLogicalBottom();
     computeOverflow(oldClientAfterEdge, true);
 
-    statePusher.pop();
-    
     updateLayerTransform();
 
     updateScrollInfoAfterLayout();

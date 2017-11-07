@@ -68,8 +68,6 @@ void RenderVTTCue::layout()
             repositionCueSnapToLinesNotSet();
     } else
         repositionGenericCue();
-
-    statePusher.pop();
 }
 
 bool RenderVTTCue::initializeLayoutParameters(InlineFlowBox*& firstLineBox, LayoutUnit& step, LayoutUnit& position)
