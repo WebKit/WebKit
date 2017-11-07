@@ -155,6 +155,13 @@ void ensureGigacage()
                 fprintf(stderr, "FATAL: Could not allocate gigacage memory with maxAlignment = %lu, totalSize = %lu.\n", maxAlignment, totalSize);
                 BCRASH();
             }
+
+            if (GIGACAGE_RUNWAY) {
+                char* runway = reinterpret_cast<char*>(base) + totalSize - GIGACAGE_RUNWAY;
+                // Make OOB accesses into the runway crash.
+                vmRevokePermissions(runway, GIGACAGE_RUNWAY);
+            }
+
             vmDeallocatePhysicalPages(base, totalSize);
             
             size_t nextCage = 0;
