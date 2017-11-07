@@ -172,6 +172,7 @@ platform/ios/ios/fast/forms/range-input-touches.html [ Skip ]
 platform/ios/ios/fast/text/data-detectors/phone-disabled.html [ Skip ]
 platform/ios/ios/fast/text/data-detectors/phone.html [ Skip ]
 platform/ios/ios/touch [ Skip ]
+media/modern-media-controls/css/pointer-events-none.html [ Skip ]
 
 # Codecs not supported
 media/media-can-play-ogg.html [ WontFix ]
