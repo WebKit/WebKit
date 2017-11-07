@@ -1876,7 +1876,7 @@ void testArgumentRegPinned2()
 
     B3::BasicBlock* b3Root = proc.addBlock();
     B3::PatchpointValue* patchpoint = b3Root->appendNew<B3::PatchpointValue>(proc, B3::Void, B3::Origin());
-    patchpoint->clobber(RegisterSet()); 
+    patchpoint->clobber({ }); 
     patchpoint->setGenerator(
         [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             jit.move(CCallHelpers::TrustedImm32(42), pinned);

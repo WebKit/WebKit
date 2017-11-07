@@ -222,7 +222,7 @@ JITCode::CodePtr NativeJITCode::addressForCall(ArityCheckMode)
 #if ENABLE(JIT)
 RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex)
 {
-    return RegisterSet();
+    return { };
 }
 #endif
 

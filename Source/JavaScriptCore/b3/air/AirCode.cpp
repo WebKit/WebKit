@@ -89,7 +89,7 @@ Code::~Code()
 void Code::setRegsInPriorityOrder(Bank bank, const Vector<Reg>& regs)
 {
     regsInPriorityOrderImpl(bank) = regs;
-    m_mutableRegs = RegisterSet();
+    m_mutableRegs = { };
     forEachBank(
         [&] (Bank bank) {
             for (Reg reg : regsInPriorityOrder(bank))

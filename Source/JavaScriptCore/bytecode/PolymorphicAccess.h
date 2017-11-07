@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -233,10 +233,10 @@ struct AccessGenerationState {
 
     const RegisterSet& calculateLiveRegistersForCallAndExceptionHandling();
 
-    SpillState preserveLiveRegistersToStackForCall(const RegisterSet& extra = RegisterSet());
+    SpillState preserveLiveRegistersToStackForCall(const RegisterSet& extra = { });
 
     void restoreLiveRegistersFromStackForCallWithThrownException(const SpillState&);
-    void restoreLiveRegistersFromStackForCall(const SpillState&, const RegisterSet& dontRestore = RegisterSet());
+    void restoreLiveRegistersFromStackForCall(const SpillState&, const RegisterSet& dontRestore = { });
 
     const RegisterSet& liveRegistersForCall();
 

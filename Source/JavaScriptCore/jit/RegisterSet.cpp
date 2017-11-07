@@ -54,7 +54,7 @@ RegisterSet RegisterSet::reservedHardwareRegisters()
 #elif CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL)
     return RegisterSet(ARMRegisters::lr, ARMRegisters::pc);
 #else
-    return RegisterSet();
+    return { };
 #endif
 }
 
@@ -63,7 +63,7 @@ RegisterSet RegisterSet::runtimeRegisters()
 #if USE(JSVALUE64)
     return RegisterSet(GPRInfo::tagTypeNumberRegister, GPRInfo::tagMaskRegister);
 #else
-    return RegisterSet();
+    return { };
 #endif
 }
 
@@ -101,7 +101,7 @@ RegisterSet RegisterSet::macroScratchRegisters()
     result.set(MacroAssembler::cmpTempRegister);
     return result;
 #else
-    return RegisterSet();
+    return { };
 #endif
 }
 

@@ -91,12 +91,12 @@ CCallHelpers::Jump PrintSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
 
 RegisterSet PrintSpecial::extraEarlyClobberedRegs(Inst&)
 {
-    return RegisterSet();
+    return { };
 }
 
 RegisterSet PrintSpecial::extraClobberedRegs(Inst&)
 {
-    return RegisterSet();
+    return { };
 }
 
 void PrintSpecial::dumpImpl(PrintStream& out) const

@@ -40,6 +40,8 @@ class RegisterAtOffsetList;
 
 class RegisterSet {
 public:
+    RegisterSet() { }
+
     template<typename... Regs>
     explicit RegisterSet(Regs... regs)
     {

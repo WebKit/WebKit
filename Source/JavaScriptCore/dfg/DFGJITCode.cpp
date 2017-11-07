@@ -117,7 +117,7 @@ RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBloc
         }
     }
 
-    return RegisterSet();
+    return { };
 }
 
 #if ENABLE(FTL_JIT)

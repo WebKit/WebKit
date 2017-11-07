@@ -919,7 +919,7 @@ void B3IRGenerator::emitTierUpCheck(uint32_t decrementCount, Origin origin)
             tierUp.link(&jit);
 
             const unsigned extraPaddingBytes = 0;
-            RegisterSet registersToSpill = RegisterSet();
+            RegisterSet registersToSpill = { };
             registersToSpill.add(GPRInfo::argumentGPR1);
             unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 

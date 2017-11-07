@@ -143,7 +143,7 @@ RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBloc
             return ValueRep::usedRegisters(exit.m_valueReps);
         }
     }
-    return RegisterSet();
+    return { };
 }
 
 std::optional<CodeOrigin> JITCode::findPC(CodeBlock* codeBlock, void* pc)

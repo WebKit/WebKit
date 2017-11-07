@@ -1,5 +1,40 @@
 2017-11-07  Mark Lam  <mark.lam@apple.com>
 
+        Introduce a default RegisterSet constructor so that we can use { } notation.
+        https://bugs.webkit.org/show_bug.cgi?id=179389
+
+        Reviewed by Saam Barati.
+
+        I also replaced uses of "RegisterSet()" with "{ }" where the use of "RegisterSet()"
+        does not add any code documentation value.
+
+        * b3/air/AirAllocateRegistersAndStackByLinearScan.cpp:
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::setRegsInPriorityOrder):
+        * b3/air/AirPrintSpecial.cpp:
+        (JSC::B3::Air::PrintSpecial::extraEarlyClobberedRegs):
+        (JSC::B3::Air::PrintSpecial::extraClobberedRegs):
+        * b3/air/testair.cpp:
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessGenerationState::preserveLiveRegistersToStackForCall):
+        (JSC::AccessGenerationState::restoreLiveRegistersFromStackForCall):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        * jit/JITCode.cpp:
+        (JSC::JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::reservedHardwareRegisters):
+        (JSC::RegisterSet::runtimeRegisters):
+        (JSC::RegisterSet::macroScratchRegisters):
+        * jit/RegisterSet.h:
+        (JSC::RegisterSet::RegisterSet):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::emitTierUpCheck):
+
+2017-11-07  Mark Lam  <mark.lam@apple.com>
+
         AccessCase::generateImpl() should exclude the result register when restoring registers after a call.
         https://bugs.webkit.org/show_bug.cgi?id=179355
         <rdar://problem/35263053>
