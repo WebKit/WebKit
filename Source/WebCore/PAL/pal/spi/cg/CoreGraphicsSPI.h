@@ -254,6 +254,7 @@ bool CGColorSpaceUsesExtendedRange(CGColorSpaceRef);
 typedef struct CGPDFAnnotation *CGPDFAnnotationRef;
 typedef bool (^CGPDFAnnotationDrawCallbackType)(CGContextRef context, CGPDFPageRef page, CGPDFAnnotationRef annotation);
 void CGContextDrawPDFPageWithAnnotations(CGContextRef, CGPDFPageRef, CGPDFAnnotationDrawCallbackType);
+void CGContextDrawPathDirect(CGContextRef, CGPathDrawingMode, CGPathRef, const CGRect* boundingBox);
 #endif
 
 #if USE(IOSURFACE)

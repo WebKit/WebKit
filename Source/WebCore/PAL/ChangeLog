@@ -1,3 +1,15 @@
+2017-11-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [CG] Adopt CGContextDrawPathDirect()
+        https://bugs.webkit.org/show_bug.cgi?id=179339
+        <rdar://problem/26283575>
+
+        Reviewed by Simon Fraser.
+
+        Add CGContextDrawPathDirect() as a new CoreGraphics SPI.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+
 2017-11-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r224353.

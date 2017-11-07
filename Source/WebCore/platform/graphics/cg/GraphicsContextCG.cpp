@@ -52,6 +52,8 @@
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
+#define USE_DRAW_PATH_DIRECT (PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200))
+
 // FIXME: The following using declaration should be in <wtf/HashFunctions.h>.
 using WTF::pairIntHash;
 
@@ -713,17 +715,21 @@ void GraphicsContext::drawPath(const Path& path)
         return;
     }
 
-    CGContextBeginPath(context);
-    CGContextAddPath(context, path.platformPath());
-
     if (state.fillPattern)
         applyFillPattern();
     if (state.strokePattern)
         applyStrokePattern();
 
     CGPathDrawingMode drawingMode;
-    if (calculateDrawingMode(state, drawingMode))
+    if (calculateDrawingMode(state, drawingMode)) {
+#if USE_DRAW_PATH_DIRECT
+        CGContextDrawPathDirect(context, drawingMode, path.platformPath(), nullptr);
+#else
+        CGContextBeginPath(context);
+        CGContextAddPath(context, path.platformPath());
         CGContextDrawPath(context, drawingMode);
+#endif
+    }
 }
 
 void GraphicsContext::fillPath(const Path& path)
@@ -777,16 +783,18 @@ void GraphicsContext::fillPath(const Path& path)
         return;
     }
 
-    CGContextBeginPath(context);
-    CGContextAddPath(context, path.platformPath());
-
     if (m_state.fillPattern)
         applyFillPattern();
-
+#if USE_DRAW_PATH_DIRECT
+    CGContextDrawPathDirect(context, fillRule() == RULE_EVENODD ? kCGPathEOFill : kCGPathFill, path.platformPath(), nullptr);
+#else
+    CGContextBeginPath(context);
+    CGContextAddPath(context, path.platformPath());
     if (fillRule() == RULE_EVENODD)
         CGContextEOFillPath(context);
     else
         CGContextFillPath(context);
+#endif
 }
 
 void GraphicsContext::strokePath(const Path& path)
@@ -800,9 +808,6 @@ void GraphicsContext::strokePath(const Path& path)
     }
 
     CGContextRef context = platformContext();
-
-    CGContextBeginPath(context);
-    CGContextAddPath(context, path.platformPath());
 
     if (m_state.strokeGradient) {
         if (hasShadow()) {
@@ -838,6 +843,8 @@ void GraphicsContext::strokePath(const Path& path)
             CGLayerRelease(layer);
         } else {
             CGContextStateSaver stateSaver(context);
+            CGContextBeginPath(context);
+            CGContextAddPath(context, path.platformPath());
             CGContextReplacePathWithStrokedPath(context);
             CGContextClip(context);
             CGContextConcatCTM(context, m_state.strokeGradient->gradientSpaceTransform());
@@ -848,7 +855,13 @@ void GraphicsContext::strokePath(const Path& path)
 
     if (m_state.strokePattern)
         applyStrokePattern();
+#if USE_DRAW_PATH_DIRECT
+    CGContextDrawPathDirect(context, kCGPathStroke, path.platformPath(), nullptr);
+#else
+    CGContextBeginPath(context);
+    CGContextAddPath(context, path.platformPath());
     CGContextStrokePath(context);
+#endif
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect)
