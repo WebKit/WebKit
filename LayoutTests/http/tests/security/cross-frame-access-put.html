@@ -3,6 +3,11 @@
 <iframe src="http://localhost:8000/security/resources/cross-frame-iframe-for-put-test.html" style=""></iframe>
 <pre id="console"></pre>
 <script>
+if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
 function log(s)
 {
     document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
@@ -20,14 +25,6 @@ function setForbiddenProperty(obj, prop)
 window.targetWindow = window.frames[0];
 
 window.addEventListener("message", test, false);
-
-window.onload = function()
-{
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
-}
 
 function test(message) {
     alert(message.data);

@@ -1,3 +1,15 @@
+2017-11-07  Chris Dumez  <cdumez@apple.com>
+
+        LayoutTest http/tests/security/cross-frame-access-put.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=179195
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix flaky test by calling the testRunner functions as early as possible, not in
+        the onload event handler.
+
+        * http/tests/security/cross-frame-access-put.html:
+
 2017-11-07  Maciej Stachowiak  <mjs@apple.com>
 
         Update WPT encoding test suite to the latest version.
