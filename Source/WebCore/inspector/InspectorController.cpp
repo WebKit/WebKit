@@ -83,8 +83,8 @@
 #include "PageDebuggable.h"
 #endif
 
-
 namespace WebCore {
+
 using namespace JSC;
 using namespace Inspector;
 
@@ -101,22 +101,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
 {
     ASSERT_ARG(inspectorClient, inspectorClient);
 
-    AgentContext baseContext = {
-        *this,
-        *m_injectedScriptManager,
-        m_frontendRouter.get(),
-        m_backendDispatcher.get()
-    };
-
-    WebAgentContext webContext = {
-        baseContext,
-        m_instrumentingAgents.get()
-    };
-
-    PageAgentContext pageContext = {
-        webContext,
-        m_page
-    };
+    auto pageContext = pageAgentContext();
 
     auto inspectorAgentPtr = std::make_unique<InspectorAgent>(pageContext);
     m_inspectorAgent = inspectorAgentPtr.get();
@@ -128,30 +113,17 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     m_pageAgent = pageAgentPtr.get();
     m_agents.append(WTFMove(pageAgentPtr));
 
-    auto runtimeAgentPtr = std::make_unique<PageRuntimeAgent>(pageContext, pageAgent);
-    PageRuntimeAgent* runtimeAgent = runtimeAgentPtr.get();
-    m_instrumentingAgents->setPageRuntimeAgent(runtimeAgent);
-    m_agents.append(WTFMove(runtimeAgentPtr));
+    auto runtimeAgent = std::make_unique<PageRuntimeAgent>(pageContext, pageAgent);
+    m_instrumentingAgents->setPageRuntimeAgent(runtimeAgent.get());
+    m_agents.append(WTFMove(runtimeAgent));
 
     auto domAgentPtr = std::make_unique<InspectorDOMAgent>(pageContext, pageAgent, m_overlay.get());
     m_domAgent = domAgentPtr.get();
     m_agents.append(WTFMove(domAgentPtr));
 
-    m_agents.append(std::make_unique<InspectorCSSAgent>(pageContext, m_domAgent));
-
     auto databaseAgentPtr = std::make_unique<InspectorDatabaseAgent>(pageContext);
     InspectorDatabaseAgent* databaseAgent = databaseAgentPtr.get();
     m_agents.append(WTFMove(databaseAgentPtr));
-
-    m_agents.append(std::make_unique<InspectorNetworkAgent>(pageContext, pageAgent));
-
-#if ENABLE(INDEXED_DATABASE)
-    m_agents.append(std::make_unique<InspectorIndexedDBAgent>(pageContext, pageAgent));
-#endif
-
-#if ENABLE(RESOURCE_USAGE)
-    m_agents.append(std::make_unique<InspectorMemoryAgent>(pageContext));
-#endif
 
     auto domStorageAgentPtr = std::make_unique<InspectorDOMStorageAgent>(pageContext, m_pageAgent);
     InspectorDOMStorageAgent* domStorageAgent = domStorageAgentPtr.get();
@@ -170,15 +142,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     m_instrumentingAgents->setWebConsoleAgent(consoleAgentPtr.get());
     m_agents.append(WTFMove(consoleAgentPtr));
 
-    auto debuggerAgentPtr = std::make_unique<PageDebuggerAgent>(pageContext, pageAgent, m_overlay.get());
-    PageDebuggerAgent* debuggerAgent = debuggerAgentPtr.get();
-    m_agents.append(WTFMove(debuggerAgentPtr));
-
     m_agents.append(std::make_unique<InspectorTimelineAgent>(pageContext, scriptProfilerAgent, heapAgent, pageAgent));
-    m_agents.append(std::make_unique<InspectorDOMDebuggerAgent>(pageContext, m_domAgent, debuggerAgent));
-    m_agents.append(std::make_unique<InspectorApplicationCacheAgent>(pageContext, pageAgent));
-    m_agents.append(std::make_unique<InspectorLayerTreeAgent>(pageContext));
-    m_agents.append(std::make_unique<InspectorWorkerAgent>(pageContext));
 
     auto canvasAgentPtr = std::make_unique<InspectorCanvasAgent>(pageContext);
     m_instrumentingAgents->setInspectorCanvasAgent(canvasAgentPtr.get());
@@ -186,7 +150,8 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
 
     ASSERT(m_injectedScriptManager->commandLineAPIHost());
     if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost()) {
-        commandLineAPIHost->init(m_inspectorAgent
+        commandLineAPIHost->init(
+              m_inspectorAgent
             , consoleAgent
             , m_domAgent
             , domStorageAgent
@@ -199,6 +164,55 @@ InspectorController::~InspectorController()
 {
     m_instrumentingAgents->reset();
     ASSERT(!m_inspectorClient);
+}
+
+PageAgentContext InspectorController::pageAgentContext()
+{
+    AgentContext baseContext = {
+        *this,
+        *m_injectedScriptManager,
+        m_frontendRouter.get(),
+        m_backendDispatcher.get()
+    };
+
+    WebAgentContext webContext = {
+        baseContext,
+        m_instrumentingAgents.get()
+    };
+
+    PageAgentContext pageContext = {
+        webContext,
+        m_page
+    };
+
+    return pageContext;
+}
+
+void InspectorController::createLazyAgents()
+{
+    if (m_didCreateLazyAgents)
+        return;
+
+    m_didCreateLazyAgents = true;
+
+    auto pageContext = pageAgentContext();
+
+    auto debuggerAgent = std::make_unique<PageDebuggerAgent>(pageContext, m_pageAgent, m_overlay.get());
+    auto debuggerAgentPtr = debuggerAgent.get();
+
+    m_agents.append(WTFMove(debuggerAgent));
+    m_agents.append(std::make_unique<InspectorNetworkAgent>(pageContext, m_pageAgent));
+    m_agents.append(std::make_unique<InspectorCSSAgent>(pageContext, m_domAgent));
+    m_agents.append(std::make_unique<InspectorDOMDebuggerAgent>(pageContext, m_domAgent, debuggerAgentPtr));
+    m_agents.append(std::make_unique<InspectorApplicationCacheAgent>(pageContext, m_pageAgent));
+    m_agents.append(std::make_unique<InspectorLayerTreeAgent>(pageContext));
+    m_agents.append(std::make_unique<InspectorWorkerAgent>(pageContext));
+#if ENABLE(INDEXED_DATABASE)
+    m_agents.append(std::make_unique<InspectorIndexedDBAgent>(pageContext, m_pageAgent));
+#endif
+#if ENABLE(RESOURCE_USAGE)
+    m_agents.append(std::make_unique<InspectorMemoryAgent>(pageContext));
+#endif
 }
 
 void InspectorController::inspectedPageDestroyed()
@@ -251,6 +265,8 @@ void InspectorController::connectFrontend(Inspector::FrontendChannel* frontendCh
 {
     ASSERT_ARG(frontendChannel, frontendChannel);
     ASSERT(m_inspectorClient);
+
+    createLazyAgents();
 
     bool connectedFirstFrontend = !m_frontendRouter->hasFrontends();
     m_isAutomaticInspection = isAutomaticInspection;

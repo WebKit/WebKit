@@ -66,6 +66,7 @@ class InstrumentingAgents;
 class Node;
 class Page;
 class WebInjectedScriptManager;
+struct PageAgentContext;
 
 class InspectorController final : public Inspector::InspectorEnvironment {
     WTF_MAKE_NONCOPYABLE(InspectorController);
@@ -128,6 +129,9 @@ public:
 private:
     friend class InspectorInstrumentation;
 
+    PageAgentContext pageAgentContext();
+    void createLazyAgents();
+
     Ref<InstrumentingAgents> m_instrumentingAgents;
     std::unique_ptr<WebInjectedScriptManager> m_injectedScriptManager;
     Ref<Inspector::FrontendRouter> m_frontendRouter;
@@ -148,6 +152,7 @@ private:
     bool m_isUnderTest { false };
     bool m_isAutomaticInspection { false };
     bool m_pauseAfterInitialization = { false };
+    bool m_didCreateLazyAgents { false };
 };
 
 } // namespace WebCore
