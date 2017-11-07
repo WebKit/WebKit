@@ -1,5 +1,23 @@
 2017-11-07  Aakash Jain  <aakash_jain@apple.com>
 
+        fix check-webkit-style errors in webkitpy about not having two spaces before inline comment
+        https://bugs.webkit.org/show_bug.cgi?id=171506
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (SCMTest._shared_test_reverse_diff): Added two spaces before inline comment.
+        (test_create_patch_is_full_patch): Ditto.
+        * Scripts/webkitpy/common/thread/messagepump.py:
+        (MessagePump): Ditto.
+        * Scripts/webkitpy/layout_tests/servers/http_server.py:
+        (Lighttpd._prepare_config): Ditto.
+        * Scripts/webkitpy/style/checker.py: Ditto.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (OrderOfIncludesTest.test_check_preprocessor_in_include_section): Ditto.
+
+2017-11-07  Aakash Jain  <aakash_jain@apple.com>
+
         Add support for webkitpy tests EWS
         https://bugs.webkit.org/show_bug.cgi?id=178480
 

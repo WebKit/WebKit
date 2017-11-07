@@ -142,13 +142,14 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Tools', 'DumpRenderTree', 'TestNetscapePlugIn')],
      ["-build/include",
       "-readability/naming"]),
-    ([# There is no clean way to avoid "yy_*" names used by flex.
+    ([  # There is no clean way to avoid "yy_*" names used by flex.
       os.path.join('Source', 'WebCore', 'css', 'CSSParser.cpp'),
       # TestWebKitAPI uses funny macros like EXPECT_WK_STREQ.
       os.path.join('Tools', 'TestWebKitAPI')],
      ["-readability/naming"]),
 
-    ([# The GTK+ and WPE APIs use upper case, underscore separated, words in
+    ([
+      # The GTK+ and WPE APIs use upper case, underscore separated, words in
       # certain types of enums (e.g. signals, properties).
       os.path.join('Source', 'WebKit', 'Shared', 'API', 'glib'),
       os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'glib'),
@@ -159,31 +160,35 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'wpe')],
      ["-readability/enum_casing"]),
 
-    ([# To use GStreamer GL without conflicts of GL symbols,
+    ([
+      # To use GStreamer GL without conflicts of GL symbols,
       # we should include gst/gl/gl.h before including OpenGL[ES]Shims
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'MediaPlayerPrivateGStreamerBase.cpp')],
      ["-build/include_order"]),
 
-    ([# Header files in ForwardingHeaders have no header guards or
+    ([
+      # Header files in ForwardingHeaders have no header guards or
       # exceptional header guards (e.g., WebCore_FWD_Debugger_h).
       os.path.join(os.path.sep, 'ForwardingHeaders')],
      ["-build/header_guard"]),
-    ([# assembler has lots of opcodes that use underscores, so
+    ([
+      # Assembler has lots of opcodes that use underscores, so
       # we don't check for underscores in that directory.
       os.path.join('Source', 'JavaScriptCore', 'assembler'),
       os.path.join('Source', 'JavaScriptCore', 'jit', 'JIT')],
      ["-readability/naming/underscores"]),
-    ([# JITStubs has an usual syntax which causes false alarms for a few checks.
+    ([  # JITStubs has an usual syntax which causes false alarms for a few checks.
       os.path.join('JavaScriptCore', 'jit', 'JITStubs.cpp')],
      ["-readability/parameter_name",
       "-whitespace/parens"]),
 
     # WebKit rules:
     # WebKit and certain directories have idiosyncracies.
-    ([# NPAPI has function names with underscores.
+    ([  # NPAPI has function names with underscores.
       os.path.join('Source', 'WebKit', 'WebProcess', 'Plugins', 'Netscape')],
      ["-readability/naming"]),
-    ([# The WebKit C API has names with underscores and whitespace-aligned
+    ([
+      # The WebKit C API has names with underscores and whitespace-aligned
       # struct members. Also, we allow unnecessary parameter names in
       # WebKit APIs because we're matching CF's header style.
       # Additionally, we use word which starts with non-capital letter 'k'
@@ -195,7 +200,8 @@ _PATH_RULES_SPECIFIER = [
       "-readability/naming",
       "-readability/parameter_name",
       "-whitespace/declaration"]),
-    ([# These files define GObjects, which implies some definitions of
+    ([
+      # These files define GObjects, which implies some definitions of
       # variables and functions containing underscores.
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'VideoSinkGStreamer.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'WebKitWebSourceGStreamer.cpp'),
@@ -220,31 +226,33 @@ _PATH_RULES_SPECIFIER = [
       "+pep8/W291",  # Trailing white space
       "+whitespace/carriage_return"]),
 
-    ([# Source/JavaScriptCore/disassembler/udis86/ is generated code.
+    ([  # Source/JavaScriptCore/disassembler/udis86/ is generated code.
       os.path.join('Source', 'JavaScriptCore', 'disassembler', 'udis86')],
      ["-readability/naming/underscores",
       "-whitespace/declaration",
       "-whitespace/indent"]),
 
-    ([# There is no way to avoid the symbols __jit_debug_register_code
+    ([
+      # There is no way to avoid the symbols __jit_debug_register_code
       # and __jit_debug_descriptor when integrating with gdb.
       os.path.join('Source', 'JavaScriptCore', 'jit', 'GDBInterface.cpp')],
      ["-readability/naming"]),
 
-    ([# On some systems the trailing CR is causing parser failure.
+    ([  # On some systems the trailing CR is causing parser failure.
       os.path.join('Source', 'JavaScriptCore', 'parser', 'Keywords.table')],
      ["+whitespace/carriage_return"]),
 
-    ([# DataDetectorsCoreSPI.h declares enum bitfields as CFIndex.
+    ([  # DataDetectorsCoreSPI.h declares enum bitfields as CFIndex.
       os.path.join('Source', 'WebCore', 'PAL', 'pal', 'spi', 'cocoa', 'DataDetectorsCoreSPI.h')],
      ["-runtime/enum_bitfields"]),
 
-    ([# PassKitSPI.h imports "PassKit.h" at two lines depending on the build configuration,
+    ([
+      # PassKitSPI.h imports "PassKit.h" at two lines depending on the build configuration,
       # which causes a false positive error.
       os.path.join('Source', 'WebCore', 'PAL', 'pal', 'spi', 'cocoa', 'PassKitSPI.h')],
      ["-build/include"]),
 
-    ([# Some SPI headers have identifier names with underscores.
+    ([  # Some SPI headers have identifier names with underscores.
       os.path.join('Source', 'WebCore', 'PAL', 'pal', 'spi')],
      ["-readability/naming/underscores"]),
 ]

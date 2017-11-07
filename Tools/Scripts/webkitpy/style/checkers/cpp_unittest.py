@@ -2878,7 +2878,7 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          '#else\n'
                                          '#include "foobar.h"\n'
                                          '#endif"\n'
-                                         '#include "bar.h"\n', # No flag because previous is in preprocessor section
+                                         '#include "bar.h"\n',  # No flag because previous is in preprocessor section.
                                          '')
 
         self.assert_language_rules_check('foo.cpp',
@@ -2889,7 +2889,7 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          '#include "baz.h"\n'
                                          '#endif"\n'
                                          '#include "bar.h"\n'
-                                         '#include "a.h"\n', # Should still flag this.
+                                         '#include "a.h"\n',  # Should still flag this.
                                          'Alphabetical sorting problem.  [build/include_order] [4]')
 
         self.assert_language_rules_check('foo.cpp',
@@ -2898,7 +2898,7 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          '\n'
                                          '#ifdef BAZ\n'
                                          '#include "baz.h"\n'
-                                         '#include "bar.h"\n' #Should still flag this
+                                         '#include "bar.h"\n'  # Should still flag this.
                                          '#endif"\n',
                                          'Alphabetical sorting problem.  [build/include_order] [4]')
 
@@ -2913,7 +2913,7 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          '#include "foobar.h"\n'
                                          '#endif"\n'
                                          '#include "bar.h"\n'
-                                         '#include "a.h"\n', # Should still flag this.
+                                         '#include "a.h"\n',  # Should still flag this.
                                          'Alphabetical sorting problem.  [build/include_order] [4]')
 
         # Check that after an already included error, the sorting rules still work.

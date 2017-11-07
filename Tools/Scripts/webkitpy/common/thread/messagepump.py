@@ -39,7 +39,7 @@ class MessagePumpDelegate(object):
 
 
 class MessagePump(object):
-    interval = 10 # seconds
+    interval = 10  # seconds.
 
     def __init__(self, delegate, message_queue):
         self._delegate = delegate

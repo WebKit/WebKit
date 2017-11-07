@@ -172,8 +172,7 @@ class Lighttpd(http_server_base.HttpServerBase):
                      '-m', module_path]
 
         if not self._run_background:
-            start_cmd.append(# Don't background
-                             '-D')
+            start_cmd.append('-D')  # Don't background.
 
         # Copy liblightcomp.dylib to /tmp/lighttpd/lib to work around the
         # bug that mod_alias.so loads it from the hard coded path.

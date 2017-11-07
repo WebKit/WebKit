@@ -416,7 +416,7 @@ class SCMTest(unittest.TestCase):
         self.assertEqual(self.scm.committer_email_for_revision(3), getpass.getuser())  # Committer "email" will be the current user
 
     def _shared_test_reverse_diff(self):
-        self._setup_webkittools_scripts_symlink(self.scm) # Git's apply_reverse_diff uses resolve-ChangeLogs
+        self._setup_webkittools_scripts_symlink(self.scm)  # Git's apply_reverse_diff uses resolve-ChangeLogs.
         # Only test the simple case, as any other will end up with conflict markers.
         self.scm.apply_reverse_diff('5')
         self.assertEqual(read_from_path('test_file'), "test1test2test3\n")
@@ -703,7 +703,7 @@ class SVNTest(SCMTest):
         # Change into our test directory and run the create_patch command.
         os.chdir(test_dir_path)
         scm = detect_scm_system(test_dir_path)
-        self.assertEqual(scm.checkout_root, self.svn_checkout_path) # Sanity check that detection worked right.
+        self.assertEqual(scm.checkout_root, self.svn_checkout_path)  # Sanity check that detection worked right.
         actual_patch_contents = scm.create_patch()
         expected_patch_contents = """Index: test_dir2/test_file2
 ===================================================================
