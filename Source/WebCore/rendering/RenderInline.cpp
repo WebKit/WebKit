@@ -30,6 +30,7 @@
 #include "HitTestResult.h"
 #include "InlineElementBox.h"
 #include "InlineTextBox.h"
+#include "LayoutState.h"
 #include "RenderBlock.h"
 #include "RenderChildIterator.h"
 #include "RenderFragmentedFlow.h"
@@ -1161,7 +1162,7 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBoxInFragment(const RenderFr
 LayoutRect RenderInline::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
 {
     // Only first-letter renderers are allowed in here during layout. They mutate the tree triggering repaints.
-    ASSERT(!view().layoutStateEnabled() || style().styleType() == FIRST_LETTER || hasSelfPaintingLayer());
+    ASSERT(!view().frameView().layoutContext().layoutStateEnabled() || style().styleType() == FIRST_LETTER || hasSelfPaintingLayer());
 
     if (!firstLineBoxIncludingCulling() && !continuation())
         return LayoutRect();
@@ -1218,8 +1219,8 @@ LayoutRect RenderInline::computeRectForRepaint(const LayoutRect& rect, const Ren
 {
     // LayoutState is only valid for root-relative repainting
     LayoutRect adjustedRect = rect;
-    if (view().layoutStateEnabled() && !repaintContainer) {
-        LayoutState* layoutState = view().layoutState();
+    if (view().frameView().layoutContext().layoutStateEnabled() && !repaintContainer) {
+        auto* layoutState = view().frameView().layoutContext().layoutState();
         if (style().hasInFlowPosition() && layer())
             adjustedRect.move(layer()->offsetForInFlowPosition());
         adjustedRect.move(layoutState->m_paintOffset);
@@ -1286,8 +1287,8 @@ void RenderInline::mapLocalToContainer(const RenderLayerModelObject* repaintCont
     if (repaintContainer == this)
         return;
 
-    if (view().layoutStateEnabled() && !repaintContainer) {
-        LayoutState* layoutState = view().layoutState();
+    if (view().frameView().layoutContext().layoutStateEnabled() && !repaintContainer) {
+        auto* layoutState = view().frameView().layoutContext().layoutState();
         LayoutSize offset = layoutState->m_paintOffset;
         if (style().hasInFlowPosition() && layer())
             offset += layer()->offsetForInFlowPosition();

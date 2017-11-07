@@ -31,6 +31,7 @@
 #include "GridPositionsResolver.h"
 #include "GridTrackSizingAlgorithm.h"
 #include "LayoutRepainter.h"
+#include "LayoutState.h"
 #include "RenderChildIterator.h"
 #include "RenderLayer.h"
 #include "RenderView.h"

@@ -33,6 +33,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "InlineElementBox.h"
+#include "LayoutState.h"
 #include "Node.h"
 #include "PODIntervalTree.h"
 #include "RenderBoxFragmentInfo.h"
@@ -224,7 +225,7 @@ void RenderFragmentedFlow::repaintRectangleInFragments(const LayoutRect& repaint
     if (!shouldRepaint(repaintRect) || !hasValidFragmentInfo())
         return;
 
-    LayoutStateDisabler layoutStateDisabler(view()); // We can't use layout state to repaint, since the fragments are somewhere else.
+    LayoutStateDisabler layoutStateDisabler(view().frameView().layoutContext()); // We can't use layout state to repaint, since the fragments are somewhere else.
 
     for (auto& fragment : m_fragmentList)
         fragment->repaintFragmentedFlowContent(repaintRect);

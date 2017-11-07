@@ -220,7 +220,7 @@ static bool supportsFirstLetter(RenderBlock& block)
 
 void RenderTreeUpdater::FirstLetter::update(RenderBlock& block)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!block.view().layoutState());
+    ASSERT_WITH_SECURITY_IMPLICATION(!block.view().frameView().layoutContext().layoutState());
 
     if (!supportsFirstLetter(block))
         return;

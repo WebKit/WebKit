@@ -71,7 +71,7 @@ static RenderObject* firstNonMarkerChild(RenderBlock& parent)
 
 void RenderTreeUpdater::ListItem::updateMarker(RenderListItem& listItemRenderer)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!listItemRenderer.view().layoutState());
+    ASSERT_WITH_SECURITY_IMPLICATION(!listItemRenderer.view().frameView().layoutContext().layoutState());
 
     auto& style = listItemRenderer.style();
 
