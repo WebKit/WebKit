@@ -49,7 +49,7 @@ class WebResourceLoadScheduler final : public WebCore::LoaderStrategy {
 public:
     WebResourceLoadScheduler();
 
-    RefPtr<WebCore::SubresourceLoader> loadResource(WebCore::Frame&, WebCore::CachedResource&, const WebCore::ResourceRequest&, const WebCore::ResourceLoaderOptions&) final;
+    void loadResource(WebCore::Frame&, WebCore::CachedResource&, WebCore::ResourceRequest&&, const WebCore::ResourceLoaderOptions&, CompletionHandler<void(RefPtr<WebCore::SubresourceLoader>&&)>&&) final;
     void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, WebCore::ClientCredentialPolicy, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>&) final;
     void remove(WebCore::ResourceLoader*) final;
     void setDefersLoading(WebCore::ResourceLoader*, bool) final;
@@ -70,7 +70,7 @@ public:
     bool isSerialLoadingEnabled() const { return m_isSerialLoadingEnabled; }
     void setSerialLoadingEnabled(bool b) { m_isSerialLoadingEnabled = b; }
 
-    RefPtr<WebCore::NetscapePlugInStreamLoader> schedulePluginStreamLoad(WebCore::Frame&, WebCore::NetscapePlugInStreamLoaderClient&, const WebCore::ResourceRequest&);
+    void schedulePluginStreamLoad(WebCore::Frame&, WebCore::NetscapePlugInStreamLoaderClient&, WebCore::ResourceRequest&&, CompletionHandler<void(RefPtr<WebCore::NetscapePlugInStreamLoader>&&)>&&);
 
 protected:
     virtual ~WebResourceLoadScheduler();

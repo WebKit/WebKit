@@ -98,7 +98,9 @@ void PluginStream::start()
 {
     ASSERT(!m_loadManually);
     ASSERT(m_frame);
-    m_loader = webResourceLoadScheduler().schedulePluginStreamLoad(*m_frame, *this, m_resourceRequest);
+    webResourceLoadScheduler().schedulePluginStreamLoad(*m_frame, *this, ResourceRequest(m_resourceRequest), [this, protectedThis = makeRef(*this)] (RefPtr<WebCore::NetscapePlugInStreamLoader>&& loader) {
+        m_loader = WTFMove(loader);
+    });
 }
 
 void PluginStream::stop()

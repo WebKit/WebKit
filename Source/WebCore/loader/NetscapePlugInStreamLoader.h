@@ -51,13 +51,13 @@ protected:
 
 class NetscapePlugInStreamLoader final : public ResourceLoader {
 public:
-    WEBCORE_EXPORT static RefPtr<NetscapePlugInStreamLoader> create(Frame&, NetscapePlugInStreamLoaderClient&, const ResourceRequest&);
+    WEBCORE_EXPORT static void create(Frame&, NetscapePlugInStreamLoaderClient&, ResourceRequest&&, CompletionHandler<void(RefPtr<NetscapePlugInStreamLoader>&&)>&&);
     virtual ~NetscapePlugInStreamLoader();
 
     WEBCORE_EXPORT bool isDone() const;
 
 private:
-    bool init(const ResourceRequest&) override;
+    void init(ResourceRequest&&, CompletionHandler<void(bool)>&&) override;
 
     void willSendRequest(ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& callback) override;
     void didReceiveResponse(const ResourceResponse&) override;

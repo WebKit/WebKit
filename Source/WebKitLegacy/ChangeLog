@@ -1,3 +1,15 @@
+2017-11-06  Alex Christensen  <achristensen@webkit.org>
+
+        Make ResourceLoader::willSendRequestInternal asynchronous
+        https://bugs.webkit.org/show_bug.cgi?id=179251
+
+        Reviewed by Andy Estes.
+
+        * WebCoreSupport/WebResourceLoadScheduler.cpp:
+        (WebResourceLoadScheduler::loadResource):
+        (WebResourceLoadScheduler::schedulePluginStreamLoad):
+        * WebCoreSupport/WebResourceLoadScheduler.h:
+
 2017-11-02  Christopher Reid  <chris.reid@sony.com>
 
         Add a FileSystem namespace to FileSystem.cpp

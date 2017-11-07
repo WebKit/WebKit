@@ -54,7 +54,7 @@ struct FetchOptions;
 
 class WEBCORE_EXPORT LoaderStrategy {
 public:
-    virtual RefPtr<SubresourceLoader> loadResource(Frame&, CachedResource&, const ResourceRequest&, const ResourceLoaderOptions&) = 0;
+    virtual void loadResource(Frame&, CachedResource&, ResourceRequest&&, const ResourceLoaderOptions&, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&&) = 0;
     virtual void loadResourceSynchronously(NetworkingContext*, unsigned long identifier, const ResourceRequest&, StoredCredentialsPolicy, ClientCredentialPolicy, ResourceError&, ResourceResponse&, Vector<char>& data) = 0;
 
     virtual void remove(ResourceLoader*) = 0;

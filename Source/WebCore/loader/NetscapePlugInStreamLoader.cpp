@@ -54,13 +54,14 @@ NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(Frame& frame, NetscapePlu
 
 NetscapePlugInStreamLoader::~NetscapePlugInStreamLoader() = default;
 
-RefPtr<NetscapePlugInStreamLoader> NetscapePlugInStreamLoader::create(Frame& frame, NetscapePlugInStreamLoaderClient& client, const ResourceRequest& request)
+void NetscapePlugInStreamLoader::create(Frame& frame, NetscapePlugInStreamLoaderClient& client, ResourceRequest&& request, CompletionHandler<void(RefPtr<NetscapePlugInStreamLoader>&&)>&& completionHandler)
 {
-    auto loader(adoptRef(new NetscapePlugInStreamLoader(frame, client)));
-    if (!loader->init(request))
-        return nullptr;
-
-    return loader;
+    auto loader(adoptRef(*new NetscapePlugInStreamLoader(frame, client)));
+    loader->init(WTFMove(request), [loader = loader.copyRef(), completionHandler = WTFMove(completionHandler)] (bool initialized) mutable {
+        if (!initialized)
+            return completionHandler(nullptr);
+        completionHandler(WTFMove(loader));
+    });
 }
 
 bool NetscapePlugInStreamLoader::isDone() const
@@ -74,26 +75,25 @@ void NetscapePlugInStreamLoader::releaseResources()
     ResourceLoader::releaseResources();
 }
 
-bool NetscapePlugInStreamLoader::init(const ResourceRequest& request)
+void NetscapePlugInStreamLoader::init(ResourceRequest&& request, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (!ResourceLoader::init(request))
-        return false;
-
-    ASSERT(!reachedTerminalState());
-
-    m_documentLoader->addPlugInStreamLoader(*this);
-    m_isInitialized = true;
-
-    return true;
+    ResourceLoader::init(WTFMove(request), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (bool success) mutable {
+        if (!success)
+            return completionHandler(false);
+        ASSERT(!reachedTerminalState());
+        m_documentLoader->addPlugInStreamLoader(*this);
+        m_isInitialized = true;
+        completionHandler(true);
+    });
 }
 
 void NetscapePlugInStreamLoader::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& callback)
 {
-    m_client->willSendRequest(this, WTFMove(request), redirectResponse, [protectedThis = makeRef(*this), redirectResponse, callback = WTFMove(callback)](ResourceRequest request) mutable {
+    m_client->willSendRequest(this, WTFMove(request), redirectResponse, [protectedThis = makeRef(*this), redirectResponse, callback = WTFMove(callback)] (ResourceRequest&& request) mutable {
         if (!request.isNull())
-            protectedThis->willSendRequestInternal(request, redirectResponse);
-
-        callback(WTFMove(request));
+            protectedThis->willSendRequestInternal(WTFMove(request), redirectResponse, WTFMove(callback));
+        else
+            callback({ });
     });
 }
 

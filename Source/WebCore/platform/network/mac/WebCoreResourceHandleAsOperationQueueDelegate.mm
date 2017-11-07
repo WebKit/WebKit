@@ -128,7 +128,7 @@ using namespace WebCore;
         callOnMainThread(WTFMove(work));
 
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
-    return m_requestResult.autorelease();
+    return m_requestResult.get();
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
@@ -334,7 +334,7 @@ using namespace WebCore;
         callOnMainThread(WTFMove(work));
 
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
-    return m_cachedResponseResult.autorelease();
+    return m_cachedResponseResult.get();
 }
 
 @end

@@ -60,15 +60,14 @@ public:
 
     WEBCORE_EXPORT void cancel();
 
-    virtual bool init(const ResourceRequest&);
+    virtual void init(ResourceRequest&&, CompletionHandler<void(bool)>&&);
 
     void deliverResponseAndData(const ResourceResponse&, RefPtr<SharedBuffer>&&);
 
 #if PLATFORM(IOS)
-    virtual bool startLoading()
+    virtual void startLoading()
     {
         start();
-        return true;
     }
 
     virtual const ResourceRequest& iOSOriginalRequest() const { return request(); }
@@ -165,7 +164,7 @@ protected:
     CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
 #endif
 
-    virtual void willSendRequestInternal(ResourceRequest&, const ResourceResponse& redirectResponse);
+    virtual void willSendRequestInternal(ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&&);
 
     RefPtr<ResourceHandle> m_handle;
     RefPtr<Frame> m_frame;

@@ -45,6 +45,7 @@
 #include "ResourceLoadObserver.h"
 #include "ResourceTiming.h"
 #include "RuntimeEnabledFeatures.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
@@ -102,32 +103,36 @@ SubresourceLoader::~SubresourceLoader()
 #endif
 }
 
-RefPtr<SubresourceLoader> SubresourceLoader::create(Frame& frame, CachedResource& resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
+void SubresourceLoader::create(Frame& frame, CachedResource& resource, ResourceRequest&& request, const ResourceLoaderOptions& options, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&& completionHandler)
 {
-    RefPtr<SubresourceLoader> subloader(adoptRef(new SubresourceLoader(frame, resource, options)));
+    auto subloader(adoptRef(*new SubresourceLoader(frame, resource, options)));
 #if PLATFORM(IOS)
     if (!IOSApplication::isWebProcess()) {
         // On iOS, do not invoke synchronous resource load delegates while resource load scheduling
         // is disabled to avoid re-entering style selection from a different thread (see <rdar://problem/9121719>).
         // FIXME: This should be fixed for all ports in <https://bugs.webkit.org/show_bug.cgi?id=56647>.
         subloader->m_iOSOriginalRequest = request;
-        return subloader;
+        return completionHandler(WTFMove(subloader));
     }
 #endif
-    if (!subloader->init(request))
-        return nullptr;
-    return subloader;
+    subloader->init(WTFMove(request), [subloader = subloader.copyRef(), completionHandler = WTFMove(completionHandler)] (bool initialized) mutable {
+        if (!initialized)
+            return completionHandler(nullptr);
+        completionHandler(WTFMove(subloader));
+    });
 }
     
 #if PLATFORM(IOS)
-bool SubresourceLoader::startLoading()
+void SubresourceLoader::startLoading()
 {
+    // FIXME: this should probably be removed.
     ASSERT(!IOSApplication::isWebProcess());
-    if (!init(m_iOSOriginalRequest))
-        return false;
-    m_iOSOriginalRequest = ResourceRequest();
-    start();
-    return true;
+    init(ResourceRequest(m_iOSOriginalRequest), [this, protectedThis = makeRef(*this)] (bool success) {
+        if (!success)
+            return;
+        m_iOSOriginalRequest = ResourceRequest();
+        start();
+    });
 }
 #endif
 
@@ -144,18 +149,17 @@ void SubresourceLoader::cancelIfNotFinishing()
     ResourceLoader::cancel();
 }
 
-bool SubresourceLoader::init(const ResourceRequest& request)
+void SubresourceLoader::init(ResourceRequest&& request, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (!ResourceLoader::init(request))
-        return false;
-
-    ASSERT(!reachedTerminalState());
-    m_state = Initialized;
-    m_documentLoader->addSubresourceLoader(this);
-
-    m_origin = m_resource->origin();
-
-    return true;
+    ResourceLoader::init(WTFMove(request), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (bool initialized) mutable {
+        if (!initialized)
+            return completionHandler(false);
+        ASSERT(!reachedTerminalState());
+        m_state = Initialized;
+        m_documentLoader->addSubresourceLoader(this);
+        m_origin = m_resource->origin();
+        completionHandler(true);
+    });
 }
 
 bool SubresourceLoader::isSubresourceLoader()
@@ -163,7 +167,7 @@ bool SubresourceLoader::isSubresourceLoader()
     return true;
 }
 
-void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
+void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     // Store the previous URL because the call to ResourceLoader::willSendRequest will modify it.
     URL previousURL = request().url();
@@ -171,7 +175,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
 
     if (!newRequest.url().isValid()) {
         cancel(cannotShowURLError());
-        return;
+        return completionHandler(WTFMove(newRequest));
     }
 
     if (newRequest.requester() != ResourceRequestBase::Requester::Main) {
@@ -184,7 +188,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
         if (options().redirect != FetchOptions::Redirect::Follow) {
             if (options().redirect == FetchOptions::Redirect::Error) {
                 cancel();
-                return;
+                return completionHandler(WTFMove(newRequest));
             }
 
             ResourceResponse opaqueRedirectedResponse = redirectResponse;
@@ -194,10 +198,10 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
 
             NetworkLoadMetrics emptyMetrics;
             didFinishLoading(emptyMetrics);
-            return;
+            return completionHandler(WTFMove(newRequest));
         } else if (m_redirectCount++ >= options().maxRedirectCount) {
             cancel(ResourceError(String(), 0, request().url(), ASCIILiteral("Too many redirections"), ResourceError::Type::General));
-            return;
+            return completionHandler(WTFMove(newRequest));
         }
 
         // CachedResources are keyed off their original request URL.
@@ -213,7 +217,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
 
         if (!m_documentLoader->cachedResourceLoader().updateRequestAfterRedirection(m_resource->type(), newRequest, options())) {
             cancel();
-            return;
+            return completionHandler(WTFMove(newRequest));
         }
 
         String errorDescription;
@@ -222,32 +226,33 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
             if (m_frame && m_frame->document())
                 m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorMessage);
             cancel(ResourceError(String(), 0, request().url(), errorMessage, ResourceError::Type::AccessControl));
-            return;
+            return completionHandler(WTFMove(newRequest));
         }
 
         if (m_resource->isImage() && m_documentLoader->cachedResourceLoader().shouldDeferImageLoad(newRequest.url())) {
             cancel();
-            return;
+            return completionHandler(WTFMove(newRequest));
         }
         m_loadTiming.addRedirect(redirectResponse.url(), newRequest.url());
         m_resource->redirectReceived(newRequest, redirectResponse);
     }
 
     if (newRequest.isNull() || reachedTerminalState())
-        return;
+        return completionHandler(WTFMove(newRequest));
 
-    ResourceLoader::willSendRequestInternal(newRequest, redirectResponse);
-
-    if (reachedTerminalState())
-        return;
-
-    if (newRequest.isNull()) {
-        cancel();
-        return;
-    }
-
-    if (m_resource->type() == CachedResource::MainResource && !redirectResponse.isNull())
-        m_documentLoader->willContinueMainResourceLoadAfterRedirect(newRequest);
+    ResourceLoader::willSendRequestInternal(WTFMove(newRequest), redirectResponse, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler), redirectResponse] (ResourceRequest&& request) mutable {
+        if (reachedTerminalState())
+            return completionHandler(WTFMove(request));
+        
+        if (request.isNull()) {
+            cancel();
+            return completionHandler(WTFMove(request));
+        }
+        
+        if (m_resource->type() == CachedResource::MainResource && !redirectResponse.isNull())
+            m_documentLoader->willContinueMainResourceLoadAfterRedirect(request);
+        completionHandler(WTFMove(request));
+    });
 }
 
 void SubresourceLoader::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)

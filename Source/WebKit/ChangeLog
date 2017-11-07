@@ -1,3 +1,17 @@
+2017-11-06  Alex Christensen  <achristensen@webkit.org>
+
+        Make ResourceLoader::willSendRequestInternal asynchronous
+        https://bugs.webkit.org/show_bug.cgi?id=179251
+
+        Reviewed by Andy Estes.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::loadResource):
+        (WebKit::WebLoaderStrategy::schedulePluginStreamLoad):
+        * WebProcess/Network/WebLoaderStrategy.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::Stream::start):
+
 2017-11-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Implement delegate hooks for attachment element insertion and removal

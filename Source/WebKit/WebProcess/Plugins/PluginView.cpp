@@ -167,7 +167,9 @@ void PluginView::Stream::start()
     Frame* frame = m_pluginView->m_pluginElement->document().frame();
     ASSERT(frame);
 
-    m_loader = WebProcess::singleton().webLoaderStrategy().schedulePluginStreamLoad(*frame, *this, m_request);
+    WebProcess::singleton().webLoaderStrategy().schedulePluginStreamLoad(*frame, *this, ResourceRequest {m_request}, [this, protectedThis = makeRef(*this)](RefPtr<NetscapePlugInStreamLoader>&& loader) {
+        m_loader = WTFMove(loader);
+    });
 }
 
 void PluginView::Stream::cancel()

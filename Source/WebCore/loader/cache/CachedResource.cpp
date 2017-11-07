@@ -48,6 +48,7 @@
 #include "SecurityOrigin.h"
 #include "SubresourceLoader.h"
 #include "URL.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -293,14 +294,15 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         }
     }
 
-    m_loader = platformStrategies()->loaderStrategy()->loadResource(frame, *this, request, m_options);
-    if (!m_loader) {
-        RELEASE_LOG_IF_ALLOWED("load: Unable to create SubresourceLoader (frame = %p)", &frame);
-        failBeforeStarting();
-        return;
-    }
-
-    m_status = Pending;
+    platformStrategies()->loaderStrategy()->loadResource(frame, *this, WTFMove(request), m_options, [this, protectedThis = CachedResourceHandle<CachedResource>(this), frame = makeRef(frame), loggingAllowed = cachedResourceLoader.isAlwaysOnLoggingAllowed()] (RefPtr<SubresourceLoader>&& loader) {
+        m_loader = WTFMove(loader);
+        if (!m_loader) {
+            RELEASE_LOG_IF(loggingAllowed, Network, "%p - CachedResource::load: Unable to create SubresourceLoader (frame = %p)", this, frame.ptr());
+            failBeforeStarting();
+            return;
+        }
+        m_status = Pending;
+    });
 }
 
 void CachedResource::loadFrom(const CachedResource& resource)

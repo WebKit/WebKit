@@ -88,21 +88,22 @@ WebResourceLoadScheduler::~WebResourceLoadScheduler()
 {
 }
 
-RefPtr<SubresourceLoader> WebResourceLoadScheduler::loadResource(Frame& frame, CachedResource& resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
+void WebResourceLoadScheduler::loadResource(Frame& frame, CachedResource& resource, ResourceRequest&& request, const ResourceLoaderOptions& options, CompletionHandler<void(RefPtr<WebCore::SubresourceLoader>&&)>&& completionHandler)
 {
-    RefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, resource, request, options);
-    if (loader)
-        scheduleLoad(loader.get());
+    SubresourceLoader::create(frame, resource, WTFMove(request), options, [this, completionHandler = WTFMove(completionHandler)] (RefPtr<WebCore::SubresourceLoader>&& loader) mutable {
+        if (loader)
+            scheduleLoad(loader.get());
 #if PLATFORM(IOS)
-    // Since we defer loader initialization until scheduling on iOS, the frame
-    // load delegate that would be called in SubresourceLoader::create() on
-    // other ports might be called in scheduleLoad() instead. Our contract to
-    // callers of this method is that a null loader is returned if the load was
-    // cancelled by a frame load delegate.
-    if (!loader || loader->reachedTerminalState())
-        return nullptr;
+        // Since we defer loader initialization until scheduling on iOS, the frame
+        // load delegate that would be called in SubresourceLoader::create() on
+        // other ports might be called in scheduleLoad() instead. Our contract to
+        // callers of this method is that a null loader is returned if the load was
+        // cancelled by a frame load delegate.
+        if (!loader || loader->reachedTerminalState())
+            return completionHandler(nullptr);
 #endif
-    return loader;
+        completionHandler(WTFMove(loader));
+    });
 }
 
 void WebResourceLoadScheduler::loadResourceSynchronously(NetworkingContext* context, unsigned long, const ResourceRequest& request, StoredCredentialsPolicy storedCredentialsPolicy, ClientCredentialPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
@@ -110,12 +111,13 @@ void WebResourceLoadScheduler::loadResourceSynchronously(NetworkingContext* cont
     ResourceHandle::loadResourceSynchronously(context, request, storedCredentialsPolicy, error, response, data);
 }
 
-RefPtr<NetscapePlugInStreamLoader> WebResourceLoadScheduler::schedulePluginStreamLoad(Frame& frame, NetscapePlugInStreamLoaderClient& client, const ResourceRequest& request)
+void WebResourceLoadScheduler::schedulePluginStreamLoad(Frame& frame, NetscapePlugInStreamLoaderClient& client, ResourceRequest&& request, CompletionHandler<void(RefPtr<WebCore::NetscapePlugInStreamLoader>&&)>&& completionHandler)
 {
-    RefPtr<NetscapePlugInStreamLoader> loader = NetscapePlugInStreamLoader::create(frame, client, request);
-    if (loader)
-        scheduleLoad(loader.get());
-    return loader;
+    NetscapePlugInStreamLoader::create(frame, client, WTFMove(request), [this, completionHandler = WTFMove(completionHandler)] (RefPtr<WebCore::NetscapePlugInStreamLoader>&& loader) mutable {
+        if (loader)
+            scheduleLoad(loader.get());
+        completionHandler(WTFMove(loader));
+    });
 }
 
 void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
