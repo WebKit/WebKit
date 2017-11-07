@@ -1,0 +1,14 @@
+
+PASS csiso2022kr - non-empty input decodes to one replacement character. 
+PASS csiso2022kr - empty input decodes to empty output. 
+PASS hz-gb-2312 - non-empty input decodes to one replacement character. 
+PASS hz-gb-2312 - empty input decodes to empty output. 
+PASS iso-2022-cn - non-empty input decodes to one replacement character. 
+PASS iso-2022-cn - empty input decodes to empty output. 
+PASS iso-2022-cn-ext - non-empty input decodes to one replacement character. 
+PASS iso-2022-cn-ext - empty input decodes to empty output. 
+PASS iso-2022-kr - non-empty input decodes to one replacement character. 
+PASS iso-2022-kr - empty input decodes to empty output. 
+FAIL replacement - non-empty input decodes to one replacement character. assert_equals: Decoding with replacement expected "U+FFFD" but got "U+0041/U+0042/U+0043/U+0061/U+0062/U+0063/U+0031/U+0032/U+0033/U+00A0"
+PASS replacement - empty input decodes to empty output. 
+

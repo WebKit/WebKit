@@ -260,6 +260,39 @@ imported/w3c/web-platform-tests/fetch/api/abort/general.any.worker.html [ Skip ]
 # Not supported
 imported/w3c/web-platform-tests/background-fetch [ Skip ]
 
+# We fail this reftest
+imported/w3c/web-platform-tests/encoding/eof-shift_jis.html [ ImageOnlyFailure ]
+
+# These encoding tests are slow
+imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-extBa.html [ Slow ]
+imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-extBb.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-csshiftjis.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-ms932.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-shift-jis.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-sjis.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-windows-31j.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-x-sjis.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-errors-han.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href-errors-han.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-cseuckr.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-csksc56011987.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-iso-ir-149.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-korean.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ks_c_5601-1987.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ks_c_5601-1989.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ksc5601.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ksc_5601.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-windows-949.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-big5-hkscs.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-cn-big5.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-csbig5.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-x-x-big5.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-big5-hkscs.html [ Slow ]
+
+
 # Content encoding sniffing is only supported by CFNetwork.
 http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Skip ]
 

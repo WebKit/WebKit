@@ -1605,6 +1605,21 @@ PASS Invalid label " koi8_r " should be rejected by TextDecoder.
 PASS Invalid label " koi8_r" should be rejected by TextDecoder. 
 PASS Invalid label "koi8_r " should be rejected by TextDecoder. 
 PASS Invalid label " koi8_r " should be rejected by TextDecoder. 
+PASS Invalid label "\0koi8-ru" should be rejected by TextDecoder. 
+PASS Invalid label "koi8-ru\0" should be rejected by TextDecoder. 
+PASS Invalid label "\0koi8-ru\0" should be rejected by TextDecoder. 
+PASS Invalid label "\vkoi8-ru" should be rejected by TextDecoder. 
+PASS Invalid label "koi8-ru\v" should be rejected by TextDecoder. 
+PASS Invalid label "\vkoi8-ru\v" should be rejected by TextDecoder. 
+PASS Invalid label " koi8-ru" should be rejected by TextDecoder. 
+PASS Invalid label "koi8-ru " should be rejected by TextDecoder. 
+PASS Invalid label " koi8-ru " should be rejected by TextDecoder. 
+PASS Invalid label " koi8-ru" should be rejected by TextDecoder. 
+PASS Invalid label "koi8-ru " should be rejected by TextDecoder. 
+PASS Invalid label " koi8-ru " should be rejected by TextDecoder. 
+PASS Invalid label " koi8-ru" should be rejected by TextDecoder. 
+PASS Invalid label "koi8-ru " should be rejected by TextDecoder. 
+PASS Invalid label " koi8-ru " should be rejected by TextDecoder. 
 PASS Invalid label "\0koi8-u" should be rejected by TextDecoder. 
 PASS Invalid label "koi8-u\0" should be rejected by TextDecoder. 
 PASS Invalid label "\0koi8-u\0" should be rejected by TextDecoder. 
@@ -3120,6 +3135,96 @@ PASS Invalid label " windows-949 " should be rejected by TextDecoder.
 PASS Invalid label " windows-949" should be rejected by TextDecoder. 
 PASS Invalid label "windows-949 " should be rejected by TextDecoder. 
 PASS Invalid label " windows-949 " should be rejected by TextDecoder. 
+PASS Invalid label "\0csiso2022kr" should be rejected by TextDecoder. 
+PASS Invalid label "csiso2022kr\0" should be rejected by TextDecoder. 
+PASS Invalid label "\0csiso2022kr\0" should be rejected by TextDecoder. 
+PASS Invalid label "\vcsiso2022kr" should be rejected by TextDecoder. 
+PASS Invalid label "csiso2022kr\v" should be rejected by TextDecoder. 
+PASS Invalid label "\vcsiso2022kr\v" should be rejected by TextDecoder. 
+PASS Invalid label " csiso2022kr" should be rejected by TextDecoder. 
+PASS Invalid label "csiso2022kr " should be rejected by TextDecoder. 
+PASS Invalid label " csiso2022kr " should be rejected by TextDecoder. 
+PASS Invalid label " csiso2022kr" should be rejected by TextDecoder. 
+PASS Invalid label "csiso2022kr " should be rejected by TextDecoder. 
+PASS Invalid label " csiso2022kr " should be rejected by TextDecoder. 
+PASS Invalid label " csiso2022kr" should be rejected by TextDecoder. 
+PASS Invalid label "csiso2022kr " should be rejected by TextDecoder. 
+PASS Invalid label " csiso2022kr " should be rejected by TextDecoder. 
+PASS Invalid label "\0hz-gb-2312" should be rejected by TextDecoder. 
+PASS Invalid label "hz-gb-2312\0" should be rejected by TextDecoder. 
+PASS Invalid label "\0hz-gb-2312\0" should be rejected by TextDecoder. 
+PASS Invalid label "\vhz-gb-2312" should be rejected by TextDecoder. 
+PASS Invalid label "hz-gb-2312\v" should be rejected by TextDecoder. 
+PASS Invalid label "\vhz-gb-2312\v" should be rejected by TextDecoder. 
+PASS Invalid label " hz-gb-2312" should be rejected by TextDecoder. 
+PASS Invalid label "hz-gb-2312 " should be rejected by TextDecoder. 
+PASS Invalid label " hz-gb-2312 " should be rejected by TextDecoder. 
+PASS Invalid label " hz-gb-2312" should be rejected by TextDecoder. 
+PASS Invalid label "hz-gb-2312 " should be rejected by TextDecoder. 
+PASS Invalid label " hz-gb-2312 " should be rejected by TextDecoder. 
+PASS Invalid label " hz-gb-2312" should be rejected by TextDecoder. 
+PASS Invalid label "hz-gb-2312 " should be rejected by TextDecoder. 
+PASS Invalid label " hz-gb-2312 " should be rejected by TextDecoder. 
+PASS Invalid label "\0iso-2022-cn" should be rejected by TextDecoder. 
+PASS Invalid label "iso-2022-cn\0" should be rejected by TextDecoder. 
+PASS Invalid label "\0iso-2022-cn\0" should be rejected by TextDecoder. 
+PASS Invalid label "\viso-2022-cn" should be rejected by TextDecoder. 
+PASS Invalid label "iso-2022-cn\v" should be rejected by TextDecoder. 
+PASS Invalid label "\viso-2022-cn\v" should be rejected by TextDecoder. 
+PASS Invalid label " iso-2022-cn" should be rejected by TextDecoder. 
+PASS Invalid label "iso-2022-cn " should be rejected by TextDecoder. 
+PASS Invalid label " iso-2022-cn " should be rejected by TextDecoder. 
+PASS Invalid label " iso-2022-cn" should be rejected by TextDecoder. 
+PASS Invalid label "iso-2022-cn " should be rejected by TextDecoder. 
+PASS Invalid label " iso-2022-cn " should be rejected by TextDecoder. 
+PASS Invalid label " iso-2022-cn" should be rejected by TextDecoder. 
+PASS Invalid label "iso-2022-cn " should be rejected by TextDecoder. 
+PASS Invalid label " iso-2022-cn " should be rejected by TextDecoder. 
+PASS Invalid label "\0iso-2022-cn-ext" should be rejected by TextDecoder. 
+PASS Invalid label "iso-2022-cn-ext\0" should be rejected by TextDecoder. 
+PASS Invalid label "\0iso-2022-cn-ext\0" should be rejected by TextDecoder. 
+PASS Invalid label "\viso-2022-cn-ext" should be rejected by TextDecoder. 
+PASS Invalid label "iso-2022-cn-ext\v" should be rejected by TextDecoder. 
+PASS Invalid label "\viso-2022-cn-ext\v" should be rejected by TextDecoder. 
+PASS Invalid label " iso-2022-cn-ext" should be rejected by TextDecoder. 
+PASS Invalid label "iso-2022-cn-ext " should be rejected by TextDecoder. 
+PASS Invalid label " iso-2022-cn-ext " should be rejected by TextDecoder. 
+PASS Invalid label " iso-2022-cn-ext" should be rejected by TextDecoder. 
+PASS Invalid label "iso-2022-cn-ext " should be rejected by TextDecoder. 
+PASS Invalid label " iso-2022-cn-ext " should be rejected by TextDecoder. 
+PASS Invalid label " iso-2022-cn-ext" should be rejected by TextDecoder. 
+PASS Invalid label "iso-2022-cn-ext " should be rejected by TextDecoder. 
+PASS Invalid label " iso-2022-cn-ext " should be rejected by TextDecoder. 
+PASS Invalid label "\0iso-2022-kr" should be rejected by TextDecoder. 
+PASS Invalid label "iso-2022-kr\0" should be rejected by TextDecoder. 
+PASS Invalid label "\0iso-2022-kr\0" should be rejected by TextDecoder. 
+PASS Invalid label "\viso-2022-kr" should be rejected by TextDecoder. 
+PASS Invalid label "iso-2022-kr\v" should be rejected by TextDecoder. 
+PASS Invalid label "\viso-2022-kr\v" should be rejected by TextDecoder. 
+PASS Invalid label " iso-2022-kr" should be rejected by TextDecoder. 
+PASS Invalid label "iso-2022-kr " should be rejected by TextDecoder. 
+PASS Invalid label " iso-2022-kr " should be rejected by TextDecoder. 
+PASS Invalid label " iso-2022-kr" should be rejected by TextDecoder. 
+PASS Invalid label "iso-2022-kr " should be rejected by TextDecoder. 
+PASS Invalid label " iso-2022-kr " should be rejected by TextDecoder. 
+PASS Invalid label " iso-2022-kr" should be rejected by TextDecoder. 
+PASS Invalid label "iso-2022-kr " should be rejected by TextDecoder. 
+PASS Invalid label " iso-2022-kr " should be rejected by TextDecoder. 
+PASS Invalid label "\0replacement" should be rejected by TextDecoder. 
+PASS Invalid label "replacement\0" should be rejected by TextDecoder. 
+PASS Invalid label "\0replacement\0" should be rejected by TextDecoder. 
+PASS Invalid label "\vreplacement" should be rejected by TextDecoder. 
+PASS Invalid label "replacement\v" should be rejected by TextDecoder. 
+PASS Invalid label "\vreplacement\v" should be rejected by TextDecoder. 
+PASS Invalid label " replacement" should be rejected by TextDecoder. 
+PASS Invalid label "replacement " should be rejected by TextDecoder. 
+PASS Invalid label " replacement " should be rejected by TextDecoder. 
+PASS Invalid label " replacement" should be rejected by TextDecoder. 
+PASS Invalid label "replacement " should be rejected by TextDecoder. 
+PASS Invalid label " replacement " should be rejected by TextDecoder. 
+PASS Invalid label " replacement" should be rejected by TextDecoder. 
+PASS Invalid label "replacement " should be rejected by TextDecoder. 
+PASS Invalid label " replacement " should be rejected by TextDecoder. 
 PASS Invalid label "\0utf-16be" should be rejected by TextDecoder. 
 PASS Invalid label "utf-16be\0" should be rejected by TextDecoder. 
 PASS Invalid label "\0utf-16be\0" should be rejected by TextDecoder. 

@@ -1,3 +1,13 @@
+2017-11-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Update WPT encoding test suite to the latest version.
+        https://bugs.webkit.org/show_bug.cgi?id=179312
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations: Mark some WPT enncoding tests as slow (either
+        globally or on debug builds) based on what times out in EWS.
+
 2017-11-07  Antti Koivisto  <antti@apple.com>
 
         Dynamic media queries don't update in shadow tree stylesheets

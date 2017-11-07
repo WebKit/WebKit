@@ -1,0 +1,10 @@
+
+FAIL Expect resources/utf-32-big-endian-bom.html to parse as windows-1252 assert_equals: expected "windows-1252" but got "UTF-32BE"
+FAIL Expect resources/utf-32-big-endian-bom.xml to parse as windows-1252 assert_equals: expected "windows-1252" but got "UTF-32BE"
+PASS Expect resources/utf-32-big-endian-nobom.html to parse as windows-1252 
+FAIL Expect resources/utf-32-big-endian-nobom.xml to parse as windows-1252 assert_equals: expected "windows-1252" but got "UTF-32BE"
+FAIL Expect resources/utf-32-little-endian-bom.html to parse as UTF-16LE assert_equals: expected "UTF-16LE" but got "UTF-32LE"
+FAIL Expect resources/utf-32-little-endian-bom.xml to parse as UTF-16LE assert_equals: expected "UTF-16LE" but got "UTF-32LE"
+PASS Expect resources/utf-32-little-endian-nobom.html to parse as windows-1252 
+FAIL Expect resources/utf-32-little-endian-nobom.xml to parse as windows-1252 assert_equals: expected "windows-1252" but got "UTF-32LE"
+

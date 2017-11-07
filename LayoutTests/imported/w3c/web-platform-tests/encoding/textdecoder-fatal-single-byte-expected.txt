@@ -6365,9 +6365,7 @@ PASS Not throw: windows-1255 has a pointer 198
 PASS Not throw: windows-1255 has a pointer 199 
 PASS Not throw: windows-1255 has a pointer 200 
 PASS Not throw: windows-1255 has a pointer 201 
-FAIL Throw due to fatal flag: windows-1255 doesn't have a pointer 202 assert_throws: function "function () {
-                    new TextDecoder(t.encoding, {fatal: true}).decode(new Uint8Array([i]));
-                }" did not throw
+PASS Not throw: windows-1255 has a pointer 202 
 PASS Not throw: windows-1255 has a pointer 203 
 PASS Not throw: windows-1255 has a pointer 204 
 PASS Not throw: windows-1255 has a pointer 205 

@@ -1,8 +1,8 @@
 
 FAIL iso-2022-jp decoder: Error ESC assert_equals: expected "\ufffd$" but got "\ufffd"
 PASS iso-2022-jp decoder: Error ESC, character 
-FAIL iso-2022-jp decoder: ASCII ESC, character assert_equals: expected "\ufffdP" but got "P"
-FAIL iso-2022-jp decoder: Double ASCII ESC, character assert_equals: expected "\ufffd\ufffdP" but got "\ufffdP"
+PASS iso-2022-jp decoder: ASCII ESC, character 
+PASS iso-2022-jp decoder: Double ASCII ESC, character 
 PASS iso-2022-jp decoder: character, ASCII ESC, character 
 PASS iso-2022-jp decoder: characters 
 PASS iso-2022-jp decoder: SO / SI 
