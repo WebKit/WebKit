@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PageClientImplCocoa.h"
 
-#import "WKWebViewInternal.h"
+#import "WKWebViewPrivate.h"
 
 namespace WebKit {
 
@@ -43,27 +43,5 @@ void PageClientImplCocoa::isPlayingAudioDidChange()
     [m_webView didChangeValueForKey:NSStringFromSelector(@selector(_isPlayingAudio))];
 #endif
 }
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-
-void PageClientImplCocoa::didInsertAttachment(const String& identifier)
-{
-#if WK_API_ENABLED
-    [m_webView _didInsertAttachment:identifier];
-#else
-    UNUSED_PARAM(identifier);
-#endif
-}
-
-void PageClientImplCocoa::didRemoveAttachment(const String& identifier)
-{
-#if WK_API_ENABLED
-    [m_webView _didRemoveAttachment:identifier];
-#else
-    UNUSED_PARAM(identifier);
-#endif
-}
-
-#endif
     
 }

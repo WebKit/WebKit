@@ -37,12 +37,6 @@ public:
         : m_webView(webView) { }
     void isPlayingAudioWillChange() final;
     void isPlayingAudioDidChange() final;
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-    void didInsertAttachment(const String& identifier) final;
-    void didRemoveAttachment(const String& identifier) final;
-#endif
-
 protected:
     WKWebView *m_webView;
 };

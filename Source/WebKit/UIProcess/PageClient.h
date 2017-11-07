@@ -384,11 +384,6 @@ public:
     virtual void didChangeDataInteractionCaretRect(const WebCore::IntRect& previousCaretRect, const WebCore::IntRect& caretRect) = 0;
 #endif
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-    virtual void didInsertAttachment(const String& identifier) { }
-    virtual void didRemoveAttachment(const String& identifier) { }
-#endif
-
 #if PLATFORM(GTK) || PLATFORM(WPE)
     virtual JSGlobalContextRef javascriptGlobalContext() { return nullptr; }
 #endif

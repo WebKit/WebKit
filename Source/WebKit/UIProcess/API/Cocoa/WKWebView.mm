@@ -1197,24 +1197,6 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
         [uiDelegate _webView:self editorStateDidChange:dictionaryRepresentationForEditorState(_page->editorState())];
 }
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-
-- (void)_didInsertAttachment:(NSString *)identifier
-{
-    id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)self.UIDelegate;
-    if ([uiDelegate respondsToSelector:@selector(_webView:didInsertAttachment:)])
-        [uiDelegate _webView:self didInsertAttachment:[wrapper(API::Attachment::create(identifier, *_page).leakRef()) autorelease]];
-}
-
-- (void)_didRemoveAttachment:(NSString *)identifier
-{
-    id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)self.UIDelegate;
-    if ([uiDelegate respondsToSelector:@selector(_webView:didRemoveAttachment:)])
-        [uiDelegate _webView:self didRemoveAttachment:[wrapper(API::Attachment::create(identifier, *_page).leakRef()) autorelease]];
-}
-
-#endif // ENABLE(ATTACHMENT_ELEMENT)
-
 #pragma mark iOS-specific methods
 
 #if PLATFORM(IOS)

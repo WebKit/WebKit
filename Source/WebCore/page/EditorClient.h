@@ -72,11 +72,6 @@ public:
     virtual void didApplyStyle() = 0;
     virtual bool shouldMoveRangeAfterDelete(Range*, Range*) = 0;
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-    virtual void didInsertAttachment(const String&) { }
-    virtual void didRemoveAttachment(const String&) { }
-#endif
-
     virtual void didBeginEditing() = 0;
     virtual void respondToChangedContents() = 0;
     virtual void respondToChangedSelection(Frame*) = 0;
