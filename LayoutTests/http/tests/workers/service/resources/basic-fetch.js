@@ -20,13 +20,25 @@ async function test()
 
         try {
             response = await fetch("test3");
-            log("test3 fetch succeeded unexpectedly");
+            log("FAIL: test3 fetch succeeded unexpectedly");
             log("test3 status code: " + response.status);
             log("test3 status text: " + response.statusText);
 
         } catch (e) {
-            log("test3 fetch failed as expected");
+            log("PASS: test3 fetch failed as expected");
         }
+
+        var response = await fetch("test4");
+        log("test4 status code: " + response.status);
+
+        try {
+            response = await fetch("test5");
+            log("FAIL: test5 fetch succeeded unexpectedly");
+            log("test5 status code: " + response.status);
+        } catch (e) {
+            log("PASS: test5 fetch failed as expected");
+        }
+
     } catch(e) {
         log("Got exception: " + e);
     }

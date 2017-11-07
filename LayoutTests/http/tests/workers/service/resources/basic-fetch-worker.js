@@ -11,5 +11,13 @@ self.addEventListener("fetch", (event) => {
         event.respondWith(Response.error());
         return;
     }
+    if (event.request.url.indexOf("test4") !== -1)
+        return;
+
+    if (event.request.url.indexOf("test5") !== -1) {
+        event.preventDefault();
+        return;
+    }
+
     event.respondWith(Response.error());
 });

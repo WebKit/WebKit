@@ -96,13 +96,23 @@ void dispatchFetchEvent(Ref<Client>&& client, WorkerGlobalScope& globalScope, Re
     // FIXME: Initialize other FetchEvent::Init fields.
     FetchEvent::Init init;
     init.request = WTFMove(fetchRequest);
+    init.cancelable = true;
     auto event = FetchEvent::create(eventNames().fetchEvent, WTFMove(init), Event::IsTrusted::Yes);
 
-    event->onResponse([client = WTFMove(client)] (FetchResponse* response) mutable {
+    event->onResponse([client = client.copyRef()] (FetchResponse* response) mutable {
         processResponse(WTFMove(client), response);
     });
 
     globalScope.dispatchEvent(event);
+
+    if (!event->respondWithEntered()) {
+        if (event->defaultPrevented()) {
+            client->didFail();
+            return;
+        }
+        client->didNotHandle();
+        // FIXME: Handle soft update.
+    }
 }
 
 } // namespace ServiceWorkerFetch

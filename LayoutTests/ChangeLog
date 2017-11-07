@@ -1,3 +1,16 @@
+2017-11-07  Youenn Fablet  <youenn@apple.com>
+
+        Support the case of fetch events that are not responded
+        https://bugs.webkit.org/show_bug.cgi?id=179336
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/workers/service/basic-fetch.https-expected.txt:
+        * http/tests/workers/service/resources/basic-fetch-worker.js:
+        (event.event.request.url.indexOf):
+        * http/tests/workers/service/resources/basic-fetch.js:
+        (async.test):
+
 2017-11-06  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed GTK test gardening

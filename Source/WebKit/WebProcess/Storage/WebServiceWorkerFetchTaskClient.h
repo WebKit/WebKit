@@ -48,6 +48,7 @@ private:
     void didReceiveData(Ref<WebCore::SharedBuffer>&&) final;
     void didFail() final;
     void didFinish() final;
+    void didNotHandle() final;
 
     RefPtr<IPC::Connection> m_connection;
     uint64_t m_serverConnectionIdentifier { 0 };

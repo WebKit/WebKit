@@ -82,6 +82,14 @@ void WebServiceWorkerFetchTaskClient::didFinish()
     m_connection = nullptr;
 }
 
+void WebServiceWorkerFetchTaskClient::didNotHandle()
+{
+    if (!m_connection)
+        return;
+    m_connection->send(Messages::StorageProcess::DidNotHandleFetch { m_serverConnectionIdentifier, m_fetchTaskIdentifier }, 0);
+    m_connection = nullptr;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(SERVICE_WORKER)

@@ -63,6 +63,8 @@ public:
     const String& reservedClientId() const { return m_reservedClientId; }
     const String& targetClientId() const { return m_targetClientId; }
 
+    bool respondWithEntered() const { return m_respondWithEntered; }
+
 private:
     WEBCORE_EXPORT FetchEvent(const AtomicString&, Init&&, IsTrusted);
 

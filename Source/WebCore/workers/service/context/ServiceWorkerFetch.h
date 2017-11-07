@@ -47,6 +47,7 @@ public:
     virtual void didReceiveData(Ref<SharedBuffer>&&) = 0;
     virtual void didFail() = 0;
     virtual void didFinish() = 0;
+    virtual void didNotHandle() = 0;
 };
 
 void dispatchFetchEvent(Ref<Client>&&, WorkerGlobalScope&, ResourceRequest&&, FetchOptions&&);
