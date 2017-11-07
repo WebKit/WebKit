@@ -64,6 +64,7 @@ class BuildbotSyncer {
         this._configurations = [];
         this._repositoryGroups = commonConfigurations.repositoryGroups;
         this._slavePropertyName = commonConfigurations.slaveArgument;
+        this._platformPropertyName = commonConfigurations.platformArgument;
         this._buildRequestPropertyName = commonConfigurations.buildRequestArgument;
         this._builderName = object.builder;
         this._slaveList = object.slaveList;
@@ -109,6 +110,9 @@ class BuildbotSyncer {
         assert.equal(!this._slavePropertyName, !slaveName);
         if (this._slavePropertyName)
             properties[this._slavePropertyName] = slaveName;
+
+        if (this._platformPropertyName)
+            properties[this._platformPropertyName] = newRequest.platform().name();
 
         this._slavesWithNewRequests.add(slaveName);
         return this._remote.postFormUrlencodedData(this.pathForForceBuild(), properties);
@@ -330,6 +334,7 @@ class BuildbotSyncer {
             repositoryGroups,
             slaveArgument: config.slaveArgument,
             buildRequestArgument: config.buildRequestArgument,
+            platformArgument: config.platformArgument,
         };
 
         const syncerByBuilder = new Map;

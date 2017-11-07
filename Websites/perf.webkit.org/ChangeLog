@@ -1,3 +1,19 @@
+2017-11-02  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Add platform argument for syncing script.
+        https://bugs.webkit.org/show_bug.cgi?id=179162
+
+        Reviewed by Ryosuke Niwa.
+
+        Syncing script should pass platform name to buildbot if platform argument is specified in configuration.
+
+        * server-tests/tools-sync-buildbot-integration-tests.js:
+        (return.createTriggerable.configWithPlatformName.then): Added unit test for platform argument.
+        * tools/js/buildbot-syncer.js:
+        (BuildbotSyncer): Add '_platformPropertyName' property.
+        (BuildbotSyncer.prototype.scheduleRequest): Add '_platformPropertyName' to build property if specified.
+        (BuildbotSyncer._loadConfig): Read '_plaformPropertyName' from config.
+
 2017-10-30  Dewei Zhu  <dewei_zhu@apple.com>
 
         Limit the number of results to be submitted in one submission.

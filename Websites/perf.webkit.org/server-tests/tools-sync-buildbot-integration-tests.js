@@ -57,6 +57,51 @@ const configWithOneTesterTwoBuilders = {
     ],
 };
 
+const configWithPlatformName = {
+    triggerableName: 'build-webkit',
+    lookbackCount: 2,
+    buildRequestArgument: 'build-request-id',
+    slaveName: 'sync-slave',
+    slavePassword: 'password',
+    platformArgument: 'platform-name',
+    repositoryGroups: {
+        'webkit': {
+            repositories: {'WebKit': {acceptsPatch: true}},
+            testProperties: {'wk': {'revision': 'WebKit'}, 'roots': {'roots': {}}},
+            buildProperties: {'wk': {'revision': 'WebKit'}, 'wk-patch': {'patch': 'WebKit'},
+                'checkbox': {'ifRepositorySet': ['WebKit'], 'value': 'build-wk'},
+                'owned-commits': {'ownedRevisions': 'WebKit'}},
+            acceptsRoots: true,
+        }
+    },
+    types: {
+        'some': {
+            test: ['some test'],
+            properties: {'test': 'some-test'},
+        }
+    },
+    builders: {
+        'builder-1': {
+            builder: 'some tester',
+            properties: {forcescheduler: 'force-ab-tests'},
+        },
+        'builder-2': {
+            builder: 'some builder',
+            properties: {forcescheduler: 'force-ab-builds'},
+        },
+        'builder-3': {
+            builder: 'other builder',
+            properties: {forcescheduler: 'force-ab-builds'},
+        },
+    },
+    buildConfigurations: [
+        {platforms: ['some platform'], builders: ['builder-2', 'builder-3']},
+    ],
+    testConfigurations: [
+        {types: ['some'], platforms: ['some platform'], builders: ['builder-1']},
+    ],
+};
+
 const configWithTwoTesters = {
     triggerableName: 'build-webkit',
     lookbackCount: 2,
@@ -442,6 +487,275 @@ describe('sync-buildbot', function () {
             assert.equal(requests.length, 7);
             assertAndResolveRequest(requests[6], 'POST', '/builders/some%20builder/force', 'OK');
             assert.deepEqual(requests[6].data, {'wk': '191622', 'build-request-id': '2', 'forcescheduler': 'force-ab-builds', 'checkbox': 'build-wk'});
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.equal(requests.length, 10);
+            assertAndResolveRequest(requests[7], 'GET', '/json/builders/some%20tester/pendingBuilds', []);
+            assertAndResolveRequest(requests[8], 'GET', '/json/builders/some%20builder/pendingBuilds', []);
+            assertAndResolveRequest(requests[9], 'GET', '/json/builders/other%20builder/pendingBuilds', []);
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.equal(requests.length, 13);
+            assertAndResolveRequest(requests[10], 'GET', '/json/builders/some%20tester/builds/?select=-1&select=-2', {});
+            assertAndResolveRequest(requests[11], 'GET', '/json/builders/some%20builder/builds/?select=-1&select=-2', {
+                [-1]: MockData.runningBuild({builder: 'some builder', buildRequestId: 2}),
+                [-2]: MockData.finishedBuild({builder: 'some builder', buildRequestId: 1}),
+            });
+            assertAndResolveRequest(requests[12], 'GET', '/json/builders/other%20builder/builds/?select=-1&select=-2', {});
+            return syncPromise;
+        }).then(() => {
+            return TestGroup.fetchForTask(taskId, true);
+        }).then((testGroups) => {
+            assert.equal(testGroups.length, 1);
+            const testGroup = testGroups[0];
+            const webkit = Repository.findById(MockData.webkitRepositoryId());
+            assert.equal(testGroup.buildRequests().length, 6);
+
+            const buildRequest = testGroup.buildRequests()[0];
+            assert(buildRequest.isBuild());
+            assert(!buildRequest.isTest());
+            assert.equal(buildRequest.statusLabel(), 'Completed');
+            assert.equal(buildRequest.statusUrl(), 'http://build.webkit.org/builders/some%20builder/builds/124');
+            assert.notEqual(buildRequest.buildId(), null);
+
+            const commitSet = buildRequest.commitSet();
+            assert.equal(commitSet.revisionForRepository(webkit), '191622');
+            const webkitPatch = commitSet.patchForRepository(webkit);
+            assert(webkitPatch instanceof UploadedFile);
+            assert.equal(webkitPatch.filename(), 'patch.dat');
+            const webkitRoot = commitSet.rootForRepository(webkit);
+            assert(webkitRoot instanceof UploadedFile);
+            assert.equal(webkitRoot.filename(), 'root123.dat');
+            assert.deepEqual(commitSet.allRootFiles(), [webkitRoot]);
+
+            const otherBuildRequest = testGroup.buildRequests()[1];
+            assert(otherBuildRequest.isBuild());
+            assert(!otherBuildRequest.isTest());
+            assert.equal(otherBuildRequest.statusLabel(), 'Running');
+            assert.equal(otherBuildRequest.statusUrl(), 'http://build.webkit.org/builders/some%20builder/builds/124');
+            assert.equal(otherBuildRequest.buildId(), null);
+
+            const otherCommitSet = otherBuildRequest.commitSet();
+            assert.equal(otherCommitSet.revisionForRepository(webkit), '191622');
+            assert.equal(otherCommitSet.patchForRepository(webkit), null);
+            assert.equal(otherCommitSet.rootForRepository(webkit), null);
+            assert.deepEqual(otherCommitSet.allRootFiles(), []);
+
+            return uploadRoot(otherBuildRequest.id(), 124);
+        }).then(() => {
+            return TestGroup.fetchForTask(taskId, true);
+        }).then((testGroups) => {
+            assert.equal(testGroups.length, 1);
+            const testGroup = testGroups[0];
+            const webkit = Repository.findById(MockData.webkitRepositoryId());
+            assert.equal(testGroup.buildRequests().length, 6);
+
+            const buildRequest = testGroup.buildRequests()[0];
+            assert(buildRequest.isBuild());
+            assert(!buildRequest.isTest());
+            assert.equal(buildRequest.statusLabel(), 'Completed');
+            assert.equal(buildRequest.statusUrl(), 'http://build.webkit.org/builders/some%20builder/builds/124');
+            assert.notEqual(buildRequest.buildId(), null);
+
+            const commitSet = buildRequest.commitSet();
+            assert.equal(commitSet.revisionForRepository(webkit), '191622');
+            const webkitPatch = commitSet.patchForRepository(webkit);
+            assert(webkitPatch instanceof UploadedFile);
+            assert.equal(webkitPatch.filename(), 'patch.dat');
+            const webkitRoot = commitSet.rootForRepository(webkit);
+            assert(webkitRoot instanceof UploadedFile);
+            assert.equal(webkitRoot.filename(), 'root123.dat');
+            assert.deepEqual(commitSet.allRootFiles(), [webkitRoot]);
+
+            const otherBuildRequest = testGroup.buildRequests()[1];
+            assert(otherBuildRequest.isBuild());
+            assert(!otherBuildRequest.isTest());
+            assert.equal(otherBuildRequest.statusLabel(), 'Completed');
+            assert.equal(otherBuildRequest.statusUrl(), 'http://build.webkit.org/builders/some%20builder/builds/124');
+            assert.notEqual(otherBuildRequest.buildId(), null);
+
+            const otherCommitSet = otherBuildRequest.commitSet();
+            assert.equal(otherCommitSet.revisionForRepository(webkit), '191622');
+            assert.equal(otherCommitSet.patchForRepository(webkit), null);
+            const otherWebkitRoot = otherCommitSet.rootForRepository(webkit);
+            assert(otherWebkitRoot instanceof UploadedFile);
+            assert.equal(otherWebkitRoot.filename(), 'root124.dat');
+            assert.deepEqual(otherCommitSet.allRootFiles(), [otherWebkitRoot]);
+        });
+    });
+
+    it('should schedule a build with platform in build property', () => {
+        const requests = MockRemoteAPI.requests;
+        let triggerable;
+        let taskId = null;
+        let syncPromise;
+        return createTriggerable(configWithPlatformName).then((newTriggerable) => {
+            triggerable = newTriggerable;
+            return createTestGroupWihPatch();
+        }).then((testGroup) => {
+            taskId = testGroup.task().id();
+            const webkit = Repository.findById(MockData.webkitRepositoryId());
+            assert.equal(testGroup.buildRequests().length, 6);
+
+            const buildRequest = testGroup.buildRequests()[0];
+            assert(buildRequest.isBuild());
+            assert(!buildRequest.isTest());
+            assert.equal(buildRequest.statusLabel(), 'Waiting');
+            assert.equal(buildRequest.statusUrl(), null);
+            assert.equal(buildRequest.buildId(), null);
+
+            const commitSet = buildRequest.commitSet();
+            assert.equal(commitSet.revisionForRepository(webkit), '191622');
+            const webkitPatch = commitSet.patchForRepository(webkit);
+            assert(webkitPatch instanceof UploadedFile);
+            assert.equal(webkitPatch.filename(), 'patch.dat');
+            assert.equal(commitSet.rootForRepository(webkit), null);
+            assert.deepEqual(commitSet.allRootFiles(), []);
+
+            const otherBuildRequest = testGroup.buildRequests()[1];
+            assert(otherBuildRequest.isBuild());
+            assert(!otherBuildRequest.isTest());
+            assert.equal(otherBuildRequest.statusLabel(), 'Waiting');
+            assert.equal(otherBuildRequest.statusUrl(), null);
+            assert.equal(otherBuildRequest.buildId(), null);
+
+            const otherCommitSet = otherBuildRequest.commitSet();
+            assert.equal(otherCommitSet.revisionForRepository(webkit), '191622');
+            assert.equal(otherCommitSet.patchForRepository(webkit), null);
+            assert.equal(otherCommitSet.rootForRepository(webkit), null);
+            assert.deepEqual(otherCommitSet.allRootFiles(), []);
+
+            syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.equal(requests.length, 3);
+            assertAndResolveRequest(requests[0], 'GET', '/json/builders/some%20tester/pendingBuilds', []);
+            assertAndResolveRequest(requests[1], 'GET', '/json/builders/some%20builder/pendingBuilds', []);
+            assertAndResolveRequest(requests[2], 'GET', '/json/builders/other%20builder/pendingBuilds', []);
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.equal(requests.length, 6);
+            assertAndResolveRequest(requests[3], 'GET', '/json/builders/some%20tester/builds/?select=-1&select=-2', {});
+            assertAndResolveRequest(requests[4], 'GET', '/json/builders/some%20builder/builds/?select=-1&select=-2', {});
+            assertAndResolveRequest(requests[5], 'GET', '/json/builders/other%20builder/builds/?select=-1&select=-2', {});
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.equal(requests.length, 7);
+            assertAndResolveRequest(requests[6], 'POST', '/builders/some%20builder/force', 'OK');
+            assert.deepEqual(requests[6].data, {'wk': '191622', 'wk-patch': RemoteAPI.url('/api/uploaded-file/1.dat'),
+                'build-request-id': '1', 'forcescheduler': 'force-ab-builds', 'checkbox': 'build-wk', 'platform-name': 'some platform'});
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.equal(requests.length, 10);
+            assertAndResolveRequest(requests[7], 'GET', '/json/builders/some%20tester/pendingBuilds', []);
+            assertAndResolveRequest(requests[8], 'GET', '/json/builders/some%20builder/pendingBuilds',
+                [MockData.pendingBuild({builder: 'some builder', buildRequestId: 1})]);
+            assertAndResolveRequest(requests[9], 'GET', '/json/builders/other%20builder/pendingBuilds', []);
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.equal(requests.length, 13);
+            assertAndResolveRequest(requests[10], 'GET', '/json/builders/some%20tester/builds/?select=-1&select=-2', {});
+            assertAndResolveRequest(requests[11], 'GET', '/json/builders/some%20builder/builds/?select=-1&select=-2', {
+                [-1]: MockData.runningBuild({builder: 'some builder', buildRequestId: 1})
+            });
+            assertAndResolveRequest(requests[12], 'GET', '/json/builders/other%20builder/builds/?select=-1&select=-2', {});
+            return syncPromise;
+        }).then(() => {
+            return TestGroup.fetchForTask(taskId, true);
+        }).then((testGroups) => {
+            assert.equal(testGroups.length, 1);
+            const testGroup = testGroups[0];
+            const webkit = Repository.findById(MockData.webkitRepositoryId());
+            assert.equal(testGroup.buildRequests().length, 6);
+
+            const buildRequest = testGroup.buildRequests()[0];
+            assert(buildRequest.isBuild());
+            assert(!buildRequest.isTest());
+            assert.equal(buildRequest.statusLabel(), 'Running');
+            assert.equal(buildRequest.statusUrl(), 'http://build.webkit.org/builders/some%20builder/builds/124');
+            assert.equal(buildRequest.buildId(), null);
+
+            const commitSet = buildRequest.commitSet();
+            assert.equal(commitSet.revisionForRepository(webkit), '191622');
+            const webkitPatch = commitSet.patchForRepository(webkit);
+            assert(webkitPatch instanceof UploadedFile);
+            assert.equal(webkitPatch.filename(), 'patch.dat');
+            assert.equal(commitSet.rootForRepository(webkit), null);
+            assert.deepEqual(commitSet.allRootFiles(), []);
+
+            const otherBuildRequest = testGroup.buildRequests()[1];
+            assert(otherBuildRequest.isBuild());
+            assert(!otherBuildRequest.isTest());
+            assert.equal(otherBuildRequest.statusLabel(), 'Waiting');
+            assert.equal(otherBuildRequest.statusUrl(), null);
+            assert.equal(otherBuildRequest.buildId(), null);
+
+            const otherCommitSet = otherBuildRequest.commitSet();
+            assert.equal(otherCommitSet.revisionForRepository(webkit), '191622');
+            assert.equal(otherCommitSet.patchForRepository(webkit), null);
+            assert.equal(otherCommitSet.rootForRepository(webkit), null);
+            assert.deepEqual(otherCommitSet.allRootFiles(), []);
+
+            return uploadRoot(buildRequest.id(), 123);
+        }).then(() => {
+            return TestGroup.fetchForTask(taskId, true);
+        }).then((testGroups) => {
+            assert.equal(testGroups.length, 1);
+            const testGroup = testGroups[0];
+            const webkit = Repository.findById(MockData.webkitRepositoryId());
+            assert.equal(testGroup.buildRequests().length, 6);
+
+            const buildRequest = testGroup.buildRequests()[0];
+            assert(buildRequest.isBuild());
+            assert(!buildRequest.isTest());
+            assert.equal(buildRequest.statusLabel(), 'Completed');
+            assert.equal(buildRequest.statusUrl(), 'http://build.webkit.org/builders/some%20builder/builds/124');
+            assert.notEqual(buildRequest.buildId(), null);
+
+            const commitSet = buildRequest.commitSet();
+            assert.equal(commitSet.revisionForRepository(webkit), '191622');
+            const webkitPatch = commitSet.patchForRepository(webkit);
+            assert(webkitPatch instanceof UploadedFile);
+            assert.equal(webkitPatch.filename(), 'patch.dat');
+            const webkitRoot = commitSet.rootForRepository(webkit);
+            assert(webkitRoot instanceof UploadedFile);
+            assert.equal(webkitRoot.filename(), 'root123.dat');
+            assert.deepEqual(commitSet.allRootFiles(), [webkitRoot]);
+
+            const otherBuildRequest = testGroup.buildRequests()[1];
+            assert(otherBuildRequest.isBuild());
+            assert(!otherBuildRequest.isTest());
+            assert.equal(otherBuildRequest.statusLabel(), 'Waiting');
+            assert.equal(otherBuildRequest.statusUrl(), null);
+            assert.equal(otherBuildRequest.buildId(), null);
+
+            const otherCommitSet = otherBuildRequest.commitSet();
+            assert.equal(otherCommitSet.revisionForRepository(webkit), '191622');
+            assert.equal(otherCommitSet.patchForRepository(webkit), null);
+            assert.equal(otherCommitSet.rootForRepository(webkit), null);
+            assert.deepEqual(otherCommitSet.allRootFiles(), []);
+
+            MockRemoteAPI.reset();
+            syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.equal(requests.length, 3);
+            assertAndResolveRequest(requests[0], 'GET', '/json/builders/some%20tester/pendingBuilds', []);
+            assertAndResolveRequest(requests[1], 'GET', '/json/builders/some%20builder/pendingBuilds', []);
+            assertAndResolveRequest(requests[2], 'GET', '/json/builders/other%20builder/pendingBuilds', []);
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.equal(requests.length, 6);
+            assertAndResolveRequest(requests[3], 'GET', '/json/builders/some%20tester/builds/?select=-1&select=-2', {});
+            assertAndResolveRequest(requests[4], 'GET', '/json/builders/some%20builder/builds/?select=-1&select=-2', {
+                [-1]: MockData.finishedBuild({builder: 'some builder', buildRequestId: 1})
+            });
+            assertAndResolveRequest(requests[5], 'GET', '/json/builders/other%20builder/builds/?select=-1&select=-2', {});
+            return MockRemoteAPI.waitForRequest();
+        }).then(() => {
+            assert.equal(requests.length, 7);
+            assertAndResolveRequest(requests[6], 'POST', '/builders/some%20builder/force', 'OK');
+            assert.deepEqual(requests[6].data, {'wk': '191622', 'build-request-id': '2', 'forcescheduler': 'force-ab-builds', 'checkbox': 'build-wk', 'platform-name': 'some platform'});
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
             assert.equal(requests.length, 10);
