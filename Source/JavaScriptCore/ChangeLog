@@ -1,3 +1,22 @@
+2017-11-07  Mark Lam  <mark.lam@apple.com>
+
+        AccessCase::generateImpl() should exclude the result register when restoring registers after a call.
+        https://bugs.webkit.org/show_bug.cgi?id=179355
+        <rdar://problem/35263053>
+
+        Reviewed by Saam Barati.
+
+        In the Transition case in AccessCase::generateImpl(), we were restoring registers
+        using restoreLiveRegistersFromStackForCall() without excluding the scratchGPR
+        where we previously stashed the reallocated butterfly.  If the generated code is
+        under heavy register pressure, scratchGPR could have been from the set of preserved
+        registers, and hence, would be restored by restoreLiveRegistersFromStackForCall().
+        As a result, the restoration would trash the butterfly result we stored there.
+        This patch fixes the issue by excluding the scratchGPR in the restoration.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+
 2017-11-06  Robin Morisset  <rmorisset@apple.com>
 
         CodeBlock::usesOpcode() is dead code

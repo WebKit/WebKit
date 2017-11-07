@@ -1,3 +1,13 @@
+2017-11-07  Mark Lam  <mark.lam@apple.com>
+
+        AccessCase::generateImpl() should exclude the result register when restoring registers after a call.
+        https://bugs.webkit.org/show_bug.cgi?id=179355
+        <rdar://problem/35263053>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-179355.js: Added.
+
 2017-11-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         JIT call inline caches should cache calls to objects with getCallData/getConstructData traps
