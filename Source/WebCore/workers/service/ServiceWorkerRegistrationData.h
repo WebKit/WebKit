@@ -37,10 +37,13 @@ enum class ServiceWorkerUpdateViaCache;
 struct ServiceWorkerRegistrationData {
     ServiceWorkerRegistrationKey key;
     uint64_t identifier;
-    std::optional<ServiceWorkerIdentifier> activeServiceWorkerIdentifier; // FIXME: This should not be part of registrationData.
     URL scopeURL;
     URL scriptURL;
     ServiceWorkerUpdateViaCache updateViaCache;
+
+    std::optional<ServiceWorkerIdentifier> installingServiceWorkerIdentifier;
+    std::optional<ServiceWorkerIdentifier> waitingServiceWorkerIdentifier;
+    std::optional<ServiceWorkerIdentifier> activeServiceWorkerIdentifier;
 
     ServiceWorkerRegistrationData isolatedCopy() const;
 
@@ -52,7 +55,7 @@ struct ServiceWorkerRegistrationData {
 template<class Encoder>
 void ServiceWorkerRegistrationData::encode(Encoder& encoder) const
 {
-    encoder << key << identifier << activeServiceWorkerIdentifier << scopeURL << scriptURL << updateViaCache;
+    encoder << key << identifier << scopeURL << scriptURL << updateViaCache << installingServiceWorkerIdentifier << waitingServiceWorkerIdentifier << activeServiceWorkerIdentifier;
 }
 
 template<class Decoder>
@@ -66,12 +69,6 @@ std::optional<ServiceWorkerRegistrationData> ServiceWorkerRegistrationData::deco
     std::optional<uint64_t> identifier;
     decoder >> identifier;
     if (!identifier)
-        return std::nullopt;
-
-
-    std::optional<std::optional<ServiceWorkerIdentifier>> activeServiceWorkerIdentifier;
-    decoder >> activeServiceWorkerIdentifier;
-    if (!activeServiceWorkerIdentifier)
         return std::nullopt;
 
     std::optional<URL> scopeURL;
@@ -89,7 +86,22 @@ std::optional<ServiceWorkerRegistrationData> ServiceWorkerRegistrationData::deco
     if (!updateViaCache)
         return std::nullopt;
 
-    return { { WTFMove(*key), WTFMove(*identifier), WTFMove(*activeServiceWorkerIdentifier), WTFMove(*scopeURL), WTFMove(*scriptURL), WTFMove(*updateViaCache) } };
+    std::optional<std::optional<ServiceWorkerIdentifier>> installingServiceWorkerIdentifier;
+    decoder >> installingServiceWorkerIdentifier;
+    if (!installingServiceWorkerIdentifier)
+        return std::nullopt;
+
+    std::optional<std::optional<ServiceWorkerIdentifier>> waitingServiceWorkerIdentifier;
+    decoder >> waitingServiceWorkerIdentifier;
+    if (!waitingServiceWorkerIdentifier)
+        return std::nullopt;
+
+    std::optional<std::optional<ServiceWorkerIdentifier>> activeServiceWorkerIdentifier;
+    decoder >> activeServiceWorkerIdentifier;
+    if (!activeServiceWorkerIdentifier)
+        return std::nullopt;
+
+    return { { WTFMove(*key), WTFMove(*identifier), WTFMove(*scopeURL), WTFMove(*scriptURL), WTFMove(*updateViaCache), WTFMove(*installingServiceWorkerIdentifier), WTFMove(*waitingServiceWorkerIdentifier), WTFMove(*activeServiceWorkerIdentifier) } };
 }
 
 } // namespace WTF

@@ -53,10 +53,11 @@ public:
     WEBCORE_EXPORT void setConnection(std::unique_ptr<Connection>&&);
     WEBCORE_EXPORT Connection* connection() const;
 
-    WEBCORE_EXPORT void registerServiceWorkerThreadForUpdate(Ref<ServiceWorkerThreadProxy>&&);
+    WEBCORE_EXPORT void registerServiceWorkerThreadForInstall(Ref<ServiceWorkerThreadProxy>&&);
     WEBCORE_EXPORT ServiceWorkerThreadProxy* serviceWorkerThreadProxy(ServiceWorkerIdentifier) const;
     WEBCORE_EXPORT void postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destination, Ref<SerializedScriptValue>&& message, const ServiceWorkerClientIdentifier& sourceIdentifier, const String& sourceOrigin);
     WEBCORE_EXPORT void fireInstallEvent(ServiceWorkerIdentifier);
+
 private:
     SWContextManager() = default;
 

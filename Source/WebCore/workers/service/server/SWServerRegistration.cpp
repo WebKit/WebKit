@@ -61,6 +61,8 @@ SWServerWorker* SWServerRegistration::getNewestWorker()
 
 void SWServerRegistration::updateRegistrationState(ServiceWorkerRegistrationState state, SWServerWorker* worker)
 {
+    LOG(ServiceWorker, "(%p) Updating registration state to %i with worker %p", this, (int)state, worker);
+    
     switch (state) {
     case ServiceWorkerRegistrationState::Installing:
         m_installingWorker = worker;
@@ -80,6 +82,18 @@ void SWServerRegistration::updateRegistrationState(ServiceWorkerRegistrationStat
     for (auto& connectionIdentifierWithClients : m_clientRegistrationsByConnection.keys()) {
         if (auto* connection = m_server.getConnection(connectionIdentifierWithClients))
             connection->updateRegistrationStateInClient(m_registrationKey, state, serviceWorkerIdentifier);
+    }
+}
+
+void SWServerRegistration::updateWorkerState(SWServerWorker& worker, ServiceWorkerState state)
+{
+    LOG(ServiceWorker, "Updating worker %p state to %i (%p)", &worker, (int)state, this);
+
+    worker.setState(state);
+
+    for (auto& connectionIdentifierWithClients : m_clientRegistrationsByConnection.keys()) {
+        if (auto* connection = m_server.getConnection(connectionIdentifierWithClients))
+            connection->updateWorkerStateInClient(worker.identifier(), state);
     }
 }
 
@@ -115,7 +129,19 @@ void SWServerRegistration::firePostInstallEvents(uint64_t connectionIdentifier)
 
 ServiceWorkerRegistrationData SWServerRegistration::data() const
 {
-    return { m_registrationKey, identifier(), m_activeServiceWorkerIdentifier, m_scopeURL, m_scriptURL, m_updateViaCache };
+    std::optional<ServiceWorkerIdentifier> installingID;
+    if (m_installingWorker)
+        installingID = m_installingWorker->identifier();
+
+    std::optional<ServiceWorkerIdentifier> waitingID;
+    if (m_waitingWorker)
+        waitingID = m_waitingWorker->identifier();
+
+    std::optional<ServiceWorkerIdentifier> activeID;
+    if (m_activeWorker)
+        activeID = m_activeWorker->identifier();
+
+    return { m_registrationKey, identifier(), m_scopeURL, m_scriptURL, m_updateViaCache, installingID, waitingID, activeID };
 }
 
 void SWServerRegistration::addClientServiceWorkerRegistration(uint64_t connectionIdentifier, uint64_t clientRegistrationIdentifier)

@@ -30,6 +30,7 @@
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include "ServiceWorkerIdentifier.h"
+#include "ServiceWorkerTypes.h"
 #include "URL.h"
 #include <heap/Strong.h>
 #include <wtf/RefCounted.h>
@@ -49,20 +50,18 @@ public:
         return adoptRef(*new ServiceWorker(context, identifier, scriptURL));
     }
 
-    virtual ~ServiceWorker() = default;
-
-    enum class State {
-        Installing,
-        Installed,
-        Activating,
-        Activated,
-        Redundant,
-    };
+    virtual ~ServiceWorker();
 
     const URL& scriptURL() const { return m_scriptURL; }
 
+    using State = ServiceWorkerState;
     State state() const { return m_state; }
-    void setState(State);
+    
+    enum ShouldFireStateChangeEvent {
+        FireStateChangeEvent,
+        DoNotFireStateChangeEvent,
+    };
+    void updateWorkerState(State, ShouldFireStateChangeEvent = FireStateChangeEvent);
 
     ExceptionOr<void> postMessage(ScriptExecutionContext&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
@@ -71,8 +70,11 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
+    static const HashMap<ServiceWorkerIdentifier, HashSet<ServiceWorker*>>& allWorkers();
+
 private:
     ServiceWorker(ScriptExecutionContext&, ServiceWorkerIdentifier, const URL& scriptURL);
+    static HashMap<ServiceWorkerIdentifier, HashSet<ServiceWorker*>>& mutableAllWorkers();
 
     virtual EventTargetInterface eventTargetInterface() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;

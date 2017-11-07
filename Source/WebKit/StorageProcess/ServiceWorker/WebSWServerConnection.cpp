@@ -111,9 +111,14 @@ void WebSWServerConnection::firePostInstallEvents(const ServiceWorkerRegistratio
     send(Messages::WebSWClientConnection::FirePostInstallEvents(key));
 }
 
-void WebSWServerConnection::updateServiceWorkerContext(const ServiceWorkerContextData& data)
+void WebSWServerConnection::updateWorkerStateInClient(ServiceWorkerIdentifier worker, ServiceWorkerState state)
 {
-    if (sendToContextProcess(Messages::WebSWContextManagerConnection::UpdateServiceWorker(identifier(), data)))
+    send(Messages::WebSWClientConnection::UpdateWorkerState(worker, state));
+}
+
+void WebSWServerConnection::installServiceWorkerContext(const ServiceWorkerContextData& data)
+{
+    if (sendToContextProcess(Messages::WebSWContextManagerConnection::InstallServiceWorker(identifier(), data)))
         return;
 
     m_pendingContextDatas.append(data);
@@ -188,7 +193,7 @@ void WebSWServerConnection::setContextConnection(IPC::Connection* connection)
 
     // We can now start any pending service worker updates.
     for (auto& pendingContextData : m_pendingContextDatas)
-        updateServiceWorkerContext(pendingContextData);
+        installServiceWorkerContext(pendingContextData);
     
     m_pendingContextDatas.clear();
 }

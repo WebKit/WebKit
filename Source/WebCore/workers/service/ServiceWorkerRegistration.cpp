@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 #include "DOMWindow.h"
 #include "Document.h"
+#include "Logging.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerTypes.h"
@@ -41,12 +42,15 @@ ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& con
     , m_registrationData(WTFMove(registrationData))
     , m_container(WTFMove(container))
 {
+    LOG(ServiceWorker, "Creating registration %p for registration key %s", this, m_registrationData.key.loggingString().utf8().data());
     suspendIfNeeded();
     m_container->addRegistration(*this);
 }
 
 ServiceWorkerRegistration::~ServiceWorkerRegistration()
 {
+    LOG(ServiceWorker, "Deleting registration %p for registration key %s", this, m_registrationData.key.loggingString().utf8().data());
+
     m_container->removeRegistration(*this);
 }
 
@@ -145,9 +149,25 @@ void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)
 
 void ServiceWorkerRegistration::updateStateFromServer(ServiceWorkerRegistrationState state, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier)
 {
-    // FIXME: Implement here along with "Update Worker State" algorithm
-    UNUSED_PARAM(state);
-    UNUSED_PARAM(serviceWorkerIdentifier);
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    RefPtr<ServiceWorker> worker;
+    if (serviceWorkerIdentifier)
+        worker = ServiceWorker::create(*context, *serviceWorkerIdentifier, m_registrationData.scriptURL);
+
+    switch (state) {
+    case ServiceWorkerRegistrationState::Installing:
+        m_installingWorker = WTFMove(worker);
+        break;
+    case ServiceWorkerRegistrationState::Waiting:
+        m_waitingWorker = WTFMove(worker);
+        break;
+    case ServiceWorkerRegistrationState::Active:
+        m_activeWorker = WTFMove(worker);
+        break;
+    }
 }
 
 EventTargetInterface ServiceWorkerRegistration::eventTargetInterface() const

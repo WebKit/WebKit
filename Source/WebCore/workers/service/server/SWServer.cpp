@@ -262,11 +262,11 @@ void SWServer::removeClientServiceWorkerRegistration(Connection& connection, con
 Ref<SWServerWorker> SWServer::updateWorker(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey, const URL& url, const String& script, WorkerType type)
 {
     auto serviceWorkerIdentifier = generateServiceWorkerIdentifier();
-    
+
     auto result = m_workersByID.add(serviceWorkerIdentifier, SWServerWorker::create(registrationKey, url, script, type, serviceWorkerIdentifier));
     ASSERT(result.isNewEntry);
-    
-    connection.updateServiceWorkerContext({ registrationKey, serviceWorkerIdentifier, script, url });
+
+    connection.installServiceWorkerContext({ registrationKey, serviceWorkerIdentifier, script, url });
     
     return result.iterator->value.get();
 }

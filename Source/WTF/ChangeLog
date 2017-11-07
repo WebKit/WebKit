@@ -1,3 +1,13 @@
+2017-11-07  Brady Eidson  <beidson@apple.com>
+
+        Implement "UpdateWorkerState" and use it
+        https://bugs.webkit.org/show_bug.cgi?id=179318
+
+        Reviewed by Chris Dumez.
+
+        * wtf/ObjectIdentifier.h:
+        (WTF::ObjectIdentifier::loggingString const):
+
 2017-11-07  Michael Saboff  <msaboff@apple.com>
 
         Add SPI function pointers qualifiers for CPU(ARM64E)

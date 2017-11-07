@@ -29,6 +29,7 @@ messages -> WebSWClientConnection {
     UnregistrationJobResolvedInServer(uint64_t identifier, bool unregistrationResult)
     StartScriptFetchForServer(uint64_t jobIdentifier)
     UpdateRegistrationState(WebCore::ServiceWorkerRegistrationKey key, enum WebCore::ServiceWorkerRegistrationState state, std::optional<WebCore::ServiceWorkerIdentifier> serviceWorkerIdentifier)
+    UpdateWorkerState(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, enum WebCore::ServiceWorkerState state)
     FireUpdateFoundEvent(WebCore::ServiceWorkerRegistrationKey key)
     FirePostInstallEvents(WebCore::ServiceWorkerRegistrationKey key)
 

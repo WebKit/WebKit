@@ -53,6 +53,10 @@ public:
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerRegistrationKey> decode(Decoder&);
 
+#ifndef NDEBUG
+    String loggingString() const;
+#endif
+
 private:
     URL m_clientCreationURL;
     SecurityOriginData m_topOrigin;

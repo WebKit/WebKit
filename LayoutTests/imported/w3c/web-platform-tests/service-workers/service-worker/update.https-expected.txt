@@ -1,3 +1,3 @@
 
-FAIL Update a registration. promise_test: Unhandled rejection with value: object "TypeError: Cannot update a null/nonexistent service worker registration"
+FAIL Update a registration. assert_unreached: update() should reject. Reached unreachable code
 

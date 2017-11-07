@@ -73,20 +73,11 @@ void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, con
         return;
     }
 
-    // If newestWorker is not null, newestWorker's script url equals job's script url with the exclude fragments
+    // FIXME: If newestWorker is not null, newestWorker's script url equals job's script url with the exclude fragments
     // flag set, and script's source text is a byte-for-byte match with newestWorker's script resource's source
     // text, then:
-    if (newestWorker && equalIgnoringFragmentIdentifier(newestWorker->scriptURL(), job.scriptURL) && result.script == newestWorker->script()) {
-        // FIXME: if script is a classic script, and script's module record's [[ECMAScriptCode]] is a byte-for-byte
-        // match with newestWorker's script resource's module record's [[ECMAScriptCode]] otherwise.
-
-        // Invoke Resolve Job Promise with job and registration.
-        m_server.resolveRegistrationJob(job, registration->data());
-
-        // Invoke Finish Job with job and abort these steps.
-        finishCurrentJob();
-        return;
-    }
+    // - Invoke Resolve Job Promise with job and registration.
+    // - Invoke Finish Job with job and abort these steps.
 
     // FIXME: Support the proper worker type (classic vs module)
     m_server.updateWorker(connection, m_registrationKey, job.scriptURL, result.script, WorkerType::Classic);
@@ -113,14 +104,20 @@ void SWServerJobQueue::scriptContextStarted(SWServer::Connection& connection, Se
 {
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
-    registration->setActiveServiceWorkerIdentifier(identifier);
 
     install(*registration, connection, identifier);
 }
 
 // https://w3c.github.io/ServiceWorker/#install
-void SWServerJobQueue::install(SWServerRegistration& registration, SWServer::Connection& connection, ServiceWorkerIdentifier serviceWorkerIdentifier)
+void SWServerJobQueue::install(SWServerRegistration& registration, SWServer::Connection& connection, ServiceWorkerIdentifier installingWorker)
 {
+    // The Install algorithm should never be invoked with a null worker.
+    auto* worker = m_server.workerByID(installingWorker);
+    RELEASE_ASSERT(worker);
+
+    registration.updateRegistrationState(ServiceWorkerRegistrationState::Installing, worker);
+    registration.updateWorkerState(*worker, ServiceWorkerState::Installing);
+
     // Invoke Resolve Job Promise with job and registration.
     m_server.resolveRegistrationJob(firstJob(), registration.data());
 
@@ -130,7 +127,7 @@ void SWServerJobQueue::install(SWServerRegistration& registration, SWServer::Con
     registration.fireUpdateFoundEvent(firstJob().connectionIdentifier());
 
     // Queue a task to fire the InstallEvent.
-    m_server.fireInstallEvent(connection, serviceWorkerIdentifier);
+    m_server.fireInstallEvent(connection, installingWorker);
 }
 
 // https://w3c.github.io/ServiceWorker/#install
@@ -250,9 +247,9 @@ void SWServerJobQueue::tryClearRegistration(SWServerRegistration& registration)
 {
     // FIXME: Make sure that the registration has no service worker client.
 
-    // FIXME: The specification has more complex logic here.
-    if (!registration.getNewestWorker())
-        clearRegistration(registration);
+    // FIXME: The specification has more complex logic here. We currently clear registrations
+    // too aggressively.
+    clearRegistration(registration);
 }
 
 // https://w3c.github.io/ServiceWorker/#clear-registration

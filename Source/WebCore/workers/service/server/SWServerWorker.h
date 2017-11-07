@@ -29,6 +29,7 @@
 
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerRegistrationKey.h"
+#include "ServiceWorkerTypes.h"
 #include "URL.h"
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -49,8 +50,12 @@ public:
     const URL& scriptURL() const { return m_scriptURL; }
     const String& script() const { return m_script; }
     WorkerType type() const { return m_type; }
+
     ServiceWorkerIdentifier identifier() const { return m_identifier; }
-    
+
+    ServiceWorkerState state() const { return m_state; }
+    void setState(ServiceWorkerState state) { m_state = state; }
+
 private:
     SWServerWorker(const ServiceWorkerRegistrationKey&, const URL&, const String& script, WorkerType, ServiceWorkerIdentifier);
 
@@ -59,6 +64,8 @@ private:
     String m_script;
     ServiceWorkerIdentifier m_identifier;
     WorkerType m_type;
+    
+    ServiceWorkerState m_state { ServiceWorkerState::Redundant };
 };
 
 } // namespace WebCore

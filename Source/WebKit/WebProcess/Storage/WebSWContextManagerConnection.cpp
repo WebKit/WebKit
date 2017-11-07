@@ -95,7 +95,7 @@ void WebSWContextManagerConnection::updatePreferences(const WebPreferencesStore&
     RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::fetchAPIEnabledKey()));
 }
 
-void WebSWContextManagerConnection::updateServiceWorker(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data)
+void WebSWContextManagerConnection::installServiceWorker(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData& data)
 {
     // FIXME: Provide a sensical session ID.
     auto sessionID = PAL::SessionID::defaultSessionID();
@@ -114,7 +114,7 @@ void WebSWContextManagerConnection::updateServiceWorker(uint64_t serverConnectio
     pageConfiguration.loaderClientForMainFrame = frameLoaderClient.release();
 
     auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(pageConfiguration), serverConnectionIdentifier, data, sessionID, WebProcess::singleton().cacheStorageProvider());
-    SWContextManager::singleton().registerServiceWorkerThreadForUpdate(WTFMove(serviceWorkerThreadProxy));
+    SWContextManager::singleton().registerServiceWorkerThreadForInstall(WTFMove(serviceWorkerThreadProxy));
 
     LOG(ServiceWorker, "Context process PID: %i created worker thread\n", getpid());
 }

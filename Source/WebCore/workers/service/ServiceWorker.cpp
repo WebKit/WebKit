@@ -35,20 +35,55 @@
 #include "SerializedScriptValue.h"
 #include "ServiceWorkerProvider.h"
 #include <runtime/JSCJSValueInlines.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+const HashMap<ServiceWorkerIdentifier, HashSet<ServiceWorker*>>& ServiceWorker::allWorkers()
+{
+    return mutableAllWorkers();
+}
+
+HashMap<ServiceWorkerIdentifier, HashSet<ServiceWorker*>>& ServiceWorker::mutableAllWorkers()
+{
+    // FIXME: Once we support service workers from workers, this will need to change.
+    RELEASE_ASSERT(isMainThread());
+    
+    static NeverDestroyed<HashMap<ServiceWorkerIdentifier, HashSet<ServiceWorker*>>> allWorkersMap;
+    return allWorkersMap;
+}
 
 ServiceWorker::ServiceWorker(ScriptExecutionContext& context, ServiceWorkerIdentifier identifier, const URL& scriptURL)
     : ContextDestructionObserver(&context)
     , m_identifier(identifier)
     , m_scriptURL(scriptURL)
 {
+    auto result = mutableAllWorkers().ensure(identifier, [] {
+        return HashSet<ServiceWorker*>();
+    });
+    result.iterator->value.add(this);
 }
 
-void ServiceWorker::setState(State state)
+ServiceWorker::~ServiceWorker()
 {
+    auto iterator = mutableAllWorkers().find(m_identifier);
+
+    ASSERT(iterator->value.contains(this));
+    iterator->value.remove(this);
+
+    if (iterator->value.isEmpty())
+        mutableAllWorkers().remove(iterator);
+}
+
+void ServiceWorker::updateWorkerState(State state, ShouldFireStateChangeEvent shouldFire)
+{
+    // FIXME: Once we support service workers from workers, this might need to change.
+    RELEASE_ASSERT(isMainThread());
+
     m_state = state;
-    dispatchEvent(Event::create(eventNames().statechangeEvent, false, false));
+    
+    if (shouldFire == FireStateChangeEvent)
+        dispatchEvent(Event::create(eventNames().statechangeEvent, false, false));
 }
 
 ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)

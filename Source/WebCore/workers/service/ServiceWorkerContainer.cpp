@@ -241,7 +241,7 @@ void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<Deferr
     });
 }
 
-void ServiceWorkerContainer::updateRegistration(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerIdentifier>& serviceWorkerIdentifier)
+void ServiceWorkerContainer::updateRegistrationState(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerIdentifier>& serviceWorkerIdentifier)
 {
     if (auto* registration = m_registrations.get(key))
         registration->updateStateFromServer(state, serviceWorkerIdentifier);
@@ -299,17 +299,17 @@ private:
                 return;
             registration->setInstallingWorker(nullptr);
             registration->setWaitingWorker(serviceWorker.copyRef());
-            serviceWorker->setState(ServiceWorker::State::Installed);
+            serviceWorker->updateWorkerState(ServiceWorker::State::Installed);
             callOnMainThread([container = WTFMove(container), registration = WTFMove(registration), serviceWorker = WTFMove(serviceWorker)] () mutable {
                 if (container->isStopped())
                     return;
                 registration->setWaitingWorker(nullptr);
                 registration->setActiveWorker(serviceWorker.copyRef());
-                serviceWorker->setState(ServiceWorker::State::Activating);
+                serviceWorker->updateWorkerState(ServiceWorker::State::Activating);
                 callOnMainThread([container = WTFMove(container), serviceWorker = WTFMove(serviceWorker)] () mutable {
                     if (container->isStopped())
                         return;
-                    serviceWorker->setState(ServiceWorker::State::Activated);
+                    serviceWorker->updateWorkerState(ServiceWorker::State::Activated);
                 });
             });
         });
@@ -346,19 +346,30 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
     }
 
     // FIXME: Implement proper selection of service workers.
-    auto* activeServiceWorker = context->activeServiceWorker();
-    ASSERT(data.activeServiceWorkerIdentifier);
-    if (!activeServiceWorker || activeServiceWorker->identifier() != *data.activeServiceWorkerIdentifier) {
-        context->setActiveServiceWorker(ServiceWorker::create(*context, *data.activeServiceWorkerIdentifier, data.scriptURL));
-        activeServiceWorker = context->activeServiceWorker();
+    auto* installingServiceWorker = context->activeServiceWorker();
+    ASSERT(data.installingServiceWorkerIdentifier);
+    if (!installingServiceWorker || installingServiceWorker->identifier() != *data.installingServiceWorkerIdentifier) {
+        context->setActiveServiceWorker(ServiceWorker::create(*context, *data.installingServiceWorkerIdentifier, data.scriptURL));
+        installingServiceWorker = context->activeServiceWorker();
     }
 
     RefPtr<ServiceWorkerRegistration> registration = m_registrations.get(data.key);
-    if (!registration)
+    if (!registration) {
+        // Currently the only registrations that can be created for the first time here should be Installing.
+        ASSERT(data.installingServiceWorkerIdentifier);
+        auto installingIdentifier = *data.installingServiceWorkerIdentifier;
+        
         registration = ServiceWorkerRegistration::create(*context, *this, WTFMove(data));
+        registration->updateStateFromServer(ServiceWorkerRegistrationState::Installing, installingIdentifier);
+        ASSERT(registration->installing());
 
-    activeServiceWorker->setState(ServiceWorker::State::Installing);
-    registration->setInstallingWorker(activeServiceWorker);
+        installingServiceWorker = registration->installing();
+    }
+
+    installingServiceWorker->updateWorkerState(ServiceWorkerState::Installing, ServiceWorker::DoNotFireStateChangeEvent);
+    registration->setInstallingWorker(installingServiceWorker);
+
+    LOG(ServiceWorker, "Container %p resolved job with registration %p", this, registration.get());
 
     job.promise().resolve<IDLInterface<ServiceWorkerRegistration>>(*registration);
 }

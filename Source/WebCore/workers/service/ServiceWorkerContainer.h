@@ -65,7 +65,7 @@ public:
     void updateRegistration(const URL& scopeURL, const URL& scriptURL, WorkerType, Ref<DeferredPromise>&&);
 
     void getRegistration(const String& clientURL, Ref<DeferredPromise>&&);
-    void updateRegistration(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerIdentifier>&);
+    void updateRegistrationState(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerIdentifier>&);
     void fireUpdateFoundEvent(const ServiceWorkerRegistrationKey&);
     void firePostInstallEvents(const ServiceWorkerRegistrationKey&);
 

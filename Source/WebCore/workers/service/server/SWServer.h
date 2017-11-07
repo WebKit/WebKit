@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "SWServerWorker.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerJob.h"
 #include "ServiceWorkerRegistrationData.h"
@@ -44,8 +45,8 @@ namespace WebCore {
 
 class SWServerJobQueue;
 class SWServerRegistration;
-class SWServerWorker;
 enum class ServiceWorkerRegistrationState;
+enum class ServiceWorkerState;
 struct ExceptionData;
 struct ServiceWorkerContextData;
 struct ServiceWorkerFetchResult;
@@ -65,6 +66,7 @@ public:
 
         // Messages to the client WebProcess
         virtual void updateRegistrationStateInClient(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, std::optional<ServiceWorkerIdentifier>) = 0;
+        virtual void updateWorkerStateInClient(ServiceWorkerIdentifier, ServiceWorkerState) = 0;
         virtual void fireUpdateFoundEvent(const ServiceWorkerRegistrationKey&) = 0;
         virtual void firePostInstallEvents(const ServiceWorkerRegistrationKey&) = 0;
 
@@ -85,7 +87,7 @@ public:
         virtual void startScriptFetchInClient(uint64_t jobIdentifier) = 0;
 
         // Messages to the SW host WebProcess
-        virtual void updateServiceWorkerContext(const ServiceWorkerContextData&) = 0;
+        virtual void installServiceWorkerContext(const ServiceWorkerContextData&) = 0;
         virtual void fireInstallEvent(ServiceWorkerIdentifier) = 0;
 
         SWServer& m_server;
@@ -111,6 +113,7 @@ public:
 
     Ref<SWServerWorker> updateWorker(Connection&, const ServiceWorkerRegistrationKey&, const URL&, const String& script, WorkerType);
     void fireInstallEvent(Connection&, ServiceWorkerIdentifier);
+    SWServerWorker* workerByID(ServiceWorkerIdentifier identifier) const { return m_workersByID.get(identifier); }
     
     Connection* getConnection(uint64_t identifier) { return m_connections.get(identifier); }
 

@@ -76,6 +76,13 @@ bool ServiceWorkerRegistrationKey::isMatching(const SecurityOriginData& topOrigi
     return clientURL.string().startsWith(m_scope);
 }
 
+#ifndef NDEBUG
+String ServiceWorkerRegistrationKey::loggingString() const
+{
+    return makeString(m_topOrigin.debugString(), "-", m_clientCreationURL.string(), "-", m_scope.string());
+}
+#endif
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

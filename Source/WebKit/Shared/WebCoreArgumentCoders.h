@@ -815,6 +815,17 @@ template <> struct EnumTraits<WebCore::ServiceWorkerRegistrationState> {
         WebCore::ServiceWorkerRegistrationState::Active
     >;
 };
+    
+template <> struct EnumTraits<WebCore::ServiceWorkerState> {
+    using values = EnumValues<
+        WebCore::ServiceWorkerState,
+        WebCore::ServiceWorkerState::Installing,
+        WebCore::ServiceWorkerState::Installed,
+        WebCore::ServiceWorkerState::Activating,
+        WebCore::ServiceWorkerState::Activated,
+        WebCore::ServiceWorkerState::Redundant
+    >;
+};
 #endif
 
 } // namespace WTF

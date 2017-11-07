@@ -36,6 +36,7 @@ namespace WebCore {
 class SWServer;
 class SWServerWorker;
 enum class ServiceWorkerRegistrationState;
+enum class ServiceWorkerState;
 struct ExceptionData;
 struct ServiceWorkerFetchResult;
 
@@ -55,9 +56,8 @@ public:
     void setLastUpdateTime(double time) { m_lastUpdateTime = time; }
     ServiceWorkerUpdateViaCache updateViaCache() const { return m_updateViaCache; }
 
-    void setActiveServiceWorkerIdentifier(ServiceWorkerIdentifier identifier) { m_activeServiceWorkerIdentifier = identifier; }
-
     void updateRegistrationState(ServiceWorkerRegistrationState, SWServerWorker*);
+    void updateWorkerState(SWServerWorker&, ServiceWorkerState);
     void fireUpdateFoundEvent(uint64_t connectionIdentifier);
     void firePostInstallEvents(uint64_t connectionIdentifier);
 
@@ -74,8 +74,6 @@ private:
     RefPtr<SWServerWorker> m_installingWorker;
     RefPtr<SWServerWorker> m_waitingWorker;
     RefPtr<SWServerWorker> m_activeWorker;
-
-    std::optional<ServiceWorkerIdentifier> m_activeServiceWorkerIdentifier;
 
     double m_lastUpdateTime { 0 };
     

@@ -47,7 +47,7 @@ auto SWContextManager::connection() const -> Connection*
     return m_connection.get();
 }
 
-void SWContextManager::registerServiceWorkerThreadForUpdate(Ref<ServiceWorkerThreadProxy>&& serviceWorkerThreadProxy)
+void SWContextManager::registerServiceWorkerThreadForInstall(Ref<ServiceWorkerThreadProxy>&& serviceWorkerThreadProxy)
 {
     auto serviceWorkerIdentifier = serviceWorkerThreadProxy->identifier();
     auto* threadProxy = serviceWorkerThreadProxy.ptr();

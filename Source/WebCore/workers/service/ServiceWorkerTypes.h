@@ -35,6 +35,14 @@ enum class ServiceWorkerRegistrationState {
     Active = 2,
 };
 
+enum class ServiceWorkerState {
+    Installing,
+    Installed,
+    Activating,
+    Activated,
+    Redundant,
+};
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

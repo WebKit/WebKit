@@ -66,6 +66,7 @@ private:
     void resolveUnregistrationJobInClient(uint64_t jobIdentifier, const WebCore::ServiceWorkerRegistrationKey&, bool unregistrationResult) final;
     void startScriptFetchInClient(uint64_t jobIdentifier) final;
     void updateRegistrationStateInClient(const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerRegistrationState, std::optional<WebCore::ServiceWorkerIdentifier>) final;
+    void updateWorkerStateInClient(WebCore::ServiceWorkerIdentifier, WebCore::ServiceWorkerState) final;
     void fireUpdateFoundEvent(const WebCore::ServiceWorkerRegistrationKey&) final;
     void firePostInstallEvents(const WebCore::ServiceWorkerRegistrationKey&) final;
 
@@ -76,7 +77,7 @@ private:
     void matchRegistration(uint64_t registrationMatchRequestIdentifier, const WebCore::SecurityOriginData&, const WebCore::URL& clientURL);
 
     // Messages to the SW context WebProcess
-    void updateServiceWorkerContext(const WebCore::ServiceWorkerContextData&) final;
+    void installServiceWorkerContext(const WebCore::ServiceWorkerContextData&) final;
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier) final;
 
     IPC::Connection* messageSenderConnection() final { return m_contentConnection.ptr(); }

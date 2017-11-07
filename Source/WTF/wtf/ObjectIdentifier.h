@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/HashTraits.h>
+#include <wtf/text/WTFString.h>
 
 namespace WTF {
 
@@ -60,6 +61,13 @@ public:
     {
         return m_identifier != other.m_identifier;
     }
+    
+#ifndef NDEBUG
+    String loggingString() const
+    {
+        return String::number(m_identifier);
+    }
+#endif
 
 private:
     template<typename U> friend ObjectIdentifier<U> makeObjectIdentifier(uint64_t);
