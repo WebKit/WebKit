@@ -1,3 +1,13 @@
+2017-11-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update TestExpectations for slow  WPT encoding LayoutTests.
+
+        Unreviewed test gardening.
+
+        Mark some of the tests as slow on Debug and skip those that time out even though they are already marked as slow.
+
+        * TestExpectations:
+
 2017-11-07  Antoine Quint  <graouts@apple.com>
 
         <video> does not respect pointer-events
