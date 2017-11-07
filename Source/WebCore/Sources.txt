@@ -2262,7 +2262,6 @@ JSAudioListener.cpp
 JSAudioNode.cpp
 JSAudioParam.cpp
 JSAudioProcessingEvent.cpp
-JSAudioTrackMediaSource.cpp
 JSBarProp.cpp
 JSBasicCredential.cpp
 JSBeforeLoadEvent.cpp
@@ -2902,7 +2901,6 @@ JSTextDecoder.cpp
 JSTextEncoder.cpp
 JSTextEvent.cpp
 JSTextMetrics.cpp
-JSTextTrackMediaSource.cpp
 JSTimeRanges.cpp
 JSTransitionEvent.cpp
 JSTreeWalker.cpp
@@ -2922,7 +2920,6 @@ JSVRPose.cpp
 JSVRStageParameters.cpp
 JSValidityState.cpp
 JSVideoPlaybackQuality.cpp
-JSVideoTrackMediaSource.cpp
 JSVisibilityState.cpp
 JSVoidCallback.cpp
 JSWaveShaperNode.cpp
@@ -3080,6 +3077,12 @@ JSVTTRegion.cpp
 JSVTTRegionList.cpp
 JSVideoTrack.cpp
 JSVideoTrackList.cpp
+
+#if ENABLE_MEDIA_SOURCE
+JSAudioTrackMediaSource.cpp
+JSTextTrackMediaSource.cpp
+JSVideoTrackMediaSource.cpp
+#endif
 
 #endif
 

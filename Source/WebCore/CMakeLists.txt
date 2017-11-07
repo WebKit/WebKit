@@ -270,14 +270,11 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediasession/MediaRemoteControls.idl
     Modules/mediasession/MediaSession.idl
 
-    Modules/mediasource/AudioTrackMediaSource.idl
     Modules/mediasource/DOMURLMediaSource.idl
     Modules/mediasource/MediaSource.idl
     Modules/mediasource/SourceBuffer.idl
     Modules/mediasource/SourceBufferList.idl
-    Modules/mediasource/TextTrackMediaSource.idl
     Modules/mediasource/VideoPlaybackQuality.idl
-    Modules/mediasource/VideoTrackMediaSource.idl
 
     Modules/mediastream/CanvasCaptureMediaStreamTrack.idl
     Modules/mediastream/DoubleRange.idl
@@ -1225,6 +1222,14 @@ if (ENABLE_VIDEO_TRACK)
         html/track/VideoTrack.idl
         html/track/VideoTrackList.idl
     )
+
+    if (ENABLE_MEDIA_SOURCE)
+        list(APPEND WebCore_IDL_FILES
+            Modules/mediasource/AudioTrackMediaSource.idl
+            Modules/mediasource/TextTrackMediaSource.idl
+            Modules/mediasource/VideoTrackMediaSource.idl
+        )
+    endif ()
 
     list(APPEND WebCore_SOURCES
         html/track/AudioTrack.cpp
