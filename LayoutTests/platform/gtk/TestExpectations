@@ -1298,6 +1298,9 @@ webkit.org/b/176803 http/tests/local/blob/send-hybrid-blob-using-open-panel.html
 
 webkit.org/b/176805 media/media-higher-prio-audio-stream.html [ Crash ]
 
+webkit.org/b/176806 media/track/track-text-track-cue-list.html [ Crash Pass ]
+webkit.org/b/176806 media/track/track-id.html [ Crash Pass ]
+
 webkit.org/b/176856 fast/mediastream/apply-constraints-video.html [ Crash ]
 
 # See also webkit.org/b/141699
@@ -1876,6 +1879,8 @@ webkit.org/b/177940 workers/wasm-hashset.html [ Crash Timeout Pass ]
 webkit.org/b/179050 accessibility/aria-text-role.html [ Crash Pass ]
 
 webkit.org/b/179051 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args.html [ Crash Failure ]
+
+webkit.org/b/179356 imported/w3c/web-platform-tests/mediacapture-fromelement/capture.html [ Failure Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -2764,7 +2769,7 @@ webkit.org/b/134979 media/track/track-cue-rendering-mode-changed.html [ Failure 
 webkit.org/b/134979 media/track/track-cue-rendering-rtl.html [ Crash Failure Timeout ]
 webkit.org/b/134979 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure Timeout ]
 
-webkit.org/b/134995 media/track/track-in-band-subtitles-too-large.html [ Failure ]
+webkit.org/b/134995 media/track/track-in-band-subtitles-too-large.html [ Failure Crash ]
 webkit.org/b/134995 media/track/track-long-word-container-sizing.html [ Failure ]
 
 webkit.org/b/135529 svg/css/parse-height.html [ Failure ]
