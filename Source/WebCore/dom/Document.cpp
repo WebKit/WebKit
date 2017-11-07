@@ -1939,7 +1939,7 @@ bool Document::updateStyleIfNeeded()
     }
 
     // The early exit for needsStyleRecalc() is needed when updateWidgetPositions() is called in runOrScheduleAsynchronousTasks().
-    ASSERT(NoEventDispatchAssertion::InMainThread::isEventAllowed() || (frameView && frameView->isInChildFrameWithFrameFlattening()));
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed() || (frameView && frameView->isInChildFrameWithFrameFlattening()));
 
     resolveStyle();
     return true;
@@ -1956,7 +1956,7 @@ void Document::updateLayout()
         ASSERT_NOT_REACHED();
         return;
     }
-    ASSERT(NoEventDispatchAssertion::InMainThread::isEventAllowed() || (frameView && frameView->isInChildFrameWithFrameFlattening()));
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed() || (frameView && frameView->isInChildFrameWithFrameFlattening()));
 
 
     RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());

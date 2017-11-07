@@ -30,13 +30,12 @@ namespace WebCore {
 
 class NoEventDispatchAssertion {
 public:
+    // This variant is expensive. Use NoEventDispatchAssertion::InMainThread whenever possible.
     NoEventDispatchAssertion()
     {
-#if !ASSERT_DISABLED
         if (!isMainThread())
             return;
         ++s_count;
-#endif
     }
 
     NoEventDispatchAssertion(const NoEventDispatchAssertion&)
@@ -46,21 +45,15 @@ public:
 
     ~NoEventDispatchAssertion()
     {
-#if !ASSERT_DISABLED
         if (!isMainThread())
             return;
         ASSERT(s_count);
         s_count--;
-#endif
     }
 
     static bool isEventAllowedInMainThread()
     {
-#if ASSERT_DISABLED
-        return true;
-#else
         return !isMainThread() || !s_count;
-#endif
     }
 
     class InMainThread {
@@ -68,33 +61,32 @@ public:
         InMainThread()
         {
             ASSERT(isMainThread());
-#if !ASSERT_DISABLED
             ++s_count;
-#endif
         }
 
         ~InMainThread()
         {
             ASSERT(isMainThread());
-#if !ASSERT_DISABLED
             ASSERT(s_count);
             --s_count;
-#endif
         }
 
+        // Don't enable this assertion in release since it's O(n).
+        // Release asserts in canExecuteScript should be sufficient for security defense purposes.
         static bool isEventDispatchAllowedInSubtree(Node& node)
         {
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
             return isEventAllowed() || EventAllowedScope::isAllowedNode(node);
+#else
+            UNUSED_PARAM(node);
+            return true;
+#endif
         }
 
         static bool isEventAllowed()
         {
             ASSERT(isMainThread());
-#if !ASSERT_DISABLED
             return !s_count;
-#else
-            return true;
-#endif
         }
     };
     
@@ -137,7 +129,6 @@ public:
     };
 #endif
 
-#if !ASSERT_DISABLED
     // FIXME: Remove this class once the sync layout inside SVGImage::draw is removed.
     class DisableAssertionsInScope {
     public:
@@ -154,17 +145,9 @@ public:
     private:
         unsigned m_originalCount { 0 };
     };
-#else
-    class DisableAssertionsInScope {
-    public:
-        DisableAssertionsInScope() { }
-    };
-#endif
 
-#if !ASSERT_DISABLED
 private:
     WEBCORE_EXPORT static unsigned s_count;
-#endif
 };
 
 } // namespace WebCore

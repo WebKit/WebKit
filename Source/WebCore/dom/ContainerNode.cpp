@@ -70,8 +70,8 @@ static void dispatchChildRemovalEvents(Ref<Node>&);
 
 ChildNodesLazySnapshot* ChildNodesLazySnapshot::latestSnapshot;
 
-#if !ASSERT_DISABLED
 unsigned NoEventDispatchAssertion::s_count = 0;
+#if !ASSERT_DISABLED
 NoEventDispatchAssertion::EventAllowedScope* NoEventDispatchAssertion::EventAllowedScope::s_currentScope = nullptr;
 #endif
 

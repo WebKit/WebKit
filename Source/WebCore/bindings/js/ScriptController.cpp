@@ -678,7 +678,7 @@ JSValue ScriptController::executeScriptInWorld(DOMWrapperWorld& world, const Str
 bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reason)
 {
     if (reason == AboutToExecuteScript)
-        ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed());
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed());
 
     if (m_frame.document() && m_frame.document()->isSandboxed(SandboxScripts)) {
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.

@@ -361,7 +361,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
 
 void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::isEventAllowedInMainThread());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed());
     ASSERT(m_alreadyStarted);
 
     if (sourceCode.isEmpty())
