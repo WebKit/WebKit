@@ -89,7 +89,6 @@ public:
 #endif
 
     PlatformContextCairo* platformContext;
-    Vector<float> layers;
 
 #if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS))
     HDC m_hdc;

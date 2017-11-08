@@ -97,7 +97,7 @@ static void setRGBABitmapAlpha(unsigned char* bytes, size_t length, unsigned cha
         bytes[i + 3] = level;
 }
 
-static void drawBitmapToContext(GraphicsContextPlatformPrivate* context, cairo_t* cr, const DIBPixelData& pixelData, const IntSize& translate)
+static void drawBitmapToContext(PlatformContextCairo& platformContext, const DIBPixelData& pixelData, const IntSize& translate)
 {
     // Need to make a cairo_surface_t out of the bitmap's pixel buffer and then draw
     // it into our context.
@@ -109,13 +109,14 @@ static void drawBitmapToContext(GraphicsContextPlatformPrivate* context, cairo_t
 
     // Flip the target surface so that when we set the srcImage as
     // the surface it will draw right-side-up.
+    cairo_t* cr = platformContext.cr();
     cairo_save(cr);
     cairo_translate(cr, static_cast<double>(translate.width()), static_cast<double>(translate.height()));
     cairo_scale(cr, 1, -1);
     cairo_set_source_surface(cr, surface, 0, 0);
 
-    if (context->layers.size())
-        cairo_paint_with_alpha(cr, context->layers.last());
+    if (platformContext.layers().size())
+        cairo_paint_with_alpha(cr, platformContext.layers().last());
     else
         cairo_paint(cr);
      
@@ -147,7 +148,7 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     if (!supportAlphaBlend)
         setRGBABitmapAlpha(bytes, pixelData.size().height() * pixelData.bytesPerRow(), 255);
 
-    drawBitmapToContext(m_data, platformContext()->cr(), pixelData, IntSize(dstRect.x(), dstRect.height() + dstRect.y()));
+    drawBitmapToContext(*platformContext(), pixelData, IntSize(dstRect.x(), dstRect.height() + dstRect.y()));
 
     ::DeleteDC(hdc);
 }
@@ -155,7 +156,7 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
 #if PLATFORM(WIN)
 void GraphicsContext::drawWindowsBitmap(WindowsBitmap* bitmap, const IntPoint& point)
 {
-    drawBitmapToContext(m_data, platformContext()->cr(), bitmap->windowsDIB(), IntSize(point.x(), bitmap->size().height() + point.y()));
+    drawBitmapToContext(*platformContext(), bitmap->windowsDIB(), IntSize(point.x(), bitmap->size().height() + point.y()));
 }
 
 void GraphicsContextPlatformPrivate::syncContext(cairo_t* cr)

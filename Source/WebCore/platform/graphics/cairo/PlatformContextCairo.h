@@ -51,6 +51,7 @@ public:
     void setCr(cairo_t* cr) { m_cr = cr; }
 
     ShadowBlur& shadowBlur() { return m_shadowBlur; }
+    Vector<float>& layers() { return m_layers; }
 
     void save();
     void restore();
@@ -81,7 +82,8 @@ private:
     // GraphicsContext is responsible for managing the state of the ShadowBlur,
     // so it does not need to be on the state stack.
     ShadowBlur m_shadowBlur;
-
+    // Transparency layers.
+    Vector<float> m_layers;
 };
 
 } // namespace WebCore
