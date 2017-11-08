@@ -91,7 +91,7 @@ public:
 #if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS))
     // NOTE: These may note be needed: review and remove once Cairo implementation is complete
     HDC m_hdc { 0 };
-    bool m_shouldIncludeChildWindows { false }
+    bool m_shouldIncludeChildWindows { false };
 #endif
 };
 
