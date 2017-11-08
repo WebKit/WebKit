@@ -1226,9 +1226,9 @@ LayoutRect RenderInline::computeRectForRepaint(const LayoutRect& rect, const Ren
         auto* layoutState = view().frameView().layoutContext().layoutState();
         if (style().hasInFlowPosition() && layer())
             adjustedRect.move(layer()->offsetForInFlowPosition());
-        adjustedRect.move(layoutState->m_paintOffset);
-        if (layoutState->m_clipped)
-            adjustedRect.intersect(layoutState->m_clipRect);
+        adjustedRect.move(layoutState->paintOffset());
+        if (layoutState->isClipped())
+            adjustedRect.intersect(layoutState->clipRect());
         return adjustedRect;
     }
 
@@ -1292,7 +1292,7 @@ void RenderInline::mapLocalToContainer(const RenderLayerModelObject* repaintCont
 
     if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !repaintContainer) {
         auto* layoutState = view().frameView().layoutContext().layoutState();
-        LayoutSize offset = layoutState->m_paintOffset;
+        LayoutSize offset = layoutState->paintOffset();
         if (style().hasInFlowPosition() && layer())
             offset += layer()->offsetForInFlowPosition();
         transformState.move(offset);

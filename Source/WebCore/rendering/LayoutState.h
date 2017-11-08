@@ -55,13 +55,15 @@ public:
     LayoutState(std::unique_ptr<LayoutState> ancestor, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged);
     explicit LayoutState(RenderElement&);
 
-    void clearPaginationInformation();
     bool isPaginated() const { return m_isPaginated; }
-    
+    void setIsPaginated() { m_isPaginated = true; }
+    void clearPaginationInformation();
+
     // The page logical offset is the object's offset from the top of the page in the page progression
     // direction (so an x-offset in vertical text and a y-offset for horizontal text).
     LayoutUnit pageLogicalOffset(RenderBox*, LayoutUnit childLogicalOffset) const;
     
+    void setPageLogicalHeight(LayoutUnit logicalHeight) { m_pageLogicalHeight = logicalHeight; }
     LayoutUnit pageLogicalHeight() const { return m_pageLogicalHeight; }
     bool pageLogicalHeightChanged() const { return m_pageLogicalHeightChanged; }
 
@@ -69,6 +71,7 @@ public:
     LayoutSize lineGridOffset() const { return m_lineGridOffset; }
     LayoutSize lineGridPaginationOrigin() const { return m_lineGridPaginationOrigin; }
 
+    LayoutSize paintOffset() const { return m_paintOffset; }
     LayoutSize layoutOffset() const { return m_layoutOffset; }
 
     LayoutSize pageOffset() const { return m_pageOffset; }
@@ -78,6 +81,20 @@ public:
 
     RenderFragmentedFlow* currentRenderFragmentedFlow() const { return m_currentRenderFragmentedFlow; }
     void setCurrentRenderFragmentedFlow(RenderFragmentedFlow* fragmentedFlow) { m_currentRenderFragmentedFlow = fragmentedFlow; }
+#ifndef NDEBUG
+    RenderElement* renderer() const { return m_renderer; }
+#endif
+    LayoutRect clipRect() const { return m_clipRect; }
+    bool isClipped() const { return m_clipped; }
+
+    void addLayoutDelta(LayoutSize);
+    LayoutSize layoutDelta() const { return m_layoutDelta; }
+#if !ASSERT_DISABLED
+    bool layoutDeltaMatches(LayoutSize);
+#endif
+
+    // FIXME: webkit.org/b/179408 LayoutContext should own the stack of LayoutState objects
+    std::unique_ptr<LayoutState> m_ancestor;
 
 private:
     void computeOffsets(RenderBox&, LayoutSize offset);
@@ -86,7 +103,6 @@ private:
     void propagateLineGridInfo(RenderBox&);
     void establishLineGrid(RenderBlockFlow&);
 
-public:
     // Do not add anything apart from bitfields. See https://bugs.webkit.org/show_bug.cgi?id=100173
     bool m_clipped : 1;
     bool m_isPaginated : 1;
@@ -99,7 +115,6 @@ public:
 
     // The current line grid that we're snapping to and the offset of the start of the grid.
     RenderBlockFlow* m_lineGrid { nullptr };
-    std::unique_ptr<LayoutState> m_ancestor;
 
     // FIXME: Distinguish between the layout clip rect and the paint clip rect which may be larger,
     // e.g., because of composited scrolling.

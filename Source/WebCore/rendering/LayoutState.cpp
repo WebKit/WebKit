@@ -61,14 +61,14 @@ LayoutState::LayoutState(RenderElement& renderer)
 }
 
 LayoutState::LayoutState(std::unique_ptr<LayoutState> ancestor, RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged)
-    : m_clipped(false)
+    : m_ancestor(WTFMove(ancestor))
+    , m_clipped(false)
     , m_isPaginated(false)
     , m_pageLogicalHeightChanged(false)
 #if !ASSERT_DISABLED
     , m_layoutDeltaXSaturated(false)
     , m_layoutDeltaYSaturated(false)
 #endif
-    , m_ancestor(WTFMove(ancestor))
 #ifndef NDEBUG
     , m_renderer(&renderer)
 #endif
@@ -217,6 +217,22 @@ void LayoutState::establishLineGrid(RenderBlockFlow& renderer)
     m_lineGrid = &renderer;
     m_lineGridOffset = m_layoutOffset;
 }
+
+void LayoutState::addLayoutDelta(LayoutSize delta)
+{
+    m_layoutDelta += delta;
+#if !ASSERT_DISABLED
+    m_layoutDeltaXSaturated |= m_layoutDelta.width() == LayoutUnit::max() || m_layoutDelta.width() == LayoutUnit::min();
+    m_layoutDeltaYSaturated |= m_layoutDelta.height() == LayoutUnit::max() || m_layoutDelta.height() == LayoutUnit::min();
+#endif
+}
+
+#if !ASSERT_DISABLED
+bool LayoutState::layoutDeltaMatches(LayoutSize delta)
+{
+    return (delta.width() == m_layoutDelta.width() || m_layoutDeltaXSaturated) && (delta.height() == m_layoutDelta.height() || m_layoutDeltaYSaturated);
+}
+#endif
 
 LayoutStateMaintainer::LayoutStateMaintainer(RenderBox& root, LayoutSize offset, bool disablePaintOffsetCache, LayoutUnit pageHeight, bool pageHeightChanged)
     : m_layoutContext(root.view().frameView().layoutContext())

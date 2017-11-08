@@ -532,19 +532,14 @@ LayoutSize LayoutContext::layoutDelta() const
 {
     if (!m_layoutState)
         return { };
-    return m_layoutState->m_layoutDelta;
+    return m_layoutState->layoutDelta();
 }
     
 void LayoutContext::addLayoutDelta(const LayoutSize& delta)
 {
     if (!m_layoutState)
         return;
-    
-    m_layoutState->m_layoutDelta += delta;
-#if !ASSERT_DISABLED
-    m_layoutState->m_layoutDeltaXSaturated |= m_layoutState->m_layoutDelta.width() == LayoutUnit::max() || m_layoutState->m_layoutDelta.width() == LayoutUnit::min();
-    m_layoutState->m_layoutDeltaYSaturated |= m_layoutState->m_layoutDelta.height() == LayoutUnit::max() || m_layoutState->m_layoutDelta.height() == LayoutUnit::min();
-#endif
+    m_layoutState->addLayoutDelta(delta);
 }
     
 #if !ASSERT_DISABLED
@@ -552,7 +547,7 @@ bool LayoutContext::layoutDeltaMatches(const LayoutSize& delta)
 {
     if (!m_layoutState)
         return false;
-    return (delta.width() == m_layoutState->m_layoutDelta.width() || m_layoutState->m_layoutDeltaXSaturated) && (delta.height() == m_layoutState->m_layoutDelta.height() || m_layoutState->m_layoutDeltaYSaturated);
+    return m_layoutState->layoutDeltaMatches(delta);
 }
 #endif
     
@@ -569,9 +564,9 @@ bool LayoutContext::pushLayoutStateForPaginationIfNeeded(RenderBlockFlow& layout
     if (m_layoutState)
         return false;
     m_layoutState = std::make_unique<LayoutState>(layoutRoot);
-    m_layoutState->m_isPaginated = true;
+    m_layoutState->setIsPaginated();
     // This is just a flag for known page height (see RenderBlockFlow::checkForPaginationLogicalHeightChange).
-    m_layoutState->m_pageLogicalHeight = 1;
+    m_layoutState->setPageLogicalHeight(1);
     return true;
 }
     
