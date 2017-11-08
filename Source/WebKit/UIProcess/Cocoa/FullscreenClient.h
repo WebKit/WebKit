@@ -50,6 +50,8 @@ public:
     explicit FullscreenClient(WKFullscreenClientView *);
     ~FullscreenClient() { };
 
+    bool isType(API::FullscreenClient::Type target) const override { return target == API::FullscreenClient::WebKitType; };
+
     RetainPtr<id<_WKFullscreenDelegate>> delegate();
     void setDelegate(id<_WKFullscreenDelegate>);
 
@@ -76,7 +78,11 @@ private:
 #endif
     } m_delegateMethods;
 };
-    
+
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::FullscreenClient) \
+static bool isType(const API::FullscreenClient& client) { return client.isType(API::FullscreenClient::WebKitType); } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // WK_API_ENABLED

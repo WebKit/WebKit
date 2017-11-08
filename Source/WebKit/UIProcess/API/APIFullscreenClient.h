@@ -33,6 +33,13 @@ namespace API {
 
 class FullscreenClient {
 public:
+    enum Type {
+        APIType,
+        WebKitType
+    };
+
+    virtual bool isType(Type target) const { return target == APIType; };
+
     virtual ~FullscreenClient() { }
 
     virtual void willEnterFullscreen(WebKit::WebPageProxy*) { }

@@ -1,3 +1,25 @@
+2017-11-07  Jeremy Jones  <jeremyj@apple.com>
+
+        Add downcast support for FullscreenClient.
+        https://bugs.webkit.org/show_bug.cgi?id=178824
+
+        Reviewed by Simon Fraser.
+
+        Add SPECIALIZE_TYPE_TRAITS macros for API::FullscreenClient and WebKit::Fullscreen client so 
+        downcasts can be done safely.
+
+        * UIProcess/API/APIFullscreenClient.h:
+        (API::FullscreenClient::isType const):
+        * UIProcess/API/C/mac/WKPagePrivateMac.mm:
+        (WKPageSetFullscreenDelegate):
+        (WKPageGetFullscreenDelegate):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setFullscreenDelegate:]):
+        (-[WKWebView _fullscreenDelegate]):
+        * UIProcess/Cocoa/FullscreenClient.h:
+        (isType):
+        * UIProcess/Cocoa/FullscreenClient.mm:
+
 2017-11-07  Brady Eidson  <beidson@apple.com>
 
         Implement "UpdateWorkerState" and use it
