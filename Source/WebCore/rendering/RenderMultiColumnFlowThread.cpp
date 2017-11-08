@@ -184,11 +184,13 @@ void RenderMultiColumnFlowThread::evacuateAndDestroy()
     SpannerMap::iterator it;
     while ((it = m_spannerMap.begin()) != m_spannerMap.end()) {
         RenderBox* spanner = it->key;
-        RenderMultiColumnSpannerPlaceholder* placeholder = it->value;
-        RenderBlockFlow& originalContainer = downcast<RenderBlockFlow>(*placeholder->parent());
         multicolContainer->removeChild(*spanner);
-        originalContainer.addChild(spanner, placeholder);
-        placeholder->destroy();
+        ASSERT(it->value.get());
+        if (RenderMultiColumnSpannerPlaceholder* placeholder = it->value.get()) {
+            RenderBlockFlow& originalContainer = downcast<RenderBlockFlow>(*placeholder->parent());
+            originalContainer.addChild(spanner, placeholder);
+            placeholder->destroy();
+        }
         m_spannerMap.remove(it);
     }
 
@@ -436,7 +438,7 @@ void RenderMultiColumnFlowThread::flowThreadDescendantInserted(RenderObject& new
             }
             
             ASSERT(!m_spannerMap.get(placeholder.spanner()));
-            m_spannerMap.add(placeholder.spanner(), &placeholder);
+            m_spannerMap.add(placeholder.spanner(), placeholder.createWeakPtr());
             ASSERT(!placeholder.firstChild()); // There should be no children here, but if there are, we ought to skip them.
             continue;
         }
@@ -447,7 +449,7 @@ void RenderMultiColumnFlowThread::flowThreadDescendantInserted(RenderObject& new
 void RenderMultiColumnFlowThread::handleSpannerRemoval(RenderObject& spanner)
 {
      // The placeholder may already have been removed, but if it hasn't, do so now.
-    if (RenderMultiColumnSpannerPlaceholder* placeholder = m_spannerMap.get(&downcast<RenderBox>(spanner))) {
+    if (RenderMultiColumnSpannerPlaceholder* placeholder = m_spannerMap.get(&downcast<RenderBox>(spanner)).get()) {
         placeholder->parent()->removeChild(*placeholder);
         m_spannerMap.remove(&downcast<RenderBox>(spanner));
     }
