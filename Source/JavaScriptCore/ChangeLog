@@ -1,3 +1,53 @@
+2017-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Web Inspector: use JSON::{Array,Object,Value} instead of Inspector{Array,Object,Value}
+        https://bugs.webkit.org/show_bug.cgi?id=173619
+
+        Reviewed by Alex Christensen and Brian Burg.
+
+        Eventually all classes used for our JSON-RPC message passing should be outside
+        of the Inspector namespace since the protocol is used outside of Inspector code.
+        This will also allow us to unify the primitive JSON types with parameteric types
+        like Inspector::Protocol::Array<T> and other protocol-related types which don't
+        need to be in the Inspector namespace.
+
+        Start this refactoring off by making JSON::Value a typedef for InspectorValue. In following
+        patches, other clients will move to use JSON::Value and friends. When all uses are
+        changed, the actual implementation will be renamed. This patch just focuses on the typedef
+        and making changes in generated protocol code.
+
+        Original patch by Brian Burg, rebased and updated by me.
+
+        * inspector/InspectorValues.cpp:
+        * inspector/InspectorValues.h:
+        * inspector/scripts/codegen/cpp_generator.py:
+        (CppGenerator.cpp_protocol_type_for_type):
+        (CppGenerator.cpp_type_for_unchecked_formal_in_parameter):
+        (CppGenerator.cpp_type_for_type_with_name):
+        (CppGenerator.cpp_type_for_stack_in_parameter):
+        * inspector/scripts/codegen/cpp_generator_templates.py:
+        (void):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (_generate_class_for_object_declaration):
+        (_generate_forward_declarations_for_binding_traits):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py:
+        (CppProtocolTypesImplementationGenerator._generate_assertion_for_object_declaration):
+        (CppProtocolTypesImplementationGenerator._generate_assertion_for_enum):
+        * inspector/scripts/tests/all/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/domain-availability.json-result:
+        * inspector/scripts/tests/generic/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/generic/expected/enum-values.json-result:
+        * inspector/scripts/tests/generic/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/generic/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-requiring-runtime-casts.json-result:
+        * inspector/scripts/tests/generic/expected/type-with-open-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/worker-supported-domains.json-result:
+        * inspector/scripts/tests/mac/expected/definitions-with-mac-platform.json-result:
+
 2017-11-07  Maciej Stachowiak  <mjs@apple.com>
 
         Get rid of unsightly hex numbers from unified build object files

@@ -167,7 +167,7 @@ protected:
 class DomainABackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<DomainABackendDispatcher> create(BackendDispatcher&, DomainABackendDispatcherHandler*);
-    void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
+    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
 private:
     void enable(long requestId, RefPtr<InspectorObject>&& parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -184,7 +184,7 @@ private:
 class DomainBBackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<DomainBBackendDispatcher> create(BackendDispatcher&, DomainBBackendDispatcherHandler*);
-    void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
+    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
 private:
     void enable(long requestId, RefPtr<InspectorObject>&& parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -261,11 +261,11 @@ DomainABackendDispatcher::DomainABackendDispatcher(BackendDispatcher& backendDis
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("DomainA"), this);
 }
 
-void DomainABackendDispatcher::dispatch(long requestId, const String& method, Ref<InspectorObject>&& message)
+void DomainABackendDispatcher::dispatch(long requestId, const String& method, Ref<JSON::Object>&& message)
 {
     Ref<DomainABackendDispatcher> protect(*this);
 
-    RefPtr<InspectorObject> parameters;
+    RefPtr<JSON::Object> parameters;
     message->getObject(ASCIILiteral("params"), parameters);
 
     if (method == "enable")
@@ -305,11 +305,11 @@ DomainBBackendDispatcher::DomainBBackendDispatcher(BackendDispatcher& backendDis
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("DomainB"), this);
 }
 
-void DomainBBackendDispatcher::dispatch(long requestId, const String& method, Ref<InspectorObject>&& message)
+void DomainBBackendDispatcher::dispatch(long requestId, const String& method, Ref<JSON::Object>&& message)
 {
     Ref<DomainBBackendDispatcher> protect(*this);
 
-    RefPtr<InspectorObject> parameters;
+    RefPtr<JSON::Object> parameters;
     message->getObject(ASCIILiteral("params"), parameters);
 
     if (method == "enable")

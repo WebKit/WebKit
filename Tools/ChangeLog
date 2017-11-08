@@ -1,3 +1,16 @@
+2017-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Web Inspector: use JSON::{Array,Object,Value} instead of Inspector{Array,Object,Value}
+        https://bugs.webkit.org/show_bug.cgi?id=173619
+
+        Reviewed by Brian Burg.
+
+        Update InspectorValue unit tests to use JSON namespace and add more basic tests to cover all the API.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/Tests/JavaScriptCore/InspectorValue.cpp:
+        (TestWebKitAPI::TEST):
+
 2017-11-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r224179): [GTK] Several WebViewEditor tests are failing since r224179

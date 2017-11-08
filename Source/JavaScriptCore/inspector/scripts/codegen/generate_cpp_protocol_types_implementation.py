@@ -198,7 +198,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         lines = []
 
         lines.append('#if !ASSERT_DISABLED')
-        lines.append('void BindingTraits<%s>::assertValueHasExpectedType(Inspector::InspectorValue* value)' % (CppGenerator.cpp_protocol_type_for_type(object_declaration.type)))
+        lines.append('void BindingTraits<%s>::assertValueHasExpectedType(JSON::Value* value)' % (CppGenerator.cpp_protocol_type_for_type(object_declaration.type)))
         lines.append("""{
     ASSERT_ARG(value, value);
     RefPtr<InspectorObject> object;
@@ -246,7 +246,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
     def _generate_assertion_for_enum(self, enum_member, object_declaration):
         lines = []
         lines.append('#if !ASSERT_DISABLED')
-        lines.append('void %s(Inspector::InspectorValue* value)' % CppGenerator.cpp_assertion_method_for_type_member(enum_member, object_declaration))
+        lines.append('void %s(JSON::Value* value)' % CppGenerator.cpp_assertion_method_for_type_member(enum_member, object_declaration))
         lines.append('{')
         lines.append('    ASSERT_ARG(value, value);')
         lines.append('    String result;')

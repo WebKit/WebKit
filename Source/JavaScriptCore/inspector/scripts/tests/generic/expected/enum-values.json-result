@@ -167,7 +167,7 @@ protected:
 class CommandDomainBackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<CommandDomainBackendDispatcher> create(BackendDispatcher&, CommandDomainBackendDispatcherHandler*);
-    void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
+    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
 private:
     void commandWithEnumReturnValue(long requestId, RefPtr<InspectorObject>&& parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -243,11 +243,11 @@ CommandDomainBackendDispatcher::CommandDomainBackendDispatcher(BackendDispatcher
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("CommandDomain"), this);
 }
 
-void CommandDomainBackendDispatcher::dispatch(long requestId, const String& method, Ref<InspectorObject>&& message)
+void CommandDomainBackendDispatcher::dispatch(long requestId, const String& method, Ref<JSON::Object>&& message)
 {
     Ref<CommandDomainBackendDispatcher> protect(*this);
 
-    RefPtr<InspectorObject> parameters;
+    RefPtr<JSON::Object> parameters;
     message->getObject(ASCIILiteral("params"), parameters);
 
     if (method == "commandWithEnumReturnValue")

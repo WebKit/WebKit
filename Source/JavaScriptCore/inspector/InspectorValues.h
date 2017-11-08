@@ -40,12 +40,27 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
-namespace Inspector {
 
+namespace Inspector {
 class InspectorArray;
 class InspectorArrayBase;
 class InspectorObject;
 class InspectorObjectBase;
+class InspectorValue;
+}
+
+namespace JSON {
+typedef Inspector::InspectorArray Array;
+typedef Inspector::InspectorObject Object;
+typedef Inspector::InspectorValue Value;
+
+
+// Not to be used except for protocol object subclasses.
+typedef Inspector::InspectorArrayBase ArrayBase;
+typedef Inspector::InspectorObjectBase ObjectBase;
+}
+
+namespace Inspector {
 
 class JS_EXPORT_PRIVATE InspectorValue : public RefCounted<InspectorValue> {
 public:
