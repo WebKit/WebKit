@@ -345,29 +345,19 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
         return;
     }
 
-    // FIXME: Implement proper selection of service workers.
-    auto* installingServiceWorker = context->activeServiceWorker();
     ASSERT(data.installingServiceWorkerIdentifier);
-    if (!installingServiceWorker || installingServiceWorker->identifier() != *data.installingServiceWorkerIdentifier) {
-        context->setActiveServiceWorker(ServiceWorker::create(*context, *data.installingServiceWorkerIdentifier, data.scriptURL));
-        installingServiceWorker = context->activeServiceWorker();
-    }
+    auto installingServiceWorkerIdentifier = *data.installingServiceWorkerIdentifier;
 
     RefPtr<ServiceWorkerRegistration> registration = m_registrations.get(data.key);
-    if (!registration) {
-        // Currently the only registrations that can be created for the first time here should be Installing.
-        ASSERT(data.installingServiceWorkerIdentifier);
-        auto installingIdentifier = *data.installingServiceWorkerIdentifier;
-        
+    if (!registration)
         registration = ServiceWorkerRegistration::create(*context, *this, WTFMove(data));
-        registration->updateStateFromServer(ServiceWorkerRegistrationState::Installing, installingIdentifier);
-        ASSERT(registration->installing());
 
-        installingServiceWorker = registration->installing();
-    }
+    registration->updateStateFromServer(ServiceWorkerRegistrationState::Installing, installingServiceWorkerIdentifier);
+    ASSERT(registration->installing());
+    registration->installing()->updateWorkerState(ServiceWorkerState::Installing, ServiceWorker::DoNotFireStateChangeEvent);
 
-    installingServiceWorker->updateWorkerState(ServiceWorkerState::Installing, ServiceWorker::DoNotFireStateChangeEvent);
-    registration->setInstallingWorker(installingServiceWorker);
+    // FIXME: Implement proper selection of service workers.
+    context->setActiveServiceWorker(registration->installing());
 
     LOG(ServiceWorker, "Container %p resolved job with registration %p", this, registration.get());
 
