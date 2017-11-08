@@ -131,6 +131,8 @@ public:
     EvalContextType evalContextType() const { return static_cast<EvalContextType>(m_evalContextType); }
     bool isArrowFunctionContext() const { return m_isArrowFunctionContext; }
     bool isClassContext() const { return m_isClassContext; }
+    bool hasTailCalls() const { return m_hasTailCalls; }
+    void setHasTailCalls() { m_hasTailCalls = true; }
 
     void addExpressionInfo(unsigned instructionOffset, int divot,
         int startOffset, int endOffset, unsigned line, unsigned column);
@@ -453,6 +455,7 @@ private:
     unsigned m_constructorKind : 2;
     unsigned m_derivedContextType : 2;
     unsigned m_evalContextType : 2;
+    unsigned m_hasTailCalls : 1;
     unsigned m_lineCount;
     unsigned m_endColumn;
 

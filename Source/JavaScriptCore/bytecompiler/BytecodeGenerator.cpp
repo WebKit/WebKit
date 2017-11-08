@@ -1313,6 +1313,12 @@ UnlinkedValueProfile BytecodeGenerator::emitProfiledOpcode(OpcodeID opcodeID)
 void BytecodeGenerator::emitEnter()
 {
     emitOpcode(op_enter);
+
+    // We must add the end of op_enter as a potential jump target, because the bytecode parser may decide to split its basic block
+    // to have somewhere to jump to if there is a recursive tail-call that points to this function.
+    m_codeBlock->addJumpTarget(instructions().size());
+    // This disables peephole optimizations when an instruction is a jump target
+    m_lastOpcodeID = op_end;
 }
 
 void BytecodeGenerator::emitLoopHint()
@@ -3357,7 +3363,11 @@ RegisterID* BytecodeGenerator::emitCall(RegisterID* dst, RegisterID* func, Expec
 
 RegisterID* BytecodeGenerator::emitCallInTailPosition(RegisterID* dst, RegisterID* func, ExpectedFunction expectedFunction, CallArguments& callArguments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall debuggableCall)
 {
-    return emitCall(m_inTailPosition ? op_tail_call : op_call, dst, func, expectedFunction, callArguments, divot, divotStart, divotEnd, debuggableCall);
+    if (m_inTailPosition) {
+        m_codeBlock->setHasTailCalls();
+        return emitCall(op_tail_call, dst, func, expectedFunction, callArguments, divot, divotStart, divotEnd, debuggableCall);
+    }
+    return emitCall(op_call, dst, func, expectedFunction, callArguments, divot, divotStart, divotEnd, debuggableCall);
 }
 
 RegisterID* BytecodeGenerator::emitCallEval(RegisterID* dst, RegisterID* func, CallArguments& callArguments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall debuggableCall)

@@ -736,7 +736,7 @@ public:
 
     // Call this to cause an optimization trigger to fire soon, but
     // not necessarily the next one. This makes sense if optimization
-    // succeeds. Successfuly optimization means that all calls are
+    // succeeds. Successful optimization means that all calls are
     // relinked to the optimized code, so this only affects call
     // frames that are still executing this CodeBlock. The value here
     // is tuned to strike a balance between the cost of OSR entry
@@ -918,6 +918,8 @@ public:
     void setPCToCodeOriginMap(std::unique_ptr<PCToCodeOriginMap>&&);
     std::optional<CodeOrigin> findPC(void* pc);
 #endif
+
+    bool hasTailCalls() const { return m_unlinkedCode->hasTailCalls(); }
 
 protected:
     void finalizeLLIntInlineCaches();

@@ -272,6 +272,7 @@ JSObject* createError(ExecState* exec, JSValue value, const String& message, Err
     scope.assertNoException();
     JSObject* exception = createTypeError(exec, errorMessage, appender, runtimeTypeForValue(value));
     ASSERT(exception->isErrorInstance());
+
     return exception;
 }
 

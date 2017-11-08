@@ -224,6 +224,7 @@ private:
     void emitFunctionChecks(CallVariant, Node* callTarget, VirtualRegister thisArgumnt);
     void emitArgumentPhantoms(int registerOffset, int argumentCountIncludingThis);
     Node* getArgumentCount();
+    bool handleRecursiveTailCall(Node* callTargetNode, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis);
     unsigned inliningCost(CallVariant, int argumentCountIncludingThis, InlineCallFrame::Kind); // Return UINT_MAX if it's not an inlining candidate. By convention, intrinsics have a cost of 1.
     // Handle inlining. Return true if it succeeded, false if we need to plant a call.
     bool handleInlining(Node* callTargetNode, int resultOperand, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, VirtualRegister argumentsArgument, unsigned argumentsOffset, int argumentCountIncludingThis, unsigned nextOffset, NodeType callOp, InlineCallFrame::Kind, SpeculatedType prediction);
@@ -231,7 +232,6 @@ private:
     bool attemptToInlineCall(Node* callTargetNode, int resultOperand, CallVariant, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, InlineCallFrame::Kind, SpeculatedType prediction, unsigned& inliningBalance, BasicBlock* continuationBlock, const ChecksFunctor& insertChecks);
     template<typename ChecksFunctor>
     void inlineCall(Node* callTargetNode, int resultOperand, CallVariant, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, InlineCallFrame::Kind, BasicBlock* continuationBlock, const ChecksFunctor& insertChecks);
-    void cancelLinkingForBlock(InlineStackEntry*, BasicBlock*); // Only works when the given block is the last one to have been added for that inline stack entry.
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
     template<typename ChecksFunctor>
     bool handleIntrinsicCall(Node* callee, int resultOperand, Intrinsic, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction, const ChecksFunctor& insertChecks);
@@ -640,6 +640,8 @@ private:
             flushDirect(inlineStackEntry->remapOperand(virtualRegisterForArgument(argument)));
         if (!inlineStackEntry->m_inlineCallFrame && m_graph.needsFlushedThis())
             flushDirect(virtualRegisterForArgument(0));
+        else
+            phantomLocalDirect(virtualRegisterForArgument(0));
 
         if (m_graph.needsScopeRegister())
             flushDirect(m_codeBlock->scopeRegister());
@@ -1064,7 +1066,7 @@ private:
     }
 
     bool needsDynamicLookup(ResolveType, OpcodeID);
-    
+
     VM* m_vm;
     CodeBlock* m_codeBlock;
     CodeBlock* m_profiledBlock;
@@ -1126,9 +1128,6 @@ private:
         // Potential block linking targets. Must be sorted by bytecodeBegin, and
         // cannot have two blocks that have the same bytecodeBegin.
         Vector<BasicBlock*> m_blockLinkingTargets;
-
-        // This is set by op_enter in parseBlock(), and indicates the first block of the function.
-        BasicBlock* m_entryBlock;
 
         // Optional: a continuation block for returns to jump to. It is set by early returns if it does not exist.
         BasicBlock* m_continuationBlock;
@@ -1217,6 +1216,9 @@ BasicBlock* ByteCodeParser::allocateTargetableBlock(unsigned bytecodeIndex)
     ASSERT(bytecodeIndex != UINT_MAX);
     Ref<BasicBlock> block = adoptRef(*new BasicBlock(bytecodeIndex, m_numArguments, m_numLocals, 1));
     BasicBlock* blockPtr = block.ptr();
+    // m_blockLinkingTargets must always be sorted in increasing order of bytecodeBegin
+    if (m_inlineStackTop->m_blockLinkingTargets.size())
+        ASSERT(m_inlineStackTop->m_blockLinkingTargets.last()->bytecodeBegin < bytecodeIndex);
     m_inlineStackTop->m_blockLinkingTargets.append(blockPtr);
     m_graph.appendBlock(WTFMove(block));
     return blockPtr;
@@ -1234,6 +1236,9 @@ void ByteCodeParser::makeBlockTargetable(BasicBlock* block, unsigned bytecodeInd
 {
     ASSERT(block->bytecodeBegin == UINT_MAX);
     block->bytecodeBegin = bytecodeIndex;
+    // m_blockLinkingTargets must always be sorted in increasing order of bytecodeBegin
+    if (m_inlineStackTop->m_blockLinkingTargets.size())
+        ASSERT(m_inlineStackTop->m_blockLinkingTargets.last()->bytecodeBegin < bytecodeIndex);
     m_inlineStackTop->m_blockLinkingTargets.append(block);
 }
 
@@ -1294,6 +1299,9 @@ ByteCodeParser::Terminality ByteCodeParser::handleCall(
     // We first check that we have profiling information about this call, and that it did not behave too polymorphically.
     if (callLinkStatus.canOptimize()) {
         VirtualRegister thisArgument = virtualRegisterForArgument(0, registerOffset);
+
+        if (op == TailCall && handleRecursiveTailCall(callTarget, callLinkStatus, registerOffset, thisArgument, argumentCountIncludingThis))
+            return Terminal;
 
         // Inlining is quite complex, and managed by a pipeline of functions:
         // handle(Varargs)Call -> handleInlining -> attemptToInlineCall -> inlineCall
@@ -1410,6 +1418,75 @@ void ByteCodeParser::emitArgumentPhantoms(int registerOffset, int argumentCountI
 {
     for (int i = 0; i < argumentCountIncludingThis; ++i)
         addToGraph(Phantom, get(virtualRegisterForArgument(i, registerOffset)));
+}
+
+bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, const CallLinkStatus& callLinkStatus, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis)
+{
+    // FIXME: We currently only do this optimisation in the simple, non-polymorphic case.
+    // https://bugs.webkit.org/show_bug.cgi?id=178390
+    if (callLinkStatus.couldTakeSlowPath() || callLinkStatus.size() != 1)
+        return false;
+
+    auto targetExecutable = callLinkStatus[0].executable();
+    InlineStackEntry* stackEntry = m_inlineStackTop;
+    do {
+        if (targetExecutable != stackEntry->executable())
+            continue;
+        VERBOSE_LOG("   We found a recursive tail call, trying to optimize it into a jump.\n");
+
+        if (auto* callFrame = stackEntry->m_inlineCallFrame) {
+            // Some code may statically use the argument count from the InlineCallFrame, so it would be invalid to loop back if it does not match.
+            // We "continue" instead of returning false in case another stack entry further on the stack has the right number of arguments.
+            if (argumentCountIncludingThis != static_cast<int>(callFrame->argumentCountIncludingThis))
+                continue;
+        } else {
+            // We are in the machine code entry (i.e. the original caller).
+            // If we have more arguments than the number of parameters to the function, it is not clear where we could put them on the stack.
+            if (argumentCountIncludingThis > m_codeBlock->numParameters())
+                return false;
+        }
+
+        // We must add some check that the profiling information was correct and the target of this call is what we thought
+        emitFunctionChecks(callLinkStatus[0], callTargetNode, thisArgument);
+
+        // We must set the arguments to the right values
+        int argIndex = 0;
+        for (; argIndex < argumentCountIncludingThis; ++argIndex) {
+            Node* value = get(virtualRegisterForArgument(argIndex, registerOffset));
+            setDirect(stackEntry->remapOperand(virtualRegisterForArgument(argIndex)), value, NormalSet);
+        }
+        Node* undefined = addToGraph(JSConstant, OpInfo(m_constantUndefined));
+        for (; argIndex < stackEntry->m_codeBlock->numParameters(); ++argIndex)
+            setDirect(stackEntry->remapOperand(virtualRegisterForArgument(argIndex)), undefined, NormalSet);
+
+        // We must repeat the work of op_enter here as we will jump right after it.
+        // We jump right after it and not before it, because of some invariant saying that a CFG root cannot have predecessors in the IR.
+        for (int i = 0; i < stackEntry->m_codeBlock->m_numVars; ++i)
+            setDirect(stackEntry->remapOperand(virtualRegisterForLocal(i)), undefined, NormalSet);
+
+        // We want to emit the SetLocals with an exit origin that points to the place we are jumping to.
+        unsigned oldIndex = m_currentIndex;
+        auto oldStackTop = m_inlineStackTop;
+        m_inlineStackTop = stackEntry;
+        m_currentIndex = OPCODE_LENGTH(op_enter);
+        m_exitOK = true;
+        processSetLocalQueue();
+        m_currentIndex = oldIndex;
+        m_inlineStackTop = oldStackTop;
+        m_exitOK = false;
+
+        // We flush everything, as if we were in the backedge of a loop (see treatment of op_jmp in parseBlock).
+        flushForTerminal();
+
+        BasicBlock** entryBlockPtr = tryBinarySearch<BasicBlock*, unsigned>(stackEntry->m_blockLinkingTargets, stackEntry->m_blockLinkingTargets.size(), OPCODE_LENGTH(op_enter), getBytecodeBeginForBlock);
+        RELEASE_ASSERT(entryBlockPtr);
+        addJumpTo(*entryBlockPtr);
+        return true;
+        // It would be unsound to jump over a non-tail call: the "tail" call is not really a tail call in that case.
+    } while (stackEntry->m_inlineCallFrame && stackEntry->m_inlineCallFrame->kind == InlineCallFrame::TailCall && (stackEntry = stackEntry->m_caller));
+
+    // The tail call was not recursive
+    return false;
 }
 
 unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountIncludingThis, InlineCallFrame::Kind kind)
@@ -4232,8 +4309,6 @@ void ByteCodeParser::parseBlock(unsigned limit)
             for (int i = 0; i < m_inlineStackTop->m_codeBlock->m_numVars; ++i)
                 set(virtualRegisterForLocal(i), undefined, ImmediateNakedSet);
 
-            m_inlineStackTop->m_entryBlock = m_currentBlock;
-
             NEXT_OPCODE(op_enter);
         }
             
@@ -5420,7 +5495,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             if (terminality == NonTerminal)
                 NEXT_OPCODE(op_tail_call);
             else
-                LAST_OPCODE(op_tail_call);
+                LAST_OPCODE_LINKED(op_tail_call);
+            // We use LAST_OPCODE_LINKED instead of LAST_OPCODE because if the tail call was optimized, it may now be a jump to a bytecode index in a different InlineStackEntry.
         }
 
         case op_construct:
@@ -6456,8 +6532,6 @@ void ByteCodeParser::parse()
     linkBlocks(inlineStackEntry.m_unlinkedBlocks, inlineStackEntry.m_blockLinkingTargets);
 
     m_graph.determineReachability();
-    if (Options::verboseDFGBytecodeParsing())
-        m_graph.dump();
     m_graph.killUnreachableBlocks();
 
     for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {

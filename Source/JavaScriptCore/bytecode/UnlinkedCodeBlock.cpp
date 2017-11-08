@@ -71,6 +71,7 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType code
     , m_constructorKind(static_cast<unsigned>(info.constructorKind()))
     , m_derivedContextType(static_cast<unsigned>(info.derivedContextType()))
     , m_evalContextType(static_cast<unsigned>(info.evalContextType()))
+    , m_hasTailCalls(false)
     , m_lineCount(0)
     , m_endColumn(UINT_MAX)
     , m_didOptimize(MixedTriState)

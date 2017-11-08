@@ -1,3 +1,43 @@
+2017-11-08  Robin Morisset  <rmorisset@apple.com>
+
+        Turn recursive tail calls into loops
+        https://bugs.webkit.org/show_bug.cgi?id=176601
+
+        Reviewed by Saam Barati.
+
+        Relanding after https://bugs.webkit.org/show_bug.cgi?id=178834.
+
+        We want to turn recursive tail calls into loops early in the pipeline, so that the loops can then be optimized.
+        One difficulty is that we need to split the entry block of the function we are jumping to in order to have somewhere to jump to.
+        Worse: it is not necessarily the first block of the codeBlock, because of inlining! So we must do the splitting in the DFGByteCodeParser, at the same time as inlining.
+        We do this part through modifying the computation of the jump targets.
+        Importantly, we only do this splitting for functions that have tail calls.
+        It is the only case where the optimisation is sound, and doing the splitting unconditionnaly destroys performance on Octane/raytrace.
+
+        We must then do the actual transformation also in DFGByteCodeParser, to avoid code motion moving code out of the body of what will become a loop.
+        The transformation is entirely contained in handleRecursiveTailCall, which is hooked to the inlining machinery.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::hasTailCalls const):
+        * bytecode/PreciseJumpTargets.cpp:
+        (JSC::getJumpTargetsForBytecodeOffset):
+        (JSC::computePreciseJumpTargetsInternal):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::hasTailCalls const):
+        (JSC::UnlinkedCodeBlock::setHasTailCalls):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEnter):
+        (JSC::BytecodeGenerator::emitCallInTailPosition):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::allocateTargetableBlock):
+        (JSC::DFG::ByteCodeParser::makeBlockTargetable):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleRecursiveTailCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+
 2017-11-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused Page.ScriptIdentifier protocol type

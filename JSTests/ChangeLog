@@ -1,3 +1,33 @@
+2017-11-08  Robin Morisset  <rmorisset@apple.com>
+
+        Turn recursive tail calls into loops
+        https://bugs.webkit.org/show_bug.cgi?id=176601
+
+        Reviewed by Saam Barati.
+
+        Relanding after https://bugs.webkit.org/show_bug.cgi?id=178834.
+
+        Add some simple test that computes factorial in several ways, and other trivial computations.
+        They all tests the case where foo calls bar (in an inlineable way) that then does a tail call.
+        Depending on the nature of both calls, it is possible or not to turn the tail call into a loop.
+        I have no clear way of checking that the call was indeed transformed, but I can check that the code computes the right result
+        (which it doesn't if that tail call is transformed into a loop in the unsound cases).
+
+        * stress/inline-call-to-recursive-tail-call.js: Added.
+        (factorial.aux):
+        (factorial):
+        (factorial2.aux2):
+        (factorial2.id):
+        (factorial2):
+        (factorial3.aux3):
+        (factorial3):
+        (aux4):
+        (factorial4):
+        (foo):
+        (auxBar):
+        (bar):
+        (test):
+
 2017-11-07  Mark Lam  <mark.lam@apple.com>
 
         AccessCase::generateImpl() should exclude the result register when restoring registers after a call.
