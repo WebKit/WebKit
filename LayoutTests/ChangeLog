@@ -1,3 +1,17 @@
+2017-09-13  Daniel Bates  <dabates@apple.com>
+
+        Make history.pushState()/replaceState() more closely aligned to the HTML standard
+        https://bugs.webkit.org/show_bug.cgi?id=176730
+        <rdar://problem/33839265>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/security/history-pushState-replaceState-from-sandboxed-iframe-expected.txt: Added.
+        * http/tests/security/history-pushState-replaceState-from-sandboxed-iframe.html: Added.
+        * http/tests/security/history-username-password-expected.txt:
+        * http/tests/security/history-username-password.html:
+        * http/tests/security/resources/history-pushState-replaceState-from-sandboxed-iframe.html: Added.
+
 2017-10-20  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Events missing and state incorrect for aria-activedescendant
