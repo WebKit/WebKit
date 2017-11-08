@@ -236,6 +236,7 @@ public:
     void suspendAnimations(double time = 0);
 
     RenderBoxModelObject* continuation() const;
+    WEBCORE_EXPORT RenderInline* inlineContinuation() const;
     
     void insertIntoContinuationChainAfter(RenderBoxModelObject&);
     void removeFromContinuationChain();

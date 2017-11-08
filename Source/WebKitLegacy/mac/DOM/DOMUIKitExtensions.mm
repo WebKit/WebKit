@@ -199,14 +199,14 @@ using WebCore::VisiblePosition;
     RenderObject* renderer = core(self)->renderer();
     return renderer
         && renderer->childrenInline()
-        && (is<RenderBlock>(*renderer) && !downcast<RenderBlock>(*renderer).inlineElementContinuation())
+        && (is<RenderBlock>(*renderer) && !downcast<RenderBlock>(*renderer).inlineContinuation())
         && !renderer->isTable();
 }
 
 - (BOOL)isSelectableBlock
 {
     RenderObject* renderer = core(self)->renderer();
-    return renderer && (is<RenderBlockFlow>(*renderer) || (is<RenderBlock>(*renderer) && downcast<RenderBlock>(*renderer).inlineElementContinuation() != nil));
+    return renderer && (is<RenderBlockFlow>(*renderer) || (is<RenderBlock>(*renderer) && downcast<RenderBlock>(*renderer).inlineContinuation() != nil));
 }
 
 - (DOMRange *)rangeOfContainingParagraph
@@ -271,7 +271,7 @@ using WebCore::VisiblePosition;
             result = INT_MAX;
         } else if (!renderer->firstChildSlow()) {
             result = 0;
-        } else if (is<RenderBlockFlow>(*renderer) || (is<RenderBlock>(*renderer) && downcast<RenderBlock>(*renderer).inlineElementContinuation())) {
+        } else if (is<RenderBlockFlow>(*renderer) || (is<RenderBlock>(*renderer) && downcast<RenderBlock>(*renderer).inlineContinuation())) {
             BOOL noCost = NO;
             if (is<RenderBox>(*renderer)) {
                 RenderBox& asBox = renderer->enclosingBox();

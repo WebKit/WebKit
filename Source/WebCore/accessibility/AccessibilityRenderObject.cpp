@@ -199,18 +199,11 @@ static inline RenderObject* lastChildConsideringContinuation(RenderObject& rende
         return &renderer;
 
     RenderObject* lastChild = downcast<RenderBoxModelObject>(renderer).lastChild();
-    RenderBoxModelObject* previous;
     for (auto* current = &downcast<RenderBoxModelObject>(renderer); current; ) {
-        previous = current;
-
         if (RenderObject* newLastChild = current->lastChild())
             lastChild = newLastChild;
 
-        if (is<RenderInline>(*current)) {
-            current = downcast<RenderInline>(*current).inlineElementContinuation();
-            ASSERT_UNUSED(previous, current || !downcast<RenderInline>(*previous).continuation());
-        } else
-            current = downcast<RenderBlock>(*current).inlineElementContinuation();
+        current = current->inlineContinuation();
     }
 
     return lastChild;
@@ -255,8 +248,8 @@ static inline RenderInline* startOfContinuations(RenderObject& renderer)
         return downcast<RenderInline>(renderer.node()->renderer());
 
     // Blocks with a previous continuation always have a next continuation
-    if (is<RenderBlock>(renderElement) && downcast<RenderBlock>(renderElement).inlineElementContinuation())
-        return downcast<RenderInline>(downcast<RenderBlock>(renderElement).inlineElementContinuation()->element()->renderer());
+    if (is<RenderBlock>(renderElement) && downcast<RenderBlock>(renderElement).inlineContinuation())
+        return downcast<RenderInline>(downcast<RenderBlock>(renderElement).inlineContinuation()->element()->renderer());
 
     return nullptr;
 }
@@ -269,11 +262,7 @@ static inline RenderObject* endOfContinuations(RenderObject& renderer)
     auto* previous = &downcast<RenderBoxModelObject>(renderer);
     for (auto* current = previous; current; ) {
         previous = current;
-        if (is<RenderInline>(*current)) {
-            current = downcast<RenderInline>(*current).inlineElementContinuation();
-            ASSERT(current || !downcast<RenderInline>(*previous).continuation());
-        } else 
-            current = downcast<RenderBlock>(*current).inlineElementContinuation();
+        current = current->inlineContinuation();
     }
 
     return previous;
@@ -293,13 +282,13 @@ static inline RenderObject* childBeforeConsideringContinuations(RenderInline* re
                 current = current->nextSibling();
             }
 
-            currentContainer = downcast<RenderInline>(*currentContainer).continuation();
+            currentContainer = currentContainer->continuation();
         } else if (is<RenderBlock>(*currentContainer)) {
             if (currentContainer == child)
                 return previous;
 
             previous = currentContainer;
-            currentContainer = downcast<RenderBlock>(*currentContainer).inlineElementContinuation();
+            currentContainer = currentContainer->inlineContinuation();
         }
     }
 
@@ -368,7 +357,7 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
     // Case 1: node is a block and has an inline continuation. Next sibling is the inline continuation's
     // first child.
     RenderInline* inlineContinuation;
-    if (is<RenderBlock>(*m_renderer) && (inlineContinuation = downcast<RenderBlock>(*m_renderer).inlineElementContinuation()))
+    if (is<RenderBlock>(*m_renderer) && (inlineContinuation = downcast<RenderBlock>(*m_renderer).inlineContinuation()))
         nextSibling = firstChildConsideringContinuation(*inlineContinuation);
 
     // Case 2: Anonymous block parent of the start of a continuation - skip all the way to
@@ -426,7 +415,7 @@ static RenderBoxModelObject* nextContinuation(RenderObject& renderer)
     if (is<RenderInline>(renderer) && !renderer.isReplaced())
         return downcast<RenderInline>(renderer).continuation();
     if (is<RenderBlock>(renderer))
-        return downcast<RenderBlock>(renderer).inlineElementContinuation();
+        return downcast<RenderBlock>(renderer).inlineContinuation();
     return nullptr;
 }
     

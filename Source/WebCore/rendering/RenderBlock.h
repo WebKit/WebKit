@@ -189,8 +189,6 @@ public:
     void addContinuationWithOutline(RenderInline*);
     bool paintsContinuationOutline(RenderInline*);
 
-    WEBCORE_EXPORT RenderInline* inlineElementContinuation() const;
-
     static RenderPtr<RenderBlock> createAnonymousWithParentRendererAndDisplay(const RenderBox& parent, EDisplay = BLOCK);
     RenderPtr<RenderBlock> createAnonymousBlock(EDisplay = BLOCK) const;
     void dropAnonymousBoxChild(RenderBlock& child);

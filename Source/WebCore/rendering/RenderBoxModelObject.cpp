@@ -279,7 +279,7 @@ static LayoutSize accumulateInFlowPositionOffsets(const RenderObject* child)
     if (!child->isAnonymousBlock() || !child->isInFlowPositioned())
         return LayoutSize();
     LayoutSize offset;
-    for (RenderElement* parent = downcast<RenderBlock>(*child).inlineElementContinuation(); is<RenderInline>(parent); parent = parent->parent()) {
+    for (RenderElement* parent = downcast<RenderBlock>(*child).inlineContinuation(); is<RenderInline>(parent); parent = parent->parent()) {
         if (parent->isInFlowPositioned())
             offset += downcast<RenderInline>(*parent).offsetForInFlowPosition();
     }
@@ -2506,6 +2506,19 @@ RenderBoxModelObject* RenderBoxModelObject::continuation() const
         return nullptr;
     return continuationChainNode.next->renderer.get();
 }
+
+RenderInline* RenderBoxModelObject::inlineContinuation() const
+{
+    if (!hasContinuationChainNode())
+        return nullptr;
+
+    for (auto* next = continuationChainNodeMap().get(this)->next; next; next = next->next) {
+        if (is<RenderInline>(*next->renderer))
+            return downcast<RenderInline>(next->renderer.get());
+    }
+    return nullptr;
+}
+
 
 void RenderBoxModelObject::insertIntoContinuationChainAfter(RenderBoxModelObject& afterRenderer)
 {

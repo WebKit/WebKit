@@ -975,7 +975,7 @@ static bool canShrinkToTextSelection(Node* node)
         node = node->parentElement();
     
     auto* renderer = (node) ? node->renderer() : nullptr;
-    return renderer && renderer->childrenInline() && (is<RenderBlock>(*renderer) && !downcast<RenderBlock>(*renderer).inlineElementContinuation()) && !renderer->isTable();
+    return renderer && renderer->childrenInline() && (is<RenderBlock>(*renderer) && !downcast<RenderBlock>(*renderer).inlineContinuation()) && !renderer->isTable();
 }
 
 static bool hasCustomLineHeight(Node& node)
@@ -1037,7 +1037,7 @@ RefPtr<Range> WebPage::rangeForWebSelectionAtPosition(const IntPoint& point, con
     if (!renderer || renderer->style().userSelect() == SELECT_NONE)
         return nullptr;
 
-    if (renderer->childrenInline() && (is<RenderBlock>(*renderer) && !downcast<RenderBlock>(*renderer).inlineElementContinuation()) && !renderer->isTable()) {
+    if (renderer->childrenInline() && (is<RenderBlock>(*renderer) && !downcast<RenderBlock>(*renderer).inlineContinuation()) && !renderer->isTable()) {
         range = enclosingTextUnitOfGranularity(position, WordGranularity, DirectionBackward);
         if (range && !range->collapsed())
             return range;

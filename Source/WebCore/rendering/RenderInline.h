@@ -79,8 +79,6 @@ public:
     void absoluteQuadsForSelection(Vector<FloatQuad>& quads) const override;
 #endif
 
-    RenderInline* inlineElementContinuation() const;
-
     void updateDragState(bool dragOn) final;
     
     LayoutSize offsetForInFlowPositionedInline(const RenderBox* child) const;
