@@ -1939,7 +1939,9 @@ bool Document::updateStyleIfNeeded()
     }
 
     // The early exit for needsStyleRecalc() is needed when updateWidgetPositions() is called in runOrScheduleAsynchronousTasks().
+#if !USE(WEB_THREAD)
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed() || (frameView && frameView->isInChildFrameWithFrameFlattening()));
+#endif
 
     resolveStyle();
     return true;
@@ -1956,8 +1958,9 @@ void Document::updateLayout()
         ASSERT_NOT_REACHED();
         return;
     }
+#if !USE(WEB_THREAD)
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed() || (frameView && frameView->isInChildFrameWithFrameFlattening()));
-
+#endif
 
     RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
 
