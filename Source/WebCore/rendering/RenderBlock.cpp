@@ -2381,7 +2381,7 @@ Node* RenderBlock::nodeForHitTest() const
     // that was split. Use the appropriate inner node.
     if (isRenderView())
         return &document();
-    return isAnonymousBlockContinuation() ? continuation()->element() : element();
+    return continuation() ? continuation()->element() : element();
 }
 
 bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
@@ -3160,12 +3160,12 @@ void RenderBlock::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accum
 {
     // For blocks inside inlines, we include margins so that we run right up to the inline boxes
     // above and below us (thus getting merged with them to form a single irregular shape).
-    if (isAnonymousBlockContinuation()) {
+    if (auto* continuation = this->continuation()) {
         // FIXME: This is wrong for block-flows that are horizontal.
         // https://bugs.webkit.org/show_bug.cgi?id=46781
         rects.append(snappedIntRect(accumulatedOffset.x(), accumulatedOffset.y() - collapsedMarginBefore(),
                                 width(), height() + collapsedMarginBefore() + collapsedMarginAfter()));
-        continuation()->absoluteRects(rects, accumulatedOffset - toLayoutSize(location() +
+        continuation->absoluteRects(rects, accumulatedOffset - toLayoutSize(location() +
                 inlineElementContinuation()->containingBlock()->location()));
     } else
         rects.append(snappedIntRect(accumulatedOffset, size()));
@@ -3175,7 +3175,8 @@ void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
     // For blocks inside inlines, we include margins so that we run right up to the inline boxes
     // above and below us (thus getting merged with them to form a single irregular shape).
-    FloatRect localRect = isAnonymousBlockContinuation() 
+    auto* continuation = this->continuation();
+    FloatRect localRect = continuation
         ? FloatRect(0, -collapsedMarginBefore(), width(), height() + collapsedMarginBefore() + collapsedMarginAfter())
         : FloatRect(0, 0, width(), height());
     
@@ -3185,21 +3186,23 @@ void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
     if (!fragmentedFlow || !fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, this, localRect.y(), localRect.maxY()))
         quads.append(localToAbsoluteQuad(localRect, UseTransforms, wasFixed));
 
-    if (isAnonymousBlockContinuation())
-        continuation()->absoluteQuads(quads, wasFixed);
+    if (continuation)
+        continuation->absoluteQuads(quads, wasFixed);
 }
 
 LayoutRect RenderBlock::rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const
 {
     LayoutRect r(RenderBox::rectWithOutlineForRepaint(repaintContainer, outlineWidth));
-    if (isAnonymousBlockContinuation())
+    if (isContinuation())
         r.inflateY(collapsedMarginBefore()); // FIXME: This is wrong for block-flows that are horizontal.
     return r;
 }
 
 RenderElement* RenderBlock::hoverAncestor() const
 {
-    return isAnonymousBlockContinuation() ? continuation() : RenderBox::hoverAncestor();
+    if (auto* continuation = this->continuation())
+        return continuation;
+    return RenderBox::hoverAncestor();
 }
 
 void RenderBlock::updateDragState(bool dragOn)
@@ -3211,7 +3214,9 @@ void RenderBlock::updateDragState(bool dragOn)
 
 const RenderStyle& RenderBlock::outlineStyleForRepaint() const
 {
-    return isAnonymousBlockContinuation() ? continuation()->style() : RenderElement::outlineStyleForRepaint();
+    if (auto* continuation = this->continuation())
+        return continuation->style();
+    return RenderElement::outlineStyleForRepaint();
 }
 
 void RenderBlock::childBecameNonInline(RenderElement&)

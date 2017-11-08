@@ -189,7 +189,6 @@ public:
     void addContinuationWithOutline(RenderInline*);
     bool paintsContinuationOutline(RenderInline*);
 
-    bool isAnonymousBlockContinuation() const { return isAnonymousBlock() && continuation(); }
     WEBCORE_EXPORT RenderInline* inlineElementContinuation() const;
 
     static RenderPtr<RenderBlock> createAnonymousWithParentRendererAndDisplay(const RenderBox& parent, EDisplay = BLOCK);

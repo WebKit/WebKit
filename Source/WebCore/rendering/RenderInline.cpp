@@ -155,7 +155,7 @@ static void updateStyleOfAnonymousBlockContinuations(const RenderBlock& block, c
             continue;
 
         RenderBlock& block = downcast<RenderBlock>(*box);
-        if (!block.isAnonymousBlockContinuation())
+        if (!block.isContinuation())
             continue;
         
         // If we are no longer in-flow positioned but our descendant block(s) still have an in-flow positioned ancestor then

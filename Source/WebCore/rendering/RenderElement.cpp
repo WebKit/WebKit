@@ -818,7 +818,7 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
 
         // Preserve the position style of anonymous block continuations as they can have relative or sticky position when
         // they contain block descendants of relative or sticky positioned inlines.
-        if (elementChild.isInFlowPositioned() && downcast<RenderBlock>(elementChild).isAnonymousBlockContinuation())
+        if (elementChild.isInFlowPositioned() && elementChild.isContinuation())
             newStyle.setPosition(elementChild.style().position());
 
         updateAnonymousChildStyle(elementChild, newStyle);
