@@ -503,6 +503,234 @@
     "imported/w3c/web-platform-tests/dom/traversal/TreeWalker.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/encoding/api-invalid-label.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-csshiftjis.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-errors.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-ms932.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-ms_kanji.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-shift-jis.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-sjis.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-windows-31j.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-x-sjis.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-csshiftjis.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-errors-han.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-errors-hangul.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-errors-misc.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-ms932.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-ms_kanji.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-shift-jis.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-sjis.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-windows-31j.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-x-sjis.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href-errors-han.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href-errors-hangul.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href-errors-misc.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-cseuckr.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-csksc56011987.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-errors.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-iso-ir-149.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-korean.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ks_c_5601-1987.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ks_c_5601-1989.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ksc5601.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ksc_5601.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-windows-949.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-cseuckr.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-csksc56011987.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-han.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-hangul.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-misc.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-iso-ir-149.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-korean.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ks_c_5601-1987.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ks_c_5601-1989.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ksc5601.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ksc_5601.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-windows-949.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-href-errors-han.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-href-errors-misc.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-href.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-big5-hkscs.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-cn-big5.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-csbig5.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-errors.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-extra.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-x-x-big5.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-enc-ascii.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-big5-hkscs.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-cn-big5.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-csbig5.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-extBa.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-extBb.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-han.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-hangul.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-misc.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-pua.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-x-x-big5.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href-errors-han.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href-errors-hangul.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href-errors-misc.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encoding/single-byte-decoder.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources.html": [
         "slow"
     ],

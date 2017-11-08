@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/encoding/resources/decoding-helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/resources/encodings.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/resources/single-byte-raw.py
+/LayoutTests/imported/w3c/web-platform-tests/encoding/resources/text-plain-charset.py
+/LayoutTests/imported/w3c/web-platform-tests/encoding/resources/utf-32-big-endian-bom.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/resources/utf-32-big-endian-bom.xml
+/LayoutTests/imported/w3c/web-platform-tests/encoding/resources/utf-32-big-endian-nobom.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/resources/utf-32-big-endian-nobom.xml
+/LayoutTests/imported/w3c/web-platform-tests/encoding/resources/utf-32-little-endian-bom.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/resources/utf-32-little-endian-bom.xml
+/LayoutTests/imported/w3c/web-platform-tests/encoding/resources/utf-32-little-endian-nobom.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/resources/utf-32-little-endian-nobom.xml

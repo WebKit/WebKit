@@ -1,0 +1,49 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/encoding/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/encoding/api-basics.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/api-invalid-label.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/api-replacement-encodings.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/api-surrogates-utf8.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/big5-encoder.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/eof-shift_jis.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/eof-utf-8-one-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/eof-utf-8-one.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/eof-utf-8-three-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/eof-utf-8-three.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/eof-utf-8-two-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/eof-utf-8-two.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/gb18030-encoder.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/gbk-encoder.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/idlharness.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/iso-2022-jp-decoder.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/iso-2022-jp-encoder.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/replacement-encodings.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/single-byte-decoder.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/textdecoder-byte-order-marks.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/textdecoder-copy.any.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/textdecoder-fatal-streaming.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/textdecoder-fatal.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/textdecoder-ignorebom.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/textdecoder-labels.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/textdecoder-streaming.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/textdecoder-utf16-surrogates.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/textencoder-constructor-non-utf.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/textencoder-utf16-surrogates.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/unsupported-encodings.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/utf-32.html

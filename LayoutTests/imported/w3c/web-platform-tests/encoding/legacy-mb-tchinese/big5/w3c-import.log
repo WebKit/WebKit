@@ -1,0 +1,71 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-big5-hkscs.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-cn-big5.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-csbig5.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-errors.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-extra.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-x-x-big5.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decoder.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-enc-ascii.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-enc-ascii.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-big5-hkscs.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-big5-hkscs.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-cn-big5.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-cn-big5.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-csbig5.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-csbig5.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-extBa.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-extBa.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-extBb.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-extBb.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-han.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-han.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-hangul.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-hangul.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-misc.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-misc.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-pua.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-x-x-big5.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-x-x-big5.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href-errors-han.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href-errors-han.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href-errors-hangul.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href-errors-hangul.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href-errors-misc.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href-errors-misc.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encoder.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5_chars-big5-hkscs.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5_chars-big5-hkscs.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5_chars-cn-big5.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5_chars-cn-big5.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5_chars-csbig5.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5_chars-csbig5.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5_chars-x-x-big5.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5_chars-x-x-big5.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5_chars.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5_chars.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5_chars_extra.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5_chars_extra.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5_errors.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5_errors.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5_index.js

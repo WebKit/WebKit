@@ -1,3 +1,13 @@
+2017-11-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Switch encoding WPT test suite to updating via import-w3c-tests
+        https://bugs.webkit.org/show_bug.cgi?id=179412
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations: Remove mention of slow encoding tests here...
+        * tests-options.json: ...because they are now recorded here.
+
 2017-11-08  Chris Dumez  <cdumez@apple.com>
 
         [Service Workers] Support waitUntil() on the 'install' event

@@ -124,7 +124,7 @@
     "web-platform-tests/dpub-aam": "skip", 
     "web-platform-tests/dpub-aria": "skip", 
     "web-platform-tests/editing": "skip", 
-    "web-platform-tests/encoding": "skip", 
+    "web-platform-tests/encoding": "import", 
     "web-platform-tests/encrypted-media": "import", 
     "web-platform-tests/encrypted-media/Google": "skip", 
     "web-platform-tests/entries-api": "skip", 
