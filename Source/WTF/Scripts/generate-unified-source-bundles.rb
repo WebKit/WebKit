@@ -168,7 +168,7 @@ class BundleManager
     end
 
     def bundleFileName(number)
-        "UnifiedSource#{number}.#{extension}"
+        @extension == "cpp" ? "UnifiedSource#{number}.#{extension}" : "UnifiedSource#{number}-#{extension}.#{extension}"
     end
 
     def flush

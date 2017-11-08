@@ -1,3 +1,12 @@
+2017-11-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Get rid of unsightly hex numbers from unified build object files
+        https://bugs.webkit.org/show_bug.cgi?id=179410
+
+        Reviewed by Saam Barati.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Rename UnifiedSource*.mm to UnifiedSource*-mm.mm for more readable build output.
+
 2017-11-07  Saam Barati  <sbarati@apple.com>
 
         Only cage double butterfly accesses

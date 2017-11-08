@@ -1,3 +1,13 @@
+2017-11-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Get rid of unsightly hex numbers from unified build object files
+        https://bugs.webkit.org/show_bug.cgi?id=179410
+
+        Reviewed by Saam Barati.
+
+        * Scripts/generate-unified-source-bundles.rb: For extensions other than "cpp", also include 
+        the extension in the base name of the file, to avoid ugly Xcode-generated object file names.
+
 2017-11-07  Filip Pizlo  <fpizlo@apple.com>
 
         Disable isoheaps on iOS
