@@ -302,6 +302,9 @@ void WebInspectorProxy::platformHide()
 
 void WebInspectorProxy::platformBringToFront()
 {
+    if (m_isOpening)
+        return;
+
     if (m_client && m_client->bringToFront(*this))
         return;
 

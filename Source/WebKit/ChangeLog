@@ -1,3 +1,22 @@
+2017-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r223773): [GTK] WebKitWebInspector bring-to-front signal is emitted right after open-window
+        https://bugs.webkit.org/show_bug.cgi?id=179365
+
+        Reviewed by Michael Catanzaro.
+
+        In the GTK+ API, open-window already implies presenting the window to bring it to the front, so it's not
+        expected that bring-to-front is emitted on open. This is happening since r223773 that moved common code from
+        platform specific inspector files to the main file, but in the case of open the mac implementation was not
+        exactly the same as the GTK+ one. This broke /webkit2/WebKitWebInspector/default and
+        /webkit2/WebKitWebInspector/manual-attach-detach.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::open): Set m_isOpening for the scope of the function.
+        * UIProcess/WebInspectorProxy.h: Add m_isOpening.
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformBringToFront): Return early if m_isOpening is true.
+
 2017-11-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r224179): [GTK] Several WebViewEditor tests are failing since r224179

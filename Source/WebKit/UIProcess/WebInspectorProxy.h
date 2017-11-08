@@ -225,6 +225,7 @@ private:
     bool m_ignoreFirstBringToFront { false };
     bool m_elementSelectionActive { false };
     bool m_ignoreElementSelectionChange { false };
+    bool m_isOpening { false };
 
     IPC::Attachment m_connectionIdentifier;
 

@@ -40,6 +40,7 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <WebCore/NotImplemented.h>
+#include <wtf/SetForScope.h>
 
 #if PLATFORM(GTK)
 #include "WebInspectorProxyClient.h"
@@ -393,6 +394,7 @@ void WebInspectorProxy::open()
     if (!m_inspectorPage)
         return;
 
+    SetForScope<bool> isOpening(m_isOpening, true);
     m_isVisible = true;
     m_inspectorPage->process().send(Messages::WebInspectorUI::SetIsVisible(m_isVisible), m_inspectorPage->pageID());
 
