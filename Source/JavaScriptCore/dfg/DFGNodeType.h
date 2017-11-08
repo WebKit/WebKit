@@ -408,6 +408,9 @@ namespace JSC { namespace DFG {
     \
     /* Count execution. */\
     macro(CountExecution, NodeMustGenerate) \
+    /* Super sampler. */\
+    macro(SuperSamplerBegin, NodeMustGenerate) \
+    macro(SuperSamplerEnd, NodeMustGenerate) \
     \
     /* This is a pseudo-terminal. It means that execution should fall out of DFG at */\
     /* this point, but execution does continue in the basic block - just in a */\

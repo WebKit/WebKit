@@ -197,6 +197,8 @@ bool doesGC(Graph& graph, Node* node)
     case TailCallVarargs:
     case Throw:
     case CountExecution:
+    case SuperSamplerBegin:
+    case SuperSamplerEnd:
     case ForceOSRExit:
     case CheckTraps:
     case StringFromCharCode:

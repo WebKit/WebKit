@@ -174,6 +174,8 @@ inline CapabilityLevel canCompile(Node* node)
     case ConstantStoragePointer:
     case Check:
     case CountExecution:
+    case SuperSamplerBegin:
+    case SuperSamplerEnd:
     case GetExecutable:
     case GetScope:
     case GetCallee:

@@ -41,6 +41,7 @@
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "SlowPathCall.h"
+#include "SuperSampler.h"
 #include "ThunkGenerators.h"
 #include "TypeLocation.h"
 #include "TypeProfilerLog.h"
@@ -966,6 +967,16 @@ void JIT::emit_op_check_traps(Instruction*)
 
 void JIT::emit_op_nop(Instruction*)
 {
+}
+
+void JIT::emit_op_super_sampler_begin(Instruction*)
+{
+    add32(TrustedImm32(1), AbsoluteAddress(bitwise_cast<void*>(&g_superSamplerCount)));
+}
+
+void JIT::emit_op_super_sampler_end(Instruction*)
+{
+    sub32(TrustedImm32(1), AbsoluteAddress(bitwise_cast<void*>(&g_superSamplerCount)));
 }
 
 void JIT::emitSlow_op_check_traps(Instruction*, Vector<SlowCaseEntry>::iterator& iter)

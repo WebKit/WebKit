@@ -129,6 +129,8 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_check_if_exception_is_uncatchable_and_noti
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_profile_catch);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_log_shadow_chicken_prologue);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_log_shadow_chicken_tail);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_super_sampler_begin);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_super_sampler_end);
 extern "C" SlowPathReturnType llint_throw_stack_overflow_error(VM*, ProtoCallFrame*) WTF_INTERNAL;
 #if !ENABLE(JIT)
 extern "C" SlowPathReturnType llint_stack_check_at_vm_entry(VM*, Register*) WTF_INTERNAL;

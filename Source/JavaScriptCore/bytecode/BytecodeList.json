@@ -177,7 +177,9 @@
             { "name" : "op_log_shadow_chicken_prologue", "length" : 2},
             { "name" : "op_log_shadow_chicken_tail", "length" : 3},
             { "name" : "op_resolve_scope_for_hoisting_func_decl_in_eval", "length" : 4 },
-            { "name" : "op_nop", "length" : 1 }
+            { "name" : "op_nop", "length" : 1 },
+            { "name" : "op_super_sampler_begin", "length" : 1 },
+            { "name" : "op_super_sampler_end", "length" : 1 }
         ]
     },
     {

@@ -1638,6 +1638,17 @@ _llint_op_nop:
     dispatch(constexpr op_nop_length)
 
 
+_llint_op_super_sampler_begin:
+    callOpcodeSlowPath(_llint_slow_path_super_sampler_begin)
+    dispatch(constexpr op_super_sampler_begin_length)
+
+
+_llint_op_super_sampler_end:
+    traceExecution()
+    callOpcodeSlowPath(_llint_slow_path_super_sampler_end)
+    dispatch(constexpr op_super_sampler_end_length)
+
+
 _llint_op_switch_string:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_switch_string)

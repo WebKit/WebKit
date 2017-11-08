@@ -5959,7 +5959,17 @@ void ByteCodeParser::parseBlock(unsigned limit)
             addToGraph(Check); // We add a nop here so that basic block linking doesn't break.
             NEXT_OPCODE(op_nop);
         }
-            
+
+        case op_super_sampler_begin: {
+            addToGraph(SuperSamplerBegin);
+            NEXT_OPCODE(op_super_sampler_begin);
+        }
+
+        case op_super_sampler_end: {
+            addToGraph(SuperSamplerEnd);
+            NEXT_OPCODE(op_super_sampler_end);
+        }
+
         case op_create_lexical_environment: {
             VirtualRegister symbolTableRegister(currentInstruction[3].u.operand);
             VirtualRegister initialValueRegister(currentInstruction[4].u.operand);

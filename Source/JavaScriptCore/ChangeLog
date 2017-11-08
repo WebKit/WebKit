@@ -1,3 +1,72 @@
+2017-11-08  Keith Miller  <keith_miller@apple.com>
+
+        Add super sampler begin and end bytecodes.
+        https://bugs.webkit.org/show_bug.cgi?id=179376
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds a way to measure a narrow range of bytecodes for
+        performance. This is done using the same infrastructure as the
+        super sampler. I also added a class that helps do the bytecode
+        checking with RAII. One problem with the current way this is done
+        is that we don't handle decrementing early exits, either from
+        branches or exceptions. So, when using this API users need to
+        ensure that there are no early exits or that those exits don't
+        occur on the measure code.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitSuperSamplerBegin):
+        (JSC::BytecodeGenerator::emitSuperSamplerEnd):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/SuperSamplerBytecodeScope.h: Added.
+        (JSC::SuperSamplerBytecodeScope::SuperSamplerBytecodeScope):
+        (JSC::SuperSamplerBytecodeScope::~SuperSamplerBytecodeScope):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSuperSamplerBegin):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSuperSamplerEnd):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_super_sampler_begin):
+        (JSC::JIT::emit_op_super_sampler_end):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+
 2017-11-08  Robin Morisset  <rmorisset@apple.com>
 
         Turn recursive tail calls into loops

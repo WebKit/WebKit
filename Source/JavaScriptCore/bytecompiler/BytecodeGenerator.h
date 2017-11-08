@@ -690,6 +690,9 @@ namespace JSC {
         RegisterID* emitPutByIndex(RegisterID* base, unsigned index, RegisterID* value);
 
         RegisterID* emitAssert(RegisterID* condition, int line);
+        void emitSuperSamplerBegin();
+        void emitSuperSamplerEnd();
+
         RegisterID* emitIdWithProfile(RegisterID* src, SpeculatedType profile);
         void emitUnreachable();
 

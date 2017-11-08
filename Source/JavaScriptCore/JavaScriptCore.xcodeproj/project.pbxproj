@@ -833,6 +833,7 @@
 		530A66C21FA3E78B0026A545 /* UnifiedSource143.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 530A66B71FA3E77D0026A545 /* UnifiedSource143.cpp */; };
 		530A66C31FA3E78B0026A545 /* UnifiedSource144.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 530A66AD1FA3E7770026A545 /* UnifiedSource144.cpp */; };
 		530A66C41FA3E78B0026A545 /* UnifiedSource145.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 530A66B01FA3E77A0026A545 /* UnifiedSource145.cpp */; };
+		530A66CD1FB1346D0026A545 /* SuperSamplerBytecodeScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 530A66CC1FB1346D0026A545 /* SuperSamplerBytecodeScope.h */; };
 		530FB3021E7A0B6E003C19DD /* WasmWorklist.h in Headers */ = {isa = PBXBuildFile; fileRef = 530FB3011E7A0B6E003C19DD /* WasmWorklist.h */; };
 		5311BD4B1EA581E500525281 /* WasmOMGPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 5311BD491EA581E500525281 /* WasmOMGPlan.h */; };
 		531374BD1D5CE67600AF7A0B /* WasmPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 531374BC1D5CE67600AF7A0B /* WasmPlan.h */; };
@@ -3180,8 +3181,9 @@
 		530A66B51FA3E77D0026A545 /* UnifiedSource5-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource5-mm.mm"; sourceTree = "<group>"; };
 		530A66B61FA3E77D0026A545 /* UnifiedSource142.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource142.cpp; sourceTree = "<group>"; };
 		530A66B71FA3E77D0026A545 /* UnifiedSource143.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource143.cpp; sourceTree = "<group>"; };
-		530A66B81FA3E77E0026A545 /* UnifiedSource4-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource4-mm.mm"; sourceTree = "<group>"; };
-		530FB3011E7A0B6E003C19DD /* WasmWorklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmWorklist.h; sourceTree = "<group>"; };
+                530A66B81FA3E77E0026A545 /* UnifiedSource4-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource4-mm.mm"; sourceTree = "<group>"; };
+                530A66CC1FB1346D0026A545 /* SuperSamplerBytecodeScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SuperSamplerBytecodeScope.h; sourceTree = "<group>"; };
+                530FB3011E7A0B6E003C19DD /* WasmWorklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmWorklist.h; sourceTree = "<group>"; };
 		530FB3031E7A1146003C19DD /* WasmWorklist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmWorklist.cpp; sourceTree = "<group>"; };
 		5311BD481EA581E500525281 /* WasmOMGPlan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmOMGPlan.cpp; sourceTree = "<group>"; };
 		5311BD491EA581E500525281 /* WasmOMGPlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmOMGPlan.h; sourceTree = "<group>"; };
@@ -6194,6 +6196,7 @@
 				969A07280ED1CE6900F1F681 /* RegisterID.h */,
 				14DF04D916B3996D0016A513 /* StaticPropertyAnalysis.h */,
 				14CA958A16AB50DE00938A06 /* StaticPropertyAnalyzer.h */,
+				530A66CC1FB1346D0026A545 /* SuperSamplerBytecodeScope.h */,
 			);
 			path = bytecompiler;
 			sourceTree = "<group>";
@@ -9190,6 +9193,7 @@
 				0F7DF1371E2970E10095951B /* Subspace.h in Headers */,
 				0F7DF1381E2970E40095951B /* SubspaceInlines.h in Headers */,
 				0F4A38FA1C8E13DF00190318 /* SuperSampler.h in Headers */,
+				530A66CD1FB1346D0026A545 /* SuperSamplerBytecodeScope.h in Headers */,
 				0FD0E5EE1E468A570006AB08 /* SweepingScope.h in Headers */,
 				705B41AC1A6E501E00716757 /* Symbol.h in Headers */,
 				705B41AE1A6E501E00716757 /* SymbolConstructor.h in Headers */,

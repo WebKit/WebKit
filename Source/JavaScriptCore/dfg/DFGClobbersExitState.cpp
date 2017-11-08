@@ -68,6 +68,8 @@ bool clobbersExitState(Graph& graph, Node* node)
     case PhantomCreateActivation:
     case MaterializeCreateActivation:
     case CountExecution:
+    case SuperSamplerBegin:
+    case SuperSamplerEnd:
     case StoreBarrier:
     case FencedStoreBarrier:
     case AllocatePropertyStorage:

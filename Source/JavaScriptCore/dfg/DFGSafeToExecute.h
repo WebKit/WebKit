@@ -348,6 +348,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case Throw:
     case ThrowStaticError:
     case CountExecution:
+    case SuperSamplerBegin:
+    case SuperSamplerEnd:
     case ForceOSRExit:
     case CheckTraps:
     case LogShadowChickenPrologue:

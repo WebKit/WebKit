@@ -528,6 +528,8 @@ namespace JSC {
         void emit_op_loop_hint(Instruction*);
         void emit_op_check_traps(Instruction*);
         void emit_op_nop(Instruction*);
+        void emit_op_super_sampler_begin(Instruction*);
+        void emit_op_super_sampler_end(Instruction*);
         void emit_op_lshift(Instruction*);
         void emit_op_mod(Instruction*);
         void emit_op_mov(Instruction*);

@@ -55,6 +55,8 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_get_argument:
     case op_nop:
     case op_unreachable:
+    case op_super_sampler_begin:
+    case op_super_sampler_end:
         return;
     case op_assert:
     case op_get_scope:
@@ -377,6 +379,8 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_yield:
     case op_nop:
     case op_unreachable:
+    case op_super_sampler_begin:
+    case op_super_sampler_end:
 #define LLINT_HELPER_OPCODES(opcode, length) case opcode:
         FOR_EACH_LLINT_OPCODE_EXTENSION(LLINT_HELPER_OPCODES);
 #undef LLINT_HELPER_OPCODES

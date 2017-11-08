@@ -1177,6 +1177,8 @@ private:
             
         // These gets ignored because it doesn't do anything.
         case CountExecution:
+        case SuperSamplerBegin:
+        case SuperSamplerEnd:
         case PhantomLocal:
         case Flush:
             break;

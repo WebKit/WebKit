@@ -84,6 +84,7 @@
 #include "SetupVarargsFrame.h"
 #include "ShadowChicken.h"
 #include "StructureStubInfo.h"
+#include "SuperSampler.h"
 #include "ThunkGenerators.h"
 #include "VirtualRegister.h"
 #include "Watchdog.h"
@@ -1079,6 +1080,12 @@ private:
             break;
         case CountExecution:
             compileCountExecution();
+            break;
+        case SuperSamplerBegin:
+            compileSuperSamplerBegin();
+            break;
+        case SuperSamplerEnd:
+            compileSuperSamplerEnd();
             break;
         case StoreBarrier:
         case FencedStoreBarrier:
@@ -9188,7 +9195,19 @@ private:
         TypedPointer counter = m_out.absolute(m_node->executionCounter()->address());
         m_out.store64(m_out.add(m_out.load64(counter), m_out.constInt64(1)), counter);
     }
-    
+
+    void compileSuperSamplerBegin()
+    {
+        TypedPointer counter = m_out.absolute(bitwise_cast<void*>(&g_superSamplerCount));
+        m_out.store32(m_out.add(m_out.load32(counter), m_out.constInt32(1)), counter);
+    }
+
+    void compileSuperSamplerEnd()
+    {
+        TypedPointer counter = m_out.absolute(bitwise_cast<void*>(&g_superSamplerCount));
+        m_out.store32(m_out.sub(m_out.load32(counter), m_out.constInt32(1)), counter);
+    }
+
     void compileStoreBarrier()
     {
         emitStoreBarrier(lowCell(m_node->child1()), m_node->op() == FencedStoreBarrier);

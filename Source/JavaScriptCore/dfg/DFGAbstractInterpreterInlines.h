@@ -3245,6 +3245,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CheckTierUpInLoop:
     case CheckTierUpAtReturn:
     case CheckTypeInfoFlags:
+    case SuperSamplerBegin:
+    case SuperSamplerEnd:
         break;
 
     case ParseInt: {

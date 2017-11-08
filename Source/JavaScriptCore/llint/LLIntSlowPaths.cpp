@@ -66,6 +66,7 @@
 #include "RegExpObject.h"
 #include "ShadowChicken.h"
 #include "StructureRareDataInlines.h"
+#include "SuperSampler.h"
 #include "VMInlines.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StringPrintStream.h>
@@ -1730,6 +1731,24 @@ LLINT_SLOW_PATH_DECL(slow_path_profile_catch)
     });
 
     LLINT_END();
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_super_sampler_begin)
+{
+    // FIXME: It seems like we should be able to do this in asm but llint doesn't seem to like global variables.
+    // See: https://bugs.webkit.org/show_bug.cgi?id=179438
+    UNUSED_PARAM(exec);
+    g_superSamplerCount++;
+    LLINT_END_IMPL();
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_super_sampler_end)
+{
+    // FIXME: It seems like we should be able to do this in asm but llint doesn't seem to like global variables.
+    // See: https://bugs.webkit.org/show_bug.cgi?id=179438
+    UNUSED_PARAM(exec);
+    g_superSamplerCount--;
+    LLINT_END_IMPL();
 }
 
 extern "C" SlowPathReturnType llint_throw_stack_overflow_error(VM* vm, ProtoCallFrame* protoFrame)

@@ -1575,6 +1575,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         }
         
     case CountExecution:
+    case SuperSamplerBegin:
+    case SuperSamplerEnd:
         read(InternalState);
         write(InternalState);
         return;

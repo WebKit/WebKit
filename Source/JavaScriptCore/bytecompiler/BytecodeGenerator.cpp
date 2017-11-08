@@ -48,6 +48,7 @@
 #include "Options.h"
 #include "StackAlignment.h"
 #include "StrongInlines.h"
+#include "SuperSamplerBytecodeScope.h"
 #include "UnlinkedCodeBlock.h"
 #include "UnlinkedEvalCodeBlock.h"
 #include "UnlinkedFunctionCodeBlock.h"
@@ -2965,6 +2966,16 @@ RegisterID* BytecodeGenerator::emitAssert(RegisterID* condition, int line)
     instructions().append(condition->index());
     instructions().append(line);
     return condition;
+}
+
+void BytecodeGenerator::emitSuperSamplerBegin()
+{
+    emitOpcode(op_super_sampler_begin);
+}
+
+void BytecodeGenerator::emitSuperSamplerEnd()
+{
+    emitOpcode(op_super_sampler_end);
 }
 
 RegisterID* BytecodeGenerator::emitIdWithProfile(RegisterID* src, SpeculatedType profile)

@@ -5575,6 +5575,14 @@ void SpeculativeJIT::compile(Node* node)
         m_jit.add64(TrustedImm32(1), MacroAssembler::AbsoluteAddress(node->executionCounter()->address()));
         break;
 
+    case SuperSamplerBegin:
+        m_jit.add32(TrustedImm32(1), MacroAssembler::AbsoluteAddress(bitwise_cast<void*>(&g_superSamplerCount)));
+        break;
+
+    case SuperSamplerEnd:
+        m_jit.sub32(TrustedImm32(1), MacroAssembler::AbsoluteAddress(bitwise_cast<void*>(&g_superSamplerCount)));
+        break;
+
     case ForceOSRExit: {
         terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), 0);
         break;
