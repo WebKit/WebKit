@@ -127,9 +127,7 @@
     <branch module="freetype/freetype-2.4.11.tar.bz2" version="2.4.11"
             repo="savannah.gnu.org"
             hash="sha256:ef9d0bcb64647d9e5125dc7534d7ca371c98310fec87677c410f397f71ffbe3f"
-            md5sum="b93435488942486c8d0ca22e8f768034">
-      <patch file="freetype6-2.4.11-truetype-font-height-fix.patch" strip="1"/>
-    </branch>
+            md5sum="b93435488942486c8d0ca22e8f768034"/>
   </autotools>
 
   <autotools id="harfbuzz" autogen-sh="configure">

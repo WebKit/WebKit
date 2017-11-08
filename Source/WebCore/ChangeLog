@@ -1,3 +1,21 @@
+2017-09-06  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [GTK] Bump freetype version to 2.8.0
+        https://bugs.webkit.org/show_bug.cgi?id=176351
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Retrieving line spacing info without metrics hinting - FreeType's metric hinting
+        uses rounding which results in the sum of ascent and descent being larger
+        than the line height. To work around this without globally disabling font metrics
+        hinting, I am temporarily creating a new cairo scaled font with metrics hinting
+        off and retrieving the height values from this one.
+
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::scaledFontWithoutMetricsHinting): New function to clone the existing font, only with metrics hinting
+        disabled.
+        (WebCore::Font::platformInit): Get height info from non-metrics hinted font, disable rounding for linespacing.
+
 2017-09-13  Zalan Bujtas  <zalan@apple.com>
 
         Switch multicolumn's spanner map from raw over to weak pointers.

@@ -1,3 +1,15 @@
+2017-09-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Bump freetype version to 2.8.0
+        https://bugs.webkit.org/show_bug.cgi?id=176351
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Remove the patch we were using since it was reverted upstream.
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/freetype6-2.4.11-truetype-font-height-fix.patch: Removed.
+
 2017-10-25  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Remove GLib API functions which use Cairo
