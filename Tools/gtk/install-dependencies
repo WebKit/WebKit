@@ -108,6 +108,7 @@ function installDependenciesWithApt {
         libenchant-dev \
         libfaad-dev \
         libffi-dev \
+        libfile-copy-recursive-perl \
         $(aptIfElse libgcrypt20-dev libgcrypt11-dev) \
         libgirepository1.0-dev \
         libgl1-mesa-dev \
@@ -279,6 +280,7 @@ function installDependenciesWithPacman {
         mpg123 \
         opus \
         pango \
+        perl-file-copy-recursive \
         libgcrypt \
         libnotify \
         libpng \
@@ -435,6 +437,7 @@ function installDependenciesWithDnf {
         opus-devel \
         patch \
         pcre-devel \
+        perl-File-Copy-Recursive \
         perl-JSON-PP \
         perl-Switch \
         perl-Time-HiRes \

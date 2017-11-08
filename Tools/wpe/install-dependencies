@@ -52,7 +52,7 @@ function aptIfElse {
 }
 
 function installDependenciesWithApt {
-    # These are dependencies necessary for building WPE+.
+    # These are dependencies necessary for building WPE.
     packages=" \
         autoconf \
         automake \
@@ -73,6 +73,7 @@ function installDependenciesWithApt {
         libgstreamer-plugins-base1.0-dev \
         libicu-dev \
         libjpeg-dev \
+        libfile-copy-recursive-perl \
         $(aptIfElse libpng-dev libpng12-dev) \
         libsqlite3-dev \
         libtasn1-6-dev \
@@ -132,7 +133,7 @@ function installDependenciesWithApt {
 }
 
 function installDependenciesWithPacman {
-    # These are dependencies necessary for building WebKitGTK+.
+    # These are dependencies necessary for building WPE.
     packages=" \
         autoconf \
         automake \
@@ -165,6 +166,7 @@ function installDependenciesWithPacman {
         make \
         ninja \
         patch \
+        perl-file-copy-recursive \
         pkg-config \
         ruby
         sed \
@@ -247,6 +249,7 @@ function installDependenciesWithDnf {
         libxslt-devel \
         ninja-build \
         patch \
+        perl-File-Copy-Recursive \
         perl-Time-HiRes \
         perl-version \
         ruby \
