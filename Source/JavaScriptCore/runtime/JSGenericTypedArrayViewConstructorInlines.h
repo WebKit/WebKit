@@ -185,8 +185,14 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
                     return constructGenericTypedArrayViewFromIterator<ViewClass>(exec, structure, iterator);
             }
 
-            length = lengthSlot.isUnset() ? 0 : lengthSlot.getValue(exec, vm.propertyNames->length).toUInt32(exec);
-            RETURN_IF_EXCEPTION(scope, nullptr);
+            if (lengthSlot.isUnset())
+                length = 0;
+            else {
+                JSValue value = lengthSlot.getValue(exec, vm.propertyNames->length);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                length = value.toUInt32(exec);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+            }
         }
 
         
