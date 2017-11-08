@@ -1,0 +1,49 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+var counter = 0
+var square
+var debugFudge = 200;
+
+function runTest(timestamp)
+{
+    square = document.getElementById('square');
+    
+    if (counter == 0 && window.internals)
+        shouldBe("window.internals.isPaintingFrequently(square)", "false");
+    
+    var oldLeft = square.offsetLeft;
+    var oldTop = square.offsetTop;
+    square.style.left = (oldLeft + 1) + 'px';
+    square.style.top = (oldTop + 1) + 'px';
+    
+    counter++;
+    if (window.testRunner) {
+        // For debug builds that can't animate fast we just do a large number of increments.
+        for (var i = 0; i < debugFudge; ++i)
+            window.internals.incrementFrequentPaintCounter(square);
+    }
+
+    if (counter < 60)
+        requestAnimationFrame(runTest);
+    else if (window.internals) {
+        shouldBe("window.internals.isPaintingFrequently(square)", "true");
+        finishJSTest();
+    }
+}
+
+</script>
+<body>
+<div style="position:absolute; left:0;top:0">
+
+<div style="position:absolute; left:0;top:0;width:2px; height:2px; background-color:green" id="square"></div>
+</div>
+
+<script>
+description("This tests that we kick into high frequency painting mode properly when animating something quickly.");
+window.jsTestIsAsync = true;
+window.requestAnimationFrame(runTest);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+

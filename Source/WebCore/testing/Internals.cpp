@@ -985,6 +985,17 @@ bool Internals::hasPausedImageAnimations(Element& element)
 {
     return element.renderer() && element.renderer()->hasPausedImageAnimations();
 }
+    
+bool Internals::isPaintingFrequently(Element& element)
+{
+    return element.renderer() && element.renderer()->enclosingLayer() && element.renderer()->enclosingLayer()->paintingFrequently();
+}
+
+void Internals::incrementFrequentPaintCounter(Element& element)
+{
+    if (element.renderer() && element.renderer()->enclosingLayer())
+        element.renderer()->enclosingLayer()->simulateFrequentPaint();
+}
 
 Ref<CSSComputedStyleDeclaration> Internals::computedStyleIncludingVisitedInfo(Element& element) const
 {

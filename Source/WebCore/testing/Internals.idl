@@ -93,6 +93,10 @@ enum EventThrottlingBehavior {
     // Animated image pausing testing.
     boolean hasPausedImageAnimations(Element element);
 
+    // Must be called on an element whose enclosingLayer() is self-painting.
+    boolean isPaintingFrequently(Element element);
+    void incrementFrequentPaintCounter(Element element);
+
     [MayThrowException] DOMString elementRenderTreeAsText(Element element);
     boolean isPreloaded(DOMString url);
     boolean isLoadingFromMemoryCache(DOMString url);

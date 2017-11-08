@@ -1,3 +1,13 @@
+2017-11-08  David Hyatt  <hyatt@apple.com>
+
+        [Experiment] Implement code to detect high frequency painting
+        https://bugs.webkit.org/show_bug.cgi?id=179118
+
+        Reviewed by Simon Fraser.
+
+        * fast/block/block-move-frequent-paint-expected.txt: Added.
+        * fast/block/block-move-frequent-paint.html: Added.
+
 2017-11-08  Ms2ger  <Ms2ger@igalia.com>
 
         Update XMLHttpRequest tests.

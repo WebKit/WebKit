@@ -66,6 +66,7 @@ class FilterOperations;
 class HitTestRequest;
 class HitTestResult;
 class HitTestingTransformState;
+class PaintFrequencyInfo;
 class RenderFragmentedFlow;
 class RenderGeometryMap;
 class RenderLayerBacking;
@@ -712,6 +713,10 @@ public:
 
     bool shouldPlaceBlockDirectionScrollbarOnLeft() const final { return renderer().shouldPlaceBlockDirectionScrollbarOnLeft(); }
 
+    WEBCORE_EXPORT void simulateFrequentPaint();
+    WEBCORE_EXPORT bool paintingFrequently() const;
+    void clearPaintFrequencyInfo();
+
 private:
     enum CollectLayersBehavior { StopAtStackingContexts, StopAtStackingContainers };
 
@@ -1164,6 +1169,8 @@ private:
     IntRect m_blockSelectionGapsBounds;
 
     std::unique_ptr<RenderLayerBacking> m_backing;
+    
+    std::unique_ptr<PaintFrequencyInfo> m_paintFrequencyInfo;
 };
 
 inline void RenderLayer::clearZOrderLists()

@@ -38,6 +38,7 @@ namespace WebCore {
 
 class OverlapTestRequestClient;
 class RenderInline;
+class RenderLayer;
 class RenderLayerModelObject;
 class RenderObject;
 
@@ -51,7 +52,7 @@ struct PaintInfo {
     PaintInfo(GraphicsContext& newContext, const LayoutRect& newRect, PaintPhase newPhase, PaintBehavior newPaintBehavior,
         RenderObject* newSubtreePaintRoot = nullptr, ListHashSet<RenderInline*>* newOutlineObjects = nullptr,
         OverlapTestRequestMap* overlapTestRequests = nullptr, const RenderLayerModelObject* newPaintContainer = nullptr,
-        bool newRequireSecurityOriginAccessForWidgets = false)
+        const RenderLayer* enclosingSelfPaintingLayer = nullptr, bool newRequireSecurityOriginAccessForWidgets = false)
             : rect(newRect)
             , phase(newPhase)
             , paintBehavior(newPaintBehavior)
@@ -60,6 +61,7 @@ struct PaintInfo {
             , overlapTestRequests(overlapTestRequests)
             , paintContainer(newPaintContainer)
             , requireSecurityOriginAccessForWidgets(newRequireSecurityOriginAccessForWidgets)
+            , m_enclosingSelfPaintingLayer(enclosingSelfPaintingLayer)
             , m_context(&newContext)
     {
     }
@@ -100,6 +102,8 @@ struct PaintInfo {
     bool skipRootBackground() const { return paintBehavior & PaintBehaviorSkipRootBackground; }
     bool paintRootBackgroundOnly() const { return paintBehavior & PaintBehaviorRootBackgroundOnly; }
 
+    const RenderLayer* enclosingSelfPaintingLayer() const { return m_enclosingSelfPaintingLayer; }
+
     void applyTransform(const AffineTransform& localToAncestorTransform)
     {
         if (localToAncestorTransform.isIdentity())
@@ -123,6 +127,7 @@ struct PaintInfo {
     OverlapTestRequestMap* overlapTestRequests;
     const RenderLayerModelObject* paintContainer; // the layer object that originates the current painting
     bool requireSecurityOriginAccessForWidgets { false };
+    const RenderLayer* m_enclosingSelfPaintingLayer { nullptr };
 
 private:
     GraphicsContext* m_context;

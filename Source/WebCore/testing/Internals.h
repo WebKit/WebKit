@@ -103,6 +103,9 @@ public:
     ExceptionOr<String> elementRenderTreeAsText(Element&);
     bool hasPausedImageAnimations(Element&);
 
+    bool isPaintingFrequently(Element&);
+    void incrementFrequentPaintCounter(Element&);
+
     String address(Node&);
     bool nodeNeedsStyleRecalc(Node&);
     String styleChangeType(Node&);
