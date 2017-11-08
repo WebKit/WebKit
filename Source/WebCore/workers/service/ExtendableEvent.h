@@ -47,8 +47,9 @@ public:
     EventInterface eventInterface() const override { return ExtendableEventInterfaceType; }
 
     ExceptionOr<void> waitUntil(Ref<DOMPromise>&&);
+    unsigned pendingPromiseCount() const { return m_pendingPromiseCount; }
 
-    WEBCORE_EXPORT void onFinishedWaitingForTesting(WTF::Function<void()>&&);
+    WEBCORE_EXPORT void whenAllExtendLifetimePromisesAreSettled(WTF::Function<void(HashSet<Ref<DOMPromise>>&&)>&&);
 
 protected:
     WEBCORE_EXPORT ExtendableEvent(const AtomicString&, const ExtendableEventInit&, IsTrusted);
@@ -56,12 +57,13 @@ protected:
 
     WeakPtr<ExtendableEvent> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
-    void addPendingPromise(Ref<DOMPromise>&&);
+    void addExtendLifetimePromise(Ref<DOMPromise>&&);
 
 private:
-    HashSet<Ref<DOMPromise>> m_pendingPromises;
+    unsigned m_pendingPromiseCount { 0 };
+    HashSet<Ref<DOMPromise>> m_extendLifetimePromises;
     WeakPtrFactory<ExtendableEvent> m_weakPtrFactory;
-    WTF::Function<void()> m_onFinishedWaitingForTesting;
+    WTF::Function<void(HashSet<Ref<DOMPromise>>&&)> m_whenAllExtendLifetimePromisesAreSettledHandler;
 };
 
 } // namespace WebCore

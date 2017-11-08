@@ -1,3 +1,15 @@
+2017-11-08  Chris Dumez  <cdumez@apple.com>
+
+        [Service Workers] Support waitUntil() on the 'install' event
+        https://bugs.webkit.org/show_bug.cgi?id=179396
+
+        Reviewed by Brady Eidson.
+
+        Rebaseline a few WPT tests.
+
+        * web-platform-tests/service-workers/service-worker/oninstall-script-error.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/register-wait-forever-in-install-worker.https-expected.txt:
+
 2017-11-08  Ms2ger  <Ms2ger@igalia.com>
 
         Update XMLHttpRequest tests.

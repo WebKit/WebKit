@@ -11,38 +11,6 @@ test(() => {
     assert_throws('InvalidStateError', () => event.waitUntil(new Request('')));
 }, "ExtendableEvent waitUntil should support non promise parameters");
 
-promise_test(async t => {
-    if (!window.internals)
-        return Promise.reject("test require internals");
-    var event = internals.createTrustedExtendableEvent();
-    var promise = internals.waitForExtendableEventToFinish(event);
-    var shouldWait = true;
-    event.waitUntil(new Promise((resolve, reject) => {
-        setTimeout(() => {
-            shouldWait = false;
-            resolve(new Request(''));
-        }, 50);
-    }));
-    await promise;
-    assert_false(shouldWait);
-}, "ExtendableEvent should wait for given promise to resolve");
-
-promise_test(async t => {
-    if (!window.internals)
-        return Promise.reject("test require internals");
-    var event = internals.createTrustedExtendableEvent();
-    var promise = internals.waitForExtendableEventToFinish(event);
-    var shouldWait = true;
-    event.waitUntil(new Promise((resolve, reject) => {
-        setTimeout(() => {
-            shouldWait = false;
-            reject(new Request(''));
-        }, 50);
-    }));
-    await promise;
-    assert_false(shouldWait);
-}, "ExtendableEvent should wait for given promise to reject");
-
 test(function() {
     assert_equals(
       new ExtendableEvent('ExtendableEvent').type,

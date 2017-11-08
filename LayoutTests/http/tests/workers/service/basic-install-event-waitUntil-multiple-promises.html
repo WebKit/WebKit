@@ -1,0 +1,26 @@
+<html>
+<head>
+<script src="resources/sw-test-pre.js"></script>
+</head>
+<body>
+<script>
+navigator.serviceWorker.addEventListener("message", function(event) {
+    if (event.data == 10)
+        log("PASS: service worker resolved all extend lifetime promises");
+    else
+        log("FAIL: service worker resolved only " + event.data + " promises");
+
+    finishSWTest();
+});
+
+navigator.serviceWorker.register("resources/basic-install-event-waitUntil-multiple-promises-worker.js", { }).then(function(registration) {
+     waitForState(registration.installing, "installed").then(function() {
+         registration.waiting.postMessage("CheckResolvedExtendLifetimePromises");
+     });
+}, function() {
+    log("FAIL: Failed to register the service worker");
+    finishSWTest();
+});
+</script>
+</body>
+</html>

@@ -32,6 +32,7 @@
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "EventNames.h"
 #include "ExtendableMessageEvent.h"
+#include "JSDOMPromise.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorkerFetch.h"
 #include "ServiceWorkerGlobalScope.h"
@@ -122,10 +123,18 @@ void ServiceWorkerThread::fireInstallEvent()
         auto installEvent = ExtendableEvent::create(eventNames().installEvent, { }, ExtendableEvent::IsTrusted::Yes);
         serviceWorkerGlobalScope.dispatchEvent(installEvent);
 
-        // FIXME: We are supposed to wait for all installEvent's extend lifetime promises.
-        callOnMainThread([serviceWorkerIdentifier] () mutable {
-            if (auto* connection = SWContextManager::singleton().connection())
-                connection->didFinishInstall(serviceWorkerIdentifier, true);
+        installEvent->whenAllExtendLifetimePromisesAreSettled([serviceWorkerIdentifier](HashSet<Ref<DOMPromise>>&& extendLifetimePromises) {
+            bool hasRejectedAnyPromise = false;
+            for (auto& promise : extendLifetimePromises) {
+                if (promise->status() == DOMPromise::Status::Rejected) {
+                    hasRejectedAnyPromise = true;
+                    break;
+                }
+            }
+            callOnMainThread([serviceWorkerIdentifier, hasRejectedAnyPromise] () mutable {
+                if (auto* connection = SWContextManager::singleton().connection())
+                    connection->didFinishInstall(serviceWorkerIdentifier, !hasRejectedAnyPromise);
+            });
         });
     });
     runLoop().postTask(WTFMove(task));

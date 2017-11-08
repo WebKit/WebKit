@@ -131,14 +131,19 @@ void SWServerJobQueue::install(SWServerRegistration& registration, SWServer::Con
 }
 
 // https://w3c.github.io/ServiceWorker/#install
-void SWServerJobQueue::didFinishInstall(SWServer::Connection&, ServiceWorkerIdentifier, bool wasSuccessful)
+void SWServerJobQueue::didFinishInstall(SWServer::Connection&, ServiceWorkerIdentifier identifier, bool wasSuccessful)
 {
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
 
     if (!wasSuccessful) {
-        // FIXME: Run the Update Worker State algorithm passing registration's installing worker and redundant as the arguments.
-        // FIXME: Run the Update Registration State algorithm passing registration, "installing" and null as the arguments.
+        auto* worker = m_server.workerByID(identifier);
+        RELEASE_ASSERT(worker);
+
+        // Run the Update Worker State algorithm passing registration's installing worker and redundant as the arguments.
+        registration->updateWorkerState(*worker, ServiceWorkerState::Redundant);
+        // Run the Update Registration State algorithm passing registration, "installing" and null as the arguments.
+        registration->updateRegistrationState(ServiceWorkerRegistrationState::Installing, nullptr);
 
         // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
         if (!registration->getNewestWorker())

@@ -449,6 +449,18 @@ bool ServiceWorkerContainer::canSuspendForDocumentSuspension() const
     return !hasPendingActivity();
 }
 
+void ServiceWorkerContainer::addRegistration(ServiceWorkerRegistration& registration)
+{
+    m_swConnection->addServiceWorkerRegistrationInServer(registration.data().key, registration.identifier());
+    m_registrations.add(registration.data().key, &registration);
+}
+
+void ServiceWorkerContainer::removeRegistration(ServiceWorkerRegistration& registration)
+{
+    m_swConnection->removeServiceWorkerRegistrationInServer(registration.data().key, registration.identifier());
+    m_registrations.remove(registration.data().key);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

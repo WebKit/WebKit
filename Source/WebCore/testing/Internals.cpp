@@ -4258,18 +4258,6 @@ void Internals::waitForFetchEventToFinish(FetchEvent& event, DOMPromiseDeferred<
     });
 }
 
-void Internals::waitForExtendableEventToFinish(ExtendableEvent& event, DOMPromiseDeferred<void>&& promise)
-{
-    event.onFinishedWaitingForTesting([promise = WTFMove(promise)] () mutable {
-        promise.resolve();
-    });
-}
-
-Ref<ExtendableEvent> Internals::createTrustedExtendableEvent()
-{
-    return ExtendableEvent::create("ExtendableEvent", { }, Event::IsTrusted::Yes);
-}
-
 Ref<FetchEvent> Internals::createBeingDispatchedFetchEvent(ScriptExecutionContext& context)
 {
     auto event = FetchEvent::createForTesting(context);

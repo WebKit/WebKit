@@ -72,8 +72,8 @@ public:
     using RegistrationsPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<ServiceWorkerRegistration>>>;
     void getRegistrations(RegistrationsPromise&&);
 
-    void addRegistration(ServiceWorkerRegistration& registration) { m_registrations.add(registration.data().key, &registration); }
-    void removeRegistration(ServiceWorkerRegistration& registration)  { m_registrations.remove(registration.data().key); }
+    void addRegistration(ServiceWorkerRegistration&);
+    void removeRegistration(ServiceWorkerRegistration&);
 
     void startMessages();
 

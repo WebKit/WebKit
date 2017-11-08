@@ -64,7 +64,7 @@ ExceptionOr<void> FetchEvent::respondWith(Ref<DOMPromise>&& promise)
         return Exception { InvalidStateError, ASCIILiteral("Event respondWith flag is set") };
 
     m_respondPromise = WTFMove(promise);
-    addPendingPromise(*m_respondPromise);
+    addExtendLifetimePromise(*m_respondPromise);
 
     m_respondPromise->whenSettled([this, weakThis = createWeakPtr()] () {
         if (!weakThis)

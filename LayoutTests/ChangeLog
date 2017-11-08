@@ -1,3 +1,27 @@
+2017-11-08  Chris Dumez  <cdumez@apple.com>
+
+        [Service Workers] Support waitUntil() on the 'install' event
+        https://bugs.webkit.org/show_bug.cgi?id=179396
+
+        Reviewed by Brady Eidson.
+
+        Add layout test coverage.
+
+        * http/tests/workers/service/basic-install-event-waitUntil-multiple-promises-expected.txt: Added.
+        * http/tests/workers/service/basic-install-event-waitUntil-multiple-promises.html: Added.
+        * http/tests/workers/service/basic-install-event-waitUntil-reject-expected.txt: Added.
+        * http/tests/workers/service/basic-install-event-waitUntil-reject.html: Added.
+        * http/tests/workers/service/basic-install-event-waitUntil-resolve-expected.txt: Added.
+        * http/tests/workers/service/basic-install-event-waitUntil-resolve.html: Added.
+        * http/tests/workers/service/resources/basic-install-event-waitUntil-multiple-promises-worker.js: Added.
+        (event.i.event.waitUntil.new.Promise):
+        * http/tests/workers/service/resources/basic-install-event-waitUntil-reject-worker.js: Added.
+        (event.event.waitUntil.new.Promise):
+        * http/tests/workers/service/resources/basic-install-event-waitUntil-resolve-worker.js: Added.
+        (event.event.waitUntil.new.Promise):
+        * http/wpt/service-workers/extendableEvent.https-expected.txt:
+        * http/wpt/service-workers/extendableEvent.https.html:
+
 2017-11-08  David Hyatt  <hyatt@apple.com>
 
         [Experiment] Implement code to detect high frequency painting

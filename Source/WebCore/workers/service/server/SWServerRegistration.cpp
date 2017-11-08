@@ -122,6 +122,9 @@ void SWServerRegistration::firePostInstallEvents(uint64_t connectionIdentifier)
         connection->firePostInstallEvents(m_registrationKey);
 
     for (auto& connectionIdentifierWithClients : m_clientRegistrationsByConnection.keys()) {
+        if (connectionIdentifierWithClients == connectionIdentifier)
+            continue;
+
         if (auto* connection = m_server.getConnection(connectionIdentifierWithClients))
             connection->firePostInstallEvents(m_registrationKey);
     }

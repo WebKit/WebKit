@@ -46,41 +46,52 @@ ExtendableEvent::~ExtendableEvent()
 {
 }
 
+// https://w3c.github.io/ServiceWorker/#dom-extendableevent-waituntil
 ExceptionOr<void> ExtendableEvent::waitUntil(Ref<DOMPromise>&& promise)
 {
     if (!isTrusted())
         return Exception { InvalidStateError, ASCIILiteral("Event is not trusted") };
 
-    if (m_pendingPromises.isEmpty() && isBeingDispatched())
-        return Exception { InvalidStateError, ASCIILiteral("Event is being dispatched") };
+    // If the pending promises count is zero and the dispatch flag is unset, throw an "InvalidStateError" DOMException.
+    if (!m_pendingPromiseCount && !isBeingDispatched())
+        return Exception { InvalidStateError, ASCIILiteral("Event is no longer being dispatched and has no pending promises") };
 
-    addPendingPromise(WTFMove(promise));
+    addExtendLifetimePromise(WTFMove(promise));
     return { };
 }
 
-void ExtendableEvent::onFinishedWaitingForTesting(WTF::Function<void()>&& callback)
+void ExtendableEvent::addExtendLifetimePromise(Ref<DOMPromise>&& promise)
 {
-    ASSERT(!m_onFinishedWaitingForTesting);
-    m_onFinishedWaitingForTesting = WTFMove(callback);
+    promise->whenSettled([this, protectedThis = makeRefPtr(this), settledPromise = promise.ptr()] () {
+        --m_pendingPromiseCount;
+
+        // FIXME: Let registration be the context object's relevant global object's associated service worker's containing service worker registration.
+        // FIXME: If registration's uninstalling flag is set, invoke Try Clear Registration with registration.
+        // FIXME: If registration is not null, invoke Try Activate with registration.
+
+        if (m_pendingPromiseCount)
+            return;
+
+        auto settledPromises = WTFMove(m_extendLifetimePromises);
+        if (auto handler = WTFMove(m_whenAllExtendLifetimePromisesAreSettledHandler))
+            handler(WTFMove(settledPromises));
+    });
+
+    m_extendLifetimePromises.add(WTFMove(promise));
+    ++m_pendingPromiseCount;
 }
 
-void ExtendableEvent::addPendingPromise(Ref<DOMPromise>&& promise)
+void ExtendableEvent::whenAllExtendLifetimePromisesAreSettled(WTF::Function<void(HashSet<Ref<DOMPromise>>&&)>&& handler)
 {
-    promise->whenSettled([this, weakThis = createWeakPtr(), settledPromise = promise.ptr()] () {
-        if (!weakThis)
-            return;
+    ASSERT_WITH_MESSAGE(target(), "Event has not been dispatched yet");
+    ASSERT(!m_whenAllExtendLifetimePromisesAreSettledHandler);
 
-        auto promise = m_pendingPromises.take(*settledPromise);
+    if (!m_pendingPromiseCount) {
+        handler(WTFMove(m_extendLifetimePromises));
+        return;
+    }
 
-        // FIXME: Implement registration handling as per https://w3c.github.io/ServiceWorker/v1/#dom-extendableevent-waituntil.
-
-        if (!m_pendingPromises.isEmpty())
-            return;
-
-        if (auto callback = WTFMove(m_onFinishedWaitingForTesting))
-            callback();
-    });
-    m_pendingPromises.add(WTFMove(promise));
+    m_whenAllExtendLifetimePromisesAreSettledHandler = WTFMove(handler);
 }
 
 } // namespace WebCore

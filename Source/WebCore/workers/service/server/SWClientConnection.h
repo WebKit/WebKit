@@ -52,6 +52,9 @@ public:
     using RegistrationCallback = WTF::CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>;
     virtual void matchRegistration(const SecurityOrigin& topOrigin, const URL& clientURL, RegistrationCallback&&) = 0;
 
+    virtual void addServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier) = 0;
+    virtual void removeServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier) = 0;
+
     void scheduleJob(ServiceWorkerJob&);
     void finishedFetchingScript(ServiceWorkerJob&, const String&);
     void failedFetchingScript(ServiceWorkerJob&, const ResourceError&);
@@ -76,8 +79,6 @@ protected:
 private:
     virtual void scheduleJobInServer(const ServiceWorkerJobData&) = 0;
     virtual void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) = 0;
-    virtual void addServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier) = 0;
-    virtual void removeServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier) = 0;
     void forEachContainer(const WTF::Function<void(ServiceWorkerContainer&)>& apply);
 
     HashMap<uint64_t, RefPtr<ServiceWorkerJob>> m_scheduledJobs;

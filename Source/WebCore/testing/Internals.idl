@@ -563,9 +563,7 @@ enum EventThrottlingBehavior {
     DOMString audioSessionCategory();
 
     [Conditional=SERVICE_WORKER] Promise<Response> waitForFetchEventToFinish(FetchEvent event);
-    [Conditional=SERVICE_WORKER] Promise<void> waitForExtendableEventToFinish(ExtendableEvent event);
     [Conditional=SERVICE_WORKER, CallWith=ScriptExecutionContext] FetchEvent createBeingDispatchedFetchEvent();
-    [Conditional=SERVICE_WORKER] ExtendableEvent createTrustedExtendableEvent();
     [Conditional=SERVICE_WORKER] Promise<boolean> hasServiceWorkerRegistration(DOMString scopeURL);
 
     boolean hasServiceWorkerRegisteredForOrigin(DOMString origin);

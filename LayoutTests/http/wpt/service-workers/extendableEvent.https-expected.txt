@@ -1,6 +1,4 @@
 
 PASS ExtendableEvent waitUntil should support non promise parameters 
-PASS ExtendableEvent should wait for given promise to resolve 
-PASS ExtendableEvent should wait for given promise to reject 
 PASS Event constructors 
 
