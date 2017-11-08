@@ -1047,13 +1047,18 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenLayer(PlatformLayer
         completionHandler();
         return;
     }
-    
+
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
     m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler));
     
     if (m_videoFullscreenLayerManager->videoFullscreenLayer() && m_textTrackRepresentationLayer) {
         syncTextTrackBounds();
         [m_videoFullscreenLayerManager->videoFullscreenLayer() addSublayer:m_textTrackRepresentationLayer.get()];
     }
+
+    [CATransaction commit];
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenFrame(FloatRect frame)
@@ -1077,11 +1082,16 @@ void MediaPlayerPrivateMediaSourceAVFObjC::syncTextTrackBounds()
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     if (!m_videoFullscreenLayerManager->videoFullscreenLayer() || !m_textTrackRepresentationLayer)
         return;
-    
+
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
     auto videoFullscreenFrame = m_videoFullscreenLayerManager->videoFullscreenFrame();
     auto videoRect = [m_sampleBufferDisplayLayer bounds];
     auto textFrame = m_sampleBufferDisplayLayer ? videoRect : CGRectMake(0, 0, videoFullscreenFrame.width(), videoFullscreenFrame.height());
     [m_textTrackRepresentationLayer setFrame:textFrame];
+
+    [CATransaction commit];
 #endif
 }
     
@@ -1093,7 +1103,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setTextTrackRepresentation(TextTrackR
         syncTextTrackBounds();
         return;
     }
-    
+
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
     if (m_textTrackRepresentationLayer)
         [m_textTrackRepresentationLayer removeFromSuperlayer];
     
@@ -1103,6 +1116,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setTextTrackRepresentation(TextTrackR
         syncTextTrackBounds();
         [m_videoFullscreenLayerManager->videoFullscreenLayer() addSublayer:m_textTrackRepresentationLayer.get()];
     }
+
+    [CATransaction commit];
     
 #else
     UNUSED_PARAM(representation);

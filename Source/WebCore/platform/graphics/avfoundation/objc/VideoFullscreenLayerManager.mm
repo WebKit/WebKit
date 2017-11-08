@@ -121,15 +121,11 @@ void VideoFullscreenLayerManager::setVideoFullscreenLayer(PlatformLayer *videoFu
             [newContext setFencePort:fencePort];
             mach_port_deallocate(mach_task_self(), fencePort);
         }
-
-        [CATransaction setCompletionBlock:BlockPtr<void ()>::fromCallable([completionHandler = WTFMove(completionHandler)] {
-            completionHandler();
-        }).get()];
-    } else {
-        [CATransaction setCompletionBlock:BlockPtr<void ()>::fromCallable([completionHandler = WTFMove(completionHandler)] {
-            completionHandler();
-        }).get()];
     }
+
+    [CATransaction setCompletionBlock:BlockPtr<void ()>::fromCallable([completionHandler = WTFMove(completionHandler)] {
+        completionHandler();
+    }).get()];
 
     [CATransaction commit];
 }

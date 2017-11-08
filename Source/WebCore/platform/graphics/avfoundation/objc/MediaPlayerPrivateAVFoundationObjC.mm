@@ -1234,12 +1234,17 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* 
         return;
     }
 
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
     m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler));
 
     if (m_videoFullscreenLayerManager->videoFullscreenLayer() && m_textTrackRepresentationLayer) {
         syncTextTrackBounds();
         [m_videoFullscreenLayerManager->videoFullscreenLayer() addSublayer:m_textTrackRepresentationLayer.get()];
     }
+
+    [CATransaction commit];
 
     updateDisableExternalPlayback();
 }
@@ -2234,9 +2239,14 @@ void MediaPlayerPrivateAVFoundationObjC::syncTextTrackBounds()
     if (!m_videoFullscreenLayerManager->videoFullscreenLayer() || !m_textTrackRepresentationLayer)
         return;
 
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
     FloatRect videoFullscreenFrame = m_videoFullscreenLayerManager->videoFullscreenFrame();
     CGRect textFrame = m_videoLayer ? [m_videoLayer videoRect] : CGRectMake(0, 0, videoFullscreenFrame.width(), videoFullscreenFrame.height());
     [m_textTrackRepresentationLayer setFrame:textFrame];
+
+    [CATransaction commit];
 #endif
 }
 
@@ -2249,6 +2259,9 @@ void MediaPlayerPrivateAVFoundationObjC::setTextTrackRepresentation(TextTrackRep
         return;
     }
 
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
     if (m_textTrackRepresentationLayer)
         [m_textTrackRepresentationLayer removeFromSuperlayer];
 
@@ -2258,6 +2271,8 @@ void MediaPlayerPrivateAVFoundationObjC::setTextTrackRepresentation(TextTrackRep
         syncTextTrackBounds();
         [m_videoFullscreenLayerManager->videoFullscreenLayer() addSublayer:m_textTrackRepresentationLayer.get()];
     }
+
+    [CATransaction commit];
 
 #else
     UNUSED_PARAM(representation);
