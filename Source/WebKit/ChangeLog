@@ -1,3 +1,35 @@
+2017-11-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Implement delegate hooks for attachment element insertion and removal
+        https://bugs.webkit.org/show_bug.cgi?id=179016
+        <rdar://problem/35250890>
+
+        Reviewed by Tim Horton.
+
+        See WebCore/ChangeLog for more details.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didInsertAttachment:]):
+        (-[WKWebView _didRemoveAttachment:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::didInsertAttachment):
+        (WebKit::PageClientImplCocoa::didRemoveAttachment):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::didInsertAttachment):
+        (WebKit::PageClient::didRemoveAttachment):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didInsertAttachment):
+        (WebKit::WebPageProxy::didRemoveAttachment):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::didInsertAttachment):
+        (WebKit::WebEditorClient::didRemoveAttachment):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+
 2017-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r223773): [GTK] WebKitWebInspector bring-to-front signal is emitted right after open-window

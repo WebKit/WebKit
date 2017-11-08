@@ -1,3 +1,27 @@
+2017-11-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Implement delegate hooks for attachment element insertion and removal
+        https://bugs.webkit.org/show_bug.cgi?id=179016
+        <rdar://problem/35250890>
+
+        Reviewed by Tim Horton.
+
+        See WebCore/ChangeLog for more details.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (-[AttachmentUpdateObserver init]):
+        (-[AttachmentUpdateObserver inserted]):
+        (-[AttachmentUpdateObserver removed]):
+        (-[AttachmentUpdateObserver _webView:didInsertAttachment:]):
+        (-[AttachmentUpdateObserver _webView:didRemoveAttachment:]):
+        (TestWebKitAPI::ObserveAttachmentUpdatesForScope::ObserveAttachmentUpdatesForScope):
+        (TestWebKitAPI::ObserveAttachmentUpdatesForScope::~ObserveAttachmentUpdatesForScope):
+        (TestWebKitAPI::ObserveAttachmentUpdatesForScope::observer const):
+        (TestWebKitAPI::ObserveAttachmentUpdatesForScope::expectAttachmentUpdates):
+        (-[TestWKWebView _synchronouslyExecuteEditCommand:argument:]):
+        (-[TestWKWebView expectUpdatesAfterCommand:withArgument:expectedRemovals:expectedInsertions:]):
+        (TestWebKitAPI::TEST):
+
 2017-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Web Inspector: use JSON::{Array,Object,Value} instead of Inspector{Array,Object,Value}

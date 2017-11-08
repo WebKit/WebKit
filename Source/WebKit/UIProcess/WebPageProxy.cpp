@@ -7113,6 +7113,16 @@ void WebPageProxy::insertAttachment(const String& identifier, const String& file
     m_process->send(Messages::WebPage::InsertAttachment(identifier, filename, contentType, IPC::SharedBufferDataReference { &data }, callbackID), m_pageID);
 }
 
+void WebPageProxy::didInsertAttachment(const String& identifier)
+{
+    m_pageClient.didInsertAttachment(identifier);
+}
+
+void WebPageProxy::didRemoveAttachment(const String& identifier)
+{
+    m_pageClient.didRemoveAttachment(identifier);
+}
+
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
 } // namespace WebKit

@@ -1637,6 +1637,11 @@ private:
 
     void stopAllURLSchemeTasks();
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+    void didInsertAttachment(const String& identifier);
+    void didRemoveAttachment(const String& identifier);
+#endif
+
     PageClient& m_pageClient;
     Ref<API::PageConfiguration> m_configuration;
 
