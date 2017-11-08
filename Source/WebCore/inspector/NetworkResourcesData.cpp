@@ -34,8 +34,8 @@
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 
-
 namespace WebCore {
+
 using namespace Inspector;
 
 static const size_t maximumResourcesContentSize = 100 * 1000 * 1000; // 100MB
@@ -111,8 +111,7 @@ size_t NetworkResourcesData::ResourceData::decodeDataToContent()
 }
 
 NetworkResourcesData::NetworkResourcesData()
-    : m_contentSize(0)
-    , m_maximumResourcesContentSize(maximumResourcesContentSize)
+    : m_maximumResourcesContentSize(maximumResourcesContentSize)
     , m_maximumSingleResourceContentSize(maximumSingleResourceContentSize)
 {
 }
@@ -122,21 +121,34 @@ NetworkResourcesData::~NetworkResourcesData()
     clear();
 }
 
-void NetworkResourcesData::resourceCreated(const String& requestId, const String& loaderId)
+void NetworkResourcesData::resourceCreated(const String& requestId, const String& loaderId, InspectorPageAgent::ResourceType type)
 {
     ensureNoDataForRequestId(requestId);
-    m_requestIdToResourceDataMap.set(requestId, new ResourceData(requestId, loaderId));
+
+    auto resourceData = std::make_unique<ResourceData>(requestId, loaderId);
+    resourceData->setType(type);
+    m_requestIdToResourceDataMap.set(requestId, WTFMove(resourceData));
 }
 
-void NetworkResourcesData::responseReceived(const String& requestId, const String& frameId, const ResourceResponse& response)
+void NetworkResourcesData::resourceCreated(const String& requestId, const String& loaderId, CachedResource& cachedResource)
+{
+    ensureNoDataForRequestId(requestId);
+
+    auto resourceData = std::make_unique<ResourceData>(requestId, loaderId);
+    resourceData->setCachedResource(&cachedResource);
+    m_requestIdToResourceDataMap.set(requestId, WTFMove(resourceData));
+}
+
+void NetworkResourcesData::responseReceived(const String& requestId, const String& frameId, const ResourceResponse& response, InspectorPageAgent::ResourceType type)
 {
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
         return;
     resourceData->setFrameId(frameId);
-    resourceData->setUrl(response.url());
+    resourceData->setURL(response.url());
     resourceData->setDecoder(InspectorPageAgent::createTextDecoder(response.mimeType(), response.textEncodingName()));
     resourceData->setHTTPStatusCode(response.httpStatusCode());
+    resourceData->setType(type);
 }
 
 void NetworkResourcesData::setResourceType(const String& requestId, InspectorPageAgent::ResourceType type)
@@ -232,7 +244,7 @@ Vector<String> NetworkResourcesData::removeCachedResource(CachedResource* cached
 {
     Vector<String> result;
     for (auto& entry : m_requestIdToResourceDataMap) {
-        ResourceData* resourceData = entry.value;
+        ResourceData* resourceData = entry.value.get();
         if (resourceData->cachedResource() == cachedResource) {
             resourceData->setCachedResource(nullptr);
             result.append(entry.key);
@@ -242,27 +254,23 @@ Vector<String> NetworkResourcesData::removeCachedResource(CachedResource* cached
     return result;
 }
 
-void NetworkResourcesData::clear(const String& preservedLoaderId)
+void NetworkResourcesData::clear(std::optional<String> preservedLoaderId)
 {
     m_requestIdsDeque.clear();
     m_contentSize = 0;
 
-    ResourceDataMap preservedMap;
-
-    for (auto& entry : m_requestIdToResourceDataMap) {
-        ResourceData* resourceData = entry.value;
-        ASSERT(resourceData);
-        if (!preservedLoaderId.isNull() && resourceData->loaderId() == preservedLoaderId)
-            preservedMap.set(entry.key, entry.value);
-        else
-            delete resourceData;
+    if (!preservedLoaderId)
+        m_requestIdToResourceDataMap.clear();
+    else {
+        m_requestIdToResourceDataMap.removeIf([loaderId = *preservedLoaderId] (auto& entry) {
+            return entry.value->loaderId() != loaderId;
+        });
     }
-    m_requestIdToResourceDataMap.swap(preservedMap);
 }
 
 Vector<NetworkResourcesData::ResourceData*> NetworkResourcesData::resources()
 {
-    return copyToVector(m_requestIdToResourceDataMap.values());
+    return WTF::map(m_requestIdToResourceDataMap.values(), [] (const auto& v) { return v.get(); });
 }
 
 NetworkResourcesData::ResourceData* NetworkResourcesData::resourceDataForRequestId(const String& requestId)
@@ -274,13 +282,13 @@ NetworkResourcesData::ResourceData* NetworkResourcesData::resourceDataForRequest
 
 void NetworkResourcesData::ensureNoDataForRequestId(const String& requestId)
 {
-    ResourceData* resourceData = resourceDataForRequestId(requestId);
-    if (!resourceData)
+    auto result = m_requestIdToResourceDataMap.take(requestId);
+    if (!result)
         return;
+
+    ResourceData* resourceData = result.get();
     if (resourceData->hasContent() || resourceData->hasData())
         m_contentSize -= resourceData->evictContent();
-    delete resourceData;
-    m_requestIdToResourceDataMap.remove(requestId);
 }
 
 bool NetworkResourcesData::ensureFreeSpace(size_t size)

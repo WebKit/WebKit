@@ -348,7 +348,7 @@ void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLo
     double walltime = currentTime();
 
     String requestId = IdentifiersFactory::requestId(identifier);
-    m_resourcesData->resourceCreated(requestId, m_pageAgent->loaderId(&loader));
+    String loaderId = m_pageAgent->loaderId(&loader);
 
     if (type == InspectorPageAgent::OtherResource) {
         if (m_loadingXHRSynchronously)
@@ -365,7 +365,7 @@ void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLo
         }
     }
 
-    m_resourcesData->setResourceType(requestId, type);
+    m_resourcesData->resourceCreated(requestId, loaderId, type);
 
     for (auto& entry : m_extraRequestHeaders)
         request.setHTTPHeaderField(entry.key, entry.value);
@@ -440,10 +440,12 @@ void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, Documen
     if (type != newType && newType != InspectorPageAgent::XHRResource && newType != InspectorPageAgent::OtherResource)
         type = newType;
 
-    m_resourcesData->responseReceived(requestId, m_pageAgent->frameId(loader.frame()), response);
-    m_resourcesData->setResourceType(requestId, type);
+    String frameId = m_pageAgent->frameId(loader.frame());
+    String loaderId = m_pageAgent->loaderId(&loader);
 
-    m_frontendDispatcher->responseReceived(requestId, m_pageAgent->frameId(loader.frame()), m_pageAgent->loaderId(&loader), timestamp(), InspectorPageAgent::resourceTypeJSON(type), resourceResponse);
+    m_resourcesData->responseReceived(requestId, frameId, response, type);
+
+    m_frontendDispatcher->responseReceived(requestId, frameId, loaderId, timestamp(), InspectorPageAgent::resourceTypeJSON(type), resourceResponse);
 
     // If we revalidated the resource and got Not modified, send content length following didReceiveResponse
     // as there will be no calls to didReceiveData from the network stack.
@@ -523,13 +525,12 @@ void InspectorNetworkAgent::didFailLoading(unsigned long identifier, DocumentLoa
 
 void InspectorNetworkAgent::didLoadResourceFromMemoryCache(DocumentLoader& loader, CachedResource& resource)
 {
-    String loaderId = m_pageAgent->loaderId(&loader);
-    String frameId = m_pageAgent->frameId(loader.frame());
     unsigned long identifier = loader.frame()->page()->progress().createUniqueIdentifier();
     String requestId = IdentifiersFactory::requestId(identifier);
+    String loaderId = m_pageAgent->loaderId(&loader);
+    String frameId = m_pageAgent->frameId(loader.frame());
 
-    m_resourcesData->resourceCreated(requestId, loaderId);
-    m_resourcesData->addCachedResource(requestId, &resource);
+    m_resourcesData->resourceCreated(requestId, loaderId, resource);
 
     RefPtr<Inspector::Protocol::Network::Initiator> initiatorObject = buildInitiatorObject(loader.frame() ? loader.frame()->document() : nullptr);
 

@@ -56,7 +56,7 @@ public:
         void setFrameId(const String& frameId) { m_frameId = frameId; }
 
         String url() const { return m_url; }
-        void setUrl(const String& url) { m_url = url; }
+        void setURL(const String& url) { m_url = url; }
 
         bool hasContent() const { return !m_content.isNull(); }
         String content() const { return m_content; }
@@ -111,11 +111,11 @@ public:
     };
 
     NetworkResourcesData();
-
     ~NetworkResourcesData();
 
-    void resourceCreated(const String& requestId, const String& loaderId);
-    void responseReceived(const String& requestId, const String& frameId, const ResourceResponse&);
+    void resourceCreated(const String& requestId, const String& loaderId, InspectorPageAgent::ResourceType);
+    void resourceCreated(const String& requestId, const String& loaderId, CachedResource&);
+    void responseReceived(const String& requestId, const String& frameId, const ResourceResponse&, InspectorPageAgent::ResourceType);
     void setResourceType(const String& requestId, InspectorPageAgent::ResourceType);
     InspectorPageAgent::ResourceType resourceType(const String& requestId);
     void setResourceContent(const String& requestId, const String& content, bool base64Encoded = false);
@@ -125,7 +125,7 @@ public:
     void addResourceSharedBuffer(const String& requestId, RefPtr<SharedBuffer>&&, const String& textEncodingName);
     ResourceData const* data(const String& requestId);
     Vector<String> removeCachedResource(CachedResource*);
-    void clear(const String& preservedLoaderId = String());
+    void clear(std::optional<String> preservedLoaderId = std::nullopt);
     Vector<ResourceData*> resources();
 
 private:
@@ -134,10 +134,8 @@ private:
     bool ensureFreeSpace(size_t);
 
     Deque<String> m_requestIdsDeque;
-
-    typedef HashMap<String, ResourceData*> ResourceDataMap;
-    ResourceDataMap m_requestIdToResourceDataMap;
-    size_t m_contentSize;
+    HashMap<String, std::unique_ptr<ResourceData>> m_requestIdToResourceDataMap;
+    size_t m_contentSize { 0 };
     size_t m_maximumResourcesContentSize;
     size_t m_maximumSingleResourceContentSize;
 };
