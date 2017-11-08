@@ -1,3 +1,14 @@
+2017-11-07  Don Olmstead  <don.olmstead@sony.com>
+
+        Fix webkitpy tests after rev 224549.
+
+        Unreviewed build fix.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (WinCairoPort.run_webkit_tests_command):
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+        (DeprecatedPortTest.test_wincairo_port):
+
 2017-11-07  Aakash Jain  <aakash_jain@apple.com>
 
         Enable webkitpy EWS bubbles
