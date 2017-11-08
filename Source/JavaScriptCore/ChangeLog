@@ -1,3 +1,13 @@
+2017-11-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unused Page.ScriptIdentifier protocol type
+        https://bugs.webkit.org/show_bug.cgi?id=179407
+
+        Reviewed by Matt Baker.
+
+        * inspector/protocol/Page.json:
+        Remove unused protocol type.
+
 2017-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Web Inspector: use JSON::{Array,Object,Value} instead of Inspector{Array,Object,Value}

@@ -2717,11 +2717,6 @@
                 { "name": "secure", "type": "boolean", "description": "True if cookie is secure." },
                 { "name": "session", "type": "boolean", "description": "True in case of session cookie." }
             ]
-        },
-        {
-            "id": "ScriptIdentifier",
-            "type": "string",
-            "description": "Unique script identifier."
         }
     ],
     "commands": [
