@@ -1,7 +1,7 @@
 
 FAIL normal promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
 FAIL blank url promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
-FAIL in scope but not controlled test on installing worker promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+FAIL in scope but not controlled test on installing worker promise_test: Unhandled rejection with value: object "InvalidStateError: Service Worker state is redundant"
 FAIL in scope but not controlled test on active worker promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
 FAIL out of scope promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
 FAIL cross orgin url promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"

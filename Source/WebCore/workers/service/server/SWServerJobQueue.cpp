@@ -115,16 +115,18 @@ void SWServerJobQueue::install(SWServerRegistration& registration, SWServer::Con
     auto* worker = m_server.workerByID(installingWorker);
     RELEASE_ASSERT(worker);
 
-    registration.updateRegistrationState(ServiceWorkerRegistrationState::Installing, worker);
-    registration.updateWorkerState(*worker, ServiceWorkerState::Installing);
+    auto& job = firstJob();
+
+    registration.updateRegistrationState(job, ServiceWorkerRegistrationState::Installing, worker);
+    registration.updateWorkerState(job, *worker, ServiceWorkerState::Installing);
 
     // Invoke Resolve Job Promise with job and registration.
-    m_server.resolveRegistrationJob(firstJob(), registration.data());
+    m_server.resolveRegistrationJob(job, registration.data());
 
     // Queue a task to fire an event named updatefound at all the ServiceWorkerRegistration objects
     // for all the service worker clients whose creation URL matches registration's scope url and
     // all the service workers whose containing service worker registration is registration.
-    registration.fireUpdateFoundEvent(firstJob().connectionIdentifier());
+    registration.fireUpdateFoundEvent(job);
 
     // Queue a task to fire the InstallEvent.
     m_server.fireInstallEvent(connection, installingWorker);
@@ -136,14 +138,16 @@ void SWServerJobQueue::didFinishInstall(SWServer::Connection&, ServiceWorkerIden
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
 
+    auto& job = firstJob();
+
     if (!wasSuccessful) {
         auto* worker = m_server.workerByID(identifier);
         RELEASE_ASSERT(worker);
 
         // Run the Update Worker State algorithm passing registration's installing worker and redundant as the arguments.
-        registration->updateWorkerState(*worker, ServiceWorkerState::Redundant);
+        registration->updateWorkerState(job, *worker, ServiceWorkerState::Redundant);
         // Run the Update Registration State algorithm passing registration, "installing" and null as the arguments.
-        registration->updateRegistrationState(ServiceWorkerRegistrationState::Installing, nullptr);
+        registration->updateRegistrationState(job, ServiceWorkerRegistrationState::Installing, nullptr);
 
         // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
         if (!registration->getNewestWorker())
@@ -154,7 +158,7 @@ void SWServerJobQueue::didFinishInstall(SWServer::Connection&, ServiceWorkerIden
     }
 
     // FIXME: Implement real post 'install' event steps of the Install algorithm (steps 14+).
-    registration->firePostInstallEvents(firstJob().connectionIdentifier());
+    registration->firePostInstallEvents(job);
 
     finishCurrentJob();
 }

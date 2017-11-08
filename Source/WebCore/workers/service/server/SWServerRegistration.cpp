@@ -59,7 +59,7 @@ SWServerWorker* SWServerRegistration::getNewestWorker()
     return m_activeWorker.get();
 }
 
-void SWServerRegistration::updateRegistrationState(ServiceWorkerRegistrationState state, SWServerWorker* worker)
+void SWServerRegistration::updateRegistrationState(const ServiceWorkerJobData& job, ServiceWorkerRegistrationState state, SWServerWorker* worker)
 {
     LOG(ServiceWorker, "(%p) Updating registration state to %i with worker %p", this, (int)state, worker);
     
@@ -79,54 +79,49 @@ void SWServerRegistration::updateRegistrationState(ServiceWorkerRegistrationStat
     if (worker)
         serviceWorkerIdentifier = worker->identifier();
 
-    for (auto& connectionIdentifierWithClients : m_clientRegistrationsByConnection.keys()) {
-        if (auto* connection = m_server.getConnection(connectionIdentifierWithClients))
-            connection->updateRegistrationStateInClient(m_registrationKey, state, serviceWorkerIdentifier);
-    }
+    forEachConnection(job, [&](auto& connection) {
+        connection.updateRegistrationStateInClient(m_registrationKey, state, serviceWorkerIdentifier);
+    });
 }
 
-void SWServerRegistration::updateWorkerState(SWServerWorker& worker, ServiceWorkerState state)
+void SWServerRegistration::updateWorkerState(const ServiceWorkerJobData& job, SWServerWorker& worker, ServiceWorkerState state)
 {
     LOG(ServiceWorker, "Updating worker %p state to %i (%p)", &worker, (int)state, this);
 
     worker.setState(state);
 
-    for (auto& connectionIdentifierWithClients : m_clientRegistrationsByConnection.keys()) {
-        if (auto* connection = m_server.getConnection(connectionIdentifierWithClients))
-            connection->updateWorkerStateInClient(worker.identifier(), state);
-    }
+    forEachConnection(job, [&](auto& connection) {
+        connection.updateWorkerStateInClient(worker.identifier(), state);
+    });
 }
 
-void SWServerRegistration::fireUpdateFoundEvent(uint64_t connectionIdentifier)
+void SWServerRegistration::fireUpdateFoundEvent(const ServiceWorkerJobData& job)
 {
-    // No matter what, we send the event to the connection that scheduled the job. The client registration
-    // may not have gotten a chance to register itself yet.
-    if (auto* connection = m_server.getConnection(connectionIdentifier))
-        connection->fireUpdateFoundEvent(m_registrationKey);
-
-    for (auto& connectionIdentifierWithClients : m_clientRegistrationsByConnection.keys()) {
-        if (connectionIdentifierWithClients == connectionIdentifier)
-            continue;
-
-        if (auto* connection = m_server.getConnection(connectionIdentifierWithClients))
-            connection->fireUpdateFoundEvent(m_registrationKey);
-    }
+    forEachConnection(job, [&](auto& connection) {
+        connection.fireUpdateFoundEvent(m_registrationKey);
+    });
 }
 
 // FIXME: This will do away once we correctly update the registration state after install.
-void SWServerRegistration::firePostInstallEvents(uint64_t connectionIdentifier)
+void SWServerRegistration::firePostInstallEvents(const ServiceWorkerJobData& job)
+{
+    forEachConnection(job, [&](auto& connection) {
+        connection.firePostInstallEvents(m_registrationKey);
+    });
+}
+
+void SWServerRegistration::forEachConnection(const ServiceWorkerJobData& job, const WTF::Function<void(SWServer::Connection&)>& apply)
 {
     // No matter what, we send the event to the connection that scheduled the job. The client registration
     // may not have gotten a chance to register itself yet.
-    if (auto* connection = m_server.getConnection(connectionIdentifier))
-        connection->firePostInstallEvents(m_registrationKey);
+    if (!m_clientRegistrationsByConnection.contains(job.connectionIdentifier())) {
+        if (auto* connection = m_server.getConnection(job.connectionIdentifier()))
+            apply(*connection);
+    }
 
     for (auto& connectionIdentifierWithClients : m_clientRegistrationsByConnection.keys()) {
-        if (connectionIdentifierWithClients == connectionIdentifier)
-            continue;
-
         if (auto* connection = m_server.getConnection(connectionIdentifierWithClients))
-            connection->firePostInstallEvents(m_registrationKey);
+            apply(*connection);
     }
 }
 

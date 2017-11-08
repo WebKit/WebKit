@@ -56,15 +56,17 @@ public:
     void setLastUpdateTime(double time) { m_lastUpdateTime = time; }
     ServiceWorkerUpdateViaCache updateViaCache() const { return m_updateViaCache; }
 
-    void updateRegistrationState(ServiceWorkerRegistrationState, SWServerWorker*);
-    void updateWorkerState(SWServerWorker&, ServiceWorkerState);
-    void fireUpdateFoundEvent(uint64_t connectionIdentifier);
-    void firePostInstallEvents(uint64_t connectionIdentifier);
+    void updateRegistrationState(const ServiceWorkerJobData&, ServiceWorkerRegistrationState, SWServerWorker*);
+    void updateWorkerState(const ServiceWorkerJobData&, SWServerWorker&, ServiceWorkerState);
+    void fireUpdateFoundEvent(const ServiceWorkerJobData&);
+    void firePostInstallEvents(const ServiceWorkerJobData&);
 
     void addClientServiceWorkerRegistration(uint64_t connectionIdentifier, uint64_t clientRegistrationIdentifier);
     void removeClientServiceWorkerRegistration(uint64_t connectionIdentifier, uint64_t clientRegistrationIdentifier);
 
 private:
+    void forEachConnection(const ServiceWorkerJobData&, const WTF::Function<void(SWServer::Connection&)>&);
+
     ServiceWorkerRegistrationKey m_registrationKey;
     ServiceWorkerUpdateViaCache m_updateViaCache;
     URL m_scopeURL;
