@@ -33,6 +33,8 @@
 
 namespace JSC {
 
+class FunctionRareData;
+
 class ObjectAllocationProfile {
     friend class LLIntOffsetsExtractor;
 public:
@@ -48,7 +50,7 @@ public:
 
     bool isNull() { return !m_structure; }
 
-    void initializeProfile(VM&, JSGlobalObject*, JSCell* owner, JSObject* prototype, unsigned inferredInlineCapacity, JSFunction* constructor = nullptr);
+    void initializeProfile(VM&, JSGlobalObject*, JSCell* owner, JSObject* prototype, unsigned inferredInlineCapacity, JSFunction* constructor = nullptr, FunctionRareData* = nullptr);
 
     Structure* structure()
     {

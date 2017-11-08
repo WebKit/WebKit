@@ -1,3 +1,29 @@
+2017-11-08  Saam Barati  <sbarati@apple.com>
+
+        A JSFunction's ObjectAllocationProfile should watch the poly prototype watchpoint so it can clear its object allocation profile
+        https://bugs.webkit.org/show_bug.cgi?id=177792
+
+        Reviewed by Yusuke Suzuki.
+
+        Before this patch, if a JSFunction's rare data initialized its allocation profile
+        before its backing Executable's poly proto watchpoint was invalidated, that
+        JSFunction would continue to allocate non-poly proto objects until its allocation
+        profile was cleared (which essentially never happens in practice). This patch
+        improves on this pathology. A JSFunction's rare data will now watch the poly
+        proto watchpoint if it's still valid and clear its allocation profile when we
+        detect that we should go poly proto.
+
+        * bytecode/ObjectAllocationProfile.h:
+        * bytecode/ObjectAllocationProfileInlines.h:
+        (JSC::ObjectAllocationProfile::initializeProfile):
+        * runtime/FunctionRareData.cpp:
+        (JSC::FunctionRareData::initializeObjectAllocationProfile):
+        (JSC::FunctionRareData::AllocationProfileClearingWatchpoint::fireInternal):
+        * runtime/FunctionRareData.h:
+        (JSC::FunctionRareData::hasAllocationProfileClearingWatchpoint const):
+        (JSC::FunctionRareData::createAllocationProfileClearingWatchpoint):
+        (JSC::FunctionRareData::AllocationProfileClearingWatchpoint::AllocationProfileClearingWatchpoint):
+
 2017-11-08  Keith Miller  <keith_miller@apple.com>
 
         Add super sampler begin and end bytecodes.

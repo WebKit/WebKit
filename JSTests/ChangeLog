@@ -1,3 +1,17 @@
+2017-11-08  Saam Barati  <sbarati@apple.com>
+
+        A JSFunction's ObjectAllocationProfile should watch the poly prototype watchpoint so it can clear its object allocation profile
+        https://bugs.webkit.org/show_bug.cgi?id=177792
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/poly-proto-clear-js-function-allocation-profile.js: Added.
+        (assert):
+        (foo.Foo.prototype.ensureX):
+        (foo.Foo):
+        (foo):
+        (access):
+
 2017-11-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark test262.yaml/test262/test/language/statements/try/tco-catch.js as passing.
