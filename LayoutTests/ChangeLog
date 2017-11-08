@@ -1,3 +1,12 @@
+2017-09-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline http/tests/loading/state-object-security-exception.html after r221978.
+        https://bugs.webkit.org/show_bug.cgi?id=176730
+
+        Unreviewed test gardening.
+
+        * http/tests/loading/state-object-security-exception-expected.txt:
+
 2017-09-13  Daniel Bates  <dabates@apple.com>
 
         Make history.pushState()/replaceState() more closely aligned to the HTML standard

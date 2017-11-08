@@ -5,28 +5,28 @@ main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
 This test makes sure that calls to pushState() and replaceState() with URLs that violate the security origin check fail as expected.
 
-Trying to pushState() with url http://localhost/test.html failed with exception SecurityError: The operation is insecure.
+Trying to pushState() with url http://localhost/test.html failed with exception SecurityError: Blocked attempt to use history.pushState() to change session history URL from http://127.0.0.1:8000/loading/state-object-security-exception.html to http://localhost/test.html. Protocols, domains, ports, usernames, and passwords must match.
 History length is 1
-Trying to replaceState() with url http://localhost/test.html failed with exception SecurityError: The operation is insecure.
+Trying to replaceState() with url http://localhost/test.html failed with exception SecurityError: Blocked attempt to use history.replaceState() to change session history URL from http://127.0.0.1:8000/loading/state-object-security-exception.html to http://localhost/test.html. Protocols, domains, ports, usernames, and passwords must match.
 History length is 1
-Trying to pushState() with url http://localhost:8001/test.html failed with exception SecurityError: The operation is insecure.
+Trying to pushState() with url http://localhost:8001/test.html failed with exception SecurityError: Blocked attempt to use history.pushState() to change session history URL from http://127.0.0.1:8000/loading/state-object-security-exception.html to http://localhost:8001/test.html. Protocols, domains, ports, usernames, and passwords must match.
 History length is 1
-Trying to replaceState() with url http://localhost:8001/test.html failed with exception SecurityError: The operation is insecure.
+Trying to replaceState() with url http://localhost:8001/test.html failed with exception SecurityError: Blocked attempt to use history.replaceState() to change session history URL from http://127.0.0.1:8000/loading/state-object-security-exception.html to http://localhost:8001/test.html. Protocols, domains, ports, usernames, and passwords must match.
 History length is 1
-Trying to pushState() with url http://www.webkit.org/test.html failed with exception SecurityError: The operation is insecure.
+Trying to pushState() with url http://www.webkit.org/test.html failed with exception SecurityError: Blocked attempt to use history.pushState() to change session history URL from http://127.0.0.1:8000/loading/state-object-security-exception.html to http://www.webkit.org/test.html. Protocols, domains, ports, usernames, and passwords must match.
 History length is 1
-Trying to replaceState() with url http://www.webkit.org/test.html failed with exception SecurityError: The operation is insecure.
+Trying to replaceState() with url http://www.webkit.org/test.html failed with exception SecurityError: Blocked attempt to use history.replaceState() to change session history URL from http://127.0.0.1:8000/loading/state-object-security-exception.html to http://www.webkit.org/test.html. Protocols, domains, ports, usernames, and passwords must match.
 History length is 1
-Trying to pushState() with url http://www.webkit.org/ failed with exception SecurityError: The operation is insecure.
+Trying to pushState() with url http://www.webkit.org/ failed with exception SecurityError: Blocked attempt to use history.pushState() to change session history URL from http://127.0.0.1:8000/loading/state-object-security-exception.html to http://www.webkit.org/. Protocols, domains, ports, usernames, and passwords must match.
 History length is 1
-Trying to replaceState() with url http://www.webkit.org/ failed with exception SecurityError: The operation is insecure.
+Trying to replaceState() with url http://www.webkit.org/ failed with exception SecurityError: Blocked attempt to use history.replaceState() to change session history URL from http://127.0.0.1:8000/loading/state-object-security-exception.html to http://www.webkit.org/. Protocols, domains, ports, usernames, and passwords must match.
 History length is 1
-Trying to pushState() with url ftp://www.webkit.org/ failed with exception SecurityError: The operation is insecure.
+Trying to pushState() with url ftp://www.webkit.org/ failed with exception SecurityError: Blocked attempt to use history.pushState() to change session history URL from http://127.0.0.1:8000/loading/state-object-security-exception.html to ftp://www.webkit.org/. Protocols, domains, ports, usernames, and passwords must match.
 History length is 1
-Trying to replaceState() with url ftp://www.webkit.org/ failed with exception SecurityError: The operation is insecure.
+Trying to replaceState() with url ftp://www.webkit.org/ failed with exception SecurityError: Blocked attempt to use history.replaceState() to change session history URL from http://127.0.0.1:8000/loading/state-object-security-exception.html to ftp://www.webkit.org/. Protocols, domains, ports, usernames, and passwords must match.
 History length is 1
-Trying to pushState() with url file://anyfile.html/ failed with exception SecurityError: The operation is insecure.
+Trying to pushState() with url file://anyfile.html/ failed with exception SecurityError: Blocked attempt to use history.pushState() to change session history URL from http://127.0.0.1:8000/loading/state-object-security-exception.html to file://anyfile.html/. Protocols, domains, ports, usernames, and passwords must match.
 History length is 1
-Trying to replaceState() with url file://anyfile.html/ failed with exception SecurityError: The operation is insecure.
+Trying to replaceState() with url file://anyfile.html/ failed with exception SecurityError: Blocked attempt to use history.replaceState() to change session history URL from http://127.0.0.1:8000/loading/state-object-security-exception.html to file://anyfile.html/. Protocols, domains, ports, usernames, and passwords must match.
 History length is 1
 
