@@ -27,6 +27,7 @@
 
 #include "IndexingHeader.h"
 #include "PropertyStorage.h"
+#include <wtf/Gigacage.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
@@ -102,6 +103,7 @@ public:
     }
     
     char* pointer() { return reinterpret_cast<char*>(this); }
+    Butterfly* caged() { return Gigacage::caged(Gigacage::JSValue, this); }
     
     static ptrdiff_t offsetOfIndexingHeader() { return IndexingHeader::offsetOfIndexingHeader(); }
     static ptrdiff_t offsetOfArrayBuffer() { return offsetOfIndexingHeader() + IndexingHeader::offsetOfArrayBuffer(); }
@@ -129,7 +131,7 @@ public:
     ArrayStorage* arrayStorage() { return indexingPayload<ArrayStorage>(); }
     ContiguousJSValues contiguousInt32() { return ContiguousJSValues(indexingPayload<WriteBarrier<Unknown>>(), vectorLength()); }
 
-    ContiguousDoubles contiguousDouble() { return ContiguousDoubles(indexingPayload<double>(), vectorLength()); }
+    ContiguousDoubles contiguousDouble() { return ContiguousDoubles(caged()->indexingPayload<double>(), vectorLength()); }
     ContiguousJSValues contiguous() { return ContiguousJSValues(indexingPayload<WriteBarrier<Unknown>>(), vectorLength()); }
     
     static Butterfly* fromContiguous(WriteBarrier<Unknown>* contiguous)

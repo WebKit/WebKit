@@ -88,7 +88,7 @@ ALWAYS_INLINE void JSArray::pushInline(ExecState* exec, JSValue value)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Butterfly* butterfly = m_butterfly.getMayBeNull();
+    Butterfly* butterfly = this->butterfly();
 
     switch (indexingType()) {
     case ArrayClass: {

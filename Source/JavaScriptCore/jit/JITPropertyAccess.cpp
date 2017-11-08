@@ -187,7 +187,6 @@ JIT::JumpList JIT::emitContiguousLoad(Instruction*, PatchableJump& badType, Inde
     
     badType = patchableBranch32(NotEqual, regT2, TrustedImm32(expectedShape));
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
-    cage(Gigacage::JSValue, regT2);
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, Butterfly::offsetOfPublicLength())));
     load64(BaseIndex(regT2, regT1, TimesEight), regT0);
     slowCases.append(branchTest64(Zero, regT0));
@@ -203,7 +202,6 @@ JIT::JumpList JIT::emitArrayStorageLoad(Instruction*, PatchableJump& badType)
     badType = patchableBranch32(Above, regT3, TrustedImm32(SlowPutArrayStorageShape - ArrayStorageShape));
 
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
-    cage(Gigacage::JSValue, regT2);
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, ArrayStorage::vectorLengthOffset())));
 
     load64(BaseIndex(regT2, regT1, TimesEight, ArrayStorage::vectorOffset()), regT0);
@@ -345,7 +343,8 @@ JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction
     badType = patchableBranch32(NotEqual, regT2, TrustedImm32(indexingShape));
     
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
-    cage(Gigacage::JSValue, regT2);
+    if (indexingShape == DoubleShape)
+        cage(Gigacage::JSValue, regT2);
     Jump outOfBounds = branch32(AboveOrEqual, regT1, Address(regT2, Butterfly::offsetOfPublicLength()));
 
     Label storeResult = label();
@@ -401,7 +400,6 @@ JIT::JumpList JIT::emitArrayStoragePutByVal(Instruction* currentInstruction, Pat
     
     badType = patchableBranch32(NotEqual, regT2, TrustedImm32(ArrayStorageShape));
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
-    cage(Gigacage::JSValue, regT2);
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, ArrayStorage::vectorLengthOffset())));
 
     Jump empty = branchTest64(Zero, BaseIndex(regT2, regT1, TimesEight, ArrayStorage::vectorOffset()));
@@ -877,7 +875,6 @@ void JIT::emit_op_get_from_scope(Instruction* currentInstruction)
                 isOutOfLine.link(this);
             }
             loadPtr(Address(base, JSObject::butterflyOffset()), scratch);
-            cage(Gigacage::JSValue, scratch);
             neg32(offset);
             signExtend32ToPtr(offset, offset);
             load64(BaseIndex(scratch, offset, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), result);
@@ -997,7 +994,6 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
             emitGetVirtualRegister(value, regT2);
             
             loadPtr(Address(regT0, JSObject::butterflyOffset()), regT0);
-            cage(Gigacage::JSValue, regT0);
             loadPtr(operandSlot, regT1);
             negPtr(regT1);
             storePtr(regT2, BaseIndex(regT0, regT1, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)));

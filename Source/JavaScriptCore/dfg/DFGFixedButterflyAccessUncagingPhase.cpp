@@ -75,11 +75,38 @@ public:
                         // https://bugs.webkit.org/show_bug.cgi?id=174926
                         if (!accessesOverlap(m_graph, node, Heap))
                             break;
-                    
+                        
+                        Node* toExclude = nullptr;
+                        if (node->hasArrayMode() && node->arrayMode().type() != Array::Double) {
+                            switch (node->op()) {
+                            case ArrayPush:
+                                toExclude = m_graph.varArgChild(node, 0).node();
+                                break;
+                            case ArrayIndexOf:
+                                toExclude = m_graph.varArgChild(node, node->numChildren() == 3 ? 2 : 3).node();
+                                break;
+                            case ArrayPop:
+                                toExclude = node->child2().node();
+                                break;
+                            case HasIndexedProperty:
+                                toExclude = node->child3().node();
+                                break;
+                            case GetByVal:
+                                toExclude = node->child3().node();
+                                break;
+                            case PutByVal:
+                                toExclude = m_graph.varArgChild(node, 3).node();
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+
                         m_graph.doToChildren(
                             node,
                             [&] (Edge& edge) {
-                                changed |= needCaging.add(edge.node());
+                                if (edge.node() != toExclude)
+                                    changed |= needCaging.add(edge.node());
                             });
                         break;
                     }

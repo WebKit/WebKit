@@ -1224,7 +1224,7 @@ _llint_op_is_object:
 
 macro loadPropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value)
     bilt propertyOffsetAsInt, firstOutOfLineOffset, .isInline
-    loadCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::jsValue, constexpr JSVALUE_GIGACAGE_MASK, JSObject::m_butterfly[objectAndStorage], objectAndStorage, value)
+    loadp JSObject::m_butterfly[objectAndStorage], objectAndStorage
     negi propertyOffsetAsInt
     sxi2q propertyOffsetAsInt, propertyOffsetAsInt
     jmp .ready
@@ -1235,9 +1235,9 @@ macro loadPropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value)
 end
 
 
-macro storePropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value, scratch)
+macro storePropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value)
     bilt propertyOffsetAsInt, firstOutOfLineOffset, .isInline
-    loadCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::jsValue, constexpr JSVALUE_GIGACAGE_MASK, JSObject::m_butterfly[objectAndStorage], objectAndStorage, scratch)
+    loadp JSObject::m_butterfly[objectAndStorage], objectAndStorage
     negi propertyOffsetAsInt
     sxi2q propertyOffsetAsInt, propertyOffsetAsInt
     jmp .ready
@@ -1460,7 +1460,7 @@ _llint_op_put_by_id:
     loadisFromInstruction(3, t1)
     loadConstantOrVariable(t1, t2)
     loadisFromInstruction(5, t1)
-    storePropertyAtVariableOffset(t1, t0, t2, t3)
+    storePropertyAtVariableOffset(t1, t0, t2)
     writeBarrierOnOperands(1, 3)
     dispatch(constexpr op_put_by_id_length)
 
@@ -2321,7 +2321,7 @@ macro putProperty()
     loadisFromInstruction(3, t1)
     loadConstantOrVariable(t1, t2)
     loadisFromInstruction(6, t1)
-    storePropertyAtVariableOffset(t1, t0, t2, t3)
+    storePropertyAtVariableOffset(t1, t0, t2)
 end
 
 macro putGlobalVariable()

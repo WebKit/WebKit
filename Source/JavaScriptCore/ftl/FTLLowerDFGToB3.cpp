@@ -9349,7 +9349,7 @@ private:
             m_out.neg(m_out.sub(index, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedInlineCapacity))));
         int32_t offsetOfFirstProperty = static_cast<int32_t>(offsetInButterfly(firstOutOfLineOffset)) * sizeof(EncodedJSValue);
         ValueFromBlock outOfLineResult = m_out.anchor(
-            m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), caged(Gigacage::JSValue, storage), realIndex, ScaleEight, offsetOfFirstProperty)));
+            m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), storage, realIndex, ScaleEight, offsetOfFirstProperty)));
         m_out.jump(continuation);
 
         m_out.appendTo(slowCase, continuation);

@@ -7269,7 +7269,6 @@ void SpeculativeJIT::compileCreateRest(Node* node)
         GPRReg butterflyGPR = butterfly.gpr();
 
         m_jit.loadPtr(MacroAssembler::Address(arrayResultGPR, JSObject::butterflyOffset()), butterflyGPR);
-        m_jit.cage(Gigacage::JSValue, butterflyGPR);
 
         CCallHelpers::Jump skipLoop = m_jit.branch32(MacroAssembler::Equal, arrayLengthGPR, TrustedImm32(0));
         m_jit.zeroExtend32ToPtr(arrayLengthGPR, currentLengthGPR);
@@ -7339,7 +7338,7 @@ void SpeculativeJIT::compileSpread(Node* node)
         slowPath.append(m_jit.branch32(MacroAssembler::Above, scratch1GPR, TrustedImm32(ContiguousShape - Int32Shape)));
 
         m_jit.loadPtr(MacroAssembler::Address(argument, JSObject::butterflyOffset()), lengthGPR);
-        m_jit.cage(Gigacage::JSValue, lengthGPR);
+        m_jit.cage(Gigacage::JSValue, lengthGPR); // We may do a double memcpy loop below, so we conservatively cage.
         m_jit.load32(MacroAssembler::Address(lengthGPR, Butterfly::offsetOfPublicLength()), lengthGPR);
         static_assert(sizeof(JSValue) == 8 && 1 << 3 == 8, "This is strongly assumed in the code below.");
         m_jit.move(lengthGPR, scratch1GPR);
@@ -7350,7 +7349,7 @@ void SpeculativeJIT::compileSpread(Node* node)
         m_jit.store32(lengthGPR, MacroAssembler::Address(resultGPR, JSFixedArray::offsetOfSize()));
 
         m_jit.loadPtr(MacroAssembler::Address(argument, JSObject::butterflyOffset()), scratch1GPR);
-        m_jit.cage(Gigacage::JSValue, scratch1GPR);
+        m_jit.cage(Gigacage::JSValue, scratch1GPR); // We may do a double memcpy loop below, so we conservatively cage.
 
         MacroAssembler::JumpList done;
 
@@ -7373,7 +7372,6 @@ void SpeculativeJIT::compileSpread(Node* node)
 
         isDoubleArray.link(&m_jit);
         {
-
             done.append(m_jit.branchTest32(MacroAssembler::Zero, lengthGPR));
             auto loopStart = m_jit.label();
             m_jit.sub32(TrustedImm32(1), lengthGPR);
@@ -7460,7 +7458,6 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
 
         m_jit.move(TrustedImm32(0), indexGPR);
         m_jit.loadPtr(MacroAssembler::Address(resultGPR, JSObject::butterflyOffset()), storageGPR);
-        m_jit.cage(Gigacage::JSValue, storageGPR);
 
         for (unsigned i = 0; i < node->numChildren(); ++i) {
             Edge use = m_jit.graph().varArgChild(node, i);

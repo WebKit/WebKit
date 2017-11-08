@@ -558,7 +558,7 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Butterfly* butterfly = m_butterfly.getMayBeNull();
+    Butterfly* butterfly = this->butterfly();
     switch (indexingType()) {
     case ArrayClass:
         if (!newLength)
@@ -628,7 +628,7 @@ JSValue JSArray::pop(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Butterfly* butterfly = m_butterfly.getMayBeNull();
+    Butterfly* butterfly = this->butterfly();
     
     switch (indexingType()) {
     case ArrayClass:
@@ -879,7 +879,7 @@ bool JSArray::shiftCountWithAnyIndexingType(ExecState* exec, unsigned& startInde
     VM& vm = exec->vm();
     RELEASE_ASSERT(count > 0);
 
-    Butterfly* butterfly = m_butterfly.getMayBeNull();
+    Butterfly* butterfly = this->butterfly();
     
     switch (indexingType()) {
     case ArrayClass:
@@ -1035,7 +1035,7 @@ bool JSArray::unshiftCountWithAnyIndexingType(ExecState* exec, unsigned startInd
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Butterfly* butterfly = m_butterfly.getMayBeNull();
+    Butterfly* butterfly = this->butterfly();
     
     switch (indexingType()) {
     case ArrayClass:
@@ -1058,7 +1058,7 @@ bool JSArray::unshiftCountWithAnyIndexingType(ExecState* exec, unsigned startInd
             throwOutOfMemoryError(exec, scope);
             return false;
         }
-        butterfly = m_butterfly.getMayBeNull();
+        butterfly = this->butterfly();
 
         // We have to check for holes before we start moving things around so that we don't get halfway 
         // through shifting and then realize we should have been in ArrayStorage mode.
@@ -1102,7 +1102,7 @@ bool JSArray::unshiftCountWithAnyIndexingType(ExecState* exec, unsigned startInd
             throwOutOfMemoryError(exec, scope);
             return false;
         }
-        butterfly = m_butterfly.getMayBeNull();
+        butterfly = this->butterfly();
         
         // We have to check for holes before we start moving things around so that we don't get halfway 
         // through shifting and then realize we should have been in ArrayStorage mode.
@@ -1145,7 +1145,7 @@ void JSArray::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
     unsigned vectorEnd;
     WriteBarrier<Unknown>* vector;
 
-    Butterfly* butterfly = m_butterfly.getMayBeNull();
+    Butterfly* butterfly = this->butterfly();
     
     switch (indexingType()) {
     case ArrayClass:
@@ -1218,7 +1218,7 @@ void JSArray::copyToArguments(ExecState* exec, VirtualRegister firstElementDest,
     // FIXME: What prevents this from being called with a RuntimeArray? The length function will always return 0 in that case.
     ASSERT(length == this->length());
 
-    Butterfly* butterfly = m_butterfly.getMayBeNull();
+    Butterfly* butterfly = this->butterfly();
     switch (indexingType()) {
     case ArrayClass:
         return;

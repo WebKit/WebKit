@@ -1,3 +1,70 @@
+2017-11-07  Saam Barati  <sbarati@apple.com>
+
+        Only cage double butterfly accesses
+        https://bugs.webkit.org/show_bug.cgi?id=179202
+
+        Reviewed by Mark Lam.
+
+        This patch removes caging from all butterfly accesses except double loads/stores.
+        This is a performance vs security tradeoff. Double loads/stores are the only butterfly
+        loads/stores that can write arbitrary bit patterns, so we choose to keep them safe
+        by caging. The other load/stores we are no longer caging to get back performance on
+        various benchmarks.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/InlineAccess.cpp:
+        (JSC::InlineAccess::dumpCacheSizesAndCrash):
+        (JSC::InlineAccess::generateSelfPropertyAccess):
+        (JSC::InlineAccess::generateSelfPropertyReplace):
+        (JSC::InlineAccess::generateArrayLength):
+        * dfg/DFGFixedButterflyAccessUncagingPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCreateRest):
+        (JSC::DFG::SpeculativeJIT::compileSpread):
+        (JSC::DFG::SpeculativeJIT::compileNewArrayWithSpread):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetDirectPname):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitContiguousLoad):
+        (JSC::JIT::emitArrayStorageLoad):
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        (JSC::JIT::emitArrayStoragePutByVal):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emit_op_put_to_scope):
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/AuxiliaryBarrier.h:
+        (JSC::AuxiliaryBarrier::operator-> const):
+        * runtime/Butterfly.h:
+        (JSC::Butterfly::caged):
+        (JSC::Butterfly::contiguousDouble):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        (JSC::JSArray::unshiftCountWithAnyIndexingType):
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToArguments):
+        * runtime/JSArrayInlines.h:
+        (JSC::JSArray::pushInline):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::heapSnapshot):
+        (JSC::JSObject::createInitialIndexedStorage):
+        (JSC::JSObject::createArrayStorage):
+        (JSC::JSObject::convertUndecidedToInt32):
+        (JSC::JSObject::ensureLengthSlow):
+        (JSC::JSObject::reallocateAndShrinkButterfly):
+        (JSC::JSObject::allocateMoreOutOfLineStorage):
+        * runtime/JSObject.h:
+        (JSC::JSObject::canGetIndexQuickly):
+        (JSC::JSObject::getIndexQuickly):
+        (JSC::JSObject::tryGetIndexQuickly const):
+        (JSC::JSObject::canSetIndexQuickly):
+        (JSC::JSObject::butterfly const):
+        (JSC::JSObject::butterfly):
+
 2017-11-07  Mark Lam  <mark.lam@apple.com>
 
         Introduce a default RegisterSet constructor so that we can use { } notation.

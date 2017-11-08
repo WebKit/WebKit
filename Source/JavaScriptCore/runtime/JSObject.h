@@ -255,7 +255,7 @@ public:
     
     bool canGetIndexQuickly(unsigned i)
     {
-        Butterfly* butterfly = m_butterfly.getMayBeNull();
+        Butterfly* butterfly = this->butterfly();
         switch (indexingType()) {
         case ALL_BLANK_INDEXING_TYPES:
         case ALL_UNDECIDED_INDEXING_TYPES:
@@ -281,7 +281,7 @@ public:
         
     JSValue getIndexQuickly(unsigned i)
     {
-        Butterfly* butterfly = m_butterfly.get();
+        Butterfly* butterfly = this->butterfly();
         switch (indexingType()) {
         case ALL_INT32_INDEXING_TYPES:
             return jsNumber(butterfly->contiguous()[i].get().asInt32());
@@ -299,7 +299,7 @@ public:
         
     JSValue tryGetIndexQuickly(unsigned i) const
     {
-        Butterfly* butterfly = m_butterfly.getMayBeNull();
+        Butterfly* butterfly = const_cast<JSObject*>(this)->butterfly();
         switch (indexingType()) {
         case ALL_BLANK_INDEXING_TYPES:
         case ALL_UNDECIDED_INDEXING_TYPES:
@@ -353,7 +353,7 @@ public:
         
     bool canSetIndexQuickly(unsigned i)
     {
-        Butterfly* butterfly = m_butterfly.getMayBeNull();
+        Butterfly* butterfly = this->butterfly();
         switch (indexingType()) {
         case ALL_BLANK_INDEXING_TYPES:
         case ALL_UNDECIDED_INDEXING_TYPES:
@@ -669,8 +669,8 @@ public:
         return inlineStorageUnsafe();
     }
         
-    const Butterfly* butterfly() const { return m_butterfly.getMayBeNull(); }
-    Butterfly* butterfly() { return m_butterfly.getMayBeNull(); }
+    const Butterfly* butterfly() const { return m_butterfly.get(); }
+    Butterfly* butterfly() { return m_butterfly.get(); }
     
     ConstPropertyStorage outOfLineStorage() const { return m_butterfly->propertyStorage(); }
     PropertyStorage outOfLineStorage() { return m_butterfly->propertyStorage(); }
@@ -1052,7 +1052,7 @@ private:
     PropertyOffset prepareToPutDirectWithoutTransition(VM&, PropertyName, unsigned attributes, StructureID, Structure*);
 
 protected:
-    CagedBarrierPtr<Gigacage::JSValue, Butterfly> m_butterfly;
+    AuxiliaryBarrier<Butterfly*> m_butterfly;
 #if USE(JSVALUE32_64)
 private:
     uint32_t m_padding;

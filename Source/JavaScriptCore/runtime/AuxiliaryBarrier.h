@@ -56,6 +56,8 @@ public:
     
     template<typename U>
     void setWithoutBarrier(U&& value) { m_value = std::forward<U>(value); }
+
+    T operator->() const { return get(); }
     
 private:
     T m_value;
