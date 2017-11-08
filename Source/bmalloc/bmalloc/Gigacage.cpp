@@ -156,7 +156,7 @@ void ensureGigacage()
                 BCRASH();
             }
 
-            if (GIGACAGE_RUNWAY) {
+            if (GIGACAGE_RUNWAY > 0) {
                 char* runway = reinterpret_cast<char*>(base) + totalSize - GIGACAGE_RUNWAY;
                 // Make OOB accesses into the runway crash.
                 vmRevokePermissions(runway, GIGACAGE_RUNWAY);
