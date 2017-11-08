@@ -1,3 +1,21 @@
+2017-11-08  Tim Horton  <timothy_horton@apple.com>
+
+        [ios-simulator] API test WebKit.BundleParameters is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=178363
+        <rdar://problem/35043144>
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/RefCounter.h:
+        (WTF::RefCounter<T>::Count::deref):
+        (WTF::RefCounter<T>::Count::refCounterWasDeleted):
+        (WTF::RefCounter<T>::~RefCounter):
+        If a RefCounter::Count is deref()'d and drops its RefCounter's value to
+        zero, and the RefCounter is deleted in that valueDidChangeCallback, it
+        will delete the Counter that is in the middle of deref(). Keep track
+        of whether we're inside the callback and defer the deletion until
+        the end of deref().
+
 2017-11-07  Maciej Stachowiak  <mjs@apple.com>
 
         Get rid of unsightly hex numbers from unified build object files

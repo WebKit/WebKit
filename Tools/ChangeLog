@@ -1,3 +1,15 @@
+2017-11-08  Tim Horton  <timothy_horton@apple.com>
+
+        [ios-simulator] API test WebKit.BundleParameters is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=178363
+        <rdar://problem/35043144>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WTF/RefCounter.cpp:
+        (TestWebKitAPI::TEST):
+        Add a test.
+
 2017-11-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Implement delegate hooks for attachment element insertion and removal

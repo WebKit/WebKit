@@ -167,4 +167,19 @@ TEST(WTF, RefCounter)
     // ... not a lot to test here! - we can at least ensure this code path is run & we don't crash!
 }
 
+TEST(WTF, RefCounterDeleteCounterWithOutstandingTokens)
+{
+    {
+        std::unique_ptr<TestCounter> counter = std::make_unique<TestCounter>([&](RefCounterEvent event) {
+            if (!counter->value())
+                counter = nullptr;
+        });
+
+        TokenType incTo1 = counter->count();
+        EXPECT_EQ(1UL, counter->value());
+        incTo1 = nullptr;
+        EXPECT_EQ(nullptr, counter.get());
+    }
+}
+
 } // namespace TestWebKitAPI
