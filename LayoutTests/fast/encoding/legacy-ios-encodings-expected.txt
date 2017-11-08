@@ -1,0 +1,36 @@
+This test verifies that certain legacy iOS text encodings are not supported.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The following encodings should not be supported
+PASS new TextDecoder("macos-6-10.2").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("macos-6_2-10.4").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("macos-35-10.2").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("macos-29-10.2").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("macos-7_3-10.2").encoding threw exception RangeError: Bad value.
+The following encoding names are supported by WebKit cross-platform, but some may be removed at a later time.
+PASS new TextDecoder("x-mac-greek").encoding is "x-mac-greek"
+PASS new TextDecoder("windows-10006").encoding is "x-mac-greek"
+PASS new TextDecoder("macgr").encoding is "x-mac-greek"
+PASS new TextDecoder("x-macgreek").encoding is "x-mac-greek"
+PASS new TextDecoder("x-mac-turkish").encoding is "x-mac-turkish"
+PASS new TextDecoder("windows-10081").encoding is "x-mac-turkish"
+PASS new TextDecoder("mactr").encoding is "x-mac-turkish"
+PASS new TextDecoder("x-macturkish").encoding is "x-mac-turkish"
+PASS new TextDecoder("x-mac-centraleurroman").encoding is "x-mac-centraleurroman"
+PASS new TextDecoder("windows-10029").encoding is "x-mac-centraleurroman"
+PASS new TextDecoder("x-mac-ce").encoding is "x-mac-centraleurroman"
+PASS new TextDecoder("macce").encoding is "x-mac-centraleurroman"
+PASS new TextDecoder("maccentraleurope").encoding is "x-mac-centraleurroman"
+PASS new TextDecoder("x-maccentraleurope").encoding is "x-mac-centraleurroman"
+PASS new TextDecoder("x-mac-cyrillic").encoding is "x-mac-cyrillic"
+PASS new TextDecoder("windows-10007").encoding is "x-mac-cyrillic"
+PASS new TextDecoder("mac-cyrillic").encoding is "x-mac-cyrillic"
+PASS new TextDecoder("maccy").encoding is "x-mac-cyrillic"
+PASS new TextDecoder("x-maccyrillic").encoding is "x-mac-cyrillic"
+PASS new TextDecoder("x-macukraine").encoding is "x-mac-cyrillic"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

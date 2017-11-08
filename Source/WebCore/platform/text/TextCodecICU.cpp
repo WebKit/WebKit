@@ -43,18 +43,6 @@ namespace WebCore {
 
 const size_t ConversionBufferSize = 16384;
 
-#if PLATFORM(IOS)
-static const char* textCodecMacAliases[] = {
-    "macos-7_3-10.2", // xmaccyrillic, maccyrillic
-    "macos-6_2-10.4", // xmacgreek
-    "macos-6-10.2",   // macgreek
-    "macos-29-10.2",  // xmaccentraleurroman, maccentraleurroman
-    "macos-35-10.2",  // xmacturkish, macturkish
-    "softbank-sjis",  // softbanksjis
-    nullptr
-};
-#endif
-
 ICUConverterWrapper::~ICUConverterWrapper()
 {
     if (converter)
@@ -182,26 +170,8 @@ void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)
     }
 
 #if PLATFORM(IOS)
-    // A.B. adding a few more Mac encodings missing 'cause we don't have TextCodecMac right now
-    // luckily, they are supported in ICU, just need to alias them.
-    // this handles encodings that OS X uses TEC (TextCodecMac)
-    // <http://publib.boulder.ibm.com/infocenter/wmbhelp/v6r0m0/index.jsp?topic=/com.ibm.etools.mft.eb.doc/ac00408_.htm>
-    int32_t i = 0;
-    for (const char* macAlias = textCodecMacAliases[i]; macAlias; macAlias = textCodecMacAliases[++i]) {
-        registrar(macAlias, macAlias);
-
-        UErrorCode error = U_ZERO_ERROR;
-        uint16_t numAliases = ucnv_countAliases(macAlias, &error);
-        ASSERT(U_SUCCESS(error));
-        if (U_SUCCESS(error))
-            for (uint16_t j = 0; j < numAliases; ++j) {
-                error = U_ZERO_ERROR;
-                const char* alias = ucnv_getAlias(macAlias, j, &error);
-                ASSERT(U_SUCCESS(error));
-                if (U_SUCCESS(error) && strcmp(alias, macAlias))
-                    registrar(alias, macAlias);
-            }
-    }
+    // FIXME: This may not be needed any more. <https://bugs.webkit.org/show_bug.cgi?id=179416>
+    registrar("softbank-sjis", "softbank-sjis");
 #endif
 }
 
@@ -246,10 +216,8 @@ void TextCodecICU::registerCodecs(TextCodecRegistrar registrar)
     }
 
 #if PLATFORM(IOS)
-    // See comment above in registerEncodingNames().
-    int32_t i = 0;
-    for (const char* alias = textCodecMacAliases[i]; alias; alias = textCodecMacAliases[++i])
-        registrar(alias, create, 0);
+    // FIXME: This may not be needed any more. <https://bugs.webkit.org/show_bug.cgi?id=179416>
+    registrar("softbank-sjis", create, 0);
 #endif
 }
 

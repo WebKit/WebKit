@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("This test verifies that certain legacy iOS text encodings are not supported.");
+
+debug("The following encodings should not be supported");
+let iosLegacyEncodings = ['macos-6-10.2','macos-6_2-10.4', 'macos-35-10.2', 'macos-29-10.2', 'macos-7_3-10.2'];
+
+for (let encoding of iosLegacyEncodings) {
+    let canonical_name_expr = 'new TextDecoder("' + encoding + '").encoding';
+    shouldThrow(canonical_name_expr);
+}
+
+
+
+debug("The following encoding names are supported by WebKit cross-platform, but some may be removed at a later time.");
+let validForNow = [
+    {encoding: 'x-mac-greek', aliases: ['x-mac-greek', 'windows-10006', 'macgr', 'x-macgreek']},
+    {encoding: 'x-mac-turkish', aliases: ['x-mac-turkish', 'windows-10081', 'mactr', 'x-macturkish']},
+    {encoding: 'x-mac-centraleurroman', aliases: ['x-mac-centraleurroman', 'windows-10029', 'x-mac-ce', 'macce', 'maccentraleurope', 'x-maccentraleurope']},
+    {encoding: 'x-mac-cyrillic', aliases: ['x-mac-cyrillic', 'windows-10007', 'mac-cyrillic', 'maccy', 'x-maccyrillic', 'x-macukraine']}
+];
+
+for (let encoding of validForNow) {
+    for (let alias of encoding.aliases) {
+         let canonical_name_expr = 'new TextDecoder("' + alias + '").encoding';
+         shouldBe(canonical_name_expr, '"' + encoding.encoding + '"');
+    }
+}
+
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
