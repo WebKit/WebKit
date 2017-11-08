@@ -1,3 +1,59 @@
+2017-11-08  Ms2ger  <Ms2ger@igalia.com>
+
+        Update XMLHttpRequest tests.
+        https://bugs.webkit.org/show_bug.cgi?id=179421
+
+        Reviewed by Sam Weinig.
+
+        * resources/import-expectations.json: enabled some more tests
+        * web-platform-tests/XMLHttpRequest/abort-during-done.htm:
+        * web-platform-tests/XMLHttpRequest/abort-during-headers-received.htm:
+        * web-platform-tests/XMLHttpRequest/abort-during-loading.htm:
+        * web-platform-tests/XMLHttpRequest/open-after-abort.htm:
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window-2-expected.txt:
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window-2.htm:
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window-3-expected.txt:
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window-3.htm:
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window-4.htm:
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window-6.htm:
+        * web-platform-tests/XMLHttpRequest/open-url-redirected-worker-origin-expected.txt:
+        * web-platform-tests/XMLHttpRequest/open-url-redirected-worker-origin.htm:
+        * web-platform-tests/XMLHttpRequest/open-url-worker-origin-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-worker-origin.htm: Added.
+        * web-platform-tests/XMLHttpRequest/overridemimetype-open-state-force-xml.htm:
+        * web-platform-tests/XMLHttpRequest/resources/workerxhr-origin-referrer.js:
+        * web-platform-tests/XMLHttpRequest/resources/workerxhr-simple.js:
+        * web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-timeout-simple.js:
+        * web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-timeout-synconmain.js:
+        * web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-timeout-synconworker.js:
+        * web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-timeout-twice.js:
+        * web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-timeout.js:
+        * web-platform-tests/XMLHttpRequest/responsedocument-decoding.htm:
+        * web-platform-tests/XMLHttpRequest/send-authentication-basic-cors-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-authentication-basic-cors.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-authentication-basic-repeat-no-args-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-authentication-basic-repeat-no-args.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-authentication-basic-setrequestheader.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-authentication-basic.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-authentication-competing-names-passwords-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-authentication-competing-names-passwords.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-basic-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-basic.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-document-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-entity-body-document.htm:
+        * web-platform-tests/XMLHttpRequest/send-entity-body-get-head-async.htm:
+        * web-platform-tests/XMLHttpRequest/send-entity-body-get-head.htm:
+        * web-platform-tests/XMLHttpRequest/send-network-error-async-events.sub-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-network-error-async-events.sub.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-redirect-infinite.htm:
+        * web-platform-tests/XMLHttpRequest/send-redirect-no-location.htm:
+        * web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm:
+        * web-platform-tests/XMLHttpRequest/setrequestheader-after-send.htm:
+        * web-platform-tests/XMLHttpRequest/setrequestheader-before-open.htm:
+        * web-platform-tests/XMLHttpRequest/w3c-import.log:
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-reused.html:
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-unsent.htm:
+
 2017-11-07  Brady Eidson  <beidson@apple.com>
 
         Implement "UpdateWorkerState" and use it
