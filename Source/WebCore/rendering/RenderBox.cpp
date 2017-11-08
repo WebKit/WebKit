@@ -1924,7 +1924,7 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
     if (repaintContainer == this)
         return;
 
-    if (view().frameView().layoutContext().layoutStateEnabled() && !repaintContainer) {
+    if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !repaintContainer) {
         auto* layoutState = view().frameView().layoutContext().layoutState();
         LayoutSize offset = layoutState->m_paintOffset + locationOffset();
         if (style().hasInFlowPosition() && layer())
@@ -2139,8 +2139,8 @@ LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const Render
     // physical coordinate space of the repaintContainer.
     LayoutRect adjustedRect = rect;
     const RenderStyle& styleToUse = style();
-    // LayoutState is only valid for root-relative, non-fixed position repainting
-    if (view().frameView().layoutContext().layoutStateEnabled() && !repaintContainer && styleToUse.position() != FixedPosition) {
+    // Paint offset cache is only valid for root-relative, non-fixed position repainting
+    if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !repaintContainer && styleToUse.position() != FixedPosition) {
         auto* layoutState = view().frameView().layoutContext().layoutState();
 
         if (layer() && layer()->transform())

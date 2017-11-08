@@ -134,7 +134,7 @@ void RenderSVGForeignObject::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
-    ASSERT(!view().frameView().layoutContext().layoutStateEnabled()); // RenderSVGRoot disables layoutState for the SVG rendering tree.
+    ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled()); // RenderSVGRoot disables paint offset cache for the SVG rendering tree.
 
     LayoutRepainter repainter(*this, SVGRenderSupport::checkForSVGRepaintDuringLayout(*this));
 

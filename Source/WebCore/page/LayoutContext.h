@@ -94,7 +94,7 @@ public:
     void popLayoutState(RenderObject&);
     LayoutState* layoutState() const { return m_layoutState.get(); }
     // Returns true if layoutState should be used for its cached offset and clip.
-    bool layoutStateEnabled() const { return !m_layoutStateDisableCount && m_layoutState; }
+    bool isPaintOffsetCacheEnabled() const { return !m_paintOffsetCacheDisableCount && m_layoutState; }
 #ifndef NDEBUG
     void checkLayoutState();
 #endif
@@ -141,8 +141,8 @@ private:
     // that can trigger repaint of a non-child (e.g. when a list item moves its list marker around).
     // Note that even when disabled, LayoutState is still used to store layoutDelta.
     // These functions may only be accessed by LayoutStateMaintainer or LayoutStateDisabler.
-    void disableLayoutState() { m_layoutStateDisableCount++; }
-    void enableLayoutState() { ASSERT(m_layoutStateDisableCount > 0); m_layoutStateDisableCount--; }
+    void disablePaintOffsetCache() { m_paintOffsetCacheDisableCount++; }
+    void enablePaintOffsetCache() { ASSERT(m_paintOffsetCacheDisableCount > 0); m_paintOffsetCacheDisableCount--; }
 
     Frame& frame() const;
     FrameView& view() const;
@@ -167,7 +167,7 @@ private:
     int m_layoutDisallowedCount { 0 };
     WeakPtr<RenderElement> m_subtreeLayoutRoot;
     std::unique_ptr<LayoutState> m_layoutState;
-    unsigned m_layoutStateDisableCount { 0 };
+    unsigned m_paintOffsetCacheDisableCount { 0 };
 };
 
 } // namespace WebCore

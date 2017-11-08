@@ -143,7 +143,7 @@ public:
 
 private:
     LayoutContext& m_layoutContext;
-    bool m_disabled { false };
+    bool m_paintOffsetCacheIsDisabled { false };
     bool m_didCallPush { false };
     bool m_didCallPop { false };
     bool m_didPushLayoutState { false };
@@ -156,7 +156,7 @@ public:
 
 private:
     RenderElement* m_subtreeLayoutRoot { nullptr };
-    bool m_didDisableLayoutState { false };
+    bool m_didDisablePaintOffsetCache { false };
 };
 
 class LayoutStateDisabler {

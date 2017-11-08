@@ -558,7 +558,7 @@ bool LayoutContext::layoutDeltaMatches(const LayoutSize& delta)
     
 void LayoutContext::pushLayoutState(RenderElement& root)
 {
-    ASSERT(!m_layoutStateDisableCount);
+    ASSERT(!m_paintOffsetCacheDisableCount);
     ASSERT(!m_layoutState);
 
     m_layoutState = std::make_unique<LayoutState>(root);
@@ -600,7 +600,7 @@ void LayoutContext::popLayoutState()
 void LayoutContext::checkLayoutState()
 {
     ASSERT(layoutDeltaMatches(LayoutSize()));
-    ASSERT(!m_layoutStateDisableCount);
+    ASSERT(!m_paintOffsetCacheDisableCount);
 }
 #endif
 

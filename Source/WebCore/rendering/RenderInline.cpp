@@ -1165,7 +1165,7 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBoxInFragment(const RenderFr
 LayoutRect RenderInline::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
 {
     // Only first-letter renderers are allowed in here during layout. They mutate the tree triggering repaints.
-    ASSERT(!view().frameView().layoutContext().layoutStateEnabled() || style().styleType() == FIRST_LETTER || hasSelfPaintingLayer());
+    ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled() || style().styleType() == FIRST_LETTER || hasSelfPaintingLayer());
 
     if (!firstLineBoxIncludingCulling() && !continuation())
         return LayoutRect();
@@ -1220,9 +1220,9 @@ LayoutRect RenderInline::rectWithOutlineForRepaint(const RenderLayerModelObject*
 
 LayoutRect RenderInline::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, RepaintContext context) const
 {
-    // LayoutState is only valid for root-relative repainting
+    // Repaint offset cache is only valid for root-relative repainting
     LayoutRect adjustedRect = rect;
-    if (view().frameView().layoutContext().layoutStateEnabled() && !repaintContainer) {
+    if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !repaintContainer) {
         auto* layoutState = view().frameView().layoutContext().layoutState();
         if (style().hasInFlowPosition() && layer())
             adjustedRect.move(layer()->offsetForInFlowPosition());
@@ -1290,7 +1290,7 @@ void RenderInline::mapLocalToContainer(const RenderLayerModelObject* repaintCont
     if (repaintContainer == this)
         return;
 
-    if (view().frameView().layoutContext().layoutStateEnabled() && !repaintContainer) {
+    if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !repaintContainer) {
         auto* layoutState = view().frameView().layoutContext().layoutState();
         LayoutSize offset = layoutState->m_paintOffset;
         if (style().hasInFlowPosition() && layer())

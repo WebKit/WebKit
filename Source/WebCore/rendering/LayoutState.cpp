@@ -218,9 +218,9 @@ void LayoutState::establishLineGrid(RenderBlockFlow& renderer)
     m_lineGridOffset = m_layoutOffset;
 }
 
-LayoutStateMaintainer::LayoutStateMaintainer(RenderBox& root, LayoutSize offset, bool disableState, LayoutUnit pageHeight, bool pageHeightChanged)
+LayoutStateMaintainer::LayoutStateMaintainer(RenderBox& root, LayoutSize offset, bool disablePaintOffsetCache, LayoutUnit pageHeight, bool pageHeightChanged)
     : m_layoutContext(root.view().frameView().layoutContext())
-    , m_disabled(disableState)
+    , m_paintOffsetCacheIsDisabled(disablePaintOffsetCache)
 {
     push(root, offset, pageHeight, pageHeightChanged);
 }
@@ -246,8 +246,8 @@ void LayoutStateMaintainer::push(RenderBox& root, LayoutSize offset, LayoutUnit 
     m_didPushLayoutState = m_layoutContext.pushLayoutState(root, offset, pageHeight, pageHeightChanged);
     if (!m_didPushLayoutState)
         return;
-    if (m_disabled)
-        m_layoutContext.disableLayoutState();
+    if (m_paintOffsetCacheIsDisabled)
+        m_layoutContext.disablePaintOffsetCache();
 }
 
 void LayoutStateMaintainer::pop()
@@ -259,22 +259,22 @@ void LayoutStateMaintainer::pop()
     if (!m_didPushLayoutState)
         return;
     m_layoutContext.popLayoutState();
-    if (m_disabled)
-        m_layoutContext.enableLayoutState();
+    if (m_paintOffsetCacheIsDisabled)
+        m_layoutContext.enablePaintOffsetCache();
 }
 
 LayoutStateDisabler::LayoutStateDisabler(LayoutContext& layoutContext)
     : m_layoutContext(layoutContext)
 {
-    m_layoutContext.disableLayoutState();
+    m_layoutContext.disablePaintOffsetCache();
 }
 
 LayoutStateDisabler::~LayoutStateDisabler()
 {
-    m_layoutContext.enableLayoutState();
+    m_layoutContext.enablePaintOffsetCache();
 }
 
-static bool shouldDisableLayoutStateForSubtree(RenderElement& subtreeLayoutRoot)
+static bool shouldDisablePaintOffsetCacheForSubtree(RenderElement& subtreeLayoutRoot)
 {
     for (auto* renderer = &subtreeLayoutRoot; renderer; renderer = renderer->container()) {
         if (renderer->hasTransform() || renderer->hasReflection())
@@ -289,9 +289,9 @@ SubtreeLayoutStateMaintainer::SubtreeLayoutStateMaintainer(RenderElement* subtre
     if (m_subtreeLayoutRoot) {
         auto& layoutContext = m_subtreeLayoutRoot->view().frameView().layoutContext();
         layoutContext.pushLayoutState(*m_subtreeLayoutRoot);
-        if (shouldDisableLayoutStateForSubtree(*m_subtreeLayoutRoot)) {
-            layoutContext.disableLayoutState();
-            m_didDisableLayoutState = true;
+        if (shouldDisablePaintOffsetCacheForSubtree(*m_subtreeLayoutRoot)) {
+            layoutContext.disablePaintOffsetCache();
+            m_didDisablePaintOffsetCache = true;
         }
     }
 }
@@ -301,8 +301,8 @@ SubtreeLayoutStateMaintainer::~SubtreeLayoutStateMaintainer()
     if (m_subtreeLayoutRoot) {
         auto& layoutContext = m_subtreeLayoutRoot->view().frameView().layoutContext();
         layoutContext.popLayoutState(*m_subtreeLayoutRoot);
-        if (m_didDisableLayoutState)
-            layoutContext.enableLayoutState();
+        if (m_didDisablePaintOffsetCache)
+            layoutContext.enablePaintOffsetCache();
     }
 }
 

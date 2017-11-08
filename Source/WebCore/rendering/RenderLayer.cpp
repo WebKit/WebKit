@@ -514,10 +514,10 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
         m_enclosingPaginationLayer = nullptr;
     
     if (m_hasVisibleContent) {
-        // FIXME: LayoutState does not work with RenderLayers as there is not a 1-to-1
+        // FIXME: Paint offset cache does not work with RenderLayers as there is not a 1-to-1
         // mapping between them and the RenderObjects. It would be neat to enable
         // LayoutState outside the layout() phase and use it here.
-        ASSERT(!renderer().view().frameView().layoutContext().layoutStateEnabled());
+        ASSERT(!renderer().view().frameView().layoutContext().isPaintOffsetCacheEnabled());
 
         RenderLayerModelObject* repaintContainer = renderer().containerForRepaint();
         

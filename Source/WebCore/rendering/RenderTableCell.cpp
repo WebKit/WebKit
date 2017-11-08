@@ -398,7 +398,7 @@ LayoutRect RenderTableCell::computeRectForRepaint(const LayoutRect& rect, const 
     if (repaintContainer == this)
         return rect;
     LayoutRect adjustedRect = rect;
-    if ((!view().frameView().layoutContext().layoutStateEnabled() || repaintContainer) && parent())
+    if ((!view().frameView().layoutContext().isPaintOffsetCacheEnabled() || repaintContainer) && parent())
         adjustedRect.moveBy(-parentBox()->location()); // Rows are in the same coordinate space, so don't add their offset in.
     return RenderBlockFlow::computeRectForRepaint(adjustedRect, repaintContainer, context);
 }

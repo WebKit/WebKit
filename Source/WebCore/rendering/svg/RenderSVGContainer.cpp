@@ -55,8 +55,8 @@ void RenderSVGContainer::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
-    // RenderSVGRoot disables layoutState for the SVG rendering tree.
-    ASSERT(!view().frameView().layoutContext().layoutStateEnabled());
+    // RenderSVGRoot disables paint offset cache for the SVG rendering tree.
+    ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled());
 
     LayoutRepainter repainter(*this, SVGRenderSupport::checkForSVGRepaintDuringLayout(*this) || selfWillPaint());
 
