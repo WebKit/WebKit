@@ -106,7 +106,7 @@ void Font::platformInit()
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
     m_fontMetrics.setCapHeight(capHeight);
-    m_fontMetrics.setLineSpacing(ascent + descent + lineGap);
+    m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
     m_fontMetrics.setLineGap(lineGap);
 
     cairo_text_extents_t textExtents;

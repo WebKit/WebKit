@@ -1,3 +1,17 @@
+2017-09-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Bring back line height rounding when computing font metrics
+        https://bugs.webkit.org/show_bug.cgi?id=176497
+
+        Reviewed by Žan Doberšek.
+
+        In r221670 we changed the way we get the metrics to avoid rounding that was causing a negative line gap to be
+        computed. Since the font metrics value is indeed a float value, we also removed the rounding when setting the
+        line height. However, this caused some test failures because now we report non integer line heights.
+
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::Font::platformInit):
+
 2017-09-06  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [GTK] Bump freetype version to 2.8.0
