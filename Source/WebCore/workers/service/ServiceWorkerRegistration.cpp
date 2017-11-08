@@ -44,6 +44,22 @@ ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& con
 {
     LOG(ServiceWorker, "Creating registration %p for registration key %s", this, m_registrationData.key.loggingString().utf8().data());
     suspendIfNeeded();
+
+    // FIXME: Reconcile worker state properly (see below)
+    if (m_registrationData.installingServiceWorkerIdentifier) {
+        m_installingWorker = ServiceWorker::create(context, *m_registrationData.installingServiceWorkerIdentifier, m_registrationData.scriptURL);
+        m_installingWorker->updateWorkerState(ServiceWorker::State::Installing);
+    }
+    if (m_registrationData.waitingServiceWorkerIdentifier) {
+        m_waitingWorker = ServiceWorker::create(context, *m_registrationData.waitingServiceWorkerIdentifier, m_registrationData.scriptURL);
+        // FIXME: Installed or Activating? This is why we have to have more data here...
+        m_waitingWorker->updateWorkerState(ServiceWorker::State::Installed);
+    }
+    if (m_registrationData.activeServiceWorkerIdentifier) {
+        m_activeWorker = ServiceWorker::create(context, *m_registrationData.activeServiceWorkerIdentifier, m_registrationData.scriptURL);
+        m_activeWorker->updateWorkerState(ServiceWorker::State::Activated);
+    }
+
     m_container->addRegistration(*this);
 }
 

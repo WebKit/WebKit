@@ -345,19 +345,12 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
         return;
     }
 
-    ASSERT(data.installingServiceWorkerIdentifier);
-    auto installingServiceWorkerIdentifier = *data.installingServiceWorkerIdentifier;
-
     RefPtr<ServiceWorkerRegistration> registration = m_registrations.get(data.key);
     if (!registration)
         registration = ServiceWorkerRegistration::create(*context, *this, WTFMove(data));
 
-    registration->updateStateFromServer(ServiceWorkerRegistrationState::Installing, installingServiceWorkerIdentifier);
-    ASSERT(registration->installing());
-    registration->installing()->updateWorkerState(ServiceWorkerState::Installing, ServiceWorker::DoNotFireStateChangeEvent);
-
     // FIXME: Implement proper selection of service workers.
-    context->setActiveServiceWorker(registration->installing());
+    context->setActiveServiceWorker(registration->getNewestWorker());
 
     LOG(ServiceWorker, "Container %p resolved job with registration %p", this, registration.get());
 
