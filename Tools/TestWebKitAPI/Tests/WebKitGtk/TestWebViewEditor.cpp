@@ -34,28 +34,22 @@ public:
         , m_triesCount(0)
         , m_editorState(nullptr)
     {
+        showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
         gtk_clipboard_clear(m_clipboard);
     }
 
     static gboolean webViewDrawCallback(GMainLoop* mainLoop)
     {
         g_main_loop_quit(mainLoop);
-        return G_SOURCE_REMOVE;
+        return FALSE;
     }
 
     void flushEditorState()
     {
-        // FIXME: It would be better to call WebViewTest::showInWindowAndWaitUntilMapped
-        // at the start of the test, rather than creating and destroying temporary windows.
-        showInWindow(GTK_WINDOW_TOPLEVEL);
-
-        g_signal_connect_swapped(m_webView, "draw", G_CALLBACK(webViewDrawCallback), m_mainLoop);
+        auto signalID = g_signal_connect_swapped(m_webView, "draw", G_CALLBACK(webViewDrawCallback), m_mainLoop);
         gtk_widget_queue_draw(GTK_WIDGET(m_webView));
         g_main_loop_run(m_mainLoop);
-
-        gtk_container_remove(GTK_CONTAINER(m_parentWindow), GTK_WIDGET(m_webView));
-        gtk_widget_destroy(m_parentWindow);
-        m_parentWindow = nullptr;
+        g_signal_handler_disconnect(m_webView, signalID);
     }
 
     static void canExecuteEditingCommandReadyCallback(GObject*, GAsyncResult* result, EditorTest* test)

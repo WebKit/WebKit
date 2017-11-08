@@ -1,5 +1,20 @@
 2017-11-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r224179): [GTK] Several WebViewEditor tests are failing since r224179
+        https://bugs.webkit.org/show_bug.cgi?id=179366
+
+        Reviewed by Michael Catanzaro.
+
+        In r224179, webkit_web_view_can_execute_editing_command() was optimized to use the sync path for commands
+        supported by the WebViewEditorState, but the state requires a redraw to be up to date. We can't know if
+        WebViewEditorState is in sync, when webkit_web_view_can_execute_editing_command() is called, so we always need
+        to ask the web process.
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_can_execute_editing_command):
+
+2017-11-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Build inspector resources using copy-user-interface-resources.pl script
         https://bugs.webkit.org/show_bug.cgi?id=179317
 

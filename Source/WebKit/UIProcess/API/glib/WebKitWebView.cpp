@@ -3087,24 +3087,10 @@ void webkit_web_view_can_execute_editing_command(WebKitWebView* webView, const c
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(command);
 
-    GTask* task = g_task_new(webView, cancellable, callback, userData);
-    WebKitEditorState* state = webkit_web_view_get_editor_state(webView);
-
-    if (!strcmp(command, WEBKIT_EDITING_COMMAND_CUT))
-        g_task_return_boolean(adoptGRef(task).get(), webkit_editor_state_is_cut_available(state));
-    else if (!strcmp(command, WEBKIT_EDITING_COMMAND_COPY))
-        g_task_return_boolean(adoptGRef(task).get(), webkit_editor_state_is_copy_available(state));
-    else if (!strcmp(command, WEBKIT_EDITING_COMMAND_PASTE))
-        g_task_return_boolean(adoptGRef(task).get(), webkit_editor_state_is_paste_available(state));
-    else if (!strcmp(command, WEBKIT_EDITING_COMMAND_UNDO))
-        g_task_return_boolean(adoptGRef(task).get(), webkit_editor_state_is_undo_available(state));
-    else if (!strcmp(command, WEBKIT_EDITING_COMMAND_REDO))
-        g_task_return_boolean(adoptGRef(task).get(), webkit_editor_state_is_redo_available(state));
-    else {
-        getPage(webView).validateCommand(String::fromUTF8(command), [task](const String&, bool isEnabled, int32_t, WebKit::CallbackBase::Error) {
-            g_task_return_boolean(adoptGRef(task).get(), isEnabled);        
-        });
-    }
+    GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
+    getPage(webView).validateCommand(String::fromUTF8(command), [task = WTFMove(task)](const String&, bool isEnabled, int32_t, WebKit::CallbackBase::Error) {
+        g_task_return_boolean(task.get(), isEnabled);
+    });
 }
 
 /**

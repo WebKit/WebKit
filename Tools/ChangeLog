@@ -1,5 +1,17 @@
 2017-11-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r224179): [GTK] Several WebViewEditor tests are failing since r224179
+        https://bugs.webkit.org/show_bug.cgi?id=179366
+
+        Reviewed by Michael Catanzaro.
+
+        Use always a toplevel window for WebViewEditor tests instead of creating and destroying one only to flush editor
+        state.
+
+        * TestWebKitAPI/Tests/WebKitGtk/TestWebViewEditor.cpp:
+
+2017-11-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Build inspector resources using copy-user-interface-resources.pl script
         https://bugs.webkit.org/show_bug.cgi?id=179317
 
