@@ -74,7 +74,7 @@ void RenderInline::willBeDestroyed()
 #if !ASSERT_DISABLED
     // Make sure we do not retain "this" in the continuation outline table map of our containing blocks.
     if (parent() && style().visibility() == VISIBLE && hasOutline()) {
-        bool containingBlockPaintsContinuationOutline = continuation() || isInlineElementContinuation();
+        bool containingBlockPaintsContinuationOutline = continuation() || isContinuation();
         if (containingBlockPaintsContinuationOutline) {
             if (RenderBlock* cb = containingBlock()) {
                 if (RenderBlock* cbCb = cb->containingBlock())
@@ -1394,7 +1394,7 @@ void RenderInline::updateHitTestResult(HitTestResult& result, const LayoutPoint&
 
     LayoutPoint localPoint(point);
     if (Element* element = this->element()) {
-        if (isInlineElementContinuation()) {
+        if (isContinuation()) {
             // We're in the continuation of a split inline.  Adjust our local point to be in the coordinate space
             // of the principal renderer's containing block.  This will end up being the innerNonSharedNode.
             RenderBlock* firstBlock = element->renderer()->containingBlock();

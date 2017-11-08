@@ -183,7 +183,7 @@ static inline RenderObject* firstChildConsideringContinuation(RenderObject& rend
     // We don't want to include the end of a continuation as the firstChild of the
     // anonymous parent, because everything has already been linked up via continuation.
     // CSS first-letter selector is an example of this case.
-    if (renderer.isAnonymous() && is<RenderElement>(firstChild) && downcast<RenderElement>(*firstChild).isInlineElementContinuation())
+    if (renderer.isAnonymous() && is<RenderInline>(firstChild) && downcast<RenderInline>(*firstChild).isContinuation())
         firstChild = nullptr;
     
     if (!firstChild && isInlineWithContinuation(renderer))
@@ -251,7 +251,7 @@ static inline RenderInline* startOfContinuations(RenderObject& renderer)
     if (!is<RenderElement>(renderer))
         return nullptr;
     auto& renderElement = downcast<RenderElement>(renderer);
-    if (renderElement.isInlineElementContinuation() && is<RenderInline>(renderElement.element()->renderer()))
+    if (is<RenderInline>(renderElement) && renderElement.isContinuation() && is<RenderInline>(renderElement.element()->renderer()))
         return downcast<RenderInline>(renderer.node()->renderer());
 
     // Blocks with a previous continuation always have a next continuation
@@ -310,7 +310,7 @@ static inline RenderObject* childBeforeConsideringContinuations(RenderInline* re
 static inline bool firstChildIsInlineContinuation(RenderElement& renderer)
 {
     RenderObject* child = renderer.firstChild();
-    return is<RenderElement>(child) && downcast<RenderElement>(*child).isInlineElementContinuation();
+    return is<RenderInline>(child) && downcast<RenderInline>(*child).isContinuation();
 }
 
 AccessibilityObject* AccessibilityRenderObject::previousSibling() const

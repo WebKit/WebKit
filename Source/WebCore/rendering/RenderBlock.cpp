@@ -1746,7 +1746,7 @@ void RenderBlock::addContinuationWithOutline(RenderInline* flow)
 {
     // We can't make this work if the inline is in a layer.  We'll just rely on the broken
     // way of painting.
-    ASSERT(!flow->layer() && !flow->isInlineElementContinuation());
+    ASSERT(!flow->layer() && !flow->isContinuation());
     
     ContinuationOutlineTableMap* table = continuationOutlineTable();
     ListHashSet<RenderInline*>* continuations = table->get(this);

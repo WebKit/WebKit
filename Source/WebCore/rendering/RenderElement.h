@@ -227,8 +227,6 @@ public:
     bool hasContinuationChainNode() const { return m_hasContinuationChainNode; }
     bool isContinuation() const { return m_isContinuation; }
     void setIsContinuation() { m_isContinuation = true; }
-    bool isElementContinuation() const { return isContinuation() && !isAnonymous(); }
-    bool isInlineElementContinuation() const { return isElementContinuation() && isInline(); }
     bool isFirstLetter() const { return m_isFirstLetter; }
     void setIsFirstLetter() { m_isFirstLetter = true; }
 

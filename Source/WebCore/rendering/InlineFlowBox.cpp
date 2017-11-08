@@ -308,7 +308,7 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, bool isLogically
         // Check to see if all initial lines are unconstructed.  If so, then
         // we know the inline began on this line (unless we are a continuation).
         const auto& lineBoxList = inlineFlow.lineBoxes();
-        if (!lineBoxList.firstLineBox()->isConstructed() && !renderer().isInlineElementContinuation()) {
+        if (!lineBoxList.firstLineBox()->isConstructed() && !inlineFlow.isContinuation()) {
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
             if (renderer().style().boxDecorationBreak() == DCLONE)
                 includeLeftEdge = includeRightEdge = true;
@@ -1155,7 +1155,7 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
                 RenderInline& inlineFlow = downcast<RenderInline>(renderer());
 
                 RenderBlock* containingBlock = nullptr;
-                bool containingBlockPaintsContinuationOutline = inlineFlow.continuation() || inlineFlow.isInlineElementContinuation();
+                bool containingBlockPaintsContinuationOutline = inlineFlow.continuation() || inlineFlow.isContinuation();
                 if (containingBlockPaintsContinuationOutline) {           
                     // FIXME: See https://bugs.webkit.org/show_bug.cgi?id=54690. We currently don't reconnect inline continuations
                     // after a child removal. As a result, those merged inlines do not get seperated and hence not get enclosed by
@@ -1178,7 +1178,7 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
                     // Add ourselves to the containing block of the entire continuation so that it can
                     // paint us atomically.
                     containingBlock->addContinuationWithOutline(downcast<RenderInline>(renderer().element()->renderer()));
-                } else if (!inlineFlow.isInlineElementContinuation())
+                } else if (!inlineFlow.isContinuation())
                     paintInfo.outlineObjects->add(&inlineFlow);
             }
         } else if (paintInfo.phase == PaintPhaseMask)
