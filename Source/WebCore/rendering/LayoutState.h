@@ -138,10 +138,7 @@ private:
 class LayoutStateMaintainer {
     WTF_MAKE_NONCOPYABLE(LayoutStateMaintainer);
 public:
-    // Constructor to push now.
     explicit LayoutStateMaintainer(RenderBox&, LayoutSize offset, bool disableState = false, LayoutUnit pageHeight = 0, bool pageHeightChanged = false);
-    // Constructor to maybe push later.
-    explicit LayoutStateMaintainer(LayoutContext&);
     ~LayoutStateMaintainer();
 
     void pop();

@@ -281,11 +281,6 @@ LayoutStateMaintainer::LayoutStateMaintainer(RenderBox& root, LayoutSize offset,
         m_context.disablePaintOffsetCache();
 }
 
-LayoutStateMaintainer::LayoutStateMaintainer(LayoutContext& context)
-    : m_context(context)
-{
-}
-
 LayoutStateMaintainer::~LayoutStateMaintainer()
 {
     // FIXME: Remove conditional pop.
