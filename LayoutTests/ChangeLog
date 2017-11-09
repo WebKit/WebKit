@@ -1,3 +1,17 @@
+2017-11-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Remove support for iOS-only softbank-sjis encoding if possible
+        https://bugs.webkit.org/show_bug.cgi?id=179416
+
+        Reviewed by Darin Adler.
+
+        * fast/encoding/charset-softbank-sjis.html: Added. Test that <meta charset>
+        declaration for softbank-sjis is ignored.
+        * fast/encoding/charset-softbank-sjis-expected.txt: Added.
+        * fast/encoding/resources/softbank-sjis-iframe.html: Added. Helper for above test.
+        * fast/encoding/legacy-ios-encodings.html: Add a case for softbank-sjis.
+        * fast/encoding/legacy-ios-encodings-expected.txt: Result for above.
+
 2017-11-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Gardening 09 nov

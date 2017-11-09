@@ -9,6 +9,7 @@ PASS new TextDecoder("macos-6_2-10.4").encoding threw exception RangeError: Bad 
 PASS new TextDecoder("macos-35-10.2").encoding threw exception RangeError: Bad value.
 PASS new TextDecoder("macos-29-10.2").encoding threw exception RangeError: Bad value.
 PASS new TextDecoder("macos-7_3-10.2").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("softbank-sjis").encoding threw exception RangeError: Bad value.
 The following encoding names are supported by WebKit cross-platform, but some may be removed at a later time.
 PASS new TextDecoder("x-mac-greek").encoding is "x-mac-greek"
 PASS new TextDecoder("windows-10006").encoding is "x-mac-greek"

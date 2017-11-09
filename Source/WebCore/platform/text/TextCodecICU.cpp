@@ -168,11 +168,6 @@ void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)
         for (size_t i = 0; i < encodingName.aliasCount; ++i)
             registrar(encodingName.aliases[i], encodingName.name);
     }
-
-#if PLATFORM(IOS)
-    // FIXME: This may not be needed any more. <https://bugs.webkit.org/show_bug.cgi?id=179416>
-    registrar("softbank-sjis", "softbank-sjis");
-#endif
 }
 
 void TextCodecICU::registerCodecs(TextCodecRegistrar registrar)
@@ -214,11 +209,6 @@ void TextCodecICU::registerCodecs(TextCodecRegistrar registrar)
         ASSERT(U_SUCCESS(error));
         registrar(encodingName.name, create, canonicalConverterName);
     }
-
-#if PLATFORM(IOS)
-    // FIXME: This may not be needed any more. <https://bugs.webkit.org/show_bug.cgi?id=179416>
-    registrar("softbank-sjis", create, 0);
-#endif
 }
 
 TextCodecICU::TextCodecICU(const char* encoding, const char* canonicalConverterName)
