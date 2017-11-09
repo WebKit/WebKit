@@ -1,5 +1,14 @@
 2017-11-08  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark imported/w3c/web-platform-tests/service-workers/service-worker/register-same-scope-different-script-url.https.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=179452
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2017-11-08  Ryan Haddad  <ryanhaddad@apple.com>
+
         Mark http/tests/workers/service/registration-task-queue-scheduling-1.html as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=179342
 

@@ -177,6 +177,7 @@ webkit.org/b/179137 imported/w3c/web-platform-tests/service-workers/cache-storag
 webkit.org/b/179193 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting.https.html [ Pass Failure ]
 webkit.org/b/179193 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https.html [ Pass Failure ]
 webkit.org/b/179248 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw.https.html [ Pass Failure ]
+webkit.org/b/179452 imported/w3c/web-platform-tests/service-workers/service-worker/register-same-scope-different-script-url.https.html [ Pass Failure ]
 webkit.org/b/179194 imported/w3c/web-platform-tests/service-workers/service-worker/registration-mime-types.https.html [ Pass Failure ]
 webkit.org/b/179138 imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/performance-timeline.https.html [ Pass Failure ]
