@@ -170,8 +170,13 @@ void ServiceWorkerRegistration::updateStateFromServer(ServiceWorkerRegistrationS
         return;
 
     RefPtr<ServiceWorker> worker;
-    if (serviceWorkerIdentifier)
-        worker = ServiceWorker::create(*context, *serviceWorkerIdentifier, m_registrationData.scriptURL);
+    if (serviceWorkerIdentifier) {
+        auto* newestWorker = getNewestWorker();
+        if (newestWorker && newestWorker->identifier() == *serviceWorkerIdentifier)
+            worker = newestWorker;
+        else
+            worker = ServiceWorker::create(*context, *serviceWorkerIdentifier, m_registrationData.scriptURL);
+    }
 
     switch (state) {
     case ServiceWorkerRegistrationState::Installing:
