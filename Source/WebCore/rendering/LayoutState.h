@@ -66,7 +66,7 @@ public:
     LayoutUnit pageLogicalHeight() const { return m_pageLogicalHeight; }
     bool pageLogicalHeightChanged() const { return m_pageLogicalHeightChanged; }
 
-    RenderBlockFlow* lineGrid() const { return m_lineGrid; }
+    RenderBlockFlow* lineGrid() const { return m_lineGrid.get(); }
     LayoutSize lineGridOffset() const { return m_lineGridOffset; }
     LayoutSize lineGridPaginationOrigin() const { return m_lineGridPaginationOrigin; }
 
@@ -108,7 +108,7 @@ private:
     bool m_layoutDeltaYSaturated : 1;
 #endif
     // The current line grid that we're snapping to and the offset of the start of the grid.
-    RenderBlockFlow* m_lineGrid { nullptr };
+    WeakPtr<RenderBlockFlow> m_lineGrid;
 
     // FIXME: Distinguish between the layout clip rect and the paint clip rect which may be larger,
     // e.g., because of composited scrolling.

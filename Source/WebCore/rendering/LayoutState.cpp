@@ -31,6 +31,7 @@
 #include "RenderLayer.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderView.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -223,7 +224,7 @@ void LayoutState::propagateLineGridInfo(const LayoutState& ancestor, RenderBox& 
     if (renderer.isUnsplittableForPagination())
         return;
 
-    m_lineGrid = ancestor.lineGrid();
+    m_lineGrid = makeWeakPtr(ancestor.lineGrid());
     m_lineGridOffset = ancestor.lineGridOffset();
     m_lineGridPaginationOrigin = ancestor.lineGridPaginationOrigin();
 }
@@ -234,16 +235,16 @@ void LayoutState::establishLineGrid(const LayoutContext::LayoutStateStack& layou
     if (m_lineGrid) {
         if (m_lineGrid->style().lineGrid() == renderer.style().lineGrid())
             return;
-        RenderBlockFlow* currentGrid = m_lineGrid;
+        auto* currentGrid = m_lineGrid.get();
         for (int i = layoutStateStack.size() - 1; i <= 0; --i) {
             auto& currentState = *layoutStateStack[i].get();
             if (currentState.m_lineGrid == currentGrid)
                 continue;
-            currentGrid = currentState.m_lineGrid;
+            currentGrid = currentState.lineGrid();
             if (!currentGrid)
                 break;
             if (currentGrid->style().lineGrid() == renderer.style().lineGrid()) {
-                m_lineGrid = currentGrid;
+                m_lineGrid = makeWeakPtr(currentGrid);
                 m_lineGridOffset = currentState.m_lineGridOffset;
                 return;
             }
@@ -251,7 +252,7 @@ void LayoutState::establishLineGrid(const LayoutContext::LayoutStateStack& layou
     }
     
     // We didn't find an already-established grid with this identifier. Our render object establishes the grid.
-    m_lineGrid = &renderer;
+    m_lineGrid = makeWeakPtr(renderer);
     m_lineGridOffset = m_layoutOffset;
 }
 
