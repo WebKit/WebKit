@@ -1,3 +1,149 @@
+2017-11-06  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Add WebKitQuartzCoreAdditions library.
+        https://bugs.webkit.org/show_bug.cgi?id=179331
+
+        Reviewed by Alex Christensen.
+
+        * WebKitQuartzCoreAdditions: Added.
+        * WebKitQuartzCoreAdditions/API: Added.
+        * WebKitQuartzCoreAdditions/API/WKCACFImage.cpp: Added.
+        (toImage):
+        (WKCACFImageGetWidth):
+        (WKCACFImageGetHeight):
+        (WKCACFImageCopyFileMapping):
+        (WKCACFImageCreateWithImage):
+        (WKCACFImageFinalize):
+        (WKCACFImageCopyFormattingDescription):
+        (WKCACFImageCopyDebugDescription):
+        (WKCACFImageGetTypeID):
+        * WebKitQuartzCoreAdditions/API/WKCACFImage.h: Added.
+        * WebKitQuartzCoreAdditions/API/WKCACFImageInternal.h: Added.
+        * WebKitQuartzCoreAdditions/API/WKCACFView.cpp: Added.
+        (toView):
+        (toImpl):
+        (WKCACFViewCreate):
+        (WKCACFViewSetLayer):
+        (WKCACFViewUpdate):
+        (WKCACFViewFlushContext):
+        (WKCACFViewInvalidateRects):
+        (WKCACFViewCanDraw):
+        (WKCACFViewDraw):
+        (WKCACFViewCopyDrawnImage):
+        (WKCACFViewDrawIntoDC):
+        (contextDidChangeCallback):
+        (WKCACFViewSetContextDidChangeCallback):
+        (WKCACFViewGetLastCommitTime):
+        (WKCACFViewSetContextUserData):
+        (WKCACFViewGetContext):
+        (WKCACFViewFinalize):
+        (WKCACFViewCopyFormattingDescription):
+        (WKCACFViewCopyDebugDescription):
+        (WKCACFViewGetTypeID):
+        (WKCACFViewSetShouldInvertColors):
+        (WKCACFViewGetD3DDevice9):
+        * WebKitQuartzCoreAdditions/API/WKCACFView.h: Added.
+        * WebKitQuartzCoreAdditions/API/WKCACFViewPrivate.h: Added.
+        * WebKitQuartzCoreAdditions/API/WebKitQuartzCoreAdditions.cpp: Added.
+        (WKQCA::dllInstance):
+        (DllMain):
+        (WKCACFShutDown):
+        * WebKitQuartzCoreAdditions/API/WebKitQuartzCoreAdditionsBase.h: Added.
+        * WebKitQuartzCoreAdditions/CAD3DRenderer.cpp: Added.
+        (WKQCA::D3DPostProcessingContext::D3DPostProcessingContext):
+        (WKQCA::d3d):
+        (WKQCA::initialPresentationParameters):
+        (WKQCA::CAD3DRenderer::shared):
+        (WKQCA::CAD3DRenderer::CAD3DRenderer):
+        (WKQCA::CAD3DRenderer::swapChain):
+        (WKQCA::CAD3DRenderer::createD3DPostProcessingContext):
+        (WKQCA::hardwareCapabilitiesIndicateCoreAnimationSupport):
+        (WKQCA::CAD3DRenderer::initialize):
+        (WKQCA::D3DMatrixOrthoOffCenterRH):
+        (WKQCA::prepareDevice):
+        (WKQCA::updateBounds):
+        (WKQCA::CAD3DRenderer::renderAndPresent):
+        (WKQCA::CAD3DRenderer::renderToImage):
+        (WKQCA::CAD3DRenderer::setDeviceIsLost):
+        (WKQCA::CAD3DRenderer::renderInternal):
+        (WKQCA::CAD3DRenderer::postProcess):
+        (WKQCA::CAD3DRenderer::resetD3DDevice):
+        (WKQCA::CAD3DRenderer::createShaderIfNeeded):
+        (WKQCA::CAD3DRenderer::release):
+        * WebKitQuartzCoreAdditions/CAD3DRenderer.h: Added.
+        (WKQCA::D3DPostProcessingContext::sceneTexture const):
+        (WKQCA::D3DPostProcessingContext::overlayQuad const):
+        (WKQCA::CAD3DRenderer::d3dDevice9 const):
+        * WebKitQuartzCoreAdditions/CAView.cpp: Added.
+        (WKQCA::CAView::Handle::create):
+        (WKQCA::CAView::Handle::~Handle):
+        (WKQCA::CAView::Handle::mutex):
+        (WKQCA::CAView::Handle::view const):
+        (WKQCA::CAView::Handle::clear):
+        (WKQCA::CAView::Handle::Handle):
+        (WKQCA::globalStateMutex):
+        (WKQCA::registerMessageWindowClass):
+        (WKQCA::createMessageWindow):
+        (WKQCA::CAView::releaseAllD3DResources):
+        (WKQCA::CAView::CAView):
+        (WKQCA::CAView::~CAView):
+        (WKQCA::CAView::create):
+        (WKQCA::CAView::setContextDidChangeCallback):
+        (WKQCA::CAView::setLayer):
+        (WKQCA::CAView::update):
+        (WKQCA::CAView::invalidateRects):
+        (WKQCA::CAView::drawToWindow):
+        (WKQCA::CAView::drawToWindowInternal):
+        (WKQCA::CAView::drawToImage):
+        (WKQCA::CAView::willDraw):
+        (WKQCA::CAView::didDraw):
+        (WKQCA::CAView::drawIntoDC):
+        (WKQCA::CAView::setShouldInvertColors):
+        (WKQCA::CAView::scheduleNextDraw):
+        (WKQCA::CAView::displayLinkReachedCAMediaTime):
+        (WKQCA::CAView::contextDidChangeCallback):
+        (WKQCA::CAView::contextDidChange):
+        (WKQCA::CAView::updateSoon):
+        (WKQCA::CAView::updateViewsNow):
+        (WKQCA::CAView::d3dDevice9):
+        * WebKitQuartzCoreAdditions/CAView.h: Added.
+        (WKQCA::CAView::context const):
+        (WKQCA::CAView::canDraw const):
+        (WKQCA::CAView::ContextDidChangeCallback::ContextDidChangeCallback):
+        * WebKitQuartzCoreAdditions/CMakeLists.txt: Added.
+        * WebKitQuartzCoreAdditions/CVDisplayLink.cpp: Added.
+        (WKQCA::CVDisplayLink::CVDisplayLink):
+        (WKQCA::CVDisplayLink::~CVDisplayLink):
+        (WKQCA::CVDisplayLink::create):
+        (WKQCA::CVDisplayLink::start):
+        (WKQCA::CVDisplayLink::stop):
+        (WKQCA::CVDisplayLink::setPaused):
+        (WKQCA::CVDisplayLink::runIOThread):
+        * WebKitQuartzCoreAdditions/CVDisplayLink.h: Added.
+        * WebKitQuartzCoreAdditions/CVDisplayLinkClient.h: Added.
+        (WKQCA::CVDisplayLinkClient::~CVDisplayLinkClient):
+        * WebKitQuartzCoreAdditions/Image.cpp: Added.
+        (WKQCA::numBytesForSize):
+        (WKQCA::Image::create):
+        (WKQCA::Image::Image):
+        (WKQCA::Image::~Image):
+        (WKQCA::bitmapInfo):
+        (WKQCA::Image::createDIB const):
+        (WKQCA::Image::copyFileMapping):
+        * WebKitQuartzCoreAdditions/Image.h: Added.
+        (WKQCA::Image::size const):
+        * WebKitQuartzCoreAdditions/ImageConversion.cpp: Added.
+        (WKQCA::getBackBufferRectAsRenderTarget):
+        (WKQCA::getSystemMemoryCopy):
+        (WKQCA::copyRectToBitmap):
+        (WKQCA::getImageCopy):
+        (WKQCA::getBackBufferRectAsImage):
+        * WebKitQuartzCoreAdditions/ImageConversion.h: Added.
+        * WebKitQuartzCoreAdditions/InvertColorPS.hlsl: Added.
+        * WebKitQuartzCoreAdditions/WebKitQuartzCoreAdditionsInternal.h: Added.
+        * WebKitQuartzCoreAdditions/WebKitQuartzCoreAdditionsPrefix.cpp: Added.
+        * WebKitQuartzCoreAdditions/WebKitQuartzCoreAdditionsPrefix.h: Added.
+
 2017-11-06  Christopher Reid  <chris.reid@sony.com>
 
         Use enum classes within FileSystem

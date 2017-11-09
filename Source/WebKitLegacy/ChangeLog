@@ -1,3 +1,14 @@
+2017-11-06  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Add WebKitQuartzCoreAdditions library.
+        https://bugs.webkit.org/show_bug.cgi?id=179331
+
+        Reviewed by Alex Christensen.
+
+        This library should be added to the OpenSource repository.
+
+        * CMakeLists.txt:
+
 2017-11-06  Alex Christensen  <achristensen@webkit.org>
 
         Make ResourceLoader::willSendRequestInternal asynchronous
