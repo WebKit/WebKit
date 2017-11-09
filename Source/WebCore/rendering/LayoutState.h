@@ -54,16 +54,15 @@ public:
     {
     }
     LayoutState(const LayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged);
-    explicit LayoutState(RenderElement&);
+    enum class IsPaginated { No, Yes };
+    explicit LayoutState(RenderElement&, IsPaginated = IsPaginated::No);
 
     bool isPaginated() const { return m_isPaginated; }
-    void setIsPaginated() { m_isPaginated = true; }
 
     // The page logical offset is the object's offset from the top of the page in the page progression
     // direction (so an x-offset in vertical text and a y-offset for horizontal text).
     LayoutUnit pageLogicalOffset(RenderBox*, LayoutUnit childLogicalOffset) const;
     
-    void setPageLogicalHeight(LayoutUnit logicalHeight) { m_pageLogicalHeight = logicalHeight; }
     LayoutUnit pageLogicalHeight() const { return m_pageLogicalHeight; }
     bool pageLogicalHeightChanged() const { return m_pageLogicalHeightChanged; }
 
@@ -87,7 +86,7 @@ public:
     void addLayoutDelta(LayoutSize);
     LayoutSize layoutDelta() const { return m_layoutDelta; }
 #if !ASSERT_DISABLED
-    bool layoutDeltaMatches(LayoutSize);
+    bool layoutDeltaMatches(LayoutSize) const;
 #endif
 
 private:

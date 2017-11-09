@@ -34,9 +34,9 @@
 
 namespace WebCore {
 
-LayoutState::LayoutState(RenderElement& renderer)
+LayoutState::LayoutState(RenderElement& renderer, IsPaginated isPaginated)
     : m_clipped(false)
-    , m_isPaginated(false)
+    , m_isPaginated(isPaginated == IsPaginated::Yes)
     , m_pageLogicalHeightChanged(false)
 #if !ASSERT_DISABLED
     , m_layoutDeltaXSaturated(false)
@@ -56,6 +56,10 @@ LayoutState::LayoutState(RenderElement& renderer)
             m_clipRect = LayoutRect(toLayoutPoint(m_paintOffset), containerBox.cachedSizeForOverflowClip());
             m_paintOffset -= toLayoutSize(containerBox.scrollPosition());
         }
+    }
+    if (m_isPaginated) {
+        // This is just a flag for known page height (see RenderBlockFlow::checkForPaginationLogicalHeightChange).
+        m_pageLogicalHeight = 1;
     }
 }
 
@@ -261,7 +265,7 @@ void LayoutState::addLayoutDelta(LayoutSize delta)
 }
 
 #if !ASSERT_DISABLED
-bool LayoutState::layoutDeltaMatches(LayoutSize delta)
+bool LayoutState::layoutDeltaMatches(LayoutSize delta) const
 {
     return (delta.width() == m_layoutDelta.width() || m_layoutDeltaXSaturated) && (delta.height() == m_layoutDelta.height() || m_layoutDeltaYSaturated);
 }

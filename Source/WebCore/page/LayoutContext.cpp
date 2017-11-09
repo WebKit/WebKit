@@ -569,10 +569,7 @@ bool LayoutContext::pushLayoutStateForPaginationIfNeeded(RenderBlockFlow& layout
 {
     if (layoutState())
         return false;
-    m_layoutStateStack.append(std::make_unique<LayoutState>(layoutRoot));
-    layoutState()->setIsPaginated();
-    // This is just a flag for known page height (see RenderBlockFlow::checkForPaginationLogicalHeightChange).
-    layoutState()->setPageLogicalHeight(1);
+    m_layoutStateStack.append(std::make_unique<LayoutState>(layoutRoot, LayoutState::IsPaginated::Yes));
     return true;
 }
     
