@@ -1,3 +1,15 @@
+2017-11-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Include a more complete block signature in public headers to avoid potential -Wstrict-prototypes warnings
+        https://bugs.webkit.org/show_bug.cgi?id=179466
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKHTTPCookieStore.h:
+        * UIProcess/API/Cocoa/WKHTTPCookieStore.mm:
+        (-[WKHTTPCookieStore setCookie:completionHandler:]):
+        (-[WKHTTPCookieStore deleteCookie:completionHandler:]):
+
 2017-11-08  Jeremy Jones  <jeremyj@apple.com>
 
         Make WKFullScreenWidnowController more robust against modification by the embedding app.

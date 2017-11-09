@@ -56,12 +56,12 @@ WK_CLASS_AVAILABLE(macosx(10.13), ios(11.0))
  @param cookie The cookie to set.
  @param completionHandler A block to invoke once the cookie has been stored.
  */
-- (void)setCookie:(NSHTTPCookie *)cookie completionHandler:(nullable void (^)())completionHandler;
+- (void)setCookie:(NSHTTPCookie *)cookie completionHandler:(nullable void (^)(void))completionHandler;
 
 /*! @abstract Delete the specified cookie.
  @param completionHandler A block to invoke once the cookie has been deleted.
  */
-- (void)deleteCookie:(NSHTTPCookie *)cookie completionHandler:(nullable void (^)())completionHandler;
+- (void)deleteCookie:(NSHTTPCookie *)cookie completionHandler:(nullable void (^)(void))completionHandler;
 
 /*! @abstract Adds a WKHTTPCookieStoreObserver object with the cookie store.
  @param observer The observer object to add.

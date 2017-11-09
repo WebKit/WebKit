@@ -84,7 +84,7 @@ private:
     });
 }
 
-- (void)setCookie:(NSHTTPCookie *)cookie completionHandler:(void (^)())completionHandler
+- (void)setCookie:(NSHTTPCookie *)cookie completionHandler:(void (^)(void))completionHandler
 {
     _cookieStore->setCookie(cookie, [handler = adoptNS([completionHandler copy])]() {
         auto rawHandler = (void (^)())handler.get();
@@ -94,7 +94,7 @@ private:
 
 }
 
-- (void)deleteCookie:(NSHTTPCookie *)cookie completionHandler:(void (^)())completionHandler
+- (void)deleteCookie:(NSHTTPCookie *)cookie completionHandler:(void (^)(void))completionHandler
 {
     _cookieStore->deleteCookie(cookie, [handler = adoptNS([completionHandler copy])]() {
         auto rawHandler = (void (^)())handler.get();
