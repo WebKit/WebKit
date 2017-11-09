@@ -306,7 +306,7 @@ ResourceErrorOr<CachedResourceHandle<CachedRawResource>> CachedResourceLoader::r
 
 ResourceErrorOr<CachedResourceHandle<CachedRawResource>> CachedResourceLoader::requestRawResource(CachedResourceRequest&& request)
 {
-    ASSERT(request.options().destination == FetchOptions::Destination::EmptyString);
+    ASSERT(request.options().destination == FetchOptions::Destination::EmptyString || request.options().serviceWorkersMode == ServiceWorkersMode::None);
     return castCachedResourceTo<CachedRawResource>(requestResource(CachedResource::RawResource, WTFMove(request)));
 }
 
