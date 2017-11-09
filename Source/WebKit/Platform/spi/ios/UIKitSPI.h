@@ -1029,6 +1029,8 @@ extern const NSString *UIPreviewDataDDContext;
 extern const NSString *UIPreviewDataAttachmentList;
 extern const NSString *UIPreviewDataAttachmentIndex;
 
+extern NSString * const UIPreviewDataAttachmentListSourceIsManaged;
+
 UIEdgeInsets UIEdgeInsetsAdd(UIEdgeInsets lhs, UIEdgeInsets rhs, UIRectEdge);
 
 WTF_EXTERN_C_END

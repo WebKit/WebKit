@@ -1,3 +1,15 @@
+2017-11-09  Andy Estes  <aestes@apple.com>
+
+        [iOS] Adopt UIPreviewDataAttachmentListIsContentManaged
+        https://bugs.webkit.org/show_bug.cgi?id=179458
+        <rdar://problem/35034691>
+
+        Reviewed by Dan Bernstein.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _dataForPreviewItemController:atPosition:type:]):
+
 2017-11-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Include a more complete block signature in public headers to avoid potential -Wstrict-prototypes warnings
