@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "LayoutContext.h"
 #include "LayoutRect.h"
 #include <wtf/Noncopyable.h>
 
@@ -51,13 +52,11 @@ public:
 #endif
     {
     }
-
-    LayoutState(std::unique_ptr<LayoutState> ancestor, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged);
+    LayoutState(const LayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged);
     explicit LayoutState(RenderElement&);
 
     bool isPaginated() const { return m_isPaginated; }
     void setIsPaginated() { m_isPaginated = true; }
-    void clearPaginationInformation();
 
     // The page logical offset is the object's offset from the top of the page in the page progression
     // direction (so an x-offset in vertical text and a y-offset for horizontal text).
@@ -93,15 +92,12 @@ public:
     bool layoutDeltaMatches(LayoutSize);
 #endif
 
-    // FIXME: webkit.org/b/179408 LayoutContext should own the stack of LayoutState objects
-    std::unique_ptr<LayoutState> m_ancestor;
-
 private:
-    void computeOffsets(RenderBox&, LayoutSize offset);
-    void computeClipRect(RenderBox&);
-    void computePaginationInformation(RenderBox&, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged);
-    void propagateLineGridInfo(RenderBox&);
-    void establishLineGrid(RenderBlockFlow&);
+    void computeOffsets(const LayoutState& ancestor, RenderBox&, LayoutSize offset);
+    void computeClipRect(const LayoutState& ancestor, RenderBox&);
+    void computePaginationInformation(const LayoutContext::LayoutStateStack&, RenderBox&, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged);
+    void propagateLineGridInfo(const LayoutState& ancestor, RenderBox&);
+    void establishLineGrid(const LayoutContext::LayoutStateStack&, RenderBlockFlow&);
 
     // Do not add anything apart from bitfields. See https://bugs.webkit.org/show_bug.cgi?id=100173
     bool m_clipped : 1;
@@ -112,7 +108,6 @@ private:
     bool m_layoutDeltaXSaturated : 1;
     bool m_layoutDeltaYSaturated : 1;
 #endif
-
     // The current line grid that we're snapping to and the offset of the start of the grid.
     RenderBlockFlow* m_lineGrid { nullptr };
 

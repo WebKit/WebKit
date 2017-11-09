@@ -26,7 +26,6 @@
 #include "config.h"
 #include "LayoutState.h"
 
-#include "LayoutContext.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
@@ -60,9 +59,8 @@ LayoutState::LayoutState(RenderElement& renderer)
     }
 }
 
-LayoutState::LayoutState(std::unique_ptr<LayoutState> ancestor, RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged)
-    : m_ancestor(WTFMove(ancestor))
-    , m_clipped(false)
+LayoutState::LayoutState(const LayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged)
+    : m_clipped(false)
     , m_isPaginated(false)
     , m_pageLogicalHeightChanged(false)
 #if !ASSERT_DISABLED
@@ -73,23 +71,22 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> ancestor, RenderBox& rende
     , m_renderer(&renderer)
 #endif
 {
-    if (m_ancestor) {
-        computeOffsets(renderer, offset);
-        computeClipRect(renderer);
+    if (!layoutStateStack.isEmpty()) {
+        auto& ancestor = *layoutStateStack.last().get();
+        computeOffsets(ancestor, renderer, offset);
+        computeClipRect(ancestor, renderer);
     }
-    computePaginationInformation(renderer, pageLogicalHeight, pageLogicalHeightChanged);
+    computePaginationInformation(layoutStateStack, renderer, pageLogicalHeight, pageLogicalHeightChanged);
 }
 
-void LayoutState::computeOffsets(RenderBox& renderer, LayoutSize offset)
+void LayoutState::computeOffsets(const LayoutState& ancestor, RenderBox& renderer, LayoutSize offset)
 {
-    ASSERT(m_ancestor);
-
     bool fixed = renderer.isFixedPositioned();
     if (fixed) {
         FloatPoint fixedOffset = renderer.view().localToAbsolute(FloatPoint(), IsFixed);
         m_paintOffset = LayoutSize(fixedOffset.x(), fixedOffset.y()) + offset;
     } else
-        m_paintOffset = m_ancestor->m_paintOffset + offset;
+        m_paintOffset = ancestor.paintOffset() + offset;
 
     if (renderer.isOutOfFlowPositioned() && !fixed) {
         if (auto* container = renderer.container()) {
@@ -106,20 +103,18 @@ void LayoutState::computeOffsets(RenderBox& renderer, LayoutSize offset)
     if (renderer.hasOverflowClip())
         m_paintOffset -= toLayoutSize(renderer.scrollPosition());
 
-    m_layoutDelta = m_ancestor->m_layoutDelta;
+    m_layoutDelta = ancestor.layoutDelta();
 #if !ASSERT_DISABLED
-    m_layoutDeltaXSaturated = m_ancestor->m_layoutDeltaXSaturated;
-    m_layoutDeltaYSaturated = m_ancestor->m_layoutDeltaYSaturated;
+    m_layoutDeltaXSaturated = ancestor.m_layoutDeltaXSaturated;
+    m_layoutDeltaYSaturated = ancestor.m_layoutDeltaYSaturated;
 #endif
 }
 
-void LayoutState::computeClipRect(RenderBox& renderer)
+void LayoutState::computeClipRect(const LayoutState& ancestor, RenderBox& renderer)
 {
-    ASSERT(m_ancestor);
-
-    m_clipped = !renderer.isFixedPositioned() && m_ancestor->m_clipped;
+    m_clipped = !renderer.isFixedPositioned() && ancestor.isClipped();
     if (m_clipped)
-        m_clipRect = m_ancestor->m_clipRect;
+        m_clipRect = ancestor.clipRect();
     if (!renderer.hasOverflowClip())
         return;
 
@@ -132,21 +127,22 @@ void LayoutState::computeClipRect(RenderBox& renderer)
     // FIXME: <http://bugs.webkit.org/show_bug.cgi?id=13443> Apply control clip if present.
 }
 
-void LayoutState::computePaginationInformation(RenderBox& renderer, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged)
+void LayoutState::computePaginationInformation(const LayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged)
 {
+    auto* ancestor = layoutStateStack.isEmpty() ? nullptr : layoutStateStack.last().get();
     // If we establish a new page height, then cache the offset to the top of the first page.
-    // We can compare this later on to figure out what part of the page we're actually on,
+    // We can compare this later on to figure out what part of the page we're actually on.
     if (pageLogicalHeight || renderer.isRenderFragmentedFlow()) {
         m_pageLogicalHeight = pageLogicalHeight;
         bool isFlipped = renderer.style().isFlippedBlocksWritingMode();
         m_pageOffset = LayoutSize(m_layoutOffset.width() + (!isFlipped ? renderer.borderLeft() + renderer.paddingLeft() : renderer.borderRight() + renderer.paddingRight()), m_layoutOffset.height() + (!isFlipped ? renderer.borderTop() + renderer.paddingTop() : renderer.borderBottom() + renderer.paddingBottom()));
         m_pageLogicalHeightChanged = pageLogicalHeightChanged;
         m_isPaginated = true;
-    } else if (m_ancestor) {
+    } else if (ancestor) {
         // If we don't establish a new page height, then propagate the old page height and offset down.
-        m_pageLogicalHeight = m_ancestor->m_pageLogicalHeight;
-        m_pageLogicalHeightChanged = m_ancestor->m_pageLogicalHeightChanged;
-        m_pageOffset = m_ancestor->m_pageOffset;
+        m_pageLogicalHeight = ancestor->pageLogicalHeight();
+        m_pageLogicalHeightChanged = ancestor->pageLogicalHeightChanged();
+        m_pageOffset = ancestor->pageOffset();
 
         // Disable pagination for objects we don't support. For now this includes overflow:scroll/auto, inline blocks and writing mode roots.
         if (renderer.isUnsplittableForPagination()) {
@@ -157,20 +153,15 @@ void LayoutState::computePaginationInformation(RenderBox& renderer, LayoutUnit p
     }
 
     // Propagate line grid information.
-    propagateLineGridInfo(renderer);
+    if (ancestor)
+        propagateLineGridInfo(*ancestor, renderer);
 
     if (lineGrid() && (lineGrid()->style().writingMode() == renderer.style().writingMode()) && is<RenderMultiColumnFlow>(renderer))
         downcast<RenderMultiColumnFlow>(renderer).computeLineGridPaginationOrigin(*this);
 
     // If we have a new grid to track, then add it to our set.
     if (renderer.style().lineGrid() != RenderStyle::initialLineGrid() && is<RenderBlockFlow>(renderer))
-        establishLineGrid(downcast<RenderBlockFlow>(renderer));
-}
-
-void LayoutState::clearPaginationInformation()
-{
-    m_pageLogicalHeight = m_ancestor->m_pageLogicalHeight;
-    m_pageOffset = m_ancestor->m_pageOffset;
+        establishLineGrid(layoutStateStack, downcast<RenderBlockFlow>(renderer));
 }
 
 LayoutUnit LayoutState::pageLogicalOffset(RenderBox* child, LayoutUnit childLogicalOffset) const
@@ -180,34 +171,36 @@ LayoutUnit LayoutState::pageLogicalOffset(RenderBox* child, LayoutUnit childLogi
     return m_layoutOffset.width() + childLogicalOffset - m_pageOffset.width();
 }
 
-void LayoutState::propagateLineGridInfo(RenderBox& renderer)
+void LayoutState::propagateLineGridInfo(const LayoutState& ancestor, RenderBox& renderer)
 {
     // Disable line grids for objects we don't support. For now this includes overflow:scroll/auto, inline blocks and
     // writing mode roots.
-    if (!m_ancestor || renderer.isUnsplittableForPagination())
+    if (renderer.isUnsplittableForPagination())
         return;
 
-    m_lineGrid = m_ancestor->m_lineGrid;
-    m_lineGridOffset = m_ancestor->m_lineGridOffset;
-    m_lineGridPaginationOrigin = m_ancestor->m_lineGridPaginationOrigin;
+    m_lineGrid = ancestor.lineGrid();
+    m_lineGridOffset = ancestor.lineGridOffset();
+    m_lineGridPaginationOrigin = ancestor.lineGridPaginationOrigin();
 }
 
-void LayoutState::establishLineGrid(RenderBlockFlow& renderer)
+void LayoutState::establishLineGrid(const LayoutContext::LayoutStateStack& layoutStateStack, RenderBlockFlow& renderer)
 {
+    // FIXME: webkit.org/b/179440 This logic should be part of the LayoutContext.
     // First check to see if this grid has been established already.
     if (m_lineGrid) {
         if (m_lineGrid->style().lineGrid() == renderer.style().lineGrid())
             return;
         RenderBlockFlow* currentGrid = m_lineGrid;
-        for (LayoutState* currentState = m_ancestor.get(); currentState; currentState = currentState->m_ancestor.get()) {
-            if (currentState->m_lineGrid == currentGrid)
+        for (int i = layoutStateStack.size() - 1; i <= 0; --i) {
+            auto& currentState = *layoutStateStack[i].get();
+            if (currentState.m_lineGrid == currentGrid)
                 continue;
-            currentGrid = currentState->m_lineGrid;
+            currentGrid = currentState.m_lineGrid;
             if (!currentGrid)
                 break;
             if (currentGrid->style().lineGrid() == renderer.style().lineGrid()) {
                 m_lineGrid = currentGrid;
-                m_lineGridOffset = currentState->m_lineGridOffset;
+                m_lineGridOffset = currentState.m_lineGridOffset;
                 return;
             }
         }
