@@ -68,10 +68,10 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         this._selectorElement.addEventListener("mouseleave", this._hideDOMNodeHighlight.bind(this));
         this._headerElement.append(this._selectorElement);
 
-        let openBrace = document.createElement("span");
-        openBrace.classList.add("open-brace");
-        openBrace.textContent = " {";
-        this._headerElement.append(openBrace);
+        this._openBrace = document.createElement("span");
+        this._openBrace.classList.add("open-brace");
+        this._openBrace.textContent = " {";
+        this._headerElement.append(this._openBrace);
 
         if (this._style.selectorEditable) {
             this._selectorTextField = new WI.SpreadsheetSelectorField(this, this._selectorElement);
@@ -81,14 +81,14 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         this._propertiesEditor = new WI.SpreadsheetCSSStyleDeclarationEditor(this, this._style);
         this._propertiesEditor.element.classList.add("properties");
 
-        let closeBrace = document.createElement("span");
-        closeBrace.classList.add("close-brace");
-        closeBrace.textContent = "}";
+        this._closeBrace = document.createElement("span");
+        this._closeBrace.classList.add("close-brace");
+        this._closeBrace.textContent = "}";
 
         this._element.append(this._createMediaHeader(), this._headerElement);
         this.addSubview(this._propertiesEditor);
         this._propertiesEditor.needsLayout();
-        this._element.append(closeBrace);
+        this._element.append(this._closeBrace);
 
         if (!this._style.editable)
             this._element.classList.add("locked");
@@ -363,13 +363,15 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             return;
         }
 
-        if (event.target.isSelfOrDescendant(this._headerElement)) {
+        if (event.target === this._headerElement || event.target === this._openBrace) {
             this._propertiesEditor.addBlankProperty(0);
             return;
         }
 
-        const appendAfterLast = -1;
-        this._propertiesEditor.addBlankProperty(appendAfterLast);
+        if (event.target === this._element || event.target === this._closeBrace) {
+            const appendAfterLast = -1;
+            this._propertiesEditor.addBlankProperty(appendAfterLast);
+        }
     }
 
     _highlightNodesWithSelector()

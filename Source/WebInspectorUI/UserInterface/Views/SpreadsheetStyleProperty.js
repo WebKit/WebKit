@@ -150,7 +150,8 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._checkboxElement.type = "checkbox";
             this._checkboxElement.checked = this._property.enabled;
             this._checkboxElement.tabIndex = -1;
-            this._checkboxElement.addEventListener("change", () => {
+            this._checkboxElement.addEventListener("click", (event) => {
+                event.stopPropagation();
                 let disabled = !this._checkboxElement.checked;
                 this._property.commentOut(disabled);
                 this._update();

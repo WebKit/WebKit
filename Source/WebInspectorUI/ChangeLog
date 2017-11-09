@@ -1,3 +1,20 @@
+2017-11-09  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: clicking on inline swatches and property checkboxes should not add a new property
+        https://bugs.webkit.org/show_bug.cgi?id=179507
+        <rdar://problem/35452204>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.initialLayout):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleClick):
+        Don't add new properties when clicking on selector fields, source links, and property checkboxes.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._update):
+        It is safe to replace "change" event with "click" since it fires even when pressing Space key when the checkbox is focused.
+
 2017-11-09  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: support undo/redo of insertAdjacentHTML
