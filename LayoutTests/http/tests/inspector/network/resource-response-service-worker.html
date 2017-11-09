@@ -16,7 +16,6 @@ async function triggerServiceWorkerLoad(url) {
 
 function test()
 {
-    InspectorTest.debug();
     let suite = InspectorTest.createAsyncSuite("Resource.ResponseSource.ServiceWorker");
 
     function addTestCase({name, description, setup, expression, statusCode, responseSource}) {

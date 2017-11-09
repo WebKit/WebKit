@@ -76,9 +76,9 @@ class MockPageOverlay;
 class MockPaymentCoordinator;
 class NodeList;
 class Page;
+class RTCPeerConnection;
 class Range;
 class RenderedDocumentMarker;
-class RTCPeerConnection;
 class SVGSVGElement;
 class SerializedScriptValue;
 class SourceBuffer;
@@ -86,6 +86,7 @@ class StringCallback;
 class StyleSheet;
 class TimeRanges;
 class TypeConversions;
+class VoidCallback;
 class WebGLRenderingContext;
 class XMLHttpRequest;
 
@@ -557,6 +558,8 @@ public:
 
     bool isProcessingUserGesture();
     double lastHandledUserGestureTimestamp();
+
+    void withUserGesture(RefPtr<VoidCallback>&&);
 
     RefPtr<GCObservation> observeGC(JSC::JSValue);
 

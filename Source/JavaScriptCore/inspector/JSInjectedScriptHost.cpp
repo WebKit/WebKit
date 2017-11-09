@@ -272,6 +272,10 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue value = exec->uncheckedArgument(0);
 
+    JSValue internalProperties = impl().getInternalProperties(vm, exec, value);
+    if (internalProperties)
+        return internalProperties;
+
     if (JSPromise* promise = jsDynamicCast<JSPromise*>(vm, value)) {
         unsigned index = 0;
         JSArray* array = constructEmptyArray(exec, nullptr);

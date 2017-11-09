@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="../resources/inspector-test.js"></script>
+<script>
+const method = {
+    supportedMethods: "https://apple.com/apple-pay",
+    data: {
+        version: 2,
+        merchantIdentifier: "",
+        merchantCapabilities: ["supports3DS"],
+        supportedNetworks: ["visa", "masterCard"],
+        countryCode: "US",
+    },
+};
+
+const simpleDetails = {
+    total: {
+        label: "Total",
+        amount: {currency: "USD", value: "9.99"}
+    }
+};
+
+const largeDetails = {
+    total: {
+        label: "Total",
+        amount: {currency: "USD", value: "99.00"},
+    },
+    displayItems: [
+        {
+            label: "Item 1",
+            amount: {currency: "USD", value: "90.00"},
+        }, {
+            label: "Item 2",
+            amount: {currency: "USD", value: "90.00"},
+            pending: true,
+        }, {
+            label: "Item 3",
+            amount: {currency: "USD", value: "9.00"},
+        }
+    ],
+    shippingOptions: [
+        {
+            id: "shippingId1",
+            label: "Shipping Label 1",
+            amount: {currency: "USD", value: "5.00"},
+            selected: false,
+        }, {
+            id: "shippingId2",
+            label: "Shipping Label 2",
+            amount: {currency: "USD", value: "10.00"},
+            selected: true,
+        }
+    ],
+    modifiers: [
+        {
+            supportedMethods: "basic-card",
+            total: {
+                label: "Total",
+                amount: {currency: "USD", value: "99.00"},
+            },
+        }
+    ],
+};
+
+let currentRequest = null;
+function createPaymentRequest() {
+    if (currentRequest)
+        currentRequest.abort().catch(() => {});
+    currentRequest = new PaymentRequest([method], simpleDetails);
+    return currentRequest;
+}
+
+function triggerLargePaymentRequest() {
+    let request = new PaymentRequest([method], largeDetails);
+    Promise.resolve().then(() => { TestPage.dispatchEventToFrontend("Continue"); });
+    return request;
+}
+
+function triggerCreatedPaymentRequest() {
+    let request = createPaymentRequest();
+    Promise.resolve().then(() => { TestPage.dispatchEventToFrontend("Continue"); });
+    return request;
+}
+
+function triggerInitiatedPaymentRequest() {
+    let request = createPaymentRequest();
+    UIHelper.withUserGesture(async () => {
+        request.show().catch(() => {});
+        TestPage.dispatchEventToFrontend("Continue");
+    });
+    return request;
+}
+
+function triggerClosedPaymentRequest() {
+    let request = createPaymentRequest();
+    UIHelper.withUserGesture(async () => {
+        request.show().catch(() => {});
+        await request.abort();
+        TestPage.dispatchEventToFrontend("Continue");
+    });
+    return request;
+}
+
+// ----
+
+function test()
+{
+    async function propertyDescriptorString(propertyDescriptor) {
+        function inspectedPage_internalValue_JSON() {
+            return JSON.stringify(this, (key, value) => {
+                if (key === "id")
+                    return "<filtered>";
+                if (key === "currencySystem")
+                    return "<filtered>";
+                return value;
+            }, 2);
+        }
+
+        // Primitive. We have the value.
+        if (propertyDescriptor.value.type !== "object")
+            return propertyDescriptor.name + ": " + JSON.stringify(propertyDescriptor.value.description);
+
+        // Object. Stringify on the page.
+        let [jsonValue] = await promisify((cb) => { propertyDescriptor.value.callFunctionJSON(inspectedPage_internalValue_JSON, undefined, cb); });
+        return propertyDescriptor.name + ": " + jsonValue;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("RemoteObject.InternalProperties.PaymentRequest");
+
+    function addTestCase({name, description, expression}) {
+        suite.addTestCase({
+            name, description,
+            async test() {
+                let [result] = await Promise.all([
+                    InspectorTest.evaluateInPage(expression),
+                    InspectorTest.awaitEvent("Continue"),
+                ]);
+                let remoteObject = WI.RemoteObject.fromPayload(result.result);
+                let [propertyDescriptors] = await promisify((cb) => { remoteObject.getAllPropertyDescriptors(cb); });
+                for (let propertyDescriptor of propertyDescriptors.reverse()) {
+                    if (propertyDescriptor.isInternalProperty) {
+                        let displayString = await propertyDescriptorString(propertyDescriptor);
+                        InspectorTest.log("INTERNAL PROPERTY: " + displayString);
+                    }
+                }
+            }
+        });
+    }
+
+    addTestCase({
+        name: "RemoteObject.InternalProperties.PaymentRequest.Created.Large",
+        expression: `triggerLargePaymentRequest()`,
+    });
+
+    addTestCase({
+        name: "RemoteObject.InternalProperties.PaymentRequest.Created",
+        expression: `triggerCreatedPaymentRequest()`,
+    });
+
+    addTestCase({
+        name: "RemoteObject.InternalProperties.PaymentRequest.Initiated",
+        expression: `triggerInitiatedPaymentRequest()`,
+    });
+
+    addTestCase({
+        name: "RemoteObject.InternalProperties.PaymentRequest.Closed",
+        expression: `triggerClosedPaymentRequest()`,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Internal properties of a PaymentRequest.</p>
+</body>
+</html>

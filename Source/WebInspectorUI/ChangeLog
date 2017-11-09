@@ -1,3 +1,18 @@
+2017-11-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Show Internal properties of PaymentRequest in Web Inspector Console
+        https://bugs.webkit.org/show_bug.cgi?id=179276
+
+        Reviewed by Andy Estes.
+
+        * UserInterface/Test.html:
+        * UserInterface/Test/FrontendTestHarness.js:
+        (FrontendTestHarness.prototype.evaluateInPage):
+        * UserInterface/Test/TestUtilities.js: Added.
+        (promisify):
+        Make async tests a little easier to work with by providing promises
+        in some cases that would normally take a callback.
+
 2017-11-08  Brian Burg  <bburg@apple.com>
 
         Web Inspector: fix incorrect curly quote orientation in a UIString

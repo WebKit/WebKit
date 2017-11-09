@@ -1,0 +1,168 @@
+Internal properties of a PaymentRequest.
+
+
+== Running test suite: RemoteObject.InternalProperties.PaymentRequest
+-- Running test case: RemoteObject.InternalProperties.PaymentRequest.Created.Large
+INTERNAL PROPERTY: state: "created"
+INTERNAL PROPERTY: details: {
+  "id": "<filtered>",
+  "total": {
+    "label": "Total",
+    "amount": {
+      "currency": "USD",
+      "value": "99.00",
+      "currencySystem": "<filtered>"
+    },
+    "pending": false
+  },
+  "displayItems": [
+    {
+      "label": "Item 1",
+      "amount": {
+        "currency": "USD",
+        "value": "90.00",
+        "currencySystem": "<filtered>"
+      },
+      "pending": false
+    },
+    {
+      "label": "Item 2",
+      "amount": {
+        "currency": "USD",
+        "value": "90.00",
+        "currencySystem": "<filtered>"
+      },
+      "pending": true
+    },
+    {
+      "label": "Item 3",
+      "amount": {
+        "currency": "USD",
+        "value": "9.00",
+        "currencySystem": "<filtered>"
+      },
+      "pending": false
+    }
+  ],
+  "shippingOptions": [
+    {
+      "id": "<filtered>",
+      "label": "Shipping Label 1",
+      "amount": {
+        "currency": "USD",
+        "value": "5.00",
+        "currencySystem": "<filtered>"
+      },
+      "selected": false
+    },
+    {
+      "id": "<filtered>",
+      "label": "Shipping Label 2",
+      "amount": {
+        "currency": "USD",
+        "value": "10.00",
+        "currencySystem": "<filtered>"
+      },
+      "selected": true
+    }
+  ],
+  "modifiers": [
+    {
+      "supportedMethods": "basic-card",
+      "total": {
+        "label": "Total",
+        "amount": {
+          "currency": "USD",
+          "value": "99.00",
+          "currencySystem": "<filtered>"
+        },
+        "pending": false
+      },
+      "additionalDisplayItems": [],
+      "data": null
+    }
+  ]
+}
+INTERNAL PROPERTY: options: {
+  "requestPayerName": false,
+  "requestPayerEmail": false,
+  "requestPayerPhone": false,
+  "requestShipping": false,
+  "shippingType": "shipping"
+}
+
+-- Running test case: RemoteObject.InternalProperties.PaymentRequest.Created
+INTERNAL PROPERTY: state: "created"
+INTERNAL PROPERTY: details: {
+  "id": "<filtered>",
+  "total": {
+    "label": "Total",
+    "amount": {
+      "currency": "USD",
+      "value": "9.99",
+      "currencySystem": "<filtered>"
+    },
+    "pending": false
+  },
+  "displayItems": [],
+  "shippingOptions": [],
+  "modifiers": []
+}
+INTERNAL PROPERTY: options: {
+  "requestPayerName": false,
+  "requestPayerEmail": false,
+  "requestPayerPhone": false,
+  "requestShipping": false,
+  "shippingType": "shipping"
+}
+
+-- Running test case: RemoteObject.InternalProperties.PaymentRequest.Initiated
+INTERNAL PROPERTY: state: "interactive"
+INTERNAL PROPERTY: details: {
+  "id": "<filtered>",
+  "total": {
+    "label": "Total",
+    "amount": {
+      "currency": "USD",
+      "value": "9.99",
+      "currencySystem": "<filtered>"
+    },
+    "pending": false
+  },
+  "displayItems": [],
+  "shippingOptions": [],
+  "modifiers": []
+}
+INTERNAL PROPERTY: options: {
+  "requestPayerName": false,
+  "requestPayerEmail": false,
+  "requestPayerPhone": false,
+  "requestShipping": false,
+  "shippingType": "shipping"
+}
+
+-- Running test case: RemoteObject.InternalProperties.PaymentRequest.Closed
+INTERNAL PROPERTY: state: "closed"
+INTERNAL PROPERTY: details: {
+  "id": "<filtered>",
+  "total": {
+    "label": "Total",
+    "amount": {
+      "currency": "USD",
+      "value": "9.99",
+      "currencySystem": "<filtered>"
+    },
+    "pending": false
+  },
+  "displayItems": [],
+  "shippingOptions": [],
+  "modifiers": []
+}
+INTERNAL PROPERTY: options: {
+  "requestPayerName": false,
+  "requestPayerEmail": false,
+  "requestPayerPhone": false,
+  "requestShipping": false,
+  "shippingType": "shipping"
+}
+

@@ -86,7 +86,10 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
             return;
         }
 
-        RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", includeCommandLineAPI: false}, callback);
+        if (typeof callback === "function")
+            RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", includeCommandLineAPI: false}, callback);
+        else
+            return RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", includeCommandLineAPI: false});
     }
 
     debug()

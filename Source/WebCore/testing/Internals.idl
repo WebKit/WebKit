@@ -513,6 +513,8 @@ enum EventThrottlingBehavior {
     boolean isProcessingUserGesture();
     double lastHandledUserGestureTimestamp();
 
+    void withUserGesture(VoidCallback callback);
+
     GCObservation? observeGC(any observed);
 
     void setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInterfaceLayoutDirection);

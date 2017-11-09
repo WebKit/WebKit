@@ -156,4 +156,9 @@ window.UIHelper = class UIHelper {
 
         return promise.then(finish, finish);
     }
+
+    static withUserGesture(callback)
+    {
+        internals.withUserGesture(callback);
+    }
 }
