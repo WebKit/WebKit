@@ -151,7 +151,7 @@ private:
     void resumeFromDocumentSuspension() override;
     AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const override;
 
-    Frame* frameForCurrentScale() const;
+    RefPtr<Frame> frameForCurrentScale() const;
     void inheritViewAttributes(const SVGViewElement&);
     Ref<NodeList> collectIntersectionOrEnclosureList(SVGRect&, SVGElement*, bool (*checkFunction)(SVGElement&, SVGRect&));
 

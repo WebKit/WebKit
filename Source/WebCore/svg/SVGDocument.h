@@ -31,7 +31,7 @@ class SVGDocument final : public XMLDocument {
 public:
     static Ref<SVGDocument> create(Frame*, const URL&);
 
-    static SVGSVGElement* rootElement(const Document&);
+    static RefPtr<SVGSVGElement> rootElement(const Document&);
 
     bool zoomAndPanEnabled() const;
     void startPan(const FloatPoint& start);

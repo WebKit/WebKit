@@ -288,7 +288,7 @@ SVGElement::~SVGElement()
     if (m_svgRareData) {
         for (SVGElement* instance : m_svgRareData->instances())
             instance->m_svgRareData->setCorrespondingElement(nullptr);
-        if (SVGElement* correspondingElement = m_svgRareData->correspondingElement())
+        if (auto correspondingElement = makeRefPtr(m_svgRareData->correspondingElement()))
             correspondingElement->m_svgRareData->instances().remove(this);
 
         m_svgRareData = nullptr;
@@ -430,7 +430,7 @@ SVGElement* SVGElement::correspondingElement() const
     return m_svgRareData ? m_svgRareData->correspondingElement() : nullptr;
 }
 
-SVGUseElement* SVGElement::correspondingUseElement() const
+RefPtr<SVGUseElement> SVGElement::correspondingUseElement() const
 {
     auto* root = containingShadowRoot();
     if (!root)
@@ -446,7 +446,7 @@ SVGUseElement* SVGElement::correspondingUseElement() const
 void SVGElement::setCorrespondingElement(SVGElement* correspondingElement)
 {
     if (m_svgRareData) {
-        if (SVGElement* oldCorrespondingElement = m_svgRareData->correspondingElement())
+        if (auto oldCorrespondingElement = makeRefPtr(m_svgRareData->correspondingElement()))
             oldCorrespondingElement->m_svgRareData->instances().remove(this);
     }
     if (m_svgRareData || correspondingElement)
@@ -729,7 +729,7 @@ void SVGElement::synchronizeSystemLanguage(SVGElement* contextElement)
 std::optional<ElementStyle> SVGElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
 {
     // If the element is in a <use> tree we get the style from the definition tree.
-    if (auto* styleElement = this->correspondingElement())
+    if (auto styleElement = makeRefPtr(this->correspondingElement()))
         return styleElement->resolveStyle(&parentStyle);
 
     return resolveStyle(&parentStyle);
@@ -759,7 +759,7 @@ const RenderStyle* SVGElement::computedStyle(PseudoId pseudoElementSpecifier)
         return Element::computedStyle(pseudoElementSpecifier);
 
     const RenderStyle* parentStyle = nullptr;
-    if (Element* parent = parentOrShadowHostElement()) {
+    if (auto parent = makeRefPtr(parentOrShadowHostElement())) {
         if (auto renderer = parent->renderer())
             parentStyle = &renderer->style();
     }
@@ -1003,11 +1003,11 @@ void SVGElement::buildPendingResourcesIfNeeded()
     extensions.markPendingResourcesForRemoval(resourceId);
 
     // Rebuild pending resources for each client of a pending resource that is being removed.
-    while (Element* clientElement = extensions.removeElementFromPendingResourcesForRemovalMap(resourceId)) {
+    while (auto clientElement = extensions.removeElementFromPendingResourcesForRemovalMap(resourceId)) {
         ASSERT(clientElement->hasPendingResources());
         if (clientElement->hasPendingResources()) {
             clientElement->buildPendingResource();
-            extensions.clearHasPendingResourcesIfPossible(clientElement);
+            extensions.clearHasPendingResourcesIfPossible(clientElement.get());
         }
     }
 }
@@ -1086,7 +1086,7 @@ void SVGElement::updateRelativeLengthsInformation(bool hasRelativeLengths, SVGEl
         return;
 
     // Find first styled parent node, and notify it that we've changed our relative length state.
-    ContainerNode* node = parentNode();
+    auto node = makeRefPtr(parentNode());
     while (node) {
         if (!node->isSVGElement())
             break;
@@ -1129,8 +1129,8 @@ void SVGElement::invalidateInstances()
 
     auto& instances = this->instances();
     while (!instances.isEmpty()) {
-        SVGElement* instance = *instances.begin();
-        if (SVGUseElement* useElement = instance->correspondingUseElement())
+        auto instance = makeRefPtr(*instances.begin());
+        if (auto useElement = instance->correspondingUseElement())
             useElement->invalidateShadowTree();
         instance->setCorrespondingElement(nullptr);
     } while (!instances.isEmpty());

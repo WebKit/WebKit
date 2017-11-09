@@ -84,7 +84,7 @@ SVGImage::~SVGImage()
     ASSERT(!m_chromeClient || !m_chromeClient->image());
 }
 
-inline SVGSVGElement* SVGImage::rootElement() const
+inline RefPtr<SVGSVGElement> SVGImage::rootElement() const
 {
     if (!m_page)
         return nullptr;
@@ -93,7 +93,7 @@ inline SVGSVGElement* SVGImage::rootElement() const
 
 bool SVGImage::hasSingleSecurityOrigin() const
 {
-    SVGSVGElement* rootElement = this->rootElement();
+    auto rootElement = this->rootElement();
     if (!rootElement)
         return true;
 
@@ -122,14 +122,14 @@ void SVGImage::setContainerSize(const FloatSize& size)
     if (!usesContainerSize())
         return;
 
-    SVGSVGElement* rootElement = this->rootElement();
+    auto rootElement = this->rootElement();
     if (!rootElement)
         return;
     auto* renderer = downcast<RenderSVGRoot>(rootElement->renderer());
     if (!renderer)
         return;
 
-    FrameView* view = frameView();
+    auto view = makeRefPtr(frameView());
     view->resize(this->containerSize());
 
     renderer->setContainerSize(IntSize(size));
@@ -137,7 +137,7 @@ void SVGImage::setContainerSize(const FloatSize& size)
 
 IntSize SVGImage::containerSize() const
 {
-    SVGSVGElement* rootElement = this->rootElement();
+    auto rootElement = this->rootElement();
     if (!rootElement)
         return IntSize();
 
@@ -285,7 +285,7 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
     if (!m_page)
         return ImageDrawResult::DidNothing;
 
-    FrameView* view = frameView();
+    auto view = makeRefPtr(frameView());
     ASSERT(view);
 
     GraphicsContextStateSaver stateSaver(context);
@@ -332,7 +332,7 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
 
 RenderBox* SVGImage::embeddedContentBox() const
 {
-    SVGSVGElement* rootElement = this->rootElement();
+    auto rootElement = this->rootElement();
     if (!rootElement)
         return nullptr;
     return downcast<RenderBox>(rootElement->renderer());
@@ -347,7 +347,7 @@ FrameView* SVGImage::frameView() const
 
 bool SVGImage::hasRelativeWidth() const
 {
-    SVGSVGElement* rootElement = this->rootElement();
+    auto rootElement = this->rootElement();
     if (!rootElement)
         return false;
     return rootElement->intrinsicWidth().isPercentOrCalculated();
@@ -355,7 +355,7 @@ bool SVGImage::hasRelativeWidth() const
 
 bool SVGImage::hasRelativeHeight() const
 {
-    SVGSVGElement* rootElement = this->rootElement();
+    auto rootElement = this->rootElement();
     if (!rootElement)
         return false;
     return rootElement->intrinsicHeight().isPercentOrCalculated();
@@ -363,7 +363,7 @@ bool SVGImage::hasRelativeHeight() const
 
 void SVGImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
 {
-    SVGSVGElement* rootElement = this->rootElement();
+    auto rootElement = this->rootElement();
     if (!rootElement)
         return;
 
@@ -379,7 +379,7 @@ void SVGImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrin
 
 void SVGImage::startAnimation()
 {
-    SVGSVGElement* rootElement = this->rootElement();
+    auto rootElement = this->rootElement();
     if (!rootElement || !rootElement->animationsPaused())
         return;
     rootElement->unpauseAnimations();
@@ -388,7 +388,7 @@ void SVGImage::startAnimation()
 
 void SVGImage::stopAnimation()
 {
-    SVGSVGElement* rootElement = this->rootElement();
+    auto rootElement = this->rootElement();
     if (!rootElement)
         return;
     rootElement->pauseAnimations();
@@ -401,7 +401,7 @@ void SVGImage::resetAnimation()
 
 bool SVGImage::isAnimating() const
 {
-    SVGSVGElement* rootElement = this->rootElement();
+    auto rootElement = this->rootElement();
     if (!rootElement)
         return false;
     return rootElement->hasActiveAnimation();
@@ -409,10 +409,10 @@ bool SVGImage::isAnimating() const
 
 void SVGImage::reportApproximateMemoryCost() const
 {
-    Document* document = m_page->mainFrame().document();
+    auto document = makeRefPtr(m_page->mainFrame().document());
     size_t decodedImageMemoryCost = 0;
 
-    for (Node* node = document; node; node = NodeTraversal::next(*node))
+    for (RefPtr<Node> node = document; node; node = NodeTraversal::next(*node))
         decodedImageMemoryCost += node->approximateMemoryCost();
 
     JSC::VM& vm = commonVM();

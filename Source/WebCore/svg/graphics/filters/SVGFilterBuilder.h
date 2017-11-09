@@ -38,7 +38,7 @@ public:
 
     void add(const AtomicString& id, RefPtr<FilterEffect>);
 
-    FilterEffect* getEffectById(const AtomicString& id) const;
+    RefPtr<FilterEffect> getEffectById(const AtomicString& id) const;
     FilterEffect* lastEffect() const { return m_lastEffect.get(); }
 
     void appendEffectToEffectReferences(RefPtr<FilterEffect>&&, RenderObject*);

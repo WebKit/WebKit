@@ -64,7 +64,7 @@ void SVGFEComponentTransferElement::parseAttribute(const QualifiedName& name, co
 
 RefPtr<FilterEffect> SVGFEComponentTransferElement::build(SVGFilterBuilder* filterBuilder, Filter& filter)
 {
-    FilterEffect* input1 = filterBuilder->getEffectById(in1());
+    auto input1 = filterBuilder->getEffectById(in1());
     
     if (!input1)
         return nullptr;

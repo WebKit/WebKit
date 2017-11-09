@@ -154,7 +154,7 @@ void invalidateFilterPrimitiveParent(SVGElement* element)
     if (!element)
         return;
 
-    ContainerNode* parent = element->parentNode();
+    auto parent = makeRefPtr(element->parentNode());
 
     if (!parent)
         return;

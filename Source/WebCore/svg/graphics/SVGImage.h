@@ -95,7 +95,7 @@ private:
     void drawPatternForContainer(GraphicsContext&, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing,
         CompositeOperator, const FloatRect&, BlendMode);
 
-    SVGSVGElement* rootElement() const;
+    RefPtr<SVGSVGElement> rootElement() const;
 
     std::unique_ptr<SVGImageChromeClient> m_chromeClient;
     std::unique_ptr<Page> m_page;

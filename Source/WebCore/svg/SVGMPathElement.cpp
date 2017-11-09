@@ -62,7 +62,7 @@ void SVGMPathElement::buildPendingResource()
         return;
 
     String id;
-    Element* target = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
+    auto target = makeRefPtr(SVGURIReference::targetElementFromIRIString(href(), document(), &id));
     if (!target) {
         // Do not register as pending if we are already pending this resource.
         if (document().accessSVGExtensions().isPendingResource(this, id))
@@ -75,7 +75,7 @@ void SVGMPathElement::buildPendingResource()
     } else if (target->isSVGElement()) {
         // Register us with the target in the dependencies map. Any change of hrefElement
         // that leads to relayout/repainting now informs us, so we can react to it.
-        document().accessSVGExtensions().addElementReferencingTarget(this, downcast<SVGElement>(target));
+        document().accessSVGExtensions().addElementReferencingTarget(this, downcast<SVGElement>(target.get()));
     }
 
     targetPathChanged();
@@ -125,7 +125,7 @@ void SVGMPathElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGElement::svgAttributeChanged(attrName);
 }
 
-SVGPathElement* SVGMPathElement::pathElement()
+RefPtr<SVGPathElement> SVGMPathElement::pathElement()
 {
     Element* target = targetElementFromIRIString(href(), document());
     if (is<SVGPathElement>(target))

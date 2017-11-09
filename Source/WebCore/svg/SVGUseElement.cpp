@@ -142,7 +142,7 @@ void SVGUseElement::transferSizeAttributesToTargetClone(SVGElement& shadowElemen
     } else if (is<SVGSVGElement>(shadowElement)) {
         // Spec (<use> on <svg>): If attributes width and/or height are provided on the 'use' element, then these
         // values will override the corresponding attributes on the 'svg' in the generated tree.
-        SVGElement* correspondingElement = shadowElement.correspondingElement();
+        auto correspondingElement = makeRefPtr(shadowElement.correspondingElement());
         shadowElement.setAttribute(SVGNames::widthAttr, (widthIsValid() && width().valueInSpecifiedUnits()) ? AtomicString(width().valueAsString()) : (correspondingElement ? correspondingElement->getAttribute(SVGNames::widthAttr) : nullAtom()));
         shadowElement.setAttribute(SVGNames::heightAttr, (heightIsValid() && height().valueInSpecifiedUnits()) ? AtomicString(height().valueAsString()) : (correspondingElement ? correspondingElement->getAttribute(SVGNames::heightAttr) : nullAtom()));
     }
@@ -156,7 +156,7 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
         updateRelativeLengthsInformation();
         if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr) {
             // FIXME: It's unnecessarily inefficient to update both width and height each time either is changed.
-            if (auto* targetClone = this->targetClone())
+            if (auto targetClone = this->targetClone())
                 transferSizeAttributesToTargetClone(*targetClone);
         }
         if (auto* renderer = this->renderer())
@@ -266,7 +266,7 @@ void SVGUseElement::updateShadowTree()
     m_shadowTreeNeedsUpdate = false;
 }
 
-SVGElement* SVGUseElement::targetClone() const
+RefPtr<SVGElement> SVGUseElement::targetClone() const
 {
     auto root = userAgentShadowRoot();
     if (!root)
@@ -293,7 +293,7 @@ static bool isDirectReference(const SVGElement& element)
 
 Path SVGUseElement::toClipPath()
 {
-    auto* targetClone = this->targetClone();
+    auto targetClone = this->targetClone();
     if (!is<SVGGraphicsElement>(targetClone))
         return { };
 
@@ -313,7 +313,7 @@ Path SVGUseElement::toClipPath()
 
 RenderElement* SVGUseElement::rendererClipChild() const
 {
-    auto* targetClone = this->targetClone();
+    auto targetClone = this->targetClone();
     if (!targetClone)
         return nullptr;
     if (!isDirectReference(*targetClone))
@@ -405,7 +405,7 @@ SVGElement* SVGUseElement::findTarget(String* targetID) const
     auto* correspondingElement = this->correspondingElement();
     auto& original = correspondingElement ? downcast<SVGUseElement>(*correspondingElement) : *this;
 
-    auto* targetCandidate = targetElementFromIRIString(original.href(), original.document(), targetID, original.externalDocument());
+    auto targetCandidate = makeRefPtr(targetElementFromIRIString(original.href(), original.document(), targetID, original.externalDocument()));
     if (targetID && !targetID->isNull()) {
         // If the reference is external, don't return the target ID to the caller.
         // The caller would use the target ID to wait for a pending resource on the wrong document.
@@ -538,7 +538,7 @@ void SVGUseElement::invalidateShadowTree()
 void SVGUseElement::invalidateDependentShadowTrees()
 {
     for (auto* instance : instances()) {
-        if (auto* element = instance->correspondingUseElement())
+        if (auto element = instance->correspondingUseElement())
             element->invalidateShadowTree();
     }
 }
@@ -548,7 +548,7 @@ bool SVGUseElement::selfHasRelativeLengths() const
     if (x().isRelative() || y().isRelative() || width().isRelative() || height().isRelative())
         return true;
 
-    auto* targetClone = this->targetClone();
+    auto targetClone = this->targetClone();
     return targetClone && targetClone->hasRelativeLengths();
 }
 

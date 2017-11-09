@@ -234,7 +234,7 @@ void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrNa
 
 RefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* filterBuilder, Filter& filter)
 {
-    auto* input1 = filterBuilder->getEffectById(in1());
+    auto input1 = filterBuilder->getEffectById(in1());
 
     if (!input1)
         return nullptr;

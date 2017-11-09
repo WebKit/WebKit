@@ -125,7 +125,7 @@ void SVGAElement::defaultEventHandler(Event& event)
             String url = stripLeadingAndTrailingHTMLSpaces(href());
 
             if (url[0] == '#') {
-                Element* targetElement = treeScope().getElementById(url.substringSharingImpl(1));
+                auto targetElement = makeRefPtr(treeScope().getElementById(url.substringSharingImpl(1)));
                 if (is<SVGSMILElement>(targetElement)) {
                     downcast<SVGSMILElement>(*targetElement).beginByLinkActivation();
                     event.setDefaultHandled();
@@ -141,7 +141,7 @@ void SVGAElement::defaultEventHandler(Event& event)
                 target = "_blank";
             event.setDefaultHandled();
 
-            Frame* frame = document().frame();
+            auto frame = makeRefPtr(document().frame());
             if (!frame)
                 return;
             frame->loader().urlSelected(document().completeURL(url), target, &event, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate());

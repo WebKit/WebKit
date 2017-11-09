@@ -76,7 +76,7 @@ void SVGFontFaceUriElement::childrenChanged(const ChildChange& change)
     if (!parentNode() || !parentNode()->hasTagName(font_face_srcTag))
         return;
     
-    ContainerNode* grandparent = parentNode()->parentNode();
+    auto grandparent = makeRefPtr(parentNode()->parentNode());
     if (grandparent && grandparent->hasTagName(font_faceTag))
         downcast<SVGFontFaceElement>(*grandparent).rebuildFontFace();
 }

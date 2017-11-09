@@ -102,7 +102,7 @@ void SVGFEImageElement::buildPendingResource()
         return;
 
     String id;
-    Element* target = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
+    auto target = makeRefPtr(SVGURIReference::targetElementFromIRIString(href(), document(), &id));
     if (!target) {
         if (id.isEmpty())
             requestImageResource();
@@ -113,7 +113,7 @@ void SVGFEImageElement::buildPendingResource()
     } else if (target->isSVGElement()) {
         // Register us with the target in the dependencies map. Any change of hrefElement
         // that leads to relayout/repainting now informs us, so we can react to it.
-        document().accessSVGExtensions().addElementReferencingTarget(this, downcast<SVGElement>(target));
+        document().accessSVGExtensions().addElementReferencingTarget(this, downcast<SVGElement>(target.get()));
     }
 
     invalidate();
@@ -173,7 +173,7 @@ void SVGFEImageElement::notifyFinished(CachedResource&)
     if (!isConnected())
         return;
 
-    Element* parent = parentElement();
+    auto parent = makeRefPtr(parentElement());
 
     if (!parent || !parent->hasTagName(SVGNames::filterTag))
         return;

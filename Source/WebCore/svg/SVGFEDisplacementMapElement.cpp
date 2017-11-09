@@ -123,8 +123,8 @@ void SVGFEDisplacementMapElement::svgAttributeChanged(const QualifiedName& attrN
 
 RefPtr<FilterEffect> SVGFEDisplacementMapElement::build(SVGFilterBuilder* filterBuilder, Filter& filter)
 {
-    FilterEffect* input1 = filterBuilder->getEffectById(in1());
-    FilterEffect* input2 = filterBuilder->getEffectById(in2());
+    auto input1 = filterBuilder->getEffectById(in1());
+    auto input2 = filterBuilder->getEffectById(in2());
     
     if (!input1 || !input2)
         return nullptr;

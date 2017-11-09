@@ -55,7 +55,7 @@ void SVGAnimatedPathAnimator::stopAnimValAnimation(const SVGElementAnimatedPrope
 
 void SVGAnimatedPathAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGPathByteStream* byteStream)
 {
-    SVGAnimatedPathSegListPropertyTearOff* property = castAnimatedPropertyToActualType<SVGAnimatedPathSegListPropertyTearOff>(animatedTypes[0].properties[0].get());
+    RefPtr<SVGAnimatedPathSegListPropertyTearOff> property = castAnimatedPropertyToActualType<SVGAnimatedPathSegListPropertyTearOff>(animatedTypes[0].properties[0].get());
     const auto& baseValue = property->currentBaseValue();
 
     buildSVGPathByteStreamFromSVGPathSegListValues(baseValue, *byteStream, UnalteredParsing);

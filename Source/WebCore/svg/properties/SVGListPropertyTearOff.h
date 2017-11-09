@@ -141,7 +141,7 @@ protected:
         unsigned size = m_wrappers->size();
         ASSERT(size == m_values->size());
         for (unsigned i = 0; i < size; ++i) {
-            ListItemTearOff* item = m_wrappers->at(i);
+            auto item = makeRefPtr(m_wrappers->at(i));
             if (!item)
                 continue;
             item->setAnimatedProperty(m_animatedProperty.ptr());
@@ -159,7 +159,7 @@ protected:
 
     bool processIncomingListItemWrapper(Ref<ListItemTearOff>& newItem, unsigned* indexToModify) override
     {
-        SVGAnimatedProperty* animatedPropertyOfItem = newItem->animatedProperty();
+        auto animatedPropertyOfItem = makeRefPtr(newItem->animatedProperty());
 
         // newItem has been created manually, it doesn't belong to any SVGElement.
         // (for example: "textElement.x.baseVal.appendItem(svgsvgElement.createSVGLength())")
@@ -181,7 +181,7 @@ protected:
         // Spec: If newItem is already in a list, it is removed from its previous list before it is inserted into this list.
         // 'newItem' is already living in another list. If it's not our list, synchronize the other lists wrappers after the removal.
         bool livesInOtherList = animatedPropertyOfItem != m_animatedProperty.ptr();
-        AnimatedListPropertyTearOff* propertyTearOff = static_cast<AnimatedListPropertyTearOff*>(animatedPropertyOfItem);
+        AnimatedListPropertyTearOff* propertyTearOff = static_cast<AnimatedListPropertyTearOff*>(animatedPropertyOfItem.get());
         int indexToRemove = propertyTearOff->findItem(newItem.ptr());
         ASSERT(indexToRemove != -1);
 

@@ -176,13 +176,13 @@ void SVGSMILElement::buildPendingResource()
     }
 
     String id;
-    Element* target;
+    RefPtr<Element> target;
     auto& href = getAttribute(XLinkNames::hrefAttr);
     if (href.isEmpty())
         target = parentElement();
     else
         target = SVGURIReference::targetElementFromIRIString(href.string(), document(), &id);
-    SVGElement* svgTarget = is<SVGElement>(target) ? downcast<SVGElement>(target) : nullptr;
+    SVGElement* svgTarget = is<SVGElement>(target) ? downcast<SVGElement>(target.get()) : nullptr;
 
     if (svgTarget && !svgTarget->isConnected())
         svgTarget = nullptr;
@@ -263,7 +263,7 @@ Node::InsertedIntoAncestorResult SVGSMILElement::insertedIntoAncestor(InsertionT
 
     updateAttributeName();
 
-    SVGSVGElement* owner = ownerSVGElement();
+    auto owner = makeRefPtr(ownerSVGElement());
     if (!owner)
         return InsertedIntoAncestorResult::Done;
 
@@ -544,7 +544,7 @@ void SVGSMILElement::connectConditions()
     for (auto& condition : m_conditions) {
         if (condition.m_type == Condition::EventBase) {
             ASSERT(!condition.m_syncbase);
-            Element* eventBase = eventBaseFor(condition);
+            auto eventBase = makeRefPtr(eventBaseFor(condition));
             if (!eventBase)
                 continue;
             ASSERT(!condition.m_eventListener);
@@ -579,7 +579,7 @@ void SVGSMILElement::disconnectConditions()
             // no guarantee that eventBaseFor() will be able to find our condition's
             // original eventBase. So, we also have to disconnect ourselves from
             // our condition event listener, in case it later fires.
-            Element* eventBase = eventBaseFor(condition);
+            auto eventBase = makeRefPtr(eventBaseFor(condition));
             if (eventBase)
                 eventBase->removeEventListener(condition.m_name, *condition.m_eventListener, false);
             condition.m_eventListener->disconnectAnimation();

@@ -134,7 +134,7 @@ void SVGFEMorphologyElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RefPtr<FilterEffect> SVGFEMorphologyElement::build(SVGFilterBuilder* filterBuilder, Filter& filter)
 {
-    FilterEffect* input1 = filterBuilder->getEffectById(in1());
+    auto input1 = filterBuilder->getEffectById(in1());
     float xRadius = radiusX();
     float yRadius = radiusY();
 

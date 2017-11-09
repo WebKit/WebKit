@@ -643,7 +643,7 @@ void SVGAnimationElement::adjustForInheritance(SVGElement* targetElement, const 
     // In the future we might want to work with the value type directly to avoid the String parsing.
     ASSERT(targetElement);
 
-    Element* parent = targetElement->parentElement();
+    auto parent = makeRefPtr(targetElement->parentElement());
     if (!parent || !parent->isSVGElement())
         return;
 
@@ -662,13 +662,13 @@ static bool inheritsFromProperty(SVGElement*, const QualifiedName& attributeName
 
 void SVGAnimationElement::determinePropertyValueTypes(const String& from, const String& to)
 {
-    SVGElement* targetElement = this->targetElement();
+    auto targetElement = makeRefPtr(this->targetElement());
     ASSERT(targetElement);
 
     const QualifiedName& attributeName = this->attributeName();
-    if (inheritsFromProperty(targetElement, attributeName, from))
+    if (inheritsFromProperty(targetElement.get(), attributeName, from))
         m_fromPropertyValueType = InheritValue;
-    if (inheritsFromProperty(targetElement, attributeName, to))
+    if (inheritsFromProperty(targetElement.get(), attributeName, to))
         m_toPropertyValueType = InheritValue;
 }
 void SVGAnimationElement::resetAnimatedPropertyType()

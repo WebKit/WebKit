@@ -133,7 +133,7 @@ RefPtr<FilterEffect> SVGFEDropShadowElement::build(SVGFilterBuilder* filterBuild
     const Color& color = svgStyle.floodColor();
     float opacity = svgStyle.floodOpacity();
 
-    FilterEffect* input1 = filterBuilder->getEffectById(in1());
+    auto input1 = filterBuilder->getEffectById(in1());
     if (!input1)
         return nullptr;
 

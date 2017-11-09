@@ -99,7 +99,7 @@ public:
     bool getBoundingBox(FloatRect&, SVGLocatable::StyleUpdateStrategy = SVGLocatable::AllowStyleUpdate);
 
     SVGElement* correspondingElement() const;
-    SVGUseElement* correspondingUseElement() const;
+    RefPtr<SVGUseElement> correspondingUseElement() const;
 
     void setCorrespondingElement(SVGElement*);
 

@@ -162,9 +162,9 @@ bool SVGLinearGradientElement::collectGradientAttributes(LinearGradientAttribute
 
     while (true) {
         // Respect xlink:href, take attributes from referenced element
-        Node* refNode = SVGURIReference::targetElementFromIRIString(current->href(), document());
+        auto refNode = makeRefPtr(SVGURIReference::targetElementFromIRIString(current->href(), document()));
         if (is<SVGGradientElement>(refNode)) {
-            current = downcast<SVGGradientElement>(refNode);
+            current = downcast<SVGGradientElement>(refNode.get());
 
             // Cycle detection
             if (processedGradients.contains(current))

@@ -104,7 +104,7 @@ public:
 
     // The following two functions are used for scheduling a pending resource to be removed.
     void markPendingResourcesForRemoval(const AtomicString&);
-    Element* removeElementFromPendingResourcesForRemovalMap(const AtomicString&);
+    RefPtr<Element> removeElementFromPendingResourcesForRemovalMap(const AtomicString&);
 
 private:
     bool isElementWithPendingResources(Element*) const;

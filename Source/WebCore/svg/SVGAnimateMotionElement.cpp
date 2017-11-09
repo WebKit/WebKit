@@ -56,7 +56,7 @@ Ref<SVGAnimateMotionElement> SVGAnimateMotionElement::create(const QualifiedName
 
 bool SVGAnimateMotionElement::hasValidAttributeType()
 {
-    SVGElement* targetElement = this->targetElement();
+    auto targetElement = makeRefPtr(this->targetElement());
     if (!targetElement)
         return false;
 
@@ -122,9 +122,9 @@ void SVGAnimateMotionElement::updateAnimationPath()
     bool foundMPath = false;
 
     for (auto& mPath : childrenOfType<SVGMPathElement>(*this)) {
-        SVGPathElement* pathElement = mPath.pathElement();
+        auto pathElement = mPath.pathElement();
         if (pathElement) {
-            m_animationPath = pathFromGraphicsElement(pathElement);
+            m_animationPath = pathFromGraphicsElement(pathElement.get());
             foundMPath = true;
             break;
         }
@@ -165,7 +165,7 @@ void SVGAnimateMotionElement::resetAnimatedType()
 {
     if (!hasValidAttributeType())
         return;
-    SVGElement* targetElement = this->targetElement();
+    auto targetElement = makeRefPtr(this->targetElement());
     if (!targetElement)
         return;
     if (AffineTransform* transform = targetElement->supplementalTransform())
@@ -231,7 +231,7 @@ void SVGAnimateMotionElement::buildTransformForProgress(AffineTransform* transfo
 
 void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned repeatCount, SVGSMILElement*)
 {
-    SVGElement* targetElement = this->targetElement();
+    auto targetElement = makeRefPtr(this->targetElement());
     if (!targetElement)
         return;
     AffineTransform* transform = targetElement->supplementalTransform();
@@ -271,7 +271,7 @@ void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned 
 void SVGAnimateMotionElement::applyResultsToTarget()
 {
     // We accumulate to the target element transform list so there is not much to do here.
-    SVGElement* targetElement = this->targetElement();
+    auto targetElement = makeRefPtr(this->targetElement());
     if (!targetElement)
         return;
 

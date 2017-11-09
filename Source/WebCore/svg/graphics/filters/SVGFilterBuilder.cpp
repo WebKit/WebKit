@@ -47,11 +47,11 @@ void SVGFilterBuilder::add(const AtomicString& id, RefPtr<FilterEffect> effect)
     m_namedEffects.set(id, m_lastEffect);
 }
 
-FilterEffect* SVGFilterBuilder::getEffectById(const AtomicString& id) const
+RefPtr<FilterEffect> SVGFilterBuilder::getEffectById(const AtomicString& id) const
 {
     if (id.isEmpty()) {
         if (m_lastEffect)
-            return m_lastEffect.get();
+            return m_lastEffect;
 
         return m_builtinEffects.get(SourceGraphic::effectName());
     }

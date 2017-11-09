@@ -262,7 +262,7 @@ void SVGDocumentExtensions::markPendingResourcesForRemoval(const AtomicString& i
         m_pendingResourcesForRemoval.add(id, WTFMove(existing));
 }
 
-Element* SVGDocumentExtensions::removeElementFromPendingResourcesForRemovalMap(const AtomicString& id)
+RefPtr<Element> SVGDocumentExtensions::removeElementFromPendingResourcesForRemovalMap(const AtomicString& id)
 {
     if (id.isEmpty())
         return 0;
@@ -272,7 +272,7 @@ Element* SVGDocumentExtensions::removeElementFromPendingResourcesForRemovalMap(c
         return 0;
 
     auto firstElement = resourceSet->begin();
-    Element* element = *firstElement;
+    RefPtr<Element> element = *firstElement;
 
     resourceSet->remove(firstElement);
 

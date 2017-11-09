@@ -87,7 +87,7 @@ RenderPtr<RenderElement> SVGAltGlyphElement::createElementRenderer(RenderStyle&&
 bool SVGAltGlyphElement::hasValidGlyphElements(Vector<String>& glyphNames) const
 {
     String target;
-    auto* element = targetElementFromIRIString(getAttribute(XLinkNames::hrefAttr), document(), &target);
+    auto element = makeRefPtr(targetElementFromIRIString(getAttribute(XLinkNames::hrefAttr), document(), &target));
 
     if (is<SVGGlyphElement>(element)) {
         glyphNames.append(target);

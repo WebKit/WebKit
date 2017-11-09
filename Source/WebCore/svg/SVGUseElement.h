@@ -79,7 +79,7 @@ private:
     SVGElement* findTarget(String* targetID = nullptr) const;
 
     void cloneTarget(ContainerNode&, SVGElement& target) const;
-    SVGElement* targetClone() const;
+    RefPtr<SVGElement> targetClone() const;
 
     void updateShadowTree();
     void expandUseElementsInShadowTree() const;

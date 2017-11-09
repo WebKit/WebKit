@@ -47,10 +47,10 @@ RefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder* filterBuilder, F
     FilterEffectVector& mergeInputs = effect->inputEffects();
 
     for (auto& mergeNode : childrenOfType<SVGFEMergeNodeElement>(*this)) {
-        FilterEffect* mergeEffect = filterBuilder->getEffectById(mergeNode.in1());
+        auto mergeEffect = filterBuilder->getEffectById(mergeNode.in1());
         if (!mergeEffect)
             return nullptr;
-        mergeInputs.append(mergeEffect);
+        mergeInputs.append(WTFMove(mergeEffect));
     }
 
     if (mergeInputs.isEmpty())

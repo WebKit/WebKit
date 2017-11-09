@@ -163,7 +163,7 @@ void SVGTRefElement::detachTarget()
     String emptyContent;
 
     ASSERT(shadowRoot());
-    Node* container = shadowRoot()->firstChild();
+    auto container = makeRefPtr(shadowRoot()->firstChild());
     if (container)
         container->setTextContent(emptyContent);
 

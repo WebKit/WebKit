@@ -118,9 +118,9 @@ void FEImage::platformApplySoftware()
         const AffineTransform& absoluteTransform = filter().absoluteTransform();
         resultImage->context().concatCTM(absoluteTransform);
 
-        SVGElement* contextNode = downcast<SVGElement>(renderer->element());
+        auto contextNode = makeRefPtr(downcast<SVGElement>(renderer->element()));
         if (contextNode->hasRelativeLengths()) {
-            SVGLengthContext lengthContext(contextNode);
+            SVGLengthContext lengthContext(contextNode.get());
             FloatSize viewportSize;
 
             // If we're referencing an element with percentage units, eg. <rect with="30%"> those values were resolved against the viewport.

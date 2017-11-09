@@ -63,8 +63,8 @@ inline Node* EventPath::eventTargetRespectingTargetRules(Node& referenceNode)
 
     // Events sent to elements inside an SVG use element's shadow tree go to the use element.
     if (is<SVGElement>(referenceNode)) {
-        if (auto* useElement = downcast<SVGElement>(referenceNode).correspondingUseElement())
-            return useElement;
+        if (auto useElement = downcast<SVGElement>(referenceNode).correspondingUseElement())
+            return useElement.get();
     }
 
     return &referenceNode;

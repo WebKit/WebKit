@@ -36,7 +36,7 @@ public:
 
     virtual ~SVGMPathElement();
 
-    SVGPathElement* pathElement();
+    RefPtr<SVGPathElement> pathElement();
 
     void targetPathChanged();
 

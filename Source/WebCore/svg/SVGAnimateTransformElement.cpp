@@ -42,8 +42,7 @@ Ref<SVGAnimateTransformElement> SVGAnimateTransformElement::create(const Qualifi
 
 bool SVGAnimateTransformElement::hasValidAttributeType()
 {
-    SVGElement* targetElement = this->targetElement();
-    if (!targetElement)
+    if (!this->targetElement())
         return false;
 
     if (attributeType() == AttributeType::CSS)
