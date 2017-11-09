@@ -5778,10 +5778,12 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
 
 #if ENABLE(FULLSCREEN_API)
     if (document().settings().fullScreenEnabled()) {
+#if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
         if (mode == VideoFullscreenModeStandard) {
             document().requestFullScreenForElement(this, Document::ExemptIFrameAllowFullScreenRequirement);
             return;
         }
+#endif
 
         // If this media element is not going to standard fullscreen mode but there's
         // an element that's currently in full screen in the document, exit full screen

@@ -1,3 +1,15 @@
+2017-11-08  Jeremy Jones  <jeremyj@apple.com>
+
+        HTMLMediaElement should not use element fullscreen on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=179418
+        rdar://problem/35409277
+
+        Reviewed by Eric Carlson.
+
+        Add ENABLE_VIDEO_USES_ELEMENT_FULLSCREEN to determine if HTMLMediaElement should use element full screen or not.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-11-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Implement delegate hooks for attachment element insertion and removal
