@@ -75,8 +75,6 @@ public:
     bool progressionIsReversed() const { return m_progressionIsReversed; }
     void setProgressionIsReversed(bool reversed) { m_progressionIsReversed = reversed; }
     
-    void computeLineGridPaginationOrigin(LayoutState&) const;
-    
     RenderFragmentContainer* mapFromFlowToFragment(TransformState&) const override;
     
     // This method takes a logical offset and returns a physical translation that can be applied to map

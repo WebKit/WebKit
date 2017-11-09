@@ -36,6 +36,7 @@ class RenderBlockFlow;
 class RenderBox;
 class RenderElement;
 class RenderFragmentedFlow;
+class RenderMultiColumnFlow;
 class RenderObject;
 
 class LayoutState {
@@ -74,12 +75,9 @@ public:
     LayoutSize layoutOffset() const { return m_layoutOffset; }
 
     LayoutSize pageOffset() const { return m_pageOffset; }
-    void setLineGridPaginationOrigin(const LayoutSize& origin) { m_lineGridPaginationOrigin = origin; }
-    
+
     bool needsBlockDirectionLocationSetBeforeLayout() const { return m_lineGrid || (m_isPaginated && m_pageLogicalHeight); }
 
-    RenderFragmentedFlow* currentRenderFragmentedFlow() const { return m_currentRenderFragmentedFlow; }
-    void setCurrentRenderFragmentedFlow(RenderFragmentedFlow* fragmentedFlow) { m_currentRenderFragmentedFlow = fragmentedFlow; }
 #ifndef NDEBUG
     RenderElement* renderer() const { return m_renderer; }
 #endif
@@ -95,9 +93,11 @@ public:
 private:
     void computeOffsets(const LayoutState& ancestor, RenderBox&, LayoutSize offset);
     void computeClipRect(const LayoutState& ancestor, RenderBox&);
+    // FIXME: webkit.org/b/179440 these functions should be part of the pagination code/LayoutContext.
     void computePaginationInformation(const LayoutContext::LayoutStateStack&, RenderBox&, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged);
     void propagateLineGridInfo(const LayoutState& ancestor, RenderBox&);
     void establishLineGrid(const LayoutContext::LayoutStateStack&, RenderBlockFlow&);
+    void computeLineGridPaginationOrigin(const RenderMultiColumnFlow&);
 
     // Do not add anything apart from bitfields. See https://bugs.webkit.org/show_bug.cgi?id=100173
     bool m_clipped : 1;
@@ -130,8 +130,6 @@ private:
     LayoutSize m_pageOffset;
     LayoutSize m_lineGridOffset;
     LayoutSize m_lineGridPaginationOrigin;
-
-    RenderFragmentedFlow* m_currentRenderFragmentedFlow { nullptr };
 #ifndef NDEBUG
     RenderElement* m_renderer { nullptr };
 #endif

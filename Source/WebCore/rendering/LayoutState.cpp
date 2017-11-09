@@ -157,7 +157,7 @@ void LayoutState::computePaginationInformation(const LayoutContext::LayoutStateS
         propagateLineGridInfo(*ancestor, renderer);
 
     if (lineGrid() && (lineGrid()->style().writingMode() == renderer.style().writingMode()) && is<RenderMultiColumnFlow>(renderer))
-        downcast<RenderMultiColumnFlow>(renderer).computeLineGridPaginationOrigin(*this);
+        computeLineGridPaginationOrigin(downcast<RenderMultiColumnFlow>(renderer));
 
     // If we have a new grid to track, then add it to our set.
     if (renderer.style().lineGrid() != RenderStyle::initialLineGrid() && is<RenderBlockFlow>(renderer))
@@ -169,6 +169,47 @@ LayoutUnit LayoutState::pageLogicalOffset(RenderBox* child, LayoutUnit childLogi
     if (child->isHorizontalWritingMode())
         return m_layoutOffset.height() + childLogicalOffset - m_pageOffset.height();
     return m_layoutOffset.width() + childLogicalOffset - m_pageOffset.width();
+}
+
+void LayoutState::computeLineGridPaginationOrigin(const RenderMultiColumnFlow& multicol)
+{
+    if (!isPaginated() || !pageLogicalHeight())
+        return;
+
+    if (!multicol.progressionIsInline())
+        return;
+    // We need to cache a line grid pagination origin so that we understand how to reset the line grid
+    // at the top of each column.
+    // Get the current line grid and offset.
+    ASSERT(m_lineGrid);
+    // Get the hypothetical line box used to establish the grid.
+    auto* lineGridBox = m_lineGrid->lineGridBox();
+    if (!lineGridBox)
+        return;
+
+    // Now determine our position on the grid. Our baseline needs to be adjusted to the nearest baseline multiple
+    // as established by the line box.
+    // FIXME: Need to handle crazy line-box-contain values that cause the root line box to not be considered. I assume
+    // the grid should honor line-box-contain.
+    LayoutUnit gridLineHeight = lineGridBox->lineBottomWithLeading() - lineGridBox->lineTopWithLeading();
+    if (!gridLineHeight)
+        return;
+
+    bool isHorizontalWritingMode = m_lineGrid->isHorizontalWritingMode();
+    LayoutUnit lineGridBlockOffset = isHorizontalWritingMode ? m_lineGridOffset.height() : m_lineGridOffset.width();
+    LayoutUnit firstLineTopWithLeading = lineGridBlockOffset + lineGridBox->lineTopWithLeading();
+    LayoutUnit pageLogicalTop = isHorizontalWritingMode ? m_pageOffset.height() : m_pageOffset.width();
+    if (pageLogicalTop <= firstLineTopWithLeading)
+        return;
+
+    // Shift to the next highest line grid multiple past the page logical top. Cache the delta
+    // between this new value and the page logical top as the pagination origin.
+    LayoutUnit remainder = roundToInt(pageLogicalTop - firstLineTopWithLeading) % roundToInt(gridLineHeight);
+    LayoutUnit paginationDelta = gridLineHeight - remainder;
+    if (isHorizontalWritingMode)
+        m_lineGridPaginationOrigin.setHeight(paginationDelta);
+    else
+        m_lineGridPaginationOrigin.setWidth(paginationDelta);
 }
 
 void LayoutState::propagateLineGridInfo(const LayoutState& ancestor, RenderBox& renderer)
@@ -185,7 +226,6 @@ void LayoutState::propagateLineGridInfo(const LayoutState& ancestor, RenderBox& 
 
 void LayoutState::establishLineGrid(const LayoutContext::LayoutStateStack& layoutStateStack, RenderBlockFlow& renderer)
 {
-    // FIXME: webkit.org/b/179440 This logic should be part of the LayoutContext.
     // First check to see if this grid has been established already.
     if (m_lineGrid) {
         if (m_lineGrid->style().lineGrid() == renderer.style().lineGrid())
