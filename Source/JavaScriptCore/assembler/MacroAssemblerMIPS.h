@@ -2952,21 +2952,29 @@ public:
 
     // Truncates 'src' to an integer, and places the resulting 'dest'.
     // If the result is not representable as a 32 bit value, branch.
-    // May also branch for some values that are representable in 32 bits
-    // (specifically, in this case, INT_MAX 0x7fffffff).
     enum BranchTruncateType { BranchIfTruncateFailed, BranchIfTruncateSuccessful };
+
+    Jump branchOnTruncateResult(BranchTruncateType branchType)
+    {
+        m_assembler.cfc1(dataTempRegister, MIPSRegisters::fcsr);
+        and32(TrustedImm32(MIPSAssembler::FP_CAUSE_INVALID_OPERATION), dataTempRegister);
+        return branch32(branchType == BranchIfTruncateFailed ? NotEqual : Equal, dataTempRegister, MIPSRegisters::zero);
+    }
+
     Jump branchTruncateDoubleToInt32(FPRegisterID src, RegisterID dest, BranchTruncateType branchType = BranchIfTruncateFailed)
     {
         m_assembler.truncwd(fpTempRegister, src);
+        Jump truncateResult = branchOnTruncateResult(branchType);
         m_assembler.mfc1(dest, fpTempRegister);
-        return branch32(branchType == BranchIfTruncateFailed ? Equal : NotEqual, dest, TrustedImm32(0x7fffffff));
+        return truncateResult;
     }
 
     Jump branchTruncateDoubleToUint32(FPRegisterID src, RegisterID dest, BranchTruncateType branchType = BranchIfTruncateFailed)
     {
         m_assembler.truncwd(fpTempRegister, src);
+        Jump truncateResult = branchOnTruncateResult(branchType);
         m_assembler.mfc1(dest, fpTempRegister);
-        return branch32(branchType == BranchIfTruncateFailed ? Equal : NotEqual, dest, TrustedImm32(0x7fffffff));
+        return truncateResult;
     }
 
     // Result is undefined if the value is outside of the integer range.

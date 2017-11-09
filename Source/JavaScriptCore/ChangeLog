@@ -1,3 +1,35 @@
+2017-11-09  Guillaume Emont  <guijemont@igalia.com>
+
+        [JSC][MIPS] Use fcsr to check the validity of the result of trunc.w.d
+        https://bugs.webkit.org/show_bug.cgi?id=179446
+
+        Reviewed by Žan Doberšek.
+
+        The trunc.w.d mips instruction should give a 0x7fffffff result when
+        the source value is Infinity, NaN, or rounds to an integer outside the
+        range -2^31 to 2^31 -1. This is what branchTruncateDoubleToInt32() and
+        branchTruncateDoubleToUInt32() have been relying on. It turns out that
+        this assumption is not true on some CPUs, including on the ci20 on
+        which we run the testbot (we get 0x80000000 instead). We should the
+        invalid operation cause bit instead to check whether the source value
+        could be properly truncated. This requires the addition of the cfc1
+        instruction, as well as the special registers that can be used with it
+        (control registers of CP1).
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::firstSPRegister):
+        (JSC::MIPSAssembler::lastSPRegister):
+        (JSC::MIPSAssembler::numberOfSPRegisters):
+        (JSC::MIPSAssembler::sprName):
+        Added control registers of CP1.
+        (JSC::MIPSAssembler::cfc1):
+        Added.
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branchOnTruncateResult):
+        (JSC::MacroAssemblerMIPS::branchTruncateDoubleToInt32):
+        (JSC::MacroAssemblerMIPS::branchTruncateDoubleToUint32):
+        Use fcsr to check if the value could be properly truncated.
+
 2017-11-08  Jeremy Jones  <jeremyj@apple.com>
 
         HTMLMediaElement should not use element fullscreen on iOS
