@@ -455,8 +455,10 @@ void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
     if (propertiesToInclude == EditingPropertiesInEffect) {
         if (RefPtr<CSSValue> value = backgroundColorInEffect(node))
             m_mutableStyle->setProperty(CSSPropertyBackgroundColor, value->cssText());
-        if (RefPtr<CSSValue> value = computedStyleAtPosition.propertyValue(CSSPropertyWebkitTextDecorationsInEffect))
+        if (RefPtr<CSSValue> value = computedStyleAtPosition.propertyValue(CSSPropertyWebkitTextDecorationsInEffect)) {
             m_mutableStyle->setProperty(CSSPropertyTextDecoration, value->cssText());
+            m_mutableStyle->removeProperty(CSSPropertyWebkitTextDecorationsInEffect);
+        }
     }
 
     if (node && node->computedStyle()) {

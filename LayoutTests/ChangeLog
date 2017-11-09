@@ -1,3 +1,20 @@
+2017-11-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Inserting an image, selecting, underlining, and then deleting leaves the typing style with both "-webkit-text-decorations-in-effect" and "text-decoration"
+        https://bugs.webkit.org/show_bug.cgi?id=179431
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds a new layout test to fix a debug assertion. See WebCore/ChangeLog for more details. Additionally
+        rebaselines a few existing tests that serialize markup strings to include `text-decoration: none;`.
+
+        * editing/execCommand/underline-selection-containing-image-expected.txt: Added.
+        * editing/execCommand/underline-selection-containing-image.html: Added.
+        * editing/pasteboard/data-transfer-get-data-on-drop-rich-text-expected.txt:
+        * fast/events/before-input-events-prevent-drag-and-drop-expected.txt:
+        * fast/events/input-events-paste-rich-datatransfer-expected.txt:
+        * fast/events/ondrop-text-html-expected.txt:
+
 2017-11-09  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: support undo/redo of insertAdjacentHTML
