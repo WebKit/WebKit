@@ -278,7 +278,7 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
     if (this == table()->topSection())
         spacing = table()->vBorderSpacing();
 
-    LayoutStateMaintainer statePusher(view().frameView().layoutContext());
+    LayoutStateMaintainer statePusher(*this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
 
     m_rowPos.resize(m_grid.size() + 1);
     m_rowPos[0] = spacing;
@@ -329,11 +329,6 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
                 unsigned cellStartRow = cell->rowIndex();
 
                 if (cell->hasOverrideLogicalContentHeight()) {
-                    if (!statePusher.didPush()) {
-                        // Technically, we should also push state for the row, but since
-                        // rows don't push a coordinate transform, that's not necessary.
-                        statePusher.push(*this, locationOffset());
-                    }
                     cell->clearIntrinsicPadding();
                     cell->clearOverrideSize();
                     cell->setChildNeedsLayout(MarkOnlyThis);

@@ -276,7 +276,9 @@ LayoutStateMaintainer::LayoutStateMaintainer(RenderBox& root, LayoutSize offset,
     : m_context(root.view().frameView().layoutContext())
     , m_paintOffsetCacheIsDisabled(disablePaintOffsetCache)
 {
-    push(root, offset, pageHeight, pageHeightChanged);
+    m_didPushLayoutState = m_context.pushLayoutState(root, offset, pageHeight, pageHeightChanged);
+    if (m_didPushLayoutState && m_paintOffsetCacheIsDisabled)
+        m_context.disablePaintOffsetCache();
 }
 
 LayoutStateMaintainer::LayoutStateMaintainer(LayoutContext& context)
@@ -286,30 +288,15 @@ LayoutStateMaintainer::LayoutStateMaintainer(LayoutContext& context)
 
 LayoutStateMaintainer::~LayoutStateMaintainer()
 {
-    // FIXME: Remove conditional push/pop.
-    if (m_didCallPush && !m_didCallPop)
+    // FIXME: Remove conditional pop.
+    if (!m_didCallPop)
         pop();
-    ASSERT(!m_didCallPush || m_didCallPush == m_didCallPop);
-}
-
-void LayoutStateMaintainer::push(RenderBox& root, LayoutSize offset, LayoutUnit pageHeight, bool pageHeightChanged)
-{
-    ASSERT(!m_didCallPush);
-    m_didCallPush = true;
-    // We push state even if disabled, because we still need to store layoutDelta
-    m_didPushLayoutState = m_context.pushLayoutState(root, offset, pageHeight, pageHeightChanged);
-    if (!m_didPushLayoutState)
-        return;
-    if (m_paintOffsetCacheIsDisabled)
-        m_context.disablePaintOffsetCache();
 }
 
 void LayoutStateMaintainer::pop()
 {
     ASSERT(!m_didCallPop);
     m_didCallPop = true;
-    if (!m_didCallPush)
-        return;
     if (!m_didPushLayoutState)
         return;
     m_context.popLayoutState();

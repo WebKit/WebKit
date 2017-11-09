@@ -144,14 +144,11 @@ public:
     explicit LayoutStateMaintainer(LayoutContext&);
     ~LayoutStateMaintainer();
 
-    void push(RenderBox& root, LayoutSize offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false);
     void pop();
-    bool didPush() const { return m_didCallPush; }
 
 private:
     LayoutContext& m_context;
     bool m_paintOffsetCacheIsDisabled { false };
-    bool m_didCallPush { false };
     bool m_didCallPop { false };
     bool m_didPushLayoutState { false };
 };
