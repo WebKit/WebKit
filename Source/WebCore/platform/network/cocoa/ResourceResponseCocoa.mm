@@ -76,10 +76,10 @@ void ResourceResponse::disableLazyInitialization()
 CertificateInfo ResourceResponse::platformCertificateInfo() const
 {
 #if USE(CFURLCONNECTION)
-    ASSERT(m_cfResponse);
+    ASSERT(m_cfResponse || source() == Source::ServiceWorker);
     CFURLResponseRef cfResponse = m_cfResponse.get();
 #else
-    ASSERT(m_nsResponse);
+    ASSERT(m_nsResponse || source() == Source::ServiceWorker);
     CFURLResponseRef cfResponse = [m_nsResponse _CFURLResponse];
 #endif
 
