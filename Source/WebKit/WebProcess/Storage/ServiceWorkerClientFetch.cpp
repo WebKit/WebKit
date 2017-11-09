@@ -53,7 +53,7 @@ void ServiceWorkerClientFetch::didReceiveResponse(WebCore::ResourceResponse&& re
     if (!(response.httpStatusCode() <= 300 || response.httpStatusCode() >= 400 || response.httpStatusCode() == 304 || response.httpStatusCode() == 305 || response.httpStatusCode() == 306)) {
         // FIXME: Support redirections.
         notImplemented();
-        m_loader->didFail({ });
+        m_loader->didFail({ ResourceError::Type::General });
         if (auto callback = WTFMove(m_callback))
             callback(Result::Succeeded);
         return;
@@ -61,7 +61,7 @@ void ServiceWorkerClientFetch::didReceiveResponse(WebCore::ResourceResponse&& re
 
     if (response.type() == ResourceResponse::Type::Error) {
         // Add support for a better error.
-        m_loader->didFail({ });
+        m_loader->didFail({ ResourceError::Type::General });
         if (auto callback = WTFMove(m_callback))
             callback(Result::Succeeded);
         return;
