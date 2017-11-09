@@ -32,6 +32,7 @@
 #include "FetchRequest.h"
 #include "HTTPParsers.h"
 #include "JSBlob.h"
+#include "MIMETypeRegistry.h"
 #include "ResourceError.h"
 #include "ScriptExecutionContext.h"
 
@@ -111,6 +112,9 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& co
     auto r = adoptRef(*new FetchResponse(context, WTFMove(extractedBody), WTFMove(headers), { }));
 
     r->m_contentType = contentType;
+    auto mimeType = extractMIMETypeFromMediaType(contentType);
+    r->m_response.setMimeType(mimeType.isEmpty() ? defaultMIMEType() : mimeType);
+
     r->m_response.setHTTPStatusCode(status);
     r->m_response.setHTTPStatusText(statusText);
 
