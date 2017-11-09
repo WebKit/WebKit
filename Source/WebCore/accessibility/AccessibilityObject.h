@@ -773,6 +773,7 @@ public:
     virtual String helpText() const { return String(); }
 
     // Methods for determining accessibility text.
+    bool isARIAStaticText() const { return ariaRoleAttribute() == AccessibilityRole::StaticText; }
     virtual String stringValue() const { return String(); }
     virtual String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const { return String(); }
     virtual String text() const { return String(); }

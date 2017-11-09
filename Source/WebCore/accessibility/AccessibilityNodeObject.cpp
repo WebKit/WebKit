@@ -1834,7 +1834,7 @@ String AccessibilityNodeObject::title() const
 String AccessibilityNodeObject::text() const
 {
     // If this is a user defined static text, use the accessible name computation.                                      
-    if (ariaRoleAttribute() == AccessibilityRole::StaticText) {
+    if (isARIAStaticText()) {
         Vector<AccessibilityText> textOrder;
         alternativeText(textOrder);
         if (textOrder.size() > 0 && textOrder[0].text.length())
@@ -1863,7 +1863,7 @@ String AccessibilityNodeObject::stringValue() const
     if (!node)
         return String();
 
-    if (ariaRoleAttribute() == AccessibilityRole::StaticText) {
+    if (isARIAStaticText()) {
         String staticText = text();
         if (!staticText.length())
             staticText = textUnderElement();

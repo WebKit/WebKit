@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<a href="#image">link</a>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests the ability to search for accessible elements by key or text.");
+
+    if (window.accessibilityController) {
+        jsTestIsAsync = true;
+        window.testRunner.keepWebHistory();
+
+        document.getElementById("body").focus();
+        var containerElement = accessibilityController.focusedElement;
+        var startElement;
+        var resultElement;
+
+        // Unvisited link.
+        startElement = accessibilityController.focusedElement.childAtIndex(0);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXUnvisitedLinkSearchKey", "", false);
+        shouldBe("resultElement.boolAttributeValue('AXVisited')", "false");
+        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: link'");
+
+        // Visited link.
+        accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0).press();
+        setTimeout(function() {
+
+            startElement = accessibilityController.focusedElement.childAtIndex(0);
+            resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXVisitedLinkSearchKey", "", false);
+            shouldBe("resultElement.boolAttributeValue('AXVisited')", "true");
+            shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: link'");
+
+            finishJSTest();
+        }, 50);
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

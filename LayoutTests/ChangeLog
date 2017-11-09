@@ -1,3 +1,22 @@
+2017-11-09  Doug Russell  <d_russell@apple.com>
+
+        Bug 179068 - AX: search predicate returns containing group for plain text instead of text element
+        https://bugs.webkit.org/show_bug.cgi?id=179068
+
+        Reviewed by Darin Adler
+
+        Implement a check in AccessibilityRenderObject::hasPlainText(), AccessibilityObject::canHavePlainText(), to confirm the element is capable of providing text.
+
+        * accessibility/mac/search-predicate-expected.txt:
+        * accessibility/mac/search-predicate-plaintext-expected.txt: Added.
+        * accessibility/mac/search-predicate-plaintext.html: Added.
+        * accessibility/mac/search-predicate-visible-button-expected.txt: Added.
+        * accessibility/mac/search-predicate-visible-button.html: Added.
+        * accessibility/mac/search-predicate-visited-links-expected.txt: Added.
+        * accessibility/mac/search-predicate-visited-links.html: Added.
+        * accessibility/mac/search-predicate.html:
+        * platform/mac-wk2/TestExpectations:
+
 2017-11-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Inserting an image, selecting, underlining, and then deleting leaves the typing style with both "-webkit-text-decorations-in-effect" and "text-decoration"

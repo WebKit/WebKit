@@ -284,6 +284,8 @@ private:
     bool inheritsPresentationalRole() const override;
 
     bool shouldGetTextFromNode(AccessibilityTextUnderElementMode) const;
+
+    bool canHavePlainText() const;
 };
 
 } // namespace WebCore

@@ -1,0 +1,14 @@
+link
+This tests the ability to search for accessible elements by key or text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS resultElement.boolAttributeValue('AXVisited') is false
+PASS resultElement.childAtIndex(0).stringValue is 'AXValue: link'
+PASS resultElement.boolAttributeValue('AXVisited') is true
+PASS resultElement.childAtIndex(0).stringValue is 'AXValue: link'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -732,7 +732,7 @@ String AccessibilityRenderObject::stringValue() const
 
     RenderBoxModelObject* cssBox = renderBoxModelObject();
 
-    if (ariaRoleAttribute() == AccessibilityRole::StaticText) {
+    if (isARIAStaticText()) {
         String staticText = text();
         if (!staticText.length())
             staticText = textUnderElement();
@@ -778,6 +778,11 @@ String AccessibilityRenderObject::stringValue() const
     // this would require subclassing or making accessibilityAttributeNames do something other than return a
     // single static array.
     return String();
+}
+
+bool AccessibilityRenderObject::canHavePlainText() const
+{
+    return isARIAStaticText() || is<RenderText>(*m_renderer) || isTextControl();
 }
 
 HTMLLabelElement* AccessibilityRenderObject::labelElementContainer() const
@@ -3535,9 +3540,11 @@ bool AccessibilityRenderObject::hasPlainText() const
 {
     if (!m_renderer)
         return false;
-    
+
+    if (!canHavePlainText())
+        return false;
+
     const RenderStyle& style = m_renderer->style();
-    
     return style.fontDescription().weight() == normalWeightValue()
         && style.fontDescription().italic() == normalItalicValue()
         && style.textDecorationsInEffect() == TextDecorationNone;
