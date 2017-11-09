@@ -335,7 +335,16 @@ if ($shouldCombineTest) {
 
     my $derivedSourcesTestHTML = File::Spec->catfile($derivedSourcesDir, 'Test.html');
     my $derivedSourcesTestJS = File::Spec->catfile($derivedSourcesDir, 'TestCombined.js');
-    # Combine the Esprima JavaScript files for testing into a single file (Esprima.js).
+    # Combine the CodeMirror JavaScript files into single file (TestCodeMirror.js).
+    system($perl, $combineResourcesCmd,
+        '--input-dir', 'External/CodeMirror',
+        '--input-html', $derivedSourcesTestHTML,
+        '--input-html-dir', $uiRoot,
+        '--derived-sources-dir', $derivedSourcesDir,
+        '--output-dir', $derivedSourcesDir,
+        '--output-script-name', 'TestCodeMirror.js');
+
+    # Combine the Esprima JavaScript files for testing into a single file (TestEsprima.js).
     system($perl, $combineResourcesCmd,
         '--input-dir', 'External/Esprima',
         '--input-html', $derivedSourcesTestHTML,
@@ -348,12 +357,20 @@ if ($shouldCombineTest) {
     my $targetTestJS = File::Spec->catfile($targetResourcePath, 'TestCombined.js');
     seedFile($targetTestJS, $inspectorLicense);
 
-    # Export the license into Esprima.js.
+    # Export the license into TestCodeMirror.js.
+    my $targetCodeMirrorJS = File::Spec->catfile($targetResourcePath, 'TestCodeMirror.js');
+    seedFile($targetCodeMirrorJS, $codeMirrorLicense);
+
+    # Export the license into TestEsprima.js.
     my $targetEsprimaJS = File::Spec->catfile($targetResourcePath, 'TestEsprima.js');
     seedFile($targetEsprimaJS, $esprimaLicense);
 
     # Append TestCombined.js to the license that was exported above.
     appendFile($targetTestJS, $derivedSourcesTestJS);
+
+    # Append CodeMirror.js to the license that was exported above.
+    my $derivedSourcesCodeMirrorJS = File::Spec->catfile($derivedSourcesDir, 'TestCodeMirror.js');
+    appendFile($targetCodeMirrorJS, $derivedSourcesCodeMirrorJS);
 
     # Append Esprima.js to the license that was exported above.
     my $derivedSourcesEsprimaJS = File::Spec->catfile($derivedSourcesDir, 'TestEsprima.js');

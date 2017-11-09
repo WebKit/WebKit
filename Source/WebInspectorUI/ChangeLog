@@ -1,3 +1,19 @@
+2017-11-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r224566): [GTK][WPE] Many inspector tests are failing after r224566
+        https://bugs.webkit.org/show_bug.cgi?id=179419
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        All of them fail with the following error:
+
+        Uncaught exception in Inspector page: ReferenceError: Can't find variable: CodeMirror [TestCombined.js:36658:15]
+
+        This is because Test.html, even when combined, is trying to load CodeMirror from External/CodeMirror, but
+        CodeMirror was already combined for Main.html. We need to also combine CodeMirror for Test.html.
+
+        * Scripts/copy-user-interface-resources.pl:
+
 2017-11-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Show Internal properties of PaymentRequest in Web Inspector Console
