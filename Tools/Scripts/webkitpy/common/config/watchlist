@@ -393,7 +393,7 @@
         "SVNScripts": [ "dbates@webkit.org" ],
         "ScrollingCoordinator": [ "jamesr@chromium.org", "tonikitoo@webkit.org", "cmarcelo@webkit.org", "luiz@webkit.org" ],
         "Selectors": [ "allan.jensen@digia.com" ],
-        "SoupNetwork": [ "gns@gnome.org", "danw@gnome.org", "cgarcia@igalia.com", "berto@igalia.com", "mcatanzaro@igalia.com" ],
+        "SoupNetwork": [ "gns@gnome.org", "cgarcia@igalia.com", "berto@igalia.com", "mcatanzaro@igalia.com" ],
         "TextureMapper" : [ "noam@webkit.org", "cmarcelo@webkit.org", "luiz@webkit.org", "kondapallykalyan@gmail.com" ],
         "TouchAdjustment" : [ "allan.jensen@digia.com" ],
         "WTF": [ "benjamin@webkit.org", "cmarcelo@webkit.org", "cdumez@apple.com", "dbates@webkit.org" ],

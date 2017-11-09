@@ -1,3 +1,11 @@
+2017-11-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, remove Dan from the soup network watchlist
+
+        Per his request. It's not Hotel California; we should probably let him leave.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2017-11-08  Don Olmstead  <don.olmstead@sony.com>
 
         Add Windows powershell EWS script
