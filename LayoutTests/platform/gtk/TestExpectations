@@ -1473,7 +1473,7 @@ webkit.org/b/126432 http/tests/misc/acid2.html [ Failure Pass ]
 
 webkit.org/b/126523 perf/accessibility-title-ui-element.html [ Failure Pass ]
 
-webkit.org/b/127280 media/audio-concurrent-supported.html [ Failure Timeout Pass ]
+webkit.org/b/127280 media/audio-concurrent-supported.html [ Failure Timeout Pass Crash ]
 
 webkit.org/b/127742 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure Pass ]
 
@@ -1767,7 +1767,7 @@ webkit.org/b/157729 fast/images/image-map-outline-with-paint-root-offset.html [ 
 
 webkit.org/b/157730 fast/forms/select/optgroup-clicking.html [ Failure Pass ]
 
-webkit.org/b/157731 fast/events/touch/touch-inside-iframe-scrolled.html [ Timeout Pass ]
+webkit.org/b/157731 fast/events/touch/touch-inside-iframe-scrolled.html [ Timeout Pass Failure ]
 
 webkit.org/b/158472 fast/text/international/system-language/han-quotes.html [ ImageOnlyFailure Pass ]
 
@@ -1881,6 +1881,9 @@ webkit.org/b/179050 accessibility/aria-text-role.html [ Crash Pass ]
 webkit.org/b/179051 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args.html [ Crash Failure ]
 
 webkit.org/b/179356 imported/w3c/web-platform-tests/mediacapture-fromelement/capture.html [ Failure Crash ]
+
+webkit.org/b/179443 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-bdo-element/bdo-child.html [ Pass Timeout ]
+webkit.org/b/179444 http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-audio-video-in-main-frame.html [ Pass Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -2152,7 +2155,7 @@ webkit.org/b/158923 media/airplay-autoplay.html [ Timeout ]
 webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-cookie.html [ Timeout ]
 webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-cross-origin-from-https.html [ Timeout ]
 webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Timeout ]
-webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-same-origin.html [ Timeout ]
+webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-same-origin.html [ Timeout Crash ]
 webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cookie.html [ Timeout ]
 webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cross-origin-from-https.html [ Timeout ]
 webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cross-origin.html [ Timeout ]
@@ -2195,6 +2198,8 @@ webkit.org/b/177934 http/tests/preconnect/link-rel-preconnect-https.html [ Timeo
 webkit.org/b/177941 http/tests/inspector/network/ping-type.html [ Timeout ]
 
 webkit.org/b/178454 editing/pasteboard/datatransfer-items-paste-plaintext.html [ Timeout ]
+
+webkit.org/b/178792 fast/events/touch/touch-inside-iframe.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
