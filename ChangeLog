@@ -1,3 +1,21 @@
+2017-11-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Use linker script to control exported symbols
+        https://bugs.webkit.org/show_bug.cgi?id=179358
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        The C API is being inadvertently exported because it's marked as WEBKIT_EXPORT in the header
+        files. But of course it should only be exported in DEVELOPER_MODE, where it's needed for
+        WebKitTestRunner. Use (almost) the same linker version script as GTK to fix this. It's
+        slightly different because WPE does not have WebKitPluginProcess.
+
+        This also reduces binary size of libWPEWebKit.so in debug mode from 615 MB down to 497 MB.
+        (Haven't checked release mode.)
+
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/wpesymbols.filter: Added.
+
 2017-11-08  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Turn on ENABLE_INDEXED_DATABASE_IN_WORKERS

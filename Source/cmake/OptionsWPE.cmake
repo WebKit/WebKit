@@ -108,11 +108,8 @@ set(FORWARDING_HEADERS_WPE_DIR ${FORWARDING_HEADERS_DIR}/wpe)
 set(FORWARDING_HEADERS_WPE_EXTENSION_DIR ${FORWARDING_HEADERS_DIR}/wpe-webextension)
 set(DERIVED_SOURCES_WPE_API_DIR ${DERIVED_SOURCES_WEBKIT_DIR}/wpe)
 
-# Build with -fvisibility=hidden to reduce the size of the shared library.
-# Not to be used when building the WebKitTestRunner library.
 if (NOT DEVELOPER_MODE)
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -fvisibility=hidden")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fvisibility=hidden -fvisibility-inlines-hidden")
+    set(WebKit_VERSION_SCRIPT "-Wl,--version-script,${CMAKE_MODULE_PATH}/wpesymbols.filter")
 endif ()
 
 include(GStreamerChecks)
