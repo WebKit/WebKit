@@ -3506,6 +3506,11 @@ void RenderLayerCompositor::deviceOrPageScaleFactorChanged()
         rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 }
 
+static bool canCoordinateScrollingForLayer(const RenderLayer& layer)
+{
+    return (layer.isRenderViewLayer() || layer.parent()) && layer.isComposited();
+}
+
 void RenderLayerCompositor::updateScrollCoordinatedStatus(RenderLayer& layer, OptionSet<ScrollingNodeChangeFlags> changes)
 {
     LayerScrollCoordinationRoles coordinationRoles = 0;
@@ -3515,7 +3520,10 @@ void RenderLayerCompositor::updateScrollCoordinatedStatus(RenderLayer& layer, Op
     if (useCoordinatedScrollingForLayer(layer))
         coordinationRoles |= Scrolling;
 
-    if (coordinationRoles) {
+    if (layer.isComposited())
+        layer.backing()->setIsScrollCoordinatedWithViewportConstrainedRole(coordinationRoles & ViewportConstrained);
+
+    if (coordinationRoles && canCoordinateScrollingForLayer(layer)) {
         if (m_scrollCoordinatedLayers.add(&layer).isNewEntry)
             m_subframeScrollLayersNeedReattach = true;
 
@@ -3721,20 +3729,13 @@ void RenderLayerCompositor::updateScrollCoordinationForThisFrame(ScrollingNodeID
 
 void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, LayerScrollCoordinationRoles reasons, OptionSet<ScrollingNodeChangeFlags> changes)
 {
-    auto* scrollingCoordinator = this->scrollingCoordinator();
-    if (!scrollingCoordinator || !scrollingCoordinator->coordinatesScrollingForFrameView(m_renderView.frameView()))
-        return;
-
     bool isRenderViewLayer = layer.isRenderViewLayer();
-
-    if (!layer.parent() && !isRenderViewLayer)
-        return;
 
     ASSERT(m_scrollCoordinatedLayers.contains(&layer));
     ASSERT(layer.isComposited());
 
-    auto* backing = layer.backing();
-    if (!backing)
+    auto* scrollingCoordinator = this->scrollingCoordinator();
+    if (!scrollingCoordinator || !scrollingCoordinator->coordinatesScrollingForFrameView(m_renderView.frameView()))
         return;
 
     if (!m_renderView.frame().isMainFrame()) {
@@ -3750,6 +3751,8 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Lay
     ScrollingNodeID parentNodeID = enclosingScrollingNodeID(layer, ExcludeSelf);
     if (!parentNodeID && !isRenderViewLayer)
         return;
+
+    auto* backing = layer.backing();
 
     // Always call this even if the backing is already attached because the parent may have changed.
     // If a node plays both roles, fixed/sticky is always the ancestor node of scrolling.
