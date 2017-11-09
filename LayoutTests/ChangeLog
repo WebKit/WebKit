@@ -1,3 +1,12 @@
+2017-11-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark http/tests/workers/service/registration-task-queue-scheduling-1.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=179342
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2017-11-08  Brent Fulgham  <bfulgham@apple.com>
 
         XMLHttpRequest should not treat file URLs as same origin
