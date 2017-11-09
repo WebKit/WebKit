@@ -70,11 +70,12 @@ struct WKWebViewState {
     float _savedTopContentInset = 0.0;
     CGFloat _savedPageScale = 1;
     CGFloat _savedViewScale = 1.0;
+    CGFloat _savedZoomScale = 1;
     UIEdgeInsets _savedEdgeInset = UIEdgeInsetsZero;
     UIEdgeInsets _savedObscuredInsets = UIEdgeInsetsZero;
     UIEdgeInsets _savedScrollIndicatorInsets = UIEdgeInsetsZero;
     CGPoint _savedContentOffset = CGPointZero;
-    
+
     void applyTo(WKWebView* webView)
     {
         [webView _setPageScale:_savedPageScale withOrigin:CGPointMake(0, 0)];
@@ -84,6 +85,7 @@ struct WKWebViewState {
         [[webView scrollView] setScrollIndicatorInsets:_savedScrollIndicatorInsets];
         [webView _page]->setTopContentInset(_savedTopContentInset);
         [webView _setViewScale:_savedViewScale];
+        [[webView scrollView] setZoomScale:_savedZoomScale];
     }
     
     void store(WKWebView* webView)
@@ -95,6 +97,7 @@ struct WKWebViewState {
         _savedScrollIndicatorInsets = [[webView scrollView] scrollIndicatorInsets];
         _savedTopContentInset = [webView _page]->topContentInset();
         _savedViewScale = [webView _viewScale];
+        _savedZoomScale = [[webView scrollView] zoomScale];
     }
 };
     
@@ -180,7 +183,7 @@ struct WKWebViewState {
 
 - (void)loadView
 {
-    [self setView:adoptNS([[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]]).get()];
+    [self setView:adoptNS([[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]).get()];
     [[self view] setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
 
     CGRect doneButtonRect = CGRectMake(10, 20, 60, 47);
@@ -218,10 +221,6 @@ struct WKWebViewState {
     [[self contentView] setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
     [[self contentView] setFrame:[[self view] bounds]];
     [[self view] insertSubview:[self contentView] atIndex:0];
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
 }
 
 - (void)cancelAction:(id)sender
@@ -275,6 +274,17 @@ struct WKWebViewState {
 
 @end
 
+@interface _WKFullscreenRootViewController : UIViewController
+@end
+
+@implementation _WKFullscreenRootViewController : UIViewController
+
+- (BOOL)prefersStatusBarHidden
+{
+    return YES;
+}
+
+@end
 
 @interface WKFullscreenAnimationController : NSObject <UIViewControllerAnimatedTransitioning>
 @property (retain, nonatomic) UIViewController* viewController;
@@ -347,6 +357,8 @@ struct WKWebViewState {
     FullScreenState _fullScreenState;
     WKWebViewState _viewState;
 
+    RetainPtr<UIWindow> _window;
+
     RefPtr<WebKit::VoidCallback> _repaintCallback;
     RetainPtr<UIViewController> _viewControllerForPresentation;
     RetainPtr<_WKFullScreenViewController> _fullscreenViewController;
@@ -398,13 +410,23 @@ struct WKWebViewState {
         return;
 
     _fullScreenState = WaitingToEnterFullScreen;
-    
-    _viewControllerForPresentation = [UIViewController _viewControllerForFullScreenPresentationFromView:_webView];
+
+    _window = adoptNS([[UIWindow alloc] init]);
+    [_window setBackgroundColor:[UIColor clearColor]];
+    [_window setRootViewController:adoptNS([[_WKFullscreenRootViewController alloc] init]).get()];
+    [[_window rootViewController] setView:adoptNS([[UIView alloc] initWithFrame:[_window bounds]]).get()];
+    [[[_window rootViewController] view] setBackgroundColor:[UIColor clearColor]];
+    [[[_window rootViewController] view] setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
+    [_window setWindowLevel:UIWindowLevelNormal - 1];
+    [_window setHidden:NO];
+    _viewControllerForPresentation = [_window rootViewController];
+
     _fullscreenViewController = adoptNS([[_WKFullScreenViewController alloc] init]);
     [_fullscreenViewController setTransitioningDelegate:self];
     [_fullscreenViewController setModalPresentationStyle:UIModalPresentationCustom];
     [_fullscreenViewController setTarget:self action:@selector(requestExitFullScreen)];
-    
+    [[_fullscreenViewController view] setFrame:[[_viewControllerForPresentation view] bounds]];
+
     [self _manager]->saveScrollPosition();
 
     [_webView _page]->setSuppressVisibilityUpdates(true);
@@ -416,37 +438,35 @@ struct WKWebViewState {
 
     WKSnapshotConfiguration* config = nil;
     [_webView takeSnapshotWithConfiguration:config completionHandler:^(UIImage * snapshotImage, NSError * error){
-        UIScreen* screen = [UIScreen mainScreen];
-        RetainPtr<UIWindow> webWindow = [_webView window];
-        
+        if (![_webView _page])
+            return;
+
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
         
         [[_webViewPlaceholder layer] setContents:(id)[snapshotImage CGImage]];
         replaceViewWithView(_webView, _webViewPlaceholder.get());
-        
+
         WKWebViewState().applyTo(_webView);
         
         [_webView setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
-        [_webView setFrame:[screen bounds]];
-        [webWindow insertSubview:_webView atIndex:0];
-        [_webView _overrideLayoutParametersWithMinimumLayoutSize:[screen bounds].size maximumUnobscuredSizeOverride:[screen bounds].size];
-        
+        [_webView setFrame:[_window bounds]];
+        [_window insertSubview:_webView atIndex:0];
+        [_webView _overrideLayoutParametersWithMinimumLayoutSize:[_window bounds].size maximumUnobscuredSizeOverride:[_window bounds].size];
+
         [_webView setNeedsLayout];
         [_webView layoutIfNeeded];
         
         [self _manager]->setAnimatingFullScreen(true);
-        
-        // FIXME: <http://webkit.org/b/178923> Find a better way to do this.
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0), dispatch_get_main_queue(), ^{
-            _repaintCallback = VoidCallback::create([protectedSelf = RetainPtr<WKFullScreenWindowController>(self)](WebKit::CallbackBase::Error) {
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0), dispatch_get_main_queue(), ^{
-                    [protectedSelf _manager]->willEnterFullScreen();
-                });
-            });
-            [_webView _page]->forceRepaint(_repaintCallback.copyRef());
+
+        _repaintCallback = VoidCallback::create([protectedSelf = retainPtr(self), self](WebKit::CallbackBase::Error) {
+            if (![_webView _page])
+                return;
+
+            [protectedSelf _manager]->willEnterFullScreen();
         });
-        
+        [_webView _page]->forceRepaint(_repaintCallback.copyRef());
+
         [CATransaction commit];
     }];
 }
@@ -459,9 +479,18 @@ struct WKWebViewState {
 
     _initialFrame = initialFrame;
     _finalFrame = finalFrame;
-    
-    [[_fullscreenViewController view] setFrame:[[UIScreen mainScreen] bounds]];
+
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
+    [_webView removeFromSuperview];
     [_fullscreenViewController setContentView:_webView];
+
+    [_window setWindowLevel:UIWindowLevelNormal];
+    [_window makeKeyAndVisible];
+
+    [CATransaction commit];
+
     [_viewControllerForPresentation presentViewController:_fullscreenViewController.get() animated:YES completion:^{
         [self completedEnterFullScreen];
     }];
@@ -469,7 +498,11 @@ struct WKWebViewState {
 
 - (void)completedEnterFullScreen
 {
+    if (![_webView _page])
+        return;
+
     _fullScreenState = InFullScreen;
+
     [self _manager]->didEnterFullScreen();
     [self _manager]->setAnimatingFullScreen(false);
 
@@ -503,45 +536,88 @@ struct WKWebViewState {
     [_webView _page]->setSuppressVisibilityUpdates(true);
 
     [_fullscreenViewController dismissViewControllerAnimated:YES completion:^{
+        if (![_webView _page])
+            return;
+
         [self completedExitFullScreen];
     }];
 }
 
 - (void)completedExitFullScreen
 {
+    if (_fullScreenState != ExitingFullScreen)
+        return;
     _fullScreenState = NotInFullScreen;
 
-    [_webView setFrame:[_webViewPlaceholder bounds]];
-    [[_webViewPlaceholder window] insertSubview:_webView atIndex:0];
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
+    [[_webViewPlaceholder superview] insertSubview:_webView belowSubview:_webViewPlaceholder.get()];
+    [_webView setFrame:[_webViewPlaceholder frame]];
+    [_webView setAutoresizingMask:[_webViewPlaceholder autoresizingMask]];
 
     [[_webView window] makeKeyAndVisible];
-
-    [self _manager]->didExitFullScreen();
-    [self _manager]->setAnimatingFullScreen(false);
 
     _viewState.applyTo(_webView);
 
     [_webView setNeedsLayout];
     [_webView layoutIfNeeded];
 
+    [CATransaction commit];
+
+    [_window setHidden:YES];
+    _window = nil;
+
+    [self _manager]->setAnimatingFullScreen(false);
+    [self _manager]->didExitFullScreen();
+
     if (_repaintCallback) {
         _repaintCallback->invalidate(WebKit::CallbackBase::Error::OwnerWasInvalidated);
         ASSERT(!_repaintCallback);
     }
-    _repaintCallback = VoidCallback::create([protectedSelf = RetainPtr<WKFullScreenWindowController>(self), self](WebKit::CallbackBase::Error) {
-        replaceViewWithView(_webViewPlaceholder.get(), _webView);
+
+    _repaintCallback = VoidCallback::create([protectedSelf = retainPtr(self), self](WebKit::CallbackBase::Error) {
         _repaintCallback = nullptr;
+        [_webViewPlaceholder removeFromSuperview];
+
+        if (![_webView _page])
+            return;
+
         [_webView _page]->setSuppressVisibilityUpdates(false);
     });
+
     [_webView _page]->forceRepaint(_repaintCallback.copyRef());
+}
+
+- (void)exitFullscreenImmediately
+{
+    if (![self isFullScreen])
+        return;
+
+    if (![_webView _page])
+        return;
+
+    [self _manager]->requestExitFullScreen();
+    [self exitFullScreen];
+    _fullScreenState = ExitingFullScreen;
+    [self completedExitFullScreen];
+    replaceViewWithView(_webViewPlaceholder.get(), _webView);
+    [_webView _page]->setSuppressVisibilityUpdates(false);
+    [self _manager]->didExitFullScreen();
+    [self _manager]->setAnimatingFullScreen(false);
+    _webViewPlaceholder = nil;
 }
 
 - (void)close
 {
-    if ([self isFullScreen])
-        [self exitFullScreen];
-    
+    [self exitFullscreenImmediately];
     _webView = nil;
+}
+
+- (void)webViewDidRemoveFromSuperviewWhileInFullscreen
+{
+    if (_fullScreenState == InFullScreen && _webView.window != _window.get())
+        [self exitFullscreenImmediately];
 }
 
 #pragma mark -

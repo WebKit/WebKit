@@ -4822,6 +4822,14 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 #if PLATFORM(IOS)
 
+- (void)removeFromSuperview
+{
+    [super removeFromSuperview];
+
+    if ([_fullScreenWindowController isFullScreen])
+        [_fullScreenWindowController webViewDidRemoveFromSuperviewWhileInFullscreen];
+}
+
 - (CGSize)_minimumLayoutSizeOverride
 {
     ASSERT(_overridesMinimumLayoutSize);

@@ -1,5 +1,41 @@
 2017-11-08  Jeremy Jones  <jeremyj@apple.com>
 
+        Make WKFullScreenWidnowController more robust against modification by the embedding app.
+        https://bugs.webkit.org/show_bug.cgi?id=179413
+        rdar://problem/35408061
+
+        Reviewed by Darin Adler.
+
+        Present fullscreen UViewController in a separate UIWindow to prevent interaction with the embedding app's
+        UIViewController hierarchy.
+
+        Immediately tear down the fullscreen interface if the embedding app removes the WKWebView from the fullscreen window.
+        This prevents the fullscreen interface from getting into an invalid state.
+
+        Preserve scrollView.zoomScale because it is not effectively preserved by the more indirect _viewScale.
+
+        Use a custom root view controller to allow hiding of the status bar.
+
+        Remove the no-longer-necessary dispatch_after calls during enter and exit fullscreen.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView removeFromSuperview]):
+        * UIProcess/ios/WKFullScreenWindowControllerIOS.h:
+        * UIProcess/ios/WKFullScreenWindowControllerIOS.mm:
+        (WebKit::WKWebViewState::applyTo):
+        (WebKit::WKWebViewState::store):
+        (-[_WKFullScreenViewController loadView]):
+        (-[_WKFullscreenRootViewController prefersStatusBarHidden]):
+        (-[WKFullScreenWindowController enterFullScreen]):
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController completedExitFullScreen]):
+        (-[WKFullScreenWindowController exitFullscreenImmediately]):
+        (-[WKFullScreenWindowController close]):
+        (-[WKFullScreenWindowController webViewDidRemoveFromSuperviewWhileInFullscreen]):
+        (-[_WKFullScreenViewController viewDidDisappear:]): Deleted.
+
+2017-11-08  Jeremy Jones  <jeremyj@apple.com>
+
         HTMLMediaElement should not use element fullscreen on iOS
         https://bugs.webkit.org/show_bug.cgi?id=179418
         rdar://problem/35409277
