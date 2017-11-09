@@ -384,9 +384,12 @@ class Protocol:
         if 'availability' in json:
             if not commands and not events:
                 raise ParseException("Malformed domain specification: availability should only be included if there are commands or events.")
-            allowed_activation_strings = set(['web'])
-            if json['availability'] not in allowed_activation_strings:
-                raise ParseException('Malformed domain specification: availability is an unsupported string. Was: "%s", Allowed values: %s' % (json['availability'], ', '.join(allowed_activation_strings)))
+            if not isinstance(json['availability'], list):
+                raise ParseException("Malformed domain specification: availability is not an array")
+            allowed_activation_strings = set(['web', 'service-worker'])
+            for availability_type in json['availability']:
+                if availability_type not in allowed_activation_strings:
+                    raise ParseException('Malformed domain specification: availability is an unsupported string. Was: "%s", Allowed values: %s' % (json['availability'], ', '.join(allowed_activation_strings)))
 
         if 'workerSupported' in json:
             if not isinstance(json['workerSupported'], bool):

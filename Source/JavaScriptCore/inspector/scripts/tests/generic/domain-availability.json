@@ -1,7 +1,7 @@
 [
 {
     "domain": "DomainA",
-    "availability": "web",
+    "availability": ["web"],
     "commands": [{"name": "enable"}]
 },
 {

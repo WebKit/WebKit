@@ -1,6 +1,6 @@
 {
     "domain": "Database",
-    "availability": "web",
+    "availability": ["web"],
     "types": [
         {
             "id": "DatabaseId",

@@ -31,7 +31,7 @@
 
 // DomainA.
 InspectorBackend.registerCommand("DomainA.enable", [], []);
-InspectorBackend.activateDomain("DomainA", "web");
+InspectorBackend.activateDomain("DomainA", ["web"]);
 
 // DomainB.
 InspectorBackend.registerCommand("DomainB.enable", [], []);

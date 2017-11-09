@@ -1,3 +1,43 @@
+2017-11-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Make domain availability a list of types instead of a single type
+        https://bugs.webkit.org/show_bug.cgi?id=179457
+
+        Reviewed by Brian Burg.
+
+        * inspector/scripts/codegen/generate_js_backend_commands.py:
+        (JSBackendCommandsGenerator.generate_domain):
+        Update output of `InspectorBackend.activateDomain` to include the list.
+
+        * inspector/scripts/codegen/models.py:
+        (Protocol.parse_domain):
+        Parse `availability` as a list and include a new supported value of "service-worker".
+
+        * inspector/protocol/ApplicationCache.json:
+        * inspector/protocol/CSS.json:
+        * inspector/protocol/Canvas.json:
+        * inspector/protocol/DOM.json:
+        * inspector/protocol/DOMDebugger.json:
+        * inspector/protocol/DOMStorage.json:
+        * inspector/protocol/Database.json:
+        * inspector/protocol/IndexedDB.json:
+        * inspector/protocol/LayerTree.json:
+        * inspector/protocol/Memory.json:
+        * inspector/protocol/Network.json:
+        * inspector/protocol/Page.json:
+        * inspector/protocol/Timeline.json:
+        * inspector/protocol/Worker.json:
+        Update `availability` to be a list.
+
+        * inspector/scripts/tests/generic/domain-availability.json:
+        * inspector/scripts/tests/generic/expected/domain-availability.json-result:
+        * inspector/scripts/tests/generic/expected/fail-on-domain-availability-type.json-error: Added.
+        * inspector/scripts/tests/generic/expected/fail-on-domain-availability-value.json-error: Added.
+        * inspector/scripts/tests/generic/expected/fail-on-domain-availability.json-error:
+        * inspector/scripts/tests/generic/fail-on-domain-availability-type.json: Copied from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-domain-availability.json.
+        * inspector/scripts/tests/generic/fail-on-domain-availability-value.json: Renamed from Source/JavaScriptCore/inspector/scripts/tests/generic/fail-on-domain-availability.json.
+        Update tests to include a test for the type and an invalid value.
+
 2017-11-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][JIT] Clean up SlowPathCall stubs

@@ -1,3 +1,30 @@
+2017-11-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Make domain availability a list of types instead of a single type
+        https://bugs.webkit.org/show_bug.cgi?id=179457
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass.prototype.activateDomain):
+        The second value changed to be an optional list. Check if the active
+        debuggable type is in the list or not.
+
+        * UserInterface/Protocol/Legacy/10.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/10.3/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/11.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/8.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/9.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/9.3/InspectorBackendCommands.js:
+        * Versions/Inspector-iOS-10.0.json:
+        * Versions/Inspector-iOS-10.3.json:
+        * Versions/Inspector-iOS-11.0.json:
+        * Versions/Inspector-iOS-8.0.json:
+        * Versions/Inspector-iOS-9.0.json:
+        * Versions/Inspector-iOS-9.3.json:
+        Since this is a change to how we generate the frontend resource,
+        update the legacy versioned backends and regenerate their resource.
+
 2017-11-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r224566): [GTK][WPE] Many inspector tests are failing after r224566

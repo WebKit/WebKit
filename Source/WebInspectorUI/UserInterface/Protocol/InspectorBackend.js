@@ -158,10 +158,10 @@ InspectorBackendClass = class InspectorBackendClass
         InspectorBackend.mainConnection.runAfterPendingDispatches(script);
     }
 
-    activateDomain(domainName, activationDebuggableType)
+    activateDomain(domainName, activationDebuggableTypes)
     {
-        if (!activationDebuggableType || InspectorFrontendHost.debuggableType() === activationDebuggableType) {
-            var agent = this._agents[domainName];
+        if (!activationDebuggableTypes || activationDebuggableTypes.includes(InspectorFrontendHost.debuggableType())) {
+            let agent = this._agents[domainName];
             agent.activate();
             return agent;
         }

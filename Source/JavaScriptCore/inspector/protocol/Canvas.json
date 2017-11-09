@@ -1,6 +1,6 @@
 {
     "domain": "Canvas",
-    "availability": "web",
+    "availability": ["web"],
     "description": "Canvas domain allows tracking of canvases that have an associated graphics context. Tracks canvases in the DOM and CSS canvases created with -webkit-canvas.",
     "types": [
         {

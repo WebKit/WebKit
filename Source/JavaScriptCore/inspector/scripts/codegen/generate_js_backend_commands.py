@@ -25,6 +25,7 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 
+import json
 import logging
 import string
 from string import Template
@@ -131,10 +132,10 @@ class JSBackendCommandsGenerator(Generator):
 
         activate_args = {
             'domain': domain.domain_name,
-            'availability': domain.availability,
+            'availability': json.dumps(domain.availability) if domain.availability else '',
         }
         if domain.availability:
-            lines.append('InspectorBackend.activateDomain("%(domain)s", "%(availability)s");' % activate_args)
+            lines.append('InspectorBackend.activateDomain("%(domain)s", %(availability)s);' % activate_args)
         else:
             lines.append('InspectorBackend.activateDomain("%(domain)s");' % activate_args)
 

@@ -1,7 +1,7 @@
 {
     "domain": "DOMStorage",
     "description": "Query and modify DOM storage.",
-    "availability": "web",
+    "availability": ["web"],
     "types": [
         {
             "id": "StorageId",
