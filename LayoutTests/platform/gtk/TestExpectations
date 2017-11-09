@@ -2201,6 +2201,33 @@ webkit.org/b/178454 editing/pasteboard/datatransfer-items-paste-plaintext.html [
 
 webkit.org/b/178792 fast/events/touch/touch-inside-iframe.html [ Timeout ]
 
+webkit.org/b/179471 inspector/console/console-message.html [ Timeout ]
+webkit.org/b/179471 inspector/console/console-time.html [ Timeout ]
+webkit.org/b/179471 inspector/console/heapSnapshot.html [ Timeout ]
+webkit.org/b/179471 inspector/console/js-source-locations.html [ Timeout ]
+webkit.org/b/179471 inspector/console/x-frame-options-message.html [ Timeout ]
+webkit.org/b/179471 inspector/heap/tracking.html [ Timeout ]
+webkit.org/b/179471 inspector/layers/layers-anonymous.html [ Timeout ]
+webkit.org/b/179471 inspector/layers/layers-compositing-reasons.html [ Timeout ]
+webkit.org/b/179471 inspector/layers/layers-for-node.html [ Timeout ]
+webkit.org/b/179471 inspector/layers/layers-generated-content.html [ Timeout ]
+webkit.org/b/179471 inspector/layers/layers-reflected-content.html [ Timeout ]
+webkit.org/b/179471 inspector/memory/tracking.html [ Timeout ]
+webkit.org/b/179471 inspector/page/media-query-list-listener-exception.html [ Timeout ]
+webkit.org/b/179471 inspector/protocol/backend-dispatcher-argument-errors.html [ Timeout ]
+webkit.org/b/179471 inspector/protocol/backend-dispatcher-malformed-message-errors.html [ Timeout ]
+webkit.org/b/179471 inspector/runtime/CommandLineAPI-inspect.html [ Timeout ]
+webkit.org/b/179471 inspector/script-profiler/event-type-API.html [ Timeout ]
+webkit.org/b/179471 inspector/script-profiler/event-type-Microtask.html [ Timeout ]
+webkit.org/b/179471 inspector/script-profiler/event-type-Other.html [ Timeout ]
+webkit.org/b/179471 inspector/script-profiler/tracking.html [ Timeout ]
+webkit.org/b/179471 inspector/unit-tests/async-test-suite.html [ Timeout ]
+webkit.org/b/179471 inspector/unit-tests/protocol-test-dispatch-event-to-frontend.html [ Timeout ]
+webkit.org/b/179471 inspector/unit-tests/sync-test-suite.html [ Timeout ]
+webkit.org/b/179471 inspector/worker/worker-create-and-terminate.html [ Timeout ]
+webkit.org/b/179471 inspector/worker/worker-recover-if-inspector-close.html [ Timeout ]
+webkit.org/b/179471 inspector/unit-tests/breakpoint-log-message-lexer.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////

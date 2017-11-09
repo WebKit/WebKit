@@ -1,3 +1,12 @@
+2017-11-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Gardening 09 nov
+        https://bugs.webkit.org/show_bug.cgi?id=179472
+
+        Unreviewed GTK gardening
+
+        * platform/gtk/TestExpectations:
+
 2017-11-09  Alicia Boya García  <aboya@igalia.com>
 
         [GTK] Test gardening
