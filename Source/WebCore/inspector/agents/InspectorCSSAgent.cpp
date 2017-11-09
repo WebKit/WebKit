@@ -104,8 +104,8 @@ static unsigned computePseudoClassMask(const InspectorArray& pseudoClassArray)
 class InspectorCSSAgent::StyleSheetAction : public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(StyleSheetAction);
 public:
-    StyleSheetAction(const String& name, InspectorStyleSheet* styleSheet)
-        : InspectorHistory::Action(name)
+    StyleSheetAction(InspectorStyleSheet* styleSheet)
+        : InspectorHistory::Action()
         , m_styleSheet(styleSheet)
     {
     }
@@ -118,7 +118,7 @@ class InspectorCSSAgent::SetStyleSheetTextAction final : public InspectorCSSAgen
     WTF_MAKE_NONCOPYABLE(SetStyleSheetTextAction);
 public:
     SetStyleSheetTextAction(InspectorStyleSheet* styleSheet, const String& text)
-        : InspectorCSSAgent::StyleSheetAction(ASCIILiteral("SetStyleSheetText"), styleSheet)
+        : InspectorCSSAgent::StyleSheetAction(styleSheet)
         , m_text(text)
     {
     }
@@ -170,7 +170,7 @@ class InspectorCSSAgent::SetStyleTextAction final : public InspectorCSSAgent::St
     WTF_MAKE_NONCOPYABLE(SetStyleTextAction);
 public:
     SetStyleTextAction(InspectorStyleSheet* styleSheet, const InspectorCSSId& cssId, const String& text)
-        : InspectorCSSAgent::StyleSheetAction(ASCIILiteral("SetStyleText"), styleSheet)
+        : InspectorCSSAgent::StyleSheetAction(styleSheet)
         , m_cssId(cssId)
         , m_text(text)
     {
@@ -215,7 +215,7 @@ class InspectorCSSAgent::SetRuleSelectorAction final : public InspectorCSSAgent:
     WTF_MAKE_NONCOPYABLE(SetRuleSelectorAction);
 public:
     SetRuleSelectorAction(InspectorStyleSheet* styleSheet, const InspectorCSSId& cssId, const String& selector)
-        : InspectorCSSAgent::StyleSheetAction(ASCIILiteral("SetRuleSelector"), styleSheet)
+        : InspectorCSSAgent::StyleSheetAction(styleSheet)
         , m_cssId(cssId)
         , m_selector(selector)
     {
@@ -250,7 +250,7 @@ class InspectorCSSAgent::AddRuleAction final : public InspectorCSSAgent::StyleSh
     WTF_MAKE_NONCOPYABLE(AddRuleAction);
 public:
     AddRuleAction(InspectorStyleSheet* styleSheet, const String& selector)
-        : InspectorCSSAgent::StyleSheetAction(ASCIILiteral("AddRule"), styleSheet)
+        : InspectorCSSAgent::StyleSheetAction(styleSheet)
         , m_selector(selector)
     {
     }

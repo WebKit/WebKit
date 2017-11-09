@@ -1,3 +1,14 @@
+2017-11-09  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: support undo/redo of insertAdjacentHTML
+        https://bugs.webkit.org/show_bug.cgi?id=179283
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/DOM.json:
+        Add `insertAdjacentHTML` command that executes an undoable version of `insertAdjacentHTML`
+        on the given node.
+
 2017-11-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Make domain availability a list of types instead of a single type

@@ -55,6 +55,7 @@ public:
     ExceptionOr<void> replaceWholeText(Text&, const String& text);
     ExceptionOr<void> replaceChild(Node& parentNode, Ref<Node>&& newNode, Node& oldNode);
     ExceptionOr<void> setNodeValue(Node& parentNode, const String& value);
+    ExceptionOr<void> insertAdjacentHTML(Element&, const String& where, const String& html);
 
     bool insertBefore(Node& parentNode, Ref<Node>&&, Node* anchorNode, ErrorString&);
     bool removeChild(Node& parentNode, Node&, ErrorString&);
@@ -62,9 +63,11 @@ public:
     bool removeAttribute(Element&, const String& name, ErrorString&);
     bool setOuterHTML(Node&, const String& html, Node*& newNode, ErrorString&);
     bool replaceWholeText(Text&, const String& text, ErrorString&);
+    bool insertAdjacentHTML(Element&, const String& where, const String& html, ErrorString&);
 
 private:
     class DOMAction;
+    class InsertAdjacentHTMLAction;
     class InsertBeforeAction;
     class RemoveAttributeAction;
     class RemoveChildAction;

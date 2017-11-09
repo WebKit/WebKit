@@ -47,7 +47,7 @@ class DOMEditor::RemoveChildAction final : public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(RemoveChildAction);
 public:
     RemoveChildAction(Node& parentNode, Node& node)
-        : Action("RemoveChild")
+        : InspectorHistory::Action()
         , m_parentNode(parentNode)
         , m_node(node)
     {
@@ -78,7 +78,7 @@ private:
 class DOMEditor::InsertBeforeAction final : public InspectorHistory::Action {
 public:
     InsertBeforeAction(Node& parentNode, Ref<Node>&& node, Node* anchorNode)
-        : Action("InsertBefore")
+        : InspectorHistory::Action()
         , m_parentNode(parentNode)
         , m_node(WTFMove(node))
         , m_anchorNode(anchorNode)
@@ -127,7 +127,7 @@ class DOMEditor::RemoveAttributeAction final : public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(RemoveAttributeAction);
 public:
     RemoveAttributeAction(Element& element, const String& name)
-        : Action("RemoveAttribute")
+        : InspectorHistory::Action()
         , m_element(element)
         , m_name(name)
     {
@@ -160,7 +160,7 @@ class DOMEditor::SetAttributeAction final : public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(SetAttributeAction);
 public:
     SetAttributeAction(Element& element, const AtomicString& name, const AtomicString& value)
-        : Action("SetAttribute")
+        : InspectorHistory::Action()
         , m_element(element)
         , m_name(name)
         , m_value(value)
@@ -197,7 +197,7 @@ private:
 class DOMEditor::SetOuterHTMLAction final : public InspectorHistory::Action {
 public:
     SetOuterHTMLAction(Node& node, const String& html)
-        : Action("SetOuterHTML")
+        : InspectorHistory::Action()
         , m_node(node)
         , m_nextSibling(node.nextSibling())
         , m_html(html)
@@ -239,11 +239,50 @@ private:
     DOMEditor m_domEditor { m_history };
 };
 
+class DOMEditor::InsertAdjacentHTMLAction final : public InspectorHistory::Action {
+    WTF_MAKE_NONCOPYABLE(InsertAdjacentHTMLAction);
+public:
+    InsertAdjacentHTMLAction(Element& element, const String& position, const String& html)
+        : InspectorHistory::Action()
+        , m_element(element)
+        , m_position(position)
+        , m_html(html)
+    {
+    }
+
+private:
+    ExceptionOr<void> perform() final
+    {
+        return redo();
+    }
+
+    ExceptionOr<void> undo() final
+    {
+        for (auto& addedNode : m_addedNodes)
+            addedNode->remove();
+        m_addedNodes.clear();
+        return { };
+    }
+
+    ExceptionOr<void> redo() final
+    {
+        auto result = m_element->insertAdjacentHTML(m_position, m_html, m_addedNodes);
+        if (result.hasException())
+            return result.releaseException();
+        return { };
+    }
+
+    Ref<Element> m_element;
+    NodeVector m_addedNodes;
+    String m_position;
+    String m_html;
+};
+
 class DOMEditor::ReplaceWholeTextAction final : public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(ReplaceWholeTextAction);
 public:
     ReplaceWholeTextAction(Text& textNode, const String& text)
-        : Action("ReplaceWholeText")
+        : InspectorHistory::Action()
         , m_textNode(textNode)
         , m_text(text)
     {
@@ -277,7 +316,7 @@ class DOMEditor::ReplaceChildNodeAction final: public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(ReplaceChildNodeAction);
 public:
     ReplaceChildNodeAction(Node& parentNode, Ref<Node>&& newNode, Node& oldNode)
-        : Action("ReplaceChildNode")
+        : InspectorHistory::Action()
         , m_parentNode(parentNode)
         , m_newNode(WTFMove(newNode))
         , m_oldNode(oldNode)
@@ -309,7 +348,7 @@ class DOMEditor::SetNodeValueAction final : public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(SetNodeValueAction);
 public:
     SetNodeValueAction(Node& node, const String& value)
-        : Action("SetNodeValue")
+        : InspectorHistory::Action()
         , m_node(node)
         , m_value(value)
     {
@@ -374,6 +413,11 @@ ExceptionOr<void> DOMEditor::setOuterHTML(Node& node, const String& html, Node*&
     return result;
 }
 
+ExceptionOr<void> DOMEditor::insertAdjacentHTML(Element& element, const String& where, const String& html)
+{
+    return m_history.perform(std::make_unique<InsertAdjacentHTMLAction>(element, where, html));
+}
+
 ExceptionOr<void> DOMEditor::replaceWholeText(Text& textNode, const String& text)
 {
     return m_history.perform(std::make_unique<ReplaceWholeTextAction>(textNode, text));
@@ -420,6 +464,11 @@ bool DOMEditor::removeAttribute(Element& element, const String& name, ErrorStrin
 bool DOMEditor::setOuterHTML(Node& node, const String& html, Node*& newNode, ErrorString& errorString)
 {
     return populateErrorString(setOuterHTML(node, html, newNode), errorString);
+}
+
+bool DOMEditor::insertAdjacentHTML(Element& element, const String& where, const String& html, ErrorString& errorString)
+{
+    return populateErrorString(insertAdjacentHTML(element, where, html), errorString);
 }
 
 bool DOMEditor::replaceWholeText(Text& textNode, const String& text, ErrorString& errorString)

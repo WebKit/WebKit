@@ -302,6 +302,14 @@
             ]
         },
         {
+            "name": "insertAdjacentHTML",
+            "parameters": [
+                { "name": "nodeId", "$ref": "NodeId" },
+                { "name": "position", "type": "string" },
+                { "name": "html", "type": "string" }
+            ]
+        },
+        {
             "name": "performSearch",
             "description": "Searches for a given string in the DOM tree. Use <code>getSearchResults</code> to access search results or <code>cancelSearch</code> to end this search session.",
             "parameters": [

@@ -312,6 +312,8 @@ public:
     WEBCORE_EXPORT void setTabIndex(int);
     virtual RefPtr<Element> focusDelegate();
 
+    ExceptionOr<void> insertAdjacentHTML(const String& where, const String& html, std::optional<NodeVector&> addedNodes);
+
     WEBCORE_EXPORT ExceptionOr<Element*> insertAdjacentElement(const String& where, Element& newChild);
     WEBCORE_EXPORT ExceptionOr<void> insertAdjacentHTML(const String& where, const String& html);
     WEBCORE_EXPORT ExceptionOr<void> insertAdjacentText(const String& where, const String& text);

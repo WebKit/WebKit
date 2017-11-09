@@ -121,6 +121,7 @@ public:
     void setNodeName(ErrorString&, int nodeId, const String& name, int* newId) override;
     void getOuterHTML(ErrorString&, int nodeId, WTF::String* outerHTML) override;
     void setOuterHTML(ErrorString&, int nodeId, const String& outerHTML) override;
+    void insertAdjacentHTML(ErrorString&, int nodeId, const String& position, const String& html) override;
     void setNodeValue(ErrorString&, int nodeId, const String& value) override;
     void getEventListenersForNode(ErrorString&, int nodeId, const WTF::String* const objectGroup, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::EventListener>>& listenersArray) override;
     void setEventListenerDisabled(ErrorString&, int eventListenerId, bool disabled) override;

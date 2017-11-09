@@ -808,6 +808,20 @@ void InspectorDOMAgent::setOuterHTML(ErrorString& errorString, int nodeId, const
         pushChildNodesToFrontend(newId);
 }
 
+void InspectorDOMAgent::insertAdjacentHTML(ErrorString& errorString, int nodeId, const String& position, const String& html)
+{
+    Node* node = assertEditableNode(errorString, nodeId);
+    if (!node)
+        return;
+
+    if (!is<Element>(node)) {
+        errorString = ASCIILiteral("Can only call insertAdjacentHTML on Elements.");
+        return;
+    }
+
+    m_domEditor->insertAdjacentHTML(downcast<Element>(*node), position, html, errorString);
+}
+
 void InspectorDOMAgent::setNodeValue(ErrorString& errorString, int nodeId, const String& value)
 {
     Node* node = assertEditableNode(errorString, nodeId);

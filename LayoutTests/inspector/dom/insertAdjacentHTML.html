@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let domNode;
+
+    let suite = InspectorTest.createAsyncSuite("DOM.insertAdjacentHTML");
+
+    const positions = [
+        "beforebegin",
+        "afterbegin",
+        "beforeend",
+        "afterend",
+    ];
+
+    for (let position of positions) {
+        suite.addTestCase({
+            name: `DOM.insertAdjacentHTML.${position}`,
+            async test() {
+                let html = `<div id="${position}"></div>`;
+                await DOMAgent.insertAdjacentHTML(domNode.id, position, html);
+
+                let insertAdjacentHTMLResult = await DOMAgent.getOuterHTML(domNode.parentNode.id);
+                InspectorTest.expectThat(insertAdjacentHTMLResult.outerHTML.includes(html), "The given HTML should have been added to the DOM tree.")
+
+                await DOMAgent.undo();
+
+                let undoResult = await DOMAgent.getOuterHTML(domNode.parentNode.id);
+                InspectorTest.expectThat(!undoResult.outerHTML.includes(html), "The given HTML should have been removed from the DOM tree.")
+
+                await DOMAgent.redo();
+
+                let redoResult = await DOMAgent.getOuterHTML(domNode.parentNode.id);
+                InspectorTest.expectThat(redoResult.outerHTML.includes(html), "The given HTML should have been added back to the DOM tree.")
+            }
+        });
+    }
+
+    suite.addTestCase({
+        name: "DOM.insertAdjacentHTML.InvalidNodeId",
+        async test() {
+            try {
+                const nodeId = 9999999;
+                const position = "afterbegin";
+                const html = "";
+                await DOMAgent.insertAdjacentHTML(nodeId, position, html);
+            } catch (error) {
+                InspectorTest.expectThat(error, "Should produce an error.");
+                InspectorTest.pass("Error: " + error.message);
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.insertAdjacentHTML.InvalidPosition",
+        async test() {
+            try {
+                const position = "INVALID_POSITION";
+                const html = "";
+                await DOMAgent.insertAdjacentHTML(domNode.id, position, html);
+            } catch (error) {
+                InspectorTest.expectThat(error, "Should produce an error.");
+                InspectorTest.pass("Error: " + error.message);
+            }
+        }
+    });
+
+    WI.domTreeManager.requestDocument((documentNode) => {
+        WI.domTreeManager.querySelector(documentNode.id, "#reference", (nodeId) => {
+            domNode = WI.domTreeManager.nodeForId(nodeId);
+            InspectorTest.assert(domNode, `Node with id "reference" should exist.`);
+
+            suite.runTestCasesAndFinish();
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test for DOM.insertAdjacentHTML.</p>
+
+    <div id="container"><div id="reference"></div></div>
+</body>
+</html>

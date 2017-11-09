@@ -1044,7 +1044,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         config.setMultiline(true);
         this._editing = WI.startEditing(this._htmlEditElement, config);
 
-        if (!isNaN(options.startPosition)) {
+        if (options.initialValue && !isNaN(options.startPosition)) {
             let range = document.createRange();
             range.setStart(this._htmlEditElement.firstChild, options.startPosition);
             range.collapse(true);

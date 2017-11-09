@@ -1,0 +1,32 @@
+Test for DOM.insertAdjacentHTML.
+
+
+== Running test suite: DOM.insertAdjacentHTML
+-- Running test case: DOM.insertAdjacentHTML.beforebegin
+PASS: The given HTML should have been added to the DOM tree.
+PASS: The given HTML should have been removed from the DOM tree.
+PASS: The given HTML should have been added back to the DOM tree.
+
+-- Running test case: DOM.insertAdjacentHTML.afterbegin
+PASS: The given HTML should have been added to the DOM tree.
+PASS: The given HTML should have been removed from the DOM tree.
+PASS: The given HTML should have been added back to the DOM tree.
+
+-- Running test case: DOM.insertAdjacentHTML.beforeend
+PASS: The given HTML should have been added to the DOM tree.
+PASS: The given HTML should have been removed from the DOM tree.
+PASS: The given HTML should have been added back to the DOM tree.
+
+-- Running test case: DOM.insertAdjacentHTML.afterend
+PASS: The given HTML should have been added to the DOM tree.
+PASS: The given HTML should have been removed from the DOM tree.
+PASS: The given HTML should have been added back to the DOM tree.
+
+-- Running test case: DOM.insertAdjacentHTML.InvalidNodeId
+PASS: Should produce an error.
+PASS: Error: Could not find node with given id
+
+-- Running test case: DOM.insertAdjacentHTML.InvalidPosition
+PASS: Should produce an error.
+PASS: Error: SyntaxError
+
