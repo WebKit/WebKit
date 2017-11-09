@@ -92,10 +92,6 @@ public:
 
     void flushAsynchronousTasks();
 
-    // Subtree push/pop
-    void pushLayoutState(RenderElement&);
-    bool pushLayoutStateForPaginationIfNeeded(RenderBlockFlow&);
-    void popLayoutState(RenderObject&);
     LayoutState* layoutState() const;
     // Returns true if layoutState should be used for its cached offset and clip.
     bool isPaintOffsetCacheEnabled() const { return !m_paintOffsetCacheDisableCount && layoutState(); }
@@ -117,6 +113,7 @@ private:
     friend class LayoutStateMaintainer;
     friend class LayoutStateDisabler;
     friend class SubtreeLayoutStateMaintainer;
+    friend class PaginatedLayoutStateMaintainer;
 
     bool canPerformLayout() const;
     bool layoutDisallowed() const { return m_layoutDisallowedCount; }
@@ -138,6 +135,9 @@ private:
     void startLayoutAtMainFrameViewIfNeeded();
 
     // These functions may only be accessed by LayoutStateMaintainer.
+    // Subtree push/pop
+    void pushLayoutState(RenderElement&);
+    bool pushLayoutStateForPaginationIfNeeded(RenderBlockFlow&);
     bool pushLayoutState(RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false);
     void popLayoutState();
 

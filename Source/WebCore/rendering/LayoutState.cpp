@@ -273,14 +273,14 @@ bool LayoutState::layoutDeltaMatches(LayoutSize delta) const
 #endif
 
 LayoutStateMaintainer::LayoutStateMaintainer(RenderBox& root, LayoutSize offset, bool disablePaintOffsetCache, LayoutUnit pageHeight, bool pageHeightChanged)
-    : m_layoutContext(root.view().frameView().layoutContext())
+    : m_context(root.view().frameView().layoutContext())
     , m_paintOffsetCacheIsDisabled(disablePaintOffsetCache)
 {
     push(root, offset, pageHeight, pageHeightChanged);
 }
 
-LayoutStateMaintainer::LayoutStateMaintainer(LayoutContext& layoutContext)
-    : m_layoutContext(layoutContext)
+LayoutStateMaintainer::LayoutStateMaintainer(LayoutContext& context)
+    : m_context(context)
 {
 }
 
@@ -297,11 +297,11 @@ void LayoutStateMaintainer::push(RenderBox& root, LayoutSize offset, LayoutUnit 
     ASSERT(!m_didCallPush);
     m_didCallPush = true;
     // We push state even if disabled, because we still need to store layoutDelta
-    m_didPushLayoutState = m_layoutContext.pushLayoutState(root, offset, pageHeight, pageHeightChanged);
+    m_didPushLayoutState = m_context.pushLayoutState(root, offset, pageHeight, pageHeightChanged);
     if (!m_didPushLayoutState)
         return;
     if (m_paintOffsetCacheIsDisabled)
-        m_layoutContext.disablePaintOffsetCache();
+        m_context.disablePaintOffsetCache();
 }
 
 void LayoutStateMaintainer::pop()
@@ -312,20 +312,20 @@ void LayoutStateMaintainer::pop()
         return;
     if (!m_didPushLayoutState)
         return;
-    m_layoutContext.popLayoutState();
+    m_context.popLayoutState();
     if (m_paintOffsetCacheIsDisabled)
-        m_layoutContext.enablePaintOffsetCache();
+        m_context.enablePaintOffsetCache();
 }
 
-LayoutStateDisabler::LayoutStateDisabler(LayoutContext& layoutContext)
-    : m_layoutContext(layoutContext)
+LayoutStateDisabler::LayoutStateDisabler(LayoutContext& context)
+    : m_context(context)
 {
-    m_layoutContext.disablePaintOffsetCache();
+    m_context.disablePaintOffsetCache();
 }
 
 LayoutStateDisabler::~LayoutStateDisabler()
 {
-    m_layoutContext.enablePaintOffsetCache();
+    m_context.enablePaintOffsetCache();
 }
 
 static bool shouldDisablePaintOffsetCacheForSubtree(RenderElement& subtreeLayoutRoot)
@@ -338,13 +338,12 @@ static bool shouldDisablePaintOffsetCacheForSubtree(RenderElement& subtreeLayout
 }
 
 SubtreeLayoutStateMaintainer::SubtreeLayoutStateMaintainer(RenderElement* subtreeLayoutRoot)
-    : m_subtreeLayoutRoot(subtreeLayoutRoot)
 {
-    if (m_subtreeLayoutRoot) {
-        auto& layoutContext = m_subtreeLayoutRoot->view().frameView().layoutContext();
-        layoutContext.pushLayoutState(*m_subtreeLayoutRoot);
-        if (shouldDisablePaintOffsetCacheForSubtree(*m_subtreeLayoutRoot)) {
-            layoutContext.disablePaintOffsetCache();
+    if (subtreeLayoutRoot) {
+        m_context = &subtreeLayoutRoot->view().frameView().layoutContext();
+        m_context->pushLayoutState(*subtreeLayoutRoot);
+        if (shouldDisablePaintOffsetCacheForSubtree(*subtreeLayoutRoot)) {
+            m_context->disablePaintOffsetCache();
             m_didDisablePaintOffsetCache = true;
         }
     }
@@ -352,24 +351,23 @@ SubtreeLayoutStateMaintainer::SubtreeLayoutStateMaintainer(RenderElement* subtre
 
 SubtreeLayoutStateMaintainer::~SubtreeLayoutStateMaintainer()
 {
-    if (m_subtreeLayoutRoot) {
-        auto& layoutContext = m_subtreeLayoutRoot->view().frameView().layoutContext();
-        layoutContext.popLayoutState(*m_subtreeLayoutRoot);
+    if (m_context) {
+        m_context->popLayoutState();
         if (m_didDisablePaintOffsetCache)
-            layoutContext.enablePaintOffsetCache();
+            m_context->enablePaintOffsetCache();
     }
 }
 
 PaginatedLayoutStateMaintainer::PaginatedLayoutStateMaintainer(RenderBlockFlow& flow)
-    : m_flow(flow)
-    , m_pushed(flow.view().frameView().layoutContext().pushLayoutStateForPaginationIfNeeded(flow))
+    : m_context(flow.view().frameView().layoutContext())
+    , m_pushed(m_context.pushLayoutStateForPaginationIfNeeded(flow))
 {
 }
 
 PaginatedLayoutStateMaintainer::~PaginatedLayoutStateMaintainer()
 {
     if (m_pushed)
-        m_flow.view().frameView().layoutContext().popLayoutState(m_flow);
+        m_context.popLayoutState();
 }
 
 } // namespace WebCore

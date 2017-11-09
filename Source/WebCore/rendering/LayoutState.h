@@ -149,7 +149,7 @@ public:
     bool didPush() const { return m_didCallPush; }
 
 private:
-    LayoutContext& m_layoutContext;
+    LayoutContext& m_context;
     bool m_paintOffsetCacheIsDisabled { false };
     bool m_didCallPush { false };
     bool m_didCallPop { false };
@@ -162,7 +162,7 @@ public:
     ~SubtreeLayoutStateMaintainer();
 
 private:
-    RenderElement* m_subtreeLayoutRoot { nullptr };
+    LayoutContext* m_context { nullptr };
     bool m_didDisablePaintOffsetCache { false };
 };
 
@@ -173,7 +173,7 @@ public:
     ~LayoutStateDisabler();
 
 private:
-    LayoutContext& m_layoutContext;
+    LayoutContext& m_context;
 };
 
 class PaginatedLayoutStateMaintainer {
@@ -182,7 +182,7 @@ public:
     ~PaginatedLayoutStateMaintainer();
 
 private:
-    RenderBlockFlow& m_flow;
+    LayoutContext& m_context;
     bool m_pushed { false };
 };
 

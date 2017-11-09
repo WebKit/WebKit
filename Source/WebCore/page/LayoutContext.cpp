@@ -573,11 +573,6 @@ bool LayoutContext::pushLayoutStateForPaginationIfNeeded(RenderBlockFlow& layout
     return true;
 }
     
-void LayoutContext::popLayoutState(RenderObject&)
-{
-    return popLayoutState();
-}
-    
 bool LayoutContext::pushLayoutState(RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged)
 {
     // We push LayoutState even if layoutState is disabled because it stores layoutDelta too.
