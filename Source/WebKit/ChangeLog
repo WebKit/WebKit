@@ -1,3 +1,16 @@
+2017-11-09  Megan Gardner  <megan_gardner@apple.com>
+
+        Clean out unused selection items from UIKitSPI
+        https://bugs.webkit.org/show_bug.cgi?id=179459
+
+        Reviewed by Tim Horton.
+
+        Many of these should have been removed from previous commits, but they were missed.
+        None of these enums or methods are being used by WebKit anymore, and removing them will keep things
+        clean and allow UIKit to remove things that are not used at all by anyone anymore.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
 2017-11-09  Christopher Reid  <chris.reid@sony.com>
 
         Use enum classes within FileSystem
