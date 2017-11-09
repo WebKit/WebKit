@@ -30,6 +30,7 @@
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include "Test.h"
+#include <WebKit/WKPreferencesRefPrivate.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKWebsiteDataStoreRef.h>
 
@@ -75,6 +76,12 @@ TEST(WebKit, EphemeralSessionPushStateNoHistoryCallback)
     pageLoaderClient.didSameDocumentNavigationForFrame = didSameDocumentNavigationForFrame;
 
     WKPageSetPageLoaderClient(webView.page(), &pageLoaderClient.base);
+
+    WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreate());
+    WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferences.get(), true);
+
+    WKPageGroupRef pageGroup = WKPageGetPageGroup(webView.page());
+    WKPageGroupSetPreferences(pageGroup, preferences.get());
 
     WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("push-state", "html"));
     WKPageLoadURL(webView.page(), url.get());

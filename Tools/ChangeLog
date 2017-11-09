@@ -1,3 +1,20 @@
+2017-11-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Test fix after r224609
+        https://bugs.webkit.org/show_bug.cgi?id=178565
+        <rdar://problem/11115901>
+
+        Unreviewed test fix after r224609.
+
+        Correct two test cases that attempt to push local file URLs in violation of our
+        same origin policies. The fix is to grant universal file access, as we do for similar
+        LayoutTests.
+
+        * TestWebKitAPI/Tests/WebKit/EphemeralSessionPushStateNoHistoryCallback.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/PrivateBrowsingPushStateNoHistoryCallback.cpp:
+        (TestWebKitAPI::TEST):
+
 2017-11-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, remove Dan from the soup network watchlist
