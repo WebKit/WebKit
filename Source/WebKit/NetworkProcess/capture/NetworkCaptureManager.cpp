@@ -79,11 +79,11 @@ void Manager::initialize(const String& recordReplayMode, const String& recordRep
     DEBUG_LOG("Cache location = " STRING_SPECIFIER, DEBUG_STR(m_recordReplayCacheLocation));
 
     if (isRecording()) {
-        m_recordFileHandle = WebCore::FileHandle(reportRecordPath(), FileOpenMode::OpenForWrite);
+        m_recordFileHandle = WebCore::FileHandle(reportRecordPath(), FileOpenMode::Write);
     } else if (isReplaying()) {
-        m_recordFileHandle = WebCore::FileHandle(reportRecordPath(), FileOpenMode::OpenForRead);
-        m_loadFileHandle = WebCore::FileHandle(reportLoadPath(), FileOpenMode::OpenForWrite);
-        m_replayFileHandle = WebCore::FileHandle(reportReplayPath(), FileOpenMode::OpenForWrite);
+        m_recordFileHandle = WebCore::FileHandle(reportRecordPath(), FileOpenMode::Read);
+        m_loadFileHandle = WebCore::FileHandle(reportLoadPath(), FileOpenMode::Write);
+        m_replayFileHandle = WebCore::FileHandle(reportReplayPath(), FileOpenMode::Write);
         loadResources();
     }
 }
@@ -466,7 +466,7 @@ WebCore::FileHandle Manager::openCacheFile(const String& filePath, FileOpenMode 
     // If we're opening the file for writing (including appending), then try
     // again after making sure all intermediate directories have been created.
 
-    if (mode != FileOpenMode::OpenForRead) {
+    if (mode != FileOpenMode::Read) {
         const auto& parentDir = directoryName(filePath);
         if (!makeAllDirectories(parentDir)) {
             DEBUG_LOG_ERROR("Error %d trying to create intermediate directories: " STRING_SPECIFIER, errno, DEBUG_STR(parentDir));
@@ -481,7 +481,7 @@ WebCore::FileHandle Manager::openCacheFile(const String& filePath, FileOpenMode 
     // Could not open the file. Log the error and leave, returning the invalid
     // file handle.
 
-    if (mode == FileOpenMode::OpenForRead)
+    if (mode == FileOpenMode::Read)
         DEBUG_LOG_ERROR("Error %d trying to open " STRING_SPECIFIER " for reading", errno, DEBUG_STR(filePath));
     else
         DEBUG_LOG_ERROR("Error %d trying to open " STRING_SPECIFIER " for writing", errno, DEBUG_STR(filePath));

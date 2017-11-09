@@ -43,7 +43,7 @@ FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, WTF:
     if (!modificationHandler)
         return;
 
-    auto handle = FileSystem::openFile(path, FileSystem::FileOpenMode::OpenForEventsOnly);
+    auto handle = FileSystem::openFile(path, FileSystem::FileOpenMode::EventsOnly);
     if (handle == FileSystem::invalidPlatformFileHandle) {
         RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to open statistics file for monitoring: %s", path.utf8().data());
         return;

@@ -57,7 +57,7 @@ public:
 
 private:
     String m_path;
-    FileSystem::FileOpenMode m_mode { FileSystem::FileOpenMode::OpenForRead };
+    FileSystem::FileOpenMode m_mode { FileSystem::FileOpenMode::Read };
     FileSystem::PlatformFileHandle m_fileHandle { FileSystem::invalidPlatformFileHandle };
 };
 

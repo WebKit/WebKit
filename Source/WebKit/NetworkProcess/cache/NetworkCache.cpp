@@ -543,7 +543,7 @@ String Cache::dumpFilePath() const
 
 void Cache::dumpContentsToFile()
 {
-    auto fd = openFile(dumpFilePath(), FileOpenMode::OpenForWrite);
+    auto fd = openFile(dumpFilePath(), FileOpenMode::Write);
     if (!isHandleValid(fd))
         return;
     auto prologue = String("{\n\"entries\": [\n").utf8();

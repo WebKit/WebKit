@@ -33,6 +33,7 @@
 #include <time.h>
 #include <utility>
 #include <wtf/Forward.h>
+#include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -75,23 +76,23 @@ const PlatformFileHandle invalidPlatformFileHandle = -1;
 #endif
 
 enum class FileOpenMode {
-    OpenForRead = 0,
-    OpenForWrite,
+    Read,
+    Write,
 #if OS(DARWIN)
-    OpenForEventsOnly
+    EventsOnly,
 #endif
 };
 
 enum class FileSeekOrigin {
-    SeekFromBeginning = 0,
-    SeekFromCurrent,
-    SeekFromEnd
+    Beginning,
+    Current,
+    End,
 };
 
 enum class FileLockMode {
-    LockShared = 1,
-    LockExclusive = 2,
-    LockNonBlocking = 4
+    Shared = 1 << 0,
+    Exclusive = 1 << 1,
+    Nonblocking = 1 << 2,
 };
 
 enum class ShouldFollowSymbolicLinks { No, Yes };
@@ -145,7 +146,7 @@ WEBCORE_EXPORT int writeToFile(PlatformFileHandle, const char* data, int length)
 // Returns number of bytes actually written if successful, -1 otherwise.
 WEBCORE_EXPORT int readFromFile(PlatformFileHandle, char* data, int length);
 
-WEBCORE_EXPORT PlatformFileHandle openAndLockFile(const String&, FileOpenMode, FileLockMode = FileLockMode::LockExclusive);
+WEBCORE_EXPORT PlatformFileHandle openAndLockFile(const String&, FileOpenMode, OptionSet<FileLockMode> = FileLockMode::Exclusive);
 WEBCORE_EXPORT void unlockAndCloseFile(PlatformFileHandle);
 
 // Appends the contents of the file found at 'path' to the open PlatformFileHandle.
@@ -156,7 +157,7 @@ bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle&);
 bool hardLinkOrCopyFile(const String& source, const String& destination);
 
 #if USE(FILE_LOCK)
-WEBCORE_EXPORT bool lockFile(PlatformFileHandle, FileLockMode);
+WEBCORE_EXPORT bool lockFile(PlatformFileHandle, OptionSet<FileLockMode>);
 WEBCORE_EXPORT bool unlockFile(PlatformFileHandle);
 #endif
 

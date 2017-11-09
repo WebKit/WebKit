@@ -207,7 +207,7 @@ String lastComponentOfPathIgnoringTrailingSlash(const String& path)
 
 bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle& target)
 {
-    auto source = openFile(path, FileOpenMode::OpenForRead);
+    auto source = openFile(path, FileOpenMode::Read);
 
     if (!isHandleValid(source))
         return false;
@@ -330,7 +330,7 @@ MappedFileData::MappedFileData(const String& filePath, bool& success)
 #endif
 }
 
-PlatformFileHandle openAndLockFile(const String& path, FileOpenMode openMode, FileLockMode lockMode)
+PlatformFileHandle openAndLockFile(const String& path, FileOpenMode openMode, OptionSet<FileLockMode> lockMode)
 {
     auto handle = openFile(path, openMode);
     if (handle == invalidPlatformFileHandle)

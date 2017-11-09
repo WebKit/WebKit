@@ -288,7 +288,7 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
             m_metaData.conditionsApplyOnlyToDomain = m_conditionsApplyOnlyToDomain;
             
             Data header = encodeContentRuleListMetaData(m_metaData);
-            if (!m_fileError && seekFile(m_fileHandle, 0ll, FileSeekOrigin::SeekFromBeginning) == -1) {
+            if (!m_fileError && seekFile(m_fileHandle, 0ll, FileSeekOrigin::Beginning) == -1) {
                 closeFile(m_fileHandle);
                 m_fileError = true;
             }
@@ -476,7 +476,7 @@ void ContentRuleListStore::synchronousRemoveAllContentRuleLists()
 
 void ContentRuleListStore::invalidateContentRuleListVersion(const WTF::String& identifier)
 {
-    auto file = openFile(constructedPath(m_storePath, identifier, m_legacyFilename), FileOpenMode::OpenForWrite);
+    auto file = openFile(constructedPath(m_storePath, identifier, m_legacyFilename), FileOpenMode::Write);
     if (file == invalidPlatformFileHandle)
         return;
     ContentRuleListMetaData invalidHeader = {0, 0, 0, 0, 0, 0};

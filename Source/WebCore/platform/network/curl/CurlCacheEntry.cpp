@@ -125,7 +125,7 @@ bool CurlCacheEntry::readCachedData(ResourceHandle* job)
 
 bool CurlCacheEntry::saveResponseHeaders(const ResourceResponse& response)
 {
-    FileSystem::PlatformFileHandle headerFile = FileSystem::openFile(m_headerFilename, FileSystem::FileOpenMode::OpenForWrite);
+    FileSystem::PlatformFileHandle headerFile = FileSystem::openFile(m_headerFilename, FileSystem::FileOpenMode::Write);
     if (!FileSystem::isHandleValid(headerFile)) {
         LOG(Network, "Cache Error: Could not open %s for write\n", m_headerFilename.latin1().data());
         return false;
@@ -227,7 +227,7 @@ void CurlCacheEntry::generateBaseFilename(const CString& url)
 bool CurlCacheEntry::loadFileToBuffer(const String& filepath, Vector<char>& buffer)
 {
     // Open the file
-    FileSystem::PlatformFileHandle inputFile = FileSystem::openFile(filepath, FileSystem::FileOpenMode::OpenForRead);
+    FileSystem::PlatformFileHandle inputFile = FileSystem::openFile(filepath, FileSystem::FileOpenMode::Read);
     if (!FileSystem::isHandleValid(inputFile)) {
         LOG(Network, "Cache Error: Could not open %s for read\n", filepath.latin1().data());
         return false;
@@ -363,7 +363,7 @@ bool CurlCacheEntry::openContentFile()
     if (FileSystem::isHandleValid(m_contentFile))
         return true;
     
-    m_contentFile = FileSystem::openFile(m_contentFilename, FileSystem::FileOpenMode::OpenForWrite);
+    m_contentFile = FileSystem::openFile(m_contentFilename, FileSystem::FileOpenMode::Write);
 
     if (FileSystem::isHandleValid(m_contentFile))
         return true;

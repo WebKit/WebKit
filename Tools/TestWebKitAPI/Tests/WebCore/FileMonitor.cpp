@@ -114,7 +114,7 @@ static String readContentsOfFile(const String& path)
 {
     constexpr int bufferSize = 1024;
 
-    auto source = FileSystem::openFile(path, FileSystem::FileOpenMode::OpenForRead);
+    auto source = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
     if (!FileSystem::isHandleValid(source))
         return emptyString();
 
@@ -379,7 +379,7 @@ TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
     testQueue->dispatch([this] () mutable {
         EXPECT_FALSE(FileSystem::fileExists(tempFilePath()));
 
-        auto handle = FileSystem::openFile(tempFilePath(), FileSystem::FileOpenMode::OpenForWrite);
+        auto handle = FileSystem::openFile(tempFilePath(), FileSystem::FileOpenMode::Write);
         ASSERT_NE(handle, FileSystem::invalidPlatformFileHandle);
 
         int rc = FileSystem::writeToFile(handle, FileMonitorTestData.utf8().data(), FileMonitorTestData.length());

@@ -137,7 +137,7 @@ void WebMemorySampler::initializeSandboxedLogFile(const SandboxExtension::Handle
     if (m_sampleLogSandboxExtension)
         m_sampleLogSandboxExtension->consume();
     m_sampleLogFilePath = sampleLogFilePath;
-    m_sampleLogFile = FileSystem::openFile(m_sampleLogFilePath, FileSystem::FileOpenMode::OpenForWrite);
+    m_sampleLogFile = FileSystem::openFile(m_sampleLogFilePath, FileSystem::FileOpenMode::Write);
     writeHeaders();
 }
 

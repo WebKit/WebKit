@@ -1304,7 +1304,7 @@ bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(SharedBuffer& dat
         fullPath = FileSystem::pathByAppendingComponent(directory, path);
     } while (FileSystem::directoryName(fullPath) != directory || FileSystem::fileExists(fullPath));
     
-    FileSystem::PlatformFileHandle handle = FileSystem::openFile(fullPath, FileSystem::FileOpenMode::OpenForWrite);
+    FileSystem::PlatformFileHandle handle = FileSystem::openFile(fullPath, FileSystem::FileOpenMode::Write);
     if (!handle)
         return false;
     

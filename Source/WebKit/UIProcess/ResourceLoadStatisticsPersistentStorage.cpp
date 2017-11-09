@@ -55,7 +55,7 @@ static bool hasFileChangedSince(const String& path, WallTime since)
 static std::unique_ptr<KeyedDecoder> createDecoderForFile(const String& path)
 {
     ASSERT(!RunLoop::isMain());
-    auto handle = FileSystem::openAndLockFile(path, FileSystem::FileOpenMode::OpenForRead);
+    auto handle = FileSystem::openAndLockFile(path, FileSystem::FileOpenMode::Read);
     if (handle == FileSystem::invalidPlatformFileHandle)
         return nullptr;
 
@@ -262,7 +262,7 @@ void ResourceLoadStatisticsPersistentStorage::writeMemoryStoreToDisk()
         excludeFromBackup();
     }
 
-    auto handle = FileSystem::openAndLockFile(resourceLogFilePath(), FileSystem::FileOpenMode::OpenForWrite);
+    auto handle = FileSystem::openAndLockFile(resourceLogFilePath(), FileSystem::FileOpenMode::Write);
     if (handle == FileSystem::invalidPlatformFileHandle)
         return;
 

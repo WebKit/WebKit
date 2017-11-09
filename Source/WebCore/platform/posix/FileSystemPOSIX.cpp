@@ -83,12 +83,12 @@ PlatformFileHandle openFile(const String& path, FileOpenMode mode)
         return invalidPlatformFileHandle;
 
     int platformFlag = 0;
-    if (mode == FileOpenMode::OpenForRead)
+    if (mode == FileOpenMode::Read)
         platformFlag |= O_RDONLY;
-    else if (mode == FileOpenMode::OpenForWrite)
+    else if (mode == FileOpenMode::Write)
         platformFlag |= (O_WRONLY | O_CREAT | O_TRUNC);
 #if OS(DARWIN)
-    else if (mode == FileOpenMode::OpenForEventsOnly)
+    else if (mode == FileOpenMode::EventsOnly)
         platformFlag |= O_EVTONLY;
 #endif
 
@@ -107,13 +107,13 @@ long long seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin o
 {
     int whence = SEEK_SET;
     switch (origin) {
-    case FileSeekOrigin::SeekFromBeginning:
+    case FileSeekOrigin::Beginning:
         whence = SEEK_SET;
         break;
-    case FileSeekOrigin::SeekFromCurrent:
+    case FileSeekOrigin::Current:
         whence = SEEK_CUR;
         break;
-    case FileSeekOrigin::SeekFromEnd:
+    case FileSeekOrigin::End:
         whence = SEEK_END;
         break;
     default:
@@ -149,12 +149,12 @@ int readFromFile(PlatformFileHandle handle, char* data, int length)
 }
 
 #if USE(FILE_LOCK)
-bool lockFile(PlatformFileHandle handle, FileLockMode lockMode)
+bool lockFile(PlatformFileHandle handle, OptionSet<FileLockMode> lockMode)
 {
-    COMPILE_ASSERT(LOCK_SH == WTF::enumToUnderlyingType(FileLockMode::LockShared), LockSharedEncodingIsAsExpected);
-    COMPILE_ASSERT(LOCK_EX == WTF::enumToUnderlyingType(FileLockMode::LockExclusive), LockExclusiveEncodingIsAsExpected);
-    COMPILE_ASSERT(LOCK_NB == WTF::enumToUnderlyingType(FileLockMode::LockNonBlocking), LockNonBlockingEncodingIsAsExpected);
-    int result = flock(handle, WTF::enumToUnderlyingType(lockMode));
+    COMPILE_ASSERT(LOCK_SH == WTF::enumToUnderlyingType(FileLockMode::Shared), LockSharedEncodingIsAsExpected);
+    COMPILE_ASSERT(LOCK_EX == WTF::enumToUnderlyingType(FileLockMode::Exclusive), LockExclusiveEncodingIsAsExpected);
+    COMPILE_ASSERT(LOCK_NB == WTF::enumToUnderlyingType(FileLockMode::Nonblocking), LockNonblockingEncodingIsAsExpected);
+    int result = flock(handle, lockMode.toRaw());
     return (result != -1);
 }
 
