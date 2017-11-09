@@ -376,6 +376,7 @@ def headers_for_type(type):
         'WebCore::ServiceWorkerState': ['<WebCore/ServiceWorkerTypes.h>'],
         'WebCore::ShippingContactUpdate': ['<WebCore/ApplePaySessionPaymentRequest.h>'],
         'WebCore::ShippingMethodUpdate': ['<WebCore/ApplePaySessionPaymentRequest.h>'],
+        'WebCore::ShouldNotifyWhenResolved': ['<WebCore/ServiceWorkerTypes.h>'],
         'WebCore::ShouldSample': ['<WebCore/DiagnosticLoggingClient.h>'],
         'WebCore::TextCheckingRequestData': ['<WebCore/TextChecking.h>'],
         'WebCore::TextCheckingResult': ['<WebCore/TextCheckerClient.h>'],

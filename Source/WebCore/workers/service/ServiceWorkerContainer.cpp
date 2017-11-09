@@ -241,10 +241,16 @@ void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<Deferr
     });
 }
 
-void ServiceWorkerContainer::updateRegistrationState(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerIdentifier>& serviceWorkerIdentifier)
+void ServiceWorkerContainer::scheduleTaskToUpdateRegistrationState(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerIdentifier>& serviceWorkerIdentifier)
 {
-    if (auto* registration = m_registrations.get(key))
-        registration->updateStateFromServer(state, serviceWorkerIdentifier);
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    context->postTask([this, protectedThis = makeRef(*this), key, state, serviceWorkerIdentifier](ScriptExecutionContext&) {
+        if (auto* registration = m_registrations.get(key))
+            registration->updateStateFromServer(state, serviceWorkerIdentifier);
+    });
 }
 
 void ServiceWorkerContainer::getRegistrations(RegistrationsPromise&& promise)
@@ -259,81 +265,29 @@ void ServiceWorkerContainer::startMessages()
 
 void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const Exception& exception)
 {
-    job.promise().reject(exception);
+    if (auto* context = scriptExecutionContext()) {
+        context->postTask([job = makeRef(job), exception](ScriptExecutionContext&) {
+            job->promise().reject(exception);
+        });
+    }
     jobDidFinish(job);
 }
 
-void ServiceWorkerContainer::fireUpdateFoundEvent(const ServiceWorkerRegistrationKey& key)
+void ServiceWorkerContainer::scheduleTaskToFireUpdateFoundEvent(const ServiceWorkerRegistrationKey& key)
 {
     if (isStopped())
         return;
 
-    auto* registration = m_registrations.get(key);
-    if (!registration)
-        return;
-
-    scriptExecutionContext()->postTask([container = makeRef(*this), registration = makeRef(*registration)] (ScriptExecutionContext&) {
-        if (container->isStopped())
+    scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this), key](ScriptExecutionContext&) {
+        if (isStopped())
             return;
-        registration->dispatchEvent(Event::create(eventNames().updatefoundEvent, false, false));
+
+        if (auto* registration = m_registrations.get(key))
+            registration->dispatchEvent(Event::create(eventNames().updatefoundEvent, false, false));
     });
 }
 
-class FirePostInstallEventsMicrotask final : public Microtask {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit FirePostInstallEventsMicrotask(Ref<ServiceWorkerContainer>&& container, Ref<ServiceWorkerRegistration>&& registration)
-        : m_container(WTFMove(container))
-        , m_registration(WTFMove(registration))
-    {
-    }
-private:
-    Result run() final
-    {
-        auto* serviceWorker = m_registration->installing();
-        if (!serviceWorker)
-            return Result::Done;
-
-        callOnMainThread([container = WTFMove(m_container), registration = WTFMove(m_registration), serviceWorker = makeRef(*serviceWorker)] () mutable {
-            if (container->isStopped())
-                return;
-            registration->setInstallingWorker(nullptr);
-            registration->setWaitingWorker(serviceWorker.copyRef());
-            serviceWorker->updateWorkerState(ServiceWorker::State::Installed);
-            callOnMainThread([container = WTFMove(container), registration = WTFMove(registration), serviceWorker = WTFMove(serviceWorker)] () mutable {
-                if (container->isStopped())
-                    return;
-                registration->setWaitingWorker(nullptr);
-                registration->setActiveWorker(serviceWorker.copyRef());
-                serviceWorker->updateWorkerState(ServiceWorker::State::Activating);
-                callOnMainThread([container = WTFMove(container), serviceWorker = WTFMove(serviceWorker)] () mutable {
-                    if (container->isStopped())
-                        return;
-                    serviceWorker->updateWorkerState(ServiceWorker::State::Activated);
-                });
-            });
-        });
-        return Result::Done;
-    }
-
-    Ref<ServiceWorkerContainer> m_container;
-    Ref<ServiceWorkerRegistration> m_registration;
-};
-
-// FIXME: This method is only use to mimick service worker activation and will do away once we implement it.
-void ServiceWorkerContainer::firePostInstallEvents(const ServiceWorkerRegistrationKey& key)
-{
-    if (isStopped())
-        return;
-
-    auto* registration = m_registrations.get(key);
-    if (!registration)
-        return;
-
-    MicrotaskQueue::mainThreadQueue().append(std::make_unique<FirePostInstallEventsMicrotask>(*this, *registration));
-}
-
-void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, ServiceWorkerRegistrationData&& data)
+void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, ServiceWorkerRegistrationData&& data, WTF::Function<void()>&& promiseResolvedHandler)
 {
     auto guard = WTF::makeScopeExit([this, &job] {
         jobDidFinish(job);
@@ -342,19 +296,23 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
     auto* context = scriptExecutionContext();
     if (!context) {
         LOG_ERROR("ServiceWorkerContainer::jobResolvedWithRegistration called but the containers ScriptExecutionContext is gone");
+        promiseResolvedHandler();
         return;
     }
 
-    RefPtr<ServiceWorkerRegistration> registration = m_registrations.get(data.key);
-    if (!registration)
-        registration = ServiceWorkerRegistration::create(*context, *this, WTFMove(data));
+    context->postTask([this, protectedThis = makeRef(*this), job = makeRef(job), data = WTFMove(data), promiseResolvedHandler = WTFMove(promiseResolvedHandler)](ScriptExecutionContext& context) mutable {
+        RefPtr<ServiceWorkerRegistration> registration = m_registrations.get(data.key);
+        if (!registration)
+            registration = ServiceWorkerRegistration::create(context, *this, WTFMove(data));
 
-    // FIXME: Implement proper selection of service workers.
-    context->setActiveServiceWorker(registration->getNewestWorker());
+        LOG(ServiceWorker, "Container %p resolved job with registration %p", this, registration.get());
 
-    LOG(ServiceWorker, "Container %p resolved job with registration %p", this, registration.get());
+        job->promise().resolve<IDLInterface<ServiceWorkerRegistration>>(*registration);
 
-    job.promise().resolve<IDLInterface<ServiceWorkerRegistration>>(*registration);
+        MicrotaskQueue::mainThreadQueue().append(std::make_unique<VoidMicrotask>([promiseResolvedHandler = WTFMove(promiseResolvedHandler)] {
+            promiseResolvedHandler();
+        }));
+    });
 }
 
 void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJob& job, bool unregistrationResult)
@@ -373,7 +331,9 @@ void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJo
     if (unregistrationResult)
         context->setActiveServiceWorker(nullptr);
 
-    job.promise().resolve<IDLBoolean>(unregistrationResult);
+    context->postTask([job = makeRef(job), unregistrationResult](ScriptExecutionContext&) mutable {
+        job->promise().resolve<IDLBoolean>(unregistrationResult);
+    });
 }
 
 void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job)

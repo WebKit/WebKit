@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "ExceptionData.h"
 #include "MessageEvent.h"
+#include "Microtasks.h"
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerJobData.h"
@@ -75,7 +76,7 @@ void SWClientConnection::jobRejectedInServer(uint64_t jobIdentifier, const Excep
     job->failedWithException(exceptionData.toException());
 }
 
-void SWClientConnection::registrationJobResolvedInServer(uint64_t jobIdentifier, ServiceWorkerRegistrationData&& registrationData)
+void SWClientConnection::registrationJobResolvedInServer(uint64_t jobIdentifier, ServiceWorkerRegistrationData&& registrationData, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
 {
     auto job = m_scheduledJobs.take(jobIdentifier);
     if (!job) {
@@ -83,7 +84,11 @@ void SWClientConnection::registrationJobResolvedInServer(uint64_t jobIdentifier,
         return;
     }
 
-    job->resolvedWithRegistration(WTFMove(registrationData));
+    auto key = registrationData.key;
+    job->resolvedWithRegistration(WTFMove(registrationData), [this, protectedThis = makeRef(*this), key, shouldNotifyWhenResolved] {
+        if (shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes)
+            didResolveRegistrationPromise(key);
+    });
 }
 
 void SWClientConnection::unregistrationJobResolvedInServer(uint64_t jobIdentifier, bool unregistrationResult)
@@ -141,7 +146,7 @@ void SWClientConnection::postMessageToServiceWorkerClient(uint64_t destinationSc
 void SWClientConnection::forEachContainer(const WTF::Function<void(ServiceWorkerContainer&)>& apply)
 {
     // FIXME: We should iterate over all service worker clients, not only documents.
-    for (auto& document : Document::allDocuments()) {
+    for (auto* document : Document::allDocuments()) {
         if (auto* container = document->serviceWorkerContainer())
             apply(*container);
     }
@@ -150,29 +155,20 @@ void SWClientConnection::forEachContainer(const WTF::Function<void(ServiceWorker
 void SWClientConnection::updateRegistrationState(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationState state, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier)
 {
     forEachContainer([&](ServiceWorkerContainer& container) {
-        container.updateRegistrationState(key, state, serviceWorkerIdentifier);
+        container.scheduleTaskToUpdateRegistrationState(key, state, serviceWorkerIdentifier);
     });
 }
 
-void SWClientConnection::updateWorkerState(ServiceWorkerIdentifier worker, ServiceWorkerState state)
+void SWClientConnection::updateWorkerState(ServiceWorkerIdentifier identifier, ServiceWorkerState state)
 {
-    const auto& matchingWorkers = ServiceWorker::allWorkers().get(worker);
-    
-    for (auto* worker : matchingWorkers)
-        worker->updateWorkerState(state);
+    for (auto* worker : ServiceWorker::allWorkers().get(identifier))
+        worker->scheduleTaskToUpdateState(state);
 }
 
 void SWClientConnection::fireUpdateFoundEvent(const ServiceWorkerRegistrationKey& key)
 {
     forEachContainer([&](ServiceWorkerContainer& container) {
-        container.fireUpdateFoundEvent(key);
-    });
-}
-
-void SWClientConnection::firePostInstallEvents(const ServiceWorkerRegistrationKey& key)
-{
-    forEachContainer([&](ServiceWorkerContainer& container) {
-        container.firePostInstallEvents(key);
+        container.scheduleTaskToFireUpdateFoundEvent(key);
     });
 }
 

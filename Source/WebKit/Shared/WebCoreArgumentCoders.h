@@ -826,6 +826,14 @@ template <> struct EnumTraits<WebCore::ServiceWorkerState> {
         WebCore::ServiceWorkerState::Redundant
     >;
 };
+
+template <> struct EnumTraits<WebCore::ShouldNotifyWhenResolved> {
+    using values = EnumValues<
+        WebCore::ShouldNotifyWhenResolved,
+        WebCore::ShouldNotifyWhenResolved::No,
+        WebCore::ShouldNotifyWhenResolved::Yes
+    >;
+};
 #endif
 
 } // namespace WTF

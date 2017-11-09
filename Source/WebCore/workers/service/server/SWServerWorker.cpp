@@ -41,6 +41,11 @@ SWServerWorker::SWServerWorker(const ServiceWorkerRegistrationKey& registrationK
 
 SWServerWorker::~SWServerWorker() = default;
 
+void SWServerWorker::terminate()
+{
+    // FIXME: Implement
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

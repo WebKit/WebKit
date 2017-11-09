@@ -43,6 +43,8 @@ enum class ServiceWorkerState {
     Redundant,
 };
 
+enum class ShouldNotifyWhenResolved { No, Yes };
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

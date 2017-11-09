@@ -65,9 +65,8 @@ public:
     void updateRegistration(const URL& scopeURL, const URL& scriptURL, WorkerType, Ref<DeferredPromise>&&);
 
     void getRegistration(const String& clientURL, Ref<DeferredPromise>&&);
-    void updateRegistrationState(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerIdentifier>&);
-    void fireUpdateFoundEvent(const ServiceWorkerRegistrationKey&);
-    void firePostInstallEvents(const ServiceWorkerRegistrationKey&);
+    void scheduleTaskToUpdateRegistrationState(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerIdentifier>&);
+    void scheduleTaskToFireUpdateFoundEvent(const ServiceWorkerRegistrationKey&);
 
     using RegistrationsPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<ServiceWorkerRegistration>>>;
     void getRegistrations(RegistrationsPromise&&);
@@ -86,7 +85,7 @@ private:
     void scheduleJob(Ref<ServiceWorkerJob>&&);
 
     void jobFailedWithException(ServiceWorkerJob&, const Exception&) final;
-    void jobResolvedWithRegistration(ServiceWorkerJob&, ServiceWorkerRegistrationData&&) final;
+    void jobResolvedWithRegistration(ServiceWorkerJob&, ServiceWorkerRegistrationData&&, WTF::Function<void()>&& promiseResolvedHandler) final;
     void jobResolvedWithUnregistrationResult(ServiceWorkerJob&, bool unregistrationResult) final;
     void startScriptFetchForJob(ServiceWorkerJob&) final;
     void jobFinishedLoadingScript(ServiceWorkerJob&, const String&) final;

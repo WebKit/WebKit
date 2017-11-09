@@ -41,6 +41,7 @@ class ServiceWorkerRegistration;
 class SharedBuffer;
 enum class ServiceWorkerRegistrationState;
 enum class ServiceWorkerState;
+enum class ShouldNotifyWhenResolved;
 struct ExceptionData;
 struct ServiceWorkerFetchResult;
 struct ServiceWorkerRegistrationData;
@@ -59,6 +60,8 @@ public:
     void finishedFetchingScript(ServiceWorkerJob&, const String&);
     void failedFetchingScript(ServiceWorkerJob&, const ResourceError&);
 
+    virtual void didResolveRegistrationPromise(const ServiceWorkerRegistrationKey&) = 0;
+
     virtual void postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationIdentifier, Ref<SerializedScriptValue>&&, ScriptExecutionContext& source) = 0;
     virtual uint64_t identifier() const = 0;
     virtual bool hasServiceWorkerRegisteredForOrigin(const SecurityOrigin&) const = 0;
@@ -67,14 +70,13 @@ protected:
     WEBCORE_EXPORT SWClientConnection();
 
     WEBCORE_EXPORT void jobRejectedInServer(uint64_t jobIdentifier, const ExceptionData&);
-    WEBCORE_EXPORT void registrationJobResolvedInServer(uint64_t jobIdentifier, ServiceWorkerRegistrationData&&);
+    WEBCORE_EXPORT void registrationJobResolvedInServer(uint64_t jobIdentifier, ServiceWorkerRegistrationData&&, ShouldNotifyWhenResolved);
     WEBCORE_EXPORT void unregistrationJobResolvedInServer(uint64_t jobIdentifier, bool unregistrationResult);
     WEBCORE_EXPORT void startScriptFetchForServer(uint64_t jobIdentifier);
     WEBCORE_EXPORT void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerIdentifier source, const String& sourceOrigin);
     WEBCORE_EXPORT void updateRegistrationState(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, std::optional<ServiceWorkerIdentifier>);
     WEBCORE_EXPORT void updateWorkerState(ServiceWorkerIdentifier, ServiceWorkerState);
     WEBCORE_EXPORT void fireUpdateFoundEvent(const ServiceWorkerRegistrationKey&);
-    WEBCORE_EXPORT void firePostInstallEvents(const ServiceWorkerRegistrationKey&);
 
 private:
     virtual void scheduleJobInServer(const ServiceWorkerJobData&) = 0;

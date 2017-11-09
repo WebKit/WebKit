@@ -53,10 +53,11 @@ HashMap<ServiceWorkerIdentifier, HashSet<ServiceWorker*>>& ServiceWorker::mutabl
     return allWorkersMap;
 }
 
-ServiceWorker::ServiceWorker(ScriptExecutionContext& context, ServiceWorkerIdentifier identifier, const URL& scriptURL)
+ServiceWorker::ServiceWorker(ScriptExecutionContext& context, ServiceWorkerIdentifier identifier, const URL& scriptURL, State state)
     : ContextDestructionObserver(&context)
     , m_identifier(identifier)
     , m_scriptURL(scriptURL)
+    , m_state(state)
 {
     auto result = mutableAllWorkers().ensure(identifier, [] {
         return HashSet<ServiceWorker*>();
@@ -75,15 +76,19 @@ ServiceWorker::~ServiceWorker()
         mutableAllWorkers().remove(iterator);
 }
 
-void ServiceWorker::updateWorkerState(State state, ShouldFireStateChangeEvent shouldFire)
+void ServiceWorker::scheduleTaskToUpdateState(State state)
 {
     // FIXME: Once we support service workers from workers, this might need to change.
     RELEASE_ASSERT(isMainThread());
 
-    m_state = state;
-    
-    if (shouldFire == FireStateChangeEvent)
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    context->postTask([this, protectedThis = makeRef(*this), state](ScriptExecutionContext&) {
+        m_state = state;
         dispatchEvent(Event::create(eventNames().statechangeEvent, false, false));
+    });
 }
 
 ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)

@@ -45,23 +45,19 @@ class Frame;
 
 class ServiceWorker final : public RefCounted<ServiceWorker>, public EventTargetWithInlineData, public ContextDestructionObserver {
 public:
-    static Ref<ServiceWorker> create(ScriptExecutionContext& context, ServiceWorkerIdentifier identifier, const URL& scriptURL)
+    using State = ServiceWorkerState;
+    static Ref<ServiceWorker> create(ScriptExecutionContext& context, ServiceWorkerIdentifier identifier, const URL& scriptURL, State state = State::Installing)
     {
-        return adoptRef(*new ServiceWorker(context, identifier, scriptURL));
+        return adoptRef(*new ServiceWorker(context, identifier, scriptURL, state));
     }
 
     virtual ~ServiceWorker();
 
     const URL& scriptURL() const { return m_scriptURL; }
 
-    using State = ServiceWorkerState;
     State state() const { return m_state; }
     
-    enum ShouldFireStateChangeEvent {
-        FireStateChangeEvent,
-        DoNotFireStateChangeEvent,
-    };
-    void updateWorkerState(State, ShouldFireStateChangeEvent = FireStateChangeEvent);
+    void scheduleTaskToUpdateState(State);
 
     ExceptionOr<void> postMessage(ScriptExecutionContext&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
@@ -73,17 +69,17 @@ public:
     static const HashMap<ServiceWorkerIdentifier, HashSet<ServiceWorker*>>& allWorkers();
 
 private:
-    ServiceWorker(ScriptExecutionContext&, ServiceWorkerIdentifier, const URL& scriptURL);
+    ServiceWorker(ScriptExecutionContext&, ServiceWorkerIdentifier, const URL& scriptURL, State);
     static HashMap<ServiceWorkerIdentifier, HashSet<ServiceWorker*>>& mutableAllWorkers();
 
-    virtual EventTargetInterface eventTargetInterface() const;
-    virtual ScriptExecutionContext* scriptExecutionContext() const;
+    EventTargetInterface eventTargetInterface() const final;
+    ScriptExecutionContext* scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
     ServiceWorkerIdentifier m_identifier;
     URL m_scriptURL;
-    State m_state { State::Installing };
+    State m_state;
 };
 
 } // namespace WebCore

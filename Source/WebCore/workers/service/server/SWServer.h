@@ -62,13 +62,13 @@ public:
         WEBCORE_EXPORT void scriptContextFailedToStart(const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier, const String& message);
         WEBCORE_EXPORT void scriptContextStarted(const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier);
         WEBCORE_EXPORT void didFinishInstall(const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier, bool wasSuccessful);
+        WEBCORE_EXPORT void didResolveRegistrationPromise(const ServiceWorkerRegistrationKey&);
         const SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const { return m_server.doRegistrationMatching(topOrigin, clientURL); }
 
         // Messages to the client WebProcess
         virtual void updateRegistrationStateInClient(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, std::optional<ServiceWorkerIdentifier>) = 0;
         virtual void updateWorkerStateInClient(ServiceWorkerIdentifier, ServiceWorkerState) = 0;
         virtual void fireUpdateFoundEvent(const ServiceWorkerRegistrationKey&) = 0;
-        virtual void firePostInstallEvents(const ServiceWorkerRegistrationKey&) = 0;
 
     protected:
         WEBCORE_EXPORT Connection(SWServer&, uint64_t identifier);
@@ -82,7 +82,7 @@ public:
     private:
         // Messages to the client WebProcess
         virtual void rejectJobInClient(uint64_t jobIdentifier, const ExceptionData&) = 0;
-        virtual void resolveRegistrationJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationData&) = 0;
+        virtual void resolveRegistrationJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationData&, ShouldNotifyWhenResolved) = 0;
         virtual void resolveUnregistrationJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationKey&, bool registrationResult) = 0;
         virtual void startScriptFetchInClient(uint64_t jobIdentifier) = 0;
 
@@ -104,7 +104,7 @@ public:
 
     void scheduleJob(const ServiceWorkerJobData&);
     void rejectJob(const ServiceWorkerJobData&, const ExceptionData&);
-    void resolveRegistrationJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationData&);
+    void resolveRegistrationJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationData&, ShouldNotifyWhenResolved);
     void resolveUnregistrationJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationKey&, bool unregistrationResult);
     void startScriptFetch(const ServiceWorkerJobData&);
 
@@ -128,6 +128,7 @@ private:
     void scriptContextFailedToStart(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier, const String& message);
     void scriptContextStarted(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier);
     void didFinishInstall(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier, bool wasSuccessful);
+    void didResolveRegistrationPromise(Connection&, const ServiceWorkerRegistrationKey&);
 
     void addClientServiceWorkerRegistration(Connection&, const ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier);
     void removeClientServiceWorkerRegistration(Connection&, const ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier);

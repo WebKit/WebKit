@@ -73,6 +73,8 @@ private:
     void matchRegistration(const WebCore::SecurityOrigin& topOrigin, const WebCore::URL& clientURL, RegistrationCallback&&) final;
     void didMatchRegistration(uint64_t matchRequestIdentifier, std::optional<WebCore::ServiceWorkerRegistrationData>&&);
 
+    void didResolveRegistrationPromise(const WebCore::ServiceWorkerRegistrationKey&) final;
+
     void scheduleStorageJob(const WebCore::ServiceWorkerJobData&);
 
     IPC::Connection* messageSenderConnection() final { return m_connection.ptr(); }

@@ -47,6 +47,8 @@ public:
     SWServerWorker(const SWServerWorker&) = delete;
     ~SWServerWorker();
 
+    void terminate();
+
     const URL& scriptURL() const { return m_scriptURL; }
     const String& script() const { return m_script; }
     WorkerType type() const { return m_type; }

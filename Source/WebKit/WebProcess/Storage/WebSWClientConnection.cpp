@@ -89,6 +89,11 @@ void WebSWClientConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerI
     send(Messages::WebSWServerConnection::PostMessageToServiceWorkerGlobalScope(destinationIdentifier, IPC::DataReference { scriptValue->data() }, downcast<Document>(source).identifier(), source.origin()));
 }
 
+void WebSWClientConnection::didResolveRegistrationPromise(const ServiceWorkerRegistrationKey& key)
+{
+    send(Messages::WebSWServerConnection::DidResolveRegistrationPromise(key));
+}
+
 bool WebSWClientConnection::hasServiceWorkerRegisteredForOrigin(const SecurityOrigin& origin) const
 {
     return m_swOriginTable->contains(origin);

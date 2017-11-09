@@ -58,13 +58,13 @@ void ServiceWorkerJob::failedWithException(const Exception& exception)
     m_client->jobFailedWithException(*this, exception);
 }
 
-void ServiceWorkerJob::resolvedWithRegistration(ServiceWorkerRegistrationData&& data)
+void ServiceWorkerJob::resolvedWithRegistration(ServiceWorkerRegistrationData&& data, WTF::Function<void()>&& promiseResolvedHandler)
 {
     ASSERT(currentThread() == m_creationThread);
     ASSERT(!m_completed);
 
     m_completed = true;
-    m_client->jobResolvedWithRegistration(*this, WTFMove(data));
+    m_client->jobResolvedWithRegistration(*this, WTFMove(data), WTFMove(promiseResolvedHandler));
 }
 
 void ServiceWorkerJob::resolvedWithUnregistrationResult(bool unregistrationResult)

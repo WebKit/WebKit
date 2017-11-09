@@ -1,4 +1,4 @@
 
-FAIL Clients.matchAll() should not show an old window as controlled after it navigates. assert_unreached: unexpected rejection: null is not an object (evaluating 'sw.postMessage') Reached unreachable code
-FAIL Clients.matchAll() should not show an old window after it navigates. assert_unreached: unexpected rejection: null is not an object (evaluating 'sw.postMessage') Reached unreachable code
+FAIL Clients.matchAll() should not show an old window as controlled after it navigates. assert_unreached: unexpected rejection: matchAll() rejected with "NotSupportedError: clients.matchAll() is not yet supported" Reached unreachable code
+FAIL Clients.matchAll() should not show an old window after it navigates. assert_unreached: unexpected rejection: matchAll() rejected with "NotSupportedError: clients.matchAll() is not yet supported" Reached unreachable code
 

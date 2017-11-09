@@ -59,10 +59,13 @@ public:
     void updateRegistrationState(const ServiceWorkerJobData&, ServiceWorkerRegistrationState, SWServerWorker*);
     void updateWorkerState(const ServiceWorkerJobData&, SWServerWorker&, ServiceWorkerState);
     void fireUpdateFoundEvent(const ServiceWorkerJobData&);
-    void firePostInstallEvents(const ServiceWorkerJobData&);
 
     void addClientServiceWorkerRegistration(uint64_t connectionIdentifier, uint64_t clientRegistrationIdentifier);
     void removeClientServiceWorkerRegistration(uint64_t connectionIdentifier, uint64_t clientRegistrationIdentifier);
+
+    SWServerWorker* installingWorker() const { return m_installingWorker.get(); }
+    SWServerWorker* waitingWorker() const { return m_waitingWorker.get(); }
+    SWServerWorker* activeWorker() const { return m_activeWorker.get(); }
 
 private:
     void forEachConnection(const ServiceWorkerJobData&, const WTF::Function<void(SWServer::Connection&)>&);

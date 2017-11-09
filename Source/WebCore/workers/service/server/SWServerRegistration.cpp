@@ -102,14 +102,6 @@ void SWServerRegistration::fireUpdateFoundEvent(const ServiceWorkerJobData& job)
     });
 }
 
-// FIXME: This will do away once we correctly update the registration state after install.
-void SWServerRegistration::firePostInstallEvents(const ServiceWorkerJobData& job)
-{
-    forEachConnection(job, [&](auto& connection) {
-        connection.firePostInstallEvents(m_registrationKey);
-    });
-}
-
 void SWServerRegistration::forEachConnection(const ServiceWorkerJobData& job, const WTF::Function<void(SWServer::Connection&)>& apply)
 {
     // No matter what, we send the event to the connection that scheduled the job. The client registration

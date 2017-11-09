@@ -1,3 +1,25 @@
+2017-11-09  Chris Dumez  <cdumez@apple.com>
+
+        Implement real post 'install' event steps of the Install algorithm (steps 14+)
+        https://bugs.webkit.org/show_bug.cgi?id=179401
+
+        Reviewed by Brady Eidson.
+
+        Implement step 14+ of Install algorithm, as per:
+        - https://w3c.github.io/ServiceWorker/#installation-algorithm
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * Shared/WebCoreArgumentCoders.h:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::resolveRegistrationJobInClient):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::didResolveRegistrationPromise):
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+
 2017-11-09  Megan Gardner  <megan_gardner@apple.com>
 
         Clean out unused selection items from UIKitSPI

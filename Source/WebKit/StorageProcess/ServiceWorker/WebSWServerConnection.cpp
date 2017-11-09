@@ -76,11 +76,11 @@ void WebSWServerConnection::rejectJobInClient(uint64_t jobIdentifier, const Exce
     send(Messages::WebSWClientConnection::JobRejectedInServer(jobIdentifier, exceptionData));
 }
 
-void WebSWServerConnection::resolveRegistrationJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationData& registrationData)
+void WebSWServerConnection::resolveRegistrationJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationData& registrationData, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
 {
     auto origin = registrationData.key.topOrigin().securityOrigin();
     StorageProcess::singleton().ensureSWOriginStoreForSession(m_sessionID).add(origin);
-    send(Messages::WebSWClientConnection::RegistrationJobResolvedInServer(jobIdentifier, registrationData));
+    send(Messages::WebSWClientConnection::RegistrationJobResolvedInServer(jobIdentifier, registrationData, shouldNotifyWhenResolved));
 }
 
 void WebSWServerConnection::resolveUnregistrationJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationKey& registrationKey, bool unregistrationResult)
@@ -104,11 +104,6 @@ void WebSWServerConnection::updateRegistrationStateInClient(const ServiceWorkerR
 void WebSWServerConnection::fireUpdateFoundEvent(const ServiceWorkerRegistrationKey& key)
 {
     send(Messages::WebSWClientConnection::FireUpdateFoundEvent(key));
-}
-
-void WebSWServerConnection::firePostInstallEvents(const ServiceWorkerRegistrationKey& key)
-{
-    send(Messages::WebSWClientConnection::FirePostInstallEvents(key));
 }
 
 void WebSWServerConnection::updateWorkerStateInClient(ServiceWorkerIdentifier worker, ServiceWorkerState state)

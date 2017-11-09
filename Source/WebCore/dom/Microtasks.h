@@ -46,6 +46,24 @@ protected:
     void removeSelfFromQueue(MicrotaskQueue&);
 };
 
+class VoidMicrotask final : public Microtask {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit VoidMicrotask(Function<void()>&& function)
+        : m_function(WTFMove(function))
+    {
+    }
+
+private:
+    Result run() final
+    {
+        m_function();
+        return Result::Done;
+    }
+
+    Function<void()> m_function;
+};
+
 class MicrotaskQueue {
     friend NeverDestroyed<MicrotaskQueue>;
     friend class Microtask;

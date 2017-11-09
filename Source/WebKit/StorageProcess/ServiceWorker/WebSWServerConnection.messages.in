@@ -32,6 +32,8 @@ messages -> WebSWServerConnection {
     StartFetch(uint64_t identifier, std::optional<WebCore::ServiceWorkerIdentifier> serviceWorkerIdentifier, WebCore::ResourceRequest request, struct WebCore::FetchOptions options)
     PostMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationServiceWorkerIdentifier, IPC::DataReference message, uint64_t sourceScriptExecutionContextIdentifier, String sourceOrigin)
 
+    DidResolveRegistrationPromise(WebCore::ServiceWorkerRegistrationKey key)
+
     MatchRegistration(uint64_t serviceRegistrationMatchRequestIdentifier, struct WebCore::SecurityOriginData topOrigin, WebCore::URL clientURL)
 }
 

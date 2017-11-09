@@ -117,6 +117,11 @@ void SWServer::Connection::didFinishInstall(const ServiceWorkerRegistrationKey& 
     m_server.didFinishInstall(*this, key, serviceWorkerIdentifier, wasSuccessful);
 }
 
+void SWServer::Connection::didResolveRegistrationPromise(const ServiceWorkerRegistrationKey& key)
+{
+    m_server.didResolveRegistrationPromise(*this, key);
+}
+
 void SWServer::Connection::addServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey& key, uint64_t clientRegistrationIdentifier)
 {
     m_server.addClientServiceWorkerRegistration(*this, key, clientRegistrationIdentifier);
@@ -171,14 +176,14 @@ void SWServer::rejectJob(const ServiceWorkerJobData& jobData, const ExceptionDat
     connection->rejectJobInClient(jobData.identifier(), exceptionData);
 }
 
-void SWServer::resolveRegistrationJob(const ServiceWorkerJobData& jobData, const ServiceWorkerRegistrationData& registrationData)
+void SWServer::resolveRegistrationJob(const ServiceWorkerJobData& jobData, const ServiceWorkerRegistrationData& registrationData, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
 {
     LOG(ServiceWorker, "Resolved ServiceWorker job %" PRIu64 "-%" PRIu64 " in server with registration %" PRIu64, jobData.connectionIdentifier(), jobData.identifier(), registrationData.identifier);
     auto* connection = m_connections.get(jobData.connectionIdentifier());
     if (!connection)
         return;
 
-    connection->resolveRegistrationJobInClient(jobData.identifier(), registrationData);
+    connection->resolveRegistrationJobInClient(jobData.identifier(), registrationData, shouldNotifyWhenResolved);
 }
 
 void SWServer::resolveUnregistrationJob(const ServiceWorkerJobData& jobData, const ServiceWorkerRegistrationKey& registrationKey, bool unregistrationResult)
@@ -235,6 +240,14 @@ void SWServer::didFinishInstall(Connection& connection, const ServiceWorkerRegis
 
     if (auto* jobQueue = m_jobQueues.get(registrationKey))
         jobQueue->didFinishInstall(connection, serviceWorkerIdentifier, wasSuccessful);
+}
+
+void SWServer::didResolveRegistrationPromise(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey)
+{
+    ASSERT(m_connections.contains(connection.identifier()));
+
+    if (auto* jobQueue = m_jobQueues.get(registrationKey))
+        jobQueue->didResolveRegistrationPromise(connection);
 }
 
 void SWServer::addClientServiceWorkerRegistration(Connection& connection, const ServiceWorkerRegistrationKey& key, uint64_t registrationIdentifier)

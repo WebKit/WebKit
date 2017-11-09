@@ -55,7 +55,7 @@ public:
     WEBCORE_EXPORT ~ServiceWorkerJob();
 
     void failedWithException(const Exception&);
-    void resolvedWithRegistration(ServiceWorkerRegistrationData&&);
+    void resolvedWithRegistration(ServiceWorkerRegistrationData&&, WTF::Function<void()>&& promiseResolvedHandler);
     void resolvedWithUnregistrationResult(bool);
     void startScriptFetch();
 

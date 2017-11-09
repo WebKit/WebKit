@@ -51,6 +51,7 @@ public:
     void scriptContextFailedToStart(SWServer::Connection&, ServiceWorkerIdentifier, const String& message);
     void scriptContextStarted(SWServer::Connection&, ServiceWorkerIdentifier);
     void didFinishInstall(SWServer::Connection&, ServiceWorkerIdentifier, bool wasSuccessful);
+    void didResolveRegistrationPromise(SWServer::Connection&);
 
 private:
     void jobTimerFired();
