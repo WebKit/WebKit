@@ -245,14 +245,6 @@ void JIT::emit_op_unsigned(Instruction* currentInstruction)
     emitPutVirtualRegister(result, regT0);
 }
 
-void JIT::emitSlow_op_unsigned(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkAllSlowCases(iter);
-    
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_unsigned);
-    slowPathCall.call();
-}
-
 void JIT::emit_compareAndJump(OpcodeID, int op1, int op2, unsigned target, RelationalCondition condition)
 {
     // We generate inline code for the following cases in the fast path:
@@ -446,14 +438,6 @@ void JIT::emit_op_inc(Instruction* currentInstruction)
     emitPutVirtualRegister(srcDst);
 }
 
-void JIT::emitSlow_op_inc(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkAllSlowCases(iter);
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_inc);
-    slowPathCall.call();
-}
-
 void JIT::emit_op_dec(Instruction* currentInstruction)
 {
     int srcDst = currentInstruction[1].u.operand;
@@ -463,14 +447,6 @@ void JIT::emit_op_dec(Instruction* currentInstruction)
     addSlowCase(branchSub32(Overflow, TrustedImm32(1), regT0));
     emitTagInt(regT0, regT0);
     emitPutVirtualRegister(srcDst);
-}
-
-void JIT::emitSlow_op_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkAllSlowCases(iter);
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_dec);
-    slowPathCall.call();
 }
 
 /* ------------------------------ BEGIN: OP_MOD ------------------------------ */
@@ -601,25 +577,9 @@ void JIT::emit_op_bitand(Instruction* currentInstruction)
     emitBitBinaryOpFastPath<JITBitAndGenerator>(currentInstruction);
 }
 
-void JIT::emitSlow_op_bitand(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkAllSlowCases(iter);
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_bitand);
-    slowPathCall.call();
-}
-
 void JIT::emit_op_bitor(Instruction* currentInstruction)
 {
     emitBitBinaryOpFastPath<JITBitOrGenerator>(currentInstruction);
-}
-
-void JIT::emitSlow_op_bitor(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkAllSlowCases(iter);
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_bitor);
-    slowPathCall.call();
 }
 
 void JIT::emit_op_bitxor(Instruction* currentInstruction)
@@ -627,25 +587,9 @@ void JIT::emit_op_bitxor(Instruction* currentInstruction)
     emitBitBinaryOpFastPath<JITBitXorGenerator>(currentInstruction);
 }
 
-void JIT::emitSlow_op_bitxor(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkAllSlowCases(iter);
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_bitxor);
-    slowPathCall.call();
-}
-
 void JIT::emit_op_lshift(Instruction* currentInstruction)
 {
     emitBitBinaryOpFastPath<JITLeftShiftGenerator>(currentInstruction);
-}
-
-void JIT::emitSlow_op_lshift(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkAllSlowCases(iter);
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_lshift);
-    slowPathCall.call();
 }
 
 void JIT::emitRightShiftFastPath(Instruction* currentInstruction, OpcodeID opcodeID)
@@ -705,25 +649,9 @@ void JIT::emit_op_rshift(Instruction* currentInstruction)
     emitRightShiftFastPath(currentInstruction, op_rshift);
 }
 
-void JIT::emitSlow_op_rshift(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkAllSlowCases(iter);
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_rshift);
-    slowPathCall.call();
-}
-
 void JIT::emit_op_urshift(Instruction* currentInstruction)
 {
     emitRightShiftFastPath(currentInstruction, op_urshift);
-}
-
-void JIT::emitSlow_op_urshift(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkAllSlowCases(iter);
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_urshift);
-    slowPathCall.call();
 }
 
 ALWAYS_INLINE static OperandTypes getOperandTypes(Instruction* instruction)
@@ -1044,14 +972,6 @@ void JIT::emit_op_div(Instruction* currentInstruction)
         JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_div);
         slowPathCall.call();
     }
-}
-
-void JIT::emitSlow_op_div(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkAllSlowCases(iter);
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_div);
-    slowPathCall.call();
 }
 
 void JIT::emit_op_mul(Instruction* currentInstruction)

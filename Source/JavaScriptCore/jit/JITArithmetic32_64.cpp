@@ -144,14 +144,6 @@ void JIT::emit_op_unsigned(Instruction* currentInstruction)
     emitStoreInt32(result, regT0, result == op1);
 }
 
-void JIT::emitSlow_op_unsigned(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkAllSlowCases(iter);
-    
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_unsigned);
-    slowPathCall.call();
-}
-
 void JIT::emit_op_inc(Instruction* currentInstruction)
 {
     int srcDst = currentInstruction[1].u.operand;
@@ -163,14 +155,6 @@ void JIT::emit_op_inc(Instruction* currentInstruction)
     emitStoreInt32(srcDst, regT0, true);
 }
 
-void JIT::emitSlow_op_inc(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkAllSlowCases(iter);
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_inc);
-    slowPathCall.call();
-}
-
 void JIT::emit_op_dec(Instruction* currentInstruction)
 {
     int srcDst = currentInstruction[1].u.operand;
@@ -180,14 +164,6 @@ void JIT::emit_op_dec(Instruction* currentInstruction)
     addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
     addSlowCase(branchSub32(Overflow, TrustedImm32(1), regT0));
     emitStoreInt32(srcDst, regT0, true);
-}
-
-void JIT::emitSlow_op_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkAllSlowCases(iter);
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_dec);
-    slowPathCall.call();
 }
 
 void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, int dst, int op1, int op2, OperandTypes types, JumpList& notInt32Op1, JumpList& notInt32Op2, bool op1IsInRegisters, bool op2IsInRegisters)

@@ -220,6 +220,7 @@ SLOW_PATH_HIDDEN_DECL(slow_path_enter);
 SLOW_PATH_HIDDEN_DECL(slow_path_get_callee);
 SLOW_PATH_HIDDEN_DECL(slow_path_to_this);
 SLOW_PATH_HIDDEN_DECL(slow_path_throw_tdz_error);
+SLOW_PATH_HIDDEN_DECL(slow_path_check_tdz);
 SLOW_PATH_HIDDEN_DECL(slow_path_throw_strict_mode_readonly_property_write_error);
 SLOW_PATH_HIDDEN_DECL(slow_path_not);
 SLOW_PATH_HIDDEN_DECL(slow_path_eq);
@@ -284,5 +285,7 @@ SLOW_PATH_HIDDEN_DECL(slow_path_define_accessor_property);
 SLOW_PATH_HIDDEN_DECL(slow_path_throw_static_error);
 SLOW_PATH_HIDDEN_DECL(slow_path_new_array_with_spread);
 SLOW_PATH_HIDDEN_DECL(slow_path_spread);
+
+using SlowPathFunction = SlowPathReturnType(SLOW_PATH *)(ExecState*, Instruction*);
 
 } // namespace JSC

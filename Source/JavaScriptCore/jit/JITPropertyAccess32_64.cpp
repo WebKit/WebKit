@@ -839,14 +839,6 @@ void JIT::emit_op_resolve_scope(Instruction* currentInstruction)
     }
 }
 
-void JIT::emitSlow_op_resolve_scope(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkAllSlowCases(iter);
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_resolve_scope);
-    slowPathCall.call();
-}
-
 void JIT::emitLoadWithStructureCheck(int scope, Structure** structureSlot)
 {
     emitLoad(scope, regT1, regT0);

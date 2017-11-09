@@ -34,7 +34,7 @@ namespace JSC {
 
 class JITSlowPathCall {
 public:
-    JITSlowPathCall(JIT* jit, Instruction* pc, SlowPathReturnType (SLOW_PATH *stub)(ExecState* exec, Instruction* pc))
+    JITSlowPathCall(JIT* jit, Instruction* pc, SlowPathFunction stub)
         : m_jit(jit)
         , m_stub(stub)
         , m_pc(pc)

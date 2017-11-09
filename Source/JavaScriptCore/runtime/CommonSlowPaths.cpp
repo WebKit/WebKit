@@ -276,6 +276,12 @@ SLOW_PATH_DECL(slow_path_throw_tdz_error)
     THROW(createTDZError(exec));
 }
 
+SLOW_PATH_DECL(slow_path_check_tdz)
+{
+    BEGIN();
+    THROW(createTDZError(exec));
+}
+
 SLOW_PATH_DECL(slow_path_throw_strict_mode_readonly_property_write_error)
 {
     BEGIN();
