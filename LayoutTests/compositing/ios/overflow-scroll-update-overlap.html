@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <style>
+        body,
+        html {
+            -webkit-overflow-scrolling: touch;
+            overflow-x: hidden;
+            height: 100%;
+        }
+        body {
+            margin: 0;
+        }
+        .container {
+            height: 100px;
+            position: relative;
+            background-color: silver;
+        }
+        .scroller {
+            width: 100vw;
+            overflow-y: hidden;
+            background-color: gray;
+        }
+        .scroller div {
+          width: 150vw;
+          height: 200px;
+        }
+        #bottom-scroller {
+            position: relative;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        .spacer {
+            height: 500px;
+        }
+        .test {
+            position: relative;
+            background-color: green;
+            height: 800px;
+        }
+    </style>
+    <script>
+        function doTest()
+        {
+            document.body.scrollTop = 600;
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="scroller">
+            <div></div>
+        </div>
+    </div>
+    <div id="bottom-scroller">
+        <div class="spacer"></div>
+        <div class="test"></div>
+    </div>
+</body>
+</html>

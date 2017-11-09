@@ -665,11 +665,8 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         checkForHierarchyUpdate = true;
         break;
     case CompositingUpdateType::OnScroll:
-        checkForHierarchyUpdate = true; // Overlap can change with scrolling, so need to check for hierarchy updates.
-
-        needGeometryUpdate = true;
-        break;
     case CompositingUpdateType::OnCompositedScroll:
+        checkForHierarchyUpdate = true; // Overlap can change with scrolling, so need to check for hierarchy updates.
         needGeometryUpdate = true;
         break;
     }
