@@ -283,10 +283,7 @@ bool SecurityOrigin::passesFileCheck(const SecurityOrigin& other) const
 {
     ASSERT(isLocal() && other.isLocal());
 
-    if (!m_enforceFilePathSeparation && !other.m_enforceFilePathSeparation)
-        return true;
-
-    return (m_filePath == other.m_filePath);
+    return !m_enforceFilePathSeparation && !other.m_enforceFilePathSeparation;
 }
 
 bool SecurityOrigin::canRequest(const URL& url) const

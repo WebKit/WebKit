@@ -1,3 +1,15 @@
+2017-11-08  Brent Fulgham  <bfulgham@apple.com>
+
+        XMLHttpRequest should not treat file URLs as same origin
+        https://bugs.webkit.org/show_bug.cgi?id=178565
+        <rdar://problem/11115901>
+
+        Reviewed by Daniel Bates.
+
+        * security/cannot-read-self-from-file-expected.txt: Added.
+        * security/cannot-read-self-from-file.html: Added.
+        * security/resources/cannot-read-self-from-file.html: Added.
+
 2017-11-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Show Internal properties of PaymentRequest in Web Inspector Console

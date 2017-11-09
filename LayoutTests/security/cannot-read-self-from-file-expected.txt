@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 8: XMLHttpRequest cannot load cannot-read-self-from-file.html. Cross origin requests are only supported for HTTP.
+ Documents loaded from file: shouldn't be able to access themselves via XHR.
+
+PASS file: should be a unique-origin protocol for XHR purposes 
+
