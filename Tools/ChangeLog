@@ -1,3 +1,15 @@
+2017-11-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo EWS] svn-apply: 'cp' is not recognized as an internal or external command
+        https://bugs.webkit.org/show_bug.cgi?id=179469
+
+        Reviewed by Per Arne Vollan.
+
+        WinCairo EWS bots haven't installed Cygwin.
+
+        * Scripts/svn-apply:
+        (scmCopy): Use 'copy' function instead of 'cp' command.
+
 2017-11-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE] Update dyz (WPE MiniBrowser)

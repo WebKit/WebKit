@@ -62,6 +62,7 @@ use warnings;
 
 use Digest::MD5;
 use File::Basename;
+use File::Copy qw(copy);
 use File::Spec;
 use Getopt::Long;
 use MIME::Base64;
@@ -444,7 +445,7 @@ sub scmCopy($$)
         my $escapedDestination = escapeSubversionPath($destination);
         system("svn", "copy", $escapedSource, $escapedDestination) == 0 or die "Failed to svn copy $escapedSource $escapedDestination.";
     } elsif (isGit()) {
-        system("cp", $source, $destination) == 0 or die "Failed to copy $source $destination.";
+        copy($source, $destination) or die "Failed to copy $source $destination.";
         system("git", "add", $destination) == 0 or die "Failed to git add $destination.";
     }
 }
