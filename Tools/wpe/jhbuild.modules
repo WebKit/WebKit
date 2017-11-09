@@ -211,7 +211,7 @@
   </autotools>
 
   <autotools id="dyz" supports-non-srcdir-builds="no">
-    <branch repo="github.com" module="Igalia/dyz" tag="0880252bac243add39ea54c0797ceb167d775ce9"/>
+    <branch repo="github.com" module="Igalia/dyz" tag="fbf8df56fbcc18fb2c1aa266c4a9f5a31d605549"/>
   </autotools>
 
   <meson id="graphene">
