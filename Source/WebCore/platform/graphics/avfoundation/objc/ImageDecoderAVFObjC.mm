@@ -349,7 +349,7 @@ void ImageDecoderAVFObjC::readSampleMetadata()
     m_sampleData.resize(static_cast<size_t>(sampleCount));
 
     if (!m_generator)
-        m_generator = [allocAVSampleBufferGeneratorInstance() initWithAsset:m_asset.get() timebase:nil];
+        m_generator = adoptNS([allocAVSampleBufferGeneratorInstance() initWithAsset:m_asset.get() timebase:nil]);
 
     for (size_t index = 0; index < static_cast<size_t>(sampleCount); ++index) {
         auto& sampleData = m_sampleData[index];
@@ -580,7 +580,7 @@ NativeImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, Subsam
     }
 
     if (!m_generator)
-        m_generator = [allocAVSampleBufferGeneratorInstance() initWithAsset:m_asset.get() timebase:nil];
+        m_generator = adoptNS([allocAVSampleBufferGeneratorInstance() initWithAsset:m_asset.get() timebase:nil]);
 
     RetainPtr<CGImageRef> image;
     while (true) {
