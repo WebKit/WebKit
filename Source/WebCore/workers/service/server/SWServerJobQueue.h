@@ -51,6 +51,7 @@ public:
     void scriptContextFailedToStart(SWServer::Connection&, ServiceWorkerIdentifier, const String& message);
     void scriptContextStarted(SWServer::Connection&, ServiceWorkerIdentifier);
     void didFinishInstall(SWServer::Connection&, ServiceWorkerIdentifier, bool wasSuccessful);
+    static void didFinishActivation(SWServerRegistration&, ServiceWorkerIdentifier);
     void didResolveRegistrationPromise(SWServer::Connection&);
 
 private:
@@ -66,6 +67,8 @@ private:
     void tryClearRegistration(SWServerRegistration&);
     void clearRegistration(SWServerRegistration&);
     void install(SWServerRegistration&, SWServer::Connection&, ServiceWorkerIdentifier);
+    static void tryActivate(SWServer&, SWServer::Connection&, SWServerRegistration&);
+    static void activate(SWServer&, SWServer::Connection&, SWServerRegistration&);
 
     Deque<ServiceWorkerJobData> m_jobQueue;
 

@@ -459,6 +459,12 @@ void StorageProcess::didFinishServiceWorkerInstall(uint64_t serverConnectionIden
         connection->didFinishInstall(registrationKey, serviceWorkerIdentifier, wasSuccessful);
 }
 
+void StorageProcess::didFinishServiceWorkerActivation(uint64_t serverConnectionIdentifier, const ServiceWorkerRegistrationKey& registrationKey, ServiceWorkerIdentifier serviceWorkerIdentifier)
+{
+    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
+        connection->didFinishActivation(registrationKey, serviceWorkerIdentifier);
+}
+
 void StorageProcess::registerSWServerConnection(WebSWServerConnection& connection)
 {
     ASSERT(!m_swServerConnections.contains(connection.identifier()));

@@ -117,6 +117,11 @@ void SWServer::Connection::didFinishInstall(const ServiceWorkerRegistrationKey& 
     m_server.didFinishInstall(*this, key, serviceWorkerIdentifier, wasSuccessful);
 }
 
+void SWServer::Connection::didFinishActivation(const ServiceWorkerRegistrationKey& key, ServiceWorkerIdentifier serviceWorkerIdentifier)
+{
+    m_server.didFinishActivation(*this, key, serviceWorkerIdentifier);
+}
+
 void SWServer::Connection::didResolveRegistrationPromise(const ServiceWorkerRegistrationKey& key)
 {
     m_server.didResolveRegistrationPromise(*this, key);
@@ -242,6 +247,14 @@ void SWServer::didFinishInstall(Connection& connection, const ServiceWorkerRegis
         jobQueue->didFinishInstall(connection, serviceWorkerIdentifier, wasSuccessful);
 }
 
+void SWServer::didFinishActivation(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey, ServiceWorkerIdentifier serviceWorkerIdentifier)
+{
+    ASSERT_UNUSED(connection, m_connections.contains(connection.identifier()));
+
+    if (auto* registration = getRegistration(registrationKey))
+        SWServerJobQueue::didFinishActivation(*registration, serviceWorkerIdentifier);
+}
+
 void SWServer::didResolveRegistrationPromise(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey)
 {
     ASSERT(m_connections.contains(connection.identifier()));
@@ -293,6 +306,11 @@ Ref<SWServerWorker> SWServer::updateWorker(Connection& connection, const Service
 void SWServer::fireInstallEvent(Connection& connection, ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     connection.fireInstallEvent(serviceWorkerIdentifier);
+}
+
+void SWServer::fireActivateEvent(Connection& connection, ServiceWorkerIdentifier serviceWorkerIdentifier)
+{
+    connection.fireActivateEvent(serviceWorkerIdentifier);
 }
 
 void SWServer::taskThreadEntryPoint()

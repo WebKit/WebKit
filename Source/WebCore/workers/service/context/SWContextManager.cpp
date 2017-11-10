@@ -83,6 +83,15 @@ void SWContextManager::fireInstallEvent(ServiceWorkerIdentifier identifier)
     serviceWorker->thread().fireInstallEvent();
 }
 
+void SWContextManager::fireActivateEvent(ServiceWorkerIdentifier identifier)
+{
+    auto* serviceWorker = m_workerMap.get(identifier);
+    if (!serviceWorker)
+        return;
+
+    serviceWorker->thread().fireActivateEvent();
+}
+
 } // namespace WebCore
 
 #endif

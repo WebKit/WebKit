@@ -1,0 +1,2 @@
+PASS: service worker received activate event and resolved the extend lifetime promise
+

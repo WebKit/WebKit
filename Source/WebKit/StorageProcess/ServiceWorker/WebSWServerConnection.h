@@ -78,6 +78,7 @@ private:
     // Messages to the SW context WebProcess
     void installServiceWorkerContext(const WebCore::ServiceWorkerContextData&) final;
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier) final;
+    void fireActivateEvent(WebCore::ServiceWorkerIdentifier) final;
 
     IPC::Connection* messageSenderConnection() final { return m_contentConnection.ptr(); }
     uint64_t messageSenderDestinationID() final { return identifier(); }

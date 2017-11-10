@@ -1,3 +1,27 @@
+2017-11-10  Chris Dumez  <cdumez@apple.com>
+
+        [Service Workers] Implement "Try Activate" / "Activate" algorithms
+        https://bugs.webkit.org/show_bug.cgi?id=179436
+
+        Reviewed by Brady Eidson.
+
+        Implement proper "Try Activate" / "Activate" algorithms as per:
+        - https://w3c.github.io/ServiceWorker/#try-activate-algorithm
+        - https://w3c.github.io/ServiceWorker/#activation-algorithm
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::fireActivateEvent):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::didFinishServiceWorkerActivation):
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageProcess.messages.in:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::fireActivateEvent):
+        (WebKit::WebSWContextManagerConnection::didFinishActivation):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2017-11-10  John Wilander  <wilander@apple.com>
 
         Ignore HSTS for partitioned, cross-origin subresource requests

@@ -62,6 +62,7 @@ public:
         WEBCORE_EXPORT void scriptContextFailedToStart(const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier, const String& message);
         WEBCORE_EXPORT void scriptContextStarted(const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier);
         WEBCORE_EXPORT void didFinishInstall(const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier, bool wasSuccessful);
+        WEBCORE_EXPORT void didFinishActivation(const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier);
         WEBCORE_EXPORT void didResolveRegistrationPromise(const ServiceWorkerRegistrationKey&);
         const SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const { return m_server.doRegistrationMatching(topOrigin, clientURL); }
 
@@ -89,6 +90,7 @@ public:
         // Messages to the SW host WebProcess
         virtual void installServiceWorkerContext(const ServiceWorkerContextData&) = 0;
         virtual void fireInstallEvent(ServiceWorkerIdentifier) = 0;
+        virtual void fireActivateEvent(ServiceWorkerIdentifier) = 0;
 
         SWServer& m_server;
     };
@@ -113,6 +115,7 @@ public:
 
     Ref<SWServerWorker> updateWorker(Connection&, const ServiceWorkerRegistrationKey&, const URL&, const String& script, WorkerType);
     void fireInstallEvent(Connection&, ServiceWorkerIdentifier);
+    void fireActivateEvent(Connection&, ServiceWorkerIdentifier);
     SWServerWorker* workerByID(ServiceWorkerIdentifier identifier) const { return m_workersByID.get(identifier); }
     
     Connection* getConnection(uint64_t identifier) { return m_connections.get(identifier); }
@@ -128,6 +131,7 @@ private:
     void scriptContextFailedToStart(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier, const String& message);
     void scriptContextStarted(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier);
     void didFinishInstall(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier, bool wasSuccessful);
+    void didFinishActivation(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier);
     void didResolveRegistrationPromise(Connection&, const ServiceWorkerRegistrationKey&);
 
     void addClientServiceWorkerRegistration(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationIdentifier);

@@ -140,6 +140,23 @@ void ServiceWorkerThread::fireInstallEvent()
     runLoop().postTask(WTFMove(task));
 }
 
+void ServiceWorkerThread::fireActivateEvent()
+{
+    ScriptExecutionContext::Task task([serviceWorkerIdentifier = this->identifier()] (ScriptExecutionContext& context) mutable {
+        auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
+        auto activateEvent = ExtendableEvent::create(eventNames().activateEvent, { }, ExtendableEvent::IsTrusted::Yes);
+        serviceWorkerGlobalScope.dispatchEvent(activateEvent);
+
+        activateEvent->whenAllExtendLifetimePromisesAreSettled([serviceWorkerIdentifier](HashSet<Ref<DOMPromise>>&&) {
+            callOnMainThread([serviceWorkerIdentifier] () mutable {
+                if (auto* connection = SWContextManager::singleton().connection())
+                    connection->didFinishActivation(serviceWorkerIdentifier);
+            });
+        });
+    });
+    runLoop().postTask(WTFMove(task));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

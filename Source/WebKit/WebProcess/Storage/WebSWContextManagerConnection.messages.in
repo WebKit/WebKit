@@ -27,6 +27,7 @@ messages -> WebSWContextManagerConnection {
     StartFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, std::optional<WebCore::ServiceWorkerIdentifier> serviceWorkerIdentifier, WebCore::ResourceRequest request, struct WebCore::FetchOptions options)
     PostMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, IPC::DataReference message, struct WebCore::ServiceWorkerClientIdentifier sourceIdentifier, String sourceOrigin)
     FireInstallEvent(uint64_t serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier identifier)
+    FireActivateEvent(uint64_t serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier identifier)
 }
 
 #endif

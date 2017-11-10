@@ -41,6 +41,7 @@ messages -> StorageProcess LegacyReceiver {
     ServiceWorkerContextFailedToStart(uint64_t serverConnectionIdentifier, WebCore::ServiceWorkerRegistrationKey registrationKey, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, String message)
     ServiceWorkerContextStarted(uint64_t serverConnectionIdentifier, WebCore::ServiceWorkerRegistrationKey registrationKey, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier)
     DidFinishServiceWorkerInstall(uint64_t serverConnectionIdentifier, WebCore::ServiceWorkerRegistrationKey registrationKey, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, bool wasSuccessful);
+    DidFinishServiceWorkerActivation(uint64_t serverConnectionIdentifier, WebCore::ServiceWorkerRegistrationKey registrationKey, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier);
 
     DidNotHandleFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier)
     DidFailFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier)

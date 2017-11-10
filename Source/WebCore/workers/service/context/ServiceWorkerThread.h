@@ -57,6 +57,7 @@ public:
     WEBCORE_EXPORT void postFetchTask(Ref<ServiceWorkerFetch::Client>&&, ResourceRequest&&, FetchOptions&&);
     WEBCORE_EXPORT void postMessageToServiceWorkerGlobalScope(Ref<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>&&, const ServiceWorkerClientIdentifier& sourceIdentifier, const String& sourceOrigin);
     void fireInstallEvent();
+    void fireActivateEvent();
 
     uint64_t serverConnectionIdentifier() const { return m_serverConnectionIdentifier; }
     const ServiceWorkerContextData& contextData() const { return m_data; }

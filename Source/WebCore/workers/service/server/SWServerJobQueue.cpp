@@ -138,7 +138,7 @@ void SWServerJobQueue::didResolveRegistrationPromise(SWServer::Connection& conne
 }
 
 // https://w3c.github.io/ServiceWorker/#install
-void SWServerJobQueue::didFinishInstall(SWServer::Connection&, ServiceWorkerIdentifier identifier, bool wasSuccessful)
+void SWServerJobQueue::didFinishInstall(SWServer::Connection& connection, ServiceWorkerIdentifier identifier, bool wasSuccessful)
 {
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
@@ -174,15 +174,64 @@ void SWServerJobQueue::didFinishInstall(SWServer::Connection&, ServiceWorkerIden
 
     finishCurrentJob();
 
-    // FIXME: Invoke Try Activate with registration
-    // FIXME: Do we need "Wait for all the tasks queued by Update Worker State invoked in this algorithm have executed" first?
-    auto* waiting = registration->waitingWorker();
-    ASSERT(waiting);
+    // FIXME: Wait for all the tasks queued by Update Worker State invoked in this algorithm have executed.
+    tryActivate(m_server, connection, *registration);
+}
 
-    registration->updateRegistrationState(ServiceWorkerRegistrationState::Active, waiting);
-    registration->updateRegistrationState(ServiceWorkerRegistrationState::Waiting, nullptr);
-    registration->updateWorkerState(*waiting, ServiceWorkerState::Activating);
-    registration->updateWorkerState(*waiting, ServiceWorkerState::Activated);
+// https://w3c.github.io/ServiceWorker/#try-activate-algorithm
+void SWServerJobQueue::tryActivate(SWServer& server, SWServer::Connection& connection, SWServerRegistration& registration)
+{
+    // If registration's waiting worker is null, return.
+    if (!registration.waitingWorker())
+        return;
+    // If registration's active worker is not null and registration's active worker's state is activating, return.
+    if (registration.activeWorker() && registration.activeWorker()->state() == ServiceWorkerState::Activating)
+        return;
+
+    // FIXME: Invoke Activate with registration if either of the following is true:
+    // - registration's active worker is null.
+    // - The result of running Service Worker Has No Pending Events with registration's active worker is true,
+    //   and no service worker client is using registration or registration's waiting worker's skip waiting
+    //   flag is set.
+    activate(server, connection, registration);
+}
+
+// https://w3c.github.io/ServiceWorker/#activate
+void SWServerJobQueue::activate(SWServer& server, SWServer::Connection& connection, SWServerRegistration& registration)
+{
+    // If registration's waiting worker is null, abort these steps.
+    if (!registration.waitingWorker())
+        return;
+
+    // If registration's active worker is not null, then:
+    if (registration.activeWorker()) {
+        // Terminate registration's active worker.
+        // registration.activeWorker()->terminate();
+        // Run the Update Worker State algorithm passing registration's active worker and redundant as the arguments.
+        registration.updateWorkerState(*registration.activeWorker(), ServiceWorkerState::Redundant);
+    }
+    // Run the Update Registration State algorithm passing registration, "active" and registration's waiting worker as the arguments.
+    registration.updateRegistrationState(ServiceWorkerRegistrationState::Active, registration.waitingWorker());
+    // Run the Update Registration State algorithm passing registration, "waiting" and null as the arguments.
+    registration.updateRegistrationState(ServiceWorkerRegistrationState::Waiting, nullptr);
+    // Run the Update Worker State algorithm passing registration's active worker and activating as the arguments.
+    registration.updateWorkerState(*registration.activeWorker(), ServiceWorkerState::Activating);
+    // FIXME: For each service worker client client whose creation URL matches registration's scope url...
+    // FIXME: For each service worker client client who is using registration...
+    // FIXME: Invoke Run Service Worker algorithm with activeWorker as the argument.
+
+    // Queue a task to fire the activate event.
+    server.fireActivateEvent(connection, registration.activeWorker()->identifier());
+}
+
+// https://w3c.github.io/ServiceWorker/#activate (post activate event steps).
+void SWServerJobQueue::didFinishActivation(SWServerRegistration& registration, ServiceWorkerIdentifier serviceWorkerIdentifier)
+{
+    if (!registration.activeWorker() || registration.activeWorker()->identifier() != serviceWorkerIdentifier)
+        return;
+
+    // Run the Update Worker State algorithm passing registration's active worker and activated as the arguments.
+    registration.updateWorkerState(*registration.activeWorker(), ServiceWorkerState::Activated);
 }
 
 // https://w3c.github.io/ServiceWorker/#run-job
