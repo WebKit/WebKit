@@ -1,5 +1,19 @@
 2017-11-10  Ms2ger  <Ms2ger@igalia.com>
 
+        Remove check-combining-headers.html.
+        https://bugs.webkit.org/show_bug.cgi?id=179527
+
+        Reviewed by Chris Dumez.
+
+        This test is an old fork of
+        imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-header-allowed.htm
+        which is no longer useful.
+
+        * http/tests/xmlhttprequest/check-combining-headers-expected.txt: Removed.
+        * http/tests/xmlhttprequest/check-combining-headers.html: Removed.
+
+2017-11-10  Ms2ger  <Ms2ger@igalia.com>
+
         [GTK] Update test expectations for imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args.html.
         https://bugs.webkit.org/show_bug.cgi?id=179051
 

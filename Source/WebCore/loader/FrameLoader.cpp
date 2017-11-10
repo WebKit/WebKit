@@ -2652,7 +2652,7 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
     if (m_overrideResourceLoadPriorityForTesting)
         request.setPriority(m_overrideResourceLoadPriorityForTesting.value());
 
-    applyUserAgent(request);
+    applyUserAgentIfNeeded(request);
 
     if (isMainResource)
         request.setHTTPAccept(defaultAcceptHeader);
@@ -3269,11 +3269,13 @@ void FrameLoader::loadedResourceFromMemoryCache(CachedResource& resource, Resour
     notifier().sendRemainingDelegateMessages(m_documentLoader.get(), identifier, newRequest, response, 0, resource.encodedSize(), 0, error);
 }
 
-void FrameLoader::applyUserAgent(ResourceRequest& request)
+void FrameLoader::applyUserAgentIfNeeded(ResourceRequest& request)
 {
-    String userAgent = this->userAgent(request.url());
-    ASSERT(!userAgent.isNull());
-    request.setHTTPUserAgent(userAgent);
+    if (!request.hasHTTPHeaderField(HTTPHeaderName::UserAgent)) {
+        String userAgent = this->userAgent(request.url());
+        ASSERT(!userAgent.isNull());
+        request.setHTTPUserAgent(userAgent);
+    }
 }
 
 bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, const URL& url, unsigned long requestIdentifier)

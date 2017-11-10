@@ -64,7 +64,7 @@ void ResourceLoadNotifier::didReceiveAuthenticationChallenge(unsigned long ident
 
 void ResourceLoadNotifier::willSendRequest(ResourceLoader* loader, ResourceRequest& clientRequest, const ResourceResponse& redirectResponse)
 {
-    m_frame.loader().applyUserAgent(clientRequest);
+    m_frame.loader().applyUserAgentIfNeeded(clientRequest);
 
     dispatchWillSendRequest(loader->documentLoader(), loader->identifier(), clientRequest, redirectResponse);
 }

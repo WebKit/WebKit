@@ -462,7 +462,7 @@ void ApplicationCacheGroup::abort(Frame& frame)
 RefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const URL& url, ApplicationCacheResource* newestCachedResource)
 {
     ResourceRequest request(url);
-    m_frame->loader().applyUserAgent(request);
+    m_frame->loader().applyUserAgentIfNeeded(request);
     request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "max-age=0");
 
     if (newestCachedResource) {

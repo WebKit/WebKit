@@ -258,7 +258,7 @@ public:
 
     WEBCORE_EXPORT Frame* findFrameForNavigation(const AtomicString& name, Document* activeDocument = nullptr);
 
-    void applyUserAgent(ResourceRequest&);
+    void applyUserAgentIfNeeded(ResourceRequest&);
 
     bool shouldInterruptLoadForXFrameOptions(const String&, const URL&, unsigned long requestIdentifier);
 
