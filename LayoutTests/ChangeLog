@@ -1,5 +1,13 @@
 2017-11-09  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark multiple service worker tests as flaky.
+
+        Unreviewed test gardening.
+
+        * TestExpectations: Add flaky tests and alphabetize existing entries.
+
+2017-11-09  Ryan Haddad  <ryanhaddad@apple.com>
+
         [iOS] Rebaseline and re-enable editing/deleting tests
         https://bugs.webkit.org/show_bug.cgi?id=179119
 
