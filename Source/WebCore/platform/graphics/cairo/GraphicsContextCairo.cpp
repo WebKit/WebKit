@@ -472,20 +472,8 @@ void GraphicsContext::clip(const FloatRect& rect)
         return;
     }
 
-    cairo_t* cr = platformContext()->cr();
-    cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
-    cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
-    cairo_set_fill_rule(cr, CAIRO_FILL_RULE_WINDING);
-    // The rectangular clip function is traditionally not expected to
-    // antialias. If we don't force antialiased clipping here,
-    // edge fringe artifacts may occur at the layer edges
-    // when a transformation is applied to the GraphicsContext
-    // while drawing the transformed layer.
-    cairo_antialias_t savedAntialiasRule = cairo_get_antialias(cr);
-    cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
-    cairo_clip(cr);
-    cairo_set_fill_rule(cr, savedFillRule);
-    cairo_set_antialias(cr, savedAntialiasRule);
+    ASSERT(hasPlatformContext());
+    Cairo::clip(*platformContext(), rect);
     m_data->clip(rect);
 }
 
@@ -499,15 +487,8 @@ void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
         return;
     }
 
-    cairo_t* cr = platformContext()->cr();
-    if (!path.isNull())
-        setPathOnCairoContext(cr, path.platformPath()->context());
-
-    cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
-    cairo_set_fill_rule(cr, clipRule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
-    cairo_clip(cr);
-    cairo_set_fill_rule(cr, savedFillRule);
-
+    ASSERT(hasPlatformContext());
+    Cairo::clipPath(*platformContext(), path, clipRule);
     m_data->clip(path);
 }
 
@@ -517,9 +498,9 @@ void GraphicsContext::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& de
         return;
 
     RefPtr<Image> image = buffer.copyImage(DontCopyBackingStore);
-    RefPtr<cairo_surface_t> surface = image->nativeImageForCurrentFrame();
-    if (surface)
-        platformContext()->pushImageMask(surface.get(), destRect);
+
+    ASSERT(hasPlatformContext());
+    Cairo::clipToImageBuffer(*platformContext(), *image, destRect);
 }
 
 IntRect GraphicsContext::clipBounds() const
@@ -1056,16 +1037,8 @@ void GraphicsContext::clipOut(const Path& path)
         return;
     }
 
-    cairo_t* cr = platformContext()->cr();
-    double x1, y1, x2, y2;
-    cairo_clip_extents(cr, &x1, &y1, &x2, &y2);
-    cairo_rectangle(cr, x1, y1, x2 - x1, y2 - y1);
-    appendWebCorePathToCairoContext(cr, path);
-
-    cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
-    cairo_set_fill_rule(cr, CAIRO_FILL_RULE_EVEN_ODD);
-    cairo_clip(cr);
-    cairo_set_fill_rule(cr, savedFillRule);
+    ASSERT(hasPlatformContext());
+    Cairo::clipOut(*platformContext(), path);
 }
 
 void GraphicsContext::rotate(float radians)
@@ -1096,25 +1069,18 @@ void GraphicsContext::scale(const FloatSize& size)
     m_data->scale(size);
 }
 
-void GraphicsContext::clipOut(const FloatRect& r)
+void GraphicsContext::clipOut(const FloatRect& rect)
 {
     if (paintingDisabled())
         return;
 
     if (m_impl) {
-        m_impl->clipOut(r);
+        m_impl->clipOut(rect);
         return;
     }
 
-    cairo_t* cr = platformContext()->cr();
-    double x1, y1, x2, y2;
-    cairo_clip_extents(cr, &x1, &y1, &x2, &y2);
-    cairo_rectangle(cr, x1, y1, x2 - x1, y2 - y1);
-    cairo_rectangle(cr, r.x(), r.y(), r.width(), r.height());
-    cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
-    cairo_set_fill_rule(cr, CAIRO_FILL_RULE_EVEN_ODD);
-    cairo_clip(cr);
-    cairo_set_fill_rule(cr, savedFillRule);
+    ASSERT(hasPlatformContext());
+    Cairo::clipOut(*platformContext(), rect);
 }
 
 void GraphicsContext::platformFillRoundedRect(const FloatRoundedRect& rect, const Color& color)
