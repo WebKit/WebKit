@@ -52,7 +52,7 @@ WTF_EXPORT_PRIVATE void* fastRealloc(void*, size_t) RETURNS_NONNULL;
 WTF_EXPORT_PRIVATE char* fastStrDup(const char*) RETURNS_NONNULL;
 
 WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastMalloc(size_t);
-TryMallocReturnValue tryFastZeroedMalloc(size_t);
+WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastZeroedMalloc(size_t);
 WTF_EXPORT_PRIVATE TryMallocReturnValue tryFastCalloc(size_t numElements, size_t elementSize);
 
 WTF_EXPORT_PRIVATE void fastFree(void*);

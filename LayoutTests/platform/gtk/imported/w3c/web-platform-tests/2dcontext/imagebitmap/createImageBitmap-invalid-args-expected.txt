@@ -1,30 +1,31 @@
+CONSOLE MESSAGE: line 167: Canvas area exceeds the maximum limit (width * height > 268435456).
 
-FAIL createImageBitmap with a HTMLImageElement source and sw set to 0 rejects with a RangeError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap with a HTMLImageElement source and sh set to 0 rejects with a RangeError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap with a HTMLImageElement source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap with a HTMLVideoElement source and sw set to 0 rejects with a RangeError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap with a HTMLVideoElement source and sh set to 0 rejects with a RangeError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap with a HTMLVideoElement source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap with a HTMLCanvasElement source and sw set to 0 rejects with a RangeError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap with a HTMLCanvasElement source and sh set to 0 rejects with a RangeError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap with a HTMLCanvasElement source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+PASS createImageBitmap with a HTMLImageElement source and sw set to 0 rejects with a RangeError. 
+PASS createImageBitmap with a HTMLImageElement source and sh set to 0 rejects with a RangeError. 
+FAIL createImageBitmap with a HTMLImageElement source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS createImageBitmap with a HTMLVideoElement source and sw set to 0 rejects with a RangeError. 
+PASS createImageBitmap with a HTMLVideoElement source and sh set to 0 rejects with a RangeError. 
+FAIL createImageBitmap with a HTMLVideoElement source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with HTMLVideoElement is not implemented" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
+PASS createImageBitmap with a HTMLCanvasElement source and sw set to 0 rejects with a RangeError. 
+PASS createImageBitmap with a HTMLCanvasElement source and sh set to 0 rejects with a RangeError. 
+FAIL createImageBitmap with a HTMLCanvasElement source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL createImageBitmap with a OffscreenCanvas source and sw set to 0 rejects with a RangeError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
 FAIL createImageBitmap with a OffscreenCanvas source and sh set to 0 rejects with a RangeError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
 FAIL createImageBitmap with a OffscreenCanvas source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL createImageBitmap with a ImageData source and sw set to 0 rejects with a RangeError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap with a ImageData source and sh set to 0 rejects with a RangeError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap with a ImageData source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap with a ImageBitmap source and sw set to 0 rejects with a RangeError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap with a ImageBitmap source and sh set to 0 rejects with a RangeError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap with a ImageBitmap source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap with a Blob source and sw set to 0 rejects with a RangeError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap with a Blob source and sh set to 0 rejects with a RangeError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap with a Blob source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
-FAIL createImageBitmap with undefined image source rejects with a TypeError. Can't find variable: createImageBitmap
-FAIL createImageBitmap with null image source rejects with a TypeError. Can't find variable: createImageBitmap
-FAIL createImageBitmap with empty image source rejects with a InvalidStateError. Can't find variable: createImageBitmap
-FAIL createImageBitmap with empty video source rejects with a InvalidStateError. Can't find variable: createImageBitmap
-FAIL createImageBitmap with an oversized canvas source rejects with a RangeError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+PASS createImageBitmap with a ImageData source and sw set to 0 rejects with a RangeError. 
+PASS createImageBitmap with a ImageData source and sh set to 0 rejects with a RangeError. 
+FAIL createImageBitmap with a ImageData source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with ImageData is not implemented" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
+PASS createImageBitmap with a ImageBitmap source and sw set to 0 rejects with a RangeError. 
+PASS createImageBitmap with a ImageBitmap source and sh set to 0 rejects with a RangeError. 
+FAIL createImageBitmap with a ImageBitmap source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with ImageBitmap is not implemented" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
+PASS createImageBitmap with a Blob source and sw set to 0 rejects with a RangeError. 
+PASS createImageBitmap with a Blob source and sh set to 0 rejects with a RangeError. 
+FAIL createImageBitmap with a Blob source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with ArrayBuffer or Blob is not implemented" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
+PASS createImageBitmap with undefined image source rejects with a TypeError. 
+PASS createImageBitmap with null image source rejects with a TypeError. 
+PASS createImageBitmap with empty image source rejects with a InvalidStateError. 
+FAIL createImageBitmap with empty video source rejects with a InvalidStateError. assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with HTMLVideoElement is not implemented" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
+PASS createImageBitmap with an oversized canvas source rejects with a RangeError. 
 FAIL createImageBitmap with an invalid OffscreenCanvas source rejects with a RangeError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL createImageBitmap with an undecodable blob source rejects with an InvalidStateError. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+FAIL createImageBitmap with an undecodable blob source rejects with an InvalidStateError. assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with ArrayBuffer or Blob is not implemented" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
 

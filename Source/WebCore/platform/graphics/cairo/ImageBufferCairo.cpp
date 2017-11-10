@@ -231,7 +231,9 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
         static cairo_user_data_key_t s_surfaceDataKey;
 
         int stride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, m_size.width());
-        auto* surfaceData = fastZeroedMalloc(m_size.height() * stride);
+        void* surfaceData;
+        if (!tryFastZeroedMalloc(m_size.height() * stride).getValue(surfaceData))
+            return;
 
         m_data.m_surface = adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(surfaceData), CAIRO_FORMAT_ARGB32, m_size.width(), m_size.height(), stride));
         cairo_surface_set_user_data(m_data.m_surface.get(), &s_surfaceDataKey, surfaceData, [](void* data) { fastFree(data); });

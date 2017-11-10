@@ -1,3 +1,15 @@
+2017-11-10  Ms2ger  <Ms2ger@igalia.com>
+
+        Export tryFastZeroedMalloc.
+        https://bugs.webkit.org/show_bug.cgi?id=179051
+
+        Reviewed by Michael Catanzaro.
+
+        The other functions were exported in bug 72855. There does not seem to be a
+        reason not to export this one.
+
+        * wtf/FastMalloc.h:
+
 2017-11-09  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r224661.
