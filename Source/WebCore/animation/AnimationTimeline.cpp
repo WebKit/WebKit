@@ -68,34 +68,6 @@ void AnimationTimeline::setCurrentTime(Seconds currentTime)
     animationTimingModelDidChange();
 }
 
-void AnimationTimeline::animationWasAddedToElement(WebAnimation& animation, Element& element)
-{
-    auto result = m_elementToAnimationsMap.ensure(&element, [] {
-        return Vector<RefPtr<WebAnimation>>();
-    });
-    result.iterator->value.append(&animation);
-}
-
-void AnimationTimeline::animationWasRemovedFromElement(WebAnimation& animation, Element& element)
-{
-    auto iterator = m_elementToAnimationsMap.find(&element);
-    if (iterator == m_elementToAnimationsMap.end())
-        return;
-
-    auto& animations = iterator->value;
-    animations.removeFirst(&animation);
-    if (!animations.size())
-        m_elementToAnimationsMap.remove(iterator);
-}
-
-Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& element)
-{
-    Vector<RefPtr<WebAnimation>> animations;
-    if (m_elementToAnimationsMap.contains(&element))
-        animations = m_elementToAnimationsMap.get(&element);
-    return animations;
-}
-
 String AnimationTimeline::description()
 {
     TextStream stream;

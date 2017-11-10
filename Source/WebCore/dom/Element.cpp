@@ -42,7 +42,6 @@
 #include "DOMRectList.h"
 #include "DOMTokenList.h"
 #include "DocumentSharedObjectPool.h"
-#include "DocumentTimeline.h"
 #include "Editing.h"
 #include "ElementIterator.h"
 #include "ElementRareData.h"
@@ -3699,12 +3698,6 @@ Element* Element::findAnchorElementForLink(String& outAnchorName)
     }
 
     return nullptr;
-}
-
-Vector<RefPtr<WebAnimation>> Element::getAnimations()
-{
-    // FIXME: Filter and order the list as specified (webkit.org/b/179535).
-    return document().timeline().animationsForElement(*this);
 }
 
 } // namespace WebCore

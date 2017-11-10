@@ -1,3 +1,0 @@
-
-PASS Check that setting an animation's effect onto another animation sets effect to null. 
-

@@ -8684,7 +8684,6 @@
 		71A57DEF154BE25C0009D120 /* SVGPathUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathUtilities.cpp; sourceTree = "<group>"; };
 		71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathUtilities.h; sourceTree = "<group>"; };
 		71B0460A1DD3C2EE00EE19CF /* status-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "status-support.js"; sourceTree = "<group>"; };
-		71C5BB1B1FB611EA0007A2AE /* Animatable.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Animatable.idl; sourceTree = "<group>"; };
 		71C916071D1483A300ACA47D /* UserInterfaceLayoutDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserInterfaceLayoutDirection.h; sourceTree = "<group>"; };
 		71CC7A1F152A0BFE009EEAF9 /* SVGAnimatedEnumeration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedEnumeration.cpp; sourceTree = "<group>"; };
 		71D02D901DB55C4E00DD5CF5 /* main.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = main.js; sourceTree = "<group>"; };
@@ -18624,7 +18623,6 @@
 		71025EC11F99F096004A250C /* animation */ = {
 			isa = PBXGroup;
 			children = (
-				71C5BB1B1FB611EA0007A2AE /* Animatable.idl */,
 				71556CB11F9F099F00E78D08 /* AnimationEffect.cpp */,
 				71556CAD1F9F099D00E78D08 /* AnimationEffect.h */,
 				71556CB01F9F099E00E78D08 /* AnimationEffect.idl */,

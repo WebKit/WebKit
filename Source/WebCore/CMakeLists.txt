@@ -419,7 +419,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webvr/VRPose.idl
     Modules/webvr/VRStageParameters.idl
 
-    animation/Animatable.idl
     animation/AnimationEffect.idl
     animation/AnimationEffectTiming.idl
     animation/AnimationTimeline.idl

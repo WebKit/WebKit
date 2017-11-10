@@ -1,7 +1,0 @@
-
-PASS Element exposes the getAnimations method. 
-PASS Element.getAnimations() returns an empty array when no animations were added. 
-PASS Element.getAnimations() returns an array with animations targetting that element. 
-PASS An effect can only be applied to a single animation and changing it changes the animations returned by Element.getAnimations(). 
-PASS Setting an animation's effect to null changes the animations returned by Element.getAnimations(). 
-

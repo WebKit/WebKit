@@ -212,7 +212,6 @@ typedef (
     [Replaceable] readonly attribute HTMLAllCollection all; /* [SameObject] */
 
     [EnabledAtRuntime=WebAnimations] readonly attribute DocumentTimeline timeline;
-    [EnabledAtRuntime=WebAnimations] sequence<WebAnimation> getAnimations();
 };
 
 enum DocumentReadyState { "loading", "interactive", "complete" };

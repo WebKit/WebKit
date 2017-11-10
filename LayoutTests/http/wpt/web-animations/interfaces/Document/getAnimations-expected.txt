@@ -1,5 +1,5 @@
 
-PASS Test document.getAnimations for non-animated content 
+FAIL Test document.getAnimations for non-animated content document.getAnimations is not a function. (In 'document.getAnimations()', 'document.getAnimations' is undefined)
 FAIL Test document.getAnimations for script-generated animations div.animate is not a function. (In 'div.animate(gKeyFrames, 100 * MS_PER_SEC)', 'div.animate' is undefined)
 FAIL Test the order of document.getAnimations with script generated animations div.animate is not a function. (In 'div.animate(gKeyFrames, 100 * MS_PER_SEC)', 'div.animate' is undefined)
 FAIL Test document.getAnimations with null target Can't find variable: KeyframeEffectReadOnly

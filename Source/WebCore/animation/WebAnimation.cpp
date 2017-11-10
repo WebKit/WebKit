@@ -29,7 +29,6 @@
 #include "AnimationEffect.h"
 #include "AnimationTimeline.h"
 #include "Document.h"
-#include "KeyframeEffect.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -39,7 +38,7 @@ Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effe
     auto result = adoptRef(*new WebAnimation());
 
     result->setEffect(effect);
-
+    
     // FIXME: the spec mandates distinguishing between an omitted timeline parameter
     // and an explicit null or undefined value (webkit.org/b/179065).
     result->setTimeline(timeline ? timeline : &document.timeline());
@@ -62,33 +61,6 @@ void WebAnimation::setEffect(RefPtr<AnimationEffect>&& effect)
     if (effect == m_effect)
         return;
 
-    if (m_effect) {
-        m_effect->setAnimation(nullptr);
-
-        // Update the Element to Animation map.
-        if (m_timeline && m_effect->isKeyframeEffect()) {
-            auto* keyframeEffect = downcast<KeyframeEffect>(m_effect.get());
-            auto* target = keyframeEffect->target();
-            if (target)
-                m_timeline->animationWasRemovedFromElement(*this, *target);
-        }
-    }
-
-    if (effect) {
-        // An animation effect can only be associated with a single animation.
-        if (effect->animation())
-            effect->animation()->setEffect(nullptr);
-
-        effect->setAnimation(this);
-
-        if (m_timeline && effect->isKeyframeEffect()) {
-            auto* keyframeEffect = downcast<KeyframeEffect>(effect.get());
-            auto* target = keyframeEffect->target();
-            if (target)
-                m_timeline->animationWasAddedToElement(*this, *target);
-        }
-    }
-
     m_effect = WTFMove(effect);
 }
 
@@ -105,17 +77,6 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
 
     if (timeline)
         timeline->addAnimation(*this);
-
-    if (m_effect && m_effect->isKeyframeEffect()) {
-        auto* keyframeEffect = downcast<KeyframeEffect>(m_effect.get());
-        auto* target = keyframeEffect->target();
-        if (target) {
-            if (m_timeline)
-                m_timeline->animationWasRemovedFromElement(*this, *target);
-            if (timeline)
-                timeline->animationWasAddedToElement(*this, *target);
-        }
-    }
 
     m_timeline = WTFMove(timeline);
 }

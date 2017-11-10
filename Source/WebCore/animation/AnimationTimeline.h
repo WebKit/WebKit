@@ -28,7 +28,6 @@
 
 #include "WebAnimation.h"
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Optional.h>
 #include <wtf/Ref.h>
@@ -37,8 +36,6 @@
 
 namespace WebCore {
 
-class AnimationEffect;
-class Element;
 class WebAnimation;
 
 class AnimationTimeline : public RefCounted<AnimationTimeline> {
@@ -54,11 +51,6 @@ public:
 
     virtual void animationTimingModelDidChange() { };
 
-    const HashSet<RefPtr<WebAnimation>>& animations() const { return m_animations; }
-    Vector<RefPtr<WebAnimation>> animationsForElement(Element&);
-    void animationWasAddedToElement(WebAnimation&, Element&);
-    void animationWasRemovedFromElement(WebAnimation&, Element&);
-
     virtual ~AnimationTimeline();
 
 protected:
@@ -68,12 +60,13 @@ protected:
 
     ClassType classType() const { return m_classType; }
 
+    HashSet<RefPtr<WebAnimation>> animations() const { return m_animations; }
+
     explicit AnimationTimeline(ClassType);
 
 private:
     ClassType m_classType;
     std::optional<Seconds> m_currentTime;
-    HashMap<RefPtr<Element>, Vector<RefPtr<WebAnimation>>> m_elementToAnimationsMap;
     HashSet<RefPtr<WebAnimation>> m_animations;
 };
 
