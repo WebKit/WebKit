@@ -175,16 +175,18 @@ struct BasicBlock : RefCounted<BasicBlock> {
     unsigned bytecodeBegin;
     
     BlockIndex index;
-    
-    bool isOSRTarget;
-    bool isCatchEntrypoint;
+
+    StructureClobberState cfaStructureClobberStateAtHead;
+    StructureClobberState cfaStructureClobberStateAtTail;
+    BranchDirection cfaBranchDirection;
     bool cfaHasVisited;
     bool cfaShouldRevisit;
     bool cfaFoundConstants;
     bool cfaDidFinish;
-    StructureClobberState cfaStructureClobberStateAtHead;
-    StructureClobberState cfaStructureClobberStateAtTail;
-    BranchDirection cfaBranchDirection;
+    bool intersectionOfCFAHasVisited;
+    bool isOSRTarget;
+    bool isCatchEntrypoint;
+
 #if !ASSERT_DISABLED
     bool isLinked;
 #endif
@@ -217,7 +219,6 @@ struct BasicBlock : RefCounted<BasicBlock> {
     // would not be a productive optimization: it would make setting up a basic block more
     // expensive and would only benefit bizarre pathological cases.
     Operands<AbstractValue> intersectionOfPastValuesAtHead;
-    bool intersectionOfCFAHasVisited;
     
     float executionCount;
     

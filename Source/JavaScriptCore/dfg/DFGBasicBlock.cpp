@@ -36,15 +36,16 @@ BasicBlock::BasicBlock(
     unsigned bytecodeBegin, unsigned numArguments, unsigned numLocals, float executionCount)
     : bytecodeBegin(bytecodeBegin)
     , index(NoBlock)
-    , isOSRTarget(false)
-    , isCatchEntrypoint(false)
+    , cfaStructureClobberStateAtHead(StructuresAreWatched)
+    , cfaStructureClobberStateAtTail(StructuresAreWatched)
+    , cfaBranchDirection(InvalidBranchDirection)
     , cfaHasVisited(false)
     , cfaShouldRevisit(false)
     , cfaFoundConstants(false)
     , cfaDidFinish(true)
-    , cfaStructureClobberStateAtHead(StructuresAreWatched)
-    , cfaStructureClobberStateAtTail(StructuresAreWatched)
-    , cfaBranchDirection(InvalidBranchDirection)
+    , intersectionOfCFAHasVisited(true)
+    , isOSRTarget(false)
+    , isCatchEntrypoint(false)
 #if !ASSERT_DISABLED
     , isLinked(false)
 #endif
@@ -54,7 +55,6 @@ BasicBlock::BasicBlock(
     , valuesAtHead(numArguments, numLocals)
     , valuesAtTail(numArguments, numLocals)
     , intersectionOfPastValuesAtHead(numArguments, numLocals, AbstractValue::fullTop())
-    , intersectionOfCFAHasVisited(true)
     , executionCount(executionCount)
 {
 }

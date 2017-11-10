@@ -1,3 +1,53 @@
+2017-11-10  Robin Morisset  <rmorisset@apple.com>
+
+        The memory consumption of DFG::BasicBlock can be easily reduced a bit
+        https://bugs.webkit.org/show_bug.cgi?id=179528
+
+        Reviewed by Saam Barati.
+
+        A few changes here:
+        - Reordering some fields of DFG::BasicBlock to reduce padding
+        - Making the enum fields that are glorified booleans fit into a u8
+        - Make each Operands object have a single vector that holds all arguments followed by all locals, instead of two vectors.
+          This change works because we never increase the number of arguments after allocating an Operands object.
+          It lets us avoid one extra capacity field and one extra pointer field per Operands,
+          and more importantly one allocation per Operands whenever both vectors would have overflowed their inlined buffer.
+          Additionally, if a single vector would have overflowed its inline buffer, while the other would have had some free space,
+          we have a chance to avoid an allocation.
+        - Finally, the three methods argumentForIndex, variableForIndex and indexForOperand were deleted since they were dead code.
+
+        * bytecode/Operands.h:
+        (JSC::Operands::Operands):
+        (JSC::Operands::numberOfArguments const):
+        (JSC::Operands::numberOfLocals const):
+        (JSC::Operands::argument):
+        (JSC::Operands::argument const):
+        (JSC::Operands::local):
+        (JSC::Operands::local const):
+        (JSC::Operands::ensureLocals):
+        (JSC::Operands::setLocal):
+        (JSC::Operands::getLocal):
+        (JSC::Operands::setArgumentFirstTime):
+        (JSC::Operands::setLocalFirstTime):
+        (JSC::Operands::operand):
+        (JSC::Operands::setOperand):
+        (JSC::Operands::size const):
+        (JSC::Operands::at const):
+        (JSC::Operands::at):
+        (JSC::Operands::isArgument const):
+        (JSC::Operands::isVariable const):
+        (JSC::Operands::virtualRegisterForIndex const):
+        (JSC::Operands::fill):
+        (JSC::Operands::operator== const):
+        (JSC::Operands::argumentForIndex const): Deleted.
+        (JSC::Operands::variableForIndex const): Deleted.
+        (JSC::Operands::indexForOperand const): Deleted.
+        * dfg/DFGBasicBlock.cpp:
+        (JSC::DFG::BasicBlock::BasicBlock):
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGBranchDirection.h:
+        * dfg/DFGStructureClobberState.h:
+
 2017-11-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Retry module fetching if previous request fails
