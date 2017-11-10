@@ -1,3 +1,15 @@
+2017-11-09  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo] Cannot find ImageDiff executable
+        https://bugs.webkit.org/show_bug.cgi?id=179508
+
+        Reviewed by Per Arne Vollan.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.is_cygwin):
+        (WinPort._path_to_image_diff):
+        (WinPort.find_system_pid):
+
 2017-11-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo EWS] svn-apply: 'cp' is not recognized as an internal or external command

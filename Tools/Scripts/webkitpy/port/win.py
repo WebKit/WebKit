@@ -161,6 +161,10 @@ class WinPort(ApplePort):
 
         return self._filesystem.join(root_directory, *comps)
 
+    def is_cygwin(self):
+        """Return whether current platform is Cygwin or not"""
+        return self.host.platform.is_cygwin()
+
     # Note: These are based on the stock XAMPP locations for these files.
     def _uses_apache(self):
         return True
@@ -180,6 +184,12 @@ class WinPort(ApplePort):
 
     def _path_to_lighttpd_php(self):
         return "/usr/bin/php-cgi"
+
+    def _path_to_image_diff(self):
+        if self.is_cygwin():
+            return super(WinPort, self)._path_to_image_diff()
+
+        return self._build_path('ImageDiff.exe')
 
     def test_search_path(self):
         test_fallback_names = [path for path in self.baseline_search_path() if not path.startswith(self._webkit_baseline_path('mac'))]
@@ -424,7 +434,7 @@ class WinPort(ApplePort):
     def find_system_pid(self, name, pid):
         system_pid = int(pid)
 
-        if sys.platform == "cygwin":
+        if self.is_cygwin():
             # Windows and Cygwin PIDs are not the same.  We need to find the Windows
             # PID for our Cygwin process so we can match it later to any crash
             # files we end up creating (which will be tagged with the Windows PID)
