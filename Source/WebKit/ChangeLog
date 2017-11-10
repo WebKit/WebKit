@@ -1,5 +1,18 @@
 2017-11-09  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rolling out r224661.
+
+        Broke build on several internal Mac/iOS bots
+
+        Reverted changeset:
+
+        "Ignore HSTS for partitioned, cross-origin subresource
+        requests"
+        https://bugs.webkit.org/show_bug.cgi?id=178993
+        https://trac.webkit.org/changeset/224661
+
+2017-11-09  Chris Dumez  <cdumez@apple.com>
+
         ServiceWorkerRegistration objects may get recycled for different SWServerRegistration objects
         https://bugs.webkit.org/show_bug.cgi?id=179517
 
