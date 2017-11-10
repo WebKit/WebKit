@@ -1,3 +1,13 @@
+2017-11-10  Jer Noble  <jer.noble@apple.com>
+
+        Add a FairPlay Streaming based CDM for Modern EME
+        https://bugs.webkit.org/show_bug.cgi?id=179499
+        <rdar://problem/35445033>
+
+        Reviewed by Eric Carlson.
+
+        * wtf/Platform.h:
+
 2017-11-10  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r224267): WebViews scheduled with custom run loop modes don't load

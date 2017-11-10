@@ -27,6 +27,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "CDMSessionType.h"
 #include <wtf/HashSet.h>
 
 namespace WebCore {
@@ -34,7 +35,7 @@ namespace WebCore {
 struct CDMRestrictions {
     bool distinctiveIdentifierDenied { false };
     bool persistentStateDenied { false };
-    HashSet<String> deniedSessionTypes;
+    HashSet<CDMSessionType, WTF::IntHash<CDMSessionType>, WTF::StrongEnumHashTraits<CDMSessionType>> deniedSessionTypes;
 };
 
 } // namespace WebCore

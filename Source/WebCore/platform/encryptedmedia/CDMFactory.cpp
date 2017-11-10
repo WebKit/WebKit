@@ -57,7 +57,7 @@ void CDMFactory::unregisterFactory(CDMFactory& factory)
     registeredFactories().removeAll(&factory);
 }
 
-#if !USE(GSTREAMER)
+#if !USE(GSTREAMER) && !USE(AVFOUNDATION)
 void CDMFactory::platformRegisterFactories(Vector<CDMFactory*>&)
 {
 }

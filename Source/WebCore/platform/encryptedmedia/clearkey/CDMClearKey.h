@@ -85,6 +85,7 @@ public:
     SuccessValue setDistinctiveIdentifiersAllowed(bool) override;
     SuccessValue setPersistentStateAllowed(bool) override;
     SuccessValue setServerCertificate(Ref<SharedBuffer>&&) override;
+    SuccessValue setStorageDirectory(const String&) override;
 
     void requestLicense(LicenseType, const AtomicString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback) override;
     void updateLicense(const String&, LicenseType, const SharedBuffer&, LicenseUpdateCallback) override;

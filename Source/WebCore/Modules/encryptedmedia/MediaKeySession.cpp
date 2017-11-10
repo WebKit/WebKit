@@ -40,7 +40,10 @@
 #include "MediaKeyStatusMap.h"
 #include "MediaKeys.h"
 #include "NotImplemented.h"
+#include "Page.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginData.h"
+#include "Settings.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
@@ -675,6 +678,23 @@ void MediaKeySession::sessionClosed()
     // 5. Let promise be the closed attribute of the session.
     // 6. Resolve promise.
     m_closedPromise.resolve();
+}
+
+String MediaKeySession::mediaKeysStorageDirectory() const
+{
+    auto* document = downcast<Document>(scriptExecutionContext());
+    if (!document)
+        return emptyString();
+
+    auto* page = document->page();
+    if (!page || page->usesEphemeralSession())
+        return emptyString();
+
+    auto storageDirectory = document->settings().mediaKeysStorageDirectory();
+    if (storageDirectory.isEmpty())
+        return emptyString();
+
+    return FileSystem::pathByAppendingComponent(storageDirectory, SecurityOriginData::fromSecurityOrigin(document->securityOrigin()).databaseIdentifier());
 }
 
 bool MediaKeySession::hasPendingActivity() const

@@ -264,6 +264,12 @@ CDMInstance::SuccessValue MockCDMInstance::setServerCertificate(Ref<SharedBuffer
     return Failed;
 }
 
+CDMInstance::SuccessValue MockCDMInstance::setStorageDirectory(const String&)
+{
+    // On disk storage is unused; no-op.
+    return Succeeded;
+}
+
 void MockCDMInstance::requestLicense(LicenseType licenseType, const AtomicString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback callback)
 {
     MockCDMFactory* factory = m_cdm ? m_cdm->factory() : nullptr;

@@ -489,14 +489,19 @@ void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, c
         if (!readNativeSampleBuffer(nativeSamples, i, buffer, duration, formatDescription))
             continue;
 
-        String type = ISOBox::peekType(buffer.get());
-        size_t boxLength = ISOBox::peekLength(buffer.get());
-        if (boxLength > buffer->byteLength()) {
-            ERROR_LOG(LOGIDENTIFIER, "chunk  type = '", type, "', size = ", boxLength, " larger than buffer length!");
+        auto view = JSC::DataView::create(WTFMove(buffer), 0, buffer->byteLength());
+        auto peekResult = ISOBox::peekBox(view, 0);
+        if (!peekResult)
+            continue;
+
+        auto type = peekResult.value().first;
+        auto boxLength = peekResult.value().second;
+        if (boxLength > view->byteLength()) {
+            ERROR_LOG(LOGIDENTIFIER, "chunk  type = '", type.toString(), "', size = ", (size_t)boxLength, " larger than buffer length!");
             continue;
         }
 
-        DEBUG_LOG(LOGIDENTIFIER, "chunk  type = '", type, "', size = ", boxLength);
+        DEBUG_LOG(LOGIDENTIFIER, "chunk  type = '", type.toString(), "', size = ", (size_t)boxLength);
 
         do {
             if (m_haveReportedVTTHeader || !formatDescription)
@@ -529,13 +534,14 @@ void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, c
             m_haveReportedVTTHeader = true;
         } while (0);
 
-        if (type == ISOWebVTTCue::boxType()) {
-            ISOWebVTTCue cueData = ISOWebVTTCue(presentationTime, duration, buffer.get());
+        if (type == ISOWebVTTCue::boxTypeName()) {
+            ISOWebVTTCue cueData = ISOWebVTTCue(presentationTime, duration);
+            cueData.read(view);
             DEBUG_LOG(LOGIDENTIFIER, "sample presentation time = ", cueData.presentationTime(), ", duration = ", cueData.duration(), ", id = '", cueData.id(), "', settings = ", cueData.settings(), ", cue text = ", cueData.cueText(), ", sourceID = ", cueData.sourceID(), ", originalStartTime = ", cueData.originalStartTime());
             client()->parseWebVTTCueData(cueData);
         }
 
-        m_sampleInputBuffer.remove(0, boxLength);
+        m_sampleInputBuffer.remove(0, (size_t)boxLength);
     }
 }
 
@@ -560,7 +566,7 @@ bool InbandTextTrackPrivateAVF::readNativeSampleBuffer(CFArrayRef nativeSamples,
 
     CMBlockBufferRef blockBuffer = CMSampleBufferGetDataBuffer(sampleBuffer);
     size_t bufferLength = CMBlockBufferGetDataLength(blockBuffer);
-    if (bufferLength < ISOBox::boxHeaderSize()) {
+    if (bufferLength < ISOBox::minimumBoxSize()) {
         ERROR_LOG(LOGIDENTIFIER, "CMSampleBuffer size length unexpectedly small: ", bufferLength);
         return false;
     }

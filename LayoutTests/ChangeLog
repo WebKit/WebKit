@@ -1,3 +1,17 @@
+2017-11-10  Jer Noble  <jer.noble@apple.com>
+
+        Add a FairPlay Streaming based CDM for Modern EME
+        https://bugs.webkit.org/show_bug.cgi?id=179499
+        <rdar://problem/35445033>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/media/encrypted-media/fps-createMediaKeys-expected.txt: Added.
+        * platform/mac/media/encrypted-media/fps-createMediaKeys.html: Added.
+        * platform/mac/media/encrypted-media/fps-requestMediaKeySystemAccess-expected.txt: Added.
+        * platform/mac/media/encrypted-media/fps-requestMediaKeySystemAccess.html: Added.
+
 2017-11-10  Megan Gardner  <megan_gardner@apple.com>
 
         Rebase some layout tests

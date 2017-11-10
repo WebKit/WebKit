@@ -335,6 +335,12 @@ CDMInstance::SuccessValue CDMInstanceClearKey::setServerCertificate(Ref<SharedBu
     return Failed;
 }
 
+CDMInstance::SuccessValue CDMInstanceClearKey::setStorageDirectory(const String& storageDirectory)
+{
+    // Reject any persistent state storage.
+    return storageDirectory.isEmpty() ? Succeeded : Failed;
+}
+
 void CDMInstanceClearKey::requestLicense(LicenseType, const AtomicString&, Ref<SharedBuffer>&& initData, LicenseCallback callback)
 {
     static uint32_t s_sessionIdValue = 0;

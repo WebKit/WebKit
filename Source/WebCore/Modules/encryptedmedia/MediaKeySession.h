@@ -83,6 +83,7 @@ private:
     void updateKeyStatuses(CDMInstance::KeyStatusVector&&);
     void updateExpiration(double);
     void sessionClosed();
+    String mediaKeysStorageDirectory() const;
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const override { return MediaKeySessionEventTargetInterfaceType; }

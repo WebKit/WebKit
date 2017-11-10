@@ -1740,3 +1740,7 @@ webkit.org/b/178465 [ Debug ] fast/html/marquee-reparent-check.html [ Skip ]
 webkit.org/b/175998 http/tests/security/mixedContent/insecure-css-with-secure-cookies.html [ Pass Failure ]
 
 webkit.org/b/179342 http/tests/workers/service/registration-task-queue-scheduling-1.html [ Pass Failure ]
+
+# AVContentKeySession not available pre-High Sierra
+[ ElCapitan Sierra ] platform/mac/media/encrypted-media/fps-createMediaKeys.html [ Skip ]
+[ ElCapitan Sierra ] platform/mac/media/encrypted-media/fps-requestMediaKeySystemAccess.html [ Skip ]

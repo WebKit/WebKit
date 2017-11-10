@@ -678,7 +678,7 @@ forcePendingWebGLPolicy:
 
 mediaKeysStorageDirectory:
   type: String
-  conditional: LEGACY_ENCRYPTED_MEDIA
+
 mediaDeviceIdentifierStorageDirectory:
   type: String
   conditional: MEDIA_STREAM

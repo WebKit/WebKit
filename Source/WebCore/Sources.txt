@@ -1510,7 +1510,6 @@ platform/graphics/GraphicsLayer.cpp
 platform/graphics/GraphicsLayerTransform.cpp
 platform/graphics/GraphicsLayerUpdater.cpp
 platform/graphics/GraphicsTypes.cpp
-platform/graphics/ISOVTTCue.cpp
 platform/graphics/Image.cpp
 platform/graphics/ImageBuffer.cpp
 platform/graphics/ImageDecoder.cpp
@@ -1594,6 +1593,14 @@ platform/graphics/gpu/GPURenderPipelineDescriptor.cpp
 platform/graphics/gpu/GPURenderPipelineState.cpp
 platform/graphics/gpu/GPUTexture.cpp
 platform/graphics/gpu/GPUTextureDescriptor.cpp
+
+platform/graphics/iso/ISOBox.cpp
+platform/graphics/iso/ISOOriginalFormatBox.cpp
+platform/graphics/iso/ISOProtectionSchemeInfoBox.cpp
+platform/graphics/iso/ISOSchemeInformationBox.cpp
+platform/graphics/iso/ISOSchemeTypeBox.cpp
+platform/graphics/iso/ISOTrackEncryptionBox.cpp
+platform/graphics/iso/ISOVTTCue.cpp
 
 platform/graphics/opentype/OpenTypeMathData.cpp
 
