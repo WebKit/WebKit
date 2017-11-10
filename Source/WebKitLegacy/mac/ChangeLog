@@ -1,3 +1,13 @@
+2017-11-10  Frederik Riedel  <frederik.riedel@frogg.io>
+
+        [iOS] Use new class name from UIKit when checking UITextSuggestion type for WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=179397
+
+        Reviewed by Wenson Hsieh.
+
+        * DOM/DOMHTMLInputElement.mm:
+        (-[DOMHTMLInputElement insertTextSuggestion:]):
+
 2017-11-08  Jeremy Jones  <jeremyj@apple.com>
 
         HTMLMediaElement should not use element fullscreen on iOS
