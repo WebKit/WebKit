@@ -1,3 +1,14 @@
+2017-11-09  John Wilander  <wilander@apple.com>
+
+        Ignore HSTS for partitioned, cross-origin subresource requests
+        https://bugs.webkit.org/show_bug.cgi?id=178993
+        <rdar://problem/34962462>
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/Platform.h:
+            Added HAVE_CFNETWORK_IGNORE_HSTS.
+
 2017-11-08  Tim Horton  <timothy_horton@apple.com>
 
         [ios-simulator] API test WebKit.BundleParameters is a flaky failure

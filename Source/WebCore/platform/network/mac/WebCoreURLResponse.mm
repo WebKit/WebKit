@@ -31,6 +31,7 @@
 
 #import "MIMETypeRegistry.h"
 #import "UTIUtilities.h"
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
 
@@ -332,8 +333,13 @@ NSURLResponse *synthesizeRedirectResponseIfNecessary(NSURLRequest *currentReques
     if (redirectResponse)
         return redirectResponse;
 
+#if HAVE(CFNETWORK_IGNORE_HSTS)
+    if ([[[newRequest URL] scheme] isEqualToString:[[currentRequest URL] scheme]] && ![newRequest _schemeWasUpgradedDueToDynamicHSTS])
+        return nil;
+#else
     if ([[[newRequest URL] scheme] isEqualToString:[[currentRequest URL] scheme]])
         return nil;
+#endif
 
     // If the new request is a different protocol than the current request, synthesize a redirect response.
     // This is critical for HSTS (<rdar://problem/14241270>).

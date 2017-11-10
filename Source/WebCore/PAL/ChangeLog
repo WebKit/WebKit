@@ -1,3 +1,20 @@
+2017-11-09  John Wilander  <wilander@apple.com>
+
+        Ignore HSTS for partitioned, cross-origin subresource requests
+        https://bugs.webkit.org/show_bug.cgi?id=178993
+        <rdar://problem/34962462>
+
+        Reviewed by Brent Fulgham.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+            Added
+            - (BOOL)_schemeWasUpgradedDueToDynamicHSTS
+            - (BOOL)_preventHSTSStorage
+            - (BOOL)_ignoreHSTS
+            - (void)_setPreventHSTSStorage:(BOOL)preventHSTSStorage
+            - (void)_setIgnoreHSTS:(BOOL)ignoreHSTS
+
+
 2017-11-08  Jeremy Jones  <jeremyj@apple.com>
 
         HTMLMediaElement should not use element fullscreen on iOS
