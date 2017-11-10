@@ -91,6 +91,6 @@ FAIL Element.animate() correctly sets the id attribute div.animate is not a func
 FAIL Element.animate() correctly sets the Animation's timeline div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 2000)', 'div.animate' is undefined)
 FAIL Element.animate() correctly sets the Animation's timeline when triggered on an element in a different document div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 2000)', 'div.animate' is undefined)
 FAIL Element.animate() calls play on the Animation div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 2000)', 'div.animate' is undefined)
-FAIL CSSPseudoElement.animate() creates an Animation object document.getAnimations is not a function. (In 'document.getAnimations()', 'document.getAnimations' is undefined)
-FAIL CSSPseudoElement.animate() creates an Animation object targeting to the correct CSSPseudoElement object document.getAnimations is not a function. (In 'document.getAnimations()', 'document.getAnimations' is undefined)
+FAIL CSSPseudoElement.animate() creates an Animation object assert_true: expected true got false
+FAIL CSSPseudoElement.animate() creates an Animation object targeting to the correct CSSPseudoElement object assert_true: expected true got false
  

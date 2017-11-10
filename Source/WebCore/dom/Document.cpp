@@ -58,6 +58,7 @@
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "DocumentSharedObjectPool.h"
+#include "DocumentTimeline.h"
 #include "DocumentType.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -194,6 +195,7 @@
 #include "ValidationMessageClient.h"
 #include "VisibilityChangeClient.h"
 #include "VisitedLinkState.h"
+#include "WebAnimation.h"
 #include "WheelEvent.h"
 #include "WindowFeatures.h"
 #include "XMLDocument.h"
@@ -2310,6 +2312,11 @@ void Document::prepareForDestruction()
 {
     if (m_hasPreparedForDestruction)
         return;
+
+    if (m_timeline) {
+        m_timeline->detachFromDocument();
+        m_timeline = nullptr;
+    }
 
     if (m_frame)
         m_frame->animation().detachFromDocument(this);
@@ -7460,6 +7467,17 @@ DocumentTimeline& Document::timeline()
         m_timeline = DocumentTimeline::create(*this, page() ? page()->chrome().displayID() : 0);
 
     return *m_timeline;
+}
+
+Vector<RefPtr<WebAnimation>> Document::getAnimations()
+{
+    Vector<RefPtr<WebAnimation>> animations;
+    if (m_timeline) {
+        // FIXME: Filter and order the list as specified (webkit.org/b/179535).
+        for (auto& animation : m_timeline->animations())
+            animations.append(animation);
+    }
+    return animations;
 }
 
 static MessageSource messageSourceForWTFLogChannel(const WTFLogChannel& channel)

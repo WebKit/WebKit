@@ -45,7 +45,7 @@ Ref<DocumentTimeline> DocumentTimeline::create(Document& document, PlatformDispl
 
 DocumentTimeline::DocumentTimeline(Document& document, PlatformDisplayID displayID)
     : AnimationTimeline(DocumentTimelineClass)
-    , m_document(document)
+    , m_document(&document)
     , m_animationScheduleTimer(*this, &DocumentTimeline::animationScheduleTimerFired)
 #if !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     , m_animationResolutionTimer(*this, &DocumentTimeline::animationResolutionTimerFired)
@@ -57,6 +57,11 @@ DocumentTimeline::DocumentTimeline(Document& document, PlatformDisplayID display
 DocumentTimeline::~DocumentTimeline()
 {
     m_invalidationTaskQueue.close();
+}
+
+void DocumentTimeline::detachFromDocument()
+{
+    m_document = nullptr;
 }
 
 std::optional<Seconds> DocumentTimeline::currentTime()

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AnimationEffectTiming.h"
+#include "WebAnimation.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -40,6 +41,9 @@ public:
 
     virtual ~AnimationEffect() { }
 
+    WebAnimation* animation() const { return m_animation.get(); }
+    void setAnimation(RefPtr<WebAnimation>&& animation) { m_animation = animation; }
+
 protected:
     enum ClassType {
         KeyframeEffectClass
@@ -51,6 +55,7 @@ protected:
 
 private:
     ClassType m_classType;
+    RefPtr<WebAnimation> m_animation;
     RefPtr<AnimationEffectTiming> m_timing;
 };
 
