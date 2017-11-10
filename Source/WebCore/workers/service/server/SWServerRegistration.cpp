@@ -66,7 +66,7 @@ SWServerWorker* SWServerRegistration::getNewestWorker()
     return m_activeWorker.get();
 }
 
-void SWServerRegistration::updateRegistrationState(const ServiceWorkerJobData& job, ServiceWorkerRegistrationState state, SWServerWorker* worker)
+void SWServerRegistration::updateRegistrationState(ServiceWorkerRegistrationState state, SWServerWorker* worker)
 {
     LOG(ServiceWorker, "(%p) Updating registration state to %i with worker %p", this, (int)state, worker);
     
@@ -86,38 +86,31 @@ void SWServerRegistration::updateRegistrationState(const ServiceWorkerJobData& j
     if (worker)
         serviceWorkerIdentifier = worker->identifier();
 
-    forEachConnection(job, [&](auto& connection) {
+    forEachConnection([&](auto& connection) {
         connection.updateRegistrationStateInClient(identifier(), state, serviceWorkerIdentifier);
     });
 }
 
-void SWServerRegistration::updateWorkerState(const ServiceWorkerJobData& job, SWServerWorker& worker, ServiceWorkerState state)
+void SWServerRegistration::updateWorkerState(SWServerWorker& worker, ServiceWorkerState state)
 {
     LOG(ServiceWorker, "Updating worker %p state to %i (%p)", &worker, (int)state, this);
 
     worker.setState(state);
 
-    forEachConnection(job, [&](auto& connection) {
+    forEachConnection([&](auto& connection) {
         connection.updateWorkerStateInClient(worker.identifier(), state);
     });
 }
 
-void SWServerRegistration::fireUpdateFoundEvent(const ServiceWorkerJobData& job)
+void SWServerRegistration::fireUpdateFoundEvent()
 {
-    forEachConnection(job, [&](auto& connection) {
+    forEachConnection([&](auto& connection) {
         connection.fireUpdateFoundEvent(identifier());
     });
 }
 
-void SWServerRegistration::forEachConnection(const ServiceWorkerJobData& job, const WTF::Function<void(SWServer::Connection&)>& apply)
+void SWServerRegistration::forEachConnection(const WTF::Function<void(SWServer::Connection&)>& apply)
 {
-    // No matter what, we send the event to the connection that scheduled the job. The client registration
-    // may not have gotten a chance to register itself yet.
-    if (!m_connectionsWithClientRegistrations.contains(job.connectionIdentifier())) {
-        if (auto* connection = m_server.getConnection(job.connectionIdentifier()))
-            apply(*connection);
-    }
-
     for (uint64_t connectionIdentifierWithClients : m_connectionsWithClientRegistrations.values()) {
         if (auto* connection = m_server.getConnection(connectionIdentifierWithClients))
             apply(*connection);

@@ -62,7 +62,7 @@ void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, con
 
     if (!result.scriptError.isNull()) {
         // Invoke Reject Job Promise with job and TypeError.
-        m_server.rejectJob(firstJob(), ExceptionData { TypeError, makeString("Script URL ", job.scriptURL.string(), " fetch resulted in error: ", result.scriptError.localizedDescription()) });
+        m_server.rejectJob(job, ExceptionData { TypeError, makeString("Script URL ", job.scriptURL.string(), " fetch resulted in error: ", result.scriptError.localizedDescription()) });
 
         // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
         if (!newestWorker)
@@ -115,13 +115,11 @@ void SWServerJobQueue::install(SWServerRegistration& registration, SWServer::Con
     auto* worker = m_server.workerByID(installingWorker);
     RELEASE_ASSERT(worker);
 
-    auto& job = firstJob();
-
-    registration.updateRegistrationState(job, ServiceWorkerRegistrationState::Installing, worker);
-    registration.updateWorkerState(job, *worker, ServiceWorkerState::Installing);
+    registration.updateRegistrationState(ServiceWorkerRegistrationState::Installing, worker);
+    registration.updateWorkerState(*worker, ServiceWorkerState::Installing);
 
     // Invoke Resolve Job Promise with job and registration.
-    m_server.resolveRegistrationJob(job, registration.data(), ShouldNotifyWhenResolved::Yes);
+    m_server.resolveRegistrationJob(firstJob(), registration.data(), ShouldNotifyWhenResolved::Yes);
 }
 
 // https://w3c.github.io/ServiceWorker/#install (after resolving promise).
@@ -130,12 +128,10 @@ void SWServerJobQueue::didResolveRegistrationPromise(SWServer::Connection& conne
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
 
-    auto& job = firstJob();
-
     // Queue a task to fire an event named updatefound at all the ServiceWorkerRegistration objects
     // for all the service worker clients whose creation URL matches registration's scope url and
     // all the service workers whose containing service worker registration is registration.
-    registration->fireUpdateFoundEvent(job);
+    registration->fireUpdateFoundEvent();
 
     // Queue a task to fire the InstallEvent.
     m_server.fireInstallEvent(connection, registration->installingWorker()->identifier());
@@ -147,16 +143,14 @@ void SWServerJobQueue::didFinishInstall(SWServer::Connection&, ServiceWorkerIden
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
 
-    auto job = firstJob();
-
     if (!wasSuccessful) {
         auto* worker = m_server.workerByID(identifier);
         RELEASE_ASSERT(worker);
 
         // Run the Update Worker State algorithm passing registration's installing worker and redundant as the arguments.
-        registration->updateWorkerState(job, *worker, ServiceWorkerState::Redundant);
+        registration->updateWorkerState(*worker, ServiceWorkerState::Redundant);
         // Run the Update Registration State algorithm passing registration, "installing" and null as the arguments.
-        registration->updateRegistrationState(job, ServiceWorkerRegistrationState::Installing, nullptr);
+        registration->updateRegistrationState(ServiceWorkerRegistrationState::Installing, nullptr);
 
         // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
         if (!registration->getNewestWorker())
@@ -168,15 +162,15 @@ void SWServerJobQueue::didFinishInstall(SWServer::Connection&, ServiceWorkerIden
 
     if (auto* waitingWorker = registration->waitingWorker()) {
         waitingWorker->terminate();
-        registration->updateWorkerState(job, *waitingWorker, ServiceWorkerState::Redundant);
+        registration->updateWorkerState(*waitingWorker, ServiceWorkerState::Redundant);
     }
 
     auto* installing = registration->installingWorker();
     ASSERT(installing);
 
-    registration->updateRegistrationState(job, ServiceWorkerRegistrationState::Waiting, installing);
-    registration->updateRegistrationState(job, ServiceWorkerRegistrationState::Installing, nullptr);
-    registration->updateWorkerState(job, *installing, ServiceWorkerState::Installed);
+    registration->updateRegistrationState(ServiceWorkerRegistrationState::Waiting, installing);
+    registration->updateRegistrationState(ServiceWorkerRegistrationState::Installing, nullptr);
+    registration->updateWorkerState(*installing, ServiceWorkerState::Installed);
 
     finishCurrentJob();
 
@@ -185,10 +179,10 @@ void SWServerJobQueue::didFinishInstall(SWServer::Connection&, ServiceWorkerIden
     auto* waiting = registration->waitingWorker();
     ASSERT(waiting);
 
-    registration->updateRegistrationState(job, ServiceWorkerRegistrationState::Active, waiting);
-    registration->updateRegistrationState(job, ServiceWorkerRegistrationState::Waiting, nullptr);
-    registration->updateWorkerState(job, *waiting, ServiceWorkerState::Activating);
-    registration->updateWorkerState(job, *waiting, ServiceWorkerState::Activated);
+    registration->updateRegistrationState(ServiceWorkerRegistrationState::Active, waiting);
+    registration->updateRegistrationState(ServiceWorkerRegistrationState::Waiting, nullptr);
+    registration->updateWorkerState(*waiting, ServiceWorkerState::Activating);
+    registration->updateWorkerState(*waiting, ServiceWorkerState::Activated);
 }
 
 // https://w3c.github.io/ServiceWorker/#run-job
@@ -238,7 +232,7 @@ void SWServerJobQueue::runRegisterJob(const ServiceWorkerJobData& job)
         registration->setIsUninstalling(false);
         auto* newestWorker = registration->getNewestWorker();
         if (newestWorker && equalIgnoringFragmentIdentifier(job.scriptURL, newestWorker->scriptURL()) && job.registrationOptions.updateViaCache == registration->updateViaCache()) {
-            m_server.resolveRegistrationJob(firstJob(), registration->data(), ShouldNotifyWhenResolved::No);
+            m_server.resolveRegistrationJob(job, registration->data(), ShouldNotifyWhenResolved::No);
             finishCurrentJob();
             return;
         }
@@ -263,7 +257,7 @@ void SWServerJobQueue::runUnregisterJob(const ServiceWorkerJobData& job)
     // If registration is null, then:
     if (!registration || registration->isUninstalling()) {
         // Invoke Resolve Job Promise with job and false.
-        m_server.resolveUnregistrationJob(firstJob(), m_registrationKey, false);
+        m_server.resolveUnregistrationJob(job, m_registrationKey, false);
         finishCurrentJob();
         return;
     }
@@ -272,7 +266,7 @@ void SWServerJobQueue::runUnregisterJob(const ServiceWorkerJobData& job)
     registration->setIsUninstalling(true);
 
     // Invoke Resolve Job Promise with job and true.
-    m_server.resolveUnregistrationJob(firstJob(), m_registrationKey, true);
+    m_server.resolveUnregistrationJob(job, m_registrationKey, true);
 
     // Invoke Try Clear Registration with registration.
     tryClearRegistration(*registration);

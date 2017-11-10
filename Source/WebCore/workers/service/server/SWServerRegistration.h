@@ -58,9 +58,9 @@ public:
     void setLastUpdateTime(double time) { m_lastUpdateTime = time; }
     ServiceWorkerUpdateViaCache updateViaCache() const { return m_updateViaCache; }
 
-    void updateRegistrationState(const ServiceWorkerJobData&, ServiceWorkerRegistrationState, SWServerWorker*);
-    void updateWorkerState(const ServiceWorkerJobData&, SWServerWorker&, ServiceWorkerState);
-    void fireUpdateFoundEvent(const ServiceWorkerJobData&);
+    void updateRegistrationState(ServiceWorkerRegistrationState, SWServerWorker*);
+    void updateWorkerState(SWServerWorker&, ServiceWorkerState);
+    void fireUpdateFoundEvent();
 
     void addClientServiceWorkerRegistration(uint64_t connectionIdentifier);
     void removeClientServiceWorkerRegistration(uint64_t connectionIdentifier);
@@ -70,7 +70,7 @@ public:
     SWServerWorker* activeWorker() const { return m_activeWorker.get(); }
 
 private:
-    void forEachConnection(const ServiceWorkerJobData&, const WTF::Function<void(SWServer::Connection&)>&);
+    void forEachConnection(const WTF::Function<void(SWServer::Connection&)>&);
 
     ServiceWorkerRegistrationIdentifier m_identifier;
     ServiceWorkerRegistrationKey m_registrationKey;
