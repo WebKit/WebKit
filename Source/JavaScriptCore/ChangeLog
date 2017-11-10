@@ -1,3 +1,52 @@
+2017-11-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Retry module fetching if previous request fails
+        https://bugs.webkit.org/show_bug.cgi?id=178168
+
+        Reviewed by Saam Barati.
+
+        According to the latest spec, the failed fetching operation can be retried if it is requested again.
+        For example,
+
+            <script type="module" integrity="shaXXX-bad" src="./A.js"></script>
+            <script type="module" integrity="shaXXX-correct" src="./A.js"></script>
+
+        When performing the first module fetching, integrity check fails, and the load of this module becomes failed.
+        But when loading the second module, we do not use the cached failure result in the first module loading.
+        We retry fetching for "./A.js". In this case, we have a correct integrity and module fetching succeeds.
+        This is specified in whatwg/HTML[1]. If the fetching fails, we do not cache it.
+
+        Interestingly, fetching result and instantiation result will be cached if they succeeds. This is because we would
+        like to cache modules based on their URLs. As a result,
+
+            <script type="module" integrity="shaXXX-correct" src="./A.js"></script>
+            <script type="module" integrity="shaXXX-bad" src="./A.js"></script>
+
+        In the above case, the first loading succeeds. And the second loading also succeeds since the succeeded fetching and
+        instantiation are cached in the module pipeline.
+
+        This patch implements the above semantics. Previously, our module pipeline always caches the result. If the fetching
+        failed, all the subsequent fetching for the same URL fails even if we have different integrity values. We retry fetching
+        if the previous one fails. As an overview of our change,
+
+        1. Fetching result should be cached only if it succeeds. Two or more on-the-fly fetching requests to the same URLs should
+           be unified. But if currently executing one fails, other attempts should retry fetching.
+
+        2. Instantiation should be cached if fetching succeeds.
+
+        3. Satisfying should be cached if it succeeds.
+
+        [1]: https://html.spec.whatwg.org/#fetch-a-single-module-script
+
+        * builtins/ModuleLoaderPrototype.js:
+        (requestFetch):
+        (requestInstantiate):
+        (requestSatisfy):
+        (link):
+        (loadModule):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+
 2017-11-09  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: support undo/redo of insertAdjacentHTML

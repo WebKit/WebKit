@@ -1,3 +1,17 @@
+2017-11-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Retry module fetching if previous request fails
+        https://bugs.webkit.org/show_bug.cgi?id=178168
+
+        Reviewed by Saam Barati.
+
+        * js/dom/modules/module-fetch-failure-not-cached-expected.txt: Added.
+        * js/dom/modules/module-fetch-failure-not-cached.html: Added.
+        * js/dom/modules/module-integrity-bad-value-success-with-cache-expected.txt: Added.
+        * js/dom/modules/module-integrity-bad-value-success-with-cache.html: Added.
+        * js/dom/modules/script-tests/module-fetch-failure-not-cached.js: Added.
+        * js/dom/modules/script-tests/module-integrity-bad-value-success-with-cache.js: Added.
+
 2017-11-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark multiple service worker tests as flaky.

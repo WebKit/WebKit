@@ -147,8 +147,22 @@ function requestFetch(entry, parameters, fetcher)
 
     "use strict";
 
-    if (entry.fetch)
-        return entry.fetch;
+    if (entry.fetch) {
+        var currentAttempt = entry.fetch;
+        if (entry.state !== @ModuleFetch)
+            return currentAttempt;
+
+        return currentAttempt.catch((error) => {
+            // Even if the existing fetching request failed, this attempt may succeed.
+            // For example, previous attempt used invalid integrity="" value. But this
+            // request could have the correct integrity="" value. In that case, we should
+            // retry fetching for this request.
+            // https://html.spec.whatwg.org/#fetch-a-single-module-script
+            if (currentAttempt === entry.fetch)
+                entry.fetch = @undefined;
+            return this.requestFetch(entry, parameters, fetcher);
+        });
+    }
 
     // Hook point.
     // 2. Loader.fetch
@@ -170,20 +184,20 @@ function requestInstantiate(entry, parameters, fetcher)
 
     "use strict";
 
+    // entry.instantiate is set if fetch succeeds.
     if (entry.instantiate)
         return entry.instantiate;
 
     var instantiatePromise = this.requestFetch(entry, parameters, fetcher).then((source) => {
+        // https://html.spec.whatwg.org/#fetch-a-single-module-script
+        // Now fetching request succeeds. Then even if instantiation fails, we should cache it.
+        // Instantiation won't be retried.
+        if (entry.instantiate)
+            return entry;
+        entry.instantiate = instantiatePromise;
+
         var key = entry.key;
         var moduleRecord = this.parseModule(key, source);
-
-        // FIXME: Described in the draft,
-        //   4. Fulfill entry.[[Instantiate]] with instance.
-        // But, instantiate promise should be fulfilled with the entry.
-        // We remove this statement because instantiate promise will be
-        // fulfilled without this "force fulfill" operation.
-        // https://github.com/whatwg/loader/pull/67
-
         var dependenciesMap = moduleRecord.dependenciesMap;
         var requestedModules = this.requestedModules(moduleRecord);
         var dependencies = @newArrayWithSize(requestedModules.length);
@@ -200,24 +214,27 @@ function requestInstantiate(entry, parameters, fetcher)
         @setStateToMax(entry, @ModuleSatisfy);
         return entry;
     });
-    entry.instantiate = instantiatePromise;
     return instantiatePromise;
 }
 
-function requestSatisfy(entry, parameters, fetcher)
+function requestSatisfy(entry, parameters, fetcher, visited)
 {
-    // https://whatwg.github.io/loader/#satisfy-instance
+    // https://html.spec.whatwg.org/#internal-module-script-graph-fetching-procedure
 
     "use strict";
 
     if (entry.satisfy)
         return entry.satisfy;
 
+    visited.@add(entry);
     var satisfyPromise = this.requestInstantiate(entry, parameters, fetcher).then((entry) => {
+        if (entry.satisfy)
+            return entry;
+
         var depLoads = @newArrayWithSize(entry.dependencies.length);
         for (var i = 0, length = entry.dependencies.length; i < length; ++i) {
             var depEntry = entry.dependencies[i];
-            var promise = @undefined;
+            var promise;
 
             // Recursive resolving. The dependencies of this entry is being resolved or already resolved.
             // Stop tracing the circular dependencies.
@@ -228,22 +245,24 @@ function requestSatisfy(entry, parameters, fetcher)
             // If we wait for the Satisfy for this module, it construct the circular promise chain and
             // rejected by the Promises runtime. Since only we need is the instantiated module, instead of waiting
             // the Satisfy for this module, we just wait Instantiate for this.
-            if (depEntry.satisfy)
-                promise = depEntry.instantiate;
+            if (visited.@has(depEntry))
+                promise = this.requestInstantiate(depEntry, @undefined, fetcher);
             else {
                 // Currently, module loader do not pass any information for non-top-level module fetching.
-                promise = this.requestSatisfy(depEntry, @undefined, fetcher);
+                promise = this.requestSatisfy(depEntry, @undefined, fetcher, visited);
             }
             @putByValDirect(depLoads, i, promise);
         }
 
-        return @InternalPromise.internalAll(depLoads).then((modules) => {
+        return @InternalPromise.internalAll(depLoads).then((entries) => {
+            if (entry.satisfy)
+                return entry;
             @setStateToMax(entry, @ModuleLink);
+            entry.satisfy = satisfyPromise;
             return entry;
         });
     });
 
-    entry.satisfy = satisfyPromise;
     return satisfyPromise;
 }
 
@@ -251,7 +270,7 @@ function requestSatisfy(entry, parameters, fetcher)
 
 function link(entry, fetcher)
 {
-    // https://whatwg.github.io/loader/#link
+    // https://html.spec.whatwg.org/#fetch-the-descendants-of-and-instantiate-a-module-script
 
     "use strict";
 
@@ -319,7 +338,7 @@ function loadModule(moduleName, parameters, fetcher)
     // Take the name and resolve it to the unique identifier for the resource location.
     // For example, take the "jquery" and return the URL for the resource.
     return this.resolve(moduleName, @undefined, fetcher).then((key) => {
-        return this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher);
+        return this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
     }).then((entry) => {
         return entry.key;
     });
@@ -350,7 +369,7 @@ function requestImportModule(key, parameters, fetcher)
 {
     "use strict";
 
-    return this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher).then((entry) => {
+    return this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set).then((entry) => {
         this.linkAndEvaluateModule(entry.key, fetcher);
         return this.getModuleNamespaceObject(entry.module);
     });
