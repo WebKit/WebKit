@@ -162,9 +162,9 @@ static JSString* jsStringForPaymentRequestState(VM& vm, ExecState* exec, Payment
 
 JSValue WebInjectedScriptHost::getInternalProperties(VM& vm, ExecState* exec, JSC::JSValue value)
 {
+#if ENABLE(PAYMENT_REQUEST)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-#if ENABLE(PAYMENT_REQUEST)
     if (PaymentRequest* paymentRequest = JSPaymentRequest::toWrapped(vm, value)) {
         unsigned index = 0;
         auto* array = constructEmptyArray(exec, nullptr);
@@ -175,6 +175,7 @@ JSValue WebInjectedScriptHost::getInternalProperties(VM& vm, ExecState* exec, JS
         return array;
     }
 #else
+    UNUSED_PARAM(vm);
     UNUSED_PARAM(exec);
     UNUSED_PARAM(value);
 #endif
