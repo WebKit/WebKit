@@ -35,7 +35,6 @@ layer at (0,0) size 800x600
           RenderBlock {P} at (2,2) size 780x30
             RenderText {#text} at (0,1) size 18x28
               text run at (0,1) width 18: "A"
-          RenderBlock (anonymous) at (2,32) size 780x0
           RenderBlock {P} at (2,32) size 780x30
             RenderText {#text} at (0,1) size 18x28
               text run at (0,1) width 18: "A"

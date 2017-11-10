@@ -1,5 +1,53 @@
 2017-11-09  Ryan Haddad  <ryanhaddad@apple.com>
 
+        [iOS] Rebaseline and re-enable editing/deleting tests
+        https://bugs.webkit.org/show_bug.cgi?id=179119
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/ios/editing/deleting/collapse-whitespace-3587601-fix-expected.txt: Added.
+        * platform/ios/editing/deleting/delete-3608445-fix-expected.txt: Added.
+        * platform/ios/editing/deleting/delete-3800834-fix-expected.txt: Added.
+        * platform/ios/editing/deleting/delete-after-span-ws-001-expected.txt: Added.
+        * platform/ios/editing/deleting/delete-after-span-ws-002-expected.txt: Added.
+        * platform/ios/editing/deleting/delete-after-span-ws-003-expected.txt: Added.
+        * platform/ios/editing/deleting/delete-at-paragraph-boundaries-004-expected.txt:
+        * platform/ios/editing/deleting/delete-at-paragraph-boundaries-010-expected.txt:
+        * platform/ios/editing/deleting/delete-at-paragraph-boundaries-011-expected.txt:
+        * platform/ios/editing/deleting/delete-at-start-or-end-expected.txt: Added.
+        * platform/ios/editing/deleting/delete-block-contents-001-expected.txt: Added.
+        * platform/ios/editing/deleting/delete-block-contents-002-expected.txt: Copied from LayoutTests/platform/ios/editing/deleting/delete-br-010-expected.txt.
+        * platform/ios/editing/deleting/delete-block-merge-contents-005-expected.txt:
+        * platform/ios/editing/deleting/delete-block-merge-contents-006-expected.txt:
+        * platform/ios/editing/deleting/delete-block-merge-contents-007-expected.txt:
+        * platform/ios/editing/deleting/delete-block-merge-contents-008-expected.txt:
+        * platform/ios/editing/deleting/delete-block-merge-contents-023-expected.txt:
+        * platform/ios/editing/deleting/delete-block-merge-contents-024-expected.txt:
+        * platform/ios/editing/deleting/delete-br-002-expected.txt: Copied from LayoutTests/platform/ios/editing/deleting/delete-to-select-table-expected.txt.
+        * platform/ios/editing/deleting/delete-br-004-expected.txt: Copied from LayoutTests/platform/ios/editing/deleting/delete-to-select-table-expected.txt.
+        * platform/ios/editing/deleting/delete-br-005-expected.txt: Copied from LayoutTests/platform/ios/editing/deleting/delete-to-select-table-expected.txt.
+        * platform/ios/editing/deleting/delete-br-006-expected.txt: Copied from LayoutTests/platform/ios/editing/deleting/delete-to-select-table-expected.txt.
+        * platform/ios/editing/deleting/delete-br-008-expected.txt:
+        * platform/ios/editing/deleting/delete-br-009-expected.txt: Copied from LayoutTests/platform/ios/editing/deleting/delete-br-008-expected.txt.
+        * platform/ios/editing/deleting/delete-br-010-expected.txt:
+        * platform/ios/editing/deleting/delete-image-004-expected.txt: Added.
+        * platform/ios/editing/deleting/delete-leading-ws-001-expected.txt: Copied from LayoutTests/platform/ios/editing/deleting/delete-br-010-expected.txt.
+        * platform/ios/editing/deleting/delete-line-011-expected.txt: Copied from LayoutTests/platform/ios/editing/deleting/delete-to-select-table-expected.txt.
+        * platform/ios/editing/deleting/delete-line-015-expected.txt:
+        * platform/ios/editing/deleting/delete-line-016-expected.txt:
+        * platform/ios/editing/deleting/delete-line-017-expected.txt:
+        * platform/ios/editing/deleting/delete-line-end-ws-001-expected.txt: Added.
+        * platform/ios/editing/deleting/delete-line-end-ws-002-expected.txt: Added.
+        * platform/ios/editing/deleting/delete-tab-001-expected.txt: Added.
+        * platform/ios/editing/deleting/delete-tab-004-expected.txt: Added.
+        * platform/ios/editing/deleting/delete-to-select-table-expected.txt:
+        * platform/ios/editing/deleting/merge-no-br-expected.txt:
+        * platform/ios/editing/deleting/table-cells-expected.txt:
+
+2017-11-09  Ryan Haddad  <ryanhaddad@apple.com>
+
         Mark media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html as a flaky timeout.
         https://bugs.webkit.org/show_bug.cgi?id=169876
 

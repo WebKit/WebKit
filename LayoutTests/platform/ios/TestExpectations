@@ -1311,6 +1311,13 @@ webkit.org/b/178963 fast/css/sticky/sticky-left-percentage.html [ ImageOnlyFailu
 webkit.org/b/178963 fast/css/sticky/sticky-writing-mode-vertical-lr.html [ ImageOnlyFailure ]
 webkit.org/b/178963 fast/css/sticky/sticky-writing-mode-vertical-rl.html [ ImageOnlyFailure ]
 
+# editing/deleting tests to triage
+editing/deleting/delete-all-text-in-text-field-assertion.html [ Failure ]
+editing/deleting/delete-cell-contents.html [ Failure ]
+editing/deleting/smart-delete-002.html [ Failure ]
+editing/deleting/smart-delete-across-editable-boundaries.html [ Failure ]
+editing/deleting/smart-editing-disabled-mac.html [ Failure ]
+
 # Font tests that fail:
 fonts/font-fallback-prefers-pictographs.html [ ImageOnlyFailure ]
 
@@ -2382,9 +2389,6 @@ http/tests/messaging/cross-domain-message-send.html [ Skip ]
 http/tests/ssl/ping-with-unsafe-redirect.html [ Skip ]
 http/tests/ssl/referer-301.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/Event-constants.html [ Skip ]
-
-# Tests that fail as of 09/02/2015:
-editing/deleting/delete-block-merge-contents-010.html [ Pass Failure ]
 
 # Skip tests that crash as of 09/02/2015:
 fast/dom/offset-position-writing-modes.html [ Skip ]
