@@ -1,4 +1,14 @@
 ==================
+WebKitGTK+  2.18.3
+==================
+
+What's new in WebKitGTK+ 2.18.3?
+
+  - Improve calculation of font metrics to prevent scrollbars from being shown unnecessarily in some cases.
+  - Fix handling of null capabilities in WebDriver implementation.
+  - Security fixes: CVE-2017-13798, CVE-2017-13788, CVE-2017-13803.
+
+==================
 WebKitGTK+  2.18.2
 ==================
 
