@@ -1,3 +1,14 @@
+2017-11-10  Colin Bendell  <colin@bendell.ca>
+
+        Fix race conditions with setBackingScaleFactor, page refresh and preloader
+        https://bugs.webkit.org/show_bug.cgi?id=179488
+
+        Reviewed by Darin Adler.
+
+        * http/tests/preload/picture-type-expected.txt: remove DPR test
+        * http/tests/preload/picture-type.html: updated srcset to account for
+        testRunners with DPR > 1
+
 2017-11-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark http/wpt/beacon/contentextensions tests as flaky.
