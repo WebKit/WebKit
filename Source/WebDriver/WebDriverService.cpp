@@ -372,8 +372,8 @@ RefPtr<InspectorObject> WebDriverService::validatedCapabilities(const InspectorO
     auto end = capabilities.end();
     for (auto it = capabilities.begin(); it != end; ++it) {
         if (it->value->isNull())
-            result->setValue(it->key, RefPtr<InspectorValue>(it->value));
-        else if (it->key == "acceptInsecureCerts") {
+            continue;
+        if (it->key == "acceptInsecureCerts") {
             bool acceptInsecureCerts;
             if (!it->value->asBoolean(acceptInsecureCerts))
                 return nullptr;
