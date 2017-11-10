@@ -174,13 +174,15 @@ bool MediaResource::shouldCacheResponse(CachedResource& resource, const Resource
     return true;
 }
 
-void MediaResource::redirectReceived(CachedResource& resource, ResourceRequest& request, const ResourceResponse& response)
+void MediaResource::redirectReceived(CachedResource& resource, ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
 
     RefPtr<MediaResource> protectedThis(this);
     if (m_client)
-        m_client->redirectReceived(*this, request, response);
+        m_client->redirectReceived(*this, WTFMove(request), response, WTFMove(completionHandler));
+    else
+        completionHandler(WTFMove(request));
 }
 
 void MediaResource::dataSent(CachedResource& resource, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)

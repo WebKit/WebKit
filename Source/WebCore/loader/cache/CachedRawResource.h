@@ -62,7 +62,7 @@ private:
     bool shouldIgnoreHTTPStatusCodeErrors() const override { return true; }
     void allClientsRemoved() override;
 
-    void redirectReceived(ResourceRequest&, const ResourceResponse&) override;
+    void redirectReceived(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;
     void responseReceived(const ResourceResponse&) override;
     bool shouldCacheResponse(const ResourceResponse&) override;
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;

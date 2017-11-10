@@ -29,6 +29,7 @@
 #import "CachedResourceRequest.h"
 #import "PlatformMediaResourceLoader.h"
 #import "SubresourceLoader.h"
+#import <wtf/CompletionHandler.h>
 
 using namespace WebCore;
 
@@ -349,7 +350,7 @@ public:
     }
 
     void responseReceived(PlatformMediaResource&, const ResourceResponse&) override;
-    void redirectReceived(PlatformMediaResource&, ResourceRequest&, const ResourceResponse&) override;
+    void redirectReceived(PlatformMediaResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;
     bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) override;
     void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) override;
     void dataReceived(PlatformMediaResource&, const char* /* data */, int /* length */) override;
@@ -381,9 +382,10 @@ void WebCoreNSURLSessionDataTaskClient::dataReceived(PlatformMediaResource& reso
     [m_task resource:resource receivedData:data length:length];
 }
 
-void WebCoreNSURLSessionDataTaskClient::redirectReceived(PlatformMediaResource& resource, ResourceRequest& request, const ResourceResponse& response)
+void WebCoreNSURLSessionDataTaskClient::redirectReceived(PlatformMediaResource& resource, ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     [m_task resource:resource receivedRedirect:response request:request];
+    completionHandler(WTFMove(request));
 }
 
 void WebCoreNSURLSessionDataTaskClient::accessControlCheckFailed(PlatformMediaResource& resource, const ResourceError& error)

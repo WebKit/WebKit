@@ -183,6 +183,25 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
         ResourceLoadObserver::shared().logSubresourceLoading(m_frame.get(), newRequest, redirectResponse);
     }
 
+    auto continueWillSendRequest = [this, protectedThis = makeRef(*this), redirectResponse] (CompletionHandler<void(ResourceRequest&&)>&& completionHandler, ResourceRequest&& newRequest) mutable {
+        if (newRequest.isNull() || reachedTerminalState())
+            return completionHandler(WTFMove(newRequest));
+
+        ResourceLoader::willSendRequestInternal(WTFMove(newRequest), redirectResponse, [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), redirectResponse] (ResourceRequest&& request) mutable {
+            if (reachedTerminalState())
+                return completionHandler(WTFMove(request));
+
+            if (request.isNull()) {
+                cancel();
+                return completionHandler(WTFMove(request));
+            }
+
+            if (m_resource->type() == CachedResource::MainResource && !redirectResponse.isNull())
+                m_documentLoader->willContinueMainResourceLoadAfterRedirect(request);
+            completionHandler(WTFMove(request));
+        });
+    };
+
     ASSERT(!newRequest.isNull());
     if (!redirectResponse.isNull()) {
         if (options().redirect != FetchOptions::Redirect::Follow) {
@@ -234,25 +253,13 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
             return completionHandler(WTFMove(newRequest));
         }
         m_loadTiming.addRedirect(redirectResponse.url(), newRequest.url());
-        m_resource->redirectReceived(newRequest, redirectResponse);
+        m_resource->redirectReceived(WTFMove(newRequest), redirectResponse, [completionHandler = WTFMove(completionHandler), continueWillSendRequest = WTFMove(continueWillSendRequest)] (ResourceRequest&& request) mutable {
+            continueWillSendRequest(WTFMove(completionHandler), WTFMove(request));
+        });
+        return;
     }
 
-    if (newRequest.isNull() || reachedTerminalState())
-        return completionHandler(WTFMove(newRequest));
-
-    ResourceLoader::willSendRequestInternal(WTFMove(newRequest), redirectResponse, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler), redirectResponse] (ResourceRequest&& request) mutable {
-        if (reachedTerminalState())
-            return completionHandler(WTFMove(request));
-        
-        if (request.isNull()) {
-            cancel();
-            return completionHandler(WTFMove(request));
-        }
-        
-        if (m_resource->type() == CachedResource::MainResource && !redirectResponse.isNull())
-            m_documentLoader->willContinueMainResourceLoadAfterRedirect(request);
-        completionHandler(WTFMove(request));
-    });
+    continueWillSendRequest(WTFMove(completionHandler), WTFMove(newRequest));
 }
 
 void SubresourceLoader::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)

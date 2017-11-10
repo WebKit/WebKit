@@ -93,7 +93,7 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, bool d
     // This avoids confusion on the part of the client.
     if (equalIgnoringHeaderFields(request, loader->lastCheckedRequest()) || (!request.isNull() && request.url().isEmpty())) {
         function(request, nullptr, true);
-        loader->setLastCheckedRequest(request);
+        loader->setLastCheckedRequest(ResourceRequest(request));
         return;
     }
 
@@ -121,7 +121,7 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, bool d
         return;
     }
 
-    loader->setLastCheckedRequest(request);
+    loader->setLastCheckedRequest(ResourceRequest(request));
 
 #if USE(QUICK_LOOK)
     // Always allow QuickLook-generated URLs based on the protocol scheme.

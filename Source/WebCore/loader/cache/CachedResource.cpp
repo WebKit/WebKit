@@ -453,13 +453,14 @@ std::chrono::microseconds CachedResource::freshnessLifetime(const ResourceRespon
     return computeFreshnessLifetimeForHTTPFamily(response, m_responseTimestamp);
 }
 
-void CachedResource::redirectReceived(ResourceRequest&, const ResourceResponse& response)
+void CachedResource::redirectReceived(ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     m_requestedFromNetworkingLayer = true;
     if (response.isNull())
-        return;
+        return completionHandler(WTFMove(request));
 
     updateRedirectChainStatus(m_redirectChainCacheStatus, response);
+    completionHandler(WTFMove(request));
 }
 
 void CachedResource::setResponse(const ResourceResponse& response)

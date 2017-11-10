@@ -234,7 +234,7 @@ void DocumentThreadableLoader::clearResource()
         m_preflightChecker = std::nullopt;
 }
 
-void DocumentThreadableLoader::redirectReceived(CachedResource& resource, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void DocumentThreadableLoader::redirectReceived(CachedResource& resource, ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     ASSERT(m_client);
     ASSERT_UNUSED(resource, &resource == m_resource);
@@ -248,18 +248,18 @@ void DocumentThreadableLoader::redirectReceived(CachedResource& resource, Resour
     if (!request.url().protocolIsInHTTPFamily() && m_options.initiator == cachedResourceRequestInitiators().fetch) {
         reportRedirectionWithBadScheme(request.url());
         clearResource();
-        return;
+        return completionHandler(WTFMove(request));
     }
 
     if (!isAllowedByContentSecurityPolicy(request.url(), redirectResponse.isNull() ? ContentSecurityPolicy::RedirectResponseReceived::No : ContentSecurityPolicy::RedirectResponseReceived::Yes)) {
         reportContentSecurityPolicyError(redirectResponse.url());
         clearResource();
-        return;
+        return completionHandler(WTFMove(request));
     }
 
     // Allow same origin requests to continue after allowing clients to audit the redirect.
     if (isAllowedRedirect(request.url()))
-        return;
+        return completionHandler(WTFMove(request));
 
     // Force any subsequent request to use these checks.
     m_sameOriginRequest = false;
@@ -276,7 +276,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource& resource, Resour
     // Except in case where preflight is needed, loading should be able to continue on its own.
     // But we also handle credentials here if it is restricted to SameOrigin.
     if (m_options.credentials != FetchOptions::Credentials::SameOrigin && m_simpleRequest && isSimpleCrossOriginAccessRequest(request.httpMethod(), *m_originalHeaders))
-        return;
+        return completionHandler(WTFMove(request));
 
     m_options.storedCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
 
@@ -289,6 +289,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource& resource, Resour
     request.setHTTPHeaderFields(*m_originalHeaders);
 
     makeCrossOriginAccessRequest(ResourceRequest(request));
+    completionHandler(WTFMove(request));
 }
 
 void DocumentThreadableLoader::dataSent(CachedResource& resource, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)

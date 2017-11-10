@@ -201,7 +201,7 @@ public:
 
     SharedBuffer* resourceBuffer() const { return m_data.get(); }
 
-    virtual void redirectReceived(ResourceRequest&, const ResourceResponse&);
+    virtual void redirectReceived(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&);
     virtual void responseReceived(const ResourceResponse&);
     virtual bool shouldCacheResponse(const ResourceResponse&) { return true; }
     void setResponse(const ResourceResponse&);

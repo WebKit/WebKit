@@ -32,6 +32,7 @@
 #include "HTTPHeaderNames.h"
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -115,42 +116,49 @@ void CachedRawResource::notifyClientsDataWasReceived(const char* data, unsigned 
         c->dataReceived(*this, data, length);
 }
 
+static void iterateRedirects(CachedResourceHandle<CachedRawResource>&& handle, CachedRawResourceClient& client, Vector<std::pair<ResourceRequest, ResourceResponse>>&& redirectsInReverseOrder, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
+{
+    if (!handle->hasClient(client) || redirectsInReverseOrder.isEmpty())
+        return completionHandler({ });
+    auto redirectPair = redirectsInReverseOrder.takeLast();
+    client.redirectReceived(*handle, WTFMove(redirectPair.first), WTFMove(redirectPair.second), [handle = WTFMove(handle), client, redirectsInReverseOrder = WTFMove(redirectsInReverseOrder), completionHandler = WTFMove(completionHandler)] (ResourceRequest&&) mutable {
+        // Ignore the new request because we can't do anything with it.
+        // We're just replying a redirect chain that has already happened.
+        iterateRedirects(WTFMove(handle), client, WTFMove(redirectsInReverseOrder), WTFMove(completionHandler));
+    });
+}
+
 void CachedRawResource::didAddClient(CachedResourceClient& c)
 {
-    if (!hasClient(c))
-        return;
-    // The calls to the client can result in events running, potentially causing
-    // this resource to be evicted from the cache and all clients to be removed,
-    // so a protector is necessary.
-    CachedResourceHandle<CachedRawResource> protectedThis(this);
     CachedRawResourceClient& client = static_cast<CachedRawResourceClient&>(c);
     size_t redirectCount = m_redirectChain.size();
-    for (size_t i = 0; i < redirectCount; i++) {
-        RedirectPair redirect = m_redirectChain[i];
-        ResourceRequest request(redirect.m_request);
-        client.redirectReceived(*this, request, redirect.m_redirectResponse);
-        if (!hasClient(c))
+    Vector<std::pair<ResourceRequest, ResourceResponse>> redirectsInReverseOrder;
+    redirectsInReverseOrder.reserveInitialCapacity(redirectCount);
+    for (size_t i = 0; i < redirectCount; ++i) {
+        const auto& pair = m_redirectChain[redirectCount - i - 1];
+        redirectsInReverseOrder.uncheckedAppend(std::make_pair(pair.m_request, pair.m_redirectResponse));
+    }
+    iterateRedirects(CachedResourceHandle<CachedRawResource>(this), client, WTFMove(redirectsInReverseOrder), [this, protectedThis = CachedResourceHandle<CachedRawResource>(this), client = &client] (ResourceRequest&&) mutable {
+        if (!hasClient(*client))
             return;
-    }
-    ASSERT(redirectCount == m_redirectChain.size());
-
-    if (!m_response.isNull()) {
-        ResourceResponse response(m_response);
-        if (validationCompleting())
-            response.setSource(ResourceResponse::Source::MemoryCacheAfterValidation);
-        else {
-            ASSERT(!validationInProgress());
-            response.setSource(ResourceResponse::Source::MemoryCache);
+        if (!m_response.isNull()) {
+            ResourceResponse response(m_response);
+            if (validationCompleting())
+                response.setSource(ResourceResponse::Source::MemoryCacheAfterValidation);
+            else {
+                ASSERT(!validationInProgress());
+                response.setSource(ResourceResponse::Source::MemoryCache);
+            }
+            client->responseReceived(*this, response);
         }
-        client.responseReceived(*this, response);
-    }
-    if (!hasClient(c))
-        return;
-    if (m_data)
-        client.dataReceived(*this, m_data->data(), m_data->size());
-    if (!hasClient(c))
-       return;
-    CachedResource::didAddClient(client);
+        if (!hasClient(*client))
+            return;
+        if (m_data)
+            client->dataReceived(*this, m_data->data(), m_data->size());
+        if (!hasClient(*client))
+            return;
+        CachedResource::didAddClient(*client);
+    });
 }
 
 void CachedRawResource::allClientsRemoved()
@@ -159,16 +167,27 @@ void CachedRawResource::allClientsRemoved()
         m_loader->cancelIfNotFinishing();
 }
 
-void CachedRawResource::redirectReceived(ResourceRequest& request, const ResourceResponse& response)
+static void iterateClients(CachedResourceClientWalker<CachedRawResourceClient>&& walker, CachedResourceHandle<CachedRawResource>&& handle, ResourceRequest&& request, std::unique_ptr<ResourceResponse>&& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
-    CachedResourceHandle<CachedRawResource> protectedThis(this);
-    if (!response.isNull()) {
-        CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
-        while (CachedRawResourceClient* c = w.next())
-            c->redirectReceived(*this, request, response);
+    auto client = walker.next();
+    if (!client)
+        return completionHandler(WTFMove(request));
+    const ResourceResponse& responseReference = *response;
+    client->redirectReceived(*handle, WTFMove(request), responseReference, [walker = WTFMove(walker), handle = WTFMove(handle), response = WTFMove(response), completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request) mutable {
+        iterateClients(WTFMove(walker), WTFMove(handle), WTFMove(request), WTFMove(response), WTFMove(completionHandler));
+    });
+}
+
+void CachedRawResource::redirectReceived(ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
+{
+    if (response.isNull())
+        CachedResource::redirectReceived(WTFMove(request), response, WTFMove(completionHandler));
+    else {
         m_redirectChain.append(RedirectPair(request, response));
+        iterateClients(CachedResourceClientWalker<CachedRawResourceClient>(m_clients), CachedResourceHandle<CachedRawResource>(this), WTFMove(request), std::make_unique<ResourceResponse>(response), [this, protectedThis = CachedResourceHandle<CachedRawResource>(this), completionHandler = WTFMove(completionHandler), response] (ResourceRequest&& request) mutable {
+            CachedResource::redirectReceived(WTFMove(request), response, WTFMove(completionHandler));
+        });
     }
-    CachedResource::redirectReceived(request, response);
 }
 
 void CachedRawResource::responseReceived(const ResourceResponse& response)

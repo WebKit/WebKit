@@ -467,10 +467,11 @@ void DocumentLoader::handleSubstituteDataLoadSoon()
         startDataLoadTimer();
 }
 
-void DocumentLoader::redirectReceived(CachedResource& resource, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void DocumentLoader::redirectReceived(CachedResource& resource, ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     ASSERT_UNUSED(resource, &resource == m_mainResource);
     willSendRequest(request, redirectResponse);
+    completionHandler(WTFMove(request));
 }
 
 void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
