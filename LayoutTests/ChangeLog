@@ -1,5 +1,9 @@
 2017-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Rebaseline tests after r224572 and r224573. Part 2.
+
+2017-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline tests after r224572 and r224573. Part 1.
 
 2017-09-13  Zalan Bujtas  <zalan@apple.com>

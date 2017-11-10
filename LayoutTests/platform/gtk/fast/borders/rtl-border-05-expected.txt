@@ -1,13 +1,13 @@
-layer at (0,0) size 785x644
+layer at (0,0) size 785x646
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x644
-  RenderBlock {HTML} at (0,0) size 785x644
-    RenderBody {BODY} at (8,16) size 769x620
-      RenderBlock {P} at (0,0) size 769x34
-        RenderText {#text} at (0,0) size 763x34
+layer at (0,0) size 785x646
+  RenderBlock {HTML} at (0,0) size 785x646
+    RenderBody {BODY} at (8,16) size 769x622
+      RenderBlock {P} at (0,0) size 769x36
+        RenderText {#text} at (0,0) size 763x35
           text run at (0,0) width 763: "Test that when we have images sprinkled within a span, borders, paddings and margins are still"
-          text run at (0,17) width 168: "calculated correctly ."
-      RenderBlock {DIV} at (0,50) size 212x285 [border: (1px solid #000000)]
+          text run at (0,18) width 168: "calculated correctly ."
+      RenderBlock {DIV} at (0,52) size 212x285 [border: (1px solid #000000)]
         RenderBlock {P} at (6,22) size 200x161
           RenderText {#text} at (0,7) size 190x49
             text run at (0,7) width 190: "aaa bbb ccc ddd eee fff"
@@ -29,7 +29,7 @@ layer at (0,0) size 785x644
             RenderText {#text} at (45,7) size 105x17
               text run at (45,7) width 105: "Some fill text"
             RenderImage {IMG} at (0,33) size 20x20
-      RenderBlock {DIV} at (0,335) size 212x285 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,337) size 212x285 [border: (1px solid #000000)]
         RenderBlock {P} at (6,22) size 200x161
           RenderText {#text} at (10,7) size 190x49
             text run at (10,7) width 190: "aaa bbb ccc ddd eee fff"

@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x17
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 53x17
           text run at (0,0) width 53: "Test for "
         RenderInline {I} at (0,0) size 699x17
@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
             text run at (358,0) width 394: "REGRESSION (SearchField): RTL search fields are mixed up"
         RenderText {#text} at (752,0) size 4x17
           text run at (752,0) width 4: "."
-      RenderBlock {P} at (0,33) size 784x84
+      RenderBlock {P} at (0,34) size 784x84
         RenderTextControl {INPUT} at (2,2) size 253x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 247x18
             RenderBlock {DIV} at (216,0) size 31x18
@@ -38,25 +38,25 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (31,0) size 185x18
             RenderBlock {DIV} at (0,0) size 31x18
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,133) size 784x17
+      RenderBlock {P} at (0,134) size 784x18
         RenderText {#text} at (0,0) size 39x17
           text run at (0,0) width 39: "PASS"
-layer at (44,47) size 185x17
-  RenderBlock {DIV} at (0,0) size 185x17
+layer at (44,47) size 185x18
+  RenderBlock {DIV} at (0,0) size 185x18
     RenderText {#text} at (9,0) size 176x17
       text run at (9,0) width 28 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
       text run at (37,0) width 26: "she"
       text run at (63,0) width 56 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
       text run at (119,0) width 18: "he"
       text run at (137,0) width 48 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
-layer at (44,75) size 275x17
-  RenderBlock {DIV} at (0,0) size 275x17
+layer at (44,75) size 275x18
+  RenderBlock {DIV} at (0,0) size 275x18
     RenderText {#text} at (99,0) size 176x17
       text run at (99,0) width 28 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
       text run at (127,0) width 26: "she"
       text run at (153,0) width 56 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
       text run at (209,0) width 18: "he"
       text run at (227,0) width 48 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
-layer at (44,103) size 185x17
-  RenderBlock {DIV} at (0,0) size 185x17
+layer at (44,103) size 185x18
+  RenderBlock {DIV} at (0,0) size 185x18
 caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#document-fragment} of child 9 {INPUT} of child 3 {P} of body

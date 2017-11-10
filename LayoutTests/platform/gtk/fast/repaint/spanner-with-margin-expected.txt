@@ -19,7 +19,7 @@ S
 S
 S
 (repaint rects
-  (rect 104 329 18 36)
-  (rect 104 329 18 36)
+  (rect 104 334 18 36)
+  (rect 104 334 18 36)
 )
 
