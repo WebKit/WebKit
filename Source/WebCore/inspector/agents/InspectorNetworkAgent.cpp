@@ -287,12 +287,11 @@ RefPtr<Inspector::Protocol::Network::Response> InspectorNetworkAgent::buildObjec
     if (response.isNull())
         return nullptr;
 
-    double status = response.httpStatusCode();
     Ref<InspectorObject> headers = buildObjectForHeaders(response.httpHeaderFields());
 
     auto responseObject = Inspector::Protocol::Network::Response::create()
         .setUrl(response.url().string())
-        .setStatus(status)
+        .setStatus(response.httpStatusCode())
         .setStatusText(response.httpStatusText())
         .setHeaders(WTFMove(headers))
         .setMimeType(response.mimeType())

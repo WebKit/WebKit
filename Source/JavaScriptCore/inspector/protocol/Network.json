@@ -65,7 +65,7 @@
             "description": "HTTP response data.",
             "properties": [
                 { "name": "url", "type": "string", "description": "Response URL. This URL can be different from CachedResource.url in case of redirect." },
-                { "name": "status", "type": "number", "description": "HTTP response status code." },
+                { "name": "status", "type": "integer", "description": "HTTP response status code." },
                 { "name": "statusText", "type": "string", "description": "HTTP response status text." },
                 { "name": "headers", "$ref": "Headers", "description": "HTTP response headers." },
                 { "name": "headersText", "type": "string", "optional": true, "description": "HTTP response headers text." },
@@ -106,7 +106,7 @@
             "type": "object",
             "description": "WebSocket response data.",
             "properties": [
-                { "name": "status", "type": "number", "description": "HTTP response status code." },
+                { "name": "status", "type": "integer", "description": "HTTP response status code." },
                 { "name": "statusText", "type": "string", "description": "HTTP response status text." },
                 { "name": "headers", "$ref": "Headers", "description": "HTTP response headers." }
             ]
@@ -191,7 +191,7 @@
             "returns": [
                 { "name": "content", "type": "string", "description": "Resource content." },
                 { "name": "mimeType", "type": "string", "description": "Resource mimeType." },
-                { "name": "status", "type": "number", "description": "HTTP response status code." }
+                { "name": "status", "type": "integer", "description": "HTTP response status code." }
             ]
         },
         {
