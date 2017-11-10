@@ -1,3 +1,20 @@
+2017-11-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: capabilities with null value shouldn't be added to the validated capabilities object
+        https://bugs.webkit.org/show_bug.cgi?id=179369
+
+        Reviewed by Brian Burg.
+
+        "4. If deserialized is not null, set a property on result with name name and value deserialized."
+
+        7.2 Processing Capabilities
+        https://w3c.github.io/webdriver/webdriver-spec.html#dfn-validate-capabilities
+
+        Fixes: imported/w3c/webdriver/tests/sessions/new_session/create_firstMatch.py::test_valid[platformName-None]
+
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::validatedCapabilities const):
+
 2017-10-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: unknown capabilities should produce an InvalidArgument error when validating capabilities
