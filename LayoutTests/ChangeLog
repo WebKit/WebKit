@@ -1,3 +1,11 @@
+2017-11-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip slow encoding WPT LayoutTests.
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2017-11-09  Doug Russell  <d_russell@apple.com>
 
         Bug 179068 - AX: search predicate returns containing group for plain text instead of text element
