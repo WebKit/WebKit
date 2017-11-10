@@ -4,6 +4,17 @@
         https://bugs.webkit.org/show_bug.cgi?id=179426
         <rdar://problem/35415191>
 
+        Unreviewed fix to r224657.
+
+        * Scripts/webkitpy/common/version.py:
+        (Version.__init__): Check if an object is iterable.
+
+2017-11-09  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Unify version parsing code
+        https://bugs.webkit.org/show_bug.cgi?id=179426
+        <rdar://problem/35415191>
+
         Reviewed by David Kilzer.
 
         webkitpy needs to parse version strings or version lists frequently. Rather than

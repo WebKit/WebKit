@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import collections
 
 class Version(object):
 
@@ -36,7 +37,7 @@ class Version(object):
             for i in xrange(len(ver.split('.'))):
                 self[i] = ver.split('.')[i]
             return
-        elif isinstance(ver, list) or isinstance(ver, Version) or isinstance(ver, tuple):
+        elif isinstance(ver, Version) or isinstance(ver, collections.Iterable):
             for i in xrange(len(ver)):
                 self[i] = ver[i]
             return
