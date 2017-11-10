@@ -1,3 +1,13 @@
+2017-11-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Remove TEC decoders that duplicate ICU decoders
+        https://bugs.webkit.org/show_bug.cgi?id=179460
+
+        Reviewed by Darin Adler.
+
+        * fast/encoding/duplicate-tec-encodings-expected.txt: Added.
+        * fast/encoding/duplicate-tec-encodings.html: Added.
+
 2017-11-10  Colin Bendell  <colin@bendell.ca>
 
         Fix race conditions with setBackingScaleFactor, page refresh and preloader

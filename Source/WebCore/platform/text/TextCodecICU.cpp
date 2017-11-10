@@ -63,7 +63,7 @@ std::unique_ptr<TextCodec> TextCodecICU::create(const TextEncoding& encoding, co
 #define DECLARE_ALIASES(encoding, ...) \
     static const char* const encoding##_aliases[] { __VA_ARGS__ }
 
-// From https://encoding.spec.whatwg.org.
+// From https://encoding.spec.whatwg.org. Plus a few extra aliases that macOS had historically from TEC.
 DECLARE_ALIASES(IBM866, "866", "cp866", "csibm866");
 DECLARE_ALIASES(ISO_8859_2, "csisolatin2", "iso-ir-101", "iso8859-2", "iso88592", "iso_8859-2", "iso_8859-2:1987", "l2", "latin2");
 DECLARE_ALIASES(ISO_8859_3, "csisolatin3", "iso-ir-109", "iso8859-3", "iso88593", "iso_8859-3", "iso_8859-3:1988", "l3", "latin3");
@@ -73,10 +73,11 @@ DECLARE_ALIASES(ISO_8859_6, "arabic", "asmo-708", "csiso88596e", "csiso88596i", 
 DECLARE_ALIASES(ISO_8859_7, "csisolatingreek", "ecma-118", "elot_928", "greek", "greek8", "iso-ir-126", "iso8859-7", "iso88597", "iso_8859-7", "iso_8859-7:1987", "sun_eu_greek");
 DECLARE_ALIASES(ISO_8859_8, "csiso88598e", "csisolatinhebrew", "hebrew", "iso-8859-8-e", "iso-ir-138", "iso8859-8", "iso88598", "iso_8859-8", "iso_8859-8:1988", "visual");
 DECLARE_ALIASES(ISO_8859_8_I, "csiso88598i", "logical");
-DECLARE_ALIASES(ISO_8859_10, "csisolatin6", "iso-ir-157", "iso8859-10", "iso885910", "l6", "latin6");
+DECLARE_ALIASES(ISO_8859_10, "csisolatin6", "iso-ir-157", "iso8859-10", "iso885910", "l6", "latin6", "iso8859101992", "isoir157");
 DECLARE_ALIASES(ISO_8859_13, "iso8859-13", "iso885913");
-DECLARE_ALIASES(ISO_8859_14, "iso8859-14", "iso885914");
+DECLARE_ALIASES(ISO_8859_14, "iso8859-14", "iso885914", "isoceltic", "iso8859141998", "isoir199", "latin8", "l8");
 DECLARE_ALIASES(ISO_8859_15, "csisolatin9", "iso8859-15", "iso885915", "iso_8859-15", "l9");
+DECLARE_ALIASES(ISO_8859_16, "isoir226", "iso8859162001", "l10", "latin10");
 DECLARE_ALIASES(KOI8_R, "cskoi8r", "koi", "koi8", "koi8_r");
 DECLARE_ALIASES(KOI8_U, "koi8-ru");
 DECLARE_ALIASES(macintosh, "csmacintosh", "mac", "x-mac-roman", "macroman", "x-macroman");
@@ -130,7 +131,7 @@ static const struct EncodingName {
     DECLARE_ENCODING_NAME("ISO-8859-13", ISO_8859_13),
     DECLARE_ENCODING_NAME("ISO-8859-14", ISO_8859_14),
     DECLARE_ENCODING_NAME("ISO-8859-15", ISO_8859_15),
-    DECLARE_ENCODING_NAME_NO_ALIASES("ISO-8859-16"),
+    DECLARE_ENCODING_NAME("ISO-8859-16", ISO_8859_16),
     DECLARE_ENCODING_NAME("KOI8-R", KOI8_R),
     DECLARE_ENCODING_NAME("KOI8-U", KOI8_U),
     DECLARE_ENCODING_NAME("macintosh", macintosh),

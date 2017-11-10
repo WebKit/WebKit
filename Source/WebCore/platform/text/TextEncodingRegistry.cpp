@@ -113,29 +113,6 @@ static HashSet<const char*>* nonBackslashEncodings;
 
 static const char* const textEncodingNameBlacklist[] = { "UTF-7", "BOCU-1", "SCSU" };
 
-#if ERROR_DISABLED
-
-static inline void checkExistingName(const char*, const char*) { }
-
-#else
-
-static void checkExistingName(const char* alias, const char* atomicName)
-{
-    const char* oldAtomicName = textEncodingNameMap->get(alias);
-    if (!oldAtomicName)
-        return;
-    if (oldAtomicName == atomicName)
-        return;
-    // Keep the warning silent about one case where we know this will happen.
-    if (strcmp(alias, "ISO-8859-8-I") == 0
-            && strcmp(oldAtomicName, "ISO-8859-8-I") == 0
-            && strcasecmp(atomicName, "iso-8859-8") == 0)
-        return;
-    LOG_ERROR("alias %s maps to %s already, but someone is trying to make it map to %s", alias, oldAtomicName, atomicName);
-}
-
-#endif
-
 static bool isUndesiredAlias(const char* alias)
 {
     // Reject aliases with version numbers that are supported by some back-ends (such as "ISO_2022,locale=ja,version=0" in ICU).
@@ -159,7 +136,9 @@ static void addToTextEncodingNameMap(const char* alias, const char* name)
     ASSERT(strcmp(alias, name) == 0 || atomicName);
     if (!atomicName)
         atomicName = name;
-    checkExistingName(alias, atomicName);
+
+    ASSERT_WITH_MESSAGE(!textEncodingNameMap->get(alias), "Duplicate text encoding name %s for %s (previously registered as %s)", alias, atomicName, !textEncodingNameMap->get(alias));
+
     textEncodingNameMap->add(alias, atomicName);
 }
 

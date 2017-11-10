@@ -11,16 +11,11 @@
 DOSChineseTrad: cp950
 DOSGreek: cp737, ibm737
 EUC_TW: EUC-TW
-ISOLatin10: ISO-8859-16
-ISOLatin6: ISO-8859-10
-ISOLatin8: ISO-8859-14
-ISOLatinThai: ISO-8859-11
 ISO_2022_JP_3: ISO-2022-JP-3
 JIS_C6226_78: JIS_C6226-1978
 JIS_X0208_83: JIS_X0208-1983
 JIS_X0208_90: JIS_X0208-1990
 JIS_X0212_90: JIS_X0212-1990
-KOI8_U: KOI8-U
 MacArabic: x-mac-arabic
 MacChineseSimp: x-mac-chinesesimp, xmacsimpchinese
 MacChineseTrad: x-mac-chinesetrad, xmactradchinese
