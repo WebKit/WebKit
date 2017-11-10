@@ -193,6 +193,7 @@ imported/w3c/web-platform-tests/service-workers/service-worker/service-worker-cs
 imported/w3c/web-platform-tests/service-workers/service-worker/service-worker-csp-script.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-bytecheck.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/unregister-controller.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/service-workers/service-worker/unregister-then-register-new-script.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/worker-interception.https.html [ Pass Failure ]

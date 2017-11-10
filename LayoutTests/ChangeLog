@@ -1,3 +1,11 @@
+2017-11-10  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark imported/w3c/web-platform-tests/service-workers/service-worker/unregister-then-register-new-script.https.html as flaky
+
+        I unskipped it yesterday but it turns out to be flaky.
+
+        * TestExpectations:
+
 2017-11-09  Chris Dumez  <cdumez@apple.com>
 
         ServiceWorkerRegistration objects may get recycled for different SWServerRegistration objects
