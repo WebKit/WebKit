@@ -190,13 +190,13 @@ class TestResultWriter(object):
 
         base_dir = self._port.path_from_webkit_base('LayoutTests', 'fast', 'harness')
 
-        image_diff_template = self._filesystem.join(base_dir, 'image-diff-template.html');
+        image_diff_template = self._filesystem.join(base_dir, 'image-diff-template.html')
         image_diff_file = ""
         if self._filesystem.exists(image_diff_template):
             image_diff_file = self._filesystem.read_text_file(image_diff_template)
 
-        html = image_diff_file.replace('__TITLE__', self._test_name);
-        html = html.replace('__PREFIX__', self._output_testname(''));
+        html = image_diff_file.replace('__TITLE__', self._test_name)
+        html = html.replace('__PREFIX__', self._output_testname(''))
 
         diffs_html_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFFS_HTML)
         self._filesystem.write_text_file(diffs_html_filename, html)

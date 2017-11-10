@@ -66,7 +66,7 @@ class Builder(object):
         return None
 
     def latest_layout_test_results_url(self):
-        return self.accumulated_results_url() or self.latest_cached_build().results_url();
+        return self.accumulated_results_url() or self.latest_cached_build().results_url()
 
     @memoized
     def latest_layout_test_results(self):

@@ -136,7 +136,7 @@ class RunTests(AbstractStep):
                 args.append("--quiet")
                 args.append("--skip-failing-tests")
             else:
-                args.append("--no-build");
+                args.append("--no-build")
 
         if self._options.quiet:
             args.append("--quiet")
