@@ -1,3 +1,12 @@
+2017-11-10  Guillaume Emont  <guijemont@igalia.com>
+
+        build-jsc: build testmasm for all platforms using cmake
+        https://bugs.webkit.org/show_bug.cgi?id=179512
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/build-jsc:
+
 2017-11-09  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Unify version parsing code
