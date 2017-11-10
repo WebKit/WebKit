@@ -8,6 +8,7 @@ from osx_browser_driver import OSXBrowserDriver
 
 _log = logging.getLogger(__name__)
 
+
 class OSXChromeDriver(OSXBrowserDriver):
     process_name = 'Google Chrome'
     browser_name = 'chrome'
@@ -58,6 +59,7 @@ class OSXChromeCanaryDriver(OSXBrowserDriver):
 def create_args():
     args = ['--args', '--homepage', create_window_size_arg()]
     return args
+
 
 def create_chrome_options():
     from selenium.webdriver.chrome.options import Options

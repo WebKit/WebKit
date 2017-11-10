@@ -29,6 +29,7 @@
 
 from webkitpy.common.version import Version
 
+
 class MockPlatformInfo(object):
     def __init__(self, os_name='mac', os_version='snowleopard'):
         self.os_name = os_name

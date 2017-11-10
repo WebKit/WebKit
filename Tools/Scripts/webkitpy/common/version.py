@@ -22,6 +22,7 @@
 
 import collections
 
+
 class Version(object):
 
     def __init__(self, ver='0'):

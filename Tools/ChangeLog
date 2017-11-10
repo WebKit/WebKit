@@ -1,3 +1,18 @@
+2017-11-10  Aakash Jain  <aakash_jain@apple.com>
+
+        fix style failures in webkitpy: expected 2 blank lines found 1
+        https://bugs.webkit.org/show_bug.cgi?id=179529
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py: Added a blank line to follow style guidelines.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_chrome_driver.py: Ditto.
+        * Scripts/webkitpy/common/system/platforminfo_mock.py: Ditto.
+        * Scripts/webkitpy/common/version.py: Ditto.
+        * Scripts/webkitpy/layout_tests/models/test_failures.py: Ditto.
+        * Scripts/webkitpy/port/mac_unittest.py: Ditto.
+        * Scripts/webkitpy/port/simulator_process.py: Ditto.
+
 2017-11-10  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r224267): WebViews scheduled with custom run loop modes don't load

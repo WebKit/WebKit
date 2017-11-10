@@ -169,6 +169,7 @@ class FailureNotTested(FailureText):
     def message(self):
         return 'test was not run'
 
+
 class FailureTextMismatch(FailureText):
     def message(self):
         return "text diff"

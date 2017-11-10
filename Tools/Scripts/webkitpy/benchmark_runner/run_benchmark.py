@@ -61,6 +61,7 @@ def parse_args():
 
     return args
 
+
 def run_benchmark_plan(args, plan):
     benchmark_runner_class = benchmark_runner_subclasses[args.driver]
     runner = benchmark_runner_class(plan, args.local_copy, args.count, args.build_dir, args.output_file, args.platform, args.browser, args.scale_unit, args.device_id)
@@ -71,6 +72,7 @@ def list_benchmark_plans():
     print "Available benchmark plans: "
     for plan in BenchmarkRunner.available_plans():
         print "\t%s" % plan
+
 
 def start(args):
     if args.json_file:

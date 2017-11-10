@@ -36,6 +36,7 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2, ScriptError
 
+
 class MacTest(darwin_testcase.DarwinTest):
     os_name = 'mac'
     os_version = 'lion'
