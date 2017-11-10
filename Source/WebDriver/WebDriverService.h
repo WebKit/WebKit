@@ -114,7 +114,7 @@ private:
     RefPtr<Inspector::InspectorObject> processCapabilities(const Inspector::InspectorObject&, Function<void (CommandResult&&)>&) const;
     RefPtr<Inspector::InspectorObject> validatedCapabilities(const Inspector::InspectorObject&) const;
     RefPtr<Inspector::InspectorObject> mergeCapabilities(const Inspector::InspectorObject&, const Inspector::InspectorObject&) const;
-    std::optional<String> matchCapabilities(const Inspector::InspectorObject&) const;
+    RefPtr<Inspector::InspectorObject> matchCapabilities(const Inspector::InspectorObject&, std::optional<String>&) const;
     bool platformValidateCapability(const String&, const RefPtr<Inspector::InspectorValue>&) const;
     std::optional<String> platformMatchCapability(const String&, const RefPtr<Inspector::InspectorValue>&) const;
     void parseCapabilities(const Inspector::InspectorObject& desiredCapabilities, Capabilities&) const;
