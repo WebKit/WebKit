@@ -1,5 +1,23 @@
 2017-11-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: WebDriverService::matchCapabilities should follow the spec
+        https://bugs.webkit.org/show_bug.cgi?id=179371
+
+        Reviewed by Brian Burg.
+
+        The returned object should contain all the entries mentioned in the spec, not only the ones already present in
+        the passed in capabilities object.
+
+        7.2 Processing Capabilities
+        https://w3c.github.io/webdriver/webdriver-spec.html#dfn-matching-capabilities
+
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::matchCapabilities const):
+        (WebDriver::WebDriverService::processCapabilities const):
+        * WebDriverService.h:
+
+2017-11-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: capabilities with null value shouldn't be added to the validated capabilities object
         https://bugs.webkit.org/show_bug.cgi?id=179369
 

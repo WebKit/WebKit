@@ -430,43 +430,64 @@ RefPtr<InspectorObject> WebDriverService::mergeCapabilities(const InspectorObjec
     return result;
 }
 
-std::optional<String> WebDriverService::matchCapabilities(const InspectorObject& mergedCapabilities) const
+RefPtr<InspectorObject> WebDriverService::matchCapabilities(const InspectorObject& mergedCapabilities, std::optional<String>& errorString) const
 {
     // §7.2 Processing Capabilities.
     // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-matching-capabilities
-    Capabilities matchedCapabilities = platformCapabilities();
+    Capabilities platformCapabilities = this->platformCapabilities();
 
     // Some capabilities like browser name and version might need to launch the browser,
     // so we only reject the known capabilities that don't match.
+    RefPtr<InspectorObject> matchedCapabilities = InspectorObject::create();
+    if (platformCapabilities.browserName)
+        matchedCapabilities->setString(ASCIILiteral("browserName"), platformCapabilities.browserName.value());
+    if (platformCapabilities.browserVersion)
+        matchedCapabilities->setString(ASCIILiteral("browserVersion"), platformCapabilities.browserVersion.value());
+    if (platformCapabilities.platformName)
+        matchedCapabilities->setString(ASCIILiteral("platformName"), platformCapabilities.platformName.value());
+    if (platformCapabilities.acceptInsecureCerts)
+        matchedCapabilities->setBoolean(ASCIILiteral("acceptInsecureCerts"), platformCapabilities.acceptInsecureCerts.value());
+
     auto end = mergedCapabilities.end();
     for (auto it = mergedCapabilities.begin(); it != end; ++it) {
-        if (it->key == "browserName" && matchedCapabilities.browserName) {
+        if (it->key == "browserName" && platformCapabilities.browserName) {
             String browserName;
             it->value->asString(browserName);
-            if (!equalIgnoringASCIICase(matchedCapabilities.browserName.value(), browserName))
-                return makeString("expected browserName ", matchedCapabilities.browserName.value(), " but got ", browserName);
-        } else if (it->key == "browserVersion" && matchedCapabilities.browserVersion) {
+            if (!equalIgnoringASCIICase(platformCapabilities.browserName.value(), browserName)) {
+                errorString = makeString("expected browserName ", platformCapabilities.browserName.value(), " but got ", browserName);
+                return nullptr;
+            }
+        } else if (it->key == "browserVersion" && platformCapabilities.browserVersion) {
             String browserVersion;
             it->value->asString(browserVersion);
-            if (!platformCompareBrowserVersions(browserVersion, matchedCapabilities.browserVersion.value()))
-                return makeString("requested browserVersion is ", browserVersion, " but actual version is ", matchedCapabilities.browserVersion.value());
-        } else if (it->key == "platformName" && matchedCapabilities.platformName) {
+            if (!platformCompareBrowserVersions(browserVersion, platformCapabilities.browserVersion.value())) {
+                errorString = makeString("requested browserVersion is ", browserVersion, " but actual version is ", platformCapabilities.browserVersion.value());
+                return nullptr;
+            }
+        } else if (it->key == "platformName" && platformCapabilities.platformName) {
             String platformName;
             it->value->asString(platformName);
-            if (!equalLettersIgnoringASCIICase(platformName, "any") && !equalIgnoringASCIICase(matchedCapabilities.platformName.value(), platformName))
-                return makeString("expected platformName ", matchedCapabilities.platformName.value(), " but got ", platformName);
-        } else if (it->key == "acceptInsecureCerts" && matchedCapabilities.acceptInsecureCerts) {
+            if (!equalLettersIgnoringASCIICase(platformName, "any") && !equalIgnoringASCIICase(platformCapabilities.platformName.value(), platformName)) {
+                errorString = makeString("expected platformName ", platformCapabilities.platformName.value(), " but got ", platformName);
+                return nullptr;
+            }
+        } else if (it->key == "acceptInsecureCerts" && platformCapabilities.acceptInsecureCerts) {
             bool acceptInsecureCerts;
             it->value->asBoolean(acceptInsecureCerts);
-            if (acceptInsecureCerts && !matchedCapabilities.acceptInsecureCerts.value())
-                return String("browser doesn't accept insecure TLS certificates");
+            if (acceptInsecureCerts && !platformCapabilities.acceptInsecureCerts.value()) {
+                errorString = String("browser doesn't accept insecure TLS certificates");
+                return nullptr;
+            }
         } else if (it->key == "proxy") {
             // FIXME: implement proxy support.
-        } else if (auto errorString = platformMatchCapability(it->key, it->value))
-            return errorString;
+        } else if (auto platformErrorString = platformMatchCapability(it->key, it->value)) {
+            errorString = platformErrorString;
+            return nullptr;
+        }
+        matchedCapabilities->setValue(it->key, RefPtr<InspectorValue>(it->value));
     }
 
-    return std::nullopt;
+    return matchedCapabilities;
 }
 
 RefPtr<InspectorObject> WebDriverService::processCapabilities(const InspectorObject& parameters, Function<void (CommandResult&&)>& completionHandler) const
@@ -544,10 +565,10 @@ RefPtr<InspectorObject> WebDriverService::processCapabilities(const InspectorObj
             return nullptr;
         }
         // 6.2. Let matched capabilities be the result of trying to match capabilities with merged capabilities as an argument.
-        errorString = matchCapabilities(*mergedCapabilities);
-        if (!errorString) {
+        auto matchedCapabilities = matchCapabilities(*mergedCapabilities, errorString);
+        if (matchedCapabilities) {
             // 6.3. If matched capabilities is not null return matched capabilities.
-            return mergedCapabilities;
+            return matchedCapabilities;
         }
     }
 
