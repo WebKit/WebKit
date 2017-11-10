@@ -1,3 +1,13 @@
+2017-11-09  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] An extra copy of FileSizeFormatter.h is installed in /usr/local/include
+        https://bugs.webkit.org/show_bug.cgi?id=179525
+
+        Reviewed by Wenson Hsieh.
+
+        * PAL.xcodeproj/project.pbxproj: Demoted FileSizeFormatter.h to a project header in the PAL target. The
+          Copy PAL Headers target takes care of installing this header under /usr/local/include/pal.
+
 2017-11-09  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r224661.
