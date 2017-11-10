@@ -137,7 +137,7 @@ static void addToTextEncodingNameMap(const char* alias, const char* name)
     if (!atomicName)
         atomicName = name;
 
-    ASSERT_WITH_MESSAGE(!textEncodingNameMap->get(alias), "Duplicate text encoding name %s for %s (previously registered as %s)", alias, atomicName, !textEncodingNameMap->get(alias));
+    ASSERT_WITH_MESSAGE(!textEncodingNameMap->get(alias), "Duplicate text encoding name %s for %s (previously registered as %s)", alias, atomicName, textEncodingNameMap->get(alias));
 
     textEncodingNameMap->add(alias, atomicName);
 }
