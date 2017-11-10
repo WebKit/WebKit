@@ -1380,10 +1380,6 @@ class Port(object):
     def sample_process(self, name, pid, target_host=None):
         pass
 
-    def find_system_pid(self, name, pid):
-        # This is only overridden on Windows
-        return pid
-
     def should_run_as_pixel_test(self, test_input):
         if not self._options.pixel_tests:
             return False

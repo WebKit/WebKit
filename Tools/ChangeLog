@@ -1,3 +1,20 @@
+2017-11-10  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Remove find_system_pid from port classes
+        https://bugs.webkit.org/show_bug.cgi?id=179514
+        <rdar://problem/35456900>
+
+        Reviewed by David Kilzer.
+
+        Removing dead code.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.find_system_pid): Deleted.
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess._start):
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.find_system_pid): Deleted.
+
 2017-11-10  Aakash Jain  <aakash_jain@apple.com>
 
         fix style failures in webkitpy: multiple statements on one line (semicolon)
