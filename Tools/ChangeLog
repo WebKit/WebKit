@@ -1,3 +1,15 @@
+2017-11-10  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r224267): WebViews scheduled with custom run loop modes don't load
+        https://bugs.webkit.org/show_bug.cgi?id=179515
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/WebViewScheduleInRunLoop.mm: Added.
+        (-[ScheduleInRunLoopDelegate webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI::TEST):
+
 2017-11-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [webkitpy] Fix PlatformInfo._win_version since r224657

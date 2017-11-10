@@ -31,6 +31,7 @@
 #define MainThread_h
 
 #include <stdint.h>
+#include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/Optional.h>
 #include <wtf/ThreadingPrimitives.h>
@@ -38,11 +39,14 @@
 namespace WTF {
 
 class PrintStream;
+class SchedulePair;
+struct SchedulePairHash;
+typedef HashSet<RefPtr<SchedulePair>, SchedulePairHash> SchedulePairHashSet;
 
 // Must be called from the main thread.
 WTF_EXPORT_PRIVATE void initializeMainThread();
 
-WTF_EXPORT_PRIVATE void callOnMainThread(Function<void ()>&&);
+WTF_EXPORT_PRIVATE void callOnMainThread(Function<void()>&&, SchedulePairHashSet* = nullptr);
 
 #if PLATFORM(COCOA)
 WTF_EXPORT_PRIVATE void callOnWebThreadOrDispatchAsyncOnMainThread(void (^block)());
@@ -81,7 +85,7 @@ WTF_EXPORT_PRIVATE bool isMainThreadOrGCThread();
 
 // NOTE: these functions are internal to the callOnMainThread implementation.
 void initializeMainThreadPlatform();
-void scheduleDispatchFunctionsOnMainThread();
+void scheduleDispatchFunctionsOnMainThread(SchedulePairHashSet* = nullptr);
 void dispatchFunctionsFromMainThread();
 
 #if OS(DARWIN) && !USE(GLIB)

@@ -67,7 +67,7 @@ void initializeMainThreadPlatform()
     Thread::initializeCurrentThreadInternal("Main Thread");
 }
 
-void scheduleDispatchFunctionsOnMainThread()
+void scheduleDispatchFunctionsOnMainThread(SchedulePairHashSet*)
 {
     ASSERT(threadingWindowHandle);
     PostMessage(threadingWindowHandle, threadingFiredMessage, 0, 0);

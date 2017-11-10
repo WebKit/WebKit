@@ -235,6 +235,7 @@
 		5C6E65441D5CEFD400F7862E /* URLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E65411D5CEF8500F7862E /* URLParser.cpp */; };
 		5C726D6F1D3EE06E00C5E1A1 /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C726D6E1D3EE06800C5E1A1 /* InstanceMethodSwizzler.mm */; };
 		5C7964101EB0278D0075D74C /* EventModifiers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C79640F1EB0269B0075D74C /* EventModifiers.cpp */; };
+		5C7C74CB1FB529BA002F9ABE /* WebViewScheduleInRunLoop.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7C74CA1FB528D4002F9ABE /* WebViewScheduleInRunLoop.mm */; };
 		5C838F7F1DB04F900082858F /* LoadInvalidURLRequest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57901FAE1CAF137100ED64F9 /* LoadInvalidURLRequest.mm */; };
 		5C973F5C1F58EF8B00359C27 /* WebGLPolicy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C973F5B1F58EF0A00359C27 /* WebGLPolicy.mm */; };
 		5C9E56851DF9145400C9EE33 /* WebsitePolicies.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C9E56841DF9143D00C9EE33 /* WebsitePolicies.mm */; };
@@ -1369,6 +1370,7 @@
 		5C726D6D1D3EE06800C5E1A1 /* InstanceMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InstanceMethodSwizzler.h; path = cocoa/InstanceMethodSwizzler.h; sourceTree = "<group>"; };
 		5C726D6E1D3EE06800C5E1A1 /* InstanceMethodSwizzler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InstanceMethodSwizzler.mm; path = cocoa/InstanceMethodSwizzler.mm; sourceTree = "<group>"; };
 		5C79640F1EB0269B0075D74C /* EventModifiers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventModifiers.cpp; sourceTree = "<group>"; };
+		5C7C74CA1FB528D4002F9ABE /* WebViewScheduleInRunLoop.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewScheduleInRunLoop.mm; sourceTree = "<group>"; };
 		5C973F5B1F58EF0A00359C27 /* WebGLPolicy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGLPolicy.mm; sourceTree = "<group>"; };
 		5C9E56841DF9143D00C9EE33 /* WebsitePolicies.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebsitePolicies.mm; sourceTree = "<group>"; };
 		5C9E56861DF9148E00C9EE33 /* contentBlockerCheck.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = contentBlockerCheck.html; sourceTree = "<group>"; };
@@ -2817,6 +2819,7 @@
 				C2EB2DD116CAC7AC009B52EE /* WebViewDidCreateJavaScriptContext.mm */,
 				37E38C33169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm */,
 				51DB16CD1F085047001FA4C5 /* WebViewIconLoading.mm */,
+				5C7C74CA1FB528D4002F9ABE /* WebViewScheduleInRunLoop.mm */,
 				CE32C7C718184C4900CD8C28 /* WillPerformClientRedirectToURLCrash.mm */,
 				1A7BFC0A171A0BDB00BC5F64 /* WillSendSubmitEvent.mm */,
 				A5E2027215B2181900C13E14 /* WindowlessWebViewWithMedia.mm */,
@@ -3523,6 +3526,7 @@
 				7CCE7ED51A411A7E00447C4C /* WebViewDidCreateJavaScriptContext.mm in Sources */,
 				7CCE7ED61A411A7E00447C4C /* WebViewDidRemoveFrameFromHierarchy.mm in Sources */,
 				51DB16CE1F085137001FA4C5 /* WebViewIconLoading.mm in Sources */,
+				5C7C74CB1FB529BA002F9ABE /* WebViewScheduleInRunLoop.mm in Sources */,
 				7CCE7F1B1A411AE600447C4C /* WillLoad.cpp in Sources */,
 				7CCE7ED71A411A7E00447C4C /* WillPerformClientRedirectToURLCrash.mm in Sources */,
 				7CCE7F1C1A411AE600447C4C /* WillSendSubmitEvent.cpp in Sources */,

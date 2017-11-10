@@ -35,6 +35,8 @@
 #import <stdio.h>
 #import <wtf/Assertions.h>
 #import <wtf/HashSet.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/SchedulePair.h>
 #import <wtf/Threading.h>
 
 #if USE(WEB_THREAD)
@@ -120,7 +122,7 @@ static void postTimer()
     CFRunLoopAddTimer(CFRunLoopGetCurrent(), CFRunLoopTimerCreate(0, 0, 0, 0, 0, timerFired, 0), kCFRunLoopCommonModes);
 }
 
-void scheduleDispatchFunctionsOnMainThread()
+void scheduleDispatchFunctionsOnMainThread(SchedulePairHashSet* pairs)
 {
     ASSERT(staticMainThreadCaller);
 
@@ -129,14 +131,22 @@ void scheduleDispatchFunctionsOnMainThread()
         return;
     }
 
+    RetainPtr<NSArray<NSString *>> modes;
+    if (pairs) {
+        modes = adoptNS([[NSMutableArray alloc] initWithCapacity:pairs->size()]);
+        for (auto& pair : *pairs)
+            [(NSMutableArray *)modes.get() addObject:(NSString *)pair->mode()];
+    } else
+        modes = @[(NSString *)kCFRunLoopCommonModes];
+    
     if (mainThreadEstablishedAsPthreadMain) {
         ASSERT(!mainThreadNSThread);
-        [staticMainThreadCaller performSelectorOnMainThread:@selector(call) withObject:nil waitUntilDone:NO];
+        [staticMainThreadCaller performSelectorOnMainThread:@selector(call) withObject:nil waitUntilDone:NO modes:modes.get()];
         return;
     }
 
     ASSERT(mainThreadNSThread);
-    [staticMainThreadCaller performSelector:@selector(call) onThread:mainThreadNSThread withObject:nil waitUntilDone:NO];
+    [staticMainThreadCaller performSelector:@selector(call) onThread:mainThreadNSThread withObject:nil waitUntilDone:NO modes:modes.get()];
 }
 
 void callOnWebThreadOrDispatchAsyncOnMainThread(void (^block)())

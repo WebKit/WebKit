@@ -142,7 +142,7 @@ void dispatchFunctionsFromMainThread()
     }
 }
 
-void callOnMainThread(Function<void ()>&& function)
+void callOnMainThread(Function<void()>&& function, SchedulePairHashSet* pairs)
 {
     ASSERT(function);
 
@@ -155,7 +155,7 @@ void callOnMainThread(Function<void ()>&& function)
     }
 
     if (needToSchedule)
-        scheduleDispatchFunctionsOnMainThread();
+        scheduleDispatchFunctionsOnMainThread(pairs);
 }
 
 void setMainThreadCallbacksPaused(bool paused)

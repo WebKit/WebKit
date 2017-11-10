@@ -43,6 +43,15 @@
 
 using namespace WebCore;
 
+static SchedulePairHashSet* scheduledRunLoopPairs(ResourceHandle* handle)
+{
+    if (!handle)
+        return nullptr;
+    if (!handle->context())
+        return nullptr;
+    return handle->context()->scheduledRunLoopPairs();
+}
+
 @implementation WebCoreResourceHandleAsOperationQueueDelegate
 
 - (id)initWithHandle:(ResourceHandle*)handle messageQueue:(MessageQueue<Function<void()>>*)messageQueue
@@ -125,7 +134,7 @@ using namespace WebCore;
     if (m_messageQueue)
         m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
     else
-        callOnMainThread(WTFMove(work));
+        callOnMainThread(WTFMove(work), scheduledRunLoopPairs(m_handle));
 
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
     return m_requestResult.get();
@@ -149,7 +158,7 @@ using namespace WebCore;
     if (m_messageQueue)
         m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
     else
-        callOnMainThread(WTFMove(work));
+        callOnMainThread(WTFMove(work), scheduledRunLoopPairs(m_handle));
 }
 
 - (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace
@@ -171,7 +180,7 @@ using namespace WebCore;
     if (m_messageQueue)
         m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
     else
-        callOnMainThread(WTFMove(work));
+        callOnMainThread(WTFMove(work), scheduledRunLoopPairs(m_handle));
 
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
     return m_boolResult;
@@ -210,7 +219,7 @@ using namespace WebCore;
     if (m_messageQueue)
         m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
     else
-        callOnMainThread(WTFMove(work));
+        callOnMainThread(WTFMove(work), scheduledRunLoopPairs(m_handle));
 
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
 }
@@ -239,7 +248,7 @@ using namespace WebCore;
     if (m_messageQueue)
         m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
     else
-        callOnMainThread(WTFMove(work));
+        callOnMainThread(WTFMove(work), scheduledRunLoopPairs(m_handle));
 }
 
 - (void)connection:(NSURLConnection *)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
@@ -259,7 +268,7 @@ using namespace WebCore;
     if (m_messageQueue)
         m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
     else
-        callOnMainThread(WTFMove(work));
+        callOnMainThread(WTFMove(work), scheduledRunLoopPairs(m_handle));
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
@@ -283,7 +292,7 @@ using namespace WebCore;
     if (m_messageQueue)
         m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
     else
-        callOnMainThread(WTFMove(work));
+        callOnMainThread(WTFMove(work), scheduledRunLoopPairs(m_handle));
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
@@ -307,7 +316,7 @@ using namespace WebCore;
     if (m_messageQueue)
         m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
     else
-        callOnMainThread(WTFMove(work));
+        callOnMainThread(WTFMove(work), scheduledRunLoopPairs(m_handle));
 }
 
 
@@ -331,7 +340,7 @@ using namespace WebCore;
     if (m_messageQueue)
         m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
     else
-        callOnMainThread(WTFMove(work));
+        callOnMainThread(WTFMove(work), scheduledRunLoopPairs(m_handle));
 
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
     return m_cachedResponseResult.get();
