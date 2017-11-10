@@ -1,3 +1,63 @@
+2017-11-09  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Unify version parsing code
+        https://bugs.webkit.org/show_bug.cgi?id=179426
+        <rdar://problem/35415191>
+
+        Reviewed by David Kilzer.
+
+        webkitpy needs to parse version strings or version lists frequently. Rather than
+        duplicate this code each time it's needed, unify it in a Version class.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.__init__): Convert mac version string to version object and
+        use _win_version instead of _win_version_tuple.
+        (PlatformInfo.xcode_sdk_version): Convert SDK version string to Version object
+        before returning it.
+        (PlatformInfo.xcode_version): Return Version object instead of version string.
+        (PlatformInfo._determine_mac_version): Accept Version object instead of string,
+        eliminate parsing.
+        (PlatformInfo._determine_win_version): Accept Version object instead of tuple.
+        (PlatformInfo._win_version): Return Version object instead of tuple, have Version
+        object own version string parsing.
+        (PlatformInfo._win_version_tuple): Renamed to _win_version().
+        (PlatformInfo._win_version_tuple_from_cmd): Deleted.
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (MockPlatformInfo.xcode_sdk_version): Return Version object instead of string.
+        (MockPlatformInfo.xcode_version): Dittio.
+        * Scripts/webkitpy/common/version.py: Added.
+        (Version): Version object.
+        (Version.__init__): Initialize the Version object with a string, integer,
+        tuple of integers, list of integers or another Version object.
+        (Version.__len__): Return 5 so that the Version object can be treated as
+        a list or tuple.
+        (Version.__getitem__): Get item in Version object by index or string.
+        (Version.__setitem__): Set item in Version object by index or string.
+        (Version.__str__): Convert version to printable string, omitting trailing 0's.
+        (Version.__cmp__): Compare two version strings, major taking precedence over
+        minor, minor taking precedence over build.
+        * Scripts/webkitpy/common/version_unittest.py: Added.
+        (VersionTestCase): Test behavior of Version object.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.default_baseline_search_path): ios_version now returns a Version object.
+        (IOSPort._is_valid_ios_version): Deleted.
+        (IOSPort.get_option): Deleted.
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort.determine_full_port_name): Use Version object instead of owning parsing.
+        (IOSDevicePort.ios_version): Return Version object instead of string.
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort.simulator_runtime): Use from_version instead of from_version_string.
+        (IOSSimulatorPort.ios_version): Return Version object instead of string.
+        (IOSSimulatorPort.use_multiple_simulator_apps): Use Version object instead of string.
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Runtime.from_version): Accept Version object instead of string.
+        (Runtime.from_version_string): Replaced by from_version.
+        (Runtime.__repr__): When printing, a runtime's version will be a Version object instead
+        of a tuple.
+        (Simulator._parse_runtimes): Use Version object instead of tuple.
+        (Simulator._parse_devices): Ditto.
+        * Scripts/webkitpy/xcode/simulator_unittest.py: Use Version object instead of tuples.
+
 2017-11-09  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [WinCairo] Cannot find ImageDiff executable

@@ -24,6 +24,7 @@ import logging
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.crashlogs import CrashLogs
+from webkitpy.common.version import Version
 from webkitpy.port.config import apple_additions
 from webkitpy.port.ios import IOSPort
 
@@ -64,8 +65,7 @@ class IOSDevicePort(IOSPort):
             iphoneos_sdk_version = host.platform.xcode_sdk_version(cls.SDK)
             if not iphoneos_sdk_version:
                 raise Exception("Please install the iOS SDK.")
-            major_version_number = iphoneos_sdk_version.split('.')[0]
-            port_name = port_name + '-' + major_version_number
+            port_name = port_name + '-' + str(iphoneos_sdk_version.major)
         return port_name
 
     def path_to_crash_logs(self):
@@ -94,7 +94,7 @@ class IOSDevicePort(IOSPort):
     @memoized
     def ios_version(self):
         if self.get_option('version'):
-            return self.get_option('version')
+            return Version(self.get_option('version'))
 
         if not apple_additions():
             raise RuntimeError(self.NO_ON_DEVICE_TESTING)
@@ -109,7 +109,7 @@ class IOSDevicePort(IOSPort):
                 if device.platform.os_version != version:
                     raise RuntimeError('Multiple connected devices have different iOS versions')
 
-        return version
+        return Version(version)
 
     # FIXME: These need device implementations <rdar://problem/30497991>.
     def check_for_leaks(self, process_name, process_pid):

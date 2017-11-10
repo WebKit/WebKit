@@ -30,6 +30,7 @@ import time
 
 from webkitpy.common.timeout_context import Timeout
 from webkitpy.common.host import Host
+from webkitpy.common.version import Version
 
 _log = logging.getLogger(__name__)
 
@@ -129,8 +130,8 @@ class Runtime(object):
         self.is_internal_runtime = is_internal_runtime
 
     @classmethod
-    def from_version_string(cls, version):
-        return cls.from_identifier('com.apple.CoreSimulator.SimRuntime.iOS-' + version.replace('.', '-'))
+    def from_version(cls, version):
+        return cls.from_identifier('com.apple.CoreSimulator.SimRuntime.iOS-' + '{}-{}'.format(version[0], version[1]))
 
     @classmethod
     def from_identifier(cls, identifier):
@@ -156,7 +157,7 @@ class Runtime(object):
         if self.is_internal_runtime:
             version_suffix = " Internal"
         return '<Runtime {version}: {identifier}. Available: {available}, {num_devices} devices>'.format(
-            version='.'.join(map(str, self.version)) + version_suffix,
+            version=str(self.version) + version_suffix,
             identifier=self.identifier,
             available=self.available,
             num_devices=len(self.devices))
@@ -334,8 +335,7 @@ class Simulator(object):
                 if line != '== Devices ==':
                     raise RuntimeError('Expected == Devices == header but got: "{}"'.format(line))
                 break
-            version = tuple(map(int, runtime_match.group('version').split('.')))
-            runtime = Runtime(version=version,
+            runtime = Runtime(version=Version(runtime_match.group('version')),
                               identifier=runtime_match.group('identifier'),
                               available=runtime_match.group('availability') is None,
                               is_internal_runtime=bool(runtime_match.group('internal')))
@@ -353,8 +353,7 @@ class Simulator(object):
         for line in lines:
             version_match = self.version_re.match(line)
             if version_match:
-                version = tuple(map(int, version_match.group('version').split('.')))
-                current_runtime = self.runtime(version=version, is_internal_runtime=bool(version_match.group('internal')))
+                current_runtime = self.runtime(version=Version(version_match.group('version')), is_internal_runtime=bool(version_match.group('internal')))
                 assert current_runtime
                 continue
 

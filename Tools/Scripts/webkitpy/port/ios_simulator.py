@@ -30,6 +30,7 @@ import time
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.version import Version
 from webkitpy.port.device import Device
 from webkitpy.port.ios import IOSPort
 from webkitpy.xcode.simulator import Simulator, Runtime, DeviceType
@@ -102,16 +103,16 @@ class IOSSimulatorPort(IOSPort):
         if runtime_identifier:
             runtime = Runtime.from_identifier(runtime_identifier)
         elif self.get_option('version'):
-            runtime = Runtime.from_version_string(self.get_option('version'))
+            runtime = Runtime.from_version(Version(self.get_option('version')))
         else:
-            runtime = Runtime.from_version_string(self.host.platform.xcode_sdk_version('iphonesimulator'))
+            runtime = Runtime.from_version(self.host.platform.xcode_sdk_version('iphonesimulator'))
         return runtime
 
     @memoized
     def ios_version(self):
         runtime_identifier = self.get_option('runtime')
         if self.get_option('version'):
-            return self.get_option('version')
+            return Version(self.get_option('version'))
         if runtime_identifier:
             return '.'.join(str(i) for i in Runtime.from_identifier(runtime_identifier).version)
         return self.host.platform.xcode_sdk_version('iphonesimulator')
@@ -187,7 +188,7 @@ class IOSSimulatorPort(IOSPort):
                 _log.warning('Unable to remove Simulator' + str(i))
 
     def use_multiple_simulator_apps(self):
-        return int(self.host.platform.xcode_version().split('.')[0]) < 9
+        return int(self.host.platform.xcode_version().major) < 9
 
     def _create_simulators(self):
         if (self.default_child_processes() < self.child_processes()):

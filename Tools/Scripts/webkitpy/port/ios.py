@@ -24,6 +24,7 @@ import logging
 import traceback
 
 from webkitpy.common.memoized import memoized
+from webkitpy.common.version import Version
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.config import apple_additions
 from webkitpy.port.darwin import DarwinPort
@@ -109,11 +110,11 @@ class IOSPort(DarwinPort):
         if self.get_option('webkit_test_runner'):
             wk_string = 'wk2'
         fallback_names = [
-            '{}-{}-{}'.format(self.port_name, self.ios_version().split('.')[0], wk_string),
-            '{}-{}'.format(self.port_name, self.ios_version().split('.')[0]),
+            '{}-{}-{}'.format(self.port_name, self.ios_version().major, wk_string),
+            '{}-{}'.format(self.port_name, self.ios_version().major),
             '{}-{}'.format(self.port_name, wk_string),
             self.port_name,
-            '{}-{}'.format(IOSPort.port_name, self.ios_version().split('.')[0]),
+            '{}-{}'.format(IOSPort.port_name, self.ios_version().major),
             '{}-{}'.format(IOSPort.port_name, wk_string),
             IOSPort.port_name,
         ]
@@ -133,22 +134,6 @@ class IOSPort(DarwinPort):
 
     def test_expectations_file_position(self):
         return 4
-
-    @staticmethod
-    def _is_valid_ios_version(version_identifier):
-        # Examples of valid versions: '11', '10.3', '10.3.1'
-        if not version_identifier:
-            return False
-        split_by_period = version_identifier.split('.')
-        if len(split_by_period) > 3:
-            return False
-        return all(part.isdigit() for part in split_by_period)
-
-    def get_option(self, name, default_value=None):
-        result = super(IOSPort, self).get_option(name, default_value)
-        if name == 'version' and result and not IOSPort._is_valid_ios_version(result):
-            raise RuntimeError('{} is an invalid iOS version'.format(result))
-        return result
 
     def ios_version(self):
         raise NotImplementedError
