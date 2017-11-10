@@ -1,3 +1,19 @@
+2017-11-10  Megan Gardner  <megan_gardner@apple.com>
+
+        Rebase some layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=179519
+
+        Reviewed by Alex Christensen and Tim Horton.
+
+        In helping with cleaning up tests, rebase tests that have only been effected by font changes
+        and other similarly irrelevant changes. Also turning back on a few tests that actually do work
+        now. 
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/editing/selection/3690703-2-expected.txt:
+        * platform/ios/editing/selection/3690703-expected.txt:
+        * platform/ios/editing/selection/3690719-expected.txt:
+
 2017-11-10  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Implement getAnimations()

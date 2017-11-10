@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
                     RenderText {#text} at (682,0) size 102x15
                       text run at (682,0) width 102: "Personalized Home"
             RenderTableRow {TR} at (0,16) size 784x4
-              RenderTableCell {TD} at (0,17) size 784x1 [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,17) size 784x2 [r=1 c=0 rs=1 cs=1]
                 RenderImage {IMG} at (0,0) size 1x1
         RenderBlock (anonymous) at (0,20) size 784x40
           RenderBR {BR} at (392,0) size 0x19
@@ -75,23 +75,23 @@ layer at (0,0) size 800x600
                         RenderText {#text} at (311,4) size 39x15
                           text run at (311,4) width 39: "more \x{BB}"
           RenderTable {TABLE} at (38,26) size 708x49
-            RenderTableSection {TBODY} at (0,0) size 708x49
-              RenderTableRow {TR} at (0,0) size 708x49
-                RenderTableCell {TD} at (0,14) size 177x20 [r=0 c=0 rs=1 cs=1]
-                  RenderText {#text} at (0,0) size 4x19
-                    text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (177,0) size 354x49 [r=0 c=1 rs=1 cs=1]
+            RenderTableSection {TBODY} at (0,0) size 707x49
+              RenderTableRow {TR} at (0,0) size 707x49
+                RenderTableCell {TD} at (0,14) size 177x21 [r=0 c=0 rs=1 cs=1]
+                  RenderText {#text} at (0,0) size 4x20
+                    text run at (0,1) width 4: " "
+                RenderTableCell {TD} at (176,0) size 355x49 [r=0 c=1 rs=1 cs=1]
                   RenderTextControl {INPUT} at (2,2) size 350x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
                   RenderBR {BR} at (353,16) size 1x0
-                  RenderButton {INPUT} at (71,27) size 99x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+                  RenderButton {INPUT} at (71,27) size 98x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                     RenderBlock (anonymous) at (12,3) size 74x14
                       RenderText at (0,0) size 74x14
                         text run at (0,0) width 74: "Google Search"
-                  RenderButton {INPUT} at (173,27) size 110x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+                  RenderButton {INPUT} at (172,27) size 111x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                     RenderBlock (anonymous) at (12,3) size 86x14
                       RenderText at (0,0) size 86x14
                         text run at (0,0) width 86: "I'm Feeling Lucky"
-                RenderTableCell {TD} at (531,0) size 177x39 [r=0 c=2 rs=1 cs=1]
+                RenderTableCell {TD} at (530,0) size 177x39 [r=0 c=2 rs=1 cs=1]
                   RenderInline {FONT} at (0,0) size 76x38
                     RenderText {#text} at (0,0) size 5x12
                       text run at (0,0) width 5: "  "
