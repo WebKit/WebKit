@@ -1,5 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS foreign fetch registration 
+FAIL Untitled TypeError: null is not an object (evaluating 'registration.scope')
 

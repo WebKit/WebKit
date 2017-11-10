@@ -1,3 +1,12 @@
+2017-11-09  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline flaky / skipped service worker tests
+        https://bugs.webkit.org/show_bug.cgi?id=179521
+
+        Unskip a test that is no longer timing out.
+
+        * TestExpectations:
+
 2017-11-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Retry module fetching if previous request fails

@@ -4,10 +4,10 @@ CONSOLE MESSAGE: line 19: Unhandled Promise Rejection: NotSupportedError: Passin
 
 Harness Error (FAIL), message = Passing MessagePort objects to postMessage is not yet supported
 
-FAIL Test install event waitUntil fulfilled assert_unreached: unexpected rejection: assert_true: state should be "installed" after the waitUntil promise for "oninstall" is fulfilled. expected true got undefined Reached unreachable code
-FAIL Test ExtendableEvent multiple waitUntil fulfilled. assert_unreached: unexpected rejection: assert_true: state should be "installed" after all waitUntil promises for "oninstall" are fulfilled. expected true got undefined Reached unreachable code
+TIMEOUT Test install event waitUntil fulfilled Test timed out
+TIMEOUT Test ExtendableEvent multiple waitUntil fulfilled. Test timed out
 TIMEOUT Test ExtendableEvent waitUntil reject precedence. Test timed out
 FAIL Test activate event waitUntil fulfilled assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
-TIMEOUT Test install event waitUntil rejected Test timed out
+PASS Test install event waitUntil rejected 
 PASS Test activate event waitUntil rejected. 
 

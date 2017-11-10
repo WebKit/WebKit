@@ -166,7 +166,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/postmessage.https
 imported/w3c/web-platform-tests/service-workers/service-worker/register-foreign-fetch-errors.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/registration-service-worker-attributes.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-without-client.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/unregister-then-register-new-script.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-navigation-fetch-event.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-oneday.https.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/abort/general-serviceworker.https.html [ Skip ]

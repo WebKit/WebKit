@@ -9,6 +9,8 @@ CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/service-workers/se
 CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/foreign-fetch/scope/origin-list/intercept/foo?basic. Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/simple.txt?fallback. Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/foreign-fetch/scope/controlled?basic. Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
@@ -20,11 +22,11 @@ FAIL Service Worker intercepts fetches in scope with wildcard origin. promise_te
 FAIL Service Worker intercepts fetches in scope with explicit origin. promise_test: Unhandled rejection with value: object "TypeError: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin."
 PASS Service Worker doesn't intercept fetches with non matching origin. 
 FAIL Service Worker intercepts fetches in scope with explicit origin list. promise_test: Unhandled rejection with value: object "TypeError: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin."
-FAIL Service Worker does not intercept same origin fetches. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Service Worker does not intercept same origin fetches. 
 PASS Service Worker does not intercept navigations. 
-FAIL Service Worker that fallback to network should fallback to network. promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Service Worker that fetch from the network should fallback to network. promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Falling back to network should still respect CORS. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Service Worker that fallback to network should fallback to network. 
+PASS Service Worker that fetch from the network should fallback to network. 
+PASS Falling back to network should still respect CORS. 
 FAIL Foreign fetch can intercept fetch requests from SW controlled pages. promise_test: Unhandled rejection with value: object "TypeError: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin."
 TIMEOUT Foreign fetch can intercept resource requests from SW controlled pages. Test timed out
 NOTRUN Referrer and origin are set correctly in ForeignFetchEvent. 

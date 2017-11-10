@@ -1,5 +1,25 @@
 2017-11-09  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, ebaseline flaky / skipped service worker tests
+        https://bugs.webkit.org/show_bug.cgi?id=179521
+
+        Rebaseline skipped / flaky service worker tests to get better estimates of our pass rate.
+
+        * web-platform-tests/service-workers/service-worker/extendable-event-waituntil.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/foreign-fetch-basics.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/performance-timeline.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/register-foreign-fetch-errors.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-updateviacache.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister-controller.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister-then-register-new-script.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update-bytecheck.https-expected.txt:
+
+2017-11-09  Chris Dumez  <cdumez@apple.com>
+
         Implement real post 'install' event steps of the Install algorithm (steps 14+)
         https://bugs.webkit.org/show_bug.cgi?id=179401
 

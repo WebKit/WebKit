@@ -2,5 +2,5 @@
 
 FAIL Verify redirect mode of Fetch API and ServiceWorker FetchEvent. promise_test: Unhandled rejection with value: object "Error: Loading redirected image with Request.redirect=follow should succeed. - undefined"
 FAIL Verify redirected of Response(Fetch API) and ServiceWorker FetchEvent. promise_test: Unhandled rejection with value: object "Error: Redirected XHR should be reject and response should be redirected with NO-CORS mode and redirect-mode=manual."
-FAIL Verify redirected of Response(Fetch API), Cache API and ServiceWorker FetchEvent. promise_test: Unhandled rejection with value: object "Error: Redirected XHR should be reject and response should be redirected with NO-CORS mode and redirect-mode=manual."
+FAIL Verify redirected of Response(Fetch API), Cache API and ServiceWorker FetchEvent. promise_test: Unhandled rejection with value: object "Error: Redirected COS image should be reject and response should not be redirected with NO-CORS mode. - undefined"
 

@@ -1,10 +1,10 @@
 
-FAIL Test(cors: false, main: default, imported: default) promise_test: Unhandled rejection with value: object "NotSupportedError: ServiceWorkerRegistration::update not yet implemented"
-FAIL Test(cors: false, main: default, imported: time) promise_test: Unhandled rejection with value: object "NotSupportedError: ServiceWorkerRegistration::update not yet implemented"
-FAIL Test(cors: false, main: time, imported: default) promise_test: Unhandled rejection with value: object "NotSupportedError: ServiceWorkerRegistration::update not yet implemented"
-FAIL Test(cors: false, main: time, imported: time) promise_test: Unhandled rejection with value: object "NotSupportedError: ServiceWorkerRegistration::update not yet implemented"
-FAIL Test(cors: true, main: default, imported: default) promise_test: Unhandled rejection with value: object "NotSupportedError: ServiceWorkerRegistration::update not yet implemented"
-FAIL Test(cors: true, main: default, imported: time) promise_test: Unhandled rejection with value: object "NotSupportedError: ServiceWorkerRegistration::update not yet implemented"
-FAIL Test(cors: true, main: time, imported: default) promise_test: Unhandled rejection with value: object "NotSupportedError: ServiceWorkerRegistration::update not yet implemented"
-FAIL Test(cors: true, main: time, imported: time) promise_test: Unhandled rejection with value: object "NotSupportedError: ServiceWorkerRegistration::update not yet implemented"
+FAIL Test(cors: false, main: default, imported: default) assert_array_equals: property 2, expected null but got object "[object ServiceWorker]"
+FAIL Test(cors: false, main: default, imported: time) promise_test: Unhandled rejection with value: object "TypeError: Cannot update a service worker with a requested script URL whose newest worker has a different script URL"
+FAIL Test(cors: false, main: time, imported: default) promise_test: Unhandled rejection with value: object "TypeError: Cannot update a service worker with a requested script URL whose newest worker has a different script URL"
+FAIL Test(cors: false, main: time, imported: time) promise_test: Unhandled rejection with value: object "TypeError: Cannot update a service worker with a requested script URL whose newest worker has a different script URL"
+FAIL Test(cors: true, main: default, imported: default) promise_test: Unhandled rejection with value: object "TypeError: Cannot update a service worker with a requested script URL whose newest worker has a different script URL"
+FAIL Test(cors: true, main: default, imported: time) promise_test: Unhandled rejection with value: object "TypeError: Cannot update a service worker with a requested script URL whose newest worker has a different script URL"
+FAIL Test(cors: true, main: time, imported: default) promise_test: Unhandled rejection with value: object "TypeError: Cannot update a service worker with a requested script URL whose newest worker has a different script URL"
+FAIL Test(cors: true, main: time, imported: time) promise_test: Unhandled rejection with value: object "TypeError: Cannot update a service worker with a requested script URL whose newest worker has a different script URL"
 
