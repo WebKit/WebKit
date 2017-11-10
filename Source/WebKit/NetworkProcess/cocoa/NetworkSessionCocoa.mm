@@ -165,6 +165,46 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
     completionHandler(WebCore::createHTTPBodyNSInputStream(*body).get());
 }
 
+#if USE(CFNETWORK_IGNORE_HSTS)
+static NSURLRequest* downgradeRequest(NSURLRequest *request)
+{
+    NSMutableURLRequest *nsMutableRequest = [[request mutableCopy] autorelease];
+    if ([nsMutableRequest.URL.scheme isEqualToString:@"https"]) {
+        NSURLComponents *components = [[NSURLComponents componentsWithURL:nsMutableRequest.URL resolvingAgainstBaseURL:NO] autorelease];
+        components.scheme = @"http";
+        [nsMutableRequest setURL:components.URL];
+        ASSERT([nsMutableRequest.URL.scheme isEqualToString:@"http"]);
+        return nsMutableRequest;
+    }
+
+    ASSERT_NOT_REACHED();
+    return request;
+}
+#endif
+
+static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURLRequest *request, bool shouldIgnoreHSTS)
+{
+#if USE(CFNETWORK_IGNORE_HSTS)
+    if ([request.URL.scheme isEqualToString:@"https"] && shouldIgnoreHSTS && ignoreHSTS(request)) {
+        // The request was upgraded for some other reason than HSTS.
+        // Don't ignore HSTS to avoid the risk of another downgrade.
+        NSMutableURLRequest *nsMutableRequest = [[request mutableCopy] autorelease];
+        setIgnoreHSTS(nsMutableRequest, false);
+        return nsMutableRequest;
+    }
+    
+    if ([request.URL.scheme isEqualToString:@"http"] && ignoreHSTS(request) != shouldIgnoreHSTS) {
+        NSMutableURLRequest *nsMutableRequest = [[request mutableCopy] autorelease];
+        setIgnoreHSTS(nsMutableRequest, shouldIgnoreHSTS);
+        return nsMutableRequest;
+    }
+#else
+    UNUSED_PARAM(shouldIgnoreHSTS);
+#endif
+
+    return request;
+}
+
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest *))completionHandler
 {
     auto taskIdentifier = task.taskIdentifier;
@@ -172,13 +212,26 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
 
     if (auto* networkDataTask = [self existingTask:task]) {
         auto completionHandlerCopy = Block_copy(completionHandler);
-        networkDataTask->willPerformHTTPRedirection(response, request, [completionHandlerCopy, taskIdentifier](auto&& request) {
+
+        bool shouldIgnoreHSTS = false;
+#if USE(CFNETWORK_IGNORE_HSTS)
+        shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request) && !(WebCore::NetworkStorageSession::storageSession(_session->sessionID())->cookieStoragePartition(request)).isEmpty();
+        if (shouldIgnoreHSTS) {
+            request = downgradeRequest(request);
+            ASSERT([request.URL.scheme isEqualToString:@"http"]);
+            LOG(NetworkSession, "%llu Downgraded %s from https to http", taskIdentifier, request.URL.absoluteString.UTF8String);
+        }
+#endif
+
+        networkDataTask->willPerformHTTPRedirection(response, request, [completionHandlerCopy, taskIdentifier, shouldIgnoreHSTS](auto&& request) {
 #if !LOG_DISABLED
             LOG(NetworkSession, "%llu willPerformHTTPRedirection completionHandler (%s)", taskIdentifier, request.url().string().utf8().data());
 #else
             UNUSED_PARAM(taskIdentifier);
 #endif
-            completionHandlerCopy(request.nsURLRequest(WebCore::UpdateHTTPBody));
+            auto nsRequest = request.nsURLRequest(WebCore::UpdateHTTPBody);
+            nsRequest = updateIgnoreStrictTransportSecuritySettingIfNecessary(nsRequest, shouldIgnoreHSTS);
+            completionHandlerCopy(nsRequest);
             Block_release(completionHandlerCopy);
         });
     } else {
@@ -191,16 +244,28 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
 {
     auto taskIdentifier = task.taskIdentifier;
     LOG(NetworkSession, "%llu _schemeUpgraded %s", taskIdentifier, request.URL.absoluteString.UTF8String);
-    
+
+    bool shouldIgnoreHSTS = false;
+#if USE(CFNETWORK_IGNORE_HSTS)
+    shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request) && !(WebCore::NetworkStorageSession::storageSession(_session->sessionID())->cookieStoragePartition(request)).isEmpty();
+    if (shouldIgnoreHSTS) {
+        request = downgradeRequest(request);
+        ASSERT([request.URL.scheme isEqualToString:@"http"]);
+        LOG(NetworkSession, "%llu Downgraded %s from https to http", taskIdentifier, request.URL.absoluteString.UTF8String);
+    }
+#endif
+
     if (auto* networkDataTask = [self existingTask:task]) {
         auto completionHandlerCopy = Block_copy(completionHandler);
-        networkDataTask->willPerformHTTPRedirection(WebCore::synthesizeRedirectResponseIfNecessary([task currentRequest], request, nil), request, [completionHandlerCopy, taskIdentifier](auto&& request) {
+        networkDataTask->willPerformHTTPRedirection(WebCore::synthesizeRedirectResponseIfNecessary([task currentRequest], request, nil), request, [completionHandlerCopy, taskIdentifier, shouldIgnoreHSTS](auto&& request) {
 #if !LOG_DISABLED
             LOG(NetworkSession, "%llu _schemeUpgraded completionHandler (%s)", taskIdentifier, request.url().string().utf8().data());
 #else
             UNUSED_PARAM(taskIdentifier);
 #endif
-            completionHandlerCopy(request.nsURLRequest(WebCore::UpdateHTTPBody));
+            auto nsRequest = request.nsURLRequest(WebCore::UpdateHTTPBody);
+            nsRequest = updateIgnoreStrictTransportSecuritySettingIfNecessary(nsRequest, shouldIgnoreHSTS);
+            completionHandlerCopy(nsRequest);
             Block_release(completionHandlerCopy);
         });
     } else {

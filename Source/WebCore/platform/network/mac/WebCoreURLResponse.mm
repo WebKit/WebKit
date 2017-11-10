@@ -31,6 +31,7 @@
 
 #import "MIMETypeRegistry.h"
 #import "UTIUtilities.h"
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
 
@@ -332,7 +333,7 @@ NSURLResponse *synthesizeRedirectResponseIfNecessary(NSURLRequest *currentReques
     if (redirectResponse)
         return redirectResponse;
 
-    if ([[[newRequest URL] scheme] isEqualToString:[[currentRequest URL] scheme]])
+    if ([[[newRequest URL] scheme] isEqualToString:[[currentRequest URL] scheme]] && !schemeWasUpgradedDueToDynamicHSTS(newRequest))
         return nil;
 
     // If the new request is a different protocol than the current request, synthesize a redirect response.
