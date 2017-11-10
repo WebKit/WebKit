@@ -29,6 +29,7 @@
 
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerRegistrationKey.h"
+#include "ServiceWorkerTypes.h"
 
 namespace WebCore {
 
@@ -36,7 +37,7 @@ enum class ServiceWorkerUpdateViaCache;
 
 struct ServiceWorkerRegistrationData {
     ServiceWorkerRegistrationKey key;
-    uint64_t identifier;
+    ServiceWorkerRegistrationIdentifier identifier;
     URL scopeURL;
     URL scriptURL;
     ServiceWorkerUpdateViaCache updateViaCache;
@@ -66,7 +67,7 @@ std::optional<ServiceWorkerRegistrationData> ServiceWorkerRegistrationData::deco
     if (!key)
         return std::nullopt;
     
-    std::optional<uint64_t> identifier;
+    std::optional<ServiceWorkerRegistrationIdentifier> identifier;
     decoder >> identifier;
     if (!identifier)
         return std::nullopt;

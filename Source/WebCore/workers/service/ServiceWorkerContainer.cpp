@@ -230,7 +230,7 @@ void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<Deferr
             return;
         }
 
-        RefPtr<ServiceWorkerRegistration> registration = m_registrations.get(result->key);
+        RefPtr<ServiceWorkerRegistration> registration = m_registrations.get(result->identifier);
         if (!registration) {
             auto& context = *scriptExecutionContext();
             // FIXME: We should probably not be constructing ServiceWorkerRegistration objects here. Instead, we should make
@@ -241,14 +241,14 @@ void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<Deferr
     });
 }
 
-void ServiceWorkerContainer::scheduleTaskToUpdateRegistrationState(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerIdentifier>& serviceWorkerIdentifier)
+void ServiceWorkerContainer::scheduleTaskToUpdateRegistrationState(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerIdentifier>& serviceWorkerIdentifier)
 {
     auto* context = scriptExecutionContext();
     if (!context)
         return;
 
-    context->postTask([this, protectedThis = makeRef(*this), key, state, serviceWorkerIdentifier](ScriptExecutionContext&) {
-        if (auto* registration = m_registrations.get(key))
+    context->postTask([this, protectedThis = makeRef(*this), identifier, state, serviceWorkerIdentifier](ScriptExecutionContext&) {
+        if (auto* registration = m_registrations.get(identifier))
             registration->updateStateFromServer(state, serviceWorkerIdentifier);
     });
 }
@@ -273,16 +273,16 @@ void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const
     jobDidFinish(job);
 }
 
-void ServiceWorkerContainer::scheduleTaskToFireUpdateFoundEvent(const ServiceWorkerRegistrationKey& key)
+void ServiceWorkerContainer::scheduleTaskToFireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier identifier)
 {
     if (isStopped())
         return;
 
-    scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this), key](ScriptExecutionContext&) {
+    scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this), identifier](ScriptExecutionContext&) {
         if (isStopped())
             return;
 
-        if (auto* registration = m_registrations.get(key))
+        if (auto* registration = m_registrations.get(identifier))
             registration->dispatchEvent(Event::create(eventNames().updatefoundEvent, false, false));
     });
 }
@@ -301,7 +301,7 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
     }
 
     context->postTask([this, protectedThis = makeRef(*this), job = makeRef(job), data = WTFMove(data), promiseResolvedHandler = WTFMove(promiseResolvedHandler)](ScriptExecutionContext& context) mutable {
-        RefPtr<ServiceWorkerRegistration> registration = m_registrations.get(data.key);
+        RefPtr<ServiceWorkerRegistration> registration = m_registrations.get(data.identifier);
         if (!registration)
             registration = ServiceWorkerRegistration::create(context, *this, WTFMove(data));
 
@@ -395,13 +395,13 @@ bool ServiceWorkerContainer::canSuspendForDocumentSuspension() const
 void ServiceWorkerContainer::addRegistration(ServiceWorkerRegistration& registration)
 {
     m_swConnection->addServiceWorkerRegistrationInServer(registration.data().key, registration.identifier());
-    m_registrations.add(registration.data().key, &registration);
+    m_registrations.add(registration.identifier(), &registration);
 }
 
 void ServiceWorkerContainer::removeRegistration(ServiceWorkerRegistration& registration)
 {
     m_swConnection->removeServiceWorkerRegistrationInServer(registration.data().key, registration.identifier());
-    m_registrations.remove(registration.data().key);
+    m_registrations.remove(registration.identifier());
 }
 
 } // namespace WebCore

@@ -187,7 +187,7 @@ def forward_declarations_and_headers(receiver):
         kind = parameter.kind
         type = parameter.type
 
-        if type.find('<') != -1 or type == "WebCore::ServiceWorkerIdentifier":
+        if type.find('<') != -1 or type == "WebCore::ServiceWorkerIdentifier" or type == "WebCore::ServiceWorkerRegistrationIdentifier":
             # Don't forward declare class templates or ServiceWorkerIdentifier.
             headers.update(headers_for_type(type))
             continue
@@ -372,6 +372,7 @@ def headers_for_type(type):
         'WebCore::PluginInfo': ['<WebCore/PluginData.h>'],
         'WebCore::PolicyAction': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::RecentSearch': ['<WebCore/SearchPopupMenu.h>'],
+        'WebCore::ServiceWorkerRegistrationIdentifier': ['<WebCore/ServiceWorkerTypes.h>'],
         'WebCore::ServiceWorkerRegistrationState': ['<WebCore/ServiceWorkerTypes.h>'],
         'WebCore::ServiceWorkerState': ['<WebCore/ServiceWorkerTypes.h>'],
         'WebCore::ShippingContactUpdate': ['<WebCore/ApplePaySessionPaymentRequest.h>'],

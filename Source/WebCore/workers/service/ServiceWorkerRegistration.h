@@ -32,7 +32,6 @@
 #include "JSDOMPromiseDeferred.h"
 #include "SWClientConnection.h"
 #include "ServiceWorkerRegistrationData.h"
-#include <wtf/Identified.h>
 
 namespace WebCore {
 
@@ -40,7 +39,7 @@ class ScriptExecutionContext;
 class ServiceWorker;
 class ServiceWorkerContainer;
 
-class ServiceWorkerRegistration final : public RefCounted<ServiceWorkerRegistration>, public EventTargetWithInlineData, public ActiveDOMObject, public ThreadSafeIdentified<ServiceWorkerRegistration> {
+class ServiceWorkerRegistration final : public RefCounted<ServiceWorkerRegistration>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
     template <typename... Args> static Ref<ServiceWorkerRegistration> create(Args&&... args)
     {
@@ -48,6 +47,8 @@ public:
     }
 
     ~ServiceWorkerRegistration();
+
+    ServiceWorkerRegistrationIdentifier identifier() const { return m_registrationData.identifier; }
 
     ServiceWorker* installing();
     ServiceWorker* waiting();

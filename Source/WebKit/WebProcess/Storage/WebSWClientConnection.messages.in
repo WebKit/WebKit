@@ -28,9 +28,9 @@ messages -> WebSWClientConnection {
     RegistrationJobResolvedInServer(uint64_t identifier, struct WebCore::ServiceWorkerRegistrationData registration, enum WebCore::ShouldNotifyWhenResolved shouldNotifyWhenResolved)
     UnregistrationJobResolvedInServer(uint64_t identifier, bool unregistrationResult)
     StartScriptFetchForServer(uint64_t jobIdentifier)
-    UpdateRegistrationState(WebCore::ServiceWorkerRegistrationKey key, enum WebCore::ServiceWorkerRegistrationState state, std::optional<WebCore::ServiceWorkerIdentifier> serviceWorkerIdentifier)
+    UpdateRegistrationState(WebCore::ServiceWorkerRegistrationIdentifier identifier, enum WebCore::ServiceWorkerRegistrationState state, std::optional<WebCore::ServiceWorkerIdentifier> serviceWorkerIdentifier)
     UpdateWorkerState(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, enum WebCore::ServiceWorkerState state)
-    FireUpdateFoundEvent(WebCore::ServiceWorkerRegistrationKey key)
+    FireUpdateFoundEvent(WebCore::ServiceWorkerRegistrationIdentifier identifier)
 
     SetSWOriginTableSharedMemory(WebKit::SharedMemory::Handle handle)
     PostMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, IPC::DataReference message, WebCore::ServiceWorkerIdentifier sourceServiceWorkerIdentifier, String sourceOrigin)

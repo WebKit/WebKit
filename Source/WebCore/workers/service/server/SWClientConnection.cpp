@@ -152,10 +152,10 @@ void SWClientConnection::forEachContainer(const WTF::Function<void(ServiceWorker
     }
 }
 
-void SWClientConnection::updateRegistrationState(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationState state, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier)
+void SWClientConnection::updateRegistrationState(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerRegistrationState state, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier)
 {
     forEachContainer([&](ServiceWorkerContainer& container) {
-        container.scheduleTaskToUpdateRegistrationState(key, state, serviceWorkerIdentifier);
+        container.scheduleTaskToUpdateRegistrationState(identifier, state, serviceWorkerIdentifier);
     });
 }
 
@@ -165,10 +165,10 @@ void SWClientConnection::updateWorkerState(ServiceWorkerIdentifier identifier, S
         worker->scheduleTaskToUpdateState(state);
 }
 
-void SWClientConnection::fireUpdateFoundEvent(const ServiceWorkerRegistrationKey& key)
+void SWClientConnection::fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier identifier)
 {
     forEachContainer([&](ServiceWorkerContainer& container) {
-        container.scheduleTaskToFireUpdateFoundEvent(key);
+        container.scheduleTaskToFireUpdateFoundEvent(identifier);
     });
 }
 

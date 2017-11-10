@@ -27,6 +27,8 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include <wtf/ObjectIdentifier.h>
+
 namespace WebCore {
 
 enum class ServiceWorkerRegistrationState {
@@ -44,6 +46,9 @@ enum class ServiceWorkerState {
 };
 
 enum class ShouldNotifyWhenResolved { No, Yes };
+
+enum ServiceWorkerRegistrationIdentifierType { };
+using ServiceWorkerRegistrationIdentifier = ObjectIdentifier<ServiceWorkerRegistrationIdentifierType>;
 
 } // namespace WebCore
 

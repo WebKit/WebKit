@@ -1,0 +1,56 @@
+<html>
+<head>
+<script src="resources/sw-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+async function test()
+{
+    try {
+         let registration1 = await navigator.serviceWorker.register("resources/empty.js", { });
+         await waitForState(registration1.installing, "activated");
+         if (registration1.installing)
+             log("FAIL: registration1 should not have an installing worker");
+         else
+             log("PASS: registration1 should not have an installing worker");
+
+         if (registration1.waiting)
+             log("FAIL: registration1 should not have a waiting worker");
+         else
+             log("PASS: registration1 should not have a waiting worker");
+
+         if (registration1.active)
+             log("PASS: registration1 should have an active worker");
+         else
+             log("FAIL: registration1 should have an active worker");
+
+         await registration1.unregister();
+
+         let registration2 = await navigator.serviceWorker.register("resources/empty.js", { });
+         if (registration2.installing)
+             log("PASS: registration2 should have an installing worker");
+         else
+             log("FAIL: registration2 should have an installing worker");
+
+         if (registration2.waiting)
+             log("FAIL: registration2 should not have a waiting worker");
+         else
+             log("PASS: registration2 should not have a waiting worker");
+
+         if (registration2.active)
+             log("FAIL: registration2 should not have an active worker");
+         else
+             log("PASS: registration2 should not have an active worker");
+
+    } catch (e) {
+        log("FAIL: Got exception " + e);
+    }
+
+    finishSWTest();
+}
+
+test();
+</script>
+</body>
+</html>

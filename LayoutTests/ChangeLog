@@ -1,5 +1,17 @@
 2017-11-09  Chris Dumez  <cdumez@apple.com>
 
+        ServiceWorkerRegistration objects may get recycled for different SWServerRegistration objects
+        https://bugs.webkit.org/show_bug.cgi?id=179517
+
+        Reviewed by Brady Eidson.
+
+        Add layout test coverage.
+
+        * http/tests/workers/service/basic-unregister-then-register-again-no-reuse-expected.txt: Added.
+        * http/tests/workers/service/basic-unregister-then-register-again-no-reuse.html: Added.
+
+2017-11-09  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rebaseline flaky / skipped service worker tests
         https://bugs.webkit.org/show_bug.cgi?id=179521
 

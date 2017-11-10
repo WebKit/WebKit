@@ -1,3 +1,23 @@
+2017-11-09  Chris Dumez  <cdumez@apple.com>
+
+        ServiceWorkerRegistration objects may get recycled for different SWServerRegistration objects
+        https://bugs.webkit.org/show_bug.cgi?id=179517
+
+        Reviewed by Brady Eidson.
+
+        * Scripts/webkit/messages.py:
+        (forward_declarations_and_headers):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::updateRegistrationStateInClient):
+        (WebKit::WebSWServerConnection::fireUpdateFoundEvent):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::addServiceWorkerRegistrationInServer):
+        (WebKit::WebSWClientConnection::removeServiceWorkerRegistrationInServer):
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+
 2017-11-09  John Wilander  <wilander@apple.com>
 
         Ignore HSTS for partitioned, cross-origin subresource requests

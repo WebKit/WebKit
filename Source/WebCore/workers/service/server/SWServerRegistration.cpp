@@ -35,8 +35,15 @@
 
 namespace WebCore {
 
+static ServiceWorkerRegistrationIdentifier generateServiceWorkerRegistrationIdentifier()
+{
+    static uint64_t identifier = 0;
+    return makeObjectIdentifier<ServiceWorkerRegistrationIdentifierType>(++identifier);
+}
+
 SWServerRegistration::SWServerRegistration(SWServer& server, const ServiceWorkerRegistrationKey& key, ServiceWorkerUpdateViaCache updateViaCache, const URL& scopeURL, const URL& scriptURL)
-    : m_registrationKey(key)
+    : m_identifier(generateServiceWorkerRegistrationIdentifier())
+    , m_registrationKey(key)
     , m_updateViaCache(updateViaCache)
     , m_scopeURL(scopeURL)
     , m_scriptURL(scriptURL)
@@ -80,7 +87,7 @@ void SWServerRegistration::updateRegistrationState(const ServiceWorkerJobData& j
         serviceWorkerIdentifier = worker->identifier();
 
     forEachConnection(job, [&](auto& connection) {
-        connection.updateRegistrationStateInClient(m_registrationKey, state, serviceWorkerIdentifier);
+        connection.updateRegistrationStateInClient(identifier(), state, serviceWorkerIdentifier);
     });
 }
 
@@ -98,7 +105,7 @@ void SWServerRegistration::updateWorkerState(const ServiceWorkerJobData& job, SW
 void SWServerRegistration::fireUpdateFoundEvent(const ServiceWorkerJobData& job)
 {
     forEachConnection(job, [&](auto& connection) {
-        connection.fireUpdateFoundEvent(m_registrationKey);
+        connection.fireUpdateFoundEvent(identifier());
     });
 }
 
@@ -106,12 +113,12 @@ void SWServerRegistration::forEachConnection(const ServiceWorkerJobData& job, co
 {
     // No matter what, we send the event to the connection that scheduled the job. The client registration
     // may not have gotten a chance to register itself yet.
-    if (!m_clientRegistrationsByConnection.contains(job.connectionIdentifier())) {
+    if (!m_connectionsWithClientRegistrations.contains(job.connectionIdentifier())) {
         if (auto* connection = m_server.getConnection(job.connectionIdentifier()))
             apply(*connection);
     }
 
-    for (auto& connectionIdentifierWithClients : m_clientRegistrationsByConnection.keys()) {
+    for (uint64_t connectionIdentifierWithClients : m_connectionsWithClientRegistrations.values()) {
         if (auto* connection = m_server.getConnection(connectionIdentifierWithClients))
             apply(*connection);
     }
@@ -134,25 +141,14 @@ ServiceWorkerRegistrationData SWServerRegistration::data() const
     return { m_registrationKey, identifier(), m_scopeURL, m_scriptURL, m_updateViaCache, installingID, waitingID, activeID };
 }
 
-void SWServerRegistration::addClientServiceWorkerRegistration(uint64_t connectionIdentifier, uint64_t clientRegistrationIdentifier)
+void SWServerRegistration::addClientServiceWorkerRegistration(uint64_t connectionIdentifier)
 {
-    auto result = m_clientRegistrationsByConnection.ensure(connectionIdentifier, [] {
-        return std::make_unique<HashSet<uint64_t>>();
-    });
-    
-    ASSERT(!result.iterator->value->contains(clientRegistrationIdentifier));
-    result.iterator->value->add(clientRegistrationIdentifier);
+    m_connectionsWithClientRegistrations.add(connectionIdentifier);
 }
 
-void SWServerRegistration::removeClientServiceWorkerRegistration(uint64_t connectionIdentifier, uint64_t clientRegistrationIdentifier)
+void SWServerRegistration::removeClientServiceWorkerRegistration(uint64_t connectionIdentifier)
 {
-    auto iterator = m_clientRegistrationsByConnection.find(connectionIdentifier);
-    if (iterator == m_clientRegistrationsByConnection.end() || !iterator->value)
-        return;
-    
-    iterator->value->remove(clientRegistrationIdentifier);
-    if (iterator->value->isEmpty())
-        m_clientRegistrationsByConnection.remove(iterator);
+    m_connectionsWithClientRegistrations.remove(connectionIdentifier);
 }
 
 } // namespace WebCore

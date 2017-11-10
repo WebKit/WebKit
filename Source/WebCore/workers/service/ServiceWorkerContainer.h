@@ -65,8 +65,8 @@ public:
     void updateRegistration(const URL& scopeURL, const URL& scriptURL, WorkerType, Ref<DeferredPromise>&&);
 
     void getRegistration(const String& clientURL, Ref<DeferredPromise>&&);
-    void scheduleTaskToUpdateRegistrationState(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerIdentifier>&);
-    void scheduleTaskToFireUpdateFoundEvent(const ServiceWorkerRegistrationKey&);
+    void scheduleTaskToUpdateRegistrationState(ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerIdentifier>&);
+    void scheduleTaskToFireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier);
 
     using RegistrationsPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<ServiceWorkerRegistration>>>;
     void getRegistrations(RegistrationsPromise&&);
@@ -111,7 +111,7 @@ private:
     HashMap<uint64_t, Ref<ServiceWorkerJob>> m_jobMap;
 
     bool m_isStopped { false };
-    HashMap<ServiceWorkerRegistrationKey, ServiceWorkerRegistration*> m_registrations;
+    HashMap<ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistration*> m_registrations;
 
 #ifndef NDEBUG
     ThreadIdentifier m_creationThread { currentThread() };

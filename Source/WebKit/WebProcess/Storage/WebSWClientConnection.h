@@ -54,8 +54,8 @@ public:
 
     uint64_t identifier() const final { return m_identifier; }
 
-    void addServiceWorkerRegistrationInServer(const WebCore::ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier) final;
-    void removeServiceWorkerRegistrationInServer(const WebCore::ServiceWorkerRegistrationKey&, uint64_t registrationIdentifier) final;
+    void addServiceWorkerRegistrationInServer(const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerRegistrationIdentifier) final;
+    void removeServiceWorkerRegistrationInServer(const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerRegistrationIdentifier) final;
 
     void disconnectedFromWebProcess();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
