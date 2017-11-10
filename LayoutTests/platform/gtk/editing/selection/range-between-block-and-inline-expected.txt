@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x84
-        RenderBlock {P} at (0,0) size 784x17
+      RenderBlock {DIV} at (0,0) size 784x88
+        RenderBlock {P} at (0,0) size 784x18
           RenderText {#text} at (0,0) size 26x17
             text run at (0,0) width 26: "For "
           RenderInline {A} at (0,0) size 71x17 [color=#0000EE]
@@ -13,14 +13,14 @@ layer at (0,0) size 800x600
           RenderText {#text} at (97,0) size 312x17
             text run at (97,0) width 8: ". "
             text run at (105,0) width 304: "Hightlight for Selection should fit the target line."
-        RenderBlock (anonymous) at (0,33) size 784x17
+        RenderBlock (anonymous) at (0,34) size 784x18
           RenderInline {SPAN} at (0,0) size 7x17
             RenderText {#text} at (0,0) size 7x17
               text run at (0,0) width 7: "a"
-        RenderBlock {DIV} at (0,50) size 784x17
+        RenderBlock {DIV} at (0,52) size 784x18
           RenderText {#text} at (0,0) size 130x17
             text run at (0,0) width 130: "should just select me"
-        RenderBlock (anonymous) at (0,67) size 784x17
+        RenderBlock (anonymous) at (0,70) size 784x18
           RenderInline {SPAN} at (0,0) size 7x17
             RenderText {#text} at (0,0) size 7x17
               text run at (0,0) width 7: "c"

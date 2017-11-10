@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x419
-  RenderBlock {HTML} at (0,0) size 800x419
-    RenderBody {BODY} at (8,8) size 784x403
+layer at (0,0) size 800x420
+  RenderBlock {HTML} at (0,0) size 800x420
+    RenderBody {BODY} at (8,8) size 784x404
       RenderSVGRoot {svg} at (8,8) size 160x160
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGContainer {g} at (8,8) size 40x40

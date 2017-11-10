@@ -30,7 +30,7 @@ AXRole: AXHeading
 AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 8.000000, 8.000000 }
-AXSize: { 784.000000, 36.000000 }
+AXSize: { 784.000000, 37.000000 }
 AXTitle: Heading Level 1
 AXDescription: 
 AXValue: Heading Level 1
@@ -48,8 +48,8 @@ AXPlatformAttributes: computed-role:heading, level:1, tag:h1, toolkit:WebKitGtk
 AXRole: AXHeading
 AXParent: AXWebArea
 AXChildren: 0
-AXPosition: { 8.000000, 65.000000 }
-AXSize: { 784.000000, 27.000000 }
+AXPosition: { 8.000000, 66.000000 }
+AXSize: { 784.000000, 28.000000 }
 AXTitle: Heading Level 2
 AXDescription: 
 AXValue: Heading Level 2
@@ -67,8 +67,8 @@ AXPlatformAttributes: computed-role:heading, level:2, tag:h2, toolkit:WebKitGtk
 AXRole: AXHeading
 AXParent: AXWebArea
 AXChildren: 0
-AXPosition: { 8.000000, 111.000000 }
-AXSize: { 784.000000, 22.000000 }
+AXPosition: { 8.000000, 113.000000 }
+AXSize: { 784.000000, 23.000000 }
 AXTitle: Heading Level 3
 AXDescription: 
 AXValue: Heading Level 3
@@ -86,8 +86,8 @@ AXPlatformAttributes: computed-role:heading, level:3, tag:h3, toolkit:WebKitGtk
 AXRole: AXHeading
 AXParent: AXWebArea
 AXChildren: 0
-AXPosition: { 8.000000, 153.000000 }
-AXSize: { 784.000000, 18.000000 }
+AXPosition: { 8.000000, 156.000000 }
+AXSize: { 784.000000, 19.000000 }
 AXTitle: Heading Level 4
 AXDescription: 
 AXValue: Heading Level 4
@@ -105,8 +105,8 @@ AXPlatformAttributes: computed-role:heading, level:4, tag:h4, toolkit:WebKitGtk
 AXRole: AXHeading
 AXParent: AXWebArea
 AXChildren: 0
-AXPosition: { 8.000000, 192.000000 }
-AXSize: { 784.000000, 16.000000 }
+AXPosition: { 8.000000, 196.000000 }
+AXSize: { 784.000000, 17.000000 }
 AXTitle: Heading Level 5
 AXDescription: 
 AXValue: Heading Level 5
@@ -124,7 +124,7 @@ AXPlatformAttributes: computed-role:heading, level:5, tag:h5, toolkit:WebKitGtk
 AXRole: AXHeading
 AXParent: AXWebArea
 AXChildren: 0
-AXPosition: { 8.000000, 232.000000 }
+AXPosition: { 8.000000, 237.000000 }
 AXSize: { 784.000000, 13.000000 }
 AXTitle: Heading Level 6
 AXDescription: 
@@ -143,8 +143,8 @@ AXPlatformAttributes: computed-role:heading, level:6, tag:h6, toolkit:WebKitGtk
 AXRole: AXSection
 AXParent: AXWebArea
 AXChildren: 1
-AXPosition: { 8.000000, 269.000000 }
-AXSize: { 784.000000, 18.000000 }
+AXPosition: { 8.000000, 274.000000 }
+AXSize: { 784.000000, 19.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Link
@@ -162,8 +162,8 @@ AXPlatformAttributes: toolkit:WebKitGtk
 AXRole: AXSection
 AXParent: AXWebArea
 AXChildren: 0
-AXPosition: { 10.000000, 288.000000 }
-AXSize: { 23.000000, 20.000000 }
+AXPosition: { 10.000000, 294.000000 }
+AXSize: { 23.000000, 21.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: foo
@@ -181,8 +181,8 @@ AXPlatformAttributes: tag:td, toolkit:WebKitGtk
 AXRole: AXSection
 AXParent: AXWebArea
 AXChildren: 0
-AXPosition: { 35.000000, 288.000000 }
-AXSize: { 22.000000, 20.000000 }
+AXPosition: { 35.000000, 294.000000 }
+AXSize: { 22.000000, 21.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: bar
@@ -200,8 +200,8 @@ AXPlatformAttributes: tag:td, toolkit:WebKitGtk
 AXRole: AXTable
 AXParent: AXWebArea
 AXChildren: 3
-AXPosition: { 8.000000, 309.000000 }
-AXSize: { 81.000000, 74.000000 }
+AXPosition: { 8.000000, 316.000000 }
+AXSize: { 81.000000, 77.000000 }
 AXTitle: 
 AXDescription: 
 AXFocusable: 0
@@ -218,8 +218,8 @@ AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitGtk
 AXRole: AXParagraph
 AXParent: AXWebArea
 AXChildren: 2
-AXPosition: { 8.000000, 398.000000 }
-AXSize: { 784.000000, 51.000000 }
+AXPosition: { 8.000000, 408.000000 }
+AXSize: { 784.000000, 53.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: This tests the exposure of Atk object attributes.<\n><\n>On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".<\n><\n><\n>

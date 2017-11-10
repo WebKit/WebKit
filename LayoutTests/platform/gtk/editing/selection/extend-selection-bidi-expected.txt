@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x34
+      RenderBlock (anonymous) at (0,0) size 784x36
         RenderText {#text} at (0,0) size 361x17
           text run at (0,0) width 361: "The selection range in the red box should look like this:   "
         RenderInline {SPAN} at (0,0) size 109x17 [bgcolor=#AFDAFF]
@@ -28,8 +28,8 @@ layer at (0,0) size 800x600
           text run at (423,0) width 16: "23"
           text run at (470,0) width 28: " def "
         RenderBR {BR} at (498,14) size 0x0
-        RenderBR {BR} at (0,17) size 0x17
-      RenderBlock {DIV} at (0,34) size 784x54 [border: (2px solid #FF0000)]
+        RenderBR {BR} at (0,18) size 0x17
+      RenderBlock {DIV} at (0,36) size 784x55 [border: (2px solid #FF0000)]
         RenderInline {SPAN} at (0,0) size 202x26
           RenderText {#text} at (14,14) size 202x26
             text run at (14,14) width 40: "abc "

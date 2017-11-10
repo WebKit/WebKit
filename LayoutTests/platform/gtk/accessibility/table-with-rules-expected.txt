@@ -8,8 +8,8 @@ asdf	asdf
 AXRole: AXTable
 AXParent: AXWebArea
 AXChildren: 1
-AXPosition: { 8.000000, 27.000000 }
-AXSize: { 57.000000, 19.000000 }
+AXPosition: { 8.000000, 28.000000 }
+AXSize: { 57.000000, 20.000000 }
 AXTitle: 
 AXDescription: 
 AXFocusable: 0
@@ -26,8 +26,8 @@ AXPlatformAttributes: computed-role:table, html-id:testTable2, tag:table, toolki
 AXRole: AXTable
 AXParent: AXWebArea
 AXChildren: 1
-AXPosition: { 8.000000, 46.000000 }
-AXSize: { 62.000000, 23.000000 }
+AXPosition: { 8.000000, 48.000000 }
+AXSize: { 62.000000, 24.000000 }
 AXTitle: 
 AXDescription: 
 AXFocusable: 0
@@ -44,8 +44,8 @@ AXPlatformAttributes: computed-role:table, html-id:testTable3, tag:table, toolki
 AXRole: AXTable
 AXParent: AXWebArea
 AXChildren: 1
-AXPosition: { 8.000000, 69.000000 }
-AXSize: { 56.000000, 19.000000 }
+AXPosition: { 8.000000, 72.000000 }
+AXSize: { 56.000000, 20.000000 }
 AXTitle: 
 AXDescription: 
 AXFocusable: 0
@@ -62,8 +62,8 @@ AXPlatformAttributes: computed-role:table, html-id:testTable4, tag:table, toolki
 AXRole: AXSection
 AXParent: AXWebArea
 AXChildren: 0
-AXPosition: { 10.000000, 90.000000 }
-AXSize: { 28.000000, 19.000000 }
+AXPosition: { 10.000000, 94.000000 }
+AXSize: { 28.000000, 20.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: asdf
@@ -81,8 +81,8 @@ AXPlatformAttributes: tag:td, toolkit:WebKitGtk
 AXRole: AXSection
 AXParent: AXWebArea
 AXChildren: 0
-AXPosition: { 40.000000, 90.000000 }
-AXSize: { 28.000000, 19.000000 }
+AXPosition: { 40.000000, 94.000000 }
+AXSize: { 28.000000, 20.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: asdf

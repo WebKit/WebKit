@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x34
-        RenderText {#text} at (0,0) size 756x34
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 756x35
           text run at (0,0) width 599: "This tests to make sure that a drag-selecting through a -webkit-user-select:ignore region works. "
           text run at (599,0) width 157: "The selection should end"
-          text run at (0,17) width 270: "somewhere inside the word 'World' below."
-      RenderBlock {DIV} at (0,50) size 784x17
+          text run at (0,18) width 270: "somewhere inside the word 'World' below."
+      RenderBlock {DIV} at (0,52) size 784x18
         RenderInline {SPAN} at (0,0) size 35x17
           RenderText {#text} at (0,0) size 35x17
             text run at (0,0) width 35: "Hello"

@@ -14,16 +14,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x106 [border: (2px solid #FF0000)]
-        RenderBlock {DIV} at (14,14) size 756x26
+      RenderBlock {DIV} at (0,0) size 784x109 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,14) size 756x27
           RenderInline {B} at (0,0) size 36x26
             RenderText {#text} at (0,0) size 36x26
               text run at (0,0) width 36: "one"
-        RenderBlock {DIV} at (14,40) size 756x26
+        RenderBlock {DIV} at (14,41) size 756x27
           RenderInline {B} at (0,0) size 54x26
             RenderText {#text} at (0,0) size 54x26
               text run at (0,0) width 54: "three"
-        RenderBlock {DIV} at (14,66) size 756x26
+        RenderBlock {DIV} at (14,68) size 756x27
           RenderInline {I} at (0,0) size 40x26
             RenderText {#text} at (0,0) size 40x26
               text run at (0,0) width 40: "four"

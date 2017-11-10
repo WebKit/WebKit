@@ -15,7 +15,7 @@ AXRole: AXList
 AXParent: AXWebArea
 AXChildren: 2
 AXPosition: { 8.000000, 16.000000 }
-AXSize: { 784.000000, 34.000000 }
+AXSize: { 784.000000, 36.000000 }
 AXTitle: 
 AXDescription: 
 AXFocusable: 0
@@ -32,8 +32,8 @@ AXPlatformAttributes: computed-role:list, tag:ul, toolkit:WebKitGtk
 AXRole: AXList
 AXParent: AXWebArea
 AXChildren: 2
-AXPosition: { 8.000000, 66.000000 }
-AXSize: { 784.000000, 34.000000 }
+AXPosition: { 8.000000, 68.000000 }
+AXSize: { 784.000000, 36.000000 }
 AXTitle: 
 AXDescription: 
 AXFocusable: 0
@@ -50,8 +50,8 @@ AXPlatformAttributes: computed-role:list, tag:ol, toolkit:WebKitGtk
 AXRole: AXDescriptionList
 AXParent: AXWebArea
 AXChildren: 5
-AXPosition: { 8.000000, 116.000000 }
-AXSize: { 784.000000, 85.000000 }
+AXPosition: { 8.000000, 120.000000 }
+AXSize: { 784.000000, 90.000000 }
 AXTitle: 
 AXDescription: 
 AXFocusable: 0
@@ -68,8 +68,8 @@ AXPlatformAttributes: tag:dl, toolkit:WebKitGtk
 AXRole: AXSection
 AXParent: AXWebArea
 AXChildren: 0
-AXPosition: { 8.000000, 217.000000 }
-AXSize: { 784.000000, 68.000000 }
+AXPosition: { 8.000000, 226.000000 }
+AXSize: { 784.000000, 72.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: <\n><\n><\n><\n>
@@ -90,7 +90,7 @@ AXRole: AXListItem
 AXParent: AXList
 AXChildren: 0
 AXPosition: { 48.000000, 16.000000 }
-AXSize: { 729.000000, 17.000000 }
+AXSize: { 729.000000, 18.000000 }
 AXTitle: test 1
 AXDescription: 
 AXValue: â¢ test 1
@@ -108,8 +108,8 @@ AXPlatformAttributes: computed-role:listitem, tag:li, toolkit:WebKitGtk
 AXRole: AXListItem
 AXParent: AXList
 AXChildren: 0
-AXPosition: { 48.000000, 33.000000 }
-AXSize: { 729.000000, 17.000000 }
+AXPosition: { 48.000000, 34.000000 }
+AXSize: { 729.000000, 18.000000 }
 AXTitle: test 2
 AXDescription: 
 AXValue: â¢ test 2
@@ -129,8 +129,8 @@ AXPlatformAttributes: computed-role:listitem, tag:li, toolkit:WebKitGtk
 AXRole: AXListItem
 AXParent: AXList
 AXChildren: 0
-AXPosition: { 48.000000, 66.000000 }
-AXSize: { 729.000000, 17.000000 }
+AXPosition: { 48.000000, 68.000000 }
+AXSize: { 729.000000, 18.000000 }
 AXTitle: test 1
 AXDescription: 
 AXValue: 1. test 1
@@ -148,8 +148,8 @@ AXPlatformAttributes: computed-role:listitem, tag:li, toolkit:WebKitGtk
 AXRole: AXListItem
 AXParent: AXList
 AXChildren: 0
-AXPosition: { 48.000000, 83.000000 }
-AXSize: { 729.000000, 17.000000 }
+AXPosition: { 48.000000, 86.000000 }
+AXSize: { 729.000000, 18.000000 }
 AXTitle: test 2
 AXDescription: 
 AXValue: 2. test 2
@@ -169,8 +169,8 @@ AXPlatformAttributes: computed-role:listitem, tag:li, toolkit:WebKitGtk
 AXRole: AXDescriptionTerm
 AXParent: AXDescriptionList
 AXChildren: 0
-AXPosition: { 8.000000, 116.000000 }
-AXSize: { 769.000000, 17.000000 }
+AXPosition: { 8.000000, 120.000000 }
+AXSize: { 769.000000, 18.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: term 1
@@ -188,8 +188,8 @@ AXPlatformAttributes: tag:dt, toolkit:WebKitGtk
 AXRole: AXDescriptionValue
 AXParent: AXDescriptionList
 AXChildren: 0
-AXPosition: { 48.000000, 133.000000 }
-AXSize: { 729.000000, 17.000000 }
+AXPosition: { 48.000000, 138.000000 }
+AXSize: { 729.000000, 18.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: meaning 2
@@ -207,8 +207,8 @@ AXPlatformAttributes: tag:dd, toolkit:WebKitGtk
 AXRole: AXDescriptionTerm
 AXParent: AXDescriptionList
 AXChildren: 0
-AXPosition: { 8.000000, 150.000000 }
-AXSize: { 769.000000, 17.000000 }
+AXPosition: { 8.000000, 156.000000 }
+AXSize: { 769.000000, 18.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: term b
@@ -226,8 +226,8 @@ AXPlatformAttributes: tag:dt, toolkit:WebKitGtk
 AXRole: AXDescriptionValue
 AXParent: AXDescriptionList
 AXChildren: 0
-AXPosition: { 48.000000, 167.000000 }
-AXSize: { 729.000000, 17.000000 }
+AXPosition: { 48.000000, 174.000000 }
+AXSize: { 729.000000, 18.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: meaning 1
@@ -245,8 +245,8 @@ AXPlatformAttributes: tag:dd, toolkit:WebKitGtk
 AXRole: AXDescriptionValue
 AXParent: AXDescriptionList
 AXChildren: 0
-AXPosition: { 48.000000, 184.000000 }
-AXSize: { 729.000000, 17.000000 }
+AXPosition: { 48.000000, 192.000000 }
+AXSize: { 729.000000, 18.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: meaning 2

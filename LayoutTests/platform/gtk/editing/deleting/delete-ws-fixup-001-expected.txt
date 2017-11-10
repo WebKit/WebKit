@@ -40,8 +40,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x80 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 750x52
+      RenderBlock {DIV} at (0,0) size 784x82 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 750x53
           RenderText {#text} at (14,14) size 97x26
             text run at (14,14) width 97: "in Liberty"
           RenderInline {I} at (0,0) size 117x26
@@ -53,11 +53,11 @@ layer at (0,0) size 800x600
           RenderInline {B} at (0,0) size 15x26
             RenderText {#text} at (291,14) size 15x26
               text run at (291,14) width 15: "s "
-          RenderText {#text} at (306,14) size 750x52
+          RenderText {#text} at (306,14) size 750x53
             text run at (306,14) width 110: "our fathers "
             text run at (416,14) width 342: "f upon this continent, a new nation,"
             text run at (758,14) width 6: " "
-            text run at (14,40) width 232: "conceived    in Liberty, "
-            text run at (246,40) width 386: "and dedicated to the proposition that all"
+            text run at (14,41) width 232: "conceived    in Liberty, "
+            text run at (246,41) width 386: "and dedicated to the proposition that all"
         RenderText {#text} at (0,0) size 0x0
 caret: position 7 of child 2 {#text} of child 1 {SPAN} of child 1 {DIV} of body
