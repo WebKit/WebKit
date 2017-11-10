@@ -1,3 +1,23 @@
+2017-11-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [webkitpy] Fix PlatformInfo._win_version since r224657
+        https://bugs.webkit.org/show_bug.cgi?id=179520
+
+        Reviewed by Aakash Jain.
+
+        There are two problems.
+
+        The return value of sys.getwindowsversion() doesn't match with
+        Version.__init__ expects. Truncate the 4th and 5th of it.
+
+        _win_version_tuple_from_cmd was deleted in r224657. But, it is
+        still needed for Cygwin Python.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo._win_version): Return [0:3] of getwindowsversion().
+        Call _win_version_from_cmd for Cygwin Python.
+        (PlatformInfo._win_version_from_cmd): Restored.
+
 2017-11-10  Guillaume Emont  <guijemont@igalia.com>
 
         build-jsc: build testmasm for all platforms using cmake
