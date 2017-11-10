@@ -283,15 +283,6 @@ LayoutStateMaintainer::LayoutStateMaintainer(RenderBox& root, LayoutSize offset,
 
 LayoutStateMaintainer::~LayoutStateMaintainer()
 {
-    // FIXME: Remove conditional pop.
-    if (!m_didCallPop)
-        pop();
-}
-
-void LayoutStateMaintainer::pop()
-{
-    ASSERT(!m_didCallPop);
-    m_didCallPop = true;
     if (!m_didPushLayoutState)
         return;
     m_context.popLayoutState();

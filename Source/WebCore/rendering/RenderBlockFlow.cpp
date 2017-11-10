@@ -477,6 +477,7 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
 
     LayoutUnit repaintLogicalTop = 0;
     LayoutUnit repaintLogicalBottom = 0;
+    LayoutUnit maxFloatLogicalBottom = 0;
     const RenderStyle& styleToUse = style();
     {
         LayoutStateMaintainer statePusher(*this, locationOffset(), hasTransform() || hasReflection() || styleToUse.isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged);
@@ -501,35 +502,39 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
             setHasMarginAfterQuirk(styleToUse.hasMarginAfterQuirk());
             setPaginationStrut(0);
         }
-        LayoutUnit maxFloatLogicalBottom = 0;
         if (!firstChild() && !isAnonymousBlock())
             setChildrenInline(true);
         if (childrenInline())
             layoutInlineChildren(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         else
             layoutBlockChildren(relayoutChildren, maxFloatLogicalBottom);
+    }
 
-        // Expand our intrinsic height to encompass floats.
-        LayoutUnit toAdd = borderAndPaddingAfter() + scrollbarLogicalHeight();
-        if (lowestFloatLogicalBottom() > (logicalHeight() - toAdd) && createsNewFormattingContext())
-            setLogicalHeight(lowestFloatLogicalBottom() + toAdd);
+    // Expand our intrinsic height to encompass floats.
+    LayoutUnit toAdd = borderAndPaddingAfter() + scrollbarLogicalHeight();
+    if (lowestFloatLogicalBottom() > (logicalHeight() - toAdd) && createsNewFormattingContext())
+        setLogicalHeight(lowestFloatLogicalBottom() + toAdd);
+    if (relayoutForPagination() || relayoutToAvoidWidows()) {
+        ASSERT(!shouldBreakAtLineToAvoidWidow());
+        return;
+    }
 
-        if (relayoutForPagination(statePusher) || relayoutToAvoidWidows(statePusher)) {
-            ASSERT(!shouldBreakAtLineToAvoidWidow());
-            return;
-        }
+    // Calculate our new height.
+    LayoutUnit oldHeight = logicalHeight();
+    LayoutUnit oldClientAfterEdge = clientLogicalBottom();
 
-        // Calculate our new height.
-        LayoutUnit oldHeight = logicalHeight();
-        LayoutUnit oldClientAfterEdge = clientLogicalBottom();
+    // Before updating the final size of the flow thread make sure a forced break is applied after the content.
+    // This ensures the size information is correctly computed for the last auto-height fragment receiving content.
+    if (is<RenderFragmentedFlow>(*this))
+        downcast<RenderFragmentedFlow>(*this).applyBreakAfterContent(oldClientAfterEdge);
 
-        // Before updating the final size of the flow thread make sure a forced break is applied after the content.
-        // This ensures the size information is correctly computed for the last auto-height fragment receiving content.
-        if (is<RenderFragmentedFlow>(*this))
-            downcast<RenderFragmentedFlow>(*this).applyBreakAfterContent(oldClientAfterEdge);
+    updateLogicalHeight();
+    LayoutUnit newHeight = logicalHeight();
+    {
+        // FIXME: This could be removed once relayoutForPagination()/relayoutToAvoidWidows() either stop recursing or we manage to
+        // re-order them.
+        LayoutStateMaintainer statePusher(*this, locationOffset(), hasTransform() || hasReflection() || styleToUse.isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged);
 
-        updateLogicalHeight();
-        LayoutUnit newHeight = logicalHeight();
         if (oldHeight != newHeight) {
             if (oldHeight > newHeight && maxFloatLogicalBottom > newHeight && !childrenInline()) {
                 // One of our children's floats may have become an overhanging float for us. We need to look for it.
@@ -545,14 +550,13 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
         bool heightChanged = (previousHeight != newHeight);
         if (heightChanged)
             relayoutChildren = true;
-
         layoutPositionedObjects(relayoutChildren || isDocumentElementRenderer());
-
-        // Add overflow from children (unless we're multi-column, since in that case all our child overflow is clipped anyway).
-        computeOverflow(oldClientAfterEdge);
-
-        fitBorderToLinesIfNeeded();
     }
+    // Add overflow from children (unless we're multi-column, since in that case all our child overflow is clipped anyway).
+    computeOverflow(oldClientAfterEdge);
+
+    fitBorderToLinesIfNeeded();
+
     auto* state = view().frameView().layoutContext().layoutState();
     if (state && state->pageLogicalHeight())
         setPageLogicalOffset(state->pageLogicalOffset(this, logicalTop()));
@@ -1796,12 +1800,11 @@ void RenderBlockFlow::clearShouldBreakAtLineToAvoidWidow() const
     rareBlockFlowData()->m_lineBreakToAvoidWidow = -1;
 }
 
-bool RenderBlockFlow::relayoutToAvoidWidows(LayoutStateMaintainer& statePusher)
+bool RenderBlockFlow::relayoutToAvoidWidows()
 {
     if (!shouldBreakAtLineToAvoidWidow())
         return false;
 
-    statePusher.pop();
     setEverHadLayout(true);
     layoutBlock(false);
     return true;
@@ -3498,7 +3501,7 @@ void RenderBlockFlow::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoin
     m_lineBoxes.paint(this, paintInfo, paintOffset);
 }
 
-bool RenderBlockFlow::relayoutForPagination(LayoutStateMaintainer& statePusher)
+bool RenderBlockFlow::relayoutForPagination()
 {
     if (!multiColumnFlow() || !multiColumnFlow()->shouldRelayoutForPagination())
         return false;
@@ -3532,8 +3535,6 @@ bool RenderBlockFlow::relayoutForPagination(LayoutStateMaintainer& statePusher)
             neededRelayout = true;
             multiColumnFlow()->setChildNeedsLayout(MarkOnlyThis);
             setChildNeedsLayout(MarkOnlyThis);
-            if (firstPass)
-                statePusher.pop();
             layoutBlock(false);
         }
         firstPass = false;

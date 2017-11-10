@@ -141,12 +141,9 @@ public:
     explicit LayoutStateMaintainer(RenderBox&, LayoutSize offset, bool disableState = false, LayoutUnit pageHeight = 0, bool pageHeightChanged = false);
     ~LayoutStateMaintainer();
 
-    void pop();
-
 private:
     LayoutContext& m_context;
     bool m_paintOffsetCacheIsDisabled { false };
-    bool m_didCallPop { false };
     bool m_didPushLayoutState { false };
 };
 
