@@ -1,3 +1,15 @@
+2017-11-10  Alex Christensen  <achristensen@webkit.org>
+
+        _WKThumbnailView initialization with WKWebView needs to call correct initWithFrame
+        https://bugs.webkit.org/show_bug.cgi?id=179537
+        <rdar://problem/35275219>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKit/WKThumbnailView.mm:
+        (-[WKThumbnailViewDelegate webView:didFinishNavigation:]):
+        (TestWebKitAPI::TEST):
+
 2017-11-10  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Remove find_system_pid from port classes

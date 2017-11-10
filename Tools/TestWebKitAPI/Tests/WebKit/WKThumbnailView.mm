@@ -25,11 +25,12 @@
 
 #include "config.h"
 
-#if WK_HAVE_C_SPI && PLATFORM(MAC) && WK_API_ENABLED
+#if PLATFORM(MAC) && WK_API_ENABLED
 
 #import "JavaScriptTest.h"
 #import "PlatformUtilities.h"
 #import "PlatformWebView.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKViewPrivate.h>
 #import <WebKit/_WKThumbnailView.h>
 #import <wtf/RetainPtr.h>
@@ -38,6 +39,10 @@ static bool didFinishLoad;
 static bool didTakeSnapshot;
 
 static void *snapshotSizeChangeKVOContext = &snapshotSizeChangeKVOContext;
+
+@interface WKWebView ()
+- (WKPageRef)_pageForTesting;
+@end
 
 @interface SnapshotSizeObserver : NSObject
 @end
@@ -56,8 +61,23 @@ static void *snapshotSizeChangeKVOContext = &snapshotSizeChangeKVOContext;
 
 @end
 
+
+@interface WKThumbnailViewDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation WKThumbnailViewDelegate
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    didFinishLoad = true;
+}
+
+@end
+
 namespace TestWebKitAPI {
 
+#if WK_HAVE_C_SPI
+    
 static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
 {
     didFinishLoad = true;
@@ -170,6 +190,98 @@ TEST(WebKit, WKThumbnailViewMaximumSnapshotSize)
     EXPECT_EQ([thumbnailView snapshotSize].height, 150);
     EXPECT_FALSE([thumbnailView layer].contents == nil);
 
+    [thumbnailView removeObserver:observer.get() forKeyPath:@"snapshotSize" context:snapshotSizeChangeKVOContext];
+}
+
+#endif // WK_HAVE_C_SPI
+
+TEST(WebKit, WKThumbnailViewKeepSnapshotWhenRemovedFromSuperviewWKWebView)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    WKPageSetCustomBackingScaleFactor([webView _pageForTesting], 1);
+    auto delegate = adoptNS([[WKThumbnailViewDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView  loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    Util::run(&didFinishLoad);
+
+    RetainPtr<_WKThumbnailView> thumbnailView = adoptNS([[_WKThumbnailView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) fromWKWebView:webView.get()]);
+    
+    RetainPtr<SnapshotSizeObserver> observer = adoptNS([[SnapshotSizeObserver alloc] init]);
+    
+    [thumbnailView addObserver:observer.get() forKeyPath:@"snapshotSize" options:NSKeyValueObservingOptionNew context:snapshotSizeChangeKVOContext];
+    
+    [webView addSubview:thumbnailView.get()];
+    Util::run(&didTakeSnapshot);
+    didTakeSnapshot = false;
+    
+    EXPECT_EQ([thumbnailView snapshotSize].width, 800);
+    EXPECT_FALSE([thumbnailView layer].contents == nil);
+    [thumbnailView removeFromSuperview];
+    
+    // The snapshot should be removed when unparented.
+    EXPECT_TRUE([thumbnailView layer].contents == nil);
+    
+    [webView addSubview:thumbnailView.get()];
+    Util::run(&didTakeSnapshot);
+    didTakeSnapshot = false;
+    
+    [thumbnailView setShouldKeepSnapshotWhenRemovedFromSuperview:YES];
+    
+    EXPECT_EQ([thumbnailView snapshotSize].width, 800);
+    EXPECT_FALSE([thumbnailView layer].contents == nil);
+    [thumbnailView removeFromSuperview];
+    
+    // This time, the snapshot should remain while unparented, because we unset shouldKeepSnapshotWhenRemovedFromSuperview.
+    EXPECT_FALSE([thumbnailView layer].contents == nil);
+    
+    [thumbnailView removeObserver:observer.get() forKeyPath:@"snapshotSize" context:snapshotSizeChangeKVOContext];
+}
+
+TEST(WebKit, WKThumbnailViewMaximumSnapshotSizeWKWebView)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    WKPageSetCustomBackingScaleFactor([webView _pageForTesting], 1);
+    auto delegate = adoptNS([[WKThumbnailViewDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView  loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    Util::run(&didFinishLoad);
+
+    auto thumbnailView = adoptNS([[_WKThumbnailView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) fromWKWebView:webView.get()]);
+
+    auto observer = adoptNS([[SnapshotSizeObserver alloc] init]);
+    
+    [thumbnailView addObserver:observer.get() forKeyPath:@"snapshotSize" options:NSKeyValueObservingOptionNew context:snapshotSizeChangeKVOContext];
+    
+    [webView addSubview:thumbnailView.get()];
+    Util::run(&didTakeSnapshot);
+    didTakeSnapshot = false;
+    EXPECT_EQ([thumbnailView snapshotSize].width, 800);
+    EXPECT_FALSE([thumbnailView layer].contents == nil);
+    
+    [thumbnailView setMaximumSnapshotSize:CGSizeMake(200, 0)];
+    Util::run(&didTakeSnapshot);
+    didTakeSnapshot = false;
+    
+    EXPECT_EQ([thumbnailView snapshotSize].width, 200);
+    EXPECT_EQ([thumbnailView snapshotSize].height, 150);
+    EXPECT_FALSE([thumbnailView layer].contents == nil);
+    
+    [thumbnailView setMaximumSnapshotSize:CGSizeMake(0, 300)];
+    Util::run(&didTakeSnapshot);
+    didTakeSnapshot = false;
+    
+    EXPECT_EQ([thumbnailView snapshotSize].width, 400);
+    EXPECT_EQ([thumbnailView snapshotSize].height, 300);
+    EXPECT_FALSE([thumbnailView layer].contents == nil);
+    
+    [thumbnailView setMaximumSnapshotSize:CGSizeMake(200, 300)];
+    Util::run(&didTakeSnapshot);
+    didTakeSnapshot = false;
+    
+    EXPECT_EQ([thumbnailView snapshotSize].width, 200);
+    EXPECT_EQ([thumbnailView snapshotSize].height, 150);
+    EXPECT_FALSE([thumbnailView layer].contents == nil);
+    
     [thumbnailView removeObserver:observer.get() forKeyPath:@"snapshotSize" context:snapshotSizeChangeKVOContext];
 }
 

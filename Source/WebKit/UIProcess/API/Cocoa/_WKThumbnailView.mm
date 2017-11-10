@@ -92,7 +92,7 @@ using namespace WebKit;
 
 - (instancetype)initWithFrame:(NSRect)frame fromWKWebView:(WKWebView *)webView
 {
-    if (!(self = [super initWithFrame:frame]))
+    if (!(self = [self initWithFrame:frame]))
         return nil;
     
     _wkWebView = webView;

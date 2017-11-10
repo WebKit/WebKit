@@ -1,3 +1,17 @@
+2017-11-10  Alex Christensen  <achristensen@webkit.org>
+
+        _WKThumbnailView initialization with WKWebView needs to call correct initWithFrame
+        https://bugs.webkit.org/show_bug.cgi?id=179537
+        <rdar://problem/35275219>
+
+        Reviewed by Darin Adler.
+
+        I introduced this in r223439 and made an ObjC mistake.  This is what I get for adding SPI with no tests.
+        I fixed this by making the existing WKView/_WKThumbnailView API tests work with WKWebView.
+
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        (-[_WKThumbnailView initWithFrame:fromWKWebView:]):
+
 2017-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Switch to use API::NavigationClient
