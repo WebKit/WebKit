@@ -21,16 +21,17 @@
 #include "WebKitNavigationAction.h"
 
 #include "WebKitNavigationActionPrivate.h"
-#include <wtf/glib/GRefPtr.h>
+#include "WebKitPrivate.h"
+#include "WebKitURIRequestPrivate.h"
 
 using namespace WebKit;
 
 G_DEFINE_BOXED_TYPE(WebKitNavigationAction, webkit_navigation_action, webkit_navigation_action_copy, webkit_navigation_action_free)
 
-WebKitNavigationAction* webkitNavigationActionCreate(WebKitURIRequest* request, const NavigationActionData& navigationActionData)
+WebKitNavigationAction* webkitNavigationActionCreate(Ref<API::NavigationAction>&& action)
 {
     WebKitNavigationAction* navigation = static_cast<WebKitNavigationAction*>(fastZeroedMalloc(sizeof(WebKitNavigationAction)));
-    new (navigation) WebKitNavigationAction(request, navigationActionData);
+    new (navigation) WebKitNavigationAction(WTFMove(action));
     return navigation;
 }
 
@@ -82,7 +83,7 @@ void webkit_navigation_action_free(WebKitNavigationAction* navigation)
 WebKitNavigationType webkit_navigation_action_get_navigation_type(WebKitNavigationAction* navigation)
 {
     g_return_val_if_fail(navigation, WEBKIT_NAVIGATION_TYPE_OTHER);
-    return navigation->type;
+    return toWebKitNavigationType(navigation->action->navigationType());
 }
 
 /**
@@ -99,7 +100,7 @@ WebKitNavigationType webkit_navigation_action_get_navigation_type(WebKitNavigati
 unsigned webkit_navigation_action_get_mouse_button(WebKitNavigationAction* navigation)
 {
     g_return_val_if_fail(navigation, 0);
-    return navigation->mouseButton;
+    return toWebKitMouseButton(navigation->action->mouseButton());
 }
 
 /**
@@ -116,7 +117,7 @@ unsigned webkit_navigation_action_get_mouse_button(WebKitNavigationAction* navig
 unsigned webkit_navigation_action_get_modifiers(WebKitNavigationAction* navigation)
 {
     g_return_val_if_fail(navigation, 0);
-    return navigation->modifiers;
+    return toPlatformModifiers(navigation->action->modifiers());
 }
 
 /**
@@ -132,6 +133,8 @@ unsigned webkit_navigation_action_get_modifiers(WebKitNavigationAction* navigati
 WebKitURIRequest* webkit_navigation_action_get_request(WebKitNavigationAction* navigation)
 {
     g_return_val_if_fail(navigation, nullptr);
+    if (!navigation->request)
+        navigation->request = adoptGRef(webkitURIRequestCreateForResourceRequest(navigation->action->request()));
     return navigation->request.get();
 }
 
@@ -148,7 +151,7 @@ WebKitURIRequest* webkit_navigation_action_get_request(WebKitNavigationAction* n
 gboolean webkit_navigation_action_is_user_gesture(WebKitNavigationAction* navigation)
 {
     g_return_val_if_fail(navigation, FALSE);
-    return navigation->isUserGesture;
+    return navigation->action->isProcessingUserGesture();
 }
 
 /**
@@ -164,5 +167,5 @@ gboolean webkit_navigation_action_is_user_gesture(WebKitNavigationAction* naviga
 gboolean webkit_navigation_action_is_redirect(WebKitNavigationAction* navigation)
 {
     g_return_val_if_fail(navigation, FALSE);
-    return navigation->isRedirect;
+    return navigation->action->isRedirect();
 }

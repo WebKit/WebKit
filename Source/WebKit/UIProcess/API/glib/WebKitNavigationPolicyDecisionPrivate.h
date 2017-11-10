@@ -19,10 +19,8 @@
 
 #pragma once
 
-#include "NavigationActionData.h"
+#include "APINavigationAction.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebKitNavigationPolicyDecision.h"
-#include <WebCore/ResourceRequest.h>
 
-WebKitPolicyDecision* webkitNavigationPolicyDecisionCreate(const WebKit::NavigationActionData&, const WebCore::ResourceRequest&, WebKit::WebFramePolicyListenerProxy*);
-WebKitPolicyDecision* webkitNewWindowPolicyDecisionCreate(const WebKit::NavigationActionData&, const WebCore::ResourceRequest&, const String& frameName, WebKit::WebFramePolicyListenerProxy*);
+WebKitPolicyDecision* webkitNavigationPolicyDecisionCreate(Ref<API::NavigationAction>&&, Ref<WebKit::WebFramePolicyListenerProxy>&&);

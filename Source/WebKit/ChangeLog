@@ -1,3 +1,74 @@
+2017-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Switch to use API::NavigationClient
+        https://bugs.webkit.org/show_bug.cgi?id=178720
+
+        Reviewed by Alex Christensen.
+
+        Replace WebKitLoaderClient and WebKitPolicyClient with WebKitNavigationClient that implements
+        API::NavigationClient.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * UIProcess/API/APINavigationAction.h: Add new constructor that receives a target frame name instead of a target
+        frame info.
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::didDisplayInsecureContent): Added.
+        (API::NavigationClient::didRunInsecureContent): Added.
+        (API::NavigationClient::decidePolicyForNavigationResponse): Change NavigationResponse parameter to be a
+        Ref<NavigationResponse>&& instead of a NavigationResponse&.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageNavigationClient): Update NavigationResponse parameter.
+        * UIProcess/API/glib/WebKitBackForwardList.cpp:
+        (webkitBackForwardListChanged):
+        * UIProcess/API/glib/WebKitBackForwardListPrivate.h:
+        * UIProcess/API/glib/WebKitNavigationAction.cpp:
+        (webkitNavigationActionCreate): Wrap the given API::NavigationAction.
+        (webkit_navigation_action_get_navigation_type): Use the wrapped API::NavigationAction.
+        (webkit_navigation_action_get_mouse_button): Ditto.
+        (webkit_navigation_action_get_modifiers): Ditto.
+        (webkit_navigation_action_get_request): Ditto.
+        (webkit_navigation_action_is_user_gesture): Ditto.
+        (webkit_navigation_action_is_redirect): Ditto.
+        * UIProcess/API/glib/WebKitNavigationActionPrivate.h:
+        (_WebKitNavigationAction::_WebKitNavigationAction):
+        * UIProcess/API/glib/WebKitNavigationClient.cpp: Renamed from Source/WebKit/UIProcess/API/glib/WebKitLoaderClient.cpp.
+        (NavigationClient::NavigationClient):
+        (attachNavigationClientToView):
+        * UIProcess/API/glib/WebKitNavigationClient.h: Renamed from Source/WebKit/UIProcess/API/glib/WebKitLoaderClient.h.
+        * UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:
+        (webkit_navigation_policy_decision_get_frame_name): Add FIXME.
+        (webkitNavigationPolicyDecisionCreate): Get the target frame name from the API::NavigationAction.
+        * UIProcess/API/glib/WebKitNavigationPolicyDecisionPrivate.h:
+        * UIProcess/API/glib/WebKitPolicyClient.cpp: Removed.
+        * UIProcess/API/glib/WebKitPolicyClient.h: Removed.
+        * UIProcess/API/glib/WebKitPolicyDecision.cpp:
+        (webkitPolicyDecisionSetListener): Remove the madePolicyDecision boolean member, we can null-check the listener instead.
+        (webkit_policy_decision_use): Ensure listener is nullptr after being invoked to prevent the decision from being made
+        more than once.
+        (webkit_policy_decision_ignore): Ditto.
+        (webkit_policy_decision_download): Ditto.
+        * UIProcess/API/glib/WebKitPolicyDecisionPrivate.h:
+        * UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:
+        (webkit_response_policy_decision_get_request): Use the wrapped API::NavigationResponse.
+        (webkit_response_policy_decision_get_response): Ditto.
+        (webkit_response_policy_decision_is_mime_type_supported): Ditto.
+        (webkitResponsePolicyDecisionCreate): Wrap the given API::NavigationResponse.
+        * UIProcess/API/glib/WebKitResponsePolicyDecisionPrivate.h:
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        (UIClient::createNewPage): Create the WebKitNavigationAction from a new API::NavigationAction.
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewConstructed): Attach navigation client.
+        * UIProcess/Cocoa/NavigationState.h: Update API::NavigationResponse parameter of decidePolicyForNavigationResponse.
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationResponse):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didDisplayInsecureContentForFrame): Notify the navigation client if it's used.
+        (WebKit::WebPageProxy::didRunInsecureContentForFrame): Ditto.
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction): Use the new API::NavigationAction constructor to pass
+        the target frame name, instead of a null target frame info.
+        (WebKit::WebPageProxy::decidePolicyForResponse): Move the API::NavigationResponse.
+
 2017-11-09  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r224661.

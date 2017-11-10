@@ -295,23 +295,20 @@ WebKitURIRequest* webkit_navigation_policy_decision_get_request(WebKitNavigation
  */
 const char* webkit_navigation_policy_decision_get_frame_name(WebKitNavigationPolicyDecision* decision)
 {
-    g_return_val_if_fail(WEBKIT_IS_NAVIGATION_POLICY_DECISION(decision), 0);
+    g_return_val_if_fail(WEBKIT_IS_NAVIGATION_POLICY_DECISION(decision), nullptr);
+    // FIXME: frame name should also be moved to WebKitNavigationAction and this method deprecated.
     return decision->priv->frameName.data();
 }
 
-WebKitPolicyDecision* webkitNavigationPolicyDecisionCreate(const NavigationActionData& navigationActionData, const ResourceRequest& request, WebFramePolicyListenerProxy* listener)
+WebKitPolicyDecision* webkitNavigationPolicyDecisionCreate(Ref<API::NavigationAction>&& navigationAction, Ref<WebFramePolicyListenerProxy>&& listener)
 {
     WebKitNavigationPolicyDecision* navigationDecision = WEBKIT_NAVIGATION_POLICY_DECISION(g_object_new(WEBKIT_TYPE_NAVIGATION_POLICY_DECISION, nullptr));
-    GRefPtr<WebKitURIRequest> uriRequest = adoptGRef(webkitURIRequestCreateForResourceRequest(request));
-    navigationDecision->priv->navigationAction = webkitNavigationActionCreate(uriRequest.get(), navigationActionData);
+    // FIXME: frame name should also be moved to WebKitNavigationAction.
+    auto targetFrameName = navigationAction->targetFrameName();
+    navigationDecision->priv->navigationAction = webkitNavigationActionCreate(WTFMove(navigationAction));
+    if (targetFrameName)
+        navigationDecision->priv->frameName = targetFrameName->utf8();
     WebKitPolicyDecision* decision = WEBKIT_POLICY_DECISION(navigationDecision);
-    webkitPolicyDecisionSetListener(decision, listener);
-    return decision;
-}
-
-WebKitPolicyDecision* webkitNewWindowPolicyDecisionCreate(const NavigationActionData& navigationActionData, const ResourceRequest& request, const String& frameName, WebFramePolicyListenerProxy* listener)
-{
-    WebKitPolicyDecision* decision = webkitNavigationPolicyDecisionCreate(navigationActionData, request, listener);
-    WEBKIT_NAVIGATION_POLICY_DECISION(decision)->priv->frameName = frameName.utf8().data();
+    webkitPolicyDecisionSetListener(decision, WTFMove(listener));
     return decision;
 }

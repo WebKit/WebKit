@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "APINavigationResponse.h"
+#include "WebFramePolicyListenerProxy.h"
 #include "WebKitResponsePolicyDecision.h"
 
-WebKitPolicyDecision* webkitResponsePolicyDecisionCreate(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, bool canShowMIMEType, WebKit::WebFramePolicyListenerProxy*);
+WebKitPolicyDecision* webkitResponsePolicyDecisionCreate(Ref<API::NavigationResponse>&&, Ref<WebKit::WebFramePolicyListenerProxy>&&);

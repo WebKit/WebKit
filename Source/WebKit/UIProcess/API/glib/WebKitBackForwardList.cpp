@@ -128,7 +128,7 @@ WebKitBackForwardList* webkitBackForwardListCreate(WebBackForwardList* backForwa
     return list;
 }
 
-void webkitBackForwardListChanged(WebKitBackForwardList* backForwardList, WebBackForwardListItem* webAddedItem, Vector<Ref<WebBackForwardListItem>>&& webRemovedItems)
+void webkitBackForwardListChanged(WebKitBackForwardList* backForwardList, WebBackForwardListItem* webAddedItem, const Vector<Ref<WebBackForwardListItem>>& webRemovedItems)
 {
     WebKitBackForwardListItem* addedItem = webkitBackForwardListGetOrCreateItem(backForwardList, webAddedItem);
     GList* removedItems = nullptr;

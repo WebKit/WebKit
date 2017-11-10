@@ -147,9 +147,9 @@ list(APPEND WebKit_SOURCES
     UIProcess/API/glib/WebKitInjectedBundleClient.cpp
     UIProcess/API/glib/WebKitInstallMissingMediaPluginsPermissionRequest.cpp
     UIProcess/API/glib/WebKitJavascriptResult.cpp
-    UIProcess/API/glib/WebKitLoaderClient.cpp
     UIProcess/API/glib/WebKitMimeInfo.cpp
     UIProcess/API/glib/WebKitNavigationAction.cpp
+    UIProcess/API/glib/WebKitNavigationClient.cpp
     UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp
     UIProcess/API/glib/WebKitNetworkProxySettings.cpp
     UIProcess/API/glib/WebKitNotification.cpp
@@ -157,7 +157,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/API/glib/WebKitNotificationProvider.cpp
     UIProcess/API/glib/WebKitPermissionRequest.cpp
     UIProcess/API/glib/WebKitPlugin.cpp
-    UIProcess/API/glib/WebKitPolicyClient.cpp
     UIProcess/API/glib/WebKitPolicyDecision.cpp
     UIProcess/API/glib/WebKitPrivate.cpp
     UIProcess/API/glib/WebKitResponsePolicyDecision.cpp

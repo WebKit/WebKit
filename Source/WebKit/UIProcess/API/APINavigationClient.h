@@ -79,6 +79,9 @@ public:
     virtual void didFailNavigationWithError(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, Navigation*, const WebCore::ResourceError&, Object*) { }
     virtual void didSameDocumentNavigation(WebKit::WebPageProxy&, Navigation*, WebKit::SameDocumentNavigationType, Object*) { }
 
+    virtual void didDisplayInsecureContent(WebKit::WebPageProxy&, API::Object*) { }
+    virtual void didRunInsecureContent(WebKit::WebPageProxy&, API::Object*) { }
+
     virtual void renderingProgressDidChange(WebKit::WebPageProxy&, WebCore::LayoutMilestones) { }
 
     virtual bool canAuthenticateAgainstProtectionSpace(WebKit::WebPageProxy&, WebKit::WebProtectionSpace*) { return false; }
@@ -101,7 +104,7 @@ public:
         listener->use({ });
     }
 
-    virtual void decidePolicyForNavigationResponse(WebKit::WebPageProxy&, NavigationResponse&, Ref<WebKit::WebFramePolicyListenerProxy>&& listener, Object*)
+    virtual void decidePolicyForNavigationResponse(WebKit::WebPageProxy&, Ref<NavigationResponse>&&, Ref<WebKit::WebFramePolicyListenerProxy>&& listener, Object*)
     {
         listener->use({ });
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,11 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitPolicyClient_h
-#define WebKitPolicyClient_h
+#pragma once
 
 #include "WebKitWebView.h"
 
-void attachPolicyClientToView(WebKitWebView*);
-
-#endif // WebKitPolicyClient_h
+void attachNavigationClientToView(WebKitWebView*);

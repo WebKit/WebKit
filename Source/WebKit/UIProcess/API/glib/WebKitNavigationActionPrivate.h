@@ -19,37 +19,23 @@
 
 #pragma once
 
-#include "NavigationActionData.h"
+#include "APINavigationAction.h"
 #include "WebKitNavigationAction.h"
-#include "WebKitPrivate.h"
 #include <wtf/glib/GRefPtr.h>
 
 struct _WebKitNavigationAction {
-    _WebKitNavigationAction(WebKitURIRequest* uriRequest, const WebKit::NavigationActionData& navigationActionData)
-        : type(toWebKitNavigationType(navigationActionData.navigationType))
-        , mouseButton(toWebKitMouseButton(navigationActionData.mouseButton))
-        , modifiers(toPlatformModifiers(navigationActionData.modifiers))
-        , isUserGesture(navigationActionData.userGestureTokenIdentifier)
-        , isRedirect(navigationActionData.isRedirect)
-        , request(uriRequest)
+    _WebKitNavigationAction(Ref<API::NavigationAction>&& action)
+        : action(WTFMove(action))
     {
     }
 
     _WebKitNavigationAction(WebKitNavigationAction* navigation)
-        : type(navigation->type)
-        , mouseButton(navigation->mouseButton)
-        , modifiers(navigation->modifiers)
-        , isUserGesture(navigation->isUserGesture)
-        , request(navigation->request)
+        : action(navigation->action)
     {
     }
 
-    WebKitNavigationType type;
-    unsigned mouseButton;
-    unsigned modifiers;
-    bool isUserGesture : 1;
-    bool isRedirect : 1;
+    RefPtr<API::NavigationAction> action;
     GRefPtr<WebKitURIRequest> request;
 };
 
-WebKitNavigationAction* webkitNavigationActionCreate(WebKitURIRequest*, const WebKit::NavigationActionData&);
+WebKitNavigationAction* webkitNavigationActionCreate(Ref<API::NavigationAction>&&);

@@ -22,4 +22,4 @@
 #include "WebFramePolicyListenerProxy.h"
 #include "WebKitPolicyDecision.h"
 
-void webkitPolicyDecisionSetListener(WebKitPolicyDecision*, WebKit::WebFramePolicyListenerProxy*);
+void webkitPolicyDecisionSetListener(WebKitPolicyDecision*, Ref<WebKit::WebFramePolicyListenerProxy>&&);

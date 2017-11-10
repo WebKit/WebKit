@@ -30,6 +30,7 @@
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
 #include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 #include <wtf/glib/GRefPtr.h>
 
 #if PLATFORM(GTK)
@@ -46,10 +47,10 @@ public:
     }
 
 private:
-    void createNewPage(WebPageProxy&, Ref<API::FrameInfo>&&, WebCore::ResourceRequest&& resourceRequest, WebCore::WindowFeatures&& windowFeatures, NavigationActionData&& navigationActionData, WTF::Function<void(RefPtr<WebPageProxy>&&)>&& completionHandler)
+    void createNewPage(WebPageProxy& page, Ref<API::FrameInfo>&& frameInfo, WebCore::ResourceRequest&& resourceRequest, WebCore::WindowFeatures&& windowFeatures, NavigationActionData&& navigationActionData, WTF::Function<void(RefPtr<WebPageProxy>&&)>&& completionHandler)
     {
-        GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(resourceRequest));
-        WebKitNavigationAction navigationAction(request.get(), navigationActionData);
+        auto userInitiatedActivity = page.process().userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
+        WebKitNavigationAction navigationAction(API::NavigationAction::create(WTFMove(navigationActionData), frameInfo.ptr(), nullptr, std::nullopt, WTFMove(resourceRequest), { }, false, WTFMove(userInitiatedActivity)));
         completionHandler(webkitWebViewCreateNewPage(m_webView, windowFeatures, &navigationAction));
     }
 

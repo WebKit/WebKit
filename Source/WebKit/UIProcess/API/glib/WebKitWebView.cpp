@@ -45,9 +45,8 @@
 #include "WebKitIconLoadingClient.h"
 #include "WebKitInstallMissingMediaPluginsPermissionRequestPrivate.h"
 #include "WebKitJavascriptResultPrivate.h"
-#include "WebKitLoaderClient.h"
+#include "WebKitNavigationClient.h"
 #include "WebKitNotificationPrivate.h"
-#include "WebKitPolicyClient.h"
 #include "WebKitPrivate.h"
 #include "WebKitResponsePolicyDecision.h"
 #include "WebKitScriptDialogPrivate.h"
@@ -648,9 +647,8 @@ static void webkitWebViewConstructed(GObject* object)
     // The related view is only valid during the construction.
     priv->relatedView = nullptr;
 
-    attachLoaderClientToView(webView);
+    attachNavigationClientToView(webView);
     attachUIClientToView(webView);
-    attachPolicyClientToView(webView);
     attachContextMenuClientToView(webView);
     attachFormClientToView(webView);
 

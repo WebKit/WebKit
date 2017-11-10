@@ -535,22 +535,22 @@ void NavigationState::NavigationClient::contentRuleListNotification(WebPageProxy
     [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView URL:url contentRuleListIdentifiers:identifiers.get() notifications:nsNotifications.get()];
 }
     
-void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPageProxy&, API::NavigationResponse& navigationResponse, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData)
+void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPageProxy&, Ref<API::NavigationResponse>&& navigationResponse, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationResponseDecisionHandler) {
-        NSURL *url = navigationResponse.response().nsURLResponse().URL;
+        NSURL *url = navigationResponse->response().nsURLResponse().URL;
         if ([url isFileURL]) {
             BOOL isDirectory = NO;
             BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:url.path isDirectory:&isDirectory];
 
-            if (exists && !isDirectory && navigationResponse.canShowMIMEType())
+            if (exists && !isDirectory && navigationResponse->canShowMIMEType())
                 listener->use({ });
             else
                 listener->ignore();
             return;
         }
 
-        if (navigationResponse.canShowMIMEType())
+        if (navigationResponse->canShowMIMEType())
             listener->use({ });
         else
             listener->ignore();

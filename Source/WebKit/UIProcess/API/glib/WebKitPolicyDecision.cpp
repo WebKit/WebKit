@@ -46,7 +46,6 @@ using namespace WebKit;
 
 struct _WebKitPolicyDecisionPrivate {
     RefPtr<WebFramePolicyListenerProxy> listener;
-    bool madePolicyDecision;
 };
 
 WEBKIT_DEFINE_ABSTRACT_TYPE(WebKitPolicyDecision, webkit_policy_decision, G_TYPE_OBJECT)
@@ -57,9 +56,9 @@ static void webkitPolicyDecisionDispose(GObject* object)
     G_OBJECT_CLASS(webkit_policy_decision_parent_class)->dispose(object);
 }
 
-void webkitPolicyDecisionSetListener(WebKitPolicyDecision* decision, WebFramePolicyListenerProxy* listener)
+void webkitPolicyDecisionSetListener(WebKitPolicyDecision* decision, Ref<WebFramePolicyListenerProxy>&& listener)
 {
-     decision->priv->listener = listener;
+    decision->priv->listener = WTFMove(listener);
 }
 
 static void webkit_policy_decision_class_init(WebKitPolicyDecisionClass* decisionClass)
@@ -78,11 +77,11 @@ void webkit_policy_decision_use(WebKitPolicyDecision* decision)
 {
     g_return_if_fail(WEBKIT_IS_POLICY_DECISION(decision));
 
-    if (decision->priv->madePolicyDecision)
+    if (!decision->priv->listener)
         return;
 
-    decision->priv->listener->use({ });
-    decision->priv->madePolicyDecision = true;
+    auto listener = std::exchange(decision->priv->listener, nullptr);
+    listener->use({ });
 }
 
 /**
@@ -96,11 +95,11 @@ void webkit_policy_decision_ignore(WebKitPolicyDecision* decision)
 {
     g_return_if_fail(WEBKIT_IS_POLICY_DECISION(decision));
 
-    if (decision->priv->madePolicyDecision)
+    if (!decision->priv->listener)
         return;
 
-    decision->priv->listener->ignore();
-    decision->priv->madePolicyDecision = true;
+    auto listener = std::exchange(decision->priv->listener, nullptr);
+    listener->ignore();
 }
 
 /**
@@ -113,9 +112,9 @@ void webkit_policy_decision_download(WebKitPolicyDecision* decision)
 {
     g_return_if_fail(WEBKIT_IS_POLICY_DECISION(decision));
 
-    if (decision->priv->madePolicyDecision)
+    if (!decision->priv->listener)
         return;
 
-    decision->priv->listener->download();
-    decision->priv->madePolicyDecision = true;
+    auto listener = std::exchange(decision->priv->listener, nullptr);
+    listener->download();
 }
