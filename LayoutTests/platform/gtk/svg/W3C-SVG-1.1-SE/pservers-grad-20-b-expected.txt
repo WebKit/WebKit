@@ -15,7 +15,7 @@ layer at (0,0) size 480x360
         RenderSVGPath {path} at (68,100) size 108x108 [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 410 10 L 70 350"]
         RenderSVGRect {rect} at (49,81) size 146x146 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=-60.00] [width=480.00] [height=480.00]
       RenderSVGText {text} at (69,235) size 102x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 102x19
+        RenderSVGInlineText {#text} at (0,0) size 102x18
           chunk 1 (middle anchor) text run 1 at (69.00,250.00) startOffset 0 endOffset 13 width 102.00: "With fallback"
       RenderSVGContainer {g} at (279,81) size 146x146 [transform={m=((0.30,0.00)(0.00,0.30)) t=(280.00,100.00)}]
         RenderSVGPath {path} at (280,151) size 144x6 [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 0 180 L 480 180"]
@@ -24,10 +24,10 @@ layer at (0,0) size 480x360
         RenderSVGPath {path} at (298,100) size 108x108 [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 410 10 L 70 350"]
         RenderSVGRect {rect} at (279,81) size 146x146 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=-60.00] [width=480.00] [height=480.00]
       RenderSVGText {text} at (286,235) size 128x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 127x19
+        RenderSVGInlineText {#text} at (0,0) size 127x18
           chunk 1 (middle anchor) text run 1 at (286.50,250.00) startOffset 0 endOffset 16 width 127.00: "Without fallback"
     RenderSVGContainer {g} at (10,314) size 231x33
       RenderSVGText {text} at (10,314) size 231x33 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 231x33
+        RenderSVGInlineText {#text} at (0,0) size 231x32
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 231.00: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

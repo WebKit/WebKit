@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (2,2) size 780x220
           RenderTableRow {TR} at (0,2) size 780x216
             RenderTableCell {TD} at (2,2) size 776x216 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock (anonymous) at (2,2) size 772x17
+              RenderBlock (anonymous) at (2,2) size 772x18
                 RenderText {#text} at (0,0) size 12x17
                   text run at (0,0) width 12: "Y"
                 RenderTable {TABLE} at (548,0) size 224x212
@@ -32,6 +32,6 @@ layer at (0,0) size 800x600
                       RenderTableCell {TD} at (10,204) size 214x8 [r=3 c=1 rs=1 cs=1]
                         RenderImage {IMG} at (0,0) size 1x8
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {P} at (2,35) size 772x17
+              RenderBlock {P} at (2,36) size 772x18
                 RenderText {#text} at (0,0) size 12x17
                   text run at (0,0) width 12: "X"

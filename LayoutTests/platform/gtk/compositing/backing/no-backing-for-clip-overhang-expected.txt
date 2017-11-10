@@ -22,7 +22,7 @@ Text here
                   (bounds 300.00 100.00)
                   (children 1
                     (GraphicsLayer
-                      (position 0.00 17.00)
+                      (position 0.00 18.00)
                       (bounds 10.00 10.00)
                       (contentsOpaque 1)
                     )

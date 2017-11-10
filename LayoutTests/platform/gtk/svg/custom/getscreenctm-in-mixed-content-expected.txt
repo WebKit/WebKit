@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x51
-  RenderBlock {html} at (0,0) size 800x51
-    RenderBody {body} at (8,8) size 784x35
+layer at (0,0) size 800x52
+  RenderBlock {html} at (0,0) size 800x52
+    RenderBody {body} at (8,8) size 784x36
       RenderText {#text} at (0,0) size 170x17
         text run at (0,0) width 170: "This tests the behaviour of "
       RenderInline {code} at (0,0) size 224x15
