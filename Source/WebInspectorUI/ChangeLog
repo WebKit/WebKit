@@ -1,5 +1,24 @@
 2017-11-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Network detail views - Include a newline between sections when copying
+        https://bugs.webkit.org/show_bug.cgi?id=179577
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/NetworkResourceDetailView.css:
+        (.content-view.resource-details):
+        * UserInterface/Views/ResourceDetailsSection.css:
+        (.resource-details > section):
+        (.resource-details > section > .title):
+        Adjust styles now that there is a <br> taking up space between sections.
+        After all the changes, the top section moved up 1px from where it was originally.
+
+        * UserInterface/Views/ResourceDetailsSection.js:
+        (WI.ResourceDetailsSection):
+        Include a <br> to get newlines when copying.
+
+2017-11-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Network waterfall graph - make connection part thinner
         https://bugs.webkit.org/show_bug.cgi?id=179561
 

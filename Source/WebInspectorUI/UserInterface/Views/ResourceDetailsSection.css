@@ -24,11 +24,11 @@
  */
 
 .resource-details > section {
-    padding-top: 8px;
+    padding-top: 5px;
 }
 
 .resource-details > section > .title {
-    margin: 10px 0;
+    margin-bottom: 10px;
 }
 
 .resource-details > section > .details {

@@ -37,6 +37,9 @@ WI.ResourceDetailsSection = class ResourceDetailsSection
 
         this._detailsElement = this._element.appendChild(document.createElement("div"));
         this._detailsElement.className = "details";
+
+        // Ensures an empty line between sections when copying.
+        this._element.appendChild(document.createElement("br"));
     }
 
     // Public
