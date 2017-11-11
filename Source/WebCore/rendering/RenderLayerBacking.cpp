@@ -646,6 +646,7 @@ void RenderLayerBacking::updateAfterLayout(OptionSet<UpdateAfterLayoutFlags> fla
         
         if (flags.contains(UpdateAfterLayoutFlags::IsUpdateRoot)) {
             updateGeometry();
+            updateAfterDescendants();
             compositor().updateRootLayerPosition();
             auto* stackingContainer = m_owningLayer.enclosingStackingContainer();
             if (!compositor().compositingLayersNeedRebuild() && stackingContainer && (stackingContainer != &m_owningLayer))

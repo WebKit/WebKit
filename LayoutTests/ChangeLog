@@ -1,3 +1,14 @@
+2017-11-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Contents of composited overflow-scroll are missing when newly added
+        https://bugs.webkit.org/show_bug.cgi?id=179556
+        rdar://problem/20368294
+
+        Reviewed by Tim Horton.
+
+        * compositing/backing/overflow-gains-content-expected.html: Added.
+        * compositing/backing/overflow-gains-content.html: Added.
+
 2017-11-10  Chris Dumez  <cdumez@apple.com>
 
         [Service Workers] Implement better support for "Clear Registration" algorithm
