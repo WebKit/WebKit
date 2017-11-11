@@ -33,7 +33,9 @@ WI.CanvasManager = class CanvasManager extends WI.Object
 
         this._canvasIdentifierMap = new Map;
         this._shaderProgramIdentifierMap = new Map;
+
         this._recordingCanvas = null;
+        this._recordingFrameMap = new Map;
 
         if (window.CanvasAgent)
             CanvasAgent.enable();
@@ -138,6 +140,30 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         canvas.cssCanvasClientNodesChanged();
     }
 
+    recordingProgress(canvasIdentifier, framesPayload, bufferUsed)
+    {
+        // Called from WI.CanvasObserver.
+
+        let canvas = this._canvasIdentifierMap.get(canvasIdentifier);
+        console.assert(canvas);
+        if (!canvas)
+            return;
+
+        let existingFrames = this._recordingFrameMap.get(canvasIdentifier);
+        if (!existingFrames) {
+            existingFrames = [];
+            this._recordingFrameMap.set(canvasIdentifier, existingFrames);
+        }
+
+        existingFrames.push(...framesPayload.map(WI.RecordingFrame.fromPayload));
+
+        this.dispatchEventToListeners(WI.CanvasManager.Event.RecordingProgress, {
+            canvas,
+            frameCount: existingFrames.length,
+            bufferUsed,
+        });
+    }
+
     recordingFinished(canvasIdentifier, recordingPayload)
     {
         // Called from WI.CanvasObserver.
@@ -149,7 +175,8 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         if (!canvas)
             return;
 
-        let recording = recordingPayload ? WI.Recording.fromPayload(recordingPayload) : null;
+        let frames = this._recordingFrameMap.take(canvasIdentifier);
+        let recording = recordingPayload ? WI.Recording.fromPayload(recordingPayload, frames) : null;
         if (recording) {
             recording.source = canvas;
             recording.createDisplayName();
@@ -242,6 +269,7 @@ WI.CanvasManager.Event = {
     CanvasAdded: "canvas-manager-canvas-was-added",
     CanvasRemoved: "canvas-manager-canvas-was-removed",
     RecordingStarted: "canvas-manager-recording-started",
+    RecordingProgress: "canvas-manager-recording-progress",
     RecordingStopped: "canvas-manager-recording-stopped",
     ShaderProgramAdded: "canvas-manager-shader-program-added",
     ShaderProgramRemoved: "canvas-manager-shader-program-removed",

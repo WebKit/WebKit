@@ -106,13 +106,27 @@ TestPage.registerInitializer(() => {
             return;
         }
 
+        let bufferUsed = 0;
+        let frameCount = 0;
+        function handleRecordingProgress(event) {
+            InspectorTest.assert(event.data.frameCount > frameCount, "Additional frames were captured for this progress event.");
+            frameCount = event.data.frameCount;
+
+            InspectorTest.assert(event.data.bufferUsed > bufferUsed, "Total memory usage increases with each progress event.");
+            bufferUsed = event.data.bufferUsed;
+        }
+        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingProgress, handleRecordingProgress);
+
         WI.canvasManager.awaitEvent(WI.CanvasManager.Event.RecordingStopped).then((event) => {
+            WI.canvasManager.removeEventListener(WI.CanvasManager.Event.RecordingProgress, handleRecordingProgress);
+
             InspectorTest.evaluateInPage(`cancelActions()`);
 
             let recording = event.data.recording;
             InspectorTest.assert(recording.source === canvas, "Recording should be of the given canvas.");
             InspectorTest.assert(recording.source.contextType === type, `Recording should be of a canvas with type "${type}".`);
             InspectorTest.assert(recording.source.recordingCollection.items.has(recording), "Recording should be in the canvas' list of recordings.");
+            InspectorTest.assert(recording.frames.length === frameCount, `Recording should have ${frameCount} frames.`)
 
             return recording.actions.then(() => {
                 logRecording(recording, type);

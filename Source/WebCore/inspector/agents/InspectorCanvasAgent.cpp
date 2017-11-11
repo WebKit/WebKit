@@ -490,6 +490,9 @@ void InspectorCanvasAgent::didFinishRecordingCanvasFrame(HTMLCanvasElement& canv
         inspectorCanvas->markCurrentFrameIncomplete();
 
     inspectorCanvas->finalizeFrame();
+    if (inspectorCanvas->currentFrameHasData())
+        m_frontendDispatcher->recordingProgress(inspectorCanvas->identifier(), inspectorCanvas->releaseFrames(), inspectorCanvas->bufferUsed());
+
     if (!forceDispatch && !inspectorCanvas->singleFrame())
         return;
 
@@ -511,7 +514,6 @@ void InspectorCanvasAgent::didFinishRecordingCanvasFrame(HTMLCanvasElement& canv
         .setVersion(1)
         .setType(type)
         .setInitialState(inspectorCanvas->releaseInitialState())
-        .setFrames(inspectorCanvas->releaseFrames())
         .setData(inspectorCanvas->releaseData())
         .release();
 

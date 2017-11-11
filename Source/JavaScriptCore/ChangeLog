@@ -1,3 +1,19 @@
+2017-11-11  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas tab: show detailed status during canvas recording
+        https://bugs.webkit.org/show_bug.cgi?id=178185
+        <rdar://problem/34939862>
+
+        Reviewed by Brian Burg.
+
+        * inspector/protocol/Canvas.json:
+        Add a `recordingProgress` event that is sent to the frontend that contains all the frame
+        payloads since the last Canvas.recordingProgress event and the current buffer usage.
+
+        * inspector/protocol/Recording.json:
+        Remove the required `frames` parameter from the Recording protocol object, as they will be
+        sent in batches via the Canvas.recordingProgress event.
+
 2017-11-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Make http status codes be "integer" instead of "number" in protocol

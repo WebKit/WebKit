@@ -1,3 +1,54 @@
+2017-11-11  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas tab: show detailed status during canvas recording
+        https://bugs.webkit.org/show_bug.cgi?id=178185
+        <rdar://problem/34939862>
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Protocol/CanvasObserver.js:
+        (WI.CanvasObserver.prototype.recordingProgress):
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager):
+        (WI.CanvasManager.prototype.recordingProgress):
+        (WI.CanvasManager.prototype.recordingFinished):
+        Maintain arrays of recorded frames for each canvas and add new frames each time a progress
+        event is fired. When the recording is finished, use the array as part of the payload for
+        creating a WI.Recording object.
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording.fromPayload):
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction.prototype.apply.getContent):
+        (WI.RecordingAction.prototype.apply):
+        Drive-by fix: toDataURL is very slow, so add alternative ways of getting and comparing the
+        content of the canvas to determine if the action has a visible effect.
+
+        * UserInterface/Views/CanvasContentView.css:
+        (.content-view.canvas:not(.tab)):
+        (.content-view.canvas:not(.tab) > .progress):
+        (.content-view.canvas:not(.tab) > .progress > .frame-count):
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView):
+        (WI.CanvasContentView.prototype.attached):
+        (WI.CanvasContentView.prototype._recordingStarted):
+        (WI.CanvasContentView.prototype._recordingProgress):
+        (WI.CanvasContentView.prototype._recordingStopped):
+        Steal some space from the preview area to display a count of the number of recorded frames
+        and the current buffer usage.
+
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (.content-view.canvas-overview .content-view.canvas > :matches(header, .progress, .preview, footer)):
+        (.content-view.canvas-overview .content-view.canvas.selected > :matches(.progress, .preview, footer),):
+        (.content-view.canvas-overview .content-view.canvas > :matches(.progress, .preview)):
+        (.content-view.canvas-overview .content-view.canvas > .preview):
+        (.content-view.canvas-overview .content-view.canvas > .progress ~ .preview):
+        (.content-view.canvas-overview .content-view.canvas > :matches(header, .preview, footer)): Deleted.
+        (.content-view.canvas-overview .content-view.canvas.selected > :matches(.preview, footer),): Deleted.
+
 2017-11-09  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: clicking on inline swatches and property checkboxes should not add a new property

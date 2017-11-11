@@ -59,6 +59,7 @@ public:
 
     void resetRecordingData();
     bool hasRecordingData() const;
+    bool currentFrameHasData() const;
     void recordAction(const String&, Vector<RecordCanvasActionVariant>&& = { });
 
     RefPtr<Inspector::Protocol::Recording::InitialState>&& releaseInitialState();
@@ -70,6 +71,7 @@ public:
 
     void setBufferLimit(long);
     bool hasBufferSpace() const;
+    long bufferUsed() const { return m_bufferUsed; }
 
     bool singleFrame() const { return m_singleFrame; }
     void setSingleFrame(bool singleFrame) { m_singleFrame = singleFrame; }

@@ -38,11 +38,11 @@
     background-color: white;
 }
 
-.content-view.canvas-overview .content-view.canvas > :matches(header, .preview, footer) {
+.content-view.canvas-overview .content-view.canvas > :matches(header, .progress, .preview, footer) {
     border: 1px solid var(--border-color);
 }
 
-.content-view.canvas-overview .content-view.canvas.selected > :matches(.preview, footer),
+.content-view.canvas-overview .content-view.canvas.selected > :matches(.progress, .preview, footer),
 .content-view.canvas-overview .content-view.canvas.selected:not(.is-recording) > header {
     border-color: var(--selected-background-color);
 }
@@ -124,10 +124,21 @@
     filter: brightness(80%);
 }
 
-.content-view.canvas-overview .content-view.canvas > .preview {
-    height: 280px;
+.content-view.canvas-overview .content-view.canvas > :matches(.progress, .preview) {
     border-top: none;
     border-bottom: none;
+}
+
+.content-view.canvas-overview .content-view.canvas > .preview {
+    height: var(--preview-height);
+
+    --preview-height: 280px;
+}
+
+.content-view.canvas-overview .content-view.canvas > .progress ~ .preview {
+    /* Keep the height of each CanvasContentView constant by subtracting the padding-top, */
+    /* padding-bottom, and text-height (1em) from the previously set height. */
+    height: calc(var(--preview-height) - 1em - (2 * var(--progress-padding)));
 }
 
 .content-view.canvas-overview .content-view.canvas > .preview > img {

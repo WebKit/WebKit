@@ -110,7 +110,12 @@ void InspectorCanvas::resetRecordingData()
 
 bool InspectorCanvas::hasRecordingData() const
 {
-    return m_initialState && m_frames;
+    return m_bufferUsed > 0;
+}
+
+bool InspectorCanvas::currentFrameHasData() const
+{
+    return !!m_frames;
 }
 
 static bool shouldSnapshotWebGLAction(const String& name)
@@ -122,12 +127,13 @@ static bool shouldSnapshotWebGLAction(const String& name)
 
 void InspectorCanvas::recordAction(const String& name, Vector<RecordCanvasActionVariant>&& parameters)
 {
-    if (!hasRecordingData()) {
+    if (!m_initialState) {
         m_initialState = buildInitialState();
         m_bufferUsed += m_initialState->memoryCost();
-
-        m_frames = Inspector::Protocol::Array<Inspector::Protocol::Recording::Frame>::create();
     }
+
+    if (!m_frames)
+        m_frames = Inspector::Protocol::Array<Inspector::Protocol::Recording::Frame>::create();
 
     if (!m_currentActions) {
         m_currentActions = Inspector::Protocol::Array<InspectorValue>::create();
@@ -173,7 +179,7 @@ RefPtr<Inspector::Protocol::Array<InspectorValue>>&& InspectorCanvas::releaseDat
 
 void InspectorCanvas::finalizeFrame()
 {
-    if (m_frames->length() && !std::isnan(m_currentFrameStartTime)) {
+    if (m_frames && m_frames->length() && !std::isnan(m_currentFrameStartTime)) {
         auto currentFrame = static_cast<Inspector::Protocol::Recording::Frame*>(m_frames->get(m_frames->length() - 1).get());
         currentFrame->setDuration(monotonicallyIncreasingTimeMS() - m_currentFrameStartTime);
 
@@ -185,7 +191,7 @@ void InspectorCanvas::finalizeFrame()
 
 void InspectorCanvas::markCurrentFrameIncomplete()
 {
-    if (!m_currentActions)
+    if (!m_currentActions || !m_frames || !m_frames->length())
         return;
 
     static_cast<Inspector::Protocol::Recording::Frame*>(m_frames->get(m_frames->length() - 1).get())->setIncomplete(true);

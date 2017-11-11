@@ -68,7 +68,7 @@ WI.Recording = class Recording
         });
     }
 
-    static fromPayload(payload)
+    static fromPayload(payload, frames)
     {
         if (typeof payload !== "object" || payload === null)
             return null;
@@ -104,7 +104,9 @@ WI.Recording = class Recording
         if (!Array.isArray(payload.data))
             payload.data = [];
 
-        let frames = payload.frames.map(WI.RecordingFrame.fromPayload);
+        if (!frames)
+            frames = payload.frames.map(WI.RecordingFrame.fromPayload)
+
         return new WI.Recording(payload.version, type, payload.initialState, frames, payload.data);
     }
 

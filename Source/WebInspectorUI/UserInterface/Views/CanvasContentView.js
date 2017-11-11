@@ -33,6 +33,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
         this.element.classList.add("canvas");
 
+        this._recordingProgressElement = null;
         this._previewContainerElement = null;
         this._previewImageElement = null;
         this._errorElement = null;
@@ -196,6 +197,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         });
 
         WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStarted, this._recordingStarted, this);
+        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingProgress, this._recordingProgress, this);
         WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStopped, this._recordingStopped, this);
 
         WI.settings.showImageGrid.addEventListener(WI.Setting.Event.Changed, this._updateImageGrid, this);
@@ -260,6 +262,34 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
     _recordingStarted(event)
     {
         this._updateRecordNavigationItem();
+
+        if (!this._recordingProgressElement) {
+            this._recordingProgressElement = this._previewContainerElement.insertAdjacentElement("beforebegin", document.createElement("div"));
+            this._recordingProgressElement.className = "progress";
+        }
+
+        this._recordingProgressElement.textContent = WI.UIString("Waiting for frames…");
+    }
+
+    _recordingProgress(event)
+    {
+        let {canvas, frameCount, bufferUsed} = event.data;
+        if (canvas !== this.representedObject)
+            return;
+
+        this._recordingProgressElement.removeChildren();
+
+        let frameCountElement = this._recordingProgressElement.appendChild(document.createElement("span"));
+        frameCountElement.className = "frame-count";
+
+        let frameString = frameCount === 1 ? WI.UIString("%d Frame") : WI.UIString("%d Frames");
+        frameCountElement.textContent = frameString.format(frameCount);
+
+        this._recordingProgressElement.append(" ");
+
+        let bufferUsedElement = this._recordingProgressElement.appendChild(document.createElement("span"));
+        bufferUsedElement.className = "buffer-used";
+        bufferUsedElement.textContent = "(" + Number.bytesToString(bufferUsed) + ")";
     }
 
     _recordingStopped(event)
@@ -271,6 +301,9 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
             return;
 
         this._addRecording(recording);
+
+        this._recordingProgressElement.remove();
+        this._recordingProgressElement = null;
     }
 
     _handleRecordingSelectElementChange(event)

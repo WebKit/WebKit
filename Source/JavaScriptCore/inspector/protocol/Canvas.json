@@ -184,6 +184,14 @@
             ]
         },
         {
+            "name": "recordingProgress",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId" },
+                { "name": "frames", "type": "array", "items": { "$ref": "Recording.Frame" }},
+                { "name": "bufferUsed", "type": "integer", "description": "Total memory size in bytes of all data recorded since the recording began." }
+            ]
+        },
+        {
             "name": "recordingFinished",
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId" },
