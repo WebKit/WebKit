@@ -140,9 +140,12 @@ imported/w3c/web-platform-tests/secure-contexts/shared-worker-insecure-first.htt
 imported/w3c/web-platform-tests/secure-contexts/shared-worker-secure-first.https.html [ Skip ]
 
 # Skip service worker tests that are timing out.
+imported/w3c/web-platform-tests/fetch/api/abort/general-serviceworker.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/registration-attribute.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/unregister.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-on-evaluation.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/detached-context.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/extendable-event-waituntil.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/foreign-fetch-basics.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/foreign-fetch-event.https.html [ Skip ]
@@ -162,11 +165,12 @@ imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preloa
 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect-to-http.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/postmessage.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/register-foreign-fetch-errors.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/respond-with-body-accessed-response.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-without-client.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-without-using-registration.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-navigation-fetch-event.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-oneday.https.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/api/abort/general-serviceworker.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-without-using-registration.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/websocket-in-service-worker.https.html [ Skip ]
 
 http/tests/workers/service/basic-install-event-waitUntil-multiple-promises.html [ Pass Timeout ]
 http/tests/workers/service/basic-install-event-waitUntil-reject.html  [ Pass Timeout ]

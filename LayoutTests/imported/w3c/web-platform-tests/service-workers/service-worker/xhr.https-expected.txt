@@ -1,4 +1,0 @@
-
-
-FAIL Verify XHR does not exist assert_unreached: unexpected rejection: null is not an object (evaluating 'frame.contentWindow.navigator.serviceWorker.controller.postMessage') Reached unreachable code
-

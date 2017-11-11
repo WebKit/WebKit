@@ -1,3 +1,68 @@
+2017-11-11  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync Service Workers web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=179575
+
+        Reviewed by Youenn Fablet.
+
+        Re-sync Service Workers web-platform-tests from upstream 04892735ed1.
+
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/registration-attribute.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/registration-attribute.https.html:
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/registration-attribute-newer-worker.js: Added.
+        (record):
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/registration-attribute-worker.js:
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/unregister-controlling-worker.html: Added.
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/unregister-worker.js:
+        (matchQuery):
+        (e.waitUntil.self.registration.unregister.then):
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/update-worker.js:
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/w3c-import.log:
+        * web-platform-tests/service-workers/service-worker/detached-context.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/detached-context.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-event.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event.https.html:
+        * web-platform-tests/service-workers/service-worker/navigation-preload/empty-preload-response-body.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-preload/resources/empty-preload-response-body-scope.html: Added.
+        * web-platform-tests/service-workers/service-worker/request-body-blob.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/request-body-blob.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/empty.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-test-worker.js:
+        (handleHeaders):
+        (handleRequestBody):
+        * web-platform-tests/service-workers/service-worker/resources/interfaces-idls.js:
+        * web-platform-tests/service-workers/service-worker/resources/interfaces-worker.sub.js:
+        (test):
+        * web-platform-tests/service-workers/service-worker/resources/request-body-blob-iframe.html: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/request-body-blob-worker.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/respond-with-body-accessed-response-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/respond-with-body-accessed-response-worker.js: Added.
+        (getQueryParams):
+        (createResponse):
+        (cloneResponseIfNeeded):
+        (passThroughCacheIfNeeded):
+        (event.request.url.indexOf):
+        (event.respondWith.createResponse.params.then):
+        (then):
+        * web-platform-tests/service-workers/service-worker/resources/respond-with-body-accessed-response.jsonp: Added.
+        * web-platform-tests/service-workers/service-worker/resources/test-helpers.sub.js:
+        * web-platform-tests/service-workers/service-worker/resources/w3c-import.log:
+        * web-platform-tests/service-workers/service-worker/resources/websocket-worker.js: Added.
+        (reportFailure):
+        (onmessage.event.ws.onopen):
+        (onmessage.event.ws.onclose):
+        (onmessage.event.ws.onerror):
+        * web-platform-tests/service-workers/service-worker/resources/xhr.js: Removed.
+        * web-platform-tests/service-workers/service-worker/respond-with-body-accessed-response.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/respond-with-body-accessed-response.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/w3c-import.log:
+        * web-platform-tests/service-workers/service-worker/waiting.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/waiting.https.html:
+        * web-platform-tests/service-workers/service-worker/websocket-in-service-worker.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/websocket-in-service-worker.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/xhr.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/xhr.https.html: Removed.
+
 2017-11-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, unskip & rebaseline several service worker tests

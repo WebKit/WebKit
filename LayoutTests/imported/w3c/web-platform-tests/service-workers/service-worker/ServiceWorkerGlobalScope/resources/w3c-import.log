@@ -25,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/postmessage-loopback-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/postmessage-ping-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/postmessage-pong-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/registration-attribute-newer-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/registration-attribute-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/unregister-controlling-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/unregister-worker.js

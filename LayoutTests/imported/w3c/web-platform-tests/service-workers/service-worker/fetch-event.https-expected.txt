@@ -15,4 +15,7 @@ FAIL Service Worker should expose FetchEvent URL fragments. assert_unreached: un
 FAIL Service Worker responds to fetch event with the correct cache types assert_unreached: unexpected rejection: assert_equals: expected "default" but got "Here's a simple html file.\n" Reached unreachable code
 FAIL Service Worker should intercept EventSource assert_unreached: unexpected rejection: The EventSource fired an error event. Reached unreachable code
 FAIL Service Worker responds to fetch event with the correct integrity_metadata assert_unreached: unexpected rejection: assert_equals: expected "" but got "Here's a simple html file.\n" Reached unreachable code
+FAIL FetchEvent#body is a string assert_equals: expected "i am the request body" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+FAIL FetchEvent#body is a blob assert_equals: expected "it's me the blob and more blob!" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+FAIL Service Worker responds to fetch event with the correct keepalive value assert_equals: expected "false" but got "Here's a simple html file.\n"
 

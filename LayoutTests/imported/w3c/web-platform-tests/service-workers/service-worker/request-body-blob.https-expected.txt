@@ -1,3 +1,0 @@
-
-FAIL Service worker can read the request body blob assert_equals: expected "Pass" but got "error: bad response: 404"
-

@@ -1,3 +1,14 @@
+2017-11-11  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync Service Workers web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=179575
+
+        Reviewed by Youenn Fablet.
+
+        Skip a few tests that are timing out.
+
+        * TestExpectations:
+
 2017-11-11  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas tab: show detailed status during canvas recording

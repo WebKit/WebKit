@@ -40,6 +40,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/controller-on-disconnect.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/controller-on-load.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/controller-on-reload.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/detached-context.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/extendable-event-async-waituntil.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/extendable-event-waituntil.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https.html
@@ -140,9 +141,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/registration-service-worker-attributes.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/rejections.https.html
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/request-body-blob.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/request-end-to-end.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/respond-with-body-accessed-response.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/service-worker-csp-connect.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/service-worker-csp-default.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/service-worker-csp-script.https.html
@@ -167,7 +168,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/update-recovery.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/update.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/waiting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/websocket-in-service-worker.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/worker-interception.https.html
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/xhr.https.html

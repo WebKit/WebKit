@@ -198,13 +198,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/registration-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/reject-install-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/reply-to-message.html
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/request-body-blob-iframe.html
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/request-body-blob-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/request-end-to-end-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/request-headers.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/resource-timing-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/resource-timing-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/respond-then-throw-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/respond-with-body-accessed-response-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/respond-with-body-accessed-response-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/respond-with-body-accessed-response.jsonp
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/service-worker-csp-worker.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/shared-worker-controlled.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/shared-worker-import.js
@@ -226,9 +227,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/update-recovery-worker.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/update-worker.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/wait-forever-in-install-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/websocket-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/websocket.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/windowclient-navigate-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/worker-interception-iframe.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/worker-load-interceptor.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/worker-testharness.js
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/xhr.js
