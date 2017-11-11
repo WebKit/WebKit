@@ -116,9 +116,6 @@ bool PDFDocumentImage::cacheParametersMatch(GraphicsContext& context, const Floa
     if (srcRect != m_cachedSourceRect)
         return false;
 
-    if (!m_cachedImageRect.contains(context.clipBounds()))
-        return false;
-
     AffineTransform::DecomposedType decomposedTransform;
     context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale).decompose(decomposedTransform);
 
@@ -207,12 +204,6 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
     bool repaintIfNecessary = interpolationQuality != InterpolationNone && interpolationQuality != InterpolationLow;
 #endif
 
-    // Clipped option is for testing only. Force recaching the PDF with each draw.
-    if (m_pdfImageCachingPolicy != PDFImageCachingClipBoundsOnly) {
-        if (m_cachedImageBuffer && (!repaintIfNecessary || cacheParametersMatch(context, dstRect, srcRect)))
-            return;
-    }
-
     switch (m_pdfImageCachingPolicy) {
     case PDFImageCachingDisabled:
         return;
@@ -227,6 +218,12 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
     case PDFImageCachingEnabled:
         m_cachedImageRect = dstRect;
         break;
+    }
+
+    // Clipped option is for testing only. Force recaching the PDF with each draw.
+    if (m_pdfImageCachingPolicy != PDFImageCachingClipBoundsOnly) {
+        if (m_cachedImageBuffer && (!repaintIfNecessary || cacheParametersMatch(context, dstRect, srcRect)))
+            return;
     }
 
     FloatSize cachedImageSize = FloatRect(enclosingIntRect(m_cachedImageRect)).size();
