@@ -716,5 +716,3 @@ webkit.org/b/174471 webrtc/filtering-ice-candidate-after-reload.html [ Pass Time
 
 webkit.org/b/175678 media/W3C/video/events/event_progress.html [ Pass Failure ]
 
-webkit.org/b/177440 imported/w3c/web-platform-tests/html/browsers/origin/relaxing-the-same-origin-restriction/document_domain_setter_null.tentative.html [ Pass Failure ]
-
