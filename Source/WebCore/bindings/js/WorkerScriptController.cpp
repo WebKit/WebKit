@@ -152,16 +152,15 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, NakedP
     }
 
     if (returnedException) {
-        String errorMessage;
+        String errorMessage = returnedException->value().toWTFString(exec);
         int lineNumber = 0;
         int columnNumber = 0;
         String sourceURL = sourceCode.url().string();
         JSC::Strong<JSC::Unknown> error;
-        if (m_workerGlobalScope->sanitizeScriptError(errorMessage, lineNumber, columnNumber, sourceURL, error, sourceCode.cachedScript())) {
-            if (returnedExceptionMessage)
-                *returnedExceptionMessage = errorMessage;
+        if (m_workerGlobalScope->sanitizeScriptError(errorMessage, lineNumber, columnNumber, sourceURL, error, sourceCode.cachedScript()))
             returnedException = JSC::Exception::create(vm, createError(exec, errorMessage.impl()));
-        }
+        if (returnedExceptionMessage)
+            *returnedExceptionMessage = errorMessage;
     }
 }
 

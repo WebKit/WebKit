@@ -1,3 +1,17 @@
+2017-11-10  Chris Dumez  <cdumez@apple.com>
+
+        [Service Workers] Registration promise should be rejected when the service worker fails to start
+        https://bugs.webkit.org/show_bug.cgi?id=179566
+
+        Reviewed by Brady Eidson.
+
+        Add layout test coverage.
+
+        * TestExpectations: Mark test as flaky as the console lines sometimes change order.
+        * http/tests/workers/service/resources/worker-fails-to-start-worker.js: Added.
+        * http/tests/workers/service/worker-fails-to-start-expected.txt: Added.
+        * http/tests/workers/service/worker-fails-to-start.html: Added.
+
 2017-11-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update TestExpectations for imported/w3c/web-platform-tests/html/browsers/origin/relaxing-the-same-origin-restriction/document_domain_setter_null.tentative.html.

@@ -184,6 +184,7 @@ imported/w3c/web-platform-tests/service-workers/service-worker/fetch-header-visi
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/foreign-fetch-cors.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/performance-timeline.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect.https.html [ Pass Failure ]
 webkit.org/b/179452 imported/w3c/web-platform-tests/service-workers/service-worker/register-same-scope-different-script-url.https.html [ Pass Failure ]
 webkit.org/b/179194 imported/w3c/web-platform-tests/service-workers/service-worker/registration-mime-types.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/registration-script.https.html [ Pass Failure ]

@@ -1,5 +1,20 @@
 2017-11-10  Chris Dumez  <cdumez@apple.com>
 
+        [Service Workers] Registration promise should be rejected when the service worker fails to start
+        https://bugs.webkit.org/show_bug.cgi?id=179566
+
+        Reviewed by Brady Eidson.
+
+        Rebaseline WPT tests now that we properly reject registration promises when the worker script
+        fails to evaluate.
+
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/registration-attribute.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/redirected-response.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update.https-expected.txt:
+
+2017-11-10  Chris Dumez  <cdumez@apple.com>
+
         [Service Workers] Implement better support for "Clear Registration" algorithm
         https://bugs.webkit.org/show_bug.cgi?id=179441
 

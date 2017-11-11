@@ -83,21 +83,22 @@ void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, con
     m_server.updateWorker(connection, m_registrationKey, job.scriptURL, result.script, WorkerType::Classic);
 }
 
-void SWServerJobQueue::scriptContextFailedToStart(SWServer::Connection&, ServiceWorkerIdentifier identifier, const String& message)
+// https://w3c.github.io/ServiceWorker/#update-algorithm
+void SWServerJobQueue::scriptContextFailedToStart(SWServer::Connection&, ServiceWorkerIdentifier, const String& message)
 {
+    // If an uncaught runtime script error occurs during the above step, then:
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
 
-    // FIXME: Install has failed. Run the install failed substeps
-    // Run the Update Worker State algorithm passing registration's installing worker and redundant as the arguments.
-    // Run the Update Registration State algorithm passing registration, "installing" and null as the arguments.
+    // Invoke Reject Job Promise with job and TypeError.
+    m_server.rejectJob(firstJob(), { TypeError, message });
 
     // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
     if (!registration->getNewestWorker())
         clearRegistration(*registration);
 
-    UNUSED_PARAM(identifier);
-    UNUSED_PARAM(message);
+    // Invoke Finish Job with job and abort these steps.
+    finishCurrentJob();
 }
 
 void SWServerJobQueue::scriptContextStarted(SWServer::Connection& connection, ServiceWorkerIdentifier identifier)

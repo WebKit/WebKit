@@ -1,4 +1,3 @@
 
-
-FAIL Verify registration attribute on ServiceWorkerGlobalScope assert_equals: Service Worker should respond to fetch expected "updatefound,install,statechange(installed),statechange(activating),activate,statechange(activated),fetch" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+FAIL Verify registration attribute on ServiceWorkerGlobalScope assert_unreached: unregister and register should not fail: TypeError: null is not an object (evaluating 'self.registration.scope') Reached unreachable code
 
