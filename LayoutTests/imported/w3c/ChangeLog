@@ -1,3 +1,24 @@
+2017-11-10  Chris Dumez  <cdumez@apple.com>
+
+        [Service Workers] Implement better support for "Clear Registration" algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=179441
+
+        Reviewed by Brady Eidson.
+
+        Rebaseline WPT test due to behavior change. Unfortunately, the check goes from PASS to FAIL.
+        The reason is that we do not implement "Try Clear Registration" algorithm, only the "Clear
+        Registration" one. The test expects that a registration object does not get cleared after
+        unregistration because it is "in use". However, because we do not yet support checking if
+        a registration is "in use" in try clear, we proceed to clearing the registration and marking
+        its service workers as redundant.
+
+        Previously, the test was passing because even though we were clearing the registration, we
+        did not mark its service workers as redundant yet. As a result, we would still report that
+        the registration as having an active worker with "activated" state and the test would think
+        we did not clear the registration, even though we did.
+
+        * web-platform-tests/service-workers/service-worker/getregistrations.https-expected.txt:
+
 2017-11-10  Ms2ger  <Ms2ger@igalia.com>
 
         Allow XHR to override the User-Agent header.

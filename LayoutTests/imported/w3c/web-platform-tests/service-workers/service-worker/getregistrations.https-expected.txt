@@ -3,6 +3,6 @@ PASS registrations are not returned following unregister
 FAIL Register then getRegistrations assert_array_equals: getRegistrations should resolve with array of registrations. lengths differ, expected 1 got 0
 FAIL Register multiple times then getRegistrations assert_array_equals: getRegistrations should resolve with array of registrations. lengths differ, expected 2 got 0
 PASS Register then Unregister then getRegistrations 
-PASS Register then Unregister with controlled frame then getRegistrations 
+FAIL Register then Unregister with controlled frame then getRegistrations assert_equals: expected "activated" but got "redundant"
 FAIL getRegistrations promise resolves only with same origin registrations. assert_array_equals: getRegistrations should only return same origin registrations. lengths differ, expected 1 got 0
 

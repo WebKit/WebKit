@@ -333,9 +333,24 @@ void SWServerJobQueue::tryClearRegistration(SWServerRegistration& registration)
 }
 
 // https://w3c.github.io/ServiceWorker/#clear-registration
+static void clearRegistrationWorker(SWServerRegistration& registration, SWServerWorker* worker, ServiceWorkerRegistrationState state)
+{
+    if (!worker)
+        return;
+
+    worker->terminate();
+    registration.updateWorkerState(*worker, ServiceWorkerState::Redundant);
+    registration.updateRegistrationState(state, nullptr);
+}
+
+// https://w3c.github.io/ServiceWorker/#clear-registration
 void SWServerJobQueue::clearRegistration(SWServerRegistration& registration)
 {
-    // FIXME: Update / terminate the registration's service workers.
+    clearRegistrationWorker(registration, registration.installingWorker(), ServiceWorkerRegistrationState::Installing);
+    clearRegistrationWorker(registration, registration.waitingWorker(), ServiceWorkerRegistrationState::Waiting);
+    clearRegistrationWorker(registration, registration.activeWorker(), ServiceWorkerRegistrationState::Active);
+
+    // Remove scope to registration map[scopeString].
     m_server.removeRegistration(registration.key());
 }
 
