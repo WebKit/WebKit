@@ -114,8 +114,8 @@ class IOSSimulatorPort(IOSPort):
         if self.get_option('version'):
             return Version(self.get_option('version'))
         if runtime_identifier:
-            return '.'.join(str(i) for i in Runtime.from_identifier(runtime_identifier).version)
-        return self.host.platform.xcode_sdk_version('iphonesimulator')
+            return Version(Runtime.from_identifier(runtime_identifier).version)
+        return Version(self.host.platform.xcode_sdk_version('iphonesimulator'))
 
     def simulator_device_type(self):
         device_type_identifier = self.get_option('device_type')

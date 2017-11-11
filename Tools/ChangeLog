@@ -1,3 +1,15 @@
+2017-11-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        check-webkit-style: AttributeError: 'NoneType' object has no attribute 'major'
+        https://bugs.webkit.org/show_bug.cgi?id=179522
+
+        Reviewed by Aakash Jain.
+
+        IOSSimulatorPort.ios_version should return a Version object.
+
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort.ios_version): Return a Version object.
+
 2017-11-10  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Win] The way to detect Windows 10 is wrong
