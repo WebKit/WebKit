@@ -31148,7 +31148,7 @@
 		};
 		5355E8D51F967E9D0031E08C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
+			baseConfigurationReference = 5355E8DD1F9680420031E08C /* GenerateUnifiedSources.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -31156,7 +31156,7 @@
 		};
 		5355E8D61F967E9D0031E08C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
+			baseConfigurationReference = 5355E8DD1F9680420031E08C /* GenerateUnifiedSources.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -31164,7 +31164,7 @@
 		};
 		5355E8D71F967E9D0031E08C /* Production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
+			baseConfigurationReference = 5355E8DD1F9680420031E08C /* GenerateUnifiedSources.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
