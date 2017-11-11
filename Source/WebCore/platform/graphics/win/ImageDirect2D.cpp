@@ -92,16 +92,4 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext& ctxt, const Float
     draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), compositeOp, BlendModeNormal, ImageOrientationDescription());
 }
 
-void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform,
-    const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
-{
-    if (!nativeImageForCurrentFrame())
-        return;
-
-    ctxt.drawPattern(*this, destRect, tileRect, patternTransform, phase, spacing, op, blendMode);
-
-    if (imageObserver())
-        imageObserver()->didDraw(*this);
-}
-
 } // namespace WebCore

@@ -225,7 +225,6 @@ platform/graphics/cg/GraphicsContextCG.cpp
 platform/graphics/cg/IOSurfacePool.cpp
 platform/graphics/cg/ImageBufferCG.cpp
 platform/graphics/cg/ImageBufferDataCG.cpp
-platform/graphics/cg/ImageCG.cpp
 platform/graphics/cg/ImageDecoderCG.cpp
 platform/graphics/cg/ImageSourceCGMac.mm
 platform/graphics/cg/IntPointCG.cpp
