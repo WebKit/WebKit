@@ -699,24 +699,13 @@ NSArray *Frame::interpretationsForCurrentRoot() const
     return result;
 }
 
-static bool anyFrameHasTiledLayers(Frame* rootFrame)
-{
-    for (Frame* frame = rootFrame; frame; frame = frame->tree().traverseNext(rootFrame)) {
-        if (frame->containsTiledBackingLayers())
-            return true;
-    }
-    return false;
-}
-
 void Frame::viewportOffsetChanged(ViewportOffsetChangeType changeType)
 {
     LOG_WITH_STREAM(Scrolling, stream << "Frame::viewportOffsetChanged - " << (changeType == IncrementalScrollOffset ? "incremental" : "completed"));
 
     if (changeType == IncrementalScrollOffset) {
-        if (anyFrameHasTiledLayers(this)) {
-            if (RenderView* root = contentRenderer())
-                root->compositor().didChangeVisibleRect();
-        }
+        if (RenderView* root = contentRenderer())
+            root->compositor().didChangeVisibleRect();
     }
 
     if (changeType == CompletedScrollOffset) {
