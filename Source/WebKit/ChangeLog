@@ -1,5 +1,29 @@
 2017-11-11  Tim Horton  <timothy_horton@apple.com>
 
+        Increase the alignment requirement of WKObject's wrapped C++ object
+        https://bugs.webkit.org/show_bug.cgi?id=179518
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::allocateWKObject):
+        (API::Object::fromWKObjectExtraSpace):
+        (API::Object::newObject):
+        * Shared/Cocoa/WKObject.mm:
+        (-[WKObject dealloc]):
+        (-[WKObject _apiObject]):
+        * UIProcess/API/Cocoa/WKConnection.mm:
+        (-[WKConnection dealloc]):
+        (-[WKConnection _apiObject]):
+        (-[WKConnection _connection]):
+        Increase the alignment of the C++ object stored inside WKObject's extra space
+        to 8-bytes, for platforms where some types require greater-than-pointer alignment.
+        To achieve this, increase the size of the extra-space allocation by the difference
+        between 8 bytes and pointer-alignment, and then align within that.
+
+2017-11-11  Tim Horton  <timothy_horton@apple.com>
+
         Avoid composing the message + recipient name for crash logs until a failure actually occurs
         https://bugs.webkit.org/show_bug.cgi?id=179576
 

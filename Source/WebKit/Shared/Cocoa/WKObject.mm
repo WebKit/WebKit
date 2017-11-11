@@ -52,7 +52,7 @@
 
 - (void)dealloc
 {
-    static_cast<API::Object*>(object_getIndexedIvars(self))->~Object();
+    API::Object::fromWKObjectExtraSpace(self).~Object();
     [_target release];
 
     [super dealloc];
@@ -257,7 +257,7 @@ static inline void initializeTargetIfNeeded(WKObject *self)
 
 - (API::Object&)_apiObject
 {
-    return *static_cast<API::Object*>(object_getIndexedIvars(self));
+    return API::Object::fromWKObjectExtraSpace(self);
 }
 
 @end

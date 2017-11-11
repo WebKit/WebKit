@@ -105,14 +105,14 @@ static void setUpClient(WKConnection *wrapper, WebConnection& connection)
 
 - (WebConnection&)_connection
 {
-    return *static_cast<WebConnection*>(object_getIndexedIvars(self));
+    return static_cast<WebConnection&>(API::Object::fromWKObjectExtraSpace(self));
 }
 
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
 {
-    return *static_cast<API::Object*>(object_getIndexedIvars(self));
+    return API::Object::fromWKObjectExtraSpace(self);
 }
 
 @end
