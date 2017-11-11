@@ -179,6 +179,8 @@ class PlatformInfo(object):
         return 'lucid'
 
     def _determine_win_version(self, win_version):
+        if self._platform_module.release() == '10':
+            return 'win10'
         if win_version.major == 0 and win_version.minor == 0:
             if win_version[2] > 10000:
                 return 'win10'
