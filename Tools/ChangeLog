@@ -1,5 +1,25 @@
 2017-11-10  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
+        [WinCairo] LayoutTests doesn't read TextExpectations files correctly
+        https://bugs.webkit.org/show_bug.cgi?id=179219
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser._parse_line):
+        * Scripts/webkitpy/port/apple.py:
+        (ApplePort.__init__):
+        (ApplePort._allowed_port_names):
+        (ApplePort):
+        (ApplePort._future_port_name):
+        (ApplePort._generate_all_test_configurations):
+        * Scripts/webkitpy/port/win.py:
+        (WinCairoPort.default_baseline_search_path):
+        (WinCairoPort):
+        (WinCairoPort._future_port_name):
+
+2017-11-10  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
         [WinCairo] Treat 'future' version correctly
         https://bugs.webkit.org/show_bug.cgi?id=179345
 

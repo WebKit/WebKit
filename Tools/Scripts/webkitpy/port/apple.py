@@ -89,7 +89,6 @@ class ApplePort(Port):
     def __init__(self, host, port_name, **kwargs):
         super(ApplePort, self).__init__(host, port_name, **kwargs)
 
-        allowed_port_names = self.VERSION_FALLBACK_ORDER + [self.operating_system() + "-future"]
         port_name = port_name.replace('-wk2', '')
         self._version = self._strip_port_name_prefix(port_name)
 
@@ -115,10 +114,15 @@ class ApplePort(Port):
     def _port_name_with_version(self):
         return self.name().replace('-future', '').replace('-wk2', '')
 
+    def _allowed_port_names(self):
+        return self.VERSION_FALLBACK_ORDER + [self._future_port_name()]
+
+    def _future_port_name(self):
+        return self.operating_system() + "-" + self.FUTURE_VERSION
+
     def _generate_all_test_configurations(self):
         configurations = []
-        allowed_port_names = self.VERSION_FALLBACK_ORDER + [self.operating_system() + "-future"]
-        for port_name in allowed_port_names:
+        for port_name in self._allowed_port_names():
             for build_type in self.ALL_BUILD_TYPES:
                 for architecture in self.ARCHITECTURES:
                     configurations.append(TestConfiguration(version=self._strip_port_name_prefix(port_name), architecture=architecture, build_type=build_type))

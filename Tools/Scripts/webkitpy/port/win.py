@@ -446,3 +446,6 @@ class WinCairoPort(WinPort):
         fallback_names.append('win')
         fallback_names.append('mac')
         return map(self._webkit_baseline_path, fallback_names)
+
+    def _future_port_name(self):
+        return self.port_name + "-" + self.FUTURE_VERSION
