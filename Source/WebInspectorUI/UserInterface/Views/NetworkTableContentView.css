@@ -153,9 +153,9 @@ body[dir=rtl] .content-view.network .empty-content-placeholder {
 
 .waterfall .block {
     position: absolute;
-    top: 7px;
+    top: 8px;
     min-width: 2px;
-    height: 6px;
+    height: 4px;
 }
 
 .waterfall .block.request,
