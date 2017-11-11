@@ -1828,7 +1828,7 @@ void RenderLayerCompositor::updateLayerTreeGeometry(RenderLayer& layer, int dept
 }
 
 // Recurs down the RenderLayer tree until its finds the compositing descendants of compositingAncestor and updates their geometry.
-void RenderLayerCompositor::updateCompositingDescendantGeometry(RenderLayer& compositingAncestor, RenderLayer& layer, bool compositedChildrenOnly)
+void RenderLayerCompositor::updateCompositingDescendantGeometry(RenderLayer& compositingAncestor, RenderLayer& layer)
 {
     if (&layer != &compositingAncestor) {
         if (auto* layerBacking = layer.backing()) {
@@ -1840,15 +1840,13 @@ void RenderLayerCompositor::updateCompositingDescendantGeometry(RenderLayer& com
             }
 
             layerBacking->updateGeometry();
-            if (compositedChildrenOnly) {
-                layerBacking->updateAfterDescendants();
-                return;
-            }
+            layerBacking->updateAfterDescendants();
+            return;
         }
     }
 
     if (layer.reflectionLayer())
-        updateCompositingDescendantGeometry(compositingAncestor, *layer.reflectionLayer(), compositedChildrenOnly);
+        updateCompositingDescendantGeometry(compositingAncestor, *layer.reflectionLayer());
 
     if (!layer.hasCompositingDescendant())
         return;
@@ -1859,17 +1857,17 @@ void RenderLayerCompositor::updateCompositingDescendantGeometry(RenderLayer& com
     
     if (auto* negZOrderList = layer.negZOrderList()) {
         for (auto* renderLayer : *negZOrderList)
-            updateCompositingDescendantGeometry(compositingAncestor, *renderLayer, compositedChildrenOnly);
+            updateCompositingDescendantGeometry(compositingAncestor, *renderLayer);
     }
 
     if (auto* normalFlowList = layer.normalFlowList()) {
         for (auto* renderLayer : *normalFlowList)
-            updateCompositingDescendantGeometry(compositingAncestor, *renderLayer, compositedChildrenOnly);
+            updateCompositingDescendantGeometry(compositingAncestor, *renderLayer);
     }
     
     if (auto* posZOrderList = layer.posZOrderList()) {
         for (auto* renderLayer : *posZOrderList)
-            updateCompositingDescendantGeometry(compositingAncestor, *renderLayer, compositedChildrenOnly);
+            updateCompositingDescendantGeometry(compositingAncestor, *renderLayer);
     }
     
     if (&layer != &compositingAncestor) {

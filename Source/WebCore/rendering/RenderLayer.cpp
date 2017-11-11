@@ -630,11 +630,11 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
         child->updateLayerPositions(geometryMap, flags);
 
     if ((flags & UpdateCompositingLayers) && isComposited()) {
-        RenderLayerBacking::UpdateAfterLayoutFlags updateFlags = RenderLayerBacking::CompositingChildrenOnly;
+        OptionSet<RenderLayerBacking::UpdateAfterLayoutFlags> updateFlags;
         if (flags & NeedsFullRepaintInBacking)
-            updateFlags |= RenderLayerBacking::NeedsFullRepaint;
+            updateFlags |= RenderLayerBacking::UpdateAfterLayoutFlags::NeedsFullRepaint;
         if (isUpdateRoot)
-            updateFlags |= RenderLayerBacking::IsUpdateRoot;
+            updateFlags |= RenderLayerBacking::UpdateAfterLayoutFlags::IsUpdateRoot;
         backing()->updateAfterLayout(updateFlags);
     }
         

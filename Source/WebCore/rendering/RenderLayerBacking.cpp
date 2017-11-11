@@ -629,7 +629,7 @@ void RenderLayerBacking::updateAfterWidgetResize()
     }
 }
 
-void RenderLayerBacking::updateAfterLayout(UpdateAfterLayoutFlags flags)
+void RenderLayerBacking::updateAfterLayout(OptionSet<UpdateAfterLayoutFlags> flags)
 {
     LOG(Compositing, "RenderLayerBacking %p updateAfterLayout (layer %p)", this, &m_owningLayer);
 
@@ -642,18 +642,18 @@ void RenderLayerBacking::updateAfterLayout(UpdateAfterLayoutFlags flags)
         // The solution is to update compositing children of this layer here,
         // via updateCompositingChildrenGeometry().
         updateCompositedBounds();
-        compositor().updateCompositingDescendantGeometry(m_owningLayer, m_owningLayer, flags & CompositingChildrenOnly);
+        compositor().updateCompositingDescendantGeometry(m_owningLayer, m_owningLayer);
         
-        if (flags & IsUpdateRoot) {
+        if (flags.contains(UpdateAfterLayoutFlags::IsUpdateRoot)) {
             updateGeometry();
             compositor().updateRootLayerPosition();
             auto* stackingContainer = m_owningLayer.enclosingStackingContainer();
             if (!compositor().compositingLayersNeedRebuild() && stackingContainer && (stackingContainer != &m_owningLayer))
-                compositor().updateCompositingDescendantGeometry(*stackingContainer, *stackingContainer, flags & CompositingChildrenOnly);
+                compositor().updateCompositingDescendantGeometry(*stackingContainer, *stackingContainer);
         }
     }
     
-    if (flags & NeedsFullRepaint && canIssueSetNeedsDisplay())
+    if (flags.contains(UpdateAfterLayoutFlags::NeedsFullRepaint) && canIssueSetNeedsDisplay())
         setContentsNeedDisplay();
 }
 
@@ -2212,7 +2212,7 @@ void RenderLayerBacking::contentChanged(ContentChangeType changeType)
     if ((changeType == MaskImageChanged) && m_maskLayer) {
         // The composited layer bounds relies on box->maskClipRect(), which changes
         // when the mask image becomes available.
-        updateAfterLayout(CompositingChildrenOnly | IsUpdateRoot);
+        updateAfterLayout(UpdateAfterLayoutFlags::IsUpdateRoot);
     }
 
 #if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)

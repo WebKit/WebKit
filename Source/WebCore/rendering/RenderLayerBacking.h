@@ -65,13 +65,11 @@ public:
 
     RenderLayer& owningLayer() const { return m_owningLayer; }
 
-    enum UpdateAfterLayoutFlag {
-        CompositingChildrenOnly = 1 << 0,
-        NeedsFullRepaint = 1 << 1,
-        IsUpdateRoot = 1 << 2
+    enum class UpdateAfterLayoutFlags {
+        NeedsFullRepaint    = 1 << 0,
+        IsUpdateRoot        = 1 << 1
     };
-    typedef unsigned UpdateAfterLayoutFlags;
-    void updateAfterLayout(UpdateAfterLayoutFlags);
+    void updateAfterLayout(OptionSet<UpdateAfterLayoutFlags>);
     
     // Returns true if layer configuration changed.
     bool updateConfiguration();
