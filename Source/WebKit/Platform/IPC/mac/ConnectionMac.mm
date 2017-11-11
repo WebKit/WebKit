@@ -247,7 +247,7 @@ bool Connection::sendMessage(std::unique_ptr<MachMessage> message)
         return false;
 
     default:
-        WebKit::setCrashReportApplicationSpecificInformation((CFStringRef)[NSString stringWithFormat:@"Unhandled error code %x, message '%@'", kr, message->messageName()]);
+        WebKit::setCrashReportApplicationSpecificInformation((CFStringRef)[NSString stringWithFormat:@"Unhandled error code %x, message '%s::%s'", kr, message->messageReceiverName().data(), message->messageName().data()]);
         CRASH();
     }
 }
@@ -282,7 +282,9 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
     }
 
     auto message = MachMessage::create(messageSize);
-    message->setMessageName((__bridge CFStringRef)[NSString stringWithFormat:@"%s:%s:", encoder->messageReceiverName().toString().data(), encoder->messageName().toString().data()]);
+
+    message->setMessageReceiverName(encoder->messageReceiverName().toString());
+    message->setMessageName(encoder->messageName().toString());
 
     bool isComplex = (numberOfPortDescriptors + numberOfOOLMemoryDescriptors) > 0;
 

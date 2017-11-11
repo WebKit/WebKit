@@ -1,3 +1,24 @@
+2017-11-11  Tim Horton  <timothy_horton@apple.com>
+
+        Avoid composing the message + recipient name for crash logs until a failure actually occurs
+        https://bugs.webkit.org/show_bug.cgi?id=179576
+
+        Reviewed by Dan Bernstein.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::sendOutgoingMessage):
+        * Platform/IPC/mac/MachMessage.h:
+        (IPC::MachMessage::messageReceiverName const):
+        (IPC::MachMessage::setMessageReceiverName):
+        (IPC::MachMessage::messageName const):
+        (IPC::MachMessage::setMessageName):
+        Store the message name and receiver name separately on MachMessage,
+        only composing them into a string if the message is unhandled. This
+        makes the time spent composing the string in sendOutgoingMessage
+        completely disappear. In absolute terms, it wasn't huge, but if you
+        do enough IPC it starts to add up.
+
 2017-11-10  Chris Dumez  <cdumez@apple.com>
 
         [Service Workers] Implement "Try Activate" / "Activate" algorithms

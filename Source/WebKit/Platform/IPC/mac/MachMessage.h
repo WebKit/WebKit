@@ -26,7 +26,7 @@
 #pragma once
 
 #include <memory>
-#include <wtf/RetainPtr.h>
+#include <wtf/text/CString.h>
 
 namespace IPC {
 
@@ -43,13 +43,17 @@ public:
 
     void leakDescriptors();
 
-    CFStringRef messageName() const { return m_messageName.get(); }
-    void setMessageName(CFStringRef messageName) { m_messageName = messageName; }
+    const CString& messageReceiverName() const { return m_messageReceiverName; }
+    void setMessageReceiverName(const CString& messageReceiverName) { m_messageReceiverName = messageReceiverName; }
+
+    const CString& messageName() const { return m_messageName; }
+    void setMessageName(const CString& messageName) { m_messageName = messageName; }
 
 private:
     explicit MachMessage(size_t);
 
-    RetainPtr<CFStringRef> m_messageName;
+    CString m_messageReceiverName;
+    CString m_messageName;
     size_t m_size;
     bool m_shouldFreeDescriptors;
     uint8_t m_buffer[0];
