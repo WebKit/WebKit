@@ -83,21 +83,6 @@ ServiceWorker* ServiceWorkerRegistration::active()
     return m_activeWorker.get();
 }
 
-void ServiceWorkerRegistration::setInstallingWorker(RefPtr<ServiceWorker>&& serviceWorker)
-{
-    m_installingWorker = WTFMove(serviceWorker);
-}
-
-void ServiceWorkerRegistration::setWaitingWorker(RefPtr<ServiceWorker>&& serviceWorker)
-{
-    m_waitingWorker = WTFMove(serviceWorker);
-}
-
-void ServiceWorkerRegistration::setActiveWorker(RefPtr<ServiceWorker>&& serviceWorker)
-{
-    m_activeWorker = WTFMove(serviceWorker);
-}
-
 ServiceWorker* ServiceWorkerRegistration::getNewestWorker()
 {
     if (m_installingWorker)

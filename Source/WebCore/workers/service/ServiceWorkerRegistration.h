@@ -54,10 +54,6 @@ public:
     ServiceWorker* waiting();
     ServiceWorker* active();
 
-    void setInstallingWorker(RefPtr<ServiceWorker>&&);
-    void setWaitingWorker(RefPtr<ServiceWorker>&&);
-    void setActiveWorker(RefPtr<ServiceWorker>&&);
-
     ServiceWorker* getNewestWorker();
 
     const String& scope() const;
