@@ -1,8 +1,8 @@
 
-FAIL register-via-api-updateViaCache-undefined assert_not_equals: Main script should have updated got disallowed value 1510290606.636327
-FAIL register-via-api-updateViaCache-imports promise_test: Unhandled rejection with value: object "TypeError: Cannot update a service worker with a requested script URL whose newest worker has a different script URL"
-FAIL register-via-api-updateViaCache-all assert_equals: reg.updateViaCache expected "all" but got "imports"
-FAIL register-via-api-updateViaCache-none assert_equals: reg.updateViaCache expected "none" but got "imports"
+FAIL register-via-api-updateViaCache-undefined assert_not_equals: Main script should have updated got disallowed value 1510380120.157005
+FAIL register-via-api-updateViaCache-imports assert_not_equals: Main script should have updated got disallowed value 1510380120.495792
+FAIL register-via-api-updateViaCache-all assert_equals: No new service worker expected null but got object "[object ServiceWorker]"
+FAIL register-via-api-updateViaCache-none assert_not_equals: Main script should have updated got disallowed value 1510380120.846384
 FAIL register-via-link-element-updateViaCache-undefined promise_test: Unhandled rejection with value: object "Error: link rel=serviceworker not supported"
 FAIL register-via-link-element-updateViaCache-imports promise_test: Unhandled rejection with value: object "Error: link rel=serviceworker not supported"
 FAIL register-via-link-element-updateViaCache-all promise_test: Unhandled rejection with value: object "Error: link rel=serviceworker not supported"
@@ -19,12 +19,12 @@ PASS register-with-updateViaCache-imports-then-undefined
 PASS register-with-updateViaCache-imports-then-imports 
 FAIL register-with-updateViaCache-imports-then-all assert_equals: reg.updateViaCache updated expected "all" but got "imports"
 FAIL register-with-updateViaCache-imports-then-none assert_equals: reg.updateViaCache updated expected "none" but got "imports"
-FAIL register-with-updateViaCache-all-then-undefined assert_not_equals: Main script should have updated got disallowed value 1510290608.59895
-FAIL register-with-updateViaCache-all-then-imports assert_not_equals: Main script should have updated got disallowed value 1510290608.768976
-FAIL register-with-updateViaCache-all-then-all assert_equals: reg.updateViaCache updated expected "all" but got "imports"
-FAIL register-with-updateViaCache-all-then-none assert_equals: reg.updateViaCache updated expected "none" but got "imports"
-FAIL register-with-updateViaCache-none-then-undefined assert_not_equals: Main script should have updated got disallowed value 1510290609.201202
-FAIL register-with-updateViaCache-none-then-imports assert_not_equals: Main script should have updated got disallowed value 1510290609.376387
-FAIL register-with-updateViaCache-none-then-all assert_equals: reg.updateViaCache updated expected "all" but got "imports"
-FAIL register-with-updateViaCache-none-then-none assert_equals: reg.updateViaCache updated expected "none" but got "imports"
+FAIL register-with-updateViaCache-all-then-undefined assert_equals: reg.updateViaCache updated expected "imports" but got "all"
+FAIL register-with-updateViaCache-all-then-imports assert_equals: reg.updateViaCache updated expected "imports" but got "all"
+PASS register-with-updateViaCache-all-then-all 
+FAIL register-with-updateViaCache-all-then-none assert_equals: reg.updateViaCache updated expected "none" but got "all"
+FAIL register-with-updateViaCache-none-then-undefined assert_equals: reg.updateViaCache updated expected "imports" but got "none"
+FAIL register-with-updateViaCache-none-then-imports assert_equals: reg.updateViaCache updated expected "imports" but got "none"
+FAIL register-with-updateViaCache-none-then-all assert_equals: reg.updateViaCache updated expected "all" but got "none"
+PASS register-with-updateViaCache-none-then-none 
 

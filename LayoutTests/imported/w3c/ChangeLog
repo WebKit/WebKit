@@ -1,5 +1,20 @@
 2017-11-10  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, unskip & rebaseline several service worker tests
+
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/unregister.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/update.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/import-scripts-updated-flag.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-script.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-service-worker-attributes.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-updateviacache.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister-controller.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister-then-register-new-script.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update-bytecheck.https-expected.txt:
+
+2017-11-10  Chris Dumez  <cdumez@apple.com>
+
         [Service Workers] Registration promise should be rejected when the service worker fails to start
         https://bugs.webkit.org/show_bug.cgi?id=179566
 

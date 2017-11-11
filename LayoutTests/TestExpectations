@@ -142,7 +142,6 @@ imported/w3c/web-platform-tests/secure-contexts/shared-worker-secure-first.https
 # Skip service worker tests that are timing out.
 imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/unregister.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/update.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-on-evaluation.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/extendable-event-waituntil.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/foreign-fetch-basics.https.html [ Skip ]
@@ -150,7 +149,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/foreign-fetch-eve
 imported/w3c/web-platform-tests/service-workers/service-worker/foreign-fetch-workers.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/http-to-https-redirect-and-register.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/iframe-sandbox-register-link-element.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/import-scripts-updated-flag.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/interfaces-sw.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/link-element-register-basic.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/link-element-register-mime-types.https.html [ Skip ]
@@ -164,7 +162,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preloa
 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect-to-http.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/postmessage.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/register-foreign-fetch-errors.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/registration-service-worker-attributes.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-without-client.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-navigation-fetch-event.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-oneday.https.html [ Skip ]

@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 50: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating 'registrations[0].unregister')
 CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: TypeError: null is not an object (evaluating 'self.registration.scope')
+CONSOLE MESSAGE: line 50: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating 'registrations[0].unregister')
 
 
 FAIL Normal redirect to same-origin scope. assert_unreached: unregister and register should not fail: TypeError: null is not an object (evaluating 'self.registration.scope') Reached unreachable code

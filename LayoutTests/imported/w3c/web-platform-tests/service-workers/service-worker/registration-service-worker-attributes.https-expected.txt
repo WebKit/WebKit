@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT installing/waiting/active after registration Test timed out
+FAIL installing/waiting/active after registration assert_equals: active should be null after redundant expected null but got object "[object ServiceWorker]"
 

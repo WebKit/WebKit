@@ -1,8 +1,8 @@
 
 Harness Error (TIMEOUT), message = null
 
-TIMEOUT Unregister on script evaluation Test timed out
-NOTRUN Unregister on installing event 
+FAIL Unregister on script evaluation assert_unreached: unregister and register should not fail: TypeError: null is not an object (evaluating 'self.registration.unregister') Reached unreachable code
+TIMEOUT Unregister on installing event Test timed out
 NOTRUN Unregister on activate event 
 NOTRUN Unregister controlling service worker 
 

@@ -1,10 +1,10 @@
 
 FAIL Test(cors: false, main: default, imported: default) assert_array_equals: property 2, expected null but got object "[object ServiceWorker]"
-FAIL Test(cors: false, main: default, imported: time) promise_test: Unhandled rejection with value: object "TypeError: Cannot update a service worker with a requested script URL whose newest worker has a different script URL"
-FAIL Test(cors: false, main: time, imported: default) promise_test: Unhandled rejection with value: object "TypeError: Cannot update a service worker with a requested script URL whose newest worker has a different script URL"
-FAIL Test(cors: false, main: time, imported: time) promise_test: Unhandled rejection with value: object "TypeError: Cannot update a service worker with a requested script URL whose newest worker has a different script URL"
-FAIL Test(cors: true, main: default, imported: default) promise_test: Unhandled rejection with value: object "TypeError: Cannot update a service worker with a requested script URL whose newest worker has a different script URL"
-FAIL Test(cors: true, main: default, imported: time) promise_test: Unhandled rejection with value: object "TypeError: Cannot update a service worker with a requested script URL whose newest worker has a different script URL"
-FAIL Test(cors: true, main: time, imported: default) promise_test: Unhandled rejection with value: object "TypeError: Cannot update a service worker with a requested script URL whose newest worker has a different script URL"
-FAIL Test(cors: true, main: time, imported: time) promise_test: Unhandled rejection with value: object "TypeError: Cannot update a service worker with a requested script URL whose newest worker has a different script URL"
+PASS Test(cors: false, main: default, imported: time) 
+PASS Test(cors: false, main: time, imported: default) 
+PASS Test(cors: false, main: time, imported: time) 
+FAIL Test(cors: true, main: default, imported: default) assert_unreached: unregister and register should not fail: NetworkError:  A network error occurred. Reached unreachable code
+FAIL Test(cors: true, main: default, imported: time) assert_unreached: unregister and register should not fail: NetworkError:  A network error occurred. Reached unreachable code
+FAIL Test(cors: true, main: time, imported: default) assert_unreached: unregister and register should not fail: NetworkError:  A network error occurred. Reached unreachable code
+FAIL Test(cors: true, main: time, imported: time) assert_unreached: unregister and register should not fail: NetworkError:  A network error occurred. Reached unreachable code
 

@@ -1,6 +1,3 @@
 
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Update a registration on ServiceWorkerGlobalScope Test timed out
+FAIL Update a registration on ServiceWorkerGlobalScope assert_unreached: unregister and register should not fail: TypeError: null is not an object (evaluating 'self.registration.addEventListener') Reached unreachable code
 
