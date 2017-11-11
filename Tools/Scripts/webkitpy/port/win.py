@@ -439,7 +439,10 @@ class WinCairoPort(WinPort):
 
     def default_baseline_search_path(self):
         name = self._name.replace('-wk2', '')
-        fallback_names = self.VERSION_FALLBACK_ORDER[self.VERSION_FALLBACK_ORDER.index(name):-1] + [self.port_name]
+        if name.endswith(self.FUTURE_VERSION):
+            fallback_names = [self.port_name]
+        else:
+            fallback_names = self.VERSION_FALLBACK_ORDER[self.VERSION_FALLBACK_ORDER.index(name):-1] + [self.port_name]
         fallback_names.append('win')
         fallback_names.append('mac')
         return map(self._webkit_baseline_path, fallback_names)

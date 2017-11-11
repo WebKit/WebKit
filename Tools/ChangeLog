@@ -1,3 +1,13 @@
+2017-11-10  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo] Treat 'future' version correctly
+        https://bugs.webkit.org/show_bug.cgi?id=179345
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinCairoPort.default_baseline_search_path):
+
 2017-11-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Finish rolling out r224544
