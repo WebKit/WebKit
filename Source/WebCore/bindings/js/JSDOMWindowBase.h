@@ -79,6 +79,8 @@ private:
     static JSC::JSInternalPromise* moduleLoaderFetch(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue, JSC::JSValue);
     static JSC::JSValue moduleLoaderEvaluate(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue, JSC::JSValue);
     static JSC::JSInternalPromise* moduleLoaderImportModule(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSString*, JSC::JSValue, const JSC::SourceOrigin&);
+    static JSC::JSObject* moduleLoaderCreateImportMetaProperties(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSModuleRecord*, JSC::JSValue);
+
     static void promiseRejectionTracker(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSPromise*, JSC::JSPromiseRejectionOperation);
 
     RefPtr<DOMWindow> m_wrapped;

@@ -1,3 +1,16 @@
+2017-11-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WebCore] Implement import.meta.url
+        https://bugs.webkit.org/show_bug.cgi?id=178672
+
+        Reviewed by Darin Adler.
+
+        * js/dom/modules/import-meta-url-expected.txt: Added.
+        * js/dom/modules/import-meta-url.html: Added.
+        * js/dom/modules/script-tests/import-meta-url-second-level.js: Added.
+        * js/dom/modules/script-tests/import-meta-url-top-level.js: Added.
+        * js/dom/modules/script-tests/import-meta-url.js: Added.
+
 2017-11-11  Chris Dumez  <cdumez@apple.com>
 
         Re-sync Service Workers web-platform-tests from upstream

@@ -72,7 +72,7 @@ const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = {
     &moduleLoaderImportModule,
     &moduleLoaderResolve,
     &moduleLoaderFetch,
-    nullptr, // moduleLoaderCreateImportMetaProperties
+    &moduleLoaderCreateImportMetaProperties,
     &moduleLoaderEvaluate,
     &promiseRejectionTracker,
     &defaultLanguage
@@ -396,6 +396,14 @@ JSC::JSInternalPromise* JSDOMWindowBase::moduleLoaderImportModule(JSC::JSGlobalO
         return document->moduleLoader()->importModule(globalObject, exec, moduleLoader, moduleName, parameters, sourceOrigin);
     JSC::JSInternalPromiseDeferred* deferred = JSC::JSInternalPromiseDeferred::create(exec, globalObject);
     return deferred->reject(exec, jsUndefined());
+}
+
+JSC::JSObject* JSDOMWindowBase::moduleLoaderCreateImportMetaProperties(JSC::JSGlobalObject* globalObject, JSC::ExecState* exec, JSC::JSModuleLoader* moduleLoader, JSC::JSValue moduleKey, JSC::JSModuleRecord* moduleRecord, JSC::JSValue scriptFetcher)
+{
+    JSDOMWindowBase* thisObject = JSC::jsCast<JSDOMWindowBase*>(globalObject);
+    if (RefPtr<Document> document = thisObject->wrapped().document())
+        return document->moduleLoader()->createImportMetaProperties(globalObject, exec, moduleLoader, moduleKey, moduleRecord, scriptFetcher);
+    return constructEmptyObject(exec, globalObject->nullPrototypeObjectStructure());
 }
 
 void JSDOMWindowBase::promiseRejectionTracker(JSGlobalObject* jsGlobalObject, ExecState* exec, JSPromise* promise, JSPromiseRejectionOperation operation)
