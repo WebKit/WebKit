@@ -825,12 +825,6 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
     return frame->view()->renderedCharactersExceed(threshold);
 }
 
-- (CGImageRef)imageForNode:(DOMNode *)node allowDownsampling:(BOOL)allowDownsampling drawContentBehindTransparentNodes:(BOOL)drawContentBehindTransparentNodes
-{
-    // FIXME: implement: <rdar://problem/15808709>
-    return nullptr;
-}
-
 // Iterates backward through the document and returns the point at which untouched dictation results end.
 - (WebVisiblePosition *)previousUnperturbedDictationResultBoundaryFromPosition:(WebVisiblePosition *)position
 {

@@ -88,8 +88,6 @@ typedef enum {
 
 - (BOOL)renderedCharactersExceed:(NSUInteger)threshold;
 
-- (CGImageRef)imageForNode:(DOMNode *)node allowDownsampling:(BOOL)allowDownsampling drawContentBehindTransparentNodes:(BOOL)drawContentBehindTransparentNodes;
-
 - (WebVisiblePosition *)previousUnperturbedDictationResultBoundaryFromPosition:(WebVisiblePosition *)position;
 - (WebVisiblePosition *)nextUnperturbedDictationResultBoundaryFromPosition:(WebVisiblePosition *)position;
 
