@@ -200,6 +200,14 @@ private:
                 node,
                 [&] (Edge& edge) {
                     fixEdge<KnownPrimitiveUse>(edge);
+                    // StrCat automatically coerces the values into strings before concatenating them.
+                    // The ECMA spec says that we're not allowed to automatically coerce a Symbol into
+                    // a string. If a Symbol is encountered, a TypeError will be thrown. As a result,
+                    // our runtime functions for this slow path expect that they will never be passed
+                    // Symbols.
+                    m_insertionSet.insertNode(
+                        m_indexInBlock, SpecNone, Check, node->origin,
+                        Edge(edge.node(), NotSymbolUse));
                 });
             break;
         }

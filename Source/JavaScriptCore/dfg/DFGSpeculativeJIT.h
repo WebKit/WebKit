@@ -3158,6 +3158,7 @@ public:
     void speculateStringOrOther(Edge, JSValueRegs, GPRReg scratch);
     void speculateStringOrOther(Edge);
     void speculateNotStringVar(Edge);
+    void speculateNotSymbol(Edge);
     template<typename StructureLocationType>
     void speculateStringObjectForStructure(Edge, StructureLocationType);
     void speculateStringObject(Edge, GPRReg);

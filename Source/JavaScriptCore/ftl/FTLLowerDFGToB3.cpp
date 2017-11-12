@@ -13852,6 +13852,9 @@ private:
         case NotStringVarUse:
             speculateNotStringVar(edge);
             break;
+        case NotSymbolUse:
+            speculateNotSymbol(edge);
+            break;
         case NotCellUse:
             speculateNotCell(edge);
             break;
@@ -14441,6 +14444,28 @@ private:
         m_out.appendTo(continuation, lastNext);
     }
     
+    void speculateNotSymbol(Edge edge)
+    {
+        if (!m_interpreter.needsTypeCheck(edge, ~SpecSymbol))
+            return;
+
+        ASSERT(mayHaveTypeCheck(edge.useKind()));
+        LValue value = lowJSValue(edge, ManualOperandSpeculation);
+
+        LBasicBlock isCellCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        m_out.branch(isCell(value, provenType(edge)), unsure(isCellCase), unsure(continuation));
+
+        LBasicBlock lastNext = m_out.appendTo(isCellCase, continuation);
+        speculate(BadType, jsValueValue(value), edge.node(), isSymbol(value));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+
+        m_interpreter.filter(edge, ~SpecSymbol);
+    }
+
     void speculateOther(Edge edge)
     {
         if (!m_interpreter.needsTypeCheck(edge))

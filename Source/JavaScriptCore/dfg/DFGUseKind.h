@@ -72,6 +72,7 @@ enum UseKind {
     StringObjectUse,
     StringOrStringObjectUse,
     NotStringVarUse,
+    NotSymbolUse,
     NotCellUse,
     OtherUse,
     MiscUse,
@@ -161,6 +162,8 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
         return SpecString | SpecStringObject;
     case NotStringVarUse:
         return ~SpecStringVar;
+    case NotSymbolUse:
+        return ~SpecSymbol;
     case NotCellUse:
         return ~SpecCellCheck;
     case OtherUse:

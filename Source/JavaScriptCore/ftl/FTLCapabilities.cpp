@@ -512,6 +512,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case MiscUse:
                 case StringIdentUse:
                 case NotStringVarUse:
+                case NotSymbolUse:
                 case AnyIntUse:
                 case DoubleRepAnyIntUse:
                     // These are OK.

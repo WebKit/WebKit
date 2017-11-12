@@ -9542,6 +9542,28 @@ void SpeculativeJIT::speculateNotStringVar(Edge edge)
     notCell.link(&m_jit);
 }
 
+void SpeculativeJIT::speculateNotSymbol(Edge edge)
+{
+    if (!needsTypeCheck(edge, ~SpecSymbol))
+        return;
+
+    JSValueOperand operand(this, edge, ManualOperandSpeculation);
+    auto valueRegs = operand.jsValueRegs();
+    GPRReg value = valueRegs.payloadGPR();
+    JITCompiler::Jump notCell;
+
+    bool needsCellCheck = needsTypeCheck(edge, SpecCell);
+    if (needsCellCheck)
+        notCell = m_jit.branchIfNotCell(valueRegs);
+
+    speculationCheck(BadType, JSValueSource::unboxedCell(value), edge.node(), m_jit.branchIfSymbol(value));
+
+    if (needsCellCheck)
+        notCell.link(&m_jit);
+
+    m_interpreter.filter(edge, ~SpecSymbol);
+}
+
 void SpeculativeJIT::speculateSymbol(Edge edge, GPRReg cell)
 {
     DFG_TYPE_CHECK(JSValueSource::unboxedCell(cell), edge, ~SpecCellCheck | SpecSymbol, m_jit.branchIfNotSymbol(cell));
@@ -9730,6 +9752,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case NotStringVarUse:
         speculateNotStringVar(edge);
+        break;
+    case NotSymbolUse:
+        speculateNotSymbol(edge);
         break;
     case NotCellUse:
         speculateNotCell(edge);

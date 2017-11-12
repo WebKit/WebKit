@@ -1,3 +1,13 @@
+2017-11-12  Mark Lam  <mark.lam@apple.com>
+
+        We should ensure that operationStrCat2 and operationStrCat3 are never passed Symbols as arguments.
+        https://bugs.webkit.org/show_bug.cgi?id=179562
+        <rdar://problem/35467022>
+
+        Reviewed by Saam Barati.
+
+        * regress-179562.js: Added.
+
 2017-11-08  Saam Barati  <sbarati@apple.com>
 
         A JSFunction's ObjectAllocationProfile should watch the poly prototype watchpoint so it can clear its object allocation profile

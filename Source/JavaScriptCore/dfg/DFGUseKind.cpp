@@ -145,6 +145,9 @@ void printInternal(PrintStream& out, UseKind useKind)
     case NotStringVarUse:
         out.print("NotStringVar");
         return;
+    case NotSymbolUse:
+        out.print("NotSymbol");
+        return;
     case NotCellUse:
         out.print("NotCell");
         return;

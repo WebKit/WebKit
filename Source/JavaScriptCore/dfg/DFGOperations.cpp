@@ -1985,8 +1985,10 @@ JSCell* JIT_OPERATION operationStrCat2(ExecState* exec, EncodedJSValue a, Encode
     NativeCallFrameTracer tracer(&vm, exec);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    ASSERT(!JSValue::decode(a).isSymbol());
+    ASSERT(!JSValue::decode(b).isSymbol());
     JSString* str1 = JSValue::decode(a).toString(exec);
-    scope.assertNoException(); // Impossible, since we must have been given primitives.
+    scope.assertNoException(); // Impossible, since we must have been given non-Symbol primitives.
     JSString* str2 = JSValue::decode(b).toString(exec);
     scope.assertNoException();
 
@@ -2000,8 +2002,11 @@ JSCell* JIT_OPERATION operationStrCat3(ExecState* exec, EncodedJSValue a, Encode
     NativeCallFrameTracer tracer(&vm, exec);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    ASSERT(!JSValue::decode(a).isSymbol());
+    ASSERT(!JSValue::decode(b).isSymbol());
+    ASSERT(!JSValue::decode(c).isSymbol());
     JSString* str1 = JSValue::decode(a).toString(exec);
-    scope.assertNoException(); // Impossible, since we must have been given primitives.
+    scope.assertNoException(); // Impossible, since we must have been given non-Symbol primitives.
     JSString* str2 = JSValue::decode(b).toString(exec);
     scope.assertNoException();
     JSString* str3 = JSValue::decode(c).toString(exec);
