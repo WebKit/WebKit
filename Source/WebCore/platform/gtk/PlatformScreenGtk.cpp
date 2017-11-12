@@ -38,6 +38,7 @@
 #include "NotImplemented.h"
 #include "Widget.h"
 
+#include <cmath>
 #include <gtk/gtk.h>
 
 namespace WebCore {
@@ -86,6 +87,29 @@ bool screenIsMonochrome(Widget* widget)
 bool screenHasInvertedColors()
 {
     return false;
+}
+
+double screenDPI()
+{
+    static const double defaultDpi = 96;
+    GdkScreen* screen = gdk_screen_get_default();
+    if (!screen)
+        return defaultDpi;
+
+    double dpi = gdk_screen_get_resolution(screen);
+    if (dpi != -1)
+        return dpi;
+
+    static double cachedDpi = 0;
+    if (cachedDpi)
+        return cachedDpi;
+
+    static const double millimetresPerInch = 25.4;
+    double diagonalInPixels = std::hypot(gdk_screen_get_width(screen), gdk_screen_get_height(screen));
+    double diagonalInInches = std::hypot(gdk_screen_get_width_mm(screen), gdk_screen_get_height_mm(screen)) / millimetresPerInch;
+    cachedDpi = diagonalInPixels / diagonalInInches;
+
+    return cachedDpi;
 }
 
 static GdkScreen* getScreen(GtkWidget* widget)

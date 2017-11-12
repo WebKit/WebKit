@@ -151,6 +151,25 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_minimum_font_size(settings, 7);
     g_assert_cmpuint(webkit_settings_get_minimum_font_size(settings), ==, 7);
 
+    // Test conversion between pixels and points. Use a standard DPI of 96.
+    // Set DPI explicitly to avoid the tests failing for users that use a
+    // different default DPI. This doesn't affect the system's DPI outside
+    // of the tests scope, so we don't need to change it back to the original
+    // value. We can control DPI only on GTK. On WPE, WebCore defaults it to 96.
+#if PLATFORM(GTK)
+    GtkSettings* gtkSettings = gtk_settings_get_default();
+    if (gtkSettings)
+        g_object_set(gtkSettings, "gtk-xft-dpi", 96 * 1024, nullptr);
+
+    // At 96 DPI, 9 points is 12 pixels and 24 points is 32 pixels.
+    g_assert_cmpuint(webkit_settings_font_size_to_pixels(9), ==, 12);
+    g_assert_cmpuint(webkit_settings_font_size_to_pixels(24), ==, 32);
+
+    // At 96 DPI, 8 pixels is 6 points and 24 pixels is 18 points.
+    g_assert_cmpuint(webkit_settings_font_size_to_points(8), ==, 6);
+    g_assert_cmpuint(webkit_settings_font_size_to_points(24), ==, 18);
+#endif
+
     // Default charset is "iso-8859-1".
     g_assert_cmpstr(webkit_settings_get_default_charset(settings), ==, "iso-8859-1");
     webkit_settings_set_default_charset(settings, "utf8");

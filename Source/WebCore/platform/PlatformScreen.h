@@ -58,6 +58,9 @@ int screenDepthPerComponent(Widget*);
 bool screenIsMonochrome(Widget*);
 
 bool screenHasInvertedColors();
+#if USE(GLIB)
+double screenDPI();
+#endif
 
 FloatRect screenRect(Widget*);
 FloatRect screenAvailableRect(Widget*);

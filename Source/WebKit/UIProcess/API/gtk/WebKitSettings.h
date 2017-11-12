@@ -451,6 +451,12 @@ WEBKIT_API void
 webkit_settings_set_hardware_acceleration_policy               (WebKitSettings *settings,
                                                                 WebKitHardwareAccelerationPolicy policy);
 
+WEBKIT_API guint32
+webkit_settings_font_size_to_points                            (guint32 pixels);
+
+WEBKIT_API guint32
+webkit_settings_font_size_to_pixels                            (guint32 points);
+
 G_END_DECLS
 
 #endif /* WebKitSettings_h */
