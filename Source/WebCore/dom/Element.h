@@ -552,6 +552,8 @@ public:
 
     Element* findAnchorElementForLink(String& outAnchorName);
 
+    Vector<RefPtr<WebAnimation>> getAnimations();
+
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
 

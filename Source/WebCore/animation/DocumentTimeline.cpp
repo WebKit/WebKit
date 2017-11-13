@@ -45,7 +45,7 @@ Ref<DocumentTimeline> DocumentTimeline::create(Document& document, PlatformDispl
 
 DocumentTimeline::DocumentTimeline(Document& document, PlatformDisplayID displayID)
     : AnimationTimeline(DocumentTimelineClass)
-    , m_document(document)
+    , m_document(&document)
     , m_animationScheduleTimer(*this, &DocumentTimeline::animationScheduleTimerFired)
 #if !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     , m_animationResolutionTimer(*this, &DocumentTimeline::animationResolutionTimerFired)
@@ -59,9 +59,14 @@ DocumentTimeline::~DocumentTimeline()
     m_invalidationTaskQueue.close();
 }
 
+void DocumentTimeline::detachFromDocument()
+{
+    m_document = nullptr;
+}
+
 std::optional<Seconds> DocumentTimeline::currentTime()
 {
-    if (m_paused)
+    if (m_paused || !m_document)
         return AnimationTimeline::currentTime();
 
     if (!m_cachedCurrentTime) {
@@ -170,7 +175,7 @@ void DocumentTimeline::windowScreenDidChange(PlatformDisplayID displayID)
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 RefPtr<DisplayRefreshMonitor> DocumentTimeline::createDisplayRefreshMonitor(PlatformDisplayID displayID) const
 {
-    if (!m_document->page())
+    if (!m_document || !m_document->page())
         return nullptr;
 
     if (auto monitor = m_document->page()->chrome().client().createDisplayRefreshMonitor(displayID))

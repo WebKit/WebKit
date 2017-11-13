@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Document.getAnimations()</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+let a, b, c;
+
+test(t => {
+    assert_true(typeof document.getAnimations === "function");
+}, "Document exposes the getAnimations method.");
+
+test(t => {
+    assert_array_equals(document.getAnimations(), []);
+}, "Document.getAnimations() returns an empty array when no animations were added.");
+
+test(t => {
+    a = new Animation;
+    b = new Animation;
+    c = new Animation;
+    const animations = document.getAnimations();
+    assert_equals(animations.length, 3);
+    assert_in_array(a, animations);
+    assert_in_array(b, animations);
+    assert_in_array(c, animations);
+}, "Document.getAnimations() returns an array with the new animations contained.");
+
+test(t => {
+    b.timeline = null;
+    const animations = document.getAnimations();
+    assert_equals(animations.length, 2);
+    assert_in_array(a, animations);
+    assert_in_array(c, animations);
+}, "Setting timeline = null on an animation removes it from the array returned by Document.getAnimations().");
+
+test(t => {
+    b.timeline = document.timeline;
+    const animations = document.getAnimations();
+    assert_equals(animations.length, 3);
+    assert_in_array(a, animations);
+    assert_in_array(b, animations);
+    assert_in_array(c, animations);
+}, "Setting timeline = document.timeline on an animation adds it to the array returned by Document.getAnimations().");
+
+</script>
+</body>

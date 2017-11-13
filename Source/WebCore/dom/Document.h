@@ -30,7 +30,6 @@
 #include "Color.h"
 #include "ContainerNode.h"
 #include "DocumentEventQueue.h"
-#include "DocumentTimeline.h"
 #include "DocumentTiming.h"
 #include "FocusDirection.h"
 #include "FontSelectorClient.h"
@@ -102,6 +101,7 @@ class DocumentLoader;
 class DocumentMarkerController;
 class DocumentParser;
 class DocumentSharedObjectPool;
+class DocumentTimeline;
 class DocumentType;
 class ExtensionStyleSheets;
 class FloatQuad;
@@ -173,6 +173,7 @@ class TextResourceDecoder;
 class TreeWalker;
 class VisibilityChangeClient;
 class VisitedLinkState;
+class WebAnimation;
 class WebGL2RenderingContext;
 class WebGLRenderingContext;
 class WebGPURenderingContext;
@@ -1376,6 +1377,7 @@ public:
     WEBCORE_EXPORT void setConsoleMessageListener(RefPtr<StringCallback>&&); // For testing.
 
     DocumentTimeline& timeline();
+    Vector<RefPtr<WebAnimation>> getAnimations();
         
 #if ENABLE(ATTACHMENT_ELEMENT)
     void didInsertAttachmentElement(HTMLAttachmentElement&);

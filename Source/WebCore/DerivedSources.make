@@ -343,6 +343,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webvr/VRLayerInit.idl \
     $(WebCore)/Modules/webvr/VRPose.idl \
     $(WebCore)/Modules/webvr/VRStageParameters.idl \
+    $(WebCore)/animation/Animatable.idl \
     $(WebCore)/animation/AnimationEffect.idl \
     $(WebCore)/animation/AnimationEffectTiming.idl \
     $(WebCore)/animation/AnimationTimeline.idl \
