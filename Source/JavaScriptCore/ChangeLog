@@ -1,3 +1,14 @@
+2017-11-13  Mark Lam  <mark.lam@apple.com>
+
+        Make the jsc shell loadGetterFromGetterSetter() function more robust.
+        https://bugs.webkit.org/show_bug.cgi?id=179619
+        <rdar://problem/35492518>
+
+        Reviewed by Saam Barati.
+
+        * jsc.cpp:
+        (functionLoadGetterFromGetterSetter):
+
 2017-11-12  Darin Adler  <darin@apple.com>
 
         More is<> and downcast<>, less static_cast<>

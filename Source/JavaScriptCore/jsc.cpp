@@ -3022,9 +3022,14 @@ EncodedJSValue JSC_HOST_CALL functionFlashHeapAccess(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionLoadGetterFromGetterSetter(ExecState* exec)
 {
     VM& vm = exec->vm();
-    RELEASE_ASSERT(exec->argumentCount() >= 1);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     GetterSetter* getterSetter = jsDynamicCast<GetterSetter*>(vm, exec->argument(0));
-    RELEASE_ASSERT(getterSetter);
+    if (UNLIKELY(!getterSetter)) {
+        throwTypeError(exec, scope, ASCIILiteral("Invalid use of loadGetterFromGetterSetter test function: argument is not a GetterSetter"));
+        return encodedJSValue();
+    }
+
     JSObject* getter = getterSetter->getter();
     RELEASE_ASSERT(getter);
     return JSValue::encode(getter);

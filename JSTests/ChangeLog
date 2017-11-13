@@ -1,3 +1,13 @@
+2017-11-13  Mark Lam  <mark.lam@apple.com>
+
+        Make the jsc shell loadGetterFromGetterSetter() function more robust.
+        https://bugs.webkit.org/show_bug.cgi?id=179619
+        <rdar://problem/35492518>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-179619.js: Added.
+
 2017-11-12  Mark Lam  <mark.lam@apple.com>
 
         We should ensure that operationStrCat2 and operationStrCat3 are never passed Symbols as arguments.
