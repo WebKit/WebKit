@@ -34,8 +34,8 @@
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
 
-
 namespace WebCore {
+
 using namespace JSC;
 using namespace Inspector;
 
@@ -43,6 +43,7 @@ WorkerDebuggerAgent::WorkerDebuggerAgent(WorkerAgentContext& context)
     : WebDebuggerAgent(context)
     , m_workerGlobalScope(context.workerGlobalScope)
 {
+    ASSERT(context.workerGlobalScope.isContextThread());
 }
 
 WorkerDebuggerAgent::~WorkerDebuggerAgent() = default;

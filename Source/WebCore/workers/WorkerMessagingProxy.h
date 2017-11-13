@@ -65,6 +65,7 @@ private:
     // Implementation of WorkerDebuggerProxy.
     // (Only use these functions in the worker context thread.)
     void postMessageToDebugger(const String&) final;
+    void setResourceCachingDisabled(bool) final;
 
     // Implementation of WorkerLoaderProxy.
     // These functions are called on different threads to schedule loading

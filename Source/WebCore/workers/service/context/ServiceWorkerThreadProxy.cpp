@@ -89,6 +89,14 @@ void ServiceWorkerThreadProxy::postMessageToDebugger(const String& message)
     });
 }
 
+void ServiceWorkerThreadProxy::setResourceCachingDisabled(bool disabled)
+{
+    postTaskToLoader([this, protectedThis = makeRef(*this), disabled] (ScriptExecutionContext&) {
+        ASSERT(isMainThread());
+        m_page->setResourceCachingDisabled(disabled);
+    });   
+}
+
 Ref<CacheStorageConnection> ServiceWorkerThreadProxy::createCacheStorageConnection()
 {
     ASSERT(isMainThread());

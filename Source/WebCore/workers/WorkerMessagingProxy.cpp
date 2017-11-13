@@ -177,6 +177,15 @@ void WorkerMessagingProxy::postMessageToDebugger(const String& message)
     });
 }
 
+void WorkerMessagingProxy::setResourceCachingDisabled(bool disabled)
+{
+    postTaskToLoader([disabled] (ScriptExecutionContext& context) {
+        ASSERT(isMainThread());
+        if (auto* page = downcast<Document>(context).page())
+            page->setResourceCachingDisabled(disabled);
+    });
+}
+
 void WorkerMessagingProxy::workerThreadCreated(DedicatedWorkerThread& workerThread)
 {
     m_workerThread = &workerThread;

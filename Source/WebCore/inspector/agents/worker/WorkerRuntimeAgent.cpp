@@ -37,8 +37,8 @@
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
 
-
 namespace WebCore {
+
 using namespace Inspector;
 
 WorkerRuntimeAgent::WorkerRuntimeAgent(WorkerAgentContext& context)
@@ -46,6 +46,7 @@ WorkerRuntimeAgent::WorkerRuntimeAgent(WorkerAgentContext& context)
     , m_backendDispatcher(RuntimeBackendDispatcher::create(context.backendDispatcher, this))
     , m_workerGlobalScope(context.workerGlobalScope)
 {
+    ASSERT(context.workerGlobalScope.isContextThread());
 }
 
 void WorkerRuntimeAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)

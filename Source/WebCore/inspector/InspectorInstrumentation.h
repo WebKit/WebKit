@@ -177,9 +177,12 @@ public:
     static void didReceiveData(Frame*, unsigned long identifier, const char* data, int dataLength, int encodedDataLength);
     static void didFinishLoading(Frame*, DocumentLoader*, unsigned long identifier, const NetworkLoadMetrics&, ResourceLoader*);
     static void didFailLoading(Frame*, DocumentLoader*, unsigned long identifier, const ResourceError&);
-    static void continueAfterXFrameOptionsDenied(Frame&, unsigned long identifier, DocumentLoader&, const ResourceResponse&);
-    static void continueWithPolicyDownload(Frame&, unsigned long identifier, DocumentLoader&, const ResourceResponse&);
-    static void continueWithPolicyIgnore(Frame&, unsigned long identifier, DocumentLoader&, const ResourceResponse&);
+
+    static void willSendRequest(WorkerGlobalScope&, unsigned long identifier, ResourceRequest&);
+    static void didReceiveResourceResponse(WorkerGlobalScope&, unsigned long identifier, const ResourceResponse&);
+    static void didReceiveData(WorkerGlobalScope&, unsigned long identifier, const char* data, int dataLength);
+    static void didFinishLoading(WorkerGlobalScope&, unsigned long identifier, const NetworkLoadMetrics&);
+    static void didFailLoading(WorkerGlobalScope&, unsigned long identifier, const ResourceError&);
 
     // Some network requests do not go through the normal network loading path.
     // These network requests have to issue their own willSendRequest / didReceiveResponse / didFinishLoading / didFailLoading
@@ -187,6 +190,9 @@ public:
     enum class LoadType { Ping, Beacon };
     static void willSendRequestOfType(Frame*, unsigned long identifier, DocumentLoader*, ResourceRequest&, LoadType);
 
+    static void continueAfterXFrameOptionsDenied(Frame&, unsigned long identifier, DocumentLoader&, const ResourceResponse&);
+    static void continueWithPolicyDownload(Frame&, unsigned long identifier, DocumentLoader&, const ResourceResponse&);
+    static void continueWithPolicyIgnore(Frame&, unsigned long identifier, DocumentLoader&, const ResourceResponse&);
     static void didFinishXHRLoading(ScriptExecutionContext*, unsigned long identifier, std::optional<String> decodedText);
     static void willLoadXHRSynchronously(ScriptExecutionContext*);
     static void didLoadXHRSynchronously(ScriptExecutionContext*);
@@ -907,6 +913,12 @@ inline void InspectorInstrumentation::willSendRequest(Frame* frame, unsigned lon
         willSendRequestImpl(*instrumentingAgents, identifier, loader, request, redirectResponse);
 }
 
+inline void InspectorInstrumentation::willSendRequest(WorkerGlobalScope& workerGlobalScope, unsigned long identifier, ResourceRequest& request)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    willSendRequestImpl(instrumentingAgentsForWorkerGlobalScope(workerGlobalScope), identifier, nullptr, request, ResourceResponse { });
+}
+
 inline void InspectorInstrumentation::willSendRequestOfType(Frame* frame, unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, LoadType loadType)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
@@ -926,6 +938,11 @@ inline void InspectorInstrumentation::didReceiveResourceResponse(Frame& frame, u
         didReceiveResourceResponseImpl(*instrumentingAgents, identifier, loader, response, resourceLoader);
 }
 
+inline void InspectorInstrumentation::didReceiveResourceResponse(WorkerGlobalScope& workerGlobalScope, unsigned long identifier, const ResourceResponse& response)
+{
+    didReceiveResourceResponseImpl(instrumentingAgentsForWorkerGlobalScope(workerGlobalScope), identifier, nullptr, response, nullptr);
+}
+
 inline void InspectorInstrumentation::didReceiveThreadableLoaderResponse(DocumentThreadableLoader& documentThreadableLoader, unsigned long identifier)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
@@ -940,16 +957,34 @@ inline void InspectorInstrumentation::didReceiveData(Frame* frame, unsigned long
         didReceiveDataImpl(*instrumentingAgents, identifier, data, dataLength, encodedDataLength);
 }
 
+inline void InspectorInstrumentation::didReceiveData(WorkerGlobalScope& workerGlobalScope, unsigned long identifier, const char* data, int dataLength)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    didReceiveDataImpl(instrumentingAgentsForWorkerGlobalScope(workerGlobalScope), identifier, data, dataLength, dataLength);
+}
+
 inline void InspectorInstrumentation::didFinishLoading(Frame* frame, DocumentLoader* loader, unsigned long identifier, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader* resourceLoader)
 {
+    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         didFinishLoadingImpl(*instrumentingAgents, identifier, loader, networkLoadMetrics, resourceLoader);
+}
+
+inline void InspectorInstrumentation::didFinishLoading(WorkerGlobalScope& workerGlobalScope, unsigned long identifier, const NetworkLoadMetrics& networkLoadMetrics)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    didFinishLoadingImpl(instrumentingAgentsForWorkerGlobalScope(workerGlobalScope), identifier, nullptr, networkLoadMetrics, nullptr);
 }
 
 inline void InspectorInstrumentation::didFailLoading(Frame* frame, DocumentLoader* loader, unsigned long identifier, const ResourceError& error)
 {
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         didFailLoadingImpl(*instrumentingAgents, identifier, loader, error);
+}
+
+inline void InspectorInstrumentation::didFailLoading(WorkerGlobalScope& workerGlobalScope, unsigned long identifier, const ResourceError& error)
+{
+    didFailLoadingImpl(instrumentingAgentsForWorkerGlobalScope(workerGlobalScope), identifier, nullptr, error);
 }
 
 inline void InspectorInstrumentation::continueAfterXFrameOptionsDenied(Frame& frame, unsigned long identifier, DocumentLoader& loader, const ResourceResponse& response)

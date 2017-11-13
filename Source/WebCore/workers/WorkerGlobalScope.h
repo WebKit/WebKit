@@ -64,6 +64,7 @@ public:
 
     const URL& url() const final { return m_url; }
     String origin() const final;
+    const String& identifier() const { return m_identifier; }
 
 #if ENABLE(INDEXED_DATABASE)
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
@@ -117,6 +118,8 @@ public:
 
     void createImageBitmap(ImageBitmap::Source&&, ImageBitmapOptions&&, ImageBitmap::Promise&&);
     void createImageBitmap(ImageBitmap::Source&&, int sx, int sy, int sw, int sh, ImageBitmapOptions&&, ImageBitmap::Promise&&);
+
+    unsigned long createUniqueIdentifier() { return m_uniqueIdentifier++; }
 
 protected:
     WorkerGlobalScope(const URL&, const String& identifier, const String& userAgent, bool isOnline, WorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, PAL::SessionID);
@@ -196,6 +199,8 @@ private:
 
     PAL::SessionID m_sessionID;
     RefPtr<WorkerCacheStorageConnection> m_cacheStorageConnection;
+
+    unsigned long m_uniqueIdentifier { 1 };
 };
 
 } // namespace WebCore

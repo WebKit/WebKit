@@ -42,6 +42,7 @@ namespace WebCore {
 class InstrumentingAgents;
 class WebInjectedScriptManager;
 class WorkerGlobalScope;
+struct WorkerAgentContext;
 
 class WorkerInspectorController final : public Inspector::InspectorEnvironment {
     WTF_MAKE_NONCOPYABLE(WorkerInspectorController);
@@ -70,6 +71,9 @@ public:
 private:
     friend class InspectorInstrumentation;
 
+    WorkerAgentContext workerAgentContext();
+    void createLazyAgents();
+
     Ref<InstrumentingAgents> m_instrumentingAgents;
     std::unique_ptr<WebInjectedScriptManager> m_injectedScriptManager;
     Ref<Inspector::FrontendRouter> m_frontendRouter;
@@ -79,6 +83,7 @@ private:
     Inspector::AgentRegistry m_agents;
     WorkerGlobalScope& m_workerGlobalScope;
     std::unique_ptr<Inspector::FrontendChannel> m_forwardingChannel;
+    bool m_didCreateLazyAgents { false };
 };
 
 } // namespace WebCore

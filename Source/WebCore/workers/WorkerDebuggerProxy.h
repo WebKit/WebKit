@@ -36,6 +36,7 @@ class WorkerDebuggerProxy {
 public:
     virtual ~WorkerDebuggerProxy() = default;
     virtual void postMessageToDebugger(const String&) = 0;
+    virtual void setResourceCachingDisabled(bool) = 0;
 };
 
 } // namespace WebCore

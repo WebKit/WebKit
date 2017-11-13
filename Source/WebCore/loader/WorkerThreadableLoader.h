@@ -117,6 +117,8 @@ namespace WebCore {
 
             // For use on the main thread.
             String m_taskMode;
+            unsigned long m_workerRequestIdentifier { 0 };
+            NetworkLoadMetrics m_networkLoadMetrics;
         };
 
         WorkerThreadableLoader(WorkerGlobalScope&, ThreadableLoaderClient&, const String& taskMode, ResourceRequest&&, const ThreadableLoaderOptions&, const String& referrer);

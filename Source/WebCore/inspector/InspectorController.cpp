@@ -50,7 +50,6 @@
 #include "InspectorInstrumentation.h"
 #include "InspectorLayerTreeAgent.h"
 #include "InspectorMemoryAgent.h"
-#include "InspectorNetworkAgent.h"
 #include "InspectorPageAgent.h"
 #include "InspectorTimelineAgent.h"
 #include "InspectorWorkerAgent.h"
@@ -64,6 +63,7 @@
 #include "PageConsoleAgent.h"
 #include "PageDebuggerAgent.h"
 #include "PageHeapAgent.h"
+#include "PageNetworkAgent.h"
 #include "PageRuntimeAgent.h"
 #include "PageScriptDebugServer.h"
 #include "Settings.h"
@@ -149,15 +149,8 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     m_agents.append(WTFMove(canvasAgentPtr));
 
     ASSERT(m_injectedScriptManager->commandLineAPIHost());
-    if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost()) {
-        commandLineAPIHost->init(
-              m_inspectorAgent
-            , consoleAgent
-            , m_domAgent
-            , domStorageAgent
-            , databaseAgent
-        );
-    }
+    if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
+        commandLineAPIHost->init(m_inspectorAgent, consoleAgent, m_domAgent, domStorageAgent, databaseAgent);
 }
 
 InspectorController::~InspectorController()
@@ -201,7 +194,7 @@ void InspectorController::createLazyAgents()
     auto debuggerAgentPtr = debuggerAgent.get();
 
     m_agents.append(WTFMove(debuggerAgent));
-    m_agents.append(std::make_unique<InspectorNetworkAgent>(pageContext, m_pageAgent));
+    m_agents.append(std::make_unique<PageNetworkAgent>(pageContext, m_pageAgent));
     m_agents.append(std::make_unique<InspectorCSSAgent>(pageContext, m_domAgent));
     m_agents.append(std::make_unique<InspectorDOMDebuggerAgent>(pageContext, m_domAgent, debuggerAgentPtr));
     m_agents.append(std::make_unique<InspectorApplicationCacheAgent>(pageContext, m_pageAgent));

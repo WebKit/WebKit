@@ -26,13 +26,16 @@
 #include "config.h"
 #include "WorkerConsoleAgent.h"
 
+#include "WorkerGlobalScope.h"
 
 namespace WebCore {
+
 using namespace Inspector;
 
 WorkerConsoleAgent::WorkerConsoleAgent(WorkerAgentContext& context, InspectorHeapAgent* heapAgent)
     : WebConsoleAgent(context, heapAgent)
 {
+    ASSERT(context.workerGlobalScope.isContextThread());
 }
 
 } // namespace WebCore
