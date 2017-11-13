@@ -128,7 +128,9 @@ class PlatformInfo(object):
     def xcode_sdk_version(self, sdk_name):
         if self.is_mac():
             # Assumes that xcrun does not write to standard output on failure (e.g. SDK does not exist).
-            return Version(self._executive.run_command(["xcrun", "--sdk", sdk_name, "--show-sdk-version"], return_stderr=False, error_handler=Executive.ignore_error).rstrip())
+            xcrun_output = self._executive.run_command(['xcrun', '--sdk', sdk_name, '--show-sdk-version'], return_stderr=False, error_handler=Executive.ignore_error).rstrip()
+            if xcrun_output:
+                return Version(xcrun_output)
         return None
 
     def xcode_simctl_list(self):
