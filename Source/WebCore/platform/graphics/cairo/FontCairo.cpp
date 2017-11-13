@@ -71,7 +71,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     double syntheticBoldOffset = font.syntheticBoldOffset();
 
     ASSERT(context.hasPlatformContext());
-    Cairo::drawGlyphs(*context.platformContext(), context.state(), context.mustUseShadowBlur(), point, scaledFont, syntheticBoldOffset, glyphs, xOffset, context);
+    Cairo::drawGlyphs(*context.platformContext(), context.state(), point, scaledFont, syntheticBoldOffset, glyphs, xOffset, context);
 }
 
 #if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)

@@ -87,7 +87,7 @@ void fillRect(PlatformContextCairo&, const FloatRect&, const GraphicsContextStat
 void fillRect(PlatformContextCairo&, const FloatRect&, const Color&, bool, GraphicsContext&);
 void fillRect(PlatformContextCairo&, const FloatRect&, cairo_pattern_t*);
 void fillRoundedRect(PlatformContextCairo&, const FloatRoundedRect&, const Color&, bool, GraphicsContext&);
-void fillRectWithRoundedHole(PlatformContextCairo&, const FloatRect&, const FloatRoundedRect&, const GraphicsContextState&, bool, GraphicsContext&);
+void fillRectWithRoundedHole(PlatformContextCairo&, const FloatRect&, const FloatRoundedRect&, const GraphicsContextState&, GraphicsContext&);
 void fillPath(PlatformContextCairo&, const Path&, const GraphicsContextState&, GraphicsContext&);
 void strokeRect(PlatformContextCairo&, const FloatRect&, float, const GraphicsContextState&, GraphicsContext&);
 void strokePath(PlatformContextCairo&, const Path&, const GraphicsContextState&, GraphicsContext&);
