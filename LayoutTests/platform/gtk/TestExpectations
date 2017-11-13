@@ -2905,11 +2905,7 @@ webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/interactive-e
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 
 # web-platform-tests XHR tests
-imported/w3c/web-platform-tests/XMLHttpRequest/getallresponseheaders.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/headers-normalize-response.htm [ Failure ]
-imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-get-head-async.htm [ Failure ]
-imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-get-head.htm [ Failure ]
-imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/status-async.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/status-basic.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/status-error.htm [ Failure ]
@@ -3220,7 +3216,6 @@ webkit.org/b/173410 fast/canvas/canvas-createPattern-video-loading.html [ Failur
 
 webkit.org/b/173411 fast/events/touch/frame-hover-update.html [ Failure ]
 
-webkit.org/b/173413 imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm [ Failure ]
 webkit.org/b/173413 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-after-content-change.html [ Failure ]
 
 webkit.org/b/143702 media/progress-events-generated-correctly.html [ Failure ]

@@ -1,3 +1,27 @@
+2017-11-13  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Enable some passing XHR tests
+        https://bugs.webkit.org/show_bug.cgi?id=179533
+
+        Reviewed by Alex Christensen.
+
+        * platform/gtk/TestExpectations: Remove failure expectations.
+        * platform/gtk/imported/w3c/web-platform-tests/XMLHttpRequest/getallresponseheaders-expected.txt:
+          Removed: the platform-neutral expectation file (two passes rather than
+          one pass, one fail) matches the current output on GTK.
+        * platform/gtk/imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-get-head-async-expected.txt:
+          Added: the platform-neutral expectation file has subtests marked as
+          failing, though they all pass on GTK.
+        * platform/gtk/imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-get-head-expected.txt:
+          Added: the platform-neutral expectation file has subtests marked as
+          failing, though they all pass on GTK.
+        * platform/gtk/imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-expected.txt:
+          Added: the platform-neutral expectation file has subtests marked as
+          failing, though they all pass on GTK.
+        * platform/gtk/imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type-expected.txt:
+          Added: some of the subtests marked as failing in the platform-neutral
+          expectation file are passing on GTK.
+
 2017-11-12  Maciej Stachowiak  <mjs@apple.com>
 
         Remove support for UTF-32 variant text encodings
