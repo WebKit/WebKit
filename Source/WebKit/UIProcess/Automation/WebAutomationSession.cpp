@@ -30,6 +30,7 @@
 #include "APIAutomationSessionClient.h"
 #include "APIOpenPanelParameters.h"
 #include "AutomationProtocolObjects.h"
+#include "CoordinateSystem.h"
 #include "WebAutomationSessionMacros.h"
 #include "WebAutomationSessionMessages.h"
 #include "WebAutomationSessionProxyMessages.h"
@@ -873,7 +874,18 @@ void WebAutomationSession::didResolveParentFrame(uint64_t callbackID, uint64_t f
         callback->sendSuccess(handleForWebFrameID(frameID));
 }
 
-void WebAutomationSession::computeElementLayout(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String& frameHandle, const String& nodeHandle, const bool* optionalScrollIntoViewIfNeeded, const bool* optionalUseViewportCoordinates, Ref<ComputeElementLayoutCallback>&& callback)
+static std::optional<CoordinateSystem> protocolStringToCoordinateSystem(const String& coordinateSystemString)
+{
+    if (coordinateSystemString == "Page")
+        return CoordinateSystem::Page;
+    if (coordinateSystemString == "LayoutViewport")
+        return CoordinateSystem::LayoutViewport;
+    if (coordinateSystemString == "VisualViewport")
+        return CoordinateSystem::VisualViewport;
+    return std::nullopt;
+}
+
+void WebAutomationSession::computeElementLayout(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String& frameHandle, const String& nodeHandle, const bool* optionalScrollIntoViewIfNeeded, const String& coordinateSystemString, Ref<ComputeElementLayoutCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
     if (!page)
@@ -883,13 +895,15 @@ void WebAutomationSession::computeElementLayout(Inspector::ErrorString& errorStr
     if (!frameID)
         FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
+    std::optional<CoordinateSystem> coordinateSystem = protocolStringToCoordinateSystem(coordinateSystemString);
+    if (!coordinateSystem)
+        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'coordinateSystem' is invalid.");
+
     uint64_t callbackID = m_nextComputeElementLayoutCallbackID++;
     m_computeElementLayoutCallbacks.set(callbackID, WTFMove(callback));
 
     bool scrollIntoViewIfNeeded = optionalScrollIntoViewIfNeeded ? *optionalScrollIntoViewIfNeeded : false;
-    bool useViewportCoordinates = optionalUseViewportCoordinates ? *optionalUseViewportCoordinates : false;
-
-    page->process().send(Messages::WebAutomationSessionProxy::ComputeElementLayout(page->pageID(), frameID.value(), nodeHandle, scrollIntoViewIfNeeded, useViewportCoordinates, callbackID), 0);
+    page->process().send(Messages::WebAutomationSessionProxy::ComputeElementLayout(page->pageID(), frameID.value(), nodeHandle, scrollIntoViewIfNeeded, coordinateSystem.value(), callbackID), 0);
 }
 
 void WebAutomationSession::didComputeElementLayout(uint64_t callbackID, WebCore::IntRect rect, std::optional<WebCore::IntPoint> inViewCenterPoint, bool isObscured, const String& errorType)

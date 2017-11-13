@@ -171,7 +171,7 @@ public:
 
     WEBCORE_EXPORT IntRect boundsInRootViewSpace();
 
-    FloatRect boundingClientRect();
+    WEBCORE_EXPORT FloatRect boundingClientRect();
 
     WEBCORE_EXPORT Ref<DOMRectList> getClientRects();
     Ref<DOMRect> getBoundingClientRect();

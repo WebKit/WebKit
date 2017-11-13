@@ -4473,6 +4473,12 @@ FloatPoint FrameView::documentToClientPoint(FloatPoint p) const
     return p;
 }
 
+FloatRect FrameView::clientToDocumentRect(FloatRect rect) const
+{
+    rect.move(-documentToClientOffset());
+    return rect;
+}
+
 FloatPoint FrameView::clientToDocumentPoint(FloatPoint point) const
 {
     point.move(-documentToClientOffset());

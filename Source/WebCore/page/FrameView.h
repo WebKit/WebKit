@@ -466,6 +466,7 @@ public:
     FloatSize documentToClientOffset() const;
     FloatRect documentToClientRect(FloatRect) const;
     FloatPoint documentToClientPoint(FloatPoint) const;
+    WEBCORE_EXPORT FloatRect clientToDocumentRect(FloatRect) const;
     WEBCORE_EXPORT FloatPoint clientToDocumentPoint(FloatPoint) const;
 
     FloatRect layoutViewportToAbsoluteRect(FloatRect) const;

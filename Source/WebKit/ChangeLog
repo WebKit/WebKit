@@ -1,3 +1,37 @@
+2017-11-07  Brian Burg  <bburg@apple.com>
+
+        Web Automation: inViewCenterPoint should not include topContentInset when computed in viewport coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=179129
+        <rdar://problem/35297038>
+
+        Reviewed by Simon Fraser.
+
+        When computing the in view center point per W3C specification, the top content inset
+        is inadvertently added back in when converting to the root view coordinate system.
+
+        This patch reworks the protocol command so that it explicitly requests a coordinate
+        system, with options for "Page" (root / contents), "LayoutViewport", and "VisualViewport".
+        The latter is not implemented in this patch, since it is intended for use on iOS someday.
+
+        * UIProcess/Automation/Automation.json:
+        Change usesViewport to CoordinateSystem.
+        Add a new coordinate system enum type and use it.
+        Fix relevant comments for Automation.computElementLayout.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::protocolStringToCoordinateSystem):
+        (WebKit::WebAutomationSession::computeElementLayout):
+        Parse the requested coordinate system and send it in the message to the web process.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Automation/WebAutomationSessionProxy.messages.in:
+        * WebProcess/Automation/WebAutomationSessionProxy.h:
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::computeElementLayout):
+        Rework the implementation. Get the element bounds and in-view center point in
+        client coordinates and convert back to root view coordinates for CoordinateSystem::Page.
+
 2017-11-08  Keith Miller  <keith_miller@apple.com>
 
         Async iteration should only fetch the next method once and add feature flag
