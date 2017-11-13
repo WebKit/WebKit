@@ -1,3 +1,14 @@
+2017-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r224566): [GTK] 26 new timeouts on inspector related tests.
+        https://bugs.webkit.org/show_bug.cgi?id=179471
+
+        Reviewed by Darin Adler.
+
+        TestStub.html and TestStub.js was missing in resources bundle.
+
+        * Scripts/copy-user-interface-resources.pl: Also combine resources for TestStub.
+
 2017-11-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Network detail views - Include a newline between sections when copying

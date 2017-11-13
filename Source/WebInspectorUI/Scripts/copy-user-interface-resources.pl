@@ -379,6 +379,17 @@ if ($shouldCombineTest) {
     # Copy over Test.html.
     copy($derivedSourcesTestHTML, File::Spec->catfile($targetResourcePath, 'Test.html'));
 
+    # Combine the JavaScript files for testing into a single file (TestStub.js).
+    system($perl, $combineResourcesCmd,
+        '--input-html', File::Spec->catfile($uiRoot, 'TestStub.html'),
+        '--derived-sources-dir', $derivedSourcesDir,
+        '--output-dir', $derivedSourcesDir,
+        '--output-script-name', 'TestStubCombined.js');
+
+    # Copy over TestStub.html and TestStubCombined.js.
+    copy(File::Spec->catfile($derivedSourcesDir, 'TestStub.html'), File::Spec->catfile($targetResourcePath, 'TestStub.html'));
+    copy(File::Spec->catfile($derivedSourcesDir, 'TestStubCombined.js'), File::Spec->catfile($targetResourcePath, 'TestStubCombined.js'));
+
     # Copy the Legacy directory.
     ditto(File::Spec->catfile($uiRoot, 'Protocol', 'Legacy'), File::Spec->catfile($protocolDir, 'Legacy'));
 }
