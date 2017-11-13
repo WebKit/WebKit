@@ -1,5 +1,16 @@
 2017-11-13  Jon Davis  <jond@apple.com>
 
+        Update safe area CSS for webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=179615
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wp-content/themes/webkit/style.css:
+        (@media only screen and (max-height: 415px)):
+        (@supports(padding:max(0px))):
+
+2017-11-13  Jon Davis  <jond@apple.com>
+
         Add a new landing page design and site-wide design detail updates for webkit.org
         https://bugs.webkit.org/show_bug.cgi?id=179558
 
