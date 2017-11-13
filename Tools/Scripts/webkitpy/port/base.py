@@ -680,10 +680,10 @@ class Port(object):
 
     def normalize_test_name(self, test_name):
         """Returns a normalized version of the test name or test directory."""
-        if test_name.endswith('/'):
+        if test_name.endswith(os.path.sep):
             return test_name
         if self.test_isdir(test_name):
-            return test_name + '/'
+            return test_name + os.path.sep
         return test_name
 
     def driver_cmd_line_for_logging(self):

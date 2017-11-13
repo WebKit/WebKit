@@ -1,3 +1,13 @@
+2017-11-13  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Windows] Make the port's normalize_test_name() method platform independent.
+        https://bugs.webkit.org/show_bug.cgi?id=179572
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.normalize_test_name):
+
 2017-11-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Implement SPI for clients to request data for a given attachment
