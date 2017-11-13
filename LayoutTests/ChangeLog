@@ -1,3 +1,40 @@
+2017-11-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Remove support for UTF-32 variant text encodings
+        https://bugs.webkit.org/show_bug.cgi?id=179435
+
+        Reviewed by Darin Adler.
+
+        * fast/encoding/legacy-utf-32-aliases.html: Added. Check that
+        we don't support our legacy aliases for utf-32, since WPT doesn't
+        either.
+        * fast/encoding/legacy-utf-32-aliases-expected.txt: Ditto.
+
+        Remove the following tests; we no longer want to support UTF-32. 
+        
+        imported/w3c/web-platform-tests/encoding already has tests for lack of support.
+        
+        * fast/encoding/utf-32-big-endian-bom-expected.txt: Removed.
+        * fast/encoding/utf-32-big-endian-bom.html: Removed.
+        * fast/encoding/utf-32-big-endian-nobom-expected.txt: Removed.
+        * fast/encoding/utf-32-big-endian-nobom.xml: Removed.
+        * fast/encoding/utf-32-little-endian-bom-expected.txt: Removed.
+        * fast/encoding/utf-32-little-endian-bom.html: Removed.
+        * fast/encoding/utf-32-little-endian-nobom-expected.txt: Removed.
+        * fast/encoding/utf-32-little-endian-nobom.xml: Removed.
+        * http/tests/misc/submit-get-in-utf32be-expected.txt: Removed.
+        * http/tests/misc/submit-get-in-utf32be.html: Removed.
+        * http/tests/misc/submit-get-in-utf32le-expected.txt: Removed.
+        * http/tests/misc/submit-get-in-utf32le.html: Removed.
+        * http/tests/misc/submit-post-in-utf32be-expected.txt: Removed.
+        * http/tests/misc/submit-post-in-utf32be.html: Removed.
+        * http/tests/misc/submit-post-in-utf32le-expected.txt: Removed.
+        * http/tests/misc/submit-post-in-utf32le.html: Removed.
+        * http/tests/misc/url-in-utf32be-expected.txt: Removed.
+        * http/tests/misc/url-in-utf32be.html: Removed.
+        * http/tests/misc/url-in-utf32le-expected.txt: Removed.
+        * http/tests/misc/url-in-utf32le.html: Removed.
+
 2017-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r224566): [GTK] 26 new timeouts on inspector related tests.

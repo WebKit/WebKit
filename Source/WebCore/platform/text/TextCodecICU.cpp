@@ -99,9 +99,6 @@ DECLARE_ALIASES(EUC_JP, "x-euc", "cseucpkdfmtjapanese", "x-euc-jp");
 DECLARE_ALIASES(ISO_2022_JP, "jis7", "csiso2022jp");
 DECLARE_ALIASES(Shift_JIS, "shift-jis", "csshiftjis", "ms932", "ms_kanji", "sjis", "windows-31j", "x-sjis");
 // Encodings below are not in the standard.
-DECLARE_ALIASES(UTF_32, "ISO-10646-UCS-4", "ibm-1236", "ibm-1237", "csUCS4", "ucs-4");
-DECLARE_ALIASES(UTF_32LE, "UTF32_LittleEndian", "ibm-1234", "ibm-1235");
-DECLARE_ALIASES(UTF_32BE, "UTF32_BigEndian", "ibm-1232", "ibm-1233", "ibm-9424");
 DECLARE_ALIASES(x_mac_greek, "windows-10006", "macgr", "x-MacGreek");
 DECLARE_ALIASES(x_mac_centraleurroman, "windows-10029", "x-mac-ce", "macce", "maccentraleurope", "x-MacCentralEurope");
 DECLARE_ALIASES(x_mac_turkish, "windows-10081", "mactr", "x-MacTurkish");
@@ -153,9 +150,6 @@ static const struct EncodingName {
     DECLARE_ENCODING_NAME("ISO-2022-JP", ISO_2022_JP),
     DECLARE_ENCODING_NAME("Shift_JIS", Shift_JIS),
     // Encodings below are not in the standard.
-    DECLARE_ENCODING_NAME("UTF-32", UTF_32),
-    DECLARE_ENCODING_NAME("UTF-32LE", UTF_32LE),
-    DECLARE_ENCODING_NAME("UTF-32BE", UTF_32BE),
     DECLARE_ENCODING_NAME("x-mac-greek", x_mac_greek),
     DECLARE_ENCODING_NAME("x-mac-centraleurroman", x_mac_centraleurroman),
     DECLARE_ENCODING_NAME("x-mac-turkish", x_mac_turkish),

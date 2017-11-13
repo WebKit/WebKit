@@ -1,3 +1,15 @@
+2017-11-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Remove support for UTF-32 variant text encodings
+        https://bugs.webkit.org/show_bug.cgi?id=179435
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/encoding/unsupported-encodings-expected.txt: Update results now 
+        that UTF-32 support is gone. Still not quite right since we don't sniff UTF-32LE as 
+        UTF-16LE yet.
+        * web-platform-tests/encoding/utf-32-expected.txt: ditto
+
 2017-11-11  Chris Dumez  <cdumez@apple.com>
 
         Re-sync Service Workers web-platform-tests from upstream
