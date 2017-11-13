@@ -1,3 +1,19 @@
+2017-11-13  Per Arne Vollan  <pvollan@apple.com>
+
+        The css properties stroke-width/stroke-color and -webkit-text-stroke-width/-webkit-text-stroke-color should not be mixed.
+        https://bugs.webkit.org/show_bug.cgi?id=174737
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/stroke-color-expected.html:
+        * fast/css/stroke-color-fallback-expected.html:
+        * fast/css/stroke-color-fallback.html:
+        * fast/css/stroke-color.html:
+        * fast/css/stroke-width-expected.html:
+        * fast/css/stroke-width-fallback-expected.html:
+        * fast/css/stroke-width-fallback.html:
+        * fast/css/stroke-width.html:
+
 2017-11-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r224763.

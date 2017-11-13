@@ -1275,7 +1275,8 @@ public:
     void setHasExplicitlySetStrokeColor(bool v) { SET_VAR(m_rareInheritedData, hasSetStrokeColor, static_cast<unsigned>(v)); }
     bool hasExplicitlySetStrokeColor() const { return m_rareInheritedData->hasSetStrokeColor; };
     static Color initialStrokeColor() { return Color(Color::transparent); }
-    
+    Color computedStrokeColor() const;
+
     float strokeMiterLimit() const { return m_rareInheritedData->miterLimit; }
     void setStrokeMiterLimit(float f) { SET_VAR(m_rareInheritedData, miterLimit, f); }
     static float initialStrokeMiterLimit() { return defaultMiterLimit; }

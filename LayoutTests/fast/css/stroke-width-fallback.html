@@ -8,26 +8,32 @@
             color: gray;
             text-shadow: none;
             -webkit-text-stroke-color: blue;
+            display: inline
         }
     
-        stroke-width-class {
+        div.stroke-width-class {
             stroke-width: 25px;
         }
     </style>
 </head>
 <body>
 
+<div style="stroke-width: 25px;">&#x25fc;</div>
+<div style="stroke-width: 25px; stroke-color: green;">&#x25fc;</div>
+<div style="stroke-color: green;">&#x25fc;</div>
 <div style="-webkit-text-stroke-width: 10px;">&#x25fc;</div>
+<div style="-webkit-text-stroke-width: 10px; stroke-color: green;">&#x25fc;</div>
 <div style="stroke-width: 25px; -webkit-text-stroke-width: 10px;">&#x25fc;</div>
-<div style="-webkit-text-stroke-width: 10px; stroke-width: 25px;">&#x25fc;</div>
-<div style="-webkit-text-stroke-width: 10px; stroke-width: 25px; stroke-width: 30px;">&#x25fc;</div>
-<div style="-webkit-text-stroke-width: 10px; stroke-width: 25px; -webkit-text-stroke-width: 30px;">&#x25fc;</div>
+<div style="stroke-width: 25px; -webkit-text-stroke-width: 10px; stroke-color: green;">&#x25fc;</div>
 
 <div style="stroke-width: 25px;"><span style="-webkit-text-stroke-width: 10px;">&#x25fc;</span></div>
+<div style="stroke-width: 25px; stroke-color: green;"><span style="-webkit-text-stroke-width: 10px;">&#x25fc;</span></div>
 <div style="-webkit-text-stroke-width: 10px;"><span style="stroke-width: 25px;">&#x25fc;</span></div>
+<div style="-webkit-text-stroke-width: 10px; stroke-color: green;"><span style="stroke-width: 25px;">&#x25fc;</span></div>
 <div style="-webkit-text-stroke-width: 10px;"><span>&#x25fc;</span></div>
+<div style="-webkit-text-stroke-width: 10px; stroke-color: green;"><span>&#x25fc;</span></div>
 <div style="stroke-width: 25px; -webkit-text-stroke-width: 10px;"><span>&#x25fc;</span></div>
-<div style="-webkit-text-stroke-width: 10px; stroke-width: 25px;"><span>&#x25fc;</span></div>
+<div style="stroke-width: 25px; -webkit-text-stroke-width: 10px; stroke-color: green;"><span>&#x25fc;</span></div>
 
 <div class="stroke-width-class" style="-webkit-text-stroke-width: 10px;">&#x25fc;</div>
 

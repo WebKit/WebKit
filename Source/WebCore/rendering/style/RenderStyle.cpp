@@ -2361,7 +2361,10 @@ Vector<PaintType, 3> RenderStyle::paintTypesForPaintOrder(PaintOrder order)
 
 float RenderStyle::computedStrokeWidth(const IntSize& viewportSize) const
 {
-    if (!hasExplicitlySetStrokeWidth())
+    // Use the stroke-width and stroke-color value combination only if stroke-color has been explicitly specified.
+    // Since there will be no visible stroke when stroke-color is not specified (transparent by default), we fall
+    // back to the legacy Webkit text stroke combination in that case.
+    if (!hasExplicitlySetStrokeColor())
         return textStrokeWidth();
     
     const Length& length = strokeWidth();
@@ -2387,6 +2390,14 @@ bool RenderStyle::hasPositiveStrokeWidth() const
         return textStrokeWidth() > 0;
 
     return strokeWidth().isPositive();
+}
+
+Color RenderStyle::computedStrokeColor() const
+{
+    CSSPropertyID propertyID = CSSPropertyStrokeColor;
+    if (!hasExplicitlySetStrokeColor())
+        propertyID = CSSPropertyWebkitTextStrokeColor;
+    return visitedDependentColor(propertyID);
 }
 
 } // namespace WebCore

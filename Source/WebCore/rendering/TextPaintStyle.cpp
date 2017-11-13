@@ -107,7 +107,7 @@ TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& line
     if (forceBackgroundToWhite)
         paintStyle.fillColor = adjustColorForVisibilityOnBackground(paintStyle.fillColor, Color::white);
 
-    paintStyle.strokeColor = lineStyle.visitedDependentColor(lineStyle.hasExplicitlySetStrokeColor() ? CSSPropertyStrokeColor : CSSPropertyWebkitTextStrokeColor);
+    paintStyle.strokeColor = lineStyle.computedStrokeColor();
 
     // Make the text stroke color legible against a white background
     if (forceBackgroundToWhite)
@@ -162,7 +162,7 @@ TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintSty
             selectionPaintStyle.strokeWidth = strokeWidth;
         }
 
-        Color stroke = paintInfo.forceTextColor() ? paintInfo.forcedTextColor() : pseudoStyle->visitedDependentColor(pseudoStyle->hasExplicitlySetStrokeColor() ? CSSPropertyStrokeColor : CSSPropertyWebkitTextStrokeColor);
+        Color stroke = paintInfo.forceTextColor() ? paintInfo.forcedTextColor() : pseudoStyle->computedStrokeColor();
         if (stroke != selectionPaintStyle.strokeColor) {
             if (!paintSelectedTextOnly)
                 paintSelectedTextSeparately = true;
