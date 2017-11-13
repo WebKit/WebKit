@@ -36,6 +36,7 @@
 #if USE(CAIRO)
 
 #include "FloatRect.h"
+#include "GraphicsContext.h"
 #include "Image.h"
 #include "Path.h"
 #include "PlatformContextCairo.h"
@@ -44,6 +45,93 @@
 
 namespace WebCore {
 namespace Cairo {
+
+static inline void fillRectWithColor(cairo_t* cr, const FloatRect& rect, const Color& color)
+{
+    if (!color.isVisible() && cairo_get_operator(cr) == CAIRO_OPERATOR_OVER)
+        return;
+
+    setSourceRGBAFromColor(cr, color);
+    cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
+    cairo_fill(cr);
+}
+
+enum PathDrawingStyle {
+    Fill = 1,
+    Stroke = 2,
+    FillAndStroke = Fill + Stroke
+};
+
+static inline void drawPathShadow(PlatformContextCairo& platformContext, const GraphicsContextState& contextState, GraphicsContext& targetContext, PathDrawingStyle drawingStyle)
+{
+    ShadowBlur& shadow = platformContext.shadowBlur();
+    if (shadow.type() == ShadowBlur::NoShadow)
+        return;
+
+    // Calculate the extents of the rendered solid paths.
+    cairo_t* cairoContext = platformContext.cr();
+    std::unique_ptr<cairo_path_t, void(*)(cairo_path_t*)> path(cairo_copy_path(cairoContext), [](cairo_path_t* path) {
+        cairo_path_destroy(path);
+    });
+
+    FloatRect solidFigureExtents;
+    double x0 = 0;
+    double x1 = 0;
+    double y0 = 0;
+    double y1 = 0;
+    if (drawingStyle & Stroke) {
+        cairo_stroke_extents(cairoContext, &x0, &y0, &x1, &y1);
+        solidFigureExtents = FloatRect(x0, y0, x1 - x0, y1 - y0);
+    }
+    if (drawingStyle & Fill) {
+        cairo_fill_extents(cairoContext, &x0, &y0, &x1, &y1);
+        FloatRect fillExtents(x0, y0, x1 - x0, y1 - y0);
+        solidFigureExtents.unite(fillExtents);
+    }
+
+    GraphicsContext* shadowContext = shadow.beginShadowLayer(targetContext, solidFigureExtents);
+    if (!shadowContext)
+        return;
+
+    cairo_t* cairoShadowContext = shadowContext->platformContext()->cr();
+
+    // It's important to copy the context properties to the new shadow
+    // context to preserve things such as the fill rule and stroke width.
+    copyContextProperties(cairoContext, cairoShadowContext);
+
+    if (drawingStyle & Fill) {
+        cairo_save(cairoShadowContext);
+        cairo_append_path(cairoShadowContext, path.get());
+        shadowContext->platformContext()->prepareForFilling(contextState, PlatformContextCairo::NoAdjustment);
+        cairo_fill(cairoShadowContext);
+        cairo_restore(cairoShadowContext);
+    }
+
+    if (drawingStyle & Stroke) {
+        cairo_append_path(cairoShadowContext, path.get());
+        shadowContext->platformContext()->prepareForStroking(contextState, PlatformContextCairo::DoNotPreserveAlpha);
+        cairo_stroke(cairoShadowContext);
+    }
+
+    // The original path may still be hanging around on the context and endShadowLayer
+    // will take care of properly creating a path to draw the result shadow. We remove the path
+    // temporarily and then restore it.
+    // See: https://bugs.webkit.org/show_bug.cgi?id=108897
+    cairo_new_path(cairoContext);
+    shadow.endShadowLayer(targetContext);
+    cairo_append_path(cairoContext, path.get());
+}
+
+static inline void fillCurrentCairoPath(PlatformContextCairo& platformContext, const GraphicsContextState& contextState)
+{
+    cairo_t* cr = platformContext.cr();
+    cairo_save(cr);
+
+    platformContext.prepareForFilling(contextState, PlatformContextCairo::AdjustPatternForGlobalAlpha);
+    cairo_fill(cr);
+
+    cairo_restore(cr);
+}
 
 void setLineCap(PlatformContextCairo& platformContext, LineCap lineCap)
 {
@@ -90,6 +178,115 @@ void setLineJoin(PlatformContextCairo& platformContext, LineJoin lineJoin)
 void setMiterLimit(PlatformContextCairo& platformContext, float miterLimit)
 {
     cairo_set_miter_limit(platformContext.cr(), miterLimit);
+}
+
+void fillRect(PlatformContextCairo& platformContext, const FloatRect& rect, const GraphicsContextState& contextState, GraphicsContext& targetContext)
+{
+    cairo_t* cr = platformContext.cr();
+
+    cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
+    drawPathShadow(platformContext, contextState, targetContext, Fill);
+    fillCurrentCairoPath(platformContext, contextState);
+}
+
+void fillRect(PlatformContextCairo& platformContext, const FloatRect& rect, const Color& color, bool hasShadow, GraphicsContext& targetContext)
+{
+    if (hasShadow)
+        platformContext.shadowBlur().drawRectShadow(targetContext, FloatRoundedRect(rect));
+
+    fillRectWithColor(platformContext.cr(), rect, color);
+}
+
+void fillRect(PlatformContextCairo& platformContext, const FloatRect& rect, cairo_pattern_t* platformPattern)
+{
+    cairo_t* cr = platformContext.cr();
+
+    cairo_set_source(cr, platformPattern);
+    cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
+    cairo_fill(cr);
+}
+
+void fillRoundedRect(PlatformContextCairo& platformContext, const FloatRoundedRect& rect, const Color& color, bool hasShadow, GraphicsContext& targetContext)
+{
+    if (hasShadow)
+        platformContext.shadowBlur().drawRectShadow(targetContext, rect);
+
+    cairo_t* cr = platformContext.cr();
+    cairo_save(cr);
+
+    Path path;
+    path.addRoundedRect(rect);
+    appendWebCorePathToCairoContext(cr, path);
+    setSourceRGBAFromColor(cr, color);
+    cairo_fill(cr);
+
+    cairo_restore(cr);
+}
+
+void fillRectWithRoundedHole(PlatformContextCairo& platformContext, const FloatRect& rect, const FloatRoundedRect& roundedHoleRect, const GraphicsContextState& contextState, bool mustUseShadowBlur, GraphicsContext& targetContext)
+{
+    // FIXME: this should leverage the specified color.
+
+    if (mustUseShadowBlur)
+        platformContext.shadowBlur().drawInsetShadow(targetContext, rect, roundedHoleRect);
+
+    Path path;
+    path.addRect(rect);
+    if (!roundedHoleRect.radii().isZero())
+        path.addRoundedRect(roundedHoleRect);
+    else
+        path.addRect(roundedHoleRect.rect());
+
+    cairo_t* cr = platformContext.cr();
+
+    cairo_save(cr);
+    setPathOnCairoContext(platformContext.cr(), path.platformPath()->context());
+    fillCurrentCairoPath(platformContext, contextState);
+    cairo_restore(cr);
+}
+
+void fillPath(PlatformContextCairo& platformContext, const Path& path, const GraphicsContextState& contextState, GraphicsContext& targetContext)
+{
+    cairo_t* cr = platformContext.cr();
+
+    setPathOnCairoContext(cr, path.platformPath()->context());
+    drawPathShadow(platformContext, contextState, targetContext, Fill);
+    fillCurrentCairoPath(platformContext, contextState);
+}
+
+void strokeRect(PlatformContextCairo& platformContext, const FloatRect& rect, float lineWidth, const GraphicsContextState& contextState, GraphicsContext& targetContext)
+{
+    cairo_t* cr = platformContext.cr();
+    cairo_save(cr);
+
+    cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
+    cairo_set_line_width(cr, lineWidth);
+    drawPathShadow(platformContext, contextState, targetContext, Stroke);
+    platformContext.prepareForStroking(contextState);
+    cairo_stroke(cr);
+
+    cairo_restore(cr);
+}
+
+void strokePath(PlatformContextCairo& platformContext, const Path& path, const GraphicsContextState& contextState, GraphicsContext& targetContext)
+{
+    cairo_t* cr = platformContext.cr();
+
+    setPathOnCairoContext(cr, path.platformPath()->context());
+    drawPathShadow(platformContext, contextState, targetContext, Stroke);
+    platformContext.prepareForStroking(contextState);
+    cairo_stroke(cr);
+}
+
+void clearRect(PlatformContextCairo& platformContext, const FloatRect& rect)
+{
+    cairo_t* cr = platformContext.cr();
+
+    cairo_save(cr);
+    cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
+    cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+    cairo_fill(cr);
+    cairo_restore(cr);
 }
 
 void save(PlatformContextCairo& platformContext)

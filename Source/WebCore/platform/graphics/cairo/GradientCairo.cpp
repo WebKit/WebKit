@@ -79,15 +79,11 @@ cairo_pattern_t* Gradient::createPlatformGradient(float globalAlpha)
 
 void Gradient::fill(GraphicsContext* context, const FloatRect& rect)
 {
-    RefPtr<cairo_pattern_t> gradient = adoptRef(createPlatformGradient(1.0));
+    RefPtr<cairo_pattern_t> platformGradient = adoptRef(createPlatformGradient(1.0));
 
     context->save();
-
-    cairo_t* cr = context->platformContext()->cr();
-    cairo_set_source(cr, gradient.get());
-    cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
-    cairo_fill(cr);
-
+    ASSERT(context->hasPlatformContext());
+    Cairo::fillRect(*context->platformContext(), rect, platformGradient.get());
     context->restore();
 }
 

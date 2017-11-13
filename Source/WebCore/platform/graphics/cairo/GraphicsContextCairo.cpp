@@ -411,9 +411,8 @@ void GraphicsContext::fillPath(const Path& path)
         return;
     }
 
-    cairo_t* cr = platformContext()->cr();
-    setPathOnCairoContext(cr, path.platformPath()->context());
-    shadowAndFillCurrentCairoPath(*this);
+    ASSERT(hasPlatformContext());
+    Cairo::fillPath(*platformContext(), path, state(), *this);
 }
 
 void GraphicsContext::strokePath(const Path& path)
@@ -426,9 +425,8 @@ void GraphicsContext::strokePath(const Path& path)
         return;
     }
 
-    cairo_t* cr = platformContext()->cr();
-    setPathOnCairoContext(cr, path.platformPath()->context());
-    shadowAndStrokeCurrentCairoPath(*this);
+    ASSERT(hasPlatformContext());
+    Cairo::strokePath(*platformContext(), path, state(), *this);
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect)
@@ -441,9 +439,8 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         return;
     }
 
-    cairo_t* cr = platformContext()->cr();
-    cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
-    shadowAndFillCurrentCairoPath(*this);
+    ASSERT(hasPlatformContext());
+    Cairo::fillRect(*platformContext(), rect, state(), *this);
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
@@ -456,10 +453,8 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
         return;
     }
 
-    if (hasShadow())
-        platformContext()->shadowBlur().drawRectShadow(*this, FloatRoundedRect(rect));
-
-    fillRectWithColor(platformContext()->cr(), rect, color);
+    ASSERT(hasPlatformContext());
+    Cairo::fillRect(*platformContext(), rect, color, hasShadow(), *this);
 }
 
 void GraphicsContext::clip(const FloatRect& rect)
@@ -882,31 +877,22 @@ void GraphicsContext::clearRect(const FloatRect& rect)
         return;
     }
 
-    cairo_t* cr = platformContext()->cr();
-
-    cairo_save(cr);
-    cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
-    cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
-    cairo_fill(cr);
-    cairo_restore(cr);
+    ASSERT(hasPlatformContext());
+    Cairo::clearRect(*platformContext(), rect);
 }
 
-void GraphicsContext::strokeRect(const FloatRect& rect, float width)
+void GraphicsContext::strokeRect(const FloatRect& rect, float lineWidth)
 {
     if (paintingDisabled())
         return;
 
     if (m_impl) {
-        m_impl->strokeRect(rect, width);
+        m_impl->strokeRect(rect, lineWidth);
         return;
     }
 
-    cairo_t* cr = platformContext()->cr();
-    cairo_save(cr);
-    cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
-    cairo_set_line_width(cr, width);
-    shadowAndStrokeCurrentCairoPath(*this);
-    cairo_restore(cr);
+    ASSERT(hasPlatformContext());
+    Cairo::strokeRect(*platformContext(), rect, lineWidth, state(), *this);
 }
 
 void GraphicsContext::setLineCap(LineCap lineCap)
@@ -1048,18 +1034,7 @@ void GraphicsContext::platformFillRoundedRect(const FloatRoundedRect& rect, cons
         return;
 
     ASSERT(hasPlatformContext());
-
-    if (hasShadow())
-        platformContext()->shadowBlur().drawRectShadow(*this, rect);
-
-    cairo_t* cr = platformContext()->cr();
-    cairo_save(cr);
-    Path path;
-    path.addRoundedRect(rect);
-    appendWebCorePathToCairoContext(cr, path);
-    setSourceRGBAFromColor(cr, color);
-    cairo_fill(cr);
-    cairo_restore(cr);
+    Cairo::fillRoundedRect(*platformContext(), rect, color, hasShadow(), *this);
 }
 
 void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const FloatRoundedRect& roundedHoleRect, const Color& color)
@@ -1072,21 +1047,8 @@ void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const Float
         return;
     }
 
-    if (this->mustUseShadowBlur())
-        platformContext()->shadowBlur().drawInsetShadow(*this, rect, roundedHoleRect);
-
-    Path path;
-    path.addRect(rect);
-    if (!roundedHoleRect.radii().isZero())
-        path.addRoundedRect(roundedHoleRect);
-    else
-        path.addRect(roundedHoleRect.rect());
-
-    cairo_t* cr = platformContext()->cr();
-    cairo_save(cr);
-    setPathOnCairoContext(platformContext()->cr(), path.platformPath()->context());
-    fillCurrentCairoPath(*this);
-    cairo_restore(cr);
+    ASSERT(hasPlatformContext());
+    Cairo::fillRectWithRoundedHole(*platformContext(), rect, roundedHoleRect, state(), mustUseShadowBlur(), *this);
 }
 
 void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)

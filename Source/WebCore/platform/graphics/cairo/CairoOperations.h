@@ -37,11 +37,17 @@
 #include "DashArray.h"
 #include "GraphicsTypes.h"
 
+typedef struct _cairo_pattern cairo_pattern_t;
+
 namespace WebCore {
 
 class AffineTransform;
+class Color;
 class FloatRect;
+class FloatRoundedRect;
 class FloatSize;
+class GraphicsContext;
+class GraphicsContextState;
 class Image;
 class Path;
 class PlatformContextCairo;
@@ -52,6 +58,16 @@ void setLineCap(PlatformContextCairo&, LineCap);
 void setLineDash(PlatformContextCairo&, const DashArray&, float);
 void setLineJoin(PlatformContextCairo&, LineJoin);
 void setMiterLimit(PlatformContextCairo&, float);
+
+void fillRect(PlatformContextCairo&, const FloatRect&, const GraphicsContextState&, GraphicsContext&);
+void fillRect(PlatformContextCairo&, const FloatRect&, const Color&, bool, GraphicsContext&);
+void fillRect(PlatformContextCairo&, const FloatRect&, cairo_pattern_t*);
+void fillRoundedRect(PlatformContextCairo&, const FloatRoundedRect&, const Color&, bool, GraphicsContext&);
+void fillRectWithRoundedHole(PlatformContextCairo&, const FloatRect&, const FloatRoundedRect&, const GraphicsContextState&, bool, GraphicsContext&);
+void fillPath(PlatformContextCairo&, const Path&, const GraphicsContextState&, GraphicsContext&);
+void strokeRect(PlatformContextCairo&, const FloatRect&, float, const GraphicsContextState&, GraphicsContext&);
+void strokePath(PlatformContextCairo&, const Path&, const GraphicsContextState&, GraphicsContext&);
+void clearRect(PlatformContextCairo&, const FloatRect&);
 
 void save(PlatformContextCairo&);
 void restore(PlatformContextCairo&);
