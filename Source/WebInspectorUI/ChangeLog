@@ -1,3 +1,14 @@
+2017-11-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network Details Views - make section headers more prominent
+        https://bugs.webkit.org/show_bug.cgi?id=179565
+        <rdar://problem/35510531>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/ResourceDetailsSection.css:
+        (.resource-details > section > .title):
+
 2017-11-13  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: make selector field inline-block when editing
