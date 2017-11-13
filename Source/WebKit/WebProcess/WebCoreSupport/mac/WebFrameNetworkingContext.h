@@ -42,7 +42,6 @@ public:
     }
 
     // FIXME: remove platform-specific code and use SessionTracker
-    static void ensurePrivateBrowsingSession(WebsiteDataStoreParameters&&);
     static void ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&);
 
     static void setCookieAcceptPolicyForAllContexts(HTTPCookieAcceptPolicy);

@@ -634,13 +634,13 @@ void WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled(bool private
 {
     if (networkProcess()) {
         if (privateBrowsingEnabled)
-            networkProcess()->send(Messages::NetworkProcess::EnsurePrivateBrowsingSession({ { }, { }, { }, { }, WebsiteDataStore::defaultCacheStoragePerOriginQuota, { }, { PAL::SessionID::legacyPrivateSessionID(), { }, { }, AllowsCellularAccess::Yes }}), 0);
+            networkProcess()->send(Messages::NetworkProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters()), 0);
         else
             networkProcess()->send(Messages::NetworkProcess::DestroySession(PAL::SessionID::legacyPrivateSessionID()), 0);
     }
 
     if (privateBrowsingEnabled)
-        sendToAllProcesses(Messages::WebProcess::EnsurePrivateBrowsingSession(PAL::SessionID::legacyPrivateSessionID()));
+        sendToAllProcesses(Messages::WebProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters()));
     else
         sendToAllProcesses(Messages::WebProcess::DestroySession(PAL::SessionID::legacyPrivateSessionID()));
 }
@@ -831,7 +831,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 #endif
 
     if (WebPreferences::anyPagesAreUsingPrivateBrowsing())
-        process.send(Messages::WebProcess::EnsurePrivateBrowsingSession(PAL::SessionID::legacyPrivateSessionID()), 0);
+        process.send(Messages::WebProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters()), 0);
 
     if (m_automationSession)
         process.send(Messages::WebProcess::EnsureAutomationSessionProxy(m_automationSession->sessionIdentifier()), 0);
@@ -1021,11 +1021,9 @@ void WebProcessPool::pageAddedToProcess(WebPageProxy& page)
 
     auto sessionID = page.sessionID();
     if (sessionID.isEphemeral()) {
-        // FIXME: Merge NetworkProcess::EnsurePrivateBrowsingSession and NetworkProcess::AddWebsiteDataStore into one message type.
-        // They do basically the same thing.
         ASSERT(page.websiteDataStore().parameters().networkSessionParameters.sessionID == sessionID);
-        sendToNetworkingProcess(Messages::NetworkProcess::EnsurePrivateBrowsingSession(page.websiteDataStore().parameters()));
-        page.process().send(Messages::WebProcess::EnsurePrivateBrowsingSession(sessionID), 0);
+        sendToNetworkingProcess(Messages::NetworkProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()));
+        page.process().send(Messages::WebProcess::AddWebsiteDataStore({{ }, { }, { }, { }, { }, { }, { sessionID, { }, { }, { }}}), 0);
     } else if (sessionID != PAL::SessionID::defaultSessionID()) {
         sendToNetworkingProcess(Messages::NetworkProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()));
         page.process().send(Messages::WebProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()), 0);

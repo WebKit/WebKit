@@ -81,7 +81,7 @@ NetworkStorageSession& WebFrameNetworkingContext::ensurePrivateBrowsingSession()
     } else
         base = identifierBase();
 
-    NetworkStorageSession::ensurePrivateBrowsingSession(PAL::SessionID::legacyPrivateSessionID(), base);
+    NetworkStorageSession::ensureSession(PAL::SessionID::legacyPrivateSessionID(), base);
 
 #endif
     return *NetworkStorageSession::storageSession(PAL::SessionID::legacyPrivateSessionID());

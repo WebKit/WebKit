@@ -121,6 +121,7 @@
 #include "WebUserContentController.h"
 #include "WebUserMediaClient.h"
 #include "WebValidationMessageClient.h"
+#include "WebsiteDataStoreParameters.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/ArchiveResource.h>
@@ -2740,7 +2741,7 @@ void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
 void WebPage::setSessionID(PAL::SessionID sessionID)
 {
     if (sessionID.isEphemeral())
-        WebProcess::singleton().ensurePrivateBrowsingSession(sessionID);
+        WebProcess::singleton().addWebsiteDataStore({{ }, { }, { }, { }, { }, { }, { sessionID, { }, { }, { }}});
     m_page->setSessionID(sessionID);
 }
 

@@ -1,3 +1,13 @@
+2017-11-13  Alex Christensen  <achristensen@webkit.org>
+
+        Merge NetworkProcess::EnsurePrivateBrowsingSession and NetworkProcess::AddWebsiteDataStore into one message type
+        https://bugs.webkit.org/show_bug.cgi?id=178751
+
+        Reviewed by Brady Eidson.
+
+        * WebCoreSupport/WebFrameNetworkingContext.mm:
+        (WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+
 2017-11-08  Keith Miller  <keith_miller@apple.com>
 
         Async iteration should only fetch the next method once and add feature flag

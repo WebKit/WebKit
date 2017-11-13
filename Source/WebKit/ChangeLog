@@ -1,5 +1,43 @@
 2017-11-13  Alex Christensen  <achristensen@webkit.org>
 
+        Merge NetworkProcess::EnsurePrivateBrowsingSession and NetworkProcess::AddWebsiteDataStore into one message type
+        https://bugs.webkit.org/show_bug.cgi?id=178751
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::ensureLegacyPrivateBrowsingSession):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::ensurePrivateBrowsingSession): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/RemoteNetworkingContext.h:
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+        (WebKit::RemoteNetworkingContext::ensurePrivateBrowsingSession): Deleted.
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::legacyPrivateSessionParameters):
+        * Shared/WebsiteDataStoreParameters.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled):
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::pageAddedToProcess):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setPrivateBrowsingEnabled):
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.h:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::ensureWebsiteDataStoreSession):
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setSessionID):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensurePrivateBrowsingSession): Deleted.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
+2017-11-13  Alex Christensen  <achristensen@webkit.org>
+
         Add logs to debug content extension test failures
         https://bugs.webkit.org/show_bug.cgi?id=179624
 

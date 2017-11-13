@@ -43,22 +43,16 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebFrameNetworkingContext::ensurePrivateBrowsingSession(WebsiteDataStoreParameters&& parameters)
+void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
 {
     auto sessionID = parameters.networkSessionParameters.sessionID;
     ASSERT(RunLoop::isMain());
-    ASSERT(sessionID.isEphemeral());
 
     if (NetworkStorageSession::storageSession(sessionID))
         return;
 
-    NetworkStorageSession::ensurePrivateBrowsingSession(sessionID, String::number(sessionID.sessionID()));
+    NetworkStorageSession::ensureSession(sessionID, String::number(sessionID.sessionID()));
     SessionTracker::setSession(sessionID, NetworkSession::create(WTFMove(parameters.networkSessionParameters)));
-}
-
-void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&)
-{
-    // FIXME: Implement
 }
 
 WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)

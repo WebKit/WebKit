@@ -108,12 +108,6 @@ NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
     return *defaultNetworkStorageSession();
 }
 
-void NetworkStorageSession::ensurePrivateBrowsingSession(PAL::SessionID sessionID, const String& identifierBase)
-{
-    ASSERT(sessionID.isEphemeral());
-    ensureSession(sessionID, identifierBase);
-}
-
 void NetworkStorageSession::ensureSession(PAL::SessionID sessionID, const String& identifierBase, RetainPtr<CFHTTPCookieStorageRef>&& cookieStorage)
 {
     auto addResult = globalSessionMap().add(sessionID, nullptr);

@@ -515,11 +515,6 @@ void WebProcess::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
     m_fullKeyboardAccessEnabled = fullKeyboardAccessEnabled;
 }
 
-void WebProcess::ensurePrivateBrowsingSession(PAL::SessionID sessionID)
-{
-    WebFrameNetworkingContext::ensurePrivateBrowsingSession({ { }, { }, { }, { }, { }, { }, { sessionID, { }, { }, AllowsCellularAccess::Yes }});
-}
-
 void WebProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters)
 {
     WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WTFMove(parameters));

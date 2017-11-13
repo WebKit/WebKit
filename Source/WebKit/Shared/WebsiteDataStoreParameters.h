@@ -43,6 +43,7 @@ struct WebsiteDataStoreParameters {
     WebsiteDataStoreParameters() = default;
     WebsiteDataStoreParameters(WebsiteDataStoreParameters&&) = default;
     ~WebsiteDataStoreParameters();
+    static WebsiteDataStoreParameters legacyPrivateSessionParameters();
     
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, WebsiteDataStoreParameters&);

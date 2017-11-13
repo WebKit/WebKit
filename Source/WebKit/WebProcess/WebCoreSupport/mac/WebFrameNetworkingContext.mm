@@ -45,26 +45,6 @@
 using namespace WebCore;
 
 namespace WebKit {
-    
-void WebFrameNetworkingContext::ensurePrivateBrowsingSession(WebsiteDataStoreParameters&& parameters)
-{
-    auto sessionID = parameters.networkSessionParameters.sessionID;
-    ASSERT(sessionID.isEphemeral());
-
-    if (WebCore::NetworkStorageSession::storageSession(sessionID))
-        return;
-
-    String base;
-    if (SessionTracker::getIdentifierBase().isNull())
-        base = [[NSBundle mainBundle] bundleIdentifier];
-    else
-        base = SessionTracker::getIdentifierBase();
-
-    NetworkStorageSession::ensurePrivateBrowsingSession(sessionID, base + '.' + String::number(sessionID.sessionID()));
-#if USE(NETWORK_SESSION)
-    SessionTracker::setSession(sessionID, NetworkSession::create(WTFMove(parameters.networkSessionParameters)));
-#endif
-}
 
 void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
 {
@@ -78,9 +58,16 @@ void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePa
     else
         base = SessionTracker::getIdentifierBase();
 
-    SandboxExtension::consumePermanently(parameters.cookieStoragePathExtensionHandle);
+    if (!sessionID.isEphemeral()) {
+        bool result = SandboxExtension::consumePermanently(parameters.cookieStoragePathExtensionHandle);
+        ASSERT_UNUSED(result, result);
+    }
 
-    RetainPtr<CFHTTPCookieStorageRef> uiProcessCookieStorage = cookieStorageFromIdentifyingData(parameters.uiProcessCookieStorageIdentifier);
+    RetainPtr<CFHTTPCookieStorageRef> uiProcessCookieStorage;
+    if (!sessionID.isEphemeral())
+        uiProcessCookieStorage = cookieStorageFromIdentifyingData(parameters.uiProcessCookieStorageIdentifier);
+    else
+        ASSERT(parameters.uiProcessCookieStorageIdentifier.isEmpty());
 
     NetworkStorageSession::ensureSession(sessionID, base + '.' + String::number(sessionID.sessionID()), WTFMove(uiProcessCookieStorage));
 

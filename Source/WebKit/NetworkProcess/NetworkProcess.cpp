@@ -238,7 +238,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     // FIXME: instead of handling this here, a message should be sent later (scales to multiple sessions)
     if (parameters.privateBrowsingEnabled)
-        RemoteNetworkingContext::ensurePrivateBrowsingSession({ { }, { }, { }, { }, WebsiteDataStore::defaultCacheStoragePerOriginQuota, { }, { PAL::SessionID::legacyPrivateSessionID(), { }, { },  AllowsCellularAccess::Yes }});
+        RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters::legacyPrivateSessionParameters());
 
     if (parameters.shouldUseTestingNetworkSession)
         NetworkStorageSession::switchToNewTestingSession();
@@ -295,11 +295,6 @@ void NetworkProcess::clearCachedCredentials()
     else
         ASSERT_NOT_REACHED();
 #endif
-}
-
-void NetworkProcess::ensurePrivateBrowsingSession(WebsiteDataStoreParameters&& parameters)
-{
-    RemoteNetworkingContext::ensurePrivateBrowsingSession(WTFMove(parameters));
 }
 
 void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters)

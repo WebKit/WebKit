@@ -132,7 +132,7 @@ public:
 
     void prefetchDNS(const String&);
 
-    void ensurePrivateBrowsingSession(WebsiteDataStoreParameters&&);
+    void addWebsiteDataStore(WebsiteDataStoreParameters&&);
 
     void grantSandboxExtensionsToStorageProcessForBlobs(const Vector<String>& filenames, Function<void ()>&& completionHandler);
 
@@ -187,7 +187,6 @@ private:
     void didReceiveSyncNetworkProcessMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
     void initializeNetworkProcess(NetworkProcessCreationParameters&&);
     void createNetworkConnectionToWebProcess();
-    void addWebsiteDataStore(WebsiteDataStoreParameters&&);
     void destroySession(PAL::SessionID);
 
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, uint64_t callbackID);

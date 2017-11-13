@@ -47,7 +47,6 @@ messages -> WebProcess LegacyReceiver {
 
     ClearCachedCredentials()
 
-    EnsurePrivateBrowsingSession(PAL::SessionID sessionID)
     AddWebsiteDataStore(struct WebKit::WebsiteDataStoreParameters websiteDataStoreParameters);
     DestroySession(PAL::SessionID sessionID)
 

@@ -35,7 +35,6 @@ messages -> NetworkProcess LegacyReceiver {
 
     ClearCachedCredentials()
 
-    EnsurePrivateBrowsingSession(struct WebKit::WebsiteDataStoreParameters websiteDataStoreParameters)
     AddWebsiteDataStore(struct WebKit::WebsiteDataStoreParameters websiteDataStoreParameters);
     DestroySession(PAL::SessionID sessionID)
 

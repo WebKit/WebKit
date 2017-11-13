@@ -321,7 +321,7 @@ void InjectedBundle::setPrivateBrowsingEnabled(WebPageGroupProxy* pageGroup, boo
 {
     if (enabled) {
         WebProcess::singleton().ensureLegacyPrivateBrowsingSessionInNetworkProcess();
-        WebFrameNetworkingContext::ensurePrivateBrowsingSession({ { }, { }, { }, { }, { }, { }, { PAL::SessionID::legacyPrivateSessionID(), { }, { }, AllowsCellularAccess::Yes }});
+        WebFrameNetworkingContext::ensureWebsiteDataStoreSession({ { }, { }, { }, { }, { }, { }, { PAL::SessionID::legacyPrivateSessionID(), { }, { }, AllowsCellularAccess::Yes }});
     } else
         SessionTracker::destroySession(PAL::SessionID::legacyPrivateSessionID());
 

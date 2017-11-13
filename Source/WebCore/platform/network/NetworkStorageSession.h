@@ -63,7 +63,6 @@ class NetworkStorageSession {
 public:
     WEBCORE_EXPORT static NetworkStorageSession& defaultStorageSession();
     WEBCORE_EXPORT static NetworkStorageSession* storageSession(PAL::SessionID);
-    WEBCORE_EXPORT static void ensurePrivateBrowsingSession(PAL::SessionID, const String& identifierBase = String());
     WEBCORE_EXPORT static void ensureSession(PAL::SessionID, const String& identifierBase = String());
     WEBCORE_EXPORT static void destroySession(PAL::SessionID);
     WEBCORE_EXPORT static void forEach(const WTF::Function<void(const WebCore::NetworkStorageSession&)>&);

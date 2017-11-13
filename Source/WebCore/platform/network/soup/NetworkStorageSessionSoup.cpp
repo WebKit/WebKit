@@ -79,16 +79,10 @@ NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
     return *defaultSession();
 }
 
-void NetworkStorageSession::ensurePrivateBrowsingSession(PAL::SessionID sessionID, const String&)
+void NetworkStorageSession::ensureSession(PAL::SessionID sessionID, const String&)
 {
-    ASSERT(sessionID != PAL::SessionID::defaultSessionID());
     ASSERT(!globalSessionMap().contains(sessionID));
     globalSessionMap().add(sessionID, std::make_unique<NetworkStorageSession>(sessionID, std::make_unique<SoupNetworkSession>(sessionID)));
-}
-
-void NetworkStorageSession::ensureSession(PAL::SessionID, const String&)
-{
-    // FIXME: Implement
 }
 
 void NetworkStorageSession::switchToNewTestingSession()

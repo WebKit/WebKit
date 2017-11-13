@@ -27,6 +27,7 @@
 #include "WebsiteDataStoreParameters.h"
 
 #include "WebCoreArgumentCoders.h"
+#include "WebsiteDataStore.h"
 
 namespace WebKit {
 
@@ -77,5 +78,9 @@ bool WebsiteDataStoreParameters::decode(IPC::Decoder& decoder, WebsiteDataStoreP
     return true;
 }
 
+WebsiteDataStoreParameters WebsiteDataStoreParameters::legacyPrivateSessionParameters()
+{
+    return { { }, { }, { }, { }, WebsiteDataStore::defaultCacheStoragePerOriginQuota, { }, { PAL::SessionID::legacyPrivateSessionID(), { }, { }, { }}};
+}
 
 } // namespace WebKit
