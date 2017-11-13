@@ -37,7 +37,7 @@ function next(value)
     const syncIterator = this.@syncIterator;
 
     try {
-        const { done: nextDone, value: nextValue } = syncIterator.next(value);
+        const { done: nextDone, value: nextValue } = this.@nextMethod.@call(syncIterator, value);
         const valueWrapperCapability = @newPromiseCapability(@Promise);
         valueWrapperCapability.@resolve.@call(@undefined, nextValue);
         valueWrapperCapability.@promise.@then(
@@ -149,16 +149,18 @@ function throw(exception)
 }
 
 @globalPrivate
-function createAsyncFromSyncIterator(syncIterator)
+function createAsyncFromSyncIterator(syncIterator, nextMethod)
 {
     if (!@isObject(syncIterator))
         @throwTypeError('Only objects can be wrapped by async-from-sync wrapper');
 
-    return new @AsyncFromSyncIteratorConstructor(syncIterator)
+    return new @AsyncFromSyncIteratorConstructor(syncIterator, nextMethod);
 }
 
 @globalPrivate
 @constructor
-function AsyncFromSyncIteratorConstructor(syncIterator) {
+function AsyncFromSyncIteratorConstructor(syncIterator, nextMethod)
+{
     this.@syncIterator = syncIterator;
+    this.@nextMethod = nextMethod;
 }

@@ -1,3 +1,22 @@
+2017-11-08  Keith Miller  <keith_miller@apple.com>
+
+        Async iteration should only fetch the next method once and add feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=179451
+
+        Reviewed by Geoffrey Garen.
+
+        Add feature flag for Async iteration. Also, change async iteration to match
+        the expected behavior of the proposal.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * builtins/AsyncFromSyncIteratorPrototype.js:
+        (globalPrivate.createAsyncFromSyncIterator):
+        (globalPrivate.AsyncFromSyncIteratorConstructor):
+        * builtins/BuiltinNames.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetAsyncIterator):
+        * runtime/Options.h:
+
 2017-11-13  Mark Lam  <mark.lam@apple.com>
 
         Add more overflow check book-keeping for MarkedArgumentBuffer.

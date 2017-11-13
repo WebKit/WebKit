@@ -123,6 +123,7 @@ namespace JSC {
     macro(generatorValue) \
     macro(generatorThis) \
     macro(syncIterator) \
+    macro(nextMethod) \
     macro(asyncGeneratorState) \
     macro(asyncGeneratorSuspendReason) \
     macro(asyncGeneratorQueue) \
