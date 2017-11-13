@@ -39,7 +39,9 @@
 
 namespace WebCore {
 
+class AffineTransform;
 class FloatRect;
+class FloatSize;
 class Image;
 class Path;
 class PlatformContextCairo;
@@ -50,6 +52,17 @@ void setLineCap(PlatformContextCairo&, LineCap);
 void setLineDash(PlatformContextCairo&, const DashArray&, float);
 void setLineJoin(PlatformContextCairo&, LineJoin);
 void setMiterLimit(PlatformContextCairo&, float);
+
+void save(PlatformContextCairo&);
+void restore(PlatformContextCairo&);
+
+void translate(PlatformContextCairo&, float, float);
+void rotate(PlatformContextCairo&, float);
+void scale(PlatformContextCairo&, const FloatSize&);
+void concatCTM(PlatformContextCairo&, const AffineTransform&);
+
+void beginTransparencyLayer(PlatformContextCairo&, float);
+void endTransparencyLayer(PlatformContextCairo&);
 
 void clip(PlatformContextCairo&, const FloatRect&);
 void clipOut(PlatformContextCairo&, const FloatRect&);

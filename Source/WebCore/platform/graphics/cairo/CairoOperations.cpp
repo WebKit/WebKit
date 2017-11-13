@@ -92,6 +92,50 @@ void setMiterLimit(PlatformContextCairo& platformContext, float miterLimit)
     cairo_set_miter_limit(platformContext.cr(), miterLimit);
 }
 
+void save(PlatformContextCairo& platformContext)
+{
+    platformContext.save();
+}
+
+void restore(PlatformContextCairo& platformContext)
+{
+    platformContext.restore();
+}
+
+void translate(PlatformContextCairo& platformContext, float x, float y)
+{
+    cairo_translate(platformContext.cr(), x, y);
+}
+
+void rotate(PlatformContextCairo& platformContext, float angleInRadians)
+{
+    cairo_rotate(platformContext.cr(), angleInRadians);
+}
+
+void scale(PlatformContextCairo& platformContext, const FloatSize& size)
+{
+    cairo_scale(platformContext.cr(), size.width(), size.height());
+}
+
+void concatCTM(PlatformContextCairo& platformContext, const AffineTransform& transform)
+{
+    const cairo_matrix_t matrix = toCairoMatrix(transform);
+    cairo_transform(platformContext.cr(), &matrix);
+}
+
+void beginTransparencyLayer(PlatformContextCairo& platformContext, float opacity)
+{
+    cairo_push_group(platformContext.cr());
+    platformContext.layers().append(opacity);
+}
+
+void endTransparencyLayer(PlatformContextCairo& platformContext)
+{
+    cairo_t* cr = platformContext.cr();
+    cairo_pop_group_to_source(cr);
+    cairo_paint_with_alpha(cr, platformContext.layers().takeLast());
+}
+
 void clip(PlatformContextCairo& platformContext, const FloatRect& rect)
 {
     cairo_t* cr = platformContext.cr();
