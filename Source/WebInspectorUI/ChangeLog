@@ -1,3 +1,41 @@
+2017-11-13  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Add CheckboxNavigationItem
+        https://bugs.webkit.org/show_bug.cgi?id=179584
+        <rdar://problem/35490085>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/ButtonNavigationItem.css:
+        (.navigation-bar .item.button.text-only.checkbox):
+        (.navigation-bar .item.button.text-only.checkbox label):
+
+        * UserInterface/Views/ButtonNavigationItem.js:
+        Cleanup and some tweaks to the label to make it work with subclasses
+        regardless of how label is represented in the DOM.
+
+        (WI.ButtonNavigationItem):
+        (WI.ButtonNavigationItem.prototype.get toolTip):
+        (WI.ButtonNavigationItem.prototype.set toolTip):
+        (WI.ButtonNavigationItem.prototype.get label):
+        (WI.ButtonNavigationItem.prototype.set label):
+        (WI.ButtonNavigationItem.prototype.set image):
+        (WI.ButtonNavigationItem.prototype.get enabled):
+        (WI.ButtonNavigationItem.prototype.set enabled):
+        (WI.ButtonNavigationItem.prototype.updateButtonText):
+
+        * UserInterface/Views/CheckboxNavigationItem.js: Added.
+        New button item with a checkbox and label. Dispatches a Clicked evennt
+        whenever the checked state changes.
+
+        (WI.CheckboxNavigationItem):
+        (WI.CheckboxNavigationItem.prototype.get checked):
+        (WI.CheckboxNavigationItem.prototype.set checked):
+        (WI.CheckboxNavigationItem.prototype.get additionalClassNames):
+        (WI.CheckboxNavigationItem.prototype.updateButtonText):
+        (WI.CheckboxNavigationItem.prototype._checkboxChanged):
+
 2017-11-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Give DataGrid/Table Header ContextMenu a section header to better describe its functions

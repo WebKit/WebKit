@@ -32,21 +32,24 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
         console.assert(identifier);
         console.assert(toolTipOrLabel);
 
+        this._enabled = true;
+
         this.toolTip = toolTipOrLabel;
 
-        this._element.addEventListener("click", this._mouseClicked.bind(this));
+        this.element.addEventListener("click", this._mouseClicked.bind(this));
 
-        this._element.setAttribute("role", role || "button");
+        this.element.setAttribute("role", role || "button");
 
         if (label)
-            this._element.setAttribute("aria-label", label);
+            this.element.setAttribute("aria-label", label);
 
         this._imageWidth = imageWidth || 16;
         this._imageHeight = imageHeight || 16;
+        this._label = "";
 
         if (image)
             this.image = image;
-        else
+        else if (toolTipOrLabel)
             this.label = toolTipOrLabel;
     }
 
@@ -54,7 +57,7 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
 
     get toolTip()
     {
-        return this._element.title;
+        return this.element.title;
     }
 
     set toolTip(newToolTip)
@@ -63,18 +66,24 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
         if (!newToolTip)
             return;
 
-        this._element.title = newToolTip;
+        this.element.title = newToolTip;
     }
 
     get label()
     {
-        return this._element.textContent;
+        return this._label;
     }
 
     set label(newLabel)
     {
-        this._element.classList.add(WI.ButtonNavigationItem.TextOnlyClassName);
-        this._element.textContent = newLabel || "";
+        newLabel = newLabel || "";
+        if (this._label === newLabel)
+            return;
+
+        this.element.classList.add(WI.ButtonNavigationItem.TextOnlyClassName);
+        this._label = newLabel;
+
+        this.updateButtonText();
         if (this.parentNavigationBar)
             this.parentNavigationBar.needsLayout();
     }
@@ -87,32 +96,34 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
     set image(newImage)
     {
         if (!newImage) {
-            this._element.removeChildren();
+            this.element.removeChildren();
             return;
         }
 
-        this._element.removeChildren();
-        this._element.classList.remove(WI.ButtonNavigationItem.TextOnlyClassName);
+        this.element.removeChildren();
+        this.element.classList.remove(WI.ButtonNavigationItem.TextOnlyClassName);
 
         this._image = newImage;
 
         this._glyphElement = WI.ImageUtilities.useSVGSymbol(this._image, "glyph");
         this._glyphElement.style.width = this._imageWidth + "px";
         this._glyphElement.style.height = this._imageHeight + "px";
-        this._element.appendChild(this._glyphElement);
+        this.element.appendChild(this._glyphElement);
     }
 
     get enabled()
     {
-        return !this._element.classList.contains(WI.ButtonNavigationItem.DisabledStyleClassName);
+        return this._enabled;
     }
 
     set enabled(flag)
     {
-        if (flag)
-            this._element.classList.remove(WI.ButtonNavigationItem.DisabledStyleClassName);
-        else
-            this._element.classList.add(WI.ButtonNavigationItem.DisabledStyleClassName);
+        flag = !!flag;
+        if (this._enabled === flag)
+            return;
+
+        this._enabled = flag;
+        this.element.classList.toggle("disabled", !this._enabled);
     }
 
     // Protected
@@ -120,6 +131,13 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
     get additionalClassNames()
     {
         return ["button"];
+    }
+
+    updateButtonText()
+    {
+        // Overridden by subclasses.
+
+        this.element.textContent = this._label;
     }
 
     // Private
@@ -132,7 +150,6 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
     }
 };
 
-WI.ButtonNavigationItem.DisabledStyleClassName = "disabled";
 WI.ButtonNavigationItem.TextOnlyClassName = "text-only";
 
 WI.ButtonNavigationItem.Event = {

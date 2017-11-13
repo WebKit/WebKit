@@ -41,6 +41,14 @@
     text-align: center;
 }
 
+.navigation-bar .item.button.text-only.checkbox {
+    padding: 1px 4px 3px;
+}
+
+.navigation-bar .item.button.text-only.checkbox label {
+    -webkit-padding-start: 2px;
+}
+
 .navigation-bar .item.button > .glyph {
     color: var(--glyph-color);
 }
