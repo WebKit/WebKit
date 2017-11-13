@@ -161,6 +161,54 @@ static inline StrokeStyle focusRingStrokeStyle()
 #endif
 }
 
+static void drawGlyphsToContext(cairo_t* context, cairo_scaled_font_t* scaledFont, double syntheticBoldOffset, const Vector<cairo_glyph_t>& glyphs)
+{
+    cairo_matrix_t originalTransform;
+    if (syntheticBoldOffset)
+        cairo_get_matrix(context, &originalTransform);
+
+    cairo_set_scaled_font(context, scaledFont);
+    cairo_show_glyphs(context, glyphs.data(), glyphs.size());
+
+    if (syntheticBoldOffset) {
+        cairo_translate(context, syntheticBoldOffset, 0);
+        cairo_show_glyphs(context, glyphs.data(), glyphs.size());
+
+        cairo_set_matrix(context, &originalTransform);
+    }
+}
+
+static void drawGlyphsShadow(PlatformContextCairo& platformContext, const GraphicsContextState& state, bool mustUseShadowBlur, const FloatPoint& point, cairo_scaled_font_t* scaledFont, double syntheticBoldOffset, const Vector<cairo_glyph_t>& glyphs, GraphicsContext& targetContext)
+{
+    ShadowBlur& shadow = platformContext.shadowBlur();
+
+    if (!(state.textDrawingMode & TextModeFill) || shadow.type() == ShadowBlur::NoShadow)
+        return;
+
+    if (!mustUseShadowBlur) {
+        // Optimize non-blurry shadows, by just drawing text without the ShadowBlur.
+        cairo_t* context = platformContext.cr();
+        cairo_save(context);
+
+        FloatSize shadowOffset(state.shadowOffset);
+        cairo_translate(context, shadowOffset.width(), shadowOffset.height());
+        setSourceRGBAFromColor(context, state.shadowColor);
+        drawGlyphsToContext(context, scaledFont, syntheticBoldOffset, glyphs);
+
+        cairo_restore(context);
+        return;
+    }
+
+    cairo_text_extents_t extents;
+    cairo_scaled_font_glyph_extents(scaledFont, glyphs.data(), glyphs.size(), &extents);
+    FloatRect fontExtentsRect(point.x() + extents.x_bearing, point.y() + extents.y_bearing, extents.width, extents.height);
+
+    if (GraphicsContext* shadowContext = shadow.beginShadowLayer(targetContext, fontExtentsRect)) {
+        drawGlyphsToContext(shadowContext->platformContext()->cr(), scaledFont, syntheticBoldOffset, glyphs);
+        shadow.endShadowLayer(targetContext);
+    }
+}
+
 namespace State {
 
 void setStrokeStyle(PlatformContextCairo& platformContext, StrokeStyle strokeStyle)
@@ -344,6 +392,35 @@ void clearRect(PlatformContextCairo& platformContext, const FloatRect& rect)
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
     cairo_fill(cr);
+    cairo_restore(cr);
+}
+
+void drawGlyphs(PlatformContextCairo& platformContext, const GraphicsContextState& state, bool mustUseShadowBlur, const FloatPoint& point, cairo_scaled_font_t* scaledFont, double syntheticBoldOffset, const Vector<cairo_glyph_t>& glyphs, float xOffset, GraphicsContext& targetContext)
+{
+    drawGlyphsShadow(platformContext, state, mustUseShadowBlur, point, scaledFont, syntheticBoldOffset, glyphs, targetContext);
+
+    cairo_t* cr = platformContext.cr();
+    cairo_save(cr);
+
+    if (state.textDrawingMode & TextModeFill) {
+        platformContext.prepareForFilling(state, PlatformContextCairo::AdjustPatternForGlobalAlpha);
+        drawGlyphsToContext(cr, scaledFont, syntheticBoldOffset, glyphs);
+    }
+
+    // Prevent running into a long computation within cairo. If the stroke width is
+    // twice the size of the width of the text we will not ask cairo to stroke
+    // the text as even one single stroke would cover the full wdth of the text.
+    //  See https://bugs.webkit.org/show_bug.cgi?id=33759.
+    if (state.textDrawingMode & TextModeStroke && state.strokeThickness < 2 * xOffset) {
+        platformContext.prepareForStroking(state);
+        cairo_set_line_width(cr, state.strokeThickness);
+
+        // This may disturb the CTM, but we are going to call cairo_restore soon after.
+        cairo_set_scaled_font(cr, scaledFont);
+        cairo_glyph_path(cr, glyphs.data(), glyphs.size());
+        cairo_stroke(cr);
+    }
+
     cairo_restore(cr);
 }
 
