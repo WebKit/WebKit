@@ -1,3 +1,18 @@
+2017-11-13  JF Bastien  <jfbastien@apple.com>
+
+        std::expected: fix and test move
+        https://bugs.webkit.org/show_bug.cgi?id=179617
+
+        Reviewed by Alex Christensen.
+
+        Non-copyable move types should be able to be in an expected
+        properly.
+
+        * wtf/Expected.h:
+        (WTF::Expected::value const):
+        (WTF::Expected::error):
+        (WTF::Expected::error const):
+
 2017-11-10  Jer Noble  <jer.noble@apple.com>
 
         Add a FairPlay Streaming based CDM for Modern EME

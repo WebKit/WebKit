@@ -27,9 +27,11 @@
 
 #include "RefLogger.h"
 
+#include <memory>
 #include <string>
 
 #include <wtf/Expected.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Ref.h>
 
 namespace WTF {
@@ -390,6 +392,72 @@ TEST(WTF_Expected, destructors)
     EXPECT_EQ(NonTrivialDtor::count, 8);
     { VN vn = makeUnexpected(NonTrivialDtor()); }
     EXPECT_EQ(NonTrivialDtor::count, 11);
+}
+
+static int snowflakes = 0;
+static int melted = 0;
+struct snowflake {
+    static void reset() { snowflakes = melted = 0; }
+    snowflake() { ++snowflakes; }
+    ~snowflake() { ++melted; }
+};
+
+TEST(WTF_Expected, unique_ptr)
+{
+    // Unique snowflakes cannot be copied.
+    {
+        auto s = makeUnexpected(std::make_unique<snowflake>());
+        EXPECT_EQ(snowflakes, 1);
+        EXPECT_EQ(melted, 0);
+    }
+    EXPECT_EQ(snowflakes, 1);
+    EXPECT_EQ(melted, 1);
+    snowflake::reset();
+
+    {
+        auto s = makeUnexpected(std::make_unique<snowflake>());
+        Unexpected<std::unique_ptr<snowflake>> c(WTFMove(s));
+        EXPECT_EQ(snowflakes, 1);
+        EXPECT_EQ(melted, 0);
+    }
+    EXPECT_EQ(snowflakes, 1);
+    EXPECT_EQ(melted, 1);
+    snowflake::reset();
+
+    auto plow = [] (std::unique_ptr<snowflake>&& s)
+    {
+        {
+            std::unique_ptr<snowflake> moved = WTFMove(s);
+            EXPECT_EQ(snowflakes, 1);
+            EXPECT_EQ(melted, 0);
+        }
+        EXPECT_EQ(snowflakes, 1);
+        EXPECT_EQ(melted, 1);
+    };
+
+    {
+        Expected<std::unique_ptr<snowflake>, int> s(std::make_unique<snowflake>());
+        plow(WTFMove(s).value());
+    }
+    EXPECT_EQ(snowflakes, 1);
+    EXPECT_EQ(melted, 1);
+    snowflake::reset();
+
+    {
+        Expected<int, std::unique_ptr<snowflake>> s(makeUnexpected(std::make_unique<snowflake>()));
+        plow(WTFMove(s).error());
+    }
+    EXPECT_EQ(snowflakes, 1);
+    EXPECT_EQ(melted, 1);
+    snowflake::reset();
+
+    {
+        Expected<void, std::unique_ptr<snowflake>> s(makeUnexpected(std::make_unique<snowflake>()));
+        plow(WTFMove(s).error());
+    }
+    EXPECT_EQ(snowflakes, 1);
+    EXPECT_EQ(melted, 1);
+    snowflake::reset();
 }
 
 TEST(WTF_Expected, Ref)

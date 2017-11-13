@@ -327,12 +327,12 @@ public:
     constexpr bool hasValue() const { return base::has; }
     constexpr const ValueType& value() const & { return base::has ? base::s.val : (ExpectedDetail::Throw(), base::s.val); }
     RELAXED_CONSTEXPR ValueType& value() & { return base::has ? base::s.val : (ExpectedDetail::Throw(), base::s.val); }
-    constexpr const ValueType&& value() const && { return base::has ? base::s.val : (ExpectedDetail::Throw(), base::s.val); }
+    constexpr const ValueType&& value() const && { return WTFMove(base::has ? base::s.val : (ExpectedDetail::Throw(), base::s.val)); }
     RELAXED_CONSTEXPR ValueType&& value() && { return WTFMove(base::has ? base::s.val : (ExpectedDetail::Throw(), base::s.val)); }
     constexpr const ErrorType& error() const & { return !base::has ? base::s.err : (ExpectedDetail::Throw(), base::s.err); }
     ErrorType& error() & { return !base::has ? base::s.err : (ExpectedDetail::Throw(), base::s.err); }
-    RELAXED_CONSTEXPR ErrorType&& error() && { return !base::has ? base::s.err : (ExpectedDetail::Throw(), base::s.err); }
-    constexpr const ErrorType&& error() const && { return !base::has ? base::s.err : (ExpectedDetail::Throw(), base::s.err); }
+    RELAXED_CONSTEXPR ErrorType&& error() && { return WTFMove(!base::has ? base::s.err : (ExpectedDetail::Throw(), base::s.err)); }
+    constexpr const ErrorType&& error() const && { return WTFMove(!base::has ? base::s.err : (ExpectedDetail::Throw(), base::s.err)); }
     constexpr UnexpectedType getUnexpected() const { return UnexpectedType(base::s.err); }
     template<class U> constexpr ValueType valueOr(U&& u) const & { return base::has ? **this : static_cast<ValueType>(std::forward<U>(u)); }
     template<class U> ValueType valueOr(U&& u) && { return base::has ? WTFMove(**this) : static_cast<ValueType>(std::forward<U>(u)); }
@@ -391,10 +391,8 @@ public:
     constexpr bool hasValue() const { return base::has; }
     void value() const { !base::has ? ExpectedDetail::Throw() : void(); }
     constexpr const E& error() const & { return !base::has ? base::s.err : (ExpectedDetail::Throw(), base::s.err); }
-    E& error() & { return !base::has ? base::s.err : (ExpectedDetail::Throw(), base::s.err); } // Not in the current paper.
-    RELAXED_CONSTEXPR E&& error() && { return !base::has ? base::s.err : (ExpectedDetail::Throw(), base::s.err); }
-    constexpr const E&& error() const && { return !base::has ? base::s.err : (ExpectedDetail::Throw(), base::s.err); } // Not in the current paper.
-    // constexpr E& error() &;
+    E& error() & { return !base::has ? base::s.err : (ExpectedDetail::Throw(), base::s.err); }
+    RELAXED_CONSTEXPR E&& error() && { return WTFMove(!base::has ? base::s.err : (ExpectedDetail::Throw(), base::s.err)); }
     constexpr UnexpectedType getUnexpected() const { return UnexpectedType(base::s.err); }
 };
 

@@ -1,3 +1,19 @@
+2017-11-13  JF Bastien  <jfbastien@apple.com>
+
+        std::expected: fix and test move
+        https://bugs.webkit.org/show_bug.cgi?id=179617
+
+        Reviewed by Alex Christensen.
+
+        Test that unique_ptr can be moved around properly, both has a
+        value and an error (and in a <void, unique> specialization).
+
+        * TestWebKitAPI/Tests/WTF/Expected.cpp:
+        (TestWebKitAPI::snowflake::reset):
+        (TestWebKitAPI::snowflake::snowflake):
+        (TestWebKitAPI::snowflake::~snowflake):
+        (TestWebKitAPI::TEST):
+
 2017-11-13  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Windows] Make the port's normalize_test_name() method platform independent.
