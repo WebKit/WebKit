@@ -168,6 +168,31 @@ static void testWebKitSettings(Test*, gconstpointer)
     // At 96 DPI, 8 pixels is 6 points and 24 pixels is 18 points.
     g_assert_cmpuint(webkit_settings_font_size_to_points(8), ==, 6);
     g_assert_cmpuint(webkit_settings_font_size_to_points(24), ==, 18);
+
+    // Test font size on DPI change. The font size value in pixels should scale
+    // accordingly, while the font size value in points should remain the same.
+    if (gtkSettings) {
+        // At 96 DPI, 20 pixels is 15 points.
+        webkit_settings_set_default_font_size(settings, 20);
+        g_assert_cmpuint(webkit_settings_font_size_to_points(webkit_settings_get_default_font_size(settings)), ==, 15);
+        // At 96 DPI, 16 pixels is 12 points.
+        webkit_settings_set_default_monospace_font_size(settings, 16);
+        g_assert_cmpuint(webkit_settings_font_size_to_points(webkit_settings_get_default_monospace_font_size(settings)), ==, 12);
+
+        // Set DPI to 120. The scaling factor is 120 / 96 == 1.25.
+        g_object_set(gtkSettings, "gtk-xft-dpi", 120 * 1024, nullptr);
+        g_assert_cmpuint(webkit_settings_get_default_font_size(settings), ==, 25);
+        g_assert_cmpuint(webkit_settings_font_size_to_points(webkit_settings_get_default_font_size(settings)), ==, 15);
+        g_assert_cmpuint(webkit_settings_get_default_monospace_font_size(settings), ==, 20);
+        g_assert_cmpuint(webkit_settings_font_size_to_points(webkit_settings_get_default_monospace_font_size(settings)), ==, 12);
+
+        // Set DPI back to 96. The scaling factor is 96 / 120 == 0.8.
+        g_object_set(gtkSettings, "gtk-xft-dpi", 96 * 1024, nullptr);
+        g_assert_cmpuint(webkit_settings_get_default_font_size(settings), ==, 20);
+        g_assert_cmpuint(webkit_settings_font_size_to_points(webkit_settings_get_default_font_size(settings)), ==, 15);
+        g_assert_cmpuint(webkit_settings_get_default_monospace_font_size(settings), ==, 16);
+        g_assert_cmpuint(webkit_settings_font_size_to_points(webkit_settings_get_default_monospace_font_size(settings)), ==, 12);
+    }
 #endif
 
     // Default charset is "iso-8859-1".

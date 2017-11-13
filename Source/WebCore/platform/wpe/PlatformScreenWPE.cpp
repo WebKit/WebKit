@@ -60,6 +60,11 @@ double screenDPI()
     return 96;
 }
 
+void setScreenDPIObserverHandler(Function<void()>&&)
+{
+    notImplemented();
+}
+
 FloatRect screenRect(Widget*)
 {
     notImplemented();

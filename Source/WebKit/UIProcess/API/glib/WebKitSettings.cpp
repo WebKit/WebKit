@@ -79,6 +79,7 @@ struct _WebKitSettingsPrivate {
     CString userAgent;
     bool allowModalDialogs { false };
     bool zoomTextOnly { false };
+    double screenDpi { 96 };
 };
 
 /**
@@ -158,12 +159,38 @@ enum {
 #endif
 };
 
+static void webKitSettingsDispose(GObject* object)
+{
+    WebCore::setScreenDPIObserverHandler(nullptr);
+    G_OBJECT_CLASS(webkit_settings_parent_class)->dispose(object);
+}
+
 static void webKitSettingsConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_settings_parent_class)->constructed(object);
 
-    WebPreferences* prefs = WEBKIT_SETTINGS(object)->priv->preferences.get();
+    WebKitSettings* settings = WEBKIT_SETTINGS(object);
+    WebPreferences* prefs = settings->priv->preferences.get();
     prefs->setShouldRespectImageOrientation(true);
+
+    settings->priv->screenDpi = WebCore::screenDPI();
+    WebCore::setScreenDPIObserverHandler([settings]() {
+        auto newScreenDpi = WebCore::screenDPI();
+        if (newScreenDpi == settings->priv->screenDpi)
+            return;
+
+        auto scalingFactor = newScreenDpi / settings->priv->screenDpi;
+        auto prevFontSize = settings->priv->preferences->defaultFontSize();
+        auto prevMonospaceFontSize = settings->priv->preferences->defaultFixedFontSize();
+
+        settings->priv->preferences->setDefaultFontSize(std::round(prevFontSize * scalingFactor));
+        g_object_notify(G_OBJECT(settings), "default-font-size");
+
+        settings->priv->preferences->setDefaultFixedFontSize(std::round(prevMonospaceFontSize * scalingFactor));
+        g_object_notify(G_OBJECT(settings), "default-monospace-font-size");
+
+        settings->priv->screenDpi = newScreenDpi;
+    });
 }
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -512,6 +539,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
 {
     GObjectClass* gObjectClass = G_OBJECT_CLASS(klass);
     gObjectClass->constructed = webKitSettingsConstructed;
+    gObjectClass->dispose = webKitSettingsDispose;
     gObjectClass->set_property = webKitSettingsSetProperty;
     gObjectClass->get_property = webKitSettingsGetProperty;
 

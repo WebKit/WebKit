@@ -1,3 +1,13 @@
+2017-11-13  Gabriel Ivascu  <givascu@igalia.com>
+
+        [GTK] Automatically adjust font size when gtk-xft-dpi changes
+        https://bugs.webkit.org/show_bug.cgi?id=142673
+
+        Reviewed by Michael Catanzaro.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+
 2017-11-13  Jonathan Bedard  <jbedard@apple.com>
 
         check-webkit-style cannot construct valid iOS version without an iOS SDK

@@ -25,6 +25,10 @@
 
 #pragma once
 
+#if USE(GLIB)
+#include <wtf/Function.h>
+#endif
+
 #if PLATFORM(MAC)
 OBJC_CLASS NSScreen;
 OBJC_CLASS NSWindow;
@@ -60,6 +64,7 @@ bool screenIsMonochrome(Widget*);
 bool screenHasInvertedColors();
 #if USE(GLIB)
 double screenDPI();
+void setScreenDPIObserverHandler(Function<void()>&&);
 #endif
 
 FloatRect screenRect(Widget*);

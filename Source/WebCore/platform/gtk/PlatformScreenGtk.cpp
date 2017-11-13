@@ -40,6 +40,7 @@
 
 #include <cmath>
 #include <gtk/gtk.h>
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -110,6 +111,32 @@ double screenDPI()
     cachedDpi = diagonalInPixels / diagonalInInches;
 
     return cachedDpi;
+}
+
+static std::optional<Function<void()>> screenDPIObserverHandler;
+
+static void gtkXftDPIChangedCallback()
+{
+    if (screenDPIObserverHandler)
+        (*screenDPIObserverHandler)();
+}
+
+void setScreenDPIObserverHandler(Function<void()>&& handler)
+{
+    static GtkSettings* gtkSettings = gtk_settings_get_default();
+    static unsigned long gtkXftDpiChangedHandlerID = 0;
+
+    if (!handler) {
+        if (gtkSettings && gtkXftDpiChangedHandlerID) {
+            g_signal_handler_disconnect(gtkSettings, gtkXftDpiChangedHandlerID);
+            gtkXftDpiChangedHandlerID = 0;
+        }
+        return;
+    }
+
+    screenDPIObserverHandler = WTFMove(handler);
+    if (gtkSettings && !gtkXftDpiChangedHandlerID)
+        gtkXftDpiChangedHandlerID = g_signal_connect(gtkSettings, "notify::gtk-xft-dpi", G_CALLBACK(gtkXftDPIChangedCallback), nullptr);
 }
 
 static GdkScreen* getScreen(GtkWidget* widget)
