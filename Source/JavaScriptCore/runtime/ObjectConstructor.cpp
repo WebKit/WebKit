@@ -548,8 +548,10 @@ static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* pro
         PropertyDescriptor descriptor;
         bool success = toPropertyDescriptor(exec, prop, descriptor);
         EXCEPTION_ASSERT(!scope.exception() || !success);
-        if (UNLIKELY(!success))
+        if (UNLIKELY(!success)) {
+            markBuffer.overflowCheckNotNeeded();
             return jsNull();
+        }
         descriptors.append(descriptor);
         // Ensure we mark all the values that we're accumulating
         if (descriptor.isDataDescriptor() && descriptor.value())

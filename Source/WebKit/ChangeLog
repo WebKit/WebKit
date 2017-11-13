@@ -1,3 +1,15 @@
+2017-11-13  Mark Lam  <mark.lam@apple.com>
+
+        Add more overflow check book-keeping for MarkedArgumentBuffer.
+        https://bugs.webkit.org/show_bug.cgi?id=179634
+        <rdar://problem/35492517>
+
+        Reviewed by Saam Barati.
+
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+        (WebKit::NPJSObject::construct):
+        (WebKit::NPJSObject::invoke):
+
 2017-11-13  Timothy Horton  <timothy_horton@apple.com>
 
         Address some post-landing review comments from r224728

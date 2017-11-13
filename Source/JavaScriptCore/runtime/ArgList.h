@@ -125,6 +125,8 @@ public:
         return Base::hasOverflowed();
     }
 
+    void overflowCheckNotNeeded() { clearNeedsOverflowCheck(); }
+
 private:
     void expandCapacity();
     void expandCapacity(int newCapacity);

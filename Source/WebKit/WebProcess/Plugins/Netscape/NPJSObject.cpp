@@ -286,6 +286,7 @@ bool NPJSObject::construct(const NPVariant* arguments, uint32_t argumentCount, N
     MarkedArgumentBuffer argumentList;
     for (uint32_t i = 0; i < argumentCount; ++i)
         argumentList.append(m_objectMap->convertNPVariantToJSValue(exec, m_objectMap->globalObject(), arguments[i]));
+    RELEASE_ASSERT(!argumentList.hasOverflowed());
 
     JSValue value = JSC::construct(exec, m_jsObject.get(), constructType, constructData, argumentList);
     
@@ -310,6 +311,7 @@ bool NPJSObject::invoke(ExecState* exec, JSGlobalObject* globalObject, JSValue f
     MarkedArgumentBuffer argumentList;
     for (uint32_t i = 0; i < argumentCount; ++i)
         argumentList.append(m_objectMap->convertNPVariantToJSValue(exec, globalObject, arguments[i]));
+    RELEASE_ASSERT(!argumentList.hasOverflowed());
 
     JSValue value = JSC::call(exec, function, callType, callData, m_jsObject.get(), argumentList);
 

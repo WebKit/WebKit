@@ -73,7 +73,7 @@ void JSJobMicrotask::run(ExecState* exec)
     MarkedArgumentBuffer handlerArguments;
     for (unsigned index = 0, length = m_arguments->length(); index < length; ++index) {
         JSValue arg = m_arguments->JSArray::get(exec, index);
-        CLEAR_AND_RETURN_IF_EXCEPTION(scope, void());
+        CLEAR_AND_RETURN_IF_EXCEPTION(scope, handlerArguments.overflowCheckNotNeeded());
         handlerArguments.append(arg);
     }
     if (UNLIKELY(handlerArguments.hasOverflowed()))
