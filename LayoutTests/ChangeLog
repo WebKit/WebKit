@@ -1,3 +1,18 @@
+2017-11-13  Chris Dumez  <cdumez@apple.com>
+
+        Implement "Service Worker Has No Pending Events" / "Update Service Worker Extended Events Set" algorithms
+        https://bugs.webkit.org/show_bug.cgi?id=179618
+
+        Reviewed by Brady Eidson.
+
+        Add layout test coverage.
+
+        * http/tests/workers/service/basic-unregister-then-register-again-reuse-expected.txt: Added.
+        * http/tests/workers/service/basic-unregister-then-register-again-reuse.html: Added.
+        * http/tests/workers/service/resources/basic-unregister-then-register-again-reuse-worker.js: Added.
+        (event.waitUntil.new.Promise):
+        (setTimeout):
+
 2017-11-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Adjust TestExpectation for js/intl-datetimeformat.html.

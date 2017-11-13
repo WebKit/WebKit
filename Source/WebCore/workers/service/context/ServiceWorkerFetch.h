@@ -31,6 +31,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
+class FetchEvent;
 struct FetchOptions;
 class FetchResponse;
 class ResourceRequest;
@@ -50,7 +51,7 @@ public:
     virtual void didNotHandle() = 0;
 };
 
-void dispatchFetchEvent(Ref<Client>&&, WorkerGlobalScope&, ResourceRequest&&, FetchOptions&&);
+Ref<FetchEvent> dispatchFetchEvent(Ref<Client>&&, WorkerGlobalScope&, ResourceRequest&&, FetchOptions&&);
 };
 
 } // namespace WebCore

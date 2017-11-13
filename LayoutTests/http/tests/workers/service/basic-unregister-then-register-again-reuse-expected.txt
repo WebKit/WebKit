@@ -1,0 +1,5 @@
+PASS: registration1 should not have an installing worker
+PASS: registration1 should not have a waiting worker
+PASS: registration1 should have an active worker
+PASS: Registration was reused
+

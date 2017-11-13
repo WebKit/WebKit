@@ -36,6 +36,7 @@ namespace WebCore {
 
 class CacheStorageProvider;
 class ContentSecurityPolicyResponseHeaders;
+class ExtendableEvent;
 class MessagePortChannel;
 class SerializedScriptValue;
 class WorkerObjectProxy;
@@ -71,9 +72,13 @@ protected:
 private:
     WEBCORE_EXPORT ServiceWorkerThread(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData&, PAL::SessionID, WorkerLoaderProxy&, WorkerDebuggerProxy&);
 
+    void updateExtendedEventsSet(ExtendableEvent* newEvent = nullptr);
+    bool hasPendingEvents() const { return !m_extendedEvents.isEmpty(); }
+
     uint64_t m_serverConnectionIdentifier;
     ServiceWorkerContextData m_data;
     WorkerObjectProxy& m_workerObjectProxy;
+    Vector<Ref<ExtendableEvent>> m_extendedEvents;
 };
 
 } // namespace WebCore

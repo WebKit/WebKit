@@ -189,12 +189,13 @@ void SWServerJobQueue::tryActivate(SWServer& server, SWServer::Connection& conne
     if (registration.activeWorker() && registration.activeWorker()->state() == ServiceWorkerState::Activating)
         return;
 
-    // FIXME: Invoke Activate with registration if either of the following is true:
+    // Invoke Activate with registration if either of the following is true:
     // - registration's active worker is null.
     // - The result of running Service Worker Has No Pending Events with registration's active worker is true,
-    //   and no service worker client is using registration or registration's waiting worker's skip waiting
-    //   flag is set.
-    activate(server, connection, registration);
+    //   and no service worker client is using registration
+    // FIXME: Check for the skip waiting flag.
+    if (!registration.activeWorker() || !registration.activeWorker()->hasPendingEvents())
+        activate(server, connection, registration);
 }
 
 // https://w3c.github.io/ServiceWorker/#activate
@@ -328,8 +329,13 @@ void SWServerJobQueue::tryClearRegistration(SWServerRegistration& registration)
 {
     // FIXME: Make sure that the registration has no service worker client.
 
-    // FIXME: The specification has more complex logic here. We currently clear registrations
-    // too aggressively.
+    if (registration.installingWorker() && registration.installingWorker()->hasPendingEvents())
+        return;
+    if (registration.waitingWorker() && registration.waitingWorker()->hasPendingEvents())
+        return;
+    if (registration.activeWorker() && registration.activeWorker()->hasPendingEvents())
+        return;
+
     clearRegistration(registration);
 }
 

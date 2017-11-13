@@ -85,7 +85,7 @@ static void processResponse(Ref<Client>&& client, FetchResponse* response)
     client->didFinish();
 }
 
-void dispatchFetchEvent(Ref<Client>&& client, WorkerGlobalScope& globalScope, ResourceRequest&& request, FetchOptions&& options)
+Ref<FetchEvent> dispatchFetchEvent(Ref<Client>&& client, WorkerGlobalScope& globalScope, ResourceRequest&& request, FetchOptions&& options)
 {
     ASSERT(globalScope.isServiceWorkerGlobalScope());
 
@@ -108,11 +108,12 @@ void dispatchFetchEvent(Ref<Client>&& client, WorkerGlobalScope& globalScope, Re
     if (!event->respondWithEntered()) {
         if (event->defaultPrevented()) {
             client->didFail();
-            return;
+            return event;
         }
         client->didNotHandle();
         // FIXME: Handle soft update.
     }
+    return event;
 }
 
 } // namespace ServiceWorkerFetch

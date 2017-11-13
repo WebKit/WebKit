@@ -1,3 +1,18 @@
+2017-11-13  Chris Dumez  <cdumez@apple.com>
+
+        Implement "Service Worker Has No Pending Events" / "Update Service Worker Extended Events Set" algorithms
+        https://bugs.webkit.org/show_bug.cgi?id=179618
+
+        Reviewed by Brady Eidson.
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::setServiceWorkerHasPendingEvents):
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageProcess.messages.in:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::setServiceWorkerHasPendingEvents):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+
 2017-11-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Implement SPI for clients to request data for a given attachment

@@ -465,6 +465,13 @@ void StorageProcess::didFinishServiceWorkerActivation(uint64_t serverConnectionI
         connection->didFinishActivation(registrationKey, serviceWorkerIdentifier);
 }
 
+
+void StorageProcess::setServiceWorkerHasPendingEvents(uint64_t serverConnectionIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, bool hasPendingEvents)
+{
+    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
+        connection->setServiceWorkerHasPendingEvents(serviceWorkerIdentifier, hasPendingEvents);
+}
+
 void StorageProcess::registerSWServerConnection(WebSWServerConnection& connection)
 {
     ASSERT(!m_swServerConnections.contains(connection.identifier()));

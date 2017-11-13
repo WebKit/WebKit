@@ -1,0 +1,55 @@
+<html>
+<head>
+<script src="resources/sw-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+function waitForMessageEvent()
+{
+    return new Promise(resolve => {
+        navigator.serviceWorker.addEventListener('message', resolve, { once: true });
+    });
+}
+
+async function test()
+{
+    try {
+         let registration1 = await navigator.serviceWorker.register("resources/basic-unregister-then-register-again-reuse-worker.js", { });
+         await waitForState(registration1.installing, "activated");
+         if (registration1.installing)
+             log("FAIL: registration1 should not have an installing worker");
+         else
+             log("PASS: registration1 should not have an installing worker");
+
+         if (registration1.waiting)
+             log("FAIL: registration1 should not have a waiting worker");
+         else
+             log("PASS: registration1 should not have a waiting worker");
+
+         if (registration1.active)
+             log("PASS: registration1 should have an active worker");
+         else
+             log("FAIL: registration1 should have an active worker");
+
+         // Service worker will use waitUntil() on the received ExtendableMessageEvent to extend its lifetime.
+         registration1.active.postMessage("ExtendLifetime");
+
+         await waitForMessageEvent();
+         await registration1.unregister();
+
+         let registration2 = await navigator.serviceWorker.register("resources/basic-unregister-then-register-again-reuse-worker.js", { });
+         if (registration1 === registration2)
+             log("PASS: Registration was reused");
+         else
+             log("FAIL: Registration was not reused");
+    } catch (e) {
+        log("FAIL: Got exception " + e);
+    }
+    finishSWTest();
+}
+
+test();
+</script>
+</body>
+</html>

@@ -184,6 +184,14 @@ void WebSWContextManagerConnection::didFinishActivation(ServiceWorkerIdentifier 
     m_connectionToStorageProcess->send(Messages::StorageProcess::DidFinishServiceWorkerActivation(threadProxy->thread().serverConnectionIdentifier(), data.registrationKey, serviceWorkerIdentifier), 0);
 }
 
+void WebSWContextManagerConnection::setServiceWorkerHasPendingEvents(ServiceWorkerIdentifier serviceWorkerIdentifier, bool hasPendingEvents)
+{
+    auto* threadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier);
+    ASSERT(threadProxy);
+
+    m_connectionToStorageProcess->send(Messages::StorageProcess::SetServiceWorkerHasPendingEvents(threadProxy->thread().serverConnectionIdentifier(), serviceWorkerIdentifier, hasPendingEvents), 0);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

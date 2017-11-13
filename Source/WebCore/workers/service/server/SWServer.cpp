@@ -122,6 +122,11 @@ void SWServer::Connection::didFinishActivation(const ServiceWorkerRegistrationKe
     m_server.didFinishActivation(*this, key, serviceWorkerIdentifier);
 }
 
+void SWServer::Connection::setServiceWorkerHasPendingEvents(ServiceWorkerIdentifier serviceWorkerIdentifier, bool hasPendingEvents)
+{
+    m_server.setServiceWorkerHasPendingEvents(*this, serviceWorkerIdentifier, hasPendingEvents);
+}
+
 void SWServer::Connection::didResolveRegistrationPromise(const ServiceWorkerRegistrationKey& key)
 {
     m_server.didResolveRegistrationPromise(*this, key);
@@ -253,6 +258,14 @@ void SWServer::didFinishActivation(Connection& connection, const ServiceWorkerRe
 
     if (auto* registration = getRegistration(registrationKey))
         SWServerJobQueue::didFinishActivation(*registration, serviceWorkerIdentifier);
+}
+
+void SWServer::setServiceWorkerHasPendingEvents(Connection& connection, ServiceWorkerIdentifier serviceWorkerIdentifier, bool hasPendingEvents)
+{
+    ASSERT_UNUSED(connection, m_connections.contains(connection.identifier()));
+
+    if (auto* serviceWorker = m_workersByID.get(serviceWorkerIdentifier))
+        serviceWorker->setHasPendingEvents(hasPendingEvents);
 }
 
 void SWServer::didResolveRegistrationPromise(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey)

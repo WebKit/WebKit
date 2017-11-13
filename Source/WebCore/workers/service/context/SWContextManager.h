@@ -49,6 +49,7 @@ public:
         virtual void serviceWorkerStartedWithMessage(ServiceWorkerIdentifier, const String& exceptionMessage) = 0;
         virtual void didFinishInstall(ServiceWorkerIdentifier, bool wasSuccessful) = 0;
         virtual void didFinishActivation(ServiceWorkerIdentifier) = 0;
+        virtual void setServiceWorkerHasPendingEvents(ServiceWorkerIdentifier, bool) = 0;
     };
 
     WEBCORE_EXPORT void setConnection(std::unique_ptr<Connection>&&);

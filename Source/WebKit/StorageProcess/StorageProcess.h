@@ -130,6 +130,7 @@ private:
 
     void didFinishServiceWorkerInstall(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerIdentifier, bool wasSuccessful);
     void didFinishServiceWorkerActivation(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerIdentifier);
+    void setServiceWorkerHasPendingEvents(uint64_t serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier, bool hasPendingEvents);
     void postMessageToServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier& destinationIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin);
 #endif
 #if ENABLE(INDEXED_DATABASE)

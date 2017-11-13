@@ -63,6 +63,7 @@ public:
         WEBCORE_EXPORT void scriptContextStarted(const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier);
         WEBCORE_EXPORT void didFinishInstall(const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier, bool wasSuccessful);
         WEBCORE_EXPORT void didFinishActivation(const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier);
+        WEBCORE_EXPORT void setServiceWorkerHasPendingEvents(ServiceWorkerIdentifier, bool hasPendingEvents);
         WEBCORE_EXPORT void didResolveRegistrationPromise(const ServiceWorkerRegistrationKey&);
         const SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const { return m_server.doRegistrationMatching(topOrigin, clientURL); }
 
@@ -132,6 +133,7 @@ private:
     void scriptContextStarted(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier);
     void didFinishInstall(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier, bool wasSuccessful);
     void didFinishActivation(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerIdentifier);
+    void setServiceWorkerHasPendingEvents(Connection&, ServiceWorkerIdentifier, bool hasPendingEvents);
     void didResolveRegistrationPromise(Connection&, const ServiceWorkerRegistrationKey&);
 
     void addClientServiceWorkerRegistration(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationIdentifier);

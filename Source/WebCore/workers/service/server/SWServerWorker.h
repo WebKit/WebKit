@@ -58,6 +58,9 @@ public:
     ServiceWorkerState state() const { return m_state; }
     void setState(ServiceWorkerState state) { m_state = state; }
 
+    bool hasPendingEvents() const { return m_hasPendingEvents; }
+    void setHasPendingEvents(bool value) { m_hasPendingEvents = value; }
+
 private:
     SWServerWorker(const ServiceWorkerRegistrationKey&, const URL&, const String& script, WorkerType, ServiceWorkerIdentifier);
 
@@ -68,6 +71,7 @@ private:
     WorkerType m_type;
     
     ServiceWorkerState m_state { ServiceWorkerState::Redundant };
+    bool m_hasPendingEvents { false };
 };
 
 } // namespace WebCore
