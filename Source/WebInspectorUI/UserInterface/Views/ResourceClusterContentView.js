@@ -213,7 +213,7 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
         if (!requestData)
             return false;
 
-        if (!this._resource.hasRequestFormParameters())
+        if (this._resource.hasRequestFormParameters())
             return false;
 
         return true;
