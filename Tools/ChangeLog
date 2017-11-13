@@ -1,3 +1,20 @@
+2017-11-13  Keith Miller  <keith_miller@apple.com>
+
+        Uninitialized variable in sort-Xcode-project-file
+        https://bugs.webkit.org/show_bug.cgi?id=179581
+
+        Reviewed by Simon Fraser.
+
+        Previously all the unified source files were named
+        UnifiedSource<some-number>.mm. This was changed to
+        UnifiedSource<some-number>-mm.mm to stop Xcode from creating
+        hashes for mm and cpp unified source files with the same
+        number. This broke the expectations in sort-Xcode-project-file.
+
+        * Scripts/sort-Xcode-project-file:
+        (sortChildrenByFileName):
+        (sortFilesByFileName):
+
 2017-11-13  JF Bastien  <jfbastien@apple.com>
 
         std::expected: fix and test move
