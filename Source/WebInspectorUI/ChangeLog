@@ -1,3 +1,19 @@
+2017-11-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Give DataGrid/Table Header ContextMenu a section header to better describe its functions
+        https://bugs.webkit.org/show_bug.cgi?id=179560
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New string.
+
+        * UserInterface/Views/DataGrid.js:
+        (WI.DataGrid.prototype._contextMenuInHeader):
+        * UserInterface/Views/Table.js:
+        (WI.Table.prototype._handleHeaderContextMenu):
+        Include a disabled context menu item as a section header.
+
 2017-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r224566): [GTK] 26 new timeouts on inspector related tests.

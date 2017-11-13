@@ -1250,6 +1250,9 @@ WI.Table = class Table extends WI.View
 
         contextMenu.appendSeparator();
 
+        const disabled = true;
+        contextMenu.appendItem(WI.UIString("Displayed Columns"), () => {}, disabled);
+
         for (let [columnIdentifier, column] of this._columnSpecs) {
             if (column.locked)
                 continue;

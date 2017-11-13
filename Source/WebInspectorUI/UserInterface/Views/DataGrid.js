@@ -1632,6 +1632,9 @@ WI.DataGrid = class DataGrid extends WI.View
                 if (!didAddSeparator) {
                     contextMenu.appendSeparator();
                     didAddSeparator = true;
+
+                    const disabled = true;
+                    contextMenu.appendItem(WI.UIString("Displayed Columns"), () => {}, disabled);
                 }
 
                 contextMenu.appendCheckboxItem(columnInfo.title, () => {

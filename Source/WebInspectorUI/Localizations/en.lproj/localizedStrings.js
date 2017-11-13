@@ -306,6 +306,7 @@ localizedStrings["Disable paint flashing"] = "Disable paint flashing";
 localizedStrings["Disabled"] = "Disabled";
 localizedStrings["Disk Cache"] = "Disk Cache";
 localizedStrings["Display"] = "Display";
+localizedStrings["Displayed Columns"] = "Displayed Columns";
 localizedStrings["Do not fade unexecuted code"] = "Do not fade unexecuted code";
 localizedStrings["Dock to bottom of window"] = "Dock to bottom of window";
 localizedStrings["Dock to side of window"] = "Dock to side of window";
