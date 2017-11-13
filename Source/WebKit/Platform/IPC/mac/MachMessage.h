@@ -25,6 +25,9 @@
 
 #pragma once
 
+#if PLATFORM(COCOA)
+
+#include <mach/message.h>
 #include <memory>
 #include <wtf/text/CString.h>
 
@@ -56,7 +59,9 @@ private:
     CString m_messageName;
     size_t m_size;
     bool m_shouldFreeDescriptors;
-    uint8_t m_buffer[0];
+    mach_msg_header_t m_messageHeader[0];
 };
 
 }
+
+#endif // PLATFORM(COCOA)

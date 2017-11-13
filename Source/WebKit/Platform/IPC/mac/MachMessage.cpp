@@ -26,6 +26,8 @@
 #include "config.h"
 #include "MachMessage.h"
 
+#if PLATFORM(COCOA)
+
 #include <mach/mach.h>
 
 namespace IPC {
@@ -66,7 +68,7 @@ size_t MachMessage::messageSize(size_t bodySize, size_t portDescriptorCount, siz
 
 mach_msg_header_t* MachMessage::header()
 {
-    return reinterpret_cast<mach_msg_header_t*>(m_buffer);
+    return m_messageHeader;
 }
 
 void MachMessage::leakDescriptors()
@@ -75,3 +77,5 @@ void MachMessage::leakDescriptors()
 }
 
 }
+
+#endif // PLATFORM(COCOA)

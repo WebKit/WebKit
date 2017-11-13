@@ -1,3 +1,17 @@
+2017-11-13  Tim Horton  <timothy_horton@apple.com>
+
+        Use the real mach type instead of reinterpret_casting in MachMessage
+        https://bugs.webkit.org/show_bug.cgi?id=179629
+
+        Reviewed by Dan Bernstein.
+
+        * Platform/IPC/mac/MachMessage.cpp:
+        (IPC::MachMessage::header):
+        * Platform/IPC/mac/MachMessage.h:
+        Just use mach_msg_header_t proper, and avoid the reinterpret_cast.
+        This also corrects the alignment of the struct on platforms where
+        alignof(mach_msg_header_t) != alignof(uint8_t).
+
 2017-11-13  Gabriel Ivascu  <givascu@igalia.com>
 
         [GTK] Automatically adjust font size when gtk-xft-dpi changes
