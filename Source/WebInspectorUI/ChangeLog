@@ -1,3 +1,23 @@
+2017-11-13  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: make selector field inline-block when editing
+        https://bugs.webkit.org/show_bug.cgi?id=179588
+        <rdar://problem/35490915>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.css:
+        (.spreadsheet-css-declaration .header.editing-selector .origin):
+        When the selector field is multiline, it covers the source link entirely.
+        When the selector field takes only one line, the source link remains where it was before editing.
+
+        (.spreadsheet-css-declaration .selector):
+        Make it `position: relative` to cover the source link.
+
+        (.spreadsheet-css-declaration .selector.spreadsheet-selector-field.editing):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.initialLayout):
+
 2017-11-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r223856): Web Inspector: Cannot view Request Data
