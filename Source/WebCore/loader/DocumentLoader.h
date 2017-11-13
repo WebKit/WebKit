@@ -324,7 +324,7 @@ private:
     void clearArchiveResources();
 #endif
 
-    void willSendRequest(ResourceRequest&, const ResourceResponse&);
+    void willSendRequest(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&);
     void finishedLoading();
     void mainReceivedError(const ResourceError&);
     WEBCORE_EXPORT void redirectReceived(CachedResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;

@@ -1312,7 +1312,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
         oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
         policyChecker().setLoadType(newLoadType);
-        policyChecker().checkNavigationPolicy(request, false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState, [this] (const ResourceRequest& request, FormState*, bool shouldContinue) {
+        policyChecker().checkNavigationPolicy(WTFMove(request), false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState, [this] (const ResourceRequest& request, FormState*, bool shouldContinue) {
             continueFragmentScrollAfterNavigationPolicy(request, shouldContinue);
         });
         return;
@@ -1472,7 +1472,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         oldDocumentLoader->setTriggeringAction(action);
         oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
-        policyChecker().checkNavigationPolicy(loader->request(), false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState, [this] (const ResourceRequest& request, FormState*, bool shouldContinue) {
+        policyChecker().checkNavigationPolicy(ResourceRequest(loader->request()), false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState, [this] (const ResourceRequest& request, FormState*, bool shouldContinue) {
             continueFragmentScrollAfterNavigationPolicy(request, shouldContinue);
         });
         return;
@@ -1499,7 +1499,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         }
     }
 
-    policyChecker().checkNavigationPolicy(loader->request(), false /* didReceiveRedirectResponse */, loader, formState, [this, allowNavigationToInvalidURL] (const ResourceRequest& request, FormState* formState, bool shouldContinue) {
+    policyChecker().checkNavigationPolicy(ResourceRequest(loader->request()), false /* didReceiveRedirectResponse */, loader, formState, [this, allowNavigationToInvalidURL] (const ResourceRequest& request, FormState* formState, bool shouldContinue) {
         continueLoadAfterNavigationPolicy(request, formState, shouldContinue, allowNavigationToInvalidURL);
     });
 }

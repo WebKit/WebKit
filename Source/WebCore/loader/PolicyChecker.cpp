@@ -76,12 +76,12 @@ PolicyChecker::PolicyChecker(Frame& frame)
 {
 }
 
-void PolicyChecker::checkNavigationPolicy(const ResourceRequest& newRequest, bool didReceiveRedirectResponse, NavigationPolicyDecisionFunction&& function)
+void PolicyChecker::checkNavigationPolicy(ResourceRequest&& newRequest, bool didReceiveRedirectResponse, NavigationPolicyDecisionFunction&& function)
 {
-    checkNavigationPolicy(newRequest, didReceiveRedirectResponse, m_frame.loader().activeDocumentLoader(), nullptr, WTFMove(function));
+    checkNavigationPolicy(WTFMove(newRequest), didReceiveRedirectResponse, m_frame.loader().activeDocumentLoader(), nullptr, WTFMove(function));
 }
 
-void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, bool didReceiveRedirectResponse, DocumentLoader* loader, FormState* formState, NavigationPolicyDecisionFunction&& function)
+void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didReceiveRedirectResponse, DocumentLoader* loader, FormState* formState, NavigationPolicyDecisionFunction&& function)
 {
     NavigationAction action = loader->triggeringAction();
     if (action.isEmpty()) {
@@ -92,8 +92,8 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, bool d
     // Don't ask more than once for the same request or if we are loading an empty URL.
     // This avoids confusion on the part of the client.
     if (equalIgnoringHeaderFields(request, loader->lastCheckedRequest()) || (!request.isNull() && request.url().isEmpty())) {
-        function(request, nullptr, true);
-        loader->setLastCheckedRequest(ResourceRequest(request));
+        function(ResourceRequest(request), nullptr, true);
+        loader->setLastCheckedRequest(WTFMove(request));
         return;
     }
 
@@ -107,7 +107,7 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, bool d
 #endif
         if (isBackForwardLoadType(m_loadType))
             m_loadType = FrameLoadType::Reload;
-        function(request, nullptr, shouldContinue);
+        function(WTFMove(request), nullptr, shouldContinue);
         return;
     }
 
@@ -117,7 +117,7 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, bool d
             // reveal that the frame was blocked. This way, it looks like any other cross-origin page load.
             m_frame.ownerElement()->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
         }
-        function(request, nullptr, false);
+        function(WTFMove(request), nullptr, false);
         return;
     }
 
@@ -126,7 +126,7 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, bool d
 #if USE(QUICK_LOOK)
     // Always allow QuickLook-generated URLs based on the protocol scheme.
     if (!request.isNull() && isQuickLookPreviewURL(request.url()))
-        return function(request, formState, true);
+        return function(WTFMove(request), formState, true);
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
@@ -157,7 +157,7 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, bool d
                 handleUnimplementablePolicy(m_frame.loader().client().cannotShowURLError(request));
                 return function({ }, nullptr, false);
             }
-            return function(request, formState.get(), true);
+            return function(WTFMove(request), formState.get(), true);
         }
         ASSERT_NOT_REACHED();
     });
