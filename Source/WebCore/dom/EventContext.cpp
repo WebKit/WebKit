@@ -120,7 +120,7 @@ void TouchEventContext::checkReachability(const Ref<TouchList>& touchList) const
 {
     size_t length = touchList->length();
     for (size_t i = 0; i < length; ++i)
-        ASSERT(!isUnreachableNode(downcast<Node>(touchList->item(i)->target())->get()));
+        ASSERT(!isUnreachableNode(downcast<Node>(touchList->item(i)->target())));
 }
 
 #endif
