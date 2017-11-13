@@ -205,11 +205,11 @@ void SWServerJobQueue::activate(SWServer& server, SWServer::Connection& connecti
         return;
 
     // If registration's active worker is not null, then:
-    if (registration.activeWorker()) {
+    if (auto* activeWorker = registration.activeWorker()) {
         // Terminate registration's active worker.
-        // registration.activeWorker()->terminate();
+        activeWorker->terminate();
         // Run the Update Worker State algorithm passing registration's active worker and redundant as the arguments.
-        registration.updateWorkerState(*registration.activeWorker(), ServiceWorkerState::Redundant);
+        registration.updateWorkerState(*activeWorker, ServiceWorkerState::Redundant);
     }
     // Run the Update Registration State algorithm passing registration, "active" and registration's waiting worker as the arguments.
     registration.updateRegistrationState(ServiceWorkerRegistrationState::Active, registration.waitingWorker());
