@@ -45,6 +45,53 @@
 namespace WebCore {
 namespace Cairo {
 
+void setLineCap(PlatformContextCairo& platformContext, LineCap lineCap)
+{
+    cairo_line_cap_t cairoCap;
+    switch (lineCap) {
+    case ButtCap:
+        cairoCap = CAIRO_LINE_CAP_BUTT;
+        break;
+    case RoundCap:
+        cairoCap = CAIRO_LINE_CAP_ROUND;
+        break;
+    case SquareCap:
+        cairoCap = CAIRO_LINE_CAP_SQUARE;
+        break;
+    }
+    cairo_set_line_cap(platformContext.cr(), cairoCap);
+}
+
+void setLineDash(PlatformContextCairo& platformContext, const DashArray& dashes, float dashOffset)
+{
+    if (std::all_of(dashes.begin(), dashes.end(), [](auto& dash) { return !dash; }))
+        cairo_set_dash(platformContext.cr(), 0, 0, 0);
+    else
+        cairo_set_dash(platformContext.cr(), dashes.data(), dashes.size(), dashOffset);
+}
+
+void setLineJoin(PlatformContextCairo& platformContext, LineJoin lineJoin)
+{
+    cairo_line_join_t cairoJoin;
+    switch (lineJoin) {
+    case MiterJoin:
+        cairoJoin = CAIRO_LINE_JOIN_MITER;
+        break;
+    case RoundJoin:
+        cairoJoin = CAIRO_LINE_JOIN_ROUND;
+        break;
+    case BevelJoin:
+        cairoJoin = CAIRO_LINE_JOIN_BEVEL;
+        break;
+    }
+    cairo_set_line_join(platformContext.cr(), cairoJoin);
+}
+
+void setMiterLimit(PlatformContextCairo& platformContext, float miterLimit)
+{
+    cairo_set_miter_limit(platformContext.cr(), miterLimit);
+}
+
 void clip(PlatformContextCairo& platformContext, const FloatRect& rect)
 {
     cairo_t* cr = platformContext.cr();

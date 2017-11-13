@@ -34,6 +34,7 @@
 
 #if USE(CAIRO)
 
+#include "DashArray.h"
 #include "GraphicsTypes.h"
 
 namespace WebCore {
@@ -44,6 +45,11 @@ class Path;
 class PlatformContextCairo;
 
 namespace Cairo {
+
+void setLineCap(PlatformContextCairo&, LineCap);
+void setLineDash(PlatformContextCairo&, const DashArray&, float);
+void setLineJoin(PlatformContextCairo&, LineJoin);
+void setMiterLimit(PlatformContextCairo&, float);
 
 void clip(PlatformContextCairo&, const FloatRect&);
 void clipOut(PlatformContextCairo&, const FloatRect&);
