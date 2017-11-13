@@ -1,3 +1,13 @@
+2017-11-13  Guillaume Emont  <guijemont@igalia.com>
+
+        [JSC] Remove ARM implementation of branchTruncateDoubleToUInt32
+        https://bugs.webkit.org/show_bug.cgi?id=179542
+
+        Reviewed by Alex Christensen.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branchTruncateDoubleToUint32): Removed.
+
 2017-11-13  Mark Lam  <mark.lam@apple.com>
 
         Make the jsc shell loadGetterFromGetterSetter() function more robust.

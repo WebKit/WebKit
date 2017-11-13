@@ -1416,17 +1416,6 @@ public:
         return Jump(m_assembler.jmp(branchType == BranchIfTruncateFailed ? ARMAssembler::EQ : ARMAssembler::NE));
     }
 
-    Jump branchTruncateDoubleToUint32(FPRegisterID src, RegisterID dest, BranchTruncateType branchType = BranchIfTruncateFailed)
-    {
-        truncateDoubleToUint32(src, dest);
-
-        m_assembler.add(ARMRegisters::S0, dest, ARMAssembler::getOp2Byte(1));
-        m_assembler.bic(ARMRegisters::S0, ARMRegisters::S0, ARMAssembler::getOp2Byte(1));
-
-        m_assembler.cmp(ARMRegisters::S0, ARMAssembler::getOp2Byte(0));
-        return Jump(m_assembler.jmp(branchType == BranchIfTruncateFailed ? ARMAssembler::EQ : ARMAssembler::NE));
-    }
-
     // Result is undefined if the value is outside of the integer range.
     void truncateDoubleToInt32(FPRegisterID src, RegisterID dest)
     {
