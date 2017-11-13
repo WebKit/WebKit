@@ -383,6 +383,7 @@ vspace
 webkitallowfullscreen
 webkitattachmentid
 webkitattachmentpath
+webkitattachmentbloburl
 webkitdirectory
 width
 wrap

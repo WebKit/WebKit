@@ -26,6 +26,8 @@
 #include "config.h"
 #include "APIAttachment.h"
 
+#include <WebCore/SharedBuffer.h>
+#include <wtf/BlockPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace API {
@@ -43,6 +45,14 @@ Attachment::Attachment(const WTF::String& identifier, WebKit::WebPageProxy& webP
 
 Attachment::~Attachment()
 {
+}
+
+void Attachment::requestData(Function<void(RefPtr<WebCore::SharedBuffer>, WebKit::CallbackBase::Error)>&& callback)
+{
+    if (m_webPage)
+        m_webPage->requestAttachmentData(m_identifier, WTFMove(callback));
+    else
+        callback(nullptr, WebKit::CallbackBase::Error::OwnerWasInvalidated);
 }
 
 }

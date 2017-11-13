@@ -216,6 +216,10 @@ class TextAutoSizing;
 class MediaSession;
 #endif
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+class HTMLAttachmentElement;
+#endif
+
 namespace Style {
 class Scope;
 };
@@ -1373,6 +1377,12 @@ public:
 
     DocumentTimeline& timeline();
         
+#if ENABLE(ATTACHMENT_ELEMENT)
+    void didInsertAttachmentElement(HTMLAttachmentElement&);
+    void didRemoveAttachmentElement(HTMLAttachmentElement&);
+    WEBCORE_EXPORT RefPtr<HTMLAttachmentElement> attachmentForIdentifier(const String& identifier) const;
+#endif
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1719,6 +1729,10 @@ private:
 
 #if ENABLE(INDEXED_DATABASE)
     RefPtr<IDBClient::IDBConnectionProxy> m_idbConnectionProxy;
+#endif
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    HashMap<String, Ref<HTMLAttachmentElement>> m_attachmentIdentifierToElementMap;
 #endif
 
     Timer m_didAssociateFormControlsTimer;

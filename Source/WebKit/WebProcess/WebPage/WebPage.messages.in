@@ -487,5 +487,6 @@ messages -> WebPage LegacyReceiver {
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     InsertAttachment(String identifier, String filename, std::optional<String> contentType, IPC::DataReference data, WebKit::CallbackID callbackID)
+    RequestAttachmentData(String identifier, WebKit::CallbackID callbackID)
 #endif
 }

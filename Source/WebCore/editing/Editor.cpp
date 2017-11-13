@@ -3802,7 +3802,7 @@ void Editor::insertAttachmentFromFile(const String& identifier, const String& fi
     attachment->setAttribute(HTMLNames::subtitleAttr, fileSizeDescription(file->size()));
     attachment->setAttribute(HTMLNames::typeAttr, contentType);
     attachment->setUniqueIdentifier(identifier);
-    attachment->setFile(file.ptr());
+    attachment->setFile(WTFMove(file));
 
     auto fragmentToInsert = document().createDocumentFragment();
     fragmentToInsert->appendChild(attachment.get());

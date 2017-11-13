@@ -43,6 +43,7 @@ WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 
 WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKAttachment : NSObject
+- (void)requestData:(void(^)(NSData *, NSError *))completionHandler;
 @end
 
 #endif

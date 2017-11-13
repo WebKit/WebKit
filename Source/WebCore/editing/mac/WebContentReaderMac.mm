@@ -65,7 +65,7 @@ bool WebContentReader::readFilenames(const Vector<String>& paths)
 #if ENABLE(ATTACHMENT_ELEMENT)
         if (RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled()) {
             auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
-            attachment->setFile(File::create([[NSURL fileURLWithPath:text] path]).ptr());
+            attachment->setFile(File::create([[NSURL fileURLWithPath:text] path]));
             fragment->appendChild(attachment);
             continue;
         }

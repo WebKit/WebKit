@@ -74,6 +74,7 @@
 #include "GenericCachedHTMLCollection.h"
 #include "HTMLAllCollection.h"
 #include "HTMLAnchorElement.h"
+#include "HTMLAttachmentElement.h"
 #include "HTMLBaseElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
@@ -7461,6 +7462,39 @@ DocumentTimeline& Document::timeline()
 
     return *m_timeline;
 }
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+
+void Document::didInsertAttachmentElement(HTMLAttachmentElement& attachment)
+{
+    auto identifier = attachment.uniqueIdentifier();
+    if (!identifier)
+        return;
+
+    m_attachmentIdentifierToElementMap.set(identifier, attachment);
+
+    if (frame())
+        frame()->editor().didInsertAttachmentElement(attachment);
+}
+
+void Document::didRemoveAttachmentElement(HTMLAttachmentElement& attachment)
+{
+    auto identifier = attachment.uniqueIdentifier();
+    if (!identifier)
+        return;
+
+    m_attachmentIdentifierToElementMap.remove(identifier);
+
+    if (frame())
+        frame()->editor().didRemoveAttachmentElement(attachment);
+}
+
+RefPtr<HTMLAttachmentElement> Document::attachmentForIdentifier(const String& identifier) const
+{
+    return m_attachmentIdentifierToElementMap.get(identifier);
+}
+
+#endif // ENABLE(ATTACHMENT_ELEMENT)
 
 static MessageSource messageSourceForWTFLogChannel(const WTFLogChannel& channel)
 {

@@ -31,15 +31,18 @@
 
 namespace WebCore {
 
+class AttachmentDataReader;
 class File;
 class RenderAttachment;
+class SharedBuffer;
 
 class HTMLAttachmentElement final : public HTMLElement {
 public:
     static Ref<HTMLAttachmentElement> create(const QualifiedName&, Document&);
 
+    WEBCORE_EXPORT URL blobURL() const;
     WEBCORE_EXPORT File* file() const;
-    void setFile(File*);
+    void setFile(RefPtr<File>&&);
 
     WEBCORE_EXPORT String uniqueIdentifier() const;
     void setUniqueIdentifier(const String&);
@@ -49,8 +52,12 @@ public:
 
     WEBCORE_EXPORT String attachmentTitle() const;
     String attachmentType() const;
+    String attachmentPath() const;
 
     RenderAttachment* renderer() const;
+
+    WEBCORE_EXPORT void requestData(Function<void(RefPtr<SharedBuffer>&&)>&& callback);
+    void destroyReader(AttachmentDataReader&);
 
 private:
     HTMLAttachmentElement(const QualifiedName&, Document&);
@@ -69,6 +76,7 @@ private:
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     
     RefPtr<File> m_file;
+    Vector<std::unique_ptr<AttachmentDataReader>> m_attachmentReaders;
 };
 
 } // namespace WebCore

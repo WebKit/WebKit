@@ -29,7 +29,10 @@
 #if WK_API_ENABLED
 
 #import "APIAttachment.h"
+#import "WKErrorPrivate.h"
 #import "_WKAttachmentInternal.h"
+#import <WebCore/SharedBuffer.h>
+#import <wtf/BlockPtr.h>
 
 using namespace WebKit;
 
@@ -56,6 +59,19 @@ using namespace WebKit;
 - (BOOL)isEqual:(id)object
 {
     return [object isKindOfClass:[_WKAttachment class]] && [self.uniqueIdentifier isEqual:[(_WKAttachment *)object uniqueIdentifier]];
+}
+
+- (void)requestData:(void(^)(NSData *, NSError *))completionHandler
+{
+    _attachment->requestData([ capturedBlock = makeBlockPtr(completionHandler) ] (RefPtr<WebCore::SharedBuffer> buffer, CallbackBase::Error error) {
+        if (!capturedBlock)
+            return;
+
+        if (buffer && error == CallbackBase::Error::None)
+            capturedBlock(buffer->createNSData().autorelease(), nil);
+        else
+            capturedBlock(nil, [NSError errorWithDomain:WKErrorDomain code:1 userInfo:nil]);
+    });
 }
 
 - (NSString *)uniqueIdentifier

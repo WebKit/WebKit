@@ -141,11 +141,13 @@
 #include <WebCore/ElementIterator.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/EventNames.h>
+#include <WebCore/File.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FormState.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/HTMLAttachmentElement.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLImageElement.h>
 #include <WebCore/HTMLInputElement.h>
@@ -5765,6 +5767,14 @@ void WebPage::storageAccessResponse(bool wasGranted, uint64_t contextId)
     callback(wasGranted);
 }
 
+void WebPage::invokeSharedBufferCallback(RefPtr<SharedBuffer>&& buffer, CallbackID callbackID)
+{
+    if (buffer)
+        send(Messages::WebPageProxy::SharedBufferCallback(IPC::SharedBufferDataReference { buffer.get() }, false, callbackID));
+    else
+        send(Messages::WebPageProxy::SharedBufferCallback({ }, true, callbackID));
+}
+
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 void WebPage::insertAttachment(const String& identifier, const String& filename, std::optional<String> contentType, const IPC::DataReference& data, CallbackID callbackID)
@@ -5772,6 +5782,29 @@ void WebPage::insertAttachment(const String& identifier, const String& filename,
     auto& frame = m_page->focusController().focusedOrMainFrame();
     frame.editor().insertAttachment(identifier, filename, SharedBuffer::create(data.data(), data.size()), contentType);
     send(Messages::WebPageProxy::VoidCallback(callbackID));
+}
+
+void WebPage::requestAttachmentData(const String& identifier, CallbackID callbackID)
+{
+    // FIXME: We don't currently handle attachment data requests for attachment elements in subframes.
+    auto* frame = mainFrame();
+    if (!frame || !frame->document()) {
+        invokeSharedBufferCallback({ }, callbackID);
+        return;
+    }
+
+    auto attachment = frame->document()->attachmentForIdentifier(identifier);
+    if (!attachment) {
+        invokeSharedBufferCallback({ }, callbackID);
+        return;
+    }
+
+    attachment->requestData([callbackID, protectedThis = makeRef(*this), protectedAttachment = WTFMove(attachment)] (RefPtr<SharedBuffer>&& buffer) {
+        if (buffer)
+            protectedThis->invokeSharedBufferCallback(WTFMove(buffer), callbackID);
+        else
+            protectedThis->invokeSharedBufferCallback({ }, callbackID);
+    });
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)

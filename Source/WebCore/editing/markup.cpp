@@ -763,7 +763,11 @@ Ref<DocumentFragment> createFragmentFromMarkup(Document& document, const String&
         attachments.append(attachment);
 
     for (auto& attachment : attachments) {
-        attachment->setFile(File::create(attachment->attributeWithoutSynchronization(webkitattachmentpathAttr)).ptr());
+        auto attachmentPath = attachment->attachmentPath();
+        if (attachmentPath.isEmpty())
+            attachment->setFile(File::deserialize({ }, attachment->blobURL(), attachment->attachmentType(), attachment->attachmentTitle()));
+        else
+            attachment->setFile(File::create(attachmentPath));
         attachment->removeAttribute(webkitattachmentpathAttr);
     }
 #endif

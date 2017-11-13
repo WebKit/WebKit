@@ -1,3 +1,23 @@
+2017-11-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Implement SPI for clients to request data for a given attachment
+        https://bugs.webkit.org/show_bug.cgi?id=179586
+        <rdar://problem/35355720>
+
+        Reviewed by Darin Adler.
+
+        Augments existing API tests in WKAttachmentTests to additionally check that -requestData: yields the correct
+        result when performing various editing operations. Also adds a new API test that cuts and pastes an attachment
+        inserted using WKWebView attachment SPI, and expects that the data of the attachment can still be fetched using
+        the _WKAttachment SPI, as well as another test that inserts an empty NSData and expects that requestData: also
+        yields an empty NSData result.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (-[NSData shortDescription]):
+        (-[_WKAttachment synchronouslyRequestData:]):
+        (-[_WKAttachment expectRequestedDataToBe:]):
+        (TestWebKitAPI::TEST):
+
 2017-11-12  Gabriel Ivascu  <givascu@igalia.com>
 
         [GTK] Add functionality to handle font sizes in points
