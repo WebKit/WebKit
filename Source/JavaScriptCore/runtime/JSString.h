@@ -581,9 +581,9 @@ inline JSString* jsString(VM* vm, const String& s)
 
 inline JSString* jsSubstring(VM& vm, ExecState* exec, JSString* s, unsigned offset, unsigned length)
 {
-    ASSERT(offset <= static_cast<unsigned>(s->length()));
-    ASSERT(length <= static_cast<unsigned>(s->length()));
-    ASSERT(offset + length <= static_cast<unsigned>(s->length()));
+    ASSERT(offset <= s->length());
+    ASSERT(length <= s->length());
+    ASSERT(offset + length <= s->length());
     if (!length)
         return vm.smallStrings.emptyString();
     if (!offset && length == s->length())
@@ -593,9 +593,9 @@ inline JSString* jsSubstring(VM& vm, ExecState* exec, JSString* s, unsigned offs
 
 inline JSString* jsSubstringOfResolved(VM& vm, GCDeferralContext* deferralContext, JSString* s, unsigned offset, unsigned length)
 {
-    ASSERT(offset <= static_cast<unsigned>(s->length()));
-    ASSERT(length <= static_cast<unsigned>(s->length()));
-    ASSERT(offset + length <= static_cast<unsigned>(s->length()));
+    ASSERT(offset <= s->length());
+    ASSERT(length <= s->length());
+    ASSERT(offset + length <= s->length());
     if (!length)
         return vm.smallStrings.emptyString();
     if (!offset && length == s->length())
@@ -615,9 +615,9 @@ inline JSString* jsSubstring(ExecState* exec, JSString* s, unsigned offset, unsi
 
 inline JSString* jsSubstring(VM* vm, const String& s, unsigned offset, unsigned length)
 {
-    ASSERT(offset <= static_cast<unsigned>(s.length()));
-    ASSERT(length <= static_cast<unsigned>(s.length()));
-    ASSERT(offset + length <= static_cast<unsigned>(s.length()));
+    ASSERT(offset <= s.length());
+    ASSERT(length <= s.length());
+    ASSERT(offset + length <= s.length());
     if (!length)
         return vm->smallStrings.emptyString();
     if (length == 1) {

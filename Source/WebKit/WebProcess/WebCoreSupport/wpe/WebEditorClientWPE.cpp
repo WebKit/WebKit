@@ -208,9 +208,8 @@ static void handleKeyDown(Frame& frame, KeyboardEvent& event, const PlatformKeyb
 
 void WebEditorClient::handleKeyboardEvent(WebCore::KeyboardEvent* event)
 {
-    auto node = event->target()->toNode();
-    ASSERT(node);
-    Frame* frame = node->document().frame();
+    ASSERT(event->target());
+    auto* frame = downcast<Node>(event->target())->document().frame();
     ASSERT(frame);
 
     // FIXME: Reorder the checks in a more sensible way.

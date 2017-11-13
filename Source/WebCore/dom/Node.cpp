@@ -356,9 +356,9 @@ void Node::clearRareData()
     clearFlag(HasRareDataFlag);
 }
 
-RefPtr<Node> Node::toNode()
+bool Node::isNode() const
 {
-    return this;
+    return true;
 }
 
 String Node::nodeValue() const

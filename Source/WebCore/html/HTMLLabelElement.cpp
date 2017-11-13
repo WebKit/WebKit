@@ -113,27 +113,28 @@ void HTMLLabelElement::defaultEventHandler(Event& event)
     static bool processingClick = false;
 
     if (event.type() == eventNames().clickEvent && !processingClick) {
-        RefPtr<LabelableElement> element = control();
+        auto control = this->control();
 
         // If we can't find a control or if the control received the click
         // event, then there's no need for us to do anything.
-        if (!element || (event.target() && element->containsIncludingShadowDOM(event.target()->toNode().get())))
+        if (!control || (is<Node>(event.target()) && control->containsIncludingShadowDOM(&downcast<Node>(*event.target())))) {
+            HTMLElement::defaultEventHandler(event);
             return;
+        }
 
         processingClick = true;
 
-        // Click the corresponding control.
-        element->dispatchSimulatedClick(&event);
+        control->dispatchSimulatedClick(&event);
 
         document().updateLayoutIgnorePendingStylesheets();
-        if (element->isMouseFocusable())
-            element->focus();
+        if (control->isMouseFocusable())
+            control->focus();
 
         processingClick = false;
-        
+
         event.setDefaultHandled();
     }
-    
+
     HTMLElement::defaultEventHandler(event);
 }
 

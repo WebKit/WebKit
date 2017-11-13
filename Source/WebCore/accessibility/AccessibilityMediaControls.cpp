@@ -327,9 +327,8 @@ String AccessibilityMediaTimeDisplay::stringValue() const
     if (!m_renderer || !m_renderer->node())
         return String();
 
-    MediaControlTimeDisplayElement* element = static_cast<MediaControlTimeDisplayElement*>(m_renderer->node());
-    float time = element->currentValue();
-    return localizedMediaTimeDescription(fabsf(time));
+    float time = static_cast<MediaControlTimeDisplayElement*>(m_renderer->node())->currentValue();
+    return localizedMediaTimeDescription(std::abs(time));
 }
 
 } // namespace WebCore

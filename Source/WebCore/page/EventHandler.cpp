@@ -4116,12 +4116,12 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
             // No hittest is performed on move or stationary, since the target is not allowed to change anyway.
             touchTarget = m_originatingTouchPointTargets.get(touchPointTargetKey);
 
-        if (!touchTarget.get())
+        if (!is<Node>(touchTarget))
             continue;
-        Document& doc = touchTarget->toNode()->document();
-        if (!doc.hasTouchEventHandlers())
+        auto& document = downcast<Node>(*touchTarget).document();
+        if (!document.hasTouchEventHandlers())
             continue;
-        Frame* targetFrame = doc.frame();
+        auto* targetFrame = document.frame();
         if (!targetFrame)
             continue;
 
@@ -4181,16 +4181,17 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         RefPtr<TouchList>& effectiveTouches(isTouchCancelEvent ? emptyList : touches);
         const AtomicString& stateName(eventNameForTouchPointState(static_cast<PlatformTouchPoint::State>(state)));
 
-        for (auto& taget : changedTouches[state].m_targets) {
-            EventTarget* touchEventTarget = taget.get();
-            RefPtr<TouchList> targetTouches(isTouchCancelEvent ? emptyList : touchesByTarget.get(touchEventTarget));
+        for (auto& target : changedTouches[state].m_targets) {
+            ASSERT(is<Node>(target));
+
+            RefPtr<TouchList> targetTouches(isTouchCancelEvent ? emptyList : touchesByTarget.get(target.get()));
             ASSERT(targetTouches);
 
             Ref<TouchEvent> touchEvent =
                 TouchEvent::create(effectiveTouches.get(), targetTouches.get(), changedTouches[state].m_touches.get(),
-                    stateName, touchEventTarget->toNode()->document().defaultView(),
+                    stateName, downcast<Node>(*target).document().defaultView(),
                     0, 0, 0, 0, event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey());
-            touchEventTarget->dispatchEvent(touchEvent);
+            target->dispatchEvent(touchEvent);
             swallowedEvent = swallowedEvent || touchEvent->defaultPrevented() || touchEvent->defaultHandled();
         }
     }

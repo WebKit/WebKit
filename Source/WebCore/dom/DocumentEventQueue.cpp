@@ -141,11 +141,12 @@ void DocumentEventQueue::pendingEventTimerFired()
 
 void DocumentEventQueue::dispatchEvent(Event& event)
 {
-    // FIXME: Where did this special case for the DOM window come from?
-    // Why do we have this special case here instead of a virtual function on EventTarget?
-    EventTarget& eventTarget = *event.target();
-    if (DOMWindow* window = eventTarget.toDOMWindow())
-        window->dispatchEvent(event, nullptr);
+    // FIXME: Why do we have this special case here instead of a virtual function?
+    // If it's not safe to call EventTarget::dispatchEvent on a DOMWindow, then we
+    // likely have problems elsewhere.
+    auto& eventTarget = *event.target();
+    if (is<DOMWindow>(eventTarget))
+        downcast<DOMWindow>(eventTarget).dispatchEvent(event, nullptr);
     else
         eventTarget.dispatchEvent(event);
 }

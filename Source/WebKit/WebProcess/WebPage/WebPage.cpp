@@ -3243,11 +3243,10 @@ NotificationPermissionRequestManager* WebPage::notificationPermissionRequestMana
 }
 
 #if !PLATFORM(GTK) && !PLATFORM(COCOA) && !PLATFORM(WPE)
+
 bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
 {
-    auto node = evt->target()->toNode();
-    ASSERT(node);
-    Frame* frame = node->document().frame();
+    Frame* frame = downcast<Node>(*evt->target()).document().frame();
     ASSERT(frame);
 
     const PlatformKeyboardEvent* keyEvent = evt->keyEvent();
@@ -3276,6 +3275,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
 
     return frame->editor().insertText(evt->keyEvent()->text(), evt);
 }
+
 #endif
 
 #if ENABLE(DRAG_SUPPORT)

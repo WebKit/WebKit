@@ -395,19 +395,19 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     scope.clearException();
 }
 
-bool HTMLPlugInImageElement::partOfSnapshotOverlay(const Node* node) const
+bool HTMLPlugInImageElement::partOfSnapshotOverlay(const EventTarget* target) const
 {
     static NeverDestroyed<AtomicString> selector(".snapshot-overlay", AtomicString::ConstructFromLiteral);
     auto shadow = userAgentShadowRoot();
     if (!shadow)
         return false;
-    if (!node)
+    if (!is<Node>(target))
         return false;
     auto queryResult = shadow->querySelector(selector.get());
     if (queryResult.hasException())
         return false;
     auto snapshotLabel = makeRefPtr(queryResult.releaseReturnValue());
-    return snapshotLabel && snapshotLabel->contains(node);
+    return snapshotLabel && snapshotLabel->contains(downcast<Node>(target));
 }
 
 void HTMLPlugInImageElement::removeSnapshotTimerFired()

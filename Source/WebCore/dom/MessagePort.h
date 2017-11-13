@@ -82,7 +82,6 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    bool isMessagePort() const final { return true; }
     EventTargetInterface eventTargetInterface() const final { return MessagePortEventTargetInterfaceType; }
 
     bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;

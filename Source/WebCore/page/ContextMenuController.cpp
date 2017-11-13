@@ -150,10 +150,10 @@ std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event
         return nullptr;
 
     auto& mouseEvent = downcast<MouseEvent>(event);
-    auto node = mouseEvent.target()->toNode();
-    if (!node)
+    if (!is<Node>(mouseEvent.target()))
         return nullptr;
-    auto* frame = node->document().frame();
+    auto& node = downcast<Node>(*mouseEvent.target());
+    auto* frame = node.document().frame();
     if (!frame)
         return nullptr;
 
@@ -164,7 +164,7 @@ std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event
     m_context = ContextMenuContext(result);
 
 #if ENABLE(SERVICE_CONTROLS)
-    if (node->isImageControlsButtonElement()) {
+    if (node.isImageControlsButtonElement()) {
         if (auto* image = imageFromImageElementNode(*result.innerNonSharedNode()))
             m_context.setControlledImage(image);
 

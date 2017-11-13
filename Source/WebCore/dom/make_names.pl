@@ -658,8 +658,7 @@ namespace WebCore {
 class $class;
 }
 namespace WTF {
-template <typename ArgType>
-class TypeCastTraits<const WebCore::$class, ArgType, false /* isBaseType */> {
+template<typename ArgType> class TypeCastTraits<const WebCore::$class, ArgType, false /* isBaseType */> {
 public:
     static bool isOfType(ArgType& node) { return checkTagName(node); }
 private:
@@ -679,6 +678,7 @@ END
            ;
        }
        print F <<END
+    static bool checkTagName(const WebCore::EventTarget& target) { return is<WebCore::Node>(target) && checkTagName(downcast<WebCore::Node>(target)); }
 };
 }
 END

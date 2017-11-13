@@ -124,7 +124,7 @@ public:
         if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
             return nullptr;
 
-        if (static_cast<unsigned>(text.length()) > SmallStringKey::capacity())
+        if (text.length() > SmallStringKey::capacity())
             return nullptr;
 
         if (m_countdown > 0) {
@@ -150,7 +150,7 @@ public:
         // If we allow tabs and a tab occurs inside a word, the width of the word varies based on its position on the line.
         if (run.allowTabs())
             return nullptr;
-        if (static_cast<unsigned>(run.length()) > SmallStringKey::capacity())
+        if (run.length() > SmallStringKey::capacity())
             return nullptr;
 
         if (m_countdown > 0) {

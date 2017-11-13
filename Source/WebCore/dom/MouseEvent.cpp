@@ -222,23 +222,23 @@ int MouseEvent::which() const
 RefPtr<Node> MouseEvent::toElement() const
 {
     // MSIE extension - "the object toward which the user is moving the mouse pointer"
-    if (type() == eventNames().mouseoutEvent || type() == eventNames().mouseleaveEvent) {
-        EventTarget* relatedTarget = this->relatedTarget();
-        return relatedTarget ? relatedTarget->toNode() : nullptr;
-    }
-
-    return target() ? target()->toNode() : nullptr;
+    EventTarget* target;
+    if (type() == eventNames().mouseoutEvent || type() == eventNames().mouseleaveEvent)
+        target = relatedTarget();
+    else
+        target = this->target();
+    return is<Node>(target) ? &downcast<Node>(*target) : nullptr;
 }
 
 RefPtr<Node> MouseEvent::fromElement() const
 {
     // MSIE extension - "object from which activation or the mouse pointer is exiting during the event" (huh?)
-    if (type() != eventNames().mouseoutEvent && type() != eventNames().mouseleaveEvent) {
-        EventTarget* relatedTarget = this->relatedTarget();
-        return relatedTarget ? relatedTarget->toNode() : nullptr;
-    }
-
-    return target() ? target()->toNode() : nullptr;
+    EventTarget* target;
+    if (type() == eventNames().mouseoutEvent || type() == eventNames().mouseleaveEvent)
+        target = this->target();
+    else
+        target = relatedTarget();
+    return is<Node>(target) ? &downcast<Node>(*target) : nullptr;
 }
 
 } // namespace WebCore

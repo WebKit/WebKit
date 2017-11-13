@@ -178,7 +178,7 @@ void RenderSnapshottedPlugIn::handleEvent(Event& event)
 
     if (mouseEvent.type() == eventNames().clickEvent || (m_isPotentialMouseActivation && mouseEvent.type() == eventNames().mouseupEvent)) {
         m_isPotentialMouseActivation = false;
-        bool clickWasOnOverlay = plugInImageElement().partOfSnapshotOverlay(mouseEvent.target()->toNode().get());
+        bool clickWasOnOverlay = plugInImageElement().partOfSnapshotOverlay(mouseEvent.target());
         plugInImageElement().userDidClickSnapshot(mouseEvent, !clickWasOnOverlay);
         mouseEvent.setDefaultHandled();
     } else if (mouseEvent.type() == eventNames().mousedownEvent) {

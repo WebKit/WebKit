@@ -301,17 +301,10 @@ Class kitClass(Node* impl)
     return nil;
 }
 
-id <DOMEventTarget> kit(EventTarget* eventTarget)
+id <DOMEventTarget> kit(EventTarget* target)
 {
-    if (!eventTarget)
-        return nil;
-
-    if (auto node = eventTarget->toNode())
-        return kit(node.get());
-
-    // We don't have an ObjC binding for XMLHttpRequest.
-
-    return nil;
+    // We don't have Objective-C bindings for XMLHttpRequest, DOMWindow, and other non-Node targets.
+    return is<Node>(target) ? kit(downcast<Node>(target)) : nil;
 }
 
 @implementation DOMNode (DOMNodeExtensions)

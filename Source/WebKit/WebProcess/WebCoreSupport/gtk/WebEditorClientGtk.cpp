@@ -63,9 +63,8 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
     if (platformEvent->handledByInputMethod())
         return;
 
-    auto node = event->target()->toNode();
-    ASSERT(node);
-    Frame* frame = node->document().frame();
+    ASSERT(event->target());
+    auto* frame = downcast<Node>(event->target())->document().frame();
     ASSERT(frame);
 
     const Vector<String> pendingEditorCommands = platformEvent->commands();

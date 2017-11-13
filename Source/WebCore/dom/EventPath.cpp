@@ -54,13 +54,11 @@ void WindowEventContext::handleLocalEvents(Event& event) const
 
 static inline bool shouldEventCrossShadowBoundary(Event& event, ShadowRoot& shadowRoot, EventTarget& target)
 {
-    auto targetNode = target.toNode();
-
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO)
     // Video-only full screen is a mode where we use the shadow DOM as an implementation
     // detail that should not be detectable by the web content.
-    if (targetNode) {
-        if (auto* element = targetNode->document().webkitCurrentFullScreenElement()) {
+    if (is<Node>(target)) {
+        if (auto* element = downcast<Node>(target).document().webkitCurrentFullScreenElement()) {
             // FIXME: We assume that if the full screen element is a media element that it's
             // the video-only full screen. Both here and elsewhere. But that is probably wrong.
             if (element->isMediaElement() && shadowRoot.host() == element)
@@ -69,7 +67,7 @@ static inline bool shouldEventCrossShadowBoundary(Event& event, ShadowRoot& shad
     }
 #endif
 
-    bool targetIsInShadowRoot = targetNode && &targetNode->treeScope().rootNode() == &shadowRoot;
+    bool targetIsInShadowRoot = is<Node>(target) && &downcast<Node>(target).treeScope().rootNode() == &shadowRoot;
     return !targetIsInShadowRoot || event.composed();
 }
 
@@ -174,13 +172,13 @@ void EventPath::buildPath(Node& originalTarget, Event& event)
 
 void EventPath::setRelatedTarget(Node& origin, EventTarget& relatedTarget)
 {
-    auto relatedNode = relatedTarget.toNode();
-    if (!relatedNode || m_path.isEmpty())
+    if (!is<Node>(relatedTarget) || m_path.isEmpty())
         return;
 
-    RelatedNodeRetargeter retargeter(*relatedNode, *m_path[0]->node());
+    auto& relatedNode = downcast<Node>(relatedTarget);
+    RelatedNodeRetargeter retargeter(relatedNode, *m_path[0]->node());
 
-    bool originIsRelatedTarget = &origin == relatedNode;
+    bool originIsRelatedTarget = &origin == &relatedNode;
     Node& rootNodeInOriginTreeScope = origin.treeScope().rootNode();
     TreeScope* previousTreeScope = nullptr;
     size_t originalEventPathSize = m_path.size();
@@ -216,15 +214,11 @@ void EventPath::setRelatedTarget(Node& origin, EventTarget& relatedTarget)
 
 void EventPath::retargetTouch(TouchEventContext::TouchListType type, const Touch& touch)
 {
-    EventTarget* eventTarget = touch.target();
-    if (!eventTarget)
+    auto* eventTarget = touch.target();
+    if (!is<Node>(eventTarget))
         return;
 
-    auto targetNode = eventTarget->toNode();
-    if (!targetNode)
-        return;
-
-    RelatedNodeRetargeter retargeter(*targetNode, *m_path[0]->node());
+    RelatedNodeRetargeter retargeter(downcast<Node>(*eventTarget), *m_path[0]->node());
     TreeScope* previousTreeScope = nullptr;
     for (auto& context : m_path) {
         Node& currentTarget = *context->node();
@@ -260,20 +254,18 @@ void EventPath::retargetTouchLists(const TouchEvent& event)
 Vector<EventTarget*> EventPath::computePathUnclosedToTarget(const EventTarget& target) const
 {
     Vector<EventTarget*> path;
-    auto targetNode = const_cast<EventTarget&>(target).toNode();
-    if (!targetNode) {
-        auto* domWindow = const_cast<EventTarget&>(target).toDOMWindow();
-        if (!domWindow)
-            return path;
-        targetNode = domWindow->document();
+    path.reserveInitialCapacity(m_path.size());
+    const Node* targetNode = nullptr;
+    if (is<Node>(target))
+        targetNode = &downcast<Node>(target);
+    else if (is<DOMWindow>(target)) {
+        targetNode = downcast<DOMWindow>(target).document();
         ASSERT(targetNode);
     }
     for (auto& context : m_path) {
-        if (auto nodeInPath = context->currentTarget()->toNode()) {
-            if (!targetNode->isClosedShadowHidden(*nodeInPath))
-                path.append(context->currentTarget());
-        } else
-            path.append(context->currentTarget());
+        auto* currentTarget = context->currentTarget();
+        if (!is<Node>(currentTarget) || !targetNode || !targetNode->isClosedShadowHidden(downcast<Node>(*currentTarget)))
+            path.uncheckedAppend(currentTarget);
     }
     return path;
 }
@@ -282,7 +274,7 @@ EventPath::EventPath(const Vector<EventTarget*>& targets)
 {
     for (auto* target : targets) {
         ASSERT(target);
-        ASSERT(!target->toNode());
+        ASSERT(!is<Node>(target));
         m_path.append(std::make_unique<EventContext>(nullptr, target, *targets.begin()));
     }
 }

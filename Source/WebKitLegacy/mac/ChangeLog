@@ -1,3 +1,18 @@
+2017-11-12  Darin Adler  <darin@apple.com>
+
+        More is<> and downcast<>, less static_cast<>
+        https://bugs.webkit.org/show_bug.cgi?id=179600
+
+        Reviewed by Chris Dumez.
+
+        * DOM/DOM.mm:
+        (kit): Use is/downcast.
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::handleKeyboardEvent): Ditto.
+        (WebEditorClient::handleInputMethodKeydown): Ditto.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _interpretKeyEvent:savingCommands:]): Ditto.
+
 2017-11-10  Frederik Riedel  <frederik.riedel@frogg.io>
 
         [iOS] Use new class name from UIKit when checking UITextSuggestion type for WebKitLegacy

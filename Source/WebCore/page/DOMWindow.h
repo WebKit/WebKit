@@ -341,8 +341,6 @@ private:
     EventTargetInterface eventTargetInterface() const final { return DOMWindowEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
-    DOMWindow* toDOMWindow() final;
-
     Page* page();
     bool allowedToChangeWindowGeometry() const;
 
@@ -431,3 +429,7 @@ inline String DOMWindow::defaultStatus() const
 }
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::DOMWindow)
+    static bool isType(const WebCore::EventTarget& target) { return target.eventTargetInterface() == WebCore::DOMWindowEventTargetInterfaceType; }
+SPECIALIZE_TYPE_TRAITS_END()

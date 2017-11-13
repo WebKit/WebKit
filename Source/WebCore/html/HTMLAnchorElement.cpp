@@ -144,13 +144,10 @@ static void appendServerMapMousePosition(StringBuilder& url, Event& event)
         return;
     auto& mouseEvent = downcast<MouseEvent>(event);
 
-    ASSERT(mouseEvent.target());
-    auto target = mouseEvent.target()->toNode();
-    ASSERT(target);
-    if (!is<HTMLImageElement>(*target))
+    if (!is<HTMLImageElement>(mouseEvent.target()))
         return;
 
-    auto& imageElement = downcast<HTMLImageElement>(*target);
+    auto& imageElement = downcast<HTMLImageElement>(*mouseEvent.target());
     if (!imageElement.isServerMap())
         return;
 

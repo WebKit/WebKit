@@ -2257,11 +2257,10 @@ void InspectorDOMAgent::pseudoElementDestroyed(PseudoElement& pseudoElement)
 
 void InspectorDOMAgent::didAddEventListener(EventTarget& target)
 {
-    auto node = target.toNode();
-    if (!node)
+    if (!is<Node>(target))
         return;
 
-    int nodeId = boundNodeId(node.get());
+    int nodeId = boundNodeId(&downcast<Node>(target));
     if (!nodeId)
         return;
 
@@ -2270,16 +2269,16 @@ void InspectorDOMAgent::didAddEventListener(EventTarget& target)
 
 void InspectorDOMAgent::willRemoveEventListener(EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
 {
-    auto node = target.toNode();
-    if (!node)
+    if (!is<Node>(target))
         return;
+    auto& node = downcast<Node>(target);
 
-    int nodeId = boundNodeId(node.get());
+    int nodeId = boundNodeId(&node);
     if (!nodeId)
         return;
 
     bool listenerExists = false;
-    for (const RefPtr<RegisteredEventListener>& item : node->eventListeners(eventType)) {
+    for (auto& item : node.eventListeners(eventType)) {
         if (item->callback() == listener && item->useCapture() == capture) {
             listenerExists = true;
             break;

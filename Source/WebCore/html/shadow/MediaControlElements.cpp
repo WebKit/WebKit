@@ -337,16 +337,15 @@ RenderPtr<RenderElement> MediaControlVolumeSliderContainerElement::createElement
 
 void MediaControlVolumeSliderContainerElement::defaultEventHandler(Event& event)
 {
+    // Poor man's mouseleave event detection.
+
     if (!is<MouseEvent>(event) || event.type() != eventNames().mouseoutEvent)
         return;
 
-    // Poor man's mouseleave event detection.
-    MouseEvent& mouseEvent = downcast<MouseEvent>(event);
-    EventTarget* relatedTarget = mouseEvent.relatedTarget();
-    if (!relatedTarget || !relatedTarget->toNode())
+    if (!is<Node>(downcast<MouseEvent>(event).relatedTarget()))
         return;
 
-    if (this->containsIncludingShadowDOM(relatedTarget->toNode().get()))
+    if (containsIncludingShadowDOM(&downcast<Node>(*downcast<MouseEvent>(event).relatedTarget())))
         return;
 
     hide();
@@ -688,8 +687,7 @@ void MediaControlClosedCaptionsTrackListElement::defaultEventHandler(Event& even
 {
 #if ENABLE(VIDEO_TRACK)
     if (event.type() == eventNames().clickEvent) {
-        RefPtr<Node> target = event.target()->toNode();
-        if (!is<Element>(target))
+        if (!is<Element>(event.target()))
             return;
 
         // When we created the elements in the track list, we gave them a custom
@@ -697,10 +695,7 @@ void MediaControlClosedCaptionsTrackListElement::defaultEventHandler(Event& even
         // Check if the event target has such a custom element and, if so,
         // tell the HTMLMediaElement to enable that track.
 
-        RefPtr<TextTrack> textTrack;
-        MenuItemToTrackMap::iterator iter = m_menuToTrackMap.find(downcast<Element>(target.get()));
-        if (iter != m_menuToTrackMap.end())
-            textTrack = iter->value;
+        auto textTrack = makeRefPtr(m_menuToTrackMap.get(&downcast<Element>(*event.target())));
         m_menuToTrackMap.clear();
         m_controls->toggleClosedCaptionTrackList();
         if (!textTrack)

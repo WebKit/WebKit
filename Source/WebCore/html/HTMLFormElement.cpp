@@ -140,8 +140,7 @@ void HTMLFormElement::removedFromAncestor(RemovalType removalType, ContainerNode
 
 void HTMLFormElement::handleLocalEvents(Event& event)
 {
-    auto targetNode = event.target()->toNode();
-    if (event.eventPhase() != Event::CAPTURING_PHASE && targetNode && targetNode != this && (event.type() == eventNames().submitEvent || event.type() == eventNames().resetEvent)) {
+    if (event.eventPhase() != Event::CAPTURING_PHASE && is<Node>(event.target()) && event.target() != this && (event.type() == eventNames().submitEvent || event.type() == eventNames().resetEvent)) {
         event.stopPropagation();
         return;
     }
@@ -206,15 +205,6 @@ void HTMLFormElement::submitImplicitly(Event& event, bool fromImplicitSubmission
         prepareForSubmission(event);
 }
 
-static inline RefPtr<HTMLFormControlElement> submitElementFromEvent(const Event& event)
-{
-    for (RefPtr<Node> node = event.target()->toNode(); node; node = node->parentNode()) {
-        if (is<HTMLFormControlElement>(*node))
-            return downcast<HTMLFormControlElement>(node.get());
-    }
-    return nullptr;
-}
-
 bool HTMLFormElement::validateInteractively()
 {
     for (auto& associatedElement : m_associatedElements) {
@@ -269,9 +259,11 @@ void HTMLFormElement::prepareForSubmission(Event& event)
 
     bool shouldValidate = document().page() && document().page()->settings().interactiveFormValidationEnabled() && !noValidate();
 
-    auto submitElement = submitElementFromEvent(event);
-    if (submitElement && submitElement->formNoValidate())
-        shouldValidate = false;
+    if (shouldValidate) {
+        auto submitElement = findSubmitButton(&event);
+        if (submitElement && submitElement->formNoValidate())
+            shouldValidate = false;
+    }
 
     // Interactive validation must be done before dispatching the submit event.
     if (shouldValidate && !validateInteractively()) {
@@ -676,13 +668,11 @@ bool HTMLFormElement::wasUserSubmitted() const
 
 HTMLFormControlElement* HTMLFormElement::findSubmitButton(const Event* event) const
 {
-    if (event && event->target()) {
-        for (auto node = event->target()->toNode(); node; node = node->parentNode()) {
-            if (is<HTMLFormControlElement>(*node))
-                return downcast<HTMLFormControlElement>(node.get());
-        }
-    }
-    return nullptr;
+    if (!event || !is<Node>(event->target()))
+        return nullptr;
+    auto& node = downcast<Node>(*event->target());
+    auto* element = is<Element>(node) ? &downcast<Element>(node) : node.parentElement();
+    return element ? lineageOfType<HTMLFormControlElement>(*element).first() : nullptr;
 }
 
 HTMLFormControlElement* HTMLFormElement::defaultButton() const

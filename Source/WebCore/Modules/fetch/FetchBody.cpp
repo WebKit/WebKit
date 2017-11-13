@@ -48,7 +48,7 @@ FetchBody FetchBody::extract(ScriptExecutionContext& context, Init&& value, Stri
         return FetchBody(WTFMove(blob));
     }, [&](RefPtr<DOMFormData>& value) mutable {
         Ref<DOMFormData> domFormData = value.releaseNonNull();
-        auto formData = FormData::createMultiPart(domFormData.get(), &static_cast<Document&>(context));
+        auto formData = FormData::createMultiPart(domFormData.get(), &downcast<Document>(context));
         contentType = makeString("multipart/form-data; boundary=", formData->boundary().data());
         return FetchBody(WTFMove(formData));
     }, [&](RefPtr<URLSearchParams>& value) mutable {
@@ -228,7 +228,7 @@ RefPtr<FormData> FetchBody::bodyAsFormData(ScriptExecutionContext& context) cons
     if (isFormData()) {
         ASSERT(!context.isWorkerGlobalScope());
         RefPtr<FormData> body = const_cast<FormData*>(&formDataBody());
-        body->generateFiles(static_cast<Document*>(&context));
+        body->generateFiles(&downcast<Document>(context));
         return body;
     }
     ASSERT_NOT_REACHED();

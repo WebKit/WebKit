@@ -57,7 +57,7 @@ public:
     void subframeLoaderDidCreatePlugIn(const Widget&);
 
     WEBCORE_EXPORT void setIsPrimarySnapshottedPlugIn(bool);
-    bool partOfSnapshotOverlay(const Node*) const;
+    bool partOfSnapshotOverlay(const EventTarget*) const;
 
     bool needsCheckForSizeChange() const { return m_needsCheckForSizeChange; }
     void setNeedsCheckForSizeChange() { m_needsCheckForSizeChange = true; }

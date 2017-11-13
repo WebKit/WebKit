@@ -447,11 +447,6 @@ DOMWindow::~DOMWindow()
     removeLanguageChangeObserver(this);
 }
 
-DOMWindow* DOMWindow::toDOMWindow()
-{
-    return this;
-}
-
 RefPtr<MediaQueryList> DOMWindow::matchMedia(const String& media)
 {
     return document() ? document()->mediaQueryMatcher().matchMedia(media) : nullptr;

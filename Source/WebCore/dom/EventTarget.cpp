@@ -48,21 +48,11 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
-
 namespace WebCore {
+
 using namespace WTF;
 
-RefPtr<Node> EventTarget::toNode()
-{
-    return nullptr;
-}
-
-DOMWindow* EventTarget::toDOMWindow()
-{
-    return nullptr;
-}
-
-bool EventTarget::isMessagePort() const
+bool EventTarget::isNode() const
 {
     return false;
 }
@@ -72,10 +62,11 @@ bool EventTarget::addEventListener(const AtomicString& eventType, Ref<EventListe
     auto passive = options.passive;
 
     if (!passive.has_value() && eventNames().isTouchScrollBlockingEventType(eventType)) {
-        if (toDOMWindow())
+        if (is<DOMWindow>(*this))
             passive = true;
-        else if (auto node = toNode()) {
-            if (node->isDocumentNode() || node->document().documentElement() == node || node->document().body() == node)
+        else if (is<Node>(*this)) {
+            auto& node = downcast<Node>(*this);
+            if (is<Document>(node) || node.document().documentElement() == &node || node.document().body() == &node)
                 passive = true;
         }
     }

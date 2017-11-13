@@ -162,6 +162,7 @@ inline bool Node::hasTagName(const HTMLQualifiedName& name) const
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLElement)
     static bool isType(const WebCore::Node& node) { return node.isHTMLElement(); }
+    static bool isType(const WebCore::EventTarget& target) { return is<WebCore::Node>(target) && isType(downcast<WebCore::Node>(target)); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #include "HTMLElementTypeHelpers.h"

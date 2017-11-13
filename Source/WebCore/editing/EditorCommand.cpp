@@ -91,10 +91,9 @@ static Frame* targetFrame(Frame& frame, Event* event)
 {
     if (!event)
         return &frame;
-    auto node = event->target()->toNode();
-    if (!node)
+    if (!is<Node>(event->target()))
         return &frame;
-    return node->document().frame();
+    return downcast<Node>(*event->target()).document().frame();
 }
 
 static bool applyCommandToFrame(Frame& frame, EditorCommandSource source, EditAction action, Ref<EditingStyle>&& style)

@@ -45,8 +45,7 @@ ScopedEventQueue& ScopedEventQueue::singleton()
 
 void ScopedEventQueue::enqueueEvent(Ref<Event>&& event)
 {
-    ASSERT(event->target());
-    ASSERT(event->target()->toNode());
+    ASSERT(is<Node>(event->target()));
     if (m_scopingLevel)
         m_queuedEvents.append(WTFMove(event));
     else
@@ -55,7 +54,7 @@ void ScopedEventQueue::enqueueEvent(Ref<Event>&& event)
 
 void ScopedEventQueue::dispatchEvent(Event& event) const
 {
-    event.target()->toNode()->dispatchEvent(event);
+    downcast<Node>(*event.target()).dispatchEvent(event);
 }
 
 void ScopedEventQueue::dispatchAllEvents()

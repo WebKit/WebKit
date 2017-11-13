@@ -104,17 +104,14 @@ WebKitDOMEvent* wrap(Event* event)
 {
     ASSERT(event);
 
-    if (event->isUIEvent()) {
-        if (event->isMouseEvent())
-            return WEBKIT_DOM_EVENT(wrapMouseEvent(static_cast<MouseEvent*>(event)));
-
-        if (event->isKeyboardEvent())
-            return WEBKIT_DOM_EVENT(wrapKeyboardEvent(static_cast<KeyboardEvent*>(event)));
-
-        if (event->eventInterface() == WheelEventInterfaceType)
-            return WEBKIT_DOM_EVENT(wrapWheelEvent(static_cast<WheelEvent*>(event)));
-
-        return WEBKIT_DOM_EVENT(wrapUIEvent(static_cast<UIEvent*>(event)));
+    if (is<UIEvent>(*event)) {
+        if (is<MouseEvent>(*event))
+            return WEBKIT_DOM_EVENT(wrapMouseEvent(&downcast<MouseEvent>(*event)));
+        if (is<KeyboardEvent>(*event))
+            return WEBKIT_DOM_EVENT(wrapKeyboardEvent(&downcast<KeyboardEvent>(*event)));
+        if (is<WheelEvent>(*event))
+            return WEBKIT_DOM_EVENT(wrapWheelEvent(&downcast<WheelEvent>(*event)));
+        return WEBKIT_DOM_EVENT(wrapUIEvent(&downcast<UIEvent>(*event)));
     }
 
     return wrapEvent(event);
@@ -142,13 +139,11 @@ WebKitDOMEventTarget* wrap(EventTarget* eventTarget)
 {
     ASSERT(eventTarget);
 
-    if (auto node = eventTarget->toNode())
-        return WEBKIT_DOM_EVENT_TARGET(kit(node.get()));
-
-    if (DOMWindow* window = eventTarget->toDOMWindow())
-        return WEBKIT_DOM_EVENT_TARGET(kit(window));
-
-    return 0;
+    if (is<Node>(*eventTarget))
+        return WEBKIT_DOM_EVENT_TARGET(kit(&downcast<Node>(*eventTarget)));
+    if (is<DOMWindow>(*eventTarget))
+        return WEBKIT_DOM_EVENT_TARGET(kit(&downcast<DOMWindow>(*eventTarget)));
+    return nullptr;
 }
 
 WebKitDOMBlob* wrap(Blob* blob)

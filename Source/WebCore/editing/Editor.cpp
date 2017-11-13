@@ -233,16 +233,18 @@ TemporarySelectionChange::~TemporarySelectionChange()
 // we should use the target control's selection for this editing operation.
 VisibleSelection Editor::selectionForCommand(Event* event)
 {
-    VisibleSelection selection = m_frame.selection().selection();
+    auto selection = m_frame.selection().selection();
     if (!event)
         return selection;
     // If the target is a text control, and the current selection is outside of its shadow tree,
     // then use the saved selection for that text control.
-    HTMLTextFormControlElement* textFormControlOfSelectionStart = enclosingTextFormControl(selection.start());
-    HTMLTextFormControlElement* textFromControlOfTarget = is<HTMLTextFormControlElement>(*event->target()->toNode()) ? downcast<HTMLTextFormControlElement>(event->target()->toNode().get()) : nullptr;
-    if (textFromControlOfTarget && (selection.start().isNull() || textFromControlOfTarget != textFormControlOfSelectionStart)) {
-        if (RefPtr<Range> range = textFromControlOfTarget->selection())
-            return VisibleSelection(*range, DOWNSTREAM, selection.isDirectional());
+    if (is<HTMLTextFormControlElement>(event->target())) {
+        auto& target = downcast<HTMLTextFormControlElement>(*event->target());
+        auto start = selection.start();
+        if (start.isNull() || &target != enclosingTextFormControl(start)) {
+            if (auto range = target.selection())
+                return { *range, DOWNSTREAM, selection.isDirectional() };
+        }
     }
     return selection;
 }

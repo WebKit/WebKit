@@ -224,9 +224,8 @@ static String commandNameForSelectorName(const String& selectorName)
 
 static Frame* frameForEvent(KeyboardEvent* event)
 {
-    auto node = event->target()->toNode();
-    ASSERT(node);
-    Frame* frame = node->document().frame();
+    ASSERT(event->target());
+    Frame* frame = downcast<Node>(event->target())->document().frame();
     ASSERT(frame);
     return frame;
 }

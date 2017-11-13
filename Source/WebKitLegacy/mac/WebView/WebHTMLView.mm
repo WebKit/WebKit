@@ -6146,7 +6146,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
 - (BOOL)_interpretKeyEvent:(KeyboardEvent*)event savingCommands:(BOOL)savingCommands
 {
-    ASSERT(core([self _frame]) == event->target()->toNode()->document().frame());
+    ASSERT(core([self _frame]) == downcast<Node>(event->target())->document().frame());
     ASSERT(!savingCommands || event->keypressCommands().isEmpty()); // Save commands once for each event.
 
     WebHTMLViewInterpretKeyEventsParameters parameters;

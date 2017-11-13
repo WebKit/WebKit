@@ -2342,9 +2342,7 @@ const char* WebView::interpretKeyEvent(const KeyboardEvent* evt)
 
 bool WebView::handleEditingKeyboardEvent(KeyboardEvent* evt)
 {
-    auto node = evt->target()->toNode();
-    ASSERT(node);
-    Frame* frame = node->document().frame();
+    auto* frame = downcast<Node>(evt->target())->document().frame();
     ASSERT(frame);
 
     const PlatformKeyboardEvent* keyEvent = evt->keyEvent();

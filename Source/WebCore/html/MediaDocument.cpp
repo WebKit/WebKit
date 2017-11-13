@@ -185,11 +185,11 @@ void MediaDocument::defaultEventHandler(Event& event)
     
     // Match the default Quicktime plugin behavior to allow
     // clicking and double-clicking to pause and play the media.
-    auto targetNode = event.target()->toNode();
-    if (!targetNode)
+    if (!is<Node>(event.target()))
         return;
+    auto& targetNode = downcast<Node>(*event.target());
 
-    if (RefPtr<HTMLVideoElement> video = ancestorVideoElement(targetNode.get())) {
+    if (auto video = makeRefPtr(ancestorVideoElement(&targetNode))) {
         if (event.type() == eventNames().clickEvent) {
             if (!video->canPlay()) {
                 video->pause();
@@ -203,15 +203,16 @@ void MediaDocument::defaultEventHandler(Event& event)
         }
     }
 
-    if (!is<ContainerNode>(*targetNode))
+    if (!is<ContainerNode>(targetNode))
         return;
-    ContainerNode& targetContainer = downcast<ContainerNode>(*targetNode);
+    auto& targetContainer = downcast<ContainerNode>(targetNode);
+
     if (event.type() == eventNames().keydownEvent && is<KeyboardEvent>(event)) {
-        RefPtr<HTMLVideoElement> video = descendantVideoElement(targetContainer);
+        auto video = makeRefPtr(descendantVideoElement(targetContainer));
         if (!video)
             return;
 
-        KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(event);
+        auto& keyboardEvent = downcast<KeyboardEvent>(event);
         if (keyboardEvent.keyIdentifier() == "U+0020") { // space
             if (video->paused()) {
                 if (video->canPlay())

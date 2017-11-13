@@ -57,18 +57,20 @@ public:
     using ClassParameter = JSEventTargetWrapper*;
     using Operation = JSC::EncodedJSValue(JSC::ExecState*, ClassParameter, JSC::ThrowScope&);
 
-    template<Operation operation, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
+    template<Operation operation, CastedThisErrorBehavior = CastedThisErrorBehavior::Throw>
     static JSC::EncodedJSValue call(JSC::ExecState& state, const char* operationName)
     {
-        JSC::VM& vm = state.vm();
+        auto& vm = state.vm();
         auto throwScope = DECLARE_THROW_SCOPE(vm);
 
         auto thisObject = jsEventTargetCast(vm, state.thisValue().toThis(&state, JSC::NotStrictMode));
         if (UNLIKELY(!thisObject))
             return throwThisTypeError(state, throwScope, "EventTarget", operationName);
 
-        if (auto* window = thisObject->wrapped().toDOMWindow()) {
-            if (!window->frame() || !BindingSecurity::shouldAllowAccessToDOMWindow(&state, *window, ThrowSecurityError))
+        auto& wrapped = thisObject->wrapped();
+        if (is<DOMWindow>(wrapped)) {
+            auto& window = downcast<DOMWindow>(wrapped);
+            if (!window.frame() || !BindingSecurity::shouldAllowAccessToDOMWindow(&state, window, ThrowSecurityError))
                 return JSC::JSValue::encode(JSC::jsUndefined());
         }
 

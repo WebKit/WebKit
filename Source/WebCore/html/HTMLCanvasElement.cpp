@@ -393,6 +393,7 @@ CanvasRenderingContext2D* HTMLCanvasElement::getContext2d(const String& type)
 }
 
 #if ENABLE(WEBGL)
+
 static bool requiresAcceleratedCompositingForWebGL()
 {
 #if PLATFORM(GTK)
@@ -439,7 +440,7 @@ WebGLRenderingContextBase* HTMLCanvasElement::createContextWebGL(const String& t
         InspectorInstrumentation::didCreateCanvasRenderingContext(*this);
     }
 
-    return static_cast<WebGLRenderingContextBase*>(m_context.get());
+    return downcast<WebGLRenderingContextBase>(m_context.get());
 }
 
 WebGLRenderingContextBase* HTMLCanvasElement::getContextWebGL(const String& type, WebGLContextAttributes&& attrs)
@@ -454,11 +455,13 @@ WebGLRenderingContextBase* HTMLCanvasElement::getContextWebGL(const String& type
 
     if (!m_context)
         return createContextWebGL(type, WTFMove(attrs));
-    return static_cast<WebGLRenderingContextBase*>(m_context.get());
+    return &downcast<WebGLRenderingContextBase>(*m_context);
 }
-#endif
+
+#endif // ENABLE(WEBGL)
 
 #if ENABLE(WEBGPU)
+
 bool HTMLCanvasElement::isWebGPUType(const String& type)
 {
     return type == "webgpu";
@@ -779,15 +782,10 @@ ExceptionOr<void> HTMLCanvasElement::toBlob(ScriptExecutionContext& context, Ref
 RefPtr<ImageData> HTMLCanvasElement::getImageData()
 {
 #if ENABLE(WEBGL)
-    if (!m_context || !m_context->isWebGL())
-        return nullptr;
-
-    WebGLRenderingContextBase* ctx = static_cast<WebGLRenderingContextBase*>(m_context.get());
-
-    return ctx->paintRenderingResultsToImageData();
-#else
-    return nullptr;
+    if (is<WebGLRenderingContextBase>(m_context.get()))
+        return downcast<WebGLRenderingContextBase>(*m_context).paintRenderingResultsToImageData();
 #endif
+    return nullptr;
 }
 
 #if ENABLE(MEDIA_STREAM)

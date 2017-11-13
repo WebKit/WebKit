@@ -40,9 +40,7 @@
 
 namespace WebCore {
 
-class DOMWindow;
 class DOMWrapperWorld;
-class Node;
 
 struct EventTargetData {
     WTF_MAKE_NONCOPYABLE(EventTargetData); WTF_MAKE_FAST_ALLOCATED;
@@ -68,9 +66,7 @@ public:
     virtual EventTargetInterface eventTargetInterface() const = 0;
     virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 
-    virtual RefPtr<Node> toNode();
-    virtual DOMWindow* toDOMWindow();
-    virtual bool isMessagePort() const;
+    virtual bool isNode() const;
 
     struct ListenerOptions {
         ListenerOptions(bool capture = false)

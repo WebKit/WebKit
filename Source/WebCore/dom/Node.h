@@ -486,8 +486,6 @@ public:
 
     WEBCORE_EXPORT unsigned short compareDocumentPosition(Node&);
 
-    RefPtr<Node> toNode() override;
-
     EventTargetInterface eventTargetInterface() const override;
     ScriptExecutionContext* scriptExecutionContext() const final; // Implemented in Document.h
 
@@ -661,8 +659,9 @@ private:
 
     WEBCORE_EXPORT void removedLastRef();
 
-    void refEventTarget() override;
-    void derefEventTarget() override;
+    void refEventTarget() final;
+    void derefEventTarget() final;
+    bool isNode() const final;
 
     void trackForDebugging();
     void materializeRareData();
@@ -804,3 +803,7 @@ inline void Node::setTreeScopeRecursively(TreeScope& newTreeScope)
 void showTree(const WebCore::Node*);
 void showNodePath(const WebCore::Node*);
 #endif
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Node)
+    static bool isType(const WebCore::EventTarget& target) { return target.isNode(); }
+SPECIALIZE_TYPE_TRAITS_END()

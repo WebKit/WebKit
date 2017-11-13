@@ -321,8 +321,8 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putOrAdd(ExecState& state, JSValue 
     }
 
     bool privateBrowsingEnabled = false;
-    if (context->isDocument()) {
-        if (auto* page = static_cast<Document*>(context)->page())
+    if (is<Document>(*context)) {
+        if (auto* page = downcast<Document>(*context).page())
             privateBrowsingEnabled = page->sessionID().isEphemeral();
     }
 

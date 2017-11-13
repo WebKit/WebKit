@@ -126,8 +126,8 @@ void CanvasCaptureMediaStreamTrack::Source::canvasChanged(HTMLCanvasElement& can
     // FIXME: We need to preserve drawing buffer as we are currently grabbing frames asynchronously.
     // We should instead add an anchor point for both 2d and 3d contexts where canvas will actually paint.
     // And call canvas observers from that point.
-    if (canvas.renderingContext() && canvas.renderingContext()->isWebGL()) {
-        auto& context = static_cast<WebGLRenderingContextBase&>(*canvas.renderingContext());
+    if (is<WebGLRenderingContextBase>(canvas.renderingContext())) {
+        auto& context = downcast<WebGLRenderingContextBase>(*canvas.renderingContext());
         if (!context.isPreservingDrawingBuffer()) {
             canvas.document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("Turning drawing buffer preservation for the WebGL canvas being captured"));
             context.setPreserveDrawingBuffer(true);
