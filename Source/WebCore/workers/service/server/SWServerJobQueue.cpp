@@ -128,6 +128,7 @@ void SWServerJobQueue::didResolveRegistrationPromise(SWServer::Connection& conne
 {
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
+    ASSERT(registration->installingWorker());
 
     // Queue a task to fire an event named updatefound at all the ServiceWorkerRegistration objects
     // for all the service worker clients whose creation URL matches registration's scope url and
@@ -143,6 +144,8 @@ void SWServerJobQueue::didFinishInstall(SWServer::Connection& connection, Servic
 {
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
+    ASSERT(registration->installingWorker());
+    ASSERT(registration->installingWorker()->identifier() == identifier);
 
     if (!wasSuccessful) {
         auto* worker = m_server.workerByID(identifier);
