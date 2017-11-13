@@ -1,3 +1,24 @@
+2017-11-12  Jon Lee  <jonlee@apple.com>
+
+        Add isolated text tests for MotionMark
+        https://bugs.webkit.org/show_bug.cgi?id=179226
+
+        Reviewed by Darin Adler.
+
+        Add a private suite that simplifies the design test.
+
+        * MotionMark/resources/debug-runner/tests.js:
+        * MotionMark/resources/runner/tests.js:
+        * MotionMark/tests/master/design.html: Copied from PerformanceTests/MotionMark/tests/master/text.html.
+        Rename the html file to the title of the test.
+        * MotionMark/tests/master/resources/design.js: Renamed from PerformanceTests/MotionMark/tests/master/resources/text.js.
+        * MotionMark/tests/text/design-6.html: Copied from PerformanceTests/MotionMark/tests/master/text.html.
+        Six active cells
+        * MotionMark/tests/text/design-6.js: Added.
+        * MotionMark/tests/text/design.html: Renamed from PerformanceTests/MotionMark/tests/master/text.html.
+        Replace the text with empty table cells that are populated with desired text.
+        * MotionMark/tests/text/design.js: Added.
+
 2017-11-06  Robin Morisset  <rmorisset@apple.com>
 
         Add a third benchmark to TailBench

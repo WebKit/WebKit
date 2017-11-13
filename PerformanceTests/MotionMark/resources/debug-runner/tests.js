@@ -266,6 +266,35 @@ Suites.push(new Suite("SVG suite",
     ]
 ));
 
+Suites.push(new Suite("Text suite",
+    [
+        {
+            url: "text/design.html?corpus=latin",
+            name: "Design: Latin only (12 items)"
+        },
+        {
+            url: "text/design.html?corpus=cjk",
+            name: "Design: CJK only (12 items)"
+        },
+        {
+            url: "text/design.html?corpus=arabic",
+            name: "Design: RTL and complex scripts only (12 items)"
+        },
+        {
+            url: "text/design-6.html?corpus=latin",
+            name: "Design: Latin only (6 items)"
+        },
+        {
+            url: "text/design-6.html?corpus=cjk",
+            name: "Design: CJK only (6 items)"
+        },
+        {
+            url: "text/design-6.html?corpus=arabic",
+            name: "Design: RTL and complex scripts only (6 items)"
+        },
+    ]
+));
+
 Suites.push(new Suite("3D Graphics",
     [
         {

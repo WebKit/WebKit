@@ -60,7 +60,7 @@ Suites.push(new Suite("MotionMark",
             name: "Images"
         },
         {
-            url: "master/text.html",
+            url: "master/design.html",
             name: "Design"
         },
         {
