@@ -1744,3 +1744,5 @@ webkit.org/b/179342 http/tests/workers/service/registration-task-queue-schedulin
 # AVContentKeySession not available pre-High Sierra
 [ ElCapitan Sierra ] platform/mac/media/encrypted-media/fps-createMediaKeys.html [ Skip ]
 [ ElCapitan Sierra ] platform/mac/media/encrypted-media/fps-requestMediaKeySystemAccess.html [ Skip ]
+
+webkit.org/b/179208 [ HighSierra+ ] js/intl-datetimeformat.html [ Failure ]

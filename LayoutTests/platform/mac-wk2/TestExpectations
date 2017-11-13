@@ -827,6 +827,3 @@ webkit.org/b/177501 [ HighSierra ] webrtc/video-mute.html [ Pass Timeout ]
 
 webkit.org/b/177828 http/tests/appcache/decide-navigation-policy-after-delay.html [ Skip ]
 webkit.org/b/177828 http/tests/contentfiltering/load-substitute-data-from-appcache.html [ Skip ]
-
-webkit.org/b/179208 [ HighSierra ] js/intl-datetimeformat.html [ Failure ]
-

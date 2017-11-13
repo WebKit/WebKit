@@ -1,3 +1,13 @@
+2017-11-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Adjust TestExpectation for js/intl-datetimeformat.html.
+        https://bugs.webkit.org/show_bug.cgi?id=179208
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-11-13  Colin Bendell  <colin@bendell.ca>
 
         Add tests to ensure that <source> tags are only preloaded when the `type`
