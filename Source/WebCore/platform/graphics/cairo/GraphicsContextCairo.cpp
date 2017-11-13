@@ -513,86 +513,32 @@ IntRect GraphicsContext::clipBounds() const
     return enclosingIntRect(FloatRect(x1, y1, x2 - x1, y2 - y1));
 }
 
-static inline void adjustFocusRingColor(Color& color)
-{
-#if !PLATFORM(GTK)
-    // Force the alpha to 50%.  This matches what the Mac does with outline rings.
-    color = Color(makeRGBA(color.red(), color.green(), color.blue(), 127));
-#else
-    UNUSED_PARAM(color);
-#endif
-}
-
-static inline void adjustFocusRingLineWidth(float& width)
-{
-#if PLATFORM(GTK)
-    width = 2;
-#else
-    UNUSED_PARAM(width);
-#endif
-}
-
-static inline StrokeStyle focusRingStrokeStyle()
-{
-#if PLATFORM(GTK)
-    return DottedStroke;
-#else
-    return SolidStroke;
-#endif
-}
-
-void GraphicsContext::drawFocusRing(const Path& path, float width, float /* offset */, const Color& color)
+void GraphicsContext::drawFocusRing(const Path& path, float width, float offset, const Color& color)
 {
     if (paintingDisabled())
         return;
 
-    // FIXME: We should draw paths that describe a rectangle with rounded corners
-    // so as to be consistent with how we draw rectangular focus rings.
-    Color ringColor = color;
-    adjustFocusRingColor(ringColor);
-    adjustFocusRingLineWidth(width);
-
-    cairo_t* cr = platformContext()->cr();
-    cairo_save(cr);
-    cairo_push_group(cr);
-    appendWebCorePathToCairoContext(cr, path);
-    setSourceRGBAFromColor(cr, ringColor);
-    cairo_set_line_width(cr, width);
-    setPlatformStrokeStyle(focusRingStrokeStyle());
-    cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
-    cairo_stroke_preserve(cr);
-
-    cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
-    cairo_set_fill_rule(cr, CAIRO_FILL_RULE_WINDING);
-    cairo_fill(cr);
-
-    cairo_pop_group_to_source(cr);
-    cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
-    cairo_paint(cr);
-    cairo_restore(cr);
-}
-
-void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width, float /* offset */, const Color& color)
-{
-    if (paintingDisabled())
+    if (m_impl) {
+        m_impl->drawFocusRing(path, width, offset, color);
         return;
-
-    Path path;
-#if PLATFORM(GTK)
-    for (const auto& rect : rects)
-        path.addRect(rect);
-#else
-    unsigned rectCount = rects.size();
-    int radius = (width - 1) / 2;
-    Path subPath;
-    for (unsigned i = 0; i < rectCount; ++i) {
-        if (i > 0)
-            subPath.clear();
-        subPath.addRoundedRect(rects[i], FloatSize(radius, radius));
-        path.addPath(subPath, AffineTransform());
     }
-#endif
-    drawFocusRing(path, width, 0, color);
+
+    ASSERT(hasPlatformContext());
+    Cairo::drawFocusRing(*platformContext(), path, width, color);
+}
+
+void GraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
+{
+    if (paintingDisabled())
+        return;
+
+    if (m_impl) {
+        m_impl->drawFocusRing(rects, width, offset, color);
+        return;
+    }
+
+    ASSERT(hasPlatformContext());
+    Cairo::drawFocusRing(*platformContext(), rects, width, color);
 }
 
 void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, bool printing, bool doubleUnderlines, StrokeStyle)
@@ -755,31 +701,11 @@ void GraphicsContext::setPlatformStrokeThickness(float strokeThickness)
 
 void GraphicsContext::setPlatformStrokeStyle(StrokeStyle strokeStyle)
 {
-    static const double dashPattern[] = { 5.0, 5.0 };
-    static const double dotPattern[] = { 1.0, 1.0 };
-
     if (paintingDisabled())
         return;
 
     ASSERT(hasPlatformContext());
-
-    switch (strokeStyle) {
-    case NoStroke:
-        // FIXME: is it the right way to emulate NoStroke?
-        cairo_set_line_width(platformContext()->cr(), 0);
-        break;
-    case SolidStroke:
-    case DoubleStroke:
-    case WavyStroke: // FIXME: https://bugs.webkit.org/show_bug.cgi?id=94110 - Needs platform support.
-        cairo_set_dash(platformContext()->cr(), 0, 0, 0);
-        break;
-    case DottedStroke:
-        cairo_set_dash(platformContext()->cr(), dotPattern, 2, 0);
-        break;
-    case DashedStroke:
-        cairo_set_dash(platformContext()->cr(), dashPattern, 2, 0);
-        break;
-    }
+    Cairo::State::setStrokeStyle(*platformContext(), strokeStyle);
 }
 
 void GraphicsContext::setURLForRect(const URL&, const FloatRect&)

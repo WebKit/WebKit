@@ -133,6 +133,64 @@ static inline void fillCurrentCairoPath(PlatformContextCairo& platformContext, c
     cairo_restore(cr);
 }
 
+static inline void adjustFocusRingColor(Color& color)
+{
+#if !PLATFORM(GTK)
+    // Force the alpha to 50%. This matches what the Mac does with outline rings.
+    color = Color(makeRGBA(color.red(), color.green(), color.blue(), 127));
+#else
+    UNUSED_PARAM(color);
+#endif
+}
+
+static inline void adjustFocusRingLineWidth(float& width)
+{
+#if PLATFORM(GTK)
+    width = 2;
+#else
+    UNUSED_PARAM(width);
+#endif
+}
+
+static inline StrokeStyle focusRingStrokeStyle()
+{
+#if PLATFORM(GTK)
+    return DottedStroke;
+#else
+    return SolidStroke;
+#endif
+}
+
+namespace State {
+
+void setStrokeStyle(PlatformContextCairo& platformContext, StrokeStyle strokeStyle)
+{
+    static const double dashPattern[] = { 5.0, 5.0 };
+    static const double dotPattern[] = { 1.0, 1.0 };
+
+    cairo_t* cr = platformContext.cr();
+    switch (strokeStyle) {
+    case NoStroke:
+        // FIXME: is it the right way to emulate NoStroke?
+        cairo_set_line_width(cr, 0);
+        break;
+    case SolidStroke:
+    case DoubleStroke:
+    case WavyStroke:
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=94110 - Needs platform support.
+        cairo_set_dash(cr, 0, 0, 0);
+        break;
+    case DottedStroke:
+        cairo_set_dash(cr, dotPattern, 2, 0);
+        break;
+    case DashedStroke:
+        cairo_set_dash(cr, dashPattern, 2, 0);
+        break;
+    }
+}
+
+} // namespace State
+
 void setLineCap(PlatformContextCairo& platformContext, LineCap lineCap)
 {
     cairo_line_cap_t cairoCap;
@@ -287,6 +345,57 @@ void clearRect(PlatformContextCairo& platformContext, const FloatRect& rect)
     cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
     cairo_fill(cr);
     cairo_restore(cr);
+}
+
+void drawFocusRing(PlatformContextCairo& platformContext, const Path& path, float width, const Color& color)
+{
+    // FIXME: We should draw paths that describe a rectangle with rounded corners
+    // so as to be consistent with how we draw rectangular focus rings.
+    Color ringColor = color;
+    adjustFocusRingColor(ringColor);
+    adjustFocusRingLineWidth(width);
+
+    cairo_t* cr = platformContext.cr();
+    cairo_save(cr);
+
+    cairo_push_group(cr);
+    appendWebCorePathToCairoContext(cr, path);
+    setSourceRGBAFromColor(cr, ringColor);
+    cairo_set_line_width(cr, width);
+    Cairo::State::setStrokeStyle(platformContext, focusRingStrokeStyle());
+    cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
+    cairo_stroke_preserve(cr);
+
+    cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+    cairo_set_fill_rule(cr, CAIRO_FILL_RULE_WINDING);
+    cairo_fill(cr);
+
+    cairo_pop_group_to_source(cr);
+    cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
+    cairo_paint(cr);
+
+    cairo_restore(cr);
+}
+
+void drawFocusRing(PlatformContextCairo& platformContext, const Vector<FloatRect>& rects, float width, const Color& color)
+{
+    Path path;
+#if PLATFORM(GTK)
+    for (const auto& rect : rects)
+        path.addRect(rect);
+#else
+    unsigned rectCount = rects.size();
+    int radius = (width - 1) / 2;
+    Path subPath;
+    for (unsigned i = 0; i < rectCount; ++i) {
+        if (i > 0)
+            subPath.clear();
+        subPath.addRoundedRect(rects[i], FloatSize(radius, radius));
+        path.addPath(subPath, AffineTransform());
+    }
+#endif
+
+    drawFocusRing(platformContext, path, width, color);
 }
 
 void save(PlatformContextCairo& platformContext)

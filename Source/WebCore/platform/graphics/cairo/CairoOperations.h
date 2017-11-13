@@ -35,6 +35,7 @@
 #if USE(CAIRO)
 
 #include "DashArray.h"
+#include "GraphicsContext.h"
 #include "GraphicsTypes.h"
 
 typedef struct _cairo_pattern cairo_pattern_t;
@@ -54,6 +55,10 @@ class PlatformContextCairo;
 
 namespace Cairo {
 
+namespace State {
+void setStrokeStyle(PlatformContextCairo&, StrokeStyle);
+}
+
 void setLineCap(PlatformContextCairo&, LineCap);
 void setLineDash(PlatformContextCairo&, const DashArray&, float);
 void setLineJoin(PlatformContextCairo&, LineJoin);
@@ -68,6 +73,9 @@ void fillPath(PlatformContextCairo&, const Path&, const GraphicsContextState&, G
 void strokeRect(PlatformContextCairo&, const FloatRect&, float, const GraphicsContextState&, GraphicsContext&);
 void strokePath(PlatformContextCairo&, const Path&, const GraphicsContextState&, GraphicsContext&);
 void clearRect(PlatformContextCairo&, const FloatRect&);
+
+void drawFocusRing(PlatformContextCairo&, const Path&, float, const Color&);
+void drawFocusRing(PlatformContextCairo&, const Vector<FloatRect>&, float, const Color&);
 
 void save(PlatformContextCairo&);
 void restore(PlatformContextCairo&);
