@@ -200,10 +200,8 @@ AffineTransform GraphicsContext::getCTM(IncludeDeviceScale) const
         return AffineTransform();
     }
 
-    cairo_t* cr = platformContext()->cr();
-    cairo_matrix_t m;
-    cairo_get_matrix(cr, &m);
-    return AffineTransform(m.xx, m.yx, m.xy, m.yy, m.x0, m.y0);
+    ASSERT(hasPlatformContext());
+    return Cairo::State::getCTM(*platformContext());
 }
 
 PlatformContextCairo* GraphicsContext::platformContext() const
@@ -224,10 +222,8 @@ void GraphicsContext::restorePlatformState()
     Cairo::restore(*platformContext());
     m_data->restore();
 
-    platformContext()->shadowBlur().setShadowValues(FloatSize(m_state.shadowBlur, m_state.shadowBlur),
-                                                    m_state.shadowOffset,
-                                                    m_state.shadowColor,
-                                                    m_state.shadowsIgnoreTransforms);
+    Cairo::State::setShadowValues(*platformContext(), FloatSize { m_state.shadowBlur, m_state.shadowBlur },
+        m_state.shadowOffset, m_state.shadowColor, m_state.shadowsIgnoreTransforms);
 }
 
 // Draws a filled rectangle with a stroked border.
@@ -508,9 +504,8 @@ IntRect GraphicsContext::clipBounds() const
         return IntRect(-2048, -2048, 4096, 4096); // FIXME: display lists.
     }
 
-    double x1, x2, y1, y2;
-    cairo_clip_extents(platformContext()->cr(), &x1, &y1, &x2, &y2);
-    return enclosingIntRect(FloatRect(x1, y1, x2 - x1, y2 - y1));
+    ASSERT(hasPlatformContext());
+    return Cairo::State::getClipBounds(*platformContext());
 }
 
 void GraphicsContext::drawFocusRing(const Path& path, float width, float offset, const Color& color)
@@ -617,49 +612,17 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& origin, float 
     cairo_restore(cr);
 }
 
-FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect, RoundingMode)
+FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMode)
 {
     if (paintingDisabled())
-        return frect;
+        return rect;
 
     if (m_impl) {
         WTFLogAlways("GraphicsContext::roundToDevicePixels() is not yet compatible with recording contexts.");
-        return frect;
+        return rect;
     }
 
-    FloatRect result;
-    double x = frect.x();
-    double y = frect.y();
-    cairo_t* cr = platformContext()->cr();
-    cairo_user_to_device(cr, &x, &y);
-    x = round(x);
-    y = round(y);
-    cairo_device_to_user(cr, &x, &y);
-    result.setX(narrowPrecisionToFloat(x));
-    result.setY(narrowPrecisionToFloat(y));
-
-    // We must ensure width and height are at least 1 (or -1) when
-    // we're given float values in the range between 0 and 1 (or -1 and 0).
-    double width = frect.width();
-    double height = frect.height();
-    cairo_user_to_device_distance(cr, &width, &height);
-    if (width > -1 && width < 0)
-        width = -1;
-    else if (width > 0 && width < 1)
-        width = 1;
-    else
-        width = round(width);
-    if (height > -1 && height < 0)
-        height = -1;
-    else if (height > 0 && height < 1)
-        height = 1;
-    else
-        height = round(height);
-    cairo_device_to_user_distance(cr, &width, &height);
-    result.setWidth(narrowPrecisionToFloat(width));
-    result.setHeight(narrowPrecisionToFloat(height));
-
-    return result;
+    return Cairo::State::roundToDevicePixels(*platformContext(), rect);
 }
 
 void GraphicsContext::translate(float x, float y)
@@ -695,8 +658,7 @@ void GraphicsContext::setPlatformStrokeThickness(float strokeThickness)
         return;
 
     ASSERT(hasPlatformContext());
-
-    cairo_set_line_width(platformContext()->cr(), strokeThickness);
+    Cairo::State::setStrokeThickness(*platformContext(), strokeThickness);
 }
 
 void GraphicsContext::setPlatformStrokeStyle(StrokeStyle strokeStyle)
@@ -738,28 +700,19 @@ void GraphicsContext::setCTM(const AffineTransform& transform)
         return;
     }
 
-    cairo_t* cr = platformContext()->cr();
-    const cairo_matrix_t matrix = toCairoMatrix(transform);
-    cairo_set_matrix(cr, &matrix);
+    ASSERT(hasPlatformContext());
+    Cairo::State::setCTM(*platformContext(), transform);
     m_data->setCTM(transform);
 }
 
-void GraphicsContext::setPlatformShadow(FloatSize const& size, float, Color const&)
+void GraphicsContext::setPlatformShadow(const FloatSize& offset, float blur, const Color& color)
 {
     if (paintingDisabled())
         return;
 
-    if (m_state.shadowsIgnoreTransforms) {
-        // Meaning that this graphics context is associated with a CanvasRenderingContext
-        // We flip the height since CG and HTML5 Canvas have opposite Y axis
-        m_state.shadowOffset = FloatSize(size.width(), -size.height());
-    }
-
-    // Cairo doesn't support shadows natively, they are drawn manually in the draw* functions using ShadowBlur.
-    platformContext()->shadowBlur().setShadowValues(FloatSize(m_state.shadowBlur, m_state.shadowBlur),
-                                                    m_state.shadowOffset,
-                                                    m_state.shadowColor,
-                                                    m_state.shadowsIgnoreTransforms);
+    ASSERT(hasPlatformContext());
+    Cairo::State::setShadowValues(*platformContext(), FloatSize { blur, blur },
+        offset, color, m_state.shadowsIgnoreTransforms);
 }
 
 void GraphicsContext::clearPlatformShadow()
@@ -767,7 +720,8 @@ void GraphicsContext::clearPlatformShadow()
     if (paintingDisabled())
         return;
 
-    platformContext()->shadowBlur().clear();
+    ASSERT(hasPlatformContext());
+    Cairo::State::clearShadow(*platformContext());
 }
 
 void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
@@ -880,15 +834,16 @@ void GraphicsContext::setMiterLimit(float miter)
 
 void GraphicsContext::setPlatformAlpha(float alpha)
 {
-    platformContext()->setGlobalAlpha(alpha);
+    Cairo::State::setGlobalAlpha(*platformContext(), alpha);
 }
 
-void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op, BlendMode blendOp)
+void GraphicsContext::setPlatformCompositeOperation(CompositeOperator compositeOperator, BlendMode blendMode)
 {
     if (paintingDisabled())
         return;
 
-    cairo_set_operator(platformContext()->cr(), toCairoOperator(op, blendOp));
+    ASSERT(hasPlatformContext());
+    Cairo::State::setCompositeOperation(*platformContext(), compositeOperator, blendMode);
 }
 
 void GraphicsContext::canvasClip(const Path& path, WindRule windRule)
@@ -1001,18 +956,13 @@ void GraphicsContext::setPlatformShouldAntialias(bool enable)
         return;
 
     ASSERT(hasPlatformContext());
-
-    // When true, use the default Cairo backend antialias mode (usually this
-    // enables standard 'grayscale' antialiasing); false to explicitly disable
-    // antialiasing.
-    cairo_set_antialias(platformContext()->cr(), enable ? CAIRO_ANTIALIAS_DEFAULT : CAIRO_ANTIALIAS_NONE);
+    Cairo::State::setShouldAntialias(*platformContext(), enable);
 }
 
 void GraphicsContext::setPlatformImageInterpolationQuality(InterpolationQuality quality)
 {
     ASSERT(hasPlatformContext());
-
-    platformContext()->setImageInterpolationQuality(quality);
+    Cairo::State::setImageInterpolationQuality(*platformContext(), quality);
 }
 
 bool GraphicsContext::isAcceleratedContext() const
@@ -1020,7 +970,7 @@ bool GraphicsContext::isAcceleratedContext() const
     if (!hasPlatformContext())
         return false;
 
-    return cairo_surface_get_type(cairo_get_target(platformContext()->cr())) == CAIRO_SURFACE_TYPE_GL;
+    return Cairo::State::isAcceleratedContext(*platformContext());
 }
 
 } // namespace WebCore

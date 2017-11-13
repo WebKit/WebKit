@@ -35,6 +35,7 @@
 
 #if USE(CAIRO)
 
+#include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "Image.h"
@@ -211,6 +212,11 @@ static void drawGlyphsShadow(PlatformContextCairo& platformContext, const Graphi
 
 namespace State {
 
+void setStrokeThickness(PlatformContextCairo& platformContext, float strokeThickness)
+{
+    cairo_set_line_width(platformContext.cr(), strokeThickness);
+}
+
 void setStrokeStyle(PlatformContextCairo& platformContext, StrokeStyle strokeStyle)
 {
     static const double dashPattern[] = { 5.0, 5.0 };
@@ -235,6 +241,110 @@ void setStrokeStyle(PlatformContextCairo& platformContext, StrokeStyle strokeSty
         cairo_set_dash(cr, dashPattern, 2, 0);
         break;
     }
+}
+
+void setGlobalAlpha(PlatformContextCairo& platformContext, float alpha)
+{
+    platformContext.setGlobalAlpha(alpha);
+}
+
+void setCompositeOperation(PlatformContextCairo& platformContext, CompositeOperator compositeOperation, BlendMode blendMode)
+{
+    cairo_set_operator(platformContext.cr(), toCairoOperator(compositeOperation, blendMode));
+}
+
+void setShouldAntialias(PlatformContextCairo& platformContext, bool enable)
+{
+    // When true, use the default Cairo backend antialias mode (usually this
+    // enables standard 'grayscale' antialiasing); false to explicitly disable
+    // antialiasing.
+    cairo_set_antialias(platformContext.cr(), enable ? CAIRO_ANTIALIAS_DEFAULT : CAIRO_ANTIALIAS_NONE);
+}
+
+void setImageInterpolationQuality(PlatformContextCairo& platformContext, InterpolationQuality quality)
+{
+    platformContext.setImageInterpolationQuality(quality);
+}
+
+void setCTM(PlatformContextCairo& platformContext, const AffineTransform& transform)
+{
+    const cairo_matrix_t matrix = toCairoMatrix(transform);
+    cairo_set_matrix(platformContext.cr(), &matrix);
+}
+
+AffineTransform getCTM(PlatformContextCairo& platformContext)
+{
+    cairo_matrix_t m;
+    cairo_get_matrix(platformContext.cr(), &m);
+    return AffineTransform(m.xx, m.yx, m.xy, m.yy, m.x0, m.y0);
+}
+
+void setShadowValues(PlatformContextCairo& platformContext, const FloatSize& radius, const FloatSize& offset, const Color& color, bool ignoreTransforms)
+{
+    FloatSize adjustedOffset = offset;
+    if (ignoreTransforms) {
+        // Meaning that this graphics context is associated with a CanvasRenderingContext
+        // We flip the height since CG and HTML5 Canvas have opposite Y axis
+        adjustedOffset.setHeight(-offset.height());
+    }
+
+    // Cairo doesn't support shadows natively, they are drawn manually in the draw* functions using ShadowBlur.
+    platformContext.shadowBlur().setShadowValues(radius, adjustedOffset, color, ignoreTransforms);
+}
+
+void clearShadow(PlatformContextCairo& platformContext)
+{
+    platformContext.shadowBlur().clear();
+}
+
+IntRect getClipBounds(PlatformContextCairo& platformContext)
+{
+    double x1, x2, y1, y2;
+    cairo_clip_extents(platformContext.cr(), &x1, &y1, &x2, &y2);
+    return enclosingIntRect(FloatRect(x1, y1, x2 - x1, y2 - y1));
+}
+
+FloatRect roundToDevicePixels(PlatformContextCairo& platformContext, const FloatRect& rect)
+{
+    FloatRect result;
+    double x = rect.x();
+    double y = rect.y();
+
+    cairo_t* cr = platformContext.cr();
+    cairo_user_to_device(cr, &x, &y);
+    x = round(x);
+    y = round(y);
+    cairo_device_to_user(cr, &x, &y);
+    result.setX(narrowPrecisionToFloat(x));
+    result.setY(narrowPrecisionToFloat(y));
+
+    // We must ensure width and height are at least 1 (or -1) when
+    // we're given float values in the range between 0 and 1 (or -1 and 0).
+    double width = rect.width();
+    double height = rect.height();
+    cairo_user_to_device_distance(cr, &width, &height);
+    if (width > -1 && width < 0)
+        width = -1;
+    else if (width > 0 && width < 1)
+        width = 1;
+    else
+        width = round(width);
+    if (height > -1 && height < 0)
+        height = -1;
+    else if (height > 0 && height < 1)
+        height = 1;
+    else
+        height = round(height);
+    cairo_device_to_user_distance(cr, &width, &height);
+    result.setWidth(narrowPrecisionToFloat(width));
+    result.setHeight(narrowPrecisionToFloat(height));
+
+    return result;
+}
+
+bool isAcceleratedContext(PlatformContextCairo& platformContext)
+{
+    return cairo_surface_get_type(cairo_get_target(platformContext.cr())) == CAIRO_SURFACE_TYPE_GL;
 }
 
 } // namespace State

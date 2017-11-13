@@ -56,8 +56,27 @@ class PlatformContextCairo;
 namespace Cairo {
 
 namespace State {
+
+void setStrokeThickness(PlatformContextCairo&, float);
 void setStrokeStyle(PlatformContextCairo&, StrokeStyle);
-}
+
+void setGlobalAlpha(PlatformContextCairo&, float);
+void setCompositeOperation(PlatformContextCairo&, CompositeOperator, BlendMode);
+void setShouldAntialias(PlatformContextCairo&, bool);
+void setImageInterpolationQuality(PlatformContextCairo&, InterpolationQuality);
+
+void setCTM(PlatformContextCairo&, const AffineTransform&);
+AffineTransform getCTM(PlatformContextCairo&);
+
+void setShadowValues(PlatformContextCairo&, const FloatSize&, const FloatSize&, const Color&, bool);
+void clearShadow(PlatformContextCairo&);
+
+IntRect getClipBounds(PlatformContextCairo&);
+FloatRect roundToDevicePixels(PlatformContextCairo&, const FloatRect&);
+
+bool isAcceleratedContext(PlatformContextCairo&);
+
+} // namespace State
 
 void setLineCap(PlatformContextCairo&, LineCap);
 void setLineDash(PlatformContextCairo&, const DashArray&, float);
