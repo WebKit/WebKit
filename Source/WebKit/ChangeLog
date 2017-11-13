@@ -1,3 +1,13 @@
+2017-11-13  Timothy Horton  <timothy_horton@apple.com>
+
+        Address some post-landing review comments from r224728
+        https://bugs.webkit.org/show_bug.cgi?id=179576
+
+        * Platform/IPC/mac/MachMessage.h:
+        (IPC::MachMessage::setMessageReceiverName):
+        (IPC::MachMessage::setMessageName):
+        More moving!
+
 2017-11-13  Tim Horton  <timothy_horton@apple.com>
 
         Occasional MobileSafari crash under -[WKPDFView web_setMinimumSize:]
