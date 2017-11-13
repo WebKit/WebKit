@@ -323,13 +323,16 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
 
     auto temporaryFileHandle = invalidPlatformFileHandle;
     String temporaryFilePath = openTemporaryFile("ContentRuleList", temporaryFileHandle);
-    if (temporaryFileHandle == invalidPlatformFileHandle)
+    if (temporaryFileHandle == invalidPlatformFileHandle) {
+        WTFLogAlways("Content Rule List compiling failed: Opening temporary file failed.");
         return ContentRuleListStore::Error::CompileFailed;
+    }
     
     char invalidHeader[ContentRuleListFileHeaderSize];
     memset(invalidHeader, 0xFF, sizeof(invalidHeader));
     // This header will be rewritten in CompilationClient::finalize.
     if (writeToFile(temporaryFileHandle, invalidHeader, sizeof(invalidHeader)) == -1) {
+        WTFLogAlways("Content Rule List compiling failed: Writing header to file failed.");
         closeFile(temporaryFileHandle);
         return ContentRuleListStore::Error::CompileFailed;
     }
@@ -337,20 +340,26 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
     CompilationClient compilationClient(temporaryFileHandle, metaData);
     
     if (auto compilerError = compileRuleList(compilationClient, WTFMove(json))) {
+        WTFLogAlways("Content Rule List compiling failed: Compiling failed.");
         closeFile(temporaryFileHandle);
         return compilerError;
     }
     if (compilationClient.hadErrorWhileWritingToFile()) {
+        WTFLogAlways("Content Rule List compiling failed: Writing to file failed.");
         closeFile(temporaryFileHandle);
         return ContentRuleListStore::Error::CompileFailed;
     }
     
     mappedData = adoptAndMapFile(temporaryFileHandle, 0, metaData.fileSize());
-    if (mappedData.isNull())
+    if (mappedData.isNull()) {
+        WTFLogAlways("Content Rule List compiling failed: Mapping file failed.");
         return ContentRuleListStore::Error::CompileFailed;
+    }
 
-    if (!moveFile(temporaryFilePath, finalFilePath))
+    if (!moveFile(temporaryFilePath, finalFilePath)) {
+        WTFLogAlways("Content Rule List compiling failed: Moving file failed.");
         return ContentRuleListStore::Error::CompileFailed;
+    }
 
     return { };
 }

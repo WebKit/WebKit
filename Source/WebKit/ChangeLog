@@ -1,3 +1,16 @@
+2017-11-13  Alex Christensen  <achristensen@webkit.org>
+
+        Add logs to debug content extension test failures
+        https://bugs.webkit.org/show_bug.cgi?id=179624
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::compiledToFile):
+        Right now I'm seeing this log:
+        "Rule list compilation failed: Unspecified error during compile."
+        I need more information to debug what is failing on the bots.
+
 2017-11-07  Brian Burg  <bburg@apple.com>
 
         Web Automation: inViewCenterPoint should not include topContentInset when computed in viewport coordinates
