@@ -3330,6 +3330,8 @@ webkit.org/b/179173 http/tests/inspector/network/har/har-page.html [ Failure ]
 
 webkit.org/b/179174 inspector/console/webcore-logging.html [ Failure ]
 
+webkit.org/b/179605 editing/execCommand/underline-selection-containing-image.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,9 @@
+2017-11-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Mark editing/execCommand/underline-selection-containing-image.html as failing.
+
+        * platform/gtk/TestExpectations:
+
 2017-11-13  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Enable some passing XHR tests
