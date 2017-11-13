@@ -73,7 +73,7 @@ class WebKitPostTileWidget extends WP_Widget {
                 <div class="tile-content">
                     <h1><?php echo $title; ?></h1>
                     <div class="summary"><?php echo $summary; ?></div>
-                    <p><a href="<?php the_permalink(); ?>"><?php echo $link; ?>&nbsp;&rsaquo;</a></p>
+                    <p><a href="<?php the_permalink(); ?>" class="readmore"><?php echo $link; ?></a></p>
                 </div>        
             </div>
         <?php

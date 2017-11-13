@@ -26,11 +26,15 @@ add_filter('the_content', function ($content) {
 ?>
 <style>
 body {
-    background: #333333;
+    background-color: #333333;
+}
+
+main {
+    background: none;
 }
 
 header {
-    border-bottom-color: transparent;
+    background-color: rgba(0,0,0,0.1);
 }
 
 #nightly {
@@ -84,8 +88,6 @@ header {
     box-sizing: border-box;
     min-height: 100px;
     overflow: hidden;
-    width: -webkit-calc(33.33% - 10px);
-    width: -moz-calc(33.33% - 10px);
     width: calc(33.33% - 10px);
     border-radius: 0.3rem;
     padding: 1rem;
@@ -220,8 +222,6 @@ hr {
 
 @media only screen and (max-width: 690px) {
     #nightly li {
-        width: -webkit-calc(100% - 1px);
-        width: -moz-calc(100% - 1px);
         width: calc(100% - 1px);
     }
 }

@@ -133,8 +133,6 @@ ul.properties {
     min-height: 3rem;
     overflow-y: hidden;
     cursor: pointer;
-    -webkit-transition: background-color 0.3s ease-in;
-    -moz-transition: background-color 0.3s ease-in;
     transition: background-color 0.3s ease-in;
 }
 
@@ -218,8 +216,6 @@ ul.values {
     position: absolute;
     right: 0;
     top: 0.5rem;
-    -webkit-transition: transform 0.3s ease-out;
-    -moz-transition: transform 0.3s ease-out;
     transition: transform 0.3s ease-out;
 }
 

@@ -19,10 +19,17 @@
             </div>
         </article>
         
-        <nav class="navigation pagination" aria-label="Next/Last posts">
-            <?php previous_post_link('%link', 'Older Post <span>%title</span>'); ?>
-            <?php next_post_link('%link', 'Newer Post <span>%title</span>'); ?>
-        </nav>
+        <aside class="nextrouter" aria-label="Next/Previous posts">
+            <div class="bodycopy">
+            <?php //previous_post_link('%link', 'Older Post <span>%title</span>'); ?>
+            <?php next_post_link('%link', '<div class="nextrouter-copy"><span class="label">Next</span><span class="title">%title</span><span class="link">Learn more</span></div>'); ?>
+            </div>
+        </aside>
+        <aside class="nextrouter previous" aria-label="Next/Previous posts">
+            <div class="bodycopy">
+            <?php previous_post_link('%link', '<div class="nextrouter-copy"><span class="label">Previously</span><span class="title">%title</span><span class="link">Learn more</span></div>'); ?>
+            </div>
+        </aside>
 
     <?php //comments_template(); // No comments ?>
 

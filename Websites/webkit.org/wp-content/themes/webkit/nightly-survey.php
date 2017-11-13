@@ -12,11 +12,15 @@ get_header();
         body {
             background: #333333;
         }
-
-        header {
-            border-bottom-color: transparent;
+        
+        main {
+            background: none;
         }
-
+        
+        header {
+            background-color: rgba(0,0,0,0.1);
+        }
+        
         #nightly {
             margin: 6rem auto;
             color: #ffffff;

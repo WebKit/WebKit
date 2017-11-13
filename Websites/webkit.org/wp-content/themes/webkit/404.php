@@ -40,7 +40,6 @@ input {
 
 input[type=submit] {
     background-color: #1d9bd9;
-    background: -webkit-linear-gradient(#3baee7, #0088cc);
     background: linear-gradient(#3baee7, #0088cc);
     border-radius: 4px;
     color: white;

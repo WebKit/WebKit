@@ -1,3 +1,147 @@
+2017-11-13  Jon Davis  <jond@apple.com>
+
+        Add a new landing page design and site-wide design detail updates for webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=179558
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wp-content/themes/webkit/404.php: Removed unnecessary prefixed CSS.
+        * wp-content/themes/webkit/444.php: Removed unnecessary prefixed CSS.
+        * wp-content/themes/webkit/css-status.php: Removed unnecessary prefixed CSS.
+        * wp-content/themes/webkit/footer.php: Added new page wrapper container.
+        * wp-content/themes/webkit/front-header.php: Redesigned landing hero.
+        * wp-content/themes/webkit/functions.php: Added support for configurable non-breaking words.
+        * wp-content/themes/webkit/header.php: Added viewport-fit, changed web font, changed logo title.
+        * wp-content/themes/webkit/images/chevron.svg: Added.
+        * wp-content/themes/webkit/images/circular.svg: Added.
+        * wp-content/themes/webkit/images/compass.svg: Added.
+        * wp-content/themes/webkit/images/download-white.svg: Added.
+        * wp-content/themes/webkit/images/template.svg: Added.
+        * wp-content/themes/webkit/loop.php: Updated "read more" link presentation.
+        * wp-content/themes/webkit/nightly-start.php: Adjusted header background colors.
+        * wp-content/themes/webkit/nightly-survey.php: Adjusted header background colors.
+        * wp-content/themes/webkit/nightly.php: Adjusted header background colors.
+        * wp-content/themes/webkit/page.php: Page clean up.
+        * wp-content/themes/webkit/single.php: Updated "read more" link presentation.
+        * wp-content/themes/webkit/status.php: Removed unnecessary prefixed CSS, improved page title.
+        * wp-content/themes/webkit/style.css: Redesigned.
+        (html):
+        (body):
+        (strong):
+        (em):
+        (code):
+        (main):
+        (h1,):
+        (input[type=text]):
+        (input[type=submit]):
+        (header):
+        (.home header):
+        (@supports ( -webkit-backdrop-filter: blur(10px) )):
+        (.sub-menu-layer):
+        (.nextrouter .link,):
+        (.pagination):
+        (.pagination::after):
+        (.pagination .page-numbers):
+        (.pagination .dots,):
+        (.pagination .next-button):
+        (.nextrouter):
+        (.nextrouter:hover):
+        (.nextrouter.previous):
+        (.nextrouter.previous:hover):
+        (.nextrouter .bodycopy):
+        (.nextrouter a):
+        (.nextrouter a:hover):
+        (.nextrouter-copy):
+        (.nextrouter .label):
+        (.nextrouter .title):
+        (.nextrouter .link):
+        (.nextrouter a:hover .link):
+        (footer):
+        (.tiles):
+        (.tile):
+        (.third-tile):
+        (.two-thirds-tile):
+        (.tile .background-image):
+        (.tile .background-image.has-featured-image):
+        (.tile .featured-image):
+        (.tile:not(.has-post-thumbnail) .background-image,):
+        (.tile h1):
+        (.tile h2):
+        (.tile .summary,):
+        (pre):
+        (article):
+        (article::after):
+        (article h1):
+        (article h2):
+        (article h3):
+        (article h4):
+        (article h5):
+        (article h6):
+        (article h2 + h3,):
+        (article figcaption):
+        (article figcaption::before):
+        (.table-of-contents):
+        (article .table-of-contents label):
+        (.table-of-contents ul):
+        (.table-of-contents ul li):
+        (.table-of-contents ul li > ul):
+        (.site-logo):
+        (footer nav):
+        (header nav li):
+        (header nav a,):
+        (header .menu-item-has-children .label-toggle::after):
+        (header .menu-item):
+        (@media only screen and (max-width: 1180px)):
+        (article .byline):
+        (@media only screen and (max-width: 920px)):
+        (.main-menu.label-toggle):
+        (header .menu):
+        (header nav a):
+        (header .menu-main-menu-container >  ul > li):
+        (header .sub-menu-layer):
+        (@media only screen and (max-width: 690px)):
+        (.third-tile,):
+        (@media only screen and (max-width: 600px)):
+        (.table-of-contents label:after):
+        (@media only screen and (max-width: 415px)):
+        (@media only screen and (max-height: 415px)):
+        (@supports(padding:max(0px))):
+        (header .menu .menu-item > .sub-menu):
+        (.sub-menu-layer .menu-item:first-child,):
+        (#template):
+        (#compass):
+        (.tile .featured-image,): Deleted.
+        (.site-logo .tagline): Deleted.
+        (.timeline): Deleted.
+        (.timeline:after): Deleted.
+        (.timeline *): Deleted.
+        (.timeline:before): Deleted.
+        (.timeline > li): Deleted.
+        (.timeline > li:before): Deleted.
+        (.timeline .content): Deleted.
+        (.timeline figure): Deleted.
+        (.timeline .time): Deleted.
+        (.timeline h2, .timeline h3): Deleted.
+        (.timeline .time::before): Deleted.
+        (.timeline img): Deleted.
+        (@media (min-width: 900px)): Deleted.
+        (.timeline > li.force-clear): Deleted.
+        (.timeline > li:nth-child(odd)): Deleted.
+        (.timeline > li:nth-child(even)): Deleted.
+        (.timeline > li:nth-child(2),): Deleted.
+        (.timeline li .time): Deleted.
+        (.timeline li:nth-child(odd) .time): Deleted.
+        (.timeline li:nth-child(even) .time): Deleted.
+        (.timeline li:nth-child(even) .time::before): Deleted.
+        (.timeline > li:nth-child(even):before): Deleted.
+        (@media (max-width: 900px)): Deleted.
+        (.timeline li .time::before): Deleted.
+        (.hero .logo,): Deleted.
+        (.home .hero): Deleted.
+        (.home.admin-bar .hero): Deleted.
+        (@media only screen and (max-width: 320px)): Deleted.
+        * wp-content/themes/webkit/widgets/post.php: Updated "read more" link presentation.
+
 2017-10-30  Tim Horton  <timothy_horton@apple.com>
 
         Update safe area inset demo pages to use env()

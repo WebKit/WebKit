@@ -20,6 +20,6 @@ $classes[] = 'third-tile';
         <div class="tile-content">
             <h1><?php the_title(); ?></h1>
             <div class="summary"><?php the_excerpt(); ?></div>
-            <p><a href="<?php the_permalink(); ?>">Read more &rsaquo;</a></p>
+            <p><a href="<?php the_permalink(); ?>" class="readmore">Read more</a></p>
         </div>        
     </div>

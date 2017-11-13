@@ -101,7 +101,20 @@ add_filter('query_vars', function( $query_vars ) {
 
 add_filter('the_title', function( $title ) {
     if ( is_admin() ) return $title;
+    if ( is_feed() ) return $title;
+    
     $title = str_replace(": ", ": <br>", $title);
+
+    $nowrap_strings = array();
+    if ($nowrap_setting = get_option("webkit_org_nowrap_strings")) {
+        $nowrap_strings = explode("\n", $nowrap_setting);
+    } else add_option("webkit_org_nowrap_strings", "\n");
+
+    foreach ($nowrap_strings as $token) {
+        $nobreak = str_replace(" ", " ", trim($token));
+        $title = str_replace(trim($token), $nobreak, $title);
+    }
+    
     return $title;
 });
 

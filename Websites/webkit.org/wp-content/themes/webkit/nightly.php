@@ -23,6 +23,14 @@ body {
     background: #333333;
 }
 
+main {
+    background: none;
+}
+
+header {
+    background-color: rgba(0,0,0,0.1);
+}
+
 .page-color {
     /*background: #333333;*/
     background: linear-gradient(black, #333333 66%);
