@@ -1,5 +1,20 @@
 2017-11-13  Tim Horton  <timothy_horton@apple.com>
 
+        Occasional MobileSafari crash under -[WKPDFView web_setMinimumSize:]
+        https://bugs.webkit.org/show_bug.cgi?id=179628
+        <rdar://problem/34773037>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView _computePageAndDocumentFrames]):
+        Similar to r223444, avoid propagating null CGRects into the view hierarchy.
+        In this case, the null rect comes from applying margins to a rect that is 
+        smaller than the margins. We could check for that specifically, but a
+        more-general check for a null rect seems reasonable.
+
+2017-11-13  Tim Horton  <timothy_horton@apple.com>
+
         Use the real mach type instead of reinterpret_casting in MachMessage
         https://bugs.webkit.org/show_bug.cgi?id=179629
 
