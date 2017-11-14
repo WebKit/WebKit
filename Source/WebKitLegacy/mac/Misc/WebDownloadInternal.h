@@ -27,18 +27,10 @@
 */
  
 #import <WebKitLegacy/WebDownload.h>
-
-#if USE(CFURLCONNECTION)
-#import <CFNetwork/CFURLConnection.h>
-#endif
  
 @interface WebDownload (WebDownloadCreation)
 +(id)_downloadWithLoadingConnection:(NSURLConnection *)connection request:(NSURLRequest *)request response:(NSURLResponse *)r delegate:(id)delegate proxy:(id)proxy;
 
 +(id)_downloadWithRequest:(NSURLRequest *)request delegate:(id)delegate directory:(NSString *)directory;
-
-#if USE(CFURLCONNECTION)
-+ (id)_downloadWithLoadingCFURLConnection:(CFURLConnectionRef)connection request:(CFURLRequestRef)request response:(CFURLResponseRef)response delegate:(id)delegate proxy:(id)proxy;
-#endif
 
 @end

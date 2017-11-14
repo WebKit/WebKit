@@ -73,16 +73,12 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::releaseHandle()
 
 void ResourceHandleCFURLConnectionDelegateWithOperationQueue::setupRequest(CFMutableURLRequestRef request)
 {
-#if PLATFORM(IOS)
-    CFURLRequestSetShouldStartSynchronously(request, 1);
-#endif
     CFURLRef requestURL = CFURLRequestGetURL(request);
     if (!requestURL)
         return;
     m_originalScheme = adoptCF(CFURLCopyScheme(requestURL));
 }
 
-#if PLATFORM(WIN)
 LRESULT CALLBACK hookToRemoveCFNetworkMessage(int code, WPARAM wParam, LPARAM lParam)
 {
     MSG* msg = reinterpret_cast<MSG*>(lParam);
@@ -100,7 +96,6 @@ static void installHookToRemoveCFNetworkMessageBlockingMainThread()
         hook = ::SetWindowsHookExW(WH_GETMESSAGE, hookToRemoveCFNetworkMessage, 0, threadID);
     }
 }
-#endif
 
 static void emptyPerform(void*)
 {
@@ -132,9 +127,7 @@ static CFRunLoopRef getRunLoop()
 
 void ResourceHandleCFURLConnectionDelegateWithOperationQueue::setupConnectionScheduling(CFURLConnectionRef connection)
 {
-#if PLATFORM(WIN)
     installHookToRemoveCFNetworkMessageBlockingMainThread();
-#endif
     CFRunLoopRef runLoop = getRunLoop();
     CFURLConnectionScheduleWithRunLoop(connection, runLoop, kCFRunLoopDefaultMode);
     CFURLConnectionScheduleDownloadWithRunLoop(connection, runLoop, kCFRunLoopDefaultMode);
@@ -201,22 +194,13 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse
 
         if (statusCode != 304) {
             bool isMainResourceLoad = handle->firstRequest().requester() == ResourceRequest::Requester::Main;
-#if !PLATFORM(WIN)
-            adjustMIMETypeIfNecessary(cfResponse.get(), isMainResourceLoad);
-#endif
         }
 
-#if !PLATFORM(IOS)
         if (_CFURLRequestCopyProtocolPropertyForKey(handle->firstRequest().cfURLRequest(DoNotUpdateHTTPBody), CFSTR("ForceHTMLMIMEType")))
             CFURLResponseSetMIMEType(cfResponse.get(), CFSTR("text/html"));
-#endif // !PLATFORM(IOS)
 
         ResourceResponse resourceResponse(cfResponse.get());
         resourceResponse.setSource(ResourceResponse::Source::Network);
-#if !PLATFORM(WIN)
-        ResourceHandle::getConnectionTimingData(connection.get(), resourceResponse.deprecatedNetworkLoadMetrics());
-#endif
-
         handle->didReceiveResponse(WTFMove(resourceResponse));
     };
 
@@ -297,7 +281,6 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFail(CFErrorRef
 
 CFCachedURLResponseRef ResourceHandleCFURLConnectionDelegateWithOperationQueue::willCacheResponse(CFCachedURLResponseRef cachedResponse)
 {
-#if PLATFORM(WIN)
     // Workaround for <rdar://problem/6300990> Caching does not respect Vary HTTP header.
     // FIXME: WebCore cache has issues with Vary, too (bug 58797, bug 71509).
     CFURLResponseRef wrappedResponse = CFCachedURLResponseGetWrappedResponse(cachedResponse);
@@ -307,7 +290,6 @@ CFCachedURLResponseRef ResourceHandleCFURLConnectionDelegateWithOperationQueue::
         if (varyValue)
             return nullptr;
     }
-#endif // PLATFORM(WIN)
 
     auto work = [protectedThis = makeRef(*this), cachedResponse = RetainPtr<CFCachedURLResponseRef>(cachedResponse)] () {
         auto& handle = protectedThis->m_handle;
@@ -385,13 +367,6 @@ Boolean ResourceHandleCFURLConnectionDelegateWithOperationQueue::canRespondToPro
         LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::canRespondToProtectionSpace(handle=%p) (%s)", handle, handle->firstRequest().url().string().utf8().data());
 
         ProtectionSpace coreProtectionSpace = ProtectionSpace(protectionSpace.get());
-#if PLATFORM(IOS)
-        if (coreProtectionSpace.authenticationScheme() == ProtectionSpaceAuthenticationSchemeUnknown) {
-            m_boolResult = false;
-            dispatch_semaphore_signal(m_semaphore);
-            return;
-        }
-#endif // PLATFORM(IOS)
         handle->canAuthenticateAgainstProtectionSpace(coreProtectionSpace);
     };
     

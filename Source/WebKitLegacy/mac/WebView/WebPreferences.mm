@@ -1867,7 +1867,7 @@ static NSString *classIBCreatorID = nil;
 + (void)_setCurrentNetworkLoaderSessionCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy
 {
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage = NetworkStorageSession::defaultStorageSession().cookieStorage();
-    ASSERT(cookieStorage); // Will fail when building without USE(CFURLCONNECTION) and NetworkStorageSession::switchToNewTestingSession() was not called beforehand.
+    ASSERT(cookieStorage); // Will fail when NetworkStorageSession::switchToNewTestingSession() was not called beforehand.
     CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), policy);
 }
 

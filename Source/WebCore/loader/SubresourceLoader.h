@@ -76,11 +76,8 @@ private:
     void didCancel(const ResourceError&) override;
     void didRetrieveDerivedDataFromCache(const String& type, SharedBuffer&) override;
 
-#if PLATFORM(COCOA) && !USE(CFURLCONNECTION)
+#if PLATFORM(COCOA)
     NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse*) override;
-#endif
-#if PLATFORM(COCOA) && USE(CFURLCONNECTION)
-    CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
 #endif
 
     void releaseResources() override;

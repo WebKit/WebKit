@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CredentialStorage.h"
 
-#if !USE(CFURLCONNECTION)
-
 #include "AuthenticationMac.h"
 #include "Credential.h"
 #include "ProtectionSpace.h"
@@ -41,5 +39,3 @@ Credential CredentialStorage::getFromPersistentStorage(const ProtectionSpace& pr
 }
 
 } // namespace WebCore
-
-#endif // !USE(CFURLCONNECTION)

@@ -56,15 +56,6 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(COCOA)
-#include "ResourceHandleCFURLConnectionDelegateWithOperationQueue.h"
-#if USE(CFURLCONNECTION)
-#include "WebCoreURLResponse.h"
-#include <CFNetwork/CFURLConnectionPriv.h>
-#include <CFNetwork/CFURLRequestPriv.h>
-#endif
-#endif
-
 #if PLATFORM(WIN)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <process.h>

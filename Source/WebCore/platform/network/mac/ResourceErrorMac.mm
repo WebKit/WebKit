@@ -31,17 +31,6 @@
 #import <Foundation/Foundation.h>
 #import <wtf/BlockObjCExceptions.h>
 
-#if PLATFORM(IOS) && USE(CFURLCONNECTION) && USE(APPLE_INTERNAL_SDK)
-#import <CFNetwork/CFSocketStreamPriv.h>
-#endif
-
-#if USE(CFURLCONNECTION)
-extern "C" {
-const CFStringRef _kCFStreamPropertySSLClientCertificates;
-const CFStringRef _kCFStreamPropertySSLClientCertificateState;
-}
-#endif
-
 @interface NSError (WebExtras)
 - (NSString *)_web_localizedDescription;
 @end
@@ -98,85 +87,6 @@ static NSDictionary* dictionaryThatCanCode(NSDictionary* src)
 
 @end
 
-
-#if USE(CFURLCONNECTION)
-static NSError *NSErrorFromCFError(CFErrorRef cfError, NSURL *url)
-{
-    CFIndex errCode = CFErrorGetCode(cfError);
-    if (CFEqual(CFErrorGetDomain(cfError), kCFErrorDomainCFNetwork) && errCode <= kCFURLErrorUnknown && errCode > -4000) {
-        // This is an URL error and needs to be translated to the NSURLErrorDomain
-        id keys[10], values[10];
-        CFDictionaryRef userInfo = CFErrorCopyUserInfo(cfError);
-        NSError *result;
-        NSInteger count = 0;
-
-        if (url) {
-            keys[count] = NSURLErrorFailingURLErrorKey;
-            values[count] = url;
-            count++;
-
-            keys[count] = NSURLErrorFailingURLStringErrorKey;
-            values[count] = [url absoluteString];
-            count++;
-        }
-
-        values[count] = (id)CFDictionaryGetValue(userInfo, kCFErrorLocalizedDescriptionKey);
-        if (values[count]) {
-            keys[count] = NSLocalizedDescriptionKey;
-            count++;
-        }
-
-        values[count] = (id)CFDictionaryGetValue(userInfo, kCFErrorLocalizedFailureReasonKey);
-        if (values[count]) {
-            keys[count] = NSLocalizedFailureReasonErrorKey;
-            count++;
-        }
-
-        values[count] = (id)CFDictionaryGetValue(userInfo, kCFErrorLocalizedRecoverySuggestionKey);
-        if (values[count]) {
-            keys[count] = NSLocalizedRecoverySuggestionErrorKey;
-            count++;
-        }
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        if (userInfo && (values[count] = (id)CFDictionaryGetValue(userInfo, kCFStreamPropertySSLPeerCertificates)) != nil) {
-            // Need to translate the cert
-            keys[count] = @"NSErrorPeerCertificateChainKey";
-            count++;
-
-            values[count] = (id)CFDictionaryGetValue(userInfo, _kCFStreamPropertySSLClientCertificates);
-            if (values[count]) {
-                keys[count] = @"NSErrorClientCertificateChainKey";
-                count++;
-            }
-
-            values[count] = (id)CFDictionaryGetValue(userInfo, _kCFStreamPropertySSLClientCertificateState);
-            if (values[count]) {
-                keys[count] = @"NSErrorClientCertificateStateKey";
-                count++;
-            }
-        }
-#pragma clang diagnostic pop
-
-        if (userInfo && (values[count] = (id)CFDictionaryGetValue(userInfo, kCFStreamPropertySSLPeerTrust)) != nil) {
-            keys[count] = NSURLErrorFailingURLPeerTrustErrorKey;
-            count++;
-        }
-
-        keys[count] = NSUnderlyingErrorKey;
-        values[count] = (id)cfError;
-        count++;
-
-        result = [WebCustomNSURLError errorWithDomain:NSURLErrorDomain code:(errCode == kCFURLErrorUnknown ? (CFIndex)NSURLErrorUnknown : errCode) userInfo:[NSDictionary dictionaryWithObjects:values forKeys:keys count:count]];
-        if (userInfo)
-            CFRelease(userInfo);
-        return result;
-    }
-    return (NSError *)cfError;
-}
-#endif // USE(CFURLCONNECTION)
-
 #endif // PLATFORM(IOS)
 
 namespace WebCore {
@@ -196,53 +106,6 @@ static RetainPtr<NSError> createNSErrorFromResourceErrorBase(const ResourceError
 
     return adoptNS([[NSError alloc] initWithDomain:resourceError.domain() code:resourceError.errorCode() userInfo:userInfo.get()]);
 }
-
-#if USE(CFURLCONNECTION)
-
-ResourceError::ResourceError(NSError *error)
-    : ResourceErrorBase(Type::Null)
-    , m_dataIsUpToDate(false)
-    , m_platformError(reinterpret_cast<CFErrorRef>(error))
-{
-    if (error)
-        setType(([error code] == NSURLErrorTimedOut) ? Type::Timeout : Type::General);
-}
-
-NSError *ResourceError::nsError() const
-{
-    if (isNull()) {
-        ASSERT(!m_platformError);
-        return nil;
-    }
-
-    if (m_platformNSError)
-        return m_platformNSError.get();
-
-    if (m_platformError) {
-        CFErrorRef error = m_platformError.get();
-        RetainPtr<CFDictionaryRef> userInfo = adoptCF(CFErrorCopyUserInfo(error));
-#if PLATFORM(IOS)
-        m_platformNSError = NSErrorFromCFError(error, (NSURL *)[(NSDictionary *)userInfo.get() objectForKey:(id) kCFURLErrorFailingURLErrorKey]);
-        // If NSErrorFromCFError created a new NSError for us, return that.
-        if (m_platformNSError.get() != (NSError *)error)
-            return m_platformNSError.get();
-
-        // Otherwise fall through to create a new NSError from the CFError.
-#endif
-        m_platformNSError = adoptNS([[NSError alloc] initWithDomain:(NSString *)CFErrorGetDomain(error) code:CFErrorGetCode(error) userInfo:(NSDictionary *)userInfo.get()]);
-        return m_platformNSError.get();
-    }
-
-    m_platformNSError = createNSErrorFromResourceErrorBase(*this);
-    return m_platformNSError.get();
-}
-
-ResourceError::operator NSError *() const
-{
-    return nsError();
-}
-
-#else
 
 ResourceError::ResourceError(NSError *nsError)
     : ResourceErrorBase(Type::Null)
@@ -315,7 +178,5 @@ ResourceError::operator CFErrorRef() const
 {
     return cfError();
 }
-
-#endif // USE(CFURLCONNECTION)
 
 } // namespace WebCore

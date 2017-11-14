@@ -188,7 +188,7 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
     NSCachedURLResponse *willCacheResponse(DocumentLoader*, unsigned long, NSCachedURLResponse *response) const final { return response; }
 #endif
 
-#if PLATFORM(WIN) && USE(CFURLCONNECTION)
+#if USE(CFURLCONNECTION)
     bool shouldCacheResponse(DocumentLoader*, unsigned long, const ResourceResponse&, const unsigned char*, unsigned long long) final { return true; }
 #endif
 

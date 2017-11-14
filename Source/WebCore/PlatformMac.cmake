@@ -441,21 +441,12 @@ list(APPEND WebCore_SOURCES
 
     platform/mediastream/mac/MockRealtimeVideoSourceMac.mm
 
-    platform/network/cf/AuthenticationCF.cpp
-    platform/network/cf/CookieJarCFNet.cpp
-    platform/network/cf/CookieStorageCFNet.cpp
-    platform/network/cf/CredentialStorageCFNet.cpp
     platform/network/cf/DNSCFNet.cpp
     platform/network/cf/FormDataStreamCFNet.cpp
-    platform/network/cf/LoaderRunLoopCF.cpp
     platform/network/cf/NetworkStorageSessionCFNet.cpp
     platform/network/cf/ProxyServerCFNet.cpp
-    platform/network/cf/ResourceErrorCF.cpp
     platform/network/cf/ResourceRequestCFNet.cpp
-    platform/network/cf/ResourceResponseCFNet.cpp
     platform/network/cf/SocketStreamHandleImplCFNet.cpp
-    platform/network/cf/SynchronousLoaderClientCFNet.cpp
-    platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp
 
     platform/network/cocoa/CookieCocoa.mm
     platform/network/cocoa/CookieStorageObserver.mm

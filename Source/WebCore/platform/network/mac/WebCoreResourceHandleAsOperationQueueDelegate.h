@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if !USE(CFURLCONNECTION)
-
 #include <dispatch/dispatch.h>
 #include <wtf/Function.h>
 #include <wtf/MessageQueue.h>
@@ -57,5 +55,3 @@ class ResourceHandle;
 @interface WebCoreResourceHandleWithCredentialStorageAsOperationQueueDelegate : WebCoreResourceHandleAsOperationQueueDelegate
 
 @end
-
-#endif // !USE(CFURLCONNECTION)

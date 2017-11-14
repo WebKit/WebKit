@@ -29,8 +29,6 @@
 #import "config.h"
 #import "FormDataStreamMac.h"
 
-#if !USE(CFURLCONNECTION)
-
 #import "FormDataStreamCFNet.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
 
@@ -52,5 +50,3 @@ FormData* httpBodyFromStream(NSInputStream *stream)
 }
 
 } // namespace WebCore
-
-#endif // !USE(CFURLCONNECTION)

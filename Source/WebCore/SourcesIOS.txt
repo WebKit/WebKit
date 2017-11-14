@@ -114,11 +114,7 @@ platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm @no-unify
 
 platform/network/ios/NetworkStateNotifierIOS.mm
 platform/network/ios/PreviewConverter.mm
-platform/network/ios/ResourceHandleIOS.mm
-platform/network/ios/ResourceRequestIOS.mm
 platform/network/ios/WebCoreURLResponseIOS.mm
-
-platform/network/mac/ResourceRequestMac.mm
 
 platform/text/ios/LocalizedDateCache.mm
 platform/text/ios/TextEncodingRegistryIOS.mm

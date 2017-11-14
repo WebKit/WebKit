@@ -75,13 +75,8 @@ void ResourceResponse::disableLazyInitialization()
 
 CertificateInfo ResourceResponse::platformCertificateInfo() const
 {
-#if USE(CFURLCONNECTION)
-    ASSERT(m_cfResponse || source() == Source::ServiceWorker);
-    CFURLResponseRef cfResponse = m_cfResponse.get();
-#else
     ASSERT(m_nsResponse || source() == Source::ServiceWorker);
     CFURLResponseRef cfResponse = [m_nsResponse _CFURLResponse];
-#endif
 
     if (!cfResponse)
         return { };
@@ -113,35 +108,6 @@ CertificateInfo ResourceResponse::platformCertificateInfo() const
     return CertificateInfo(CertificateInfo::certificateChainFromSecTrust(trust));
 #endif
 }
-
-#if USE(CFURLCONNECTION)
-
-NSURLResponse *ResourceResponse::nsURLResponse() const
-{
-    if (!m_nsResponse && !m_cfResponse && !m_isNull) {
-        initNSURLResponse();
-        m_cfResponse = [m_nsResponse.get() _CFURLResponse];
-        return m_nsResponse.get();
-    }
-
-    if (!m_cfResponse)
-        return nil;
-
-    if (!m_nsResponse)
-        m_nsResponse = [NSURLResponse _responseWithCFURLResponse:m_cfResponse.get()];
-
-    return m_nsResponse.get();
-}
-
-ResourceResponse::ResourceResponse(NSURLResponse* nsResponse)
-    : m_initLevel(Uninitialized)
-    , m_cfResponse([nsResponse _CFURLResponse])
-    , m_nsResponse(nsResponse)
-{
-    m_isNull = !nsResponse;
-}
-
-#else
 
 static NSString* const commonHeaderFields[] = {
     @"Age", @"Cache-Control", @"Content-Type", @"Date", @"Etag", @"Expires", @"Last-Modified", @"Pragma"
@@ -241,8 +207,6 @@ bool ResourceResponse::platformCompare(const ResourceResponse& a, const Resource
 {
     return a.nsURLResponse() == b.nsURLResponse();
 }
-
-#endif // USE(CFURLCONNECTION)
 
 } // namespace WebCore
 

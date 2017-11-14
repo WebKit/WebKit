@@ -31,8 +31,6 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
-#if !USE(CFURLCONNECTION)
-
 #import "Cookie.h"
 #import "CookieStorage.h"
 #import "URL.h"
@@ -42,8 +40,6 @@
 @interface NSURL ()
 - (CFURLRef)_cfurl;
 @end
-
-#endif
 
 namespace WebCore {
 
@@ -65,8 +61,6 @@ static void deleteHTTPCookie(CFHTTPCookieStorageRef cookieStorage, NSHTTPCookie 
     
     CFHTTPCookieStorageDeleteCookie(cookieStorage, [cookie _GetInternalCFHTTPCookie]);
 }
-
-#if !USE(CFURLCONNECTION)
 
 static NSArray *httpCookiesForURL(CFHTTPCookieStorageRef cookieStorage, NSURL *firstParty, NSURL *url)
 {
@@ -347,8 +341,6 @@ void deleteAllCookies(const NetworkStorageSession& session)
 {
     deleteAllHTTPCookies(session.cookieStorage().get());
 }
-
-#endif // !USE(CFURLCONNECTION)
 
 void deleteCookiesForHostnames(const NetworkStorageSession& session, const Vector<String>& hostnames)
 {

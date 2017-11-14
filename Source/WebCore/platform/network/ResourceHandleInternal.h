@@ -121,7 +121,7 @@ public:
     ResourceRequest m_currentRequest;
     RefPtr<ResourceHandleCFURLConnectionDelegate> m_connectionDelegate;
 #endif
-#if PLATFORM(COCOA) && !USE(CFURLCONNECTION)
+#if PLATFORM(COCOA)
     RetainPtr<NSURLConnection> m_connection;
     RetainPtr<id> m_delegate;
 #endif

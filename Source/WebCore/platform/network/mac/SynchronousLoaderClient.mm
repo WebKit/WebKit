@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SynchronousLoaderClient.h"
 
-#if !USE(CFURLCONNECTION)
-
 #include "AuthenticationChallenge.h"
 
 namespace WebCore {
@@ -38,14 +36,10 @@ void SynchronousLoaderClient::didReceiveAuthenticationChallenge(ResourceHandle*,
     [challenge.sender() continueWithoutCredentialForAuthenticationChallenge:challenge.nsURLAuthenticationChallenge()];
 }
 
-#if !USE(CFURLCONNECTION)
 ResourceError SynchronousLoaderClient::platformBadResponseError()
 {
     RetainPtr<NSError> error = adoptNS([[NSError alloc] initWithDomain:NSURLErrorDomain code:NSURLErrorBadServerResponse userInfo:nil]);
     return error.get();
 }
-#endif
 
 }
-
-#endif // !USE(CFURLCONNECTION)

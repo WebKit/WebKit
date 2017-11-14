@@ -35,18 +35,6 @@
 
 namespace WebCore {
 
-#if USE(CFURLCONNECTION)
-
-CFCachedURLResponseRef SubresourceLoader::willCacheResponse(ResourceHandle* handle, CFCachedURLResponseRef cachedResponse)
-{
-    DiskCacheMonitor::monitorFileBackingStoreCreation(request(), m_resource->sessionID(), cachedResponse);
-    if (!m_resource->shouldCacheResponse(CFCachedURLResponseGetWrappedResponse(cachedResponse)))
-        return nullptr;
-    return ResourceLoader::willCacheResponse(handle, cachedResponse);
-}
-
-#else
-
 NSCachedURLResponse* SubresourceLoader::willCacheResponse(ResourceHandle* handle, NSCachedURLResponse* response)
 {
     DiskCacheMonitor::monitorFileBackingStoreCreation(request(), m_resource->sessionID(), [response _CFCachedURLResponse]);
@@ -54,7 +42,5 @@ NSCachedURLResponse* SubresourceLoader::willCacheResponse(ResourceHandle* handle
         return nullptr;
     return ResourceLoader::willCacheResponse(handle, response);
 }
-
-#endif
 
 }

@@ -26,21 +26,16 @@
 #include "config.h"
 #include "CookieStorage.h"
 
+#include "LoaderRunLoopCF.h"
 #include "NetworkStorageSession.h"
+#include <CFNetwork/CFHTTPCookiesPriv.h>
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
-#if PLATFORM(WIN)
-#include "LoaderRunLoopCF.h"
-#include <CFNetwork/CFHTTPCookiesPriv.h>
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
-#endif
-
 namespace WebCore {
-
-#if PLATFORM(WIN)
 
 static HashMap<CFHTTPCookieStorageRef, WTF::Function<void ()>>& cookieChangeCallbackMap()
 {
@@ -100,7 +95,5 @@ void stopObservingCookieChanges(const NetworkStorageSession& storageSession)
     CFHTTPCookieStorageRemoveObserver(cookieStorage.get(), runLoop, kCFRunLoopDefaultMode, notifyCookiesChanged, 0);
     CFHTTPCookieStorageUnscheduleFromRunLoop(cookieStorage.get(), runLoop, kCFRunLoopCommonModes);
 }
-
-#endif // PLATFORM(WIN)
 
 } // namespace WebCore

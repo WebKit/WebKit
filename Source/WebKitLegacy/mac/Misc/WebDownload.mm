@@ -29,7 +29,6 @@
 #import <WebKitLegacy/WebDownload.h>
 
 #import <Foundation/NSURLAuthenticationChallenge.h>
-#import <WebCore/AuthenticationCF.h>
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/Credential.h>
 #import <WebCore/CredentialStorage.h>
@@ -39,11 +38,6 @@
 #import <wtf/Assertions.h>
 
 #import "WebTypesInternal.h"
-
-#if USE(CFURLCONNECTION)
-#import <CFNetwork/CFNetwork.h>
-#import <CFNetwork/CFURLConnection.h>
-#endif
 
 using namespace WebCore;
 
@@ -60,10 +54,6 @@ using namespace WebCore;
 - (id)_initWithRequest:(NSURLRequest *)request
               delegate:(id)delegate
              directory:(NSString *)directory;
-
-#if USE(CFURLCONNECTION)
-- (id)_initWithLoadingCFURLConnection:(CFURLConnectionRef)connection request:(CFURLRequestRef)request response:(CFURLResponseRef)response delegate:(id)delegate proxy:(NSURLConnectionDelegateProxy *)proxy;
-#endif
 
 @end
 
@@ -226,14 +216,6 @@ using namespace WebCore;
     [self _setRealDelegate:delegate];
     return [super _initWithLoadingConnection:connection request:request response:response delegate:_webInternal proxy:proxy];
 }
-
-#if USE(CFURLCONNECTION)
-- (id)_initWithLoadingCFURLConnection:(CFURLConnectionRef)connection request:(CFURLRequestRef)request response:(CFURLResponseRef)response delegate:(id)delegate proxy:(NSURLConnectionDelegateProxy *)proxy
-{
-    [self _setRealDelegate:delegate];
-    return [super _initWithLoadingCFURLConnection:connection request:request response:response delegate:_webInternal proxy:proxy];
-}
-#endif
 
 - (id)_initWithRequest:(NSURLRequest *)request
               delegate:(id)delegate

@@ -33,8 +33,6 @@
 
 namespace WebCore {
 
-#if !USE(CFURLCONNECTION)
-
 static void scheduleAll(const ResourceLoaderMap& loaders, SchedulePair& pair)
 {
     for (auto& loader : copyToVector(loaders.values()))
@@ -64,7 +62,5 @@ void DocumentLoader::unschedule(SchedulePair& pair)
     unscheduleAll(m_plugInStreamLoaders, pair);
     unscheduleAll(m_multipartSubresourceLoaders, pair);
 }
-
-#endif
 
 } // namespace WebCore

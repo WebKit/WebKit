@@ -42,36 +42,8 @@ namespace WebCore {
 NSURLRequest *ResourceRequest::nsURLRequest(HTTPBodyUpdatePolicy bodyPolicy) const
 {
     updatePlatformRequest(bodyPolicy);
-#if USE(CFURLCONNECTION)
-    if (!m_nsRequest)
-        const_cast<ResourceRequest*>(this)->updateNSURLRequest();
-#endif
     return [[m_nsRequest.get() retain] autorelease];
 }
-
-#if USE(CFURLCONNECTION)
-
-void ResourceRequest::clearOrUpdateNSURLRequest()
-{
-    // There is client code that extends NSURLRequest and expects to get back, in the delegate
-    // callbacks, an object of the same type that they passed into WebKit. To keep then running, we
-    // create an object of the same type and return that. See <rdar://9843582>.
-    // Also, developers really really want an NSMutableURLRequest so try to create an
-    // NSMutableURLRequest instead of NSURLRequest.
-    static Class nsURLRequestClass = [NSURLRequest class];
-    static Class nsMutableURLRequestClass = [NSMutableURLRequest class];
-    Class requestClass = [m_nsRequest.get() class];
-    
-    if (!m_cfRequest)
-        return;
-    
-    if (requestClass && requestClass != nsURLRequestClass && requestClass != nsMutableURLRequestClass)
-        m_nsRequest = adoptNS([[requestClass alloc] _initWithCFURLRequest:m_cfRequest.get()]);
-    else
-        m_nsRequest = nullptr;
-}
-
-#else
 
 CFURLRequestRef ResourceRequest::cfURLRequest(HTTPBodyUpdatePolicy bodyPolicy) const
 {
@@ -261,8 +233,6 @@ void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
     updatePlatformRequest();
     m_nsRequest = adoptNS(copyRequestWithStorageSession(storageSession, m_nsRequest.get()));
 }
-
-#endif // USE(CFURLCONNECTION)
 
 NSURLRequest *copyRequestWithStorageSession(CFURLStorageSessionRef storageSession, NSURLRequest *request)
 {

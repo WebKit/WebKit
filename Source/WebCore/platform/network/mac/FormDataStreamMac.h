@@ -28,8 +28,6 @@
 
 #pragma once
 
-#if !USE(CFURLCONNECTION)
-
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 
@@ -47,5 +45,3 @@ FormData* httpBodyFromStream(NSInputStream *);
 CFStringRef formDataStreamLengthPropertyName();
 
 } // namespace WebCore
-
-#endif // !USE(CFURLCONNECTION)

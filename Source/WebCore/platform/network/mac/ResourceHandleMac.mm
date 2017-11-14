@@ -55,16 +55,6 @@
 #import <wtf/text/Base64.h>
 #import <wtf/text/CString.h>
 
-#if USE(CFURLCONNECTION)
-#if USE(APPLE_INTERNAL_SDK)
-#import <CFNetwork/CFURLConnectionPriv.h>
-#endif
-typedef struct _CFURLConnection* CFURLConnectionRef;
-extern "C" {
-CFDictionaryRef _CFURLConnectionCopyTimingData(CFURLConnectionRef);
-}
-#endif // USE(CFURLCONNECTION)
-
 #if PLATFORM(IOS)
 #import "RuntimeApplicationChecks.h"
 #import "WebCoreThreadRun.h"
@@ -77,8 +67,6 @@ using namespace WebCore;
 @end
 
 namespace WebCore {
-    
-#if !USE(CFURLCONNECTION)
     
 static void applyBasicAuthorizationHeader(ResourceRequest& request, const Credential& credential)
 {
@@ -113,12 +101,7 @@ ResourceHandle::~ResourceHandle()
 #if PLATFORM(IOS)
 static bool synchronousWillSendRequestEnabled()
 {
-#if PLATFORM(IOS)
     static bool disabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitDisableSynchronousWillSendRequestPreferenceKey"] || IOSApplication::isIBooks();
-#else
-    static bool disabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitDisableSynchronousWillSendRequestPreferenceKey"];
-#endif
-
     return !disabled;
 }
 #endif
@@ -320,8 +303,6 @@ void ResourceHandle::platformSetDefersLoading(bool defers)
         [d->m_connection setDefersCallbacks:defers];
 }
 
-#if !USE(CFURLCONNECTION)
-
 void ResourceHandle::schedule(SchedulePair& pair)
 {
     NSRunLoop *runLoop = pair.nsRunLoop();
@@ -335,8 +316,6 @@ void ResourceHandle::unschedule(SchedulePair& pair)
     if (NSRunLoop *runLoop = pair.nsRunLoop())
         [d->m_connection.get() unscheduleFromRunLoop:runLoop forMode:(NSString *)pair.mode()];
 }
-
-#endif
 
 id ResourceHandle::makeDelegate(bool shouldUseCredentialStorage, MessageQueue<Function<void()>>* queue)
 {
@@ -689,22 +668,9 @@ void ResourceHandle::continueWillCacheResponse(NSCachedURLResponse *response)
     [(id)delegate() continueWillCacheResponse:response];
 }
 
-#endif // !USE(CFURLCONNECTION)
-
-#if USE(CFURLCONNECTION)
-
-void ResourceHandle::getConnectionTimingData(CFURLConnectionRef connection, NetworkLoadMetrics& timing)
-{
-    copyTimingData((__bridge NSDictionary*)adoptCF(_CFURLConnectionCopyTimingData(connection)).get(), timing);
-}
-
-#else
-
 void ResourceHandle::getConnectionTimingData(NSURLConnection *connection, NetworkLoadMetrics& timing)
 {
     copyTimingData([connection _timingData], timing);
 }
-
-#endif
 
 } // namespace WebCore

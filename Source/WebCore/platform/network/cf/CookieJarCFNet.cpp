@@ -35,21 +35,16 @@
 #include "URL.h"
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <pal/spi/cf/CFNetworkSPI.h>
+#include <windows.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(WIN)
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
-#include <windows.h>
-#endif
-
-#if PLATFORM(WIN)
 enum {
     CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain = 3
 };
-#endif
 
 namespace WTF {
 
@@ -130,22 +125,13 @@ static RetainPtr<CFArrayRef> copyCookiesForURLWithFirstPartyURL(const NetworkSto
 
     ASSERT(!secure || (secure && url.protocolIs("https")));
 
-#if PLATFORM(COCOA)
-    return adoptCF(_CFHTTPCookieStorageCopyCookiesForURLWithMainDocumentURL(session.cookieStorage().get(), url.createCFURL().get(), firstParty.createCFURL().get(), secure));
-#else
-    // _CFHTTPCookieStorageCopyCookiesForURLWithMainDocumentURL is not available on other platforms.
     UNUSED_PARAM(firstParty);
     return adoptCF(CFHTTPCookieStorageCopyCookiesForURL(session.cookieStorage().get(), url.createCFURL().get(), secure));
-#endif
 }
 
 static CFArrayRef createCookies(CFDictionaryRef headerFields, CFURLRef url)
 {
-#if PLATFORM(IOS)
-    CFArrayRef parsedCookies = _CFHTTPParsedCookiesWithResponseHeaderFields(kCFAllocatorDefault, headerFields, url);
-#else
     CFArrayRef parsedCookies = CFHTTPCookieCreateWithResponseHeaderFields(kCFAllocatorDefault, headerFields, url);
-#endif
     if (!parsedCookies)
         parsedCookies = CFArrayCreate(kCFAllocatorDefault, 0, 0, &kCFTypeArrayCallBacks);
 
@@ -288,7 +274,6 @@ void deleteAllCookies(const NetworkStorageSession& session)
     CFHTTPCookieStorageDeleteAllCookies(session.cookieStorage().get());
 }
 
-#if PLATFORM(WIN)
 void deleteCookiesForHostnames(const NetworkStorageSession& session, const Vector<String>& hostnames)
 {
 }
@@ -296,7 +281,6 @@ void deleteCookiesForHostnames(const NetworkStorageSession& session, const Vecto
 void deleteAllCookiesModifiedSince(const NetworkStorageSession&, std::chrono::system_clock::time_point)
 {
 }
-#endif
 
 } // namespace WebCore
 

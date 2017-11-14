@@ -31,23 +31,8 @@
 
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "SharedBuffer.h"
-#include <pal/spi/cf/CFNetworkSPI.h>
 
 namespace WebCore {
-
-#if USE(CFURLCONNECTION)
-
-CFCachedURLResponseRef ResourceLoader::willCacheResponse(ResourceHandle*, CFCachedURLResponseRef cachedResponse)
-{
-    if (m_options.sendLoadCallbacks == DoNotSendCallbacks)
-        return nullptr;
-
-    RetainPtr<NSCachedURLResponse> nsCachedResponse = adoptNS([[NSCachedURLResponse alloc] _initWithCFCachedURLResponse:cachedResponse]);
-    return [frameLoader()->client().willCacheResponse(documentLoader(), identifier(), nsCachedResponse.get()) _CFCachedURLResponse];
-}
-
-#else
 
 NSCachedURLResponse* ResourceLoader::willCacheResponse(ResourceHandle*, NSCachedURLResponse* response)
 {
@@ -55,7 +40,5 @@ NSCachedURLResponse* ResourceLoader::willCacheResponse(ResourceHandle*, NSCached
         return nullptr;
     return frameLoader()->client().willCacheResponse(documentLoader(), identifier(), response);
 }
-
-#endif
 
 }

@@ -53,7 +53,7 @@
 #include <wtf/RunLoopTimer.h>
 #endif
 
-#if PLATFORM(COCOA) && !USE(CFURLCONNECTION)
+#if PLATFORM(COCOA)
 #include <wtf/SchedulePair.h>
 #endif
 
@@ -156,7 +156,7 @@ public:
     WEBCORE_EXPORT void setTitle(const StringWithDirection&);
     const String& overrideEncoding() const { return m_overrideEncoding; }
 
-#if PLATFORM(COCOA) && !USE(CFURLCONNECTION)
+#if PLATFORM(COCOA)
     void schedule(SchedulePair&);
     void unschedule(SchedulePair&);
 #endif

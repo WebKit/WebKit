@@ -151,9 +151,6 @@ private:
     RetainPtr<NSURLDownload> m_nsURLDownload;
     RetainPtr<WKDownloadAsDelegate> m_delegate;
 #endif
-#if USE(CFURLCONNECTION)
-    RetainPtr<CFURLDownloadRef> m_download;
-#endif
     std::unique_ptr<WebCore::ResourceHandleClient> m_downloadClient;
     RefPtr<WebCore::ResourceHandle> m_resourceHandle;
 #endif // USE(NETWORK_SESSION)
