@@ -61,7 +61,6 @@ void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, cons
 {
     UNUSED_PARAM(imageSize);
 
-    ASSERT(hasPlatformContext());
     Cairo::drawNativeImage(*context.platformContext(), image, destRect, srcRect, compositeOperator, blendMode, orientation, context);
 }
 
