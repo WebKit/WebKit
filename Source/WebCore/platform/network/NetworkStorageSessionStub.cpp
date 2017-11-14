@@ -47,11 +47,6 @@ NetworkingContext* NetworkStorageSession::context() const
     return m_context.get();
 }
 
-void NetworkStorageSession::ensurePrivateBrowsingSession(PAL::SessionID, const String&)
-{
-    ASSERT_NOT_REACHED();
-}
-
 void NetworkStorageSession::ensureSession(PAL::SessionID, const String&)
 {
     ASSERT_NOT_REACHED();
