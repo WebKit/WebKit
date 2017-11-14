@@ -137,7 +137,7 @@ static void instantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSW
 {
     auto scope = DECLARE_CATCH_SCOPE(vm);
     // In order to avoid potentially recompiling a module. We first gather all the import/memory information prior to compiling code.
-    JSWebAssemblyInstance* instance = JSWebAssemblyInstance::create(vm, exec, module, importObject, exec->lexicalGlobalObject()->WebAssemblyInstanceStructure(), Wasm::Instance::create(&vm.wasmContext, Ref<Wasm::Module>(module->module()), &vm.topEntryFrame));
+    JSWebAssemblyInstance* instance = JSWebAssemblyInstance::create(vm, exec, module, importObject, exec->lexicalGlobalObject()->WebAssemblyInstanceStructure(), Ref<Wasm::Module>(module->module()));
     RETURN_IF_EXCEPTION(scope, reject(exec, scope, promise));
 
     Vector<Strong<JSCell>> dependencies;

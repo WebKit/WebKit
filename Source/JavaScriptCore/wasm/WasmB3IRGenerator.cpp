@@ -558,7 +558,9 @@ auto B3IRGenerator::addUnreachable() -> PartialResult
 
 auto B3IRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) -> PartialResult
 {
-    int32_t (*growMemory)(Instance*, int32_t) = [] (Instance* instance, int32_t delta) -> int32_t {
+    int32_t (*growMemory)(void*, Instance*, int32_t) = [] (void* callFrame, Instance* instance, int32_t delta) -> int32_t {
+        instance->storeTopCallFrame(callFrame);
+
         if (delta < 0)
             return -1;
 
@@ -571,6 +573,7 @@ auto B3IRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) 
             case Memory::GrowFailReason::OutOfMemory:
                 return -1;
             }
+            RELEASE_ASSERT_NOT_REACHED();
         }
 
         return grown.value().pageCount();
@@ -578,7 +581,7 @@ auto B3IRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) 
 
     result = m_currentBlock->appendNew<CCallValue>(m_proc, Int32, origin(),
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), bitwise_cast<void*>(growMemory)),
-        instanceValue(), delta);
+        m_currentBlock->appendNew<B3::Value>(m_proc, B3::FramePointer, origin()), instanceValue(), delta);
 
     restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_proc, m_currentBlock);
 

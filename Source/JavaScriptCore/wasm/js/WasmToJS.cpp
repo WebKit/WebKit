@@ -638,25 +638,25 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
 
 void* wasmToJSException(ExecState* exec, Wasm::ExceptionType type, Instance* wasmInstance)
 {
+    wasmInstance->storeTopCallFrame(exec);
     JSWebAssemblyInstance* instance = wasmInstance->owner<JSWebAssemblyInstance>();
-    VM* vm = instance->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    JSGlobalObject* globalObject = instance->globalObject();
+    VM& vm = globalObject->vm();
 
     {
-        auto throwScope = DECLARE_THROW_SCOPE(*vm);
-        JSGlobalObject* globalObject = instance->globalObject();
+        auto throwScope = DECLARE_THROW_SCOPE(vm);
 
         JSObject* error;
         if (type == ExceptionType::StackOverflow)
             error = createStackOverflowError(exec, globalObject);
         else
-            error = JSWebAssemblyRuntimeError::create(exec, *vm, globalObject->WebAssemblyRuntimeErrorStructure(), Wasm::errorMessageForExceptionType(type));
+            error = JSWebAssemblyRuntimeError::create(exec, vm, globalObject->WebAssemblyRuntimeErrorStructure(), Wasm::errorMessageForExceptionType(type));
         throwException(exec, throwScope, error);
     }
 
-    genericUnwind(vm, exec);
-    ASSERT(!!vm->callFrameForCatch);
-    ASSERT(!!vm->targetMachinePCForThrow);
+    genericUnwind(&vm, exec);
+    ASSERT(!!vm.callFrameForCatch);
+    ASSERT(!!vm.targetMachinePCForThrow);
     // FIXME: We could make this better:
     // This is a total hack, but the llint (both op_catch and handleUncaughtException)
     // require a cell in the callee field to load the VM. (The baseline JIT does not require
@@ -665,7 +665,7 @@ void* wasmToJSException(ExecState* exec, Wasm::ExceptionType type, Instance* was
     // to the exception handler. If we did this, we could remove this terrible hack.
     // https://bugs.webkit.org/show_bug.cgi?id=170440
     bitwise_cast<uint64_t*>(exec)[CallFrameSlot::callee] = bitwise_cast<uint64_t>(instance->webAssemblyToJSCallee());
-    return vm->targetMachinePCForThrow;
+    return vm.targetMachinePCForThrow;
 }
 
 } } // namespace JSC::Wasm

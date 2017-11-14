@@ -1,3 +1,37 @@
+2017-11-14  Saam Barati  <sbarati@apple.com>
+
+        We need to set topCallFrame when calling Wasm::Memory::grow from the JIT
+        https://bugs.webkit.org/show_bug.cgi?id=179639
+        <rdar://problem/35513018>
+
+        Reviewed by JF Bastien.
+
+        Calling Wasm::Memory::grow from the JIT may cause us to GC. When we GC, we will
+        walk the stack for ShadowChicken (and maybe other things). We weren't updating
+        topCallFrame when calling grow from the Wasm JIT. This would cause the GC to
+        use stale topCallFrame bits in VM, often leading to crashes. This patch fixes
+        this bug by giving Wasm::Instance a lambda that is called when we need to store
+        the topCallFrame. Users of Wasm::Instance can provide a function to do this action.
+        Currently, JSWebAssemblyInstance passes in a lambda that stores to
+        VM.topCallFrame.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addGrowMemory):
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::Instance):
+        (JSC::Wasm::Instance::create):
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::storeTopCallFrame):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::create):
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJSException):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::instantiate):
+
 2017-11-13  Saam Barati  <sbarati@apple.com>
 
         Remove pointer caging for HashMapImpl, JSLexicalEnvironment, DirectArguments, ScopedArguments, and ScopedArgumentsTable

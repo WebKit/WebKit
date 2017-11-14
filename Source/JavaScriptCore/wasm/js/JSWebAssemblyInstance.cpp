@@ -135,7 +135,7 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec, Ref<Wasm::
     RETURN_IF_EXCEPTION(scope, void());
 }
 
-JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JSWebAssemblyModule* jsModule, JSObject* importObject, Structure* instanceStructure, Ref<Wasm::Instance>&& instance)
+JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JSWebAssemblyModule* jsModule, JSObject* importObject, Structure* instanceStructure, Ref<Wasm::Module>&& module)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* globalObject = exec->lexicalGlobalObject();
@@ -163,8 +163,14 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
     JSModuleNamespaceObject* moduleNamespace = moduleRecord->getModuleNamespace(exec);
+
+    auto storeTopCallFrame = [&vm] (void* topCallFrame) {
+        vm.topCallFrame = bitwise_cast<ExecState*>(topCallFrame);
+    };
+
     // FIXME: These objects could be pretty big we should try to throw OOM here.
-    auto* jsInstance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm.heap)) JSWebAssemblyInstance(vm, instanceStructure, WTFMove(instance));
+    auto* jsInstance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm.heap)) JSWebAssemblyInstance(vm, instanceStructure, 
+        Wasm::Instance::create(&vm.wasmContext, WTFMove(module), &vm.topEntryFrame, WTFMove(storeTopCallFrame)));
     jsInstance->finishCreation(vm, jsModule, moduleNamespace);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 

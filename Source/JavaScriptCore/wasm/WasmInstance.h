@@ -42,7 +42,9 @@ struct Context;
 
 class Instance : public ThreadSafeRefCounted<Instance> {
 public:
-    static Ref<Instance> create(Context* context, Ref<Module>&& module, EntryFrame** topEntryFramePointer);
+    using StoreTopCallFrameCallback = WTF::Function<void(void*)>;
+
+    static Ref<Instance> create(Context*, Ref<Module>&&, EntryFrame** topEntryFramePointer, StoreTopCallFrameCallback&&);
 
     void finalizeCreation(void* owner, Ref<CodeBlock>&& codeBlock)
     {
@@ -103,8 +105,13 @@ public:
     static size_t offsetOfImportFunction(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, importFunction); }
     template<typename T> T* importFunction(unsigned importFunctionNum) { return reinterpret_cast<T*>(&importFunctionInfo(importFunctionNum)->importFunction); }
 
+    void storeTopCallFrame(void* callFrame)
+    {
+        m_storeTopCallFrame(callFrame);
+    }
+
 private:
-    Instance(Context* context, Ref<Module>&&, EntryFrame**);
+    Instance(Context*, Ref<Module>&&, EntryFrame**, StoreTopCallFrameCallback&&);
     
     static size_t allocationSize(Checked<size_t> numImportFunctions)
     {
@@ -120,7 +127,7 @@ private:
     MallocPtr<uint64_t> m_globals;
     EntryFrame** m_topEntryFramePointer { nullptr };
     void* m_cachedStackLimit { bitwise_cast<void*>(std::numeric_limits<uintptr_t>::max()) };
-    
+    StoreTopCallFrameCallback m_storeTopCallFrame;
     unsigned m_numImportFunctions { 0 };
 };
 
