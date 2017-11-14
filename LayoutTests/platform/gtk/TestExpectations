@@ -2905,13 +2905,11 @@ webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/interactive-e
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 
 # web-platform-tests XHR tests
-imported/w3c/web-platform-tests/XMLHttpRequest/headers-normalize-response.htm [ Failure ]
-imported/w3c/web-platform-tests/XMLHttpRequest/status-async.htm [ Failure ]
-imported/w3c/web-platform-tests/XMLHttpRequest/status-basic.htm [ Failure ]
-imported/w3c/web-platform-tests/XMLHttpRequest/status-error.htm [ Failure ]
+webkit.org/b/179663 imported/w3c/web-platform-tests/XMLHttpRequest/headers-normalize-response.htm [ Failure ]
+webkit.org/b/179662 imported/w3c/web-platform-tests/XMLHttpRequest/status-async.htm [ Failure ]
+webkit.org/b/179662 imported/w3c/web-platform-tests/XMLHttpRequest/status-basic.htm [ Failure ]
+webkit.org/b/179662 imported/w3c/web-platform-tests/XMLHttpRequest/status-error.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm [ Slow ]
-imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-none.htm [ Pass ]
-imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-empty.htm  [ Pass ]
 
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video.html [ Failure ]
 
