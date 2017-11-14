@@ -272,62 +272,8 @@ void GraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point
         return;
     }
 
-    const Color& strokeColor = this->strokeColor();
-    float thickness = strokeThickness();
-    bool isVerticalLine = (point1.x() + thickness == point2.x());
-    float strokeWidth = isVerticalLine ? point2.y() - point1.y() : point2.x() - point1.x();
-    if (!thickness || !strokeWidth)
-        return;
-
-    cairo_t* cairoContext = platformContext()->cr();
-    StrokeStyle strokeStyle = this->strokeStyle();
-    float cornerWidth = 0;
-    bool drawsDashedLine = strokeStyle == DottedStroke || strokeStyle == DashedStroke;
-
-    if (drawsDashedLine) {
-        cairo_save(cairoContext);
-        // Figure out end points to ensure we always paint corners.
-        cornerWidth = dashedLineCornerWidthForStrokeWidth(strokeWidth);
-        if (isVerticalLine) {
-            fillRectWithColor(cairoContext, FloatRect(point1.x(), point1.y(), thickness, cornerWidth), strokeColor);
-            fillRectWithColor(cairoContext, FloatRect(point1.x(), point2.y() - cornerWidth, thickness, cornerWidth), strokeColor);
-        } else {
-            fillRectWithColor(cairoContext, FloatRect(point1.x(), point1.y(), cornerWidth, thickness), strokeColor);
-            fillRectWithColor(cairoContext, FloatRect(point2.x() - cornerWidth, point1.y(), cornerWidth, thickness), strokeColor);
-        }
-        strokeWidth -= 2 * cornerWidth;
-        float patternWidth = dashedLinePatternWidthForStrokeWidth(strokeWidth);
-        // Check if corner drawing sufficiently covers the line.
-        if (strokeWidth <= patternWidth + 1) {
-            cairo_restore(cairoContext);
-            return;
-        }
-
-        float patternOffset = dashedLinePatternOffsetForPatternAndStrokeWidth(patternWidth, strokeWidth);
-        const double dashedLine[2] = { static_cast<double>(patternWidth), static_cast<double>(patternWidth) };
-        cairo_set_dash(cairoContext, dashedLine, 2, patternOffset);
-    } else {
-        setSourceRGBAFromColor(cairoContext, strokeColor);
-        if (thickness < 1)
-            cairo_set_line_width(cairoContext, 1);
-    }
-
-
-    auto centeredPoints = centerLineAndCutOffCorners(isVerticalLine, cornerWidth, point1, point2);
-    auto p1 = centeredPoints[0];
-    auto p2 = centeredPoints[1];
-
-    if (shouldAntialias())
-        cairo_set_antialias(cairoContext, CAIRO_ANTIALIAS_NONE);
-
-    cairo_new_path(cairoContext);
-    cairo_move_to(cairoContext, p1.x(), p1.y());
-    cairo_line_to(cairoContext, p2.x(), p2.y());
-    cairo_stroke(cairoContext);
-    if (drawsDashedLine)
-        cairo_restore(cairoContext);
-    if (shouldAntialias())
-        cairo_set_antialias(cairoContext, CAIRO_ANTIALIAS_DEFAULT);
+    ASSERT(hasPlatformContext());
+    Cairo::drawLine(*platformContext(), point1, point2, state());
 }
 
 // This method is only used to draw the little circles used in lists.

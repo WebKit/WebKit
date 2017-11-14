@@ -266,6 +266,65 @@ FloatRect computeLineBoundsAndAntialiasingModeForText(PlatformContextCairo& plat
     return FloatRect(origin, FloatSize(width, thickness));
 };
 
+// FIXME: Replace once GraphicsContext::dashedLineCornerWidthForStrokeWidth()
+// is refactored as a static public function.
+static float dashedLineCornerWidthForStrokeWidth(float strokeWidth, const GraphicsContextState& state)
+{
+    float thickness = state.strokeThickness;
+    return state.strokeStyle == DottedStroke ? thickness : std::min(2.0f * thickness, std::max(thickness, strokeWidth / 3.0f));
+}
+
+// FIXME: Replace once GraphicsContext::dashedLinePatternWidthForStrokeWidth()
+// is refactored as a static public function.
+static float dashedLinePatternWidthForStrokeWidth(float strokeWidth, const GraphicsContextState& state)
+{
+    float thickness = state.strokeThickness;
+    return state.strokeStyle == DottedStroke ? thickness : std::min(3.0f * thickness, std::max(thickness, strokeWidth / 3.0f));
+}
+
+// FIXME: Replace once GraphicsContext::dashedLinePatternOffsetForPatternAndStrokeWidth()
+// is refactored as a static public function.
+static float dashedLinePatternOffsetForPatternAndStrokeWidth(float patternWidth, float strokeWidth)
+{
+    // Pattern starts with full fill and ends with the empty fill.
+    // 1. Let's start with the empty phase after the corner.
+    // 2. Check if we've got odd or even number of patterns and whether they fully cover the line.
+    // 3. In case of even number of patterns and/or remainder, move the pattern start position
+    // so that the pattern is balanced between the corners.
+    float patternOffset = patternWidth;
+    int numberOfSegments = std::floor(strokeWidth / patternWidth);
+    bool oddNumberOfSegments = numberOfSegments % 2;
+    float remainder = strokeWidth - (numberOfSegments * patternWidth);
+    if (oddNumberOfSegments && remainder)
+        patternOffset -= remainder / 2.0f;
+    else if (!oddNumberOfSegments) {
+        if (remainder)
+            patternOffset += patternOffset - (patternWidth + remainder) / 2.0f;
+        else
+            patternOffset += patternWidth / 2.0f;
+    }
+
+    return patternOffset;
+}
+
+// FIXME: Replace once GraphicsContext::centerLineAndCutOffCorners()
+// is refactored as a static public function.
+static Vector<FloatPoint> centerLineAndCutOffCorners(bool isVerticalLine, float cornerWidth, FloatPoint point1, FloatPoint point2)
+{
+    // Center line and cut off corners for pattern painting.
+    if (isVerticalLine) {
+        float centerOffset = (point2.x() - point1.x()) / 2.0f;
+        point1.move(centerOffset, cornerWidth);
+        point2.move(-centerOffset, -cornerWidth);
+    } else {
+        float centerOffset = (point2.y() - point1.y()) / 2.0f;
+        point1.move(cornerWidth, centerOffset);
+        point2.move(-cornerWidth, -centerOffset);
+    }
+
+    return { point1, point2 };
+}
+
 namespace State {
 
 void setStrokeThickness(PlatformContextCairo& platformContext, float strokeThickness)
@@ -654,6 +713,64 @@ void drawRect(PlatformContextCairo& platformContext, const FloatRect& rect, floa
     }
 
     cairo_restore(cr);
+}
+
+void drawLine(PlatformContextCairo& platformContext, const FloatPoint& point1, const FloatPoint& point2, const GraphicsContextState& state)
+{
+    bool isVerticalLine = (point1.x() + state.strokeThickness == point2.x());
+    float strokeWidth = isVerticalLine ? point2.y() - point1.y() : point2.x() - point1.x();
+    if (!state.strokeThickness || !strokeWidth)
+        return;
+
+    cairo_t* cairoContext = platformContext.cr();
+    float cornerWidth = 0;
+    bool drawsDashedLine = state.strokeStyle == DottedStroke || state.strokeStyle == DashedStroke;
+
+    if (drawsDashedLine) {
+        cairo_save(cairoContext);
+        // Figure out end points to ensure we always paint corners.
+        cornerWidth = dashedLineCornerWidthForStrokeWidth(strokeWidth, state);
+        if (isVerticalLine) {
+            fillRectWithColor(cairoContext, FloatRect(point1.x(), point1.y(), state.strokeThickness, cornerWidth), state.strokeColor);
+            fillRectWithColor(cairoContext, FloatRect(point1.x(), point2.y() - cornerWidth, state.strokeThickness, cornerWidth), state.strokeColor);
+        } else {
+            fillRectWithColor(cairoContext, FloatRect(point1.x(), point1.y(), cornerWidth, state.strokeThickness), state.strokeColor);
+            fillRectWithColor(cairoContext, FloatRect(point2.x() - cornerWidth, point1.y(), cornerWidth, state.strokeThickness), state.strokeColor);
+        }
+        strokeWidth -= 2 * cornerWidth;
+        float patternWidth = dashedLinePatternWidthForStrokeWidth(strokeWidth, state);
+        // Check if corner drawing sufficiently covers the line.
+        if (strokeWidth <= patternWidth + 1) {
+            cairo_restore(cairoContext);
+            return;
+        }
+
+        float patternOffset = dashedLinePatternOffsetForPatternAndStrokeWidth(patternWidth, strokeWidth);
+        const double dashedLine[2] = { static_cast<double>(patternWidth), static_cast<double>(patternWidth) };
+        cairo_set_dash(cairoContext, dashedLine, 2, patternOffset);
+    } else {
+        setSourceRGBAFromColor(cairoContext, state.strokeColor);
+        if (state.strokeThickness < 1)
+            cairo_set_line_width(cairoContext, 1);
+    }
+
+
+    auto centeredPoints = centerLineAndCutOffCorners(isVerticalLine, cornerWidth, point1, point2);
+    auto p1 = centeredPoints[0];
+    auto p2 = centeredPoints[1];
+
+    if (state.shouldAntialias)
+        cairo_set_antialias(cairoContext, CAIRO_ANTIALIAS_NONE);
+
+    cairo_new_path(cairoContext);
+    cairo_move_to(cairoContext, p1.x(), p1.y());
+    cairo_line_to(cairoContext, p2.x(), p2.y());
+    cairo_stroke(cairoContext);
+    if (drawsDashedLine)
+        cairo_restore(cairoContext);
+
+    if (state.shouldAntialias)
+        cairo_set_antialias(cairoContext, CAIRO_ANTIALIAS_DEFAULT);
 }
 
 void drawLinesForText(PlatformContextCairo& platformContext, const FloatPoint& point, const DashArray& widths, bool printing, bool doubleUnderlines, const Color& color, float strokeThickness)
