@@ -39,9 +39,7 @@
 // https://bugs.webkit.org/show_bug.cgi?id=177605
 #define GIGACAGE_RUNWAY 0
 #else
-// FIXME: Consider making this 32GB, in case unsigned 32-bit indices find their way into indexed accesses.
-// https://bugs.webkit.org/show_bug.cgi?id=175062
-#define GIGACAGE_RUNWAY (16llu * 1024 * 1024 * 1024)
+#define GIGACAGE_RUNWAY (32llu * 1024 * 1024 * 1024)
 #endif
 
 char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE] __attribute__((aligned(GIGACAGE_BASE_PTRS_SIZE)));

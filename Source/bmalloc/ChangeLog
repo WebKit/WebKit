@@ -1,3 +1,20 @@
+2017-11-14  Saam Barati  <sbarati@apple.com>
+
+        Make the gigacage runway 32GB
+        https://bugs.webkit.org/show_bug.cgi?id=175062
+
+        Reviewed by Mark Lam.
+
+        Making the gigacage runway 32GB defends us against buffer overflows in the
+        cage reaching memory outside the cage assuming indices are 32-bit unsigned
+        integers and the type they're indexing into has size <= 8 bytes. This is
+        exactly the case for many things in JSC. For example, butterfly access in
+        JSC meet this criteria, as does typed array access.
+        
+        The 32GB comes from 8 * 2^32 = 32GB.
+
+        * bmalloc/Gigacage.cpp:
+
 2017-11-08  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Gigacage.cpp:44:46: warning: ‘*’ in boolean context, suggest ‘&&’ instead [-Wint-in-bool-context]
