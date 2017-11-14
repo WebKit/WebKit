@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CallFrame.h"
 #include "VM.h"
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Expected.h>
@@ -60,6 +61,17 @@ public:
 
     Expected<bool, Error> isValidExecutableMemory(const Locker&, void*);
     Expected<CodeBlock*, Error> codeBlockForMachinePC(const Locker&, void*);
+
+    JS_EXPORT_PRIVATE static bool currentThreadOwnsJSLock(ExecState*);
+    JS_EXPORT_PRIVATE static void gc(ExecState*);
+    JS_EXPORT_PRIVATE static void edenGC(ExecState*);
+    JS_EXPORT_PRIVATE static bool isInHeap(Heap*, void*);
+    JS_EXPORT_PRIVATE static bool isValidCell(Heap*, JSCell*);
+    JS_EXPORT_PRIVATE static bool isValidCodeBlock(ExecState*, CodeBlock*);
+    JS_EXPORT_PRIVATE static CodeBlock* codeBlockForFrame(CallFrame* topCallFrame, unsigned frameNumber);
+    JS_EXPORT_PRIVATE static void printCallFrame(CallFrame*, unsigned framesToSkip);
+    JS_EXPORT_PRIVATE static void printStack(CallFrame* topCallFrame, unsigned framesToSkip);
+    JS_EXPORT_PRIVATE static void printValue(JSValue);
 
 private:
     template <typename Functor> void iterate(const Functor& functor)

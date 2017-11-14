@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,11 +39,11 @@ public:
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
-    
-    static JSDollarVM* create(VM& vm, Structure* structure)
+
+    static JSDollarVM* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
         JSDollarVM* instance = new (NotNull, allocateCell<JSDollarVM>(vm.heap)) JSDollarVM(vm, structure);
-        instance->finishCreation(vm);
+        instance->finishCreation(vm, globalObject);
         return instance;
     }
     
@@ -52,6 +52,9 @@ private:
         : Base(vm, structure)
     {
     }
+
+    void finishCreation(VM&, JSGlobalObject*);
+    void addFunction(VM&, JSGlobalObject*, const char* name, NativeFunction, unsigned arguments);
 };
 
 } // namespace JSC

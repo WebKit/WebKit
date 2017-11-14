@@ -1716,7 +1716,6 @@
 		FE318FE01CAC982F00DFCC54 /* ECMAScriptSpecInternalFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = FE318FDE1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.h */; };
 		FE3422121D6B81C30032BE88 /* ThrowScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3422111D6B818C0032BE88 /* ThrowScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE384EE61ADDB7AD0055DE2C /* JSDollarVM.h in Headers */ = {isa = PBXBuildFile; fileRef = FE384EE21ADDB7AD0055DE2C /* JSDollarVM.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FE384EE81ADDB7AD0055DE2C /* JSDollarVMPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = FE384EE41ADDB7AD0055DE2C /* JSDollarVMPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE3A06A61C10B72D00390FDD /* JITBitOrGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06A41C10B70800390FDD /* JITBitOrGenerator.h */; };
 		FE3A06A81C10BC8100390FDD /* JITBitBinaryOpGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06A71C10BC7400390FDD /* JITBitBinaryOpGenerator.h */; };
 		FE3A06B21C10CB8900390FDD /* JITBitAndGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06AE1C10CB6F00390FDD /* JITBitAndGenerator.h */; };
@@ -3181,9 +3180,9 @@
 		530A66B51FA3E77D0026A545 /* UnifiedSource5-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource5-mm.mm"; sourceTree = "<group>"; };
 		530A66B61FA3E77D0026A545 /* UnifiedSource142.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource142.cpp; sourceTree = "<group>"; };
 		530A66B71FA3E77D0026A545 /* UnifiedSource143.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource143.cpp; sourceTree = "<group>"; };
-                530A66B81FA3E77E0026A545 /* UnifiedSource4-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource4-mm.mm"; sourceTree = "<group>"; };
-                530A66CC1FB1346D0026A545 /* SuperSamplerBytecodeScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SuperSamplerBytecodeScope.h; sourceTree = "<group>"; };
-                530FB3011E7A0B6E003C19DD /* WasmWorklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmWorklist.h; sourceTree = "<group>"; };
+		530A66B81FA3E77E0026A545 /* UnifiedSource4-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource4-mm.mm"; sourceTree = "<group>"; };
+		530A66CC1FB1346D0026A545 /* SuperSamplerBytecodeScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SuperSamplerBytecodeScope.h; sourceTree = "<group>"; };
+		530FB3011E7A0B6E003C19DD /* WasmWorklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmWorklist.h; sourceTree = "<group>"; };
 		530FB3031E7A1146003C19DD /* WasmWorklist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmWorklist.cpp; sourceTree = "<group>"; };
 		5311BD481EA581E500525281 /* WasmOMGPlan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmOMGPlan.cpp; sourceTree = "<group>"; };
 		5311BD491EA581E500525281 /* WasmOMGPlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmOMGPlan.h; sourceTree = "<group>"; };
@@ -4584,8 +4583,6 @@
 		FE3422111D6B818C0032BE88 /* ThrowScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThrowScope.h; sourceTree = "<group>"; };
 		FE384EE11ADDB7AD0055DE2C /* JSDollarVM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDollarVM.cpp; sourceTree = "<group>"; };
 		FE384EE21ADDB7AD0055DE2C /* JSDollarVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDollarVM.h; sourceTree = "<group>"; };
-		FE384EE31ADDB7AD0055DE2C /* JSDollarVMPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDollarVMPrototype.cpp; sourceTree = "<group>"; };
-		FE384EE41ADDB7AD0055DE2C /* JSDollarVMPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDollarVMPrototype.h; sourceTree = "<group>"; };
 		FE3A06A31C10B70800390FDD /* JITBitOrGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITBitOrGenerator.cpp; sourceTree = "<group>"; };
 		FE3A06A41C10B70800390FDD /* JITBitOrGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITBitOrGenerator.h; sourceTree = "<group>"; };
 		FE3A06A71C10BC7400390FDD /* JITBitBinaryOpGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITBitBinaryOpGenerator.h; sourceTree = "<group>"; };
@@ -6899,8 +6896,6 @@
 				FE1BD0231E72052F00134BC9 /* HeapVerifier.h */,
 				FE384EE11ADDB7AD0055DE2C /* JSDollarVM.cpp */,
 				FE384EE21ADDB7AD0055DE2C /* JSDollarVM.h */,
-				FE384EE31ADDB7AD0055DE2C /* JSDollarVMPrototype.cpp */,
-				FE384EE41ADDB7AD0055DE2C /* JSDollarVMPrototype.h */,
 				86B5822C14D22F5F00A9C306 /* ProfileTreeNode.h */,
 				FE3022D01E3D739600BAC493 /* SigillCrashAnalyzer.cpp */,
 				FE3022D11E3D739600BAC493 /* SigillCrashAnalyzer.h */,
@@ -8780,7 +8775,6 @@
 				C2A7F688160432D400F76B98 /* JSDestructibleObject.h in Headers */,
 				0F7DF13C1E2971130095951B /* JSDestructibleObjectSubspace.h in Headers */,
 				FE384EE61ADDB7AD0055DE2C /* JSDollarVM.h in Headers */,
-				FE384EE81ADDB7AD0055DE2C /* JSDollarVMPrototype.h in Headers */,
 				86E3C614167BABD7006D760A /* JSExport.h in Headers */,
 				A7B4ACAF1484C9CE00B38A36 /* JSExportMacros.h in Headers */,
 				798937791DCAB57300F8D4FB /* JSFixedArray.h in Headers */,

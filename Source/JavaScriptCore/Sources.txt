@@ -932,7 +932,6 @@ tools/FunctionOverrides.cpp
 tools/FunctionWhitelist.cpp
 tools/HeapVerifier.cpp
 tools/JSDollarVM.cpp
-tools/JSDollarVMPrototype.cpp
 tools/SigillCrashAnalyzer.cpp
 tools/VMInspector.cpp
 

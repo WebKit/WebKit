@@ -1,3 +1,73 @@
+2017-11-14  Mark Lam  <mark.lam@apple.com>
+
+        Remove JSDollarVMPrototype.
+        https://bugs.webkit.org/show_bug.cgi?id=179685
+
+        Reviewed by Saam Barati.
+
+        1. Move the JSDollarVMPrototype C++ utility functions into VMInspector.cpp.
+
+           This allows us to call these functions during lldb debugging sessions using
+           VMInspector::foo() instead of JSDollarVMPrototype::foo().  It makes sense that
+           VMInspector provides VM debugging utility methods.  It doesn't make sense to
+           have a JSDollarVMPrototype object provide these methods.
+
+           Plus, it's shorter to type VMInspector than JSDollarVMPrototype.
+
+        2. Move the JSDollarVMPrototype JS functions into JSDollarVM.cpp.
+
+           JSDollarVM is a special object used only for debugging purposes.  There's no
+           gain in requiring its methods to be stored in a prototype object other than to
+           conform to typical JS convention.  We can remove this complexity.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSDollarVM::addFunction):
+        (JSC::functionCrash):
+        (JSC::functionDFGTrue):
+        (JSC::CallerFrameJITTypeFunctor::CallerFrameJITTypeFunctor):
+        (JSC::CallerFrameJITTypeFunctor::operator() const):
+        (JSC::CallerFrameJITTypeFunctor::jitType):
+        (JSC::functionLLintTrue):
+        (JSC::functionJITTrue):
+        (JSC::functionGC):
+        (JSC::functionEdenGC):
+        (JSC::functionCodeBlockForFrame):
+        (JSC::codeBlockFromArg):
+        (JSC::functionCodeBlockFor):
+        (JSC::functionPrintSourceFor):
+        (JSC::functionPrintBytecodeFor):
+        (JSC::functionPrint):
+        (JSC::functionPrintCallFrame):
+        (JSC::functionPrintStack):
+        (JSC::functionValue):
+        (JSC::functionGetPID):
+        (JSC::JSDollarVM::finishCreation):
+        * tools/JSDollarVM.h:
+        (JSC::JSDollarVM::create):
+        * tools/JSDollarVMPrototype.cpp: Removed.
+        * tools/JSDollarVMPrototype.h: Removed.
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::currentThreadOwnsJSLock):
+        (JSC::ensureCurrentThreadOwnsJSLock):
+        (JSC::VMInspector::gc):
+        (JSC::VMInspector::edenGC):
+        (JSC::VMInspector::isInHeap):
+        (JSC::CellAddressCheckFunctor::CellAddressCheckFunctor):
+        (JSC::CellAddressCheckFunctor::operator() const):
+        (JSC::VMInspector::isValidCell):
+        (JSC::VMInspector::isValidCodeBlock):
+        (JSC::VMInspector::codeBlockForFrame):
+        (JSC::PrintFrameFunctor::PrintFrameFunctor):
+        (JSC::PrintFrameFunctor::operator() const):
+        (JSC::VMInspector::printCallFrame):
+        (JSC::VMInspector::printStack):
+        (JSC::VMInspector::printValue):
+        * tools/VMInspector.h:
+
 2017-11-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add a ServiceWorker domain to get information about an inspected ServiceWorker

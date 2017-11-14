@@ -29,7 +29,10 @@
 #include "CodeBlock.h"
 #include "CodeBlockSet.h"
 #include "HeapInlines.h"
+#include "HeapIterationScope.h"
 #include "MachineContext.h"
+#include "MarkedSpaceInlines.h"
+#include "StackVisitor.h"
 #include <mutex>
 #include <wtf/Expected.h>
 
@@ -192,6 +195,192 @@ auto VMInspector::codeBlockForMachinePC(const VMInspector::Locker&, void* machin
     UNUSED_PARAM(machinePC);
     return nullptr;
 #endif
+}
+
+bool VMInspector::currentThreadOwnsJSLock(ExecState* exec)
+{
+    return exec->vm().currentThreadIsHoldingAPILock();
+}
+
+static bool ensureCurrentThreadOwnsJSLock(ExecState* exec)
+{
+    if (VMInspector::currentThreadOwnsJSLock(exec))
+        return true;
+    dataLog("ERROR: current thread does not own the JSLock\n");
+    return false;
+}
+
+void VMInspector::gc(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    if (!ensureCurrentThreadOwnsJSLock(exec))
+        return;
+    vm.heap.collectNow(Sync, CollectionScope::Full);
+}
+
+void VMInspector::edenGC(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    if (!ensureCurrentThreadOwnsJSLock(exec))
+        return;
+    vm.heap.collectSync(CollectionScope::Eden);
+}
+
+bool VMInspector::isInHeap(Heap* heap, void* ptr)
+{
+    MarkedBlock* candidate = MarkedBlock::blockFor(ptr);
+    if (heap->objectSpace().blocks().set().contains(candidate))
+        return true;
+    for (LargeAllocation* allocation : heap->objectSpace().largeAllocations()) {
+        if (allocation->contains(ptr))
+            return true;
+    }
+    return false;
+}
+
+struct CellAddressCheckFunctor : MarkedBlock::CountFunctor {
+    CellAddressCheckFunctor(JSCell* candidate)
+        : candidate(candidate)
+    {
+    }
+
+    IterationStatus operator()(HeapCell* cell, HeapCell::Kind) const
+    {
+        if (cell == candidate) {
+            found = true;
+            return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    }
+
+    JSCell* candidate;
+    mutable bool found { false };
+};
+
+bool VMInspector::isValidCell(Heap* heap, JSCell* candidate)
+{
+    HeapIterationScope iterationScope(*heap);
+    CellAddressCheckFunctor functor(candidate);
+    heap->objectSpace().forEachLiveCell(iterationScope, functor);
+    return functor.found;
+}
+
+bool VMInspector::isValidCodeBlock(ExecState* exec, CodeBlock* candidate)
+{
+    if (!ensureCurrentThreadOwnsJSLock(exec))
+        return false;
+
+    struct CodeBlockValidationFunctor {
+        CodeBlockValidationFunctor(CodeBlock* candidate)
+            : candidate(candidate)
+        {
+        }
+
+        bool operator()(CodeBlock* codeBlock) const
+        {
+            if (codeBlock == candidate)
+                found = true;
+            return found;
+        }
+
+        CodeBlock* candidate;
+        mutable bool found { false };
+    };
+
+    VM& vm = exec->vm();
+    CodeBlockValidationFunctor functor(candidate);
+    vm.heap.forEachCodeBlock(functor);
+    return functor.found;
+}
+
+CodeBlock* VMInspector::codeBlockForFrame(CallFrame* topCallFrame, unsigned frameNumber)
+{
+    if (!ensureCurrentThreadOwnsJSLock(topCallFrame))
+        return nullptr;
+
+    if (!topCallFrame)
+        return nullptr;
+
+    struct FetchCodeBlockFunctor {
+    public:
+        FetchCodeBlockFunctor(unsigned targetFrameNumber)
+            : targetFrame(targetFrameNumber)
+        {
+        }
+
+        StackVisitor::Status operator()(StackVisitor& visitor) const
+        {
+            auto currentFrame = nextFrame++;
+            if (currentFrame == targetFrame) {
+                codeBlock = visitor->codeBlock();
+                return StackVisitor::Done;
+            }
+            return StackVisitor::Continue;
+        }
+
+        unsigned targetFrame;
+        mutable unsigned nextFrame { 0 };
+        mutable CodeBlock* codeBlock { nullptr };
+    };
+
+    FetchCodeBlockFunctor functor(frameNumber);
+    topCallFrame->iterate(functor);
+    return functor.codeBlock;
+}
+
+class PrintFrameFunctor {
+public:
+    enum Action {
+        PrintOne,
+        PrintAll
+    };
+
+    PrintFrameFunctor(Action action, unsigned framesToSkip)
+        : m_action(action)
+        , m_framesToSkip(framesToSkip)
+    {
+    }
+
+    StackVisitor::Status operator()(StackVisitor& visitor) const
+    {
+        m_currentFrame++;
+        if (m_currentFrame > m_framesToSkip) {
+            visitor->dump(WTF::dataFile(), Indenter(2), [&] (PrintStream& out) {
+                out.print("[", (m_currentFrame - m_framesToSkip - 1), "] ");
+            });
+        }
+        if (m_action == PrintOne && m_currentFrame > m_framesToSkip)
+            return StackVisitor::Done;
+        return StackVisitor::Continue;
+    }
+
+private:
+    Action m_action;
+    unsigned m_framesToSkip;
+    mutable unsigned m_currentFrame { 0 };
+};
+
+void VMInspector::printCallFrame(CallFrame* callFrame, unsigned framesToSkip)
+{
+    if (!ensureCurrentThreadOwnsJSLock(callFrame))
+        return;
+    PrintFrameFunctor functor(PrintFrameFunctor::PrintOne, framesToSkip);
+    callFrame->iterate(functor);
+}
+
+void VMInspector::printStack(CallFrame* topCallFrame, unsigned framesToSkip)
+{
+    if (!ensureCurrentThreadOwnsJSLock(topCallFrame))
+        return;
+    if (!topCallFrame)
+        return;
+    PrintFrameFunctor functor(PrintFrameFunctor::PrintAll, framesToSkip);
+    topCallFrame->iterate(functor);
+}
+
+void VMInspector::printValue(JSValue value)
+{
+    dataLog(value);
 }
 
 } // namespace JSC

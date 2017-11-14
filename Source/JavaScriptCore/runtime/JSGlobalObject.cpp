@@ -85,7 +85,6 @@
 #include "JSDataView.h"
 #include "JSDataViewPrototype.h"
 #include "JSDollarVM.h"
-#include "JSDollarVMPrototype.h"
 #include "JSFunction.h"
 #include "JSGeneratorFunction.h"
 #include "JSGenericTypedArrayViewConstructorInlines.h"
@@ -896,9 +895,8 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::ThrowTypeErrorFunction)] = m_throwTypeErrorFunction.get();
 
     if (UNLIKELY(Options::useDollarVM())) {
-        JSDollarVMPrototype* dollarVMPrototype = JSDollarVMPrototype::create(vm, this, JSDollarVMPrototype::createStructure(vm, this, m_objectPrototype.get()));
-        m_dollarVMStructure.set(vm, this, JSDollarVM::createStructure(vm, this, dollarVMPrototype));
-        JSDollarVM* dollarVM = JSDollarVM::create(vm, m_dollarVMStructure.get());
+        m_dollarVMStructure.set(vm, this, JSDollarVM::createStructure(vm, this, m_objectPrototype.get()));
+        JSDollarVM* dollarVM = JSDollarVM::create(vm, this, m_dollarVMStructure.get());
 
         GlobalPropertyInfo extraStaticGlobals[] = {
             GlobalPropertyInfo(vm.propertyNames->builtinNames().dollarVMPrivateName(), dollarVM, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
