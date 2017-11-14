@@ -26,13 +26,25 @@
 #pragma once
 
 #include "EventTarget.h"
+#include "ExceptionOr.h"
 #include "IntSize.h"
 #include "JSDOMPromiseDeferred.h"
 #include "ScriptWrappable.h"
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+class ImageBitmap;
+class WebGLRenderingContext;
+
+// using OffscreenRenderingContext = Variant<
+// #if ENABLE(WEBGL)
+// RefPtr<WebGLRenderingContext>,
+// #endif
+// RefPtr<OffscreenCanvasRenderingContext2D>
+// >;
 
 class OffscreenCanvas : public RefCounted<OffscreenCanvas>, public EventTargetWithInlineData {
     WTF_MAKE_FAST_ALLOCATED;
@@ -56,9 +68,9 @@ public:
     unsigned height() const;
     void setHeight(unsigned);
 
-    // The currently unimplemented OffscreenCanvas methods.
-    // OffscreenRenderingContext? getContext(OffscreenRenderingContextType contextType, any... arguments);
-    // ImageBitmap transferToImageBitmap();
+    // FIXME: Should be optional<OffscreenRenderingContext> from above.
+    ExceptionOr<RefPtr<WebGLRenderingContext>> getContext(JSC::ExecState&, RenderingContextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+    RefPtr<ImageBitmap> transferToImageBitmap();
     // void convertToBlob(ImageEncodeOptions options);
 
     using RefCounted::ref;

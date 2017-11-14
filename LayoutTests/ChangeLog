@@ -1,3 +1,16 @@
+2017-11-14  Dean Jackson  <dino@apple.com>
+
+        Stub implementations of OffscreenCanvas getContext and transferToImageBitmap
+        https://bugs.webkit.org/show_bug.cgi?id=179671
+        <rdar://problem/35534018>
+
+        Reviewed by Antoine Quint.
+
+        * http/wpt/offscreen-canvas/getContext-webgl-expected.txt: Added.
+        * http/wpt/offscreen-canvas/getContext-webgl.html: Added.
+        * http/wpt/offscreen-canvas/transferToImageBitmap-expected.txt: Added.
+        * http/wpt/offscreen-canvas/transferToImageBitmap.html: Added.
+
 2017-11-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening for High Sierra.

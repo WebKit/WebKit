@@ -26,6 +26,9 @@
 #include "config.h"
 #include "OffscreenCanvas.h"
 
+#include "ImageBitmap.h"
+#include "WebGLRenderingContext.h"
+
 namespace WebCore {
 
 Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& context, unsigned width, unsigned height)
@@ -59,6 +62,18 @@ unsigned OffscreenCanvas::height() const
 void OffscreenCanvas::setHeight(unsigned newHeight)
 {
     return m_size.setHeight(newHeight);
+}
+
+ExceptionOr<RefPtr<WebGLRenderingContext>> OffscreenCanvas::getContext(JSC::ExecState&, RenderingContextType contextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
+{
+    UNUSED_PARAM(contextType);
+    UNUSED_PARAM(arguments);
+    return { nullptr };
+}
+
+RefPtr<ImageBitmap> OffscreenCanvas::transferToImageBitmap()
+{
+    return nullptr;
 }
 
 }

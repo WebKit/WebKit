@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/canvas-tests.js"></script>
+<link rel="help" href="https://html.spec.whatwg.org/#dom-offscreencanvas">
+<script>
+
+test(function() {
+    let offscreenCanvas = new OffscreenCanvas(100, 100);
+    let gl = offscreenCanvas.getContext("webgl");
+    assert_equals(gl, null);
+}, "Test getContext('webgl').");
+
+</script>
+
