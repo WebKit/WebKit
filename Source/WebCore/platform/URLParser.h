@@ -49,6 +49,7 @@ public:
     static String serialize(const URLEncodedForm&);
 
     static const UIDNA& internationalDomainNameTranscoder();
+    static bool isInUserInfoEncodeSet(UChar);
 
     WEBCORE_EXPORT static bool isSpecialScheme(const String& scheme);
     WEBCORE_EXPORT static std::optional<String> maybeCanonicalizeScheme(const String& scheme);

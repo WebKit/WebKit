@@ -215,11 +215,6 @@ bool ApplicationCacheHost::maybeLoadFallbackForError(ResourceLoader* resourceLoa
 URL ApplicationCacheHost::createFileURL(const String& path)
 {
     // FIXME: Can we just use fileURLWithFileSystemPath instead?
-
-    // fileURLWithFileSystemPath function is not suitable because URL::setPath uses encodeWithURLEscapeSequences, which it notes
-    // does not correctly escape '#' and '?'. This function works for our purposes because
-    // app cache media files are always created with encodeForFileName(createCanonicalUUIDString()).
-
 #if USE(CF) && PLATFORM(WIN)
     URL url(adoptCF(CFURLCreateWithFileSystemPath(0, path.createCFString().get(), kCFURLWindowsPathStyle, false)).get());
 #else

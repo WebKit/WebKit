@@ -429,6 +429,11 @@ ALWAYS_INLINE static bool shouldPercentEncodeQueryByte(uint8_t byte, const bool&
     return false;
 }
 
+bool URLParser::isInUserInfoEncodeSet(UChar c)
+{
+    return WebCore::isInUserInfoEncodeSet(c);
+}
+
 template<typename CharacterType, URLParser::ReportSyntaxViolation reportSyntaxViolation>
 ALWAYS_INLINE void URLParser::advance(CodePointIterator<CharacterType>& iterator, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition)
 {
@@ -2086,10 +2091,10 @@ void URLParser::parseAuthority(CodePointIterator<CharacterType> iterator)
             appendToASCIIBuffer(':');
             break;
         }
-        utf8PercentEncode<isInUserInfoEncodeSet>(iterator);
+        utf8PercentEncode<WebCore::isInUserInfoEncodeSet>(iterator);
     }
     for (; !iterator.atEnd(); advance(iterator))
-        utf8PercentEncode<isInUserInfoEncodeSet>(iterator);
+        utf8PercentEncode<WebCore::isInUserInfoEncodeSet>(iterator);
     m_url.m_passwordEnd = currentPosition(iterator);
     if (!m_url.m_userEnd)
         m_url.m_userEnd = m_url.m_passwordEnd;

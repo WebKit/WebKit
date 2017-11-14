@@ -1,3 +1,14 @@
+2017-11-14  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up old URL parser remnants
+        https://bugs.webkit.org/show_bug.cgi?id=179573
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::searchWithGoogle):
+        Use https if we do end up searching with google.
+
 2017-11-12  Darin Adler  <darin@apple.com>
 
         More is<> and downcast<>, less static_cast<>

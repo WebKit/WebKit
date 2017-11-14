@@ -1,3 +1,13 @@
+2017-11-14  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up old URL parser remnants
+        https://bugs.webkit.org/show_bug.cgi?id=179573
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/url/url-setters-expected.txt:
+        We're more spec compliant!  Hooray!
+
 2017-11-13  Chris Dumez  <cdumez@apple.com>
 
         Send ServiceWorkerData structs to the WebProcesses instead of ServiceWorkerIdentifiers
