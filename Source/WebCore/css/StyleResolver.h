@@ -348,7 +348,6 @@ public:
     public:
         void clear();
 
-        Document& document() const { return m_element->document(); }
         const Element* element() const { return m_element; }
 
         void setStyle(std::unique_ptr<RenderStyle>);
