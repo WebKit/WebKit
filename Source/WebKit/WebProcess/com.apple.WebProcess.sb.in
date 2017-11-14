@@ -36,9 +36,6 @@
 ;;; Allow registration of per-pid services.
 (allow mach-register (local-name-prefix ""))
 
-;;; Allow lookup of XPC services for backward-compatibility.
-(allow mach-lookup (xpc-service-name-prefix ""))
-
 ;;; Allow read access to standard system paths.
 (allow file-read*
     (require-all (file-mode #o0004)
@@ -96,29 +93,6 @@
 (allow ipc-posix-shm-read*
     (ipc-posix-name "apple.shm.notification_center")
     (ipc-posix-name-prefix "apple.cfprefs."))
-
-(allow mach-lookup
-    (global-name "com.apple.appsleep")
-    (global-name "com.apple.bsd.dirhelper")
-    (global-name "com.apple.cfprefsd.agent")
-    (global-name "com.apple.cfprefsd.daemon")
-    (global-name "com.apple.diagnosticd")
-    (global-name "com.apple.dyld.closured")
-    (global-name "com.apple.espd")
-    (global-name "com.apple.logd")
-    (global-name "com.apple.logd.events")
-    (global-name "com.apple.secinitd")
-    (global-name "com.apple.system.DirectoryService.libinfo_v1")
-    (global-name "com.apple.system.logger")
-    (global-name "com.apple.system.notification_center")
-    (global-name "com.apple.system.opendirectoryd.libinfo")
-    (global-name "com.apple.system.opendirectoryd.membership")
-    (global-name "com.apple.trustd")
-    (global-name "com.apple.trustd.agent")
-    (global-name "com.apple.xpc.activity.unmanaged")
-    (global-name "com.apple.xpcd")
-    (local-name "com.apple.cfprefsd.agent"))
-
 
 ;;; Allow mostly harmless operations.
 (allow sysctl-read)
@@ -357,13 +331,17 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 (deny mach-lookup (xpc-service-name-prefix ""))
 (allow mach-lookup
+    (xpc-service-name "com.apple.PerformanceAnalysis.animationperfd")
     (xpc-service-name "com.apple.accessibility.mediaaccessibilityd")
     (xpc-service-name "com.apple.audio.SandboxHelper")
     (xpc-service-name "com.apple.coremedia.videodecoder")
     (xpc-service-name "com.apple.coremedia.videoencoder")
     (xpc-service-name-regex #"\.apple-extension-service$")
     (xpc-service-name "com.apple.hiservices-xpcservice")
+    (xpc-service-name "com.apple.ist.ds.appleconnect2.HelperService")
     (xpc-service-name "com.apple.print.normalizerd")
+    (xpc-service-name "com.apple.securityd.xpc")
+    (xpc-service-name "com.apple.signpost.signpost-notificationd")
 )
 #endif
 
@@ -561,32 +539,44 @@
        (global-name "com.apple.audio.SystemSoundServer-OSX")
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
        (global-name "com.apple.analyticsd")
+       (global-name "com.apple.audio.AudioComponentRegistrar")
 #endif
        (global-name "com.apple.audio.audiohald")
        (global-name "com.apple.audio.coreaudiod")
        (global-name "com.apple.awdd")
        (global-name "com.apple.cfnetwork.AuthBrokerAgent")
+       (global-name "com.apple.cfprefsd.agent")
+       (global-name "com.apple.cfprefsd.daemon")
        (global-name "com.apple.cookied")
        (global-name "com.apple.coreservices.launchservicesd")
+       (global-name "com.apple.diagnosticd")
        (global-name "com.apple.dock.server")
+       (global-name "com.apple.dyld.closured")
        (global-name "com.apple.fonts")
        (global-name "com.apple.iconservices")
        (global-name "com.apple.iconservices.store")
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
        (global-name "com.apple.mediaremoted.xpc")
 #endif
+       (global-name "com.apple.logd")
+       (global-name "com.apple.logd.events")
        (global-name "com.apple.lsd.mapdb")
+       (global-name "com.apple.mobileassetd")
        (global-name "com.apple.nesessionmanager.flow-divert-token")
        (global-name "com.apple.speech.speechsynthesisd")
        (global-name "com.apple.speech.synthesis.console")
+       (global-name "com.apple.system.DirectoryService.libinfo_v1")
+       (global-name "com.apple.system.logger")
        (global-name "com.apple.system.opendirectoryd.api")
+       (global-name "com.apple.systemstats.analysis")
        (global-name "com.apple.tccd")
        (global-name "com.apple.tccd.system")
+       (global-name "com.apple.trustd")
+       (global-name "com.apple.trustd.agent")
        (global-name "com.apple.window_proxies")
        (global-name "com.apple.windowserver.active")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
-       (global-name "com.apple.audio.AudioComponentRegistrar")
-#endif
+       (global-name "com.apple.xpc.activity.unmanaged")
+       (global-name "com.apple.xpcd")
 )
 
 ;; Security framework
