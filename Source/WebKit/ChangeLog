@@ -1,3 +1,12 @@
+2017-11-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r224799): WebKit crashes at launch on macOS Sierra due to a sandbox violation
+        https://bugs.webkit.org/show_bug.cgi?id=179656
+
+        Unreviewed. Revert r224799 on macOS Sierra.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-11-13  Chris Dumez  <cdumez@apple.com>
 
         Send ServiceWorkerData structs to the WebProcesses instead of ServiceWorkerIdentifiers
