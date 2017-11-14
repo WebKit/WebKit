@@ -1924,6 +1924,19 @@ bool Document::needsStyleRecalc() const
     return false;
 }
 
+inline bool static isSafeToUpdateStyleOrLayout(FrameView* frameView)
+{
+#if USE(WEB_THREAD)
+    // FIXME: Remove this code: <rdar://problem/35522719>
+    bool usingWebThread = WebThreadIsEnabled();
+#else
+    bool usingWebThread = false;
+#endif
+    bool isSafeToExecuteScript = NoEventDispatchAssertion::InMainThread::isEventAllowed();
+    bool isInFrameFlattening = frameView && frameView->isInChildFrameWithFrameFlattening();
+    return isSafeToExecuteScript || isInFrameFlattening || usingWebThread;
+}
+
 bool Document::updateStyleIfNeeded()
 {
     RefPtr<FrameView> frameView = view();
@@ -1941,10 +1954,8 @@ bool Document::updateStyleIfNeeded()
             return false;
     }
 
-    // The early exit for needsStyleRecalc() is needed when updateWidgetPositions() is called in runOrScheduleAsynchronousTasks().
-#if !USE(WEB_THREAD)
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed() || (frameView && frameView->isInChildFrameWithFrameFlattening()));
-#endif
+    // The early exit above for !needsStyleRecalc() is needed when updateWidgetPositions() is called in runOrScheduleAsynchronousTasks().
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isSafeToUpdateStyleOrLayout(frameView.get()));
 
     resolveStyle();
     return true;
@@ -1961,9 +1972,7 @@ void Document::updateLayout()
         ASSERT_NOT_REACHED();
         return;
     }
-#if !USE(WEB_THREAD)
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed() || (frameView && frameView->isInChildFrameWithFrameFlattening()));
-#endif
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isSafeToUpdateStyleOrLayout(frameView.get()));
 
     RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
 
