@@ -64,12 +64,14 @@ void OffscreenCanvas::setHeight(unsigned newHeight)
     return m_size.setHeight(newHeight);
 }
 
+#if ENABLE(WEBGL)
 ExceptionOr<RefPtr<WebGLRenderingContext>> OffscreenCanvas::getContext(JSC::ExecState&, RenderingContextType contextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     UNUSED_PARAM(contextType);
     UNUSED_PARAM(arguments);
     return { nullptr };
 }
+#endif
 
 RefPtr<ImageBitmap> OffscreenCanvas::transferToImageBitmap()
 {

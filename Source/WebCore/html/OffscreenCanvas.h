@@ -68,8 +68,10 @@ public:
     unsigned height() const;
     void setHeight(unsigned);
 
+#if ENABLE(WEBGL)
     // FIXME: Should be optional<OffscreenRenderingContext> from above.
     ExceptionOr<RefPtr<WebGLRenderingContext>> getContext(JSC::ExecState&, RenderingContextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+#endif
     RefPtr<ImageBitmap> transferToImageBitmap();
     // void convertToBlob(ImageEncodeOptions options);
 
