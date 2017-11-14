@@ -145,7 +145,7 @@ body[dir=rtl] .hierarchical-path-component > select {
     width: 7px;
     height: 20px;
 
-    --path-component-separator-margin-start: 2px;
+    --path-component-separator-margin-start: 3px;
 }
 
 body[dir=ltr] .hierarchical-path-component > .separator {

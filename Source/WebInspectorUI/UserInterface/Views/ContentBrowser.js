@@ -64,8 +64,6 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
 
             let navigationButtonsGroup = new WI.GroupNavigationItem([this._backNavigationItem, this._forwardNavigationItem]);
             this._navigationBar.addNavigationItem(navigationButtonsGroup);
-
-            this._navigationBar.addNavigationItem(new WI.DividerNavigationItem);
         }
 
         if (!disableFindBanner) {
@@ -426,13 +424,6 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
 
         // Go through each of the items of the new content view and add a divider before them.
         currentContentView.navigationItems.forEach(function(navigationItem, index) {
-            // Add dividers before items unless it's the first item and not a button.
-            if (index !== 0 || navigationItem instanceof WI.ButtonNavigationItem) {
-                let divider = new WI.DividerNavigationItem;
-                if (shouldInsert)
-                    navigationBar.insertNavigationItem(divider, insertionIndex++);
-                newNavigationItems.push(divider);
-            }
             if (shouldInsert)
                 navigationBar.insertNavigationItem(navigationItem, insertionIndex++);
             newNavigationItems.push(navigationItem);

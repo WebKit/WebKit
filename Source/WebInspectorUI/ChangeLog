@@ -1,3 +1,29 @@
+2017-11-14  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Cleanup navigation bar dividers and separators
+        https://bugs.webkit.org/show_bug.cgi?id=179654
+        <rdar://problem/35523734>
+
+        Reviewed by Devin Rousso.
+
+        Update path separator icon, and reduce number of dividers used in the
+        content browser's navigation bar, to more closely match modern Xcode.
+
+        * UserInterface/Images/HierarchicalNavigationItemChevron.svg:
+        Update icon, remove tapered arrow head.
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WI.ContentBrowser):
+        Remove divider between back/forward buttons and item name.
+        (WI.ContentBrowser.prototype._updateContentViewNavigationItems):
+
+        * UserInterface/Views/HierarchicalPathComponent.css:
+        (.hierarchical-path-component > .separator):
+
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype.get navigationItems):
+        Remove dividers between buttons provided by the current content view.
+
 2017-11-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Network Details Views - make section headers more prominent

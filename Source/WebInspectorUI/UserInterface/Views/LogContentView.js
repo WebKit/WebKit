@@ -116,7 +116,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     get navigationItems()
     {
-        let navigationItems = [this._scopeBar];
+        let navigationItems = [this._scopeBar, new WI.DividerNavigationItem];
 
         if (this._hasNonDefaultLogChannelMessage && this._messageSourceBar)
             navigationItems.push(this._messageSourceBar);
@@ -125,10 +125,10 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             navigationItems.push(this._garbageCollectNavigationItem);
 
         navigationItems.push(this._clearLogNavigationItem);
-
-        if (WI.isShowingSplitConsole())
+        if (WI.isShowingSplitConsole()) {
+            navigationItems.push(new WI.DividerNavigationItem);
             navigationItems.push(this._showConsoleTabNavigationItem);
-        else if (WI.isShowingConsoleTab())
+        } else if (WI.isShowingConsoleTab())
             navigationItems.unshift(this._findBanner);
         return navigationItems;
     }
