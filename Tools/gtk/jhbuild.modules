@@ -85,7 +85,7 @@
   </cmake>
 
   <cmake id="woff2">
-    <branch repo="github.com" module="google/woff2.git" checkoutdir="woff2" tag="v1.0.1"/>
+    <branch repo="github.com" module="google/woff2.git" checkoutdir="woff2" tag="v1.0.2"/>
     <dependencies>
       <dep package="brotli"/>
     </dependencies>
