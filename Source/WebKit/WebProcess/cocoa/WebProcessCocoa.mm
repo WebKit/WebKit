@@ -171,6 +171,10 @@ void WebProcess::initializeProcessName(const ChildProcessInitializationParameter
     NSString *applicationName;
     if (parameters.extraInitializationData.get(ASCIILiteral("inspector-process")) == "1")
         applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Inspector", "Visible name of Web Inspector's web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
+#if ENABLE(SERVICE_WORKER)
+    else if (parameters.extraInitializationData.get(ASCIILiteral("service-worker-process")) == "1")
+        applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Service Worker", "Visible name of Service Worker process. The argument is the application name."), (NSString *)parameters.uiProcessName];
+#endif
     else
         applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Content", "Visible name of the web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
     _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName, nullptr);

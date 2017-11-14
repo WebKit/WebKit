@@ -194,14 +194,14 @@ public:
 
 protected:
     static uint64_t generatePageID();
-    explicit WebProcessProxy(WebProcessPool&, WebsiteDataStore&);
+    WebProcessProxy(WebProcessPool&, WebsiteDataStore&);
 
-private:
-    // From ChildProcessProxy
+    // ChildProcessProxy
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
     void connectionWillOpen(IPC::Connection&) override;
     void processWillShutDown(IPC::Connection&) override;
 
+private:
     // Called when the web process has crashed or we know that it will terminate soon.
     // Will potentially cause the WebProcessProxy object to be freed.
     void shutDown();

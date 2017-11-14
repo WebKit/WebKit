@@ -35,6 +35,13 @@
 
 namespace WebKit {
 
+Ref<ServiceWorkerProcessProxy> ServiceWorkerProcessProxy::create(WebProcessPool& pool, WebsiteDataStore& store)
+{
+    auto proxy = adoptRef(*new ServiceWorkerProcessProxy { pool, store });
+    proxy->connect();
+    return proxy;
+}
+
 ServiceWorkerProcessProxy::ServiceWorkerProcessProxy(WebProcessPool& pool, WebsiteDataStore& store)
     : WebProcessProxy { pool, store }
     , m_serviceWorkerPageID(generatePageID())
@@ -43,6 +50,13 @@ ServiceWorkerProcessProxy::ServiceWorkerProcessProxy(WebProcessPool& pool, Websi
 
 ServiceWorkerProcessProxy::~ServiceWorkerProcessProxy()
 {
+}
+
+void ServiceWorkerProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
+{
+    WebProcessProxy::getLaunchOptions(launchOptions);
+
+    launchOptions.extraInitializationData.add(ASCIILiteral("service-worker-process"), ASCIILiteral("1"));
 }
 
 void ServiceWorkerProcessProxy::start(const WebPreferencesStore& store)

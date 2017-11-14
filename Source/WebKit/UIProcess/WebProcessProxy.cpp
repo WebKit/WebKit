@@ -92,7 +92,9 @@ static WebProcessProxy::WebPageProxyMap& globalPageMap()
 
 Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore& websiteDataStore)
 {
-    return adoptRef(*new WebProcessProxy(processPool, websiteDataStore));
+    auto proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore));
+    proxy->connect();
+    return proxy;
 }
 
 WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore& websiteDataStore)
@@ -111,8 +113,6 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore& 
 #endif
 {
     WebPasteboardProxy::singleton().addWebProcessProxy(*this);
-
-    connect();
 }
 
 WebProcessProxy::~WebProcessProxy()

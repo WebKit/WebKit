@@ -97,6 +97,12 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
     if (!inspectorProcess.isEmpty())
         extraInitializationData.add(ASCIILiteral("inspector-process"), inspectorProcess);
 
+#if ENABLE(SERVICE_WORKER)
+    String serviceWorkerProcess = xpc_dictionary_get_string(extraDataInitializationDataObject, "service-worker-process");
+    if (!serviceWorkerProcess.isEmpty())
+        extraInitializationData.add(ASCIILiteral("service-worker-process"), serviceWorkerProcess);
+#endif
+
     if (!isClientSandboxed()) {
         String userDirectorySuffix = xpc_dictionary_get_string(extraDataInitializationDataObject, "user-directory-suffix");
         if (!userDirectorySuffix.isEmpty())

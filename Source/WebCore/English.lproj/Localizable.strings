@@ -40,6 +40,9 @@
 /* Text track contains subtitles for the deaf and hard of hearing */
 "%@ SDH" = "%@ SDH";
 
+/* Visible name of Service Worker process. The argument is the application name. */
+"%@ Service Worker" = "%@ Service Worker";
+
 /* visible name of the storage process. The argument is the application name. */
 "%@ Storage" = "%@ Storage";
 
