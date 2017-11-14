@@ -28,6 +28,7 @@
 
 #if USE(CAIRO)
 
+#include "CairoOperations.h"
 #include "CairoUtilities.h"
 #include "PlatformContextCairo.h"
 #include <cairo.h>
@@ -56,39 +57,12 @@ Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
     return colorFromPremultipliedARGB(*pixel);
 }
 
-void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize&, CompositeOperator op, BlendMode mode, const ImageOrientation& orientation)
+void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& imageSize, CompositeOperator compositeOperator, BlendMode blendMode, const ImageOrientation& orientation)
 {
-    context.save();
-    
-    // Set the compositing operation.
-    if (op == CompositeSourceOver && mode == BlendModeNormal && !nativeImageHasAlpha(image))
-        context.setCompositeOperation(CompositeCopy);
-    else
-        context.setCompositeOperation(op, mode);
-        
-#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
-    IntSize scaledSize = nativeImageSize(image);
-    FloatRect adjustedSrcRect = adjustSourceRectForDownSampling(srcRect, scaledSize);
-#else
-    FloatRect adjustedSrcRect(srcRect);
-#endif
-        
-    FloatRect adjustedDestRect = destRect;
-        
-    if (orientation != DefaultImageOrientation) {
-        // ImageOrientation expects the origin to be at (0, 0).
-        context.translate(destRect.x(), destRect.y());
-        adjustedDestRect.setLocation(FloatPoint());
-        context.concatCTM(orientation.transformFromDefault(adjustedDestRect.size()));
-        if (orientation.usesWidthAsHeight()) {
-            // The destination rectangle will have it's width and height already reversed for the orientation of
-            // the image, as it was needed for page layout, so we need to reverse it back here.
-            adjustedDestRect.setSize(adjustedDestRect.size().transposedSize());
-        }
-    }
+    UNUSED_PARAM(imageSize);
 
-    context.platformContext()->drawSurfaceToContext(image.get(), adjustedDestRect, adjustedSrcRect, context);
-    context.restore();
+    ASSERT(hasPlatformContext());
+    Cairo::drawNativeImage(*context.platformContext(), image, destRect, srcRect, compositeOperator, blendMode, orientation, context);
 }
 
 void clearNativeImageSubimages(const NativeImagePtr&)

@@ -231,6 +231,11 @@ static void drawGlyphsShadow(PlatformContextCairo& platformContext, const Graphi
     }
 }
 
+static bool cairoSurfaceHasAlpha(cairo_surface_t* surface)
+{
+    return cairo_surface_get_content(surface) != CAIRO_CONTENT_COLOR;
+}
+
 namespace State {
 
 void setStrokeThickness(PlatformContextCairo& platformContext, float strokeThickness)
@@ -556,6 +561,41 @@ void drawGlyphs(PlatformContextCairo& platformContext, const GraphicsContextStat
     }
 
     cairo_restore(cr);
+}
+
+void drawNativeImage(PlatformContextCairo& platformContext, const NativeImagePtr& image, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOperator, BlendMode blendMode, ImageOrientation orientation, GraphicsContext& targetContext)
+{
+    platformContext.save();
+
+    // Set the compositing operation.
+    if (compositeOperator == CompositeSourceOver && blendMode == BlendModeNormal && !cairoSurfaceHasAlpha(image.get()))
+        Cairo::State::setCompositeOperation(platformContext, CompositeCopy, BlendModeNormal);
+    else
+        Cairo::State::setCompositeOperation(platformContext, compositeOperator, blendMode);
+
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+    IntSize scaledSize = nativeImageSize(image);
+    FloatRect src = adjustSourceRectForDownSampling(srcRect, scaledSize);
+#else
+    FloatRect src(srcRect);
+#endif
+
+    FloatRect dst = destRect;
+
+    if (orientation != DefaultImageOrientation) {
+        // ImageOrientation expects the origin to be at (0, 0).
+        Cairo::translate(platformContext, dst.x(), dst.y());
+        dst.setLocation(FloatPoint());
+        Cairo::concatCTM(platformContext, orientation.transformFromDefault(dst.size()));
+        if (orientation.usesWidthAsHeight()) {
+            // The destination rectangle will have its width and height already reversed for the orientation of
+            // the image, as it was needed for page layout, so we need to reverse it back here.
+            dst = FloatRect(dst.x(), dst.y(), dst.height(), dst.width());
+        }
+    }
+
+    platformContext.drawSurfaceToContext(image.get(), dst, src, targetContext);
+    platformContext.restore();
 }
 
 void drawPattern(PlatformContextCairo& platformContext, Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, CompositeOperator compositeOperator, BlendMode blendMode)
