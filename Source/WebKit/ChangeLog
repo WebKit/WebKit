@@ -1,3 +1,16 @@
+2017-11-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Whitelist some IOKIt properties to avoid sandbox violations on YouTube
+        https://bugs.webkit.org/show_bug.cgi?id=179683
+        <rdar://problem/35415368>
+
+        Reviewed by Dean Jackson.
+
+        YouTube video playback on some hardware (and some video encodings) generates sandbox violations. Add
+        whitelist entries for the relevant IOKit properties needed to support these activities.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-11-14  Daniel Bates  <dabates@apple.com>
 
         Mark WebChromeClient::requestStorageAccess() as final
