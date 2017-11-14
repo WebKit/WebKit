@@ -1,0 +1,67 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useAcceleratedDrawing=true ] -->
+
+<html>
+<head>
+    <style>
+        .container {
+            position: relative;
+            height: 200px;
+            width: 200px;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid black;
+            will-change: transform;
+        }
+    </style>
+    <script>
+        var jsTestIsAsync = true;
+
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            window.testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+        }
+        
+        function doOnFirstLoad()
+        {
+            if (window.internals)
+                document.getElementById('layers-before-navigate').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_ACCELERATES_DRAWING);
+            
+            setTimeout(function() {
+                window.location.href = 'resources/go-back.html';
+            }, 0);
+        }
+
+        function doAfterBack()
+        {
+            if (window.internals)
+                document.getElementById('layers-after-back').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_ACCELERATES_DRAWING);
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener("pageshow", function(event) {
+            if (event.persisted)
+                setTimeout(doAfterBack, 0);
+        }, false);
+
+        function doTest()
+        {
+            doOnFirstLoad();
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<div class="container">
+    <p>This layer should use 'acceleratesDrawing' after going back to this page.</p>
+</div>
+<h2>Before:</h2>
+<pre id="layers-before-navigate"></pre>
+<h2>After:</h2>
+<pre id="layers-after-back"></pre>
+
+</body>
+</html>

@@ -80,6 +80,8 @@ TestOptions::TestOptions(NSURL *testURL, const TestCommand& command)
         auto value = pairString.substr(equalsLocation + 1, pairEnd - (equalsLocation + 1));
         if (key == "enableAttachmentElement")
             this->enableAttachmentElement = parseBooleanTestHeaderValue(value);
+        if (key == "useAcceleratedDrawing")
+            this->useAcceleratedDrawing = parseBooleanTestHeaderValue(value);
         else if (key == "enableIntersectionObserver")
             this->enableIntersectionObserver = parseBooleanTestHeaderValue(value);
         else if (key == "enableMenuItemElement")

@@ -1758,6 +1758,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & CoverageRectChanged)
         updateCoverage(commitState);
 
+    if (m_uncommittedChanges & AcceleratesDrawingChanged) // Needs to happen before TilingAreaChanged.
+        updateAcceleratesDrawing();
+
     if (m_uncommittedChanges & TilingAreaChanged) // Needs to happen after CoverageRectChanged, ContentsScaleChanged
         updateTiles();
 
@@ -1780,9 +1783,6 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & ContentsNeedsDisplay)
         updateContentsNeedsDisplay();
     
-    if (m_uncommittedChanges & AcceleratesDrawingChanged)
-        updateAcceleratesDrawing();
-
     if (m_uncommittedChanges & SupportsSubpixelAntialiasedTextChanged)
         updateSupportsSubpixelAntialiasedText();
 

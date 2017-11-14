@@ -1,3 +1,17 @@
+2017-11-13  Simon Fraser  <simon.fraser@apple.com>
+
+        When navigating back to a page, compositing layers may not use accelerated drawing
+        https://bugs.webkit.org/show_bug.cgi?id=178749
+        rdar://problem/35158946
+
+        Reviewed by Dean Jackson.
+
+        Avoid assertions when a test enables accelerated drawing (which we can't support
+        in the iOS simulator).
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::ensureBackingStore):
+
 2017-11-13  Youenn Fablet  <youenn@apple.com>
 
         matchRegistration does not need to go to StorageProcess if no service worker is registered
