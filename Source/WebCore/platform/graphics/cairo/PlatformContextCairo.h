@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class GraphicsContextPlatformPrivate;
 struct GraphicsContextState;
 
 // Much like PlatformContextSkia in the Skia port, this class holds information that
@@ -49,6 +50,9 @@ public:
 
     cairo_t* cr() { return m_cr.get(); }
     void setCr(cairo_t* cr) { m_cr = cr; }
+
+    GraphicsContextPlatformPrivate* graphicsContextPrivate() { return m_graphicsContextPrivate; }
+    void setGraphicsContextPrivate(GraphicsContextPlatformPrivate* graphicsContextPrivate) { m_graphicsContextPrivate = graphicsContextPrivate; }
 
     ShadowBlur& shadowBlur() { return m_shadowBlur; }
     Vector<float>& layers() { return m_layers; }
@@ -74,6 +78,11 @@ private:
     void clipForPatternFilling(const GraphicsContextState&);
 
     RefPtr<cairo_t> m_cr;
+
+    // Keeping a pointer to GraphicsContextPlatformPrivate here enables calling
+    // Windows-specific methods from CairoOperations (where only PlatformContextCairo
+    // can be leveraged).
+    GraphicsContextPlatformPrivate* m_graphicsContextPrivate { nullptr };
 
     class State;
     State* m_state;

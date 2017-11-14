@@ -39,6 +39,7 @@
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
+#include "GraphicsContextPlatformPrivateCairo.h"
 #include "Image.h"
 #include "Path.h"
 #include "PlatformContextCairo.h"
@@ -290,6 +291,9 @@ void setCTM(PlatformContextCairo& platformContext, const AffineTransform& transf
 {
     const cairo_matrix_t matrix = toCairoMatrix(transform);
     cairo_set_matrix(platformContext.cr(), &matrix);
+
+    if (auto* graphicsContextPrivate = platformContext.graphicsContextPrivate())
+        graphicsContextPrivate->setCTM(transform);
 }
 
 AffineTransform getCTM(PlatformContextCairo& platformContext)
@@ -679,32 +683,50 @@ void drawFocusRing(PlatformContextCairo& platformContext, const Vector<FloatRect
 void save(PlatformContextCairo& platformContext)
 {
     platformContext.save();
+
+    if (auto* graphicsContextPrivate = platformContext.graphicsContextPrivate())
+        graphicsContextPrivate->save();
 }
 
 void restore(PlatformContextCairo& platformContext)
 {
     platformContext.restore();
+
+    if (auto* graphicsContextPrivate = platformContext.graphicsContextPrivate())
+        graphicsContextPrivate->restore();
 }
 
 void translate(PlatformContextCairo& platformContext, float x, float y)
 {
     cairo_translate(platformContext.cr(), x, y);
+
+    if (auto* graphicsContextPrivate = platformContext.graphicsContextPrivate())
+        graphicsContextPrivate->translate(x, y);
 }
 
 void rotate(PlatformContextCairo& platformContext, float angleInRadians)
 {
     cairo_rotate(platformContext.cr(), angleInRadians);
+
+    if (auto* graphicsContextPrivate = platformContext.graphicsContextPrivate())
+        graphicsContextPrivate->rotate(angleInRadians);
 }
 
 void scale(PlatformContextCairo& platformContext, const FloatSize& size)
 {
     cairo_scale(platformContext.cr(), size.width(), size.height());
+
+    if (auto* graphicsContextPrivate = platformContext.graphicsContextPrivate())
+        graphicsContextPrivate->scale(size);
 }
 
 void concatCTM(PlatformContextCairo& platformContext, const AffineTransform& transform)
 {
     const cairo_matrix_t matrix = toCairoMatrix(transform);
     cairo_transform(platformContext.cr(), &matrix);
+
+    if (auto* graphicsContextPrivate = platformContext.graphicsContextPrivate())
+        graphicsContextPrivate->concatCTM(transform);
 }
 
 void beginTransparencyLayer(PlatformContextCairo& platformContext, float opacity)
@@ -736,6 +758,9 @@ void clip(PlatformContextCairo& platformContext, const FloatRect& rect)
     cairo_clip(cr);
     cairo_set_fill_rule(cr, savedFillRule);
     cairo_set_antialias(cr, savedAntialiasRule);
+
+    if (auto* graphicsContextPrivate = platformContext.graphicsContextPrivate())
+        graphicsContextPrivate->clip(rect);
 }
 
 void clipOut(PlatformContextCairo& platformContext, const FloatRect& rect)
@@ -776,6 +801,9 @@ void clipPath(PlatformContextCairo& platformContext, const Path& path, WindRule 
     cairo_set_fill_rule(cr, clipRule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
     cairo_clip(cr);
     cairo_set_fill_rule(cr, savedFillRule);
+
+    if (auto* graphicsContextPrivate = platformContext.graphicsContextPrivate())
+        graphicsContextPrivate->clip(path);
 }
 
 void clipToImageBuffer(PlatformContextCairo& platformContext, Image& image, const FloatRect& destRect)
