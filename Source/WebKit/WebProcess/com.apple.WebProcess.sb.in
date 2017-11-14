@@ -25,7 +25,176 @@
 (deny default (with partial-symbolication))
 (allow system-audit file-read-metadata)
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
 (import "system.sb")
+#else
+;;;
+;;; The following rules were originally contained in 'system.sb'. We are duplicating them here so we can
+;;; remove unneeded sandbox extensions.
+;;;
+
+;;; Allow registration of per-pid services.
+(allow mach-register (local-name-prefix ""))
+
+;;; Allow lookup of XPC services for backward-compatibility.
+(allow mach-lookup (xpc-service-name-prefix ""))
+
+;;; Allow read access to standard system paths.
+(allow file-read*
+    (require-all (file-mode #o0004)
+    (require-any (subpath "/Library/Filesystems/NetFSPlugins")
+    (subpath "/Library/Preferences/Logging")      ; Logging Rethink
+    (subpath "/System")
+    (subpath "/private/var/db/dyld")
+    (subpath "/private/var/db/timezone")
+    (subpath "/usr/lib")
+    (subpath "/usr/share"))))
+
+;;; Allow reading internal profiles on development builds
+(allow file-read*
+    (require-all (file-mode #o0004)
+    (subpath "/AppleInternal/Library/Preferences/Logging")
+    (system-attribute apple-internal)))
+
+(allow file-read-metadata
+    (literal "/etc")
+    (literal "/tmp")
+    (literal "/var")
+    (literal "/private/etc/localtime"))
+
+
+;;; Allow access to standard special files.
+(allow file-read*
+    (literal "/dev/autofs_nowait")
+    (literal "/dev/random")
+    (literal "/dev/urandom")
+    (literal "/private/etc/master.passwd")
+    (literal "/private/etc/passwd"))
+
+(allow file-read*
+       file-write-data
+    (literal "/dev/null")
+    (literal "/dev/zero"))
+
+(allow file-read*
+       file-write-data
+       file-ioctl
+    (literal "/dev/dtracehelper"))
+
+(allow network-outbound
+    (literal "/private/var/run/asl_input")
+    (literal "/private/var/run/syslog"))
+
+
+;;; Allow creation of core dumps.
+(allow file-write-create
+    (require-all (prefix "/cores/")
+        (vnode-type REGULAR-FILE)))
+
+
+;;; Allow IPC to standard system agents.
+(allow ipc-posix-shm-read*
+    (ipc-posix-name "apple.shm.notification_center")
+    (ipc-posix-name-prefix "apple.cfprefs."))
+
+(allow mach-lookup
+    (global-name "com.apple.appsleep")
+    (global-name "com.apple.bsd.dirhelper")
+    (global-name "com.apple.cfprefsd.agent")
+    (global-name "com.apple.cfprefsd.daemon")
+    (global-name "com.apple.diagnosticd")
+    (global-name "com.apple.dyld.closured")
+    (global-name "com.apple.espd")
+    (global-name "com.apple.logd")
+    (global-name "com.apple.logd.events")
+    (global-name "com.apple.secinitd")
+    (global-name "com.apple.system.DirectoryService.libinfo_v1")
+    (global-name "com.apple.system.logger")
+    (global-name "com.apple.system.notification_center")
+    (global-name "com.apple.system.opendirectoryd.libinfo")
+    (global-name "com.apple.system.opendirectoryd.membership")
+    (global-name "com.apple.trustd")
+    (global-name "com.apple.trustd.agent")
+    (global-name "com.apple.xpc.activity.unmanaged")
+    (global-name "com.apple.xpcd")
+    (local-name "com.apple.cfprefsd.agent"))
+
+
+;;; Allow mostly harmless operations.
+(allow sysctl-read)
+
+
+;;; (system-graphics) - Allow access to graphics hardware.
+(define (system-graphics)
+    ;; Preferences
+    (allow user-preference-read
+        (preference-domain "com.apple.opengl")
+        (preference-domain "com.nvidia.OpenGL"))
+    ;; OpenGL memory debugging
+    (allow mach-lookup
+        (global-name "com.apple.gpumemd.source"))
+    ;; CVMS
+    (allow mach-lookup
+        (global-name "com.apple.cvmsServ"))
+    ;; OpenCL
+    (allow iokit-open
+        (iokit-connection "IOAccelerator")
+        (iokit-registry-entry-class "IOAccelerationUserClient")
+        (iokit-registry-entry-class "IOSurfaceRootUserClient")
+        (iokit-registry-entry-class "IOSurfaceSendRight"))
+    ;; CoreVideo CVCGDisplayLink
+    (allow iokit-open
+        (iokit-registry-entry-class "IOFramebufferSharedUserClient"))
+    ;; H.264 Acceleration
+    (allow iokit-open
+        (iokit-registry-entry-class "AppleIntelMEUserClient")
+        (iokit-registry-entry-class "AppleSNBFBUserClient"))
+    ;; QuartzCore
+    (allow iokit-open
+        (iokit-registry-entry-class "AGPMClient")
+        (iokit-registry-entry-class "AppleGraphicsControlClient")
+        (iokit-registry-entry-class "AppleGraphicsPolicyClient"))
+    ;; OpenGL
+    (allow iokit-open
+        (iokit-registry-entry-class "AppleMGPUPowerControlClient"))
+    ;; GPU bundles
+    (allow file-read*
+        (subpath "/Library/GPUBundles"))
+    ;; DisplayServices
+    (allow iokit-set-properties
+        (require-all (iokit-connection "IODisplay")
+        (require-any (iokit-property "brightness")
+        (iokit-property "linear-brightness")
+        (iokit-property "commit")
+        (iokit-property "rgcs")
+        (iokit-property "ggcs")
+        (iokit-property "bgcs")))))
+
+
+;;; (system-network) - Allow access to the network.
+(define (system-network)
+    (allow file-read*
+        (literal "/Library/Preferences/com.apple.networkd.plist"))
+    (allow mach-lookup
+        (global-name "com.apple.SystemConfiguration.PPPController")
+        (global-name "com.apple.SystemConfiguration.SCNetworkReachability")
+        (global-name "com.apple.nehelper")
+        (global-name "com.apple.networkd")
+        (global-name "com.apple.nsurlstorage-cache")
+        (global-name "com.apple.symptomsd")
+        (global-name "com.apple.usymptomsd"))
+    (allow network-outbound
+        (control-name "com.apple.netsrc")
+        (control-name "com.apple.network.statistics"))
+    (allow system-socket
+        (require-all (socket-domain AF_SYSTEM)
+        (socket-protocol 2)) ; SYSPROTO_CONTROL
+    (socket-domain AF_ROUTE)))
+
+;;;
+;;; End rules originally copied from 'system.sb'
+;;;
+#endif
 
 ;;; process-info* defaults to allow; deny it and then allow operations we actually need.
 (deny process-info*)
