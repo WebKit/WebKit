@@ -58,10 +58,8 @@ void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePa
     else
         base = SessionTracker::getIdentifierBase();
 
-    if (!sessionID.isEphemeral()) {
-        bool result = SandboxExtension::consumePermanently(parameters.cookieStoragePathExtensionHandle);
-        ASSERT_UNUSED(result, result);
-    }
+    if (!sessionID.isEphemeral())
+        SandboxExtension::consumePermanently(parameters.cookieStoragePathExtensionHandle);
 
     RetainPtr<CFHTTPCookieStorageRef> uiProcessCookieStorage;
     if (!sessionID.isEphemeral())

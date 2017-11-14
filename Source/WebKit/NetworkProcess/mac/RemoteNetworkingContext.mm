@@ -93,10 +93,8 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePara
     else
         base = SessionTracker::getIdentifierBase();
 
-    if (!sessionID.isEphemeral()) {
-        bool result = SandboxExtension::consumePermanently(parameters.cookieStoragePathExtensionHandle);
-        ASSERT_UNUSED(result, result);
-    }
+    if (!sessionID.isEphemeral())
+        SandboxExtension::consumePermanently(parameters.cookieStoragePathExtensionHandle);
 
     RetainPtr<CFHTTPCookieStorageRef> uiProcessCookieStorage;
     if (!parameters.uiProcessCookieStorageIdentifier.isEmpty())
