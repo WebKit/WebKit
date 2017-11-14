@@ -1,3 +1,25 @@
+2017-11-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Consolidate sysctl-read rules in WebProcess sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=179674
+        <rdar://problem/35367154>
+
+        Reviewed by Dean Jackson.
+
+        Consolidate the various calls to 'allow sysctl-read' imported during Bug 179548 into
+        the main function in the sandbox profile.
+
+        Remove the statement to grant global sysctl-read permissions that was copied into this
+        sandbox profile in an earlier checkin. We started blocking the blanket read permissions in
+        macOS 10.13, and want to continue to do so.
+        
+        The earlier "grant global read access" in 'system.sb' apparently allowed some sysctl reads
+        to occur before we hit the block declaration in the WebContent sandbox. Now that we are
+        consistently blocking systcl reads from the start, we need to add whitelist entries for a
+        few more entries to avoid creating new sandbox violations.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-11-14  Alex Christensen  <achristensen@webkit.org>
 
         Remove WebKit CFURLConnection code

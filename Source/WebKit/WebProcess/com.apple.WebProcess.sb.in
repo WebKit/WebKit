@@ -94,10 +94,6 @@
     (ipc-posix-name "apple.shm.notification_center")
     (ipc-posix-name-prefix "apple.cfprefs."))
 
-;;; Allow mostly harmless operations.
-(allow sysctl-read)
-
-
 ;;; (system-graphics) - Allow access to graphics hardware.
 (define (system-graphics)
     ;; Preferences
@@ -181,11 +177,26 @@
 (deny sysctl*)
 (allow sysctl-read
     (sysctl-name
-        "hw.availcpu"
-        "hw.ncpu"
+        "hw.busfrequency_max"
+        "hw.cputype"
+        "hw.l2cachesize"
+        "hw.machine"
+        "hw.memsize"
         "hw.model"
+        "hw.ncpu"
+        "hw.vectorunit"
+        "kern.hostname"
+        "kern.maxfilesperproc"
         "kern.memorystatus_level"
-        "vm.footprint_suspend"))
+        "kern.safeboot"
+        "kern.version"
+        "vm.footprint_suspend")
+    (sysctl-name-regex #"^hw.(active|avail)cpu")
+    (sysctl-name-regex #"^hw.(logical|physical)cpu_max")
+    (sysctl-name-regex #"^hw.optional\.")
+    (sysctl-name-regex #"^kern.os(release|type|variant_status|version)")
+    (sysctl-name-regex #"^net.routetable")
+)
 
 (deny iokit-get-properties)
 (allow iokit-get-properties
