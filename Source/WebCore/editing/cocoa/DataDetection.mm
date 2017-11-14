@@ -152,12 +152,18 @@ RetainPtr<DDActionContext> DataDetection::detectItemAroundHitTestResult(const Hi
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS)
+
+bool DataDetection::canBePresentedByDataDetectors(const URL& url)
+{
+    return [softLink_DataDetectorsCore_DDURLTapAndHoldSchemes() containsObject:(NSString *)url.protocol().toStringWithoutCopying().convertToASCIILowercase()];
+}
+
 bool DataDetection::isDataDetectorLink(Element& element)
 {
     if (!is<HTMLAnchorElement>(element))
         return false;
 
-    return [softLink_DataDetectorsCore_DDURLTapAndHoldSchemes() containsObject:(NSString *)downcast<HTMLAnchorElement>(element).href().protocol().toStringWithoutCopying().convertToASCIILowercase()];
+    return canBePresentedByDataDetectors(downcast<HTMLAnchorElement>(element).href());
 }
 
 bool DataDetection::requiresExtendedContext(Element& element)

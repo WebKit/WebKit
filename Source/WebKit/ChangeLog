@@ -1,3 +1,23 @@
+2017-11-14  Tim Horton  <timothy_horton@apple.com>
+
+        Long pressing a phone number with spaces in it results in a link sheet instead of a data detectors sheet
+        https://bugs.webkit.org/show_bug.cgi?id=179646
+        <rdar://problem/35337288>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant showImageSheet]):
+        (-[WKActionSheetAssistant showLinkSheet]):
+        (-[WKActionSheetAssistant showDataDetectorsSheet]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _actionForLongPressFromPositionInformation:]):
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+        Make use of canBePresentedByDataDetectors with our WebCore URL instead
+        of (sometimes unsucessfully) reparsing the URL with NSURL's parser.
+        Also, avoid a few unnecessary round-trips through String when converting
+        from URL to NSURL.
+
 2017-11-14  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r224799): WebKit crashes on Sierra due to sandbox violation

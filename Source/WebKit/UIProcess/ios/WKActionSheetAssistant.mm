@@ -40,6 +40,7 @@
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKElementActionInternal.h"
 #import <UIKit/UIView.h>
+#import <WebCore/DataDetection.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/PathUtilities.h>
 #import <WebCore/WebCoreNSURLExtras.h>
@@ -348,7 +349,9 @@ static const CGFloat presentationElementRectPadding = 15;
         return;
 
     void (^showImageSheetWithAlternateURLBlock)(NSURL*, NSDictionary *userInfo) = ^(NSURL *alternateURL, NSDictionary *userInfo) {
-        NSURL *targetURL = [NSURL _web_URLWithWTFString:_positionInformation->url] ?: alternateURL;
+        NSURL *targetURL = _positionInformation->url;
+        if (!targetURL)
+            targetURL = alternateURL;
         auto elementBounds = _positionInformation->bounds;
         auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL location:_positionInformation->request.point title:_positionInformation->title ID:_positionInformation->idAttribute rect:elementBounds image:_positionInformation->image.get() userInfo:userInfo]);
         if ([delegate respondsToSelector:@selector(actionSheetAssistant:showCustomSheetForElement:)] && [delegate actionSheetAssistant:self showCustomSheetForElement:elementInfo.get()])
@@ -509,7 +512,7 @@ static WKActionSheetPresentationStyle presentationStyleForView(UIView *view, con
     if (![self synchronouslyRetrievePositionInformation])
         return;
 
-    NSURL *targetURL = [NSURL _web_URLWithWTFString:_positionInformation->url];
+    NSURL *targetURL = _positionInformation->url;
     if (!targetURL) {
         _needsLinkIndicator = NO;
         return;
@@ -552,11 +555,11 @@ static WKActionSheetPresentationStyle presentationStyleForView(UIView *view, con
     if (![self synchronouslyRetrievePositionInformation])
         return;
 
-    NSURL *targetURL = [NSURL _web_URLWithWTFString:_positionInformation->url];
-    if (!targetURL)
+    if (!WebCore::DataDetection::canBePresentedByDataDetectors(_positionInformation->url))
         return;
 
-    if (![[getDDDetectionControllerClass() tapAndHoldSchemes] containsObject:[targetURL scheme]])
+    NSURL *targetURL = _positionInformation->url;
+    if (!targetURL)
         return;
 
     DDDetectionController *controller = [getDDDetectionControllerClass() sharedController];

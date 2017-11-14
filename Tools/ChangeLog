@@ -1,3 +1,17 @@
+2017-11-14  Tim Horton  <timothy_horton@apple.com>
+
+        Long pressing a phone number with spaces in it results in a link sheet instead of a data detectors sheet
+        https://bugs.webkit.org/show_bug.cgi?id=179646
+        <rdar://problem/35337288>
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/ios/ActionSheetTests.mm:
+        (-[ActionSheetObserver _dataDetectionContextForWebView:]):
+        (TestWebKitAPI::TEST):
+        Add a test that ensures that a phone number with spaces in it
+        invokes a data detectors sheet, not a normal link sheet.
+
 2017-11-14  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Add committer status for Emilio Cobos Álvarez.
