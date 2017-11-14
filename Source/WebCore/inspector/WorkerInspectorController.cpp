@@ -47,6 +47,7 @@
 #include <inspector/agents/InspectorAgent.h>
 
 #if ENABLE(SERVICE_WORKER)
+#include "ServiceWorkerAgent.h"
 #include "ServiceWorkerGlobalScope.h"
 #endif
 
@@ -169,8 +170,10 @@ void WorkerInspectorController::createLazyAgents()
 
 #if ENABLE(SERVICE_WORKER)
     auto workerContext = workerAgentContext();
-    if (is<ServiceWorkerGlobalScope>(m_workerGlobalScope))
+    if (is<ServiceWorkerGlobalScope>(m_workerGlobalScope)) {
+        m_agents.append(std::make_unique<ServiceWorkerAgent>(workerContext));
         m_agents.append(std::make_unique<WorkerNetworkAgent>(workerContext));
+    }
 #endif
 }
 

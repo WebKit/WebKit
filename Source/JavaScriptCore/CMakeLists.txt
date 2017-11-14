@@ -453,6 +453,12 @@ if (ENABLE_RESOURCE_USAGE)
     )
 endif ()
 
+if (ENABLE_SERVICE_WORKER)
+    list(APPEND JavaScriptCore_INSPECTOR_DOMAINS
+        ${JAVASCRIPTCORE_DIR}/inspector/protocol/ServiceWorker.json
+    )
+endif ()
+
 add_custom_command(
     OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/CombinedDomains.json
     MAIN_DEPENDENCY ${JavaScriptCore_SCRIPTS_DIR}/generate-combined-inspector-json.py

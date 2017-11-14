@@ -2838,6 +2838,7 @@
 		A578F4351DE00EEB003DFC6A /* PromiseRejectionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A578F4331DE00ED6003DFC6A /* PromiseRejectionEvent.h */; };
 		A578F43C1DE01423003DFC6A /* JSPromiseRejectionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A578F43A1DE013FB003DFC6A /* JSPromiseRejectionEvent.h */; };
 		A578F43F1DE0B630003DFC6A /* RejectedPromiseTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = A578F43E1DE0B62B003DFC6A /* RejectedPromiseTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A581ED131FB288CF00CED4EC /* ServiceWorkerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A581ED101FB288C800CED4EC /* ServiceWorkerAgent.h */; };
 		A5840E1D187B74D500843B10 /* InspectorInstrumentationCookie.h in Headers */ = {isa = PBXBuildFile; fileRef = A5840E1B187B74D500843B10 /* InspectorInstrumentationCookie.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5840E25187B8AC200843B10 /* WebInjectedScriptHost.h in Headers */ = {isa = PBXBuildFile; fileRef = A5840E23187B8AC200843B10 /* WebInjectedScriptHost.h */; };
 		A584FE2618637DAB00843B10 /* CommandLineAPIModuleSource.h in Headers */ = {isa = PBXBuildFile; fileRef = A584FE2518637DAB00843B10 /* CommandLineAPIModuleSource.h */; };
@@ -10732,6 +10733,8 @@
 		A578F43A1DE013FB003DFC6A /* JSPromiseRejectionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPromiseRejectionEvent.h; sourceTree = "<group>"; };
 		A578F43D1DE0B62B003DFC6A /* RejectedPromiseTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RejectedPromiseTracker.cpp; sourceTree = "<group>"; };
 		A578F43E1DE0B62B003DFC6A /* RejectedPromiseTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RejectedPromiseTracker.h; sourceTree = "<group>"; };
+		A581ED101FB288C800CED4EC /* ServiceWorkerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerAgent.h; sourceTree = "<group>"; };
+		A581ED121FB288C900CED4EC /* ServiceWorkerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerAgent.cpp; sourceTree = "<group>"; };
 		A5840E1A187B74D500843B10 /* InspectorInstrumentationCookie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorInstrumentationCookie.cpp; sourceTree = "<group>"; };
 		A5840E1B187B74D500843B10 /* InspectorInstrumentationCookie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorInstrumentationCookie.h; sourceTree = "<group>"; };
 		A5840E22187B8AC200843B10 /* WebInjectedScriptHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInjectedScriptHost.cpp; sourceTree = "<group>"; };
@@ -20626,6 +20629,8 @@
 		A5B81CC61FAA44C30037D1E6 /* worker */ = {
 			isa = PBXGroup;
 			children = (
+				A581ED121FB288C900CED4EC /* ServiceWorkerAgent.cpp */,
+				A581ED101FB288C800CED4EC /* ServiceWorkerAgent.h */,
 				A5B81CCB1FAA44DA0037D1E6 /* WorkerConsoleAgent.cpp */,
 				A5B81CCA1FAA44DA0037D1E6 /* WorkerConsoleAgent.h */,
 				A5B81CC81FAA44DA0037D1E6 /* WorkerDebuggerAgent.cpp */,
@@ -28979,6 +28984,7 @@
 				516F7F6D1C31E39A00F111DC /* ServerOpenDBRequest.h in Headers */,
 				2D93AEE319DF5641002A86C3 /* ServicesOverlayController.h in Headers */,
 				51F1755D1F3EBC8300C74950 /* ServiceWorker.h in Headers */,
+				A581ED131FB288CF00CED4EC /* ServiceWorkerAgent.h in Headers */,
 				46EF142D1F97B7D800C2A524 /* ServiceWorkerClient.h in Headers */,
 				837D46271FA2A8CE0054E1FA /* ServiceWorkerClientIdentifier.h in Headers */,
 				46EF142C1F97B7D800C2A524 /* ServiceWorkerClients.h in Headers */,

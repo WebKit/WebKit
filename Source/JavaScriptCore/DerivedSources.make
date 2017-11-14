@@ -253,6 +253,10 @@ ifeq ($(findstring ENABLE_RESOURCE_USAGE,$(FEATURE_DEFINES)), ENABLE_RESOURCE_US
     INSPECTOR_DOMAINS := $(INSPECTOR_DOMAINS) $(JavaScriptCore)/inspector/protocol/Memory.json
 endif
 
+ifeq ($(findstring ENABLE_SERVICE_WORKER,$(FEATURE_DEFINES)), ENABLE_SERVICE_WORKER)
+    INSPECTOR_DOMAINS := $(INSPECTOR_DOMAINS) $(JavaScriptCore)/inspector/protocol/ServiceWorker.json
+endif
+
 INSPECTOR_GENERATOR_SCRIPTS = \
 	$(JavaScriptCore)/inspector/scripts/codegen/__init__.py \
 	$(JavaScriptCore)/inspector/scripts/codegen/cpp_generator_templates.py \

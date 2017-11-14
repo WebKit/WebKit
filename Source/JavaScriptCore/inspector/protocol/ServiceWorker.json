@@ -1,0 +1,26 @@
+{
+    "domain": "ServiceWorker",
+    "description": "Actions and events related to the inspected service worker.",
+    "availability": ["service-worker"],
+    "types": [
+        {
+            "id": "InitializationInfo",
+            "type": "object",
+            "description": "ServiceWorker metadata and initial state.",
+            "properties": [
+                { "name": "targetId", "type": "string" },
+                { "name": "securityOrigin", "type": "string" },
+                { "name": "url", "type": "string", "description": "ServiceWorker main script URL." }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "getInitializationInfo",
+            "description": "Returns the initialization information for this target.",
+            "returns": [
+                { "name": "info", "$ref": "InitializationInfo" }
+            ]
+        }
+    ]
+}

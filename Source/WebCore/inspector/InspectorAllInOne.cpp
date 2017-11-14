@@ -60,6 +60,7 @@
 #include "PageNetworkAgent.cpp"
 #include "PageRuntimeAgent.cpp"
 #include "PageScriptDebugServer.cpp"
+#include "ServiceWorkerAgent.cpp"
 #include "TimelineRecordFactory.cpp"
 #include "WebConsoleAgent.cpp"
 #include "WebDebuggerAgent.cpp"
