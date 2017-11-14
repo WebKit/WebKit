@@ -625,8 +625,6 @@ public:
     void hasServiceWorkerRegistration(const String& clientURL, HasRegistrationPromise&&);
 #endif
 
-    bool hasServiceWorkerRegisteredForOrigin(const String&);
-
 #if ENABLE(APPLE_PAY)
     MockPaymentCoordinator& mockPaymentCoordinator() const;
 #endif

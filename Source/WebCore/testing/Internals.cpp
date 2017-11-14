@@ -4232,19 +4232,6 @@ void Internals::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
     contextDocument()->setConsoleMessageListener(WTFMove(listener));
 }
 
-bool Internals::hasServiceWorkerRegisteredForOrigin(const String& origin)
-{
-#if ENABLE(SERVICE_WORKER)
-    if (!contextDocument())
-        return false;
-
-    return ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(contextDocument()->sessionID()).hasServiceWorkerRegisteredForOrigin(SecurityOrigin::createFromString(origin));
-#else
-    UNUSED_PARAM(origin);
-    return false;
-#endif
-}
-
 void Internals::setResponseSizeWithPadding(FetchResponse& response, uint64_t size)
 {
     response.setBodySizeWithPadding(size);

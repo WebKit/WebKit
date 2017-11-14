@@ -1,3 +1,17 @@
+2017-11-14  Youenn Fablet  <youenn@apple.com>
+
+        WebSWClientConnection should do IPC to StorageProcess if its WebSWOriginTable is not yet initialized
+        https://bugs.webkit.org/show_bug.cgi?id=179668
+
+        Reviewed by Chris Dumez.
+
+        Updated tests to use hasServiceWorkerRegistration instead of hasServiceWorkerRegisteredForOrigin.
+        Since the latter is trying to match a registration and compares scopes, we need the scopes to be set right on the tests.
+
+        * http/tests/workers/service/basic-unregister.https-expected.txt:
+        * http/tests/workers/service/resources/basic-register.js:
+        * http/tests/workers/service/resources/basic-unregister.js:
+
 2017-11-14  Ms2ger  <Ms2ger@igalia.com>
 
         Add some bug numbers for failing XHR tests

@@ -94,14 +94,22 @@ void WebSWClientConnection::didResolveRegistrationPromise(const ServiceWorkerReg
     send(Messages::WebSWServerConnection::DidResolveRegistrationPromise(key));
 }
 
-bool WebSWClientConnection::hasServiceWorkerRegisteredForOrigin(const SecurityOrigin& origin) const
+bool WebSWClientConnection::mayHaveServiceWorkerRegisteredForOrigin(const SecurityOrigin& origin) const
 {
+    if (!m_swOriginTable->isInitialized())
+        return true;
+
     return m_swOriginTable->contains(origin);
 }
 
 void WebSWClientConnection::setSWOriginTableSharedMemory(const SharedMemory::Handle& handle)
 {
     m_swOriginTable->setSharedMemory(handle);
+}
+
+void WebSWClientConnection::initializeSWOriginTableAsEmpty()
+{
+    m_swOriginTable->initializeAsEmpty();
 }
 
 void WebSWClientConnection::didMatchRegistration(uint64_t matchingRequest, std::optional<ServiceWorkerRegistrationData>&& result)
@@ -112,7 +120,7 @@ void WebSWClientConnection::didMatchRegistration(uint64_t matchingRequest, std::
 
 void WebSWClientConnection::matchRegistration(const SecurityOrigin& topOrigin, const URL& clientURL, RegistrationCallback&& callback)
 {
-    if (!hasServiceWorkerRegisteredForOrigin(topOrigin)) {
+    if (!mayHaveServiceWorkerRegisteredForOrigin(topOrigin)) {
         callback(std::nullopt);
         return;
     }

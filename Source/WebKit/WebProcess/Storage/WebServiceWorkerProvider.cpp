@@ -74,7 +74,7 @@ static inline bool shouldHandleFetch(const WebSWClientConnection& connection, Ca
     if (!resource)
         return false;
 
-    return connection.hasServiceWorkerRegisteredForOrigin(*resource->origin());
+    return connection.mayHaveServiceWorkerRegisteredForOrigin(*resource->origin());
 }
 
 void WebServiceWorkerProvider::handleFetch(ResourceLoader& loader, CachedResource* resource, PAL::SessionID sessionID, ServiceWorkerClientFetch::Callback&& callback)

@@ -62,8 +62,10 @@ void WebSWOriginStore::registerSWServerConnection(WebSWServerConnection& connect
 {
     m_webSWServerConnections.add(&connection);
 
-    if (m_store.isEmpty())
+    if (m_store.isEmpty()) {
+        connection.send(Messages::WebSWClientConnection::InitializeSWOriginTableAsEmpty());
         return;
+    }
 
     sendStoreHandle(connection);
 }

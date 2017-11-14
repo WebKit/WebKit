@@ -60,7 +60,7 @@ public:
     void disconnectedFromWebProcess();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-    bool hasServiceWorkerRegisteredForOrigin(const WebCore::SecurityOrigin&) const final;
+    bool mayHaveServiceWorkerRegisteredForOrigin(const WebCore::SecurityOrigin&) const final;
     Ref<ServiceWorkerClientFetch> startFetch(WebServiceWorkerProvider&, Ref<WebCore::ResourceLoader>&&, uint64_t identifier, ServiceWorkerClientFetch::Callback&&);
 
     void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerData&& source, const String& sourceOrigin);
@@ -81,6 +81,7 @@ private:
     uint64_t messageSenderDestinationID() final { return m_identifier; }
 
     void setSWOriginTableSharedMemory(const SharedMemory::Handle&);
+    void initializeSWOriginTableAsEmpty();
 
     PAL::SessionID m_sessionID;
     uint64_t m_identifier;

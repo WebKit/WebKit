@@ -5,14 +5,14 @@ function done()
 
 async function test()
 {
-    if (!internals.hasServiceWorkerRegisteredForOrigin(self.origin))
+    if (!await internals.hasServiceWorkerRegistration(self.origin))
         log("PASS: No service worker is initially registered for this origin");
     else
         log("FAIL: A service worker is initially registered for this origin");
 
     testRunner.setPrivateBrowsingEnabled(true);
 
-    if (!internals.hasServiceWorkerRegisteredForOrigin(self.origin))
+    if (!await internals.hasServiceWorkerRegistration(self.origin))
         log("PASS: No service worker is initially registered for this origin in private session");
     else
         log("FAIL: A service worker is initially registered for this origin in private session");
@@ -32,14 +32,14 @@ async function test()
         else
             log("FAIL: registration object's updateViaCache is invalid, got: " + r.updateViaCache);
 
-        if (internals.hasServiceWorkerRegisteredForOrigin(self.origin))
+        if (await internals.hasServiceWorkerRegistration("/test"))
             log("PASS: A service worker is now registered for this origin");
         else
             log("FAIL: No service worker is registered for this origin");
 
         testRunner.setPrivateBrowsingEnabled(true);
 
-        if (!internals.hasServiceWorkerRegisteredForOrigin(self.origin))
+        if (!await internals.hasServiceWorkerRegistration("/test"))
             log("PASS: No service worker is registered for this origin in private session");
         else
             log("FAIL: A service worker is registered for this origin in private session");

@@ -1,3 +1,27 @@
+2017-11-14  Youenn Fablet  <youenn@apple.com>
+
+        WebSWClientConnection should do IPC to StorageProcess if its WebSWOriginTable is not yet initialized
+        https://bugs.webkit.org/show_bug.cgi?id=179668
+
+        Reviewed by Chris Dumez.
+
+        There may be cases where the origin table is not initialized and we would think there is no service worker registration.
+        In such a case, we should go to the StorageProcess.
+        StorageProcess is now sending an IPC message back to each registered SW connection so that WebProcess will know whether its map
+        is correctly initialized or not.
+
+        Renaming hasServiceWorkerRegisteredForOrigin in mayHaveServiceWorkerRegisteredForOrigin.
+
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::mayHaveServiceWorkerRegisteredForOrigin const):
+        (WebKit::WebSWClientConnection::matchRegistration):
+        (WebKit::WebSWClientConnection::hasServiceWorkerRegisteredForOrigin const): Deleted.
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWOriginTable.h:
+        (WebKit::WebSWOriginTable::isInitialized const):
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::shouldHandleFetch):
+
 2017-11-14  Brent Fulgham  <bfulgham@apple.com>
 
         Consolidate sysctl-read rules in WebProcess sandbox

@@ -32,6 +32,7 @@ messages -> WebSWClientConnection {
     UpdateWorkerState(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, enum WebCore::ServiceWorkerState state)
     FireUpdateFoundEvent(WebCore::ServiceWorkerRegistrationIdentifier identifier)
 
+    InitializeSWOriginTableAsEmpty()
     SetSWOriginTableSharedMemory(WebKit::SharedMemory::Handle handle)
     PostMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, IPC::DataReference message, struct WebCore::ServiceWorkerData source, String sourceOrigin)
 

@@ -66,7 +66,7 @@ public:
 
     virtual void postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationIdentifier, Ref<SerializedScriptValue>&&, ScriptExecutionContext& source) = 0;
     virtual uint64_t identifier() const = 0;
-    virtual bool hasServiceWorkerRegisteredForOrigin(const SecurityOrigin&) const = 0;
+    virtual bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOrigin&) const = 0;
 
 protected:
     WEBCORE_EXPORT SWClientConnection();

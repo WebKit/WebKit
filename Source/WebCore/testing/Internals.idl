@@ -568,8 +568,6 @@ enum EventThrottlingBehavior {
     [Conditional=SERVICE_WORKER, CallWith=ScriptExecutionContext] FetchEvent createBeingDispatchedFetchEvent();
     [Conditional=SERVICE_WORKER] Promise<boolean> hasServiceWorkerRegistration(DOMString scopeURL);
 
-    boolean hasServiceWorkerRegisteredForOrigin(DOMString origin);
-
     [EnabledAtRuntime=WebAnimations] DOMString timelineDescription(AnimationTimeline timeline);
     [EnabledAtRuntime=WebAnimations] void pauseTimeline(AnimationTimeline timeline);
     [EnabledAtRuntime=WebAnimations] void setTimelineCurrentTime(AnimationTimeline timeline, double currentTime);

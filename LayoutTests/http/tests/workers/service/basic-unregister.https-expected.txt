@@ -1,5 +1,5 @@
 PASS: There is initially no service worker registered for the origin
-PASS: registration scope is https://127.0.0.1:8443/workers/service/
+PASS: registration scope is https://127.0.0.1:8443/
 PASS: There is a service worker registered for the origin
 PASS: Unregistration was successful
 PASS: There is no service worker registered for the origin

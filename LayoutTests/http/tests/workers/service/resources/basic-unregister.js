@@ -6,18 +6,18 @@ function done()
 async function test()
 {
     try {
-        if (!internals.hasServiceWorkerRegisteredForOrigin(self.origin))
+        if (!await internals.hasServiceWorkerRegistration(self.origin))
             log("PASS: There is initially no service worker registered for the origin");
         else
             log("FAIL: There is initially a service worker registered for the origin");
 
-        let registration = await navigator.serviceWorker.register("resources/basic-fetch-worker.js", { });
-        if (registration.scope === "https://127.0.0.1:8443/workers/service/")
+        let registration = await navigator.serviceWorker.register("resources/basic-fetch-worker.js", { scope: "/" });
+        if (registration.scope === "https://127.0.0.1:8443/")
             log("PASS: registration scope is " + registration.scope);
         else
             log("FAIL: registration scope is " + registration.scope);
  
-        if (internals.hasServiceWorkerRegisteredForOrigin(self.origin))
+        if (await internals.hasServiceWorkerRegistration(self.origin))
             log("PASS: There is a service worker registered for the origin");
         else
             log("FAIL: There is no service worker registered for the origin");
@@ -28,7 +28,7 @@ async function test()
         else
             log("FAIL: Unregistration failed");
 
-        if (!internals.hasServiceWorkerRegisteredForOrigin(self.origin))
+        if (!await internals.hasServiceWorkerRegistration(self.origin))
             log("PASS: There is no service worker registered for the origin");
         else
             log("FAIL: There is a service worker registered for the origin");
@@ -39,7 +39,7 @@ async function test()
         else
             log("FAIL: Unregistration succeeded unexpectedly");
         
-        if (!internals.hasServiceWorkerRegisteredForOrigin(self.origin))
+        if (!await internals.hasServiceWorkerRegistration(self.origin))
             log("PASS: There is no service worker registered for the origin");
         else
             log("FAIL: There is a service worker registered for the origin");
@@ -50,7 +50,7 @@ async function test()
         else
             log("FAIL: registration scope is " + registration.scope);
 
-        if (internals.hasServiceWorkerRegisteredForOrigin(self.origin))
+        if (await internals.hasServiceWorkerRegistration("/workers/service/resources/test"))
             log("PASS: There is a service worker registered for the origin");
         else
             log("FAIL: There is no service worker registered for the origin");
