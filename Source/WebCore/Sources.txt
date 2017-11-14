@@ -2172,6 +2172,7 @@ workers/service/ServiceWorkerClient.cpp
 workers/service/ServiceWorkerClients.cpp
 workers/service/ServiceWorkerContainer.cpp
 workers/service/ServiceWorkerContextData.cpp
+workers/service/ServiceWorkerData.cpp
 workers/service/ServiceWorkerGlobalScope.cpp
 workers/service/ServiceWorkerJob.cpp
 workers/service/ServiceWorkerJobData.cpp

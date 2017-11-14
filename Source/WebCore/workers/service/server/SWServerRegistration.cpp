@@ -81,12 +81,12 @@ void SWServerRegistration::updateRegistrationState(ServiceWorkerRegistrationStat
         break;
     };
 
-    std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier;
+    std::optional<ServiceWorkerData> serviceWorkerData;
     if (worker)
-        serviceWorkerIdentifier = worker->identifier();
+        serviceWorkerData = worker->data();
 
     forEachConnection([&](auto& connection) {
-        connection.updateRegistrationStateInClient(identifier(), state, serviceWorkerIdentifier);
+        connection.updateRegistrationStateInClient(identifier(), state, serviceWorkerData);
     });
 }
 
@@ -118,19 +118,19 @@ void SWServerRegistration::forEachConnection(const WTF::Function<void(SWServer::
 
 ServiceWorkerRegistrationData SWServerRegistration::data() const
 {
-    std::optional<ServiceWorkerIdentifier> installingID;
+    std::optional<ServiceWorkerData> installingWorkerData;
     if (m_installingWorker)
-        installingID = m_installingWorker->identifier();
+        installingWorkerData = m_installingWorker->data();
 
-    std::optional<ServiceWorkerIdentifier> waitingID;
+    std::optional<ServiceWorkerData> waitingWorkerData;
     if (m_waitingWorker)
-        waitingID = m_waitingWorker->identifier();
+        waitingWorkerData = m_waitingWorker->data();
 
-    std::optional<ServiceWorkerIdentifier> activeID;
+    std::optional<ServiceWorkerData> activeWorkerData;
     if (m_activeWorker)
-        activeID = m_activeWorker->identifier();
+        activeWorkerData = m_activeWorker->data();
 
-    return { m_registrationKey, identifier(), m_scopeURL, m_scriptURL, m_updateViaCache, installingID, waitingID, activeID };
+    return { m_registrationKey, identifier(), m_scopeURL, m_updateViaCache, WTFMove(installingWorkerData), WTFMove(waitingWorkerData), WTFMove(activeWorkerData) };
 }
 
 void SWServerRegistration::addClientServiceWorkerRegistration(uint64_t connectionIdentifier)

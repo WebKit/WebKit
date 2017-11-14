@@ -131,9 +131,9 @@ Ref<ServiceWorkerClientFetch> WebSWClientConnection::startFetch(WebServiceWorker
     return ServiceWorkerClientFetch::create(provider, WTFMove(loader), identifier, m_connection.get(), WTFMove(callback));
 }
 
-void WebSWClientConnection::postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, const IPC::DataReference& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
+void WebSWClientConnection::postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, const IPC::DataReference& message, ServiceWorkerData&& source, const String& sourceOrigin)
 {
-    SWClientConnection::postMessageToServiceWorkerClient(destinationScriptExecutionContextIdentifier, SerializedScriptValue::adopt(message.vector()), sourceIdentifier, sourceOrigin);
+    SWClientConnection::postMessageToServiceWorkerClient(destinationScriptExecutionContextIdentifier, SerializedScriptValue::adopt(message.vector()), WTFMove(source), sourceOrigin);
 }
 
 } // namespace WebKit

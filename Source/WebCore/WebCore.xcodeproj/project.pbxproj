@@ -2243,6 +2243,7 @@
 		83D35AEC1C7187FA00F70D5A /* XMLHttpRequestEventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D35AEA1C7187ED00F70D5A /* XMLHttpRequestEventTarget.h */; };
 		83D35AF21C718D9000F70D5A /* JSXMLHttpRequestEventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D35AF01C718D8400F70D5A /* JSXMLHttpRequestEventTarget.h */; };
 		83E359A21BB1031D002CEB98 /* JSHTMLTimeElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E359A01BB1031D002CEB98 /* JSHTMLTimeElement.h */; };
+		83E866801FBA565B008855C5 /* ServiceWorkerData.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E8667D1FBA563F008855C5 /* ServiceWorkerData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83EE598F1F50958E003E8B30 /* JSErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 83EE598B1F50958B003E8B30 /* JSErrorCallback.h */; };
 		83FB33711F508A5400986E54 /* FileSystemDirectoryEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FB336D1F508A4E00986E54 /* FileSystemDirectoryEntry.h */; };
 		83FB33731F508A5800986E54 /* FileSystemEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FB336F1F508A4E00986E54 /* FileSystemEntry.h */; };
@@ -9534,6 +9535,8 @@
 		83E045EF1DAA104F00B0D8B9 /* JSUIEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSUIEventInit.h; sourceTree = "<group>"; };
 		83E359A01BB1031D002CEB98 /* JSHTMLTimeElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLTimeElement.h; sourceTree = "<group>"; };
 		83E359A11BB1031D002CEB98 /* JSHTMLTimeElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTimeElement.cpp; sourceTree = "<group>"; };
+		83E8667D1FBA563F008855C5 /* ServiceWorkerData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerData.h; sourceTree = "<group>"; };
+		83E8667F1FBA5640008855C5 /* ServiceWorkerData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerData.cpp; sourceTree = "<group>"; };
 		83E959E11B8BC22B004D9385 /* NativeNodeFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeNodeFilter.h; sourceTree = "<group>"; };
 		83E9B3001DA5A51E00FFE8F6 /* JSScrollToOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScrollToOptions.cpp; sourceTree = "<group>"; };
 		83E9B3011DA5A51E00FFE8F6 /* JSScrollToOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScrollToOptions.h; sourceTree = "<group>"; };
@@ -17296,6 +17299,8 @@
 				51F175561F3EBC0C00C74950 /* ServiceWorkerContainer.idl */,
 				517C87161F8FD4D300EB8076 /* ServiceWorkerContextData.cpp */,
 				51CA7EE71F8832E0003D3131 /* ServiceWorkerContextData.h */,
+				83E8667F1FBA5640008855C5 /* ServiceWorkerData.cpp */,
+				83E8667D1FBA563F008855C5 /* ServiceWorkerData.h */,
 				517A535C1F5899F200DCDC0A /* ServiceWorkerFetchResult.h */,
 				51F175551F3EBC0C00C74950 /* ServiceWorkerGlobalScope.cpp */,
 				51F175541F3EBC0C00C74950 /* ServiceWorkerGlobalScope.h */,
@@ -28980,6 +28985,7 @@
 				8369FDFC1FA102E300C1FF1F /* ServiceWorkerClientType.h in Headers */,
 				51F1755F1F3EBC8300C74950 /* ServiceWorkerContainer.h in Headers */,
 				51CA7EE91F883390003D3131 /* ServiceWorkerContextData.h in Headers */,
+				83E866801FBA565B008855C5 /* ServiceWorkerData.h in Headers */,
 				A52B348F1FA3BDA6008B6246 /* ServiceWorkerDebuggable.h in Headers */,
 				419ACF921F97E7DA009F1A83 /* ServiceWorkerFetch.h in Headers */,
 				517A535D1F5899FE00DCDC0A /* ServiceWorkerFetchResult.h in Headers */,

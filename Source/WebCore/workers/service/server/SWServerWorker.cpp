@@ -43,14 +43,12 @@ SWServerWorker* SWServerWorker::existingWorkerForIdentifier(ServiceWorkerIdentif
     return allWorkers().get(identifier);
 }
 
-SWServerWorker::SWServerWorker(SWServer& server, const ServiceWorkerRegistrationKey& registrationKey, SWServerToContextConnectionIdentifier contextConnectionIdentifier, const URL& url, const String& script, WorkerType type, ServiceWorkerIdentifier identifier)
+SWServerWorker::SWServerWorker(SWServer& server, const ServiceWorkerRegistrationKey& registrationKey, SWServerToContextConnectionIdentifier contextConnectionIdentifier, const URL& scriptURL, const String& script, WorkerType type, ServiceWorkerIdentifier identifier)
     : m_server(server)
     , m_registrationKey(registrationKey)
     , m_contextConnectionIdentifier(contextConnectionIdentifier)
-    , m_scriptURL(url)
+    , m_data { identifier, scriptURL, ServiceWorkerState::Redundant, type }
     , m_script(script)
-    , m_identifier(identifier)
-    , m_type(type)
 {
     auto result = allWorkers().add(identifier, this);
     ASSERT_UNUSED(result, result.isNewEntry);
@@ -58,7 +56,7 @@ SWServerWorker::SWServerWorker(SWServer& server, const ServiceWorkerRegistration
 
 SWServerWorker::~SWServerWorker()
 {
-    auto taken = allWorkers().take(m_identifier);
+    auto taken = allWorkers().take(identifier());
     ASSERT_UNUSED(taken, taken == this);
 }
 

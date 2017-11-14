@@ -1,3 +1,15 @@
+2017-11-13  Chris Dumez  <cdumez@apple.com>
+
+        Send ServiceWorkerData structs to the WebProcesses instead of ServiceWorkerIdentifiers
+        https://bugs.webkit.org/show_bug.cgi?id=179649
+
+        Reviewed by Brady Eidson.
+
+        Rebaseline a couple of WPT tests that are now passing.
+
+        * web-platform-tests/service-workers/service-worker/register-wait-forever-in-install-worker.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/skip-waiting.https-expected.txt:
+
 2017-11-13  Youenn Fablet  <youenn@apple.com>
 
         matchRegistration does not need to go to StorageProcess if no service worker is registered

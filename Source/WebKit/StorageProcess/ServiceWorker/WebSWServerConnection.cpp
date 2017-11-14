@@ -91,9 +91,9 @@ void WebSWServerConnection::startScriptFetchInClient(uint64_t jobIdentifier)
     send(Messages::WebSWClientConnection::StartScriptFetchForServer(jobIdentifier));
 }
 
-void WebSWServerConnection::updateRegistrationStateInClient(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerRegistrationState state, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier)
+void WebSWServerConnection::updateRegistrationStateInClient(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerData>& serviceWorkerData)
 {
-    send(Messages::WebSWClientConnection::UpdateRegistrationState(identifier, state, serviceWorkerIdentifier));
+    send(Messages::WebSWClientConnection::UpdateRegistrationState(identifier, state, serviceWorkerData));
 }
 
 void WebSWServerConnection::fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier identifier)
@@ -142,9 +142,13 @@ void WebSWServerConnection::didNotHandleFetch(uint64_t fetchIdentifier)
     m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
 }
 
-void WebSWServerConnection::postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, const IPC::DataReference& message, ServiceWorkerIdentifier sourceServiceWorkerIdentifier, const String& sourceOrigin)
+void WebSWServerConnection::postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, const IPC::DataReference& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
 {
-    send(Messages::WebSWClientConnection::PostMessageToServiceWorkerClient { destinationScriptExecutionContextIdentifier, message, sourceServiceWorkerIdentifier, sourceOrigin });
+    auto* sourceServiceWorker = server().workerByID(sourceIdentifier);
+    if (!sourceServiceWorker)
+        return;
+
+    send(Messages::WebSWClientConnection::PostMessageToServiceWorkerClient { destinationScriptExecutionContextIdentifier, message, sourceServiceWorker->data(), sourceOrigin });
 }
 
 void WebSWServerConnection::matchRegistration(uint64_t registrationMatchRequestIdentifier, const SecurityOriginData& topOrigin, const URL& clientURL)

@@ -44,6 +44,7 @@ enum class ServiceWorkerRegistrationState;
 enum class ServiceWorkerState;
 enum class ShouldNotifyWhenResolved;
 struct ExceptionData;
+struct ServiceWorkerData;
 struct ServiceWorkerFetchResult;
 struct ServiceWorkerRegistrationData;
 
@@ -74,8 +75,8 @@ protected:
     WEBCORE_EXPORT void registrationJobResolvedInServer(uint64_t jobIdentifier, ServiceWorkerRegistrationData&&, ShouldNotifyWhenResolved);
     WEBCORE_EXPORT void unregistrationJobResolvedInServer(uint64_t jobIdentifier, bool unregistrationResult);
     WEBCORE_EXPORT void startScriptFetchForServer(uint64_t jobIdentifier);
-    WEBCORE_EXPORT void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerIdentifier source, const String& sourceOrigin);
-    WEBCORE_EXPORT void updateRegistrationState(ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationState, std::optional<ServiceWorkerIdentifier>);
+    WEBCORE_EXPORT void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerData&& source, const String& sourceOrigin);
+    WEBCORE_EXPORT void updateRegistrationState(ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerData>&);
     WEBCORE_EXPORT void updateWorkerState(ServiceWorkerIdentifier, ServiceWorkerState);
     WEBCORE_EXPORT void fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier);
 

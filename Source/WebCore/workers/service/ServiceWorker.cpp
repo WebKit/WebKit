@@ -53,13 +53,23 @@ HashMap<ServiceWorkerIdentifier, HashSet<ServiceWorker*>>& ServiceWorker::mutabl
     return allWorkersMap;
 }
 
-ServiceWorker::ServiceWorker(ScriptExecutionContext& context, ServiceWorkerIdentifier identifier, const URL& scriptURL, State state)
-    : ContextDestructionObserver(&context)
-    , m_identifier(identifier)
-    , m_scriptURL(scriptURL)
-    , m_state(state)
+Ref<ServiceWorker> ServiceWorker::getOrCreate(ScriptExecutionContext& context, ServiceWorkerData&& data)
 {
-    auto result = mutableAllWorkers().ensure(identifier, [] {
+    auto it = allWorkers().find(data.identifier);
+    if (it != allWorkers().end()) {
+        for (auto& worker : it->value) {
+            if (worker->scriptExecutionContext() == &context)
+                return *worker;
+        }
+    }
+    return adoptRef(*new ServiceWorker(context, WTFMove(data)));
+}
+
+ServiceWorker::ServiceWorker(ScriptExecutionContext& context, ServiceWorkerData&& data)
+    : ContextDestructionObserver(&context)
+    , m_data(WTFMove(data))
+{
+    auto result = mutableAllWorkers().ensure(identifier(), [] {
         return HashSet<ServiceWorker*>();
     });
     result.iterator->value.add(this);
@@ -67,7 +77,7 @@ ServiceWorker::ServiceWorker(ScriptExecutionContext& context, ServiceWorkerIdent
 
 ServiceWorker::~ServiceWorker()
 {
-    auto iterator = mutableAllWorkers().find(m_identifier);
+    auto iterator = mutableAllWorkers().find(identifier());
 
     ASSERT(iterator->value.contains(this));
     iterator->value.remove(this);
@@ -86,7 +96,7 @@ void ServiceWorker::scheduleTaskToUpdateState(State state)
         return;
 
     context->postTask([this, protectedThis = makeRef(*this), state](ScriptExecutionContext&) {
-        m_state = state;
+        m_data.state = state;
         dispatchEvent(Event::create(eventNames().statechangeEvent, false, false));
     });
 }
@@ -117,7 +127,7 @@ ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JS
         return Exception { NotSupportedError, ASCIILiteral("Passing MessagePort objects to postMessage is not yet supported") };
 
     auto& swConnection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(context.sessionID());
-    swConnection.postMessageToServiceWorkerGlobalScope(m_identifier, message.releaseReturnValue(), context);
+    swConnection.postMessageToServiceWorkerGlobalScope(identifier(), message.releaseReturnValue(), context);
 
     return { };
 }

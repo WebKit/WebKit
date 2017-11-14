@@ -45,15 +45,12 @@ ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& con
     LOG(ServiceWorker, "Creating registration %p for registration key %s", this, m_registrationData.key.loggingString().utf8().data());
     suspendIfNeeded();
 
-    // FIXME: Reconcile worker state properly (see below)
-    if (m_registrationData.installingServiceWorkerIdentifier)
-        m_installingWorker = ServiceWorker::create(context, *m_registrationData.installingServiceWorkerIdentifier, m_registrationData.scriptURL, ServiceWorker::State::Installing);
-    if (m_registrationData.waitingServiceWorkerIdentifier)
-        m_waitingWorker = ServiceWorker::create(context, *m_registrationData.waitingServiceWorkerIdentifier, m_registrationData.scriptURL, ServiceWorker::State::Installed);
-    if (m_registrationData.activeServiceWorkerIdentifier) {
-        // FIXME: Activating or Activated? This is why we have to have more data here...
-        m_activeWorker = ServiceWorker::create(context, *m_registrationData.activeServiceWorkerIdentifier, m_registrationData.scriptURL, ServiceWorker::State::Activated);
-    }
+    if (m_registrationData.installingWorker)
+        m_installingWorker = ServiceWorker::getOrCreate(context, WTFMove(*m_registrationData.installingWorker));
+    if (m_registrationData.waitingWorker)
+        m_waitingWorker = ServiceWorker::getOrCreate(context, WTFMove(*m_registrationData.waitingWorker));
+    if (m_registrationData.activeWorker)
+        m_activeWorker = ServiceWorker::getOrCreate(context, WTFMove(*m_registrationData.activeWorker));
 
     // FIXME: Implement proper selection of service workers.
     context.setActiveServiceWorker(getNewestWorker());
@@ -146,30 +143,17 @@ void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)
     container->removeRegistration(m_registrationData.scopeURL, WTFMove(promise));
 }
 
-void ServiceWorkerRegistration::updateStateFromServer(ServiceWorkerRegistrationState state, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier)
+void ServiceWorkerRegistration::updateStateFromServer(ServiceWorkerRegistrationState state, RefPtr<ServiceWorker>&& serviceWorker)
 {
-    auto* context = scriptExecutionContext();
-    if (!context)
-        return;
-
-    RefPtr<ServiceWorker> worker;
-    if (serviceWorkerIdentifier) {
-        auto* newestWorker = getNewestWorker();
-        if (newestWorker && newestWorker->identifier() == *serviceWorkerIdentifier)
-            worker = newestWorker;
-        else
-            worker = ServiceWorker::create(*context, *serviceWorkerIdentifier, m_registrationData.scriptURL);
-    }
-
     switch (state) {
     case ServiceWorkerRegistrationState::Installing:
-        m_installingWorker = WTFMove(worker);
+        m_installingWorker = WTFMove(serviceWorker);
         break;
     case ServiceWorkerRegistrationState::Waiting:
-        m_waitingWorker = WTFMove(worker);
+        m_waitingWorker = WTFMove(serviceWorker);
         break;
     case ServiceWorkerRegistrationState::Active:
-        m_activeWorker = WTFMove(worker);
+        m_activeWorker = WTFMove(serviceWorker);
         break;
     }
 }

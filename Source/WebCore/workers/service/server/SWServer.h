@@ -67,7 +67,7 @@ public:
         const SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const { return m_server.doRegistrationMatching(topOrigin, clientURL); }
 
         // Messages to the client WebProcess
-        virtual void updateRegistrationStateInClient(ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationState, std::optional<ServiceWorkerIdentifier>) = 0;
+        virtual void updateRegistrationStateInClient(ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerData>&) = 0;
         virtual void updateWorkerStateInClient(ServiceWorkerIdentifier, ServiceWorkerState) = 0;
         virtual void fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier) = 0;
 

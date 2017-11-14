@@ -63,7 +63,7 @@ public:
     bool hasServiceWorkerRegisteredForOrigin(const WebCore::SecurityOrigin&) const final;
     Ref<ServiceWorkerClientFetch> startFetch(WebServiceWorkerProvider&, Ref<WebCore::ResourceLoader>&&, uint64_t identifier, ServiceWorkerClientFetch::Callback&&);
 
-    void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin);
+    void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerData&& source, const String& sourceOrigin);
 
 private:
     void scheduleJobInServer(const WebCore::ServiceWorkerJobData&) final;

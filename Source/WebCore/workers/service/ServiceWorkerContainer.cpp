@@ -241,15 +241,19 @@ void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<Deferr
     });
 }
 
-void ServiceWorkerContainer::scheduleTaskToUpdateRegistrationState(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerIdentifier>& serviceWorkerIdentifier)
+void ServiceWorkerContainer::scheduleTaskToUpdateRegistrationState(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerData>& serviceWorkerData)
 {
     auto* context = scriptExecutionContext();
     if (!context)
         return;
 
-    context->postTask([this, protectedThis = makeRef(*this), identifier, state, serviceWorkerIdentifier](ScriptExecutionContext&) {
+    RefPtr<ServiceWorker> serviceWorker;
+    if (serviceWorkerData)
+        serviceWorker = ServiceWorker::getOrCreate(*context, ServiceWorkerData { *serviceWorkerData });
+
+    context->postTask([this, protectedThis = makeRef(*this), identifier, state, serviceWorker = WTFMove(serviceWorker)](ScriptExecutionContext&) mutable {
         if (auto* registration = m_registrations.get(identifier))
-            registration->updateStateFromServer(state, serviceWorkerIdentifier);
+            registration->updateStateFromServer(state, WTFMove(serviceWorker));
     });
 }
 

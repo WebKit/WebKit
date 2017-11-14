@@ -118,7 +118,7 @@ void SWClientConnection::startScriptFetchForServer(uint64_t jobIdentifier)
     job->startScriptFetch();
 }
 
-void SWClientConnection::postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
+void SWClientConnection::postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerData&& sourceData, const String& sourceOrigin)
 {
     // FIXME: destinationScriptExecutionContextIdentifier can only identify a Document at the moment.
     auto* destinationDocument = Document::allDocumentsMap().get(destinationScriptExecutionContextIdentifier);
@@ -129,14 +129,7 @@ void SWClientConnection::postMessageToServiceWorkerClient(uint64_t destinationSc
     if (!container)
         return;
 
-    std::optional<MessageEventSource> source;
-    auto* activeServiceWorker = destinationDocument->activeServiceWorker();
-    if (activeServiceWorker && activeServiceWorker->identifier() == sourceIdentifier)
-        source = MessageEventSource { RefPtr<ServiceWorker> { activeServiceWorker } };
-    else {
-        // FIXME: Pass in valid scriptURL.
-        source = MessageEventSource { RefPtr<ServiceWorker> { ServiceWorker::create(*destinationDocument, sourceIdentifier, URL()) } };
-    }
+    MessageEventSource source = RefPtr<ServiceWorker> { ServiceWorker::getOrCreate(*destinationDocument, WTFMove(sourceData)) };
 
     // FIXME: We should pass in ports.
     auto messageEvent = MessageEvent::create({ }, WTFMove(message), sourceOrigin, { }, WTFMove(source));
@@ -152,10 +145,10 @@ void SWClientConnection::forEachContainer(const WTF::Function<void(ServiceWorker
     }
 }
 
-void SWClientConnection::updateRegistrationState(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerRegistrationState state, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier)
+void SWClientConnection::updateRegistrationState(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerData>& serviceWorkerData)
 {
     forEachContainer([&](ServiceWorkerContainer& container) {
-        container.scheduleTaskToUpdateRegistrationState(identifier, state, serviceWorkerIdentifier);
+        container.scheduleTaskToUpdateRegistrationState(identifier, state, serviceWorkerData);
     });
 }
 

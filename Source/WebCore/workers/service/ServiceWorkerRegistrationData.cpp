@@ -36,11 +36,10 @@ ServiceWorkerRegistrationData ServiceWorkerRegistrationData::isolatedCopy() cons
         key.isolatedCopy(),
         identifier,
         scopeURL.isolatedCopy(),
-        scriptURL.isolatedCopy(),
         updateViaCache,
-        installingServiceWorkerIdentifier,
-        waitingServiceWorkerIdentifier,
-        activeServiceWorkerIdentifier,
+        installingWorker ? std::optional<ServiceWorkerData>(installingWorker->isolatedCopy()) : std::nullopt,
+        waitingWorker ? std::optional<ServiceWorkerData>(waitingWorker->isolatedCopy()) : std::nullopt,
+        activeWorker ? std::optional<ServiceWorkerData>(activeWorker->isolatedCopy()) : std::nullopt,
     };
 }
 

@@ -64,7 +64,7 @@ private:
     void resolveRegistrationJobInClient(uint64_t jobIdentifier, const WebCore::ServiceWorkerRegistrationData&, WebCore::ShouldNotifyWhenResolved) final;
     void resolveUnregistrationJobInClient(uint64_t jobIdentifier, const WebCore::ServiceWorkerRegistrationKey&, bool unregistrationResult) final;
     void startScriptFetchInClient(uint64_t jobIdentifier) final;
-    void updateRegistrationStateInClient(WebCore::ServiceWorkerRegistrationIdentifier, WebCore::ServiceWorkerRegistrationState, std::optional<WebCore::ServiceWorkerIdentifier>) final;
+    void updateRegistrationStateInClient(WebCore::ServiceWorkerRegistrationIdentifier, WebCore::ServiceWorkerRegistrationState, const std::optional<WebCore::ServiceWorkerData>&) final;
     void updateWorkerStateInClient(WebCore::ServiceWorkerIdentifier, WebCore::ServiceWorkerState) final;
     void fireUpdateFoundEvent(WebCore::ServiceWorkerRegistrationIdentifier) final;
 

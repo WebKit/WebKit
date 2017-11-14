@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ServiceWorkerData.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerRegistrationKey.h"
 #include "ServiceWorkerTypes.h"
@@ -46,21 +47,21 @@ public:
     }
     
     SWServerWorker(const SWServerWorker&) = delete;
-    ~SWServerWorker();
+    WEBCORE_EXPORT ~SWServerWorker();
 
     void terminate();
 
     SWServer& server();
     const ServiceWorkerRegistrationKey& registrationKey() const { return m_registrationKey; }
-    const URL& scriptURL() const { return m_scriptURL; }
+    const URL& scriptURL() const { return m_data.scriptURL; }
     const String& script() const { return m_script; }
-    WorkerType type() const { return m_type; }
+    WorkerType type() const { return m_data.type; }
 
-    ServiceWorkerIdentifier identifier() const { return m_identifier; }
+    ServiceWorkerIdentifier identifier() const { return m_data.identifier; }
     SWServerToContextConnectionIdentifier contextConnectionIdentifier() const { return m_contextConnectionIdentifier; }
 
-    ServiceWorkerState state() const { return m_state; }
-    void setState(ServiceWorkerState state) { m_state = state; }
+    ServiceWorkerState state() const { return m_data.state; }
+    void setState(ServiceWorkerState state) { m_data.state = state; }
 
     bool hasPendingEvents() const { return m_hasPendingEvents; }
     void setHasPendingEvents(bool value) { m_hasPendingEvents = value; }
@@ -72,18 +73,16 @@ public:
 
     WEBCORE_EXPORT static SWServerWorker* existingWorkerForIdentifier(ServiceWorkerIdentifier);
 
+    const ServiceWorkerData& data() const { return m_data; }
+
 private:
     SWServerWorker(SWServer&, const ServiceWorkerRegistrationKey&, SWServerToContextConnectionIdentifier, const URL&, const String& script, WorkerType, ServiceWorkerIdentifier);
 
     SWServer& m_server;
     ServiceWorkerRegistrationKey m_registrationKey;
     SWServerToContextConnectionIdentifier m_contextConnectionIdentifier;
-    URL m_scriptURL;
+    ServiceWorkerData m_data;
     String m_script;
-    ServiceWorkerIdentifier m_identifier;
-    WorkerType m_type;
-    
-    ServiceWorkerState m_state { ServiceWorkerState::Redundant };
     bool m_hasPendingEvents { false };
 };
 

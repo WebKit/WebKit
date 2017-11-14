@@ -29,8 +29,7 @@
 
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
-#include "ServiceWorkerIdentifier.h"
-#include "ServiceWorkerTypes.h"
+#include "ServiceWorkerData.h"
 #include "URL.h"
 #include <heap/Strong.h>
 #include <wtf/RefCounted.h>
@@ -46,22 +45,19 @@ class Frame;
 class ServiceWorker final : public RefCounted<ServiceWorker>, public EventTargetWithInlineData, public ContextDestructionObserver {
 public:
     using State = ServiceWorkerState;
-    static Ref<ServiceWorker> create(ScriptExecutionContext& context, ServiceWorkerIdentifier identifier, const URL& scriptURL, State state = State::Installing)
-    {
-        return adoptRef(*new ServiceWorker(context, identifier, scriptURL, state));
-    }
+    static Ref<ServiceWorker> getOrCreate(ScriptExecutionContext&, ServiceWorkerData&&);
 
     virtual ~ServiceWorker();
 
-    const URL& scriptURL() const { return m_scriptURL; }
+    const URL& scriptURL() const { return m_data.scriptURL; }
 
-    State state() const { return m_state; }
+    State state() const { return m_data.state; }
     
     void scheduleTaskToUpdateState(State);
 
     ExceptionOr<void> postMessage(ScriptExecutionContext&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
-    ServiceWorkerIdentifier identifier() const { return m_identifier; }
+    ServiceWorkerIdentifier identifier() const { return m_data.identifier; }
 
     using RefCounted::ref;
     using RefCounted::deref;
@@ -69,7 +65,7 @@ public:
     static const HashMap<ServiceWorkerIdentifier, HashSet<ServiceWorker*>>& allWorkers();
 
 private:
-    ServiceWorker(ScriptExecutionContext&, ServiceWorkerIdentifier, const URL& scriptURL, State);
+    ServiceWorker(ScriptExecutionContext&, ServiceWorkerData&&);
     static HashMap<ServiceWorkerIdentifier, HashSet<ServiceWorker*>>& mutableAllWorkers();
 
     EventTargetInterface eventTargetInterface() const final;
@@ -77,9 +73,7 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    ServiceWorkerIdentifier m_identifier;
-    URL m_scriptURL;
-    State m_state;
+    ServiceWorkerData m_data;
 };
 
 } // namespace WebCore
