@@ -240,7 +240,7 @@ private:
     bool m_isCredentialManagementEnabled { false };
     bool m_isSecureContextAttributeEnabled { false };
 
-    bool m_isDisplayContentsEnabled { false };
+    bool m_isDisplayContentsEnabled { true };
     bool m_isShadowDOMEnabled { true };
     bool m_areCustomElementsEnabled { true };
     bool m_isMenuItemElementEnabled { false };

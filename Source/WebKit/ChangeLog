@@ -1,3 +1,14 @@
+2017-11-14  Antti Koivisto  <antti@apple.com>
+
+        Enable display:contents by default
+        https://bugs.webkit.org/show_bug.cgi?id=179655
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebPreferences.yaml:
+
+        Make non-experimental and enabled.
+
 2017-11-10  Brent Fulgham  <bfulgham@apple.com>
 
         Consolidate mach-lookup calls in WebProcess sandbox

@@ -787,6 +787,13 @@ ViewportFitEnabled:
   humanReadableName: "Viewport Fit"
   humanReadableDescription: "Enable viewport-fit viewport parameter"
 
+DisplayContentsEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "CSS display: contents"
+  humanReadableDescription: "Enable CSS display: contents support"
+  webcoreBinding: RuntimeEnabledFeatures
+
 IncrementalRenderingSuppressionTimeout:
   type: double
   defaultValue: 5
@@ -1058,14 +1065,6 @@ ConstantPropertiesEnabled:
   humanReadableName: "Constant Properties"
   humanReadableDescription: "Enable CSS constant() properties"
   category: experimental
-
-DisplayContentsEnabled:
-  type: bool
-  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
-  humanReadableName: "CSS display: contents"
-  humanReadableDescription: "Enable CSS display: contents support"
-  category: experimental
-  webcoreBinding: RuntimeEnabledFeatures
 
 SpringTimingFunctionEnabled:
   type: bool

@@ -840,7 +840,6 @@ static NSString *libraryPathForDumpRenderTree()
 static void enableExperimentalFeatures(WebPreferences* preferences)
 {
     [preferences setCSSGridLayoutEnabled:YES];
-    [preferences setDisplayContentsEnabled:YES];
     // FIXME: SpringTimingFunction
     [preferences setGamepadsEnabled:YES];
     [preferences setLinkPreloadEnabled:YES];

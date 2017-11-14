@@ -1,3 +1,17 @@
+2017-11-14  Antti Koivisto  <antti@apple.com>
+
+        Enable display:contents by default
+        https://bugs.webkit.org/show_bug.cgi?id=179655
+
+        Reviewed by Sam Weinig.
+
+        No need to enable this specifically for tests anymore.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2017-11-14  Tim Horton  <timothy_horton@apple.com>
 
         Long pressing a phone number with spaces in it results in a link sheet instead of a data detectors sheet
