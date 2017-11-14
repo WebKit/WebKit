@@ -1,3 +1,15 @@
+2017-11-14  Daniel Bates  <dabates@apple.com>
+
+        Mark WebChromeClient::requestStorageAccess() as final
+        https://bugs.webkit.org/show_bug.cgi?id=179673
+
+        Reviewed by Sam Weinig.
+
+        Mark WebChromeClient::requestStorageAccess() as final so that it overrides the virtual function
+        in ChromeClient with the same name and hence we actually call it through a ChromeClient pointer.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2017-11-14  Youenn Fablet  <youenn@apple.com>
 
         WebSWClientConnection should do IPC to StorageProcess if its WebSWOriginTable is not yet initialized
