@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+#if ENABLE(WEBGL)
+
 class WebGLRenderingContext final : public WebGLRenderingContextBase {
 public:
     WebGLRenderingContext(HTMLCanvasElement&, GraphicsContext3DAttributes);
@@ -53,7 +55,9 @@ public:
     bool validateBlendEquation(const char* functionName, GC3Denum mode) final;
     bool validateCapability(const char* functionName, GC3Denum cap) final;
 };
-    
+
+#endif
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::WebGLRenderingContext, isWebGL1())
