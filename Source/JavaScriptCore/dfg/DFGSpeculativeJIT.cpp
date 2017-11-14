@@ -6490,16 +6490,22 @@ void SpeculativeJIT::compileGetByValOnDirectArguments(Node* node)
         m_jit.branchTestPtr(
             MacroAssembler::NonZero,
             MacroAssembler::Address(baseReg, DirectArguments::offsetOfMappedArguments())));
-    speculationCheck(
-        ExoticObjectMode, JSValueSource(), 0,
-        m_jit.branch32(
-            MacroAssembler::AboveOrEqual, propertyReg,
-            MacroAssembler::Address(baseReg, DirectArguments::offsetOfLength())));
+
+    auto isOutOfBounds = m_jit.branch32(CCallHelpers::AboveOrEqual, propertyReg, CCallHelpers::Address(baseReg, DirectArguments::offsetOfLength()));
+    if (node->arrayMode().isInBounds())
+        speculationCheck(OutOfBounds, JSValueSource(), 0, isOutOfBounds);
     
     m_jit.loadValue(
         MacroAssembler::BaseIndex(
             baseReg, propertyReg, MacroAssembler::TimesEight, DirectArguments::storageOffset()),
         resultRegs);
+
+    if (!node->arrayMode().isInBounds()) {
+        addSlowPathGenerator(
+            slowPathCall(
+                isOutOfBounds, this, operationGetByValObjectInt,
+                extractResult(resultRegs), baseReg, propertyReg));
+    }
     
     jsValueResult(resultRegs, node);
 }

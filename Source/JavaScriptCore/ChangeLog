@@ -1,3 +1,38 @@
+2017-11-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] Support Array::DirectArguments with OutOfBounds
+        https://bugs.webkit.org/show_bug.cgi?id=179594
+
+        Reviewed by Saam Barati.
+
+        Currently we handle OOB access to DirectArguments as GetByVal(Array::Generic).
+        If we can handle it as GetByVal(Array::DirectArguments+OutOfBounds), we can (1) optimize
+        `arguments[i]` accesses if i is in bound, and (2) encourage arguments elimination phase
+        to convert CreateDirectArguments and GetByVal(Array::DirectArguments+OutOfBounds) to
+        PhantomDirectArguments and GetMyArgumentOutOfBounds respectively.
+
+        This patch introduces Array::DirectArguments+OutOfBounds array mode. GetByVal can
+        accept this type, and emit optimized code compared to Array::Generic case.
+
+        We make OOB check failures in GetByVal(Array::DirectArguments+InBounds) as OutOfBounds
+        exit instead of ExoticObjectMode.
+
+        This change significantly improves SixSpeed rest.es5 since it uses OOB access.
+        Our arguments elimination phase can change CreateDirectArguments to PhantomDirectArguments.
+
+            rest.es5                       59.6719+-2.2440     ^      3.1634+-0.5507        ^ definitely 18.8635x faster
+
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::refine const):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnDirectArguments):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMyArgumentByVal):
+
 2017-11-14  Saam Barati  <sbarati@apple.com>
 
         We need to set topCallFrame when calling Wasm::Memory::grow from the JIT

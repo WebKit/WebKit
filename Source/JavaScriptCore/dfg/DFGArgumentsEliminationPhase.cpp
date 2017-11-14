@@ -230,15 +230,33 @@ private:
         
         auto escapeBasedOnArrayMode = [&] (ArrayMode mode, Edge edge, Node* source) {
             switch (mode.type()) {
-            case Array::DirectArguments:
-                if (edge->op() != CreateDirectArguments)
+            case Array::DirectArguments: {
+                if (edge->op() != CreateDirectArguments) {
                     escape(edge, source);
+                    break;
+                }
+
+                // Everything is fine if we're doing an in-bounds access.
+                if (mode.isInBounds())
+                    break;
+
+                // If we're out-of-bounds then we proceed only if the prototype chain
+                // for the allocation is sane (i.e. doesn't have indexed properties).
+                JSGlobalObject* globalObject = m_graph.globalObjectFor(edge->origin.semantic);
+                Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
+                if (objectPrototypeStructure->transitionWatchpointSetIsStillValid()
+                    && globalObject->objectPrototypeIsSane()) {
+                    m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
+                    break;
+                }
+                escape(edge, source);
                 break;
+            }
             
             case Array::Contiguous: {
                 if (edge->op() != CreateClonedArguments && edge->op() != CreateRest) {
                     escape(edge, source);
-                    return;
+                    break;
                 }
             
                 // Everything is fine if we're doing an in-bounds access.

@@ -3711,15 +3711,35 @@ private:
             speculate(
                 ExoticObjectMode, noValue(), nullptr,
                 m_out.notNull(m_out.loadPtr(base, m_heaps.DirectArguments_mappedArguments)));
-            speculate(
-                ExoticObjectMode, noValue(), nullptr,
-                m_out.aboveOrEqual(
-                    index,
-                    m_out.load32NonNegative(base, m_heaps.DirectArguments_length)));
 
+            auto isOutOfBounds = m_out.aboveOrEqual(index, m_out.load32NonNegative(base, m_heaps.DirectArguments_length));
+            if (m_node->arrayMode().isInBounds()) {
+                speculate(OutOfBounds, noValue(), nullptr, isOutOfBounds);
+                TypedPointer address = m_out.baseIndex(
+                    m_heaps.DirectArguments_storage, base, m_out.zeroExtPtr(index));
+                setJSValue(m_out.load64(address));
+                return;
+            }
+
+            LBasicBlock inBounds = m_out.newBlock();
+            LBasicBlock slowCase = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            m_out.branch(isOutOfBounds, rarely(slowCase), usually(inBounds));
+
+            LBasicBlock lastNext = m_out.appendTo(inBounds, slowCase);
             TypedPointer address = m_out.baseIndex(
                 m_heaps.DirectArguments_storage, base, m_out.zeroExtPtr(index));
-            setJSValue(m_out.load64(address));
+            ValueFromBlock fastResult = m_out.anchor(m_out.load64(address));
+            m_out.jump(continuation);
+
+            m_out.appendTo(slowCase, continuation);
+            ValueFromBlock slowResult = m_out.anchor(
+                vmCall(Int64, m_out.operation(operationGetByValObjectInt), m_callFrame, base, index));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(Int64, fastResult, slowResult));
             return;
         }
             
@@ -3912,7 +3932,7 @@ private:
             
             lastNext = m_out.appendTo(normalCase, continuation);
         } else
-            speculate(ExoticObjectMode, noValue(), 0, isOutOfBounds);
+            speculate(OutOfBounds, noValue(), 0, isOutOfBounds);
         
         TypedPointer base;
         if (inlineCallFrame) {

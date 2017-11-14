@@ -259,12 +259,15 @@ ArrayMode ArrayMode::refine(
         
         if (isDirectArgumentsSpeculation(base) || isScopedArgumentsSpeculation(base)) {
             // Handle out-of-bounds accesses as generic accesses.
-            if (graph.hasExitSite(node->origin.semantic, OutOfBounds) || !isInBounds())
+            Array::Type type = isDirectArgumentsSpeculation(base) ? Array::DirectArguments : Array::ScopedArguments;
+            if (graph.hasExitSite(node->origin.semantic, OutOfBounds) || !isInBounds()) {
+                // FIXME: Support OOB access for ScopedArguments.
+                // https://bugs.webkit.org/show_bug.cgi?id=179596
+                if (type == Array::DirectArguments)
+                    return ArrayMode(type, Array::NonArray, Array::OutOfBounds, Array::AsIs);
                 return ArrayMode(Array::Generic);
-            
-            if (isDirectArgumentsSpeculation(base))
-                return withType(Array::DirectArguments);
-            return withType(Array::ScopedArguments);
+            }
+            return withType(type);
         }
         
         ArrayMode result;

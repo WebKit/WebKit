@@ -783,8 +783,13 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             return;
             
         case Array::DirectArguments:
-            read(DirectArgumentsProperties);
-            def(HeapLocation(indexedPropertyLoc, DirectArgumentsProperties, node->child1(), node->child2()), LazyNode(node));
+            if (mode.isInBounds()) {
+                read(DirectArgumentsProperties);
+                def(HeapLocation(indexedPropertyLoc, DirectArgumentsProperties, node->child1(), node->child2()), LazyNode(node));
+                return;
+            }
+            read(World);
+            write(Heap);
             return;
             
         case Array::ScopedArguments:

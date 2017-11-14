@@ -1,3 +1,17 @@
+2017-11-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] Support Array::DirectArguments with OutOfBounds
+        https://bugs.webkit.org/show_bug.cgi?id=179594
+
+        Reviewed by Saam Barati.
+
+        * stress/direct-arguments-in-bounds-to-out-of-bounds.js: Added.
+        (shouldBe):
+        (args):
+        * stress/direct-arguments-out-of-bounds-watchpoint.js: Added.
+        (shouldBe):
+        (args):
+
 2017-11-14  Saam Barati  <sbarati@apple.com>
 
         We need to set topCallFrame when calling Wasm::Memory::grow from the JIT
