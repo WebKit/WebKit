@@ -1,3 +1,10 @@
+2017-11-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening for High Sierra.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/editing/deleting/delete-emoji-9-expected.txt:
+
 2017-11-14  Jer Noble  <jer.noble@apple.com>
 
         Enable Modern EME tests in DumpRenderTree
