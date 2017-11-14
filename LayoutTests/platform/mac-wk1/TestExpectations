@@ -466,3 +466,5 @@ webkit.org/b/177563 [ HighSierra ] http/tests/xmlhttprequest/response-empty-arra
 
 webkit.org/b/172397 [ Debug ] animations/needs-layout.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/179544 platform/mac/media/encrypted-media/fps-createMediaKeys.html [ Failure ]
+webkit.org/b/179544 platform/mac/media/encrypted-media/fps-requestMediaKeySystemAccess.html [ Skip ]

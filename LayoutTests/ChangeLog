@@ -1,3 +1,12 @@
+2017-11-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Disable two Modern EME LayoutTests on mac-wk1  until the feature is enabled in DumpRenderTree.
+        https://bugs.webkit.org/show_bug.cgi?id=179544
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-11-13  Per Arne Vollan  <pvollan@apple.com>
 
         The css properties stroke-width/stroke-color and -webkit-text-stroke-width/-webkit-text-stroke-color should not be mixed.
