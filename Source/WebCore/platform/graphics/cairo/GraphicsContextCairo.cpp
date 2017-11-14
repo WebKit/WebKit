@@ -38,7 +38,6 @@
 #include "AffineTransform.h"
 #include "CairoUtilities.h"
 #include "DisplayListRecorder.h"
-#include "DrawErrorUnderline.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
@@ -238,22 +237,8 @@ void GraphicsContext::drawRect(const FloatRect& rect, float borderThickness)
     }
 
     ASSERT(!rect.isEmpty());
-
-    cairo_t* cr = platformContext()->cr();
-    cairo_save(cr);
-
-    fillRectWithColor(cr, rect, fillColor());
-
-    if (strokeStyle() != NoStroke) {
-        setSourceRGBAFromColor(cr, strokeColor());
-        FloatRect r(rect);
-        r.inflate(-.5f);
-        cairo_rectangle(cr, r.x(), r.y(), r.width(), r.height());
-        cairo_set_line_width(cr, 1.0); // borderThickness?
-        cairo_stroke(cr);
-    }
-
-    cairo_restore(cr);
+    ASSERT(hasPlatformContext());
+    Cairo::drawRect(*platformContext(), rect, borderThickness, state());
 }
 
 void GraphicsContext::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)
@@ -375,26 +360,8 @@ void GraphicsContext::drawEllipse(const FloatRect& rect)
         return;
     }
 
-    cairo_t* cr = platformContext()->cr();
-    cairo_save(cr);
-    float yRadius = .5 * rect.height();
-    float xRadius = .5 * rect.width();
-    cairo_translate(cr, rect.x() + xRadius, rect.y() + yRadius);
-    cairo_scale(cr, xRadius, yRadius);
-    cairo_arc(cr, 0., 0., 1., 0., 2 * piFloat);
-    cairo_restore(cr);
-
-    if (fillColor().isVisible()) {
-        setSourceRGBAFromColor(cr, fillColor());
-        cairo_fill_preserve(cr);
-    }
-
-    if (strokeStyle() != NoStroke) {
-        setSourceRGBAFromColor(cr, strokeColor());
-        cairo_set_line_width(cr, strokeThickness());
-        cairo_stroke(cr);
-    } else
-        cairo_new_path(cr);
+    ASSERT(hasPlatformContext());
+    Cairo::drawEllipse(*platformContext(), rect, state());
 }
 
 void GraphicsContext::fillPath(const Path& path)
@@ -592,24 +559,13 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& origin, float 
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = platformContext()->cr();
-    cairo_save(cr);
-
-    switch (style) {
-    case DocumentMarkerSpellingLineStyle:
-        cairo_set_source_rgb(cr, 1, 0, 0);
-        break;
-    case DocumentMarkerGrammarLineStyle:
-        cairo_set_source_rgb(cr, 0, 1, 0);
-        break;
-    default:
-        cairo_restore(cr);
+    if (m_impl) {
+        m_impl->drawLineForDocumentMarker(origin, width, style);
         return;
     }
 
-    drawErrorUnderline(cr, origin.x(), origin.y(), width, cMisspellingLineThickness);
-
-    cairo_restore(cr);
+    ASSERT(hasPlatformContext());
+    Cairo::drawLineForDocumentMarker(*platformContext(), origin, width, style);
 }
 
 FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMode)
@@ -932,22 +888,18 @@ void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const Float
     Cairo::fillRectWithRoundedHole(*platformContext(), rect, roundedHoleRect, state(), *this);
 }
 
-void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
+void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator compositeOperator, BlendMode blendMode)
 {
     if (paintingDisabled())
         return;
 
     if (m_impl) {
-        m_impl->drawPattern(image, destRect, tileRect, patternTransform, phase, spacing, op, blendMode);
+        m_impl->drawPattern(image, destRect, tileRect, patternTransform, phase, spacing, compositeOperator, blendMode);
         return;
     }
 
-    RefPtr<cairo_surface_t> surface = image.nativeImageForCurrentFrame();
-    if (!surface) // If it's too early we won't have an image yet.
-        return;
-
-    cairo_t* cr = platformContext()->cr();
-    drawPatternToCairoContext(cr, surface.get(), IntSize(image.size()), tileRect, patternTransform, phase, toCairoOperator(op, blendMode), destRect);
+    ASSERT(hasPlatformContext());
+    Cairo::drawPattern(*platformContext(), image, destRect, tileRect, patternTransform, phase, compositeOperator, blendMode);
 }
 
 void GraphicsContext::setPlatformShouldAntialias(bool enable)

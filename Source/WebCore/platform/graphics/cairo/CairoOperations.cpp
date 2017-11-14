@@ -35,6 +35,7 @@
 
 #if USE(CAIRO)
 
+#include "DrawErrorUnderline.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
@@ -551,6 +552,77 @@ void drawGlyphs(PlatformContextCairo& platformContext, const GraphicsContextStat
     }
 
     cairo_restore(cr);
+}
+
+void drawPattern(PlatformContextCairo& platformContext, Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, CompositeOperator compositeOperator, BlendMode blendMode)
+{
+    if (auto surface = image.nativeImageForCurrentFrame())
+        drawPatternToCairoContext(platformContext.cr(), surface.get(), IntSize(image.size()), tileRect, patternTransform, phase, toCairoOperator(compositeOperator, blendMode), destRect);
+}
+
+void drawRect(PlatformContextCairo& platformContext, const FloatRect& rect, float borderThickness, const GraphicsContextState& state)
+{
+    // FIXME: how should borderThickness be used?
+    UNUSED_PARAM(borderThickness);
+
+    cairo_t* cr = platformContext.cr();
+    cairo_save(cr);
+
+    fillRectWithColor(cr, rect, state.fillColor);
+
+    if (state.strokeStyle != NoStroke) {
+        setSourceRGBAFromColor(cr, state.strokeColor);
+        FloatRect r(rect);
+        r.inflate(-.5f);
+        cairo_rectangle(cr, r.x(), r.y(), r.width(), r.height());
+        cairo_set_line_width(cr, 1.0); // borderThickness?
+        cairo_stroke(cr);
+    }
+
+    cairo_restore(cr);
+}
+
+void drawLineForDocumentMarker(PlatformContextCairo& platformContext, const FloatPoint& origin, float width, GraphicsContext::DocumentMarkerLineStyle style)
+{
+    if (style != GraphicsContext::DocumentMarkerSpellingLineStyle
+        && style != GraphicsContext::DocumentMarkerGrammarLineStyle)
+        return;
+
+    cairo_t* cr = platformContext.cr();
+    cairo_save(cr);
+
+    if (style == GraphicsContext::DocumentMarkerSpellingLineStyle)
+        cairo_set_source_rgb(cr, 1, 0, 0);
+    else if (style == GraphicsContext::DocumentMarkerGrammarLineStyle)
+        cairo_set_source_rgb(cr, 0, 1, 0);
+
+    drawErrorUnderline(cr, origin.x(), origin.y(), width, cMisspellingLineThickness);
+    cairo_restore(cr);
+}
+
+void drawEllipse(PlatformContextCairo& platformContext, const FloatRect& rect, const GraphicsContextState& state)
+{
+    cairo_t* cr = platformContext.cr();
+
+    cairo_save(cr);
+    float yRadius = .5 * rect.height();
+    float xRadius = .5 * rect.width();
+    cairo_translate(cr, rect.x() + xRadius, rect.y() + yRadius);
+    cairo_scale(cr, xRadius, yRadius);
+    cairo_arc(cr, 0., 0., 1., 0., 2 * piFloat);
+    cairo_restore(cr);
+
+    if (state.fillColor.isVisible()) {
+        setSourceRGBAFromColor(cr, state.fillColor);
+        cairo_fill_preserve(cr);
+    }
+
+    if (state.strokeStyle != NoStroke) {
+        setSourceRGBAFromColor(cr, state.strokeColor);
+        cairo_set_line_width(cr, state.strokeThickness);
+        cairo_stroke(cr);
+    } else
+        cairo_new_path(cr);
 }
 
 void drawFocusRing(PlatformContextCairo& platformContext, const Path& path, float width, const Color& color)

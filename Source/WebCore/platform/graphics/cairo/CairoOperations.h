@@ -93,6 +93,14 @@ void strokeRect(PlatformContextCairo&, const FloatRect&, float, const GraphicsCo
 void strokePath(PlatformContextCairo&, const Path&, const GraphicsContextState&, GraphicsContext&);
 void clearRect(PlatformContextCairo&, const FloatRect&);
 
+void drawGlyphs(GraphicsContext&, const GraphicsContextState&, bool, const FloatPoint&, cairo_scaled_font_t*, double, const Vector<cairo_glyph_t>&, float, GraphicsContext&);
+
+void drawPattern(PlatformContextCairo&, Image&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, CompositeOperator, BlendMode);
+
+void drawRect(PlatformContextCairo&, const FloatRect&, float, const GraphicsContextState&);
+void drawLineForDocumentMarker(PlatformContextCairo&, const FloatPoint&, float, GraphicsContext::DocumentMarkerLineStyle);
+void drawEllipse(PlatformContextCairo&, const FloatRect&, const GraphicsContextState&);
+
 void drawFocusRing(PlatformContextCairo&, const Path&, float, const Color&);
 void drawFocusRing(PlatformContextCairo&, const Vector<FloatRect>&, float, const Color&);
 
