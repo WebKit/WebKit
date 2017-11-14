@@ -89,7 +89,11 @@ bool moveFile(const String& oldPath, const String& newPath)
     auto delegate = adoptNS([[WebFileManagerDelegate alloc] init]);
     [manager setDelegate:delegate.get()];
     
-    return [manager moveItemAtURL:[NSURL fileURLWithPath:oldPath] toURL:[NSURL fileURLWithPath:newPath] error:nil];
+    NSError *error = nil;
+    bool success = [manager moveItemAtURL:[NSURL fileURLWithPath:oldPath] toURL:[NSURL fileURLWithPath:newPath] error:&error];
+    if (!success)
+        NSLog(@"Error in moveFile: %@", error);
+    return success;
 }
 
 bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
