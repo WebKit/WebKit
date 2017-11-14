@@ -32,13 +32,10 @@
 
 namespace WebKit {
 
-static inline NSString* makeKey(NSString *identifier, NSString *keyPrefix, NSString *key)
+static inline NSString *makeKey(const String& identifier, const String& keyPrefix, const String& key)
 {
-    ASSERT(identifier.length);
-    ASSERT(keyPrefix);
-    ASSERT(key);
-
-    return [NSString stringWithFormat:@"%@%@%@", identifier, keyPrefix, key];
+    ASSERT(!identifier.isEmpty());
+    return String(identifier + keyPrefix + key);
 }
 
 bool WebPreferences::platformGetStringUserValueForKey(const String& key, String& userValue)
@@ -101,16 +98,13 @@ bool WebPreferences::platformGetDoubleUserValueForKey(const String& key, double&
     return true;
 }
 
-static id debugUserDefaultsValue(NSString *identifier, NSString *keyPrefix, NSString *globalDebugKeyPrefix, NSString *key)
+static id debugUserDefaultsValue(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix, const String& key)
 {
-    ASSERT(keyPrefix);
-    ASSERT(key);
-
     NSUserDefaults *standardUserDefaults = [NSUserDefaults standardUserDefaults];
     id object = nil;
 
-    if (identifier.length)
-        object = [standardUserDefaults objectForKey:[NSString stringWithFormat:@"%@%@%@", identifier, keyPrefix, key]];
+    if (!identifier.isEmpty())
+        object = [standardUserDefaults objectForKey:makeKey(identifier, keyPrefix, key)];
 
     if (!object) {
         // Allow debug preferences to be set globally, using the debug key prefix.
