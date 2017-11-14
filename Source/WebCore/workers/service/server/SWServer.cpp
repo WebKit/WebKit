@@ -329,12 +329,6 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
 
 void SWServer::fireInstallEvent(SWServerWorker& worker)
 {
-//    auto* worker = m_workersByID.get(serviceWorkerIdentifier);
-//    if (!worker) {
-//        LOG_ERROR("Request to fire install event on a worker that cannot be found in the server");
-//        return;
-//    }
-
     auto* connection = SWServerToContextConnection::connectionForIdentifier(worker.contextConnectionIdentifier());
     if (!connection) {
         LOG_ERROR("Request to fire install event on a worker whose context connection does not exist");
@@ -346,12 +340,6 @@ void SWServer::fireInstallEvent(SWServerWorker& worker)
 
 void SWServer::fireActivateEvent(SWServerWorker& worker)
 {
-//    auto* worker = m_workersByID.get(serviceWorkerIdentifier);
-//    if (!worker) {
-//        LOG_ERROR("Request to fire install event on a worker that cannot be found in the server");
-//        return;
-//    }
-
     auto* connection = SWServerToContextConnection::connectionForIdentifier(worker.contextConnectionIdentifier());
     if (!connection) {
         LOG_ERROR("Request to fire install event on a worker whose context connection does not exist");
