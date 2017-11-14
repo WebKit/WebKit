@@ -1,0 +1,98 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.resource-timing {
+    font-family: '-webkit-system-font';
+}
+
+.resource-timing > .content {
+    width: 550px;
+    margin: 0 auto;
+}
+
+.resource-timing > .content .label {
+    color: gray;
+}
+
+.resource-timing > .content > section.timing {
+    padding: 20px 0;
+}
+
+.resource-timing > .content > section.timing > ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.resource-timing > .content > section.timing > ul > li {
+    position: relative;
+    height: 20px;
+    padding: 1px 0;
+    line-height: 18px;
+}
+
+.resource-timing > .content > section.timing > .waterfall {
+    width: 500px;
+    margin: auto;
+}
+
+.resource-timing > .content > section.timing > .waterfall .block {
+    top: 4px;
+    min-width: 1px;
+    height: 12px;
+}
+
+.resource-timing > .content > section.timing > ul > li > .row-label {
+    display: inline-block;
+    min-width: 70px;
+    color: black;
+}
+
+.resource-timing > .content > section.timing > ul > li > .row-label {
+    text-align: end;
+}
+
+.resource-timing > .content > section.timing > ul > li > .time-label {
+    position: absolute;
+    top: 1px;
+    color: gray;
+}
+
+.resource-timing > .content > section.timing > ul > li.total .block {
+    display: none;
+}
+
+.resource-timing > .content > section.timing > ul > li.total .time-label {
+    color: black;
+}
+
+.resource-timing > .content > section.timing .indeterminate-progress-spinner {
+    margin: 0 auto;
+}
+
+.resource-timing > .content > section.timing .empty {
+    text-align: center;
+    color: gray;
+}

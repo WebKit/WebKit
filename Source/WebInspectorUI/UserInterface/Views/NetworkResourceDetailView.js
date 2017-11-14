@@ -40,7 +40,8 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
         this._resourceContentView = null;
         this._headersContentView = null;
         this._cookiesContentView = null;
-        this._metricsContentView = null;
+        this._sizesContentView = null;
+        this._timingContentView = null;
     }
 
     // Public
@@ -77,21 +78,21 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
         this._resourceContentView.showRequest();
     }
 
-    // ResourceMetricsContentView delegate
+    // ResourceSizesContentView delegate
 
-    metricsContentViewGoToHeaders(metricsContentView)
+    sizesContentViewGoToHeaders(metricsContentView)
     {
         this._contentBrowser.navigationBar.selectedNavigationItem = this._headersNavigationItem;
     }
 
-    metricsContentViewGoToRequestBody(metricsContentView)
+    sizesContentViewGoToRequestBody(metricsContentView)
     {
         this._contentBrowser.navigationBar.selectedNavigationItem = this._previewNavigationItem;
 
         this._resourceContentView.showRequest();
     }
 
-    metricsContentViewGoToResponseBody(metricsContentView)
+    sizesContentViewGoToResponseBody(metricsContentView)
     {
         this._contentBrowser.navigationBar.selectedNavigationItem = this._previewNavigationItem;
 
@@ -117,7 +118,8 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
         this._previewNavigationItem = new WI.RadioButtonNavigationItem("preview", WI.UIString("Preview"));
         this._headersNavigationItem = new WI.RadioButtonNavigationItem("headers", WI.UIString("Headers"));
         this._cookiesNavigationItem = new WI.RadioButtonNavigationItem("cookies", WI.UIString("Cookies"));
-        this._metricsNavigationItem = new WI.RadioButtonNavigationItem("metrics", WI.UIString("Metrics"));
+        this._sizesNavigationItem = new WI.RadioButtonNavigationItem("sizes", WI.UIString("Sizes"));
+        this._timingNavigationItem = new WI.RadioButtonNavigationItem("timing", WI.UIString("Timing"));
 
         // Insert all of our custom navigation items at the start of the ContentBrowser's NavigationBar.
         let index = 0;
@@ -126,7 +128,8 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
         this._contentBrowser.navigationBar.insertNavigationItem(this._previewNavigationItem, index++);
         this._contentBrowser.navigationBar.insertNavigationItem(this._headersNavigationItem, index++);
         this._contentBrowser.navigationBar.insertNavigationItem(this._cookiesNavigationItem, index++);
-        this._contentBrowser.navigationBar.insertNavigationItem(this._metricsNavigationItem, index++);
+        this._contentBrowser.navigationBar.insertNavigationItem(this._sizesNavigationItem, index++);
+        this._contentBrowser.navigationBar.insertNavigationItem(this._timingNavigationItem, index++);
         this._contentBrowser.navigationBar.addEventListener(WI.NavigationBar.Event.NavigationItemSelected, this._navigationItemSelected, this);
 
         this.addSubview(this._contentBrowser);
@@ -148,7 +151,8 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
             if (navigationItem !== this._previewNavigationItem
                 && navigationItem !== this._headersNavigationItem
                 && navigationItem !== this._cookiesNavigationItem
-                && navigationItem !== this._metricsNavigationItem)
+                && navigationItem !== this._sizesNavigationItem
+                && navigationItem !== this._timingNavigationItem)
                 continue;
 
             if (!firstNavigationItem)
@@ -182,10 +186,15 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.View
                 this._cookiesContentView = new WI.ResourceCookiesContentView(this._resource);
             this._contentBrowser.showContentView(this._cookiesContentView);
             break;
-        case "metrics":
-            if (!this._metricsContentView)
-                this._metricsContentView = new WI.ResourceMetricsContentView(this._resource, this);
-            this._contentBrowser.showContentView(this._metricsContentView);
+        case "sizes":
+            if (!this._sizesContentView)
+                this._sizesContentView = new WI.ResourceSizesContentView(this._resource, this);
+            this._contentBrowser.showContentView(this._sizesContentView);
+            break;
+        case "timing":
+            if (!this._timingContentView)
+                this._timingContentView = new WI.ResourceTimingContentView(this._resource);
+            this._contentBrowser.showContentView(this._timingContentView);
             break;
         }
     }
