@@ -565,7 +565,7 @@ webkit.org/b/172998 [ Sierra+ ] media/fullscreen-api-enabled-media-with-presenta
 [ Sierra+ ] media/video-contained-in-fullscreen-element-going-into-pip.html [ Pass ]
 
 # RTL Scrollbars are enabled on Sierra WebKit2.
-[ Sierra+ ] fast/scrolling/rtl-scrollbars.html [ Pass ]
+webkit.org/b/179455 [ Sierra+ ] fast/scrolling/rtl-scrollbars.html [ Pass ImageOnlyFailure ]
 [ Sierra+ ] fast/scrolling/rtl-scrollbars-simple.html [ Pass ]
 [ Sierra+ ] fast/scrolling/rtl-scrollbars-overflow-contents.html [ Pass ]
 [ Sierra+ ] fast/scrolling/rtl-scrollbars-overflow-dir-rtl.html [ Pass ]
