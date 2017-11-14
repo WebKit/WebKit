@@ -1,3 +1,12 @@
+2017-11-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening for High Sierra.
+
+        * platform/mac-sierra/http/tests/blink/sendbeacon/beacon-same-origin-expected.txt: Added.
+        * platform/mac-sierra/imported/w3c/web-platform-tests/beacon/headers/header-content-type-expected.txt: Renamed from LayoutTests/platform/mac-wk2/imported/w3c/web-platform-tests/beacon/headers/header-content-type-expected.txt.
+        * platform/mac/http/tests/blink/sendbeacon/beacon-same-origin-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/beacon/headers/header-content-type-expected.txt: Added.
+
 2017-11-14  Dean Jackson  <dino@apple.com>
 
         Stub implementations of OffscreenCanvas getContext and transferToImageBitmap
