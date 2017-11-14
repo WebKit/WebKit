@@ -73,6 +73,7 @@ public:
     };
     void addThrottlingReason(ThrottlingReason);
     void removeThrottlingReason(ThrottlingReason);
+
     WEBCORE_EXPORT bool isThrottled() const;
     WEBCORE_EXPORT Seconds interval() const;
 
@@ -80,6 +81,14 @@ public:
 
 private:
     ScriptedAnimationController(Document&, PlatformDisplayID);
+
+    void scheduleAnimation();
+    void animationTimerFired();
+
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    // Override for DisplayRefreshMonitorClient
+    void displayRefreshFired() override;
+#endif
 
     Page* page() const;
 
@@ -90,19 +99,13 @@ private:
     CallbackId m_nextCallbackId { 0 };
     int m_suspendCount { 0 };
 
-    void scheduleAnimation();
-    void animationTimerFired();
     Timer m_animationTimer;
     double m_lastAnimationFrameTimestamp { 0 };
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    // Override for DisplayRefreshMonitorClient
-    void displayRefreshFired() override;
     RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;
-
-    bool m_isUsingTimer { false };
-
     OptionSet<ThrottlingReason> m_throttlingReasons;
+    bool m_isUsingTimer { false };
 #endif
 };
 

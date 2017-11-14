@@ -36,7 +36,6 @@ namespace WebCore {
 
 DisplayRefreshMonitorMac::DisplayRefreshMonitorMac(PlatformDisplayID displayID)
     : DisplayRefreshMonitor(displayID)
-    , m_displayLink(nullptr)
 {
 }
 

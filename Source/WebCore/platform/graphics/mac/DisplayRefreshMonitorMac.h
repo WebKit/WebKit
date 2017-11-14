@@ -50,7 +50,7 @@ private:
     explicit DisplayRefreshMonitorMac(PlatformDisplayID);
 
     WeakPtrFactory<DisplayRefreshMonitorMac> m_weakFactory;
-    CVDisplayLinkRef m_displayLink;
+    CVDisplayLinkRef m_displayLink { nullptr };
 };
 
 }
