@@ -161,8 +161,7 @@ public:
 private:
     WriteBarrier<Unknown>* overflowStorage() const
     {
-        return bitwise_cast<WriteBarrier<Unknown>*>(
-            bitwise_cast<char*>(Gigacage::caged(Gigacage::JSValue, this)) + overflowStorageOffset());
+        return bitwise_cast<WriteBarrier<Unknown>*>(bitwise_cast<char*>(this) + overflowStorageOffset());
     }
     
     bool m_overrodeThings; // True if length, callee, and caller are fully materialized in the object.

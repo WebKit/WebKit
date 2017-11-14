@@ -698,7 +698,7 @@ private:
 
     WriteBarrier<HashMapBucketType> m_head;
     WriteBarrier<HashMapBucketType> m_tail;
-    CagedBarrierPtr<Gigacage::JSValue, HashMapBufferType> m_buffer;
+    AuxiliaryBarrier<HashMapBufferType*> m_buffer;
     uint32_t m_keyCount;
     uint32_t m_deleteCount;
     uint32_t m_capacity;

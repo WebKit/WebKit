@@ -62,7 +62,7 @@ void HashMapImpl<HashMapBucket>::visitChildren(JSCell* cell, SlotVisitor& visito
     visitor.append(thisObject->m_head);
     visitor.append(thisObject->m_tail);
     
-    if (HashMapBufferType* buffer = thisObject->m_buffer.getMayBeNull())
+    if (HashMapBufferType* buffer = thisObject->m_buffer.get())
         visitor.markAuxiliary(buffer);
 }
 

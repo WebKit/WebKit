@@ -3718,7 +3718,7 @@ private:
                     m_out.load32NonNegative(base, m_heaps.DirectArguments_length)));
 
             TypedPointer address = m_out.baseIndex(
-                m_heaps.DirectArguments_storage, caged(Gigacage::JSValue, base), m_out.zeroExtPtr(index));
+                m_heaps.DirectArguments_storage, base, m_out.zeroExtPtr(index));
             setJSValue(m_out.load64(address));
             return;
         }
@@ -3746,9 +3746,7 @@ private:
             LBasicBlock lastNext = m_out.appendTo(namedCase, overflowCase);
             
             LValue scope = m_out.loadPtr(base, m_heaps.ScopedArguments_scope);
-            LValue arguments = caged(
-                ScopedArgumentsTable::ArgumentsPtr::kind,
-                m_out.loadPtr(table, m_heaps.ScopedArgumentsTable_arguments));
+            LValue arguments = m_out.loadPtr(table, m_heaps.ScopedArgumentsTable_arguments);
             
             TypedPointer address = m_out.baseIndex(
                 m_heaps.scopedArgumentsTableArguments, arguments, m_out.zeroExtPtr(index));
@@ -3759,15 +3757,14 @@ private:
                 m_out.equal(scopeOffset, m_out.constInt32(ScopeOffset::invalidOffset)));
             
             address = m_out.baseIndex(
-                m_heaps.JSLexicalEnvironment_variables, caged(Gigacage::JSValue, scope),
-                m_out.zeroExtPtr(scopeOffset));
+                m_heaps.JSLexicalEnvironment_variables, scope, m_out.zeroExtPtr(scopeOffset));
             ValueFromBlock namedResult = m_out.anchor(m_out.load64(address));
             m_out.jump(continuation);
             
             m_out.appendTo(overflowCase, continuation);
             
             address = m_out.baseIndex(
-                m_heaps.ScopedArguments_overflowStorage, caged(Gigacage::JSValue, base),
+                m_heaps.ScopedArguments_overflowStorage, base,
                 m_out.zeroExtPtr(m_out.sub(index, namedLength)));
             LValue overflowValue = m_out.load64(address);
             speculate(ExoticObjectMode, noValue(), nullptr, m_out.isZero64(overflowValue));
