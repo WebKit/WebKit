@@ -215,7 +215,7 @@ Apple TV 1080p (55281ABE-9C27-438B-AD50-C540D7BC4BAC) (Shutdown)
         self.assertEqual('com.apple.CoreSimulator.SimRuntime.iOS-8-4', runtime_ios_8_4.identifier)
         self.assertEqual(True, runtime_ios_8_4.available)
         self.assertEqual(False, runtime_ios_8_4.is_internal_runtime)
-        self.assertEqual(Version([8, 4]), runtime_ios_8_4.version)
+        self.assertEqual(Version([8, 4, 1]), runtime_ios_8_4.version)
         self.assertEqual(0, len(runtime_ios_8_4.devices))
 
         runtime_tvos_9 = simulator.runtimes[3]
