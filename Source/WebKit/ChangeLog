@@ -1,3 +1,12 @@
+2017-11-14  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r224799): WebKit crashes on Sierra due to sandbox violation
+        https://bugs.webkit.org/show_bug.cgi?id=179656
+        
+        Unreviewed build fix.
+
+        * WebProcess/com.apple.WebProcess.sb.in: Switch to Dan's recommended version check.
+
 2017-11-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Give a ServiceWorker WebContentProcess a different display name

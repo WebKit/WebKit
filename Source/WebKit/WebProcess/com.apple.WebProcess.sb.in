@@ -25,7 +25,7 @@
 (deny default (with partial-symbolication))
 (allow system-audit file-read-metadata)
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 101200
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
 (import "system.sb")
 #else
 ;;;
