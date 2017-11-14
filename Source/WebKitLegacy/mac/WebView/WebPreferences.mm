@@ -674,6 +674,7 @@ public:
 #else
         @YES, WebKitLegacyEncryptedMediaAPIEnabledKey,
 #endif
+        @NO, WebKitEncryptedMediaAPIEnabledKey,
         @YES, WebKitViewportFitEnabledPreferenceKey,
         @YES, WebKitConstantPropertiesEnabledPreferenceKey,
         @YES, WebKitAllowMediaContentTypesRequiringHardwareSupportAsFallbackKey,
@@ -3203,6 +3204,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setLegacyEncryptedMediaAPIEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitLegacyEncryptedMediaAPIEnabledKey];
+}
+
+- (BOOL)encryptedMediaAPIEnabled
+{
+    return [self _boolValueForKey:WebKitEncryptedMediaAPIEnabledKey];
+}
+
+- (void)setEncryptedMediaAPIEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitEncryptedMediaAPIEnabledKey];
 }
 
 - (BOOL)viewportFitEnabled

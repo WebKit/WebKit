@@ -1,3 +1,21 @@
+2017-11-14  Jer Noble  <jer.noble@apple.com>
+
+        Enable Modern EME tests in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=179544
+
+        Reviewed by Alex Christensen.
+
+        Add a WebPreferences property to enable the (modern) EME API.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences encryptedMediaAPIEnabled]):
+        (-[WebPreferences setEncryptedMediaAPIEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2017-11-14  Antti Koivisto  <antti@apple.com>
 
         Enable display:contents by default

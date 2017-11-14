@@ -854,6 +854,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setCacheAPIEnabled:NO];
     [preferences setReadableByteStreamAPIEnabled:YES];
     [preferences setWritableStreamAPIEnabled:YES];
+    preferences.encryptedMediaAPIEnabled = YES;
 }
 
 // Called before each test.

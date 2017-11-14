@@ -1,3 +1,13 @@
+2017-11-14  Jer Noble  <jer.noble@apple.com>
+
+        Enable Modern EME tests in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=179544
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/fast/dom/navigator-detached-no-crash-expected.txt:
+
 2017-11-14  Youenn Fablet  <youenn@apple.com>
 
         WebSWClientConnection should do IPC to StorageProcess if its WebSWOriginTable is not yet initialized
