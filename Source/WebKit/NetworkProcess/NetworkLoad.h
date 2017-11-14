@@ -89,11 +89,7 @@ public:
     void canAuthenticateAgainstProtectionSpaceAsync(WebCore::ResourceHandle*, const WebCore::ProtectionSpace&) override;
 #endif
 #if PLATFORM(COCOA)
-#if USE(CFURLCONNECTION)
-    void willCacheResponseAsync(WebCore::ResourceHandle*, CFCachedURLResponseRef) override;
-#else
     void willCacheResponseAsync(WebCore::ResourceHandle*, NSCachedURLResponse *) override;
-#endif
 #endif
 #endif // USE(NETWORK_SESSION)
 

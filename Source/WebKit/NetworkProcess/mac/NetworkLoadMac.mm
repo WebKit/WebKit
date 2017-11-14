@@ -35,25 +35,12 @@ namespace WebKit {
 
 using namespace WebCore;
 
-#if USE(CFURLCONNECTION)
-
-void NetworkLoad::willCacheResponseAsync(ResourceHandle* handle, CFCachedURLResponseRef cfResponse)
-{
-    ASSERT_UNUSED(handle, handle == m_handle);
-
-    m_handle->continueWillCacheResponse(cfResponse);
-}
-
-#else
-
 void NetworkLoad::willCacheResponseAsync(ResourceHandle* handle, NSCachedURLResponse *nsResponse)
 {
     ASSERT_UNUSED(handle, handle == m_handle);
 
     m_handle->continueWillCacheResponse(nsResponse);
 }
-
-#endif // !USE(CFURLCONNECTION)
 
 } // namespace WebKit
 

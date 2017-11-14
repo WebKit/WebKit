@@ -1,5 +1,38 @@
 2017-11-14  Alex Christensen  <achristensen@webkit.org>
 
+        Remove WebKit CFURLConnection code
+        https://bugs.webkit.org/show_bug.cgi?id=179645
+
+        Reviewed by Alexey Proskuryakov.
+
+        The CFURLConnection code is Windows-specific now. Nobody can use it in modern WebKit.
+
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/mac/DownloadMac.mm:
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::serverTrustCredential):
+        * NetworkProcess/mac/NetworkLoadMac.mm:
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::useCredentialForSingleChallenge):
+        (WebKit::AuthenticationManager::continueWithoutCredentialForSingleChallenge):
+        (WebKit::AuthenticationManager::cancelSingleChallenge):
+        (WebKit::AuthenticationManager::performDefaultHandlingForSingleChallenge):
+        (WebKit::AuthenticationManager::rejectProtectionSpaceAndContinueForSingleChallenge):
+        * Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm:
+        * Shared/Authentication/mac/AuthenticationManager.mac.mm:
+        (WebKit::AuthenticationManager::tryUseCertificateInfoForChallenge):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<ResourceRequest>::encodePlatformData):
+        (IPC::ArgumentCoder<ResourceRequest>::decodePlatformData):
+        * config.h:
+
+2017-11-14  Alex Christensen  <achristensen@webkit.org>
+
         Remove assertions added in r224791
         https://bugs.webkit.org/show_bug.cgi?id=178751#c10
 

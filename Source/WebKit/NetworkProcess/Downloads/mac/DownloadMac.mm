@@ -38,44 +38,6 @@
 #import <WebCore/ResourceResponse.h>
 #import <pal/spi/cocoa/NSURLDownloadSPI.h>
 
-#if USE(CFURLCONNECTION)
-
-namespace WebKit {
-
-void Download::resume(const IPC::DataReference&, const String&, const SandboxExtension::Handle&)
-{
-    notImplemented();
-}
-
-void Download::platformDidFinish()
-{
-    notImplemented();
-}
-
-void Download::platformCancelNetworkLoad()
-{
-    notImplemented();
-}
-
-void Download::startNetworkLoadWithHandle(WebCore::ResourceHandle*, const WebCore::ResourceResponse&)
-{
-    notImplemented();
-}
-
-void Download::startNetworkLoad()
-{
-    notImplemented();
-}
-
-void Download::platformInvalidate()
-{
-    notImplemented();
-}
-
-}
-
-#else
-
 @interface WKDownloadAsDelegate : NSObject <NSURLDownloadDelegate> {
     WebKit::Download* _download;
 }
@@ -314,5 +276,4 @@ static void dispatchOnMainThread(void (^block)())
 
 @end
 
-#endif // USE(CFURLCONNECTION)
 #endif // !USE(NETWORK_SESSION)

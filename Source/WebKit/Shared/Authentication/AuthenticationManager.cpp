@@ -231,7 +231,7 @@ void AuthenticationManager::useCredentialForSingleChallenge(uint64_t challengeID
 
     if (coreClient)
         coreClient->receivedCredential(challenge.challenge, credential);
-#if !USE(CFURLCONNECTION) && !USE(NETWORK_SESSION)
+#if !USE(NETWORK_SESSION)
     else
         receivedCredential(challenge.challenge, credential);
 #endif
@@ -262,7 +262,7 @@ void AuthenticationManager::continueWithoutCredentialForSingleChallenge(uint64_t
 
     if (coreClient)
         coreClient->receivedRequestToContinueWithoutCredential(challenge.challenge);
-#if !USE(CFURLCONNECTION) && !USE(NETWORK_SESSION)
+#if !USE(NETWORK_SESSION)
     else
         receivedRequestToContinueWithoutCredential(challenge.challenge);
 #endif
@@ -293,7 +293,7 @@ void AuthenticationManager::cancelSingleChallenge(uint64_t challengeID)
 
     if (coreClient)
         coreClient->receivedCancellation(challenge.challenge);
-#if !USE(CFURLCONNECTION) && !USE(NETWORK_SESSION)
+#if !USE(NETWORK_SESSION)
     else
         receivedCancellation(challenge.challenge);
 #endif
@@ -324,7 +324,7 @@ void AuthenticationManager::performDefaultHandlingForSingleChallenge(uint64_t ch
 
     if (coreClient)
         coreClient->receivedRequestToPerformDefaultHandling(challenge.challenge);
-#if !USE(CFURLCONNECTION) && !USE(NETWORK_SESSION)
+#if !USE(NETWORK_SESSION)
     else
         receivedRequestToPerformDefaultHandling(challenge.challenge);
 #endif
@@ -355,7 +355,7 @@ void AuthenticationManager::rejectProtectionSpaceAndContinueForSingleChallenge(u
 
     if (coreClient)
         coreClient->receivedChallengeRejection(challenge.challenge);
-#if !USE(CFURLCONNECTION) && !USE(NETWORK_SESSION)
+#if !USE(NETWORK_SESSION)
     else
         receivedChallengeRejection(challenge.challenge);
 #endif

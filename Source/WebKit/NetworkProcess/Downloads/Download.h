@@ -49,10 +49,6 @@ OBJC_CLASS WKDownloadAsDelegate;
 #endif
 #endif // USE(NETWORK_SESSION)
 
-#if USE(CFURLCONNECTION)
-#include <CFNetwork/CFURLDownloadPriv.h>
-#endif
-
 namespace IPC {
 class DataReference;
 }

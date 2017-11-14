@@ -81,26 +81,16 @@ bool AuthenticationManager::tryUseCertificateInfoForChallenge(const Authenticati
         LOG_ERROR("Unable to create SecIdentityRef with certificate - %i", result);
         if (completionHandler)
             completionHandler(AuthenticationChallengeDisposition::Cancel, { });
-        else {
-#if USE(CFURLCONNECTION)
-            notImplemented();
-#else
+        else
             [challenge.sender() cancelAuthenticationChallenge:challenge.nsURLAuthenticationChallenge()];
-#endif
-        }
         return true;
     }
 
     NSURLCredential *credential = [NSURLCredential credentialWithIdentity:identity certificates:chain(certificateInfo) persistence:NSURLCredentialPersistenceNone];
     if (completionHandler)
         completionHandler(AuthenticationChallengeDisposition::UseCredential, Credential(credential));
-    else {
-#if USE(CFURLCONNECTION)
-        notImplemented();
-#else
+    else
         [challenge.sender() useCredential:credential forAuthenticationChallenge:challenge.nsURLAuthenticationChallenge()];
-#endif
-    }
     return true;
 }
 

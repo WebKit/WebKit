@@ -133,7 +133,7 @@ struct WebProcessCreationParameters {
 
     TextCheckerState textCheckerState;
 
-#if PLATFORM(COCOA) || USE(CFURLCONNECTION)
+#if PLATFORM(COCOA)
     String uiProcessBundleIdentifier;
 #endif
 

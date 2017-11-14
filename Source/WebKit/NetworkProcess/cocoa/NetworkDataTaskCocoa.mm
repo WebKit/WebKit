@@ -401,12 +401,7 @@ NetworkDataTask::State NetworkDataTaskCocoa::state() const
 
 WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge& challenge)
 {
-#if USE(CFURLCONNECTION)
-    notImplemented();
-    return { };
-#else
     return WebCore::Credential([NSURLCredential credentialForTrust:challenge.nsURLAuthenticationChallenge().protectionSpace.serverTrust]);
-#endif
 }
 
 }

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "AuthenticationManager.h"
 
-#if !USE(CFURLCONNECTION) && !USE(NETWORK_SESSION)
+#if !USE(NETWORK_SESSION)
 using namespace WebCore;
 
 namespace WebKit {
