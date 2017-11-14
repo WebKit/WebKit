@@ -32,6 +32,7 @@
 #include "InitializeThreading.h"
 #include "LinkBuffer.h"
 #include "ProbeContext.h"
+#include <limits>
 #include <wtf/Compiler.h>
 #include <wtf/DataLog.h>
 #include <wtf/Function.h>
@@ -169,6 +170,45 @@ void testSimple()
         jit.ret();
     }), 42);
 }
+
+// branchTruncateDoubleToInt32(), when encountering Infinity, -Infinity or a
+// Nan, should either yield 0 in dest or fail.
+void testBranchTruncateDoubleToInt32(double val, int32_t expected)
+{
+    const uint64_t valAsUInt = *reinterpret_cast<uint64_t*>(&val);
+#if CPU(BIG_ENDIAN)
+    const bool isBigEndian = true;
+#else
+    const bool isBigEndian = false;
+#endif
+    CHECK_EQ(compileAndRun<int>([&] (CCallHelpers& jit) {
+        jit.emitFunctionPrologue();
+        jit.subPtr(CCallHelpers::TrustedImm32(8), MacroAssembler::stackPointerRegister);
+        if (isBigEndian) {
+            jit.store32(CCallHelpers::TrustedImm32(valAsUInt >> 32),
+                MacroAssembler::stackPointerRegister);
+            jit.store32(CCallHelpers::TrustedImm32(valAsUInt & 0xffffffff),
+                MacroAssembler::Address(MacroAssembler::stackPointerRegister, 4));
+        } else {
+            jit.store32(CCallHelpers::TrustedImm32(valAsUInt & 0xffffffff),
+                MacroAssembler::stackPointerRegister);
+            jit.store32(CCallHelpers::TrustedImm32(valAsUInt >> 32),
+                MacroAssembler::Address(MacroAssembler::stackPointerRegister, 4));
+        }
+        jit.loadDouble(MacroAssembler::stackPointerRegister, FPRInfo::fpRegT0);
+
+        MacroAssembler::Jump done;
+        done = jit.branchTruncateDoubleToInt32(FPRInfo::fpRegT0, GPRInfo::returnValueGPR, MacroAssembler::BranchIfTruncateSuccessful);
+
+        jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::returnValueGPR);
+
+        done.link(&jit);
+        jit.addPtr(CCallHelpers::TrustedImm32(8), MacroAssembler::stackPointerRegister);
+        jit.emitFunctionEpilogue();
+        jit.ret();
+    }), expected);
+}
+
 
 #if ENABLE(MASM_PROBE)
 void testProbeReadsArgumentRegisters()
@@ -690,6 +730,20 @@ void run(const char* filter)
     };
 
     RUN(testSimple());
+    RUN(testBranchTruncateDoubleToInt32(0, 0));
+    RUN(testBranchTruncateDoubleToInt32(42, 42));
+    RUN(testBranchTruncateDoubleToInt32(42.7, 42));
+    RUN(testBranchTruncateDoubleToInt32(-1234, -1234));
+    RUN(testBranchTruncateDoubleToInt32(-1234.56, -1234));
+    RUN(testBranchTruncateDoubleToInt32(std::numeric_limits<double>::infinity(), 0));
+    RUN(testBranchTruncateDoubleToInt32(-std::numeric_limits<double>::infinity(), 0));
+    RUN(testBranchTruncateDoubleToInt32(std::numeric_limits<double>::quiet_NaN(), 0));
+    RUN(testBranchTruncateDoubleToInt32(std::numeric_limits<double>::signaling_NaN(), 0));
+    RUN(testBranchTruncateDoubleToInt32(std::numeric_limits<double>::max(), 0));
+    RUN(testBranchTruncateDoubleToInt32(-std::numeric_limits<double>::max(), 0));
+    // We run this last one to make sure that we don't use flags that were not
+    // reset to check a conversion result
+    RUN(testBranchTruncateDoubleToInt32(123, 123));
 
 #if ENABLE(MASM_PROBE)
     RUN(testProbeReadsArgumentRegisters());

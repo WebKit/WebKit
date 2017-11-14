@@ -1,3 +1,27 @@
+2017-11-14  Guillaume Emont  <guijemont@igalia.com>
+
+        REGRESSION(r224623) [MIPS] branchTruncateDoubleToInt32() doesn't set return register when branching
+        https://bugs.webkit.org/show_bug.cgi?id=179563
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        When run with BranchIfTruncateSuccessful,
+        branchTruncateDoubleToInt32() should set the destination register
+        before branching.
+        This change also removes branchTruncateDoubleToUInt32() as it is
+        deprecated (see r160205), merges branchOnTruncateResult() into
+        branchTruncateDoubleToInt32() and adds test cases in testmasm.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branchOnTruncateResult): Deleted.
+        (JSC::MacroAssemblerMIPS::branchTruncateDoubleToInt32):
+        Properly set dest before branching.
+        (JSC::MacroAssemblerMIPS::branchTruncateDoubleToUInt32): Deleted.
+        * assembler/testmasm.cpp:
+        (JSC::testBranchTruncateDoubleToInt32):
+        (JSC::run):
+        Add tests for branchTruncateDoubleToInt32().
+
 2017-11-14  Daniel Bates  <dabates@apple.com>
 
         Update comment in FeatureDefines.xcconfig to reflect location of Visual Studio property files
