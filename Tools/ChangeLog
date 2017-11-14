@@ -1,3 +1,12 @@
+2017-11-14  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Add committer status for Emilio Cobos Álvarez.
+        https://bugs.webkit.org/show_bug.cgi?id=179667
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2017-11-13  Mark Lam  <mark.lam@apple.com>
 
         Pass --useDollarVM=true to all JSC tests.
