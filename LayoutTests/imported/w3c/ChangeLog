@@ -1,3 +1,14 @@
+2017-11-13  Youenn Fablet  <youenn@apple.com>
+
+        matchRegistration does not need to go to StorageProcess if no service worker is registered
+        https://bugs.webkit.org/show_bug.cgi?id=179480
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/service-workers/service-worker/activation.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/activation.https.html:
+        * web-platform-tests/service-workers/service-worker/registration-iframe.https.html:
+
 2017-11-12  Maciej Stachowiak  <mjs@apple.com>
 
         Remove support for UTF-32 variant text encodings

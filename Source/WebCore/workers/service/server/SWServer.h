@@ -40,9 +40,11 @@
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
+class SWOriginStore;
 class SWServerJobQueue;
 class SWServerRegistration;
 enum class ServiceWorkerRegistrationState;
@@ -96,10 +98,12 @@ public:
         SWServer& m_server;
     };
 
-    WEBCORE_EXPORT SWServer();
+    WEBCORE_EXPORT explicit SWServer(UniqueRef<SWOriginStore>&&);
     WEBCORE_EXPORT ~SWServer();
 
-    WEBCORE_EXPORT void clear();
+    WEBCORE_EXPORT void clearAll();
+    WEBCORE_EXPORT void clear(const SecurityOrigin&);
+
 
     SWServerRegistration* getRegistration(const ServiceWorkerRegistrationKey&);
     void addRegistration(std::unique_ptr<SWServerRegistration>&&);
@@ -120,6 +124,7 @@ public:
     SWServerWorker* workerByID(ServiceWorkerIdentifier identifier) const { return m_workersByID.get(identifier); }
     
     Connection* getConnection(uint64_t identifier) { return m_connections.get(identifier); }
+    SWOriginStore& originStore() { return m_originStore; }
 
 private:
     void registerConnection(Connection&);
@@ -155,6 +160,7 @@ private:
 
     Lock m_mainThreadReplyLock;
     bool m_mainThreadReplyScheduled { false };
+    UniqueRef<SWOriginStore> m_originStore;
 };
 
 } // namespace WebCore

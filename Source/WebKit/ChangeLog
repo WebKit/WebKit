@@ -1,3 +1,40 @@
+2017-11-13  Youenn Fablet  <youenn@apple.com>
+
+        matchRegistration does not need to go to StorageProcess if no service worker is registered
+        https://bugs.webkit.org/show_bug.cgi?id=179480
+
+        Reviewed by Chris Dumez.
+
+        Removed origin store handling from StorageProcess since it is now handled within SWServer.
+        Updated clearing of web site data accordingly.
+        Optimized matchRegistration by looking at the origin store before doing any IPC.
+        Do IPC to the StorageProcess if the origin store is not yet initialized on the WebProcess.
+
+        * StorageProcess/ServiceWorker/WebSWOriginStore.h:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::resolveRegistrationJobInClient):
+        (WebKit::WebSWServerConnection::resolveUnregistrationJobInClient):
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::deleteWebsiteData):
+        (WebKit::StorageProcess::deleteWebsiteDataForOrigins):
+        (WebKit::StorageProcess::swServerForSession):
+        (WebKit::StorageProcess::swOriginStoreForSession):
+        (WebKit::StorageProcess::registerSWServerConnection):
+        (WebKit::StorageProcess::unregisterSWServerConnection):
+        (WebKit::StorageProcess::ensureSWOriginStoreForSession): Deleted.
+        (WebKit::StorageProcess::swOriginStoreForSession const): Deleted.
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/ServiceWorker/WebSWOriginStore.cpp:
+        (WebKit::WebSWOriginStore::addToStore):
+        (WebKit::WebSWOriginStore::removeFromStore):
+        (WebKit::WebSWOriginStore::clearStore):
+        (WebKit::WebSWOriginStore::add): Deleted.
+        (WebKit::WebSWOriginStore::remove): Deleted.
+        (WebKit::WebSWOriginStore::clear): Deleted.
+        * StorageProcess/ServiceWorker/WebSWOriginStore.h:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::matchRegistration):
+
 2017-11-13  Alex Christensen  <achristensen@webkit.org>
 
         Merge NetworkProcess::EnsurePrivateBrowsingSession and NetworkProcess::AddWebsiteDataStore into one message type

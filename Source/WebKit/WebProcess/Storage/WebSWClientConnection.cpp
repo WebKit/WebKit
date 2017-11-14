@@ -112,6 +112,11 @@ void WebSWClientConnection::didMatchRegistration(uint64_t matchingRequest, std::
 
 void WebSWClientConnection::matchRegistration(const SecurityOrigin& topOrigin, const URL& clientURL, RegistrationCallback&& callback)
 {
+    if (!hasServiceWorkerRegisteredForOrigin(topOrigin)) {
+        callback(std::nullopt);
+        return;
+    }
+
     uint64_t requestIdentifier = ++m_previousMatchRegistrationTaskIdentifier;
     m_ongoingMatchRegistrationTasks.add(requestIdentifier, WTFMove(callback));
     send(Messages::WebSWServerConnection::MatchRegistration(requestIdentifier, SecurityOriginData::fromSecurityOrigin(topOrigin), clientURL));

@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "SharedStringHashStore.h"
+#include <WebCore/SWOriginStore.h>
 #include <wtf/HashSet.h>
 
 namespace WebCore {
@@ -38,20 +39,19 @@ namespace WebKit {
 
 class WebSWServerConnection;
 
-class WebSWOriginStore final : private SharedStringHashStore::Client {
+class WebSWOriginStore final : public WebCore::SWOriginStore, private SharedStringHashStore::Client {
 public:
     WebSWOriginStore();
-
-    void add(const WebCore::SecurityOrigin&);
-    void addAll(const Vector<WebCore::SecurityOrigin>&);
-    void remove(const WebCore::SecurityOrigin&);
-    void clear();
 
     void registerSWServerConnection(WebSWServerConnection&);
     void unregisterSWServerConnection(WebSWServerConnection&);
 
 private:
     void sendStoreHandle(WebSWServerConnection&);
+
+    void addToStore(const WebCore::SecurityOrigin&) final;
+    void removeFromStore(const WebCore::SecurityOrigin&) final;
+    void clearStore() final;
 
     // SharedStringHashStore::Client.
     void didInvalidateSharedMemory() final;

@@ -41,26 +41,19 @@ WebSWOriginStore::WebSWOriginStore()
 {
 }
 
-void WebSWOriginStore::add(const SecurityOrigin& origin)
+void WebSWOriginStore::addToStore(const SecurityOrigin& origin)
 {
     m_store.scheduleAddition(computeSharedStringHash(origin.toString()));
     m_store.flushPendingChanges();
 }
 
-void WebSWOriginStore::addAll(const Vector<SecurityOrigin>& origins)
-{
-    for (auto& origin : origins)
-        m_store.scheduleAddition(computeSharedStringHash(origin.toString()));
-    m_store.flushPendingChanges();
-}
-
-void WebSWOriginStore::remove(const SecurityOrigin& origin)
+void WebSWOriginStore::removeFromStore(const SecurityOrigin& origin)
 {
     m_store.scheduleRemoval(computeSharedStringHash(origin.toString()));
     m_store.flushPendingChanges();
 }
 
-void WebSWOriginStore::clear()
+void WebSWOriginStore::clearStore()
 {
     m_store.clear();
 }

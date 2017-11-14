@@ -83,9 +83,6 @@ public:
     IPC::Connection* workerContextProcessConnection();
     void createWorkerContextProcessConnection();
 
-    WebSWOriginStore& ensureSWOriginStoreForSession(PAL::SessionID);
-    WebSWOriginStore* swOriginStoreForSession(PAL::SessionID) const;
-
     WebCore::SWServer& swServerForSession(PAL::SessionID);
     void registerSWServerConnection(WebSWServerConnection&);
     void unregisterSWServerConnection(WebSWServerConnection&);
@@ -132,6 +129,7 @@ private:
     void didFinishServiceWorkerActivation(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerIdentifier);
     void setServiceWorkerHasPendingEvents(uint64_t serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier, bool hasPendingEvents);
     void postMessageToServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier& destinationIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin);
+    WebSWOriginStore& swOriginStoreForSession(PAL::SessionID);
 #endif
 #if ENABLE(INDEXED_DATABASE)
     Vector<WebCore::SecurityOriginData> indexedDatabaseOrigins(const String& path);
@@ -162,7 +160,6 @@ private:
     bool m_waitingForWorkerContextProcessConnection { false };
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::SWServer>> m_swServers;
     HashMap<uint64_t, WebSWServerConnection*> m_swServerConnections;
-    HashMap<PAL::SessionID, std::unique_ptr<WebSWOriginStore>> m_swOriginStores;
 #endif
 };
 

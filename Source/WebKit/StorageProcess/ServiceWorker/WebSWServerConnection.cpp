@@ -31,14 +31,12 @@
 #include "DataReference.h"
 #include "Logging.h"
 #include "ServiceWorkerClientFetchMessages.h"
-#include "StorageProcess.h"
 #include "StorageToWebProcessConnectionMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include "WebProcessMessages.h"
 #include "WebSWClientConnectionMessages.h"
 #include "WebSWContextManagerConnectionMessages.h"
-#include "WebSWOriginStore.h"
 #include "WebSWServerConnectionMessages.h"
 #include "WebToStorageProcessConnection.h"
 #include <WebCore/ExceptionData.h>
@@ -78,16 +76,11 @@ void WebSWServerConnection::rejectJobInClient(uint64_t jobIdentifier, const Exce
 
 void WebSWServerConnection::resolveRegistrationJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationData& registrationData, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
 {
-    auto origin = registrationData.key.topOrigin().securityOrigin();
-    StorageProcess::singleton().ensureSWOriginStoreForSession(m_sessionID).add(origin);
     send(Messages::WebSWClientConnection::RegistrationJobResolvedInServer(jobIdentifier, registrationData, shouldNotifyWhenResolved));
 }
 
 void WebSWServerConnection::resolveUnregistrationJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationKey& registrationKey, bool unregistrationResult)
 {
-    auto origin = registrationKey.topOrigin().securityOrigin();
-    if (auto* store = StorageProcess::singleton().swOriginStoreForSession(m_sessionID))
-        store->remove(origin);
     send(Messages::WebSWClientConnection::UnregistrationJobResolvedInServer(jobIdentifier, unregistrationResult));
 }
 

@@ -990,6 +990,7 @@
 		415080361E3F00AD0051D75D /* LibWebRTCAudioModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 415080341E3F00AA0051D75D /* LibWebRTCAudioModule.cpp */; };
 		415080371E3F00B00051D75D /* LibWebRTCAudioModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 415080351E3F00AA0051D75D /* LibWebRTCAudioModule.h */; };
 		4150F9F112B6E0E70008C860 /* SliderThumbElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */; };
+		4151E5BB1FBA4C7A00E47E2D /* SWOriginStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 4151E5B71FBA4C7500E47E2D /* SWOriginStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		415747471E3869A400E914D8 /* LibWebRTCMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 415747431E38699E00E914D8 /* LibWebRTCMacros.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		415747481E3869A700E914D8 /* LibWebRTCProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 415747441E38699E00E914D8 /* LibWebRTCProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4157EBFA1E3AB67900AC9FE9 /* MockLibWebRTCPeerConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4157EBF91E3AB06800AC9FE9 /* MockLibWebRTCPeerConnection.cpp */; };
@@ -6941,6 +6942,8 @@
 		415080351E3F00AA0051D75D /* LibWebRTCAudioModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCAudioModule.h; path = libwebrtc/LibWebRTCAudioModule.h; sourceTree = "<group>"; };
 		4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SliderThumbElement.h; sourceTree = "<group>"; };
 		4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SliderThumbElement.cpp; sourceTree = "<group>"; };
+		4151E5B71FBA4C7500E47E2D /* SWOriginStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWOriginStore.h; sourceTree = "<group>"; };
+		4151E5B91FBA4C7600E47E2D /* SWOriginStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWOriginStore.cpp; sourceTree = "<group>"; };
 		415747431E38699E00E914D8 /* LibWebRTCMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCMacros.h; path = libwebrtc/LibWebRTCMacros.h; sourceTree = "<group>"; };
 		415747441E38699E00E914D8 /* LibWebRTCProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCProvider.h; path = libwebrtc/LibWebRTCProvider.h; sourceTree = "<group>"; };
 		4157EBF81E3AB06800AC9FE9 /* MockLibWebRTCPeerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockLibWebRTCPeerConnection.h; sourceTree = "<group>"; };
@@ -17131,6 +17134,8 @@
 			children = (
 				517A52FE1F478CCE00DCDC0A /* SWClientConnection.cpp */,
 				517A52FF1F478CCE00DCDC0A /* SWClientConnection.h */,
+				4151E5B91FBA4C7600E47E2D /* SWOriginStore.cpp */,
+				4151E5B71FBA4C7500E47E2D /* SWOriginStore.h */,
 				517A52EF1F47535900DCDC0A /* SWServer.cpp */,
 				517A52EE1F47535900DCDC0A /* SWServer.h */,
 				8311C0001FAA2E8900E3C8E5 /* SWServerJobQueue.cpp */,
@@ -29409,6 +29414,7 @@
 				B2E4EC980D00C22B00432643 /* SVGZoomEvent.h in Headers */,
 				517A531D1F4B53B100DCDC0A /* SWClientConnection.h in Headers */,
 				46658DC91FA24B8700F7DD54 /* SWContextManager.h in Headers */,
+				4151E5BB1FBA4C7A00E47E2D /* SWOriginStore.h in Headers */,
 				517A52F01F47535B00DCDC0A /* SWServer.h in Headers */,
 				8311C0031FAA2E9500E3C8E5 /* SWServerJobQueue.h in Headers */,
 				51F645971F4A686F00B54DED /* SWServerRegistration.h in Headers */,

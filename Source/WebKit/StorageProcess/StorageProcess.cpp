@@ -232,10 +232,8 @@ void StorageProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 
 #if ENABLE(SERVICE_WORKER)
     if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations)) {
-        if (auto* store = swOriginStoreForSession(sessionID))
-            store->clear();
         if (auto* server = m_swServers.get(sessionID))
-            server->clear();
+            server->clearAll();
     }
 #endif
 
@@ -257,11 +255,10 @@ void StorageProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
 
 #if ENABLE(SERVICE_WORKER)
     if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations)) {
-        if (auto* store = swOriginStoreForSession(sessionID)) {
+        if (auto* server = m_swServers.get(sessionID)) {
             for (auto& originData : securityOriginDatas)
-                store->remove(originData.securityOrigin());
+                server->clear(originData.securityOrigin());
         }
-        // FIXME: Clear service workers and registrations related to the origin.
     }
 #endif
 
@@ -345,10 +342,15 @@ SWServer& StorageProcess::swServerForSession(PAL::SessionID sessionID)
 {
     auto result = m_swServers.add(sessionID, nullptr);
     if (result.isNewEntry)
-        result.iterator->value = std::make_unique<SWServer>();
+        result.iterator->value = std::make_unique<SWServer>(makeUniqueRef<WebSWOriginStore>());
 
     ASSERT(result.iterator->value);
     return *result.iterator->value;
+}
+
+WebSWOriginStore& StorageProcess::swOriginStoreForSession(PAL::SessionID sessionID)
+{
+    return static_cast<WebSWOriginStore&>(swServerForSession(sessionID).originStore());
 }
 
 IPC::Connection* StorageProcess::workerContextProcessConnection()
@@ -363,21 +365,6 @@ void StorageProcess::createWorkerContextProcessConnection()
     
     m_waitingForWorkerContextProcessConnection = true;
     parentProcessConnection()->send(Messages::StorageProcessProxy::GetWorkerContextProcessConnection(), 0);
-}
-
-WebSWOriginStore& StorageProcess::ensureSWOriginStoreForSession(PAL::SessionID sessionID)
-{
-    return *m_swOriginStores.ensure(sessionID, [] {
-        return std::make_unique<WebSWOriginStore>();
-    }).iterator->value;
-}
-
-WebSWOriginStore* StorageProcess::swOriginStoreForSession(PAL::SessionID sessionID) const
-{
-    auto it = m_swOriginStores.find(sessionID);
-    if (it == m_swOriginStores.end())
-        return nullptr;
-    return it->value.get();
 }
 
 void StorageProcess::didGetWorkerContextProcessConnection(IPC::Attachment&& encodedConnectionIdentifier)
@@ -476,15 +463,14 @@ void StorageProcess::registerSWServerConnection(WebSWServerConnection& connectio
 {
     ASSERT(!m_swServerConnections.contains(connection.identifier()));
     m_swServerConnections.add(connection.identifier(), &connection);
-    ensureSWOriginStoreForSession(connection.sessionID()).registerSWServerConnection(connection);
+    swOriginStoreForSession(connection.sessionID()).registerSWServerConnection(connection);
 }
 
 void StorageProcess::unregisterSWServerConnection(WebSWServerConnection& connection)
 {
     ASSERT(m_swServerConnections.get(connection.identifier()) == &connection);
     m_swServerConnections.remove(connection.identifier());
-    if (auto* originStore = swOriginStoreForSession(connection.sessionID()))
-        originStore->unregisterSWServerConnection(connection);
+    swOriginStoreForSession(connection.sessionID()).unregisterSWServerConnection(connection);
 }
 #endif
 

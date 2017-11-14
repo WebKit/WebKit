@@ -31,6 +31,7 @@
 #include "ExceptionCode.h"
 #include "ExceptionData.h"
 #include "Logging.h"
+#include "SWOriginStore.h"
 #include "SWServerJobQueue.h"
 #include "SWServerRegistration.h"
 #include "SWServerWorker.h"
@@ -84,19 +85,34 @@ SWServerRegistration* SWServer::getRegistration(const ServiceWorkerRegistrationK
 void SWServer::addRegistration(std::unique_ptr<SWServerRegistration>&& registration)
 {
     auto key = registration->key();
-    m_registrations.add(key, WTFMove(registration));
+    auto result = m_registrations.add(key, WTFMove(registration));
+    ASSERT_UNUSED(result, result.isNewEntry);
+
+    m_originStore->add(key.topOrigin().securityOrigin());
 }
 
-void SWServer::removeRegistration(const ServiceWorkerRegistrationKey& registrationKey)
+void SWServer::removeRegistration(const ServiceWorkerRegistrationKey& key)
 {
-    m_registrations.remove(registrationKey);
+    auto topOrigin = key.topOrigin().securityOrigin();
+    auto result = m_registrations.remove(key);
+    ASSERT_UNUSED(result, result);
+
+    m_originStore->remove(topOrigin);
 }
 
-void SWServer::clear()
+void SWServer::clearAll()
 {
     m_jobQueues.clear();
     m_registrations.clear();
+    m_originStore->clearAll();
     // FIXME: We should probably ask service workers to terminate.
+}
+
+void SWServer::clear(const SecurityOrigin& origin)
+{
+    m_originStore->clear(origin);
+
+    // FIXME: We should clear entries in m_registrations, m_jobQueues and m_workersByID.
 }
 
 void SWServer::Connection::scheduleJobInServer(const ServiceWorkerJobData& jobData)
@@ -152,7 +168,8 @@ void SWServer::Connection::scriptContextStarted(const ServiceWorkerRegistrationK
     m_server.scriptContextStarted(*this, registrationKey, identifier);
 }
 
-SWServer::SWServer()
+SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore)
+    : m_originStore(WTFMove(originStore))
 {
     m_taskThread = Thread::create(ASCIILiteral("ServiceWorker Task Thread"), [this] {
         taskThreadEntryPoint();
