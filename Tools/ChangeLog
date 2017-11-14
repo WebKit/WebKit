@@ -1,3 +1,15 @@
+2017-11-14  Daniel Bates  <dabates@apple.com>
+
+        Update comment in FeatureDefines.xcconfig to reflect location of Visual Studio property files
+        for feature defines
+
+        Following r195498 and r201917 the Visual Studio property files for feature defines have
+        moved from directory WebKitLibraries/win/tools/vsprops to directory Source/cmake/tools/vsprops.
+        Update the comment in FeatureDefines.xcconfig to reflect the new location and names of these
+        files.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2017-11-14  Jer Noble  <jer.noble@apple.com>
 
         Enable Modern EME tests in DumpRenderTree
