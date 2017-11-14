@@ -2,8 +2,8 @@
 
 Harness Error (TIMEOUT), message = null
 
-FAIL Foreign fetch can intercept fetches made from a service worker assert_equals: expected "Foreign Fetch" but got "Here's a simple html file."
-TIMEOUT Foreign fetch can intercept fetches made from a dedicated worker Test timed out
+TIMEOUT Foreign fetch can intercept fetches made from a service worker Test timed out
+NOTRUN Foreign fetch can intercept fetches made from a dedicated worker 
 NOTRUN Foreign fetch can intercept fetches made from a shared worker 
 NOTRUN Fetches from an insecure dedicated worker aren't intercepted. 
 NOTRUN Fetches from an insecure shared worker aren't intercepted. 

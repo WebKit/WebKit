@@ -1,4 +1,3 @@
 
-
-FAIL controller is cleared on disconnected window assert_true: controller should be a ServiceWorker object expected true got false
+FAIL controller is cleared on disconnected window assert_equals: disconnected frame should not be controlled expected null but got object "[object ServiceWorker]"
 

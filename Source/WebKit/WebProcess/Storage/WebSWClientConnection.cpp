@@ -132,8 +132,7 @@ void WebSWClientConnection::matchRegistration(const SecurityOrigin& topOrigin, c
 
 Ref<ServiceWorkerClientFetch> WebSWClientConnection::startFetch(WebServiceWorkerProvider& provider, Ref<WebCore::ResourceLoader>&& loader, uint64_t identifier, ServiceWorkerClientFetch::Callback&& callback)
 {
-    ASSERT(loader->options().serviceWorkersMode != ServiceWorkersMode::None);
-    // FIXME: Decide whether to assert for loader->options().serviceWorkerIdentifier once we have a story for navigation loads.
+    ASSERT(loader->options().serviceWorkersMode != ServiceWorkersMode::None && loader->options().serviceWorkerIdentifier);
 
     send(Messages::WebSWServerConnection::StartFetch(identifier, loader->options().serviceWorkerIdentifier, loader->originalRequest(), loader->options()));
     return ServiceWorkerClientFetch::create(provider, WTFMove(loader), identifier, m_connection.get(), WTFMove(callback));

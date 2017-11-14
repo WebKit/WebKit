@@ -1,8 +1,10 @@
 
 
-FAIL Frame location should update on successful navigation assert_unreached: unexpected rejection: null is not an object (evaluating 'remote.onerror = function(error) { this_obj.remote_error(error); }') Reached unreachable code
-FAIL Frame location should not be accessible after redirect assert_unreached: unexpected rejection: null is not an object (evaluating 'remote.onerror = function(error) { this_obj.remote_error(error); }') Reached unreachable code
-FAIL Frame location should not be accessible after cross-origin navigation assert_unreached: unexpected rejection: null is not an object (evaluating 'remote.onerror = function(error) { this_obj.remote_error(error); }') Reached unreachable code
-FAIL Frame location should not update on failed about:blank navigation assert_unreached: unexpected rejection: null is not an object (evaluating 'remote.onerror = function(error) { this_obj.remote_error(error); }') Reached unreachable code
-FAIL Frame location should not update on failed mixed-content navigation assert_unreached: unexpected rejection: null is not an object (evaluating 'remote.onerror = function(error) { this_obj.remote_error(error); }') Reached unreachable code
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Frame location should update on successful navigation Test timed out
+NOTRUN Frame location should not be accessible after redirect 
+NOTRUN Frame location should not be accessible after cross-origin navigation 
+NOTRUN Frame location should not update on failed about:blank navigation 
+NOTRUN Frame location should not update on failed mixed-content navigation 
 

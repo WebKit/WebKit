@@ -1,4 +1,4 @@
 
-FAIL Service worker intercepts requests from window assert_equals: fetch intercepted expected "intercepted" but got "Hello world\n"
-FAIL Service worker does not intercept fetch/cache requests within service worker assert_equals: fetch within SW not intercepted expected "Hello world\n" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+PASS Service worker intercepts requests from window 
+PASS Service worker does not intercept fetch/cache requests within service worker 
 

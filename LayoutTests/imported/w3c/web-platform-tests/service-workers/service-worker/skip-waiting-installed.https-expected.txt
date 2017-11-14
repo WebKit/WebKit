@@ -1,4 +1,4 @@
 
 
-FAIL Test skipWaiting when a installed worker is waiting promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'frame_sw.controller.scriptURL')"
+FAIL Test skipWaiting when a installed worker is waiting promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
 

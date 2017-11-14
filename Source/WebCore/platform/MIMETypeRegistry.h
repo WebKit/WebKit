@@ -125,6 +125,6 @@ private:
     static bool isUnsupportedTextMIMEType(const String& mimeType);
 };
 
-const String& defaultMIMEType();
+WEBCORE_EXPORT const String& defaultMIMEType();
 
 } // namespace WebCore

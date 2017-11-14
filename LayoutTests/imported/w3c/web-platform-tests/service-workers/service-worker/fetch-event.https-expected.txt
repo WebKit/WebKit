@@ -1,21 +1,21 @@
 
 
-FAIL Service Worker headers in the request of a fetch event assert_unreached: unexpected rejection: JSON Parse error: Unexpected identifier "Here" Reached unreachable code
-FAIL Service Worker responds to fetch event with string assert_unreached: unexpected rejection: assert_equals: Service Worker should respond to fetch with a test string expected "Test string" but got "Here's a simple html file.\n" Reached unreachable code
-FAIL Service Worker responds to fetch event with blob body assert_unreached: unexpected rejection: assert_equals: Service Worker should respond to fetch with a test string expected "Test blob" but got "Here's a simple html file.\n" Reached unreachable code
-FAIL Service Worker responds to fetch event with the referrer URL assert_unreached: unexpected rejection: assert_equals: Service Worker should respond to fetch with the referrer URL expected "Referrer: https://localhost:9443/service-workers/service-worker/fetch-event.https.html" but got "Here's a simple html file.\n" Reached unreachable code
-FAIL Service Worker responds to fetch event with an existing client id assert_unreached: unexpected rejection: assert_equals: Service Worker should respond to fetch with a client id expected "Client ID Not Found" but got "Here's a simple html file.\n" Reached unreachable code
+FAIL Service Worker headers in the request of a fetch event assert_unreached: unexpected rejection: assert_true: request specifies "Upgrade-Insecure Requests header as inserted by Fetch expected true got false Reached unreachable code
+FAIL Service Worker responds to fetch event with string assert_unreached: unexpected rejection: assert_equals: The character set of the response created with a string should be UTF-8 expected "UTF-8" but got "windows-1252" Reached unreachable code
+FAIL Service Worker responds to fetch event with blob body assert_unreached: unexpected rejection: assert_equals: Service Worker should respond to fetch with a test string expected "Test blob" but got "" Reached unreachable code
+FAIL Service Worker responds to fetch event with the referrer URL assert_unreached: unexpected rejection: assert_equals: Service Worker should respond to fetch with the referrer URL expected "Referrer: https://localhost:9443/service-workers/service-worker/fetch-event.https.html" but got "" Reached unreachable code
+FAIL Service Worker responds to fetch event with an existing client id assert_unreached: unexpected rejection: assert_equals: Service Worker should respond to fetch with a client id expected "Client ID Not Found" but got "Client ID Found: " Reached unreachable code
 PASS Service Worker does not respond to fetch event 
-FAIL Service Worker responds to fetch event with null response body assert_unreached: unexpected rejection: assert_equals: Response should be the empty string expected "" but got "Here's a simple html file.\n" Reached unreachable code
-FAIL Service Worker fetches other file in fetch event assert_unreached: unexpected rejection: assert_equals: Response should come from fetched other file expected "Here's an other html file.\n" but got "Here's a simple html file.\n" Reached unreachable code
-FAIL Service Worker responds to fetch event with POST form assert_unreached: unexpected rejection: assert_equals: expected "POST:application/x-www-form-urlencoded:testName1=testValue1&testName2=testValue2" but got "{\"error\": {\"message\": \"\", \"code\": 404}}" Reached unreachable code
-FAIL Multiple calls of respondWith must throw InvalidStateErrors assert_unreached: unexpected rejection: assert_equals: Multiple calls of respondWith must throw InvalidStateErrors. expected "(0)(1)[InvalidStateError](2)[InvalidStateError]" but got "Here's a simple html file.\n" Reached unreachable code
-FAIL Service Worker event.respondWith must set the used flag assert_unreached: unexpected rejection: assert_equals: Response should come from fetched other file expected "Here's an other html file.\n" but got "Here's a simple html file.\n" Reached unreachable code
-FAIL Service Worker should expose FetchEvent URL fragments. assert_unreached: unexpected rejection: assert_equals: Service worker should expose URL fragments in request. expected "Fragment Found :#/some/fragment" but got "Here's a simple html file.\n" Reached unreachable code
-FAIL Service Worker responds to fetch event with the correct cache types assert_unreached: unexpected rejection: assert_equals: expected "default" but got "Here's a simple html file.\n" Reached unreachable code
-FAIL Service Worker should intercept EventSource assert_unreached: unexpected rejection: The EventSource fired an error event. Reached unreachable code
-FAIL Service Worker responds to fetch event with the correct integrity_metadata assert_unreached: unexpected rejection: assert_equals: expected "" but got "Here's a simple html file.\n" Reached unreachable code
-FAIL FetchEvent#body is a string assert_equals: expected "i am the request body" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
-FAIL FetchEvent#body is a blob assert_equals: expected "it's me the blob and more blob!" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
-FAIL Service Worker responds to fetch event with the correct keepalive value assert_equals: expected "false" but got "Here's a simple html file.\n"
+PASS Service Worker responds to fetch event with null response body 
+PASS Service Worker fetches other file in fetch event 
+FAIL Service Worker responds to fetch event with POST form assert_unreached: unexpected rejection: assert_equals: expected "POST:application/x-www-form-urlencoded:testName1=testValue1&testName2=testValue2" but got "POST:application/x-www-form-urlencoded:" Reached unreachable code
+PASS Multiple calls of respondWith must throw InvalidStateErrors 
+PASS Service Worker event.respondWith must set the used flag 
+PASS Service Worker should expose FetchEvent URL fragments. 
+FAIL Service Worker responds to fetch event with the correct cache types assert_unreached: unexpected rejection: assert_equals: expected "no-cache" but got "default" Reached unreachable code
+PASS Service Worker should intercept EventSource 
+PASS Service Worker responds to fetch event with the correct integrity_metadata 
+FAIL FetchEvent#body is a string assert_equals: expected "i am the request body" but got ""
+FAIL FetchEvent#body is a blob assert_equals: expected "it's me the blob and more blob!" but got ""
+PASS Service Worker responds to fetch event with the correct keepalive value 
 

@@ -1,3 +1,3 @@
 
-FAIL Verify the response of FetchEvent using XMLHttpRequest assert_equals: expected (string) "foo, bar" but got (object) null
+PASS Verify the response of FetchEvent using XMLHttpRequest 
 

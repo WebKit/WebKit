@@ -1,4 +1,4 @@
 
 
-FAIL Mime type checking of CSS files fetched via SW. assert_equals: The color must be overridden by cross origin CSS. expected "rgb(0, 0, 255)" but got "rgb(255, 0, 0)"
+FAIL Mime type checking of CSS files fetched via SW. assert_equals: The color must not be overridden by cross origin non CSS file. expected "rgb(0, 0, 255)" but got "rgb(255, 0, 0)"
 

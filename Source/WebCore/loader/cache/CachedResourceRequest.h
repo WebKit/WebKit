@@ -43,6 +43,7 @@ struct BlockedStatus;
 
 class Document;
 class FrameLoader;
+struct ServiceWorkerRegistrationData;
 enum class ReferrerPolicy;
 
 bool isRequestCrossOrigin(SecurityOrigin*, const URL& requestURL, const ResourceLoaderOptions&);
@@ -98,6 +99,7 @@ public:
 
 #if ENABLE(SERVICE_WORKER)
     void setSelectedServiceWorkerIdentifierIfNeeded(ServiceWorkerIdentifier);
+    void setNavigationServiceWorkerRegistrationData(const std::optional<ServiceWorkerRegistrationData>&);
 #endif
 
 private:

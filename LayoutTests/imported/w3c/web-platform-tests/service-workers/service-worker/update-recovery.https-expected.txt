@@ -1,3 +1,5 @@
 
-FAIL Recover from a bad service worker by updating after a failed navigation. assert_unreached: unexpected rejection: expected bad iframe should not fire a load event! Reached unreachable code
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Recover from a bad service worker by updating after a failed navigation. Test timed out
 

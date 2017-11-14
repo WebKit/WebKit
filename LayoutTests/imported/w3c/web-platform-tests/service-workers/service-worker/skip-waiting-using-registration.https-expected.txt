@@ -1,3 +1,5 @@
 
-FAIL Test skipWaiting while a client is using the registration promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'frame_sw.controller.scriptURL')"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Test skipWaiting while a client is using the registration Test timed out
 

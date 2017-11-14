@@ -327,10 +327,10 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
             if (m_client)
                 m_client->didFinishLoading(identifier);
         }
-    } else {
-        ASSERT(response.type() == ResourceResponse::Type::Opaqueredirect);
-        m_client->didReceiveResponse(identifier, response);
+        return;
     }
+    ASSERT(response.type() == ResourceResponse::Type::Opaqueredirect || response.source() == ResourceResponse::Source::ServiceWorker);
+    m_client->didReceiveResponse(identifier, response);
 }
 
 void DocumentThreadableLoader::dataReceived(CachedResource& resource, const char* data, int dataLength)

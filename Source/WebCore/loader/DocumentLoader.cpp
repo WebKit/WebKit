@@ -68,9 +68,12 @@
 #include "ProgressTracker.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadObserver.h"
+#include "SWClientConnection.h"
 #include "SchemeRegistry.h"
 #include "ScriptableDocumentParser.h"
 #include "SecurityPolicy.h"
+#include "ServiceWorker.h"
+#include "ServiceWorkerProvider.h"
 #include "Settings.h"
 #include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"
@@ -867,7 +870,12 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
         if (m_archive && m_archive->shouldOverrideBaseURL())
             m_frame->document()->setBaseURLOverride(m_archive->mainResource()->url());
 #endif
-
+#if ENABLE(SERVICE_WORKER)
+        if (m_serviceWorkerRegistrationData && m_serviceWorkerRegistrationData->activeWorker) {
+            m_frame->document()->setActiveServiceWorker(ServiceWorker::getOrCreate(*m_frame->document(), WTFMove(m_serviceWorkerRegistrationData->activeWorker.value())));
+            m_serviceWorkerRegistrationData = { };
+        }
+#endif
         // Call receivedFirstData() exactly once per load. We should only reach this point multiple times
         // for multipart loads, and FrameLoader::isReplacing() will be true after the first time.
         if (!isMultipartReplacingLoad())
@@ -1453,7 +1461,7 @@ void DocumentLoader::startLoadingMainResource()
     ASSERT(timing().startTime());
     ASSERT(timing().fetchStart());
 
-    willSendRequest(ResourceRequest(m_request), ResourceResponse(), [this, protectedThis = makeRef(*this)] (ResourceRequest&& request) {
+    willSendRequest(ResourceRequest(m_request), ResourceResponse(), [this, protectedThis = makeRef(*this)] (ResourceRequest&& request) mutable {
         m_request = request;
 
         // willSendRequest() may lead to our Frame being detached or cancelling the load via nulling the ResourceRequest.
@@ -1479,61 +1487,88 @@ void DocumentLoader::startLoadingMainResource()
 
         RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Starting load (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
 
-        static NeverDestroyed<ResourceLoaderOptions> mainResourceLoadOptions(SendCallbacks, SniffContent, BufferData, StoredCredentialsPolicy::Use, ClientCredentialPolicy::MayAskClientForCredentials, FetchOptions::Credentials::Include, SkipSecurityCheck, FetchOptions::Mode::NoCors, IncludeCertificateInfo, ContentSecurityPolicyImposition::SkipPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::AllowCaching);
-        CachedResourceRequest mainResourceRequest(ResourceRequest(request), mainResourceLoadOptions);
-        if (!m_frame->isMainFrame() && m_frame->document()) {
-            // If we are loading the main resource of a subframe, use the cache partition of the main document.
-            mainResourceRequest.setDomainForCachePartition(*m_frame->document());
-        } else {
-            auto origin = SecurityOrigin::create(request.url());
-            origin->setStorageBlockingPolicy(frameLoader()->frame().settings().storageBlockingPolicy());
-            mainResourceRequest.setDomainForCachePartition(origin->domainForCachePartition());
-        }
-        m_mainResource = m_cachedResourceLoader->requestMainResource(WTFMove(mainResourceRequest)).valueOr(nullptr);
+#if ENABLE(SERVICE_WORKER)
+        if (m_frame && m_frame->page() && RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled()) {
+            auto origin = (!m_frame->isMainFrame() && m_frame->document()) ? makeRef(m_frame->document()->topOrigin()) : SecurityOrigin::create(request.url());
+            auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(m_frame->page()->sessionID());
+            if (connection.mayHaveServiceWorkerRegisteredForOrigin(origin)) {
+                auto url = request.url();
+                connection.matchRegistration(origin, url, [request = WTFMove(request), protectedThis = WTFMove(protectedThis), this] (auto&& registrationData) mutable {
+                    if (!m_mainDocumentError.isNull() || !m_frame)
+                        return;
 
-#if ENABLE(CONTENT_EXTENSIONS)
-        if (m_mainResource && m_mainResource->errorOccurred() && m_frame->page() && m_mainResource->resourceError().domain() == ContentExtensions::WebKitContentBlockerDomain) {
-            RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Blocked by content blocker error (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
-            cancelMainResourceLoad(frameLoader()->blockedByContentBlockerError(m_request));
-            return;
-        }
-#endif
-
-        if (!m_mainResource) {
-            if (!m_request.url().isValid()) {
-                RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Unable to load main resource, URL is invalid (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
-                cancelMainResourceLoad(frameLoader()->client().cannotShowURLError(m_request));
+                    m_serviceWorkerRegistrationData = WTFMove(registrationData);
+                    loadMainResource(WTFMove(request));
+                });
                 return;
             }
+        }
+#endif
+        loadMainResource(WTFMove(request));
+    });
+}
 
-            RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Unable to load main resource, returning empty document (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
+void DocumentLoader::loadMainResource(ResourceRequest&& request)
+{
+    static NeverDestroyed<ResourceLoaderOptions> mainResourceLoadOptions(SendCallbacks, SniffContent, BufferData, StoredCredentialsPolicy::Use, ClientCredentialPolicy::MayAskClientForCredentials, FetchOptions::Credentials::Include, SkipSecurityCheck, FetchOptions::Mode::NoCors, IncludeCertificateInfo, ContentSecurityPolicyImposition::SkipPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::AllowCaching);
+    CachedResourceRequest mainResourceRequest(ResourceRequest(request), mainResourceLoadOptions);
+    if (!m_frame->isMainFrame() && m_frame->document()) {
+        // If we are loading the main resource of a subframe, use the cache partition of the main document.
+        mainResourceRequest.setDomainForCachePartition(*m_frame->document());
+    } else {
+        auto origin = SecurityOrigin::create(request.url());
+        origin->setStorageBlockingPolicy(frameLoader()->frame().settings().storageBlockingPolicy());
+        mainResourceRequest.setDomainForCachePartition(origin->domainForCachePartition());
+    }
 
-            setRequest(ResourceRequest());
-            // If the load was aborted by clearing m_request, it's possible the ApplicationCacheHost
-            // is now in a state where starting an empty load will be inconsistent. Replace it with
-            // a new ApplicationCacheHost.
-            m_applicationCacheHost = std::make_unique<ApplicationCacheHost>(*this);
-            maybeLoadEmpty();
+#if ENABLE(SERVICE_WORKER)
+    mainResourceRequest.setNavigationServiceWorkerRegistrationData(m_serviceWorkerRegistrationData);
+#endif
+
+    m_mainResource = m_cachedResourceLoader->requestMainResource(WTFMove(mainResourceRequest)).valueOr(nullptr);
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (m_mainResource && m_mainResource->errorOccurred() && m_frame->page() && m_mainResource->resourceError().domain() == ContentExtensions::WebKitContentBlockerDomain) {
+        RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Blocked by content blocker error (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
+        cancelMainResourceLoad(frameLoader()->blockedByContentBlockerError(m_request));
+        return;
+    }
+#endif
+
+    if (!m_mainResource) {
+        if (!m_request.url().isValid()) {
+            RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Unable to load main resource, URL is invalid (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
+            cancelMainResourceLoad(frameLoader()->client().cannotShowURLError(m_request));
             return;
         }
 
-        if (!mainResourceLoader()) {
-            m_identifierForLoadWithoutResourceLoader = m_frame->page()->progress().createUniqueIdentifier();
-            frameLoader()->notifier().assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, this, request);
-            frameLoader()->notifier().dispatchWillSendRequest(this, m_identifierForLoadWithoutResourceLoader, request, ResourceResponse());
-        }
+        RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Unable to load main resource, returning empty document (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
 
-        becomeMainResourceClient();
+        setRequest(ResourceRequest());
+        // If the load was aborted by clearing m_request, it's possible the ApplicationCacheHost
+        // is now in a state where starting an empty load will be inconsistent. Replace it with
+        // a new ApplicationCacheHost.
+        m_applicationCacheHost = std::make_unique<ApplicationCacheHost>(*this);
+        maybeLoadEmpty();
+        return;
+    }
 
-        // A bunch of headers are set when the underlying ResourceLoader is created, and m_request needs to include those.
-        if (mainResourceLoader())
-            request = mainResourceLoader()->originalRequest();
-        // If there was a fragment identifier on m_request, the cache will have stripped it. m_request should include
-        // the fragment identifier, so add that back in.
-        if (equalIgnoringFragmentIdentifier(m_request.url(), request.url()))
-            request.setURL(m_request.url());
-        setRequest(request);
-    });
+    if (!mainResourceLoader()) {
+        m_identifierForLoadWithoutResourceLoader = m_frame->page()->progress().createUniqueIdentifier();
+        frameLoader()->notifier().assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, this, request);
+        frameLoader()->notifier().dispatchWillSendRequest(this, m_identifierForLoadWithoutResourceLoader, request, ResourceResponse());
+    }
+
+    becomeMainResourceClient();
+
+    // A bunch of headers are set when the underlying ResourceLoader is created, and m_request needs to include those.
+    if (mainResourceLoader())
+        request = mainResourceLoader()->originalRequest();
+    // If there was a fragment identifier on m_request, the cache will have stripped it. m_request should include
+    // the fragment identifier, so add that back in.
+    if (equalIgnoringFragmentIdentifier(m_request.url(), request.url()))
+        request.setURL(m_request.url());
+    setRequest(request);
 }
 
 void DocumentLoader::cancelPolicyCheckIfNeeded()

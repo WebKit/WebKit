@@ -1,8 +1,8 @@
 CONSOLE MESSAGE: line 25: The page at https://localhost:9443/service-workers/service-worker/fetch-mixed-content-to-outscope.https.html was allowed to display insecure content from http://localhost:8800/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE.
 
-CONSOLE MESSAGE: line 39: The page at https://localhost:9443/service-workers/service-worker/fetch-mixed-content-to-outscope.https.html was allowed to display insecure content from http://127.0.0.1:8800/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE.
+CONSOLE MESSAGE: line 42: The page at https://localhost:9443/service-workers/service-worker/fetch-mixed-content-to-outscope.https.html was allowed to display insecure content from http://127.0.0.1:8800/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE.
 
 
 
-FAIL Verify Mixed content of fetch() in a Service Worker assert_equals: expected "finish" but got "FAIL(3)FAIL(4)FAIL(5)finish"
+FAIL Verify Mixed content of fetch() in a Service Worker assert_equals: expected "finish" but got "FAIL(5)finish"
 

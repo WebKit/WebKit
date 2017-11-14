@@ -2,7 +2,7 @@
 Harness Error (TIMEOUT), message = null
 
 FAIL Post an extendable message from a top-level client promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
-FAIL Post an extendable message from a nested client promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'f.contentWindow.navigator.serviceWorker.controller.postMessage')"
+FAIL Post an extendable message from a nested client assert_equals: event `source` property `url` expected "https://localhost:9443/service-workers/service-worker/ServiceWorkerGlobalScope/resources/scope/extendable-message-event-from-nested" but got ""
 TIMEOUT Post loopback extendable messages Test timed out
 NOTRUN Post extendable messages among service workers 
 

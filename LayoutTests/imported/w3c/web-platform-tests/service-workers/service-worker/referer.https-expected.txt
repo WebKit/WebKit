@@ -1,4 +1,4 @@
 
 
-FAIL Verify the referer assert_equals: expected "finish" but got "failure:Referer for request-headers.py?url=request-headers.py must be https://localhost:9443/service-workers/service-worker/resources/fetch-rewrite-worker.js but got https://localhost:9443/service-workers/service-worker/resources/referer-iframe.html"
+FAIL Verify the referer assert_equals: expected "finish" but got "failure:Referer for request-headers.py must be https://localhost:9443/service-workers/service-worker/resources/referer-iframe.html but got https://localhost:9443/service-workers/service-worker/resources/fetch-rewrite-worker.js"
 

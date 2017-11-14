@@ -1,3 +1,74 @@
+2017-11-14  Youenn Fablet  <youenn@apple.com>
+
+        Implement ServiceWorker handle fetch for navigation loads
+        https://bugs.webkit.org/show_bug.cgi?id=179404
+
+        Reviewed by Alex Christensen and Chris Dumez.
+
+        * web-platform-tests/service-workers/cache-storage/serviceworker/credentials.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/claim-not-using-registration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/client-id.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/client-navigate.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-get-cross-origin.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-get.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-client-types.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-include-uncontrolled.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/controller-on-disconnect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/controller-on-load.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-csp.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-after-navigation-within-page.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-async-respond-with.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-network-error.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-referrer-policy.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-argument.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-readable-stream.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-response-body-with-invalid-chunk.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-stops-propagation.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-within-sw.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-frame-resource.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-header-visibility.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-inscope.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-outscope.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-css-cross-origin-mime-check.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-xhr.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-response-taint.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-response-xhr.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/foreign-fetch-workers.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/interfaces-sw.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/invalid-header.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/mime-sniffing.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-preload/chunked-encoding.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-preload/request-headers.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-redirect-to-http.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/opaque-response-preloaded.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/performance-timeline.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/postmessage-msgport-to-client.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/postmessage-to-client.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/referer.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/referrer-policy-header.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/register-same-scope-different-script-url.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-updateviacache.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/request-end-to-end.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/resource-timing.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/serviceworker-message-event-historical.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/skip-waiting-installed.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/skip-waiting-using-registration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/skip-waiting-without-using-registration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister-controller.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister-then-register.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update-bytecheck.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update-recovery.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/worker-interception.https-expected.txt:
+
 2017-11-14  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline skipped / flaky service worker tests

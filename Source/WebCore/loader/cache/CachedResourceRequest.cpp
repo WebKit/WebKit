@@ -288,6 +288,15 @@ void CachedResourceRequest::setSelectedServiceWorkerIdentifierIfNeeded(ServiceWo
 
     m_options.serviceWorkerIdentifier = identifier;
 }
+
+void CachedResourceRequest::setNavigationServiceWorkerRegistrationData(const std::optional<ServiceWorkerRegistrationData>& data)
+{
+    if (!data || !data->activeWorker) {
+        m_options.serviceWorkersMode = ServiceWorkersMode::None;
+        return;
+    }
+    m_options.serviceWorkerIdentifier = data->activeWorker->identifier;
+}
 #endif
 
 } // namespace WebCore

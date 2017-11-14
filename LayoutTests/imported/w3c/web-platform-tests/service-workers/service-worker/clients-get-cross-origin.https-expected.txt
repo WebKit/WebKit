@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 48: Unhandled Promise Rejection: TypeError: null is not an object (evaluating 'iframe.contentWindow.navigator.serviceWorker.controller.postMessage')
+CONSOLE MESSAGE: line 48: Unhandled Promise Rejection: NotSupportedError: Passing MessagePort objects to postMessage is not yet supported
 

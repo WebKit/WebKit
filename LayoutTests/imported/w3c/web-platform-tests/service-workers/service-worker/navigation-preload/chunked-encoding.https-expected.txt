@@ -1,4 +1,6 @@
 
 
-PASS Navigation Preload must work with chunked encoding. 
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Navigation Preload must work with chunked encoding. Test timed out
 

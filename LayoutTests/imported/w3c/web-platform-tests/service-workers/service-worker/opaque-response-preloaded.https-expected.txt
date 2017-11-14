@@ -1,4 +1,4 @@
 
-FAIL Opaque responses should not be reused for XHRs, loading case assert_equals: expected "PASS" but got "FAIL: {\"error\": {\"message\": \"\", \"code\": 404}}"
-FAIL Opaque responses should not be reused for XHRs, done case assert_equals: expected "PASS" but got "FAIL: {\"error\": {\"message\": \"\", \"code\": 404}}"
+FAIL Opaque responses should not be reused for XHRs, loading case assert_equals: expected "PASS" but got "FAIL: a simple text file\n"
+FAIL Opaque responses should not be reused for XHRs, done case assert_equals: expected "PASS" but got "FAIL: a simple text file\n"
 

@@ -40,6 +40,7 @@
 #include "ResourceLoaderOptions.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "ServiceWorkerRegistrationData.h"
 #include "StringWithDirection.h"
 #include "StyleSheetContents.h"
 #include "SubstituteData.h"
@@ -309,6 +310,8 @@ protected:
 private:
     Document* document() const;
 
+    void loadMainResource(ResourceRequest&&);
+
     void setRequest(const ResourceRequest&);
 
     void commitIfReady();
@@ -478,6 +481,10 @@ private:
     bool m_userContentExtensionsEnabled { true };
     AutoplayPolicy m_autoplayPolicy { AutoplayPolicy::Default };
     OptionSet<AutoplayQuirk> m_allowedAutoplayQuirks;
+
+#if ENABLE(SERVICE_WORKER)
+    std::optional<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
+#endif
 
 #ifndef NDEBUG
     bool m_hasEverBeenAttached { false };

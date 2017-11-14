@@ -1,3 +1,21 @@
+2017-11-14  Youenn Fablet  <youenn@apple.com>
+
+        Implement ServiceWorker handle fetch for navigation loads
+        https://bugs.webkit.org/show_bug.cgi?id=179404
+
+        Reviewed by Alex Christensen and Chris Dumez.
+
+        Update handle fetch algorithm to support navigation requests.
+        In case of navigation requests, set service worker response mime type to text/html if none is provided.
+
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp:
+        (WebKit::ServiceWorkerClientFetch::didReceiveResponse):
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::startFetch):
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::shouldHandleFetch):
+        (WebKit::WebServiceWorkerProvider::handleFetch):
+
 2017-11-14  Alex Christensen  <achristensen@webkit.org>
 
         Remove Cocoa CFURLConnection loading code

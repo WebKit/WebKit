@@ -1,3 +1,5 @@
 
-FAIL postMessage MessagePorts from ServiceWorker to Client promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'w.navigator.serviceWorker.controller.postMessage')"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT postMessage MessagePorts from ServiceWorker to Client Test timed out
 

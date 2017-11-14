@@ -2,5 +2,5 @@ CONSOLE MESSAGE: Refused to load https://127.0.0.1:9443/service-workers/service-
 CONSOLE MESSAGE: Refused to load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE because it does not appear in the img-src directive of the Content Security Policy.
 
 
-FAIL Verify CSP control of fetch() in a Service Worker promise_test: Unhandled rejection with value: object "Error: Allowed scope image resource which was fetched via SW should be loaded. - undefined"
+FAIL Verify CSP control of fetch() in a Service Worker promise_test: Unhandled rejection with value: object "Error: Disallowed scope image resource which was fetched via SW should not be loaded."
 

@@ -1,3 +1,3 @@
 
-FAIL Response with a ReadableStream having non-Uint8Array chunks should be transferred as errored assert_equals: expected "PASS" but got "FAIL: read() should be rejected"
+PASS Response with a ReadableStream having non-Uint8Array chunks should be transferred as errored 
 

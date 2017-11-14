@@ -30,6 +30,7 @@
 
 #include "DataReference.h"
 #include "WebServiceWorkerProvider.h"
+#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceError.h>
 
@@ -67,6 +68,12 @@ void ServiceWorkerClientFetch::didReceiveResponse(WebCore::ResourceResponse&& re
         return;
     }
 
+    // In case of main resource and mime type is the default one, we set it to text/html to pass more service worker WPT tests.
+    // FIXME: We should refine our MIME type sniffing strategy for synthetic responses.
+    if (m_loader->originalRequest().requester() == ResourceRequest::Requester::Main) {
+        if (response.mimeType() == defaultMIMEType())
+            response.setMimeType(ASCIILiteral("text/html"));
+    }
     response.setSource(ResourceResponse::Source::ServiceWorker);
     m_loader->didReceiveResponse(response);
     if (auto callback = WTFMove(m_callback))

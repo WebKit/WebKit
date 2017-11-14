@@ -1,4 +1,4 @@
 
 
-FAIL Verify Mixed content of fetch() in a Service Worker assert_equals: expected "finish" but got "FAIL(1)FAIL(2)finish"
+PASS Verify Mixed content of fetch() in a Service Worker 
 
