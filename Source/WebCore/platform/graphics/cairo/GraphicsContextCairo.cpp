@@ -503,29 +503,8 @@ void GraphicsContext::drawLinesForText(const FloatPoint& point, const DashArray&
         return;
     }
 
-    Color localStrokeColor(strokeColor());
-
-    FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(point, widths.last(), printing, localStrokeColor);
-
-    Vector<FloatRect, 4> dashBounds;
-    ASSERT(!(widths.size() % 2));
-    dashBounds.reserveInitialCapacity(dashBounds.size() / 2);
-    for (size_t i = 0; i < widths.size(); i += 2)
-        dashBounds.append(FloatRect(FloatPoint(bounds.x() + widths[i], bounds.y()), FloatSize(widths[i+1] - widths[i], bounds.height())));
-
-    if (doubleUnderlines) {
-        // The space between double underlines is equal to the height of the underline
-        for (size_t i = 0; i < widths.size(); i += 2)
-            dashBounds.append(FloatRect(FloatPoint(bounds.x() + widths[i], bounds.y() + 2 * bounds.height()), FloatSize(widths[i+1] - widths[i], bounds.height())));
-    }
-
-    cairo_t* cr = platformContext()->cr();
-    cairo_save(cr);
-
-    for (auto& dash : dashBounds)
-        fillRectWithColor(cr, dash, localStrokeColor);
-
-    cairo_restore(cr);
+    ASSERT(hasPlatformContext());
+    Cairo::drawLinesForText(*platformContext(), point, widths, printing, doubleUnderlines, m_state.strokeColor, m_state.strokeThickness);
 }
 
 void GraphicsContext::updateDocumentMarkerResources()

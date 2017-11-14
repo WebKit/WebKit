@@ -99,6 +99,7 @@ void drawNativeImage(PlatformContextCairo&, const NativeImagePtr&, const FloatRe
 void drawPattern(PlatformContextCairo&, Image&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, CompositeOperator, BlendMode);
 
 void drawRect(PlatformContextCairo&, const FloatRect&, float, const GraphicsContextState&);
+void drawLinesForText(PlatformContextCairo&, const FloatPoint&, const DashArray&, bool, bool, const Color&, float);
 void drawLineForDocumentMarker(PlatformContextCairo&, const FloatPoint&, float, GraphicsContext::DocumentMarkerLineStyle);
 void drawEllipse(PlatformContextCairo&, const FloatRect&, const GraphicsContextState&);
 

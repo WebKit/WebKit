@@ -236,6 +236,36 @@ static bool cairoSurfaceHasAlpha(cairo_surface_t* surface)
     return cairo_surface_get_content(surface) != CAIRO_CONTENT_COLOR;
 }
 
+// FIXME: Fix GraphicsContext::computeLineBoundsAndAntialiasingModeForText()
+// to be a static public function that operates on CTM and strokeThickness
+// arguments instead of using an underlying GraphicsContext object.
+FloatRect computeLineBoundsAndAntialiasingModeForText(PlatformContextCairo& platformContext, const FloatPoint& point, float width, bool printing, Color& color, float strokeThickness)
+{
+    FloatPoint origin = point;
+    float thickness = std::max(strokeThickness, 0.5f);
+    if (printing)
+        return FloatRect(origin, FloatSize(width, thickness));
+
+    AffineTransform transform = Cairo::State::getCTM(platformContext);
+    // Just compute scale in x dimension, assuming x and y scales are equal.
+    float scale = transform.b() ? sqrtf(transform.a() * transform.a() + transform.b() * transform.b()) : transform.a();
+    if (scale < 1.0) {
+        // This code always draws a line that is at least one-pixel line high,
+        // which tends to visually overwhelm text at small scales. To counter this
+        // effect, an alpha is applied to the underline color when text is at small scales.
+        static const float minimumUnderlineAlpha = 0.4f;
+        float shade = scale > minimumUnderlineAlpha ? scale : minimumUnderlineAlpha;
+        color = color.colorWithAlphaMultipliedBy(shade);
+    }
+
+    FloatPoint devicePoint = transform.mapPoint(point);
+    // Visual overflow might occur here due to integral roundf/ceilf. visualOverflowForDecorations adjusts the overflow value for underline decoration.
+    FloatPoint deviceOrigin = FloatPoint(roundf(devicePoint.x()), ceilf(devicePoint.y()));
+    if (auto inverse = transform.inverse())
+        origin = inverse.value().mapPoint(deviceOrigin);
+    return FloatRect(origin, FloatSize(width, thickness));
+};
+
 namespace State {
 
 void setStrokeThickness(PlatformContextCairo& platformContext, float strokeThickness)
@@ -622,6 +652,32 @@ void drawRect(PlatformContextCairo& platformContext, const FloatRect& rect, floa
         cairo_set_line_width(cr, 1.0); // borderThickness?
         cairo_stroke(cr);
     }
+
+    cairo_restore(cr);
+}
+
+void drawLinesForText(PlatformContextCairo& platformContext, const FloatPoint& point, const DashArray& widths, bool printing, bool doubleUnderlines, const Color& color, float strokeThickness)
+{
+    Color modifiedColor = color;
+    FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(platformContext, point, widths.last(), printing, modifiedColor, strokeThickness);
+
+    Vector<FloatRect, 4> dashBounds;
+    ASSERT(!(widths.size() % 2));
+    dashBounds.reserveInitialCapacity(dashBounds.size() / 2);
+    for (size_t i = 0; i < widths.size(); i += 2)
+        dashBounds.append(FloatRect(FloatPoint(bounds.x() + widths[i], bounds.y()), FloatSize(widths[i+1] - widths[i], bounds.height())));
+
+    if (doubleUnderlines) {
+        // The space between double underlines is equal to the height of the underline
+        for (size_t i = 0; i < widths.size(); i += 2)
+            dashBounds.append(FloatRect(FloatPoint(bounds.x() + widths[i], bounds.y() + 2 * bounds.height()), FloatSize(widths[i+1] - widths[i], bounds.height())));
+    }
+
+    cairo_t* cr = platformContext.cr();
+    cairo_save(cr);
+
+    for (auto& dash : dashBounds)
+        fillRectWithColor(cr, dash, modifiedColor);
 
     cairo_restore(cr);
 }
