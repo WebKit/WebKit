@@ -47,14 +47,17 @@ struct ServiceWorkerContextData;
 
 class ServiceWorkerThreadProxy final : public ThreadSafeRefCounted<ServiceWorkerThreadProxy>, public WorkerLoaderProxy, public WorkerDebuggerProxy {
 public:
-    WEBCORE_EXPORT static Ref<ServiceWorkerThreadProxy> create(PageConfiguration&&, uint64_t serverConnectionIdentifier, const ServiceWorkerContextData&, PAL::SessionID, CacheStorageProvider&);
+    template<typename... Args> static Ref<ServiceWorkerThreadProxy> create(Args&&... args)
+    {
+        return adoptRef(*new ServiceWorkerThreadProxy(std::forward<Args>(args)...));
+    }
 
     ServiceWorkerIdentifier identifier() const { return m_serviceWorkerThread->identifier(); }
     ServiceWorkerThread& thread() { return m_serviceWorkerThread.get(); }
     ServiceWorkerInspectorProxy& inspectorProxy() { return m_inspectorProxy; }
 
 private:
-    ServiceWorkerThreadProxy(PageConfiguration&&, uint64_t serverConnectionIdentifier, const ServiceWorkerContextData&, PAL::SessionID, CacheStorageProvider&);
+    WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, const ServiceWorkerContextData&, PAL::SessionID, CacheStorageProvider&);
 
     // WorkerLoaderProxy
     bool postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;

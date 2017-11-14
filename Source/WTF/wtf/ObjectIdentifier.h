@@ -70,7 +70,7 @@ public:
 #endif
 
 private:
-    template<typename U> friend ObjectIdentifier<U> makeObjectIdentifier(uint64_t);
+    template<typename U> friend ObjectIdentifier<U> generateObjectIdentifier();
     friend struct HashTraits<ObjectIdentifier>;
     template<typename U> friend struct ObjectIdentifierHash;
 
@@ -83,12 +83,14 @@ private:
     }
 
     uint64_t m_identifier { 0 };
+    static uint64_t s_currentIdentifier;
 };
 
-template<typename T> inline ObjectIdentifier<T> makeObjectIdentifier(uint64_t identifier)
+template<typename T> uint64_t ObjectIdentifier<T>::s_currentIdentifier;
+
+template<typename T> inline ObjectIdentifier<T> generateObjectIdentifier()
 {
-    ASSERT(ObjectIdentifier<T>::isValidIdentifier(identifier));
-    return ObjectIdentifier<T> { identifier };
+    return ObjectIdentifier<T> { ++ObjectIdentifier<T>::s_currentIdentifier };
 }
 
 template<typename T> struct ObjectIdentifierHash {
@@ -106,4 +108,4 @@ template<typename T> struct DefaultHash<ObjectIdentifier<T>> {
 } // namespace WTF
 
 using WTF::ObjectIdentifier;
-using WTF::makeObjectIdentifier;
+using WTF::generateObjectIdentifier;

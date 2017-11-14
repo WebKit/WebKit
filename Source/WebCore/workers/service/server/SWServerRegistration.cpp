@@ -37,8 +37,7 @@ namespace WebCore {
 
 static ServiceWorkerRegistrationIdentifier generateServiceWorkerRegistrationIdentifier()
 {
-    static uint64_t identifier = 0;
-    return makeObjectIdentifier<ServiceWorkerRegistrationIdentifierType>(++identifier);
+    return generateObjectIdentifier<ServiceWorkerRegistrationIdentifierType>();
 }
 
 SWServerRegistration::SWServerRegistration(SWServer& server, const ServiceWorkerRegistrationKey& key, ServiceWorkerUpdateViaCache updateViaCache, const URL& scopeURL, const URL& scriptURL)

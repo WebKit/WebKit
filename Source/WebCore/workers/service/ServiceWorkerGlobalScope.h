@@ -51,8 +51,6 @@ public:
     ServiceWorkerClients& clients() { return m_clients.get(); }
     ServiceWorkerRegistration* registration();
     
-    uint64_t serverConnectionIdentifier() const { return m_serverConnectionIdentifier; }
-
     void skipWaiting(Ref<DeferredPromise>&&);
 
     EventTargetInterface eventTargetInterface() const final;
@@ -60,9 +58,8 @@ public:
     ServiceWorkerThread& thread();
 
 private:
-    ServiceWorkerGlobalScope(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData&, const URL&, const String& identifier, const String& userAgent, bool isOnline, ServiceWorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, PAL::SessionID);
+    ServiceWorkerGlobalScope(const ServiceWorkerContextData&, const URL&, const String& identifier, const String& userAgent, bool isOnline, ServiceWorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, PAL::SessionID);
 
-    uint64_t m_serverConnectionIdentifier;
     ServiceWorkerContextData m_contextData;
     Ref<ServiceWorkerClients> m_clients;
 };

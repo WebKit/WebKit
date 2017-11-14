@@ -28,22 +28,63 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include <wtf/NeverDestroyed.h>
+
 namespace WebCore {
 
-SWServerWorker::SWServerWorker(const ServiceWorkerRegistrationKey& registrationKey, const URL& url, const String& script, WorkerType type, ServiceWorkerIdentifier identifier)
-    : m_registrationKey(registrationKey)
+static HashMap<ServiceWorkerIdentifier, SWServerWorker*>& allWorkers()
+{
+    static NeverDestroyed<HashMap<ServiceWorkerIdentifier, SWServerWorker*>> workers;
+    return workers;
+}
+
+SWServerWorker* SWServerWorker::existingWorkerForIdentifier(ServiceWorkerIdentifier identifier)
+{
+    return allWorkers().get(identifier);
+}
+
+SWServerWorker::SWServerWorker(SWServer& server, const ServiceWorkerRegistrationKey& registrationKey, SWServerToContextConnectionIdentifier contextConnectionIdentifier, const URL& url, const String& script, WorkerType type, ServiceWorkerIdentifier identifier)
+    : m_server(server)
+    , m_registrationKey(registrationKey)
+    , m_contextConnectionIdentifier(contextConnectionIdentifier)
     , m_scriptURL(url)
     , m_script(script)
     , m_identifier(identifier)
     , m_type(type)
 {
+    auto result = allWorkers().add(identifier, this);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-SWServerWorker::~SWServerWorker() = default;
+SWServerWorker::~SWServerWorker()
+{
+    auto taken = allWorkers().take(m_identifier);
+    ASSERT_UNUSED(taken, taken == this);
+}
 
 void SWServerWorker::terminate()
 {
     // FIXME: Implement
+}
+
+void SWServerWorker::scriptContextFailedToStart(const String& message)
+{
+    m_server.scriptContextFailedToStart(*this, message);
+}
+
+void SWServerWorker::scriptContextStarted()
+{
+    m_server.scriptContextStarted(*this);
+}
+
+void SWServerWorker::didFinishInstall(bool wasSuccessful)
+{
+    m_server.didFinishInstall(*this, wasSuccessful);
+}
+
+void SWServerWorker::didFinishActivation()
+{
+    m_server.didFinishActivation(*this);
 }
 
 } // namespace WebCore

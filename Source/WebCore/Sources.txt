@@ -2194,6 +2194,7 @@ workers/service/server/SWOriginStore.cpp
 workers/service/server/SWServer.cpp
 workers/service/server/SWServerJobQueue.cpp
 workers/service/server/SWServerRegistration.cpp
+workers/service/server/SWServerToContextConnection.cpp
 workers/service/server/SWServerWorker.cpp
 
 xml/DOMParser.cpp

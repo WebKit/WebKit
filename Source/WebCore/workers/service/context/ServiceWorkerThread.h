@@ -60,7 +60,6 @@ public:
     void fireInstallEvent();
     void fireActivateEvent();
 
-    uint64_t serverConnectionIdentifier() const { return m_serverConnectionIdentifier; }
     const ServiceWorkerContextData& contextData() const { return m_data; }
 
     ServiceWorkerIdentifier identifier() const { return m_data.serviceWorkerIdentifier; }
@@ -70,12 +69,11 @@ protected:
     void runEventLoop() override;
 
 private:
-    WEBCORE_EXPORT ServiceWorkerThread(uint64_t serverConnectionIdentifier, const ServiceWorkerContextData&, PAL::SessionID, WorkerLoaderProxy&, WorkerDebuggerProxy&);
+    WEBCORE_EXPORT ServiceWorkerThread(const ServiceWorkerContextData&, PAL::SessionID, WorkerLoaderProxy&, WorkerDebuggerProxy&);
 
     void updateExtendedEventsSet(ExtendableEvent* newEvent = nullptr);
     bool hasPendingEvents() const { return !m_extendedEvents.isEmpty(); }
 
-    uint64_t m_serverConnectionIdentifier;
     ServiceWorkerContextData m_data;
     WorkerObjectProxy& m_workerObjectProxy;
     Vector<Ref<ExtendableEvent>> m_extendedEvents;

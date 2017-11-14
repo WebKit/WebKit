@@ -50,6 +50,9 @@ enum class ShouldNotifyWhenResolved { No, Yes };
 enum ServiceWorkerRegistrationIdentifierType { };
 using ServiceWorkerRegistrationIdentifier = ObjectIdentifier<ServiceWorkerRegistrationIdentifierType>;
 
+enum SWServerToContextConnectionIdentifierType { };
+using SWServerToContextConnectionIdentifier = ObjectIdentifier<SWServerToContextConnectionIdentifierType>;
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

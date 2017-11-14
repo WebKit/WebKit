@@ -35,13 +35,14 @@
 
 namespace WebCore {
 
+class SWServer;
 enum class WorkerType;
 
 class SWServerWorker : public ThreadSafeRefCounted<SWServerWorker> {
 public:
-    static Ref<SWServerWorker> create(const ServiceWorkerRegistrationKey& registrationKey, const URL& url, const String& script, WorkerType type, ServiceWorkerIdentifier identifier)
+    template <typename... Args> static Ref<SWServerWorker> create(Args&&... args)
     {
-        return adoptRef(*new SWServerWorker(registrationKey, url, script, type, identifier));
+        return adoptRef(*new SWServerWorker(std::forward<Args>(args)...));
     }
     
     SWServerWorker(const SWServerWorker&) = delete;
@@ -49,11 +50,14 @@ public:
 
     void terminate();
 
+    SWServer& server();
+    const ServiceWorkerRegistrationKey& registrationKey() const { return m_registrationKey; }
     const URL& scriptURL() const { return m_scriptURL; }
     const String& script() const { return m_script; }
     WorkerType type() const { return m_type; }
 
     ServiceWorkerIdentifier identifier() const { return m_identifier; }
+    SWServerToContextConnectionIdentifier contextConnectionIdentifier() const { return m_contextConnectionIdentifier; }
 
     ServiceWorkerState state() const { return m_state; }
     void setState(ServiceWorkerState state) { m_state = state; }
@@ -61,10 +65,19 @@ public:
     bool hasPendingEvents() const { return m_hasPendingEvents; }
     void setHasPendingEvents(bool value) { m_hasPendingEvents = value; }
 
-private:
-    SWServerWorker(const ServiceWorkerRegistrationKey&, const URL&, const String& script, WorkerType, ServiceWorkerIdentifier);
+    void scriptContextFailedToStart(const String& message);
+    void scriptContextStarted();
+    void didFinishInstall(bool wasSuccessful);
+    void didFinishActivation();
 
+    WEBCORE_EXPORT static SWServerWorker* existingWorkerForIdentifier(ServiceWorkerIdentifier);
+
+private:
+    SWServerWorker(SWServer&, const ServiceWorkerRegistrationKey&, SWServerToContextConnectionIdentifier, const URL&, const String& script, WorkerType, ServiceWorkerIdentifier);
+
+    SWServer& m_server;
     ServiceWorkerRegistrationKey m_registrationKey;
+    SWServerToContextConnectionIdentifier m_contextConnectionIdentifier;
     URL m_scriptURL;
     String m_script;
     ServiceWorkerIdentifier m_identifier;

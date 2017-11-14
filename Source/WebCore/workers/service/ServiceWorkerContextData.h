@@ -28,6 +28,7 @@
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerRegistrationKey.h"
 #include "URL.h"
+#include "WorkerType.h"
 
 #if ENABLE(SERVICE_WORKER)
 
@@ -38,6 +39,7 @@ struct ServiceWorkerContextData {
     ServiceWorkerIdentifier serviceWorkerIdentifier;
     String script;
     URL scriptURL;
+    WorkerType workerType;
     
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerContextData> decode(Decoder&);
@@ -48,7 +50,7 @@ struct ServiceWorkerContextData {
 template<class Encoder>
 void ServiceWorkerContextData::encode(Encoder& encoder) const
 {
-    encoder << registrationKey << serviceWorkerIdentifier << script << scriptURL;
+    encoder << registrationKey << serviceWorkerIdentifier << script << scriptURL << workerType;
 }
 
 template<class Decoder>
@@ -69,8 +71,12 @@ std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder
     URL scriptURL;
     if (!decoder.decode(scriptURL))
         return std::nullopt;
-
-    return {{ WTFMove(*registrationKey), WTFMove(*serviceWorkerIdentifier), WTFMove(script), WTFMove(scriptURL) }};
+    
+    WorkerType workerType;
+    if (!decoder.decodeEnum(workerType))
+        return std::nullopt;
+    
+    return {{ WTFMove(*registrationKey), WTFMove(*serviceWorkerIdentifier), WTFMove(script), WTFMove(scriptURL), workerType }};
 }
 
 } // namespace WebCore

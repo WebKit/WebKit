@@ -46,7 +46,6 @@ public:
     ~WebSWServerConnection() final;
 
     void disconnectedFromWebProcess();
-    void setContextConnection(IPC::Connection*);
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     PAL::SessionID sessionID() const { return m_sessionID; }
@@ -75,22 +74,15 @@ private:
 
     void matchRegistration(uint64_t registrationMatchRequestIdentifier, const WebCore::SecurityOriginData&, const WebCore::URL& clientURL);
 
-    // Messages to the SW context WebProcess
-    void installServiceWorkerContext(const WebCore::ServiceWorkerContextData&) final;
-    void fireInstallEvent(WebCore::ServiceWorkerIdentifier) final;
-    void fireActivateEvent(WebCore::ServiceWorkerIdentifier) final;
-
     IPC::Connection* messageSenderConnection() final { return m_contentConnection.ptr(); }
     uint64_t messageSenderDestinationID() final { return identifier(); }
-
-    template<typename U> bool sendToContextProcess(U&& message);
     
+    template<typename U> void sendToContextProcess(U&& message);
+
     PAL::SessionID m_sessionID;
 
     Ref<IPC::Connection> m_contentConnection;
     RefPtr<IPC::Connection> m_contextConnection;
-    
-    Deque<WebCore::ServiceWorkerContextData> m_pendingContextDatas;
 }; // class WebSWServerConnection
 
 } // namespace WebKit

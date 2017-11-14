@@ -164,6 +164,7 @@ MESSAGE_RECEIVERS = \
     WebSWClientConnection \
     WebSWContextManagerConnection \
     WebSWServerConnection \
+    WebSWServerToContextConnection \
     PlaybackSessionManager \
     PlaybackSessionManagerProxy \
     WebProcess \

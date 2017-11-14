@@ -48,11 +48,11 @@ public:
     void runNextJob();
 
     void scriptFetchFinished(SWServer::Connection&, const ServiceWorkerFetchResult&);
-    void scriptContextFailedToStart(SWServer::Connection&, ServiceWorkerIdentifier, const String& message);
-    void scriptContextStarted(SWServer::Connection&, ServiceWorkerIdentifier);
-    void didFinishInstall(SWServer::Connection&, ServiceWorkerIdentifier, bool wasSuccessful);
+    void scriptContextFailedToStart(ServiceWorkerIdentifier, const String& message);
+    void scriptContextStarted(ServiceWorkerIdentifier);
+    void didFinishInstall(ServiceWorkerIdentifier, bool wasSuccessful);
     static void didFinishActivation(SWServerRegistration&, ServiceWorkerIdentifier);
-    void didResolveRegistrationPromise(SWServer::Connection&);
+    void didResolveRegistrationPromise();
 
 private:
     void jobTimerFired();
@@ -66,9 +66,9 @@ private:
 
     void tryClearRegistration(SWServerRegistration&);
     void clearRegistration(SWServerRegistration&);
-    void install(SWServerRegistration&, SWServer::Connection&, ServiceWorkerIdentifier);
-    static void tryActivate(SWServer&, SWServer::Connection&, SWServerRegistration&);
-    static void activate(SWServer&, SWServer::Connection&, SWServerRegistration&);
+    void install(SWServerRegistration&, ServiceWorkerIdentifier);
+    static void tryActivate(SWServer&, SWServerRegistration&);
+    static void activate(SWServer&, SWServerRegistration&);
 
     Deque<ServiceWorkerJobData> m_jobQueue;
 

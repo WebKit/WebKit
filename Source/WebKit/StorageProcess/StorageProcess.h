@@ -46,6 +46,7 @@ namespace WebKit {
 
 class StorageToWebProcessConnection;
 class WebSWServerConnection;
+class WebSWServerToContextConnection;
 enum class WebsiteDataType;
 struct StorageProcessCreationParameters;
 
@@ -80,8 +81,10 @@ public:
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    IPC::Connection* workerContextProcessConnection();
-    void createWorkerContextProcessConnection();
+    // For now we just have one global connection to service worker context processes.
+    // This will change in the future.
+    WebSWServerToContextConnection* globalServerToContextConnection();
+    void createServerToContextConnection();
 
     WebCore::SWServer& swServerForSession(PAL::SessionID);
     void registerSWServerConnection(WebSWServerConnection&);
@@ -116,8 +119,6 @@ private:
 #endif
 #if ENABLE(SERVICE_WORKER)
     void didGetWorkerContextProcessConnection(IPC::Attachment&& encodedConnectionIdentifier);
-    void serviceWorkerContextFailedToStart(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerIdentifier, const String& message);
-    void serviceWorkerContextStarted(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerIdentifier);
 
     void didReceiveFetchResponse(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, const WebCore::ResourceResponse&);
     void didReceiveFetchData(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, const IPC::DataReference&, int64_t encodedDataLength);
@@ -125,9 +126,6 @@ private:
     void didFailFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier);
     void didNotHandleFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier);
 
-    void didFinishServiceWorkerInstall(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerIdentifier, bool wasSuccessful);
-    void didFinishServiceWorkerActivation(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerIdentifier);
-    void setServiceWorkerHasPendingEvents(uint64_t serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier, bool hasPendingEvents);
     void postMessageToServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier& destinationIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin);
     WebSWOriginStore& swOriginStoreForSession(PAL::SessionID);
 #endif
@@ -156,8 +154,8 @@ private:
 #if ENABLE(SERVICE_WORKER)
     void didCreateWorkerContextProcessConnection(const IPC::Attachment&);
 
-    RefPtr<IPC::Connection> m_workerContextProcessConnection;
-    bool m_waitingForWorkerContextProcessConnection { false };
+    RefPtr<WebSWServerToContextConnection> m_serverToContextConnection;
+    bool m_waitingForServerToContextProcessConnection { false };
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::SWServer>> m_swServers;
     HashMap<uint64_t, WebSWServerConnection*> m_swServerConnections;
 #endif

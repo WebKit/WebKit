@@ -31,6 +31,7 @@
 #include "DataReference.h"
 #include "Logging.h"
 #include "ServiceWorkerClientFetchMessages.h"
+#include "StorageProcess.h"
 #include "StorageToWebProcessConnectionMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
@@ -38,6 +39,7 @@
 #include "WebSWClientConnectionMessages.h"
 #include "WebSWContextManagerConnectionMessages.h"
 #include "WebSWServerConnectionMessages.h"
+#include "WebSWServerToContextConnection.h"
 #include "WebToStorageProcessConnection.h"
 #include <WebCore/ExceptionData.h>
 #include <WebCore/NotImplemented.h>
@@ -104,24 +106,6 @@ void WebSWServerConnection::updateWorkerStateInClient(ServiceWorkerIdentifier wo
     send(Messages::WebSWClientConnection::UpdateWorkerState(worker, state));
 }
 
-void WebSWServerConnection::installServiceWorkerContext(const ServiceWorkerContextData& data)
-{
-    if (sendToContextProcess(Messages::WebSWContextManagerConnection::InstallServiceWorker(identifier(), data)))
-        return;
-
-    m_pendingContextDatas.append(data);
-}
-
-void WebSWServerConnection::fireInstallEvent(ServiceWorkerIdentifier serviceWorkerIdentifier)
-{
-    sendToContextProcess(Messages::WebSWContextManagerConnection::FireInstallEvent(identifier(), serviceWorkerIdentifier));
-}
-
-void WebSWServerConnection::fireActivateEvent(ServiceWorkerIdentifier serviceWorkerIdentifier)
-{
-    sendToContextProcess(Messages::WebSWContextManagerConnection::FireActivateEvent(identifier(), serviceWorkerIdentifier));
-}
-
 void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier, const ResourceRequest& request, const FetchOptions& options)
 {
     sendToContextProcess(Messages::WebSWContextManagerConnection::StartFetch(identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options));
@@ -172,25 +156,12 @@ void WebSWServerConnection::matchRegistration(uint64_t registrationMatchRequestI
     send(Messages::WebSWClientConnection::DidMatchRegistration { registrationMatchRequestIdentifier, std::nullopt });
 }
 
-template<typename U> bool WebSWServerConnection::sendToContextProcess(U&& message)
+template<typename U> void WebSWServerConnection::sendToContextProcess(U&& message)
 {
-    if (!m_contextConnection)
-        return false;
-
-    return m_contextConnection->send<U>(WTFMove(message), 0);
+    if (auto* connection = StorageProcess::singleton().globalServerToContextConnection())
+        connection->send(WTFMove(message));
 }
 
-void WebSWServerConnection::setContextConnection(IPC::Connection* connection)
-{
-    m_contextConnection = connection;
-
-    // We can now start any pending service worker updates.
-    for (auto& pendingContextData : m_pendingContextDatas)
-        installServiceWorkerContext(pendingContextData);
-    
-    m_pendingContextDatas.clear();
-}
-    
 } // namespace WebKit
 
 #endif // ENABLE(SERVICE_WORKER)

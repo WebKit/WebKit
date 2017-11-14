@@ -1019,6 +1019,8 @@
 		514BDED316C98EDD00E4E25E /* StatisticsRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 514BDED216C98EDD00E4E25E /* StatisticsRequest.h */; };
 		514D9F5719119D35000063A7 /* ServicesController.h in Headers */ = {isa = PBXBuildFile; fileRef = 514D9F5519119D35000063A7 /* ServicesController.h */; };
 		514D9F5819119D35000063A7 /* ServicesController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514D9F5619119D35000063A7 /* ServicesController.mm */; };
+		515262BC1FB9515D0070E579 /* WebSWServerToContextConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 515262BB1FB951310070E579 /* WebSWServerToContextConnectionMessages.h */; };
+		515262BD1FB951610070E579 /* WebSWServerToContextConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515262BA1FB951310070E579 /* WebSWServerToContextConnectionMessageReceiver.cpp */; };
 		51578B831209ECEF00A37C4A /* APIData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51578B821209ECEF00A37C4A /* APIData.h */; };
 		515BE1771D53FE8700DD7C68 /* WebGamepadProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515BE1731D53FDDC00DD7C68 /* WebGamepadProvider.cpp */; };
 		515BE1791D53FE8F00DD7C68 /* WebGamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 515BE1741D53FDDC00DD7C68 /* WebGamepadProvider.h */; };
@@ -1058,6 +1060,7 @@
 		517DD5BE180DA7D30081660B /* StorageProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517DD5BC180DA7D30081660B /* StorageProcessProxy.cpp */; };
 		517DD5BF180DA7D30081660B /* StorageProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 517DD5BD180DA7D30081660B /* StorageProcessProxy.h */; };
 		5183DDEC1630BDFC008BE5C7 /* NetworkProcessConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5105B0D4162F7A7A00E27709 /* NetworkProcessConnection.cpp */; };
+		5185430E1FB6816100478F95 /* WebSWServerToContextConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5185430D1FB680FA00478F95 /* WebSWServerToContextConnection.cpp */; };
 		51871B5B127CB89D00F76232 /* WebContextMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51871B59127CB89D00F76232 /* WebContextMenu.cpp */; };
 		51871B5C127CB89D00F76232 /* WebContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 51871B5A127CB89D00F76232 /* WebContextMenu.h */; };
 		518ACAEA12AEE6BB00B04B83 /* WKProtectionSpaceTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 518ACAE912AEE6BB00B04B83 /* WKProtectionSpaceTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3359,6 +3362,9 @@
 		514BDED216C98EDD00E4E25E /* StatisticsRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatisticsRequest.h; sourceTree = "<group>"; };
 		514D9F5519119D35000063A7 /* ServicesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServicesController.h; sourceTree = "<group>"; };
 		514D9F5619119D35000063A7 /* ServicesController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ServicesController.mm; sourceTree = "<group>"; };
+		515262B91FB950350070E579 /* WebSWServerToContextConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebSWServerToContextConnection.messages.in; sourceTree = "<group>"; };
+		515262BA1FB951310070E579 /* WebSWServerToContextConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWServerToContextConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
+		515262BB1FB951310070E579 /* WebSWServerToContextConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWServerToContextConnectionMessages.h; sourceTree = "<group>"; };
 		51578B821209ECEF00A37C4A /* APIData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIData.h; sourceTree = "<group>"; };
 		515BE1731D53FDDC00DD7C68 /* WebGamepadProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGamepadProvider.cpp; sourceTree = "<group>"; };
 		515BE1741D53FDDC00DD7C68 /* WebGamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGamepadProvider.h; sourceTree = "<group>"; };
@@ -3396,6 +3402,8 @@
 		517DD5BC180DA7D30081660B /* StorageProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageProcessProxy.cpp; sourceTree = "<group>"; };
 		517DD5BD180DA7D30081660B /* StorageProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageProcessProxy.h; sourceTree = "<group>"; };
 		5183B3931379F85C00E8754E /* Shim.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shim.xcconfig; sourceTree = "<group>"; };
+		5185430C1FB680F900478F95 /* WebSWServerToContextConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWServerToContextConnection.h; sourceTree = "<group>"; };
+		5185430D1FB680FA00478F95 /* WebSWServerToContextConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWServerToContextConnection.cpp; sourceTree = "<group>"; };
 		51871B59127CB89D00F76232 /* WebContextMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextMenu.cpp; sourceTree = "<group>"; };
 		51871B5A127CB89D00F76232 /* WebContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMenu.h; sourceTree = "<group>"; };
 		518ACAE912AEE6BB00B04B83 /* WKProtectionSpaceTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProtectionSpaceTypes.h; sourceTree = "<group>"; };
@@ -6383,6 +6391,9 @@
 				517A53091F479E3100DCDC0A /* WebSWServerConnection.cpp */,
 				517A53071F479E3100DCDC0A /* WebSWServerConnection.h */,
 				517A53081F479E3100DCDC0A /* WebSWServerConnection.messages.in */,
+				5185430D1FB680FA00478F95 /* WebSWServerToContextConnection.cpp */,
+				5185430C1FB680F900478F95 /* WebSWServerToContextConnection.h */,
+				515262B91FB950350070E579 /* WebSWServerToContextConnection.messages.in */,
 			);
 			path = ServiceWorker;
 			sourceTree = "<group>";
@@ -8202,6 +8213,8 @@
 				460F488E1F996F6C00CF4B87 /* WebSWContextManagerConnectionMessages.h */,
 				517A52D71F43A9B600DCDC0A /* WebSWServerConnectionMessageReceiver.cpp */,
 				517A52D61F43A9B600DCDC0A /* WebSWServerConnectionMessages.h */,
+				515262BA1FB951310070E579 /* WebSWServerToContextConnectionMessageReceiver.cpp */,
+				515262BB1FB951310070E579 /* WebSWServerToContextConnectionMessages.h */,
 				1AAF08B519269E6D00B6390C /* WebUserContentControllerMessageReceiver.cpp */,
 				1AAF08B619269E6D00B6390C /* WebUserContentControllerMessages.h */,
 				7C361D76192803BD0036A59D /* WebUserContentControllerProxyMessageReceiver.cpp */,
@@ -9125,6 +9138,7 @@
 				83F1A07A1F96E7790045B94E /* WebSWOriginTable.h in Headers */,
 				517A530B1F479E3600DCDC0A /* WebSWServerConnection.h in Headers */,
 				517A52D91F43A9DA00DCDC0A /* WebSWServerConnectionMessages.h in Headers */,
+				515262BC1FB9515D0070E579 /* WebSWServerToContextConnectionMessages.h in Headers */,
 				5118E99C1F295266003EF9F5 /* WebToStorageProcessConnection.h in Headers */,
 				BCA0EF7F12331E78007D3CFB /* WebUndoStep.h in Headers */,
 				1AAF08AE1926936700B6390C /* WebUserContentController.h in Headers */,
@@ -10791,6 +10805,8 @@
 				83F1A0791F96E7790045B94E /* WebSWOriginTable.cpp in Sources */,
 				517A530A1F479E3600DCDC0A /* WebSWServerConnection.cpp in Sources */,
 				517A52D81F43A9DA00DCDC0A /* WebSWServerConnectionMessageReceiver.cpp in Sources */,
+				5185430E1FB6816100478F95 /* WebSWServerToContextConnection.cpp in Sources */,
+				515262BD1FB951610070E579 /* WebSWServerToContextConnectionMessageReceiver.cpp in Sources */,
 				5118E99B1F295266003EF9F5 /* WebToStorageProcessConnection.cpp in Sources */,
 				C0337DD8127A51B6008FF4F4 /* WebTouchEvent.cpp in Sources */,
 				2DA944A31884E4F000ED86DB /* WebTouchEventIOS.cpp in Sources */,

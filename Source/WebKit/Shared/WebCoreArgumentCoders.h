@@ -42,6 +42,7 @@
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/ServiceWorkerUpdateViaCache.h>
 #include <WebCore/StoredCredentialsPolicy.h>
+#include <WebCore/WorkerType.h>
 
 namespace WTF {
 class MonotonicTime;
@@ -794,6 +795,14 @@ template <> struct EnumTraits<WebCore::StoredCredentialsPolicy> {
         WebCore::StoredCredentialsPolicy,
         WebCore::StoredCredentialsPolicy::DoNotUse,
         WebCore::StoredCredentialsPolicy::Use
+    >;
+};
+
+template <> struct EnumTraits<WebCore::WorkerType> {
+    using values = EnumValues<
+        WebCore::WorkerType,
+        WebCore::WorkerType::Classic,
+        WebCore::WorkerType::Module
     >;
 };
 

@@ -35,6 +35,11 @@
 #include "WebSWServerConnectionMessages.h"
 #include <wtf/RunLoop.h>
 
+#if ENABLE(SERVICE_WORKER)
+#include "WebSWServerToContextConnection.h"
+#include "WebSWServerToContextConnectionMessages.h"
+#endif
+
 using namespace PAL;
 using namespace WebCore;
 
@@ -83,6 +88,11 @@ void StorageToWebProcessConnection::didReceiveMessage(IPC::Connection& connectio
         auto iterator = m_swConnections.find(decoder.destinationID());
         if (iterator != m_swConnections.end())
             iterator->value->didReceiveMessage(connection, decoder);
+        return;
+    }
+
+    if (decoder.messageReceiverName() == Messages::WebSWServerToContextConnection::messageReceiverName()) {
+        StorageProcess::singleton().globalServerToContextConnection()->didReceiveMessage(connection, decoder);
         return;
     }
 #endif
@@ -148,10 +158,8 @@ void StorageToWebProcessConnection::establishSWServerConnection(SessionID sessio
 
     StorageProcess::singleton().registerSWServerConnection(*(connectionResult.iterator->value));
 
-    if (auto* connection = StorageProcess::singleton().workerContextProcessConnection())
-        connectionResult.iterator->value->setContextConnection(connection);
-    else
-        StorageProcess::singleton().createWorkerContextProcessConnection();
+    if (!StorageProcess::singleton().globalServerToContextConnection())
+        StorageProcess::singleton().createServerToContextConnection();
 }
 
 void StorageToWebProcessConnection::removeSWServerConnection(uint64_t serverConnectionIdentifier)
@@ -165,11 +173,8 @@ void StorageToWebProcessConnection::removeSWServerConnection(uint64_t serverConn
 
 void StorageToWebProcessConnection::workerContextProcessConnectionCreated()
 {
-    auto* ipcConnection = StorageProcess::singleton().workerContextProcessConnection();
-    ASSERT(ipcConnection);
-
-    for (auto& swConnection : m_swConnections.values())
-        swConnection->setContextConnection(ipcConnection);
+    for (auto* server : SWServer::allServers())
+        server->serverToContextConnectionCreated();
 }
 #endif
 

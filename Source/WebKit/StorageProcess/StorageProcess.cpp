@@ -33,16 +33,22 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebSWOriginStore.h"
 #include "WebSWServerConnection.h"
+#include "WebSWServerToContextConnection.h"
 #include "WebsiteData.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/IDBKeyData.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/SWServerWorker.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/ServiceWorkerClientIdentifier.h>
 #include <WebCore/TextEncoding.h>
 #include <pal/SessionID.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/MainThread.h>
+
+#if ENABLE(SERVICE_WORKER)
+#include "WebSWServerToContextConnectionMessages.h"
+#endif
 
 using namespace WebCore;
 
@@ -79,8 +85,9 @@ bool StorageProcess::shouldTerminate()
 void StorageProcess::didClose(IPC::Connection& connection)
 {
 #if ENABLE(SERVICE_WORKER)
-    if (m_workerContextProcessConnection == &connection) {
-        m_workerContextProcessConnection = nullptr;
+    if (m_serverToContextConnection && m_serverToContextConnection->ipcConnection() == &connection) {
+        m_serverToContextConnection->connectionClosed();
+        m_serverToContextConnection = nullptr;
         return;
     }
 #else
@@ -98,6 +105,16 @@ void StorageProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder
         didReceiveStorageProcessMessage(connection, decoder);
         return;
     }
+
+#if ENABLE(SERVICE_WORKER)
+    if (decoder.messageReceiverName() == Messages::WebSWServerToContextConnection::messageReceiverName()) {
+        if (auto* swConnection = SWServerToContextConnection::globalServerToContextConnection()) {
+            auto* webSWConnection = static_cast<WebSWServerToContextConnection*>(swConnection);
+            webSWConnection->didReceiveMessage(connection, decoder);
+            return;        
+        }
+    }
+#endif
 }
 
 #if ENABLE(INDEXED_DATABASE)
@@ -353,24 +370,24 @@ WebSWOriginStore& StorageProcess::swOriginStoreForSession(PAL::SessionID session
     return static_cast<WebSWOriginStore&>(swServerForSession(sessionID).originStore());
 }
 
-IPC::Connection* StorageProcess::workerContextProcessConnection()
+WebSWServerToContextConnection* StorageProcess::globalServerToContextConnection()
 {
-    return m_workerContextProcessConnection.get();
+    return m_serverToContextConnection.get();
 }
 
-void StorageProcess::createWorkerContextProcessConnection()
+void StorageProcess::createServerToContextConnection()
 {
-    if (m_waitingForWorkerContextProcessConnection)
+    if (m_waitingForServerToContextProcessConnection)
         return;
     
-    m_waitingForWorkerContextProcessConnection = true;
+    m_waitingForServerToContextProcessConnection = true;
     parentProcessConnection()->send(Messages::StorageProcessProxy::GetWorkerContextProcessConnection(), 0);
 }
 
 void StorageProcess::didGetWorkerContextProcessConnection(IPC::Attachment&& encodedConnectionIdentifier)
 {
-    ASSERT(m_waitingForWorkerContextProcessConnection);
-    m_waitingForWorkerContextProcessConnection = false;
+    ASSERT(m_waitingForServerToContextProcessConnection);
+    m_waitingForServerToContextProcessConnection = false;
 
 #if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.releaseFileDescriptor();
@@ -385,23 +402,12 @@ void StorageProcess::didGetWorkerContextProcessConnection(IPC::Attachment&& enco
         return;
     }
 
-    m_workerContextProcessConnection = IPC::Connection::createClientConnection(connectionIdentifier, *this);
-    m_workerContextProcessConnection->open();
+    auto ipcConnection = IPC::Connection::createClientConnection(connectionIdentifier, *this);
+    ipcConnection->open();
+    m_serverToContextConnection = WebSWServerToContextConnection::create(WTFMove(ipcConnection));
     
     for (auto& connection : m_storageToWebProcessConnections)
         connection->workerContextProcessConnectionCreated();
-}
-
-void StorageProcess::serviceWorkerContextFailedToStart(uint64_t serverConnectionIdentifier, const ServiceWorkerRegistrationKey& registrationKey, ServiceWorkerIdentifier serviceWorkerIdentifier, const String& message)
-{
-    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
-        connection->scriptContextFailedToStart(registrationKey, serviceWorkerIdentifier, message);
-}
-
-void StorageProcess::serviceWorkerContextStarted(uint64_t serverConnectionIdentifier, const ServiceWorkerRegistrationKey& registrationKey, ServiceWorkerIdentifier serviceWorkerIdentifier)
-{
-    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
-        connection->scriptContextStarted(registrationKey, serviceWorkerIdentifier);
 }
 
 void StorageProcess::didFailFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier)
@@ -438,25 +444,6 @@ void StorageProcess::postMessageToServiceWorkerClient(const ServiceWorkerClientI
 {
     if (auto* connection = m_swServerConnections.get(destinationIdentifier.serverConnectionIdentifier))
         connection->postMessageToServiceWorkerClient(destinationIdentifier.scriptExecutionContextIdentifier, message, sourceIdentifier, sourceOrigin);
-}
-
-void StorageProcess::didFinishServiceWorkerInstall(uint64_t serverConnectionIdentifier, const ServiceWorkerRegistrationKey& registrationKey, ServiceWorkerIdentifier serviceWorkerIdentifier, bool wasSuccessful)
-{
-    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
-        connection->didFinishInstall(registrationKey, serviceWorkerIdentifier, wasSuccessful);
-}
-
-void StorageProcess::didFinishServiceWorkerActivation(uint64_t serverConnectionIdentifier, const ServiceWorkerRegistrationKey& registrationKey, ServiceWorkerIdentifier serviceWorkerIdentifier)
-{
-    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
-        connection->didFinishActivation(registrationKey, serviceWorkerIdentifier);
-}
-
-
-void StorageProcess::setServiceWorkerHasPendingEvents(uint64_t serverConnectionIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, bool hasPendingEvents)
-{
-    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
-        connection->setServiceWorkerHasPendingEvents(serviceWorkerIdentifier, hasPendingEvents);
 }
 
 void StorageProcess::registerSWServerConnection(WebSWServerConnection& connection)

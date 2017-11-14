@@ -1,3 +1,68 @@
+2017-11-13  Brady Eidson  <beidson@apple.com>
+
+        Massive "Server-process-to-context-process" connection overhaul.
+        https://bugs.webkit.org/show_bug.cgi?id=179554
+
+        Reviewed by Chris Dumez.
+
+        * DerivedSources.make:
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * Shared/WebCoreArgumentCoders.h:
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::sendToContextProcess):
+        (WebKit::WebSWServerConnection::installServiceWorkerContext): Deleted.
+        (WebKit::WebSWServerConnection::fireInstallEvent): Deleted.
+        (WebKit::WebSWServerConnection::fireActivateEvent): Deleted.
+        (WebKit::WebSWServerConnection::setContextConnection): Deleted.
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.cpp: Copied from Source/WebCore/workers/service/server/SWServerWorker.cpp.
+        (WebKit::WebSWServerToContextConnection::WebSWServerToContextConnection):
+        (WebKit::WebSWServerToContextConnection::messageSenderConnection):
+        (WebKit::WebSWServerToContextConnection::messageSenderDestinationID):
+        (WebKit::WebSWServerToContextConnection::connectionClosed):
+        (WebKit::WebSWServerToContextConnection::installServiceWorkerContext):
+        (WebKit::WebSWServerToContextConnection::fireInstallEvent):
+        (WebKit::WebSWServerToContextConnection::fireActivateEvent):
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.h: Copied from Source/WebCore/workers/service/ServiceWorkerTypes.h.
+        (WebKit::WebSWServerToContextConnection::create):
+        (WebKit::WebSWServerToContextConnection::ipcConnection const):
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.messages.in: Copied from Source/WebKit/WebProcess/Storage/WebSWContextManagerConnection.messages.in.
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::didClose):
+        (WebKit::StorageProcess::didReceiveMessage):
+        (WebKit::StorageProcess::globalServerToContextConnection):
+        (WebKit::StorageProcess::createServerToContextConnection):
+        (WebKit::StorageProcess::didGetWorkerContextProcessConnection):
+        (WebKit::StorageProcess::workerContextProcessConnection): Deleted.
+        (WebKit::StorageProcess::createWorkerContextProcessConnection): Deleted.
+        (WebKit::StorageProcess::serviceWorkerContextFailedToStart): Deleted.
+        (WebKit::StorageProcess::serviceWorkerContextStarted): Deleted.
+        (WebKit::StorageProcess::didFinishServiceWorkerInstall): Deleted.
+        (WebKit::StorageProcess::didFinishServiceWorkerActivation): Deleted.
+        (WebKit::StorageProcess::setServiceWorkerHasPendingEvents): Deleted.
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageProcess.messages.in:
+
+        * StorageProcess/StorageToWebProcessConnection.cpp:
+        (WebKit::StorageToWebProcessConnection::didReceiveMessage):
+        (WebKit::StorageToWebProcessConnection::establishSWServerConnection):
+        (WebKit::StorageToWebProcessConnection::workerContextProcessConnectionCreated):
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+        (WebKit::WebSWContextManagerConnection::serviceWorkerStartedWithMessage):
+        (WebKit::WebSWContextManagerConnection::fireInstallEvent):
+        (WebKit::WebSWContextManagerConnection::fireActivateEvent):
+        (WebKit::WebSWContextManagerConnection::didFinishInstall):
+        (WebKit::WebSWContextManagerConnection::didFinishActivation):
+        (WebKit::WebSWContextManagerConnection::setServiceWorkerHasPendingEvents):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2017-11-13  Brent Fulgham  <bfulgham@apple.com>
 
         WebContent sandbox should not include 'system.sb'

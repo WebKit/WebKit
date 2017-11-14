@@ -58,11 +58,11 @@ private:
 
     // IPC messages.
     void serviceWorkerStartedWithMessage(WebCore::ServiceWorkerIdentifier, const String& exceptionMessage) final;
-    void installServiceWorker(uint64_t serverConnectionIdentifier, const WebCore::ServiceWorkerContextData&);
+    void installServiceWorker(const WebCore::ServiceWorkerContextData&);
     void startFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, std::optional<WebCore::ServiceWorkerIdentifier>, WebCore::ResourceRequest&&, WebCore::FetchOptions&&);
     void postMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, const WebCore::ServiceWorkerClientIdentifier& sourceIdentifier, const String& sourceOrigin);
-    void fireInstallEvent(uint64_t serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier);
-    void fireActivateEvent(uint64_t serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier);
+    void fireInstallEvent(WebCore::ServiceWorkerIdentifier);
+    void fireActivateEvent(WebCore::ServiceWorkerIdentifier);
 
     Ref<IPC::Connection> m_connectionToStorageProcess;
     uint64_t m_pageID { 0 };

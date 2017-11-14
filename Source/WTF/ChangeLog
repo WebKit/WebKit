@@ -1,3 +1,14 @@
+2017-11-13  Brady Eidson  <beidson@apple.com>
+
+        Massive "Server-process-to-context-process" connection overhaul.
+        https://bugs.webkit.org/show_bug.cgi?id=179554
+
+        Reviewed by Chris Dumez.
+
+        * wtf/ObjectIdentifier.h:
+        (WTF::generateObjectIdentifier):
+        (WTF::makeObjectIdentifier): Deleted.
+
 2017-11-13  JF Bastien  <jfbastien@apple.com>
 
         std::expected: fix and test move
