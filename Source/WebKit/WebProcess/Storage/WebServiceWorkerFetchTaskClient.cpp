@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "DataReference.h"
+#include "FormDataReference.h"
 #include "StorageProcessMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/ResourceResponse.h>
@@ -64,6 +65,14 @@ void WebServiceWorkerFetchTaskClient::didReceiveData(Ref<SharedBuffer>&& buffer)
         return;
     IPC::SharedBufferDataReference dataReference { buffer.ptr() };
     m_connection->send(Messages::StorageProcess::DidReceiveFetchData { m_serverConnectionIdentifier, m_fetchTaskIdentifier, dataReference, static_cast<int64_t>(buffer->size()) }, 0);
+}
+
+void WebServiceWorkerFetchTaskClient::didReceiveFormData(Ref<FormData>&& formData)
+{
+    if (!m_connection)
+        return;
+
+    m_connection->send(Messages::StorageProcess::DidReceiveFetchFormData { m_serverConnectionIdentifier, m_fetchTaskIdentifier, IPC::FormDataReference { WTFMove(formData) } }, 0);
 }
 
 void WebServiceWorkerFetchTaskClient::didFail()

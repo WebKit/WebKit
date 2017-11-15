@@ -35,6 +35,10 @@
 #include <wtf/CrossThreadTask.h>
 #include <wtf/Function.h>
 
+namespace IPC {
+class FormDataReference;
+}
+
 namespace WebCore {
 class SWServer;
 struct SecurityOriginData;
@@ -122,6 +126,7 @@ private:
 
     void didReceiveFetchResponse(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, const WebCore::ResourceResponse&);
     void didReceiveFetchData(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, const IPC::DataReference&, int64_t encodedDataLength);
+    void didReceiveFetchFormData(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, const IPC::FormDataReference&);
     void didFinishFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier);
     void didFailFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier);
     void didNotHandleFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier);

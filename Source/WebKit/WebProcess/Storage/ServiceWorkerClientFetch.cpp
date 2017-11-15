@@ -85,6 +85,11 @@ void ServiceWorkerClientFetch::didReceiveData(const IPC::DataReference& data, in
     m_loader->didReceiveData(reinterpret_cast<const char*>(data.data()), data.size(), encodedDataLength, DataPayloadBytes);
 }
 
+void ServiceWorkerClientFetch::didReceiveFormData(const IPC::FormDataReference&)
+{
+    // FIXME: Implement form data reading.
+}
+
 void ServiceWorkerClientFetch::didFinish()
 {
     ASSERT(!m_callback);

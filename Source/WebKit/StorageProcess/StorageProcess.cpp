@@ -434,6 +434,12 @@ void StorageProcess::didReceiveFetchData(uint64_t serverConnectionIdentifier, ui
         connection->didReceiveFetchData(fetchIdentifier, data, encodedDataLength);
 }
 
+void StorageProcess::didReceiveFetchFormData(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, const IPC::FormDataReference& formData)
+{
+    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
+        connection->didReceiveFetchFormData(fetchIdentifier, formData);
+}
+
 void StorageProcess::didFinishFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier)
 {
     if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))

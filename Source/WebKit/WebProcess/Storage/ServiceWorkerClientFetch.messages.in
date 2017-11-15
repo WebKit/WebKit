@@ -25,6 +25,7 @@
 messages -> ServiceWorkerClientFetch {
     DidReceiveResponse(WebCore::ResourceResponse response)
     DidReceiveData(IPC::DataReference data, int64_t encodedDataLength)
+    DidReceiveFormData(IPC::FormDataReference data)
     DidFinish()
     DidFail()
     DidNotHandle()

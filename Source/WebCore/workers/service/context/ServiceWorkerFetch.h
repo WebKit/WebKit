@@ -34,6 +34,7 @@ namespace WebCore {
 class FetchEvent;
 struct FetchOptions;
 class FetchResponse;
+class FormData;
 class ResourceRequest;
 class ResourceResponse;
 class SharedBuffer;
@@ -46,6 +47,7 @@ public:
 
     virtual void didReceiveResponse(const ResourceResponse&) = 0;
     virtual void didReceiveData(Ref<SharedBuffer>&&) = 0;
+    virtual void didReceiveFormData(Ref<FormData>&&) = 0;
     virtual void didFail() = 0;
     virtual void didFinish() = 0;
     virtual void didNotHandle() = 0;

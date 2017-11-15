@@ -75,8 +75,8 @@ static void processResponse(Ref<Client>&& client, FetchResponse* response)
     }
 
     auto body = response->consumeBody();
-    WTF::switchOn(body, [] (Ref<FormData>&) {
-        // FIXME: Support FormData response bodies.
+    WTF::switchOn(body, [&] (Ref<FormData>& formData) {
+        client->didReceiveFormData(WTFMove(formData));
     }, [&] (Ref<SharedBuffer>& buffer) {
         client->didReceiveData(WTFMove(buffer));
     }, [] (std::nullptr_t&) {

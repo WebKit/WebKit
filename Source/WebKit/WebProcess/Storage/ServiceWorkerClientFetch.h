@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "FormDataReference.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include <WebCore/ResourceLoader.h>
@@ -56,6 +57,7 @@ private:
 
     void didReceiveResponse(WebCore::ResourceResponse&&);
     void didReceiveData(const IPC::DataReference&, int64_t encodedDataLength);
+    void didReceiveFormData(const IPC::FormDataReference&);
     void didFinish();
     void didFail();
     void didNotHandle();

@@ -128,6 +128,11 @@ void WebSWServerConnection::didReceiveFetchData(uint64_t fetchIdentifier, const 
     m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidReceiveData { data, encodedDataLength }, fetchIdentifier);
 }
 
+void WebSWServerConnection::didReceiveFetchFormData(uint64_t fetchIdentifier, const IPC::FormDataReference& formData)
+{
+    m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidReceiveFormData { formData }, fetchIdentifier);
+}
+
 void WebSWServerConnection::didFinishFetch(uint64_t fetchIdentifier)
 {
     m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidFinish { }, fetchIdentifier);

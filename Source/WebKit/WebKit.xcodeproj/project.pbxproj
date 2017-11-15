@@ -3222,6 +3222,7 @@
 		414DEDC51F9E4BEC0047C40D /* ServiceWorkerFrameLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerFrameLoaderClient.cpp; sourceTree = "<group>"; };
 		414DEDD51F9EDDDF0047C40D /* ServiceWorkerProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerProcessProxy.h; sourceTree = "<group>"; };
 		414DEDD61F9EDDE00047C40D /* ServiceWorkerProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerProcessProxy.cpp; sourceTree = "<group>"; };
+		4151E5C31FBB90A900E47E2D /* FormDataReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormDataReference.h; sourceTree = "<group>"; };
 		41897ECB1F415D5C0016FA42 /* WebCacheStorageConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCacheStorageConnection.messages.in; sourceTree = "<group>"; };
 		41897ECC1F415D5C0016FA42 /* WebCacheStorageProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCacheStorageProvider.cpp; sourceTree = "<group>"; };
 		41897ECD1F415D5C0016FA42 /* WebCacheStorageConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCacheStorageConnection.h; sourceTree = "<group>"; };
@@ -5404,6 +5405,7 @@
 				BC032D9E10F437D10058C15A /* Decoder.h */,
 				BC032D9F10F437D10058C15A /* Encoder.cpp */,
 				BC032DA010F437D10058C15A /* Encoder.h */,
+				4151E5C31FBB90A900E47E2D /* FormDataReference.h */,
 				C0CE72AC1247E78D00BC0EC4 /* HandleMessage.h */,
 				1AC4C82816B876A90069DCCD /* MessageFlags.h */,
 				1A3EED11161A53D600AEB4F5 /* MessageReceiver.h */,

@@ -32,6 +32,10 @@
 #include <WebCore/SWServer.h>
 #include <pal/SessionID.h>
 
+namespace IPC {
+class FormDataReference;
+}
+
 namespace WebCore {
 struct ExceptionData;
 struct ServiceWorkerClientData;
@@ -53,6 +57,7 @@ public:
 
     void didReceiveFetchResponse(uint64_t fetchIdentifier, const WebCore::ResourceResponse&);
     void didReceiveFetchData(uint64_t fetchIdentifier, const IPC::DataReference&, int64_t encodedDataLength);
+    void didReceiveFetchFormData(uint64_t fetchIdentifier, const IPC::FormDataReference&);
     void didFinishFetch(uint64_t fetchIdentifier);
     void didFailFetch(uint64_t fetchIdentifier);
     void didNotHandleFetch(uint64_t fetchIdentifier);

@@ -1,3 +1,34 @@
+2017-11-15  Youenn Fablet  <youenn@apple.com>
+
+        Add ServiceWorker to WebProcess plumbery for FormData fetch responses
+        https://bugs.webkit.org/show_bug.cgi?id=179694
+
+        Reviewed by Alex Christensen.
+
+        Added plumbery from Service Worker up to Web Process to pass form data response bodies.
+        A follow-up patch should read the data from Network Process and send it to the ResourceLoader.
+
+        * Platform/IPC/FormDataReference.h: Added.
+        (IPC::FormDataReference::FormDataReference):
+        (IPC::FormDataReference::takeData):
+        (IPC::FormDataReference::encode const):
+        (IPC::FormDataReference::decode):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::didReceiveFetchFormData):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::didReceiveFetchFormData):
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageProcess.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp:
+        (WebKit::ServiceWorkerClientFetch::didReceiveFormData):
+        * WebProcess/Storage/ServiceWorkerClientFetch.h:
+        * WebProcess/Storage/ServiceWorkerClientFetch.messages.in:
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveFormData):
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.h:
+
 2017-11-15  Alex Christensen  <achristensen@webkit.org>
 
         Move a compiled WKContentRuleList to its destination before calling mmap

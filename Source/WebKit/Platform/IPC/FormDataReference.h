@@ -25,37 +25,35 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
+#include "Decoder.h"
+#include "Encoder.h"
+#include <WebCore/FormData.h>
+#include <wtf/Vector.h>
 
-#include "Connection.h"
-#include <WebCore/ServiceWorkerFetch.h>
+namespace IPC {
 
-namespace WebKit {
-
-class WebServiceWorkerFetchTaskClient final : public WebCore::ServiceWorkerFetch::Client {
+class FormDataReference {
 public:
-    static Ref<WebServiceWorkerFetchTaskClient> create(Ref<IPC::Connection>&& connection, uint64_t serverConnectionIdentifier, uint64_t fetchTaskIdentifier)
+    FormDataReference() = default;
+
+    explicit FormDataReference(Ref<WebCore::FormData>&& data)
+        : m_data(WTFMove(data))
     {
-        return adoptRef(*new WebServiceWorkerFetchTaskClient(WTFMove(connection), serverConnectionIdentifier, fetchTaskIdentifier));
     }
 
-    ~WebServiceWorkerFetchTaskClient();
+    Ref<WebCore::FormData> takeData() { return m_data.releaseNonNull(); }
+
+    void encode(Encoder& encoder) const { encoder << *m_data; }
+    static std::optional<FormDataReference> decode(Decoder& decoder)
+    {
+        auto formData = WebCore::FormData::decode(decoder);
+        if (!formData)
+            return std::nullopt;
+        return FormDataReference { formData.releaseNonNull() };
+    }
 
 private:
-    WebServiceWorkerFetchTaskClient(Ref<IPC::Connection>&&, uint64_t serverConnectionIdentifier, uint64_t fetchTaskIdentifier);
-
-    void didReceiveResponse(const WebCore::ResourceResponse&) final;
-    void didReceiveData(Ref<WebCore::SharedBuffer>&&) final;
-    void didReceiveFormData(Ref<WebCore::FormData>&&) final;
-    void didFail() final;
-    void didFinish() final;
-    void didNotHandle() final;
-
-    RefPtr<IPC::Connection> m_connection;
-    uint64_t m_serverConnectionIdentifier { 0 };
-    uint64_t m_fetchTaskIdentifier { 0 };
+    RefPtr<WebCore::FormData> m_data;
 };
 
-} // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)
+} // namespace IPC
