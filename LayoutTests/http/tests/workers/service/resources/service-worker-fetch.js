@@ -1,26 +1,18 @@
-function done()
-{
-    finishSWTest();
-}
-
-async function logStatus()
-{
-    var response = await fetch("status");
-    log("Status is " + response.statusText);
-}
-
 async function test()
 {
     try {
-        await navigator.serviceWorker.register("resources/service-worker-fetch-worker.js", { });
+        var frame = await interceptedFrame("resources/service-worker-fetch-worker.js", "/");
+        var fetch = frame.contentWindow.fetch;
 
-        await logStatus();
+        var response = await fetch("status");
+        log("Status is " + response.statusText);
 
-        var response = await fetch("/resources/square100.png.fromserviceworker");
+        response = await fetch("/resources/square100.png.fromserviceworker");
         var buffer =  await response.arrayBuffer();
         log("Got response with buffer byte length being " + buffer.byteLength);
 
-        await logStatus();
+        response = await fetch("status");
+        log("Status is " + response.statusText);
     } catch(e) {
         log("Got exception: " + e);
     }

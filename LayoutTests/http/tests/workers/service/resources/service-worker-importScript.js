@@ -1,9 +1,3 @@
-async function logStatus()
-{
-    var response = await fetch("status");
-    log("Status is " + response.statusText);
-}
-
 async function test()
 {
     try {
@@ -11,7 +5,11 @@ async function test()
         await navigator.serviceWorker.register("resources/service-worker-importScript-worker.js", { });
         log("Registered service worker");
 
-        await logStatus();
+        var frame = await interceptedFrame("resources/service-worker-fetch-worker.js", "/");
+        var fetch = frame.contentWindow.fetch;
+        var response = await fetch("status");
+        log("Status is " + response.statusText);
+
         log("PASS");
     } catch(e) {
         console.log("Got exception: " + e);

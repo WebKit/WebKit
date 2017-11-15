@@ -4,8 +4,29 @@
 <meta charset="utf-8">
 <script src="../resources/inspector-test.js"></script>
 <script>
-async function startServiceWorker() {
-    await navigator.serviceWorker.register("resources/fetch-service-worker.js");
+async function startServiceWorker()
+{
+    var registration = await navigator.serviceWorker.register("resources/fetch-service-worker.js", { scope : "/"});
+    await new Promise(resolve => {
+        if (registration.active)
+            resolve();
+        worker = registration.installing;
+        if (worker.state === "activated")
+            resolve();
+        worker.addEventListener("statechange", () => {
+            if (worker.state === "activated")
+                resolve();
+        });
+    });
+
+    var frame;
+    await new Promise(function(resolve) {
+        frame = document.createElement('iframe');
+        frame.src = "/";
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+    window.fetch = frame.contentWindow.fetch
     TestPage.dispatchEventToFrontend("SetupComplete");
 }
 

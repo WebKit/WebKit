@@ -9,6 +9,6 @@ navigator.serviceWorker.addEventListener("message", function(event) {
         finishSWTest();
 });
 
-navigator.serviceWorker.register("resources/basic-ServiceWorker-postMessage-worker.js", { }).then(function() {
-    navigator.serviceWorker.controller.postMessage("Message 1");
+navigator.serviceWorker.register("resources/basic-ServiceWorker-postMessage-worker.js", { }).then(function(registration) {
+    registration.installing.postMessage("Message 1");
 });

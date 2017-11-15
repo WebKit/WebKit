@@ -343,10 +343,6 @@ void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJo
         return;
     }
 
-    // FIXME: Implement proper selection of service workers.
-    if (unregistrationResult)
-        context->setActiveServiceWorker(nullptr);
-
     context->postTask([job = makeRef(job), unregistrationResult](ScriptExecutionContext&) mutable {
         job->promise().resolve<IDLBoolean>(unregistrationResult);
     });

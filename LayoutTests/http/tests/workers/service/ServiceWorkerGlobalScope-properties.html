@@ -20,9 +20,9 @@ navigator.serviceWorker.addEventListener("message", function(event) {
         finishSWTest();
 });
 
-navigator.serviceWorker.register("resources/ServiceWorkerGlobalScope-properties-worker.js", { }).then(function() {
+navigator.serviceWorker.register("resources/ServiceWorkerGlobalScope-properties-worker.js", { }).then(function(registration) {
     for (let property of expectedProperties)
-        navigator.serviceWorker.controller.postMessage("Object.getOwnPropertyDescriptor(self, '" + property + "')");
+        registration.installing.postMessage("Object.getOwnPropertyDescriptor(self, '" + property + "')");
 });
 </script>
 </body>

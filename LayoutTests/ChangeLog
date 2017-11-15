@@ -1,3 +1,57 @@
+2017-11-15  Youenn Fablet  <youenn@apple.com>
+
+        Remove service worker selection based on registration
+        https://bugs.webkit.org/show_bug.cgi?id=179705
+
+        Reviewed by Alex Christensen.
+
+        Updating tests to use actual selected frames.
+
+        * http/tests/inspector/network/resource-response-service-worker.html:
+        * http/tests/inspector/network/resources/fetch-service-worker.js:
+        * http/tests/workers/service/ServiceWorkerGlobalScope-properties.html:
+        * http/tests/workers/service/basic-fetch.https-expected.txt:
+        * http/tests/workers/service/cors-image-fetch-expected.txt:
+        * http/tests/workers/service/cors-image-fetch.html:
+        * http/tests/workers/service/image-fetch-expected.txt:
+        * http/tests/workers/service/resources/basic-ServiceWorker-postMessage.js:
+        (then):
+        * http/tests/workers/service/resources/basic-fetch-worker.js:
+        * http/tests/workers/service/resources/basic-fetch.js:
+        (async.test):
+        * http/tests/workers/service/resources/cors-image-fetch.js:
+        (async.test):
+        (async.loadedImage): Deleted.
+        (async.erroredImage): Deleted.
+        (async.logStatus): Deleted.
+        * http/tests/workers/service/resources/cors-image-fetch-iframe.html: Added.
+        * http/tests/workers/service/resources/image-fetch.js:
+        (async.test):
+        (done): Deleted.
+        (async.loadedImage): Deleted.
+        (async.erroredImage): Deleted.
+        (async.logStatus): Deleted.
+        * http/tests/workers/service/resources/service-worker-crossorigin-fetch.js:
+        (async.test):
+        (done): Deleted.
+        (async.logStatus): Deleted.
+        * http/tests/workers/service/resources/service-worker-fetch.js:
+        (async.test):
+        (done): Deleted.
+        (async.logStatus): Deleted.
+        * http/tests/workers/service/resources/service-worker-importScript.js:
+        (async.test):
+        (async.logStatus): Deleted.
+        * http/tests/workers/service/resources/sw-test-pre.js:
+        (async.interceptedFrame):
+        * http/tests/workers/service/resources/tainted-image-fetch.js:
+        (async.test):
+        (async.loadedImage): Deleted.
+        (async.erroredImage): Deleted.
+        (async.logStatus): Deleted.
+        * http/tests/workers/service/service-worker-fetch.https-expected.txt:
+        * http/tests/workers/service/tainted-image-fetch-expected.txt:
+
 2017-11-15  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK][WPE] Unreviewed test gardening

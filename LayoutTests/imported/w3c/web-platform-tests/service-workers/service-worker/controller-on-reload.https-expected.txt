@@ -1,4 +1,3 @@
 
-
-FAIL controller is set upon reload after registration assert_equals: controller should be null until the document is reloaded expected null but got object "[object ServiceWorker]"
+PASS controller is set upon reload after registration 
 

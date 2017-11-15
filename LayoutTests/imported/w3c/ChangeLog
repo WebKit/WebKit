@@ -1,3 +1,12 @@
+2017-11-15  Youenn Fablet  <youenn@apple.com>
+
+        Remove service worker selection based on registration
+        https://bugs.webkit.org/show_bug.cgi?id=179705
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/service-workers/service-worker/controller-on-reload.https-expected.txt:
+
 2017-11-14  Chris Dumez  <cdumez@apple.com>
 
         [Service Workers] Implement container.getRegistrations()

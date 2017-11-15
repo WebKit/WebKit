@@ -1,7 +1,8 @@
 async function test()
 {
     try {
-        await navigator.serviceWorker.register("resources/basic-fetch-worker.js", { });
+        var frame = await interceptedFrame("resources/basic-fetch-worker.js", "/");
+        var fetch = frame.contentWindow.fetch;
 
         var response = await fetch("test1");
         log("test1 status code: " + response.status);

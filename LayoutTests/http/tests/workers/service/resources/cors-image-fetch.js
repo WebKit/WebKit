@@ -1,39 +1,16 @@
-async function loadedImage()
-{
-    log("PASS: Loaded image");
-    await logStatus();
-    log("Image size: " + image.width + "x" + image.height);
-    finishSWTest();
-}
-
-async function erroredImage()
-{
-    log("FAIL: image loading failed");
-    await logStatus();
-    finishSWTest();
-}
-
-async function logStatus()
-{
-    var response = await fetch("status");
-    log("Status is " + response.statusText);
-}
-
 async function test()
 {
-    try {
-        log("Registering service worker");
-        await navigator.serviceWorker.register("resources/cors-image-fetch-worker.js", { });
-        log("Service worker registered");
-
-        await logStatus();
-        log("Loading image");
-        image.crossOrigin = "anonymous";
-        image.src = "http://localhost:8000/resources/square100.png.fromserviceworker";
-    } catch(e) {
-        log("Got exception: " + e);
-        await logStatus();
-    }
+    log("Registering service worker");
+    var frame = await interceptedFrame("/workers/service/resources/cors-image-fetch-worker.js", "/workers/service/resources/cors-image-fetch-iframe.html.fromserviceworker");
+    log("Service worker registered");
+    window.addEventListener("message", (event) => {
+        if (event.data === "end") {
+            finishSWTest();
+            return;
+        }
+        log(event.data);
+    }, false);
+    frame.contentWindow.start("http://localhost:8000/resources/square100.png.fromserviceworker", true);
 }
 
 test();

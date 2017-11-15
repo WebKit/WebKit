@@ -35,6 +35,29 @@ function waitForState(worker, state)
 
 function finishSWTest()
 {
-	if (window.testRunner)
-		testRunner.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+async function interceptedFrame(workerURL, scopeURL)
+{
+    var registration = await navigator.serviceWorker.register(workerURL, { scope : scopeURL });
+    await new Promise(resolve => {
+        if (registration.active)
+            resolve();
+        worker = registration.installing;
+        if (worker.state === "activated")
+            resolve();
+        worker.addEventListener("statechange", () => {
+            if (worker.state === "activated")
+                resolve();
+        });
+    });
+
+    return await new Promise((resolve) => {
+        var frame = document.createElement('iframe');
+        frame.src = scopeURL;
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
 }

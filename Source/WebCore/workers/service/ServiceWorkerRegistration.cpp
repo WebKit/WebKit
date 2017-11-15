@@ -60,9 +60,6 @@ ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& con
     if (m_registrationData.activeWorker)
         m_activeWorker = ServiceWorker::getOrCreate(context, WTFMove(*m_registrationData.activeWorker));
 
-    // FIXME: Implement proper selection of service workers.
-    context.setActiveServiceWorker(getNewestWorker());
-
     m_container->addRegistration(*this);
 }
 

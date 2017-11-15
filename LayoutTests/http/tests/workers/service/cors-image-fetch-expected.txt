@@ -1,7 +1,6 @@
-
 Registering service worker
 Service worker registered
-Status is no status
+Status is Got response for http://127.0.0.1:8000/workers/service/resources/cors-image-fetch-iframe.html, status code is 200
 Loading image
 PASS: Loaded image
 Status is Got response for http://localhost:8000/resources/square100.png, status code is 200

@@ -9,5 +9,10 @@ self.addEventListener("fetch", (event) => {
         return;
     }
 
-    event.respondWith(Response.error());
+    if (event.request.url.includes("error")) {
+        event.respondWith(Response.error());
+        return;
+    }
+
+    event.respondWith(fetch(event.request.url));
 });
