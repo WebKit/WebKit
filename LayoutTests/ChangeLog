@@ -1,3 +1,15 @@
+2017-11-15  Youenn Fablet  <youenn@apple.com>
+
+        ReloadFromOrigin loads should not select any service worker
+        https://bugs.webkit.org/show_bug.cgi?id=179736
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/workers/service/resources/shift-reload-navigation.js: Added.
+        (async.test):
+        * http/tests/workers/service/shift-reload-navigation-expected.txt: Added.
+        * http/tests/workers/service/shift-reload-navigation.html: Added.
+
 2017-11-15  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Implement basic to-from animations

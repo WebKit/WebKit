@@ -298,6 +298,7 @@ public:
 
     bool isAlwaysOnLoggingAllowed() const;
     bool shouldSuppressTextInputFromEditing() const;
+    bool isReloadingFromOrigin() const { return m_loadType == FrameLoadType::ReloadFromOrigin; }
 
 private:
     enum FormSubmissionCacheLoadPolicy {

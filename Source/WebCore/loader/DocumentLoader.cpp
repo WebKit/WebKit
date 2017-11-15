@@ -1488,7 +1488,8 @@ void DocumentLoader::startLoadingMainResource()
         RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Starting load (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
 
 #if ENABLE(SERVICE_WORKER)
-        if (m_frame && m_frame->page() && RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled()) {
+        auto tryLoadingThroughServiceWorker = !frameLoader()->isReloadingFromOrigin() && m_frame->page() && RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled();
+        if (tryLoadingThroughServiceWorker) {
             auto origin = (!m_frame->isMainFrame() && m_frame->document()) ? makeRef(m_frame->document()->topOrigin()) : SecurityOrigin::create(request.url());
             auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(m_frame->page()->sessionID());
             if (connection.mayHaveServiceWorkerRegisteredForOrigin(origin)) {
