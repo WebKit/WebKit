@@ -64,14 +64,14 @@ ServiceWorkerThreadProxy* SWContextManager::serviceWorkerThreadProxy(ServiceWork
     return m_workerMap.get(identifier);
 }
 
-void SWContextManager::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destination, Ref<SerializedScriptValue>&& message, const ServiceWorkerClientIdentifier& sourceIdentifier, const String& sourceOrigin)
+void SWContextManager::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destination, Ref<SerializedScriptValue>&& message, ServiceWorkerClientData&& source)
 {
     auto* serviceWorker = m_workerMap.get(destination);
     if (!serviceWorker)
         return;
 
     // FIXME: We should pass valid MessagePortChannels.
-    serviceWorker->thread().postMessageToServiceWorkerGlobalScope(WTFMove(message), nullptr, sourceIdentifier, sourceOrigin);
+    serviceWorker->thread().postMessageToServiceWorkerGlobalScope(WTFMove(message), nullptr, WTFMove(source));
 }
 
 void SWContextManager::fireInstallEvent(ServiceWorkerIdentifier identifier)

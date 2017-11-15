@@ -27,6 +27,8 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include <wtf/EnumTraits.h>
+
 namespace WebCore {
 
 enum class ServiceWorkerClientType {
@@ -36,6 +38,20 @@ enum class ServiceWorkerClientType {
     All
 };
 
-}
+} // namespace WebCore
+
+namespace WTF {
+
+template <> struct EnumTraits<WebCore::ServiceWorkerClientType> {
+    using values = EnumValues<
+        WebCore::ServiceWorkerClientType,
+        WebCore::ServiceWorkerClientType::Window,
+        WebCore::ServiceWorkerClientType::Worker,
+        WebCore::ServiceWorkerClientType::Sharedworker,
+        WebCore::ServiceWorkerClientType::All
+    >;
+};
+
+} // namespace WTF
 
 #endif

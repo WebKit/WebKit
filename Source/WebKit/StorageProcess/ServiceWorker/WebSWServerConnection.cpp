@@ -45,6 +45,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SWServerRegistration.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/ServiceWorkerClientData.h>
 #include <WebCore/ServiceWorkerClientIdentifier.h>
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/ServiceWorkerJobData.h>
@@ -111,10 +112,10 @@ void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, std::optional<S
     sendToContextProcess(Messages::WebSWContextManagerConnection::StartFetch(identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options));
 }
 
-void WebSWServerConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationServiceWorkerIdentifier, const IPC::DataReference& message, uint64_t sourceScriptExecutionContextIdentifier, const String& sourceOrigin)
+void WebSWServerConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationServiceWorkerIdentifier, const IPC::DataReference& message, ServiceWorkerClientData&& source)
 {
-    ServiceWorkerClientIdentifier sourceIdentifier { identifier(), sourceScriptExecutionContextIdentifier };
-    sendToContextProcess(Messages::WebSWContextManagerConnection::PostMessageToServiceWorkerGlobalScope { destinationServiceWorkerIdentifier, message, sourceIdentifier, sourceOrigin });
+    source.identifier.serverConnectionIdentifier = identifier();
+    sendToContextProcess(Messages::WebSWContextManagerConnection::PostMessageToServiceWorkerGlobalScope { destinationServiceWorkerIdentifier, message, WTFMove(source) });
 }
 
 void WebSWServerConnection::didReceiveFetchResponse(uint64_t fetchIdentifier, const ResourceResponse& response)

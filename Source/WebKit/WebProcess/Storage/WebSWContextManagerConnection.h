@@ -60,7 +60,7 @@ private:
     void serviceWorkerStartedWithMessage(WebCore::ServiceWorkerIdentifier, const String& exceptionMessage) final;
     void installServiceWorker(const WebCore::ServiceWorkerContextData&);
     void startFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, std::optional<WebCore::ServiceWorkerIdentifier>, WebCore::ResourceRequest&&, WebCore::FetchOptions&&);
-    void postMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, const WebCore::ServiceWorkerClientIdentifier& sourceIdentifier, const String& sourceOrigin);
+    void postMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerClientData&& source);
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier);
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier);
 

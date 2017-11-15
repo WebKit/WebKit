@@ -1,3 +1,20 @@
+2017-11-15  Chris Dumez  <cdumez@apple.com>
+
+        [Service Workers] Implement Client API
+        https://bugs.webkit.org/show_bug.cgi?id=179709
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * http/tests/workers/service/Client-properties-auxiliary-expected.txt: Added.
+        * http/tests/workers/service/Client-properties-auxiliary.html: Added.
+        * http/tests/workers/service/Client-properties-expected.txt: Added.
+        * http/tests/workers/service/Client-properties-subframe-expected.txt: Added.
+        * http/tests/workers/service/Client-properties-subframe.html: Added.
+        * http/tests/workers/service/Client-properties.html: Added.
+        * http/tests/workers/service/resources/Client-properties-worker.js: Added.
+
 2017-11-15  Youenn Fablet  <youenn@apple.com>
 
         Remove service worker selection based on registration

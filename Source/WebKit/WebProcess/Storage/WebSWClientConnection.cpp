@@ -37,6 +37,7 @@
 #include "WebSWServerConnectionMessages.h"
 #include <WebCore/Document.h>
 #include <WebCore/SerializedScriptValue.h>
+#include <WebCore/ServiceWorkerClientData.h>
 #include <WebCore/ServiceWorkerFetchResult.h>
 #include <WebCore/ServiceWorkerJobData.h>
 #include <WebCore/ServiceWorkerRegistrationData.h>
@@ -80,13 +81,9 @@ void WebSWClientConnection::removeServiceWorkerRegistrationInServer(const Servic
     send(Messages::WebSWServerConnection::RemoveServiceWorkerRegistrationInServer(key, identifier));
 }
 
-void WebSWClientConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationIdentifier, Ref<SerializedScriptValue>&& scriptValue, ScriptExecutionContext& source)
+void WebSWClientConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationIdentifier, Ref<SerializedScriptValue>&& scriptValue, ServiceWorkerClientData&& source)
 {
-    // FIXME: Add support for posting messages from workers.
-    if (!is<Document>(source))
-        return;
-
-    send(Messages::WebSWServerConnection::PostMessageToServiceWorkerGlobalScope(destinationIdentifier, IPC::DataReference { scriptValue->data() }, downcast<Document>(source).identifier(), source.origin()));
+    send(Messages::WebSWServerConnection::PostMessageToServiceWorkerGlobalScope(destinationIdentifier, IPC::DataReference { scriptValue->data() }, WTFMove(source)));
 }
 
 void WebSWClientConnection::didResolveRegistrationPromise(const ServiceWorkerRegistrationKey& key)

@@ -34,6 +34,31 @@ struct ServiceWorkerClientIdentifier {
     uint64_t scriptExecutionContextIdentifier;
 
     String toString() const { return String::number(serverConnectionIdentifier) + "-" +  String::number(scriptExecutionContextIdentifier); }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<ServiceWorkerClientIdentifier> decode(Decoder&);
 };
+
+template<class Encoder>
+void ServiceWorkerClientIdentifier::encode(Encoder& encoder) const
+{
+    encoder << serverConnectionIdentifier << scriptExecutionContextIdentifier;
+}
+
+template<class Decoder>
+std::optional<ServiceWorkerClientIdentifier> ServiceWorkerClientIdentifier::decode(Decoder& decoder)
+{
+    std::optional<uint64_t> serverConnectionIdentifier;
+    decoder >> serverConnectionIdentifier;
+    if (!serverConnectionIdentifier)
+        return std::nullopt;
+
+    std::optional<uint64_t> scriptExecutionContextIdentifier;
+    decoder >> scriptExecutionContextIdentifier;
+    if (!scriptExecutionContextIdentifier)
+        return std::nullopt;
+
+    return { { WTFMove(*serverConnectionIdentifier), WTFMove(*scriptExecutionContextIdentifier) } };
+}
 
 }

@@ -27,6 +27,8 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include <wtf/EnumTraits.h>
+
 namespace WebCore {
 
 enum class ServiceWorkerUpdateViaCache {
@@ -36,5 +38,18 @@ enum class ServiceWorkerUpdateViaCache {
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template <> struct EnumTraits<WebCore::ServiceWorkerUpdateViaCache> {
+    using values = EnumValues<
+        WebCore::ServiceWorkerUpdateViaCache,
+        WebCore::ServiceWorkerUpdateViaCache::Imports,
+        WebCore::ServiceWorkerUpdateViaCache::All,
+        WebCore::ServiceWorkerUpdateViaCache::None
+    >;
+};
+
+} // namespace WTF
 
 #endif // ENABLE(SERVICE_WORKER)

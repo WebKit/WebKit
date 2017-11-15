@@ -37,30 +37,36 @@
 
 namespace WebCore {
 
-ServiceWorkerClient::ServiceWorkerClient(ScriptExecutionContext& context, const Identifier& identifier, Type type)
+ServiceWorkerClient::ServiceWorkerClient(ScriptExecutionContext& context, ServiceWorkerClientData&& data)
     : ContextDestructionObserver(&context)
-    , m_identifier(identifier)
-    , m_type(type)
+    , m_data(WTFMove(data))
 {
+    ASSERT(m_data.identifier.serverConnectionIdentifier);
+    ASSERT(m_data.identifier.scriptExecutionContextIdentifier);
 }
 
 ServiceWorkerClient::~ServiceWorkerClient()
 {
 }
 
-String ServiceWorkerClient::url() const
+const URL& ServiceWorkerClient::url() const
 {
-    return { };
+    return m_data.url;
+}
+
+auto ServiceWorkerClient::type() const -> Type
+{
+    return m_data.type;
 }
 
 auto ServiceWorkerClient::frameType() const -> FrameType
 {
-    return FrameType::None;
+    return m_data.frameType;
 }
 
 String ServiceWorkerClient::id() const
 {
-    return m_identifier.toString();
+    return m_data.identifier.toString();
 }
 
 ExceptionOr<void> ServiceWorkerClient::postMessage(ScriptExecutionContext& context, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
@@ -84,7 +90,7 @@ ExceptionOr<void> ServiceWorkerClient::postMessage(ScriptExecutionContext& conte
         return Exception { NotSupportedError, ASCIILiteral("Passing MessagePort objects to postMessage is not yet supported") };
 
     auto sourceIdentifier = downcast<ServiceWorkerGlobalScope>(context).thread().identifier();
-    callOnMainThread([message = message.releaseReturnValue(), destinationIdentifier = m_identifier, sourceIdentifier, sourceOrigin = context.origin().isolatedCopy()] () mutable {
+    callOnMainThread([message = message.releaseReturnValue(), destinationIdentifier = m_data.identifier, sourceIdentifier, sourceOrigin = context.origin().isolatedCopy()] () mutable {
         if (auto* connection = SWContextManager::singleton().connection())
             connection->postMessageToServiceWorkerClient(destinationIdentifier, WTFMove(message), sourceIdentifier, sourceOrigin);
     });

@@ -34,6 +34,7 @@
 
 namespace WebCore {
 struct ExceptionData;
+struct ServiceWorkerClientData;
 class ServiceWorkerRegistrationKey;
 }
 
@@ -70,7 +71,7 @@ private:
 
     void startFetch(uint64_t fetchIdentifier, std::optional<WebCore::ServiceWorkerIdentifier>, const WebCore::ResourceRequest&, const WebCore::FetchOptions&);
 
-    void postMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, uint64_t sourceScriptExecutionContextIdentifier, const String& sourceOrigin);
+    void postMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerClientData&& source);
 
     void matchRegistration(uint64_t registrationMatchRequestIdentifier, const WebCore::SecurityOriginData& topOrigin, const WebCore::URL& clientURL);
     void getRegistrations(uint64_t registrationMatchRequestIdentifier, const WebCore::SecurityOriginData& topOrigin, const WebCore::URL& clientURL);

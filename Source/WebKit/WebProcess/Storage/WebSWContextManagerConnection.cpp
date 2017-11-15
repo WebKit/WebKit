@@ -47,6 +47,7 @@
 #include <WebCore/PageConfiguration.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/SerializedScriptValue.h>
+#include <WebCore/ServiceWorkerClientIdentifier.h>
 #include <pal/SessionID.h>
 
 #if USE(QUICK_LOOK)
@@ -142,9 +143,9 @@ void WebSWContextManagerConnection::startFetch(uint64_t serverConnectionIdentifi
     serviceWorkerThreadProxy->thread().postFetchTask(WTFMove(client), WTFMove(request), WTFMove(options));
 }
 
-void WebSWContextManagerConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, const ServiceWorkerClientIdentifier& sourceIdentifier, const String& sourceOrigin)
+void WebSWContextManagerConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, ServiceWorkerClientData&& source)
 {
-    SWContextManager::singleton().postMessageToServiceWorkerGlobalScope(destinationIdentifier, SerializedScriptValue::adopt(message.vector()), sourceIdentifier, sourceOrigin);
+    SWContextManager::singleton().postMessageToServiceWorkerGlobalScope(destinationIdentifier, SerializedScriptValue::adopt(message.vector()), WTFMove(source));
 }
 
 void WebSWContextManagerConnection::fireInstallEvent(ServiceWorkerIdentifier identifier)

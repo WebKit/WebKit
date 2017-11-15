@@ -31,6 +31,7 @@
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerRegistrationKey.h"
 #include "ServiceWorkerTypes.h"
+#include "ServiceWorkerUpdateViaCache.h"
 
 namespace WebCore {
 

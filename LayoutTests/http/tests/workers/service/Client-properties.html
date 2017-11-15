@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/sw-test-pre.js"></script>
+<script>
+
+logWindow = window;
+if (window.opener)
+    logWindow = window.opener;
+else if (window.parent)
+    logWindow = window.parent;
+
+navigator.serviceWorker.addEventListener("message", function(event) {
+    if (event.data === "DONE") {
+        finishSWTest();
+        return;
+    }
+        logWindow.log(event.data);
+});
+
+navigator.serviceWorker.register("resources/Client-properties-worker.js", { }).then(function() {
+    navigator.serviceWorker.controller.postMessage("TEST");
+});
+</script>
+</body>
+</html>

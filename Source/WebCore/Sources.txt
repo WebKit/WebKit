@@ -2172,6 +2172,7 @@ workers/service/ExtendableMessageEvent.cpp
 workers/service/FetchEvent.cpp
 workers/service/ServiceWorker.cpp
 workers/service/ServiceWorkerClient.cpp
+workers/service/ServiceWorkerClientData.cpp
 workers/service/ServiceWorkerClients.cpp
 workers/service/ServiceWorkerContainer.cpp
 workers/service/ServiceWorkerContextData.cpp

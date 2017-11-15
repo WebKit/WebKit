@@ -33,6 +33,7 @@
 #include "SWClientConnection.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
+#include "ServiceWorkerClientData.h"
 #include "ServiceWorkerProvider.h"
 #include <runtime/JSCJSValueInlines.h>
 #include <wtf/NeverDestroyed.h>
@@ -126,8 +127,14 @@ ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JS
     if (channels && !channels->isEmpty())
         return Exception { NotSupportedError, ASCIILiteral("Passing MessagePort objects to postMessage is not yet supported") };
 
+    // FIXME: We should add support for workers.
+    if (!is<Document>(context))
+        return Exception { NotSupportedError, ASCIILiteral("serviceWorkerClient.postMessage() from workers is not yet supported") };
+
+    auto sourceClientData = ServiceWorkerClientData::from(context);
+
     auto& swConnection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(context.sessionID());
-    swConnection.postMessageToServiceWorkerGlobalScope(identifier(), message.releaseReturnValue(), context);
+    swConnection.postMessageToServiceWorkerGlobalScope(identifier(), message.releaseReturnValue(), WTFMove(sourceClientData));
 
     return { };
 }
