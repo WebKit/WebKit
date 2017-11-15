@@ -59,7 +59,6 @@ list(APPEND WebCore_SOURCES
 
     platform/audio/PlatformMediaSessionManager.cpp
 
-    platform/graphics/FourCC.cpp
     platform/graphics/GraphicsContext3DPrivate.cpp
 
     platform/graphics/egl/GLContextEGL.cpp
