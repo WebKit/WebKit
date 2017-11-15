@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Licensed under the Creative Commons Attribution-Share Alike 3.0 United States License (http://creativecommons.org/licenses/by-sa/3.0/) -->
-<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
- <rect width="6" height="6" x="3" y="5" fill="currentColor" rx="2" ry="2"/>
- <path fill="currentColor" d="m0 1v14h16v-1h-15v-12h15v-1z"/>
-</svg>

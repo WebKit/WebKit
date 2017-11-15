@@ -2116,16 +2116,17 @@ sub shouldRemoveCMakeCache(@)
         return 1;
     }
 
-    my $inspectorUserInterfaceDircetory = File::Spec->catdir(sourceDir(), "Source", "WebInspectorUI", "UserInterface");
-    if ($cacheFileModifiedTime < stat($inspectorUserInterfaceDircetory)->mtime) {
+    # FIXME: This probably does not work as expected, or the next block to
+    # delete the images subdirectory would not be here. Directory mtime does not
+    # percolate upwards when files are added or removed from subdirectories.
+    my $inspectorUserInterfaceDirectory = File::Spec->catdir(sourceDir(), "Source", "WebInspectorUI", "UserInterface");
+    if ($cacheFileModifiedTime < stat($inspectorUserInterfaceDirectory)->mtime) {
         return 1;
     }
 
-    if (isGtk() or isWPE()) {
-        my $gtkImageDircetory = File::Spec->catdir(sourceDir(), "Source", "WebInspectorUI", "UserInterface", "Images", "gtk");
-        if ($cacheFileModifiedTime < stat($gtkImageDircetory)->mtime) {
-            return 1;
-        }
+    my $inspectorImageDirectory = File::Spec->catdir(sourceDir(), "Source", "WebInspectorUI", "UserInterface", "Images");
+    if ($cacheFileModifiedTime < stat($inspectorImageDirectory)->mtime) {
+        return 1;
     }
 
     if(isAnyWindows()) {

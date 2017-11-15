@@ -58,7 +58,6 @@ exclude Source/cmake/OptionsWindows.cmake$
 exclude Source/cmake/OptionsAppleWin.cmake$
 exclude Source/cmake/OptionsWPE.cmake$
 exclude Source/WebInspectorUI/Tools
-exclude Source/WebInspectorUI/UserInterface/Images
 
 exclude Source/WebKit/Resources
 exclude Source/WebKit/gtk/NEWS$
@@ -66,7 +65,6 @@ exclude Source/WebKit/gtk/NEWS$
 # We do want to include the NEWS, but we want it to be in the root of the archive.
 file Source/WebKit/gtk/NEWS NEWS
 
-directory Source/WebInspectorUI/UserInterface/Images/gtk
 file Source/WebCore/English.lproj/mediaControlsLocalizedStrings.js Source/WebCore/English.lproj/mediaControlsLocalizedStrings.js
 file Source/WebInspectorUI/Localizations/en.lproj/localizedStrings.js Source/WebInspectorUI/Localizations/en.lproj/localizedStrings.js
 

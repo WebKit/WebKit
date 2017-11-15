@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Licensed under the Creative Commons Attribution-Share Alike 3.0 United States License (http://creativecommons.org/licenses/by-sa/3.0/) -->
-<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
- <rect width="2" height="6" x="-9" y="-6" fill="currentColor" transform="matrix(0,-1,-1,0,0,0)" rx="1" ry="0"/>
- <rect width="2" height="6" x="-9" y="-16" fill="currentColor" transform="matrix(0,-1,-1,0,0,0)" rx=".9375" ry="0"/>
- <path fill="currentColor" d="m4 3c-1.108 0-2 0.892-2 2v6c0 1.108 0.892 2 2 2h8c1.108 0 2-0.892 2-2v-6c0-1.108-0.892-2-2-2h-8zm1 2h6c0.554 0 1 0.446 1 1v4c0 0.554-0.446 1-1 1h-6c-0.554 0-1-0.446-1-1v-4c0-0.554 0.446-1 1-1z"/>
-</svg>

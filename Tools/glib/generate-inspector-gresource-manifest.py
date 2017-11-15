@@ -28,8 +28,6 @@ def get_filenames(directory):
     filenames = []
 
     def should_ignore_resource(resource):
-        if resource.startswith('Images') and 'gtk' not in resource:
-            return True
         if resource.startswith(os.path.join('Protocol', 'Legacy')):
             return True
         if os.path.splitext(resource)[1] not in VALID_EXTENSIONS:
@@ -78,8 +76,6 @@ if __name__ == "__main__":
             line += ' compressed="true"'
         if not filename.startswith('Localization'):
             alias = 'UserInterface/' + filename
-            if 'Images/gtk/' in alias:
-                alias = alias.replace('gtk/', '')
             line += ' alias="%s"' % alias
         line += '>%s</file>\n' % filename
 

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Licensed under the Creative Commons Attribution-Share Alike 3.0 United States License (http://creativecommons.org/licenses/by-sa/3.0/) -->
-<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
- <path fill="#bb92e8" d="m14.378 1.4871h-1.3247c-0.0046 4.4457-0.02153 6.6976 0 11.143h1.3247c-0.06826-4.4442-0.009-6.6965 0-11.143z"/>
- <path fill="#bb92e8" d="m13.716 13.8-1.9871-2.3397h3.9742z"/>
- <rect width="9.4188" height="3.2151" x="1.3747" y="5.7849" fill="#bb92e8" rx="1.3878e-16" ry="1.3878e-16"/>
- <rect width="6.0742" height="6.1219" x="18.551" y="11.956" fill="#bb92e8" transform="matrix(.93173 .36316 -.93428 .35655 0 0)" rx="1.1729e-16" ry="1.1773e-16"/>
- <rect width="10.969" height="3.1686" x=".59965" y=".20940" fill="#bb92e8" rx="0.8" ry="0.8"/>
-</svg>

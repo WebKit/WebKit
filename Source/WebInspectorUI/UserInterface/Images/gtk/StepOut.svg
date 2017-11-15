@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Licensed under the Creative Commons Attribution-Share Alike 3.0 United States License (http://creativecommons.org/licenses/by-sa/3.0/) -->
-<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
- <rect width="2.9023" height="8" x="12.098" y="-12" fill="currentColor" transform="rotate(90)" rx="0" ry="0"/>
- <path fill="currentColor" d="m7 10v-5.5625l-1.2812 1.2813c-0.1882 0.1881-0.4535 0.2812-0.7188 0.2812h-1v-1c0-0.2653 0.0931-0.5306 0.2812-0.7188l3-3 0.2813-0.2812h0.875l0.28125 0.28125 3 3c0.188 0.1882 0.281 0.4535 0.281 0.7188v1h-1c-0.265 0-0.531-0.0931-0.719-0.2812l-1.281-1.2813v5.5625z"/>
-</svg>

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Licensed under the Creative Commons Attribution-Share Alike 3.0 United States License (http://creativecommons.org/licenses/by-sa/3.0/) -->
-<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
- <rect width="14" height="14" x="1" y="1" fill="#b0e0e6" stroke="#000" stroke-width=".5" rx="2" ry="2"/>
- <path fill="none" stroke="#000" stroke-width="1.5" d="m4 5.5h8"/>
- <path fill="none" stroke="#000" stroke-width="1.5" d="m4 10.5h8"/>
-</svg>
