@@ -400,15 +400,8 @@ AffineTransform getCTM(PlatformContextCairo& platformContext)
 
 void setShadowValues(PlatformContextCairo& platformContext, const FloatSize& radius, const FloatSize& offset, const Color& color, bool ignoreTransforms)
 {
-    FloatSize adjustedOffset = offset;
-    if (ignoreTransforms) {
-        // Meaning that this graphics context is associated with a CanvasRenderingContext
-        // We flip the height since CG and HTML5 Canvas have opposite Y axis
-        adjustedOffset.setHeight(-offset.height());
-    }
-
     // Cairo doesn't support shadows natively, they are drawn manually in the draw* functions using ShadowBlur.
-    platformContext.shadowBlur().setShadowValues(radius, adjustedOffset, color, ignoreTransforms);
+    platformContext.shadowBlur().setShadowValues(radius, offset, color, ignoreTransforms);
 }
 
 void clearShadow(PlatformContextCairo& platformContext)

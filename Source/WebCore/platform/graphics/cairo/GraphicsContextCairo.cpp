@@ -450,9 +450,17 @@ void GraphicsContext::setPlatformShadow(const FloatSize& offset, float blur, con
     if (paintingDisabled())
         return;
 
+    FloatSize adjustedOffset = offset;
+    if (m_state.shadowsIgnoreTransforms) {
+        // Meaning that this graphics context is associated with a CanvasRenderingContext
+        // We flip the height since CG and HTML5 Canvas have opposite Y axis
+        adjustedOffset.setHeight(-offset.height());
+        m_state.shadowOffset = adjustedOffset;
+    }
+
     ASSERT(hasPlatformContext());
     Cairo::State::setShadowValues(*platformContext(), FloatSize { blur, blur },
-        offset, color, m_state.shadowsIgnoreTransforms);
+        adjustedOffset, color, m_state.shadowsIgnoreTransforms);
 }
 
 void GraphicsContext::clearPlatformShadow()
