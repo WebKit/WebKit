@@ -446,6 +446,18 @@ static void filterEnabledNonemptyCSSStyleSheets(Vector<RefPtr<CSSStyleSheet>>& r
     }
 }
 
+static void invalidateHostAndSlottedStyleIfNeeded(ShadowRoot& shadowRoot, StyleResolver& resolver)
+{
+    auto& host = *shadowRoot.host();
+    if (!resolver.ruleSets().authorStyle().hostPseudoClassRules().isEmpty())
+        host.invalidateStyle();
+
+    if (!resolver.ruleSets().authorStyle().slottedPseudoElementRules().isEmpty()) {
+        for (auto& shadowChild : childrenOfType<Element>(host))
+            shadowChild.invalidateStyle();
+    }
+}
+
 void Scope::updateActiveStyleSheets(UpdateType updateType)
 {
     ASSERT(!m_pendingUpdate);
@@ -493,14 +505,7 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
         if (m_shadowRoot) {
             for (auto& shadowChild : childrenOfType<Element>(*m_shadowRoot))
                 shadowChild.invalidateStyleForSubtree();
-            if (m_shadowRoot->host()) {
-                if (!resolver().ruleSets().authorStyle().hostPseudoClassRules().isEmpty())
-                    m_shadowRoot->host()->invalidateStyle();
-                if (!resolver().ruleSets().authorStyle().slottedPseudoElementRules().isEmpty()) {
-                    for (auto& shadowChild : childrenOfType<Element>(*m_shadowRoot->host()))
-                        shadowChild.invalidateStyle();
-                }
-            }
+            invalidateHostAndSlottedStyleIfNeeded(*m_shadowRoot, resolver());
         } else
             m_document.scheduleForcedStyleRecalc();
     }
@@ -585,9 +590,14 @@ void Scope::clearPendingUpdate()
 
 void Scope::scheduleUpdate(UpdateType update)
 {
-    // FIXME: The m_isUpdatingStyleResolver test is here because extension stylesheets can get us here from StyleResolver::appendAuthorStyleSheets.
-    if (update == UpdateType::ContentsOrInterpretation && !m_isUpdatingStyleResolver)
-        clearResolver();
+    if (update == UpdateType::ContentsOrInterpretation) {
+        // :host and ::slotted rules might go away.
+        if (m_shadowRoot && m_resolver)
+            invalidateHostAndSlottedStyleIfNeeded(*m_shadowRoot, *m_resolver);
+        // FIXME: The m_isUpdatingStyleResolver test is here because extension stylesheets can get us here from StyleResolver::appendAuthorStyleSheets.
+        if (!m_isUpdatingStyleResolver)
+            clearResolver();
+    }
 
     if (!m_pendingUpdate || *m_pendingUpdate < update) {
         m_pendingUpdate = update;

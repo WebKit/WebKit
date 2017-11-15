@@ -1,15 +1,16 @@
-<div id=test></div>
+<div id=test><span>Text</span></div>
 <script>
 const shadow = test.attachShadow({mode: 'open'});
 shadow.innerHTML = `
     <style>
     @media (min-width:200px) {
         div { color: green }
+        :host { background-color: lightgrey }
     }
     @media (max-width:200px) {
-        div { color: red }
+        ::slotted(*) { color: red }
     }
     </style>
-    <div>Text</div>
+    <div><slot></slot></div>
 `;
 </script>

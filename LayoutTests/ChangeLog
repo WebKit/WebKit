@@ -1,3 +1,16 @@
+2017-11-14  Antti Koivisto  <antti@apple.com>
+
+        Media query with :host inside a custom elements doesn't get updated on window resize
+        https://bugs.webkit.org/show_bug.cgi?id=176101
+        <rdar://problem/34163850>
+
+        Reviewed by Simon Fraser.
+
+        Expand the existing test case to cover :host and ::slotted.
+
+        * fast/shadow-dom/media-query-in-shadow-style-expected.html:
+        * fast/shadow-dom/resources/media-query-in-shadow-style-frame.html:
+
 2017-11-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark fast/scrolling/rtl-scrollbars.html as flaky.
