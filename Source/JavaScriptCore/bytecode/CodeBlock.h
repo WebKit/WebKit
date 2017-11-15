@@ -782,6 +782,7 @@ public:
 #else // No JIT
     static unsigned numberOfLLIntBaselineCalleeSaveRegisters() { return 0; }
     static size_t llintBaselineCalleeSaveSpaceAsVirtualRegisters() { return 0; };
+    size_t calleeSaveSpaceAsVirtualRegisters() { return 0; }
     void optimizeAfterWarmUp() { }
     unsigned numberOfDFGCompiles() { return 0; }
 #endif
