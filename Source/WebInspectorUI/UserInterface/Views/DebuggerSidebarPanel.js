@@ -25,11 +25,9 @@
 
 WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSidebarPanel
 {
-    constructor(contentBrowser)
+    constructor()
     {
         super("debugger", WI.UIString("Debugger"), true);
-
-        this.contentBrowser = contentBrowser;
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, this._resourceAdded, this);

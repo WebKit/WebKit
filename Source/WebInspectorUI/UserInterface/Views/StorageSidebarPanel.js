@@ -25,11 +25,9 @@
 
 WI.StorageSidebarPanel = class StorageSidebarPanel extends WI.NavigationSidebarPanel
 {
-    constructor(contentBrowser)
+    constructor()
     {
         super("storage", WI.UIString("Storage"));
-
-        this.contentBrowser = contentBrowser;
 
         this._navigationBar = new WI.NavigationBar;
         this.addSubview(this._navigationBar);

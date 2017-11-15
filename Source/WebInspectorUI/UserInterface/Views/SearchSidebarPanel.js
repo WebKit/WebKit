@@ -25,11 +25,9 @@
 
 WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPanel
 {
-    constructor(contentBrowser)
+    constructor()
     {
         super("search", WI.UIString("Search"), true, true);
-
-        this.contentBrowser = contentBrowser;
 
         var searchElement = document.createElement("div");
         searchElement.classList.add("search-bar");

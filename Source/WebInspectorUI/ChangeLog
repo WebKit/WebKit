@@ -1,3 +1,23 @@
+2017-11-15  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION (r217750): Navigation sidebar broken after closing and re-opening tab
+        https://bugs.webkit.org/show_bug.cgi?id=179717
+        <rdar://problem/35551541>
+
+        Reviewed by Devin Rousso.
+
+        NavigationSidebarPanels should not be created with WI.instanceForClass.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WI.ResourceSidebarPanel):
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel):
+        * UserInterface/Views/StorageSidebarPanel.js:
+        (WI.StorageSidebarPanel):
+        * UserInterface/Views/TabContentView.js:
+        (WI.TabContentView.prototype.get navigationSidebarPanel):
+
 2017-11-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Remove GTK web inspector images

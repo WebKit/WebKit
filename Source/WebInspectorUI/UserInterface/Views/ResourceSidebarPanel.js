@@ -25,11 +25,9 @@
 
 WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSidebarPanel
 {
-    constructor(contentBrowser)
+    constructor()
     {
         super("resource", WI.UIString("Resources"), true);
-
-        this.contentBrowser = contentBrowser;
 
         this._navigationBar = new WI.NavigationBar;
         this.addSubview(this._navigationBar);
