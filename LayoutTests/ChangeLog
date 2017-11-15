@@ -1,3 +1,15 @@
+2017-11-15  Nan Wang  <n_wang@apple.com>
+
+        [GTK] accessibility/accessibility-object-model.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=179723
+
+        Reviewed by Chris Fleizach.
+
+        Updated the test to support different platforms.
+
+        * accessibility/accessibility-object-model-expected.txt:
+        * accessibility/accessibility-object-model.html:
+
 2017-11-15  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix tests introduced in r224880.

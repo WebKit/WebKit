@@ -13,7 +13,7 @@ PASS button.accessibleNode.foo is undefined
 
 ARIA attributes should not be reflected into AOM properties.
 PASS axButton.role is 'AXRole: AXCheckBox'
-PASS axButton.description is 'AXDescription: label'
+PASS platformValueForW3CName(axButton) is "label"
 PASS button.accessibleNode.role is null
 PASS button.accessibleNode.label is null
 
@@ -21,7 +21,7 @@ Test setting AOM properties. And make sure AOM takes precedence.
 PASS button.accessibleNode.role is 'slider'
 PASS button.accessibleNode.label is 'AOM Label'
 PASS axButton.role is 'AXRole: AXSlider'
-PASS axButton.description is 'AXDescription: AOM Label'
+PASS platformValueForW3CName(axButton) is "AOM Label"
 
 Setting some of the AOM properties should be able to make an element accessible.
 PASS axParagraph == null || axParagraph == undefined is true

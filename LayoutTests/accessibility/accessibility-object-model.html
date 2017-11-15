@@ -45,7 +45,7 @@
         button.setAttribute("role", "checkbox");
         button.setAttribute("aria-label", "label");
         shouldBe("axButton.role", "'AXRole: AXCheckBox'");
-        shouldBe("axButton.description", "'AXDescription: label'");
+        shouldBeEqualToString("platformValueForW3CName(axButton)", "label");
         
         // AOM properties should be null even if we have set ARIA attributes.
         shouldBeNull("button.accessibleNode.role");
@@ -67,7 +67,7 @@
         
         // The AOM property values should override ARIA attributes.
         shouldBe("axButton.role", "'AXRole: AXSlider'");
-        shouldBe("axButton.description", "'AXDescription: AOM Label'");
+        shouldBeEqualToString("platformValueForW3CName(axButton)", "AOM Label");
     }
     
     function testBecomeAccessible() {
