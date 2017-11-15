@@ -18,8 +18,8 @@ navigator.serviceWorker.addEventListener("message", function(event) {
         logWindow.log(event.data);
 });
 
-navigator.serviceWorker.register("resources/Client-properties-worker.js", { }).then(function() {
-    navigator.serviceWorker.controller.postMessage("TEST");
+navigator.serviceWorker.register("resources/Client-properties-worker.js", { }).then(function(registration) {
+    registration.installing.postMessage("TEST");
 });
 </script>
 </body>

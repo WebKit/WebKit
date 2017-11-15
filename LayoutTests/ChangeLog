@@ -1,3 +1,11 @@
+2017-11-15  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix tests introduced in r224880.
+
+        This is needed because of the changes in r224876.
+
+        * http/tests/workers/service/Client-properties.html:
+
 2017-11-15  Youenn Fablet  <youenn@apple.com>
 
         Some service worker tests are flaky due to console log messages
