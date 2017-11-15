@@ -173,7 +173,7 @@ typedef String ErrorString;
 #include "TestBackendDispatchers.h"
 
 #include <inspector/InspectorFrontendRouter.h>
-#include <wtf/JSONValues.h>
+#include <inspector/InspectorValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
@@ -223,7 +223,7 @@ namespace Inspector {
 #pragma once
 
 #include "TestProtocolObjects.h"
-#include <wtf/JSONValues.h>
+#include <inspector/InspectorValues.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -501,7 +501,7 @@ public:
 
     void setObj(RefPtr<Inspector::Protocol::Test::RecursiveObject2> value)
     {
-        JSON::ObjectBase::setObject(ASCIILiteral("obj"), WTFMove(value));
+        InspectorObjectBase::setObject(ASCIILiteral("obj"), WTFMove(value));
     }
 };
 
@@ -552,7 +552,7 @@ public:
 
     void setObj(RefPtr<Inspector::Protocol::Test::RecursiveObject1> value)
     {
-        JSON::ObjectBase::setObject(ASCIILiteral("obj"), WTFMove(value));
+        InspectorObjectBase::setObject(ASCIILiteral("obj"), WTFMove(value));
     }
 };
 
@@ -708,31 +708,31 @@ void BindingTraits<Inspector::Protocol::Test::CastedAnimals>::assertValueHasExpe
 void BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::assertValueHasExpectedType(JSON::Value* value)
 {
     ASSERT_ARG(value, value);
-    RefPtr<JSON::Object> object;
+    RefPtr<InspectorObject> object;
     bool castSucceeded = value->asObject(object);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
     {
-        JSON::Object::iterator stringPos = object->find(ASCIILiteral("string"));
+        InspectorObject::iterator stringPos = object->find(ASCIILiteral("string"));
         ASSERT(stringPos != object->end());
         BindingTraits<String>::assertValueHasExpectedType(stringPos->value.get());
     }
     {
-        JSON::Object::iterator numberPos = object->find(ASCIILiteral("number"));
+        InspectorObject::iterator numberPos = object->find(ASCIILiteral("number"));
         ASSERT(numberPos != object->end());
         BindingTraits<int>::assertValueHasExpectedType(numberPos->value.get());
     }
     {
-        JSON::Object::iterator animalsPos = object->find(ASCIILiteral("animals"));
+        InspectorObject::iterator animalsPos = object->find(ASCIILiteral("animals"));
         ASSERT(animalsPos != object->end());
         BindingTraits<Inspector::Protocol::Test::CastedAnimals>::assertValueHasExpectedType(animalsPos->value.get());
     }
     {
-        JSON::Object::iterator idPos = object->find(ASCIILiteral("id"));
+        InspectorObject::iterator idPos = object->find(ASCIILiteral("id"));
         ASSERT(idPos != object->end());
         BindingTraits<int>::assertValueHasExpectedType(idPos->value.get());
     }
     {
-        JSON::Object::iterator treePos = object->find(ASCIILiteral("tree"));
+        InspectorObject::iterator treePos = object->find(ASCIILiteral("tree"));
         ASSERT(treePos != object->end());
         BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasExpectedType(treePos->value.get());
     }
@@ -760,13 +760,13 @@ RefPtr<Inspector::Protocol::Test::TypeNeedingCast> BindingTraits<Inspector::Prot
 void BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasExpectedType(JSON::Value* value)
 {
     ASSERT_ARG(value, value);
-    RefPtr<JSON::Object> object;
+    RefPtr<InspectorObject> object;
     bool castSucceeded = value->asObject(object);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 
     int foundPropertiesCount = 0;
     {
-        JSON::Object::iterator objPos = object->find(ASCIILiteral("obj"));
+        InspectorObject::iterator objPos = object->find(ASCIILiteral("obj"));
         if (objPos != object->end()) {
             BindingTraits<Inspector::Protocol::Test::RecursiveObject2>::assertValueHasExpectedType(objPos->value.get());
             ++foundPropertiesCount;
@@ -781,13 +781,13 @@ void BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasE
 void BindingTraits<Inspector::Protocol::Test::RecursiveObject2>::assertValueHasExpectedType(JSON::Value* value)
 {
     ASSERT_ARG(value, value);
-    RefPtr<JSON::Object> object;
+    RefPtr<InspectorObject> object;
     bool castSucceeded = value->asObject(object);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 
     int foundPropertiesCount = 0;
     {
-        JSON::Object::iterator objPos = object->find(ASCIILiteral("obj"));
+        InspectorObject::iterator objPos = object->find(ASCIILiteral("obj"));
         if (objPos != object->end()) {
             BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasExpectedType(objPos->value.get());
             ++foundPropertiesCount;
@@ -883,7 +883,7 @@ namespace Inspector {
 
 #include "TestProtocolInternal.h"
 #include "TestProtocolTypeConversions.h"
-#include <wtf/JSONValues.h>
+#include <JavaScriptCore/InspectorValues.h>
 
 namespace Inspector {
 
@@ -1032,7 +1032,7 @@ using namespace Inspector;
 #import "TestProtocolInternal.h"
 
 #import "TestProtocolTypeConversions.h"
-#import <wtf/JSONValues.h>
+#import <JavaScriptCore/InspectorValues.h>
 
 using namespace Inspector;
 
@@ -1169,7 +1169,7 @@ __attribute__((visibility ("default")))
 #import "TestProtocol.h"
 #import "TestProtocolJSONObjectPrivate.h"
 #import <JavaScriptCore/AugmentableInspectorController.h>
-#import <wtf/JSONValues.h>
+#import <JavaScriptCore/InspectorValues.h>
 
 
 
@@ -1443,8 +1443,8 @@ using namespace Inspector;
 
 #import "TestProtocolTypeConversions.h"
 #import <WebInspector/RWIProtocolJSONObjectPrivate.h>
+#import <JavaScriptCore/InspectorValues.h>
 #import <wtf/Assertions.h>
-#import <wtf/JSONValues.h>
 
 using namespace Inspector;
 

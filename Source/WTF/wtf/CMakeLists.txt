@@ -60,7 +60,6 @@ set(WTF_HEADERS
     IndexedContainerIterator.h
     IteratorAdaptors.h
     IteratorRange.h
-    JSONValues.h
     Language.h
     ListHashSet.h
     Liveness.h
@@ -231,7 +230,6 @@ set(WTF_SOURCES
     GlobalVersion.cpp
     GregorianDateTime.cpp
     HashTable.cpp
-    JSONValues.cpp
     Language.cpp
     Lock.cpp
     LockedPrintStream.cpp

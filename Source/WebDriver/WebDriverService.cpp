@@ -29,9 +29,11 @@
 #include "Capabilities.h"
 #include "CommandResult.h"
 #include "SessionHost.h"
-#include <wtf/JSONValues.h>
+#include <inspector/InspectorValues.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
+
+using namespace Inspector;
 
 namespace WebDriver {
 
@@ -218,10 +220,10 @@ void WebDriverService::handleRequest(HTTPRequestHandler::Request&& request, Func
         return;
     }
 
-    RefPtr<JSON::Object> parametersObject;
+    RefPtr<InspectorObject> parametersObject;
     if (request.dataLength) {
-        RefPtr<JSON::Value> messageValue;
-        if (!JSON::Value::parseJSON(String::fromUTF8(request.data, request.dataLength), messageValue)) {
+        RefPtr<InspectorValue> messageValue;
+        if (!InspectorValue::parseJSON(String::fromUTF8(request.data, request.dataLength), messageValue)) {
             sendResponse(WTFMove(replyHandler), CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
             return;
         }
@@ -231,7 +233,7 @@ void WebDriverService::handleRequest(HTTPRequestHandler::Request&& request, Func
             return;
         }
     } else
-        parametersObject = JSON::Object::create();
+        parametersObject = InspectorObject::create();
     for (const auto& parameter : parameters)
         parametersObject->setString(parameter.key, parameter.value);
 
@@ -244,33 +246,33 @@ void WebDriverService::sendResponse(Function<void (HTTPRequestHandler::Response&
 {
     // §6.3 Processing Model.
     // https://w3c.github.io/webdriver/webdriver-spec.html#processing-model
-    RefPtr<JSON::Value> resultValue;
+    RefPtr<InspectorValue> resultValue;
     if (result.isError()) {
         // When required to send an error.
         // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-send-an-error
         // Let body be a new JSON Object initialised with the following properties: "error", "message", "stacktrace".
-        auto errorObject = JSON::Object::create();
+        auto errorObject = InspectorObject::create();
         errorObject->setString(ASCIILiteral("error"), result.errorString());
         errorObject->setString(ASCIILiteral("message"), result.errorMessage().value_or(emptyString()));
         errorObject->setString(ASCIILiteral("stacktrace"), emptyString());
         // If the error data dictionary contains any entries, set the "data" field on body to a new JSON Object populated with the dictionary.
         if (auto& additionalData = result.additionalErrorData())
-            errorObject->setObject(ASCIILiteral("data"), RefPtr<JSON::Object> { additionalData });
+            errorObject->setObject(ASCIILiteral("data"), RefPtr<InspectorObject> { additionalData });
         // Send a response with status and body as arguments.
         resultValue = WTFMove(errorObject);
     } else if (auto value = result.result())
         resultValue = WTFMove(value);
     else
-        resultValue = JSON::Value::null();
+        resultValue = InspectorValue::null();
 
     // When required to send a response.
     // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-send-a-response
-    RefPtr<JSON::Object> responseObject = JSON::Object::create();
+    RefPtr<InspectorObject> responseObject = InspectorObject::create();
     responseObject->setValue(ASCIILiteral("value"), WTFMove(resultValue));
     replyHandler({ result.httpStatusCode(), responseObject->toJSONString().utf8(), ASCIILiteral("application/json; charset=utf-8") });
 }
 
-static std::optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject)
+static std::optional<Timeouts> deserializeTimeouts(InspectorObject& timeoutsObject)
 {
     // §8.5 Set Timeouts.
     // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-deserialize-as-a-timeout
@@ -281,7 +283,7 @@ static std::optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject)
             continue;
 
         int timeoutMS;
-        if (it->value->type() != JSON::Value::Type::Integer || !it->value->asInteger(timeoutMS) || timeoutMS < 0 || timeoutMS > INT_MAX)
+        if (it->value->type() != InspectorValue::Type::Integer || !it->value->asInteger(timeoutMS) || timeoutMS < 0 || timeoutMS > INT_MAX)
             return std::nullopt;
 
         if (it->key == "script")
@@ -318,7 +320,7 @@ static std::optional<UnhandledPromptBehavior> deserializeUnhandledPromptBehavior
     return std::nullopt;
 }
 
-void WebDriverService::parseCapabilities(const JSON::Object& matchedCapabilities, Capabilities& capabilities) const
+void WebDriverService::parseCapabilities(const InspectorObject& matchedCapabilities, Capabilities& capabilities) const
 {
     // Matched capabilities have already been validated.
     bool acceptInsecureCerts;
@@ -333,7 +335,7 @@ void WebDriverService::parseCapabilities(const JSON::Object& matchedCapabilities
     String platformName;
     if (matchedCapabilities.getString(ASCIILiteral("platformName"), platformName))
         capabilities.platformName = platformName;
-    RefPtr<JSON::Object> timeouts;
+    RefPtr<InspectorObject> timeouts;
     if (matchedCapabilities.getObject(ASCIILiteral("timeouts"), timeouts))
         capabilities.timeouts = deserializeTimeouts(*timeouts);
     String pageLoadStrategy;
@@ -345,7 +347,7 @@ void WebDriverService::parseCapabilities(const JSON::Object& matchedCapabilities
     platformParseCapabilities(matchedCapabilities, capabilities);
 }
 
-RefPtr<Session> WebDriverService::findSessionOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler)
+RefPtr<Session> WebDriverService::findSessionOrCompleteWithError(InspectorObject& parameters, Function<void (CommandResult&&)>& completionHandler)
 {
     String sessionID;
     if (!parameters.getString(ASCIILiteral("sessionId"), sessionID)) {
@@ -362,11 +364,11 @@ RefPtr<Session> WebDriverService::findSessionOrCompleteWithError(JSON::Object& p
     return session;
 }
 
-RefPtr<JSON::Object> WebDriverService::validatedCapabilities(const JSON::Object& capabilities) const
+RefPtr<InspectorObject> WebDriverService::validatedCapabilities(const InspectorObject& capabilities) const
 {
     // §7.2 Processing Capabilities.
     // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-validate-capabilities
-    RefPtr<JSON::Object> result = JSON::Object::create();
+    RefPtr<InspectorObject> result = InspectorObject::create();
     auto end = capabilities.end();
     for (auto it = capabilities.begin(); it != end; ++it) {
         if (it->value->isNull())
@@ -389,10 +391,10 @@ RefPtr<JSON::Object> WebDriverService::validatedCapabilities(const JSON::Object&
         } else if (it->key == "proxy") {
             // FIXME: implement proxy support.
         } else if (it->key == "timeouts") {
-            RefPtr<JSON::Object> timeouts;
+            RefPtr<InspectorObject> timeouts;
             if (!it->value->asObject(timeouts) || !deserializeTimeouts(*timeouts))
                 return nullptr;
-            result->setValue(it->key, RefPtr<JSON::Value>(it->value));
+            result->setValue(it->key, RefPtr<InspectorValue>(it->value));
         } else if (it->key == "unhandledPromptBehavior") {
             String unhandledPromptBehavior;
             if (!it->value->asString(unhandledPromptBehavior) || !deserializeUnhandledPromptBehavior(unhandledPromptBehavior))
@@ -401,34 +403,34 @@ RefPtr<JSON::Object> WebDriverService::validatedCapabilities(const JSON::Object&
         } else if (it->key.find(":") != notFound) {
             if (!platformValidateCapability(it->key, it->value))
                 return nullptr;
-            result->setValue(it->key, RefPtr<JSON::Value>(it->value));
+            result->setValue(it->key, RefPtr<InspectorValue>(it->value));
         } else
             return nullptr;
     }
     return result;
 }
 
-RefPtr<JSON::Object> WebDriverService::mergeCapabilities(const JSON::Object& requiredCapabilities, const JSON::Object& firstMatchCapabilities) const
+RefPtr<InspectorObject> WebDriverService::mergeCapabilities(const InspectorObject& requiredCapabilities, const InspectorObject& firstMatchCapabilities) const
 {
     // §7.2 Processing Capabilities.
     // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-merging-capabilities
-    RefPtr<JSON::Object> result = JSON::Object::create();
+    RefPtr<InspectorObject> result = InspectorObject::create();
     auto requiredEnd = requiredCapabilities.end();
     for (auto it = requiredCapabilities.begin(); it != requiredEnd; ++it)
-        result->setValue(it->key, RefPtr<JSON::Value>(it->value));
+        result->setValue(it->key, RefPtr<InspectorValue>(it->value));
 
     auto firstMatchEnd = firstMatchCapabilities.end();
     for (auto it = firstMatchCapabilities.begin(); it != firstMatchEnd; ++it) {
         if (requiredCapabilities.find(it->key) != requiredEnd)
             return nullptr;
 
-        result->setValue(it->key, RefPtr<JSON::Value>(it->value));
+        result->setValue(it->key, RefPtr<InspectorValue>(it->value));
     }
 
     return result;
 }
 
-RefPtr<JSON::Object> WebDriverService::matchCapabilities(const JSON::Object& mergedCapabilities, std::optional<String>& errorString) const
+RefPtr<InspectorObject> WebDriverService::matchCapabilities(const InspectorObject& mergedCapabilities, std::optional<String>& errorString) const
 {
     // §7.2 Processing Capabilities.
     // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-matching-capabilities
@@ -436,7 +438,7 @@ RefPtr<JSON::Object> WebDriverService::matchCapabilities(const JSON::Object& mer
 
     // Some capabilities like browser name and version might need to launch the browser,
     // so we only reject the known capabilities that don't match.
-    RefPtr<JSON::Object> matchedCapabilities = JSON::Object::create();
+    RefPtr<InspectorObject> matchedCapabilities = InspectorObject::create();
     if (platformCapabilities.browserName)
         matchedCapabilities->setString(ASCIILiteral("browserName"), platformCapabilities.browserName.value());
     if (platformCapabilities.browserVersion)
@@ -482,30 +484,30 @@ RefPtr<JSON::Object> WebDriverService::matchCapabilities(const JSON::Object& mer
             errorString = platformErrorString;
             return nullptr;
         }
-        matchedCapabilities->setValue(it->key, RefPtr<JSON::Value>(it->value));
+        matchedCapabilities->setValue(it->key, RefPtr<InspectorValue>(it->value));
     }
 
     return matchedCapabilities;
 }
 
-RefPtr<JSON::Object> WebDriverService::processCapabilities(const JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler) const
+RefPtr<InspectorObject> WebDriverService::processCapabilities(const InspectorObject& parameters, Function<void (CommandResult&&)>& completionHandler) const
 {
     // §7.2 Processing Capabilities.
     // https://w3c.github.io/webdriver/webdriver-spec.html#processing-capabilities
 
     // 1. Let capabilities request be the result of getting the property "capabilities" from parameters.
-    RefPtr<JSON::Object> capabilitiesObject;
+    RefPtr<InspectorObject> capabilitiesObject;
     if (!parameters.getObject(ASCIILiteral("capabilities"), capabilitiesObject)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return nullptr;
     }
 
     // 2. Let required capabilities be the result of getting the property "alwaysMatch" from capabilities request.
-    RefPtr<JSON::Value> requiredCapabilitiesValue;
-    RefPtr<JSON::Object> requiredCapabilities;
+    RefPtr<InspectorValue> requiredCapabilitiesValue;
+    RefPtr<InspectorObject> requiredCapabilities;
     if (!capabilitiesObject->getValue(ASCIILiteral("alwaysMatch"), requiredCapabilitiesValue))
         // 2.1. If required capabilities is undefined, set the value to an empty JSON Object.
-        requiredCapabilities = JSON::Object::create();
+        requiredCapabilities = InspectorObject::create();
     else if (!requiredCapabilitiesValue->asObject(requiredCapabilities)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("alwaysMatch is invalid in capabilities")));
         return nullptr;
@@ -519,12 +521,12 @@ RefPtr<JSON::Object> WebDriverService::processCapabilities(const JSON::Object& p
     }
 
     // 3. Let all first match capabilities be the result of getting the property "firstMatch" from capabilities request.
-    RefPtr<JSON::Value> firstMatchCapabilitiesValue;
-    RefPtr<JSON::Array> firstMatchCapabilitiesList;
+    RefPtr<InspectorValue> firstMatchCapabilitiesValue;
+    RefPtr<InspectorArray> firstMatchCapabilitiesList;
     if (!capabilitiesObject->getValue(ASCIILiteral("firstMatch"), firstMatchCapabilitiesValue)) {
         // 3.1. If all first match capabilities is undefined, set the value to a JSON List with a single entry of an empty JSON Object.
-        firstMatchCapabilitiesList = JSON::Array::create();
-        firstMatchCapabilitiesList->pushObject(JSON::Object::create());
+        firstMatchCapabilitiesList = InspectorArray::create();
+        firstMatchCapabilitiesList->pushObject(InspectorObject::create());
     } else if (!firstMatchCapabilitiesValue->asArray(firstMatchCapabilitiesList)) {
         // 3.2. If all first match capabilities is not a JSON List, return error with error code invalid argument.
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("firstMatch is invalid in capabilities")));
@@ -532,13 +534,13 @@ RefPtr<JSON::Object> WebDriverService::processCapabilities(const JSON::Object& p
     }
 
     // 4. Let validated first match capabilities be an empty JSON List.
-    Vector<RefPtr<JSON::Object>> validatedFirstMatchCapabilitiesList;
+    Vector<RefPtr<InspectorObject>> validatedFirstMatchCapabilitiesList;
     auto firstMatchCapabilitiesListLength = firstMatchCapabilitiesList->length();
     validatedFirstMatchCapabilitiesList.reserveInitialCapacity(firstMatchCapabilitiesListLength);
     // 5. For each first match capabilities corresponding to an indexed property in all first match capabilities.
     for (unsigned i = 0; i < firstMatchCapabilitiesListLength; ++i) {
-        RefPtr<JSON::Value> firstMatchCapabilitiesValue = firstMatchCapabilitiesList->get(i);
-        RefPtr<JSON::Object> firstMatchCapabilities;
+        RefPtr<InspectorValue> firstMatchCapabilitiesValue = firstMatchCapabilitiesList->get(i);
+        RefPtr<InspectorObject> firstMatchCapabilities;
         if (!firstMatchCapabilitiesValue->asObject(firstMatchCapabilities)) {
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("Invalid capabilities found in firstMatch")));
             return nullptr;
@@ -574,7 +576,7 @@ RefPtr<JSON::Object> WebDriverService::processCapabilities(const JSON::Object& p
     return nullptr;
 }
 
-void WebDriverService::newSession(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::newSession(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §8.1 New Session.
     // https://www.w3.org/TR/webdriver/#new-session
@@ -606,9 +608,9 @@ void WebDriverService::newSession(RefPtr<JSON::Object>&& parameters, Function<vo
             if (capabilities.timeouts)
                 session->setTimeouts(capabilities.timeouts.value(), [](CommandResult&&) { });
 
-            RefPtr<JSON::Object> resultObject = JSON::Object::create();
+            RefPtr<InspectorObject> resultObject = InspectorObject::create();
             resultObject->setString(ASCIILiteral("sessionId"), session->id());
-            RefPtr<JSON::Object> capabilitiesObject = JSON::Object::create();
+            RefPtr<InspectorObject> capabilitiesObject = InspectorObject::create();
             if (capabilities.browserName)
                 capabilitiesObject->setString(ASCIILiteral("browserName"), capabilities.browserName.value());
             if (capabilities.browserVersion)
@@ -618,7 +620,7 @@ void WebDriverService::newSession(RefPtr<JSON::Object>&& parameters, Function<vo
             if (capabilities.acceptInsecureCerts)
                 capabilitiesObject->setBoolean(ASCIILiteral("acceptInsecureCerts"), capabilities.acceptInsecureCerts.value());
             if (capabilities.timeouts) {
-                RefPtr<JSON::Object> timeoutsObject = JSON::Object::create();
+                RefPtr<InspectorObject> timeoutsObject = InspectorObject::create();
                 if (capabilities.timeouts.value().script)
                     timeoutsObject->setInteger(ASCIILiteral("script"), capabilities.timeouts.value().script.value().millisecondsAs<int>());
                 if (capabilities.timeouts.value().pageLoad)
@@ -659,7 +661,7 @@ void WebDriverService::newSession(RefPtr<JSON::Object>&& parameters, Function<vo
     });
 }
 
-void WebDriverService::deleteSession(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::deleteSession(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §8.2 Delete Session.
     // https://www.w3.org/TR/webdriver/#delete-session
@@ -682,7 +684,7 @@ void WebDriverService::deleteSession(RefPtr<JSON::Object>&& parameters, Function
     });
 }
 
-void WebDriverService::setTimeouts(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::setTimeouts(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §8.5 Set Timeouts.
     // https://www.w3.org/TR/webdriver/#set-timeouts
@@ -699,7 +701,7 @@ void WebDriverService::setTimeouts(RefPtr<JSON::Object>&& parameters, Function<v
     session->setTimeouts(timeouts.value(), WTFMove(completionHandler));
 }
 
-void WebDriverService::go(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::go(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §9.1 Go.
     // https://www.w3.org/TR/webdriver/#go
@@ -722,7 +724,7 @@ void WebDriverService::go(RefPtr<JSON::Object>&& parameters, Function<void (Comm
     });
 }
 
-void WebDriverService::getCurrentURL(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::getCurrentURL(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §9.2 Get Current URL.
     // https://www.w3.org/TR/webdriver/#get-current-url
@@ -739,7 +741,7 @@ void WebDriverService::getCurrentURL(RefPtr<JSON::Object>&& parameters, Function
     });
 }
 
-void WebDriverService::back(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::back(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §9.3 Back.
     // https://www.w3.org/TR/webdriver/#back
@@ -756,7 +758,7 @@ void WebDriverService::back(RefPtr<JSON::Object>&& parameters, Function<void (Co
     });
 }
 
-void WebDriverService::forward(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::forward(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §9.4 Forward.
     // https://www.w3.org/TR/webdriver/#forward
@@ -773,7 +775,7 @@ void WebDriverService::forward(RefPtr<JSON::Object>&& parameters, Function<void 
     });
 }
 
-void WebDriverService::refresh(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::refresh(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §9.5 Refresh.
     // https://www.w3.org/TR/webdriver/#refresh
@@ -790,7 +792,7 @@ void WebDriverService::refresh(RefPtr<JSON::Object>&& parameters, Function<void 
     });
 }
 
-void WebDriverService::getTitle(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::getTitle(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §9.6 Get Title.
     // https://www.w3.org/TR/webdriver/#get-title
@@ -807,7 +809,7 @@ void WebDriverService::getTitle(RefPtr<JSON::Object>&& parameters, Function<void
     });
 }
 
-void WebDriverService::getWindowHandle(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::getWindowHandle(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §10.1 Get Window Handle.
     // https://www.w3.org/TR/webdriver/#get-window-handle
@@ -815,7 +817,7 @@ void WebDriverService::getWindowHandle(RefPtr<JSON::Object>&& parameters, Functi
         session->getWindowHandle(WTFMove(completionHandler));
 }
 
-void WebDriverService::getWindowRect(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::getWindowRect(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §10.7.1 Get Window Rect.
     // https://w3c.github.io/webdriver/webdriver-spec.html#get-window-rect
@@ -823,7 +825,7 @@ void WebDriverService::getWindowRect(RefPtr<JSON::Object>&& parameters, Function
         session->getWindowRect(WTFMove(completionHandler));
 }
 
-static std::optional<double> valueAsNumberInRange(const JSON::Value& value, double minAllowed = 0, double maxAllowed = INT_MAX)
+static std::optional<double> valueAsNumberInRange(const InspectorValue& value, double minAllowed = 0, double maxAllowed = INT_MAX)
 {
     double number;
     if (!value.asDouble(number))
@@ -838,11 +840,11 @@ static std::optional<double> valueAsNumberInRange(const JSON::Value& value, doub
     return number;
 }
 
-void WebDriverService::setWindowRect(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::setWindowRect(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §10.7.2 Set Window Rect.
     // https://w3c.github.io/webdriver/webdriver-spec.html#set-window-rect
-    RefPtr<JSON::Value> value;
+    RefPtr<InspectorValue> value;
     std::optional<double> width;
     if (parameters->getValue(ASCIILiteral("width"), value)) {
         if (auto number = valueAsNumberInRange(*value))
@@ -887,7 +889,7 @@ void WebDriverService::setWindowRect(RefPtr<JSON::Object>&& parameters, Function
         session->setWindowRect(x, y, width, height, WTFMove(completionHandler));
 }
 
-void WebDriverService::closeWindow(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::closeWindow(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §10.2 Close Window.
     // https://www.w3.org/TR/webdriver/#close-window
@@ -901,7 +903,7 @@ void WebDriverService::closeWindow(RefPtr<JSON::Object>&& parameters, Function<v
             return;
         }
 
-        RefPtr<JSON::Array> handles;
+        RefPtr<InspectorArray> handles;
         if (result.result()->asArray(handles) && !handles->length()) {
             m_sessions.remove(session->id());
             if (m_activeSession == session.get())
@@ -911,7 +913,7 @@ void WebDriverService::closeWindow(RefPtr<JSON::Object>&& parameters, Function<v
     });
 }
 
-void WebDriverService::switchToWindow(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::switchToWindow(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §10.3 Switch To Window.
     // https://www.w3.org/TR/webdriver/#switch-to-window
@@ -928,7 +930,7 @@ void WebDriverService::switchToWindow(RefPtr<JSON::Object>&& parameters, Functio
     session->switchToWindow(handle, WTFMove(completionHandler));
 }
 
-void WebDriverService::getWindowHandles(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::getWindowHandles(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §10.4 Get Window Handles.
     // https://www.w3.org/TR/webdriver/#get-window-handles
@@ -936,7 +938,7 @@ void WebDriverService::getWindowHandles(RefPtr<JSON::Object>&& parameters, Funct
         session->getWindowHandles(WTFMove(completionHandler));
 }
 
-void WebDriverService::switchToFrame(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::switchToFrame(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §10.5 Switch To Frame.
     // https://www.w3.org/TR/webdriver/#switch-to-frame
@@ -944,7 +946,7 @@ void WebDriverService::switchToFrame(RefPtr<JSON::Object>&& parameters, Function
     if (!session)
         return;
 
-    RefPtr<JSON::Value> frameID;
+    RefPtr<InspectorValue> frameID;
     if (!parameters->getValue(ASCIILiteral("id"), frameID)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return;
@@ -959,7 +961,7 @@ void WebDriverService::switchToFrame(RefPtr<JSON::Object>&& parameters, Function
     });
 }
 
-void WebDriverService::switchToParentFrame(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::switchToParentFrame(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §10.6 Switch To Parent Frame.
     // https://www.w3.org/TR/webdriver/#switch-to-parent-frame
@@ -976,7 +978,7 @@ void WebDriverService::switchToParentFrame(RefPtr<JSON::Object>&& parameters, Fu
     });
 }
 
-static std::optional<String> findElementOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler)
+static std::optional<String> findElementOrCompleteWithError(InspectorObject& parameters, Function<void (CommandResult&&)>& completionHandler)
 {
     String elementID;
     if (!parameters.getString(ASCIILiteral("elementId"), elementID) || elementID.isEmpty()) {
@@ -986,7 +988,7 @@ static std::optional<String> findElementOrCompleteWithError(JSON::Object& parame
     return elementID;
 }
 
-static bool findStrategyAndSelectorOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler, String& strategy, String& selector)
+static bool findStrategyAndSelectorOrCompleteWithError(InspectorObject& parameters, Function<void (CommandResult&&)>& completionHandler, String& strategy, String& selector)
 {
     if (!parameters.getString(ASCIILiteral("using"), strategy)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
@@ -999,7 +1001,7 @@ static bool findStrategyAndSelectorOrCompleteWithError(JSON::Object& parameters,
     return true;
 }
 
-void WebDriverService::findElement(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::findElement(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §12.2 Find Element.
     // https://www.w3.org/TR/webdriver/#find-element
@@ -1020,7 +1022,7 @@ void WebDriverService::findElement(RefPtr<JSON::Object>&& parameters, Function<v
     });
 }
 
-void WebDriverService::findElements(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::findElements(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §12.3 Find Elements.
     // https://www.w3.org/TR/webdriver/#find-elements
@@ -1041,7 +1043,7 @@ void WebDriverService::findElements(RefPtr<JSON::Object>&& parameters, Function<
     });
 }
 
-void WebDriverService::findElementFromElement(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::findElementFromElement(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §12.4 Find Element From Element.
     // https://www.w3.org/TR/webdriver/#find-element-from-element
@@ -1060,7 +1062,7 @@ void WebDriverService::findElementFromElement(RefPtr<JSON::Object>&& parameters,
     session->findElements(strategy, selector, Session::FindElementsMode::Single, elementID.value(), WTFMove(completionHandler));
 }
 
-void WebDriverService::findElementsFromElement(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::findElementsFromElement(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §12.5 Find Elements From Element.
     // https://www.w3.org/TR/webdriver/#find-elements-from-element
@@ -1079,7 +1081,7 @@ void WebDriverService::findElementsFromElement(RefPtr<JSON::Object>&& parameters
     session->findElements(strategy, selector, Session::FindElementsMode::Multiple, elementID.value(), WTFMove(completionHandler));
 }
 
-void WebDriverService::isElementSelected(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::isElementSelected(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §13.1 Is Element Selected.
     // https://www.w3.org/TR/webdriver/#is-element-selected
@@ -1094,7 +1096,7 @@ void WebDriverService::isElementSelected(RefPtr<JSON::Object>&& parameters, Func
     session->isElementSelected(elementID.value(), WTFMove(completionHandler));
 }
 
-void WebDriverService::getElementAttribute(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::getElementAttribute(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §13.2 Get Element Attribute.
     // https://www.w3.org/TR/webdriver/#get-element-attribute
@@ -1115,7 +1117,7 @@ void WebDriverService::getElementAttribute(RefPtr<JSON::Object>&& parameters, Fu
     session->getElementAttribute(elementID.value(), attribute, WTFMove(completionHandler));
 }
 
-void WebDriverService::getElementText(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::getElementText(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §13.5 Get Element Text.
     // https://www.w3.org/TR/webdriver/#get-element-text
@@ -1130,7 +1132,7 @@ void WebDriverService::getElementText(RefPtr<JSON::Object>&& parameters, Functio
     session->getElementText(elementID.value(), WTFMove(completionHandler));
 }
 
-void WebDriverService::getElementTagName(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::getElementTagName(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §13.6 Get Element Tag Name.
     // https://www.w3.org/TR/webdriver/#get-element-tag-name
@@ -1145,7 +1147,7 @@ void WebDriverService::getElementTagName(RefPtr<JSON::Object>&& parameters, Func
     session->getElementTagName(elementID.value(), WTFMove(completionHandler));
 }
 
-void WebDriverService::getElementRect(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::getElementRect(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §13.7 Get Element Rect.
     // https://www.w3.org/TR/webdriver/#get-element-rect
@@ -1160,7 +1162,7 @@ void WebDriverService::getElementRect(RefPtr<JSON::Object>&& parameters, Functio
     session->getElementRect(elementID.value(), WTFMove(completionHandler));
 }
 
-void WebDriverService::isElementEnabled(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::isElementEnabled(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §13.8 Is Element Enabled.
     // https://www.w3.org/TR/webdriver/#is-element-enabled
@@ -1175,7 +1177,7 @@ void WebDriverService::isElementEnabled(RefPtr<JSON::Object>&& parameters, Funct
     session->isElementEnabled(elementID.value(), WTFMove(completionHandler));
 }
 
-void WebDriverService::isElementDisplayed(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::isElementDisplayed(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §C. Element Displayedness.
     // https://www.w3.org/TR/webdriver/#element-displayedness
@@ -1190,7 +1192,7 @@ void WebDriverService::isElementDisplayed(RefPtr<JSON::Object>&& parameters, Fun
     session->isElementDisplayed(elementID.value(), WTFMove(completionHandler));
 }
 
-void WebDriverService::elementClick(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::elementClick(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §14.1 Element Click.
     // https://www.w3.org/TR/webdriver/#element-click
@@ -1205,7 +1207,7 @@ void WebDriverService::elementClick(RefPtr<JSON::Object>&& parameters, Function<
     session->elementClick(elementID.value(), WTFMove(completionHandler));
 }
 
-void WebDriverService::elementClear(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::elementClear(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §14.2 Element Clear.
     // https://www.w3.org/TR/webdriver/#element-clear
@@ -1220,7 +1222,7 @@ void WebDriverService::elementClear(RefPtr<JSON::Object>&& parameters, Function<
     session->elementClear(elementID.value(), WTFMove(completionHandler));
 }
 
-void WebDriverService::elementSendKeys(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::elementSendKeys(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §14.3 Element Send Keys.
     // https://www.w3.org/TR/webdriver/#element-send-keys
@@ -1232,7 +1234,7 @@ void WebDriverService::elementSendKeys(RefPtr<JSON::Object>&& parameters, Functi
     if (!elementID)
         return;
 
-    RefPtr<JSON::Array> valueArray;
+    RefPtr<InspectorArray> valueArray;
     if (!parameters->getArray(ASCIILiteral("value"), valueArray)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return;
@@ -1260,7 +1262,7 @@ void WebDriverService::elementSendKeys(RefPtr<JSON::Object>&& parameters, Functi
     session->elementSendKeys(elementID.value(), WTFMove(value), WTFMove(completionHandler));
 }
 
-void WebDriverService::elementSubmit(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::elementSubmit(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
     if (!session)
@@ -1273,7 +1275,7 @@ void WebDriverService::elementSubmit(RefPtr<JSON::Object>&& parameters, Function
     session->elementSubmit(elementID.value(), WTFMove(completionHandler));
 }
 
-static bool findScriptAndArgumentsOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler, String& script, RefPtr<JSON::Array>& arguments)
+static bool findScriptAndArgumentsOrCompleteWithError(InspectorObject& parameters, Function<void (CommandResult&&)>& completionHandler, String& script, RefPtr<InspectorArray>& arguments)
 {
     if (!parameters.getString(ASCIILiteral("script"), script)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
@@ -1286,7 +1288,7 @@ static bool findScriptAndArgumentsOrCompleteWithError(JSON::Object& parameters, 
     return true;
 }
 
-void WebDriverService::executeScript(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::executeScript(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §15.2.1 Execute Script.
     // https://www.w3.org/TR/webdriver/#execute-script
@@ -1295,7 +1297,7 @@ void WebDriverService::executeScript(RefPtr<JSON::Object>&& parameters, Function
         return;
 
     String script;
-    RefPtr<JSON::Array> arguments;
+    RefPtr<InspectorArray> arguments;
     if (!findScriptAndArgumentsOrCompleteWithError(*parameters, completionHandler, script, arguments))
         return;
 
@@ -1308,7 +1310,7 @@ void WebDriverService::executeScript(RefPtr<JSON::Object>&& parameters, Function
     });
 }
 
-void WebDriverService::executeAsyncScript(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::executeAsyncScript(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §15.2.2 Execute Async Script.
     // https://www.w3.org/TR/webdriver/#execute-async-script
@@ -1317,7 +1319,7 @@ void WebDriverService::executeAsyncScript(RefPtr<JSON::Object>&& parameters, Fun
         return;
 
     String script;
-    RefPtr<JSON::Array> arguments;
+    RefPtr<InspectorArray> arguments;
     if (!findScriptAndArgumentsOrCompleteWithError(*parameters, completionHandler, script, arguments))
         return;
 
@@ -1330,7 +1332,7 @@ void WebDriverService::executeAsyncScript(RefPtr<JSON::Object>&& parameters, Fun
     });
 }
 
-void WebDriverService::getAllCookies(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::getAllCookies(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §16.1 Get All Cookies.
     // https://w3c.github.io/webdriver/webdriver-spec.html#get-all-cookies
@@ -1347,7 +1349,7 @@ void WebDriverService::getAllCookies(RefPtr<JSON::Object>&& parameters, Function
     });
 }
 
-void WebDriverService::getNamedCookie(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::getNamedCookie(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §16.2 Get Named Cookie.
     // https://w3c.github.io/webdriver/webdriver-spec.html#get-named-cookie
@@ -1370,7 +1372,7 @@ void WebDriverService::getNamedCookie(RefPtr<JSON::Object>&& parameters, Functio
     });
 }
 
-static std::optional<Session::Cookie> deserializeCookie(JSON::Object& cookieObject)
+static std::optional<Session::Cookie> deserializeCookie(InspectorObject& cookieObject)
 {
     Session::Cookie cookie;
     if (!cookieObject.getString(ASCIILiteral("name"), cookie.name) || cookie.name.isEmpty())
@@ -1378,7 +1380,7 @@ static std::optional<Session::Cookie> deserializeCookie(JSON::Object& cookieObje
     if (!cookieObject.getString(ASCIILiteral("value"), cookie.value) || cookie.value.isEmpty())
         return std::nullopt;
 
-    RefPtr<JSON::Value> value;
+    RefPtr<InspectorValue> value;
     if (cookieObject.getValue(ASCIILiteral("path"), value)) {
         String path;
         if (!value->asString(path))
@@ -1414,7 +1416,7 @@ static std::optional<Session::Cookie> deserializeCookie(JSON::Object& cookieObje
     return cookie;
 }
 
-void WebDriverService::addCookie(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::addCookie(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §16.3 Add Cookie.
     // https://w3c.github.io/webdriver/webdriver-spec.html#add-cookie
@@ -1422,7 +1424,7 @@ void WebDriverService::addCookie(RefPtr<JSON::Object>&& parameters, Function<voi
     if (!session)
         return;
 
-    RefPtr<JSON::Object> cookieObject;
+    RefPtr<InspectorObject> cookieObject;
     if (!parameters->getObject(ASCIILiteral("cookie"), cookieObject)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return;
@@ -1443,7 +1445,7 @@ void WebDriverService::addCookie(RefPtr<JSON::Object>&& parameters, Function<voi
     });
 }
 
-void WebDriverService::deleteCookie(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::deleteCookie(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §16.4 Delete Cookie.
     // https://w3c.github.io/webdriver/webdriver-spec.html#delete-cookie
@@ -1466,7 +1468,7 @@ void WebDriverService::deleteCookie(RefPtr<JSON::Object>&& parameters, Function<
     });
 }
 
-void WebDriverService::deleteAllCookies(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::deleteAllCookies(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §16.5 Delete All Cookies.
     // https://w3c.github.io/webdriver/webdriver-spec.html#delete-all-cookies
@@ -1483,7 +1485,7 @@ void WebDriverService::deleteAllCookies(RefPtr<JSON::Object>&& parameters, Funct
     });
 }
 
-void WebDriverService::dismissAlert(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::dismissAlert(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §18.1 Dismiss Alert.
     // https://w3c.github.io/webdriver/webdriver-spec.html#dismiss-alert
@@ -1500,7 +1502,7 @@ void WebDriverService::dismissAlert(RefPtr<JSON::Object>&& parameters, Function<
     });
 }
 
-void WebDriverService::acceptAlert(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::acceptAlert(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §18.2 Accept Alert.
     // https://w3c.github.io/webdriver/webdriver-spec.html#accept-alert
@@ -1517,7 +1519,7 @@ void WebDriverService::acceptAlert(RefPtr<JSON::Object>&& parameters, Function<v
     });
 }
 
-void WebDriverService::getAlertText(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::getAlertText(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §18.3 Get Alert Text.
     // https://w3c.github.io/webdriver/webdriver-spec.html#get-alert-text
@@ -1534,7 +1536,7 @@ void WebDriverService::getAlertText(RefPtr<JSON::Object>&& parameters, Function<
     });
 }
 
-void WebDriverService::sendAlertText(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::sendAlertText(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §18.4 Send Alert Text.
     // https://w3c.github.io/webdriver/webdriver-spec.html#send-alert-text
@@ -1557,7 +1559,7 @@ void WebDriverService::sendAlertText(RefPtr<JSON::Object>&& parameters, Function
     });
 }
 
-void WebDriverService::takeScreenshot(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::takeScreenshot(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §19.1 Take Screenshot.
     // https://w3c.github.io/webdriver/webdriver-spec.html#take-screenshot
@@ -1574,7 +1576,7 @@ void WebDriverService::takeScreenshot(RefPtr<JSON::Object>&& parameters, Functio
     });
 }
 
-void WebDriverService::takeElementScreenshot(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::takeElementScreenshot(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §19.2 Take Element Screenshot.
     // https://w3c.github.io/webdriver/webdriver-spec.html#take-element-screenshot

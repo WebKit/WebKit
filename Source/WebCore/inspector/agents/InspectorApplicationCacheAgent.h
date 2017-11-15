@@ -32,6 +32,8 @@
 
 namespace Inspector {
 class ApplicationCacheFrontendDispatcher;
+class InspectorObject;
+class InspectorValue;
 }
 
 namespace WebCore {

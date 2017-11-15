@@ -57,7 +57,7 @@
 #include "SocketProvider.h"
 #include "StyledElement.h"
 #include <inspector/InspectorProtocolObjects.h>
-#include <wtf/JSONValues.h>
+#include <inspector/InspectorValues.h>
 
 
 namespace WebCore {
@@ -749,14 +749,14 @@ void InspectorOverlay::reset(const IntSize& viewportSize, const IntSize& frameVi
     evaluateInOverlay("reset", WTFMove(configObject));
 }
 
-static void evaluateCommandInOverlay(Page* page, Ref<JSON::Array>&& command)
+static void evaluateCommandInOverlay(Page* page, Ref<InspectorArray>&& command)
 {
     page->mainFrame().script().evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ')')));
 }
 
 void InspectorOverlay::evaluateInOverlay(const String& method)
 {
-    Ref<JSON::Array> command = JSON::Array::create();
+    Ref<InspectorArray> command = InspectorArray::create();
     command->pushString(method);
 
     evaluateCommandInOverlay(overlayPage(), WTFMove(command));
@@ -764,16 +764,16 @@ void InspectorOverlay::evaluateInOverlay(const String& method)
 
 void InspectorOverlay::evaluateInOverlay(const String& method, const String& argument)
 {
-    Ref<JSON::Array> command = JSON::Array::create();
+    Ref<InspectorArray> command = InspectorArray::create();
     command->pushString(method);
     command->pushString(argument);
 
     evaluateCommandInOverlay(overlayPage(), WTFMove(command));
 }
 
-void InspectorOverlay::evaluateInOverlay(const String& method, RefPtr<JSON::Value>&& argument)
+void InspectorOverlay::evaluateInOverlay(const String& method, RefPtr<InspectorValue>&& argument)
 {
-    Ref<JSON::Array> command = JSON::Array::create();
+    Ref<InspectorArray> command = InspectorArray::create();
     command->pushString(method);
     command->pushValue(WTFMove(argument));
 

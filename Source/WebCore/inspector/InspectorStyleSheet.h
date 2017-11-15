@@ -27,14 +27,11 @@
 #include "CSSPropertySourceData.h"
 #include "CSSStyleDeclaration.h"
 #include <inspector/InspectorProtocolObjects.h>
+#include <inspector/InspectorValues.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 class ParsedStyleSheet;
-
-namespace JSON {
-class Object;
-}
 
 namespace WebCore {
 
@@ -54,7 +51,7 @@ class InspectorCSSId {
 public:
     InspectorCSSId() = default;
 
-    explicit InspectorCSSId(const JSON::Object& value)
+    explicit InspectorCSSId(const Inspector::InspectorObject& value)
     {
         if (!value.getString(ASCIILiteral("styleSheetId"), m_styleSheetId))
             return;

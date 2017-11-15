@@ -39,9 +39,9 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-namespace JSON {
-class Object;
-class Value;
+namespace Inspector {
+class InspectorObject;
+class InspectorValue;
 
 namespace Protocol {
 namespace OverlayTypes {
@@ -151,7 +151,7 @@ private:
     void reset(const IntSize& viewportSize, const IntSize& frameViewFullSize);
     void evaluateInOverlay(const String& method);
     void evaluateInOverlay(const String& method, const String& argument);
-    void evaluateInOverlay(const String& method, RefPtr<JSON::Value>&& argument);
+    void evaluateInOverlay(const String& method, RefPtr<Inspector::InspectorValue>&& argument);
 
     Page& m_page;
     InspectorClient* m_client;

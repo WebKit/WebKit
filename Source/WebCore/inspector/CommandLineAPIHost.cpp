@@ -42,11 +42,11 @@
 #include "Pasteboard.h"
 #include "Storage.h"
 #include <bindings/ScriptValue.h>
+#include <inspector/InspectorValues.h>
 #include <inspector/agents/InspectorAgent.h>
 #include <inspector/agents/InspectorConsoleAgent.h>
 #include <runtime/JSCInlines.h>
 #include <runtime/JSLock.h>
-#include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
 
@@ -81,7 +81,7 @@ void CommandLineAPIHost::inspect(JSC::ExecState& state, JSC::JSValue valueToInsp
     if (!m_inspectorAgent)
         return;
 
-    RefPtr<JSON::Object> hintsObject;
+    RefPtr<InspectorObject> hintsObject;
     if (!Inspector::toInspectorValue(state, hintsValue)->asObject(hintsObject))
         return;
 

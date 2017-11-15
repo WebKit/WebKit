@@ -39,6 +39,7 @@ namespace Inspector {
 
 class BackendDispatcher;
 class InspectorEnvironment;
+class InspectorObject;
 
 typedef String ErrorString;
 
@@ -56,7 +57,7 @@ public:
     void disable(ErrorString&) override;
     void initialized(ErrorString&) override;
 
-    void inspect(RefPtr<Protocol::Runtime::RemoteObject>&& objectToInspect, RefPtr<JSON::Object>&& hints);
+    void inspect(RefPtr<Protocol::Runtime::RemoteObject>&& objectToInspect, RefPtr<InspectorObject>&& hints);
     void evaluateForTestInFrontend(const String& script);
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -70,7 +71,7 @@ private:
     Ref<InspectorBackendDispatcher> m_backendDispatcher;
 
     Vector<String> m_pendingEvaluateTestCommands;
-    std::pair<RefPtr<Protocol::Runtime::RemoteObject>, RefPtr<JSON::Object>> m_pendingInspectData;
+    std::pair<RefPtr<Protocol::Runtime::RemoteObject>, RefPtr<InspectorObject>> m_pendingInspectData;
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     RefPtr<Inspector::Protocol::Array<String>> m_pendingExtraDomainsData;
 #endif

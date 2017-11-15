@@ -33,10 +33,10 @@
 #include "InjectedScriptBase.h"
 
 #include "DebuggerEvalEnabler.h"
+#include "InspectorValues.h"
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "ScriptFunctionCall.h"
-#include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -75,10 +75,10 @@ JSC::JSValue InjectedScriptBase::callFunctionWithEvalEnabled(Deprecated::ScriptF
     return function.call(hadException);
 }
 
-void InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& function, RefPtr<JSON::Value>* result)
+void InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& function, RefPtr<InspectorValue>* result)
 {
     if (hasNoValue() || !hasAccessToInspectedScriptState()) {
-        *result = JSON::Value::null();
+        *result = InspectorValue::null();
         return;
     }
 
@@ -89,33 +89,33 @@ void InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& function, RefP
     if (!hadException) {
         *result = toInspectorValue(*m_injectedScriptObject.scriptState(), resultValue);
         if (!*result)
-            *result = JSON::Value::create(String::format("Object has too long reference chain (must not be longer than %d)", JSON::Value::maxDepth));
+            *result = InspectorValue::create(String::format("Object has too long reference chain (must not be longer than %d)", InspectorValue::maxDepth));
     } else
-        *result = JSON::Value::create("Exception while making a call.");
+        *result = InspectorValue::create("Exception while making a call.");
 }
 
 void InjectedScriptBase::makeEvalCall(ErrorString& errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Protocol::Runtime::RemoteObject>* objectResult, Protocol::OptOutput<bool>* wasThrown, Protocol::OptOutput<int>* savedResultIndex)
 {
-    RefPtr<JSON::Value> result;
+    RefPtr<InspectorValue> result;
     makeCall(function, &result);
     if (!result) {
         errorString = ASCIILiteral("Internal error: result value is empty");
         return;
     }
 
-    if (result->type() == JSON::Value::Type::String) {
+    if (result->type() == InspectorValue::Type::String) {
         result->asString(errorString);
         ASSERT(errorString.length());
         return;
     }
 
-    RefPtr<JSON::Object> resultTuple;
+    RefPtr<InspectorObject> resultTuple;
     if (!result->asObject(resultTuple)) {
         errorString = ASCIILiteral("Internal error: result is not an Object");
         return;
     }
 
-    RefPtr<JSON::Object> resultObject;
+    RefPtr<InspectorObject> resultObject;
     if (!resultTuple->getObject(ASCIILiteral("result"), resultObject)) {
         errorString = ASCIILiteral("Internal error: result is not a pair of value and wasThrown flag");
         return;

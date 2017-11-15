@@ -37,7 +37,7 @@
 #include "InstrumentingAgents.h"
 #include <inspector/ContentSearchUtilities.h>
 #include <inspector/InspectorFrontendDispatchers.h>
-#include <wtf/JSONValues.h>
+#include <inspector/InspectorValues.h>
 #include <yarr/RegularExpression.h>
 
 namespace {
@@ -162,7 +162,7 @@ void InspectorDOMDebuggerAgent::removeBreakpoint(ErrorString& error, const Strin
 void InspectorDOMDebuggerAgent::didInvalidateStyleAttr(Node& node)
 {
     if (hasBreakpoint(&node, AttributeModified)) {
-        Ref<JSON::Object> eventData = JSON::Object::create();
+        Ref<InspectorObject> eventData = InspectorObject::create();
         descriptionForDOMEvent(node, AttributeModified, false, eventData.get());
         m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
     }
@@ -265,7 +265,7 @@ void InspectorDOMDebuggerAgent::willInsertDOMNode(Node& parent)
         return;
 
     if (hasBreakpoint(&parent, SubtreeModified)) {
-        Ref<JSON::Object> eventData = JSON::Object::create();
+        Ref<InspectorObject> eventData = InspectorObject::create();
         descriptionForDOMEvent(parent, SubtreeModified, true, eventData.get());
         m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
     }
@@ -278,11 +278,11 @@ void InspectorDOMDebuggerAgent::willRemoveDOMNode(Node& node)
 
     Node* parentNode = InspectorDOMAgent::innerParentNode(&node);
     if (hasBreakpoint(&node, NodeRemoved)) {
-        Ref<JSON::Object> eventData = JSON::Object::create();
+        Ref<InspectorObject> eventData = InspectorObject::create();
         descriptionForDOMEvent(node, NodeRemoved, false, eventData.get());
         m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
     } else if (parentNode && hasBreakpoint(parentNode, SubtreeModified)) {
-        Ref<JSON::Object> eventData = JSON::Object::create();
+        Ref<InspectorObject> eventData = InspectorObject::create();
         descriptionForDOMEvent(node, SubtreeModified, false, eventData.get());
         m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
     }
@@ -294,13 +294,13 @@ void InspectorDOMDebuggerAgent::willModifyDOMAttr(Element& element)
         return;
 
     if (hasBreakpoint(&element, AttributeModified)) {
-        Ref<JSON::Object> eventData = JSON::Object::create();
+        Ref<InspectorObject> eventData = InspectorObject::create();
         descriptionForDOMEvent(element, AttributeModified, false, eventData.get());
         m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
     }
 }
 
-void InspectorDOMDebuggerAgent::descriptionForDOMEvent(Node& target, int breakpointType, bool insertion, JSON::Object& description)
+void InspectorDOMDebuggerAgent::descriptionForDOMEvent(Node& target, int breakpointType, bool insertion, InspectorObject& description)
 {
     ASSERT(hasBreakpoint(&target, breakpointType));
 
@@ -365,7 +365,7 @@ void InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded(bool isDOMEvent, cons
     if (!shouldPause)
         return;
 
-    Ref<JSON::Object> eventData = JSON::Object::create();
+    Ref<InspectorObject> eventData = InspectorObject::create();
     eventData->setString(ASCIILiteral("eventName"), fullEventName);
 
     if (synchronous)
@@ -418,7 +418,7 @@ void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(const String& url)
     if (breakpointURL.isNull())
         return;
 
-    Ref<JSON::Object> eventData = JSON::Object::create();
+    Ref<InspectorObject> eventData = InspectorObject::create();
     eventData->setString("breakpointURL", breakpointURL);
     eventData->setString("url", url);
     m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::XHR, WTFMove(eventData));

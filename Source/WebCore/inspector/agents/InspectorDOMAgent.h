@@ -33,6 +33,7 @@
 #include "InspectorWebAgentBase.h"
 #include <inspector/InspectorBackendDispatchers.h>
 #include <inspector/InspectorFrontendDispatchers.h>
+#include <inspector/InspectorValues.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -46,11 +47,6 @@ class InjectedScriptManager;
 namespace JSC {
 class ExecState;
 class JSValue;
-}
-
-namespace JSON {
-class Array;
-class Object;
 }
 
 namespace WebCore {
@@ -130,23 +126,23 @@ public:
     void getEventListenersForNode(ErrorString&, int nodeId, const WTF::String* const objectGroup, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::EventListener>>& listenersArray) override;
     void setEventListenerDisabled(ErrorString&, int eventListenerId, bool disabled) override;
     void getAccessibilityPropertiesForNode(ErrorString&, int nodeId, RefPtr<Inspector::Protocol::DOM::AccessibilityProperties>& axProperties) override;
-    void performSearch(ErrorString&, const String& whitespaceTrimmedQuery, const JSON::Array* nodeIds, String* searchId, int* resultCount) override;
+    void performSearch(ErrorString&, const String& whitespaceTrimmedQuery, const Inspector::InspectorArray* nodeIds, String* searchId, int* resultCount) override;
     void getSearchResults(ErrorString&, const String& searchId, int fromIndex, int toIndex, RefPtr<Inspector::Protocol::Array<int>>&) override;
     void discardSearchResults(ErrorString&, const String& searchId) override;
     void resolveNode(ErrorString&, int nodeId, const String* const objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result) override;
     void getAttributes(ErrorString&, int nodeId, RefPtr<Inspector::Protocol::Array<String>>& result) override;
-    void setInspectModeEnabled(ErrorString&, bool enabled, const JSON::Object* highlightConfig) override;
+    void setInspectModeEnabled(ErrorString&, bool enabled, const Inspector::InspectorObject* highlightConfig) override;
     void requestNode(ErrorString&, const String& objectId, int* nodeId) override;
     void pushNodeByPathToFrontend(ErrorString&, const String& path, int* nodeId) override;
     void pushNodeByBackendIdToFrontend(ErrorString&, BackendNodeId, int* nodeId) override;
     void releaseBackendNodeIds(ErrorString&, const String& nodeGroup) override;
     void hideHighlight(ErrorString&) override;
-    void highlightRect(ErrorString&, int x, int y, int width, int height, const JSON::Object* color, const JSON::Object* outlineColor, const bool* const usePageCoordinates) override;
-    void highlightQuad(ErrorString&, const JSON::Array& quad, const JSON::Object* color, const JSON::Object* outlineColor, const bool* const usePageCoordinates) override;
-    void highlightSelector(ErrorString&, const JSON::Object& highlightConfig, const String& selectorString, const String* const frameId) override;
-    void highlightNode(ErrorString&, const JSON::Object& highlightConfig, const int* const nodeId, const String* const objectId) override;
-    void highlightNodeList(ErrorString&, const JSON::Array& nodeIds, const JSON::Object& highlightConfig) override;
-    void highlightFrame(ErrorString&, const String& frameId, const JSON::Object* color, const JSON::Object* outlineColor) override;
+    void highlightRect(ErrorString&, int x, int y, int width, int height, const Inspector::InspectorObject* color, const Inspector::InspectorObject* outlineColor, const bool* const usePageCoordinates) override;
+    void highlightQuad(ErrorString&, const Inspector::InspectorArray& quad, const Inspector::InspectorObject* color, const Inspector::InspectorObject* outlineColor, const bool* const usePageCoordinates) override;
+    void highlightSelector(ErrorString&, const Inspector::InspectorObject& highlightConfig, const String& selectorString, const String* const frameId) override;
+    void highlightNode(ErrorString&, const Inspector::InspectorObject& highlightConfig, const int* const nodeId, const String* const objectId) override;
+    void highlightNodeList(ErrorString&, const Inspector::InspectorArray& nodeIds, const Inspector::InspectorObject& highlightConfig) override;
+    void highlightFrame(ErrorString&, const String& frameId, const Inspector::InspectorObject* color, const Inspector::InspectorObject* outlineColor) override;
     void moveTo(ErrorString&, int nodeId, int targetNodeId, const int* const anchorNodeId, int* newNodeId) override;
     void undo(ErrorString&) override;
     void redo(ErrorString&) override;
@@ -221,8 +217,8 @@ public:
 
 private:
     void highlightMousedOverNode();
-    void setSearchingForNode(ErrorString&, bool enabled, const JSON::Object* highlightConfig);
-    std::unique_ptr<HighlightConfig> highlightConfigFromInspectorObject(ErrorString&, const JSON::Object* highlightInspectorObject);
+    void setSearchingForNode(ErrorString&, bool enabled, const Inspector::InspectorObject* highlightConfig);
+    std::unique_ptr<HighlightConfig> highlightConfigFromInspectorObject(ErrorString&, const Inspector::InspectorObject* highlightInspectorObject);
 
     // Node-related methods.
     typedef HashMap<RefPtr<Node>, int> NodeToIdMap;
@@ -248,7 +244,7 @@ private:
 
     void discardBindings();
 
-    void innerHighlightQuad(std::unique_ptr<FloatQuad>, const JSON::Object* color, const JSON::Object* outlineColor, const bool* usePageCoordinates);
+    void innerHighlightQuad(std::unique_ptr<FloatQuad>, const Inspector::InspectorObject* color, const Inspector::InspectorObject* outlineColor, const bool* usePageCoordinates);
 
     Inspector::InjectedScriptManager& m_injectedScriptManager;
     std::unique_ptr<Inspector::DOMFrontendDispatcher> m_frontendDispatcher;

@@ -174,7 +174,7 @@ typedef String ErrorString;
 #include "TestBackendDispatchers.h"
 
 #include <inspector/InspectorFrontendRouter.h>
-#include <wtf/JSONValues.h>
+#include <inspector/InspectorValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
@@ -224,7 +224,7 @@ namespace Inspector {
 #pragma once
 
 #include "TestProtocolObjects.h"
-#include <wtf/JSONValues.h>
+#include <inspector/InspectorValues.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -284,9 +284,9 @@ namespace Inspector {
 
 void DatabaseFrontendDispatcher::didExecuteOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String* const notes, const double* const timestamp, RefPtr<JSON::Object> values, RefPtr<JSON::Value> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors* const screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String* const printColor)
 {
-    Ref<JSON::Object> jsonMessage = JSON::Object::create();
+    Ref<InspectorObject> jsonMessage = InspectorObject::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("Database.didExecuteOptionalParameters"));
-    Ref<JSON::Object> paramsObject = JSON::Object::create();
+    Ref<InspectorObject> paramsObject = InspectorObject::create();
     if (columnNames)
         paramsObject->setArray(ASCIILiteral("columnNames"), columnNames);
     if (notes)
@@ -312,9 +312,9 @@ void DatabaseFrontendDispatcher::didExecuteOptionalParameters(RefPtr<Inspector::
 
 void DatabaseFrontendDispatcher::didExecuteNoOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String& notes, double timestamp, RefPtr<JSON::Object> values, RefPtr<JSON::Value> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors& screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String& printColor)
 {
-    Ref<JSON::Object> jsonMessage = JSON::Object::create();
+    Ref<InspectorObject> jsonMessage = InspectorObject::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("Database.didExecuteNoOptionalParameters"));
-    Ref<JSON::Object> paramsObject = JSON::Object::create();
+    Ref<InspectorObject> paramsObject = InspectorObject::create();
     paramsObject->setArray(ASCIILiteral("columnNames"), columnNames);
     paramsObject->setString(ASCIILiteral("notes"), notes);
     paramsObject->setDouble(ASCIILiteral("timestamp"), timestamp);
@@ -594,7 +594,7 @@ namespace Inspector {
 
 #include "TestProtocolInternal.h"
 #include "TestProtocolTypeConversions.h"
-#include <wtf/JSONValues.h>
+#include <JavaScriptCore/InspectorValues.h>
 
 namespace Inspector {
 
@@ -753,7 +753,7 @@ using namespace Inspector;
 #import "TestProtocolInternal.h"
 
 #import "TestProtocolTypeConversions.h"
-#import <wtf/JSONValues.h>
+#import <JavaScriptCore/InspectorValues.h>
 
 using namespace Inspector;
 
@@ -785,9 +785,9 @@ using namespace Inspector;
     THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(alternateColors, @"alternateColors");
     THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(printColor, @"printColor");
 
-    Ref<JSON::Object> jsonMessage = JSON::Object::create();
+    Ref<InspectorObject> jsonMessage = InspectorObject::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("Database.didExecuteOptionalParameters"));
-    Ref<JSON::Object> paramsObject = JSON::Object::create();
+    Ref<InspectorObject> paramsObject = InspectorObject::create();
     if (columnNames)
         paramsObject->setArray(ASCIILiteral("columnNames"), inspectorStringArray((*columnNames)));
     if (notes)
@@ -823,9 +823,9 @@ using namespace Inspector;
     THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(alternateColors, @"alternateColors");
     THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(printColor, @"printColor");
 
-    Ref<JSON::Object> jsonMessage = JSON::Object::create();
+    Ref<InspectorObject> jsonMessage = InspectorObject::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("Database.didExecuteNoOptionalParameters"));
-    Ref<JSON::Object> paramsObject = JSON::Object::create();
+    Ref<InspectorObject> paramsObject = InspectorObject::create();
     paramsObject->setArray(ASCIILiteral("columnNames"), inspectorStringArray(columnNames));
     paramsObject->setString(ASCIILiteral("notes"), notes);
     paramsObject->setDouble(ASCIILiteral("timestamp"), timestamp);
@@ -946,7 +946,7 @@ __attribute__((visibility ("default")))
 #import "TestProtocol.h"
 #import "TestProtocolJSONObjectPrivate.h"
 #import <JavaScriptCore/AugmentableInspectorController.h>
-#import <wtf/JSONValues.h>
+#import <JavaScriptCore/InspectorValues.h>
 
 @interface TestProtocolDatabaseDomainEventDispatcher (Private)
 - (instancetype)initWithController:(Inspector::AugmentableInspectorController*)controller;
@@ -1142,8 +1142,8 @@ using namespace Inspector;
 
 #import "TestProtocolTypeConversions.h"
 #import <WebInspector/RWIProtocolJSONObjectPrivate.h>
+#import <JavaScriptCore/InspectorValues.h>
 #import <wtf/Assertions.h>
-#import <wtf/JSONValues.h>
 
 using namespace Inspector;
 

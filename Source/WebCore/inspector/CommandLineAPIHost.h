@@ -38,14 +38,11 @@ namespace JSC {
 class JSValue;
 }
 
-namespace JSON {
-class Object;
-class Value;
-}
-
 namespace Inspector {
 class InspectorAgent;
 class InspectorConsoleAgent;
+class InspectorObject;
+class InspectorValue;
 }
 
 namespace WebCore {

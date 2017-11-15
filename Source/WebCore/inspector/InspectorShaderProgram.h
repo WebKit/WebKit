@@ -26,6 +26,7 @@
 #pragma once
 
 #include <inspector/InspectorProtocolObjects.h>
+#include <inspector/InspectorValues.h>
 
 namespace WebCore {
 

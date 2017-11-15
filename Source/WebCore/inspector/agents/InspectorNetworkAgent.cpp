@@ -68,10 +68,10 @@
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
 #include <inspector/InspectorFrontendRouter.h>
+#include <inspector/InspectorValues.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
 #include <runtime/JSCInlines.h>
-#include <wtf/JSONValues.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Stopwatch.h>
@@ -178,9 +178,9 @@ void InspectorNetworkAgent::willDestroyFrontendAndBackend(Inspector::DisconnectR
     disable(unused);
 }
 
-static Ref<JSON::Object> buildObjectForHeaders(const HTTPHeaderMap& headers)
+static Ref<InspectorObject> buildObjectForHeaders(const HTTPHeaderMap& headers)
 {
-    Ref<JSON::Object> headersObject = JSON::Object::create();
+    Ref<InspectorObject> headersObject = InspectorObject::create();
 
     for (const auto& header : headers)
         headersObject->setString(header.key, header.value);
@@ -288,7 +288,7 @@ RefPtr<Inspector::Protocol::Network::Response> InspectorNetworkAgent::buildObjec
     if (response.isNull())
         return nullptr;
 
-    Ref<JSON::Object> headers = buildObjectForHeaders(response.httpHeaderFields());
+    Ref<InspectorObject> headers = buildObjectForHeaders(response.httpHeaderFields());
 
     auto responseObject = Inspector::Protocol::Network::Response::create()
         .setUrl(response.url().string())
@@ -743,7 +743,7 @@ void InspectorNetworkAgent::disable(ErrorString&)
     setResourceCachingDisabled(false);
 }
 
-void InspectorNetworkAgent::setExtraHTTPHeaders(ErrorString&, const JSON::Object& headers)
+void InspectorNetworkAgent::setExtraHTTPHeaders(ErrorString&, const InspectorObject& headers)
 {
     for (auto& entry : headers) {
         String stringValue;

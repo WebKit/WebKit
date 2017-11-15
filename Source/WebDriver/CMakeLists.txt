@@ -2,6 +2,8 @@ set_property(DIRECTORY . PROPERTY FOLDER "WebDriver")
 
 set(WebDriver_INCLUDE_DIRECTORIES
     "${WEBDRIVER_DIR}"
+    "${JAVASCRIPTCORE_DIR}"
+    "${JAVASCRIPTCORE_DIR}/runtime"
     "${DERIVED_SOURCES_WEBDRIVER_DIR}"
 )
 
@@ -15,7 +17,7 @@ set(WebDriver_SOURCES
 )
 
 set(WebDriver_LIBRARIES
-    WTF
+    JavaScriptCore
 )
 
 set(WebDriver_SCRIPTS

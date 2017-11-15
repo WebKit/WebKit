@@ -32,6 +32,11 @@ else ()
 endif ()
 
 
+set(TestJavaScriptCore_LIBRARIES
+    JavaScriptCore
+    gtest
+)
+
 set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Counters.cpp
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
@@ -50,7 +55,6 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/HashMap.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/HashSet.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/IntegerToStringConversion.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/JSONValue.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/LEBDecoder.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/LifecycleLogger.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/ListHashSet.cpp

@@ -73,7 +73,7 @@ enum ForcePseudoClassFlags {
     PseudoClassVisited = 1 << 3
 };
 
-static unsigned computePseudoClassMask(const JSON::Array& pseudoClassArray)
+static unsigned computePseudoClassMask(const InspectorArray& pseudoClassArray)
 {
     static NeverDestroyed<String> active(MAKE_STATIC_STRING_IMPL("active"));
     static NeverDestroyed<String> hover(MAKE_STATIC_STRING_IMPL("hover"));
@@ -593,7 +593,7 @@ void InspectorCSSAgent::setStyleSheetText(ErrorString& errorString, const String
         errorString = InspectorDOMAgent::toErrorString(result.releaseException());
 }
 
-void InspectorCSSAgent::setStyleText(ErrorString& errorString, const JSON::Object& fullStyleId, const String& text, RefPtr<Inspector::Protocol::CSS::CSSStyle>& result)
+void InspectorCSSAgent::setStyleText(ErrorString& errorString, const InspectorObject& fullStyleId, const String& text, RefPtr<Inspector::Protocol::CSS::CSSStyle>& result)
 {
     InspectorCSSId compoundId(fullStyleId);
     ASSERT(!compoundId.isEmpty());
@@ -611,7 +611,7 @@ void InspectorCSSAgent::setStyleText(ErrorString& errorString, const JSON::Objec
     result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
 }
 
-void InspectorCSSAgent::setRuleSelector(ErrorString& errorString, const JSON::Object& fullRuleId, const String& selector, RefPtr<Inspector::Protocol::CSS::CSSRule>& result)
+void InspectorCSSAgent::setRuleSelector(ErrorString& errorString, const InspectorObject& fullRuleId, const String& selector, RefPtr<Inspector::Protocol::CSS::CSSRule>& result)
 {
     InspectorCSSId compoundId(fullRuleId);
     ASSERT(!compoundId.isEmpty());
@@ -753,7 +753,7 @@ void InspectorCSSAgent::getSupportedSystemFontFamilyNames(ErrorString&, RefPtr<I
     fontFamilyNames = WTFMove(families);
 }
 
-void InspectorCSSAgent::forcePseudoState(ErrorString& errorString, int nodeId, const JSON::Array& forcedPseudoClasses)
+void InspectorCSSAgent::forcePseudoState(ErrorString& errorString, int nodeId, const InspectorArray& forcedPseudoClasses)
 {
     Element* element = m_domAgent->assertElement(errorString, nodeId);
     if (!element)

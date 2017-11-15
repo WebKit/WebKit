@@ -31,10 +31,9 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 
-namespace JSON {
-class Array;
-class Object;
-class Value;
+namespace Inspector {
+class InspectorArray;
+class InspectorObject;
 }
 
 namespace WebDriver {
@@ -54,7 +53,7 @@ public:
 
 private:
     enum class HTTPMethod { Get, Post, Delete };
-    typedef void (WebDriverService::*CommandHandler)(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
+    typedef void (WebDriverService::*CommandHandler)(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     struct Command {
         HTTPMethod method;
         const char* uriTemplate;
@@ -65,62 +64,62 @@ private:
     static std::optional<HTTPMethod> toCommandHTTPMethod(const String& method);
     static bool findCommand(const String& method, const String& path, CommandHandler*, HashMap<String, String>& parameters);
 
-    void newSession(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void deleteSession(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void setTimeouts(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void go(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void getCurrentURL(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void back(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void forward(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void refresh(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void getTitle(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void getWindowHandle(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void closeWindow(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void switchToWindow(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void getWindowHandles(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void switchToFrame(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void switchToParentFrame(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void getWindowRect(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void setWindowRect(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void findElement(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void findElements(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void findElementFromElement(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void findElementsFromElement(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void isElementSelected(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void getElementText(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void getElementTagName(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void getElementRect(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void isElementEnabled(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void isElementDisplayed(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void getElementAttribute(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void elementClick(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void elementClear(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void elementSendKeys(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void elementSubmit(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void executeScript(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void executeAsyncScript(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void getAllCookies(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void getNamedCookie(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void addCookie(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void deleteCookie(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void deleteAllCookies(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void dismissAlert(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void acceptAlert(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void getAlertText(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void sendAlertText(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void takeScreenshot(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void takeElementScreenshot(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
+    void newSession(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void deleteSession(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void setTimeouts(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void go(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void getCurrentURL(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void back(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void forward(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void refresh(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void getTitle(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void getWindowHandle(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void closeWindow(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void switchToWindow(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void getWindowHandles(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void switchToFrame(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void switchToParentFrame(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void getWindowRect(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void setWindowRect(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void findElement(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void findElements(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void findElementFromElement(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void findElementsFromElement(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void isElementSelected(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void getElementText(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void getElementTagName(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void getElementRect(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void isElementEnabled(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void isElementDisplayed(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void getElementAttribute(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void elementClick(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void elementClear(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void elementSendKeys(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void elementSubmit(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void executeScript(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void executeAsyncScript(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void getAllCookies(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void getNamedCookie(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void addCookie(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void deleteCookie(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void deleteAllCookies(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void dismissAlert(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void acceptAlert(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void getAlertText(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void sendAlertText(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void takeScreenshot(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void takeElementScreenshot(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
 
     static Capabilities platformCapabilities();
-    RefPtr<JSON::Object> processCapabilities(const JSON::Object&, Function<void (CommandResult&&)>&) const;
-    RefPtr<JSON::Object> validatedCapabilities(const JSON::Object&) const;
-    RefPtr<JSON::Object> mergeCapabilities(const JSON::Object&, const JSON::Object&) const;
-    RefPtr<JSON::Object> matchCapabilities(const JSON::Object&, std::optional<String>&) const;
-    bool platformValidateCapability(const String&, const RefPtr<JSON::Value>&) const;
-    std::optional<String> platformMatchCapability(const String&, const RefPtr<JSON::Value>&) const;
-    void parseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;
-    void platformParseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;
-    RefPtr<Session> findSessionOrCompleteWithError(JSON::Object&, Function<void (CommandResult&&)>&);
+    RefPtr<Inspector::InspectorObject> processCapabilities(const Inspector::InspectorObject&, Function<void (CommandResult&&)>&) const;
+    RefPtr<Inspector::InspectorObject> validatedCapabilities(const Inspector::InspectorObject&) const;
+    RefPtr<Inspector::InspectorObject> mergeCapabilities(const Inspector::InspectorObject&, const Inspector::InspectorObject&) const;
+    RefPtr<Inspector::InspectorObject> matchCapabilities(const Inspector::InspectorObject&, std::optional<String>&) const;
+    bool platformValidateCapability(const String&, const RefPtr<Inspector::InspectorValue>&) const;
+    std::optional<String> platformMatchCapability(const String&, const RefPtr<Inspector::InspectorValue>&) const;
+    void parseCapabilities(const Inspector::InspectorObject& desiredCapabilities, Capabilities&) const;
+    void platformParseCapabilities(const Inspector::InspectorObject& desiredCapabilities, Capabilities&) const;
+    RefPtr<Session> findSessionOrCompleteWithError(Inspector::InspectorObject&, Function<void (CommandResult&&)>&);
 
     void handleRequest(HTTPRequestHandler::Request&&, Function<void (HTTPRequestHandler::Response&&)>&& replyHandler) override;
     void sendResponse(Function<void (HTTPRequestHandler::Response&&)>&& replyHandler, CommandResult&&) const;

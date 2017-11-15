@@ -34,6 +34,7 @@
 #include "InstrumentingAgents.h"
 #include "MainFrame.h"
 #include "NetworkStateNotifier.h"
+#include <inspector/InspectorValues.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

@@ -168,7 +168,7 @@ typedef String ErrorString;
 #include "TestBackendDispatchers.h"
 
 #include <inspector/InspectorFrontendRouter.h>
-#include <wtf/JSONValues.h>
+#include <inspector/InspectorValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
@@ -218,7 +218,7 @@ namespace Inspector {
 #pragma once
 
 #include "TestProtocolObjects.h"
-#include <wtf/JSONValues.h>
+#include <inspector/InspectorValues.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -397,12 +397,12 @@ public:
 
     void setString(const String& value)
     {
-        JSON::ObjectBase::setString(ASCIILiteral("string"), value);
+        InspectorObjectBase::setString(ASCIILiteral("string"), value);
     }
 
     void setArray(RefPtr<Inspector::Protocol::Array<String>> value)
     {
-        JSON::ObjectBase::setArray(ASCIILiteral("array"), WTFMove(value));
+        InspectorObjectBase::setArray(ASCIILiteral("array"), WTFMove(value));
     }
 };
 
@@ -585,7 +585,7 @@ namespace Inspector {
 
 #include "TestProtocolInternal.h"
 #include "TestProtocolTypeConversions.h"
-#include <wtf/JSONValues.h>
+#include <JavaScriptCore/InspectorValues.h>
 
 namespace Inspector {
 
@@ -734,7 +734,7 @@ using namespace Inspector;
 #import "TestProtocolInternal.h"
 
 #import "TestProtocolTypeConversions.h"
-#import <wtf/JSONValues.h>
+#import <JavaScriptCore/InspectorValues.h>
 
 using namespace Inspector;
 
@@ -845,7 +845,7 @@ __attribute__((visibility ("default")))
 #import "TestProtocol.h"
 #import "TestProtocolJSONObjectPrivate.h"
 #import <JavaScriptCore/AugmentableInspectorController.h>
-#import <wtf/JSONValues.h>
+#import <JavaScriptCore/InspectorValues.h>
 
 
 
@@ -1041,8 +1041,8 @@ using namespace Inspector;
 
 #import "TestProtocolTypeConversions.h"
 #import <WebInspector/RWIProtocolJSONObjectPrivate.h>
+#import <JavaScriptCore/InspectorValues.h>
 #import <wtf/Assertions.h>
-#import <wtf/JSONValues.h>
 
 using namespace Inspector;
 

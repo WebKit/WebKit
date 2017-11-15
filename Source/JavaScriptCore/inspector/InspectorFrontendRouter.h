@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "JSExportMacros.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

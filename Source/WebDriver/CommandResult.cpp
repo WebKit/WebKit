@@ -26,7 +26,9 @@
 #include "config.h"
 #include "CommandResult.h"
 
-#include <wtf/JSONValues.h>
+#include <inspector/InspectorValues.h>
+
+using namespace Inspector;
 
 namespace WebDriver {
 
@@ -40,7 +42,7 @@ enum ProtocolErrorCode {
     ServerError = -32000
 };
 
-CommandResult::CommandResult(RefPtr<JSON::Value>&& result, std::optional<ErrorCode> errorCode)
+CommandResult::CommandResult(RefPtr<InspectorValue>&& result, std::optional<ErrorCode> errorCode)
     : m_errorCode(errorCode)
 {
     if (!m_errorCode) {
@@ -51,7 +53,7 @@ CommandResult::CommandResult(RefPtr<JSON::Value>&& result, std::optional<ErrorCo
     if (!result)
         return;
 
-    RefPtr<JSON::Object> errorObject;
+    RefPtr<InspectorObject> errorObject;
     if (!result->asObject(errorObject))
         return;
 

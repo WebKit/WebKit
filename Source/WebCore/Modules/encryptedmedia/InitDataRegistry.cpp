@@ -30,12 +30,13 @@
 
 #include "NotImplemented.h"
 #include "SharedBuffer.h"
-#include <wtf/JSONValues.h>
+#include "inspector/InspectorValues.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
 
 
 namespace WebCore {
+using namespace Inspector;
 
 static Vector<Ref<SharedBuffer>> extractKeyIDsKeyids(const SharedBuffer& buffer)
 {
@@ -45,15 +46,15 @@ static Vector<Ref<SharedBuffer>> extractKeyIDsKeyids(const SharedBuffer& buffer)
         return { };
     String json { buffer.data(), static_cast<unsigned>(buffer.size()) };
 
-    RefPtr<JSON::Value> value;
-    if (!JSON::Value::parseJSON(json, value))
+    RefPtr<InspectorValue> value;
+    if (!InspectorValue::parseJSON(json, value))
         return { };
 
-    RefPtr<JSON::Object> object;
+    RefPtr<InspectorObject> object;
     if (!value->asObject(object))
         return { };
 
-    RefPtr<JSON::Array> kidsArray;
+    RefPtr<InspectorArray> kidsArray;
     if (!object->getArray("kids", kidsArray))
         return { };
 
@@ -82,8 +83,8 @@ static RefPtr<SharedBuffer> sanitizeKeyids(const SharedBuffer& buffer)
     if (keyIDBuffer.isEmpty())
         return nullptr;
 
-    auto object = JSON::Object::create();
-    auto kidsArray = JSON::Array::create();
+    auto object = InspectorObject::create();
+    auto kidsArray = InspectorArray::create();
     for (auto& buffer : keyIDBuffer)
         kidsArray->pushString(WTF::base64URLEncode(buffer->data(), buffer->size()));
     object->setArray("kids", WTFMove(kidsArray));

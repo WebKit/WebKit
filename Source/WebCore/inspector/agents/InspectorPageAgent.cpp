@@ -69,6 +69,7 @@
 #include "UserGestureIndicator.h"
 #include <inspector/ContentSearchUtilities.h>
 #include <inspector/IdentifiersFactory.h>
+#include <inspector/InspectorValues.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/text/Base64.h>

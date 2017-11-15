@@ -29,6 +29,7 @@
 #include "config.h"
 #include "ContentSearchUtilities.h"
 
+#include "InspectorValues.h"
 #include "RegularExpression.h"
 #include "Yarr.h"
 #include "YarrInterpreter.h"

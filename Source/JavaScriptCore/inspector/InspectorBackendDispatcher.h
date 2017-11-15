@@ -44,7 +44,7 @@ class JS_EXPORT_PRIVATE SupplementalBackendDispatcher : public RefCounted<Supple
 public:
     SupplementalBackendDispatcher(BackendDispatcher&);
     virtual ~SupplementalBackendDispatcher();
-    virtual void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) = 0;
+    virtual void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) = 0;
 protected:
     Ref<BackendDispatcher> m_backendDispatcher;
 };
@@ -60,7 +60,7 @@ public:
         bool isActive() const;
         void disable() { m_alreadySent = true; }
 
-        void sendSuccess(RefPtr<JSON::Object>&&);
+        void sendSuccess(RefPtr<InspectorObject>&&);
         void sendFailure(const ErrorString&);
 
     private:
@@ -85,7 +85,7 @@ public:
     void registerDispatcherForDomain(const String& domain, SupplementalBackendDispatcher*);
     void dispatch(const String& message);
 
-    void sendResponse(long requestId, RefPtr<JSON::Object>&& result);
+    void sendResponse(long requestId, RefPtr<InspectorObject>&& result);
     void sendPendingErrors();
 
     void reportProtocolError(CommonErrorCode, const String& errorMessage);
@@ -93,15 +93,15 @@ public:
 
     template<typename T>
     WTF_HIDDEN_DECLARATION
-    T getPropertyValue(JSON::Object*, const String& name, bool* out_optionalValueFound, T defaultValue, std::function<bool(JSON::Value&, T&)>, const char* typeName);
+    T getPropertyValue(InspectorObject*, const String& name, bool* out_optionalValueFound, T defaultValue, std::function<bool(InspectorValue&, T&)>, const char* typeName);
 
-    int getInteger(JSON::Object*, const String& name, bool* valueFound);
-    double getDouble(JSON::Object*, const String& name, bool* valueFound);
-    String getString(JSON::Object*, const String& name, bool* valueFound);
-    bool getBoolean(JSON::Object*, const String& name, bool* valueFound);
-    RefPtr<JSON::Value> getValue(JSON::Object*, const String& name, bool* valueFound);
-    RefPtr<JSON::Object> getObject(JSON::Object*, const String& name, bool* valueFound);
-    RefPtr<JSON::Array> getArray(JSON::Object*, const String& name, bool* valueFound);
+    int getInteger(InspectorObject*, const String& name, bool* valueFound);
+    double getDouble(InspectorObject*, const String& name, bool* valueFound);
+    String getString(InspectorObject*, const String& name, bool* valueFound);
+    bool getBoolean(InspectorObject*, const String& name, bool* valueFound);
+    RefPtr<InspectorValue> getValue(InspectorObject*, const String& name, bool* valueFound);
+    RefPtr<InspectorObject> getObject(InspectorObject*, const String& name, bool* valueFound);
+    RefPtr<InspectorArray> getArray(InspectorObject*, const String& name, bool* valueFound);
 
 private:
     BackendDispatcher(Ref<FrontendRouter>&&);

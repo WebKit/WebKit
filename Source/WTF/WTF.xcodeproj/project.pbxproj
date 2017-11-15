@@ -73,7 +73,6 @@
 		53534F2A1EC0E10E00141B2F /* MachExceptions.defs in Sources */ = {isa = PBXBuildFile; fileRef = 53534F291EC0E10E00141B2F /* MachExceptions.defs */; settings = {ATTRIBUTES = (Client, Server, ); }; };
 		70A993FE1AD7151300FA615B /* SymbolRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70A993FC1AD7151300FA615B /* SymbolRegistry.cpp */; };
 		70ECA60D1B02426800449739 /* AtomicStringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70ECA60A1B02426800449739 /* AtomicStringImpl.cpp */; };
-		7A05093F1FB9DCC500B33FB8 /* JSONValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A05093E1FB9DCC500B33FB8 /* JSONValues.cpp */; };
 		7AFEC6B11EB22B5900DADE36 /* UUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AFEC6B01EB22B5900DADE36 /* UUID.cpp */; };
 		8134013815B092FD001FF0B8 /* Base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8134013615B092FD001FF0B8 /* Base64.cpp */; };
 		93934BD318A1E8C300D0D6A1 /* StringViewObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93934BD218A1E8C300D0D6A1 /* StringViewObjC.mm */; };
@@ -350,8 +349,6 @@
 		70ECA60C1B02426800449739 /* UniquedStringImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniquedStringImpl.h; sourceTree = "<group>"; };
 		7936D6A91C99F8AE000D1AED /* SmallPtrSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmallPtrSet.h; sourceTree = "<group>"; };
 		795212021F42588800BD6421 /* SingleRootGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleRootGraph.h; sourceTree = "<group>"; };
-		7A05093D1FB9DCC500B33FB8 /* JSONValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONValues.h; sourceTree = "<group>"; };
-		7A05093E1FB9DCC500B33FB8 /* JSONValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSONValues.cpp; sourceTree = "<group>"; };
 		7AFEC6AE1EB22AC600DADE36 /* UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UUID.h; sourceTree = "<group>"; };
 		7AFEC6B01EB22B5900DADE36 /* UUID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UUID.cpp; sourceTree = "<group>"; };
 		7C3F72391D78811900674E26 /* Brigand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Brigand.h; sourceTree = "<group>"; };
@@ -867,8 +864,6 @@
 				7CDD7FF7186D291E007433CD /* IteratorAdaptors.h */,
 				7CDD7FF9186D2A54007433CD /* IteratorRange.h */,
 				7C9692941F66306E00267A9E /* KeyValuePair.h */,
-				7A05093E1FB9DCC500B33FB8 /* JSONValues.cpp */,
-				7A05093D1FB9DCC500B33FB8 /* JSONValues.h */,
 				C2BCFC3E1F61D13000C9222C /* Language.cpp */,
 				C2BCFC3F1F61D13000C9222C /* Language.h */,
 				539EB0621D55284200C82EF7 /* LEBDecoder.h */,
@@ -1389,7 +1384,6 @@
 				0F5BF1761F23D49A0029D91D /* Gigacage.cpp in Sources */,
 				0F30BA901E78708E002CA847 /* GlobalVersion.cpp in Sources */,
 				2CCD892A15C0390200285083 /* GregorianDateTime.cpp in Sources */,
-				7A05093F1FB9DCC500B33FB8 /* JSONValues.cpp in Sources */,
 				A8A473D8151A825B004123FF /* HashTable.cpp in Sources */,
 				C2BCFC401F61D13000C9222C /* Language.cpp in Sources */,
 				C2BCFC421F61D61600C9222C /* LanguageCF.cpp in Sources */,
