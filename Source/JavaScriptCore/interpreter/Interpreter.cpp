@@ -74,6 +74,7 @@
 #include "Symbol.h"
 #include "VMEntryScope.h"
 #include "VMInlines.h"
+#include "VMInspector.h"
 #include "VirtualRegister.h"
 
 #include <limits.h>
@@ -395,7 +396,6 @@ public:
         unsigned unusedColumn = 0;
         visitor->computeLineAndColumn(line, unusedColumn);
         dataLogF("[ReturnVPC]                | %10p | %d (line %d)\n", m_it, visitor->bytecodeOffset(), line);
-        --m_it;
         return StackVisitor::Done;
     }
 
@@ -406,12 +406,18 @@ private:
 
 void Interpreter::dumpRegisters(CallFrame* callFrame)
 {
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    if (!codeBlock) {
+        dataLog("Dumping host frame registers not supported.\n");
+        return;
+    }
+    VM& vm = *codeBlock->vm();
+
     dataLogF("Register frame: \n\n");
     dataLogF("-----------------------------------------------------------------------------\n");
     dataLogF("            use            |   address  |                value               \n");
     dataLogF("-----------------------------------------------------------------------------\n");
 
-    CodeBlock* codeBlock = callFrame->codeBlock();
     const Register* it;
     const Register* end;
 
@@ -427,33 +433,36 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     
     dataLogF("-----------------------------------------------------------------------------\n");
     dataLogF("[ArgumentCount]            | %10p | %lu \n", it, (unsigned long) callFrame->argumentCount());
-    --it;
-    dataLogF("[CallerFrame]              | %10p | %p \n", it, callFrame->callerFrame());
+    DumpReturnVirtualPCFunctor functor(it);
+    callFrame->iterate(functor);
     --it;
     dataLogF("[Callee]                   | %10p | %p \n", it, callFrame->jsCallee());
     --it;
-    // FIXME: Remove the next decrement when the ScopeChain slot is removed from the call header
+    dataLogF("[CodeBlock]                | %10p | %p \n", it, callFrame->codeBlock());
     --it;
 #if ENABLE(JIT)
     AbstractPC pc = callFrame->abstractReturnPC(callFrame->vm());
     if (pc.hasJITReturnAddress())
-        dataLogF("[ReturnJITPC]              | %10p | %p \n", it, pc.jitReturnAddress().value());
+        dataLogF("[ReturnPC]                 | %10p | %p \n", it, pc.jitReturnAddress().value());
+    --it;
 #endif
-
-    DumpReturnVirtualPCFunctor functor(it);
-    callFrame->iterate(functor);
-
-    dataLogF("[CodeBlock]                | %10p | %p \n", it, callFrame->codeBlock());
+    dataLogF("[CallerFrame]              | %10p | %p \n", it, callFrame->callerFrame());
     --it;
     dataLogF("-----------------------------------------------------------------------------\n");
+
+    size_t numberOfCalleeSaveSlots = codeBlock->calleeSaveSpaceAsVirtualRegisters();
+    const Register* endOfCalleeSaves = it - numberOfCalleeSaveSlots;
 
     end = it - codeBlock->m_numVars;
     if (it != end) {
         do {
             JSValue v = it->jsValue();
             int registerNumber = it - callFrame->registers();
-            String name = codeBlock->nameForRegister(VirtualRegister(registerNumber));
-            dataLogF("[r% 3d %14s]      | %10p | %-16s 0x%lld \n", registerNumber, name.ascii().data(), it, toCString(v).data(), (long long)JSValue::encode(v));
+            String name = (it > endOfCalleeSaves)
+                ? "CalleeSaveReg"
+                : codeBlock->nameForRegister(VirtualRegister(registerNumber));
+            CString valueString = (it > endOfCalleeSaves) ? "" : toCString(v);
+            dataLogF("[r% 3d %14s]      | %10p | %-16s 0x%lld \n", registerNumber, name.ascii().data(), it, valueString.data(), (long long)JSValue::encode(v));
             --it;
         } while (it != end);
     }
@@ -464,7 +473,11 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
         do {
             JSValue v = (*it).jsValue();
             int registerNumber = it - callFrame->registers();
-            dataLogF("[r% 3d]                     | %10p | %-16s 0x%lld \n", registerNumber, it, toCString(v).data(), (long long)JSValue::encode(v));
+            CString valueString =
+                (v.isCell() && !VMInspector::isValidCell(&vm.heap, reinterpret_cast<JSCell*>(JSValue::encode(v))))
+                ? "INVALID"
+                : toCString(v);
+            dataLogF("[r% 3d]                     | %10p | %-16s 0x%lld \n", registerNumber, it, valueString.data(), (long long)JSValue::encode(v));
             --it;
         } while (it != end);
     }

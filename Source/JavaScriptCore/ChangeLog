@@ -1,3 +1,15 @@
+2017-11-14  Mark Lam  <mark.lam@apple.com>
+
+        Fix a bit-rotted Interpreter::dumpRegisters() and make it more robust.
+        https://bugs.webkit.org/show_bug.cgi?id=179699
+        <rdar://problem/35462346>
+
+        Reviewed by Michael Saboff.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpRegisters):
+        - Need to skip the callee saved registers
+
 2017-11-14  Guillaume Emont  <guijemont@igalia.com>
 
         REGRESSION(r224623) [MIPS] branchTruncateDoubleToInt32() doesn't set return register when branching
