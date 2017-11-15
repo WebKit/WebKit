@@ -4,11 +4,18 @@ self.addEventListener("fetch", (event) => {
         event.respondWith(new Response(null, {status: 200, statusText: status}));
         return;
     }
-    if (!event.request.url.endsWith(".fromserviceworker")) {
-        state = "unknown url";
-        event.respondWith(new Response(null, {status: 404, statusText: "Not Found"}));
+    if (event.request.url.endsWith(".fromserviceworker")) {
+        status = event.request.url.substring(0, event.request.url.length - 18) + " through " + "fetch";
+        event.respondWith(fetch(event.request.url.substring(0, event.request.url.length - 18)));
+    }
+    if (event.request.url.endsWith(".bodyasanemptystream")) {
+        var stream = new ReadableStream({ start : controller => {
+            controller.close();
+        }});
+        event.respondWith(new Response(stream, {status : 200, statusText : "Empty stream"}));
         return;
     }
-    status = event.request.url.substring(0, event.request.url.length - 18) + " through " + "fetch";
-    event.respondWith(fetch(event.request.url.substring(0, event.request.url.length - 18)));
+    state = "unknown url";
+    event.respondWith(new Response(null, {status: 404, statusText: "Not Found"}));
+    return;
 });

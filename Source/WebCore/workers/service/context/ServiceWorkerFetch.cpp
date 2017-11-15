@@ -56,7 +56,9 @@ static void processResponse(Ref<Client>&& client, FetchResponse* response)
                 client->didFail();
                 return;
             }
-            client->didReceiveData(result.releaseReturnValue().releaseNonNull());
+
+            if (auto buffer = result.releaseReturnValue())
+                client->didReceiveData(buffer.releaseNonNull());
             client->didFinish();
         });
         return;
@@ -68,7 +70,9 @@ static void processResponse(Ref<Client>&& client, FetchResponse* response)
                 client->didFail();
                 return;
             }
-            client->didReceiveData(result.releaseReturnValue().releaseNonNull());
+
+            if (auto buffer = result.releaseReturnValue())
+                client->didReceiveData(buffer.releaseNonNull());
             client->didFinish();
         });
         return;

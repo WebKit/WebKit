@@ -48,6 +48,9 @@ void ReadableStreamToSharedBufferSink::pipeFrom(ReadableStream& stream)
 
 void ReadableStreamToSharedBufferSink::enqueue(const BufferSource& buffer)
 {
+    if (!buffer.length())
+        return;
+
     if (!m_data) {
         m_data = SharedBuffer::create(buffer.data(), buffer.length());
         return;

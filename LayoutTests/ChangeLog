@@ -1,5 +1,18 @@
 2017-11-15  Youenn Fablet  <youenn@apple.com>
 
+        Service Worker fetch should handle empty responses
+        https://bugs.webkit.org/show_bug.cgi?id=179740
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/workers/service/resources/service-worker-fetch-worker.js:
+        (event.event.request.url.endsWith):
+        * http/tests/workers/service/resources/service-worker-fetch.js:
+        (async.test):
+        * http/tests/workers/service/service-worker-fetch.https-expected.txt:
+
+2017-11-15  Youenn Fablet  <youenn@apple.com>
+
         ReloadFromOrigin loads should not select any service worker
         https://bugs.webkit.org/show_bug.cgi?id=179736
 
