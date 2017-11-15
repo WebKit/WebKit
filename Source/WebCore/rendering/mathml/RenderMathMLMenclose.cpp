@@ -189,6 +189,8 @@ void RenderMathMLMenclose::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     m_contentRect = LayoutRect(space.left, space.top, contentWidth, contentAscent + contentDescent);
 
+    layoutPositionedObjects(relayoutChildren);
+
     clearNeedsLayout();
 }
 

@@ -110,6 +110,8 @@ void RenderMathMLPadded::layoutBlock(bool relayoutChildren, LayoutUnit)
     setLogicalWidth(width);
     setLogicalHeight(ascent + descent);
 
+    layoutPositionedObjects(relayoutChildren);
+
     clearNeedsLayout();
 }
 

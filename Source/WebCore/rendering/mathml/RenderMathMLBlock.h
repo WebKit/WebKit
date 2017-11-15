@@ -84,7 +84,7 @@ protected:
     }
 
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
-    void layoutInvalidMarkup();
+    void layoutInvalidMarkup(bool relayoutChildren);
 
 private:
     bool isRenderMathMLBlock() const final { return true; }

@@ -250,7 +250,7 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
         return;
 
     if (!isValid()) {
-        layoutInvalidMarkup();
+        layoutInvalidMarkup(relayoutChildren);
         return;
     }
 
@@ -310,6 +310,8 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
     }
 
     setLogicalHeight(verticalOffset);
+
+    layoutPositionedObjects(relayoutChildren);
 
     clearNeedsLayout();
 }

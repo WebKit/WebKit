@@ -187,6 +187,8 @@ void RenderMathMLRow::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     updateLogicalHeight();
 
+    layoutPositionedObjects(relayoutChildren);
+
     clearNeedsLayout();
 }
 

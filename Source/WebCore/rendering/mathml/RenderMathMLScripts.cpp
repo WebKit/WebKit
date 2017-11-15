@@ -366,7 +366,7 @@ void RenderMathMLScripts::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     auto possibleReference = validateAndGetReferenceChildren();
     if (!possibleReference) {
-        layoutInvalidMarkup();
+        layoutInvalidMarkup(relayoutChildren);
         return;
     }
     auto& reference = possibleReference.value();
@@ -470,6 +470,8 @@ void RenderMathMLScripts::layoutBlock(bool relayoutChildren, LayoutUnit)
         }
     }
     }
+
+    layoutPositionedObjects(relayoutChildren);
 
     clearNeedsLayout();
 }

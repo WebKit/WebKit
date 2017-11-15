@@ -188,7 +188,7 @@ void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
     m_baseWidth = 0;
 
     if (!isValid()) {
-        layoutInvalidMarkup();
+        layoutInvalidMarkup(relayoutChildren);
         return;
     }
 
@@ -255,6 +255,9 @@ void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
     }
 
     setLogicalHeight(ascent + descent);
+
+    layoutPositionedObjects(relayoutChildren);
+
     clearNeedsLayout();
 }
 

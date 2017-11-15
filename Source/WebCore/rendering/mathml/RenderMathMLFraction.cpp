@@ -183,7 +183,7 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
         return;
 
     if (!isValid()) {
-        layoutInvalidMarkup();
+        layoutInvalidMarkup(relayoutChildren);
         return;
     }
 
@@ -225,6 +225,8 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     verticalOffset = std::max(verticalOffset + denominator().logicalHeight(), m_ascent + denominatorDescent); // This is the bottom of our renderer.
     setLogicalHeight(verticalOffset);
+
+    layoutPositionedObjects(relayoutChildren);
 
     clearNeedsLayout();
 }
