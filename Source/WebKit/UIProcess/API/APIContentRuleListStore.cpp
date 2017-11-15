@@ -350,15 +350,14 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
         return ContentRuleListStore::Error::CompileFailed;
     }
 
-    if (!moveFile(temporaryFilePath, finalFilePath)) {
-        WTFLogAlways("Content Rule List compiling failed: Moving file failed.");
-        return ContentRuleListStore::Error::CompileFailed;
-    }
-
     mappedData = adoptAndMapFile(temporaryFileHandle, 0, metaData.fileSize());
     if (mappedData.isNull()) {
         WTFLogAlways("Content Rule List compiling failed: Mapping file failed.");
-        deleteFile(finalFilePath);
+        return ContentRuleListStore::Error::CompileFailed;
+    }
+
+    if (!moveFile(temporaryFilePath, finalFilePath)) {
+        WTFLogAlways("Content Rule List compiling failed: Moving file failed.");
         return ContentRuleListStore::Error::CompileFailed;
     }
 
