@@ -1503,7 +1503,6 @@ platform/graphics/FontTaggedSettings.cpp
 platform/graphics/FontGenericFamilies.cpp
 platform/graphics/FontPlatformData.cpp
 platform/graphics/FontRanges.cpp
-platform/graphics/FourCC.cpp
 platform/graphics/GeneratedImage.cpp
 platform/graphics/GeometryUtilities.cpp
 platform/graphics/Gradient.cpp
