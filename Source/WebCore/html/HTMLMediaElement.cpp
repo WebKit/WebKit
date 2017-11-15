@@ -254,6 +254,40 @@ static const char* mediaStreamBlobProtocol = "blob";
 
 using namespace HTMLNames;
 
+String convertEnumerationToString(HTMLMediaElement::ReadyState enumerationValue)
+{
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("HAVE_NOTHING"),
+        MAKE_STATIC_STRING_IMPL("HAVE_METADATA"),
+        MAKE_STATIC_STRING_IMPL("HAVE_CURRENT_DATA"),
+        MAKE_STATIC_STRING_IMPL("HAVE_FUTURE_DATA"),
+        MAKE_STATIC_STRING_IMPL("HAVE_ENOUGH_DATA"),
+    };
+    static_assert(static_cast<size_t>(HTMLMediaElementEnums::HAVE_NOTHING) == 0, "HTMLMediaElement::HAVE_NOTHING is not 0 as expected");
+    static_assert(static_cast<size_t>(HTMLMediaElementEnums::HAVE_METADATA) == 1, "HTMLMediaElement::HAVE_METADATA is not 1 as expected");
+    static_assert(static_cast<size_t>(HTMLMediaElementEnums::HAVE_CURRENT_DATA) == 2, "HTMLMediaElement::HAVE_CURRENT_DATA is not 2 as expected");
+    static_assert(static_cast<size_t>(HTMLMediaElementEnums::HAVE_FUTURE_DATA) == 3, "HTMLMediaElement::HAVE_FUTURE_DATA is not 3 as expected");
+    static_assert(static_cast<size_t>(HTMLMediaElementEnums::HAVE_ENOUGH_DATA) == 4, "HTMLMediaElement::HAVE_ENOUGH_DATA is not 4 as expected");
+    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    return values[static_cast<size_t>(enumerationValue)];
+}
+
+String convertEnumerationToString(HTMLMediaElement::NetworkState enumerationValue)
+{
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("NETWORK_EMPTY"),
+        MAKE_STATIC_STRING_IMPL("NETWORK_IDLE"),
+        MAKE_STATIC_STRING_IMPL("NETWORK_LOADING"),
+        MAKE_STATIC_STRING_IMPL("NETWORK_NO_SOURCE"),
+    };
+    static_assert(static_cast<size_t>(HTMLMediaElementEnums::NETWORK_EMPTY) == 0, "HTMLMediaElement::NETWORK_EMPTY is not 0 as expected");
+    static_assert(static_cast<size_t>(HTMLMediaElementEnums::NETWORK_IDLE) == 1, "HTMLMediaElement::NETWORK_IDLE is not 1 as expected");
+    static_assert(static_cast<size_t>(HTMLMediaElementEnums::NETWORK_LOADING) == 2, "HTMLMediaElement::NETWORK_LOADING is not 2 as expected");
+    static_assert(static_cast<size_t>(HTMLMediaElementEnums::NETWORK_NO_SOURCE) == 3, "HTMLMediaElement::NETWORK_NO_SOURCE is not 3 as expected");
+    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    return values[static_cast<size_t>(enumerationValue)];
+}
+
 typedef HashMap<Document*, HashSet<HTMLMediaElement*>> DocumentElementSetMap;
 static DocumentElementSetMap& documentToElementSetMap()
 {
@@ -988,7 +1022,7 @@ void HTMLMediaElement::didRecalcStyle(Style::Change)
 
 void HTMLMediaElement::scheduleDelayedAction(DelayedActionType actionType)
 {
-    if (actionType ^ m_pendingActionFlags)
+    if (!(actionType & m_pendingActionFlags))
         ALWAYS_LOG(LOGIDENTIFIER, "setting ", actionName(actionType), " flag");
 
 #if ENABLE(VIDEO_TRACK)
@@ -1088,7 +1122,7 @@ void HTMLMediaElement::pendingActionTimerFired()
     if (!pendingActions)
         return;
 
-    ALWAYS_LOG(LOGIDENTIFIER, "setting ", actionName(static_cast<DelayedActionType>(pendingActions)), " flag");
+    ALWAYS_LOG(LOGIDENTIFIER, "processing ", actionName(static_cast<DelayedActionType>(pendingActions)), " flag");
 
 #if ENABLE(VIDEO_TRACK)
     if (pendingActions & ConfigureTextTracks)
@@ -2296,7 +2330,7 @@ void HTMLMediaElement::mediaLoadingFailed(MediaPlayer::NetworkState error)
 void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
 {
     if (static_cast<int>(state) != static_cast<int>(m_networkState))
-        ALWAYS_LOG(LOGIDENTIFIER, "new state = ", static_cast<int>(state), ", current state = ", static_cast<int>(m_networkState));
+        ALWAYS_LOG(LOGIDENTIFIER, "new state = ", state, ", current state = ", m_networkState);
 
     if (state == MediaPlayer::Empty) {
         // Just update the cached state and leave, we can't do anything.
@@ -2402,7 +2436,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     bool tracksAreReady = true;
 #endif
 
-    ALWAYS_LOG(LOGIDENTIFIER, "new state = ", static_cast<int>(state), ", current state = ", static_cast<int>(m_readyState));
+    ALWAYS_LOG(LOGIDENTIFIER, "new state = ", state, ", current state = ", m_readyState);
 
     if (tracksAreReady)
         m_readyState = newState;
@@ -2505,8 +2539,10 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
             m_playbackStartedTime = currentMediaTime().toDouble();
             scheduleEvent(eventNames().playEvent);
             scheduleNotifyAboutPlaying();
-        } else if (success.value() == MediaPlaybackDenialReason::UserGestureRequired)
+        } else if (success.value() == MediaPlaybackDenialReason::UserGestureRequired) {
+            ALWAYS_LOG(LOGIDENTIFIER, "Autoplay blocked, user gesture required");
             setPlaybackWithoutUserGesture(PlaybackWithoutUserGesture::Prevented);
+        }
 
         shouldUpdateDisplayState = true;
     }
@@ -2514,6 +2550,10 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     // If we transition to the Future Data state and we're about to begin playing, ensure playback is actually permitted first,
     // honoring any playback denial reasons such as the requirement of a user gesture.
     if (m_readyState == HAVE_FUTURE_DATA && oldState < HAVE_FUTURE_DATA && potentiallyPlaying() && !m_mediaSession->playbackPermitted(*this)) {
+        auto canTransition = canTransitionFromAutoplayToPlay();
+        if (canTransition && canTransition.value() == MediaPlaybackDenialReason::UserGestureRequired)
+            ALWAYS_LOG(LOGIDENTIFIER, "Autoplay blocked, user gesture required");
+
         pauseInternal();
         setPlaybackWithoutUserGesture(PlaybackWithoutUserGesture::Prevented);
     }

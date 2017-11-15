@@ -58,4 +58,31 @@ public:
     } SeekType;
 };
 
+String convertEnumerationToString(HTMLMediaElementEnums::ReadyState);
+String convertEnumerationToString(HTMLMediaElementEnums::NetworkState);
+
 } // namespace WebCore
+
+namespace PAL {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::HTMLMediaElementEnums::ReadyState> {
+    static String toString(const WebCore::HTMLMediaElementEnums::ReadyState state)
+    {
+        return convertEnumerationToString(state);
+    }
+};
+
+template <>
+struct LogArgument<WebCore::HTMLMediaElementEnums::NetworkState> {
+    static String toString(const WebCore::HTMLMediaElementEnums::NetworkState state)
+    {
+        return convertEnumerationToString(state);
+    }
+};
+
+}; // namespace PAL
+
