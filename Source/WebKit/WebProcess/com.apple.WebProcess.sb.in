@@ -177,19 +177,26 @@
 (deny sysctl*)
 (allow sysctl-read
     (sysctl-name
+        "hw.byteorder"
+        "hw.busfrequency_compat"
         "hw.busfrequency_max"
+        "hw.cachelinesize_compat"
+        "hw.cpufrequency_compat"
         "hw.cputype"
         "hw.l2cachesize"
         "hw.machine"
         "hw.memsize"
         "hw.model"
         "hw.ncpu"
+        "hw.pagesize_compat"
+        "hw.tbfrequency_compat"
         "hw.vectorunit"
         "kern.hostname"
         "kern.maxfilesperproc"
         "kern.memorystatus_level"
         "kern.safeboot"
         "kern.version"
+        "security.mac.sandbox.sentinel"
         "vm.footprint_suspend")
     (sysctl-name-regex #"^hw.(active|avail)cpu")
     (sysctl-name-regex #"^hw.(logical|physical)cpu_max")
