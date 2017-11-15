@@ -70,6 +70,9 @@ class PlatformInfo(object):
     def is_win(self):
         return self.os_name == 'win'
 
+    def is_native_win(self):
+        return self.is_win() and not self.is_cygwin()
+
     def is_cygwin(self):
         return self._is_cygwin
 

@@ -111,6 +111,7 @@ class TestPlatformInfo(unittest.TestCase):
         self.assertFalse(info.is_linux())
         self.assertFalse(info.is_mac())
         self.assertTrue(info.is_win())
+        self.assertTrue(info.is_native_win())
         self.assertFalse(info.is_freebsd())
 
         info = self.make_info(fake_sys('cygwin'), executive=fake_executive('6.1.7600'))
@@ -118,6 +119,7 @@ class TestPlatformInfo(unittest.TestCase):
         self.assertFalse(info.is_linux())
         self.assertFalse(info.is_mac())
         self.assertTrue(info.is_win())
+        self.assertFalse(info.is_native_win())
         self.assertFalse(info.is_freebsd())
 
         info = self.make_info(fake_sys('freebsd8'))

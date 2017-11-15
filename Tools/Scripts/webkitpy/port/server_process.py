@@ -64,7 +64,13 @@ class ServerProcess(object):
         self._port = port_obj
         self._name = name  # Should be the command name (e.g. DumpRenderTree, ImageDiff)
         self._cmd = cmd
-        self._env = env
+
+        # Windows does not allow unicode values in the environment
+        if env and self._port.host.platform.is_native_win():
+            self._env = {key: env[key].encode('utf-8') for key in env}
+        else:
+            self._env = env
+
         # Set if the process outputs non-standard newlines like '\r\n' or '\r'.
         # Don't set if there will be binary data or the data must be ASCII encoded.
         self._universal_newlines = universal_newlines

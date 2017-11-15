@@ -1,3 +1,23 @@
+2017-11-14  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Windows] Fix error while launching subprocess on Windows Python
+        https://bugs.webkit.org/show_bug.cgi?id=179637
+
+        Reviewed by Alex Christensen.
+
+        To pass environment variables to subprocess.popen on Windows Python 2,
+        the dict values must be str not unicode.
+        Also is_native_win() method is added to port.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.is_native_win):
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (MockPlatformInfo.is_native_win):
+        * Scripts/webkitpy/common/system/platforminfo_unittest.py:
+        (TestPlatformInfo.test_os_name_and_wrappers):
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.__init__):
+
 2017-11-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Move JSONValues to WTF and convert uses of InspectorValues.h to JSONValues.h
