@@ -1,3 +1,144 @@
+2017-11-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Move JSONValues to WTF and convert uses of InspectorValues.h to JSONValues.h
+        https://bugs.webkit.org/show_bug.cgi?id=173793
+
+        Reviewed by Brian Burg.
+
+        * CMakeLists.txt:
+        * CommandResult.cpp:
+        (WebDriver::CommandResult::CommandResult):
+        * CommandResult.h:
+        (WebDriver::CommandResult::success):
+        (WebDriver::CommandResult::fail):
+        (WebDriver::CommandResult::result const):
+        (WebDriver::CommandResult::setAdditionalErrorData):
+        (WebDriver::CommandResult::additionalErrorData const):
+        * Session.cpp:
+        (WebDriver::firstWindowHandleInResult):
+        (WebDriver::Session::handleUserPrompts):
+        (WebDriver::Session::reportUnexpectedAlertOpen):
+        (WebDriver::Session::go):
+        (WebDriver::Session::getCurrentURL):
+        (WebDriver::Session::back):
+        (WebDriver::Session::forward):
+        (WebDriver::Session::refresh):
+        (WebDriver::Session::getTitle):
+        (WebDriver::Session::getWindowHandle):
+        (WebDriver::Session::closeTopLevelBrowsingContext):
+        (WebDriver::Session::switchToWindow):
+        (WebDriver::Session::getWindowHandles):
+        (WebDriver::Session::switchToFrame):
+        (WebDriver::Session::switchToParentFrame):
+        (WebDriver::Session::getToplevelBrowsingContextRect):
+        (WebDriver::Session::moveToplevelBrowsingContextWindow):
+        (WebDriver::Session::resizeToplevelBrowsingContextWindow):
+        (WebDriver::Session::createElement):
+        (WebDriver::Session::extractElement):
+        (WebDriver::Session::extractElementID):
+        (WebDriver::Session::computeElementLayout):
+        (WebDriver::Session::findElements):
+        (WebDriver::Session::isElementSelected):
+        (WebDriver::Session::getElementText):
+        (WebDriver::Session::getElementTagName):
+        (WebDriver::Session::getElementRect):
+        (WebDriver::Session::isElementEnabled):
+        (WebDriver::Session::isElementDisplayed):
+        (WebDriver::Session::getElementAttribute):
+        (WebDriver::Session::waitForNavigationToComplete):
+        (WebDriver::Session::selectOptionElement):
+        (WebDriver::Session::elementClick):
+        (WebDriver::Session::elementClear):
+        (WebDriver::Session::elementSendKeys):
+        (WebDriver::Session::elementSubmit):
+        (WebDriver::Session::handleScriptResult):
+        (WebDriver::Session::executeScript):
+        (WebDriver::Session::performMouseInteraction):
+        (WebDriver::Session::performKeyboardInteractions):
+        (WebDriver::parseAutomationCookie):
+        (WebDriver::builtAutomationCookie):
+        (WebDriver::serializeCookie):
+        (WebDriver::Session::getAllCookies):
+        (WebDriver::Session::getNamedCookie):
+        (WebDriver::Session::addCookie):
+        (WebDriver::Session::deleteCookie):
+        (WebDriver::Session::deleteAllCookies):
+        (WebDriver::Session::dismissAlert):
+        (WebDriver::Session::acceptAlert):
+        (WebDriver::Session::getAlertText):
+        (WebDriver::Session::sendAlertText):
+        (WebDriver::Session::takeScreenshot):
+        * Session.h:
+        * SessionHost.cpp:
+        (WebDriver::SessionHost::sendCommandToBackend):
+        (WebDriver::SessionHost::dispatchMessage):
+        * SessionHost.h:
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::handleRequest):
+        (WebDriver::WebDriverService::sendResponse const):
+        (WebDriver::deserializeTimeouts):
+        (WebDriver::WebDriverService::parseCapabilities const):
+        (WebDriver::WebDriverService::findSessionOrCompleteWithError):
+        (WebDriver::WebDriverService::validatedCapabilities const):
+        (WebDriver::WebDriverService::mergeCapabilities const):
+        (WebDriver::WebDriverService::matchCapabilities const):
+        (WebDriver::WebDriverService::processCapabilities const):
+        (WebDriver::WebDriverService::newSession):
+        (WebDriver::WebDriverService::deleteSession):
+        (WebDriver::WebDriverService::setTimeouts):
+        (WebDriver::WebDriverService::go):
+        (WebDriver::WebDriverService::getCurrentURL):
+        (WebDriver::WebDriverService::back):
+        (WebDriver::WebDriverService::forward):
+        (WebDriver::WebDriverService::refresh):
+        (WebDriver::WebDriverService::getTitle):
+        (WebDriver::WebDriverService::getWindowHandle):
+        (WebDriver::WebDriverService::getWindowRect):
+        (WebDriver::valueAsNumberInRange):
+        (WebDriver::WebDriverService::setWindowRect):
+        (WebDriver::WebDriverService::closeWindow):
+        (WebDriver::WebDriverService::switchToWindow):
+        (WebDriver::WebDriverService::getWindowHandles):
+        (WebDriver::WebDriverService::switchToFrame):
+        (WebDriver::WebDriverService::switchToParentFrame):
+        (WebDriver::findElementOrCompleteWithError):
+        (WebDriver::findStrategyAndSelectorOrCompleteWithError):
+        (WebDriver::WebDriverService::findElement):
+        (WebDriver::WebDriverService::findElements):
+        (WebDriver::WebDriverService::findElementFromElement):
+        (WebDriver::WebDriverService::findElementsFromElement):
+        (WebDriver::WebDriverService::isElementSelected):
+        (WebDriver::WebDriverService::getElementAttribute):
+        (WebDriver::WebDriverService::getElementText):
+        (WebDriver::WebDriverService::getElementTagName):
+        (WebDriver::WebDriverService::getElementRect):
+        (WebDriver::WebDriverService::isElementEnabled):
+        (WebDriver::WebDriverService::isElementDisplayed):
+        (WebDriver::WebDriverService::elementClick):
+        (WebDriver::WebDriverService::elementClear):
+        (WebDriver::WebDriverService::elementSendKeys):
+        (WebDriver::WebDriverService::elementSubmit):
+        (WebDriver::findScriptAndArgumentsOrCompleteWithError):
+        (WebDriver::WebDriverService::executeScript):
+        (WebDriver::WebDriverService::executeAsyncScript):
+        (WebDriver::WebDriverService::getAllCookies):
+        (WebDriver::WebDriverService::getNamedCookie):
+        (WebDriver::deserializeCookie):
+        (WebDriver::WebDriverService::addCookie):
+        (WebDriver::WebDriverService::deleteCookie):
+        (WebDriver::WebDriverService::deleteAllCookies):
+        (WebDriver::WebDriverService::dismissAlert):
+        (WebDriver::WebDriverService::acceptAlert):
+        (WebDriver::WebDriverService::getAlertText):
+        (WebDriver::WebDriverService::sendAlertText):
+        (WebDriver::WebDriverService::takeScreenshot):
+        (WebDriver::WebDriverService::takeElementScreenshot):
+        * WebDriverService.h:
+        * gtk/WebDriverServiceGtk.cpp:
+        (WebDriver::WebDriverService::platformValidateCapability const):
+        (WebDriver::WebDriverService::platformMatchCapability const):
+        (WebDriver::WebDriverService::platformParseCapabilities const):
+
 2017-11-07  Brian Burg  <bburg@apple.com>
 
         Web Automation: inViewCenterPoint should not include topContentInset when computed in viewport coordinates

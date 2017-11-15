@@ -33,8 +33,8 @@
 
 #include "InspectorEnvironment.h"
 #include "InspectorFrontendRouter.h"
-#include "InspectorValues.h"
 #include "ScriptValue.h"
+#include <wtf/JSONValues.h>
 
 namespace Inspector {
 
@@ -90,7 +90,7 @@ void InspectorAgent::initialized(ErrorString&)
     m_environment.frontendInitialized();
 }
 
-void InspectorAgent::inspect(RefPtr<Protocol::Runtime::RemoteObject>&& objectToInspect, RefPtr<InspectorObject>&& hints)
+void InspectorAgent::inspect(RefPtr<Protocol::Runtime::RemoteObject>&& objectToInspect, RefPtr<JSON::Object>&& hints)
 {
     if (m_enabled) {
         m_frontendDispatcher->inspect(objectToInspect, hints);

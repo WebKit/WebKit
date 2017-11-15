@@ -38,7 +38,6 @@
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "InspectorFrontendRouter.h"
-#include "InspectorValues.h"
 #include "JSLock.h"
 #include "ParserError.h"
 #include "ScriptDebugServer.h"
@@ -46,6 +45,7 @@
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/JSONValues.h>
 
 using namespace JSC;
 
@@ -132,7 +132,7 @@ void InspectorRuntimeAgent::evaluate(ErrorString& errorString, const String& exp
     }
 }
 
-void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const String& objectId, const String& expression, const InspectorArray* optionalArguments, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown)
+void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const String& objectId, const String& expression, const JSON::Array* optionalArguments, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown)
 {
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
@@ -225,7 +225,7 @@ void InspectorRuntimeAgent::getCollectionEntries(ErrorString& errorString, const
     injectedScript.getCollectionEntries(errorString, objectId, objectGroup ? *objectGroup : String(), start, fetch, &entries);
 }
 
-void InspectorRuntimeAgent::saveResult(ErrorString& errorString, const Inspector::InspectorObject& callArgument, const int* executionContextId, Inspector::Protocol::OptOutput<int>* savedResultIndex)
+void InspectorRuntimeAgent::saveResult(ErrorString& errorString, const JSON::Object& callArgument, const int* executionContextId, Inspector::Protocol::OptOutput<int>* savedResultIndex)
 {
     InjectedScript injectedScript;
 
@@ -257,7 +257,7 @@ void InspectorRuntimeAgent::releaseObjectGroup(ErrorString&, const String& objec
     m_injectedScriptManager.releaseObjectGroup(objectGroup);
 }
 
-void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString& errorString, const Inspector::InspectorArray& locations, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::TypeDescription>>& typeDescriptions)
+void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString& errorString, const JSON::Array& locations, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::TypeDescription>>& typeDescriptions)
 {
     static const bool verbose = false;
 
@@ -271,8 +271,8 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString& er
     m_vm.typeProfilerLog()->processLogEntries(ASCIILiteral("User Query"));
 
     for (size_t i = 0; i < locations.length(); i++) {
-        RefPtr<Inspector::InspectorValue> value = locations.get(i);
-        RefPtr<InspectorObject> location;
+        RefPtr<JSON::Value> value = locations.get(i);
+        RefPtr<JSON::Object> location;
         if (!value->asObject(location)) {
             errorString = ASCIILiteral("Array of TypeLocation objects has an object that does not have type of TypeLocation.");
             return;

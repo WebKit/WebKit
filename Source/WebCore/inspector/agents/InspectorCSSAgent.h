@@ -32,7 +32,6 @@
 #include "InspectorWebAgentBase.h"
 #include "SecurityContext.h"
 #include <inspector/InspectorBackendDispatchers.h>
-#include <inspector/InspectorValues.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -40,6 +39,11 @@
 
 namespace Inspector {
 class CSSFrontendDispatcher;
+}
+
+namespace JSON {
+class Array;
+class Object;
 }
 
 namespace WebCore {
@@ -104,13 +108,13 @@ public:
     void getStyleSheet(ErrorString&, const String& styleSheetId, RefPtr<Inspector::Protocol::CSS::CSSStyleSheetBody>& result) override;
     void getStyleSheetText(ErrorString&, const String& styleSheetId, String* result) override;
     void setStyleSheetText(ErrorString&, const String& styleSheetId, const String& text) override;
-    void setStyleText(ErrorString&, const Inspector::InspectorObject& styleId, const String& text, RefPtr<Inspector::Protocol::CSS::CSSStyle>& result) override;
-    void setRuleSelector(ErrorString&, const Inspector::InspectorObject& ruleId, const String& selector, RefPtr<Inspector::Protocol::CSS::CSSRule>& result) override;
+    void setStyleText(ErrorString&, const JSON::Object& styleId, const String& text, RefPtr<Inspector::Protocol::CSS::CSSStyle>& result) override;
+    void setRuleSelector(ErrorString&, const JSON::Object& ruleId, const String& selector, RefPtr<Inspector::Protocol::CSS::CSSRule>& result) override;
     void createStyleSheet(ErrorString&, const String& frameId, String* styleSheetId) override;
     void addRule(ErrorString&, const String& styleSheetId, const String& selector, RefPtr<Inspector::Protocol::CSS::CSSRule>& result) override;
     void getSupportedCSSProperties(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSPropertyInfo>>& result) override;
     void getSupportedSystemFontFamilyNames(ErrorString&, RefPtr<Inspector::Protocol::Array<String>>& result) override;
-    void forcePseudoState(ErrorString&, int nodeId, const Inspector::InspectorArray& forcedPseudoClasses) override;
+    void forcePseudoState(ErrorString&, int nodeId, const JSON::Array& forcedPseudoClasses) override;
 
 private:
     class StyleSheetAction;

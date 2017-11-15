@@ -37,12 +37,12 @@
 #include "StrongInlines.h"
 #include <wtf/text/WTFString.h>
 
+namespace JSON {
+class Value;
+}
+
 namespace Inspector {
-
-class InspectorValue;
-
-JS_EXPORT_PRIVATE RefPtr<InspectorValue> toInspectorValue(JSC::ExecState&, JSC::JSValue);
-
+JS_EXPORT_PRIVATE RefPtr<JSON::Value> toInspectorValue(JSC::ExecState&, JSC::JSValue);
 }
 
 namespace Deprecated {
@@ -68,7 +68,7 @@ public:
 
     bool operator==(const ScriptValue& other) const { return m_value == other.m_value; }
 
-    RefPtr<Inspector::InspectorValue> toInspectorValue(JSC::ExecState*) const;
+    RefPtr<JSON::Value> toInspectorValue(JSC::ExecState*) const;
 
 private:
     JSC::Strong<JSC::Unknown> m_value;

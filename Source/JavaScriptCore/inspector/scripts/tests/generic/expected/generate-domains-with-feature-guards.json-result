@@ -164,7 +164,7 @@ public:
     static Ref<Network1BackendDispatcher> create(BackendDispatcher&, Network1BackendDispatcherHandler*);
     void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
 private:
-    void loadResource(long requestId, RefPtr<InspectorObject>&& parameters);
+    void loadResource(long requestId, RefPtr<JSON::Object>&& parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
     void setAlternateDispatcher(AlternateNetwork1BackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
@@ -215,7 +215,7 @@ private:
 #include "TestBackendDispatchers.h"
 
 #include <inspector/InspectorFrontendRouter.h>
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
@@ -255,7 +255,7 @@ void Network1BackendDispatcher::dispatch(long requestId, const String& method, R
         m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\'', "Network1", '.', method, "' was not found"));
 }
 
-void Network1BackendDispatcher::loadResource(long requestId, RefPtr<InspectorObject>&&)
+void Network1BackendDispatcher::loadResource(long requestId, RefPtr<JSON::Object>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -265,7 +265,7 @@ void Network1BackendDispatcher::loadResource(long requestId, RefPtr<InspectorObj
 #endif
 
     ErrorString error;
-    Ref<InspectorObject> result = InspectorObject::create();
+    Ref<JSON::Object> result = JSON::Object::create();
     m_agent->loadResource(error);
 
     if (!error.length())
@@ -313,7 +313,7 @@ void Network1BackendDispatcher::loadResource(long requestId, RefPtr<InspectorObj
 #pragma once
 
 #include "TestProtocolObjects.h"
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -375,7 +375,7 @@ namespace Inspector {
 #if PLATFORM(WEB_EVENTS)
 void Network3FrontendDispatcher::resourceLoaded()
 {
-    Ref<InspectorObject> jsonMessage = InspectorObject::create();
+    Ref<JSON::Object> jsonMessage = JSON::Object::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("Network3.resourceLoaded"));
 
     m_frontendRouter.sendEvent(jsonMessage->toJSONString());
@@ -653,7 +653,7 @@ private:
 
 #include "TestProtocolInternal.h"
 #include "TestProtocolTypeConversions.h"
-#include <JavaScriptCore/InspectorValues.h>
+#include <wtf/JSONValues.h>
 
 namespace Inspector {
 
@@ -666,7 +666,7 @@ void ObjCInspectorNetwork1BackendDispatcher::loadResource(long requestId)
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
+        backendDispatcher()->sendResponse(requestId, JSON::Object::create());
     };
 
     [m_delegate loadResourceWithErrorCallback:errorCallback successCallback:successCallback];
@@ -850,7 +850,7 @@ using namespace Inspector;
 #import "TestProtocolInternal.h"
 
 #import "TestProtocolTypeConversions.h"
-#import <JavaScriptCore/InspectorValues.h>
+#import <wtf/JSONValues.h>
 
 using namespace Inspector;
 
@@ -873,7 +873,7 @@ using namespace Inspector;
 {
     const FrontendRouter& router = _controller->frontendRouter();
 
-    Ref<InspectorObject> jsonMessage = InspectorObject::create();
+    Ref<JSON::Object> jsonMessage = JSON::Object::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("Network3.resourceLoaded"));
     router.sendEvent(jsonMessage->toJSONString());
 }
@@ -987,7 +987,7 @@ __attribute__((visibility ("default")))
 #import "TestProtocol.h"
 #import "TestProtocolJSONObjectPrivate.h"
 #import <JavaScriptCore/AugmentableInspectorController.h>
-#import <JavaScriptCore/InspectorValues.h>
+#import <wtf/JSONValues.h>
 
 @interface TestProtocolNetwork3DomainEventDispatcher (Private)
 - (instancetype)initWithController:(Inspector::AugmentableInspectorController*)controller;
@@ -1162,8 +1162,8 @@ using namespace Inspector;
 
 #import "TestProtocolTypeConversions.h"
 #import <WebInspector/RWIProtocolJSONObjectPrivate.h>
-#import <JavaScriptCore/InspectorValues.h>
 #import <wtf/Assertions.h>
+#import <wtf/JSONValues.h>
 
 using namespace Inspector;
 

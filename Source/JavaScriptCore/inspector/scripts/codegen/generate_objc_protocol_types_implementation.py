@@ -57,8 +57,8 @@ class ObjCProtocolTypesImplementationGenerator(ObjCGenerator):
         secondary_headers = [
             '"%sTypeConversions.h"' % self.protocol_name(),
             Generator.string_for_file_include('%sJSONObjectPrivate.h' % ObjCGenerator.OBJC_STATIC_PREFIX, Frameworks.WebInspector, self.model().framework),
-            '<JavaScriptCore/InspectorValues.h>',
             '<wtf/Assertions.h>',
+            '<wtf/JSONValues.h>',
         ]
 
         # The FooProtocolInternal.h header is only needed to declare the backend-side event dispatcher bindings.

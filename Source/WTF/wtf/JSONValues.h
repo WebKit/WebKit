@@ -32,41 +32,22 @@
 
 #pragma once
 
-#include "JSExportMacros.h"
-#include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
-
-namespace Inspector {
-class InspectorArray;
-class InspectorArrayBase;
-class InspectorObject;
-class InspectorObjectBase;
-class InspectorValue;
-}
-
 namespace JSON {
-typedef Inspector::InspectorArray Array;
-typedef Inspector::InspectorObject Object;
-typedef Inspector::InspectorValue Value;
 
+class Array;
+class ArrayBase;
+class Object;
+class ObjectBase;
 
-// Not to be used except for protocol object subclasses.
-typedef Inspector::InspectorArrayBase ArrayBase;
-typedef Inspector::InspectorObjectBase ObjectBase;
-}
-
-namespace Inspector {
-
-class JS_EXPORT_PRIVATE InspectorValue : public RefCounted<InspectorValue> {
+class WTF_EXPORT_PRIVATE Value : public RefCounted<Value> {
 public:
     static const int maxDepth = 1000;
 
-    virtual ~InspectorValue()
+    virtual ~Value()
     {
         switch (m_type) {
         case Type::Null:
@@ -84,12 +65,12 @@ public:
         }
     }
 
-    static Ref<InspectorValue> null();
-    static Ref<InspectorValue> create(bool);
-    static Ref<InspectorValue> create(int);
-    static Ref<InspectorValue> create(double);
-    static Ref<InspectorValue> create(const String&);
-    static Ref<InspectorValue> create(const char*);
+    static Ref<Value> null();
+    static Ref<Value> create(bool);
+    static Ref<Value> create(int);
+    static Ref<Value> create(double);
+    static Ref<Value> create(const String&);
+    static Ref<Value> create(const char*);
 
     enum class Type {
         Null = 0,
@@ -114,12 +95,12 @@ public:
     bool asDouble(double&) const;
     bool asDouble(float&) const;
     bool asString(String&) const;
-    bool asValue(RefPtr<InspectorValue>&);
+    bool asValue(RefPtr<Value>&);
 
-    virtual bool asObject(RefPtr<InspectorObject>&);
-    virtual bool asArray(RefPtr<InspectorArray>&);
+    virtual bool asObject(RefPtr<Object>&);
+    virtual bool asArray(RefPtr<Array>&);
 
-    static bool parseJSON(const String& jsonInput, RefPtr<InspectorValue>& output);
+    static bool parseJSON(const String& jsonInput, RefPtr<Value>& output);
 
     String toJSONString() const;
     virtual void writeJSON(StringBuilder& output) const;
@@ -127,31 +108,31 @@ public:
     virtual size_t memoryCost() const;
 
 protected:
-    InspectorValue()
+    Value()
         : m_type(Type::Null) { }
 
-    explicit InspectorValue(Type type)
+    explicit Value(Type type)
         : m_type(type) { }
 
-    explicit InspectorValue(bool value)
+    explicit Value(bool value)
         : m_type(Type::Boolean)
     {
         m_value.boolean = value;
     }
 
-    explicit InspectorValue(int value)
+    explicit Value(int value)
         : m_type(Type::Integer)
     {
         m_value.number = static_cast<double>(value);
     }
 
-    explicit InspectorValue(double value)
+    explicit Value(double value)
         : m_type(Type::Double)
     {
         m_value.number = value;
     }
 
-    explicit InspectorValue(const String& value)
+    explicit Value(const String& value)
         : m_type(Type::String)
     {
         m_value.string = value.impl();
@@ -159,7 +140,7 @@ protected:
             m_value.string->ref();
     }
 
-    explicit InspectorValue(const char* value)
+    explicit Value(const char* value)
         : m_type(Type::String)
     {
         String wrapper(value);
@@ -177,31 +158,31 @@ private:
     } m_value;
 };
 
-class JS_EXPORT_PRIVATE InspectorObjectBase : public InspectorValue {
+class WTF_EXPORT_PRIVATE ObjectBase : public Value {
 private:
-    typedef HashMap<String, RefPtr<InspectorValue>> Dictionary;
+    typedef HashMap<String, RefPtr<Value>> Dictionary;
 
 public:
     typedef Dictionary::iterator iterator;
     typedef Dictionary::const_iterator const_iterator;
 
-    InspectorObject* openAccessors();
+    Object* openAccessors();
 
     size_t memoryCost() const final;
 
 protected:
-    virtual ~InspectorObjectBase();
+    virtual ~ObjectBase();
 
-    bool asObject(RefPtr<InspectorObject>& output) override;
+    bool asObject(RefPtr<Object>& output) override;
 
     // FIXME: use templates to reduce the amount of duplicated set*() methods.
     void setBoolean(const String& name, bool);
     void setInteger(const String& name, int);
     void setDouble(const String& name, double);
     void setString(const String& name, const String&);
-    void setValue(const String& name, RefPtr<InspectorValue>&&);
-    void setObject(const String& name, RefPtr<InspectorObjectBase>&&);
-    void setArray(const String& name, RefPtr<InspectorArrayBase>&&);
+    void setValue(const String& name, RefPtr<Value>&&);
+    void setObject(const String& name, RefPtr<ObjectBase>&&);
+    void setArray(const String& name, RefPtr<ArrayBase>&&);
 
     iterator find(const String& name);
     const_iterator find(const String& name) const;
@@ -210,7 +191,7 @@ protected:
     bool getBoolean(const String& name, bool& output) const;
     template<class T> bool getDouble(const String& name, T& output) const
     {
-        RefPtr<InspectorValue> value;
+        RefPtr<Value> value;
         if (!getValue(name, value))
             return false;
 
@@ -218,7 +199,7 @@ protected:
     }
     template<class T> bool getInteger(const String& name, T& output) const
     {
-        RefPtr<InspectorValue> value;
+        RefPtr<Value> value;
         if (!getValue(name, value))
             return false;
 
@@ -226,9 +207,9 @@ protected:
     }
 
     bool getString(const String& name, String& output) const;
-    bool getObject(const String& name, RefPtr<InspectorObject>&) const;
-    bool getArray(const String& name, RefPtr<InspectorArray>&) const;
-    bool getValue(const String& name, RefPtr<InspectorValue>&) const;
+    bool getObject(const String& name, RefPtr<Object>&) const;
+    bool getArray(const String& name, RefPtr<Array>&) const;
+    bool getValue(const String& name, RefPtr<Value>&) const;
 
     void remove(const String& name);
 
@@ -242,69 +223,69 @@ protected:
     int size() const { return m_map.size(); }
 
 protected:
-    InspectorObjectBase();
+    ObjectBase();
 
 private:
     Dictionary m_map;
     Vector<String> m_order;
 };
 
-class InspectorObject : public InspectorObjectBase {
+class Object : public ObjectBase {
 public:
-    static JS_EXPORT_PRIVATE Ref<InspectorObject> create();
+    static WTF_EXPORT_PRIVATE Ref<Object> create();
 
-    using InspectorObjectBase::asObject;
+    using ObjectBase::asObject;
 
     // This class expected non-cyclic values, as we cannot serialize cycles in JSON.
-    using InspectorObjectBase::setBoolean;
-    using InspectorObjectBase::setInteger;
-    using InspectorObjectBase::setDouble;
-    using InspectorObjectBase::setString;
-    using InspectorObjectBase::setValue;
-    using InspectorObjectBase::setObject;
-    using InspectorObjectBase::setArray;
+    using ObjectBase::setBoolean;
+    using ObjectBase::setInteger;
+    using ObjectBase::setDouble;
+    using ObjectBase::setString;
+    using ObjectBase::setValue;
+    using ObjectBase::setObject;
+    using ObjectBase::setArray;
 
-    using InspectorObjectBase::find;
-    using InspectorObjectBase::getBoolean;
-    using InspectorObjectBase::getInteger;
-    using InspectorObjectBase::getDouble;
-    using InspectorObjectBase::getString;
-    using InspectorObjectBase::getObject;
-    using InspectorObjectBase::getArray;
-    using InspectorObjectBase::getValue;
+    using ObjectBase::find;
+    using ObjectBase::getBoolean;
+    using ObjectBase::getInteger;
+    using ObjectBase::getDouble;
+    using ObjectBase::getString;
+    using ObjectBase::getObject;
+    using ObjectBase::getArray;
+    using ObjectBase::getValue;
 
-    using InspectorObjectBase::remove;
+    using ObjectBase::remove;
 
-    using InspectorObjectBase::begin;
-    using InspectorObjectBase::end;
+    using ObjectBase::begin;
+    using ObjectBase::end;
 
-    using InspectorObjectBase::size;
+    using ObjectBase::size;
 };
 
 
-class JS_EXPORT_PRIVATE InspectorArrayBase : public InspectorValue {
+class WTF_EXPORT_PRIVATE ArrayBase : public Value {
 public:
-    typedef Vector<RefPtr<InspectorValue>>::iterator iterator;
-    typedef Vector<RefPtr<InspectorValue>>::const_iterator const_iterator;
+    typedef Vector<RefPtr<Value>>::iterator iterator;
+    typedef Vector<RefPtr<Value>>::const_iterator const_iterator;
 
     unsigned length() const { return static_cast<unsigned>(m_map.size()); }
 
-    RefPtr<InspectorValue> get(size_t index) const;
+    RefPtr<Value> get(size_t index) const;
 
     size_t memoryCost() const final;
 
 protected:
-    virtual ~InspectorArrayBase();
+    virtual ~ArrayBase();
 
-    bool asArray(RefPtr<InspectorArray>&) override;
+    bool asArray(RefPtr<Array>&) override;
 
     void pushBoolean(bool);
     void pushInteger(int);
     void pushDouble(double);
     void pushString(const String&);
-    void pushValue(RefPtr<InspectorValue>&&);
-    void pushObject(RefPtr<InspectorObjectBase>&&);
-    void pushArray(RefPtr<InspectorArrayBase>&&);
+    void pushValue(RefPtr<Value>&&);
+    void pushObject(RefPtr<ObjectBase>&&);
+    void pushArray(RefPtr<ArrayBase>&&);
 
     void writeJSON(StringBuilder& output) const override;
 
@@ -314,121 +295,121 @@ protected:
     const_iterator end() const { return m_map.end(); }
 
 protected:
-    InspectorArrayBase();
+    ArrayBase();
 
 private:
-    Vector<RefPtr<InspectorValue>> m_map;
+    Vector<RefPtr<Value>> m_map;
 };
 
-class InspectorArray : public InspectorArrayBase {
+class Array : public ArrayBase {
 public:
-    static JS_EXPORT_PRIVATE Ref<InspectorArray> create();
+    static WTF_EXPORT_PRIVATE Ref<Array> create();
 
-    using InspectorArrayBase::asArray;
+    using ArrayBase::asArray;
 
     // This class expected non-cyclic values, as we cannot serialize cycles in JSON.
-    using InspectorArrayBase::pushBoolean;
-    using InspectorArrayBase::pushInteger;
-    using InspectorArrayBase::pushDouble;
-    using InspectorArrayBase::pushString;
-    using InspectorArrayBase::pushValue;
-    using InspectorArrayBase::pushObject;
-    using InspectorArrayBase::pushArray;
+    using ArrayBase::pushBoolean;
+    using ArrayBase::pushInteger;
+    using ArrayBase::pushDouble;
+    using ArrayBase::pushString;
+    using ArrayBase::pushValue;
+    using ArrayBase::pushObject;
+    using ArrayBase::pushArray;
 
-    using InspectorArrayBase::get;
+    using ArrayBase::get;
 
-    using InspectorArrayBase::begin;
-    using InspectorArrayBase::end;
+    using ArrayBase::begin;
+    using ArrayBase::end;
 };
 
 
-inline InspectorObjectBase::iterator InspectorObjectBase::find(const String& name)
+inline ObjectBase::iterator ObjectBase::find(const String& name)
 {
     return m_map.find(name);
 }
 
-inline InspectorObjectBase::const_iterator InspectorObjectBase::find(const String& name) const
+inline ObjectBase::const_iterator ObjectBase::find(const String& name) const
 {
     return m_map.find(name);
 }
 
-inline void InspectorObjectBase::setBoolean(const String& name, bool value)
+inline void ObjectBase::setBoolean(const String& name, bool value)
 {
-    setValue(name, InspectorValue::create(value));
+    setValue(name, Value::create(value));
 }
 
-inline void InspectorObjectBase::setInteger(const String& name, int value)
+inline void ObjectBase::setInteger(const String& name, int value)
 {
-    setValue(name, InspectorValue::create(value));
+    setValue(name, Value::create(value));
 }
 
-inline void InspectorObjectBase::setDouble(const String& name, double value)
+inline void ObjectBase::setDouble(const String& name, double value)
 {
-    setValue(name, InspectorValue::create(value));
+    setValue(name, Value::create(value));
 }
 
-inline void InspectorObjectBase::setString(const String& name, const String& value)
+inline void ObjectBase::setString(const String& name, const String& value)
 {
-    setValue(name, InspectorValue::create(value));
+    setValue(name, Value::create(value));
 }
 
-inline void InspectorObjectBase::setValue(const String& name, RefPtr<InspectorValue>&& value)
-{
-    ASSERT(value);
-    if (m_map.set(name, WTFMove(value)).isNewEntry)
-        m_order.append(name);
-}
-
-inline void InspectorObjectBase::setObject(const String& name, RefPtr<InspectorObjectBase>&& value)
+inline void ObjectBase::setValue(const String& name, RefPtr<Value>&& value)
 {
     ASSERT(value);
     if (m_map.set(name, WTFMove(value)).isNewEntry)
         m_order.append(name);
 }
 
-inline void InspectorObjectBase::setArray(const String& name, RefPtr<InspectorArrayBase>&& value)
+inline void ObjectBase::setObject(const String& name, RefPtr<ObjectBase>&& value)
 {
     ASSERT(value);
     if (m_map.set(name, WTFMove(value)).isNewEntry)
         m_order.append(name);
 }
 
-inline void InspectorArrayBase::pushBoolean(bool value)
+inline void ObjectBase::setArray(const String& name, RefPtr<ArrayBase>&& value)
 {
-    m_map.append(InspectorValue::create(value));
+    ASSERT(value);
+    if (m_map.set(name, WTFMove(value)).isNewEntry)
+        m_order.append(name);
 }
 
-inline void InspectorArrayBase::pushInteger(int value)
+inline void ArrayBase::pushBoolean(bool value)
 {
-    m_map.append(InspectorValue::create(value));
+    m_map.append(Value::create(value));
 }
 
-inline void InspectorArrayBase::pushDouble(double value)
+inline void ArrayBase::pushInteger(int value)
 {
-    m_map.append(InspectorValue::create(value));
+    m_map.append(Value::create(value));
 }
 
-inline void InspectorArrayBase::pushString(const String& value)
+inline void ArrayBase::pushDouble(double value)
 {
-    m_map.append(InspectorValue::create(value));
+    m_map.append(Value::create(value));
 }
 
-inline void InspectorArrayBase::pushValue(RefPtr<InspectorValue>&& value)
+inline void ArrayBase::pushString(const String& value)
+{
+    m_map.append(Value::create(value));
+}
+
+inline void ArrayBase::pushValue(RefPtr<Value>&& value)
 {
     ASSERT(value);
     m_map.append(WTFMove(value));
 }
 
-inline void InspectorArrayBase::pushObject(RefPtr<InspectorObjectBase>&& value)
+inline void ArrayBase::pushObject(RefPtr<ObjectBase>&& value)
 {
     ASSERT(value);
     m_map.append(WTFMove(value));
 }
 
-inline void InspectorArrayBase::pushArray(RefPtr<InspectorArrayBase>&& value)
+inline void ArrayBase::pushArray(RefPtr<ArrayBase>&& value)
 {
     ASSERT(value);
     m_map.append(WTFMove(value));
 }
 
-} // namespace Inspector
+} // namespace JSON

@@ -35,7 +35,6 @@
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "InspectorFrontendRouter.h"
-#include "InspectorValues.h"
 #include "JSCInlines.h"
 #include "RegularExpression.h"
 #include "ScriptCallStack.h"
@@ -43,6 +42,7 @@
 #include "ScriptDebugServer.h"
 #include "ScriptObject.h"
 #include "ScriptValue.h"
+#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/text/WTFString.h>
@@ -172,7 +172,7 @@ void InspectorDebuggerAgent::setSuppressAllPauses(bool suppress)
     m_scriptDebugServer.setSuppressAllPauses(suppress);
 }
 
-static RefPtr<InspectorObject> buildAssertPauseReason(const String& message)
+static RefPtr<JSON::Object> buildAssertPauseReason(const String& message)
 {
     auto reason = Inspector::Protocol::Debugger::AssertPauseReason::create().release();
     if (!message.isNull())
@@ -180,7 +180,7 @@ static RefPtr<InspectorObject> buildAssertPauseReason(const String& message)
     return reason->openAccessors();
 }
 
-static RefPtr<InspectorObject> buildCSPViolationPauseReason(const String& directiveText)
+static RefPtr<JSON::Object> buildCSPViolationPauseReason(const String& directiveText)
 {
     auto reason = Inspector::Protocol::Debugger::CSPViolationPauseReason::create()
         .setDirective(directiveText)
@@ -188,7 +188,7 @@ static RefPtr<InspectorObject> buildCSPViolationPauseReason(const String& direct
     return reason->openAccessors();
 }
 
-RefPtr<InspectorObject> InspectorDebuggerAgent::buildBreakpointPauseReason(JSC::BreakpointID debuggerBreakpointIdentifier)
+RefPtr<JSON::Object> InspectorDebuggerAgent::buildBreakpointPauseReason(JSC::BreakpointID debuggerBreakpointIdentifier)
 {
     ASSERT(debuggerBreakpointIdentifier != JSC::noBreakpointID);
     auto it = m_debuggerBreakpointIdentifierToInspectorBreakpointIdentifier.find(debuggerBreakpointIdentifier);
@@ -201,7 +201,7 @@ RefPtr<InspectorObject> InspectorDebuggerAgent::buildBreakpointPauseReason(JSC::
     return reason->openAccessors();
 }
 
-RefPtr<InspectorObject> InspectorDebuggerAgent::buildExceptionPauseReason(JSC::JSValue exception, const InjectedScript& injectedScript)
+RefPtr<JSON::Object> InspectorDebuggerAgent::buildExceptionPauseReason(JSC::JSValue exception, const InjectedScript& injectedScript)
 {
     ASSERT(exception);
     if (!exception)
@@ -315,9 +315,9 @@ void InspectorDebuggerAgent::didDispatchAsyncCall()
         m_pendingAsyncCalls.remove(identifier);
 }
 
-static Ref<InspectorObject> buildObjectForBreakpointCookie(const String& url, int lineNumber, int columnNumber, const String& condition, RefPtr<InspectorArray>& actions, bool isRegex, bool autoContinue, unsigned ignoreCount)
+static Ref<JSON::Object> buildObjectForBreakpointCookie(const String& url, int lineNumber, int columnNumber, const String& condition, RefPtr<JSON::Array>& actions, bool isRegex, bool autoContinue, unsigned ignoreCount)
 {
-    Ref<InspectorObject> breakpointObject = InspectorObject::create();
+    Ref<JSON::Object> breakpointObject = JSON::Object::create();
     breakpointObject->setString(ASCIILiteral("url"), url);
     breakpointObject->setInteger(ASCIILiteral("lineNumber"), lineNumber);
     breakpointObject->setInteger(ASCIILiteral("columnNumber"), columnNumber);
@@ -363,7 +363,7 @@ static bool breakpointActionTypeForString(const String& typeString, ScriptBreakp
     return false;
 }
 
-bool InspectorDebuggerAgent::breakpointActionsFromProtocol(ErrorString& errorString, RefPtr<InspectorArray>& actions, BreakpointActions* result)
+bool InspectorDebuggerAgent::breakpointActionsFromProtocol(ErrorString& errorString, RefPtr<JSON::Array>& actions, BreakpointActions* result)
 {
     if (!actions)
         return true;
@@ -374,8 +374,8 @@ bool InspectorDebuggerAgent::breakpointActionsFromProtocol(ErrorString& errorStr
 
     result->reserveCapacity(actionsLength);
     for (unsigned i = 0; i < actionsLength; ++i) {
-        RefPtr<InspectorValue> value = actions->get(i);
-        RefPtr<InspectorObject> object;
+        RefPtr<JSON::Value> value = actions->get(i);
+        RefPtr<JSON::Object> object;
         if (!value->asObject(object)) {
             errorString = ASCIILiteral("BreakpointAction of incorrect type, expected object");
             return false;
@@ -420,7 +420,7 @@ static RefPtr<Inspector::Protocol::Debugger::Location> buildDebuggerLocation(con
     return WTFMove(location);
 }
 
-static bool parseLocation(ErrorString& errorString, const InspectorObject& location, JSC::SourceID& sourceID, unsigned& lineNumber, unsigned& columnNumber)
+static bool parseLocation(ErrorString& errorString, const JSON::Object& location, JSC::SourceID& sourceID, unsigned& lineNumber, unsigned& columnNumber)
 {
     String scriptIDStr;
     if (!location.getString(ASCIILiteral("scriptId"), scriptIDStr) || !location.getInteger(ASCIILiteral("lineNumber"), lineNumber)) {
@@ -435,7 +435,7 @@ static bool parseLocation(ErrorString& errorString, const InspectorObject& locat
     return true;
 }
 
-void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString& errorString, int lineNumber, const String* const optionalURL, const String* const optionalURLRegex, const int* const optionalColumnNumber, const InspectorObject* options, Inspector::Protocol::Debugger::BreakpointId* outBreakpointIdentifier, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Debugger::Location>>& locations)
+void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString& errorString, int lineNumber, const String* const optionalURL, const String* const optionalURLRegex, const int* const optionalColumnNumber, const JSON::Object* options, Inspector::Protocol::Debugger::BreakpointId* outBreakpointIdentifier, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Debugger::Location>>& locations)
 {
     locations = Inspector::Protocol::Array<Inspector::Protocol::Debugger::Location>::create();
     if (!optionalURL == !optionalURLRegex) {
@@ -456,7 +456,7 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString& errorString, int li
     String condition = emptyString();
     bool autoContinue = false;
     unsigned ignoreCount = 0;
-    RefPtr<InspectorArray> actions;
+    RefPtr<JSON::Array> actions;
     if (options) {
         options->getString(ASCIILiteral("condition"), condition);
         options->getBoolean(ASCIILiteral("autoContinue"), autoContinue);
@@ -496,7 +496,7 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString& errorString, int li
     *outBreakpointIdentifier = breakpointIdentifier;
 }
 
-void InspectorDebuggerAgent::setBreakpoint(ErrorString& errorString, const InspectorObject& location, const InspectorObject* options, Inspector::Protocol::Debugger::BreakpointId* outBreakpointIdentifier, RefPtr<Inspector::Protocol::Debugger::Location>& actualLocation)
+void InspectorDebuggerAgent::setBreakpoint(ErrorString& errorString, const JSON::Object& location, const JSON::Object* options, Inspector::Protocol::Debugger::BreakpointId* outBreakpointIdentifier, RefPtr<Inspector::Protocol::Debugger::Location>& actualLocation)
 {
     JSC::SourceID sourceID;
     unsigned lineNumber;
@@ -507,7 +507,7 @@ void InspectorDebuggerAgent::setBreakpoint(ErrorString& errorString, const Inspe
     String condition = emptyString();
     bool autoContinue = false;
     unsigned ignoreCount = 0;
-    RefPtr<InspectorArray> actions;
+    RefPtr<JSON::Array> actions;
     if (options) {
         options->getString(ASCIILiteral("condition"), condition);
         options->getBoolean(ASCIILiteral("autoContinue"), autoContinue);
@@ -604,7 +604,7 @@ void InspectorDebuggerAgent::continueUntilNextRunLoop(ErrorString& errorString)
     registerIdleHandler();
 }
 
-void InspectorDebuggerAgent::continueToLocation(ErrorString& errorString, const InspectorObject& location)
+void InspectorDebuggerAgent::continueToLocation(ErrorString& errorString, const JSON::Object& location)
 {
     if (!assertPaused(errorString))
         return;
@@ -695,7 +695,7 @@ void InspectorDebuggerAgent::getFunctionDetails(ErrorString& errorString, const 
     injectedScript.getFunctionDetails(errorString, functionId, &details);
 }
 
-void InspectorDebuggerAgent::schedulePauseOnNextStatement(DebuggerFrontendDispatcher::Reason breakReason, RefPtr<InspectorObject>&& data)
+void InspectorDebuggerAgent::schedulePauseOnNextStatement(DebuggerFrontendDispatcher::Reason breakReason, RefPtr<JSON::Object>&& data)
 {
     if (m_javaScriptPauseScheduled)
         return;
@@ -909,7 +909,7 @@ void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script
         return;
 
     for (auto& entry : m_javaScriptBreakpoints) {
-        RefPtr<InspectorObject> breakpointObject = entry.value;
+        RefPtr<JSON::Object> breakpointObject = entry.value;
 
         bool isRegex;
         String url;
@@ -925,7 +925,7 @@ void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script
         breakpointObject->getBoolean(ASCIILiteral("autoContinue"), scriptBreakpoint.autoContinue);
         breakpointObject->getInteger(ASCIILiteral("ignoreCount"), scriptBreakpoint.ignoreCount);
         ErrorString errorString;
-        RefPtr<InspectorArray> actions;
+        RefPtr<JSON::Array> actions;
         breakpointObject->getArray(ASCIILiteral("actions"), actions);
         if (!breakpointActionsFromProtocol(errorString, actions, &scriptBreakpoint.actions)) {
             ASSERT_NOT_REACHED();
@@ -1061,7 +1061,7 @@ void InspectorDebuggerAgent::didContinue()
         m_frontendDispatcher->resumed();
 }
 
-void InspectorDebuggerAgent::breakProgram(DebuggerFrontendDispatcher::Reason breakReason, RefPtr<InspectorObject>&& data)
+void InspectorDebuggerAgent::breakProgram(DebuggerFrontendDispatcher::Reason breakReason, RefPtr<JSON::Object>&& data)
 {
     m_breakReason = breakReason;
     m_breakAuxData = WTFMove(data);

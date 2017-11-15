@@ -31,31 +31,31 @@
  */
 
 #include "config.h"
-#include "InspectorValues.h"
+#include "JSONValues.h"
 
 #include <wtf/DecimalNumber.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/StringBuilder.h>
 
-namespace Inspector {
+namespace JSON {
 
 namespace {
 
 static const int stackLimit = 1000;
 
-enum Token {
-    OBJECT_BEGIN,
-    OBJECT_END,
-    ARRAY_BEGIN,
-    ARRAY_END,
-    STRING,
-    NUMBER,
-    BOOL_TRUE,
-    BOOL_FALSE,
-    NULL_TOKEN,
-    LIST_SEPARATOR,
-    OBJECT_PAIR_SEPARATOR,
-    INVALID_TOKEN,
+enum class Token {
+    ObjectBegin,
+    ObjectEnd,
+    ArrayBegin,
+    ArrayEnd,
+    String,
+    Number,
+    BoolTrue,
+    BoolFalse,
+    Null,
+    ListSeparator,
+    ObjectPairSeparator,
+    Invalid,
 };
 
 const char* const nullString = "null";
@@ -97,7 +97,7 @@ bool readInt(const UChar* start, const UChar* end, const UChar** tokenEnd, bool 
 
 bool parseNumberToken(const UChar* start, const UChar* end, const UChar** tokenEnd)
 {
-    // We just grab the number here.  We validate the size in DecodeNumber.
+    // We just grab the number here. We validate the size in DecodeNumber.
     // According   to RFC4627, a valid number is: [minus] int [frac] [exp]
     if (start == end)
         return false;
@@ -204,41 +204,41 @@ Token parseToken(const UChar* start, const UChar* end, const UChar** tokenStart,
         ++start;
 
     if (start == end)
-        return INVALID_TOKEN;
+        return Token::Invalid;
 
     *tokenStart = start;
 
     switch (*start) {
     case 'n':
         if (parseConstToken(start, end, tokenEnd, nullString))
-            return NULL_TOKEN;
+            return Token::Null;
         break;
     case 't':
         if (parseConstToken(start, end, tokenEnd, trueString))
-            return BOOL_TRUE;
+            return Token::BoolTrue;
         break;
     case 'f':
         if (parseConstToken(start, end, tokenEnd, falseString))
-            return BOOL_FALSE;
+            return Token::BoolFalse;
         break;
     case '[':
         *tokenEnd = start + 1;
-        return ARRAY_BEGIN;
+        return Token::ArrayBegin;
     case ']':
         *tokenEnd = start + 1;
-        return ARRAY_END;
+        return Token::ArrayEnd;
     case ',':
         *tokenEnd = start + 1;
-        return LIST_SEPARATOR;
+        return Token::ListSeparator;
     case '{':
         *tokenEnd = start + 1;
-        return OBJECT_BEGIN;
+        return Token::ObjectBegin;
     case '}':
         *tokenEnd = start + 1;
-        return OBJECT_END;
+        return Token::ObjectEnd;
     case ':':
         *tokenEnd = start + 1;
-        return OBJECT_PAIR_SEPARATOR;
+        return Token::ObjectPairSeparator;
     case '0':
     case '1':
     case '2':
@@ -251,15 +251,15 @@ Token parseToken(const UChar* start, const UChar* end, const UChar** tokenStart,
     case '9':
     case '-':
         if (parseNumberToken(start, end, tokenEnd))
-            return NUMBER;
+            return Token::Number;
         break;
     case '"':
         if (parseStringToken(start + 1, end, tokenEnd))
-            return STRING;
+            return Token::String;
         break;
     }
 
-    return INVALID_TOKEN;
+    return Token::Invalid;
 }
 
 bool decodeString(const UChar* start, const UChar* end, StringBuilder& output)
@@ -330,49 +330,49 @@ bool decodeString(const UChar* start, const UChar* end, String& output)
     return true;
 }
 
-RefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, const UChar** valueTokenEnd, int depth)
+RefPtr<JSON::Value> buildValue(const UChar* start, const UChar* end, const UChar** valueTokenEnd, int depth)
 {
     if (depth > stackLimit)
         return nullptr;
 
-    RefPtr<InspectorValue> result;
+    RefPtr<JSON::Value> result;
     const UChar* tokenStart;
     const UChar* tokenEnd;
     Token token = parseToken(start, end, &tokenStart, &tokenEnd);
     switch (token) {
-    case INVALID_TOKEN:
+    case Token::Invalid:
         return nullptr;
-    case NULL_TOKEN:
-        result = InspectorValue::null();
+    case Token::Null:
+        result = JSON::Value::null();
         break;
-    case BOOL_TRUE:
-        result = InspectorValue::create(true);
+    case Token::BoolTrue:
+        result = JSON::Value::create(true);
         break;
-    case BOOL_FALSE:
-        result = InspectorValue::create(false);
+    case Token::BoolFalse:
+        result = JSON::Value::create(false);
         break;
-    case NUMBER: {
+    case Token::Number: {
         bool ok;
         double value = charactersToDouble(tokenStart, tokenEnd - tokenStart, &ok);
         if (!ok)
             return nullptr;
-        result = InspectorValue::create(value);
+        result = JSON::Value::create(value);
         break;
     }
-    case STRING: {
+    case Token::String: {
         String value;
         bool ok = decodeString(tokenStart + 1, tokenEnd - 1, value);
         if (!ok)
             return nullptr;
-        result = InspectorValue::create(value);
+        result = JSON::Value::create(value);
         break;
     }
-    case ARRAY_BEGIN: {
-        Ref<InspectorArray> array = InspectorArray::create();
+    case Token::ArrayBegin: {
+        Ref<JSON::Array> array = JSON::Array::create();
         start = tokenEnd;
         token = parseToken(start, end, &tokenStart, &tokenEnd);
-        while (token != ARRAY_END) {
-            RefPtr<InspectorValue> arrayNode = buildValue(start, end, &tokenEnd, depth + 1);
+        while (token != Token::ArrayEnd) {
+            RefPtr<JSON::Value> arrayNode = buildValue(start, end, &tokenEnd, depth + 1);
             if (!arrayNode)
                 return nullptr;
             array->pushValue(WTFMove(arrayNode));
@@ -380,27 +380,27 @@ RefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, const UC
             // After a list value, we expect a comma or the end of the list.
             start = tokenEnd;
             token = parseToken(start, end, &tokenStart, &tokenEnd);
-            if (token == LIST_SEPARATOR) {
+            if (token == Token::ListSeparator) {
                 start = tokenEnd;
                 token = parseToken(start, end, &tokenStart, &tokenEnd);
-                if (token == ARRAY_END)
+                if (token == Token::ArrayEnd)
                     return nullptr;
-            } else if (token != ARRAY_END) {
-                // Unexpected value after list value.  Bail out.
+            } else if (token != Token::ArrayEnd) {
+                // Unexpected value after list value. Bail out.
                 return nullptr;
             }
         }
-        if (token != ARRAY_END)
+        if (token != Token::ArrayEnd)
             return nullptr;
         result = WTFMove(array);
         break;
     }
-    case OBJECT_BEGIN: {
-        Ref<InspectorObject> object = InspectorObject::create();
+    case Token::ObjectBegin: {
+        Ref<JSON::Object> object = JSON::Object::create();
         start = tokenEnd;
         token = parseToken(start, end, &tokenStart, &tokenEnd);
-        while (token != OBJECT_END) {
-            if (token != STRING)
+        while (token != Token::ObjectEnd) {
+            if (token != Token::String)
                 return nullptr;
             String key;
             if (!decodeString(tokenStart + 1, tokenEnd - 1, key))
@@ -408,11 +408,11 @@ RefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, const UC
             start = tokenEnd;
 
             token = parseToken(start, end, &tokenStart, &tokenEnd);
-            if (token != OBJECT_PAIR_SEPARATOR)
+            if (token != Token::ObjectPairSeparator)
                 return nullptr;
             start = tokenEnd;
 
-            RefPtr<InspectorValue> value = buildValue(start, end, &tokenEnd, depth + 1);
+            RefPtr<JSON::Value> value = buildValue(start, end, &tokenEnd, depth + 1);
             if (!value)
                 return nullptr;
             object->setValue(key, WTFMove(value));
@@ -421,17 +421,17 @@ RefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, const UC
             // After a key/value pair, we expect a comma or the end of the
             // object.
             token = parseToken(start, end, &tokenStart, &tokenEnd);
-            if (token == LIST_SEPARATOR) {
+            if (token == Token::ListSeparator) {
                 start = tokenEnd;
                 token = parseToken(start, end, &tokenStart, &tokenEnd);
-                 if (token == OBJECT_END)
+                if (token == Token::ObjectEnd)
                     return nullptr;
-            } else if (token != OBJECT_END) {
-                // Unexpected value after last object value.  Bail out.
+            } else if (token != Token::ObjectEnd) {
+                // Unexpected value after last object value. Bail out.
                 return nullptr;
             }
         }
-        if (token != OBJECT_END)
+        if (token != Token::ObjectEnd)
             return nullptr;
         result = WTFMove(object);
         break;
@@ -470,7 +470,7 @@ inline void doubleQuoteString(const String& str, StringBuilder& dst)
             if (c < 32 || c > 126 || c == '<' || c == '>') {
                 // 1. Escaping <, > to prevent script execution.
                 // 2. Technically, we could also pass through c > 126 as UTF8, but this
-                //    is also optional.  It would also be a pain to implement here.
+                //    is also optional. It would also be a pain to implement here.
                 dst.append(String::format("\\u%04X", c));
             } else
                 dst.append(c);
@@ -481,53 +481,53 @@ inline void doubleQuoteString(const String& str, StringBuilder& dst)
 
 } // anonymous namespace
 
-Ref<InspectorValue> InspectorValue::null()
+Ref<Value> Value::null()
 {
-    return adoptRef(*new InspectorValue);
+    return adoptRef(*new Value);
 }
 
-Ref<InspectorValue> InspectorValue::create(bool value)
+Ref<Value> Value::create(bool value)
 {
-    return adoptRef(*new InspectorValue(value));
+    return adoptRef(*new Value(value));
 }
 
-Ref<InspectorValue> InspectorValue::create(int value)
+Ref<Value> Value::create(int value)
 {
-    return adoptRef(*new InspectorValue(value));
+    return adoptRef(*new Value(value));
 }
 
-Ref<InspectorValue> InspectorValue::create(double value)
+Ref<Value> Value::create(double value)
 {
-    return adoptRef(*new InspectorValue(value));
+    return adoptRef(*new Value(value));
 }
 
-Ref<InspectorValue> InspectorValue::create(const String& value)
+Ref<Value> Value::create(const String& value)
 {
-    return adoptRef(*new InspectorValue(value));
+    return adoptRef(*new Value(value));
 }
 
-Ref<InspectorValue> InspectorValue::create(const char* value)
+Ref<Value> Value::create(const char* value)
 {
-    return adoptRef(*new InspectorValue(value));
+    return adoptRef(*new Value(value));
 }
 
-bool InspectorValue::asValue(RefPtr<Inspector::InspectorValue> & value)
+bool Value::asValue(RefPtr<Value> & value)
 {
     value = this;
     return true;
 }
 
-bool InspectorValue::asObject(RefPtr<InspectorObject>&)
+bool Value::asObject(RefPtr<Object>&)
 {
     return false;
 }
 
-bool InspectorValue::asArray(RefPtr<InspectorArray>&)
+bool Value::asArray(RefPtr<Array>&)
 {
     return false;
 }
 
-bool InspectorValue::parseJSON(const String& jsonInput, RefPtr<InspectorValue>& output)
+bool Value::parseJSON(const String& jsonInput, RefPtr<Value>& output)
 {
     // FIXME: This whole file should just use StringView instead of UChar/length and avoid upconverting.
     auto characters = StringView(jsonInput).upconvertedCharacters();
@@ -542,7 +542,7 @@ bool InspectorValue::parseJSON(const String& jsonInput, RefPtr<InspectorValue>& 
     return true;
 }
 
-String InspectorValue::toJSONString() const
+String Value::toJSONString() const
 {
     StringBuilder result;
     result.reserveCapacity(512);
@@ -550,7 +550,7 @@ String InspectorValue::toJSONString() const
     return result.toString();
 }
 
-bool InspectorValue::asBoolean(bool& output) const
+bool Value::asBoolean(bool& output) const
 {
     if (type() != Type::Boolean)
         return false;
@@ -559,7 +559,7 @@ bool InspectorValue::asBoolean(bool& output) const
     return true;
 }
 
-bool InspectorValue::asDouble(double& output) const
+bool Value::asDouble(double& output) const
 {
     if (type() != Type::Double)
         return false;
@@ -568,7 +568,7 @@ bool InspectorValue::asDouble(double& output) const
     return true;
 }
 
-bool InspectorValue::asDouble(float& output) const
+bool Value::asDouble(float& output) const
 {
     if (type() != Type::Double)
         return false;
@@ -577,7 +577,7 @@ bool InspectorValue::asDouble(float& output) const
     return true;
 }
 
-bool InspectorValue::asInteger(int& output) const
+bool Value::asInteger(int& output) const
 {
     if (type() != Type::Integer && type() != Type::Double)
         return false;
@@ -586,7 +586,7 @@ bool InspectorValue::asInteger(int& output) const
     return true;
 }
 
-bool InspectorValue::asInteger(unsigned& output) const
+bool Value::asInteger(unsigned& output) const
 {
     if (type() != Type::Integer && type() != Type::Double)
         return false;
@@ -595,7 +595,7 @@ bool InspectorValue::asInteger(unsigned& output) const
     return true;
 }
 
-bool InspectorValue::asInteger(long& output) const
+bool Value::asInteger(long& output) const
 {
     if (type() != Type::Integer && type() != Type::Double)
         return false;
@@ -604,7 +604,7 @@ bool InspectorValue::asInteger(long& output) const
     return true;
 }
 
-bool InspectorValue::asInteger(long long& output) const
+bool Value::asInteger(long long& output) const
 {
     if (type() != Type::Integer && type() != Type::Double)
         return false;
@@ -613,7 +613,7 @@ bool InspectorValue::asInteger(long long& output) const
     return true;
 }
 
-bool InspectorValue::asInteger(unsigned long& output) const
+bool Value::asInteger(unsigned long& output) const
 {
     if (type() != Type::Integer && type() != Type::Double)
         return false;
@@ -622,7 +622,7 @@ bool InspectorValue::asInteger(unsigned long& output) const
     return true;
 }
 
-bool InspectorValue::asInteger(unsigned long long& output) const
+bool Value::asInteger(unsigned long long& output) const
 {
     if (type() != Type::Integer && type() != Type::Double)
         return false;
@@ -631,7 +631,7 @@ bool InspectorValue::asInteger(unsigned long long& output) const
     return true;
 }
 
-bool InspectorValue::asString(String& output) const
+bool Value::asString(String& output) const
 {
     if (type() != Type::String)
         return false;
@@ -640,7 +640,7 @@ bool InspectorValue::asString(String& output) const
     return true;
 }
 
-void InspectorValue::writeJSON(StringBuilder& output) const
+void Value::writeJSON(StringBuilder& output) const
 {
     switch (m_type) {
     case Type::Null:
@@ -682,7 +682,7 @@ void InspectorValue::writeJSON(StringBuilder& output) const
     }
 }
 
-size_t InspectorValue::memoryCost() const
+size_t Value::memoryCost() const
 {
     size_t memoryCost = sizeof(this);
     if (m_type == Type::String && m_value.string)
@@ -690,28 +690,28 @@ size_t InspectorValue::memoryCost() const
     return memoryCost;
 }
 
-InspectorObjectBase::~InspectorObjectBase()
+ObjectBase::~ObjectBase()
 {
 }
 
-bool InspectorObjectBase::asObject(RefPtr<InspectorObject>& output)
+bool ObjectBase::asObject(RefPtr<Object>& output)
 {
-    COMPILE_ASSERT(sizeof(InspectorObject) == sizeof(InspectorObjectBase), cannot_cast);
+    COMPILE_ASSERT(sizeof(Object) == sizeof(ObjectBase), cannot_cast);
 
-    output = static_cast<InspectorObject*>(this);
+    output = static_cast<Object*>(this);
     return true;
 }
 
-InspectorObject* InspectorObjectBase::openAccessors()
+Object* ObjectBase::openAccessors()
 {
-    COMPILE_ASSERT(sizeof(InspectorObject) == sizeof(InspectorObjectBase), cannot_cast);
+    COMPILE_ASSERT(sizeof(Object) == sizeof(ObjectBase), cannot_cast);
 
-    return static_cast<InspectorObject*>(this);
+    return static_cast<Object*>(this);
 }
 
-size_t InspectorObjectBase::memoryCost() const
+size_t ObjectBase::memoryCost() const
 {
-    size_t memoryCost = InspectorValue::memoryCost();
+    size_t memoryCost = Value::memoryCost();
     for (const auto& entry : m_map) {
         memoryCost += entry.key.sizeInBytes();
         if (entry.value)
@@ -720,43 +720,43 @@ size_t InspectorObjectBase::memoryCost() const
     return memoryCost;
 }
 
-bool InspectorObjectBase::getBoolean(const String& name, bool& output) const
+bool ObjectBase::getBoolean(const String& name, bool& output) const
 {
-    RefPtr<InspectorValue> value;
+    RefPtr<Value> value;
     if (!getValue(name, value))
         return false;
 
     return value->asBoolean(output);
 }
 
-bool InspectorObjectBase::getString(const String& name, String& output) const
+bool ObjectBase::getString(const String& name, String& output) const
 {
-    RefPtr<InspectorValue> value;
+    RefPtr<Value> value;
     if (!getValue(name, value))
         return false;
 
     return value->asString(output);
 }
 
-bool InspectorObjectBase::getObject(const String& name, RefPtr<InspectorObject>& output) const
+bool ObjectBase::getObject(const String& name, RefPtr<Object>& output) const
 {
-    RefPtr<InspectorValue> value;
+    RefPtr<Value> value;
     if (!getValue(name, value))
         return false;
 
     return value->asObject(output);
 }
 
-bool InspectorObjectBase::getArray(const String& name, RefPtr<InspectorArray>& output) const
+bool ObjectBase::getArray(const String& name, RefPtr<Array>& output) const
 {
-    RefPtr<InspectorValue> value;
+    RefPtr<Value> value;
     if (!getValue(name, value))
         return false;
 
     return value->asArray(output);
 }
 
-bool InspectorObjectBase::getValue(const String& name, RefPtr<InspectorValue>& output) const
+bool ObjectBase::getValue(const String& name, RefPtr<Value>& output) const
 {
     Dictionary::const_iterator findResult = m_map.find(name);
     if (findResult == m_map.end())
@@ -766,13 +766,13 @@ bool InspectorObjectBase::getValue(const String& name, RefPtr<InspectorValue>& o
     return true;
 }
 
-void InspectorObjectBase::remove(const String& name)
+void ObjectBase::remove(const String& name)
 {
     m_map.remove(name);
     m_order.removeFirst(name);
 }
 
-void InspectorObjectBase::writeJSON(StringBuilder& output) const
+void ObjectBase::writeJSON(StringBuilder& output) const
 {
     output.append('{');
     for (size_t i = 0; i < m_order.size(); ++i) {
@@ -787,28 +787,28 @@ void InspectorObjectBase::writeJSON(StringBuilder& output) const
     output.append('}');
 }
 
-InspectorObjectBase::InspectorObjectBase()
-    : Inspector::InspectorValue(Type::Object)
+ObjectBase::ObjectBase()
+    : Value(Type::Object)
     , m_map()
     , m_order()
 {
 }
 
-InspectorArrayBase::~InspectorArrayBase()
+ArrayBase::~ArrayBase()
 {
 }
 
-bool InspectorArrayBase::asArray(RefPtr<InspectorArray>& output)
+bool ArrayBase::asArray(RefPtr<Array>& output)
 {
-    COMPILE_ASSERT(sizeof(InspectorArrayBase) == sizeof(InspectorArray), cannot_cast);
-    output = static_cast<InspectorArray*>(this);
+    COMPILE_ASSERT(sizeof(ArrayBase) == sizeof(Array), cannot_cast);
+    output = static_cast<Array*>(this);
     return true;
 }
 
-void InspectorArrayBase::writeJSON(StringBuilder& output) const
+void ArrayBase::writeJSON(StringBuilder& output) const
 {
     output.append('[');
-    for (Vector<RefPtr<InspectorValue>>::const_iterator it = m_map.begin(); it != m_map.end(); ++it) {
+    for (Vector<RefPtr<Value>>::const_iterator it = m_map.begin(); it != m_map.end(); ++it) {
         if (it != m_map.begin())
             output.append(',');
         (*it)->writeJSON(output);
@@ -816,31 +816,31 @@ void InspectorArrayBase::writeJSON(StringBuilder& output) const
     output.append(']');
 }
 
-InspectorArrayBase::InspectorArrayBase()
-    : InspectorValue(Type::Array)
+ArrayBase::ArrayBase()
+    : Value(Type::Array)
     , m_map()
 {
 }
 
-RefPtr<InspectorValue> InspectorArrayBase::get(size_t index) const
+RefPtr<Value> ArrayBase::get(size_t index) const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(index < m_map.size());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(index < m_map.size());
     return m_map[index];
 }
 
-Ref<InspectorObject> InspectorObject::create()
+Ref<Object> Object::create()
 {
-    return adoptRef(*new InspectorObject);
+    return adoptRef(*new Object);
 }
 
-Ref<InspectorArray> InspectorArray::create()
+Ref<Array> Array::create()
 {
-    return adoptRef(*new InspectorArray);
+    return adoptRef(*new Array);
 }
 
-size_t InspectorArrayBase::memoryCost() const
+size_t ArrayBase::memoryCost() const
 {
-    size_t memoryCost = InspectorValue::memoryCost();
+    size_t memoryCost = Value::memoryCost();
     for (const auto& item : m_map) {
         if (item)
             memoryCost += item->memoryCost();
@@ -848,4 +848,4 @@ size_t InspectorArrayBase::memoryCost() const
     return memoryCost;
 }
 
-} // namespace Inspector
+} // namespace JSON

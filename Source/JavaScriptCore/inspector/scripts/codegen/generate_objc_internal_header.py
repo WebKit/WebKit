@@ -47,8 +47,8 @@ class ObjCInternalHeaderGenerator(ObjCGenerator):
         headers = set([
             '"%s.h"' % self.protocol_name(),
             '"%sJSONObjectPrivate.h"' % self.protocol_name(),
-            '<JavaScriptCore/InspectorValues.h>',
             '<JavaScriptCore/AugmentableInspectorController.h>',
+            '<wtf/JSONValues.h>',
         ])
 
         header_args = {

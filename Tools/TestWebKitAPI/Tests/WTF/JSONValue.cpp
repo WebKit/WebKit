@@ -27,13 +27,11 @@
 
 #include "Test.h"
 #include "WTFStringUtilities.h"
-#include <JavaScriptCore/InspectorValues.h>
-
-using namespace Inspector;
+#include <wtf/JSONValues.h>
 
 namespace TestWebKitAPI {
 
-TEST(InspectorValue, Construct)
+TEST(JSONValue, Construct)
 {
     {
         Ref<JSON::Value> value = JSON::Value::null();
@@ -46,12 +44,12 @@ TEST(InspectorValue, Construct)
         EXPECT_TRUE(value->type() == JSON::Value::Type::Boolean);
         bool booleanValue;
         EXPECT_TRUE(value->asBoolean(booleanValue));
-        EXPECT_TRUE(booleanValue);
+        EXPECT_EQ(booleanValue, true);
 
         value = JSON::Value::create(false);
         EXPECT_TRUE(value->type() == JSON::Value::Type::Boolean);
         EXPECT_TRUE(value->asBoolean(booleanValue));
-        EXPECT_FALSE(booleanValue);
+        EXPECT_EQ(booleanValue, false);
     }
 
     {
@@ -137,7 +135,7 @@ TEST(InspectorValue, Construct)
     }
 }
 
-TEST(InspectorArray, Basic)
+TEST(JSONArray, Basic)
 {
     Ref<JSON::Array> array = JSON::Array::create();
 
@@ -231,7 +229,7 @@ TEST(InspectorArray, Basic)
     EXPECT_TRUE(it == array->end());
 }
 
-TEST(InspectorObject, Basic)
+TEST(JSONObject, Basic)
 {
     Ref<JSON::Object> object = JSON::Object::create();
 
@@ -316,7 +314,7 @@ TEST(InspectorObject, Basic)
     EXPECT_TRUE(object->find("array") == object->end());
 }
 
-TEST(InspectorValue, ToJSONString)
+TEST(JSONValue, ToJSONString)
 {
     {
         Ref<JSON::Value> value = JSON::Value::null();
@@ -388,7 +386,7 @@ TEST(InspectorValue, ToJSONString)
     }
 }
 
-TEST(InspectorValue, ParseJSON)
+TEST(JSONValue, ParseJSON)
 {
     {
         RefPtr<JSON::Value> value;
@@ -487,7 +485,7 @@ TEST(InspectorValue, ParseJSON)
         EXPECT_EQ(object->size(), 1);
         bool booleanValue;
         EXPECT_TRUE(object->getBoolean("baz", booleanValue));
-        EXPECT_FALSE(booleanValue);
+        EXPECT_EQ(booleanValue, false);
         ++it;
         EXPECT_FALSE(it == arrayValue->end());
 
@@ -549,7 +547,7 @@ TEST(InspectorValue, ParseJSON)
     }
 }
 
-TEST(InspectorValue, MemoryCost)
+TEST(JSONValue, MemoryCost)
 {
     {
         Ref<JSON::Value> value = JSON::Value::null();
@@ -617,7 +615,7 @@ TEST(InspectorValue, MemoryCost)
     }
 
     {
-        Ref<InspectorObject> value = JSON::Object::create();
+        Ref<JSON::Object> value = JSON::Object::create();
         value->setValue("test", JSON::Value::null());
         size_t memoryCost = value->memoryCost();
         EXPECT_GT(memoryCost, 0U);
@@ -625,14 +623,14 @@ TEST(InspectorValue, MemoryCost)
     }
 
     {
-        Ref<InspectorObject> value = JSON::Object::create();
+        Ref<JSON::Object> value = JSON::Object::create();
         size_t memoryCost = value->memoryCost();
         EXPECT_GT(memoryCost, 0U);
         EXPECT_LE(memoryCost, 8U);
     }
 
     {
-        Ref<InspectorObject> value = JSON::Object::create();
+        Ref<JSON::Object> value = JSON::Object::create();
 
         value->setValue("1", JSON::Value::null());
         size_t memoryCost1 = value->memoryCost();

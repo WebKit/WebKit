@@ -1304,7 +1304,6 @@
 		A58C024218E4A41A00032BC5 /* JSContextPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A58C024118E4A41A00032BC5 /* JSContextPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A593CF7D1840360300BFCE27 /* InspectorBackendDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = A593CF7B1840360300BFCE27 /* InspectorBackendDispatcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A593CF7F1840362C00BFCE27 /* InspectorAgentBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A593CF7E1840362C00BFCE27 /* InspectorAgentBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A593CF831840377100BFCE27 /* InspectorValues.h in Headers */ = {isa = PBXBuildFile; fileRef = A593CF811840377100BFCE27 /* InspectorValues.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A593CF87184038CA00BFCE27 /* InspectorAgentRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = A593CF85184038CA00BFCE27 /* InspectorAgentRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A59455931824744700CC3843 /* JSGlobalObjectDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = A59455911824744700CC3843 /* JSGlobalObjectDebuggable.h */; };
 		A5945595182479EB00CC3843 /* InspectorFrontendChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = A5945594182479EB00CC3843 /* InspectorFrontendChannel.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3928,8 +3927,6 @@
 		A593CF7A1840360300BFCE27 /* InspectorBackendDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorBackendDispatcher.cpp; sourceTree = "<group>"; };
 		A593CF7B1840360300BFCE27 /* InspectorBackendDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorBackendDispatcher.h; sourceTree = "<group>"; };
 		A593CF7E1840362C00BFCE27 /* InspectorAgentBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAgentBase.h; sourceTree = "<group>"; };
-		A593CF801840377100BFCE27 /* InspectorValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorValues.cpp; sourceTree = "<group>"; };
-		A593CF811840377100BFCE27 /* InspectorValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorValues.h; sourceTree = "<group>"; };
 		A593CF84184038CA00BFCE27 /* InspectorAgentRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAgentRegistry.cpp; sourceTree = "<group>"; };
 		A593CF85184038CA00BFCE27 /* InspectorAgentRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAgentRegistry.h; sourceTree = "<group>"; };
 		A594558E18245EDE00CC3843 /* RemoteInspectionTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteInspectionTarget.cpp; sourceTree = "<group>"; };
@@ -7667,8 +7664,6 @@
 				99F1A6FC1B8E6D9400463B26 /* InspectorFrontendRouter.cpp */,
 				99F1A7001B98FBEC00463B26 /* InspectorFrontendRouter.h */,
 				A55D93AB18514F7900400DED /* InspectorProtocolTypes.h */,
-				A593CF801840377100BFCE27 /* InspectorValues.cpp */,
-				A593CF811840377100BFCE27 /* InspectorValues.h */,
 				A503FA13188E0FAF00110F14 /* JavaScriptCallFrame.cpp */,
 				A503FA14188E0FAF00110F14 /* JavaScriptCallFrame.h */,
 				A5C3A1A318C0490200C9593A /* JSGlobalObjectConsoleClient.cpp */,
@@ -8670,7 +8665,6 @@
 				A55D93AC18514F7900400DED /* InspectorProtocolTypes.h in Headers */,
 				A50E4B6218809DD50068A46D /* InspectorRuntimeAgent.h in Headers */,
 				A55165D31BDF0B9E003B75C1 /* InspectorScriptProfilerAgent.h in Headers */,
-				A593CF831840377100BFCE27 /* InspectorValues.h in Headers */,
 				969A07990ED1D3AE00F1F681 /* Instruction.h in Headers */,
 				A7A8AF3B17ADB5F3005AB174 /* Int16Array.h in Headers */,
 				A7A8AF3C17ADB5F3005AB174 /* Int32Array.h in Headers */,

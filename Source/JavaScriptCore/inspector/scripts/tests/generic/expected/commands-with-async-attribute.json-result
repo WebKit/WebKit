@@ -180,10 +180,10 @@ public:
     static Ref<DatabaseBackendDispatcher> create(BackendDispatcher&, DatabaseBackendDispatcherHandler*);
     void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
 private:
-    void executeSQLSyncOptionalReturnValues(long requestId, RefPtr<InspectorObject>&& parameters);
-    void executeSQLAsyncOptionalReturnValues(long requestId, RefPtr<InspectorObject>&& parameters);
-    void executeSQLSync(long requestId, RefPtr<InspectorObject>&& parameters);
-    void executeSQLAsync(long requestId, RefPtr<InspectorObject>&& parameters);
+    void executeSQLSyncOptionalReturnValues(long requestId, RefPtr<JSON::Object>&& parameters);
+    void executeSQLAsyncOptionalReturnValues(long requestId, RefPtr<JSON::Object>&& parameters);
+    void executeSQLSync(long requestId, RefPtr<JSON::Object>&& parameters);
+    void executeSQLAsync(long requestId, RefPtr<JSON::Object>&& parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
     void setAlternateDispatcher(AlternateDatabaseBackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
@@ -233,7 +233,7 @@ private:
 #include "TestBackendDispatchers.h"
 
 #include <inspector/InspectorFrontendRouter.h>
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
@@ -276,7 +276,7 @@ void DatabaseBackendDispatcher::dispatch(long requestId, const String& method, R
         m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\'', "Database", '.', method, "' was not found"));
 }
 
-void DatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(long requestId, RefPtr<InspectorObject>&& parameters)
+void DatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(long requestId, RefPtr<JSON::Object>&& parameters)
 {
     int in_databaseId = m_backendDispatcher->getInteger(parameters.get(), ASCIILiteral("databaseId"), nullptr);
     String in_query = m_backendDispatcher->getString(parameters.get(), ASCIILiteral("query"), nullptr);
@@ -293,7 +293,7 @@ void DatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(long requestI
 #endif
 
     ErrorString error;
-    Ref<InspectorObject> result = InspectorObject::create();
+    Ref<JSON::Object> result = JSON::Object::create();
     RefPtr<Inspector::Protocol::Array<String>> out_columnNames;
     Inspector::Protocol::OptOutput<String> out_notes;
     Inspector::Protocol::OptOutput<double> out_timestamp;
@@ -362,7 +362,7 @@ void DatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnValuesCallba
     CallbackBase::sendSuccess(WTFMove(jsonMessage));
 }
 
-void DatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues(long requestId, RefPtr<InspectorObject>&& parameters)
+void DatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues(long requestId, RefPtr<JSON::Object>&& parameters)
 {
     int in_databaseId = m_backendDispatcher->getInteger(parameters.get(), ASCIILiteral("databaseId"), nullptr);
     String in_query = m_backendDispatcher->getString(parameters.get(), ASCIILiteral("query"), nullptr);
@@ -379,7 +379,7 @@ void DatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues(long request
 #endif
 
     ErrorString error;
-    Ref<InspectorObject> result = InspectorObject::create();
+    Ref<JSON::Object> result = JSON::Object::create();
     Ref<DatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnValuesCallback> callback = adoptRef(*new DatabaseBackendDispatcherHandler::ExecuteSQLAsyncOptionalReturnValuesCallback(m_backendDispatcher.copyRef(), requestId));
     m_agent->executeSQLAsyncOptionalReturnValues(error, in_databaseId, in_query, callback.copyRef());
 
@@ -390,7 +390,7 @@ void DatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues(long request
     }
 }
 
-void DatabaseBackendDispatcher::executeSQLSync(long requestId, RefPtr<InspectorObject>&& parameters)
+void DatabaseBackendDispatcher::executeSQLSync(long requestId, RefPtr<JSON::Object>&& parameters)
 {
     int in_databaseId = m_backendDispatcher->getInteger(parameters.get(), ASCIILiteral("databaseId"), nullptr);
     String in_query = m_backendDispatcher->getString(parameters.get(), ASCIILiteral("query"), nullptr);
@@ -407,7 +407,7 @@ void DatabaseBackendDispatcher::executeSQLSync(long requestId, RefPtr<InspectorO
 #endif
 
     ErrorString error;
-    Ref<InspectorObject> result = InspectorObject::create();
+    Ref<JSON::Object> result = JSON::Object::create();
     RefPtr<Inspector::Protocol::Array<String>> out_columnNames;
     String out_notes;
     double out_timestamp;
@@ -456,7 +456,7 @@ void DatabaseBackendDispatcherHandler::ExecuteSQLAsyncCallback::sendSuccess(RefP
     CallbackBase::sendSuccess(WTFMove(jsonMessage));
 }
 
-void DatabaseBackendDispatcher::executeSQLAsync(long requestId, RefPtr<InspectorObject>&& parameters)
+void DatabaseBackendDispatcher::executeSQLAsync(long requestId, RefPtr<JSON::Object>&& parameters)
 {
     int in_databaseId = m_backendDispatcher->getInteger(parameters.get(), ASCIILiteral("databaseId"), nullptr);
     String in_query = m_backendDispatcher->getString(parameters.get(), ASCIILiteral("query"), nullptr);
@@ -473,7 +473,7 @@ void DatabaseBackendDispatcher::executeSQLAsync(long requestId, RefPtr<Inspector
 #endif
 
     ErrorString error;
-    Ref<InspectorObject> result = InspectorObject::create();
+    Ref<JSON::Object> result = JSON::Object::create();
     Ref<DatabaseBackendDispatcherHandler::ExecuteSQLAsyncCallback> callback = adoptRef(*new DatabaseBackendDispatcherHandler::ExecuteSQLAsyncCallback(m_backendDispatcher.copyRef(), requestId));
     m_agent->executeSQLAsync(error, in_databaseId, in_query, callback.copyRef());
 
@@ -522,7 +522,7 @@ void DatabaseBackendDispatcher::executeSQLAsync(long requestId, RefPtr<Inspector
 #pragma once
 
 #include "TestProtocolObjects.h"
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -910,7 +910,7 @@ private:
 
 #include "TestProtocolInternal.h"
 #include "TestProtocolTypeConversions.h"
-#include <JavaScriptCore/InspectorValues.h>
+#include <wtf/JSONValues.h>
 
 namespace Inspector {
 
@@ -922,7 +922,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(
     };
 
     id successCallback = ^(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, int *databaseId, TestProtocolDatabaseError **sqlError, TestProtocolDatabasePrimaryColors *screenColor, NSArray/*<NSString>*/ **alternateColors, TestProtocolDatabaseExecuteSQLSyncOptionalReturnValuesPrintColor *printColor) {
-        Ref<InspectorObject> resultObject = InspectorObject::create();
+        Ref<JSON::Object> resultObject = JSON::Object::create();
         THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(columnNames, @"columnNames");
         THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(notes, @"notes");
         THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(values, @"values");
@@ -966,7 +966,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues
     };
 
     id successCallback = ^(NSArray/*<NSString>*/ **columnNames, NSString **notes, double *timestamp, RWIProtocolJSONObject **values, RWIProtocolJSONObject **payload, int *databaseId, TestProtocolDatabaseError **sqlError, TestProtocolDatabasePrimaryColors *screenColor, NSArray/*<NSString>*/ **alternateColors, TestProtocolDatabaseExecuteSQLAsyncOptionalReturnValuesPrintColor *printColor) {
-        Ref<InspectorObject> resultObject = InspectorObject::create();
+        Ref<JSON::Object> resultObject = JSON::Object::create();
         THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(columnNames, @"columnNames");
         THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(notes, @"notes");
         THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(values, @"values");
@@ -1010,7 +1010,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLSync(long requestId, int 
     };
 
     id successCallback = ^(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, int databaseId, TestProtocolDatabaseError *sqlError, NSArray/*<NSString>*/ *alternateColors, TestProtocolDatabasePrimaryColors screenColor, TestProtocolDatabaseExecuteSQLSyncPrintColor printColor) {
-        Ref<InspectorObject> resultObject = InspectorObject::create();
+        Ref<JSON::Object> resultObject = JSON::Object::create();
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(columnNames, @"columnNames");
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(notes, @"notes");
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(values, @"values");
@@ -1044,7 +1044,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsync(long requestId, int
     };
 
     id successCallback = ^(NSArray/*<NSString>*/ *columnNames, NSString *notes, double timestamp, RWIProtocolJSONObject *values, RWIProtocolJSONObject *payload, int databaseId, TestProtocolDatabaseError *sqlError, TestProtocolDatabasePrimaryColors screenColor, NSArray/*<NSString>*/ *alternateColors, TestProtocolDatabaseExecuteSQLAsyncPrintColor printColor) {
-        Ref<InspectorObject> resultObject = InspectorObject::create();
+        Ref<JSON::Object> resultObject = JSON::Object::create();
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(columnNames, @"columnNames");
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(notes, @"notes");
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(values, @"values");
@@ -1237,7 +1237,7 @@ using namespace Inspector;
 #import "TestProtocolInternal.h"
 
 #import "TestProtocolTypeConversions.h"
-#import <JavaScriptCore/InspectorValues.h>
+#import <wtf/JSONValues.h>
 
 using namespace Inspector;
 
@@ -1381,7 +1381,7 @@ __attribute__((visibility ("default")))
 #import "TestProtocol.h"
 #import "TestProtocolJSONObjectPrivate.h"
 #import <JavaScriptCore/AugmentableInspectorController.h>
-#import <JavaScriptCore/InspectorValues.h>
+#import <wtf/JSONValues.h>
 
 
 
@@ -1712,8 +1712,8 @@ using namespace Inspector;
 
 #import "TestProtocolTypeConversions.h"
 #import <WebInspector/RWIProtocolJSONObjectPrivate.h>
-#import <JavaScriptCore/InspectorValues.h>
 #import <wtf/Assertions.h>
+#import <wtf/JSONValues.h>
 
 using namespace Inspector;
 

@@ -26,10 +26,8 @@
 #include "config.h"
 #include "SessionHost.h"
 
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 #include <wtf/text/StringBuilder.h>
-
-using namespace Inspector;
 
 namespace WebDriver {
 
@@ -42,7 +40,7 @@ void SessionHost::inspectorDisconnected()
     }
 }
 
-long SessionHost::sendCommandToBackend(const String& command, RefPtr<InspectorObject>&& parameters, Function<void (CommandResponse&&)>&& responseHandler)
+long SessionHost::sendCommandToBackend(const String& command, RefPtr<JSON::Object>&& parameters, Function<void (CommandResponse&&)>&& responseHandler)
 {
     static long lastSequenceID = 0;
     long sequenceID = ++lastSequenceID;
@@ -65,11 +63,11 @@ long SessionHost::sendCommandToBackend(const String& command, RefPtr<InspectorOb
 
 void SessionHost::dispatchMessage(const String& message)
 {
-    RefPtr<InspectorValue> messageValue;
-    if (!InspectorValue::parseJSON(message, messageValue))
+    RefPtr<JSON::Value> messageValue;
+    if (!JSON::Value::parseJSON(message, messageValue))
         return;
 
-    RefPtr<InspectorObject> messageObject;
+    RefPtr<JSON::Object> messageObject;
     if (!messageValue->asObject(messageObject))
         return;
 
@@ -81,12 +79,12 @@ void SessionHost::dispatchMessage(const String& message)
     ASSERT(responseHandler);
 
     CommandResponse response;
-    RefPtr<InspectorObject> errorObject;
+    RefPtr<JSON::Object> errorObject;
     if (messageObject->getObject(ASCIILiteral("error"), errorObject)) {
         response.responseObject = WTFMove(errorObject);
         response.isError = true;
     } else {
-        RefPtr<InspectorObject> resultObject;
+        RefPtr<JSON::Object> resultObject;
         if (messageObject->getObject(ASCIILiteral("result"), resultObject) && resultObject->size())
             response.responseObject = WTFMove(resultObject);
     }

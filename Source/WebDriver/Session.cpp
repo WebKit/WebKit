@@ -29,12 +29,10 @@
 #include "CommandResult.h"
 #include "SessionHost.h"
 #include "WebDriverAtoms.h"
-#include <inspector/InspectorValues.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
+#include <wtf/JSONValues.h>
 #include <wtf/UUID.h>
-
-using namespace Inspector;
 
 namespace WebDriver {
 
@@ -57,9 +55,9 @@ const Capabilities& Session::capabilities() const
     return m_host->capabilities();
 }
 
-static std::optional<String> firstWindowHandleInResult(InspectorValue& result)
+static std::optional<String> firstWindowHandleInResult(JSON::Value& result)
 {
-    RefPtr<InspectorArray> handles;
+    RefPtr<JSON::Array> handles;
     if (result.asArray(handles) && handles->length()) {
         auto handleValue = handles->get(0);
         String handle;
@@ -169,7 +167,7 @@ void Session::createTopLevelBrowsingContext(Function<void (CommandResult&&)>&& c
 
 void Session::handleUserPrompts(Function<void (CommandResult&&)>&& completionHandler)
 {
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
     m_host->sendCommandToBackend(ASCIILiteral("isShowingJavaScriptDialog"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
         if (response.isError || !response.responseObject) {
@@ -225,7 +223,7 @@ void Session::reportUnexpectedAlertOpen(Function<void (CommandResult&&)>&& compl
         }
         auto errorResult = CommandResult::fail(CommandResult::ErrorCode::UnexpectedAlertOpen);
         if (alertText) {
-            RefPtr<InspectorObject> additonalData = InspectorObject::create();
+            RefPtr<JSON::Object> additonalData = JSON::Object::create();
             additonalData->setString(ASCIILiteral("text"), alertText.value());
             errorResult.setAdditionalErrorData(WTFMove(additonalData));
         }
@@ -246,7 +244,7 @@ void Session::go(const String& url, Function<void (CommandResult&&)>&& completio
             return;
         }
 
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
         parameters->setString(ASCIILiteral("url"), url);
         if (m_timeouts.pageLoad)
@@ -277,14 +275,14 @@ void Session::getCurrentURL(Function<void (CommandResult&&)>&& completionHandler
             return;
         }
 
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
         m_host->sendCommandToBackend(ASCIILiteral("getBrowsingContext"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
             }
-            RefPtr<InspectorObject> browsingContext;
+            RefPtr<JSON::Object> browsingContext;
             if (!response.responseObject->getObject("context", browsingContext)) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
@@ -294,7 +292,7 @@ void Session::getCurrentURL(Function<void (CommandResult&&)>&& completionHandler
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
-            completionHandler(CommandResult::success(InspectorValue::create(url)));
+            completionHandler(CommandResult::success(JSON::Value::create(url)));
         });
     });
 }
@@ -311,7 +309,7 @@ void Session::back(Function<void (CommandResult&&)>&& completionHandler)
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
         if (m_timeouts.pageLoad)
             parameters->setInteger(ASCIILiteral("pageLoadTimeout"), m_timeouts.pageLoad.value().millisecondsAs<int>());
@@ -340,7 +338,7 @@ void Session::forward(Function<void (CommandResult&&)>&& completionHandler)
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
         if (m_timeouts.pageLoad)
             parameters->setInteger(ASCIILiteral("pageLoadTimeout"), m_timeouts.pageLoad.value().millisecondsAs<int>());
@@ -369,7 +367,7 @@ void Session::refresh(Function<void (CommandResult&&)>&& completionHandler)
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
         if (m_timeouts.pageLoad)
             parameters->setInteger(ASCIILiteral("pageLoadTimeout"), m_timeouts.pageLoad.value().millisecondsAs<int>());
@@ -398,10 +396,10 @@ void Session::getTitle(Function<void (CommandResult&&)>&& completionHandler)
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
         parameters->setString(ASCIILiteral("function"), ASCIILiteral("function() { return document.title; }"));
-        parameters->setArray(ASCIILiteral("arguments"), InspectorArray::create());
+        parameters->setArray(ASCIILiteral("arguments"), JSON::Array::create());
         m_host->sendCommandToBackend(ASCIILiteral("evaluateJavaScriptFunction"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
@@ -412,8 +410,8 @@ void Session::getTitle(Function<void (CommandResult&&)>&& completionHandler)
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
-            RefPtr<InspectorValue> resultValue;
-            if (!InspectorValue::parseJSON(valueString, resultValue)) {
+            RefPtr<JSON::Value> resultValue;
+            if (!JSON::Value::parseJSON(valueString, resultValue)) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
@@ -429,14 +427,14 @@ void Session::getWindowHandle(Function<void (CommandResult&&)>&& completionHandl
         return;
     }
 
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
     m_host->sendCommandToBackend(ASCIILiteral("getBrowsingContext"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError || !response.responseObject) {
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
             return;
         }
-        RefPtr<InspectorObject> browsingContext;
+        RefPtr<JSON::Object> browsingContext;
         if (!response.responseObject->getObject(ASCIILiteral("context"), browsingContext)) {
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
             return;
@@ -446,18 +444,18 @@ void Session::getWindowHandle(Function<void (CommandResult&&)>&& completionHandl
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
             return;
         }
-        completionHandler(CommandResult::success(InspectorValue::create(handle)));
+        completionHandler(CommandResult::success(JSON::Value::create(handle)));
     });
 }
 
 void Session::closeTopLevelBrowsingContext(const String& toplevelBrowsingContext, Function<void (CommandResult&&)>&& completionHandler)
 {
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString(ASCIILiteral("handle"), toplevelBrowsingContext);
     m_host->sendCommandToBackend(ASCIILiteral("closeBrowsingContext"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
         if (!m_host->isConnected()) {
             // Closing the browsing context made the browser quit.
-            completionHandler(CommandResult::success(InspectorArray::create()));
+            completionHandler(CommandResult::success(JSON::Array::create()));
             return;
         }
         if (response.isError) {
@@ -468,7 +466,7 @@ void Session::closeTopLevelBrowsingContext(const String& toplevelBrowsingContext
         getWindowHandles([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) {
             if (!m_host->isConnected()) {
                 // Closing the browsing context made the browser quit.
-                completionHandler(CommandResult::success(InspectorArray::create()));
+                completionHandler(CommandResult::success(JSON::Array::create()));
                 return;
             }
             completionHandler(WTFMove(result));
@@ -495,7 +493,7 @@ void Session::closeWindow(Function<void (CommandResult&&)>&& completionHandler)
 
 void Session::switchToWindow(const String& windowHandle, Function<void (CommandResult&&)>&& completionHandler)
 {
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString(ASCIILiteral("browsingContextHandle"), windowHandle);
     m_host->sendCommandToBackend(ASCIILiteral("switchToBrowsingContext"), WTFMove(parameters), [this, protectedThis = makeRef(*this), windowHandle, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
@@ -509,20 +507,20 @@ void Session::switchToWindow(const String& windowHandle, Function<void (CommandR
 
 void Session::getWindowHandles(Function<void (CommandResult&&)>&& completionHandler)
 {
-    m_host->sendCommandToBackend(ASCIILiteral("getBrowsingContexts"), InspectorObject::create(), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+    m_host->sendCommandToBackend(ASCIILiteral("getBrowsingContexts"), JSON::Object::create(), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError || !response.responseObject) {
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
             return;
         }
-        RefPtr<InspectorArray> browsingContextArray;
+        RefPtr<JSON::Array> browsingContextArray;
         if (!response.responseObject->getArray(ASCIILiteral("contexts"), browsingContextArray)) {
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
             return;
         }
-        RefPtr<InspectorArray> windowHandles = InspectorArray::create();
+        RefPtr<JSON::Array> windowHandles = JSON::Array::create();
         for (unsigned i = 0; i < browsingContextArray->length(); ++i) {
-            RefPtr<InspectorValue> browsingContextValue = browsingContextArray->get(i);
-            RefPtr<InspectorObject> browsingContext;
+            RefPtr<JSON::Value> browsingContextValue = browsingContextArray->get(i);
+            RefPtr<JSON::Object> browsingContext;
             if (!browsingContextValue->asObject(browsingContext)) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
@@ -540,7 +538,7 @@ void Session::getWindowHandles(Function<void (CommandResult&&)>&& completionHand
     });
 }
 
-void Session::switchToFrame(RefPtr<InspectorValue>&& frameID, Function<void (CommandResult&&)>&& completionHandler)
+void Session::switchToFrame(RefPtr<JSON::Value>&& frameID, Function<void (CommandResult&&)>&& completionHandler)
 {
     if (!m_toplevelBrowsingContext) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
@@ -558,7 +556,7 @@ void Session::switchToFrame(RefPtr<InspectorValue>&& frameID, Function<void (Com
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
@@ -617,7 +615,7 @@ void Session::switchToParentFrame(Function<void (CommandResult&&)>&& completionH
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
         parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
         m_host->sendCommandToBackend(ASCIILiteral("resolveParentFrameHandle"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
@@ -638,19 +636,19 @@ void Session::switchToParentFrame(Function<void (CommandResult&&)>&& completionH
 
 void Session::getToplevelBrowsingContextRect(Function<void (CommandResult&&)>&& completionHandler)
 {
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
     m_host->sendCommandToBackend(ASCIILiteral("getBrowsingContext"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError || !response.responseObject) {
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
             return;
         }
-        RefPtr<InspectorObject> browsingContext;
+        RefPtr<JSON::Object> browsingContext;
         if (!response.responseObject->getObject(ASCIILiteral("context"), browsingContext)) {
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
             return;
         }
-        RefPtr<InspectorObject> windowOrigin;
+        RefPtr<JSON::Object> windowOrigin;
         double x, y;
         if (!browsingContext->getObject(ASCIILiteral("windowOrigin"), windowOrigin)
             || !windowOrigin->getDouble(ASCIILiteral("x"), x)
@@ -658,7 +656,7 @@ void Session::getToplevelBrowsingContextRect(Function<void (CommandResult&&)>&& 
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
             return;
         }
-        RefPtr<InspectorObject> windowSize;
+        RefPtr<JSON::Object> windowSize;
         double width, height;
         if (!browsingContext->getObject(ASCIILiteral("windowSize"), windowSize)
             || !windowSize->getDouble(ASCIILiteral("width"), width)
@@ -666,7 +664,7 @@ void Session::getToplevelBrowsingContextRect(Function<void (CommandResult&&)>&& 
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
             return;
         }
-        auto windowRect = InspectorObject::create();
+        auto windowRect = JSON::Object::create();
         windowRect->setDouble(ASCIILiteral("x"), x);
         windowRect->setDouble(ASCIILiteral("y"), y);
         windowRect->setDouble(ASCIILiteral("width"), width);
@@ -677,9 +675,9 @@ void Session::getToplevelBrowsingContextRect(Function<void (CommandResult&&)>&& 
 
 void Session::moveToplevelBrowsingContextWindow(double x, double y, Function<void (CommandResult&&)>&& completionHandler)
 {
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
-    RefPtr<InspectorObject> windowOrigin = InspectorObject::create();
+    RefPtr<JSON::Object> windowOrigin = JSON::Object::create();
     windowOrigin->setDouble("x", x);
     windowOrigin->setDouble("y", y);
     parameters->setObject(ASCIILiteral("origin"), WTFMove(windowOrigin));
@@ -694,9 +692,9 @@ void Session::moveToplevelBrowsingContextWindow(double x, double y, Function<voi
 
 void Session::resizeToplevelBrowsingContextWindow(double width, double height, Function<void (CommandResult&&)>&& completionHandler)
 {
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
-    RefPtr<InspectorObject> windowSize = InspectorObject::create();
+    RefPtr<JSON::Object> windowSize = JSON::Object::create();
     windowSize->setDouble("width", width);
     windowSize->setDouble("height", height);
     parameters->setObject(ASCIILiteral("size"), WTFMove(windowSize));
@@ -775,9 +773,9 @@ void Session::setWindowRect(std::optional<double> x, std::optional<double> y, st
     });
 }
 
-RefPtr<InspectorObject> Session::createElement(RefPtr<InspectorValue>&& value)
+RefPtr<JSON::Object> Session::createElement(RefPtr<JSON::Value>&& value)
 {
-    RefPtr<InspectorObject> valueObject;
+    RefPtr<JSON::Object> valueObject;
     if (!value->asObject(valueObject))
         return nullptr;
 
@@ -785,27 +783,27 @@ RefPtr<InspectorObject> Session::createElement(RefPtr<InspectorValue>&& value)
     if (!valueObject->getString("session-node-" + m_id, elementID))
         return nullptr;
 
-    RefPtr<InspectorObject> elementObject = InspectorObject::create();
+    RefPtr<JSON::Object> elementObject = JSON::Object::create();
     elementObject->setString(webElementIdentifier, elementID);
     return elementObject;
 }
 
-RefPtr<InspectorObject> Session::createElement(const String& elementID)
+RefPtr<JSON::Object> Session::createElement(const String& elementID)
 {
-    RefPtr<InspectorObject> elementObject = InspectorObject::create();
+    RefPtr<JSON::Object> elementObject = JSON::Object::create();
     elementObject->setString("session-node-" + m_id, elementID);
     return elementObject;
 }
 
-RefPtr<InspectorObject> Session::extractElement(InspectorValue& value)
+RefPtr<JSON::Object> Session::extractElement(JSON::Value& value)
 {
     String elementID = extractElementID(value);
     return !elementID.isEmpty() ? createElement(elementID) : nullptr;
 }
 
-String Session::extractElementID(InspectorValue& value)
+String Session::extractElementID(JSON::Value& value)
 {
-    RefPtr<InspectorObject> valueObject;
+    RefPtr<JSON::Object> valueObject;
     if (!value.asObject(valueObject))
         return emptyString();
 
@@ -816,11 +814,11 @@ String Session::extractElementID(InspectorValue& value)
     return elementID;
 }
 
-void Session::computeElementLayout(const String& elementID, OptionSet<ElementLayoutOption> options, Function<void (std::optional<Rect>&&, std::optional<Point>&&, bool, RefPtr<InspectorObject>&&)>&& completionHandler)
+void Session::computeElementLayout(const String& elementID, OptionSet<ElementLayoutOption> options, Function<void (std::optional<Rect>&&, std::optional<Point>&&, bool, RefPtr<JSON::Object>&&)>&& completionHandler)
 {
     ASSERT(m_toplevelBrowsingContext.value());
 
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
     parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
     parameters->setString(ASCIILiteral("nodeHandle"), elementID);
@@ -831,14 +829,14 @@ void Session::computeElementLayout(const String& elementID, OptionSet<ElementLay
             completionHandler(std::nullopt, std::nullopt, false, WTFMove(response.responseObject));
             return;
         }
-        RefPtr<InspectorObject> rectObject;
+        RefPtr<JSON::Object> rectObject;
         if (!response.responseObject->getObject(ASCIILiteral("rect"), rectObject)) {
             completionHandler(std::nullopt, std::nullopt, false, nullptr);
             return;
         }
         std::optional<int> elementX;
         std::optional<int> elementY;
-        RefPtr<InspectorObject> elementPosition;
+        RefPtr<JSON::Object> elementPosition;
         if (rectObject->getObject(ASCIILiteral("origin"), elementPosition)) {
             int x, y;
             if (elementPosition->getInteger(ASCIILiteral("x"), x) && elementPosition->getInteger(ASCIILiteral("y"), y)) {
@@ -852,7 +850,7 @@ void Session::computeElementLayout(const String& elementID, OptionSet<ElementLay
         }
         std::optional<int> elementWidth;
         std::optional<int> elementHeight;
-        RefPtr<InspectorObject> elementSize;
+        RefPtr<JSON::Object> elementSize;
         if (rectObject->getObject(ASCIILiteral("size"), elementSize)) {
             int width, height;
             if (elementSize->getInteger(ASCIILiteral("width"), width) && elementSize->getInteger(ASCIILiteral("height"), height)) {
@@ -871,7 +869,7 @@ void Session::computeElementLayout(const String& elementID, OptionSet<ElementLay
             completionHandler(std::nullopt, std::nullopt, false, nullptr);
             return;
         }
-        RefPtr<InspectorObject> inViewCenterPointObject;
+        RefPtr<JSON::Object> inViewCenterPointObject;
         if (!response.responseObject->getObject(ASCIILiteral("inViewCenterPoint"), inViewCenterPointObject)) {
             completionHandler(rect, std::nullopt, isObscured, nullptr);
             return;
@@ -895,17 +893,17 @@ void Session::findElements(const String& strategy, const String& selector, FindE
     }
 
     auto implicitWait = m_timeouts.implicit.value_or(0_s);
-    RefPtr<InspectorArray> arguments = InspectorArray::create();
-    arguments->pushString(InspectorValue::create(strategy)->toJSONString());
+    RefPtr<JSON::Array> arguments = JSON::Array::create();
+    arguments->pushString(JSON::Value::create(strategy)->toJSONString());
     if (rootElementID.isEmpty())
-        arguments->pushString(InspectorValue::null()->toJSONString());
+        arguments->pushString(JSON::Value::null()->toJSONString());
     else
         arguments->pushString(createElement(rootElementID)->toJSONString());
-    arguments->pushString(InspectorValue::create(selector)->toJSONString());
-    arguments->pushString(InspectorValue::create(mode == FindElementsMode::Single)->toJSONString());
-    arguments->pushString(InspectorValue::create(implicitWait.milliseconds())->toJSONString());
+    arguments->pushString(JSON::Value::create(selector)->toJSONString());
+    arguments->pushString(JSON::Value::create(mode == FindElementsMode::Single)->toJSONString());
+    arguments->pushString(JSON::Value::create(implicitWait.milliseconds())->toJSONString());
 
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
     if (m_currentBrowsingContext)
         parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
@@ -926,15 +924,15 @@ void Session::findElements(const String& strategy, const String& selector, FindE
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
             return;
         }
-        RefPtr<InspectorValue> resultValue;
-        if (!InspectorValue::parseJSON(valueString, resultValue)) {
+        RefPtr<JSON::Value> resultValue;
+        if (!JSON::Value::parseJSON(valueString, resultValue)) {
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
             return;
         }
 
         switch (mode) {
         case FindElementsMode::Single: {
-            RefPtr<InspectorObject> elementObject = createElement(WTFMove(resultValue));
+            RefPtr<JSON::Object> elementObject = createElement(WTFMove(resultValue));
             if (!elementObject) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchElement));
                 return;
@@ -943,12 +941,12 @@ void Session::findElements(const String& strategy, const String& selector, FindE
             break;
         }
         case FindElementsMode::Multiple: {
-            RefPtr<InspectorArray> elementsArray;
+            RefPtr<JSON::Array> elementsArray;
             if (!resultValue->asArray(elementsArray)) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchElement));
                 return;
             }
-            RefPtr<InspectorArray> elementObjectsArray = InspectorArray::create();
+            RefPtr<JSON::Array> elementObjectsArray = JSON::Array::create();
             unsigned elementsArrayLength = elementsArray->length();
             for (unsigned i = 0; i < elementsArrayLength; ++i) {
                 if (auto elementObject = createElement(elementsArray->get(i)))
@@ -973,11 +971,11 @@ void Session::isElementSelected(const String& elementID, Function<void (CommandR
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorArray> arguments = InspectorArray::create();
+        RefPtr<JSON::Array> arguments = JSON::Array::create();
         arguments->pushString(createElement(elementID)->toJSONString());
-        arguments->pushString(InspectorValue::create("selected")->toJSONString());
+        arguments->pushString(JSON::Value::create("selected")->toJSONString());
 
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
@@ -993,13 +991,13 @@ void Session::isElementSelected(const String& elementID, Function<void (CommandR
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
-            RefPtr<InspectorValue> resultValue;
-            if (!InspectorValue::parseJSON(valueString, resultValue)) {
+            RefPtr<JSON::Value> resultValue;
+            if (!JSON::Value::parseJSON(valueString, resultValue)) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
             if (resultValue->isNull()) {
-                completionHandler(CommandResult::success(InspectorValue::create(false)));
+                completionHandler(CommandResult::success(JSON::Value::create(false)));
                 return;
             }
             String booleanResult;
@@ -1007,7 +1005,7 @@ void Session::isElementSelected(const String& elementID, Function<void (CommandR
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
-            completionHandler(CommandResult::success(InspectorValue::create(true)));
+            completionHandler(CommandResult::success(JSON::Value::create(true)));
         });
     });
 }
@@ -1024,10 +1022,10 @@ void Session::getElementText(const String& elementID, Function<void (CommandResu
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorArray> arguments = InspectorArray::create();
+        RefPtr<JSON::Array> arguments = JSON::Array::create();
         arguments->pushString(createElement(elementID)->toJSONString());
 
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
@@ -1044,8 +1042,8 @@ void Session::getElementText(const String& elementID, Function<void (CommandResu
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
-            RefPtr<InspectorValue> resultValue;
-            if (!InspectorValue::parseJSON(valueString, resultValue)) {
+            RefPtr<JSON::Value> resultValue;
+            if (!JSON::Value::parseJSON(valueString, resultValue)) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
@@ -1066,10 +1064,10 @@ void Session::getElementTagName(const String& elementID, Function<void (CommandR
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorArray> arguments = InspectorArray::create();
+        RefPtr<JSON::Array> arguments = JSON::Array::create();
         arguments->pushString(createElement(elementID)->toJSONString());
 
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
@@ -1085,8 +1083,8 @@ void Session::getElementTagName(const String& elementID, Function<void (CommandR
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
-            RefPtr<InspectorValue> resultValue;
-            if (!InspectorValue::parseJSON(valueString, resultValue)) {
+            RefPtr<JSON::Value> resultValue;
+            if (!JSON::Value::parseJSON(valueString, resultValue)) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
@@ -1107,12 +1105,12 @@ void Session::getElementRect(const String& elementID, Function<void (CommandResu
             completionHandler(WTFMove(result));
             return;
         }
-        computeElementLayout(elementID, { }, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](std::optional<Rect>&& rect, std::optional<Point>&&, bool, RefPtr<InspectorObject>&& error) {
+        computeElementLayout(elementID, { }, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](std::optional<Rect>&& rect, std::optional<Point>&&, bool, RefPtr<JSON::Object>&& error) {
             if (!rect || error) {
                 completionHandler(CommandResult::fail(WTFMove(error)));
                 return;
             }
-            RefPtr<InspectorObject> rectObject = InspectorObject::create();
+            RefPtr<JSON::Object> rectObject = JSON::Object::create();
             rectObject->setInteger(ASCIILiteral("x"), rect.value().origin.x);
             rectObject->setInteger(ASCIILiteral("y"), rect.value().origin.y);
             rectObject->setInteger(ASCIILiteral("width"), rect.value().size.width);
@@ -1134,10 +1132,10 @@ void Session::isElementEnabled(const String& elementID, Function<void (CommandRe
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorArray> arguments = InspectorArray::create();
+        RefPtr<JSON::Array> arguments = JSON::Array::create();
         arguments->pushString(createElement(elementID)->toJSONString());
 
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
@@ -1153,8 +1151,8 @@ void Session::isElementEnabled(const String& elementID, Function<void (CommandRe
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
-            RefPtr<InspectorValue> resultValue;
-            if (!InspectorValue::parseJSON(valueString, resultValue)) {
+            RefPtr<JSON::Value> resultValue;
+            if (!JSON::Value::parseJSON(valueString, resultValue)) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
@@ -1175,10 +1173,10 @@ void Session::isElementDisplayed(const String& elementID, Function<void (Command
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorArray> arguments = InspectorArray::create();
+        RefPtr<JSON::Array> arguments = JSON::Array::create();
         arguments->pushString(createElement(elementID)->toJSONString());
 
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
@@ -1194,8 +1192,8 @@ void Session::isElementDisplayed(const String& elementID, Function<void (Command
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
-            RefPtr<InspectorValue> resultValue;
-            if (!InspectorValue::parseJSON(valueString, resultValue)) {
+            RefPtr<JSON::Value> resultValue;
+            if (!JSON::Value::parseJSON(valueString, resultValue)) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
@@ -1216,11 +1214,11 @@ void Session::getElementAttribute(const String& elementID, const String& attribu
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorArray> arguments = InspectorArray::create();
+        RefPtr<JSON::Array> arguments = JSON::Array::create();
         arguments->pushString(createElement(elementID)->toJSONString());
-        arguments->pushString(InspectorValue::create(attribute)->toJSONString());
+        arguments->pushString(JSON::Value::create(attribute)->toJSONString());
 
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
@@ -1236,8 +1234,8 @@ void Session::getElementAttribute(const String& elementID, const String& attribu
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
-            RefPtr<InspectorValue> resultValue;
-            if (!InspectorValue::parseJSON(valueString, resultValue)) {
+            RefPtr<JSON::Value> resultValue;
+            if (!JSON::Value::parseJSON(valueString, resultValue)) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
@@ -1253,7 +1251,7 @@ void Session::waitForNavigationToComplete(Function<void (CommandResult&&)>&& com
         return;
     }
 
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
     if (m_currentBrowsingContext)
         parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
@@ -1278,7 +1276,7 @@ void Session::waitForNavigationToComplete(Function<void (CommandResult&&)>&& com
 
 void Session::selectOptionElement(const String& elementID, Function<void (CommandResult&&)>&& completionHandler)
 {
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
     parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
     parameters->setString(ASCIILiteral("nodeHandle"), elementID);
@@ -1300,7 +1298,7 @@ void Session::elementClick(const String& elementID, Function<void (CommandResult
 
     OptionSet<ElementLayoutOption> options = ElementLayoutOption::ScrollIntoViewIfNeeded;
     options |= ElementLayoutOption::UseViewportCoordinates;
-    computeElementLayout(elementID, options, [this, protectedThis = makeRef(*this), elementID, completionHandler = WTFMove(completionHandler)](std::optional<Rect>&& rect, std::optional<Point>&& inViewCenter, bool isObscured, RefPtr<InspectorObject>&& error) mutable {
+    computeElementLayout(elementID, options, [this, protectedThis = makeRef(*this), elementID, completionHandler = WTFMove(completionHandler)](std::optional<Rect>&& rect, std::optional<Point>&& inViewCenter, bool isObscured, RefPtr<JSON::Object>&& error) mutable {
         if (!rect || error) {
             completionHandler(CommandResult::fail(WTFMove(error)));
             return;
@@ -1345,10 +1343,10 @@ void Session::elementClear(const String& elementID, Function<void (CommandResult
         return;
     }
 
-    RefPtr<InspectorArray> arguments = InspectorArray::create();
+    RefPtr<JSON::Array> arguments = JSON::Array::create();
     arguments->pushString(createElement(elementID)->toJSONString());
 
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
     if (m_currentBrowsingContext)
         parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
@@ -1513,9 +1511,9 @@ void Session::elementSendKeys(const String& elementID, Vector<String>&& keys, Fu
             "        throw new Error('cannot focus element');"
             "}";
 
-        RefPtr<InspectorArray> arguments = InspectorArray::create();
+        RefPtr<JSON::Array> arguments = JSON::Array::create();
         arguments->pushString(createElement(elementID)->toJSONString());
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
@@ -1577,10 +1575,10 @@ void Session::elementSubmit(const String& elementID, Function<void (CommandResul
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorArray> arguments = InspectorArray::create();
+        RefPtr<JSON::Array> arguments = JSON::Array::create();
         arguments->pushString(createElement(elementID)->toJSONString());
 
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
@@ -1596,23 +1594,23 @@ void Session::elementSubmit(const String& elementID, Function<void (CommandResul
     });
 }
 
-RefPtr<InspectorValue> Session::handleScriptResult(RefPtr<InspectorValue>&& resultValue)
+RefPtr<JSON::Value> Session::handleScriptResult(RefPtr<JSON::Value>&& resultValue)
 {
-    RefPtr<InspectorArray> resultArray;
+    RefPtr<JSON::Array> resultArray;
     if (resultValue->asArray(resultArray)) {
-        RefPtr<InspectorArray> returnValueArray = InspectorArray::create();
+        RefPtr<JSON::Array> returnValueArray = JSON::Array::create();
         unsigned resultArrayLength = resultArray->length();
         for (unsigned i = 0; i < resultArrayLength; ++i)
             returnValueArray->pushValue(handleScriptResult(resultArray->get(i)));
         return returnValueArray;
     }
 
-    if (auto element = createElement(RefPtr<InspectorValue>(resultValue)))
+    if (auto element = createElement(RefPtr<JSON::Value>(resultValue)))
         return element;
 
-    RefPtr<InspectorObject> resultObject;
+    RefPtr<JSON::Object> resultObject;
     if (resultValue->asObject(resultObject)) {
-        RefPtr<InspectorObject> returnValueObject = InspectorObject::create();
+        RefPtr<JSON::Object> returnValueObject = JSON::Object::create();
         auto end = resultObject->end();
         for (auto it = resultObject->begin(); it != end; ++it)
             returnValueObject->setValue(it->key, handleScriptResult(WTFMove(it->value)));
@@ -1622,7 +1620,7 @@ RefPtr<InspectorValue> Session::handleScriptResult(RefPtr<InspectorValue>&& resu
     return resultValue;
 }
 
-void Session::executeScript(const String& script, RefPtr<InspectorArray>&& argumentsArray, ExecuteScriptMode mode, Function<void (CommandResult&&)>&& completionHandler)
+void Session::executeScript(const String& script, RefPtr<JSON::Array>&& argumentsArray, ExecuteScriptMode mode, Function<void (CommandResult&&)>&& completionHandler)
 {
     if (!m_toplevelBrowsingContext) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
@@ -1634,7 +1632,7 @@ void Session::executeScript(const String& script, RefPtr<InspectorArray>&& argum
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorArray> arguments = InspectorArray::create();
+        RefPtr<JSON::Array> arguments = JSON::Array::create();
         unsigned argumentsLength = argumentsArray->length();
         for (unsigned i = 0; i < argumentsLength; ++i) {
             if (auto argument = argumentsArray->get(i)) {
@@ -1645,7 +1643,7 @@ void Session::executeScript(const String& script, RefPtr<InspectorArray>&& argum
             }
         }
 
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
@@ -1670,8 +1668,8 @@ void Session::executeScript(const String& script, RefPtr<InspectorArray>&& argum
                 completionHandler(CommandResult::success());
                 return;
             }
-            RefPtr<InspectorValue> resultValue;
-            if (!InspectorValue::parseJSON(valueString, resultValue)) {
+            RefPtr<JSON::Value> resultValue;
+            if (!JSON::Value::parseJSON(valueString, resultValue)) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
@@ -1682,9 +1680,9 @@ void Session::executeScript(const String& script, RefPtr<InspectorArray>&& argum
 
 void Session::performMouseInteraction(int x, int y, MouseButton button, MouseInteraction interaction, Function<void (CommandResult&&)>&& completionHandler)
 {
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
-    RefPtr<InspectorObject> position = InspectorObject::create();
+    RefPtr<JSON::Object> position = JSON::Object::create();
     position->setInteger(ASCIILiteral("x"), x);
     position->setInteger(ASCIILiteral("y"), y);
     parameters->setObject(ASCIILiteral("position"), WTFMove(position));
@@ -1719,7 +1717,7 @@ void Session::performMouseInteraction(int x, int y, MouseButton button, MouseInt
         parameters->setString(ASCIILiteral("interaction"), ASCIILiteral("DoubleClick"));
         break;
     }
-    parameters->setArray(ASCIILiteral("modifiers"), InspectorArray::create());
+    parameters->setArray(ASCIILiteral("modifiers"), JSON::Array::create());
     m_host->sendCommandToBackend(ASCIILiteral("performMouseInteraction"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
@@ -1731,11 +1729,11 @@ void Session::performMouseInteraction(int x, int y, MouseButton button, MouseInt
 
 void Session::performKeyboardInteractions(Vector<KeyboardInteraction>&& interactions, Function<void (CommandResult&&)>&& completionHandler)
 {
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
-    RefPtr<InspectorArray> interactionsArray = InspectorArray::create();
+    RefPtr<JSON::Array> interactionsArray = JSON::Array::create();
     for (const auto& interaction : interactions) {
-        RefPtr<InspectorObject> interactionObject = InspectorObject::create();
+        RefPtr<JSON::Object> interactionObject = JSON::Object::create();
         switch (interaction.type) {
         case KeyboardInteractionType::KeyPress:
             interactionObject->setString(ASCIILiteral("type"), ASCIILiteral("KeyPress"));
@@ -1763,7 +1761,7 @@ void Session::performKeyboardInteractions(Vector<KeyboardInteraction>&& interact
     });
 }
 
-static std::optional<Session::Cookie> parseAutomationCookie(const InspectorObject& cookieObject)
+static std::optional<Session::Cookie> parseAutomationCookie(const JSON::Object& cookieObject)
 {
     Session::Cookie cookie;
     if (!cookieObject.getString(ASCIILiteral("name"), cookie.name))
@@ -1794,9 +1792,9 @@ static std::optional<Session::Cookie> parseAutomationCookie(const InspectorObjec
     return cookie;
 }
 
-static RefPtr<InspectorObject> builtAutomationCookie(const Session::Cookie& cookie)
+static RefPtr<JSON::Object> builtAutomationCookie(const Session::Cookie& cookie)
 {
-    RefPtr<InspectorObject> cookieObject = InspectorObject::create();
+    RefPtr<JSON::Object> cookieObject = JSON::Object::create();
     cookieObject->setString(ASCIILiteral("name"), cookie.name);
     cookieObject->setString(ASCIILiteral("value"), cookie.value);
     cookieObject->setString(ASCIILiteral("path"), cookie.path.value_or("/"));
@@ -1808,9 +1806,9 @@ static RefPtr<InspectorObject> builtAutomationCookie(const Session::Cookie& cook
     return cookieObject;
 }
 
-static RefPtr<InspectorObject> serializeCookie(const Session::Cookie& cookie)
+static RefPtr<JSON::Object> serializeCookie(const Session::Cookie& cookie)
 {
-    RefPtr<InspectorObject> cookieObject = InspectorObject::create();
+    RefPtr<JSON::Object> cookieObject = JSON::Object::create();
     cookieObject->setString(ASCIILiteral("name"), cookie.name);
     cookieObject->setString(ASCIILiteral("value"), cookie.value);
     if (cookie.path)
@@ -1839,22 +1837,22 @@ void Session::getAllCookies(Function<void (CommandResult&&)>&& completionHandler
             return;
         }
 
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
         m_host->sendCommandToBackend(ASCIILiteral("getAllCookies"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
             if (response.isError || !response.responseObject) {
                 completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
             }
-            RefPtr<InspectorArray> cookiesArray;
+            RefPtr<JSON::Array> cookiesArray;
             if (!response.responseObject->getArray(ASCIILiteral("cookies"), cookiesArray)) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
-            RefPtr<InspectorArray> cookies = InspectorArray::create();
+            RefPtr<JSON::Array> cookies = JSON::Array::create();
             for (unsigned i = 0; i < cookiesArray->length(); ++i) {
-                RefPtr<InspectorValue> cookieValue = cookiesArray->get(i);
-                RefPtr<InspectorObject> cookieObject;
+                RefPtr<JSON::Value> cookieValue = cookiesArray->get(i);
+                RefPtr<JSON::Object> cookieObject;
                 if (!cookieValue->asObject(cookieObject)) {
                     completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                     return;
@@ -1879,11 +1877,11 @@ void Session::getNamedCookie(const String& name, Function<void (CommandResult&&)
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorArray> cookiesArray;
+        RefPtr<JSON::Array> cookiesArray;
         result.result()->asArray(cookiesArray);
         for (unsigned i = 0; i < cookiesArray->length(); ++i) {
-            RefPtr<InspectorValue> cookieValue = cookiesArray->get(i);
-            RefPtr<InspectorObject> cookieObject;
+            RefPtr<JSON::Value> cookieValue = cookiesArray->get(i);
+            RefPtr<JSON::Object> cookieObject;
             cookieValue->asObject(cookieObject);
             String cookieName;
             cookieObject->getString(ASCIILiteral("name"), cookieName);
@@ -1908,7 +1906,7 @@ void Session::addCookie(const Cookie& cookie, Function<void (CommandResult&&)>&&
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
         parameters->setObject(ASCIILiteral("cookie"), WTFMove(cookie));
         m_host->sendCommandToBackend(ASCIILiteral("addSingleCookie"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
@@ -1933,7 +1931,7 @@ void Session::deleteCookie(const String& name, Function<void (CommandResult&&)>&
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
         parameters->setString(ASCIILiteral("cookieName"), name);
         m_host->sendCommandToBackend(ASCIILiteral("deleteSingleCookie"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
@@ -1958,7 +1956,7 @@ void Session::deleteAllCookies(Function<void (CommandResult&&)>&& completionHand
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
         m_host->sendCommandToBackend(ASCIILiteral("deleteAllCookies"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError) {
@@ -1977,7 +1975,7 @@ void Session::dismissAlert(Function<void (CommandResult&&)>&& completionHandler)
         return;
     }
 
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
     m_host->sendCommandToBackend(ASCIILiteral("dismissCurrentJavaScriptDialog"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
@@ -1995,7 +1993,7 @@ void Session::acceptAlert(Function<void (CommandResult&&)>&& completionHandler)
         return;
     }
 
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
     m_host->sendCommandToBackend(ASCIILiteral("acceptCurrentJavaScriptDialog"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
@@ -2013,7 +2011,7 @@ void Session::getAlertText(Function<void (CommandResult&&)>&& completionHandler)
         return;
     }
 
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
     m_host->sendCommandToBackend(ASCIILiteral("messageOfCurrentJavaScriptDialog"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError || !response.responseObject) {
@@ -2025,7 +2023,7 @@ void Session::getAlertText(Function<void (CommandResult&&)>&& completionHandler)
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
             return;
         }
-        completionHandler(CommandResult::success(InspectorValue::create(valueString)));
+        completionHandler(CommandResult::success(JSON::Value::create(valueString)));
     });
 }
 
@@ -2036,7 +2034,7 @@ void Session::sendAlertText(const String& text, Function<void (CommandResult&&)>
         return;
     }
 
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    RefPtr<JSON::Object> parameters = JSON::Object::create();
     parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
     parameters->setString(ASCIILiteral("userInput"), text);
     m_host->sendCommandToBackend(ASCIILiteral("setUserInputForCurrentJavaScriptPrompt"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
@@ -2060,7 +2058,7 @@ void Session::takeScreenshot(std::optional<String> elementID, std::optional<bool
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
@@ -2078,7 +2076,7 @@ void Session::takeScreenshot(std::optional<String> elementID, std::optional<bool
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
-            completionHandler(CommandResult::success(InspectorValue::create(data)));
+            completionHandler(CommandResult::success(JSON::Value::create(data)));
         });
     });
 }

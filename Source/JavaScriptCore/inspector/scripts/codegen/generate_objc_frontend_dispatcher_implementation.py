@@ -50,7 +50,7 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
     def generate_output(self):
         secondary_headers = [
             '"%sTypeConversions.h"' % self.protocol_name(),
-            '<JavaScriptCore/InspectorValues.h>',
+            '<wtf/JSONValues.h>',
         ]
 
         header_args = {
@@ -119,7 +119,7 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
         if required_pointer_parameters or optional_pointer_parameters:
             lines.append('')
 
-        lines.append('    Ref<InspectorObject> jsonMessage = InspectorObject::create();')
+        lines.append('    Ref<JSON::Object> jsonMessage = JSON::Object::create();')
         lines.append('    jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("%s.%s"));' % (domain.domain_name, event.event_name))
         if event.event_parameters:
             lines.extend(self._generate_event_out_parameters(domain, event))
@@ -139,7 +139,7 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
 
     def _generate_event_out_parameters(self, domain, event):
         lines = []
-        lines.append('    Ref<InspectorObject> paramsObject = InspectorObject::create();')
+        lines.append('    Ref<JSON::Object> paramsObject = JSON::Object::create();')
         for parameter in event.event_parameters:
             keyed_set_method = CppGenerator.cpp_setter_method_for_type(parameter.type)
             var_name = parameter.parameter_name

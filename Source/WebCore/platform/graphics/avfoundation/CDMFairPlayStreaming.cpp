@@ -37,18 +37,16 @@
 #include "ISOTrackEncryptionBox.h"
 #include "InitDataRegistry.h"
 #include "NotImplemented.h"
-#include "inspector/InspectorValues.h"
 #include <runtime/ArrayBuffer.h>
 #include <runtime/DataView.h>
 #include <wtf/Algorithms.h>
+#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
 
 #if HAVE(AVCONTENTKEYSESSION)
 #include "CDMInstanceFairPlayStreamingAVFObjC.h"
 #endif
-
-using namespace Inspector;
 
 namespace WebCore {
 
@@ -59,15 +57,15 @@ static Vector<Ref<SharedBuffer>> extractSinfData(const SharedBuffer& buffer)
         return { };
     String json { buffer.data(), static_cast<unsigned>(buffer.size()) };
 
-    RefPtr<InspectorValue> value;
-    if (!InspectorValue::parseJSON(json, value))
+    RefPtr<JSON::Value> value;
+    if (!JSON::Value::parseJSON(json, value))
         return { };
 
-    RefPtr<InspectorObject> object;
+    RefPtr<JSON::Object> object;
     if (!value->asObject(object))
         return { };
 
-    RefPtr<InspectorArray> sinfArray;
+    RefPtr<JSON::Array> sinfArray;
     if (!object->getArray("sinf", sinfArray))
         return { };
 
