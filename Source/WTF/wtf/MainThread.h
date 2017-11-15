@@ -87,6 +87,7 @@ WTF_EXPORT_PRIVATE bool isMainThreadOrGCThread();
 void initializeMainThreadPlatform();
 void scheduleDispatchFunctionsOnMainThread(SchedulePairHashSet* = nullptr);
 void dispatchFunctionsFromMainThread();
+bool currentRunLoopInCommonMode();
 
 #if OS(DARWIN) && !USE(GLIB)
 #if !USE(WEB_THREAD)

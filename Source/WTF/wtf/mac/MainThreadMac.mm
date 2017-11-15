@@ -122,6 +122,11 @@ static void postTimer()
     CFRunLoopAddTimer(CFRunLoopGetCurrent(), CFRunLoopTimerCreate(0, 0, 0, 0, 0, timerFired, 0), kCFRunLoopCommonModes);
 }
 
+bool currentRunLoopInCommonMode()
+{
+    return [[NSRunLoop currentRunLoop] currentMode] == (NSString *)kCFRunLoopCommonModes;
+}
+
 void scheduleDispatchFunctionsOnMainThread(SchedulePairHashSet* pairs)
 {
     ASSERT(staticMainThreadCaller);

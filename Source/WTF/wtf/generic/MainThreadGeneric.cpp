@@ -67,6 +67,11 @@ void initializeMainThreadPlatform()
 {
 }
 
+bool currentRunLoopInCommonMode()
+{
+    return true;
+}
+
 void scheduleDispatchFunctionsOnMainThread(SchedulePairHashSet*)
 {
     // Use a RunLoop::Timer instead of RunLoop::dispatch() to be able to use a different priority and

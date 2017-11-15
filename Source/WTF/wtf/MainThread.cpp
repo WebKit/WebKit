@@ -135,7 +135,7 @@ void dispatchFunctionsFromMainThread()
         // yield so the user input can be processed. Otherwise user may not be able to even close the window.
         // This code has effect only in case the scheduleDispatchFunctionsOnMainThread() is implemented in a way that
         // allows input events to be processed before we are back here.
-        if (MonotonicTime::now() - startTime > maxRunLoopSuspensionTime) {
+        if (MonotonicTime::now() - startTime > maxRunLoopSuspensionTime && currentRunLoopInCommonMode()) {
             scheduleDispatchFunctionsOnMainThread();
             break;
         }

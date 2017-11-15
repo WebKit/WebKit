@@ -1,3 +1,29 @@
+2017-11-15  Alex Christensen  <achristensen@webkit.org>
+
+        WebViews scheduled in custom run loop modes should be able to do more than 50ms of work at a time
+        https://bugs.webkit.org/show_bug.cgi?id=179742
+        <rdar://problem/35519421>
+
+        Reviewed by Jer Noble.
+        
+        In r224687 I fixed loading from scheduled WebViews with custom run loop modes, but in 
+        dispatchFunctionsFromMainThread we have an optimization to yield the run loop if we have already
+        done more than 50ms of work on the main thread in this run loop iteration.  When this happens
+        and we are running in a custom run loop mode, we disable this responsiveness optimization.
+        We are calling CFRunLoopRunInMode or [NSRunLoop acceptInputForMode:beforeDate:] in a while loop anyways,
+        so we would not benefit from a responsiveness optimization.  We definitely don't want to reschedule
+        on the main thread in the common run loop mode in this case.
+
+        * wtf/MainThread.cpp:
+        (WTF::dispatchFunctionsFromMainThread):
+        * wtf/MainThread.h:
+        * wtf/generic/MainThreadGeneric.cpp:
+        (WTF::currentRunLoopInCommonMode):
+        * wtf/mac/MainThreadMac.mm:
+        (WTF::currentRunLoopInCommonMode):
+        * wtf/win/MainThreadWin.cpp:
+        (WTF::currentRunLoopInCommonMode):
+
 2017-11-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r224863.

@@ -49,6 +49,11 @@ LRESULT CALLBACK ThreadingWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, 
     return 0;
 }
 
+bool currentRunLoopInCommonMode()
+{
+    return true;
+}
+
 void initializeMainThreadPlatform()
 {
     if (threadingWindowHandle)

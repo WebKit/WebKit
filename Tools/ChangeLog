@@ -1,3 +1,16 @@
+2017-11-15  Alex Christensen  <achristensen@webkit.org>
+
+        WebViews scheduled in custom run loop modes should be able to do more than 50ms of work at a time
+        https://bugs.webkit.org/show_bug.cgi?id=179742
+        <rdar://problem/35519421>
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/mac/WebViewScheduleInRunLoop.mm:
+        (-[ScheduleInRunLoopDelegate webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI::TEST):
+        Load more than one scheduled WebView to test work that typically takes more than 50 ms.
+
 2017-11-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r223781.
