@@ -1,3 +1,17 @@
+2017-11-15  Alex Christensen  <achristensen@webkit.org>
+
+        Move a compiled WKContentRuleList to its destination before calling mmap
+        https://bugs.webkit.org/show_bug.cgi?id=179719
+
+        Reviewed by Brady Eidson.
+
+        Right now we compile a WKContentRuleList to a temporary file, call mmap, close the file, then move it.
+        Sometimes, especially on bots running tests, the move fails because the temporary file doesn't exist
+        any more.  Moving the file before mmaping and closing the file might prevent this failure.
+
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::compiledToFile):
+
 2017-11-15  Chris Dumez  <cdumez@apple.com>
 
         [Service Workers] Implement Client API
