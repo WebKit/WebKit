@@ -67,13 +67,15 @@ ServiceWorkerRegistrationKey ServiceWorkerRegistrationKey::isolatedCopy() const
 
 bool ServiceWorkerRegistrationKey::isMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const
 {
+    return originIsMatching(topOrigin, clientURL) && clientURL.string().startsWith(m_scope);
+}
+
+bool ServiceWorkerRegistrationKey::originIsMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const
+{
     if (topOrigin != m_topOrigin)
         return false;
 
-    if (!protocolHostAndPortAreEqual(clientURL, m_scope))
-        return false;
-
-    return clientURL.string().startsWith(m_scope);
+    return protocolHostAndPortAreEqual(clientURL, m_scope);
 }
 
 #ifndef NDEBUG

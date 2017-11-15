@@ -47,6 +47,7 @@ SWServerRegistration::SWServerRegistration(SWServer& server, const ServiceWorker
     , m_scopeURL(scopeURL)
     , m_scriptURL(scriptURL)
     , m_server(server)
+    , m_creationTime(MonotonicTime::now())
 {
     m_scopeURL.removeFragmentIdentifier();
 }

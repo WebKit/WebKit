@@ -37,6 +37,7 @@ messages -> WebSWClientConnection {
     PostMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, IPC::DataReference message, struct WebCore::ServiceWorkerData source, String sourceOrigin)
 
     DidMatchRegistration(uint64_t matchRequestIdentifier, std::optional<WebCore::ServiceWorkerRegistrationData> data)
+    DidGetRegistrations(uint64_t matchRequestIdentifier, Vector<WebCore::ServiceWorkerRegistrationData> registrations)
 }
 
 #endif // ENABLE(SERVICE_WORKER)

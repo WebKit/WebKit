@@ -31,6 +31,7 @@
 #include "ServiceWorkerRegistrationData.h"
 #include "ServiceWorkerTypes.h"
 #include <wtf/HashCountedSet.h>
+#include <wtf/MonotonicTime.h>
 
 namespace WebCore {
 
@@ -69,6 +70,8 @@ public:
     SWServerWorker* waitingWorker() const { return m_waitingWorker.get(); }
     SWServerWorker* activeWorker() const { return m_activeWorker.get(); }
 
+    MonotonicTime creationTime() const { return m_creationTime; }
+
 private:
     void forEachConnection(const WTF::Function<void(SWServer::Connection&)>&);
 
@@ -87,6 +90,8 @@ private:
     
     HashCountedSet<uint64_t> m_connectionsWithClientRegistrations;
     SWServer& m_server;
+
+    MonotonicTime m_creationTime;
 };
 
 } // namespace WebCore

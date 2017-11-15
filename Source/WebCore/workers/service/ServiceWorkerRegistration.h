@@ -41,10 +41,7 @@ class ServiceWorkerContainer;
 
 class ServiceWorkerRegistration final : public RefCounted<ServiceWorkerRegistration>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
-    template <typename... Args> static Ref<ServiceWorkerRegistration> create(Args&&... args)
-    {
-        return adoptRef(*new ServiceWorkerRegistration(std::forward<Args>(args)...));
-    }
+    static Ref<ServiceWorkerRegistration> getOrCreate(ScriptExecutionContext&, Ref<ServiceWorkerContainer>&&, ServiceWorkerRegistrationData&&);
 
     ~ServiceWorkerRegistration();
 

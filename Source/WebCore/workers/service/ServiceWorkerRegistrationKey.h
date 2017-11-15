@@ -42,6 +42,7 @@ public:
 
     bool operator==(const ServiceWorkerRegistrationKey&) const;
     bool isMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const;
+    bool originIsMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const;
     size_t scopeLength() const { return m_scope.string().length(); }
 
     const SecurityOriginData& topOrigin() const { return m_topOrigin; }

@@ -160,6 +160,12 @@ void WebSWServerConnection::matchRegistration(uint64_t registrationMatchRequestI
     send(Messages::WebSWClientConnection::DidMatchRegistration { registrationMatchRequestIdentifier, std::nullopt });
 }
 
+void WebSWServerConnection::getRegistrations(uint64_t registrationMatchRequestIdentifier, const SecurityOriginData& topOrigin, const URL& clientURL)
+{
+    auto registrations = server().getRegistrations(topOrigin, clientURL);
+    send(Messages::WebSWClientConnection::DidGetRegistrations { registrationMatchRequestIdentifier, registrations });
+}
+
 template<typename U> void WebSWServerConnection::sendToContextProcess(U&& message)
 {
     if (auto* connection = StorageProcess::singleton().globalServerToContextConnection())

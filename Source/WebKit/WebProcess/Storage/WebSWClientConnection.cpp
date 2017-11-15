@@ -118,6 +118,12 @@ void WebSWClientConnection::didMatchRegistration(uint64_t matchingRequest, std::
         completionHandler(WTFMove(result));
 }
 
+void WebSWClientConnection::didGetRegistrations(uint64_t matchingRequest, Vector<ServiceWorkerRegistrationData>&& registrations)
+{
+    if (auto completionHandler = m_ongoingGetRegistrationsTasks.take(matchingRequest))
+        completionHandler(WTFMove(registrations));
+}
+
 void WebSWClientConnection::matchRegistration(const SecurityOrigin& topOrigin, const URL& clientURL, RegistrationCallback&& callback)
 {
     if (!mayHaveServiceWorkerRegisteredForOrigin(topOrigin)) {
@@ -128,6 +134,18 @@ void WebSWClientConnection::matchRegistration(const SecurityOrigin& topOrigin, c
     uint64_t requestIdentifier = ++m_previousMatchRegistrationTaskIdentifier;
     m_ongoingMatchRegistrationTasks.add(requestIdentifier, WTFMove(callback));
     send(Messages::WebSWServerConnection::MatchRegistration(requestIdentifier, SecurityOriginData::fromSecurityOrigin(topOrigin), clientURL));
+}
+
+void WebSWClientConnection::getRegistrations(const SecurityOrigin& topOrigin, const URL& clientURL, GetRegistrationsCallback&& callback)
+{
+    if (!mayHaveServiceWorkerRegisteredForOrigin(topOrigin)) {
+        callback({ });
+        return;
+    }
+
+    uint64_t requestIdentifier = ++m_previousGetRegistrationsTaskIdentifier;
+    m_ongoingGetRegistrationsTasks.add(requestIdentifier, WTFMove(callback));
+    send(Messages::WebSWServerConnection::GetRegistrations(requestIdentifier, SecurityOriginData::fromSecurityOrigin(topOrigin), clientURL));
 }
 
 Ref<ServiceWorkerClientFetch> WebSWClientConnection::startFetch(WebServiceWorkerProvider& provider, Ref<WebCore::ResourceLoader>&& loader, uint64_t identifier, ServiceWorkerClientFetch::Callback&& callback)

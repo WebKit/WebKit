@@ -37,6 +37,14 @@
 
 namespace WebCore {
 
+Ref<ServiceWorkerRegistration> ServiceWorkerRegistration::getOrCreate(ScriptExecutionContext& context, Ref<ServiceWorkerContainer>&& container, ServiceWorkerRegistrationData&& data)
+{
+    if (auto* registration = container->registration(data.identifier))
+        return *registration;
+
+    return adoptRef(*new ServiceWorkerRegistration(context, WTFMove(container), WTFMove(data)));
+}
+
 ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& context, Ref<ServiceWorkerContainer>&& container, ServiceWorkerRegistrationData&& registrationData)
     : ActiveDOMObject(&context)
     , m_registrationData(WTFMove(registrationData))

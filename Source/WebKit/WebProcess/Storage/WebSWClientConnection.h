@@ -72,6 +72,9 @@ private:
 
     void matchRegistration(const WebCore::SecurityOrigin& topOrigin, const WebCore::URL& clientURL, RegistrationCallback&&) final;
     void didMatchRegistration(uint64_t matchRequestIdentifier, std::optional<WebCore::ServiceWorkerRegistrationData>&&);
+    void didGetRegistrations(uint64_t matchRequestIdentifier, Vector<WebCore::ServiceWorkerRegistrationData>&&);
+
+    void getRegistrations(const WebCore::SecurityOrigin& topOrigin, const WebCore::URL& clientURL, GetRegistrationsCallback&&) final;
 
     void didResolveRegistrationPromise(const WebCore::ServiceWorkerRegistrationKey&) final;
 
@@ -91,6 +94,9 @@ private:
 
     uint64_t m_previousMatchRegistrationTaskIdentifier { 0 };
     HashMap<uint64_t, RegistrationCallback> m_ongoingMatchRegistrationTasks;
+
+    uint64_t m_previousGetRegistrationsTaskIdentifier { 0 };
+    HashMap<uint64_t, GetRegistrationsCallback> m_ongoingGetRegistrationsTasks;
 
 }; // class WebSWServerConnection
 

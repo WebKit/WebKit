@@ -109,6 +109,24 @@ void SWServer::removeRegistration(const ServiceWorkerRegistrationKey& key)
     m_originStore->remove(topOrigin);
 }
 
+Vector<ServiceWorkerRegistrationData> SWServer::getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL)
+{
+    Vector<SWServerRegistration*> matchingRegistrations;
+    for (auto& item : m_registrations) {
+        if (!item.value->isUninstalling() && item.key.originIsMatching(topOrigin, clientURL))
+            matchingRegistrations.append(item.value.get());
+    }
+    // The specification mandates that registrations are returned in the insertion order.
+    std::sort(matchingRegistrations.begin(), matchingRegistrations.end(), [](auto& a, auto& b) {
+        return a->creationTime() < b->creationTime();
+    });
+    Vector<ServiceWorkerRegistrationData> matchingRegistrationDatas;
+    matchingRegistrationDatas.reserveInitialCapacity(matchingRegistrations.size());
+    for (auto* registration : matchingRegistrations)
+        matchingRegistrationDatas.uncheckedAppend(registration->data());
+    return matchingRegistrationDatas;
+}
+
 void SWServer::clearAll()
 {
     m_jobQueues.clear();
