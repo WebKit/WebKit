@@ -27,9 +27,9 @@
 
 #include "WebGLRenderingContextBase.h"
 
-namespace WebCore {
-
 #if ENABLE(WEBGL)
+
+namespace WebCore {
 
 class WebGLRenderingContext final : public WebGLRenderingContextBase {
 public:
@@ -56,8 +56,8 @@ public:
     bool validateCapability(const char* functionName, GC3Denum cap) final;
 };
 
-#endif
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::WebGLRenderingContext, isWebGL1())
+
+#endif
