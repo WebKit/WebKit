@@ -161,7 +161,7 @@ enum {
 
 static void webKitSettingsDispose(GObject* object)
 {
-    WebCore::setScreenDPIObserverHandler(nullptr);
+    WebCore::setScreenDPIObserverHandler(nullptr, object);
     G_OBJECT_CLASS(webkit_settings_parent_class)->dispose(object);
 }
 
@@ -180,17 +180,15 @@ static void webKitSettingsConstructed(GObject* object)
             return;
 
         auto scalingFactor = newScreenDpi / settings->priv->screenDpi;
-        auto prevFontSize = settings->priv->preferences->defaultFontSize();
-        auto prevMonospaceFontSize = settings->priv->preferences->defaultFixedFontSize();
-
-        settings->priv->preferences->setDefaultFontSize(std::round(prevFontSize * scalingFactor));
-        g_object_notify(G_OBJECT(settings), "default-font-size");
-
-        settings->priv->preferences->setDefaultFixedFontSize(std::round(prevMonospaceFontSize * scalingFactor));
-        g_object_notify(G_OBJECT(settings), "default-monospace-font-size");
-
+        auto fontSize = settings->priv->preferences->defaultFontSize();
+        auto monospaceFontSize = settings->priv->preferences->defaultFixedFontSize();
         settings->priv->screenDpi = newScreenDpi;
-    });
+
+        g_object_freeze_notify(G_OBJECT(settings));
+        webkit_settings_set_default_font_size(settings, std::round(fontSize * scalingFactor));
+        webkit_settings_set_default_monospace_font_size(settings, std::round(monospaceFontSize * scalingFactor));
+        g_object_thaw_notify(G_OBJECT(settings));
+    }, object);
 }
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)

@@ -60,7 +60,7 @@ double screenDPI()
     return 96;
 }
 
-void setScreenDPIObserverHandler(Function<void()>&&)
+void setScreenDPIObserverHandler(Function<void()>&&, void*)
 {
     notImplemented();
 }

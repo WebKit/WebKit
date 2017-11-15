@@ -1,3 +1,16 @@
+2017-11-15  Gabriel Ivascu  <givascu@igalia.com>
+
+        [GTK] Automatically adjust font size when gtk-xft-dpi changes
+        https://bugs.webkit.org/show_bug.cgi?id=142673
+
+        Some follow-up fixes for the previous patch.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webKitSettingsDispose):
+        (webKitSettingsConstructed):
+
 2017-11-14  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: Implement AccessibleNode class and support label and role attributes

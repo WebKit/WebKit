@@ -40,7 +40,8 @@
 
 #include <cmath>
 #include <gtk/gtk.h>
-#include <wtf/Optional.h>
+#include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -113,30 +114,38 @@ double screenDPI()
     return cachedDpi;
 }
 
-static std::optional<Function<void()>> screenDPIObserverHandler;
+static WTF::HashMap<void*, Function<void()>>& screenDPIObserverHandlersMap()
+{
+    static WTF::NeverDestroyed<WTF::HashMap<void*, Function<void()>>> handlersMap;
+    return handlersMap;
+}
 
 static void gtkXftDPIChangedCallback()
 {
-    if (screenDPIObserverHandler)
-        (*screenDPIObserverHandler)();
+    for (const auto& keyValuePair : screenDPIObserverHandlersMap())
+        keyValuePair.value();
 }
 
-void setScreenDPIObserverHandler(Function<void()>&& handler)
+void setScreenDPIObserverHandler(Function<void()>&& handler, void* context)
 {
     static GtkSettings* gtkSettings = gtk_settings_get_default();
     static unsigned long gtkXftDpiChangedHandlerID = 0;
 
-    if (!handler) {
-        if (gtkSettings && gtkXftDpiChangedHandlerID) {
-            g_signal_handler_disconnect(gtkSettings, gtkXftDpiChangedHandlerID);
-            gtkXftDpiChangedHandlerID = 0;
-        }
+    if (!gtkSettings)
         return;
-    }
 
-    screenDPIObserverHandler = WTFMove(handler);
-    if (gtkSettings && !gtkXftDpiChangedHandlerID)
-        gtkXftDpiChangedHandlerID = g_signal_connect(gtkSettings, "notify::gtk-xft-dpi", G_CALLBACK(gtkXftDPIChangedCallback), nullptr);
+    if (handler)
+        screenDPIObserverHandlersMap().set(context, WTFMove(handler));
+    else
+        screenDPIObserverHandlersMap().remove(context);
+
+    if (!screenDPIObserverHandlersMap().isEmpty()) {
+        if (!gtkXftDpiChangedHandlerID)
+            gtkXftDpiChangedHandlerID = g_signal_connect(gtkSettings, "notify::gtk-xft-dpi", G_CALLBACK(gtkXftDPIChangedCallback), nullptr);
+    } else if (gtkXftDpiChangedHandlerID) {
+        g_signal_handler_disconnect(gtkSettings, gtkXftDpiChangedHandlerID);
+        gtkXftDpiChangedHandlerID = 0;
+    }
 }
 
 static GdkScreen* getScreen(GtkWidget* widget)
