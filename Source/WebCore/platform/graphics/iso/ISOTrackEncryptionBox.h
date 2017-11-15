@@ -31,7 +31,7 @@ namespace WebCore {
 
 class ISOTrackEncryptionBox : public ISOFullBox {
 public:
-    static FourCC boxTypeName() { return 'tenc'; }
+    static FourCC boxTypeName() { return "tenc"; }
 
     std::optional<int8_t> defaultCryptByteBlock() const { return m_defaultCryptByteBlock; }
     std::optional<int8_t> defaultSkipByteBlock() const { return m_defaultSkipByteBlock; }

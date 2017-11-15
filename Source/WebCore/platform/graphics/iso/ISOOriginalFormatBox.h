@@ -31,7 +31,7 @@ namespace WebCore {
 
 class ISOOriginalFormatBox : public ISOBox {
 public:
-    static FourCC boxTypeName() { return 'frma'; }
+    static FourCC boxTypeName() { return "frma"; }
 
     FourCC dataFormat() const { return m_dataFormat; }
 

@@ -73,11 +73,11 @@ protected:
     String m_contents;
 };
 
-static FourCC vttIdBoxType() { return 'iden'; }
-static FourCC vttSettingsBoxType() { return 'sttg'; }
-static FourCC vttPayloadBoxType() { return 'payl'; }
-static FourCC vttCurrentTimeBoxType() { return 'ctim'; }
-static FourCC vttCueSourceIDBoxType() { return 'vsid'; }
+static FourCC vttIdBoxType() { return "iden"; }
+static FourCC vttSettingsBoxType() { return "sttg"; }
+static FourCC vttPayloadBoxType() { return "payl"; }
+static FourCC vttCurrentTimeBoxType() { return "ctim"; }
+static FourCC vttCueSourceIDBoxType() { return "vsid"; }
 
 ISOWebVTTCue::ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& duration)
     : m_presentationTime(presentationTime)

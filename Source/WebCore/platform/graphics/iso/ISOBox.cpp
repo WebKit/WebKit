@@ -75,7 +75,7 @@ bool ISOBox::parse(DataView& view, unsigned& offset)
     if (m_size == 1 && !checkedRead<uint64_t>(m_size, view, offset, BigEndian))
         return false;
 
-    if (m_boxType.value == 'uuid') {
+    if (m_boxType == "uuid") {
         struct ExtendedType {
             uint8_t value[16];
         } extendedTypeStruct;

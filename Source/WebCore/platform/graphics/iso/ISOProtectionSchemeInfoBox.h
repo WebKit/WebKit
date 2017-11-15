@@ -34,7 +34,7 @@ class ISOSchemeInformationBox;
 
 class ISOProtectionSchemeInfoBox : public ISOFullBox {
 public:
-    static FourCC boxTypeName() { return 'sinf'; }
+    static FourCC boxTypeName() { return "sinf"; }
 
     const ISOSchemeTypeBox* schemeTypeBox() const { return m_schemeTypeBox.get(); }
     const ISOSchemeInformationBox* schemeInformationBox() const { return m_schemeInformationBox.get(); }

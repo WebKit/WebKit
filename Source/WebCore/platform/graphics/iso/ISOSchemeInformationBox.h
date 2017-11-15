@@ -31,7 +31,7 @@ namespace WebCore {
 
 class ISOSchemeInformationBox : public ISOBox {
 public:
-    static FourCC boxTypeName() { return 'schi'; }
+    static FourCC boxTypeName() { return "schi"; }
 
     const ISOBox* schemeSpecificData() const { return m_schemeSpecificData.get(); }
 
