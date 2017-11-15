@@ -3330,6 +3330,17 @@ webkit.org/b/179174 inspector/console/webcore-logging.html [ Failure ]
 
 webkit.org/b/179605 editing/execCommand/underline-selection-containing-image.html [ Failure ]
 
+webkit.org/b/179721 media/video-fullscreen-restriction-removed.html [ Failure ]
+webkit.org/b/179721 fullscreen/full-screen-iframe-legacy.html [ Timeout ]
+webkit.org/b/179721 media/media-fullscreen-inline.html [ Timeout ]
+webkit.org/b/179721 media/media-fullscreen-not-in-document.html [ Timeout ]
+webkit.org/b/179721 media/media-fullscreen-return-to-inline.html [ Timeout ]
+webkit.org/b/179721 media/video-fullscreeen-only-playback.html [ Timeout ]
+
+webkit.org/b/179722 compositing/accelerated-layers-after-back.html [ Failure ]
+
+webkit.org/b/179723 accessibility/accessibility-object-model.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -111,7 +111,6 @@ Bug(WPE) webgl/1.0.2/conformance/extensions/oes-vertex-array-object.html [ Failu
 #  Timing out
 Bug(WPE) webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Timeout ]
 Bug(WPE) webgl/1.0.2/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
-Bug(WPE) webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Timeout ]
 Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Timeout ]
 Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Timeout ]
 Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Timeout ]
@@ -750,7 +749,6 @@ Bug(WPE) transitions/blendmode-transitions.html [ Failure ]
 media/media-source/ [ Pass ]
 webkit.org/b/168373 media/media-source/media-source-error-crash.html [ Timeout ]
 webkit.org/b/171726 media/media-source/media-source-init-segment-duration.html [ Failure ]
-webkit.org/b/172816 media/media-source/media-source-paint-to-canvas.html [ Timeout ]
 webkit.org/b/168373 media/media-source/media-source-resize.html [ Failure ]
 webkit.org/b/165394 media/media-source/media-source-seek-detach-crash.html [ Timeout ]
 webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-valid.html [ Timeout ]
@@ -957,7 +955,6 @@ webkit.org/b/178704 svg/as-image/svg-as-image-canvas.html [ Crash ]
 webkit.org/b/178704 svg/css/svg-resource-fragment-identifier-img-src.html [ Crash ]
 
 webkit.org/b/178703 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted.html [ Crash ]
-webkit.org/b/178707 imported/w3c/web-platform-tests/encrypted-media/encrypted-media-default-feature-policy.https.sub.html [ Timeout ]
 
 webkit.org/b/178705 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Failure ]
 webkit.org/b/178705 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Failure ]

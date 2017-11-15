@@ -1,3 +1,30 @@
+2017-11-15  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK][WPE] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=179726
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations: Add new expectations.
+        * platform/gtk/fast/events/input-events-paste-rich-datatransfer-expected.txt:
+          Rebaseline for bug 179431.
+        * platform/gtk/js/dom/dom-static-property-for-in-iteration-expected.txt:
+          Rebaseline for ​bug 179494.
+        * platform/wpe/TestExpectations: Remove expectations that were redundant
+          with other (more correct) expectations in the same file, or with the
+          new expectation file.
+        * platform/wpe/fast/workers/WorkerGlobalScope-properties-prototype-expected.txt:
+          Removed: bug 179094 improved the results and made them match the
+          platform-neutral expectation file.
+        * platform/wpe/fast/workers/self-hasOwnProperty-expected.txt:
+          Removed: bug 179094 improved the results and made them match the
+          platform-neutral expectation file.
+        * platform/wpe/http/tests/uri/css-href-expected.txt: Added: missing baseline.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/encrypted-media-default-feature-policy.https.sub-expected.txt:
+          Rebaseline to make the test useful as a regression test.
+        * platform/wpe/js/dom/dom-static-property-for-in-iteration-expected.txt:
+          Rebaseline for ​bug 179494.
+
 2017-11-14  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: Implement AccessibleNode class and support label and role attributes
