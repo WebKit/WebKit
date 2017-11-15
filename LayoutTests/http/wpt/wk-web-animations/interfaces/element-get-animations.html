@@ -13,9 +13,9 @@ let a, b, c;
 const targetA = document.createElement("a");
 const targetB = document.createElement("b");
 
-const effectAa = new KeyframeEffect(targetA);
-const effectAb = new KeyframeEffect(targetA);
-const effectB = new KeyframeEffect(targetB);
+const effectAa = new KeyframeEffect(targetA, null);
+const effectAb = new KeyframeEffect(targetA, null);
+const effectB = new KeyframeEffect(targetB, null);
 
 test(t => {
     assert_true(typeof targetA.getAnimations === "function");

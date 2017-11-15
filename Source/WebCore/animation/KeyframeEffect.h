@@ -26,22 +26,32 @@
 #pragma once
 
 #include "AnimationEffect.h"
+#include "RenderStyle.h"
 #include <wtf/Ref.h>
 
 namespace WebCore {
 
 class Element;
 
+struct Keyframe {
+    RenderStyle style;
+    Vector<CSSPropertyID> properties;
+};
+
 class KeyframeEffect final : public AnimationEffect {
 public:
-    static Ref<KeyframeEffect> create(Element*);
+    static ExceptionOr<Ref<KeyframeEffect>> create(JSC::ExecState&, Element*, JSC::Strong<JSC::JSObject>&&);
     ~KeyframeEffect() { }
 
     Element* target() const { return m_target.get(); }
+    ExceptionOr<void> setKeyframes(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&);
+    void applyAtLocalTime(Seconds, RenderStyle&) override;
 
 private:
     KeyframeEffect(Element*);
+    ExceptionOr<void> processKeyframes(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&);
     RefPtr<Element> m_target;
+    Vector<Keyframe> m_keyframes;
 
 };
 

@@ -36,10 +36,11 @@ namespace WebCore {
 
 class AnimationEffect : public RefCounted<AnimationEffect> {
 public:
+    virtual ~AnimationEffect() = default;
+
     bool isKeyframeEffect() const { return m_classType == KeyframeEffectClass; }
     AnimationEffectTiming* timing() const { return m_timing.get(); }
-
-    virtual ~AnimationEffect() { }
+    virtual void applyAtLocalTime(Seconds, RenderStyle&) = 0;
 
     WebAnimation* animation() const { return m_animation.get(); }
     void setAnimation(RefPtr<WebAnimation>&& animation) { m_animation = animation; }

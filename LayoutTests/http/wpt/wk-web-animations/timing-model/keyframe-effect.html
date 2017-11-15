@@ -16,22 +16,23 @@ test(t => {
 
 test(t => {
     assert_throws(new TypeError, () => new KeyframeEffect);
-}, "The KeyframeEffect interface cannot be constructed without parameters.");
+    assert_throws(new TypeError, () => new KeyframeEffect(document.createElement("div")));
+}, "The KeyframeEffect interface cannot be constructed without enough parameters.");
 
 test(t => {
-    assert_throws(new TypeError, () => new KeyframeEffect(0));
-    assert_throws(new TypeError, () => new KeyframeEffect({}));
-    assert_throws(new TypeError, () => new KeyframeEffect([]));
-    assert_throws(new TypeError, () => new KeyframeEffect(false));
-    assert_throws(new TypeError, () => new KeyframeEffect('element'));
-}, "The KeyframeEffect interface constructor throws if the parameter has the wrong type.");
+    assert_throws(new TypeError, () => new KeyframeEffect(0, null));
+    assert_throws(new TypeError, () => new KeyframeEffect({}, null));
+    assert_throws(new TypeError, () => new KeyframeEffect([], null));
+    assert_throws(new TypeError, () => new KeyframeEffect(false, null));
+    assert_throws(new TypeError, () => new KeyframeEffect('element', null));
+}, "The KeyframeEffect interface constructor throws if the first parameter has the wrong type.");
 
 test(t => {
-    assert_equals((new KeyframeEffect(document.body)).target, document.body);
+    assert_equals((new KeyframeEffect(document.body, null)).target, document.body);
 }, "The KeyframeEffect interface target is set to the provided Element.");
 
 test(t => {
-    const effect = new KeyframeEffect(document.body);
+    const effect = new KeyframeEffect(document.body, null);
     assert_readonly(effect, "target");
 }, "A KeyframeEffect object target is read-only.");
 

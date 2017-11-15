@@ -3706,7 +3706,9 @@ Element* Element::findAnchorElementForLink(String& outAnchorName)
 Vector<RefPtr<WebAnimation>> Element::getAnimations()
 {
     // FIXME: Filter and order the list as specified (webkit.org/b/179535).
-    return document().timeline().animationsForElement(*this);
+    if (auto timeline = document().existingTimeline())
+        return timeline->animationsForElement(*this);
+    return Vector<RefPtr<WebAnimation>> { };
 }
 
 AccessibleNode* Element::accessibleNode()

@@ -237,6 +237,12 @@ Seconds WebAnimation::timeToNextRequiredTick(Seconds timelineTime) const
     return Seconds::infinity();
 }
 
+void WebAnimation::resolve(RenderStyle& targetStyle)
+{
+    if (m_effect && currentTime())
+        m_effect->applyAtLocalTime(currentTime().value(), targetStyle);
+}
+
 String WebAnimation::description()
 {
     return "Animation";

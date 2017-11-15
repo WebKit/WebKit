@@ -38,6 +38,7 @@ namespace WebCore {
 class AnimationEffect;
 class AnimationTimeline;
 class Document;
+class RenderStyle;
 
 class WebAnimation final : public RefCounted<WebAnimation> {
 public:
@@ -63,6 +64,7 @@ public:
     void setPlaybackRate(double);
 
     Seconds timeToNextRequiredTick(Seconds) const;
+    void resolve(RenderStyle&);
 
     String description();
 

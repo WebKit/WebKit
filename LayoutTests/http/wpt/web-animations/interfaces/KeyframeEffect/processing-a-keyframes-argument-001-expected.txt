@@ -55,5 +55,5 @@ FAIL Only enumerable properties on keyframes are read effect.getKeyframes is not
 FAIL Only properties defined directly on keyframes are read effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
 FAIL Only enumerable properties on property-indexed keyframes are read effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
 FAIL Only properties defined directly on property-indexed keyframes are read effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
-FAIL Properties are read in ascending order by Unicode codepoint assert_array_equals: property access order lengths differ, expected 5 got 0
+FAIL Properties are read in ascending order by Unicode codepoint assert_array_equals: property access order property 0, expected "composite" but got "marginLeft"
 

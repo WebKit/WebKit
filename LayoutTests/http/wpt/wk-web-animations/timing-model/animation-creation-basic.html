@@ -33,7 +33,7 @@ test(t => {
 }, "Creating Animation with a null argument should have a null effect and the document timeline.");
 
 test(t => {
-    const effect = new KeyframeEffect(document.body);
+    const effect = new KeyframeEffect(document.body, null);
     const animation = new Animation(effect);
     assert_equals(animation.effect, effect);
     assert_equals(animation.timeline, document.timeline);

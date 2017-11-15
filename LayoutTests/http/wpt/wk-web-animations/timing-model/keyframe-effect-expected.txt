@@ -1,7 +1,7 @@
 
 PASS The KeyframeEffect interface is defined. 
-PASS The KeyframeEffect interface cannot be constructed without parameters. 
-PASS The KeyframeEffect interface constructor throws if the parameter has the wrong type. 
+PASS The KeyframeEffect interface cannot be constructed without enough parameters. 
+PASS The KeyframeEffect interface constructor throws if the first parameter has the wrong type. 
 PASS The KeyframeEffect interface target is set to the provided Element. 
 PASS A KeyframeEffect object target is read-only. 
 

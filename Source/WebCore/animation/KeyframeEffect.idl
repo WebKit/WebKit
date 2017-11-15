@@ -25,7 +25,10 @@
 
 [
     EnabledAtRuntime=WebAnimations,
-    Constructor(Element? target)
+    ConstructorMayThrowException,
+    ConstructorCallWith=ScriptState,
+    Constructor(Element? target, object? keyframes)
 ] interface KeyframeEffect : AnimationEffect {
     readonly attribute Element? target;
+    [MayThrowException, CallWith=ScriptState] void setKeyframes(object? keyframes);
 };

@@ -62,7 +62,7 @@ private:
     void updateAnimationSchedule();
     void animationScheduleTimerFired();
     void scheduleAnimationResolution();
-    void resolveAnimations();
+    void updateAnimations();
 
     RefPtr<Document> m_document;
     bool m_paused { false };

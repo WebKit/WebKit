@@ -70,6 +70,8 @@ protected:
 
     explicit AnimationTimeline(ClassType);
 
+    const HashMap<RefPtr<Element>, Vector<RefPtr<WebAnimation>>>& elementToAnimationsMap() { return m_elementToAnimationsMap; }
+
 private:
     ClassType m_classType;
     std::optional<Seconds> m_currentTime;

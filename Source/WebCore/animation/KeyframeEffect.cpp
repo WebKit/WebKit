@@ -26,19 +26,119 @@
 #include "config.h"
 #include "KeyframeEffect.h"
 
+#include "CSSPropertyAnimation.h"
 #include "Element.h"
+#include "RenderStyle.h"
+#include "StyleProperties.h"
+#include "StyleResolver.h"
 
 namespace WebCore {
+using namespace JSC;
 
-Ref<KeyframeEffect> KeyframeEffect::create(Element* target)
+ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(ExecState& state, Element* target, Strong<JSObject>&& keyframes)
 {
-    return adoptRef(*new KeyframeEffect(target));
+    auto result = adoptRef(*new KeyframeEffect(target));
+
+    auto setKeyframesResult = result->setKeyframes(state, WTFMove(keyframes));
+    if (setKeyframesResult.hasException())
+        return setKeyframesResult.releaseException();
+
+    return WTFMove(result);
 }
 
 KeyframeEffect::KeyframeEffect(Element* target)
     : AnimationEffect(KeyframeEffectClass)
     , m_target(target)
 {
+}
+
+ExceptionOr<void> KeyframeEffect::setKeyframes(ExecState& state, Strong<JSObject>&& keyframes)
+{
+    auto processKeyframesResult = processKeyframes(state, WTFMove(keyframes));
+    if (processKeyframesResult.hasException())
+        return processKeyframesResult.releaseException();
+    return { };
+}
+
+ExceptionOr<void> KeyframeEffect::processKeyframes(ExecState& state, Strong<JSObject>&& keyframes)
+{
+    // FIXME: We only have primitive to-from parsing, for full support see webkit.org/b/179708.
+    // Full specification is at https://w3c.github.io/web-animations/#processing-a-keyframes-argument.
+
+    if (!m_target || !keyframes)
+        return { };
+
+    if (!isJSArray(keyframes.get()))
+        return Exception { TypeError };
+
+    Vector<Keyframe> newKeyframes { };
+
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    StyleResolver& styleResolver = m_target->styleResolver();
+    auto parserContext = CSSParserContext(HTMLStandardMode);
+
+    const auto* array = jsCast<const JSArray*>(keyframes.get());
+    auto length = array->length();
+    if (length != 2)
+        return Exception { TypeError };
+
+    for (unsigned i = 0; i < length; ++i) {
+        const JSValue value = array->getIndex(&state, i);
+        if (scope.exception() || !value || !value.isObject())
+            return Exception { TypeError };
+        JSObject* keyframe = value.toObject(&state);
+        PropertyNameArray ownPropertyNames(&vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
+        JSObject::getOwnPropertyNames(keyframe, &state, ownPropertyNames, EnumerationMode());
+        size_t numberOfProperties = ownPropertyNames.size();
+
+        StringBuilder cssText;
+        for (unsigned j = 0; j < numberOfProperties; ++j) {
+            cssText.append(ownPropertyNames[j].string());
+            cssText.appendLiteral(": ");
+            cssText.append(keyframe->get(&state, ownPropertyNames[j]).toWTFString(&state));
+            cssText.appendLiteral("; ");
+        }
+
+        auto renderStyle = RenderStyle::createPtr();
+        auto styleProperties = MutableStyleProperties::create();
+        styleProperties->parseDeclaration(cssText.toString(), parserContext);
+        unsigned numberOfCSSProperties = styleProperties->propertyCount();
+
+        Vector<CSSPropertyID> properties;
+        for (unsigned k = 0; k < numberOfCSSProperties; ++k) {
+            properties.append(styleProperties->propertyAt(k).id());
+            styleResolver.applyPropertyToStyle(styleProperties->propertyAt(k).id(), styleProperties->propertyAt(k).value(), WTFMove(renderStyle));
+            renderStyle = styleResolver.state().takeStyle();
+        }
+
+        newKeyframes.append({ RenderStyle::clone(*renderStyle), properties });
+    }
+
+    m_keyframes = WTFMove(newKeyframes);
+
+    return { };
+}
+
+void KeyframeEffect::applyAtLocalTime(Seconds localTime, RenderStyle& targetStyle)
+{
+    if (!m_target)
+        return;
+
+    // FIXME: Assume animations only apply in the range [0, duration[
+    // until we support fill modes, delays and iterations.
+    if (localTime < 0_s || localTime >= timing()->duration())
+        return;
+
+    if (!timing()->duration())
+        return;
+
+    float progress = localTime / timing()->duration();
+
+    // FIXME: This will crash if we attempt to animate properties that require an AnimationBase.
+    for (auto propertyId : m_keyframes[0].properties)
+        CSSPropertyAnimation::blendProperties(nullptr, propertyId, &targetStyle, &m_keyframes[0].style, &m_keyframes[1].style, progress);
 }
 
 } // namespace WebCore

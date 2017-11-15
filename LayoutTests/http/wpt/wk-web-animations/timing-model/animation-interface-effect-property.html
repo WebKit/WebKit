@@ -17,24 +17,24 @@ test(t => {
 
 test(t => {
     const animation = new Animation;
-    const effect = new KeyframeEffect(document.body);
+    const effect = new KeyframeEffect(document.body, null);
     animation.effect = effect;
     assert_equals(animation.effect, effect);
 }, "The animation.effect property can be set to a KeyframeEffect object.");
 
 test(t => {
     const animation = new Animation;
-    const effectA = new KeyframeEffect(document.body);
+    const effectA = new KeyframeEffect(document.body, null);
     animation.effect = effectA;
     assert_equals(animation.effect, effectA);
-    const effectB = new KeyframeEffect(document.body);
+    const effectB = new KeyframeEffect(document.body, null);
     animation.effect = effectB;
     assert_equals(animation.effect, effectB);
 }, "The animation.effect property can be set to another KeyframeEffect object.");
 
 test(t => {
     const animation = new Animation;
-    const effect = new KeyframeEffect(document.body);
+    const effect = new KeyframeEffect(document.body, null);
     animation.effect = effect;
     assert_equals(animation.effect, effect);
     animation.effect = null;

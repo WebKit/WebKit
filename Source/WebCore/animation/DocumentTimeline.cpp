@@ -154,11 +154,17 @@ void DocumentTimeline::displayRefreshFired()
 void DocumentTimeline::animationResolutionTimerFired()
 #endif
 {
-    resolveAnimations();
+    updateAnimations();
 }
 
-void DocumentTimeline::resolveAnimations()
+void DocumentTimeline::updateAnimations()
 {
+    if (m_document && !elementToAnimationsMap().isEmpty()) {
+        for (const auto& elementToAnimationsMapItem : elementToAnimationsMap())
+            elementToAnimationsMapItem.key->invalidateStyleAndLayerComposition();
+        m_document->updateStyleIfNeeded();
+    }
+
     // Time has advanced, the timing model requires invalidation now.
     animationTimingModelDidChange();
 }

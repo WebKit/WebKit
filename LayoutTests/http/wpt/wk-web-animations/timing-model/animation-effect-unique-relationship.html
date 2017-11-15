@@ -9,8 +9,8 @@
 'use strict';
 
 test(t => {
-    const effectA = new KeyframeEffect(document.createElement("div"));
-    const effectB = new KeyframeEffect(document.createElement("div"));
+    const effectA = new KeyframeEffect(document.createElement("div"), null);
+    const effectB = new KeyframeEffect(document.createElement("div"), null);
 
     const a = new Animation(effectA);
     const b = new Animation(effectB);

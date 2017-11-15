@@ -30,6 +30,7 @@
 #include "CSSFontSelector.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
+#include "DocumentTimeline.h"
 #include "ElementIterator.h"
 #include "HTMLBodyElement.h"
 #include "HTMLMeterElement.h"
@@ -274,9 +275,20 @@ const RenderStyle* TreeResolver::parentBoxStyle() const
 
 ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderStyle> newStyle, Element& element, Change parentChange)
 {
+    auto* oldStyle = renderOrDisplayContentsStyle(element);
+
+    if (auto timeline = element.document().existingTimeline()) {
+        auto webAnimations = timeline->animationsForElement(element);
+        if (!webAnimations.isEmpty()) {
+            auto animatedStyle = RenderStyle::clonePtr(*newStyle);
+            for (const auto& animation : webAnimations)
+                animation->resolve(*animatedStyle);
+            newStyle = WTFMove(animatedStyle);
+        }
+    }
+
     auto& animationController = m_document.frame()->animation();
 
-    auto* oldStyle = renderOrDisplayContentsStyle(element);
     auto animationUpdate = animationController.updateAnimations(element, *newStyle, oldStyle);
 
     if (animationUpdate.style)
