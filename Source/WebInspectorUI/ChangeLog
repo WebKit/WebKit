@@ -1,5 +1,22 @@
 2017-11-14  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Relicense non-distributable web inspector images
+        https://bugs.webkit.org/show_bug.cgi?id=166460
+        <rdar://problem/29800966>
+
+        Reviewed by Brian Burg.
+
+        * APPLE_IMAGES_LICENSE.rtf: Removed.
+        Remove the restrictive Web Inspector images license and default to the
+        same license as the rest of WebKit.
+
+        The Apple Images license was never intended to restrict distribution of
+        Web Inspector images when used as part of WebKit. Now, all contributions
+        to Web Inspector, images and source, have the same licensing as all other
+        WebKit contributions.
+
+2017-11-14  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Network Detail Views - Split Metrics into Sizes and Timing
         https://bugs.webkit.org/show_bug.cgi?id=179569
         <rdar://problem/35484914>
