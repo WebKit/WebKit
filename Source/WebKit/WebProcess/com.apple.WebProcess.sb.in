@@ -653,9 +653,6 @@
        (literal "/private/var/run/mDNSResponder")
        (remote tcp))
 
-(allow mach-lookup
-       (global-name "com.apple.pbs.fetch_services"))
-
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 ;; CFNetwork
 (allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))

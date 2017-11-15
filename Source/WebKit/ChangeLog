@@ -1,3 +1,17 @@
+2017-11-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove access to "com.apple.pbs.fetch_services" from WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=179689
+        <rdar://problem/35369172>
+
+        Reviewed by Per Arne Vollan.
+
+        WebKit's WebContent process should not have any need to interact with the fetch_services
+        API exposed to the system. These interactions (if needed) should be happening in the UIProcess,
+        so we should prevent the untrusted Web Content Process from being able to connect.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-11-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Remove GTK web inspector images
