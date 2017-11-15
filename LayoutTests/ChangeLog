@@ -1,3 +1,14 @@
+2017-11-14  Nan Wang  <n_wang@apple.com>
+
+        AX: AOM: Implement AccessibleNode class and support label and role attributes
+        https://bugs.webkit.org/show_bug.cgi?id=179494
+
+        Reviewed by Ryosuke Niwa.
+
+        * accessibility/accessibility-object-model-expected.txt: Added.
+        * accessibility/accessibility-object-model.html: Added.
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+
 2017-11-14  Antti Koivisto  <antti@apple.com>
 
         Media query with :host inside a custom elements doesn't get updated on window resize

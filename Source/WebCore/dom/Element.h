@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class AccessibleNode;
 class CustomElementReactionQueue;
 class DatasetDOMStringMap;
 class DOMRect;
@@ -551,6 +552,9 @@ public:
     void setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);
 
     Element* findAnchorElementForLink(String& outAnchorName);
+
+    AccessibleNode* existingAccessibleNode() const;
+    AccessibleNode* accessibleNode();
 
     Vector<RefPtr<WebAnimation>> getAnimations();
 

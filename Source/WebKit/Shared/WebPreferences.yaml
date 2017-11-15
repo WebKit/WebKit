@@ -1147,3 +1147,11 @@ WebGPUEnabled:
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEBGPU)
+
+AccessibilityObjectModelEnabled:
+    type: bool
+    defaultValue: false
+    humanReadableName: "Accessibility Object Model"
+    humanReadableDescription: "Accessibility Object Model support"
+    category: experimental
+    webcoreBinding: RuntimeEnabledFeatures

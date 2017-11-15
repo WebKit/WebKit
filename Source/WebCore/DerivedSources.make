@@ -57,6 +57,7 @@ VPATH = \
     $(WebCore)/Modules/webdriver \
     $(WebCore)/Modules/websockets \
     $(WebCore)/Modules/webvr \
+    $(WebCore)/accessibility \
     $(WebCore)/animation \
     $(WebCore)/bindings/js \
     $(WebCore)/crypto \
@@ -343,6 +344,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webvr/VRLayerInit.idl \
     $(WebCore)/Modules/webvr/VRPose.idl \
     $(WebCore)/Modules/webvr/VRStageParameters.idl \
+    $(WebCore)/accessibility/AccessibleNode.idl \
     $(WebCore)/animation/Animatable.idl \
     $(WebCore)/animation/AnimationEffect.idl \
     $(WebCore)/animation/AnimationEffectTiming.idl \
@@ -1395,6 +1397,7 @@ PREPROCESS_IDLS_SCRIPTS = \
 
 IDL_INCLUDES = \
     $(WebCore)/Modules \
+    $(WebCore)/accessibility \
     $(WebCore)/animation \
     $(WebCore)/css \
     $(WebCore)/crypto \

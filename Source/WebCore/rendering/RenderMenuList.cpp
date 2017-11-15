@@ -27,6 +27,7 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityMenuList.h"
+#include "AccessibleNode.h"
 #include "CSSFontSelector.h"
 #include "Chrome.h"
 #include "Frame.h"
@@ -476,7 +477,7 @@ String RenderMenuList::itemAccessibilityText(unsigned listIndex) const
     const Vector<HTMLElement*>& listItems = selectElement().listItems();
     if (listIndex >= listItems.size())
         return String();
-    return listItems[listIndex]->attributeWithoutSynchronization(aria_labelAttr);
+    return AccessibleNode::effectiveStringValueForElement(*listItems[listIndex], AXPropertyName::Label);
 }
     
 String RenderMenuList::itemToolTip(unsigned listIndex) const

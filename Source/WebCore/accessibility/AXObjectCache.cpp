@@ -62,6 +62,7 @@
 #include "AccessibilityTableRow.h"
 #include "AccessibilityTree.h"
 #include "AccessibilityTreeItem.h"
+#include "AccessibleNode.h"
 #include "Document.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -408,7 +409,7 @@ bool nodeHasRole(Node* node, const String& role)
     if (!node || !is<Element>(node))
         return false;
 
-    auto& roleValue = downcast<Element>(*node).attributeWithoutSynchronization(roleAttr);
+    const auto& roleValue = AccessibleNode::effectiveStringValueForElement(downcast<Element>(*node), AXPropertyName::Role);
     if (role.isNull())
         return roleValue.isEmpty();
     if (roleValue.isEmpty())
@@ -848,7 +849,7 @@ void AXObjectCache::handleLiveRegionCreated(Node* node)
     Element* element = downcast<Element>(node);
     String liveRegionStatus = element->attributeWithoutSynchronization(aria_liveAttr);
     if (liveRegionStatus.isEmpty()) {
-        const AtomicString& ariaRole = element->attributeWithoutSynchronization(roleAttr);
+        const AtomicString& ariaRole = AccessibleNode::effectiveStringValueForElement(*element, AXPropertyName::Role);
         if (!ariaRole.isEmpty())
             liveRegionStatus = AccessibilityObject::defaultLiveRegionStatusForRole(AccessibilityObject::ariaRoleToWebCoreRole(ariaRole));
     }

@@ -749,7 +749,7 @@ String AccessibilityRenderObject::stringValue() const
         int selectedIndex = selectElement.selectedIndex();
         const Vector<HTMLElement*>& listItems = selectElement.listItems();
         if (selectedIndex >= 0 && static_cast<size_t>(selectedIndex) < listItems.size()) {
-            const AtomicString& overriddenDescription = listItems[selectedIndex]->attributeWithoutSynchronization(aria_labelAttr);
+            const AtomicString& overriddenDescription = AccessibleNode::effectiveStringValueForElement(*listItems[selectedIndex], AXPropertyName::Label);
             if (!overriddenDescription.isNull())
                 return overriddenDescription;
         }
@@ -1059,7 +1059,7 @@ bool AccessibilityRenderObject::exposesTitleUIElement() const
     // titleUIElement, otherwise its inner text will be announced by a screenreader.
     if (isLabelable()) {
         if (HTMLLabelElement* label = labelForElement(downcast<Element>(node()))) {
-            if (!label->attributeWithoutSynchronization(aria_labelAttr).isEmpty())
+            if (!AccessibleNode::effectiveStringValueForElement(*label, AXPropertyName::Label).isEmpty())
                 return false;
             if (AccessibilityObject* labelObject = axObjectCache()->getOrCreate(label)) {
                 if (!labelObject->ariaLabeledByAttribute().isEmpty())
@@ -2768,7 +2768,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     // The HTML AAM spec says it is "strongly recommended" that ATs only convey and provide navigation
     // for section elements which have names.
     if (node && node->hasTagName(sectionTag))
-        return hasAttribute(aria_labelAttr) || hasAttribute(aria_labelledbyAttr) ? AccessibilityRole::LandmarkRegion : AccessibilityRole::TextGroup;
+        return hasProperty(AXPropertyName::Label) || hasAttribute(aria_labelledbyAttr) ? AccessibilityRole::LandmarkRegion : AccessibilityRole::TextGroup;
 
     if (node && node->hasTagName(addressTag))
         return AccessibilityRole::LandmarkContentInfo;

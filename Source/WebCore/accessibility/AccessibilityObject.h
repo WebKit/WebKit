@@ -90,6 +90,8 @@ class ScrollableArea;
 class ScrollView;
 class Widget;
 
+enum class AXPropertyName;
+
 typedef unsigned AXID;
 
 enum class AccessibilityRole {
@@ -890,6 +892,9 @@ public:
     bool hasAttribute(const QualifiedName&) const;
     const AtomicString& getAttribute(const QualifiedName&) const;
     bool hasTagName(const QualifiedName&) const;
+
+    bool hasProperty(AXPropertyName) const;
+    const String stringValueForProperty(AXPropertyName) const;
 
     virtual VisiblePositionRange visiblePositionRange() const { return VisiblePositionRange(); }
     virtual VisiblePositionRange visiblePositionRangeForLine(unsigned) const { return VisiblePositionRange(); }

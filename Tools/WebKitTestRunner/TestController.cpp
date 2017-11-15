@@ -741,6 +741,8 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetInspectorAdditionsEnabled(preferences, options.enableInspectorAdditions);
 
     WKPreferencesSetStorageAccessAPIEnabled(preferences, true);
+    
+    WKPreferencesSetAccessibilityObjectModelEnabled(preferences, true);
 
     platformResetPreferencesToConsistentValues();
 }

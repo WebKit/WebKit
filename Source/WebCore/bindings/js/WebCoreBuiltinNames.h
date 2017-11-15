@@ -31,6 +31,7 @@
 namespace WebCore {
 
 #define WEBCORE_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
+    macro(AccessibleNode) \
     macro(Animation) \
     macro(AnimationEffect) \
     macro(AnimationEffectTiming) \

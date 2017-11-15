@@ -540,6 +540,10 @@ WK_EXPORT bool WKPreferencesGetInspectorAdditionsEnabled(WKPreferencesRef);
 // Defaults to false.
 WK_EXPORT void WKPreferencesSetStorageAccessAPIEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetStorageAccessAPIEnabled(WKPreferencesRef);
+
+// Defaults to false
+WK_EXPORT void WKPreferencesSetAccessibilityObjectModelEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetAccessibilityObjectModelEnabled(WKPreferencesRef);
     
 #ifdef __cplusplus
 }

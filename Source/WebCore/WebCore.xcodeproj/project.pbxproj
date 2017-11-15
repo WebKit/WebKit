@@ -11238,6 +11238,9 @@
 		A91C9FBD1B6586DE00AFFD54 /* AccessibilityTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTree.h; sourceTree = "<group>"; };
 		A91C9FC01B659A6700AFFD54 /* AccessibilityTreeItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTreeItem.cpp; sourceTree = "<group>"; };
 		A91C9FC11B659A6700AFFD54 /* AccessibilityTreeItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTreeItem.h; sourceTree = "<group>"; };
+		A941AE6B1FB62BE5000F6F71 /* AccessibleNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibleNode.cpp; sourceTree = "<group>"; };
+		A941AE6D1FB62BE7000F6F71 /* AccessibleNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibleNode.h; sourceTree = "<group>"; };
+		A941AE6E1FB62BEC000F6F71 /* AccessibleNode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AccessibleNode.idl; sourceTree = "<group>"; };
 		A9787CB21F5F599200C551C6 /* AccessibilityMediaObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilityMediaObject.h; sourceTree = "<group>"; };
 		A9787CB31F5F5C6500C551C6 /* AccessibilityMediaObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityMediaObject.cpp; sourceTree = "<group>"; };
 		A9C6E4E10D745E05006442E9 /* DOMMimeType.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DOMMimeType.cpp; sourceTree = "<group>"; };
@@ -15842,6 +15845,9 @@
 				2981CAAF131822EC00D12F2A /* AXObjectCache.cpp */,
 				29A8121A0FBB9C1D00510293 /* AXObjectCache.h */,
 				91C9F2F81AE3BE240095B61C /* AXTextStateChangeIntent.h */,
+				A941AE6B1FB62BE5000F6F71 /* AccessibleNode.cpp */,
+				A941AE6D1FB62BE7000F6F71 /* AccessibleNode.h */,
+				A941AE6E1FB62BEC000F6F71 /* AccessibleNode.idl */,
 			);
 			path = accessibility;
 			sourceTree = "<group>";

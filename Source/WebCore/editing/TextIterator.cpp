@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TextIterator.h"
 
+#include "AccessibleNode.h"
 #include "Document.h"
 #include "Editing.h"
 #include "FontCascade.h"
@@ -284,7 +285,7 @@ bool isRendererReplacedElement(RenderObject* renderer)
         Element& element = downcast<Element>(*renderer->node());
         if (is<HTMLFormControlElement>(element) || is<HTMLLegendElement>(element) || is<HTMLProgressElement>(element) || element.hasTagName(meterTag))
             return true;
-        if (equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(roleAttr), "img"))
+        if (equalLettersIgnoringASCIICase(AccessibleNode::effectiveStringValueForElement(element, AXPropertyName::Role), "img"))
             return true;
     }
 

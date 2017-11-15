@@ -33,6 +33,7 @@
 #include "AccessibilityRenderObject.h"
 #include "AccessibilityScrollView.h"
 #include "AccessibilityTable.h"
+#include "AccessibleNode.h"
 #include "DOMTokenList.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -2143,7 +2144,21 @@ const AtomicString& AccessibilityObject::getAttribute(const QualifiedName& attri
         return element->attributeWithoutSynchronization(attribute);
     return nullAtom();
 }
-    
+
+bool AccessibilityObject::hasProperty(AXPropertyName propertyKey) const
+{
+    if (Element* element = this->element())
+        return AccessibleNode::hasProperty(*element, propertyKey);
+    return false;
+}
+
+const String AccessibilityObject::stringValueForProperty(AXPropertyName propertyKey) const
+{
+    if (Element* element = this->element())
+        return AccessibleNode::effectiveStringValueForElement(*element, propertyKey);
+    return nullAtom();
+}
+
 // Lacking concrete evidence of orientation, horizontal means width > height. vertical is height > width;
 AccessibilityOrientation AccessibilityObject::orientation() const
 {
@@ -2519,7 +2534,7 @@ bool AccessibilityObject::supportsARIAAttributes() const
         || hasAttribute(aria_flowtoAttr)
         || hasAttribute(aria_haspopupAttr)
         || hasAttribute(aria_invalidAttr)
-        || hasAttribute(aria_labelAttr)
+        || hasProperty(AXPropertyName::Label)
         || hasAttribute(aria_labelledbyAttr)
         || hasAttribute(aria_relevantAttr);
 }

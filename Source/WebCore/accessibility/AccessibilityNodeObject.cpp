@@ -35,6 +35,7 @@
 #include "AccessibilityListBox.h"
 #include "AccessibilitySpinButton.h"
 #include "AccessibilityTable.h"
+#include "AccessibleNode.h"
 #include "Editing.h"
 #include "ElementIterator.h"
 #include "EventNames.h"
@@ -1169,7 +1170,7 @@ String AccessibilityNodeObject::ariaAccessibilityDescription() const
     if (!ariaLabeledBy.isEmpty())
         return ariaLabeledBy;
 
-    const AtomicString& ariaLabel = getAttribute(aria_labelAttr);
+    const AtomicString& ariaLabel = stringValueForProperty(AXPropertyName::Label);
     if (!ariaLabel.isEmpty())
         return ariaLabel;
 
@@ -1185,7 +1186,7 @@ static Element* siblingWithAriaRole(Node* node, const char* role)
 
     for (auto& sibling : childrenOfType<Element>(*parent)) {
         // FIXME: Should skip sibling that is the same as the node.
-        if (equalIgnoringASCIICase(sibling.attributeWithoutSynchronization(roleAttr), role))
+        if (equalIgnoringASCIICase(AccessibleNode::effectiveStringValueForElement(sibling, AXPropertyName::Role), role))
             return &sibling;
     }
 
@@ -1276,7 +1277,7 @@ String AccessibilityNodeObject::textForLabelElement(Element* element) const
     
     // Then check for aria-label attribute.
     if (result.isEmpty())
-        result = label->attributeWithoutSynchronization(aria_labelAttr);
+        result = AccessibleNode::effectiveStringValueForElement(*label, AXPropertyName::Label);
     
     return !result.isEmpty() ? result : label->innerText();
 }
@@ -1315,7 +1316,7 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
     
     ariaLabeledByText(textOrder);
     
-    const AtomicString& ariaLabel = getAttribute(aria_labelAttr);
+    const AtomicString& ariaLabel = stringValueForProperty(AXPropertyName::Label);
     if (!ariaLabel.isEmpty())
         textOrder.append(AccessibilityText(ariaLabel, AccessibilityTextSource::Alternative));
     
@@ -1507,7 +1508,7 @@ String AccessibilityNodeObject::alternativeTextForWebArea() const
     
     // Check if the HTML element has an aria-label for the webpage.
     if (Element* documentElement = document->documentElement()) {
-        const AtomicString& ariaLabel = documentElement->attributeWithoutSynchronization(aria_labelAttr);
+        const AtomicString& ariaLabel = AccessibleNode::effectiveStringValueForElement(*documentElement, AXPropertyName::Label);
         if (!ariaLabel.isEmpty())
             return ariaLabel;
     }
@@ -1878,7 +1879,7 @@ String AccessibilityNodeObject::stringValue() const
         int selectedIndex = selectElement.selectedIndex();
         const Vector<HTMLElement*>& listItems = selectElement.listItems();
         if (selectedIndex >= 0 && static_cast<size_t>(selectedIndex) < listItems.size()) {
-            const AtomicString& overriddenDescription = listItems[selectedIndex]->attributeWithoutSynchronization(aria_labelAttr);
+            const AtomicString& overriddenDescription = AccessibleNode::effectiveStringValueForElement(*listItems[selectedIndex], AXPropertyName::Label);
             if (!overriddenDescription.isNull())
                 return overriddenDescription;
         }
@@ -1931,7 +1932,7 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
         return String();
     
     Element& element = downcast<Element>(*node);
-    const AtomicString& ariaLabel = element.attributeWithoutSynchronization(aria_labelAttr);
+    const AtomicString& ariaLabel = AccessibleNode::effectiveStringValueForElement(element, AXPropertyName::Label);
     if (!ariaLabel.isEmpty())
         return ariaLabel;
     
@@ -2119,7 +2120,7 @@ bool AccessibilityNodeObject::canSetValueAttribute() const
 
 AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
 {
-    const AtomicString& ariaRole = getAttribute(roleAttr);
+    const AtomicString& ariaRole = stringValueForProperty(AXPropertyName::Role);
     if (ariaRole.isNull() || ariaRole.isEmpty())
         return AccessibilityRole::Unknown;
     
@@ -2145,7 +2146,7 @@ AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
     // describes the purpose of the content in the region." The Core AAM states, "Special case:
     // if the region does not have an accessible name, do not expose the element as a landmark.
     // Use the native host language role of the element instead."
-    if (role == AccessibilityRole::LandmarkRegion && !hasAttribute(aria_labelAttr) && !hasAttribute(aria_labelledbyAttr))
+    if (role == AccessibilityRole::LandmarkRegion && !hasProperty(AXPropertyName::Label) && !hasAttribute(aria_labelledbyAttr))
         role = AccessibilityRole::Unknown;
 
     if (static_cast<int>(role))

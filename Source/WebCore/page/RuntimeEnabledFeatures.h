@@ -225,6 +225,9 @@ public:
     void setWebVREnabled(bool isEnabled) { m_webVREnabled = isEnabled; }
     bool webVREnabled() const { return m_webVREnabled; }
 
+    void setAccessibilityObjectModelEnabled(bool isEnabled) { m_accessibilityObjectModelEnabled = isEnabled; }
+    bool accessibilityObjectModelEnabled() const { return m_accessibilityObjectModelEnabled; }
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -344,6 +347,8 @@ private:
 
     bool m_inspectorAdditionsEnabled { false };
     bool m_webVREnabled { false };
+
+    bool m_accessibilityObjectModelEnabled { false };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };
