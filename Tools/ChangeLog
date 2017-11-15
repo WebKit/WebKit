@@ -1,3 +1,15 @@
+2017-11-15  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION(r221877): 'future' handled incorrectly for mac
+        https://bugs.webkit.org/show_bug.cgi?id=179711
+        <rdar://problem/35546604>
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.default_baseline_search_path): Use platform/mac-<version> instead of
+        platform/<version> as the baseline search path.
+
 2017-11-14  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: Implement AccessibleNode class and support label and role attributes
