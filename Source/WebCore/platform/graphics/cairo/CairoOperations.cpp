@@ -44,6 +44,7 @@
 #include "Path.h"
 #include "PlatformContextCairo.h"
 #include "PlatformPathCairo.h"
+#include <algorithm>
 #include <cairo.h>
 
 namespace WebCore {
@@ -753,7 +754,6 @@ void drawLine(PlatformContextCairo& platformContext, const FloatPoint& point1, c
         if (state.strokeThickness < 1)
             cairo_set_line_width(cairoContext, 1);
     }
-
 
     auto centeredPoints = centerLineAndCutOffCorners(isVerticalLine, cornerWidth, point1, point2);
     auto p1 = centeredPoints[0];

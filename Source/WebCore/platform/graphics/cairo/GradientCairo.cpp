@@ -29,6 +29,7 @@
 
 #if USE(CAIRO)
 
+#include "CairoOperations.h"
 #include "CairoUtilities.h"
 #include "GraphicsContext.h"
 #include "PlatformContextCairo.h"
