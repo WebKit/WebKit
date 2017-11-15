@@ -1,3 +1,12 @@
+2017-11-15  Youenn Fablet  <youenn@apple.com>
+
+        Some service worker tests are flaky due to console log messages
+        https://bugs.webkit.org/show_bug.cgi?id=179601
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+
 2017-11-15  Matt Lewis  <jlewis3@apple.com>
 
         Adjusted expectations for compositing/repaint/fixed-background-scroll.html.
