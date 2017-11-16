@@ -59,21 +59,28 @@ Ref<ServiceWorker> ServiceWorker::getOrCreate(ScriptExecutionContext& context, S
     auto it = allWorkers().find(data.identifier);
     if (it != allWorkers().end()) {
         for (auto& worker : it->value) {
-            if (worker->scriptExecutionContext() == &context)
+            if (worker->scriptExecutionContext() == &context) {
+                ASSERT(!worker->m_isStopped);
                 return *worker;
+            }
         }
     }
     return adoptRef(*new ServiceWorker(context, WTFMove(data)));
 }
 
 ServiceWorker::ServiceWorker(ScriptExecutionContext& context, ServiceWorkerData&& data)
-    : ContextDestructionObserver(&context)
+    : ActiveDOMObject(&context)
     , m_data(WTFMove(data))
 {
+    suspendIfNeeded();
+
     auto result = mutableAllWorkers().ensure(identifier(), [] {
         return HashSet<ServiceWorker*>();
     });
     result.iterator->value.add(this);
+
+    relaxAdoptionRequirement();
+    updatePendingActivityForEventDispatch();
 }
 
 ServiceWorker::~ServiceWorker()
@@ -97,8 +104,15 @@ void ServiceWorker::scheduleTaskToUpdateState(State state)
         return;
 
     context->postTask([this, protectedThis = makeRef(*this), state](ScriptExecutionContext&) {
+        ASSERT(this->state() != state);
+
         m_data.state = state;
-        dispatchEvent(Event::create(eventNames().statechangeEvent, false, false));
+        if (state != State::Installing && !m_isStopped) {
+            ASSERT(m_pendingActivityForEventDispatch);
+            dispatchEvent(Event::create(eventNames().statechangeEvent, false, false));
+        }
+
+        updatePendingActivityForEventDispatch();
     });
 }
 
@@ -147,6 +161,35 @@ EventTargetInterface ServiceWorker::eventTargetInterface() const
 ScriptExecutionContext* ServiceWorker::scriptExecutionContext() const
 {
     return ContextDestructionObserver::scriptExecutionContext();
+}
+
+const char* ServiceWorker::activeDOMObjectName() const
+{
+    return "ServiceWorker";
+}
+
+bool ServiceWorker::canSuspendForDocumentSuspension() const
+{
+    // FIXME: We should do better as this prevents the page from entering PageCache when there is a Service Worker.
+    return !hasPendingActivity();
+}
+
+void ServiceWorker::stop()
+{
+    m_isStopped = true;
+    updatePendingActivityForEventDispatch();
+}
+
+void ServiceWorker::updatePendingActivityForEventDispatch()
+{
+    // ServiceWorkers can dispatch events until they become redundant or they are stopped.
+    if (m_isStopped || state() == State::Redundant) {
+        m_pendingActivityForEventDispatch = nullptr;
+        return;
+    }
+    if (m_pendingActivityForEventDispatch)
+        return;
+    m_pendingActivityForEventDispatch = makePendingActivity(*this);
 }
 
 } // namespace WebCore

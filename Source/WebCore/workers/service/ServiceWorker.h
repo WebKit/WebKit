@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ActiveDOMObject.h"
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include "ServiceWorkerData.h"
@@ -42,7 +43,7 @@ namespace WebCore {
 
 class Frame;
 
-class ServiceWorker final : public RefCounted<ServiceWorker>, public EventTargetWithInlineData, public ContextDestructionObserver {
+class ServiceWorker final : public RefCounted<ServiceWorker>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
     using State = ServiceWorkerState;
     static Ref<ServiceWorker> getOrCreate(ScriptExecutionContext&, ServiceWorkerData&&);
@@ -67,13 +68,21 @@ public:
 private:
     ServiceWorker(ScriptExecutionContext&, ServiceWorkerData&&);
     static HashMap<ServiceWorkerIdentifier, HashSet<ServiceWorker*>>& mutableAllWorkers();
+    void updatePendingActivityForEventDispatch();
 
     EventTargetInterface eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
+    // ActiveDOMObject.
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
+    void stop() final;
+
     ServiceWorkerData m_data;
+    bool m_isStopped { false };
+    RefPtr<PendingActivity<ServiceWorker>> m_pendingActivityForEventDispatch;
 };
 
 } // namespace WebCore

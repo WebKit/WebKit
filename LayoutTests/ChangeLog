@@ -1,3 +1,16 @@
+2017-11-16  Chris Dumez  <cdumez@apple.com>
+
+        Dispatching an event on a ServiceWorker may fail or crash due to GC
+        https://bugs.webkit.org/show_bug.cgi?id=179745
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * http/tests/workers/service/resources/sw-test-pre.js:
+        * http/tests/workers/service/service-worker-gc-event.html: Added.
+        * http/tests/workers/service/service-worker-gc-event-expected.txt: Added.
+
 2017-11-16  Youenn Fablet  <youenn@apple.com>
 
         LayoutTest imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html is a flaky failure

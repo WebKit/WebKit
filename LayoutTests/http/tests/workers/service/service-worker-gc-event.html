@@ -1,0 +1,33 @@
+<html>
+<head>
+<script src="resources/sw-test-pre.js"></script>
+</head>
+<body>
+<script>
+function getNewestWorker(registration)
+{
+    if (registration.installing)
+        return registration.installing;
+    if (registration.waiting)
+        return registration.waiting;
+    return registration.active;
+}
+
+navigator.serviceWorker.register("resources/empty.js", { }).then(function(_registration) {
+    registration = _registration;
+    registration.installing.addEventListener("statechange", function() {
+        gc();
+        let newState = getNewestWorker(registration).state;
+        gc();
+        log("statechange to " + newState);
+        if (newState == "activated")
+            finishSWTest();
+    });
+    gc();
+    setTimeout(function() {
+        gc();
+    }, 0);
+});
+</script>
+</body>
+</html>
