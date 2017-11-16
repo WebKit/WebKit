@@ -464,7 +464,9 @@
         "com.apple.driver.AppleBluetoothMultitouch.trackpad"
         "com.apple.driver.AppleHIDMouse"
         "com.apple.lookup.shared"
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
         "com.apple.mediaaccessibility"
+#endif
         "com.apple.networkConnect"
         "com.apple.security"
         "com.apple.security.common"
@@ -504,9 +506,11 @@
 (if (defined? 'mach-register)
     (allow mach-register (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
 ;; MediaAccessibility
 (allow user-preference-read user-preference-write
     (preference-domain "com.apple.mediaaccessibility.public"))
+#endif
 
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
     (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_CACHE_DIR")))
