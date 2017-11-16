@@ -71,7 +71,7 @@ namespace WebCore {
 static const int kMaxTextureSize = 4096;
 
 
-std::unique_ptr<WebGPURenderingContext> WebGPURenderingContext::create(HTMLCanvasElement& canvas)
+std::unique_ptr<WebGPURenderingContext> WebGPURenderingContext::create(CanvasBase& canvas)
 {
     RefPtr<GPUDevice> device(GPUDevice::create());
 
@@ -87,11 +87,16 @@ std::unique_ptr<WebGPURenderingContext> WebGPURenderingContext::create(HTMLCanva
     return renderingContext;
 }
 
-WebGPURenderingContext::WebGPURenderingContext(HTMLCanvasElement& canvas, Ref<GPUDevice>&& device)
+WebGPURenderingContext::WebGPURenderingContext(CanvasBase& canvas, Ref<GPUDevice>&& device)
     : GPUBasedCanvasRenderingContext(canvas)
     , m_device(WTFMove(device))
 {
     initializeNewContext();
+}
+
+HTMLCanvasElement* WebGPURenderingContext::canvas() const
+{
+    return canvasBase().asHTMLCanvasElement();
 }
 
 void WebGPURenderingContext::initializeNewContext()
@@ -104,8 +109,8 @@ void WebGPURenderingContext::initializeNewContext()
 
 IntSize WebGPURenderingContext::clampedCanvasSize() const
 {
-    return IntSize(clamp(canvas().width(), 1, kMaxTextureSize),
-        clamp(canvas().height(), 1, kMaxTextureSize));
+    return IntSize(clamp(canvas()->width(), 1, kMaxTextureSize),
+        clamp(canvas()->height(), 1, kMaxTextureSize));
 }
 
 bool WebGPURenderingContext::hasPendingActivity() const

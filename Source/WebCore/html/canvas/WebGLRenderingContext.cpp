@@ -66,13 +66,13 @@
 
 namespace WebCore {
 
-WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement& passedCanvas, GraphicsContext3DAttributes attributes)
-    : WebGLRenderingContextBase(passedCanvas, attributes)
+WebGLRenderingContext::WebGLRenderingContext(CanvasBase& canvas, GraphicsContext3DAttributes attributes)
+    : WebGLRenderingContextBase(canvas, attributes)
 {
 }
 
-WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement& passedCanvas, Ref<GraphicsContext3D>&& context, GraphicsContext3DAttributes attributes)
-    : WebGLRenderingContextBase(passedCanvas, WTFMove(context), attributes)
+WebGLRenderingContext::WebGLRenderingContext(CanvasBase& canvas, Ref<GraphicsContext3D>&& context, GraphicsContext3DAttributes attributes)
+    : WebGLRenderingContextBase(canvas, WTFMove(context), attributes)
 {
     initializeVertexArrayObjects();
 }

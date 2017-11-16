@@ -361,7 +361,7 @@ static bool isHighPerformanceContext(const RefPtr<GraphicsContext3D>& context)
     return context->powerPreferenceUsedForCreation() == WebGLPowerPreference::HighPerformance;
 }
 
-std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTMLCanvasElement& canvas, WebGLContextAttributes& attributes, const String& type)
+std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(CanvasBase& canvas, WebGLContextAttributes& attributes, const String& type)
 {
 #if ENABLE(WEBGL2)
     if (type == "webgl2" && !RuntimeEnabledFeatures::sharedFeatures().webGL2Enabled())
@@ -370,52 +370,62 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
     UNUSED_PARAM(type);
 #endif
 
-    Document& document = canvas.document();
-    RefPtr<Frame> frame = document.frame();
-    if (!frame)
-        return nullptr;
-
-    // The FrameLoaderClient might block creation of a new WebGL context despite the page settings; in
-    // particular, if WebGL contexts were lost one or more times via the GL_ARB_robustness extension.
-    if (!frame->loader().client().allowWebGL(frame->settings().webGLEnabled())) {
-        canvas.dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent, false, true, "Web page was not allowed to create a WebGL context."));
-        return nullptr;
-    }
-
     bool isPendingPolicyResolution = false;
-    Document& topDocument = document.topDocument();
-    Page* page = topDocument.page();
-    bool forcingPendingPolicy = frame->settings().isForcePendingWebGLPolicy();
+    HostWindow* hostWindow = nullptr;
 
-    if (forcingPendingPolicy || (page && !topDocument.url().isLocalFile())) {
-        WebGLLoadPolicy policy = forcingPendingPolicy ? WebGLPendingCreation : page->mainFrame().loader().client().webGLPolicyForURL(topDocument.url());
+    auto* canvasElement = canvas.asHTMLCanvasElement();
 
-        if (policy == WebGLBlockCreation) {
-            LOG(WebGL, "The policy for this URL (%s) is to block WebGL.", topDocument.url().host().utf8().data());
+    if (canvasElement) {
+        Document& document = canvasElement->document();
+        RefPtr<Frame> frame = document.frame();
+        if (!frame)
+            return nullptr;
+
+        // The FrameLoaderClient might block creation of a new WebGL context despite the page settings; in
+        // particular, if WebGL contexts were lost one or more times via the GL_ARB_robustness extension.
+        if (!frame->loader().client().allowWebGL(frame->settings().webGLEnabled())) {
+            canvasElement->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent, false, true, "Web page was not allowed to create a WebGL context."));
             return nullptr;
         }
 
-        if (policy == WebGLPendingCreation) {
-            LOG(WebGL, "WebGL policy is pending. May need to be resolved later.");
-            isPendingPolicyResolution = true;
+        Document& topDocument = document.topDocument();
+        Page* page = topDocument.page();
+        bool forcingPendingPolicy = frame->settings().isForcePendingWebGLPolicy();
+
+        if (forcingPendingPolicy || (page && !topDocument.url().isLocalFile())) {
+            WebGLLoadPolicy policy = forcingPendingPolicy ? WebGLPendingCreation : page->mainFrame().loader().client().webGLPolicyForURL(topDocument.url());
+
+            if (policy == WebGLBlockCreation) {
+                LOG(WebGL, "The policy for this URL (%s) is to block WebGL.", topDocument.url().host().utf8().data());
+                return nullptr;
+            }
+
+            if (policy == WebGLPendingCreation) {
+                LOG(WebGL, "WebGL policy is pending. May need to be resolved later.");
+                isPendingPolicyResolution = true;
+            }
         }
+
+        if (frame->settings().forceSoftwareWebGLRendering())
+            attributes.forceSoftwareRenderer = true;
+
+        if (frame->settings().forceWebGLUsesLowPower()) {
+            if (attributes.powerPreference == GraphicsContext3DPowerPreference::HighPerformance)
+                LOG(WebGL, "Overriding powerPreference from high-performance to low-power.");
+            attributes.powerPreference = GraphicsContext3DPowerPreference::LowPower;
+        }
+
+        if (page)
+            attributes.devicePixelRatio = page->deviceScaleFactor();
+
+        hostWindow = document.view()->root()->hostWindow();
     }
 
     attributes.noExtensions = true;
     attributes.shareResources = false;
 
-    if (frame->settings().forceSoftwareWebGLRendering())
-        attributes.forceSoftwareRenderer = true;
-
     attributes.initialPowerPreference = attributes.powerPreference;
-    if (frame->settings().forceWebGLUsesLowPower()) {
-        if (attributes.powerPreference == GraphicsContext3DPowerPreference::HighPerformance)
-            LOG(WebGL, "Overriding powerPreference from high-performance to low-power.");
-        attributes.powerPreference = GraphicsContext3DPowerPreference::LowPower;
-    }
 
-    if (page)
-        attributes.devicePixelRatio = page->deviceScaleFactor();
 
 #if ENABLE(WEBGL2)
     if (type == "webgl2")
@@ -435,9 +445,10 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
         return renderingContext;
     }
 
-    auto context = GraphicsContext3D::create(attributes, document.view()->root()->hostWindow());
+    auto context = GraphicsContext3D::create(attributes, hostWindow);
     if (!context || !context->makeContextCurrent()) {
-        canvas.dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent, false, true, "Could not create a WebGL context."));
+        if (canvasElement)
+            canvasElement->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent, false, true, "Could not create a WebGL context."));
         return nullptr;
     }
 
@@ -464,8 +475,8 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
     return renderingContext;
 }
 
-WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement& passedCanvas, WebGLContextAttributes attributes)
-    : GPUBasedCanvasRenderingContext(passedCanvas)
+WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, WebGLContextAttributes attributes)
+    : GPUBasedCanvasRenderingContext(canvas)
     , m_dispatchContextLostEventTimer(*this, &WebGLRenderingContextBase::dispatchContextLostEvent)
     , m_restoreTimer(*this, &WebGLRenderingContextBase::maybeRestoreContext)
     , m_attributes(attributes)
@@ -477,8 +488,8 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement& passedCa
     m_checkForContextLossHandlingTimer.startOneShot(checkContextLossHandlingDelay);
 }
 
-WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement& passedCanvas, Ref<GraphicsContext3D>&& context, WebGLContextAttributes attributes)
-    : GPUBasedCanvasRenderingContext(passedCanvas)
+WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, Ref<GraphicsContext3D>&& context, WebGLContextAttributes attributes)
+    : GPUBasedCanvasRenderingContext(canvas)
     , m_context(WTFMove(context))
     , m_dispatchContextLostEventTimer(*this, &WebGLRenderingContextBase::dispatchContextLostEvent)
     , m_restoreTimer(*this, &WebGLRenderingContextBase::maybeRestoreContext)
@@ -502,24 +513,29 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement& passedCa
     addActivityStateChangeObserverIfNecessary();
 }
 
+HTMLCanvasElement* WebGLRenderingContextBase::canvas()
+{
+    return canvasBase().asHTMLCanvasElement();
+}
+
 // We check for context loss handling after a few seconds to give the JS a chance to register the event listeners
 // and to discard temporary GL contexts (e.g. feature detection).
 void WebGLRenderingContextBase::checkForContextLossHandling()
 {
-    if (!canvas().renderer())
+    if (!canvas()->renderer())
         return;
 
-    auto* page = canvas().document().page();
+    auto* page = canvas()->document().page();
     if (!page)
         return;
 
-    bool handlesContextLoss = canvas().hasEventListeners(eventNames().webglcontextlostEvent) && canvas().hasEventListeners(eventNames().webglcontextrestoredEvent);
+    bool handlesContextLoss = canvas()->hasEventListeners(eventNames().webglcontextlostEvent) && canvas()->hasEventListeners(eventNames().webglcontextrestoredEvent);
     page->diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::pageHandlesWebGLContextLossKey(), handlesContextLoss ? DiagnosticLoggingKeys::yesKey() : DiagnosticLoggingKeys::noKey(), ShouldSample::No);
 }
 
 void WebGLRenderingContextBase::registerWithWebGLStateTracker()
 {
-    auto* page = canvas().document().page();
+    auto* page = canvas()->document().page();
     if (!page)
         return;
 
@@ -608,7 +624,7 @@ void WebGLRenderingContextBase::setupFlags()
 {
     ASSERT(m_context);
 
-    if (Page* page = canvas().document().page())
+    if (Page* page = canvas()->document().page())
         m_synthesizedErrorsToConsole = page->settings().webGLErrorsToConsoleEnabled();
 
     m_isGLES2Compliant = m_context->isGLES2Compliant();
@@ -635,7 +651,7 @@ void WebGLRenderingContextBase::addActivityStateChangeObserverIfNecessary()
     if (!isHighPerformanceContext(m_context))
         return;
 
-    auto* page = canvas().document().page();
+    auto* page = canvas()->document().page();
     if (!page)
         return;
 
@@ -649,7 +665,7 @@ void WebGLRenderingContextBase::addActivityStateChangeObserverIfNecessary()
 
 void WebGLRenderingContextBase::removeActivityStateChangeObserver()
 {
-    if (auto* page = canvas().document().page())
+    if (auto* page = canvas()->document().page())
         page->removeActivityStateChangeObserver(*this);
 }
 
@@ -702,15 +718,15 @@ void WebGLRenderingContextBase::markContextChanged()
     m_context->markContextChanged();
 
     m_layerCleared = false;
-    RenderBox* renderBox = canvas().renderBox();
+    RenderBox* renderBox = canvas()->renderBox();
     if (isAccelerated() && renderBox && renderBox->hasAcceleratedCompositing()) {
         m_markedCanvasDirty = true;
-        canvas().clearCopiedImage();
+        canvas()->clearCopiedImage();
         renderBox->contentChanged(CanvasChanged);
     } else {
         if (!m_markedCanvasDirty) {
             m_markedCanvasDirty = true;
-            canvas().didDraw(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
+            canvas()->didDraw(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
         }
     }
 }
@@ -721,9 +737,9 @@ void WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver()
     if (!isAccelerated())
         return;
     
-    RenderBox* renderBox = canvas().renderBox();
+    RenderBox* renderBox = canvas()->renderBox();
     if (renderBox && renderBox->hasAcceleratedCompositing())
-        canvas().notifyObserversCanvasChanged(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
+        canvas()->notifyObserversCanvasChanged(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
 }
 
 bool WebGLRenderingContextBase::clearIfComposited(GC3Dbitfield mask)
@@ -805,26 +821,26 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
     if (isContextLostOrPending())
         return;
 
-    if (canvas().document().printing())
-        canvas().clearPresentationCopy();
+    if (canvas()->document().printing())
+        canvas()->clearPresentationCopy();
 
     // Until the canvas is written to by the application, the clear that
     // happened after it was composited should be ignored by the compositor.
     if (m_context->layerComposited() && !m_attributes.preserveDrawingBuffer) {
-        m_context->paintCompositedResultsToCanvas(canvas().buffer());
+        m_context->paintCompositedResultsToCanvas(canvas()->buffer());
 
-        canvas().makePresentationCopy();
+        canvas()->makePresentationCopy();
     } else
-        canvas().clearPresentationCopy();
+        canvas()->clearPresentationCopy();
     clearIfComposited();
 
     if (!m_markedCanvasDirty && !m_layerCleared)
         return;
 
-    canvas().clearCopiedImage();
+    canvas()->clearCopiedImage();
     m_markedCanvasDirty = false;
 
-    m_context->paintRenderingResultsToCanvas(canvas().buffer());
+    m_context->paintRenderingResultsToCanvas(canvas()->buffer());
 }
 
 RefPtr<ImageData> WebGLRenderingContextBase::paintRenderingResultsToImageData()
@@ -854,7 +870,7 @@ void WebGLRenderingContextBase::reshape(int width, int height)
     height = clamp(height, 1, maxHeight);
 
     if (m_needsUpdate) {
-        RenderBox* renderBox = canvas().renderBox();
+        RenderBox* renderBox = canvas()->renderBox();
         if (renderBox && renderBox->hasAcceleratedCompositing())
             renderBox->contentChanged(CanvasChanged);
         m_needsUpdate = false;
@@ -1314,7 +1330,7 @@ void WebGLRenderingContextBase::compileShader(WebGLShader* shader)
         Vector<String> errors;
         getShaderInfoLog(shader).split("\n", errors);
         for (String& error : errors)
-            canvas().document().addConsoleMessage(std::make_unique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, MessageLevel::Error, "WebGL: " + error, stackTrace.copyRef()));
+            canvas()->document().addConsoleMessage(std::make_unique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, MessageLevel::Error, "WebGL: " + error, stackTrace.copyRef()));
     }
 }
 
@@ -2791,7 +2807,7 @@ bool WebGLRenderingContextBase::isContextLostOrPending()
 {
     if (m_isPendingPolicyResolution && !m_hasRequestedPolicyResolution) {
         LOG(WebGL, "Context is being used. Attempt to resolve the policy.");
-        Document& document = canvas().document().topDocument();
+        Document& document = canvas()->document().topDocument();
         Page* page = document.page();
         if (page && !document.url().isLocalFile())
             page->mainFrame().loader().client().resolveWebGLPolicyForURL(document.url());
@@ -3116,7 +3132,7 @@ void WebGLRenderingContextBase::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width
         return;
     // Due to WebGL's same-origin restrictions, it is not possible to
     // taint the origin using the WebGL API.
-    ASSERT(canvas().originClean());
+    ASSERT(canvas()->originClean());
 
     GC3Denum internalFormat = 0;
     if (m_framebufferBinding) {
@@ -4690,7 +4706,7 @@ void WebGLRenderingContextBase::loseContextImpl(WebGLRenderingContextBase::LostC
     if (mode == RealLostContext) {
         // Inform the embedder that a lost context was received. In response, the embedder might
         // decide to take action such as asking the user for permission to use WebGL again.
-        if (RefPtr<Frame> frame = canvas().document().frame())
+        if (RefPtr<Frame> frame = canvas()->document().frame())
             frame->loader().client().didLoseWebGLContext(m_context->getExtensions().getGraphicsResetStatusARB());
     }
 
@@ -5314,7 +5330,7 @@ void WebGLRenderingContextBase::printToConsole(MessageLevel level, const String&
     } else
         consoleMessage = std::make_unique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, level, message);
 
-    canvas().document().addConsoleMessage(WTFMove(consoleMessage));
+    canvas()->document().addConsoleMessage(WTFMove(consoleMessage));
 
     --m_numGLErrorsToConsoleAllowed;
     if (!m_numGLErrorsToConsoleAllowed)
@@ -5660,7 +5676,7 @@ void WebGLRenderingContextBase::restoreStatesAfterVertexAttrib0Simulation()
 void WebGLRenderingContextBase::dispatchContextLostEvent()
 {
     Ref<WebGLContextEvent> event = WebGLContextEvent::create(eventNames().webglcontextlostEvent, false, true, emptyString());
-    canvas().dispatchEvent(event);
+    canvas()->dispatchEvent(event);
     m_restoreAllowed = event->defaultPrevented();
     if (m_contextLostMode == RealLostContext && m_restoreAllowed)
         m_restoreTimer.startOneShot(0_s);
@@ -5708,7 +5724,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
         break;
     }
 
-    RefPtr<Frame> frame = canvas().document().frame();
+    RefPtr<Frame> frame = canvas()->document().frame();
     if (!frame)
         return;
 
@@ -5741,12 +5757,12 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     setupFlags();
     initializeNewContext();
     initializeVertexArrayObjects();
-    canvas().dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, false, true, emptyString()));
+    canvas()->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, false, true, emptyString()));
 }
 
 void WebGLRenderingContextBase::dispatchContextChangedEvent()
 {
-    canvas().dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextchangedEvent, false, true, emptyString()));
+    canvas()->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextchangedEvent, false, true, emptyString()));
 }
 
 void WebGLRenderingContextBase::simulateContextChanged()
@@ -5856,8 +5872,8 @@ void WebGLRenderingContextBase::enableOrDisable(GC3Denum capability, bool enable
 
 IntSize WebGLRenderingContextBase::clampedCanvasSize()
 {
-    return IntSize(clamp(canvas().width(), 1, m_maxViewportDims[0]),
-        clamp(canvas().height(), 1, m_maxViewportDims[1]));
+    return IntSize(clamp(canvas()->width(), 1, m_maxViewportDims[0]),
+        clamp(canvas()->height(), 1, m_maxViewportDims[1]));
 }
 
 GC3Dint WebGLRenderingContextBase::getMaxDrawBuffers()

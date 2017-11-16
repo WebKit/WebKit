@@ -45,8 +45,10 @@ public:
         Blank
     };
 
-    ImageBitmapRenderingContext(HTMLCanvasElement&, ImageBitmapRenderingContextSettings&&);
+    ImageBitmapRenderingContext(CanvasBase&, ImageBitmapRenderingContextSettings&&);
     ~ImageBitmapRenderingContext();
+
+    HTMLCanvasElement* canvas() const;
 
     ExceptionOr<void> transferFromImageBitmap(RefPtr<ImageBitmap>);
 

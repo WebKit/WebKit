@@ -50,12 +50,12 @@
 
 namespace WebCore {
 
+class CanvasBase;
 class CanvasGradient;
 class CanvasPattern;
 class DOMMatrix;
 class FloatRect;
 class GraphicsContext;
-class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBitmap;
@@ -73,8 +73,10 @@ using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasEle
 
 class CanvasRenderingContext2D final : public CanvasRenderingContext, public CanvasPath {
 public:
-    CanvasRenderingContext2D(HTMLCanvasElement&, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
+    CanvasRenderingContext2D(CanvasBase&, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
     virtual ~CanvasRenderingContext2D();
+
+    HTMLCanvasElement& canvas() const { return static_cast<HTMLCanvasElement&>(canvasBase()); }
 
     float lineWidth() const;
     void setLineWidth(float);

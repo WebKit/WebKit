@@ -425,9 +425,11 @@ void InspectorCanvasAgent::didChangeCanvasMemory(HTMLCanvasElement& canvasElemen
 
 void InspectorCanvasAgent::recordCanvasAction(CanvasRenderingContext& canvasRenderingContext, const String& name, Vector<RecordCanvasActionVariant>&& parameters)
 {
-    HTMLCanvasElement& canvasElement = canvasRenderingContext.canvas();
+    auto* canvasElement = canvasRenderingContext.canvasBase().asHTMLCanvasElement();
+    if (!canvasElement)
+        return;
 
-    auto* inspectorCanvas = findInspectorCanvas(canvasElement);
+    auto* inspectorCanvas = findInspectorCanvas(*canvasElement);
     ASSERT(inspectorCanvas);
     if (!inspectorCanvas)
         return;
@@ -442,7 +444,7 @@ void InspectorCanvasAgent::recordCanvasAction(CanvasRenderingContext& canvasRend
         m_canvasRecordingTimer.startOneShot(0_s);
 
     if (!inspectorCanvas->hasBufferSpace())
-        didFinishRecordingCanvasFrame(canvasElement, true);
+        didFinishRecordingCanvasFrame(*canvasElement, true);
 }
 
 void InspectorCanvasAgent::canvasDestroyed(HTMLCanvasElement& canvasElement)
@@ -525,7 +527,7 @@ void InspectorCanvasAgent::didFinishRecordingCanvasFrame(HTMLCanvasElement& canv
 #if ENABLE(WEBGL)
 void InspectorCanvasAgent::didEnableExtension(WebGLRenderingContextBase& context, const String& extension)
 {
-    auto* inspectorCanvas = findInspectorCanvas(context.canvas());
+    auto* inspectorCanvas = findInspectorCanvas(*context.canvas());
     if (!inspectorCanvas)
         return;
 
@@ -534,7 +536,7 @@ void InspectorCanvasAgent::didEnableExtension(WebGLRenderingContextBase& context
 
 void InspectorCanvasAgent::didCreateProgram(WebGLRenderingContextBase& context, WebGLProgram& program)
 {
-    auto* inspectorCanvas = findInspectorCanvas(context.canvas());
+    auto* inspectorCanvas = findInspectorCanvas(*context.canvas());
     ASSERT(inspectorCanvas);
     if (!inspectorCanvas)
         return;

@@ -111,6 +111,7 @@ static size_t activePixelMemory = 0;
 
 HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
+    , CanvasBase(&document)
     , m_size(defaultWidth, defaultHeight)
 {
     ASSERT(hasTagName(canvasTag));
@@ -720,7 +721,7 @@ static std::optional<double> qualityFromJSValue(JSC::JSValue qualityValue)
 
 ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType, JSC::JSValue qualityValue)
 {
-    if (!m_originClean)
+    if (!originClean())
         return Exception { SecurityError };
 
     if (m_size.isEmpty() || !buffer())
@@ -747,7 +748,7 @@ ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType)
 
 ExceptionOr<void> HTMLCanvasElement::toBlob(ScriptExecutionContext& context, Ref<BlobCallback>&& callback, const String& mimeType, JSC::JSValue qualityValue)
 {
-    if (!m_originClean)
+    if (!originClean())
         return Exception { SecurityError };
 
     if (m_size.isEmpty() || !buffer()) {
@@ -955,8 +956,8 @@ void HTMLCanvasElement::createImageBuffer() const
     m_imageBuffer->context().setStrokeThickness(1);
     m_contextStateSaver = std::make_unique<GraphicsContextStateSaver>(m_imageBuffer->context());
 
-    JSC::JSLockHolder lock(scriptExecutionContext()->vm());
-    scriptExecutionContext()->vm().heap.reportExtraMemoryAllocated(memoryCost());
+    JSC::JSLockHolder lock(HTMLElement::scriptExecutionContext()->vm());
+    HTMLElement::scriptExecutionContext()->vm().heap.reportExtraMemoryAllocated(memoryCost());
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
     if (m_context && m_context->is2d()) {

@@ -58,7 +58,6 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement) TexImageSource;
     ExportMacro=WEBCORE_EXPORT,
 ] interface WebGLRenderingContextBase {
 
-    // back-reference to the canvas
     readonly attribute HTMLCanvasElement canvas;
 
     /* ClearBufferMask */

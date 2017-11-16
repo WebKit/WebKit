@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-PlaceholderRenderingContext::PlaceholderRenderingContext(HTMLCanvasElement& canvas)
+PlaceholderRenderingContext::PlaceholderRenderingContext(CanvasBase& canvas)
     : CanvasRenderingContext(canvas)
 {
 }

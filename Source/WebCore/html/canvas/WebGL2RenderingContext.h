@@ -39,8 +39,8 @@ class WebGLVertexArrayObject;
 
 class WebGL2RenderingContext final : public WebGLRenderingContextBase {
 public:
-    WebGL2RenderingContext(HTMLCanvasElement&, WebGLContextAttributes);
-    WebGL2RenderingContext(HTMLCanvasElement&, Ref<GraphicsContext3D>&&, WebGLContextAttributes);
+    WebGL2RenderingContext(CanvasBase&, WebGLContextAttributes);
+    WebGL2RenderingContext(CanvasBase&, Ref<GraphicsContext3D>&&, WebGLContextAttributes);
 
     // Buffer objects
     using WebGLRenderingContextBase::bufferData;

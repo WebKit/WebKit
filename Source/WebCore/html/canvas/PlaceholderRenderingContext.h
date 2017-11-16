@@ -31,7 +31,7 @@ namespace WebCore {
 
 class PlaceholderRenderingContext final : public CanvasRenderingContext {
 public:
-    PlaceholderRenderingContext(HTMLCanvasElement&);
+    PlaceholderRenderingContext(CanvasBase&);
 
 private:
     bool isPlaceholder() const final { return true; }

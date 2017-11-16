@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CanvasBase.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "IntSize.h"
@@ -46,7 +47,7 @@ class WebGLRenderingContext;
 // RefPtr<OffscreenCanvasRenderingContext2D>
 // >;
 
-class OffscreenCanvas : public RefCounted<OffscreenCanvas>, public EventTargetWithInlineData {
+class OffscreenCanvas : public RefCounted<OffscreenCanvas>, public CanvasBase, public EventTargetWithInlineData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
 
@@ -63,10 +64,15 @@ public:
     static Ref<OffscreenCanvas> create(ScriptExecutionContext&, unsigned width, unsigned height);
     ~OffscreenCanvas();
 
-    unsigned width() const;
+    unsigned width() const override;
     void setWidth(unsigned);
-    unsigned height() const;
+    unsigned height() const override;
     void setHeight(unsigned);
+
+    const IntSize& size() const override;
+    void setSize(const IntSize&) override;
+
+    bool isOffscreenCanvas() const override { return true; }
 
 #if ENABLE(WEBGL)
     // FIXME: Should be optional<OffscreenRenderingContext> from above.
@@ -82,14 +88,15 @@ private:
 
     OffscreenCanvas(ScriptExecutionContext&, unsigned width, unsigned height);
 
-    // EventTargetWithInlineData.
-    ScriptExecutionContext* scriptExecutionContext() const final { return &m_scriptExecutionContext; }
+    ScriptExecutionContext* scriptExecutionContext() const override { return CanvasBase::scriptExecutionContext(); }
+
     EventTargetInterface eventTargetInterface() const final { return OffscreenCanvasEventTargetInterfaceType; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
     IntSize m_size;
-    ScriptExecutionContext& m_scriptExecutionContext;
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_CANVAS(WebCore::OffscreenCanvas, isOffscreenCanvas())

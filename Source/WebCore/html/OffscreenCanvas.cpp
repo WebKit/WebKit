@@ -37,8 +37,8 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& context, un
 }
 
 OffscreenCanvas::OffscreenCanvas(ScriptExecutionContext& context, unsigned width, unsigned height)
-    : m_size(width, height)
-    , m_scriptExecutionContext(context)
+    : CanvasBase(&context)
+    , m_size(width, height)
 {
 }
 
@@ -62,6 +62,16 @@ unsigned OffscreenCanvas::height() const
 void OffscreenCanvas::setHeight(unsigned newHeight)
 {
     return m_size.setHeight(newHeight);
+}
+
+const IntSize& OffscreenCanvas::size() const
+{
+    return m_size;
+}
+
+void OffscreenCanvas::setSize(const IntSize& newSize)
+{
+    m_size = newSize;
 }
 
 #if ENABLE(WEBGL)

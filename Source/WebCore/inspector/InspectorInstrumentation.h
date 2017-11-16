@@ -1236,8 +1236,11 @@ inline void InspectorInstrumentation::didChangeCanvasMemory(HTMLCanvasElement& c
 inline void InspectorInstrumentation::recordCanvasAction(CanvasRenderingContext& canvasRenderingContext, const String& name, Vector<RecordCanvasActionVariant>&& parameters)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasRenderingContext.canvas().document()))
-        recordCanvasActionImpl(*instrumentingAgents, canvasRenderingContext, name, WTFMove(parameters));
+    auto* canvasElement = canvasRenderingContext.canvasBase().asHTMLCanvasElement();
+    if (canvasElement) {
+        if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasElement->document()))
+            recordCanvasActionImpl(*instrumentingAgents, canvasRenderingContext, name, WTFMove(parameters));
+    }
 }
 
 inline void InspectorInstrumentation::didFinishRecordingCanvasFrame(HTMLCanvasElement& canvasElement, bool forceDispatch)
@@ -1251,27 +1254,36 @@ inline void InspectorInstrumentation::didFinishRecordingCanvasFrame(HTMLCanvasEl
 inline void InspectorInstrumentation::didEnableExtension(WebGLRenderingContextBase& context, const String& extension)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(context.canvas().document()))
-        didEnableExtensionImpl(*instrumentingAgents, context, extension);
+
+    if (auto* canvasElement = context.canvas()) {
+        if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(canvasElement->document()))
+            didEnableExtensionImpl(*instrumentingAgents, context, extension);
+    }
 }
 
 inline void InspectorInstrumentation::didCreateProgram(WebGLRenderingContextBase& context, WebGLProgram& program)
 {
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(context.canvas().document()))
-        didCreateProgramImpl(*instrumentingAgents, context, program);
+    if (auto* canvasElement = context.canvas()) {
+        if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(canvasElement->document()))
+            didCreateProgramImpl(*instrumentingAgents, context, program);
+    }
 }
 
 inline void InspectorInstrumentation::willDeleteProgram(WebGLRenderingContextBase& context, WebGLProgram& program)
 {
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(context.canvas().document()))
-        willDeleteProgramImpl(*instrumentingAgents, program);
+    if (auto* canvasElement = context.canvas()) {
+        if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(canvasElement->document()))
+            willDeleteProgramImpl(*instrumentingAgents, program);
+    }
 }
 
 inline bool InspectorInstrumentation::isShaderProgramDisabled(WebGLRenderingContextBase& context, WebGLProgram& program)
 {
     FAST_RETURN_IF_NO_FRONTENDS(false);
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(context.canvas().document()))
-        return isShaderProgramDisabledImpl(*instrumentingAgents, program);
+    if (auto* canvasElement = context.canvas()) {
+        if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(canvasElement->document()))
+            return isShaderProgramDisabledImpl(*instrumentingAgents, program);
+    }
     return false;
 }
 #endif

@@ -49,9 +49,9 @@ public:
     virtual void markLayerComposited() = 0;
 
 protected:
-    GPUBasedCanvasRenderingContext(HTMLCanvasElement& canvas)
+    GPUBasedCanvasRenderingContext(CanvasBase& canvas)
         : CanvasRenderingContext(canvas)
-        , ActiveDOMObject(&canvas.document())
+        , ActiveDOMObject(canvas.scriptExecutionContext())
     {
     }
 };

@@ -50,7 +50,9 @@ class WebGPUTextureDescriptor;
 
 class WebGPURenderingContext : public GPUBasedCanvasRenderingContext {
 public:
-    static std::unique_ptr<WebGPURenderingContext> create(HTMLCanvasElement&);
+    static std::unique_ptr<WebGPURenderingContext> create(CanvasBase&);
+
+    HTMLCanvasElement* canvas() const;
 
     bool isWebGPU() const final { return true; }
 
@@ -91,7 +93,7 @@ protected:
     void initializeNewContext();
 
 private:
-    WebGPURenderingContext(HTMLCanvasElement&, Ref<GPUDevice>&&);
+    WebGPURenderingContext(CanvasBase&, Ref<GPUDevice>&&);
 
     RefPtr<GPUDevice> m_device;
 };

@@ -37,7 +37,7 @@ static RenderingMode bufferRenderingMode = Accelerated;
 static RenderingMode bufferRenderingMode = Unaccelerated;
 #endif
 
-ImageBitmapRenderingContext::ImageBitmapRenderingContext(HTMLCanvasElement& canvas, ImageBitmapRenderingContextSettings&& settings)
+ImageBitmapRenderingContext::ImageBitmapRenderingContext(CanvasBase& canvas, ImageBitmapRenderingContextSettings&& settings)
     : CanvasRenderingContext(canvas)
     , m_settings(WTFMove(settings))
 {
@@ -45,6 +45,11 @@ ImageBitmapRenderingContext::ImageBitmapRenderingContext(HTMLCanvasElement& canv
 }
 
 ImageBitmapRenderingContext::~ImageBitmapRenderingContext() = default;
+
+HTMLCanvasElement* ImageBitmapRenderingContext::canvas() const
+{
+    return canvasBase().asHTMLCanvasElement();
+}
 
 bool ImageBitmapRenderingContext::isAccelerated() const
 {
@@ -73,11 +78,11 @@ void ImageBitmapRenderingContext::setOutputBitmap(RefPtr<ImageBitmap> imageBitma
         // only reason I can think of is toDataURL(), but that doesn't seem like
         // a good enough argument to waste memory.
 
-        canvas().setImageBufferAndMarkDirty(ImageBuffer::create(FloatSize(canvas().width(), canvas().height()), bufferRenderingMode));
+        canvas()->setImageBufferAndMarkDirty(ImageBuffer::create(FloatSize(canvas()->width(), canvas()->height()), bufferRenderingMode));
 
         // 1.4. Set the output bitmap's origin-clean flag to true.
 
-        canvas().setOriginClean();
+        canvas()->setOriginClean();
         return;
     }
 
@@ -93,10 +98,10 @@ void ImageBitmapRenderingContext::setOutputBitmap(RefPtr<ImageBitmap> imageBitma
     //      bitmap data to be referenced by context's output bitmap.
 
     if (imageBitmap->originClean())
-        canvas().setOriginClean();
+        canvas()->setOriginClean();
     else
-        canvas().setOriginTainted();
-    canvas().setImageBufferAndMarkDirty(imageBitmap->transferOwnershipAndClose());
+        canvas()->setOriginTainted();
+    canvas()->setImageBufferAndMarkDirty(imageBitmap->transferOwnershipAndClose());
 }
 
 ExceptionOr<void> ImageBitmapRenderingContext::transferFromImageBitmap(RefPtr<ImageBitmap> imageBitmap)
