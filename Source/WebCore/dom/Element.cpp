@@ -3708,7 +3708,7 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations()
     // FIXME: Filter and order the list as specified (webkit.org/b/179535).
     if (auto timeline = document().existingTimeline())
         return timeline->animationsForElement(*this);
-    return Vector<RefPtr<WebAnimation>> { };
+    return { };
 }
 
 AccessibleNode* Element::accessibleNode()

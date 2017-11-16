@@ -37,13 +37,13 @@ using namespace JSC;
 
 ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(ExecState& state, Element* target, Strong<JSObject>&& keyframes)
 {
-    auto result = adoptRef(*new KeyframeEffect(target));
+    auto keyframeEffect = adoptRef(*new KeyframeEffect(target));
 
-    auto setKeyframesResult = result->setKeyframes(state, WTFMove(keyframes));
+    auto setKeyframesResult = keyframeEffect->setKeyframes(state, WTFMove(keyframes));
     if (setKeyframesResult.hasException())
         return setKeyframesResult.releaseException();
 
-    return WTFMove(result);
+    return WTFMove(keyframeEffect);
 }
 
 KeyframeEffect::KeyframeEffect(Element* target)
@@ -79,7 +79,7 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(ExecState& state, Strong<JSOb
     StyleResolver& styleResolver = m_target->styleResolver();
     auto parserContext = CSSParserContext(HTMLStandardMode);
 
-    const auto* array = jsCast<const JSArray*>(keyframes.get());
+    auto* array = jsCast<const JSArray*>(keyframes.get());
     auto length = array->length();
     if (length != 2)
         return Exception { TypeError };
@@ -94,7 +94,7 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(ExecState& state, Strong<JSOb
         size_t numberOfProperties = ownPropertyNames.size();
 
         StringBuilder cssText;
-        for (unsigned j = 0; j < numberOfProperties; ++j) {
+        for (size_t j = 0; j < numberOfProperties; ++j) {
             cssText.append(ownPropertyNames[j].string());
             cssText.appendLiteral(": ");
             cssText.append(keyframe->get(&state, ownPropertyNames[j]).toWTFString(&state));
@@ -106,9 +106,9 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(ExecState& state, Strong<JSOb
         styleProperties->parseDeclaration(cssText.toString(), parserContext);
         unsigned numberOfCSSProperties = styleProperties->propertyCount();
 
-        Vector<CSSPropertyID> properties;
+        Vector<CSSPropertyID> properties(numberOfCSSProperties);
         for (unsigned k = 0; k < numberOfCSSProperties; ++k) {
-            properties.append(styleProperties->propertyAt(k).id());
+            properties[k] = styleProperties->propertyAt(k).id();
             styleResolver.applyPropertyToStyle(styleProperties->propertyAt(k).id(), styleProperties->propertyAt(k).value(), WTFMove(renderStyle));
             renderStyle = styleResolver.state().takeStyle();
         }
