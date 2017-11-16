@@ -71,6 +71,11 @@ void WebSWServerToContextConnection::fireActivateEvent(ServiceWorkerIdentifier s
     send(Messages::WebSWContextManagerConnection::FireActivateEvent(serviceWorkerIdentifier));
 }
 
+void WebSWServerToContextConnection::terminateWorker(ServiceWorkerIdentifier serviceWorkerIdentifier)
+{
+    send(Messages::WebSWContextManagerConnection::TerminateWorker(serviceWorkerIdentifier));
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(SERVICE_WORKER)

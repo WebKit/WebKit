@@ -62,7 +62,7 @@ SWServerWorker::~SWServerWorker()
 
 void SWServerWorker::terminate()
 {
-    // FIXME: Implement
+    m_server.terminateWorker(*this);
 }
 
 void SWServerWorker::scriptContextFailedToStart(const String& message)
@@ -83,6 +83,11 @@ void SWServerWorker::didFinishInstall(bool wasSuccessful)
 void SWServerWorker::didFinishActivation()
 {
     m_server.didFinishActivation(*this);
+}
+
+void SWServerWorker::contextTerminated()
+{
+    m_server.workerContextTerminated(*this);
 }
 
 } // namespace WebCore

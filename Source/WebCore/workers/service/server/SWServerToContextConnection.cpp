@@ -102,6 +102,12 @@ void SWServerToContextConnection::setServiceWorkerHasPendingEvents(ServiceWorker
         worker->setHasPendingEvents(hasPendingEvents);
 }
 
+void SWServerToContextConnection::workerTerminated(ServiceWorkerIdentifier serviceWorkerIdentifier)
+{
+    if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
+        worker->contextTerminated();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

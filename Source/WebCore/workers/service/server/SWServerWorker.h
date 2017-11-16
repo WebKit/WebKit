@@ -70,6 +70,7 @@ public:
     void scriptContextStarted();
     void didFinishInstall(bool wasSuccessful);
     void didFinishActivation();
+    void contextTerminated();
 
     WEBCORE_EXPORT static SWServerWorker* existingWorkerForIdentifier(ServiceWorkerIdentifier);
 

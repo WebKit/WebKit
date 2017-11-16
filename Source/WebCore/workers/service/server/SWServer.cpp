@@ -272,6 +272,12 @@ void SWServer::didFinishActivation(SWServerWorker& worker)
         SWServerJobQueue::didFinishActivation(*registration, worker.identifier());
 }
 
+void SWServer::workerContextTerminated(SWServerWorker& worker)
+{
+    auto result = m_workersByID.remove(worker.identifier());
+    ASSERT_UNUSED(result, result);
+}
+
 void SWServer::didResolveRegistrationPromise(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey)
 {
     ASSERT_UNUSED(connection, m_connections.contains(connection.identifier()));
@@ -343,6 +349,16 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
     ASSERT_UNUSED(result, result.isNewEntry);
 
     connection->installServiceWorkerContext(data);
+}
+
+
+void SWServer::terminateWorker(SWServerWorker& worker)
+{
+    auto* connection = SWServerToContextConnection::connectionForIdentifier(worker.contextConnectionIdentifier());
+    if (connection)
+        connection->terminateWorker(worker.identifier());
+    else
+        LOG_ERROR("Request to terminate a worker whose context connection does not exist");
 }
 
 void SWServer::fireInstallEvent(SWServerWorker& worker)

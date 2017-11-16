@@ -64,7 +64,7 @@ public:
     virtual ~WorkerThread();
 
     WEBCORE_EXPORT bool start(WTF::Function<void(const String&)>&& evaluateCallback);
-    void stop();
+    void stop(WTF::Function<void()>&& terminatedCallback);
 
     ThreadIdentifier threadID() const { return m_thread ? m_thread->id() : 0; }
     WorkerRunLoop& runLoop() { return m_runLoop; }
@@ -126,6 +126,8 @@ private:
     RefPtr<IDBClient::IDBConnectionProxy> m_idbConnectionProxy;
 #endif
     RefPtr<SocketProvider> m_socketProvider;
+
+    WTF::Function<void()> m_stoppedCallback;
 };
 
 } // namespace WebCore

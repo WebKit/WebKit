@@ -188,7 +188,7 @@ void WorkerThread::workerThread()
     String exceptionMessage;
     scriptController->evaluate(ScriptSourceCode(m_startupData->m_sourceCode, m_startupData->m_scriptURL), &exceptionMessage);
     
-    RunLoop::main().dispatch([evaluateCallback = WTFMove(m_evaluateCallback), message = exceptionMessage.isolatedCopy()] {
+    callOnMainThread([evaluateCallback = WTFMove(m_evaluateCallback), message = exceptionMessage.isolatedCopy()] {
         if (evaluateCallback)
             evaluateCallback(message);
     });
@@ -228,6 +228,9 @@ void WorkerThread::workerThread()
     // Clean up WebCore::ThreadGlobalData before WTF::Thread goes away!
     threadGlobalData().destroy();
 
+    if (m_stoppedCallback)
+        callOnMainThread(WTFMove(m_stoppedCallback));
+
     // The thread object may be already destroyed from notification now, don't try to access "this".
     protector->detach();
 }
@@ -254,8 +257,11 @@ void WorkerThread::runEventLoop()
     m_runLoop.run(m_workerGlobalScope.get());
 }
 
-void WorkerThread::stop()
+void WorkerThread::stop(WTF::Function<void()>&& stoppedCallback)
 {
+    ASSERT(!m_stoppedCallback);
+    m_stoppedCallback = WTFMove(stoppedCallback);
+
     // Mutex protection is necessary to ensure that m_workerGlobalScope isn't changed by
     // WorkerThread::workerThread() while we're accessing it. Note also that stop() can
     // be called before m_workerGlobalScope is fully created.

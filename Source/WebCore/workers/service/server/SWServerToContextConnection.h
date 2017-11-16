@@ -46,6 +46,7 @@ public:
     virtual void installServiceWorkerContext(const ServiceWorkerContextData&) = 0;
     virtual void fireInstallEvent(ServiceWorkerIdentifier) = 0;
     virtual void fireActivateEvent(ServiceWorkerIdentifier) = 0;
+    virtual void terminateWorker(ServiceWorkerIdentifier) = 0;
 
     // Messages back from the SW host process
     WEBCORE_EXPORT void scriptContextFailedToStart(ServiceWorkerIdentifier, const String& message);
@@ -53,6 +54,7 @@ public:
     WEBCORE_EXPORT void didFinishInstall(ServiceWorkerIdentifier, bool wasSuccessful);
     WEBCORE_EXPORT void didFinishActivation(ServiceWorkerIdentifier);
     WEBCORE_EXPORT void setServiceWorkerHasPendingEvents(ServiceWorkerIdentifier, bool hasPendingEvents);
+    WEBCORE_EXPORT void workerTerminated(ServiceWorkerIdentifier);
 
     static SWServerToContextConnection* connectionForIdentifier(SWServerToContextConnectionIdentifier);
 

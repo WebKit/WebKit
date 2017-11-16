@@ -58,7 +58,8 @@ private:
     void installServiceWorkerContext(const WebCore::ServiceWorkerContextData&) final;
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier) final;
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier) final;
-    
+    void terminateWorker(WebCore::ServiceWorkerIdentifier) final;
+
     Ref<IPC::Connection> m_ipcConnection;
     
 }; // class WebSWServerToContextConnection

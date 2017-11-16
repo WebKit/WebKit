@@ -28,6 +28,7 @@ messages -> WebSWContextManagerConnection {
     PostMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, IPC::DataReference message, struct WebCore::ServiceWorkerClientData source)
     FireInstallEvent(WebCore::ServiceWorkerIdentifier identifier)
     FireActivateEvent(WebCore::ServiceWorkerIdentifier identifier)
+    TerminateWorker(WebCore::ServiceWorkerIdentifier identifier)
 }
 
 #endif

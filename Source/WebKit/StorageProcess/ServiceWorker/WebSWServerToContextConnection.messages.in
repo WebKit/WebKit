@@ -29,7 +29,8 @@ messages -> WebSWServerToContextConnection {
     ScriptContextStarted(WebCore::ServiceWorkerIdentifier identifier);
     DidFinishInstall(WebCore::ServiceWorkerIdentifier identifier, bool wasSuccessful);
     DidFinishActivation(WebCore::ServiceWorkerIdentifier identifier);
-    SetServiceWorkerHasPendingEvents(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, bool hasPendingEvents);
+    SetServiceWorkerHasPendingEvents(WebCore::ServiceWorkerIdentifier identifier, bool hasPendingEvents);
+    WorkerTerminated(WebCore::ServiceWorkerIdentifier identifier);
 }
 
 #endif // ENABLE(SERVICE_WORKER)

@@ -50,6 +50,7 @@ public:
         virtual void didFinishInstall(ServiceWorkerIdentifier, bool wasSuccessful) = 0;
         virtual void didFinishActivation(ServiceWorkerIdentifier) = 0;
         virtual void setServiceWorkerHasPendingEvents(ServiceWorkerIdentifier, bool) = 0;
+        virtual void workerTerminated(ServiceWorkerIdentifier) = 0;
     };
 
     WEBCORE_EXPORT void setConnection(std::unique_ptr<Connection>&&);
@@ -60,6 +61,7 @@ public:
     WEBCORE_EXPORT void postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destination, Ref<SerializedScriptValue>&& message, ServiceWorkerClientData&& source);
     WEBCORE_EXPORT void fireInstallEvent(ServiceWorkerIdentifier);
     WEBCORE_EXPORT void fireActivateEvent(ServiceWorkerIdentifier);
+    WEBCORE_EXPORT void terminateWorker(ServiceWorkerIdentifier);
 
 private:
     SWContextManager() = default;

@@ -1,3 +1,21 @@
+2017-11-15  Brady Eidson  <beidson@apple.com>
+
+        Implement basics of "Terminate Service Worker" algorithm.
+        https://bugs.webkit.org/show_bug.cgi?id=179551
+
+        Reviewed by Chris Dumez.
+
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::terminateWorker):
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.messages.in:
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::terminateWorker):
+        (WebKit::WebSWContextManagerConnection::workerTerminated):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2017-11-15  Brent Fulgham  <bfulgham@apple.com>
 
         Remove access to 'com.apple.mediaaccessibility.public' preferences in WebContent sandbox

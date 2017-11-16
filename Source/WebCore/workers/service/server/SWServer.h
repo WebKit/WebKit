@@ -112,6 +112,7 @@ public:
     void postTaskReply(CrossThreadTask&&);
 
     void updateWorker(Connection&, const ServiceWorkerRegistrationKey&, const URL&, const String& script, WorkerType);
+    void terminateWorker(SWServerWorker&);
     void fireInstallEvent(SWServerWorker&);
     void fireActivateEvent(SWServerWorker&);
     SWServerWorker* workerByID(ServiceWorkerIdentifier identifier) const { return m_workersByID.get(identifier); }
@@ -123,6 +124,7 @@ public:
     void scriptContextStarted(SWServerWorker&);
     void didFinishInstall(SWServerWorker&, bool wasSuccessful);
     void didFinishActivation(SWServerWorker&);
+    void workerContextTerminated(SWServerWorker&);
 
     WEBCORE_EXPORT void serverToContextConnectionCreated();
     

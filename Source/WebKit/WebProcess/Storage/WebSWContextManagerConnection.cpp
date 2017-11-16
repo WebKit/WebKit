@@ -158,6 +158,11 @@ void WebSWContextManagerConnection::fireActivateEvent(ServiceWorkerIdentifier id
     SWContextManager::singleton().fireActivateEvent(identifier);
 }
 
+void WebSWContextManagerConnection::terminateWorker(ServiceWorkerIdentifier identifier)
+{
+    SWContextManager::singleton().terminateWorker(identifier);
+}
+
 void WebSWContextManagerConnection::postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
 {
     m_connectionToStorageProcess->send(Messages::StorageProcess::PostMessageToServiceWorkerClient(destinationIdentifier, IPC::DataReference { message->data() }, sourceIdentifier, sourceOrigin), 0);
@@ -176,6 +181,11 @@ void WebSWContextManagerConnection::didFinishActivation(ServiceWorkerIdentifier 
 void WebSWContextManagerConnection::setServiceWorkerHasPendingEvents(ServiceWorkerIdentifier serviceWorkerIdentifier, bool hasPendingEvents)
 {
     m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::SetServiceWorkerHasPendingEvents(serviceWorkerIdentifier, hasPendingEvents), 0);
+}
+
+void WebSWContextManagerConnection::workerTerminated(ServiceWorkerIdentifier serviceWorkerIdentifier)
+{
+    m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::WorkerTerminated(serviceWorkerIdentifier), 0);
 }
 
 } // namespace WebCore

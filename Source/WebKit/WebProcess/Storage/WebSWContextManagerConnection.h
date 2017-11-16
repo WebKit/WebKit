@@ -55,6 +55,7 @@ private:
     void didFinishInstall(WebCore::ServiceWorkerIdentifier, bool wasSuccessful) final;
     void didFinishActivation(WebCore::ServiceWorkerIdentifier) final;
     void setServiceWorkerHasPendingEvents(WebCore::ServiceWorkerIdentifier, bool) final;
+    void workerTerminated(WebCore::ServiceWorkerIdentifier) final;
 
     // IPC messages.
     void serviceWorkerStartedWithMessage(WebCore::ServiceWorkerIdentifier, const String& exceptionMessage) final;
@@ -63,6 +64,7 @@ private:
     void postMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerClientData&& source);
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier);
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier);
+    void terminateWorker(WebCore::ServiceWorkerIdentifier);
 
     Ref<IPC::Connection> m_connectionToStorageProcess;
     uint64_t m_pageID { 0 };

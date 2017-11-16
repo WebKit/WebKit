@@ -162,8 +162,8 @@ IDBClient::IDBConnectionProxy* WorkerGlobalScope::idbConnectionProxy()
 void WorkerGlobalScope::stopIndexedDatabase()
 {
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
-    ASSERT(m_connectionProxy);
-    m_connectionProxy->forgetActivityForCurrentThread();
+    if (m_connectionProxy)
+        m_connectionProxy->forgetActivityForCurrentThread();
 #endif
 }
 

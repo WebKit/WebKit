@@ -192,7 +192,7 @@ void WorkerMessagingProxy::workerThreadCreated(DedicatedWorkerThread& workerThre
 
     if (m_askedToTerminate) {
         // Worker.terminate() could be called from JS before the thread was created.
-        m_workerThread->stop();
+        m_workerThread->stop(nullptr);
     } else {
         ASSERT(!m_unconfirmedMessageCount);
         m_unconfirmedMessageCount = m_queuedEarlyTasks.size();
@@ -268,7 +268,7 @@ void WorkerMessagingProxy::terminateWorkerGlobalScope()
     m_inspectorProxy->workerTerminated();
 
     if (m_workerThread)
-        m_workerThread->stop();
+        m_workerThread->stop(nullptr);
 }
 
 void WorkerMessagingProxy::confirmMessageFromWorkerObject(bool hasPendingActivity)

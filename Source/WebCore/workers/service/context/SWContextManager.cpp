@@ -92,6 +92,18 @@ void SWContextManager::fireActivateEvent(ServiceWorkerIdentifier identifier)
     serviceWorker->thread().fireActivateEvent();
 }
 
+void SWContextManager::terminateWorker(ServiceWorkerIdentifier identifier)
+{
+    auto* serviceWorker = m_workerMap.get(identifier);
+    if (!serviceWorker)
+        return;
+
+    serviceWorker->thread().stop([identifier] {
+        if (auto* connection = SWContextManager::singleton().connection())
+            connection->workerTerminated(identifier);
+    });
+}
+
 } // namespace WebCore
 
 #endif
