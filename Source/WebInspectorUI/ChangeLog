@@ -1,3 +1,35 @@
+2017-11-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: typing colon in property name should advance to value field
+        https://bugs.webkit.org/show_bug.cgi?id=178795
+        <rdar://problem/35174674>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._update):
+        (WI.SpreadsheetStyleProperty.prototype._handleNameBeforeInput):
+        Unlike pressing Tab or Enter, typing ":" in the property name should discard suggestion hint.
+
+        (WI.SpreadsheetStyleProperty.prototype._valueCompletionDataProvider):
+        We use 250ms debounce before updating this._property.name.
+        When typing "font-f:", we want to discard suggestion hint (i.e. "font-family"),
+        and immediately show autocomplete for "font-f" (in this case, invalid property).
+
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField):
+        (WI.SpreadsheetTextField.prototype.stopEditing):
+        (WI.SpreadsheetTextField.prototype.discardCompletion):
+        Call spreadsheetTextFieldDidChange when discarding non-empty suggestion hint.
+
+        (WI.SpreadsheetTextField.prototype.detached):
+        (WI.SpreadsheetTextField.prototype.completionSuggestionsClickedCompletion):
+        (WI.SpreadsheetTextField.prototype._handleBlur):
+        (WI.SpreadsheetTextField.prototype._handleKeyDownForSuggestionView):
+        (WI.SpreadsheetTextField.prototype._updateCompletions):
+        (WI.SpreadsheetTextField.prototype._applyCompletionHint):
+        (WI.SpreadsheetTextField.prototype._hideCompletions): Deleted.
+
 2017-11-15  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r217750): Navigation sidebar broken after closing and re-opening tab

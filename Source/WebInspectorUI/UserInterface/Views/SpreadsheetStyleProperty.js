@@ -173,6 +173,8 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         if (this._property.editable && this._property.enabled) {
             this._nameElement.tabIndex = 0;
+            this._nameElement.addEventListener("beforeinput", this._handleNameBeforeInput.bind(this));
+
             this._nameTextField = new WI.SpreadsheetTextField(this, this._nameElement, this._nameCompletionDataProvider.bind(this));
 
             this._valueElement.tabIndex = 0;
@@ -463,6 +465,16 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._property.rawValue = this._valueElement.textContent.trim();
     }
 
+    _handleNameBeforeInput(event)
+    {
+        if (event.data !== ":" || event.inputType !== "insertText")
+            return;
+
+        event.preventDefault();
+        this._nameTextField.discardCompletion();
+        this._valueTextField.startEditing();
+    }
+
     _nameCompletionDataProvider(prefix)
     {
         return WI.CSSCompletions.cssNameCompletions.startsWith(prefix);
@@ -470,7 +482,8 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
     _valueCompletionDataProvider(prefix)
     {
-        return WI.CSSKeywordCompletions.forProperty(this._property.name).startsWith(prefix);
+        let propertyName = this._nameElement.textContent.trim();
+        return WI.CSSKeywordCompletions.forProperty(propertyName).startsWith(prefix);
     }
 
     _setupJumpToSymbol(element)

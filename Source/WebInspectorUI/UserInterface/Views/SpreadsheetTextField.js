@@ -108,12 +108,25 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         this._element.classList.remove("editing");
         this._element.contentEditable = false;
 
-        this._hideCompletions();
+        this.discardCompletion();
+    }
+
+    discardCompletion()
+    {
+        if (!this._completionProvider)
+            return;
+
+        this._suggestionsView.hide();
+
+        let hadSuggestionHint = !!this.suggestionHint;
+        this.suggestionHint = "";
+        if (hadSuggestionHint && this._delegate && typeof this._delegate.spreadsheetTextFieldDidChange === "function")
+            this._delegate.spreadsheetTextFieldDidChange(this);
     }
 
     detached()
     {
-        this._hideCompletions();
+        this.discardCompletion();
         this._element.remove();
     }
 
@@ -156,7 +169,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         // Place text caret at the end.
         window.getSelection().setBaseAndExtent(this._element, selectedText.length, this._element, selectedText.length);
 
-        this._hideCompletions();
+        this.discardCompletion();
 
         if (this._delegate && typeof this._delegate.spreadsheetTextFieldDidChange === "function")
             this._delegate.spreadsheetTextFieldDidChange(this);
@@ -197,7 +210,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
             return;
 
         this._applyCompletionHint();
-        this._hideCompletions();
+        this.discardCompletion();
 
         this._delegate.spreadsheetTextFieldDidBlur(this);
         this.stopEditing();
@@ -293,7 +306,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
             event.stop();
 
             let willChange = !!this.suggestionHint;
-            this._hideCompletions();
+            this.discardCompletion();
 
             if (willChange && this._delegate && typeof this._delegate.spreadsheetTextFieldDidChange === "function")
                 this._delegate.spreadsheetTextFieldDidChange(this);
@@ -302,7 +315,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         }
 
         if (event.key === "ArrowLeft" && (this.suggestionHint || this._suggestionsView.visible)) {
-            this._hideCompletions();
+            this.discardCompletion();
 
             if (this._delegate && typeof this._delegate.spreadsheetTextFieldDidChange === "function")
                 this._delegate.spreadsheetTextFieldDidChange(this);
@@ -332,13 +345,13 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         let completions = this._completionProvider(completionPrefix);
 
         if (!completions.length) {
-            this._hideCompletions();
+            this.discardCompletion();
             return;
         }
 
         // No need to show the completion popover with only one item that matches the entered value.
         if (completions.length === 1 && completions[0] === prefix) {
-            this._hideCompletions();
+            this.discardCompletion();
             return;
         }
 
@@ -399,14 +412,5 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
             return;
 
         this._element.textContent = this._element.textContent;
-    }
-
-    _hideCompletions()
-    {
-        if (!this._completionProvider)
-            return;
-
-        this._suggestionsView.hide();
-        this.suggestionHint = "";
     }
 };
