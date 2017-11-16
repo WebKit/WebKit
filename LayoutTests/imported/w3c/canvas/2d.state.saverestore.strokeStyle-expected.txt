@@ -1,5 +1,0 @@
-2d.state.saverestore.strokeStyle
-save()/restore() works for strokeStyle
-Spec references: 2d.state.strokeStyle
-Actual output:
-Passed

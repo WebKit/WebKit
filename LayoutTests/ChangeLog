@@ -1,3 +1,55 @@
+2017-11-16  Ms2ger  <Ms2ger@igalia.com>
+
+        Remove the outdated and unmaintained copies of the tests in wpt/2dcontext/the-canvas-state/.
+        https://bugs.webkit.org/show_bug.cgi?id=179769
+
+        Reviewed by Youenn Fablet.
+
+        * canvas/philip/tests/2d.state.saverestore.bitmap-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.bitmap.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.clip-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.clip.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.fillStyle-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.fillStyle.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.font-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.font.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.globalAlpha-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.globalAlpha.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.globalCompositeOperation-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.globalCompositeOperation.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.lineCap-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.lineCap.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.lineJoin-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.lineJoin.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.lineWidth-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.lineWidth.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.miterLimit-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.miterLimit.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.path-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.path.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.shadowBlur-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.shadowBlur.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.shadowColor-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.shadowColor.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.shadowOffsetX-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.shadowOffsetX.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.shadowOffsetY-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.shadowOffsetY.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.stack-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.stack.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.stackdepth-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.stackdepth.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.strokeStyle-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.strokeStyle.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.textAlign-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.textAlign.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.textBaseline-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.textBaseline.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.transformation-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.transformation.html: Removed.
+        * canvas/philip/tests/2d.state.saverestore.underflow-expected.txt: Removed.
+        * canvas/philip/tests/2d.state.saverestore.underflow.html: Removed.
+
 2017-11-16  Per Arne Vollan  <pvollan@apple.com>
 
         Mark http/wpt/offscreen-canvas/getContext-webgl.html as failing on Windows.

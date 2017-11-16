@@ -1,0 +1,6 @@
+2d.state.saverestore.shadowColor
+save()/restore() works for shadowColor
+Actual output:
+
+PASS save()/restore() works for shadowColor 
+
