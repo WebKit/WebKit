@@ -20,33 +20,37 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
+from webkitpy.webdriver_tests.webdriver_driver import WebDriver, register_driver
 
-class WebDriver(object):
+
+class WebDriverWPE(WebDriver):
+
     def __init__(self, port):
-        self._port = port
+        super(WebDriverWPE, self).__init__(port)
 
     def binary_path(self):
-        raise NotImplementedError
+        return self._port._build_path('bin', 'WPEWebDriver')
 
     def browser_name(self):
-        raise NotImplementedError
+        return 'dyz'
 
     def capabilities(self):
-        raise NotImplementedError
+        return {'wpe:browserOptions': {
+            'binary': self.browser_name(),
+            'args': ['--automation']}}
 
     def browser_env(self):
-        return {}
+        env = {}
+        env['WEBKIT_EXEC_PATH'] = self._port._build_path('bin')
+        try:
+            ld_library_path = os.environ['LD_LIBRARY_PATH']
+        except KeyError:
+            ld_library_path = None
+        env['LD_LIBRARY_PATH'] = self._port._build_path('lib')
+        if ld_library_path:
+            env['LD_LIBRARY_PATH'] += ':' + ld_library_path
+        return env
 
 
-_drivers = {}
-
-
-def register_driver(port_name, driver_cls):
-    _drivers[port_name] = driver_cls
-
-
-def create_driver(port):
-    if port.name() not in _drivers:
-        __import__('webkitpy.webdriver_tests.webdriver_driver_%s' % port.name())
-
-    return _drivers[port.name()](port)
+register_driver('wpe', WebDriverWPE)

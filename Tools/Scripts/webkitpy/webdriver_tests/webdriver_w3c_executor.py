@@ -124,6 +124,7 @@ class WebDriverW3CExecutor(WdspecExecutor):
 
     def __init__(self, driver, server, display_driver):
         WebKitDriverServer.test_env = display_driver._setup_environ_for_test()
+        WebKitDriverServer.test_env.update(driver.browser_env())
         server_config = {'host': server.host(), 'ports': {'http': [str(server.port())]}}
         WdspecExecutor.__init__(self, driver.browser_name(), server_config, driver.binary_path(), None, capabilities=driver.capabilities())
 

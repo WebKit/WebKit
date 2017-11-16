@@ -1,3 +1,29 @@
+2017-11-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Add initial support for WebDriver
+        https://bugs.webkit.org/show_bug.cgi?id=179727
+
+        Reviewed by Michael Catanzaro.
+
+        Make it possible to run WebDriver tests with WPE.
+
+        * Scripts/run-webdriver-tests: Add --wpe alias for --platform=wpe.
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.__init__): Initialize _display_server from options.
+        (WPEPort._driver_class): Use WaylandDriver when wayland is passed as display server option.
+        * Scripts/webkitpy/webdriver_tests/webdriver_driver.py:
+        (WebDriver.browser_env): Add virtual method to get the environment that should be used.
+        * Scripts/webkitpy/webdriver_tests/webdriver_driver_wpe.py: Copied from Tools/Scripts/webkitpy/webdriver_tests/webdriver_driver.py.
+        (WebDriverWPE):
+        (WebDriverWPE.__init__):
+        (WebDriverWPE.binary_path):
+        (WebDriverWPE.browser_name):
+        (WebDriverWPE.capabilities):
+        (WebDriverWPE.browser_env):
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_executor.py:
+        (WebDriverW3CExecutor.__init__): Update the environment with the one provided by the driver.
+        * wpe/jhbuild.modules: Upgrade dyz to newer version that supports automation.
+
 2017-11-15  Alex Christensen  <achristensen@webkit.org>
 
         WebViews scheduled in custom run loop modes should be able to do more than 50ms of work at a time

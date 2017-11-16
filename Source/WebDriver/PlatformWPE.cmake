@@ -1,6 +1,4 @@
-set(WebDriver_Process_OUTPUT_NAME WebKitWebDriver)
-
-add_definitions(-DLIBEXECDIR="${CMAKE_INSTALL_FULL_LIBEXECDIR}")
+set(WebDriver_Process_OUTPUT_NAME WPEWebDriver)
 
 list(APPEND WebDriver_SYSTEM_INCLUDE_DIRECTORIES
     "${GLIB_INCLUDE_DIRS}"
@@ -11,9 +9,9 @@ list(APPEND WebDriver_SOURCES
     glib/SessionHostGlib.cpp
     glib/WebDriverServiceGLib.cpp
 
-    gtk/WebDriverServiceGtk.cpp
-
     soup/HTTPServerSoup.cpp
+
+    wpe/WebDriverServiceWPE.cpp
 )
 
 list(APPEND WebDriver_LIBRARIES

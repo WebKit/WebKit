@@ -1,3 +1,26 @@
+2017-11-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Add initial support for WebDriver
+        https://bugs.webkit.org/show_bug.cgi?id=179727
+
+        Reviewed by Michael Catanzaro.
+
+        Add WPE implementation for platform-specific methods. Move the version handling to a common file
+        WebDriverServiceGLib.cpp.
+
+        * Capabilities.h:
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * glib/WebDriverServiceGLib.cpp: Added.
+        (WebDriver::parseVersion):
+        (WebDriver::WebDriverService::platformCompareBrowserVersions):
+        * gtk/WebDriverServiceGtk.cpp:
+        * wpe/WebDriverServiceWPE.cpp: Copied from Source/WebDriver/gtk/WebDriverServiceGtk.cpp.
+        (WebDriver::WebDriverService::platformCapabilities):
+        (WebDriver::WebDriverService::platformValidateCapability const):
+        (WebDriver::WebDriverService::platformMatchCapability const):
+        (WebDriver::WebDriverService::platformParseCapabilities const):
+
 2017-11-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r224863.
