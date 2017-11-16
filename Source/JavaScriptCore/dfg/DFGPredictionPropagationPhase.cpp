@@ -1042,6 +1042,14 @@ private:
             break;
         }
 
+        case CPUIntrinsic: {
+            if (m_currentNode->intrinsic() == CPURdtscIntrinsic)
+                setPrediction(SpecInt32Only);
+            else
+                setPrediction(SpecOther);
+            break;
+        }
+
         case PutByValAlias:
         case DoubleAsInt32:
         case GetLocalUnlinked:

@@ -3880,6 +3880,26 @@ public:
         s_avxCheckState = (flags & (1 << 28)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
     }
 
+    void mfence()
+    {
+        m_assembler.mfence();
+    }
+
+    void rdtsc()
+    {
+        m_assembler.rdtsc();
+    }
+
+    void pause()
+    {
+        m_assembler.pause();
+    }
+
+    void cpuid()
+    {
+        m_assembler.cpuid();
+    }
+
 protected:
     X86Assembler::Condition x86Condition(RelationalCondition cond)
     {

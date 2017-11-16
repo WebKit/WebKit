@@ -28,8 +28,10 @@
 
 #include "CodeBlock.h"
 #include "FunctionCodeBlock.h"
+#include "JSArrayBuffer.h"
 #include "JSCInlines.h"
 #include "VMInspector.h"
+#include <wtf/Atomics.h>
 #include <wtf/DataLog.h>
 #include <wtf/ProcessID.h>
 #include <wtf/StringPrintStream.h>
@@ -57,6 +59,97 @@ static EncodedJSValue JSC_HOST_CALL functionCrash(ExecState*)
 static EncodedJSValue JSC_HOST_CALL functionDFGTrue(ExecState*)
 {
     return JSValue::encode(jsBoolean(false));
+}
+
+static EncodedJSValue JSC_HOST_CALL functionCpuMfence(ExecState*)
+{
+#if CPU(X86_64) && !OS(WINDOWS)
+    asm volatile("mfence" ::: "memory");
+#endif
+    return JSValue::encode(jsUndefined());
+}
+
+static EncodedJSValue JSC_HOST_CALL functionCpuRdtsc(ExecState*)
+{
+#if CPU(X86_64) && !OS(WINDOWS)
+    unsigned high;
+    unsigned low;
+    asm volatile ("rdtsc" : "=a"(low), "=d"(high));
+    return JSValue::encode(jsNumber(low));
+#else
+    return JSValue::encode(jsNumber(0));
+#endif
+}
+
+static EncodedJSValue JSC_HOST_CALL functionCpuCpuid(ExecState*)
+{
+#if CPU(X86_64) && !OS(WINDOWS)
+    WTF::x86_cpuid();
+#endif
+    return JSValue::encode(jsUndefined());
+}
+
+static EncodedJSValue JSC_HOST_CALL functionCpuPause(ExecState*)
+{
+#if CPU(X86_64) && !OS(WINDOWS)
+    asm volatile ("pause" ::: "memory");
+#endif
+    return JSValue::encode(jsUndefined());
+}
+
+// This takes either a JSArrayBuffer, JSArrayBufferView*, or any other object as its first
+// argument. The second argument is expected to be an integer.
+//
+// If the first argument is a JSArrayBuffer, it'll clflush on that buffer
+// plus the second argument as a byte offset. It'll also flush on the object
+// itself so its length, etc, aren't in the cache.
+//
+// If the first argument is not a JSArrayBuffer, we load the butterfly
+// and clflush at the address of the butterfly.
+static EncodedJSValue JSC_HOST_CALL functionCpuClflush(ExecState* exec)
+{
+#if CPU(X86_64) && !OS(WINDOWS)
+    VM& vm = exec->vm();
+
+    if (!exec->argument(1).isInt32())
+        return JSValue::encode(jsBoolean(false));
+
+    auto clflush = [] (void* ptr) {
+        char* ptrToFlush = static_cast<char*>(ptr);
+        asm volatile ("clflush %0" :: "m"(*ptrToFlush) : "memory");
+    };
+
+    uint32_t offset = exec->argument(1).asUInt32();
+
+    char* ptr = nullptr;
+    if (JSArrayBuffer* buffer = jsDynamicCast<JSArrayBuffer*>(vm, exec->argument(0))) {
+        if (ArrayBuffer* impl = buffer->impl()) {
+            if (offset < impl->byteLength()) {
+                clflush(impl);
+                ptr = bitwise_cast<char*>(impl) + offset;
+            }
+        }
+    } else if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(vm, exec->argument(0)))
+        ptr = bitwise_cast<char*>(view);
+    else if (JSObject* object = jsDynamicCast<JSObject*>(vm, exec->argument(0))) {
+        switch (object->indexingType()) {
+        case ALL_INT32_INDEXING_TYPES:
+        case ALL_CONTIGUOUS_INDEXING_TYPES:
+        case ALL_DOUBLE_INDEXING_TYPES:
+            clflush(object);
+            ptr = bitwise_cast<char*>(object->butterfly()) + offset;
+        }
+    }
+
+    if (!ptr)
+        return JSValue::encode(jsBoolean(false));
+
+    clflush(ptr);
+    return JSValue::encode(jsBoolean(true));
+#else
+    UNUSED_PARAM(exec);
+    return JSValue::encode(jsBoolean(false));
+#endif
 }
 
 class CallerFrameJITTypeFunctor {
@@ -270,6 +363,12 @@ void JSDollarVM::finishCreation(VM& vm, JSGlobalObject* globalObject)
     addFunction(vm, globalObject, "crash", functionCrash, 0);
     
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "dfgTrue"), 0, functionDFGTrue, DFGTrueIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "cpuMfence"), 0, functionCpuMfence, CPUMfenceIntrinsic, 0);
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "cpuRdtsc"), 0, functionCpuRdtsc, CPURdtscIntrinsic, 0);
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "cpuCpuid"), 0, functionCpuCpuid, CPUCpuidIntrinsic, 0);
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "cpuPause"), 0, functionCpuPause, CPUPauseIntrinsic, 0);
+    addFunction(vm, globalObject, "cpuClflush", functionCpuClflush, 2);
     
     addFunction(vm, globalObject, "llintTrue", functionLLintTrue, 0);
     addFunction(vm, globalObject, "jitTrue", functionJITTrue, 0);

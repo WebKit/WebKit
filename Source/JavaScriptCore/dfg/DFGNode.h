@@ -1442,6 +1442,12 @@ public:
         ASSERT(isEntrySwitch());
         return m_opInfo.as<EntrySwitchData*>();
     }
+
+    Intrinsic intrinsic()
+    {
+        RELEASE_ASSERT(op() == CPUIntrinsic);
+        return m_opInfo.as<Intrinsic>();
+    }
     
     unsigned numSuccessors()
     {

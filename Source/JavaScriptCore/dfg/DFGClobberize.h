@@ -437,6 +437,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case Switch:
     case EntrySwitch:
     case ForceOSRExit:
+    case CPUIntrinsic:
     case CheckBadCell:
     case Return:
     case Unreachable:

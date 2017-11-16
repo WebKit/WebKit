@@ -1003,6 +1003,13 @@ private:
         case ForceOSRExit:
             compileForceOSRExit();
             break;
+        case CPUIntrinsic:
+#if CPU(X86_64)
+            compileCPUIntrinsic();
+#else
+            RELEASE_ASSERT_NOT_REACHED();
+#endif
+            break;
         case Throw:
             compileThrow();
             break;
@@ -8189,6 +8196,53 @@ private:
     void compileForceOSRExit()
     {
         terminate(InadequateCoverage);
+    }
+
+    void compileCPUIntrinsic()
+    {
+#if CPU(X86_64)
+        Intrinsic intrinsic = m_node->intrinsic();
+        switch (intrinsic) {
+        case CPUMfenceIntrinsic:
+        case CPUCpuidIntrinsic:
+        case CPUPauseIntrinsic: {
+            PatchpointValue* patchpoint = m_out.patchpoint(Void);
+            patchpoint->effects = Effects::forCall();
+            patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+                switch (intrinsic) {
+                case CPUMfenceIntrinsic:
+                    jit.mfence();
+                    break;
+                case CPUCpuidIntrinsic:
+                    jit.cpuid();
+                    break;
+                case CPUPauseIntrinsic:
+                    jit.pause();
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+            });
+            setJSValue(m_out.constInt64(JSValue::encode(jsUndefined())));
+            break;
+        }
+        case CPURdtscIntrinsic: {
+            PatchpointValue* patchpoint = m_out.patchpoint(Int32);
+            patchpoint->effects = Effects::forCall();
+            patchpoint->clobber(RegisterSet { X86Registers::eax, X86Registers::edx });
+            // The low 32-bits of rdtsc go into rax.
+            patchpoint->resultConstraint = ValueRep::reg(X86Registers::eax);
+            patchpoint->setGenerator( [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+                jit.rdtsc();
+            });
+            setJSValue(boxInt32(patchpoint));
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+
+        }
+#endif
     }
     
     void compileThrow()

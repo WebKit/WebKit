@@ -2133,6 +2133,7 @@ private:
         case CompareEqPtr:
         case NumberToStringWithValidRadixConstant:
         case GetGlobalThis:
+        case CPUIntrinsic:
             break;
 #else
         default:

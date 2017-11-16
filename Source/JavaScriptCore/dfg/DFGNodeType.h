@@ -456,7 +456,11 @@ namespace JSC { namespace DFG {
     /* Metadata node that initializes the state for flushed argument types at an entrypoint in the program. */ \
     /* Currently, we only use this for the blocks an EntrySwitch branches to at the root of the program. */ \
     /* This is only used in SSA. */ \
-    macro(InitializeEntrypointArguments, NodeMustGenerate)
+    macro(InitializeEntrypointArguments, NodeMustGenerate) \
+    \
+    /* Used for $vm performance debugging */ \
+    macro(CPUIntrinsic, NodeResultJS | NodeMustGenerate) \
+
 
 // This enum generates a monotonically increasing id for all Node types,
 // and is used by the subsequent enum to fill out the id (as accessed via the NodeIdMask).

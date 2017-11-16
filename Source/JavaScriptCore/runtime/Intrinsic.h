@@ -122,6 +122,12 @@ enum Intrinsic {
     SetInt32HeapPredictionIntrinsic,
     CheckInt32Intrinsic,
     FiatInt52Intrinsic,
+
+    // These are used for $vm performance debugging features.
+    CPUMfenceIntrinsic,
+    CPURdtscIntrinsic,
+    CPUCpuidIntrinsic,
+    CPUPauseIntrinsic,
 };
 
 const char* intrinsicName(Intrinsic);

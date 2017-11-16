@@ -333,6 +333,19 @@ public:
                     VALIDATE((node), type == Array::ArrayStorage || type == Array::SlowPutArrayStorage);
                     break;
                 }
+                case CPUIntrinsic: {
+                    switch (node->intrinsic()) {
+                    case CPUMfenceIntrinsic:
+                    case CPURdtscIntrinsic:
+                    case CPUCpuidIntrinsic:
+                    case CPUPauseIntrinsic:
+                        break;
+                    default:
+                        VALIDATE((node), false);
+                        break;
+                    }
+                    break;
+                }
                 default:
                     break;
                 }

@@ -352,6 +352,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case SuperSamplerBegin:
     case SuperSamplerEnd:
     case ForceOSRExit:
+    case CPUIntrinsic:
     case CheckTraps:
     case LogShadowChickenPrologue:
     case LogShadowChickenTail:

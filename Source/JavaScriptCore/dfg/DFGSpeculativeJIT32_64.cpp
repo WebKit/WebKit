@@ -5665,6 +5665,7 @@ void SpeculativeJIT::compile(Node* node)
     case IdentityWithProfile:
     case InitializeEntrypointArguments:
     case EntrySwitch:
+    case CPUIntrinsic:
         DFG_CRASH(m_jit.graph(), node, "unexpected node in DFG backend");
         break;
     }

@@ -3233,6 +3233,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         m_state.setStructureClobberState(StructuresAreWatched);
         break;
 
+    case CPUIntrinsic: 
+        if (node->intrinsic() == CPURdtscIntrinsic)
+            forNode(node).setType(SpecInt32Only);
+        else
+            forNode(node).setType(SpecOther);
+        break;
+
     case CheckTraps:
     case LogShadowChickenPrologue:
     case LogShadowChickenTail:

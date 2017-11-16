@@ -315,6 +315,7 @@ inline CapabilityLevel canCompile(Node* node)
     case AtomicsXor:
     case AtomicsIsLockFree:
     case InitializeEntrypointArguments:
+    case CPUIntrinsic:
         // These are OK.
         break;
 

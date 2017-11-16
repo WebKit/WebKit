@@ -209,6 +209,14 @@ const char* intrinsicName(Intrinsic intrinsic)
         return "CheckInt32Intrinsic";
     case FiatInt52Intrinsic:
         return "FiatInt52Intrinsic";
+    case CPUMfenceIntrinsic:
+        return "CPUMfenceIntrinsic";
+    case CPURdtscIntrinsic:
+        return "CPURdtscIntrinsic";
+    case CPUCpuidIntrinsic:
+        return "CPUCpuidIntrinsic";
+    case CPUPauseIntrinsic:
+        return "CPUPauseIntrinsic";
     }
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;

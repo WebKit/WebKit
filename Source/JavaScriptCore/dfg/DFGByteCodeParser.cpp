@@ -3037,6 +3037,23 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         return true;
     }
 
+    case CPUMfenceIntrinsic:
+    case CPURdtscIntrinsic:
+    case CPUCpuidIntrinsic:
+    case CPUPauseIntrinsic: {
+#if CPU(X86_64)
+        if (!isFTL(m_graph.m_plan.mode))
+            return false;
+        insertChecks();
+        set(VirtualRegister(resultOperand),
+            addToGraph(CPUIntrinsic, OpInfo(intrinsic), OpInfo()));
+        return true;
+#else
+        return false;
+#endif
+    }
+
+
     default:
         return false;
     }

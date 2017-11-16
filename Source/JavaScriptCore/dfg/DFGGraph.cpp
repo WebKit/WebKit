@@ -243,6 +243,8 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, inContext(node->structureSet().toStructureSet(), context));
     if (node->hasStructure())
         out.print(comma, inContext(*node->structure().get(), context));
+    if (node->op() == CPUIntrinsic)
+        out.print(comma, intrinsicName(node->intrinsic()));
     if (node->hasTransition()) {
         out.print(comma, pointerDumpInContext(node->transition(), context));
 #if USE(JSVALUE64)

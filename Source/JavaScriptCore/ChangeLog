@@ -1,3 +1,62 @@
+2017-11-16  Saam Barati  <sbarati@apple.com>
+
+        Add some X86 intrinsics to $vm to help with some perf testing
+        https://bugs.webkit.org/show_bug.cgi?id=179693
+
+        Reviewed by Mark Lam.
+
+        I've been doing some local perf testing of various ideas and have
+        had these come in handy. I'm going to land them to dollarVM to prevent
+        having to add them to my local build every time I do perf testing.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::mfence):
+        (JSC::MacroAssemblerX86Common::rdtsc):
+        (JSC::MacroAssemblerX86Common::pause):
+        (JSC::MacroAssemblerX86Common::cpuid):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::rdtsc):
+        (JSC::X86Assembler::pause):
+        (JSC::X86Assembler::cpuid):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::intrinsic):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCPUIntrinsic):
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::functionCpuMfence):
+        (JSC::functionCpuRdtsc):
+        (JSC::functionCpuCpuid):
+        (JSC::functionCpuPause):
+        (JSC::functionCpuClflush):
+        (JSC::JSDollarVM::finishCreation):
+
 2017-11-16  JF Bastien  <jfbastien@apple.com>
 
         It should be easier to reify lazy property names
