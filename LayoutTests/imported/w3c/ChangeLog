@@ -1,3 +1,17 @@
+2017-11-16  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline skipped and flaky service workers tests.
+
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/register-same-scope-different-script-url.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/respond-with-body-accessed-response.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/uncontrolled-page.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister-controller.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update-bytecheck.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/worker-interception.https-expected.txt:
+
 2017-11-16  Ms2ger  <Ms2ger@igalia.com>
 
         Import 2dcontext/the-canvas-state/ from wpt.

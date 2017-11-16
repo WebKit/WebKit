@@ -1,6 +1,6 @@
 
 
 FAIL Verify redirect mode of Fetch API and ServiceWorker FetchEvent. promise_test: Unhandled rejection with value: object "Error: Normal audio resource should be loaded. - undefined"
-FAIL Verify redirected of Response(Fetch API) and ServiceWorker FetchEvent. promise_test: Unhandled rejection with value: object "Error: Redirected XHR should be reject and response should be redirected with NO-CORS mode and redirect-mode=manual."
-FAIL Verify redirected of Response(Fetch API), Cache API and ServiceWorker FetchEvent. promise_test: Unhandled rejection with value: object "Error: Redirected XHR should be reject and response should be redirected with NO-CORS mode and redirect-mode=manual."
+FAIL Verify redirected of Response(Fetch API) and ServiceWorker FetchEvent. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
+FAIL Verify redirected of Response(Fetch API), Cache API and ServiceWorker FetchEvent. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
 

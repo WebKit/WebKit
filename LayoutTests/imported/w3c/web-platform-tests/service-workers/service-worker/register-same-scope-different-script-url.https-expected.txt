@@ -3,6 +3,6 @@
 PASS Register different scripts concurrently 
 PASS Register then register new script URL 
 FAIL Register then register new script URL that 404s assert_unreached: unexpected rejection: assert_unreached: register should reject Reached unreachable code Reached unreachable code
-FAIL Register then register new script that does not install assert_unreached: unexpected rejection: assert_equals: on update, the second script should be installing expected "https://localhost:9443/service-workers/service-worker/resources/reject-install-worker.js" but got "https://localhost:9443/service-workers/service-worker/resources/empty-worker.js" Reached unreachable code
-FAIL Register same-scope new script url effect on controller assert_unreached: unexpected rejection: wait_for_state must be passed a ServiceWorker Reached unreachable code
+FAIL Register then register new script that does not install assert_unreached: unexpected rejection: assert_equals: on redundant, installing should be null expected null but got object "[object ServiceWorker]" Reached unreachable code
+FAIL Register same-scope new script url effect on controller assert_unreached: unexpected rejection: assert_equals: the old version should control a new doc expected "https://localhost:9443/service-workers/service-worker/resources/empty-worker.js" but got "https://localhost:9443/service-workers/service-worker/resources/empty-worker.js?new" Reached unreachable code
 
