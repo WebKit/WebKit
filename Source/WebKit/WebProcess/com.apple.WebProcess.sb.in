@@ -178,18 +178,13 @@
 (allow sysctl-read
     (sysctl-name
         "hw.byteorder"
-        "hw.busfrequency_compat"
         "hw.busfrequency_max"
-        "hw.cachelinesize_compat"
-        "hw.cpufrequency_compat"
         "hw.cputype"
         "hw.l2cachesize"
         "hw.machine"
         "hw.memsize"
         "hw.model"
         "hw.ncpu"
-        "hw.pagesize_compat"
-        "hw.tbfrequency_compat"
         "hw.vectorunit"
         "kern.hostname"
         "kern.maxfilesperproc"
@@ -199,6 +194,7 @@
         "security.mac.sandbox.sentinel"
         "vm.footprint_suspend")
     (sysctl-name-regex #"^hw.(active|avail)cpu")
+    (sysctl-name-regex #"^hw.(busfrequency|cachelinesize|cpufrequency|pagesize|tbfrequency)_compat")
     (sysctl-name-regex #"^hw.(logical|physical)cpu_max")
     (sysctl-name-regex #"^hw.optional\.")
     (sysctl-name-regex #"^kern.os(release|type|variant_status|version)")
@@ -214,7 +210,7 @@
     (iokit-property "ActuationSupported")
     (iokit-property "AllowDisplaySleep")
     (iokit-property "AlwaysNeedsVelocityCalculated")
-    (iokit-property "AppleIntelMEVABundleName")
+    (iokit-property-regex #"Apple(GVAKeyDoesNotExist|IntelMEVABundleName)")
     (iokit-property-regex #"^AAPL,(DisplayPipe|OpenCLdisabled|IOGraphics_LER(|_RegTag_1|_RegTag_0|_Busy_2)|alias-policy|boot-display|display-alias|mux-switch-state|ndrv-dev|primary-display|slot-name)")
     (iokit-property-regex #"^ATY,fb_(linebytes|offset|size)")
     (iokit-property "BacklightHandle")
@@ -272,6 +268,7 @@
     (iokit-property "IONDRVFramebufferGeneration")
     (iokit-property "IONVRAMProperty")
     (iokit-property-regex #"^IOName(|Match(|ed))")
+    (iokit-property "IOPCITunnelled")
     (iokit-property "IOPMStrictTreeOrder")
     (iokit-property "IOParentMatch")
     (iokit-property-regex #"^IOPCI(Express(Capabilities|Link(Status|Capabilities))|MSIMode|Resourced|Tunnelled)")
@@ -306,6 +303,9 @@
     (iokit-property-regex #"^Num(Blocks|Streams)")
     (iokit-property-regex #"^PerformanceStatistics(|Accum)")
     (iokit-property "Protocol Characteristics")
+    (iokit-property "Removable")
+    (iokit-property-regex #"^ResetOn(Lock|Unlock)Ms")
+    (iokit-property "SafeEjectRequested")
     (iokit-property "SampleRates")
     (iokit-property "Serial Number")
     (iokit-property "StartupDisplay")

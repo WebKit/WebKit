@@ -1,3 +1,16 @@
+2017-11-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Whitelist additional IOKit properties based on customer feedback
+        https://bugs.webkit.org/show_bug.cgi?id=179782
+        <rdar://problem/35508246>
+
+        Reviewed by Dean Jackson.
+
+        Expand the IOKit property whitelist to recognize a few more properties as valid based on review of logs
+        from customer systems and our test infrastructure.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-11-15  Brady Eidson  <beidson@apple.com>
 
         Implement basics of "Terminate Service Worker" algorithm.
