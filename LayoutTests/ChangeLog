@@ -1,3 +1,14 @@
+2017-11-16  Colin Bendell  <colin@bendell.ca>
+
+        Add tests to ensure that <source> tags are only preloaded when the `type`
+        attribute matches.
+        https://bugs.webkit.org/show_bug.cgi?id=179231
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/preload/picture-type-expected.txt: Added.
+        * http/tests/preload/picture-type.html: Added.
+
 2017-11-16  Chris Dumez  <cdumez@apple.com>
 
         Dispatching an event on a ServiceWorker may fail or crash due to GC
