@@ -1,5 +1,17 @@
 2017-11-16  Robin Morisset  <rmorisset@apple.com>
 
+        Fix null pointer dereference in bytecodeDumper
+        https://bugs.webkit.org/show_bug.cgi?id=179764
+
+        Reviewed by Mark Lam.
+
+        The problem was just a call to lastSeenCallee() that was unguarded by haveLastSeenCallee().
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::printCallOp):
+
+2017-11-16  Robin Morisset  <rmorisset@apple.com>
+
         REGRESSION (r224592): oss-fuzz: jsc: Null-dereference READ in JSC::JSCell::isObject (4216)
         https://bugs.webkit.org/show_bug.cgi?id=179763
         <rdar://problem/35550513>
