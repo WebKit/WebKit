@@ -1,3 +1,48 @@
+2017-11-16  JF Bastien  <jfbastien@apple.com>
+
+        It should be easier to reify lazy property names
+        https://bugs.webkit.org/show_bug.cgi?id=179734
+        <rdar://problem/35492521>
+
+        Reviewed by Keith Miller.
+
+        We reify lazy property names in a few different ways, each
+        specific to the JSCell implementation, in put() instead of having
+        a special function to do reification. Let's make that simpler.
+
+        This patch makes it easier to reify property names in a uniform
+        manner, and does so in JSFunction. As a follow up I'll use the
+        same mechanics for:
+
+        ClonedArguments   callee, iteratorSymbol (Symbol.iterator)
+        ErrorConstructor  stackTraceLimit
+        ErrorInstance     line, column, sourceURL, stack
+        GenericArguments  length, callee, iteratorSymbol (Symbol.iterator)
+        GetterSetter      RELEASE_ASSERT_NOT_REACHED()
+        JSArray           length
+        RegExpObject      lastIndex
+        StringObject      length
+
+        * runtime/ClassInfo.h: Add reifyPropertyNameIfNeeded to method table.
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::reifyPropertyNameIfNeeded): by default, don't reify.
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp: `name` and `length` can be reified.
+        (JSC::JSFunction::reifyPropertyNameIfNeeded):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::reifyLength):
+        (JSC::JSFunction::reifyName):
+        (JSC::JSFunction::reifyLazyPropertyIfNeeded):
+        (JSC::JSFunction::reifyLazyPropertyForHostOrBuiltinIfNeeded):
+        (JSC::JSFunction::reifyLazyLengthIfNeeded):
+        (JSC::JSFunction::reifyLazyNameIfNeeded):
+        (JSC::JSFunction::reifyLazyBoundNameIfNeeded):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::isLazy):
+        (JSC::JSFunction::isReified):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putDirectInternal): do the reification here.
+
 2017-11-16  Robin Morisset  <rmorisset@apple.com>
 
         Provide a runtime option for disabling the optimization of recursive tail calls

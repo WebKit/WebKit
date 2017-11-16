@@ -46,6 +46,7 @@ class JSDestructibleObject;
 class JSGlobalObject;
 class LLIntOffsetsExtractor;
 class PropertyDescriptor;
+class PropertyName;
 class PropertyNameArray;
 class Structure;
 
@@ -57,6 +58,12 @@ enum class AllocationFailureMode {
 enum class GCDeferralContextArgPresense {
     HasArg,
     DoesNotHaveArg
+};
+
+enum class PropertyReificationResult {
+    Nothing,
+    Something,
+    TriedButFailed, // Sometimes the property name already exists but has special behavior and can't be reified, e.g. Array.length.
 };
 
 template<typename T> void* allocateCell(Heap&, size_t = sizeof(T));
@@ -169,6 +176,8 @@ public:
 
     static void visitChildren(JSCell*, SlotVisitor&);
     static void visitOutputConstraints(JSCell*, SlotVisitor&);
+
+    JS_EXPORT_PRIVATE static PropertyReificationResult reifyPropertyNameIfNeeded(JSCell*, ExecState*, PropertyName&);
 
     JS_EXPORT_PRIVATE static void heapSnapshot(JSCell*, HeapSnapshotBuilder&);
 

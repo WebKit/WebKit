@@ -43,7 +43,7 @@ struct MethodTable {
 
     typedef void (*VisitChildrenFunctionPtr)(JSCell*, SlotVisitor&);
     VisitChildrenFunctionPtr visitChildren;
-    
+
     typedef CallType (*GetCallDataFunctionPtr)(JSCell*, CallData&);
     GetCallDataFunctionPtr getCallData;
 
@@ -103,7 +103,7 @@ struct MethodTable {
 
     typedef ArrayBuffer* (*SlowDownAndWasteMemory)(JSArrayBufferView*);
     SlowDownAndWasteMemory slowDownAndWasteMemory;
-    
+
     typedef RefPtr<ArrayBufferView> (*GetTypedArrayImpl)(JSArrayBufferView*);
     GetTypedArrayImpl getTypedArrayImpl;
 
@@ -127,9 +127,12 @@ struct MethodTable {
 
     typedef size_t (*EstimatedSizeFunctionPtr)(JSCell*);
     EstimatedSizeFunctionPtr estimatedSize;
-    
+
     typedef void (*VisitOutputConstraintsPtr)(JSCell*, SlotVisitor&);
     VisitOutputConstraintsPtr visitOutputConstraints;
+
+    using ReifyPropertyNameIfNeededPtr = PropertyReificationResult (*)(JSCell*, ExecState*, PropertyName&);
+    ReifyPropertyNameIfNeededPtr reifyPropertyNameIfNeeded;
 };
 
 #define CREATE_MEMBER_CHECKER(member) \
@@ -183,7 +186,8 @@ struct MethodTable {
         &ClassName::dumpToStream, \
         &ClassName::heapSnapshot, \
         &ClassName::estimatedSize, \
-        &ClassName::visitOutputConstraints \
+        &ClassName::visitOutputConstraints, \
+        &ClassName::reifyPropertyNameIfNeeded, \
     }, \
     ClassName::TypedArrayStorageType
 

@@ -172,6 +172,7 @@ protected:
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
+    static PropertyReificationResult reifyPropertyNameIfNeeded(JSCell*, ExecState*, PropertyName&);
 
 private:
     static JSFunction* createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
@@ -188,11 +189,19 @@ private:
     void reifyName(VM&, ExecState*);
     void reifyName(VM&, ExecState*, String name);
 
-    enum class LazyPropertyType { NotLazyProperty, IsLazyProperty };
-    LazyPropertyType reifyLazyPropertyIfNeeded(VM&, ExecState*, PropertyName);
-    LazyPropertyType reifyLazyPropertyForHostOrBuiltinIfNeeded(VM&, ExecState*, PropertyName);
-    LazyPropertyType reifyLazyLengthIfNeeded(VM&, ExecState*, PropertyName);
-    LazyPropertyType reifyLazyBoundNameIfNeeded(VM&, ExecState*, PropertyName);
+    enum class PropertyStatus {
+        Eager,
+        Lazy,
+        Reified,
+    };
+    static bool isLazy(PropertyStatus property) { return property == PropertyStatus::Lazy || property == PropertyStatus::Reified; }
+    static bool isReified(PropertyStatus property) { return property == PropertyStatus::Reified; }
+
+    PropertyStatus reifyLazyPropertyIfNeeded(VM&, ExecState*, PropertyName);
+    PropertyStatus reifyLazyPropertyForHostOrBuiltinIfNeeded(VM&, ExecState*, PropertyName);
+    PropertyStatus reifyLazyLengthIfNeeded(VM&, ExecState*, PropertyName);
+    PropertyStatus reifyLazyNameIfNeeded(VM&, ExecState*, PropertyName);
+    PropertyStatus reifyLazyBoundNameIfNeeded(VM&, ExecState*, PropertyName);
 
     friend class LLIntOffsetsExtractor;
 

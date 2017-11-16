@@ -216,6 +216,13 @@ void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_rareData);
 }
 
+PropertyReificationResult JSFunction::reifyPropertyNameIfNeeded(JSCell* cell, ExecState* exec, PropertyName& propertyName)
+{
+    JSFunction* thisObject = jsCast<JSFunction*>(cell);
+    PropertyStatus propertyType = thisObject->reifyLazyPropertyIfNeeded(exec->vm(), exec, propertyName);
+    return isReified(propertyType) ? PropertyReificationResult::Something : PropertyReificationResult::Nothing;
+}
+
 CallType JSFunction::getCallData(JSCell* cell, CallData& callData)
 {
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
@@ -442,8 +449,8 @@ bool JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
     }
 
     if (thisObject->isHostOrBuiltinFunction()) {
-        LazyPropertyType propType = thisObject->reifyLazyPropertyForHostOrBuiltinIfNeeded(vm, exec, propertyName);
-        if (propType == LazyPropertyType::IsLazyProperty)
+        PropertyStatus propertyType = thisObject->reifyLazyPropertyForHostOrBuiltinIfNeeded(vm, exec, propertyName);
+        if (isLazy(propertyType))
             slot.disableCaching();
         scope.release();
         return Base::put(thisObject, exec, propertyName, value, slot);
@@ -475,8 +482,8 @@ bool JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
         }
         return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
     }
-    LazyPropertyType propType = thisObject->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
-    if (propType == LazyPropertyType::IsLazyProperty)
+    PropertyStatus propertyType = thisObject->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
+    if (isLazy(propertyType))
         slot.disableCaching();
     scope.release();
     return Base::put(thisObject, exec, propertyName, value, slot);
@@ -642,9 +649,8 @@ void JSFunction::reifyLength(VM& vm)
     JSValue initialValue = jsNumber(jsExecutable()->parameterCount());
     unsigned initialAttributes = PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
     const Identifier& identifier = vm.propertyNames->length;
-    putDirect(vm, identifier, initialValue, initialAttributes);
-
     rareData->setHasReifiedLength();
+    putDirect(vm, identifier, initialValue, initialAttributes);
 }
 
 void JSFunction::reifyName(VM& vm, ExecState* exec)
@@ -683,50 +689,66 @@ void JSFunction::reifyName(VM& vm, ExecState* exec, String name)
     else if (jsExecutable()->isSetter())
         name = makeString("set ", name);
 
-    putDirect(vm, propID, jsString(exec, name), initialAttributes);
     rareData->setHasReifiedName();
+    putDirect(vm, propID, jsString(exec, name), initialAttributes);
 }
 
-JSFunction::LazyPropertyType JSFunction::reifyLazyPropertyIfNeeded(VM& vm, ExecState* exec, PropertyName propertyName)
+JSFunction::PropertyStatus JSFunction::reifyLazyPropertyIfNeeded(VM& vm, ExecState* exec, PropertyName propertyName)
 {
-    if (reifyLazyLengthIfNeeded(vm, exec, propertyName) == LazyPropertyType::IsLazyProperty)
-        return LazyPropertyType::IsLazyProperty;
-    if (propertyName == vm.propertyNames->name) {
-        if (!hasReifiedName())
-            reifyName(vm, exec);
-        return LazyPropertyType::IsLazyProperty;
-    }
-    return LazyPropertyType::NotLazyProperty;
+    if (isHostOrBuiltinFunction())
+        return PropertyStatus::Eager;
+    PropertyStatus lazyLength = reifyLazyLengthIfNeeded(vm, exec, propertyName);
+    if (isLazy(lazyLength))
+        return lazyLength;
+    PropertyStatus lazyName = reifyLazyNameIfNeeded(vm, exec, propertyName);
+    if (isLazy(lazyName))
+        return lazyName;
+    return PropertyStatus::Eager;
 }
 
-JSFunction::LazyPropertyType JSFunction::reifyLazyPropertyForHostOrBuiltinIfNeeded(VM& vm, ExecState* exec, PropertyName propertyName)
+JSFunction::PropertyStatus JSFunction::reifyLazyPropertyForHostOrBuiltinIfNeeded(VM& vm, ExecState* exec, PropertyName propertyName)
 {
     ASSERT(isHostOrBuiltinFunction());
     if (isBuiltinFunction()) {
-        if (reifyLazyLengthIfNeeded(vm, exec, propertyName) == LazyPropertyType::IsLazyProperty)
-            return LazyPropertyType::IsLazyProperty;
+        PropertyStatus lazyLength = reifyLazyLengthIfNeeded(vm, exec, propertyName);
+        if (isLazy(lazyLength))
+            return lazyLength;
     }
     return reifyLazyBoundNameIfNeeded(vm, exec, propertyName);
 }
 
-JSFunction::LazyPropertyType JSFunction::reifyLazyLengthIfNeeded(VM& vm, ExecState*, PropertyName propertyName)
+JSFunction::PropertyStatus JSFunction::reifyLazyLengthIfNeeded(VM& vm, ExecState*, PropertyName propertyName)
 {
     if (propertyName == vm.propertyNames->length) {
-        if (!hasReifiedLength())
+        if (!hasReifiedLength()) {
             reifyLength(vm);
-        return LazyPropertyType::IsLazyProperty;
+            return PropertyStatus::Reified;
+        }
+        return PropertyStatus::Lazy;
     }
-    return LazyPropertyType::NotLazyProperty;
+    return PropertyStatus::Eager;
 }
 
-JSFunction::LazyPropertyType JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, ExecState* exec, PropertyName propertyName)
+JSFunction::PropertyStatus JSFunction::reifyLazyNameIfNeeded(VM& vm, ExecState* exec, PropertyName propertyName)
+{
+    if (propertyName == vm.propertyNames->name) {
+        if (!hasReifiedName()) {
+            reifyName(vm, exec);
+            return PropertyStatus::Reified;
+        }
+        return PropertyStatus::Lazy;
+    }
+    return PropertyStatus::Eager;
+}
+
+JSFunction::PropertyStatus JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, ExecState* exec, PropertyName propertyName)
 {
     const Identifier& nameIdent = vm.propertyNames->name;
     if (propertyName != nameIdent)
-        return LazyPropertyType::NotLazyProperty;
+        return PropertyStatus::Eager;
 
     if (hasReifiedName())
-        return LazyPropertyType::IsLazyProperty;
+        return PropertyStatus::Lazy;
 
     if (isBuiltinFunction())
         reifyName(vm, exec);
@@ -734,10 +756,10 @@ JSFunction::LazyPropertyType JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, Exec
         FunctionRareData* rareData = this->rareData(vm);
         String name = makeString("bound ", static_cast<NativeExecutable*>(m_executable.get())->name());
         unsigned initialAttributes = PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
-        putDirect(vm, nameIdent, jsString(exec, name), initialAttributes);
         rareData->setHasReifiedName();
+        putDirect(vm, nameIdent, jsString(exec, name), initialAttributes);
     }
-    return LazyPropertyType::IsLazyProperty;
+    return PropertyStatus::Reified;
 }
 
 } // namespace JSC
