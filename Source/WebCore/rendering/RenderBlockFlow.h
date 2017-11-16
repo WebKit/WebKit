@@ -475,7 +475,7 @@ private:
     void paintInlineChildren(PaintInfo&, const LayoutPoint&) override;
     void paintFloats(PaintInfo&, const LayoutPoint&, bool preservePhase = false) override;
 
-    void moveAllChildrenIncludingFloatsTo(RenderBlock& toBlock, bool fullRemoveInsert) override;
+    void moveAllChildrenIncludingFloatsTo(RenderBlock& toBlock, RenderBoxModelObject::NormalizeAfterInsertion) override;
     void repaintOverhangingFloats(bool paintAllDescendants) final;
     void clipOutFloatingObjects(RenderBlock&, const PaintInfo*, const LayoutPoint&, const LayoutSize&) override;
 

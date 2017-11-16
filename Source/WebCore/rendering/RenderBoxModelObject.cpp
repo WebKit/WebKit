@@ -2679,32 +2679,31 @@ void RenderBoxModelObject::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, Tra
         transformState.move(containerOffset.width(), containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
 }
 
-void RenderBoxModelObject::moveChildTo(RenderBoxModelObject* toBoxModelObject, RenderObject* child, RenderObject* beforeChild, bool fullRemoveInsert)
+void RenderBoxModelObject::moveChildTo(RenderBoxModelObject* toBoxModelObject, RenderObject* child, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
 {
-    // We assume that callers have cleared their positioned objects list for child moves (!fullRemoveInsert) so the
+    // We assume that callers have cleared their positioned objects list for child moves so the
     // positioned renderer maps don't become stale. It would be too slow to do the map lookup on each call.
-    ASSERT(!fullRemoveInsert || !is<RenderBlock>(*this) || !downcast<RenderBlock>(*this).hasPositionedObjects());
+    ASSERT(normalizeAfterInsertion == NormalizeAfterInsertion::No || !is<RenderBlock>(*this) || !downcast<RenderBlock>(*this).hasPositionedObjects());
 
     ASSERT(this == child->parent());
     ASSERT(!beforeChild || toBoxModelObject == beforeChild->parent());
-    if (fullRemoveInsert && (toBoxModelObject->isRenderBlock() || toBoxModelObject->isRenderInline())) {
+    if (normalizeAfterInsertion == NormalizeAfterInsertion::Yes && (toBoxModelObject->isRenderBlock() || toBoxModelObject->isRenderInline())) {
         // Takes care of adding the new child correctly if toBlock and fromBlock
         // have different kind of children (block vs inline).
-        auto childToMove = takeChildInternal(*child, NotifyChildren);
+        auto childToMove = takeChildInternal(*child);
         toBoxModelObject->addChild(WTFMove(childToMove), beforeChild);
     } else {
-        NotifyChildrenType notifyType = fullRemoveInsert ? NotifyChildren : DontNotifyChildren;
-        auto childToMove = takeChildInternal(*child, notifyType);
-        toBoxModelObject->insertChildInternal(WTFMove(childToMove), beforeChild, notifyType);
+        auto childToMove = takeChildInternal(*child);
+        toBoxModelObject->insertChildInternal(WTFMove(childToMove), beforeChild);
     }
 }
 
-void RenderBoxModelObject::moveChildrenTo(RenderBoxModelObject* toBoxModelObject, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, bool fullRemoveInsert)
+void RenderBoxModelObject::moveChildrenTo(RenderBoxModelObject* toBoxModelObject, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
 {
     // This condition is rarely hit since this function is usually called on
     // anonymous blocks which can no longer carry positioned objects (see r120761)
     // or when fullRemoveInsert is false.
-    if (fullRemoveInsert && is<RenderBlock>(*this)) {
+    if (normalizeAfterInsertion == NormalizeAfterInsertion::Yes && is<RenderBlock>(*this)) {
         downcast<RenderBlock>(*this).removePositionedObjects(nullptr);
         if (is<RenderBlockFlow>(*this))
             downcast<RenderBlockFlow>(*this).removeFloatingObjects();
@@ -2732,7 +2731,7 @@ void RenderBoxModelObject::moveChildrenTo(RenderBoxModelObject* toBoxModelObject
                 nextSibling = nextSibling->nextSibling();
         }
 
-        moveChildTo(toBoxModelObject, child, beforeChild, fullRemoveInsert);
+        moveChildTo(toBoxModelObject, child, beforeChild, normalizeAfterInsertion);
         child = nextSibling;
     }
 }

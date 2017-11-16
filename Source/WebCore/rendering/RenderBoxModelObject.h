@@ -277,28 +277,28 @@ public:
     void setFirstLetterRemainingText(RenderTextFragment&);
     void clearFirstLetterRemainingText();
 
-    // These functions are only used internally to manipulate the render tree structure via remove/insert/appendChildNode.
-    // Since they are typically called only to move objects around within anonymous blocks, the default for fullRemoveInsert is false rather than true.
-    void moveChildTo(RenderBoxModelObject* toBoxModelObject, RenderObject* child, RenderObject* beforeChild, bool fullRemoveInsert = false);
-    void moveChildTo(RenderBoxModelObject* toBoxModelObject, RenderObject* child, bool fullRemoveInsert = false)
+    // NormalizeAfterInsertion::Yes ensures that the destination subtree is consistent after the insertion (anonymous wrappers etc).
+    enum class NormalizeAfterInsertion { No, Yes };
+    void moveChildTo(RenderBoxModelObject* toBoxModelObject, RenderObject* child, RenderObject* beforeChild, NormalizeAfterInsertion);
+    void moveChildTo(RenderBoxModelObject* toBoxModelObject, RenderObject* child, NormalizeAfterInsertion normalizeAfterInsertion)
     {
-        moveChildTo(toBoxModelObject, child, nullptr, fullRemoveInsert);
+        moveChildTo(toBoxModelObject, child, nullptr, normalizeAfterInsertion);
     }
-    void moveAllChildrenTo(RenderBoxModelObject* toBoxModelObject, bool fullRemoveInsert = false)
+    void moveAllChildrenTo(RenderBoxModelObject* toBoxModelObject, NormalizeAfterInsertion normalizeAfterInsertion)
     {
-        moveAllChildrenTo(toBoxModelObject, nullptr, fullRemoveInsert);
+        moveAllChildrenTo(toBoxModelObject, nullptr, normalizeAfterInsertion);
     }
-    void moveAllChildrenTo(RenderBoxModelObject* toBoxModelObject, RenderObject* beforeChild, bool fullRemoveInsert = false)
+    void moveAllChildrenTo(RenderBoxModelObject* toBoxModelObject, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)
     {
-        moveChildrenTo(toBoxModelObject, firstChild(), nullptr, beforeChild, fullRemoveInsert);
+        moveChildrenTo(toBoxModelObject, firstChild(), nullptr, beforeChild, normalizeAfterInsertion);
     }
     // Move all of the kids from |startChild| up to but excluding |endChild|. 0 can be passed as the |endChild| to denote
     // that all the kids from |startChild| onwards should be moved.
-    void moveChildrenTo(RenderBoxModelObject* toBoxModelObject, RenderObject* startChild, RenderObject* endChild, bool fullRemoveInsert = false)
+    void moveChildrenTo(RenderBoxModelObject* toBoxModelObject, RenderObject* startChild, RenderObject* endChild, NormalizeAfterInsertion normalizeAfterInsertion)
     {
-        moveChildrenTo(toBoxModelObject, startChild, endChild, nullptr, fullRemoveInsert);
+        moveChildrenTo(toBoxModelObject, startChild, endChild, nullptr, normalizeAfterInsertion);
     }
-    void moveChildrenTo(RenderBoxModelObject* toBoxModelObject, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, bool fullRemoveInsert = false);
+    void moveChildrenTo(RenderBoxModelObject* toBoxModelObject, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, NormalizeAfterInsertion);
 
     enum ScaleByEffectiveZoomOrNot { ScaleByEffectiveZoom, DoNotScaleByEffectiveZoom };
     LayoutSize calculateImageIntrinsicDimensions(StyleImage*, const LayoutSize& scaledPositioningAreaSize, ScaleByEffectiveZoomOrNot) const;

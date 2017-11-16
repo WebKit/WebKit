@@ -314,7 +314,7 @@ void RenderTableRow::collapseAndDestroyAnonymousSiblingRows()
             currentRow = currentRow->nextRow();
             continue;
         }
-        currentRow->moveAllChildrenTo(rowToInsertInto);
+        currentRow->moveAllChildrenTo(rowToInsertInto, RenderBoxModelObject::NormalizeAfterInsertion::No);
         auto toDestroy = section->takeChild(*currentRow);
         currentRow = currentRow->nextRow();
     }

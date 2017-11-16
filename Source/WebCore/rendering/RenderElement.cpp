@@ -491,7 +491,7 @@ void RenderElement::addChild(RenderPtr<RenderObject> newChild, RenderObject* bef
 
         table->addChild(WTFMove(newChild));
     } else
-        insertChildInternal(WTFMove(newChild), beforeChild, NotifyChildren);
+        insertChildInternal(WTFMove(newChild), beforeChild);
 
     if (is<RenderText>(child))
         downcast<RenderText>(child).styleDidChange(StyleDifferenceEqual, nullptr);
@@ -512,7 +512,7 @@ void RenderElement::addChild(RenderPtr<RenderObject> newChild, RenderObject* bef
 
 RenderPtr<RenderObject> RenderElement::takeChild(RenderObject& oldChild)
 {
-    return takeChildInternal(oldChild, NotifyChildren);
+    return takeChildInternal(oldChild);
 }
 
 void RenderElement::removeAndDestroyChild(RenderObject& oldChild)
@@ -529,7 +529,7 @@ void RenderElement::destroyLeftoverChildren()
     }
 }
 
-void RenderElement::insertChildInternal(RenderPtr<RenderObject> newChildPtr, RenderObject* beforeChild, NotifyChildrenType notifyChildren)
+void RenderElement::insertChildInternal(RenderPtr<RenderObject> newChildPtr, RenderObject* beforeChild)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!view().frameView().layoutContext().layoutState(), "Layout must not mutate render tree");
 
@@ -567,8 +567,7 @@ void RenderElement::insertChildInternal(RenderPtr<RenderObject> newChildPtr, Ren
 
     newChild->initializeFragmentedFlowStateOnInsertion();
     if (!renderTreeBeingDestroyed()) {
-        if (notifyChildren == NotifyChildren)
-            newChild->insertedIntoTree();
+        newChild->insertedIntoTree();
         if (is<RenderElement>(*newChild))
             RenderCounter::rendererSubtreeAttached(downcast<RenderElement>(*newChild));
     }
@@ -586,7 +585,7 @@ void RenderElement::insertChildInternal(RenderPtr<RenderObject> newChildPtr, Ren
         newChild->setHasOutlineAutoAncestor();
 }
 
-RenderPtr<RenderObject> RenderElement::takeChildInternal(RenderObject& oldChild, NotifyChildrenType notifyChildren)
+RenderPtr<RenderObject> RenderElement::takeChildInternal(RenderObject& oldChild)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!view().frameView().layoutContext().layoutState(), "Layout must not mutate render tree");
 
@@ -599,7 +598,7 @@ RenderPtr<RenderObject> RenderElement::takeChildInternal(RenderObject& oldChild,
     // So that we'll get the appropriate dirty bit set (either that a normal flow child got yanked or
     // that a positioned child got yanked). We also repaint, so that the area exposed when the child
     // disappears gets repainted properly.
-    if (!renderTreeBeingDestroyed() && notifyChildren == NotifyChildren && oldChild.everHadLayout()) {
+    if (!renderTreeBeingDestroyed() && oldChild.everHadLayout()) {
         oldChild.setNeedsLayoutAndPrefWidthsRecalc();
         // We only repaint |oldChild| if we have a RenderLayer as its visual overflow may not be tracked by its parent.
         if (oldChild.isBody())
@@ -622,7 +621,7 @@ RenderPtr<RenderObject> RenderElement::takeChildInternal(RenderObject& oldChild,
     if (!renderTreeBeingDestroyed() && oldChild.isSelectionBorder())
         frame().selection().setNeedsSelectionUpdate();
 
-    if (!renderTreeBeingDestroyed() && notifyChildren == NotifyChildren)
+    if (!renderTreeBeingDestroyed())
         oldChild.willBeRemovedFromTree();
 
     oldChild.resetFragmentedFlowStateOnRemoval();
@@ -957,9 +956,9 @@ void RenderElement::handleDynamicFloatPositionChange()
             // An anonymous block must be made to wrap this inline.
             auto newBlock = downcast<RenderBlock>(*parent()).createAnonymousBlock();
             auto& block = *newBlock;
-            parent()->insertChildInternal(WTFMove(newBlock), this, RenderElement::NotifyChildren);
-            auto thisToMove = parent()->takeChildInternal(*this, RenderElement::NotifyChildren);
-            block.insertChildInternal(WTFMove(thisToMove), nullptr, RenderElement::NotifyChildren);
+            parent()->insertChildInternal(WTFMove(newBlock), this);
+            auto thisToMove = parent()->takeChildInternal(*this);
+            block.insertChildInternal(WTFMove(thisToMove), nullptr);
         }
     }
 }

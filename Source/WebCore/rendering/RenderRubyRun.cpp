@@ -167,8 +167,8 @@ RenderPtr<RenderObject> RenderRubyRun::takeChild(RenderObject& child)
                 RenderRubyBase* rightBase = rightRun.rubyBaseSafe();
                 // Collect all children in a single base, then swap the bases.
                 rightBase->mergeChildrenWithBase(*base);
-                moveChildTo(&rightRun, base);
-                rightRun.moveChildTo(this, rightBase);
+                moveChildTo(&rightRun, base, RenderBoxModelObject::NormalizeAfterInsertion::No);
+                rightRun.moveChildTo(this, rightBase, RenderBoxModelObject::NormalizeAfterInsertion::No);
                 // The now empty ruby base will be removed below.
                 ASSERT(!rubyBase()->firstChild());
             }

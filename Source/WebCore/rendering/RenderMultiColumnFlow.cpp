@@ -368,7 +368,7 @@ void RenderMultiColumnFlow::fragmentedFlowDescendantInserted(RenderObject& newDe
                 // Insert after the placeholder, but don't let a notification happen.
                 gShiftingSpanner = true;
                 RenderBlockFlow& ancestorBlock = downcast<RenderBlockFlow>(*spanner->parent());
-                ancestorBlock.moveChildTo(placeholder.parentBox(), spanner, placeholder.nextSibling(), true);
+                ancestorBlock.moveChildTo(placeholder.parentBox(), spanner, placeholder.nextSibling(), RenderBoxModelObject::NormalizeAfterInsertion::Yes);
                 gShiftingSpanner = false;
                 
                 // We have to nuke the placeholder, since the ancestor already lost the mapping to it when

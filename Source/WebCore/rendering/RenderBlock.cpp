@@ -704,8 +704,8 @@ void RenderBlock::makeChildrenNonInline(RenderObject* insertionPoint)
 
         auto newBlock = createAnonymousBlock();
         auto& block = *newBlock;
-        insertChildInternal(WTFMove(newBlock), inlineRunStart, NotifyChildren);
-        moveChildrenTo(&block, inlineRunStart, child);
+        insertChildInternal(WTFMove(newBlock), inlineRunStart);
+        moveChildrenTo(&block, inlineRunStart, child, RenderBoxModelObject::NormalizeAfterInsertion::No);
     }
 
 #ifndef NDEBUG
@@ -810,8 +810,8 @@ void RenderBlock::dropAnonymousBoxChild(RenderBlock& child)
     setChildrenInline(child.childrenInline());
     RenderObject* nextSibling = child.nextSibling();
 
-    auto toBeDeleted = takeChildInternal(child, child.hasLayer() ? NotifyChildren : DontNotifyChildren);
-    child.moveAllChildrenTo(this, nextSibling, child.hasLayer());
+    auto toBeDeleted = takeChildInternal(child);
+    child.moveAllChildrenTo(this, nextSibling, RenderBoxModelObject::NormalizeAfterInsertion::No);
     // Delete the now-empty block's lines and nuke it.
     child.deleteLines();
 }
@@ -843,14 +843,12 @@ RenderPtr<RenderObject> RenderBlock::takeChild(RenderObject& oldChild)
             // column span flag if it is set.
             ASSERT(!inlineChildrenBlock.continuation());
             // Cache this value as it might get changed in setStyle() call.
-            bool inlineChildrenBlockHasLayer = inlineChildrenBlock.hasLayer();
             inlineChildrenBlock.setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK));
-            auto blockToMove = takeChildInternal(inlineChildrenBlock, inlineChildrenBlockHasLayer ? NotifyChildren : DontNotifyChildren);
+            auto blockToMove = takeChildInternal(inlineChildrenBlock);
             
             // Now just put the inlineChildrenBlock inside the blockChildrenBlock.
             RenderObject* beforeChild = prev == &inlineChildrenBlock ? blockChildrenBlock.firstChild() : nullptr;
-            blockChildrenBlock.insertChildInternal(WTFMove(blockToMove), beforeChild,
-                (inlineChildrenBlockHasLayer || blockChildrenBlock.hasLayer()) ? NotifyChildren : DontNotifyChildren);
+            blockChildrenBlock.insertChildInternal(WTFMove(blockToMove), beforeChild);
             next->setNeedsLayoutAndPrefWidthsRecalc();
             
             // inlineChildrenBlock got reparented to blockChildrenBlock, so it is no longer a child
@@ -862,7 +860,7 @@ RenderPtr<RenderObject> RenderBlock::takeChild(RenderObject& oldChild)
         } else {
             // Take all the children out of the |next| block and put them in
             // the |prev| block.
-            nextBlock.moveAllChildrenIncludingFloatsTo(prevBlock, nextBlock.hasLayer() || prevBlock.hasLayer());
+            nextBlock.moveAllChildrenIncludingFloatsTo(prevBlock, RenderBoxModelObject::NormalizeAfterInsertion::No);
             
             // Delete the now-empty block's lines and nuke it.
             nextBlock.deleteLines();

@@ -99,9 +99,8 @@ public:
     void moveLayers(RenderLayer* oldParent, RenderLayer* newParent);
     RenderLayer* findNextLayer(RenderLayer* parentLayer, RenderObject* startPoint, bool checkParent = true);
 
-    enum NotifyChildrenType { NotifyChildren, DontNotifyChildren };
-    void insertChildInternal(RenderPtr<RenderObject>, RenderObject* beforeChild, NotifyChildrenType);
-    RenderPtr<RenderObject> takeChildInternal(RenderObject&, NotifyChildrenType) WARN_UNUSED_RETURN;
+    void insertChildInternal(RenderPtr<RenderObject>, RenderObject* beforeChild);
+    RenderPtr<RenderObject> takeChildInternal(RenderObject&) WARN_UNUSED_RETURN;
 
     virtual RenderElement* hoverAncestor() const;
 

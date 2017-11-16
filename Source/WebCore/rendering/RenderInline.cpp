@@ -402,7 +402,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
             // FIXME: When the anonymous wrapper has multiple children, we end up traversing up to the topmost wrapper
             // every time, which is a bit wasteful.
         }
-        auto childToMove = rendererToMove->parent()->takeChildInternal(*rendererToMove, NotifyChildren);
+        auto childToMove = rendererToMove->parent()->takeChildInternal(*rendererToMove);
         cloneInline->addChildIgnoringContinuation(WTFMove(childToMove));
         rendererToMove->setNeedsLayoutAndPrefWidthsRecalc();
         rendererToMove = nextSibling;
@@ -440,7 +440,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
             // *after* currentChild and append them all to the clone.
             for (auto* sibling = currentChild->nextSibling(); sibling;) {
                 auto* next = sibling->nextSibling();
-                auto childToMove = current->takeChildInternal(*sibling, NotifyChildren);
+                auto childToMove = current->takeChildInternal(*sibling);
                 cloneInline->addChildIgnoringContinuation(WTFMove(childToMove));
                 sibling->setNeedsLayoutAndPrefWidthsRecalc();
                 sibling = next;
@@ -458,14 +458,14 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
         cloneBlockChild.resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants();
 
     // Now we are at the block level. We need to put the clone into the toBlock.
-    toBlock->insertChildInternal(WTFMove(cloneInline), nullptr, NotifyChildren);
+    toBlock->insertChildInternal(WTFMove(cloneInline), nullptr);
 
     // Now take all the children after currentChild and remove them from the fromBlock
     // and put them in the toBlock.
     for (auto* current = currentChild->nextSibling(); current;) {
         auto* next = current->nextSibling();
-        auto childToMove = fromBlock->takeChildInternal(*current, NotifyChildren);
-        toBlock->insertChildInternal(WTFMove(childToMove), nullptr, NotifyChildren);
+        auto childToMove = fromBlock->takeChildInternal(*current);
+        toBlock->insertChildInternal(WTFMove(childToMove), nullptr);
         current = next;
     }
 }
@@ -503,9 +503,9 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderPtr<RenderBlock> n
 
     RenderObject* boxFirst = madeNewBeforeBlock ? block->firstChild() : pre->nextSibling();
     if (createdPre)
-        block->insertChildInternal(WTFMove(createdPre), boxFirst, NotifyChildren);
-    block->insertChildInternal(WTFMove(newBlockBox), boxFirst, NotifyChildren);
-    block->insertChildInternal(WTFMove(createdPost), boxFirst, NotifyChildren);
+        block->insertChildInternal(WTFMove(createdPre), boxFirst);
+    block->insertChildInternal(WTFMove(newBlockBox), boxFirst);
+    block->insertChildInternal(WTFMove(createdPost), boxFirst);
     block->setChildrenInline(false);
     
     if (madeNewBeforeBlock) {
@@ -513,8 +513,8 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderPtr<RenderBlock> n
         while (o) {
             RenderObject* no = o;
             o = no->nextSibling();
-            auto childToMove = block->takeChildInternal(*no, NotifyChildren);
-            pre->insertChildInternal(WTFMove(childToMove), nullptr, NotifyChildren);
+            auto childToMove = block->takeChildInternal(*no);
+            pre->insertChildInternal(WTFMove(childToMove), nullptr);
             no->setNeedsLayoutAndPrefWidthsRecalc();
         }
     }
@@ -1371,7 +1371,7 @@ void RenderInline::childBecameNonInline(RenderElement& child)
         oldContinuation->removeFromContinuationChain();
     newBox->insertIntoContinuationChainAfter(*this);
     RenderObject* beforeChild = child.nextSibling();
-    auto removedChild = takeChildInternal(child, NotifyChildren);
+    auto removedChild = takeChildInternal(child);
     splitFlow(beforeChild, WTFMove(newBox), WTFMove(removedChild), oldContinuation);
 }
 

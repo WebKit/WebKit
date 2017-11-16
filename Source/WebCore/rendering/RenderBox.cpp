@@ -4937,8 +4937,8 @@ RenderObject* RenderBox::splitAnonymousBoxesAroundChild(RenderObject* beforeChil
             // so that the table repainting logic knows the structure is dirty.
             // See for example RenderTableCell:clippedOverflowRectForRepaint.
             markBoxForRelayoutAfterSplit(*parentBox);
-            parentBox->insertChildInternal(WTFMove(newPostBox), boxToSplit.nextSibling(), NotifyChildren);
-            boxToSplit.moveChildrenTo(&postBox, beforeChild, nullptr, true);
+            parentBox->insertChildInternal(WTFMove(newPostBox), boxToSplit.nextSibling());
+            boxToSplit.moveChildrenTo(&postBox, beforeChild, nullptr, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
 
             markBoxForRelayoutAfterSplit(boxToSplit);
             markBoxForRelayoutAfterSplit(postBox);

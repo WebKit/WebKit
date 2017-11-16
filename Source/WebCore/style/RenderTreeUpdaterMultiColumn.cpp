@@ -57,12 +57,12 @@ void RenderTreeUpdater::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
     flow.RenderBlock::addChild(WTFMove(newFragmentedFlow));
 
     // Reparent children preceding the fragmented flow into the fragmented flow.
-    flow.moveChildrenTo(&fragmentedFlow, flow.firstChild(), &fragmentedFlow, true);
+    flow.moveChildrenTo(&fragmentedFlow, flow.firstChild(), &fragmentedFlow, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
     if (flow.isFieldset()) {
         // Keep legends out of the flow thread.
         for (auto& box : childrenOfType<RenderBox>(fragmentedFlow)) {
             if (box.isLegend())
-                fragmentedFlow.moveChildTo(&flow, &box, true);
+                fragmentedFlow.moveChildTo(&flow, &box, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
         }
     }
 
@@ -75,7 +75,7 @@ void RenderTreeUpdater::MultiColumn::destroyFragmentedFlow(RenderBlockFlow& flow
     flow.clearMultiColumnFlow();
 
     fragmentedFlow.deleteLines();
-    fragmentedFlow.moveAllChildrenTo(&flow, true);
+    fragmentedFlow.moveAllChildrenTo(&flow, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
 
     // Move spanners back to their original DOM position in the tree, and destroy the placeholders.
     auto spannerMap = fragmentedFlow.takeSpannerMap();
