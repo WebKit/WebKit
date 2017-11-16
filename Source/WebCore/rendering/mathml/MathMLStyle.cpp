@@ -80,15 +80,19 @@ RenderObject* MathMLStyle::getMathMLParentNode(RenderObject* renderer)
 
 void MathMLStyle::updateStyleIfNeeded(RenderObject* renderer, bool oldDisplayStyle, MathMLElement::MathVariant oldMathVariant)
 {
+    // RenderMathMLFencedOperator does not support mathvariant or displaystyle transforms.
+    // See https://bugs.webkit.org/show_bug.cgi?id=160509#c1.
+    bool isNonAnonymousTokenElement = is<RenderMathMLToken>(renderer) && !renderer->isAnonymous();
+
     if (oldDisplayStyle != m_displayStyle) {
         renderer->setNeedsLayoutAndPrefWidthsRecalc();
-        if (is<RenderMathMLToken>(renderer))
+        if (isNonAnonymousTokenElement)
             downcast<RenderMathMLToken>(renderer)->updateTokenContent();
         else if (is<RenderMathMLFraction>(renderer))
             downcast<RenderMathMLFraction>(renderer)->updateFromElement();
     }
     if (oldMathVariant != m_mathVariant) {
-        if (is<RenderMathMLToken>(renderer))
+        if (isNonAnonymousTokenElement)
             downcast<RenderMathMLToken>(renderer)->updateTokenContent();
     }
 }

@@ -1,3 +1,15 @@
+2017-11-16  Frederic Wang  <fwang@igalia.com>
+
+        ASSERTION FAILED: !isAnonymous() in WebCore::RenderMathMLOperator::updateTokenContent
+        https://bugs.webkit.org/show_bug.cgi?id=166011
+
+        Reviewed by Alejandro G. Castro.
+
+        Add a crash test checking displaystyle and mathvariant on mfenced operators.
+
+        * mathml/mfenced-displaystyle-and-mathvariant-crash-expected.txt: Added.
+        * mathml/mfenced-displaystyle-and-mathvariant-crash.html: Added.
+
 2017-11-15  Youenn Fablet  <youenn@apple.com>
 
         Service Worker fetch should handle empty responses
