@@ -1,3 +1,36 @@
+2017-11-16  Megan Gardner  <megan_gardner@apple.com>
+
+        Remove allowBlockSelection as block selection is not supported anymore
+        https://bugs.webkit.org/show_bug.cgi?id=179738
+
+        Reviewed by Tim Horton.
+
+        Remove all instances of the alloweBlockSelection flag. Blocks selection is fully disabled
+        and thus this flag will do nothing. This was only added as a debug measure last year, and nothing
+        ever actually used it.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _allowsBlockSelection]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _allowsBlockSelection]): Deleted.
+        (-[WKWebViewConfiguration _setAllowsBlockSelection:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::allowsBlockSelection): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+
 2017-11-16  Brent Fulgham  <bfulgham@apple.com>
 
         Whitelist additional IOKit properties based on customer feedback

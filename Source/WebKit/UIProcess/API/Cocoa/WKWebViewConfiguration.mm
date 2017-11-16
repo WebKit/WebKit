@@ -127,7 +127,6 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     BOOL _allowsInlineMediaPlayback;
     BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute;
     BOOL _allowsInlineMediaPlaybackAfterFullscreen;
-    BOOL _allowsBlockSelection;
     _WKDragLiftDelay _dragLiftDelay;
 #endif
 
@@ -218,7 +217,6 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 
 #if PLATFORM(IOS)
     _selectionGranularity = WKSelectionGranularityDynamic;
-    _allowsBlockSelection = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitDebugAllowBlockSelection"];
     _dragLiftDelay = toDragLiftDelay([[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitDebugDragLiftDelay"]);
 #endif
 
@@ -335,7 +333,6 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_allowsPictureInPictureMediaPlayback = self->_allowsPictureInPictureMediaPlayback;
     configuration->_alwaysRunsAtForegroundPriority = _alwaysRunsAtForegroundPriority;
     configuration->_selectionGranularity = self->_selectionGranularity;
-    configuration->_allowsBlockSelection = self->_allowsBlockSelection;
     configuration->_ignoresViewportScaleLimits = self->_ignoresViewportScaleLimits;
     configuration->_dragLiftDelay = self->_dragLiftDelay;
 #endif
@@ -638,16 +635,6 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setAllowsInlineMediaPlaybackAfterFullscreen:(BOOL)allows
 {
     _allowsInlineMediaPlaybackAfterFullscreen = allows;
-}
-
-- (BOOL)_allowsBlockSelection
-{
-    return _allowsBlockSelection;
-}
-
-- (void)_setAllowsBlockSelection:(BOOL)allowsBlockSelection
-{
-    _allowsBlockSelection = allowsBlockSelection;
 }
 
 - (_WKDragLiftDelay)_dragLiftDelay

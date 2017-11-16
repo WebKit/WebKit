@@ -569,11 +569,6 @@ void PageClientImpl::stopAssistingNode()
     [m_contentView _stopAssistingNode];
 }
 
-bool PageClientImpl::allowsBlockSelection()
-{
-    return [m_webView _allowsBlockSelection];
-}
-
 void PageClientImpl::showPlaybackTargetPicker(bool hasVideo, const IntRect& elementRect)
 {
     [m_contentView _showPlaybackTargetPicker:hasVideo fromRect:elementRect];

@@ -137,7 +137,6 @@ struct WebPageCreationParameters {
     WebCore::FloatSize availableScreenSize;
     float textAutosizingWidth;
     bool ignoresViewportScaleLimits;
-    bool allowsBlockSelection;
 #endif
 #if PLATFORM(COCOA)
     bool smartInsertDeleteEnabled;

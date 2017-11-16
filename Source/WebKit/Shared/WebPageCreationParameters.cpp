@@ -85,7 +85,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << availableScreenSize;
     encoder << textAutosizingWidth;
     encoder << ignoresViewportScaleLimits;
-    encoder << allowsBlockSelection;
 #endif
 #if PLATFORM(COCOA)
     encoder << smartInsertDeleteEnabled;
@@ -227,8 +226,6 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.textAutosizingWidth))
         return std::nullopt;
     if (!decoder.decode(parameters.ignoresViewportScaleLimits))
-        return std::nullopt;
-    if (!decoder.decode(parameters.allowsBlockSelection))
         return std::nullopt;
 #endif
 

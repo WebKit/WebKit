@@ -141,7 +141,6 @@ struct PrintInfo;
 @property (nonatomic, readonly) WKWebViewContentProviderRegistry *_contentProviderRegistry;
 
 @property (nonatomic, readonly) WKSelectionGranularity _selectionGranularity;
-@property (nonatomic, readonly) BOOL _allowsBlockSelection;
 
 @property (nonatomic, readonly) BOOL _allowsDoubleTapGestures;
 @property (nonatomic, readonly) UIEdgeInsets _computedContentInset;
