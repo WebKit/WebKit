@@ -220,7 +220,7 @@ void AsyncScrollingCoordinator::frameViewRootLayerDidChange(FrameView& frameView
     
     // If the root layer does not have a ScrollingStateNode, then we should create one.
     ensureRootStateNodeForFrameView(frameView);
-    ASSERT(m_scrollingStateTree->rootStateNode());
+    ASSERT(m_scrollingStateTree->stateNodeForID(frameView.scrollLayerID()));
 
     ScrollingCoordinator::frameViewRootLayerDidChange(frameView);
 
@@ -512,6 +512,12 @@ void AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions(const
 void AsyncScrollingCoordinator::ensureRootStateNodeForFrameView(FrameView& frameView)
 {
     ASSERT(frameView.scrollLayerID());
+    if (m_scrollingStateTree->stateNodeForID(frameView.scrollLayerID()))
+        return;
+
+    // For non-main frames, it is only possible to arrive in this function from
+    // RenderLayerCompositor::updateBacking where the node has already been created.
+    ASSERT(frameView.frame().isMainFrame());
     attachToStateTree(FrameScrollingNode, frameView.scrollLayerID(), 0);
 }
 
