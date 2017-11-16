@@ -1,5 +1,20 @@
 2017-11-16  Robin Morisset  <rmorisset@apple.com>
 
+        Provide a runtime option for disabling the optimization of recursive tail calls
+        https://bugs.webkit.org/show_bug.cgi?id=179765
+
+        Reviewed by Mark Lam.
+
+        * bytecode/PreciseJumpTargets.cpp:
+        (JSC::getJumpTargetsForBytecodeOffset):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEnter):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleRecursiveTailCall):
+        * runtime/Options.h:
+
+2017-11-16  Robin Morisset  <rmorisset@apple.com>
+
         Fix null pointer dereference in bytecodeDumper
         https://bugs.webkit.org/show_bug.cgi?id=179764
 

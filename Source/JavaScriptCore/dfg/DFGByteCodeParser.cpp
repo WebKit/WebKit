@@ -1422,6 +1422,9 @@ void ByteCodeParser::emitArgumentPhantoms(int registerOffset, int argumentCountI
 
 bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, const CallLinkStatus& callLinkStatus, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis)
 {
+    if (UNLIKELY(!Options::optimizeRecursiveTailCalls()))
+        return false;
+
     // FIXME: We currently only do this optimisation in the simple, non-polymorphic case.
     // https://bugs.webkit.org/show_bug.cgi?id=178390
     if (callLinkStatus.couldTakeSlowPath() || callLinkStatus.size() != 1)

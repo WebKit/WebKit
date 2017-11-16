@@ -42,7 +42,7 @@ static void getJumpTargetsForBytecodeOffset(Block* codeBlock, Instruction* instr
     // op_loop_hint does not have jump target stored in bytecode instructions.
     if (opcodeID == op_loop_hint)
         out.append(bytecodeOffset);
-    else if (opcodeID == op_enter && codeBlock->hasTailCalls()) {
+    else if (opcodeID == op_enter && codeBlock->hasTailCalls() && Options::optimizeRecursiveTailCalls()) {
         // We need to insert a jump after op_enter, so recursive tail calls have somewhere to jump to.
         // But we only want to pay that price for functions that have at least one tail call.
         out.append(bytecodeOffset + opcodeLengths[op_enter]);

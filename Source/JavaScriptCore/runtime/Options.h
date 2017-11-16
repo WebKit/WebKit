@@ -149,6 +149,7 @@ constexpr bool enableAsyncIteration = false;
     \
     v(bool, useFunctionDotArguments, true, Normal, nullptr) \
     v(bool, useTailCalls, true, Normal, nullptr) \
+    v(bool, optimizeRecursiveTailCalls, true, Normal, nullptr) \
     v(bool, alwaysUseShadowChicken, false, Normal, nullptr) \
     v(unsigned, shadowChickenLogSize, 1000, Normal, nullptr) \
     v(unsigned, shadowChickenMaxTailDeletedFramesSize, 128, Normal, nullptr) \
