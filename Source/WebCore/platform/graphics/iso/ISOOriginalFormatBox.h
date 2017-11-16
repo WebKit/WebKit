@@ -38,7 +38,7 @@ public:
 protected:
     bool parse(JSC::DataView&, unsigned& offset) override;
 
-    FourCC m_dataFormat { 0 };
+    FourCC m_dataFormat { uint32_t { 0 } };
 };
 
 }

@@ -71,7 +71,7 @@ protected:
     }
 
     uint64_t m_size { 0 };
-    FourCC m_boxType { 0 };
+    FourCC m_boxType { uint32_t { 0 } };
     Vector<uint8_t> m_extendedType;
 };
 
