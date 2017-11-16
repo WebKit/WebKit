@@ -326,8 +326,6 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
 # A lot of the disk-cache tests are flaky on mac-wk2
 webkit.org/b/169359 [ Debug ] http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html [ Pass Failure ]
-webkit.org/b/149087 [ Debug ] http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html [ Pass Failure Timeout ]
-webkit.org/b/149087 [ Release ] http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html [ Pass Timeout ]
 webkit.org/b/149087 [ Debug ] http/tests/cache/disk-cache/disk-cache-validation-no-body.html [ Pass Failure Timeout ]
 webkit.org/b/149087 [ Debug ] http/tests/cache/disk-cache/disk-cache-validation.html [ Pass Failure Timeout ]
 webkit.org/b/149087 [ Release ] http/tests/cache/disk-cache/disk-cache-validation.html [ Pass Timeout ]
@@ -335,6 +333,8 @@ webkit.org/b/149087 [ Debug ] http/tests/cache/disk-cache/disk-cache-last-modifi
 webkit.org/b/149087 [ Debug ] http/tests/cache/disk-cache/disk-cache-vary.html [ Pass Failure Timeout ]
 webkit.org/b/147075 [ Debug ] http/tests/cache/disk-cache/disk-cache-disable.html [ Pass Failure Timeout ]
 webkit.org/b/149087 [ Debug ] http/tests/cache/disk-cache/disk-cache-vary-no-body.html [ Pass Failure Timeout ]
+
+webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html [ Pass Failure ]
 
 webkit.org/b/150241 webarchive/loading/object.html [ Pass Crash ] 
 
@@ -827,3 +827,6 @@ webkit.org/b/177501 [ HighSierra ] webrtc/video-mute.html [ Pass Timeout ]
 
 webkit.org/b/177828 http/tests/appcache/decide-navigation-policy-after-delay.html [ Skip ]
 webkit.org/b/177828 http/tests/contentfiltering/load-substitute-data-from-appcache.html [ Skip ]
+
+webkit.org/b/165620 [ ElCapitan Sierra ] http/tests/cache/disk-cache/disk-cache-request-headers.html [ Pass Failure ]
+

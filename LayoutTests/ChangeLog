@@ -1,3 +1,11 @@
+2017-11-16  Matt Lewis  <jlewis3@apple.com>
+
+        Marked multiple http/tests/cache/disk-cache/ tests as flaky.
+        
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-11-16  Youenn Fablet  <youenn@apple.com>
 
         imported/w3c/web-platform-tests/2dcontext/the-canvas-state/canvas_state_restore_001.htm is an ImageOnlyFailure
