@@ -1,3 +1,17 @@
+2017-11-16  Robin Morisset  <rmorisset@apple.com>
+
+        REGRESSION (r224592): oss-fuzz: jsc: Null-dereference READ in JSC::JSCell::isObject (4216)
+        https://bugs.webkit.org/show_bug.cgi?id=179763
+        <rdar://problem/35550513>
+
+        Reviewed by Keith Miller.
+
+        Just adding a slightly cleaned-up version of the original fuzzer-found test.
+
+        * stress/tdz-this-in-try-catch.js: Added.
+        (__v_6388):
+        (__v_6392):
+
 2017-11-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][FTL] Support Array::DirectArguments with OutOfBounds

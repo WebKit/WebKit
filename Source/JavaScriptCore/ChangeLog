@@ -1,3 +1,20 @@
+2017-11-16  Robin Morisset  <rmorisset@apple.com>
+
+        REGRESSION (r224592): oss-fuzz: jsc: Null-dereference READ in JSC::JSCell::isObject (4216)
+        https://bugs.webkit.org/show_bug.cgi?id=179763
+        <rdar://problem/35550513>
+
+        Reviewed by Keith Miller.
+
+        Fix null pointer dereference caused by an eliminated tdz_check
+
+        The problem was when doing an OSR entry in DFG while |this| was null
+        (because super() had not yet been called in the constructor of this
+        subclass), it would be marked as non-null, and the tdz_check eliminated.
+
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::initialize):
+
 2017-11-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r224863.

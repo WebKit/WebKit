@@ -129,7 +129,7 @@ void InPlaceAbstractState::initialize()
                     entrypoint->valuesAtHead.argument(i).setType(SpecBoolean);
                     break;
                 case FlushedCell:
-                    entrypoint->valuesAtHead.argument(i).setType(m_graph, SpecCell);
+                    entrypoint->valuesAtHead.argument(i).setType(m_graph, SpecCellCheck);
                     break;
                 case FlushedJSValue:
                     entrypoint->valuesAtHead.argument(i).makeBytecodeTop();
