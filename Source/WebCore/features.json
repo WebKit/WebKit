@@ -971,7 +971,7 @@
     {
         "name": "Payment Request",
         "status": {
-            "status": "In Development"
+            "status": "Supported In Preview"
         },
         "url": "https://www.w3.org/TR/payment-request/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=174796",
