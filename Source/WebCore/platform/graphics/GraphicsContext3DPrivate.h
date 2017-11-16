@@ -34,11 +34,8 @@ public:
     bool makeContextCurrent();
     PlatformGraphicsContext3D platformContext();
 
-    GraphicsContext3D::RenderStyle renderStyle() { return m_renderStyle; }
-
 private:
     std::unique_ptr<GLContext> m_glContext;
-    GraphicsContext3D::RenderStyle m_renderStyle;
 };
 
 }

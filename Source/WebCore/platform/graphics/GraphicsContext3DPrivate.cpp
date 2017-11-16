@@ -40,13 +40,10 @@ namespace WebCore {
 using namespace std;
 
 GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D*, GraphicsContext3D::RenderStyle renderStyle)
-    : m_renderStyle(renderStyle)
 {
     switch (renderStyle) {
     case GraphicsContext3D::RenderOffscreen:
         m_glContext = GLContext::createOffscreenContext(&PlatformDisplay::sharedDisplayForCompositing());
-        break;
-    case GraphicsContext3D::RenderToCurrentGLContext:
         break;
     case GraphicsContext3D::RenderDirectlyToHostWindow:
         ASSERT_NOT_REACHED();

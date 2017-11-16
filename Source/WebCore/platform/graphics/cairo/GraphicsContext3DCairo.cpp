@@ -220,14 +220,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, Hos
 
 GraphicsContext3D::~GraphicsContext3D()
 {
-#if USE(TEXTURE_MAPPER)
-    if (m_texmapLayer->renderStyle() == RenderToCurrentGLContext)
-        return;
-#else
-    if (m_private->renderStyle() == RenderToCurrentGLContext)
-        return;
-#endif
-
     makeContextCurrent();
     if (m_texture)
         ::glDeleteTextures(1, &m_texture);

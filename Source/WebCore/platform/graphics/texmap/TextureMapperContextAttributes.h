@@ -33,7 +33,6 @@ struct TextureMapperContextAttributes {
     void initialize();
 
     bool isGLES2Compliant { false };
-
     bool supportsNPOTTextures { false };
     bool supportsBGRA8888 { false };
     bool supportsUnpackSubimage { false };

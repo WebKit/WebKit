@@ -37,13 +37,17 @@ void TextureMapperContextAttributes::initialize()
 {
 #if USE(OPENGL_ES_2)
     isGLES2Compliant = true;
-#endif
 
     String extensionsString(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)));
-
-    supportsNPOTTextures = !isGLES2Compliant || extensionsString.contains(ASCIILiteral("GL_OES_texture_npot"));
+    supportsNPOTTextures = extensionsString.contains(ASCIILiteral("GL_OES_texture_npot"));
     supportsBGRA8888 = extensionsString.contains(ASCIILiteral("GL_EXT_texture_format_BGRA8888"));
-    supportsUnpackSubimage = !isGLES2Compliant || extensionsString.contains(ASCIILiteral("GL_EXT_unpack_subimage"));
+    supportsUnpackSubimage = extensionsString.contains(ASCIILiteral("GL_EXT_unpack_subimage"));
+#else
+    isGLES2Compliant = false;
+    supportsNPOTTextures = true;
+    supportsBGRA8888 = true;
+    supportsUnpackSubimage = true;
+#endif
 }
 
 } // namespace WebCore
