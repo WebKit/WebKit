@@ -124,7 +124,9 @@ static void postTimer()
 
 bool currentRunLoopInCommonMode()
 {
-    return [[NSRunLoop currentRunLoop] currentMode] == (NSString *)kCFRunLoopCommonModes;
+    NSString *currentMode = [[NSRunLoop currentRunLoop] currentMode];
+    return currentMode == (NSString *)kCFRunLoopCommonModes
+        || currentMode == (NSString *)kCFRunLoopDefaultMode;
 }
 
 void scheduleDispatchFunctionsOnMainThread(SchedulePairHashSet* pairs)

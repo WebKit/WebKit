@@ -1,5 +1,18 @@
 2017-11-15  Alex Christensen  <achristensen@webkit.org>
 
+        Fix fast/events/message-port-postMessage-recursive.html after r224896
+        https://bugs.webkit.org/show_bug.cgi?id=179749
+
+        Reviewed by Jer Noble.
+
+        * wtf/mac/MainThreadMac.mm:
+        (WTF::currentRunLoopInCommonMode):
+        We sometimes run the runloop in kCFRunLoopDefaultMode, which should also have the responsiveness optimization.
+        This allows the runloop to continue to iterate when we are doing lots of things on the main thread.
+        CFRunLoop.h has a special definition of these two constants.
+
+2017-11-15  Alex Christensen  <achristensen@webkit.org>
+
         WebViews scheduled in custom run loop modes should be able to do more than 50ms of work at a time
         https://bugs.webkit.org/show_bug.cgi?id=179742
         <rdar://problem/35519421>
