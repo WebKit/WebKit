@@ -1,3 +1,18 @@
+2017-11-16  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Express time in milliseconds through the API
+        https://bugs.webkit.org/show_bug.cgi?id=179799
+
+        Reviewed by Simon Fraser.
+
+        Update tests to use milliseconds rather than seconds.
+
+        * http/wpt/wk-web-animations/timing-model/animation-current-time.html:
+        * http/wpt/wk-web-animations/timing-model/animation-interface-start-time-property.html:
+        * http/wpt/wk-web-animations/timing-model/animation-playback-rate.html:
+        * http/wpt/wk-web-animations/timing-model/keyframe-effect-interface-timing-duration.html:
+        * http/wpt/wk-web-animations/timing-model/timeline-current-time.html:
+
 2017-11-16  Matt Lewis  <jlewis3@apple.com>
 
         Marked multiple http/tests/cache/disk-cache/ tests as flaky.

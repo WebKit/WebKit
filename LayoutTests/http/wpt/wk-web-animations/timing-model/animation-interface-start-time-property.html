@@ -17,14 +17,14 @@ test(t => {
 
 test(t => {
     const animation = new Animation;
-    animation.startTime = 2;
-    assert_equals(animation.startTime, 2);
+    animation.startTime = 2000;
+    assert_equals(animation.startTime, 2000);
 }, "The animation.startTime property can be set to a number.");
 
 test(t => {
     const animation = new Animation;
-    animation.startTime = 2;
-    assert_equals(animation.startTime, 2);
+    animation.startTime = 2000;
+    assert_equals(animation.startTime, 2000);
     animation.startTime = null;
     assert_equals(animation.startTime, null);
 }, "The animation.effect property can be set back to null.");

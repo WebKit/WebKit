@@ -17,23 +17,23 @@ test(t => {
 
 test(t => {
     const animation = new Animation;
-    animation.startTime = 2;
+    animation.startTime = 2000;
     internals.setTimelineCurrentTime(document.timeline, 0);
-    assert_equals(animation.currentTime, -2);
-    internals.setTimelineCurrentTime(document.timeline, 3);
-    assert_equals(animation.currentTime, 1);
-    animation.startTime = 1;
-    assert_equals(animation.currentTime, 2);
+    assert_equals(animation.currentTime, -2000);
+    internals.setTimelineCurrentTime(document.timeline, 3000);
+    assert_equals(animation.currentTime, 1000);
+    animation.startTime = 1000;
+    assert_equals(animation.currentTime, 2000);
 }, "An animation accounts for its start time and document current time when computing its current time.");
 
 test(t => {
     const animation = new Animation;
-    animation.startTime = 1;
-    internals.setTimelineCurrentTime(document.timeline, 3);
-    assert_equals(animation.currentTime, 2);
+    animation.startTime = 1000;
+    internals.setTimelineCurrentTime(document.timeline, 3000);
+    assert_equals(animation.currentTime, 2000);
 
-    animation.currentTime = 1;
-    assert_equals(animation.startTime, 2);
+    animation.currentTime = 1000;
+    assert_equals(animation.startTime, 2000);
 }, "Setting the current time should adjust the start time.");
 
 test(t => {

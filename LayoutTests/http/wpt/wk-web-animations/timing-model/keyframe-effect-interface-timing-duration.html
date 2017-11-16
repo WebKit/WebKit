@@ -19,8 +19,8 @@ test(t => {
 
 test(t => {
     const keyframeEffect = new KeyframeEffect(document.body, null);
-    keyframeEffect.timing.duration = 2;
-    assert_equals(keyframeEffect.timing.duration, 2);
+    keyframeEffect.timing.duration = 2000;
+    assert_equals(keyframeEffect.timing.duration, 2000);
 }, "Check that we can update the timing duration.");
 
 </script>

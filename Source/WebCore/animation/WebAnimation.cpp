@@ -123,7 +123,7 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
 std::optional<double> WebAnimation::bindingsStartTime() const
 {
     if (m_startTime)
-        return m_startTime->value();
+        return m_startTime->milliseconds();
     return std::nullopt;
 }
 
@@ -132,7 +132,7 @@ void WebAnimation::setBindingsStartTime(std::optional<double> startTime)
     if (startTime == std::nullopt)
         setStartTime(std::nullopt);
     else
-        setStartTime(Seconds(startTime.value()));
+        setStartTime(Seconds::fromMilliseconds(startTime.value()));
 }
 
 std::optional<Seconds> WebAnimation::startTime() const
@@ -156,14 +156,14 @@ std::optional<double> WebAnimation::bindingsCurrentTime() const
     auto time = currentTime();
     if (!time)
         return std::nullopt;
-    return time->value();
+    return time->milliseconds();
 }
 
 ExceptionOr<void> WebAnimation::setBindingsCurrentTime(std::optional<double> currentTime)
 {
     if (!currentTime)
         return Exception { TypeError };
-    setCurrentTime(Seconds(currentTime.value()));
+    setCurrentTime(Seconds::fromMilliseconds(currentTime.value()));
     return { };
 }
 

@@ -38,8 +38,8 @@ public:
     static Ref<AnimationEffectTiming> create();
     ~AnimationEffectTiming();
 
-    double bindingsDuration() const { return m_duration.value(); }
-    void setBindingsDuration(double duration) { m_duration = Seconds(duration); }
+    double bindingsDuration() const { return m_duration.milliseconds(); }
+    void setBindingsDuration(double duration) { m_duration = Seconds::fromMilliseconds(duration); }
     Seconds duration() const { return m_duration; }
     void setDuration(Seconds& duration) { m_duration = duration; }
 

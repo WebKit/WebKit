@@ -4285,7 +4285,7 @@ void Internals::pauseTimeline(AnimationTimeline& timeline)
 
 void Internals::setTimelineCurrentTime(AnimationTimeline& timeline, double currentTime)
 {
-    timeline.setCurrentTime(Seconds(currentTime));
+    timeline.setCurrentTime(Seconds::fromMilliseconds(currentTime));
 }
 
 #if ENABLE(APPLE_PAY)

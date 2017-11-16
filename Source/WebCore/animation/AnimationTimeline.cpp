@@ -59,7 +59,7 @@ std::optional<double> AnimationTimeline::bindingsCurrentTime()
     auto time = currentTime();
     if (!time)
         return std::nullopt;
-    return time->value();
+    return time->milliseconds();
 }
 
 void AnimationTimeline::setCurrentTime(Seconds currentTime)

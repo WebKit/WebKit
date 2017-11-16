@@ -15,13 +15,13 @@ test(t => {
 }, 'The document timeline currentTime is null by default.');
 
 test(t => {
-    internals.setTimelineCurrentTime(document.timeline, 1);
-    assert_equals(document.timeline.currentTime, 1);
+    internals.setTimelineCurrentTime(document.timeline, 1000);
+    assert_equals(document.timeline.currentTime, 1000);
 }, 'Using internals.setTimelineCurrentTime() can set the document timeline currentTime.');
 
 test(t => {
-    internals.setTimelineCurrentTime(document.timeline, -1);
-    assert_equals(document.timeline.currentTime, -1);
+    internals.setTimelineCurrentTime(document.timeline, -1000);
+    assert_equals(document.timeline.currentTime, -1000);
 }, 'Using internals.setTimelineCurrentTime() can set the document timeline currentTime to a negative value.');
 
 </script>
