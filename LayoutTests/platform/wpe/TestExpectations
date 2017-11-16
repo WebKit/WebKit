@@ -215,6 +215,7 @@ imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg [ Timeout
 Bug(WPE) imported/w3c/IndexedDB-private-browsing/idb_webworkers.html [ Failure ]
 webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating.html [ Crash ]
 webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating_index.html [ Crash ]
+webkit.org/b/179758 imported/w3c/IndexedDB-private-browsing/idbfactory_open12.html [ Pass Crash ]
 
 Bug(WPE) fast/attachment [ Skip ]
 Bug(WPE) fast/autoresize [ Skip ]
@@ -914,7 +915,7 @@ webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-c.svg [ Imag
 webkit.org/b/107018 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ ImageOnlyFailure ]
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
 webkit.org/b/110446 svg/as-background-image/svg-transformed-background.html [ ImageOnlyFailure ]
-Bug(WPE) svg/as-image/svg-as-image-canvas.html [ ImageOnlyFailure ]
+Bug(WPE) svg/as-image/svg-as-image-canvas.html [ ImageOnlyFailure Crash ]
 webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-006.svg [ ImageOnlyFailure ]
 webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-007.svg [ ImageOnlyFailure ]
 webkit.org/b/129958 svg/clip-path/mask-nested-clip-path-008.svg [ ImageOnlyFailure ]
@@ -929,7 +930,7 @@ webkit.org/b/163830 svg/css/mix-blend-mode-opacity-root.svg [ ImageOnlyFailure ]
 webkit.org/b/163830 svg/css/mix-blend-mode-with-inline-svg.html [ ImageOnlyFailure ]
 webkit.org/b/135529 svg/css/parse-height.html [ Failure ]
 webkit.org/b/135529 svg/css/parse-length.html [ Failure ]
-Bug(WPE) svg/css/svg-resource-fragment-identifier-img-src.html [ ImageOnlyFailure ]
+Bug(WPE) svg/css/svg-resource-fragment-identifier-img-src.html [ ImageOnlyFailure Crash ]
 webkit.org/b/163831 svg/custom/acid3-test-77.html [ Failure ]
 webkit.org/b/163832 svg/custom/filter-update-different-root.html [ ImageOnlyFailure ]
 webkit.org/b/134758 svg/custom/composited-svg-with-opacity.html [ ImageOnlyFailure Pass ]
@@ -960,3 +961,12 @@ webkit.org/b/178705 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html
 webkit.org/b/178705 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Failure ]
 
 webkit.org/b/178706 media/media-source/media-source-paint-to-canvas.html [ Failure ]
+
+webkit.org/b/179957 crypto/workers/subtle/aes-cbc-import-key-decrypt.html [ Pass Crash ]
+
+webkit.org/b/179759 js/dom/removing-Cf-characters.html [ Pass Crash ]
+
+webkit.org/b/179760 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Timeout ]
+webkit.org/b/179760 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
+
+webkit.org/b/179761 workers/wasm-hashset-many-2.html [ Pass Timeout ]
