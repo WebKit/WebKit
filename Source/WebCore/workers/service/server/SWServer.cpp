@@ -130,9 +130,9 @@ Vector<ServiceWorkerRegistrationData> SWServer::getRegistrations(const SecurityO
 void SWServer::clearAll()
 {
     m_jobQueues.clear();
-    m_registrations.clear();
+    while (!m_registrations.isEmpty())
+        SWServerJobQueue::clearRegistration(*this, *m_registrations.begin()->value);
     m_originStore->clearAll();
-    // FIXME: We should probably ask service workers to terminate.
 }
 
 void SWServer::clear(const SecurityOrigin& origin)

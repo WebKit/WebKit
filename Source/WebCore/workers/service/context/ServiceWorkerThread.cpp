@@ -175,6 +175,9 @@ void ServiceWorkerThread::updateExtendedEventsSet(ExtendableEvent* newEvent)
         newEvent->whenAllExtendLifetimePromisesAreSettled([this](auto&&) {
             updateExtendedEventsSet();
         });
+        // Clear out the event's target as it is the WorkerGlobalScope and we do not want to keep it
+        // alive unnecessarily.
+        newEvent->setTarget(nullptr);
     }
 
     bool hasPendingEvents = this->hasPendingEvents();

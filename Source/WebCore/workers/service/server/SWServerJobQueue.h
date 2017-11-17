@@ -54,6 +54,8 @@ public:
     static void didFinishActivation(SWServerRegistration&, ServiceWorkerIdentifier);
     void didResolveRegistrationPromise();
 
+    static void clearRegistration(SWServer&, SWServerRegistration&);
+
 private:
     void jobTimerFired();
     void runNextJobSynchronously();
@@ -65,7 +67,6 @@ private:
     void runUpdateJob(const ServiceWorkerJobData&);
 
     void tryClearRegistration(SWServerRegistration&);
-    void clearRegistration(SWServerRegistration&);
     void install(SWServerRegistration&, ServiceWorkerIdentifier);
     static void tryActivate(SWServer&, SWServerRegistration&);
     static void activate(SWServer&, SWServerRegistration&);

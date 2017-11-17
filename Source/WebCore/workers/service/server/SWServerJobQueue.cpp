@@ -73,7 +73,7 @@ void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, con
 
         // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
         if (!newestWorker)
-            clearRegistration(*registration);
+            clearRegistration(m_server, *registration);
 
         // Invoke Finish Job with job and abort these steps.
         finishCurrentJob();
@@ -102,7 +102,7 @@ void SWServerJobQueue::scriptContextFailedToStart(ServiceWorkerIdentifier, const
 
     // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
     if (!registration->getNewestWorker())
-        clearRegistration(*registration);
+        clearRegistration(m_server, *registration);
 
     // Invoke Finish Job with job and abort these steps.
     finishCurrentJob();
@@ -166,7 +166,7 @@ void SWServerJobQueue::didFinishInstall(ServiceWorkerIdentifier identifier, bool
 
         // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
         if (!registration->getNewestWorker())
-            clearRegistration(*registration);
+            clearRegistration(m_server, *registration);
         // Invoke Finish Job with job and abort these steps.
         finishCurrentJob();
         return;
@@ -349,7 +349,7 @@ void SWServerJobQueue::tryClearRegistration(SWServerRegistration& registration)
     if (registration.activeWorker() && registration.activeWorker()->hasPendingEvents())
         return;
 
-    clearRegistration(registration);
+    clearRegistration(m_server, registration);
 }
 
 // https://w3c.github.io/ServiceWorker/#clear-registration
@@ -364,14 +364,14 @@ static void clearRegistrationWorker(SWServerRegistration& registration, SWServer
 }
 
 // https://w3c.github.io/ServiceWorker/#clear-registration
-void SWServerJobQueue::clearRegistration(SWServerRegistration& registration)
+void SWServerJobQueue::clearRegistration(SWServer& server, SWServerRegistration& registration)
 {
     clearRegistrationWorker(registration, registration.installingWorker(), ServiceWorkerRegistrationState::Installing);
     clearRegistrationWorker(registration, registration.waitingWorker(), ServiceWorkerRegistrationState::Waiting);
     clearRegistrationWorker(registration, registration.activeWorker(), ServiceWorkerRegistrationState::Active);
 
     // Remove scope to registration map[scopeString].
-    m_server.removeRegistration(registration.key());
+    server.removeRegistration(registration.key());
 }
 
 // https://w3c.github.io/ServiceWorker/#update-algorithm
