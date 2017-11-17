@@ -1,3 +1,13 @@
+2017-11-17  Nan Wang  <n_wang@apple.com>
+
+        AX: AOM: Implement boolean type properties
+        https://bugs.webkit.org/show_bug.cgi?id=179496
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/AOM-bool-properties-expected.txt: Added.
+        * accessibility/mac/AOM-bool-properties.html: Added.
+
 2017-11-17  Megan Gardner  <megan_gardner@apple.com>
 
         Turn on selection layout tests that are already working on iOS

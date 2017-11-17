@@ -625,11 +625,11 @@ bool AccessibilityNodeObject::isEnabled() const
 {
     // ARIA says that the disabled status applies to the current element and all descendant elements.
     for (AccessibilityObject* object = const_cast<AccessibilityNodeObject*>(this); object; object = object->parentObject()) {
-        const AtomicString& disabledStatus = object->getAttribute(aria_disabledAttr);
-        if (equalLettersIgnoringASCIICase(disabledStatus, "true"))
-            return false;
-        if (equalLettersIgnoringASCIICase(disabledStatus, "false"))
+        if (std::optional<bool> disabled = object->boolValueForProperty(AXPropertyName::Disabled)) {
+            if (disabled.value())
+                return false;
             break;
+        }
     }
     
     if (roleValue() == AccessibilityRole::HorizontalRule)
@@ -704,11 +704,9 @@ bool AccessibilityNodeObject::isHovered() const
 
 bool AccessibilityNodeObject::isMultiSelectable() const
 {
-    const AtomicString& ariaMultiSelectable = getAttribute(aria_multiselectableAttr);
-    if (equalLettersIgnoringASCIICase(ariaMultiSelectable, "true"))
-        return true;
-    if (equalLettersIgnoringASCIICase(ariaMultiSelectable, "false"))
-        return false;
+    std::optional<bool> multiSelectable = boolValueForProperty(AXPropertyName::Multiselectable);
+    if (multiSelectable)
+        return multiSelectable.value();
     
     return node() && node()->hasTagName(selectTag) && downcast<HTMLSelectElement>(*node()).multiple();
 }
@@ -716,11 +714,9 @@ bool AccessibilityNodeObject::isMultiSelectable() const
 bool AccessibilityNodeObject::isRequired() const
 {
     // Explicit aria-required values should trump native required attributes.
-    const AtomicString& requiredValue = getAttribute(aria_requiredAttr);
-    if (equalLettersIgnoringASCIICase(requiredValue, "true"))
-        return true;
-    if (equalLettersIgnoringASCIICase(requiredValue, "false"))
-        return false;
+    std::optional<bool> axRequired = boolValueForProperty(AXPropertyName::Required);
+    if (axRequired)
+        return axRequired.value();
 
     Node* n = this->node();
     if (is<HTMLFormControlElement>(n))
@@ -1688,7 +1684,7 @@ static bool shouldUseAccessibilityObjectInnerText(AccessibilityObject* obj, Acce
         && !obj->accessibleNameDerivesFromContent())
         return false;
     
-    if (equalLettersIgnoringASCIICase(obj->getAttribute(aria_hiddenAttr), "true"))
+    if (obj->boolValueForProperty(AXPropertyName::Hidden).value())
         return false;
     
     // If something doesn't expose any children, then we can always take the inner text content.
@@ -2077,7 +2073,7 @@ bool AccessibilityNodeObject::canSetValueAttribute() const
             return !input.isReadOnly();
     }
 
-    String readOnly = ariaReadOnlyValue();
+    String readOnly = readOnlyValue();
     if (!readOnly.isEmpty())
         return readOnly == "true" ? false : true;
 
@@ -2093,12 +2089,12 @@ bool AccessibilityNodeObject::canSetValueAttribute() const
 #if PLATFORM(GTK)
     // In ATK, input types which support aria-readonly are treated as having a
     // settable value if the user can modify the widget's value or its state.
-    if (supportsARIAReadOnly())
+    if (supportsReadOnly())
         return true;
 
     if (isRadioButton()) {
         auto radioGroup = radioGroupAncestor();
-        return radioGroup ? radioGroup->ariaReadOnlyValue() != "true" : true;
+        return radioGroup ? radioGroup->readOnlyValue() != "true" : true;
     }
 #endif
 

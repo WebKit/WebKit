@@ -1634,7 +1634,7 @@ bool AccessibilityObject::hasContentEditableAttributeSet() const
     return contentEditableAttributeIsEnabled(element());
 }
 
-bool AccessibilityObject::supportsARIAReadOnly() const
+bool AccessibilityObject::supportsReadOnly() const
 {
     AccessibilityRole role = roleValue();
 
@@ -1657,12 +1657,12 @@ bool AccessibilityObject::supportsARIAReadOnly() const
         || isPasswordField();
 }
 
-String AccessibilityObject::ariaReadOnlyValue() const
+String AccessibilityObject::readOnlyValue() const
 {
-    if (!hasAttribute(aria_readonlyAttr))
-        return ariaRoleAttribute() != AccessibilityRole::Unknown && supportsARIAReadOnly() ? "false" : String();
+    if (!hasProperty(AXPropertyName::ReadOnly))
+        return ariaRoleAttribute() != AccessibilityRole::Unknown && supportsReadOnly() ? "false" : String();
 
-    return getAttribute(aria_readonlyAttr).string().convertToASCIILowercase();
+    return boolValueForProperty(AXPropertyName::ReadOnly).value() ? "true" : "false";
 }
 
 bool AccessibilityObject::supportsAutoComplete() const
@@ -1988,7 +1988,7 @@ const String& AccessibilityObject::actionVerb() const
 
 bool AccessibilityObject::ariaIsMultiline() const
 {
-    return equalLettersIgnoringASCIICase(getAttribute(aria_multilineAttr), "true");
+    return boolValueForProperty(AXPropertyName::Multiline).value();
 }
 
 String AccessibilityObject::invalidStatus() const
@@ -2076,32 +2076,32 @@ String AccessibilityObject::currentValue() const
     }
 }
 
-bool AccessibilityObject::isAriaModalDescendant(Node* ariaModalNode) const
+bool AccessibilityObject::isModalDescendant(Node* modalNode) const
 {
-    if (!ariaModalNode || !this->element())
+    if (!modalNode || !this->element())
         return false;
     
-    if (this->element() == ariaModalNode)
+    if (this->element() == modalNode)
         return true;
     
     // ARIA 1.1 aria-modal, indicates whether an element is modal when displayed.
     // For the decendants of the modal object, they should also be considered as aria-modal=true.
     for (auto& ancestor : elementAncestors(this->element())) {
-        if (&ancestor == ariaModalNode)
+        if (&ancestor == modalNode)
             return true;
     }
     return false;
 }
 
-bool AccessibilityObject::isAriaModalNode() const
+bool AccessibilityObject::isModalNode() const
 {
     if (AXObjectCache* cache = axObjectCache())
-        return node() && cache->ariaModalNode() == node();
+        return node() && cache->modalNode() == node();
 
     return false;
 }
 
-bool AccessibilityObject::ignoredFromARIAModalPresence() const
+bool AccessibilityObject::ignoredFromModalPresence() const
 {
     // We shouldn't ignore the top node.
     if (!node() || !node()->parentNode())
@@ -2111,16 +2111,16 @@ bool AccessibilityObject::ignoredFromARIAModalPresence() const
     if (!cache)
         return false;
     
-    // ariaModalNode is the current displayed modal dialog.
-    Node* ariaModalNode = cache->ariaModalNode();
-    if (!ariaModalNode)
+    // modalNode is the current displayed modal dialog.
+    Node* modalNode = cache->modalNode();
+    if (!modalNode)
         return false;
     
     // We only want to ignore the objects within the same frame as the modal dialog.
-    if (ariaModalNode->document().frame() != this->frame())
+    if (modalNode->document().frame() != this->frame())
         return false;
     
-    return !isAriaModalDescendant(ariaModalNode);
+    return !isModalDescendant(modalNode);
 }
 
 bool AccessibilityObject::hasTagName(const QualifiedName& tagName) const
@@ -2157,6 +2157,13 @@ const String AccessibilityObject::stringValueForProperty(AXPropertyName property
     if (Element* element = this->element())
         return AccessibleNode::effectiveStringValueForElement(*element, propertyKey);
     return nullAtom();
+}
+
+std::optional<bool> AccessibilityObject::boolValueForProperty(AXPropertyName propertyKey) const
+{
+    if (Element* element = this->element())
+        return AccessibleNode::effectiveBoolValueForElement(*element, propertyKey);
+    return std::nullopt;
 }
 
 // Lacking concrete evidence of orientation, horizontal means width > height. vertical is height > width;
@@ -2523,13 +2530,13 @@ bool AccessibilityObject::supportsARIAAttributes() const
         || supportsARIADragging()
         || supportsARIADropping()
         || supportsARIAOwns()
-        || hasAttribute(aria_atomicAttr)
-        || hasAttribute(aria_busyAttr)
+        || hasProperty(AXPropertyName::Atomic)
+        || hasProperty(AXPropertyName::Busy)
         || hasAttribute(aria_controlsAttr)
         || hasProperty(AXPropertyName::Current)
         || hasAttribute(aria_describedbyAttr)
         || hasAttribute(aria_detailsAttr)
-        || hasAttribute(aria_disabledAttr)
+        || hasProperty(AXPropertyName::Disabled)
         || hasAttribute(aria_errormessageAttr)
         || hasAttribute(aria_flowtoAttr)
         || hasProperty(AXPropertyName::HasPopUp)
@@ -2692,8 +2699,7 @@ bool AccessibilityObject::supportsPressed() const
 bool AccessibilityObject::supportsExpanded() const
 {
     // Undefined values should not result in this attribute being exposed to ATs according to ARIA.
-    const AtomicString& expanded = getAttribute(aria_expandedAttr);
-    if (equalLettersIgnoringASCIICase(expanded, "true") || equalLettersIgnoringASCIICase(expanded, "false"))
+    if (boolValueForProperty(AXPropertyName::Expanded))
         return true;
     switch (roleValue()) {
     case AccessibilityRole::ComboBox:
@@ -2707,7 +2713,7 @@ bool AccessibilityObject::supportsExpanded() const
     
 bool AccessibilityObject::isExpanded() const
 {
-    if (equalLettersIgnoringASCIICase(getAttribute(aria_expandedAttr), "true"))
+    if (boolValueForProperty(AXPropertyName::Expanded).value())
         return true;
     
     if (is<HTMLDetailsElement>(node()))
@@ -3173,10 +3179,10 @@ bool AccessibilityObject::accessibilityIsIgnoredByDefault() const
 
 // ARIA component of hidden definition.
 // http://www.w3.org/TR/wai-aria/terms#def_hidden
-bool AccessibilityObject::isARIAHidden() const
+bool AccessibilityObject::isAXHidden() const
 {
     return AccessibilityObject::matchedParent(*this, true, [] (const AccessibilityObject& object) {
-        return equalLettersIgnoringASCIICase(object.getAttribute(aria_hiddenAttr), "true");
+        return object.boolValueForProperty(AXPropertyName::Hidden).value();
     }) != nullptr;
 }
 
@@ -3210,10 +3216,10 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
 {
     bool useParentData = !m_isIgnoredFromParentData.isNull();
     
-    if (useParentData ? m_isIgnoredFromParentData.isARIAHidden : isARIAHidden())
+    if (useParentData ? m_isIgnoredFromParentData.isAXHidden : isAXHidden())
         return AccessibilityObjectInclusion::IgnoreObject;
     
-    if (ignoredFromARIAModalPresence())
+    if (ignoredFromModalPresence())
         return AccessibilityObjectInclusion::IgnoreObject;
     
     if (useParentData ? m_isIgnoredFromParentData.isPresentationalChildOfAriaRole : isPresentationalChildOfAriaRole())
@@ -3509,11 +3515,11 @@ void AccessibilityObject::setIsIgnoredFromParentDataForChild(AccessibilityObject
     
     AccessibilityIsIgnoredFromParentData result = AccessibilityIsIgnoredFromParentData(this);
     if (!m_isIgnoredFromParentData.isNull()) {
-        result.isARIAHidden = m_isIgnoredFromParentData.isARIAHidden || equalLettersIgnoringASCIICase(child->getAttribute(aria_hiddenAttr), "true");
+        result.isAXHidden = m_isIgnoredFromParentData.isAXHidden || child->boolValueForProperty(AXPropertyName::Hidden).value();
         result.isPresentationalChildOfAriaRole = m_isIgnoredFromParentData.isPresentationalChildOfAriaRole || ariaRoleHasPresentationalChildren();
         result.isDescendantOfBarrenParent = m_isIgnoredFromParentData.isDescendantOfBarrenParent || !canHaveChildren();
     } else {
-        result.isARIAHidden = child->isARIAHidden();
+        result.isAXHidden = child->isAXHidden();
         result.isPresentationalChildOfAriaRole = child->isPresentationalChildOfAriaRole();
         result.isDescendantOfBarrenParent = child->isDescendantOfBarrenParent();
     }

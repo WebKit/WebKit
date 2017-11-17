@@ -300,7 +300,7 @@ struct AccessibilityTextUnderElementMode {
 // we avoid going up the parent chain for each element while traversing the tree with useful information already.
 struct AccessibilityIsIgnoredFromParentData {
     AccessibilityObject* parent { nullptr };
-    bool isARIAHidden { false };
+    bool isAXHidden { false };
     bool isPresentationalChildOfAriaRole { false };
     bool isDescendantOfBarrenParent { false };
     
@@ -704,9 +704,9 @@ public:
     const String keyShortcutsValue() const;
     
     // This function checks if the object should be ignored when there's a modal dialog displayed.
-    bool ignoredFromARIAModalPresence() const;
-    bool isAriaModalDescendant(Node*) const;
-    bool isAriaModalNode() const;
+    bool ignoredFromModalPresence() const;
+    bool isModalDescendant(Node*) const;
+    bool isModalNode() const;
     
     bool supportsARIASetSize() const;
     bool supportsARIAPosInSet() const;
@@ -895,6 +895,7 @@ public:
 
     bool hasProperty(AXPropertyName) const;
     const String stringValueForProperty(AXPropertyName) const;
+    std::optional<bool> boolValueForProperty(AXPropertyName) const;
 
     virtual VisiblePositionRange visiblePositionRange() const { return VisiblePositionRange(); }
     virtual VisiblePositionRange visiblePositionRangeForLine(unsigned) const { return VisiblePositionRange(); }
@@ -990,8 +991,8 @@ public:
     static bool contentEditableAttributeIsEnabled(Element*);
     bool hasContentEditableAttributeSet() const;
 
-    bool supportsARIAReadOnly() const;
-    virtual String ariaReadOnlyValue() const;
+    bool supportsReadOnly() const;
+    virtual String readOnlyValue() const;
 
     bool supportsAutoComplete() const;
     String autoCompleteValue() const;
@@ -1072,9 +1073,9 @@ public:
     virtual void mathPostscripts(AccessibilityMathMultiscriptPairs&) { }
     
     // Visibility.
-    bool isARIAHidden() const;
+    bool isAXHidden() const;
     bool isDOMHidden() const;
-    bool isHidden() const { return isARIAHidden() || isDOMHidden(); }
+    bool isHidden() const { return isAXHidden() || isDOMHidden(); }
     
 #if HAVE(ACCESSIBILITY)
 #if PLATFORM(GTK)

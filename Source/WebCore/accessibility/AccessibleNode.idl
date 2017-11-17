@@ -27,20 +27,31 @@
     SkipVTableValidation,
     EnabledAtRuntime=AccessibilityObjectModel,
 ] interface AccessibleNode {
+    attribute boolean? atomic;
     attribute DOMString? autocomplete;
+    attribute boolean? busy;
     attribute DOMString? checked;
     attribute DOMString? current;
+    attribute boolean? disabled;
+    attribute boolean? expanded;
     attribute DOMString? hasPopUp;
+    attribute boolean? hidden;
     attribute DOMString? invalid;
     attribute DOMString? keyShortcuts;
     attribute DOMString? label;
     attribute DOMString? live;
+    attribute boolean? modal;
+    attribute boolean? multiline;
+    attribute boolean? multiselectable;
     attribute DOMString? orientation;
     attribute DOMString? placeholder;
     attribute DOMString? pressed;
+    attribute boolean? readOnly;
     attribute DOMString? relevant;
+    attribute boolean? required;
     attribute DOMString? role;
     attribute DOMString? roleDescription;
+    attribute boolean? selected;
     attribute DOMString? sort;
     attribute DOMString? valueText;
 };

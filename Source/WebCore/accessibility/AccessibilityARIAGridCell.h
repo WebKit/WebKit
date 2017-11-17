@@ -48,7 +48,7 @@ private:
     AccessibilityTable* parentTable() const override;
     AccessibilityObject* parentRowGroup() const;
     unsigned ariaRowSpanWithRowIndex(unsigned index) const;
-    String ariaReadOnlyValue() const override;
+    String readOnlyValue() const override;
 }; 
     
 } // namespace WebCore 

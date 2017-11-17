@@ -1140,9 +1140,11 @@ AccessibilityObjectInclusion AccessibilityRenderObject::defaultObjectInclusion()
 
     if (m_renderer->style().visibility() != VISIBLE) {
         // aria-hidden is meant to override visibility as the determinant in AX hierarchy inclusion.
-        if (equalLettersIgnoringASCIICase(getAttribute(aria_hiddenAttr), "false"))
-            return AccessibilityObjectInclusion::DefaultBehavior;
-        
+        if (std::optional<bool> hidden = boolValueForProperty(AXPropertyName::Hidden)) {
+            if (!hidden.value())
+                return AccessibilityObjectInclusion::DefaultBehavior;
+        }
+
         return AccessibilityObjectInclusion::IgnoreObject;
     }
 
@@ -1630,7 +1632,7 @@ bool AccessibilityRenderObject::isSelected() const
     if (!m_renderer->node())
         return false;
     
-    if (equalLettersIgnoringASCIICase(getAttribute(aria_selectedAttr), "true"))
+    if (boolValueForProperty(AXPropertyName::Selected).value())
         return true;    
     
     if (isTabItem() && isTabItemSelected())
@@ -2942,8 +2944,9 @@ bool AccessibilityRenderObject::canSetExpandedAttribute() const
         return true;
     
     // An object can be expanded if it aria-expanded is true or false.
-    const AtomicString& ariaExpanded = getAttribute(aria_expandedAttr);
-    return equalLettersIgnoringASCIICase(ariaExpanded, "true") || equalLettersIgnoringASCIICase(ariaExpanded, "false");
+    if (boolValueForProperty(AXPropertyName::Expanded))
+        return true;
+    return false;
 }
 
 bool AccessibilityRenderObject::canSetTextRangeAttributes() const
@@ -3276,11 +3279,8 @@ const String AccessibilityRenderObject::liveRegionRelevant() const
 
 bool AccessibilityRenderObject::liveRegionAtomic() const
 {
-    const AtomicString& atomic = getAttribute(aria_atomicAttr);
-    if (equalLettersIgnoringASCIICase(atomic, "true"))
-        return true;
-    if (equalLettersIgnoringASCIICase(atomic, "false"))
-        return false;
+    if (std::optional<bool> atomic = boolValueForProperty(AXPropertyName::Atomic))
+        return atomic.value();
 
     // WAI-ARIA "alert" and "status" roles have an implicit aria-atomic value of true.
     switch (roleValue()) {
@@ -3294,7 +3294,7 @@ bool AccessibilityRenderObject::liveRegionAtomic() const
 
 bool AccessibilityRenderObject::isBusy() const
 {
-    return elementAttributeValue(aria_busyAttr);    
+    return boolValueForProperty(AXPropertyName::Busy).value();
 }
 
 bool AccessibilityRenderObject::canHaveSelectedChildren() const

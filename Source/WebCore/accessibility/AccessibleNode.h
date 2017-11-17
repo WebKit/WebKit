@@ -36,24 +36,35 @@
 
 namespace WebCore {
 
-typedef Variant<String, bool, int> PropertyValueVariant;
+typedef Variant<std::nullptr_t, String, bool, int> PropertyValueVariant;
 
 enum class AXPropertyName {
     None,
+    Atomic,
     Autocomplete,
+    Busy,
     Checked,
     Current,
+    Disabled,
+    Expanded,
     HasPopUp,
+    Hidden,
     Invalid,
     KeyShortcuts,
     Label,
     Live,
+    Modal,
+    Multiline,
+    Multiselectable,
     Orientation,
     Placeholder,
     Pressed,
+    ReadOnly,
     Relevant,
+    Required,
     Role,
     RoleDescription,
+    Selected,
     Sort,
     ValueText
 };
@@ -83,10 +94,17 @@ public:
     void deref() { m_ownerElement.deref(); }
 
     static const String effectiveStringValueForElement(Element&, AXPropertyName);
+    static std::optional<bool> effectiveBoolValueForElement(Element&, AXPropertyName);
     static bool hasProperty(Element&, AXPropertyName);
 
+    std::optional<bool> atomic() const;
+    void setAtomic(std::optional<bool>);
+    
     String autocomplete() const;
     void setAutocomplete(const String&);
+
+    std::optional<bool> busy() const;
+    void setBusy(std::optional<bool>);
 
     String checked() const;
     void setChecked(const String&);
@@ -94,8 +112,17 @@ public:
     String current() const;
     void setCurrent(const String&);
 
+    std::optional<bool> disabled() const;
+    void setDisabled(std::optional<bool>);
+
+    std::optional<bool> expanded() const;
+    void setExpanded(std::optional<bool>);
+
     String hasPopUp() const;
     void setHasPopUp(const String&);
+
+    std::optional<bool> hidden() const;
+    void setHidden(std::optional<bool>);
 
     String invalid() const;
     void setInvalid(const String&);
@@ -109,6 +136,15 @@ public:
     String label() const;
     void setLabel(const String&);
 
+    std::optional<bool> modal() const;
+    void setModal(std::optional<bool>);
+
+    std::optional<bool> multiline() const;
+    void setMultiline(std::optional<bool>);
+
+    std::optional<bool> multiselectable() const;
+    void setMultiselectable(std::optional<bool>);
+
     String orientation() const;
     void setOrientation(const String&);
 
@@ -118,14 +154,23 @@ public:
     String pressed() const;
     void setPressed(const String&);
 
+    std::optional<bool> readOnly() const;
+    void setReadOnly(std::optional<bool>);
+
     String relevant() const;
     void setRelevant(const String&);
+
+    std::optional<bool> required() const;
+    void setRequired(std::optional<bool>);
 
     String role() const;
     void setRole(const String&);
 
     String roleDescription() const;
     void setRoleDescription(const String&);
+
+    std::optional<bool> selected() const;
+    void setSelected(std::optional<bool>);
 
     String sort() const;
     void setSort(const String&);
@@ -136,7 +181,9 @@ public:
 private:
     static const PropertyValueVariant valueForProperty(Element&, AXPropertyName);
     static const String stringValueForProperty(Element&, AXPropertyName);
+    static std::optional<bool> boolValueForProperty(Element&, AXPropertyName);
     void setStringProperty(const String&, AXPropertyName);
+    void setBoolProperty(std::optional<bool>, AXPropertyName);
     
     void notifyAttributeChanged(const WebCore::QualifiedName&);
 

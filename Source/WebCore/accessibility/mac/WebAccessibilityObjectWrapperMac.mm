@@ -3196,6 +3196,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([attributeName isEqualToString:@"AXARIAPressedIsPresent"])
         return [NSNumber numberWithBool:m_object->pressedIsPresent()];
     
+    if ([attributeName isEqualToString:@"AXIsMultiline"])
+        return [NSNumber numberWithBool:m_object->ariaIsMultiline()];
+    
+    if ([attributeName isEqualToString:@"AXReadOnlyValue"])
+        return m_object->readOnlyValue();
+
     if (m_object->isWebArea() && [attributeName isEqualToString:NSAccessibilityPreventKeyboardDOMEventDispatchAttribute])
         return [NSNumber numberWithBool:m_object->preventKeyboardDOMEventDispatch()];
     

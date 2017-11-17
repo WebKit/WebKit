@@ -533,7 +533,7 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     if (coreObject->supportsARIASetSize())
         attributeSet = addToAtkAttributeSet(attributeSet, "setsize", String::number(coreObject->ariaSetSize()).utf8().data());
 
-    String isReadOnly = coreObject->ariaReadOnlyValue();
+    String isReadOnly = coreObject->readOnlyValue();
     if (!isReadOnly.isEmpty())
         attributeSet = addToAtkAttributeSet(attributeSet, "readonly", isReadOnly.utf8().data());
 
@@ -987,7 +987,7 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
             atk_state_set_add_state(stateSet, ATK_STATE_INDETERMINATE);
     }
 
-    if (coreObject->isAriaModalNode())
+    if (coreObject->isModalNode())
         atk_state_set_add_state(stateSet, ATK_STATE_MODAL);
 
     if (coreObject->invalidStatus() != "false")
@@ -1002,7 +1002,7 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
         atk_state_set_add_state(stateSet, ATK_STATE_PRESSED);
 
 #if ATK_CHECK_VERSION(2,15,3)
-    if (!coreObject->canSetValueAttribute() && (coreObject->supportsARIAReadOnly()))
+    if (!coreObject->canSetValueAttribute() && (coreObject->supportsReadOnly()))
         atk_state_set_add_state(stateSet, ATK_STATE_READ_ONLY);
 #endif
 

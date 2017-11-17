@@ -63,7 +63,7 @@ bool AccessibilityListBoxOption::isEnabled() const
     if (is<HTMLOptGroupElement>(m_optionElement))
         return false;
 
-    if (equalLettersIgnoringASCIICase(getAttribute(aria_disabledAttr), "true"))
+    if (boolValueForProperty(AXPropertyName::Disabled).value())
         return false;
 
     if (m_optionElement->hasAttributeWithoutSynchronization(disabledAttr))

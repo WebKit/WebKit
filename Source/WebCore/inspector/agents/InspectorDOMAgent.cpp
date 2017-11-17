@@ -1819,7 +1819,7 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
             else // Future versions of ARIA may allow additional truthy values. Ex. format, order, or size.
                 invalid = Inspector::Protocol::DOM::AccessibilityProperties::Invalid::True;
             
-            if (axObject->isARIAHidden() || axObject->isDOMHidden())
+            if (axObject->isAXHidden() || axObject->isDOMHidden())
                 hidden = true;
             
             label = axObject->computedLabel();
