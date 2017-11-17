@@ -23,6 +23,10 @@ function test()
         if (key === "_fetchType")
             return undefined;
 
+        // If cached the protocol might not be available.
+        if (key === "httpVersion")
+            return "<filtered>";
+
         // Headers include dynamic data.
         if (key === "headers")
             return "<filtered>";
