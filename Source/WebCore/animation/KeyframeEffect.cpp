@@ -31,6 +31,7 @@
 #include "RenderStyle.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
+#include "WillChangeData.h"
 
 namespace WebCore {
 using namespace JSC;
@@ -118,7 +119,22 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(ExecState& state, Strong<JSOb
 
     m_keyframes = WTFMove(newKeyframes);
 
+    computeStackingContextImpact();
+
     return { };
+}
+
+void KeyframeEffect::computeStackingContextImpact()
+{
+    m_triggersStackingContext = false;
+    for (auto& keyframe : m_keyframes) {
+        for (auto propertyID : keyframe.properties) {
+            if (WillChangeData::propertyCreatesStackingContext(propertyID)) {
+                m_triggersStackingContext = true;
+                break;
+            }
+        }
+    }
 }
 
 void KeyframeEffect::applyAtLocalTime(Seconds localTime, RenderStyle& targetStyle)
@@ -139,6 +155,12 @@ void KeyframeEffect::applyAtLocalTime(Seconds localTime, RenderStyle& targetStyl
     // FIXME: This will crash if we attempt to animate properties that require an AnimationBase.
     for (auto propertyId : m_keyframes[0].properties)
         CSSPropertyAnimation::blendProperties(this, propertyId, &targetStyle, &m_keyframes[0].style, &m_keyframes[1].style, progress);
+
+    // https://w3c.github.io/web-animations/#side-effects-section
+    // For every property targeted by at least one animation effect that is current or in effect, the user agent
+    // must act as if the will-change property ([css-will-change-1]) on the target element includes the property.
+    if (m_triggersStackingContext && targetStyle.hasAutoZIndex())
+        targetStyle.setZIndex(0);
 }
 
 RenderElement* KeyframeEffect::renderer() const

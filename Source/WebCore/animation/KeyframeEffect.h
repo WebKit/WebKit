@@ -61,8 +61,11 @@ public:
 private:
     KeyframeEffect(Element*);
     ExceptionOr<void> processKeyframes(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&);
+    void computeStackingContextImpact();
+
     RefPtr<Element> m_target;
     Vector<Keyframe> m_keyframes;
+    bool m_triggersStackingContext { false };
 
 };
 
