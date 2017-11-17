@@ -23,52 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CheckboxNavigationItem = class CheckboxNavigationItem extends WI.NavigationItem
-{
-    constructor(identifier, label, checked)
-    {
-        super(identifier, "checkbox");
+.navigation-bar .item.checkbox {
+    margin: 0;
+    padding: 1px 8px 3px;
+}
 
-        this._checkboxElement = this.element.appendChild(document.createElement("input"));
-        this._checkboxElement.checked = !checked;
-        this._checkboxElement.id = "checkbox-navigation-item-" + identifier;
-        this._checkboxElement.type = "checkbox";
-
-        this._checkboxElement.addEventListener("change", this._checkboxChanged.bind(this));
-
-        this._checkboxLabel = this.element.appendChild(document.createElement("label"));
-        this._checkboxLabel.className = "toggle";
-        this._checkboxLabel.textContent = label;
-        this._checkboxLabel.setAttribute("for", this._checkboxElement.id);
-    }
-
-    // Public
-
-    get checked()
-    {
-        return this._checkboxElement.checked;
-    }
-
-    set checked(flag)
-    {
-        this._checkboxElement.checked = flag;
-    }
-
-    // Protected
-
-    get additionalClassNames()
-    {
-        return ["checkbox", "button"];
-    }
-
-    // Private
-
-    _checkboxChanged(event)
-    {
-        this.dispatchEventToListeners(WI.CheckboxNavigationItem.Event.CheckedDidChange);
-    }
-};
-
-WI.CheckboxNavigationItem.Event = {
-    CheckedDidChange: "checkbox-navigation-item-checked-did-change",
-};
+.navigation-bar .item.checkbox label {
+    -webkit-padding-start: 3px;
+}

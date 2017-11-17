@@ -27,7 +27,7 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
 {
     constructor(identifier, toolTipOrLabel, image, imageWidth, imageHeight, role, label)
     {
-        super(identifier);
+        super(identifier, role || "button");
 
         console.assert(identifier);
         console.assert(toolTipOrLabel);
@@ -38,19 +38,17 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
 
         this.element.addEventListener("click", this._mouseClicked.bind(this));
 
-        this.element.setAttribute("role", role || "button");
-
         if (label)
             this.element.setAttribute("aria-label", label);
 
+        this._buttonStyle = null;
+        this._disabled = false;
+        this._image = image || null;
         this._imageWidth = imageWidth || 16;
         this._imageHeight = imageHeight || 16;
-        this._label = "";
+        this._label = toolTipOrLabel;
 
-        if (image)
-            this.image = image;
-        else if (toolTipOrLabel)
-            this.label = toolTipOrLabel;
+        this.buttonStyle = this._image ? WI.ButtonNavigationItem.Style.Image : WI.ButtonNavigationItem.Style.Text;
     }
 
     // Public
@@ -80,10 +78,9 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
         if (this._label === newLabel)
             return;
 
-        this.element.classList.add(WI.ButtonNavigationItem.TextOnlyClassName);
         this._label = newLabel;
+        this._update();
 
-        this.updateButtonText();
         if (this.parentNavigationBar)
             this.parentNavigationBar.needsLayout();
     }
@@ -95,20 +92,12 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
 
     set image(newImage)
     {
-        if (!newImage) {
-            this.element.removeChildren();
+        newImage = newImage || null;
+        if (this._image === newImage)
             return;
-        }
-
-        this.element.removeChildren();
-        this.element.classList.remove(WI.ButtonNavigationItem.TextOnlyClassName);
 
         this._image = newImage;
-
-        this._glyphElement = WI.ImageUtilities.useSVGSymbol(this._image, "glyph");
-        this._glyphElement.style.width = this._imageWidth + "px";
-        this._glyphElement.style.height = this._imageHeight + "px";
-        this.element.appendChild(this._glyphElement);
+        this._update();
     }
 
     get enabled()
@@ -126,18 +115,32 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
         this.element.classList.toggle("disabled", !this._enabled);
     }
 
+    get buttonStyle()
+    {
+        return this._buttonStyle;
+    }
+
+    set buttonStyle(newButtonStyle)
+    {
+        newButtonStyle = newButtonStyle || WI.ButtonNavigationItem.Style.Image;
+        if (this._buttonStyle === newButtonStyle)
+            return;
+
+        this.element.classList.remove(...Object.values(WI.ButtonNavigationItem.Style));
+        this.element.classList.add(newButtonStyle);
+
+        this._buttonStyle = newButtonStyle;
+        this._update();
+
+        if (this.parentNavigationBar)
+            this.parentNavigationBar.needsLayout();
+    }
+
     // Protected
 
     get additionalClassNames()
     {
         return ["button"];
-    }
-
-    updateButtonText()
-    {
-        // Overridden by subclasses.
-
-        this.element.textContent = this._label;
     }
 
     // Private
@@ -148,10 +151,33 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
             return;
         this.dispatchEventToListeners(WI.ButtonNavigationItem.Event.Clicked, {nativeEvent: event});
     }
-};
 
-WI.ButtonNavigationItem.TextOnlyClassName = "text-only";
+    _update()
+    {
+        this.element.removeChildren();
+
+        if (this._buttonStyle === WI.ButtonNavigationItem.Style.Text)
+            this.element.textContent = this._label;
+        else {
+            let glyphElement = WI.ImageUtilities.useSVGSymbol(this._image, "glyph");
+            glyphElement.style.width = this._imageWidth + "px";
+            glyphElement.style.height = this._imageHeight + "px";
+            this.element.appendChild(glyphElement);
+
+            if (this._buttonStyle === WI.ButtonNavigationItem.Style.ImageAndText) {
+                let labelElement = this.element.appendChild(document.createElement("span"));
+                labelElement.textContent = this._label;
+            }
+        }
+    }
+};
 
 WI.ButtonNavigationItem.Event = {
     Clicked: "button-navigation-item-clicked"
+};
+
+WI.ButtonNavigationItem.Style = {
+    Image: "image-only",
+    Text: "text-only",
+    ImageAndText: "image-and-text",
 };

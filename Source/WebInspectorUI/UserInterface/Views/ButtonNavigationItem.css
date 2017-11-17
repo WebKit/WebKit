@@ -24,29 +24,32 @@
  */
 
 .navigation-bar .item.button {
-    width: 26px;
     justify-content: center;
+    color: hsl(0, 0%, 18%);
+}
+
+.navigation-bar .item.button.image-only {
+    width: 26px;
+}
+
+.navigation-bar .item.button.image-and-text {
+    padding: 0 8px;
+}
+
+.navigation-bar .item.button.image-and-text > span {
+    padding-bottom: 1px;
+    -webkit-padding-start: 4px;
 }
 
 .navigation-bar .item.button.text-only {
-    width: auto;
     padding: 1px 8px 3px;
     margin: 0 2px;
 
     height: initial;
     line-height: 11px;
-    color: hsl(0, 0%, 18%);
     border: 1px solid transparent;
     border-radius: 3px;
     text-align: center;
-}
-
-.navigation-bar .item.button.text-only.checkbox {
-    padding: 1px 4px 3px;
-}
-
-.navigation-bar .item.button.text-only.checkbox label {
-    -webkit-padding-start: 2px;
 }
 
 .navigation-bar .item.button > .glyph {

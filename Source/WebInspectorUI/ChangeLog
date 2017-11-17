@@ -1,3 +1,51 @@
+2017-11-17  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: ButtonNavigationItem should support image and text button style
+        https://bugs.webkit.org/show_bug.cgi?id=179625
+        <rdar://problem/35512238>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Main.html:
+
+        * UserInterface/Views/ButtonNavigationItem.css:
+        (.navigation-bar .item.button):
+        (.navigation-bar .item.button.image-only):
+        (.navigation-bar .item.button.image-and-text):
+        (.navigation-bar .item.button.image-and-text > span):
+        (.navigation-bar .item.button.text-only):
+        (.navigation-bar .item.button.text-only.checkbox): Deleted.
+        (.navigation-bar .item.button.text-only.checkbox label): Deleted.
+        Checkbox styles have been moved to a separate CSS file.
+
+        * UserInterface/Views/ButtonNavigationItem.js:
+        Add backing data members for the image and label, allowing the DOM
+        representation of the button to change as needed.
+
+        (WI.ButtonNavigationItem):
+        Remove duplicate role logic. The base class sets the role.
+
+        (WI.ButtonNavigationItem.prototype.set label):
+        (WI.ButtonNavigationItem.prototype.set image):
+        (WI.ButtonNavigationItem.prototype.get buttonStyle):
+        (WI.ButtonNavigationItem.prototype.set buttonStyle):
+        (WI.ButtonNavigationItem.prototype.get additionalClassNames):
+        (WI.ButtonNavigationItem.prototype._mouseClicked):
+        (WI.ButtonNavigationItem.prototype._update):
+        (WI.ButtonNavigationItem.prototype.updateButtonText): Deleted.
+
+        * UserInterface/Views/CheckboxNavigationItem.css: Added.
+        (.navigation-bar .item.checkbox):
+        (.navigation-bar .item.checkbox label):
+
+        * UserInterface/Views/CheckboxNavigationItem.js:
+        Change base class to NavigationItem, since this item lacks an image
+        and makes use of an actual label element instead of a span for its text.
+
+        (WI.CheckboxNavigationItem):
+        (WI.CheckboxNavigationItem.prototype._checkboxChanged):
+        (WI.CheckboxNavigationItem.prototype.updateButtonText): Deleted.
+
 2017-11-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove FIXMEs for GTK+ missing icons
