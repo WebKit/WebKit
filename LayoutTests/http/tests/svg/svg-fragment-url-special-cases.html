@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+     <style>
+        img {
+            width: 100px;
+            height: 100px;
+         }
+    </style>
+</head>
+<body>
+    <div id="group-1">
+        <p>Image URL with no fragmentIdentifier:</p>
+        <img src="resources/rgb-icons-1.svg#">
+        <img src="http://localhost:8000/svg/resources/rgb-icons-2.svg#">
+        <img src="http://127.0.0.1:8000/svg/resources/rgb-icons-3.svg#">
+    </div>
+    <div id="group-2">
+        <p>Image URL with trailing spaces after the fragmentIdentifier:</p>
+        <img src="resources/rgb-icons-1.svg#green-icon-view    ">
+        <img src="http://localhost:8000/svg/resources/rgb-icons-2.svg#svgView(viewBox(0,32,32,32))    ">
+        <img src="http://127.0.0.1:8000/svg/resources/rgb-icons-3.svg#green-icon    ">
+    </div>
+    <div id="group-3">
+        <p>Image URL with non-existent fragmentIdentifier:</p>
+        <img src="resources/rgb-icons-1.svg#non-existent-icon-view">
+        <img src="http://localhost:8000/svg/resources/rgb-icons-2.svg#">
+        <img src="http://127.0.0.1:8000/svg/resources/rgb-icons-3.svg#non-existent-icon">
+    </div>
+</body>
+</html>

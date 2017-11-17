@@ -1,3 +1,13 @@
+2017-11-17  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVG scrolling anchor should be reset if the fragmentIdentifier does not exist or is not provided
+        https://bugs.webkit.org/show_bug.cgi?id=176577
+
+        Reviewed by Simon Fraser.
+
+        * http/tests/svg/svg-fragment-url-special-cases-expected.html: Added.
+        * http/tests/svg/svg-fragment-url-special-cases.html: Added.
+
 2017-11-16  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Force a stacking context during animations that animate properties that will force a stacking context

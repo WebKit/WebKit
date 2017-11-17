@@ -635,7 +635,26 @@ AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float vie
     return transform;
 }
 
-void SVGSVGElement::scrollToAnchor(const String& fragmentIdentifier, Element* anchorNode)
+SVGViewElement* SVGSVGElement::findViewAnchor(const String& fragmentIdentifier) const
+{
+    auto* anchorElement = document().findAnchor(fragmentIdentifier);
+    return is<SVGViewElement>(anchorElement) ? downcast<SVGViewElement>(anchorElement): nullptr;
+}
+
+SVGSVGElement* SVGSVGElement::findRootAnchor(const SVGViewElement* viewElement) const
+{
+    auto* viewportElement = SVGLocatable::nearestViewportElement(viewElement);
+    return is<SVGSVGElement>(viewportElement) ? downcast<SVGSVGElement>(viewportElement) : nullptr;
+}
+
+SVGSVGElement* SVGSVGElement::findRootAnchor(const String& fragmentIdentifier) const
+{
+    if (auto* viewElement = findViewAnchor(fragmentIdentifier))
+        return findRootAnchor(viewElement);
+    return nullptr;
+}
+
+bool SVGSVGElement::scrollToFragment(const String& fragmentIdentifier)
 {
     auto renderer = this->renderer();
     auto view = m_viewSpec;
@@ -649,7 +668,7 @@ void SVGSVGElement::scrollToAnchor(const String& fragmentIdentifier, Element* an
         // FIXME: XPointer references are ignored (https://bugs.webkit.org/show_bug.cgi?id=17491)
         if (renderer && hadUseCurrentView)
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-        return;
+        return false;
     }
 
     if (fragmentIdentifier.startsWith("svgView(")) {
@@ -661,27 +680,49 @@ void SVGSVGElement::scrollToAnchor(const String& fragmentIdentifier, Element* an
             view->reset();
         if (renderer && (hadUseCurrentView || m_useCurrentView))
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-        return;
+        return m_useCurrentView;
     }
 
     // Spec: If the SVG fragment identifier addresses a "view" element within an SVG document (e.g., MyDrawing.svg#MyView
     // or MyDrawing.svg#xpointer(id('MyView'))) then the closest ancestor "svg" element is displayed in the viewport.
     // Any view specification attributes included on the given "view" element override the corresponding view specification
     // attributes on the closest ancestor "svg" element.
-    if (is<SVGViewElement>(anchorNode)) {
-        auto& viewElement = downcast<SVGViewElement>(*anchorNode);
-        auto viewportElement = makeRefPtr(SVGLocatable::nearestViewportElement(&viewElement));
-        if (is<SVGSVGElement>(viewportElement)) {
-            auto& element = downcast<SVGSVGElement>(*viewportElement);
-            element.inheritViewAttributes(viewElement);
-            if (auto* renderer = element.renderer())
+    if (auto* viewElement = findViewAnchor(fragmentIdentifier)) {
+        if (auto* rootElement = findRootAnchor(viewElement)) {
+            rootElement->inheritViewAttributes(*viewElement);
+            if (auto* renderer = rootElement->renderer())
                 RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+            m_currentViewFragmentIdentifier = fragmentIdentifier;
+            return true;
         }
-        return;
     }
 
     // FIXME: We need to decide which <svg> to focus on, and zoom to it.
     // FIXME: We need to actually "highlight" the viewTarget(s).
+    return false;
+}
+
+void SVGSVGElement::resetScrollAnchor()
+{
+    if (!m_useCurrentView && m_currentViewFragmentIdentifier.isEmpty())
+        return;
+
+    if (m_viewSpec)
+        m_viewSpec->reset();
+
+    if (!m_currentViewFragmentIdentifier.isEmpty()) {
+        if (auto* rootElement = findRootAnchor(m_currentViewFragmentIdentifier)) {
+            SVGViewSpec& view = rootElement->currentView();
+            view.setViewBoxBaseValue(viewBox());
+            view.setPreserveAspectRatioBaseValue(preserveAspectRatioBaseValue());
+            view.setZoomAndPanBaseValue(zoomAndPan());
+            m_currentViewFragmentIdentifier = { };
+        }
+    }
+
+    m_useCurrentView = false;
+    if (renderer())
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer());
 }
 
 void SVGSVGElement::inheritViewAttributes(const SVGViewElement& viewElement)

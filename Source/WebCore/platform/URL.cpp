@@ -224,7 +224,7 @@ String URL::encodedPass() const
 
 String URL::fragmentIdentifier() const
 {
-    if (!m_isValid || m_queryEnd == m_string.length())
+    if (!hasFragmentIdentifier())
         return String();
 
     return m_string.substring(m_queryEnd + 1);
@@ -674,11 +674,15 @@ void URL::setPath(const String& s)
 
 String decodeURLEscapeSequences(const String& string)
 {
+    if (string.isEmpty())
+        return string;
     return decodeEscapeSequences<URLEscapeSequence>(string, UTF8Encoding());
 }
 
 String decodeURLEscapeSequences(const String& string, const TextEncoding& encoding)
 {
+    if (string.isEmpty())
+        return string;
     return decodeEscapeSequences<URLEscapeSequence>(string, encoding);
 }
 
