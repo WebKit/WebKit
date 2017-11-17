@@ -131,13 +131,3 @@
 .large .resource-icon.resource-type-websocket .icon {
     content: image-set(url(../Images/WebSocketLarge.png) 1x, url(../Images/WebSocketLarge@2x.png) 2x);
 }
-
-/* FIXME: <https://webkit.org/b/177642> Web Inspector: Add GTK icons for Beacon / Ping requests */
-body:not(.mac-platform, .windows-platform) .resource-icon.resource-type-ping .icon,
-body:not(.mac-platform, .windows-platform) .resource-icon.resource-type-beacon .icon {
-    content: image-set(url(../Images/DocumentGeneric.png) 1x, url(../Images/DocumentGeneric@2x.png) 2x);
-}
-body:not(.mac-platform, .windows-platform) .large .resource-icon.resource-type-ping .icon,
-body:not(.mac-platform, .windows-platform) .large .resource-icon.resource-type-beacon .icon {
-    content: image-set(url(../Images/DocumentGenericLarge.png) 1x, url(../Images/DocumentGenericLarge@2x.png) 2x);
-}

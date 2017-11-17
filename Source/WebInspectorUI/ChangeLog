@@ -1,3 +1,20 @@
+2017-11-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove FIXMEs for GTK+ missing icons
+        https://bugs.webkit.org/show_bug.cgi?id=155282
+        <rdar://problem/25076615>
+
+        Reviewed by Michael Catanzaro.
+
+        * UserInterface/Views/PathComponentIcons.css:
+        (.source-icon .icon):
+        (body:not(.mac-platform, .windows-platform) .heap-snapshot-record .icon,): Deleted.
+        * UserInterface/Views/ResourceIcons.css:
+        (.large .resource-icon.resource-type-websocket .icon):
+        (body:not(.mac-platform, .windows-platform) .resource-icon.resource-type-ping .icon,): Deleted.
+        (body:not(.mac-platform, .windows-platform) .large .resource-icon.resource-type-ping .icon,): Deleted.
+        All ports now share the same images.
+
 2017-11-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: typing colon in property name should advance to value field
