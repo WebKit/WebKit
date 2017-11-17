@@ -1,5 +1,24 @@
 2017-11-17  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Remove WI.instanceForClass
+        https://bugs.webkit.org/show_bug.cgi?id=179746
+
+        Reviewed by Timothy Hatcher.
+
+        The implementations of DetailsSidebarPanel subclasses assume that panels
+        are closed and released when no longer needed. Keeping them alive with
+        instanceForClass isn't the right choice, since sidebar panels remove their
+        event listeners when closed.
+
+        * UserInterface/Base/Main.js:
+        (WI.instanceForClass): Deleted.
+        * UserInterface/Views/DebuggerTabContentView.js:
+        (WI.DebuggerTabContentView.prototype.showDetailsSidebarPanels):
+        * UserInterface/Views/TabContentView.js:
+        (WI.TabContentView.prototype.get detailsSidebarPanels):
+
+2017-11-17  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: ButtonNavigationItem should support image and text button style
         https://bugs.webkit.org/show_bug.cgi?id=179625
         <rdar://problem/35512238>

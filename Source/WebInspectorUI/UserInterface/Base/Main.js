@@ -502,24 +502,6 @@ WI.contentLoaded = function()
         this.runBootstrapOperations();
 };
 
-// This function returns a lazily constructed instance of a class scoped to this WebInspector
-// instance. In the unlikely event that we ever need to construct multiple WebInspector instances
-// this allows us to scope objects within the WI.
-// Classes can prevent usage of this function via a static `disallowInstanceForClass` function that
-// returns true. It is then their responsibility to ensure that the returned value is tracked.
-// Currently it is only used for sidebars.
-WI.instanceForClass = function(constructor)
-{
-    console.assert(typeof constructor === "function");
-    if (typeof constructor.disallowInstanceForClass === "function" && constructor.disallowInstanceForClass())
-        return new constructor;
-
-    let key = `__${constructor.name}`;
-    if (!WI[key])
-        WI[key] = new constructor;
-    return WI[key];
-};
-
 WI.isTabTypeAllowed = function(tabType)
 {
     let tabClass = this._knownTabClassesByType.get(tabType);
