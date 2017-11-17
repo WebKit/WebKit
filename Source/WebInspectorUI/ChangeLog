@@ -1,3 +1,13 @@
+2017-11-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network Tab - Update Ignore Caches button
+        https://bugs.webkit.org/show_bug.cgi?id=179841
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Images/IgnoreCaches.svg:
+        This changes from an arrow over a cache to a slash through a cache.
+
 2017-11-17  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Remove WI.instanceForClass
