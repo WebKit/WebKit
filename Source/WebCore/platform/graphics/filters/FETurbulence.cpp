@@ -165,7 +165,7 @@ inline float linearInterpolation(float t, float a, float b)
     return a + t * (b - a);
 }
 
-inline void FETurbulence::initPaint(PaintingData& paintingData)
+void FETurbulence::initPaint(PaintingData& paintingData)
 {
     float normalizationFactor;
 
@@ -189,6 +189,7 @@ inline void FETurbulence::initPaint(PaintingData& paintingData)
             gradient[1] /= normalizationFactor;
         }
     }
+
     for (int i = s_blockSize - 1; i > 0; --i) {
         int k = paintingData.latticeSelector[i];
         int j = paintingData.random() % s_blockSize;
@@ -197,6 +198,7 @@ inline void FETurbulence::initPaint(PaintingData& paintingData)
         paintingData.latticeSelector[i] = paintingData.latticeSelector[j];
         paintingData.latticeSelector[j] = k;
     }
+
     for (int i = 0; i < s_blockSize + 2; ++i) {
         paintingData.latticeSelector[s_blockSize + i] = paintingData.latticeSelector[i];
         for (int channel = 0; channel < 4; ++channel) {
@@ -214,7 +216,7 @@ inline void checkNoise(int& noiseValue, int limitValue, int newValue)
         noiseValue -= newValue - 1;
 }
 
-float FETurbulence::noise2D(int channel, PaintingData& paintingData, StitchData& stitchData, const FloatPoint& noiseVector)
+float FETurbulence::noise2D(int channel, const PaintingData& paintingData, StitchData& stitchData, const FloatPoint& noiseVector)
 {
     struct Noise {
         int noisePositionIntegerValue;
@@ -230,8 +232,6 @@ float FETurbulence::noise2D(int channel, PaintingData& paintingData, StitchData&
 
     Noise noiseX(noiseVector.x());
     Noise noiseY(noiseVector.y());
-    float* q;
-    float sx, sy, a, b, u, v;
 
     // If stitching, adjust lattice points accordingly.
     if (m_stitchTiles) {
@@ -244,12 +244,13 @@ float FETurbulence::noise2D(int channel, PaintingData& paintingData, StitchData&
     int latticeIndex = paintingData.latticeSelector[noiseX.noisePositionIntegerValue];
     int nextLatticeIndex = paintingData.latticeSelector[(noiseX.noisePositionIntegerValue + 1) & s_blockMask];
 
-    sx = smoothCurve(noiseX.noisePositionFractionValue);
-    sy = smoothCurve(noiseY.noisePositionFractionValue);
+    float sx = smoothCurve(noiseX.noisePositionFractionValue);
+    float sy = smoothCurve(noiseY.noisePositionFractionValue);
+    float a, b, u, v;
 
     // This is taken 1:1 from SVG spec: http://www.w3.org/TR/SVG11/filters.html#feTurbulenceElement.
     int temp = paintingData.latticeSelector[latticeIndex + noiseY.noisePositionIntegerValue];
-    q = paintingData.gradient[channel][temp];
+    const float* q = paintingData.gradient[channel][temp];
     u = noiseX.noisePositionFractionValue * q[0] + noiseY.noisePositionFractionValue * q[1];
     temp = paintingData.latticeSelector[nextLatticeIndex + noiseY.noisePositionIntegerValue];
     q = paintingData.gradient[channel][temp];
@@ -265,7 +266,7 @@ float FETurbulence::noise2D(int channel, PaintingData& paintingData, StitchData&
     return linearInterpolation(sy, a, b);
 }
 
-unsigned char FETurbulence::calculateTurbulenceValueForPoint(int channel, PaintingData& paintingData, StitchData& stitchData, const FloatPoint& point)
+unsigned char FETurbulence::calculateTurbulenceValueForPoint(int channel, const PaintingData& paintingData, StitchData& stitchData, const FloatPoint& point)
 {
     float tileWidth = paintingData.filterSize.width();
     float tileHeight = paintingData.filterSize.height();
@@ -299,6 +300,7 @@ unsigned char FETurbulence::calculateTurbulenceValueForPoint(int channel, Painti
         stitchData.height = roundf(tileHeight * baseFrequencyY);
         stitchData.wrapY = s_perlinNoise + stitchData.height;
     }
+
     float turbulenceFunctionResult = 0;
     FloatPoint noiseVector(point.x() * baseFrequencyX, point.y() * baseFrequencyY);
     float ratio = 1;
@@ -329,7 +331,7 @@ unsigned char FETurbulence::calculateTurbulenceValueForPoint(int channel, Painti
     return static_cast<unsigned char>(turbulenceFunctionResult * 255);
 }
 
-inline void FETurbulence::fillRegion(Uint8ClampedArray* pixelArray, PaintingData& paintingData, int startY, int endY)
+void FETurbulence::fillRegion(Uint8ClampedArray* pixelArray, const PaintingData& paintingData, int startY, int endY)
 {
     IntRect filterRegion = absolutePaintRect();
     IntPoint point(0, filterRegion.y() + startY);
