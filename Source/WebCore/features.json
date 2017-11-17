@@ -1161,11 +1161,11 @@
         "description": "An API that provides access to the vibration mechanism of the hosting device."
     },
     {
-        "name": "ViewportAPI",
+        "name": "Visual Viewport API",
         "status": {
-            "status": "Under Consideration"
+            "status": "In Development"
         },
-        "url": "https://github.com/WICG/ViewportAPI",
+        "url": "https://wicg.github.io/visual-viewport/",
         "description": "A proposal to add explicit APIs to the Web for querying and setting the visual viewport.",
         "keywords": ["visual viewport", "viewport", "viewportapi"]
     },
