@@ -31,6 +31,7 @@
 		0F66B28E1DC97BAB004A1D3F /* Seconds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F66B2841DC97BAB004A1D3F /* Seconds.cpp */; };
 		0F66B2901DC97BAB004A1D3F /* TimeWithDynamicClockType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F66B2861DC97BAB004A1D3F /* TimeWithDynamicClockType.cpp */; };
 		0F66B2921DC97BAB004A1D3F /* WallTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F66B2881DC97BAB004A1D3F /* WallTime.cpp */; };
+		0F7075F51FBF53CD00489AF0 /* TimingScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7075F41FBF537A00489AF0 /* TimingScope.cpp */; };
 		0F7C5FB61D885CF20044F5E2 /* FastBitVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7C5FB51D885CF20044F5E2 /* FastBitVector.cpp */; };
 		0F824A681B7443A0002E345D /* ParkingLot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F824A641B7443A0002E345D /* ParkingLot.cpp */; };
 		0F8F2B92172E0103007DBDA5 /* CompilationThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F8F2B8F172E00F0007DBDA5 /* CompilationThread.cpp */; };
@@ -203,6 +204,8 @@
 		0F66B2871DC97BAB004A1D3F /* TimeWithDynamicClockType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeWithDynamicClockType.h; sourceTree = "<group>"; };
 		0F66B2881DC97BAB004A1D3F /* WallTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WallTime.cpp; sourceTree = "<group>"; };
 		0F66B2891DC97BAB004A1D3F /* WallTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WallTime.h; sourceTree = "<group>"; };
+		0F7075F31FBF537A00489AF0 /* TimingScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TimingScope.h; sourceTree = "<group>"; };
+		0F7075F41FBF537A00489AF0 /* TimingScope.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TimingScope.cpp; sourceTree = "<group>"; };
 		0F725CAB1C50461600AD943A /* RangeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RangeSet.h; sourceTree = "<group>"; };
 		0F79C7C31E73511800EB34D1 /* FastTLS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastTLS.h; sourceTree = "<group>"; };
 		0F7C5FB51D885CF20044F5E2 /* FastBitVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastBitVector.cpp; sourceTree = "<group>"; };
@@ -1016,6 +1019,8 @@
 				A8A4733F151A825B004123FF /* ThreadSpecific.h */,
 				0F66B2861DC97BAB004A1D3F /* TimeWithDynamicClockType.cpp */,
 				0F66B2871DC97BAB004A1D3F /* TimeWithDynamicClockType.h */,
+				0F7075F41FBF537A00489AF0 /* TimingScope.cpp */,
+				0F7075F31FBF537A00489AF0 /* TimingScope.h */,
 				553071C91C40427200384898 /* TinyLRUCache.h */,
 				0FED67B51B22D4D80066CE15 /* TinyPtrSet.h */,
 				149EF16216BBFE0D000A4331 /* TriState.h */,
@@ -1441,6 +1446,7 @@
 				93934BD518A1F16900D0D6A1 /* StringViewCF.cpp in Sources */,
 				93934BD318A1E8C300D0D6A1 /* StringViewObjC.mm in Sources */,
 				A8A473B7151A825B004123FF /* strtod.cc in Sources */,
+				0F7075F51FBF53CD00489AF0 /* TimingScope.cpp in Sources */,
 				52183012C99E476A84EEBEA8 /* SymbolImpl.cpp in Sources */,
 				70A993FE1AD7151300FA615B /* SymbolRegistry.cpp in Sources */,
 				1C181C7F1D3078DA00F5FA16 /* TextBreakIterator.cpp in Sources */,

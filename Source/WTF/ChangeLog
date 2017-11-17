@@ -1,3 +1,33 @@
+2017-11-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a TimingScope class for microbenchmarking sections of code
+        https://bugs.webkit.org/show_bug.cgi?id=179825
+
+        Reviewed by Zalan Bujtas.
+        
+        Add a class, similar to B3TimingScope, which makes it easy to microbenchmark
+        sections of code. Use looks like:
+        
+        TimingScope scope("some label", 100);
+        
+        where this will print mean scope duration every 100 calls. Sample output:
+        
+            FETurbulence::platformApplySoftware: 100 calls, mean duration: 3.073181ms
+            FETurbulence::platformApplySoftware: 200 calls, mean duration: 3.074612ms
+            FETurbulence::platformApplySoftware: 300 calls, mean duration: 3.065722ms
+        
+        Because TimingScope needs to store state beween invocations, and there may be
+        multiple TimingScopes in use at the same time, data is stored in a global
+        hash map with atomic access.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/TimingScope.cpp: Added.
+        (WTF::TimingScope::scopeDidEnd):
+        * wtf/TimingScope.h: Added.
+        (WTF::TimingScope::TimingScope):
+        (WTF::TimingScope::~TimingScope):
+
 2017-11-17  Alex Christensen  <achristensen@webkit.org>
 
         Clean up after r224952
