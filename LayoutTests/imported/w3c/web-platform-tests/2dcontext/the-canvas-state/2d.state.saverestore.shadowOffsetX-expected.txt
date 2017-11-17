@@ -1,6 +1,0 @@
-2d.state.saverestore.shadowOffsetX
-save()/restore() works for shadowOffsetX
-Actual output:
-
-PASS save()/restore() works for shadowOffsetX 
-

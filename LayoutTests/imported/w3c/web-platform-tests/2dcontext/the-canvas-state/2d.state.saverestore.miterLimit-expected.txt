@@ -1,6 +1,0 @@
-2d.state.saverestore.miterLimit
-save()/restore() works for miterLimit
-Actual output:
-
-PASS save()/restore() works for miterLimit 
-

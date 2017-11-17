@@ -2,7 +2,6 @@
     "css/geometry-1": "import", 
     "web-platform-tests/2dcontext": "skip", 
     "web-platform-tests/2dcontext/imagebitmap": "import", 
-    "web-platform-tests/2dcontext/the-canvas-state": "import", 
     "web-platform-tests/2dcontext/transformations/canvas_transformations_reset_001-ref.html": "import", 
     "web-platform-tests/2dcontext/transformations/canvas_transformations_reset_001.html": "import", 
     "web-platform-tests/DOM-parsing": "skip", 
