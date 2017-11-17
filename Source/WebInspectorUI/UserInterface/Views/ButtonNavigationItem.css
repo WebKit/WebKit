@@ -68,6 +68,7 @@
     color: var(--glyph-color-active-pressed);
 }
 
+.navigation-bar .item.button.disabled.image-and-text,
 .navigation-bar .item.button.disabled > .glyph {
     color: var(--glyph-color-disabled);
 }
