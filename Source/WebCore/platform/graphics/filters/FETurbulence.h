@@ -39,22 +39,22 @@ class FETurbulence : public FilterEffect {
 public:
     static Ref<FETurbulence> create(Filter&, TurbulenceType, float, float, int, float, bool);
 
-    TurbulenceType type() const;
+    TurbulenceType type() const { return m_type; }
     bool setType(TurbulenceType);
 
-    float baseFrequencyY() const;
+    float baseFrequencyY() const { return m_baseFrequencyX; }
     bool setBaseFrequencyY(float);
 
-    float baseFrequencyX() const;
+    float baseFrequencyX() const { return m_baseFrequencyY; }
     bool setBaseFrequencyX(float);
 
-    float seed() const;
+    float seed() const { return m_seed; }
     bool setSeed(float);
 
-    int numOctaves() const;
+    int numOctaves() const { return m_numOctaves; }
     bool setNumOctaves(int);
 
-    bool stitchTiles() const;
+    bool stitchTiles() const { return m_stitchTiles; }
     bool setStitchTiles(bool);
 
     static void fillRegionWorker(void*);

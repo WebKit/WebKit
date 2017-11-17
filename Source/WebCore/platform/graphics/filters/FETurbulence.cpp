@@ -64,22 +64,12 @@ Ref<FETurbulence> FETurbulence::create(Filter& filter, TurbulenceType type, floa
     return adoptRef(*new FETurbulence(filter, type, baseFrequencyX, baseFrequencyY, numOctaves, seed, stitchTiles));
 }
 
-TurbulenceType FETurbulence::type() const
-{
-    return m_type;
-}
-
 bool FETurbulence::setType(TurbulenceType type)
 {
     if (m_type == type)
         return false;
     m_type = type;
     return true;
-}
-
-float FETurbulence::baseFrequencyY() const
-{
-    return m_baseFrequencyY;
 }
 
 bool FETurbulence::setBaseFrequencyY(float baseFrequencyY)
@@ -90,22 +80,12 @@ bool FETurbulence::setBaseFrequencyY(float baseFrequencyY)
     return true;
 }
 
-float FETurbulence::baseFrequencyX() const
-{
-    return m_baseFrequencyX;
-}
-
 bool FETurbulence::setBaseFrequencyX(float baseFrequencyX)
 {
     if (m_baseFrequencyX == baseFrequencyX)
         return false;
     m_baseFrequencyX = baseFrequencyX;
     return true;
-}
-
-float FETurbulence::seed() const
-{
-    return m_seed; 
 }
 
 bool FETurbulence::setSeed(float seed)
@@ -116,22 +96,12 @@ bool FETurbulence::setSeed(float seed)
     return true;
 }
 
-int FETurbulence::numOctaves() const
-{
-    return m_numOctaves;
-}
-
 bool FETurbulence::setNumOctaves(int numOctaves)
 {
     if (m_numOctaves == numOctaves)
         return false;
     m_numOctaves = numOctaves;
     return true;
-}
-
-bool FETurbulence::stitchTiles() const
-{
-    return m_stitchTiles;
 }
 
 bool FETurbulence::setStitchTiles(bool stitch)
@@ -334,18 +304,19 @@ unsigned char FETurbulence::calculateTurbulenceValueForPoint(int channel, const 
 void FETurbulence::fillRegion(Uint8ClampedArray* pixelArray, const PaintingData& paintingData, int startY, int endY)
 {
     IntRect filterRegion = absolutePaintRect();
-    IntPoint point(0, filterRegion.y() + startY);
+    FloatPoint point(0, filterRegion.y() + startY);
     int indexOfPixelChannel = startY * (filterRegion.width() << 2);
-    int channel;
     StitchData stitchData;
+    AffineTransform inverseTransfrom = filter().absoluteTransform().inverse().value_or(AffineTransform());
 
     for (int y = startY; y < endY; ++y) {
         point.setY(point.y() + 1);
         point.setX(filterRegion.x());
         for (int x = 0; x < filterRegion.width(); ++x) {
             point.setX(point.x() + 1);
-            for (channel = 0; channel < 4; ++channel, ++indexOfPixelChannel)
-                pixelArray->set(indexOfPixelChannel, calculateTurbulenceValueForPoint(channel, paintingData, stitchData, filter().mapAbsolutePointToLocalPoint(point)));
+            FloatPoint localPoint = inverseTransfrom.mapPoint(point);
+            for (int channel = 0; channel < 4; ++channel, ++indexOfPixelChannel)
+                pixelArray->set(indexOfPixelChannel, calculateTurbulenceValueForPoint(channel, paintingData, stitchData, localPoint));
         }
     }
 }
