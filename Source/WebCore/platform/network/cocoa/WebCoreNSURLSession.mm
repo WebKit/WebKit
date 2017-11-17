@@ -445,6 +445,10 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 - (void)_restart
 {
     ASSERT(isMainThread());
+
+    if (!self.session)
+        return;
+
     [self _cancel];
 
     _resource = self.session.loader.requestResource(self.originalRequest, PlatformMediaResourceLoader::LoadOption::DisallowCaching);
