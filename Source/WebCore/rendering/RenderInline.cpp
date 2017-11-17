@@ -84,10 +84,6 @@ void RenderInline::willBeDestroyed()
     }
 #endif
 
-    // Make sure to destroy anonymous children first while they are still connected to the rest of the tree, so that they will
-    // properly dirty line boxes that they are removed from.  Effects that do :before/:after only on hover could crash otherwise.
-    destroyLeftoverChildren();
-    
     if (!renderTreeBeingDestroyed()) {
         if (firstLineBox()) {
             // We can't wait for RenderBoxModelObject::destroy to clear the selection,

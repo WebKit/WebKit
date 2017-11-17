@@ -435,6 +435,10 @@ RenderLayer::~RenderLayer()
     // we don't need to delete them ourselves.
 
     clearBacking(true);
+
+    // Layer and all its children should be removed from the tree before destruction.
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(renderer().renderTreeBeingDestroyed() || !m_parent);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(renderer().renderTreeBeingDestroyed() || !m_first);
 }
 
 String RenderLayer::name() const
