@@ -136,22 +136,6 @@ AXChecked: 0
 AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WebKitGtk
 ------------
 
-AXParent: (null)
-AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 0.000000, 0.000000 }
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 0
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: 
-------------
-
 
 --------------------------
 
@@ -520,22 +504,6 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WebKitGtk
-------------
-
-AXParent: (null)
-AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 0.000000, 0.000000 }
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 0
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: 
 ------------
 
 

@@ -1286,9 +1286,6 @@ webkit.org/b/176796 accessibility/gtk/xml-roles-exposed.html [ Crash ]
 
 webkit.org/b/176797 accessibility/aria-listbox-no-selection.html [ Crash ]
 
-webkit.org/b/176798 accessibility/aria-tables.html [ Crash ]
-webkit.org/b/176798 accessibility/table-sections.html [ Crash ]
-
 webkit.org/b/176799 editing/deleting/delete-surrogatepair.html [ Crash ]
 
 webkit.org/b/176801 fast/mediastream/apply-constraints-audio.html [ Crash ]

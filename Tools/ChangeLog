@@ -1,3 +1,20 @@
+2017-11-17  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Fix WKTR's methods for testing row header and column header presence and count
+        https://bugs.webkit.org/show_bug.cgi?id=179837
+
+        Reviewed by Chris Fleizach.
+
+        Add support to rowHeaders() for tables. Return an empty array in rowHeaders()
+        and columnHeaders() upon failure. Rename getRowHeaders() and getColumnHeaders()
+        to getTableRowHeaders() and getTableColumnHeaders() respectively.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::rowHeaders const):
+        (WTR::AccessibilityUIElement::columnHeaders const):
+        (WTR::AccessibilityUIElement::attributesOfColumnHeaders):
+        (WTR::AccessibilityUIElement::attributesOfRowHeaders):
+
 2017-11-16  Don Olmstead  <don.olmstead@sony.com>
 
         [WinCairo] Update WinCairoRequirements
