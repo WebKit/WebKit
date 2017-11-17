@@ -72,6 +72,9 @@ public:
     virtual uint64_t identifier() const = 0;
     virtual bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOrigin&) const = 0;
 
+    virtual void serviceWorkerStartedControllingClient(ServiceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier) = 0;
+    virtual void serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier) = 0;
+
 protected:
     WEBCORE_EXPORT SWClientConnection();
 

@@ -1,5 +1,20 @@
 2017-11-16  Chris Dumez  <cdumez@apple.com>
 
+        [Service Worker] Implement "Try Clear Registration" algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=179791
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline several WPT tests that are now passing or failing later.
+
+        * web-platform-tests/service-workers/service-worker/clients-matchall-client-types.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/getregistrations.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/ready.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister-then-register-new-script.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister-then-register.https-expected.txt:
+
+2017-11-16  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rebaseline skipped and flaky service workers tests.
 
         * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event.https-expected.txt:

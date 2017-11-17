@@ -170,6 +170,16 @@ void SWServer::Connection::removeServiceWorkerRegistrationInServer(const Service
     m_server.removeClientServiceWorkerRegistration(*this, key, identifier);
 }
 
+void SWServer::Connection::serviceWorkerStartedControllingClient(ServiceWorkerIdentifier serviceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier)
+{
+    m_server.serviceWorkerStartedControllingClient(*this, serviceWorkerIdentifier, scriptExecutionContextIdentifier);
+}
+
+void SWServer::Connection::serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier serviceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier)
+{
+    m_server.serviceWorkerStoppedControllingClient(*this, serviceWorkerIdentifier, scriptExecutionContextIdentifier);
+}
+
 SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore)
     : m_originStore(WTFMove(originStore))
 {
@@ -314,6 +324,32 @@ void SWServer::removeClientServiceWorkerRegistration(Connection& connection, con
     registration->removeClientServiceWorkerRegistration(connection.identifier());
 }
 
+void SWServer::serviceWorkerStartedControllingClient(Connection& connection, ServiceWorkerIdentifier serviceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier)
+{
+    auto* serviceWorker = m_workersByID.get(serviceWorkerIdentifier);
+    if (!serviceWorker)
+        return;
+
+    auto* registration = m_registrations.get(serviceWorker->registrationKey());
+    if (!registration)
+        return;
+
+    registration->addClientUsingRegistration({ connection.identifier(), scriptExecutionContextIdentifier });
+}
+
+void SWServer::serviceWorkerStoppedControllingClient(Connection& connection, ServiceWorkerIdentifier serviceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier)
+{
+    auto* serviceWorker = m_workersByID.get(serviceWorkerIdentifier);
+    if (!serviceWorker)
+        return;
+
+    auto* registration = m_registrations.get(serviceWorker->registrationKey());
+    if (!registration)
+        return;
+
+    registration->removeClientUsingRegistration({ connection.identifier(), scriptExecutionContextIdentifier });
+}
+
 void SWServer::updateWorker(Connection&, const ServiceWorkerRegistrationKey& registrationKey, const URL& url, const String& script, WorkerType type)
 {
     auto serviceWorkerIdentifier = generateServiceWorkerIdentifier();
@@ -435,6 +471,9 @@ void SWServer::unregisterConnection(Connection& connection)
 {
     ASSERT(m_connections.get(connection.identifier()) == &connection);
     m_connections.remove(connection.identifier());
+
+    for (auto& registration : m_registrations.values())
+        registration->unregisterServerConnection(connection.identifier());
 }
 
 const SWServerRegistration* SWServer::doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const

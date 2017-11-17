@@ -79,6 +79,8 @@ public:
         WEBCORE_EXPORT void finishFetchingScriptInServer(const ServiceWorkerFetchResult&);
         WEBCORE_EXPORT void addServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationIdentifier);
         WEBCORE_EXPORT void removeServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationIdentifier);
+        WEBCORE_EXPORT void serviceWorkerStartedControllingClient(ServiceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier);
+        WEBCORE_EXPORT void serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier);
 
     private:
         // Messages to the client WebProcess
@@ -143,6 +145,8 @@ private:
 
     void addClientServiceWorkerRegistration(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationIdentifier);
     void removeClientServiceWorkerRegistration(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationIdentifier);
+    void serviceWorkerStartedControllingClient(Connection&, ServiceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier);
+    void serviceWorkerStoppedControllingClient(Connection&, ServiceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier);
 
     WEBCORE_EXPORT const SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const;
 

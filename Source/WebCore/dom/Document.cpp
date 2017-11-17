@@ -2331,6 +2331,10 @@ void Document::prepareForDestruction()
     if (m_frame)
         m_frame->animation().detachFromDocument(this);
 
+#if ENABLE(SERVICE_WORKER)
+    setActiveServiceWorker(nullptr);
+#endif
+
 #if ENABLE(IOS_TOUCH_EVENTS)
     clearTouchEventHandlersAndListeners();
 #endif

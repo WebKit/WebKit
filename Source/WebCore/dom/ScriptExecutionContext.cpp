@@ -43,8 +43,10 @@
 #include "PublicURLManager.h"
 #include "RejectedPromiseTracker.h"
 #include "ResourceRequest.h"
+#include "SWClientConnection.h"
 #include "ScriptState.h"
 #include "ServiceWorker.h"
+#include "ServiceWorkerProvider.h"
 #include "Settings.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerNavigator.h"
@@ -113,6 +115,10 @@ ScriptExecutionContext::~ScriptExecutionContext()
 
 #if !ASSERT_DISABLED
     m_inScriptExecutionContextDestructor = true;
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+    setActiveServiceWorker(nullptr);
 #endif
 
     while (auto* destructionObserver = m_destructionObservers.takeAny())
@@ -537,7 +543,21 @@ ServiceWorker* ScriptExecutionContext::activeServiceWorker() const
 
 void ScriptExecutionContext::setActiveServiceWorker(RefPtr<ServiceWorker>&& serviceWorker)
 {
+    // Add support for workers.
+    if (!is<Document>(*this))
+        return;
+
+    if (m_activeServiceWorker == serviceWorker)
+        return;
+
+    auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID());
+    if (m_activeServiceWorker)
+        connection.serviceWorkerStoppedControllingClient(m_activeServiceWorker->identifier(), downcast<Document>(*this).identifier());
+
     m_activeServiceWorker = WTFMove(serviceWorker);
+
+    if (m_activeServiceWorker)
+        connection.serviceWorkerStartedControllingClient(m_activeServiceWorker->identifier(), downcast<Document>(*this).identifier());
 }
 
 ServiceWorkerContainer* ScriptExecutionContext::serviceWorkerContainer()

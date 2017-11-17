@@ -339,7 +339,8 @@ void SWServerJobQueue::runUnregisterJob(const ServiceWorkerJobData& job)
 // https://w3c.github.io/ServiceWorker/#try-clear-registration-algorithm
 void SWServerJobQueue::tryClearRegistration(SWServerRegistration& registration)
 {
-    // FIXME: Make sure that the registration has no service worker client.
+    if (registration.hasClientsUsingRegistration())
+        return;
 
     if (registration.installingWorker() && registration.installingWorker()->hasPendingEvents())
         return;

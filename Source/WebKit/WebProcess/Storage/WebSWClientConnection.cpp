@@ -86,6 +86,16 @@ void WebSWClientConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerI
     send(Messages::WebSWServerConnection::PostMessageToServiceWorkerGlobalScope(destinationIdentifier, IPC::DataReference { scriptValue->data() }, WTFMove(source)));
 }
 
+void WebSWClientConnection::serviceWorkerStartedControllingClient(ServiceWorkerIdentifier serviceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier)
+{
+    send(Messages::WebSWServerConnection::ServiceWorkerStartedControllingClient(serviceWorkerIdentifier, scriptExecutionContextIdentifier));
+}
+
+void WebSWClientConnection::serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier serviceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier)
+{
+    send(Messages::WebSWServerConnection::ServiceWorkerStoppedControllingClient(serviceWorkerIdentifier, scriptExecutionContextIdentifier));
+}
+
 void WebSWClientConnection::didResolveRegistrationPromise(const ServiceWorkerRegistrationKey& key)
 {
     send(Messages::WebSWServerConnection::DidResolveRegistrationPromise(key));

@@ -1,3 +1,16 @@
+2017-11-16  Chris Dumez  <cdumez@apple.com>
+
+        [Service Worker] Implement "Try Clear Registration" algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=179791
+
+        Reviewed by Youenn Fablet.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::serviceWorkerStartedControllingClient):
+        (WebKit::WebSWClientConnection::serviceWorkerStoppedControllingClient):
+        * WebProcess/Storage/WebSWClientConnection.h:
+
 2017-11-16  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r224179): layer flush now requires sync IPC to compute undo/redo availability in EditorState

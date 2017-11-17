@@ -3,6 +3,6 @@ PASS registrations are not returned following unregister
 PASS Register then getRegistrations 
 PASS Register multiple times then getRegistrations 
 PASS Register then Unregister then getRegistrations 
-FAIL Register then Unregister with controlled frame then getRegistrations assert_equals: expected "activated" but got "redundant"
+PASS Register then Unregister with controlled frame then getRegistrations 
 PASS getRegistrations promise resolves only with same origin registrations. 
 

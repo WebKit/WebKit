@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "SWServer.h"
+#include "ServiceWorkerClientIdentifier.h"
 #include "ServiceWorkerRegistrationData.h"
 #include "ServiceWorkerTypes.h"
 #include <wtf/HashCountedSet.h>
@@ -72,6 +73,11 @@ public:
 
     MonotonicTime creationTime() const { return m_creationTime; }
 
+    bool hasClientsUsingRegistration() const { return !m_clientsUsingRegistration.isEmpty(); }
+    void addClientUsingRegistration(const ServiceWorkerClientIdentifier&);
+    void removeClientUsingRegistration(const ServiceWorkerClientIdentifier&);
+    void unregisterServerConnection(uint64_t serverConnectionIdentifier);
+
 private:
     void forEachConnection(const WTF::Function<void(SWServer::Connection&)>&);
 
@@ -88,10 +94,11 @@ private:
 
     double m_lastUpdateTime { 0 };
     
-    HashCountedSet<uint64_t> m_connectionsWithClientRegistrations;
+    HashCountedSet<uint64_t /* serverConnectionIdentifier */> m_connectionsWithClientRegistrations;
     SWServer& m_server;
 
     MonotonicTime m_creationTime;
+    HashMap<uint64_t /* serverConnectionIdentifier */, HashSet<uint64_t /* scriptExecutionContextIdentifier */>> m_clientsUsingRegistration;
 };
 
 } // namespace WebCore

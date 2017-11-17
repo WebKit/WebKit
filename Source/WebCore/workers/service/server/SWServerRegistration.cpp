@@ -144,6 +144,31 @@ void SWServerRegistration::removeClientServiceWorkerRegistration(uint64_t connec
     m_connectionsWithClientRegistrations.remove(connectionIdentifier);
 }
 
+void SWServerRegistration::addClientUsingRegistration(const ServiceWorkerClientIdentifier& clientIdentifier)
+{
+    auto addResult = m_clientsUsingRegistration.ensure(clientIdentifier.serverConnectionIdentifier, [] {
+        return HashSet<uint64_t> { };
+    }).iterator->value.add(clientIdentifier.scriptExecutionContextIdentifier);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
+
+void SWServerRegistration::removeClientUsingRegistration(const ServiceWorkerClientIdentifier& clientIdentifier)
+{
+    auto iterator = m_clientsUsingRegistration.find(clientIdentifier.serverConnectionIdentifier);
+    ASSERT(iterator != m_clientsUsingRegistration.end());
+    bool wasRemoved = iterator->value.remove(clientIdentifier.scriptExecutionContextIdentifier);
+    ASSERT_UNUSED(wasRemoved, wasRemoved);
+
+    if (iterator->value.isEmpty())
+        m_clientsUsingRegistration.remove(iterator);
+}
+
+void SWServerRegistration::unregisterServerConnection(uint64_t serverConnectionIdentifier)
+{
+    m_connectionsWithClientRegistrations.removeAll(serverConnectionIdentifier);
+    m_clientsUsingRegistration.remove(serverConnectionIdentifier);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

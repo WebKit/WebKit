@@ -1,5 +1,5 @@
 
 
 FAIL Verify matchAll() with window client type assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
-FAIL Verify matchAll() with {window, sharedworker, worker} client types promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL Verify matchAll() with {window, sharedworker, worker} client types promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
 
