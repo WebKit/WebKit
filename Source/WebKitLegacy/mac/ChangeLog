@@ -1,3 +1,15 @@
+2017-11-16  Daniel Bates  <dabates@apple.com>
+
+        Add feature define for alternative presentation button element
+        https://bugs.webkit.org/show_bug.cgi?id=179692
+        Part of <rdar://problem/34917108>
+
+        Reviewed by Andy Estes.
+
+        Only enabled on Cocoa platforms by default.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-11-14  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: Implement AccessibleNode class and support label and role attributes
