@@ -49,11 +49,6 @@ LRESULT CALLBACK ThreadingWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, 
     return 0;
 }
 
-bool currentRunLoopInCommonMode()
-{
-    return true;
-}
-
 void initializeMainThreadPlatform()
 {
     if (threadingWindowHandle)
@@ -72,7 +67,7 @@ void initializeMainThreadPlatform()
     Thread::initializeCurrentThreadInternal("Main Thread");
 }
 
-void scheduleDispatchFunctionsOnMainThread(SchedulePairHashSet*)
+void scheduleDispatchFunctionsOnMainThread()
 {
     ASSERT(threadingWindowHandle);
     PostMessage(threadingWindowHandle, threadingFiredMessage, 0, 0);

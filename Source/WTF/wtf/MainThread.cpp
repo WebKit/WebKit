@@ -135,14 +135,14 @@ void dispatchFunctionsFromMainThread()
         // yield so the user input can be processed. Otherwise user may not be able to even close the window.
         // This code has effect only in case the scheduleDispatchFunctionsOnMainThread() is implemented in a way that
         // allows input events to be processed before we are back here.
-        if (MonotonicTime::now() - startTime > maxRunLoopSuspensionTime && currentRunLoopInCommonMode()) {
+        if (MonotonicTime::now() - startTime > maxRunLoopSuspensionTime) {
             scheduleDispatchFunctionsOnMainThread();
             break;
         }
     }
 }
 
-void callOnMainThread(Function<void()>&& function, SchedulePairHashSet* pairs)
+void callOnMainThread(Function<void()>&& function)
 {
     ASSERT(function);
 
@@ -155,7 +155,7 @@ void callOnMainThread(Function<void()>&& function, SchedulePairHashSet* pairs)
     }
 
     if (needToSchedule)
-        scheduleDispatchFunctionsOnMainThread(pairs);
+        scheduleDispatchFunctionsOnMainThread();
 }
 
 void setMainThreadCallbacksPaused(bool paused)

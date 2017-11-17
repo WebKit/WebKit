@@ -122,14 +122,7 @@ static void postTimer()
     CFRunLoopAddTimer(CFRunLoopGetCurrent(), CFRunLoopTimerCreate(0, 0, 0, 0, 0, timerFired, 0), kCFRunLoopCommonModes);
 }
 
-bool currentRunLoopInCommonMode()
-{
-    NSString *currentMode = [[NSRunLoop currentRunLoop] currentMode];
-    return currentMode == (NSString *)kCFRunLoopCommonModes
-        || currentMode == (NSString *)kCFRunLoopDefaultMode;
-}
-
-void scheduleDispatchFunctionsOnMainThread(SchedulePairHashSet* pairs)
+void scheduleDispatchFunctionsOnMainThread()
 {
     ASSERT(staticMainThreadCaller);
 
@@ -137,23 +130,15 @@ void scheduleDispatchFunctionsOnMainThread(SchedulePairHashSet* pairs)
         postTimer();
         return;
     }
-
-    RetainPtr<NSArray<NSString *>> modes;
-    if (pairs) {
-        modes = adoptNS([[NSMutableArray alloc] initWithCapacity:pairs->size()]);
-        for (auto& pair : *pairs)
-            [(NSMutableArray *)modes.get() addObject:(NSString *)pair->mode()];
-    } else
-        modes = @[(NSString *)kCFRunLoopCommonModes];
     
     if (mainThreadEstablishedAsPthreadMain) {
         ASSERT(!mainThreadNSThread);
-        [staticMainThreadCaller performSelectorOnMainThread:@selector(call) withObject:nil waitUntilDone:NO modes:modes.get()];
+        [staticMainThreadCaller performSelectorOnMainThread:@selector(call) withObject:nil waitUntilDone:NO];
         return;
     }
 
     ASSERT(mainThreadNSThread);
-    [staticMainThreadCaller performSelector:@selector(call) onThread:mainThreadNSThread withObject:nil waitUntilDone:NO modes:modes.get()];
+    [staticMainThreadCaller performSelector:@selector(call) onThread:mainThreadNSThread withObject:nil waitUntilDone:NO];
 }
 
 void callOnWebThreadOrDispatchAsyncOnMainThread(void (^block)())

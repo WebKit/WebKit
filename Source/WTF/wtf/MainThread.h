@@ -39,14 +39,11 @@
 namespace WTF {
 
 class PrintStream;
-class SchedulePair;
-struct SchedulePairHash;
-typedef HashSet<RefPtr<SchedulePair>, SchedulePairHash> SchedulePairHashSet;
 
 // Must be called from the main thread.
 WTF_EXPORT_PRIVATE void initializeMainThread();
 
-WTF_EXPORT_PRIVATE void callOnMainThread(Function<void()>&&, SchedulePairHashSet* = nullptr);
+WTF_EXPORT_PRIVATE void callOnMainThread(Function<void()>&&);
 
 #if PLATFORM(COCOA)
 WTF_EXPORT_PRIVATE void callOnWebThreadOrDispatchAsyncOnMainThread(void (^block)());
@@ -85,9 +82,8 @@ WTF_EXPORT_PRIVATE bool isMainThreadOrGCThread();
 
 // NOTE: these functions are internal to the callOnMainThread implementation.
 void initializeMainThreadPlatform();
-void scheduleDispatchFunctionsOnMainThread(SchedulePairHashSet* = nullptr);
+void scheduleDispatchFunctionsOnMainThread();
 void dispatchFunctionsFromMainThread();
-bool currentRunLoopInCommonMode();
 
 #if OS(DARWIN) && !USE(GLIB)
 #if !USE(WEB_THREAD)
