@@ -866,8 +866,6 @@ EditorState WebPage::editorState(IncludePostLayoutDataHint shouldIncludePostLayo
         postLayoutData.canCut = editor.canCut();
         postLayoutData.canCopy = editor.canCopy();
         postLayoutData.canPaste = editor.canPaste();
-        postLayoutData.canUndo = editor.canUndo();
-        postLayoutData.canRedo = editor.canRedo();
 
 #if PLATFORM(COCOA)
         if (result.isContentEditable && !selection.isNone()) {

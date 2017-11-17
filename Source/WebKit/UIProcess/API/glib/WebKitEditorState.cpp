@@ -22,6 +22,7 @@
 
 #include "EditorState.h"
 #include "WebKitEditorStatePrivate.h"
+#include "WebPageProxy.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -47,6 +48,7 @@ enum {
 };
 
 struct _WebKitEditorStatePrivate {
+    WebPageProxy* page;
     unsigned typingAttributes;
     unsigned isCutAvailable : 1;
     unsigned isCopyAvailable : 1;
@@ -103,10 +105,11 @@ static void webkitEditorStateSetTypingAttributes(WebKitEditorState* editorState,
     g_object_notify(G_OBJECT(editorState), "typing-attributes");
 }
 
-WebKitEditorState* webkitEditorStateCreate(const EditorState& state)
+WebKitEditorState* webkitEditorStateCreate(WebPageProxy& page)
 {
     WebKitEditorState* editorState = WEBKIT_EDITOR_STATE(g_object_new(WEBKIT_TYPE_EDITOR_STATE, nullptr));
-    webkitEditorStateChanged(editorState, state);
+    editorState->priv->page = &page;
+    webkitEditorStateChanged(editorState, page.editorState());
     return editorState;
 }
 
@@ -131,8 +134,9 @@ void webkitEditorStateChanged(WebKitEditorState* editorState, const EditorState&
     editorState->priv->isCutAvailable = postLayoutData.canCut;
     editorState->priv->isCopyAvailable = postLayoutData.canCopy;
     editorState->priv->isPasteAvailable = postLayoutData.canPaste;
-    editorState->priv->isUndoAvailable = postLayoutData.canUndo;
-    editorState->priv->isRedoAvailable = postLayoutData.canRedo;
+
+    editorState->priv->isUndoAvailable = editorState->priv->page->canUndo();
+    editorState->priv->isRedoAvailable = editorState->priv->page->canRedo();
 }
 
 /**

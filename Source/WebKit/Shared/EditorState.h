@@ -112,8 +112,6 @@ struct EditorState {
         bool canCut { false };
         bool canCopy { false };
         bool canPaste { false };
-        bool canUndo { false };
-        bool canRedo { false };
 
         void encode(IPC::Encoder&) const;
         static bool decode(IPC::Decoder&, PostLayoutData&);

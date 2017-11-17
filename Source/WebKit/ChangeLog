@@ -1,3 +1,43 @@
+2017-11-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r224179): layer flush now requires sync IPC to compute undo/redo availability in EditorState
+        https://bugs.webkit.org/show_bug.cgi?id=179797
+
+        Reviewed by Simon Fraser.
+
+        r224179 introduced a performance regression. The newly-added code in WebPage::editorState is
+        part of a performance-critical path. (The editor state is computed and sent to the UI
+        process during the layer flush.) Calls to Editor::canUndo and Editor::canRedo were added,
+        but these calls are both implemented with sync IPC calls to WebPageProxy in the UI process.
+        WebPageProxy passes them along to PageClientImpl to compute the availability of the
+        commands.
+
+        That's all pointless because this code only exists for the purpose of getting editing
+        command availability to the UI process. In the case of undo and redo, it's not needed at
+        all. I did not realize that when writing the code. So canUndo and canRedo should be removed
+        from EditorState. This ought to be sufficient to avoid the perf regression.
+
+        No changes are needed to the GTK/WPE WebKitEditorState API. The API is reimplemented using
+        WebPageProxy::canUndoRedo instead of EditorState. There should be no changes in behavior,
+        only performance.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::PostLayoutData::encode const):
+        (WebKit::EditorState::PostLayoutData::decode):
+        * Shared/EditorState.h:
+        * UIProcess/API/glib/WebKitEditorState.cpp:
+        (webkitEditorStateCreate):
+        (webkitEditorStateChanged):
+        * UIProcess/API/glib/WebKitEditorStatePrivate.h:
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_get_editor_state):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::canUndo):
+        (WebKit::WebPageProxy::canRedo):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState const):
+
 2017-11-16  Megan Gardner  <megan_gardner@apple.com>
 
         Remove allowBlockSelection as block selection is not supported anymore

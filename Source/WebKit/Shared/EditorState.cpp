@@ -133,8 +133,6 @@ void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
     encoder << canCut;
     encoder << canCopy;
     encoder << canPaste;
-    encoder << canUndo;
-    encoder << canRedo;
 }
 
 bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& result)
@@ -199,10 +197,6 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
     if (!decoder.decode(result.canCopy))
         return false;
     if (!decoder.decode(result.canPaste))
-        return false;
-    if (!decoder.decode(result.canUndo))
-        return false;
-    if (!decoder.decode(result.canRedo))
         return false;
 
     return true;

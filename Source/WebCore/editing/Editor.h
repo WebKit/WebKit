@@ -305,9 +305,9 @@ public:
     bool shouldEndEditing(Range*);
 
     void clearUndoRedoOperations();
-    WEBCORE_EXPORT bool canUndo() const;
+    bool canUndo() const;
     void undo();
-    WEBCORE_EXPORT bool canRedo() const;
+    bool canRedo() const;
     void redo();
 
     void didBeginEditing();

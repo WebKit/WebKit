@@ -21,6 +21,7 @@
 
 #include "EditorState.h"
 #include "WebKitEditorState.h"
+#include "WebPageProxy.h"
 
-WebKitEditorState* webkitEditorStateCreate(const WebKit::EditorState&);
+WebKitEditorState* webkitEditorStateCreate(WebKit::WebPageProxy&);
 void webkitEditorStateChanged(WebKitEditorState*, const WebKit::EditorState&);

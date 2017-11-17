@@ -874,6 +874,9 @@ public:
     bool isValidEditCommand(WebEditCommandProxy*);
     void registerEditCommand(Ref<WebEditCommandProxy>&&, UndoOrRedo);
 
+    bool canUndo();
+    bool canRedo();
+
 #if PLATFORM(COCOA)
     void registerKeypressCommandName(const String& name) { m_knownKeypressCommandNames.add(name); }
     bool isValidKeypressCommandName(const String& name) const { return m_knownKeypressCommandNames.contains(name); }

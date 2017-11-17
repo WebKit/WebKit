@@ -4896,6 +4896,20 @@ void WebPageProxy::removeEditCommand(WebEditCommandProxy* command)
     m_process->send(Messages::WebPage::DidRemoveEditCommand(command->commandID()), m_pageID);
 }
 
+bool WebPageProxy::canUndo()
+{
+    bool result;
+    canUndoRedo(Undo, result);
+    return result;
+}
+
+bool WebPageProxy::canRedo()
+{
+    bool result;
+    canUndoRedo(Redo, result);
+    return result;
+}
+
 bool WebPageProxy::isValidEditCommand(WebEditCommandProxy* command)
 {
     return m_editCommandSet.find(command) != m_editCommandSet.end();

@@ -3893,7 +3893,7 @@ WebKitEditorState* webkit_web_view_get_editor_state(WebKitWebView *webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
 
     if (!webView->priv->editorState)
-        webView->priv->editorState = adoptGRef(webkitEditorStateCreate(getPage(webView).editorState()));
+        webView->priv->editorState = adoptGRef(webkitEditorStateCreate(getPage(webView)));
 
     return webView->priv->editorState.get();
 }
