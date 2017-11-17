@@ -1,3 +1,19 @@
+2017-11-17  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly JS API: throw when a promise can't be created
+        https://bugs.webkit.org/show_bug.cgi?id=179826
+        <rdar://problem/35455813>
+
+        Reviewed by Mark Lam.
+
+        Test WebAssembly.{compile,instantiate} where promise creation
+        fails because of a stack overflow.
+
+        * wasm/js-api/promise-stack-overflow.js: Added.
+        (const.runNearStackLimit.f.const.t):
+        (async.testCompile):
+        (async.testInstantiate):
+
 2017-11-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, mark regress-178385.js as memory exhausting

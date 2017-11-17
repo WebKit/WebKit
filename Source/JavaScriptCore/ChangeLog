@@ -1,3 +1,39 @@
+2017-11-17  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly JS API: throw when a promise can't be created
+        https://bugs.webkit.org/show_bug.cgi?id=179826
+        <rdar://problem/35455813>
+
+        Reviewed by Mark Lam.
+
+        Failure *in* a promise causes rejection, but failure to create a
+        promise (because of stack overflow) isn't really spec'd (as all
+        stack things JS). This applies to WebAssembly.compile and
+        WebAssembly.instantiate.
+
+        Dan's current proposal says:
+
+            https://littledan.github.io/spec/document/js-api/index.html#stack-overflow
+
+            Whenever a stack overflow occurs in WebAssembly code, the same
+            class of exception is thrown as for a stack overflow in
+            JavaScript. The particular exception here is
+            implementation-defined in both cases.
+
+            Note: ECMAScript doesn’t specify any sort of behavior on stack
+            overflow; implementations have been observed to throw RangeError,
+            InternalError or Error. Any is valid here.
+
+        This is for general stack overflow within WebAssembly, not
+        specifically for promise creation within JavaScript, but it seems
+        like a stack overflow in promise creation should follow the same
+        rule instead of, say, swallowing the overflow and returning
+        undefined.
+
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::webAssemblyCompileFunc):
+        (JSC::webAssemblyInstantiateFunc):
+
 2017-11-16  Daniel Bates  <dabates@apple.com>
 
         Add feature define for alternative presentation button element
