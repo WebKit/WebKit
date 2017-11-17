@@ -93,12 +93,12 @@ HTMLFrameOwnerElement::~HTMLFrameOwnerElement()
 
 Document* HTMLFrameOwnerElement::contentDocument() const
 {
-    return m_contentFrame ? m_contentFrame->document() : 0;
+    return m_contentFrame ? m_contentFrame->document() : nullptr;
 }
 
 DOMWindow* HTMLFrameOwnerElement::contentWindow() const
 {
-    return m_contentFrame ? m_contentFrame->document()->domWindow() : 0;
+    return m_contentFrame ? m_contentFrame->document()->domWindow() : nullptr;
 }
 
 void HTMLFrameOwnerElement::setSandboxFlags(SandboxFlags flags)
@@ -113,9 +113,9 @@ bool HTMLFrameOwnerElement::isKeyboardFocusable(KeyboardEvent& event) const
 
 ExceptionOr<Document&> HTMLFrameOwnerElement::getSVGDocument() const
 {
-    auto document = makeRef(*contentDocument());
+    auto* document = contentDocument();
     if (is<SVGDocument>(document))
-        return document.get();
+        return *document;
     // Spec: http://www.w3.org/TR/SVG/struct.html#InterfaceGetSVGDocument
     return Exception { NotSupportedError };
 }
