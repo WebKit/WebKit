@@ -93,9 +93,8 @@ Ref<FetchEvent> dispatchFetchEvent(Ref<Client>&& client, WorkerGlobalScope& glob
 {
     ASSERT(globalScope.isServiceWorkerGlobalScope());
 
-    // FIXME: Set request referrer.
     auto requestHeaders = FetchHeaders::create(FetchHeaders::Guard::Immutable, HTTPHeaderMap { request.httpHeaderFields() });
-    auto fetchRequest = FetchRequest::create(globalScope, FetchBody::fromFormData(request.httpBody()), WTFMove(requestHeaders),  WTFMove(request), WTFMove(options), { });
+    auto fetchRequest = FetchRequest::create(globalScope, FetchBody::fromFormData(request.httpBody()), WTFMove(requestHeaders),  WTFMove(request), WTFMove(options), request.httpReferrer());
 
     // FIXME: Initialize other FetchEvent::Init fields.
     FetchEvent::Init init;

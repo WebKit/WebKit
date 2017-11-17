@@ -1,3 +1,3 @@
 
-FAIL Test FetchEvent.request passed to onfetch assert_equals: request.referrer expected "https://localhost:9443/service-workers/service-worker/request-end-to-end.https.html" but got ""
+FAIL Test FetchEvent.request passed to onfetch assert_equals: request.mode expected "navigate" but got "no-cors"
 
