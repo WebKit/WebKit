@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/sw-test-pre.js"></script>
+</head>
+<body>
+<script>
+let updatefoundCount = 0;
+
+navigator.serviceWorker.register("resources/empty.js", { }).then(function(registration) {
+    registration.addEventListener("updatefound", function() {
+        gc();
+        log("updatefound event fired");
+        updatefoundCount++;
+        if (updatefoundCount == 2)
+            finishSWTest();
+    });
+    registration.update();
+    setTimeout(function() {
+        gc();
+    }, 0);
+});
+</script>
+</body>
+</html>

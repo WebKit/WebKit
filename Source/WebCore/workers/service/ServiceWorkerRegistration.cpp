@@ -29,6 +29,8 @@
 #if ENABLE(SERVICE_WORKER)
 #include "DOMWindow.h"
 #include "Document.h"
+#include "Event.h"
+#include "EventNames.h"
 #include "Logging.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerContainer.h"
@@ -39,8 +41,10 @@ namespace WebCore {
 
 Ref<ServiceWorkerRegistration> ServiceWorkerRegistration::getOrCreate(ScriptExecutionContext& context, Ref<ServiceWorkerContainer>&& container, ServiceWorkerRegistrationData&& data)
 {
-    if (auto* registration = container->registration(data.identifier))
+    if (auto* registration = container->registration(data.identifier)) {
+        ASSERT(!registration->m_isStopped);
         return *registration;
+    }
 
     return adoptRef(*new ServiceWorkerRegistration(context, WTFMove(container), WTFMove(data)));
 }
@@ -61,6 +65,9 @@ ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& con
         m_activeWorker = ServiceWorker::getOrCreate(context, WTFMove(*m_registrationData.activeWorker));
 
     m_container->addRegistration(*this);
+
+    relaxAdoptionRequirement();
+    updatePendingActivityForEventDispatch();
 }
 
 ServiceWorkerRegistration::~ServiceWorkerRegistration()
@@ -161,6 +168,21 @@ void ServiceWorkerRegistration::updateStateFromServer(ServiceWorkerRegistrationS
         m_activeWorker = WTFMove(serviceWorker);
         break;
     }
+    updatePendingActivityForEventDispatch();
+}
+
+void ServiceWorkerRegistration::scheduleTaskToFireUpdateFoundEvent()
+{
+    if (m_isStopped)
+        return;
+
+    scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this)](ScriptExecutionContext&) {
+        if (m_isStopped)
+            return;
+
+        ASSERT(m_pendingActivityForEventDispatch);
+        dispatchEvent(Event::create(eventNames().updatefoundEvent, false, false));
+    });
 }
 
 EventTargetInterface ServiceWorkerRegistration::eventTargetInterface() const
@@ -180,7 +202,26 @@ const char* ServiceWorkerRegistration::activeDOMObjectName() const
 
 bool ServiceWorkerRegistration::canSuspendForDocumentSuspension() const
 {
+    // FIXME: We should do better as this prevents a page from entering PageCache when there is a service worker registration.
     return !hasPendingActivity();
+}
+
+void ServiceWorkerRegistration::stop()
+{
+    m_isStopped = true;
+    updatePendingActivityForEventDispatch();
+}
+
+void ServiceWorkerRegistration::updatePendingActivityForEventDispatch()
+{
+    // If a registration has no ServiceWorker, then it has been cleared on server-side.
+    if (m_isStopped || !getNewestWorker()) {
+        m_pendingActivityForEventDispatch = nullptr;
+        return;
+    }
+    if (m_pendingActivityForEventDispatch)
+        return;
+    m_pendingActivityForEventDispatch = makePendingActivity(*this);
 }
 
 } // namespace WebCore

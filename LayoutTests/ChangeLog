@@ -1,3 +1,15 @@
+2017-11-16  Chris Dumez  <cdumez@apple.com>
+
+        Dispatching an event on a ServiceWorkerRegistration may fail or crash due to GC
+        https://bugs.webkit.org/show_bug.cgi?id=179751
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * http/tests/workers/service/service-worker-registration-gc-event-expected.txt: Added.
+        * http/tests/workers/service/service-worker-registration-gc-event.html: Added.
+
 2017-11-16  Matt Lewis  <jlewis3@apple.com>
 
         Marked svg/wicd/test-rightsizing-a.xhtml as flaky.

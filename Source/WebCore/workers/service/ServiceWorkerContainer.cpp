@@ -293,16 +293,8 @@ void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const
 
 void ServiceWorkerContainer::scheduleTaskToFireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier identifier)
 {
-    if (isStopped())
-        return;
-
-    scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this), identifier](ScriptExecutionContext&) {
-        if (isStopped())
-            return;
-
-        if (auto* registration = m_registrations.get(identifier))
-            registration->dispatchEvent(Event::create(eventNames().updatefoundEvent, false, false));
-    });
+    if (auto* registration = m_registrations.get(identifier))
+        registration->scheduleTaskToFireUpdateFoundEvent();
 }
 
 void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, ServiceWorkerRegistrationData&& data, WTF::Function<void()>&& promiseResolvedHandler)
@@ -311,14 +303,17 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
         jobDidFinish(job);
     });
 
-    auto* context = scriptExecutionContext();
-    if (!context) {
-        LOG_ERROR("ServiceWorkerContainer::jobResolvedWithRegistration called but the containers ScriptExecutionContext is gone");
+    if (isStopped()) {
         promiseResolvedHandler();
         return;
     }
 
-    context->postTask([this, protectedThis = makeRef(*this), job = makeRef(job), data = WTFMove(data), promiseResolvedHandler = WTFMove(promiseResolvedHandler)](ScriptExecutionContext& context) mutable {
+    scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this), job = makeRef(job), data = WTFMove(data), promiseResolvedHandler = WTFMove(promiseResolvedHandler)](ScriptExecutionContext& context) mutable {
+        if (isStopped()) {
+            promiseResolvedHandler();
+            return;
+        }
+
         auto registration = ServiceWorkerRegistration::getOrCreate(context, *this, WTFMove(data));
 
         LOG(ServiceWorker, "Container %p resolved job with registration %p", this, registration.ptr());
