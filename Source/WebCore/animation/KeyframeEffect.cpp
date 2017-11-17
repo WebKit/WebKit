@@ -138,7 +138,19 @@ void KeyframeEffect::applyAtLocalTime(Seconds localTime, RenderStyle& targetStyl
 
     // FIXME: This will crash if we attempt to animate properties that require an AnimationBase.
     for (auto propertyId : m_keyframes[0].properties)
-        CSSPropertyAnimation::blendProperties(nullptr, propertyId, &targetStyle, &m_keyframes[0].style, &m_keyframes[1].style, progress);
+        CSSPropertyAnimation::blendProperties(this, propertyId, &targetStyle, &m_keyframes[0].style, &m_keyframes[1].style, progress);
+}
+
+RenderElement* KeyframeEffect::renderer() const
+{
+    return m_target ? m_target->renderer() : nullptr;
+}
+
+const RenderStyle& KeyframeEffect::currentStyle() const
+{
+    if (auto* renderer = this->renderer())
+        return renderer->style();
+    return RenderStyle::defaultStyle();
 }
 
 } // namespace WebCore

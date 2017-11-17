@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AnimationEffect.h"
+#include "CSSPropertyBlendingClient.h"
 #include "RenderStyle.h"
 #include <wtf/Ref.h>
 
@@ -38,7 +39,8 @@ struct Keyframe {
     Vector<CSSPropertyID> properties;
 };
 
-class KeyframeEffect final : public AnimationEffect {
+class KeyframeEffect final : public AnimationEffect
+    , public CSSPropertyBlendingClient {
 public:
     static ExceptionOr<Ref<KeyframeEffect>> create(JSC::ExecState&, Element*, JSC::Strong<JSC::JSObject>&&);
     ~KeyframeEffect() { }
@@ -46,6 +48,15 @@ public:
     Element* target() const { return m_target.get(); }
     ExceptionOr<void> setKeyframes(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&);
     void applyAtLocalTime(Seconds, RenderStyle&) override;
+
+    RenderElement* renderer() const override;
+    const RenderStyle& currentStyle() const override;
+    bool isAccelerated() const override { return false; }
+    bool filterFunctionListsMatch() const override { return false; }
+    bool transformFunctionListsMatch() const override { return false; }
+#if ENABLE(FILTERS_LEVEL_2)
+    bool backdropFilterFunctionListsMatch() const override { return false; }
+#endif
 
 private:
     KeyframeEffect(Element*);

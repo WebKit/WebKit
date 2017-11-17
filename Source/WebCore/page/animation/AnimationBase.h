@@ -29,6 +29,7 @@
 #pragma once
 
 #include "Animation.h"
+#include "CSSPropertyBlendingClient.h"
 #include "CSSPropertyNames.h"
 #include "RenderStyleConstants.h"
 
@@ -43,7 +44,8 @@ class RenderElement;
 class RenderStyle;
 class TimingFunction;
 
-class AnimationBase : public RefCounted<AnimationBase> {
+class AnimationBase : public RefCounted<AnimationBase>
+    , public CSSPropertyBlendingClient {
     friend class CompositeAnimation;
     friend class CSSPropertyAnimation;
     WTF_MAKE_FAST_ALLOCATED;
@@ -52,8 +54,8 @@ public:
     virtual ~AnimationBase();
 
     Element* element() const { return m_element.get(); }
-    const RenderStyle& currentStyle() const;
-    RenderElement* renderer() const;
+    const RenderStyle& currentStyle() const override;
+    RenderElement* renderer() const override;
     RenderBoxModelObject* compositedRenderer() const;
     void clear();
 
@@ -125,7 +127,7 @@ public:
     bool waitingForStartTime() const { return m_animationState == AnimationState::StartWaitResponse; }
     bool waitingForStyleAvailable() const { return m_animationState == AnimationState::StartWaitStyleAvailable; }
 
-    bool isAccelerated() const { return m_isAccelerated; }
+    bool isAccelerated() const override { return m_isAccelerated; }
 
     virtual std::optional<Seconds> timeToNextService();
 
@@ -179,10 +181,10 @@ public:
         return false;
     }
 
-    bool transformFunctionListsMatch() const { return m_transformFunctionListsMatch; }
-    bool filterFunctionListsMatch() const { return m_filterFunctionListsMatch; }
+    bool transformFunctionListsMatch() const override { return m_transformFunctionListsMatch; }
+    bool filterFunctionListsMatch() const override { return m_filterFunctionListsMatch; }
 #if ENABLE(FILTERS_LEVEL_2)
-    bool backdropFilterFunctionListsMatch() const { return m_backdropFilterFunctionListsMatch; }
+    bool backdropFilterFunctionListsMatch() const override { return m_backdropFilterFunctionListsMatch; }
 #endif
 
     // Freeze the animation; used by DumpRenderTree.
