@@ -72,7 +72,7 @@ static inline bool shouldHandleFetch(const ResourceLoaderOptions& options)
 
 void WebServiceWorkerProvider::handleFetch(ResourceLoader& loader, CachedResource* resource, PAL::SessionID sessionID, ServiceWorkerClientFetch::Callback&& callback)
 {
-    if (!shouldHandleFetch(loader.options())) {
+    if (!loader.request().url().protocolIsInHTTPFamily() || !shouldHandleFetch(loader.options())) {
         callback(ServiceWorkerClientFetch::Result::Unhandled);
         return;
     }

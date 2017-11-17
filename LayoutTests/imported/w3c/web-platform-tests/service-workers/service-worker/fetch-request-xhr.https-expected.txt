@@ -4,11 +4,11 @@ FAIL event.request has the expected headers for same-origin GET. promise_test: U
 FAIL event.request has the expected headers for same-origin POST. promise_test: Unhandled rejection with value: object "Error: assert_array_equals: event.request has the expected headers for same-origin POST. lengths differ, expected 2 got 5"
 FAIL event.request has the expected headers for cross-origin GET. promise_test: Unhandled rejection with value: object "Error: assert_array_equals: event.request has the expected headers for cross-origin GET. lengths differ, expected 1 got 4"
 FAIL event.request has the expected headers for cross-origin POST. promise_test: Unhandled rejection with value: object "Error: assert_array_equals: event.request has the expected headers for cross-origin POST. lengths differ, expected 2 got 5"
-FAIL FetchEvent#request.body contains XHR request data (string) promise_test: Unhandled rejection with value: object "Error: assert_equals: expected "test string" but got """
+PASS FetchEvent#request.body contains XHR request data (string) 
 FAIL FetchEvent#request.body contains XHR request data (blob) promise_test: Unhandled rejection with value: object "Error: assert_equals: expected "test blob" but got """
-FAIL FetchEvent#request.method is set to XHR method promise_test: Unhandled rejection with value: object "Error: assert_equals: expected "test string xxx" but got """
-FAIL XHR using OPTIONS method promise_test: Unhandled rejection with value: object "Error: assert_equals: expected "test string xxx" but got """
-FAIL XHR with form data promise_test: Unhandled rejection with value: object "Error: assert_equals: expected "------WebKitFormBoundaryXQcTUBfCg2hFT0zU\r\nContent-Disposition: form-data; name=\"sample string\"\r\n\r\n1234567890\r\n------WebKitFormBoundaryXQcTUBfCg2hFT0zU\r\nContent-Disposition: form-data; name=\"sample blob\"; filename=\"blob\"\r\nContent-Type: application/octet-stream\r\n\r\nblob content\r\n------WebKitFormBoundaryXQcTUBfCg2hFT0zU\r\nContent-Disposition: form-data; name=\"sample file\"; filename=\"file.dat\"\r\nContent-Type: application/octet-stream\r\n\r\nfile content\r\n------WebKitFormBoundaryXQcTUBfCg2hFT0zU--\r\n" but got """
+PASS FetchEvent#request.method is set to XHR method 
+PASS XHR using OPTIONS method 
+FAIL XHR with form data promise_test: Unhandled rejection with value: object "Error: assert_equals: expected "------WebKitFormBoundaryvjEQu9gV1uP6AQOG\r\nContent-Disposition: form-data; name=\"sample string\"\r\n\r\n1234567890\r\n------WebKitFormBoundaryvjEQu9gV1uP6AQOG\r\nContent-Disposition: form-data; name=\"sample blob\"; filename=\"blob\"\r\nContent-Type: application/octet-stream\r\n\r\nblob content\r\n------WebKitFormBoundaryvjEQu9gV1uP6AQOG\r\nContent-Disposition: form-data; name=\"sample file\"; filename=\"file.dat\"\r\nContent-Type: application/octet-stream\r\n\r\nfile content\r\n------WebKitFormBoundaryvjEQu9gV1uP6AQOG--\r\n" but got """
 FAIL XHR with mode/credentials set promise_test: Unhandled rejection with value: object "Error: assert_equals: expected "include" but got "same-origin""
 PASS XHR to data URL 
 PASS restore global state 

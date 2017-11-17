@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "DataReference.h"
+#include "FormDataReference.h"
 #include "Logging.h"
 #include "ServiceWorkerClientFetch.h"
 #include "StorageToWebProcessConnectionMessages.h"
@@ -159,7 +160,7 @@ Ref<ServiceWorkerClientFetch> WebSWClientConnection::startFetch(WebServiceWorker
 {
     ASSERT(loader->options().serviceWorkersMode != ServiceWorkersMode::None && loader->options().serviceWorkerIdentifier);
 
-    send(Messages::WebSWServerConnection::StartFetch(identifier, loader->options().serviceWorkerIdentifier, loader->originalRequest(), loader->options()));
+    send(Messages::WebSWServerConnection::StartFetch { identifier, loader->options().serviceWorkerIdentifier, loader->originalRequest(), loader->options(), IPC::FormDataReference { loader->originalRequest().httpBody() } });
     return ServiceWorkerClientFetch::create(provider, WTFMove(loader), identifier, m_connection.get(), WTFMove(callback));
 }
 

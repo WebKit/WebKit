@@ -54,17 +54,11 @@ public:
     void consumeAsStream(FetchBodyOwner&, FetchBodySource&);
 #endif
 
-    bool isBlob() const { return WTF::holds_alternative<Ref<const Blob>>(m_data); }
-    bool isFormData() const { return WTF::holds_alternative<Ref<FormData>>(m_data); }
-    bool isArrayBuffer() const { return WTF::holds_alternative<Ref<const ArrayBuffer>>(m_data); }
-    bool isArrayBufferView() const { return WTF::holds_alternative<Ref<const ArrayBufferView>>(m_data); }
-    bool isURLSearchParams() const { return WTF::holds_alternative<Ref<const URLSearchParams>>(m_data); }
-    bool isText() const { return WTF::holds_alternative<String>(m_data); }
-    bool hasReadableStream() const { return !!m_readableStream; }
-
     using Init = Variant<RefPtr<Blob>, RefPtr<ArrayBufferView>, RefPtr<ArrayBuffer>, RefPtr<DOMFormData>, RefPtr<URLSearchParams>, RefPtr<ReadableStream>, String>;
     static FetchBody extract(ScriptExecutionContext&, Init&&, String&);
     FetchBody() = default;
+
+    static std::optional<FetchBody> fromFormData(FormData*);
 
     void loadingFailed();
     void loadingSucceeded();
@@ -81,6 +75,8 @@ public:
     void cleanConsumer() { m_consumer.clean(); }
 
     FetchBody clone();
+
+    bool hasReadableStream() const { return !!m_readableStream; }
     const ReadableStream* readableStream() const { return m_readableStream.get(); }
     ReadableStream* readableStream() { return m_readableStream.get(); }
     void setReadableStream(Ref<ReadableStream>&& stream)
@@ -105,6 +101,13 @@ private:
     void consumeArrayBufferView(Ref<DeferredPromise>&&);
     void consumeText(Ref<DeferredPromise>&&, const String&);
     void consumeBlob(FetchBodyOwner&, Ref<DeferredPromise>&&);
+
+    bool isBlob() const { return WTF::holds_alternative<Ref<const Blob>>(m_data); }
+    bool isFormData() const { return WTF::holds_alternative<Ref<FormData>>(m_data); }
+    bool isArrayBuffer() const { return WTF::holds_alternative<Ref<const ArrayBuffer>>(m_data); }
+    bool isArrayBufferView() const { return WTF::holds_alternative<Ref<const ArrayBufferView>>(m_data); }
+    bool isURLSearchParams() const { return WTF::holds_alternative<Ref<const URLSearchParams>>(m_data); }
+    bool isText() const { return WTF::holds_alternative<String>(m_data); }
 
     const Blob& blobBody() const { return WTF::get<Ref<const Blob>>(m_data).get(); }
     FormData& formDataBody() { return WTF::get<Ref<FormData>>(m_data).get(); }

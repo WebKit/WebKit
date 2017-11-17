@@ -1,3 +1,18 @@
+2017-11-16  Youenn Fablet  <youenn@apple.com>
+
+        Service Worker should get the body of intercepted requests
+        https://bugs.webkit.org/show_bug.cgi?id=179776
+
+        Reviewed by Alex Christensen.
+
+        * imported/w3c/web-platform-tests/fetch/api/request/request-consume-empty-expected.txt:
+        * imported/w3c/web-platform-tests/fetch/api/request/request-init-002-expected.txt:
+        * imported/w3c/web-platform-tests/fetch/api/response/response-consume-empty-expected.txt:
+        * imported/w3c/web-platform-tests/fetch/api/response/response-consume-expected.txt:
+        * imported/w3c/web-platform-tests/fetch/api/response/response-init-002-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-xhr.https-expected.txt:
+
 2017-11-16  Chris Dumez  <cdumez@apple.com>
 
         [Service Worker] Implement "Try Clear Registration" algorithm

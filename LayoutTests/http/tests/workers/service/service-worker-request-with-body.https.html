@@ -1,0 +1,63 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+async function interceptedFrame(workerURL, scopeURL)
+{
+    var registration = await navigator.serviceWorker.register(workerURL, { scope : scopeURL });
+    await new Promise(resolve => {
+        if (registration.active)
+            resolve();
+        worker = registration.installing;
+        if (worker.state === "activated")
+            resolve();
+        worker.addEventListener("statechange", () => {
+            if (worker.state === "activated")
+                resolve();
+        });
+    });
+
+    return await new Promise((resolve) => {
+        var frame = document.createElement('iframe');
+        frame.src = scopeURL;
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+var fetch;
+
+promise_test(async (test) => {
+    var frame = await interceptedFrame("resources/service-worker-request-with-body-worker.js", "/");
+    fetch = frame.contentWindow.fetch;
+}, "Setup test");
+
+promise_test(async (test) => {
+    response = await fetch("request-with-text-body.fromserviceworker", { method: "POST", body: "PASS" });
+    var buffer =  await response.text();
+    assert_equals(buffer, "PASS");
+}, "Request with text body");
+
+promise_test(async (test) => {
+    response = await fetch("request-with-text-body.fromserviceworker", { method: "POST", body: new TextEncoder().encode("PASS") });
+    var buffer =  await response.text();
+    assert_equals(buffer, "PASS");
+}, "Request with arrayBuffer body");
+
+promise_test(async (test) => {
+    response = await fetch("request-with-cloned-text-body.fromserviceworker", { method: "POST", body: "PASS" });
+    var buffer =  await response.text();
+    assert_equals(buffer, "PASS");
+}, "Request with cloned text body");
+
+promise_test(async (test) => {
+    response = await fetch("/xmlhttprequest/resources/post-echo.cgi", { method: "POST", body: "PASS" });
+    var buffer =  await response.text();
+    assert_equals(buffer, "PASS");
+}, "Request with text body then fetched");
+</script>
+</body>
+</html>

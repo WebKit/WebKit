@@ -104,6 +104,7 @@ inline FetchRequest::FetchRequest(ScriptExecutionContext& context, std::optional
     , m_options(WTFMove(options))
     , m_referrer(WTFMove(referrer))
 {
+    updateContentType();
 }
 
 } // namespace WebCore

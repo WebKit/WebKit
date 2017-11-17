@@ -107,9 +107,9 @@ void WebSWServerConnection::updateWorkerStateInClient(ServiceWorkerIdentifier wo
     send(Messages::WebSWClientConnection::UpdateWorkerState(worker, state));
 }
 
-void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier, const ResourceRequest& request, const FetchOptions& options)
+void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier, const ResourceRequest& request, const FetchOptions& options, const IPC::FormDataReference& formData)
 {
-    sendToContextProcess(Messages::WebSWContextManagerConnection::StartFetch(identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options));
+    sendToContextProcess(Messages::WebSWContextManagerConnection::StartFetch { identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options, formData });
 }
 
 void WebSWServerConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationServiceWorkerIdentifier, const IPC::DataReference& message, ServiceWorkerClientData&& source)

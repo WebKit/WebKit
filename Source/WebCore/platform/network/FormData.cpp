@@ -428,4 +428,13 @@ uint64_t FormData::lengthInBytes() const
     return *m_lengthInBytes;
 }
 
+RefPtr<SharedBuffer> FormData::asSharedBuffer() const
+{
+    for (auto& element : m_elements) {
+        if (element.m_type != FormDataElement::Type::Data)
+            return nullptr;
+    }
+    return SharedBuffer::create(flatten());
+}
+
 } // namespace WebCore

@@ -69,6 +69,21 @@ FetchBody FetchBody::extract(ScriptExecutionContext& context, Init&& value, Stri
     });
 }
 
+std::optional<FetchBody> FetchBody::fromFormData(FormData* formData)
+{
+    if (!formData || formData->isEmpty())
+        return std::nullopt;
+
+    if (auto buffer = formData->asSharedBuffer()) {
+        FetchBody body;
+        body.m_consumer.setData(buffer.releaseNonNull());
+        return WTFMove(body);
+    }
+
+    // FIXME: Support blob and form data bodies.
+    return std::nullopt;
+}
+
 void FetchBody::arrayBuffer(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
     m_consumer.setType(FetchBodyConsumer::Type::ArrayBuffer);
@@ -134,7 +149,7 @@ void FetchBody::consume(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
     }
     if (isFormData()) {
         // FIXME: Support consuming FormData.
-        promise->reject();
+        promise->reject(NotSupportedError);
         return;
     }
 
@@ -231,6 +246,9 @@ RefPtr<FormData> FetchBody::bodyAsFormData(ScriptExecutionContext& context) cons
         body->generateFiles(&downcast<Document>(context));
         return body;
     }
+    if (auto* data = m_consumer.data())
+        return FormData::create(data->data(), data->size());
+
     ASSERT_NOT_REACHED();
     return nullptr;
 }

@@ -31,7 +31,7 @@ messages -> WebSWServerConnection {
     ServiceWorkerStartedControllingClient(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier)
     ServiceWorkerStoppedControllingClient(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier)
 
-    StartFetch(uint64_t identifier, std::optional<WebCore::ServiceWorkerIdentifier> serviceWorkerIdentifier, WebCore::ResourceRequest request, struct WebCore::FetchOptions options)
+    StartFetch(uint64_t identifier, std::optional<WebCore::ServiceWorkerIdentifier> serviceWorkerIdentifier, WebCore::ResourceRequest request, struct WebCore::FetchOptions options, IPC::FormDataReference requestBody)
     PostMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationServiceWorkerIdentifier, IPC::DataReference message, struct WebCore::ServiceWorkerClientData source)
 
     DidResolveRegistrationPromise(WebCore::ServiceWorkerRegistrationKey key)

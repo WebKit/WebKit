@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "DataReference.h"
+#include "FormDataReference.h"
 #include "Logging.h"
 #include "StorageProcessMessages.h"
 #include "WebCacheStorageProvider.h"
@@ -131,7 +132,7 @@ void WebSWContextManagerConnection::serviceWorkerStartedWithMessage(ServiceWorke
         m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::ScriptContextFailedToStart(serviceWorkerIdentifier, exceptionMessage), 0);
 }
 
-void WebSWContextManagerConnection::startFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier, ResourceRequest&& request, FetchOptions&& options)
+void WebSWContextManagerConnection::startFetch(uint64_t serverConnectionIdentifier, uint64_t fetchIdentifier, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier, ResourceRequest&& request, FetchOptions&& options, IPC::FormDataReference&& formData)
 {
     auto* serviceWorkerThreadProxy = serviceWorkerIdentifier ? SWContextManager::singleton().serviceWorkerThreadProxy(*serviceWorkerIdentifier) : nullptr;
     if (!serviceWorkerThreadProxy) {
@@ -140,6 +141,8 @@ void WebSWContextManagerConnection::startFetch(uint64_t serverConnectionIdentifi
     }
 
     auto client = WebServiceWorkerFetchTaskClient::create(m_connectionToStorageProcess.copyRef(), serverConnectionIdentifier, fetchIdentifier);
+
+    request.setHTTPBody(formData.takeData());
     serviceWorkerThreadProxy->thread().postFetchTask(WTFMove(client), WTFMove(request), WTFMove(options));
 }
 

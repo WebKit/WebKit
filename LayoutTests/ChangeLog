@@ -1,3 +1,16 @@
+2017-11-16  Youenn Fablet  <youenn@apple.com>
+
+        Service Worker should get the body of intercepted requests
+        https://bugs.webkit.org/show_bug.cgi?id=179776
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/workers/service/resources/service-worker-fetch.js:
+        * http/tests/workers/service/service-worker-fetch.https-expected.txt:
+        * http/tests/workers/service/resources/service-worker-request-with-body-worker.js: Added.
+        * http/tests/workers/service/service-worker-request-with-body.https-expected.txt: Added.
+        * http/tests/workers/service/service-worker-request-with-body.https.html: Added.
+
 2017-11-16  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: Implement string type properties

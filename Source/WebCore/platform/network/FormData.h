@@ -31,6 +31,7 @@ namespace WebCore {
 class DOMFormData;
 class Document;
 class File;
+class SharedBuffer;
 class TextEncoding;
 
 class FormDataElement {
@@ -233,6 +234,8 @@ public:
     bool isEmpty() const { return m_elements.isEmpty(); }
     const Vector<FormDataElement>& elements() const { return m_elements; }
     const Vector<char>& boundary() const { return m_boundary; }
+
+    RefPtr<SharedBuffer> asSharedBuffer() const;
 
     void generateFiles(Document*);
     void removeGeneratedFilesIfNeeded();

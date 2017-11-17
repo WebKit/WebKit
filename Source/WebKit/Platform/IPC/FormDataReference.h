@@ -28,27 +28,40 @@
 #include "Decoder.h"
 #include "Encoder.h"
 #include <WebCore/FormData.h>
-#include <wtf/Vector.h>
 
 namespace IPC {
 
+// FIXME: In case of file based form data, we should pass sandbox extensions as well.
 class FormDataReference {
 public:
     FormDataReference() = default;
-
-    explicit FormDataReference(Ref<WebCore::FormData>&& data)
+    explicit FormDataReference(RefPtr<WebCore::FormData>&& data)
         : m_data(WTFMove(data))
     {
     }
 
-    Ref<WebCore::FormData> takeData() { return m_data.releaseNonNull(); }
+    RefPtr<WebCore::FormData> takeData() { return WTFMove(m_data); }
 
-    void encode(Encoder& encoder) const { encoder << *m_data; }
+    void encode(Encoder& encoder) const
+    {
+        encoder << !!m_data;
+        if (m_data)
+            encoder << *m_data;
+    }
+
     static std::optional<FormDataReference> decode(Decoder& decoder)
     {
+        std::optional<bool> hasFormData;
+        decoder >> hasFormData;
+        if (!hasFormData)
+            return std::nullopt;
+        if (!hasFormData.value())
+            return FormDataReference { };
+
         auto formData = WebCore::FormData::decode(decoder);
         if (!formData)
             return std::nullopt;
+
         return FormDataReference { formData.releaseNonNull() };
     }
 

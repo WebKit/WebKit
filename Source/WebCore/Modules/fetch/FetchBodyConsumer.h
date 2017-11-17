@@ -48,6 +48,8 @@ public:
     void append(const char* data, unsigned);
     void append(const unsigned char* data, unsigned);
 
+    bool hasData() const { return !!m_buffer; }
+    const SharedBuffer* data() const { return m_buffer.get(); }
     void setData(Ref<SharedBuffer>&& data) { m_buffer = WTFMove(data); }
 
     RefPtr<SharedBuffer> takeData();
@@ -63,8 +65,6 @@ public:
     void extract(ReadableStream&, ReadableStreamToSharedBufferSink::Callback&&);
     void resolve(Ref<DeferredPromise>&&, ReadableStream*);
     void resolveWithData(Ref<DeferredPromise>&&, const unsigned char*, unsigned);
-
-    bool hasData() const { return !!m_buffer; }
 
     void loadingFailed();
     void loadingSucceeded();

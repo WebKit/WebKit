@@ -1,3 +1,32 @@
+2017-11-16  Youenn Fablet  <youenn@apple.com>
+
+        Service Worker should get the body of intercepted requests
+        https://bugs.webkit.org/show_bug.cgi?id=179776
+
+        Reviewed by Alex Christensen.
+
+        Pass a FormDataReference when starting fetch IPC.
+        Convert this FormDataReference in a FormData and using it to set the FetchRequest body properly in Service Worker process.
+        Forbid fetch interception when URL is not HTTP/HTTPS.
+
+        * Platform/IPC/FormDataReference.h:
+        (IPC::FormDataReference::FormDataReference):
+        (IPC::FormDataReference::takeData):
+        (IPC::FormDataReference::encode const):
+        (IPC::FormDataReference::decode):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::startFetch):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::startFetch):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::startFetch):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::WebServiceWorkerProvider::handleFetch):
+
 2017-11-16  Daniel Bates  <dabates@apple.com>
 
         Add feature define for alternative presentation button element
