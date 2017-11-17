@@ -70,6 +70,8 @@ private:
     static void tryActivate(SWServer&, SWServerRegistration&);
     static void activate(SWServer&, SWServerRegistration&);
 
+    bool isCurrentlyProcessingJob(uint64_t jobIdentifier) const;
+
     Deque<ServiceWorkerJobData> m_jobQueue;
 
     Timer m_jobTimer;

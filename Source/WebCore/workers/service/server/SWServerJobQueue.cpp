@@ -50,10 +50,17 @@ SWServerJobQueue::~SWServerJobQueue()
 {
 }
 
+bool SWServerJobQueue::isCurrentlyProcessingJob(uint64_t jobIdentifier) const
+{
+    return !m_jobQueue.isEmpty() && firstJob().identifier() == jobIdentifier;
+}
+
 void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, const ServiceWorkerFetchResult& result)
 {
+    if (!isCurrentlyProcessingJob(result.jobIdentifier))
+        return;
+
     auto& job = firstJob();
-    ASSERT(job.identifier() == result.jobIdentifier);
 
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
