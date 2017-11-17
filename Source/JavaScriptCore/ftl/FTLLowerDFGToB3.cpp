@@ -8208,6 +8208,9 @@ private:
         case CPUPauseIntrinsic: {
             PatchpointValue* patchpoint = m_out.patchpoint(Void);
             patchpoint->effects = Effects::forCall();
+            if (intrinsic == CPUCpuidIntrinsic)
+                patchpoint->clobber(RegisterSet { X86Registers::eax, X86Registers::ebx, X86Registers::ecx, X86Registers::edx });
+
             patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
                 switch (intrinsic) {
                 case CPUMfenceIntrinsic:

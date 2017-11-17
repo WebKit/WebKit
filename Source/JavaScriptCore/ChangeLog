@@ -1,5 +1,18 @@
 2017-11-16  Saam Barati  <sbarati@apple.com>
 
+        Fix a bug with cpuid in the FTL.
+
+        Rubber stamped by Mark Lam.
+
+        Before uploading the previous patch, I tried to condense the code. I
+        accidentally removed a crucial line saying that CPUID clobbers various
+        registers.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCPUIntrinsic):
+
+2017-11-16  Saam Barati  <sbarati@apple.com>
+
         Add some X86 intrinsics to $vm to help with some perf testing
         https://bugs.webkit.org/show_bug.cgi?id=179693
 
