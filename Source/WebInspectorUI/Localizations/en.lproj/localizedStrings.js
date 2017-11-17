@@ -459,6 +459,7 @@ localizedStrings["Group by Event"] = "Group by Event";
 localizedStrings["Group by Node"] = "Group by Node";
 localizedStrings["Grouping Method"] = "Grouping Method";
 localizedStrings["Grow"] = "Grow";
+localizedStrings["HAR Export (%s)"] = "HAR Export (%s)";
 localizedStrings["HTML"] = "HTML";
 localizedStrings["HTML Attributes"] = "HTML Attributes";
 localizedStrings["HTTP"] = "HTTP";

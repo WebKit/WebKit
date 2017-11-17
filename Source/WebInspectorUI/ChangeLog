@@ -1,3 +1,33 @@
+2017-11-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network Tab - Add HAR Export button
+        https://bugs.webkit.org/show_bug.cgi?id=179570
+        <rdar://problem/35484918>
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New strings.
+
+        * UserInterface/Images/Export.svg: Added.
+        * UserInterface/Images/Import.svg: Added.
+        Add symmetric import/export buttons.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        Expose the save keyboard shortcut so we can show its display name in a tooltip.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype.get navigationItems):
+        (WI.NetworkTableContentView.prototype.reset):
+        (WI.NetworkTableContentView.prototype.layout):
+        (WI.NetworkTableContentView.prototype._updateExportButton):
+        Include the export button and enable/disable it when appropriate.
+
+        (WI.NetworkTableContentView.prototype.closed):
+        Add a missing event listener removal.
+
 2017-11-17  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Disabled ImageAndText-style buttons should have gray text
