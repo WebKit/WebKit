@@ -1,3 +1,15 @@
+2017-11-17  Megan Gardner  <megan_gardner@apple.com>
+
+        Turn on selection layout tests that are already working on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=179842
+
+        Reviewed by Tim Horton.
+
+        I have checked these test manually and on the flakiness dashboard and they are all
+        working on iOS. No reason to not run them on iOS now.
+
+        * platform/ios-wk2/TestExpectations:
+
 2017-11-17  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Fix WKTR's methods for testing row header and column header presence and count
