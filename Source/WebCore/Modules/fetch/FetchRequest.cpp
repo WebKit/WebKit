@@ -263,7 +263,7 @@ String FetchRequest::referrer() const
 const String& FetchRequest::urlString() const
 {
     if (m_requestURL.isNull())
-        m_requestURL = m_request.url().serialize();
+        m_requestURL = m_request.url();
     return m_requestURL;
 }
 

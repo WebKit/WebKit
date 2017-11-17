@@ -207,20 +207,12 @@ public:
     template <class Decoder> static bool decode(Decoder&, URL&);
     template <class Decoder> static std::optional<URL> decode(Decoder&);
 
-    String serialize(bool omitFragment = false) const;
-
 private:
     friend class URLParser;
     WEBCORE_EXPORT void invalidate();
     static bool protocolIs(const String&, const char*);
     void init(const URL&, const String&, const TextEncoding&);
     void copyToBuffer(Vector<char, 512>& buffer) const;
-
-    // Parses the given URL. The originalString parameter allows for an
-    // optimization: When the source is the same as the fixed-up string,
-    // it will use the passed-in string instead of allocating a new one.
-    void parse(const String&);
-    void parse(const char* url, const String* originalString = 0);
 
     bool hasPath() const;
 
@@ -464,10 +456,10 @@ WTF::TextStream& operator<<(WTF::TextStream&, const URL&);
 
 namespace WTF {
 
-    // URLHash is the default hash for String
-    template<typename T> struct DefaultHash;
-    template<> struct DefaultHash<WebCore::URL> {
-        typedef WebCore::URLHash Hash;
-    };
+// URLHash is the default hash for String
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<WebCore::URL> {
+    typedef WebCore::URLHash Hash;
+};
 
 } // namespace WTF

@@ -57,7 +57,7 @@ URL::operator NSURL *() const
 RetainPtr<CFURLRef> URL::createCFURL() const
 {
     if (isNull())
-        return 0;
+        return nullptr;
 
     if (isEmpty()) {
         // We use the toll-free bridge between NSURL and CFURL to create a CFURLRef supporting both empty and null values.
@@ -73,7 +73,5 @@ RetainPtr<CFURLRef> URL::createCFURL() const
     copyToBuffer(buffer);
     return createCFURLFromBuffer(buffer.data(), buffer.size());
 }
-
-
 
 }

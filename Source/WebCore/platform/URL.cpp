@@ -686,13 +686,6 @@ String decodeURLEscapeSequences(const String& string, const TextEncoding& encodi
     return decodeEscapeSequences<URLEscapeSequence>(string, encoding);
 }
 
-String URL::serialize(bool omitFragment) const
-{
-    if (omitFragment)
-        return m_string.left(m_queryEnd);
-    return m_string;
-}
-
 #if PLATFORM(IOS)
 
 static bool shouldCanonicalizeScheme = true;

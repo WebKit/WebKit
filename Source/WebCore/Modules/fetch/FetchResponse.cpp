@@ -186,8 +186,11 @@ void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request
 
 const String& FetchResponse::url() const
 {
-    if (m_responseURL.isNull())
-        m_responseURL = m_response.url().serialize(true);
+    if (m_responseURL.isNull()) {
+        URL url = m_response.url();
+        url.removeFragmentIdentifier();
+        m_responseURL = url.string();
+    }
     return m_responseURL;
 }
 
