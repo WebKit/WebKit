@@ -78,6 +78,7 @@ static bool isPropertyValueString(AXPropertyName propertyName)
     case AXPropertyName::Current:
     case AXPropertyName::HasPopUp:
     case AXPropertyName::Invalid:
+    case AXPropertyName::KeyShortcuts:
     case AXPropertyName::Label:
     case AXPropertyName::Live:
     case AXPropertyName::Orientation:
