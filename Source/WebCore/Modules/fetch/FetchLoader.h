@@ -42,6 +42,7 @@ class ScriptExecutionContext;
 class FetchLoader final : public ThreadableLoaderClient {
 public:
     FetchLoader(FetchLoaderClient&, FetchBodyConsumer*);
+    ~FetchLoader();
 
     RefPtr<SharedBuffer> startStreaming();
 
@@ -63,6 +64,7 @@ private:
     RefPtr<ThreadableLoader> m_loader;
     FetchBodyConsumer* m_consumer;
     bool m_isStarted { false };
+    URL m_urlForReading;
 };
 
 } // namespace WebCore

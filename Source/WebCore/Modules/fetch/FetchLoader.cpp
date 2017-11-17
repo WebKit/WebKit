@@ -45,17 +45,23 @@
 
 namespace WebCore {
 
+FetchLoader::~FetchLoader()
+{
+    if (!m_urlForReading.isEmpty())
+        ThreadableBlobRegistry::unregisterBlobURL(m_urlForReading);
+}
+
 void FetchLoader::start(ScriptExecutionContext& context, const Blob& blob)
 {
-    auto urlForReading = BlobURL::createPublicURL(context.securityOrigin());
-    if (urlForReading.isEmpty()) {
+    m_urlForReading = BlobURL::createPublicURL(context.securityOrigin());
+    if (m_urlForReading.isEmpty()) {
         m_client.didFail({ errorDomainWebKitInternal, 0, URL(), ASCIILiteral("Could not create URL for Blob") });
         return;
     }
 
-    ThreadableBlobRegistry::registerBlobURL(context.securityOrigin(), urlForReading, blob.url());
+    ThreadableBlobRegistry::registerBlobURL(context.securityOrigin(), m_urlForReading, blob.url());
 
-    ResourceRequest request(urlForReading);
+    ResourceRequest request(m_urlForReading);
     request.setInitiatorIdentifier(context.resourceRequestIdentifier());
     request.setHTTPMethod("GET");
 
