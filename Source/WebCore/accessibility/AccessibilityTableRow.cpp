@@ -132,6 +132,18 @@ AccessibilityObject* AccessibilityTableRow::headerObject()
     if (!cellNode || !cellNode->hasTagName(thTag))
         return nullptr;
     
+    // Verify that the row header is not part of an entire row of headers.
+    // In that case, it is unlikely this is a row header.
+    bool allHeadersInRow = true;
+    for (auto cell : rowChildren) {
+        if (cell->node() && !cell->node()->hasTagName(thTag)) {
+            allHeadersInRow = false;
+            break;
+        }
+    }
+    if (allHeadersInRow)
+        return nullptr;
+    
     return cell;
 }
     

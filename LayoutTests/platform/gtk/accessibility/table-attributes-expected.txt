@@ -107,44 +107,6 @@ AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
 
 --------------------------
 
-AXRole: AXColumnHeader
-AXParent: AXRow
-AXChildren: 0
-AXPosition: { 227.000000, 27.000000 }
-AXSize: { 143.000000, 66.000000 }
-AXTitle: 
-AXDescription: 
-AXValue: Ruritanian<\n>Population <\n>Survey
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
-------------
-AXRole: AXColumnHeader
-AXParent: AXRow
-AXChildren: 0
-AXPosition: { 227.000000, 27.000000 }
-AXSize: { 143.000000, 66.000000 }
-AXTitle: 
-AXDescription: 
-AXValue: Ruritanian<\n>Population <\n>Survey
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
-------------
 AXRole: AXRowHeader
 AXParent: AXRow
 AXChildren: 0

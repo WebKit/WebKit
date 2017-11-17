@@ -1,3 +1,16 @@
+2017-11-17  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver in Safari does not read table header for first cell in first body row
+        https://bugs.webkit.org/show_bug.cgi?id=179780
+        <rdar://problem/35590551>
+
+        Reviewed by Joanmarie Diggs.
+
+        * accessibility/table-header-calculation-for-header-rows-expected.txt: Added.
+        * accessibility/table-header-calculation-for-header-rows.html: Added.
+        * accessibility/table-attributes-expected.txt: Updated.
+        * platform/gtk/accessibility/table-attributes-expected.txt: Updated.
+
 2017-11-17  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: Implement boolean type properties
