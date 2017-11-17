@@ -830,3 +830,5 @@ webkit.org/b/177828 http/tests/contentfiltering/load-substitute-data-from-appcac
 
 webkit.org/b/165620 [ ElCapitan Sierra ] http/tests/cache/disk-cache/disk-cache-request-headers.html [ Pass Failure ]
 
+webkit.org/b/179176 [ Release ] svg/graphics/SVGImage.cpp [ Pass Failure ]
+
