@@ -1187,7 +1187,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const Visibl
     if (is<AccessibilityTable>(*m_object) && downcast<AccessibilityTable>(*m_object).isExposableThroughAccessibility() && downcast<AccessibilityTable>(*m_object).supportsSelectedRows())
         [additional addObject:NSAccessibilitySelectedRowsAttribute];
     
-    if (m_object->supportsARIALiveRegion()) {
+    if (m_object->supportsLiveRegion()) {
         [additional addObject:NSAccessibilityARIALiveAttribute];
         [additional addObject:NSAccessibilityARIARelevantAttribute];
     }
@@ -1202,7 +1202,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const Visibl
         [additional addObject:NSAccessibilitySortDirectionAttribute];
     
     // If an object is a child of a live region, then add these
-    if (m_object->isInsideARIALiveRegion())
+    if (m_object->isInsideLiveRegion())
         [additional addObject:NSAccessibilityARIAAtomicAttribute];
     // All objects should expose the ARIA busy attribute (ARIA 1.1 with ISSUE-538).
     [additional addObject:NSAccessibilityElementBusyAttribute];
@@ -1219,7 +1219,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const Visibl
         [additional addObject:NSAccessibilityRequiredAttribute];
     }
     
-    if (m_object->ariaHasPopup())
+    if (m_object->hasPopup())
         [additional addObject:NSAccessibilityHasPopupAttribute];
     
     if (m_object->isMathRoot()) {
@@ -1661,7 +1661,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const Visibl
         objectAttributes = [objectAttributes arrayByAddingObjectsFromArray:additionalAttributes];
     
     // Only expose AXARIACurrent attribute when the element is set to be current item.
-    if (m_object->ariaCurrentState() != AccessibilityARIACurrentState::False)
+    if (m_object->currentState() != AccessibilityCurrentState::False)
         objectAttributes = [objectAttributes arrayByAddingObjectsFromArray:@[ NSAccessibilityARIACurrentAttribute ]];
     
     return objectAttributes;
@@ -2979,7 +2979,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return [NSNumber numberWithBool:m_object->isSelected()];
     
     if ([attributeName isEqualToString: NSAccessibilityARIACurrentAttribute])
-        return m_object->ariaCurrentValue();
+        return m_object->currentValue();
     
     if ([attributeName isEqualToString: NSAccessibilityServesAsTitleForUIElementsAttribute] && m_object->isMenuButton()) {
         AccessibilityObject* uiElement = downcast<AccessibilityRenderObject>(*m_object).menuForMenuButton();
@@ -3091,7 +3091,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return @(m_object->isValueAutofilled());
 
     if ([attributeName isEqualToString:NSAccessibilityHasPopupAttribute])
-        return [NSNumber numberWithBool:m_object->ariaHasPopup()];
+        return [NSNumber numberWithBool:m_object->hasPopup()];
 
     if ([attributeName isEqualToString:NSAccessibilityDatetimeValueAttribute])
         return m_object->datetimeAttributeValue();
@@ -3101,11 +3101,11 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     // ARIA Live region attributes.
     if ([attributeName isEqualToString:NSAccessibilityARIALiveAttribute])
-        return m_object->ariaLiveRegionStatus();
+        return m_object->liveRegionStatus();
     if ([attributeName isEqualToString:NSAccessibilityARIARelevantAttribute])
-        return m_object->ariaLiveRegionRelevant();
+        return m_object->liveRegionRelevant();
     if ([attributeName isEqualToString:NSAccessibilityARIAAtomicAttribute])
-        return [NSNumber numberWithBool:m_object->ariaLiveRegionAtomic()];
+        return [NSNumber numberWithBool:m_object->liveRegionAtomic()];
     if ([attributeName isEqualToString:NSAccessibilityElementBusyAttribute])
         return [NSNumber numberWithBool:m_object->isBusy()];
     
@@ -3183,6 +3183,18 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     // Used by DRT to find an accessible node by its element id.
     if ([attributeName isEqualToString:@"AXDRTElementIdAttribute"])
         return m_object->getAttribute(idAttr);
+    
+    if ([attributeName isEqualToString:@"AXAutocompleteValue"])
+        return m_object->autoCompleteValue();
+    
+    if ([attributeName isEqualToString:@"AXHasPopUpValue"])
+        return m_object->hasPopupValue();
+    
+    if ([attributeName isEqualToString:@"AXKeyShortcutsValue"])
+        return m_object->keyShortcutsValue();
+    
+    if ([attributeName isEqualToString:@"AXARIAPressedIsPresent"])
+        return [NSNumber numberWithBool:m_object->pressedIsPresent()];
     
     if (m_object->isWebArea() && [attributeName isEqualToString:NSAccessibilityPreventKeyboardDOMEventDispatchAttribute])
         return [NSNumber numberWithBool:m_object->preventKeyboardDOMEventDispatch()];

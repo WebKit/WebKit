@@ -499,14 +499,14 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     if (!placeholder.isEmpty())
         attributeSet = addToAtkAttributeSet(attributeSet, "placeholder-text", placeholder.utf8().data());
 
-    if (coreObject->supportsARIAAutoComplete())
-        attributeSet = addToAtkAttributeSet(attributeSet, "autocomplete", coreObject->ariaAutoCompleteValue().utf8().data());
+    if (coreObject->supportsAutoComplete())
+        attributeSet = addToAtkAttributeSet(attributeSet, "autocomplete", coreObject->autoCompleteValue().utf8().data());
 
-    if (coreObject->supportsARIAHasPopup())
-        attributeSet = addToAtkAttributeSet(attributeSet, "haspopup", coreObject->ariaPopupValue().utf8().data());
+    if (coreObject->supportsHasPopup())
+        attributeSet = addToAtkAttributeSet(attributeSet, "haspopup", coreObject->hasPopupValue().utf8().data());
 
-    if (coreObject->supportsARIACurrent())
-        attributeSet = addToAtkAttributeSet(attributeSet, "current", coreObject->ariaCurrentValue().utf8().data());
+    if (coreObject->supportsCurrent())
+        attributeSet = addToAtkAttributeSet(attributeSet, "current", coreObject->currentValue().utf8().data());
 
     // The Core AAM states that an explicitly-set value should be exposed, including "none".
     if (coreObject->hasAttribute(HTMLNames::aria_sortAttr)) {
@@ -565,10 +565,10 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
         attributeSet = addToAtkAttributeSet(attributeSet, "roledescription", roleDescription.utf8().data());
 
     // We need to expose the live region attributes even if the live region is currently disabled/off.
-    if (auto liveContainer = coreObject->ariaLiveRegionAncestor(false)) {
-        String liveStatus = liveContainer->ariaLiveRegionStatus();
-        String relevant = liveContainer->ariaLiveRegionRelevant();
-        bool isAtomic = liveContainer->ariaLiveRegionAtomic();
+    if (auto liveContainer = coreObject->liveRegionAncestor(false)) {
+        String liveStatus = liveContainer->liveRegionStatus();
+        String relevant = liveContainer->liveRegionRelevant();
+        bool isAtomic = liveContainer->liveRegionAtomic();
         String liveRole = roleString.isEmpty() ? computedRoleString : roleString;
 
         // According to the Core AAM, we need to expose the above properties with "container-" prefixed
@@ -587,7 +587,7 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
             attributeSet = addToAtkAttributeSet(attributeSet, "relevant", relevant.utf8().data());
             if (isAtomic)
                 attributeSet = addToAtkAttributeSet(attributeSet, "atomic", "true");
-        } else if (!isAtomic && coreObject->ariaLiveRegionAtomic())
+        } else if (!isAtomic && coreObject->liveRegionAtomic())
             attributeSet = addToAtkAttributeSet(attributeSet, "atomic", "true");
     }
 
@@ -602,7 +602,7 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
         attributeSet = addToAtkAttributeSet(attributeSet, "grabbed", "false");
 
     // The Core AAM states the author-provided value should be exposed as-is.
-    const AtomicString& keyShortcuts = coreObject->ariaKeyShortcutsValue();
+    const AtomicString& keyShortcuts = coreObject->keyShortcutsValue();
     if (!keyShortcuts.isEmpty())
         attributeSet = addToAtkAttributeSet(attributeSet, "keyshortcuts", keyShortcuts.string().utf8().data());
 
@@ -687,7 +687,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case AccessibilityRole::Window:
         return ATK_ROLE_WINDOW;
     case AccessibilityRole::PopUpButton:
-        return coreObject->ariaHasPopup() ? ATK_ROLE_PUSH_BUTTON : ATK_ROLE_COMBO_BOX;
+        return coreObject->hasPopup() ? ATK_ROLE_PUSH_BUTTON : ATK_ROLE_COMBO_BOX;
     case AccessibilityRole::ComboBox:
         return ATK_ROLE_COMBO_BOX;
     case AccessibilityRole::SplitGroup:
@@ -930,7 +930,7 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
 
     // Please keep the state list in alphabetical order
     if ((isListBoxOption && coreObject->isSelectedOptionActive())
-        || coreObject->ariaCurrentState() != AccessibilityARIACurrentState::False)
+        || coreObject->currentState() != AccessibilityCurrentState::False)
         atk_state_set_add_state(stateSet, ATK_STATE_ACTIVE);
 
     if (coreObject->isBusy())
@@ -977,7 +977,7 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
     else if (coreObject->orientation() == AccessibilityOrientation::Vertical)
         atk_state_set_add_state(stateSet, ATK_STATE_VERTICAL);
 
-    if (coreObject->ariaHasPopup())
+    if (coreObject->hasPopup())
         atk_state_set_add_state(stateSet, ATK_STATE_HAS_POPUP);
 
     if (coreObject->isIndeterminate())
@@ -1046,7 +1046,7 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
 
     // TODO: ATK_STATE_SENSITIVE
 
-    if (coreObject->supportsARIAAutoComplete() && coreObject->ariaAutoCompleteValue() != "none")
+    if (coreObject->supportsAutoComplete() && coreObject->autoCompleteValue() != "none")
         atk_state_set_add_state(stateSet, ATK_STATE_SUPPORTS_AUTOCOMPLETION);
 
     if (coreObject->isVisited())

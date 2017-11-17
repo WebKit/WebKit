@@ -847,7 +847,7 @@ void AXObjectCache::handleLiveRegionCreated(Node* node)
         return;
     
     Element* element = downcast<Element>(node);
-    String liveRegionStatus = element->attributeWithoutSynchronization(aria_liveAttr);
+    String liveRegionStatus = AccessibleNode::effectiveStringValueForElement(*element, AXPropertyName::Live);
     if (liveRegionStatus.isEmpty()) {
         const AtomicString& ariaRole = AccessibleNode::effectiveStringValueForElement(*element, AXPropertyName::Role);
         if (!ariaRole.isEmpty())

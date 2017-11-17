@@ -244,7 +244,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
         break;
 
     case AXCurrentChanged:
-        atk_object_notify_state_change(axObject, ATK_STATE_ACTIVE, coreObject->ariaCurrentState() != AccessibilityARIACurrentState::False);
+        atk_object_notify_state_change(axObject, ATK_STATE_ACTIVE, coreObject->currentState() != AccessibilityCurrentState::False);
         break;
 
     case AXRowExpanded:

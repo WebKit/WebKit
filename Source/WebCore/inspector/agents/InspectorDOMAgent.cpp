@@ -1761,26 +1761,26 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
                     controlledNodeIds->addItem(pushNodePathToFrontend(controlledElement));
             }
             
-            switch (axObject->ariaCurrentState()) {
-            case AccessibilityARIACurrentState::False:
+            switch (axObject->currentState()) {
+            case AccessibilityCurrentState::False:
                 currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::False;
                 break;
-            case AccessibilityARIACurrentState::Page:
+            case AccessibilityCurrentState::Page:
                 currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Page;
                 break;
-            case AccessibilityARIACurrentState::Step:
+            case AccessibilityCurrentState::Step:
                 currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Step;
                 break;
-            case AccessibilityARIACurrentState::Location:
+            case AccessibilityCurrentState::Location:
                 currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Location;
                 break;
-            case AccessibilityARIACurrentState::Date:
+            case AccessibilityCurrentState::Date:
                 currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Date;
                 break;
-            case AccessibilityARIACurrentState::Time:
+            case AccessibilityCurrentState::Time:
                 currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Time;
                 break;
-            case AccessibilityARIACurrentState::True:
+            case AccessibilityCurrentState::True:
                 currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::True;
                 break;
             }
@@ -1824,11 +1824,11 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
             
             label = axObject->computedLabel();
 
-            if (axObject->supportsARIALiveRegion()) {
+            if (axObject->supportsLiveRegion()) {
                 supportsLiveRegion = true;
-                liveRegionAtomic = axObject->ariaLiveRegionAtomic();
+                liveRegionAtomic = axObject->liveRegionAtomic();
 
-                String ariaRelevantAttrValue = axObject->ariaLiveRegionRelevant();
+                String ariaRelevantAttrValue = axObject->liveRegionRelevant();
                 if (!ariaRelevantAttrValue.isEmpty()) {
                     // FIXME: Pass enum values rather than strings once unblocked. http://webkit.org/b/133711
                     String ariaRelevantAdditions = Inspector::Protocol::InspectorHelpers::getEnumConstantValue(Inspector::Protocol::DOM::LiveRegionRelevant::Additions);
@@ -1852,7 +1852,7 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
                     }
                 }
 
-                String ariaLive = axObject->ariaLiveRegionStatus();
+                String ariaLive = axObject->liveRegionStatus();
                 if (ariaLive == "assertive")
                     liveRegionStatus = Inspector::Protocol::DOM::AccessibilityProperties::LiveRegionStatus::Assertive;
                 else if (ariaLive == "polite")
@@ -1875,7 +1875,7 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
             if (AccessibilityObject* parentObject = axObject->parentObjectUnignored())
                 parentNode = parentObject->node();
 
-            supportsPressed = axObject->ariaPressedIsPresent();
+            supportsPressed = axObject->pressedIsPresent();
             if (supportsPressed)
                 pressed = axObject->isPressed();
             
@@ -1903,7 +1903,7 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
             hierarchicalLevel = axObject->hierarchicalLevel();
             
             level = hierarchicalLevel ? hierarchicalLevel : headingLevel;
-            isPopupButton = axObject->isPopUpButton() || axObject->ariaHasPopup();
+            isPopupButton = axObject->isPopUpButton() || axObject->hasPopup();
         }
     }
     

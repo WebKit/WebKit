@@ -45,8 +45,22 @@ static ARIAAttributeMap& ariaAttributeMap()
             AXPropertyName name;
             QualifiedName ariaAttribute;
         } attributes[] = {
+            { AXPropertyName::Autocomplete, aria_autocompleteAttr },
+            { AXPropertyName::Checked, aria_checkedAttr },
+            { AXPropertyName::Current, aria_currentAttr },
+            { AXPropertyName::HasPopUp, aria_haspopupAttr },
+            { AXPropertyName::Invalid, aria_invalidAttr },
+            { AXPropertyName::KeyShortcuts, aria_keyshortcutsAttr },
             { AXPropertyName::Label, aria_labelAttr },
-            { AXPropertyName::Role, roleAttr }
+            { AXPropertyName::Live, aria_liveAttr },
+            { AXPropertyName::Orientation, aria_orientationAttr },
+            { AXPropertyName::Placeholder, aria_placeholderAttr },
+            { AXPropertyName::Pressed, aria_pressedAttr },
+            { AXPropertyName::Relevant, aria_relevantAttr },
+            { AXPropertyName::Role, roleAttr },
+            { AXPropertyName::RoleDescription, aria_roledescriptionAttr },
+            { AXPropertyName::Sort, aria_sortAttr },
+            { AXPropertyName::ValueText, aria_valuetextAttr }
         };
         ARIAAttributeMap map;
         for (auto& attribute : attributes)
@@ -59,8 +73,21 @@ static ARIAAttributeMap& ariaAttributeMap()
 static bool isPropertyValueString(AXPropertyName propertyName)
 {
     switch (propertyName) {
+    case AXPropertyName::Autocomplete:
+    case AXPropertyName::Checked:
+    case AXPropertyName::Current:
+    case AXPropertyName::HasPopUp:
+    case AXPropertyName::Invalid:
     case AXPropertyName::Label:
+    case AXPropertyName::Live:
+    case AXPropertyName::Orientation:
+    case AXPropertyName::Placeholder:
+    case AXPropertyName::Pressed:
+    case AXPropertyName::Relevant:
     case AXPropertyName::Role:
+    case AXPropertyName::RoleDescription:
+    case AXPropertyName::Sort:
+    case AXPropertyName::ValueText:
         return true;
     default:
         return false;
@@ -119,16 +146,87 @@ void AccessibleNode::setStringProperty(const String& value, AXPropertyName prope
     m_propertyMap.set(propertyName, value);
 }
 
-String AccessibleNode::role() const
+void AccessibleNode::notifyAttributeChanged(const WebCore::QualifiedName& name)
 {
-    return stringValueForProperty(m_ownerElement, AXPropertyName::Role);
+    if (AXObjectCache* cache = m_ownerElement.document().axObjectCache())
+        cache->handleAttributeChanged(name, &m_ownerElement);
 }
 
-void AccessibleNode::setRole(const String& role)
+String AccessibleNode::autocomplete() const
 {
-    setStringProperty(role, AXPropertyName::Role);
-    if (AXObjectCache* cache = m_ownerElement.document().axObjectCache())
-        cache->handleAttributeChanged(roleAttr, &m_ownerElement);
+    return stringValueForProperty(m_ownerElement, AXPropertyName::Autocomplete);
+}
+
+void AccessibleNode::setAutocomplete(const String& autocomplete)
+{
+    setStringProperty(autocomplete, AXPropertyName::Autocomplete);
+    notifyAttributeChanged(aria_autocompleteAttr);
+}
+
+String AccessibleNode::checked() const
+{
+    return stringValueForProperty(m_ownerElement, AXPropertyName::Checked);
+}
+
+void AccessibleNode::setChecked(const String& checked)
+{
+    setStringProperty(checked, AXPropertyName::Checked);
+    notifyAttributeChanged(aria_checkedAttr);
+}
+
+String AccessibleNode::current() const
+{
+    return stringValueForProperty(m_ownerElement, AXPropertyName::Current);
+}
+
+void AccessibleNode::setCurrent(const String& current)
+{
+    setStringProperty(current, AXPropertyName::Current);
+    notifyAttributeChanged(aria_currentAttr);
+}
+
+String AccessibleNode::hasPopUp() const
+{
+    return stringValueForProperty(m_ownerElement, AXPropertyName::HasPopUp);
+}
+
+void AccessibleNode::setHasPopUp(const String& hasPopUp)
+{
+    setStringProperty(hasPopUp, AXPropertyName::HasPopUp);
+    notifyAttributeChanged(aria_haspopupAttr);
+}
+
+String AccessibleNode::invalid() const
+{
+    return stringValueForProperty(m_ownerElement, AXPropertyName::Invalid);
+}
+
+void AccessibleNode::setInvalid(const String& invalid)
+{
+    setStringProperty(invalid, AXPropertyName::Invalid);
+    notifyAttributeChanged(aria_invalidAttr);
+}
+
+String AccessibleNode::keyShortcuts() const
+{
+    return stringValueForProperty(m_ownerElement, AXPropertyName::KeyShortcuts);
+}
+
+void AccessibleNode::setKeyShortcuts(const String& keyShortcuts)
+{
+    setStringProperty(keyShortcuts, AXPropertyName::KeyShortcuts);
+    notifyAttributeChanged(aria_keyshortcutsAttr);
+}
+
+String AccessibleNode::live() const
+{
+    return stringValueForProperty(m_ownerElement, AXPropertyName::Live);
+}
+
+void AccessibleNode::setLive(const String& live)
+{
+    setStringProperty(live, AXPropertyName::Live);
+    notifyAttributeChanged(aria_liveAttr);
 }
 
 String AccessibleNode::label() const
@@ -139,8 +237,95 @@ String AccessibleNode::label() const
 void AccessibleNode::setLabel(const String& label)
 {
     setStringProperty(label, AXPropertyName::Label);
-    if (AXObjectCache* cache = m_ownerElement.document().axObjectCache())
-        cache->handleAttributeChanged(aria_labelAttr, &m_ownerElement);
+    notifyAttributeChanged(aria_labelAttr);
+}
+
+String AccessibleNode::orientation() const
+{
+    return stringValueForProperty(m_ownerElement, AXPropertyName::Orientation);
+}
+
+void AccessibleNode::setOrientation(const String& orientation)
+{
+    setStringProperty(orientation, AXPropertyName::Orientation);
+    notifyAttributeChanged(aria_orientationAttr);
+}
+
+String AccessibleNode::placeholder() const
+{
+    return stringValueForProperty(m_ownerElement, AXPropertyName::Placeholder);
+}
+
+void AccessibleNode::setPlaceholder(const String& placeholder)
+{
+    setStringProperty(placeholder, AXPropertyName::Placeholder);
+    notifyAttributeChanged(aria_placeholderAttr);
+}
+
+String AccessibleNode::pressed() const
+{
+    return stringValueForProperty(m_ownerElement, AXPropertyName::Pressed);
+}
+
+void AccessibleNode::setPressed(const String& pressed)
+{
+    setStringProperty(pressed, AXPropertyName::Pressed);
+    notifyAttributeChanged(aria_pressedAttr);
+}
+
+String AccessibleNode::relevant() const
+{
+    return stringValueForProperty(m_ownerElement, AXPropertyName::Relevant);
+}
+
+void AccessibleNode::setRelevant(const String& relevant)
+{
+    setStringProperty(relevant, AXPropertyName::Relevant);
+    notifyAttributeChanged(aria_relevantAttr);
+}
+
+String AccessibleNode::role() const
+{
+    return stringValueForProperty(m_ownerElement, AXPropertyName::Role);
+}
+
+void AccessibleNode::setRole(const String& role)
+{
+    setStringProperty(role, AXPropertyName::Role);
+    notifyAttributeChanged(roleAttr);
+}
+
+String AccessibleNode::roleDescription() const
+{
+    return stringValueForProperty(m_ownerElement, AXPropertyName::RoleDescription);
+}
+
+void AccessibleNode::setRoleDescription(const String& roleDescription)
+{
+    setStringProperty(roleDescription, AXPropertyName::RoleDescription);
+    notifyAttributeChanged(aria_roledescriptionAttr);
+}
+
+String AccessibleNode::sort() const
+{
+    return stringValueForProperty(m_ownerElement, AXPropertyName::Sort);
+}
+
+void AccessibleNode::setSort(const String& sort)
+{
+    setStringProperty(sort, AXPropertyName::Sort);
+    notifyAttributeChanged(aria_sortAttr);
+}
+
+String AccessibleNode::valueText() const
+{
+    return stringValueForProperty(m_ownerElement, AXPropertyName::ValueText);
+}
+
+void AccessibleNode::setValueText(const String& valueText)
+{
+    setStringProperty(valueText, AXPropertyName::ValueText);
+    notifyAttributeChanged(aria_valuetextAttr);
 }
 
 } // namespace WebCore

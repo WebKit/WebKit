@@ -476,7 +476,7 @@ struct AccessibilitySelectTextCriteria {
 enum class AccessibilityMathScriptObjectType { Subscript, Superscript };
 enum class AccessibilityMathMultiscriptObjectType { PreSubscript, PreSuperscript, PostSubscript, PostSuperscript };
 
-enum class AccessibilityARIACurrentState { False, True, Page, Step, Location, Date, Time };
+enum class AccessibilityCurrentState { False, True, Page, Step, Location, Date, Time };
     
 bool nodeHasPresentationRole(Node*);
     
@@ -683,13 +683,13 @@ public:
     void ariaOwnsElements(AccessibilityChildrenVector&) const;
     void ariaOwnsReferencingElements(AccessibilityChildrenVector&) const;
 
-    virtual bool ariaHasPopup() const { return false; }
-    String ariaPopupValue() const;
-    bool supportsARIAHasPopup() const;
-    bool ariaPressedIsPresent() const;
+    virtual bool hasPopup() const { return false; }
+    String hasPopupValue() const;
+    bool supportsHasPopup() const;
+    bool pressedIsPresent() const;
     bool ariaIsMultiline() const;
     String invalidStatus() const;
-    bool supportsARIAPressed() const;
+    bool supportsPressed() const;
     bool supportsExpanded() const;
     bool supportsChecked() const;
     AccessibilitySortDirection sortDirection() const;
@@ -698,10 +698,10 @@ public:
     const AtomicString& identifierAttribute() const;
     void classList(Vector<String>&) const;
     virtual String roleDescription() const;
-    AccessibilityARIACurrentState ariaCurrentState() const;
-    String ariaCurrentValue() const;
-    bool supportsARIACurrent() const;
-    const AtomicString& ariaKeyShortcutsValue() const;
+    AccessibilityCurrentState currentState() const;
+    String currentValue() const;
+    bool supportsCurrent() const;
+    const String keyShortcutsValue() const;
     
     // This function checks if the object should be ignored when there's a modal dialog displayed.
     bool ignoredFromARIAModalPresence() const;
@@ -782,7 +782,7 @@ public:
     virtual int textLength() const { return 0; }
     virtual String ariaLabeledByAttribute() const { return String(); }
     virtual String ariaDescribedByAttribute() const { return String(); }
-    const AtomicString& placeholderValue() const;
+    const String placeholderValue() const;
     bool accessibleNameDerivesFromContent() const;
     
     // Abbreviations
@@ -978,12 +978,12 @@ public:
     void ariaTreeItemContent(AccessibilityChildrenVector&);
     
     // ARIA live-region features.
-    bool supportsARIALiveRegion(bool excludeIfOff = true) const;
-    bool isInsideARIALiveRegion(bool excludeIfOff = true) const;
-    AccessibilityObject* ariaLiveRegionAncestor(bool excludeIfOff = true) const;
-    virtual const String ariaLiveRegionStatus() const { return String(); }
-    virtual const AtomicString& ariaLiveRegionRelevant() const { return nullAtom(); }
-    virtual bool ariaLiveRegionAtomic() const { return false; }
+    bool supportsLiveRegion(bool excludeIfOff = true) const;
+    bool isInsideLiveRegion(bool excludeIfOff = true) const;
+    AccessibilityObject* liveRegionAncestor(bool excludeIfOff = true) const;
+    virtual const String liveRegionStatus() const { return String(); }
+    virtual const String liveRegionRelevant() const { return nullAtom(); }
+    virtual bool liveRegionAtomic() const { return false; }
     virtual bool isBusy() const { return false; }
     static const String defaultLiveRegionStatusForRole(AccessibilityRole);
     static bool liveRegionStatusIsEnabled(const AtomicString&);
@@ -993,8 +993,8 @@ public:
     bool supportsARIAReadOnly() const;
     virtual String ariaReadOnlyValue() const;
 
-    bool supportsARIAAutoComplete() const;
-    String ariaAutoCompleteValue() const;
+    bool supportsAutoComplete() const;
+    String autoCompleteValue() const;
     
     bool supportsARIAAttributes() const;
     

@@ -1,3 +1,14 @@
+2017-11-16  Nan Wang  <n_wang@apple.com>
+
+        AX: AOM: Implement string type properties
+        https://bugs.webkit.org/show_bug.cgi?id=179495
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/accessibility-object-model.html:
+        * accessibility/mac/AOM-string-properties-expected.txt: Added.
+        * accessibility/mac/AOM-string-properties.html: Added.
+
 2017-11-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html as flaky.

@@ -210,7 +210,7 @@ bool AccessibilityObject::isAccessibilityObjectSearchMatchAtIndex(AccessibilityO
         return axObject->isList();
         
     case AccessibilitySearchKey::LiveRegion:
-        return axObject->supportsARIALiveRegion();
+        return axObject->supportsLiveRegion();
         
     case AccessibilitySearchKey::MisspelledWord:
         return axObject->hasMisspelling();
@@ -1665,14 +1665,14 @@ String AccessibilityObject::ariaReadOnlyValue() const
     return getAttribute(aria_readonlyAttr).string().convertToASCIILowercase();
 }
 
-bool AccessibilityObject::supportsARIAAutoComplete() const
+bool AccessibilityObject::supportsAutoComplete() const
 {
-    return (isComboBox() || isARIATextControl()) && hasAttribute(aria_autocompleteAttr);
+    return (isComboBox() || isARIATextControl()) && hasProperty(AXPropertyName::Autocomplete);
 }
 
-String AccessibilityObject::ariaAutoCompleteValue() const
+String AccessibilityObject::autoCompleteValue() const
 {
-    const AtomicString& autoComplete = getAttribute(aria_autocompleteAttr);
+    const AtomicString& autoComplete = stringValueForProperty(AXPropertyName::Autocomplete);
     if (equalLettersIgnoringASCIICase(autoComplete, "inline")
         || equalLettersIgnoringASCIICase(autoComplete, "list")
         || equalLettersIgnoringASCIICase(autoComplete, "both"))
@@ -2000,7 +2000,7 @@ String AccessibilityObject::invalidStatus() const
     String undefinedValue = ASCIILiteral("undefined");
 
     // aria-invalid can return false (default), grammar, spelling, or true.
-    String ariaInvalid = stripLeadingAndTrailingHTMLSpaces(getAttribute(aria_invalidAttr));
+    String ariaInvalid = stripLeadingAndTrailingHTMLSpaces(stringValueForProperty(AXPropertyName::Invalid));
     
     if (ariaInvalid.isEmpty()) {
         // We should expose invalid status for input types.
@@ -2026,52 +2026,52 @@ String AccessibilityObject::invalidStatus() const
     return trueValue;
 }
 
-bool AccessibilityObject::supportsARIACurrent() const
+bool AccessibilityObject::supportsCurrent() const
 {
-    return hasAttribute(aria_currentAttr);
+    return hasProperty(AXPropertyName::Current);
 }
  
-AccessibilityARIACurrentState AccessibilityObject::ariaCurrentState() const
+AccessibilityCurrentState AccessibilityObject::currentState() const
 {
     // aria-current can return false (default), true, page, step, location, date or time.
-    String currentStateValue = stripLeadingAndTrailingHTMLSpaces(getAttribute(aria_currentAttr));
+    String currentStateValue = stripLeadingAndTrailingHTMLSpaces(stringValueForProperty(AXPropertyName::Current));
     
     // If "false", empty, or missing, return false state.
     if (currentStateValue.isEmpty() || currentStateValue == "false")
-        return AccessibilityARIACurrentState::False;
+        return AccessibilityCurrentState::False;
     
     if (currentStateValue == "page")
-        return AccessibilityARIACurrentState::Page;
+        return AccessibilityCurrentState::Page;
     if (currentStateValue == "step")
-        return AccessibilityARIACurrentState::Step;
+        return AccessibilityCurrentState::Step;
     if (currentStateValue == "location")
-        return AccessibilityARIACurrentState::Location;
+        return AccessibilityCurrentState::Location;
     if (currentStateValue == "date")
-        return AccessibilityARIACurrentState::Date;
+        return AccessibilityCurrentState::Date;
     if (currentStateValue == "time")
-        return AccessibilityARIACurrentState::Time;
+        return AccessibilityCurrentState::Time;
     
     // Any value not included in the list of allowed values should be treated as "true".
-    return AccessibilityARIACurrentState::True;
+    return AccessibilityCurrentState::True;
 }
 
-String AccessibilityObject::ariaCurrentValue() const
+String AccessibilityObject::currentValue() const
 {
-    switch (ariaCurrentState()) {
-    case AccessibilityARIACurrentState::False:
+    switch (currentState()) {
+    case AccessibilityCurrentState::False:
         return "false";
-    case AccessibilityARIACurrentState::Page:
+    case AccessibilityCurrentState::Page:
         return "page";
-    case AccessibilityARIACurrentState::Step:
+    case AccessibilityCurrentState::Step:
         return "step";
-    case AccessibilityARIACurrentState::Location:
+    case AccessibilityCurrentState::Location:
         return "location";
-    case AccessibilityARIACurrentState::Time:
+    case AccessibilityCurrentState::Time:
         return "time";
-    case AccessibilityARIACurrentState::Date:
+    case AccessibilityCurrentState::Date:
         return "date";
     default:
-    case AccessibilityARIACurrentState::True:
+    case AccessibilityCurrentState::True:
         return "true";
     }
 }
@@ -2398,7 +2398,7 @@ bool AccessibilityObject::hasHighlighting() const
 
 String AccessibilityObject::roleDescription() const
 {
-    return stripLeadingAndTrailingHTMLSpaces(getAttribute(aria_roledescriptionAttr));
+    return stripLeadingAndTrailingHTMLSpaces(stringValueForProperty(AXPropertyName::RoleDescription));
 }
     
 bool nodeHasPresentationRole(Node* node)
@@ -2446,9 +2446,9 @@ const AtomicString& AccessibilityObject::datetimeAttributeValue() const
     return getAttribute(datetimeAttr);
 }
     
-const AtomicString& AccessibilityObject::ariaKeyShortcutsValue() const
+const String AccessibilityObject::keyShortcutsValue() const
 {
-    return getAttribute(aria_keyshortcutsAttr);
+    return stringValueForProperty(AXPropertyName::KeyShortcuts);
 }
 
 Element* AccessibilityObject::element() const
@@ -2491,52 +2491,52 @@ bool AccessibilityObject::isValueAutofilled() const
     return downcast<HTMLInputElement>(*node).isAutoFilled();
 }
 
-const AtomicString& AccessibilityObject::placeholderValue() const
+const String AccessibilityObject::placeholderValue() const
 {
     const AtomicString& placeholder = getAttribute(placeholderAttr);
     if (!placeholder.isEmpty())
         return placeholder;
     
-    const AtomicString& ariaPlaceholder = getAttribute(aria_placeholderAttr);
+    const AtomicString& ariaPlaceholder = stringValueForProperty(AXPropertyName::Placeholder);
     if (!ariaPlaceholder.isEmpty())
         return ariaPlaceholder;
     
     return nullAtom();
 }
     
-bool AccessibilityObject::isInsideARIALiveRegion(bool excludeIfOff) const
+bool AccessibilityObject::isInsideLiveRegion(bool excludeIfOff) const
 {
-    return ariaLiveRegionAncestor(excludeIfOff);
+    return liveRegionAncestor(excludeIfOff);
 }
     
-AccessibilityObject* AccessibilityObject::ariaLiveRegionAncestor(bool excludeIfOff) const
+AccessibilityObject* AccessibilityObject::liveRegionAncestor(bool excludeIfOff) const
 {
     return const_cast<AccessibilityObject*>(AccessibilityObject::matchedParent(*this, true, [excludeIfOff] (const AccessibilityObject& object) {
-        return object.supportsARIALiveRegion(excludeIfOff);
+        return object.supportsLiveRegion(excludeIfOff);
     }));
 }
 
 bool AccessibilityObject::supportsARIAAttributes() const
 {
     // This returns whether the element supports any global ARIA attributes.
-    return supportsARIALiveRegion()
+    return supportsLiveRegion()
         || supportsARIADragging()
         || supportsARIADropping()
         || supportsARIAOwns()
         || hasAttribute(aria_atomicAttr)
         || hasAttribute(aria_busyAttr)
         || hasAttribute(aria_controlsAttr)
-        || hasAttribute(aria_currentAttr)
+        || hasProperty(AXPropertyName::Current)
         || hasAttribute(aria_describedbyAttr)
         || hasAttribute(aria_detailsAttr)
         || hasAttribute(aria_disabledAttr)
         || hasAttribute(aria_errormessageAttr)
         || hasAttribute(aria_flowtoAttr)
-        || hasAttribute(aria_haspopupAttr)
-        || hasAttribute(aria_invalidAttr)
+        || hasProperty(AXPropertyName::HasPopUp)
+        || hasProperty(AXPropertyName::Invalid)
         || hasProperty(AXPropertyName::Label)
         || hasAttribute(aria_labelledbyAttr)
-        || hasAttribute(aria_relevantAttr);
+        || hasProperty(AXPropertyName::Relevant);
 }
     
 bool AccessibilityObject::liveRegionStatusIsEnabled(const AtomicString& liveRegionStatus)
@@ -2544,10 +2544,10 @@ bool AccessibilityObject::liveRegionStatusIsEnabled(const AtomicString& liveRegi
     return equalLettersIgnoringASCIICase(liveRegionStatus, "polite") || equalLettersIgnoringASCIICase(liveRegionStatus, "assertive");
 }
     
-bool AccessibilityObject::supportsARIALiveRegion(bool excludeIfOff) const
+bool AccessibilityObject::supportsLiveRegion(bool excludeIfOff) const
 {
-    const AtomicString& liveRegionStatus = ariaLiveRegionStatus();
-    return excludeIfOff ? liveRegionStatusIsEnabled(liveRegionStatus) : !liveRegionStatus.isEmpty();
+    const AtomicString& liveRegionStatusValue = liveRegionStatus();
+    return excludeIfOff ? liveRegionStatusIsEnabled(liveRegionStatusValue) : !liveRegionStatusValue.isEmpty();
 }
 
 AccessibilityObject* AccessibilityObject::elementAccessibilityHitTest(const IntPoint& point) const
@@ -2598,7 +2598,7 @@ AccessibilitySortDirection AccessibilityObject::sortDirection() const
     if (role != AccessibilityRole::RowHeader && role != AccessibilityRole::ColumnHeader)
         return AccessibilitySortDirection::Invalid;
 
-    const AtomicString& sortAttribute = getAttribute(aria_sortAttr);
+    const AtomicString& sortAttribute = stringValueForProperty(AXPropertyName::Sort);
     if (equalLettersIgnoringASCIICase(sortAttribute, "ascending"))
         return AccessibilitySortDirection::Ascending;
     if (equalLettersIgnoringASCIICase(sortAttribute, "descending"))
@@ -2619,14 +2619,14 @@ bool AccessibilityObject::supportsRangeValue() const
         || isAttachmentElement();
 }
     
-bool AccessibilityObject::supportsARIAHasPopup() const
+bool AccessibilityObject::supportsHasPopup() const
 {
-    return hasAttribute(aria_haspopupAttr) || isComboBox();
+    return hasProperty(AXPropertyName::HasPopUp) || isComboBox();
 }
 
-String AccessibilityObject::ariaPopupValue() const
+String AccessibilityObject::hasPopupValue() const
 {
-    const AtomicString& hasPopup = getAttribute(aria_haspopupAttr);
+    const AtomicString& hasPopup = stringValueForProperty(AXPropertyName::HasPopUp);
     if (equalLettersIgnoringASCIICase(hasPopup, "true")
         || equalLettersIgnoringASCIICase(hasPopup, "dialog")
         || equalLettersIgnoringASCIICase(hasPopup, "grid")
@@ -2683,9 +2683,9 @@ void AccessibilityObject::classList(Vector<String>& classList) const
         classList.append(list.item(k).string());
 }
 
-bool AccessibilityObject::supportsARIAPressed() const
+bool AccessibilityObject::supportsPressed() const
 {
-    const AtomicString& expanded = getAttribute(aria_pressedAttr);
+    const AtomicString& expanded = stringValueForProperty(AXPropertyName::Pressed);
     return equalLettersIgnoringASCIICase(expanded, "true") || equalLettersIgnoringASCIICase(expanded, "false");
 }
     
@@ -2745,7 +2745,7 @@ AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
     // If it's a toggle button, the aria-pressed attribute is consulted.
 
     if (isToggleButton()) {
-        const AtomicString& ariaPressed = getAttribute(aria_pressedAttr);
+        const AtomicString& ariaPressed = stringValueForProperty(AXPropertyName::Pressed);
         if (equalLettersIgnoringASCIICase(ariaPressed, "true"))
             return AccessibilityButtonState::On;
         if (equalLettersIgnoringASCIICase(ariaPressed, "mixed"))
@@ -2753,7 +2753,7 @@ AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
         return AccessibilityButtonState::Off;
     }
     
-    const AtomicString& result = getAttribute(aria_checkedAttr);
+    const AtomicString& result = stringValueForProperty(AXPropertyName::Checked);
     if (equalLettersIgnoringASCIICase(result, "true"))
         return AccessibilityButtonState::On;
     if (equalLettersIgnoringASCIICase(result, "mixed")) {
@@ -3127,9 +3127,9 @@ void AccessibilityObject::notifyIfIgnoredValueChanged()
     }
 }
 
-bool AccessibilityObject::ariaPressedIsPresent() const
+bool AccessibilityObject::pressedIsPresent() const
 {
-    return !getAttribute(aria_pressedAttr).isEmpty();
+    return !stringValueForProperty(AXPropertyName::Pressed).isEmpty();
 }
 
 TextIteratorBehavior AccessibilityObject::textIteratorBehaviorForTextRange() const
@@ -3149,9 +3149,9 @@ AccessibilityRole AccessibilityObject::buttonRoleType() const
 {
     // If aria-pressed is present, then it should be exposed as a toggle button.
     // http://www.w3.org/TR/wai-aria/states_and_properties#aria-pressed
-    if (ariaPressedIsPresent())
+    if (pressedIsPresent())
         return AccessibilityRole::ToggleButton;
-    if (ariaHasPopup())
+    if (hasPopup())
         return AccessibilityRole::PopUpButton;
     // We don't contemplate AccessibilityRole::RadioButton, as it depends on the input
     // type.

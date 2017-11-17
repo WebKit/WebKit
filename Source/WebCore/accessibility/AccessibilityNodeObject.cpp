@@ -145,7 +145,7 @@ void AccessibilityNodeObject::childrenChanged()
         // Sometimes this function can be called many times within a short period of time, leading to posting too many AXLiveRegionChanged
         // notifications. To fix this, we used a timer to make sure we only post one notification for the children changes within a pre-defined
         // time interval.
-        if (parent->supportsARIALiveRegion())
+        if (parent->supportsLiveRegion())
             cache->postLiveRegionChangeNotification(parent);
         
         // If this element is an ARIA text control, notify the AT of changes.
@@ -658,7 +658,7 @@ bool AccessibilityNodeObject::isPressed() const
 
     // If this is an toggle button, check the aria-pressed attribute rather than node()->active()
     if (isToggleButton())
-        return equalLettersIgnoringASCIICase(getAttribute(aria_pressedAttr), "true");
+        return equalLettersIgnoringASCIICase(stringValueForProperty(AXPropertyName::Pressed), "true");
 
     if (!is<Element>(*node))
         return false;
@@ -690,7 +690,7 @@ bool AccessibilityNodeObject::isChecked() const
         break;
     }
     
-    if (validRole && equalLettersIgnoringASCIICase(getAttribute(aria_checkedAttr), "true"))
+    if (validRole && equalLettersIgnoringASCIICase(stringValueForProperty(AXPropertyName::Checked), "true"))
         return true;
 
     return false;
@@ -802,7 +802,7 @@ String AccessibilityNodeObject::valueDescription() const
     if (!isRangeControl())
         return String();
 
-    return getAttribute(aria_valuetextAttr).string();
+    return stringValueForProperty(AXPropertyName::ValueText);
 }
 
 float AccessibilityNodeObject::valueForRange() const

@@ -27,6 +27,20 @@
     SkipVTableValidation,
     EnabledAtRuntime=AccessibilityObjectModel,
 ] interface AccessibleNode {
-    attribute DOMString? role;
+    attribute DOMString? autocomplete;
+    attribute DOMString? checked;
+    attribute DOMString? current;
+    attribute DOMString? hasPopUp;
+    attribute DOMString? invalid;
+    attribute DOMString? keyShortcuts;
     attribute DOMString? label;
+    attribute DOMString? live;
+    attribute DOMString? orientation;
+    attribute DOMString? placeholder;
+    attribute DOMString? pressed;
+    attribute DOMString? relevant;
+    attribute DOMString? role;
+    attribute DOMString? roleDescription;
+    attribute DOMString? sort;
+    attribute DOMString? valueText;
 };

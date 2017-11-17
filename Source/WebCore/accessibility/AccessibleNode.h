@@ -40,8 +40,22 @@ typedef Variant<String, bool, int> PropertyValueVariant;
 
 enum class AXPropertyName {
     None,
+    Autocomplete,
+    Checked,
+    Current,
+    HasPopUp,
+    Invalid,
+    KeyShortcuts,
+    Label,
+    Live,
+    Orientation,
+    Placeholder,
+    Pressed,
+    Relevant,
     Role,
-    Label
+    RoleDescription,
+    Sort,
+    ValueText
 };
 
 struct AXPropertyHashTraits : WTF::GenericHashTraits<AXPropertyName> {
@@ -49,11 +63,11 @@ struct AXPropertyHashTraits : WTF::GenericHashTraits<AXPropertyName> {
     static AXPropertyName emptyValue() { return AXPropertyName::None; };
     static void constructDeletedValue(AXPropertyName& slot)
     {
-        slot = AXPropertyName::None;
+        slot = static_cast<AXPropertyName>(static_cast<int>(AXPropertyName::None) - 1);
     }
     static bool isDeletedValue(AXPropertyName value)
     {
-        return value == AXPropertyName::None;
+        return static_cast<int>(value) == static_cast<int>(AXPropertyName::None) - 1;
     }
 };
 
@@ -71,16 +85,60 @@ public:
     static const String effectiveStringValueForElement(Element&, AXPropertyName);
     static bool hasProperty(Element&, AXPropertyName);
 
-    String role() const;
-    void setRole(const String&);
+    String autocomplete() const;
+    void setAutocomplete(const String&);
+
+    String checked() const;
+    void setChecked(const String&);
+
+    String current() const;
+    void setCurrent(const String&);
+
+    String hasPopUp() const;
+    void setHasPopUp(const String&);
+
+    String invalid() const;
+    void setInvalid(const String&);
+
+    String keyShortcuts() const;
+    void setKeyShortcuts(const String&);
+
+    String live() const;
+    void setLive(const String&);
 
     String label() const;
     void setLabel(const String&);
+
+    String orientation() const;
+    void setOrientation(const String&);
+
+    String placeholder() const;
+    void setPlaceholder(const String&);
+
+    String pressed() const;
+    void setPressed(const String&);
+
+    String relevant() const;
+    void setRelevant(const String&);
+
+    String role() const;
+    void setRole(const String&);
+
+    String roleDescription() const;
+    void setRoleDescription(const String&);
+
+    String sort() const;
+    void setSort(const String&);
+
+    String valueText() const;
+    void setValueText(const String&);
 
 private:
     static const PropertyValueVariant valueForProperty(Element&, AXPropertyName);
     static const String stringValueForProperty(Element&, AXPropertyName);
     void setStringProperty(const String&, AXPropertyName);
+    
+    void notifyAttributeChanged(const WebCore::QualifiedName&);
 
     Element& m_ownerElement;
 

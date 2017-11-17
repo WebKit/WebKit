@@ -171,7 +171,7 @@ public:
     IntRect boundsForRects(LayoutRect&, LayoutRect&, RefPtr<Range>) const;
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
     bool isVisiblePositionRangeInDifferentDocument(const VisiblePositionRange&) const;
-    bool ariaHasPopup() const override;
+    bool hasPopup() const override;
 
     bool supportsARIADropping() const override;
     bool supportsARIADragging() const override;
@@ -276,9 +276,9 @@ private:
     
     ESpeak speakProperty() const override;
     
-    const String ariaLiveRegionStatus() const override;
-    const AtomicString& ariaLiveRegionRelevant() const override;
-    bool ariaLiveRegionAtomic() const override;
+    const String liveRegionStatus() const override;
+    const String liveRegionRelevant() const override;
+    bool liveRegionAtomic() const override;
     bool isBusy() const override;
 
     bool inheritsPresentationalRole() const override;

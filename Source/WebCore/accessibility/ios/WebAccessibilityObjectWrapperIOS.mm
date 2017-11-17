@@ -497,7 +497,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (![self _prepareAccessibilityCall])
         return NO;
     
-    return m_object->ariaHasPopup();
+    return m_object->hasPopup();
 }
 
 - (NSString *)accessibilityLanguage
@@ -2880,7 +2880,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    return m_object->ariaLiveRegionStatus();
+    return m_object->liveRegionStatus();
 }
 
 - (NSString *)accessibilityARIARelevantStatus
@@ -2888,7 +2888,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (![self _prepareAccessibilityCall])
         return nil;
     
-    return m_object->ariaLiveRegionRelevant();
+    return m_object->liveRegionRelevant();
 }
 
 - (BOOL)accessibilityARIALiveRegionIsAtomic
@@ -2896,7 +2896,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (![self _prepareAccessibilityCall])
         return NO;
     
-    return m_object->ariaLiveRegionAtomic();
+    return m_object->liveRegionAtomic();
 }
 
 - (BOOL)accessibilitySupportsARIAPressed
@@ -2904,7 +2904,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (![self _prepareAccessibilityCall])
         return NO;
     
-    return m_object->supportsARIAPressed();
+    return m_object->supportsPressed();
 }
 
 - (BOOL)accessibilityIsPressed
@@ -2968,20 +2968,20 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (![self _prepareAccessibilityCall])
         return nil;
     
-    switch (m_object->ariaCurrentState()) {
-    case AccessibilityARIACurrentState::False:
+    switch (m_object->currentState()) {
+    case AccessibilityCurrentState::False:
         return @"false";
-    case AccessibilityARIACurrentState::Page:
+    case AccessibilityCurrentState::Page:
         return @"page";
-    case AccessibilityARIACurrentState::Step:
+    case AccessibilityCurrentState::Step:
         return @"step";
-    case AccessibilityARIACurrentState::Location:
+    case AccessibilityCurrentState::Location:
         return @"location";
-    case AccessibilityARIACurrentState::Time:
+    case AccessibilityCurrentState::Time:
         return @"time";
-    case AccessibilityARIACurrentState::Date:
+    case AccessibilityCurrentState::Date:
         return @"date";
-    case AccessibilityARIACurrentState::True:
+    case AccessibilityCurrentState::True:
         return @"true";
     }
 }
