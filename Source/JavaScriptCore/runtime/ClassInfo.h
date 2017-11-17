@@ -38,97 +38,97 @@ class Snippet;
 struct HashTable;
 
 struct MethodTable {
-    typedef void (*DestroyFunctionPtr)(JSCell*);
+    using DestroyFunctionPtr = void (*)(JSCell*);
     DestroyFunctionPtr destroy;
 
-    typedef void (*VisitChildrenFunctionPtr)(JSCell*, SlotVisitor&);
+    using VisitChildrenFunctionPtr = void (*)(JSCell*, SlotVisitor&);
     VisitChildrenFunctionPtr visitChildren;
 
-    typedef CallType (*GetCallDataFunctionPtr)(JSCell*, CallData&);
+    using GetCallDataFunctionPtr = CallType (*)(JSCell*, CallData&);
     GetCallDataFunctionPtr getCallData;
 
-    typedef ConstructType (*GetConstructDataFunctionPtr)(JSCell*, ConstructData&);
+    using GetConstructDataFunctionPtr = ConstructType (*)(JSCell*, ConstructData&);
     GetConstructDataFunctionPtr getConstructData;
 
-    typedef bool (*PutFunctionPtr)(JSCell*, ExecState*, PropertyName propertyName, JSValue, PutPropertySlot&);
+    using PutFunctionPtr = bool (*)(JSCell*, ExecState*, PropertyName propertyName, JSValue, PutPropertySlot&);
     PutFunctionPtr put;
 
-    typedef bool (*PutByIndexFunctionPtr)(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
+    using PutByIndexFunctionPtr = bool (*)(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
     PutByIndexFunctionPtr putByIndex;
 
-    typedef bool (*DeletePropertyFunctionPtr)(JSCell*, ExecState*, PropertyName);
+    using DeletePropertyFunctionPtr = bool (*)(JSCell*, ExecState*, PropertyName);
     DeletePropertyFunctionPtr deleteProperty;
 
-    typedef bool (*DeletePropertyByIndexFunctionPtr)(JSCell*, ExecState*, unsigned);
+    using DeletePropertyByIndexFunctionPtr = bool (*)(JSCell*, ExecState*, unsigned);
     DeletePropertyByIndexFunctionPtr deletePropertyByIndex;
 
-    typedef bool (*GetOwnPropertySlotFunctionPtr)(JSObject*, ExecState*, PropertyName, PropertySlot&);
+    using GetOwnPropertySlotFunctionPtr = bool (*)(JSObject*, ExecState*, PropertyName, PropertySlot&);
     GetOwnPropertySlotFunctionPtr getOwnPropertySlot;
 
-    typedef bool (*GetOwnPropertySlotByIndexFunctionPtr)(JSObject*, ExecState*, unsigned, PropertySlot&);
+    using GetOwnPropertySlotByIndexFunctionPtr = bool (*)(JSObject*, ExecState*, unsigned, PropertySlot&);
     GetOwnPropertySlotByIndexFunctionPtr getOwnPropertySlotByIndex;
 
-    typedef JSValue (*ToThisFunctionPtr)(JSCell*, ExecState*, ECMAMode);
+    using ToThisFunctionPtr = JSValue (*)(JSCell*, ExecState*, ECMAMode);
     ToThisFunctionPtr toThis;
 
-    typedef JSValue (*DefaultValueFunctionPtr)(const JSObject*, ExecState*, PreferredPrimitiveType);
+    using DefaultValueFunctionPtr = JSValue (*)(const JSObject*, ExecState*, PreferredPrimitiveType);
     DefaultValueFunctionPtr defaultValue;
 
-    typedef void (*GetOwnPropertyNamesFunctionPtr)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    using GetOwnPropertyNamesFunctionPtr = void (*)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     GetOwnPropertyNamesFunctionPtr getOwnPropertyNames;
 
-    typedef void (*GetOwnNonIndexPropertyNamesFunctionPtr)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    using GetOwnNonIndexPropertyNamesFunctionPtr = void (*)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     GetOwnNonIndexPropertyNamesFunctionPtr getOwnNonIndexPropertyNames;
 
-    typedef void (*GetPropertyNamesFunctionPtr)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    using GetPropertyNamesFunctionPtr = void (*)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     GetPropertyNamesFunctionPtr getPropertyNames;
 
-    typedef uint32_t (*GetEnumerableLengthFunctionPtr)(ExecState*, JSObject*);
+    using GetEnumerableLengthFunctionPtr = uint32_t (*)(ExecState*, JSObject*);
     GetEnumerableLengthFunctionPtr getEnumerableLength;
 
     GetPropertyNamesFunctionPtr getStructurePropertyNames;
     GetPropertyNamesFunctionPtr getGenericPropertyNames;
 
-    typedef String (*ClassNameFunctionPtr)(const JSObject*);
+    using ClassNameFunctionPtr = String (*)(const JSObject*);
     ClassNameFunctionPtr className;
 
-    typedef String (*ToStringNameFunctionPtr)(const JSObject*, ExecState*);
+    using ToStringNameFunctionPtr = String (*)(const JSObject*, ExecState*);
     ToStringNameFunctionPtr toStringName;
 
-    typedef bool (*CustomHasInstanceFunctionPtr)(JSObject*, ExecState*, JSValue);
+    using CustomHasInstanceFunctionPtr = bool (*)(JSObject*, ExecState*, JSValue);
     CustomHasInstanceFunctionPtr customHasInstance;
 
-    typedef bool (*DefineOwnPropertyFunctionPtr)(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool);
+    using DefineOwnPropertyFunctionPtr = bool (*)(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool);
     DefineOwnPropertyFunctionPtr defineOwnProperty;
 
-    typedef ArrayBuffer* (*SlowDownAndWasteMemory)(JSArrayBufferView*);
+    using SlowDownAndWasteMemory = ArrayBuffer* (*)(JSArrayBufferView*);
     SlowDownAndWasteMemory slowDownAndWasteMemory;
 
-    typedef RefPtr<ArrayBufferView> (*GetTypedArrayImpl)(JSArrayBufferView*);
+    using GetTypedArrayImpl = RefPtr<ArrayBufferView> (*)(JSArrayBufferView*);
     GetTypedArrayImpl getTypedArrayImpl;
 
-    typedef bool (*PreventExtensionsFunctionPtr)(JSObject*, ExecState*);
+    using PreventExtensionsFunctionPtr = bool (*)(JSObject*, ExecState*);
     PreventExtensionsFunctionPtr preventExtensions;
 
-    typedef bool (*IsExtensibleFunctionPtr)(JSObject*, ExecState*);
+    using IsExtensibleFunctionPtr = bool (*)(JSObject*, ExecState*);
     IsExtensibleFunctionPtr isExtensible;
 
-    typedef bool (*SetPrototypeFunctionPtr)(JSObject*, ExecState*, JSValue, bool shouldThrowIfCantSet);
+    using SetPrototypeFunctionPtr = bool (*)(JSObject*, ExecState*, JSValue, bool shouldThrowIfCantSet);
     SetPrototypeFunctionPtr setPrototype;
 
-    typedef JSValue (*GetPrototypeFunctionPtr)(JSObject*, ExecState*);
+    using GetPrototypeFunctionPtr = JSValue (*)(JSObject*, ExecState*);
     GetPrototypeFunctionPtr getPrototype;
 
-    typedef void (*DumpToStreamFunctionPtr)(const JSCell*, PrintStream&);
+    using DumpToStreamFunctionPtr = void (*)(const JSCell*, PrintStream&);
     DumpToStreamFunctionPtr dumpToStream;
 
-    typedef void (*HeapSnapshotFunctionPtr)(JSCell*, HeapSnapshotBuilder&);
+    using HeapSnapshotFunctionPtr = void (*)(JSCell*, HeapSnapshotBuilder&);
     HeapSnapshotFunctionPtr heapSnapshot;
 
-    typedef size_t (*EstimatedSizeFunctionPtr)(JSCell*);
+    using EstimatedSizeFunctionPtr = size_t (*)(JSCell*);
     EstimatedSizeFunctionPtr estimatedSize;
 
-    typedef void (*VisitOutputConstraintsPtr)(JSCell*, SlotVisitor&);
+    using VisitOutputConstraintsPtr = void (*)(JSCell*, SlotVisitor&);
     VisitOutputConstraintsPtr visitOutputConstraints;
 
     using ReifyPropertyNameIfNeededPtr = PropertyReificationResult (*)(JSCell*, ExecState*, PropertyName&);
@@ -219,7 +219,7 @@ struct ClassInfo {
 
     const HashTable* staticPropHashTable;
 
-    typedef Ref<Snippet> (*CheckSubClassSnippetFunctionPtr)(void);
+    using CheckSubClassSnippetFunctionPtr = Ref<Snippet> (*)(void);
     CheckSubClassSnippetFunctionPtr checkSubClassSnippet;
 
     MethodTable methodTable;

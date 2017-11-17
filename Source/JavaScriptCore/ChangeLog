@@ -1,5 +1,17 @@
 2017-11-17  JF Bastien  <jfbastien@apple.com>
 
+        NFC update ClassInfo to C++14
+        https://bugs.webkit.org/show_bug.cgi?id=179783
+
+        Reviewed by Mark Lam.
+
+        Forked from #179734, use `using` instead of `typedef`. It's easier
+        to read.
+
+        * runtime/ClassInfo.h:
+
+2017-11-17  JF Bastien  <jfbastien@apple.com>
+
         WebAssembly JS API: throw when a promise can't be created
         https://bugs.webkit.org/show_bug.cgi?id=179826
         <rdar://problem/35455813>
