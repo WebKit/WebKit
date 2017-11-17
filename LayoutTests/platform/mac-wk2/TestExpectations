@@ -832,3 +832,4 @@ webkit.org/b/165620 [ ElCapitan Sierra ] http/tests/cache/disk-cache/disk-cache-
 
 webkit.org/b/179176 [ Release ] svg/graphics/SVGImage.cpp [ Pass Failure ]
 
+webkit.org/b/179773 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Pass Failure ]

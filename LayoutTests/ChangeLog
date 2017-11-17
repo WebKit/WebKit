@@ -1,3 +1,12 @@
+2017-11-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=179773
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-11-16  Chris Dumez  <cdumez@apple.com>
 
         Dispatching an event on a ServiceWorkerRegistration may fail or crash due to GC
