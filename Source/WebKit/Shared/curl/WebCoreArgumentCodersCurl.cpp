@@ -53,7 +53,7 @@ void ArgumentCoder<CertificateInfo>::encode(Encoder&, const CertificateInfo&)
 
 bool ArgumentCoder<CertificateInfo>::decode(Decoder&, CertificateInfo&)
 {
-    return false;
+    return true;
 }
 
 void ArgumentCoder<ResourceError>::encodePlatformData(Encoder&, const ResourceError&)
@@ -62,7 +62,7 @@ void ArgumentCoder<ResourceError>::encodePlatformData(Encoder&, const ResourceEr
 
 bool ArgumentCoder<ResourceError>::decodePlatformData(Decoder&, ResourceError&)
 {
-    return false;
+    return true;
 }
 
 void ArgumentCoder<ProtectionSpace>::encodePlatformData(Encoder&, const ProtectionSpace&)
