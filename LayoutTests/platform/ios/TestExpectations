@@ -3171,3 +3171,5 @@ webkit.org/b/179454 imported/w3c/web-platform-tests/streams/readable-streams/gen
 webkit.org/b/179454 imported/w3c/web-platform-tests/streams/readable-streams/readable-stream-reader.serviceworker.https.html [ Pass Failure ]
 webkit.org/b/179454 imported/w3c/web-platform-tests/streams/readable-streams/tee.serviceworker.https.html [ Pass Failure ]
 webkit.org/b/179454 imported/w3c/web-platform-tests/streams/readable-streams/templated.serviceworker.https.html [ Pass Failure ]
+
+webkit.org/b/179773 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Pass Failure ]
