@@ -73,10 +73,9 @@ set(TestWebCoreLib_SOURCES
 if (${WTF_PLATFORM_WIN_CAIRO})
     list(APPEND test_webcore_LIBRARIES
         ${CAIRO_LIBRARIES}
+        ${OPENSSL_LIBRARIES}
         libANGLE
-        libeay32
         mfuuid
-        ssleay32
         strmiids
         vcruntime
     )

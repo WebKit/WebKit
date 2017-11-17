@@ -121,9 +121,8 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     add_definitions(-DUSE_CAIRO=1 -DUSE_CURL=1)
 
     list(APPEND WebKit_LIBRARIES
-        libeay32.lib
+        ${OPENSSL_LIBRARIES}
         mfuuid.lib
-        ssleay32.lib
         strmiids.lib
     )
 endif ()
