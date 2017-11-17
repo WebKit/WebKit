@@ -63,7 +63,7 @@ TEST(WebKitLegacy, ScheduleInRunLoop)
     }
 
     while (loadsFinished < webViewCount)
-        CFRunLoopRunInMode(CFSTR("TestRunLoopMode"), std::numeric_limits<double>::max(), true);
+        CFRunLoopRunInMode(CFSTR("TestRunLoopMode"), .001, true);
 }
 
 } // namespace TestWebKitAPI

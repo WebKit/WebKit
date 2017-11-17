@@ -37,20 +37,47 @@
 #import "SynchronousLoaderClient.h"
 #import "WebCoreURLResponse.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
 
 using namespace WebCore;
 
-static SchedulePairHashSet* scheduledRunLoopPairs(ResourceHandle* handle)
+static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
 {
-    if (!handle)
-        return nullptr;
-    if (!handle->context())
-        return nullptr;
-    return handle->context()->scheduledRunLoopPairs();
+    if (!pairs)
+        return false;
+    for (auto& pair : *pairs) {
+        auto mode = pair->mode();
+        if (mode != kCFRunLoopCommonModes && mode != kCFRunLoopDefaultMode)
+            return true;
+    }
+    return false;
 }
 
 @implementation WebCoreResourceHandleAsOperationQueueDelegate
+
+- (void)callFunctionOnMainThread:(Function<void()>&&)function
+{
+    // Sync xhr uses the message queue.
+    if (m_messageQueue)
+        return m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(function)));
+
+    // This is the common case.
+    SchedulePairHashSet* pairs = m_handle && m_handle->context() ? m_handle->context()->scheduledRunLoopPairs() : nullptr;
+    if (!scheduledWithCustomRunLoopMode(pairs))
+        return callOnMainThread(WTFMove(function));
+    
+    // If we have been scheduled in a custom run loop mode, schedule a block in that mode.
+    auto block = BlockPtr<void()>::fromCallable([alreadyCalled = false, function = WTFMove(function)] () mutable {
+        if (alreadyCalled)
+            return;
+        alreadyCalled = true;
+        function();
+        function = nullptr;
+    });
+    for (auto& pair : *pairs)
+        CFRunLoopPerformBlock(pair->runLoop(), pair->mode(), block.get());
+}
 
 - (id)initWithHandle:(ResourceHandle*)handle messageQueue:(MessageQueue<Function<void()>>*)messageQueue
 {
@@ -116,7 +143,7 @@ static SchedulePairHashSet* scheduledRunLoopPairs(ResourceHandle* handle)
         LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:non-HTTP", m_handle, connection, [newRequest description]); 
 #endif
 
-    auto work = [self = self, protectedSelf = RetainPtr<id>(self), newRequest = RetainPtr<NSURLRequest>(newRequest), redirectResponse = RetainPtr<NSURLResponse>(redirectResponse)] () mutable {
+    auto work = [self = self, protectedSelf = retainPtr(self), newRequest = retainPtr(newRequest), redirectResponse = retainPtr(redirectResponse)] () mutable {
         if (!m_handle) {
             m_requestResult = nullptr;
             dispatch_semaphore_signal(m_semaphore);
@@ -129,11 +156,7 @@ static SchedulePairHashSet* scheduledRunLoopPairs(ResourceHandle* handle)
         });
     };
 
-    if (m_messageQueue)
-        m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
-    else
-        callOnMainThread(WTFMove(work), scheduledRunLoopPairs(m_handle));
-
+    [self callFunctionOnMainThread:WTFMove(work)];
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
     return m_requestResult.get();
 }
@@ -145,7 +168,7 @@ static SchedulePairHashSet* scheduledRunLoopPairs(ResourceHandle* handle)
 
     LOG(Network, "Handle %p delegate connection:%p didReceiveAuthenticationChallenge:%p", m_handle, connection, challenge);
 
-    auto work = [self, protectedSelf = RetainPtr<id>(self), challenge = RetainPtr<NSURLAuthenticationChallenge>(challenge)] () mutable {
+    auto work = [self, protectedSelf = retainPtr(self), challenge = retainPtr(challenge)] () mutable {
         if (!m_handle) {
             [[challenge sender] cancelAuthenticationChallenge:challenge.get()];
             return;
@@ -153,10 +176,7 @@ static SchedulePairHashSet* scheduledRunLoopPairs(ResourceHandle* handle)
         m_handle->didReceiveAuthenticationChallenge(core(challenge.get()));
     };
 
-    if (m_messageQueue)
-        m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
-    else
-        callOnMainThread(WTFMove(work), scheduledRunLoopPairs(m_handle));
+    [self callFunctionOnMainThread:WTFMove(work)];
 }
 
 - (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace
@@ -166,7 +186,7 @@ static SchedulePairHashSet* scheduledRunLoopPairs(ResourceHandle* handle)
 
     LOG(Network, "Handle %p delegate connection:%p canAuthenticateAgainstProtectionSpace:%@://%@:%u realm:%@ method:%@ %@%@", m_handle, connection, [protectionSpace protocol], [protectionSpace host], [protectionSpace port], [protectionSpace realm], [protectionSpace authenticationMethod], [protectionSpace isProxy] ? @"proxy:" : @"", [protectionSpace isProxy] ? [protectionSpace proxyType] : @"");
 
-    auto work = [self = self, protectedSelf = RetainPtr<id>(self), protectionSpace = RetainPtr<NSURLProtectionSpace>(protectionSpace)] () mutable {
+    auto work = [self = self, protectedSelf = retainPtr(self), protectionSpace = retainPtr(protectionSpace)] () mutable {
         if (!m_handle) {
             m_boolResult = NO;
             dispatch_semaphore_signal(m_semaphore);
@@ -175,11 +195,7 @@ static SchedulePairHashSet* scheduledRunLoopPairs(ResourceHandle* handle)
         m_handle->canAuthenticateAgainstProtectionSpace(ProtectionSpace(protectionSpace.get()));
     };
 
-    if (m_messageQueue)
-        m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
-    else
-        callOnMainThread(WTFMove(work), scheduledRunLoopPairs(m_handle));
-
+    [self callFunctionOnMainThread:WTFMove(work)];
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
     return m_boolResult;
 }
@@ -190,7 +206,7 @@ static SchedulePairHashSet* scheduledRunLoopPairs(ResourceHandle* handle)
 
     LOG(Network, "Handle %p delegate connection:%p didReceiveResponse:%p (HTTP status %d, reported MIMEType '%s')", m_handle, connection, r, [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0, [[r MIMEType] UTF8String]);
 
-    auto work = [self = self, protectedSelf = RetainPtr<id>(self), r = RetainPtr<NSURLResponse>(r), connection = RetainPtr<NSURLConnection>(connection)] () mutable {
+    auto work = [self = self, protectedSelf = retainPtr(self), r = retainPtr(r), connection = retainPtr(connection)] () mutable {
         RefPtr<ResourceHandle> protectedHandle(m_handle);
         if (!m_handle || !m_handle->client()) {
             dispatch_semaphore_signal(m_semaphore);
@@ -214,11 +230,7 @@ static SchedulePairHashSet* scheduledRunLoopPairs(ResourceHandle* handle)
         m_handle->didReceiveResponse(WTFMove(resourceResponse));
     };
 
-    if (m_messageQueue)
-        m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
-    else
-        callOnMainThread(WTFMove(work), scheduledRunLoopPairs(m_handle));
-
+    [self callFunctionOnMainThread:WTFMove(work)];
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
 }
 
@@ -230,7 +242,7 @@ static SchedulePairHashSet* scheduledRunLoopPairs(ResourceHandle* handle)
 
     LOG(Network, "Handle %p delegate connection:%p didReceiveData:%p lengthReceived:%lld", m_handle, connection, data, lengthReceived);
 
-    auto work = [self = self, protectedSelf = RetainPtr<id>(self), data = RetainPtr<NSData>(data)] () mutable {
+    auto work = [self = self, protectedSelf = retainPtr(self), data = retainPtr(data)] () mutable {
         if (!m_handle || !m_handle->client())
             return;
         // FIXME: If we get more than 2B bytes in a single chunk, this code won't do the right thing.
@@ -243,10 +255,7 @@ static SchedulePairHashSet* scheduledRunLoopPairs(ResourceHandle* handle)
         m_handle->client()->didReceiveBuffer(m_handle, SharedBuffer::create(data.get()), -1);
     };
 
-    if (m_messageQueue)
-        m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
-    else
-        callOnMainThread(WTFMove(work), scheduledRunLoopPairs(m_handle));
+    [self callFunctionOnMainThread:WTFMove(work)];
 }
 
 - (void)connection:(NSURLConnection *)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
@@ -257,16 +266,13 @@ static SchedulePairHashSet* scheduledRunLoopPairs(ResourceHandle* handle)
 
     LOG(Network, "Handle %p delegate connection:%p didSendBodyData:%d totalBytesWritten:%d totalBytesExpectedToWrite:%d", m_handle, connection, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
 
-    auto work = [self = self, protectedSelf = RetainPtr<id>(self), totalBytesWritten = totalBytesWritten, totalBytesExpectedToWrite = totalBytesExpectedToWrite] () mutable {
+    auto work = [self = self, protectedSelf = retainPtr(self), totalBytesWritten = totalBytesWritten, totalBytesExpectedToWrite = totalBytesExpectedToWrite] () mutable {
         if (!m_handle || !m_handle->client())
             return;
         m_handle->client()->didSendData(m_handle, totalBytesWritten, totalBytesExpectedToWrite);
     };
 
-    if (m_messageQueue)
-        m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
-    else
-        callOnMainThread(WTFMove(work), scheduledRunLoopPairs(m_handle));
+    [self callFunctionOnMainThread:WTFMove(work)];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
@@ -276,7 +282,7 @@ static SchedulePairHashSet* scheduledRunLoopPairs(ResourceHandle* handle)
 
     LOG(Network, "Handle %p delegate connectionDidFinishLoading:%p", m_handle, connection);
 
-    auto work = [self = self, protectedSelf = RetainPtr<id>(self)] () mutable {
+    auto work = [self = self, protectedSelf = retainPtr(self)] () mutable {
         if (!m_handle || !m_handle->client())
             return;
 
@@ -287,10 +293,7 @@ static SchedulePairHashSet* scheduledRunLoopPairs(ResourceHandle* handle)
         }
     };
 
-    if (m_messageQueue)
-        m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
-    else
-        callOnMainThread(WTFMove(work), scheduledRunLoopPairs(m_handle));
+    [self callFunctionOnMainThread:WTFMove(work)];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
@@ -300,7 +303,7 @@ static SchedulePairHashSet* scheduledRunLoopPairs(ResourceHandle* handle)
 
     LOG(Network, "Handle %p delegate connection:%p didFailWithError:%@", m_handle, connection, error);
 
-    auto work = [self = self, protectedSelf = RetainPtr<id>(self), error = RetainPtr<NSError>(error)] () mutable {
+    auto work = [self = self, protectedSelf = retainPtr(self), error = retainPtr(error)] () mutable {
         if (!m_handle || !m_handle->client())
             return;
 
@@ -311,10 +314,7 @@ static SchedulePairHashSet* scheduledRunLoopPairs(ResourceHandle* handle)
         }
     };
 
-    if (m_messageQueue)
-        m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
-    else
-        callOnMainThread(WTFMove(work), scheduledRunLoopPairs(m_handle));
+    [self callFunctionOnMainThread:WTFMove(work)];
 }
 
 
@@ -325,7 +325,7 @@ static SchedulePairHashSet* scheduledRunLoopPairs(ResourceHandle* handle)
 
     LOG(Network, "Handle %p delegate connection:%p willCacheResponse:%p", m_handle, connection, cachedResponse);
 
-    auto work = [self = self, protectedSelf = RetainPtr<id>(self), cachedResponse = RetainPtr<NSCachedURLResponse>(cachedResponse)] () mutable {
+    auto work = [self = self, protectedSelf = retainPtr(self), cachedResponse = retainPtr(cachedResponse)] () mutable {
         if (!m_handle || !m_handle->client()) {
             m_cachedResponseResult = nullptr;
             dispatch_semaphore_signal(m_semaphore);
@@ -335,11 +335,7 @@ static SchedulePairHashSet* scheduledRunLoopPairs(ResourceHandle* handle)
         m_handle->client()->willCacheResponseAsync(m_handle, cachedResponse.get());
     };
 
-    if (m_messageQueue)
-        m_messageQueue->append(std::make_unique<Function<void()>>(WTFMove(work)));
-    else
-        callOnMainThread(WTFMove(work), scheduledRunLoopPairs(m_handle));
-
+    [self callFunctionOnMainThread:WTFMove(work)];
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
     return m_cachedResponseResult.get();
 }
