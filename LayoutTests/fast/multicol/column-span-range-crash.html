@@ -1,0 +1,20 @@
+<html>
+<head>
+<style>
+set, frameset, * { columns: 1 1px }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+function boomz() {
+try { var a = document.createRange(); } catch(e) { }
+try { a.setEndBefore(b); } catch(e) { }
+try { var c = a.extractContents(); } catch(e) { }
+}
+</script>
+</head>
+<body onload=boomz()>
+<audio id="x" controls=""></audio>
+<ol id="b" style="-webkit-column-span: all;"></ol>
+</body>
+</html>
