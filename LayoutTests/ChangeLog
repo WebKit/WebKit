@@ -1,5 +1,14 @@
 2017-11-17  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Skip imported/w3c/web-platform-tests/service-workers/service-worker/getregistration.https.html on debug bots.
+        https://bugs.webkit.org/show_bug.cgi?id=179846
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2017-11-17  Ryan Haddad  <ryanhaddad@apple.com>
+
         Update TestExpectations for service-worker tests.
 
         Unreviewed test gardening.

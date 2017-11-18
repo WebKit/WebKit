@@ -1751,3 +1751,5 @@ webkit.org/b/179208 [ HighSierra+ ] js/intl-datetimeformat.html [ Failure ]
 [ HighSierra+ ] imported/w3c/web-platform-tests/media-source/mediasource-play.html [ Failure ]
 [ HighSierra+ ] imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html [ Failure ]
 [ HighSierra+ ] imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Failure ]
+
+webkit.org/b/179846 imported/w3c/web-platform-tests/service-workers/service-worker/getregistration.https.html [ Skip ]
