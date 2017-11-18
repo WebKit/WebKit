@@ -5,6 +5,7 @@
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2010 Renata Hodovan <reni@inf.u-szeged.hu>
  * Copyright (C) 2011 Gabor Loki <loki@webkit.org>
+ * Copyright (C) 2017 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -186,7 +187,7 @@ inline void checkNoise(int& noiseValue, int limitValue, int newValue)
         noiseValue -= newValue - 1;
 }
 
-float FETurbulence::noise2D(int channel, const PaintingData& paintingData, StitchData& stitchData, const FloatPoint& noiseVector)
+FloatComponents FETurbulence::noise2D(const PaintingData& paintingData, StitchData& stitchData, const FloatPoint& noiseVector)
 {
     struct Noise {
         int noisePositionIntegerValue;
@@ -216,33 +217,44 @@ float FETurbulence::noise2D(int channel, const PaintingData& paintingData, Stitc
 
     float sx = smoothCurve(noiseX.noisePositionFractionValue);
     float sy = smoothCurve(noiseY.noisePositionFractionValue);
-    float a, b, u, v;
 
-    // This is taken 1:1 from SVG spec: http://www.w3.org/TR/SVG11/filters.html#feTurbulenceElement.
-    int temp = paintingData.latticeSelector[latticeIndex + noiseY.noisePositionIntegerValue];
-    const float* q = paintingData.gradient[channel][temp];
-    u = noiseX.noisePositionFractionValue * q[0] + noiseY.noisePositionFractionValue * q[1];
-    temp = paintingData.latticeSelector[nextLatticeIndex + noiseY.noisePositionIntegerValue];
-    q = paintingData.gradient[channel][temp];
-    v = (noiseX.noisePositionFractionValue - 1) * q[0] + noiseY.noisePositionFractionValue * q[1];
-    a = linearInterpolation(sx, u, v);
-    temp = paintingData.latticeSelector[latticeIndex + noiseY.noisePositionIntegerValue + 1];
-    q = paintingData.gradient[channel][temp];
-    u = noiseX.noisePositionFractionValue * q[0] + (noiseY.noisePositionFractionValue - 1) * q[1];
-    temp = paintingData.latticeSelector[nextLatticeIndex + noiseY.noisePositionIntegerValue + 1];
-    q = paintingData.gradient[channel][temp];
-    v = (noiseX.noisePositionFractionValue - 1) * q[0] + (noiseY.noisePositionFractionValue - 1) * q[1];
-    b = linearInterpolation(sx, u, v);
-    return linearInterpolation(sy, a, b);
+    auto noiseForChannel = [&](int channel) {
+        // This is taken 1:1 from SVG spec: http://www.w3.org/TR/SVG11/filters.html#feTurbulenceElement.
+        int temp = paintingData.latticeSelector[latticeIndex + noiseY.noisePositionIntegerValue];
+        const float* q = paintingData.gradient[channel][temp];
+
+        float u = noiseX.noisePositionFractionValue * q[0] + noiseY.noisePositionFractionValue * q[1];
+        temp = paintingData.latticeSelector[nextLatticeIndex + noiseY.noisePositionIntegerValue];
+        q = paintingData.gradient[channel][temp];
+        float v = (noiseX.noisePositionFractionValue - 1) * q[0] + noiseY.noisePositionFractionValue * q[1];
+        float a = linearInterpolation(sx, u, v);
+        temp = paintingData.latticeSelector[latticeIndex + noiseY.noisePositionIntegerValue + 1];
+        q = paintingData.gradient[channel][temp];
+        u = noiseX.noisePositionFractionValue * q[0] + (noiseY.noisePositionFractionValue - 1) * q[1];
+        temp = paintingData.latticeSelector[nextLatticeIndex + noiseY.noisePositionIntegerValue + 1];
+        q = paintingData.gradient[channel][temp];
+        v = (noiseX.noisePositionFractionValue - 1) * q[0] + (noiseY.noisePositionFractionValue - 1) * q[1];
+        float b = linearInterpolation(sx, u, v);
+
+        return linearInterpolation(sy, a, b);
+    };
+
+    return {
+        noiseForChannel(0),
+        noiseForChannel(1),
+        noiseForChannel(2),
+        noiseForChannel(3)
+    };
 }
 
-unsigned char FETurbulence::calculateTurbulenceValueForPoint(int channel, const PaintingData& paintingData, StitchData& stitchData, const FloatPoint& point)
+ColorComponents FETurbulence::calculateTurbulenceValueForPoint(const PaintingData& paintingData, StitchData& stitchData, const FloatPoint& point)
 {
     float tileWidth = paintingData.filterSize.width();
     float tileHeight = paintingData.filterSize.height();
     ASSERT(tileWidth > 0 && tileHeight > 0);
     float baseFrequencyX = m_baseFrequencyX;
     float baseFrequencyY = m_baseFrequencyY;
+
     // Adjust the base frequencies if necessary for stitching.
     if (m_stitchTiles) {
         // When stitching tiled turbulence, the frequencies must be adjusted
@@ -271,17 +283,19 @@ unsigned char FETurbulence::calculateTurbulenceValueForPoint(int channel, const 
         stitchData.wrapY = s_perlinNoise + stitchData.height;
     }
 
-    float turbulenceFunctionResult = 0;
+    FloatComponents turbulenceFunctionResult;
     FloatPoint noiseVector(point.x() * baseFrequencyX, point.y() * baseFrequencyY);
     float ratio = 1;
     for (int octave = 0; octave < m_numOctaves; ++octave) {
         if (m_type == FETURBULENCE_TYPE_FRACTALNOISE)
-            turbulenceFunctionResult += noise2D(channel, paintingData, stitchData, noiseVector) / ratio;
+            turbulenceFunctionResult += noise2D(paintingData, stitchData, noiseVector) / ratio;
         else
-            turbulenceFunctionResult += fabsf(noise2D(channel, paintingData, stitchData, noiseVector)) / ratio;
+            turbulenceFunctionResult += noise2D(paintingData, stitchData, noiseVector).abs() / ratio;
+
         noiseVector.setX(noiseVector.x() * 2);
         noiseVector.setY(noiseVector.y() * 2);
         ratio *= 2;
+
         if (m_stitchTiles) {
             // Update stitch values. Subtracting s_perlinNoiseoise before the multiplication and
             // adding it afterward simplifies to subtracting it once.
@@ -296,9 +310,8 @@ unsigned char FETurbulence::calculateTurbulenceValueForPoint(int channel, const 
     // and (turbulenceFunctionResult * 255) by turbulence.
     if (m_type == FETURBULENCE_TYPE_FRACTALNOISE)
         turbulenceFunctionResult = turbulenceFunctionResult * 0.5f + 0.5f;
-    // Clamp result
-    turbulenceFunctionResult = std::max(std::min(turbulenceFunctionResult, 1.f), 0.f);
-    return static_cast<unsigned char>(turbulenceFunctionResult * 255);
+
+    return turbulenceFunctionResult;
 }
 
 void FETurbulence::fillRegion(Uint8ClampedArray* pixelArray, const PaintingData& paintingData, int startY, int endY)
@@ -315,8 +328,11 @@ void FETurbulence::fillRegion(Uint8ClampedArray* pixelArray, const PaintingData&
         for (int x = 0; x < filterRegion.width(); ++x) {
             point.setX(point.x() + 1);
             FloatPoint localPoint = inverseTransfrom.mapPoint(point);
-            for (int channel = 0; channel < 4; ++channel, ++indexOfPixelChannel)
-                pixelArray->set(indexOfPixelChannel, calculateTurbulenceValueForPoint(channel, paintingData, stitchData, localPoint));
+            ColorComponents values = calculateTurbulenceValueForPoint(paintingData, stitchData, localPoint);
+            pixelArray->set(indexOfPixelChannel++, values.components[0]);
+            pixelArray->set(indexOfPixelChannel++, values.components[1]);
+            pixelArray->set(indexOfPixelChannel++, values.components[2]);
+            pixelArray->set(indexOfPixelChannel++, values.components[3]);
         }
     }
 }
@@ -355,7 +371,7 @@ void FETurbulence::platformApplySoftware()
 
             int startY = 0;
             for (; i > 0; --i) {
-                FillRegionParameters& params = parallelJobs.parameter(i-1);
+                FillRegionParameters& params = parallelJobs.parameter(i - 1);
                 params.filter = this;
                 params.pixelArray = pixelArray;
                 params.paintingData = &paintingData;

@@ -5498,6 +5498,8 @@
 		0FE5FBCF1C3DD51E0007A2CA /* DisplayListRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisplayListRecorder.h; path = displaylists/DisplayListRecorder.h; sourceTree = "<group>"; };
 		0FE5FBD01C3DD51E0007A2CA /* DisplayListReplayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DisplayListReplayer.cpp; path = displaylists/DisplayListReplayer.cpp; sourceTree = "<group>"; };
 		0FE5FBD11C3DD51E0007A2CA /* DisplayListReplayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisplayListReplayer.h; path = displaylists/DisplayListReplayer.h; sourceTree = "<group>"; };
+		0FE6C76B1FBFB7A60025C053 /* ColorUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ColorUtilities.cpp; sourceTree = "<group>"; };
+		0FE6C76C1FBFB7A60025C053 /* ColorUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorUtilities.h; sourceTree = "<group>"; };
 		0FE71403142170B800DB33BA /* ScrollbarThemeMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarThemeMock.cpp; sourceTree = "<group>"; };
 		0FE71404142170B800DB33BA /* ScrollbarThemeMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarThemeMock.h; sourceTree = "<group>"; };
 		0FE71415142189FC00DB33BA /* ScrollbarTheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarTheme.cpp; sourceTree = "<group>"; };
@@ -22593,6 +22595,8 @@
 				B27535390B053814002CE64F /* Color.h */,
 				3103B7DE1DB01556008BB890 /* ColorHash.h */,
 				9382DF5710A8D5C900925652 /* ColorSpace.h */,
+				0FE6C76B1FBFB7A60025C053 /* ColorUtilities.cpp */,
+				0FE6C76C1FBFB7A60025C053 /* ColorUtilities.h */,
 				C2F4E7881E45AEDF006D7105 /* ComplexTextController.cpp */,
 				C2F4E7891E45AEDF006D7105 /* ComplexTextController.h */,
 				2D2FC0541460CD6F00263633 /* CrossfadeGeneratedImage.cpp */,

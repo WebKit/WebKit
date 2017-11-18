@@ -4,6 +4,7 @@
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2010 Renata Hodovan <reni@inf.u-szeged.hu>
+ * Copyright (C) 2017 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,9 +22,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FETurbulence_h
-#define FETurbulence_h
+#pragma once
 
+#include "ColorUtilities.h"
 #include "FilterEffect.h"
 #include "Filter.h"
 
@@ -118,8 +119,8 @@ private:
     FETurbulence(Filter&, TurbulenceType, float, float, int, float, bool);
 
     void initPaint(PaintingData&);
-    float noise2D(int channel, const PaintingData&, StitchData&, const FloatPoint&);
-    unsigned char calculateTurbulenceValueForPoint(int channel, const PaintingData&, StitchData&, const FloatPoint&);
+    FloatComponents noise2D(const PaintingData&, StitchData&, const FloatPoint&);
+    ColorComponents calculateTurbulenceValueForPoint(const PaintingData&, StitchData&, const FloatPoint&);
     void fillRegion(Uint8ClampedArray*, const PaintingData&, int, int);
 
     TurbulenceType m_type;
@@ -132,4 +133,3 @@ private:
 
 } // namespace WebCore
 
-#endif // FETurbulence_h

@@ -1481,6 +1481,7 @@ platform/encryptedmedia/CDMFactory.cpp
 
 platform/graphics/BitmapImage.cpp
 platform/graphics/Color.cpp
+platform/graphics/ColorUtilities.cpp
 platform/graphics/ComplexTextController.cpp
 platform/graphics/CrossfadeGeneratedImage.cpp
 platform/graphics/DisplayRefreshMonitor.cpp
