@@ -42,11 +42,11 @@ public:
     TurbulenceType type() const { return m_type; }
     bool setType(TurbulenceType);
 
-    float baseFrequencyY() const { return m_baseFrequencyX; }
-    bool setBaseFrequencyY(float);
-
-    float baseFrequencyX() const { return m_baseFrequencyY; }
+    float baseFrequencyX() const { return m_baseFrequencyX; }
     bool setBaseFrequencyX(float);
+
+    float baseFrequencyY() const { return m_baseFrequencyY; }
+    bool setBaseFrequencyY(float);
 
     float seed() const { return m_seed; }
     bool setSeed(float);
