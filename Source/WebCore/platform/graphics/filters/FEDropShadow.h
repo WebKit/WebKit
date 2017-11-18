@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FEDropShadow_h
-#define FEDropShadow_h
+#pragma once
 
 #include "Color.h"
 #include "Filter.h"
@@ -68,4 +67,3 @@ private:
     
 } // namespace WebCore
 
-#endif // FEDropShadow_h

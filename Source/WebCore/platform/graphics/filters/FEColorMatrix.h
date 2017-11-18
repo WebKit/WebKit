@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FEColorMatrix_h
-#define FEColorMatrix_h
+#pragma once
 
 #include "FilterEffect.h"
 
@@ -93,4 +92,3 @@ inline void FEColorMatrix::calculateHueRotateComponents(float* components, float
 
 } // namespace WebCore
 
-#endif // FEColorMatrix_h

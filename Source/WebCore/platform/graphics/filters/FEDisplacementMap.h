@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FEDisplacementMap_h
-#define FEDisplacementMap_h
+#pragma once
 
 #include "FilterEffect.h"
 #include "Filter.h"
@@ -69,4 +68,3 @@ private:
 
 } // namespace WebCore
 
-#endif // FEDisplacementMap_h

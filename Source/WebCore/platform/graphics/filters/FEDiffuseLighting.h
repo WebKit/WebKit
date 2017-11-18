@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FEDiffuseLighting_h
-#define FEDiffuseLighting_h
+#pragma once
 
 #include "FELighting.h"
 
@@ -60,4 +59,3 @@ private:
 
 } // namespace WebCore
 
-#endif // FEDiffuseLighting_h

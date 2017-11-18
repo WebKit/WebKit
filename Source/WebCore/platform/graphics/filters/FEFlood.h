@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FEFlood_h
-#define FEFlood_h
+#pragma once
 
 #include "Color.h"
 #include "Filter.h"
@@ -61,4 +60,3 @@ private:
 
 } // namespace WebCore
 
-#endif // FEFlood_h

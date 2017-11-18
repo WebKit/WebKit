@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FEOffset_h
-#define FEOffset_h
+#pragma once
 
 #include "FilterEffect.h"
 #include "Filter.h"
@@ -53,4 +52,3 @@ private:
 
 } // namespace WebCore
 
-#endif // FEOffset_h

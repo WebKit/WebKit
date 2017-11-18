@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FELighting_h
-#define FELighting_h
+#pragma once
 
 #include "Color.h"
 #include "Filter.h"
@@ -118,4 +117,3 @@ protected:
 
 } // namespace WebCore
 
-#endif // FELighting_h

@@ -20,8 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FEConvolveMatrix_h
-#define FEConvolveMatrix_h
+#pragma once
 
 #include "FilterEffect.h"
 #include "FloatPoint.h"
@@ -115,4 +114,3 @@ private:
 
 } // namespace WebCore
 
-#endif // FEConvolveMatrix_h

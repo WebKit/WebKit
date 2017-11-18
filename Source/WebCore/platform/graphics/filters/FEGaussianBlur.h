@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FEGaussianBlur_h
-#define FEGaussianBlur_h
+#pragma once
 
 #include "FEConvolveMatrix.h"
 #include "Filter.h"
@@ -81,4 +80,3 @@ private:
 
 } // namespace WebCore
 
-#endif // FEGaussianBlur_h

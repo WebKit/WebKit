@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FEComposite_h
-#define FEComposite_h
+#pragma once
 
 #include "FilterEffect.h"
 
@@ -91,4 +90,3 @@ private:
 
 } // namespace WebCore
 
-#endif // FEComposite_h

@@ -20,8 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FEBlend_h
-#define FEBlend_h
+#pragma once
 
 #include "FilterEffect.h"
 
@@ -53,4 +52,3 @@ private:
 
 } // namespace WebCore
 
-#endif // FEBlend_h

@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FEMerge_h
-#define FEMerge_h
+#pragma once
 
 #include "FilterEffect.h"
 #include "Filter.h"
@@ -42,4 +41,3 @@ private:
 
 } // namespace WebCore
 
-#endif // FEMerge_h

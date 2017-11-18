@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FETile_h
-#define FETile_h
+#pragma once
 
 #include "FilterEffect.h"
 #include "Filter.h"
@@ -46,4 +45,3 @@ private:
 
 } // namespace WebCore
 
-#endif // FETile_h
