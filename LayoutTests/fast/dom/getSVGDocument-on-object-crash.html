@@ -1,0 +1,15 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>This tests that we don't crash while calling getSVGDocument.</title>
+</head>
+<body>
+PASS if no crash.
+<object id="object"></object>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+object.getSVGDocument();
+</script>
+</body>
+</html>

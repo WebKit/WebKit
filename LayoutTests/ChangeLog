@@ -1,3 +1,11 @@
+2017-11-17  Zalan Bujtas  <zalan@apple.com>
+
+        Test case for r224995.
+        https://bugs.webkit.org/show_bug.cgi?id=179854
+
+        * fast/dom/getSVGDocument-on-object-crash-expected.txt: Added.
+        * fast/dom/getSVGDocument-on-object-crash.html: Added.
+
 2017-11-17  Chris Dumez  <cdumez@apple.com>
 
         [Service Workers] Implement "Notify Controller Change" algorithm

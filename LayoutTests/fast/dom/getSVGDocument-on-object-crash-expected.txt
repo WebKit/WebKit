@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 12: NotSupportedError: The operation is not supported.
+PASS if no crash. 
