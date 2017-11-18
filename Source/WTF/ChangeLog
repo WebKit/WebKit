@@ -1,3 +1,30 @@
+2017-11-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Remove CPU(HPPA) in StackBounds by using runtime stack direction test
+        https://bugs.webkit.org/show_bug.cgi?id=179859
+
+        Reviewed by JF Bastien.
+
+        Currently, we know that CPU(HPPA)'s stack direction is upward! But listing
+        CPU architectures here is not a scalable way.
+
+        Instead, we use runtime stack direction test. By doing so, we can handle
+        such a strange architecture without listing the CPU to Platform.h. This paves
+        the way to dropping many CPUs in Platform.h by replacing them with CPU(UNKNOWN)[1].
+
+        We also fix StackBounds::isGrowingDownward().
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=179243
+
+        * wtf/StackBounds.cpp:
+        (WTF::StackBounds::stackDirection):
+        (WTF::testStackDirection2):
+        (WTF::testStackDirection):
+        (WTF::StackBounds::newThreadStackBounds):
+        (WTF::StackBounds::currentThreadStackBoundsInternal):
+        * wtf/StackBounds.h:
+        (WTF::StackBounds::isGrowingDownward const):
+
 2017-11-17  Chris Dumez  <cdumez@apple.com>
 
         Use a strongly typed identifier for SWServer::Connection
