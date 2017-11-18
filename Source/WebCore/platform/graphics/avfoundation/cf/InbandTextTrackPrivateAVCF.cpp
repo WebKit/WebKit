@@ -198,7 +198,7 @@ bool InbandTextTrackPrivateAVCF::readNativeSampleBuffer(CFArrayRef nativeSamples
     formatDescription = sampleBuffer->formatDescription;
 
     size_t bufferLength = CFDataGetLength(sampleBuffer->buffer);
-    if (bufferLength < ISOBox::boxHeaderSize()) {
+    if (bufferLength < ISOBox::minimumBoxSize()) {
         LOG(Media, "InbandTextTrackPrivateLegacyAVCF::readNativeSampleBuffer(%p) - ERROR: CFBuffer size length unexpectedly small (%zu)!!", this, bufferLength);
         return false;
     }
