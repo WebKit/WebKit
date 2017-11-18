@@ -1,3 +1,14 @@
+2017-11-18  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r220646): ASSERTION FAILED: skipAssert || nextSiblingRenderer(node) == m_nextSibling
+        https://bugs.webkit.org/show_bug.cgi?id=179855
+        <rdar://problem/35464071>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/css-generated-content/first-letter-update-crash-expected.txt: Added.
+        * fast/css-generated-content/first-letter-update-crash.html: Added.
+
 2017-11-17  Megan Gardner  <megan_gardner@apple.com>
 
         Rebaseline and/or turn on more iOS selection tests that either already pass, or need minimal visual tweaking

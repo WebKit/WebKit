@@ -26,6 +26,7 @@
 
 #include "FontCascade.h"
 #include "RenderBlock.h"
+#include "RenderButton.h"
 #include "RenderInline.h"
 #include "RenderRubyRun.h"
 #include "RenderSVGText.h"
@@ -35,7 +36,7 @@
 
 namespace WebCore {
 
-static RenderStyle styleForFirstLetter(const RenderElement& firstLetterBlock, const RenderObject& firstLetterContainer)
+static RenderStyle styleForFirstLetter(const RenderBlock& firstLetterBlock, const RenderObject& firstLetterContainer)
 {
     auto* containerFirstLetterStyle = firstLetterBlock.getCachedPseudoStyle(FIRST_LETTER, &firstLetterContainer.firstLineStyle());
     // FIXME: There appears to be some path where we have a first letter renderer without first letter style.
@@ -99,7 +100,7 @@ static inline bool shouldSkipForFirstLetter(UChar c)
     return isSpaceOrNewline(c) || c == noBreakSpace || isPunctuationForFirstLetter(c);
 }
 
-static void updateFirstLetterStyle(RenderElement& firstLetterBlock, RenderObject& currentChild)
+static void updateFirstLetterStyle(RenderBlock& firstLetterBlock, RenderObject& currentChild)
 {
     RenderElement* firstLetter = currentChild.parent();
     ASSERT(firstLetter->isFirstLetter());
@@ -139,7 +140,7 @@ static void updateFirstLetterStyle(RenderElement& firstLetterBlock, RenderObject
         firstLetter->setStyle(WTFMove(pseudoStyle));
 }
 
-static void createFirstLetterRenderer(RenderElement& firstLetterBlock, RenderText& currentTextChild)
+static void createFirstLetterRenderer(RenderBlock& firstLetterBlock, RenderText& currentTextChild)
 {
     RenderElement* firstLetterContainer = currentTextChild.parent();
     auto pseudoStyle = styleForFirstLetter(firstLetterBlock, *firstLetterContainer);
@@ -209,42 +210,47 @@ static void createFirstLetterRenderer(RenderElement& firstLetterBlock, RenderTex
 
 static bool supportsFirstLetter(RenderBlock& block)
 {
-    if (is<RenderTable>(block))
+    if (is<RenderButton>(block))
+        return true;
+    if (!is<RenderBlockFlow>(block))
         return false;
     if (is<RenderSVGText>(block))
         return false;
     if (is<RenderRubyRun>(block))
         return false;
-    return true;
+    return block.canHaveGeneratedChildren();
 }
 
 void RenderTreeUpdater::FirstLetter::update(RenderBlock& block)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!block.view().frameView().layoutContext().layoutState());
-
+    if (!block.style().hasPseudoStyle(FIRST_LETTER))
+        return;
     if (!supportsFirstLetter(block))
         return;
 
-    RenderObject* firstLetterObj;
+    // FIXME: This should be refactored, firstLetterContainer is not needed.
+    RenderObject* firstLetterRenderer;
     RenderElement* firstLetterContainer;
-    // FIXME: The first letter might be composed of a variety of code units, and therefore might
-    // be contained within multiple RenderElements.
-    block.getFirstLetter(firstLetterObj, firstLetterContainer);
+    block.getFirstLetter(firstLetterRenderer, firstLetterContainer);
 
-    if (!firstLetterObj || !firstLetterContainer)
+    if (!firstLetterRenderer)
+        return;
+
+    // Other containers are handled when updating their renderers.
+    if (&block != firstLetterContainer)
         return;
 
     // If the child already has style, then it has already been created, so we just want
     // to update it.
-    if (firstLetterObj->parent()->style().styleType() == FIRST_LETTER) {
-        updateFirstLetterStyle(*firstLetterContainer, *firstLetterObj);
+    if (firstLetterRenderer->parent()->style().styleType() == FIRST_LETTER) {
+        updateFirstLetterStyle(block, *firstLetterRenderer);
         return;
     }
 
-    if (!is<RenderText>(*firstLetterObj))
+    if (!is<RenderText>(firstLetterRenderer))
         return;
 
-    createFirstLetterRenderer(*firstLetterContainer, downcast<RenderText>(*firstLetterObj));
+    createFirstLetterRenderer(block, downcast<RenderText>(*firstLetterRenderer));
 }
 
 };
