@@ -29,7 +29,7 @@ function test()
                         reject();
                         return;
                     }
-                    InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be exist.");
+                    InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should exist.");
                     InspectorTest.expectEqual(resource.statusCode, statusCode, `statusCode should be ${statusCode}`);
                     InspectorTest.expectEqual(resource.responseSource, responseSource, `responseSource should be ${String(responseSource)}`);
                 }).then(resolve, reject);
