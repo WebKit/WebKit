@@ -94,6 +94,14 @@ struct FloatComponents {
 struct ColorComponents {
     ColorComponents() = default;
     ColorComponents(const FloatComponents&);
+
+    ColorComponents(uint8_t a = 0, uint8_t b = 0, uint8_t c = 0, uint8_t d = 0)
+    {
+        components[0] = a;
+        components[1] = b;
+        components[2] = c;
+        components[3] = d;
+    }
     uint8_t components[4] { };
 };
 

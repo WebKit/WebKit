@@ -323,6 +323,17 @@ FloatComponents FETurbulence::noise2D(const PaintingData& paintingData, const St
     };
 }
 
+// https://www.w3.org/TR/SVG/filters.html#feTurbulenceElement describes this conversion to color components.
+static inline ColorComponents toColorComponents(const FloatComponents& floatComponents)
+{
+    return {
+        std::max<uint8_t>(0, std::min(static_cast<int>(floatComponents.components[0] * 255), 255)),
+        std::max<uint8_t>(0, std::min(static_cast<int>(floatComponents.components[1] * 255), 255)),
+        std::max<uint8_t>(0, std::min(static_cast<int>(floatComponents.components[2] * 255), 255)),
+        std::max<uint8_t>(0, std::min(static_cast<int>(floatComponents.components[3] * 255), 255))
+    };
+}
+
 ColorComponents FETurbulence::calculateTurbulenceValueForPoint(const PaintingData& paintingData, StitchData stitchData, const FloatPoint& point) const
 {
     FloatComponents turbulenceFunctionResult;
@@ -353,7 +364,7 @@ ColorComponents FETurbulence::calculateTurbulenceValueForPoint(const PaintingDat
     if (m_type == TurbulenceType::FractalNoise)
         turbulenceFunctionResult = turbulenceFunctionResult * 0.5f + 0.5f;
 
-    return turbulenceFunctionResult;
+    return toColorComponents(turbulenceFunctionResult);
 }
 
 void FETurbulence::fillRegion(Uint8ClampedArray* pixelArray, const PaintingData& paintingData, StitchData stitchData, int startY, int endY) const
