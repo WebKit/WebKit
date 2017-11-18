@@ -76,7 +76,7 @@ static inline unsigned enumerationValueForTargetAttribute(SVGElement* targetElem
         if (targetElement->hasTagName(SVGNames::feColorMatrixTag))
             return SVGPropertyTraits<ColorMatrixType>::fromString(value);
         if (targetElement->hasTagName(SVGNames::feTurbulenceTag))
-            return SVGPropertyTraits<TurbulenceType>::fromString(value);
+            return static_cast<unsigned>(SVGPropertyTraits<TurbulenceType>::fromString(value));
 
         ASSERT(targetElement->hasTagName(SVGNames::feFuncATag)
                || targetElement->hasTagName(SVGNames::feFuncBTag)

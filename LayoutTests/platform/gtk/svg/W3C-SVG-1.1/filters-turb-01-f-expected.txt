@@ -6,11 +6,11 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (25,25) size 400x274
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGResourceFilter {filter} [id="Turb1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [feTurbulence type="TURBULANCE" baseFrequency="0.05, 0.05" seed="0.00" numOctaves="2" stitchTiles="0"]
+            [feTurbulence type="TURBULENCE" baseFrequency="0.05, 0.05" seed="0.00" numOctaves="2" stitchTiles="0"]
           RenderSVGResourceFilter {filter} [id="Turb2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [feTurbulence type="TURBULANCE" baseFrequency="0.10, 0.10" seed="0.00" numOctaves="2" stitchTiles="0"]
+            [feTurbulence type="TURBULENCE" baseFrequency="0.10, 0.10" seed="0.00" numOctaves="2" stitchTiles="0"]
           RenderSVGResourceFilter {filter} [id="Turb3"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [feTurbulence type="TURBULANCE" baseFrequency="0.05, 0.05" seed="0.00" numOctaves="8" stitchTiles="0"]
+            [feTurbulence type="TURBULENCE" baseFrequency="0.05, 0.05" seed="0.00" numOctaves="8" stitchTiles="0"]
           RenderSVGResourceFilter {filter} [id="Turb4"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
             [feTurbulence type="NOISE" baseFrequency="0.10, 0.10" seed="0.00" numOctaves="4" stitchTiles="0"]
           RenderSVGResourceFilter {filter} [id="Turb5"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]

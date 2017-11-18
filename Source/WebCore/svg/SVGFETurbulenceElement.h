@@ -65,16 +65,16 @@ struct SVGPropertyTraits<SVGStitchOptions> {
 
 template<>
 struct SVGPropertyTraits<TurbulenceType> {
-    static unsigned highestEnumValue() { return FETURBULENCE_TYPE_TURBULENCE; }
+    static unsigned highestEnumValue() { return static_cast<unsigned>(TurbulenceType::Turbulence); }
 
     static String toString(TurbulenceType type)
     {
         switch (type) {
-        case FETURBULENCE_TYPE_UNKNOWN:
+        case TurbulenceType::Unknown:
             return emptyString();
-        case FETURBULENCE_TYPE_FRACTALNOISE:
+        case TurbulenceType::FractalNoise:
             return ASCIILiteral("fractalNoise");
-        case FETURBULENCE_TYPE_TURBULENCE:
+        case TurbulenceType::Turbulence:
             return ASCIILiteral("turbulence");
         }
 
@@ -85,10 +85,10 @@ struct SVGPropertyTraits<TurbulenceType> {
     static TurbulenceType fromString(const String& value)
     {
         if (value == "fractalNoise")
-            return FETURBULENCE_TYPE_FRACTALNOISE;
+            return TurbulenceType::FractalNoise;
         if (value == "turbulence")
-            return FETURBULENCE_TYPE_TURBULENCE;
-        return FETURBULENCE_TYPE_UNKNOWN;
+            return TurbulenceType::Turbulence;
+        return TurbulenceType::Unknown;
     }
 };
 

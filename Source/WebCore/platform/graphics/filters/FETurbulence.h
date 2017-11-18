@@ -30,10 +30,10 @@
 
 namespace WebCore {
 
-enum TurbulenceType {
-    FETURBULENCE_TYPE_UNKNOWN = 0,
-    FETURBULENCE_TYPE_FRACTALNOISE = 1,
-    FETURBULENCE_TYPE_TURBULENCE = 2
+enum class TurbulenceType {
+    Unknown,
+    FractalNoise,
+    Turbulence
 };
 
 class FETurbulence : public FilterEffect {
@@ -74,9 +74,11 @@ private:
     static const int s_minimalRectDimension = (100 * 100); // Empirical data limit for parallel jobs.
 
     struct PaintingData {
-        PaintingData(long paintingSeed, const IntSize& paintingSize)
+        PaintingData(long paintingSeed, const IntSize& paintingSize, float baseFrequencyX, float baseFrequencyY)
             : seed(paintingSeed)
             , filterSize(paintingSize)
+            , baseFrequencyX(baseFrequencyX)
+            , baseFrequencyY(baseFrequencyY)
         {
         }
 
@@ -84,23 +86,19 @@ private:
         int latticeSelector[2 * s_blockSize + 2];
         float gradient[4][2 * s_blockSize + 2][2];
         IntSize filterSize;
+        float baseFrequencyX;
+        float baseFrequencyY;
 
         inline long random();
     };
 
     struct StitchData {
-        StitchData()
-            : width(0)
-            , wrapX(0)
-            , height(0)
-            , wrapY(0)
-        {
-        }
+        StitchData() = default;
 
-        int width; // How much to subtract to wrap for stitching.
-        int wrapX; // Minimum value to wrap.
-        int height;
-        int wrapY;
+        int width { 0 }; // How much to subtract to wrap for stitching.
+        int wrapX { 0 }; // Minimum value to wrap.
+        int height { 0 };
+        int wrapY { 0 };
     };
 
     template<typename Type>
@@ -110,6 +108,7 @@ private:
         FETurbulence* filter;
         Uint8ClampedArray* pixelArray;
         PaintingData* paintingData;
+        StitchData stitchData;
         int startY;
         int endY;
     };
@@ -119,9 +118,10 @@ private:
     FETurbulence(Filter&, TurbulenceType, float, float, int, float, bool);
 
     void initPaint(PaintingData&);
+    StitchData computeStitching(IntSize tileSize, float& baseFrequencyX, float& baseFrequencyY) const;
     FloatComponents noise2D(const PaintingData&, const StitchData&, const FloatPoint&) const;
-    ColorComponents calculateTurbulenceValueForPoint(const PaintingData&, StitchData&, const FloatPoint&) const;
-    void fillRegion(Uint8ClampedArray*, const PaintingData&, int startY, int endY) const;
+    ColorComponents calculateTurbulenceValueForPoint(const PaintingData&, StitchData, const FloatPoint&) const;
+    void fillRegion(Uint8ClampedArray*, const PaintingData&, StitchData, int startY, int endY) const;
 
     TurbulenceType m_type;
     float m_baseFrequencyX;
