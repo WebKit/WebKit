@@ -297,7 +297,7 @@ void NetworkStorageSession::setStorageAccessGranted(const String& resourceDomain
     auto iterator = m_domainsGrantedStorageAccess.find(firstPartyDomain);
     if (value) {
         if (iterator == m_domainsGrantedStorageAccess.end())
-            auto accessEntry = m_domainsGrantedStorageAccess.add(firstPartyDomain, HashSet<String>({ resourceDomain }));
+            m_domainsGrantedStorageAccess.add(firstPartyDomain, HashSet<String>({ resourceDomain }));
         else
             iterator->value.add(resourceDomain);
     } else {
