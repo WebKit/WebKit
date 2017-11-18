@@ -98,6 +98,7 @@ struct NetworkProcessCreationParameters {
     RetainPtr<CFDataRef> networkATSContext;
 #endif
     bool cookieStoragePartitioningEnabled;
+    bool storageAccessAPIEnabled;
 #endif
 
 #if USE(SOUP)

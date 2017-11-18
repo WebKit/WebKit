@@ -96,6 +96,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 #endif
 
     WebCore::NetworkStorageSession::setCookieStoragePartitioningEnabled(parameters.cookieStoragePartitioningEnabled);
+    WebCore::NetworkStorageSession::setStorageAccessAPIEnabled(parameters.storageAccessAPIEnabled);
 
     // FIXME: Most of what this function does for cache size gets immediately overridden by setCacheModel().
     // - memory cache size passed from UI process is always ignored;
@@ -209,6 +210,11 @@ void NetworkProcess::clearDiskCache(std::chrono::system_clock::time_point modifi
 void NetworkProcess::setCookieStoragePartitioningEnabled(bool enabled)
 {
     WebCore::NetworkStorageSession::setCookieStoragePartitioningEnabled(enabled);
+}
+
+void NetworkProcess::setStorageAccessAPIEnabled(bool enabled)
+{
+    WebCore::NetworkStorageSession::setStorageAccessAPIEnabled(enabled);
 }
 
 void NetworkProcess::syncAllCookies()

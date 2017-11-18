@@ -446,6 +446,16 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->setCookieStoragePartitioningEnabled(enabled);
 }
 
+- (BOOL)_isStorageAccessAPIEnabled
+{
+    return _processPool->storageAccessAPIEnabled();
+}
+
+- (void)_setStorageAccessAPIEnabled:(BOOL)enabled
+{
+    _processPool->setStorageAccessAPIEnabled(enabled);
+}
+
 - (void)_setAllowsAnySSLCertificateForServiceWorker:(BOOL) allows
 {
 #if ENABLE(SERVICE_WORKER)

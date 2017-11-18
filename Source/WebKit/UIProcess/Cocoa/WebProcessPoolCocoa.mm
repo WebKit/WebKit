@@ -295,6 +295,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 #endif
 
     parameters.cookieStoragePartitioningEnabled = cookieStoragePartitioningEnabled();
+    parameters.storageAccessAPIEnabled = storageAccessAPIEnabled();
 
 #if ENABLE(NETWORK_CAPTURE)
     parameters.recordReplayMode = [defaults stringForKey:WebKitRecordReplayModeDefaultsKey];
@@ -585,6 +586,12 @@ void WebProcessPool::setCookieStoragePartitioningEnabled(bool enabled)
 {
     m_cookieStoragePartitioningEnabled = enabled;
     sendToNetworkingProcess(Messages::NetworkProcess::SetCookieStoragePartitioningEnabled(enabled));
+}
+
+void WebProcessPool::setStorageAccessAPIEnabled(bool enabled)
+{
+    m_storageAccessAPIEnabled = enabled;
+    sendToNetworkingProcess(Messages::NetworkProcess::SetStorageAccessAPIEnabled(enabled));
 }
 
 int networkProcessLatencyQOS()

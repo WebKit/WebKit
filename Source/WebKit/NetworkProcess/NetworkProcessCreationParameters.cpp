@@ -85,6 +85,7 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     IPC::encode(encoder, networkATSContext.get());
 #endif
     encoder << cookieStoragePartitioningEnabled;
+    encoder << storageAccessAPIEnabled;
 #endif
 #if USE(SOUP)
     encoder << cookiePersistentStoragePath;
@@ -185,6 +186,8 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
 #endif
     if (!decoder.decode(result.cookieStoragePartitioningEnabled))
+        return false;
+    if (!decoder.decode(result.storageAccessAPIEnabled))
         return false;
 #endif
 

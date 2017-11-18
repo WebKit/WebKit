@@ -286,4 +286,13 @@ void WebCookieManagerProxy::setCookieStoragePartitioningEnabled(bool enabled)
 #endif
 }
 
+void WebCookieManagerProxy::setStorageAccessAPIEnabled(bool enabled)
+{
+#if PLATFORM(COCOA)
+    processPool()->sendToNetworkingProcess(Messages::NetworkProcess::SetStorageAccessAPIEnabled(enabled));
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
 } // namespace WebKit

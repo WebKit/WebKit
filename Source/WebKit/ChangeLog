@@ -1,3 +1,67 @@
+2017-11-17  John Wilander  <wilander@apple.com>
+
+        Storage Access API: UI process should update network process about granted access
+        https://bugs.webkit.org/show_bug.cgi?id=176943
+        <rdar://problem/34440612>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::updateStorageAccessForPrevalentDomains):
+            Updates storage access on the session.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        (WebKit::NetworkProcess::setStorageAccessAPIEnabled):
+        * UIProcess/API/C/WKCookieManager.cpp:
+        (WKCookieManagerSetStorageAccessAPIEnabled):
+        * UIProcess/API/C/WKCookieManager.h:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetStatisticsHasHadNonRecentUserInteraction):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _isStorageAccessAPIEnabled]):
+        (-[WKProcessPool _setStorageAccessAPIEnabled:]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetHasHadNonRecentUserInteractionForHost:]):
+            Test infrastructure.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        (WebKit::WebProcessPool::setStorageAccessAPIEnabled):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::nextRequestStorageAccessContextId):
+        (WebKit::NetworkProcessProxy::updateStorageAccessForPrevalentDomains):
+            Sends a message to the network process to update storage access.
+        (WebKit::NetworkProcessProxy::storageAccessRequestResult):
+            Receives a message from the network process that storage access
+            was updated.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::setStorageAccessAPIEnabled):
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::logNonRecentUserInteraction):
+            Test infrastructure.
+        (WebKit::WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains):
+            Now makes the API call even if the only operation is to clear first.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::updateStorageAccessForPrevalentDomainsHandler):
+            Propagates the storage access directive to the network process proxy.
+        (WebKit::WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2017-11-16  Yousuke Kimoto  <yousuke.kimoto@sony.com>
 
         [WinCairo] Add network (curl) files for wincairo webkit

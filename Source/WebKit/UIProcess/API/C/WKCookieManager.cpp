@@ -80,6 +80,11 @@ void WKCookieManagerSetCookieStoragePartitioningEnabled(WKCookieManagerRef cooki
     toImpl(cookieManager)->setCookieStoragePartitioningEnabled(enabled);
 }
 
+void WKCookieManagerSetStorageAccessAPIEnabled(WKCookieManagerRef cookieManager, bool enabled)
+{
+    toImpl(cookieManager)->setStorageAccessAPIEnabled(enabled);
+}
+
 void WKCookieManagerStartObservingCookieChanges(WKCookieManagerRef cookieManager)
 {
     toImpl(cookieManager)->startObservingCookieChanges(PAL::SessionID::defaultSessionID());

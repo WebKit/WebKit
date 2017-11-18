@@ -40,6 +40,7 @@
 namespace WebCore {
 
 static bool cookieStoragePartitioningEnabled;
+static bool storageAccessAPIEnabled;
 
 static RetainPtr<CFURLStorageSessionRef> createCFStorageSessionForIdentifier(CFStringRef identifier)
 {
@@ -158,6 +159,11 @@ void NetworkStorageSession::setCookieStoragePartitioningEnabled(bool enabled)
     cookieStoragePartitioningEnabled = enabled;
 }
 
+void NetworkStorageSession::setStorageAccessAPIEnabled(bool enabled)
+{
+    storageAccessAPIEnabled = enabled;
+}
+
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
 
 String NetworkStorageSession::cookieStoragePartition(const ResourceRequest& request) const
@@ -188,6 +194,9 @@ String NetworkStorageSession::cookieStoragePartition(const URL& firstPartyForCoo
 
     auto firstPartyDomain = getPartitioningDomain(firstPartyForCookies);
     if (firstPartyDomain == resourceDomain)
+        return emptyString();
+
+    if (storageAccessAPIEnabled && isStorageAccessGranted(resourceDomain, firstPartyDomain))
         return emptyString();
 
     return firstPartyDomain;
@@ -241,6 +250,7 @@ void NetworkStorageSession::setPrevalentDomainsToPartitionOrBlockCookies(const V
     if (clearFirst) {
         m_topPrivatelyControlledDomainsToPartition.clear();
         m_topPrivatelyControlledDomainsToBlock.clear();
+        m_domainsGrantedStorageAccess.clear();
     }
 
     for (auto& domain : domainsToPartition) {
@@ -270,6 +280,32 @@ void NetworkStorageSession::removePrevalentDomains(const Vector<String>& domains
     for (auto& domain : domains) {
         m_topPrivatelyControlledDomainsToPartition.remove(domain);
         m_topPrivatelyControlledDomainsToBlock.remove(domain);
+    }
+}
+
+bool NetworkStorageSession::isStorageAccessGranted(const String& resourceDomain, const String& firstPartyDomain) const
+{
+    auto it = m_domainsGrantedStorageAccess.find(firstPartyDomain);
+    if (it == m_domainsGrantedStorageAccess.end())
+        return false;
+
+    return it->value.contains(resourceDomain);
+}
+
+void NetworkStorageSession::setStorageAccessGranted(const String& resourceDomain, const String& firstPartyDomain, bool value)
+{
+    auto iterator = m_domainsGrantedStorageAccess.find(firstPartyDomain);
+    if (value) {
+        if (iterator == m_domainsGrantedStorageAccess.end())
+            auto accessEntry = m_domainsGrantedStorageAccess.add(firstPartyDomain, HashSet<String>({ resourceDomain }));
+        else
+            iterator->value.add(resourceDomain);
+    } else {
+        if (iterator == m_domainsGrantedStorageAccess.end())
+            return;
+        iterator->value.remove(resourceDomain);
+        if (iterator->value.isEmpty())
+            m_domainsGrantedStorageAccess.remove(firstPartyDomain);
     }
 }
 

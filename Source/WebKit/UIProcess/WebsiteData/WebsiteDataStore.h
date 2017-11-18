@@ -115,6 +115,7 @@ public:
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     void updatePrevalentDomainsToPartitionOrBlockCookies(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst);
+    void updateStorageAccessForPrevalentDomainsHandler(const String& resourceDomain, const String& firstPartyDomain, bool value, WTF::CompletionHandler<void(bool wasGranted)>&& callback);
     void removePrevalentDomains(const Vector<String>& domains);
 #endif
     void networkProcessDidCrash();

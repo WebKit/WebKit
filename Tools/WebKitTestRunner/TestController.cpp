@@ -2484,6 +2484,12 @@ void TestController::setStatisticsHasHadUserInteraction(WKStringRef host, bool v
     WKWebsiteDataStoreSetStatisticsHasHadUserInteraction(dataStore, host, value);
 }
 
+void TestController::setStatisticsHasHadNonRecentUserInteraction(WKStringRef host)
+{
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    WKWebsiteDataStoreSetStatisticsHasHadNonRecentUserInteraction(dataStore, host);
+}
+
 bool TestController::isStatisticsHasHadUserInteraction(WKStringRef host)
 {
     auto* dataStore = WKContextGetWebsiteDataStore(platformContext());

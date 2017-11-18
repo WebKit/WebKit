@@ -77,6 +77,7 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || PLATFORM(IOS)
     WKCookieManagerSetCookieStoragePartitioningEnabled(WKContextGetCookieManager(context), true);
+    WKCookieManagerSetStorageAccessAPIEnabled(WKContextGetCookieManager(context), true);
 #endif
 
     WKWebsiteDataStore* poolWebsiteDataStore = (WKWebsiteDataStore *)WKContextGetWebsiteDataStore((WKContextRef)globalWebViewConfiguration.processPool);
@@ -301,6 +302,11 @@ bool TestController::isStatisticsRegisteredAsRedirectingTo(WKStringRef hostRedir
 void TestController::setStatisticsHasHadUserInteraction(WKStringRef hostName, bool value)
 {
     [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetHadUserInteraction:value forHost:toNSString(hostName)];
+}
+
+void TestController::setStatisticsHasHadNonRecentUserInteraction(WKStringRef hostName)
+{
+    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetHasHadNonRecentUserInteractionForHost:toNSString(hostName)];
 }
 
 bool TestController::isStatisticsHasHadUserInteraction(WKStringRef hostName)

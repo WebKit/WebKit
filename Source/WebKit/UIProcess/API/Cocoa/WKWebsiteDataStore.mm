@@ -346,6 +346,15 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         store->clearUserInteraction(URL(URL(), host));
 }
 
+- (void)_resourceLoadStatisticsSetHasHadNonRecentUserInteractionForHost:(NSString *)host
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+    
+    store->logNonRecentUserInteraction(URL(URL(), host));
+}
+
 - (void)_resourceLoadStatisticsHadUserInteraction:(NSString *)host completionHandler:(void (^)(BOOL))completionHandler
 {
     auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();

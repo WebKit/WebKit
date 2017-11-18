@@ -45,6 +45,7 @@
 #include <WebCore/OriginLock.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/RunLoop.h>
 
@@ -1141,6 +1142,12 @@ void WebsiteDataStore::updatePrevalentDomainsToPartitionOrBlockCookies(const Vec
         processPool->sendToNetworkingProcess(Messages::NetworkProcess::UpdatePrevalentDomainsToPartitionOrBlockCookies(m_sessionID, domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst == ShouldClearFirst::Yes));
 }
 
+void WebsiteDataStore::updateStorageAccessForPrevalentDomainsHandler(const String& resourceDomain, const String& firstPartyDomain, bool value, WTF::CompletionHandler<void(bool wasGranted)>&& callback)
+{
+    for (auto& processPool : processPools())
+        processPool->networkProcess()->updateStorageAccessForPrevalentDomains(m_sessionID, resourceDomain, firstPartyDomain, value, WTFMove(callback));
+}
+
 void WebsiteDataStore::removePrevalentDomains(const Vector<String>& domains)
 {
     for (auto& processPool : processPools())
@@ -1334,7 +1341,9 @@ void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Functio
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, WTFMove(callback), [this] (const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst shouldClearFirst) {
         updatePrevalentDomainsToPartitionOrBlockCookies(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst);
-    }, [this] (const Vector<String>& domainsToRemove) {
+    }, [this, protectedThis = makeRef(*this)] (const String& resourceDomain, const String& firstPartyDomain, bool value, WTF::Function<void(bool wasGranted)>&& callback) {
+        updateStorageAccessForPrevalentDomainsHandler(resourceDomain, firstPartyDomain, value, WTFMove(callback));
+    }, [this, protectedThis = makeRef(*this)] (const Vector<String>& domainsToRemove) {
         removePrevalentDomains(domainsToRemove);
     });
 #else
