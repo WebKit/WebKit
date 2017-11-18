@@ -32,7 +32,6 @@
 #include <runtime/Uint8ClampedArray.h>
 #include <wtf/MathExtras.h>
 #include <wtf/ParallelJobs.h>
-#include <wtf/TimingScope.h>
 
 namespace WebCore {
 
@@ -404,8 +403,6 @@ void FETurbulence::platformApplySoftware()
         pixelArray->zeroFill();
         return;
     }
-
-    TimingScope scope("FETurbulence::platformApplySoftware", 100);
 
     IntSize tileSize = roundedIntSize(filterPrimitiveSubregion().size());
 
