@@ -1,3 +1,20 @@
+2017-11-17  Megan Gardner  <megan_gardner@apple.com>
+
+        Rebaseline and/or turn on more iOS selection tests that either already pass, or need minimal visual tweaking
+        https://bugs.webkit.org/show_bug.cgi?id=179856
+
+        Reviewed by Myles C. Maxfield.
+
+        These tests all neither to either be minimally rebaselined, or they worked, but were marked as failing.
+        All were checked for flakiness, and none were found to be flakey on the open source bots.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/editing/selection/extend-by-word-002-expected.txt:
+        * platform/ios/editing/selection/iframe-expected.png: Modified property svn:mime-type.
+        * platform/ios/editing/selection/iframe-expected.txt:
+        * platform/ios/editing/selection/inline-table-expected.png: Modified property svn:mime-type.
+        * platform/ios/editing/selection/inline-table-expected.txt:
+
 2017-11-17  Zalan Bujtas  <zalan@apple.com>
 
         Test case for r224995.
