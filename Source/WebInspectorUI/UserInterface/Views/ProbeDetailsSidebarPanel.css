@@ -30,6 +30,11 @@
     right: 0;
 }
 
+.sidebar > .panel.probes > .navigation-bar .item.clear-samples {
+    position: relative;
+    top: 1px;
+}
+
 .sidebar > .panel.probes > .content {
     position: absolute;
     top: 23px;

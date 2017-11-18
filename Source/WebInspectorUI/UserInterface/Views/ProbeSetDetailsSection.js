@@ -53,7 +53,7 @@ WI.ProbeSetDetailsSection = class ProbeSetDetailsSection extends WI.DetailsSecti
         this._addProbeButtonItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._addProbeButtonClicked, this);
         this._navigationBar.addNavigationItem(this._addProbeButtonItem);
 
-        this._clearSamplesButtonItem = new WI.ButtonNavigationItem("clear-samples", WI.UIString("Clear samples"), "Images/NavigationItemTrash.svg", 14, 14);
+        this._clearSamplesButtonItem = new WI.ButtonNavigationItem("clear-samples", WI.UIString("Clear samples"), "Images/NavigationItemTrash.svg", 15, 15);
         this._clearSamplesButtonItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._clearSamplesButtonClicked, this);
         this._clearSamplesButtonItem.enabled = this._probeSetHasSamples();
         this._navigationBar.addNavigationItem(this._clearSamplesButtonItem);

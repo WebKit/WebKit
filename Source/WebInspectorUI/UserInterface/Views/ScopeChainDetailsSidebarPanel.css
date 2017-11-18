@@ -58,3 +58,8 @@
 
     padding-bottom: 2px;
 }
+
+.scope-chain .navigation-bar .item.clear-watch-expressions {
+    position: relative;
+    top: 1px;
+}

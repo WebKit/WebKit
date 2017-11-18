@@ -1,3 +1,23 @@
+2017-11-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Update the Trash / Clear icon
+        https://bugs.webkit.org/show_bug.cgi?id=179850
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Images/NavigationItemTrash.svg:
+        Update the icon.
+
+        * UserInterface/Views/ProbeDetailsSidebarPanel.css:
+        (.sidebar > .panel.probes > .navigation-bar .item.clear-samples):
+        * UserInterface/Views/ProbeSetDetailsSection.js:
+        (WI.ProbeSetDetailsSection):
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.css:
+        (.scope-chain .navigation-bar .item.clear-watch-expressions):
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WI.ScopeChainDetailsSidebarPanel):
+        Resize to 15x15 and move it down a pixel.
+
 2017-11-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Network Tab - Add HAR Export button

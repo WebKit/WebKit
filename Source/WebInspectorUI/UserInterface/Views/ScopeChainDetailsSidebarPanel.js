@@ -44,7 +44,7 @@ WI.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel extends W
         addWatchExpressionButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._addWatchExpressionButtonClicked, this);
         this._navigationBar.addNavigationItem(addWatchExpressionButton);
 
-        this._clearAllWatchExpressionButton = new WI.ButtonNavigationItem("clear-watch-expressions", WI.UIString("Clear watch expressions"), "Images/NavigationItemTrash.svg", 14, 14);
+        this._clearAllWatchExpressionButton = new WI.ButtonNavigationItem("clear-watch-expressions", WI.UIString("Clear watch expressions"), "Images/NavigationItemTrash.svg", 15, 15);
         this._clearAllWatchExpressionButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._clearAllWatchExpressionsButtonClicked, this);
         this._navigationBar.addNavigationItem(this._clearAllWatchExpressionButton);
 
