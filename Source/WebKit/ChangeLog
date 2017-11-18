@@ -1,5 +1,19 @@
 2017-11-17  Chris Dumez  <cdumez@apple.com>
 
+        [Service Workers] Implement "Notify Controller Change" algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=179822
+
+        Reviewed by Youenn Fablet.
+
+        * Scripts/webkit/messages.py:
+        (class_template_headers):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::notifyClientsOfControllerChange):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+
+2017-11-17  Chris Dumez  <cdumez@apple.com>
+
         Use a strongly typed identifier for SWServer::Connection
         https://bugs.webkit.org/show_bug.cgi?id=179848
 

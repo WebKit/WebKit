@@ -411,6 +411,19 @@ void ServiceWorkerContainer::removeRegistration(ServiceWorkerRegistration& regis
     m_registrations.remove(registration.identifier());
 }
 
+void ServiceWorkerContainer::scheduleTaskToFireControllerChangeEvent()
+{
+    if (m_isStopped)
+        return;
+
+    scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this)](ScriptExecutionContext&) mutable {
+        if (m_isStopped)
+            return;
+
+        dispatchEvent(Event::create(eventNames().controllerchangeEvent, false, false));
+    });
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

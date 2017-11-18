@@ -73,6 +73,7 @@ public:
         virtual void updateRegistrationStateInClient(ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerData>&) = 0;
         virtual void updateWorkerStateInClient(ServiceWorkerIdentifier, ServiceWorkerState) = 0;
         virtual void fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier) = 0;
+        virtual void notifyClientsOfControllerChange(const HashSet<uint64_t>& scriptExecutionContexts, const ServiceWorkerData& newController) = 0;
 
     protected:
         WEBCORE_EXPORT explicit Connection(SWServer&);

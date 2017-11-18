@@ -1,0 +1,44 @@
+<html>
+<head>
+<script src="resources/sw-test-pre.js"></script>
+</head>
+<body>
+<script>
+let initialController = null;
+
+function listenForControllerChange(frame)
+{
+    frame.contentWindow.navigator.serviceWorker.addEventListener("controllerchange", function() {
+        log("PASS: controllerchange event has been fired");
+
+        let newController = frame.contentWindow.navigator.serviceWorker.controller;
+        if (newController != null && newController != initialController)
+             log("PASS: controller has been updated");
+        else
+             log("FAIL: controller has not been updated");
+
+        finishSWTest();
+    });
+}
+
+async function test() {
+    let scopeURL = "/";
+    let registration = await registerAndWaitForActive("resources/service-worker-fetch-worker.js", scopeURL);
+    let frame = await withFrame(scopeURL);
+    initialController = frame.contentWindow.navigator.serviceWorker.controller;
+    if (initialController === null) {
+        log("FAIL: frame does not have a controller");
+        finishSWTest();
+        return;
+    }
+
+    log("PASS: frame has a controller");
+    
+    listenForControllerChange(frame);
+    registration.update();
+}
+
+test();
+</script>
+</body>
+</html>

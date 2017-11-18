@@ -1,0 +1,5 @@
+
+PASS: frame has a controller
+PASS: controllerchange event has been fired
+PASS: controller has been updated
+

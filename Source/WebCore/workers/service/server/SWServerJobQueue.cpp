@@ -230,7 +230,12 @@ void SWServerJobQueue::activate(SWServer& server, SWServerRegistration& registra
     // Run the Update Worker State algorithm passing registration's active worker and activating as the arguments.
     registration.updateWorkerState(*registration.activeWorker(), ServiceWorkerState::Activating);
     // FIXME: For each service worker client client whose creation URL matches registration's scope url...
-    // FIXME: For each service worker client client who is using registration...
+
+    // For each service worker client client who is using registration:
+    // - Set client's active worker to registration's active worker.
+    // - Invoke Notify Controller Change algorithm with client as the argument.
+    registration.notifyClientsOfControllerChange();
+
     // FIXME: Invoke Run Service Worker algorithm with activeWorker as the argument.
 
     // Queue a task to fire the activate event.

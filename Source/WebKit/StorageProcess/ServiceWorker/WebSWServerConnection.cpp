@@ -102,6 +102,11 @@ void WebSWServerConnection::fireUpdateFoundEvent(ServiceWorkerRegistrationIdenti
     send(Messages::WebSWClientConnection::FireUpdateFoundEvent(identifier));
 }
 
+void WebSWServerConnection::notifyClientsOfControllerChange(const HashSet<uint64_t>& scriptExecutionContexts, const ServiceWorkerData& newController)
+{
+    send(Messages::WebSWClientConnection::NotifyClientsOfControllerChange(scriptExecutionContexts, newController));
+}
+
 void WebSWServerConnection::updateWorkerStateInClient(ServiceWorkerIdentifier worker, ServiceWorkerState state)
 {
     send(Messages::WebSWClientConnection::UpdateWorkerState(worker, state));

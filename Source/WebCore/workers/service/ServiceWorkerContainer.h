@@ -67,6 +67,7 @@ public:
     void getRegistration(const String& clientURL, Ref<DeferredPromise>&&);
     void scheduleTaskToUpdateRegistrationState(ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerData>&);
     void scheduleTaskToFireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier);
+    void scheduleTaskToFireControllerChangeEvent();
 
     using RegistrationsPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<ServiceWorkerRegistration>>>;
     void getRegistrations(RegistrationsPromise&&);

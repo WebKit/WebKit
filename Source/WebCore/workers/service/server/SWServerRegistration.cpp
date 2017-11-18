@@ -163,6 +163,17 @@ void SWServerRegistration::removeClientUsingRegistration(const ServiceWorkerClie
         m_clientsUsingRegistration.remove(iterator);
 }
 
+// https://w3c.github.io/ServiceWorker/#notify-controller-change
+void SWServerRegistration::notifyClientsOfControllerChange()
+{
+    ASSERT(activeWorker());
+
+    for (auto& item : m_clientsUsingRegistration) {
+        if (auto* connection = m_server.getConnection(item.key))
+            connection->notifyClientsOfControllerChange(item.value, activeWorker()->data());
+    }
+}
+
 void SWServerRegistration::unregisterServerConnection(SWServerConnectionIdentifier serverConnectionIdentifier)
 {
     m_connectionsWithClientRegistrations.removeAll(serverConnectionIdentifier);

@@ -86,6 +86,7 @@ protected:
     WEBCORE_EXPORT void updateRegistrationState(ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerData>&);
     WEBCORE_EXPORT void updateWorkerState(ServiceWorkerIdentifier, ServiceWorkerState);
     WEBCORE_EXPORT void fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier);
+    WEBCORE_EXPORT void notifyClientsOfControllerChange(const HashSet<uint64_t>& scriptExecutionContexts, ServiceWorkerData&& newController);
 
 private:
     virtual void scheduleJobInServer(const ServiceWorkerJobData&) = 0;

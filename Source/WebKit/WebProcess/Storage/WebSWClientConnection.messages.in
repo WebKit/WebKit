@@ -31,6 +31,7 @@ messages -> WebSWClientConnection {
     UpdateRegistrationState(WebCore::ServiceWorkerRegistrationIdentifier identifier, enum WebCore::ServiceWorkerRegistrationState state, std::optional<WebCore::ServiceWorkerData> serviceWorkerIdentifier)
     UpdateWorkerState(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, enum WebCore::ServiceWorkerState state)
     FireUpdateFoundEvent(WebCore::ServiceWorkerRegistrationIdentifier identifier)
+    NotifyClientsOfControllerChange(HashSet<uint64_t> scriptExecutionContexts, struct WebCore::ServiceWorkerData newController)
 
     InitializeSWOriginTableAsEmpty()
     SetSWOriginTableSharedMemory(WebKit::SharedMemory::Handle handle)

@@ -39,27 +39,35 @@ function finishSWTest()
         testRunner.notifyDone();
 }
 
-async function interceptedFrame(workerURL, scopeURL)
+function withFrame(scopeURL)
 {
-    var registration = await navigator.serviceWorker.register(workerURL, { scope : scopeURL });
-    await new Promise(resolve => {
-        if (registration.active)
-            resolve();
-        worker = registration.installing;
-        if (worker.state === "activated")
-            resolve();
-        worker.addEventListener("statechange", () => {
-            if (worker.state === "activated")
-                resolve();
-        });
-    });
-
-    return await new Promise((resolve) => {
-        var frame = document.createElement('iframe');
+    return new Promise((resolve) => {
+        let frame = document.createElement('iframe');
         frame.src = scopeURL;
         frame.onload = function() { resolve(frame); };
         document.body.appendChild(frame);
     });
+}
+
+function registerAndWaitForActive(workerURL, scopeURL)
+{
+    return navigator.serviceWorker.register(workerURL, { scope : scopeURL }).then(function(registration) {
+        return new Promise(resolve => {
+            if (registration.active)
+                resolve(registration);
+            worker = registration.installing;
+            worker.addEventListener("statechange", () => {
+                if (worker.state === "activated")
+                    resolve(registration);
+            });
+        });
+    });
+}
+
+async function interceptedFrame(workerURL, scopeURL)
+{
+    await registerAndWaitForActive(workerURL, scopeURL);
+    return await withFrame(scopeURL);
 }
 
 function gc() {

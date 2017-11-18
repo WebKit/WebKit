@@ -1,3 +1,15 @@
+2017-11-17  Chris Dumez  <cdumez@apple.com>
+
+        [Service Workers] Implement "Notify Controller Change" algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=179822
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * http/tests/workers/service/controller-change-expected.txt: Added.
+        * http/tests/workers/service/controller-change.html: Added.
+
 2017-11-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Fix grammar typo in tests

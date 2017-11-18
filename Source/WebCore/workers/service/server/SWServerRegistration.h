@@ -78,6 +78,8 @@ public:
     void removeClientUsingRegistration(const ServiceWorkerClientIdentifier&);
     void unregisterServerConnection(SWServerConnectionIdentifier);
 
+    void notifyClientsOfControllerChange();
+
 private:
     void forEachConnection(const WTF::Function<void(SWServer::Connection&)>&);
 

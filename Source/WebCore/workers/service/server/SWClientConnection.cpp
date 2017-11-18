@@ -165,6 +165,24 @@ void SWClientConnection::fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifie
     });
 }
 
+void SWClientConnection::notifyClientsOfControllerChange(const HashSet<uint64_t>& scriptExecutionContexts, ServiceWorkerData&& newController)
+{
+    ASSERT(!scriptExecutionContexts.isEmpty());
+
+    for (auto& clientIdentifier : scriptExecutionContexts) {
+        // FIXME: Support worker contexts.
+        auto* client = Document::allDocumentsMap().get(clientIdentifier);
+        if (!client)
+            continue;
+
+        ASSERT(client->activeServiceWorker());
+        ASSERT(client->activeServiceWorker()->identifier() != newController.identifier);
+        client->setActiveServiceWorker(ServiceWorker::getOrCreate(*client, ServiceWorkerData { newController }));
+        if (auto* container = client->serviceWorkerContainer())
+            container->scheduleTaskToFireControllerChangeEvent();
+    }
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)
