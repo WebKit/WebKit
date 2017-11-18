@@ -187,6 +187,8 @@ TEST(WebKit, WKHTTPCookieStore)
     runTestWithWebsiteDataStore([WKWebsiteDataStore defaultDataStore]);
 }
 
+// FIXME: This should be removed once <rdar://problem/35344202> is resolved and bots are updated.
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED <= 101301) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED <= 110102)
 TEST(WebKit, WKHTTPCookieStoreNonPersistent)
 {
     RetainPtr<WKWebsiteDataStore> nonPersistentDataStore;
@@ -215,6 +217,7 @@ TEST(WebKit, WKHTTPCookieStoreCustom)
     auto customDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
     runTestWithWebsiteDataStore(customDataStore.get());
 }
+#endif // (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED <= 101301) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED <= 110102)
 
 TEST(WebKit, CookieObserverCrash)
 {
@@ -256,6 +259,8 @@ static bool finished;
 }
 @end
 
+// FIXME: This should be removed once <rdar://problem/35344202> is resolved and bots are updated.
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED <= 101301) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED <= 110102)
 TEST(WebKit, WKHTTPCookieStoreWithoutProcessPool)
 {
     NSHTTPCookie *cookie = [NSHTTPCookie cookieWithProperties:[NSDictionary dictionaryWithObjectsAndKeys:@"127.0.0.1", NSHTTPCookieDomain, @"/", NSHTTPCookiePath, @"cookiename", NSHTTPCookieName, @"cookievalue", NSHTTPCookieValue, [NSDate distantFuture], NSHTTPCookieExpires, nil]];
@@ -305,4 +310,5 @@ TEST(WebKit, WKHTTPCookieStoreWithoutProcessPool)
     TestWebKitAPI::Util::run(&finished);
 #endif
 }
+#endif // (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED <= 101301) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED <= 110102)
 #endif

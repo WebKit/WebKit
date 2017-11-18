@@ -1,3 +1,11 @@
+2017-11-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Disable failing API tests for rdar://problem/35344202.
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+
 2017-11-17  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Fix WKTR's methods for testing row header and column header presence and count
