@@ -64,7 +64,7 @@ void WebToStorageProcessConnection::didReceiveMessage(IPC::Connection& connectio
 
 #if ENABLE(SERVICE_WORKER)
     if (decoder.messageReceiverName() == Messages::WebSWClientConnection::messageReceiverName()) {
-        auto serviceWorkerConnection = m_swConnectionsByIdentifier.get(decoder.destinationID());
+        auto serviceWorkerConnection = m_swConnectionsByIdentifier.get(makeObjectIdentifier<SWServerConnectionIdentifierType>(decoder.destinationID()));
         if (serviceWorkerConnection)
             serviceWorkerConnection->didReceiveMessage(connection, decoder);
         return;
@@ -114,8 +114,8 @@ WebSWClientConnection& WebToStorageProcessConnection::serviceWorkerConnectionFor
     auto result = m_swConnectionsBySession.add(sessionID, nullptr);
     if (result.isNewEntry) {
         result.iterator->value = std::make_unique<WebSWClientConnection>(m_connection.get(), sessionID);
-        ASSERT(!m_swConnectionsByIdentifier.contains(result.iterator->value->identifier()));
-        m_swConnectionsByIdentifier.set(result.iterator->value->identifier(), result.iterator->value.get());
+        ASSERT(!m_swConnectionsByIdentifier.contains(result.iterator->value->serverConnectionIdentifier()));
+        m_swConnectionsByIdentifier.set(result.iterator->value->serverConnectionIdentifier(), result.iterator->value.get());
     }
 
     return *result.iterator->value;

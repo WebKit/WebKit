@@ -31,6 +31,7 @@
 #include "ServiceWorkerJobType.h"
 #include "ServiceWorkerRegistrationKey.h"
 #include "ServiceWorkerRegistrationOptions.h"
+#include "ServiceWorkerTypes.h"
 #include "URL.h"
 #include <wtf/Identified.h>
 
@@ -38,11 +39,11 @@ namespace WebCore {
 
 struct ServiceWorkerJobData : public ThreadSafeIdentified<ServiceWorkerJobData> {
 public:
-    explicit ServiceWorkerJobData(uint64_t connectionIdentifier);
+    explicit ServiceWorkerJobData(SWServerConnectionIdentifier);
     ServiceWorkerJobData(const ServiceWorkerJobData&) = default;
     ServiceWorkerJobData() = default;
 
-    uint64_t connectionIdentifier() const { return m_connectionIdentifier; }
+    SWServerConnectionIdentifier connectionIdentifier() const { return m_connectionIdentifier; }
 
     URL scriptURL;
     URL clientCreationURL;
@@ -59,9 +60,9 @@ public:
     template<class Decoder> static std::optional<ServiceWorkerJobData> decode(Decoder&);
 
 private:
-    WEBCORE_EXPORT ServiceWorkerJobData(uint64_t jobIdentifier, uint64_t connectionIdentifier);
+    WEBCORE_EXPORT ServiceWorkerJobData(uint64_t jobIdentifier, SWServerConnectionIdentifier);
 
-    uint64_t m_connectionIdentifier { 0 };
+    SWServerConnectionIdentifier m_connectionIdentifier;
 };
 
 template<class Encoder>
@@ -86,11 +87,12 @@ std::optional<ServiceWorkerJobData> ServiceWorkerJobData::decode(Decoder& decode
     if (!decoder.decode(jobIdentifier))
         return std::nullopt;
 
-    uint64_t connectionIdentifier;
-    if (!decoder.decode(connectionIdentifier))
+    std::optional<SWServerConnectionIdentifier> connectionIdentifier;
+    decoder >> connectionIdentifier;
+    if (!connectionIdentifier)
         return std::nullopt;
 
-    std::optional<ServiceWorkerJobData> jobData = { { jobIdentifier, connectionIdentifier } };
+    std::optional<ServiceWorkerJobData> jobData = { { jobIdentifier, *connectionIdentifier } };
 
     if (!decoder.decode(jobData->scriptURL))
         return std::nullopt;

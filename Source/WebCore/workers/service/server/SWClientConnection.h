@@ -68,8 +68,8 @@ public:
 
     virtual void didResolveRegistrationPromise(const ServiceWorkerRegistrationKey&) = 0;
 
-    virtual void postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationIdentifier, Ref<SerializedScriptValue>&&, ServiceWorkerClientData&& source) = 0;
-    virtual uint64_t identifier() const = 0;
+    virtual void postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationIdentifier, Ref<SerializedScriptValue>&&, uint64_t sourceContextIdentifier, ServiceWorkerClientData&& source) = 0;
+    virtual SWServerConnectionIdentifier serverConnectionIdentifier() const = 0;
     virtual bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOrigin&) const = 0;
 
     virtual void serviceWorkerStartedControllingClient(ServiceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier) = 0;

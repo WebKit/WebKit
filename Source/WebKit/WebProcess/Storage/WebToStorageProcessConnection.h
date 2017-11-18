@@ -78,7 +78,7 @@ private:
 
 #if ENABLE(SERVICE_WORKER)
     HashMap<PAL::SessionID, std::unique_ptr<WebSWClientConnection>> m_swConnectionsBySession;
-    HashMap<uint64_t, WebSWClientConnection*> m_swConnectionsByIdentifier;
+    HashMap<WebCore::SWServerConnectionIdentifier, WebSWClientConnection*> m_swConnectionsByIdentifier;
 #endif
 };
 

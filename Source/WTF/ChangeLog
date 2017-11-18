@@ -1,3 +1,16 @@
+2017-11-17  Chris Dumez  <cdumez@apple.com>
+
+        Use a strongly typed identifier for SWServer::Connection
+        https://bugs.webkit.org/show_bug.cgi?id=179848
+
+        Reviewed by Brady Eidson.
+
+        Make ObjectIdentifier a little more flexible to support more use cases.
+
+        * wtf/ObjectIdentifier.h:
+        (WTF::ObjectIdentifier::toUInt64 const):
+        (WTF::makeObjectIdentifier):
+
 2017-11-17  Simon Fraser  <simon.fraser@apple.com>
 
         Add a TimingScope class for microbenchmarking sections of code

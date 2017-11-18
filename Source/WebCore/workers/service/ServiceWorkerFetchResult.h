@@ -29,12 +29,13 @@
 
 #include "ResourceError.h"
 #include "ServiceWorkerRegistrationKey.h"
+#include "ServiceWorkerTypes.h"
 
 namespace WebCore {
 
 struct ServiceWorkerFetchResult {
     uint64_t jobIdentifier;
-    uint64_t connectionIdentifier;
+    SWServerConnectionIdentifier connectionIdentifier;
     ServiceWorkerRegistrationKey registrationKey;
     String script;
     ResourceError scriptError;
@@ -54,8 +55,12 @@ bool ServiceWorkerFetchResult::decode(Decoder& decoder, ServiceWorkerFetchResult
 {
     if (!decoder.decode(result.jobIdentifier))
         return false;
-    if (!decoder.decode(result.connectionIdentifier))
+
+    std::optional<SWServerConnectionIdentifier> connectionIdentifier;
+    decoder >> connectionIdentifier;
+    if (!connectionIdentifier)
         return false;
+    result.connectionIdentifier = *connectionIdentifier;
     
     auto registrationKey = ServiceWorkerRegistrationKey::decode(decoder);
     if (!registrationKey)

@@ -37,12 +37,11 @@
 
 namespace WebCore {
 
-ServiceWorkerClient::ServiceWorkerClient(ScriptExecutionContext& context, ServiceWorkerClientData&& data)
+ServiceWorkerClient::ServiceWorkerClient(ScriptExecutionContext& context, ServiceWorkerClientIdentifier identifier, ServiceWorkerClientData&& data)
     : ContextDestructionObserver(&context)
+    , m_identifier(identifier)
     , m_data(WTFMove(data))
 {
-    ASSERT(m_data.identifier.serverConnectionIdentifier);
-    ASSERT(m_data.identifier.scriptExecutionContextIdentifier);
 }
 
 ServiceWorkerClient::~ServiceWorkerClient()
@@ -66,7 +65,7 @@ auto ServiceWorkerClient::frameType() const -> FrameType
 
 String ServiceWorkerClient::id() const
 {
-    return m_data.identifier.toString();
+    return identifier().toString();
 }
 
 ExceptionOr<void> ServiceWorkerClient::postMessage(ScriptExecutionContext& context, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
@@ -90,7 +89,7 @@ ExceptionOr<void> ServiceWorkerClient::postMessage(ScriptExecutionContext& conte
         return Exception { NotSupportedError, ASCIILiteral("Passing MessagePort objects to postMessage is not yet supported") };
 
     auto sourceIdentifier = downcast<ServiceWorkerGlobalScope>(context).thread().identifier();
-    callOnMainThread([message = message.releaseReturnValue(), destinationIdentifier = m_data.identifier, sourceIdentifier, sourceOrigin = context.origin().isolatedCopy()] () mutable {
+    callOnMainThread([message = message.releaseReturnValue(), destinationIdentifier = identifier(), sourceIdentifier, sourceOrigin = context.origin().isolatedCopy()] () mutable {
         if (auto* connection = SWContextManager::singleton().connection())
             connection->postMessageToServiceWorkerClient(destinationIdentifier, WTFMove(message), sourceIdentifier, sourceOrigin);
     });

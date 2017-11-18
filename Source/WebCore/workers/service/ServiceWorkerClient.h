@@ -46,9 +46,9 @@ public:
     using Type = ServiceWorkerClientType;
     using FrameType = ServiceWorkerClientFrameType;
 
-    static Ref<ServiceWorkerClient> create(ScriptExecutionContext& context, ServiceWorkerClientData&& data)
+    static Ref<ServiceWorkerClient> create(ScriptExecutionContext& context, ServiceWorkerClientIdentifier identifier, ServiceWorkerClientData&& data)
     {
-        return adoptRef(*new ServiceWorkerClient(context, WTFMove(data)));
+        return adoptRef(*new ServiceWorkerClient(context, identifier, WTFMove(data)));
     }
 
     ~ServiceWorkerClient();
@@ -58,11 +58,14 @@ public:
     Type type() const;
     String id() const;
 
+    Identifier identifier() const { return m_identifier; }
+
     ExceptionOr<void> postMessage(ScriptExecutionContext&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&& transfer);
 
 protected:
-    ServiceWorkerClient(ScriptExecutionContext&, ServiceWorkerClientData&&);
+    ServiceWorkerClient(ScriptExecutionContext&, ServiceWorkerClientIdentifier, ServiceWorkerClientData&&);
 
+    ServiceWorkerClientIdentifier m_identifier;
     ServiceWorkerClientData m_data;
 };
 

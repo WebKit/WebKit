@@ -37,7 +37,7 @@
 #include <wtf/CrossThreadTask.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/Identified.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
@@ -58,10 +58,13 @@ struct ServiceWorkerRegistrationData;
 
 class SWServer {
 public:
-    class Connection : public Identified<Connection> {
+    class Connection {
     friend class SWServer;
     public:
         WEBCORE_EXPORT virtual ~Connection();
+
+        using Identifier = SWServerConnectionIdentifier;
+        Identifier identifier() const { return m_identifier; }
 
         WEBCORE_EXPORT void didResolveRegistrationPromise(const ServiceWorkerRegistrationKey&);
         const SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const { return m_server.doRegistrationMatching(topOrigin, clientURL); }
@@ -72,7 +75,7 @@ public:
         virtual void fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier) = 0;
 
     protected:
-        WEBCORE_EXPORT Connection(SWServer&, uint64_t identifier);
+        WEBCORE_EXPORT explicit Connection(SWServer&);
         SWServer& server() { return m_server; }
 
         WEBCORE_EXPORT void scheduleJobInServer(const ServiceWorkerJobData&);
@@ -90,6 +93,7 @@ public:
         virtual void startScriptFetchInClient(uint64_t jobIdentifier) = 0;
 
         SWServer& m_server;
+        Identifier m_identifier;
     };
 
     WEBCORE_EXPORT explicit SWServer(UniqueRef<SWOriginStore>&&);
@@ -119,7 +123,7 @@ public:
     void fireActivateEvent(SWServerWorker&);
     SWServerWorker* workerByID(ServiceWorkerIdentifier identifier) const { return m_workersByID.get(identifier); }
     
-    Connection* getConnection(uint64_t identifier) { return m_connections.get(identifier); }
+    Connection* getConnection(SWServerConnectionIdentifier identifier) { return m_connections.get(identifier); }
     SWOriginStore& originStore() { return m_originStore; }
 
     void scriptContextFailedToStart(SWServerWorker&, const String& message);
@@ -152,7 +156,7 @@ private:
 
     void installContextData(const ServiceWorkerContextData&);
 
-    HashMap<uint64_t, Connection*> m_connections;
+    HashMap<SWServerConnectionIdentifier, Connection*> m_connections;
     HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerRegistration>> m_registrations;
     HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerJobQueue>> m_jobQueues;
 

@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 #include "SWContextManager.h"
+#include "ServiceWorkerClientIdentifier.h"
 
 namespace WebCore {
 
@@ -64,14 +65,14 @@ ServiceWorkerThreadProxy* SWContextManager::serviceWorkerThreadProxy(ServiceWork
     return m_workerMap.get(identifier);
 }
 
-void SWContextManager::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destination, Ref<SerializedScriptValue>&& message, ServiceWorkerClientData&& source)
+void SWContextManager::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destination, Ref<SerializedScriptValue>&& message, ServiceWorkerClientIdentifier sourceIdentifier, ServiceWorkerClientData&& sourceData)
 {
     auto* serviceWorker = m_workerMap.get(destination);
     if (!serviceWorker)
         return;
 
     // FIXME: We should pass valid MessagePortChannels.
-    serviceWorker->thread().postMessageToServiceWorkerGlobalScope(WTFMove(message), nullptr, WTFMove(source));
+    serviceWorker->thread().postMessageToServiceWorkerGlobalScope(WTFMove(message), nullptr, sourceIdentifier, WTFMove(sourceData));
 }
 
 void SWContextManager::fireInstallEvent(ServiceWorkerIdentifier identifier)

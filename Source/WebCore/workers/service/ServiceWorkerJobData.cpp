@@ -30,13 +30,13 @@
 
 namespace WebCore {
 
-ServiceWorkerJobData::ServiceWorkerJobData(uint64_t jobIdentifier, uint64_t connectionIdentifier)
+ServiceWorkerJobData::ServiceWorkerJobData(uint64_t jobIdentifier, SWServerConnectionIdentifier connectionIdentifier)
     : ThreadSafeIdentified(jobIdentifier)
     , m_connectionIdentifier(connectionIdentifier)
 {
 }
 
-ServiceWorkerJobData::ServiceWorkerJobData(uint64_t connectionIdentifier)
+ServiceWorkerJobData::ServiceWorkerJobData(SWServerConnectionIdentifier connectionIdentifier)
     : m_connectionIdentifier(connectionIdentifier)
 {
 }

@@ -111,7 +111,7 @@ void SWServerRegistration::fireUpdateFoundEvent()
 
 void SWServerRegistration::forEachConnection(const WTF::Function<void(SWServer::Connection&)>& apply)
 {
-    for (uint64_t connectionIdentifierWithClients : m_connectionsWithClientRegistrations.values()) {
+    for (auto connectionIdentifierWithClients : m_connectionsWithClientRegistrations.values()) {
         if (auto* connection = m_server.getConnection(connectionIdentifierWithClients))
             apply(*connection);
     }
@@ -134,12 +134,12 @@ ServiceWorkerRegistrationData SWServerRegistration::data() const
     return { m_registrationKey, identifier(), m_scopeURL, m_updateViaCache, WTFMove(installingWorkerData), WTFMove(waitingWorkerData), WTFMove(activeWorkerData) };
 }
 
-void SWServerRegistration::addClientServiceWorkerRegistration(uint64_t connectionIdentifier)
+void SWServerRegistration::addClientServiceWorkerRegistration(SWServerConnectionIdentifier connectionIdentifier)
 {
     m_connectionsWithClientRegistrations.add(connectionIdentifier);
 }
 
-void SWServerRegistration::removeClientServiceWorkerRegistration(uint64_t connectionIdentifier)
+void SWServerRegistration::removeClientServiceWorkerRegistration(SWServerConnectionIdentifier connectionIdentifier)
 {
     m_connectionsWithClientRegistrations.remove(connectionIdentifier);
 }
@@ -163,7 +163,7 @@ void SWServerRegistration::removeClientUsingRegistration(const ServiceWorkerClie
         m_clientsUsingRegistration.remove(iterator);
 }
 
-void SWServerRegistration::unregisterServerConnection(uint64_t serverConnectionIdentifier)
+void SWServerRegistration::unregisterServerConnection(SWServerConnectionIdentifier serverConnectionIdentifier)
 {
     m_connectionsWithClientRegistrations.removeAll(serverConnectionIdentifier);
     m_clientsUsingRegistration.remove(serverConnectionIdentifier);

@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "Document.h"
 #include "EventNames.h"
 #include "MessagePort.h"
 #include "SWClientConnection.h"
@@ -148,7 +149,7 @@ ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JS
     auto sourceClientData = ServiceWorkerClientData::from(context);
 
     auto& swConnection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(context.sessionID());
-    swConnection.postMessageToServiceWorkerGlobalScope(identifier(), message.releaseReturnValue(), WTFMove(sourceClientData));
+    swConnection.postMessageToServiceWorkerGlobalScope(identifier(), message.releaseReturnValue(), downcast<Document>(context).identifier(), WTFMove(sourceClientData));
 
     return { };
 }

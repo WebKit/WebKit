@@ -61,6 +61,9 @@ using ServiceWorkerRegistrationIdentifier = ObjectIdentifier<ServiceWorkerRegist
 enum SWServerToContextConnectionIdentifierType { };
 using SWServerToContextConnectionIdentifier = ObjectIdentifier<SWServerToContextConnectionIdentifierType>;
 
+enum SWServerConnectionIdentifierType { };
+using SWServerConnectionIdentifier = ObjectIdentifier<SWServerConnectionIdentifierType>;
+
 } // namespace WebCore
 
 namespace WTF {

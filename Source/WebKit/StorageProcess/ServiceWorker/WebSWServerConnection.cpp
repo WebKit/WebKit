@@ -56,8 +56,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebSWServerConnection::WebSWServerConnection(SWServer& server, IPC::Connection& connection, uint64_t connectionIdentifier, SessionID sessionID)
-    : SWServer::Connection(server, connectionIdentifier)
+WebSWServerConnection::WebSWServerConnection(SWServer& server, IPC::Connection& connection, SessionID sessionID)
+    : SWServer::Connection(server)
     , m_sessionID(sessionID)
     , m_contentConnection(connection)
 {
@@ -112,10 +112,10 @@ void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, std::optional<S
     sendToContextProcess(Messages::WebSWContextManagerConnection::StartFetch { identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options, formData });
 }
 
-void WebSWServerConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationServiceWorkerIdentifier, const IPC::DataReference& message, ServiceWorkerClientData&& source)
+void WebSWServerConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationServiceWorkerIdentifier, const IPC::DataReference& message, uint64_t sourceContextIdentifier, ServiceWorkerClientData&& sourceData)
 {
-    source.identifier.serverConnectionIdentifier = identifier();
-    sendToContextProcess(Messages::WebSWContextManagerConnection::PostMessageToServiceWorkerGlobalScope { destinationServiceWorkerIdentifier, message, WTFMove(source) });
+    ServiceWorkerClientIdentifier sourceIdentifier { identifier(), sourceContextIdentifier };
+    sendToContextProcess(Messages::WebSWContextManagerConnection::PostMessageToServiceWorkerGlobalScope { destinationServiceWorkerIdentifier, message, sourceIdentifier, WTFMove(sourceData) });
 }
 
 void WebSWServerConnection::didReceiveFetchResponse(uint64_t fetchIdentifier, const ResourceResponse& response)

@@ -72,9 +72,9 @@ private:
 #endif // ENABLE(INDEXED_DATABASE)
 
 #if ENABLE(SERVICE_WORKER)
-    void establishSWServerConnection(PAL::SessionID, uint64_t& serverConnectionIdentifier);
-    void removeSWServerConnection(uint64_t serverConnectionIdentifier);
-    HashMap<uint64_t, std::unique_ptr<WebSWServerConnection>> m_swConnections;
+    void establishSWServerConnection(PAL::SessionID, WebCore::SWServerConnectionIdentifier&);
+    void removeSWServerConnection(WebCore::SWServerConnectionIdentifier);
+    HashMap<WebCore::SWServerConnectionIdentifier, std::unique_ptr<WebSWServerConnection>> m_swConnections;
 #endif
 
     Ref<IPC::Connection> m_connection;

@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-ServiceWorkerWindowClient::ServiceWorkerWindowClient(ScriptExecutionContext& context, ServiceWorkerClientData&& data)
-    : ServiceWorkerClient(context, WTFMove(data))
+ServiceWorkerWindowClient::ServiceWorkerWindowClient(ScriptExecutionContext& context, ServiceWorkerClientIdentifier identifier, ServiceWorkerClientData&& data)
+    : ServiceWorkerClient(context, identifier, WTFMove(data))
 {
 }
 

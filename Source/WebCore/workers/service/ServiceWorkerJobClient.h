@@ -27,6 +27,8 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ServiceWorkerTypes.h"
+
 namespace WebCore {
 
 class Exception;
@@ -46,7 +48,7 @@ public:
     virtual void jobFinishedLoadingScript(ServiceWorkerJob&, const String&) = 0;
     virtual void jobFailedLoadingScript(ServiceWorkerJob&, const ResourceError&, std::optional<Exception>&&) = 0;
 
-    virtual uint64_t connectionIdentifier() = 0;
+    virtual SWServerConnectionIdentifier connectionIdentifier() = 0;
 
     virtual void ref() = 0;
     virtual void deref() = 0;

@@ -61,6 +61,8 @@ public:
     {
         return m_identifier != other.m_identifier;
     }
+
+    uint64_t toUInt64() const { return m_identifier; }
     
 #ifndef NDEBUG
     String loggingString() const
@@ -71,6 +73,7 @@ public:
 
 private:
     template<typename U> friend ObjectIdentifier<U> generateObjectIdentifier();
+    template<typename U> friend ObjectIdentifier<U> makeObjectIdentifier(uint64_t);
     friend struct HashTraits<ObjectIdentifier>;
     template<typename U> friend struct ObjectIdentifierHash;
 
@@ -93,6 +96,11 @@ template<typename T> inline ObjectIdentifier<T> generateObjectIdentifier()
     return ObjectIdentifier<T> { ++ObjectIdentifier<T>::s_currentIdentifier };
 }
 
+template<typename T> inline ObjectIdentifier<T> makeObjectIdentifier(uint64_t identifier)
+{
+    return ObjectIdentifier<T> { identifier };
+}
+
 template<typename T> struct ObjectIdentifierHash {
     static unsigned hash(const ObjectIdentifier<T>& identifier) { return intHash(identifier.m_identifier); }
     static bool equal(const ObjectIdentifier<T>& a, const ObjectIdentifier<T>& b) { return a == b; }
@@ -109,3 +117,4 @@ template<typename T> struct DefaultHash<ObjectIdentifier<T>> {
 
 using WTF::ObjectIdentifier;
 using WTF::generateObjectIdentifier;
+using WTF::makeObjectIdentifier;

@@ -25,15 +25,18 @@
 
 #pragma once
 
+#if ENABLE(SERVICE_WORKER)
+
+#include "ServiceWorkerTypes.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct ServiceWorkerClientIdentifier {
-    uint64_t serverConnectionIdentifier;
+    SWServerConnectionIdentifier serverConnectionIdentifier;
     uint64_t scriptExecutionContextIdentifier;
 
-    String toString() const { return String::number(serverConnectionIdentifier) + "-" +  String::number(scriptExecutionContextIdentifier); }
+    String toString() const { return String::number(serverConnectionIdentifier.toUInt64()) + "-" +  String::number(scriptExecutionContextIdentifier); }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerClientIdentifier> decode(Decoder&);
@@ -48,7 +51,7 @@ void ServiceWorkerClientIdentifier::encode(Encoder& encoder) const
 template<class Decoder>
 std::optional<ServiceWorkerClientIdentifier> ServiceWorkerClientIdentifier::decode(Decoder& decoder)
 {
-    std::optional<uint64_t> serverConnectionIdentifier;
+    std::optional<SWServerConnectionIdentifier> serverConnectionIdentifier;
     decoder >> serverConnectionIdentifier;
     if (!serverConnectionIdentifier)
         return std::nullopt;
@@ -61,4 +64,6 @@ std::optional<ServiceWorkerClientIdentifier> ServiceWorkerClientIdentifier::deco
     return { { WTFMove(*serverConnectionIdentifier), WTFMove(*scriptExecutionContextIdentifier) } };
 }
 
-}
+} // namespace WebCore
+
+#endif // ENABLE(SERVICE_WORKER)

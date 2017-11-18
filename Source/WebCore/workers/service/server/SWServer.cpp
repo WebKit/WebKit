@@ -50,9 +50,9 @@ static ServiceWorkerIdentifier generateServiceWorkerIdentifier()
     return generateObjectIdentifier<ServiceWorkerIdentifierType>();
 }
 
-SWServer::Connection::Connection(SWServer& server, uint64_t identifier)
-    : Identified(identifier)
-    , m_server(server)
+SWServer::Connection::Connection(SWServer& server)
+    : m_server(server)
+    , m_identifier(generateObjectIdentifier<SWServerConnectionIdentifierType>())
 {
     m_server.registerConnection(*this);
 }
@@ -144,7 +144,7 @@ void SWServer::clear(const SecurityOrigin& origin)
 
 void SWServer::Connection::scheduleJobInServer(const ServiceWorkerJobData& jobData)
 {
-    LOG(ServiceWorker, "Scheduling ServiceWorker job %" PRIu64 "-%" PRIu64 " in server", jobData.connectionIdentifier(), jobData.identifier());
+    LOG(ServiceWorker, "Scheduling ServiceWorker job %s-%" PRIu64 " in server", jobData.connectionIdentifier().loggingString().utf8().data(), jobData.identifier());
     ASSERT(identifier() == jobData.connectionIdentifier());
 
     m_server.scheduleJob(jobData);
@@ -208,7 +208,7 @@ void SWServer::scheduleJob(const ServiceWorkerJobData& jobData)
 
 void SWServer::rejectJob(const ServiceWorkerJobData& jobData, const ExceptionData& exceptionData)
 {
-    LOG(ServiceWorker, "Rejected ServiceWorker job %" PRIu64 "-%" PRIu64 " in server", jobData.connectionIdentifier(), jobData.identifier());
+    LOG(ServiceWorker, "Rejected ServiceWorker job %s-%" PRIu64 " in server", jobData.connectionIdentifier().loggingString().utf8().data(), jobData.identifier());
     auto* connection = m_connections.get(jobData.connectionIdentifier());
     if (!connection)
         return;
@@ -218,7 +218,7 @@ void SWServer::rejectJob(const ServiceWorkerJobData& jobData, const ExceptionDat
 
 void SWServer::resolveRegistrationJob(const ServiceWorkerJobData& jobData, const ServiceWorkerRegistrationData& registrationData, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
 {
-    LOG(ServiceWorker, "Resolved ServiceWorker job %" PRIu64 "-%" PRIu64 " in server with registration %s", jobData.connectionIdentifier(), jobData.identifier(), registrationData.identifier.loggingString().utf8().data());
+    LOG(ServiceWorker, "Resolved ServiceWorker job %s-%" PRIu64 " in server with registration %s", jobData.connectionIdentifier().loggingString().utf8().data(), jobData.identifier(), registrationData.identifier.loggingString().utf8().data());
     auto* connection = m_connections.get(jobData.connectionIdentifier());
     if (!connection)
         return;
@@ -237,7 +237,7 @@ void SWServer::resolveUnregistrationJob(const ServiceWorkerJobData& jobData, con
 
 void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData)
 {
-    LOG(ServiceWorker, "Server issuing startScriptFetch for current job %" PRIu64 "-%" PRIu64 " in client", jobData.connectionIdentifier(), jobData.identifier());
+    LOG(ServiceWorker, "Server issuing startScriptFetch for current job %s-%" PRIu64 " in client", jobData.connectionIdentifier().loggingString().utf8().data(), jobData.identifier());
     auto* connection = m_connections.get(jobData.connectionIdentifier());
     if (!connection)
         return;
@@ -247,7 +247,7 @@ void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData)
 
 void SWServer::scriptFetchFinished(Connection& connection, const ServiceWorkerFetchResult& result)
 {
-    LOG(ServiceWorker, "Server handling scriptFetchFinished for current job %" PRIu64 "-%" PRIu64 " in client", result.connectionIdentifier, result.jobIdentifier);
+    LOG(ServiceWorker, "Server handling scriptFetchFinished for current job %s-%" PRIu64 " in client", result.connectionIdentifier.loggingString().utf8().data(), result.jobIdentifier);
 
     ASSERT(m_connections.contains(result.connectionIdentifier));
 

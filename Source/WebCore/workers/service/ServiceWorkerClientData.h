@@ -37,7 +37,6 @@ namespace WebCore {
 class ScriptExecutionContext;
 
 struct ServiceWorkerClientData {
-    ServiceWorkerClientIdentifier identifier;
     ServiceWorkerClientType type;
     ServiceWorkerClientFrameType frameType;
     URL url;
@@ -53,17 +52,12 @@ struct ServiceWorkerClientData {
 template<class Encoder>
 void ServiceWorkerClientData::encode(Encoder& encoder) const
 {
-    encoder << identifier << type << frameType << url;
+    encoder << type << frameType << url;
 }
 
 template<class Decoder>
 std::optional<ServiceWorkerClientData> ServiceWorkerClientData::decode(Decoder& decoder)
 {
-    std::optional<ServiceWorkerClientIdentifier> identifier;
-    decoder >> identifier;
-    if (!identifier)
-        return std::nullopt;
-
     std::optional<ServiceWorkerClientType> type;
     decoder >> type;
     if (!type)
@@ -79,7 +73,7 @@ std::optional<ServiceWorkerClientData> ServiceWorkerClientData::decode(Decoder& 
     if (!url)
         return std::nullopt;
 
-    return { { WTFMove(*identifier), WTFMove(*type), WTFMove(*frameType), WTFMove(*url) } };
+    return { { WTFMove(*type), WTFMove(*frameType), WTFMove(*url) } };
 }
 
 } // namespace WebCore

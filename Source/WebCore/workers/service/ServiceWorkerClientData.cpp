@@ -56,17 +56,14 @@ static ServiceWorkerClientFrameType toServiceWorkerClientFrameType(ScriptExecuti
 
 ServiceWorkerClientData ServiceWorkerClientData::isolatedCopy() const
 {
-    return { identifier, type, frameType, url.isolatedCopy() };
+    return { type, frameType, url.isolatedCopy() };
 }
 
 ServiceWorkerClientData ServiceWorkerClientData::from(ScriptExecutionContext& context)
 {
     bool isDocument = is<Document>(context);
 
-    ASSERT_WITH_MESSAGE(isDocument, "Only documents have identifiers at the moment");
-
     return {
-        { 0, downcast<Document>(context).identifier() },
         isDocument ? ServiceWorkerClientType::Window : ServiceWorkerClientType::Worker,
         toServiceWorkerClientFrameType(context),
         context.url()

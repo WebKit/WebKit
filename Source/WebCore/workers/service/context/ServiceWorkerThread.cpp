@@ -104,12 +104,12 @@ void ServiceWorkerThread::postFetchTask(Ref<ServiceWorkerFetch::Client>&& client
     }, WorkerRunLoop::defaultMode());
 }
 
-void ServiceWorkerThread::postMessageToServiceWorkerGlobalScope(Ref<SerializedScriptValue>&& message, std::unique_ptr<MessagePortChannelArray>&& channels, ServiceWorkerClientData&& source)
+void ServiceWorkerThread::postMessageToServiceWorkerGlobalScope(Ref<SerializedScriptValue>&& message, std::unique_ptr<MessagePortChannelArray>&& channels, ServiceWorkerClientIdentifier sourceIdentifier, ServiceWorkerClientData&& sourceData)
 {
-    ScriptExecutionContext::Task task([this, channels = WTFMove(channels), message = WTFMove(message), sourceData = source.isolatedCopy()] (ScriptExecutionContext& context) mutable {
+    ScriptExecutionContext::Task task([this, channels = WTFMove(channels), message = WTFMove(message), sourceIdentifier, sourceData = sourceData.isolatedCopy()] (ScriptExecutionContext& context) mutable {
         auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
         auto ports = MessagePort::entanglePorts(serviceWorkerGlobalScope, WTFMove(channels));
-        RefPtr<ServiceWorkerClient> source = ServiceWorkerWindowClient::create(context, WTFMove(sourceData));
+        RefPtr<ServiceWorkerClient> source = ServiceWorkerWindowClient::create(context, sourceIdentifier, WTFMove(sourceData));
         auto sourceOrigin = SecurityOrigin::create(source->url());
         auto messageEvent = ExtendableMessageEvent::create(WTFMove(ports), WTFMove(message), sourceOrigin->toString(), { }, ExtendableMessageEventSource { source });
         serviceWorkerGlobalScope.dispatchEvent(messageEvent);

@@ -52,7 +52,7 @@ public:
     WebSWClientConnection(const WebSWClientConnection&) = delete;
     ~WebSWClientConnection() final;
 
-    uint64_t identifier() const final { return m_identifier; }
+    WebCore::SWServerConnectionIdentifier serverConnectionIdentifier() const final { return m_identifier; }
 
     void addServiceWorkerRegistrationInServer(const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerRegistrationIdentifier) final;
     void removeServiceWorkerRegistrationInServer(const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerRegistrationIdentifier) final;
@@ -68,7 +68,7 @@ public:
 private:
     void scheduleJobInServer(const WebCore::ServiceWorkerJobData&) final;
     void finishFetchingScriptInServer(const WebCore::ServiceWorkerFetchResult&) final;
-    void postMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, Ref<WebCore::SerializedScriptValue>&&, WebCore::ServiceWorkerClientData&& source) final;
+    void postMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, Ref<WebCore::SerializedScriptValue>&&, uint64_t sourceContextIdentifier, WebCore::ServiceWorkerClientData&& source) final;
     void serviceWorkerStartedControllingClient(WebCore::ServiceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier) final;
     void serviceWorkerStoppedControllingClient(WebCore::ServiceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier) final;
 
@@ -83,13 +83,13 @@ private:
     void scheduleStorageJob(const WebCore::ServiceWorkerJobData&);
 
     IPC::Connection* messageSenderConnection() final { return m_connection.ptr(); }
-    uint64_t messageSenderDestinationID() final { return m_identifier; }
+    uint64_t messageSenderDestinationID() final { return m_identifier.toUInt64(); }
 
     void setSWOriginTableSharedMemory(const SharedMemory::Handle&);
     void initializeSWOriginTableAsEmpty();
 
     PAL::SessionID m_sessionID;
-    uint64_t m_identifier;
+    WebCore::SWServerConnectionIdentifier m_identifier;
 
     Ref<IPC::Connection> m_connection;
     UniqueRef<WebSWOriginTable> m_swOriginTable;

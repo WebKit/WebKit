@@ -46,7 +46,7 @@ namespace WebKit {
 
 class WebSWServerConnection : public WebCore::SWServer::Connection, public IPC::MessageSender, public IPC::MessageReceiver {
 public:
-    WebSWServerConnection(WebCore::SWServer&, IPC::Connection&, uint64_t connectionIdentifier, PAL::SessionID);
+    WebSWServerConnection(WebCore::SWServer&, IPC::Connection&, PAL::SessionID);
     WebSWServerConnection(const WebSWServerConnection&) = delete;
     ~WebSWServerConnection() final;
 
@@ -76,13 +76,13 @@ private:
 
     void startFetch(uint64_t fetchIdentifier, std::optional<WebCore::ServiceWorkerIdentifier>, const WebCore::ResourceRequest&, const WebCore::FetchOptions&, const IPC::FormDataReference&);
 
-    void postMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerClientData&& source);
+    void postMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, uint64_t sourceContextIdentifier, WebCore::ServiceWorkerClientData&& source);
 
     void matchRegistration(uint64_t registrationMatchRequestIdentifier, const WebCore::SecurityOriginData& topOrigin, const WebCore::URL& clientURL);
     void getRegistrations(uint64_t registrationMatchRequestIdentifier, const WebCore::SecurityOriginData& topOrigin, const WebCore::URL& clientURL);
 
     IPC::Connection* messageSenderConnection() final { return m_contentConnection.ptr(); }
-    uint64_t messageSenderDestinationID() final { return identifier(); }
+    uint64_t messageSenderDestinationID() final { return identifier().toUInt64(); }
     
     template<typename U> void sendToContextProcess(U&& message);
 

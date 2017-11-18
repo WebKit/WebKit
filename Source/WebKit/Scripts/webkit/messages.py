@@ -183,12 +183,18 @@ def forward_declarations_and_headers(receiver):
             headers.add('<wtf/ThreadSafeRefCounted.h>')
             types_by_namespace['IPC'].update([('class', 'Connection')])
 
+    no_forward_declaration_types = frozenset([
+        'WebCore::ServiceWorkerIdentifier',
+        'WebCore::ServiceWorkerRegistrationIdentifier',
+        'WebCore::SWServerConnectionIdentifier',
+    ])
+
     for parameter in receiver.iterparameters():
         kind = parameter.kind
         type = parameter.type
 
-        if type.find('<') != -1 or type == "WebCore::ServiceWorkerIdentifier" or type == "WebCore::ServiceWorkerRegistrationIdentifier":
-            # Don't forward declare class templates or ServiceWorkerIdentifier.
+        if type.find('<') != -1 or type in no_forward_declaration_types:
+            # Don't forward declare class templates.
             headers.update(headers_for_type(type))
             continue
 
@@ -372,6 +378,7 @@ def headers_for_type(type):
         'WebCore::PluginInfo': ['<WebCore/PluginData.h>'],
         'WebCore::PolicyAction': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::RecentSearch': ['<WebCore/SearchPopupMenu.h>'],
+        'WebCore::SWServerConnectionIdentifier': ['<WebCore/ServiceWorkerTypes.h>'],
         'WebCore::ServiceWorkerRegistrationIdentifier': ['<WebCore/ServiceWorkerTypes.h>'],
         'WebCore::ServiceWorkerRegistrationState': ['<WebCore/ServiceWorkerTypes.h>'],
         'WebCore::ServiceWorkerState': ['<WebCore/ServiceWorkerTypes.h>'],

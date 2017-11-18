@@ -82,9 +82,9 @@ void WebSWClientConnection::removeServiceWorkerRegistrationInServer(const Servic
     send(Messages::WebSWServerConnection::RemoveServiceWorkerRegistrationInServer(key, identifier));
 }
 
-void WebSWClientConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationIdentifier, Ref<SerializedScriptValue>&& scriptValue, ServiceWorkerClientData&& source)
+void WebSWClientConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationIdentifier, Ref<SerializedScriptValue>&& scriptValue, uint64_t sourceContextIdentifier, ServiceWorkerClientData&& source)
 {
-    send(Messages::WebSWServerConnection::PostMessageToServiceWorkerGlobalScope(destinationIdentifier, IPC::DataReference { scriptValue->data() }, WTFMove(source)));
+    send(Messages::WebSWServerConnection::PostMessageToServiceWorkerGlobalScope(destinationIdentifier, IPC::DataReference { scriptValue->data() }, sourceContextIdentifier, WTFMove(source)));
 }
 
 void WebSWClientConnection::serviceWorkerStartedControllingClient(ServiceWorkerIdentifier serviceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier)

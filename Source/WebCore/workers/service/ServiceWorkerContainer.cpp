@@ -98,7 +98,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
     if (!m_swConnection)
         m_swConnection = &ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(scriptExecutionContext()->sessionID());
 
-    ServiceWorkerJobData jobData(m_swConnection->identifier());
+    ServiceWorkerJobData jobData(m_swConnection->serverConnectionIdentifier());
 
     jobData.scriptURL = context->completeURL(relativeScriptURL);
     if (!jobData.scriptURL.isValid()) {
@@ -156,7 +156,7 @@ void ServiceWorkerContainer::removeRegistration(const URL& scopeURL, Ref<Deferre
         return;
     }
 
-    ServiceWorkerJobData jobData(m_swConnection->identifier());
+    ServiceWorkerJobData jobData(m_swConnection->serverConnectionIdentifier());
     jobData.clientCreationURL = context->url();
     jobData.topOrigin = SecurityOriginData::fromSecurityOrigin(context->topOrigin());
     jobData.type = ServiceWorkerJobType::Unregister;
@@ -180,7 +180,7 @@ void ServiceWorkerContainer::updateRegistration(const URL& scopeURL, const URL& 
         return;
     }
 
-    ServiceWorkerJobData jobData(m_swConnection->identifier());
+    ServiceWorkerJobData jobData(m_swConnection->serverConnectionIdentifier());
     jobData.clientCreationURL = context->url();
     jobData.topOrigin = SecurityOriginData::fromSecurityOrigin(context->topOrigin());
     jobData.type = ServiceWorkerJobType::Update;
@@ -383,10 +383,10 @@ void ServiceWorkerContainer::jobDidFinish(ServiceWorkerJob& job)
     unsetPendingActivity(this);
 }
 
-uint64_t ServiceWorkerContainer::connectionIdentifier()
+SWServerConnectionIdentifier ServiceWorkerContainer::connectionIdentifier()
 {
     ASSERT(m_swConnection);
-    return m_swConnection->identifier();
+    return m_swConnection->serverConnectionIdentifier();
 }
 
 const char* ServiceWorkerContainer::activeDOMObjectName() const

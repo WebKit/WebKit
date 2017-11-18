@@ -45,7 +45,7 @@ WebServiceWorkerFetchTaskClient::~WebServiceWorkerFetchTaskClient()
         RunLoop::main().dispatch([connection = WTFMove(m_connection)] { });
 }
 
-WebServiceWorkerFetchTaskClient::WebServiceWorkerFetchTaskClient(Ref<IPC::Connection>&& connection, uint64_t serverConnectionIdentifier, uint64_t fetchTaskIdentifier)
+WebServiceWorkerFetchTaskClient::WebServiceWorkerFetchTaskClient(Ref<IPC::Connection>&& connection, WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchTaskIdentifier)
     : m_connection(WTFMove(connection))
     , m_serverConnectionIdentifier(serverConnectionIdentifier)
     , m_fetchTaskIdentifier(fetchTaskIdentifier)
