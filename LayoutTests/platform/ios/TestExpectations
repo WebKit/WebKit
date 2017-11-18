@@ -1500,7 +1500,6 @@ svg/hixie/text/003a.xml [ Failure ]
 svg/hixie/text/003b.xml [ Failure ]
 svg/hixie/viewbox/preserveAspectRatio/001.xml [ Failure ]
 svg/hixie/viewbox/preserveAspectRatio/002.xml [ Failure ]
-svg/in-html/by-reference.html [ Failure ]
 svg/overflow/overflow-on-outermost-svg-element-defaults.svg [ Failure ]
 svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2.svg [ Failure ]
 svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3.svg [ Failure ]
@@ -3173,3 +3172,5 @@ webkit.org/b/179454 imported/w3c/web-platform-tests/streams/readable-streams/tee
 webkit.org/b/179454 imported/w3c/web-platform-tests/streams/readable-streams/templated.serviceworker.https.html [ Pass Failure ]
 
 webkit.org/b/179773 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Pass Failure ]
+
+webkit.org/b/179784 svg/in-html/by-reference.html [ Failure Timeout ]
