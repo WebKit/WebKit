@@ -1,3 +1,15 @@
+2017-11-18  Simon Fraser  <simon.fraser@apple.com>
+
+        feTurbulence with stitchTiles is broken
+        https://bugs.webkit.org/show_bug.cgi?id=179862
+
+        Reviewed by Zalan Bujtas.
+        
+        Ref test that masks out an empty area of the filter and compares with a green rectangle.
+
+        * svg/filters/feTurbulence-stitchTiles-expected.html: Added.
+        * svg/filters/feTurbulence-stitchTiles.html: Added.
+
 2017-11-18  Antti Koivisto  <antti@apple.com>
 
         Add test for a multicolumn render tree update issue

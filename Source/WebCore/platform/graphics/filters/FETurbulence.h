@@ -119,9 +119,9 @@ private:
     FETurbulence(Filter&, TurbulenceType, float, float, int, float, bool);
 
     void initPaint(PaintingData&);
-    FloatComponents noise2D(const PaintingData&, StitchData&, const FloatPoint&);
-    ColorComponents calculateTurbulenceValueForPoint(const PaintingData&, StitchData&, const FloatPoint&);
-    void fillRegion(Uint8ClampedArray*, const PaintingData&, int, int);
+    FloatComponents noise2D(const PaintingData&, const StitchData&, const FloatPoint&) const;
+    ColorComponents calculateTurbulenceValueForPoint(const PaintingData&, StitchData&, const FloatPoint&) const;
+    void fillRegion(Uint8ClampedArray*, const PaintingData&, int startY, int endY) const;
 
     TurbulenceType m_type;
     float m_baseFrequencyX;

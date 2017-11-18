@@ -179,63 +179,100 @@ void FETurbulence::initPaint(PaintingData& paintingData)
     }
 }
 
-inline void checkNoise(int& noiseValue, int limitValue, int newValue)
+// This is taken 1:1 from SVG spec: http://www.w3.org/TR/SVG11/filters.html#feTurbulenceElement.
+FloatComponents FETurbulence::noise2D(const PaintingData& paintingData, const StitchData& stitchData, const FloatPoint& noiseVector) const
 {
-    if (noiseValue >= limitValue)
-        noiseValue -= newValue;
-    if (noiseValue >= limitValue - 1)
-        noiseValue -= newValue - 1;
-}
+    struct NoisePosition {
+        int index; // bx0, by0 in the spec text.
+        int nextIndex; // bx1, by1 in the spec text.
+        float fraction; // rx0, ry0 in the spec text.
 
-FloatComponents FETurbulence::noise2D(const PaintingData& paintingData, StitchData& stitchData, const FloatPoint& noiseVector)
-{
-    struct Noise {
-        int noisePositionIntegerValue;
-        float noisePositionFractionValue;
-
-        Noise(float component)
+        NoisePosition(float component)
         {
+            //  t = vec[0] + PerlinN;
+            //  bx0 = (int)t;
+            //  bx1 = bx0+1;
+            //  rx0 = t - (int)t;
             float position = component + s_perlinNoise;
-            noisePositionIntegerValue = static_cast<int>(position);
-            noisePositionFractionValue = position - noisePositionIntegerValue;
+            index = static_cast<int>(position);
+            nextIndex = index + 1;
+            fraction = position - index;
+        }
+        
+        void stitch(int size, int wrapSize)
+        {
+            // if (bx0 >= pStitchInfo->nWrapX)
+            //   bx0 -= pStitchInfo->nWidth;
+            if (index >= wrapSize)
+                index -= size;
+
+            // if (bx1 >= pStitchInfo->nWrapX)
+            //   bx1 -= pStitchInfo->nWidth;
+            if (nextIndex >= wrapSize)
+                nextIndex -= size;
         }
     };
 
-    Noise noiseX(noiseVector.x());
-    Noise noiseY(noiseVector.y());
+    NoisePosition noiseX(noiseVector.x());
+    NoisePosition noiseY(noiseVector.y());
 
     // If stitching, adjust lattice points accordingly.
     if (m_stitchTiles) {
-        checkNoise(noiseX.noisePositionIntegerValue, stitchData.wrapX, stitchData.width);
-        checkNoise(noiseY.noisePositionIntegerValue, stitchData.wrapY, stitchData.height);
+        noiseX.stitch(stitchData.width, stitchData.wrapX);
+        noiseY.stitch(stitchData.height, stitchData.wrapY);
     }
 
-    noiseX.noisePositionIntegerValue &= s_blockMask;
-    noiseY.noisePositionIntegerValue &= s_blockMask;
-    int latticeIndex = paintingData.latticeSelector[noiseX.noisePositionIntegerValue];
-    int nextLatticeIndex = paintingData.latticeSelector[(noiseX.noisePositionIntegerValue + 1) & s_blockMask];
+    // bx0 &= BM;
+    // bx1 &= BM;
+    // by0 &= BM;
+    // by1 &= BM;
+    noiseX.index &= s_blockMask;
+    noiseX.nextIndex &= s_blockMask;
+    noiseY.index &= s_blockMask;
+    noiseY.nextIndex &= s_blockMask;
 
-    float sx = smoothCurve(noiseX.noisePositionFractionValue);
-    float sy = smoothCurve(noiseY.noisePositionFractionValue);
+    // i = uLatticeSelector[bx0];
+    // j = uLatticeSelector[bx1];
+    int latticeIndex = paintingData.latticeSelector[noiseX.index];
+    int nextLatticeIndex = paintingData.latticeSelector[noiseX.nextIndex];
+
+    // sx = double(s_curve(rx0));
+    // sy = double(s_curve(ry0));
+    float sx = smoothCurve(noiseX.fraction);
+    float sy = smoothCurve(noiseY.fraction);
 
     auto noiseForChannel = [&](int channel) {
-        // This is taken 1:1 from SVG spec: http://www.w3.org/TR/SVG11/filters.html#feTurbulenceElement.
-        int temp = paintingData.latticeSelector[latticeIndex + noiseY.noisePositionIntegerValue];
-        const float* q = paintingData.gradient[channel][temp];
+        // b00 = uLatticeSelector[i + by0]
+        int b00 = paintingData.latticeSelector[latticeIndex + noiseY.index];
+        // q = fGradient[nColorChannel][b00]; u = rx0 * q[0] + ry0 * q[1];
+        const float* q = paintingData.gradient[channel][b00];
+        float u = noiseX.fraction * q[0] + noiseY.fraction * q[1];
 
-        float u = noiseX.noisePositionFractionValue * q[0] + noiseY.noisePositionFractionValue * q[1];
-        temp = paintingData.latticeSelector[nextLatticeIndex + noiseY.noisePositionIntegerValue];
-        q = paintingData.gradient[channel][temp];
-        float v = (noiseX.noisePositionFractionValue - 1) * q[0] + noiseY.noisePositionFractionValue * q[1];
+        // b10 = uLatticeSelector[j + by0];
+        int b10 = paintingData.latticeSelector[nextLatticeIndex + noiseY.index];
+        // rx1 = rx0 - 1.0f;
+        // q = fGradient[nColorChannel][b10]; v = rx1 * q[0] + ry0 * q[1];
+        q = paintingData.gradient[channel][b10];
+        float v = (noiseX.fraction - 1) * q[0] + noiseY.fraction * q[1];
+        // a = lerp(sx, u, v);
         float a = linearInterpolation(sx, u, v);
-        temp = paintingData.latticeSelector[latticeIndex + noiseY.noisePositionIntegerValue + 1];
-        q = paintingData.gradient[channel][temp];
-        u = noiseX.noisePositionFractionValue * q[0] + (noiseY.noisePositionFractionValue - 1) * q[1];
-        temp = paintingData.latticeSelector[nextLatticeIndex + noiseY.noisePositionIntegerValue + 1];
-        q = paintingData.gradient[channel][temp];
-        v = (noiseX.noisePositionFractionValue - 1) * q[0] + (noiseY.noisePositionFractionValue - 1) * q[1];
+
+        // b01 = uLatticeSelector[i + by1];
+        int b01 = paintingData.latticeSelector[latticeIndex + noiseY.nextIndex];
+        // ry1 = ry0 - 1.0f;
+        // q = fGradient[nColorChannel][b01]; u = rx0 * q[0] + ry1 * q[1];
+        q = paintingData.gradient[channel][b01];
+        u = noiseX.fraction * q[0] + (noiseY.fraction - 1) * q[1];
+
+        // b11 = uLatticeSelector[j + by1];
+        int b11 = paintingData.latticeSelector[nextLatticeIndex + noiseY.nextIndex];
+        // q = fGradient[nColorChannel][b11]; v = rx1 * q[0] + ry1 * q[1];
+        q = paintingData.gradient[channel][b11];
+        v = (noiseX.fraction - 1) * q[0] + (noiseY.fraction - 1) * q[1];
+        // b = lerp(sx, u, v);
         float b = linearInterpolation(sx, u, v);
 
+        // return lerp(sy, a, b);
         return linearInterpolation(sy, a, b);
     };
 
@@ -247,11 +284,12 @@ FloatComponents FETurbulence::noise2D(const PaintingData& paintingData, StitchDa
     };
 }
 
-ColorComponents FETurbulence::calculateTurbulenceValueForPoint(const PaintingData& paintingData, StitchData& stitchData, const FloatPoint& point)
+ColorComponents FETurbulence::calculateTurbulenceValueForPoint(const PaintingData& paintingData, StitchData& stitchData, const FloatPoint& point) const
 {
     float tileWidth = paintingData.filterSize.width();
     float tileHeight = paintingData.filterSize.height();
     ASSERT(tileWidth > 0 && tileHeight > 0);
+    
     float baseFrequencyX = m_baseFrequencyX;
     float baseFrequencyY = m_baseFrequencyY;
 
@@ -314,7 +352,7 @@ ColorComponents FETurbulence::calculateTurbulenceValueForPoint(const PaintingDat
     return turbulenceFunctionResult;
 }
 
-void FETurbulence::fillRegion(Uint8ClampedArray* pixelArray, const PaintingData& paintingData, int startY, int endY)
+void FETurbulence::fillRegion(Uint8ClampedArray* pixelArray, const PaintingData& paintingData, int startY, int endY) const
 {
     IntRect filterRegion = absolutePaintRect();
     FloatPoint point(0, filterRegion.y() + startY);
