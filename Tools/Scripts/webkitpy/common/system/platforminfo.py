@@ -31,6 +31,7 @@ import re
 import sys
 
 from webkitpy.common.version import Version
+from webkitpy.common.version_name_map import VersionNameMap
 from webkitpy.common.system.executive import Executive
 
 
@@ -51,14 +52,21 @@ class PlatformInfo(object):
         self._executive = executive
         self._platform_module = platform_module
         self.os_name = self._determine_os_name(sys_module.platform)
-        if self.os_name == 'linux':
-            self.os_version = self._determine_linux_version()
-        if self.os_name == 'freebsd' or self.os_name == 'openbsd' or self.os_name == 'netbsd' or self.os_name == 'ios':
-            self.os_version = platform_module.release()
+        self.os_version = None
+
         if self.os_name.startswith('mac'):
-            self.os_version = self._determine_mac_version(Version(platform_module.mac_ver()[0]))
-        if self.os_name.startswith('win'):
-            self.os_version = self._determine_win_version(self._win_version(sys_module))
+            self.os_version = VersionNameMap.map(self).to_name(Version(platform_module.mac_ver()[0]), table='public')
+        elif self.os_name.startswith('win'):
+            self.os_version = VersionNameMap.map(self).to_name(self._win_version(sys_module), table='public')
+        elif self.os_name == 'freebsd':
+            self.os_version = VersionNameMap.map(self).to_name(platform_module.release().split('-')[0], table='public')
+        else:
+            # Most other platforms (namely Linux and iOS) return conforming version strings.
+            self.os_version = VersionNameMap.map(self).to_name(Version(platform_module.release()), table='public')
+
+        assert self.os_version is not None
+        self.os_version = self.os_version.lower().replace(' ', '')
+
         self._is_cygwin = sys_module.platform == 'cygwin'
 
     def is_mac(self):
@@ -163,40 +171,6 @@ class PlatformInfo(object):
         if sys_platform.startswith('haiku'):
             return 'haiku'
         raise AssertionError('unrecognized platform string "%s"' % sys_platform)
-
-    def _determine_mac_version(self, mac_version):
-        version_strings = {
-            5: 'leopard',
-            6: 'snowleopard',
-            7: 'lion',
-            8: 'mountainlion',
-            9: 'mavericks',
-            10: 'yosemite',
-            11: 'elcapitan',
-            12: 'sierra',
-            13: 'highsierra',
-        }
-        assert mac_version.minor >= min(version_strings.keys())
-        return version_strings.get(mac_version.minor, 'future')
-
-    def _determine_linux_version(self):
-        # FIXME: we ignore whatever the real version is and pretend it's lucid for now.
-        return 'lucid'
-
-    def _determine_win_version(self, win_version):
-        if self._platform_module.release() == '10':
-            return 'win10'
-        if win_version.major == 0 and win_version.minor == 0:
-            if win_version[2] > 10000:
-                return 'win10'
-        if win_version == Version([6, 1, 7600]):
-            return '7sp0'
-        if win_version.major == 6 and win_version.minor == 0:
-            return 'vista'
-        if win_version.major == 5 and win_version.minor == 1:
-            return 'xp'
-        assert win_version[0] > 6 or win_version[1] >= 1, 'Unrecognized Windows version: "{}"'.format(win_version)
-        return 'future'
 
     def _win_version(self, sys_module):
         if hasattr(sys_module, 'getwindowsversion'):

@@ -87,13 +87,13 @@ class TestPlatformInfo(unittest.TestCase):
             self.assertIsNone(info.total_bytes_memory())
 
     def test_os_name_and_wrappers(self):
-        info = self.make_info(fake_sys('linux2'))
+        info = self.make_info(fake_sys('linux2'), fake_platform('', '10.4'))
         self.assertTrue(info.is_linux())
         self.assertFalse(info.is_mac())
         self.assertFalse(info.is_win())
         self.assertFalse(info.is_freebsd())
 
-        info = self.make_info(fake_sys('linux3'))
+        info = self.make_info(fake_sys('linux3'), fake_platform('', '10.4'))
         self.assertTrue(info.is_linux())
         self.assertFalse(info.is_mac())
         self.assertFalse(info.is_win())
@@ -122,7 +122,7 @@ class TestPlatformInfo(unittest.TestCase):
         self.assertFalse(info.is_native_win())
         self.assertFalse(info.is_freebsd())
 
-        info = self.make_info(fake_sys('freebsd8'))
+        info = self.make_info(fake_sys('freebsd8'), fake_platform('', '8.3-PRERELEASE'))
         self.assertEqual(info.os_name, 'freebsd')
         self.assertFalse(info.is_linux())
         self.assertFalse(info.is_mac())
@@ -144,19 +144,20 @@ class TestPlatformInfo(unittest.TestCase):
         self.assertEqual(self.make_info(fake_sys('darwin'), fake_platform('10.13.0')).os_version, 'highsierra')
         self.assertEqual(self.make_info(fake_sys('darwin'), fake_platform('10.14.0')).os_version, 'future')
 
-        self.assertEqual(self.make_info(fake_sys('linux2')).os_version, 'lucid')
+        self.assertEqual(self.make_info(fake_sys('linux2'), fake_platform('', '10.4')).os_version, 'lucid')
 
-        self.assertEqual(self.make_info(fake_sys('freebsd8'), fake_platform('', '8.3-PRERELEASE')).os_version, '8.3-PRERELEASE')
-        self.assertEqual(self.make_info(fake_sys('freebsd9'), fake_platform('', '9.0-RELEASE')).os_version, '9.0-RELEASE')
+        self.assertEqual(self.make_info(fake_sys('freebsd8'), fake_platform('', '8.3-PRERELEASE')).os_version, 'freebsd8')
+        self.assertEqual(self.make_info(fake_sys('freebsd9'), fake_platform('', '9.0-RELEASE')).os_version, 'freebsd9')
 
         self.assertRaises(AssertionError, self.make_info, fake_sys('win32', tuple([5, 0, 1234])))
-        self.assertEqual(self.make_info(fake_sys('win32', tuple([6, 2, 1234]))).os_version, 'future')
+        self.assertEqual(self.make_info(fake_sys('win32', tuple([10, 0, 14393]))).os_version, 'win10')
+        self.assertEqual(self.make_info(fake_sys('win32', tuple([6, 2, 1234]))).os_version, '8')
         self.assertEqual(self.make_info(fake_sys('win32', tuple([6, 1, 7600]))).os_version, '7sp0')
         self.assertEqual(self.make_info(fake_sys('win32', tuple([6, 0, 1234]))).os_version, 'vista')
         self.assertEqual(self.make_info(fake_sys('win32', tuple([5, 1, 1234]))).os_version, 'xp')
 
         self.assertRaises(AssertionError, self.make_info, fake_sys('win32'), executive=fake_executive('5.0.1234'))
-        self.assertEqual(self.make_info(fake_sys('cygwin'), executive=fake_executive('6.2.1234')).os_version, 'future')
+        self.assertEqual(self.make_info(fake_sys('cygwin'), executive=fake_executive('6.2.1234')).os_version, '8')
         self.assertEqual(self.make_info(fake_sys('cygwin'), executive=fake_executive('6.1.7600')).os_version, '7sp0')
         self.assertEqual(self.make_info(fake_sys('cygwin'), executive=fake_executive('6.0.1234')).os_version, 'vista')
         self.assertEqual(self.make_info(fake_sys('cygwin'), executive=fake_executive('5.1.1234')).os_version, 'xp')
@@ -168,10 +169,10 @@ class TestPlatformInfo(unittest.TestCase):
         info = self.make_info(fake_sys('win32', tuple([6, 1, 7600])))
         self.assertNotEquals(info.display_name(), '')
 
-        info = self.make_info(fake_sys('linux2'))
+        info = self.make_info(fake_sys('linux2'), fake_platform('', '10.4'))
         self.assertNotEquals(info.display_name(), '')
 
-        info = self.make_info(fake_sys('freebsd9'))
+        info = self.make_info(fake_sys('freebsd9'), fake_platform('', '9.0-RELEASE'))
         self.assertNotEquals(info.display_name(), '')
 
     def test_total_bytes_memory(self):
@@ -181,8 +182,8 @@ class TestPlatformInfo(unittest.TestCase):
         info = self.make_info(fake_sys('win32', tuple([6, 1, 7600])))
         self.assertIsNone(info.total_bytes_memory())
 
-        info = self.make_info(fake_sys('linux2'))
+        info = self.make_info(fake_sys('linux2'), fake_platform('', '10.4'))
         self.assertIsNone(info.total_bytes_memory())
 
-        info = self.make_info(fake_sys('freebsd9'))
+        info = self.make_info(fake_sys('freebsd9'), fake_platform('', '9.0-RELEASE'))
         self.assertIsNone(info.total_bytes_memory())

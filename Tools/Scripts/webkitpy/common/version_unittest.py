@@ -125,6 +125,22 @@ class VersionTestCase(unittest.TestCase):
         self.assertEqual(str(Version('1.2')), '1.2')
         self.assertEqual(str(Version('0.0.3')), '0.0.3')
 
+    def test_contained_in(self):
+        self.assertTrue(Version('11.1').contained_in(Version('11')))
+        self.assertTrue(Version('11.1.2').contained_in(Version('11.1')))
+        self.assertFalse(Version('11').contained_in(Version('11.1')))
+        self.assertFalse(Version('11').contained_in(Version('11.1.2')))
+        self.assertFalse(Version('11.1').contained_in(Version('11.1.2')))
+        self.assertTrue(Version('11').contained_in(Version('11')))
+        self.assertTrue(Version('11.1').contained_in(Version('11.1')))
+        self.assertTrue(Version('11.1.2').contained_in(Version('11.1.2')))
+        self.assertTrue(Version('11').contained_in(Version('11.0')))
+        self.assertTrue(Version('11.0').contained_in(Version('11')))
+        self.assertTrue(Version('11').contained_in(Version('11.0.0')))
+        self.assertTrue(Version('11.0.0').contained_in(Version('11')))
+        self.assertTrue(Version('11.1').contained_in(Version('11.1.0')))
+        self.assertTrue(Version('11.1.0').contained_in(Version('11.1')))
+
     def test_compare_versions(self):
         self.assertEqual(Version('1.2.3'), Version('1.2.3'))
         self.assertGreater(Version('1.2.4'), Version('1.2.3'))

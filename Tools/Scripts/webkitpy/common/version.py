@@ -92,6 +92,16 @@ class Version(object):
             raise ValueError('Version key must be major, minor, tiny, micro or nano')
         raise ValueError('Expected version key to be string or integer')
 
+    # 11.2 is contained in 11, but 11 is not contained in 11.2
+    def contained_in(self, version):
+        does_match = True
+        for i in xrange(len(self)):
+            if self[i] != version[i]:
+                does_match = False
+            if not does_match and version[i] != 0:
+                return False
+        return True
+
     def __str__(self):
         len_to_print = 1
         for i in xrange(len(self)):
