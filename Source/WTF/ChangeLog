@@ -1,3 +1,20 @@
+2017-11-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Use system endianess information instead of relying CPU information
+        https://bugs.webkit.org/show_bug.cgi?id=179861
+
+        Reviewed by JF Bastien.
+
+        Currently, we use known CPU information to determine endianess of the current
+        architecture. But this means that unknown CPU does not work well in WebKit
+        withou modifying code. Instead, we use compiler or system's macro to determine
+        endianess. This paves the way to dropping many CPUs in Platform.h by replacing
+        them with CPU(UNKNOWN)[1].
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=179243
+
+        * wtf/Platform.h:
+
 2017-11-18  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: registration in WebCore::SWServerJobQueue::scriptContextStarted(ServiceWorkerIdentifier)

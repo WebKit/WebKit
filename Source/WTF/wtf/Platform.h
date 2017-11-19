@@ -58,8 +58,6 @@
 
 /* ==== CPU() - the target CPU architecture ==== */
 
-/* This also defines CPU(BIG_ENDIAN) or CPU(MIDDLE_ENDIAN) or neither, as appropriate. */
-
 /* CPU(ALPHA) - DEC Alpha */
 #if defined(__alpha__)
 #define WTF_CPU_ALPHA 1
@@ -68,7 +66,6 @@
 /* CPU(HPPA) - HP PA-RISC */
 #if defined(__hppa__) || defined(__hppa64__)
 #define WTF_CPU_HPPA 1
-#define WTF_CPU_BIG_ENDIAN 1
 #endif
 
 /* CPU(IA64) - Itanium / IA-64 */
@@ -89,9 +86,6 @@
 #define WTF_CPU_MIPS 1
 #define WTF_MIPS_ARCH __mips
 #endif
-#if defined(__MIPSEB__)
-#define WTF_CPU_BIG_ENDIAN 1
-#endif
 #define WTF_MIPS_PIC (defined __PIC__)
 #define WTF_MIPS_ISA(v) (defined WTF_MIPS_ARCH && WTF_MIPS_ARCH == v)
 #define WTF_MIPS_ISA_AT_LEAST(v) (defined WTF_MIPS_ARCH && WTF_MIPS_ARCH >= v)
@@ -109,7 +103,6 @@
     && defined(__BYTE_ORDER__) \
     && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
 #define WTF_CPU_PPC64 1
-#define WTF_CPU_BIG_ENDIAN 1
 #endif
 
 /* CPU(PPC64) - PowerPC 64-bit Little Endian */
@@ -131,10 +124,8 @@
     || defined(_M_PPC)         \
     || defined(__PPC))         \
     && !CPU(PPC64)             \
-    && defined(__BYTE_ORDER__) \
-    && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+    && CPU(BIG_ENDIAN)
 #define WTF_CPU_PPC 1
-#define WTF_CPU_BIG_ENDIAN 1
 #endif
 
 /* CPU(SH4) - SuperH SH-4 */
@@ -145,14 +136,12 @@
 /* CPU(S390X) - S390 64-bit */
 #if defined(__s390x__)
 #define WTF_CPU_S390X 1
-#define WTF_CPU_BIG_ENDIAN 1
 #endif
 
 /* CPU(S390) - S390 32-bit */
 #if (  defined(__s390__)        \
     && !CPU(S390X))
 #define WTF_CPU_S390 1
-#define WTF_CPU_BIG_ENDIAN 1
 #endif
 
 /* CPU(X86) - i386 / x86 32-bit */
@@ -196,17 +185,6 @@
 
 #if defined(__ARM_PCS_VFP)
 #define WTF_CPU_ARM_HARDFP 1
-#endif
-
-#if defined(__ARMEB__)
-#define WTF_CPU_BIG_ENDIAN 1
-
-#elif !defined(__ARM_EABI__) \
-    && !defined(__EABI__) \
-    && !defined(__VFP_FP__) \
-    && !defined(_WIN32_WCE)
-#define WTF_CPU_MIDDLE_ENDIAN 1
-
 #endif
 
 /* Set WTF_ARM_ARCH_VERSION */
@@ -445,6 +423,58 @@
 #endif
 
 /* Operating environments */
+
+/* CPU(BIG_ENDIAN) or CPU(MIDDLE_ENDIAN) or neither, as appropriate. */
+
+#if COMPILER(GCC_OR_CLANG)
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#define WTF_CPU_BIG_ENDIAN 1
+#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#define WTF_CPU_LITTLE_ENDIAN 1
+#elif __BYTE_ORDER__ == __ORDER_PDP_ENDIAN__
+#define WTF_CPU_MIDDLE_ENDIAN 1
+#else
+#error "Unknown endian"
+#endif
+#else
+#if OS(WINDOWS)
+/* Windows only have little endian architecture. */
+#define WTF_CPU_LITTLE_ENDIAN 1
+#else
+#include <sys/types.h>
+#if __has_include(<endian.h>)
+#include <endian.h>
+#if __BYTE_ORDER == __BIG_ENDIAN
+#define WTF_CPU_BIG_ENDIAN 1
+#elif __BYTE_ORDER == __LITTLE_ENDIAN
+#define WTF_CPU_LITTLE_ENDIAN 1
+#elif __BYTE_ORDER == __PDP_ENDIAN
+#define WTF_CPU_MIDDLE_ENDIAN 1
+#else
+#error "Unknown endian"
+#endif
+#else
+#if __has_include(<machine/endian.h>)
+#include <machine/endian.h>
+#else
+#include <sys/endian.h>
+#endif
+#if BYTE_ORDER == BIG_ENDIAN
+#define WTF_CPU_BIG_ENDIAN 1
+#elif BYTE_ORDER == LITTLE_ENDIAN
+#define WTF_CPU_LITTLE_ENDIAN 1
+#elif BYTE_ORDER == PDP_ENDIAN
+#define WTF_CPU_MIDDLE_ENDIAN 1
+#else
+#error "Unknown endian"
+#endif
+#endif
+#endif
+#endif
+
+#if !CPU(LITTLE_ENDIAN) && !CPU(BIG_ENDIAN)
+#error "Unsupported endian"
+#endif
 
 /* Export macro support. Detects the attributes available for shared library symbol export
    decorations. */
