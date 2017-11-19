@@ -103,7 +103,7 @@ Resource* Manager::findMatch(const WebCore::ResourceRequest& request)
     if (!bestMatch)
         bestMatch = findBestFuzzyMatch(request);
 
-#if ENABLE(WTF_CAPTURE_INTERNAL_DEBUGGING)
+#if CAPTURE_INTERNAL_DEBUGGING
     if (!bestMatch)
         DEBUG_LOG("Could not find match for: " STRING_SPECIFIER, DEBUG_STR(request.url().string()));
     else if (request.url() == bestMatch->url())
@@ -289,7 +289,7 @@ int Manager::fuzzyMatchURLs(const WebCore::URL& requestURL, const WebCore::URLPa
 
     for (; requestParameter != std::end(requestParameters) && resourceParameter != std::end(resourceParameters); ++requestParameter, ++resourceParameter) {
         if (requestParameter->key == resourceParameter->key) {
-#if ENABLE(WTF_CAPTURE_INTERNAL_DEBUGGING)
+#if CAPTURE_INTERNAL_DEBUGGING
             if (requestParameter->value == resourceParameter->value)
                 DEBUG_LOG("Matching parameter names and values: \"" STRING_SPECIFIER "\" = \"" STRING_SPECIFIER "\"", DEBUG_STR(requestParameter->first), DEBUG_STR(requestParameter->second));
             else
@@ -309,7 +309,7 @@ int Manager::fuzzyMatchURLs(const WebCore::URL& requestURL, const WebCore::URLPa
                 DEBUG_LOG("Skipping past %d non-matching parameter names", static_cast<int>(std::distance(scanningIter, scanner)));
                 score += kParameterMissingScore * std::distance(scanningIter, scanner);
                 DEBUG_LOG("Score = %d", score);
-#if ENABLE(WTF_CAPTURE_INTERNAL_DEBUGGING)
+#if CAPTURE_INTERNAL_DEBUGGING
                 if (fixedIter->second == scanner->second)
                     DEBUG_LOG("Matching parameter names and values: \"" STRING_SPECIFIER "\" = \"" STRING_SPECIFIER "\"", DEBUG_STR(fixedIter->first), DEBUG_STR(fixedIter->second));
                 else

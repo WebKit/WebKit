@@ -29,8 +29,8 @@
 
 #include "Logging.h"
 
-#define ENABLE_WTF_CAPTURE_INTERNAL_DEBUGGING 0
-#define ENABLE_WTF_VERBOSE_CAPTURE_INTERNAL_DEBUGGING 0
+#define CAPTURE_INTERNAL_DEBUGGING 0
+#define VERBOSE_CAPTURE_INTERNAL_DEBUGGING 0
 
 #define DEBUG_STR(s)                    (s).ascii().data()
 
@@ -40,12 +40,12 @@
 #define STRING_SPECIFIER                "%{public}s"
 #endif
 
-#if ENABLE(WTF_CAPTURE_INTERNAL_DEBUGGING)
+#if CAPTURE_INTERNAL_DEBUGGING
 #define DEBUG_LOG_QUOTE(str)            #str
 #define DEBUG_LOG_EXPAND_AND_QUOTE(str) DEBUG_LOG_QUOTE(str)
 #define DEBUG_LOG(format, ...)          RELEASE_LOG(Network, "#PLT: %p - " STRING_SPECIFIER "::" STRING_SPECIFIER ": " format, this, DEBUG_LOG_EXPAND_AND_QUOTE(DEBUG_CLASS), __FUNCTION__, ##__VA_ARGS__)
 #define DEBUG_LOG_ERROR(format, ...)    RELEASE_LOG_ERROR(Network, "#PLT: %p - " STRING_SPECIFIER "::" STRING_SPECIFIER ": " format, this, DEBUG_LOG_EXPAND_AND_QUOTE(DEBUG_CLASS), __FUNCTION__, ##__VA_ARGS__)
-#if ENABLE(WTF_VERBOSE_CAPTURE_INTERNAL_DEBUGGING)
+#if VERBOSE_CAPTURE_INTERNAL_DEBUGGING
 #define DEBUG_LOG_VERBOSE(format, ...)  DEBUG_LOG(format, ##__VA_ARGS__)
 #else
 #define DEBUG_LOG_VERBOSE(...)          ((void)0)

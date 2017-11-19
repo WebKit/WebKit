@@ -1,3 +1,17 @@
+2017-11-18  Tim Horton  <timothy_horton@apple.com>
+
+        Rename some Network Capture debugging defines
+        https://bugs.webkit.org/show_bug.cgi?id=179870
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/capture/NetworkCaptureLogging.h:
+        * NetworkProcess/capture/NetworkCaptureManager.cpp:
+        (WebKit::NetworkCapture::Manager::findMatch):
+        (WebKit::NetworkCapture::Manager::fuzzyMatchURLs):
+        These shouldn't have WTF in their name - they have nothing to do with WTF.
+        These shouldn't use ENABLE(), since they're not features, just debugging macros.
+
 2017-11-17  Chris Dumez  <cdumez@apple.com>
 
         [Service Workers] Implement "Notify Controller Change" algorithm
