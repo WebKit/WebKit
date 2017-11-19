@@ -38,7 +38,6 @@ namespace WebCore {
     struct CachedResourceRequestInitiators;
     struct EventNames;
     struct ICUConverterWrapper;
-    struct TECConverterWrapper;
 
 #if USE(WEB_THREAD)
     class ThreadGlobalData : public ThreadSafeRefCounted<ThreadGlobalData> {
@@ -59,10 +58,6 @@ namespace WebCore {
 
         ICUConverterWrapper& cachedConverterICU() { return *m_cachedConverterICU; }
 
-#if PLATFORM(MAC)
-        TECConverterWrapper& cachedConverterTEC() { return *m_cachedConverterTEC; }
-#endif
-
 #if USE(WEB_THREAD)
         void setWebCoreThreadData();
 #endif
@@ -78,10 +73,6 @@ namespace WebCore {
 #endif
 
         std::unique_ptr<ICUConverterWrapper> m_cachedConverterICU;
-
-#if PLATFORM(MAC)
-        std::unique_ptr<TECConverterWrapper> m_cachedConverterTEC;
-#endif
 
         WEBCORE_EXPORT friend ThreadGlobalData& threadGlobalData();
     };

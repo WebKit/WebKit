@@ -112,7 +112,6 @@ platform/mac/WidgetMac.mm
 
 platform/network/mac/NetworkStateNotifierMac.cpp
 
-platform/text/mac/TextCodecMac.cpp
 platform/text/mac/TextEncodingRegistryMac.mm
 
 rendering/RenderThemeMac.mm

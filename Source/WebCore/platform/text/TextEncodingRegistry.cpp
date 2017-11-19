@@ -43,10 +43,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 
-#if PLATFORM(MAC)
-#include "TextCodecMac.h"
-#endif
-
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
 
@@ -266,11 +262,6 @@ static void extendTextCodecMaps()
 
     TextCodecICU::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecICU::registerCodecs(addToTextCodecMap);
-
-#if PLATFORM(MAC)
-    TextCodecMac::registerEncodingNames(addToTextEncodingNameMap);
-    TextCodecMac::registerCodecs(addToTextCodecMap);
-#endif
 
     pruneBlacklistedCodecs();
     buildQuirksSets();

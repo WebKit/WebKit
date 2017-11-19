@@ -1531,26 +1531,3 @@ all : $(notdir $(WebCore_BUILTINS_SOURCES:%.js=%Builtins.h)) $(firstword $(WebCo
 
 # ------------------------
 
-# Mac-specific rules
-
-ifeq ($(OS),MACOS)
-
-all : CharsetData.cpp
-
-# --------
-
-# character set name table
-
-ifeq ($(WTF_PLATFORM_IOS),1)
-ENCODINGS_FILENAME := ios-encodings.txt
-else
-ENCODINGS_FILENAME := mac-encodings.txt
-endif # WTF_PLATFORM_IOS
-
-CharsetData.cpp : platform/text/mac/make-charset-table.pl platform/text/mac/character-sets.txt platform/text/mac/$(ENCODINGS_FILENAME)
-	$(PERL) $^ kTextEncoding > $@
-
-# --------
-
-endif # MACOS
-

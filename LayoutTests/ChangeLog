@@ -1,3 +1,16 @@
+2017-11-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Remove TEC support and all TEC-only encodings except EUC-TW (which now uses ICU)
+        https://bugs.webkit.org/show_bug.cgi?id=179582
+
+        Reviewed by Darin Adler.
+
+        * fast/encoding/legacy-tec-encodings.html: Added. Verify that we
+        no longer support these encodings.
+        * fast/encoding/legacy-tec-encodings-expected.txt: Added.
+        * platform/mac/fast/encoding/xnextstep-decoding.html: Removed. We no longer support this encoding.
+        * platform/mac/fast/encoding/xnextstep-decoding-expected.txt: Removed.
+
 2017-11-18  Simon Fraser  <simon.fraser@apple.com>
 
         Line of garbage pixels at the bottom of an feTurbulence sometimes

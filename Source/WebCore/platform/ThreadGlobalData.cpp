@@ -37,10 +37,6 @@
 #include <wtf/Threading.h>
 #include <wtf/text/StringImpl.h>
 
-#if PLATFORM(MAC)
-#include "TextCodecMac.h"
-#endif
-
 namespace WebCore {
 
 ThreadGlobalData::ThreadGlobalData()
@@ -52,9 +48,6 @@ ThreadGlobalData::ThreadGlobalData()
     , m_isMainThread(isMainThread())
 #endif
     , m_cachedConverterICU(std::make_unique<ICUConverterWrapper>())
-#if PLATFORM(MAC)
-    , m_cachedConverterTEC(std::make_unique<TECConverterWrapper>())
-#endif
 {
     // This constructor will have been called on the main thread before being called on
     // any other thread, and is only called once per thread - this makes this a convenient
@@ -67,10 +60,6 @@ ThreadGlobalData::~ThreadGlobalData() = default;
 
 void ThreadGlobalData::destroy()
 {
-#if PLATFORM(MAC)
-    m_cachedConverterTEC = nullptr;
-#endif
-
     m_cachedConverterICU = nullptr;
 
     m_eventNames = nullptr;

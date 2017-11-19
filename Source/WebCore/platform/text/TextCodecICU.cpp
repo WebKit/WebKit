@@ -154,6 +154,7 @@ static const struct EncodingName {
     DECLARE_ENCODING_NAME("x-mac-centraleurroman", x_mac_centraleurroman),
     DECLARE_ENCODING_NAME("x-mac-turkish", x_mac_turkish),
     DECLARE_ENCODING_NAME("Big5-HKSCS", Big5_HKSCS),
+    DECLARE_ENCODING_NAME_NO_ALIASES("EUC-TW"),
 };
 
 void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)

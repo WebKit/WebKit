@@ -138,19 +138,6 @@ set(WebCore_USER_AGENT_SCRIPTS
     ${WEBCORE_DIR}/Modules/plugins/QuickTimePluginReplacement.js
 )
 
-#FIXME: Use ios-encodings.txt once we get CMake working for iOS.
-add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/CharsetData.cpp
-    MAIN_DEPENDENCY ${WEBCORE_DIR}/platform/text/mac/make-charset-table.pl
-    DEPENDS platform/text/mac/character-sets.txt
-    DEPENDS platform/text/mac/mac-encodings.txt
-    COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/platform/text/mac/make-charset-table.pl ${WEBCORE_DIR}/platform/text/mac/character-sets.txt ${WEBCORE_DIR}/platform/text/mac/mac-encodings.txt kTextEncoding > ${DERIVED_SOURCES_WEBCORE_DIR}/CharsetData.cpp
-    VERBATIM)
-
-list(APPEND WebCore_DERIVED_SOURCES
-    ${DERIVED_SOURCES_WEBCORE_DIR}/CharsetData.cpp
-)
-
 list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     "${CMAKE_OSX_SYSROOT}/usr/include/libxslt"
     "${CMAKE_OSX_SYSROOT}/usr/include/libxml2"
@@ -479,7 +466,6 @@ list(APPEND WebCore_SOURCES
 
     platform/text/mac/LocaleMac.mm
     platform/text/mac/TextBoundaries.mm
-    platform/text/mac/TextCodecMac.cpp
     platform/text/mac/TextEncodingRegistryMac.mm
 
     rendering/RenderThemeCocoa.mm
