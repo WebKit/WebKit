@@ -380,10 +380,8 @@ void FETurbulence::fillRegion(Uint8ClampedArray* pixelArray, const PaintingData&
             point.setX(point.x() + 1);
             FloatPoint localPoint = inverseTransfrom.mapPoint(point);
             ColorComponents values = calculateTurbulenceValueForPoint(paintingData, stitchData, localPoint);
-            pixelArray->set(indexOfPixelChannel++, values.components[0]);
-            pixelArray->set(indexOfPixelChannel++, values.components[1]);
-            pixelArray->set(indexOfPixelChannel++, values.components[2]);
-            pixelArray->set(indexOfPixelChannel++, values.components[3]);
+            pixelArray->setRange(values.components, 4, indexOfPixelChannel);
+            indexOfPixelChannel += 4;
         }
     }
 }
