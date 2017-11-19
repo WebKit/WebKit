@@ -1,5 +1,15 @@
 2017-11-18  Simon Fraser  <simon.fraser@apple.com>
 
+        Line of garbage pixels at the bottom of an feTurbulence sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=179866
+
+        Reviewed by Wenson Hsieh.
+
+        * svg/filters/feTurbulence-parallel-jobs-expected.html: Added.
+        * svg/filters/feTurbulence-parallel-jobs.html: Added.
+
+2017-11-18  Simon Fraser  <simon.fraser@apple.com>
+
         More FETurbulence cleanup
         https://bugs.webkit.org/show_bug.cgi?id=179863
 

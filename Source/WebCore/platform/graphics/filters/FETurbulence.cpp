@@ -413,39 +413,44 @@ void FETurbulence::platformApplySoftware()
     PaintingData paintingData(m_seed, tileSize, baseFrequencyX, baseFrequencyY);
     initPaint(paintingData);
 
-    int optimalThreadNumber = (absolutePaintRect().width() * absolutePaintRect().height()) / s_minimalRectDimension;
+    int height = absolutePaintRect().height();
+
+    auto area = absolutePaintRect().area();
+    if (area.hasOverflowed())
+        return;
+
+    unsigned optimalThreadNumber = area.unsafeGet() / s_minimalRectDimension;
     if (optimalThreadNumber > 1) {
-        // Initialize parallel jobs
         WTF::ParallelJobs<FillRegionParameters> parallelJobs(&WebCore::FETurbulence::fillRegionWorker, optimalThreadNumber);
 
         // Fill the parameter array
-        int i = parallelJobs.numberOfJobs();
-        if (i > 1) {
-            // Split the job into "stepY"-sized jobs but there a few jobs that need to be slightly larger since
-            // stepY * jobs < total size. These extras are handled by the remainder "jobsWithExtra".
-            const int stepY = absolutePaintRect().height() / i;
-            const int jobsWithExtra = absolutePaintRect().height() % i;
+        unsigned numJobs = parallelJobs.numberOfJobs();
+        if (numJobs > 1) {
+            // Split the job into "stepY"-sized jobs, distributing the extra rows into the first "jobsWithExtra" jobs.
+            unsigned stepY = height / numJobs;
+            unsigned jobsWithExtra = height % numJobs;
+            unsigned startY = 0;
 
-            int startY = 0;
-            for (; i > 0; --i) {
-                FillRegionParameters& params = parallelJobs.parameter(i - 1);
+            for (unsigned i = 0; i < numJobs; ++i) {
+                FillRegionParameters& params = parallelJobs.parameter(i);
                 params.filter = this;
                 params.pixelArray = pixelArray;
                 params.paintingData = &paintingData;
                 params.stitchData = stitchData;
                 params.startY = startY;
-                startY += i < jobsWithExtra ? stepY + 1 : stepY;
-                params.endY = startY;
+
+                unsigned jobHeight = (i < jobsWithExtra) ? stepY + 1 : stepY;
+                params.endY = params.startY + jobHeight;
+                startY += jobHeight;
             }
 
-            // Execute parallel jobs
             parallelJobs.execute();
             return;
         }
     }
 
     // Fallback to single threaded mode if there is no room for a new thread or the paint area is too small.
-    fillRegion(pixelArray, paintingData, stitchData, 0, absolutePaintRect().height());
+    fillRegion(pixelArray, paintingData, stitchData, 0, height);
 }
 
 void FETurbulence::dump()
