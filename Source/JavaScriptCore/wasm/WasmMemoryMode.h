@@ -42,4 +42,4 @@ JS_EXPORT_PRIVATE const char* makeString(MemoryMode);
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMLY)
+#endif // ENABLE(WEBASSEMBLY)

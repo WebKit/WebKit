@@ -62,4 +62,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM && PLATFORM(MAC)
+#endif // ENABLE(MEDIA_STREAM) && PLATFORM(MAC)

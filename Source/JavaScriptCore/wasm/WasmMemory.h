@@ -117,4 +117,4 @@ public:
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMLY)
+#endif // ENABLE(WEBASSEMBLY)
