@@ -1140,7 +1140,7 @@ AccessibilityObjectInclusion AccessibilityRenderObject::defaultObjectInclusion()
 
     if (m_renderer->style().visibility() != VISIBLE) {
         // aria-hidden is meant to override visibility as the determinant in AX hierarchy inclusion.
-        if (std::optional<bool> hidden = boolValueForProperty(AXPropertyName::Hidden)) {
+        if (auto hidden = boolValueForProperty(AXPropertyName::Hidden)) {
             if (!hidden.value())
                 return AccessibilityObjectInclusion::DefaultBehavior;
         }
@@ -3279,7 +3279,7 @@ const String AccessibilityRenderObject::liveRegionRelevant() const
 
 bool AccessibilityRenderObject::liveRegionAtomic() const
 {
-    if (std::optional<bool> atomic = boolValueForProperty(AXPropertyName::Atomic))
+    if (auto atomic = boolValueForProperty(AXPropertyName::Atomic))
         return atomic.value();
 
     // WAI-ARIA "alert" and "status" roles have an implicit aria-atomic value of true.

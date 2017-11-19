@@ -708,10 +708,10 @@ public:
     bool isModalDescendant(Node*) const;
     bool isModalNode() const;
     
-    bool supportsARIASetSize() const;
-    bool supportsARIAPosInSet() const;
-    int ariaSetSize() const;
-    int ariaPosInSet() const;
+    bool supportsSetSize() const;
+    bool supportsPosInSet() const;
+    int setSize() const;
+    int posInSet() const;
     
     // ARIA drag and drop
     virtual bool supportsARIADropping() const { return false; }
@@ -896,6 +896,9 @@ public:
     bool hasProperty(AXPropertyName) const;
     const String stringValueForProperty(AXPropertyName) const;
     std::optional<bool> boolValueForProperty(AXPropertyName) const;
+    int intValueForProperty(AXPropertyName) const;
+    unsigned unsignedValueForProperty(AXPropertyName) const;
+    double doubleValueForProperty(AXPropertyName) const;
 
     virtual VisiblePositionRange visiblePositionRange() const { return VisiblePositionRange(); }
     virtual VisiblePositionRange visiblePositionRangeForLine(unsigned) const { return VisiblePositionRange(); }

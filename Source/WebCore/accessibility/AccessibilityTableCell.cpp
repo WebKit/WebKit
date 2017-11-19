@@ -32,6 +32,7 @@
 #include "AXObjectCache.h"
 #include "AccessibilityTable.h"
 #include "AccessibilityTableRow.h"
+#include "AccessibleNode.h"
 #include "ElementIterator.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
@@ -44,7 +45,7 @@ using namespace HTMLNames;
 
 AccessibilityTableCell::AccessibilityTableCell(RenderObject* renderer)
     : AccessibilityRenderObject(renderer)
-    , m_ariaColIndexFromRow(-1)
+    , m_axColIndexFromRow(-1)
 {
 }
 
@@ -320,7 +321,7 @@ void AccessibilityTableCell::rowIndexRange(std::pair<unsigned, unsigned>& rowRan
     // ARIA 1.1's aria-rowspan attribute is intended for cells and gridcells which are not contained
     // in a native table. But if we have a valid author-provided value and do not have an explicit
     // native host language value for the rowspan, expose the ARIA value.
-    rowRange.second = ariaRowSpan();
+    rowRange.second = axRowSpan();
     if (static_cast<int>(rowRange.second) == -1)
         rowRange.second = renderCell.rowSpan();
     
@@ -339,7 +340,7 @@ void AccessibilityTableCell::columnIndexRange(std::pair<unsigned, unsigned>& col
     // ARIA 1.1's aria-colspan attribute is intended for cells and gridcells which are not contained
     // in a native table. But if we have a valid author-provided value and do not have an explicit
     // native host language value for the colspan, expose the ARIA value.
-    columnRange.second = ariaColumnSpan();
+    columnRange.second = axColumnSpan();
     if (static_cast<int>(columnRange.second) != -1)
         return;
 
@@ -383,66 +384,66 @@ AccessibilityObject* AccessibilityTableCell::titleUIElement() const
     return axObjectCache()->getOrCreate(headerCell);
 }
     
-int AccessibilityTableCell::ariaColumnIndex() const
+int AccessibilityTableCell::axColumnIndex() const
 {
-    const AtomicString& colIndexValue = getAttribute(aria_colindexAttr);
-    if (colIndexValue.toInt() >= 1)
-        return colIndexValue.toInt();
+    unsigned colIndexValue = unsignedValueForProperty(AXPropertyName::ColIndex);
+    if (colIndexValue >= 1)
+        return colIndexValue;
     
     // "ARIA 1.1: If the set of columns which is present in the DOM is contiguous, and if there are no cells which span more than one row
     // or column in that set, then authors may place aria-colindex on each row, setting the value to the index of the first column of the set."
     // Here, we let its parent row to set its index beforehand, so we don't have to go through the siblings to calculate the index.
     AccessibilityTableRow* parentRow = this->parentRow();
-    if (parentRow && m_ariaColIndexFromRow != -1)
-        return m_ariaColIndexFromRow;
+    if (parentRow && m_axColIndexFromRow != -1)
+        return m_axColIndexFromRow;
     
     return -1;
 }
     
-int AccessibilityTableCell::ariaRowIndex() const
+int AccessibilityTableCell::axRowIndex() const
 {
     // ARIA 1.1: Authors should place aria-rowindex on each row. Authors may also place
     // aria-rowindex on all of the children or owned elements of each row.
-    const AtomicString& rowIndexValue = getAttribute(aria_rowindexAttr);
-    if (rowIndexValue.toInt() >= 1)
-        return rowIndexValue.toInt();
+    unsigned rowIndexValue = unsignedValueForProperty(AXPropertyName::RowIndex);
+    if (rowIndexValue >= 1)
+        return rowIndexValue;
     
     if (AccessibilityTableRow* parentRow = this->parentRow())
-        return parentRow->ariaRowIndex();
+        return parentRow->axRowIndex();
     
     return -1;
 }
 
-int AccessibilityTableCell::ariaColumnSpan() const
+int AccessibilityTableCell::axColumnSpan() const
 {
     // According to the ARIA spec, "If aria-colpan is used on an element for which the host language
     // provides an equivalent attribute, user agents must ignore the value of aria-colspan."
     if (hasAttribute(colspanAttr))
         return -1;
 
-    const AtomicString& colSpanValue = getAttribute(aria_colspanAttr);
+    unsigned colSpanValue = unsignedValueForProperty(AXPropertyName::ColSpan);
     // ARIA 1.1: Authors must set the value of aria-colspan to an integer greater than or equal to 1.
-    if (colSpanValue.toInt() >= 1)
-        return colSpanValue.toInt();
+    if (colSpanValue >= 1)
+        return colSpanValue;
     
     return -1;
 }
 
-int AccessibilityTableCell::ariaRowSpan() const
+int AccessibilityTableCell::axRowSpan() const
 {
     // According to the ARIA spec, "If aria-rowspan is used on an element for which the host language
     // provides an equivalent attribute, user agents must ignore the value of aria-rowspan."
     if (hasAttribute(rowspanAttr))
         return -1;
 
-    const AtomicString& rowSpanValue = getAttribute(aria_rowspanAttr);
+    unsigned rowSpanValue = unsignedValueForProperty(AXPropertyName::RowSpan);
     
     // ARIA 1.1: Authors must set the value of aria-rowspan to an integer greater than or equal to 0.
     // Setting the value to 0 indicates that the cell or gridcell is to span all the remaining rows in the row group.
-    if (rowSpanValue == "0")
+    if (hasProperty(AXPropertyName::RowSpan) && !rowSpanValue)
         return 0;
-    if (rowSpanValue.toInt() >= 1)
-        return rowSpanValue.toInt();
+    if (rowSpanValue >= 1)
+        return rowSpanValue;
     
     return -1;
 }

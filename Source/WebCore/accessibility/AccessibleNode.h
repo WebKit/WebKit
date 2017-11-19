@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-typedef Variant<std::nullptr_t, String, bool, int> PropertyValueVariant;
+typedef Variant<std::nullptr_t, String, bool, int, unsigned, double> PropertyValueVariant;
 
 enum class AXPropertyName {
     None,
@@ -44,6 +44,9 @@ enum class AXPropertyName {
     Autocomplete,
     Busy,
     Checked,
+    ColCount,
+    ColIndex,
+    ColSpan,
     Current,
     Disabled,
     Expanded,
@@ -52,20 +55,29 @@ enum class AXPropertyName {
     Invalid,
     KeyShortcuts,
     Label,
+    Level,
     Live,
     Modal,
     Multiline,
     Multiselectable,
     Orientation,
     Placeholder,
+    PosInSet,
     Pressed,
     ReadOnly,
     Relevant,
     Required,
     Role,
     RoleDescription,
+    RowCount,
+    RowIndex,
+    RowSpan,
     Selected,
+    SetSize,
     Sort,
+    ValueMax,
+    ValueMin,
+    ValueNow,
     ValueText
 };
 
@@ -95,6 +107,9 @@ public:
 
     static const String effectiveStringValueForElement(Element&, AXPropertyName);
     static std::optional<bool> effectiveBoolValueForElement(Element&, AXPropertyName);
+    static int effectiveIntValueForElement(Element&, AXPropertyName);
+    static unsigned effectiveUnsignedValueForElement(Element&, AXPropertyName);
+    static double effectiveDoubleValueForElement(Element&, AXPropertyName);
     static bool hasProperty(Element&, AXPropertyName);
 
     std::optional<bool> atomic() const;
@@ -108,6 +123,15 @@ public:
 
     String checked() const;
     void setChecked(const String&);
+
+    std::optional<int> colCount() const;
+    void setColCount(std::optional<int>);
+
+    std::optional<unsigned> colIndex() const;
+    void setColIndex(std::optional<unsigned>);
+
+    std::optional<unsigned> colSpan() const;
+    void setColSpan(std::optional<unsigned>);
 
     String current() const;
     void setCurrent(const String&);
@@ -130,11 +154,14 @@ public:
     String keyShortcuts() const;
     void setKeyShortcuts(const String&);
 
-    String live() const;
-    void setLive(const String&);
-
     String label() const;
     void setLabel(const String&);
+
+    std::optional<unsigned> level() const;
+    void setLevel(std::optional<unsigned>);
+
+    String live() const;
+    void setLive(const String&);
 
     std::optional<bool> modal() const;
     void setModal(std::optional<bool>);
@@ -151,6 +178,9 @@ public:
     String placeholder() const;
     void setPlaceholder(const String&);
 
+    std::optional<unsigned> posInSet() const;
+    void setPosInSet(std::optional<unsigned>);
+    
     String pressed() const;
     void setPressed(const String&);
 
@@ -169,11 +199,32 @@ public:
     String roleDescription() const;
     void setRoleDescription(const String&);
 
+    std::optional<int> rowCount() const;
+    void setRowCount(std::optional<int>);
+
+    std::optional<unsigned> rowIndex() const;
+    void setRowIndex(std::optional<unsigned>);
+
+    std::optional<unsigned> rowSpan() const;
+    void setRowSpan(std::optional<unsigned>);
+
     std::optional<bool> selected() const;
     void setSelected(std::optional<bool>);
 
+    std::optional<int> setSize() const;
+    void setSetSize(std::optional<int>);
+
     String sort() const;
     void setSort(const String&);
+
+    std::optional<double> valueMax() const;
+    void setValueMax(std::optional<double>);
+
+    std::optional<double> valueMin() const;
+    void setValueMin(std::optional<double>);
+
+    std::optional<double> valueNow() const;
+    void setValueNow(std::optional<double>);
 
     String valueText() const;
     void setValueText(const String&);
@@ -181,9 +232,11 @@ public:
 private:
     static const PropertyValueVariant valueForProperty(Element&, AXPropertyName);
     static const String stringValueForProperty(Element&, AXPropertyName);
-    static std::optional<bool> boolValueForProperty(Element&, AXPropertyName);
-    void setStringProperty(const String&, AXPropertyName);
-    void setBoolProperty(std::optional<bool>, AXPropertyName);
+    template<typename T> static std::optional<T> optionalValueForProperty(Element&, AXPropertyName);
+    
+    void setProperty(AXPropertyName, PropertyValueVariant&&, bool);
+    template<typename T> void setOptionalProperty(AXPropertyName, std::optional<T>);
+    void setStringProperty(AXPropertyName, const String&);
     
     void notifyAttributeChanged(const WebCore::QualifiedName&);
 

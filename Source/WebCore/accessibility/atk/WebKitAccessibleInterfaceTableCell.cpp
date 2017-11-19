@@ -120,7 +120,7 @@ gboolean webkitAccessibleTableCellGetPosition(AtkTableCell* cell, gint* row, gin
     std::pair<unsigned, unsigned> columnRowRange;
     if (row) {
         // aria-rowindex is 1-based.
-        int rowIndex = downcast<AccessibilityTableCell>(*axObject).ariaRowIndex() - 1;
+        int rowIndex = downcast<AccessibilityTableCell>(*axObject).axRowIndex() - 1;
         if (rowIndex <= -1) {
             downcast<AccessibilityTableCell>(*axObject).rowIndexRange(columnRowRange);
             rowIndex = columnRowRange.first;
@@ -129,7 +129,7 @@ gboolean webkitAccessibleTableCellGetPosition(AtkTableCell* cell, gint* row, gin
     }
     if (column) {
         // aria-colindex is 1-based.
-        int columnIndex = downcast<AccessibilityTableCell>(*axObject).ariaColumnIndex() - 1;
+        int columnIndex = downcast<AccessibilityTableCell>(*axObject).axColumnIndex() - 1;
         if (columnIndex <= -1) {
             downcast<AccessibilityTableCell>(*axObject).columnIndexRange(columnRowRange);
             columnIndex = columnRowRange.first;

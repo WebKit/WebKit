@@ -1,3 +1,13 @@
+2017-11-18  Nan Wang  <n_wang@apple.com>
+
+        AX: AOM: Implement number type properties
+        https://bugs.webkit.org/show_bug.cgi?id=179497
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/AOM-number-properties-expected.txt: Added.
+        * accessibility/mac/AOM-number-properties.html: Added.
+
 2017-11-18  Maciej Stachowiak  <mjs@apple.com>
 
         Remove TEC support and all TEC-only encodings except EUC-TW (which now uses ICU)

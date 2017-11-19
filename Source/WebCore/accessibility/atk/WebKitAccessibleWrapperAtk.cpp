@@ -464,33 +464,33 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
 
     if (is<AccessibilityTable>(*coreObject) && downcast<AccessibilityTable>(*coreObject).isExposableThroughAccessibility()) {
         auto& table = downcast<AccessibilityTable>(*coreObject);
-        int rowCount = table.ariaRowCount();
+        int rowCount = table.axRowCount();
         if (rowCount)
             attributeSet = addToAtkAttributeSet(attributeSet, "rowcount", String::number(rowCount).utf8().data());
 
-        int columnCount = table.ariaColumnCount();
+        int columnCount = table.axColumnCount();
         if (columnCount)
             attributeSet = addToAtkAttributeSet(attributeSet, "colcount", String::number(columnCount).utf8().data());
     } else if (is<AccessibilityTableRow>(*coreObject)) {
         auto& row = downcast<AccessibilityTableRow>(*coreObject);
-        int rowIndex = row.ariaRowIndex();
+        int rowIndex = row.axRowIndex();
         if (rowIndex != -1)
             attributeSet = addToAtkAttributeSet(attributeSet, "rowindex", String::number(rowIndex).utf8().data());
     } else if (is<AccessibilityTableCell>(*coreObject)) {
         auto& cell = downcast<AccessibilityTableCell>(*coreObject);
-        int rowIndex = cell.ariaRowIndex();
+        int rowIndex = cell.axRowIndex();
         if (rowIndex != -1)
             attributeSet = addToAtkAttributeSet(attributeSet, "rowindex", String::number(rowIndex).utf8().data());
 
-        int columnIndex = cell.ariaColumnIndex();
+        int columnIndex = cell.axColumnIndex();
         if (columnIndex != -1)
             attributeSet = addToAtkAttributeSet(attributeSet, "colindex", String::number(columnIndex).utf8().data());
 
-        int rowSpan = cell.ariaRowSpan();
+        int rowSpan = cell.axRowSpan();
         if (rowSpan != -1)
             attributeSet = addToAtkAttributeSet(attributeSet, "rowspan", String::number(rowSpan).utf8().data());
 
-        int columnSpan = cell.ariaColumnSpan();
+        int columnSpan = cell.axColumnSpan();
         if (columnSpan != -1)
             attributeSet = addToAtkAttributeSet(attributeSet, "colspan", String::number(columnSpan).utf8().data());
     }
@@ -527,11 +527,11 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
         }
     }
 
-    if (coreObject->supportsARIAPosInSet())
-        attributeSet = addToAtkAttributeSet(attributeSet, "posinset", String::number(coreObject->ariaPosInSet()).utf8().data());
+    if (coreObject->supportsPosInSet())
+        attributeSet = addToAtkAttributeSet(attributeSet, "posinset", String::number(coreObject->posInSet()).utf8().data());
 
-    if (coreObject->supportsARIASetSize())
-        attributeSet = addToAtkAttributeSet(attributeSet, "setsize", String::number(coreObject->ariaSetSize()).utf8().data());
+    if (coreObject->supportsSetSize())
+        attributeSet = addToAtkAttributeSet(attributeSet, "setsize", String::number(coreObject->setSize()).utf8().data());
 
     String isReadOnly = coreObject->readOnlyValue();
     if (!isReadOnly.isEmpty())

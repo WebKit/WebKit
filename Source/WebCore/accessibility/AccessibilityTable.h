@@ -74,8 +74,8 @@ public:
     // isExposableThroughAccessibility() is whether it is exposed as an AccessibilityTable to the platform.
     bool isExposableThroughAccessibility() const;
     
-    int ariaColumnCount() const;
-    int ariaRowCount() const;
+    int axColumnCount() const;
+    int axRowCount() const;
 
 protected:
     explicit AccessibilityTable(RenderObject*);

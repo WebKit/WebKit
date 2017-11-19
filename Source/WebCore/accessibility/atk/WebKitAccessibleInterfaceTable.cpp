@@ -152,7 +152,7 @@ static gint webkitAccessibleTableGetNColumns(AtkTable* table)
     if (!is<AccessibilityTable>(*accTable))
         return 0;
 
-    if (int columnCount = downcast<AccessibilityTable>(*accTable).ariaColumnCount())
+    if (int columnCount = downcast<AccessibilityTable>(*accTable).axColumnCount())
         return columnCount;
 
     return downcast<AccessibilityTable>(*accTable).columnCount();
@@ -167,7 +167,7 @@ static gint webkitAccessibleTableGetNRows(AtkTable* table)
     if (!is<AccessibilityTable>(*accTable))
         return 0;
 
-    if (int rowCount = downcast<AccessibilityTable>(*accTable).ariaRowCount())
+    if (int rowCount = downcast<AccessibilityTable>(*accTable).axRowCount())
         return rowCount;
 
     return downcast<AccessibilityTable>(*accTable).rowCount();

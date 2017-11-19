@@ -49,6 +49,9 @@ static ARIAAttributeMap& ariaAttributeMap()
             { AXPropertyName::Autocomplete, aria_autocompleteAttr },
             { AXPropertyName::Busy, aria_busyAttr },
             { AXPropertyName::Checked, aria_checkedAttr },
+            { AXPropertyName::ColCount, aria_colcountAttr },
+            { AXPropertyName::ColIndex, aria_colindexAttr },
+            { AXPropertyName::ColSpan, aria_colspanAttr },
             { AXPropertyName::Current, aria_currentAttr },
             { AXPropertyName::Disabled, aria_disabledAttr },
             { AXPropertyName::Expanded, aria_expandedAttr },
@@ -57,20 +60,29 @@ static ARIAAttributeMap& ariaAttributeMap()
             { AXPropertyName::Invalid, aria_invalidAttr },
             { AXPropertyName::KeyShortcuts, aria_keyshortcutsAttr },
             { AXPropertyName::Label, aria_labelAttr },
+            { AXPropertyName::Level, aria_levelAttr },
             { AXPropertyName::Live, aria_liveAttr },
             { AXPropertyName::Modal, aria_modalAttr },
             { AXPropertyName::Multiline, aria_multilineAttr },
             { AXPropertyName::Multiselectable, aria_multiselectableAttr },
             { AXPropertyName::Orientation, aria_orientationAttr },
             { AXPropertyName::Placeholder, aria_placeholderAttr },
+            { AXPropertyName::PosInSet, aria_posinsetAttr },
             { AXPropertyName::Pressed, aria_pressedAttr },
             { AXPropertyName::ReadOnly, aria_readonlyAttr },
             { AXPropertyName::Relevant, aria_relevantAttr },
             { AXPropertyName::Required, aria_requiredAttr },
             { AXPropertyName::Role, roleAttr },
             { AXPropertyName::RoleDescription, aria_roledescriptionAttr },
+            { AXPropertyName::RowCount, aria_rowcountAttr },
+            { AXPropertyName::RowIndex, aria_rowindexAttr },
+            { AXPropertyName::RowSpan, aria_rowspanAttr },
             { AXPropertyName::Selected, aria_selectedAttr },
+            { AXPropertyName::SetSize, aria_setsizeAttr },
             { AXPropertyName::Sort, aria_sortAttr },
+            { AXPropertyName::ValueMax, aria_valuemaxAttr },
+            { AXPropertyName::ValueMin, aria_valueminAttr },
+            { AXPropertyName::ValueNow, aria_valuenowAttr },
             { AXPropertyName::ValueText, aria_valuetextAttr }
         };
         ARIAAttributeMap map;
@@ -126,6 +138,45 @@ static bool isPropertyValueBoolean(AXPropertyName propertyName)
     }
 }
 
+static bool isPropertyValueInt(AXPropertyName propertyName)
+{
+    switch (propertyName) {
+    case AXPropertyName::ColCount:
+    case AXPropertyName::RowCount:
+    case AXPropertyName::SetSize:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool isPropertyValueUnsigned(AXPropertyName propertyName)
+{
+    switch (propertyName) {
+    case AXPropertyName::ColIndex:
+    case AXPropertyName::ColSpan:
+    case AXPropertyName::Level:
+    case AXPropertyName::PosInSet:
+    case AXPropertyName::RowIndex:
+    case AXPropertyName::RowSpan:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool isPropertyValueFloat(AXPropertyName propertyName)
+{
+    switch (propertyName) {
+    case AXPropertyName::ValueMax:
+    case AXPropertyName::ValueMin:
+    case AXPropertyName::ValueNow:
+        return true;
+    default:
+        return false;
+    }
+}
+
 bool AccessibleNode::hasProperty(Element& element, AXPropertyName propertyName)
 {
     if (auto* accessibleNode = element.existingAccessibleNode()) {
@@ -149,6 +200,26 @@ const PropertyValueVariant AccessibleNode::valueForProperty(Element& element, AX
     return nullptr;
 }
 
+void AccessibleNode::setProperty(AXPropertyName propertyName, PropertyValueVariant&& value, bool shouldRemove)
+{
+    if (shouldRemove) {
+        m_propertyMap.remove(propertyName);
+        return;
+    }
+    m_propertyMap.set(propertyName, value);
+}
+
+template<typename T>
+void AccessibleNode::setOptionalProperty(AXPropertyName propertyName, std::optional<T> optional)
+{
+    setProperty(propertyName, optional.value(), !optional.has_value());
+}
+
+void AccessibleNode::setStringProperty(AXPropertyName propertyName, const String& value)
+{
+    setProperty(propertyName, value, value.isEmpty());
+}
+
 const String AccessibleNode::effectiveStringValueForElement(Element& element, AXPropertyName propertyName)
 {
     const String& value = stringValueForProperty(element, propertyName);
@@ -169,18 +240,20 @@ const String AccessibleNode::stringValueForProperty(Element& element, AXProperty
     return nullAtom();
 }
 
-void AccessibleNode::setStringProperty(const String& value, AXPropertyName propertyName)
+template<typename T>
+std::optional<T> AccessibleNode::optionalValueForProperty(Element& element, AXPropertyName propertyName)
 {
-    if (value.isEmpty()) {
-        m_propertyMap.remove(propertyName);
-        return;
-    }
-    m_propertyMap.set(propertyName, value);
+    const PropertyValueVariant&& variant = AccessibleNode::valueForProperty(element, propertyName);
+    if (WTF::holds_alternative<std::nullptr_t>(variant))
+        return std::nullopt;
+    if (WTF::holds_alternative<T>(variant))
+        return WTF::get<T>(variant);
+    return std::nullopt;
 }
 
 std::optional<bool> AccessibleNode::effectiveBoolValueForElement(Element& element, AXPropertyName propertyName)
 {
-    std::optional<bool> value = boolValueForProperty(element, propertyName);
+    auto value = optionalValueForProperty<bool>(element, propertyName);
     if (value)
         return *value;
 
@@ -195,23 +268,42 @@ std::optional<bool> AccessibleNode::effectiveBoolValueForElement(Element& elemen
     return std::nullopt;
 }
 
-std::optional<bool> AccessibleNode::boolValueForProperty(Element& element, AXPropertyName propertyName)
+int AccessibleNode::effectiveIntValueForElement(Element& element, AXPropertyName propertyName)
 {
-    const PropertyValueVariant&& variant = AccessibleNode::valueForProperty(element, propertyName);
-    if (WTF::holds_alternative<std::nullptr_t>(variant))
-        return std::nullopt;
-    if (WTF::holds_alternative<bool>(variant))
-        return WTF::get<bool>(variant);
-    return std::nullopt;
+    auto value = optionalValueForProperty<int>(element, propertyName);
+    if (value)
+        return *value;
+
+    if (ariaAttributeMap().contains(propertyName) && isPropertyValueInt(propertyName))
+        return element.attributeWithoutSynchronization(ariaAttributeMap().get(propertyName)).toInt();
+
+    return 0;
 }
 
-void AccessibleNode::setBoolProperty(std::optional<bool> value, AXPropertyName propertyName)
+unsigned AccessibleNode::effectiveUnsignedValueForElement(Element& element, AXPropertyName propertyName)
 {
-    if (!value) {
-        m_propertyMap.remove(propertyName);
-        return;
+    auto value = optionalValueForProperty<unsigned>(element, propertyName);
+    if (value)
+        return *value;
+
+    if (ariaAttributeMap().contains(propertyName) && isPropertyValueUnsigned(propertyName)) {
+        const String& value = element.attributeWithoutSynchronization(ariaAttributeMap().get(propertyName));
+        return value.toUInt();
     }
-    m_propertyMap.set(propertyName, *value);
+
+    return 0;
+}
+
+double AccessibleNode::effectiveDoubleValueForElement(Element& element, AXPropertyName propertyName)
+{
+    auto value = optionalValueForProperty<double>(element, propertyName);
+    if (value)
+        return *value;
+
+    if (ariaAttributeMap().contains(propertyName) && isPropertyValueFloat(propertyName))
+        return element.attributeWithoutSynchronization(ariaAttributeMap().get(propertyName)).toDouble();
+
+    return 0.0;
 }
 
 void AccessibleNode::notifyAttributeChanged(const WebCore::QualifiedName& name)
@@ -222,12 +314,12 @@ void AccessibleNode::notifyAttributeChanged(const WebCore::QualifiedName& name)
 
 std::optional<bool> AccessibleNode::atomic() const
 {
-    return boolValueForProperty(m_ownerElement, AXPropertyName::Atomic);
+    return optionalValueForProperty<bool>(m_ownerElement, AXPropertyName::Atomic);
 }
 
 void AccessibleNode::setAtomic(std::optional<bool> value)
 {
-    setBoolProperty(value, AXPropertyName::Atomic);
+    setOptionalProperty<bool>(AXPropertyName::Atomic, value);
     notifyAttributeChanged(aria_atomicAttr);
 }
 
@@ -238,18 +330,18 @@ String AccessibleNode::autocomplete() const
 
 void AccessibleNode::setAutocomplete(const String& autocomplete)
 {
-    setStringProperty(autocomplete, AXPropertyName::Autocomplete);
+    setStringProperty(AXPropertyName::Autocomplete, autocomplete);
     notifyAttributeChanged(aria_autocompleteAttr);
 }
 
 std::optional<bool> AccessibleNode::busy() const
 {
-    return boolValueForProperty(m_ownerElement, AXPropertyName::Busy);
+    return optionalValueForProperty<bool>(m_ownerElement, AXPropertyName::Busy);
 }
 
 void AccessibleNode::setBusy(std::optional<bool> value)
 {
-    setBoolProperty(value, AXPropertyName::Busy);
+    setOptionalProperty<bool>(AXPropertyName::Busy, value);
     notifyAttributeChanged(aria_busyAttr);
 }
 
@@ -260,8 +352,41 @@ String AccessibleNode::checked() const
 
 void AccessibleNode::setChecked(const String& checked)
 {
-    setStringProperty(checked, AXPropertyName::Checked);
+    setStringProperty(AXPropertyName::Checked, checked);
     notifyAttributeChanged(aria_checkedAttr);
+}
+
+std::optional<int> AccessibleNode::colCount() const
+{
+    return optionalValueForProperty<int>(m_ownerElement, AXPropertyName::ColCount);
+}
+
+void AccessibleNode::setColCount(std::optional<int> value)
+{
+    setOptionalProperty<int>(AXPropertyName::ColCount, value);
+    notifyAttributeChanged(aria_colcountAttr);
+}
+
+std::optional<unsigned> AccessibleNode::colIndex() const
+{
+    return optionalValueForProperty<unsigned>(m_ownerElement, AXPropertyName::ColCount);
+}
+
+void AccessibleNode::setColIndex(std::optional<unsigned> value)
+{
+    setOptionalProperty<unsigned>(AXPropertyName::ColIndex, value);
+    notifyAttributeChanged(aria_colindexAttr);
+}
+
+std::optional<unsigned> AccessibleNode::colSpan() const
+{
+    return optionalValueForProperty<unsigned>(m_ownerElement, AXPropertyName::ColSpan);
+}
+
+void AccessibleNode::setColSpan(std::optional<unsigned> value)
+{
+    setOptionalProperty<unsigned>(AXPropertyName::ColSpan, value);
+    notifyAttributeChanged(aria_colspanAttr);
 }
 
 String AccessibleNode::current() const
@@ -271,29 +396,29 @@ String AccessibleNode::current() const
 
 void AccessibleNode::setCurrent(const String& current)
 {
-    setStringProperty(current, AXPropertyName::Current);
+    setStringProperty(AXPropertyName::Current, current);
     notifyAttributeChanged(aria_currentAttr);
 }
 
 std::optional<bool> AccessibleNode::disabled() const
 {
-    return boolValueForProperty(m_ownerElement, AXPropertyName::Disabled);
+    return optionalValueForProperty<bool>(m_ownerElement, AXPropertyName::Disabled);
 }
 
 void AccessibleNode::setDisabled(std::optional<bool> value)
 {
-    setBoolProperty(value, AXPropertyName::Disabled);
+    setOptionalProperty<bool>(AXPropertyName::Disabled, value);
     notifyAttributeChanged(aria_disabledAttr);
 }
 
 std::optional<bool> AccessibleNode::expanded() const
 {
-    return boolValueForProperty(m_ownerElement, AXPropertyName::Expanded);
+    return optionalValueForProperty<bool>(m_ownerElement, AXPropertyName::Expanded);
 }
 
 void AccessibleNode::setExpanded(std::optional<bool> value)
 {
-    setBoolProperty(value, AXPropertyName::Expanded);
+    setOptionalProperty<bool>(AXPropertyName::Expanded, value);
     notifyAttributeChanged(aria_expandedAttr);
 }
 
@@ -304,18 +429,18 @@ String AccessibleNode::hasPopUp() const
 
 void AccessibleNode::setHasPopUp(const String& hasPopUp)
 {
-    setStringProperty(hasPopUp, AXPropertyName::HasPopUp);
+    setStringProperty(AXPropertyName::HasPopUp, hasPopUp);
     notifyAttributeChanged(aria_haspopupAttr);
 }
 
 std::optional<bool> AccessibleNode::hidden() const
 {
-    return boolValueForProperty(m_ownerElement, AXPropertyName::Hidden);
+    return optionalValueForProperty<bool>(m_ownerElement, AXPropertyName::Hidden);
 }
 
 void AccessibleNode::setHidden(std::optional<bool> value)
 {
-    setBoolProperty(value, AXPropertyName::Hidden);
+    setOptionalProperty<bool>(AXPropertyName::Hidden, value);
     notifyAttributeChanged(aria_hiddenAttr);
 }
 
@@ -326,7 +451,7 @@ String AccessibleNode::invalid() const
 
 void AccessibleNode::setInvalid(const String& invalid)
 {
-    setStringProperty(invalid, AXPropertyName::Invalid);
+    setStringProperty(AXPropertyName::Invalid, invalid);
     notifyAttributeChanged(aria_invalidAttr);
 }
 
@@ -337,19 +462,8 @@ String AccessibleNode::keyShortcuts() const
 
 void AccessibleNode::setKeyShortcuts(const String& keyShortcuts)
 {
-    setStringProperty(keyShortcuts, AXPropertyName::KeyShortcuts);
+    setStringProperty(AXPropertyName::KeyShortcuts, keyShortcuts);
     notifyAttributeChanged(aria_keyshortcutsAttr);
-}
-
-String AccessibleNode::live() const
-{
-    return stringValueForProperty(m_ownerElement, AXPropertyName::Live);
-}
-
-void AccessibleNode::setLive(const String& live)
-{
-    setStringProperty(live, AXPropertyName::Live);
-    notifyAttributeChanged(aria_liveAttr);
 }
 
 String AccessibleNode::label() const
@@ -359,40 +473,62 @@ String AccessibleNode::label() const
 
 void AccessibleNode::setLabel(const String& label)
 {
-    setStringProperty(label, AXPropertyName::Label);
+    setStringProperty(AXPropertyName::Label, label);
     notifyAttributeChanged(aria_labelAttr);
+}
+
+std::optional<unsigned> AccessibleNode::level() const
+{
+    return optionalValueForProperty<unsigned>(m_ownerElement, AXPropertyName::Level);
+}
+
+void AccessibleNode::setLevel(std::optional<unsigned> value)
+{
+    setOptionalProperty<unsigned>(AXPropertyName::Level, value);
+    notifyAttributeChanged(aria_levelAttr);
+}
+
+String AccessibleNode::live() const
+{
+    return stringValueForProperty(m_ownerElement, AXPropertyName::Live);
+}
+
+void AccessibleNode::setLive(const String& live)
+{
+    setStringProperty(AXPropertyName::Live, live);
+    notifyAttributeChanged(aria_liveAttr);
 }
 
 std::optional<bool> AccessibleNode::modal() const
 {
-    return boolValueForProperty(m_ownerElement, AXPropertyName::Modal);
+    return optionalValueForProperty<bool>(m_ownerElement, AXPropertyName::Modal);
 }
 
 void AccessibleNode::setModal(std::optional<bool> value)
 {
-    setBoolProperty(value, AXPropertyName::Modal);
+    setOptionalProperty<bool>(AXPropertyName::Modal, value);
     notifyAttributeChanged(aria_modalAttr);
 }
 
 std::optional<bool> AccessibleNode::multiline() const
 {
-    return boolValueForProperty(m_ownerElement, AXPropertyName::Multiline);
+    return optionalValueForProperty<bool>(m_ownerElement, AXPropertyName::Multiline);
 }
 
 void AccessibleNode::setMultiline(std::optional<bool> value)
 {
-    setBoolProperty(value, AXPropertyName::Multiline);
+    setOptionalProperty<bool>(AXPropertyName::Multiline, value);
     notifyAttributeChanged(aria_multilineAttr);
 }
 
 std::optional<bool> AccessibleNode::multiselectable() const
 {
-    return boolValueForProperty(m_ownerElement, AXPropertyName::Multiselectable);
+    return optionalValueForProperty<bool>(m_ownerElement, AXPropertyName::Multiselectable);
 }
 
 void AccessibleNode::setMultiselectable(std::optional<bool> value)
 {
-    setBoolProperty(value, AXPropertyName::Multiselectable);
+    setOptionalProperty<bool>(AXPropertyName::Multiselectable, value);
     notifyAttributeChanged(aria_multiselectableAttr);
 }
 
@@ -403,7 +539,7 @@ String AccessibleNode::orientation() const
 
 void AccessibleNode::setOrientation(const String& orientation)
 {
-    setStringProperty(orientation, AXPropertyName::Orientation);
+    setStringProperty(AXPropertyName::Orientation, orientation);
     notifyAttributeChanged(aria_orientationAttr);
 }
 
@@ -414,8 +550,19 @@ String AccessibleNode::placeholder() const
 
 void AccessibleNode::setPlaceholder(const String& placeholder)
 {
-    setStringProperty(placeholder, AXPropertyName::Placeholder);
+    setStringProperty(AXPropertyName::Placeholder, placeholder);
     notifyAttributeChanged(aria_placeholderAttr);
+}
+
+std::optional<unsigned> AccessibleNode::posInSet() const
+{
+    return optionalValueForProperty<unsigned>(m_ownerElement, AXPropertyName::PosInSet);
+}
+
+void AccessibleNode::setPosInSet(std::optional<unsigned> value)
+{
+    setOptionalProperty<unsigned>(AXPropertyName::PosInSet, value);
+    notifyAttributeChanged(aria_posinsetAttr);
 }
 
 String AccessibleNode::pressed() const
@@ -425,18 +572,18 @@ String AccessibleNode::pressed() const
 
 void AccessibleNode::setPressed(const String& pressed)
 {
-    setStringProperty(pressed, AXPropertyName::Pressed);
+    setStringProperty(AXPropertyName::Pressed, pressed);
     notifyAttributeChanged(aria_pressedAttr);
 }
 
 std::optional<bool> AccessibleNode::readOnly() const
 {
-    return boolValueForProperty(m_ownerElement, AXPropertyName::ReadOnly);
+    return optionalValueForProperty<bool>(m_ownerElement, AXPropertyName::ReadOnly);
 }
 
 void AccessibleNode::setReadOnly(std::optional<bool> value)
 {
-    setBoolProperty(value, AXPropertyName::ReadOnly);
+    setOptionalProperty<bool>(AXPropertyName::ReadOnly, value);
     notifyAttributeChanged(aria_readonlyAttr);
 }
 
@@ -447,18 +594,18 @@ String AccessibleNode::relevant() const
 
 void AccessibleNode::setRelevant(const String& relevant)
 {
-    setStringProperty(relevant, AXPropertyName::Relevant);
+    setStringProperty(AXPropertyName::Relevant, relevant);
     notifyAttributeChanged(aria_relevantAttr);
 }
 
 std::optional<bool> AccessibleNode::required() const
 {
-    return boolValueForProperty(m_ownerElement, AXPropertyName::Required);
+    return optionalValueForProperty<bool>(m_ownerElement, AXPropertyName::Required);
 }
 
 void AccessibleNode::setRequired(std::optional<bool> value)
 {
-    setBoolProperty(value, AXPropertyName::Required);
+    setOptionalProperty<bool>(AXPropertyName::Required, value);
     notifyAttributeChanged(aria_requiredAttr);
 }
 
@@ -469,7 +616,7 @@ String AccessibleNode::role() const
 
 void AccessibleNode::setRole(const String& role)
 {
-    setStringProperty(role, AXPropertyName::Role);
+    setStringProperty(AXPropertyName::Role, role);
     notifyAttributeChanged(roleAttr);
 }
 
@@ -480,19 +627,63 @@ String AccessibleNode::roleDescription() const
 
 void AccessibleNode::setRoleDescription(const String& roleDescription)
 {
-    setStringProperty(roleDescription, AXPropertyName::RoleDescription);
+    setStringProperty(AXPropertyName::RoleDescription, roleDescription);
     notifyAttributeChanged(aria_roledescriptionAttr);
+}
+
+std::optional<int> AccessibleNode::rowCount() const
+{
+    return optionalValueForProperty<int>(m_ownerElement, AXPropertyName::RowCount);
+}
+
+void AccessibleNode::setRowCount(std::optional<int> value)
+{
+    setOptionalProperty<int>(AXPropertyName::RowCount, value);
+    notifyAttributeChanged(aria_rowcountAttr);
+}
+
+std::optional<unsigned> AccessibleNode::rowIndex() const
+{
+    return optionalValueForProperty<unsigned>(m_ownerElement, AXPropertyName::RowCount);
+}
+
+void AccessibleNode::setRowIndex(std::optional<unsigned> value)
+{
+    setOptionalProperty<unsigned>(AXPropertyName::RowIndex, value);
+    notifyAttributeChanged(aria_rowindexAttr);
+}
+
+std::optional<unsigned> AccessibleNode::rowSpan() const
+{
+    return optionalValueForProperty<unsigned>(m_ownerElement, AXPropertyName::RowSpan);
+}
+
+void AccessibleNode::setRowSpan(std::optional<unsigned> value)
+{
+    setOptionalProperty<unsigned>(AXPropertyName::RowSpan, value);
+    notifyAttributeChanged(aria_rowspanAttr);
 }
 
 std::optional<bool> AccessibleNode::selected() const
 {
-    return boolValueForProperty(m_ownerElement, AXPropertyName::Selected);
+    return optionalValueForProperty<bool>(m_ownerElement, AXPropertyName::Selected);
 }
 
 void AccessibleNode::setSelected(std::optional<bool> value)
 {
-    setBoolProperty(value, AXPropertyName::Selected);
+    setOptionalProperty<bool>(AXPropertyName::Selected, value);
     notifyAttributeChanged(aria_selectedAttr);
+}
+
+std::optional<int> AccessibleNode::setSize() const
+{
+    return optionalValueForProperty<int>(m_ownerElement, AXPropertyName::SetSize);
+}
+
+void AccessibleNode::setSetSize(std::optional<int> value)
+{
+    setOptionalProperty<int>(AXPropertyName::SetSize, value);
+    notifyAttributeChanged(aria_setsizeAttr);
 }
 
 String AccessibleNode::sort() const
@@ -502,8 +693,41 @@ String AccessibleNode::sort() const
 
 void AccessibleNode::setSort(const String& sort)
 {
-    setStringProperty(sort, AXPropertyName::Sort);
+    setStringProperty(AXPropertyName::Sort, sort);
     notifyAttributeChanged(aria_sortAttr);
+}
+
+std::optional<double> AccessibleNode::valueMax() const
+{
+    return optionalValueForProperty<double>(m_ownerElement, AXPropertyName::ValueMax);
+}
+
+void AccessibleNode::setValueMax(std::optional<double> value)
+{
+    setOptionalProperty<double>(AXPropertyName::ValueMax, value);
+    notifyAttributeChanged(aria_valuemaxAttr);
+}
+
+std::optional<double> AccessibleNode::valueMin() const
+{
+    return optionalValueForProperty<double>(m_ownerElement, AXPropertyName::ValueMin);
+}
+
+void AccessibleNode::setValueMin(std::optional<double> value)
+{
+    setOptionalProperty<double>(AXPropertyName::ValueMin, value);
+    notifyAttributeChanged(aria_valueminAttr);
+}
+
+std::optional<double> AccessibleNode::valueNow() const
+{
+    return optionalValueForProperty<double>(m_ownerElement, AXPropertyName::ValueNow);
+}
+
+void AccessibleNode::setValueNow(std::optional<double> value)
+{
+    setOptionalProperty<double>(AXPropertyName::ValueNow, value);
+    notifyAttributeChanged(aria_valuenowAttr);
 }
 
 String AccessibleNode::valueText() const
@@ -513,7 +737,7 @@ String AccessibleNode::valueText() const
 
 void AccessibleNode::setValueText(const String& valueText)
 {
-    setStringProperty(valueText, AXPropertyName::ValueText);
+    setStringProperty(AXPropertyName::ValueText, valueText);
     notifyAttributeChanged(aria_valuetextAttr);
 }
 

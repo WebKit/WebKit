@@ -625,7 +625,7 @@ bool AccessibilityNodeObject::isEnabled() const
 {
     // ARIA says that the disabled status applies to the current element and all descendant elements.
     for (AccessibilityObject* object = const_cast<AccessibilityNodeObject*>(this); object; object = object->parentObject()) {
-        if (std::optional<bool> disabled = object->boolValueForProperty(AXPropertyName::Disabled)) {
+        if (auto disabled = object->boolValueForProperty(AXPropertyName::Disabled)) {
             if (disabled.value())
                 return false;
             break;
@@ -704,8 +704,7 @@ bool AccessibilityNodeObject::isHovered() const
 
 bool AccessibilityNodeObject::isMultiSelectable() const
 {
-    std::optional<bool> multiSelectable = boolValueForProperty(AXPropertyName::Multiselectable);
-    if (multiSelectable)
+    if (auto multiSelectable = boolValueForProperty(AXPropertyName::Multiselectable))
         return multiSelectable.value();
     
     return node() && node()->hasTagName(selectTag) && downcast<HTMLSelectElement>(*node()).multiple();
@@ -714,8 +713,7 @@ bool AccessibilityNodeObject::isMultiSelectable() const
 bool AccessibilityNodeObject::isRequired() const
 {
     // Explicit aria-required values should trump native required attributes.
-    std::optional<bool> axRequired = boolValueForProperty(AXPropertyName::Required);
-    if (axRequired)
+    if (auto axRequired = boolValueForProperty(AXPropertyName::Required))
         return axRequired.value();
 
     Node* n = this->node();
@@ -762,9 +760,9 @@ int AccessibilityNodeObject::headingLevel() const
         return false;
 
     if (isHeading()) {
-        int ariaLevel = getAttribute(aria_levelAttr).toInt();
-        if (ariaLevel > 0)
-            return ariaLevel;
+        int level = unsignedValueForProperty(AXPropertyName::Level);
+        if (level > 0)
+            return level;
     }
 
     if (node->hasTagName(h1Tag))
@@ -814,9 +812,8 @@ float AccessibilityNodeObject::valueForRange() const
 
     // In ARIA 1.1, the implicit value for aria-valuenow on a spin button is 0.
     // For other roles, it is half way between aria-valuemin and aria-valuemax.
-    auto& value = getAttribute(aria_valuenowAttr);
-    if (!value.isEmpty())
-        return value.toFloat();
+    if (hasProperty(AXPropertyName::ValueNow))
+        return doubleValueForProperty(AXPropertyName::ValueNow);
 
     return isSpinButton() ? 0 : (minValueForRange() + maxValueForRange()) / 2;
 }
@@ -832,9 +829,8 @@ float AccessibilityNodeObject::maxValueForRange() const
     if (!isRangeControl())
         return 0.0f;
 
-    auto& value = getAttribute(aria_valuemaxAttr);
-    if (!value.isEmpty())
-        return value.toFloat();
+    if (hasProperty(AXPropertyName::ValueMax))
+        return doubleValueForProperty(AXPropertyName::ValueMax);
 
     // In ARIA 1.1, the implicit value for aria-valuemax on a spin button
     // is that there is no maximum value. For other roles, it is 100.
@@ -852,9 +848,8 @@ float AccessibilityNodeObject::minValueForRange() const
     if (!isRangeControl())
         return 0.0f;
 
-    auto& value = getAttribute(aria_valueminAttr);
-    if (!value.isEmpty())
-        return value.toFloat();
+    if (hasProperty(AXPropertyName::ValueMin))
+        return doubleValueForProperty(AXPropertyName::ValueMin);
 
     // In ARIA 1.1, the implicit value for aria-valuemin on a spin button
     // is that there is no minimum value. For other roles, it is 0.
@@ -1622,10 +1617,8 @@ unsigned AccessibilityNodeObject::hierarchicalLevel() const
     Node* node = this->node();
     if (!is<Element>(node))
         return 0;
-    Element& element = downcast<Element>(*node);
-    const AtomicString& ariaLevel = element.attributeWithoutSynchronization(aria_levelAttr);
-    if (!ariaLevel.isEmpty())
-        return ariaLevel.toInt();
+    if (hasProperty(AXPropertyName::Level))
+        return unsignedValueForProperty(AXPropertyName::Level);
     
     // Only tree item will calculate its level through the DOM currently.
     if (roleValue() != AccessibilityRole::TreeItem)

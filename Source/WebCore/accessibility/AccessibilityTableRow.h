@@ -52,8 +52,8 @@ public:
     
     void addChildren() override;
     
-    int ariaColumnIndex() const;
-    int ariaRowIndex() const;
+    int axColumnIndex() const;
+    int axRowIndex() const;
     
 protected:
     explicit AccessibilityTableRow(RenderObject*);

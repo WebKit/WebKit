@@ -47,7 +47,7 @@ private:
 
     AccessibilityTable* parentTable() const override;
     AccessibilityObject* parentRowGroup() const;
-    unsigned ariaRowSpanWithRowIndex(unsigned index) const;
+    unsigned axRowSpanWithRowIndex(unsigned index) const;
     String readOnlyValue() const override;
 }; 
     

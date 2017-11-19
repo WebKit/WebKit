@@ -82,7 +82,7 @@ bool AccessibilityARIAGrid::addTableCellChild(AccessibilityObject* child, HashSe
 
 bool AccessibilityARIAGrid::isMultiSelectable() const
 {
-    std::optional<bool> multiSelectable = boolValueForProperty(AXPropertyName::Multiselectable);
+    auto multiSelectable = boolValueForProperty(AXPropertyName::Multiselectable);
     if (multiSelectable && !multiSelectable.value())
         return false;
     return true;

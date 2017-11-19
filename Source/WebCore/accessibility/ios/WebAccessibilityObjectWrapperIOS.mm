@@ -1274,7 +1274,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (!table)
         return 0;
     
-    NSInteger rowCount = table->ariaRowCount();
+    NSInteger rowCount = table->axRowCount();
     return rowCount > 0 ? rowCount : 0;
 }
 
@@ -1286,7 +1286,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (!table)
         return 0;
     
-    NSInteger colCount = table->ariaColumnCount();
+    NSInteger colCount = table->axColumnCount();
     return colCount > 0 ? colCount : 0;
 }
 
@@ -1298,7 +1298,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (!tableCell)
         return NSNotFound;
     
-    NSInteger rowIndex = tableCell->ariaRowIndex();
+    NSInteger rowIndex = tableCell->axRowIndex();
     return rowIndex > 0 ? rowIndex : NSNotFound;
 }
 
@@ -1310,7 +1310,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (!tableCell)
         return NSNotFound;
     
-    NSInteger columnIndex = tableCell->ariaColumnIndex();
+    NSInteger columnIndex = tableCell->axColumnIndex();
     return columnIndex > 0 ? columnIndex : NSNotFound;
 }
 

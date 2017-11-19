@@ -2166,6 +2166,27 @@ std::optional<bool> AccessibilityObject::boolValueForProperty(AXPropertyName pro
     return std::nullopt;
 }
 
+int AccessibilityObject::intValueForProperty(AXPropertyName propertyKey) const
+{
+    if (Element* element = this->element())
+        return AccessibleNode::effectiveIntValueForElement(*element, propertyKey);
+    return 0;
+}
+
+unsigned AccessibilityObject::unsignedValueForProperty(AXPropertyName propertyKey) const
+{
+    if (Element* element = this->element())
+        return AccessibleNode::effectiveUnsignedValueForElement(*element, propertyKey);
+    return 0;
+}
+
+double AccessibilityObject::doubleValueForProperty(AXPropertyName propertyKey) const
+{
+    if (Element* element = this->element())
+        return AccessibleNode::effectiveDoubleValueForElement(*element, propertyKey);
+    return 0.0;
+}
+
 // Lacking concrete evidence of orientation, horizontal means width > height. vertical is height > width;
 AccessibilityOrientation AccessibilityObject::orientation() const
 {
@@ -2652,24 +2673,24 @@ String AccessibilityObject::hasPopupValue() const
     return "false";
 }
 
-bool AccessibilityObject::supportsARIASetSize() const
+bool AccessibilityObject::supportsSetSize() const
 {
-    return hasAttribute(aria_setsizeAttr);
+    return hasProperty(AXPropertyName::SetSize);
 }
 
-bool AccessibilityObject::supportsARIAPosInSet() const
+bool AccessibilityObject::supportsPosInSet() const
 {
-    return hasAttribute(aria_posinsetAttr);
+    return hasProperty(AXPropertyName::PosInSet);
 }
     
-int AccessibilityObject::ariaSetSize() const
+int AccessibilityObject::setSize() const
 {
-    return getAttribute(aria_setsizeAttr).toInt();
+    return intValueForProperty(AXPropertyName::SetSize);
 }
 
-int AccessibilityObject::ariaPosInSet() const
+int AccessibilityObject::posInSet() const
 {
-    return getAttribute(aria_posinsetAttr).toInt();
+    return unsignedValueForProperty(AXPropertyName::PosInSet);
 }
     
 const AtomicString& AccessibilityObject::identifierAttribute() const

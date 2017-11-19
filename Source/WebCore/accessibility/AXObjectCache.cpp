@@ -2882,7 +2882,7 @@ bool isNodeAriaVisible(Node* node)
     bool axHiddenFalsePresent = false;
     for (Node* testNode = node; testNode; testNode = testNode->parentNode()) {
         if (is<Element>(*testNode)) {
-            std::optional<bool> hiddenValue = AccessibleNode::effectiveBoolValueForElement(downcast<Element>(*testNode), AXPropertyName::Hidden);
+            auto hiddenValue = AccessibleNode::effectiveBoolValueForElement(downcast<Element>(*testNode), AXPropertyName::Hidden);
             bool axHiddenFalse = false;
             if (hiddenValue) {
                 if (hiddenValue.value())
