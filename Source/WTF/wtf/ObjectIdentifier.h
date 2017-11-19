@@ -26,6 +26,7 @@
 #pragma once
 
 #include <atomic>
+#include <mutex>
 #include <wtf/HashTraits.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
@@ -99,7 +100,11 @@ template<typename T> inline ObjectIdentifier<T> generateObjectIdentifier()
 
 template<typename T> inline ObjectIdentifier<T> generateThreadSafeObjectIdentifier()
 {
-    static NeverDestroyed<std::atomic<uint64_t>> currentIdentifier;
+    static LazyNeverDestroyed<std::atomic<uint64_t>> currentIdentifier;
+    static std::once_flag initializeCurrentIdentifier;
+    std::call_once(initializeCurrentIdentifier, [] {
+        currentIdentifier.construct(0);
+    });
     return ObjectIdentifier<T> { ++currentIdentifier.get() };
 }
 

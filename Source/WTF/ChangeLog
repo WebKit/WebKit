@@ -1,3 +1,17 @@
+2017-11-19  Chris Dumez  <cdumez@apple.com>
+
+        Fix potential thread safety issue in generateThreadSafeObjectIdentifier()
+        https://bugs.webkit.org/show_bug.cgi?id=179877
+
+        Reviewed by Sam Weinig.
+
+        Fix potential thread safety issue in generateThreadSafeObjectIdentifier().
+        Protect std::atomic initialization with an std::call_once() given that we
+        build with --fno-threadsafe-statics.
+
+        * wtf/ObjectIdentifier.h:
+        (WTF::generateThreadSafeObjectIdentifier):
+
 2017-11-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Use system endianess information instead of relying CPU information
