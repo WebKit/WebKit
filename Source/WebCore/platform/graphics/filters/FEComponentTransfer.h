@@ -64,28 +64,27 @@ public:
     static Ref<FEComponentTransfer> create(Filter&, const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc,
                                            const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc);
 
-    ComponentTransferFunction redFunction() const;
+    ComponentTransferFunction redFunction() const { return m_redFunc; }
     void setRedFunction(const ComponentTransferFunction&);
 
-    ComponentTransferFunction greenFunction() const;
+    ComponentTransferFunction greenFunction() const { return m_greenFunc; }
     void setGreenFunction(const ComponentTransferFunction&);
 
-    ComponentTransferFunction blueFunction() const;
+    ComponentTransferFunction blueFunction() const { return m_blueFunc; }
     void setBlueFunction(const ComponentTransferFunction&);
 
-    ComponentTransferFunction alphaFunction() const;
+    ComponentTransferFunction alphaFunction() const { return m_alphaFunc; }
     void setAlphaFunction(const ComponentTransferFunction&);
-
-    void platformApplySoftware() override;
-    void dump() override;
-
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
 
 private:
     FEComponentTransfer(Filter&, const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc,
                         const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc);
 
     void getValues(unsigned char rValues[256], unsigned char gValues[256], unsigned char bValues[256], unsigned char aValues[256]);
+
+    void platformApplySoftware() override;
+
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
 
     ComponentTransferFunction m_redFunc;
     ComponentTransferFunction m_greenFunc;

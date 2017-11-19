@@ -112,10 +112,6 @@ void FEDropShadow::platformApplySoftware()
     resultImage->context().drawImageBuffer(*sourceImage, drawingRegion);
 }
 
-void FEDropShadow::dump()
-{
-}
-
 TextStream& FEDropShadow::externalRepresentation(TextStream& ts, int indent) const
 {
     writeIndent(ts, indent);

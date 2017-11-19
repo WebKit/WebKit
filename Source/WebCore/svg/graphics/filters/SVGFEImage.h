@@ -36,20 +36,17 @@ public:
     static Ref<FEImage> createWithImage(Filter&, RefPtr<Image>, const SVGPreserveAspectRatioValue&);
     static Ref<FEImage> createWithIRIReference(Filter&, Document&, const String&, const SVGPreserveAspectRatioValue&);
 
-    void platformApplySoftware() final;
-    void dump() final;
-
-    void determineAbsolutePaintRect() final;
-
-    FilterEffectType filterEffectType() const final { return FilterEffectTypeImage; }
-
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const final;
-    
 private:
     virtual ~FEImage() = default;
     FEImage(Filter&, RefPtr<Image>, const SVGPreserveAspectRatioValue&);
     FEImage(Filter&, Document&, const String&, const SVGPreserveAspectRatioValue&);
+    FilterEffectType filterEffectType() const final { return FilterEffectTypeImage; }
+
     RenderElement* referencedRenderer() const;
+
+    void platformApplySoftware() final;
+    void determineAbsolutePaintRect() final;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const final;
 
     RefPtr<Image> m_image;
 

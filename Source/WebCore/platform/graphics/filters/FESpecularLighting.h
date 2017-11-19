@@ -30,27 +30,11 @@ public:
     static Ref<FESpecularLighting> create(Filter&, const Color&, float, float, float, float, float, Ref<LightSource>&&);
     virtual ~FESpecularLighting();
 
-    const Color& lightingColor() const;
-    bool setLightingColor(const Color&);
-
-    float surfaceScale() const;
-    bool setSurfaceScale(float);
-
-    float specularConstant() const;
+    float specularConstant() const { return m_specularConstant; }
     bool setSpecularConstant(float);
 
-    float specularExponent() const;
+    float specularExponent() const { return m_specularExponent; }
     bool setSpecularExponent(float);
-
-    float kernelUnitLengthX() const;
-    bool setKernelUnitLengthX(float);
-
-    float kernelUnitLengthY() const;
-    bool setKernelUnitLengthY(float);
-
-    const LightSource& lightSource() const;
-
-    void dump() override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
 

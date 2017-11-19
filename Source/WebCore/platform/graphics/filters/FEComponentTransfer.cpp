@@ -52,19 +52,9 @@ Ref<FEComponentTransfer> FEComponentTransfer::create(Filter& filter, const Compo
     return adoptRef(*new FEComponentTransfer(filter, redFunc, greenFunc, blueFunc, alphaFunc));
 }
 
-ComponentTransferFunction FEComponentTransfer::redFunction() const
-{
-    return m_redFunc;
-}
-
 void FEComponentTransfer::setRedFunction(const ComponentTransferFunction& func)
 {
     m_redFunc = func;
-}
-
-ComponentTransferFunction FEComponentTransfer::greenFunction() const
-{
-    return m_greenFunc;
 }
 
 void FEComponentTransfer::setGreenFunction(const ComponentTransferFunction& func)
@@ -72,19 +62,9 @@ void FEComponentTransfer::setGreenFunction(const ComponentTransferFunction& func
     m_greenFunc = func;
 }
 
-ComponentTransferFunction FEComponentTransfer::blueFunction() const
-{
-    return m_blueFunc;
-}
-
 void FEComponentTransfer::setBlueFunction(const ComponentTransferFunction& func)
 {
     m_blueFunc = func;
-}
-
-ComponentTransferFunction FEComponentTransfer::alphaFunction() const
-{
-    return m_alphaFunc;
 }
 
 void FEComponentTransfer::setAlphaFunction(const ComponentTransferFunction& func)
@@ -184,10 +164,6 @@ void FEComponentTransfer::getValues(unsigned char rValues[256], unsigned char gV
         ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(transferFunction[channel].type) < WTF_ARRAY_LENGTH(callEffect));
         (*callEffect[transferFunction[channel].type])(tables[channel], transferFunction[channel]);
     }
-}
-
-void FEComponentTransfer::dump()
-{
 }
 
 static TextStream& operator<<(TextStream& ts, const ComponentTransferType& type)

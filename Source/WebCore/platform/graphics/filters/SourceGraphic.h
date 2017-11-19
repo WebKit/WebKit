@@ -32,21 +32,18 @@ public:
 
     static const AtomicString& effectName();
 
-    void platformApplySoftware() override;
-    void dump() override;
-
-    void determineAbsolutePaintRect() override;
-
-    FilterEffectType filterEffectType() const override { return FilterEffectTypeSourceInput; }
-
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
-
 private:
     SourceGraphic(Filter& filter)
         : FilterEffect(filter)
     {
         setOperatingColorSpace(ColorSpaceSRGB);
     }
+
+    void determineAbsolutePaintRect() override;
+    void platformApplySoftware() override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
+
+    FilterEffectType filterEffectType() const override { return FilterEffectTypeSourceInput; }
 };
 
 } //namespace WebCore

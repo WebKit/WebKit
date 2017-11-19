@@ -32,24 +32,8 @@ public:
     static Ref<FEDiffuseLighting> create(Filter&, const Color&, float, float, float, float, Ref<LightSource>&&);
     virtual ~FEDiffuseLighting();
 
-    const Color& lightingColor() const;
-    bool setLightingColor(const Color&);
-
-    float surfaceScale() const;
-    bool setSurfaceScale(float);
-
-    float diffuseConstant() const;
+    float diffuseConstant() const { return m_diffuseConstant; }
     bool setDiffuseConstant(float);
-
-    float kernelUnitLengthX() const;
-    bool setKernelUnitLengthX(float);
-
-    float kernelUnitLengthY() const;
-    bool setKernelUnitLengthY(float);
-
-    const LightSource& lightSource() const;
-
-    void dump() override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
 

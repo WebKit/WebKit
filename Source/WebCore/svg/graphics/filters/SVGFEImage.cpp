@@ -137,10 +137,6 @@ void FEImage::platformApplySoftware()
     resultImage->context().drawImage(*m_image, destRect, srcRect);
 }
 
-void FEImage::dump()
-{
-}
-
 TextStream& FEImage::externalRepresentation(TextStream& ts, int indent) const
 {
     FloatSize imageSize;

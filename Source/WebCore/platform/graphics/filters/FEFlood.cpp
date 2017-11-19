@@ -41,22 +41,12 @@ Ref<FEFlood> FEFlood::create(Filter& filter, const Color& floodColor, float floo
     return adoptRef(*new FEFlood(filter, floodColor, floodOpacity));
 }
 
-const Color& FEFlood::floodColor() const
-{
-    return m_floodColor;
-}
-
 bool FEFlood::setFloodColor(const Color& color)
 {
     if (m_floodColor == color)
         return false;
     m_floodColor = color;
     return true;
-}
-
-float FEFlood::floodOpacity() const
-{
-    return m_floodOpacity;
 }
 
 bool FEFlood::setFloodOpacity(float floodOpacity)
@@ -75,10 +65,6 @@ void FEFlood::platformApplySoftware()
 
     const Color& color = colorWithOverrideAlpha(floodColor().rgb(), floodOpacity());
     resultImage->context().fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()), color);
-}
-
-void FEFlood::dump()
-{
 }
 
 TextStream& FEFlood::externalRepresentation(TextStream& ts, int indent) const

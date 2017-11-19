@@ -50,22 +50,12 @@ Ref<FEColorMatrix> FEColorMatrix::create(Filter& filter, ColorMatrixType type, c
     return adoptRef(*new FEColorMatrix(filter, type, values));
 }
 
-ColorMatrixType FEColorMatrix::type() const
-{
-    return m_type;
-}
-
 bool FEColorMatrix::setType(ColorMatrixType type)
 {
     if (m_type == type)
         return false;
     m_type = type;
     return true;
-}
-
-const Vector<float>& FEColorMatrix::values() const
-{
-    return m_values;
 }
 
 bool FEColorMatrix::setValues(const Vector<float> &values)
@@ -339,10 +329,6 @@ void FEColorMatrix::platformApplySoftware()
     
     WTFLogAlways("FEColorMatrix::platformApplySoftware (%dx%d) took %.4fms (ave %.4fms/mp)", imageRect.width(), imageRect.height(), duration.milliseconds(), totalTime.milliseconds() / totalMegapixels);
 #endif
-}
-
-void FEColorMatrix::dump()
-{
 }
 
 static TextStream& operator<<(TextStream& ts, const ColorMatrixType& type)

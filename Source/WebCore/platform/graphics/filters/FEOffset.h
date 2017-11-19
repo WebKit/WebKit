@@ -30,21 +30,20 @@ class FEOffset : public FilterEffect {
 public:
     static Ref<FEOffset> create(Filter&, float dx, float dy);
 
-    float dx() const;
+    float dx() const { return m_dx; }
     void setDx(float);
 
-    float dy() const;
+    float dy() const { return m_dy; }
     void setDy(float);
 
+private:
+    FEOffset(Filter&, float dx, float dy);
+
     void platformApplySoftware() override;
-    void dump() override;
     
     void determineAbsolutePaintRect() override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
-
-private:
-    FEOffset(Filter&, float dx, float dy);
 
     float m_dx;
     float m_dy;

@@ -48,22 +48,12 @@ Ref<FEComposite> FEComposite::create(Filter& filter, const CompositeOperationTyp
     return adoptRef(*new FEComposite(filter, type, k1, k2, k3, k4));
 }
 
-CompositeOperationType FEComposite::operation() const
-{
-    return m_type;
-}
-
 bool FEComposite::setOperation(CompositeOperationType type)
 {
     if (m_type == type)
         return false;
     m_type = type;
     return true;
-}
-
-float FEComposite::k1() const
-{
-    return m_k1;
 }
 
 bool FEComposite::setK1(float k1)
@@ -74,11 +64,6 @@ bool FEComposite::setK1(float k1)
     return true;
 }
 
-float FEComposite::k2() const
-{
-    return m_k2;
-}
-
 bool FEComposite::setK2(float k2)
 {
     if (m_k2 == k2)
@@ -87,22 +72,12 @@ bool FEComposite::setK2(float k2)
     return true;
 }
 
-float FEComposite::k3() const
-{
-    return m_k3;
-}
-
 bool FEComposite::setK3(float k3)
 {
     if (m_k3 == k3)
         return false;
     m_k3 = k3;
     return true;
-}
-
-float FEComposite::k4() const
-{
-    return m_k4;
 }
 
 bool FEComposite::setK4(float k4)
@@ -319,10 +294,6 @@ void FEComposite::platformApplySoftware()
     default:
         break;
     }
-}
-
-void FEComposite::dump()
-{
 }
 
 static TextStream& operator<<(TextStream& ts, const CompositeOperationType& type)

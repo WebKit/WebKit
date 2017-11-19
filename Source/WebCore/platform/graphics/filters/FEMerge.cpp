@@ -56,10 +56,6 @@ void FEMerge::platformApplySoftware()
     }
 }
 
-void FEMerge::dump()
-{
-}
-
 TextStream& FEMerge::externalRepresentation(TextStream& ts, int indent) const
 {
     writeIndent(ts, indent);

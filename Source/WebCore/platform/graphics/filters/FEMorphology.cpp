@@ -246,10 +246,6 @@ void FEMorphology::platformApplySoftware()
     platformApply(&paintingData);
 }
 
-void FEMorphology::dump()
-{
-}
-
 static TextStream& operator<<(TextStream& ts, const MorphologyOperatorType& type)
 {
     switch (type) {

@@ -30,13 +30,12 @@ class FEMerge : public FilterEffect {
 public:
     static Ref<FEMerge> create(Filter&);
 
-    void platformApplySoftware() override;
-    void dump() override;
-
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
-
 private:
     FEMerge(Filter&);
+
+    void platformApplySoftware() override;
+
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
 };
 
 } // namespace WebCore

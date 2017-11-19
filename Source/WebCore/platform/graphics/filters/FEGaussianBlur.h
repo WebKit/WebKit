@@ -31,25 +31,21 @@ class FEGaussianBlur : public FilterEffect {
 public:
     static Ref<FEGaussianBlur> create(Filter&, float, float, EdgeModeType);
 
-    float stdDeviationX() const;
+    float stdDeviationX() const { return m_stdX; }
     void setStdDeviationX(float);
 
-    float stdDeviationY() const;
+    float stdDeviationY() const { return m_stdY; }
     void setStdDeviationY(float);
 
-    EdgeModeType edgeMode() const;
+    EdgeModeType edgeMode() const { return m_edgeMode; }
     void setEdgeMode(EdgeModeType);
 
-    void platformApplySoftware() override;
-    void dump() override;
-
-    void determineAbsolutePaintRect() override;
     static IntSize calculateKernelSize(const Filter&, const FloatPoint& stdDeviation);
     static IntSize calculateUnscaledKernelSize(const FloatPoint& stdDeviation);
 
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
-
 private:
+    FEGaussianBlur(Filter&, float, float, EdgeModeType);
+
     static const int s_minimalRectDimension = 100 * 100; // Empirical data limit for parallel jobs
 
     template<typename Type>
@@ -65,12 +61,14 @@ private:
         unsigned kernelSizeY;
     };
 
+    void platformApplySoftware() override;
+
+    void determineAbsolutePaintRect() override;
+
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
+
     static void platformApplyWorker(PlatformApplyParameters*);
-
-    FEGaussianBlur(Filter&, float, float, EdgeModeType);
-
     inline void platformApply(Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
-
     inline void platformApplyGeneric(Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
 
     float m_stdX;

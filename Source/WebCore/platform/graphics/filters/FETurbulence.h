@@ -58,15 +58,6 @@ public:
     bool stitchTiles() const { return m_stitchTiles; }
     bool setStitchTiles(bool);
 
-    static void fillRegionWorker(void*);
-
-    void platformApplySoftware() override;
-    void dump() override;
-    
-    void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
-
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
-
 private:
     static const int s_blockSize = 256;
     static const int s_blockMask = s_blockSize - 1;
@@ -117,11 +108,17 @@ private:
 
     FETurbulence(Filter&, TurbulenceType, float, float, int, float, bool);
 
+    void platformApplySoftware() override;
+    void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
+
     void initPaint(PaintingData&);
     StitchData computeStitching(IntSize tileSize, float& baseFrequencyX, float& baseFrequencyY) const;
     FloatComponents noise2D(const PaintingData&, const StitchData&, const FloatPoint&) const;
     ColorComponents calculateTurbulenceValueForPoint(const PaintingData&, StitchData, const FloatPoint&) const;
     void fillRegion(Uint8ClampedArray*, const PaintingData&, StitchData, int startY, int endY) const;
+
+    static void fillRegionWorker(void*);
 
     TurbulenceType m_type;
     float m_baseFrequencyX;

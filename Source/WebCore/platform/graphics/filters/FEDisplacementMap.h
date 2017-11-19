@@ -39,27 +39,26 @@ class FEDisplacementMap : public FilterEffect {
 public:
     static Ref<FEDisplacementMap> create(Filter&, ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
 
-    ChannelSelectorType xChannelSelector() const;
+    ChannelSelectorType xChannelSelector() const { return m_xChannelSelector; }
     bool setXChannelSelector(const ChannelSelectorType);
 
-    ChannelSelectorType yChannelSelector() const;
+    ChannelSelectorType yChannelSelector() const { return m_yChannelSelector; }
     bool setYChannelSelector(const ChannelSelectorType);
 
-    float scale() const;
+    float scale() const { return m_scale; }
     bool setScale(float);
 
     void setResultColorSpace(ColorSpace) override;
     void transformResultColorSpace(FilterEffect*, const int) override;
 
+private:
+    FEDisplacementMap(Filter&, ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
+
     void platformApplySoftware() override;
-    void dump() override;
 
     void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
-
-private:
-    FEDisplacementMap(Filter&, ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
 
     ChannelSelectorType m_xChannelSelector;
     ChannelSelectorType m_yChannelSelector;

@@ -46,11 +46,6 @@ Ref<FEDisplacementMap> FEDisplacementMap::create(Filter& filter, ChannelSelector
     return adoptRef(*new FEDisplacementMap(filter, xChannelSelector, yChannelSelector, scale));
 }
 
-ChannelSelectorType FEDisplacementMap::xChannelSelector() const
-{
-    return m_xChannelSelector;
-}
-
 bool FEDisplacementMap::setXChannelSelector(const ChannelSelectorType xChannelSelector)
 {
     if (m_xChannelSelector == xChannelSelector)
@@ -59,22 +54,12 @@ bool FEDisplacementMap::setXChannelSelector(const ChannelSelectorType xChannelSe
     return true;
 }
 
-ChannelSelectorType FEDisplacementMap::yChannelSelector() const
-{
-    return m_yChannelSelector;
-}
-
 bool FEDisplacementMap::setYChannelSelector(const ChannelSelectorType yChannelSelector)
 {
     if (m_yChannelSelector == yChannelSelector)
         return false;
     m_yChannelSelector = yChannelSelector;
     return true;
-}
-
-float FEDisplacementMap::scale() const
-{
-    return m_scale;
 }
 
 bool FEDisplacementMap::setScale(float scale)
@@ -146,10 +131,6 @@ void FEDisplacementMap::platformApplySoftware()
             }
         }
     }
-}
-
-void FEDisplacementMap::dump()
-{
 }
 
 static TextStream& operator<<(TextStream& ts, const ChannelSelectorType& type)

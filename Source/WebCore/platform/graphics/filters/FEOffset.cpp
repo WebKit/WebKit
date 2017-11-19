@@ -42,19 +42,9 @@ Ref<FEOffset> FEOffset::create(Filter& filter, float dx, float dy)
     return adoptRef(*new FEOffset(filter, dx, dy));
 }
 
-float FEOffset::dx() const
-{
-    return m_dx;
-}
-
 void FEOffset::setDx(float dx)
 {
     m_dx = dx;
-}
-
-float FEOffset::dy() const
-{
-    return m_dy;
 }
 
 void FEOffset::setDy(float dy)
@@ -89,10 +79,6 @@ void FEOffset::platformApplySoftware()
     Filter& filter = this->filter();
     drawingRegion.move(filter.applyHorizontalScale(m_dx), filter.applyVerticalScale(m_dy));
     resultImage->context().drawImageBuffer(*inBuffer, drawingRegion);
-}
-
-void FEOffset::dump()
-{
 }
 
 TextStream& FEOffset::externalRepresentation(TextStream& ts, int indent) const

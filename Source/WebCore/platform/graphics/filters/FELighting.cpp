@@ -46,6 +46,42 @@ FELighting::FELighting(Filter& filter, LightingType lightingType, const Color& l
 {
 }
 
+bool FELighting::setSurfaceScale(float surfaceScale)
+{
+    if (m_surfaceScale == surfaceScale)
+        return false;
+
+    m_surfaceScale = surfaceScale;
+    return true;
+}
+
+bool FELighting::setLightingColor(const Color& lightingColor)
+{
+    if (m_lightingColor == lightingColor)
+        return false;
+
+    m_lightingColor = lightingColor;
+    return true;
+}
+
+bool FELighting::setKernelUnitLengthX(float kernelUnitLengthX)
+{
+    if (m_kernelUnitLengthX == kernelUnitLengthX)
+        return false;
+
+    m_kernelUnitLengthX = kernelUnitLengthX;
+    return true;
+}
+
+bool FELighting::setKernelUnitLengthY(float kernelUnitLengthY)
+{
+    if (m_kernelUnitLengthY == kernelUnitLengthY)
+        return false;
+
+    m_kernelUnitLengthY = kernelUnitLengthY;
+    return true;
+}
+
 const static int cPixelSize = 4;
 const static int cAlphaChannelOffset = 3;
 const static unsigned char cOpaqueAlpha = static_cast<unsigned char>(0xff);

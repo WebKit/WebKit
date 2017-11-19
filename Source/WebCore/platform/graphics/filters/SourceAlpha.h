@@ -30,17 +30,13 @@ public:
 
     static const AtomicString& effectName();
 
-    void platformApplySoftware() override;
-    void dump() override;
-
-    void determineAbsolutePaintRect() override;
-
-    FilterEffectType filterEffectType() const override { return FilterEffectTypeSourceInput; }
-
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
-
 private:
     explicit SourceAlpha(FilterEffect&);
+    FilterEffectType filterEffectType() const override { return FilterEffectTypeSourceInput; }
+
+    void platformApplySoftware() override;
+    void determineAbsolutePaintRect() override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
 };
 
 } //namespace WebCore

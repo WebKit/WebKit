@@ -31,10 +31,10 @@ class FEFlood : public FilterEffect {
 public:
     static Ref<FEFlood> create(Filter&, const Color&, float);
 
-    const Color& floodColor() const;
+    const Color& floodColor() const { return m_floodColor; }
     bool setFloodColor(const Color&);
 
-    float floodOpacity() const;
+    float floodOpacity() const { return m_floodOpacity; }
     bool setFloodOpacity(float);
 
 #if !USE(CG)
@@ -44,15 +44,14 @@ public:
     void setResultColorSpace(ColorSpace) override { FilterEffect::setResultColorSpace(ColorSpaceSRGB); }
 #endif
 
+private:
+    FEFlood(Filter&, const Color&, float);
+
     void platformApplySoftware() override;
-    void dump() override;
 
     void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
-
-private:
-    FEFlood(Filter&, const Color&, float);
 
     Color m_floodColor;
     float m_floodOpacity;

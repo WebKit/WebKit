@@ -40,9 +40,21 @@ struct FELightingPaintingDataForNeon;
 
 class FELighting : public FilterEffect {
 public:
-    void platformApplySoftware() override;
-
     void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+
+    float surfaceScale() const { return m_surfaceScale; }
+    bool setSurfaceScale(float);
+
+    const Color& lightingColor() const { return m_lightingColor; }
+    bool setLightingColor(const Color&);
+
+    float kernelUnitLengthX() const { return m_kernelUnitLengthX; }
+    bool setKernelUnitLengthX(float);
+
+    float kernelUnitLengthY() const { return m_kernelUnitLengthY; }
+    bool setKernelUnitLengthY(float);
+
+    const LightSource& lightSource() const { return m_lightSource.get(); }
 
 protected:
     static const int s_minimalRectDimension = 100 * 100; // Empirical data limit for parallel jobs
@@ -94,6 +106,8 @@ protected:
     // Not worth to inline every occurence of setPixel.
     void setPixel(int offset, LightingData&, LightSource::PaintingData&,
                   int lightX, int lightY, float factorX, float factorY, IntPoint& normalVector);
+
+    void platformApplySoftware() override;
 
     inline void platformApply(LightingData&, LightSource::PaintingData&);
 

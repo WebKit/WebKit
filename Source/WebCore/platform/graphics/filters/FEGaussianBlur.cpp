@@ -91,29 +91,14 @@ Ref<FEGaussianBlur> FEGaussianBlur::create(Filter& filter, float x, float y, Edg
     return adoptRef(*new FEGaussianBlur(filter, x, y, edgeMode));
 }
 
-float FEGaussianBlur::stdDeviationX() const
-{
-    return m_stdX;
-}
-
 void FEGaussianBlur::setStdDeviationX(float x)
 {
     m_stdX = x;
 }
 
-float FEGaussianBlur::stdDeviationY() const
-{
-    return m_stdY;
-}
-
 void FEGaussianBlur::setStdDeviationY(float y)
 {
     m_stdY = y;
-}
-
-EdgeModeType FEGaussianBlur::edgeMode() const
-{
-    return m_edgeMode;
 }
 
 void FEGaussianBlur::setEdgeMode(EdgeModeType edgeMode)
@@ -556,10 +541,6 @@ void FEGaussianBlur::platformApplySoftware()
     }
 
     platformApply(srcPixelArray, tmpImageData.get(), kernelSize.width(), kernelSize.height(), paintSize);
-}
-
-void FEGaussianBlur::dump()
-{
 }
 
 TextStream& FEGaussianBlur::externalRepresentation(TextStream& ts, int indent) const

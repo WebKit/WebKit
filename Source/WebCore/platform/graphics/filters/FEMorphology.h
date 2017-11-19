@@ -46,12 +46,16 @@ public:
     float radiusY() const { return m_radiusY; }
     bool setRadiusY(float);
 
+private:
+    FEMorphology(Filter&, MorphologyOperatorType, float radiusX, float radiusY);
+
     void platformApplySoftware() override;
-    void dump() override;
 
     void determineAbsolutePaintRect() override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
+
+    bool platformApplyDegenerate(Uint8ClampedArray* dstPixelArray, const IntRect& imageRect, int radiusX, int radiusY);
 
     struct PaintingData {
         Uint8ClampedArray* srcPixelArray;
@@ -75,10 +79,7 @@ public:
 
     inline void platformApply(PaintingData*);
     inline void platformApplyGeneric(PaintingData*, const int yStart, const int yEnd);
-private:
-    FEMorphology(Filter&, MorphologyOperatorType, float radiusX, float radiusY);
-    bool platformApplyDegenerate(Uint8ClampedArray* dstPixelArray, const IntRect& imageRect, int radiusX, int radiusY);
-    
+
     MorphologyOperatorType m_type;
     float m_radiusX;
     float m_radiusY;

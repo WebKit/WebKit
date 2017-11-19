@@ -453,10 +453,6 @@ void FETurbulence::platformApplySoftware()
     fillRegion(pixelArray, paintingData, stitchData, 0, height);
 }
 
-void FETurbulence::dump()
-{
-}
-
 static TextStream& operator<<(TextStream& ts, const TurbulenceType& type)
 {
     switch (type) {

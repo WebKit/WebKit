@@ -86,10 +86,6 @@ void FETile::platformApplySoftware()
     filterContext.fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()));
 }
 
-void FETile::dump()
-{
-}
-
 TextStream& FETile::externalRepresentation(TextStream& ts, int indent) const
 {
     writeIndent(ts, indent);

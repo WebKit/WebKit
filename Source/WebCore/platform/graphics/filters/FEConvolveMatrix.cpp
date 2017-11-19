@@ -58,12 +58,6 @@ Ref<FEConvolveMatrix> FEConvolveMatrix::create(Filter& filter, const IntSize& ke
         preserveAlpha, kernelMatrix));
 }
 
-
-IntSize FEConvolveMatrix::kernelSize() const
-{
-    return m_kernelSize;
-}
-
 void FEConvolveMatrix::setKernelSize(const IntSize& kernelSize)
 {
     ASSERT(kernelSize.width() > 0);
@@ -71,19 +65,9 @@ void FEConvolveMatrix::setKernelSize(const IntSize& kernelSize)
     m_kernelSize = kernelSize;
 }
 
-const Vector<float>& FEConvolveMatrix::kernel() const
-{
-    return m_kernelMatrix; 
-}
-
 void FEConvolveMatrix::setKernel(const Vector<float>& kernel)
 {
     m_kernelMatrix = kernel; 
-}
-
-float FEConvolveMatrix::divisor() const
-{
-    return m_divisor; 
 }
 
 bool FEConvolveMatrix::setDivisor(float divisor)
@@ -95,22 +79,12 @@ bool FEConvolveMatrix::setDivisor(float divisor)
     return true;
 }
 
-float FEConvolveMatrix::bias() const
-{
-    return m_bias; 
-}
-
 bool FEConvolveMatrix::setBias(float bias)
 {
     if (m_bias == bias)
         return false;
     m_bias = bias;
     return true;
-}
-
-IntPoint FEConvolveMatrix::targetOffset() const
-{
-    return m_targetOffset; 
 }
 
 bool FEConvolveMatrix::setTargetOffset(const IntPoint& targetOffset)
@@ -121,22 +95,12 @@ bool FEConvolveMatrix::setTargetOffset(const IntPoint& targetOffset)
     return true;
 }
 
-EdgeModeType FEConvolveMatrix::edgeMode() const
-{
-    return m_edgeMode;
-}
-
 bool FEConvolveMatrix::setEdgeMode(EdgeModeType edgeMode)
 {
     if (m_edgeMode == edgeMode)
         return false;
     m_edgeMode = edgeMode;
     return true;
-}
-
-FloatPoint FEConvolveMatrix::kernelUnitLength() const
-{
-    return m_kernelUnitLength; 
 }
 
 bool FEConvolveMatrix::setKernelUnitLength(const FloatPoint& kernelUnitLength)
@@ -147,11 +111,6 @@ bool FEConvolveMatrix::setKernelUnitLength(const FloatPoint& kernelUnitLength)
         return false;
     m_kernelUnitLength = kernelUnitLength;
     return true;
-}
-
-bool FEConvolveMatrix::preserveAlpha() const
-{
-    return m_preserveAlpha; 
 }
 
 bool FEConvolveMatrix::setPreserveAlpha(bool preserveAlpha)
@@ -471,10 +430,6 @@ void FEConvolveMatrix::platformApplySoftware()
         setOuterPixels(paintingData, 0, m_targetOffset.y(), m_targetOffset.x(), clipBottom);
     if (clipRight < paintSize.width())
         setOuterPixels(paintingData, clipRight, m_targetOffset.y(), paintSize.width(), clipBottom);
-}
-
-void FEConvolveMatrix::dump()
-{
 }
 
 static TextStream& operator<<(TextStream& ts, const EdgeModeType& type)

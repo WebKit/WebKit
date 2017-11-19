@@ -46,11 +46,6 @@ Ref<FEBlend> FEBlend::create(Filter& filter, BlendMode mode)
     return adoptRef(*new FEBlend(filter, mode));
 }
 
-BlendMode FEBlend::blendMode() const
-{
-    return m_mode;
-}
-
 bool FEBlend::setBlendMode(BlendMode mode)
 {
     if (m_mode == mode)
@@ -79,10 +74,6 @@ void FEBlend::platformApplySoftware()
     filterContext.drawImageBuffer(*imageBuffer, drawingRegionOfInputImage(in->absolutePaintRect()), IntRect(IntPoint(), imageBuffer->logicalSize()), ImagePaintingOptions(CompositeSourceOver, m_mode));
 }
 #endif
-
-void FEBlend::dump()
-{
-}
 
 TextStream& FEBlend::externalRepresentation(TextStream& ts, int indent) const
 {

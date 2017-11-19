@@ -30,17 +30,16 @@ class FETile : public FilterEffect {
 public:
     static Ref<FETile> create(Filter&);
 
-    void platformApplySoftware() override;
-    void dump() override;
-
-    void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+private:
+    FETile(Filter&);
 
     FilterEffectType filterEffectType() const override { return FilterEffectTypeTile; }
 
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
+    void platformApplySoftware() override;
 
-private:
-    FETile(Filter&);
+    void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
 };
 
 } // namespace WebCore

@@ -42,36 +42,29 @@ public:
             float, float, const IntPoint&, EdgeModeType, const FloatPoint&,
             bool, const Vector<float>&);
 
-    IntSize kernelSize() const;
+    IntSize kernelSize() const { return m_kernelSize; }
     void setKernelSize(const IntSize&);
 
-    const Vector<float>& kernel() const;
+    const Vector<float>& kernel() const { return m_kernelMatrix; }
     void setKernel(const Vector<float>&);
 
-    float divisor() const;
+    float divisor() const { return m_divisor; }
     bool setDivisor(float);
 
-    float bias() const;
+    float bias() const { return m_bias; }
     bool setBias(float);
 
-    IntPoint targetOffset() const;
+    IntPoint targetOffset() const { return m_targetOffset; }
     bool setTargetOffset(const IntPoint&);
 
-    EdgeModeType edgeMode() const;
+    EdgeModeType edgeMode() const { return m_edgeMode; }
     bool setEdgeMode(EdgeModeType);
 
-    FloatPoint kernelUnitLength() const;
+    FloatPoint kernelUnitLength() const { return m_kernelUnitLength; }
     bool setKernelUnitLength(const FloatPoint&);
 
-    bool preserveAlpha() const;
+    bool preserveAlpha() const { return m_preserveAlpha; }
     bool setPreserveAlpha(bool);
-
-    void platformApplySoftware() override;
-    void dump() override;
-
-    void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
-
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
 
 private:
 
@@ -86,6 +79,12 @@ private:
 
     FEConvolveMatrix(Filter&, const IntSize&, float, float,
             const IntPoint&, EdgeModeType, const FloatPoint&, bool, const Vector<float>&);
+
+    void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+
+    void platformApplySoftware() override;
+
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
 
     template<bool preserveAlphaValues>
     ALWAYS_INLINE void fastSetInteriorPixels(PaintingData&, int clipRight, int clipBottom, int yStart, int yEnd);
