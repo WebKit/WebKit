@@ -144,7 +144,7 @@ void SWServer::clear(const SecurityOrigin& origin)
 
 void SWServer::Connection::scheduleJobInServer(const ServiceWorkerJobData& jobData)
 {
-    LOG(ServiceWorker, "Scheduling ServiceWorker job %s-%" PRIu64 " in server", jobData.connectionIdentifier().loggingString().utf8().data(), jobData.identifier());
+    LOG(ServiceWorker, "Scheduling ServiceWorker job %s in server", jobData.identifier().loggingString().utf8().data());
     ASSERT(identifier() == jobData.connectionIdentifier());
 
     m_server.scheduleJob(jobData);
@@ -208,7 +208,7 @@ void SWServer::scheduleJob(const ServiceWorkerJobData& jobData)
 
 void SWServer::rejectJob(const ServiceWorkerJobData& jobData, const ExceptionData& exceptionData)
 {
-    LOG(ServiceWorker, "Rejected ServiceWorker job %s-%" PRIu64 " in server", jobData.connectionIdentifier().loggingString().utf8().data(), jobData.identifier());
+    LOG(ServiceWorker, "Rejected ServiceWorker job %s in server", jobData.identifier().loggingString().utf8().data());
     auto* connection = m_connections.get(jobData.connectionIdentifier());
     if (!connection)
         return;
@@ -218,7 +218,7 @@ void SWServer::rejectJob(const ServiceWorkerJobData& jobData, const ExceptionDat
 
 void SWServer::resolveRegistrationJob(const ServiceWorkerJobData& jobData, const ServiceWorkerRegistrationData& registrationData, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
 {
-    LOG(ServiceWorker, "Resolved ServiceWorker job %s-%" PRIu64 " in server with registration %s", jobData.connectionIdentifier().loggingString().utf8().data(), jobData.identifier(), registrationData.identifier.loggingString().utf8().data());
+    LOG(ServiceWorker, "Resolved ServiceWorker job %s in server with registration %s", jobData.identifier().loggingString().utf8().data(), registrationData.identifier.loggingString().utf8().data());
     auto* connection = m_connections.get(jobData.connectionIdentifier());
     if (!connection)
         return;
@@ -237,7 +237,7 @@ void SWServer::resolveUnregistrationJob(const ServiceWorkerJobData& jobData, con
 
 void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData)
 {
-    LOG(ServiceWorker, "Server issuing startScriptFetch for current job %s-%" PRIu64 " in client", jobData.connectionIdentifier().loggingString().utf8().data(), jobData.identifier());
+    LOG(ServiceWorker, "Server issuing startScriptFetch for current job %s in client", jobData.identifier().loggingString().utf8().data());
     auto* connection = m_connections.get(jobData.connectionIdentifier());
     if (!connection)
         return;
@@ -247,9 +247,9 @@ void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData)
 
 void SWServer::scriptFetchFinished(Connection& connection, const ServiceWorkerFetchResult& result)
 {
-    LOG(ServiceWorker, "Server handling scriptFetchFinished for current job %s-%" PRIu64 " in client", result.connectionIdentifier.loggingString().utf8().data(), result.jobIdentifier);
+    LOG(ServiceWorker, "Server handling scriptFetchFinished for current job %s in client", result.jobDataIdentifier.loggingString().utf8().data());
 
-    ASSERT(m_connections.contains(result.connectionIdentifier));
+    ASSERT(m_connections.contains(result.jobDataIdentifier.connectionIdentifier));
 
     auto jobQueue = m_jobQueues.get(result.registrationKey);
     if (!jobQueue)
@@ -258,22 +258,22 @@ void SWServer::scriptFetchFinished(Connection& connection, const ServiceWorkerFe
     jobQueue->scriptFetchFinished(connection, result);
 }
 
-void SWServer::scriptContextFailedToStart(SWServerWorker& worker, const String& message)
+void SWServer::scriptContextFailedToStart(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerWorker& worker, const String& message)
 {
     if (auto* jobQueue = m_jobQueues.get(worker.registrationKey()))
-        jobQueue->scriptContextFailedToStart(worker.identifier(), message);
+        jobQueue->scriptContextFailedToStart(jobDataIdentifier, worker.identifier(), message);
 }
 
-void SWServer::scriptContextStarted(SWServerWorker& worker)
+void SWServer::scriptContextStarted(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerWorker& worker)
 {
     if (auto* jobQueue = m_jobQueues.get(worker.registrationKey()))
-        jobQueue->scriptContextStarted(worker.identifier());
+        jobQueue->scriptContextStarted(jobDataIdentifier, worker.identifier());
 }
 
-void SWServer::didFinishInstall(SWServerWorker& worker, bool wasSuccessful)
+void SWServer::didFinishInstall(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerWorker& worker, bool wasSuccessful)
 {
     if (auto* jobQueue = m_jobQueues.get(worker.registrationKey()))
-        jobQueue->didFinishInstall(worker.identifier(), wasSuccessful);
+        jobQueue->didFinishInstall(jobDataIdentifier, worker.identifier(), wasSuccessful);
 }
 
 void SWServer::didFinishActivation(SWServerWorker& worker)
@@ -350,11 +350,11 @@ void SWServer::serviceWorkerStoppedControllingClient(Connection& connection, Ser
     registration->removeClientUsingRegistration({ connection.identifier(), scriptExecutionContextIdentifier });
 }
 
-void SWServer::updateWorker(Connection&, const ServiceWorkerRegistrationKey& registrationKey, const URL& url, const String& script, WorkerType type)
+void SWServer::updateWorker(Connection&, const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, const URL& url, const String& script, WorkerType type)
 {
     auto serviceWorkerIdentifier = generateServiceWorkerIdentifier();
 
-    ServiceWorkerContextData data = { registrationKey, serviceWorkerIdentifier, script, url, type };
+    ServiceWorkerContextData data = { jobDataIdentifier, registrationKey, serviceWorkerIdentifier, script, url, type };
 
     // Right now we only ever keep up to one connection to one SW context process.
     // And it should always exist if we're calling updateWorker

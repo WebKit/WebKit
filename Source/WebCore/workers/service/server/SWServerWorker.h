@@ -38,6 +38,7 @@ namespace WebCore {
 
 class SWServer;
 enum class WorkerType;
+struct ServiceWorkerJobDataIdentifier;
 
 class SWServerWorker : public ThreadSafeRefCounted<SWServerWorker> {
 public:
@@ -66,9 +67,9 @@ public:
     bool hasPendingEvents() const { return m_hasPendingEvents; }
     void setHasPendingEvents(bool value) { m_hasPendingEvents = value; }
 
-    void scriptContextFailedToStart(const String& message);
-    void scriptContextStarted();
-    void didFinishInstall(bool wasSuccessful);
+    void scriptContextFailedToStart(const ServiceWorkerJobDataIdentifier&, const String& message);
+    void scriptContextStarted(const ServiceWorkerJobDataIdentifier&);
+    void didFinishInstall(const ServiceWorkerJobDataIdentifier&, bool wasSuccessful);
     void didFinishActivation();
     void contextTerminated();
 

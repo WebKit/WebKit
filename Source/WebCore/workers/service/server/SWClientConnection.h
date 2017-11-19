@@ -78,10 +78,10 @@ public:
 protected:
     WEBCORE_EXPORT SWClientConnection();
 
-    WEBCORE_EXPORT void jobRejectedInServer(uint64_t jobIdentifier, const ExceptionData&);
-    WEBCORE_EXPORT void registrationJobResolvedInServer(uint64_t jobIdentifier, ServiceWorkerRegistrationData&&, ShouldNotifyWhenResolved);
-    WEBCORE_EXPORT void unregistrationJobResolvedInServer(uint64_t jobIdentifier, bool unregistrationResult);
-    WEBCORE_EXPORT void startScriptFetchForServer(uint64_t jobIdentifier);
+    WEBCORE_EXPORT void jobRejectedInServer(const ServiceWorkerJobDataIdentifier&, const ExceptionData&);
+    WEBCORE_EXPORT void registrationJobResolvedInServer(const ServiceWorkerJobDataIdentifier&, ServiceWorkerRegistrationData&&, ShouldNotifyWhenResolved);
+    WEBCORE_EXPORT void unregistrationJobResolvedInServer(const ServiceWorkerJobDataIdentifier&, bool unregistrationResult);
+    WEBCORE_EXPORT void startScriptFetchForServer(const ServiceWorkerJobDataIdentifier&);
     WEBCORE_EXPORT void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerData&& source, const String& sourceOrigin);
     WEBCORE_EXPORT void updateRegistrationState(ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerData>&);
     WEBCORE_EXPORT void updateWorkerState(ServiceWorkerIdentifier, ServiceWorkerState);
@@ -93,7 +93,7 @@ private:
     virtual void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) = 0;
     void forEachContainer(const WTF::Function<void(ServiceWorkerContainer&)>& apply);
 
-    HashMap<uint64_t, RefPtr<ServiceWorkerJob>> m_scheduledJobs;
+    HashMap<ServiceWorkerJobIdentifier, RefPtr<ServiceWorkerJob>> m_scheduledJobs;
 };
 
 } // namespace WebCore

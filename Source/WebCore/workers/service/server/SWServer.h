@@ -88,10 +88,10 @@ public:
 
     private:
         // Messages to the client WebProcess
-        virtual void rejectJobInClient(uint64_t jobIdentifier, const ExceptionData&) = 0;
-        virtual void resolveRegistrationJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationData&, ShouldNotifyWhenResolved) = 0;
-        virtual void resolveUnregistrationJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationKey&, bool registrationResult) = 0;
-        virtual void startScriptFetchInClient(uint64_t jobIdentifier) = 0;
+        virtual void rejectJobInClient(const ServiceWorkerJobDataIdentifier&, const ExceptionData&) = 0;
+        virtual void resolveRegistrationJobInClient(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationData&, ShouldNotifyWhenResolved) = 0;
+        virtual void resolveUnregistrationJobInClient(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, bool registrationResult) = 0;
+        virtual void startScriptFetchInClient(const ServiceWorkerJobDataIdentifier&) = 0;
 
         SWServer& m_server;
         Identifier m_identifier;
@@ -118,7 +118,7 @@ public:
     void postTask(CrossThreadTask&&);
     void postTaskReply(CrossThreadTask&&);
 
-    void updateWorker(Connection&, const ServiceWorkerRegistrationKey&, const URL&, const String& script, WorkerType);
+    void updateWorker(Connection&, const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, const URL&, const String& script, WorkerType);
     void terminateWorker(SWServerWorker&);
     void fireInstallEvent(SWServerWorker&);
     void fireActivateEvent(SWServerWorker&);
@@ -127,9 +127,9 @@ public:
     Connection* getConnection(SWServerConnectionIdentifier identifier) { return m_connections.get(identifier); }
     SWOriginStore& originStore() { return m_originStore; }
 
-    void scriptContextFailedToStart(SWServerWorker&, const String& message);
-    void scriptContextStarted(SWServerWorker&);
-    void didFinishInstall(SWServerWorker&, bool wasSuccessful);
+    void scriptContextFailedToStart(const ServiceWorkerJobDataIdentifier&, SWServerWorker&, const String& message);
+    void scriptContextStarted(const ServiceWorkerJobDataIdentifier&, SWServerWorker&);
+    void didFinishInstall(const ServiceWorkerJobDataIdentifier&, SWServerWorker&, bool wasSuccessful);
     void didFinishActivation(SWServerWorker&);
     void workerContextTerminated(SWServerWorker&);
 

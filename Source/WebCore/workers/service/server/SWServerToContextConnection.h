@@ -35,6 +35,7 @@ namespace WebCore {
 
 class SWServer;
 struct ServiceWorkerContextData;
+struct ServiceWorkerJobDataIdentifier;
 
 class SWServerToContextConnection : public ThreadSafeRefCounted<SWServerToContextConnection> {
 public:
@@ -49,9 +50,9 @@ public:
     virtual void terminateWorker(ServiceWorkerIdentifier) = 0;
 
     // Messages back from the SW host process
-    WEBCORE_EXPORT void scriptContextFailedToStart(ServiceWorkerIdentifier, const String& message);
-    WEBCORE_EXPORT void scriptContextStarted(ServiceWorkerIdentifier);
-    WEBCORE_EXPORT void didFinishInstall(ServiceWorkerIdentifier, bool wasSuccessful);
+    WEBCORE_EXPORT void scriptContextFailedToStart(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier, const String& message);
+    WEBCORE_EXPORT void scriptContextStarted(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier);
+    WEBCORE_EXPORT void didFinishInstall(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier, bool wasSuccessful);
     WEBCORE_EXPORT void didFinishActivation(ServiceWorkerIdentifier);
     WEBCORE_EXPORT void setServiceWorkerHasPendingEvents(ServiceWorkerIdentifier, bool hasPendingEvents);
     WEBCORE_EXPORT void workerTerminated(ServiceWorkerIdentifier);

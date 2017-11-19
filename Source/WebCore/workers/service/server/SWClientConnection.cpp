@@ -45,7 +45,7 @@ SWClientConnection::~SWClientConnection() = default;
 
 void SWClientConnection::scheduleJob(ServiceWorkerJob& job)
 {
-    auto addResult = m_scheduledJobs.add(job.data().identifier(), &job);
+    auto addResult = m_scheduledJobs.add(job.identifier(), &job);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
     scheduleJobInServer(job.data());
@@ -53,34 +53,34 @@ void SWClientConnection::scheduleJob(ServiceWorkerJob& job)
 
 void SWClientConnection::finishedFetchingScript(ServiceWorkerJob& job, const String& script)
 {
-    ASSERT(m_scheduledJobs.get(job.data().identifier()) == &job);
+    ASSERT(m_scheduledJobs.get(job.identifier()) == &job);
 
-    finishFetchingScriptInServer({ job.data().identifier(), job.data().connectionIdentifier(), job.data().registrationKey(), script, { } });
+    finishFetchingScriptInServer({ job.data().identifier(), job.data().registrationKey(), script, { } });
 }
 
 void SWClientConnection::failedFetchingScript(ServiceWorkerJob& job, const ResourceError& error)
 {
-    ASSERT(m_scheduledJobs.get(job.data().identifier()) == &job);
+    ASSERT(m_scheduledJobs.get(job.identifier()) == &job);
 
-    finishFetchingScriptInServer({ job.data().identifier(), job.data().connectionIdentifier(), job.data().registrationKey(), { }, error });
+    finishFetchingScriptInServer({ job.data().identifier(), job.data().registrationKey(), { }, error });
 }
 
-void SWClientConnection::jobRejectedInServer(uint64_t jobIdentifier, const ExceptionData& exceptionData)
+void SWClientConnection::jobRejectedInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ExceptionData& exceptionData)
 {
-    auto job = m_scheduledJobs.take(jobIdentifier);
+    auto job = m_scheduledJobs.take(jobDataIdentifier.jobIdentifier);
     if (!job) {
-        LOG_ERROR("Job %" PRIu64 " rejected from server, but was not found", jobIdentifier);
+        LOG_ERROR("Job %s rejected from server, but was not found", jobDataIdentifier.loggingString().utf8().data());
         return;
     }
 
     job->failedWithException(exceptionData.toException());
 }
 
-void SWClientConnection::registrationJobResolvedInServer(uint64_t jobIdentifier, ServiceWorkerRegistrationData&& registrationData, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
+void SWClientConnection::registrationJobResolvedInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, ServiceWorkerRegistrationData&& registrationData, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
 {
-    auto job = m_scheduledJobs.take(jobIdentifier);
+    auto job = m_scheduledJobs.take(jobDataIdentifier.jobIdentifier);
     if (!job) {
-        LOG_ERROR("Job %" PRIu64 " resolved in server, but was not found", jobIdentifier);
+        LOG_ERROR("Job %s resolved in server, but was not found", jobDataIdentifier.loggingString().utf8().data());
         return;
     }
 
@@ -91,22 +91,22 @@ void SWClientConnection::registrationJobResolvedInServer(uint64_t jobIdentifier,
     });
 }
 
-void SWClientConnection::unregistrationJobResolvedInServer(uint64_t jobIdentifier, bool unregistrationResult)
+void SWClientConnection::unregistrationJobResolvedInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, bool unregistrationResult)
 {
-    auto job = m_scheduledJobs.take(jobIdentifier);
+    auto job = m_scheduledJobs.take(jobDataIdentifier.jobIdentifier);
     if (!job) {
-        LOG_ERROR("Job %" PRIu64 " resolved in server, but was not found", jobIdentifier);
+        LOG_ERROR("Job %s resolved in server, but was not found", jobDataIdentifier.loggingString().utf8().data());
         return;
     }
 
     job->resolvedWithUnregistrationResult(unregistrationResult);
 }
 
-void SWClientConnection::startScriptFetchForServer(uint64_t jobIdentifier)
+void SWClientConnection::startScriptFetchForServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier)
 {
-    auto job = m_scheduledJobs.get(jobIdentifier);
+    auto job = m_scheduledJobs.get(jobDataIdentifier.jobIdentifier);
     if (!job) {
-        LOG_ERROR("Job %" PRIu64 " instructed to start fetch from server, but job was not found", jobIdentifier);
+        LOG_ERROR("Job %s instructed to start fetch from server, but job was not found", jobDataIdentifier.loggingString().utf8().data());
 
         // FIXME: Should message back to the server here to signal failure to fetch,
         // but we currently need the registration key to do so, and don't have it here.

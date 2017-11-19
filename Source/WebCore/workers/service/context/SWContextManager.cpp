@@ -51,12 +51,13 @@ auto SWContextManager::connection() const -> Connection*
 void SWContextManager::registerServiceWorkerThreadForInstall(Ref<ServiceWorkerThreadProxy>&& serviceWorkerThreadProxy)
 {
     auto serviceWorkerIdentifier = serviceWorkerThreadProxy->identifier();
+    auto jobDataIdentifier = serviceWorkerThreadProxy->thread().contextData().jobDataIdentifier;
     auto* threadProxy = serviceWorkerThreadProxy.ptr();
     auto result = m_workerMap.add(serviceWorkerIdentifier, WTFMove(serviceWorkerThreadProxy));
     ASSERT_UNUSED(result, result.isNewEntry);
     
-    threadProxy->thread().start([serviceWorkerIdentifier](const String& exceptionMessage) {
-        SWContextManager::singleton().connection()->serviceWorkerStartedWithMessage(serviceWorkerIdentifier, exceptionMessage);
+    threadProxy->thread().start([jobDataIdentifier, serviceWorkerIdentifier](const String& exceptionMessage) {
+        SWContextManager::singleton().connection()->serviceWorkerStartedWithMessage(jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage);
     });
 }
 

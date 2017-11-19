@@ -72,22 +72,22 @@ SWServerToContextConnection* SWServerToContextConnection::globalServerToContextC
     return allConnections().begin()->value;
 }
 
-void SWServerToContextConnection::scriptContextFailedToStart(ServiceWorkerIdentifier serviceWorkerIdentifier, const String& message)
+void SWServerToContextConnection::scriptContextFailedToStart(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const String& message)
 {
     if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
-        worker->scriptContextFailedToStart(message);
+        worker->scriptContextFailedToStart(jobDataIdentifier, message);
 }
 
-void SWServerToContextConnection::scriptContextStarted(ServiceWorkerIdentifier serviceWorkerIdentifier)
+void SWServerToContextConnection::scriptContextStarted(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
-        worker->scriptContextStarted();
+        worker->scriptContextStarted(jobDataIdentifier);
 }
     
-void SWServerToContextConnection::didFinishInstall(ServiceWorkerIdentifier serviceWorkerIdentifier, bool wasSuccessful)
+void SWServerToContextConnection::didFinishInstall(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, bool wasSuccessful)
 {
     if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
-        worker->didFinishInstall(wasSuccessful);
+        worker->didFinishInstall(jobDataIdentifier, wasSuccessful);
 }
 
 void SWServerToContextConnection::didFinishActivation(ServiceWorkerIdentifier serviceWorkerIdentifier)

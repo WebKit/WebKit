@@ -111,7 +111,7 @@ private:
     NavigatorBase& m_navigator;
 
     RefPtr<SWClientConnection> m_swConnection;
-    HashMap<uint64_t, Ref<ServiceWorkerJob>> m_jobMap;
+    HashMap<ServiceWorkerJobIdentifier, Ref<ServiceWorkerJob>> m_jobMap;
 
     bool m_isStopped { false };
     HashMap<ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistration*> m_registrations;

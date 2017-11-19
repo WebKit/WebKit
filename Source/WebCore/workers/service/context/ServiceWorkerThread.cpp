@@ -121,12 +121,12 @@ void ServiceWorkerThread::postMessageToServiceWorkerGlobalScope(Ref<SerializedSc
 
 void ServiceWorkerThread::fireInstallEvent()
 {
-    ScriptExecutionContext::Task task([serviceWorkerIdentifier = this->identifier()] (ScriptExecutionContext& context) mutable {
+    ScriptExecutionContext::Task task([jobDataIdentifier = m_data.jobDataIdentifier, serviceWorkerIdentifier = this->identifier()] (ScriptExecutionContext& context) mutable {
         auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
         auto installEvent = ExtendableEvent::create(eventNames().installEvent, { }, ExtendableEvent::IsTrusted::Yes);
         serviceWorkerGlobalScope.dispatchEvent(installEvent);
 
-        installEvent->whenAllExtendLifetimePromisesAreSettled([serviceWorkerIdentifier](HashSet<Ref<DOMPromise>>&& extendLifetimePromises) {
+        installEvent->whenAllExtendLifetimePromisesAreSettled([jobDataIdentifier, serviceWorkerIdentifier](HashSet<Ref<DOMPromise>>&& extendLifetimePromises) {
             bool hasRejectedAnyPromise = false;
             for (auto& promise : extendLifetimePromises) {
                 if (promise->status() == DOMPromise::Status::Rejected) {
@@ -134,9 +134,9 @@ void ServiceWorkerThread::fireInstallEvent()
                     break;
                 }
             }
-            callOnMainThread([serviceWorkerIdentifier, hasRejectedAnyPromise] () mutable {
+            callOnMainThread([jobDataIdentifier, serviceWorkerIdentifier, hasRejectedAnyPromise] () mutable {
                 if (auto* connection = SWContextManager::singleton().connection())
-                    connection->didFinishInstall(serviceWorkerIdentifier, !hasRejectedAnyPromise);
+                    connection->didFinishInstall(jobDataIdentifier, serviceWorkerIdentifier, !hasRejectedAnyPromise);
             });
         });
     });

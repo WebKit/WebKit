@@ -65,19 +65,19 @@ void SWServerWorker::terminate()
     m_server.terminateWorker(*this);
 }
 
-void SWServerWorker::scriptContextFailedToStart(const String& message)
+void SWServerWorker::scriptContextFailedToStart(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const String& message)
 {
-    m_server.scriptContextFailedToStart(*this, message);
+    m_server.scriptContextFailedToStart(jobDataIdentifier, *this, message);
 }
 
-void SWServerWorker::scriptContextStarted()
+void SWServerWorker::scriptContextStarted(const ServiceWorkerJobDataIdentifier& jobDataIdentifier)
 {
-    m_server.scriptContextStarted(*this);
+    m_server.scriptContextStarted(jobDataIdentifier, *this);
 }
 
-void SWServerWorker::didFinishInstall(bool wasSuccessful)
+void SWServerWorker::didFinishInstall(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, bool wasSuccessful)
 {
-    m_server.didFinishInstall(*this, wasSuccessful);
+    m_server.didFinishInstall(jobDataIdentifier, *this, wasSuccessful);
 }
 
 void SWServerWorker::didFinishActivation()

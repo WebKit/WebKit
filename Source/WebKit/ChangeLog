@@ -1,3 +1,23 @@
+2017-11-18  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: registration in WebCore::SWServerJobQueue::scriptContextStarted(ServiceWorkerIdentifier)
+        https://bugs.webkit.org/show_bug.cgi?id=179846
+
+        Reviewed by Darin Adler.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::rejectJobInClient):
+        (WebKit::WebSWServerConnection::resolveRegistrationJobInClient):
+        (WebKit::WebSWServerConnection::resolveUnregistrationJobInClient):
+        (WebKit::WebSWServerConnection::startScriptFetchInClient):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.messages.in:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::serviceWorkerStartedWithMessage):
+        (WebKit::WebSWContextManagerConnection::didFinishInstall):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+
 2017-11-18  Tim Horton  <timothy_horton@apple.com>
 
         Rename some Network Capture debugging defines

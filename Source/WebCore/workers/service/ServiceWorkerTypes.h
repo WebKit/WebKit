@@ -58,6 +58,9 @@ enum class ShouldNotifyWhenResolved { No, Yes };
 enum ServiceWorkerRegistrationIdentifierType { };
 using ServiceWorkerRegistrationIdentifier = ObjectIdentifier<ServiceWorkerRegistrationIdentifierType>;
 
+enum ServiceWorkerJobIdentifierType { };
+using ServiceWorkerJobIdentifier = ObjectIdentifier<ServiceWorkerJobIdentifierType>;
+
 enum SWServerToContextConnectionIdentifierType { };
 using SWServerToContextConnectionIdentifier = ObjectIdentifier<SWServerToContextConnectionIdentifierType>;
 

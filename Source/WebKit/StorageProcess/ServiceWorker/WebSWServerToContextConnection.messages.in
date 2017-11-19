@@ -25,9 +25,9 @@
 messages -> WebSWServerToContextConnection {
     # When possible, these messages can be implemented directly by WebCore::SWServerToContextConnection
 
-    ScriptContextFailedToStart(WebCore::ServiceWorkerIdentifier identifier, String message);
-    ScriptContextStarted(WebCore::ServiceWorkerIdentifier identifier);
-    DidFinishInstall(WebCore::ServiceWorkerIdentifier identifier, bool wasSuccessful);
+    ScriptContextFailedToStart(struct WebCore::ServiceWorkerJobDataIdentifier jobDataIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, String message);
+    ScriptContextStarted(struct WebCore::ServiceWorkerJobDataIdentifier jobDataIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier);
+    DidFinishInstall(struct WebCore::ServiceWorkerJobDataIdentifier jobDataIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, bool wasSuccessful);
     DidFinishActivation(WebCore::ServiceWorkerIdentifier identifier);
     SetServiceWorkerHasPendingEvents(WebCore::ServiceWorkerIdentifier identifier, bool hasPendingEvents);
     WorkerTerminated(WebCore::ServiceWorkerIdentifier identifier);

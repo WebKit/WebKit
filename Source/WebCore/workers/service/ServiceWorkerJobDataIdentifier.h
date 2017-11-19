@@ -23,42 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ServiceWorkerJobData.h"
+#pragma once
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ServiceWorkerTypes.h"
+
 namespace WebCore {
 
-ServiceWorkerJobData::ServiceWorkerJobData(const Identifier& identifier)
-    : m_identifier(identifier)
+struct ServiceWorkerJobDataIdentifier {
+    SWServerConnectionIdentifier connectionIdentifier;
+    ServiceWorkerJobIdentifier jobIdentifier;
+
+#ifndef NDEBUG
+    String loggingString() const
+    {
+        return connectionIdentifier.loggingString() + "-" + jobIdentifier.loggingString();
+    }
+#endif
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<ServiceWorkerJobDataIdentifier> decode(Decoder&);
+};
+
+inline bool operator==(const ServiceWorkerJobDataIdentifier& a, const ServiceWorkerJobDataIdentifier& b)
 {
+    return a.connectionIdentifier == b.connectionIdentifier && a.jobIdentifier == b.jobIdentifier;
 }
 
-ServiceWorkerJobData::ServiceWorkerJobData(SWServerConnectionIdentifier connectionIdentifier)
-    : m_identifier { connectionIdentifier, generateThreadSafeObjectIdentifier<ServiceWorkerJobIdentifierType>() }
+template<class Encoder>
+void ServiceWorkerJobDataIdentifier::encode(Encoder& encoder) const
 {
+    encoder << connectionIdentifier << jobIdentifier;
 }
 
-ServiceWorkerRegistrationKey ServiceWorkerJobData::registrationKey() const
+template<class Decoder>
+std::optional<ServiceWorkerJobDataIdentifier> ServiceWorkerJobDataIdentifier::decode(Decoder& decoder)
 {
-    URL scope = scopeURL;
-    scope.removeFragmentIdentifier();
-    return { URL { clientCreationURL }, SecurityOriginData { topOrigin }, WTFMove(scope) };
-}
+    std::optional<SWServerConnectionIdentifier> connectionIdentifier;
+    decoder >> connectionIdentifier;
+    if (!connectionIdentifier)
+        return std::nullopt;
 
-ServiceWorkerJobData ServiceWorkerJobData::isolatedCopy() const
-{
-    ServiceWorkerJobData result { identifier() };
-    result.type = type;
+    std::optional<ServiceWorkerJobIdentifier> jobIdentifier;
+    decoder >> jobIdentifier;
+    if (!jobIdentifier)
+        return std::nullopt;
 
-    result.scriptURL = scriptURL.isolatedCopy();
-    result.clientCreationURL = clientCreationURL.isolatedCopy();
-    result.topOrigin = topOrigin.isolatedCopy();
-    result.scopeURL = scopeURL.isolatedCopy();
-    result.registrationOptions = registrationOptions.isolatedCopy();
-
-    return result;
+    return { { WTFMove(*connectionIdentifier), WTFMove(*jobIdentifier) } };
 }
 
 } // namespace WebCore

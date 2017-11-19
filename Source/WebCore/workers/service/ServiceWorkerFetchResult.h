@@ -34,8 +34,7 @@
 namespace WebCore {
 
 struct ServiceWorkerFetchResult {
-    uint64_t jobIdentifier;
-    SWServerConnectionIdentifier connectionIdentifier;
+    ServiceWorkerJobDataIdentifier jobDataIdentifier;
     ServiceWorkerRegistrationKey registrationKey;
     String script;
     ResourceError scriptError;
@@ -47,20 +46,17 @@ struct ServiceWorkerFetchResult {
 template<class Encoder>
 void ServiceWorkerFetchResult::encode(Encoder& encoder) const
 {
-    encoder << jobIdentifier << connectionIdentifier << registrationKey << script << scriptError;
+    encoder << jobDataIdentifier << registrationKey << script << scriptError;
 }
 
 template<class Decoder>
 bool ServiceWorkerFetchResult::decode(Decoder& decoder, ServiceWorkerFetchResult& result)
 {
-    if (!decoder.decode(result.jobIdentifier))
+    std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier;
+    decoder >> jobDataIdentifier;
+    if (!jobDataIdentifier)
         return false;
-
-    std::optional<SWServerConnectionIdentifier> connectionIdentifier;
-    decoder >> connectionIdentifier;
-    if (!connectionIdentifier)
-        return false;
-    result.connectionIdentifier = *connectionIdentifier;
+    result.jobDataIdentifier = WTFMove(*jobDataIdentifier);
     
     auto registrationKey = ServiceWorkerRegistrationKey::decode(decoder);
     if (!registrationKey)

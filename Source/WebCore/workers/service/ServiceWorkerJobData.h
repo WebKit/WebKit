@@ -28,22 +28,22 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "SecurityOriginData.h"
+#include "ServiceWorkerJobDataIdentifier.h"
 #include "ServiceWorkerJobType.h"
 #include "ServiceWorkerRegistrationKey.h"
 #include "ServiceWorkerRegistrationOptions.h"
 #include "ServiceWorkerTypes.h"
 #include "URL.h"
-#include <wtf/Identified.h>
 
 namespace WebCore {
 
-struct ServiceWorkerJobData : public ThreadSafeIdentified<ServiceWorkerJobData> {
-public:
+struct ServiceWorkerJobData {
+    using Identifier = ServiceWorkerJobDataIdentifier;
     explicit ServiceWorkerJobData(SWServerConnectionIdentifier);
     ServiceWorkerJobData(const ServiceWorkerJobData&) = default;
     ServiceWorkerJobData() = default;
 
-    SWServerConnectionIdentifier connectionIdentifier() const { return m_connectionIdentifier; }
+    SWServerConnectionIdentifier connectionIdentifier() const { return m_identifier.connectionIdentifier; }
 
     URL scriptURL;
     URL clientCreationURL;
@@ -53,6 +53,7 @@ public:
 
     RegistrationOptions registrationOptions;
 
+    Identifier identifier() const { return m_identifier; }
     ServiceWorkerRegistrationKey registrationKey() const;
     ServiceWorkerJobData isolatedCopy() const;
 
@@ -60,15 +61,15 @@ public:
     template<class Decoder> static std::optional<ServiceWorkerJobData> decode(Decoder&);
 
 private:
-    WEBCORE_EXPORT ServiceWorkerJobData(uint64_t jobIdentifier, SWServerConnectionIdentifier);
+    WEBCORE_EXPORT explicit ServiceWorkerJobData(const Identifier&);
 
-    SWServerConnectionIdentifier m_connectionIdentifier;
+    Identifier m_identifier;
 };
 
 template<class Encoder>
 void ServiceWorkerJobData::encode(Encoder& encoder) const
 {
-    encoder << identifier() << m_connectionIdentifier << scriptURL << clientCreationURL << topOrigin << scopeURL;
+    encoder << identifier() << scriptURL << clientCreationURL << topOrigin << scopeURL;
     encoder.encodeEnum(type);
     switch (type) {
     case ServiceWorkerJobType::Register:
@@ -83,16 +84,12 @@ void ServiceWorkerJobData::encode(Encoder& encoder) const
 template<class Decoder>
 std::optional<ServiceWorkerJobData> ServiceWorkerJobData::decode(Decoder& decoder)
 {
-    uint64_t jobIdentifier;
-    if (!decoder.decode(jobIdentifier))
+    std::optional<ServiceWorkerJobDataIdentifier> identifier;
+    decoder >> identifier;
+    if (!identifier)
         return std::nullopt;
 
-    std::optional<SWServerConnectionIdentifier> connectionIdentifier;
-    decoder >> connectionIdentifier;
-    if (!connectionIdentifier)
-        return std::nullopt;
-
-    std::optional<ServiceWorkerJobData> jobData = { { jobIdentifier, *connectionIdentifier } };
+    std::optional<ServiceWorkerJobData> jobData = { ServiceWorkerJobData { WTFMove(*identifier) } };
 
     if (!decoder.decode(jobData->scriptURL))
         return std::nullopt;

@@ -50,14 +50,14 @@ SWServerJobQueue::~SWServerJobQueue()
 {
 }
 
-bool SWServerJobQueue::isCurrentlyProcessingJob(uint64_t jobIdentifier) const
+bool SWServerJobQueue::isCurrentlyProcessingJob(const ServiceWorkerJobDataIdentifier& jobDataIdentifier) const
 {
-    return !m_jobQueue.isEmpty() && firstJob().identifier() == jobIdentifier;
+    return !m_jobQueue.isEmpty() && firstJob().identifier() == jobDataIdentifier;
 }
 
 void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, const ServiceWorkerFetchResult& result)
 {
-    if (!isCurrentlyProcessingJob(result.jobIdentifier))
+    if (!isCurrentlyProcessingJob(result.jobDataIdentifier))
         return;
 
     auto& job = firstJob();
@@ -87,12 +87,15 @@ void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, con
     // - Invoke Finish Job with job and abort these steps.
 
     // FIXME: Support the proper worker type (classic vs module)
-    m_server.updateWorker(connection, m_registrationKey, job.scriptURL, result.script, WorkerType::Classic);
+    m_server.updateWorker(connection, job.identifier(), m_registrationKey, job.scriptURL, result.script, WorkerType::Classic);
 }
 
 // https://w3c.github.io/ServiceWorker/#update-algorithm
-void SWServerJobQueue::scriptContextFailedToStart(ServiceWorkerIdentifier, const String& message)
+void SWServerJobQueue::scriptContextFailedToStart(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, ServiceWorkerIdentifier, const String& message)
 {
+    if (!isCurrentlyProcessingJob(jobDataIdentifier))
+        return;
+
     // If an uncaught runtime script error occurs during the above step, then:
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
@@ -108,8 +111,11 @@ void SWServerJobQueue::scriptContextFailedToStart(ServiceWorkerIdentifier, const
     finishCurrentJob();
 }
 
-void SWServerJobQueue::scriptContextStarted(ServiceWorkerIdentifier identifier)
+void SWServerJobQueue::scriptContextStarted(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, ServiceWorkerIdentifier identifier)
 {
+    if (!isCurrentlyProcessingJob(jobDataIdentifier))
+        return;
+
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
 
@@ -148,8 +154,11 @@ void SWServerJobQueue::didResolveRegistrationPromise()
 }
 
 // https://w3c.github.io/ServiceWorker/#install
-void SWServerJobQueue::didFinishInstall(ServiceWorkerIdentifier identifier, bool wasSuccessful)
+void SWServerJobQueue::didFinishInstall(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, ServiceWorkerIdentifier identifier, bool wasSuccessful)
 {
+    if (!isCurrentlyProcessingJob(jobDataIdentifier))
+        return;
+
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
     ASSERT(registration->installingWorker());

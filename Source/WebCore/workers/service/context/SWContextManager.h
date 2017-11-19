@@ -46,8 +46,8 @@ public:
         virtual ~Connection() { }
 
         virtual void postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerIdentifier source, const String& sourceOrigin) = 0;
-        virtual void serviceWorkerStartedWithMessage(ServiceWorkerIdentifier, const String& exceptionMessage) = 0;
-        virtual void didFinishInstall(ServiceWorkerIdentifier, bool wasSuccessful) = 0;
+        virtual void serviceWorkerStartedWithMessage(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier, const String& exceptionMessage) = 0;
+        virtual void didFinishInstall(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier, bool wasSuccessful) = 0;
         virtual void didFinishActivation(ServiceWorkerIdentifier) = 0;
         virtual void setServiceWorkerHasPendingEvents(ServiceWorkerIdentifier, bool) = 0;
         virtual void workerTerminated(ServiceWorkerIdentifier) = 0;

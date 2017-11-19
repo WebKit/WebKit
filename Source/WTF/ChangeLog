@@ -1,3 +1,17 @@
+2017-11-18  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: registration in WebCore::SWServerJobQueue::scriptContextStarted(ServiceWorkerIdentifier)
+        https://bugs.webkit.org/show_bug.cgi?id=179846
+
+        Reviewed by Darin Adler.
+
+        Add a generateThreadSafeObjectIdentifier() for generating an ObjectIdentifier
+        in a thread-safe manner, using std::atomic.
+
+        * wtf/ObjectIdentifier.h:
+        (WTF::generateObjectIdentifier):
+        (WTF::generateThreadSafeObjectIdentifier):
+
 2017-11-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Remove CPU(HPPA) in StackBounds by using runtime stack direction test
