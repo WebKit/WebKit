@@ -777,7 +777,7 @@ void GraphicsContext::fillPath(const Path& path)
             else
                 CGContextClip(context);
 
-            m_state.fillGradient->paint(this);
+            m_state.fillGradient->paint(*this);
         }
 
         return;
@@ -848,7 +848,7 @@ void GraphicsContext::strokePath(const Path& path)
             CGContextReplacePathWithStrokedPath(context);
             CGContextClip(context);
             CGContextConcatCTM(context, m_state.strokeGradient->gradientSpaceTransform());
-            m_state.strokeGradient->paint(this);
+            m_state.strokeGradient->paint(*this);
         }
         return;
     }
@@ -896,7 +896,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         } else {
             CGContextClipToRect(context, rect);
             CGContextConcatCTM(context, m_state.fillGradient->gradientSpaceTransform());
-            m_state.fillGradient->paint(this);
+            m_state.fillGradient->paint(*this);
         }
         return;
     }
@@ -1323,7 +1323,7 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float lineWidth)
             CGContextReplacePathWithStrokedPath(context);
             CGContextClip(context);
             CGContextConcatCTM(context, m_state.strokeGradient->gradientSpaceTransform());
-            m_state.strokeGradient->paint(this);
+            m_state.strokeGradient->paint(*this);
         }
         return;
     }

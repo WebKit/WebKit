@@ -852,7 +852,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, Gradient& gradient)
         return;
     }
 
-    gradient.fill(this, rect);
+    gradient.fill(*this, rect);
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, CompositeOperator op, BlendMode blendMode)

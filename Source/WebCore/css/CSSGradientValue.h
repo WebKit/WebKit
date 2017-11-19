@@ -27,12 +27,12 @@
 
 #include "CSSImageGeneratorValue.h"
 #include "CSSPrimitiveValue.h"
+#include "Gradient.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class FloatPoint;
-class Gradient;
 class StyleResolver;
 
 enum CSSGradientType {
@@ -109,7 +109,8 @@ protected:
     {
     }
 
-    void addStops(Gradient&, const CSSToLengthConversionData&, float maxLengthForRepeat = 0);
+    template<typename GradientAdapter>
+    Gradient::ColorStopVector computeStops(GradientAdapter&, const CSSToLengthConversionData&, float maxLengthForRepeat);
 
     // Resolve points/radii to front end values.
     FloatPoint computeEndPoint(CSSPrimitiveValue*, CSSPrimitiveValue*, const CSSToLengthConversionData&, const FloatSize&);

@@ -591,23 +591,30 @@ RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> InspectorCanvas::b
 
 RefPtr<Inspector::Protocol::Array<InspectorValue>> InspectorCanvas::buildArrayForCanvasGradient(const CanvasGradient& canvasGradient)
 {
-    const Gradient& gradient = canvasGradient.gradient();
-    bool isRadial = gradient.isRadial();
+    const auto& gradient = canvasGradient.gradient();
 
-    String type = isRadial ? ASCIILiteral("radial-gradient") : ASCIILiteral("linear-gradient");
+    String type = gradient.type() == Gradient::Type::Radial ? ASCIILiteral("radial-gradient") : ASCIILiteral("linear-gradient");
 
     RefPtr<Inspector::Protocol::Array<float>> parameters = Inspector::Protocol::Array<float>::create();
-    parameters->addItem(gradient.p0().x());
-    parameters->addItem(gradient.p0().y());
-    if (isRadial)
-        parameters->addItem(gradient.startRadius());
-    parameters->addItem(gradient.p1().x());
-    parameters->addItem(gradient.p1().y());
-    if (isRadial)
-        parameters->addItem(gradient.endRadius());
+    WTF::switchOn(gradient.data(),
+        [&parameters] (const Gradient::LinearData& data) {
+            parameters->addItem(data.point0.x());
+            parameters->addItem(data.point0.y());
+            parameters->addItem(data.point1.x());
+            parameters->addItem(data.point1.y());
+        },
+        [&parameters] (const Gradient::RadialData& data) {
+            parameters->addItem(data.point0.x());
+            parameters->addItem(data.point0.y());
+            parameters->addItem(data.startRadius);
+            parameters->addItem(data.point1.x());
+            parameters->addItem(data.point1.y());
+            parameters->addItem(data.endRadius);
+        }
+    );
 
     RefPtr<Inspector::Protocol::Array<InspectorValue>> stops = Inspector::Protocol::Array<InspectorValue>::create();
-    for (const Gradient::ColorStop& colorStop : gradient.stops()) {
+    for (auto& colorStop : gradient.stops()) {
         RefPtr<Inspector::Protocol::Array<InspectorValue>> stop = Inspector::Protocol::Array<InspectorValue>::create();
         stop->addItem(colorStop.offset);
         stop->addItem(indexForData(colorStop.color.cssText()));

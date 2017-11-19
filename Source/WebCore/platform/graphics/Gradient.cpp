@@ -36,30 +36,24 @@ using WTF::pairIntHash;
 
 namespace WebCore {
 
-Gradient::Gradient(const FloatPoint& p0, const FloatPoint& p1)
-    : m_radial(false)
-    , m_p0(p0)
-    , m_p1(p1)
-    , m_r0(0)
-    , m_r1(0)
-    , m_aspectRatio(1)
-    , m_stopsSorted(false)
-    , m_spreadMethod(SpreadMethodPad)
-    , m_cachedHash(0)
+Ref<Gradient> Gradient::create(LinearData&& data)
+{
+    return adoptRef(*new Gradient(WTFMove(data)));
+}
+
+Ref<Gradient> Gradient::create(RadialData&& data)
+{
+    return adoptRef(*new Gradient(WTFMove(data)));
+}
+
+Gradient::Gradient(LinearData&& data)
+    : m_data(WTFMove(data))
 {
     platformInit();
 }
 
-Gradient::Gradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, float aspectRatio)
-    : m_radial(true)
-    , m_p0(p0)
-    , m_p1(p1)
-    , m_r0(r0)
-    , m_r1(r1)
-    , m_aspectRatio(aspectRatio)
-    , m_stopsSorted(false)
-    , m_spreadMethod(SpreadMethodPad)
-    , m_cachedHash(0)
+Gradient::Gradient(RadialData&& data)
+    : m_data(WTFMove(data))
 {
     platformInit();
 }
@@ -69,39 +63,61 @@ Gradient::~Gradient()
     platformDestroy();
 }
 
+auto Gradient::type() const -> Type
+{
+    return WTF::switchOn(m_data,
+        [] (const LinearData&) {
+            return Type::Linear;
+        },
+        [] (const RadialData&) {
+            return Type::Radial;
+        }
+    );
+}
+
 void Gradient::adjustParametersForTiledDrawing(FloatSize& size, FloatRect& srcRect, const FloatSize& spacing)
 {
-    if (m_radial)
-        return;
-
     if (srcRect.isEmpty())
         return;
 
     if (!spacing.isZero())
         return;
 
-    if (m_p0.x() == m_p1.x()) {
-        size.setWidth(1);
-        srcRect.setWidth(1);
-        srcRect.setX(0);
-        return;
-    }
-    if (m_p0.y() != m_p1.y())
-        return;
+    WTF::switchOn(m_data,
+        [&] (const LinearData& data) {
+            if (data.point0.x() == data.point1.x()) {
+                size.setWidth(1);
+                srcRect.setWidth(1);
+                srcRect.setX(0);
+                return;
+            }
+            if (data.point0.y() != data.point1.y())
+                return;
 
-    size.setHeight(1);
-    srcRect.setHeight(1);
-    srcRect.setY(0);
+            size.setHeight(1);
+            srcRect.setHeight(1);
+            srcRect.setY(0);
+        },
+        [] (const RadialData&) {
+        }
+    );
+}
+
+bool Gradient::isZeroSize() const
+{
+    return WTF::switchOn(m_data,
+        [] (const LinearData& data) {
+            return data.point0.x() == data.point1.x() && data.point0.y() == data.point1.y();
+        },
+        [] (const RadialData& data) {
+            return data.point0.x() == data.point1.x() && data.point0.y() == data.point1.y() && data.startRadius == data.endRadius;
+        }
+    );
 }
 
 void Gradient::addColorStop(float offset, const Color& color)
 {
-    m_stops.append(ColorStop(offset, color));
-
-    m_stopsSorted = false;
-    platformDestroy();
-
-    invalidateHash();
+    addColorStop({ offset, color });
 }
 
 void Gradient::addColorStop(const Gradient::ColorStop& stop)
@@ -109,8 +125,18 @@ void Gradient::addColorStop(const Gradient::ColorStop& stop)
     m_stops.append(stop);
 
     m_stopsSorted = false;
-    platformDestroy();
 
+    platformDestroy();
+    invalidateHash();
+}
+
+void Gradient::setSortedColorStops(ColorStopVector&& stops)
+{
+    m_stops = WTFMove(stops);
+
+    m_stopsSorted = true;
+
+    platformDestroy();
     invalidateHash();
 }
 
@@ -130,7 +156,6 @@ void Gradient::sortStopsIfNecessary()
         return;
 
     std::stable_sort(m_stops.begin(), m_stops.end(), compareStops);
-
     invalidateHash();
 }
 
@@ -173,14 +198,14 @@ unsigned Gradient::hash() const
         return m_cachedHash;
 
     struct {
-        AffineTransform gradientSpaceTransformation;
-        FloatPoint p0;
-        FloatPoint p1;
-        float r0;
-        float r1;
+        Type type;
+        FloatPoint point0;
+        FloatPoint point1;
+        float startRadius;
+        float endRadius;
         float aspectRatio;
         GradientSpreadMethod spreadMethod;
-        bool radial;
+        AffineTransform gradientSpaceTransformation;
     } parameters;
 
     // StringHasher requires that the memory it hashes be a multiple of two in size.
@@ -190,14 +215,27 @@ unsigned Gradient::hash() const
     // Ensure that any padding in the struct is zero-filled, so it will not affect the hash value.
     memset(&parameters, 0, sizeof(parameters));
     
-    parameters.gradientSpaceTransformation = m_gradientSpaceTransformation;
-    parameters.p0 = m_p0;
-    parameters.p1 = m_p1;
-    parameters.r0 = m_r0;
-    parameters.r1 = m_r1;
-    parameters.aspectRatio = m_aspectRatio;
+    WTF::switchOn(m_data,
+        [&parameters] (const LinearData& data) {
+            parameters.point0 = data.point0;
+            parameters.point1 = data.point1;
+            parameters.startRadius = 0;
+            parameters.endRadius = 0;
+            parameters.aspectRatio = 0;
+            parameters.type = Type::Linear;
+        },
+        [&parameters] (const RadialData& data) {
+            parameters.point0 = data.point0;
+            parameters.point1 = data.point1;
+            parameters.startRadius = data.startRadius;
+            parameters.endRadius = data.endRadius;
+            parameters.aspectRatio = data.aspectRatio;
+            parameters.type = Type::Radial;
+        }
+    );
+
     parameters.spreadMethod = m_spreadMethod;
-    parameters.radial = m_radial;
+    parameters.gradientSpaceTransformation = m_gradientSpaceTransformation;
 
     unsigned parametersHash = StringHasher::hashMemory(&parameters, sizeof(parameters));
     unsigned stopHash = StringHasher::hashMemory(m_stops.data(), m_stops.size() * sizeof(ColorStop));
@@ -207,4 +245,4 @@ unsigned Gradient::hash() const
     return m_cachedHash;
 }
 
-} //namespace
+}
