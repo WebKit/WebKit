@@ -60,5 +60,16 @@ WKURLRef createURLForResource(const char* resource, const char* extension)
     return WKURLCreateWithUTF8CString(resourceURI.get());
 }
 
+WKURLRef URLForNonExistentResource()
+{
+    return WKURLCreateWithUTF8CString("file:///does-not-exist.html");
+}
+
+bool isKeyDown(WKNativeEventPtr event)
+{
+    // FIXME: WKNativeEventPtr is not properly defined in WPE.
+    return false;
+}
+
 } // namespace Util
 } // namespace TestWebKitAPI

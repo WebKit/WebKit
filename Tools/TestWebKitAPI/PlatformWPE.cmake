@@ -15,6 +15,7 @@ set(ForwardingHeadersForTestWebKitAPI_NAME TestWebKitAPI-forwarding-headers)
 include_directories(
     ${FORWARDING_HEADERS_DIR}
     ${FORWARDING_HEADERS_DIR}/JavaScriptCore
+    ${TOOLS_DIR}/wpe/HeadlessViewBackend
 )
 
 include_directories(SYSTEM
@@ -30,6 +31,12 @@ set(bundle_harness_SOURCES
     ${TESTWEBKITAPI_DIR}/glib/UtilitiesGLib.cpp
     ${TESTWEBKITAPI_DIR}/wpe/InjectedBundleControllerWPE.cpp
     ${TESTWEBKITAPI_DIR}/wpe/PlatformUtilitiesWPE.cpp
+)
+
+set(webkit_api_harness_SOURCES
+    ${TESTWEBKITAPI_DIR}/glib/UtilitiesGLib.cpp
+    ${TESTWEBKITAPI_DIR}/wpe/PlatformUtilitiesWPE.cpp
+    ${TESTWEBKITAPI_DIR}/wpe/PlatformWebViewWPE.cpp
 )
 
 # TestWTF
@@ -63,8 +70,24 @@ add_test(TestWebCore ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebCore/TestWebCo
 set_tests_properties(TestWebCore PROPERTIES TIMEOUT 60)
 set_target_properties(TestWebCore PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebCore)
 
+# TestWebKit
+
+list(APPEND test_webkit_api_LIBRARIES
+    WPEHeadlessViewBackend
+)
+
+add_executable(TestWebKit ${test_webkit_api_SOURCES})
+
+target_link_libraries(TestWebKit ${test_webkit_api_LIBRARIES})
+add_test(TestWebKit ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit/TestWebKit)
+set_tests_properties(TestWebKit PROPERTIES TIMEOUT 60)
+set_target_properties(TestWebKit PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit)
+
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebCore -Wno-sign-compare
                                             -Wno-undef
                                             -Wno-unused-parameter)
+    WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKit -Wno-sign-compare
+                                           -Wno-undef
+                                           -Wno-unused-parameter)
 endif ()

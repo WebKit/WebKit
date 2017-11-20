@@ -1,5 +1,30 @@
 2017-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE] Build C API tests
+        https://bugs.webkit.org/show_bug.cgi?id=179817
+
+        Reviewed by Michael Catanzaro.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformWPE.cmake:
+        * TestWebKitAPI/PlatformWebView.h:
+        * TestWebKitAPI/wpe/PlatformUtilitiesWPE.cpp:
+        (TestWebKitAPI::Util::URLForNonExistentResource):
+        (TestWebKitAPI::Util::isKeyDown):
+        * TestWebKitAPI/wpe/PlatformWebViewWPE.cpp: Added.
+        (TestWebKitAPI::PlatformWebView::PlatformWebView):
+        (TestWebKitAPI::PlatformWebView::~PlatformWebView):
+        (TestWebKitAPI::PlatformWebView::initialize):
+        (TestWebKitAPI::PlatformWebView::page const):
+        (TestWebKitAPI::PlatformWebView::resizeTo):
+        (TestWebKitAPI::PlatformWebView::simulateSpacebarKeyPress):
+        (TestWebKitAPI::PlatformWebView::simulateAltKeyPress):
+        (TestWebKitAPI::PlatformWebView::simulateRightClick):
+        (TestWebKitAPI::PlatformWebView::simulateMouseMove):
+
+2017-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE] Add env var WPE_USE_HEADLESS_VIEW_BACKEND
         https://bugs.webkit.org/show_bug.cgi?id=173770
 
