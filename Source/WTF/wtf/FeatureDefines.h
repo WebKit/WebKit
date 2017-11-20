@@ -486,10 +486,6 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_LEGACY_CSS_VENDOR_PREFIXES 0
 #endif
 
-#if !defined(ENABLE_LEGACY_VENDOR_PREFIXES)
-#define ENABLE_LEGACY_VENDOR_PREFIXES 0
-#endif
-
 #if !defined(ENABLE_LETTERPRESS)
 #define ENABLE_LETTERPRESS 0
 #endif

@@ -1,3 +1,12 @@
+2017-11-19  Tim Horton  <timothy_horton@apple.com>
+
+        Remove unused LEGACY_VENDOR_PREFIXES feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=179872
+
+        Reviewed by Darin Adler.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-11-18  Tim Horton  <timothy_horton@apple.com>
 
         Fix typos in closing ENABLE() comments

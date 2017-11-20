@@ -271,9 +271,6 @@ my @features = (
     { option => "legacy-encrypted-media", desc => "Toggle Legacy EME V2 support",
       define => "ENABLE_LEGACY_ENCRYPTED_MEDIA", default => 0, value => \$legacyEncryptedMediaSupport },
 
-    { option => "legacy-vendor-prefixes", desc => "Toggle Legacy Vendor Prefix support",
-      define => "ENABLE_LEGACY_VENDOR_PREFIXES", default => 1, value => \$legacyVendorPrefixSupport },
-
     { option => "legacy-web-audio", desc => "Toggle Legacy Web Audio support",
       define => "ENABLE_LEGACY_WEB_AUDIO", default => 1, value => \$legacyWebAudioSupport },
 
