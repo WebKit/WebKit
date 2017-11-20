@@ -57,25 +57,7 @@
 
 
 /* ==== CPU() - the target CPU architecture ==== */
-
-/* CPU(ALPHA) - DEC Alpha */
-#if defined(__alpha__)
-#define WTF_CPU_ALPHA 1
-#endif
-
-/* CPU(HPPA) - HP PA-RISC */
-#if defined(__hppa__) || defined(__hppa64__)
-#define WTF_CPU_HPPA 1
-#endif
-
-/* CPU(IA64) - Itanium / IA-64 */
-#if defined(__ia64__)
-#define WTF_CPU_IA64 1
-/* 32-bit mode on Itanium */
-#if !defined(__LP64__)
-#define WTF_CPU_IA64_32 1
-#endif
-#endif
+/* CPU(KNOWN) becomes true if we explicitly support a target CPU. */
 
 /* CPU(MIPS) - MIPS 32-bit and 64-bit */
 #if (defined(mips) || defined(__mips__) || defined(MIPS) || defined(_MIPS_) || defined(__mips64))
@@ -86,6 +68,7 @@
 #define WTF_CPU_MIPS 1
 #define WTF_MIPS_ARCH __mips
 #endif
+#define WTF_CPU_KNOWN 1
 #define WTF_MIPS_PIC (defined __PIC__)
 #define WTF_MIPS_ISA(v) (defined WTF_MIPS_ARCH && WTF_MIPS_ARCH == v)
 #define WTF_MIPS_ISA_AT_LEAST(v) (defined WTF_MIPS_ARCH && WTF_MIPS_ARCH >= v)
@@ -103,6 +86,7 @@
     && defined(__BYTE_ORDER__) \
     && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
 #define WTF_CPU_PPC64 1
+#define WTF_CPU_KNOWN 1
 #endif
 
 /* CPU(PPC64) - PowerPC 64-bit Little Endian */
@@ -113,6 +97,7 @@
     && defined(__BYTE_ORDER__) \
     && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
 #define WTF_CPU_PPC64LE 1
+#define WTF_CPU_KNOWN 1
 #endif
 
 /* CPU(PPC) - PowerPC 32-bit */
@@ -126,22 +111,7 @@
     && !CPU(PPC64)             \
     && CPU(BIG_ENDIAN)
 #define WTF_CPU_PPC 1
-#endif
-
-/* CPU(SH4) - SuperH SH-4 */
-#if defined(__SH4__)
-#define WTF_CPU_SH4 1
-#endif
-
-/* CPU(S390X) - S390 64-bit */
-#if defined(__s390x__)
-#define WTF_CPU_S390X 1
-#endif
-
-/* CPU(S390) - S390 32-bit */
-#if (  defined(__s390__)        \
-    && !CPU(S390X))
-#define WTF_CPU_S390 1
+#define WTF_CPU_KNOWN 1
 #endif
 
 /* CPU(X86) - i386 / x86 32-bit */
@@ -151,6 +121,7 @@
     || defined(_X86_)    \
     || defined(__THW_INTEL)
 #define WTF_CPU_X86 1
+#define WTF_CPU_KNOWN 1
 
 #if defined(__SSE2__) || (defined(_M_IX86_FP) && _M_IX86_FP >= 2)
 #define WTF_CPU_X86_SSE2 1
@@ -163,11 +134,13 @@
     || defined(_M_X64)
 #define WTF_CPU_X86_64 1
 #define WTF_CPU_X86_SSE2 1
+#define WTF_CPU_KNOWN 1
 #endif
 
 /* CPU(ARM64) - Apple */
 #if (defined(__arm64__) && defined(__APPLE__)) || defined(__aarch64__)
 #define WTF_CPU_ARM64 1
+#define WTF_CPU_KNOWN 1
 
 #if defined(__arm64e__)
 #define WTF_CPU_ARM64E 1
@@ -182,6 +155,7 @@
     || defined(ARM) \
     || defined(_ARM_)
 #define WTF_CPU_ARM 1
+#define WTF_CPU_KNOWN 1
 
 #if defined(__ARM_PCS_VFP)
 #define WTF_CPU_ARM_HARDFP 1
@@ -344,7 +318,11 @@
 
 #endif /* ARM */
 
-#if CPU(ARM) || CPU(MIPS) || CPU(SH4) || CPU(ALPHA) || CPU(HPPA)
+#if !CPU(KNOWN)
+#define WTF_CPU_UNKNOWN 1
+#endif
+
+#if CPU(ARM) || CPU(MIPS) || CPU(UNKNOWN)
 #define WTF_CPU_NEEDS_ALIGNED_ACCESS 1
 #endif
 
@@ -737,17 +715,30 @@
 #endif
 
 #if !defined(USE_JSVALUE64) && !defined(USE_JSVALUE32_64)
-#if (CPU(X86_64) && !defined(__ILP32__) && (OS(UNIX) || OS(WINDOWS))) \
-    || (CPU(IA64) && !CPU(IA64_32)) \
-    || CPU(ALPHA) \
-    || (CPU(ARM64) && !defined(__ILP32__)) \
-    || CPU(S390X) \
-    || CPU(MIPS64) \
-    || CPU(PPC64) \
-    || CPU(PPC64LE)
+#if COMPILER(GCC_OR_CLANG)
+/* __LP64__ is not defined on 64bit Windows since it uses LLP64. Using __SIZEOF_POINTER__ is simpler. */
+#if __SIZEOF_POINTER__ == 8
+#define USE_JSVALUE64 1
+#elif __SIZEOF_POINTER__ == 4
+#define USE_JSVALUE32_64 1
+#else
+#error "Unsupported pointer width"
+#endif
+#elif COMPILER(MSVC)
+#if defined(_WIN64)
 #define USE_JSVALUE64 1
 #else
 #define USE_JSVALUE32_64 1
+#endif
+#else
+/* This is the most generic way. But in OS(DARWIN), Platform.h can be included by sandbox definition file (.sb).
+ * At that time, we cannot include "stdint.h" header. So in the case of known compilers, we use predefined constants instead. */
+#include <stdint.h>
+#if UINTPTR_MAX > UINT32_MAX
+#define USE_JSVALUE64 1
+#else
+#define USE_JSVALUE32_64 1
+#endif
 #endif
 #endif /* !defined(USE_JSVALUE64) && !defined(USE_JSVALUE32_64) */
 

@@ -25,6 +25,8 @@
 
 #ifndef InlineASM_h
 #define InlineASM_h
+#include <wtf/Platform.h>
+#if !CPU(UNKNOWN)
 
 /* asm directive helpers */ 
 
@@ -65,7 +67,7 @@
 #elif   OS(LINUX)               \
      || OS(FREEBSD)             \
      || OS(OPENBSD)             \
-     || (OS(HPUX) && CPU(IA64)) \
+     || OS(HPUX)                \
      || OS(NETBSD)
     // ELF platform
 #define HIDE_SYMBOL(name) ".hidden " #name
@@ -94,4 +96,5 @@
 #define INLINE_ARM_FUNCTION(name)
 #endif
 
+#endif // !CPU(UNKNOWN)
 #endif // InlineASM_h

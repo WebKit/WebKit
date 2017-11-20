@@ -576,19 +576,7 @@ add_custom_command(
 
 list(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InjectedScriptSource.h)
 
-if (WTF_CPU_ARM)
-elseif (WTF_CPU_ARM64)
-elseif (WTF_CPU_ALPHA)
-elseif (WTF_CPU_HPPA)
-elseif (WTF_CPU_PPC)
-elseif (WTF_CPU_PPC64)
-elseif (WTF_CPU_PPC64LE)
-elseif (WTF_CPU_S390)
-elseif (WTF_CPU_S390X)
-elseif (WTF_CPU_MIPS)
-elseif (WTF_CPU_SH4)
-elseif (WTF_CPU_X86)
-elseif (WTF_CPU_X86_64)
+if (WTF_CPU_X86_64)
     if (MSVC AND ENABLE_JIT)
         add_custom_command(
             OUTPUT ${DERIVED_SOURCES_DIR}/JITStubsMSVC64.obj
@@ -598,8 +586,6 @@ elseif (WTF_CPU_X86_64)
 
         list(APPEND JavaScriptCore_SOURCES ${DERIVED_SOURCES_DIR}/JITStubsMSVC64.obj)
     endif ()
-else ()
-    message(FATAL_ERROR "Unknown CPU")
 endif ()
 
 WEBKIT_FRAMEWORK_DECLARE(JavaScriptCore)

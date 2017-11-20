@@ -1,3 +1,24 @@
+2017-11-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add CPU(UNKNOWN) to cover all the unknown CPU types
+        https://bugs.webkit.org/show_bug.cgi?id=179243
+
+        Reviewed by JF Bastien.
+
+        This patch adds a new CPU type, `CPU(UNKNOWN)` to cover all the unknown CPUs.
+        This CPU architecture tells conservative assumption to make JSC work on all
+        the unknown generic CPUs. And we make several CPUs (ALPHA, SH4, S390, S390X, IA64, IA64_32)
+        UNKNOWN.
+
+        We also make InlineASM available only for !CPU(UNKNOWN). In an unknown CPU, inline asm is not useful.
+
+        And we also introduce a generic way to detect 64bit pointer environment by using
+        __SIZEOF_POINTER__ predefined macro, or `UINTPTR_MAX > UINT32_MAX`.
+
+        * wtf/InlineASM.h:
+        * wtf/Platform.h:
+        * wtf/dtoa/utils.h:
+
 2017-11-19  Tim Horton  <timothy_horton@apple.com>
 
         Remove unused LEGACY_VENDOR_PREFIXES feature flag
