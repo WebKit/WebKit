@@ -1,3 +1,11 @@
+2017-11-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, speculative attempt to fix run-gtk-tests after r225047
+        https://bugs.webkit.org/show_bug.cgi?id=173772
+
+        * jhbuild/jhbuildutils.py:
+        (enter_jhbuild_environment_if_available):
+
 2017-11-20  Mario Sanchez Prada  <mario@endlessm.com>
 
         [GTK] New API to add, retrieve and delete cookies via WebKitCookieManager
