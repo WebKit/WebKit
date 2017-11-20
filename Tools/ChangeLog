@@ -1,3 +1,13 @@
+2017-11-20  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [Win] Update ruby JSC test writer for gigacage changes
+        https://bugs.webkit.org/show_bug.cgi?id=178757
+
+        Reviewed by Keith Miller.
+
+        * Scripts/webkitruby/jsc-stress-test-writer-ruby.rb:
+        Add additionalEnv to ruby test writer Plan
+
 2017-11-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Remove ENABLE_ALLINONE_BUILD option

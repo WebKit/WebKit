@@ -261,7 +261,7 @@ def chakraPassFailErrorHandler
 end
 
 class Plan
-    attr_reader :directory, :arguments, :family, :name, :outputHandler, :errorHandler
+    attr_reader :directory, :arguments, :family, :name, :outputHandler, :errorHandler, :additionalEnv
     attr_accessor :index
     
     def initialize(directory, arguments, family, name, outputHandler, errorHandler)
@@ -272,6 +272,7 @@ class Plan
         @outputHandler = outputHandler
         @errorHandler = errorHandler
         @isSlow = !!$runCommandOptions[:isSlow]
+        @additionalEnv = []
     end
     
     def shellCommand 
@@ -280,7 +281,7 @@ class Plan
         script += "status = nil\n"
         script += "Dir.chdir(\"../#{Shellwords.shellescape(@directory.to_s)}\") do\n"
         script += "  env = {}\n"
-        $envVars.each {
+        ($envVars + additionalEnv).each {
             |var| 
             (key, value) = var.split(/=/, 2)
             script += "  env[\"#{key}\"] = \"#{value}\"\n"
