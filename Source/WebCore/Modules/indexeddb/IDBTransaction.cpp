@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -153,9 +153,8 @@ ExceptionOr<Ref<IDBObjectStore>> IDBTransaction::objectStore(const String& objec
 
     Locker<Lock> locker(m_referencedObjectStoreLock);
 
-    auto iterator = m_referencedObjectStores.find(objectStoreName);
-    if (iterator != m_referencedObjectStores.end())
-        return Ref<IDBObjectStore> { *iterator->value };
+    if (auto* store = m_referencedObjectStores.get(objectStoreName))
+        return makeRef(*store);
 
     bool found = false;
     for (auto& objectStore : m_info.objectStores()) {

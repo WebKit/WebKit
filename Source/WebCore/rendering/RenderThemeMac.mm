@@ -75,6 +75,7 @@
 #import <pal/spi/mac/NSCellSPI.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <wtf/MathExtras.h>
+#import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/text/StringBuilder.h>
@@ -244,23 +245,18 @@ String RenderThemeMac::mediaControlsScript()
     if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
         if (m_mediaControlsScript.isEmpty()) {
             NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
-
-            StringBuilder scriptBuilder;
-            scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls-localized-strings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
-            scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls" ofType:@"js" inDirectory:@"modern-media-controls"] encoding:NSUTF8StringEncoding error:nil]);
-            m_mediaControlsScript = scriptBuilder.toString();
+            NSString *localizedStrings = [NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls-localized-strings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil];
+            NSString *script = [NSString stringWithContentsOfFile:[bundle pathForResource:@"modern-media-controls" ofType:@"js" inDirectory:@"modern-media-controls"] encoding:NSUTF8StringEncoding error:nil];
+            m_mediaControlsScript = makeString(String { localizedStrings }, String { script });
         }
         return m_mediaControlsScript;
     }
 
     if (m_legacyMediaControlsScript.isEmpty()) {
         NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
-
-        StringBuilder scriptBuilder;
-        scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"mediaControlsLocalizedStrings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
-        scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"mediaControlsApple" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
-
-        m_legacyMediaControlsScript = scriptBuilder.toString();
+        NSString *localizedStrings = [NSString stringWithContentsOfFile:[bundle pathForResource:@"mediaControlsLocalizedStrings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil];
+        NSString *script = [NSString stringWithContentsOfFile:[bundle pathForResource:@"mediaControlsApple" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil];
+        m_legacyMediaControlsScript = makeString(String { localizedStrings }, String { script });
     }
     return m_legacyMediaControlsScript;
 #else
@@ -483,151 +479,108 @@ void RenderThemeMac::platformColorsDidChange()
 
 Color RenderThemeMac::systemColor(CSSValueID cssValueID) const
 {
-    auto addResult = m_systemColorCache.add(cssValueID, Color());
-    if (!addResult.isNewEntry)
-        return addResult.iterator->value;
-
-    Color color;
-    switch (cssValueID) {
-    case CSSValueActiveborder:
-        color = convertNSColorToColor([NSColor keyboardFocusIndicatorColor]);
-        break;
-    case CSSValueActivebuttontext:
-        // There is no corresponding NSColor for this so we use a hard coded value.
-        color = Color::white;
-        break;
-    case CSSValueActivecaption:
-        color = convertNSColorToColor([NSColor windowFrameTextColor]);
-        break;
-    case CSSValueAppworkspace:
-        color = convertNSColorToColor([NSColor headerColor]);
-        break;
-    case CSSValueBackground:
-        // Use theme independent default
-        break;
-    case CSSValueButtonface:
-        // We use this value instead of NSColor's controlColor to avoid website incompatibilities.
-        // We may want to change this to use the NSColor in future.
-        color = 0xFFC0C0C0;
-        break;
-    case CSSValueButtonhighlight:
-        color = convertNSColorToColor([NSColor controlHighlightColor]);
-        break;
-    case CSSValueButtonshadow:
-        color = convertNSColorToColor([NSColor controlShadowColor]);
-        break;
-    case CSSValueButtontext:
-        color = convertNSColorToColor([NSColor controlTextColor]);
-        break;
-    case CSSValueCaptiontext:
-        color = convertNSColorToColor([NSColor textColor]);
-        break;
-    case CSSValueGraytext:
-        color = convertNSColorToColor([NSColor disabledControlTextColor]);
-        break;
-    case CSSValueHighlight:
-        color = convertNSColorToColor([NSColor selectedTextBackgroundColor]);
-        break;
-    case CSSValueHighlighttext:
-        color = convertNSColorToColor([NSColor selectedTextColor]);
-        break;
-    case CSSValueInactiveborder:
-        color = convertNSColorToColor([NSColor controlBackgroundColor]);
-        break;
-    case CSSValueInactivecaption:
-        color = convertNSColorToColor([NSColor controlBackgroundColor]);
-        break;
-    case CSSValueInactivecaptiontext:
-        color = convertNSColorToColor([NSColor textColor]);
-        break;
-    case CSSValueInfobackground:
-        // There is no corresponding NSColor for this so we use a hard coded value.
-        color = 0xFFFBFCC5;
-        break;
-    case CSSValueInfotext:
-        color = convertNSColorToColor([NSColor textColor]);
-        break;
-    case CSSValueMenu:
-        color = menuBackgroundColor();
-        break;
-    case CSSValueMenutext:
-        color = convertNSColorToColor([NSColor selectedMenuItemTextColor]);
-        break;
-    case CSSValueScrollbar:
-        color = convertNSColorToColor([NSColor scrollBarColor]);
-        break;
-    case CSSValueText:
-        color = convertNSColorToColor([NSColor textColor]);
-        break;
-    case CSSValueThreeddarkshadow:
-        color = convertNSColorToColor([NSColor controlDarkShadowColor]);
-        break;
-    case CSSValueThreedshadow:
-        color = convertNSColorToColor([NSColor shadowColor]);
-        break;
-    case CSSValueThreedface:
-        // We use this value instead of NSColor's controlColor to avoid website incompatibilities.
-        // We may want to change this to use the NSColor in future.
-        color = 0xFFC0C0C0;
-        break;
-    case CSSValueThreedhighlight:
-        color = convertNSColorToColor([NSColor highlightColor]);
-        break;
-    case CSSValueThreedlightshadow:
-        color = convertNSColorToColor([NSColor controlLightHighlightColor]);
-        break;
-    case CSSValueWebkitFocusRingColor:
-        color = convertNSColorToColor([NSColor keyboardFocusIndicatorColor]);
-        break;
-    case CSSValueWindow:
-        color = convertNSColorToColor([NSColor windowBackgroundColor]);
-        break;
-    case CSSValueWindowframe:
-        color = convertNSColorToColor([NSColor windowFrameColor]);
-        break;
-    case CSSValueWindowtext:
-        color = convertNSColorToColor([NSColor windowFrameTextColor]);
-        break;
-    case CSSValueAppleWirelessPlaybackTargetActive:
-        color = convertNSColorToColor([NSColor systemBlueColor]);
-        break;
-    case CSSValueAppleSystemBlue:
-        color = convertNSColorToColor([NSColor systemBlueColor]);
-        break;
-    case CSSValueAppleSystemBrown:
-        color = convertNSColorToColor([NSColor systemBrownColor]);
-        break;
-    case CSSValueAppleSystemGray:
-        color = convertNSColorToColor([NSColor systemGrayColor]);
-        break;
-    case CSSValueAppleSystemGreen:
-        color = convertNSColorToColor([NSColor systemGreenColor]);
-        break;
-    case CSSValueAppleSystemOrange:
-        color = convertNSColorToColor([NSColor systemOrangeColor]);
-        break;
-    case CSSValueAppleSystemPink:
-        color = convertNSColorToColor([NSColor systemPinkColor]);
-        break;
-    case CSSValueAppleSystemPurple:
-        color = convertNSColorToColor([NSColor systemPurpleColor]);
-        break;
-    case CSSValueAppleSystemRed:
-        color = convertNSColorToColor([NSColor systemRedColor]);
-        break;
-    case CSSValueAppleSystemYellow:
-        color = convertNSColorToColor([NSColor systemYellowColor]);
-        break;
-    default:
-        break;
-    }
-
-    if (!color.isValid())
-        color = RenderTheme::systemColor(cssValueID);
-
-    addResult.iterator->value = color;
-
-    return addResult.iterator->value;
+    return m_systemColorCache.ensure(cssValueID, [this, cssValueID] () -> Color {
+        auto selectCocoaColor = [cssValueID] () -> SEL {
+            switch (cssValueID) {
+            case CSSValueActiveborder:
+                return @selector(keyboardFocusIndicatorColor);
+            case CSSValueActivecaption:
+                return @selector(windowFrameTextColor);
+            case CSSValueAppworkspace:
+                return @selector(headerColor);
+            case CSSValueButtonhighlight:
+                return @selector(controlHighlightColor);
+            case CSSValueButtonshadow:
+                return @selector(controlShadowColor);
+            case CSSValueButtontext:
+                return @selector(controlTextColor);
+            case CSSValueCaptiontext:
+                return @selector(textColor);
+            case CSSValueGraytext:
+                return @selector(disabledControlTextColor);
+            case CSSValueHighlight:
+                return @selector(selectedTextBackgroundColor);
+            case CSSValueHighlighttext:
+                return @selector(selectedTextColor);
+            case CSSValueInactiveborder:
+                return @selector(controlBackgroundColor);
+            case CSSValueInactivecaption:
+                return @selector(controlBackgroundColor);
+            case CSSValueInactivecaptiontext:
+                return @selector(textColor);
+            case CSSValueInfotext:
+                return @selector(textColor);
+            case CSSValueMenutext:
+                return @selector(selectedMenuItemTextColor);
+            case CSSValueScrollbar:
+                return @selector(scrollBarColor);
+            case CSSValueText:
+                return @selector(textColor);
+            case CSSValueThreeddarkshadow:
+                return @selector(controlDarkShadowColor);
+            case CSSValueThreedshadow:
+                return @selector(shadowColor);
+            case CSSValueThreedhighlight:
+                return @selector(highlightColor);
+            case CSSValueThreedlightshadow:
+                return @selector(controlLightHighlightColor);
+            case CSSValueWebkitFocusRingColor:
+                return @selector(keyboardFocusIndicatorColor);
+            case CSSValueWindow:
+                return @selector(windowBackgroundColor);
+            case CSSValueWindowframe:
+                return @selector(windowFrameColor);
+            case CSSValueWindowtext:
+                return @selector(windowFrameTextColor);
+            case CSSValueAppleWirelessPlaybackTargetActive:
+                return @selector(systemBlueColor);
+            case CSSValueAppleSystemBlue:
+                return @selector(systemBlueColor);
+            case CSSValueAppleSystemBrown:
+                return @selector(systemBrownColor);
+            case CSSValueAppleSystemGray:
+                return @selector(systemGrayColor);
+            case CSSValueAppleSystemGreen:
+                return @selector(systemGreenColor);
+            case CSSValueAppleSystemOrange:
+                return @selector(systemOrangeColor);
+            case CSSValueAppleSystemPink:
+                return @selector(systemPinkColor);
+            case CSSValueAppleSystemPurple:
+                return @selector(systemPurpleColor);
+            case CSSValueAppleSystemRed:
+                return @selector(systemRedColor);
+            case CSSValueAppleSystemYellow:
+                return @selector(systemYellowColor);
+            default:
+                return nullptr;
+            }
+        };
+        if (auto selector = selectCocoaColor()) {
+            if (auto color = wtfObjcMsgSend<NSColor *>([NSColor class], selector))
+                return convertNSColorToColor(color);
+        }
+        switch (cssValueID) {
+        case CSSValueActivebuttontext:
+            // No corresponding NSColor for this so we use a hard coded value.
+            return Color::white;
+        case CSSValueButtonface:
+        case CSSValueThreedface:
+            // We selected this value instead of [NSColor controlColor] to avoid website incompatibilities.
+            // We may want to consider changing to [NSColor controlColor] some day.
+            return 0xFFC0C0C0;
+        case CSSValueInfobackground:
+            // No corresponding NSColor for this so we use a hard coded value.
+            return 0xFFFBFCC5;
+        case CSSValueMenu:
+            return menuBackgroundColor();
+        case CSSValueBackground:
+            // Use platform-independent value returned by base class.
+            FALLTHROUGH;
+        default:
+            return RenderTheme::systemColor(cssValueID);
+        }
+    }).iterator->value;
 }
 
 bool RenderThemeMac::usesTestModeFocusRingColor() const

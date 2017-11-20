@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -206,7 +206,7 @@ AXObjectCache::~AXObjectCache()
     for (const auto& object : m_objects.values()) {
         detachWrapper(object.get(), AccessibilityDetachmentType::CacheDestroyed);
         object->detach(AccessibilityDetachmentType::CacheDestroyed);
-        removeAXID(object.get());
+        object->setAXObjectID(0);
     }
 }
 
@@ -694,31 +694,25 @@ void AXObjectCache::remove(AXID axID)
 {
     if (!axID)
         return;
-    
-    // first fetch object to operate some cleanup functions on it 
-    AccessibilityObject* obj = m_objects.get(axID);
-    if (!obj)
+
+    auto object = m_objects.take(axID);
+    if (!object)
         return;
-    
-    detachWrapper(obj, AccessibilityDetachmentType::ElementDestroyed);
-    obj->detach(AccessibilityDetachmentType::ElementDestroyed, this);
-    removeAXID(obj);
-    
-    // finally remove the object
-    if (!m_objects.take(axID))
-        return;
-    
-    ASSERT(m_objects.size() >= m_idsInUse.size());    
+
+    detachWrapper(object.get(), AccessibilityDetachmentType::ElementDestroyed);
+    object->detach(AccessibilityDetachmentType::ElementDestroyed, this);
+    object->setAXObjectID(0);
+
+    m_idsInUse.remove(axID);
+
+    ASSERT(m_objects.size() >= m_idsInUse.size());
 }
     
 void AXObjectCache::remove(RenderObject* renderer)
 {
     if (!renderer)
         return;
-    
-    AXID axID = m_renderObjectMapping.get(renderer);
-    remove(axID);
-    m_renderObjectMapping.remove(renderer);
+    remove(m_renderObjectMapping.take(renderer));
 }
 
 void AXObjectCache::remove(Node* node)
@@ -733,31 +727,20 @@ void AXObjectCache::remove(Node* node)
     m_deferredTextChangedList.remove(node);
     removeNodeForUse(node);
 
-    // This is all safe even if we didn't have a mapping.
-    AXID axID = m_nodeObjectMapping.get(node);
-    remove(axID);
-    m_nodeObjectMapping.remove(node);
+    remove(m_nodeObjectMapping.take(node));
 
-    // Cleanup for aria modal nodes.
     if (m_currentModalNode == node)
         m_currentModalNode = nullptr;
-    if (m_modalNodesSet.contains(node))
-        m_modalNodesSet.remove(node);
-    
-    if (node->renderer()) {
-        remove(node->renderer());
-        return;
-    }
+    m_modalNodesSet.remove(node);
+
+    remove(node->renderer());
 }
 
 void AXObjectCache::remove(Widget* view)
 {
     if (!view)
         return;
-        
-    AXID axID = m_widgetObjectMapping.get(view);
-    remove(axID);
-    m_widgetObjectMapping.remove(view);
+    remove(m_widgetObjectMapping.take(view));
 }
     
     
@@ -793,20 +776,6 @@ AXID AXObjectCache::getAXID(AccessibilityObject* obj)
     obj->setAXObjectID(objID);
     
     return objID;
-}
-
-void AXObjectCache::removeAXID(AccessibilityObject* object)
-{
-    if (!object)
-        return;
-    
-    AXID objID = object->axObjectID();
-    if (!objID)
-        return;
-    ASSERT(!HashTraits<AXID>::isDeletedValue(objID));
-    ASSERT(m_idsInUse.contains(objID));
-    object->setAXObjectID(0);
-    m_idsInUse.remove(objID);
 }
 
 void AXObjectCache::textChanged(Node* node)
@@ -1561,7 +1530,7 @@ VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& 
         return VisiblePosition();
     
     AXObjectCache* cache = renderer->document().axObjectCache();
-    if (!cache->isIDinUse(textMarkerData.axID))
+    if (!cache->m_idsInUse.contains(textMarkerData.axID))
         return VisiblePosition();
 
     return visiblePos;

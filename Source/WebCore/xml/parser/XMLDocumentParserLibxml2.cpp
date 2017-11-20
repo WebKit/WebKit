@@ -1455,20 +1455,16 @@ bool XMLDocumentParser::appendFragmentSource(const String& chunk)
 
 // --------------------------------
 
-struct AttributeParseState {
-    HashMap<String, String> attributes;
-    bool gotAttributes;
-};
+using AttributeParseState = std::optional<HashMap<String, String>>;
 
 static void attributesStartElementNsHandler(void* closure, const xmlChar* xmlLocalName, const xmlChar* /*xmlPrefix*/, const xmlChar* /*xmlURI*/, int /*numNamespaces*/, const xmlChar** /*namespaces*/, int numAttributes, int /*numDefaulted*/, const xmlChar** libxmlAttributes)
 {
     if (strcmp(reinterpret_cast<const char*>(xmlLocalName), "attrs") != 0)
         return;
 
-    xmlParserCtxtPtr ctxt = static_cast<xmlParserCtxtPtr>(closure);
-    AttributeParseState* state = static_cast<AttributeParseState*>(ctxt->_private);
+    auto& state = *static_cast<AttributeParseState*>(static_cast<xmlParserCtxtPtr>(closure)->_private);
 
-    state->gotAttributes = true;
+    state = HashMap<String, String> { };
 
     xmlSAX2Attributes* attributes = reinterpret_cast<xmlSAX2Attributes*>(libxmlAttributes);
     for (int i = 0; i < numAttributes; i++) {
@@ -1478,29 +1474,27 @@ static void attributesStartElementNsHandler(void* closure, const xmlChar* xmlLoc
         String attrPrefix = toString(attributes[i].prefix);
         String attrQName = attrPrefix.isEmpty() ? attrLocalName : attrPrefix + ":" + attrLocalName;
 
-        state->attributes.set(attrQName, attrValue);
+        state->set(attrQName, attrValue);
     }
 }
 
-HashMap<String, String> parseAttributes(const String& string, bool& attrsOK)
+std::optional<HashMap<String, String>> parseAttributes(const String& string)
 {
     String parseString = "<?xml version=\"1.0\"?><attrs " + string + " />";
 
-    AttributeParseState state;
-    state.gotAttributes = false;
+    AttributeParseState attributes;
 
     xmlSAXHandler sax;
     memset(&sax, 0, sizeof(sax));
     sax.startElementNs = attributesStartElementNsHandler;
     sax.initialized = XML_SAX2_MAGIC;
 
-    RefPtr<XMLParserContext> parser = XMLParserContext::createStringParser(&sax, &state);
+    auto parser = XMLParserContext::createStringParser(&sax, &attributes);
 
     // FIXME: Can we parse 8-bit strings directly as Latin-1 instead of upconverting to UTF-16?
     xmlParseChunk(parser->context(), reinterpret_cast<const char*>(StringView(parseString).upconvertedCharacters().get()), parseString.length() * sizeof(UChar), 1);
 
-    attrsOK = state.gotAttributes;
-    return WTFMove(state.attributes);
+    return attributes;
 }
 
 }

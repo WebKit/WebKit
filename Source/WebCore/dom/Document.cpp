@@ -657,7 +657,7 @@ void Document::removedLastRef()
         m_titleElement = nullptr;
         m_documentElement = nullptr;
         m_focusNavigationStartingNode = nullptr;
-        m_userActionElements.documentDidRemoveLastRef();
+        m_userActionElements.clear();
 #if ENABLE(FULLSCREEN_API)
         m_fullScreenElement = nullptr;
         m_fullScreenElementStack.clear();
@@ -6808,7 +6808,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
         // We are clearing the :active chain because the mouse has been released.
         for (Element* currentElement = oldActiveElement; currentElement; currentElement = currentElement->parentElementInComposedTree()) {
             currentElement->setActive(false);
-            m_userActionElements.setInActiveChain(currentElement, false);
+            m_userActionElements.setInActiveChain(*currentElement, false);
         }
         m_activeElement = nullptr;
     } else {
@@ -6820,7 +6820,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
                 Element* element = curr->element();
                 if (!element || curr->isTextOrLineBreak())
                     continue;
-                m_userActionElements.setInActiveChain(element, true);
+                m_userActionElements.setInActiveChain(*element, true);
             }
 
             m_activeElement = newActiveElement;

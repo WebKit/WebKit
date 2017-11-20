@@ -113,11 +113,13 @@ FileInputType::~FileInputType()
 Vector<FileChooserFileInfo> FileInputType::filesFromFormControlState(const FormControlState& state)
 {
     Vector<FileChooserFileInfo> files;
-    for (size_t i = 0; i < state.valueSize(); i += 2) {
+    size_t size = state.size();
+    files.reserveInitialCapacity(size / 2);
+    for (size_t i = 0; i < size; i += 2) {
         if (!state[i + 1].isEmpty())
-            files.append({ state[i], state[i + 1] });
+            files.uncheckedAppend({ state[i], state[i + 1] });
         else
-            files.append({ state[i] });
+            files.uncheckedAppend({ state[i] });
     }
     return files;
 }
@@ -145,8 +147,6 @@ FormControlState FileInputType::saveFormControlState() const
 
 void FileInputType::restoreFormControlState(const FormControlState& state)
 {
-    if (state.valueSize() % 2)
-        return;
     filesChosen(filesFromFormControlState(state));
 }
 

@@ -190,6 +190,6 @@ private:
 xmlDocPtr xmlDocPtrForString(CachedResourceLoader&, const String& source, const String& url);
 #endif
 
-HashMap<String, String> parseAttributes(const String&, bool& attrsOK);
+std::optional<HashMap<String, String>> parseAttributes(const String&);
 
 } // namespace WebCore

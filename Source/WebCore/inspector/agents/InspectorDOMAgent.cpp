@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2009 Joseph Pecoraro
  *
@@ -360,15 +360,10 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
     if (m_domListener)
         m_domListener->didRemoveDOMNode(*node, id);
 
-    bool childrenRequested = m_childrenRequested.contains(id);
-    if (childrenRequested) {
-        // Unbind subtree known to client recursively.
-        m_childrenRequested.remove(id);
-        Node* child = innerFirstChild(node);
-        while (child) {
+    if (m_childrenRequested.remove(id)) {
+        // FIXME: Would be better to do this iteratively rather than recursively.
+        for (Node* child = innerFirstChild(node); child; child = innerNextSibling(child))
             unbind(child, nodesMap);
-            child = innerNextSibling(child);
-        }
     }
 }
 
@@ -508,13 +503,10 @@ int InspectorDOMAgent::pushNodeToFrontend(ErrorString& errorString, int document
 
 Node* InspectorDOMAgent::nodeForId(int id)
 {
-    if (!id)
-        return 0;
+    if (!m_idToNode.isValidKey(id))
+        return nullptr;
 
-    HashMap<int, Node*>::iterator it = m_idToNode.find(id);
-    if (it != m_idToNode.end())
-        return it->value;
-    return 0;
+    return m_idToNode.get(id);
 }
 
 void InspectorDOMAgent::requestChildNodes(ErrorString& errorString, int nodeId, const int* depth)
@@ -670,7 +662,7 @@ void InspectorDOMAgent::setAttributeValue(ErrorString& errorString, int elementI
     m_domEditor->setAttribute(*element, name, value, errorString);
 }
 
-void InspectorDOMAgent::setAttributesAsText(ErrorString& errorString, int elementId, const String& text, const String* const name)
+void InspectorDOMAgent::setAttributesAsText(ErrorString& errorString, int elementId, const String& text, const String* name)
 {
     Element* element = assertEditableElement(errorString, elementId);
     if (!element)
@@ -1260,7 +1252,7 @@ void InspectorDOMAgent::hideHighlight(ErrorString&)
     m_overlay->hideHighlight();
 }
 
-void InspectorDOMAgent::moveTo(ErrorString& errorString, int nodeId, int targetElementId, const int* const anchorNodeId, int* newNodeId)
+void InspectorDOMAgent::moveTo(ErrorString& errorString, int nodeId, int targetElementId, const int* anchorNodeId, int* newNodeId)
 {
     Node* node = assertEditableNode(errorString, nodeId);
     if (!node)
@@ -1330,7 +1322,7 @@ void InspectorDOMAgent::setInspectedNode(ErrorString& errorString, int nodeId)
         commandLineAPIHost->addInspectedObject(std::make_unique<InspectableNode>(node));
 }
 
-void InspectorDOMAgent::resolveNode(ErrorString& errorString, int nodeId, const String* const objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result)
+void InspectorDOMAgent::resolveNode(ErrorString& errorString, int nodeId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result)
 {
     String objectGroupName = objectGroup ? *objectGroup : emptyString();
     Node* node = nodeForId(nodeId);
@@ -2028,8 +2020,9 @@ Node* InspectorDOMAgent::innerParentNode(Node* node)
 
 bool InspectorDOMAgent::isWhitespace(Node* node)
 {
-    //TODO: pull ignoreWhitespace setting from the frontend and use here.
-    return node && node->nodeType() == Node::TEXT_NODE && node->nodeValue().stripWhiteSpace().length() == 0;
+    // FIXME: Rename to containsOnlyHTMLSpaces?
+    // FIXME: Respect ignoreWhitespace setting from inspector front end?
+    return is<Text>(node) && downcast<Text>(*node).data().containsOnlyWhitespace();
 }
 
 void InspectorDOMAgent::mainFrameDOMContentLoaded()

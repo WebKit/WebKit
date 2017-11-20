@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013, 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -617,9 +617,8 @@ SelectorQuery::SelectorQuery(CSSSelectorList&& selectorList)
 
 ExceptionOr<SelectorQuery&> SelectorQueryCache::add(const String& selectors, Document& document)
 {
-    auto it = m_entries.find(selectors);
-    if (it != m_entries.end())
-        return *it->value;
+    if (auto* entry = m_entries.get(selectors))
+        return *entry;
 
     CSSParser parser(document);
     CSSSelectorList selectorList;

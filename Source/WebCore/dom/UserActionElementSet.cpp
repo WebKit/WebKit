@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,60 +32,42 @@
 
 namespace WebCore {
 
-void UserActionElementSet::didDetach(Element* element)
-{
-    ASSERT(element->isUserActionElement());
-    clearFlags(element, IsActiveFlag | InActiveChainFlag | IsHoveredFlag);
-}
-
-void UserActionElementSet::documentDidRemoveLastRef()
+void UserActionElementSet::clear()
 {
     m_elements.clear();
 }
 
-bool UserActionElementSet::hasFlags(const Element* element, unsigned flags) const
+bool UserActionElementSet::hasFlag(const Element& element, Flag flag) const
 {
-    ASSERT(element->isUserActionElement());
-    ElementFlagMap::const_iterator found = m_elements.find(const_cast<Element*>(element));
-    if (found == m_elements.end())
-        return false;
-    return found->value & flags;
+    // Caller has the responsibility to check isUserActionElement before calling this.
+    ASSERT(element.isUserActionElement());
+
+    return m_elements.get(&const_cast<Element&>(element)).contains(flag);
 }
 
-void UserActionElementSet::clearFlags(Element* element, unsigned flags)
+void UserActionElementSet::clearFlags(Element& element, OptionSet<Flag> flags)
 {
-    if (!element->isUserActionElement()) {
-        ASSERT(m_elements.end() == m_elements.find(element));
-        return;
-    }
+    ASSERT(!flags.isEmpty());
 
-    ElementFlagMap::iterator found = m_elements.find(element);
-    if (found == m_elements.end()) {
-        element->setUserActionElement(false);
+    if (!element.isUserActionElement())
         return;
-    }
 
-    unsigned updated = found->value & ~flags;
-    if (!updated) {
-        element->setUserActionElement(false);
-        m_elements.remove(found);
-        return;
-    }
-
-    found->value = updated;
+    auto iterator = m_elements.find(&element);
+    ASSERT(iterator != m_elements.end());
+    auto updatedFlags = iterator->value - flags;
+    if (updatedFlags.isEmpty()) {
+        element.setUserActionElement(false);
+        m_elements.remove(iterator);
+    } else
+        iterator->value = updatedFlags;
 }
 
-void UserActionElementSet::setFlags(Element* element, unsigned flags)
+void UserActionElementSet::setFlags(Element& element, OptionSet<Flag> flags)
 {
-    ElementFlagMap::iterator result = m_elements.find(element);
-    if (result != m_elements.end()) {
-        ASSERT(element->isUserActionElement());
-        result->value |= flags;
-        return;
-    }
+    ASSERT(!flags.isEmpty());
 
-    element->setUserActionElement(true);
-    m_elements.add(element, flags);
+    m_elements.add(&element, OptionSet<Flag> { }).iterator->value |= flags;
+    element.setUserActionElement(true);
 }
 
 }

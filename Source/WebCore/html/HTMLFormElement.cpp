@@ -75,7 +75,7 @@ Ref<HTMLFormElement> HTMLFormElement::create(const QualifiedName& tagName, Docum
 
 HTMLFormElement::~HTMLFormElement()
 {
-    document().formController().willDeleteForm(this);
+    document().formController().willDeleteForm(*this);
     if (!shouldAutocomplete())
         document().unregisterForDocumentSuspensionCallbacks(this);
 

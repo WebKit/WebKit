@@ -542,25 +542,25 @@ bool Element::isFocusable() const
 bool Element::isUserActionElementInActiveChain() const
 {
     ASSERT(isUserActionElement());
-    return document().userActionElements().isInActiveChain(this);
+    return document().userActionElements().inActiveChain(*this);
 }
 
 bool Element::isUserActionElementActive() const
 {
     ASSERT(isUserActionElement());
-    return document().userActionElements().isActive(this);
+    return document().userActionElements().isActive(*this);
 }
 
 bool Element::isUserActionElementFocused() const
 {
     ASSERT(isUserActionElement());
-    return document().userActionElements().isFocused(this);
+    return document().userActionElements().isFocused(*this);
 }
 
 bool Element::isUserActionElementHovered() const
 {
     ASSERT(isUserActionElement());
-    return document().userActionElements().isHovered(this);
+    return document().userActionElements().isHovered(*this);
 }
 
 void Element::setActive(bool flag, bool pause)
@@ -568,7 +568,7 @@ void Element::setActive(bool flag, bool pause)
     if (flag == active())
         return;
 
-    document().userActionElements().setActive(this, flag);
+    document().userActionElements().setActive(*this, flag);
 
     const RenderStyle* renderStyle = this->renderStyle();
     bool reactsToPress = (renderStyle && renderStyle->affectedByActive()) || styleAffectedByActive();
@@ -617,7 +617,7 @@ void Element::setFocus(bool flag)
     if (flag == focused())
         return;
 
-    document().userActionElements().setFocused(this, flag);
+    document().userActionElements().setFocused(*this, flag);
     invalidateStyleForSubtree();
 
     for (Element* element = this; element; element = element->parentElementInComposedTree())
@@ -629,7 +629,7 @@ void Element::setHovered(bool flag)
     if (flag == hovered())
         return;
 
-    document().userActionElements().setHovered(this, flag);
+    document().userActionElements().setHovered(*this, flag);
 
     if (!renderer()) {
         // When setting hover to false, the style needs to be recalc'd even when
@@ -3418,7 +3418,7 @@ void Element::clearHoverAndActiveStatusBeforeDetachingRenderer()
         document().hoveredElementDidDetach(this);
     if (inActiveChain())
         document().elementInActiveChainDidDetach(this);
-    document().userActionElements().didDetach(this);
+    document().userActionElements().clearActiveAndHovered(*this);
 }
 
 void Element::willRecalcStyle(Style::Change)

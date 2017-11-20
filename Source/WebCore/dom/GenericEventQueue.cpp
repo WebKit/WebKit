@@ -111,9 +111,6 @@ void GenericEventQueue::resume()
 
     m_isSuspended = false;
 
-    if (m_pendingEvents.isEmpty())
-        return;
-
     for (unsigned i = 0; i < m_pendingEvents.size(); ++i)
         m_taskQueue.enqueueTask(std::bind(&GenericEventQueue::dispatchOneEvent, this));
 }

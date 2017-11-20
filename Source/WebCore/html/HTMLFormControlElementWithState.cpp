@@ -41,14 +41,14 @@ HTMLFormControlElementWithState::~HTMLFormControlElementWithState() = default;
 Node::InsertedIntoAncestorResult HTMLFormControlElementWithState::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     if (insertionType.connectedToDocument && !containingShadowRoot())
-        document().formController().registerFormElementWithState(this);
+        document().formController().registerFormElementWithState(*this);
     return HTMLFormControlElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 }
 
 void HTMLFormControlElementWithState::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (removalType.disconnectedFromDocument && !containingShadowRoot() && !oldParentOfRemovedTree.containingShadowRoot())
-        document().formController().unregisterFormElementWithState(this);
+        document().formController().unregisterFormElementWithState(*this);
     HTMLFormControlElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 }
 

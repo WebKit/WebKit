@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,19 +32,12 @@ namespace WebCore {
 
 static bool setGenericFontFamilyForScript(ScriptFontFamilyMap& fontMap, const AtomicString& family, UScriptCode script)
 {
-    if (family.isEmpty()) {
-        ScriptFontFamilyMap::iterator it = fontMap.find(static_cast<int>(script));
-        if (it == fontMap.end())
-            return false;
-        fontMap.remove(it);
-        return true;
-    }
-    ScriptFontFamilyMap::AddResult addResult = fontMap.add(static_cast<int>(script), family);
-    if (addResult.isNewEntry)
-        return true;
-    if (addResult.iterator->value == family)
+    if (family.isEmpty())
+        return fontMap.remove(static_cast<int>(script));
+    auto& familyInMap = fontMap.add(static_cast<int>(script), AtomicString { }).iterator->value;
+    if (familyInMap == family)
         return false;
-    addResult.iterator->value = family;
+    familyInMap = family;
     return true;
 }
 

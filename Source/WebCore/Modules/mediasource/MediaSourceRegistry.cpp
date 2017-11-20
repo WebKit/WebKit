@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -60,13 +61,8 @@ void MediaSourceRegistry::registerURL(SecurityOrigin*, const URL& url, URLRegist
 void MediaSourceRegistry::unregisterURL(const URL& url)
 {
     ASSERT(isMainThread());
-    HashMap<String, RefPtr<MediaSource>>::iterator iter = m_mediaSources.find(url.string());
-    if (iter == m_mediaSources.end())
-        return;
-
-    RefPtr<MediaSource> source = iter->value;
-    m_mediaSources.remove(iter);
-    source->removedFromRegistry();
+    if (auto source = m_mediaSources.take(url.string()))
+        source->removedFromRegistry();
 }
 
 URLRegistrable* MediaSourceRegistry::lookup(const String& url) const

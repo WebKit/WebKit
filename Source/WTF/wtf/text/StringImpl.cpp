@@ -300,16 +300,16 @@ Ref<StringImpl> StringImpl::create(const LChar* string)
 
 bool StringImpl::containsOnlyWhitespace()
 {
-    // FIXME: The definition of whitespace here includes a number of characters
-    // that are not whitespace from the point of view of RenderText; I wonder if
-    // that's a problem in practice.
+    // FIXME: Should rename this to containsOnlyASCIIWhitespace.
+    // Most WebKit callers instead want containsOnlyHTMLWhitespace which, unlike this,
+    // would *not* treat U+000B LINE TABULATION as a space.
+
     if (is8Bit()) {
         for (unsigned i = 0; i < m_length; ++i) {
             UChar c = m_data8[i];
             if (!isASCIISpace(c))
                 return false;
         }
-
         return true;
     }
 

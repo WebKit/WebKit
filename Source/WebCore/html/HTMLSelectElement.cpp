@@ -959,13 +959,15 @@ void HTMLSelectElement::deselectItemsWithoutValidation(HTMLElement* excludeEleme
 FormControlState HTMLSelectElement::saveFormControlState() const
 {
     FormControlState state;
-    for (auto& element : listItems()) {
+    auto& items = listItems();
+    state.reserveInitialCapacity(items.size());
+    for (auto& element : items) {
         if (!is<HTMLOptionElement>(*element))
             continue;
-        HTMLOptionElement& option = downcast<HTMLOptionElement>(*element);
+        auto& option = downcast<HTMLOptionElement>(*element);
         if (!option.selected())
             continue;
-        state.append(option.value());
+        state.uncheckedAppend(option.value());
         if (!multiple())
             break;
     }
@@ -1006,8 +1008,7 @@ void HTMLSelectElement::restoreFormControlState(const FormControlState& state)
             downcast<HTMLOptionElement>(*items[foundIndex]).setSelectedState(true);
     } else {
         size_t startIndex = 0;
-        for (size_t i = 0; i < state.valueSize(); ++i) {
-            const String& value = state[i];
+        for (auto& value : state) {
             size_t foundIndex = searchOptionsForValue(value, startIndex, itemsSize);
             if (foundIndex == notFound)
                 foundIndex = searchOptionsForValue(value, 0, startIndex);

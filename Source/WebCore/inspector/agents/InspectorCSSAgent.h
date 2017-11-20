@@ -121,7 +121,6 @@ private:
 
     typedef HashMap<String, RefPtr<InspectorStyleSheet>> IdToInspectorStyleSheet;
     typedef HashMap<CSSStyleSheet*, RefPtr<InspectorStyleSheet>> CSSStyleSheetToInspectorStyleSheet;
-    typedef HashMap<Node*, RefPtr<InspectorStyleSheetForInlineStyle>> NodeToInspectorStyleSheet; // bogus "stylesheets" with elements' inline styles
     typedef HashMap<RefPtr<Document>, Vector<RefPtr<InspectorStyleSheet>>> DocumentToViaInspectorStyleSheet; // "via inspector" stylesheets
     typedef HashMap<int, unsigned> NodeIdToForcedPseudoState;
 
@@ -160,7 +159,7 @@ private:
 
     IdToInspectorStyleSheet m_idToInspectorStyleSheet;
     CSSStyleSheetToInspectorStyleSheet m_cssStyleSheetToInspectorStyleSheet;
-    NodeToInspectorStyleSheet m_nodeToInspectorStyleSheet;
+    HashMap<Node*, Ref<InspectorStyleSheetForInlineStyle>> m_nodeToInspectorStyleSheet; // bogus "stylesheets" with elements' inline styles
     DocumentToViaInspectorStyleSheet m_documentToInspectorStyleSheet;
     HashMap<Document*, HashSet<CSSStyleSheet*>> m_documentToKnownCSSStyleSheets;
     NodeIdToForcedPseudoState m_nodeIdToForcedPseudoState;

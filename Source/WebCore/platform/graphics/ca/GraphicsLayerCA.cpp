@@ -1027,14 +1027,8 @@ void GraphicsLayerCA::pauseAnimation(const String& animationName, double timeOff
     if (!animationIsRunning(animationName))
         return;
 
-    AnimationsToProcessMap::iterator it = m_animationsToProcess.find(animationName);
-    if (it != m_animationsToProcess.end()) {
-        AnimationProcessingAction& processingInfo = it->value;
-        // If an animation is scheduled to be removed, don't change the remove to a pause.
-        if (processingInfo.action != Remove)
-            processingInfo.action = Pause;
-    } else
-        m_animationsToProcess.add(animationName, AnimationProcessingAction(Pause, timeOffset));
+    // Call add since if there is already a Remove in there, we don't want to overwrite it with a Pause.
+    m_animationsToProcess.add(animationName, AnimationProcessingAction { Pause, timeOffset });
 
     noteLayerPropertyChanged(AnimationChanged);
 }

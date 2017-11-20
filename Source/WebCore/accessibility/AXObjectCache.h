@@ -205,9 +205,6 @@ public:
     static bool accessibilityEnhancedUserInterfaceEnabled() { return false; }
 #endif
 
-    void removeAXID(AccessibilityObject*);
-    bool isIDinUse(AXID id) const { return m_idsInUse.contains(id); }
-
     const Element* rootAXEditableElement(const Node*);
     bool nodeIsTextControl(const Node*);
 

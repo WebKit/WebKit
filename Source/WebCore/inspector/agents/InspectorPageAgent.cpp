@@ -507,10 +507,8 @@ void InspectorPageAgent::getCookies(ErrorString&, RefPtr<Inspector::Protocol::Ar
                 // because "document" is the document of the main frame of the page.
                 stringCookiesList.append(document->cookie().releaseReturnValue());
             } else {
-                for (auto& cookie : docCookiesList) {
-                    if (!rawCookiesList.contains(cookie))
-                        rawCookiesList.add(cookie);
-                }
+                for (auto& cookie : docCookiesList)
+                    rawCookiesList.add(cookie);
             }
         }
     }
@@ -666,12 +664,11 @@ void InspectorPageAgent::frameNavigated(Frame& frame)
 
 void InspectorPageAgent::frameDetached(Frame& frame)
 {
-    HashMap<Frame*, String>::iterator iterator = m_frameToIdentifier.find(&frame);
-    if (iterator != m_frameToIdentifier.end()) {
-        m_frontendDispatcher->frameDetached(iterator->value);
-        m_identifierToFrame.remove(iterator->value);
-        m_frameToIdentifier.remove(iterator);
-    }
+    auto identifier = m_frameToIdentifier.take(&frame);
+    if (identifier.isNull())
+        return;
+    m_frontendDispatcher->frameDetached(identifier);
+    m_identifierToFrame.remove(identifier);
 }
 
 MainFrame& InspectorPageAgent::mainFrame()
@@ -688,13 +685,11 @@ String InspectorPageAgent::frameId(Frame* frame)
 {
     if (!frame)
         return emptyString();
-    String identifier = m_frameToIdentifier.get(frame);
-    if (identifier.isNull()) {
-        identifier = IdentifiersFactory::createIdentifier();
-        m_frameToIdentifier.set(frame, identifier);
+    return m_frameToIdentifier.ensure(frame, [this, frame] {
+        auto identifier = IdentifiersFactory::createIdentifier();
         m_identifierToFrame.set(identifier, frame);
-    }
-    return identifier;
+        return identifier;
+    }).iterator->value;
 }
 
 bool InspectorPageAgent::hasIdForFrame(Frame* frame) const
@@ -706,19 +701,15 @@ String InspectorPageAgent::loaderId(DocumentLoader* loader)
 {
     if (!loader)
         return emptyString();
-    String identifier = m_loaderToIdentifier.get(loader);
-    if (identifier.isNull()) {
-        identifier = IdentifiersFactory::createIdentifier();
-        m_loaderToIdentifier.set(loader, identifier);
-    }
-    return identifier;
+    return m_loaderToIdentifier.ensure(loader, [] {
+        return IdentifiersFactory::createIdentifier();
+    }).iterator->value;
 }
 
 Frame* InspectorPageAgent::findFrameWithSecurityOrigin(const String& originRawString)
 {
     for (Frame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        Ref<SecurityOrigin> documentOrigin = frame->document()->securityOrigin();
-        if (documentOrigin->toRawString() == originRawString)
+        if (frame->document()->securityOrigin().toRawString() == originRawString)
             return frame;
     }
     return nullptr;

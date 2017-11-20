@@ -2744,7 +2744,7 @@ Ref<MemoryInfo> Internals::memoryInfo() const
 Vector<String> Internals::getReferencedFilePaths() const
 {
     frame()->loader().history().saveDocumentAndScrollState();
-    return FormController::getReferencedFilePaths(frame()->loader().history().currentItem()->documentState());
+    return FormController::referencedFilePaths(frame()->loader().history().currentItem()->documentState());
 }
 
 ExceptionOr<void> Internals::startTrackingRepaints()
