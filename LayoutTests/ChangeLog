@@ -1,5 +1,14 @@
 2017-11-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Better unreviewed WPE test gardening
+
+        I gave this test a TIMEOUT expectation because there is an XHR timeout, but that was dumb
+        because the test itself does not time out.
+
+        * platform/wpe/TestExpectations:
+
+2017-11-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed WPE test gardening
 
         * platform/wpe/TestExpectations:

@@ -1017,6 +1017,6 @@ webkit.org/b/179760 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
 
 webkit.org/b/179761 workers/wasm-hashset-many-2.html [ Pass Timeout ]
 
-webkit.org/b/179897 imported/w3c/web-platform-tests/XMLHttpRequest/getallresponseheaders.htm [ Timeout ]
+webkit.org/b/179897 imported/w3c/web-platform-tests/XMLHttpRequest/getallresponseheaders.htm [ Failure ]
 
 webkit.org/b/179898 svg/animations/svglengthlist-animation-3.html [ Pass Failure ]
