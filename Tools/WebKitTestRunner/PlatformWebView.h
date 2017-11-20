@@ -51,8 +51,9 @@ typedef WKViewRef PlatformWKView;
 typedef GtkWidget* PlatformWindow;
 typedef cairo_surface_t *PlatformImage;
 #elif PLATFORM(WPE)
+class HeadlessViewBackend;
 typedef WKViewRef PlatformWKView;
-typedef void* PlatformWindow;
+typedef HeadlessViewBackend* PlatformWindow;
 typedef cairo_surface_t* PlatformImage;
 #endif
 

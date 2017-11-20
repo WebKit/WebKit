@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PlatformWebView.h"
 
+#include "HeadlessViewBackend.h"
 #include <WebKit/WKImageCairo.h>
 #include <cairo.h>
 #include <cstdio>
@@ -115,7 +116,8 @@ cairo_surface_t* PlatformWebView::windowSnapshotImage()
         RunLoop::main().run();
     }
 
-    return WKViewCreateSnapshot(m_view);
+    cairo_surface_t* imageSurface = m_window->createSnapshot();
+    return imageSurface;
 }
 
 void PlatformWebView::changeWindowScaleIfNeeded(float)
