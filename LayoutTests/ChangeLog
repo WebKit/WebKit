@@ -1,3 +1,18 @@
+2017-11-19  Ms2ger  <Ms2ger@igalia.com>
+
+        [WPE] Enable the XMLHttpRequest/ directory of web-platform-tests.
+        https://bugs.webkit.org/show_bug.cgi?id=179820
+
+        Reviewed by Sam Weinig.
+
+        Added test expectations are copied from platform/gtk/
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-get-head-async-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/send-entity-body-get-head-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type-expected.txt: Added.
+
 2017-11-18  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: registration in WebCore::SWServerJobQueue::scriptContextStarted(ServiceWorkerIdentifier)
