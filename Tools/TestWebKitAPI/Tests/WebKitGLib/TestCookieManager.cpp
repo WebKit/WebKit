@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2017 Endless Mobile, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,12 +22,21 @@
 
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
+#include <WebCore/GUniquePtrSoup.h>
 #include <glib/gstdio.h>
 
 static WebKitTestServer* kServer;
 
 static const char* kFirstPartyDomain = "127.0.0.1";
 static const char* kThirdPartyDomain = "localhost";
+
+static const char* kCookieName = "foo";
+static const char* kCookieValue = "bar";
+static const char* kCookiePath = "/";
+
+static const char* kCookiePathNew = "/new";
+static const char* kCookieValueNew = "new-value";
+
 static const char* kIndexHtmlFormat =
     "<html><body>"
     " <p>WebKitGTK+ Cookie Manager test</p>"
@@ -55,6 +65,8 @@ public:
     ~CookieManagerTest()
     {
         g_strfreev(m_domains);
+        g_list_free_full(m_cookies, reinterpret_cast<GDestroyNotify>(soup_cookie_free));
+
         g_signal_handlers_disconnect_matched(m_cookieManager, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
         if (m_cookiesTextFile)
             g_unlink(m_cookiesTextFile.get());
@@ -100,6 +112,61 @@ public:
         g_main_loop_run(m_mainLoop);
 
         return m_acceptPolicy;
+    }
+
+    static void addCookieReadyCallback(GObject* object, GAsyncResult* result, gpointer userData)
+    {
+        GUniqueOutPtr<GError> error;
+        bool added = webkit_cookie_manager_add_cookie_finish(WEBKIT_COOKIE_MANAGER(object), result, &error.outPtr());
+        g_assert(!error.get());
+        g_assert(added);
+
+        CookieManagerTest* test = static_cast<CookieManagerTest*>(userData);
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
+    void addCookie(SoupCookie* cookie)
+    {
+        webkit_cookie_manager_add_cookie(m_cookieManager, cookie, 0, addCookieReadyCallback, this);
+        g_main_loop_run(m_mainLoop);
+    }
+
+    static void getCookiesReadyCallback(GObject* object, GAsyncResult* result, gpointer userData)
+    {
+        GUniqueOutPtr<GError> error;
+        GList* cookies = webkit_cookie_manager_get_cookies_finish(WEBKIT_COOKIE_MANAGER(object), result, &error.outPtr());
+        g_assert(!error.get());
+
+        CookieManagerTest* test = static_cast<CookieManagerTest*>(userData);
+        test->m_cookies = cookies;
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
+    GList* getCookies(const char* uri)
+    {
+        g_list_free_full(m_cookies, reinterpret_cast<GDestroyNotify>(soup_cookie_free));
+        m_cookies = nullptr;
+        webkit_cookie_manager_get_cookies(m_cookieManager, uri, 0, getCookiesReadyCallback, this);
+        g_main_loop_run(m_mainLoop);
+
+        return m_cookies;
+    }
+
+    static void deleteCookieReadyCallback(GObject* object, GAsyncResult* result, gpointer userData)
+    {
+        GUniqueOutPtr<GError> error;
+        bool deleted = webkit_cookie_manager_delete_cookie_finish(WEBKIT_COOKIE_MANAGER(object), result, &error.outPtr());
+        g_assert(!error.get());
+        g_assert(deleted);
+
+        CookieManagerTest* test = static_cast<CookieManagerTest*>(userData);
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
+    void deleteCookie(SoupCookie* cookie)
+    {
+        webkit_cookie_manager_delete_cookie(m_cookieManager, cookie, 0, deleteCookieReadyCallback, this);
+        g_main_loop_run(m_mainLoop);
     }
 
     void setAcceptPolicy(WebKitCookieAcceptPolicy policy)
@@ -170,6 +237,7 @@ public:
     WebKitCookieManager* m_cookieManager { nullptr };
     WebKitCookieAcceptPolicy m_acceptPolicy { WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY };
     char** m_domains { nullptr };
+    GList* m_cookies { nullptr };
     bool m_cookiesChanged { false };
     int m_cookiesExpectedToChangeCount { 0 };
     bool m_finishLoopWhenCookiesChange { false };
@@ -207,6 +275,223 @@ static void testCookieManagerAcceptPolicy(CookieManagerTest* test, gconstpointer
     domains = test->getDomains();
     g_assert(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 0);
+}
+
+static void testCookieManagerAddCookie(CookieManagerTest* test, gconstpointer)
+{
+    // Load the html content, with the default NO_THIRD_PARTY accept policy,
+    // which will automatically add one cookie.
+    test->loadURI(kServer->getURIForPath("/index.html").data());
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(g_strv_length(test->getDomains()), ==, 1);
+
+    // Check the cookies that have been added for the domain.
+    GUniquePtr<char> uri(g_strdup_printf("%s://%s", SOUP_URI_SCHEME_HTTP, kFirstPartyDomain));
+    GList* foundCookies = test->getCookies(uri.get());
+    g_assert_cmpint(g_list_length(foundCookies), ==, 1);
+
+    SoupCookie* foundCookie = static_cast<SoupCookie*>(foundCookies->data);
+    g_assert_cmpstr(soup_cookie_get_name(foundCookie), ==, kCookieName);
+    g_assert_cmpstr(soup_cookie_get_domain(foundCookie), ==, kFirstPartyDomain);
+    g_assert_cmpstr(soup_cookie_get_path(foundCookie), ==, kCookiePath);
+    g_assert_cmpstr(soup_cookie_get_value(foundCookie), ==, kCookieValue);
+
+    // Try to add now a cookie with same (name, domain, path) than the ones already added.
+    GUniquePtr<SoupCookie> firstCookie(soup_cookie_new(kCookieName, kCookieValueNew, kFirstPartyDomain, kCookiePath, SOUP_COOKIE_MAX_AGE_ONE_HOUR));
+    test->addCookie(firstCookie.get());
+
+    // Still one cookie, since (name, domain, path) are the same than the already existing
+    // one, but the new value is now stored as replaced by the recently added cookie.
+    foundCookies = test->getCookies(uri.get());
+    g_assert_cmpint(g_list_length(foundCookies), ==, 1);
+
+    foundCookie = static_cast<SoupCookie*>(foundCookies->data);
+    g_assert_cmpstr(soup_cookie_get_name(foundCookie), ==, kCookieName);
+    g_assert_cmpstr(soup_cookie_get_domain(foundCookie), ==, kFirstPartyDomain);
+    g_assert_cmpstr(soup_cookie_get_path(foundCookie), ==, kCookiePath);
+    g_assert_cmpstr(soup_cookie_get_value(foundCookie), ==, kCookieValueNew);
+
+    // Now create another cookie with a different path and add it.
+    GUniquePtr<SoupCookie> secondCookie(soup_cookie_new(kCookieName, kCookieValueNew, kFirstPartyDomain, kCookiePathNew, SOUP_COOKIE_MAX_AGE_ONE_HOUR));
+    test->addCookie(secondCookie.get());
+    g_assert_cmpint(g_strv_length(test->getDomains()), ==, 1);
+
+    // Retrieve the list of cookies for the same domain and path again now and check.
+    uri.reset(g_strdup_printf("%s://%s%s", SOUP_URI_SCHEME_HTTP, kFirstPartyDomain, kCookiePathNew));
+    foundCookies = test->getCookies(uri.get());
+
+    // We have now two cookies that would apply to the passed URL, one is the cookie initially
+    // loaded with the web content and the other cookie the one we manually added.
+    g_assert_cmpint(g_list_length(foundCookies), ==, 2);
+
+    // Add a third new cookie for a different domain than the previous ones.
+    GUniquePtr<SoupCookie> thirdCookie(soup_cookie_new(kCookieName, kCookieValueNew, kThirdPartyDomain, kCookiePathNew, SOUP_COOKIE_MAX_AGE_ONE_HOUR));
+    test->addCookie(thirdCookie.get());
+
+    // Only one cookie now, since the domain is different.
+    uri.reset(g_strdup_printf("%s://%s%s", SOUP_URI_SCHEME_HTTP, kThirdPartyDomain, kCookiePathNew));
+    foundCookies = test->getCookies(uri.get());
+    g_assert_cmpint(g_list_length(foundCookies), ==, 1);
+    g_assert_cmpint(g_strv_length(test->getDomains()), ==, 2);
+
+    foundCookie = static_cast<SoupCookie*>(foundCookies->data);
+    g_assert_cmpstr(soup_cookie_get_name(foundCookie), ==, kCookieName);
+    g_assert_cmpstr(soup_cookie_get_domain(foundCookie), ==, kThirdPartyDomain);
+    g_assert_cmpstr(soup_cookie_get_path(foundCookie), ==, kCookiePathNew);
+    g_assert_cmpstr(soup_cookie_get_value(foundCookie), ==, kCookieValueNew);
+
+    // Finally, delete all cookies and check they are all gone.
+    test->deleteAllCookies();
+    g_assert_cmpint(g_strv_length(test->getDomains()), ==, 0);
+}
+
+static void testCookieManagerGetCookies(CookieManagerTest* test, gconstpointer)
+{
+    // Load the html content and retrieve the two cookies automatically added with ALWAYS policy.
+    test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
+    test->loadURI(kServer->getURIForPath("/index.html").data());
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(g_strv_length(test->getDomains()), ==, 2);
+
+    // Retrieve the first cookie using a HTTP scheme.
+    GUniquePtr<char> uri(g_strdup_printf("%s://%s", SOUP_URI_SCHEME_HTTP, kFirstPartyDomain));
+    GList* foundCookies = test->getCookies(uri.get());
+    g_assert_cmpint(g_list_length(foundCookies), ==, 1);
+
+    SoupCookie* foundCookie = static_cast<SoupCookie*>(foundCookies->data);
+    g_assert_cmpstr(soup_cookie_get_name(foundCookie), ==, kCookieName);
+    g_assert_cmpstr(soup_cookie_get_domain(foundCookie), ==, kFirstPartyDomain);
+    g_assert_cmpstr(soup_cookie_get_path(foundCookie), ==, kCookiePath);
+    g_assert_cmpstr(soup_cookie_get_value(foundCookie), ==, kCookieValue);
+
+    // Retrieve the second cookie using a HTTPS scheme.
+    uri.reset(g_strdup_printf("%s://%s", SOUP_URI_SCHEME_HTTPS, kThirdPartyDomain));
+    foundCookies = test->getCookies(uri.get());
+    g_assert_cmpint(g_list_length(foundCookies), ==, 1);
+
+    foundCookie = static_cast<SoupCookie*>(foundCookies->data);
+    g_assert_cmpstr(soup_cookie_get_name(foundCookie), ==, kCookieName);
+    g_assert_cmpstr(soup_cookie_get_domain(foundCookie), ==, kThirdPartyDomain);
+    g_assert_cmpstr(soup_cookie_get_path(foundCookie), ==, kCookiePath);
+    g_assert_cmpstr(soup_cookie_get_value(foundCookie), ==, kCookieValue);
+
+    // Create a new cookie and add it to the first domain.
+    GUniquePtr<SoupCookie> newCookie(soup_cookie_new(kCookieName, kCookieValueNew, kFirstPartyDomain, kCookiePathNew, SOUP_COOKIE_MAX_AGE_ONE_HOUR));
+    test->addCookie(newCookie.get());
+
+    // We should get two cookies that would apply to the same URL passed, since
+    // http://127.0.0.1/new is a subset of the http://127.0.0.1/ URL.
+    uri.reset(g_strdup_printf("%s://%s%s", SOUP_URI_SCHEME_HTTP, kFirstPartyDomain, kCookiePathNew));
+    foundCookies = test->getCookies(uri.get());
+    g_assert_cmpint(g_list_length(foundCookies), ==, 2);
+
+    // We have now two cookies that would apply to the passed URL, one is the cookie initially
+    // loaded with the web content and the other cookie the one we manually added.
+    g_assert_cmpint(g_list_length(foundCookies), ==, 2);
+
+    bool newPathChecked = false;
+    const char* pathFound = nullptr;
+    const char* valueFound = nullptr;
+    for (uint i = 0; i < 2; i++) {
+        foundCookie = static_cast<SoupCookie*>(g_list_nth_data(foundCookies, i));
+        g_assert_cmpstr(soup_cookie_get_name(foundCookie), ==, kCookieName);
+        g_assert_cmpstr(soup_cookie_get_domain(foundCookie), ==, kFirstPartyDomain);
+
+        // Cookies will have different values for 'value' and 'path', so make sure that
+        // we check for both possibilities, but different ones for each cookie found.
+        pathFound = soup_cookie_get_path(foundCookie);
+        valueFound = soup_cookie_get_value(foundCookie);
+        if (i > 0) {
+            if (newPathChecked) {
+                g_assert_cmpstr(pathFound, ==, kCookiePath);
+                g_assert_cmpstr(valueFound, ==, kCookieValue);
+            } else {
+                g_assert_cmpstr(pathFound, ==, kCookiePathNew);
+                g_assert_cmpstr(valueFound, ==, kCookieValueNew);
+            }
+        } else {
+            if (g_strcmp0(pathFound, kCookiePath)) {
+                g_assert_cmpstr(pathFound, ==, kCookiePathNew);
+                g_assert_cmpstr(valueFound, ==, kCookieValueNew);
+                newPathChecked = true;
+            }
+
+            if (g_strcmp0(pathFound, kCookiePathNew)) {
+                g_assert_cmpstr(pathFound, ==, kCookiePath);
+                g_assert_cmpstr(valueFound, ==, kCookieValue);
+                newPathChecked = false;
+            }
+        }
+    }
+
+    // We should get 1 cookie only if we specify http://127.0.0.1/, though.
+    uri.reset(g_strdup_printf("%s://%s", SOUP_URI_SCHEME_HTTP, kFirstPartyDomain));
+    foundCookies = test->getCookies(uri.get());
+    g_assert_cmpint(g_list_length(foundCookies), ==, 1);
+
+    foundCookie = static_cast<SoupCookie*>(foundCookies->data);
+    g_assert_cmpstr(soup_cookie_get_name(foundCookie), ==, kCookieName);
+    g_assert_cmpstr(soup_cookie_get_domain(foundCookie), ==, kFirstPartyDomain);
+    g_assert_cmpstr(soup_cookie_get_path(foundCookie), ==, kCookiePath);
+    g_assert_cmpstr(soup_cookie_get_value(foundCookie), ==, kCookieValue);
+
+    // Finally, delete all cookies and try to retrieve them again, one by one.
+    test->deleteAllCookies();
+    g_assert_cmpint(g_strv_length(test->getDomains()), ==, 0);
+
+    uri.reset(g_strdup_printf("%s://%s", SOUP_URI_SCHEME_HTTP, kFirstPartyDomain));
+    foundCookies = test->getCookies(uri.get());
+    g_assert_null(foundCookies);
+}
+
+static void testCookieManagerDeleteCookie(CookieManagerTest* test, gconstpointer)
+{
+    test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
+    test->loadURI(kServer->getURIForPath("/index.html").data());
+    test->waitUntilLoadFinished();
+
+    // Initially, there should be two cookies available.
+    g_assert_cmpint(g_strv_length(test->getDomains()), ==, 2);
+
+    // Delete the cookie for the first party domain.
+    GUniquePtr<char> uri(g_strdup_printf("%s://%s", SOUP_URI_SCHEME_HTTP, kFirstPartyDomain));
+    GList* foundCookies = test->getCookies(uri.get());
+    g_assert_cmpint(g_list_length(foundCookies), ==, 1);
+
+    GUniquePtr<SoupCookie> firstPartyCookie(soup_cookie_copy(static_cast<SoupCookie*>(foundCookies->data)));
+    test->deleteCookie(firstPartyCookie.get());
+    g_assert_cmpint(g_strv_length(test->getDomains()), ==, 1);
+
+    // Try deleting a non-existent cookie (wrong name).
+    GUniquePtr<SoupCookie> wrongCookie(soup_cookie_new("wrong-name", kCookieValue, kThirdPartyDomain, kCookiePath, -1));
+    test->deleteCookie(wrongCookie.get());
+    g_assert_cmpint(g_strv_length(test->getDomains()), ==, 1);
+
+    // Try deleting a non-existent cookie (wrong domain).
+    wrongCookie.reset(soup_cookie_new(kCookieName, kCookieValue, "wrong-domain", kCookiePath, -1));
+    test->deleteCookie(wrongCookie.get());
+    g_assert_cmpint(g_strv_length(test->getDomains()), ==, 1);
+
+    // Try deleting a non-existent cookie (wrong path).
+    wrongCookie.reset(soup_cookie_new(kCookieName, kCookieValue, kThirdPartyDomain, "wrong-path", -1));
+    test->deleteCookie(wrongCookie.get());
+    g_assert_cmpint(g_strv_length(test->getDomains()), ==, 1);
+
+    // Delete the cookie for the third party domain.
+    uri.reset(g_strdup_printf("%s://%s", SOUP_URI_SCHEME_HTTP, kThirdPartyDomain));
+    foundCookies = test->getCookies(uri.get());
+    g_assert_cmpint(g_list_length(foundCookies), ==, 1);
+
+    GUniquePtr<SoupCookie> thirdPartyCookie(soup_cookie_copy(static_cast<SoupCookie*>(foundCookies->data)));
+    test->deleteCookie(thirdPartyCookie.get());
+    g_assert_cmpint(g_strv_length(test->getDomains()), ==, 0);
+
+    // Finally, add a new cookie now we don't have any and delete it afterwards.
+    GUniquePtr<SoupCookie> newCookie(soup_cookie_new(kCookieName, kCookieValueNew, kFirstPartyDomain, kCookiePathNew, SOUP_COOKIE_MAX_AGE_ONE_HOUR));
+    test->addCookie(newCookie.get());
+    g_assert_cmpint(g_strv_length(test->getDomains()), ==, 1);
+    test->deleteCookie(newCookie.get());
+    g_assert_cmpint(g_strv_length(test->getDomains()), ==, 0);
 }
 
 static void testCookieManagerDeleteCookies(CookieManagerTest* test, gconstpointer)
@@ -386,12 +671,14 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     }
 
     soup_message_set_status(message, SOUP_STATUS_OK);
+    gchar* header_str = g_strdup_printf("%s=%s; Max-Age=60", kCookieName, kCookieValue);
+
     if (g_str_equal(path, "/index.html")) {
         char* indexHtml = g_strdup_printf(kIndexHtmlFormat, soup_server_get_port(server));
-        soup_message_headers_replace(message->response_headers, "Set-Cookie", "foo=bar; Max-Age=60");
+        soup_message_headers_replace(message->response_headers, "Set-Cookie", header_str);
         soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, indexHtml, strlen(indexHtml));
     } else if (g_str_equal(path, "/image.png"))
-        soup_message_headers_replace(message->response_headers, "Set-Cookie", "baz=qux; Max-Age=60");
+        soup_message_headers_replace(message->response_headers, "Set-Cookie", header_str);
     else if (g_str_equal(path, "/no-cookies.html")) {
         static const char* indexHtml = "<html><body><p>No cookies</p></body></html>";
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, indexHtml, strlen(indexHtml));
@@ -406,6 +693,9 @@ void beforeAll()
     kServer->run(serverCallback);
 
     CookieManagerTest::add("WebKitCookieManager", "accept-policy", testCookieManagerAcceptPolicy);
+    CookieManagerTest::add("WebKitCookieManager", "add-cookie", testCookieManagerAddCookie);
+    CookieManagerTest::add("WebKitCookieManager", "get-cookies", testCookieManagerGetCookies);
+    CookieManagerTest::add("WebKitCookieManager", "delete-cookie", testCookieManagerDeleteCookie);
     CookieManagerTest::add("WebKitCookieManager", "delete-cookies", testCookieManagerDeleteCookies);
     CookieManagerTest::add("WebKitCookieManager", "cookies-changed", testCookieManagerCookiesChanged);
     CookieManagerTest::add("WebKitCookieManager", "persistent-storage", testCookieManagerPersistentStorage);

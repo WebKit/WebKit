@@ -1,3 +1,24 @@
+2017-11-20  Mario Sanchez Prada  <mario@endlessm.com>
+
+        [GTK] New API to add, retrieve and delete cookies via WebKitCookieManager
+        https://bugs.webkit.org/show_bug.cgi?id=177932
+
+        Reviewed by Carlos Garcia Campos.
+
+        Added new API to WebKitCookieManager to add, retrieve and delete complete
+        cookies into/out-of a running session, and updated documentation sections.
+
+        * UIProcess/API/glib/WebKitCookieManager.cpp:
+        (webkit_cookie_manager_add_cookie): New function.
+        (webkit_cookie_manager_add_cookie_finish): Ditto.
+        (webkit_cookie_manager_get_cookies): Ditto.
+        (webkit_cookie_manager_get_cookies_finish): Ditto.
+        (webkit_cookie_manager_delete_cookie): Ditto.
+        (webkit_cookie_manager_delete_cookie_finish): Ditto.
+        * UIProcess/API/gtk/WebKitCookieManager.h: Added new functions.
+        * UIProcess/API/wpe/WebKitCookieManager.h: Ditto.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Ditto.
+
 2017-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] webkit_web_view_new() should enable specifying wpe_view_backend object

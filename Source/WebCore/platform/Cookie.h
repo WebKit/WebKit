@@ -67,6 +67,9 @@ struct Cookie {
 #ifdef __OBJC__
     WEBCORE_EXPORT Cookie(NSHTTPCookie *);
     WEBCORE_EXPORT operator NSHTTPCookie *() const;
+#elif USE(SOUP)
+    explicit Cookie(SoupCookie*);
+    SoupCookie* toSoupCookie() const;
 #endif
 
     bool isNull() const

@@ -2,6 +2,7 @@
  * Copyright (C) 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2013 University of Szeged. All rights reserved.
  * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2017 Endless Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +34,7 @@
 #include "Cookie.h"
 #include "ResourceHandle.h"
 #include "SoupNetworkSession.h"
+#include <WebCore/GUniquePtrSoup.h>
 #include <libsoup/soup.h>
 #include <wtf/DateMath.h>
 #include <wtf/MainThread.h>
@@ -283,45 +285,21 @@ void NetworkStorageSession::saveCredentialToPersistentStorage(const ProtectionSp
 #endif
 }
 
-static SoupDate* msToSoupDate(double ms)
-{
-    int year = msToYear(ms);
-    int dayOfYear = dayInYear(ms, year);
-    bool leapYear = isLeapYear(year);
-
-    // monthFromDayInYear() returns a value in the [0,11] range, while soup_date_new() expects
-    // a value in the [1,12] range, meaning we have to manually adjust the month value.
-    return soup_date_new(year, monthFromDayInYear(dayOfYear, leapYear) + 1, dayInMonthFromDayInYear(dayOfYear, leapYear), msToHours(ms), msToMinutes(ms), static_cast<int>(ms / 1000) % 60);
-}
-
-static SoupCookie* toSoupCookie(const Cookie& cookie)
-{
-    SoupCookie* soupCookie = soup_cookie_new(cookie.name.utf8().data(), cookie.value.utf8().data(),
-        cookie.domain.utf8().data(), cookie.path.utf8().data(), -1);
-    soup_cookie_set_http_only(soupCookie, cookie.httpOnly);
-    soup_cookie_set_secure(soupCookie, cookie.secure);
-    if (!cookie.session) {
-        SoupDate* date = msToSoupDate(cookie.expires);
-        soup_cookie_set_expires(soupCookie, date);
-        soup_date_free(date);
-    }
-    return soupCookie;
-}
-
 void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL&, const URL&)
 {
     for (auto cookie : cookies)
-        soup_cookie_jar_add_cookie(cookieStorage(), toSoupCookie(cookie));
+        soup_cookie_jar_add_cookie(cookieStorage(), cookie.toSoupCookie());
 }
 
-void NetworkStorageSession::setCookie(const Cookie&)
+void NetworkStorageSession::setCookie(const Cookie& cookie)
 {
-    // FIXME: Implement for WK2 to use.
+    soup_cookie_jar_add_cookie(cookieStorage(), cookie.toSoupCookie());
 }
 
-void NetworkStorageSession::deleteCookie(const Cookie&)
+void NetworkStorageSession::deleteCookie(const Cookie& cookie)
 {
-    // FIXME: Implement for WK2 to use.
+    GUniquePtr<SoupCookie> targetCookie(cookie.toSoupCookie());
+    soup_cookie_jar_delete_cookie(cookieStorage(), targetCookie.get());
 }
 
 Vector<Cookie> NetworkStorageSession::getAllCookies()
@@ -330,10 +308,17 @@ Vector<Cookie> NetworkStorageSession::getAllCookies()
     return { };
 }
 
-Vector<Cookie> NetworkStorageSession::getCookies(const URL&)
+Vector<Cookie> NetworkStorageSession::getCookies(const URL& url)
 {
-    // FIXME: Implement for WK2 to use.
-    return { };
+    Vector<Cookie> cookies;
+    GUniquePtr<SoupURI> uri = url.createSoupURI();
+    GUniquePtr<GSList> cookiesList(soup_cookie_jar_get_cookie_list(cookieStorage(), uri.get(), TRUE));
+    for (GSList* item = cookiesList.get(); item; item = g_slist_next(item)) {
+        GUniquePtr<SoupCookie> soupCookie(static_cast<SoupCookie*>(item->data));
+        cookies.append(WebCore::Cookie(soupCookie.get()));
+    }
+
+    return cookies;
 }
 
 void NetworkStorageSession::flushCookieStore()

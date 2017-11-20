@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2017 Endless Mobile, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,6 +28,7 @@
 #include "WebKitWebsiteDataManagerPrivate.h"
 #include "WebKitWebsiteDataPrivate.h"
 #include "WebsiteDataRecord.h"
+#include <glib/gi18n-lib.h>
 #include <pal/SessionID.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -230,6 +232,192 @@ WebKitCookieAcceptPolicy webkit_cookie_manager_get_accept_policy_finish(WebKitCo
 
     gssize returnValue = g_task_propagate_int(G_TASK(result), error);
     return returnValue == -1 ? WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY : static_cast<WebKitCookieAcceptPolicy>(returnValue);
+}
+
+/**
+ * webkit_cookie_manager_add_cookie:
+ * @cookie_manager: a #WebKitCookieManager
+ * @cookie: the #SoupCookie to be added
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Asynchronously add a #SoupCookie to the underlying storage.
+ *
+ * When the operation is finished, @callback will be called. You can then call
+ * webkit_cookie_manager_add_cookie_finish() to get the result of the operation.
+ *
+ * Since: 2.20
+ */
+void webkit_cookie_manager_add_cookie(WebKitCookieManager* manager, SoupCookie* cookie, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
+    g_return_if_fail(cookie);
+
+    GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
+
+    auto sessionID = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager).websiteDataStore().sessionID();
+    const auto& processPools = webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager);
+
+    // Cookies are read/written from/to the same SQLite database on disk regardless
+    // of the process we access them from, so just use the first process pool.
+    processPools[0]->supplement<WebCookieManagerProxy>()->setCookie(sessionID, WebCore::Cookie(cookie), [task = WTFMove(task)](CallbackBase::Error error) {
+        if (error != CallbackBase::Error::None) {
+            // This can only happen in cases where the web process is not available,
+            // consider the operation "cancelled" from the point of view of the client.
+            g_task_return_new_error(task.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED, _("Operation was cancelled"));
+            return;
+        }
+
+        g_task_return_boolean(task.get(), TRUE);
+    });
+}
+
+/**
+ * webkit_cookie_manager_add_cookie_finish:
+ * @cookie_manager: a #WebKitCookieManager
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finish an asynchronous operation started with webkit_cookie_manager_add_cookie().
+ *
+ * Returns: %TRUE if the cookie was added or %FALSE in case of error.
+ *
+ * Since: 2.20
+ */
+gboolean webkit_cookie_manager_add_cookie_finish(WebKitCookieManager* manager, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager), FALSE);
+    g_return_val_if_fail(g_task_is_valid(result, manager), FALSE);
+
+    return g_task_propagate_boolean(G_TASK(result), error);
+}
+
+/**
+ * webkit_cookie_manager_get_cookies:
+ * @cookie_manager: a #WebKitCookieManager
+ * @uri: the URI associated to the cookies to be retrieved
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Asynchronously get a list of #SoupCookie from @cookie_manager associated with @uri, which
+ * must be either an HTTP or an HTTPS URL.
+ *
+ * When the operation is finished, @callback will be called. You can then call
+ * webkit_cookie_manager_get_cookies_finish() to get the result of the operation.
+ *
+ * Since: 2.20
+ */
+void webkit_cookie_manager_get_cookies(WebKitCookieManager* manager, const gchar* uri, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
+    g_return_if_fail(uri);
+
+    GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
+
+    auto sessionID = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager).websiteDataStore().sessionID();
+    const auto& processPools = webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager);
+
+    // Cookies are read/written from/to the same SQLite database on disk regardless
+    // of the process we access them from, so just use the first process pool.
+    processPools[0]->supplement<WebCookieManagerProxy>()->getCookies(sessionID, WebCore::URL(WebCore::URL(), String::fromUTF8(uri)), [task = WTFMove(task)](const Vector<WebCore::Cookie>& cookies, CallbackBase::Error error) {
+        if (error != CallbackBase::Error::None) {
+            // This can only happen in cases where the web process is not available,
+            // consider the operation "cancelled" from the point of view of the client.
+            g_task_return_new_error(task.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED, _("Operation was cancelled"));
+            return;
+        }
+
+        GList* cookiesList = nullptr;
+        for (auto& cookie : cookies)
+            cookiesList = g_list_prepend(cookiesList, cookie.toSoupCookie());
+
+        g_task_return_pointer(task.get(), g_list_reverse(cookiesList), [](gpointer data) {
+            g_list_free_full(static_cast<GList*>(data), reinterpret_cast<GDestroyNotify>(soup_cookie_free));
+        });
+    });
+}
+
+/**
+ * webkit_cookie_manager_get_cookies_finish:
+ * @cookie_manager: a #WebKitCookieManager
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finish an asynchronous operation started with webkit_cookie_manager_get_cookies().
+ * The return value is a #GSList of #SoupCookie instances which should be released
+ * with g_list_free_full() and soup_cookie_free().
+ *
+ * Returns: (element-type SoupCookie) (transfer full): A #GList of #SoupCookie instances.
+ *
+ * Since: 2.20
+ */
+GList* webkit_cookie_manager_get_cookies_finish(WebKitCookieManager* manager, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager), nullptr);
+    g_return_val_if_fail(g_task_is_valid(result, manager), nullptr);
+
+    return reinterpret_cast<GList*>(g_task_propagate_pointer(G_TASK(result), error));
+}
+
+/**
+ * webkit_cookie_manager_delete_cookie:
+ * @cookie_manager: a #WebKitCookieManager
+ * @cookie: the #SoupCookie to be deleted
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Asynchronously delete a #SoupCookie from the current session.
+ *
+ * When the operation is finished, @callback will be called. You can then call
+ * webkit_cookie_manager_delete_cookie_finish() to get the result of the operation.
+ *
+ * Since: 2.20
+ */
+void webkit_cookie_manager_delete_cookie(WebKitCookieManager* manager, SoupCookie* cookie, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
+    g_return_if_fail(cookie);
+
+    GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
+
+    auto sessionID = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager).websiteDataStore().sessionID();
+    const auto& processPools = webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager);
+
+    // Cookies are read/written from/to the same SQLite database on disk regardless
+    // of the process we access them from, so just use the first process pool.
+    processPools[0]->supplement<WebCookieManagerProxy>()->deleteCookie(sessionID, WebCore::Cookie(cookie), [task = WTFMove(task)](CallbackBase::Error error) {
+        if (error != CallbackBase::Error::None) {
+            // This can only happen in cases where the web process is not available,
+            // consider the operation "cancelled" from the point of view of the client.
+            g_task_return_new_error(task.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED, _("Operation was cancelled"));
+            return;
+        }
+
+        g_task_return_boolean(task.get(), TRUE);
+    });
+}
+
+/**
+ * webkit_cookie_manager_delete_cookie_finish:
+ * @cookie_manager: a #WebKitCookieManager
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finish an asynchronous operation started with webkit_cookie_manager_delete_cookie().
+ *
+ * Returns: %TRUE if the cookie was deleted or %FALSE in case of error.
+ *
+ * Since: 2.20
+ */
+gboolean webkit_cookie_manager_delete_cookie_finish(WebKitCookieManager* manager, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager), FALSE);
+    g_return_val_if_fail(g_task_is_valid(result, manager), FALSE);
+
+    return g_task_propagate_boolean(G_TASK(result), error);
 }
 
 /**

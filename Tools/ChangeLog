@@ -1,3 +1,21 @@
+2017-11-20  Mario Sanchez Prada  <mario@endlessm.com>
+
+        [GTK] New API to add, retrieve and delete cookies via WebKitCookieManager
+        https://bugs.webkit.org/show_bug.cgi?id=177932
+
+        Reviewed by Carlos Garcia Campos.
+
+        Added new test cases to cover the newly added API for WebKitCookieManager:
+        webkit_cookie_manager_add_cookie, webkit_cookie_manager_get_cookies and
+        webkit_cookie_manager_delete_cookie.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp:
+        (testCookieManagerAddCookie): Added.
+        (testCookieManagerGetCookies): Added.
+        (testCookieManagerDeleteCookie): Added.
+        (serverCallback): Small update to avoid hardcoding strings we reuse.
+        (beforeAll): Added the new test cases to the test suite.
+
 2017-11-20  Stephan Szabo  <stephan.szabo@sony.com>
 
         [Win] Update ruby JSC test writer for gigacage changes
