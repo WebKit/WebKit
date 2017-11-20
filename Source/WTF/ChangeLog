@@ -1,3 +1,20 @@
+2017-11-19  Chris Dumez  <cdumez@apple.com>
+
+        Fix potential thread safety issue in ThreadSafeIdentified
+        https://bugs.webkit.org/show_bug.cgi?id=179879
+
+        Reviewed by Darin Adler.
+
+        Fix potential thread safety issue in ThreadSafeIdentified. Protect static std::atomic
+        initialization with an std::call_once() given that we build with
+        --fno-threadsafe-statics.
+
+        * wtf/Identified.h:
+        (WTF::Identified::Identified):
+        (WTF::Identified::generateIdentifier):
+        (WTF::ThreadSafeIdentified::ThreadSafeIdentified):
+        (WTF::ThreadSafeIdentified::generateIdentifier):
+
 2017-11-18  Darin Adler  <darin@apple.com>
 
         Eliminate some cases of double hashing, other related refactoring

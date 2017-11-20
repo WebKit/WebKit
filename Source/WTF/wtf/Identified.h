@@ -26,10 +26,11 @@
 #pragma once
 
 #include <atomic>
+#include <wtf/NeverDestroyed.h>
 
 namespace WTF {
 
-template <typename IdentifierType, typename StaticType, typename ClassType>
+template <typename IdentifierType, typename ClassType>
 class IdentifiedBase {
 public:
     IdentifierType identifier() const
@@ -38,11 +39,6 @@ public:
     }
 
 protected:
-    IdentifiedBase()
-        : m_identifier(++s_currentIdentifier)
-    {
-    }
-
     IdentifiedBase(const IdentifiedBase& other)
         : m_identifier(other.m_identifier)
     {
@@ -55,32 +51,55 @@ protected:
 
 private:
     IdentifierType m_identifier;
-    static StaticType s_currentIdentifier;
 };
 
-template<typename IdentifierType, typename StaticType, typename ClassType> StaticType IdentifiedBase<IdentifierType, StaticType, ClassType>::s_currentIdentifier;
-
 template <typename T>
-class Identified : public IdentifiedBase<uint64_t, uint64_t, T> {
+class Identified : public IdentifiedBase<uint64_t, T> {
 protected:
-    Identified() = default;
+    Identified()
+        : IdentifiedBase<uint64_t, T>(generateIdentifier())
+    {
+    }
+
     Identified(const Identified&) = default;
 
     explicit Identified(uint64_t identifier)
-        : IdentifiedBase<uint64_t, uint64_t, T>(identifier)
+        : IdentifiedBase<uint64_t, T>(identifier)
     {
+    }
+
+private:
+    static uint64_t generateIdentifier()
+    {
+        static uint64_t currentIdentifier;
+        return ++currentIdentifier;
     }
 };
 
 template <typename T>
-class ThreadSafeIdentified : public IdentifiedBase<uint64_t, std::atomic<uint64_t>, T> {
+class ThreadSafeIdentified : public IdentifiedBase<uint64_t, T> {
 protected:
-    ThreadSafeIdentified() = default;
+    ThreadSafeIdentified()
+        : IdentifiedBase<uint64_t, T>(generateIdentifier())
+    {
+    }
+
     ThreadSafeIdentified(const ThreadSafeIdentified&) = default;
 
     explicit ThreadSafeIdentified(uint64_t identifier)
-        : IdentifiedBase<uint64_t, std::atomic<uint64_t>, T>(identifier)
+        : IdentifiedBase<uint64_t, T>(identifier)
     {
+    }
+
+private:
+    static uint64_t generateIdentifier()
+    {
+        static LazyNeverDestroyed<std::atomic<uint64_t>> currentIdentifier;
+        static std::once_flag initializeCurrentIdentifier;
+        std::call_once(initializeCurrentIdentifier, [] {
+            currentIdentifier.construct(0);
+        });
+        return ++currentIdentifier.get();
     }
 };
 
