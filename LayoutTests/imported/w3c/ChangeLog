@@ -1,3 +1,14 @@
+2017-11-20  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Incorrect computed style in pseudo-elements with display: contents
+        https://bugs.webkit.org/show_bug.cgi?id=179812
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/cssom/getComputedStyle-pseudo-expected.txt:
+        * web-platform-tests/cssom/getComputedStyle-pseudo.html:
+          Extended the testcase to cover this bug.
+
 2017-11-17  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorker intercepted FetchRequest should have their referrer set appropriately.

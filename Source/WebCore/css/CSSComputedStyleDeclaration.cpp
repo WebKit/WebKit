@@ -2360,6 +2360,8 @@ RenderElement* ComputedStyleExtractor::styledRenderer() const
         return nullptr;
     if (m_pseudoElementSpecifier != NOPSEUDO && element == m_element.get())
         return nullptr;
+    if (element->hasDisplayContents())
+        return nullptr;
     return element->renderer();
 }
 

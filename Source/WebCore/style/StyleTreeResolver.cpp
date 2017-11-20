@@ -247,15 +247,6 @@ ElementUpdate TreeResolver::resolvePseudoStyle(Element& element, const ElementUp
             element.setAfterPseudoElement(WTFMove(newPseudoElement));
     }
 
-    if (pseudoStyle->display() == CONTENTS) {
-        // For display:contents we create an inline wrapper that inherits its style from the display:contents style.
-        auto contentsStyle = RenderStyle::createPtr();
-        contentsStyle->setStyleType(pseudoId);
-        contentsStyle->inheritFrom(*pseudoStyle);
-        contentsStyle->copyContentFrom(*pseudoStyle);
-        pseudoStyle = WTFMove(contentsStyle);
-    }
-
     return createAnimatedElementUpdate(WTFMove(pseudoStyle), *pseudoElement, elementUpdate.change);
 }
 

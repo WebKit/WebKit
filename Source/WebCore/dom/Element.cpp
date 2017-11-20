@@ -1514,8 +1514,9 @@ void Element::invalidateStyleAndRenderersForSubtree()
 
 bool Element::hasDisplayContents() const
 {
-    if (renderer() || !hasRareData())
+    if (!hasRareData())
         return false;
+
     const RenderStyle* style = elementRareData()->computedStyle();
     return style && style->display() == CONTENTS;
 }
@@ -1523,7 +1524,7 @@ bool Element::hasDisplayContents() const
 void Element::storeDisplayContentsStyle(std::unique_ptr<RenderStyle> style)
 {
     ASSERT(style && style->display() == CONTENTS);
-    ASSERT(!renderer());
+    ASSERT(!renderer() || isPseudoElement());
     ensureElementRareData().setComputedStyle(WTFMove(style));
 }
 
@@ -2673,13 +2674,12 @@ static PseudoElement* beforeOrAfterPseudoElement(Element& host, PseudoId pseudoE
 
 const RenderStyle* Element::existingComputedStyle() const
 {
-    if (auto* renderTreeStyle = renderStyle())
-        return renderTreeStyle;
+    if (hasRareData()) {
+        if (auto* style = elementRareData()->computedStyle())
+            return style;
+    }
 
-    if (hasRareData())
-        return elementRareData()->computedStyle();
-
-    return nullptr;
+    return renderStyle();
 }
 
 const RenderStyle& Element::resolveComputedStyle()

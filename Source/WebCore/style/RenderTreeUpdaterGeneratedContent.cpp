@@ -123,7 +123,21 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
             current.setAfterPseudoElement(newPseudoElement.releaseNonNull());
     }
 
-    m_updater.updateElementRenderer(*pseudoElement, *update);
+    if (update->style->display() == CONTENTS) {
+        // For display:contents we create an inline wrapper that inherits its
+        // style from the display:contents style.
+        auto contentsStyle = RenderStyle::createPtr();
+        contentsStyle->setStyleType(pseudoId);
+        contentsStyle->inheritFrom(*update->style);
+        contentsStyle->copyContentFrom(*update->style);
+
+        Style::ElementUpdate contentsUpdate { WTFMove(contentsStyle), update->change, update->recompositeLayer };
+        m_updater.updateElementRenderer(*pseudoElement, contentsUpdate);
+        pseudoElement->storeDisplayContentsStyle(RenderStyle::clonePtr(*update->style));
+    } else {
+        m_updater.updateElementRenderer(*pseudoElement, *update);
+        ASSERT(!pseudoElement->hasDisplayContents());
+    }
 
     auto* pseudoElementRenderer = pseudoElement->renderer();
     if (!pseudoElementRenderer)
