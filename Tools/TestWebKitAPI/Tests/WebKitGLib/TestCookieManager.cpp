@@ -40,17 +40,13 @@ public:
     static void cookiesChangedCallback(WebKitCookieManager*, CookieManagerTest* test)
     {
         test->m_cookiesChanged = true;
-        if (test->m_finishLoopWhenCookiesChange)
+        if (test->m_finishLoopWhenCookiesChange && !(--test->m_cookiesExpectedToChangeCount))
             g_main_loop_quit(test->m_mainLoop);
     }
 
     CookieManagerTest()
         : WebViewTest()
         , m_cookieManager(webkit_web_context_get_cookie_manager(webkit_web_view_get_context(m_webView)))
-        , m_acceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY)
-        , m_domains(0)
-        , m_cookiesChanged(false)
-        , m_finishLoopWhenCookiesChange(false)
     {
         g_assert(webkit_website_data_manager_get_cookie_manager(webkit_web_context_get_website_data_manager(webkit_web_view_get_context(m_webView))) == m_cookieManager);
         g_signal_connect(m_cookieManager, "changed", G_CALLBACK(cookiesChangedCallback), this);
@@ -162,19 +158,21 @@ public:
         G_GNUC_END_IGNORE_DEPRECATIONS;
     }
 
-    void waitUntilCookiesChanged()
+    void waitUntilCookiesChanged(int cookiesExpectedToChangeCount = 1)
     {
         m_cookiesChanged = false;
+        m_cookiesExpectedToChangeCount = cookiesExpectedToChangeCount;
         m_finishLoopWhenCookiesChange = true;
         g_main_loop_run(m_mainLoop);
         m_finishLoopWhenCookiesChange = false;
     }
 
-    WebKitCookieManager* m_cookieManager;
-    WebKitCookieAcceptPolicy m_acceptPolicy;
-    char** m_domains;
-    bool m_cookiesChanged;
-    bool m_finishLoopWhenCookiesChange;
+    WebKitCookieManager* m_cookieManager { nullptr };
+    WebKitCookieAcceptPolicy m_acceptPolicy { WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY };
+    char** m_domains { nullptr };
+    bool m_cookiesChanged { false };
+    int m_cookiesExpectedToChangeCount { 0 };
+    bool m_finishLoopWhenCookiesChange { false };
     GUniquePtr<char> m_cookiesTextFile;
     GUniquePtr<char> m_cookiesSQLiteFile;
 };
@@ -300,6 +298,31 @@ static void testCookieManagerPersistentStorage(CookieManagerTest* test, gconstpo
     g_assert_cmpint(g_strv_length(test->getDomains()), ==, 0);
 }
 
+static void testCookieManagerPersistentStorageDeleteAll(CookieManagerTest* test, gconstpointer)
+{
+    // This checks that we can remove all the cookies of an existing file before a web process is created.
+    // See bug https://bugs.webkit.org/show_bug.cgi?id=175265.
+    static const char cookiesFileFormat[] = "127.0.0.1\tFALSE\t/\tFALSE\t%ld\tfoo\tbar\nlocalhost\tFALSE\t/\tFALSE\t%ld\tbaz\tqux\n";
+    time_t expires = time(nullptr) + 60;
+    GUniquePtr<char> cookiesFileContents(g_strdup_printf(cookiesFileFormat, expires, expires));
+    GUniquePtr<char> cookiesFile(g_build_filename(Test::dataDirectory(), "cookies.txt", nullptr));
+    g_assert(g_file_set_contents(cookiesFile.get(), cookiesFileContents.get(), -1, nullptr));
+
+    test->setPersistentStorage(WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT);
+    test->deleteAllCookies();
+    // Changed signal is emitted for every deleted cookie, twice in this case.
+    test->waitUntilCookiesChanged(2);
+
+    // Ensure the web process is created and load something without cookies.
+    test->m_cookiesChanged = false;
+    test->loadURI(kServer->getURIForPath("/no-cookies.html").data());
+    test->waitUntilLoadFinished();
+    g_assert(!test->m_cookiesChanged);
+    char** domains = test->getDomains();
+    g_assert(domains);
+    g_assert_cmpint(g_strv_length(domains), ==, 0);
+}
+
 static void ephemeralViewloadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebViewTest* test)
 {
     if (loadEvent != WEBKIT_LOAD_FINISHED)
@@ -366,7 +389,10 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, indexHtml, strlen(indexHtml));
     } else if (g_str_equal(path, "/image.png"))
         soup_message_headers_replace(message->response_headers, "Set-Cookie", "baz=qux; Max-Age=60");
-    else
+    else if (g_str_equal(path, "/no-cookies.html")) {
+        static const char* indexHtml = "<html><body><p>No cookies</p></body></html>";
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, indexHtml, strlen(indexHtml));
+    } else
         soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
     soup_message_body_complete(message->response_body);
 }
@@ -380,6 +406,7 @@ void beforeAll()
     CookieManagerTest::add("WebKitCookieManager", "delete-cookies", testCookieManagerDeleteCookies);
     CookieManagerTest::add("WebKitCookieManager", "cookies-changed", testCookieManagerCookiesChanged);
     CookieManagerTest::add("WebKitCookieManager", "persistent-storage", testCookieManagerPersistentStorage);
+    CookieManagerTest::add("WebKitCookieManager", "persistent-storage-delete-all", testCookieManagerPersistentStorageDeleteAll);
     CookieManagerTest::add("WebKitCookieManager", "ephemeral", testCookieManagerEphemeral);
 }
 

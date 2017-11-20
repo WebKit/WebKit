@@ -1,3 +1,17 @@
+2017-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] webkit_cookie_manager_delete_all_cookies doesn't delete the cookies if called before a web process is running
+        https://bugs.webkit.org/show_bug.cgi?id=175265
+
+        Reviewed by Michael Catanzaro.
+
+        Add test case.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp:
+        (testCookieManagerPersistentStorageDeleteAll):
+        (serverCallback):
+        (beforeAll):
+
 2017-11-19  Tim Horton  <timothy_horton@apple.com>
 
         Remove unused TOUCH_ICON_LOADING feature flag
