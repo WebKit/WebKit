@@ -23,18 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
 #include "HeadlessViewBackend.h"
 
 #include <cassert>
 #include <fcntl.h>
 #include <unistd.h>
-#include <wtf/glib/RunLoopSourcePriority.h>
 
 // Manually provide the EGL_CAST C++ definition in case eglplatform.h doesn't provide it.
 #ifndef EGL_CAST
 #define EGL_CAST(type, value) (static_cast<type>(value))
 #endif
+
+// Keep this in sync with wtf/glib/RunLoopSourcePriority.h.
+static int kRunLoopSourcePriorityDispatcher = -70;
 
 // FIXME: Deploy good practices and clean up GBM resources at process exit.
 static EGLDisplay getEGLDisplay()
@@ -109,7 +110,7 @@ HeadlessViewBackend::HeadlessViewBackend()
             backend.performUpdate();
             return TRUE;
         }, this, nullptr);
-    g_source_set_priority(m_updateSource, RunLoopSourcePriority::RunLoopDispatcher);
+    g_source_set_priority(m_updateSource, kRunLoopSourcePriorityDispatcher);
     g_source_attach(m_updateSource, g_main_context_default());
 }
 

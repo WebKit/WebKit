@@ -1,5 +1,40 @@
 2017-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE] Add env var WPE_USE_HEADLESS_VIEW_BACKEND
+        https://bugs.webkit.org/show_bug.cgi?id=173770
+
+        Reviewed by Michael Catanzaro.
+
+        Move HeadlessViewBackend implementation to a common place and build it as a private static library to be used by
+        WTR, GLib API tests and eventually C API tests too. WTR uses the HeadlessViewBackend unconditionally, but GLib
+        API tests use it only when WPE_USE_HEADLESS_VIEW_BACKEND environment variable is present and not "0".
+
+        * CMakeLists.txt: Include wpe/HeadlessViewBackend directory for developer builds.
+        * TestWebKitAPI/Tests/WebKitGLib/TestAutomationSession.cpp:
+        (testAutomationSessionRequestSession):
+        * TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp:
+        (testCookieManagerEphemeral):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitFaviconDatabase.cpp:
+        (testPrivateBrowsing):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
+        (testWebContextProxySettings):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (testWebViewWebContext):
+        (testWebViewEphemeral):
+        * TestWebKitAPI/glib/PlatformWPE.cmake:
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::createWebViewBackend):
+        (Test::createWebView):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp:
+        (WebViewTest::initializeWebView):
+        * WebKitTestRunner/PlatformWPE.cmake:
+        * wpe/HeadlessViewBackend/CMakeLists.txt: Added.
+        * wpe/HeadlessViewBackend/HeadlessViewBackend.cpp: Renamed from Tools/WebKitTestRunner/wpe/HeadlessViewBackend.cpp.
+        (HeadlessViewBackend::HeadlessViewBackend):
+        * wpe/HeadlessViewBackend/HeadlessViewBackend.h: Renamed from Tools/WebKitTestRunner/wpe/HeadlessViewBackend.h.
+
+2017-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE] webkit_web_view_new() should enable specifying wpe_view_backend object
         https://bugs.webkit.org/show_bug.cgi?id=178655
 

@@ -184,6 +184,9 @@ static void ephemeralViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loa
 static void testPrivateBrowsing(FaviconDatabaseTest* test)
 {
     auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+#if PLATFORM(WPE)
+        "backend", Test::createWebViewBackend(),
+#endif
         "web-context", test->m_webContext.get(),
         "is-ephemeral", TRUE,
         nullptr));

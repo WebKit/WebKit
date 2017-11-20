@@ -51,7 +51,11 @@ static void testWebViewWebContext(WebViewTest* test, gconstpointer)
     g_assert(webkit_web_context_get_default() != test->m_webContext.get());
 
     // Check that a web view created with g_object_new has the default context.
-    auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW, nullptr));
+    auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+#if PLATFORM(WPE)
+        "backend", Test::createWebViewBackend(),
+#endif
+        nullptr));
     g_assert(webkit_web_view_get_context(webView.get()) == webkit_web_context_get_default());
 
     // Check that a web view created with a related view has the related view context.
@@ -60,7 +64,12 @@ static void testWebViewWebContext(WebViewTest* test, gconstpointer)
 
     // Check that a web context given as construct parameter is ignored if a related view is also provided.
     webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
-        "web-context", webkit_web_context_get_default(), "related-view", test->m_webView, nullptr));
+#if PLATFORM(WPE)
+        "backend", Test::createWebViewBackend(),
+#endif
+        "web-context", webkit_web_context_get_default(),
+        "related-view", test->m_webView,
+        nullptr));
     g_assert(webkit_web_view_get_context(webView.get()) == test->m_webContext.get());
 }
 
@@ -182,6 +191,9 @@ static void testWebViewEphemeral(WebViewTest* test, gconstpointer)
 
     // A WebView on a non ephemeral context can be ephemeral.
     auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+#if PLATFORM(WPE)
+        "backend", Test::createWebViewBackend(),
+#endif
         "web-context", webkit_web_view_get_context(test->m_webView),
         "is-ephemeral", TRUE,
         nullptr));

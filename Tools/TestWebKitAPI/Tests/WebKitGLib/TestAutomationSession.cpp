@@ -313,7 +313,13 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
     g_assert(!test->createTopLevelBrowsingContext(webView.get()));
 
     // And will work with a proper web view.
-    webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW, "web-context", test->m_webContext.get(), "is-controlled-by-automation", TRUE, nullptr));
+    webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+#if PLATFORM(WPE)
+        "backend", Test::createWebViewBackend(),
+#endif
+        "web-context", test->m_webContext.get(),
+        "is-controlled-by-automation", TRUE,
+        nullptr));
     g_assert(webkit_web_view_is_controlled_by_automation(webView.get()));
     g_assert(test->createTopLevelBrowsingContext(webView.get()));
 

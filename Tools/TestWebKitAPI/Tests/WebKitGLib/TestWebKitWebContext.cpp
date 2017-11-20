@@ -708,6 +708,9 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
 
     // Proxy settings also affect ephemeral web views.
     auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+#if PLATFORM(WPE)
+        "backend", Test::createWebViewBackend(),
+#endif
         "web-context", test->m_webContext.get(),
         "is-ephemeral", TRUE,
         nullptr));

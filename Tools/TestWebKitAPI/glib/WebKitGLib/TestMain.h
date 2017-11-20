@@ -29,6 +29,7 @@
 #if PLATFORM(GTK)
 #include <webkit2/webkit2.h>
 #elif PLATFORM(WPE)
+#include "HeadlessViewBackend.h"
 #include <wpe/webkit.h>
 #endif
 
@@ -143,12 +144,25 @@ public:
         webkit_web_context_set_web_extensions_initialization_user_data(m_webContext.get(), g_variant_new_uint32(++s_webExtensionID));
     }
 
+#if PLATFORM(WPE)
+    static WebKitWebViewBackend* createWebViewBackend()
+    {
+        const char* useHeadlessViewBackend = g_getenv("WPE_USE_HEADLESS_VIEW_BACKEND");
+        if (!useHeadlessViewBackend || !strcmp(useHeadlessViewBackend, "0"))
+            return nullptr;
+        auto* headlessBackend = new HeadlessViewBackend;
+        return webkit_web_view_backend_new(headlessBackend->backend(), [](gpointer userData) {
+            delete static_cast<HeadlessViewBackend*>(userData);
+        }, headlessBackend);
+    }
+#endif
+
     static WebKitWebView* createWebView()
     {
 #if PLATFORM(GTK)
         return WEBKIT_WEB_VIEW(webkit_web_view_new());
 #elif PLATFORM(WPE)
-        return webkit_web_view_new(nullptr);
+        return webkit_web_view_new(createWebViewBackend());
 #endif
     }
 
@@ -157,7 +171,7 @@ public:
 #if PLATFORM(GTK)
         return WEBKIT_WEB_VIEW(webkit_web_view_new_with_context(context));
 #elif PLATFORM(WPE)
-        return webkit_web_view_new_with_context(nullptr, context);
+        return webkit_web_view_new_with_context(createWebViewBackend(), context);
 #endif
     }
 
@@ -166,7 +180,7 @@ public:
 #if PLATFORM(GTK)
         return WEBKIT_WEB_VIEW(webkit_web_view_new_with_related_view(relatedView));
 #elif PLATFORM(WPE)
-        return webkit_web_view_new_with_related_view(nullptr, relatedView);
+        return webkit_web_view_new_with_related_view(createWebViewBackend(), relatedView);
 #endif
     }
 
@@ -175,7 +189,7 @@ public:
 #if PLATFORM(GTK)
         return WEBKIT_WEB_VIEW(webkit_web_view_new_with_user_content_manager(contentManager));
 #elif PLATFORM(WPE)
-        return webkit_web_view_new_with_user_content_manager(nullptr, contentManager);
+        return webkit_web_view_new_with_user_content_manager(createWebViewBackend(), contentManager);
 #endif
     }
 
@@ -184,7 +198,7 @@ public:
 #if PLATFORM(GTK)
         return WEBKIT_WEB_VIEW(webkit_web_view_new_with_settings(settings));
 #elif PLATFORM(WPE)
-        return webkit_web_view_new_with_settings(nullptr, settings);
+        return webkit_web_view_new_with_settings(createWebViewBackend(), settings);
 #endif
     }
 
