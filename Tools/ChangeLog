@@ -1,5 +1,81 @@
 2017-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE] Add run-wpe-tests script to run WPE glib API tests
+        https://bugs.webkit.org/show_bug.cgi?id=173772
+
+        Reviewed by Michael Catanzaro.
+
+        Move common code from run-gtk-tests to api_test_runner.py, to be shared by both run-gtk-tests and un-wpe-tests.
+
+        * Scripts/run-gtk-tests:
+        (GtkTestRunner):
+        (GtkTestRunner.__init__):
+        (GtkTestRunner._start_accessibility_daemons):
+        (GtkTestRunner._setup_testing_environment):
+        (GtkTestRunner._tear_down_testing_environment):
+        (GtkTestRunner.is_glib_test):
+        (GtkTestRunner.is_google_test):
+        * Scripts/run-wpe-tests: Added.
+        (WPETestRunner):
+        (WPETestRunner.__init__):
+        (WPETestRunner.is_glib_test):
+        (WPETestRunner.is_google_test):
+        * Scripts/webkitpy/port/headlessdriver.py: Added.
+        (HeadlessDriver):
+        (HeadlessDriver._setup_environ_for_test):
+        (HeadlessDriver._start):
+        * Scripts/webkitpy/port/headlessdriver_unittest.py: Added.
+        (HeadlessDriverTest):
+        (HeadlessDriverTest.make_driver):
+        (HeadlessDriverTest.make_environment):
+        (HeadlessDriverTest.test_environment_needed_variables):
+        (HeadlessDriverTest.test_environment_forbidden_variables):
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort._driver_class):
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/wpe/PlatformWebViewWPE.cpp:
+        (WTR::PlatformWebView::windowSnapshotImage):
+        * glib/api_test_runner.py: Copied from Tools/Scripts/run-gtk-tests.
+        (SkippedTest):
+        (SkippedTest.__init__):
+        (SkippedTest.__str__):
+        (SkippedTest.skip_entire_suite):
+        (SkippedTest.skip_for_build_type):
+        (TestTimeout):
+        (TestRunner):
+        (TestRunner.__init__):
+        (TestRunner._test_programs_base_dir):
+        (TestRunner._get_tests_from_dir):
+        (TestRunner._get_tests):
+        (TestRunner._create_driver):
+        (TestRunner._setup_testing_environment):
+        (TestRunner._tear_down_testing_environment):
+        (TestRunner._test_cases_to_skip):
+        (TestRunner._should_run_test_program):
+        (TestRunner._kill_process):
+        (TestRunner._start_timeout):
+        (TestRunner._start_timeout._alarm_handler):
+        (TestRunner._stop_timeout):
+        (TestRunner._waitpid):
+        (TestRunner._run_test_glib):
+        (TestRunner._run_test_glib.parse_line):
+        (TestRunner._run_test_glib.parse_line.set_test_result):
+        (TestRunner._get_tests_from_google_test_suite):
+        (TestRunner._run_google_test):
+        (TestRunner._run_google_test_suite):
+        (TestRunner.is_glib_test):
+        (TestRunner.is_google_test):
+        (TestRunner._run_test):
+        (TestRunner.run_tests):
+        (add_options):
+        * glib/common.py: Renamed from Tools/gtk/common.py.
+        (get_build_path.is_valid_build_directory):
+        * gtk/generate-gtkdoc:
+        * gtk/jhbuildrc:
+        * gtk/ycm_extra_conf.py:
+
+2017-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE] Build C API tests
         https://bugs.webkit.org/show_bug.cgi?id=179817
 

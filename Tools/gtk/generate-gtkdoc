@@ -20,12 +20,15 @@ from ConfigParser import SafeConfigParser
 
 import argparse
 import codecs
-import common
 import glob
 import gtkdoc
 import logging
 import os.path
 import sys
+
+top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'glib'))
+import common
 
 sys.stdout = codecs.getwriter("utf-8")(sys.stdout)
 sys.stderr = codecs.getwriter("utf-8")(sys.stderr)

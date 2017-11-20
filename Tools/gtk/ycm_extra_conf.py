@@ -31,7 +31,8 @@ if os.path.islink(original_file):
 else:
     __tools_directory = os.path.dirname(original_file)
 
-sys.path.insert(0, os.path.abspath(__tools_directory))
+top_level_directory = os.path.normpath(os.path.join(os.path.abspath(__tools_directory), '..', '..'))
+sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'glib'))
 import common
 
 
