@@ -259,7 +259,9 @@ webkit.org/b/177530 imported/w3c/web-platform-tests/XMLHttpRequest/setrequesthea
 Bug(WPE) imported/w3c/IndexedDB-private-browsing/idb_webworkers.html [ Failure ]
 webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating.html [ Crash ]
 webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating_index.html [ Crash ]
-webkit.org/b/179758 imported/w3c/IndexedDB-private-browsing/idbfactory_open12.html [ Pass Crash ]
+
+webkit.org/b/174354 imported/w3c/IndexedDB-private-browsing/idbfactory_open.html [ Crash Pass ]
+webkit.org/b/174354 imported/w3c/IndexedDB-private-browsing/idbfactory_open12.html [ Crash Pass ]
 
 Bug(WPE) fast/attachment [ Skip ]
 Bug(WPE) fast/autoresize [ Skip ]
@@ -1014,3 +1016,7 @@ webkit.org/b/179760 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Timeout 
 webkit.org/b/179760 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
 
 webkit.org/b/179761 workers/wasm-hashset-many-2.html [ Pass Timeout ]
+
+webkit.org/b/179897 imported/w3c/web-platform-tests/XMLHttpRequest/getallresponseheaders.htm [ Timeout ]
+
+webkit.org/b/179898 svg/animations/svglengthlist-animation-3.html [ Pass Failure ]

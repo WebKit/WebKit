@@ -1,3 +1,9 @@
+2017-11-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed WPE test gardening
+
+        * platform/wpe/TestExpectations:
+
 2017-11-20  Zalan Bujtas  <zalan@apple.com>
 
         Remove slow repaint object from FrameView when style changes.
