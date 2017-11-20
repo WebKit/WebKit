@@ -1,3 +1,13 @@
+2017-11-20  Zalan Bujtas  <zalan@apple.com>
+
+        Remove slow repaint object from FrameView when style changes.
+        https://bugs.webkit.org/show_bug.cgi?id=179871
+
+        Reviewed by Antti Koivisto.
+
+        * fast/repaint/slow-repaint-object-crash-expected.txt: Added.
+        * fast/repaint/slow-repaint-object-crash.html: Added.
+
 2017-11-19  Ms2ger  <Ms2ger@igalia.com>
 
         [WPE] Enable the XMLHttpRequest/ directory of web-platform-tests.

@@ -1448,39 +1448,40 @@ void FrameView::setCannotBlitToWindow()
     updateCanBlitOnScrollRecursively();
 }
 
-void FrameView::addSlowRepaintObject(RenderElement* o)
+void FrameView::addSlowRepaintObject(RenderElement& renderer)
 {
     bool hadSlowRepaintObjects = hasSlowRepaintObjects();
 
     if (!m_slowRepaintObjects)
         m_slowRepaintObjects = std::make_unique<HashSet<const RenderElement*>>();
 
-    m_slowRepaintObjects->add(o);
+    m_slowRepaintObjects->add(&renderer);
+    if (hadSlowRepaintObjects)
+        return;
 
-    if (!hadSlowRepaintObjects) {
-        updateCanBlitOnScrollRecursively();
+    updateCanBlitOnScrollRecursively();
 
-        if (Page* page = frame().page()) {
-            if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-                scrollingCoordinator->frameViewHasSlowRepaintObjectsDidChange(*this);
-        }
+    if (auto* page = frame().page()) {
+        if (auto* scrollingCoordinator = page->scrollingCoordinator())
+            scrollingCoordinator->frameViewHasSlowRepaintObjectsDidChange(*this);
     }
 }
 
-void FrameView::removeSlowRepaintObject(RenderElement* o)
+void FrameView::removeSlowRepaintObject(RenderElement& renderer)
 {
     if (!m_slowRepaintObjects)
         return;
 
-    m_slowRepaintObjects->remove(o);
-    if (m_slowRepaintObjects->isEmpty()) {
-        m_slowRepaintObjects = nullptr;
-        updateCanBlitOnScrollRecursively();
+    m_slowRepaintObjects->remove(&renderer);
+    if (!m_slowRepaintObjects->isEmpty())
+        return;
 
-        if (Page* page = frame().page()) {
-            if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-                scrollingCoordinator->frameViewHasSlowRepaintObjectsDidChange(*this);
-        }
+    m_slowRepaintObjects = nullptr;
+    updateCanBlitOnScrollRecursively();
+
+    if (auto* page = frame().page()) {
+        if (auto* scrollingCoordinator = page->scrollingCoordinator())
+            scrollingCoordinator->frameViewHasSlowRepaintObjectsDidChange(*this);
     }
 }
 
