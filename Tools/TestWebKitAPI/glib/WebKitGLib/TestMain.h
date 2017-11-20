@@ -143,6 +143,51 @@ public:
         webkit_web_context_set_web_extensions_initialization_user_data(m_webContext.get(), g_variant_new_uint32(++s_webExtensionID));
     }
 
+    static WebKitWebView* createWebView()
+    {
+#if PLATFORM(GTK)
+        return WEBKIT_WEB_VIEW(webkit_web_view_new());
+#elif PLATFORM(WPE)
+        return webkit_web_view_new(nullptr);
+#endif
+    }
+
+    static WebKitWebView* createWebView(WebKitWebContext* context)
+    {
+#if PLATFORM(GTK)
+        return WEBKIT_WEB_VIEW(webkit_web_view_new_with_context(context));
+#elif PLATFORM(WPE)
+        return webkit_web_view_new_with_context(nullptr, context);
+#endif
+    }
+
+    static WebKitWebView* createWebView(WebKitWebView* relatedView)
+    {
+#if PLATFORM(GTK)
+        return WEBKIT_WEB_VIEW(webkit_web_view_new_with_related_view(relatedView));
+#elif PLATFORM(WPE)
+        return webkit_web_view_new_with_related_view(nullptr, relatedView);
+#endif
+    }
+
+    static WebKitWebView* createWebView(WebKitUserContentManager* contentManager)
+    {
+#if PLATFORM(GTK)
+        return WEBKIT_WEB_VIEW(webkit_web_view_new_with_user_content_manager(contentManager));
+#elif PLATFORM(WPE)
+        return webkit_web_view_new_with_user_content_manager(nullptr, contentManager);
+#endif
+    }
+
+    static WebKitWebView* createWebView(WebKitSettings* settings)
+    {
+#if PLATFORM(GTK)
+        return WEBKIT_WEB_VIEW(webkit_web_view_new_with_settings(settings));
+#elif PLATFORM(WPE)
+        return webkit_web_view_new_with_settings(nullptr, settings);
+#endif
+    }
+
     static void objectFinalized(Test* test, GObject* finalizedObject)
     {
         test->m_watchedObjects.remove(finalizedObject);

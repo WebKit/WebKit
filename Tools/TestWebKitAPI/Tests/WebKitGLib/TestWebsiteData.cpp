@@ -252,7 +252,7 @@ static void testWebsiteDataEphemeral(WebViewTest* test, gconstpointer)
     // Non persistent data can be queried in an ephemeral manager.
     GRefPtr<WebKitWebContext> webContext = adoptGRef(webkit_web_context_new_with_website_data_manager(manager.get()));
     g_assert(webkit_web_context_is_ephemeral(webContext.get()));
-    auto webView = Test::adoptView(webkit_web_view_new_with_context(webContext.get()));
+    auto webView = Test::adoptView(Test::createWebView(webContext.get()));
     g_assert(webkit_web_view_is_ephemeral(webView.get()));
     g_assert(webkit_web_view_get_website_data_manager(webView.get()) == manager.get());
 

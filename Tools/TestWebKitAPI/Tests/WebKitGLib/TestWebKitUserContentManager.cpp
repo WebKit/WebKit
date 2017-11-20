@@ -40,10 +40,10 @@ static void testWebViewNewWithUserContentManager(Test* test, gconstpointer)
 {
     GRefPtr<WebKitUserContentManager> userContentManager1 = adoptGRef(webkit_user_content_manager_new());
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(userContentManager1.get()));
-    auto webView1 = Test::adoptView(webkit_web_view_new_with_user_content_manager(userContentManager1.get()));
+    auto webView1 = Test::adoptView(Test::createWebView(userContentManager1.get()));
     g_assert(webkit_web_view_get_user_content_manager(webView1.get()) == userContentManager1.get());
 
-    auto webView2 = Test::adoptView(webkit_web_view_new());
+    auto webView2 = Test::adoptView(Test::createWebView());
     g_assert(webkit_web_view_get_user_content_manager(webView2.get()) != userContentManager1.get());
 }
 

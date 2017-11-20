@@ -321,7 +321,7 @@ public:
         g_assert(webView == m_webView);
         g_assert(navigation);
 
-        auto* newWebView = webkit_web_view_new_with_context(webkit_web_view_get_context(webView));
+        auto* newWebView = Test::createWebView(webkit_web_view_get_context(webView));
 #if PLATFORM(GTK)
         g_object_ref_sink(newWebView);
 #endif

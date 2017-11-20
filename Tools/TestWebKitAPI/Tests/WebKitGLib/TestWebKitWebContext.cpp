@@ -51,11 +51,11 @@ static void testWebContextEphemeral(Test* test, gconstpointer)
     g_assert(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
     g_assert(!webkit_website_data_manager_is_ephemeral(manager));
 
-    auto webView = Test::adoptView(webkit_web_view_new());
+    auto webView = Test::adoptView(Test::createWebView());
     g_assert(!webkit_web_view_is_ephemeral(webView.get()));
     g_assert(webkit_web_view_get_website_data_manager(webView.get()) == webkit_web_context_get_website_data_manager(webkit_web_context_get_default()));
 
-    webView = Test::adoptView(webkit_web_view_new_with_context(test->m_webContext.get()));
+    webView = Test::adoptView(Test::createWebView(test->m_webContext.get()));
     g_assert(!webkit_web_view_is_ephemeral(webView.get()));
     g_assert(webkit_web_view_get_website_data_manager(webView.get()) == manager);
 
@@ -66,7 +66,7 @@ static void testWebContextEphemeral(Test* test, gconstpointer)
     g_assert(webkit_website_data_manager_is_ephemeral(manager));
     g_assert(webkit_web_view_get_website_data_manager(webView.get()) != manager);
 
-    webView = Test::adoptView(webkit_web_view_new_with_context(context.get()));
+    webView = Test::adoptView(Test::createWebView(context.get()));
     g_assert(webkit_web_view_is_ephemeral(webView.get()));
     g_assert(webkit_web_view_get_website_data_manager(webView.get()) == manager);
 

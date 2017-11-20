@@ -49,6 +49,7 @@
 #include <wpe/WebKitUserContentManager.h>
 #include <wpe/WebKitWebContext.h>
 #include <wpe/WebKitWebResource.h>
+#include <wpe/WebKitWebViewBackend.h>
 #include <wpe/WebKitWebViewSessionState.h>
 #include <wpe/WebKitWindowProperties.h>
 
@@ -228,19 +229,26 @@ WEBKIT_API GType
 webkit_web_view_get_type                             (void);
 
 WEBKIT_API WebKitWebView *
-webkit_web_view_new                                  (void);
+webkit_web_view_new                                  (WebKitWebViewBackend      *backend);
 
 WEBKIT_API WebKitWebView *
-webkit_web_view_new_with_context                     (WebKitWebContext          *context);
+webkit_web_view_new_with_context                     (WebKitWebViewBackend      *backend,
+                                                      WebKitWebContext          *context);
 
 WEBKIT_API WebKitWebView *
-webkit_web_view_new_with_settings                    (WebKitSettings            *settings);
+webkit_web_view_new_with_settings                    (WebKitWebViewBackend      *backend,
+                                                      WebKitSettings            *settings);
 
 WEBKIT_API WebKitWebView *
-webkit_web_view_new_with_related_view                (WebKitWebView             *web_view);
+webkit_web_view_new_with_related_view                (WebKitWebViewBackend      *backend,
+                                                      WebKitWebView             *web_view);
 
 WEBKIT_API WebKitWebView *
-webkit_web_view_new_with_user_content_manager        (WebKitUserContentManager  *user_content_manager);
+webkit_web_view_new_with_user_content_manager        (WebKitWebViewBackend      *backend,
+                                                      WebKitUserContentManager  *user_content_manager);
+
+WEBKIT_API WebKitWebViewBackend *
+webkit_web_view_get_backend                          (WebKitWebView             *web_view);
 
 WEBKIT_API gboolean
 webkit_web_view_is_ephemeral                         (WebKitWebView             *web_view);

@@ -39,6 +39,7 @@ gboolean webkitWebViewRunFileChooser(WebKitWebView*, WebKitFileChooserRequest*)
 
 /**
  * webkit_web_view_new:
+ * @backend: (nullable) (transfer full): a #WebKitWebViewBackend, or %NULL to use the default
  *
  * Creates a new #WebKitWebView with the default #WebKitWebContext and
  * no #WebKitUserContentManager associated with it.
@@ -48,13 +49,17 @@ gboolean webkitWebViewRunFileChooser(WebKitWebView*, WebKitFileChooserRequest*)
  *
  * Returns: The newly created #WebKitWebView
  */
-WebKitWebView* webkit_web_view_new()
+WebKitWebView* webkit_web_view_new(WebKitWebViewBackend* backend)
 {
-    return webkit_web_view_new_with_context(webkit_web_context_get_default());
+    return WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "backend", backend,
+        "web-context", webkit_web_context_get_default(),
+        nullptr));
 }
 
 /**
  * webkit_web_view_new_with_context:
+ * @backend: (nullable) (transfer full): a #WebKitWebViewBackend, or %NULL to use the default
  * @context: the #WebKitWebContext to be used by the #WebKitWebView
  *
  * Creates a new #WebKitWebView with the given #WebKitWebContext and
@@ -64,11 +69,12 @@ WebKitWebView* webkit_web_view_new()
  *
  * Returns: The newly created #WebKitWebView
  */
-WebKitWebView* webkit_web_view_new_with_context(WebKitWebContext* context)
+WebKitWebView* webkit_web_view_new_with_context(WebKitWebViewBackend* backend, WebKitWebContext* context)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), nullptr);
 
     return WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "backend", backend,
         "is-ephemeral", webkit_web_context_is_ephemeral(context),
         "web-context", context,
         nullptr));
@@ -76,6 +82,7 @@ WebKitWebView* webkit_web_view_new_with_context(WebKitWebContext* context)
 
 /**
  * webkit_web_view_new_with_related_view: (constructor)
+ * @backend: (nullable) (transfer full): a #WebKitWebViewBackend, or %NULL to use the default
  * @web_view: the related #WebKitWebView
  *
  * Creates a new #WebKitWebView sharing the same web process with @web_view.
@@ -93,11 +100,12 @@ WebKitWebView* webkit_web_view_new_with_context(WebKitWebContext* context)
  *
  * Since: 2.4
  */
-WebKitWebView* webkit_web_view_new_with_related_view(WebKitWebView* webView)
+WebKitWebView* webkit_web_view_new_with_related_view(WebKitWebViewBackend* backend, WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
 
     return WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "backend", backend,
         "user-content-manager", webkit_web_view_get_user_content_manager(webView),
         "settings", webkit_web_view_get_settings(webView),
         "related-view", webView,
@@ -106,6 +114,7 @@ WebKitWebView* webkit_web_view_new_with_related_view(WebKitWebView* webView)
 
 /**
  * webkit_web_view_new_with_settings:
+ * @backend: (nullable) (transfer full): a #WebKitWebViewBackend, or %NULL to use the default
  * @settings: a #WebKitSettings
  *
  * Creates a new #WebKitWebView with the given #WebKitSettings.
@@ -116,14 +125,19 @@ WebKitWebView* webkit_web_view_new_with_related_view(WebKitWebView* webView)
  *
  * Since: 2.6
  */
-WebKitWebView* webkit_web_view_new_with_settings(WebKitSettings* settings)
+WebKitWebView* webkit_web_view_new_with_settings(WebKitWebViewBackend* backend, WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), nullptr);
-    return WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW, "settings", settings, nullptr));
+
+    return WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "backend", backend,
+        "settings", settings,
+        nullptr));
 }
 
 /**
  * webkit_web_view_new_with_user_content_manager:
+ * @backend: (nullable) (transfer full): a #WebKitWebViewBackend, or %NULL to use the default
  * @user_content_manager: a #WebKitUserContentManager.
  *
  * Creates a new #WebKitWebView with the given #WebKitUserContentManager.
@@ -134,9 +148,12 @@ WebKitWebView* webkit_web_view_new_with_settings(WebKitSettings* settings)
  *
  * Since: 2.6
  */
-WebKitWebView* webkit_web_view_new_with_user_content_manager(WebKitUserContentManager* userContentManager)
+WebKitWebView* webkit_web_view_new_with_user_content_manager(WebKitWebViewBackend* backend, WebKitUserContentManager* userContentManager)
 {
     g_return_val_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(userContentManager), nullptr);
 
-    return WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW, "user-content-manager", userContentManager, nullptr));
+    return WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "backend", backend,
+        "user-content-manager", userContentManager,
+        nullptr));
 }

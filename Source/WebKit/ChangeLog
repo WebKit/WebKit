@@ -1,5 +1,54 @@
 2017-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE] webkit_web_view_new() should enable specifying wpe_view_backend object
+        https://bugs.webkit.org/show_bug.cgi?id=178655
+
+        Reviewed by Michael Catanzaro.
+
+        Update all WebKitWebView constructors to receive a WebKitWebViewBackend as argument. It's now required to
+        provide a backend to create a web view, but it can be NULL to use the default one. WebKitWebViewBackend is a
+        boxed type wrapping a struct wpe_view_backend* used as construct only property of WebKitWebView. The view always
+        takes the ownership of the WebKitWebViewBackend which owns the struct wpe_view_backend*. An optional
+        GDestroyNotify and user data pointer can be passed to the WebKitWebViewBackend constructor to provide a custom
+        deleter for the backend. In the C API the struct wpe_view_backend* is also mandatory now, but it can't be NULL
+        and it's owned by the caller, not the view.
+
+        * PlatformWPE.cmake:
+        * UIProcess/API/C/wpe/WKView.cpp:
+        (WKViewCreate):
+        * UIProcess/API/C/wpe/WKView.h:
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (_WebKitWebViewPrivate::~_WebKitWebViewPrivate):
+        (webkitWebViewConstructed):
+        (webkitWebViewSetProperty):
+        (webkitWebViewGetProperty):
+        (webkit_web_view_class_init):
+        (webkitWebViewCreatePage):
+        (webkit_web_view_get_backend):
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::m_backend):
+        (WKWPE::View::~View):
+        * UIProcess/API/wpe/WebKitWebView.h:
+        * UIProcess/API/wpe/WebKitWebViewBackend.cpp: Added.
+        (_WebKitWebViewBackend::_WebKitWebViewBackend):
+        (_WebKitWebViewBackend::~_WebKitWebViewBackend):
+        (webkitWebViewBackendRef):
+        (webkitWebViewBackendUnref):
+        (webkitWebViewBackendCreateDefault):
+        (webkit_web_view_backend_new):
+        (webkit_web_view_backend_get_wpe_backend):
+        * UIProcess/API/wpe/WebKitWebViewBackend.h: Added.
+        * UIProcess/API/wpe/WebKitWebViewBackendPrivate.h: Added.
+        * UIProcess/API/wpe/WebKitWebViewWPE.cpp:
+        (webkit_web_view_new):
+        (webkit_web_view_new_with_context):
+        (webkit_web_view_new_with_related_view):
+        (webkit_web_view_new_with_settings):
+        (webkit_web_view_new_with_user_content_manager):
+        * UIProcess/API/wpe/webkit.h:
+
+2017-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] webkit_cookie_manager_delete_all_cookies doesn't delete the cookies if called before a web process is running
         https://bugs.webkit.org/show_bug.cgi?id=175265
 

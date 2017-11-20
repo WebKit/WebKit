@@ -1,5 +1,45 @@
 2017-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE] webkit_web_view_new() should enable specifying wpe_view_backend object
+        https://bugs.webkit.org/show_bug.cgi?id=178655
+
+        Reviewed by Michael Catanzaro.
+
+        Update unit tests to create web views using helper methods that have a different implementation for GTK and
+        WPE. Also add a new test case to check the new API to create a WebKitWebView with a WPE backend. Use
+        WKViewCreate in WTR and fix a memory leak in HeadlessViewBackend.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestAutomationSession.cpp:
+        (testAutomationSessionRequestSession):
+        * TestWebKitAPI/Tests/WebKitGLib/TestBackForwardList.cpp:
+        (testWebKitWebViewSessionState):
+        (testWebKitWebViewSessionStateWithFormData):
+        (testWebKitWebViewNavigationAfterSessionRestore):
+        * TestWebKitAPI/Tests/WebKitGLib/TestMultiprocess.cpp:
+        * TestWebKitAPI/Tests/WebKitGLib/TestResources.cpp:
+        (testWebResourceGetDataError):
+        * TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp:
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitUserContentManager.cpp:
+        (testWebViewNewWithUserContentManager):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
+        (testWebContextEphemeral):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (testWebViewWebContext):
+        (testWebViewWebContextLifetime):
+        (testWebViewWebBackend):
+        (testWebViewSettings):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp:
+        (testWebsiteDataEphemeral):
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::createWebView):
+        * WebKitTestRunner/wpe/HeadlessViewBackend.cpp:
+        (HeadlessViewBackend::~HeadlessViewBackend):
+        * WebKitTestRunner/wpe/PlatformWebViewWPE.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+
+2017-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] webkit_cookie_manager_delete_all_cookies doesn't delete the cookies if called before a web process is running
         https://bugs.webkit.org/show_bug.cgi?id=175265
 

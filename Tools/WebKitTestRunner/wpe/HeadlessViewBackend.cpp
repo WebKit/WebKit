@@ -131,6 +131,8 @@ HeadlessViewBackend::~HeadlessViewBackend()
 
     if (m_egl.context)
         eglDestroyContext(m_egl.display, m_egl.context);
+
+    wpe_mesa_view_backend_exportable_dma_buf_destroy(m_exportable);
 }
 
 struct wpe_view_backend* HeadlessViewBackend::backend() const

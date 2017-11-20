@@ -84,6 +84,7 @@
 #if PLATFORM(WPE)
 #include "APIViewClient.h"
 #include "WPEView.h"
+#include "WebKitWebViewBackendPrivate.h"
 #endif
 
 #if USE(LIBNOTIFY)
@@ -161,6 +162,10 @@ enum {
 enum {
     PROP_0,
 
+#if PLATFORM(WPE)
+    PROP_BACKEND,
+#endif
+
     PROP_WEB_CONTEXT,
     PROP_RELATED_VIEW,
     PROP_SETTINGS,
@@ -192,9 +197,14 @@ struct _WebKitWebViewPrivate {
         // For modal dialogs, make sure the main loop is stopped when finalizing the webView.
         if (modalLoop && g_main_loop_is_running(modalLoop.get()))
             g_main_loop_quit(modalLoop.get());
+#if PLATFORM(WPE)
+        view = nullptr;
+        webkitWebViewBackendUnref(backend);
+#endif
     }
 
 #if PLATFORM(WPE)
+    WebKitWebViewBackend* backend;
     std::unique_ptr<WKWPE::View> view;
 #endif
 
@@ -619,6 +629,10 @@ static void webkitWebViewConstructed(GObject* object)
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
     WebKitWebViewPrivate* priv = webView->priv;
+#if PLATFORM(WPE)
+    if (!priv->backend)
+        priv->backend = webkitWebViewBackendCreateDefault();
+#endif
     if (priv->relatedView) {
         priv->context = webkit_web_view_get_context(priv->relatedView);
         priv->isEphemeral = webkit_web_view_is_ephemeral(priv->relatedView);
@@ -673,6 +687,13 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
 
     switch (propId) {
+#if PLATFORM(WPE)
+    case PROP_BACKEND: {
+        gpointer backend = g_value_get_boxed(value);
+        webView->priv->backend = backend ? static_cast<WebKitWebViewBackend*>(backend) : nullptr;
+        break;
+    }
+#endif
     case PROP_WEB_CONTEXT: {
         gpointer webContext = g_value_get_object(value);
         webView->priv->context = webContext ? WEBKIT_WEB_CONTEXT(webContext) : nullptr;
@@ -715,6 +736,11 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
 
     switch (propId) {
+#if PLATFORM(WPE)
+    case PROP_BACKEND:
+        g_value_set_static_boxed(value, webView->priv->backend);
+        break;
+#endif
     case PROP_WEB_CONTEXT:
         g_value_set_object(value, webView->priv->context.get());
         break;
@@ -820,6 +846,25 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     webViewClass->run_file_chooser = webkitWebViewRunFileChooser;
     webViewClass->authenticate = webkitWebViewAuthenticate;
     webViewClass->show_notification = webkitWebViewShowNotification;
+
+#if PLATFORM(WPE)
+    /**
+     * WebKitWebView:backend:
+     *
+     * The #WebKitWebViewBackend of the view.
+     *
+     * since: 2.20
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_BACKEND,
+        g_param_spec_boxed(
+            "backend",
+            _("Backend"),
+            _("The backend for the web view"),
+            WEBKIT_TYPE_WEB_VIEW_BACKEND,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+#endif
 
     /**
      * WebKitWebView:web-context:
@@ -1915,7 +1960,7 @@ void webkitWebViewCreatePage(WebKitWebView* webView, Ref<API::PageConfiguration>
 #if PLATFORM(GTK)
     webkitWebViewBaseCreateWebPage(WEBKIT_WEB_VIEW_BASE(webView), WTFMove(configuration));
 #elif PLATFORM(WPE)
-    webView->priv->view.reset(WKWPE::View::create(nullptr, configuration.get()));
+    webView->priv->view.reset(WKWPE::View::create(webkit_web_view_backend_get_wpe_backend(webView->priv->backend), configuration.get()));
 #endif
 }
 
@@ -2344,6 +2389,25 @@ bool webkitWebViewShowOptionMenu(WebKitWebView* webView, const IntRect& rect, We
     gboolean handled;
     g_signal_emit(webView, signals[SHOW_OPTION_MENU], 0, menu, event, &menuRect, &handled);
     return handled;
+}
+#endif
+
+#if PLATFORM(WPE)
+/**
+ * webkit_web_view_get_backend:
+ * @web_view: a #WebKitWebView
+ *
+ * Get the #WebKitWebViewBackend of @web_view
+ *
+ * Returns: (transfer none): the #WebKitWebViewBackend of @web_view
+ *
+ * Since: 2.20
+ */
+WebKitWebViewBackend* webkit_web_view_get_backend(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
+
+    return webView->priv->backend;
 }
 #endif
 

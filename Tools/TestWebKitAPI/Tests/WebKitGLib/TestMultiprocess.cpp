@@ -58,7 +58,7 @@ public:
     {
         g_assert_cmpuint(index, <, numViews);
 
-        m_webViews[index] = Test::adoptView(webkit_web_view_new_with_context(m_webContext.get()));
+        m_webViews[index] = Test::adoptView(Test::createWebView(m_webContext.get()));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webViews[index].get()));
 
         m_webViewBusNames[index] = GUniquePtr<char>(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
@@ -170,7 +170,7 @@ public:
         , m_initializeWebExtensionsSignalCount(0)
     {
         webkit_web_context_set_process_model(m_webContext.get(), WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
-        m_webView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_context(m_webContext.get()));
+        m_webView = WEBKIT_WEB_VIEW(Test::createWebView(m_webContext.get()));
 #if PLATFORM(GTK)
         g_object_ref_sink(m_webView);
 #endif
@@ -195,7 +195,7 @@ public:
     {
         g_assert(webView == m_webView);
 
-        auto* newWebView = webkit_web_view_new_with_related_view(webView);
+        auto* newWebView = Test::createWebView(webView);
 #if PLATFORM(GTK)
         g_object_ref_sink(newWebView);
 #endif

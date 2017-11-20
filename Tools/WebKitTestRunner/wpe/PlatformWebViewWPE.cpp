@@ -40,7 +40,7 @@ PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const Tes
     , m_options(options)
 {
     m_window = new HeadlessViewBackend;
-    m_view = WKViewCreateWithViewBackend(m_window->backend(), configuration);
+    m_view = WKViewCreate(m_window->backend(), configuration);
 }
 
 PlatformWebView::~PlatformWebView()

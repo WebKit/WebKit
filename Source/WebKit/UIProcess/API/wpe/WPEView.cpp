@@ -48,7 +48,10 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
     , m_size { 800, 600 }
     , m_viewStateFlags(WebCore::ActivityState::WindowIsActive | WebCore::ActivityState::IsFocused | WebCore::ActivityState::IsVisible | WebCore::ActivityState::IsInWindow)
     , m_compositingManagerProxy(*this)
+    , m_backend(backend)
 {
+    ASSERT(m_backend);
+
     auto configuration = baseConfiguration.copy();
     auto* preferences = configuration->preferences();
     if (!preferences && configuration->pageGroup()) {
@@ -71,9 +74,6 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
         pool->startMemorySampler(0);
 #endif
 
-    m_backend = backend;
-    if (!m_backend)
-        m_backend = wpe_view_backend_create();
     m_compositingManagerProxy.initialize();
 
     static struct wpe_view_backend_client s_backendClient = {
@@ -136,7 +136,6 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
 View::~View()
 {
     m_compositingManagerProxy.finalize();
-    wpe_view_backend_destroy(m_backend);
 }
 
 void View::setClient(std::unique_ptr<API::ViewClient>&& client)

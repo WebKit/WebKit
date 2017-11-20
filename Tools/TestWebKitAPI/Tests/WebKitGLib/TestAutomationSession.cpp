@@ -308,7 +308,7 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
     g_assert(!test->createTopLevelBrowsingContext(nullptr));
 
     // Will also fail if the web view is not controlled by automation.
-    auto webView = Test::adoptView(webkit_web_view_new_with_context(test->m_webContext.get()));
+    auto webView = Test::adoptView(Test::createWebView(test->m_webContext.get()));
     g_assert(!webkit_web_view_is_controlled_by_automation(webView.get()));
     g_assert(!test->createTopLevelBrowsingContext(webView.get()));
 

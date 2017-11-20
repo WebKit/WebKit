@@ -202,6 +202,7 @@ list(APPEND WebKit_SOURCES
     UIProcess/API/wpe/PageClientImpl.cpp
     UIProcess/API/wpe/ScrollGestureController.cpp
     UIProcess/API/wpe/WebKitScriptDialogWPE.cpp
+    UIProcess/API/wpe/WebKitWebViewBackend.cpp
     UIProcess/API/wpe/WebKitWebViewWPE.cpp
     UIProcess/API/wpe/WPEView.cpp
 
@@ -333,6 +334,7 @@ set(WPE_API_INSTALLED_HEADERS
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitWebContext.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitWebResource.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitWebView.h
+    ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitWebViewBackend.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitWebViewSessionState.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitWebsiteData.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitWebsiteDataManager.h
