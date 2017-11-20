@@ -50,7 +50,6 @@ BEGIN {
 
 my (
     $accelerated2DCanvasSupport,
-    $allInOneBuild,
     $attachmentElementSupport,
     $canvasProxySupport,
     $channelMessagingSupport,
@@ -147,9 +146,6 @@ my @features = (
 
     { option => "accelerated-2d-canvas", desc => "Toggle Accelerated 2D Canvas support",
       define => "ENABLE_ACCELERATED_2D_CANVAS", default => isWPE(), value => \$accelerated2DCanvasSupport },
-
-    { option => "allinone-build", desc => "Toggle all-in-one build",
-      define => "ENABLE_ALLINONE_BUILD", default => isWindows(), value => \$allInOneBuild },
 
     { option => "attachment-element", desc => "Toggle Attachment Element support",
       define => "ENABLE_ATTACHMENT_ELEMENT", default => 0, value => \$attachmentElementSupport },
