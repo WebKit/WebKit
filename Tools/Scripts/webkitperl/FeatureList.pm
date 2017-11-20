@@ -352,9 +352,6 @@ my @features = (
     { option => "touch-events", desc => "Toggle Touch Events support",
       define => "ENABLE_TOUCH_EVENTS", default => (isIOSWebKit() || isGtk() || isWPE()), value => \$touchEventsSupport },
 
-    { option => "touch-icon-loading", desc => "Toggle Touch Icon Loading Support",
-      define => "ENABLE_TOUCH_ICON_LOADING", default => 0, value => \$touchIconLoadingSupport },
-
     { option => "touch-slider", desc => "Toggle Touch Slider support",
       define => "ENABLE_TOUCH_SLIDER", default => 0, value => \$touchSliderSupport },
 

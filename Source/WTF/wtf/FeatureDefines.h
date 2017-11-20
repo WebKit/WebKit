@@ -620,10 +620,6 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_TOUCH_EVENTS 0
 #endif
 
-#if !defined(ENABLE_TOUCH_ICON_LOADING)
-#define ENABLE_TOUCH_ICON_LOADING 0
-#endif
-
 #if !defined(ENABLE_VIDEO)
 #define ENABLE_VIDEO 0
 #endif
