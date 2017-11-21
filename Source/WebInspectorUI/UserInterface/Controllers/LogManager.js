@@ -44,8 +44,9 @@ WI.LogManager = class LogManager extends WI.Object
                 if (error)
                     return;
 
-                for (let channel of channels)
+                for (let channel of channels) {
                     console.assert(this._loggingChannelSources.includes(channel.source));
+                }
 
                 this._customLoggingChannels = channels.map(WI.LoggingChannel.fromPayload);
             });
