@@ -68,20 +68,27 @@ typedef const struct OpaqueJSValue* JSValueRef;
 /*! @typedef JSObjectRef A JavaScript object. A JSObject is a JSValue. */
 typedef struct OpaqueJSValue* JSObjectRef;
 
+/* Clang's __has_declspec_attribute emulation */
+/* https://clang.llvm.org/docs/LanguageExtensions.html#has-declspec-attribute */
+
+#ifndef __has_declspec_attribute
+#define __has_declspec_attribute(x) 0
+#endif
+
 /* JavaScript symbol exports */
 /* These rules should stay the same as in WebKit2/Shared/API/c/WKBase.h */
 
 #undef JS_EXPORT
 #if defined(JS_NO_EXPORT)
 #define JS_EXPORT
-#elif defined(__GNUC__) && !defined(__CC_ARM) && !defined(__ARMCC__)
-#define JS_EXPORT __attribute__((visibility("default")))
-#elif defined(WIN32) || defined(_WIN32) || defined(_WIN32_WCE) || defined(__CC_ARM) || defined(__ARMCC__)
+#elif defined(WIN32) || defined(_WIN32) || defined(__CC_ARM) || defined(__ARMCC__) || (__has_declspec_attribute(dllimport) && __has_declspec_attribute(dllexport))
 #if defined(BUILDING_JavaScriptCore) || defined(STATICALLY_LINKED_WITH_JavaScriptCore)
 #define JS_EXPORT __declspec(dllexport)
 #else
 #define JS_EXPORT __declspec(dllimport)
 #endif
+#elif defined(__GNUC__)
+#define JS_EXPORT __attribute__((visibility("default")))
 #else /* !defined(JS_NO_EXPORT) */
 #define JS_EXPORT
 #endif /* defined(JS_NO_EXPORT) */
