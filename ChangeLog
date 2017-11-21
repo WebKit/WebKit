@@ -1,3 +1,9 @@
+2017-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.19.2 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2017-11-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Remove ENABLE_ALLINONE_BUILD option

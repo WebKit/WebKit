@@ -1,4 +1,16 @@
 =================
+WebKitGTK+ 2.19.2
+=================
+
+What's new in WebKitGTK+ 2.19.2?
+
+  - Add new API to add, retrieve and delete cookies via WebKitCookieManager.
+  - Add functions to WebSettings to convert font sizes between points and pixels.
+  - Ensure cookie operations take effect when they happen before a web process has been spawned.
+  - Automatically adjust font size when GtkSettings:gtk-xft-dpi changes.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.19.1
 =================
 
