@@ -1,3 +1,12 @@
+2017-11-21  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Update expectations for wpt/url/failure.html.
+        https://bugs.webkit.org/show_bug.cgi?id=179920
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/url/failure-expected.txt: update for sendBeacon support.
+
 2017-11-20  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Incorrect computed style in pseudo-elements with display: contents

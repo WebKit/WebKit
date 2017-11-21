@@ -3430,6 +3430,8 @@ webkit.org/b/155132 http/tests/security/contentSecurityPolicy/video-with-https-u
 
 webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
 
+webkit.org/b/172337 imported/w3c/web-platform-tests/url/failure.html [ Pass ]
+
 webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-005.html [ Pass ]
 
 webkit.org/b/169264 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-navigation-samedoc.html [ Pass ]

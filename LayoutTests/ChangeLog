@@ -1,3 +1,13 @@
+2017-11-21  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Enable imported/w3c/web-platform-tests/url/failure.html
+        https://bugs.webkit.org/show_bug.cgi?id=179920
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations: the test is only flaky or prone to
+          crashing on platforms that enable CONTENT_EXTENSIONS; i.e. mac and ios.
+
 2017-11-21  Frederic Wang  <fwang@igalia.com>
 
         ASSERTION FAILED: !needsLayout() in WebCore::RenderMathMLScripts::firstLineBaseline
