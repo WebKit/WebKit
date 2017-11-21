@@ -33,21 +33,24 @@ namespace WebCore {
 
 FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, WTF::Function<void(FileChangeType)>&& modificationHandler)
     : m_handlerQueue(WTFMove(handlerQueue))
+    , m_modificationHandler(WTFMove(modificationHandler))
 {
-    if (path.isEmpty() || !modificationHandler)
+    if (path.isEmpty() || !m_modificationHandler)
         return;
 
-    auto file = adoptGRef(g_file_new_for_path(FileSystem::fileSystemRepresentation(path).data()));
     m_cancellable = adoptGRef(g_cancellable_new());
-    GUniqueOutPtr<GError> error;
-    m_platformMonitor = adoptGRef(g_file_monitor(file.get(), G_FILE_MONITOR_NONE, m_cancellable.get(), &error.outPtr()));
-    if (!m_platformMonitor) {
-        WTFLogAlways("Failed to create a monitor for path %s: %s", path.utf8().data(), error->message);
-        return;
-    }
-
-    m_modificationHandler = WTFMove(modificationHandler);
-    g_signal_connect(m_platformMonitor.get(), "changed", G_CALLBACK(fileChangedCallback), this);
+    m_handlerQueue->dispatch([this, cancellable = m_cancellable, path = path.isolatedCopy()] {
+        if (g_cancellable_is_cancelled(cancellable.get()))
+            return;
+        auto file = adoptGRef(g_file_new_for_path(FileSystem::fileSystemRepresentation(path).data()));
+        GUniqueOutPtr<GError> error;
+        m_platformMonitor = adoptGRef(g_file_monitor(file.get(), G_FILE_MONITOR_NONE, m_cancellable.get(), &error.outPtr()));
+        if (!m_platformMonitor) {
+            WTFLogAlways("Failed to create a monitor for path %s: %s", path.utf8().data(), error->message);
+            return;
+        }
+        g_signal_connect(m_platformMonitor.get(), "changed", G_CALLBACK(fileChangedCallback), this);
+    });
 }
 
 FileMonitor::~FileMonitor()
@@ -72,15 +75,15 @@ void FileMonitor::fileChangedCallback(GFileMonitor*, GFile*, GFile*, GFileMonito
 
 void FileMonitor::didChange(FileChangeType type)
 {
-    m_handlerQueue->dispatch([this, cancellable = m_cancellable, type] {
-        if (g_cancellable_is_cancelled(cancellable.get()))
-            return;
-        m_modificationHandler(type);
-        if (type == FileChangeType::Removal) {
-            g_cancellable_cancel(m_cancellable.get());
-            m_platformMonitor = nullptr;
-        }
-    });
+    ASSERT(!isMainThread());
+    if (g_cancellable_is_cancelled(m_cancellable.get())) {
+        m_platformMonitor = nullptr;
+        return;
+    }
+
+    m_modificationHandler(type);
+    if (type == FileChangeType::Removal)
+        m_platformMonitor = nullptr;
 }
 
 } // namespace WebCore
