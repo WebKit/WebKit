@@ -38,6 +38,7 @@ def setup_logging(*args, **kwargs):
     global logger
     logger = wptlogging.setup(*args, **kwargs)
 
+
 def get_loader(test_paths, product, ssl_env, debug=None, run_info_extras=None, **kwargs):
     if run_info_extras is None:
         run_info_extras = {}
@@ -45,7 +46,8 @@ def get_loader(test_paths, product, ssl_env, debug=None, run_info_extras=None, *
     run_info = wpttest.get_run_info(kwargs["run_info"], product, debug=debug,
                                     extras=run_info_extras)
 
-    test_manifests = testloader.ManifestLoader(test_paths, force_manifest_update=kwargs["manifest_update"]).load()
+    test_manifests = testloader.ManifestLoader(test_paths, force_manifest_update=kwargs["manifest_update"],
+                                               manifest_download=kwargs["manifest_download"]).load()
 
     manifest_filters = []
     meta_filters = []
@@ -66,8 +68,10 @@ def get_loader(test_paths, product, ssl_env, debug=None, run_info_extras=None, *
                                         chunk_type=kwargs["chunk_type"],
                                         total_chunks=kwargs["total_chunks"],
                                         chunk_number=kwargs["this_chunk"],
-                                        include_https=ssl_env.ssl_enabled)
+                                        include_https=ssl_env.ssl_enabled,
+                                        skip_timeout=kwargs["skip_timeout"])
     return run_info, test_loader
+
 
 def list_test_groups(test_paths, product, **kwargs):
     env.do_delayed_imports(logger, test_paths)
@@ -122,7 +126,7 @@ def get_pause_after_test(test_loader, **kwargs):
     if kwargs["pause_after_test"] is None:
         if kwargs["repeat_until_unexpected"]:
             return False
-        if kwargs["repeat"] == 1 and total_tests == 1:
+        if kwargs["repeat"] == 1 and kwargs["rerun"] == 1 and total_tests == 1:
             return True
         return False
     return kwargs["pause_after_test"]
@@ -216,7 +220,6 @@ def run_tests(config, test_paths, product, **kwargs):
                                                         ssl_env=ssl_env,
                                                         **kwargs)
 
-
                     executor_cls = executor_classes.get(test_type)
                     executor_kwargs = get_executor_kwargs(test_type,
                                                           test_environment.external_config,
@@ -233,6 +236,17 @@ def run_tests(config, test_paths, product, **kwargs):
                         logger.test_start(test.id)
                         logger.test_end(test.id, status="SKIP")
 
+                    if test_type == "testharness":
+                        run_tests = {"testharness": []}
+                        for test in test_loader.tests["testharness"]:
+                            if test.testdriver and not executor_cls.supports_testdriver:
+                                logger.test_start(test.id)
+                                logger.test_end(test.id, status="SKIP")
+                            else:
+                                run_tests["testharness"].append(test)
+                    else:
+                        run_tests = test_loader.tests
+
                     with ManagerGroup("web-platform-tests",
                                       kwargs["processes"],
                                       test_source_cls,
@@ -241,12 +255,13 @@ def run_tests(config, test_paths, product, **kwargs):
                                       browser_kwargs,
                                       executor_cls,
                                       executor_kwargs,
+                                      kwargs["rerun"],
                                       kwargs["pause_after_test"],
                                       kwargs["pause_on_unexpected"],
                                       kwargs["restart_on_unexpected"],
                                       kwargs["debug_info"]) as manager_group:
                         try:
-                            manager_group.run(test_type, test_loader.tests)
+                            manager_group.run(test_type, run_tests)
                         except KeyboardInterrupt:
                             logger.critical("Main thread got signal")
                             manager_group.stop()
@@ -260,6 +275,12 @@ def run_tests(config, test_paths, product, **kwargs):
                 logger.suite_end()
     return unexpected_total == 0
 
+
+def check_stability(**kwargs):
+    import stability
+    return stability.check_stability(logger, **kwargs)
+
+
 def start(**kwargs):
     if kwargs["list_test_groups"]:
         list_test_groups(**kwargs)
@@ -267,8 +288,11 @@ def start(**kwargs):
         list_disabled(**kwargs)
     elif kwargs["list_tests"]:
         list_tests(**kwargs)
+    elif kwargs["verify"]:
+        check_stability(**kwargs)
     else:
         return not run_tests(**kwargs)
+
 
 def main():
     """Main entry point when calling from the command line"""
