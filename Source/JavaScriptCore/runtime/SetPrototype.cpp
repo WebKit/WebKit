@@ -61,12 +61,12 @@ void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     ASSERT(inherits(vm, info()));
     didBecomePrototype();
 
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->add, setProtoFuncAdd, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->add, setProtoFuncAdd, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, JSSetAddIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->clear, setProtoFuncClear, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->deleteKeyword, setProtoFuncDelete, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->has, setProtoFuncHas, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, JSSetHasIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().hasPrivateName(), setProtoFuncHas, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, JSSetHasIntrinsic);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().addPrivateName(), setProtoFuncAdd, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().addPrivateName(), setProtoFuncAdd, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, JSSetAddIntrinsic);
 
     JSFunction* values = JSFunction::create(vm, setPrototypeValuesCodeGenerator(vm), globalObject);
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().valuesPublicName(), values, static_cast<unsigned>(PropertyAttribute::DontEnum));

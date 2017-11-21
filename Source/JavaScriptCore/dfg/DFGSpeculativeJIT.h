@@ -1932,9 +1932,19 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR());
         return appendCall(operation);
     }
+    JITCompiler::Call callOperation(V_JITOperation_ECJZ operation, GPRReg arg1, JSValueRegs arg2, GPRReg arg3)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg3);
+        return appendCall(operation);
+    }
     JITCompiler::Call callOperation(V_JITOperation_ECJJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
+        return appendCall(operation);
+    }
+    JITCompiler::Call callOperation(V_JITOperation_ECJJZ operation, GPRReg arg1, JSValueRegs arg2, JSValueRegs arg3, GPRReg arg4)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg3.payloadGPR(), arg4);
         return appendCall(operation);
     }
     JITCompiler::Call callOperation(V_JITOperation_ECCJ operation, GPRReg arg1, GPRReg arg2, JSValueRegs arg3)
@@ -2502,6 +2512,16 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg2.tagGPR(), arg3.payloadGPR(), arg3.tagGPR());
         return appendCall(operation);
     }
+    JITCompiler::Call callOperation(V_JITOperation_ECJZ operation, GPRReg arg1, JSValueRegs arg2, GPRReg arg3)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg2.tagGPR(), arg3);
+        return appendCall(operation);
+    }
+    JITCompiler::Call callOperation(V_JITOperation_ECJJZ operation, GPRReg arg1, JSValueRegs arg2, JSValueRegs arg3, GPRReg arg4)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg2.tagGPR(), arg3.payloadGPR(), arg3.tagGPR(), arg4);
+        return appendCall(operation);
+    }
     JITCompiler::Call callOperation(V_JITOperation_ECCJ operation, GPRReg arg1, GPRReg arg2, JSValueRegs arg3)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2, EABI_32BIT_DUMMY_ARG arg3.payloadGPR(), arg3.tagGPR());
@@ -2876,6 +2896,8 @@ public:
     void compileCheckSubClass(Node*);
     void compileGetMapBucketHead(Node*);
     void compileGetMapBucketNext(Node*);
+    void compileSetAdd(Node*);
+    void compileMapSet(Node*);
     void compileWeakMapGet(Node*);
     void compileLoadKeyFromMapBucket(Node*);
     void compileLoadValueFromMapBucket(Node*);

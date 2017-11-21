@@ -1052,6 +1052,12 @@ private:
         case LoadValueFromMapBucket:
             compileLoadValueFromMapBucket();
             break;
+        case SetAdd:
+            compileSetAdd();
+            break;
+        case MapSet:
+            compileMapSet();
+            break;
         case WeakMapGet:
             compileWeakMapGet();
             break;
@@ -8784,6 +8790,25 @@ private:
     {
         LValue mapBucket = lowCell(m_node->child1());
         setJSValue(m_out.load64(mapBucket, m_heaps.HashMapBucket_key));
+    }
+
+    void compileSetAdd()
+    {
+        LValue set = lowSetObject(m_node->child1());
+        LValue key = lowJSValue(m_node->child2());
+        LValue hash = lowInt32(m_node->child3());
+
+        vmCall(Void, m_out.operation(operationSetAdd), m_callFrame, set, key, hash);
+    }
+
+    void compileMapSet()
+    {
+        LValue map = lowMapObject(m_graph.varArgChild(m_node, 0));
+        LValue key = lowJSValue(m_graph.varArgChild(m_node, 1));
+        LValue value = lowJSValue(m_graph.varArgChild(m_node, 2));
+        LValue hash = lowInt32(m_graph.varArgChild(m_node, 3));
+
+        vmCall(Void, m_out.operation(operationMapSet), m_callFrame, map, key, value, hash);
     }
 
     void compileWeakMapGet()

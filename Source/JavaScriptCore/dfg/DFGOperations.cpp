@@ -2556,6 +2556,22 @@ JSCell* JIT_OPERATION operationJSSetFindBucket(ExecState* exec, JSCell* map, Enc
     return *bucket;
 }
 
+// FIXME: Add NormalizeMapKey DFG node.
+// https://bugs.webkit.org/show_bug.cgi?id=179912
+void JIT_OPERATION operationSetAdd(ExecState* exec, JSCell* set, EncodedJSValue key, int32_t hash)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    jsCast<JSSet*>(set)->addNormalized(exec, normalizeMapKey(JSValue::decode(key)), JSValue(), hash);
+}
+
+void JIT_OPERATION operationMapSet(ExecState* exec, JSCell* map, EncodedJSValue key, EncodedJSValue value, int32_t hash)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    jsCast<JSMap*>(map)->addNormalized(exec, normalizeMapKey(JSValue::decode(key)), JSValue::decode(value), hash);
+}
+
 EncodedJSValue JIT_OPERATION operationGetPrototypeOfObject(ExecState* exec, JSObject* thisObject)
 {
     VM& vm = exec->vm();

@@ -1,5 +1,28 @@
 2017-11-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG][FTL] Support MapSet / SetAdd intrinsics
+        https://bugs.webkit.org/show_bug.cgi?id=179858
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/map-has-and-set.js: Added.
+        (test):
+        * stress/map-set-check-failure.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (target):
+        * stress/map-set-cse.js: Added.
+        (shouldBe):
+        (test):
+        * stress/set-add-check-failure.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (set shouldThrow):
+        * stress/set-add-cse.js: Added.
+        (shouldBe):
+
+2017-11-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Allow poly proto for intrinsic getters
         https://bugs.webkit.org/show_bug.cgi?id=179550
 

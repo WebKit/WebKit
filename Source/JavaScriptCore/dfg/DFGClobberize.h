@@ -1643,6 +1643,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
     }
 
+    case SetAdd:
+    case MapSet: {
+        // FIXME: Define defs for them to participate in CSE.
+        // https://bugs.webkit.org/show_bug.cgi?id=179911
+        write(MiscFields);
+        return;
+    }
+
     case StringSlice:
         def(PureValue(node));
         return;

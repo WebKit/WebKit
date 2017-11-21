@@ -1,5 +1,84 @@
 2017-11-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG][FTL] Support MapSet / SetAdd intrinsics
+        https://bugs.webkit.org/show_bug.cgi?id=179858
+
+        Reviewed by Saam Barati.
+
+        Map.prototype.set and Set.prototype.add uses MapHash value anyway.
+        By handling them as MapSet and SetAdd DFG nodes and decoupling
+        MapSet and SetAdd nodes from MapHash DFG node, we have a chance to
+        remove duplicate MapHash calculation for the same key.
+
+        One story is *set-if-not-exists*.
+
+            if (!map.has(key))
+                map.set(key, value);
+
+        In the above code, both `has` and `set` require hash value for `key`.
+        If we can change `set` to the series of DFG nodes:
+
+            1: MapHash(key)
+            2: MapSet(MapObjectUse:map, Untyped:key, Untyped:value, Int32Use:@1)
+
+        we can remove duplicate @1 produced by `has` operation.
+
+        This patch improves SixSpeed map-set.es6 and map-set-object.es6 by 20.5% and 20.4% respectively,
+
+                                         baseline                  patched
+
+            map-set.es6             246.2413+-15.2084    ^    204.3679+-11.2408       ^ definitely 1.2049x faster
+            map-set-object.es6      266.5075+-17.2289    ^    221.2792+-12.2948       ^ definitely 1.2044x faster
+
+        Microbenchmarks
+
+            map-has-and-set         148.1522+-7.6665     ^    131.4552+-7.8846        ^ definitely 1.1270x faster
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileSetAdd):
+        (JSC::DFG::SpeculativeJIT::compileMapSet):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSetAdd):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMapSet):
+        * jit/JITOperations.h:
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapImpl::addNormalized):
+        (JSC::HashMapImpl::addNormalizedInternal):
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+
+2017-11-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Allow poly proto for intrinsic getters
         https://bugs.webkit.org/show_bug.cgi?id=179550
 

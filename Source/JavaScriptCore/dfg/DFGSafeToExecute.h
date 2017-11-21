@@ -535,6 +535,10 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
         return true;
     }
 
+    case SetAdd:
+    case MapSet:
+        return false;
+
     case LastNodeType:
         RELEASE_ASSERT_NOT_REACHED();
         return false;

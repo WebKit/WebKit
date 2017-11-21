@@ -143,6 +143,8 @@ const char* intrinsicName(Intrinsic intrinsic)
         return "JSMapGetIntrinsic";
     case JSMapHasIntrinsic:
         return "JSMapHasIntrinsic";
+    case JSMapSetIntrinsic:
+        return "JSMapSetIntrinsic";
     case JSMapBucketHeadIntrinsic:
         return "JSMapBucketHeadIntrinsic";
     case JSMapBucketNextIntrinsic:
@@ -153,6 +155,8 @@ const char* intrinsicName(Intrinsic intrinsic)
         return "JSMapBucketValueIntrinsic";
     case JSSetHasIntrinsic:
         return "JSSetHasIntrinsic";
+    case JSSetAddIntrinsic:
+        return "JSSetAddIntrinsic";
     case JSSetBucketHeadIntrinsic:
         return "JSSetBucketHeadIntrinsic";
     case JSSetBucketNextIntrinsic:

@@ -1141,6 +1141,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         }
         break;
 
+    case SetAdd:
+    case MapSet:
+        break;
+
     case WeakMapGet:
         forNode(node).makeHeapTop();
         break;

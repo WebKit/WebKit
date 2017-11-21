@@ -441,6 +441,18 @@ public:
             rehash(exec);
     }
 
+    ALWAYS_INLINE void addNormalized(ExecState* exec, JSValue key, JSValue value, uint32_t hash)
+    {
+        ASSERT_WITH_MESSAGE(normalizeMapKey(key) == key, "We expect normalized values flowing into this function.");
+        ASSERT_WITH_MESSAGE(jsMapHash(exec, exec->vm(), key) == hash, "We expect hash value is what we expect.");
+
+        addNormalizedInternal(exec->vm(), key, value, hash, [&] (HashMapBucketType* bucket) {
+            return !isDeleted(bucket) && areKeysEqual(exec, key, bucket->key());
+        });
+        if (shouldRehashAfterAdd())
+            rehash(exec);
+    }
+
     ALWAYS_INLINE bool remove(ExecState* exec, JSValue key)
     {
         HashMapBucketType** bucket = findBucket(exec, key);
@@ -556,14 +568,22 @@ private:
     template<typename CanUseBucket>
     ALWAYS_INLINE void addNormalizedInternal(ExecState* exec, JSValue key, JSValue value, const CanUseBucket& canUseBucket)
     {
-        ASSERT_WITH_MESSAGE(normalizeMapKey(key) == key, "We expect normalized values flowing into this function.");
-
         VM& vm = exec->vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        const uint32_t mask = m_capacity - 1;
-        uint32_t index = jsMapHash(exec, vm, key) & mask;
+        uint32_t hash = jsMapHash(exec, vm, key);
         RETURN_IF_EXCEPTION(scope, void());
+        scope.release();
+        addNormalizedInternal(vm, key, value, hash, canUseBucket);
+    }
+
+    template<typename CanUseBucket>
+    ALWAYS_INLINE void addNormalizedInternal(VM& vm, JSValue key, JSValue value, uint32_t hash, const CanUseBucket& canUseBucket)
+    {
+        ASSERT_WITH_MESSAGE(normalizeMapKey(key) == key, "We expect normalized values flowing into this function.");
+
+        const uint32_t mask = m_capacity - 1;
+        uint32_t index = hash & mask;
         HashMapBucketType** buffer = this->buffer();
         HashMapBucketType* bucket = buffer[index];
         while (!isEmpty(bucket)) {

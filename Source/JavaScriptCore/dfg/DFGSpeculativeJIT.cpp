@@ -10836,6 +10836,44 @@ void SpeculativeJIT::compileThrowStaticError(Node* node)
     noResult(node);
 }
 
+void SpeculativeJIT::compileSetAdd(Node* node)
+{
+    SpeculateCellOperand set(this, node->child1());
+    JSValueOperand key(this, node->child2());
+    SpeculateInt32Operand hash(this, node->child3());
+
+    GPRReg setGPR = set.gpr();
+    JSValueRegs keyRegs = key.jsValueRegs();
+    GPRReg hashGPR = hash.gpr();
+
+    speculateSetObject(node->child1(), setGPR);
+
+    flushRegisters();
+    callOperation(operationSetAdd, setGPR, keyRegs, hashGPR);
+    m_jit.exceptionCheck();
+    noResult(node);
+}
+
+void SpeculativeJIT::compileMapSet(Node* node)
+{
+    SpeculateCellOperand map(this, m_jit.graph().varArgChild(node, 0));
+    JSValueOperand key(this, m_jit.graph().varArgChild(node, 1));
+    JSValueOperand value(this, m_jit.graph().varArgChild(node, 2));
+    SpeculateInt32Operand hash(this, m_jit.graph().varArgChild(node, 3));
+
+    GPRReg mapGPR = map.gpr();
+    JSValueRegs keyRegs = key.jsValueRegs();
+    JSValueRegs valueRegs = value.jsValueRegs();
+    GPRReg hashGPR = hash.gpr();
+
+    speculateMapObject(m_jit.graph().varArgChild(node, 0), mapGPR);
+
+    flushRegisters();
+    callOperation(operationMapSet, mapGPR, keyRegs, valueRegs, hashGPR);
+    m_jit.exceptionCheck();
+    noResult(node);
+}
+
 void SpeculativeJIT::compileWeakMapGet(Node* node)
 {
     SpeculateCellOperand weakMap(this, node->child1());

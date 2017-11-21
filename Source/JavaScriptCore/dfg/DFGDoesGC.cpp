@@ -344,6 +344,8 @@ bool doesGC(Graph& graph, Node* node)
     case ArraySlice:
     case ArrayIndexOf:
     case ParseInt: // We might resolve a rope even though we don't clobber anything.
+    case SetAdd:
+    case MapSet:
         return true;
         
     case MultiPutByOffset:

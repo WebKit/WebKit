@@ -138,6 +138,8 @@ void JIT_OPERATION operationDefineAccessorProperty(ExecState*, JSObject*, Encode
 void JIT_OPERATION operationDefineAccessorPropertyString(ExecState*, JSObject*, JSString*, JSObject*, JSObject*, int32_t) WTF_INTERNAL;
 void JIT_OPERATION operationDefineAccessorPropertyStringIdent(ExecState*, JSObject*, UniquedStringImpl*, JSObject*, JSObject*, int32_t) WTF_INTERNAL;
 void JIT_OPERATION operationDefineAccessorPropertySymbol(ExecState*, JSObject*, Symbol*, JSObject*, JSObject*, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationSetAdd(ExecState*, JSCell*, EncodedJSValue, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationMapSet(ExecState*, JSCell*, EncodedJSValue, EncodedJSValue, int32_t) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationArrayPush(ExecState*, EncodedJSValue encodedValue, JSArray*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationArrayPushMultiple(ExecState*, JSArray*, void* buffer, int32_t elementCount) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationArrayPushDouble(ExecState*, double value, JSArray*) WTF_INTERNAL;

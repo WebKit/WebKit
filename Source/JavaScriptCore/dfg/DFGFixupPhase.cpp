@@ -1947,6 +1947,18 @@ private:
             break;
         }
 
+        case SetAdd: {
+            fixEdge<SetObjectUse>(node->child1());
+            fixEdge<Int32Use>(node->child3());
+            break;
+        }
+
+        case MapSet: {
+            fixEdge<MapObjectUse>(m_graph.varArgChild(node, 0));
+            fixEdge<Int32Use>(m_graph.varArgChild(node, 3));
+            break;
+        }
+
         case DefineDataProperty: {
             fixEdge<CellUse>(m_graph.varArgChild(node, 0));
             Edge& propertyEdge = m_graph.varArgChild(node, 1);

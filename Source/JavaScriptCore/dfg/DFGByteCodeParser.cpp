@@ -2904,6 +2904,38 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         return true;
     }
 
+    case JSSetAddIntrinsic: {
+        if (argumentCountIncludingThis != 2)
+            return false;
+
+        insertChecks();
+        Node* base = get(virtualRegisterForArgument(0, registerOffset));
+        Node* key = get(virtualRegisterForArgument(1, registerOffset));
+        Node* hash = addToGraph(MapHash, key);
+        addToGraph(SetAdd, base, key, hash);
+        set(VirtualRegister(resultOperand), base);
+        return true;
+    }
+
+    case JSMapSetIntrinsic: {
+        if (argumentCountIncludingThis != 3)
+            return false;
+
+        insertChecks();
+        Node* base = get(virtualRegisterForArgument(0, registerOffset));
+        Node* key = get(virtualRegisterForArgument(1, registerOffset));
+        Node* value = get(virtualRegisterForArgument(2, registerOffset));
+        Node* hash = addToGraph(MapHash, key);
+
+        addVarArgChild(base);
+        addVarArgChild(key);
+        addVarArgChild(value);
+        addVarArgChild(hash);
+        addToGraph(Node::VarArg, MapSet, OpInfo(0), OpInfo(0));
+        set(VirtualRegister(resultOperand), base);
+        return true;
+    }
+
     case JSSetBucketHeadIntrinsic:
     case JSMapBucketHeadIntrinsic: {
         ASSERT(argumentCountIncludingThis == 2);
