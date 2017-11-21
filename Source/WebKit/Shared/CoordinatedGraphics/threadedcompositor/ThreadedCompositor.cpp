@@ -93,10 +93,11 @@ void ThreadedCompositor::createGLContext()
     if (!m_context)
         return;
 
-    if (m_doFrameSync == ShouldDoFrameSync::No) {
-        if (m_context->makeContextCurrent())
-            m_context->swapInterval(0);
-    }
+    if (!m_context->makeContextCurrent())
+        return;
+
+    if (m_doFrameSync == ShouldDoFrameSync::No)
+        m_context->swapInterval(0);
 }
 
 void ThreadedCompositor::invalidate()

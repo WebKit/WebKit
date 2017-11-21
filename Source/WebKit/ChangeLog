@@ -1,3 +1,19 @@
+2017-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] WPEWebProcess: Couldn't find current GLX or EGL context
+        https://bugs.webkit.org/show_bug.cgi?id=179883
+
+        Reviewed by Žan Doberšek.
+
+        I'm seeing that message quite often when running the unit tests. The problem seems to be that some tests run so
+        fast that the web process never renders the first frame, so the context is created but never made current. I've
+        checked with apitrace that there are calls to eglQueryContext with null display, causing a EGL_BAD_DISPLAY, but
+        I don't know where those calls are originated. Making the context current right after it's created fixes the
+        problem.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::createGLContext): Always call makeContextCurrent() right after the context is created.
+
 2017-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.19.2 release.
