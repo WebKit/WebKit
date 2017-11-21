@@ -1,4 +1,4 @@
-//@ if $buildType == "release" && $architecture != "arm64" then runDefault else skip end
+//@ if $buildType == "release" && !$memoryLimited then runDefault else skip end
 
 function temp(i) {
     let a1 = [{}];

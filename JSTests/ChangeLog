@@ -1,3 +1,16 @@
+2017-11-20  Guillaume Emont  <guijemont@igalia.com>
+
+        Skip stress/unshiftCountSlowCase-correct-postCapacity.js on embedded Linux
+        https://bugs.webkit.org/show_bug.cgi?id=179744
+
+        Reviewed by Michael Catanzaro.
+
+        This test uses too much memory for our buildbots on these platforms
+        and gets OOM-killed.
+
+        * stress/unshiftCountSlowCase-correct-postCapacity.js:
+        Skip if $memoryLimited and linux.
+
 2017-11-17  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly JS API: throw when a promise can't be created
