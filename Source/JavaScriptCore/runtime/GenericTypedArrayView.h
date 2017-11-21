@@ -49,12 +49,13 @@ public:
         return setImpl(array, offset * sizeof(typename Adaptor::Type));
     }
     
-    bool setRange(const typename Adaptor::Type* data, size_t dataLength, unsigned offset)
+    bool setRange(const typename Adaptor::Type* data, size_t count, unsigned offset)
     {
         return setRangeImpl(
             reinterpret_cast<const char*>(data),
-            dataLength * sizeof(typename Adaptor::Type),
-            offset * sizeof(typename Adaptor::Type));
+            count * sizeof(typename Adaptor::Type),
+            offset * sizeof(typename Adaptor::Type),
+            internalByteLength());
     }
     
     bool zeroRange(unsigned offset, size_t length)
@@ -73,7 +74,7 @@ public:
     
     unsigned byteLength() const override
     {
-        return length() * sizeof(typename Adaptor::Type);
+        return internalByteLength();
     }
 
     typename Adaptor::Type item(unsigned index) const
@@ -87,14 +88,29 @@ public:
         ASSERT_WITH_SECURITY_IMPLICATION(index < this->length());
         data()[index] = Adaptor::toNativeFromDouble(value);
     }
-    
-    bool checkInboundData(unsigned offset, unsigned pos) const
+
+    void setNative(unsigned index, typename Adaptor::Type value) const
+    {
+        ASSERT_WITH_SECURITY_IMPLICATION(index < this->length());
+        data()[index] = value;
+    }
+
+    bool getRange(typename Adaptor::Type* data, size_t count, unsigned offset)
+    {
+        return getRangeUnchecked(
+            reinterpret_cast<char*>(data),
+            count * sizeof(typename Adaptor::Type),
+            offset * sizeof(typename Adaptor::Type),
+            internalByteLength());
+    }
+
+    bool checkInboundData(unsigned offset, size_t count) const
     {
         unsigned length = this->length();
         return (offset <= length
-            && offset + pos <= length
+            && offset + count <= length
             // check overflow
-            && offset + pos >= offset);
+            && offset + count >= offset);
     }
     
     RefPtr<GenericTypedArrayView> subarray(int start) const;
@@ -108,6 +124,11 @@ public:
     JSArrayBufferView* wrap(ExecState*, JSGlobalObject*) override;
 
 private:
+    unsigned internalByteLength() const
+    {
+        return length() * sizeof(typename Adaptor::Type);
+    }
+
     unsigned m_length;
 };
 

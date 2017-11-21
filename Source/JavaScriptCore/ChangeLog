@@ -1,3 +1,31 @@
+2017-11-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow for more efficient use of GenericTypedArrayView
+        https://bugs.webkit.org/show_bug.cgi?id=179899
+
+        Reviewed by Sam Weinig.
+        
+        Fix ArrayBufferView::setRange() to not make two virtual function calls to byteLength()
+        under setRangeImpl(). There is only one caller in GenericTypedArrayView, and it can pass
+        in a length.
+
+        Add GenericTypedArrayView::getRange() to fetch a range of elements, also without virtual
+        byteLength() calls.
+        
+        Renamed 'dataLength' to 'count' in setRange() to be clearer.
+        
+        Added setNative() for callers who don't need clamping of doubles.
+
+        * runtime/ArrayBufferView.h:
+        (JSC::ArrayBufferView::setRangeImpl):
+        (JSC::ArrayBufferView::getRangeImpl):
+        * runtime/GenericTypedArrayView.h:
+        (JSC::GenericTypedArrayView::setRange):
+        (JSC::GenericTypedArrayView::setNative const):
+        (JSC::GenericTypedArrayView::getRange):
+        (JSC::GenericTypedArrayView::checkInboundData const):
+        (JSC::GenericTypedArrayView::internalByteLength const):
+
 2017-11-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][FTL] Support MapSet / SetAdd intrinsics

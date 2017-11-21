@@ -117,7 +117,9 @@ protected:
 
     inline bool setImpl(ArrayBufferView*, unsigned byteOffset);
 
-    inline bool setRangeImpl(const char* data, size_t dataByteLength, unsigned byteOffset);
+    // Caller passes in bufferByteLength to avoid a virtual function call.
+    inline bool setRangeImpl(const char* data, size_t dataByteLength, unsigned byteOffset, unsigned bufferByteLength);
+    inline bool getRangeImpl(char* destination, size_t dataByteLength, unsigned byteOffset, unsigned bufferByteLength);
 
     inline bool zeroRangeImpl(unsigned byteOffset, size_t rangeByteLength);
 
@@ -171,17 +173,33 @@ bool ArrayBufferView::setImpl(ArrayBufferView* array, unsigned byteOffset)
     return true;
 }
 
-bool ArrayBufferView::setRangeImpl(const char* data, size_t dataByteLength, unsigned byteOffset)
+bool ArrayBufferView::setRangeImpl(const char* data, size_t dataByteLength, unsigned byteOffset, unsigned bufferByteLength)
 {
-    if (byteOffset > byteLength()
-        || byteOffset + dataByteLength > byteLength()
+    ASSERT_WITH_SECURITY_IMPLICATION(bufferByteLength == byteLength());
+    if (byteOffset > bufferByteLength
+        || byteOffset + dataByteLength > bufferByteLength
         || byteOffset + dataByteLength < byteOffset) {
         // Out of range offset or overflow
         return false;
     }
-    
+
     char* base = static_cast<char*>(baseAddress());
     memmove(base + byteOffset, data, dataByteLength);
+    return true;
+}
+
+bool ArrayBufferView::getRangeImpl(char* destination, size_t dataByteLength, unsigned byteOffset, unsigned bufferByteLength)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(bufferByteLength == byteLength());
+    if (byteOffset > bufferByteLength
+        || byteOffset + dataByteLength > bufferByteLength
+        || byteOffset + dataByteLength < byteOffset) {
+        // Out of range offset or overflow
+        return false;
+    }
+
+    char* base = static_cast<char*>(baseAddress());
+    memmove(destination, base + byteOffset, dataByteLength);
     return true;
 }
 
