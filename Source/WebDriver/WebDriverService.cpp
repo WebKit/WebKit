@@ -174,15 +174,11 @@ std::optional<WebDriverService::HTTPMethod> WebDriverService::toCommandHTTPMetho
     return std::nullopt;
 }
 
-bool WebDriverService::findCommand(const String& method, const String& path, CommandHandler* handler, HashMap<String, String>& parameters)
+bool WebDriverService::findCommand(HTTPMethod method, const String& path, CommandHandler* handler, HashMap<String, String>& parameters)
 {
-    auto commandMethod = toCommandHTTPMethod(method);
-    if (!commandMethod)
-        return false;
-
     size_t length = WTF_ARRAY_LENGTH(s_commands);
     for (size_t i = 0; i < length; ++i) {
-        if (s_commands[i].method != *commandMethod)
+        if (s_commands[i].method != method)
             continue;
 
         Vector<String> pathTokens;
@@ -213,15 +209,20 @@ bool WebDriverService::findCommand(const String& method, const String& path, Com
 
 void WebDriverService::handleRequest(HTTPRequestHandler::Request&& request, Function<void (HTTPRequestHandler::Response&&)>&& replyHandler)
 {
+    auto method = toCommandHTTPMethod(request.method);
+    if (!method) {
+        sendResponse(WTFMove(replyHandler), CommandResult::fail(CommandResult::ErrorCode::UnknownCommand, String("Unknown method: " + request.method)));
+        return;
+    }
     CommandHandler handler;
     HashMap<String, String> parameters;
-    if (!findCommand(request.method, request.path, &handler, parameters)) {
+    if (!findCommand(method.value(), request.path, &handler, parameters)) {
         sendResponse(WTFMove(replyHandler), CommandResult::fail(CommandResult::ErrorCode::UnknownCommand, String("Unknown command: " + request.path)));
         return;
     }
 
     RefPtr<InspectorObject> parametersObject;
-    if (request.dataLength) {
+    if (method.value() == HTTPMethod::Post && request.dataLength) {
         RefPtr<InspectorValue> messageValue;
         if (!InspectorValue::parseJSON(String::fromUTF8(request.data, request.dataLength), messageValue)) {
             sendResponse(WTFMove(replyHandler), CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));

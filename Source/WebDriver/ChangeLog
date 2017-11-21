@@ -1,5 +1,38 @@
 2017-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: do not try to parse http body if method is not POST
+        https://bugs.webkit.org/show_bug.cgi?id=179918
+
+        Reviewed by Darin Adler.
+
+        As said in the spec:
+
+          5. If request’s method is POST:
+
+            1. Let parse result be the result of parsing as JSON with request’s body as the argument. If this process
+               throws an exception, return an error with error code invalid argument and jump back to step 1 in this
+               overall algorithm.
+
+            2. If parse result is not an Object, send an error with error code invalid argument and jump back to step 1
+               in this overall algorithm.
+
+            Otherwise, let parameters be parse result.
+
+          Otherwise, let parameters be null.
+
+        6.3 Processing Model
+        https://w3c.github.io/webdriver/webdriver-spec.html#processing-model
+
+        Now, w3c tests are sending null as body of delete session command (it used to be just empty), making it fail
+        with invalid argument error.
+
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::findCommand):
+        (WebDriver::WebDriverService::handleRequest):
+        * WebDriverService.h:
+
+2017-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: crash in Session::computeElementLayout when called without a current browsing context
         https://bugs.webkit.org/show_bug.cgi?id=179917
 
