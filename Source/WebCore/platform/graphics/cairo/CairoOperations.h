@@ -37,8 +37,7 @@
 #include "DashArray.h"
 #include "GraphicsContext.h"
 #include "GraphicsTypes.h"
-
-typedef struct _cairo_pattern cairo_pattern_t;
+#include <cairo.h>
 
 namespace WebCore {
 
@@ -94,10 +93,10 @@ void strokeRect(PlatformContextCairo&, const FloatRect&, float, const GraphicsCo
 void strokePath(PlatformContextCairo&, const Path&, const GraphicsContextState&, GraphicsContext&);
 void clearRect(PlatformContextCairo&, const FloatRect&);
 
-void drawGlyphs(GraphicsContext&, const GraphicsContextState&, bool, const FloatPoint&, cairo_scaled_font_t*, double, const Vector<cairo_glyph_t>&, float, GraphicsContext&);
+void drawGlyphs(PlatformContextCairo&, const GraphicsContextState&, const FloatPoint&, cairo_scaled_font_t*, double, const Vector<cairo_glyph_t>&, float, GraphicsContext&);
 
-void drawNativeImage(PlatformContextCairo&, const NativeImagePtr&, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, ImageOrientation, GraphicsContext&);
-void drawPattern(PlatformContextCairo&, Image&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, CompositeOperator, BlendMode);
+void drawNativeImage(PlatformContextCairo&, cairo_surface_t*, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, ImageOrientation, GraphicsContext&);
+void drawPattern(PlatformContextCairo&, cairo_surface_t*, const IntSize&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, CompositeOperator, BlendMode);
 
 void drawRect(PlatformContextCairo&, const FloatRect&, float, const GraphicsContextState&);
 void drawLine(PlatformContextCairo&, const FloatPoint&, const FloatPoint&, const GraphicsContextState&);

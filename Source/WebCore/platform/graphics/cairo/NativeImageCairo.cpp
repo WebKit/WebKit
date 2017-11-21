@@ -59,10 +59,7 @@ Color nativeImageSinglePixelSolidColor(const NativeImagePtr& image)
 
 void drawNativeImage(const NativeImagePtr& image, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const IntSize& imageSize, CompositeOperator compositeOperator, BlendMode blendMode, const ImageOrientation& orientation)
 {
-    UNUSED_PARAM(imageSize);
-
-    ASSERT(context.hasPlatformContext());
-    Cairo::drawNativeImage(*context.platformContext(), image, destRect, srcRect, compositeOperator, blendMode, orientation, context);
+    context.drawNativeImage(image, imageSize, destRect, srcRect, compositeOperator, blendMode, orientation);
 }
 
 void clearNativeImageSubimages(const NativeImagePtr&)
