@@ -1,3 +1,9 @@
+2017-11-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, mark one more GTK test as passing
+
+        * platform/gtk/TestExpectations:
+
 2017-11-20  Andy VanWagoner  <andy@thetalecrafter.com>
 
         Layout Test js/intl-datetimeformat.html is failing on High Sierra (GMT vs. UTC)
