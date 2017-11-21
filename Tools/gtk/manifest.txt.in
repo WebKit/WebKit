@@ -85,6 +85,8 @@ exclude Tools/gtk/jhbuildrc
 exclude Tools/gtk/make-dist.py
 exclude Tools/gtk/ycm_extra_conf.py
 
+file Tools/glib/generate-inspector-gresource-manifest.py
+
 directory Tools/MiniBrowser
 directory Tools/TestWebKitAPI
 

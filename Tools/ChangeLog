@@ -1,3 +1,9 @@
+2017-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ make distcheck.
+
+        * gtk/manifest.txt.in: Add generate-inspector-gresource-manifest.py to the tarball.
+
 2017-11-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Disable ACCELERATED_2D_CANVAS in FeatureList.pm
