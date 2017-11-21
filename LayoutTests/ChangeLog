@@ -1,3 +1,15 @@
+2017-11-21  Frederic Wang  <fwang@igalia.com>
+
+        ASSERTION FAILED: !needsLayout() in WebCore::RenderMathMLScripts::firstLineBaseline
+        https://bugs.webkit.org/show_bug.cgi?id=174131
+
+        Reviewed by Alejandro G. Castro.
+
+        Add tests for calling RenderMathMLScripts::firstLineBaseline with needsLayout() == true.
+
+        * mathml/cells-and-scripts-crash-expected.txt: Added.
+        * mathml/cells-and-scripts-crash.html: Added.
+
 2017-11-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, mark one more GTK test as passing

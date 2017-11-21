@@ -478,7 +478,6 @@ void RenderMathMLScripts::layoutBlock(bool relayoutChildren, LayoutUnit)
 
 std::optional<int> RenderMathMLScripts::firstLineBaseline() const
 {
-    ASSERT(!needsLayout());
     auto* base = firstChildBox();
     if (!base)
         return std::optional<int>();

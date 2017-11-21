@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ASSERTION with cell layout and math scripts</title>
+    <meta charset="utf-8"/>
+    <script>
+      if (window.testRunner)
+          testRunner.dumpAsText();
+    </script>
+  </head>
+  <body>
+
+    <p>This test passes if it does not crash</p>
+
+    <p>
+      <table>
+        <tr>
+          <td>
+            <math display="block">
+              <munder>
+                <mtext>a</mtext>
+                <mtext>b</mtext>
+              </munder>
+            </math>
+          </td>
+        </tr>
+      </table>
+    </p>
+
+    <p>
+      <math>
+        <mtr>
+          <msub></msub>
+        </mtr>
+      </math>
+    </p>
+    
+  </body>
+</html>
