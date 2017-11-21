@@ -35,6 +35,10 @@
 #include <arm_neon.h>
 #endif
 
+#if USE(ACCELERATE)
+#include <Accelerate/Accelerate.h>
+#endif
+
 namespace WebCore {
 
 FilterEffect::FilterEffect(Filter& filter)
@@ -302,6 +306,81 @@ inline void FilterEffect::copyImageBytes(Uint8ClampedArray* source, Uint8Clamped
     }
 }
 
+static void copyPremultiplyingAlpha(const Uint8ClampedArray* source, Uint8ClampedArray* destination, const IntSize& inputSize)
+{
+#if USE(ACCELERATE)
+    size_t rowBytes = inputSize.width() * 4;
+
+    vImage_Buffer src;
+    src.width = inputSize.width();
+    src.height = inputSize.height();
+    src.rowBytes = rowBytes;
+    src.data = reinterpret_cast<void*>(source->data());
+
+    vImage_Buffer dest;
+    dest.width = inputSize.width();
+    dest.height = inputSize.height();
+    dest.rowBytes = rowBytes;
+    dest.data = reinterpret_cast<void*>(destination->data());
+
+    vImagePremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags);
+#else
+    unsigned char* sourceComponent = source->data();
+    unsigned char* destinationComponent = destination->data();
+    unsigned char* end = sourceComponent + (inputSize.area() * 4).unsafeGet();
+
+    while (sourceComponent < end) {
+        int alpha = sourceComponent[3];
+        destinationComponent[0] = static_cast<int>(sourceComponent[0]) * alpha / 255;
+        destinationComponent[1] = static_cast<int>(sourceComponent[1]) * alpha / 255;
+        destinationComponent[2] = static_cast<int>(sourceComponent[2]) * alpha / 255;
+        destinationComponent[3] = alpha;
+        sourceComponent += 4;
+        destinationComponent += 4;
+    }
+#endif
+}
+
+static void copyUnpremultiplyingAlpha(const Uint8ClampedArray* source, Uint8ClampedArray* destination, const IntSize& inputSize)
+{
+#if USE(ACCELERATE)
+    size_t rowBytes = inputSize.width() * 4;
+
+    vImage_Buffer src;
+    src.width = inputSize.width();
+    src.height = inputSize.height();
+    src.rowBytes = rowBytes;
+    src.data = reinterpret_cast<void*>(source->data());
+
+    vImage_Buffer dest;
+    dest.width = inputSize.width();
+    dest.height = inputSize.height();
+    dest.rowBytes = rowBytes;
+    dest.data = reinterpret_cast<void*>(destination->data());
+
+    vImageUnpremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags);
+#else
+    unsigned char* sourceComponent = source->data();
+    unsigned char* destinationComponent = destination->data();
+    unsigned char* end = sourceComponent + (inputSize.area() * 4).unsafeGet();
+    while (sourceComponent < end) {
+        int alpha = sourceComponent[3];
+        if (alpha) {
+            destinationComponent[0] = static_cast<int>(sourceComponent[0]) * 255 / alpha;
+            destinationComponent[1] = static_cast<int>(sourceComponent[1]) * 255 / alpha;
+            destinationComponent[2] = static_cast<int>(sourceComponent[2]) * 255 / alpha;
+        } else {
+            destinationComponent[0] = 0;
+            destinationComponent[1] = 0;
+            destinationComponent[2] = 0;
+        }
+        destinationComponent[3] = alpha;
+        sourceComponent += 4;
+        destinationComponent += 4;
+    }
+#endif
+}
+
 void FilterEffect::copyUnmultipliedImage(Uint8ClampedArray* destination, const IntRect& rect)
 {
     ASSERT(hasResult());
@@ -319,24 +398,8 @@ void FilterEffect::copyUnmultipliedImage(Uint8ClampedArray* destination, const I
                 WTFLogAlways("FilterEffect::copyUnmultipliedImage Unable to create buffer. Requested size was %d x %d\n", inputSize.width(), inputSize.height());
                 return;
             }
-            unsigned char* sourceComponent = m_premultipliedImageResult->data();
-            unsigned char* destinationComponent = m_unmultipliedImageResult->data();
-            unsigned char* end = sourceComponent + (inputSize.area() * 4).unsafeGet();
-            while (sourceComponent < end) {
-                int alpha = sourceComponent[3];
-                if (alpha) {
-                    destinationComponent[0] = static_cast<int>(sourceComponent[0]) * 255 / alpha;
-                    destinationComponent[1] = static_cast<int>(sourceComponent[1]) * 255 / alpha;
-                    destinationComponent[2] = static_cast<int>(sourceComponent[2]) * 255 / alpha;
-                } else {
-                    destinationComponent[0] = 0;
-                    destinationComponent[1] = 0;
-                    destinationComponent[2] = 0;
-                }
-                destinationComponent[3] = alpha;
-                sourceComponent += 4;
-                destinationComponent += 4;
-            }
+            
+            copyUnpremultiplyingAlpha(m_premultipliedImageResult.get(), m_unmultipliedImageResult.get(), inputSize);
         }
     }
     copyImageBytes(m_unmultipliedImageResult.get(), destination, rect);
@@ -359,18 +422,8 @@ void FilterEffect::copyPremultipliedImage(Uint8ClampedArray* destination, const 
                 WTFLogAlways("FilterEffect::copyPremultipliedImage Unable to create buffer. Requested size was %d x %d\n", inputSize.width(), inputSize.height());
                 return;
             }
-            unsigned char* sourceComponent = m_unmultipliedImageResult->data();
-            unsigned char* destinationComponent = m_premultipliedImageResult->data();
-            unsigned char* end = sourceComponent + (inputSize.area() * 4).unsafeGet();
-            while (sourceComponent < end) {
-                int alpha = sourceComponent[3];
-                destinationComponent[0] = static_cast<int>(sourceComponent[0]) * alpha / 255;
-                destinationComponent[1] = static_cast<int>(sourceComponent[1]) * alpha / 255;
-                destinationComponent[2] = static_cast<int>(sourceComponent[2]) * alpha / 255;
-                destinationComponent[3] = alpha;
-                sourceComponent += 4;
-                destinationComponent += 4;
-            }
+            
+            copyPremultiplyingAlpha(m_unmultipliedImageResult.get(), m_premultipliedImageResult.get(), inputSize);
         }
     }
     copyImageBytes(m_premultipliedImageResult.get(), destination, rect);
