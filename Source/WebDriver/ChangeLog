@@ -1,3 +1,18 @@
+2017-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: crash in Session::computeElementLayout when called without a current browsing context
+        https://bugs.webkit.org/show_bug.cgi?id=179917
+
+        Reviewed by Darin Adler.
+
+        In the case of computeElementLayout message, the frameHandle parameter is not optional, but we still need to
+        provide a valid value (empty string means the default frame) when m_currentBrowsingContext is std::nullopt. The
+        same applies to selectOptionElement.
+
+        * Session.cpp:
+        (WebDriver::Session::computeElementLayout):
+        (WebDriver::Session::selectOptionElement):
+
 2017-11-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Add initial support for WebDriver

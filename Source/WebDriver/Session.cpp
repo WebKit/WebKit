@@ -822,7 +822,7 @@ void Session::computeElementLayout(const String& elementID, OptionSet<ElementLay
 
     RefPtr<InspectorObject> parameters = InspectorObject::create();
     parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
-    parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
+    parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value_or(emptyString()));
     parameters->setString(ASCIILiteral("nodeHandle"), elementID);
     parameters->setBoolean(ASCIILiteral("scrollIntoViewIfNeeded"), options.contains(ElementLayoutOption::ScrollIntoViewIfNeeded));
     parameters->setString(ASCIILiteral("coordinateSystem"), options.contains(ElementLayoutOption::UseViewportCoordinates) ? ASCIILiteral("LayoutViewport") : ASCIILiteral("Page"));
@@ -1280,7 +1280,7 @@ void Session::selectOptionElement(const String& elementID, Function<void (Comman
 {
     RefPtr<InspectorObject> parameters = InspectorObject::create();
     parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
-    parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
+    parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value_or(emptyString()));
     parameters->setString(ASCIILiteral("nodeHandle"), elementID);
     m_host->sendCommandToBackend(ASCIILiteral("selectOptionElement"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
