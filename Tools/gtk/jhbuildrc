@@ -22,8 +22,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../jhbuild") )
 import jhbuildrc_common
 jhbuildrc_common.init(globals(), "gtk")
 
-top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
-sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'glib'))
+__top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(__top_level_directory, 'Tools', 'glib'))
 import common
 
 # LLVM requires that builddir != srcdir, and it's not possible to do that in jhbuild only

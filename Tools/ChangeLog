@@ -1,3 +1,17 @@
+2017-11-21  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Avoid warning in jhbuildrc.
+        https://bugs.webkit.org/show_bug.cgi?id=179913
+
+        Reviewed by Carlos Garcia Campos.
+
+        Apparently this is not quite a real python file; this declaration causes
+        warnings like
+          I: unknown keys defined in configuration file: top_level_directory
+        which break run-webkit-tests.
+
+        * gtk/jhbuildrc:
+
 2017-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WPE make distcheck.
