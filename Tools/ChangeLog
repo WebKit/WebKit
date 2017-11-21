@@ -1,5 +1,14 @@
 2017-11-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [WPE] Disable ACCELERATED_2D_CANVAS in FeatureList.pm
+        https://bugs.webkit.org/show_bug.cgi?id=179889
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
+2017-11-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed, speculative attempt to fix run-gtk-tests after r225047
         https://bugs.webkit.org/show_bug.cgi?id=173772
 
