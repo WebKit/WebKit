@@ -1,3 +1,16 @@
+2017-11-21  Tomas Popela  <tpopela@redhat.com>
+
+        Fix WebKitGTK+ compilation
+
+        Reviewed by Carlos Garcia Campos.
+
+        File "/builddir/build/BUILD/webkitgtk-2.19.2/Tools/gtk/generate-gtkdoc", line 31, in <module>
+        import common
+        ImportError: No module named common
+
+        * gtk/manifest.txt.in:
+        Add Tools/glib/common.py to the tarball.
+
 2017-11-21  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Avoid warning in jhbuildrc.
