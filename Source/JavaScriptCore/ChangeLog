@@ -1,3 +1,25 @@
+2017-11-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Allow poly proto for intrinsic getters
+        https://bugs.webkit.org/show_bug.cgi?id=179550
+
+        Reviewed by Saam Barati.
+
+        This patch allows intrinsic getters to accept poly proto.
+        We propagate PolyProtoAccessChain in IntrinsicGetterAccessCase to perform
+        poly proto checks. And we extend UnderscoreProtoIntrinsic to emit
+        code for poly proto case.
+
+        * bytecode/IntrinsicGetterAccessCase.cpp:
+        (JSC::IntrinsicGetterAccessCase::IntrinsicGetterAccessCase):
+        (JSC::IntrinsicGetterAccessCase::create):
+        * bytecode/IntrinsicGetterAccessCase.h:
+        * jit/IntrinsicEmitter.cpp:
+        (JSC::IntrinsicGetterAccessCase::canEmitIntrinsicGetter):
+        (JSC::IntrinsicGetterAccessCase::emitIntrinsicGetter):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+
 2017-11-20  Don Olmstead  <don.olmstead@sony.com>
 
         Detect __declspec within JSBase.h

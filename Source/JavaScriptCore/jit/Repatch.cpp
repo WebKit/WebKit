@@ -321,13 +321,9 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
                     RELEASE_ASSERT_NOT_REACHED();
 
                 newCase = ProxyableAccessCase::create(vm, codeBlock, type, offset, structure, conditionSet, loadTargetFromProxy, slot.watchpointSet(), WTFMove(prototypeAccessChain));
-            } else if (!loadTargetFromProxy && getter && IntrinsicGetterAccessCase::canEmitIntrinsicGetter(getter, structure) && !prototypeAccessChain) {
-                // FIXME: We should make this work with poly proto, but for our own sanity, we probably
-                // want to do a pointer check on the actual getter. A good time to make this work would
-                // be when we can inherit from builtin types in poly proto fashion:
-                // https://bugs.webkit.org/show_bug.cgi?id=177318
-                newCase = IntrinsicGetterAccessCase::create(vm, codeBlock, slot.cachedOffset(), structure, conditionSet, getter);
-            } else {
+            } else if (!loadTargetFromProxy && getter && IntrinsicGetterAccessCase::canEmitIntrinsicGetter(getter, structure))
+                newCase = IntrinsicGetterAccessCase::create(vm, codeBlock, slot.cachedOffset(), structure, conditionSet, getter, WTFMove(prototypeAccessChain));
+            else {
                 if (slot.isCacheableValue() || slot.isUnset()) {
                     newCase = ProxyableAccessCase::create(vm, codeBlock, slot.isUnset() ? AccessCase::Miss : AccessCase::Load,
                         offset, structure, conditionSet, loadTargetFromProxy, slot.watchpointSet(), WTFMove(prototypeAccessChain));

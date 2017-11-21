@@ -1,3 +1,28 @@
+2017-11-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Allow poly proto for intrinsic getters
+        https://bugs.webkit.org/show_bug.cgi?id=179550
+
+        Reviewed by Saam Barati.
+
+        This change is also tested by existing tests.
+
+            1. stress/intrinsic-getter-with-poly-proto.js
+            2. stress/poly-proto-intrinsic-getter-correctness.js
+
+        * stress/intrinsic-getter-with-poly-proto-getter-change.js: Added.
+        (shouldBe):
+        (makePolyProtoObject.foo.C):
+        (makePolyProtoObject.foo):
+        (makePolyProtoObject):
+        (target):
+        * stress/intrinsic-getter-with-poly-proto-proto-change.js: Added.
+        (shouldBe):
+        (makePolyProtoObject.foo.C):
+        (makePolyProtoObject.foo):
+        (makePolyProtoObject):
+        (target):
+
 2017-11-20  Guillaume Emont  <guijemont@igalia.com>
 
         Skip stress/unshiftCountSlowCase-correct-postCapacity.js on embedded Linux
