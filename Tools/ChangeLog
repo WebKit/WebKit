@@ -1,3 +1,24 @@
+2017-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Run unit tests in the bots
+        https://bugs.webkit.org/show_bug.cgi?id=179910
+
+        Reviewed by Michael Catanzaro.
+
+        Add a step to run unit tests in WPE test bots.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunGLibAPITests):
+        (RunGtkAPITests):
+        (RunWPEAPITests):
+        (TestFactory.__init__):
+        (RunGtkAPITests.start): Deleted.
+        (RunGtkAPITests.commandComplete): Deleted.
+        (RunGtkAPITests.evaluateCommand): Deleted.
+        (RunGtkAPITests.getText): Deleted.
+        (RunGtkAPITests.getText2): Deleted.
+        * wpe/jhbuild.modules: Upgrade WPEBackend-mesa to fix crashes when running unit tests.
+
 2017-11-21  Tomas Popela  <tpopela@redhat.com>
 
         Fix WebKitGTK+ compilation
