@@ -1,5 +1,12 @@
 2017-11-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed GTK test gardening
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2017-11-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Better unreviewed WPE test gardening
 
         I gave this test a TIMEOUT expectation because there is an XHR timeout, but that was dumb

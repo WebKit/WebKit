@@ -545,11 +545,11 @@ webkit.org/b/169565 imported/w3c/web-platform-tests/cors/credentials-flag.htm [ 
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/preflight-cache.htm [ Failure ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/preflight-failure.htm [ Failure ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/redirect-origin.htm [ Failure ]
-webkit.org/b/169565 imported/w3c/web-platform-tests/cors/redirect-preflight.htm [ Failure ]
+webkit.org/b/169565 imported/w3c/web-platform-tests/cors/redirect-preflight.htm [ Failure Pass ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/redirect-preflight-2.htm [ Failure ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/simple-requests.htm [ Failure ]
-webkit.org/b/169565 imported/w3c/web-platform-tests/cors/status-preflight.htm [ Failure ]
-webkit.org/b/169565 imported/w3c/web-platform-tests/cors/status-async.htm [ Failure ]
+webkit.org/b/169565 imported/w3c/web-platform-tests/cors/status-preflight.htm [ Failure Pass ]
+webkit.org/b/169565 imported/w3c/web-platform-tests/cors/status-async.htm [ Failure Pass ]
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/304.htm [ Failure ]
 
 # These tests used to have deterministic load delegate callback order before webkit.org/b/160677

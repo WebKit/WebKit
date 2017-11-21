@@ -477,8 +477,8 @@ webkit.org/b/169917 webgl/1.0.2/conformance/extensions/oes-texture-float.html [ 
 webkit.org/b/169917 webgl/1.0.2/conformance/reading/read-pixels-test.html [ Failure Pass ]
 webkit.org/b/169917 webgl/1.0.2/conformance/textures/copy-tex-image-2d-formats.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.2/conformance/textures/texture-attachment-formats.html [ Failure ]
-webkit.org/b/169917 webgl/1.0.2/conformance/textures/texture-mips.html [ Failure ]
-webkit.org/b/169917 webgl/1.0.2/conformance/textures/texture-npot.html [ Failure ]
+webkit.org/b/169917 webgl/1.0.2/conformance/textures/texture-mips.html [ Failure Pass ]
+webkit.org/b/169917 webgl/1.0.2/conformance/textures/texture-npot.html [ Failure Pass ]
 webkit.org/b/169917 webgl/1.0.2/conformance/textures/texture-size-limit.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/attribs/gl-bindAttribLocation-aliasing.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/attribs/gl-bindAttribLocation-matrix.html [ Failure ]
@@ -506,12 +506,12 @@ webkit.org/b/169917 compositing/overlap-blending/children-opacity-huge.html [ Im
 webkit.org/b/169917 compositing/video/video-border-radius.html [ ImageOnlyFailure Pass ]
 # WebGL timeouts or slow tests.
 webkit.org/b/169917 fast/canvas/webgl/oes-texture-half-float.html [ Slow ]
-webkit.org/b/169917 webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Timeout ]
+webkit.org/b/169917 webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Pass Timeout ]
 webkit.org/b/169917 webgl/1.0.2/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
 webkit.org/b/169917 webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Slow ]
-webkit.org/b/169917 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Timeout ]
+webkit.org/b/169917 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Timeout Pass ]
 webkit.org/b/169917 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Timeout ]
 webkit.org/b/169917 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Timeout ]
 webkit.org/b/169917 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Timeout ]
@@ -536,7 +536,7 @@ webkit.org/b/169917 webgl/1.0.3/conformance/glsl/misc/struct-nesting-of-variable
 webkit.org/b/169917 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Timeout ]
 # WebGL crashes
 webkit.org/b/169917 fast/canvas/webgl/webgl-draw-buffers.html [ Failure Crash ]
-webkit.org/b/169917 webgl/1.0.3/conformance/extensions/webgl-draw-buffers.html [ Crash ]
+webkit.org/b/169917 webgl/1.0.3/conformance/extensions/webgl-draw-buffers.html [ Failure Crash ]
 
 # WebGL 2.0 still not enabled
 webkit.org/b/166536 webgl/webgl2-rendering-context-defined.html [ Skip ]
@@ -1308,8 +1308,6 @@ webkit.org/b/177536 media/video-object-fit.html [ Crash ImageOnlyFailure ]
 webkit.org/b/177537 http/tests/multipart/multipart-html.php [ Crash ]
 
 webkit.org/b/177816 webgl/1.0.2/conformance/ogles/GL/vec/vec_001_to_008.html [ Crash Pass ]
-
-webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -2201,6 +2199,13 @@ webkit.org/b/177941 http/tests/inspector/network/ping-type.html [ Timeout ]
 webkit.org/b/178454 editing/pasteboard/datatransfer-items-paste-plaintext.html [ Timeout ]
 
 webkit.org/b/178792 fast/events/touch/touch-inside-iframe.html [ Timeout ]
+
+webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Timeout ]
+webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
+
+webkit.org/b/179261 editing/selection/drag-to-contenteditable-iframe.html [ Timeout ]
+
+webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3154,7 +3159,7 @@ webkit.org/b/169910 fast/multicol/simple-line-layout-line-index-after-strut.html
 
 webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure ]
 
-webkit.org/b/170053 media/video-load-require-user-gesture.html [ Failure ]
+webkit.org/b/170053 media/video-load-require-user-gesture.html [ Failure Pass ]
 
 webkit.org/b/170335 canvas/philip/tests/2d.pattern.animated.gif.html [ Failure ]
 
@@ -3217,7 +3222,7 @@ webkit.org/b/173411 fast/events/touch/frame-hover-update.html [ Failure ]
 
 webkit.org/b/173413 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-after-content-change.html [ Failure ]
 
-webkit.org/b/143702 media/progress-events-generated-correctly.html [ Failure ]
+webkit.org/b/143702 media/progress-events-generated-correctly.html [ Failure Pass ]
 
 webkit.org/b/173413 imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray.html [ Failure ]
 
@@ -3276,8 +3281,6 @@ webkit.org/b/177319 imported/w3c/web-platform-tests/html/semantics/forms/the-for
 
 webkit.org/b/177362 imported/w3c/web-platform-tests/css/css-pseudo-4/marker-font-properties.html [ ImageOnlyFailure ]
 
-webkit.org/b/177363 imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-022.html [ ImageOnlyFailure ]
-
 webkit.org/b/175661 inspector/worker/resources-in-worker.html [ Failure ]
 
 webkit.org/b/175662 inspector/canvas/recording-2d.html [ Failure ]
@@ -3287,9 +3290,6 @@ webkit.org/b/177934 fast/dom/HTMLLinkElement/preconnect-support.html [ Failure ]
 webkit.org/b/177936 fast/text/emoji-gender-2.html [ ImageOnlyFailure ]
 webkit.org/b/177936 fast/text/emoji-gender.html [ ImageOnlyFailure ]
 webkit.org/b/177936 fast/text/all-small-caps-whitespace.html [ ImageOnlyFailure ]
-webkit.org/b/177936 editing/selection/caret-bidi-first-and-last-letters.html [ Failure ]
-webkit.org/b/177936 editing/selection/extend-to-line-boundary.html [ Failure ]
-webkit.org/b/177936 editing/selection/select-bidi-run.html [ Failure ]
 webkit.org/b/177936 fast/text/regional-indicator-symobls.html [ Failure ]
 webkit.org/b/177936 fast/text/selection-in-initial-advance-region.html [ Failure ]
 webkit.org/b/177936 imported/blink/editing/selection/offset-from-point-complex-scripts.html [ Failure ]
@@ -3325,8 +3325,6 @@ webkit.org/b/178456 media/audio-playback-volume-changes-with-restrictions.html [
 webkit.org/b/178591 http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Failure ]
 webkit.org/b/178591 http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Failure ]
 
-webkit.org/b/179173 http/tests/inspector/network/har/har-page.html [ Failure ]
-
 webkit.org/b/179174 inspector/console/webcore-logging.html [ Failure ]
 
 webkit.org/b/179605 editing/execCommand/underline-selection-containing-image.html [ Failure ]
@@ -3340,7 +3338,9 @@ webkit.org/b/179721 media/video-fullscreeen-only-playback.html [ Timeout ]
 
 webkit.org/b/179722 compositing/accelerated-layers-after-back.html [ Failure ]
 
-webkit.org/b/179723 accessibility/accessibility-object-model.html [ Failure ]
+webkit.org/b/179113 fast/inline/padding-ellipsis-right.html [ ImageOnlyFailure ]
+webkit.org/b/179113 fast/text/ellipsis-text-rtl.html [ ImageOnlyFailure ]
+webkit.org/b/179113 imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-013.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
@@ -3356,17 +3356,30 @@ ietestcenter/css3/flexbox/flexbox-layout-001.htm [ Pass ]
 
 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
 
-transitions/svg-text-shadow-transition.html [ Pass ]
-
 imported/w3c/css/css-color-3/t422-rgba-onscreen-b.xht [ Pass ]
 imported/w3c/css/css-color-3/t422-rgba-onscreen-multiple-boxes-c.xht [ Pass ]
 imported/w3c/css/css-color-3/t425-hsla-onscreen-multiple-boxes-c.xht [ Pass ]
 
+imported/w3c/web-platform-tests/2dcontext/transformations/canvas_transformations_reset_001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-grid-1/grid-layout-properties.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo-4/first-letter-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo-4/first-letter-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui-3/box-sizing-026.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui-3/outline-006.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-012.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors4/selector-placeholder-shown-type-change-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors4/selector-placeholder-shown-type-change-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors4/selector-placeholder-shown-type-change-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors4/selector-read-write-type-change-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors4/selector-required-type-change-002.html [ Pass ]
+imported/w3c/web-platform-tests/cssom/MediaList.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-02.html [ Pass ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords.html [ Pass ]
 
 fast/multicol/multicol-with-child-renderLayer-for-input.html [ Pass ]
-
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords.html [ Pass ]
 
 # Some Apple ports don't support RTL scrollbars.
 fast/scrolling/rtl-scrollbars.html [ Pass ]
@@ -3410,20 +3423,15 @@ fast/text/emoji-gender-fe0f-7.html [ Pass ]
 fast/text/emoji-gender-fe0f-8.html [ Pass ]
 fast/text/emoji-gender-fe0f-9.html [ Pass ]
 
+transitions/svg-text-shadow-transition.html [ Pass ]
+
 webkit.org/b/155132 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Pass ]
 
 webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
 
 webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-005.html [ Pass ]
 
-webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Timeout ]
-webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
-
-webkit.org/b/179113 fast/inline/padding-ellipsis-right.html [ ImageOnlyFailure ]
-webkit.org/b/179113 fast/text/ellipsis-text-rtl.html [ ImageOnlyFailure ]
-webkit.org/b/179113 imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-013.html [ ImageOnlyFailure ]
-
-webkit.org/b/179261 editing/selection/drag-to-contenteditable-iframe.html [ Timeout ]
+webkit.org/b/169264 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-navigation-samedoc.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.
