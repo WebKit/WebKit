@@ -30,8 +30,8 @@
 
 #import <WebCore/FontCascade.h>
 #import <WebCore/GraphicsContext.h>
+#import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/TextRun.h>
-#import <WebCore/WebCoreNSStringExtras.h>
 #import <WebKitLegacy/WebNSFileManagerExtras.h>
 #import <WebKitLegacy/WebNSObjectExtras.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -174,22 +174,22 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
 
 - (BOOL)_webkit_isCaseInsensitiveEqualToString:(NSString *)string
 {
-    return stringIsCaseInsensitiveEqualToString(self, string);
+    return [self compare:string options:(NSCaseInsensitiveSearch | NSLiteralSearch)] == NSOrderedSame;
 }
 
 -(BOOL)_webkit_hasCaseInsensitivePrefix:(NSString *)prefix
 {
-    return hasCaseInsensitivePrefix(self, prefix);
+    return [self rangeOfString:prefix options:(NSCaseInsensitiveSearch | NSAnchoredSearch)].location != NSNotFound;
 }
 
 -(BOOL)_webkit_hasCaseInsensitiveSuffix:(NSString *)suffix
 {
-    return hasCaseInsensitiveSuffix(self, suffix);
+    return [self rangeOfString:suffix options:(NSCaseInsensitiveSearch | NSBackwardsSearch | NSAnchoredSearch)].location != NSNotFound;
 }
 
 -(BOOL)_webkit_hasCaseInsensitiveSubstring:(NSString *)substring
 {
-    return hasCaseInsensitiveSubstring(self, substring);
+    return [self rangeOfString:substring options:NSCaseInsensitiveSearch].location != NSNotFound;
 }
 
 -(NSString *)_webkit_filenameByFixingIllegalCharacters

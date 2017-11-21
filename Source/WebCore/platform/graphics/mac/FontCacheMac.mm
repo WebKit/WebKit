@@ -37,7 +37,6 @@
 #import <pal/spi/cocoa/CoreTextSPI.h>
 
 #if PLATFORM(MAC)
-#import "WebCoreNSStringExtras.h"
 #import <AppKit/AppKit.h>
 #import <pal/spi/mac/NSFontSPI.h>
 #import <wtf/MainThread.h>

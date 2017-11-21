@@ -303,7 +303,6 @@ platform/mac/PublicSuffixMac.mm
 platform/mac/SerializedPlatformRepresentationMac.mm
 platform/mac/StringUtilities.mm
 platform/mac/URLMac.mm
-platform/mac/WebCoreNSStringExtras.mm
 platform/mac/WebCoreNSURLExtras.mm
 platform/mac/WebCoreObjCExtras.mm
 

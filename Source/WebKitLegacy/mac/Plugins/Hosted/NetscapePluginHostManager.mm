@@ -31,8 +31,8 @@
 #import "NetscapePluginInstanceProxy.h"
 #import "WebLocalizableStringsInternal.h"
 #import "WebNetscapePluginPackage.h"
-#import <WebCore/WebCoreNSStringExtras.h>
 #import <mach/mach_port.h>
+#import <pal/spi/cf/CFLocaleSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/cocoa/ServersSPI.h>
 #import <spawn.h>
@@ -98,6 +98,30 @@ NetscapePluginHostProxy* NetscapePluginHostManager::hostForPlugin(const WTF::Str
     result.iterator->value = hostProxy;
     
     return hostProxy;
+}
+
+static NSString *preferredBundleLocalizationName()
+{
+    // FIXME: Any use of this function to pass localizations to another
+    // process is likely not completely right, since it only considers
+    // one localization.
+    NSArray *preferredLocalizations = [[NSBundle mainBundle] preferredLocalizations];
+    if (!preferredLocalizations || ![preferredLocalizations count])
+        return @"en_US";
+
+    NSString *language = [preferredLocalizations objectAtIndex:0];
+
+    // FIXME: <rdar://problem/18083880> Replace use of Script Manager
+    // to canonicalize locales with a custom Web-specific table
+    LangCode languageCode;
+    RegionCode regionCode;
+
+    Boolean success = CFLocaleGetLanguageRegionEncodingForLocaleIdentifier((CFStringRef)language, &languageCode, &regionCode, nullptr, nullptr);
+    if (!success)
+        return @"en_US";
+
+    auto code = adoptCF(CFLocaleCreateCanonicalLocaleIdentifierFromScriptManagerCodes(0, languageCode, regionCode));
+    return (NSString *)code.autorelease();
 }
 
 bool NetscapePluginHostManager::spawnPluginHost(const String& pluginPath, cpu_type_t pluginArchitecture, mach_port_t clientPort, mach_port_t& pluginHostPort, ProcessSerialNumber& pluginHostPSN)

@@ -36,7 +36,6 @@
 #import "SharedBuffer.h"
 #import "URL.h"
 #import "UTIUtilities.h"
-#import "WebCoreNSStringExtras.h"
 #import "WebNSAttributedStringExtras.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/HIServicesSPI.h>

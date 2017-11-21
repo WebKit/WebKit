@@ -27,11 +27,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <wtf/Forward.h>
 
-namespace WTF {
-class String;
-}
-
-extern "C" {
 WEBCORE_EXPORT NSString *suggestedFilenameWithMIMEType(NSURL *, const WTF::String& MIMEType);
-}
+WEBCORE_EXPORT NSString *filenameByFixingIllegalCharacters(NSString *);

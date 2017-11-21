@@ -416,7 +416,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/WebCoreFullScreenPlaceholderView.mm
     platform/mac/WebCoreFullScreenWarningView.mm
     platform/mac/WebCoreFullScreenWindow.mm
-    platform/mac/WebCoreNSStringExtras.mm
     platform/mac/WebCoreNSURLExtras.mm
     platform/mac/WebCoreObjCExtras.mm
     platform/mac/WebGLBlacklist.mm

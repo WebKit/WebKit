@@ -35,7 +35,6 @@
 #import "URL.h"
 #import "LocalizedStrings.h"
 #import "MIMETypeRegistry.h"
-#import "WebCoreNSStringExtras.h"
 #import <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -64,8 +63,8 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType)
     // Do not correct filenames that are reported with a mime type of tar, and 
     // have a filename which has .tar in it or ends in .tgz
     if ((mimeType == "application/tar" || mimeType == "application/x-tar")
-        && (hasCaseInsensitiveSubstring(filename, @".tar")
-        || hasCaseInsensitiveSuffix(filename, @".tgz"))) {
+        && (String(filename).containsIgnoringASCIICase(".tar")
+        || String(filename).endsWithIgnoringASCIICase(".tgz"))) {
         return filename;
     }
 
@@ -83,6 +82,27 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType)
             }
         }
     }
+
+    return filename;
+}
+
+NSString *filenameByFixingIllegalCharacters(NSString *string)
+{
+    NSMutableString *filename = [[string mutableCopy] autorelease];
+
+    // Strip null characters.
+    unichar nullChar = 0;
+    [filename replaceOccurrencesOfString:[NSString stringWithCharacters:&nullChar length:0] withString:@"" options:0 range:NSMakeRange(0, [filename length])];
+
+    // Replace "/" with "-".
+    [filename replaceOccurrencesOfString:@"/" withString:@"-" options:0 range:NSMakeRange(0, [filename length])];
+
+    // Replace ":" with "-".
+    [filename replaceOccurrencesOfString:@":" withString:@"-" options:0 range:NSMakeRange(0, [filename length])];
+
+    // Strip leading dots.
+    while ([filename hasPrefix:@"."])
+        [filename deleteCharactersInRange:NSMakeRange(0, 1)];
 
     return filename;
 }

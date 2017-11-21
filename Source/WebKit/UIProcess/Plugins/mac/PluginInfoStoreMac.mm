@@ -32,7 +32,6 @@
 #import "NetscapePluginModule.h"
 #import "SandboxUtilities.h"
 #import <WebCore/PluginBlacklist.h>
-#import <WebCore/WebCoreNSStringExtras.h>
 #import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>

@@ -75,6 +75,7 @@
 #import <WebCore/DragData.h>
 #import <WebCore/Editor.h>
 #import <WebCore/KeypressCommand.h>
+#import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/TextAlternativeWithRange.h>
@@ -83,7 +84,6 @@
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebCoreFullScreenPlaceholderView.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
-#import <WebCore/WebCoreNSStringExtras.h>
 #import <WebCore/WebPlaybackControlsManager.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
@@ -101,6 +101,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/text/StringConcatenate.h>
 
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 SOFT_LINK_FRAMEWORK(AVKit)
@@ -3797,11 +3798,10 @@ void WebViewImpl::dragImageForView(NSView *view, NSImage *image, CGPoint clientP
 #pragma clang diagnostic pop
 }
 
-static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension)
+static bool matchesExtensionOrEquivalent(const String& filename, const String& extension)
 {
-    NSString *extensionAsSuffix = [@"." stringByAppendingString:extension];
-    return hasCaseInsensitiveSuffix(filename, extensionAsSuffix) || (stringIsCaseInsensitiveEqualToString(extension, @"jpeg")
-        && hasCaseInsensitiveSuffix(filename, @".jpg"));
+    return filename.endsWithIgnoringASCIICase("." + extension)
+        || (equalLettersIgnoringASCIICase(extension, "jpeg") && filename.endsWithIgnoringASCIICase(".jpg"));
 }
 
 void WebViewImpl::setFileAndURLTypes(NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, NSPasteboard *pasteboard)
