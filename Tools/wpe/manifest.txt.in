@@ -83,6 +83,8 @@ exclude Tools/wpe/patches
 exclude Tools/wpe/jhbuild.modules
 exclude Tools/wpe/jhbuildrc
 
+file Tools/glib/generate-inspector-gresource-manifest.py
+
 directory Tools/TestWebKitAPI
 
 file CMakeLists.txt
