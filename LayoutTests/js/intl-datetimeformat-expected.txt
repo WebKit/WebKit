@@ -375,9 +375,9 @@ PASS Intl.DateTimeFormat('en', { timeZoneName: { toString() { throw 'timeZoneNam
 PASS Intl.DateTimeFormat('en', { timeZoneName:'name' }) threw exception RangeError: timeZoneName must be "short" or "long".
 PASS Intl.DateTimeFormat('en').resolvedOptions().timeZoneName is undefined
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZoneName:'short' }).resolvedOptions().timeZoneName is 'short'
-PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZoneName:'short', timeZone: 'UTC' }).format(0) is '12:00 AM GMT'
+PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZoneName:'short', timeZone: 'America/Los_Angeles' }).format(0) is '4:00 PM PST'
 PASS Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZoneName:'long' }).resolvedOptions().timeZoneName is 'long'
-PASS ['00:00 GMT','00:00 Horário do Meridiano de Greenwich'].includes(Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZoneName:'long', timeZone: 'UTC' }).format(0)) is true
+PASS Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZoneName:'long', timeZone: 'america/sao_paulo' }).format(0) is '21:00 Horário Padrão de Brasília'
 PASS 
     var options = { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" };
     var resolved = Intl.DateTimeFormat("ar", options).resolvedOptions();
@@ -2182,17 +2182,17 @@ PASS JSON.stringify(
   Intl.DateTimeFormat("pt-BR", {
     hour: "numeric", minute: "numeric", second: "numeric",
     year: "numeric", month: "numeric", day: "numeric",
-    timeZoneName: "short", era: "short", timeZone: "UTC"
+    timeZoneName: "short", era: "short", timeZone: "America/Sao_Paulo"
   }).formatToParts(0).filter((part) => (part.type !== "literal"))
 ) is JSON.stringify([
-  {"type":"day","value":"1"},
-  {"type":"month","value":"1"},
-  {"type":"year","value":"1970"},
+  {"type":"day","value":"31"},
+  {"type":"month","value":"12"},
+  {"type":"year","value":"1969"},
   {"type":"era","value":"d.C."},
-  {"type":"hour","value":"00"},
+  {"type":"hour","value":"21"},
   {"type":"minute","value":"00"},
   {"type":"second","value":"00"},
-  {"type":"timeZoneName","value":"GMT"}
+  {"type":"timeZoneName","value":"BRT"}
 ])
 PASS Intl.DateTimeFormat("ar", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }).formatToParts() is an instance of Array
 PASS Intl.DateTimeFormat("ar", { weekday: "short", year: "numeric", month: "short", day: "numeric" }).formatToParts() is an instance of Array
@@ -2555,28 +2555,28 @@ PASS JSON.stringify(
   Intl.DateTimeFormat('en-US', {
     hour: "numeric", minute: "numeric", second: "numeric",
     year: "numeric", month: "long", day: "numeric", weekday: "long",
-    timeZoneName: "short", era: "long", timeZone: "UTC"
+    timeZoneName: "long", era: "long", timeZone: "America/Los_Angeles"
   }).formatToParts(0)
 ) is JSON.stringify([
-  {"type":"weekday","value":"Thursday"},
+  {"type":"weekday","value":"Wednesday"},
   {"type":"literal","value":", "},
-  {"type":"month","value":"January"},
+  {"type":"month","value":"December"},
   {"type":"literal","value":" "},
-  {"type":"day","value":"1"},
+  {"type":"day","value":"31"},
   {"type":"literal","value":", "},
-  {"type":"year","value":"1970"},
+  {"type":"year","value":"1969"},
   {"type":"literal","value":" "},
   {"type":"era","value":"Anno Domini"},
   {"type":"literal","value":", "},
-  {"type":"hour","value":"12"},
+  {"type":"hour","value":"4"},
   {"type":"literal","value":":"},
   {"type":"minute","value":"00"},
   {"type":"literal","value":":"},
   {"type":"second","value":"00"},
   {"type":"literal","value":" "},
-  {"type":"dayPeriod","value":"AM"},
+  {"type":"dayPeriod","value":"PM"},
   {"type":"literal","value":" "},
-  {"type":"timeZoneName","value":"GMT"}
+  {"type":"timeZoneName","value":"Pacific Standard Time"}
 ])
 PASS successfullyParsed is true
 

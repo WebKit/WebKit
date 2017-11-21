@@ -1745,8 +1745,6 @@ webkit.org/b/179342 http/tests/workers/service/registration-task-queue-schedulin
 [ ElCapitan Sierra ] platform/mac/media/encrypted-media/fps-createMediaKeys.html [ Skip ]
 [ ElCapitan Sierra ] platform/mac/media/encrypted-media/fps-requestMediaKeySystemAccess.html [ Skip ]
 
-webkit.org/b/179208 [ HighSierra+ ] js/intl-datetimeformat.html [ Failure ]
-
 # rdar://problem/35395437
 [ HighSierra+ ] imported/w3c/web-platform-tests/media-source/mediasource-play.html [ Failure ]
 [ HighSierra+ ] imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html [ Failure ]

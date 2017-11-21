@@ -459,9 +459,9 @@ shouldThrow("Intl.DateTimeFormat('en', { timeZoneName: { toString() { throw 'tim
 shouldThrow("Intl.DateTimeFormat('en', { timeZoneName:'name' })", '\'RangeError: timeZoneName must be "short" or "long"\'');
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().timeZoneName", "undefined");
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZoneName:'short' }).resolvedOptions().timeZoneName", "'short'");
-shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZoneName:'short', timeZone: 'UTC' }).format(0)", "'12:00 AM GMT'");
+shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZoneName:'short', timeZone: 'America/Los_Angeles' }).format(0)", "'4:00 PM PST'");
 shouldBe("Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZoneName:'long' }).resolvedOptions().timeZoneName", "'long'");
-shouldBeTrue("['00:00 GMT','00:00 Horário do Meridiano de Greenwich'].includes(Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZoneName:'long', timeZone: 'UTC' }).format(0))");
+shouldBe("Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZoneName:'long', timeZone: 'america/sao_paulo' }).format(0)", "'21:00 Horário Padrão de Brasília'");
 
 let localesSample = [
   "ar", "ar-SA", "be", "ca", "cs", "da", "de", "de-CH", "en", "en-AU", "en-GB",
@@ -542,17 +542,17 @@ shouldBe(`JSON.stringify(
   Intl.DateTimeFormat("pt-BR", {
     hour: "numeric", minute: "numeric", second: "numeric",
     year: "numeric", month: "numeric", day: "numeric",
-    timeZoneName: "short", era: "short", timeZone: "UTC"
+    timeZoneName: "short", era: "short", timeZone: "America/Sao_Paulo"
   }).formatToParts(0).filter((part) => (part.type !== "literal"))
 )`, `JSON.stringify([
-  {"type":"day","value":"1"},
-  {"type":"month","value":"1"},
-  {"type":"year","value":"1970"},
+  {"type":"day","value":"31"},
+  {"type":"month","value":"12"},
+  {"type":"year","value":"1969"},
   {"type":"era","value":"d.C."},
-  {"type":"hour","value":"00"},
+  {"type":"hour","value":"21"},
   {"type":"minute","value":"00"},
   {"type":"second","value":"00"},
-  {"type":"timeZoneName","value":"GMT"}
+  {"type":"timeZoneName","value":"BRT"}
 ])`);
 
 for (let locale of localesSample) {
@@ -578,27 +578,27 @@ shouldBe(`JSON.stringify(
   Intl.DateTimeFormat('en-US', {
     hour: "numeric", minute: "numeric", second: "numeric",
     year: "numeric", month: "long", day: "numeric", weekday: "long",
-    timeZoneName: "short", era: "long", timeZone: "UTC"
+    timeZoneName: "long", era: "long", timeZone: "America/Los_Angeles"
   }).formatToParts(0)
 )`, `JSON.stringify([
-  {"type":"weekday","value":"Thursday"},
+  {"type":"weekday","value":"Wednesday"},
   {"type":"literal","value":", "},
-  {"type":"month","value":"January"},
+  {"type":"month","value":"December"},
   {"type":"literal","value":" "},
-  {"type":"day","value":"1"},
+  {"type":"day","value":"31"},
   {"type":"literal","value":", "},
-  {"type":"year","value":"1970"},
+  {"type":"year","value":"1969"},
   {"type":"literal","value":" "},
   {"type":"era","value":"Anno Domini"},
   {"type":"literal","value":", "},
-  {"type":"hour","value":"12"},
+  {"type":"hour","value":"4"},
   {"type":"literal","value":":"},
   {"type":"minute","value":"00"},
   {"type":"literal","value":":"},
   {"type":"second","value":"00"},
   {"type":"literal","value":" "},
-  {"type":"dayPeriod","value":"AM"},
+  {"type":"dayPeriod","value":"PM"},
   {"type":"literal","value":" "},
-  {"type":"timeZoneName","value":"GMT"}
+  {"type":"timeZoneName","value":"Pacific Standard Time"}
 ])`)
 

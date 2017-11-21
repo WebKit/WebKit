@@ -1,3 +1,16 @@
+2017-11-20  Andy VanWagoner  <andy@thetalecrafter.com>
+
+        Layout Test js/intl-datetimeformat.html is failing on High Sierra (GMT vs. UTC)
+        https://bugs.webkit.org/show_bug.cgi?id=179208
+
+        Reviewed by Darin Adler.
+
+        Use time zones that are unambiguous in datetimeformat tests.
+
+        * js/intl-datetimeformat-expected.txt:
+        * js/script-tests/intl-datetimeformat.js:
+        * platform/mac/TestExpectations:
+
 2017-11-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed GTK test gardening
