@@ -523,9 +523,6 @@ visualViewportEnabled:
   initial: false
   onChange: setNeedsRecalcStyleInAllFrames
 
-visualViewportAPIEnabled:
-  initial: false
-
 inputEventsEnabled:
   initial: true
 

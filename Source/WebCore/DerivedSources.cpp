@@ -613,7 +613,6 @@
 #endif
 #include "JSValidityState.cpp"
 #include "JSVideoPlaybackQuality.cpp"
-#include "JSVisualViewport.cpp"
 #include "JSVoidCallback.cpp"
 #include "JSWaveShaperNode.cpp"
 #include "JSWebKitAnimationEvent.cpp"

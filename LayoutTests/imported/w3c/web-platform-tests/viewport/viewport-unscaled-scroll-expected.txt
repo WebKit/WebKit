@@ -1,14 +1,17 @@
+CONSOLE MESSAGE: line 40: TypeError: undefined is not an object (evaluating 'window.visualViewport.offsetLeft')
 Viewport: Scroll - no page scale
 
 Test Description: This test checks that window.visualViewport returns correct offset and scroll values without any pinch-zoom page scale applied.
 
-window.visualViewport's offsetLeft and offsetTop is (0, 0).
+window.visualViewport's offsetLeft and offsetTop is ().
 
-window.visualViewport's pageLeft and pageTop is (1000, 1200).
+window.visualViewport's pageLeft and pageTop is ().
 
 
-PASS offsetLeft must be 0. 
-PASS offsetTop must be 0. 
-PASS pageLeft must reflect location of viewport in document. 
-PASS pageTop must reflect location of viewport in document. 
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'window.visualViewport.offsetLeft')
+
+FAIL offsetLeft must be 0. undefined is not an object (evaluating 'window.visualViewport.offsetLeft')
+FAIL offsetTop must be 0. undefined is not an object (evaluating 'window.visualViewport.offsetTop')
+FAIL pageLeft must reflect location of viewport in document. undefined is not an object (evaluating 'window.visualViewport.pageLeft')
+FAIL pageTop must reflect location of viewport in document. undefined is not an object (evaluating 'window.visualViewport.pageTop')
 

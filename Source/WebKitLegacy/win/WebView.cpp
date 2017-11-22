@@ -5243,11 +5243,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     RuntimeEnabledFeatures::sharedFeatures().setInspectorAdditionsEnabled(!!enabled);
 
-    hr = prefsPrivate->visualViewportAPIEnabled(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings.setVisualViewportAPIEnabled(!!enabled);
-
     hr = preferences->privateBrowsingEnabled(&enabled);
     if (FAILED(hr))
         return hr;

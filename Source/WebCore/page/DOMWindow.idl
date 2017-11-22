@@ -133,9 +133,6 @@ typedef USVString CSSOMString;
     void scrollBy(optional ScrollToOptions option);
     void scrollBy(unrestricted double x, unrestricted double y);
 
-    // Visual Viewport (https://wicg.github.io/ViewportAPI/spec.html)
-    [EnabledBySetting=VisualViewportAPI, Replaceable] readonly attribute VisualViewport visualViewport; // FIXME: Should be [SameObject]. https://bugs.webkit.org/show_bug.cgi?id=163414
-
     // Client (CSSOM-View).
     [Replaceable] readonly attribute long screenX;
     [Replaceable] readonly attribute long screenY;

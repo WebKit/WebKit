@@ -1122,13 +1122,6 @@ SubresourceIntegrityEnabled:
   humanReadableDescription: "Enable SubresourceIntegrity"
   category: experimental
 
-VisualViewportAPIEnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "VisualViewportAPI"
-  humanReadableDescription: "Enable Visual Viewport API"
-  category: experimental
-
 WebAnimationsEnabled:
   type: bool
   defaultValue: false

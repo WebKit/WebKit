@@ -1,10 +1,13 @@
+CONSOLE MESSAGE: line 31: TypeError: undefined is not an object (evaluating 'frames[0].window.visualViewport.scale')
 Viewport: Unscaled scale iframe
 
 Test Description: This test checks that the default value for scale inside an iframe is 1.
 
 
-iframe's window.visualViewport.scale is 1.
+iframe's window.visualViewport.scale is .
 
 
-PASS iframe's visualViewport.scale default value. 
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'frames[0].window.visualViewport.scale')
+
+FAIL iframe's visualViewport.scale default value. undefined is not an object (evaluating 'frames[0].window.visualViewport.scale')
 

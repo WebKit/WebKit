@@ -43,7 +43,6 @@ TextTrackCue conditional=VIDEO_TRACK
 TextTrackList conditional=VIDEO_TRACK
 VRDisplay
 VideoTrackList conditional=VIDEO_TRACK
-VisualViewport
 WebKitMediaKeySession conditional=LEGACY_ENCRYPTED_MEDIA
 WebSocket
 Worker

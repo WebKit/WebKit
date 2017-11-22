@@ -1889,9 +1889,6 @@
 		7728694E14F8882500F484DC /* EXTTextureFilterAnisotropic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7728694B14F8882500F484DC /* EXTTextureFilterAnisotropic.cpp */; };
 		7728694F14F8882500F484DC /* EXTTextureFilterAnisotropic.h in Headers */ = {isa = PBXBuildFile; fileRef = 7728694C14F8882500F484DC /* EXTTextureFilterAnisotropic.h */; };
 		7728698414FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.h in Headers */ = {isa = PBXBuildFile; fileRef = 7728698214FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.h */; };
-		7779BD951F312D0100C21417 /* VisualViewport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779BD941F3117B700C21417 /* VisualViewport.cpp */; };
-		7779BD961F32246A00C21417 /* JSVisualViewport.h in Headers */ = {isa = PBXBuildFile; fileRef = 7779BD921F2FDBF700C21417 /* JSVisualViewport.h */; };
-		7779BD971F32246D00C21417 /* JSVisualViewport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7779BD911F2FDBCE00C21417 /* JSVisualViewport.cpp */; };
 		77A17A7112F28182004E02F6 /* OESVertexArrayObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77A17A6E12F28182004E02F6 /* OESVertexArrayObject.cpp */; };
 		77A17A7212F28182004E02F6 /* OESVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17A6F12F28182004E02F6 /* OESVertexArrayObject.h */; };
 		77A17A7712F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77A17A7412F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp */; };
@@ -8818,10 +8815,6 @@
 		77534FF21ED4C96B00A9646E /* JSFederatedCredentialInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFederatedCredentialInit.h; sourceTree = "<group>"; };
 		77534FF31ED4C99F00A9646E /* JSPasswordCredentialData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPasswordCredentialData.cpp; sourceTree = "<group>"; };
 		77534FF41ED4C99F00A9646E /* JSPasswordCredentialData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPasswordCredentialData.h; sourceTree = "<group>"; };
-		7779BD911F2FDBCE00C21417 /* JSVisualViewport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVisualViewport.cpp; sourceTree = "<group>"; };
-		7779BD921F2FDBF700C21417 /* JSVisualViewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVisualViewport.h; sourceTree = "<group>"; };
-		7779BD931F2FDFCB00C21417 /* VisualViewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisualViewport.h; sourceTree = "<group>"; };
-		7779BD941F3117B700C21417 /* VisualViewport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisualViewport.cpp; sourceTree = "<group>"; };
 		77A17A6E12F28182004E02F6 /* OESVertexArrayObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OESVertexArrayObject.cpp; sourceTree = "<group>"; };
 		77A17A6F12F28182004E02F6 /* OESVertexArrayObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OESVertexArrayObject.h; sourceTree = "<group>"; };
 		77A17A7012F28182004E02F6 /* OESVertexArrayObject.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OESVertexArrayObject.idl; sourceTree = "<group>"; };
@@ -8838,7 +8831,6 @@
 		77AAD6811ECF8D3800BFA2D1 /* FederatedCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FederatedCredential.cpp; sourceTree = "<group>"; };
 		77AAD6831ECFB66200BFA2D1 /* CredentialCreationOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CredentialCreationOptions.idl; sourceTree = "<group>"; };
 		77AAD6851ECFBD3900BFA2D1 /* CredentialCreationOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CredentialCreationOptions.h; sourceTree = "<group>"; };
-		77CAAAEF1F2FC35000CB5C8D /* VisualViewport.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VisualViewport.idl; sourceTree = "<group>"; };
 		77CD167D1ED3BDB8009E9536 /* FederatedCredentialInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FederatedCredentialInit.idl; sourceTree = "<group>"; };
 		77CD167E1ED3BE11009E9536 /* FederatedCredentialInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FederatedCredentialInit.h; sourceTree = "<group>"; };
 		77CD167F1ED3C2DB009E9536 /* PasswordCredentialData.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PasswordCredentialData.idl; sourceTree = "<group>"; };
@@ -18602,9 +18594,6 @@
 				26F9A83718A046AC00AEB88A /* ViewportConfiguration.h */,
 				1AF4CEEB18BC3C1B00BC2D34 /* VisitedLinkStore.cpp */,
 				1ABA7FFF1897341200DCE9D6 /* VisitedLinkStore.h */,
-				7779BD941F3117B700C21417 /* VisualViewport.cpp */,
-				7779BD931F2FDFCB00C21417 /* VisualViewport.h */,
-				77CAAAEF1F2FC35000CB5C8D /* VisualViewport.idl */,
 				BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */,
 				7C48A6CE191C9D6500026674 /* WebKitNamespace.cpp */,
 				7C48A6CF191C9D6500026674 /* WebKitNamespace.h */,
@@ -21572,8 +21561,6 @@
 				65DF31F009D1CC60000BE325 /* JSText.h */,
 				46E791451F97E01700199739 /* JSVisibilityState.cpp */,
 				46E791461F97E01700199739 /* JSVisibilityState.h */,
-				7779BD911F2FDBCE00C21417 /* JSVisualViewport.cpp */,
-				7779BD921F2FDBF700C21417 /* JSVisualViewport.h */,
 				83F570AE1C53268E007FD6CB /* JSXMLDocument.cpp */,
 				83F570AD1C53268E007FD6CB /* JSXMLDocument.h */,
 			);
@@ -27975,7 +27962,6 @@
 				BE8EF04B171C9014009B48C3 /* JSVideoTrack.h in Headers */,
 				BE8EF04D171C9014009B48C3 /* JSVideoTrackList.h in Headers */,
 				46E791491F97E01A00199739 /* JSVisibilityState.h in Headers */,
-				7779BD961F32246A00C21417 /* JSVisualViewport.h in Headers */,
 				2DDE1CE41F574AE900D1A365 /* JSVRDisplay.h in Headers */,
 				2DDE1CF81F574C3900D1A365 /* JSVRDisplayCapabilities.h in Headers */,
 				2DDE1CFA1F574C3E00D1A365 /* JSVRDisplayEvent.h in Headers */,

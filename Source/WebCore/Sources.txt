@@ -1336,7 +1336,6 @@ page/UserContentProvider.cpp
 page/UserContentController.cpp
 page/UserContentURLPattern.cpp
 page/VisitedLinkStore.cpp
-page/VisualViewport.cpp
 page/WheelEventDeltaFilter.cpp
 page/WheelEventTestTrigger.cpp
 page/WindowFeatures.cpp
@@ -2942,7 +2941,6 @@ JSVRStageParameters.cpp
 JSValidityState.cpp
 JSVideoPlaybackQuality.cpp
 JSVisibilityState.cpp
-JSVisualViewport.cpp
 JSVoidCallback.cpp
 JSWaveShaperNode.cpp
 JSWebAnimation.cpp

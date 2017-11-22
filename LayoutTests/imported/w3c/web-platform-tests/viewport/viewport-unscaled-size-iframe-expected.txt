@@ -1,15 +1,16 @@
+CONSOLE MESSAGE: line 38: TypeError: undefined is not an object (evaluating 'frames[0].window.visualViewport.width')
 Viewport: Size in iframe - no page scale
 
 Test Description: This test checks that window.visualViewport returns correct sizes without any pinch-zoom page scale applied but with scrollbars.
 
 
-frames[0].window.visualViewport width and height is (200, 300).
+frames[0].window.visualViewport width and height is ().
 
-frames[0].window.visualViewport width and height when scrollbars are present is (185, 285).
+frames[0].window.visualViewport width and height when scrollbars are present is ().
 
 
-PASS window.visualViewport.width of iframe viewport should match iframe width. 
-PASS window.visualViewport.height of iframe viewport should match iframe height. 
-PASS window.visualViewport.width of iframe viewport should not include scrollbar. 
-PASS window.visualViewport.height of iframe viewport should not include scrollbar. 
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'frames[0].window.visualViewport.width')
+
+FAIL window.visualViewport.width of iframe viewport should match iframe width. undefined is not an object (evaluating 'frames[0].window.visualViewport.width')
+FAIL window.visualViewport.height of iframe viewport should match iframe height. undefined is not an object (evaluating 'frames[0].window.visualViewport.height')
 

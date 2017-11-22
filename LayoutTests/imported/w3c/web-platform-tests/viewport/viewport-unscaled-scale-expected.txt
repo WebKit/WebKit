@@ -1,9 +1,12 @@
+CONSOLE MESSAGE: line 24: TypeError: undefined is not an object (evaluating 'window.visualViewport.scale')
 Viewport: Unscaled scale
 
 Test Description: This test checks that the default value for scale is 1.
 
-window.visualViewport.scale is 1.
+window.visualViewport.scale is .
 
 
-PASS visualViewport.scale default value. 
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'window.visualViewport.scale')
+
+FAIL visualViewport.scale default value. undefined is not an object (evaluating 'window.visualViewport.scale')
 

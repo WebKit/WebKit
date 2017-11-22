@@ -1,4 +1,0 @@
-
-
-FAIL Verify viewport dimensions for iframe. assert_equals: pageLeft expected 10 but got 0
-

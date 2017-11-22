@@ -2,9 +2,9 @@ Viewport: window.visualViewport type
 
 Test Description: This test checks that window.visualViewport is an object of type VisualViewport.
 
-window.visualViewport is of type: object.
+window.visualViewport is of type: undefined.
 
 
-PASS window.visualViewport is an object 
-PASS window.visualViewport has type `VisualViewport` 
+FAIL window.visualViewport is an object assert_equals: expected "object" but got "undefined"
+FAIL window.visualViewport has type `VisualViewport` undefined is not an object (evaluating 'window.visualViewport.toString')
 

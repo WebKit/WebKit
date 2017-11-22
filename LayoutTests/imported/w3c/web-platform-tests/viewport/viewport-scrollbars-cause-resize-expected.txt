@@ -1,7 +1,8 @@
+CONSOLE MESSAGE: line 22: ReferenceError: Can't find variable: visualViewport
 Viewport: Scrollbars Cause Resize
 
 Test Description: This test checks that the appearance of classic scrollbars will cause a resize event to be fired at window.visualViewport.
 
 
-PASS view size initially matches window size 
+FAIL Viewport: Scrollbars Cause Resize ReferenceError: Can't find variable: visualViewport
 

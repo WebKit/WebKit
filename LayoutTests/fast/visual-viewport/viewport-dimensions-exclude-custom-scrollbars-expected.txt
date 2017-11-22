@@ -1,3 +1,0 @@
-
-PASS Verify viewport dimensions exclude custom scrollbars. 
-

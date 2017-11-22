@@ -1,7 +1,10 @@
+CONSOLE MESSAGE: line 24: TypeError: undefined is not an object (evaluating 'window.visualViewport.addEventListener')
 Viewport: Resize Event On Load Overflowing Page
 
 Test Description: This test ensures that we fire a resize event against window.visualViewport if the page has overflow (since this creates a scrollbar and thus changes the viewport size).
 
 
-FAIL Resize event fired exactly once against window.visualViewport if scrollbars affect layout. assert_equals: expected 1 but got 0
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'window.visualViewport.addEventListener')
+
+NOTRUN Resize event fired exactly once against window.visualViewport if scrollbars affect layout. 
 

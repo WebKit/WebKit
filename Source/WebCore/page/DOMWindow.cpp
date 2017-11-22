@@ -101,7 +101,6 @@
 #include "SuddenTermination.h"
 #include "URL.h"
 #include "UserGestureIndicator.h"
-#include "VisualViewport.h"
 #include "WebKitPoint.h"
 #include "WindowFeatures.h"
 #include "WindowFocusAllowedIndicator.h"
@@ -425,7 +424,6 @@ DOMWindow::~DOMWindow()
         ASSERT(!m_sessionStorage);
         ASSERT(!m_localStorage);
         ASSERT(!m_applicationCache);
-        ASSERT(!m_visualViewport);
     }
 #endif
 
@@ -588,7 +586,6 @@ void DOMWindow::resetDOMWindowProperties()
     m_statusbar = nullptr;
     m_toolbar = nullptr;
     m_performance = nullptr;
-    m_visualViewport = nullptr;
 }
 
 bool DOMWindow::isCurrentlyDisplayedInFrame() const
@@ -800,15 +797,6 @@ Location* DOMWindow::location() const
     if (!m_location)
         m_location = Location::create(m_frame);
     return m_location.get();
-}
-
-VisualViewport* DOMWindow::visualViewport() const
-{
-    if (!isCurrentlyDisplayedInFrame())
-        return nullptr;
-    if (!m_visualViewport)
-        m_visualViewport = VisualViewport::create(m_frame);
-    return m_visualViewport.get();
 }
 
 #if ENABLE(USER_MESSAGE_HANDLERS)

@@ -141,7 +141,6 @@ namespace WebCore {
     macro(VRFieldOfView) \
     macro(VRFrameData) \
     macro(VRStageParameters) \
-    macro(VisualViewport) \
     macro(WebGL2RenderingContext) \
     macro(WebGLVertexArrayObject) \
     macro(WebGPUBuffer) \
@@ -280,7 +279,6 @@ namespace WebCore {
     macro(underlyingSink) \
     macro(underlyingSource) \
     macro(view) \
-    macro(visualViewport) \
     macro(webRTCLegacyAPIEnabled) \
     macro(webkit) \
     macro(webkitAudioContext) \
