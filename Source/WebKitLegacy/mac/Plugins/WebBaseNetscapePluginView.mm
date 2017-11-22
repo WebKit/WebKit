@@ -51,7 +51,6 @@
 #import <WebCore/RenderEmbeddedObject.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/SecurityOrigin.h>
-#import <WebCore/WebCoreObjCExtras.h>
 #import <WebKitLegacy/DOMPrivate.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <runtime/InitializeThreading.h>

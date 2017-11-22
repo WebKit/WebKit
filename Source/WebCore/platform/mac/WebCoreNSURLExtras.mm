@@ -28,7 +28,6 @@
 
 #import "config.h"
 #import "URLParser.h"
-#import "WebCoreObjCExtras.h"
 #import "WebCoreNSURLExtras.h"
 #import <wtf/Function.h>
 #import <wtf/HexNumber.h>

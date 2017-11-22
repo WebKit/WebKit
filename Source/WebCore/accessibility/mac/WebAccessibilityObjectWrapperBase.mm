@@ -61,7 +61,6 @@
 #import "TextCheckingHelper.h"
 #import "VisibleUnits.h"
 #import "WebCoreFrameView.h"
-#import "WebCoreObjCExtras.h"
 
 using namespace WebCore;
 using namespace HTMLNames;

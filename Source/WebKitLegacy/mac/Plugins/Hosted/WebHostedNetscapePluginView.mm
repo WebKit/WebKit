@@ -46,7 +46,6 @@
 #import <WebCore/RenderEmbeddedObject.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/WebCoreCALayerExtras.h>
-#import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/runtime_root.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <runtime/InitializeThreading.h>

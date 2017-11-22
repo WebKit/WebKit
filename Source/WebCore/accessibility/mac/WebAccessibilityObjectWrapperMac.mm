@@ -77,7 +77,6 @@
 #import "TextIterator.h"
 #import "VisibleUnits.h"
 #import "WebCoreFrameView.h"
-#import "WebCoreObjCExtras.h"
 #import <pal/spi/mac/HIServicesSPI.h>
 #import <pal/spi/mac/NSAccessibilitySPI.h>
 #import <wtf/ObjcRuntimeExtras.h>

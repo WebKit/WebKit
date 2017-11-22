@@ -34,7 +34,6 @@
 #import "WebSelectionServiceController.h"
 #import "WebViewGroup.h"
 #import <WebCore/AlternativeTextUIController.h>
-#import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/ValidationBubble.h>

@@ -66,7 +66,6 @@
 #import <WebCore/ScriptController.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/UserGestureIndicator.h>
-#import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <WebCore/npruntime_impl.h>
 #import <WebCore/runtime_root.h>

@@ -29,7 +29,6 @@
 #import "DOMRangeInternal.h"
 #import "WebTypesInternal.h"
 #import <WebCore/TextIterator.h>
-#import <WebCore/WebCoreObjCExtras.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>

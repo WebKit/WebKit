@@ -49,7 +49,6 @@
 #import <WebCore/PlatformStrategies.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityPolicy.h>
-#import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <runtime/JSLock.h>

@@ -1,3 +1,18 @@
+2017-11-22  Christopher Reid  <chris.reid@sony.com>
+
+        WebCoreObjCExtras.h is being included in too many places
+        https://bugs.webkit.org/show_bug.cgi?id=179931
+
+        Reviewed by Darin Adler.
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        * Plugins/WebBasePluginPackage.mm:
+        * Plugins/WebNetscapePluginStream.mm:
+        * Plugins/WebNetscapePluginView.mm:
+        * WebView/WebTextIterator.mm:
+        * WebView/WebViewData.mm:
+
 2017-11-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r225093.
