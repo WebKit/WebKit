@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<style>
+    body {
+        height: 2000px;
+        width: 2000px;
+    }
+    #frame {
+        height: 500px;
+        width: 200px;
+    }
+</style>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+    var pageScaleFactor = 2;
+    var scrollbarThicknessInCSSPixels;
+
+    if (window.internals)
+        internals.settings.setVisualViewportEnabled(true);
+
+    function frameViewport() {
+        var frame = document.getElementById("frame");
+        return frame.contentWindow.visualViewport;
+    }
+
+    var test = async_test('Verify viewport dimensions for iframe.');
+
+    var doAfterZooming = test.step_func(function() {
+        // The page scale on the root frame shouldn't affect the viewport/scale
+        // values in the iframe.
+        var frame = document.getElementById("frame");
+        frame.contentWindow.scrollTo(10, 15);
+        assert_equals(frameViewport().width, 200 - scrollbarThicknessInCSSPixels, "width");
+        assert_equals(frameViewport().height, 500 - scrollbarThicknessInCSSPixels, "height");
+        assert_equals(frameViewport().pageLeft, 10, "pageLeft");
+        assert_equals(frameViewport().pageTop, 15, "pageTop");
+        assert_equals(frameViewport().offsetLeft, 0, "offsetLeft");
+        assert_equals(frameViewport().offsetTop, 0, "offsetTop");
+        assert_equals(frameViewport().scale, 1, "scale");
+
+        test.done();
+    });
+
+    function getUIScript() {
+        return `(function() {
+            uiController.zoomToScale(${pageScaleFactor}, function() {
+                uiController.uiScriptComplete(uiController.zoomScale);
+            });
+        })();`;
+    }
+
+    window.onload = function() {
+        scrollbarThicknessInCSSPixels = window.innerWidth - document.documentElement.clientWidth;
+        testRunner.runUIScript(getUIScript(), function(zoomScale) {
+            doAfterZooming();
+        });
+    };
+</script>
+<iframe id="frame" srcdoc="
+<style>
+  body {
+    width: 2000px;
+    height: 2000px;
+  }
+</style>
+"></iframe>

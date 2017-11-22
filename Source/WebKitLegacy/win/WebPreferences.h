@@ -265,6 +265,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setDataTransferItemsEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE inspectorAdditionsEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setInspectorAdditionsEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE visualViewportAPIEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setVisualViewportAPIEnabled(BOOL);
 
     // WebPreferences
 

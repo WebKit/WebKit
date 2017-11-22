@@ -1,3 +1,29 @@
+2017-11-22  Ali Juma  <ajuma@chromium.org>
+
+        Implement VisualViewport API attributes
+        https://bugs.webkit.org/show_bug.cgi?id=179385
+
+        Reviewed by Frédéric Wang.
+
+        Update expectations for viewport WPTs. The new expectations are all passing,
+        except as mentioned below.
+
+        * web-platform-tests/viewport/viewport-no-resize-event-on-overflow-recalc-expected.txt:
+        * web-platform-tests/viewport/viewport-read-size-causes-layout-expected.txt:
+        * web-platform-tests/viewport/viewport-read-size-in-iframe-causes-layout-expected.txt:
+        * web-platform-tests/viewport/viewport-resize-event-on-load-overflowing-page-expected.txt:
+          Fails since events are not implemented yet (wkbug.com/b/179386).
+        * web-platform-tests/viewport/viewport-scrollbars-cause-resize-expected.txt:
+        * web-platform-tests/viewport/viewport-type-expected.txt:
+        * web-platform-tests/viewport/viewport-unscaled-scale-expected.txt:
+        * web-platform-tests/viewport/viewport-unscaled-scale-iframe-expected.txt:
+        * web-platform-tests/viewport/viewport-unscaled-scroll-expected.txt:
+        * web-platform-tests/viewport/viewport-unscaled-scroll-iframe-expected.txt:
+          Passing expectation for non-iOS, but fails on iOS because iframes aren't scrollable (wkbug.com/b/179794).
+        * web-platform-tests/viewport/viewport-unscaled-size-expected.txt:
+        * web-platform-tests/viewport/viewport-unscaled-size-iframe-expected.txt:
+          Passing expectation for non-iOS, but fails on iOS because iframes aren't scrollable (wkbug.com/b/179794).
+
 2017-11-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r225093.

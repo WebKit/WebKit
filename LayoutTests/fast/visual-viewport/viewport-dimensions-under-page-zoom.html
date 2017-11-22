@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<style>
+    body {
+        height: 2000px;
+        width: 2000px;
+    }
+</style>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+    var pageScaleFactor = 2;
+    var pageZoomFactor = 2;
+    var scrollbarThicknessInCSSPixels;
+
+    if (window.internals)
+        internals.settings.setVisualViewportEnabled(true);
+
+    function viewport() {
+        return window.visualViewport;
+    }
+
+    var test = async_test('Verify viewport dimensions under page zoom.');
+
+    var doAfterZooming = test.step_func(function() {
+        window.scrollTo(0, 0);
+        scrollbarThicknessInCSSPixels /= pageScaleFactor;
+
+        // Make the layout viewport have origin (100, 100).
+        window.scrollTo(1500, 1500);
+        window.scrollTo(100, 100);
+        window.scrollTo(110, 110);
+
+        assert_equals(viewport().offsetTop, 10, "offsetTop with page scale");
+        assert_equals(viewport().offsetLeft, 10, "offsetLeft with page scale");
+        assert_equals(viewport().pageLeft, 110, "pageLeft with page scale");
+        assert_equals(viewport().pageTop, 110, "pageTop with page scale");
+        assert_equals(viewport().width, 400 - scrollbarThicknessInCSSPixels, "width with page scale");
+        assert_equals(viewport().height, 300 - scrollbarThicknessInCSSPixels, "height with page scale");
+        assert_equals(viewport().scale, 2, "scale with page scale");
+
+        window.internals.setPageZoomFactor(pageZoomFactor);
+        scrollbarThicknessInCSSPixels /= pageZoomFactor;
+
+        testRunner.runUIScript(getUIScript(), function(zoomScale) {
+            // Make the layout viewport havie origin (100, 100).
+            window.scrollTo(1500, 1500);
+            window.scrollTo(100, 100);
+            window.scrollTo(110, 110);
+
+            assert_equals(viewport().offsetTop, 10, "offsetTop with page scale and page zoom");
+            assert_equals(viewport().offsetLeft, 10, "offsetLeft with page scale and page zoom");
+            assert_equals(viewport().pageLeft, 110, "pageLeft with page scale and page zoom");
+            assert_equals(viewport().pageTop, 110, "pageTop with page scale and page zoom");
+            assert_equals(viewport().width,
+                400 / pageZoomFactor - scrollbarThicknessInCSSPixels,
+                "width with page scale and page zoom");
+            assert_equals(viewport().height,
+                300 / pageZoomFactor - scrollbarThicknessInCSSPixels,
+                "height with page scale and page zoom");
+            assert_equals(viewport().scale, 2, "scale with page scale and page zoom");
+
+            test.done();
+        });
+    });
+
+    function getUIScript() {
+        return `(function() {
+            uiController.zoomToScale(${pageScaleFactor}, function() {
+                uiController.uiScriptComplete(uiController.zoomScale);
+            });
+        })();`;
+    }
+
+    window.onload = function() {
+        scrollbarThicknessInCSSPixels = window.innerWidth - document.documentElement.clientWidth;
+        testRunner.runUIScript(getUIScript(), function(zoomScale) {
+            doAfterZooming();
+        });
+    };
+</script>

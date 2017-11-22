@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<style>
+    body {
+        height: 2000px;
+        width: 2000px;
+    }
+</style>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+    var pageZoomFactor = 1.25;
+    var pageScaleFactor = 2;
+    var scrollbarThicknessInCSSPixels;
+
+    if (window.internals)
+        internals.settings.setVisualViewportEnabled(true);
+
+    function viewport() {
+        return window.visualViewport;
+    }
+
+    var test = async_test('Verify viewport dimensions exclude scrollbars.');
+
+    var doAfterZooming = test.step_func(function() {
+        window.scrollTo(0, 0);
+        scrollbarThicknessInCSSPixels /= pageScaleFactor;
+
+        assert_equals(
+            viewport().width,
+            800 / pageScaleFactor - scrollbarThicknessInCSSPixels,
+            "Width with page scale");
+        assert_equals(
+            viewport().height,
+            600 / pageScaleFactor - scrollbarThicknessInCSSPixels,
+            "Height with page scale");
+
+        window.internals.setPageZoomFactor(pageZoomFactor);
+
+        // Since the scrollbars don't change size to the user with page zoom,
+        // they're actually smaller in CSS pixels.
+        scrollbarThicknessInCSSPixels /= pageZoomFactor;
+        assert_equals(
+            viewport().width, 
+            800 / pageScaleFactor / pageZoomFactor - scrollbarThicknessInCSSPixels,
+            "Width with page scale and page zoom");
+        assert_equals(
+            viewport().height,
+            600 / pageScaleFactor / pageZoomFactor - scrollbarThicknessInCSSPixels,
+            "Height with page scale and page zoom");
+        test.done();
+    });
+
+    function getUIScript() {
+        return `(function() {
+            uiController.zoomToScale(${pageScaleFactor}, function() {
+                uiController.uiScriptComplete(uiController.zoomScale);
+            });
+        })();`;
+    }
+
+    window.onload = function() {
+        scrollbarThicknessInCSSPixels = window.innerWidth - document.documentElement.clientWidth;
+        testRunner.runUIScript(getUIScript(), function(zoomScale) {
+            doAfterZooming();
+        });
+    };
+</script>

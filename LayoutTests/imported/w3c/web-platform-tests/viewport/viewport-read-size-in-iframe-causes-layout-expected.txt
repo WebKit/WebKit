@@ -2,5 +2,5 @@ This test checks that requesting the viewport size in an iframe causes any pendi
 
 
 
-FAIL Untitled undefined is not an object (evaluating 'frames[0].window.visualViewport.width')
+PASS Untitled 
 
