@@ -1,3 +1,13 @@
+2017-11-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        Drop ENABLE_IMAGE_DECODER_DOWN_SAMPLING code
+        https://bugs.webkit.org/show_bug.cgi?id=179921
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/WebKitFeatures.cmake: Remove the CMake option that
+        enabled IMAGE_DECODER_DOWN_SAMPLING code.
+
 2017-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.19.2 release.

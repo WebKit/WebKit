@@ -176,10 +176,6 @@ public:
     virtual void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
         const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, BlendMode = BlendModeNormal);
 
-#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
-    FloatRect adjustSourceRectForDownSampling(const FloatRect& srcRect, const IntSize& scaledSize) const;
-#endif
-
 #if !ASSERT_DISABLED
     virtual bool notSolidColor() { return true; }
 #endif

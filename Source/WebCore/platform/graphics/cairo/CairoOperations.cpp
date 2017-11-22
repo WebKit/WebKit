@@ -656,15 +656,7 @@ void drawNativeImage(PlatformContextCairo& platformContext, cairo_surface_t* sur
     else
         Cairo::State::setCompositeOperation(platformContext, compositeOperator, blendMode);
 
-#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
-    IntSize scaledSize = nativeImageSize(surface);
-    FloatRect src = adjustSourceRectForDownSampling(srcRect, scaledSize);
-#else
-    FloatRect src(srcRect);
-#endif
-
     FloatRect dst = destRect;
-
     if (orientation != DefaultImageOrientation) {
         // ImageOrientation expects the origin to be at (0, 0).
         Cairo::translate(platformContext, dst.x(), dst.y());
@@ -677,7 +669,7 @@ void drawNativeImage(PlatformContextCairo& platformContext, cairo_surface_t* sur
         }
     }
 
-    platformContext.drawSurfaceToContext(surface, dst, src, targetContext);
+    platformContext.drawSurfaceToContext(surface, dst, srcRect, targetContext);
     platformContext.restore();
 }
 

@@ -517,28 +517,16 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     int width = scaledSize().width();
     unsigned char nonTrivialAlphaMask = 0;
 
-#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
-    if (m_scaled) {
-        for (int x = 0; x < width; ++x, ++address) {
-            png_bytep pixel = row + m_scaledColumns[x] * colorChannels;
-            unsigned alpha = hasAlpha ? pixel[3] : 255;
+    png_bytep pixel = row;
+    if (hasAlpha) {
+        for (int x = 0; x < width; ++x, pixel += 4, ++address) {
+            unsigned alpha = pixel[3];
             buffer.backingStore()->setPixel(address, pixel[0], pixel[1], pixel[2], alpha);
             nonTrivialAlphaMask |= (255 - alpha);
         }
-    } else
-#endif
-    {
-        png_bytep pixel = row;
-        if (hasAlpha) {
-            for (int x = 0; x < width; ++x, pixel += 4, ++address) {
-                unsigned alpha = pixel[3];
-                buffer.backingStore()->setPixel(address, pixel[0], pixel[1], pixel[2], alpha);
-                nonTrivialAlphaMask |= (255 - alpha);
-            }
-        } else {
-            for (int x = 0; x < width; ++x, pixel += 3, ++address)
-                *address = makeRGB(pixel[0], pixel[1], pixel[2]);
-        }
+    } else {
+        for (int x = 0; x < width; ++x, pixel += 3, ++address)
+            *address = makeRGB(pixel[0], pixel[1], pixel[2]);
     }
 
     if (nonTrivialAlphaMask && !buffer.hasAlpha())
@@ -835,21 +823,6 @@ void PNGImageDecoder::frameComplete()
         if (m_blend && !hasAlpha)
             m_blend = 0;
 
-#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
-        for (int y = 0; y < rect.maxY() - rect.y(); ++y) {
-            png_bytep row = interlaceBuffer + (m_scaled ? m_scaledRows[y] : y) * colorChannels * size().width();
-            RGBA32* address = buffer.backingStore()->pixelAt(rect.x(), y + rect.y());
-            for (int x = 0; x < rect.maxX() - rect.x(); ++x) {
-                png_bytep pixel = row + (m_scaled ? m_scaledColumns[x] : x) * colorChannels;
-                unsigned alpha = hasAlpha ? pixel[3] : 255;
-                nonTrivialAlpha |= alpha < 255;
-                if (!m_blend)
-                    buffer.backingStore()->setPixel(address++, pixel[0], pixel[1], pixel[2], alpha);
-                else
-                    buffer.backingStore()->blendPixel(address++, pixel[0], pixel[1], pixel[2], alpha);
-            }
-        }
-#else
         ASSERT(!m_scaled);
         png_bytep row = interlaceBuffer;
         for (int y = rect.y(); y < rect.maxY(); ++y, row += colorChannels * size().width()) {
@@ -864,7 +837,6 @@ void PNGImageDecoder::frameComplete()
                     buffer.backingStore()->blendPixel(address++, pixel[0], pixel[1], pixel[2], alpha);
             }
         }
-#endif
 
         if (!nonTrivialAlpha) {
             IntRect rect = buffer.backingStore()->frameRect();

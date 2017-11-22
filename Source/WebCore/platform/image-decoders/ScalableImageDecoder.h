@@ -42,10 +42,7 @@ namespace WebCore {
 
 // ScalableImageDecoder is a base for all format-specific decoders
 // (e.g. JPEGImageDecoder). This base manages the ImageFrame cache.
-//
-// ENABLE(IMAGE_DECODER_DOWN_SAMPLING) allows image decoders to downsample
-// at decode time. Image decoders will downsample any images larger than
-// |m_maxNumPixels|. FIXME: Not yet supported by all decoders.
+
 class ScalableImageDecoder : public ImageDecoder {
     WTF_MAKE_NONCOPYABLE(ScalableImageDecoder); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -221,11 +218,12 @@ private:
     IntSize m_size;
     EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::TypeAvailable };
     bool m_decodingSizeFromSetData { false };
-#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
-    static const int m_maxNumPixels { 1024 * 1024 };
-#else
+
+    // FIXME: Evaluate the need for decoded data scaling. m_scaled,
+    // m_scaledColumns and m_scaledRows are member variables that are
+    // affected by this value, and are not used at all since the value
+    // is negavite (see prepareScaleDataIfNecessary()).
     static const int m_maxNumPixels { -1 };
-#endif
 };
 
 } // namespace WebCore

@@ -420,10 +420,6 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_ICONDATABASE 1
 #endif
 
-#if !defined(ENABLE_IMAGE_DECODER_DOWN_SAMPLING)
-#define ENABLE_IMAGE_DECODER_DOWN_SAMPLING 0
-#endif
-
 #if !defined(ENABLE_INDEXED_DATABASE)
 #define ENABLE_INDEXED_DATABASE 0
 #endif

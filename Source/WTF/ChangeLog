@@ -1,3 +1,13 @@
+2017-11-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        Drop ENABLE_IMAGE_DECODER_DOWN_SAMPLING code
+        https://bugs.webkit.org/show_bug.cgi?id=179921
+
+        Reviewed by Carlos Garcia Campos.
+
+        * wtf/FeatureDefines.h: Remove the ENABLE_IMAGE_DECODER_DOWN_SAMPLING
+        definition.
+
 2017-11-19  Tim Horton  <timothy_horton@apple.com>
 
         Remove unused TOUCH_ICON_LOADING feature flag
