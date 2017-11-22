@@ -63,7 +63,6 @@ public:
     unsigned autoRepeatCountForDirection(GridTrackSizingDirection direction) const { return m_grid.autoRepeatTracks(direction); }
 
     // Required by GridTrackSizingAlgorithm. Keep them under control.
-    bool isOrthogonalChild(const RenderBox&) const;
     LayoutUnit guttersSize(const Grid&, GridTrackSizingDirection, unsigned startLine, unsigned span, std::optional<LayoutUnit> availableSize) const;
 
     StyleContentAlignmentData contentAlignment(GridTrackSizingDirection) const;
@@ -136,8 +135,6 @@ private:
     LayoutUnit gridAreaBreadthForChildIncludingAlignmentOffsets(const RenderBox&, GridTrackSizingDirection) const;
 
     void paintChildren(PaintInfo& forSelf, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect) override;
-    LayoutUnit marginLogicalSizeForChild(GridTrackSizingDirection, const RenderBox&) const;
-    LayoutUnit computeMarginLogicalSizeForChild(GridTrackSizingDirection, const RenderBox&) const;
     LayoutUnit availableAlignmentSpaceForChildBeforeStretching(LayoutUnit gridAreaBreadthForChild, const RenderBox&) const;
     StyleSelfAlignmentData justifySelfForChild(const RenderBox&, const RenderStyle* = nullptr) const;
     StyleSelfAlignmentData alignSelfForChild(const RenderBox&, const RenderStyle* = nullptr) const;
@@ -163,8 +160,6 @@ private:
     unsigned numTracks(GridTrackSizingDirection, const Grid&) const;
 
     LayoutUnit translateRTLCoordinate(LayoutUnit) const;
-
-    GridTrackSizingDirection flowAwareDirectionForChild(const RenderBox&, GridTrackSizingDirection) const;
 
     Grid m_grid;
 

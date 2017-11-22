@@ -32,6 +32,7 @@
 #include "InlineIterator.h"
 #include "InlineTextBox.h"
 #include "InlineTextBoxStyle.h"
+#include "LayoutState.h"
 #include "LineLayoutState.h"
 #include "Logging.h"
 #include "RenderBlockFlow.h"

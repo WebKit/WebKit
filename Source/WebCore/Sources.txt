@@ -1731,6 +1731,7 @@ rendering/FlexibleBoxAlgorithm.cpp
 rendering/FixedTableLayout.cpp
 rendering/FloatingObjects.cpp
 rendering/Grid.cpp
+rendering/GridLayoutFunctions.cpp
 rendering/GridTrackSizingAlgorithm.cpp
 rendering/HitTestLocation.cpp
 rendering/HitTestResult.cpp

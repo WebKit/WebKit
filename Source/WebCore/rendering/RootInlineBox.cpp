@@ -29,6 +29,7 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "InlineTextBox.h"
+#include "LayoutState.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "PaintInfo.h"
 #include "RenderFragmentedFlow.h"

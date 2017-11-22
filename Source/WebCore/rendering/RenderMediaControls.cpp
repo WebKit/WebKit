@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO) && PLATFORM(WIN) && USE(CG)
 
+#include "MediaControlElementTypes.h"
 #include "RenderStyle.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
