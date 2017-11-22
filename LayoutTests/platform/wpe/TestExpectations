@@ -325,7 +325,6 @@ Bug(WPE) fast/xmlhttprequest [ Skip ]
 Bug(WPE) fast/xpath [ Skip ]
 Bug(WPE) fast/zooming [ Skip ]
 
-webkit.org/b/173422 fast/animation/request-animation-frame-disabled.html [ Failure Crash ]
 Bug(WPE) fast/css-grid-layout/flex-content-sized-columns-resize.html [ Timeout ]
 Bug(WPE) fast/css-grid-layout/grid-baseline-margins.html [ ImageOnlyFailure ]
 Bug(WPE) fast/css-grid-layout/grid-baseline.html [ ImageOnlyFailure ]
