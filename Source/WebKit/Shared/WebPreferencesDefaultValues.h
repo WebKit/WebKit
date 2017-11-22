@@ -172,9 +172,8 @@
 
 #endif
 
-// Our Xcode build system does not currently have any concept of DEVELOPER_MODE.
 // Cocoa ports must disable experimental features on release branches for now.
-#if ENABLE(DEVELOPER_MODE) || PLATFORM(COCOA)
+#if ENABLE(EXPERIMENTAL_FEATURES) || PLATFORM(COCOA)
 #define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED true
 #else
 #define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED false

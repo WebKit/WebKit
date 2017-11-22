@@ -1,3 +1,39 @@
+2017-11-22  Tim Horton <timothy_horton@apple.com> and Michael Catanzaro <mcatanzaro@igalia.com>
+
+        Remove build-webkit's notion of feature flags having a default value
+        https://bugs.webkit.org/show_bug.cgi?id=177338
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Delegate feature flag default values to the build system.
+        (FeatureDefines.xcconfig for Xcode, WebKitFeatures.cmake and Options*.cmake for CMake, and FeatureDefines.h for everyone)
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (Factory.__init__):
+        Update GTK and WPE buildbot configuration to use --no-experimental-features on old stable
+        bots instead of --default-cmake-features.
+ 
+        * Scripts/build-webkit:
+        (cMakeArgsFromFeatures): Deleted.
+        Default feature values to 'undef'.
+        Remove the --default-cmake-features argument; it is now the default.
+        Add --no-experimental-features to replace it.
+        Stop printing the default feature flag value in the help.
+        Avoid propagating undefined values to the build system;
+        only mention flags that are overridden on the command line.
+
+        This has the nice side effect of using the default CMake features
+        for CMake builds, but still allowing toggling of them using the
+        prettier --FEATURE and --no-FEATURE arguments.
+
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject):
+        No longer need to suppress CMake warnings about unused arguments.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        Remove the default values from the feature list.
+
 2017-11-22  Mark Lam  <mark.lam@apple.com>
 
         [Re-landing] Pass --useDollarVM=true to all JSC tests.

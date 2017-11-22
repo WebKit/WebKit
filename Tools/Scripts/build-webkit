@@ -53,7 +53,6 @@ chdirWebKit();
 my $showHelp = 0;
 my $verbose = 0;
 my $clean = 0;
-my $defaultCMakeFeatures = 0;
 my $minimal = 0;
 my $installHeaders;
 my $installLibs;
@@ -63,6 +62,7 @@ my @cmakeArgs;
 my $onlyWebKitProject = 0;
 my $coverageSupport = 0;
 my $shouldRunStaticAnalyzer = 0;
+my $noExperimentalFeatures = 0;
 my $startTime = time();
 my $archs32bit = 0;
 my $skipLibraryUpdate = 0;
@@ -82,9 +82,10 @@ foreach (@ARGV) {
     }
 }
 
-# Initialize values from defaults
+# Feature flags default to undefined, where they will inherit the default value
+# specified by the build system, or to 'off' if --minimal is specified.
 foreach (@features) {
-    ${$_->{value}} = ($minimal ? 0 : $_->{default});
+    ${$_->{value}} = ($minimal ? 0 : undef);
 }
 
 my $programName = basename($0);
@@ -110,12 +111,12 @@ Usage: $programName [options] [options to pass to build system]
 
   --inspector-frontend              Copy Web Inspector user interface resources to the build directory
 
-  --prefix=<path>                   Set installation prefix to the given path (Gtk/Efl only)
+  --prefix=<path>                   Set installation prefix to the given path (CMake only, except Windows)
   --makeargs=<arguments>            Optional Makefile flags
   --cmakeargs=<arguments>           One or more optional CMake flags (e.g. --cmakeargs="-DFOO=bar -DCMAKE_PREFIX_PATH=/usr/local")
 
   --minimal                         No optional features, unless explicitly enabled
-  --default-cmake-features          Use the default CMake features enabled for the port (CMake based ports)
+  --no-experimental-features        No experimental features, unless explicitly enabled (CMake only)
 
   --only-webkit                     Build only the WebKit project
 
@@ -138,7 +139,7 @@ my %options = (
     'only-webkit' => \$onlyWebKitProject,
     'coverage' => \$coverageSupport,
     'analyze' => \$shouldRunStaticAnalyzer,
-    'default-cmake-features' => \$defaultCMakeFeatures,
+    'no-experimental-features' => \$noExperimentalFeatures,
     'skip-library-update' => \$skipLibraryUpdate,
     'use-ccache!' => \$useCCache,
 );
@@ -146,7 +147,7 @@ my %options = (
 # Build usage text and options list from features
 foreach (@features) {
     my $opt = sprintf("%-35s", "  --[no-]$_->{option}");
-    $usage .= "$opt $_->{desc} (default: $_->{default})\n";
+    $usage .= "$opt $_->{desc}\n";
     $options{"$_->{option}!"} = $_->{value};
 }
 
@@ -195,15 +196,15 @@ my @options = ();
 
 if (isAppleCocoaWebKit()) {
     push @options, XcodeOptions();
-    sub option($$$)
+    sub option($$)
     {
-        my ($feature, $isEnabled, $defaultValue) = @_;
-        return "" if $defaultValue == $isEnabled;
+        my ($feature, $isEnabled) = @_;
+        return "" if not defined $isEnabled;
         return $feature . "=" . ($isEnabled ? $feature : "");
     }
 
     foreach (@features) {
-        my $option = option($_->{define}, ${$_->{value}}, $_->{default});
+        my $option = option($_->{define}, ${$_->{value}});
         push @options, $option unless $option eq "";
     }
 
@@ -272,7 +273,7 @@ if (isCMakeBuild() && !isAnyWindows()) {
     my $maxCPULoad = maxCPULoad() if $makeArgs !~ /-l\s*\d+\.?\d*/;
     $makeArgs .= " -l" . maxCPULoad() if defined $maxCPULoad;
 
-    # We remove CMakeCache to avoid the bots to reuse cached flags when
+    # We remove CMakeCache to avoid the bots reusing cached flags when
     # we enable new features. This forces a reconfiguration.
     my @featureArgs = cMakeArgsFromFeatures();
     removeCMakeCache(@featureArgs);
@@ -369,15 +370,22 @@ exit 0;
 sub cMakeArgsFromFeatures()
 {
     my @args;
-    if (!$defaultCMakeFeatures) {
-        foreach (@features) {
-            my $featureName = $_->{define};
-            if ($featureName) {
-                my $featureEnabled = ${$_->{value}} ? "ON" : "OFF";
+
+    if (!$noExperimentalFeatures) {
+        push @args, "-DENABLE_EXPERIMENTAL_FEATURES=ON";
+    }
+
+    foreach (@features) {
+        my $featureName = $_->{define};
+        if ($featureName) {
+            my $featureValue = ${$_->{value}};
+            if (defined $featureValue) {
+                my $featureEnabled = $featureValue ? "ON" : "OFF";
                 push @args, "-D$featureName=$featureEnabled";
             }
         }
     }
+
     return @args;
 }
 

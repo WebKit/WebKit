@@ -1,3 +1,15 @@
+2017-11-22  Tim Horton <timothy_horton@apple.com> and Michael Catanzaro <mcatanzaro@igalia.com>
+
+        Remove build-webkit's notion of feature flags having a default value
+        https://bugs.webkit.org/show_bug.cgi?id=177338
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Add an ENABLE_EXPERIMENTAL_FEATURES flag and use it to enable certain features.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2017-11-21  Zan Dobersek  <zdobersek@igalia.com>
 
         Drop ENABLE_IMAGE_DECODER_DOWN_SAMPLING code
