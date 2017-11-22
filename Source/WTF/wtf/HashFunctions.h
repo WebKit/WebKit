@@ -22,6 +22,7 @@
 #define WTF_HashFunctions_h
 
 #include <stdint.h>
+#include <tuple>
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 

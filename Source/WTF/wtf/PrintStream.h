@@ -28,6 +28,7 @@
 
 #include <memory>
 #include <stdarg.h>
+#include <tuple>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Optional.h>

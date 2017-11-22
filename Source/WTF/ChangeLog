@@ -1,3 +1,14 @@
+2017-11-22  Stephan Szabo  <stephan.szabo@sony.com>
+
+        tuple related items are used in WTF without including tuple
+        https://bugs.webkit.org/show_bug.cgi?id=179926
+
+        Reviewed by Darin Adler.
+
+        * wtf/HashFunctions.h:
+        * wtf/PrintStream.h:
+        * wtf/threads/Signals.h:
+
 2017-11-21  Zan Dobersek  <zdobersek@igalia.com>
 
         Drop ENABLE_IMAGE_DECODER_DOWN_SAMPLING code

@@ -28,6 +28,7 @@
 #if USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
 
 #include <signal.h>
+#include <tuple>
 #include <wtf/Function.h>
 #include <wtf/Optional.h>
 #include <wtf/PlatformRegisters.h>
