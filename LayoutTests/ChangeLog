@@ -1,3 +1,19 @@
+2017-11-22  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Available height is wrong for positioned elements with "box-sizing: border-box"
+        https://bugs.webkit.org/show_bug.cgi?id=178783
+
+        Reviewed by Darin Adler.
+
+        There are some cases failing in fast/box-sizing/fill-available.html,
+        this is because of a different bug (see https://webkit.org/b/178790)
+        as noted down in the text comments.
+
+        * fast/box-sizing/fill-available-expected.txt: Added.
+        * fast/box-sizing/fill-available.html: Added.
+        * fast/box-sizing/replaced-expected.txt: Added.
+        * fast/box-sizing/replaced.html: Added.
+
 2017-11-22  Ms2ger  <Ms2ger@igalia.com>
 
         [WPE] Enable request-animation-frame-disabled.html.

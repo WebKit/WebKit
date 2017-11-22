@@ -3081,8 +3081,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Len
                 auto& block = downcast<RenderBlock>(*container);
                 auto computedValues = block.computeLogicalHeight(block.logicalHeight(), 0);
                 LayoutUnit newContentHeight = computedValues.m_extent - block.borderAndPaddingLogicalHeight() - block.scrollbarLogicalHeight();
-                LayoutUnit newHeight = block.adjustContentBoxLogicalHeightForBoxSizing(newContentHeight);
-                return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(logicalHeight, newHeight));
+                return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(logicalHeight, newContentHeight));
             }
             
             // FIXME: availableLogicalHeight() is wrong if the replaced element's block-flow is perpendicular to the
@@ -3161,8 +3160,7 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogi
     if (is<RenderBlock>(*this) && isOutOfFlowPositioned() && style().height().isAuto() && !(style().top().isAuto() || style().bottom().isAuto())) {
         RenderBlock& block = const_cast<RenderBlock&>(downcast<RenderBlock>(*this));
         auto computedValues = block.computeLogicalHeight(block.logicalHeight(), 0);
-        LayoutUnit newContentHeight = computedValues.m_extent - block.borderAndPaddingLogicalHeight() - block.scrollbarLogicalHeight();
-        return adjustContentBoxLogicalHeightForBoxSizing(newContentHeight);
+        return computedValues.m_extent - block.borderAndPaddingLogicalHeight() - block.scrollbarLogicalHeight();
     }
 
     // FIXME: This is wrong if the containingBlock has a perpendicular writing mode.
