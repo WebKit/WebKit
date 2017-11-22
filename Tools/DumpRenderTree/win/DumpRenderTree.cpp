@@ -772,7 +772,7 @@ static bool shouldEnableDeveloperExtras(const char* pathOrURL)
 
 static void enableExperimentalFeatures(IWebPreferences* preferences)
 {
-    COMPtr<IWebPreferencesPrivate5> prefsPrivate { Query, preferences };
+    COMPtr<IWebPreferencesPrivate6> prefsPrivate { Query, preferences };
 
     // FIXME: CSSGridLayout
     // FIXME: SpringTimingFunction
@@ -782,6 +782,7 @@ static void enableExperimentalFeatures(IWebPreferences* preferences)
     // FIXME: ModernMediaControls
     // FIXME: InputEvents
     // FIXME: SubtleCrypto
+    prefsPrivate->setVisualViewportAPIEnabled(TRUE);
     prefsPrivate->setWebAnimationsEnabled(TRUE);
     // FIXME: WebGL2
     // FIXME: WebRTC

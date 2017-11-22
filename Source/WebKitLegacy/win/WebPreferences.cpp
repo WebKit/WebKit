@@ -322,6 +322,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitInspectorAdditionsEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitVisualViewportAPIEnabledPreferenceKey), kCFBooleanFalse);
+
     defaultSettings = defaults;
 }
 
@@ -2090,6 +2092,20 @@ HRESULT WebPreferences::inspectorAdditionsEnabled(_Out_ BOOL* enabled)
 HRESULT WebPreferences::setInspectorAdditionsEnabled(BOOL enabled)
 {
     setBoolValue(WebKitInspectorAdditionsEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::visualViewportAPIEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitVisualViewportAPIEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setVisualViewportAPIEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitVisualViewportAPIEnabledPreferenceKey, enabled);
     return S_OK;
 }
 

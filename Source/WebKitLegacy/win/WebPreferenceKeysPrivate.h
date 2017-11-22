@@ -191,3 +191,5 @@
 #define WebKitDataTransferItemsEnabledPreferenceKey "WebKitDataTransferItemsEnabled"
 
 #define WebKitInspectorAdditionsEnabledPreferenceKey "WebKitInspectorAdditionsEnabled"
+
+#define WebKitVisualViewportAPIEnabledPreferenceKey "WebKitVisualViewportAPIEnabled"

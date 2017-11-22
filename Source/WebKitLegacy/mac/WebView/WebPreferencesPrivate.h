@@ -574,6 +574,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)isSecureContextAttributeEnabled;
 
 @property (nonatomic) BOOL visualViewportEnabled;
+@property (nonatomic) BOOL visualViewportAPIEnabled;
 @property (nonatomic) BOOL largeImageAsyncDecodingEnabled;
 @property (nonatomic) BOOL animatedImageAsyncDecodingEnabled;
 @property (nonatomic) BOOL javaScriptMarkupEnabled;

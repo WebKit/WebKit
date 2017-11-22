@@ -1,3 +1,22 @@
+2017-11-21  Ali Juma  <ajuma@chromium.org>
+
+        Implement VisualViewport API attributes
+        https://bugs.webkit.org/show_bug.cgi?id=179385
+
+        Reviewed by Frédéric Wang.
+
+        Add a VisualViewportAPI preference.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::visualViewportAPIEnabled):
+        (WebPreferences::setVisualViewportAPIEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2017-11-14  Alex Christensen  <achristensen@webkit.org>
 
         Clean up old URL parser remnants

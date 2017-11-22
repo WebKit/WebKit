@@ -1,10 +1,7 @@
-CONSOLE MESSAGE: line 31: TypeError: undefined is not an object (evaluating 'window.visualViewport.addEventListener')
 No Resize Event Fired on Overflow Recalc
 
 Test Description: This test ensures we don't fire spurrious resize events when overflow is recalculated.
 
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'window.visualViewport.addEventListener')
-
-NOTRUN Resize event not fired at window.visualViewport when content is added 
+PASS Resize event not fired at window.visualViewport when content is added 
 

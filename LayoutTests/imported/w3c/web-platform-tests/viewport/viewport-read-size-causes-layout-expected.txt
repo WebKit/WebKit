@@ -1,5 +1,5 @@
 This test checks that requesting the viewport size causes any pending layout to occur.
 
 
-FAIL Untitled undefined is not an object (evaluating 'window.visualViewport.width')
+PASS Untitled 
 

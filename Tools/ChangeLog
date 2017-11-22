@@ -1,3 +1,17 @@
+2017-11-21  Ali Juma  <ajuma@chromium.org>
+
+        Implement VisualViewport API attributes
+        https://bugs.webkit.org/show_bug.cgi?id=179385
+
+        Reviewed by Frédéric Wang.
+
+        Enable the VisualViewportAPI in layout tests.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (enableExperimentalFeatures):
+
 2017-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Run unit tests in the bots

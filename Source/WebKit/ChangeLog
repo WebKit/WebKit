@@ -1,3 +1,14 @@
+2017-11-21  Ali Juma  <ajuma@chromium.org>
+
+        Implement VisualViewport API attributes
+        https://bugs.webkit.org/show_bug.cgi?id=179385
+
+        Reviewed by Frédéric Wang.
+
+        Add a VisualViewportAPI experimental feature.
+
+        * Shared/WebPreferences.yaml:
+
 2017-11-21  Christopher Reid  <chris.reid@sony.com>
 
         [PAL] Remove FileSystem's dependency on WebCoreNSStringExtras

@@ -245,6 +245,9 @@ inspector/unit-tests/heap-snapshot-collection-event.html [ Skip ]
 fast/scrolling/scroll-animator-overlay-scrollbars-clicked.html [ Skip ]
 fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html [ Skip ]
 
+# WK1 main frame scrollbars are native widgets whose size is unaffected by webkit-scrollbar.
+fast/visual-viewport/viewport-dimensions-exclude-custom-scrollbars.html [ Skip ]
+
 # This hit-test test doesn't work on DRT
 webkit.org/b/156084 accessibility/mac/video-tag-hit-test.html [ Skip ]
 

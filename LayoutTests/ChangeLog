@@ -1,3 +1,36 @@
+2017-11-21  Ali Juma  <ajuma@chromium.org>
+
+        Implement VisualViewport API attributes
+        https://bugs.webkit.org/show_bug.cgi?id=179385
+
+        Reviewed by Frédéric Wang.
+
+        Add tests for the Visual Viewport API, based on Blink's layout tests but modified
+        to use UIScriptController.
+
+        * fast/visual-viewport/viewport-dimensions-exclude-custom-scrollbars-expected.txt: Added.
+        * fast/visual-viewport/viewport-dimensions-exclude-custom-scrollbars.html: Added.
+        * fast/visual-viewport/viewport-dimensions-exclude-scrollbars-expected.txt: Added.
+        * fast/visual-viewport/viewport-dimensions-exclude-scrollbars.html: Added.
+        * fast/visual-viewport/viewport-dimensions-expected.txt: Added.
+        * fast/visual-viewport/viewport-dimensions-iframe-expected.txt: Added.
+        * fast/visual-viewport/viewport-dimensions-iframe.html: Added.
+        * fast/visual-viewport/viewport-dimensions-under-page-zoom-expected.txt: Added.
+        * fast/visual-viewport/viewport-dimensions-under-page-zoom.html: Added.
+        * fast/visual-viewport/viewport-dimensions.html: Added.
+        * platform/gtk/TestExpectations:
+          Skipped tests that use UIScriptController::zoomToScale, since this isn't implemented on GTK (webkit.org/b/168050).
+        * platform/ios/fast/visual-viewport/viewport-dimensions-iframe-expected.txt: Added.
+          Fails because iframes aren't scrollable on iOS (webkit.org/b/179794).
+        * platform/ios/imported/w3c/web-platform-tests/viewport/viewport-unscaled-scroll-iframe-expected.txt: Added.
+          Fails because iframes aren't scrollable on iOS (webkit.org/b/179794).
+        * platform/ios/imported/w3c/web-platform-tests/viewport/viewport-unscaled-size-expected.txt: Added.
+          Platform-specific expectation because of the window size being different on iOS.
+        * platform/ios/imported/w3c/web-platform-tests/viewport/viewport-unscaled-size-iframe-expected.txt: Added.
+          Fails because iframes aren't scrollable on iOS (webkit.org/b/179794).
+        * platform/mac-wk1/TestExpectations:
+          Skipped a test that applies webkit-scrollbar to main frame scrollbars, since this is unsupported in WK1.
+
 2017-11-21  Frederic Wang  <fwang@igalia.com>
 
         Async frame scrolling: handle fixed root backgrounds in frames
