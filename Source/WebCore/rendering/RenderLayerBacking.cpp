@@ -1019,7 +1019,7 @@ void RenderLayerBacking::updateGeometry()
         positionOverflowControlsLayers();
     }
 
-    if (!m_isMainFrameRenderViewLayer && !m_isFrameLayerWithTiledBacking) {
+    if (!m_isMainFrameRenderViewLayer) {
         // For non-root layers, background is always painted by the primary graphics layer.
         ASSERT(!m_backgroundLayer);
         // Subpixel offset from graphics layer or size changed.
@@ -1421,15 +1421,7 @@ bool RenderLayerBacking::updateDescendantClippingLayer(bool needsDescendantClip)
 
 void RenderLayerBacking::setBackgroundLayerPaintsFixedRootBackground(bool backgroundLayerPaintsFixedRootBackground)
 {
-    if (backgroundLayerPaintsFixedRootBackground == m_backgroundLayerPaintsFixedRootBackground)
-        return;
-
     m_backgroundLayerPaintsFixedRootBackground = backgroundLayerPaintsFixedRootBackground;
-
-    if (m_backgroundLayerPaintsFixedRootBackground) {
-        ASSERT(m_isFrameLayerWithTiledBacking);
-        renderer().view().frameView().removeSlowRepaintObject(renderer().view().rendererForRootBackground());
-    }
 }
 
 bool RenderLayerBacking::requiresHorizontalScrollbarLayer() const
@@ -1931,14 +1923,12 @@ void RenderLayerBacking::updateRootLayerConfiguration()
     bool viewIsTransparent = compositor().viewHasTransparentBackground(&backgroundColor);
 
     if (m_backgroundLayerPaintsFixedRootBackground && m_backgroundLayer) {
-        if (m_isMainFrameRenderViewLayer) {
-            m_backgroundLayer->setBackgroundColor(backgroundColor);
-            m_backgroundLayer->setContentsOpaque(!viewIsTransparent);
-        }
+        m_backgroundLayer->setBackgroundColor(backgroundColor);
+        m_backgroundLayer->setContentsOpaque(!viewIsTransparent);
 
         m_graphicsLayer->setBackgroundColor(Color());
         m_graphicsLayer->setContentsOpaque(false);
-    } else if (m_isMainFrameRenderViewLayer) {
+    } else {
         m_graphicsLayer->setBackgroundColor(backgroundColor);
         m_graphicsLayer->setContentsOpaque(!viewIsTransparent);
     }

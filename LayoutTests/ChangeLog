@@ -1,3 +1,18 @@
+2017-11-21  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r225089.
+        https://bugs.webkit.org/show_bug.cgi?id=179937
+
+        This patch caused compilation failures (Requested by fredw on
+        #webkit).
+
+        Reverted changeset:
+
+        "Async frame scrolling: handle fixed root backgrounds in
+        frames"
+        https://bugs.webkit.org/show_bug.cgi?id=176261
+        https://trac.webkit.org/changeset/225089
+
 2017-11-21  Frederic Wang  <fwang@igalia.com>
 
         Async frame scrolling: handle fixed root backgrounds in frames
