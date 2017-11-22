@@ -32,6 +32,7 @@
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "WillChangeData.h"
+#include <wtf/UUID.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -50,6 +51,7 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(ExecState& state, Elemen
 KeyframeEffect::KeyframeEffect(Element* target)
     : AnimationEffect(KeyframeEffectClass)
     , m_target(target)
+    , m_keyframes(emptyString())
 {
 }
 
@@ -72,7 +74,7 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(ExecState& state, Strong<JSOb
     if (!isJSArray(keyframes.get()))
         return Exception { TypeError };
 
-    Vector<Keyframe> newKeyframes { };
+    KeyframeList newKeyframes("keyframe-effect-" + createCanonicalUUIDString());
 
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -107,14 +109,18 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(ExecState& state, Strong<JSOb
         styleProperties->parseDeclaration(cssText.toString(), parserContext);
         unsigned numberOfCSSProperties = styleProperties->propertyCount();
 
-        Vector<CSSPropertyID> properties(numberOfCSSProperties);
+        KeyframeValue keyframeValue(0, nullptr);
         for (unsigned k = 0; k < numberOfCSSProperties; ++k) {
-            properties[k] = styleProperties->propertyAt(k).id();
-            styleResolver.applyPropertyToStyle(styleProperties->propertyAt(k).id(), styleProperties->propertyAt(k).value(), WTFMove(renderStyle));
+            auto cssPropertyId = styleProperties->propertyAt(k).id();
+            keyframeValue.addProperty(cssPropertyId);
+            newKeyframes.addProperty(cssPropertyId);
+            styleResolver.applyPropertyToStyle(cssPropertyId, styleProperties->propertyAt(k).value(), WTFMove(renderStyle));
             renderStyle = styleResolver.state().takeStyle();
         }
 
-        newKeyframes.append({ RenderStyle::clone(*renderStyle), properties });
+        keyframeValue.setKey(i);
+        keyframeValue.setStyle(RenderStyle::clonePtr(*renderStyle));
+        newKeyframes.insert(WTFMove(keyframeValue));
     }
 
     m_keyframes = WTFMove(newKeyframes);
@@ -127,12 +133,10 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(ExecState& state, Strong<JSOb
 void KeyframeEffect::computeStackingContextImpact()
 {
     m_triggersStackingContext = false;
-    for (auto& keyframe : m_keyframes) {
-        for (auto propertyID : keyframe.properties) {
-            if (WillChangeData::propertyCreatesStackingContext(propertyID)) {
-                m_triggersStackingContext = true;
-                break;
-            }
+    for (auto cssPropertyId : m_keyframes.properties()) {
+        if (WillChangeData::propertyCreatesStackingContext(cssPropertyId)) {
+            m_triggersStackingContext = true;
+            break;
         }
     }
 }
@@ -152,9 +156,8 @@ void KeyframeEffect::applyAtLocalTime(Seconds localTime, RenderStyle& targetStyl
 
     float progress = localTime / timing()->duration();
 
-    // FIXME: This will crash if we attempt to animate properties that require an AnimationBase.
-    for (auto propertyId : m_keyframes[0].properties)
-        CSSPropertyAnimation::blendProperties(this, propertyId, &targetStyle, &m_keyframes[0].style, &m_keyframes[1].style, progress);
+    for (auto cssPropertyId : m_keyframes.properties())
+        CSSPropertyAnimation::blendProperties(this, cssPropertyId, &targetStyle, m_keyframes[0].style(), m_keyframes[1].style(), progress);
 
     // https://w3c.github.io/web-animations/#side-effects-section
     // For every property targeted by at least one animation effect that is current or in effect, the user agent

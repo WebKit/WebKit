@@ -27,17 +27,13 @@
 
 #include "AnimationEffect.h"
 #include "CSSPropertyBlendingClient.h"
+#include "KeyframeList.h"
 #include "RenderStyle.h"
 #include <wtf/Ref.h>
 
 namespace WebCore {
 
 class Element;
-
-struct Keyframe {
-    RenderStyle style;
-    Vector<CSSPropertyID> properties;
-};
 
 class KeyframeEffect final : public AnimationEffect
     , public CSSPropertyBlendingClient {
@@ -64,7 +60,7 @@ private:
     void computeStackingContextImpact();
 
     RefPtr<Element> m_target;
-    Vector<Keyframe> m_keyframes;
+    KeyframeList m_keyframes;
     bool m_triggersStackingContext { false };
 
 };
