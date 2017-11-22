@@ -85,24 +85,27 @@ bool FELighting::setKernelUnitLengthY(float kernelUnitLengthY)
 const static int cPixelSize = 4;
 const static int cAlphaChannelOffset = 3;
 const static unsigned char cOpaqueAlpha = static_cast<unsigned char>(0xff);
+
+// These factors and the normal coefficients come from the table under https://www.w3.org/TR/SVG/filters.html#feDiffuseLightingElement.
 const static float cFactor1div2 = -1 / 2.f;
 const static float cFactor1div3 = -1 / 3.f;
 const static float cFactor1div4 = -1 / 4.f;
 const static float cFactor2div3 = -2 / 3.f;
 
-// << 1 is signed multiply by 2
-inline void FELighting::LightingData::topLeft(int offset, IntPoint& normalVector)
+inline IntSize FELighting::LightingData::topLeftNormal(int offset) const
 {
     int center = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     int right = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
     offset += widthMultipliedByPixelSize;
     int bottom = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     int bottomRight = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
-    normalVector.setX(-(center << 1) + (right << 1) - bottom + bottomRight);
-    normalVector.setY(-(center << 1) - right + (bottom << 1) + bottomRight);
+    return {
+        -2 * center + 2 * right - bottom + bottomRight,
+        -2 * center - right + 2 * bottom + bottomRight
+    };
 }
 
-inline void FELighting::LightingData::topRow(int offset, IntPoint& normalVector)
+inline IntSize FELighting::LightingData::topRowNormal(int offset) const
 {
     int left = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
     int center = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
@@ -111,36 +114,42 @@ inline void FELighting::LightingData::topRow(int offset, IntPoint& normalVector)
     int bottomLeft = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
     int bottom = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     int bottomRight = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
-    normalVector.setX(-(left << 1) + (right << 1) - bottomLeft + bottomRight);
-    normalVector.setY(-left - (center << 1) - right + bottomLeft + (bottom << 1) + bottomRight);
+    return {
+        -2 * left + 2 * right - bottomLeft + bottomRight,
+        -left - 2 * center - right + bottomLeft + 2 * bottom + bottomRight
+    };
 }
 
-inline void FELighting::LightingData::topRight(int offset, IntPoint& normalVector)
+inline IntSize FELighting::LightingData::topRightNormal(int offset) const
 {
     int left = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
     int center = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     offset += widthMultipliedByPixelSize;
     int bottomLeft = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
     int bottom = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
-    normalVector.setX(-(left << 1) + (center << 1) - bottomLeft + bottom);
-    normalVector.setY(-left - (center << 1) + bottomLeft + (bottom << 1));
+    return {
+        -2 * left + 2 * center - bottomLeft + bottom,
+        -left - 2 * center + bottomLeft + 2 * bottom
+    };
 }
 
-inline void FELighting::LightingData::leftColumn(int offset, IntPoint& normalVector)
+inline IntSize FELighting::LightingData::leftColumnNormal(int offset) const
 {
     int center = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     int right = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
     offset -= widthMultipliedByPixelSize;
     int top = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     int topRight = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
-    offset += widthMultipliedByPixelSize << 1;
+    offset += 2 * widthMultipliedByPixelSize;
     int bottom = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     int bottomRight = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
-    normalVector.setX(-top + topRight - (center << 1) + (right << 1) - bottom + bottomRight);
-    normalVector.setY(-(top << 1) - topRight + (bottom << 1) + bottomRight);
+    return {
+        -top + topRight - 2 * center + 2 * right - bottom + bottomRight,
+        -2 * top - topRight + 2 * bottom + bottomRight
+    };
 }
 
-inline void FELighting::LightingData::interior(int offset, IntPoint& normalVector)
+inline IntSize FELighting::LightingData::interiorNormal(int offset) const
 {
     int left = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
     int right = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
@@ -148,40 +157,46 @@ inline void FELighting::LightingData::interior(int offset, IntPoint& normalVecto
     int topLeft = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
     int top = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     int topRight = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
-    offset += widthMultipliedByPixelSize << 1;
+    offset += 2 * widthMultipliedByPixelSize;
     int bottomLeft = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
     int bottom = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     int bottomRight = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
-    normalVector.setX(-topLeft + topRight - (left << 1) + (right << 1) - bottomLeft + bottomRight);
-    normalVector.setY(-topLeft - (top << 1) - topRight + bottomLeft + (bottom << 1) + bottomRight);
+    return {
+        -topLeft + topRight - 2 * left + 2 * right - bottomLeft + bottomRight,
+        -topLeft - 2 * top - topRight + bottomLeft + 2 * bottom + bottomRight
+    };
 }
 
-inline void FELighting::LightingData::rightColumn(int offset, IntPoint& normalVector)
+inline IntSize FELighting::LightingData::rightColumnNormal(int offset) const
 {
     int left = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
     int center = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     offset -= widthMultipliedByPixelSize;
     int topLeft = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
     int top = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
-    offset += widthMultipliedByPixelSize << 1;
+    offset += 2 * widthMultipliedByPixelSize;
     int bottomLeft = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
     int bottom = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
-    normalVector.setX(-topLeft + top - (left << 1) + (center << 1) - bottomLeft + bottom);
-    normalVector.setY(-topLeft - (top << 1) + bottomLeft + (bottom << 1));
+    return {
+        -topLeft + top - 2 * left + 2 * center - bottomLeft + bottom,
+        -topLeft - 2 * top + bottomLeft + 2 * bottom
+    };
 }
 
-inline void FELighting::LightingData::bottomLeft(int offset, IntPoint& normalVector)
+inline IntSize FELighting::LightingData::bottomLeftNormal(int offset) const
 {
     int center = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     int right = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
     offset -= widthMultipliedByPixelSize;
     int top = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     int topRight = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
-    normalVector.setX(-top + topRight - (center << 1) + (right << 1));
-    normalVector.setY(-(top << 1) - topRight + (center << 1) + right);
+    return {
+        -top + topRight - 2 * center + 2 * right,
+        -2 * top - topRight + 2 * center + right
+    };
 }
 
-inline void FELighting::LightingData::bottomRow(int offset, IntPoint& normalVector)
+inline IntSize FELighting::LightingData::bottomRowNormal(int offset) const
 {
     int left = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
     int center = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
@@ -190,28 +205,31 @@ inline void FELighting::LightingData::bottomRow(int offset, IntPoint& normalVect
     int topLeft = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
     int top = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     int topRight = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
-    normalVector.setX(-topLeft + topRight - (left << 1) + (right << 1));
-    normalVector.setY(-topLeft - (top << 1) - topRight + left + (center << 1) + right);
+    return {
+        -topLeft + topRight - 2 * left + 2 * right,
+        -topLeft - 2 * top - topRight + left + 2 * center + right
+    };
 }
 
-inline void FELighting::LightingData::bottomRight(int offset, IntPoint& normalVector)
+inline IntSize FELighting::LightingData::bottomRightNormal(int offset) const
 {
     int left = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
     int center = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     offset -= widthMultipliedByPixelSize;
     int topLeft = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
     int top = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
-    normalVector.setX(-topLeft + top - (left << 1) + (center << 1));
-    normalVector.setY(-topLeft - (top << 1) + left + (center << 1));
+    return {
+        -topLeft + top - 2 * left + 2 * center,
+        topLeft - 2 * top + left + 2 * center
+    };
 }
 
-inline void FELighting::inlineSetPixel(int offset, LightingData& data, LightSource::PaintingData& paintingData,
-                                       int lightX, int lightY, float factorX, float factorY, IntPoint& normal2DVector)
+inline void FELighting::inlineSetPixel(int offset, LightingData& data, LightSource::PaintingData& paintingData, int lightX, int lightY, float factorX, float factorY, IntSize normal2DVector)
 {
     m_lightSource->updatePaintingData(paintingData, lightX, lightY, static_cast<float>(data.pixels->item(offset + cAlphaChannelOffset)) * data.surfaceScale);
 
     float lightStrength;
-    if (!normal2DVector.x() && !normal2DVector.y()) {
+    if (normal2DVector.isZero()) {
         // Normal vector is (0, 0, 1). This is a quite frequent case.
         if (m_lightingType == FELighting::DiffuseLighting)
             lightStrength = m_diffuseConstant * paintingData.lightVector.z() / paintingData.lightVectorLength;
@@ -226,8 +244,8 @@ inline void FELighting::inlineSetPixel(int offset, LightingData& data, LightSour
         }
     } else {
         FloatPoint3D normalVector;
-        normalVector.setX(factorX * static_cast<float>(normal2DVector.x()) * data.surfaceScale);
-        normalVector.setY(factorY * static_cast<float>(normal2DVector.y()) * data.surfaceScale);
+        normalVector.setX(factorX * static_cast<float>(normal2DVector.width()) * data.surfaceScale);
+        normalVector.setY(factorY * static_cast<float>(normal2DVector.height()) * data.surfaceScale);
         normalVector.setZ(1);
         float normalVectorLength = normalVector.length();
 
@@ -254,22 +272,17 @@ inline void FELighting::inlineSetPixel(int offset, LightingData& data, LightSour
     data.pixels->set(offset + 2, static_cast<unsigned char>(lightStrength * paintingData.colorVector.z()));
 }
 
-void FELighting::setPixel(int offset, LightingData& data, LightSource::PaintingData& paintingData,
-                          int lightX, int lightY, float factorX, float factorY, IntPoint& normalVector)
+void FELighting::setPixel(int offset, LightingData& data, LightSource::PaintingData& paintingData, int lightX, int lightY, float factorX, float factorY, IntSize normalVector)
 {
     inlineSetPixel(offset, data, paintingData, lightX, lightY, factorX, factorY, normalVector);
 }
 
 inline void FELighting::platformApplyGenericPaint(LightingData& data, LightSource::PaintingData& paintingData, int startY, int endY)
 {
-    IntPoint normalVector;
-    int offset = 0;
-
     for (int y = startY; y < endY; ++y) {
-        offset = y * data.widthMultipliedByPixelSize + cPixelSize;
+        int offset = y * data.widthMultipliedByPixelSize + cPixelSize;
         for (int x = 1; x < data.widthDecreasedByOne; ++x, offset += cPixelSize) {
-            data.interior(offset, normalVector);
-            inlineSetPixel(offset, data, paintingData, x, y, cFactor1div4, cFactor1div4, normalVector);
+            inlineSetPixel(offset, data, paintingData, x, y, cFactor1div4, cFactor1div4, data.interiorNormal(offset));
         }
     }
 }
@@ -341,55 +354,44 @@ bool FELighting::drawLighting(Uint8ClampedArray* pixels, int width, int height)
     paintingData.colorVector = FloatPoint3D(m_lightingColor.red(), m_lightingColor.green(), m_lightingColor.blue());
     m_lightSource->initPaintingData(paintingData);
 
-    // Top/Left corner.
-    IntPoint normalVector;
+    // Top left.
     int offset = 0;
-    data.topLeft(offset, normalVector);
-    setPixel(offset, data, paintingData, 0, 0, cFactor2div3, cFactor2div3, normalVector);
+    setPixel(offset, data, paintingData, 0, 0, cFactor2div3, cFactor2div3, data.topLeftNormal(offset));
 
-    // Top/Right pixel.
+    // Top right.
     offset = data.widthMultipliedByPixelSize - cPixelSize;
-    data.topRight(offset, normalVector);
-    setPixel(offset, data, paintingData, data.widthDecreasedByOne, 0, cFactor2div3, cFactor2div3, normalVector);
+    setPixel(offset, data, paintingData, data.widthDecreasedByOne, 0, cFactor2div3, cFactor2div3, data.topRightNormal(offset));
 
-    // Bottom/Left pixel.
+    // Bottom left.
     offset = data.heightDecreasedByOne * data.widthMultipliedByPixelSize;
-    data.bottomLeft(offset, normalVector);
-    setPixel(offset, data, paintingData, 0, data.heightDecreasedByOne, cFactor2div3, cFactor2div3, normalVector);
+    setPixel(offset, data, paintingData, 0, data.heightDecreasedByOne, cFactor2div3, cFactor2div3, data.bottomLeftNormal(offset));
 
-    // Bottom/Right pixel.
+    // Bottom right.
     offset = height * data.widthMultipliedByPixelSize - cPixelSize;
-    data.bottomRight(offset, normalVector);
-    setPixel(offset, data, paintingData, data.widthDecreasedByOne, data.heightDecreasedByOne, cFactor2div3, cFactor2div3, normalVector);
+    setPixel(offset, data, paintingData, data.widthDecreasedByOne, data.heightDecreasedByOne, cFactor2div3, cFactor2div3, data.bottomRightNormal(offset));
 
     if (width >= 3) {
         // Top row.
         offset = cPixelSize;
-        for (int x = 1; x < data.widthDecreasedByOne; ++x, offset += cPixelSize) {
-            data.topRow(offset, normalVector);
-            inlineSetPixel(offset, data, paintingData, x, 0, cFactor1div3, cFactor1div2, normalVector);
-        }
+        for (int x = 1; x < data.widthDecreasedByOne; ++x, offset += cPixelSize)
+            inlineSetPixel(offset, data, paintingData, x, 0, cFactor1div3, cFactor1div2, data.topRowNormal(offset));
+
         // Bottom row.
         offset = data.heightDecreasedByOne * data.widthMultipliedByPixelSize + cPixelSize;
-        for (int x = 1; x < data.widthDecreasedByOne; ++x, offset += cPixelSize) {
-            data.bottomRow(offset, normalVector);
-            inlineSetPixel(offset, data, paintingData, x, data.heightDecreasedByOne, cFactor1div3, cFactor1div2, normalVector);
-        }
+        for (int x = 1; x < data.widthDecreasedByOne; ++x, offset += cPixelSize)
+            inlineSetPixel(offset, data, paintingData, x, data.heightDecreasedByOne, cFactor1div3, cFactor1div2, data.bottomRowNormal(offset));
     }
 
     if (height >= 3) {
         // Left column.
         offset = data.widthMultipliedByPixelSize;
-        for (int y = 1; y < data.heightDecreasedByOne; ++y, offset += data.widthMultipliedByPixelSize) {
-            data.leftColumn(offset, normalVector);
-            inlineSetPixel(offset, data, paintingData, 0, y, cFactor1div2, cFactor1div3, normalVector);
-        }
+        for (int y = 1; y < data.heightDecreasedByOne; ++y, offset += data.widthMultipliedByPixelSize)
+            inlineSetPixel(offset, data, paintingData, 0, y, cFactor1div2, cFactor1div3, data.leftColumnNormal(offset));
+
         // Right column.
-        offset = (data.widthMultipliedByPixelSize << 1) - cPixelSize;
-        for (int y = 1; y < data.heightDecreasedByOne; ++y, offset += data.widthMultipliedByPixelSize) {
-            data.rightColumn(offset, normalVector);
-            inlineSetPixel(offset, data, paintingData, data.widthDecreasedByOne, y, cFactor1div2, cFactor1div3, normalVector);
-        }
+        offset = 2 * data.widthMultipliedByPixelSize - cPixelSize;
+        for (int y = 1; y < data.heightDecreasedByOne; ++y, offset += data.widthMultipliedByPixelSize)
+            inlineSetPixel(offset, data, paintingData, data.widthDecreasedByOne, y, cFactor1div2, cFactor1div3, data.rightColumnNormal(offset));
     }
 
     if (width >= 3 && height >= 3) {

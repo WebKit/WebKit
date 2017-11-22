@@ -72,15 +72,15 @@ protected:
         int widthDecreasedByOne;
         int heightDecreasedByOne;
 
-        inline void topLeft(int offset, IntPoint& normalVector);
-        inline void topRow(int offset, IntPoint& normalVector);
-        inline void topRight(int offset, IntPoint& normalVector);
-        inline void leftColumn(int offset, IntPoint& normalVector);
-        inline void interior(int offset, IntPoint& normalVector);
-        inline void rightColumn(int offset, IntPoint& normalVector);
-        inline void bottomLeft(int offset, IntPoint& normalVector);
-        inline void bottomRow(int offset, IntPoint& normalVector);
-        inline void bottomRight(int offset, IntPoint& normalVector);
+        inline IntSize topLeftNormal(int offset) const;
+        inline IntSize topRowNormal(int offset) const;
+        inline IntSize topRightNormal(int offset) const;
+        inline IntSize leftColumnNormal(int offset) const;
+        inline IntSize interiorNormal(int offset) const;
+        inline IntSize rightColumnNormal(int offset) const;
+        inline IntSize bottomLeftNormal(int offset) const;
+        inline IntSize bottomRowNormal(int offset) const;
+        inline IntSize bottomRightNormal(int offset) const;
     };
 
     template<typename Type>
@@ -101,11 +101,11 @@ protected:
 
     bool drawLighting(Uint8ClampedArray*, int, int);
     inline void inlineSetPixel(int offset, LightingData&, LightSource::PaintingData&,
-                               int lightX, int lightY, float factorX, float factorY, IntPoint& normalVector);
+        int lightX, int lightY, float factorX, float factorY, IntSize normalVector);
 
     // Not worth to inline every occurence of setPixel.
     void setPixel(int offset, LightingData&, LightSource::PaintingData&,
-                  int lightX, int lightY, float factorX, float factorY, IntPoint& normalVector);
+        int lightX, int lightY, float factorX, float factorY, IntSize normalVector);
 
     void platformApplySoftware() override;
 
@@ -114,8 +114,10 @@ protected:
     inline void platformApplyGenericPaint(LightingData&, LightSource::PaintingData&, int startX, int startY);
     inline void platformApplyGeneric(LightingData&, LightSource::PaintingData&);
 
+#if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC_OR_CLANG)
     static int getPowerCoefficients(float exponent);
     inline void platformApplyNeon(LightingData&, LightSource::PaintingData&);
+#endif
 
     LightingType m_lightingType;
     Ref<LightSource> m_lightSource;
