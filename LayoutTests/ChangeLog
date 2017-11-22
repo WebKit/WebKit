@@ -1,3 +1,21 @@
+2017-11-21  Frederic Wang  <fwang@igalia.com>
+
+        Async frame scrolling: handle fixed root backgrounds in frames
+        https://bugs.webkit.org/show_bug.cgi?id=176261
+
+        Reviewed by Antonio Gomes.
+
+        Extend tiled-drawing-async-frame-scrolling with new test cases and update expectations.
+
+        * compositing/tiling/tiled-drawing-async-frame-scrolling.html: Add two test cases with
+        non-white and fixed gradient background. The latter exhibits a crash fixed by that commit.
+        * compositing/tiling/tiled-drawing-async-frame-scrolling-expected.txt: Adjust expectation due
+        to spacing changes.
+        * platform/ios-wk2/compositing/tiling/tiled-drawing-async-frame-scrolling-expected.txt: Ditto.
+        Update expectation for the first case to remove the white background and add expectations for
+        the two new cases.
+        * platform/mac-wk2/compositing/tiling/tiled-drawing-async-frame-scrolling-expected.txt: Ditto.
+
 2017-11-21  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Enable imported/w3c/web-platform-tests/url/failure.html

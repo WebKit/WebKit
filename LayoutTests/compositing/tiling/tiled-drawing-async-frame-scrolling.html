@@ -18,10 +18,32 @@
                 testRunner.notifyDone();
             }
         }
+
+	var frameToLoadCount = 3;
+	function newFrameLoaded() {
+	    frameToLoadCount--;
+	    if (frameToLoadCount === 0)
+	        doTest();
+        }
     </script>
+    <style>
+        frame {
+            width: 200px;
+            height: 100px;
+        }
+    </style>
   </head>
   <body>
-    <iframe onload="setTimeout(doTest, 0)" id="frame" style="height: 100px; width: 200px;" scrolling="yes" srcdoc="&lt;div style='height: 300px; width: 400px;'&gt;&lt;/div&gt;"></iframe>
-    <pre id="layers">Layer tree goes here</p>
+    <iframe onload="newFrameLoaded()" scrolling="yes" srcdoc="<html style='
+            background: transparent;
+            height: 300px; width: 400px;'></html>"></iframe>
+    <iframe onload="newFrameLoaded()" scrolling="yes" srcdoc="<html style='
+            background: #ABCDEF;
+            height: 300px; width: 400px;'></html>"></iframe>
+    <iframe onload="newFrameLoaded()" scrolling="yes" srcdoc="<html style='
+            background-image: linear-gradient(45deg, black, white);
+            background-attachment: fixed;
+	    height: 300px; width: 400px;'></html>"></iframe>
+    <pre id="layers">Layer tree goes here</pre>
   </body>
 </html>
