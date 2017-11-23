@@ -61,7 +61,7 @@ public:
     bool supportsAlpha() const { return m_flags & SupportsAlpha; }
     const IntSize& size() const { return m_size; }
 
-    void paintToSurface(const IntRect&, Client&);
+    GraphicsContext& context();
     RefPtr<Image> uploadImage();
 
 private:

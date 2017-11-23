@@ -50,14 +50,9 @@ CoordinatedBuffer::CoordinatedBuffer(const IntSize& size, Flags flags)
 
 CoordinatedBuffer::~CoordinatedBuffer() = default;
 
-void CoordinatedBuffer::paintToSurface(const IntRect& rect, Client& client)
+GraphicsContext& CoordinatedBuffer::context()
 {
-    GraphicsContext& context = m_imageBuffer->context();
-    context.save();
-    context.clip(rect);
-    context.translate(rect.x(), rect.y());
-    client.paintToSurfaceContext(context);
-    context.restore();
+    return m_imageBuffer->context();
 }
 
 RefPtr<Image> CoordinatedBuffer::uploadImage()

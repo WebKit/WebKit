@@ -1,5 +1,23 @@
 2017-11-23  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordGraphics] Remove relay CoordinatedBuffer::Client implementations
+        https://bugs.webkit.org/show_bug.cgi?id=179970
+
+        Reviewed by Carlos Garcia Campos.
+
+        Drop the helper UpdateAtlasSurfaceClient class and instead directly use
+        the CoordinatedBuffer's GraphicsContext to perform clip and translation
+        operations based on the allocated rectangle, to pre-fill the target rect
+        with transparent color in case the alpha channel is supported, and to
+        then invoke CoordinatedBuffer::Client::paintToSurfaceContext() method,
+        passing the GraphicsContext as the argument.
+
+        * WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.cpp:
+        (WebKit::UpdateAtlas::paintOnAvailableBuffer):
+        (): Deleted.
+
+2017-11-23  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordGraphics] Replace CoordinatedSurface, ThreadSafeCoordinatedSurface with CoordinatedBuffer
         https://bugs.webkit.org/show_bug.cgi?id=179967
 
