@@ -1,3 +1,25 @@
+2017-11-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Minor ArrayBufferView cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=179966
+
+        Reviewed by Darin Adler.
+        
+        Use void* for data pointers when we don't need to do offset math. Use const for
+        source pointers.
+        
+        Prefer uint8_t* to char*.
+        
+        Add comments noting that the assertions should not be made release assertions
+        as recommended by the style checker, since the point is to avoid the virtual byteLength()
+        call in release.
+
+        * runtime/ArrayBufferView.h:
+        (JSC::ArrayBufferView::setImpl):
+        (JSC::ArrayBufferView::setRangeImpl):
+        (JSC::ArrayBufferView::getRangeImpl):
+        (JSC::ArrayBufferView::zeroRangeImpl):
+
 2017-11-23  Darin Adler  <darin@apple.com>
 
         Reduce WTF::String operations that do unnecessary Unicode operations instead of ASCII

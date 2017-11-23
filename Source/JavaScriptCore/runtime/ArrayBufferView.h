@@ -118,8 +118,8 @@ protected:
     inline bool setImpl(ArrayBufferView*, unsigned byteOffset);
 
     // Caller passes in bufferByteLength to avoid a virtual function call.
-    inline bool setRangeImpl(const char* data, size_t dataByteLength, unsigned byteOffset, unsigned bufferByteLength);
-    inline bool getRangeImpl(char* destination, size_t dataByteLength, unsigned byteOffset, unsigned bufferByteLength);
+    inline bool setRangeImpl(const void* data, size_t dataByteLength, unsigned byteOffset, unsigned bufferByteLength);
+    inline bool getRangeImpl(void* destination, size_t dataByteLength, unsigned byteOffset, unsigned bufferByteLength);
 
     inline bool zeroRangeImpl(unsigned byteOffset, size_t rangeByteLength);
 
@@ -168,13 +168,14 @@ bool ArrayBufferView::setImpl(ArrayBufferView* array, unsigned byteOffset)
         return false;
     }
     
-    char* base = static_cast<char*>(baseAddress());
+    uint8_t* base = static_cast<uint8_t*>(baseAddress());
     memmove(base + byteOffset, array->baseAddress(), array->byteLength());
     return true;
 }
 
-bool ArrayBufferView::setRangeImpl(const char* data, size_t dataByteLength, unsigned byteOffset, unsigned bufferByteLength)
+bool ArrayBufferView::setRangeImpl(const void* data, size_t dataByteLength, unsigned byteOffset, unsigned bufferByteLength)
 {
+    // Do not replace with RELEASE_ASSERT; we want to avoid the virtual byteLength() function call in release.
     ASSERT_WITH_SECURITY_IMPLICATION(bufferByteLength == byteLength());
     if (byteOffset > bufferByteLength
         || byteOffset + dataByteLength > bufferByteLength
@@ -183,13 +184,14 @@ bool ArrayBufferView::setRangeImpl(const char* data, size_t dataByteLength, unsi
         return false;
     }
 
-    char* base = static_cast<char*>(baseAddress());
+    uint8_t* base = static_cast<uint8_t*>(baseAddress());
     memmove(base + byteOffset, data, dataByteLength);
     return true;
 }
 
-bool ArrayBufferView::getRangeImpl(char* destination, size_t dataByteLength, unsigned byteOffset, unsigned bufferByteLength)
+bool ArrayBufferView::getRangeImpl(void* destination, size_t dataByteLength, unsigned byteOffset, unsigned bufferByteLength)
 {
+    // Do not replace with RELEASE_ASSERT; we want to avoid the virtual byteLength() function call in release.
     ASSERT_WITH_SECURITY_IMPLICATION(bufferByteLength == byteLength());
     if (byteOffset > bufferByteLength
         || byteOffset + dataByteLength > bufferByteLength
@@ -198,7 +200,7 @@ bool ArrayBufferView::getRangeImpl(char* destination, size_t dataByteLength, uns
         return false;
     }
 
-    char* base = static_cast<char*>(baseAddress());
+    const uint8_t* base = static_cast<const uint8_t*>(baseAddress());
     memmove(destination, base + byteOffset, dataByteLength);
     return true;
 }
@@ -212,7 +214,7 @@ bool ArrayBufferView::zeroRangeImpl(unsigned byteOffset, size_t rangeByteLength)
         return false;
     }
     
-    char* base = static_cast<char*>(baseAddress());
+    uint8_t* base = static_cast<uint8_t*>(baseAddress());
     memset(base + byteOffset, 0, rangeByteLength);
     return true;
 }
