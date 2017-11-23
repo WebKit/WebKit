@@ -48,7 +48,7 @@ Tile::Tile(TiledBackingStore& tiledBackingStore, const Coordinate& tileCoordinat
 Tile::~Tile()
 {
     if (m_ID != InvalidTileID)
-        m_tiledBackingStore.client()->removeTile(m_ID);
+        m_tiledBackingStore.client().removeTile(m_ID);
 }
 
 bool Tile::isDirty() const
@@ -72,7 +72,7 @@ bool Tile::updateBackBuffer()
 
     SurfaceUpdateInfo updateInfo;
 
-    if (!m_tiledBackingStore.client()->paintToSurface(m_dirtyRect.size(), updateInfo.atlasID, updateInfo.surfaceOffset, *this))
+    if (!m_tiledBackingStore.client().paintToSurface(m_dirtyRect.size(), updateInfo.atlasID, updateInfo.surfaceOffset, *this))
         return false;
 
     updateInfo.updateRect = m_dirtyRect;
@@ -84,9 +84,9 @@ bool Tile::updateBackBuffer()
         // We may get an invalid ID due to wrap-around on overflow.
         if (m_ID == InvalidTileID)
             m_ID = id++;
-        m_tiledBackingStore.client()->createTile(m_ID, m_tiledBackingStore.contentsScale());
+        m_tiledBackingStore.client().createTile(m_ID, m_tiledBackingStore.contentsScale());
     }
-    m_tiledBackingStore.client()->updateTile(m_ID, updateInfo, m_rect);
+    m_tiledBackingStore.client().updateTile(m_ID, updateInfo, m_rect);
 
     m_dirtyRect = IntRect();
 
@@ -97,7 +97,7 @@ void Tile::paintToSurfaceContext(GraphicsContext& context)
 {
     context.translate(-m_dirtyRect.x(), -m_dirtyRect.y());
     context.scale(FloatSize(m_tiledBackingStore.contentsScale(), m_tiledBackingStore.contentsScale()));
-    m_tiledBackingStore.client()->tiledBackingStorePaint(context, m_tiledBackingStore.mapToContents(m_dirtyRect));
+    m_tiledBackingStore.client().tiledBackingStorePaint(context, m_tiledBackingStore.mapToContents(m_dirtyRect));
 }
 
 bool Tile::isReadyToPaint() const

@@ -36,7 +36,7 @@ static IntPoint innerBottomRight(const IntRect& rect)
     return IntPoint(rect.maxX() - 1, rect.maxY() - 1);
 }
 
-TiledBackingStore::TiledBackingStore(TiledBackingStoreClient* client, float contentsScale)
+TiledBackingStore::TiledBackingStore(TiledBackingStoreClient& client, float contentsScale)
     : m_client(client)
     , m_tileSize(defaultTileDimension, defaultTileDimension)
     , m_coverAreaMultiplier(2.0f)
@@ -102,7 +102,7 @@ void TiledBackingStore::updateTileBuffers()
     }
 
     if (updated)
-        m_client->didUpdateTileBuffers();
+        m_client.didUpdateTileBuffers();
 }
 
 double TiledBackingStore::tileDistance(const IntRect& viewport, const Tile::Coordinate& tileCoordinate) const
@@ -233,7 +233,7 @@ void TiledBackingStore::createTiles(const IntRect& visibleRect, const IntRect& s
     // Re-call createTiles on a timer to cover the visible area with the newest shortest distance.
     m_pendingTileCreation = requiredTileCount;
     if (m_pendingTileCreation)
-        m_client->tiledBackingStoreHasPendingTileCreation();
+        m_client.tiledBackingStoreHasPendingTileCreation();
 }
 
 void TiledBackingStore::adjustForContentsRect(IntRect& rect) const

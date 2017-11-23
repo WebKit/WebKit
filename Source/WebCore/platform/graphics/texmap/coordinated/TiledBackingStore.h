@@ -37,10 +37,10 @@ class TiledBackingStoreClient;
 class TiledBackingStore {
     WTF_MAKE_NONCOPYABLE(TiledBackingStore); WTF_MAKE_FAST_ALLOCATED;
 public:
-    TiledBackingStore(TiledBackingStoreClient*, float contentsScale = 1.f);
+    TiledBackingStore(TiledBackingStoreClient&, float contentsScale = 1.f);
     ~TiledBackingStore();
 
-    TiledBackingStoreClient* client() { return m_client; }
+    TiledBackingStoreClient& client() { return m_client; }
 
     void setTrajectoryVector(const FloatPoint&);
     void createTilesIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& contentsRect);
@@ -78,7 +78,7 @@ private:
     void paintCheckerPattern(GraphicsContext*, const IntRect&, const Tile::Coordinate&);
 
 private:
-    TiledBackingStoreClient* m_client;
+    TiledBackingStoreClient& m_client;
 
     typedef HashMap<Tile::Coordinate, std::unique_ptr<Tile>> TileMap;
     TileMap m_tiles;
