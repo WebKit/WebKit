@@ -1,3 +1,21 @@
+2017-11-23  Chris Dumez  <cdumez@apple.com>
+
+        WebSWServerConnection should register/unregister itself with the StorageProcess
+        https://bugs.webkit.org/show_bug.cgi?id=179965
+
+        Reviewed by Darin Adler.
+
+        WebSWServerConnection should register/unregister itself with the StorageProcess instead of relying
+        on StorageToWebProcessConnection to do so on its behalf. This is less error-prone.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::WebSWServerConnection):
+        (WebKit::WebSWServerConnection::~WebSWServerConnection):
+        * StorageProcess/StorageToWebProcessConnection.cpp:
+        (WebKit::StorageToWebProcessConnection::~StorageToWebProcessConnection):
+        (WebKit::StorageToWebProcessConnection::establishSWServerConnection):
+        (WebKit::StorageToWebProcessConnection::removeSWServerConnection):
+
 2017-11-23  Darin Adler  <darin@apple.com>
 
         Reduce WTF::String operations that do unnecessary Unicode operations instead of ASCII

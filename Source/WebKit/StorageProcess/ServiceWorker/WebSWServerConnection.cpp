@@ -61,10 +61,12 @@ WebSWServerConnection::WebSWServerConnection(SWServer& server, IPC::Connection& 
     , m_sessionID(sessionID)
     , m_contentConnection(connection)
 {
+    StorageProcess::singleton().registerSWServerConnection(*this);
 }
 
 WebSWServerConnection::~WebSWServerConnection()
 {
+    StorageProcess::singleton().unregisterSWServerConnection(*this);
 }
 
 void WebSWServerConnection::disconnectedFromWebProcess()

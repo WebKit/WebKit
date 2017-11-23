@@ -60,11 +60,6 @@ StorageToWebProcessConnection::StorageToWebProcessConnection(IPC::Connection::Id
 StorageToWebProcessConnection::~StorageToWebProcessConnection()
 {
     m_connection->invalidate();
-
-#if ENABLE(SERVICE_WORKER)
-    for (auto& connection : m_swConnections.values())
-        StorageProcess::singleton().unregisterSWServerConnection(*connection);
-#endif
 }
 
 void StorageToWebProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -149,9 +144,7 @@ void StorageToWebProcessConnection::establishSWServerConnection(SessionID sessio
     ASSERT(!m_swConnections.contains(serverConnectionIdentifier));
 
     auto addResult = m_swConnections.add(serverConnectionIdentifier, WTFMove(connection));
-    ASSERT(addResult.isNewEntry);
-
-    StorageProcess::singleton().registerSWServerConnection(*(addResult.iterator->value));
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
     if (!StorageProcess::singleton().globalServerToContextConnection())
         StorageProcess::singleton().createServerToContextConnection();
@@ -162,7 +155,6 @@ void StorageToWebProcessConnection::removeSWServerConnection(WebCore::SWServer::
     ASSERT(m_swConnections.contains(serverConnectionIdentifier));
 
     auto connection = m_swConnections.take(serverConnectionIdentifier);
-    StorageProcess::singleton().unregisterSWServerConnection(*connection);
     connection->disconnectedFromWebProcess();
 }
 
