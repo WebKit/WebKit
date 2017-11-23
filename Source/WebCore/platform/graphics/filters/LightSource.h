@@ -21,8 +21,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef LightSource_h
-#define LightSource_h
+#pragma once
 
 #include "FloatPoint3D.h"
 #include <wtf/RefCounted.h>
@@ -41,20 +40,15 @@ enum LightType {
 
 class LightSource : public RefCounted<LightSource> {
 public:
-
-    // Light vectors must be calculated for every pixel during
-    // painting. It is expensive to pass all these arguments to
-    // a frequently called function, especially because not all
-    // light sources require all of them. Instead, we just pass
-    // a reference to the following structure
-    struct PaintingData {
-        // SVGFELighting also use them
+    struct ComputedLightingData {
         FloatPoint3D lightVector;
         FloatPoint3D colorVector;
         float lightVectorLength;
-        // Private members
+    };
+
+    struct PaintingData {
+        ComputedLightingData intialLightingData;
         FloatPoint3D directionVector;
-        FloatPoint3D privateColorVector;
         float coneCutOffLimit;
         float coneFullLight;
         int specularExponent;
@@ -72,7 +66,7 @@ public:
     virtual void initPaintingData(PaintingData&) = 0;
     // z is a float number, since it is the alpha value scaled by a user
     // specified "surfaceScale" constant, which type is <number> in the SVG standard
-    virtual void updatePaintingData(PaintingData&, int x, int y, float z) = 0;
+    virtual ComputedLightingData computePixelLightingData(const PaintingData&, int x, int y, float z) const = 0;
 
     virtual bool setAzimuth(float) { return false; }
     virtual bool setElevation(float) { return false; }
@@ -91,4 +85,7 @@ private:
 
 } // namespace WebCore
 
-#endif // LightSource_h
+#define SPECIALIZE_TYPE_TRAITS_LIGHTSOURCE(ClassName, Type) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ClassName) \
+    static bool isType(const WebCore::LightSource& source) { return source.type() == WebCore::Type; } \
+SPECIALIZE_TYPE_TRAITS_END()

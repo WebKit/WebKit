@@ -20,8 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef PointLightSource_h
-#define PointLightSource_h
+#pragma once
 
 #include "LightSource.h"
 #include <wtf/Ref.h>
@@ -41,7 +40,7 @@ public:
     bool setZ(float) override;
 
     void initPaintingData(PaintingData&) override;
-    void updatePaintingData(PaintingData&, int x, int y, float z) override;
+    ComputedLightingData computePixelLightingData(const PaintingData&, int x, int y, float z) const final;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
 
@@ -57,4 +56,4 @@ private:
 
 } // namespace WebCore
 
-#endif // PointLightSource_h
+SPECIALIZE_TYPE_TRAITS_LIGHTSOURCE(PointLightSource, LS_POINT)

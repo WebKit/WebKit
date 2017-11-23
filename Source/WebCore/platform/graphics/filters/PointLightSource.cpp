@@ -39,12 +39,15 @@ void PointLightSource::initPaintingData(PaintingData&)
 {
 }
 
-void PointLightSource::updatePaintingData(PaintingData& paintingData, int x, int y, float z)
+LightSource::ComputedLightingData PointLightSource::computePixelLightingData(const PaintingData&, int x, int y, float z) const
 {
-    paintingData.lightVector.setX(m_position.x() - x);
-    paintingData.lightVector.setY(m_position.y() - y);
-    paintingData.lightVector.setZ(m_position.z() - z);
-    paintingData.lightVectorLength = paintingData.lightVector.length();
+    FloatPoint3D lightVector = {
+        m_position.x() - x,
+        m_position.y() - y,
+        m_position.z() - z
+    };
+
+    return { lightVector, { }, lightVector.length() };
 }
 
 bool PointLightSource::setX(float x)

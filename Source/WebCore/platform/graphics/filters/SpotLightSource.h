@@ -20,8 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SpotLightSource_h
-#define SpotLightSource_h
+#pragma once
 
 #include "LightSource.h"
 #include <wtf/Ref.h>
@@ -52,7 +51,7 @@ public:
     bool setLimitingConeAngle(float) override;
 
     void initPaintingData(PaintingData&) override;
-    void updatePaintingData(PaintingData&, int x, int y, float z) override;
+    ComputedLightingData computePixelLightingData(const PaintingData&, int x, int y, float z) const final;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
 
@@ -76,4 +75,4 @@ private:
 
 } // namespace WebCore
 
-#endif // SpotLightSource_h
+SPECIALIZE_TYPE_TRAITS_LIGHTSOURCE(SpotLightSource, LS_SPOT)

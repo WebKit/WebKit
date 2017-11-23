@@ -42,10 +42,7 @@ static const float antiAliasTreshold = 0.016f;
 
 void SpotLightSource::initPaintingData(PaintingData& paintingData)
 {
-    paintingData.privateColorVector = paintingData.colorVector;
-    paintingData.directionVector.setX(m_direction.x() - m_position.x());
-    paintingData.directionVector.setY(m_direction.y() - m_position.y());
-    paintingData.directionVector.setZ(m_direction.z() - m_position.z());
+    paintingData.directionVector = m_direction - m_position;
     paintingData.directionVector.normalize();
 
     if (!m_limitingConeAngle) {
@@ -70,20 +67,19 @@ void SpotLightSource::initPaintingData(PaintingData& paintingData)
         paintingData.specularExponent = 2;
 }
 
-void SpotLightSource::updatePaintingData(PaintingData& paintingData, int x, int y, float z)
+LightSource::ComputedLightingData SpotLightSource::computePixelLightingData(const PaintingData& paintingData, int x, int y, float z) const
 {
-    paintingData.lightVector.setX(m_position.x() - x);
-    paintingData.lightVector.setY(m_position.y() - y);
-    paintingData.lightVector.setZ(m_position.z() - z);
-    paintingData.lightVectorLength = paintingData.lightVector.length();
+    FloatPoint3D lightVector = {
+        m_position.x() - x,
+        m_position.y() - y,
+        m_position.z() - z
+    };
+    float lightVectorLength = lightVector.length();
 
-    float cosineOfAngle = (paintingData.lightVector * paintingData.directionVector) / paintingData.lightVectorLength;
+    float cosineOfAngle = (lightVector * paintingData.directionVector) / lightVectorLength;
     if (cosineOfAngle > paintingData.coneCutOffLimit) {
         // No light is produced, scanlines are not updated
-        paintingData.colorVector.setX(0.0f);
-        paintingData.colorVector.setY(0.0f);
-        paintingData.colorVector.setZ(0.0f);
-        return;
+        return { lightVector, { }, lightVectorLength };
     }
 
     // Set the color of the pixel
@@ -106,9 +102,11 @@ void SpotLightSource::updatePaintingData(PaintingData& paintingData, int x, int 
     if (lightStrength > 1.0f)
         lightStrength = 1.0f;
 
-    paintingData.colorVector.setX(paintingData.privateColorVector.x() * lightStrength);
-    paintingData.colorVector.setY(paintingData.privateColorVector.y() * lightStrength);
-    paintingData.colorVector.setZ(paintingData.privateColorVector.z() * lightStrength);
+    return {
+        lightVector,
+        paintingData.intialLightingData.colorVector * lightStrength,
+        lightVectorLength
+    };
 }
 
 bool SpotLightSource::setX(float x)

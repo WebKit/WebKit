@@ -84,7 +84,7 @@ bool FELighting::setKernelUnitLengthY(float kernelUnitLengthY)
 
 const static int cPixelSize = 4;
 const static int cAlphaChannelOffset = 3;
-const static unsigned char cOpaqueAlpha = static_cast<unsigned char>(0xff);
+const static uint8_t cOpaqueAlpha = static_cast<uint8_t>(0xFF);
 
 // These factors and the normal coefficients come from the table under https://www.w3.org/TR/SVG/filters.html#feDiffuseLightingElement.
 const static float cFactor1div2 = -1 / 2.f;
@@ -149,18 +149,30 @@ inline IntSize FELighting::LightingData::leftColumnNormal(int offset) const
     };
 }
 
-inline IntSize FELighting::LightingData::interiorNormal(int offset) const
+inline IntSize FELighting::LightingData::interiorNormal(int offset, AlphaWindow& alphaWindow) const
 {
-    int left = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
-    int right = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
-    offset -= widthMultipliedByPixelSize;
-    int topLeft = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
-    int top = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
-    int topRight = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
-    offset += 2 * widthMultipliedByPixelSize;
-    int bottomLeft = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
-    int bottom = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
-    int bottomRight = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
+    int rightAlphaOffset = offset + cPixelSize + cAlphaChannelOffset;
+    
+    int right = static_cast<int>(pixels->item(rightAlphaOffset));
+    int topRight = static_cast<int>(pixels->item(rightAlphaOffset - widthMultipliedByPixelSize));
+    int bottomRight = static_cast<int>(pixels->item(rightAlphaOffset + widthMultipliedByPixelSize));
+
+    int left = alphaWindow.left();
+    int topLeft = alphaWindow.topLeft();
+    int top = alphaWindow.top();
+
+    int bottomLeft = alphaWindow.bottomLeft();
+    int bottom = alphaWindow.bottom();
+
+    // The alphaWindow has been shifted, and here we fill in the right column.
+    alphaWindow.alpha[0][2] = topRight;
+    alphaWindow.alpha[1][2] = right;
+    alphaWindow.alpha[2][2] = bottomRight;
+    
+    // Check that the alphaWindow is working with some spot-checks.
+    ASSERT(alphaWindow.topLeft() == pixels->item(offset - cPixelSize - widthMultipliedByPixelSize + cAlphaChannelOffset)); // topLeft
+    ASSERT(alphaWindow.top() == pixels->item(offset - widthMultipliedByPixelSize + cAlphaChannelOffset)); // top
+
     return {
         -topLeft + topRight - 2 * left + 2 * right - bottomLeft + bottomRight,
         -topLeft - 2 * top - topRight + bottomLeft + 2 * bottom + bottomRight
@@ -224,18 +236,27 @@ inline IntSize FELighting::LightingData::bottomRightNormal(int offset) const
     };
 }
 
-inline void FELighting::inlineSetPixel(int offset, LightingData& data, LightSource::PaintingData& paintingData, int lightX, int lightY, float factorX, float factorY, IntSize normal2DVector)
+void FELighting::setPixel(int offset, const LightingData& data, const LightSource::PaintingData& paintingData, int x, int y, float factorX, float factorY, IntSize normal2DVector)
 {
-    m_lightSource->updatePaintingData(paintingData, lightX, lightY, static_cast<float>(data.pixels->item(offset + cAlphaChannelOffset)) * data.surfaceScale);
+    setPixelInternal(offset, data, paintingData, x, y, factorX, factorY, normal2DVector, data.pixels->item(offset + cAlphaChannelOffset));
+}
+
+void FELighting::setPixelInternal(int offset, const LightingData& data, const LightSource::PaintingData& paintingData, int x, int y, float factorX, float factorY, IntSize normal2DVector, float alpha)
+{
+    float z = alpha * data.surfaceScale;
+    LightSource::ComputedLightingData lightingData = m_lightSource->computePixelLightingData(paintingData, x, y, z);
 
     float lightStrength;
     if (normal2DVector.isZero()) {
         // Normal vector is (0, 0, 1). This is a quite frequent case.
         if (m_lightingType == FELighting::DiffuseLighting)
-            lightStrength = m_diffuseConstant * paintingData.lightVector.z() / paintingData.lightVectorLength;
+            lightStrength = m_diffuseConstant * lightingData.lightVector.z() / lightingData.lightVectorLength;
         else {
-            FloatPoint3D halfwayVector = paintingData.lightVector;
-            halfwayVector.setZ(halfwayVector.z() + paintingData.lightVectorLength);
+            FloatPoint3D halfwayVector = {
+                lightingData.lightVector.x(),
+                lightingData.lightVector.y(),
+                lightingData.lightVector.z() + lightingData.lightVectorLength
+            };
             float halfwayVectorLength = halfwayVector.length();
             if (m_specularExponent == 1)
                 lightStrength = m_specularConstant * halfwayVector.z() / halfwayVectorLength;
@@ -243,17 +264,21 @@ inline void FELighting::inlineSetPixel(int offset, LightingData& data, LightSour
                 lightStrength = m_specularConstant * powf(halfwayVector.z() / halfwayVectorLength, m_specularExponent);
         }
     } else {
-        FloatPoint3D normalVector;
-        normalVector.setX(factorX * static_cast<float>(normal2DVector.width()) * data.surfaceScale);
-        normalVector.setY(factorY * static_cast<float>(normal2DVector.height()) * data.surfaceScale);
-        normalVector.setZ(1);
+        FloatPoint3D normalVector = {
+            factorX * normal2DVector.width() * data.surfaceScale,
+            factorY * normal2DVector.height() * data.surfaceScale,
+            1.0f
+        };
         float normalVectorLength = normalVector.length();
 
         if (m_lightingType == FELighting::DiffuseLighting)
-            lightStrength = m_diffuseConstant * (normalVector * paintingData.lightVector) / (normalVectorLength * paintingData.lightVectorLength);
+            lightStrength = m_diffuseConstant * (normalVector * lightingData.lightVector) / (normalVectorLength * lightingData.lightVectorLength);
         else {
-            FloatPoint3D halfwayVector = paintingData.lightVector;
-            halfwayVector.setZ(halfwayVector.z() + paintingData.lightVectorLength);
+            FloatPoint3D halfwayVector = {
+                lightingData.lightVector.x(),
+                lightingData.lightVector.y(),
+                lightingData.lightVector.z() + lightingData.lightVectorLength
+            };
             float halfwayVectorLength = halfwayVector.length();
             if (m_specularExponent == 1)
                 lightStrength = m_specularConstant * (normalVector * halfwayVector) / (normalVectorLength * halfwayVectorLength);
@@ -267,22 +292,43 @@ inline void FELighting::inlineSetPixel(int offset, LightingData& data, LightSour
     if (lightStrength < 0)
         lightStrength = 0;
 
-    data.pixels->set(offset, static_cast<unsigned char>(lightStrength * paintingData.colorVector.x()));
-    data.pixels->set(offset + 1, static_cast<unsigned char>(lightStrength * paintingData.colorVector.y()));
-    data.pixels->set(offset + 2, static_cast<unsigned char>(lightStrength * paintingData.colorVector.z()));
+    uint8_t pixelValue[3] = {
+        static_cast<uint8_t>(lightStrength * lightingData.colorVector.x()),
+        static_cast<uint8_t>(lightStrength * lightingData.colorVector.y()),
+        static_cast<uint8_t>(lightStrength * lightingData.colorVector.z())
+    };
+    
+    data.pixels->setRange(pixelValue, 3, offset);
 }
 
-void FELighting::setPixel(int offset, LightingData& data, LightSource::PaintingData& paintingData, int lightX, int lightY, float factorX, float factorY, IntSize normalVector)
+// This appears to read from and write to the same pixel buffer, but it only reads the alpha channel, and writes the non-alpha channels.
+void FELighting::platformApplyGenericPaint(const LightingData& data, const LightSource::PaintingData& paintingData, int startY, int endY)
 {
-    inlineSetPixel(offset, data, paintingData, lightX, lightY, factorX, factorY, normalVector);
-}
+    // Make sure startY is > 0 since we read from the previous row in the loop.
+    ASSERT(startY);
 
-inline void FELighting::platformApplyGenericPaint(LightingData& data, LightSource::PaintingData& paintingData, int startY, int endY)
-{
     for (int y = startY; y < endY; ++y) {
-        int offset = y * data.widthMultipliedByPixelSize + cPixelSize;
+        int rowStartOffset = y * data.widthMultipliedByPixelSize;
+        int previousRowStart = rowStartOffset - data.widthMultipliedByPixelSize;
+        int nextRowStart = rowStartOffset + data.widthMultipliedByPixelSize;
+
+        // alphaWindow is a local cache of alpha values.
+        // Fill the two right columns putting the left edge value in the center column.
+        // For each pixel, we shift each row left then fill the right column.
+        AlphaWindow alphaWindow;
+        alphaWindow.setTop(data.pixels->item(previousRowStart + cAlphaChannelOffset));
+        alphaWindow.setTopRight(data.pixels->item(previousRowStart + cPixelSize + cAlphaChannelOffset));
+
+        alphaWindow.setCenter(data.pixels->item(rowStartOffset + cAlphaChannelOffset));
+        alphaWindow.setRight(data.pixels->item(rowStartOffset + cPixelSize + cAlphaChannelOffset));
+
+        alphaWindow.setBottom(data.pixels->item(nextRowStart + cAlphaChannelOffset));
+        alphaWindow.setBottomRight(data.pixels->item(nextRowStart + cPixelSize + cAlphaChannelOffset));
+
+        int offset = rowStartOffset + cPixelSize;
         for (int x = 1; x < data.widthDecreasedByOne; ++x, offset += cPixelSize) {
-            inlineSetPixel(offset, data, paintingData, x, y, cFactor1div4, cFactor1div4, data.interiorNormal(offset));
+            alphaWindow.shift();
+            setPixelInternal(offset, data, paintingData, x, y, cFactor1div4, cFactor1div4, data.interiorNormal(offset, alphaWindow), alphaWindow.center());
         }
     }
 }
@@ -292,7 +338,7 @@ void FELighting::platformApplyGenericWorker(PlatformApplyGenericParameters* para
     parameters->filter->platformApplyGenericPaint(parameters->data, parameters->paintingData, parameters->yStart, parameters->yEnd);
 }
 
-inline void FELighting::platformApplyGeneric(LightingData& data, LightSource::PaintingData& paintingData)
+void FELighting::platformApplyGeneric(const LightingData& data, const LightSource::PaintingData& paintingData)
 {
     int optimalThreadNumber = ((data.widthDecreasedByOne - 1) * (data.heightDecreasedByOne - 1)) / s_minimalRectDimension;
     if (optimalThreadNumber > 1) {
@@ -326,7 +372,7 @@ inline void FELighting::platformApplyGeneric(LightingData& data, LightSource::Pa
     platformApplyGenericPaint(data, paintingData, 1, data.heightDecreasedByOne);
 }
 
-inline void FELighting::platformApply(LightingData& data, LightSource::PaintingData& paintingData)
+inline void FELighting::platformApply(const LightingData& data, const LightSource::PaintingData& paintingData)
 {
     // The selection here eventually should happen dynamically on some platforms.
 #if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC_OR_CLANG)
@@ -351,7 +397,7 @@ bool FELighting::drawLighting(Uint8ClampedArray* pixels, int width, int height)
     data.widthMultipliedByPixelSize = width * cPixelSize;
     data.widthDecreasedByOne = width - 1;
     data.heightDecreasedByOne = height - 1;
-    paintingData.colorVector = FloatPoint3D(m_lightingColor.red(), m_lightingColor.green(), m_lightingColor.blue());
+    paintingData.intialLightingData.colorVector = FloatPoint3D(m_lightingColor.red(), m_lightingColor.green(), m_lightingColor.blue());
     m_lightSource->initPaintingData(paintingData);
 
     // Top left.
@@ -374,24 +420,24 @@ bool FELighting::drawLighting(Uint8ClampedArray* pixels, int width, int height)
         // Top row.
         offset = cPixelSize;
         for (int x = 1; x < data.widthDecreasedByOne; ++x, offset += cPixelSize)
-            inlineSetPixel(offset, data, paintingData, x, 0, cFactor1div3, cFactor1div2, data.topRowNormal(offset));
+            setPixel(offset, data, paintingData, x, 0, cFactor1div3, cFactor1div2, data.topRowNormal(offset));
 
         // Bottom row.
         offset = data.heightDecreasedByOne * data.widthMultipliedByPixelSize + cPixelSize;
         for (int x = 1; x < data.widthDecreasedByOne; ++x, offset += cPixelSize)
-            inlineSetPixel(offset, data, paintingData, x, data.heightDecreasedByOne, cFactor1div3, cFactor1div2, data.bottomRowNormal(offset));
+            setPixel(offset, data, paintingData, x, data.heightDecreasedByOne, cFactor1div3, cFactor1div2, data.bottomRowNormal(offset));
     }
 
     if (height >= 3) {
         // Left column.
         offset = data.widthMultipliedByPixelSize;
         for (int y = 1; y < data.heightDecreasedByOne; ++y, offset += data.widthMultipliedByPixelSize)
-            inlineSetPixel(offset, data, paintingData, 0, y, cFactor1div2, cFactor1div3, data.leftColumnNormal(offset));
+            setPixel(offset, data, paintingData, 0, y, cFactor1div2, cFactor1div3, data.leftColumnNormal(offset));
 
         // Right column.
         offset = 2 * data.widthMultipliedByPixelSize - cPixelSize;
         for (int y = 1; y < data.heightDecreasedByOne; ++y, offset += data.widthMultipliedByPixelSize)
-            inlineSetPixel(offset, data, paintingData, data.widthDecreasedByOne, y, cFactor1div2, cFactor1div3, data.rightColumnNormal(offset));
+            setPixel(offset, data, paintingData, data.widthDecreasedByOne, y, cFactor1div2, cFactor1div3, data.rightColumnNormal(offset));
     }
 
     if (width >= 3 && height >= 3) {
@@ -405,9 +451,9 @@ bool FELighting::drawLighting(Uint8ClampedArray* pixels, int width, int height)
             data.pixels->set(i, cOpaqueAlpha);
     } else {
         for (int i = 0; i < lastPixel; i += cPixelSize) {
-            unsigned char a1 = data.pixels->item(i);
-            unsigned char a2 = data.pixels->item(i + 1);
-            unsigned char a3 = data.pixels->item(i + 2);
+            uint8_t a1 = data.pixels->item(i);
+            uint8_t a2 = data.pixels->item(i + 1);
+            uint8_t a3 = data.pixels->item(i + 2);
             // alpha set to set to max(a1, a2, a3)
             data.pixels->set(i + 3, a1 >= a2 ? (a1 >= a3 ? a1 : a3) : (a2 >= a3 ? a2 : a3));
         }
