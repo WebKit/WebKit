@@ -191,9 +191,8 @@ void TiledBackingStore::createTiles(const IntRect& visibleRect, const IntRect& s
 
     // Resize tiles at the edge in case the contents size has changed, but only do so
     // after having dropped tiles outside the keep rect.
-    bool didResizeTiles = false;
     if (previousRect != m_rect)
-        didResizeTiles = resizeEdgeTiles();
+        resizeEdgeTiles();
 
     // Search for the tile position closest to the viewport center that does not yet contain a tile.
     // Which position is considered the closest depends on the tileDistance function.
@@ -230,10 +229,6 @@ void TiledBackingStore::createTiles(const IntRect& visibleRect, const IntRect& s
         m_tiles.add(coordinate, std::make_unique<Tile>(*this, coordinate));
     }
     requiredTileCount -= tilesToCreateCount;
-
-    // Paint the content of the newly created tiles or resized tiles.
-    if (tilesToCreateCount || didResizeTiles)
-        updateTileBuffers();
 
     // Re-call createTiles on a timer to cover the visible area with the newest shortest distance.
     m_pendingTileCreation = requiredTileCount;
@@ -328,9 +323,8 @@ void TiledBackingStore::computeCoverAndKeepRect(const IntRect& visibleRect, IntR
     ASSERT(coverRect.isEmpty() || keepRect.contains(coverRect));
 }
 
-bool TiledBackingStore::resizeEdgeTiles()
+void TiledBackingStore::resizeEdgeTiles()
 {
-    bool wasResized = false;
     Vector<Tile::Coordinate> tilesToRemove;
     for (auto& tile : m_tiles.values()) {
         Tile::Coordinate tileCoordinate = tile->coordinate();
@@ -338,16 +332,12 @@ bool TiledBackingStore::resizeEdgeTiles()
         IntRect expectedTileRect = tileRectForCoordinate(tileCoordinate);
         if (expectedTileRect.isEmpty())
             tilesToRemove.append(tileCoordinate);
-        else if (expectedTileRect != tileRect) {
+        else if (expectedTileRect != tileRect)
             tile->resize(expectedTileRect.size());
-            wasResized = true;
-        }
     }
 
     for (auto& coordinateToRemove : tilesToRemove)
         m_tiles.remove(coordinateToRemove);
-
-    return wasResized;
 }
 
 void TiledBackingStore::setKeepRect(const IntRect& keepRect)
