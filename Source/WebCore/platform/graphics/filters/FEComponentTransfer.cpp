@@ -34,96 +34,74 @@
 
 namespace WebCore {
 
-typedef void (*TransferType)(unsigned char*, const ComponentTransferFunction&);
-
-FEComponentTransfer::FEComponentTransfer(Filter& filter, const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc,
-                                         const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc)
+FEComponentTransfer::FEComponentTransfer(Filter& filter, const ComponentTransferFunction& redFunction,
+    const ComponentTransferFunction& greenFunction, const ComponentTransferFunction& blueFunction, const ComponentTransferFunction& alphaFunction)
     : FilterEffect(filter)
-    , m_redFunc(redFunc)
-    , m_greenFunc(greenFunc)
-    , m_blueFunc(blueFunc)
-    , m_alphaFunc(alphaFunc)
+    , m_redFunction(redFunction)
+    , m_greenFunction(greenFunction)
+    , m_blueFunction(blueFunction)
+    , m_alphaFunction(alphaFunction)
 {
 }
 
-Ref<FEComponentTransfer> FEComponentTransfer::create(Filter& filter, const ComponentTransferFunction& redFunc,
-    const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc)
+Ref<FEComponentTransfer> FEComponentTransfer::create(Filter& filter, const ComponentTransferFunction& redFunction,
+    const ComponentTransferFunction& greenFunction, const ComponentTransferFunction& blueFunction, const ComponentTransferFunction& alphaFunction)
 {
-    return adoptRef(*new FEComponentTransfer(filter, redFunc, greenFunc, blueFunc, alphaFunc));
+    return adoptRef(*new FEComponentTransfer(filter, redFunction, greenFunction, blueFunction, alphaFunction));
 }
 
-void FEComponentTransfer::setRedFunction(const ComponentTransferFunction& func)
-{
-    m_redFunc = func;
-}
-
-void FEComponentTransfer::setGreenFunction(const ComponentTransferFunction& func)
-{
-    m_greenFunc = func;
-}
-
-void FEComponentTransfer::setBlueFunction(const ComponentTransferFunction& func)
-{
-    m_blueFunc = func;
-}
-
-void FEComponentTransfer::setAlphaFunction(const ComponentTransferFunction& func)
-{
-    m_alphaFunc = func;
-}
-
-static void identity(unsigned char*, const ComponentTransferFunction&)
+void FEComponentTransfer::computeIdentityTable(LookupTable&, const ComponentTransferFunction&)
 {
 }
 
-static void table(unsigned char* values, const ComponentTransferFunction& transferFunction)
+void FEComponentTransfer::computeTabularTable(LookupTable& values, const ComponentTransferFunction& transferFunction)
 {
     const Vector<float>& tableValues = transferFunction.tableValues;
     unsigned n = tableValues.size();
     if (n < 1)
         return;            
-    for (unsigned i = 0; i < 256; ++i) {
+    for (unsigned i = 0; i < values.size(); ++i) {
         double c = i / 255.0;                
         unsigned k = static_cast<unsigned>(c * (n - 1));
         double v1 = tableValues[k];
         double v2 = tableValues[std::min((k + 1), (n - 1))];
         double val = 255.0 * (v1 + (c * (n - 1) - k) * (v2 - v1));
         val = std::max(0.0, std::min(255.0, val));
-        values[i] = static_cast<unsigned char>(val);
+        values[i] = static_cast<uint8_t>(val);
     }
 }
 
-static void discrete(unsigned char* values, const ComponentTransferFunction& transferFunction)
+void FEComponentTransfer::computeDiscreteTable(LookupTable& values, const ComponentTransferFunction& transferFunction)
 {
     const Vector<float>& tableValues = transferFunction.tableValues;
     unsigned n = tableValues.size();
     if (n < 1)
         return;
-    for (unsigned i = 0; i < 256; ++i) {
+    for (unsigned i = 0; i < values.size(); ++i) {
         unsigned k = static_cast<unsigned>((i * n) / 255.0);
         k = std::min(k, n - 1);
         double val = 255 * tableValues[k];
         val = std::max(0.0, std::min(255.0, val));
-        values[i] = static_cast<unsigned char>(val);
+        values[i] = static_cast<uint8_t>(val);
     }
 }
 
-static void linear(unsigned char* values, const ComponentTransferFunction& transferFunction)
+void FEComponentTransfer::computeLinearTable(LookupTable& values, const ComponentTransferFunction& transferFunction)
 {
-    for (unsigned i = 0; i < 256; ++i) {
+    for (unsigned i = 0; i < values.size(); ++i) {
         double val = transferFunction.slope * i + 255 * transferFunction.intercept;
         val = std::max(0.0, std::min(255.0, val));
-        values[i] = static_cast<unsigned char>(val);
+        values[i] = static_cast<uint8_t>(val);
     }
 }
 
-static void gamma(unsigned char* values, const ComponentTransferFunction& transferFunction)
+void FEComponentTransfer::computeGammaTable(LookupTable& values, const ComponentTransferFunction& transferFunction)
 {
-    for (unsigned i = 0; i < 256; ++i) {
+    for (unsigned i = 0; i < values.size(); ++i) {
         double exponent = transferFunction.exponent; // RCVT doesn't like passing a double and a float to pow, so promote this to double
         double val = 255.0 * (transferFunction.amplitude * pow((i / 255.0), exponent) + transferFunction.offset);
         val = std::max(0.0, std::min(255.0, val));
-        values[i] = static_cast<unsigned char>(val);
+        values[i] = static_cast<uint8_t>(val);
     }
 }
 
@@ -135,38 +113,52 @@ void FEComponentTransfer::platformApplySoftware()
     if (!pixelArray)
         return;
 
-    unsigned char rValues[256], gValues[256], bValues[256], aValues[256];
-    getValues(rValues, gValues, bValues, aValues);
-    unsigned char* tables[] = { rValues, gValues, bValues, aValues };
+    LookupTable redTable;
+    LookupTable greenTable;
+    LookupTable blueTable;
+    LookupTable alphaTable;
+    computeLookupTables(redTable, greenTable, blueTable, alphaTable);
 
     IntRect drawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
     in->copyUnmultipliedImage(pixelArray, drawingRect);
 
     unsigned pixelArrayLength = pixelArray->length();
-    unsigned char* data = pixelArray->data();
+    uint8_t* data = pixelArray->data();
     for (unsigned pixelOffset = 0; pixelOffset < pixelArrayLength; pixelOffset += 4) {
-        for (unsigned channel = 0; channel < 4; ++channel) {
-            unsigned char c = data[pixelOffset + channel];
-            data[pixelOffset + channel] = tables[channel][c];
-        }
+        data[pixelOffset] = redTable[data[pixelOffset]];
+        data[pixelOffset + 1] = greenTable[data[pixelOffset + 1]];
+        data[pixelOffset + 2] = blueTable[data[pixelOffset + 2]];
+        data[pixelOffset + 3] = alphaTable[data[pixelOffset + 3]];
     }
 }
 
-void FEComponentTransfer::getValues(unsigned char rValues[256], unsigned char gValues[256], unsigned char bValues[256], unsigned char aValues[256])
+void FEComponentTransfer::computeLookupTables(LookupTable& redTable, LookupTable& greenTable, LookupTable& blueTable, LookupTable& alphaTable)
 {
-    for (unsigned i = 0; i < 256; ++i)
-        rValues[i] = gValues[i] = bValues[i] = aValues[i] = i;
-    unsigned char* tables[] = { rValues, gValues, bValues, aValues };
-    ComponentTransferFunction transferFunction[] = {m_redFunc, m_greenFunc, m_blueFunc, m_alphaFunc};
-    TransferType callEffect[] = {identity, identity, table, discrete, linear, gamma};
+    for (unsigned i = 0; i < redTable.size(); ++i)
+        redTable[i] = greenTable[i] = blueTable[i] = alphaTable[i] = i;
 
-    for (unsigned channel = 0; channel < 4; channel++) {
-        ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(transferFunction[channel].type) < WTF_ARRAY_LENGTH(callEffect));
-        (*callEffect[transferFunction[channel].type])(tables[channel], transferFunction[channel]);
-    }
+    using TransferType = void (*)(LookupTable&, const ComponentTransferFunction&);
+    TransferType callEffect[] = {
+        computeIdentityTable,   // FECOMPONENTTRANSFER_TYPE_UNKNOWN
+        computeIdentityTable,   // FECOMPONENTTRANSFER_TYPE_IDENTITY
+        computeTabularTable,    // FECOMPONENTTRANSFER_TYPE_TABLE
+        computeDiscreteTable,   // FECOMPONENTTRANSFER_TYPE_DISCRETE
+        computeLinearTable,     // FECOMPONENTTRANSFER_TYPE_LINEAR
+        computeGammaTable       // FECOMPONENTTRANSFER_TYPE_GAMMA
+    };
+
+    ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(m_redFunction.type) < WTF_ARRAY_LENGTH(callEffect));
+    ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(m_greenFunction.type) < WTF_ARRAY_LENGTH(callEffect));
+    ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(m_blueFunction.type) < WTF_ARRAY_LENGTH(callEffect));
+    ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(m_alphaFunction.type) < WTF_ARRAY_LENGTH(callEffect));
+
+    callEffect[m_redFunction.type](redTable, m_redFunction);
+    callEffect[m_greenFunction.type](greenTable, m_greenFunction);
+    callEffect[m_blueFunction.type](blueTable, m_blueFunction);
+    callEffect[m_alphaFunction.type](alphaTable, m_alphaFunction);
 }
 
-static TextStream& operator<<(TextStream& ts, const ComponentTransferType& type)
+static TextStream& operator<<(TextStream& ts, ComponentTransferType type)
 {
     switch (type) {
     case FECOMPONENTTRANSFER_TYPE_UNKNOWN:
@@ -209,13 +201,13 @@ TextStream& FEComponentTransfer::externalRepresentation(TextStream& ts, int inde
     FilterEffect::externalRepresentation(ts);
     ts << " \n";
     writeIndent(ts, indent + 2);
-    ts << "{red: " << m_redFunc << "}\n";
+    ts << "{red: " << m_redFunction << "}\n";
     writeIndent(ts, indent + 2);
-    ts << "{green: " << m_greenFunc << "}\n";
+    ts << "{green: " << m_greenFunction << "}\n";
     writeIndent(ts, indent + 2);
-    ts << "{blue: " << m_blueFunc << "}\n";    
+    ts << "{blue: " << m_blueFunction << "}\n";
     writeIndent(ts, indent + 2);
-    ts << "{alpha: " << m_alphaFunc << "}]\n";
+    ts << "{alpha: " << m_alphaFunction << "}]\n";
     inputEffect(0)->externalRepresentation(ts, indent + 1);
     return ts;
 }
