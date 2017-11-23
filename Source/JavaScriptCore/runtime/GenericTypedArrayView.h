@@ -58,9 +58,9 @@ public:
             internalByteLength());
     }
     
-    bool zeroRange(unsigned offset, size_t length)
+    bool zeroRange(unsigned offset, size_t count)
     {
-        return zeroRangeImpl(offset * sizeof(typename Adaptor::Type), length * sizeof(typename Adaptor::Type));
+        return zeroRangeImpl(offset * sizeof(typename Adaptor::Type), count * sizeof(typename Adaptor::Type));
     }
     
     void zeroFill() { zeroRange(0, length()); }
@@ -97,7 +97,7 @@ public:
 
     bool getRange(typename Adaptor::Type* data, size_t count, unsigned offset)
     {
-        return getRangeUnchecked(
+        return getRangeImpl(
             reinterpret_cast<char*>(data),
             count * sizeof(typename Adaptor::Type),
             offset * sizeof(typename Adaptor::Type),

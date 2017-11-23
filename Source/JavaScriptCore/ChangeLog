@@ -1,3 +1,14 @@
+2017-11-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Followup after r225084: if anyone called GenericTypedArrayView() it didn't compile,
+        because of a getRangeUnchecked/getRangeImpl name mismatch; fixed to use getRangeImpl().
+        
+        Also name the argument to zeroRange() to 'count' since it's an item count.
+
+        * runtime/GenericTypedArrayView.h:
+        (JSC::GenericTypedArrayView::zeroRange):
+        (JSC::GenericTypedArrayView::getRange):
+
 2017-11-21  Simon Fraser  <simon.fraser@apple.com>
 
         Allow for more efficient use of GenericTypedArrayView
