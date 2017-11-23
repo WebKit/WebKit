@@ -30,6 +30,7 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include "UpdateAtlas.h"
+#include <WebCore/CoordinatedBuffer.h>
 #include <WebCore/CoordinatedGraphicsLayer.h>
 #include <WebCore/CoordinatedGraphicsState.h>
 #include <WebCore/CoordinatedImageBacking.h>
@@ -116,7 +117,7 @@ private:
     WebCore::FloatRect visibleContentsRect() const override;
     Ref<WebCore::CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image&) override;
     void detachLayer(WebCore::CoordinatedGraphicsLayer*) override;
-    bool paintToSurface(const WebCore::IntSize&, WebCore::CoordinatedBuffer::Flags, uint32_t& /* atlasID */, WebCore::IntPoint&, WebCore::CoordinatedBuffer::Client&) override;
+    RefPtr<WebCore::CoordinatedBuffer> getCoordinatedBuffer(const WebCore::IntSize&, WebCore::CoordinatedBuffer::Flags, uint32_t&, WebCore::IntRect&) override;
     void syncLayerState(WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayerState&) override;
 
     // UpdateAtlas::Client

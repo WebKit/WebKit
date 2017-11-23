@@ -27,7 +27,7 @@
 #include "Tile.h"
 
 #if USE(COORDINATED_GRAPHICS)
-#include "GraphicsContext.h"
+
 #include "SurfaceUpdateInfo.h"
 #include "TiledBackingStore.h"
 #include "TiledBackingStoreClient.h"
@@ -38,9 +38,9 @@ static const uint32_t InvalidTileID = 0;
 
 Tile::Tile(TiledBackingStore& tiledBackingStore, const Coordinate& tileCoordinate)
     : m_tiledBackingStore(tiledBackingStore)
+    , m_ID(InvalidTileID)
     , m_coordinate(tileCoordinate)
     , m_rect(tiledBackingStore.tileRectForCoordinate(tileCoordinate))
-    , m_ID(InvalidTileID)
     , m_dirtyRect(m_rect)
 {
 }
@@ -51,33 +51,8 @@ Tile::~Tile()
         m_tiledBackingStore.client().removeTile(m_ID);
 }
 
-bool Tile::isDirty() const
+void Tile::ensureTileID()
 {
-    return !m_dirtyRect.isEmpty();
-}
-
-void Tile::invalidate(const IntRect& dirtyRect)
-{
-    IntRect tileDirtyRect = intersection(dirtyRect, m_rect);
-    if (tileDirtyRect.isEmpty())
-        return;
-
-    m_dirtyRect.unite(tileDirtyRect);
-}
-
-bool Tile::updateBackBuffer()
-{
-    if (!isDirty())
-        return false;
-
-    SurfaceUpdateInfo updateInfo;
-
-    if (!m_tiledBackingStore.client().paintToSurface(m_dirtyRect.size(), updateInfo.atlasID, updateInfo.surfaceOffset, *this))
-        return false;
-
-    updateInfo.updateRect = m_dirtyRect;
-    updateInfo.updateRect.move(-m_rect.x(), -m_rect.y());
-
     static uint32_t id = 1;
     if (m_ID == InvalidTileID) {
         m_ID = id++;
@@ -86,23 +61,28 @@ bool Tile::updateBackBuffer()
             m_ID = id++;
         m_tiledBackingStore.client().createTile(m_ID, m_tiledBackingStore.contentsScale());
     }
-    m_tiledBackingStore.client().updateTile(m_ID, updateInfo, m_rect);
-
-    m_dirtyRect = IntRect();
-
-    return true;
 }
 
-void Tile::paintToSurfaceContext(GraphicsContext& context)
+bool Tile::isDirty() const
 {
-    context.translate(-m_dirtyRect.x(), -m_dirtyRect.y());
-    context.scale(FloatSize(m_tiledBackingStore.contentsScale(), m_tiledBackingStore.contentsScale()));
-    m_tiledBackingStore.client().tiledBackingStorePaint(context, m_tiledBackingStore.mapToContents(m_dirtyRect));
+    return !m_dirtyRect.isEmpty();
 }
 
 bool Tile::isReadyToPaint() const
 {
     return m_ID != InvalidTileID;
+}
+
+void Tile::invalidate(const IntRect& dirtyRect)
+{
+    IntRect tileDirtyRect = intersection(dirtyRect, m_rect);
+    if (!tileDirtyRect.isEmpty())
+        m_dirtyRect.unite(tileDirtyRect);
+}
+
+void Tile::markClean()
+{
+    m_dirtyRect = { };
 }
 
 void Tile::resize(const IntSize& newSize)

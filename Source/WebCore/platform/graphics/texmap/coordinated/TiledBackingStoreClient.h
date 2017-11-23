@@ -20,8 +20,6 @@
 #ifndef TiledBackingStoreClient_h
 #define TiledBackingStoreClient_h
 
-#include "CoordinatedBuffer.h"
-
 namespace WebCore {
 
 #if USE(COORDINATED_GRAPHICS)
@@ -32,14 +30,11 @@ class SurfaceUpdateInfo;
 class TiledBackingStoreClient {
 public:
     virtual ~TiledBackingStoreClient() = default;
-    virtual void tiledBackingStorePaint(GraphicsContext&, const IntRect&) = 0;
-    virtual void didUpdateTileBuffers() = 0;
     virtual void tiledBackingStoreHasPendingTileCreation() = 0;
 
     virtual void createTile(uint32_t tileID, float) = 0;
     virtual void updateTile(uint32_t tileID, const SurfaceUpdateInfo&, const IntRect&) = 0;
     virtual void removeTile(uint32_t tileID) = 0;
-    virtual bool paintToSurface(const IntSize&, uint32_t& atlasID, IntPoint&, CoordinatedBuffer::Client&) = 0;
 };
 
 #endif

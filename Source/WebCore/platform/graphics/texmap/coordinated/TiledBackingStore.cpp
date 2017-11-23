@@ -88,21 +88,15 @@ void TiledBackingStore::invalidate(const IntRect& contentsDirtyRect)
     }
 }
 
-void TiledBackingStore::updateTileBuffers()
+Vector<std::reference_wrapper<Tile>> TiledBackingStore::dirtyTiles()
 {
-    // FIXME: In single threaded case, tile back buffers could be updated asynchronously 
-    // one by one and then swapped to front in one go. This would minimize the time spent
-    // blocking on tile updates.
-    bool updated = false;
+    Vector<std::reference_wrapper<Tile>> tiles;
     for (auto& tile : m_tiles.values()) {
-        if (!tile->isDirty())
-            continue;
-
-        updated |= tile->updateBackBuffer();
+        if (tile->isDirty())
+            tiles.append(*tile);
     }
 
-    if (updated)
-        m_client.didUpdateTileBuffers();
+    return tiles;
 }
 
 double TiledBackingStore::tileDistance(const IntRect& viewport, const Tile::Coordinate& tileCoordinate) const

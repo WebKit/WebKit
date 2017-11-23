@@ -47,7 +47,7 @@ public:
 
     float contentsScale() { return m_contentsScale; }
 
-    void updateTileBuffers();
+    Vector<std::reference_wrapper<Tile>> dirtyTiles();
 
     void invalidate(const IntRect& dirtyRect);
 

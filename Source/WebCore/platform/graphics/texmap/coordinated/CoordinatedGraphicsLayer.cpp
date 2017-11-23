@@ -94,6 +94,15 @@ void CoordinatedGraphicsLayer::didChangeImageBacking()
     notifyFlushRequired();
 }
 
+void CoordinatedGraphicsLayer::didUpdateTileBuffers()
+{
+    if (!isShowingRepaintCounter())
+        return;
+
+    m_layerState.repaintCount = incrementRepaintCount();
+    m_layerState.repaintCountChanged = true;
+}
+
 void CoordinatedGraphicsLayer::setShouldUpdateVisibleRect()
 {
     m_shouldUpdateVisibleRect = true;
@@ -842,22 +851,6 @@ void CoordinatedGraphicsLayer::createBackingStore()
     m_mainBackingStore->setSupportsAlpha(!contentsOpaque());
 }
 
-void CoordinatedGraphicsLayer::tiledBackingStorePaint(GraphicsContext& context, const IntRect& rect)
-{
-    if (rect.isEmpty())
-        return;
-    paintGraphicsLayerContents(context, rect);
-}
-
-void CoordinatedGraphicsLayer::didUpdateTileBuffers()
-{
-    if (!isShowingRepaintCounter())
-        return;
-
-    m_layerState.repaintCount = incrementRepaintCount();
-    m_layerState.repaintCountChanged = true;
-}
-
 void CoordinatedGraphicsLayer::tiledBackingStoreHasPendingTileCreation()
 {
     setNeedsVisibleRectAdjustment();
@@ -890,13 +883,6 @@ IntRect CoordinatedGraphicsLayer::transformedVisibleRect()
     FloatRect rect = m_cachedInverseTransform.clampedBoundsOfProjectedQuad(FloatQuad(m_coordinator->visibleContentsRect()));
     clampToContentsRectIfRectIsInfinite(rect, size());
     return enclosingIntRect(rect);
-}
-
-bool CoordinatedGraphicsLayer::paintToSurface(const IntSize& size, uint32_t& atlas, IntPoint& offset, CoordinatedBuffer::Client& client)
-{
-    ASSERT(m_coordinator);
-    ASSERT(m_coordinator->isFlushingLayerChanges());
-    return m_coordinator->paintToSurface(size, contentsOpaque() ? CoordinatedBuffer::NoFlags : CoordinatedBuffer::SupportsAlpha, atlas, offset, client);
 }
 
 void CoordinatedGraphicsLayer::createTile(uint32_t tileID, float scaleFactor)
@@ -968,7 +954,60 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
         m_mainBackingStore->createTilesIfNeeded(transformedVisibleRect(), IntRect(0, 0, size().width(), size().height()));
     }
 
-    m_mainBackingStore->updateTileBuffers();
+    ASSERT(m_coordinator && m_coordinator->isFlushingLayerChanges());
+
+    auto dirtyTiles = m_mainBackingStore->dirtyTiles();
+    if (!dirtyTiles.isEmpty()) {
+        bool didUpdateTiles = false;
+
+        for (auto& tileReference : dirtyTiles) {
+            auto& tile = tileReference.get();
+            tile.ensureTileID();
+
+            auto& tileRect = tile.rect();
+            auto& dirtyRect = tile.dirtyRect();
+
+            SurfaceUpdateInfo updateInfo;
+            IntRect targetRect;
+            auto coordinatedBuffer = m_coordinator->getCoordinatedBuffer(dirtyRect.size(),
+                contentsOpaque() ? CoordinatedBuffer::NoFlags : CoordinatedBuffer::SupportsAlpha,
+                updateInfo.atlasID, targetRect);
+            if (!coordinatedBuffer)
+                continue;
+
+            {
+                GraphicsContext& context = coordinatedBuffer->context();
+                context.save();
+                context.clip(targetRect);
+                context.translate(targetRect.x(), targetRect.y());
+
+                if (coordinatedBuffer->supportsAlpha()) {
+                    context.setCompositeOperation(CompositeCopy);
+                    context.fillRect(IntRect(IntPoint::zero(), dirtyRect.size()), Color::transparent);
+                    context.setCompositeOperation(CompositeSourceOver);
+                }
+
+                context.translate(-dirtyRect.x(), -dirtyRect.y());
+                float backingStoreScale = m_mainBackingStore->contentsScale();
+                context.scale(FloatSize(backingStoreScale, backingStoreScale));
+
+                paintGraphicsLayerContents(context, m_mainBackingStore->mapToContents(dirtyRect));
+
+                context.restore();
+            }
+
+            updateInfo.surfaceOffset = targetRect.location();
+            updateInfo.updateRect = dirtyRect;
+            updateInfo.updateRect.move(-tileRect.x(), -tileRect.y());
+            updateTile(tile.tileID(), updateInfo, tileRect);
+
+            tile.markClean();
+            didUpdateTiles |= true;
+        }
+
+        if (didUpdateTiles)
+            didUpdateTileBuffers();
+    }
 
     // The previous backing store is kept around to avoid flickering between
     // removing the existing tiles and painting the new ones. The first time

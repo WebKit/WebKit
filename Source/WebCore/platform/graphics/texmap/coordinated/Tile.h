@@ -35,33 +35,33 @@
 
 namespace WebCore {
 
-class GraphicsContext;
 class TiledBackingStore;
 
-class Tile : public CoordinatedBuffer::Client {
+class Tile {
 public:
     typedef IntPoint Coordinate;
 
     Tile(TiledBackingStore&, const Coordinate&);
     ~Tile();
 
-    bool isDirty() const;
-    void invalidate(const IntRect&);
-    bool updateBackBuffer();
-    bool isReadyToPaint() const;
+    uint32_t tileID() const { return m_ID; }
+    void ensureTileID();
 
     const Coordinate& coordinate() const { return m_coordinate; }
     const IntRect& rect() const { return m_rect; }
-    void resize(const IntSize&);
+    const IntRect& dirtyRect() const { return m_dirtyRect; }
+    bool isDirty() const;
+    bool isReadyToPaint() const;
 
-    void paintToSurfaceContext(GraphicsContext&) override;
+    void invalidate(const IntRect&);
+    void markClean();
+    void resize(const IntSize&);
 
 private:
     TiledBackingStore& m_tiledBackingStore;
+    uint32_t m_ID;
     Coordinate m_coordinate;
     IntRect m_rect;
-
-    uint32_t m_ID;
     IntRect m_dirtyRect;
 };
 

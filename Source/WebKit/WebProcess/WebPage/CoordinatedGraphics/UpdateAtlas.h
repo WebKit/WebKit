@@ -23,14 +23,13 @@
 
 #include "AreaAllocator.h"
 #include <WebCore/CoordinatedBuffer.h>
-#include <WebCore/IntSize.h>
 #include <wtf/RefPtr.h>
 
 #if USE(COORDINATED_GRAPHICS)
 
 namespace WebCore {
-class GraphicsContext;
-class IntPoint;
+class IntRect;
+class IntSize;
 }
 
 namespace WebKit {
@@ -49,8 +48,7 @@ public:
 
     const WebCore::IntSize& size() const { return m_buffer->size(); }
 
-    // Returns false if there is no available buffer.
-    bool paintOnAvailableBuffer(const WebCore::IntSize&, uint32_t& atlasID, WebCore::IntPoint& offset, WebCore::CoordinatedBuffer::Client&);
+    RefPtr<WebCore::CoordinatedBuffer> getCoordinatedBuffer(const WebCore::IntSize&, uint32_t&, WebCore::IntRect&);
     void didSwapBuffers();
     bool supportsAlpha() const { return m_buffer->supportsAlpha(); }
 

@@ -48,7 +48,7 @@ public:
     virtual FloatRect visibleContentsRect() const = 0;
     virtual Ref<CoordinatedImageBacking> createImageBackingIfNeeded(Image&) = 0;
     virtual void detachLayer(CoordinatedGraphicsLayer*) = 0;
-    virtual bool paintToSurface(const IntSize&, CoordinatedBuffer::Flags, uint32_t& atlasID, IntPoint&, CoordinatedBuffer::Client&) = 0;
+    virtual RefPtr<CoordinatedBuffer> getCoordinatedBuffer(const IntSize&, CoordinatedBuffer::Flags, uint32_t&, IntRect&) = 0;
 
     virtual void syncLayerState(CoordinatedLayerID, CoordinatedGraphicsLayerState&) = 0;
 };
@@ -130,13 +130,10 @@ public:
     IntRect transformedVisibleRect();
 
     // TiledBackingStoreClient
-    void tiledBackingStorePaint(GraphicsContext&, const IntRect&) override;
-    void didUpdateTileBuffers() override;
     void tiledBackingStoreHasPendingTileCreation() override;
     void createTile(uint32_t tileID, float) override;
     void updateTile(uint32_t tileID, const SurfaceUpdateInfo&, const IntRect&) override;
     void removeTile(uint32_t tileID) override;
-    bool paintToSurface(const IntSize&, uint32_t& /* atlasID */, IntPoint&, CoordinatedBuffer::Client&) override;
 
     void setCoordinator(CoordinatedGraphicsLayerClient*);
 
@@ -165,6 +162,7 @@ private:
     void didChangeChildren();
     void didChangeFilters();
     void didChangeImageBacking();
+    void didUpdateTileBuffers();
 
     void resetLayerState();
     void syncLayerState();

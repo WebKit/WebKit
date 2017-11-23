@@ -60,38 +60,17 @@ void UpdateAtlas::didSwapBuffers()
     m_areaAllocator = nullptr;
 }
 
-bool UpdateAtlas::paintOnAvailableBuffer(const IntSize& size, uint32_t& atlasID, IntPoint& offset, CoordinatedBuffer::Client& client)
+RefPtr<CoordinatedBuffer> UpdateAtlas::getCoordinatedBuffer(const IntSize& size, uint32_t& atlasID, IntRect& allocatedRect)
 {
     m_inactivityInSeconds = 0;
     buildLayoutIfNeeded();
-    IntRect rect = m_areaAllocator->allocate(size);
+    allocatedRect = m_areaAllocator->allocate(size);
 
-    // No available buffer was found.
-    if (rect.isEmpty())
-        return false;
+    if (allocatedRect.isEmpty())
+        return nullptr;
 
     atlasID = m_ID;
-
-    // FIXME: Use tri-state buffers, to allow faster updates.
-    offset = rect.location();
-
-    {
-        GraphicsContext& context = m_buffer->context();
-        context.save();
-        context.clip(rect);
-        context.translate(rect.x(), rect.y());
-
-        if (supportsAlpha()) {
-            context.setCompositeOperation(CompositeCopy);
-            context.fillRect(IntRect(IntPoint::zero(), size), Color::transparent);
-            context.setCompositeOperation(CompositeSourceOver);
-        }
-
-        client.paintToSurfaceContext(context);
-        context.restore();
-    }
-
-    return true;
+    return m_buffer.copyRef();
 }
 
 } // namespace WebCore

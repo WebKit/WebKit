@@ -39,7 +39,6 @@ namespace WebCore {
 class GraphicsContext;
 class Image;
 class ImageBuffer;
-class IntRect;
 
 class CoordinatedBuffer : public ThreadSafeRefCounted<CoordinatedBuffer> {
 public:
@@ -48,12 +47,6 @@ public:
         SupportsAlpha = 1 << 0,
     };
     using Flags = unsigned;
-
-    class Client {
-    public:
-        virtual ~Client() = default;
-        virtual void paintToSurfaceContext(GraphicsContext&) = 0;
-    };
 
     static Ref<CoordinatedBuffer> create(const IntSize&, Flags);
     ~CoordinatedBuffer();

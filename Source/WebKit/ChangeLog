@@ -1,5 +1,32 @@
 2017-11-23  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordGraphics] Simplify CoordinatedGraphicsLayer's content buffer updates
+        https://bugs.webkit.org/show_bug.cgi?id=179972
+
+        Reviewed by Carlos Garcia Campos.
+
+        In CompositingCoordinator, add the getCoordinatedBuffer() method, replacing
+        paintToSurface(). The new method traverses the list of UpdateAtlases and
+        returns any CoordinatedBuffer object that was free to use. If none exist,
+        a new UpdateAtlas object is created, and its CoordinatedBuffer is returned.
+
+        In  UpdateAtlas, the paintOnAvailableBuffer() method is replaced with
+        getCoordinatedBuffer(). The latter allocates the necessary area but then
+        returns a reference to the CoordinatedBuffer buffer, along with the atlas ID
+        and the allocated rectangle information, and does not invoke any painting
+        operation like paintOnAvailableBuffer() did.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::getCoordinatedBuffer):
+        (WebKit::CompositingCoordinator::paintToSurface): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+        * WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.cpp:
+        (WebKit::UpdateAtlas::getCoordinatedBuffer):
+        (WebKit::UpdateAtlas::paintOnAvailableBuffer): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.h:
+
+2017-11-23  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordGraphics] Remove relay CoordinatedBuffer::Client implementations
         https://bugs.webkit.org/show_bug.cgi?id=179970
 

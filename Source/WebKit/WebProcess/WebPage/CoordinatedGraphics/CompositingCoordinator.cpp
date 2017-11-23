@@ -385,21 +385,19 @@ void CompositingCoordinator::purgeBackingStores()
     m_updateAtlases.clear();
 }
 
-bool CompositingCoordinator::paintToSurface(const IntSize& size, CoordinatedBuffer::Flags flags, uint32_t& atlasID, IntPoint& offset, CoordinatedBuffer::Client& client)
+RefPtr<CoordinatedBuffer> CompositingCoordinator::getCoordinatedBuffer(const IntSize& size, CoordinatedBuffer::Flags flags, uint32_t& atlasID, IntRect& allocatedRect)
 {
-    for (auto& updateAtlas : m_updateAtlases) {
-        UpdateAtlas* atlas = updateAtlas.get();
+    for (auto& atlas : m_updateAtlases) {
         if (atlas->supportsAlpha() == (flags & CoordinatedBuffer::SupportsAlpha)) {
-            // This will be false if there is no available buffer space.
-            if (atlas->paintOnAvailableBuffer(size, atlasID, offset, client))
-                return true;
+            if (auto buffer = atlas->getCoordinatedBuffer(size, atlasID, allocatedRect))
+                return buffer;
         }
     }
 
-    static const int ScratchBufferDimension = 1024; // Should be a power of two.
+    static const int ScratchBufferDimension = 1024;
     m_updateAtlases.append(std::make_unique<UpdateAtlas>(*this, ScratchBufferDimension, flags));
     scheduleReleaseInactiveAtlases();
-    return m_updateAtlases.last()->paintOnAvailableBuffer(size, atlasID, offset, client);
+    return m_updateAtlases.last()->getCoordinatedBuffer(size, atlasID, allocatedRect);
 }
 
 const Seconds releaseInactiveAtlasesTimerInterval { 500_ms };

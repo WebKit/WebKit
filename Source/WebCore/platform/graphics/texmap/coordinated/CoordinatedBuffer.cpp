@@ -32,7 +32,6 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include "ImageBuffer.h"
-#include "IntRect.h"
 
 namespace WebCore {
 
