@@ -1236,7 +1236,8 @@ inline void InspectorInstrumentation::didChangeCanvasMemory(HTMLCanvasElement& c
 inline void InspectorInstrumentation::recordCanvasAction(CanvasRenderingContext& canvasRenderingContext, const String& name, Vector<RecordCanvasActionVariant>&& parameters)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    auto* canvasElement = canvasRenderingContext.canvasBase().asHTMLCanvasElement();
+    auto& canvasBase = canvasRenderingContext.canvasBase();
+    auto* canvasElement = is<HTMLCanvasElement>(canvasBase) ? &downcast<HTMLCanvasElement>(canvasBase) : nullptr;
     if (canvasElement) {
         if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasElement->document()))
             recordCanvasActionImpl(*instrumentingAgents, canvasRenderingContext, name, WTFMove(parameters));

@@ -48,7 +48,10 @@ ImageBitmapRenderingContext::~ImageBitmapRenderingContext() = default;
 
 HTMLCanvasElement* ImageBitmapRenderingContext::canvas() const
 {
-    return canvasBase().asHTMLCanvasElement();
+    auto& base = canvasBase();
+    if (!is<HTMLCanvasElement>(base))
+        return nullptr;
+    return &downcast<HTMLCanvasElement>(base);
 }
 
 bool ImageBitmapRenderingContext::isAccelerated() const

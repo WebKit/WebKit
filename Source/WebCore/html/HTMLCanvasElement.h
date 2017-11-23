@@ -82,13 +82,13 @@ public:
     void removeObserver(CanvasObserver&);
     HashSet<Element*> cssCanvasClients() const;
 
-    unsigned width() const override { return size().width(); }
-    unsigned height() const override { return size().height(); }
+    unsigned width() const final { return size().width(); }
+    unsigned height() const final { return size().height(); }
 
     WEBCORE_EXPORT ExceptionOr<void> setWidth(unsigned);
     WEBCORE_EXPORT ExceptionOr<void> setHeight(unsigned);
 
-    const IntSize& size() const override { return m_size; }
+    const IntSize& size() const final { return m_size; }
 
     void setSize(const IntSize& newSize) override
     { 
@@ -100,8 +100,6 @@ public:
         m_ignoreReset = false;
         reset();
     }
-
-    bool isHTMLCanvasElement() const override { return true; }
 
     ExceptionOr<std::optional<RenderingContext>> getContext(JSC::ExecState&, const String& contextId, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
 
@@ -153,7 +151,7 @@ public:
     void makePresentationCopy();
     void clearPresentationCopy();
 
-    SecurityOrigin* securityOrigin() const override;
+    SecurityOrigin* securityOrigin() const final;
 
     AffineTransform baseTransform() const;
 
@@ -177,6 +175,8 @@ public:
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);
 
+    bool isHTMLCanvasElement() const final { return true; }
+
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
@@ -195,6 +195,9 @@ private:
     bool paintsIntoCanvasBuffer() const;
 
     bool isGPUBased() const;
+
+    void refCanvasBase() final { HTMLElement::ref(); }
+    void derefCanvasBase() final { HTMLElement::deref(); }
 
     HashSet<CanvasObserver*> m_observers;
     std::unique_ptr<CanvasRenderingContext> m_context;
@@ -220,3 +223,16 @@ private:
 };
 
 } // namespace WebCore
+
+namespace WTF {
+template<typename ArgType> class TypeCastTraits<const WebCore::HTMLCanvasElement, ArgType, false /* isBaseType */> {
+public:
+    static bool isOfType(ArgType& node) { return checkTagName(node); }
+private:
+    static bool checkTagName(const WebCore::CanvasBase& base) { return base.isHTMLCanvasElement(); }
+    static bool checkTagName(const WebCore::HTMLElement& element) { return element.hasTagName(WebCore::HTMLNames::canvasTag); }
+    static bool checkTagName(const WebCore::Node& node) { return node.hasTagName(WebCore::HTMLNames::canvasTag); }
+    static bool checkTagName(const WebCore::EventTarget& target) { return is<WebCore::Node>(target) && checkTagName(downcast<WebCore::Node>(target)); }
+};
+}
+

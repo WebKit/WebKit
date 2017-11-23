@@ -96,7 +96,10 @@ WebGPURenderingContext::WebGPURenderingContext(CanvasBase& canvas, Ref<GPUDevice
 
 HTMLCanvasElement* WebGPURenderingContext::canvas() const
 {
-    return canvasBase().asHTMLCanvasElement();
+    auto& base = canvasBase();
+    if (!is<HTMLCanvasElement>(base))
+        return nullptr;
+    return &downcast<HTMLCanvasElement>(base);
 }
 
 void WebGPURenderingContext::initializeNewContext()

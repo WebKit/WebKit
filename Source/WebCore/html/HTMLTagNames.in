@@ -25,7 +25,7 @@ blockquote interfaceName=HTMLQuoteElement
 body
 br interfaceName=HTMLBRElement
 button constructorNeedsFormElement
-canvas
+canvas customTypeHelper
 caption interfaceName=HTMLTableCaptionElement
 center interfaceName=HTMLElement
 cite interfaceName=HTMLElement

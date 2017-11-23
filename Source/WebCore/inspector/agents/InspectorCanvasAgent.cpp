@@ -425,7 +425,8 @@ void InspectorCanvasAgent::didChangeCanvasMemory(HTMLCanvasElement& canvasElemen
 
 void InspectorCanvasAgent::recordCanvasAction(CanvasRenderingContext& canvasRenderingContext, const String& name, Vector<RecordCanvasActionVariant>&& parameters)
 {
-    auto* canvasElement = canvasRenderingContext.canvasBase().asHTMLCanvasElement();
+    auto& canvasBase = canvasRenderingContext.canvasBase();
+    auto* canvasElement = is<HTMLCanvasElement>(canvasBase) ? &downcast<HTMLCanvasElement>(canvasBase) : nullptr;
     if (!canvasElement)
         return;
 

@@ -45,30 +45,12 @@ CanvasRenderingContext::CanvasRenderingContext(CanvasBase& canvas)
 
 void CanvasRenderingContext::ref()
 {
-    if (m_canvas.isHTMLCanvasElement()) {
-        auto* htmlCanvas = static_cast<HTMLCanvasElement*>(&m_canvas);
-        htmlCanvas->ref();
-        return;
-    }
-    if (is<OffscreenCanvas>(m_canvas)) {
-        auto* offscreenCanvas = static_cast<OffscreenCanvas*>(&m_canvas);
-        offscreenCanvas->ref();
-        return;
-    }
+    m_canvas.refCanvasBase();
 }
 
 void CanvasRenderingContext::deref()
 {
-    if (m_canvas.isHTMLCanvasElement()) {
-        auto* htmlCanvas = static_cast<HTMLCanvasElement*>(&m_canvas);
-        htmlCanvas->deref();
-        return;
-    }
-    if (is<OffscreenCanvas>(m_canvas)) {
-        auto* offscreenCanvas = static_cast<OffscreenCanvas*>(&m_canvas);
-        offscreenCanvas->deref();
-        return;
-    }
+    m_canvas.derefCanvasBase();
 }
 
 bool CanvasRenderingContext::wouldTaintOrigin(const CanvasPattern* pattern)

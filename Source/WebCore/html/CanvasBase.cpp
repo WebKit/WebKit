@@ -35,11 +35,4 @@ CanvasBase::CanvasBase(ScriptExecutionContext* scriptExecutionContext)
 {
 }
 
-HTMLCanvasElement* CanvasBase::asHTMLCanvasElement()
-{
-    if (!isHTMLCanvasElement())
-        return nullptr;
-    return static_cast<HTMLCanvasElement*>(this);
-}
-
 }

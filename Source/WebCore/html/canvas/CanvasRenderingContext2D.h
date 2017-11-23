@@ -76,7 +76,7 @@ public:
     CanvasRenderingContext2D(CanvasBase&, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
     virtual ~CanvasRenderingContext2D();
 
-    HTMLCanvasElement& canvas() const { return static_cast<HTMLCanvasElement&>(canvasBase()); }
+    HTMLCanvasElement& canvas() const { return downcast<HTMLCanvasElement>(canvasBase()); }
 
     float lineWidth() const;
     void setLineWidth(float);

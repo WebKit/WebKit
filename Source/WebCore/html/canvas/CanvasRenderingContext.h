@@ -70,7 +70,7 @@ public:
     void setCallTracingActive(bool callTracingActive) { m_callTracingActive = callTracingActive; }
 
 protected:
-    CanvasRenderingContext(CanvasBase&);
+    explicit CanvasRenderingContext(CanvasBase&);
     bool wouldTaintOrigin(const CanvasPattern*);
     bool wouldTaintOrigin(const HTMLCanvasElement*);
     bool wouldTaintOrigin(const HTMLImageElement*);

@@ -38,10 +38,11 @@ class CanvasBase {
 public:
     virtual ~CanvasBase() = default;
 
+    virtual void refCanvasBase() = 0;
+    virtual void derefCanvasBase() = 0;
+
     virtual bool isHTMLCanvasElement() const { return false; }
     virtual bool isOffscreenCanvas() const { return false; }
-
-    HTMLCanvasElement* asHTMLCanvasElement();
 
     virtual unsigned width() const = 0;
     virtual unsigned height() const = 0;

@@ -373,7 +373,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     bool isPendingPolicyResolution = false;
     HostWindow* hostWindow = nullptr;
 
-    auto* canvasElement = canvas.asHTMLCanvasElement();
+    auto* canvasElement = is<HTMLCanvasElement>(canvas) ? &downcast<HTMLCanvasElement>(canvas) : nullptr;
 
     if (canvasElement) {
         Document& document = canvasElement->document();
@@ -515,7 +515,10 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, Ref<Gra
 
 HTMLCanvasElement* WebGLRenderingContextBase::canvas()
 {
-    return canvasBase().asHTMLCanvasElement();
+    auto& base = canvasBase();
+    if (!is<HTMLCanvasElement>(base))
+        return nullptr;
+    return &downcast<HTMLCanvasElement>(base);
 }
 
 // We check for context loss handling after a few seconds to give the JS a chance to register the event listeners
