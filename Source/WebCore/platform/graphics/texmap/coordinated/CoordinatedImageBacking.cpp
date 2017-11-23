@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class ImageBackingSurfaceClient : public CoordinatedSurface::Client {
+class ImageBackingSurfaceClient : public CoordinatedBuffer::Client {
 public:
     ImageBackingSurfaceClient(Image& image, const IntRect& rect)
         : m_image(image)
@@ -118,28 +118,23 @@ void CoordinatedImageBacking::update()
         }
     }
 
-    m_surface = CoordinatedSurface::create(IntSize(m_image->size()), !m_image->currentFrameKnownToBeOpaque() ? CoordinatedSurface::SupportsAlpha : CoordinatedSurface::NoFlags);
-    if (!m_surface) {
-        m_isDirty = false;
-        return;
-    }
+    m_buffer = CoordinatedBuffer::create(IntSize(m_image->size()), !m_image->currentFrameKnownToBeOpaque() ? CoordinatedBuffer::SupportsAlpha : CoordinatedBuffer::NoFlags);
+    ASSERT(m_buffer);
 
     IntRect rect(IntPoint::zero(), IntSize(m_image->size()));
 
     ImageBackingSurfaceClient surfaceClient(*m_image, rect);
-    m_surface->paintToSurface(rect, surfaceClient);
+    m_buffer->paintToSurface(rect, surfaceClient);
 
     m_nativeImagePtr = m_image->nativeImageForCurrentFrame();
 
-    m_client->updateImageBacking(id(), m_surface.copyRef());
+    m_client->updateImageBacking(id(), m_buffer.copyRef());
     m_isDirty = false;
 }
 
 void CoordinatedImageBacking::releaseSurfaceIfNeeded()
 {
-    // We must keep m_surface until UI Process reads m_surface.
-    // If m_surface exists, it was created in the previous update.
-    m_surface = nullptr;
+    m_buffer = nullptr;
 }
 
 static const Seconds clearContentsTimerInterval { 3_s };

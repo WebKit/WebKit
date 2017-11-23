@@ -30,7 +30,7 @@
 
 
 namespace WebCore {
-class CoordinatedSurface;
+class CoordinatedBuffer;
 }
 
 namespace WebKit {
@@ -45,13 +45,13 @@ public:
 
     inline float scale() const { return m_scale; }
     void swapBuffers(WebCore::TextureMapper&);
-    void setBackBuffer(const WebCore::IntRect&, const WebCore::IntRect&, RefPtr<WebCore::CoordinatedSurface>&& buffer, const WebCore::IntPoint&);
+    void setBackBuffer(const WebCore::IntRect&, const WebCore::IntRect&, RefPtr<WebCore::CoordinatedBuffer>&&, const WebCore::IntPoint&);
 
 private:
-    RefPtr<WebCore::CoordinatedSurface> m_surface;
+    RefPtr<WebCore::CoordinatedBuffer> m_buffer;
     WebCore::IntRect m_sourceRect;
     WebCore::IntRect m_tileRect;
-    WebCore::IntPoint m_surfaceOffset;
+    WebCore::IntPoint m_bufferOffset;
     float m_scale;
 };
 
@@ -60,7 +60,7 @@ public:
     void createTile(uint32_t tileID, float);
     void removeTile(uint32_t tileID);
     void removeAllTiles();
-    void updateTile(uint32_t tileID, const WebCore::IntRect&, const WebCore::IntRect&, RefPtr<WebCore::CoordinatedSurface>&&, const WebCore::IntPoint&);
+    void updateTile(uint32_t tileID, const WebCore::IntRect&, const WebCore::IntRect&, RefPtr<WebCore::CoordinatedBuffer>&&, const WebCore::IntPoint&);
     static Ref<CoordinatedBackingStore> create() { return adoptRef(*new CoordinatedBackingStore); }
     void commitTileOperations(WebCore::TextureMapper&);
     RefPtr<WebCore::BitmapTexture> texture() const override;

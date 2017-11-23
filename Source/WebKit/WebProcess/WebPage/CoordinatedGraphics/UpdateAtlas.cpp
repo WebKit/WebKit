@@ -32,9 +32,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-class UpdateAtlasSurfaceClient final : public CoordinatedSurface::Client {
+class UpdateAtlasSurfaceClient final : public CoordinatedBuffer::Client {
 public:
-    UpdateAtlasSurfaceClient(CoordinatedSurface::Client& client, const IntSize& size, bool supportsAlpha)
+    UpdateAtlasSurfaceClient(CoordinatedBuffer::Client& client, const IntSize& size, bool supportsAlpha)
         : m_client(client)
         , m_size(size)
         , m_supportsAlpha(supportsAlpha)
@@ -53,26 +53,24 @@ public:
     }
 
 private:
-    CoordinatedSurface::Client& m_client;
+    CoordinatedBuffer::Client& m_client;
     IntSize m_size;
     bool m_supportsAlpha;
 };
 
-UpdateAtlas::UpdateAtlas(Client& client, int dimension, CoordinatedSurface::Flags flags)
+UpdateAtlas::UpdateAtlas(Client& client, int dimension, CoordinatedBuffer::Flags flags)
     : m_client(client)
+    , m_buffer(CoordinatedBuffer::create(nextPowerOfTwo(IntSize(dimension, dimension)), flags))
 {
     static uint32_t nextID = 0;
     m_ID = ++nextID;
-    IntSize size = nextPowerOfTwo(IntSize(dimension, dimension));
-    m_surface = CoordinatedSurface::create(size, flags);
 
-    m_client.createUpdateAtlas(m_ID, m_surface.copyRef());
+    m_client.createUpdateAtlas(m_ID, m_buffer.copyRef());
 }
 
 UpdateAtlas::~UpdateAtlas()
 {
-    if (m_surface)
-        m_client.removeUpdateAtlas(m_ID);
+    m_client.removeUpdateAtlas(m_ID);
 }
 
 void UpdateAtlas::buildLayoutIfNeeded()
@@ -88,7 +86,7 @@ void UpdateAtlas::didSwapBuffers()
     m_areaAllocator = nullptr;
 }
 
-bool UpdateAtlas::paintOnAvailableBuffer(const IntSize& size, uint32_t& atlasID, IntPoint& offset, CoordinatedSurface::Client& client)
+bool UpdateAtlas::paintOnAvailableBuffer(const IntSize& size, uint32_t& atlasID, IntPoint& offset, CoordinatedBuffer::Client& client)
 {
     m_inactivityInSeconds = 0;
     buildLayoutIfNeeded();
@@ -98,16 +96,13 @@ bool UpdateAtlas::paintOnAvailableBuffer(const IntSize& size, uint32_t& atlasID,
     if (rect.isEmpty())
         return false;
 
-    if (!m_surface)
-        return false;
-
     atlasID = m_ID;
 
     // FIXME: Use tri-state buffers, to allow faster updates.
     offset = rect.location();
 
     UpdateAtlasSurfaceClient surfaceClient(client, size, supportsAlpha());
-    m_surface->paintToSurface(rect, surfaceClient);
+    m_buffer->paintToSurface(rect, surfaceClient);
 
     return true;
 }

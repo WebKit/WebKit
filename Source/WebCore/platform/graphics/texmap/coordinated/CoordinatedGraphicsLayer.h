@@ -48,7 +48,7 @@ public:
     virtual FloatRect visibleContentsRect() const = 0;
     virtual Ref<CoordinatedImageBacking> createImageBackingIfNeeded(Image&) = 0;
     virtual void detachLayer(CoordinatedGraphicsLayer*) = 0;
-    virtual bool paintToSurface(const IntSize&, CoordinatedSurface::Flags, uint32_t& atlasID, IntPoint&, CoordinatedSurface::Client&) = 0;
+    virtual bool paintToSurface(const IntSize&, CoordinatedBuffer::Flags, uint32_t& atlasID, IntPoint&, CoordinatedBuffer::Client&) = 0;
 
     virtual void syncLayerState(CoordinatedLayerID, CoordinatedGraphicsLayerState&) = 0;
 };
@@ -136,7 +136,7 @@ public:
     void createTile(uint32_t tileID, float) override;
     void updateTile(uint32_t tileID, const SurfaceUpdateInfo&, const IntRect&) override;
     void removeTile(uint32_t tileID) override;
-    bool paintToSurface(const IntSize&, uint32_t& /* atlasID */, IntPoint&, CoordinatedSurface::Client&) override;
+    bool paintToSurface(const IntSize&, uint32_t& /* atlasID */, IntPoint&, CoordinatedBuffer::Client&) override;
 
     void setCoordinator(CoordinatedGraphicsLayerClient*);
 

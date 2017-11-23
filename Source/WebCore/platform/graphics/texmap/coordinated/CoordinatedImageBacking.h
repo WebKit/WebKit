@@ -28,8 +28,8 @@
 #define CoordinatedImageBacking_h
 
 #if USE(COORDINATED_GRAPHICS)
+#include "CoordinatedBuffer.h"
 #include "CoordinatedGraphicsState.h"
-#include "CoordinatedSurface.h"
 #include "Image.h"
 #include "Timer.h"
 #include <wtf/RefCounted.h>
@@ -42,7 +42,7 @@ public:
     class Client {
     public:
         virtual void createImageBacking(CoordinatedImageBackingID) = 0;
-        virtual void updateImageBacking(CoordinatedImageBackingID, RefPtr<CoordinatedSurface>&&) = 0;
+        virtual void updateImageBacking(CoordinatedImageBackingID, RefPtr<CoordinatedBuffer>&&) = 0;
         virtual void clearImageBackingContents(CoordinatedImageBackingID) = 0;
         virtual void removeImageBacking(CoordinatedImageBackingID) = 0;
     };
@@ -80,7 +80,7 @@ private:
     CoordinatedImageBackingID m_id;
     Vector<Host*> m_hosts;
 
-    RefPtr<CoordinatedSurface> m_surface;
+    RefPtr<CoordinatedBuffer> m_buffer;
 
     Timer m_clearContentsTimer;
 

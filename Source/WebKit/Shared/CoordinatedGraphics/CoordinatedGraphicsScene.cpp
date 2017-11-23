@@ -438,10 +438,10 @@ void CoordinatedGraphicsScene::syncUpdateAtlases(const CoordinatedGraphicsState&
         createUpdateAtlas(atlas.first, atlas.second.copyRef());
 }
 
-void CoordinatedGraphicsScene::createUpdateAtlas(uint32_t atlasID, RefPtr<CoordinatedSurface>&& surface)
+void CoordinatedGraphicsScene::createUpdateAtlas(uint32_t atlasID, RefPtr<CoordinatedBuffer>&& buffer)
 {
     ASSERT(!m_surfaces.contains(atlasID));
-    m_surfaces.add(atlasID, WTFMove(surface));
+    m_surfaces.add(atlasID, WTFMove(buffer));
 }
 
 void CoordinatedGraphicsScene::removeUpdateAtlas(uint32_t atlasID)
@@ -477,7 +477,7 @@ void CoordinatedGraphicsScene::createImageBacking(CoordinatedImageBackingID imag
     m_imageBackings.add(imageID, CoordinatedBackingStore::create());
 }
 
-void CoordinatedGraphicsScene::updateImageBacking(CoordinatedImageBackingID imageID, RefPtr<CoordinatedSurface>&& surface)
+void CoordinatedGraphicsScene::updateImageBacking(CoordinatedImageBackingID imageID, RefPtr<CoordinatedBuffer>&& buffer)
 {
     ASSERT(m_imageBackings.contains(imageID));
     auto it = m_imageBackings.find(imageID);
@@ -485,11 +485,11 @@ void CoordinatedGraphicsScene::updateImageBacking(CoordinatedImageBackingID imag
 
     // CoordinatedImageBacking is realized to CoordinatedBackingStore with only one tile in UI Process.
     backingStore->createTile(1 /* id */, 1 /* scale */);
-    IntRect rect(IntPoint::zero(), surface->size());
+    IntRect rect(IntPoint::zero(), buffer->size());
     // See CoordinatedGraphicsLayer::shouldDirectlyCompositeImage()
     ASSERT(2000 >= std::max(rect.width(), rect.height()));
     backingStore->setSize(rect.size());
-    backingStore->updateTile(1 /* id */, rect, rect, WTFMove(surface), rect.location());
+    backingStore->updateTile(1 /* id */, rect, rect, WTFMove(buffer), rect.location());
 
     m_backingStoresWithPendingBuffers.add(backingStore);
 }

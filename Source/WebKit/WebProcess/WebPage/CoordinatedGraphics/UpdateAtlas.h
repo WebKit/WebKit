@@ -22,7 +22,7 @@
 #define UpdateAtlas_h
 
 #include "AreaAllocator.h"
-#include <WebCore/CoordinatedSurface.h>
+#include <WebCore/CoordinatedBuffer.h>
 #include <WebCore/IntSize.h>
 #include <wtf/RefPtr.h>
 
@@ -40,19 +40,19 @@ class UpdateAtlas {
 public:
     class Client {
     public:
-        virtual void createUpdateAtlas(uint32_t /* id */, RefPtr<WebCore::CoordinatedSurface>&&) = 0;
+        virtual void createUpdateAtlas(uint32_t /* id */, RefPtr<WebCore::CoordinatedBuffer>&&) = 0;
         virtual void removeUpdateAtlas(uint32_t /* id */) = 0;
     };
 
-    UpdateAtlas(Client&, int dimension, WebCore::CoordinatedSurface::Flags);
+    UpdateAtlas(Client&, int dimension, WebCore::CoordinatedBuffer::Flags);
     ~UpdateAtlas();
 
-    inline WebCore::IntSize size() const { return m_surface->size(); }
+    const WebCore::IntSize& size() const { return m_buffer->size(); }
 
     // Returns false if there is no available buffer.
-    bool paintOnAvailableBuffer(const WebCore::IntSize&, uint32_t& atlasID, WebCore::IntPoint& offset, WebCore::CoordinatedSurface::Client&);
+    bool paintOnAvailableBuffer(const WebCore::IntSize&, uint32_t& atlasID, WebCore::IntPoint& offset, WebCore::CoordinatedBuffer::Client&);
     void didSwapBuffers();
-    bool supportsAlpha() const { return m_surface->supportsAlpha(); }
+    bool supportsAlpha() const { return m_buffer->supportsAlpha(); }
 
     void addTimeInactive(double seconds)
     {
@@ -72,7 +72,7 @@ private:
 private:
     Client& m_client;
     std::unique_ptr<GeneralAreaAllocator> m_areaAllocator;
-    RefPtr<WebCore::CoordinatedSurface> m_surface;
+    Ref<WebCore::CoordinatedBuffer> m_buffer;
     double m_inactivityInSeconds { 0 };
     uint32_t m_ID { 0 };
 };

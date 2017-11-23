@@ -27,7 +27,8 @@
 #define Tile_h
 
 #if USE(COORDINATED_GRAPHICS)
-#include "CoordinatedSurface.h"
+
+#include "CoordinatedBuffer.h"
 #include "IntPoint.h"
 #include "IntPointHash.h"
 #include "IntRect.h"
@@ -37,7 +38,7 @@ namespace WebCore {
 class GraphicsContext;
 class TiledBackingStore;
 
-class Tile : public CoordinatedSurface::Client {
+class Tile : public CoordinatedBuffer::Client {
 public:
     typedef IntPoint Coordinate;
 

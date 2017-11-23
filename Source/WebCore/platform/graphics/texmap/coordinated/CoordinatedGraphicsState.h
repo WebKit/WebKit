@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-class CoordinatedSurface;
+class CoordinatedBuffer;
 
 typedef uint32_t CoordinatedLayerID;
 enum { InvalidCoordinatedLayerID = 0 };
@@ -186,15 +186,15 @@ struct CoordinatedGraphicsState {
     IntRect coveredRect;
 
     Vector<CoordinatedLayerID> layersToCreate;
-    Vector<std::pair<CoordinatedLayerID, CoordinatedGraphicsLayerState> > layersToUpdate;
+    Vector<std::pair<CoordinatedLayerID, CoordinatedGraphicsLayerState>> layersToUpdate;
     Vector<CoordinatedLayerID> layersToRemove;
 
     Vector<CoordinatedImageBackingID> imagesToCreate;
     Vector<CoordinatedImageBackingID> imagesToRemove;
-    Vector<std::pair<CoordinatedImageBackingID, RefPtr<CoordinatedSurface> > > imagesToUpdate;
+    Vector<std::pair<CoordinatedImageBackingID, RefPtr<CoordinatedBuffer>>> imagesToUpdate;
     Vector<CoordinatedImageBackingID> imagesToClear;
 
-    Vector<std::pair<uint32_t /* atlasID */, RefPtr<CoordinatedSurface> > > updateAtlasesToCreate;
+    Vector<std::pair<uint32_t /* atlasID */, RefPtr<CoordinatedBuffer>>> updateAtlasesToCreate;
 };
 
 } // namespace WebCore

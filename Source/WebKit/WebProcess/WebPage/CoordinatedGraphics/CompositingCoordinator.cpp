@@ -224,10 +224,10 @@ void CompositingCoordinator::createImageBacking(CoordinatedImageBackingID imageI
     m_state.imagesToCreate.append(imageID);
 }
 
-void CompositingCoordinator::updateImageBacking(CoordinatedImageBackingID imageID, RefPtr<CoordinatedSurface>&& coordinatedSurface)
+void CompositingCoordinator::updateImageBacking(CoordinatedImageBackingID imageID, RefPtr<CoordinatedBuffer>&& buffer)
 {
     m_shouldSyncFrame = true;
-    m_state.imagesToUpdate.append(std::make_pair(imageID, WTFMove(coordinatedSurface)));
+    m_state.imagesToUpdate.append(std::make_pair(imageID, WTFMove(buffer)));
 }
 
 void CompositingCoordinator::clearImageBackingContents(CoordinatedImageBackingID imageID)
@@ -293,9 +293,9 @@ float CompositingCoordinator::pageScaleFactor() const
     return m_page->pageScaleFactor();
 }
 
-void CompositingCoordinator::createUpdateAtlas(uint32_t atlasID, RefPtr<CoordinatedSurface>&& coordinatedSurface)
+void CompositingCoordinator::createUpdateAtlas(uint32_t atlasID, RefPtr<CoordinatedBuffer>&& buffer)
 {
-    m_state.updateAtlasesToCreate.append(std::make_pair(atlasID, WTFMove(coordinatedSurface)));
+    m_state.updateAtlasesToCreate.append(std::make_pair(atlasID, WTFMove(buffer)));
 }
 
 void CompositingCoordinator::removeUpdateAtlas(uint32_t atlasID)
@@ -385,11 +385,11 @@ void CompositingCoordinator::purgeBackingStores()
     m_updateAtlases.clear();
 }
 
-bool CompositingCoordinator::paintToSurface(const IntSize& size, CoordinatedSurface::Flags flags, uint32_t& atlasID, IntPoint& offset, CoordinatedSurface::Client& client)
+bool CompositingCoordinator::paintToSurface(const IntSize& size, CoordinatedBuffer::Flags flags, uint32_t& atlasID, IntPoint& offset, CoordinatedBuffer::Client& client)
 {
     for (auto& updateAtlas : m_updateAtlases) {
         UpdateAtlas* atlas = updateAtlas.get();
-        if (atlas->supportsAlpha() == (flags & CoordinatedSurface::SupportsAlpha)) {
+        if (atlas->supportsAlpha() == (flags & CoordinatedBuffer::SupportsAlpha)) {
             // This will be false if there is no available buffer space.
             if (atlas->paintOnAvailableBuffer(size, atlasID, offset, client))
                 return true;

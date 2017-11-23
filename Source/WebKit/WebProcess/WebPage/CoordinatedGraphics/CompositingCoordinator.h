@@ -39,10 +39,10 @@
 #include <WebCore/IntRect.h>
 
 namespace WebCore {
-class Page;
+class CoordinatedBuffer;
 class GraphicsContext;
 class GraphicsLayer;
-class CoordinatedSurface;
+class Page;
 }
 
 namespace WebKit {
@@ -107,7 +107,7 @@ private:
 
     // CoordinatedImageBacking::Client
     void createImageBacking(WebCore::CoordinatedImageBackingID) override;
-    void updateImageBacking(WebCore::CoordinatedImageBackingID, RefPtr<WebCore::CoordinatedSurface>&&) override;
+    void updateImageBacking(WebCore::CoordinatedImageBackingID, RefPtr<WebCore::CoordinatedBuffer>&&) override;
     void clearImageBackingContents(WebCore::CoordinatedImageBackingID) override;
     void removeImageBacking(WebCore::CoordinatedImageBackingID) override;
 
@@ -116,11 +116,11 @@ private:
     WebCore::FloatRect visibleContentsRect() const override;
     Ref<WebCore::CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image&) override;
     void detachLayer(WebCore::CoordinatedGraphicsLayer*) override;
-    bool paintToSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags, uint32_t& /* atlasID */, WebCore::IntPoint&, WebCore::CoordinatedSurface::Client&) override;
+    bool paintToSurface(const WebCore::IntSize&, WebCore::CoordinatedBuffer::Flags, uint32_t& /* atlasID */, WebCore::IntPoint&, WebCore::CoordinatedBuffer::Client&) override;
     void syncLayerState(WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayerState&) override;
 
     // UpdateAtlas::Client
-    void createUpdateAtlas(uint32_t atlasID, RefPtr<WebCore::CoordinatedSurface>&&) override;
+    void createUpdateAtlas(uint32_t atlasID, RefPtr<WebCore::CoordinatedBuffer>&&) override;
     void removeUpdateAtlas(uint32_t atlasID) override;
 
     // GraphicsLayerFactory

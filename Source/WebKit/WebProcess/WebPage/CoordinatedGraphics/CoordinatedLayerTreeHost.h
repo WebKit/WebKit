@@ -29,7 +29,6 @@
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
-class CoordinatedSurface;
 class GraphicsLayerFactory;
 }
 
@@ -79,8 +78,6 @@ protected:
 
 private:
     void layerFlushTimerFired();
-
-    static RefPtr<WebCore::CoordinatedSurface> createCoordinatedSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags);
 
     CompositingCoordinator m_coordinator;
     bool m_isWaitingForRenderer { true };
