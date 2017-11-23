@@ -1036,8 +1036,6 @@ webkit.org/b/178703 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4
 webkit.org/b/178705 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Failure ]
 webkit.org/b/178705 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Failure ]
 
-webkit.org/b/178706 media/media-source/media-source-paint-to-canvas.html [ Failure ]
-
 webkit.org/b/179957 crypto/workers/subtle/aes-cbc-import-key-decrypt.html [ Pass Crash ]
 
 webkit.org/b/179759 js/dom/removing-Cf-characters.html [ Pass Crash ]

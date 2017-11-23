@@ -1,5 +1,14 @@
 2017-11-23  Ms2ger  <Ms2ger@igalia.com>
 
+        [WPE] Mark media/media-source/media-source-paint-to-canvas.html as passing.
+        https://bugs.webkit.org/show_bug.cgi?id=178706
+
+        Unreviewed test gardening.
+
+        It has passed since r225060.
+
+        * platform/wpe/TestExpectations:
+
         [WPE] Re-enable fast/dom/Document/CaretRangeFromPoint/replace-element.html.
         https://bugs.webkit.org/show_bug.cgi?id=176820
 
