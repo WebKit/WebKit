@@ -1,3 +1,26 @@
+2017-11-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Sanity-check feature defaults in WebKitFeatures.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=179095
+
+        Reviewed by Konstantin Tokarev.
+
+        Change the default value of some features in WebKitFeatures.cmake to reduce the number of
+        Options*.cmake files the feature's default value must be overridden in.
+
+        Remove feature definitions where they are redundant with the definition in
+        WebKitFeatures.cmake, particluarly in OptionsMac.cmake.
+
+        This commit should not include any functional changes. It just aims to reduce the total
+        number of times we need to call WEBKIT_OPTION_DEFAULT_PORT_VALUE.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsJSCOnly.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2017-11-22  Tim Horton <timothy_horton@apple.com> and Michael Catanzaro <mcatanzaro@igalia.com>
 
         Remove build-webkit's notion of feature flags having a default value
