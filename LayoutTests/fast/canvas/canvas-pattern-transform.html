@@ -1,10 +1,227 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE HTML>
 <html>
-<head>
-<script src="../../resources/js-test-pre.js"></script>
-</head>
-<body>
-<script src="canvas-pattern-transform.js"></script>
-<script src="../../resources/js-test-post.js"></script>
-</body>
+  <head>
+    <style>
+        canvas {
+            border: 1px solid black;
+            margin: 10px;
+        }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        var patternCanvas;
+        function drawOneCanvas(canvas, repeat, transform, patternTransform)
+        {
+            var context = canvas.getContext('2d');
+
+            context.fillStyle = 'black';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            var pattern = context.createPattern(patternCanvas, repeat);
+
+            var patternMatrix = new DOMMatrix;
+            if (patternTransform)
+                patternMatrix.setMatrixValue(patternTransform);
+            if ('setTransform' in pattern)
+                pattern.setTransform(patternMatrix);
+
+            if (transform) {
+                var matrix = new DOMMatrix;
+                matrix.setMatrixValue(transform);
+                context.setTransform(matrix);
+            }
+
+            context.fillStyle = pattern;
+            context.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function createPatternCanvas()
+        {
+            patternCanvas = document.createElement('canvas');
+            patternCanvas.height = 64;
+            patternCanvas.width = 64;
+
+            var context = patternCanvas.getContext('2d');
+
+            context.fillStyle = 'blue';
+            context.fillRect(0, 0, patternCanvas.width, patternCanvas.height);
+
+            context.fillStyle = 'green';
+            const borderWidth = 8;
+            context.fillRect(borderWidth, borderWidth, patternCanvas.width - 2 * borderWidth, patternCanvas.height - 2 * borderWidth);
+        }
+        
+        function setupCanvas(data)
+        {
+            var canvas = document.createElement('canvas');
+            canvas.height = 128;
+            canvas.width = 128;
+
+            drawOneCanvas(canvas, data.repeat, data.transform, data.patternTransform);
+            
+            debug('');
+            debug('Testing canvas ' + data.repeat + ' transform ' + data.transform + ' pattern transform ' + data.patternTransform);
+            return canvas;
+        }
+        
+        function testCanvas(canvas, testData)
+        {
+            var test;
+            for (test of testData)
+                checkPixel(canvas, test.x, test.y, test.r, test.g, test.b);
+        }
+
+        var imgdata;
+        var expectedRed;
+        var expectedGreen;
+        var expectedBlue;
+        function checkPixel(canvas, x, y, r, g, b)
+        {
+            var context = canvas.getContext('2d');
+            var imageData = context.getImageData(x, y, 1, 1);
+            imgdata = imageData.data;
+            
+            debug('Checking point ' + x + ' ' + y);
+            expectedRed = r;
+            expectedGreen = g;
+            expectedBlue = b;
+            shouldBe("imgdata[0]", "expectedRed");
+            shouldBe("imgdata[1]", "expectedGreen");
+            shouldBe("imgdata[2]", "expectedBlue");
+        }
+        
+        function testInvalidMatrix()
+        {
+            var testCanvas = document.createElement('canvas');
+            testCanvas.height = 64;
+            testCanvas.width = 64;
+
+            var ctx = testCanvas.getContext('2d');
+
+            shouldThrowErrorName(function() {
+                ctx.setTransform({a: 1, m11: 11, b: 2, m12: 12, c: 3, m21: 21, d: 4, m22: 22, e: 5, m41: 41, f: 6, m42: 42});
+            }, "TypeError");
+        }
+
+        function doTest()
+        {
+            testInvalidMatrix();
+            createPatternCanvas();
+
+            const tests = [
+                {
+                    repeat : 'repeat',
+                    transform : '',
+                    patternTransform : '',
+                    test : [
+                        // Check two corners for blue.
+                        { x : 4, y : 4, r : 0, g : 0, b : 255 },
+                        { x : 124, y : 124, r : 0, g : 0, b : 255 },
+                        // Check for blue cross in the middle.
+                        { x : 64, y : 32, r : 0, g : 0, b : 255 },
+                        { x : 64, y : 96, r : 0, g : 0, b : 255 },
+                        { x : 32, y : 64, r : 0, g : 0, b : 255 },
+                        { x : 96, y : 64, r : 0, g : 0, b : 255 },
+                        // Four fields of green.
+                        { x : 32, y : 32, r : 0, g : 128, b : 0 },
+                        { x : 96, y : 32, r : 0, g : 128, b : 0 },
+                        { x : 96, y : 32, r : 0, g : 128, b : 0 },
+                        { x : 96, y : 96, r : 0, g : 128, b : 0 },
+                    ],
+                },
+                {
+                    repeat : 'no-repeat',
+                    transform : '',
+                    patternTransform : 'scale(0.5)',
+                    test : [
+                        // Check two corners for blue.
+                        { x : 2, y : 2, r : 0, g : 0, b : 255 },
+                        { x : 31, y : 31, r : 0, g : 0, b : 255 },
+                        // Green near corner and middle.
+                        { x : 6, y : 6, r : 0, g : 128, b : 0 },
+                        { x : 16, y : 16, r : 0, g : 128, b : 0 },
+                        // Mostly black
+                        { x : 64, y : 64, r : 0, g : 0, b : 0 },
+                        { x : 96, y : 96, r : 0, g : 0, b : 0 },
+                    ],
+                },
+                {
+                    repeat: 'repeat',
+                    transform: '',
+                    patternTransform: 'rotate(45deg)',
+                    test : [
+                        // Check two corners for blue.
+                        { x : 2, y : 2, r : 0, g : 0, b : 255 },
+                        // Green at top edge due to rotation.
+                        { x : 42, y : 2, r : 0, g : 128, b : 0 },
+                        { x : 42, y : 64, r : 0, g : 128, b : 0 },
+                        // Blue diagonal.
+                        { x : 32, y : 32, r : 0, g : 0, b : 255 },
+                        { x : 96, y : 96, r : 0, g : 0, b : 255 },
+                    ],
+                },
+                {
+                    repeat: 'repeat',
+                    transform: '',
+                    patternTransform: 'translate(32px, 0)',
+                    test : [
+                        // Check two corners for blue.
+                        { x : 4, y : 4, r : 0, g : 0, b : 255 },
+                        { x : 124, y : 124, r : 0, g : 0, b : 255 },
+                        // Green is offset half pattern width.
+                        { x : 64, y : 32, r : 0, g : 128, b : 0 },
+                        { x : 2, y : 96, r : 0, g : 128, b : 0 },
+                    ],
+                },
+                {
+                    repeat: 'repeat',
+                    transform: '',
+                    patternTransform: 'translate(32px, 32px) rotate(45deg) scale(0.5)',
+                    test : [
+                        // Blue diagonals
+                        { x : 24, y : 24, r : 0, g : 0, b : 255 },
+                        { x : 104, y : 104, r : 0, g : 0, b : 255 },
+                        { x : 22, y : 64, r : 0, g : 0, b : 255 },
+                        { x : 90, y : 112, r : 0, g : 0, b : 255 },
+                        // Green centers.
+                        { x : 16, y : 32, r : 0, g : 128, b : 0 },
+                        { x : 82, y : 58, r : 0, g : 128, b : 0 },
+                    ],
+                },
+                {
+                    repeat: 'repeat',
+                    transform: 'scale(0.5)',
+                    patternTransform: 'rotate(45deg)',
+                    test : [
+                        // Blue diagonals
+                        { x : 4, y : 4, r : 0, g : 0, b : 255 },
+                        { x : 62, y : 62, r : 0, g : 0, b : 255 },
+
+                        // Green centers.
+                        { x : 2, y : 24, r : 0, g : 128, b : 0 },
+                        { x : 24, y : 2, r : 0, g : 128, b : 0 },
+                        { x : 24, y : 2, r : 0, g : 128, b : 0 },
+                        { x : 32, y : 48, r : 0, g : 128, b : 0 },
+
+                        // Mostly black
+                        { x : 66, y : 4, r : 0, g : 0, b : 0 },
+                        { x : 4, y : 66, r : 0, g : 0, b : 0 },
+                        { x : 104, y : 104, r : 0, g : 0, b : 0 },
+                    ],
+                },
+            ];
+
+            var testData;
+            for (testData of tests) {
+                var canvas = setupCanvas(testData);
+                testCanvas(canvas, testData.test);
+            }
+        }
+      
+      window.addEventListener('load', doTest, false);
+    </script>
+  </head>
+  <body>
+  </body>
+  <script src="../../resources/js-test-post.js"></script>
 </html>

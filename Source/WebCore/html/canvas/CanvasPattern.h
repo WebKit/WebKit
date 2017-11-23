@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008, 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -33,6 +34,7 @@ namespace WebCore {
 
 class Image;
 class Pattern;
+struct DOMMatrix2DInit;
 
 class CanvasPattern : public RefCounted<CanvasPattern> {
 public:
@@ -45,6 +47,8 @@ public:
     const Pattern& pattern() const { return m_pattern; }
 
     bool originClean() const { return m_originClean; }
+    
+    ExceptionOr<void> setTransform(DOMMatrix2DInit&&);
 
 private:
     CanvasPattern(Ref<Image>&&, bool repeatX, bool repeatY, bool originClean);

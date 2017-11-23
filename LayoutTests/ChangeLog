@@ -1,3 +1,19 @@
+2017-11-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Add support for CanvasPattern.setTransform()
+        https://bugs.webkit.org/show_bug.cgi?id=179935
+
+        Reviewed by Sam Weinig.
+        
+        Moved the test previously known as canvas-pattern-transform.html to canvas-pattern-with-transform.html
+        and added a new test.
+
+        * fast/canvas/canvas-pattern-transform-expected.txt:
+        * fast/canvas/canvas-pattern-transform.html:
+        * fast/canvas/canvas-pattern-with-transform-expected.txt: Copied from LayoutTests/fast/canvas/canvas-pattern-transform-expected.txt.
+        * fast/canvas/canvas-pattern-with-transform.html: Copied from LayoutTests/fast/canvas/canvas-pattern-transform.html.
+        * fast/canvas/canvas-pattern-with-transform.js: Renamed from LayoutTests/fast/canvas/canvas-pattern-transform.js.
+
 2017-11-23  Ms2ger  <Ms2ger@igalia.com>
 
         [WPE] Mark media/media-source/media-source-paint-to-canvas.html as passing.
