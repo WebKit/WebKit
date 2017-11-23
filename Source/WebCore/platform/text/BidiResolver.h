@@ -245,6 +245,7 @@ protected:
     // FIXME: Instead of InlineBidiResolvers subclassing this method, we should
     // pass in some sort of Traits object which knows how to create runs for appending.
     void appendRun() { static_cast<DerivedClass&>(*this).appendRunInternal(); }
+    bool needsContinuePastEnd() const { return static_cast<const DerivedClass&>(*this).needsContinuePastEndInternal(); }
 
     Iterator m_current;
     // sor and eor are "start of run" and "end of run" respectively and correpond
@@ -277,6 +278,7 @@ private:
     void reorderRunsFromLevels();
     void incrementInternal() { m_current.increment(); }
     void appendRunInternal();
+    bool needsContinuePastEndInternal() const { return true; }
 
     Vector<BidiEmbedding, 8> m_currentExplicitEmbeddingSequence;
 };
@@ -292,6 +294,7 @@ public:
 
     void incrementInternal();
     void appendRunInternal();
+    bool needsContinuePastEndInternal() const;
     Vector<IsolateRun>& isolatedRuns() { return m_isolatedRuns; }
 
 private:
@@ -880,7 +883,7 @@ void BidiResolverBase<Iterator, Run, DerivedClass>::createBidiRunsForLine(const 
             break;
         }
 
-        if (pastEnd && m_eor == m_current) {
+        if (pastEnd && (m_eor == m_current || !needsContinuePastEnd())) {
             if (!m_reachedEndOfLine) {
                 m_eor = endOfLine;
                 switch (m_status.eor) {

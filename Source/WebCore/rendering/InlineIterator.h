@@ -586,4 +586,11 @@ inline void InlineBidiResolver::appendRunInternal()
     m_status.eor = U_OTHER_NEUTRAL;
 }
 
+template<>
+inline bool InlineBidiResolver::needsContinuePastEndInternal() const
+{
+    // We don't collect runs beyond the endOfLine renderer. Stop traversing when the iterator moves to the next renderer to prevent O(n^2).
+    return m_current.renderer() == endOfLine.renderer();
+}
+
 } // namespace WebCore
