@@ -291,7 +291,7 @@ imported/w3c/web-platform-tests/fetch/api/abort/general.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/background-fetch [ Skip ]
 
 # We fail this reftest
-imported/w3c/web-platform-tests/encoding/eof-shift_jis.html [ ImageOnlyFailure ]
+webkit.org/b/179881 imported/w3c/web-platform-tests/encoding/eof-shift_jis.html [ ImageOnlyFailure ]
 
 # These tests are so slow that on debug builds they time out even if marked Slow, so skip them
 [ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-cseuckr.html [ Skip ]

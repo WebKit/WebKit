@@ -213,6 +213,39 @@ imported/w3c/web-platform-tests/dom [ Pass ]
 imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg [ Timeout ]
 
 
+# WPT: cssom
+# ==========
+imported/w3c/web-platform-tests/cssom [ Pass ]
+
+
+# WPT: domparsing
+# ===============
+imported/w3c/web-platform-tests/domparsing [ Pass ]
+
+
+# WPT: encoding
+# =============
+imported/w3c/web-platform-tests/encoding [ Pass ]
+
+# Platform-neutral expectations
+# -----------------------------
+webkit.org/b/179881 imported/w3c/web-platform-tests/encoding/eof-shift_jis.html [ ImageOnlyFailure ]
+
+
+# WPT: FileAPI
+# ============
+imported/w3c/web-platform-tests/FileAPI [ Pass ]
+
+# Platform-neutral expectations
+# -----------------------------
+webkit.org/b/172099 imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html [ ImageOnlyFailure ]
+
+
+# WPT: url
+# ========
+imported/w3c/web-platform-tests/url [ Pass ]
+
+
 # WPT: XMLHttpRequest
 # ===================
 imported/w3c/web-platform-tests/XMLHttpRequest [ Pass ]

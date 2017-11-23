@@ -1,3 +1,17 @@
+2017-11-23  Ms2ger  <Ms2ger@igalia.com>
+
+        [WPE] Enable some more wpt tests.
+        https://bugs.webkit.org/show_bug.cgi?id=179939
+
+        Reviewed by Žan Doberšek.
+
+        * TestExpectations: Add the number of a bug I filed.
+        * platform/wpe/TestExpectations: Enable some smaller top-level wpt
+          directories.
+        * platform/wpe/imported/w3c/web-platform-tests/FileAPI/historical.https-expected.txt:
+          Added: Service Workers are not yet enabled for WPE, which affects the
+          results of this test in a harmless way.
+
 2017-11-22  Ali Juma  <ajuma@chromium.org>
 
         Implement VisualViewport API attributes
