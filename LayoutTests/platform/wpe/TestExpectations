@@ -903,8 +903,6 @@ webkit.org/b/177226 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapK
 # Apparently fails on Mac, but I don't know for what reasons. It passes on GTK/WPE.
 webkit.org/b/138676 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
 
-webkit.org/b/176820 fast/dom/Document/CaretRangeFromPoint/replace-element.html [ Failure ]
-
 # Accessibility support isn't glued to any API yet.
 Bug(WPE) accessibility/ [ Skip ]
 Bug(WPE) perf/accessibility-title-ui-element.html [ Failure ]
