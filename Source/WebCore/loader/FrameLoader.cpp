@@ -117,6 +117,7 @@
 #include "SubframeLoader.h"
 #include "TextResourceDecoder.h"
 #include "UserContentController.h"
+#include "UserGestureIndicator.h"
 #include "WindowFeatures.h"
 #include "XMLDocumentParser.h"
 #include <wtf/CompletionHandler.h>
@@ -420,7 +421,7 @@ void FrameLoader::submitForm(Ref<FormSubmission>&& submission)
 
     Frame* targetFrame = findFrameForNavigation(submission->target(), &submission->state().sourceDocument());
     if (!targetFrame) {
-        if (!DOMWindow::allowPopUp(m_frame) && !ScriptController::processingUserGesture())
+        if (!DOMWindow::allowPopUp(m_frame) && !UserGestureIndicator::processingUserGesture())
             return;
 
         // FIXME: targetFrame can be null for two distinct reasons:
@@ -1217,7 +1218,7 @@ void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, For
 
 static ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicyToApply(Frame& currentFrame, InitiatedByMainFrame initiatedByMainFrame, ShouldOpenExternalURLsPolicy propagatedPolicy)
 {
-    if (ScriptController::processingUserGesture())
+    if (UserGestureIndicator::processingUserGesture())
         return ShouldOpenExternalURLsPolicy::ShouldAllow;
 
     if (initiatedByMainFrame == InitiatedByMainFrame::Yes)

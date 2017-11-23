@@ -40,12 +40,11 @@
 #include "LocalizedStrings.h"
 #include "RenderFileUploadControl.h"
 #include "RuntimeEnabledFeatures.h"
-#include "ScriptController.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "UserGestureIndicator.h"
 #include <wtf/TypeCasts.h>
 #include <wtf/text/StringBuilder.h>
-
 
 namespace WebCore {
 class UploadButtonElement;
@@ -200,7 +199,7 @@ void FileInputType::handleDOMActivateEvent(Event& event)
     if (input.isDisabledFormControl())
         return;
 
-    if (!ScriptController::processingUserGesture())
+    if (!UserGestureIndicator::processingUserGesture())
         return;
 
     if (auto* chrome = this->chrome()) {

@@ -57,6 +57,7 @@
 #import <WebCore/HTMLNames.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ScriptController.h>
+#import <WebCore/UserGestureIndicator.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <objc/runtime.h>
 #import <runtime/JSLock.h>
@@ -455,7 +456,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
 #if PLATFORM(IOS)
 - (BOOL)processingUserGesture
 {
-    return ScriptController::processingUserGesture();
+    return UserGestureIndicator::processingUserGesture();
 }
 #endif
 

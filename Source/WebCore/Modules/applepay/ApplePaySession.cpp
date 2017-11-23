@@ -40,6 +40,7 @@
 #include "ApplePayShippingMethodSelectedEvent.h"
 #include "ApplePayShippingMethodUpdate.h"
 #include "ApplePayValidateMerchantEvent.h"
+#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "EventNames.h"
@@ -55,9 +56,9 @@
 #include "PaymentMerchantSession.h"
 #include "PaymentMethod.h"
 #include "PaymentRequestValidator.h"
-#include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "UserGestureIndicator.h"
 
 namespace WebCore {
 
@@ -404,7 +405,7 @@ ExceptionOr<Ref<ApplePaySession>> ApplePaySession::create(Document& document, un
     if (canCall.hasException())
         return canCall.releaseException();
 
-    if (!ScriptController::processingUserGesture())
+    if (!UserGestureIndicator::processingUserGesture())
         return Exception { InvalidAccessError, "Must create a new ApplePaySession from a user gesture handler." };
 
     auto& paymentCoordinator = document.frame()->mainFrame().paymentCoordinator();
@@ -497,7 +498,7 @@ ExceptionOr<void> ApplePaySession::openPaymentSetup(ScriptExecutionContext& scri
     if (canCall.hasException())
         return canCall.releaseException();
 
-    if (!ScriptController::processingUserGesture())
+    if (!UserGestureIndicator::processingUserGesture())
         return Exception { InvalidAccessError, "Must call ApplePaySession.openPaymentSetup from a user gesture handler." };
 
     RefPtr<DeferredPromise> promise(WTFMove(passedPromise));

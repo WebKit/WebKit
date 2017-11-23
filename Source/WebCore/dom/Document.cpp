@@ -6654,7 +6654,7 @@ void Document::updateLastHandledUserGestureTimestamp(MonotonicTime time)
 
 bool Document::processingUserGestureForMedia() const
 {
-    if (ScriptController::processingUserGestureForMedia())
+    if (UserGestureIndicator::processingUserGestureForMedia())
         return true;
 
     if (settings().mediaUserGestureInheritsFromDocument())

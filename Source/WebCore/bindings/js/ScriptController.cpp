@@ -472,16 +472,6 @@ void ScriptController::disableWebAssembly(const String& errorMessage)
     windowProxy->window()->setWebAssemblyEnabled(false, errorMessage);
 }
 
-bool ScriptController::processingUserGesture()
-{
-    return UserGestureIndicator::processingUserGesture();
-}
-
-bool ScriptController::processingUserGestureForMedia()
-{
-    return UserGestureIndicator::processingUserGestureForMedia();
-}
-
 bool ScriptController::canAccessFromCurrentOrigin(Frame* frame)
 {
     auto* state = JSMainThreadExecState::currentState();

@@ -48,8 +48,8 @@
 #include "RenderObject.h"
 #include "RenderView.h"
 #include "ScopedEventQueue.h"
-#include "ScriptController.h"
 #include "ShadowRoot.h"
+#include "UserGestureIndicator.h"
 
 namespace WebCore {
 
@@ -151,7 +151,7 @@ void ColorInputType::handleDOMActivateEvent(Event& event)
     if (element().isDisabledFormControl() || !element().renderer())
         return;
 
-    if (!ScriptController::processingUserGesture())
+    if (!UserGestureIndicator::processingUserGesture())
         return;
 
     if (Chrome* chrome = this->chrome()) {

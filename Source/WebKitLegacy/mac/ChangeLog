@@ -1,3 +1,18 @@
+2017-11-23  Sam Weinig  <sam@webkit.org>
+
+        Remove unneeded ScriptController::processingUserGesture() forwarding functions
+        https://bugs.webkit.org/show_bug.cgi?id=179954
+
+        Reviewed by Darin Adler.
+
+        Replace ScriptController::processingUserGesture() and ScriptController::processingUserGestureForMedia()
+        with direct calls to the corresponding UserGestureIndicator functions.
+
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController processingUserGesture]):
+        * WebView/WebView.mm:
+        (-[WebView _isProcessingUserGesture]):
+
 2017-11-23  Darin Adler  <darin@apple.com>
 
         Reduce WTF::String operations that do unnecessary Unicode operations instead of ASCII

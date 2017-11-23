@@ -189,6 +189,7 @@
 #include <WebCore/SubframeLoader.h>
 #include <WebCore/SubstituteData.h>
 #include <WebCore/TextIterator.h>
+#include <WebCore/UserGestureIndicator.h>
 #include <WebCore/UserInputBridge.h>
 #include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
@@ -4283,7 +4284,7 @@ void WebPage::addResourceRequest(unsigned long identifier, const WebCore::Resour
     if (!request.url().protocolIsInHTTPFamily())
         return;
 
-    if (m_mainFrameProgressCompleted && !ScriptController::processingUserGesture())
+    if (m_mainFrameProgressCompleted && !UserGestureIndicator::processingUserGesture())
         return;
 
     ASSERT(!m_trackedNetworkResourceRequestIdentifiers.contains(identifier));
