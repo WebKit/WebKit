@@ -477,7 +477,7 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
         UChar32 c = previous.characterAfter();
         // FIXME: VisiblePosition::characterAfter() and characterBefore() do not emit newlines the same
         // way as TextIterator, so we do an isEndOfParagraph check here.
-        if (isSpaceOrNewline(c) || c == 0xA0 || isEndOfParagraph(previous)) {
+        if (isSpaceOrNewline(c) || c == noBreakSpace || isEndOfParagraph(previous)) {
             startWordSide = RightWordIfOnBoundary;
         }
         VisiblePosition p1 = startOfWord(previous, startWordSide);

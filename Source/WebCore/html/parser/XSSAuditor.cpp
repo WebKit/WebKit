@@ -715,11 +715,11 @@ bool XSSAuditor::isContainedInRequest(const String& decodedSnippet)
 {
     if (decodedSnippet.isEmpty())
         return false;
-    if (m_decodedURL.find(decodedSnippet, 0, false) != notFound)
+    if (m_decodedURL.containsIgnoringASCIICase(decodedSnippet))
         return true;
     if (m_decodedHTTPBodySuffixTree && !m_decodedHTTPBodySuffixTree->mightContain(decodedSnippet))
         return false;
-    return m_decodedHTTPBody.find(decodedSnippet, 0, false) != notFound;
+    return m_decodedHTTPBody.containsIgnoringASCIICase(decodedSnippet);
 }
 
 bool XSSAuditor::isLikelySafeResource(const String& url)

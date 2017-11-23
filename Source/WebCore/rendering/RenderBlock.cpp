@@ -3548,7 +3548,7 @@ TextRun RenderBlock::constructTextRun(const RenderText& text, const RenderStyle&
 TextRun RenderBlock::constructTextRun(const RenderText& text, unsigned offset, unsigned length, const RenderStyle& style, ExpansionBehavior expansion)
 {
     unsigned stop = offset + length;
-    ASSERT(stop <= text.textLength());
+    ASSERT(stop <= text.text().length());
     return constructTextRun(text.stringView(offset, stop), style, expansion);
 }
 

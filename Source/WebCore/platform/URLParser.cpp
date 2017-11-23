@@ -2538,19 +2538,10 @@ Vector<LChar, URLParser::defaultInlineBufferSize> URLParser::percentDecode(const
     return output;
 }
 
-ALWAYS_INLINE static bool containsOnlyASCII(const String& string)
-{
-    ASSERT(!string.isNull());
-    if (string.is8Bit())
-        return charactersAreAllASCII(string.characters8(), string.length());
-    return charactersAreAllASCII(string.characters16(), string.length());
-}
-
-template<typename CharacterType>
-std::optional<Vector<LChar, URLParser::defaultInlineBufferSize>> URLParser::domainToASCII(const String& domain, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition)
+template<typename CharacterType> std::optional<Vector<LChar, URLParser::defaultInlineBufferSize>> URLParser::domainToASCII(StringImpl& domain, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition)
 {
     Vector<LChar, defaultInlineBufferSize> ascii;
-    if (containsOnlyASCII(domain)) {
+    if (domain.isAllASCII()) {
         size_t length = domain.length();
         if (domain.is8Bit()) {
             const LChar* characters = domain.characters8();
@@ -2767,7 +2758,7 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
         return false;
     if (domain != StringView(percentDecoded.data(), percentDecoded.size()))
         syntaxViolation(hostBegin);
-    auto asciiDomain = domainToASCII(domain, hostBegin);
+    auto asciiDomain = domainToASCII(*domain.impl(), hostBegin);
     if (!asciiDomain || hasForbiddenHostCodePoint(asciiDomain.value()))
         return false;
     Vector<LChar, defaultInlineBufferSize>& asciiDomainValue = asciiDomain.value();

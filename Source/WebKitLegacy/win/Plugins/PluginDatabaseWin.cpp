@@ -80,9 +80,8 @@ void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
     String oldWMPPluginPath;
     String newWMPPluginPath;
 
-    Vector<String>::const_iterator end = m_pluginDirectories.end();
-    for (Vector<String>::const_iterator it = m_pluginDirectories.begin(); it != end; ++it) {
-        String pattern = *it + "\\*";
+    for (auto& directory : m_pluginDirectories) {
+        String pattern = directory + "\\*";
 
         hFind = FindFirstFileW(stringToNullTerminatedWChar(pattern).data(), &findFileData);
 
@@ -94,11 +93,11 @@ void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
                 continue;
 
             String filename = wcharToString(findFileData.cFileName, wcslen(findFileData.cFileName));
-            if ((!filename.startsWith("np", false) || !filename.endsWith("dll", false)) &&
-                (!equalLettersIgnoringASCIICase(filename, "plugin.dll") || !it->endsWith("Shockwave 10", false)))
+            if (!(startsWithLettersIgnoringASCIICase(filename, "np") && filename.endsWithIgnoringASCIICase("dll"))
+                && !(equalLettersIgnoringASCIICase(filename, "plugin.dll") && directory.endsWithIgnoringASCIICase("shockwave 10")))
                 continue;
 
-            String fullPath = *it + "\\" + filename;
+            String fullPath = directory + "\\" + filename;
             if (!uniqueFilenames.add(fullPath).isNewEntry)
                 continue;
 

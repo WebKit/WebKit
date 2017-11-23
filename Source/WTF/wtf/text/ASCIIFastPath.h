@@ -194,4 +194,6 @@ inline void copyLCharsFromUCharSource(LChar* destination, const UChar* source, s
 
 } // namespace WTF
 
+using WTF::charactersAreAllASCII;
+
 #endif // ASCIIFastPath_h

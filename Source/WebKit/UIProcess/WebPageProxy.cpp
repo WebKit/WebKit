@@ -6252,7 +6252,7 @@ void WebPageProxy::saveDataToFileInDownloadsFolder(String&& suggestedFilename, S
 
 void WebPageProxy::savePDFToFileInDownloadsFolder(String&& suggestedFilename, URL&& originatingURL, const IPC::DataReference& dataReference)
 {
-    if (!suggestedFilename.endsWith(".pdf", false))
+    if (!suggestedFilename.endsWithIgnoringASCIICase(".pdf"))
         return;
 
     saveDataToFileInDownloadsFolder(WTFMove(suggestedFilename), ASCIILiteral("application/pdf"), WTFMove(originatingURL),

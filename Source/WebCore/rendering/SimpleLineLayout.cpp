@@ -165,7 +165,7 @@ static AvoidanceReasonFlags canUseForFontAndText(const RenderBlockFlow& flow, In
     bool flowIsJustified = style.textAlign() == JUSTIFY;
     for (const auto& textRenderer : childrenOfType<RenderText>(flow)) {
         // FIXME: Do not return until after checking all children.
-        if (!textRenderer.textLength())
+        if (textRenderer.text().isEmpty())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsEmpty, reasons, includeReasons);
         if (textRenderer.isCombineText())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsCombineText, reasons, includeReasons);

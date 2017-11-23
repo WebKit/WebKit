@@ -80,17 +80,20 @@ void SVGTextLayoutAttributesBuilder::rebuildMetricsForTextRenderer(RenderSVGInli
 
 static inline void processRenderSVGInlineText(const RenderSVGInlineText& text, unsigned& atCharacter, bool& lastCharacterWasSpace)
 {
+    auto& string = text.text();
+    auto length = string.length();
     if (text.style().whiteSpace() == PRE) {
-        atCharacter += text.textLength();
+        atCharacter += length;
         return;
     }
 
-    for (unsigned textPosition = 0, textLength = text.textLength(); textPosition < textLength; ++textPosition) {
-        const UChar currentCharacter = text[textPosition];
-        if (currentCharacter == ' ' && lastCharacterWasSpace)
+    // FIXME: This is not a complete whitespace collapsing implementation; it doesn't handle newlines or tabs.
+    for (unsigned i = 0; i < length; ++i) {
+        UChar character = string[i];
+        if (character == ' ' && lastCharacterWasSpace)
             continue;
 
-        lastCharacterWasSpace = currentCharacter == ' ';
+        lastCharacterWasSpace = character == ' ';
         ++atCharacter;
     }
 }

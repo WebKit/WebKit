@@ -97,7 +97,7 @@ private:
     template<typename UnsignedIntegerType> void appendNumberToASCIIBuffer(UnsignedIntegerType);
     template<bool(*isInCodeSet)(UChar32), typename CharacterType> void utf8PercentEncode(const CodePointIterator<CharacterType>&);
     template<typename CharacterType> void utf8QueryEncode(const CodePointIterator<CharacterType>&);
-    template<typename CharacterType> std::optional<Vector<LChar, defaultInlineBufferSize>> domainToASCII(const String&, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
+    template<typename CharacterType> std::optional<Vector<LChar, defaultInlineBufferSize>> domainToASCII(StringImpl&, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
     template<typename CharacterType> Vector<LChar, defaultInlineBufferSize> percentDecode(const LChar*, size_t, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
     static Vector<LChar, defaultInlineBufferSize> percentDecode(const LChar*, size_t);
     static std::optional<String> formURLDecode(StringView input);

@@ -330,10 +330,8 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
     if (!result.noCache) {
         // Handle Pragma: no-cache
         // This is deprecated and equivalent to Cache-control: no-cache
-        // Don't bother tokenizing the value, it is not important
-        String pragmaValue = headers.get(HTTPHeaderName::Pragma);
-
-        result.noCache = pragmaValue.contains("no-cache", false);
+        // Don't bother tokenizing the value; handling that exactly right is not important.
+        result.noCache = headers.get(HTTPHeaderName::Pragma).containsIgnoringASCIICase("no-cache");
     }
 
     return result;

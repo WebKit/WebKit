@@ -289,9 +289,9 @@ bool AccessibilityObject::accessibilityObjectContainsText(String* text) const
     // If text is null or empty we return true.
     return !text
         || text->isEmpty()
-        || title().contains(*text, false)
-        || accessibilityDescription().contains(*text, false)
-        || stringValue().contains(*text, false);
+        || findPlainText(title(), *text, CaseInsensitive)
+        || findPlainText(accessibilityDescription(), *text, CaseInsensitive)
+        || findPlainText(stringValue(), *text, CaseInsensitive);
 }
 
 // ARIA marks elements as having their accessible name derive from either their contents, or their author provide name.
@@ -838,8 +838,7 @@ String AccessibilityObject::selectText(AccessibilitySelectTextCriteria* criteria
         if (frame->selection().setSelectedRange(closestStringRange.get(), DOWNSTREAM, true)) {
             switch (activity) {
             case AccessibilitySelectTextActivity::FindAndCapitalize:
-                replacementString = closestString;
-                makeCapitalized(&replacementString, 0);
+                replacementString = capitalize(closestString, ' '); // FIXME: Needs to take locale into account to work correctly.
                 replaceSelection = true;
                 break;
             case AccessibilitySelectTextActivity::FindAndUppercase:
@@ -856,7 +855,7 @@ String AccessibilityObject::selectText(AccessibilitySelectTextCriteria* criteria
                 // (unless we're replacing with an abbreviation.)
                 if (closestString.length() > 0 && replacementString.length() > 2 && replacementString != replacementString.convertToUppercaseWithoutLocale()) {
                     if (closestString[0] == u_toupper(closestString[0]))
-                        makeCapitalized(&replacementString, 0);
+                        replacementString = capitalize(replacementString, ' '); // FIXME: Needs to take locale into account to work correctly.
                     else
                         replacementString = replacementString.convertToLowercaseWithoutLocale(); // FIXME: Needs locale to work correctly.
                 }

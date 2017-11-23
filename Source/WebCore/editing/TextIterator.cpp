@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2005 Alexey Proskuryakov.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -579,7 +579,7 @@ static unsigned textNodeOffsetInFlow(const Text& firstTextNodeInRange)
     unsigned textOffset = 0;
     for (renderer = renderer->previousSibling(); renderer; renderer = renderer->previousSibling()) {
         if (is<RenderText>(renderer))
-            textOffset += downcast<RenderText>(renderer)->textLength();
+            textOffset += downcast<RenderText>(renderer)->text().length();
     }
     return textOffset;
 }
@@ -640,7 +640,7 @@ bool TextIterator::handleTextNode()
         bool isNewTextNode = m_previousSimpleTextNodeInFlow && m_previousSimpleTextNodeInFlow != &textNode;
         // Simple line layout run positions are all absolute to the parent flow.
         // Offsetting is required when multiple renderers are present.
-        m_accumulatedSimpleTextLengthInFlow += isNewTextNode ? m_previousSimpleTextNodeInFlow->renderer()->text()->length() : 0;
+        m_accumulatedSimpleTextLengthInFlow += isNewTextNode ? m_previousSimpleTextNodeInFlow->renderer()->text().length() : 0;
         m_previousSimpleTextNodeInFlow = &textNode;
 
         unsigned endPosition = (m_node == m_endContainer) ? static_cast<unsigned>(m_endOffset) : rendererText.length();
@@ -1045,7 +1045,7 @@ static bool shouldEmitExtraNewlineForNode(Node& node)
 
 static int collapsedSpaceLength(RenderText& renderer, int textEnd)
 {
-    StringImpl& text = *renderer.text();
+    StringImpl& text = renderer.text();
     unsigned length = text.length();
     for (unsigned i = textEnd; i < length; ++i) {
         if (!renderer.style().isCollapsibleWhiteSpace(text[i]))
@@ -2761,6 +2761,22 @@ Ref<Range> findPlainText(const Range& range, const String& target, FindOptions o
 
     findPlainTextMatches(range, target, options, WTFMove(match));
     return rangeForMatch(range, options, matchStart, matchLength, searchForward);
+}
+
+bool findPlainText(const String& document, const String& target, FindOptions options)
+{
+    SearchBuffer buffer { target, options };
+    StringView remainingText { document };
+    while (!remainingText.isEmpty()) {
+        size_t charactersAppended = buffer.append(document);
+        remainingText = remainingText.substring(charactersAppended);
+        if (remainingText.isEmpty())
+            buffer.reachedBreak();
+        size_t matchStartOffset;
+        if (buffer.search(matchStartOffset))
+            return true;
+    }
+    return false;
 }
 
 }

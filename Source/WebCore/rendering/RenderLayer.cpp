@@ -76,6 +76,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "HitTestingTransformState.h"
@@ -6447,7 +6448,7 @@ static void determineNonLayerDescendantsPaintedContent(const RenderElement& rend
             if (renderer.style().userSelect() != SELECT_NONE)
                 request.setHasPaintedContent();
 
-            if (!renderText.text()->containsOnlyWhitespace()) {
+            if (!renderText.text().isAllSpecialCharacters<isHTMLSpace>()) {
                 request.setHasPaintedContent();
 
                 if (request.needToDetermineSubpixelAntialiasedTextState() && styleHasSmoothingTextMode(child.style()))

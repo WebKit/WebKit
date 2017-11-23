@@ -28,6 +28,7 @@
 #include "BidiResolver.h"
 #include "BreakingContext.h"
 #include "FloatingObjects.h"
+#include "HTMLParserIdioms.h"
 #include "InlineElementBox.h"
 #include "InlineIterator.h"
 #include "InlineTextBox.h"
@@ -245,15 +246,13 @@ InlineFlowBox* RenderBlockFlow::createLineBoxes(RenderObject* obj, const LineInf
     return result;
 }
 
-template <typename CharacterType>
-static inline bool endsWithASCIISpaces(const CharacterType* characters, unsigned pos, unsigned end)
+template<typename CharacterType> static inline bool endsWithHTMLSpaces(const CharacterType* characters, unsigned position, unsigned end)
 {
-    while (isASCIISpace(characters[pos])) {
-        pos++;
-        if (pos >= end)
-            return true;
+    for (unsigned i = position; i < end; ++i) {
+        if (!isHTMLSpace(characters[i]))
+            return false;
     }
-    return false;
+    return true;
 }
 
 static bool reachedEndOfTextRenderer(const BidiRunList<BidiRun>& bidiRuns)
@@ -261,18 +260,14 @@ static bool reachedEndOfTextRenderer(const BidiRunList<BidiRun>& bidiRuns)
     BidiRun* run = bidiRuns.logicallyLastRun();
     if (!run)
         return true;
-    unsigned pos = run->stop();
-    const RenderObject& renderer = run->renderer();
-    if (!is<RenderText>(renderer))
+    if (!is<RenderText>(run->renderer()))
         return false;
-    const RenderText& renderText = downcast<RenderText>(renderer);
-    unsigned length = renderText.textLength();
-    if (pos >= length)
-        return true;
-
-    if (renderText.is8Bit())
-        return endsWithASCIISpaces(renderText.characters8(), pos, length);
-    return endsWithASCIISpaces(renderText.characters16(), pos, length);
+    auto& text = downcast<RenderText>(run->renderer()).text();
+    unsigned position = run->stop();
+    unsigned length = text.length();
+    if (text.is8Bit())
+        return endsWithHTMLSpaces(text.characters8(), position, length);
+    return endsWithHTMLSpaces(text.characters16(), position, length);
 }
 
 RootInlineBox* RenderBlockFlow::constructLine(BidiRunList<BidiRun>& bidiRuns, const LineInfo& lineInfo)
@@ -890,7 +885,7 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
             if (textAlign == JUSTIFY && run != trailingSpaceRun)
                 computeExpansionOpportunities(*this, textBox, previousRun, run->next(), renderText.stringView(run->m_start, run->m_stop), run->box()->direction());
 
-            if (unsigned length = renderText.textLength()) {
+            if (unsigned length = renderText.text().length()) {
                 if (!run->m_start && needsWordSpacing && isSpaceOrNewline(renderText.characterAt(run->m_start)))
                     totalLogicalWidth += lineStyle(*renderText.parent(), lineInfo).fontCascade().wordSpacing();
                 // run->m_start == run->m_stop should only be true iff the run is a replaced run for bidi: isolate.
@@ -1057,10 +1052,10 @@ inline BidiRun* RenderBlockFlow::handleTrailingSpaces(BidiRunList<BidiRun>& bidi
 
     const RenderText& lastText = downcast<RenderText>(lastObject);
     unsigned firstSpace;
-    if (lastText.is8Bit())
-        firstSpace = findFirstTrailingSpace(lastText, lastText.characters8(), trailingSpaceRun->start(), trailingSpaceRun->stop());
+    if (lastText.text().is8Bit())
+        firstSpace = findFirstTrailingSpace(lastText, lastText.text().characters8(), trailingSpaceRun->start(), trailingSpaceRun->stop());
     else
-        firstSpace = findFirstTrailingSpace(lastText, lastText.characters16(), trailingSpaceRun->start(), trailingSpaceRun->stop());
+        firstSpace = findFirstTrailingSpace(lastText, lastText.text().characters16(), trailingSpaceRun->start(), trailingSpaceRun->stop());
 
     if (firstSpace == trailingSpaceRun->stop())
         return nullptr;
@@ -1855,7 +1850,7 @@ RootInlineBox* RenderBlockFlow::determineStartPosition(LineLayoutState& layoutSt
                 if (!dirtiedByFloat && (!prevRootBox->endsWithBreak()
                     || !prevRootBox->lineBreakObj()
                     || (is<RenderText>(*prevRootBox->lineBreakObj())
-                    && prevRootBox->lineBreakPos() >= downcast<RenderText>(*prevRootBox->lineBreakObj()).textLength()))) {
+                    && prevRootBox->lineBreakPos() >= downcast<RenderText>(*prevRootBox->lineBreakObj()).text().length()))) {
                     // The previous line didn't break cleanly or broke at a newline
                     // that has been deleted, so treat it as dirty too.
                     currentLine = prevRootBox;

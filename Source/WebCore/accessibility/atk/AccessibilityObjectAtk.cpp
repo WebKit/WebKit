@@ -197,7 +197,7 @@ unsigned AccessibilityObject::getLengthForTextRange() const
     Node* node = this->node();
     RenderObject* renderer = node ? node->renderer() : nullptr;
     if (is<RenderText>(renderer))
-        textLength = downcast<RenderText>(*renderer).textLength();
+        textLength = downcast<RenderText>(*renderer).text().length();
 
     // Get the text length from the elements under the
     // accessibility object if the value is still zero.

@@ -228,7 +228,7 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
                 postLayoutData.wordAtSelection = selectedText;
         }
         // FIXME: We should disallow replace when the string contains only CJ characters.
-        postLayoutData.isReplaceAllowed = result.isContentEditable && !result.isInPasswordField && !selectedText.containsOnlyWhitespace();
+        postLayoutData.isReplaceAllowed = result.isContentEditable && !result.isInPasswordField && !selectedText.isAllSpecialCharacters<isHTMLSpace>();
     }
     postLayoutData.insideFixedPosition = startNodeIsInsideFixedPosition || endNodeIsInsideFixedPosition;
     if (!selection.isNone()) {

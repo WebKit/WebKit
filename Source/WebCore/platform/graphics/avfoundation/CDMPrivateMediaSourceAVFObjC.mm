@@ -44,7 +44,7 @@ namespace WebCore {
 
 static RegularExpression& validKeySystemRE()
 {
-    static NeverDestroyed<RegularExpression> keySystemRE("^com\\.apple\\.fps\\.[23]_\\d+(?:,\\d+)*$", TextCaseInsensitive);
+    static NeverDestroyed<RegularExpression> keySystemRE("^com\\.apple\\.fps\\.[23]_\\d+(?:,\\d+)*$", JSC::Yarr::TextCaseInsensitive);
     return keySystemRE;
 }
 

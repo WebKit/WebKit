@@ -34,7 +34,7 @@ using namespace JSC;
 
 static inline String stringToByteString(ExecState& state, JSC::ThrowScope& scope, String&& string)
 {
-    if (!string.containsOnlyLatin1()) {
+    if (!string.isAllLatin1()) {
         throwTypeError(&state, scope);
         return { };
     }

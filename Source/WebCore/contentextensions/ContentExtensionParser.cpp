@@ -51,9 +51,8 @@ namespace ContentExtensions {
     
 static bool containsOnlyASCIIWithNoUppercase(const String& domain)
 {
-    for (unsigned i = 0; i < domain.length(); ++i) {
-        UChar c = domain.at(i);
-        if (!isASCII(c) || isASCIIUpper(c))
+    for (auto character : StringView { domain }.codeUnits()) {
+        if (!isASCII(character) || isASCIIUpper(character))
             return false;
     }
     return true;

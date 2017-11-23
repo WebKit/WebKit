@@ -1655,7 +1655,7 @@ String GraphicsContext3D::getUnmangledInfoLog(Platform3DObject shaders[2], GC3Ds
 {
     LOG(WebGL, "Original ShaderInfoLog:\n%s", log.utf8().data());
 
-    JSC::Yarr::RegularExpression regExp("webgl_[0123456789abcdefABCDEF]+", TextCaseSensitive);
+    JSC::Yarr::RegularExpression regExp("webgl_[0123456789abcdefABCDEF]+");
 
     StringBuilder processedLog;
     

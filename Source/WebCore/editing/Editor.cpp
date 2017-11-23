@@ -3559,7 +3559,7 @@ void Editor::editorUIUpdateTimerFired()
             UChar32 c = newStart.characterBefore();
             // FIXME: VisiblePosition::characterAfter() and characterBefore() do not emit newlines the same
             // way as TextIterator, so we do an isStartOfParagraph check here.
-            if (isSpaceOrNewline(c) || c == 0xA0 || isStartOfParagraph(newStart)) {
+            if (isSpaceOrNewline(c) || c == noBreakSpace || isStartOfParagraph(newStart)) {
                 startWordSide = RightWordIfOnBoundary;
             }
             newAdjacentWords = VisibleSelection(startOfWord(newStart, startWordSide), endOfWord(newStart, RightWordIfOnBoundary));

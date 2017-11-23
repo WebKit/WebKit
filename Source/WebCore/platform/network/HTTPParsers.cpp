@@ -219,7 +219,7 @@ bool parseHTTPRefresh(const String& refresh, double& delay, String& url)
         ++pos;
         skipWhiteSpace(refresh, pos);
         unsigned urlStartPos = pos;
-        if (refresh.find("url", urlStartPos, false) == urlStartPos) {
+        if (refresh.findIgnoringASCIICase("url", urlStartPos) == urlStartPos) {
             urlStartPos += 3;
             skipWhiteSpace(refresh, urlStartPos);
             if (refresh[urlStartPos] == '=') {
@@ -347,7 +347,7 @@ void findCharsetInMediaType(const String& mediaType, unsigned int& charsetPos, u
     unsigned length = mediaType.length();
     
     while (pos < length) {
-        pos = mediaType.find("charset", pos, false);
+        pos = mediaType.findIgnoringASCIICase("charset", pos);
         if (pos == notFound || pos == 0) {
             charsetLen = 0;
             return;
@@ -532,10 +532,11 @@ bool parseRange(const String& range, long long& rangeOffset, long long& rangeEnd
     rangeOffset = rangeEnd = rangeSuffixLength = -1;
 
     // The "bytes" unit identifier should be present.
-    static const char bytesStart[] = "bytes="; 
-    if (!range.startsWith(bytesStart, false))
+    static const unsigned bytesLength = 6;
+    if (!startsWithLettersIgnoringASCIICase(range, "bytes="))
         return false;
-    String byteRange = range.substring(sizeof(bytesStart) - 1);
+    // FIXME: The rest of this should use StringView.
+    String byteRange = range.substring(bytesLength);
 
     // The '-' character needs to be present.
     int index = byteRange.find('-');

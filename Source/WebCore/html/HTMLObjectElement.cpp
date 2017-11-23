@@ -214,7 +214,7 @@ bool HTMLObjectElement::hasFallbackContent() const
     for (RefPtr<Node> child = firstChild(); child; child = child->nextSibling()) {
         // Ignore whitespace-only text, and <param> tags, any other content is fallback content.
         if (is<Text>(*child)) {
-            if (!downcast<Text>(*child).containsOnlyWhitespace())
+            if (!downcast<Text>(*child).data().isAllSpecialCharacters<isHTMLSpace>())
                 return true;
         } else if (!is<HTMLParamElement>(*child))
             return true;
@@ -238,7 +238,7 @@ bool HTMLObjectElement::shouldAllowQuickTimeClassIdQuirk()
         return false;
 
     for (auto& metaElement : descendantsOfType<HTMLMetaElement>(document())) {
-        if (equalLettersIgnoringASCIICase(metaElement.name(), "generator") && metaElement.content().startsWith("Mac OS X Server Web Services Server", false))
+        if (equalLettersIgnoringASCIICase(metaElement.name(), "generator") && startsWithLettersIgnoringASCIICase(metaElement.content(), "mac os x server web services server"))
             return true;
     }
 
@@ -247,7 +247,7 @@ bool HTMLObjectElement::shouldAllowQuickTimeClassIdQuirk()
     
 bool HTMLObjectElement::hasValidClassId()
 {
-    if (MIMETypeRegistry::isJavaAppletMIMEType(serviceType()) && attributeWithoutSynchronization(classidAttr).startsWith("java:", false))
+    if (MIMETypeRegistry::isJavaAppletMIMEType(serviceType()) && protocolIs(attributeWithoutSynchronization(classidAttr), "java"))
         return true;
     
     if (shouldAllowQuickTimeClassIdQuirk())
@@ -409,7 +409,7 @@ static inline bool preventsParentObjectFromExposure(const Node& child)
     if (is<Element>(child))
         return preventsParentObjectFromExposure(downcast<Element>(child));
     if (is<Text>(child))
-        return !downcast<Text>(child).containsOnlyWhitespace();
+        return !downcast<Text>(child).data().isAllSpecialCharacters<isHTMLSpace>();
     return true;
 }
 

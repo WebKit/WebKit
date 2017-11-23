@@ -399,22 +399,20 @@ static bool shouldAllowExternalLoad(const URL& url)
 {
     String urlString = url.string();
 
-    // On non-Windows platforms libxml asks for this URL, the
-    // "XML_XML_DEFAULT_CATALOG", on initialization.
+    // On non-Windows platforms libxml asks for this URL, the "XML_XML_DEFAULT_CATALOG", on initialization.
     if (urlString == "file:///etc/xml/catalog")
         return false;
 
     // On Windows, libxml computes a URL relative to where its DLL resides.
-    if (urlString.startsWith("file:///", false) && urlString.endsWith("/etc/catalog", false))
+    if (startsWithLettersIgnoringASCIICase(urlString, "file:///") && urlString.endsWithIgnoringASCIICase("/etc/catalog"))
         return false;
 
-    // The most common DTD.  There isn't much point in hammering www.w3c.org
-    // by requesting this URL for every XHTML document.
-    if (urlString.startsWith("http://www.w3.org/TR/xhtml", false))
+    // The most common DTD. There isn't much point in hammering www.w3c.org by requesting this for every XHTML document.
+    if (startsWithLettersIgnoringASCIICase(urlString, "http://www.w3.org/tr/xhtml"))
         return false;
 
     // Similarly, there isn't much point in requesting the SVG DTD.
-    if (urlString.startsWith("http://www.w3.org/Graphics/SVG", false))
+    if (startsWithLettersIgnoringASCIICase(urlString, "http://www.w3.org/graphics/svg"))
         return false;
 
     // The libxml doesn't give us a lot of context for deciding whether to

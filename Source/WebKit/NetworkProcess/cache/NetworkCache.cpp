@@ -221,13 +221,9 @@ static RetrieveDecision makeRetrieveDecision(const WebCore::ResourceRequest& req
     return RetrieveDecision::Yes;
 }
 
-static bool isMediaMIMEType(const String& mimeType)
+static bool isMediaMIMEType(const String& type)
 {
-    if (mimeType.startsWith("video/", /*caseSensitive*/ false))
-        return true;
-    if (mimeType.startsWith("audio/", /*caseSensitive*/ false))
-        return true;
-    return false;
+    return startsWithLettersIgnoringASCIICase(type, "video/") || startsWithLettersIgnoringASCIICase(type, "audio/");
 }
 
 static std::optional<size_t> expectedTotalResourceSizeFromContentRange(const WebCore::ResourceResponse& response)

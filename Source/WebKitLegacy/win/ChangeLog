@@ -1,3 +1,23 @@
+2017-11-23  Darin Adler  <darin@apple.com>
+
+        Reduce WTF::String operations that do unnecessary Unicode operations instead of ASCII
+        https://bugs.webkit.org/show_bug.cgi?id=179907
+
+        Reviewed by Sam Weinig.
+
+        * Plugins/PluginDatabaseWin.cpp:
+        (WebCore::PluginDatabase::getPluginPathsInDirectories const): Use
+        startsWithLettersIgnoringASCIICase and endsWithIgnoringASCIICase.
+        * WebDownloadCFNet.cpp:
+        (WebDownload::initToResumeWithBundle): Use endsWithIgnoringASCIICase.
+
+        * WebView.cpp:
+        (WebView::markAllMatchesForText): Fix old code that was passing TextCaseSensitivity
+        to a function that actually takes FindOptions. By luck, TextCaseSensitive happens to
+        be 0, which is correct FindOptions for case sensitive matching, and TextCaseInsensitive
+        happens to be 1, which is correct FindOptions for case insensitive matching, so fixing
+        the code does not cause any change in behavior.
+
 2017-11-22  Ali Juma  <ajuma@chromium.org>
 
         Implement VisualViewport API attributes

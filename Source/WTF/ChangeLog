@@ -1,3 +1,65 @@
+2017-11-23  Darin Adler  <darin@apple.com>
+
+        Reduce WTF::String operations that do unnecessary Unicode operations instead of ASCII
+        https://bugs.webkit.org/show_bug.cgi?id=179907
+
+        Reviewed by Sam Weinig.
+
+        * wtf/text/ASCIIFastPath.h: Moved the using for charactersAreAllASCII here since
+        the function is defined here.
+
+        * wtf/text/AtomicString.h: Removed overloads of contains, find, startsWith, and
+        endsWith that take a boolean indicating whether they should be "case sensitive".
+        When false, this was doing Unicode case folding, and no callers needed that.
+        Also tweaked formatting and argument names.
+
+        * wtf/text/IntegerToStringConversion.h: Added an include of LChar.h since this file
+        uses that. Also tweaked formatting a bit.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::containsOnlyWhitespace): Deleted. Despite its name sounding like
+        it used the full Unicode whitespace definition, this actually checked isASCIISpace.
+        Callers now all use isAllSpecialCharacters instead with the whitespace definition
+        that is appropriate to each call site.
+        (WTF::latin1CaseFoldTable): Deleted.
+        (WTF::equalCompatibilityCaseless): Deleted.
+        (WTF::StringImpl::findIgnoringCase): Deleted.
+        (WTF::findIgnoringCaseInner): Deleted.
+        (WTF::reverseFindIgnoringCaseInner): Deleted.
+        (WTF::StringImpl::reverseFindIgnoringCase): Deleted.
+        (WTF::equalInner): Removed boolean caseSensitive argument.
+        (WTF::StringImpl::startsWith): Ditto.
+        (WTF::StringImpl::endsWith): Ditto.
+
+        * wtf/text/StringImpl.h: Moved TextCaseSensitivity out into a different header.
+        Moved ASCIIFastPath.h include here from WTFString.h. Moved isAllSpecialCharacters
+        free function here from WTFString.h. Moved lots of function bodies out of class
+        definitions to make the class definitions easier to read. Sorted things a bit.
+        Tweaked formatting. Marked constructor that takes one argument explicit. Added
+        an isEmpty function like the one in String. Renamed copyChars to copyCharacters.
+        Added isAllASCII, isAllLatin1 and isAllSpecialCharacters functions. Removed
+        boolean caseSensitive arguments from various functions. Removed findIgnoringCase
+        and reverseFindIgnoringCase. Added a FIXME to codePointCompare about the way it
+        treats null and empty strings as equal. Changed length argument in remove to
+        unsigned to match other lengths.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::removeInternal): Changed length argument to be unsigned.
+        (WTF::createWithFormatAndArguments): Use emptyString.
+        (WTF::String::isSafeToSendToAnotherThread const): Rewrote to be easier to read.
+
+        * wtf/text/WTFString.h: Moved ASCIIFastPath.h to StringImpl.h. Moved lots of
+        function bodies out of class definitions to make the class definitions easier
+        to read, made others one-liners. Removed the String::at function but kept the
+        String::characterAt function; the two were identical. Removed boolean
+        caseSensitive arguments from various functions. Removed findIgnoringCase and
+        reverseFindIgnoringCase. Renamed containsOnlyASCII to isAllASCII and
+        containsOnlyLatin1 to isAllLatin1 to match the naming of isAllSpecialCharacters.
+        Moved the inline implementations of functions that are defined above further
+        down, after things like the ASCIILiteral class and various functions.
+
+        * wtf/text/icu/UTextProviderLatin1.cpp: Updated name of copyChars.
+
 2017-11-22  Stephan Szabo  <stephan.szabo@sony.com>
 
         tuple related items are used in WTF without including tuple

@@ -1,3 +1,35 @@
+2017-11-23  Darin Adler  <darin@apple.com>
+
+        Reduce WTF::String operations that do unnecessary Unicode operations instead of ASCII
+        https://bugs.webkit.org/show_bug.cgi?id=179907
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::isMediaMIMEType): Use startsWithLettersIgnoringASCIICase.
+        * NetworkProcess/cache/NetworkCacheKey.cpp:
+        (WebKit::NetworkCache::hashString): Use isAllASCII..
+        * UIProcess/API/C/WKWebsitePolicies.cpp:
+        (WKWebsitePoliciesSetCustomHeaderFields): Use startsWithLettersIgnoringASCIICase..
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        (-[_WKWebsitePolicies setCustomHeaderFields:]): Ditto.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::savePDFToFileInDownloadsFolder): Use endsWithIgnoringASCIICase.
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::WebPreferences): Initialize m_identifier explicitly. Somehow
+        changing the String default constructor to be "= default" led to a warning that we
+        otherwise did not get about not initializing m_identifier. Arguably a compiler bug,
+        but legitimately strange that the copy constructor does not copy m_identifier and so
+        nice to be explicit about it, I guess.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplicationRaw): Use
+        endsWithIgnoringASCIICase.
+        (WebKit::WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication): Ditto.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin): Ditto.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState const): Use isAllSpecialCharacters<isHTMLSpace>.
+
 2017-11-23  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Simplify CoordinatedGraphicsLayer's content buffer updates

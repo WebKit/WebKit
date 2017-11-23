@@ -40,12 +40,12 @@ bool BaseTextInputType::isTextType() const
 bool BaseTextInputType::patternMismatch(const String& value) const
 {
     const AtomicString& rawPattern = element().attributeWithoutSynchronization(patternAttr);
-    if (rawPattern.isNull() || value.isEmpty() || !JSC::Yarr::RegularExpression(rawPattern, TextCaseSensitive).isValid())
+    if (rawPattern.isNull() || value.isEmpty() || !JSC::Yarr::RegularExpression(rawPattern).isValid())
         return false;
     String pattern = "^(?:" + rawPattern + ")$";
     int matchLength = 0;
     int valueLength = value.length();
-    int matchOffset = JSC::Yarr::RegularExpression(pattern, TextCaseSensitive).match(value, 0, &matchLength);
+    int matchOffset = JSC::Yarr::RegularExpression(pattern).match(value, 0, &matchLength);
     return matchOffset || matchLength != valueLength;
 }
 

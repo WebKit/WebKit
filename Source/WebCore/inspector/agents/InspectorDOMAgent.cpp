@@ -60,6 +60,7 @@
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLScriptElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTemplateElement.h"
@@ -1973,10 +1974,16 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
     return WTFMove(value);
 }
 
+static bool containsOnlyHTMLWhitespace(Node* node)
+{
+    // FIXME: Respect ignoreWhitespace setting from inspector front end?
+    return is<Text>(node) && downcast<Text>(*node).data().isAllSpecialCharacters<isHTMLSpace>();
+}
+
 Node* InspectorDOMAgent::innerFirstChild(Node* node)
 {
     node = node->firstChild();
-    while (isWhitespace(node))
+    while (containsOnlyHTMLWhitespace(node))
         node = node->nextSibling();
     return node;
 }
@@ -1985,7 +1992,7 @@ Node* InspectorDOMAgent::innerNextSibling(Node* node)
 {
     do {
         node = node->nextSibling();
-    } while (isWhitespace(node));
+    } while (containsOnlyHTMLWhitespace(node));
     return node;
 }
 
@@ -1993,18 +2000,15 @@ Node* InspectorDOMAgent::innerPreviousSibling(Node* node)
 {
     do {
         node = node->previousSibling();
-    } while (isWhitespace(node));
+    } while (containsOnlyHTMLWhitespace(node));
     return node;
 }
 
 unsigned InspectorDOMAgent::innerChildNodeCount(Node* node)
 {
     unsigned count = 0;
-    Node* child = innerFirstChild(node);
-    while (child) {
-        count++;
-        child = innerNextSibling(child);
-    }
+    for (Node* child = innerFirstChild(node); child; child = innerNextSibling(child))
+        ++count;
     return count;
 }
 
@@ -2016,13 +2020,6 @@ Node* InspectorDOMAgent::innerParentNode(Node* node)
     if (is<ShadowRoot>(*node))
         return downcast<ShadowRoot>(*node).host();
     return node->parentNode();
-}
-
-bool InspectorDOMAgent::isWhitespace(Node* node)
-{
-    // FIXME: Rename to containsOnlyHTMLSpaces?
-    // FIXME: Respect ignoreWhitespace setting from inspector front end?
-    return is<Text>(node) && downcast<Text>(*node).data().containsOnlyWhitespace();
 }
 
 void InspectorDOMAgent::mainFrameDOMContentLoaded()
@@ -2056,7 +2053,7 @@ void InspectorDOMAgent::didCommitLoad(Document* document)
 
 void InspectorDOMAgent::didInsertDOMNode(Node& node)
 {
-    if (isWhitespace(&node))
+    if (containsOnlyHTMLWhitespace(&node))
         return;
 
     // We could be attaching existing subtree. Forget the bindings.
@@ -2085,7 +2082,7 @@ void InspectorDOMAgent::didInsertDOMNode(Node& node)
 
 void InspectorDOMAgent::didRemoveDOMNode(Node& node)
 {
-    if (isWhitespace(&node))
+    if (containsOnlyHTMLWhitespace(&node))
         return;
 
     ContainerNode* parent = node.parentNode();

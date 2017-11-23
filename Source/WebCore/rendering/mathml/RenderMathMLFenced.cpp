@@ -66,7 +66,7 @@ void RenderMathMLFenced::updateFromElement()
     auto& separators = fenced.attributeWithoutSynchronization(MathMLNames::separatorsAttr);
     if (!separators.isNull()) {
         StringBuilder characters;
-        for (unsigned int i = 0; i < separators.length(); i++) {
+        for (unsigned i = 0; i < separators.length(); i++) {
             if (!isSpaceOrNewline(separators[i]))
                 characters.append(separators[i]);
         }

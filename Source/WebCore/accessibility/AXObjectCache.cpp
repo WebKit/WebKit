@@ -76,6 +76,7 @@
 #include "HTMLLabelElement.h"
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLTextFormControlElement.h"
 #include "InlineElementBox.h"
 #include "MathMLElement.h"
@@ -1615,14 +1616,14 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(RefPtr<Range>range, int o
         } else {
             // Ignore space, new line, tag node.
             if (currentLength == 1) {
-                if (isSpaceOrNewline(iterator.text()[0])) {
+                if (isHTMLSpace(iterator.text()[0])) {
                     // If the node has BR tag, we want to set the currentNode to it.
                     int subOffset = iterator.range()->startOffset();
                     Node* childNode = node.traverseToChildAt(subOffset);
                     if (childNode && childNode->renderer() && childNode->renderer()->isBR()) {
                         currentNode = childNode;
                         hasReplacedNodeOrBR = true;
-                    } else if (Element *shadowHost = currentNode->shadowHost()) {
+                    } else if (auto* shadowHost = currentNode->shadowHost()) {
                         // Since we are entering text controls, we should set the currentNode
                         // to be the shadow host when there's no content.
                         if (nodeIsTextControl(shadowHost) && currentNode->isShadowRoot()) {

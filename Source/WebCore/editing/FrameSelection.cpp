@@ -1763,7 +1763,7 @@ void FrameSelection::debugRenderer(RenderObject* renderer, bool selected) const
         fprintf(stderr, "%s%s\n", selected ? "==> " : "    ", element.localName().string().utf8().data());
     } else if (is<RenderText>(*renderer)) {
         RenderText& textRenderer = downcast<RenderText>(*renderer);
-        if (!textRenderer.textLength() || !textRenderer.firstTextBox()) {
+        if (textRenderer.text().isEmpty() || !textRenderer.firstTextBox()) {
             fprintf(stderr, "%s#text (empty)\n", selected ? "==> " : "    ");
             return;
         }
@@ -2641,7 +2641,7 @@ bool FrameSelection::selectionAtWordStart() const
         }
         UChar c(pos.characterAfter());
         if (c) {
-            result = isSpaceOrNewline(c) || c == 0xA0 || (u_ispunct(c) && c != ',' && c != '-' && c != '\'');
+            result = isSpaceOrNewline(c) || c == noBreakSpace || (u_ispunct(c) && c != ',' && c != '-' && c != '\'');
             break;
         }
     }
@@ -2686,7 +2686,7 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
 
     if (isEndOfParagraph(endVisiblePosBeforeExpansion)) {
         UChar c(endVisiblePosBeforeExpansion.characterBefore());
-        if (isSpaceOrNewline(c) || c == 0xA0) {
+        if (isSpaceOrNewline(c) || c == noBreakSpace) {
             // End of paragraph with space.
             return VisibleSelection();
         }
@@ -2729,7 +2729,7 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
             return VisibleSelection();
         }
         UChar c(previous.characterAfter());
-        if (isSpaceOrNewline(c) || c == 0xA0) {
+        if (isSpaceOrNewline(c) || c == noBreakSpace) {
             // Space at end of line
             return VisibleSelection();
         }
@@ -2744,7 +2744,7 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
             return VisibleSelection();
         }
         UChar c(previous.characterAfter());
-        if (isSpaceOrNewline(c) || c == 0xA0) {
+        if (isSpaceOrNewline(c) || c == noBreakSpace) {
             // Space at end of line
             return VisibleSelection();
         }
@@ -2764,7 +2764,7 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
     while (endVisiblePos != startVisiblePos) {
         VisiblePosition previous(endVisiblePos.previous());
         UChar c(previous.characterAfter());
-        if (!isSpaceOrNewline(c) && c != 0xA0)
+        if (!isSpaceOrNewline(c) && c != noBreakSpace)
             break;
         endVisiblePos = previous;
     }
@@ -2802,7 +2802,7 @@ bool FrameSelection::actualSelectionAtSentenceStart(const VisibleSelection& sel)
         }
         UChar c(pos.characterAfter());
         if (c) {
-            if (isSpaceOrNewline(c) || c == 0xA0) {
+            if (isSpaceOrNewline(c) || c == noBreakSpace) {
                 sawSpace = true;
             }
             else {

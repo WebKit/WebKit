@@ -422,7 +422,7 @@ void ResourceHandleCurlDelegate::handleDataURL()
     String data = url.substring(index + 1);
     auto originalSize = data.length();
 
-    bool base64 = mediaType.endsWith(";base64", false);
+    bool base64 = mediaType.endsWithIgnoringASCIICase(";base64");
     if (base64)
         mediaType = mediaType.left(mediaType.length() - 7);
 

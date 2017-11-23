@@ -203,7 +203,6 @@ public:
     static Node* innerPreviousSibling(Node*);
     static unsigned innerChildNodeCount(Node*);
     static Node* innerParentNode(Node*);
-    static bool isWhitespace(Node*);
 
     Node* assertNode(ErrorString&, int nodeId);
     Element* assertElement(ErrorString&, int nodeId);

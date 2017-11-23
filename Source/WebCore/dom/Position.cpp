@@ -32,6 +32,7 @@
 #include "HTMLBodyElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLTableElement.h"
 #include "InlineElementBox.h"
 #include "InlineIterator.h"
@@ -1141,11 +1142,11 @@ Position Position::leadingWhitespacePosition(EAffinity affinity, bool considerNo
 
     Position prev = previousCharacterPosition(affinity);
     if (prev != *this && inSameEnclosingBlockFlowElement(deprecatedNode(), prev.deprecatedNode()) && is<Text>(*prev.deprecatedNode())) {
-        String string = downcast<Text>(*prev.deprecatedNode()).data();
-        UChar c = string[prev.deprecatedEditingOffset()];
-        if (considerNonCollapsibleWhitespace ? (isSpaceOrNewline(c) || c == noBreakSpace) : deprecatedIsCollapsibleWhitespace(c))
+        UChar c = downcast<Text>(*prev.deprecatedNode()).data()[prev.deprecatedEditingOffset()];
+        if (considerNonCollapsibleWhitespace ? (isHTMLSpace(c) || c == noBreakSpace) : deprecatedIsCollapsibleWhitespace(c)) {
             if (isEditablePosition(prev))
                 return prev;
+        }
     }
 
     return { };
@@ -1162,7 +1163,7 @@ Position Position::trailingWhitespacePosition(EAffinity, bool considerNonCollaps
     UChar c = v.characterAfter();
     // The space must not be in another paragraph and it must be editable.
     if (!isEndOfParagraph(v) && v.next(CannotCrossEditingBoundary).isNotNull())
-        if (considerNonCollapsibleWhitespace ? (isSpaceOrNewline(c) || c == noBreakSpace) : deprecatedIsCollapsibleWhitespace(c))
+        if (considerNonCollapsibleWhitespace ? (isHTMLSpace(c) || c == noBreakSpace) : deprecatedIsCollapsibleWhitespace(c))
             return *this;
     
     return { };

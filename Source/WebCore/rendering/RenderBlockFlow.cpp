@@ -30,6 +30,7 @@
 #include "FrameSelection.h"
 #include "HTMLElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLTextAreaElement.h"
 #include "HitTestLocation.h"
 #include "InlineTextBox.h"
@@ -3671,13 +3672,14 @@ void RenderBlockFlow::materializeRareBlockFlowData()
 }
 
 #if ENABLE(TEXT_AUTOSIZING)
+
 static inline bool isVisibleRenderText(const RenderObject& renderer)
 {
     if (!is<RenderText>(renderer))
         return false;
 
     auto& renderText = downcast<RenderText>(renderer);
-    return !renderText.linesBoundingBox().isEmpty() && !renderText.text()->containsOnlyWhitespace();
+    return !renderText.linesBoundingBox().isEmpty() && !renderText.text().isAllSpecialCharacters<isHTMLSpace>();
 }
 
 static inline bool resizeTextPermitted(const RenderObject& renderer)
@@ -3787,6 +3789,7 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
         descendant = RenderObjectTraversal::nextSkippingChildren(text, this);
     }
 }
+
 #endif // ENABLE(TEXT_AUTOSIZING)
 
 void RenderBlockFlow::layoutExcludedChildren(bool relayoutChildren)
@@ -4264,18 +4267,15 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                 // of the string. If those are going to be stripped out,
                 // then they shouldn't be considered in the breakable char
                 // check.
-                bool hasBreakableChar, hasBreak;
-                float beginMin, endMin;
-                bool beginWS, endWS;
-                float beginMax, endMax;
                 bool strippingBeginWS = stripFrontSpaces;
-                renderText.trimmedPrefWidths(inlineMax, beginMin, beginWS, endMin, endWS,
-                                     hasBreakableChar, hasBreak, beginMax, endMax,
-                                     childMin, childMax, stripFrontSpaces);
+                auto widths = renderText.trimmedPreferredWidths(inlineMax, stripFrontSpaces);
+
+                childMin = widths.min;
+                childMax = widths.max;
 
                 // This text object will not be rendered, but it may still provide a breaking opportunity.
-                if (!hasBreak && !childMax) {
-                    if (autoWrap && (beginWS || endWS)) {
+                if (!widths.hasBreak && !childMax) {
+                    if (autoWrap && (widths.beginWS || widths.endWS)) {
                         minLogicalWidth = preferredWidth(minLogicalWidth, inlineMin);
                         inlineMin = 0;
                     }
@@ -4294,14 +4294,14 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                 if (!addedTextIndent || hasRemainingNegativeTextIndent) {
                     ti = textIndent.ceilToFloat();
                     childMin += ti;
-                    beginMin += ti;
+                    widths.beginMin += ti;
 
                     // It the text indent negative and larger than the child minimum, we re-use the remainder
                     // in future minimum calculations, but using the negative value again on the maximum
                     // will lead to under-counting the max pref width.
                     if (!addedTextIndent) {
                         childMax += ti;
-                        beginMax += ti;
+                        widths.beginMax += ti;
                         addedTextIndent = true;
                     }
 
@@ -4316,48 +4316,48 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                     unsigned startIndex = strippingBeginWS ? renderText.firstCharacterIndexStrippingSpaces() : 0;
                     float hangStartWidth = renderText.hangablePunctuationStartWidth(startIndex);
                     childMin -= hangStartWidth;
-                    beginMin -= hangStartWidth;
+                    widths.beginMin -= hangStartWidth;
                     childMax -= hangStartWidth;
-                    beginMax -= hangStartWidth;
+                    widths.beginMax -= hangStartWidth;
                     addedStartPunctuationHang = true;
                 }
                 
                 // If we have no breakable characters at all,
                 // then this is the easy case. We add ourselves to the current
                 // min and max and continue.
-                if (!hasBreakableChar)
+                if (!widths.hasBreakableChar)
                     inlineMin += childMin;
                 else {
                     // We have a breakable character. Now we need to know if
                     // we start and end with whitespace.
-                    if (beginWS) {
+                    if (widths.beginWS) {
                         // End the current line.
                         minLogicalWidth = preferredWidth(minLogicalWidth, inlineMin);
                     } else {
-                        inlineMin += beginMin;
+                        inlineMin += widths.beginMin;
                         minLogicalWidth = preferredWidth(minLogicalWidth, inlineMin);
                         childMin -= ti;
                     }
 
                     inlineMin = childMin;
 
-                    if (endWS) {
+                    if (widths.endWS) {
                         // We end in whitespace, which means we can end our current line.
                         minLogicalWidth = preferredWidth(minLogicalWidth, inlineMin);
                         inlineMin = 0;
                         shouldBreakLineAfterText = false;
                     } else {
                         minLogicalWidth = preferredWidth(minLogicalWidth, inlineMin);
-                        inlineMin = endMin;
+                        inlineMin = widths.endMin;
                         shouldBreakLineAfterText = true;
                     }
                 }
 
-                if (hasBreak) {
-                    inlineMax += beginMax;
+                if (widths.hasBreak) {
+                    inlineMax += widths.beginMax;
                     maxLogicalWidth = preferredWidth(maxLogicalWidth, inlineMax);
                     maxLogicalWidth = preferredWidth(maxLogicalWidth, childMax);
-                    inlineMax = endMax;
+                    inlineMax = widths.endMax;
                     addedTextIndent = true;
                     addedStartPunctuationHang = true;
                 } else
@@ -4388,8 +4388,8 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     if (styleToUse.collapseWhiteSpace())
         stripTrailingSpace(inlineMax, inlineMin, trailingSpaceChild);
     
-    if (canHangPunctuationAtEnd && lastText && lastText->textLength() > 0) {
-        unsigned endIndex = trailingSpaceChild == lastText ? lastText->lastCharacterIndexStrippingSpaces() : lastText->textLength() - 1;
+    if (canHangPunctuationAtEnd && lastText && lastText->text().length() > 0) {
+        unsigned endIndex = trailingSpaceChild == lastText ? lastText->lastCharacterIndexStrippingSpaces() : lastText->text().length() - 1;
         float endHangWidth = lastText->hangablePunctuationEndWidth(endIndex);
         inlineMin -= endHangWidth;
         inlineMax -= endHangWidth;

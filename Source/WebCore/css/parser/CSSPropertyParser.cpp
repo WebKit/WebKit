@@ -3254,7 +3254,7 @@ static Vector<String> parseGridTemplateAreasColumnNames(const String& gridRowNam
 
 static bool parseGridTemplateAreasRow(const String& gridRowNames, NamedGridAreaMap& gridAreaMap, const size_t rowCount, size_t& columnCount)
 {
-    if (gridRowNames.isEmpty() || gridRowNames.containsOnlyWhitespace())
+    if (gridRowNames.isAllSpecialCharacters<isCSSSpace>())
         return false;
 
     Vector<String> columnNames = parseGridTemplateAreasColumnNames(gridRowNames);

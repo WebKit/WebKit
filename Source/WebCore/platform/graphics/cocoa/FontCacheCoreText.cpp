@@ -685,7 +685,7 @@ RefPtr<Font> FontCache::similarFont(const FontDescription& description, const At
     static NeverDestroyed<AtomicString> geezaPlain("GeezaPro", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> geezaBold("GeezaPro-Bold", AtomicString::ConstructFromLiteral);
     for (String* matchWord : matchWords) {
-        if (family.contains(*matchWord, false))
+        if (family.containsIgnoringASCIICase(*matchWord))
             return fontForFamily(description, isFontWeightBold(description.weight()) ? geezaBold : geezaPlain);
     }
     return nullptr;

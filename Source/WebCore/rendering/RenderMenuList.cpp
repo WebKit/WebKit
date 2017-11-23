@@ -137,7 +137,7 @@ void RenderMenuList::adjustInnerStyle()
         // Items in the popup will not respect the CSS text-align and direction properties,
         // so we must adjust our own style to match.
         innerStyle.setTextAlign(LEFT);
-        TextDirection direction = (m_buttonText && m_buttonText->text()->defaultWritingDirection() == U_RIGHT_TO_LEFT) ? RTL : LTR;
+        TextDirection direction = (m_buttonText && m_buttonText->text().defaultWritingDirection() == U_RIGHT_TO_LEFT) ? RTL : LTR;
         innerStyle.setDirection(direction);
 #if PLATFORM(IOS)
     } else if (document().page()->chrome().selectItemAlignmentFollowsMenuWritingDirection()) {
@@ -145,7 +145,7 @@ void RenderMenuList::adjustInnerStyle()
         TextDirection direction;
         EUnicodeBidi unicodeBidi;
         if (multiple() && selectedOptionCount(*this) != 1) {
-            direction = (m_buttonText && m_buttonText->text()->defaultWritingDirection() == U_RIGHT_TO_LEFT) ? RTL : LTR;
+            direction = (m_buttonText && m_buttonText->text().defaultWritingDirection() == U_RIGHT_TO_LEFT) ? RTL : LTR;
             unicodeBidi = UBNormal;
         } else if (m_optionStyle) {
             direction = m_optionStyle->direction();
@@ -218,7 +218,7 @@ void RenderMenuList::updateOptionsWidth()
             continue;
 
         String text = downcast<HTMLOptionElement>(*element).textIndentedToRespectGroupLabel();
-        applyTextTransform(style(), text, ' ');
+        text = applyTextTransform(style(), text, ' ');
         if (theme().popupOptionSupportsTextIndent()) {
             // Add in the option's text indent.  We can't calculate percentage values for now.
             float optionWidth = 0;
@@ -446,19 +446,18 @@ void RenderMenuList::didUpdateActiveOption(int optionIndex)
 
 String RenderMenuList::itemText(unsigned listIndex) const
 {
-    const Vector<HTMLElement*>& listItems = selectElement().listItems();
+    auto& listItems = selectElement().listItems();
     if (listIndex >= listItems.size())
         return String();
 
     String itemString;
-    Element* element = listItems[listIndex];
-    if (is<HTMLOptGroupElement>(*element))
-        itemString = downcast<HTMLOptGroupElement>(*element).groupLabelText();
-    else if (is<HTMLOptionElement>(*element))
-        itemString = downcast<HTMLOptionElement>(*element).textIndentedToRespectGroupLabel();
+    auto& element = *listItems[listIndex];
+    if (is<HTMLOptGroupElement>(element))
+        itemString = downcast<HTMLOptGroupElement>(element).groupLabelText();
+    else if (is<HTMLOptionElement>(element))
+        itemString = downcast<HTMLOptionElement>(element).textIndentedToRespectGroupLabel();
 
-    applyTextTransform(style(), itemString, ' ');
-    return itemString;
+    return applyTextTransform(style(), itemString, ' ');
 }
 
 String RenderMenuList::itemLabel(unsigned) const

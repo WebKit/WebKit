@@ -46,7 +46,7 @@ static Vector<FlowContents::Segment> initializeSegments(const RenderBlockFlow& f
     for (auto& child : childrenOfType<RenderObject>(flow)) {
         if (is<RenderText>(child)) {
             auto& textChild = downcast<RenderText>(child);
-            unsigned textLength = textChild.text()->length();
+            unsigned textLength = textChild.text().length();
             segments.append(FlowContents::Segment { startPosition, startPosition + textLength, textChild.text(),
                 textChild, textChild.canUseSimplifiedTextMeasuring() });
             startPosition += textLength;

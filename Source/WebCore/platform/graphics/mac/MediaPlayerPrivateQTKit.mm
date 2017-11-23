@@ -1298,7 +1298,7 @@ static bool shouldRejectMIMEType(const String& type)
 {
     // QTKit will return non-video MIME types which it claims to support, but which we
     // do not support in the <video> element. Disclaim all non video/ or audio/ types.
-    return !type.startsWith("video/", false) && !type.startsWith("audio/", false);
+    return !startsWithLettersIgnoringASCIICase(type, "video/") && !startsWithLettersIgnoringASCIICase(type, "audio/");
 }
 
 static HashSet<String, ASCIICaseInsensitiveHash> createFileTypesSet(NSArray *fileTypes)

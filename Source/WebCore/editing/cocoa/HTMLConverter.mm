@@ -2224,7 +2224,7 @@ void HTMLConverter::_processText(CharacterData& characterData)
     bool wasSpace = false;
     if (_caches->propertyValueForNode(characterData, CSSPropertyWhiteSpace).startsWith("pre")) {
         if (textLength && originalString.length() && _flags.isSoft) {
-            unichar c = originalString.at(0);
+            unichar c = originalString.characterAt(0);
             if (c == '\n' || c == '\r' || c == NSParagraphSeparatorCharacter || c == NSLineSeparatorCharacter || c == NSFormFeedCharacter || c == WebNextLineCharacter)
                 rangeToReplace = NSMakeRange(textLength - 1, 1);
         }
@@ -2234,7 +2234,7 @@ void HTMLConverter::_processText(CharacterData& characterData)
         StringBuilder builder;
         LChar noBreakSpaceRepresentation = 0;
         for (unsigned i = 0; i < count; i++) {
-            UChar c = originalString.at(i);
+            UChar c = originalString.characterAt(i);
             bool isWhitespace = c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == 0xc || c == 0x200b;
             if (isWhitespace)
                 wasSpace = (!wasLeading || !suppressLeadingSpace);
@@ -2260,7 +2260,7 @@ void HTMLConverter::_processText(CharacterData& characterData)
     if (outputString.length()) {
         String textTransform = _caches->propertyValueForNode(characterData, CSSPropertyTextTransform);
         if (textTransform == "capitalize")
-            makeCapitalized(&outputString, 0); // FIXME: Needs to take locale into account to work correctly.
+            outputString = capitalize(outputString, ' '); // FIXME: Needs to take locale into account to work correctly.
         else if (textTransform == "uppercase")
             outputString = outputString.convertToUppercaseWithoutLocale(); // FIXME: Needs locale to work correctly.
         else if (textTransform == "lowercase")

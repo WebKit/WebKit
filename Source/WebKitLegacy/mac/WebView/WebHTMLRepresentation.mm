@@ -354,7 +354,7 @@ static RegularExpression* regExpForLabels(NSArray *labels)
     static const unsigned int regExpCacheSize = 4;
     static NSMutableArray* regExpLabels = nil;
     static NeverDestroyed<Vector<RegularExpression*>> regExps;
-    static NeverDestroyed<RegularExpression> wordRegExp("\\w", TextCaseSensitive);
+    static NeverDestroyed<RegularExpression> wordRegExp("\\w");
 
     RegularExpression* result;
     if (!regExpLabels)
@@ -389,7 +389,7 @@ static RegularExpression* regExpForLabels(NSArray *labels)
                 pattern.appendLiteral("\\b");
         }
         pattern.append(')');
-        result = new RegularExpression(pattern.toString(), TextCaseInsensitive);
+        result = new RegularExpression(pattern.toString(), JSC::Yarr::TextCaseInsensitive);
     }
 
     // add regexp to the cache, making sure it is at the front for LRU ordering
@@ -488,7 +488,7 @@ static NSString *matchLabelsAgainstString(NSArray *labels, const String& stringT
     String mutableStringToMatch = stringToMatch;
     
     // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
-    replace(mutableStringToMatch, RegularExpression("\\d", TextCaseSensitive), " ");
+    replace(mutableStringToMatch, RegularExpression("\\d"), " ");
     mutableStringToMatch.replace('_', ' ');
     
     RegularExpression* regExp = regExpForLabels(labels);

@@ -217,7 +217,7 @@ unsigned textOffsetForPoint(const LayoutPoint& point, const RenderText& renderer
     auto resolver = runResolver(flow, layout);
     auto it = resolver.runForPoint(point);
     if (it == resolver.end())
-        return renderer.textLength();
+        return renderer.text().length();
     auto run = *it;
     auto& style = flow.style();
     TextRun textRun(run.text(), run.logicalLeft(), run.expansion(), run.expansionBehavior());

@@ -238,10 +238,10 @@ static void append(Vector<char>& vector, const CString& string)
 // Find the markup between "<!--StartFragment -->" and "<!--EndFragment -->", accounting for browser quirks.
 static String extractMarkupFromCFHTML(const String& cfhtml)
 {
-    unsigned markupStart = cfhtml.find("<html", 0, false);
-    unsigned tagStart = cfhtml.find("startfragment", markupStart, false);
+    unsigned markupStart = cfhtml.findIgnoringASCIICase("<html");
+    unsigned tagStart = cfhtml.findIgnoringASCIICase("startfragment", markupStart);
     unsigned fragmentStart = cfhtml.find('>', tagStart) + 1;
-    unsigned tagEnd = cfhtml.find("endfragment", fragmentStart, false);
+    unsigned tagEnd = cfhtml.findIgnoringASCIICase("endfragment", fragmentStart);
     unsigned fragmentEnd = cfhtml.reverseFind('<', tagEnd);
     return cfhtml.substring(fragmentStart, fragmentEnd - fragmentStart).stripWhiteSpace();
 }
@@ -630,9 +630,9 @@ Ref<DocumentFragment> fragmentFromCFHTML(Document* doc, const String& cfhtml)
     // obtain baseURL if present
     String srcURLStr("sourceURL:");
     String srcURL;
-    unsigned lineStart = cfhtml.find(srcURLStr, 0, false);
+    unsigned lineStart = cfhtml.findIgnoringASCIICase(srcURLStr);
     if (lineStart != -1) {
-        unsigned srcEnd = cfhtml.find("\n", lineStart, false);
+        unsigned srcEnd = cfhtml.find('\n', lineStart);
         unsigned srcStart = lineStart+srcURLStr.length();
         String rawSrcURL = cfhtml.substring(srcStart, srcEnd-srcStart);
         replaceNBSPWithSpace(rawSrcURL);

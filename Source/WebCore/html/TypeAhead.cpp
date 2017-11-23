@@ -46,13 +46,11 @@ static const Seconds typeAheadTimeout { 1_s };
 static String stripLeadingWhiteSpace(const String& string)
 {
     unsigned length = string.length();
-
     unsigned i;
     for (i = 0; i < length; ++i) {
-        if (string[i] != noBreakSpace && (string[i] <= 0x7F ? !isASCIISpace(string[i]) : (u_charDirection(string[i]) != U_WHITE_SPACE_NEUTRAL)))
+        if (string[i] != noBreakSpace && !isSpaceOrNewline(string[i]))
             break;
     }
-
     return string.substring(i, length - i);
 }
 
@@ -95,10 +93,6 @@ int TypeAhead::handleEvent(KeyboardEvent* event, MatchModeFlags matchMode)
         int index = (selected < 0 ? 0 : selected) + searchStartOffset;
         index %= optionCount;
 
-        // Compute a case-folded copy of the prefix string before beginning the search for
-        // a matching element. This code uses foldCase to work around the fact that
-        // String::startWith does not fold non-ASCII characters. This code can be changed
-        // to use startWith once that is fixed.
         String prefixWithCaseFolded(prefix.foldCase());
         for (int i = 0; i < optionCount; ++i, index = (index + 1) % optionCount) {
             // Fold the option string and check if its prefix is equal to the folded prefix.

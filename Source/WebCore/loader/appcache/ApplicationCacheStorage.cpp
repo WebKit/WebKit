@@ -1285,8 +1285,8 @@ void ApplicationCacheStorage::deleteTables()
     
 bool ApplicationCacheStorage::shouldStoreResourceAsFlatFile(ApplicationCacheResource* resource)
 {
-    return resource->response().mimeType().startsWith("audio/", false) 
-        || resource->response().mimeType().startsWith("video/", false);
+    auto& type = resource->response().mimeType();
+    return startsWithLettersIgnoringASCIICase(type, "audio/") || startsWithLettersIgnoringASCIICase(type, "video/");
 }
     
 bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(SharedBuffer& data, const String& directory, String& path, const String& fileExtension)

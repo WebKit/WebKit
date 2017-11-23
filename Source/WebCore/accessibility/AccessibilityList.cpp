@@ -118,7 +118,7 @@ bool AccessibilityList::childHasPseudoVisibleListItemMarkers(RenderObject* listI
     // those renderers as "ignored" objects.
 #if PLATFORM(GTK)
     String text = axObj->textUnderElement();
-    return !text.isEmpty() && !text.containsOnlyWhitespace();
+    return !text.isEmpty() && !text.isAllSpecialCharacters<isHTMLSpace>();
 #else
     return false;
 #endif

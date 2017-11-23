@@ -116,38 +116,46 @@ HTMLSelectElement& RenderListBox::selectElement() const
     return downcast<HTMLSelectElement>(nodeForNonAnonymous());
 }
 
+static FontCascade bolder(Document& document, const FontCascade& font)
+{
+    auto description = font.fontDescription();
+    description.setWeight(description.bolderWeight());
+    auto result = FontCascade { description, font.letterSpacing(), font.wordSpacing() };
+    result.update(&document.fontSelector());
+    return result;
+}
+
 void RenderListBox::updateFromElement()
 {
     if (m_optionsChanged) {
-        const Vector<HTMLElement*>& listItems = selectElement().listItems();
-        int size = numItems();
-        
         float width = 0;
-        for (int i = 0; i < size; ++i) {
-            HTMLElement* element = listItems[i];
+        auto& normalFont = style().fontCascade();
+        std::optional<FontCascade> boldFont;
+        for (auto* element : selectElement().listItems()) {
             String text;
-            FontCascade itemFont = style().fontCascade();
+            WTF::Function<const FontCascade&()> selectFont = [&normalFont] () -> const FontCascade& {
+                return normalFont;
+            };
             if (is<HTMLOptionElement>(*element))
                 text = downcast<HTMLOptionElement>(*element).textIndentedToRespectGroupLabel();
             else if (is<HTMLOptGroupElement>(*element)) {
                 text = downcast<HTMLOptGroupElement>(*element).groupLabelText();
-                auto description = itemFont.fontDescription();
-                description.setWeight(description.bolderWeight());
-                itemFont = FontCascade(description, itemFont.letterSpacing(), itemFont.wordSpacing());
-                itemFont.update(&document().fontSelector());
+                selectFont = [this, &normalFont, &boldFont] () -> const FontCascade& {
+                    if (!boldFont)
+                        boldFont = bolder(document(), normalFont);
+                    return boldFont.value();
+                };
             }
-
-            if (!text.isEmpty()) {
-                applyTextTransform(style(), text, ' ');
-                // FIXME: Why is this always LTR? Can't text direction affect the width?
-                TextRun textRun = constructTextRun(text, style(), AllowTrailingExpansion);
-                float textWidth = itemFont.width(textRun);
-                width = std::max(width, textWidth);
-            }
+            if (text.isEmpty())
+                continue;
+            text = applyTextTransform(style(), text, ' ');
+            auto textRun = constructTextRun(text, style(), AllowTrailingExpansion);
+            width = std::max(width, selectFont().width(textRun));
         }
-        m_optionsWidth = static_cast<int>(ceilf(width));
+        // FIXME: Is ceiling right here, or should we be doing some kind of rounding instead?
+        m_optionsWidth = static_cast<int>(std::ceil(width));
         m_optionsChanged = false;
-        
+
         setHasVerticalScrollbar(true);
 
         computeFirstIndexesVisibleInPaddingTopBottomAreas();
@@ -412,7 +420,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
         itemText = downcast<HTMLOptionElement>(*listItemElement).textIndentedToRespectGroupLabel();
     else if (is<HTMLOptGroupElement>(*listItemElement))
         itemText = downcast<HTMLOptGroupElement>(*listItemElement).groupLabelText();
-    applyTextTransform(style(), itemText, ' ');
+    itemText = applyTextTransform(style(), itemText, ' ');
 
     Color textColor = itemStyle.visitedDependentColor(CSSPropertyColor);
     if (isOptionElement && downcast<HTMLOptionElement>(*listItemElement).selected()) {

@@ -106,7 +106,7 @@ inline unsigned findCaretMinimumOffset(const RenderText&, const Layout& layout)
 inline unsigned findCaretMaximumOffset(const RenderText& renderer, const Layout& layout)
 {
     if (!layout.runCount())
-        return renderer.textLength();
+        return renderer.text().length();
     auto& last = layout.runAt(layout.runCount() - 1);
     return last.end;
 }

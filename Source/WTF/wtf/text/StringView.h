@@ -451,16 +451,16 @@ inline bool StringView::contains(UChar character) const
 inline void StringView::getCharactersWithUpconvert(LChar* destination) const
 {
     ASSERT(is8Bit());
-    StringImpl::copyChars(destination, characters8(), m_length);
+    StringImpl::copyCharacters(destination, characters8(), m_length);
 }
 
 inline void StringView::getCharactersWithUpconvert(UChar* destination) const
 {
     if (is8Bit()) {
-        StringImpl::copyChars(destination, characters8(), m_length);
+        StringImpl::copyCharacters(destination, characters8(), m_length);
         return;
     }
-    StringImpl::copyChars(destination, characters16(), m_length);
+    StringImpl::copyCharacters(destination, characters16(), m_length);
 }
 
 inline StringView::UpconvertedCharacters::UpconvertedCharacters(const StringView& string)

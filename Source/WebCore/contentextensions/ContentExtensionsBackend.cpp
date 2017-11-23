@@ -80,7 +80,7 @@ std::pair<Vector<Action>, Vector<String>> ContentExtensionsBackend::actionsForRe
         return { };
 
     const String& urlString = resourceLoadInfo.resourceURL.string();
-    ASSERT_WITH_MESSAGE(urlString.containsOnlyASCII(), "A decoded URL should only contain ASCII characters. The matching algorithm assumes the input is ASCII.");
+    ASSERT_WITH_MESSAGE(urlString.isAllASCII(), "A decoded URL should only contain ASCII characters. The matching algorithm assumes the input is ASCII.");
     const CString& urlCString = urlString.utf8();
 
     Vector<Action> finalActions;

@@ -1,7 +1,7 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -43,8 +43,6 @@ public:
 
     virtual ~RenderText();
 
-    const char* renderName() const override;
-
     WEBCORE_EXPORT Text* textNode() const;
 
     virtual bool isTextFragment() const;
@@ -63,7 +61,7 @@ public:
     void attachTextBox(InlineTextBox& box) { m_lineBoxes.attach(box); }
     void removeTextBox(InlineTextBox& box) { m_lineBoxes.remove(box); }
 
-    StringImpl* text() const { return m_text.impl(); }
+    StringImpl& text() const { return *m_text.impl(); } // Since m_text can never be null, returning this type means callers won't null check.
     String textWithoutConvertingBackslashToYenSymbol() const;
 
     InlineTextBox* createInlineTextBox() { return m_lineBoxes.createAndAppendLineBox(*this); }
@@ -72,7 +70,7 @@ public:
     void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const final;
     Vector<IntRect> absoluteRectsForRange(unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false, bool* wasFixed = nullptr) const;
 #if PLATFORM(IOS)
-    void collectSelectionRects(Vector<SelectionRect>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max()) override;
+    void collectSelectionRects(Vector<SelectionRect>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max()) final;
 #endif
 
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const final;
@@ -80,35 +78,38 @@ public:
 
     Vector<FloatQuad> absoluteQuadsClippedToEllipsis() const;
 
-    Position positionForPoint(const LayoutPoint&) override;
-    VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) override;
+    Position positionForPoint(const LayoutPoint&) final;
 
-    bool is8Bit() const { return m_text.impl()->is8Bit(); }
-    const LChar* characters8() const { return m_text.impl()->characters8(); }
-    const UChar* characters16() const { return m_text.impl()->characters16(); }
     UChar characterAt(unsigned) const;
-    UChar uncheckedCharacterAt(unsigned) const;
-    UChar operator[](unsigned i) const { return uncheckedCharacterAt(i); }
-    unsigned textLength() const { return m_text.impl()->length(); } // non virtual implementation of length()
+    unsigned length() const final { return text().length(); }
+
     void positionLineBox(InlineTextBox&);
 
-    virtual float width(unsigned from, unsigned len, const FontCascade&, float xPos, HashSet<const Font*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
-    virtual float width(unsigned from, unsigned len, float xPos, bool firstLine = false, HashSet<const Font*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
+    virtual float width(unsigned from, unsigned length, const FontCascade&, float xPos, HashSet<const Font*>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
+    virtual float width(unsigned from, unsigned length, float xPos, bool firstLine = false, HashSet<const Font*>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
 
     float minLogicalWidth() const;
     float maxLogicalWidth() const;
 
-    void trimmedPrefWidths(float leadWidth,
-                           float& beginMinW, bool& beginWS,
-                           float& endMinW, bool& endWS,
-                           bool& hasBreakableChar, bool& hasBreak,
-                           float& beginMaxW, float& endMaxW,
-                           float& minW, float& maxW, bool& stripFrontSpaces);
+    struct Widths {
+        float min { 0 };
+        float max { 0 };
+        float beginMin { 0 };
+        float endMin { 0 };
+        float beginMax { 0 };
+        float endMax { 0 };
+        bool beginWS { false };
+        bool endWS { false };
+        bool hasBreakableChar { false };
+        bool hasBreak { false };
+    };
+    Widths trimmedPreferredWidths(float leadWidth, bool& stripFrontSpaces);
+
     float hangablePunctuationStartWidth(unsigned index) const;
     float hangablePunctuationEndWidth(unsigned index) const;
     unsigned firstCharacterIndexStrippingSpaces() const;
     unsigned lastCharacterIndexStrippingSpaces() const;
-    bool isHangableStopOrComma(UChar) const;
+    static bool isHangableStopOrComma(UChar);
     
     WEBCORE_EXPORT virtual IntRect linesBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBox() const;
@@ -119,22 +120,17 @@ public:
     void setTextWithOffset(const String&, unsigned offset, unsigned len, bool force = false);
 
     bool canBeSelectionLeaf() const override { return true; }
-    void setSelectionState(SelectionState) final;
-    LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) override;
-    LayoutRect localCaretRect(InlineBox*, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine = 0) override;
 
-    LayoutRect collectSelectionRectsForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<LayoutRect>& rects);
+    LayoutRect collectSelectionRectsForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<LayoutRect>&);
 
     LayoutUnit marginLeft() const { return minimumValueForLength(style().marginLeft(), 0); }
     LayoutUnit marginRight() const { return minimumValueForLength(style().marginRight(), 0); }
 
-    LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const final;
-
     InlineTextBox* firstTextBox() const { return m_lineBoxes.first(); }
     InlineTextBox* lastTextBox() const { return m_lineBoxes.last(); }
 
-    int caretMinOffset() const override;
-    int caretMaxOffset() const override;
+    int caretMinOffset() const final;
+    int caretMaxOffset() const final;
     unsigned countRenderedCharacterOffsetsUntil(unsigned) const;
     bool containsRenderedCharacterOffset(unsigned) const;
     bool containsCaretOffset(unsigned) const;
@@ -159,11 +155,11 @@ public:
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
-    virtual std::unique_ptr<InlineTextBox> createTextBox(); // Subclassed by RenderSVGInlineText.
+    virtual std::unique_ptr<InlineTextBox> createTextBox();
 
 #if ENABLE(TEXT_AUTOSIZING)
     float candidateComputedTextSize() const { return m_candidateComputedTextSize; }
-    void setCandidateComputedTextSize(float s) { m_candidateComputedTextSize = s; }
+    void setCandidateComputedTextSize(float size) { m_candidateComputedTextSize = size; }
 #endif
 
     void ensureLineBoxes();
@@ -174,7 +170,7 @@ public:
 
     LayoutUnit topOfFirstText() const;
     
-    bool containsOnlyWhitespace(unsigned from, unsigned len) const;
+    bool containsOnlyHTMLWhitespace(unsigned from, unsigned length) const;
     
     bool canUseSimplifiedTextMeasuring() const { return m_canUseSimplifiedTextMeasuring; }
 
@@ -197,21 +193,24 @@ protected:
 private:
     RenderText(Node&, const String&);
 
+    const char* renderName() const override;
+
     bool canHaveChildren() const final { return false; }
+
+    VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) override;
+
+    void setSelectionState(SelectionState) final;
+    LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) final;
+    LayoutRect localCaretRect(InlineBox*, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine = nullptr) override;
+    LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const final;
 
     void computePreferredLogicalWidths(float leadWidth, HashSet<const Font*>& fallbackFonts, GlyphOverflow&);
 
     bool computeCanUseSimpleFontCodePath() const;
     
-    // Make length() private so that callers that have a RenderText*
-    // will use the more efficient textLength() instead, while
-    // callers with a RenderObject* can continue to use length().
-    unsigned length() const final { return textLength(); }
-
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) final { ASSERT_NOT_REACHED(); return false; }
 
     float widthFromCache(const FontCascade&, unsigned start, unsigned len, float xPos, HashSet<const Font*>* fallbackFonts, GlyphOverflow*, const RenderStyle&) const;
-    bool isAllASCII() const { return m_isAllASCII; }
     bool computeUseBackslashAsYenSymbol() const;
 
     void secureText(UChar mask);
@@ -244,28 +243,23 @@ private:
 
 #if ENABLE(TEXT_AUTOSIZING)
     // FIXME: This should probably be part of the text sizing structures in Document instead. That would save some memory.
-    float m_candidateComputedTextSize;
+    float m_candidateComputedTextSize { 0 };
 #endif
-    float m_minWidth;
-    float m_maxWidth;
-    float m_beginMinWidth;
-    float m_endMinWidth;
+    float m_minWidth { -1 };
+    float m_maxWidth { -1 };
+    float m_beginMinWidth { 0 };
+    float m_endMinWidth { 0 };
 
     String m_text;
 };
 
-inline UChar RenderText::uncheckedCharacterAt(unsigned i) const
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(i < textLength());
-    return is8Bit() ? characters8()[i] : characters16()[i];
-}
+String applyTextTransform(const RenderStyle&, const String&, UChar previousCharacter);
+String capitalize(const String&, UChar previousCharacter);
+LineBreakIteratorMode mapLineBreakToIteratorMode(LineBreak);
 
 inline UChar RenderText::characterAt(unsigned i) const
 {
-    if (i >= textLength())
-        return 0;
-
-    return uncheckedCharacterAt(i);
+    return i >= length() ? 0 : text()[i];
 }
 
 inline const RenderStyle& RenderText::style() const
@@ -298,10 +292,6 @@ inline Color RenderText::selectionEmphasisMarkColor() const
     return parent()->selectionEmphasisMarkColor();
 }
 
-void applyTextTransform(const RenderStyle&, String&, UChar);
-void makeCapitalized(String*, UChar previous);
-LineBreakIteratorMode mapLineBreakToIteratorMode(LineBreak);
-    
 inline RenderText* Text::renderer() const
 {
     return downcast<RenderText>(Node::renderer());

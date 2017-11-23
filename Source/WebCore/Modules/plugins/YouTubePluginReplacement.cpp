@@ -174,11 +174,6 @@ static YouTubePluginReplacement::KeyValueMap queryKeysAndValues(const String& qu
     return queryDictionary;
 }
     
-static bool hasCaseInsensitivePrefix(const String& input, const String& prefix)
-{
-    return input.startsWith(prefix, false);
-}
-    
 static bool isYouTubeURL(const URL& url)
 {
     String hostName = url.host();
@@ -264,7 +259,7 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
                 }
             }
         }
-    } else if (hasCaseInsensitivePrefix(path, "/v/") || hasCaseInsensitivePrefix(path, "/e/")) {
+    } else if (startsWithLettersIgnoringASCIICase(path, "/v/") || startsWithLettersIgnoringASCIICase(path, "/e/")) {
         String lastPathComponent = url.lastPathComponent();
         String videoID;
         String pathAfterFirstAmpersand;

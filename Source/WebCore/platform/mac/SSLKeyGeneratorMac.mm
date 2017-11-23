@@ -238,7 +238,7 @@ String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& ch
         return String();
     }
 
-    auto challenge = challengeString.containsOnlyASCII() ? challengeString.ascii() : "";
+    auto challenge = challengeString.isAllASCII() ? challengeString.ascii() : "";
 
     return signedPublicKeyAndChallengeString(keySize, challenge, keygenKeychainItemName(url.host()));
 }

@@ -394,7 +394,7 @@ URL HitTestResult::absolutePDFURL() const
     if (!url.isValid())
         return URL();
 
-    if (element.serviceType() == "application/pdf" || (element.serviceType().isEmpty() && url.path().endsWith(".pdf", false)))
+    if (element.serviceType() == "application/pdf" || (element.serviceType().isEmpty() && url.path().endsWithIgnoringASCIICase(".pdf")))
         return url;
     return URL();
 }

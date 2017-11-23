@@ -1,3 +1,15 @@
+2017-11-23  Darin Adler  <darin@apple.com>
+
+        Reduce WTF::String operations that do unnecessary Unicode operations instead of ASCII
+        https://bugs.webkit.org/show_bug.cgi?id=179907
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (changeWindowScaleIfNeeded): Use containsIgnoringASCIICase.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::urlContains const): Ditto.
+
 2017-11-22  Ali Juma  <ajuma@chromium.org>
 
         Implement VisualViewport API attributes

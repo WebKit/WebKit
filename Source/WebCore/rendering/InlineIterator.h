@@ -342,7 +342,7 @@ static inline RenderObject* bidiFirstIncludingEmptyInlines(RenderElement& root)
 inline void InlineIterator::fastIncrementInTextNode()
 {
     ASSERT(m_renderer);
-    ASSERT(m_pos <= downcast<RenderText>(*m_renderer).textLength());
+    ASSERT(m_pos <= downcast<RenderText>(*m_renderer).text().length());
     ++m_pos;
 }
 
@@ -396,7 +396,7 @@ inline void InlineIterator::increment(InlineBidiResolver* resolver)
         return;
     if (is<RenderText>(*m_renderer)) {
         fastIncrementInTextNode();
-        if (m_pos < downcast<RenderText>(*m_renderer).textLength())
+        if (m_pos < downcast<RenderText>(*m_renderer).text().length())
             return;
     }
     // bidiNext can return nullptr

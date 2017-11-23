@@ -110,8 +110,8 @@ bool InspectorNodeFinder::matchesElement(const Element& element)
     String nodeName = element.nodeName();
     if ((!m_startTagFound && !m_endTagFound && nodeName.containsIgnoringASCIICase(m_tagNameQuery))
         || (m_startTagFound && m_endTagFound && equalIgnoringASCIICase(nodeName, m_tagNameQuery))
-        || (m_startTagFound && !m_endTagFound && nodeName.startsWith(m_tagNameQuery, false))
-        || (!m_startTagFound && m_endTagFound && nodeName.endsWith(m_tagNameQuery, false)))
+        || (m_startTagFound && !m_endTagFound && nodeName.startsWithIgnoringASCIICase(m_tagNameQuery))
+        || (!m_startTagFound && m_endTagFound && nodeName.endsWithIgnoringASCIICase(m_tagNameQuery)))
         return true;
 
     if (!element.hasAttributes())

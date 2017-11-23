@@ -312,7 +312,7 @@ static String stripMicrosoftPrefix(const String& string)
     // It's a simple-minded way to ignore the CF_HTML clipboard format, just skipping over the
     // description part and parsing the entire context plus fragment.
     if (string.startsWith("Version:")) {
-        size_t location = string.findIgnoringCase("<html");
+        size_t location = string.findIgnoringASCIICase("<html");
         if (location != notFound)
             return string.substring(location);
     }

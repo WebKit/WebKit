@@ -491,15 +491,15 @@ bool MIMETypeRegistry::isSupportedStyleSheetMIMEType(const String& mimeType)
 
 bool MIMETypeRegistry::isSupportedFontMIMEType(const String& mimeType)
 {
-    static const unsigned fontLen = 5;
-    if (!mimeType.startsWithIgnoringASCIICase("font/"))
+    static const unsigned fontLength = 5;
+    if (!startsWithLettersIgnoringASCIICase(mimeType, "font/"))
         return false;
-    String subType = mimeType.substring(fontLen);
-    return equalLettersIgnoringASCIICase(subType, "woff")
-        || equalLettersIgnoringASCIICase(subType, "woff2")
-        || equalLettersIgnoringASCIICase(subType, "otf")
-        || equalLettersIgnoringASCIICase(subType, "ttf")
-        || equalLettersIgnoringASCIICase(subType, "sfnt");
+    auto subtype = StringView { mimeType }.substring(fontLength);
+    return equalLettersIgnoringASCIICase(subtype, "woff")
+        || equalLettersIgnoringASCIICase(subtype, "woff2")
+        || equalLettersIgnoringASCIICase(subtype, "otf")
+        || equalLettersIgnoringASCIICase(subtype, "ttf")
+        || equalLettersIgnoringASCIICase(subtype, "sfnt");
 }
 
 bool MIMETypeRegistry::isSupportedJSONMIMEType(const String& mimeType)
@@ -511,7 +511,7 @@ bool MIMETypeRegistry::isSupportedJSONMIMEType(const String& mimeType)
         return true;
 
     // When detecting +json ensure there is a non-empty type / subtype preceeding the suffix.
-    if (mimeType.endsWith("+json", false) && mimeType.length() >= 8) {
+    if (mimeType.endsWithIgnoringASCIICase("+json") && mimeType.length() >= 8) {
         size_t slashPosition = mimeType.find('/');
         if (slashPosition != notFound && slashPosition > 0 && slashPosition <= mimeType.length() - 6)
             return true;
@@ -556,12 +556,11 @@ bool MIMETypeRegistry::isTextMIMEType(const String& mimeType)
 {
     return isSupportedJavaScriptMIMEType(mimeType)
         || isSupportedJSONMIMEType(mimeType) // Render JSON as text/plain.
-        || (mimeType.startsWith("text/", false)
+        || (startsWithLettersIgnoringASCIICase(mimeType, "text/")
             && !equalLettersIgnoringASCIICase(mimeType, "text/html")
             && !equalLettersIgnoringASCIICase(mimeType, "text/xml")
             && !equalLettersIgnoringASCIICase(mimeType, "text/xsl"));
 }
-
 
 static inline bool isValidXMLMIMETypeChar(UChar c)
 {
@@ -575,7 +574,7 @@ bool MIMETypeRegistry::isXMLMIMEType(const String& mimeType)
     if (equalLettersIgnoringASCIICase(mimeType, "text/xml") || equalLettersIgnoringASCIICase(mimeType, "application/xml") || equalLettersIgnoringASCIICase(mimeType, "text/xsl"))
         return true;
 
-    if (!mimeType.endsWith("+xml", false))
+    if (!mimeType.endsWithIgnoringASCIICase("+xml"))
         return false;
 
     size_t slashPosition = mimeType.find('/');
@@ -599,9 +598,9 @@ bool MIMETypeRegistry::isJavaAppletMIMEType(const String& mimeType)
     // of using a hash set.
     // Any of the MIME types below may be followed by any number of specific versions of the JVM,
     // which is why we use startsWith()
-    return mimeType.startsWith("application/x-java-applet", false)
-        || mimeType.startsWith("application/x-java-bean", false)
-        || mimeType.startsWith("application/x-java-vm", false);
+    return startsWithLettersIgnoringASCIICase(mimeType, "application/x-java-applet")
+        || startsWithLettersIgnoringASCIICase(mimeType, "application/x-java-bean")
+        || startsWithLettersIgnoringASCIICase(mimeType, "application/x-java-vm");
 }
 
 bool MIMETypeRegistry::isPDFOrPostScriptMIMEType(const String& mimeType)
@@ -626,7 +625,7 @@ bool MIMETypeRegistry::canShowMIMEType(const String& mimeType)
     if (isSupportedJavaScriptMIMEType(mimeType) || isSupportedJSONMIMEType(mimeType))
         return true;
 
-    if (mimeType.startsWith("text/", false))
+    if (startsWithLettersIgnoringASCIICase(mimeType, "text/"))
         return !isUnsupportedTextMIMEType(mimeType);
 
     return false;

@@ -174,11 +174,6 @@ String CharacterData::nodeValue() const
     return m_data;
 }
 
-bool CharacterData::containsOnlyWhitespace() const
-{
-    return m_data.containsOnlyWhitespace();
-}
-
 ExceptionOr<void> CharacterData::setNodeValue(const String& nodeValue)
 {
     setData(nodeValue);

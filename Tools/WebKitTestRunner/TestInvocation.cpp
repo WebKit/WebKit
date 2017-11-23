@@ -89,7 +89,7 @@ WKURLRef TestInvocation::url() const
 
 bool TestInvocation::urlContains(const char* searchString) const
 {
-    return m_urlString.contains(searchString, false);
+    return m_urlString.containsIgnoringASCIICase(searchString);
 }
 
 void TestInvocation::setIsPixelTest(const std::string& expectedPixelHash)

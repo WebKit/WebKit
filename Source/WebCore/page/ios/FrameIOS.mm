@@ -119,7 +119,7 @@ NSArray *Frame::wordsInCurrentParagraph() const
     if (!isStartOfParagraph(end)) {
         VisiblePosition previous = end.previous();
         UChar c(previous.characterAfter());
-        if (!iswpunct(c) && !isSpaceOrNewline(c) && c != 0xA0)
+        if (!iswpunct(c) && !isSpaceOrNewline(c) && c != noBreakSpace)
             end = startOfWord(end);
     }
     VisiblePosition start(startOfParagraph(end));
@@ -140,7 +140,7 @@ NSArray *Frame::wordsInCurrentParagraph() const
         if (length > 1 || !isSpaceOrNewline(text[0])) {
             int startOfWordBoundary = 0;
             for (int i = 1; i < length; i++) {
-                if (isSpaceOrNewline(text[i]) || text[i] == 0xA0) {
+                if (isSpaceOrNewline(text[i]) || text[i] == noBreakSpace) {
                     int wordLength = i - startOfWordBoundary;
                     if (wordLength > 0) {
                         RetainPtr<NSString> chunk = text.substring(startOfWordBoundary, wordLength).createNSString();
@@ -160,7 +160,7 @@ NSArray *Frame::wordsInCurrentParagraph() const
     if ([words count] > 0 && isEndOfParagraph(position) && !isStartOfParagraph(position)) {
         VisiblePosition previous = position.previous();
         UChar c(previous.characterAfter());
-        if (!isSpaceOrNewline(c) && c != 0xA0)
+        if (!isSpaceOrNewline(c) && c != noBreakSpace)
             [words removeLastObject];
     }
 

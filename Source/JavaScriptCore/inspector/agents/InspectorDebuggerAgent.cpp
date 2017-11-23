@@ -335,7 +335,7 @@ static Ref<InspectorObject> buildObjectForBreakpointCookie(const String& url, in
 static bool matches(const String& url, const String& pattern, bool isRegex)
 {
     if (isRegex) {
-        JSC::Yarr::RegularExpression regex(pattern, TextCaseSensitive);
+        JSC::Yarr::RegularExpression regex(pattern);
         return regex.match(url) != -1;
     }
     return url == pattern;

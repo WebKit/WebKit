@@ -1,3 +1,22 @@
+2017-11-23  Darin Adler  <darin@apple.com>
+
+        Reduce WTF::String operations that do unnecessary Unicode operations instead of ASCII
+        https://bugs.webkit.org/show_bug.cgi?id=179907
+
+        Reviewed by Sam Weinig.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::matches): Removed explicit TextCaseSensitive because RegularExpression now
+        defaults to that.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringIncludesImpl): Use String::find since there is no overload of
+        String::contains that takes a start offset now that we removed the one that took a
+        caseSensitive boolean. We can add one later if we like, but this should do for now.
+
+        * yarr/RegularExpression.h: Moved the TextCaseSensitivity enumeration here from
+        the StringImpl.h header because it is only used here.
+
 2017-11-22  Simon Fraser  <simon.fraser@apple.com>
 
         Followup after r225084: if anyone called GenericTypedArrayView() it didn't compile,

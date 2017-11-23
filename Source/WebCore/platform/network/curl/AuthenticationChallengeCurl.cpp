@@ -69,7 +69,7 @@ ProtectionSpace AuthenticationChallenge::protectionSpaceFromHandle(const CurlRes
     String realm;
     const String realmString("realm=");
     auto authHeader = response.httpHeaderField(String("www-authenticate"));
-    auto realmPos = authHeader.findIgnoringCase(realmString);
+    auto realmPos = authHeader.findIgnoringASCIICase(realmString);
     if (realmPos != notFound) {
         realm = authHeader.substring(realmPos + realmString.length());
         realm = realm.left(realm.find(','));

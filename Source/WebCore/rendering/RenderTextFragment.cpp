@@ -80,12 +80,11 @@ void RenderTextFragment::willBeDestroyed()
     RenderText::willBeDestroyed();
 }
 
-void RenderTextFragment::setText(const String& text, bool force)
+void RenderTextFragment::setText(const String& newText, bool force)
 {
-    RenderText::setText(text, force);
-
+    RenderText::setText(newText, force);
     m_start = 0;
-    m_end = textLength();
+    m_end = text().length();
     if (!m_firstLetter)
         return;
     m_firstLetter->removeFromParentAndDestroy();

@@ -490,7 +490,7 @@ void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplicationRaw(const
     // FIXME: Write originatingURLString to the file's originating URL metadata (perhaps WebCore::FileSystem::setMetadataURL()?).
     UNUSED_PARAM(originatingURLString);
 
-    if (!suggestedFilename.endsWith(".pdf", false)) {
+    if (!suggestedFilename.endsWithIgnoringASCIICase(".pdf")) {
         WTFLogAlways("Cannot save file without .pdf extension to the temporary directory.");
         return;
     }
@@ -533,7 +533,7 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String&
 {
     String pdfFilename = m_temporaryPDFFiles.get(pdfUUID);
 
-    if (!pdfFilename.endsWith(".pdf", false))
+    if (!pdfFilename.endsWithIgnoringASCIICase(".pdf"))
         return;
 
     [[NSWorkspace sharedWorkspace] openFile:pdfFilename];

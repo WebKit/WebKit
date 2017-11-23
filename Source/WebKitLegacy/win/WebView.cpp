@@ -3887,7 +3887,7 @@ HRESULT WebView::markAllMatchesForText(_In_ BSTR str, BOOL caseSensitive, BOOL h
     if (!str || !SysStringLen(str))
         return E_INVALIDARG;
 
-    *matches = m_page->markAllMatchesForText(toString(str), caseSensitive ? TextCaseSensitive : TextCaseInsensitive, highlight, limit);
+    *matches = m_page->markAllMatchesForText(toString(str), caseSensitive ? 0 : WebCore::CaseInsensitive, highlight, limit);
     return S_OK;
 }
 

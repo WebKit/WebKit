@@ -48,7 +48,7 @@ String topPrivatelyControlledDomain(const String& domain)
     if ([domain _web_looksLikeIPAddress])
         return domain;
 
-    if (!domain.containsOnlyASCII())
+    if (!domain.isAllASCII())
         return domain;
     
     const auto& lowercaseDomain = domain.convertToASCIILowercase();

@@ -525,7 +525,7 @@ const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* e
         if ((headerName == HTTPHeaderName::SecWebSocketExtensions
             || headerName == HTTPHeaderName::SecWebSocketAccept
             || headerName == HTTPHeaderName::SecWebSocketProtocol)
-            && !value.containsOnlyASCII()) {
+            && !value.isAllASCII()) {
             m_failureReason = makeString(name, " header value should only contain ASCII characters");
             return nullptr;
         }

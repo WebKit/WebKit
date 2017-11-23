@@ -1121,7 +1121,7 @@ bool AccessibilityRenderObject::isAllowedChildOfTree() const
 static AccessibilityObjectInclusion objectInclusionFromAltText(const String& altText)
 {
     // Don't ignore an image that has an alt tag.
-    if (!altText.containsOnlyWhitespace())
+    if (!altText.isAllSpecialCharacters<isHTMLSpace>())
         return AccessibilityObjectInclusion::IncludeObject;
     
     // The informal standard is to ignore images with zero-length alt strings.
@@ -1251,7 +1251,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
         }
 
         // text elements that are just empty whitespace should not be returned
-        return renderText.text()->containsOnlyWhitespace();
+        return renderText.text().isAllSpecialCharacters<isHTMLSpace>();
     }
     
     if (isHeading())

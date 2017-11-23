@@ -138,7 +138,7 @@
     
     for (NSString* name in fields) {
         auto field = WebCore::HTTPHeaderField::create(name, [fields objectForKey:name]);
-        if (field && field->name().startsWithIgnoringASCIICase("X-"))
+        if (field && startsWithLettersIgnoringASCIICase(field->name(), "x-"))
             parsedFields.uncheckedAppend(WTFMove(*field));
     }
     _websitePolicies->setCustomHeaderFields(WTFMove(parsedFields));

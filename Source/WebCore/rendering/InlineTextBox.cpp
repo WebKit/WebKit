@@ -314,7 +314,7 @@ float InlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, flo
 
 bool InlineTextBox::isLineBreak() const
 {
-    return renderer().style().preserveNewline() && len() == 1 && (*renderer().text())[start()] == '\n';
+    return renderer().style().preserveNewline() && len() == 1 && renderer().text()[start()] == '\n';
 }
 
 bool InlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit /* lineTop */, LayoutUnit /*lineBottom*/,
@@ -617,7 +617,7 @@ std::pair<unsigned, unsigned> InlineTextBox::selectionStartEnd() const
     auto start = renderer().view().selection().startPosition();
     auto end = renderer().view().selection().endPosition();
     if (selectionState == RenderObject::SelectionStart)
-        end = renderer().textLength();
+        end = renderer().text().length();
     else if (selectionState == RenderObject::SelectionEnd)
         start = 0;
     return { clampedOffset(start), clampedOffset(end) };
@@ -1082,15 +1082,15 @@ String InlineTextBox::text(bool ignoreCombinedText, bool ignoreHyphen) const
 {
     if (auto* combinedText = this->combinedText()) {
         if (ignoreCombinedText)
-            return renderer().text()->substring(m_start, m_len);
+            return renderer().text().substring(m_start, m_len);
         return combinedText->combinedStringForRendering();
     }
     if (hasHyphen()) {
         if (ignoreHyphen)
-            return renderer().text()->substring(m_start, m_len);
+            return renderer().text().substring(m_start, m_len);
         return makeString(StringView(renderer().text()).substring(m_start, m_len), lineStyle().hyphenString());
     }
-    return renderer().text()->substring(m_start, m_len);
+    return renderer().text().substring(m_start, m_len);
 }
 
 inline const RenderCombineText* InlineTextBox::combinedText() const

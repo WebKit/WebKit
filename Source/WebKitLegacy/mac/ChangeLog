@@ -1,3 +1,17 @@
+2017-11-23  Darin Adler  <darin@apple.com>
+
+        Reduce WTF::String operations that do unnecessary Unicode operations instead of ASCII
+        https://bugs.webkit.org/show_bug.cgi?id=179907
+
+        Reviewed by Sam Weinig.
+
+        * History/BinaryPropertyList.cpp:
+        (BinaryPropertyListPlan::writeStringObject): Use isAllASCII.
+        (BinaryPropertyListSerializer::appendStringObject): Ditto.
+        * WebView/WebHTMLRepresentation.mm:
+        (regExpForLabels): Removed TextCaseSensitive since it is now the default.
+        (matchLabelsAgainstString): Use JSC::Yarr::TextCaseInsensitive.
+
 2017-11-22  Ali Juma  <ajuma@chromium.org>
 
         Implement VisualViewport API attributes

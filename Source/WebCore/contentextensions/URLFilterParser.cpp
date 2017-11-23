@@ -341,7 +341,7 @@ URLFilterParser::~URLFilterParser() = default;
 
 URLFilterParser::ParseStatus URLFilterParser::addPattern(const String& pattern, bool patternIsCaseSensitive, uint64_t patternId)
 {
-    if (!pattern.containsOnlyASCII())
+    if (!pattern.isAllASCII())
         return NonASCII;
     if (pattern.isEmpty())
         return EmptyPattern;

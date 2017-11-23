@@ -56,7 +56,7 @@ static String wildcardRegexPatternString(const String& string)
     
 bool stringMatchesWildcardString(const String& string, const String& wildcardString)
 {
-    return JSC::Yarr::RegularExpression(wildcardRegexPatternString(wildcardString), TextCaseInsensitive).match(string) != -1;
+    return JSC::Yarr::RegularExpression(wildcardRegexPatternString(wildcardString), JSC::Yarr::TextCaseInsensitive).match(string) != -1;
 }
 
 }

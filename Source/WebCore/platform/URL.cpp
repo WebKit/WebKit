@@ -396,7 +396,7 @@ bool URL::setProtocol(const String& s)
     return true;
 }
 
-static bool containsOnlyASCII(StringView string)
+static bool isAllASCII(StringView string)
 {
     if (string.is8Bit())
         return charactersAreAllASCII(string.characters8(), string.length());
@@ -412,7 +412,7 @@ static bool appendEncodedHostname(UCharBuffer& buffer, StringView string)
     // For host names bigger than this, we won't do IDN encoding, which is almost certainly OK.
     const unsigned hostnameBufferLength = 2048;
     
-    if (string.length() > hostnameBufferLength || containsOnlyASCII(string)) {
+    if (string.length() > hostnameBufferLength || isAllASCII(string)) {
         append(buffer, string);
         return true;
     }

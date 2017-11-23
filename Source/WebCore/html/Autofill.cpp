@@ -304,7 +304,7 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
     // 17. If the first eight characters of the indexth token in tokens are not an ASCII case-insensitive
     // match for the string "section-", then jump to the step labeled default.
     const auto& sectionToken = tokens[index];
-    if (!sectionToken.startsWithIgnoringASCIICase("section-"))
+    if (!startsWithLettersIgnoringASCIICase(sectionToken, "section-"))
         return defaultLabel();
 
     // 18. Let section be the indexth token in tokens, converted to ASCII lowercase.

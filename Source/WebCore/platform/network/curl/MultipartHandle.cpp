@@ -41,7 +41,7 @@ namespace WebCore {
 bool MultipartHandle::extractBoundary(const String& contentType, String& boundary)
 {
     static const size_t length = strlen("boundary=");
-    size_t boundaryStart = contentType.findIgnoringCase("boundary=");
+    size_t boundaryStart = contentType.findIgnoringASCIICase("boundary=");
 
     // No boundary found.
     if (boundaryStart == notFound)

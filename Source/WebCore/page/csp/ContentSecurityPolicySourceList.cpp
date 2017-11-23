@@ -437,10 +437,10 @@ static bool isNonceCharacter(UChar c)
 // nonce-value     = base64-value
 bool ContentSecurityPolicySourceList::parseNonceSource(const UChar* begin, const UChar* end)
 {
-    static NeverDestroyed<String> noncePrefix("'nonce-", String::ConstructFromLiteral);
-    if (!StringView(begin, end - begin).startsWithIgnoringASCIICase(noncePrefix.get()))
+    const unsigned noncePrefixLength = 7;
+    if (!StringView(begin, end - begin).startsWithIgnoringASCIICase("'nonce-"))
         return false;
-    const UChar* position = begin + noncePrefix.get().length();
+    const UChar* position = begin + noncePrefixLength;
     const UChar* beginNonceValue = position;
     skipWhile<UChar, isNonceCharacter>(position, end);
     if (position >= end || position == beginNonceValue || *position != '\'')

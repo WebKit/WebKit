@@ -341,7 +341,7 @@ static ALWAYS_INLINE JSValue jsSpliceSubstrings(ExecState* exec, JSString* sourc
         int bufferPos = 0;
         for (int i = 0; i < rangeCount; i++) {
             if (int srcLen = substringRanges[i].length) {
-                StringImpl::copyChars(buffer + bufferPos, sourceData + substringRanges[i].position, srcLen);
+                StringImpl::copyCharacters(buffer + bufferPos, sourceData + substringRanges[i].position, srcLen);
                 bufferPos += srcLen;
             }
         }
@@ -360,7 +360,7 @@ static ALWAYS_INLINE JSValue jsSpliceSubstrings(ExecState* exec, JSString* sourc
     int bufferPos = 0;
     for (int i = 0; i < rangeCount; i++) {
         if (int srcLen = substringRanges[i].length) {
-            StringImpl::copyChars(buffer + bufferPos, sourceData + substringRanges[i].position, srcLen);
+            StringImpl::copyCharacters(buffer + bufferPos, sourceData + substringRanges[i].position, srcLen);
             bufferPos += srcLen;
         }
     }
@@ -413,13 +413,13 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
         for (int i = 0; i < maxCount; i++) {
             if (i < rangeCount) {
                 if (int srcLen = substringRanges[i].length) {
-                    StringImpl::copyChars(buffer + bufferPos, sourceData + substringRanges[i].position, srcLen);
+                    StringImpl::copyCharacters(buffer + bufferPos, sourceData + substringRanges[i].position, srcLen);
                     bufferPos += srcLen;
                 }
             }
             if (i < separatorCount) {
                 if (int sepLen = separators[i].length()) {
-                    StringImpl::copyChars(buffer + bufferPos, separators[i].characters8(), sepLen);
+                    StringImpl::copyCharacters(buffer + bufferPos, separators[i].characters8(), sepLen);
                     bufferPos += sepLen;
                 }
             }
@@ -440,18 +440,18 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
         if (i < rangeCount) {
             if (int srcLen = substringRanges[i].length) {
                 if (source.is8Bit())
-                    StringImpl::copyChars(buffer + bufferPos, source.characters8() + substringRanges[i].position, srcLen);
+                    StringImpl::copyCharacters(buffer + bufferPos, source.characters8() + substringRanges[i].position, srcLen);
                 else
-                    StringImpl::copyChars(buffer + bufferPos, source.characters16() + substringRanges[i].position, srcLen);
+                    StringImpl::copyCharacters(buffer + bufferPos, source.characters16() + substringRanges[i].position, srcLen);
                 bufferPos += srcLen;
             }
         }
         if (i < separatorCount) {
             if (int sepLen = separators[i].length()) {
                 if (separators[i].is8Bit())
-                    StringImpl::copyChars(buffer + bufferPos, separators[i].characters8(), sepLen);
+                    StringImpl::copyCharacters(buffer + bufferPos, separators[i].characters8(), sepLen);
                 else
-                    StringImpl::copyChars(buffer + bufferPos, separators[i].characters16(), sepLen);
+                    StringImpl::copyCharacters(buffer + bufferPos, separators[i].characters16(), sepLen);
                 bufferPos += sepLen;
             }
         }
@@ -1799,7 +1799,7 @@ static EncodedJSValue JSC_HOST_CALL stringIncludesImpl(VM& vm, ExecState* exec, 
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
-    return JSValue::encode(jsBoolean(stringToSearchIn.contains(searchString, true, start)));
+    return JSValue::encode(jsBoolean(stringToSearchIn.find(searchString, start) != notFound));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState* exec)
@@ -1900,7 +1900,7 @@ static JSValue normalize(ExecState* exec, const UChar* source, size_t sourceLeng
 
     if (U_FAILURE(status) && status != U_BUFFER_OVERFLOW_ERROR) {
         // The behavior is not specified when normalize fails.
-        // Now we throw a type erorr since it seems that the contents of the string are invalid.
+        // Now we throw a type error since it seems that the contents of the string are invalid.
         return throwTypeError(exec, scope);
     }
 

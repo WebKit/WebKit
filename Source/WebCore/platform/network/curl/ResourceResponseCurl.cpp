@@ -65,7 +65,7 @@ bool ResourceResponse::isAppendableHeader(const String &key)
     };
 
     // Custom headers start with 'X-', and need no further checking.
-    if (key.startsWith("x-", /* caseSensitive */ false))
+    if (startsWithLettersIgnoringASCIICase(key, "x-"))
         return true;
 
     for (const auto& header : appendableHeaders) {
@@ -90,16 +90,16 @@ ResourceResponse::ResourceResponse(const CurlResponse& response)
 
 void ResourceResponse::appendHTTPHeaderField(const String& header)
 {
-    auto splitPosistion = header.find(":");
-    if (splitPosistion != notFound) {
-        auto key = header.left(splitPosistion).stripWhiteSpace();
-        auto value = header.substring(splitPosistion + 1).stripWhiteSpace();
+    auto splitPosition = header.find(':');
+    if (splitPosition != notFound) {
+        auto key = header.left(splitPosition).stripWhiteSpace();
+        auto value = header.substring(splitPosition + 1).stripWhiteSpace();
 
         if (isAppendableHeader(key))
             addHTTPHeaderField(key, value);
         else
             setHTTPHeaderField(key, value);
-    } else if (header.startsWith("HTTP", false)) {
+    } else if (startsWithLettersIgnoringASCIICase(header, "http")) {
         // This is the first line of the response.
         setStatusLine(header);
     }
@@ -109,7 +109,7 @@ void ResourceResponse::setStatusLine(const String& header)
 {
     auto statusLine = header.stripWhiteSpace();
 
-    auto httpVersionEndPosition = statusLine.find(" ");
+    auto httpVersionEndPosition = statusLine.find(' ');
     auto statusCodeEndPosition = notFound;
 
     // Extract the http version
@@ -118,7 +118,7 @@ void ResourceResponse::setStatusLine(const String& header)
         setHTTPVersion(httpVersion.stripWhiteSpace());
 
         statusLine = statusLine.substring(httpVersionEndPosition + 1).stripWhiteSpace();
-        statusCodeEndPosition = statusLine.find(" ");
+        statusCodeEndPosition = statusLine.find(' ');
     }
 
     // Extract the http status text

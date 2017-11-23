@@ -44,7 +44,7 @@ static StringView extractCharset(const String& value)
 {
     unsigned length = value.length();
     for (size_t pos = 0; pos < length; ) {
-        pos = value.find("charset", pos, false);
+        pos = value.findIgnoringASCIICase("charset", pos);
         if (pos == notFound)
             break;
 

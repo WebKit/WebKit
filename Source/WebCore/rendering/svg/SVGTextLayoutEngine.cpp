@@ -316,7 +316,7 @@ bool SVGTextLayoutEngine::currentLogicalCharacterAttributes(SVGTextLayoutAttribu
     logicalAttributes = m_layoutAttributes[m_layoutAttributesPosition];
     ASSERT(logicalAttributes);
 
-    if (m_logicalCharacterOffset != logicalAttributes->context().textLength())
+    if (m_logicalCharacterOffset != logicalAttributes->context().text().length())
         return true;
 
     ++m_layoutAttributesPosition;

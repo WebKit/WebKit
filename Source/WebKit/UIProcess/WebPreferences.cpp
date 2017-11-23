@@ -65,7 +65,8 @@ WebPreferences::WebPreferences(const String& identifier, const String& keyPrefix
 }
 
 WebPreferences::WebPreferences(const WebPreferences& other)
-    : m_keyPrefix(other.m_keyPrefix)
+    : m_identifier()
+    , m_keyPrefix(other.m_keyPrefix)
     , m_globalDebugKeyPrefix(other.m_globalDebugKeyPrefix)
     , m_store(other.m_store)
 {

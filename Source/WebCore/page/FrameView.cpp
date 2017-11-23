@@ -2488,7 +2488,7 @@ static unsigned countRenderedCharactersInRenderObjectWithThreshold(const RenderE
     unsigned count = 0;
     for (const RenderObject* descendant = &renderer; descendant; descendant = descendant->nextInPreOrder()) {
         if (is<RenderText>(*descendant)) {
-            count += downcast<RenderText>(*descendant).text()->length();
+            count += downcast<RenderText>(*descendant).text().length();
             if (count >= threshold)
                 break;
         }

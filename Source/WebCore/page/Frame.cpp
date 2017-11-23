@@ -328,7 +328,7 @@ static JSC::Yarr::RegularExpression createRegExpForLabels(const Vector<String>& 
     // REVIEW- version of this call in FrameMac.mm caches based on the NSArray ptrs being
     // the same across calls.  We can't do that.
 
-    static NeverDestroyed<JSC::Yarr::RegularExpression> wordRegExp("\\w", TextCaseSensitive);
+    static NeverDestroyed<JSC::Yarr::RegularExpression> wordRegExp("\\w");
     StringBuilder pattern;
     pattern.append('(');
     unsigned int numLabels = labels.size();
@@ -355,7 +355,7 @@ static JSC::Yarr::RegularExpression createRegExpForLabels(const Vector<String>& 
             pattern.appendLiteral("\\b");
     }
     pattern.append(')');
-    return JSC::Yarr::RegularExpression(pattern.toString(), TextCaseInsensitive);
+    return JSC::Yarr::RegularExpression(pattern.toString(), JSC::Yarr::TextCaseInsensitive);
 }
 
 String Frame::searchForLabelsAboveCell(const JSC::Yarr::RegularExpression& regExp, HTMLTableCellElement* cell, size_t* resultDistanceFromStartOfCell)
@@ -459,7 +459,7 @@ static String matchLabelsAgainstString(const Vector<String>& labels, const Strin
     String mutableStringToMatch = stringToMatch;
 
     // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
-    replace(mutableStringToMatch, JSC::Yarr::RegularExpression("\\d", TextCaseSensitive), " ");
+    replace(mutableStringToMatch, JSC::Yarr::RegularExpression("\\d"), " ");
     mutableStringToMatch.replace('_', ' ');
     
     JSC::Yarr::RegularExpression regExp = createRegExpForLabels(labels);
