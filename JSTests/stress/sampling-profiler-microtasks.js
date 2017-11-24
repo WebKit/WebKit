@@ -1,3 +1,5 @@
+var abort = $vm.abort;
+
 if (platformSupportsSamplingProfiler()) {
     load("./sampling-profiler/samplingProfiler.js");
 

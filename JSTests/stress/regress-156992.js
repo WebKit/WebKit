@@ -1,5 +1,7 @@
 // Verify that DFG TryGetById nodes properly save live registers.  This test should not crash.
 
+var createBuiltin = $vm.createBuiltin;
+
 function tryMultipleGetByIds() { return '(function (base) { return @tryGetById(base, "value1") + @tryGetById(base, "value2") + @tryGetById(base, "value3"); })'; } 
 
 

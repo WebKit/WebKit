@@ -1,3 +1,5 @@
+var enableExceptionFuzz = $vm.enableExceptionFuzz;
+
 try {
 
 // 3D Cube Rotation

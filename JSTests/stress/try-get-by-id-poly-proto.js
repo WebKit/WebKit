@@ -1,3 +1,6 @@
+var createBuiltin = $vm.createBuiltin;
+var loadGetterFromGetterSetter = $vm.loadGetterFromGetterSetter;
+
 function assert(b, m) {
     if (!b)
         throw new Error("Bad:" + m);

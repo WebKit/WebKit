@@ -1,3 +1,6 @@
+var findTypeForExpression = $vm.findTypeForExpression;
+var returnTypeFor = $vm.returnTypeFor;
+
 load("./driver/driver.js");
 
 let foo = (x) => x;

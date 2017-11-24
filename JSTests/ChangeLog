@@ -1,3 +1,112 @@
+2017-11-24  Mark Lam  <mark.lam@apple.com>
+
+        Move unsafe jsc shell test functions to the $vm object.
+        https://bugs.webkit.org/show_bug.cgi?id=179980
+
+        Reviewed by Yusuke Suzuki.
+
+        * controlFlowProfiler/driver/driver.js:
+        * controlFlowProfiler/execution-count.js:
+        * controlFlowProfiler/if-statement.js:
+        * controlFlowProfiler/loop-statements.js:
+        * controlFlowProfiler/switch-statements.js:
+        * controlFlowProfiler/test-jit.js:
+        * exceptionFuzz/3d-cube.js:
+        * exceptionFuzz/date-format-xparb.js:
+        * exceptionFuzz/earley-boyer.js:
+        * heapProfiler/basic-edges.js:
+        * heapProfiler/property-edge-types.js:
+        * microbenchmarks/try-get-by-id-basic.js:
+        * microbenchmarks/try-get-by-id-polymorphic.js:
+        * modules/namespace-object-try-get.js:
+        * stress/argument-count-bytecode.js:
+        * stress/argument-intrinsic-basic.js:
+        * stress/argument-intrinsic-inlining-use-caller-arg.js:
+        * stress/argument-intrinsic-inlining-with-result-escape.js:
+        * stress/argument-intrinsic-inlining-with-vararg-with-enough-arguments.js:
+        * stress/argument-intrinsic-inlining-with-vararg.js:
+        * stress/argument-intrinsic-nested-inlining.js:
+        * stress/argument-intrinsic-not-convert-to-get-argument.js:
+        * stress/argument-intrinsic-with-stack-write.js:
+        * stress/arity-mismatch-get-argument.js:
+        * stress/array-message-passing.js:
+        * stress/array-push-with-force-exit.js:
+        * stress/check-dom-with-signature.js:
+        * stress/check-sub-class.js:
+        * stress/compare-eq-incomplete-profile.js:
+        * stress/custom-get-set-inline-caching-one-level-up-proto-chain.js:
+        * stress/do-eval-virtual-call-correctly.js:
+        * stress/dom-jit-with-poly-proto.js:
+        * stress/domjit-exception-ic.js:
+        * stress/domjit-exception.js:
+        * stress/domjit-getter-complex-with-incorrect-object.js:
+        * stress/domjit-getter-complex.js:
+        * stress/domjit-getter-poly.js:
+        * stress/domjit-getter-proto.js:
+        * stress/domjit-getter-super-poly.js:
+        * stress/domjit-getter-try-catch-getter-as-get-by-id-register-restoration.js:
+        * stress/domjit-getter-type-check.js:
+        * stress/domjit-getter.js:
+        * stress/exit-during-inlined-arity-fixup-recover-proper-frame.js:
+        * stress/for-in-proxy-target-changed-structure.js:
+        * stress/for-in-proxy.js:
+        * stress/generational-opaque-roots.js:
+        * stress/global-const-redeclaration-setting-2.js:
+        * stress/global-const-redeclaration-setting-3.js:
+        * stress/global-const-redeclaration-setting-4.js:
+        * stress/global-const-redeclaration-setting-5.js:
+        * stress/global-const-redeclaration-setting.js:
+        * stress/import-basic.js:
+        * stress/import-from-eval.js:
+        * stress/import-reject-with-exception.js:
+        * stress/import-syntax.js:
+        * stress/impure-get-own-property-slot-inline-cache.js:
+        * stress/is-constructor.js:
+        * stress/istypedarrayview-intrinsic.js:
+        * stress/jsc-setImpureGetterDelegate-on-bad-type.js:
+        * stress/jsc-test-functions-should-be-more-robust.js:
+        * stress/object-toString-with-proxy.js:
+        * stress/poly-proto-custom-value-and-accessor.js:
+        * stress/proxy-inline-cache.js:
+        * stress/re-execute-error-module.js:
+        * stress/regress-150532.js:
+        * stress/regress-156992.js:
+        * stress/regress-179619.js:
+        * stress/resources/shadow-chicken-support.js:
+        * stress/runtime-array.js:
+        * stress/sampling-profiler-microtasks.js:
+        * stress/shadow-chicken-enabled.js:
+        * stress/spread-correct-global-object-on-exception.js:
+        * stress/super-get-by-id.js:
+        * stress/tailCallForwardArguments.js:
+        * stress/to-object-intrinsic-boolean-edge.js:
+        * stress/to-object-intrinsic-null-or-undefined-edge.js:
+        * stress/to-object-intrinsic-number-edge.js:
+        * stress/to-object-intrinsic-object-edge.js:
+        * stress/to-object-intrinsic-string-edge.js:
+        * stress/to-object-intrinsic-symbol-edge.js:
+        * stress/to-object-intrinsic.js:
+        * stress/try-catch-custom-getter-as-get-by-id.js:
+        * stress/try-get-by-id-poly-proto.js:
+        * stress/try-get-by-id-should-spill-registers-dfg.js:
+        * stress/try-get-by-id.js:
+        * typeProfiler/arrow-functions.js:
+        * typeProfiler/basic.js:
+        * typeProfiler/captured.js:
+        * typeProfiler/classes.js:
+        * typeProfiler/dfg-jit-optimizations.js:
+        * typeProfiler/dictionary-mode.js:
+        * typeProfiler/es6-block-scoping.js:
+        * typeProfiler/es6-classes.js:
+        * typeProfiler/inheritance.js:
+        * typeProfiler/int52-dfg.js:
+        * typeProfiler/loop.js:
+        * typeProfiler/optional-fields.js:
+        * typeProfiler/overflow.js:
+        * typeProfiler/return.js:
+        * typeProfiler/symbol.js:
+        * typeProfiler/weird-prototype-chain.js:
+
 2017-11-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][FTL] Support MapSet / SetAdd intrinsics

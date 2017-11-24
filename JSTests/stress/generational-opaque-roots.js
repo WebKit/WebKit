@@ -1,5 +1,9 @@
 // Tests that opaque roots behave correctly during young generation collections
 
+var Element = $vm.Element;
+var Root = $vm.Root;
+var getElement = $vm.getElement;
+
 try {
     // regression test for bug 160773.  This should not crash.
     new (Element.bind());

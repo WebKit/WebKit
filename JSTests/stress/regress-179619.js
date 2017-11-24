@@ -1,5 +1,8 @@
 //@ runDefault
 
+var createBuiltin = $vm.createBuiltin;
+var loadGetterFromGetterSetter = $vm.loadGetterFromGetterSetter;
+
 var exception;
 var getter;
 

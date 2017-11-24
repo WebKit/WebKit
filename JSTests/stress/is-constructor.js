@@ -1,3 +1,5 @@
+var createBuiltin = $vm.createBuiltin;
+
 function assert(x) {
     if (!x)
         throw Error("Bad");

@@ -1,3 +1,5 @@
+var createCustomGetterObject = $vm.createCustomGetterObject;
+
 function assert(b) {
     if (!b) throw new Error("b");
 }

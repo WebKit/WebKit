@@ -1,3 +1,5 @@
+var createProxy = $vm.createProxy;
+
 var niters = 100000;
 
 // proxy -> target -> x

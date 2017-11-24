@@ -1,3 +1,5 @@
+var createRuntimeArray = $vm.createRuntimeArray;
+
 function testArrayConcat() {
     var array = createRuntimeArray(1, 2, 3);
     var result = array.concat();

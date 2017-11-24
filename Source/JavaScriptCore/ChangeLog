@@ -1,3 +1,285 @@
+2017-11-24  Mark Lam  <mark.lam@apple.com>
+
+        Move unsafe jsc shell test functions to the $vm object.
+        https://bugs.webkit.org/show_bug.cgi?id=179980
+
+        Reviewed by Yusuke Suzuki.
+
+        Also removed setElementRoot() which was not used.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (WTF::Element::Element): Deleted.
+        (WTF::Element::root const): Deleted.
+        (WTF::Element::setRoot): Deleted.
+        (WTF::Element::create): Deleted.
+        (WTF::Element::visitChildren): Deleted.
+        (WTF::Element::createStructure): Deleted.
+        (WTF::Root::Root): Deleted.
+        (WTF::Root::element): Deleted.
+        (WTF::Root::setElement): Deleted.
+        (WTF::Root::create): Deleted.
+        (WTF::Root::createStructure): Deleted.
+        (WTF::Root::visitChildren): Deleted.
+        (WTF::ImpureGetter::ImpureGetter): Deleted.
+        (WTF::ImpureGetter::createStructure): Deleted.
+        (WTF::ImpureGetter::create): Deleted.
+        (WTF::ImpureGetter::finishCreation): Deleted.
+        (WTF::ImpureGetter::getOwnPropertySlot): Deleted.
+        (WTF::ImpureGetter::visitChildren): Deleted.
+        (WTF::ImpureGetter::setDelegate): Deleted.
+        (WTF::CustomGetter::CustomGetter): Deleted.
+        (WTF::CustomGetter::createStructure): Deleted.
+        (WTF::CustomGetter::create): Deleted.
+        (WTF::CustomGetter::getOwnPropertySlot): Deleted.
+        (WTF::CustomGetter::customGetter): Deleted.
+        (WTF::CustomGetter::customGetterAcessor): Deleted.
+        (WTF::RuntimeArray::create): Deleted.
+        (WTF::RuntimeArray::~RuntimeArray): Deleted.
+        (WTF::RuntimeArray::destroy): Deleted.
+        (WTF::RuntimeArray::getOwnPropertySlot): Deleted.
+        (WTF::RuntimeArray::getOwnPropertySlotByIndex): Deleted.
+        (WTF::RuntimeArray::put): Deleted.
+        (WTF::RuntimeArray::deleteProperty): Deleted.
+        (WTF::RuntimeArray::getLength const): Deleted.
+        (WTF::RuntimeArray::createPrototype): Deleted.
+        (WTF::RuntimeArray::createStructure): Deleted.
+        (WTF::RuntimeArray::finishCreation): Deleted.
+        (WTF::RuntimeArray::RuntimeArray): Deleted.
+        (WTF::RuntimeArray::lengthGetter): Deleted.
+        (WTF::SimpleObject::SimpleObject): Deleted.
+        (WTF::SimpleObject::create): Deleted.
+        (WTF::SimpleObject::visitChildren): Deleted.
+        (WTF::SimpleObject::createStructure): Deleted.
+        (WTF::SimpleObject::hiddenValue): Deleted.
+        (WTF::SimpleObject::setHiddenValue): Deleted.
+        (WTF::DOMJITNode::DOMJITNode): Deleted.
+        (WTF::DOMJITNode::createStructure): Deleted.
+        (WTF::DOMJITNode::checkSubClassSnippet): Deleted.
+        (WTF::DOMJITNode::create): Deleted.
+        (WTF::DOMJITNode::value const): Deleted.
+        (WTF::DOMJITNode::offsetOfValue): Deleted.
+        (WTF::DOMJITGetter::DOMJITGetter): Deleted.
+        (WTF::DOMJITGetter::createStructure): Deleted.
+        (WTF::DOMJITGetter::create): Deleted.
+        (WTF::DOMJITGetter::DOMJITAttribute::DOMJITAttribute): Deleted.
+        (WTF::DOMJITGetter::DOMJITAttribute::slowCall): Deleted.
+        (WTF::DOMJITGetter::DOMJITAttribute::callDOMGetter): Deleted.
+        (WTF::DOMJITGetter::customGetter): Deleted.
+        (WTF::DOMJITGetter::finishCreation): Deleted.
+        (WTF::DOMJITGetterComplex::DOMJITGetterComplex): Deleted.
+        (WTF::DOMJITGetterComplex::createStructure): Deleted.
+        (WTF::DOMJITGetterComplex::create): Deleted.
+        (WTF::DOMJITGetterComplex::DOMJITAttribute::DOMJITAttribute): Deleted.
+        (WTF::DOMJITGetterComplex::DOMJITAttribute::slowCall): Deleted.
+        (WTF::DOMJITGetterComplex::DOMJITAttribute::callDOMGetter): Deleted.
+        (WTF::DOMJITGetterComplex::functionEnableException): Deleted.
+        (WTF::DOMJITGetterComplex::customGetter): Deleted.
+        (WTF::DOMJITGetterComplex::finishCreation): Deleted.
+        (WTF::DOMJITFunctionObject::DOMJITFunctionObject): Deleted.
+        (WTF::DOMJITFunctionObject::createStructure): Deleted.
+        (WTF::DOMJITFunctionObject::create): Deleted.
+        (WTF::DOMJITFunctionObject::safeFunction): Deleted.
+        (WTF::DOMJITFunctionObject::unsafeFunction): Deleted.
+        (WTF::DOMJITFunctionObject::checkSubClassSnippet): Deleted.
+        (WTF::DOMJITFunctionObject::finishCreation): Deleted.
+        (WTF::DOMJITCheckSubClassObject::DOMJITCheckSubClassObject): Deleted.
+        (WTF::DOMJITCheckSubClassObject::createStructure): Deleted.
+        (WTF::DOMJITCheckSubClassObject::create): Deleted.
+        (WTF::DOMJITCheckSubClassObject::safeFunction): Deleted.
+        (WTF::DOMJITCheckSubClassObject::unsafeFunction): Deleted.
+        (WTF::DOMJITCheckSubClassObject::finishCreation): Deleted.
+        (WTF::DOMJITGetterBaseJSObject::DOMJITGetterBaseJSObject): Deleted.
+        (WTF::DOMJITGetterBaseJSObject::createStructure): Deleted.
+        (WTF::DOMJITGetterBaseJSObject::create): Deleted.
+        (WTF::DOMJITGetterBaseJSObject::DOMJITAttribute::DOMJITAttribute): Deleted.
+        (WTF::DOMJITGetterBaseJSObject::DOMJITAttribute::slowCall): Deleted.
+        (WTF::DOMJITGetterBaseJSObject::DOMJITAttribute::callDOMGetter): Deleted.
+        (WTF::DOMJITGetterBaseJSObject::customGetter): Deleted.
+        (WTF::DOMJITGetterBaseJSObject::finishCreation): Deleted.
+        (WTF::Element::handleOwner): Deleted.
+        (WTF::Element::finishCreation): Deleted.
+        (JSTestCustomGetterSetter::JSTestCustomGetterSetter): Deleted.
+        (JSTestCustomGetterSetter::create): Deleted.
+        (JSTestCustomGetterSetter::createStructure): Deleted.
+        (customGetAccessor): Deleted.
+        (customGetValue): Deleted.
+        (customSetAccessor): Deleted.
+        (customSetValue): Deleted.
+        (JSTestCustomGetterSetter::finishCreation): Deleted.
+        (GlobalObject::addConstructableFunction): Deleted.
+        (functionCreateRoot): Deleted.
+        (functionCreateElement): Deleted.
+        (functionGetElement): Deleted.
+        (functionSetElementRoot): Deleted.
+        (functionCreateSimpleObject): Deleted.
+        (functionGetHiddenValue): Deleted.
+        (functionSetHiddenValue): Deleted.
+        (functionCreateProxy): Deleted.
+        (functionCreateRuntimeArray): Deleted.
+        (functionCreateImpureGetter): Deleted.
+        (functionCreateCustomGetterObject): Deleted.
+        (functionCreateDOMJITNodeObject): Deleted.
+        (functionCreateDOMJITGetterObject): Deleted.
+        (functionCreateDOMJITGetterComplexObject): Deleted.
+        (functionCreateDOMJITFunctionObject): Deleted.
+        (functionCreateDOMJITCheckSubClassObject): Deleted.
+        (functionCreateDOMJITGetterBaseJSObject): Deleted.
+        (functionSetImpureGetterDelegate): Deleted.
+        (functionGetGetterSetter): Deleted.
+        (functionShadowChickenFunctionsOnStack): Deleted.
+        (functionSetGlobalConstRedeclarationShouldNotThrow): Deleted.
+        (functionGlobalObjectForObject): Deleted.
+        (functionLoadGetterFromGetterSetter): Deleted.
+        (functionCreateCustomTestGetterSetter): Deleted.
+        (functionAbort): Deleted.
+        (functionFindTypeForExpression): Deleted.
+        (functionReturnTypeFor): Deleted.
+        (functionDumpBasicBlockExecutionRanges): Deleted.
+        (functionHasBasicBlockExecuted): Deleted.
+        (functionBasicBlockExecutionCount): Deleted.
+        (functionEnableExceptionFuzz): Deleted.
+        (functionCreateBuiltin): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * tools/JSDollarVM.cpp:
+        (WTF::Element::Element):
+        (WTF::Element::root const):
+        (WTF::Element::setRoot):
+        (WTF::Element::create):
+        (WTF::Element::visitChildren):
+        (WTF::Element::createStructure):
+        (WTF::Root::Root):
+        (WTF::Root::element):
+        (WTF::Root::setElement):
+        (WTF::Root::create):
+        (WTF::Root::createStructure):
+        (WTF::Root::visitChildren):
+        (WTF::SimpleObject::SimpleObject):
+        (WTF::SimpleObject::create):
+        (WTF::SimpleObject::visitChildren):
+        (WTF::SimpleObject::createStructure):
+        (WTF::SimpleObject::hiddenValue):
+        (WTF::SimpleObject::setHiddenValue):
+        (WTF::ImpureGetter::ImpureGetter):
+        (WTF::ImpureGetter::createStructure):
+        (WTF::ImpureGetter::create):
+        (WTF::ImpureGetter::finishCreation):
+        (WTF::ImpureGetter::getOwnPropertySlot):
+        (WTF::ImpureGetter::visitChildren):
+        (WTF::ImpureGetter::setDelegate):
+        (WTF::CustomGetter::CustomGetter):
+        (WTF::CustomGetter::createStructure):
+        (WTF::CustomGetter::create):
+        (WTF::CustomGetter::getOwnPropertySlot):
+        (WTF::CustomGetter::customGetter):
+        (WTF::CustomGetter::customGetterAcessor):
+        (WTF::RuntimeArray::create):
+        (WTF::RuntimeArray::~RuntimeArray):
+        (WTF::RuntimeArray::destroy):
+        (WTF::RuntimeArray::getOwnPropertySlot):
+        (WTF::RuntimeArray::getOwnPropertySlotByIndex):
+        (WTF::RuntimeArray::put):
+        (WTF::RuntimeArray::deleteProperty):
+        (WTF::RuntimeArray::getLength const):
+        (WTF::RuntimeArray::createPrototype):
+        (WTF::RuntimeArray::createStructure):
+        (WTF::RuntimeArray::finishCreation):
+        (WTF::RuntimeArray::RuntimeArray):
+        (WTF::RuntimeArray::lengthGetter):
+        (WTF::DOMJITNode::DOMJITNode):
+        (WTF::DOMJITNode::createStructure):
+        (WTF::DOMJITNode::checkSubClassSnippet):
+        (WTF::DOMJITNode::create):
+        (WTF::DOMJITNode::value const):
+        (WTF::DOMJITNode::offsetOfValue):
+        (WTF::DOMJITGetter::DOMJITGetter):
+        (WTF::DOMJITGetter::createStructure):
+        (WTF::DOMJITGetter::create):
+        (WTF::DOMJITGetter::DOMJITAttribute::DOMJITAttribute):
+        (WTF::DOMJITGetter::DOMJITAttribute::slowCall):
+        (WTF::DOMJITGetter::DOMJITAttribute::callDOMGetter):
+        (WTF::DOMJITGetter::customGetter):
+        (WTF::DOMJITGetter::finishCreation):
+        (WTF::DOMJITGetterComplex::DOMJITGetterComplex):
+        (WTF::DOMJITGetterComplex::createStructure):
+        (WTF::DOMJITGetterComplex::create):
+        (WTF::DOMJITGetterComplex::DOMJITAttribute::DOMJITAttribute):
+        (WTF::DOMJITGetterComplex::DOMJITAttribute::slowCall):
+        (WTF::DOMJITGetterComplex::DOMJITAttribute::callDOMGetter):
+        (WTF::DOMJITGetterComplex::functionEnableException):
+        (WTF::DOMJITGetterComplex::customGetter):
+        (WTF::DOMJITGetterComplex::finishCreation):
+        (WTF::DOMJITFunctionObject::DOMJITFunctionObject):
+        (WTF::DOMJITFunctionObject::createStructure):
+        (WTF::DOMJITFunctionObject::create):
+        (WTF::DOMJITFunctionObject::safeFunction):
+        (WTF::DOMJITFunctionObject::unsafeFunction):
+        (WTF::DOMJITFunctionObject::checkSubClassSnippet):
+        (WTF::DOMJITFunctionObject::finishCreation):
+        (WTF::DOMJITCheckSubClassObject::DOMJITCheckSubClassObject):
+        (WTF::DOMJITCheckSubClassObject::createStructure):
+        (WTF::DOMJITCheckSubClassObject::create):
+        (WTF::DOMJITCheckSubClassObject::safeFunction):
+        (WTF::DOMJITCheckSubClassObject::unsafeFunction):
+        (WTF::DOMJITCheckSubClassObject::finishCreation):
+        (WTF::DOMJITGetterBaseJSObject::DOMJITGetterBaseJSObject):
+        (WTF::DOMJITGetterBaseJSObject::createStructure):
+        (WTF::DOMJITGetterBaseJSObject::create):
+        (WTF::DOMJITGetterBaseJSObject::DOMJITAttribute::DOMJITAttribute):
+        (WTF::DOMJITGetterBaseJSObject::DOMJITAttribute::slowCall):
+        (WTF::DOMJITGetterBaseJSObject::DOMJITAttribute::callDOMGetter):
+        (WTF::DOMJITGetterBaseJSObject::customGetter):
+        (WTF::DOMJITGetterBaseJSObject::finishCreation):
+        (WTF::Message::releaseContents):
+        (WTF::Message::index const):
+        (WTF::JSTestCustomGetterSetter::JSTestCustomGetterSetter):
+        (WTF::JSTestCustomGetterSetter::create):
+        (WTF::JSTestCustomGetterSetter::createStructure):
+        (WTF::customGetAccessor):
+        (WTF::customGetValue):
+        (WTF::customSetAccessor):
+        (WTF::customSetValue):
+        (WTF::JSTestCustomGetterSetter::finishCreation):
+        (WTF::Element::handleOwner):
+        (WTF::Element::finishCreation):
+        (JSC::functionCrash):
+        (JSC::functionCreateProxy):
+        (JSC::functionCreateRuntimeArray):
+        (JSC::functionCreateImpureGetter):
+        (JSC::functionCreateCustomGetterObject):
+        (JSC::functionCreateDOMJITNodeObject):
+        (JSC::functionCreateDOMJITGetterObject):
+        (JSC::functionCreateDOMJITGetterComplexObject):
+        (JSC::functionCreateDOMJITFunctionObject):
+        (JSC::functionCreateDOMJITCheckSubClassObject):
+        (JSC::functionCreateDOMJITGetterBaseJSObject):
+        (JSC::functionSetImpureGetterDelegate):
+        (JSC::functionCreateBuiltin):
+        (JSC::functionCreateRoot):
+        (JSC::functionCreateElement):
+        (JSC::functionGetElement):
+        (JSC::functionCreateSimpleObject):
+        (JSC::functionGetHiddenValue):
+        (JSC::functionSetHiddenValue):
+        (JSC::functionShadowChickenFunctionsOnStack):
+        (JSC::functionSetGlobalConstRedeclarationShouldNotThrow):
+        (JSC::functionFindTypeForExpression):
+        (JSC::functionReturnTypeFor):
+        (JSC::functionDumpBasicBlockExecutionRanges):
+        (JSC::functionHasBasicBlockExecuted):
+        (JSC::functionBasicBlockExecutionCount):
+        (JSC::functionEnableExceptionFuzz):
+        (JSC::functionGlobalObjectForObject):
+        (JSC::functionGetGetterSetter):
+        (JSC::functionLoadGetterFromGetterSetter):
+        (JSC::functionCreateCustomTestGetterSetter):
+        (JSC::JSDollarVM::finishCreation):
+        (JSC::JSDollarVM::addFunction):
+        (JSC::JSDollarVM::addConstructibleFunction):
+        * tools/JSDollarVM.h:
+        (JSC::JSDollarVM::create):
+
 2017-11-23  Simon Fraser  <simon.fraser@apple.com>
 
         Minor ArrayBufferView cleanup

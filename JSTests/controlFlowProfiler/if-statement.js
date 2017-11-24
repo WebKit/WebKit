@@ -1,3 +1,5 @@
+var hasBasicBlockExecuted = $vm.hasBasicBlockExecuted;
+
 load("./driver/driver.js");
 
 var a, b, c, d;

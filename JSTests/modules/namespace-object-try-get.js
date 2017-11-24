@@ -1,3 +1,5 @@
+var createBuiltin = $vm.createBuiltin;
+
 import { shouldBe } from "./resources/assert.js";
 import * as ns from "./namespace-object-try-get.js"
 

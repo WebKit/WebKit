@@ -1,3 +1,5 @@
+var createCustomTestGetterSetter = $vm.createCustomTestGetterSetter;
+
 function assert(b, m) {
     if (!b)
         throw new Error("Bad:" + m);

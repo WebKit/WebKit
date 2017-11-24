@@ -1,3 +1,5 @@
+var createBuiltin = $vm.createBuiltin;
+
 let i;
 function verify(a, b, c, d, e, f) {
     function assert(b, m) {

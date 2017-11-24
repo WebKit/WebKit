@@ -1,3 +1,5 @@
+var createDOMJITGetterBaseJSObject =  $vm.createDOMJITGetterBaseJSObject;
+
 function assert(b, m) {
     if (!b)
         throw new Error("Bad:" + m);

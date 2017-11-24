@@ -1,3 +1,5 @@
+var createBuiltin = $vm.createBuiltin;
+
 count = createBuiltin("(function () { return @argumentCount(); })");
 countNoInline = createBuiltin("(function () { return @argumentCount(); })");
 noInline(countNoInline);

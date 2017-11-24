@@ -1,6 +1,9 @@
 //@ runFTLNoCJIT
 // This test passes if it does not crash or trigger any assertion failures.
 
+var getHiddenValue =  $vm.getHiddenValue;
+var setHiddenValue =  $vm.setHiddenValue;
+
 function shouldEqual(actual, expected) {
     if (actual != expected) {
         throw "ERROR: expect " + expected + ", actual " + actual;

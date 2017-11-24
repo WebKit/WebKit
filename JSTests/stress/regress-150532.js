@@ -1,6 +1,8 @@
 // Makes sure we don't use base's tag register on 32-bit when an inline cache fails and jumps to the slow path
 // because the slow path depends on the base being present.
 
+var createCustomGetterObject = $vm.createCustomGetterObject;
+
 function assert(b) {
     if (!b)
         throw new Error("baddd");

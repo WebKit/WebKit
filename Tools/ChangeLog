@@ -1,3 +1,18 @@
+2017-11-24  Mark Lam  <mark.lam@apple.com>
+
+        Move unsafe jsc shell test functions to the $vm object.
+        https://bugs.webkit.org/show_bug.cgi?id=179980
+
+        Reviewed by Yusuke Suzuki.
+
+        Always set --useDollarVM=true for jsc runs of benchmarks.  This is needed because
+        some microbenchmarks relies on createBuiltin().
+
+        Also set --useDollarVM=true for runExceptionFuzz and runExecutableAllocationFuzz.
+
+        * Scripts/run-jsc-benchmarks:
+        * Scripts/run-jsc-stress-tests:
+
 2017-11-23  Darin Adler  <darin@apple.com>
 
         Reduce WTF::String operations that do unnecessary Unicode operations instead of ASCII

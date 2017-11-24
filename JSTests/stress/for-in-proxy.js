@@ -1,3 +1,5 @@
+var createProxy = $vm.createProxy;
+
 function foo(o_) {
     var o = o_;
     var result = 0;

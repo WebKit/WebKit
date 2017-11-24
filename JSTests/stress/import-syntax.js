@@ -1,3 +1,5 @@
+var abort = $vm.abort;
+
 function testSyntaxError(script, message) {
     var error = null;
     try {

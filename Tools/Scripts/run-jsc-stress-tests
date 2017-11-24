@@ -848,12 +848,12 @@ def runProfiler
 end
 
 def runExceptionFuzz
-    subCommand = escapeAll([pathToVM.to_s, $benchmark.to_s])
+    subCommand = escapeAll([pathToVM.to_s, "--useDollarVM=true", $benchmark.to_s])
     addRunCommand("exception-fuzz", ["perl", (pathToHelpers + "js-exception-fuzz").to_s, subCommand], silentOutputHandler, simpleErrorHandler)
 end
 
 def runExecutableAllocationFuzz(name, *options)
-    subCommand = escapeAll([pathToVM.to_s, $benchmark.to_s] + options)
+    subCommand = escapeAll([pathToVM.to_s, "--useDollarVM=true", $benchmark.to_s] + options)
     addRunCommand("executable-allocation-fuzz-" + name, ["perl", (pathToHelpers + "js-executable-allocation-fuzz").to_s, subCommand], silentOutputHandler, simpleErrorHandler)
 end
 

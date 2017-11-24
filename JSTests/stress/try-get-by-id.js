@@ -1,3 +1,6 @@
+var createBuiltin = $vm.createBuiltin;
+var getGetterSetter = $vm.getGetterSetter;
+
 function tryGetByIdText(propertyName) { return `(function (base) { return @tryGetById(base, '${propertyName}'); })`; }
 
 function tryGetByIdTextStrict(propertyName) { return `(function (base) { "use strict"; return @tryGetById(base, '${propertyName}'); })`; }

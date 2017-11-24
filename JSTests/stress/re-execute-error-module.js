@@ -1,3 +1,5 @@
+var abort = $vm.abort;
+
 function shouldBe(actual, expected)
 {
     if (actual !== expected)

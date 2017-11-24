@@ -1,3 +1,6 @@
+if (typeof Element == "undefined" && $vm)
+    Element = $vm.Element;
+
 if (!this.alert) {
     debug = print;
     description = print;

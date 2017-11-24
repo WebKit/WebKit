@@ -1,3 +1,5 @@
+var hasBasicBlockExecuted = $vm.hasBasicBlockExecuted;
+
 function assert(condition, reason) {
     if (!condition)
         throw new Error(reason);

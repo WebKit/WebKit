@@ -1,3 +1,5 @@
+var findTypeForExpression = $vm.findTypeForExpression;
+
 load("./driver/driver.js");
 
 let changeFoo;

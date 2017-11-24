@@ -2,6 +2,8 @@
 
 "use strict";
 
+var shadowChickenFunctionsOnStack = $vm.shadowChickenFunctionsOnStack;
+
 var verbose = false;
 
 load("resources/shadow-chicken-support.js");

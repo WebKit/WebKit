@@ -1,3 +1,5 @@
+var createProxy = $vm.createProxy;
+
 let foo = {};
 let properties = [];
 let p = new Proxy(foo, { get:(target, property) => {

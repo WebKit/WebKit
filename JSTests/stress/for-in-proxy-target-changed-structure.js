@@ -1,3 +1,5 @@
+var createProxy = $vm.createProxy;
+
 var theO;
 
 function deleteAll() {

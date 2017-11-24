@@ -1,5 +1,7 @@
 "use strict";
 
+var shadowChickenFunctionsOnStack = $vm.shadowChickenFunctionsOnStack;
+
 function describeFunction(f)
 {
     var name;

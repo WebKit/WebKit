@@ -1,3 +1,5 @@
+var createBuiltin = $vm.createBuiltin;
+
 const test = createBuiltin(`(function (arg) {
     let other = @undefined;
     @idWithProfile(other, "SpecObject");

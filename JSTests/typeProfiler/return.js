@@ -1,3 +1,5 @@
+var returnTypeFor = $vm.returnTypeFor;
+
 load("./driver/driver.js");
 
 function foo(x) { return x; }

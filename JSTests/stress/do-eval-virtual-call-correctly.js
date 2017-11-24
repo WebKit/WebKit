@@ -1,3 +1,5 @@
+var abort = $vm.abort;
+
 function assert(b) {
     if (!b) {
         abort(); 

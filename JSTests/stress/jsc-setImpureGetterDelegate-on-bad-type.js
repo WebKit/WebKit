@@ -1,6 +1,8 @@
 //@ runFTLNoCJIT
 // This test passes if it does not crash or trigger any assertion failures.
 
+var setImpureGetterDelegate = $vm.setImpureGetterDelegate;
+
 function shouldEqual(actual, expected) {
     if (actual != expected) {
         throw "ERROR: expect " + expected + ", actual " + actual;

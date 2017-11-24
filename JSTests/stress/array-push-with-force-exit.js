@@ -1,3 +1,5 @@
+var createBuiltin = $vm.createBuiltin;
+
 var target = createBuiltin(`(function(array)
 {
     if (array) {

@@ -1,3 +1,13 @@
+2017-11-24  Mark Lam  <mark.lam@apple.com>
+
+        Move unsafe jsc shell test functions to the $vm object.
+        https://bugs.webkit.org/show_bug.cgi?id=179980
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/script-tests/stack-trace.js:
+        * js/stack-trace-expected.txt:
+
 2017-11-23  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Perform hardware-composited animations when possible

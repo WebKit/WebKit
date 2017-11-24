@@ -40,10 +40,10 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-    static JSDollarVM* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+    static JSDollarVM* create(VM& vm, Structure* structure)
     {
         JSDollarVM* instance = new (NotNull, allocateCell<JSDollarVM>(vm.heap)) JSDollarVM(vm, structure);
-        instance->finishCreation(vm, globalObject);
+        instance->finishCreation(vm);
         return instance;
     }
     
@@ -53,8 +53,9 @@ private:
     {
     }
 
-    void finishCreation(VM&, JSGlobalObject*);
+    void finishCreation(VM&);
     void addFunction(VM&, JSGlobalObject*, const char* name, NativeFunction, unsigned arguments);
+    void addConstructibleFunction(VM&, JSGlobalObject*, const char* name, NativeFunction, unsigned arguments);
 };
 
 } // namespace JSC

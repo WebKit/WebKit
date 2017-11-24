@@ -1,3 +1,5 @@
+var abort = $vm.abort;
+
 (async function () {
     const { shouldBe } = await import('./import-tests/should.js');
     {

@@ -1,3 +1,5 @@
+var basicBlockExecutionCount = $vm.basicBlockExecutionCount;
+
 load("./driver/driver.js");
 
 function noop() { ; }

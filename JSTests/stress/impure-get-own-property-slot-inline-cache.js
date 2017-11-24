@@ -1,4 +1,5 @@
-
+var createImpureGetter = $vm.createImpureGetter;
+var setImpureGetterDelegate = $vm.setImpureGetterDelegate;
 
 var ig = createImpureGetter(null);
 ig.x = 42;

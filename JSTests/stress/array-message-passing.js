@@ -1,6 +1,8 @@
 // This test was originally for message passing of typed arrays. But it turns out that it is a good
 // stress of JSC inline caches as well. So, this is a DOMless version of the test.
 
+var abort = $vm.abort;
+
 var window;
 
 (function() {

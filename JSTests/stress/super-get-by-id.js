@@ -1,5 +1,7 @@
 "use strict";
 
+var createCustomGetterObject = $vm.createCustomGetterObject;
+
 function assert(a) {
     if (!a)
         throw new Error("Bad!");

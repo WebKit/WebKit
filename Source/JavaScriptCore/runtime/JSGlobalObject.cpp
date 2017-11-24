@@ -896,7 +896,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
 
     if (UNLIKELY(Options::useDollarVM())) {
         m_dollarVMStructure.set(vm, this, JSDollarVM::createStructure(vm, this, m_objectPrototype.get()));
-        JSDollarVM* dollarVM = JSDollarVM::create(vm, this, m_dollarVMStructure.get());
+        JSDollarVM* dollarVM = JSDollarVM::create(vm, m_dollarVMStructure.get());
 
         GlobalPropertyInfo extraStaticGlobals[] = {
             GlobalPropertyInfo(vm.propertyNames->builtinNames().dollarVMPrivateName(), dollarVM, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),

@@ -1,3 +1,6 @@
+var SimpleObject = $vm.SimpleObject;
+var setHiddenValue = $vm.setHiddenValue;
+
 load("./driver/driver.js");
 
 let simpleObject = new SimpleObject;
