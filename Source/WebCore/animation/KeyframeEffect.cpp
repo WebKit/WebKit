@@ -192,6 +192,30 @@ bool KeyframeEffect::shouldRunAccelerated()
     return true;
 }
 
+void KeyframeEffect::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle)
+{
+    if (!animation() || !timing()->duration())
+        return;
+
+    auto localTime = animation()->currentTime();
+
+    // FIXME: Assume animations only apply in the range [0, duration[
+    // until we support fill modes, delays and iterations.
+    if (!localTime || localTime < 0_s || localTime >= timing()->duration())
+        return;
+
+    if (!m_keyframes.size())
+        return;
+
+    if (!animatedStyle)
+        animatedStyle = RenderStyle::clonePtr(renderer()->style());
+
+    for (auto cssPropertyId : m_keyframes.properties()) {
+        float progress = localTime.value() / timing()->duration();
+        CSSPropertyAnimation::blendProperties(this, cssPropertyId, animatedStyle.get(), m_keyframes[0].style(), m_keyframes[1].style(), progress);
+    }
+}
+
 void KeyframeEffect::startOrStopAccelerated()
 {
     auto* renderer = this->renderer();

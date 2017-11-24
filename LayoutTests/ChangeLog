@@ -1,3 +1,17 @@
+2017-11-24  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Allow getComputedStyle() to return animated values for accelerated animations
+        https://bugs.webkit.org/show_bug.cgi?id=179975
+        <rdar://problem/35676811>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that checks that the computed style of accelerated animation returns the animated value.
+        This test would fail for the accelerated case prior to this patch.
+
+        * http/wpt/wk-web-animations/interfaces/keyframe-effect-getComputedStyle-expected.txt: Added.
+        * http/wpt/wk-web-animations/interfaces/keyframe-effect-getComputedStyle.html: Added.
+
 2017-11-24  Mark Lam  <mark.lam@apple.com>
 
         Move unsafe jsc shell test functions to the $vm object.

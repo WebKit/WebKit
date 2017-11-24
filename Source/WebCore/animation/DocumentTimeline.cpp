@@ -34,6 +34,7 @@
 #include "Document.h"
 #include "KeyframeEffect.h"
 #include "Page.h"
+#include "RenderElement.h"
 
 static const Seconds animationInterval { 15_ms };
 
@@ -172,6 +173,23 @@ void DocumentTimeline::updateAnimations()
 
     // Time has advanced, the timing model requires invalidation now.
     animationTimingModelDidChange();
+}
+
+std::unique_ptr<RenderStyle> DocumentTimeline::animatedStyleForRenderer(RenderElement& renderer)
+{
+    std::unique_ptr<RenderStyle> result;
+
+    if (auto* element = renderer.element()) {
+        for (auto animation : animationsForElement(*element)) {
+            if (animation->effect() && animation->effect()->isKeyframeEffect())
+                downcast<KeyframeEffect>(animation->effect())->getAnimatedStyle(result);
+        }
+    }
+
+    if (!result)
+        result = RenderStyle::clonePtr(renderer.style());
+
+    return result;
 }
 
 void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& animation)

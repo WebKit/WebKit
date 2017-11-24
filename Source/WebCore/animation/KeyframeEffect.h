@@ -43,6 +43,7 @@ public:
 
     Element* target() const { return m_target.get(); }
     ExceptionOr<void> setKeyframes(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&);
+    void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle);
     void applyAtLocalTime(Seconds, RenderStyle&) override;
     void startOrStopAccelerated();
     bool isRunningAccelerated() const { return m_startedAccelerated; }
