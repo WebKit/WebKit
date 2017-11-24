@@ -31,7 +31,6 @@
 #include "Heap.h"
 #include "IsoTLS.h"
 #include "PerHeapKind.h"
-#include "PerProcess.h"
 #include "Scavenger.h"
 #include "StaticMutex.h"
 
@@ -71,13 +70,7 @@ inline void* realloc(void* object, size_t newSize, HeapKind kind = HeapKind::Pri
 }
 
 // Returns null for failure
-inline void* tryLargeMemalignVirtual(size_t alignment, size_t size, HeapKind kind = HeapKind::Primary)
-{
-    kind = mapToActiveHeapKind(kind);
-    Heap& heap = PerProcess<PerHeapKind<Heap>>::get()->at(kind);
-    std::lock_guard<StaticMutex> lock(Heap::mutex());
-    return heap.tryAllocateLarge(lock, alignment, size, AllocationKind::Virtual);
-}
+BEXPORT void* tryLargeMemalignVirtual(size_t alignment, size_t size, HeapKind kind = HeapKind::Primary);
 
 inline void free(void* object, HeapKind kind = HeapKind::Primary)
 {
@@ -86,13 +79,7 @@ inline void free(void* object, HeapKind kind = HeapKind::Primary)
 
 BEXPORT void freeOutOfLine(void* object, HeapKind kind = HeapKind::Primary);
 
-inline void freeLargeVirtual(void* object, HeapKind kind = HeapKind::Primary)
-{
-    kind = mapToActiveHeapKind(kind);
-    Heap& heap = PerProcess<PerHeapKind<Heap>>::get()->at(kind);
-    std::lock_guard<StaticMutex> lock(Heap::mutex());
-    heap.deallocateLarge(lock, object, AllocationKind::Virtual);
-}
+BEXPORT void freeLargeVirtual(void* object, HeapKind kind = HeapKind::Primary);
 
 inline void scavengeThisThread()
 {
@@ -101,19 +88,9 @@ inline void scavengeThisThread()
     IsoTLS::scavenge();
 }
 
-inline void scavenge()
-{
-    scavengeThisThread();
+BEXPORT void scavenge();
 
-    PerProcess<Scavenger>::get()->scavenge();
-}
-
-inline bool isEnabled(HeapKind kind = HeapKind::Primary)
-{
-    kind = mapToActiveHeapKind(kind);
-    std::unique_lock<StaticMutex> lock(Heap::mutex());
-    return !PerProcess<PerHeapKind<Heap>>::getFastCase()->at(kind).debugHeap();
-}
+BEXPORT bool isEnabled(HeapKind kind = HeapKind::Primary);
     
 inline size_t availableMemory()
 {
@@ -133,11 +110,7 @@ inline double percentAvailableMemoryInUse()
 #endif
 
 #if BOS(DARWIN)
-inline void setScavengerThreadQOSClass(qos_class_t overrideClass)
-{
-    std::unique_lock<StaticMutex> lock(Heap::mutex());
-    PerProcess<Scavenger>::get()->setScavengerThreadQOSClass(overrideClass);
-}
+BEXPORT void setScavengerThreadQOSClass(qos_class_t overrideClass);
 #endif
 
 } // namespace api

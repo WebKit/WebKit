@@ -35,7 +35,7 @@ namespace bmalloc {
 template<typename Config>
 IsoPage<Config>* IsoPage<Config>::tryCreate(IsoDirectoryBase<Config>& directory, unsigned index)
 {
-    void* memory = tryVMAllocate(pageSize, pageSize);
+    void* memory = allocatePageMemory();
     if (!memory)
         return nullptr;
     

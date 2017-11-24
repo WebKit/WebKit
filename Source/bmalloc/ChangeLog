@@ -1,3 +1,55 @@
+2017-11-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Isolated Heaps caused an increase in reported leaks on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=179463
+
+        Reviewed by Darin Adler.
+        
+        This fixes the way isoheaps interact with system tools:
+        
+        - Opts into the VMHeap API so that the leaks tool can find isoheap memory.
+        
+        - Opts into the DebugHeap/Environment APIs so that we turn off isoheap allocation if memory
+          debugging options are in use.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/DebugHeap.h:
+        * bmalloc/IsoHeap.h:
+        * bmalloc/IsoPage.cpp: Added.
+        (bmalloc::IsoPageBase::allocatePageMemory):
+        * bmalloc/IsoPage.h:
+        * bmalloc/IsoPageInlines.h:
+        (bmalloc::IsoPage<Config>::tryCreate):
+        * bmalloc/IsoTLS.cpp:
+        (bmalloc::IsoTLS::deallocateSlow):
+        (bmalloc::IsoTLS::ensureEntries):
+        (bmalloc::IsoTLS::isUsingDebugHeap):
+        (bmalloc::IsoTLS::debugMalloc):
+        * bmalloc/IsoTLS.h:
+        * bmalloc/IsoTLSInlines.h:
+        (bmalloc::IsoTLS::allocate):
+        (bmalloc::IsoTLS::deallocate):
+        (bmalloc::IsoTLS::allocateImpl):
+        (bmalloc::IsoTLS::allocateFast):
+        (bmalloc::IsoTLS::allocateSlow):
+        (bmalloc::IsoTLS::deallocateImpl):
+        (bmalloc::IsoTLS::deallocateFast):
+        (bmalloc::IsoTLS::ensureHeapAndEntries):
+        (bmalloc::IsoTLS::allocator): Deleted.
+        (bmalloc::IsoTLS::deallocator): Deleted.
+        * bmalloc/bmalloc.cpp:
+        (bmalloc::api::tryLargeMemalignVirtual):
+        (bmalloc::api::freeLargeVirtual):
+        (bmalloc::api::scavenge):
+        (bmalloc::api::isEnabled):
+        (bmalloc::api::setScavengerThreadQOSClass):
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::tryLargeMemalignVirtual): Deleted.
+        (bmalloc::api::freeLargeVirtual): Deleted.
+        (bmalloc::api::scavenge): Deleted.
+        (bmalloc::api::isEnabled): Deleted.
+        (bmalloc::api::setScavengerThreadQOSClass): Deleted.
+
 2017-11-14  Saam Barati  <sbarati@apple.com>
 
         Make the gigacage runway 32GB

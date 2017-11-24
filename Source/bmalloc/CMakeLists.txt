@@ -18,6 +18,7 @@ set(bmalloc_SOURCES
     bmalloc/Heap.cpp
     bmalloc/HeapKind.cpp
     bmalloc/IsoHeapImpl.cpp
+    bmalloc/IsoPage.cpp
     bmalloc/IsoTLS.cpp
     bmalloc/IsoTLSEntry.cpp
     bmalloc/IsoTLSLayout.cpp

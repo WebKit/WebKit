@@ -25,6 +25,8 @@
 
 #include "IsoTLS.h"
 
+#include "DebugHeap.h"
+#include "Environment.h"
 #include "IsoTLSEntryInlines.h"
 #include "IsoTLSInlines.h"
 #include "IsoTLSLayout.h"
@@ -48,6 +50,15 @@ void IsoTLS::scavenge()
 
 IsoTLS::IsoTLS()
 {
+}
+
+void IsoTLS::deallocateSlow(void* p)
+{
+    // If we go down this path and we aren't in debug heap mode, then this means we have some corruption.
+    // Think of this as really being an assertion about offset < tls->m_extent.
+    RELEASE_BASSERT(PerProcess<Environment>::get()->isDebugHeapEnabled());
+    
+    PerProcess<DebugHeap>::get()->free(p);
 }
 
 IsoTLS* IsoTLS::ensureEntries(unsigned offset)
@@ -76,16 +87,19 @@ IsoTLS* IsoTLS::ensureEntries(unsigned offset)
     IsoTLSEntry* startEntry = oldLastEntry ? oldLastEntry : layout.head();
     
     IsoTLSEntry* targetEntry = startEntry;
-    for (;;) {
+    size_t requiredCapacity = 0;
+    if (startEntry) {
+        for (;;) {
+            RELEASE_BASSERT(targetEntry);
+            RELEASE_BASSERT(targetEntry->offset() <= offset);
+            if (targetEntry->offset() == offset)
+                break;
+            targetEntry = targetEntry->m_next;
+        }
         RELEASE_BASSERT(targetEntry);
-        RELEASE_BASSERT(targetEntry->offset() <= offset);
-        if (targetEntry->offset() == offset)
-            break;
-        targetEntry = targetEntry->m_next;
+        requiredCapacity = targetEntry->extent();
     }
-    RELEASE_BASSERT(targetEntry);
-
-    size_t requiredCapacity = targetEntry->extent();
+    
     if (!tls || requiredCapacity > tls->m_capacity) {
         size_t requiredSize = sizeForCapacity(requiredCapacity);
         size_t goodSize = roundUpToMultipleOf(vmPageSize(), requiredSize);
@@ -110,14 +124,16 @@ IsoTLS* IsoTLS::ensureEntries(unsigned offset)
         set(tls);
     }
     
-    startEntry->walkUpToInclusive(
-        targetEntry,
-        [&] (IsoTLSEntry* entry) {
-            entry->construct(tls->m_data + entry->offset());
-        });
-    
-    tls->m_lastEntry = targetEntry;
-    tls->m_extent = targetEntry->extent();
+    if (startEntry) {
+        startEntry->walkUpToInclusive(
+            targetEntry,
+            [&] (IsoTLSEntry* entry) {
+                entry->construct(tls->m_data + entry->offset());
+            });
+        
+        tls->m_lastEntry = targetEntry;
+        tls->m_extent = targetEntry->extent();
+    }
     
     return tls;
 }
@@ -157,6 +173,19 @@ void IsoTLS::forEachEntry(const Func& func)
         [&] (IsoTLSEntry* entry) {
             func(entry, m_data + entry->offset());
         });
+}
+
+bool IsoTLS::isUsingDebugHeap()
+{
+    return PerProcess<Environment>::get()->isDebugHeapEnabled();
+}
+
+auto IsoTLS::debugMalloc(size_t size) -> DebugMallocResult
+{
+    DebugMallocResult result;
+    if ((result.usingDebugHeap = isUsingDebugHeap()))
+        result.ptr = PerProcess<DebugHeap>::get()->malloc(size);
+    return result;
 }
 
 } // namespace bmalloc

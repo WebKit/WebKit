@@ -38,6 +38,9 @@ template<typename Config> class IsoHeapImpl;
 class IsoPageBase {
 public:    
     static constexpr size_t pageSize = 16384;
+    
+protected:
+    BEXPORT static void* allocatePageMemory();
 };
 
 template<typename Config>
