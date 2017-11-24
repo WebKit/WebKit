@@ -1196,6 +1196,19 @@ webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-cross-origin-i
 
 webkit.org/b/179052 compositing/contents-format/subpixel-antialiased-nested-layer.html [ Failure ]
 
+webkit.org/b/179989 http/tests/misc/prefetch-purpose.html [ Timeout ]
+webkit.org/b/179989 http/tests/misc/link-rel-prefetch-and-subresource.html [ Timeout ]
+webkit.org/b/179989 fast/dom/HTMLLinkElement/subresource.html [ Timeout ]
+webkit.org/b/179989 fast/dom/HTMLLinkElement/prefetch-onload.html [ Timeout ]
+webkit.org/b/179989 fast/dom/HTMLLinkElement/prefetch-onerror.html [ Timeout ]
+webkit.org/b/179989 fast/dom/HTMLLinkElement/prefetch.html [ Timeout ]
+webkit.org/b/179989 fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html [ Timeout ]
+webkit.org/b/179989 fast/dom/HTMLLinkElement/link-and-subresource-test.html [ Timeout ]
+webkit.org/b/179989 fast/css3-text/css3-text-justify/getComputedStyle/getComputedStyle-text-justify-inherited.html [ Failure ]
+webkit.org/b/179989 fast/css3-text/css3-text-justify/getComputedStyle/getComputedStyle-text-justify.html [ Failure ]
+webkit.org/b/179989 fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last-inherited.html [ Failure ]
+webkit.org/b/179989 fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

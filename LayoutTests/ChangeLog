@@ -1,3 +1,14 @@
+2017-11-23  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r225098): [GTK] Gardening of tests after r225098.
+        https://bugs.webkit.org/show_bug.cgi?id=179989
+
+        Unreviewed.
+
+        Mark new expected failures meanwhile the issue is not fixed.
+
+        * platform/gtk/TestExpectations:
+
 2017-11-23  Simon Fraser  <simon.fraser@apple.com>
 
         Add support for CanvasPattern.setTransform()
