@@ -100,15 +100,17 @@ public:
     static HashMapBucket* createSentinel(VM& vm)
     {
         auto* bucket = create(vm);
-        bucket->setDeleted(true);
         bucket->setKey(vm, jsUndefined());
         bucket->setValue(vm, jsUndefined());
+        ASSERT(!bucket->deleted());
         return bucket;
     }
 
     HashMapBucket(VM& vm, Structure* structure)
         : Base(vm, structure)
-    { }
+    {
+        ASSERT(deleted());
+    }
 
     ALWAYS_INLINE void setNext(VM& vm, HashMapBucket* bucket)
     {
@@ -145,8 +147,12 @@ public:
     ALWAYS_INLINE HashMapBucket* next() const { return m_next.get(); }
     ALWAYS_INLINE HashMapBucket* prev() const { return m_prev.get(); }
 
-    ALWAYS_INLINE bool deleted() const { return m_deleted; }
-    ALWAYS_INLINE void setDeleted(bool deleted) { m_deleted = deleted; }
+    ALWAYS_INLINE bool deleted() const { return !key(); }
+    ALWAYS_INLINE void makeDeleted(VM& vm)
+    {
+        setKey(vm, JSValue());
+        setValue(vm, JSValue());
+    }
 
     static ptrdiff_t offsetOfKey()
     {
@@ -164,11 +170,6 @@ public:
         return OBJECT_OFFSETOF(HashMapBucket, m_next);
     }
 
-    static ptrdiff_t offsetOfDeleted()
-    {
-        return OBJECT_OFFSETOF(HashMapBucket, m_deleted);
-    }
-
     template <typename T = Data>
     ALWAYS_INLINE static typename std::enable_if<std::is_same<T, HashMapBucketDataKeyValue>::value, JSValue>::type extractValue(const HashMapBucket& bucket)
     {
@@ -184,7 +185,6 @@ public:
 private:
     WriteBarrier<HashMapBucket> m_next;
     WriteBarrier<HashMapBucket> m_prev;
-    uint32_t m_deleted { false };
     Data m_data;
 };
 
@@ -463,7 +463,7 @@ public:
         HashMapBucketType* impl = *bucket;
         impl->next()->setPrev(vm, impl->prev());
         impl->prev()->setNext(vm, impl->next());
-        impl->setDeleted(true);
+        impl->makeDeleted(vm);
 
         *bucket = deletedValue();
 
@@ -494,7 +494,7 @@ public:
             HashMapBucketType* next = bucket->next();
             // We restart each iterator by pointing it to the head of the list.
             bucket->setNext(vm, head);
-            bucket->setDeleted(true);
+            bucket->makeDeleted(vm);
             bucket = next;
         }
         m_head->setNext(vm, m_tail.get());
@@ -554,8 +554,8 @@ private:
 
         m_head->setNext(vm, m_tail.get());
         m_tail->setPrev(vm, m_head.get());
-        m_head->setDeleted(true);
-        m_tail->setDeleted(true);
+        ASSERT(m_head->deleted());
+        ASSERT(m_tail->deleted());
     }
 
     ALWAYS_INLINE void addNormalizedNonExistingForCloning(ExecState* exec, JSValue key, JSValue value = JSValue())
@@ -599,11 +599,11 @@ private:
         buffer[index] = newEntry;
         newEntry->setKey(vm, key);
         newEntry->setValue(vm, value);
-        newEntry->setDeleted(false);
+        ASSERT(!newEntry->deleted());
         HashMapBucketType* newTail = HashMapBucketType::create(vm);
         m_tail.set(vm, this, newTail);
         newTail->setPrev(vm, newEntry);
-        newTail->setDeleted(true);
+        ASSERT(newTail->deleted());
         newEntry->setNext(vm, newTail);
 
         ++m_keyCount;

@@ -1,3 +1,38 @@
+2017-11-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Make empty key as deleted mark in HashMapBucket and drop m_deleted field
+        https://bugs.webkit.org/show_bug.cgi?id=179923
+
+        Reviewed by Darin Adler.
+
+        We do not set empty as a key in HashMapBucket since JSMap / JSSet can expose it to users.
+        So we can use it as a marker of deleted bucket.
+
+        This patch uses empty key as a deleted flag, and drop m_deleted field of HashMapBucket.
+        It shrinks the size of HashMapBucket much.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetMapBucketNext):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMapBucketNext):
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapBucket::createSentinel):
+        We make sentinel bucket as (undefined, undefined) since DFG/FTL can load a value from sentinels.
+        While the sentinel's deleted flag becomes false since key is set, it is not a problem since deleted
+        flag of sentinel bucket is not used.
+
+        (JSC::HashMapBucket::HashMapBucket):
+        (JSC::HashMapBucket::deleted const):
+        (JSC::HashMapBucket::makeDeleted):
+        (JSC::HashMapImpl::remove):
+        (JSC::HashMapImpl::clear):
+        (JSC::HashMapImpl::setUpHeadAndTail):
+        (JSC::HashMapImpl::addNormalizedInternal):
+        (JSC::HashMapBucket::setDeleted): Deleted.
+        (JSC::HashMapBucket::offsetOfDeleted): Deleted.
+        (): Deleted.
+
 2017-11-24  Mark Lam  <mark.lam@apple.com>
 
         Move unsafe jsc shell test functions to the $vm object.
