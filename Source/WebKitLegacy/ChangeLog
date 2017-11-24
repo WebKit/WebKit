@@ -1,3 +1,18 @@
+2017-11-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] WebPreferences IDL not regenerating
+        https://bugs.webkit.org/show_bug.cgi?id=179960
+
+        Reviewed by Darin Adler.
+
+        WebKitLegacy shouldn't include the forwarding header of
+        WebKitLegacy itself.
+
+        * CMakeLists.txt: Add ${FORWARDING_HEADERS_DIR} and remove
+        ${FORWARDING_HEADERS_DIR}/JavaScriptCore and
+        ${FORWARDING_HEADERS_DIR}/WebKitLegacy from
+        WebKitLegacy_INCLUDE_DIRECTORIES.
+
 2017-11-14  Alex Christensen  <achristensen@webkit.org>
 
         Remove Cocoa CFURLConnection loading code
