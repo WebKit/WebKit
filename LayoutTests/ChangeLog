@@ -1,3 +1,14 @@
+2017-11-24  Antti Koivisto  <antti@apple.com>
+
+        Style resolution spin due to calc() values always comparing inequal (seen on arstechnica.com)
+        https://bugs.webkit.org/show_bug.cgi?id=179982
+        <rdar://problem/35677991>
+
+        Reviewed by Darin Adler.
+
+        * transitions/transition-with-calc-spin-expected.txt: Added.
+        * transitions/transition-with-calc-spin.html: Added.
+
 2017-11-24  Antoine Quint  <graouts@apple.com>
 
         Captions move when <video> with no controls is hovered

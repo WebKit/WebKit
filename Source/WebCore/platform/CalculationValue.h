@@ -211,10 +211,7 @@ inline CalcExpressionOperation::CalcExpressionOperation(Vector<std::unique_ptr<C
 {
 }
 
-inline bool operator==(const CalcExpressionOperation& a, const CalcExpressionOperation& b)
-{
-    return a.getOperator() == b.getOperator() && a.children() == b.children();
-}
+bool operator==(const CalcExpressionOperation&, const CalcExpressionOperation&);
 
 inline const CalcExpressionOperation& toCalcExpressionOperation(const CalcExpressionNode& value)
 {
