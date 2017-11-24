@@ -333,8 +333,27 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 #endif
     CLoopDoubleRegister d0, d1;
 
+    struct StackPointerScope {
+        StackPointerScope(CLoopStack& stack)
+            : m_stack(stack)
+            , m_originalStackPointer(stack.currentStackPointer())
+        { }
+
+        ~StackPointerScope()
+        {
+            m_stack.setCurrentStackPointer(m_originalStackPointer);
+        }
+
+    private:
+        CLoopStack& m_stack;
+        void* m_originalStackPointer;
+    };
+
+    CLoopStack& cloopStack = vm->interpreter->cloopStack();
+    StackPointerScope stackPointerScope(cloopStack);
+
     lr.opcode = getOpcode(llint_return_to_host);
-    sp.vp = vm->interpreter->cloopStack().topOfStack() + 1;
+    sp.vp = cloopStack.currentStackPointer();
     cfr.callFrame = vm->topCallFrame;
 #ifndef NDEBUG
     void* startSP = sp.vp;

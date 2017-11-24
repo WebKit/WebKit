@@ -1,3 +1,89 @@
+2017-11-24  Mark Lam  <mark.lam@apple.com>
+
+        Fix CLoop::sanitizeStack() bug where it was clearing part of the JS stack in use.
+        https://bugs.webkit.org/show_bug.cgi?id=179936
+        <rdar://problem/35623998>
+
+        Reviewed by Saam Barati.
+
+        This issue was uncovered when we enabled --useDollarVM=true on the JSC tests.
+        See https://bugs.webkit.org/show_bug.cgi?id=179684.
+
+        Basically, in the case of the failing test we observed, op_tail_call_forward_arguments
+        was allocating stack space to stash arguments (to be forwarded) and new frame
+        info.  The location of this new stash space happens to lie beyond the top of frame
+        of the tail call caller frame.  After stashing the arguments, the code proceeded
+        to load the callee codeBlock.  This triggered an allocation, which in turn,
+        triggered stack sanitization.  The CLoop stack sanitizer was relying on
+        frame->topOfFrame() to tell it where the top of the used stack is.  In this case,
+        that turned out to be inadequate.  As a result, part of the stashed data was
+        zeroed out, and subsequently led to a crash.
+
+        This bug does not affect JIT builds (i.e. the ASM LLint) for 2 reasons:
+        1. JIT builds do stack sanitization in the LLInt code itself (different from the
+           CLoop implementation), and the sanitizer there is aware of the true top of
+           stack value (i.e. the stack pointer).
+        2. JIT builds don't use a parallel stack like the CLoop.  The presence of the
+           parallel stack is one condition necessary for reproducing this issue.
+
+        The fix is to make the CLoop record the stack pointer in CLoopStack::m_currentStackPointer
+        every time before it calls out to native C++ code.  This also brings the CLoop's
+        behavior closer to hardware behavior where we can know where the stack pointer
+        is after calling from JS back into native C++ code, which makes it easier to
+        reason about correctness.       
+
+        Also simplified the various stack boundary calculations (removed the +1 and -1
+        adjustments).  The CLoopStack bounds are now:
+
+            reservationTop(): the lowest reserved address that can be within stack bounds.
+            m_commitTop: the lowest address within stack bounds that has been committed.
+            lowAddress() aka m_end: the lowest stack address that JS code can use.
+            m_lastStackPointer: cache of the last m_currentStackPointer value.
+            m_currentStackPointer: the CLoopStack stack pointer value when calling from JS into C++ code.
+            highAddress(): the highest address just beyond the bounds of the stack.
+
+        Also deleted some unneeded code.
+
+        * interpreter/CLoopStack.cpp:
+        (JSC::CLoopStack::CLoopStack):
+        (JSC::CLoopStack::gatherConservativeRoots):
+        (JSC::CLoopStack::sanitizeStack):
+        (JSC::CLoopStack::setSoftReservedZoneSize):
+        * interpreter/CLoopStack.h:
+        (JSC::CLoopStack::setCurrentStackPointer):
+        (JSC::CLoopStack::lowAddress const):
+
+        (JSC::CLoopStack::baseOfStack const): Deleted.
+        - Not needed after we simplified the code and removed all the +1/-1 adjustments.
+          Now, it has the exact same value as highAddress() and can be removed.
+
+        * interpreter/CLoopStackInlines.h:
+        (JSC::CLoopStack::ensureCapacityFor):
+        (JSC::CLoopStack::currentStackPointer):
+        (JSC::CLoopStack::setCLoopStackLimit):
+
+        (JSC::CLoopStack::topOfFrameFor): Deleted.
+        - Not needed.
+
+        (JSC::CLoopStack::topOfStack): Deleted.
+        - Supplanted by currentStackPointer().
+
+        (JSC::CLoopStack::shrink): Deleted.
+        - This is unused.
+
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+        - Introduce a StackPointerScope to restore the original CLoopStack::m_currentStackPointer
+          upon exitting the interpreter loop.
+
+        * offlineasm/cloop.rb:
+        - Added setting of CLoopStack::m_currentStackPointer at boundary points where we
+          call from JS into C++ code.
+
+        * tools/VMInspector.h:
+        - Added some default argument values. These were being used while debugging this
+          issue.
+
 2017-11-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Make empty key as deleted mark in HashMapBucket and drop m_deleted field

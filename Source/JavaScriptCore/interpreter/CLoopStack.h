@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2009, 2013-2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,30 +59,24 @@ namespace JSC {
         void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&);
         void sanitizeStack();
 
-        Register* baseOfStack() const
-        {
-            return highAddress() - 1;
-        }
+        inline void* currentStackPointer();
+        void setCurrentStackPointer(void* sp) { m_currentStackPointer = sp; }
 
         size_t size() const { return highAddress() - lowAddress(); }
 
         void setSoftReservedZoneSize(size_t);
         bool isSafeToRecurse() const;
-        inline Register* topOfStack();
 
     private:
-
         Register* lowAddress() const
         {
-            return m_end + 1;
+            return m_end;
         }
 
         Register* highAddress() const
         {
             return reinterpret_cast_ptr<Register*>(static_cast<char*>(m_reservation.base()) + m_reservation.size());
         }
-
-        inline Register* topOfFrameFor(CallFrame*);
 
         Register* reservationTop() const
         {
@@ -91,7 +85,6 @@ namespace JSC {
         }
 
         bool grow(Register* newTopOfStack);
-        void shrink(Register* newTopOfStack);
         void releaseExcessCapacity();
         void addToCommittedByteCount(long);
 
@@ -99,10 +92,14 @@ namespace JSC {
 
         VM& m_vm;
         CallFrame*& m_topCallFrame;
-        Register* m_end;
-        Register* m_commitTop;
+
+        // The following is always true:
+        //    reservationTop() <= m_commitTop <= m_end <= m_currentStackPointer <= highAddress()
+        Register* m_end; // lowest address of JS allocatable stack memory.
+        Register* m_commitTop; // lowest address of committed memory.
         PageReservation m_reservation;
-        Register* m_lastStackTop;
+        void* m_lastStackPointer;
+        void* m_currentStackPointer;
         ptrdiff_t m_softReservedZoneSizeInRegisters;
 
         friend class LLIntOffsetsExtractor;

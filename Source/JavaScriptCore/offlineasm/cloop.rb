@@ -1,4 +1,4 @@
-# Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
+# Copyright (C) 2012-2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -543,12 +543,14 @@ end
 # operands: callTarget, currentFrame, currentPC
 def cloopEmitCallSlowPath(operands)
     $asm.putc "{"
+    $asm.putc "    cloopStack.setCurrentStackPointer(sp.vp);"
     $asm.putc "    SlowPathReturnType result = #{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump});"
     $asm.putc "    decodeResult(result, t0.vp, t1.vp);"
     $asm.putc "}"
 end
 
 def cloopEmitCallSlowPathVoid(operands)
+    $asm.putc "cloopStack.setCurrentStackPointer(sp.vp);"
     $asm.putc "#{operands[0].cLabel}(#{operands[1].clDump}, #{operands[2].clDump});"
 end
 
@@ -1125,6 +1127,7 @@ class Instruction
         # fortunately we don't have to here. All native function calls always
         # have a fixed prototype of 1 args: the passed ExecState.
         when "cloopCallNative"
+            $asm.putc "cloopStack.setCurrentStackPointer(sp.vp);"
             $asm.putc "nativeFunc = #{operands[0].clValue(:nativeFunc)};"
             $asm.putc "functionReturnValue = JSValue::decode(nativeFunc(t0.execState));"
             $asm.putc "#if USE(JSVALUE32_64)"
