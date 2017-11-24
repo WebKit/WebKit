@@ -64,6 +64,7 @@
     "web-platform-tests/css/css-pseudo-4": "import", 
     "web-platform-tests/css/css-scoping-1": "import", 
     "web-platform-tests/css/css-shapes-1": "import", 
+    "web-platform-tests/css/css-shapes-1/test-plan/index.html": "skip", 
     "web-platform-tests/css/css-ui-3": "import", 
     "web-platform-tests/css/geometry-1/": "import", 
     "web-platform-tests/css/reference": "import", 

@@ -3159,8 +3159,6 @@ webkit.org/b/168551 http/tests/misc/slow-loading-animated-image.html [ ImageOnly
 
 webkit.org/b/168552 [ Release ] fast/text/hyphenate-locale.html [ Failure ]
 
-webkit.org/b/168553 imported/w3c/web-platform-tests/css/css-shapes-1/test-plan/index.html [ Failure ]
-
 webkit.org/b/168555 fast/text/initial-advance-in-intermediate-run-complex.html [ ImageOnlyFailure ]
 
 webkit.org/b/168557 imported/blink/compositing/draws-content/webgl-simple-background.html [ ImageOnlyFailure ]

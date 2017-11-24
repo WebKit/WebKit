@@ -1,5 +1,14 @@
 2017-11-24  Ms2ger  <Ms2ger@igalia.com>
 
+        [GTK] Remove reference to css-shapes-1/test-plan/index.html.
+        https://bugs.webkit.org/show_bug.cgi?id=168553
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
+2017-11-24  Ms2ger  <Ms2ger@igalia.com>
+
         [WPE] Update some test expectations
         https://bugs.webkit.org/show_bug.cgi?id=180000
 
