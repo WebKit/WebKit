@@ -33,6 +33,8 @@ public:
 private:
     FEMerge(Filter&);
 
+    const char* filterName() const final { return "FEMerge"; }
+
     void platformApplySoftware() override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;

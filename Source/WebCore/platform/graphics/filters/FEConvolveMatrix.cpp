@@ -384,9 +384,9 @@ void FEConvolveMatrix::platformApplySoftware()
 
     RefPtr<Uint8ClampedArray> srcPixelArray;
     if (m_preserveAlpha)
-        srcPixelArray = in->asUnmultipliedImage(effectDrawingRect);
+        srcPixelArray = in->unmultipliedResult(effectDrawingRect);
     else
-        srcPixelArray = in->asPremultipliedImage(effectDrawingRect);
+        srcPixelArray = in->premultipliedResult(effectDrawingRect);
 
     IntSize paintSize = absolutePaintRect().size();
     PaintingData paintingData;

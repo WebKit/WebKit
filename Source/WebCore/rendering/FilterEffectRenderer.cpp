@@ -363,7 +363,7 @@ LayoutRect FilterEffectRenderer::computeSourceImageRectForDirtyRect(const Layout
 
 ImageBuffer* FilterEffectRenderer::output() const
 {
-    return m_effects.last()->asImageBuffer();
+    return m_effects.last()->imageBufferResult();
 }
 
 void FilterEffectRenderer::setMaxEffectRects(const FloatRect& effectRect)

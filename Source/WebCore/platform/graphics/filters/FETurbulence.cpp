@@ -451,7 +451,7 @@ void FETurbulence::platformApplySoftware()
     fillRegion(pixelArray, paintingData, stitchData, 0, height);
 }
 
-static TextStream& operator<<(TextStream& ts, const TurbulenceType& type)
+static TextStream& operator<<(TextStream& ts, TurbulenceType type)
 {
     switch (type) {
     case TurbulenceType::Unknown:

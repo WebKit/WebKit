@@ -65,8 +65,8 @@ void FEBlend::platformApplySoftware()
         return;
     GraphicsContext& filterContext = resultImage->context();
 
-    ImageBuffer* imageBuffer = in->asImageBuffer();
-    ImageBuffer* imageBuffer2 = in2->asImageBuffer();
+    ImageBuffer* imageBuffer = in->imageBufferResult();
+    ImageBuffer* imageBuffer2 = in2->imageBufferResult();
     if (!imageBuffer || !imageBuffer2)
         return;
 

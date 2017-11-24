@@ -36,6 +36,8 @@ public:
     bool setBlendMode(BlendMode);
 
 private:
+    const char* filterName() const final { return "FEBlend"; }
+
     void platformApplySoftware() override;
     void platformApplyGeneric(unsigned char* srcPixelArrayA, unsigned char* srcPixelArrayB, unsigned char* dstPixelArray,
                            unsigned colorArrayLength);

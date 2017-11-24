@@ -99,10 +99,10 @@ void FEDisplacementMap::platformApplySoftware()
         return;
 
     IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<Uint8ClampedArray> srcPixelArrayA = in->asPremultipliedImage(effectADrawingRect);
+    RefPtr<Uint8ClampedArray> srcPixelArrayA = in->premultipliedResult(effectADrawingRect);
 
     IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
-    RefPtr<Uint8ClampedArray> srcPixelArrayB = in2->asUnmultipliedImage(effectBDrawingRect);
+    RefPtr<Uint8ClampedArray> srcPixelArrayB = in2->unmultipliedResult(effectBDrawingRect);
 
     ASSERT(srcPixelArrayA->length() == srcPixelArrayB->length());
 

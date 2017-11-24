@@ -40,6 +40,9 @@ private:
     virtual ~FEImage() = default;
     FEImage(Filter&, RefPtr<Image>, const SVGPreserveAspectRatioValue&);
     FEImage(Filter&, Document&, const String&, const SVGPreserveAspectRatioValue&);
+
+    const char* filterName() const final { return "FEImage"; }
+
     FilterEffectType filterEffectType() const final { return FilterEffectTypeImage; }
 
     RenderElement* referencedRenderer() const;

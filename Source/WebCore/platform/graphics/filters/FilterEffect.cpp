@@ -26,6 +26,7 @@
 
 #include "Filter.h"
 #include "ImageBuffer.h"
+#include "Logging.h"
 #include <runtime/JSCInlines.h>
 #include <runtime/TypedArrayInlines.h>
 #include <runtime/Uint8ClampedArray.h>
@@ -42,15 +43,7 @@
 namespace WebCore {
 
 FilterEffect::FilterEffect(Filter& filter)
-    : m_alphaImage(false)
-    , m_filter(filter)
-    , m_hasX(false)
-    , m_hasY(false)
-    , m_hasWidth(false)
-    , m_hasHeight(false)
-    , m_clipsToBounds(true)
-    , m_operatingColorSpace(ColorSpaceLinearRGB)
-    , m_resultColorSpace(ColorSpaceSRGB)
+    : m_filter(filter)
 {
 }
 
@@ -216,12 +209,16 @@ void FilterEffect::clearResultsRecursive()
         m_inputEffects.at(i).get()->clearResultsRecursive();
 }
 
-ImageBuffer* FilterEffect::asImageBuffer()
+ImageBuffer* FilterEffect::imageBufferResult()
 {
+    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " imageBufferResult(). Existing image buffer " << m_imageBufferResult.get() <<  " m_premultipliedImageResult " << m_premultipliedImageResult.get() << " m_unmultipliedImageResult " << m_unmultipliedImageResult.get());
+
     if (!hasResult())
         return nullptr;
+
     if (m_imageBufferResult)
         return m_imageBufferResult.get();
+
     m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), m_filter.renderingMode(), m_filter.filterScale(), m_resultColorSpace);
     if (!m_imageBufferResult)
         return nullptr;
@@ -234,27 +231,27 @@ ImageBuffer* FilterEffect::asImageBuffer()
     return m_imageBufferResult.get();
 }
 
-RefPtr<Uint8ClampedArray> FilterEffect::asUnmultipliedImage(const IntRect& rect)
+RefPtr<Uint8ClampedArray> FilterEffect::unmultipliedResult(const IntRect& rect)
 {
     IntSize scaledSize(rect.size());
     ASSERT(!ImageBuffer::sizeNeedsClamping(scaledSize));
     scaledSize.scale(m_filter.filterScale());
     auto imageData = Uint8ClampedArray::createUninitialized((scaledSize.area() * 4).unsafeGet());
-    copyUnmultipliedImage(imageData.get(), rect);
+    copyUnmultipliedResult(imageData.get(), rect);
     return imageData;
 }
 
-RefPtr<Uint8ClampedArray> FilterEffect::asPremultipliedImage(const IntRect& rect)
+RefPtr<Uint8ClampedArray> FilterEffect::premultipliedResult(const IntRect& rect)
 {
     IntSize scaledSize(rect.size());
     ASSERT(!ImageBuffer::sizeNeedsClamping(scaledSize));
     scaledSize.scale(m_filter.filterScale());
     auto imageData = Uint8ClampedArray::createUninitialized((scaledSize.area() * 4).unsafeGet());
-    copyPremultipliedImage(imageData.get(), rect);
+    copyPremultipliedResult(imageData.get(), rect);
     return imageData;
 }
 
-inline void FilterEffect::copyImageBytes(Uint8ClampedArray* source, Uint8ClampedArray* destination, const IntRect& rect)
+void FilterEffect::copyImageBytes(Uint8ClampedArray* source, Uint8ClampedArray* destination, const IntRect& rect) const
 {
     IntRect scaledRect(rect);
     scaledRect.scale(m_filter.filterScale());
@@ -381,9 +378,11 @@ static void copyUnpremultiplyingAlpha(const Uint8ClampedArray* source, Uint8Clam
 #endif
 }
 
-void FilterEffect::copyUnmultipliedImage(Uint8ClampedArray* destination, const IntRect& rect)
+void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray* destination, const IntRect& rect)
 {
     ASSERT(hasResult());
+    
+    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " copyUnmultipliedResult(). Existing image buffer " << m_imageBufferResult.get() <<  " m_premultipliedImageResult " << m_premultipliedImageResult.get() << " m_unmultipliedImageResult " << m_unmultipliedImageResult.get());
 
     if (!m_unmultipliedImageResult) {
         // We prefer a conversion from the image buffer.
@@ -395,7 +394,7 @@ void FilterEffect::copyUnmultipliedImage(Uint8ClampedArray* destination, const I
             inputSize.scale(m_filter.filterScale());
             m_unmultipliedImageResult = Uint8ClampedArray::createUninitialized((inputSize.area() * 4).unsafeGet());
             if (!m_unmultipliedImageResult) {
-                WTFLogAlways("FilterEffect::copyUnmultipliedImage Unable to create buffer. Requested size was %d x %d\n", inputSize.width(), inputSize.height());
+                WTFLogAlways("FilterEffect::copyUnmultipliedResult Unable to create buffer. Requested size was %d x %d\n", inputSize.width(), inputSize.height());
                 return;
             }
             
@@ -405,9 +404,11 @@ void FilterEffect::copyUnmultipliedImage(Uint8ClampedArray* destination, const I
     copyImageBytes(m_unmultipliedImageResult.get(), destination, rect);
 }
 
-void FilterEffect::copyPremultipliedImage(Uint8ClampedArray* destination, const IntRect& rect)
+void FilterEffect::copyPremultipliedResult(Uint8ClampedArray* destination, const IntRect& rect)
 {
     ASSERT(hasResult());
+
+    LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " copyPremultipliedResult(). Existing image buffer " << m_imageBufferResult.get() <<  " m_premultipliedImageResult " << m_premultipliedImageResult.get() << " m_unmultipliedImageResult " << m_unmultipliedImageResult.get());
 
     if (!m_premultipliedImageResult) {
         // We prefer a conversion from the image buffer.
@@ -419,7 +420,7 @@ void FilterEffect::copyPremultipliedImage(Uint8ClampedArray* destination, const 
             inputSize.scale(m_filter.filterScale());
             m_premultipliedImageResult = Uint8ClampedArray::createUninitialized((inputSize.area() * 4).unsafeGet());
             if (!m_premultipliedImageResult) {
-                WTFLogAlways("FilterEffect::copyPremultipliedImage Unable to create buffer. Requested size was %d x %d\n", inputSize.width(), inputSize.height());
+                WTFLogAlways("FilterEffect::copyPremultipliedResult Unable to create buffer. Requested size was %d x %d\n", inputSize.width(), inputSize.height());
                 return;
             }
             
@@ -431,6 +432,8 @@ void FilterEffect::copyPremultipliedImage(Uint8ClampedArray* destination, const 
 
 ImageBuffer* FilterEffect::createImageBufferResult()
 {
+    LOG(Filters, "FilterEffect %s %p createImageBufferResult", filterName(), this);
+
     // Only one result type is allowed.
     ASSERT(!hasResult());
     if (m_absolutePaintRect.isEmpty())
@@ -446,6 +449,8 @@ ImageBuffer* FilterEffect::createImageBufferResult()
 
 Uint8ClampedArray* FilterEffect::createUnmultipliedImageResult()
 {
+    LOG(Filters, "FilterEffect %s %p createUnmultipliedImageResult", filterName(), this);
+
     // Only one result type is allowed.
     ASSERT(!hasResult());
     if (m_absolutePaintRect.isEmpty())
@@ -460,6 +465,8 @@ Uint8ClampedArray* FilterEffect::createUnmultipliedImageResult()
 
 Uint8ClampedArray* FilterEffect::createPremultipliedImageResult()
 {
+    LOG(Filters, "FilterEffect %s %p createPremultipliedImageResult", filterName(), this);
+
     // Only one result type is allowed.
     ASSERT(!hasResult());
     if (m_absolutePaintRect.isEmpty())
@@ -483,7 +490,7 @@ void FilterEffect::transformResultColorSpace(ColorSpace dstColorSpace)
 
     // FIXME: We can avoid this potentially unnecessary ImageBuffer conversion by adding
     // color space transform support for the {pre,un}multiplied arrays.
-    asImageBuffer()->transformColorSpace(m_resultColorSpace, dstColorSpace);
+    imageBufferResult()->transformColorSpace(m_resultColorSpace, dstColorSpace);
 
     m_resultColorSpace = dstColorSpace;
 

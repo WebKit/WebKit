@@ -33,6 +33,8 @@ public:
 private:
     FETile(Filter&);
 
+    const char* filterName() const final { return "FETile"; }
+
     FilterEffectType filterEffectType() const override { return FilterEffectTypeTile; }
 
     void platformApplySoftware() override;

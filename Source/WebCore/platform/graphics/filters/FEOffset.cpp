@@ -69,7 +69,7 @@ void FEOffset::platformApplySoftware()
     FilterEffect* in = inputEffect(0);
 
     ImageBuffer* resultImage = createImageBufferResult();
-    ImageBuffer* inBuffer = in->asImageBuffer();
+    ImageBuffer* inBuffer = in->imageBufferResult();
     if (!resultImage || !inBuffer)
         return;
 

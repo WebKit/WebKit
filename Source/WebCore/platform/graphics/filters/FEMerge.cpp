@@ -51,7 +51,7 @@ void FEMerge::platformApplySoftware()
     GraphicsContext& filterContext = resultImage->context();
     for (unsigned i = 0; i < size; ++i) {
         FilterEffect* in = inputEffect(i);
-        if (ImageBuffer* inBuffer = in->asImageBuffer())
+        if (ImageBuffer* inBuffer = in->imageBufferResult())
             filterContext.drawImageBuffer(*inBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
     }
 }

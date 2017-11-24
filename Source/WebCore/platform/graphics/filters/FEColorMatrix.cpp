@@ -287,7 +287,7 @@ void FEColorMatrix::platformApplySoftware()
     MonotonicTime startTime = MonotonicTime::now();
 #endif
 
-    ImageBuffer* inBuffer = in->asImageBuffer();
+    ImageBuffer* inBuffer = in->imageBufferResult();
     if (inBuffer)
         resultImage->context().drawImageBuffer(*inBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
 

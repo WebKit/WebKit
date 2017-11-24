@@ -46,6 +46,8 @@ public:
 private:
     FEGaussianBlur(Filter&, float, float, EdgeModeType);
 
+    const char* filterName() const final { return "FEGaussianBlur"; }
+
     static const int s_minimalRectDimension = 100 * 100; // Empirical data limit for parallel jobs
 
     template<typename Type>

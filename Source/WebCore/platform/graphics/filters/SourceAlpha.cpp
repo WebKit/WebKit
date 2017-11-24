@@ -54,7 +54,7 @@ void SourceAlpha::platformApplySoftware()
         return;
     GraphicsContext& filterContext = resultImage->context();
 
-    ImageBuffer* imageBuffer = inputEffect(0)->asImageBuffer();
+    ImageBuffer* imageBuffer = inputEffect(0)->imageBufferResult();
     if (!imageBuffer)
         return;
 

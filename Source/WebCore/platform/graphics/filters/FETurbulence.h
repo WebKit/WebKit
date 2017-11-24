@@ -108,6 +108,8 @@ private:
 
     FETurbulence(Filter&, TurbulenceType, float, float, int, float, bool);
 
+    const char* filterName() const final { return "FETurbulence"; }
+
     void platformApplySoftware() override;
     void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
     WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;

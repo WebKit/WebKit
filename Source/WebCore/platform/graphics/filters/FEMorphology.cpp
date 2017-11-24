@@ -204,7 +204,7 @@ bool FEMorphology::platformApplyDegenerate(Uint8ClampedArray* dstPixelArray, con
     // Input radius is equal to zero or the scaled radius is less than one.
     if (!m_radiusX || !m_radiusY) {
         FilterEffect* in = inputEffect(0);
-        in->copyPremultipliedImage(dstPixelArray, imageRect);
+        in->copyPremultipliedResult(dstPixelArray, imageRect);
         return true;
     }
 
@@ -226,7 +226,7 @@ void FEMorphology::platformApplySoftware()
         return;
 
     Filter& filter = this->filter();
-    RefPtr<Uint8ClampedArray> srcPixelArray = in->asPremultipliedImage(effectDrawingRect);
+    RefPtr<Uint8ClampedArray> srcPixelArray = in->premultipliedResult(effectDrawingRect);
     int radiusX = static_cast<int>(floorf(filter.applyHorizontalScale(m_radiusX)));
     int radiusY = static_cast<int>(floorf(filter.applyVerticalScale(m_radiusY)));
     radiusX = std::min(effectDrawingRect.width() - 1, radiusX);

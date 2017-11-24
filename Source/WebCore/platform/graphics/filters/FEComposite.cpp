@@ -237,10 +237,10 @@ void FEComposite::platformApplySoftware()
             return;
 
         IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-        RefPtr<Uint8ClampedArray> srcPixelArray = in->asPremultipliedImage(effectADrawingRect);
+        RefPtr<Uint8ClampedArray> srcPixelArray = in->premultipliedResult(effectADrawingRect);
 
         IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
-        in2->copyPremultipliedImage(dstPixelArray, effectBDrawingRect);
+        in2->copyPremultipliedResult(dstPixelArray, effectBDrawingRect);
 
         platformArithmeticSoftware(srcPixelArray.get(), dstPixelArray, m_k1, m_k2, m_k3, m_k4);
         return;
@@ -251,8 +251,8 @@ void FEComposite::platformApplySoftware()
         return;
     GraphicsContext& filterContext = resultImage->context();
 
-    ImageBuffer* imageBuffer = in->asImageBuffer();
-    ImageBuffer* imageBuffer2 = in2->asImageBuffer();
+    ImageBuffer* imageBuffer = in->imageBufferResult();
+    ImageBuffer* imageBuffer2 = in2->imageBufferResult();
     if (!imageBuffer || !imageBuffer2)
         return;
 

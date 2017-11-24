@@ -86,7 +86,7 @@ void FEDropShadow::platformApplySoftware()
     FloatRect drawingRegionWithOffset(drawingRegion);
     drawingRegionWithOffset.move(offset);
 
-    ImageBuffer* sourceImage = in->asImageBuffer();
+    ImageBuffer* sourceImage = in->imageBufferResult();
     if (!sourceImage)
         return;
 

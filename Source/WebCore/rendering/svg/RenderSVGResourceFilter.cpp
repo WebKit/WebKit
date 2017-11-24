@@ -32,6 +32,7 @@
 #include "Image.h"
 #include "ImageData.h"
 #include "IntRect.h"
+#include "Logging.h"
 #include "RenderSVGResourceFilterPrimitive.h"
 #include "RenderView.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
@@ -40,6 +41,7 @@
 #include "Settings.h"
 #include "SourceGraphic.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -54,18 +56,24 @@ RenderSVGResourceFilter::~RenderSVGResourceFilter() = default;
 
 void RenderSVGResourceFilter::removeAllClientsFromCache(bool markForInvalidation)
 {
-    m_filter.clear();
+    LOG(Filters, "RenderSVGResourceFilter %p removeAllClientsFromCache", this);
+
+    m_rendererFilterDataMap.clear();
 
     markAllClientsForInvalidation(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation);
 }
 
 void RenderSVGResourceFilter::removeClientFromCache(RenderElement& client, bool markForInvalidation)
 {
-    if (FilterData* filterData = m_filter.get(&client)) {
-        if (filterData->savedContext)
-            filterData->state = FilterData::MarkedForRemoval;
+    LOG(Filters, "RenderSVGResourceFilter %p removing client %p", this, &client);
+    
+    auto findResult = m_rendererFilterDataMap.find(&client);
+    if (findResult != m_rendererFilterDataMap.end()) {
+        FilterData& filterData = *findResult->value;
+        if (filterData.savedContext)
+            filterData.state = FilterData::MarkedForRemoval;
         else
-            m_filter.remove(&client);
+            m_rendererFilterDataMap.remove(findResult);
     }
 
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
@@ -102,8 +110,10 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, resourceMode == RenderSVGResourceMode::ApplyToDefault);
 
-    if (m_filter.contains(&renderer)) {
-        FilterData* filterData = m_filter.get(&renderer);
+    LOG(Filters, "RenderSVGResourceFilter %p applyResource renderer %p", this, &renderer);
+
+    if (m_rendererFilterDataMap.contains(&renderer)) {
+        FilterData* filterData = m_rendererFilterDataMap.get(&renderer);
         if (filterData->state == FilterData::PaintingSource || filterData->state == FilterData::Applying)
             filterData->state = FilterData::CycleDetected;
         return false; // Already built, or we're in a cycle, or we're marked for removal. Regardless, just do nothing more now.
@@ -175,9 +185,9 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     // If the drawingRegion is empty, we have something like <g filter=".."/>.
     // Even if the target objectBoundingBox() is empty, we still have to draw the last effect result image in postApplyResource.
     if (filterData->drawingRegion.isEmpty()) {
-        ASSERT(!m_filter.contains(&renderer));
+        ASSERT(!m_rendererFilterDataMap.contains(&renderer));
         filterData->savedContext = context;
-        m_filter.set(&renderer, WTFMove(filterData));
+        m_rendererFilterDataMap.set(&renderer, WTFMove(filterData));
         return false;
     }
 
@@ -189,9 +199,9 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     RenderingMode renderingMode = renderer.settings().acceleratedFiltersEnabled() ? Accelerated : Unaccelerated;
     auto sourceGraphic = SVGRenderingContext::createImageBuffer(filterData->drawingRegion, effectiveTransform, ColorSpaceLinearRGB, renderingMode);
     if (!sourceGraphic) {
-        ASSERT(!m_filter.contains(&renderer));
+        ASSERT(!m_rendererFilterDataMap.contains(&renderer));
         filterData->savedContext = context;
-        m_filter.set(&renderer, WTFMove(filterData));
+        m_rendererFilterDataMap.set(&renderer, WTFMove(filterData));
         return false;
     }
     
@@ -205,8 +215,8 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
 
     context = &sourceGraphicContext;
 
-    ASSERT(!m_filter.contains(&renderer));
-    m_filter.set(&renderer, WTFMove(filterData));
+    ASSERT(!m_rendererFilterDataMap.contains(&renderer));
+    m_rendererFilterDataMap.set(&renderer, WTFMove(filterData));
 
     return true;
 }
@@ -216,13 +226,17 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, resourceMode == RenderSVGResourceMode::ApplyToDefault);
 
-    FilterData* filterData = m_filter.get(&renderer);
-    if (!filterData)
+    auto findResult = m_rendererFilterDataMap.find(&renderer);
+    if (findResult == m_rendererFilterDataMap.end())
         return;
 
-    switch (filterData->state) {
+    FilterData& filterData = *findResult->value;
+
+    LOG_WITH_STREAM(Filters, stream << "\nRenderSVGResourceFilter " << this << " postApplyResource - renderer " << &renderer << " filter state " << filterData.state);
+
+    switch (filterData.state) {
     case FilterData::MarkedForRemoval:
-        m_filter.remove(&renderer);
+        m_rendererFilterDataMap.remove(findResult);
         return;
 
     case FilterData::CycleDetected:
@@ -231,52 +245,53 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
         // This can occur due to FeImage referencing a source that makes use of the FEImage itself.
         // This is the first place we've hit the cycle, so set the state back to PaintingSource so the return stack
         // will continue correctly.
-        filterData->state = FilterData::PaintingSource;
+        filterData.state = FilterData::PaintingSource;
         return;
 
     case FilterData::PaintingSource:
-        if (!filterData->savedContext) {
+        if (!filterData.savedContext) {
             removeClientFromCache(renderer);
             return;
         }
 
-        context = filterData->savedContext;
-        filterData->savedContext = 0;
+        context = filterData.savedContext;
+        filterData.savedContext = nullptr;
         break;
 
-    case FilterData::Built: { } // Empty
+    case FilterData::Built:
+        break;
     }
 
-    FilterEffect* lastEffect = filterData->builder->lastEffect();
+    FilterEffect* lastEffect = filterData.builder->lastEffect();
 
-    if (lastEffect && !filterData->boundaries.isEmpty() && !lastEffect->filterPrimitiveSubregion().isEmpty()) {
+    if (lastEffect && !filterData.boundaries.isEmpty() && !lastEffect->filterPrimitiveSubregion().isEmpty()) {
         // This is the real filtering of the object. It just needs to be called on the
         // initial filtering process. We just take the stored filter result on a
         // second drawing.
-        if (filterData->state != FilterData::Built)
-            filterData->filter->setSourceImage(WTFMove(filterData->sourceGraphicBuffer));
+        if (filterData.state != FilterData::Built)
+            filterData.filter->setSourceImage(WTFMove(filterData.sourceGraphicBuffer));
 
         // Always true if filterData is just built (filterData->state == FilterData::Built).
         if (!lastEffect->hasResult()) {
-            filterData->state = FilterData::Applying;
+            filterData.state = FilterData::Applying;
             lastEffect->applyAll();
             lastEffect->correctFilterResultIfNeeded();
             lastEffect->transformResultColorSpace(ColorSpaceDeviceRGB);
         }
-        filterData->state = FilterData::Built;
+        filterData.state = FilterData::Built;
 
-        ImageBuffer* resultImage = lastEffect->asImageBuffer();
+        ImageBuffer* resultImage = lastEffect->imageBufferResult();
         if (resultImage) {
-            context->concatCTM(filterData->shearFreeAbsoluteTransform.inverse().value_or(AffineTransform()));
+            context->concatCTM(filterData.shearFreeAbsoluteTransform.inverse().value_or(AffineTransform()));
 
-            context->scale(FloatSize(1 / filterData->filter->filterResolution().width(), 1 / filterData->filter->filterResolution().height()));
+            context->scale(FloatSize(1 / filterData.filter->filterResolution().width(), 1 / filterData.filter->filterResolution().height()));
             context->drawImageBuffer(*resultImage, lastEffect->absolutePaintRect());
-            context->scale(filterData->filter->filterResolution());
+            context->scale(filterData.filter->filterResolution());
 
-            context->concatCTM(filterData->shearFreeAbsoluteTransform);
+            context->concatCTM(filterData.shearFreeAbsoluteTransform);
         }
     }
-    filterData->sourceGraphicBuffer.reset();
+    filterData.sourceGraphicBuffer.reset();
 }
 
 FloatRect RenderSVGResourceFilter::resourceBoundingBox(const RenderObject& object)
@@ -288,7 +303,9 @@ void RenderSVGResourceFilter::primitiveAttributeChanged(RenderObject* object, co
 {
     SVGFilterPrimitiveStandardAttributes* primitve = static_cast<SVGFilterPrimitiveStandardAttributes*>(object->node());
 
-    for (const auto& objectFilterDataPair : m_filter) {
+    LOG(Filters, "RenderSVGResourceFilter %p primitiveAttributeChanged renderer %p", this, object);
+
+    for (const auto& objectFilterDataPair : m_rendererFilterDataMap) {
         const auto& filterData = objectFilterDataPair.value;
         if (filterData->state != FilterData::Built)
             continue;
@@ -311,8 +328,30 @@ void RenderSVGResourceFilter::primitiveAttributeChanged(RenderObject* object, co
 
 FloatRect RenderSVGResourceFilter::drawingRegion(RenderObject* object) const
 {
-    FilterData* filterData = m_filter.get(object);
+    FilterData* filterData = m_rendererFilterDataMap.get(object);
     return filterData ? filterData->drawingRegion : FloatRect();
 }
 
+TextStream& operator<<(TextStream& ts, FilterData::FilterDataState state)
+{
+    switch (state) {
+    case FilterData::PaintingSource:
+        ts << "painting source";
+        break;
+    case FilterData::Applying:
+        ts << "applying";
+        break;
+    case FilterData::Built:
+        ts << "built";
+        break;
+    case FilterData::CycleDetected:
+        ts << "cycle detected";
+        break;
+    case FilterData::MarkedForRemoval:
+        ts << "marked for removal";
+        break;
+    }
+    return ts;
 }
+
+} // namespace WebCore

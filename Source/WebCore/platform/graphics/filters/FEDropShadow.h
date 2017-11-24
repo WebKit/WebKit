@@ -50,6 +50,8 @@ public:
 private:
     FEDropShadow(Filter&, float, float, float, float, const Color&, float);
 
+    const char* filterName() const final { return "FEDropShadow"; }
+
     void platformApplySoftware() override;
 
     void determineAbsolutePaintRect() override;

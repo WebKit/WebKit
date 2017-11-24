@@ -80,6 +80,8 @@ private:
     FEConvolveMatrix(Filter&, const IntSize&, float, float,
             const IntPoint&, EdgeModeType, const FloatPoint&, bool, const Vector<float>&);
 
+    const char* filterName() const final { return "FEConvolveMatrix"; }
+
     void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 
     void platformApplySoftware() override;

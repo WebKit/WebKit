@@ -34,6 +34,8 @@ private:
     explicit SourceAlpha(FilterEffect&);
     FilterEffectType filterEffectType() const override { return FilterEffectTypeSourceInput; }
 
+    const char* filterName() const final { return "SourceAlpha"; }
+
     void platformApplySoftware() override;
     void determineAbsolutePaintRect() override;
     WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;

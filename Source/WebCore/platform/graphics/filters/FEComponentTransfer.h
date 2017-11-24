@@ -65,6 +65,8 @@ private:
     FEComponentTransfer(Filter&, const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc,
                         const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc);
 
+     const char* filterName() const final { return "FEComponentTransfer"; }
+
     using LookupTable = std::array<uint8_t, 256>;
 
     static void computeIdentityTable(LookupTable&, const ComponentTransferFunction&);
