@@ -1,0 +1,10 @@
+Testing that we leave room for the bottom controls bar when showing captions with controls on.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS textTrackContainer.getBoundingClientRect().height is bounds.height - 37
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

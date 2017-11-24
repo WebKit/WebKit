@@ -44,7 +44,7 @@ video::-webkit-media-text-track-container {
     -webkit-line-box-contain: block inline-box replaced;
 }
 
-video::-webkit-media-text-track-container.visible-controls-bar {
+video[controls]::-webkit-media-text-track-container.visible-controls-bar {
     height: calc(100% - var(--inline-controls-bar-height) - var(--inline-controls-inside-margin));
 }
 
