@@ -1,3 +1,57 @@
+2017-11-24  Ms2ger  <Ms2ger@igalia.com>
+
+        [WPE] Update some test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=180000
+
+        Unreviewed test gardening.
+
+        * platform/wpe/TestExpectations:
+          * Mark as intermittently passing:
+              - animations/negative-delay.html (also noted the bug)
+              - fast/canvas/canvas-overflow-hidden-animation.html
+              - imported/w3c/i18n/bidi/bidi-plaintext-011.html
+
+          * Enable tests fixed in r224580:
+              - imported/w3c/IndexedDB-private-browsing/idb_webworkers.html
+              - storage/indexeddb/basics-workers.html
+              - storage/indexeddb/cursor-advance-workers.html
+              - storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html
+              - storage/indexeddb/dont-commit-on-blocked.html
+              - storage/indexeddb/index-basics-workers.html
+              - storage/indexeddb/modern/blob-simple-workers.html
+              - storage/indexeddb/modern/worker-getall.html
+              - storage/indexeddb/modern/workers-enable.html
+              - storage/indexeddb/objectstore-basics-workers.html
+              - storage/indexeddb/open-twice-workers.html
+              - storage/indexeddb/pending-activity-workers.html
+              - storage/indexeddb/pending-version-change-on-exit.html
+              - storage/indexeddb/pending-version-change-on-exit-private.html
+              - storage/indexeddb/pending-version-change-stuck.html
+              - storage/indexeddb/pending-version-change-stuck-private.html
+              - storage/indexeddb/pending-version-change-stuck-works-with-terminate.html
+              - storage/indexeddb/pending-version-change-stuck-works-with-terminate-private.html
+              - storage/indexeddb/transaction-complete-workers.html
+              - storage/indexeddb/transaction-complete-workers-private.html
+              - storage/indexeddb/unprefix-workers.html
+
+          * Remove failure expectations for tests that are passing on the bot:
+              - fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html: passing since r225060.
+              - fast/events/event-view-toString.html: passing since r221858.
+              - fast/events/offsetX-offsetY.html: passing since r221858.
+              - fast/shapes/shape-outside-floats/shape-outside-floats-shape-margin-percent.html: passing since r221858.
+              - webgl/1.0.2/conformance/context/context-creation-and-destruction.html:
+                passing since its missing resource was added in r223632.
+
+          * Add some passing expectations for tests that are marked as failing in the platform-neutral file:
+              - css2.1/20110323/replaced-intrinsic-001.htm: has been passing for a long time;
+                the baseline probably does not reflect the actual pass condition.
+                (The upstream test is claimed to be invalid, and fails in all browsers.)
+              - css2.1/20110323/replaced-intrinsic-002.htm:  has been passing for a long time;
+                the baseline probably does not reflect the actual pass condition.
+                (The upstream test is claimed to be invalid, and fails in all browsers.)
+              - css3/flexbox/csswg/flexbox_flex-natural-mixed-basis-auto.html: passing since r222128.
+              - transitions/svg-text-shadow-transition.html: passing since expectation rebaseline in r222084.
+
 2017-11-24  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r225098): [WPE] Gardening of tests after r225098.

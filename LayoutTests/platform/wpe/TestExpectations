@@ -62,7 +62,7 @@ Bug(WPE) animations/font-variations/font-variation-settings-order.html [ Failure
 Bug(WPE) animations/font-variations/font-variation-settings-unlike.html [ Failure ]
 # Unknown
 Bug(WPE) animations/fill-forwards-auto-height.html [ ImageOnlyFailure Pass ]
-Bug(WPE) animations/negative-delay.html [ Failure ]
+webkit.org/b/137883 animations/negative-delay.html [ Pass Failure ]
 webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
 webkit.org/b/111612 animations/animation-delay-changed.html [ Failure Pass ]
@@ -86,6 +86,10 @@ Bug(WPE) canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
 
 Bug(WPE) css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
 Bug(WPE) css2.1/20110323/vertical-align-boxes-001.htm [ ImageOnlyFailure ]
+# Incorrect upstream, but seem to pass on the bots, possibly with a broken baseline.
+# https://github.com/w3c/web-platform-tests/issues/8407
+css2.1/20110323/replaced-intrinsic-001.htm [ Pass ]
+css2.1/20110323/replaced-intrinsic-002.htm [ Pass ]
 
 Bug(WPE) ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
 Bug(WPE) ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
@@ -109,7 +113,6 @@ Bug(WPE) webgl/1.0.2/conformance/context/context-attribute-preserve-drawing-buff
 Bug(WPE) webgl/1.0.2/conformance/context/premultiplyalpha-test.html [ Failure ]
 Bug(WPE) webgl/1.0.2/conformance/extensions/oes-vertex-array-object.html [ Failure ]
 #  Timing out
-Bug(WPE) webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Timeout ]
 Bug(WPE) webgl/1.0.2/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
 Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Timeout ]
 Bug(WPE) webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Timeout ]
@@ -161,7 +164,7 @@ fast/canvas/canvas-createPattern-video-modify.html [ Failure ]
 fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
 fast/canvas/canvas-gradient-addStop-error.html [ Failure ]
 fast/canvas/canvas-imageSmoothingQuality.html [ Failure ]
-fast/canvas/canvas-overflow-hidden-animation.html [ ImageOnlyFailure ]
+fast/canvas/canvas-overflow-hidden-animation.html [ Pass ImageOnlyFailure ]
 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
 fast/canvas/canvas-toDataURL-case-insensitive-mimetype.html [ Failure ]
 fast/canvas/canvas-toDataURL-webp.html [ Failure ]
@@ -289,7 +292,6 @@ webkit.org/b/175586 imported/w3c/web-platform-tests/XMLHttpRequest/send-network-
 webkit.org/b/177530 imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-header-allowed.htm [ Pass Failure ]
 
 
-Bug(WPE) imported/w3c/IndexedDB-private-browsing/idb_webworkers.html [ Failure ]
 webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating.html [ Crash ]
 webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating_index.html [ Crash ]
 
@@ -378,7 +380,6 @@ Bug(WPE) fast/parser/xml-colon-entity.html [ Failure ]
 Bug(WPE) fast/parser/xml-declaration-missing-ending-mark.html [ Failure ]
 
 Bug(WPE) fast/shapes/shape-outside-floats/shape-outside-clip-path-selection.html [ Failure ]
-Bug(WPE) fast/shapes/shape-outside-floats/shape-outside-floats-shape-margin-percent.html [ ImageOnlyFailure ]
 
 # These are Mac specific for now.
 fast/url/user-visible [ Skip ]
@@ -554,7 +555,6 @@ webkit.org/b/173419 fast/events/mouseover-button.html [ Failure ]
 webkit.org/b/173419 fast/events/mouseup-from-button2.html [ Failure ]
 webkit.org/b/173419 fast/events/no-scroll-on-input-text-selection.html [ Failure ]
 webkit.org/b/173419 fast/events/node-event-anchor-lock.html [ Failure ]
-webkit.org/b/173419 fast/events/offsetX-offsetY.html [ Failure ]
 webkit.org/b/173419 fast/events/onchange-range-slider.html [ Failure ]
 webkit.org/b/173419 fast/events/option-tab.html [ Failure ]
 webkit.org/b/173419 fast/events/platform-wheelevent-in-scrolling-div.html [ Failure ]
@@ -591,7 +591,6 @@ webkit.org/b/173419 fast/events/autoscroll-when-zoomed.html [ Timeout ]
 webkit.org/b/173419 fast/events/before-input-prevent-insert-replacement.html [ Failure ]
 webkit.org/b/173419 fast/events/clipboard-dataTransferItemList.html [ Timeout ]
 webkit.org/b/173419 fast/events/drag-dataTransferItemList.html [ Timeout ]
-webkit.org/b/173419 fast/events/event-view-toString.html [ Timeout ]
 webkit.org/b/173419 fast/events/input-event-insert-replacement.html [ Failure ]
 webkit.org/b/173419 fast/events/mouse-force-changed.html [ Timeout ]
 webkit.org/b/173419 fast/events/mouse-force-down.html [ Timeout ]
@@ -674,33 +673,13 @@ Bug(WPE) fast/dom/getElementsByClassName [ Pass ]
 Bug(WPE) fast/dom/nodesFromRect [ Pass ]
 
 Bug(WPE) storage/indexeddb/modern/index-3-private.html [ Crash ]
-Bug(WPE) storage/indexeddb/modern/worker-getall.html [ Timeout ]
 Bug(WPE) storage/domstorage/events/basic-body-attribute.html [ Failure ]
-Bug(WPE) storage/indexeddb/basics-workers.html [ Failure ]
-Bug(WPE) storage/indexeddb/cursor-advance-workers.html [ Failure ]
-Bug(WPE) storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html [ Failure ]
-Bug(WPE) storage/indexeddb/dont-commit-on-blocked.html [ Failure ]
-Bug(WPE) storage/indexeddb/index-basics-workers.html [ Failure ]
-Bug(WPE) storage/indexeddb/modern/blob-simple-workers.html [ Failure ]
 Bug(WPE) storage/indexeddb/modern/date-basic-private.html [ Failure ]
 Bug(WPE) storage/indexeddb/modern/date-basic.html [ Failure ]
 Bug(WPE) storage/indexeddb/modern/get-keyrange-private.html [ Failure ]
 Bug(WPE) storage/indexeddb/modern/get-keyrange.html [ Failure ]
 Bug(WPE) storage/indexeddb/modern/idbobjectstore-delete-1-private.html [ Failure ]
 Bug(WPE) storage/indexeddb/modern/idbobjectstore-delete-1.html [ Failure ]
-Bug(WPE) storage/indexeddb/modern/workers-enable.html [ Failure ]
-Bug(WPE) storage/indexeddb/objectstore-basics-workers.html [ Failure ]
-Bug(WPE) storage/indexeddb/open-twice-workers.html [ Failure ]
-Bug(WPE) storage/indexeddb/pending-activity-workers.html [ Failure ]
-Bug(WPE) storage/indexeddb/pending-version-change-on-exit-private.html [ Failure ]
-Bug(WPE) storage/indexeddb/pending-version-change-on-exit.html [ Failure ]
-Bug(WPE) storage/indexeddb/pending-version-change-stuck-private.html [ Failure ]
-Bug(WPE) storage/indexeddb/pending-version-change-stuck-works-with-terminate-private.html [ Failure ]
-Bug(WPE) storage/indexeddb/pending-version-change-stuck-works-with-terminate.html [ Failure ]
-Bug(WPE) storage/indexeddb/pending-version-change-stuck.html [ Failure ]
-Bug(WPE) storage/indexeddb/transaction-complete-workers-private.html [ Failure ]
-Bug(WPE) storage/indexeddb/transaction-complete-workers.html [ Failure ]
-Bug(WPE) storage/indexeddb/unprefix-workers.html [ Failure ]
 Bug(WPE) storage/storageinfo-missing-arguments.html [ Failure ]
 Bug(WPE) storage/storageinfo-no-callbacks.html [ Failure ]
 Bug(WPE) storage/storageinfo-query-usage.html [ Failure ]
@@ -722,6 +701,7 @@ Bug(WPE) css3/background/background-repeat-space-content.html [ ImageOnlyFailure
 Bug(WPE) css3/background/background-repeat-space-padding.html [ ImageOnlyFailure ]
 
 Bug(WPE) css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
+webkit.org/b/136754 css3/flexbox/csswg/flexbox_flex-natural-mixed-basis-auto.html [ Pass ]
 
 Bug(WPE) css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html [ Timeout ]
 Bug(WPE) css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Timeout ]
@@ -823,6 +803,7 @@ webkit.org/b/175199 crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivate
 
 # ENABLE_CSS_COMPOSITING
 Bug(WPE) transitions/blendmode-transitions.html [ Failure ]
+transitions/svg-text-shadow-transition.html [ Pass ]
 
 # ENABLE_MEDIA_SOURCE
 media/media-source/ [ Pass ]
@@ -893,7 +874,7 @@ media/encrypted-media/encrypted-media-syntax.html [ Skip ]
 media/encrypted-media/encrypted-media-v2-events.html [ Skip ]
 media/encrypted-media/encrypted-media-v2-syntax.html [ Skip ]
 
-webkit.org/b/172815 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ ImageOnlyFailure ]
+webkit.org/b/172815 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/176174 media/event-queue-crash.html [ Pass Failure ]
 
@@ -1031,7 +1012,6 @@ webkit.org/b/178704 svg/css/svg-resource-fragment-identifier-img-src.html [ Cras
 
 webkit.org/b/178703 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted.html [ Crash ]
 
-webkit.org/b/178705 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Failure ]
 webkit.org/b/178705 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Failure ]
 
 webkit.org/b/179957 crypto/workers/subtle/aes-cbc-import-key-decrypt.html [ Pass Crash ]
