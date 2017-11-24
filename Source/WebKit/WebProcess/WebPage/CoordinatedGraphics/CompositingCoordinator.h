@@ -117,7 +117,7 @@ private:
     WebCore::FloatRect visibleContentsRect() const override;
     Ref<WebCore::CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image&) override;
     void detachLayer(WebCore::CoordinatedGraphicsLayer*) override;
-    RefPtr<WebCore::CoordinatedBuffer> getCoordinatedBuffer(const WebCore::IntSize&, WebCore::CoordinatedBuffer::Flags, uint32_t&, WebCore::IntRect&) override;
+    Ref<WebCore::CoordinatedBuffer> getCoordinatedBuffer(const WebCore::IntSize&, WebCore::CoordinatedBuffer::Flags, uint32_t&, WebCore::IntRect&) override;
     void syncLayerState(WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayerState&) override;
 
     // UpdateAtlas::Client

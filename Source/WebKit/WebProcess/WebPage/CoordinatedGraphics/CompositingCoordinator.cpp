@@ -385,19 +385,25 @@ void CompositingCoordinator::purgeBackingStores()
     m_updateAtlases.clear();
 }
 
-RefPtr<CoordinatedBuffer> CompositingCoordinator::getCoordinatedBuffer(const IntSize& size, CoordinatedBuffer::Flags flags, uint32_t& atlasID, IntRect& allocatedRect)
+Ref<CoordinatedBuffer> CompositingCoordinator::getCoordinatedBuffer(const IntSize& size, CoordinatedBuffer::Flags flags, uint32_t& atlasID, IntRect& allocatedRect)
 {
     for (auto& atlas : m_updateAtlases) {
         if (atlas->supportsAlpha() == (flags & CoordinatedBuffer::SupportsAlpha)) {
             if (auto buffer = atlas->getCoordinatedBuffer(size, atlasID, allocatedRect))
-                return buffer;
+                return *buffer;
         }
     }
 
     static const IntSize s_atlasSize { 1024, 1024 }; // This should be a square.
     m_updateAtlases.append(std::make_unique<UpdateAtlas>(*this, s_atlasSize, flags));
     scheduleReleaseInactiveAtlases();
-    return m_updateAtlases.last()->getCoordinatedBuffer(size, atlasID, allocatedRect);
+
+    // Specified size should always fit into a newly-created UpdateAtlas and a non-null
+    // CoordinatedBuffer value should be returned from UpdateAtlas::getCoordinatedBuffer().
+    // We use a RELEASE_ASSERT() to stop any malfunctioning at the earliest point.
+    auto buffer = m_updateAtlases.last()->getCoordinatedBuffer(size, atlasID, allocatedRect);
+    RELEASE_ASSERT(buffer);
+    return *buffer;
 }
 
 const Seconds releaseInactiveAtlasesTimerInterval { 500_ms };

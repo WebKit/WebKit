@@ -1,5 +1,27 @@
 2017-11-24  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordGraphics] CoordinatedGraphicsLayer::updateContentBuffers() should always assume a non-null CoordinatedBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=179977
+
+        Reviewed by Carlos Garcia Campos.
+
+        Make CompositingCoordinator::getCoordinatedBuffer() return a Ref<CoordinatedBuffer>
+        value. In case an UpdateAtlas with enough free area is found, its CoordinatedBuffer
+        is dereferenced into the return value. In case a new UpdateAtlas is created, the
+        returned CoordinatedBuffer pointer is asserted to be non-null and dereferenced.
+
+        The retrieved CoordinatedBuffer pointer on a newly-created UpdateAtlas should never
+        be null since the tiles are smaller in size than the UpdateAtlas area. The assert
+        is done in release configurations as well since the code in CoordinatedGraphicsLayer
+        assumes the returned pointer will be non-null, so it's just a matter of where to
+        crash first in case somehow a null value is returned.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::getCoordinatedBuffer):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+
+2017-11-24  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordGraphics] UpdateAtlas constructor should receive an IntSize, not a dimension value
         https://bugs.webkit.org/show_bug.cgi?id=179976
 

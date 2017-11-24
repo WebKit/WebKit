@@ -972,9 +972,6 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
             auto coordinatedBuffer = m_coordinator->getCoordinatedBuffer(dirtyRect.size(),
                 contentsOpaque() ? CoordinatedBuffer::NoFlags : CoordinatedBuffer::SupportsAlpha,
                 updateInfo.atlasID, targetRect);
-            if (!coordinatedBuffer)
-                continue;
-
             {
                 GraphicsContext& context = coordinatedBuffer->context();
                 context.save();
