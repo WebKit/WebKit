@@ -52,6 +52,8 @@ public:
     void animationTimingModelDidChange() override;
     void windowScreenDidChange(PlatformDisplayID);
 
+    void animationAcceleratedRunningStateDidChange(WebAnimation&);
+    bool runningAnimationsForElementAreAllAccelerated(Element&);
     void detachFromDocument();
 
 private:
@@ -70,6 +72,7 @@ private:
     GenericTaskQueue<Timer> m_invalidationTaskQueue;
     bool m_needsUpdateAnimationSchedule { false };
     Timer m_animationScheduleTimer;
+    HashSet<RefPtr<WebAnimation>> m_acceleratedAnimationsPendingRunningStateChange;
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     // Override for DisplayRefreshMonitorClient

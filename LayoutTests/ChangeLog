@@ -1,3 +1,35 @@
+2017-11-23  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Perform hardware-composited animations when possible
+        https://bugs.webkit.org/show_bug.cgi?id=179973
+        <rdar://problem/34953922>
+
+        Reviewed by Dean Jackson.
+
+        Add a series of tests to check that we use hardware-compositing for animations when possible.
+        Specifically, we check that:
+        
+        1. Specifying both accelerated and non-accelerated properties for a single animation does *not*
+        yield hardware compositing (left-and-opacity-animation-yields-no-compositing.html).
+
+        2. Specifying both accelerated and non-accelerated properties via multiple animations does *not*
+        yield hardware compositing (width-and-opacity-separate-animation-yields-no-compositing.html).
+
+        3. Specifying only accelerated properties *does* yield hardware compositing
+        (opacity-animation-yields-compositing.html).
+
+        4. Hardware-composited animations no longer enforce hardware compositing after their completion
+        (opacity-animation-no-longer-composited-upon-completion.html).
+
+        * webanimations/left-and-opacity-animation-yields-no-compositing-expected.txt: Added.
+        * webanimations/left-and-opacity-animation-yields-no-compositing.html: Added.
+        * webanimations/opacity-animation-no-longer-composited-upon-completion-expected.txt: Added.
+        * webanimations/opacity-animation-no-longer-composited-upon-completion.html: Added.
+        * webanimations/opacity-animation-yields-compositing-expected.txt: Added.
+        * webanimations/opacity-animation-yields-compositing.html: Added.
+        * webanimations/width-and-opacity-separate-animation-yields-no-compositing-expected.txt: Added.
+        * webanimations/width-and-opacity-separate-animation-yields-no-compositing.html: Added.
+
 2017-11-23  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r225098): [GTK] Gardening of tests after r225098.

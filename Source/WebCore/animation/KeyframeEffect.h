@@ -44,6 +44,8 @@ public:
     Element* target() const { return m_target.get(); }
     ExceptionOr<void> setKeyframes(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&);
     void applyAtLocalTime(Seconds, RenderStyle&) override;
+    void startOrStopAccelerated();
+    bool isRunningAccelerated() const { return m_startedAccelerated; }
 
     RenderElement* renderer() const override;
     const RenderStyle& currentStyle() const override;
@@ -58,10 +60,13 @@ private:
     KeyframeEffect(Element*);
     ExceptionOr<void> processKeyframes(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&);
     void computeStackingContextImpact();
+    bool shouldRunAccelerated();
 
     RefPtr<Element> m_target;
     KeyframeList m_keyframes;
     bool m_triggersStackingContext { false };
+    bool m_started { false };
+    bool m_startedAccelerated { false };
 
 };
 

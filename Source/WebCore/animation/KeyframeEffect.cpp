@@ -26,6 +26,7 @@
 #include "config.h"
 #include "KeyframeEffect.h"
 
+#include "Animation.h"
 #include "CSSPropertyAnimation.h"
 #include "Element.h"
 #include "RenderStyle.h"
@@ -146,6 +147,11 @@ void KeyframeEffect::applyAtLocalTime(Seconds localTime, RenderStyle& targetStyl
     if (!m_target)
         return;
 
+    if (m_startedAccelerated && localTime >= timing()->duration()) {
+        m_startedAccelerated = false;
+        animation()->acceleratedRunningStateDidChange();
+    }
+
     // FIXME: Assume animations only apply in the range [0, duration[
     // until we support fill modes, delays and iterations.
     if (localTime < 0_s || localTime >= timing()->duration())
@@ -154,16 +160,54 @@ void KeyframeEffect::applyAtLocalTime(Seconds localTime, RenderStyle& targetStyl
     if (!timing()->duration())
         return;
 
-    float progress = localTime / timing()->duration();
+    bool needsToStartAccelerated = false;
 
-    for (auto cssPropertyId : m_keyframes.properties())
-        CSSPropertyAnimation::blendProperties(this, cssPropertyId, &targetStyle, m_keyframes[0].style(), m_keyframes[1].style(), progress);
+    if (!m_started && !m_startedAccelerated) {
+        needsToStartAccelerated = shouldRunAccelerated();
+        m_startedAccelerated = needsToStartAccelerated;
+        if (needsToStartAccelerated)
+            animation()->acceleratedRunningStateDidChange();
+    }
+    m_started = true;
+
+    if (!needsToStartAccelerated && !m_startedAccelerated) {
+        float progress = localTime / timing()->duration();
+        for (auto cssPropertyId : m_keyframes.properties())
+            CSSPropertyAnimation::blendProperties(this, cssPropertyId, &targetStyle, m_keyframes[0].style(), m_keyframes[1].style(), progress);
+    }
 
     // https://w3c.github.io/web-animations/#side-effects-section
     // For every property targeted by at least one animation effect that is current or in effect, the user agent
     // must act as if the will-change property ([css-will-change-1]) on the target element includes the property.
     if (m_triggersStackingContext && targetStyle.hasAutoZIndex())
         targetStyle.setZIndex(0);
+}
+
+bool KeyframeEffect::shouldRunAccelerated()
+{
+    for (auto cssPropertyId : m_keyframes.properties()) {
+        if (!CSSPropertyAnimation::animationOfPropertyIsAccelerated(cssPropertyId))
+            return false;
+    }
+    return true;
+}
+
+void KeyframeEffect::startOrStopAccelerated()
+{
+    auto* renderer = this->renderer();
+    if (!renderer || !renderer->isComposited())
+        return;
+
+    auto* compositedRenderer = downcast<RenderBoxModelObject>(renderer);
+    if (m_startedAccelerated) {
+        auto animation = Animation::create();
+        animation->setDuration(timing()->duration().value());
+        compositedRenderer->startAnimation(0, animation.ptr(), m_keyframes);
+    } else {
+        compositedRenderer->animationFinished(m_keyframes.animationName());
+        if (!m_target->document().renderTreeBeingDestroyed())
+            m_target->invalidateStyleAndLayerComposition();
+    }
 }
 
 RenderElement* KeyframeEffect::renderer() const

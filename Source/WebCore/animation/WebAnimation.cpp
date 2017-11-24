@@ -243,6 +243,18 @@ void WebAnimation::resolve(RenderStyle& targetStyle)
         m_effect->applyAtLocalTime(currentTime().value(), targetStyle);
 }
 
+void WebAnimation::acceleratedRunningStateDidChange()
+{
+    if (m_timeline && m_timeline->isDocumentTimeline())
+        downcast<DocumentTimeline>(*m_timeline).animationAcceleratedRunningStateDidChange(*this);
+}
+
+void WebAnimation::startOrStopAccelerated()
+{
+    if (m_effect && m_effect->isKeyframeEffect())
+        downcast<KeyframeEffect>(*m_effect).startOrStopAccelerated();
+}
+
 String WebAnimation::description()
 {
     return "Animation";

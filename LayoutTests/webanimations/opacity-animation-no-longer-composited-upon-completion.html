@@ -1,0 +1,20 @@
+<pre id="results"></pre>
+<div id="target" style="width: 100px; height: 100px; background-color: black;"></div>
+<script>
+
+const animation = new Animation(new KeyframeEffect(document.getElementById("target"), [
+    { opacity: 1 },
+    { opacity: 0 }
+]));
+animation.startTime = 0;
+animation.effect.timing.duration = 100;
+
+testRunner.waitUntilDone();
+testRunner.dumpAsText();
+
+setTimeout(() => {
+    document.getElementById("results").innerText = internals.layerTreeAsText(document);
+    testRunner.notifyDone();
+}, animation.effect.timing.duration + 500);
+
+</script>

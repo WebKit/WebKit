@@ -32,6 +32,7 @@
 #include "DisplayRefreshMonitor.h"
 #include "DisplayRefreshMonitorManager.h"
 #include "Document.h"
+#include "KeyframeEffect.h"
 #include "Page.h"
 
 static const Seconds animationInterval { 15_ms };
@@ -165,8 +166,30 @@ void DocumentTimeline::updateAnimations()
         m_document->updateStyleIfNeeded();
     }
 
+    for (auto animation : m_acceleratedAnimationsPendingRunningStateChange)
+        animation->startOrStopAccelerated();
+    m_acceleratedAnimationsPendingRunningStateChange.clear();
+
     // Time has advanced, the timing model requires invalidation now.
     animationTimingModelDidChange();
+}
+
+void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& animation)
+{
+    m_acceleratedAnimationsPendingRunningStateChange.add(&animation);
+}
+
+bool DocumentTimeline::runningAnimationsForElementAreAllAccelerated(Element& element)
+{
+    // FIXME: This will let animations run using hardware compositing even if later in the active
+    // span of the current animations a new animation should require hardware compositing to be
+    // disabled (webkit.org/b/179974).
+    auto animations = animationsForElement(element);
+    for (const auto& animation : animations) {
+        if (animation->effect() && animation->effect()->isKeyframeEffect() && !downcast<KeyframeEffect>(animation->effect())->isRunningAccelerated())
+            return false;
+    }
+    return !animations.isEmpty();
 }
 
 void DocumentTimeline::windowScreenDidChange(PlatformDisplayID displayID)

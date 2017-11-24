@@ -65,6 +65,8 @@ public:
 
     Seconds timeToNextRequiredTick(Seconds) const;
     void resolve(RenderStyle&);
+    void acceleratedRunningStateDidChange();
+    void startOrStopAccelerated();
 
     String description();
 
