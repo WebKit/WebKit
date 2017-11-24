@@ -160,7 +160,7 @@ Ref<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
     stringBuilder.append("\"\r\n\r\n");
 
     // We use utf8() below instead of ascii() as ascii() replaces CRLFs with ?? (we still only have put ASCII characters in it).
-    ASSERT(stringBuilder.toString().containsOnlyASCII());
+    ASSERT(stringBuilder.toString().isAllASCII());
     CString asciiString = stringBuilder.toString().utf8();
     auto mhtmlData = SharedBuffer::create();
     mhtmlData->append(asciiString.data(), asciiString.length());
