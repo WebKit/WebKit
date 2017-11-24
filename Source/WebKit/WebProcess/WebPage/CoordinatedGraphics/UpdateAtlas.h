@@ -43,7 +43,7 @@ public:
         virtual void removeUpdateAtlas(uint32_t /* id */) = 0;
     };
 
-    UpdateAtlas(Client&, int dimension, WebCore::CoordinatedBuffer::Flags);
+    UpdateAtlas(Client&, const WebCore::IntSize&, WebCore::CoordinatedBuffer::Flags);
     ~UpdateAtlas();
 
     const WebCore::IntSize& size() const { return m_buffer->size(); }

@@ -1,3 +1,21 @@
+2017-11-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] UpdateAtlas constructor should receive an IntSize, not a dimension value
+        https://bugs.webkit.org/show_bug.cgi?id=179976
+
+        Reviewed by Carlos Garcia Campos.
+
+        Have the UpdateAtlas constructor receive an IntSize object that specifies
+        the desired size for the CoordinatedBuffer. Passing in a dimension doesn't
+        really make sense since this value isn't dynamically configurable, and
+        the only value that is passed in is already a power-of-two.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::getCoordinatedBuffer):
+        * WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.cpp:
+        (WebKit::UpdateAtlas::UpdateAtlas):
+        * WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.h:
+
 2017-11-23  Sam Weinig  <sam@webkit.org>
 
         Remove unneeded ScriptController::processingUserGesture() forwarding functions

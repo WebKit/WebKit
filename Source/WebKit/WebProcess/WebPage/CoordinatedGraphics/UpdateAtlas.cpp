@@ -26,15 +26,14 @@
 #include <WebCore/CoordinatedGraphicsState.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/IntRect.h>
-#include <wtf/MathExtras.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-UpdateAtlas::UpdateAtlas(Client& client, int dimension, CoordinatedBuffer::Flags flags)
+UpdateAtlas::UpdateAtlas(Client& client, const IntSize& size, CoordinatedBuffer::Flags flags)
     : m_client(client)
-    , m_buffer(CoordinatedBuffer::create(nextPowerOfTwo(IntSize(dimension, dimension)), flags))
+    , m_buffer(CoordinatedBuffer::create(size, flags))
 {
     static uint32_t nextID = 0;
     m_ID = ++nextID;
