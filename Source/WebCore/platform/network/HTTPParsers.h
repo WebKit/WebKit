@@ -28,8 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTTPParsers_h
-#define HTTPParsers_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -111,7 +110,7 @@ inline bool isHTTPSpace(UChar character)
 // Strip leading and trailing whitespace as defined in https://fetch.spec.whatwg.org/#concept-header-value-normalize.
 inline String stripLeadingAndTrailingHTTPSpaces(const String& string)
 {
-    return string.stripWhiteSpace(isHTTPSpace);
+    return string.stripLeadingAndTrailingCharacters(isHTTPSpace);
 }
 
 inline StringView stripLeadingAndTrailingHTTPSpaces(StringView string)
@@ -120,5 +119,3 @@ inline StringView stripLeadingAndTrailingHTTPSpaces(StringView string)
 }
 
 }
-
-#endif

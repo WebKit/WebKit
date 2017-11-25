@@ -24,7 +24,6 @@
 #define StringImpl_h
 
 #include <limits.h>
-#include <unicode/uchar.h>
 #include <unicode/ustring.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/CheckedArithmetic.h>
@@ -69,11 +68,8 @@ template<typename> class RetainPtr;
 template<typename> struct BufferFromStaticDataTranslator;
 template<typename> struct HashAndCharactersTranslator;
 
-// Define STRING_STATS to 1 turn on runtime statistics for string sizes and memory usage.
+// Define STRING_STATS to 1 turn on runtime statistics of string sizes and memory usage.
 #define STRING_STATS 0
-
-typedef bool (*CharacterMatchFunctionPtr)(UChar);
-typedef bool (*IsWhiteSpaceFunctionPtr)(UChar);
 
 template<bool isSpecialCharacter(UChar), typename CharacterType> bool isAllSpecialCharacters(const CharacterType*, size_t length);
 
@@ -368,7 +364,7 @@ public:
     template<typename CharacterType> static void copyCharacters(CharacterType* destination, const CharacterType* source, unsigned numCharacters);
     static void copyCharacters(UChar* destination, const LChar* source, unsigned numCharacters);
 
-    // Some string features, like refcounting and the atomicity flag, are not
+    // Some string features, like reference counting and the atomicity flag, are not
     // thread-safe. We achieve thread safety by isolation, giving each thread
     // its own copy of the string.
     Ref<StringImpl> isolatedCopy() const;
@@ -408,12 +404,11 @@ public:
     Ref<StringImpl> foldCase();
 
     Ref<StringImpl> stripWhiteSpace();
-    Ref<StringImpl> stripWhiteSpace(IsWhiteSpaceFunctionPtr);
     WTF_EXPORT_STRING_API Ref<StringImpl> simplifyWhiteSpace();
-    Ref<StringImpl> simplifyWhiteSpace(IsWhiteSpaceFunctionPtr);
+    Ref<StringImpl> simplifyWhiteSpace(CodeUnitMatchFunction);
 
-    Ref<StringImpl> removeCharacters(CharacterMatchFunctionPtr);
-    template<typename CharacterType> Ref<StringImpl> removeCharacters(const CharacterType*, CharacterMatchFunctionPtr);
+    Ref<StringImpl> stripLeadingAndTrailingCharacters(CodeUnitMatchFunction);
+    Ref<StringImpl> removeCharacters(CodeUnitMatchFunction);
 
     bool isAllASCII() const;
     bool isAllLatin1() const;
@@ -422,7 +417,7 @@ public:
     size_t find(LChar character, unsigned start = 0);
     size_t find(char character, unsigned start = 0);
     size_t find(UChar character, unsigned start = 0);
-    WTF_EXPORT_STRING_API size_t find(CharacterMatchFunctionPtr, unsigned index = 0);
+    WTF_EXPORT_STRING_API size_t find(CodeUnitMatchFunction, unsigned index = 0);
     size_t find(const LChar*, unsigned index = 0);
     ALWAYS_INLINE size_t find(const char* string, unsigned index = 0) { return find(reinterpret_cast<const LChar*>(string), index); }
     WTF_EXPORT_STRING_API size_t find(StringImpl*);
@@ -504,8 +499,9 @@ private:
     enum class CaseConvertType { Upper, Lower };
     template<CaseConvertType, typename CharacterType> static Ref<StringImpl> convertASCIICase(StringImpl&, const CharacterType*, unsigned);
 
-    template<typename UCharPredicate> Ref<StringImpl> stripMatchedCharacters(UCharPredicate);
-    template<typename CharacterType, typename UCharPredicate> Ref<StringImpl> simplifyMatchedCharactersToSpace(UCharPredicate);
+    template<class CodeUnitPredicate> Ref<StringImpl> stripMatchedCharacters(CodeUnitPredicate);
+    template<typename CharacterType> ALWAYS_INLINE Ref<StringImpl> removeCharacters(const CharacterType* characters, CodeUnitMatchFunction);
+    template<typename CharacterType, class CodeUnitPredicate> Ref<StringImpl> simplifyMatchedCharactersToSpace(CodeUnitPredicate);
     template<typename CharacterType> static Ref<StringImpl> constructInternal(StringImpl&, unsigned);
     template<typename CharacterType> static Ref<StringImpl> createUninitializedInternal(unsigned, CharacterType*&);
     template<typename CharacterType> static Ref<StringImpl> createUninitializedInternalNonEmpty(unsigned, CharacterType*&);
@@ -563,8 +559,8 @@ WTF_EXPORT_STRING_API bool equalIgnoringASCIICaseNonNull(const StringImpl*, cons
 template<unsigned length> bool equalLettersIgnoringASCIICase(const StringImpl&, const char (&lowercaseLetters)[length]);
 template<unsigned length> bool equalLettersIgnoringASCIICase(const StringImpl*, const char (&lowercaseLetters)[length]);
 
-size_t find(const LChar*, unsigned length, CharacterMatchFunctionPtr, unsigned index = 0);
-size_t find(const UChar*, unsigned length, CharacterMatchFunctionPtr, unsigned index = 0);
+size_t find(const LChar*, unsigned length, CodeUnitMatchFunction, unsigned index = 0);
+size_t find(const UChar*, unsigned length, CodeUnitMatchFunction, unsigned index = 0);
 
 template<typename CharacterType> size_t reverseFindLineTerminator(const CharacterType*, unsigned length, unsigned index = std::numeric_limits<unsigned>::max());
 template<typename CharacterType> size_t reverseFind(const CharacterType*, unsigned length, CharacterType matchCharacter, unsigned index = std::numeric_limits<unsigned>::max());
@@ -616,7 +612,7 @@ template<> ALWAYS_INLINE const UChar* StringImpl::characters<UChar>() const
     return characters16();
 }
 
-inline size_t find(const LChar* characters, unsigned length, CharacterMatchFunctionPtr matchFunction, unsigned index)
+inline size_t find(const LChar* characters, unsigned length, CodeUnitMatchFunction matchFunction, unsigned index)
 {
     while (index < length) {
         if (matchFunction(characters[index]))
@@ -626,7 +622,7 @@ inline size_t find(const LChar* characters, unsigned length, CharacterMatchFunct
     return notFound;
 }
 
-inline size_t find(const UChar* characters, unsigned length, CharacterMatchFunctionPtr matchFunction, unsigned index)
+inline size_t find(const UChar* characters, unsigned length, CodeUnitMatchFunction matchFunction, unsigned index)
 {
     while (index < length) {
         if (matchFunction(characters[index]))
@@ -700,8 +696,7 @@ template<size_t inlineCapacity> inline bool equalIgnoringNullity(const Vector<UC
     return equalIgnoringNullity(a.data(), a.size(), b);
 }
 
-template<typename CharacterType1, typename CharacterType2>
-inline int codePointCompare(const CharacterType1* characters1, unsigned length1, const CharacterType2* characters2, unsigned length2)
+template<typename CharacterType1, typename CharacterType2> inline int codePointCompare(const CharacterType1* characters1, unsigned length1, const CharacterType2* characters2, unsigned length2)
 {
     unsigned commonLength = std::min(length1, length2);
 
@@ -742,9 +737,8 @@ inline int codePointCompare(const StringImpl* string1, const StringImpl* string2
 
 inline bool isSpaceOrNewline(UChar character)
 {
-    // Use isASCIISpace() for basic Latin-1.
-    // This will include newlines, which aren't included in Unicode DirWS.
-    return isASCII(character) ? isASCIISpace(character) : u_charDirection(character) == U_WHITE_SPACE_NEUTRAL;
+    // Use isASCIISpace() for all Latin-1 characters. This will include newlines, which aren't included in Unicode DirWS.
+    return character <= 0xFF ? isASCIISpace(character) : u_charDirection(character) == U_WHITE_SPACE_NEUTRAL;
 }
 
 template<typename CharacterType> inline unsigned lengthOfNullTerminatedString(const CharacterType* string)

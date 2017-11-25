@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,8 @@
 #include <wtf/NotFound.h>
 
 namespace WTF {
+
+using CodeUnitMatchFunction = bool (*)(UChar);
 
 template<typename CharacterTypeA, typename CharacterTypeB> bool equalIgnoringASCIICase(const CharacterTypeA*, const CharacterTypeB*, unsigned length);
 template<typename CharacterTypeA, typename CharacterTypeB> bool equalIgnoringASCIICase(const CharacterTypeA*, unsigned lengthA, const CharacterTypeB*, unsigned lengthB);
@@ -655,4 +657,4 @@ template<typename StringClass, unsigned length> inline bool startsWithLettersIgn
 using WTF::equalIgnoringASCIICase;
 using WTF::equalLettersIgnoringASCIICase;
 
-#endif // StringCommon_h
+#endif

@@ -45,8 +45,6 @@
 
 namespace WTF {
 
-using CharacterMatchFunction = bool (*)(UChar);
-
 // StringView is a non-owning reference to a string, similar to the proposed std::string_view.
 
 class StringView {
@@ -126,7 +124,7 @@ public:
     SplitResult split(UChar) const;
 
     size_t find(UChar, unsigned start = 0) const;
-    size_t find(CharacterMatchFunction, unsigned start = 0) const;
+    size_t find(CodeUnitMatchFunction, unsigned start = 0) const;
 
     WTF_EXPORT_STRING_API size_t find(StringView, unsigned start) const;
 
@@ -539,7 +537,7 @@ inline size_t StringView::find(UChar character, unsigned start) const
     return WTF::find(characters16(), m_length, character, start);
 }
 
-inline size_t StringView::find(CharacterMatchFunction matchFunction, unsigned start) const
+inline size_t StringView::find(CodeUnitMatchFunction matchFunction, unsigned start) const
 {
     if (is8Bit())
         return WTF::find(characters8(), m_length, matchFunction, start);
@@ -980,4 +978,4 @@ using WTF::append;
 using WTF::equal;
 using WTF::StringView;
 
-#endif // StringView_h
+#endif

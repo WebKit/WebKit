@@ -733,7 +733,7 @@ void FrameLoader::didBeginDocument(bool dispatch)
         if (!headerContentLanguage.isEmpty()) {
             size_t commaIndex = headerContentLanguage.find(',');
             headerContentLanguage.truncate(commaIndex); // notFound == -1 == don't truncate
-            headerContentLanguage = headerContentLanguage.stripWhiteSpace(isHTMLSpace);
+            headerContentLanguage = stripLeadingAndTrailingHTMLSpaces(headerContentLanguage);
             if (!headerContentLanguage.isEmpty())
                 m_frame.document()->setContentLanguage(headerContentLanguage);
         }

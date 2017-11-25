@@ -74,7 +74,7 @@ TextPosition textPositionFromOffset(size_t offset, const Vector<size_t>& lineEnd
     return TextPosition(OrdinalNumber::fromZeroBasedInt(lineIndex), OrdinalNumber::fromZeroBasedInt(column));
 }
 
-static Vector<std::pair<size_t, String>> getRegularExpressionMatchesByLines(const JSC::Yarr::RegularExpression& regex, const String& text)
+static Vector<std::pair<size_t, String>> getRegularExpressionMatchesByLines(const RegularExpression& regex, const String& text)
 {
     Vector<std::pair<size_t, String>> result;
     if (text.isEmpty())
@@ -128,13 +128,12 @@ static Ref<Inspector::Protocol::GenericTypes::SearchMatch> buildObjectForSearchM
         .release();
 }
 
-JSC::Yarr::RegularExpression createSearchRegex(const String& query, bool caseSensitive, bool isRegex)
+RegularExpression createSearchRegex(const String& query, bool caseSensitive, bool isRegex)
 {
-    String regexSource = isRegex ? query : createSearchRegexSource(query);
-    return JSC::Yarr::RegularExpression(regexSource, caseSensitive ? TextCaseSensitive : TextCaseInsensitive);
+    return RegularExpression { isRegex ? query : createSearchRegexSource(query), caseSensitive ? TextCaseSensitive : TextCaseInsensitive };
 }
 
-int countRegularExpressionMatches(const JSC::Yarr::RegularExpression& regex, const String& content)
+int countRegularExpressionMatches(const RegularExpression& regex, const String& content)
 {
     if (content.isEmpty())
         return 0;
@@ -157,7 +156,7 @@ Ref<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>> 
 {
     Ref<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>> result = Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>::create();
 
-    JSC::Yarr::RegularExpression regex = ContentSearchUtilities::createSearchRegex(query, caseSensitive, isRegex);
+    RegularExpression regex = ContentSearchUtilities::createSearchRegex(query, caseSensitive, isRegex);
     Vector<std::pair<size_t, String>> matches = getRegularExpressionMatchesByLines(regex, text);
 
     for (const auto& match : matches) {
@@ -178,17 +177,17 @@ static String findMagicComment(const String& content, const String& patternStrin
 {
     ASSERT(!content.isNull());
     const char* error = nullptr;
-    JSC::Yarr::YarrPattern pattern(patternString, JSC::RegExpFlags::FlagMultiline, &error);
+    YarrPattern pattern(patternString, JSC::RegExpFlags::FlagMultiline, &error);
     ASSERT(!error);
     BumpPointerAllocator regexAllocator;
-    auto bytecodePattern = JSC::Yarr::byteCompile(pattern, &regexAllocator);
+    auto bytecodePattern = byteCompile(pattern, &regexAllocator);
     ASSERT(bytecodePattern);
 
     ASSERT(pattern.m_numSubpatterns == 1);
     Vector<int, 4> matches;
     matches.grow(4);
-    unsigned result = JSC::Yarr::interpret(bytecodePattern.get(), content, 0, reinterpret_cast<unsigned*>(matches.data()));
-    if (result == JSC::Yarr::offsetNoMatch)
+    unsigned result = interpret(bytecodePattern.get(), content, 0, reinterpret_cast<unsigned*>(matches.data()));
+    if (result == offsetNoMatch)
         return String();
 
     ASSERT(matches[2] > 0 && matches[3] > 0);

@@ -1,3 +1,47 @@
+2016-08-05  Darin Adler  <darin@apple.com>
+
+        Fix some minor problems in the StringImpl header
+        https://bugs.webkit.org/show_bug.cgi?id=160630
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/text/AtomicString.h: Update since CharacterMatchFunctionPtr is now
+        CodeUnitMatchFunction.
+
+        * wtf/text/StringCommon.h: Added CodeUnitMatchFunction, which replaces
+        CharacterMatchFunctionPtr.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::stripMatchedCharacters): Changed template argument name
+        to CodeUnitPredicate to help make it clear this works on code units, not
+        code points.
+        (WTF::UCharPredicate): Deleted.
+        (WTF::SpaceOrNewlinePredicate): Deleted.
+        (WTF::StringImpl::stripWhiteSpace): Removed unneeded use of predicate class to
+        turn a function into a functor; functions already work fine as functors without
+        a class wrapping them.
+        (WTF::StringImpl::stripLeadingAndTrailingCharacters): Ditto. Also renamed
+        from stripWhiteSpace, since it strips arbitrary characters.
+        (WTF::StringImpl::removeCharacters): Fixed various minor style issues and
+        updated to new type name.
+        (WTF::StringImpl::simplifyMatchedCharactersToSpace): Ditto.
+        (WTF::StringImpl::simplifyWhiteSpace): More of the same.
+        (WTF::StringImpl::find): Ditto.
+
+        * wtf/text/StringImpl.h: Removed unneeded include of uchar.h, since it's
+        included by StringCommon.h. Removed =CharacterMatchFunctionPtr and
+        IsWhiteSpaceFunctionPtr, both replaced by CodeUnitMatchFunction. Fixed
+        a mistake recently introduced in isSpaceOrNewline, which was unnecessarily,
+        inefficiently using ICU for non-ASCII Latin-1 characters.
+
+        * wtf/text/StringView.h: Use CodeUnitMatchFunction instead of CharacterMatchFunction.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::stripLeadingAndTrailingCharacters): Updated function name and type.
+        (WTF::String::simplifyWhiteSpace): Updated type.
+        (WTF::String::removeCharacters): Updated type.
+        * wtf/text/WTFString.h: Ditto.
+
 2017-11-23  Darin Adler  <darin@apple.com>
 
         Fix dictionary leak in lookup, convert FindOptions to OptionSet, tweak code style nearby

@@ -378,12 +378,10 @@ String String::stripWhiteSpace() const
     return m_impl ? m_impl->stripWhiteSpace() : String { };
 }
 
-String String::stripWhiteSpace(IsWhiteSpaceFunctionPtr isWhiteSpace) const
+String String::stripLeadingAndTrailingCharacters(CodeUnitMatchFunction predicate) const
 {
     // FIXME: Should this function, and the many others like it, be inlined?
-    // FIXME: This function needs a new name. It strips leading and trailing
-    // characters that match a predicate; not necessarily "white space".
-    return m_impl ? m_impl->stripWhiteSpace(isWhiteSpace) : String { };
+    return m_impl ? m_impl->stripLeadingAndTrailingCharacters(predicate) : String { };
 }
 
 String String::simplifyWhiteSpace() const
@@ -396,13 +394,13 @@ String String::simplifyWhiteSpace() const
     return m_impl ? m_impl->simplifyWhiteSpace() : String { };
 }
 
-String String::simplifyWhiteSpace(IsWhiteSpaceFunctionPtr isWhiteSpace) const
+String String::simplifyWhiteSpace(CodeUnitMatchFunction isWhiteSpace) const
 {
     // FIXME: Should this function, and the many others like it, be inlined?
     return m_impl ? m_impl->simplifyWhiteSpace(isWhiteSpace) : String { };
 }
 
-String String::removeCharacters(CharacterMatchFunctionPtr findMatch) const
+String String::removeCharacters(CodeUnitMatchFunction findMatch) const
 {
     // FIXME: Should this function, and the many others like it, be inlined?
     return m_impl ? m_impl->removeCharacters(findMatch) : String { };

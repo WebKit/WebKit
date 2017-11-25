@@ -693,8 +693,7 @@ Ref<StringImpl> StringImpl::convertToASCIIUppercase()
     return convertASCIICase<CaseConvertType::Upper>(*this, m_data16, m_length);
 }
 
-template <class UCharPredicate>
-inline Ref<StringImpl> StringImpl::stripMatchedCharacters(UCharPredicate predicate)
+template<typename CodeUnitPredicate> inline Ref<StringImpl> StringImpl::stripMatchedCharacters(CodeUnitPredicate predicate)
 {
     if (!m_length)
         return *this;
@@ -721,70 +720,47 @@ inline Ref<StringImpl> StringImpl::stripMatchedCharacters(UCharPredicate predica
     return create(m_data16 + start, end + 1 - start);
 }
 
-class UCharPredicate {
-public:
-    inline UCharPredicate(CharacterMatchFunctionPtr function): m_function(function) { }
-
-    inline bool operator()(UChar character) const
-    {
-        return m_function(character);
-    }
-
-private:
-    const CharacterMatchFunctionPtr m_function;
-};
-
-class SpaceOrNewlinePredicate {
-public:
-    inline bool operator()(UChar character) const
-    {
-        return isSpaceOrNewline(character);
-    }
-};
-
 Ref<StringImpl> StringImpl::stripWhiteSpace()
 {
-    return stripMatchedCharacters(SpaceOrNewlinePredicate());
+    return stripMatchedCharacters(isSpaceOrNewline);
 }
 
-Ref<StringImpl> StringImpl::stripWhiteSpace(IsWhiteSpaceFunctionPtr isWhiteSpace)
+Ref<StringImpl> StringImpl::stripLeadingAndTrailingCharacters(CodeUnitMatchFunction predicate)
 {
-    return stripMatchedCharacters(UCharPredicate(isWhiteSpace));
+    return stripMatchedCharacters(predicate);
 }
 
-template<typename CharacterType> ALWAYS_INLINE Ref<StringImpl> StringImpl::removeCharacters(const CharacterType* characters, CharacterMatchFunctionPtr findMatch)
+template<typename CharacterType> ALWAYS_INLINE Ref<StringImpl> StringImpl::removeCharacters(const CharacterType* characters, CodeUnitMatchFunction findMatch)
 {
     auto* from = characters;
-    auto* fromend = from + m_length;
-    
+    auto* fromEnd = from + m_length;
+
     // Assume the common case will not remove any characters
-    while (from != fromend && !findMatch(*from))
+    while (from != fromEnd && !findMatch(*from))
         ++from;
-    if (from == fromend)
+    if (from == fromEnd)
         return *this;
-    
+
     StringBuffer<CharacterType> data(m_length);
     auto* to = data.characters();
     unsigned outc = from - characters;
-    
+
     if (outc)
         copyCharacters(to, characters, outc);
 
-    while (true) {
-        while (from != fromend && findMatch(*from))
+    do {
+        while (from != fromEnd && findMatch(*from))
             ++from;
-        while (from != fromend && !findMatch(*from))
+        while (from != fromEnd && !findMatch(*from))
             to[outc++] = *from++;
-        if (from == fromend)
-            break;
-    }
+    } while (from != fromEnd);
 
     data.shrink(outc);
 
     return adopt(WTFMove(data));
 }
 
-Ref<StringImpl> StringImpl::removeCharacters(CharacterMatchFunctionPtr findMatch)
+Ref<StringImpl> StringImpl::removeCharacters(CodeUnitMatchFunction findMatch)
 {
     if (is8Bit())
         return removeCharacters(characters8(), findMatch);
@@ -796,49 +772,49 @@ template<typename CharacterType, class UCharPredicate> inline Ref<StringImpl> St
     StringBuffer<CharacterType> data(m_length);
 
     auto* from = characters<CharacterType>();
-    auto* fromend = from + m_length;
-    int outc = 0;
+    auto* fromEnd = from + m_length;
+    unsigned outc = 0;
     bool changedToSpace = false;
     
     auto* to = data.characters();
     
     while (true) {
-        while (from != fromend && predicate(*from)) {
+        while (from != fromEnd && predicate(*from)) {
             if (*from != ' ')
                 changedToSpace = true;
             ++from;
         }
-        while (from != fromend && !predicate(*from))
+        while (from != fromEnd && !predicate(*from))
             to[outc++] = *from++;
-        if (from != fromend)
+        if (from != fromEnd)
             to[outc++] = ' ';
         else
             break;
     }
-    
-    if (outc > 0 && to[outc - 1] == ' ')
+
+    if (outc && to[outc - 1] == ' ')
         --outc;
-    
-    if (static_cast<unsigned>(outc) == m_length && !changedToSpace)
+
+    if (outc == m_length && !changedToSpace)
         return *this;
-    
+
     data.shrink(outc);
-    
+
     return adopt(WTFMove(data));
 }
 
 Ref<StringImpl> StringImpl::simplifyWhiteSpace()
 {
     if (is8Bit())
-        return StringImpl::simplifyMatchedCharactersToSpace<LChar>(SpaceOrNewlinePredicate());
-    return StringImpl::simplifyMatchedCharactersToSpace<UChar>(SpaceOrNewlinePredicate());
+        return StringImpl::simplifyMatchedCharactersToSpace<LChar>(isSpaceOrNewline);
+    return StringImpl::simplifyMatchedCharactersToSpace<UChar>(isSpaceOrNewline);
 }
 
-Ref<StringImpl> StringImpl::simplifyWhiteSpace(IsWhiteSpaceFunctionPtr isWhiteSpace)
+Ref<StringImpl> StringImpl::simplifyWhiteSpace(CodeUnitMatchFunction isWhiteSpace)
 {
     if (is8Bit())
-        return StringImpl::simplifyMatchedCharactersToSpace<LChar>(UCharPredicate(isWhiteSpace));
-    return StringImpl::simplifyMatchedCharactersToSpace<UChar>(UCharPredicate(isWhiteSpace));
+        return StringImpl::simplifyMatchedCharactersToSpace<LChar>(isWhiteSpace);
+    return StringImpl::simplifyMatchedCharactersToSpace<UChar>(isWhiteSpace);
 }
 
 int StringImpl::toIntStrict(bool* ok, int base)
@@ -925,7 +901,7 @@ float StringImpl::toFloat(bool* ok)
     return charactersToFloat(characters16(), m_length, ok);
 }
 
-size_t StringImpl::find(CharacterMatchFunctionPtr matchFunction, unsigned start)
+size_t StringImpl::find(CodeUnitMatchFunction matchFunction, unsigned start)
 {
     if (is8Bit())
         return WTF::find(characters8(), m_length, matchFunction, start);

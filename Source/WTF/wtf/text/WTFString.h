@@ -189,7 +189,7 @@ public:
     size_t findIgnoringASCIICase(const String& string) const { return m_impl ? m_impl->findIgnoringASCIICase(string.impl()) : notFound; }
     size_t findIgnoringASCIICase(const String& string, unsigned startOffset) const { return m_impl ? m_impl->findIgnoringASCIICase(string.impl(), startOffset) : notFound; }
 
-    size_t find(CharacterMatchFunctionPtr matchFunction, unsigned start = 0) const { return m_impl ? m_impl->find(matchFunction, start) : notFound; }
+    size_t find(CodeUnitMatchFunction matchFunction, unsigned start = 0) const { return m_impl ? m_impl->find(matchFunction, start) : notFound; }
     size_t find(const LChar* string, unsigned start = 0) const { return m_impl ? m_impl->find(string, start) : notFound; }
 
     // Find the last instance of a single character or string.
@@ -250,11 +250,11 @@ public:
     WTF_EXPORT_STRING_API String convertToUppercaseWithLocale(const AtomicString& localeIdentifier) const;
 
     WTF_EXPORT_STRING_API String stripWhiteSpace() const;
-    WTF_EXPORT_STRING_API String stripWhiteSpace(IsWhiteSpaceFunctionPtr) const;
     WTF_EXPORT_STRING_API String simplifyWhiteSpace() const;
-    WTF_EXPORT_STRING_API String simplifyWhiteSpace(IsWhiteSpaceFunctionPtr) const;
+    WTF_EXPORT_STRING_API String simplifyWhiteSpace(CodeUnitMatchFunction) const;
 
-    WTF_EXPORT_STRING_API String removeCharacters(CharacterMatchFunctionPtr) const;
+    WTF_EXPORT_STRING_API String stripLeadingAndTrailingCharacters(CodeUnitMatchFunction) const;
+    WTF_EXPORT_STRING_API String removeCharacters(CodeUnitMatchFunction) const;
 
     // Returns the string with case folded for case insensitive comparison.
     // Use convertToASCIILowercase instead if ASCII case insensitive comparison is desired.

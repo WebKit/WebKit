@@ -121,7 +121,7 @@ public:
     size_t find(const String& string, unsigned start = 0) const { return m_string.find(string, start); }
     size_t findIgnoringASCIICase(const String& string) const { return m_string.findIgnoringASCIICase(string); }
     size_t findIgnoringASCIICase(const String& string, unsigned startOffset) const { return m_string.findIgnoringASCIICase(string, startOffset); }
-    size_t find(CharacterMatchFunctionPtr matchFunction, unsigned start = 0) const { return m_string.find(matchFunction, start); }
+    size_t find(CodeUnitMatchFunction matchFunction, unsigned start = 0) const { return m_string.find(matchFunction, start); }
 
     bool startsWith(const String& string) const { return m_string.startsWith(string); }
     bool startsWithIgnoringASCIICase(const String& string) const { return m_string.startsWithIgnoringASCIICase(string); }
