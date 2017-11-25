@@ -1,3 +1,8 @@
+2017-11-24  Darin Adler  <darin@apple.com>
+
+        * TestWebKitAPI/Tests/WTF/OptionSet.cpp:
+        (TestWebKitAPI::TEST): Added a test for OptionSet operator|.
+
 2017-11-24  Mark Lam  <mark.lam@apple.com>
 
         Move unsafe jsc shell test functions to the $vm object.
