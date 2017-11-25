@@ -33,6 +33,7 @@ class HTMLPlugInImageElement;
 class RenderImageResource;
 
 class RenderSnapshottedPlugIn final : public RenderEmbeddedObject {
+    WTF_MAKE_ISO_ALLOCATED(RenderSnapshottedPlugIn);
 public:
     RenderSnapshottedPlugIn(HTMLPlugInImageElement&, RenderStyle&&);
     virtual ~RenderSnapshottedPlugIn();

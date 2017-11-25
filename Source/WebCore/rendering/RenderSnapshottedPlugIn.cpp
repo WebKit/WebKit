@@ -44,9 +44,12 @@
 #include "RenderImageResource.h"
 #include "RenderIterator.h"
 #include "RenderView.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSnapshottedPlugIn);
 
 RenderSnapshottedPlugIn::RenderSnapshottedPlugIn(HTMLPlugInImageElement& element, RenderStyle&& style)
     : RenderEmbeddedObject(element, WTFMove(style))
