@@ -1768,20 +1768,8 @@ bool WebFrameLoaderClient::allowScript(bool enabledPerSettings)
     if (!enabledPerSettings)
         return false;
 
-    Frame* coreFrame = m_frame->coreFrame();
-
-    if (coreFrame->document()->isPluginDocument()) {
-        PluginDocument* pluginDocument = static_cast<PluginDocument*>(coreFrame->document());
-
-        if (pluginDocument->pluginWidget() && pluginDocument->pluginWidget()->isPluginView()) {
-            PluginView* pluginView = static_cast<PluginView*>(pluginDocument->pluginWidget());
-
-            if (!pluginView->shouldAllowScripting())
-                return false;
-        }
-    }
-
-    return true;
+    auto* pluginView = WebPage::pluginViewForFrame(m_frame->coreFrame());
+    return !pluginView || !pluginView->shouldAllowScripting();
 }
 
 bool WebFrameLoaderClient::shouldForceUniversalAccessFromLocalURL(const WebCore::URL& url)

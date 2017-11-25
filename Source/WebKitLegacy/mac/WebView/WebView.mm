@@ -566,12 +566,20 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
 
 FindOptions coreOptions(WebFindOptions options)
 {
-    return (options & WebFindOptionsCaseInsensitive ? CaseInsensitive : 0)
-        | (options & WebFindOptionsAtWordStarts ? AtWordStarts : 0)
-        | (options & WebFindOptionsTreatMedialCapitalAsWordStart ? TreatMedialCapitalAsWordStart : 0)
-        | (options & WebFindOptionsBackwards ? Backwards : 0)
-        | (options & WebFindOptionsWrapAround ? WrapAround : 0)
-        | (options & WebFindOptionsStartInSelection ? StartInSelection : 0);
+    FindOptions findOptions;
+    if (options & WebFindOptionsCaseInsensitive)
+        findOptions |= CaseInsensitive;
+    if (options & WebFindOptionsAtWordStarts)
+        findOptions |= AtWordStarts;
+    if (options & WebFindOptionsTreatMedialCapitalAsWordStart)
+        findOptions |= TreatMedialCapitalAsWordStart;
+    if (options & WebFindOptionsBackwards)
+        findOptions |= Backwards;
+    if (options & WebFindOptionsWrapAround)
+        findOptions |= WrapAround;
+    if (options & WebFindOptionsStartInSelection)
+        findOptions |= StartInSelection;
+    return findOptions;
 }
 
 LayoutMilestones coreLayoutMilestones(WebLayoutMilestones milestones)

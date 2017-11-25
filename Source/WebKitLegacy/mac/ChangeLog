@@ -1,3 +1,15 @@
+2017-11-23  Darin Adler  <darin@apple.com>
+
+        Fix dictionary leak in lookup, convert FindOptions to OptionSet, tweak code style nearby
+        https://bugs.webkit.org/show_bug.cgi?id=179981
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _animationControllerForText]): Use RetainPtr so we don't leak.
+        * WebView/WebView.mm:
+        (coreOptions): Use |= instead of | to build up FindOptions.
+
 2017-11-23  Sam Weinig  <sam@webkit.org>
 
         Remove unneeded ScriptController::processingUserGesture() forwarding functions

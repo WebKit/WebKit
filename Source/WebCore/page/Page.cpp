@@ -586,17 +586,17 @@ bool Page::findString(const String& target, FindOptions options, DidWrap* didWra
     if (target.isEmpty())
         return false;
 
-    CanWrap canWrap = options & WrapAround ? CanWrap::Yes : CanWrap::No;
+    CanWrap canWrap = options.contains(WrapAround) ? CanWrap::Yes : CanWrap::No;
     Frame* frame = &focusController().focusedOrMainFrame();
     Frame* startFrame = frame;
     do {
-        if (frame->editor().findString(target, (options & ~WrapAround) | StartInSelection)) {
+        if (frame->editor().findString(target, (options - WrapAround) | StartInSelection)) {
             if (frame != startFrame)
                 startFrame->selection().clear();
             focusController().setFocusedFrame(frame);
             return true;
         }
-        frame = incrementFrame(frame, !(options & Backwards), canWrap, didWrap);
+        frame = incrementFrame(frame, !options.contains(Backwards), canWrap, didWrap);
     } while (frame && frame != startFrame);
 
     // Search contents of startFrame, on the other side of the selection that we did earlier.
@@ -631,7 +631,7 @@ void Page::findStringMatchingRanges(const String& target, FindOptions options, i
     if (frameWithSelection) {
         indexForSelection = NoMatchAfterUserSelection;
         RefPtr<Range> selectedRange = frameWithSelection->selection().selection().firstRange();
-        if (options & Backwards) {
+        if (options.contains(Backwards)) {
             for (size_t i = matchRanges.size(); i > 0; --i) {
                 auto result = selectedRange->compareBoundaryPoints(Range::END_TO_START, *matchRanges[i - 1]);
                 if (!result.hasException() && result.releaseReturnValue() > 0) {
@@ -649,7 +649,7 @@ void Page::findStringMatchingRanges(const String& target, FindOptions options, i
             }
         }
     } else {
-        if (options & Backwards)
+        if (options.contains(Backwards))
             indexForSelection = matchRanges.size() - 1;
         else
             indexForSelection = 0;
@@ -664,14 +664,14 @@ RefPtr<Range> Page::rangeOfString(const String& target, Range* referenceRange, F
     if (referenceRange && referenceRange->ownerDocument().page() != this)
         return nullptr;
 
-    CanWrap canWrap = options & WrapAround ? CanWrap::Yes : CanWrap::No;
+    CanWrap canWrap = options.contains(WrapAround) ? CanWrap::Yes : CanWrap::No;
     Frame* frame = referenceRange ? referenceRange->ownerDocument().frame() : &mainFrame();
     Frame* startFrame = frame;
     do {
-        if (RefPtr<Range> resultRange = frame->editor().rangeOfString(target, frame == startFrame ? referenceRange : 0, options & ~WrapAround))
+        if (RefPtr<Range> resultRange = frame->editor().rangeOfString(target, frame == startFrame ? referenceRange : 0, options - WrapAround))
             return resultRange;
 
-        frame = incrementFrame(frame, !(options & Backwards), canWrap);
+        frame = incrementFrame(frame, !options.contains(Backwards), canWrap);
     } while (frame && frame != startFrame);
 
     // Search contents of startFrame, on the other side of the reference range that we did earlier.

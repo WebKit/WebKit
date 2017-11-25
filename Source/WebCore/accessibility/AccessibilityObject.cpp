@@ -748,7 +748,7 @@ RefPtr<Range> AccessibilityObject::rangeOfStringClosestToRangeInDirection(Range*
         return nullptr;
     
     bool isBackwardSearch = searchDirection == AccessibilitySearchDirection::Previous;
-    FindOptions findOptions = AtWordStarts | AtWordEnds | CaseInsensitive | StartInSelection;
+    FindOptions findOptions { { AtWordStarts, AtWordEnds, CaseInsensitive, StartInSelection } };
     if (isBackwardSearch)
         findOptions |= Backwards;
     

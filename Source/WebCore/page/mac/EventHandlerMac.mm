@@ -1090,8 +1090,7 @@ VisibleSelection EventHandler::selectClosestWordFromHitTestResultBasedOnLookup(c
     if (!m_frame.editor().behavior().shouldSelectBasedOnDictionaryLookup())
         return VisibleSelection();
 
-    NSDictionary *options = nil;
-    if (RefPtr<Range> range = DictionaryLookup::rangeAtHitTestResult(result, &options))
+    if (auto range = DictionaryLookup::rangeAtHitTestResult(result, nullptr))
         return VisibleSelection(*range);
 
     return VisibleSelection();

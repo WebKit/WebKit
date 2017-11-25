@@ -518,21 +518,13 @@ JSGlobalContextRef WebFrame::jsContextForWorld(InjectedBundleScriptWorld* world)
 
 bool WebFrame::handlesPageScaleGesture() const
 {
-    if (!m_coreFrame->document()->isPluginDocument())
-        return 0;
-
-    PluginDocument* pluginDocument = static_cast<PluginDocument*>(m_coreFrame->document());
-    PluginView* pluginView = static_cast<PluginView*>(pluginDocument->pluginWidget());
+    auto* pluginView = WebPage::pluginViewForFrame(m_coreFrame);
     return pluginView && pluginView->handlesPageScaleFactor();
 }
 
 bool WebFrame::requiresUnifiedScaleFactor() const
 {
-    if (!m_coreFrame->document()->isPluginDocument())
-        return 0;
-
-    PluginDocument* pluginDocument = static_cast<PluginDocument*>(m_coreFrame->document());
-    PluginView* pluginView = static_cast<PluginView*>(pluginDocument->pluginWidget());
+    auto* pluginView = WebPage::pluginViewForFrame(m_coreFrame);
     return pluginView && pluginView->requiresUnifiedScaleFactor();
 }
 

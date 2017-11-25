@@ -1725,7 +1725,7 @@ Ref<Range> Internals::subrange(Range& range, int rangeLocation, int rangeLength)
 
 RefPtr<Range> Internals::rangeOfStringNearLocation(const Range& searchRange, const String& text, unsigned targetOffset)
 {
-    return findClosestPlainText(searchRange, text, 0, targetOffset);
+    return findClosestPlainText(searchRange, text, { }, targetOffset);
 }
 
 ExceptionOr<RefPtr<Range>> Internals::rangeForDictionaryLookupAtLocation(int x, int y)
@@ -1738,8 +1738,7 @@ ExceptionOr<RefPtr<Range>> Internals::rangeForDictionaryLookupAtLocation(int x, 
     document->updateLayoutIgnorePendingStylesheets();
 
     HitTestResult result = document->frame()->mainFrame().eventHandler().hitTestResultAtPoint(IntPoint(x, y));
-    NSDictionary *options = nullptr;
-    return DictionaryLookup::rangeAtHitTestResult(result, &options);
+    return DictionaryLookup::rangeAtHitTestResult(result, nullptr);
 #else
     UNUSED_PARAM(x);
     UNUSED_PARAM(y);
@@ -2119,7 +2118,7 @@ static ExceptionOr<FindOptions> parseFindOptions(const Vector<String>& optionLis
         {"AtWordEnds", AtWordEnds},
         {"DoNotTraverseFlatTree", DoNotTraverseFlatTree},
     };
-    FindOptions result = 0;
+    FindOptions result;
     for (auto& option : optionList) {
         bool found = false;
         for (auto& flag : flagList) {
@@ -2132,7 +2131,7 @@ static ExceptionOr<FindOptions> parseFindOptions(const Vector<String>& optionLis
         if (!found)
             return Exception { SyntaxError };
     }
-    return result;
+    return WTFMove(result);
 }
 
 ExceptionOr<RefPtr<Range>> Internals::rangeOfString(const String& text, RefPtr<Range>&& referenceRange, const Vector<String>& findOptions)

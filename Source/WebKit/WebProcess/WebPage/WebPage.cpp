@@ -801,12 +801,8 @@ RefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginE
     if (isBlockedPlugin || !pluginProcessToken) {
 #if ENABLE(PDFKIT_PLUGIN)
         String path = parameters.url.path();
-        if (shouldUsePDFPlugin() && (MIMETypeRegistry::isPDFOrPostScriptMIMEType(parameters.mimeType) || (parameters.mimeType.isEmpty() && (path.endsWithIgnoringASCIICase(".pdf") || path.endsWithIgnoringASCIICase(".ps"))))) {
-            auto pdfPlugin = PDFPlugin::create(frame);
-            return WTFMove(pdfPlugin);
-        }
-#else
-        UNUSED_PARAM(frame);
+        if (shouldUsePDFPlugin() && (MIMETypeRegistry::isPDFOrPostScriptMIMEType(parameters.mimeType) || (parameters.mimeType.isEmpty() && (path.endsWithIgnoringASCIICase(".pdf") || path.endsWithIgnoringASCIICase(".ps")))))
+            return PDFPlugin::create(*frame);
 #endif
     }
 
@@ -1004,26 +1000,23 @@ Ref<API::Array> WebPage::trackedRepaintRects()
 
 PluginView* WebPage::focusedPluginViewForFrame(Frame& frame)
 {
-    if (!frame.document()->isPluginDocument())
-        return 0;
+    if (!is<PluginDocument>(frame.document()))
+        return nullptr;
 
-    PluginDocument* pluginDocument = static_cast<PluginDocument*>(frame.document());
+    auto& pluginDocument = downcast<PluginDocument>(*frame.document());
+    if (pluginDocument.focusedElement() != pluginDocument.pluginElement())
+        return nullptr;
 
-    if (pluginDocument->focusedElement() != pluginDocument->pluginElement())
-        return 0;
-
-    PluginView* pluginView = static_cast<PluginView*>(pluginDocument->pluginWidget());
-    return pluginView;
+    return pluginViewForFrame(&frame);
 }
 
 PluginView* WebPage::pluginViewForFrame(Frame* frame)
 {
-    if (!frame->document()->isPluginDocument())
-        return 0;
+    if (!frame || !is<PluginDocument>(frame->document()))
+        return nullptr;
 
-    PluginDocument* pluginDocument = static_cast<PluginDocument*>(frame->document());
-    PluginView* pluginView = static_cast<PluginView*>(pluginDocument->pluginWidget());
-    return pluginView;
+    auto& document = downcast<PluginDocument>(*frame->document());
+    return static_cast<PluginView*>(document.pluginWidget());
 }
 
 void WebPage::executeEditingCommand(const String& commandName, const String& argument)
@@ -3482,7 +3475,7 @@ void WebPage::setActiveOpenPanelResultListener(Ref<WebOpenPanelResultListener>&&
 
 bool WebPage::findStringFromInjectedBundle(const String& target, FindOptions options)
 {
-    return m_page->findString(target, options);
+    return m_page->findString(target, core(options));
 }
 
 void WebPage::findString(const String& string, uint32_t options, uint32_t maxMatchCount)
@@ -4063,19 +4056,17 @@ void WebPage::stopSpeaking()
 #endif
 
 #if PLATFORM(MAC)
+
 RetainPtr<PDFDocument> WebPage::pdfDocumentForPrintingFrame(Frame* coreFrame)
 {
-    Document* document = coreFrame->document();
-    if (!is<PluginDocument>(document))
-        return nullptr;
-
-    PluginView* pluginView = static_cast<PluginView*>(downcast<PluginDocument>(*document).pluginWidget());
+    PluginView* pluginView = pluginViewForFrame(coreFrame);
     if (!pluginView)
         return nullptr;
 
     return pluginView->pdfDocumentForPrinting();
 }
-#endif // PLATFORM(MAC)
+
+#endif
 
 void WebPage::beginPrinting(uint64_t frameID, const PrintInfo& printInfo)
 {
@@ -4090,7 +4081,7 @@ void WebPage::beginPrinting(uint64_t frameID, const PrintInfo& printInfo)
 #if PLATFORM(MAC)
     if (pdfDocumentForPrintingFrame(coreFrame))
         return;
-#endif // PLATFORM(MAC)
+#endif
 
     if (!m_printContext)
         m_printContext = std::make_unique<PrintContext>(coreFrame);

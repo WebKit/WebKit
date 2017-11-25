@@ -403,12 +403,12 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint&)
     notImplemented();
 }
 
-void WebPage::performDictionaryLookupForSelection(Frame*, const VisibleSelection&, TextIndicatorPresentationTransition)
+void WebPage::performDictionaryLookupForSelection(Frame&, const VisibleSelection&, TextIndicatorPresentationTransition)
 {
     notImplemented();
 }
 
-void WebPage::performDictionaryLookupForRange(Frame*, Range&, NSDictionary *, TextIndicatorPresentationTransition)
+void WebPage::performDictionaryLookupForRange(Frame&, Range&, NSDictionary *, TextIndicatorPresentationTransition)
 {
     notImplemented();
 }
@@ -444,12 +444,12 @@ void WebPage::getSelectionContext(CallbackID callbackID)
 NSObject *WebPage::accessibilityObjectForMainFramePlugin()
 {
     if (!m_page)
-        return 0;
+        return nil;
     
-    if (PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame()))
+    if (auto* pluginView = pluginViewForFrame(&m_page->mainFrame()))
         return pluginView->accessibilityObject();
     
-    return 0;
+    return nil;
 }
     
 void WebPage::registerUIProcessAccessibilityTokens(const IPC::DataReference& elementToken, const IPC::DataReference&)
@@ -1423,7 +1423,7 @@ static RefPtr<Range> rangeNearPositionMatchesText(const VisiblePosition& positio
 {
     auto range = Range::create(selectionRange->ownerDocument(), selectionRange->startPosition(), position.deepEquivalent().parentAnchoredEquivalent());
     unsigned targetOffset = TextIterator::rangeLength(range.ptr(), true);
-    return findClosestPlainText(*selectionRange.get(), matchText, 0, targetOffset);
+    return findClosestPlainText(*selectionRange.get(), matchText, { }, targetOffset);
 }
 
 void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& text, CallbackID callbackID)

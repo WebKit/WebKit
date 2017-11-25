@@ -1,5 +1,15 @@
 2017-11-23  Darin Adler  <darin@apple.com>
 
+        Fix dictionary leak in lookup, convert FindOptions to OptionSet, tweak code style nearby
+        https://bugs.webkit.org/show_bug.cgi?id=179981
+
+        Reviewed by Sam Weinig.
+
+        * wtf/OptionSet.h: Added some operators so it's easier to use | and - with individual
+        options from the set.
+
+2017-11-23  Darin Adler  <darin@apple.com>
+
         Reduce WTF::String operations that do unnecessary Unicode operations instead of ASCII
         https://bugs.webkit.org/show_bug.cgi?id=179907
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FindController_h
-#define FindController_h
+#pragma once
 
 #include "ShareableBitmap.h"
 #include "WebFindOptions.h"
+#include <WebCore/FindOptions.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageOverlay.h>
 #include <wtf/Forward.h>
@@ -41,7 +41,6 @@
 namespace WebCore {
 class Frame;
 class Range;
-
 enum class DidWrap : bool;
 }
 
@@ -91,15 +90,15 @@ private:
     void didHideFindIndicator();
 
     WebPage* m_webPage;
-    WebCore::PageOverlay* m_findPageOverlay;
+    WebCore::PageOverlay* m_findPageOverlay { nullptr };
 
     // Whether the UI process is showing the find indicator. Note that this can be true even if
     // the find indicator isn't showing, but it will never be false when it is showing.
-    bool m_isShowingFindIndicator;
+    bool m_isShowingFindIndicator { false };
     WebCore::IntRect m_findIndicatorRect;
     Vector<RefPtr<WebCore::Range>> m_findMatches;
     // Index value is -1 if not found or if number of matches exceeds provided maximum.
-    int m_foundStringMatchIndex;
+    int m_foundStringMatchIndex { -1 };
 
 #if PLATFORM(IOS)
     RefPtr<WebCore::PageOverlay> m_findIndicatorOverlay;
@@ -107,6 +106,6 @@ private:
 #endif
 };
 
-} // namespace WebKit
+WebCore::FindOptions core(FindOptions);
 
-#endif // FindController_h
+} // namespace WebKit

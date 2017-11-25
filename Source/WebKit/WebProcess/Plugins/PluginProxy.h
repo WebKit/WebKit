@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginProxy_h
-#define PluginProxy_h
+#pragma once
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
@@ -32,7 +31,6 @@
 #include "Plugin.h"
 #include "PluginProcess.h"
 #include <WebCore/AffineTransform.h>
-#include <WebCore/FindOptions.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/SecurityOrigin.h>
 #include <memory>
@@ -238,4 +236,3 @@ SPECIALIZE_TYPE_TRAITS_PLUGIN(PluginProxy, PluginProxyType)
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
-#endif // PluginProxy_h

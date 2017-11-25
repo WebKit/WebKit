@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -121,20 +121,33 @@ public:
     friend OptionSet& operator|=(OptionSet& lhs, OptionSet rhs)
     {
         lhs.m_storage |= rhs.m_storage;
-
         return lhs;
     }
 
     friend OptionSet& operator-=(OptionSet& lhs, OptionSet rhs)
     {
         lhs.m_storage &= ~rhs.m_storage;
-
         return lhs;
+    }
+
+    constexpr friend OptionSet operator|(OptionSet lhs, OptionSet rhs)
+    {
+        return fromRaw(lhs.m_storage | rhs.m_storage);
+    }
+
+    constexpr friend OptionSet operator|(OptionSet lhs, T rhs)
+    {
+        return lhs | OptionSet { rhs };
     }
 
     constexpr friend OptionSet operator-(OptionSet lhs, OptionSet rhs)
     {
-        return OptionSet::fromRaw(lhs.m_storage & ~rhs.m_storage);
+        return fromRaw(lhs.m_storage & ~rhs.m_storage);
+    }
+
+    constexpr friend OptionSet operator-(OptionSet lhs, T rhs)
+    {
+        return lhs - OptionSet { rhs };
     }
 
 private:

@@ -1,3 +1,80 @@
+2017-11-23  Darin Adler  <darin@apple.com>
+
+        Fix dictionary leak in lookup, convert FindOptions to OptionSet, tweak code style nearby
+        https://bugs.webkit.org/show_bug.cgi?id=179981
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h: Use some references instead of pointers. Made more
+        things final and private. Changed functions with multiple return values to use tuples
+        instead of out arguments for clarity, especially because some were using pointers and it
+        was ambiguous whether the pointers could be nullptr. Tweaked formatting. Moved initialization
+        of data members into the class definition.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::create): Take a reference.
+        (WebKit::PDFPlugin::PDFPlugin): Ditto. Also moved some initialization to the class definition.
+        (WebKit::PDFPlugin::countFindMatches): Added comment about ignored maxMatchCount argument.
+        (WebKit::PDFPlugin::findString): Use contains instead of & to check bits in options.
+        Simplified slightly confusing match count code that was doing some unnecessary comparisons
+        with the maximum match count. Use auto a bit.
+        (WebKit::coreCursor): Renamed from pdfLayerControllerCursorTypeToCursor since this is C++
+        and overloading works based on the argument type.
+        (WebKit::PDFPlugin::notifyCursorChanged): Updated for name change.
+        (WebKit::PDFPlugin::lookupTextAtLocation const): Return a tuple instead of using two out
+        arguments and use a RetainPtr so we don't leak the options dictionary.
+
+        * WebProcess/Plugins/PluginProxy.h: Removed unneeded include of FindOptions.h.
+
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+        (WebKit::WebContextMenuClient::lookUpInDictionary): Pass a reference.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::core): Use |= instead of | to build up a FindOptions.
+        (WebKit::FindController::FindController): Initialize data members in the class definition.
+        (WebKit::pluginViewForFrame): Deleted. Callers now use WebPage::pluginViewForFrame.
+        (WebKit::FindController::updateFindUIAfterPageScroll): Added a FIXME about some peculiar code.
+        (WebKit::FindController::findString): Use |= rather than | to add in an option.
+        (WebKit::FindController::hideFindUI): Use { } rather than 0 for no options.
+        * WebProcess/WebPage/FindController.h: Moved initialization to the header. Exported the core
+        function that converts WebKit::FindOptions to WebCore::FindOptions.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::handlesPageScaleGesture const): Use WebPage::pluginViewForFrame.
+        (WebKit::WebFrame::requiresUnifiedScaleFactor const): Use WebPage::pluginViewForFrame.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin): Removed unneeded local variable and UNUSED_PARAM.
+        (WebKit::WebPage::focusedPluginViewForFrame): Use pluginViewForFrame.
+        (WebKit::WebPage::pluginViewForFrame): Added a null check since this takes a pointer.
+        Use is/downcast insteadof more ad hoc coding style.
+        (WebKit::WebPage::findStringFromInjectedBundle): Call core to convert WebKit::FindOptions
+        to WebCore::FindOptions. Before, this was accidentally relying on the bits from the two
+        enumrations matching! The stricter type checking of OptionSet helps us catch mistakes
+        like this.
+
+        * WebProcess/WebPage/WebPage.h: Updated for the above. Also flattened out nested #if
+        statements, made forward declarations unconditional, and re-sorted them. Changed the
+        Mac-specific lookupTextAtLocation to return a tuple (see below).
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::performDictionaryLookupForSelection): Take a reference instead of a pointer.
+        (WebKit::WebPage::performDictionaryLookupForRange): Ditto.
+        (WebKit::rangeNearPositionMatchesText): Use { } rather than 0 for no options.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation): Use RetainPtr<NSDictionary> to fix
+        code that used to leak.
+        (WebKit::WebPage::performDictionaryLookupForSelection): Ditto.
+        (WebKit::WebPage::performDictionaryLookupOfCurrentSelection): Use a reference.
+        (WebKit::WebPage::dictionaryPopupInfoForRange): Updated for changed argument types.
+        (WebKit::WebPage::dictionaryPopupInfoForSelectionInPDFPlugin): Ditto.
+        (WebKit::WebPage::performDictionaryLookupForRange): Ditto.
+        (WebKit::WebPage::performImmediateActionHitTestAtLocation): Updated to handle the
+        tuple result from the lookupTextAtLocation functions.
+        (WebKit::WebPage::lookupTextAtLocation): Changed to return a tuple and use RetainPtr
+        for the NSDictionary to help fix the leak.
+
 2017-11-24  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] CoordinatedGraphicsLayer::updateContentBuffers() should always assume a non-null CoordinatedBuffer

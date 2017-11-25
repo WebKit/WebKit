@@ -564,12 +564,12 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
     if (!frame)
         return nil;
 
-    NSDictionary *options = nil;
-    RefPtr<Range> dictionaryRange = DictionaryLookup::rangeAtHitTestResult(_hitTestResult, &options);
+    RetainPtr<NSDictionary> options;
+    auto dictionaryRange = DictionaryLookup::rangeAtHitTestResult(_hitTestResult, &options);
     if (!dictionaryRange)
         return nil;
 
-    DictionaryPopupInfo dictionaryPopupInfo = [WebImmediateActionController _dictionaryPopupInfoForRange:*dictionaryRange inFrame:frame withLookupOptions:options indicatorOptions:TextIndicatorOptionDefault transition: TextIndicatorPresentationTransition::FadeIn];
+    auto dictionaryPopupInfo = [WebImmediateActionController _dictionaryPopupInfoForRange:*dictionaryRange inFrame:frame withLookupOptions:options.get() indicatorOptions:TextIndicatorOptionDefault transition: TextIndicatorPresentationTransition::FadeIn];
     if (!dictionaryPopupInfo.attributedString)
         return nil;
 

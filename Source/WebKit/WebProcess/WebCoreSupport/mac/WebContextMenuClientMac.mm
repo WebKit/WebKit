@@ -45,7 +45,7 @@ namespace WebKit {
 
 void WebContextMenuClient::lookUpInDictionary(Frame* frame)
 {
-    m_page->performDictionaryLookupForSelection(frame, frame->selection().selection(), TextIndicatorPresentationTransition::BounceAndCrossfade);
+    m_page->performDictionaryLookupForSelection(*frame, frame->selection().selection(), TextIndicatorPresentationTransition::BounceAndCrossfade);
 }
 
 bool WebContextMenuClient::isSpeaking()
@@ -67,7 +67,7 @@ void WebContextMenuClient::searchWithGoogle(const Frame* frame)
 {
     String searchString = frame->editor().selectedText();
     searchString.stripWhiteSpace();
-    
+
     m_page->send(Messages::WebPageProxy::SearchTheWeb(searchString));
 }
 
@@ -78,7 +78,7 @@ void WebContextMenuClient::searchWithSpotlight()
     // If not, can we find a place in WebCore to put this?
 
     Frame& mainFrame = m_page->corePage()->mainFrame();
-    
+
     Frame* selectionFrame = &mainFrame;
     for (; selectionFrame; selectionFrame = selectionFrame->tree().traverseNext()) {
         if (selectionFrame->selection().isRange())
@@ -88,7 +88,7 @@ void WebContextMenuClient::searchWithSpotlight()
         selectionFrame = &mainFrame;
 
     String selectedString = selectionFrame->displayStringModifiedByEncoding(selectionFrame->editor().selectedText());
-    
+
     if (selectedString.isEmpty())
         return;
 

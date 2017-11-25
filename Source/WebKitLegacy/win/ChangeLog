@@ -1,5 +1,18 @@
 2017-11-23  Darin Adler  <darin@apple.com>
 
+        Fix dictionary leak in lookup, convert FindOptions to OptionSet, tweak code style nearby
+        https://bugs.webkit.org/show_bug.cgi?id=179981
+
+        Reviewed by Sam Weinig.
+
+        * WebView.cpp:
+        (WebView::searchFor): Use |= instead of | to build FindOptions.
+        (WebView::markAllMatchesForText): Create FindOptions with |= instead of |.
+        (WebView::findString): Create FindOptions with |=; the old code just passed a
+        WebKit FindOptions through without converting to WebCore::FindOptions.
+
+2017-11-23  Darin Adler  <darin@apple.com>
+
         Reduce WTF::String operations that do unnecessary Unicode operations instead of ASCII
         https://bugs.webkit.org/show_bug.cgi?id=179907
 

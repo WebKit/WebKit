@@ -2061,7 +2061,7 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
     , m_options(options)
     , m_prefixLength(0)
     , m_atBreak(true)
-    , m_needsMoreContext(options & AtWordStarts)
+    , m_needsMoreContext(options.contains(AtWordStarts))
     , m_targetRequiresKanaWorkaround(containsKanaLetters(m_target))
 {
     ASSERT(!m_target.isEmpty());
@@ -2070,13 +2070,13 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
     m_buffer.reserveInitialCapacity(std::max(targetLength * 8, minimumSearchBufferSize));
     m_overlap = m_buffer.capacity() / 4;
 
-    if ((m_options & AtWordStarts) && targetLength) {
+    if (m_options.contains(AtWordStarts) && targetLength) {
         UChar32 targetFirstCharacter;
         U16_GET(m_target, 0, 0u, targetLength, targetFirstCharacter);
         // Characters in the separator category never really occur at the beginning of a word,
         // so if the target begins with such a character, we just ignore the AtWordStart option.
         if (isSeparator(targetFirstCharacter)) {
-            m_options &= ~AtWordStarts;
+            m_options -= AtWordStarts;
             m_needsMoreContext = false;
         }
     }
@@ -2091,7 +2091,7 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
 
     UCollationStrength strength;
     USearchAttributeValue comparator;
-    if (m_options & CaseInsensitive) {
+    if (m_options.contains(CaseInsensitive)) {
         // Without loss of generality, have 'e' match {'e', 'E', 'é', 'É'} and 'é' match {'é', 'É'}.
         strength = UCOL_SECONDARY;
         comparator = USEARCH_PATTERN_BASE_WEIGHT_IS_WILDCARD;
@@ -2254,7 +2254,7 @@ inline bool SearchBuffer::isBadMatch(const UChar* match, size_t matchLength) con
 inline bool SearchBuffer::isWordEndMatch(size_t start, size_t length) const
 {
     ASSERT(length);
-    ASSERT(m_options & AtWordEnds);
+    ASSERT(m_options.contains(AtWordEnds));
 
     int endWord;
     // Start searching at the end of matched search, so that multiple word matches succeed.
@@ -2264,7 +2264,7 @@ inline bool SearchBuffer::isWordEndMatch(size_t start, size_t length) const
 
 inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
 {
-    ASSERT(m_options & AtWordStarts);
+    ASSERT(m_options.contains(AtWordStarts));
 
     if (!start)
         return true;
@@ -2274,7 +2274,7 @@ inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
     UChar32 firstCharacter;
     U16_GET(m_buffer.data(), 0, offset, size, firstCharacter);
 
-    if (m_options & TreatMedialCapitalAsWordStart) {
+    if (m_options.contains(TreatMedialCapitalAsWordStart)) {
         UChar32 previousCharacter;
         U16_PREV(m_buffer.data(), 0, offset, previousCharacter);
 
@@ -2351,7 +2351,7 @@ nextMatch:
     // possibly including a combining character that's not yet in the buffer.
     if (!m_atBreak && static_cast<size_t>(matchStart) >= size - m_overlap) {
         size_t overlap = m_overlap;
-        if (m_options & AtWordStarts) {
+        if (m_options.contains(AtWordStarts)) {
             // Ensure that there is sufficient context before matchStart the next time around for
             // determining if it is at a word boundary.
             unsigned wordBoundaryContextStart = matchStart;
@@ -2370,8 +2370,8 @@ nextMatch:
 
     // If this match is "bad", move on to the next match.
     if (isBadMatch(m_buffer.data() + matchStart, matchedLength)
-        || ((m_options & AtWordStarts) && !isWordStartMatch(matchStart, matchedLength))
-        || ((m_options & AtWordEnds) && !isWordEndMatch(matchStart, matchedLength))) {
+        || (m_options.contains(AtWordStarts) && !isWordStartMatch(matchStart, matchedLength))
+        || (m_options.contains(AtWordEnds) && !isWordEndMatch(matchStart, matchedLength))) {
         matchStart = usearch_next(searcher, &status);
         ASSERT(status == U_ZERO_ERROR);
         goto nextMatch;
@@ -2681,7 +2681,7 @@ static Ref<Range> collapsedToBoundary(const Range& range, bool forward)
 static TextIteratorBehavior findIteratorOptions(FindOptions options)
 {
     TextIteratorBehavior iteratorOptions = TextIteratorEntersTextControls | TextIteratorClipsToFrameAncestors;
-    if (!(options & DoNotTraverseFlatTree))
+    if (!options.contains(DoNotTraverseFlatTree))
         iteratorOptions |= TextIteratorTraversesFlatTree;
     return iteratorOptions;
 }
@@ -2744,12 +2744,12 @@ Ref<Range> findClosestPlainText(const Range& range, const String& target, FindOp
     };
 
     findPlainTextMatches(range, target, options, WTFMove(match));
-    return rangeForMatch(range, options, matchStart, matchLength, !(options & Backwards));
+    return rangeForMatch(range, options, matchStart, matchLength, !options.contains(Backwards));
 }
 
 Ref<Range> findPlainText(const Range& range, const String& target, FindOptions options)
 {
-    bool searchForward = !(options & Backwards);
+    bool searchForward = !options.contains(Backwards);
     size_t matchStart = 0;
     size_t matchLength = 0;
     auto match = [searchForward, &matchStart, &matchLength] (size_t start, size_t length) {

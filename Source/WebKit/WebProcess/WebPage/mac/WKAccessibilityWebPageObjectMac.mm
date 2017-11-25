@@ -199,7 +199,7 @@ using namespace WebKit;
     
     // Some plugins may be able to figure out the scroll position and inset on their own.
     bool applyContentOffset = true;
-    if (auto pluginView = m_page->pluginViewForFrame(m_page->mainFrame()))
+    if (auto pluginView = WebPage::pluginViewForFrame(m_page->mainFrame()))
         applyContentOffset = !pluginView->plugin()->pluginHandlesContentOffsetForAccessibilityHitTest();
 
     if (applyContentOffset) {

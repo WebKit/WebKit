@@ -1736,7 +1736,7 @@ RefPtr<Range> AXObjectCache::rangeMatchesTextNearRange(RefPtr<Range> originalRan
     
     RefPtr<Range> range = Range::create(m_document, startPosition, originalRange->startPosition());
     unsigned targetOffset = TextIterator::rangeLength(range.get(), true);
-    return findClosestPlainText(*searchRange.get(), matchText, 0, targetOffset);
+    return findClosestPlainText(*searchRange.get(), matchText, { }, targetOffset);
 }
 
 static bool isReplacedNodeOrBR(Node* node)

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/OptionSet.h>
+
 namespace WebCore {
 
 enum FindOptionFlag {
@@ -41,6 +43,6 @@ enum FindOptionFlag {
     DoNotTraverseFlatTree = 1 << 8,
 };
 
-typedef unsigned short FindOptions;
+using FindOptions = OptionSet<FindOptionFlag>;
 
 } // namespace WebCore

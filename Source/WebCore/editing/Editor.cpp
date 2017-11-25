@@ -3245,7 +3245,7 @@ bool Editor::findString(const String& target, FindOptions options)
 
     m_frame.selection().setSelection(VisibleSelection(*resultRange, DOWNSTREAM));
 
-    if (!(options & DoNotRevealSelection))
+    if (!(options.contains(DoNotRevealSelection)))
         m_frame.selection().revealSelection();
 
     return true;
@@ -3260,8 +3260,8 @@ RefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRange,
     // is used depends on whether we're searching forward or backward, and whether startInSelection is set.
     RefPtr<Range> searchRange(rangeOfContents(document()));
 
-    bool forward = !(options & Backwards);
-    bool startInReferenceRange = referenceRange && (options & StartInSelection);
+    bool forward = !options.contains(Backwards);
+    bool startInReferenceRange = referenceRange && options.contains(StartInSelection);
     if (referenceRange) {
         if (forward)
             searchRange->setStart(startInReferenceRange ? referenceRange->startPosition() : referenceRange->endPosition());
@@ -3313,7 +3313,7 @@ RefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRange,
 
     // If we didn't find anything and we're wrapping, search again in the entire document (this will
     // redundantly re-search the area already searched in some cases).
-    if (resultRange->collapsed() && options & WrapAround) {
+    if (resultRange->collapsed() && options.contains(WrapAround)) {
         searchRange = rangeOfContents(document());
         resultRange = findPlainText(*searchRange, target, options);
         // We used to return false here if we ended up with the same range that we started with
@@ -3355,7 +3355,7 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
 
     unsigned matchCount = 0;
     do {
-        RefPtr<Range> resultRange(findPlainText(*searchRange, target, options & ~Backwards));
+        RefPtr<Range> resultRange(findPlainText(*searchRange, target, options - Backwards));
         if (resultRange->collapsed()) {
             if (!resultRange->startContainer().isInShadowTree())
                 break;
