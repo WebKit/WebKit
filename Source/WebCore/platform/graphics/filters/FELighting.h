@@ -135,7 +135,7 @@ protected:
 
     const char* filterName() const final { return "FELighting"; }
 
-    bool drawLighting(Uint8ClampedArray*, int, int);
+    bool drawLighting(Uint8ClampedArray&, int, int);
 
     void setPixel(int offset, const LightingData&, const LightSource::PaintingData&, int x, int y, float factorX, float factorY, IntSize normalVector);
     void setPixelInternal(int offset, const LightingData&, const LightSource::PaintingData&, int x, int y, float factorX, float factorY, IntSize normalVector, float alpha);

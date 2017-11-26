@@ -187,17 +187,17 @@ static ALWAYS_INLINE unsigned char clampRGBAValue(float channel, unsigned char m
 }
 
 template<bool preserveAlphaValues>
-ALWAYS_INLINE void setDestinationPixels(Uint8ClampedArray* image, int& pixel, float* totals, float divisor, float bias, Uint8ClampedArray* src)
+ALWAYS_INLINE void setDestinationPixels(const Uint8ClampedArray& sourcePixels, Uint8ClampedArray& destPixels, int& pixel, float* totals, float divisor, float bias)
 {
     unsigned char maxAlpha = preserveAlphaValues ? 255 : clampRGBAValue(totals[3] / divisor + bias);
     for (int i = 0; i < 3; ++i)
-        image->set(pixel++, clampRGBAValue(totals[i] / divisor + bias, maxAlpha));
+        destPixels.set(pixel++, clampRGBAValue(totals[i] / divisor + bias, maxAlpha));
 
     if (preserveAlphaValues) {
-        image->set(pixel, src->item(pixel));
+        destPixels.set(pixel, sourcePixels.item(pixel));
         ++pixel;
     } else
-        image->set(pixel++, maxAlpha);
+        destPixels.set(pixel++, maxAlpha);
 }
 
 #if COMPILER(MSVC)
@@ -237,11 +237,11 @@ ALWAYS_INLINE void FEConvolveMatrix::fastSetInteriorPixels(PaintingData& paintin
                 totals[3] = 0;
 
             while (kernelValue >= 0) {
-                totals[0] += paintingData.kernelMatrix[kernelValue] * static_cast<float>(paintingData.srcPixelArray->item(kernelPixel++));
-                totals[1] += paintingData.kernelMatrix[kernelValue] * static_cast<float>(paintingData.srcPixelArray->item(kernelPixel++));
-                totals[2] += paintingData.kernelMatrix[kernelValue] * static_cast<float>(paintingData.srcPixelArray->item(kernelPixel++));
+                totals[0] += paintingData.kernelMatrix[kernelValue] * static_cast<float>(paintingData.srcPixelArray.item(kernelPixel++));
+                totals[1] += paintingData.kernelMatrix[kernelValue] * static_cast<float>(paintingData.srcPixelArray.item(kernelPixel++));
+                totals[2] += paintingData.kernelMatrix[kernelValue] * static_cast<float>(paintingData.srcPixelArray.item(kernelPixel++));
                 if (!preserveAlphaValues)
-                    totals[3] += paintingData.kernelMatrix[kernelValue] * static_cast<float>(paintingData.srcPixelArray->item(kernelPixel));
+                    totals[3] += paintingData.kernelMatrix[kernelValue] * static_cast<float>(paintingData.srcPixelArray.item(kernelPixel));
                 ++kernelPixel;
                 --kernelValue;
                 if (!--width) {
@@ -250,7 +250,7 @@ ALWAYS_INLINE void FEConvolveMatrix::fastSetInteriorPixels(PaintingData& paintin
                 }
             }
 
-            setDestinationPixels<preserveAlphaValues>(paintingData.dstPixelArray, pixel, totals, m_divisor, paintingData.bias, paintingData.srcPixelArray);
+            setDestinationPixels<preserveAlphaValues>(paintingData.srcPixelArray, paintingData.dstPixelArray, pixel, totals, m_divisor, paintingData.bias);
             startKernelPixel += 4;
         }
         pixel += xIncrease;
@@ -320,12 +320,12 @@ void FEConvolveMatrix::fastSetOuterPixels(PaintingData& paintingData, int x1, in
             while (kernelValue >= 0) {
                 int pixelIndex = getPixelValue(paintingData, kernelPixelX, kernelPixelY);
                 if (pixelIndex >= 0) {
-                    totals[0] += paintingData.kernelMatrix[kernelValue] * static_cast<float>(paintingData.srcPixelArray->item(pixelIndex));
-                    totals[1] += paintingData.kernelMatrix[kernelValue] * static_cast<float>(paintingData.srcPixelArray->item(pixelIndex + 1));
-                    totals[2] += paintingData.kernelMatrix[kernelValue] * static_cast<float>(paintingData.srcPixelArray->item(pixelIndex + 2));
+                    totals[0] += paintingData.kernelMatrix[kernelValue] * static_cast<float>(paintingData.srcPixelArray.item(pixelIndex));
+                    totals[1] += paintingData.kernelMatrix[kernelValue] * static_cast<float>(paintingData.srcPixelArray.item(pixelIndex + 1));
+                    totals[2] += paintingData.kernelMatrix[kernelValue] * static_cast<float>(paintingData.srcPixelArray.item(pixelIndex + 2));
                 }
                 if (!preserveAlphaValues && pixelIndex >= 0)
-                    totals[3] += paintingData.kernelMatrix[kernelValue] * static_cast<float>(paintingData.srcPixelArray->item(pixelIndex + 3));
+                    totals[3] += paintingData.kernelMatrix[kernelValue] * static_cast<float>(paintingData.srcPixelArray.item(pixelIndex + 3));
                 ++kernelPixelX;
                 --kernelValue;
                 if (!--width) {
@@ -335,7 +335,7 @@ void FEConvolveMatrix::fastSetOuterPixels(PaintingData& paintingData, int x1, in
                 }
             }
 
-            setDestinationPixels<preserveAlphaValues>(paintingData.dstPixelArray, pixel, totals, m_divisor, paintingData.bias, paintingData.srcPixelArray);
+            setDestinationPixels<preserveAlphaValues>(paintingData.srcPixelArray, paintingData.dstPixelArray, pixel, totals, m_divisor, paintingData.bias);
             ++startKernelPixelX;
         }
         pixel += xIncrease;
@@ -388,14 +388,18 @@ void FEConvolveMatrix::platformApplySoftware()
     else
         srcPixelArray = in->premultipliedResult(effectDrawingRect);
 
+    if (!srcPixelArray)
+        return;
+
     IntSize paintSize = absolutePaintRect().size();
-    PaintingData paintingData;
-    paintingData.srcPixelArray = srcPixelArray.get();
-    paintingData.dstPixelArray = resultImage;
-    paintingData.width = paintSize.width();
-    paintingData.height = paintSize.height();
-    paintingData.bias = m_bias * 255;
-    paintingData.kernelMatrix = normalizedFloats(m_kernelMatrix);
+    PaintingData paintingData = {
+        *srcPixelArray,
+        *resultImage,
+        paintSize.width(),
+        paintSize.height(),
+        m_bias * 255,
+        normalizedFloats(m_kernelMatrix)
+    };
 
     // Drawing fully covered pixels
     int clipRight = paintSize.width() - m_kernelSize.width();

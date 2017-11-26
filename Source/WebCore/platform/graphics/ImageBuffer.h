@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ImageBuffer_h
-#define ImageBuffer_h
+#pragma once
 
 #include "AffineTransform.h"
 #include "ColorSpace.h"
@@ -107,7 +106,7 @@ public:
     RefPtr<Uint8ClampedArray> getUnmultipliedImageData(const IntRect&, IntSize* pixelArrayDimensions = nullptr, CoordinateSystem = LogicalCoordinateSystem) const;
     RefPtr<Uint8ClampedArray> getPremultipliedImageData(const IntRect&, IntSize* pixelArrayDimensions = nullptr, CoordinateSystem = LogicalCoordinateSystem) const;
 
-    void putByteArray(Multiply multiplied, Uint8ClampedArray*, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem = LogicalCoordinateSystem);
+    void putByteArray(Multiply multiplied, const Uint8ClampedArray&, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem = LogicalCoordinateSystem);
     
     void convertToLuminanceMask();
     
@@ -186,4 +185,3 @@ Vector<uint8_t> data(const ImageData&, const String& mimeType, std::optional<dou
 
 } // namespace WebCore
 
-#endif // ImageBuffer_h

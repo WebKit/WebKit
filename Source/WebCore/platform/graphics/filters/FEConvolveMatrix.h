@@ -69,8 +69,8 @@ public:
 private:
 
     struct PaintingData {
-        Uint8ClampedArray* srcPixelArray;
-        Uint8ClampedArray* dstPixelArray;
+        const Uint8ClampedArray& srcPixelArray;
+        Uint8ClampedArray& dstPixelArray;
         int width;
         int height;
         float bias;

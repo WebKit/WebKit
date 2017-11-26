@@ -2219,6 +2219,9 @@ void CanvasRenderingContext2D::putImageData(ImageData& data, ImageBuffer::Coordi
     if (!buffer)
         return;
 
+    if (!data.data())
+        return;
+
     if (dirtyWidth < 0) {
         dirtyX += dirtyWidth;
         dirtyWidth = -dirtyWidth;
@@ -2242,7 +2245,7 @@ void CanvasRenderingContext2D::putImageData(ImageData& data, ImageBuffer::Coordi
     sourceRect.intersect(IntRect(0, 0, data.width(), data.height()));
 
     if (!sourceRect.isEmpty())
-        buffer->putByteArray(Unmultiplied, data.data(), IntSize(data.width(), data.height()), sourceRect, IntPoint(destOffset), coordinateSystem);
+        buffer->putByteArray(Unmultiplied, *data.data(), IntSize(data.width(), data.height()), sourceRect, IntPoint(destOffset), coordinateSystem);
 
     didDraw(destRect, CanvasDidDrawApplyNone); // ignore transform, shadow and clip
 }

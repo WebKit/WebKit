@@ -100,9 +100,9 @@ inline void luminance(float& red, float& green, float& blue, float& alpha)
 
 #if USE(ACCELERATE)
 template<ColorMatrixType filterType>
-bool effectApplyAccelerated(Uint8ClampedArray* pixelArray, const Vector<float>& values, float components[9], IntSize bufferSize)
+bool effectApplyAccelerated(Uint8ClampedArray& pixelArray, const Vector<float>& values, float components[9], IntSize bufferSize)
 {
-    ASSERT(pixelArray->length() == bufferSize.area().unsafeGet() * 4);
+    ASSERT(pixelArray.length() == bufferSize.area().unsafeGet() * 4);
     
     if (filterType == FECOLORMATRIX_TYPE_MATRIX) {
         // vImageMatrixMultiply_ARGB8888 takes a 4x4 matrix, if any value in the last column of the FEColorMatrix 5x4 matrix
@@ -112,7 +112,7 @@ bool effectApplyAccelerated(Uint8ClampedArray* pixelArray, const Vector<float>& 
     }
 
     const int32_t divisor = 256;
-    uint8_t* data = pixelArray->data();
+    uint8_t* data = pixelArray.data();
 
     vImage_Buffer src;
     src.width = bufferSize.width();
@@ -211,7 +211,7 @@ bool effectApplyAccelerated(Uint8ClampedArray* pixelArray, const Vector<float>& 
 #endif
 
 template<ColorMatrixType filterType>
-void effectType(Uint8ClampedArray* pixelArray, const Vector<float>& values, IntSize bufferSize)
+void effectType(Uint8ClampedArray& pixelArray, const Vector<float>& values, IntSize bufferSize)
 {
     float components[9];
 
@@ -220,7 +220,7 @@ void effectType(Uint8ClampedArray* pixelArray, const Vector<float>& values, IntS
     else if (filterType == FECOLORMATRIX_TYPE_HUEROTATE)
         FEColorMatrix::calculateHueRotateComponents(components, values[0]);
 
-    unsigned pixelArrayLength = pixelArray->length();
+    unsigned pixelArrayLength = pixelArray.length();
 
 #if USE(ACCELERATE)
     if (effectApplyAccelerated<filterType>(pixelArray, values, components, bufferSize))
@@ -232,44 +232,44 @@ void effectType(Uint8ClampedArray* pixelArray, const Vector<float>& values, IntS
     switch (filterType) {
     case FECOLORMATRIX_TYPE_MATRIX:
         for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelArrayLength; pixelByteOffset += 4) {
-            float red = pixelArray->item(pixelByteOffset);
-            float green = pixelArray->item(pixelByteOffset + 1);
-            float blue = pixelArray->item(pixelByteOffset + 2);
-            float alpha = pixelArray->item(pixelByteOffset + 3);
+            float red = pixelArray.item(pixelByteOffset);
+            float green = pixelArray.item(pixelByteOffset + 1);
+            float blue = pixelArray.item(pixelByteOffset + 2);
+            float alpha = pixelArray.item(pixelByteOffset + 3);
             matrix(red, green, blue, alpha, values);
-            pixelArray->set(pixelByteOffset, red);
-            pixelArray->set(pixelByteOffset + 1, green);
-            pixelArray->set(pixelByteOffset + 2, blue);
-            pixelArray->set(pixelByteOffset + 3, alpha);
+            pixelArray.set(pixelByteOffset, red);
+            pixelArray.set(pixelByteOffset + 1, green);
+            pixelArray.set(pixelByteOffset + 2, blue);
+            pixelArray.set(pixelByteOffset + 3, alpha);
         }
         break;
 
     case FECOLORMATRIX_TYPE_SATURATE:
     case FECOLORMATRIX_TYPE_HUEROTATE:
         for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelArrayLength; pixelByteOffset += 4) {
-            float red = pixelArray->item(pixelByteOffset);
-            float green = pixelArray->item(pixelByteOffset + 1);
-            float blue = pixelArray->item(pixelByteOffset + 2);
-            float alpha = pixelArray->item(pixelByteOffset + 3);
+            float red = pixelArray.item(pixelByteOffset);
+            float green = pixelArray.item(pixelByteOffset + 1);
+            float blue = pixelArray.item(pixelByteOffset + 2);
+            float alpha = pixelArray.item(pixelByteOffset + 3);
             saturateAndHueRotate(red, green, blue, components);
-            pixelArray->set(pixelByteOffset, red);
-            pixelArray->set(pixelByteOffset + 1, green);
-            pixelArray->set(pixelByteOffset + 2, blue);
-            pixelArray->set(pixelByteOffset + 3, alpha);
+            pixelArray.set(pixelByteOffset, red);
+            pixelArray.set(pixelByteOffset + 1, green);
+            pixelArray.set(pixelByteOffset + 2, blue);
+            pixelArray.set(pixelByteOffset + 3, alpha);
         }
         break;
 
     case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
         for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelArrayLength; pixelByteOffset += 4) {
-            float red = pixelArray->item(pixelByteOffset);
-            float green = pixelArray->item(pixelByteOffset + 1);
-            float blue = pixelArray->item(pixelByteOffset + 2);
-            float alpha = pixelArray->item(pixelByteOffset + 3);
+            float red = pixelArray.item(pixelByteOffset);
+            float green = pixelArray.item(pixelByteOffset + 1);
+            float blue = pixelArray.item(pixelByteOffset + 2);
+            float alpha = pixelArray.item(pixelByteOffset + 3);
             luminance(red, green, blue, alpha);
-            pixelArray->set(pixelByteOffset, red);
-            pixelArray->set(pixelByteOffset + 1, green);
-            pixelArray->set(pixelByteOffset + 2, blue);
-            pixelArray->set(pixelByteOffset + 3, alpha);
+            pixelArray.set(pixelByteOffset, red);
+            pixelArray.set(pixelByteOffset + 1, green);
+            pixelArray.set(pixelByteOffset + 2, blue);
+            pixelArray.set(pixelByteOffset + 3, alpha);
         }
         break;
     }
@@ -293,28 +293,31 @@ void FEColorMatrix::platformApplySoftware()
 
     IntRect imageRect(IntPoint(), resultImage->logicalSize());
     IntSize pixelArrayDimensions;
-    RefPtr<Uint8ClampedArray> pixelArray = resultImage->getUnmultipliedImageData(imageRect, &pixelArrayDimensions);
+    auto pixelArray = resultImage->getUnmultipliedImageData(imageRect, &pixelArrayDimensions);
+    if (!pixelArray)
+        return;
+
     Vector<float> values = normalizedFloats(m_values);
 
     switch (m_type) {
     case FECOLORMATRIX_TYPE_UNKNOWN:
         break;
     case FECOLORMATRIX_TYPE_MATRIX:
-        effectType<FECOLORMATRIX_TYPE_MATRIX>(pixelArray.get(), values, pixelArrayDimensions);
+        effectType<FECOLORMATRIX_TYPE_MATRIX>(*pixelArray, values, pixelArrayDimensions);
         break;
     case FECOLORMATRIX_TYPE_SATURATE: 
-        effectType<FECOLORMATRIX_TYPE_SATURATE>(pixelArray.get(), values, pixelArrayDimensions);
+        effectType<FECOLORMATRIX_TYPE_SATURATE>(*pixelArray, values, pixelArrayDimensions);
         break;
     case FECOLORMATRIX_TYPE_HUEROTATE:
-        effectType<FECOLORMATRIX_TYPE_HUEROTATE>(pixelArray.get(), values, pixelArrayDimensions);
+        effectType<FECOLORMATRIX_TYPE_HUEROTATE>(*pixelArray, values, pixelArrayDimensions);
         break;
     case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
-        effectType<FECOLORMATRIX_TYPE_LUMINANCETOALPHA>(pixelArray.get(), values, pixelArrayDimensions);
+        effectType<FECOLORMATRIX_TYPE_LUMINANCETOALPHA>(*pixelArray, values, pixelArrayDimensions);
         setIsAlphaImage(true);
         break;
     }
 
-    resultImage->putByteArray(Unmultiplied, pixelArray.get(), imageRect.size(), imageRect, IntPoint());
+    resultImage->putByteArray(Unmultiplied, *pixelArray, imageRect.size(), imageRect, IntPoint());
 
 #if PRINT_FILTER_PERFORMANCE
     MonotonicTime endTime = MonotonicTime::now();

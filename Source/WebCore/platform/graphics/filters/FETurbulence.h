@@ -118,7 +118,7 @@ private:
     StitchData computeStitching(IntSize tileSize, float& baseFrequencyX, float& baseFrequencyY) const;
     FloatComponents noise2D(const PaintingData&, const StitchData&, const FloatPoint&) const;
     ColorComponents calculateTurbulenceValueForPoint(const PaintingData&, StitchData, const FloatPoint&) const;
-    void fillRegion(Uint8ClampedArray*, const PaintingData&, StitchData, int startY, int endY) const;
+    void fillRegion(Uint8ClampedArray&, const PaintingData&, StitchData, int startY, int endY) const;
 
     static void fillRegionWorker(void*);
 

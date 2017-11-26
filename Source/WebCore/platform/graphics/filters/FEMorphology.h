@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FEMorphology_h
-#define FEMorphology_h
+#pragma once
 
 #include "FilterEffect.h"
 #include "Filter.h"
@@ -57,10 +56,10 @@ private:
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
 
-    bool platformApplyDegenerate(Uint8ClampedArray* dstPixelArray, const IntRect& imageRect, int radiusX, int radiusY);
+    bool platformApplyDegenerate(Uint8ClampedArray& dstPixelArray, const IntRect& imageRect, int radiusX, int radiusY);
 
     struct PaintingData {
-        Uint8ClampedArray* srcPixelArray;
+        const Uint8ClampedArray* srcPixelArray;
         Uint8ClampedArray* dstPixelArray;
         int width;
         int height;
@@ -89,4 +88,3 @@ private:
 
 } // namespace WebCore
 
-#endif // FEMorphology_h

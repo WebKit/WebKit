@@ -146,7 +146,7 @@ void FilterEffect::forceValidPreMultipliedPixels()
         return;
 
     Uint8ClampedArray* imageArray = m_premultipliedImageResult.get();
-    unsigned char* pixelData = imageArray->data();
+    uint8_t* pixelData = imageArray->data();
     int pixelArrayLength = imageArray->length();
 
     // We must have four bytes per pixel, and complete pixels
@@ -154,7 +154,7 @@ void FilterEffect::forceValidPreMultipliedPixels()
 
 #if HAVE(ARM_NEON_INTRINSICS)
     if (pixelArrayLength >= 64) {
-        unsigned char* lastPixel = pixelData + (pixelArrayLength & ~0x3f);
+        uint8_t* lastPixel = pixelData + (pixelArrayLength & ~0x3f);
         do {
             // Increments pixelData by 64.
             uint8x16x4_t sixteenPixels = vld4q_u8(pixelData);
@@ -176,7 +176,7 @@ void FilterEffect::forceValidPreMultipliedPixels()
     // Iterate over each pixel, checking alpha and adjusting color components if necessary
     while (--numPixels >= 0) {
         // Alpha is the 4th byte in a pixel
-        unsigned char a = *(pixelData + 3);
+        uint8_t a = *(pixelData + 3);
         // Clamp each component to alpha, and increment the pixel location
         for (int i = 0; i < 3; ++i) {
             if (*pixelData > a)
@@ -225,9 +225,9 @@ ImageBuffer* FilterEffect::imageBufferResult()
 
     IntRect destinationRect(IntPoint(), m_absolutePaintRect.size());
     if (m_premultipliedImageResult)
-        m_imageBufferResult->putByteArray(Premultiplied, m_premultipliedImageResult.get(), destinationRect.size(), destinationRect, IntPoint());
+        m_imageBufferResult->putByteArray(Premultiplied, *m_premultipliedImageResult, destinationRect.size(), destinationRect, IntPoint());
     else
-        m_imageBufferResult->putByteArray(Unmultiplied, m_unmultipliedImageResult.get(), destinationRect.size(), destinationRect, IntPoint());
+        m_imageBufferResult->putByteArray(Unmultiplied, *m_unmultipliedImageResult, destinationRect.size(), destinationRect, IntPoint());
     return m_imageBufferResult.get();
 }
 
@@ -237,7 +237,10 @@ RefPtr<Uint8ClampedArray> FilterEffect::unmultipliedResult(const IntRect& rect)
     ASSERT(!ImageBuffer::sizeNeedsClamping(scaledSize));
     scaledSize.scale(m_filter.filterScale());
     auto imageData = Uint8ClampedArray::createUninitialized((scaledSize.area() * 4).unsafeGet());
-    copyUnmultipliedResult(imageData.get(), rect);
+    if (!imageData)
+        return nullptr;
+
+    copyUnmultipliedResult(*imageData, rect);
     return imageData;
 }
 
@@ -247,23 +250,22 @@ RefPtr<Uint8ClampedArray> FilterEffect::premultipliedResult(const IntRect& rect)
     ASSERT(!ImageBuffer::sizeNeedsClamping(scaledSize));
     scaledSize.scale(m_filter.filterScale());
     auto imageData = Uint8ClampedArray::createUninitialized((scaledSize.area() * 4).unsafeGet());
-    copyPremultipliedResult(imageData.get(), rect);
+    if (!imageData)
+        return nullptr;
+    copyPremultipliedResult(*imageData, rect);
     return imageData;
 }
 
-void FilterEffect::copyImageBytes(Uint8ClampedArray* source, Uint8ClampedArray* destination, const IntRect& rect) const
+void FilterEffect::copyImageBytes(const Uint8ClampedArray& source, Uint8ClampedArray& destination, const IntRect& rect) const
 {
     IntRect scaledRect(rect);
     scaledRect.scale(m_filter.filterScale());
     IntSize scaledPaintSize(m_absolutePaintRect.size());
     scaledPaintSize.scale(m_filter.filterScale());
 
-    if (!source || !destination)
-        return;
-
     // Initialize the destination to transparent black, if not entirely covered by the source.
     if (scaledRect.x() < 0 || scaledRect.y() < 0 || scaledRect.maxX() > scaledPaintSize.width() || scaledRect.maxY() > scaledPaintSize.height())
-        memset(destination->data(), 0, destination->length());
+        memset(destination.data(), 0, destination.length());
 
     // Early return if the rect does not intersect with the source.
     if (scaledRect.maxX() <= 0 || scaledRect.maxY() <= 0 || scaledRect.x() >= scaledPaintSize.width() || scaledRect.y() >= scaledPaintSize.height())
@@ -292,8 +294,8 @@ void FilterEffect::copyImageBytes(Uint8ClampedArray* source, Uint8ClampedArray* 
     int size = (xEnd - xOrigin) * 4;
     int destinationScanline = scaledRect.width() * 4;
     int sourceScanline = scaledPaintSize.width() * 4;
-    unsigned char *destinationPixel = destination->data() + ((yDest * scaledRect.width()) + xDest) * 4;
-    unsigned char *sourcePixel = source->data() + ((yOrigin * scaledPaintSize.width()) + xOrigin) * 4;
+    uint8_t* destinationPixel = destination.data() + ((yDest * scaledRect.width()) + xDest) * 4;
+    const uint8_t* sourcePixel = source.data() + ((yOrigin * scaledPaintSize.width()) + xOrigin) * 4;
 
     while (yOrigin < yEnd) {
         memcpy(destinationPixel, sourcePixel, size);
@@ -303,7 +305,7 @@ void FilterEffect::copyImageBytes(Uint8ClampedArray* source, Uint8ClampedArray* 
     }
 }
 
-static void copyPremultiplyingAlpha(const Uint8ClampedArray* source, Uint8ClampedArray* destination, const IntSize& inputSize)
+static void copyPremultiplyingAlpha(const Uint8ClampedArray& source, Uint8ClampedArray& destination, const IntSize& inputSize)
 {
 #if USE(ACCELERATE)
     size_t rowBytes = inputSize.width() * 4;
@@ -312,19 +314,19 @@ static void copyPremultiplyingAlpha(const Uint8ClampedArray* source, Uint8Clampe
     src.width = inputSize.width();
     src.height = inputSize.height();
     src.rowBytes = rowBytes;
-    src.data = reinterpret_cast<void*>(source->data());
+    src.data = reinterpret_cast<void*>(source.data());
 
     vImage_Buffer dest;
     dest.width = inputSize.width();
     dest.height = inputSize.height();
     dest.rowBytes = rowBytes;
-    dest.data = reinterpret_cast<void*>(destination->data());
+    dest.data = reinterpret_cast<void*>(destination.data());
 
     vImagePremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags);
 #else
-    unsigned char* sourceComponent = source->data();
-    unsigned char* destinationComponent = destination->data();
-    unsigned char* end = sourceComponent + (inputSize.area() * 4).unsafeGet();
+    const uint8_t* sourceComponent = source.data();
+    const uint8_t* end = sourceComponent + (inputSize.area() * 4).unsafeGet();
+    uint8_t* destinationComponent = destination.data();
 
     while (sourceComponent < end) {
         int alpha = sourceComponent[3];
@@ -338,7 +340,7 @@ static void copyPremultiplyingAlpha(const Uint8ClampedArray* source, Uint8Clampe
 #endif
 }
 
-static void copyUnpremultiplyingAlpha(const Uint8ClampedArray* source, Uint8ClampedArray* destination, const IntSize& inputSize)
+static void copyUnpremultiplyingAlpha(const Uint8ClampedArray& source, Uint8ClampedArray& destination, const IntSize& inputSize)
 {
 #if USE(ACCELERATE)
     size_t rowBytes = inputSize.width() * 4;
@@ -347,19 +349,19 @@ static void copyUnpremultiplyingAlpha(const Uint8ClampedArray* source, Uint8Clam
     src.width = inputSize.width();
     src.height = inputSize.height();
     src.rowBytes = rowBytes;
-    src.data = reinterpret_cast<void*>(source->data());
+    src.data = reinterpret_cast<void*>(source.data());
 
     vImage_Buffer dest;
     dest.width = inputSize.width();
     dest.height = inputSize.height();
     dest.rowBytes = rowBytes;
-    dest.data = reinterpret_cast<void*>(destination->data());
+    dest.data = reinterpret_cast<void*>(destination.data());
 
     vImageUnpremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags);
 #else
-    unsigned char* sourceComponent = source->data();
-    unsigned char* destinationComponent = destination->data();
-    unsigned char* end = sourceComponent + (inputSize.area() * 4).unsafeGet();
+    const uint8_t* sourceComponent = source.data();
+    const uint8_t* end = sourceComponent + (inputSize.area() * 4).unsafeGet();
+    uint8_t* destinationComponent = destination.data();
     while (sourceComponent < end) {
         int alpha = sourceComponent[3];
         if (alpha) {
@@ -378,7 +380,7 @@ static void copyUnpremultiplyingAlpha(const Uint8ClampedArray* source, Uint8Clam
 #endif
 }
 
-void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray* destination, const IntRect& rect)
+void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray& destination, const IntRect& rect)
 {
     ASSERT(hasResult());
     
@@ -386,25 +388,25 @@ void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray* destination, const 
 
     if (!m_unmultipliedImageResult) {
         // We prefer a conversion from the image buffer.
-        if (m_imageBufferResult)
+        if (m_imageBufferResult) {
             m_unmultipliedImageResult = m_imageBufferResult->getUnmultipliedImageData(IntRect(IntPoint(), m_absolutePaintRect.size()));
-        else {
+            if (!m_unmultipliedImageResult)
+                return;
+        } else {
             IntSize inputSize(m_absolutePaintRect.size());
             ASSERT(!ImageBuffer::sizeNeedsClamping(inputSize));
             inputSize.scale(m_filter.filterScale());
             m_unmultipliedImageResult = Uint8ClampedArray::createUninitialized((inputSize.area() * 4).unsafeGet());
-            if (!m_unmultipliedImageResult) {
-                WTFLogAlways("FilterEffect::copyUnmultipliedResult Unable to create buffer. Requested size was %d x %d\n", inputSize.width(), inputSize.height());
+            if (!m_unmultipliedImageResult)
                 return;
-            }
             
-            copyUnpremultiplyingAlpha(m_premultipliedImageResult.get(), m_unmultipliedImageResult.get(), inputSize);
+            copyUnpremultiplyingAlpha(*m_premultipliedImageResult, *m_unmultipliedImageResult, inputSize);
         }
     }
-    copyImageBytes(m_unmultipliedImageResult.get(), destination, rect);
+    copyImageBytes(*m_unmultipliedImageResult, destination, rect);
 }
 
-void FilterEffect::copyPremultipliedResult(Uint8ClampedArray* destination, const IntRect& rect)
+void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const IntRect& rect)
 {
     ASSERT(hasResult());
 
@@ -412,22 +414,22 @@ void FilterEffect::copyPremultipliedResult(Uint8ClampedArray* destination, const
 
     if (!m_premultipliedImageResult) {
         // We prefer a conversion from the image buffer.
-        if (m_imageBufferResult)
+        if (m_imageBufferResult) {
             m_premultipliedImageResult = m_imageBufferResult->getPremultipliedImageData(IntRect(IntPoint(), m_absolutePaintRect.size()));
-        else {
+            if (!m_premultipliedImageResult)
+                return;
+        } else {
             IntSize inputSize(m_absolutePaintRect.size());
             ASSERT(!ImageBuffer::sizeNeedsClamping(inputSize));
             inputSize.scale(m_filter.filterScale());
             m_premultipliedImageResult = Uint8ClampedArray::createUninitialized((inputSize.area() * 4).unsafeGet());
-            if (!m_premultipliedImageResult) {
-                WTFLogAlways("FilterEffect::copyPremultipliedResult Unable to create buffer. Requested size was %d x %d\n", inputSize.width(), inputSize.height());
+            if (!m_premultipliedImageResult)
                 return;
-            }
             
-            copyPremultiplyingAlpha(m_unmultipliedImageResult.get(), m_premultipliedImageResult.get(), inputSize);
+            copyPremultiplyingAlpha(*m_unmultipliedImageResult, *m_premultipliedImageResult, inputSize);
         }
     }
-    copyImageBytes(m_premultipliedImageResult.get(), destination, rect);
+    copyImageBytes(*m_premultipliedImageResult, destination, rect);
 }
 
 ImageBuffer* FilterEffect::createImageBufferResult()

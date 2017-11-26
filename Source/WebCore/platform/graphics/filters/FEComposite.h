@@ -72,13 +72,14 @@ private:
     void platformApplySoftware() override;
     WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
 
-    inline void platformArithmeticSoftware(Uint8ClampedArray* source, Uint8ClampedArray* destination,
-        float k1, float k2, float k3, float k4);
+    inline void platformArithmeticSoftware(const Uint8ClampedArray& source, Uint8ClampedArray& destination, float k1, float k2, float k3, float k4);
+
+#if HAVE(ARM_NEON_INTRINSICS)
     template <int b1, int b4>
-    static inline void computeArithmeticPixelsNeon(unsigned char* source, unsigned  char* destination,
-        unsigned pixelArrayLength, float k1, float k2, float k3, float k4);
-    static inline void platformArithmeticNeon(unsigned char* source, unsigned  char* destination,
-        unsigned pixelArrayLength, float k1, float k2, float k3, float k4);
+    static inline void computeArithmeticPixelsNeon(const uint8_t* source, uint8_t* destination, unsigned pixelArrayLength, float k1, float k2, float k3, float k4);
+
+    static inline void platformArithmeticNeon(const uint8_t* source, uint8_t* destination, unsigned pixelArrayLength, float k1, float k2, float k3, float k4);
+#endif
 
     CompositeOperationType m_type;
     float m_k1;

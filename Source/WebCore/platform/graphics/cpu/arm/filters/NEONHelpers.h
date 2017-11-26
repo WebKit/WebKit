@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-inline float32x4_t loadRGBA8AsFloat(uint32_t* source)
+inline float32x4_t loadRGBA8AsFloat(const uint32_t* source)
 {
     uint32x2_t temporary1 = {0, 0};
     temporary1 = vset_lane_u32(*source, temporary1, 0);

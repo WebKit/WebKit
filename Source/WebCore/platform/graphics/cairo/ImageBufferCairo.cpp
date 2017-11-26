@@ -460,7 +460,7 @@ RefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& 
     return getImageData<Premultiplied>(backingStoreRect, logicalRect, m_data, m_size, m_logicalSize, m_resolutionScale);
 }
 
-void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem coordinateSystem)
+void ImageBuffer::putByteArray(Multiply multiplied, const Uint8ClampedArray& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem coordinateSystem)
 {
     IntRect scaledSourceRect = backingStoreUnit(sourceRect, coordinateSystem, m_resolutionScale);
     IntSize scaledSourceSize = backingStoreUnit(sourceSize, coordinateSystem, m_resolutionScale);
@@ -508,12 +508,12 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
     destx = imageRect.x();
     desty = imageRect.y();
 
-    unsigned char* pixelData = cairo_image_surface_get_data(imageSurface.get());
+    uint8_t* pixelData = cairo_image_surface_get_data(imageSurface.get());
 
     unsigned srcBytesPerRow = 4 * scaledSourceSize.width();
     int stride = cairo_image_surface_get_stride(imageSurface.get());
 
-    unsigned char* srcRows = source->data() + originy * srcBytesPerRow + originx * 4;
+    const uint8_t* srcRows = source.data() + originy * srcBytesPerRow + originx * 4;
     for (int y = 0; y < numRows; ++y) {
         unsigned* row = reinterpret_cast_ptr<unsigned*>(pixelData + stride * (y + desty));
         for (int x = 0; x < numColumns; x++) {

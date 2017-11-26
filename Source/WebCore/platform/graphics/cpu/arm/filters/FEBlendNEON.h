@@ -116,10 +116,10 @@ void FEBlend::platformApplySoftware()
         return;
 
     IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<Uint8ClampedArray> srcPixelArrayA = in->premultipliedResult(effectADrawingRect);
+    auto srcPixelArrayA = in->premultipliedResult(effectADrawingRect);
 
     IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
-    RefPtr<Uint8ClampedArray> srcPixelArrayB = in2->premultipliedResult(effectBDrawingRect);
+    auto srcPixelArrayB = in2->premultipliedResult(effectBDrawingRect);
 
     unsigned pixelArrayLength = srcPixelArrayA->length();
     ASSERT(pixelArrayLength == srcPixelArrayB->length());

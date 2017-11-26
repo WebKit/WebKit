@@ -36,8 +36,7 @@
 namespace WebCore {
 
 template <int b1, int b4>
-inline void FEComposite::computeArithmeticPixelsNeon(unsigned char* source, unsigned char* destination,
-    unsigned pixelArrayLength, float k1, float k2, float k3, float k4)
+inline void FEComposite::computeArithmeticPixelsNeon(const uint8_t* source, uint8_t* destination, unsigned pixelArrayLength, float k1, float k2, float k3, float k4)
 {
     float32x4_t k1x4 = vdupq_n_f32(k1 / 255);
     float32x4_t k2x4 = vdupq_n_f32(k2);
@@ -45,7 +44,7 @@ inline void FEComposite::computeArithmeticPixelsNeon(unsigned char* source, unsi
     float32x4_t k4x4 = vdupq_n_f32(k4 * 255);
     uint32x4_t max255 = vdupq_n_u32(255);
 
-    uint32_t* sourcePixel = reinterpret_cast<uint32_t*>(source);
+    const uint32_t* sourcePixel = reinterpret_cast<const uint32_t*>(source);
     uint32_t* destinationPixel = reinterpret_cast<uint32_t*>(destination);
     uint32_t* destinationEndPixel = destinationPixel + (pixelArrayLength >> 2);
 
@@ -68,8 +67,7 @@ inline void FEComposite::computeArithmeticPixelsNeon(unsigned char* source, unsi
     }
 }
 
-inline void FEComposite::platformArithmeticNeon(unsigned char* source, unsigned char* destination,
-    unsigned pixelArrayLength, float k1, float k2, float k3, float k4)
+inline void FEComposite::platformArithmeticNeon(const uint8_t* source, uint8_t* destination, unsigned pixelArrayLength, float k1, float k2, float k3, float k4)
 {
     if (!k4) {
         if (!k1) {

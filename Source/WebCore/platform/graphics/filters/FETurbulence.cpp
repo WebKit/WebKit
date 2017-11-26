@@ -366,7 +366,7 @@ ColorComponents FETurbulence::calculateTurbulenceValueForPoint(const PaintingDat
     return toColorComponents(turbulenceFunctionResult);
 }
 
-void FETurbulence::fillRegion(Uint8ClampedArray* pixelArray, const PaintingData& paintingData, StitchData stitchData, int startY, int endY) const
+void FETurbulence::fillRegion(Uint8ClampedArray& pixelArray, const PaintingData& paintingData, StitchData stitchData, int startY, int endY) const
 {
     IntRect filterRegion = absolutePaintRect();
     FloatPoint point(0, filterRegion.y() + startY);
@@ -380,7 +380,7 @@ void FETurbulence::fillRegion(Uint8ClampedArray* pixelArray, const PaintingData&
             point.setX(point.x() + 1);
             FloatPoint localPoint = inverseTransfrom.mapPoint(point);
             ColorComponents values = calculateTurbulenceValueForPoint(paintingData, stitchData, localPoint);
-            pixelArray->setRange(values.components, 4, indexOfPixelChannel);
+            pixelArray.setRange(values.components, 4, indexOfPixelChannel);
             indexOfPixelChannel += 4;
         }
     }
@@ -388,7 +388,7 @@ void FETurbulence::fillRegion(Uint8ClampedArray* pixelArray, const PaintingData&
 
 void FETurbulence::fillRegionWorker(FillRegionParameters* parameters)
 {
-    parameters->filter->fillRegion(parameters->pixelArray, *parameters->paintingData, parameters->stitchData, parameters->startY, parameters->endY);
+    parameters->filter->fillRegion(*parameters->pixelArray, *parameters->paintingData, parameters->stitchData, parameters->startY, parameters->endY);
 }
 
 void FETurbulence::platformApplySoftware()
@@ -448,7 +448,7 @@ void FETurbulence::platformApplySoftware()
     }
 
     // Fallback to single threaded mode if there is no room for a new thread or the paint area is too small.
-    fillRegion(pixelArray, paintingData, stitchData, 0, height);
+    fillRegion(*pixelArray, paintingData, stitchData, 0, height);
 }
 
 static TextStream& operator<<(TextStream& ts, TurbulenceType type)

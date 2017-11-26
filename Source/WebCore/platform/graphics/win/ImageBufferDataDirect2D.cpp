@@ -84,7 +84,7 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const In
     return result;
 }
 
-void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool /* accelerateRendering */, bool unmultiplied, float resolutionScale)
+void ImageBufferData::putData(const Uint8ClampedArray& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool /* accelerateRendering */, bool unmultiplied, float resolutionScale)
 {
     auto platformContext = context->platformContext();
     COMPtr<ID2D1BitmapRenderTarget> renderTarget(Query, platformContext);
@@ -132,14 +132,14 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
         return;
 
     unsigned srcBytesPerRow = 4 * sourceSize.width();
-    unsigned char* srcRows = source->data() + (originy * srcBytesPerRow + originx * 4).unsafeGet();
+    const uint8_t* srcRows = source.data() + (originy * srcBytesPerRow + originx * 4).unsafeGet();
 
-    unsigned char* row = new unsigned char[srcBytesPerRow];
+    uint8_t* row = new uint8_t[srcBytesPerRow];
 
     for (int y = 0; y < height.unsafeGet(); ++y) {
         for (int x = 0; x < width.unsafeGet(); x++) {
             int basex = x * 4;
-            unsigned char alpha = srcRows[basex + 3];
+            uint8_t alpha = srcRows[basex + 3];
             if (unmultiplied && alpha != 255) {
                 row[basex] = (srcRows[basex] * alpha + 254) / 255;
                 row[basex + 1] = (srcRows[basex + 1] * alpha + 254) / 255;

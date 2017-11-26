@@ -59,8 +59,9 @@ public:
     ImageBuffer* imageBufferResult();
     RefPtr<Uint8ClampedArray> unmultipliedResult(const IntRect&);
     RefPtr<Uint8ClampedArray> premultipliedResult(const IntRect&);
-    void copyUnmultipliedResult(Uint8ClampedArray* destination, const IntRect&);
-    void copyPremultipliedResult(Uint8ClampedArray* destination, const IntRect&);
+
+    void copyUnmultipliedResult(Uint8ClampedArray& destination, const IntRect&);
+    void copyPremultipliedResult(Uint8ClampedArray& destination, const IntRect&);
 
 #if ENABLE(OPENCL)
     OpenCLHandle openCLImage() { return m_openCLImageResult; }
@@ -181,7 +182,7 @@ protected:
 private:
     virtual void platformApplySoftware() = 0;
 
-    void copyImageBytes(Uint8ClampedArray* source, Uint8ClampedArray* destination, const IntRect&) const;
+    void copyImageBytes(const Uint8ClampedArray& source, Uint8ClampedArray& destination, const IntRect&) const;
 
     Filter& m_filter;
     FilterEffectVector m_inputEffects;

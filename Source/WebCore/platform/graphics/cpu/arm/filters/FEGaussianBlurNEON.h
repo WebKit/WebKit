@@ -34,11 +34,11 @@
 
 namespace WebCore {
 
-inline void boxBlurNEON(Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* dstPixelArray,
+inline void boxBlurNEON(const Uint8ClampedArray& srcPixelArray, Uint8ClampedArray& dstPixelArray,
                         unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight)
 {
-    uint32_t* sourcePixel = reinterpret_cast<uint32_t*>(srcPixelArray->data());
-    uint32_t* destinationPixel = reinterpret_cast<uint32_t*>(dstPixelArray->data());
+    const uint32_t* sourcePixel = reinterpret_cast<uint32_t*>(srcPixelArray.data());
+    uint32_t* destinationPixel = reinterpret_cast<uint32_t*>(dstPixelArray.data());
 
     float32x4_t deltaX = vdupq_n_f32(1.0 / dx);
     int pixelLine = strideLine / 4;
