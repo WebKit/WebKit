@@ -198,13 +198,9 @@ public:
         
     JS_EXPORT_PRIVATE void getSlice(int startIndex, ArgList& result) const;
 
-    // FIXME: This is only made public as a work around for jsc's test helper function,
-    // callWasmFunction() to use. Make this a private method again once we can remove
-    // callWasmFunction().
-    // https://bugs.webkit.org/show_bug.cgi?id=168582
+private:
     JSValue* data() const { return m_args; }
 
-private:
     JSValue* m_args;
     int m_argCount;
 };
