@@ -48,7 +48,7 @@ private:
     void computePreferredLogicalWidths() final;
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
 
-    void computeOperatorsHorizontalStretch();
+    void stretchHorizontalOperatorsAndLayoutChildren();
     bool isValid() const;
     bool shouldMoveLimits();
     RenderBox& base() const;

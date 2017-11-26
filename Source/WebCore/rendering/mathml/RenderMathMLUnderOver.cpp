@@ -50,7 +50,7 @@ MathMLUnderOverElement& RenderMathMLUnderOver::element() const
     return static_cast<MathMLUnderOverElement&>(nodeForNonAnonymous());
 }
 
-void RenderMathMLUnderOver::computeOperatorsHorizontalStretch()
+void RenderMathMLUnderOver::stretchHorizontalOperatorsAndLayoutChildren()
 {
     LayoutUnit stretchWidth = 0;
     Vector<RenderMathMLOperator*, 2> renderOperators;
@@ -261,14 +261,12 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
 
     recomputeLogicalWidth();
 
-    computeOperatorsHorizontalStretch();
+    stretchHorizontalOperatorsAndLayoutChildren();
 
-    base().layoutIfNeeded();
-    if (m_scriptType == Under || m_scriptType == UnderOver)
-        under().layoutIfNeeded();
-    if (m_scriptType == Over || m_scriptType == UnderOver)
-        over().layoutIfNeeded();
-
+    ASSERT(!base().needsLayout());
+    ASSERT(m_scriptType == Over || !under().needsLayout());
+    ASSERT(m_scriptType == Under || !over().needsLayout());
+    
     LayoutUnit logicalWidth = base().logicalWidth();
     if (m_scriptType == Under || m_scriptType == UnderOver)
         logicalWidth = std::max(logicalWidth, under().logicalWidth());
