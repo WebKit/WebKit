@@ -32,9 +32,27 @@ namespace WebCore {
 
 namespace GridLayoutFunctions {
 
+static inline bool marginStartIsAuto(const RenderBox& child, GridTrackSizingDirection direction)
+{
+    return direction == ForColumns ? child.style().marginStart().isAuto() : child.style().marginBefore().isAuto();
+}
+
+static inline bool marginEndIsAuto(const RenderBox& child, GridTrackSizingDirection direction)
+{
+    return direction == ForColumns ? child.style().marginEnd().isAuto() : child.style().marginAfter().isAuto();
+}
+
+static bool childHasMargin(const RenderBox& child, GridTrackSizingDirection direction)
+{
+    // Length::IsZero returns true for 'auto' margins, which is aligned with the purpose of this function.
+    if (direction == ForColumns)
+        return !child.style().marginStart().isZero() || !child.style().marginEnd().isZero();
+    return !child.style().marginBefore().isZero() || !child.style().marginAfter().isZero();
+}
+
 LayoutUnit computeMarginLogicalSizeForChild(const RenderGrid& grid, GridTrackSizingDirection direction, const RenderBox& child)
 {
-    if (!child.style().hasMargin())
+    if (!childHasMargin(child, flowAwareDirectionForChild(grid, child, direction)))
         return 0;
 
     LayoutUnit marginStart;
@@ -43,15 +61,17 @@ LayoutUnit computeMarginLogicalSizeForChild(const RenderGrid& grid, GridTrackSiz
         child.computeInlineDirectionMargins(grid, child.containingBlockLogicalWidthForContentInFragment(nullptr), child.logicalWidth(), marginStart, marginEnd);
     else
         child.computeBlockDirectionMargins(grid, marginStart, marginEnd);
-
-    return marginStart + marginEnd;
+    return marginStartIsAuto(child, direction) ? marginEnd : marginEndIsAuto(child, direction) ? marginStart : marginStart + marginEnd;
 }
 
 LayoutUnit marginLogicalSizeForChild(const RenderGrid& grid, GridTrackSizingDirection direction, const RenderBox& child)
 {
     if (child.needsLayout())
         return computeMarginLogicalSizeForChild(grid, direction, child);
-    return flowAwareDirectionForChild(grid, child, direction) == ForColumns ? child.marginLogicalWidth() : child.marginLogicalHeight();
+    bool isRowAxis = flowAwareDirectionForChild(grid, child, direction) == ForColumns;
+    LayoutUnit marginStart = marginStartIsAuto(child, direction) ? LayoutUnit() : isRowAxis ? child.marginStart() : child.marginBefore();
+    LayoutUnit marginEnd = marginEndIsAuto(child, direction) ? LayoutUnit() : isRowAxis ? child.marginEnd() : child.marginAfter();
+    return marginStart + marginEnd;
 }
 
 bool isOrthogonalChild(const RenderGrid& grid, const RenderBox& child)
