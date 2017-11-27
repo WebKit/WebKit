@@ -3,6 +3,6 @@ Resource Timing: Element localName initiatorType
 
 PASS Type: video - <video src> 
 PASS Timing: video - <video src> 
-FAIL Type: audio - <audio src> assert_equals: name should be the url expected "http://localhost:8800/WebKit/resource-timing/resources/data.json?audio&0.5660213883579809" but got "http://localhost:8800/WebKit/resource-timing/resources/data.json?video&0.7924746989228406"
+PASS Type: audio - <audio src> 
 PASS Timing: audio - <audio src> 
 

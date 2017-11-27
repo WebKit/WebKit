@@ -895,6 +895,7 @@ webkit.org/b/177872 http/wpt/fetch/response-status-text.html [ Failure ]
 webkit.org/b/168543 http/wpt/resource-timing/rt-nextHopProtocol.html [ Failure ]
 webkit.org/b/168543 http/wpt/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
 webkit.org/b/177871 http/wpt/resource-timing/rt-shared-resource-in-workers.html [ Failure ]
+webkit.org/b/168357 http/wpt/resource-timing/rt-initiatorType-media.html [ Pass ]
 
 Bug(WPE) contentfiltering/ [ Skip ]
 Bug(WPE) http/wpt/beacon/contentextensions/ [ Skip ]

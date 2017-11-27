@@ -1,3 +1,25 @@
+2017-11-27  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK][WPE] Enable http/wpt/resource-timing/rt-initiatorType-media.html.
+        https://bugs.webkit.org/show_bug.cgi?id=180034
+
+        Unreviewed test gardening.
+
+        If this test fails, it will fail with random numbers in the failure
+        message. The current platform-neutral expectation file contains one
+        pair of these random numbers, ensuring that this test will never be
+        interpreted as passing -- not while the bug exists, and not when it
+        is fixed.
+
+        This change updates the expectation file to contain only passes and
+        enables the test for WPE and GTK, as the bug does not seem to exist
+        there.
+
+        * http/wpt/resource-timing/rt-initiatorType-media-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/http/wpt/resource-timing/rt-initiatorType-media-expected.txt: Removed.
+
 2017-11-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Layout test media/track/track-text-track-cue-list.html crash with g_source_set_ready_time: assertion 'source->ref_count > 0' failed
