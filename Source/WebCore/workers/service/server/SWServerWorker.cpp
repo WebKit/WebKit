@@ -43,11 +43,11 @@ SWServerWorker* SWServerWorker::existingWorkerForIdentifier(ServiceWorkerIdentif
     return allWorkers().get(identifier);
 }
 
-SWServerWorker::SWServerWorker(SWServer& server, const ServiceWorkerRegistrationKey& registrationKey, SWServerToContextConnectionIdentifier contextConnectionIdentifier, const URL& scriptURL, const String& script, WorkerType type, ServiceWorkerIdentifier identifier)
+SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registration, SWServerToContextConnectionIdentifier contextConnectionIdentifier, const URL& scriptURL, const String& script, WorkerType type, ServiceWorkerIdentifier identifier)
     : m_server(server)
-    , m_registrationKey(registrationKey)
+    , m_registrationKey(registration.key())
     , m_contextConnectionIdentifier(contextConnectionIdentifier)
-    , m_data { identifier, scriptURL, ServiceWorkerState::Redundant, type }
+    , m_data { identifier, scriptURL, ServiceWorkerState::Redundant, type, registration.identifier() }
     , m_script(script)
 {
     auto result = allWorkers().add(identifier, this);

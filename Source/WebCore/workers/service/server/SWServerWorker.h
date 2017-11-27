@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class SWServer;
+class SWServerRegistration;
 enum class WorkerType;
 struct ServiceWorkerJobDataIdentifier;
 
@@ -78,7 +79,7 @@ public:
     const ServiceWorkerData& data() const { return m_data; }
 
 private:
-    SWServerWorker(SWServer&, const ServiceWorkerRegistrationKey&, SWServerToContextConnectionIdentifier, const URL&, const String& script, WorkerType, ServiceWorkerIdentifier);
+    SWServerWorker(SWServer&, SWServerRegistration&, SWServerToContextConnectionIdentifier, const URL&, const String& script, WorkerType, ServiceWorkerIdentifier);
 
     SWServer& m_server;
     ServiceWorkerRegistrationKey m_registrationKey;

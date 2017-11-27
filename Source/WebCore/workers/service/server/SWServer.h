@@ -82,10 +82,10 @@ public:
 
         WEBCORE_EXPORT void scheduleJobInServer(const ServiceWorkerJobData&);
         WEBCORE_EXPORT void finishFetchingScriptInServer(const ServiceWorkerFetchResult&);
-        WEBCORE_EXPORT void addServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationIdentifier);
-        WEBCORE_EXPORT void removeServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationIdentifier);
-        WEBCORE_EXPORT void serviceWorkerStartedControllingClient(ServiceWorkerIdentifier, DocumentIdentifier);
-        WEBCORE_EXPORT void serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier, DocumentIdentifier);
+        WEBCORE_EXPORT void addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier);
+        WEBCORE_EXPORT void removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier);
+        WEBCORE_EXPORT void serviceWorkerStartedControllingClient(ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier, DocumentIdentifier);
+        WEBCORE_EXPORT void serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier, DocumentIdentifier);
 
     private:
         // Messages to the client WebProcess
@@ -149,10 +149,10 @@ private:
 
     void didResolveRegistrationPromise(Connection&, const ServiceWorkerRegistrationKey&);
 
-    void addClientServiceWorkerRegistration(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationIdentifier);
-    void removeClientServiceWorkerRegistration(Connection&, const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationIdentifier);
-    void serviceWorkerStartedControllingClient(Connection&, ServiceWorkerIdentifier, DocumentIdentifier);
-    void serviceWorkerStoppedControllingClient(Connection&, ServiceWorkerIdentifier, DocumentIdentifier);
+    void addClientServiceWorkerRegistration(Connection&, ServiceWorkerRegistrationIdentifier);
+    void removeClientServiceWorkerRegistration(Connection&, ServiceWorkerRegistrationIdentifier);
+    void serviceWorkerStartedControllingClient(Connection&, ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier, DocumentIdentifier);
+    void serviceWorkerStoppedControllingClient(Connection&, ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier, DocumentIdentifier);
 
     WEBCORE_EXPORT const SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const;
 
@@ -160,6 +160,7 @@ private:
 
     HashMap<SWServerConnectionIdentifier, Connection*> m_connections;
     HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerRegistration>> m_registrations;
+    HashMap<ServiceWorkerRegistrationIdentifier, SWServerRegistration*> m_registrationsByID;
     HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerJobQueue>> m_jobQueues;
 
     HashMap<ServiceWorkerIdentifier, Ref<SWServerWorker>> m_workersByID;

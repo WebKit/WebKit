@@ -94,8 +94,12 @@ SWServerRegistration* SWServer::getRegistration(const ServiceWorkerRegistrationK
 void SWServer::addRegistration(std::unique_ptr<SWServerRegistration>&& registration)
 {
     auto key = registration->key();
-    auto result = m_registrations.add(key, WTFMove(registration));
-    ASSERT_UNUSED(result, result.isNewEntry);
+    auto* registrationPtr = registration.get();
+    auto addResult1 = m_registrations.add(key, WTFMove(registration));
+    ASSERT_UNUSED(addResult1, addResult1.isNewEntry);
+
+    auto addResult2 = m_registrationsByID.add(registrationPtr->identifier(), registrationPtr);
+    ASSERT_UNUSED(addResult2, addResult2.isNewEntry);
 
     m_originStore->add(key.topOrigin().securityOrigin());
 }
@@ -103,8 +107,10 @@ void SWServer::addRegistration(std::unique_ptr<SWServerRegistration>&& registrat
 void SWServer::removeRegistration(const ServiceWorkerRegistrationKey& key)
 {
     auto topOrigin = key.topOrigin().securityOrigin();
-    auto result = m_registrations.remove(key);
-    ASSERT_UNUSED(result, result);
+    auto registration = m_registrations.take(key);
+    ASSERT(registration);
+    bool wasRemoved = m_registrationsByID.remove(registration->identifier());
+    ASSERT_UNUSED(wasRemoved, wasRemoved);
 
     m_originStore->remove(topOrigin);
 }
@@ -132,6 +138,7 @@ void SWServer::clearAll()
     m_jobQueues.clear();
     while (!m_registrations.isEmpty())
         SWServerJobQueue::clearRegistration(*this, *m_registrations.begin()->value);
+    ASSERT(m_registrationsByID.isEmpty());
     m_originStore->clearAll();
 }
 
@@ -160,24 +167,24 @@ void SWServer::Connection::didResolveRegistrationPromise(const ServiceWorkerRegi
     m_server.didResolveRegistrationPromise(*this, key);
 }
 
-void SWServer::Connection::addServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationIdentifier identifier)
+void SWServer::Connection::addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier identifier)
 {
-    m_server.addClientServiceWorkerRegistration(*this, key, identifier);
+    m_server.addClientServiceWorkerRegistration(*this, identifier);
 }
 
-void SWServer::Connection::removeServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationIdentifier identifier)
+void SWServer::Connection::removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier identifier)
 {
-    m_server.removeClientServiceWorkerRegistration(*this, key, identifier);
+    m_server.removeClientServiceWorkerRegistration(*this, identifier);
 }
 
-void SWServer::Connection::serviceWorkerStartedControllingClient(ServiceWorkerIdentifier serviceWorkerIdentifier, DocumentIdentifier contextIdentifier)
+void SWServer::Connection::serviceWorkerStartedControllingClient(ServiceWorkerIdentifier serviceWorkerIdentifier, ServiceWorkerRegistrationIdentifier registrationIdentifier, DocumentIdentifier contextIdentifier)
 {
-    m_server.serviceWorkerStartedControllingClient(*this, serviceWorkerIdentifier, contextIdentifier);
+    m_server.serviceWorkerStartedControllingClient(*this, serviceWorkerIdentifier, registrationIdentifier, contextIdentifier);
 }
 
-void SWServer::Connection::serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier serviceWorkerIdentifier, DocumentIdentifier contextIdentifier)
+void SWServer::Connection::serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier serviceWorkerIdentifier, ServiceWorkerRegistrationIdentifier registrationIdentifier, DocumentIdentifier contextIdentifier)
 {
-    m_server.serviceWorkerStoppedControllingClient(*this, serviceWorkerIdentifier, contextIdentifier);
+    m_server.serviceWorkerStoppedControllingClient(*this, serviceWorkerIdentifier, registrationIdentifier, contextIdentifier);
 }
 
 SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore)
@@ -296,54 +303,40 @@ void SWServer::didResolveRegistrationPromise(Connection& connection, const Servi
         jobQueue->didResolveRegistrationPromise();
 }
 
-void SWServer::addClientServiceWorkerRegistration(Connection& connection, const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationIdentifier identifier)
+void SWServer::addClientServiceWorkerRegistration(Connection& connection, ServiceWorkerRegistrationIdentifier identifier)
 {
-    auto* registration = m_registrations.get(key);
+    auto* registration = m_registrationsByID.get(identifier);
     if (!registration) {
         LOG_ERROR("Request to add client-side ServiceWorkerRegistration to non-existent server-side registration");
         return;
     }
-
-    if (registration->identifier() != identifier)
-        return;
     
     registration->addClientServiceWorkerRegistration(connection.identifier());
 }
 
-void SWServer::removeClientServiceWorkerRegistration(Connection& connection, const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationIdentifier identifier)
+void SWServer::removeClientServiceWorkerRegistration(Connection& connection, ServiceWorkerRegistrationIdentifier identifier)
 {
-    auto* registration = m_registrations.get(key);
+    auto* registration = m_registrationsByID.get(identifier);
     if (!registration) {
         LOG_ERROR("Request to remove client-side ServiceWorkerRegistration from non-existent server-side registration");
         return;
     }
-
-    if (registration->identifier() != identifier)
-        return;
     
     registration->removeClientServiceWorkerRegistration(connection.identifier());
 }
 
-void SWServer::serviceWorkerStartedControllingClient(Connection& connection, ServiceWorkerIdentifier serviceWorkerIdentifier, DocumentIdentifier contextIdentifier)
+void SWServer::serviceWorkerStartedControllingClient(Connection& connection, ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier registrationIdentifier, DocumentIdentifier contextIdentifier)
 {
-    auto* serviceWorker = m_workersByID.get(serviceWorkerIdentifier);
-    if (!serviceWorker)
-        return;
-
-    auto* registration = m_registrations.get(serviceWorker->registrationKey());
+    auto* registration = m_registrationsByID.get(registrationIdentifier);
     if (!registration)
         return;
 
     registration->addClientUsingRegistration({ connection.identifier(), contextIdentifier });
 }
 
-void SWServer::serviceWorkerStoppedControllingClient(Connection& connection, ServiceWorkerIdentifier serviceWorkerIdentifier, DocumentIdentifier contextIdentifier)
+void SWServer::serviceWorkerStoppedControllingClient(Connection& connection, ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier registrationIdentifier, DocumentIdentifier contextIdentifier)
 {
-    auto* serviceWorker = m_workersByID.get(serviceWorkerIdentifier);
-    if (!serviceWorker)
-        return;
-
-    auto* registration = m_registrations.get(serviceWorker->registrationKey());
+    auto* registration = m_registrationsByID.get(registrationIdentifier);
     if (!registration)
         return;
 
@@ -381,7 +374,10 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
     auto* connection = SWServerToContextConnection::globalServerToContextConnection();
     ASSERT(connection);
 
-    auto result = m_workersByID.add(data.serviceWorkerIdentifier, SWServerWorker::create(*this, data.registrationKey, connection->identifier(), data.scriptURL, data.script, data.workerType, data.serviceWorkerIdentifier));
+    auto* registration = m_registrations.get(data.registrationKey);
+    RELEASE_ASSERT(registration);
+
+    auto result = m_workersByID.add(data.serviceWorkerIdentifier, SWServerWorker::create(*this, *registration, connection->identifier(), data.scriptURL, data.script, data.workerType, data.serviceWorkerIdentifier));
     ASSERT_UNUSED(result, result.isNewEntry);
 
     connection->installServiceWorkerContext(data);

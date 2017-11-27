@@ -39,6 +39,7 @@ struct ServiceWorkerData {
     URL scriptURL;
     ServiceWorkerState state;
     WorkerType type;
+    ServiceWorkerRegistrationIdentifier registrationIdentifier;
 
     ServiceWorkerData isolatedCopy() const;
 
@@ -49,7 +50,7 @@ struct ServiceWorkerData {
 template<class Encoder>
 void ServiceWorkerData::encode(Encoder& encoder) const
 {
-    encoder << identifier << scriptURL << state << type;
+    encoder << identifier << scriptURL << state << type << registrationIdentifier;
 }
 
 template<class Decoder>
@@ -75,7 +76,12 @@ std::optional<ServiceWorkerData> ServiceWorkerData::decode(Decoder& decoder)
     if (!type)
         return std::nullopt;
 
-    return { { WTFMove(*identifier), WTFMove(*scriptURL), WTFMove(*state), WTFMove(*type) } };
+    std::optional<ServiceWorkerRegistrationIdentifier> registrationIdentifier;
+    decoder >> registrationIdentifier;
+    if (!registrationIdentifier)
+        return std::nullopt;
+
+    return { { WTFMove(*identifier), WTFMove(*scriptURL), WTFMove(*state), WTFMove(*type), WTFMove(*registrationIdentifier) } };
 }
 
 } // namespace WebCore

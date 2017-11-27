@@ -59,6 +59,7 @@ public:
     ExceptionOr<void> postMessage(ScriptExecutionContext&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
     ServiceWorkerIdentifier identifier() const { return m_data.identifier; }
+    ServiceWorkerRegistrationIdentifier registrationIdentifier() const { return m_data.registrationIdentifier; }
 
     using RefCounted::ref;
     using RefCounted::deref;

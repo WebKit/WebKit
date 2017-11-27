@@ -60,8 +60,8 @@ public:
     using GetRegistrationsCallback = WTF::CompletionHandler<void(Vector<ServiceWorkerRegistrationData>&&)>;
     virtual void getRegistrations(const SecurityOrigin& topOrigin, const URL& clientURL, GetRegistrationsCallback&&) = 0;
 
-    virtual void addServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationIdentifier) = 0;
-    virtual void removeServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey&, ServiceWorkerRegistrationIdentifier) = 0;
+    virtual void addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier) = 0;
+    virtual void removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier) = 0;
 
     void scheduleJob(ServiceWorkerJob&);
     void finishedFetchingScript(ServiceWorkerJob&, const String&);
@@ -73,8 +73,8 @@ public:
     virtual SWServerConnectionIdentifier serverConnectionIdentifier() const = 0;
     virtual bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOrigin&) const = 0;
 
-    virtual void serviceWorkerStartedControllingClient(ServiceWorkerIdentifier, DocumentIdentifier) = 0;
-    virtual void serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier, DocumentIdentifier) = 0;
+    virtual void serviceWorkerStartedControllingClient(ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier, DocumentIdentifier) = 0;
+    virtual void serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier, DocumentIdentifier) = 0;
 
 protected:
     WEBCORE_EXPORT SWClientConnection();

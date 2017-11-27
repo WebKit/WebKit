@@ -36,7 +36,8 @@ ServiceWorkerData ServiceWorkerData::isolatedCopy() const
         identifier,
         scriptURL.isolatedCopy(),
         state,
-        type
+        type,
+        registrationIdentifier
     };
 }
 

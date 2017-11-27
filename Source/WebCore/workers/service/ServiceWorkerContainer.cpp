@@ -401,13 +401,13 @@ bool ServiceWorkerContainer::canSuspendForDocumentSuspension() const
 
 void ServiceWorkerContainer::addRegistration(ServiceWorkerRegistration& registration)
 {
-    m_swConnection->addServiceWorkerRegistrationInServer(registration.data().key, registration.identifier());
+    m_swConnection->addServiceWorkerRegistrationInServer(registration.identifier());
     m_registrations.add(registration.identifier(), &registration);
 }
 
 void ServiceWorkerContainer::removeRegistration(ServiceWorkerRegistration& registration)
 {
-    m_swConnection->removeServiceWorkerRegistrationInServer(registration.data().key, registration.identifier());
+    m_swConnection->removeServiceWorkerRegistrationInServer(registration.identifier());
     m_registrations.remove(registration.identifier());
 }
 

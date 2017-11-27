@@ -54,8 +54,8 @@ public:
 
     WebCore::SWServerConnectionIdentifier serverConnectionIdentifier() const final { return m_identifier; }
 
-    void addServiceWorkerRegistrationInServer(const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerRegistrationIdentifier) final;
-    void removeServiceWorkerRegistrationInServer(const WebCore::ServiceWorkerRegistrationKey&, WebCore::ServiceWorkerRegistrationIdentifier) final;
+    void addServiceWorkerRegistrationInServer(WebCore::ServiceWorkerRegistrationIdentifier) final;
+    void removeServiceWorkerRegistrationInServer(WebCore::ServiceWorkerRegistrationIdentifier) final;
 
     void disconnectedFromWebProcess();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -69,8 +69,8 @@ private:
     void scheduleJobInServer(const WebCore::ServiceWorkerJobData&) final;
     void finishFetchingScriptInServer(const WebCore::ServiceWorkerFetchResult&) final;
     void postMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, Ref<WebCore::SerializedScriptValue>&&, WebCore::DocumentIdentifier sourceContextIdentifier, WebCore::ServiceWorkerClientData&& source) final;
-    void serviceWorkerStartedControllingClient(WebCore::ServiceWorkerIdentifier, WebCore::DocumentIdentifier) final;
-    void serviceWorkerStoppedControllingClient(WebCore::ServiceWorkerIdentifier, WebCore::DocumentIdentifier) final;
+    void serviceWorkerStartedControllingClient(WebCore::ServiceWorkerIdentifier, WebCore::ServiceWorkerRegistrationIdentifier, WebCore::DocumentIdentifier) final;
+    void serviceWorkerStoppedControllingClient(WebCore::ServiceWorkerIdentifier, WebCore::ServiceWorkerRegistrationIdentifier, WebCore::DocumentIdentifier) final;
 
     void matchRegistration(const WebCore::SecurityOrigin& topOrigin, const WebCore::URL& clientURL, RegistrationCallback&&) final;
     void didMatchRegistration(uint64_t matchRequestIdentifier, std::optional<WebCore::ServiceWorkerRegistrationData>&&);

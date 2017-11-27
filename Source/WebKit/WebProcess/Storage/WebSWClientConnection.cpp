@@ -72,14 +72,14 @@ void WebSWClientConnection::finishFetchingScriptInServer(const ServiceWorkerFetc
     send(Messages::WebSWServerConnection::FinishFetchingScriptInServer(result));
 }
 
-void WebSWClientConnection::addServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationIdentifier identifier)
+void WebSWClientConnection::addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier identifier)
 {
-    send(Messages::WebSWServerConnection::AddServiceWorkerRegistrationInServer(key, identifier));
+    send(Messages::WebSWServerConnection::AddServiceWorkerRegistrationInServer(identifier));
 }
 
-void WebSWClientConnection::removeServiceWorkerRegistrationInServer(const ServiceWorkerRegistrationKey& key, ServiceWorkerRegistrationIdentifier identifier)
+void WebSWClientConnection::removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier identifier)
 {
-    send(Messages::WebSWServerConnection::RemoveServiceWorkerRegistrationInServer(key, identifier));
+    send(Messages::WebSWServerConnection::RemoveServiceWorkerRegistrationInServer(identifier));
 }
 
 void WebSWClientConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationIdentifier, Ref<SerializedScriptValue>&& scriptValue, DocumentIdentifier sourceContextIdentifier, ServiceWorkerClientData&& source)
@@ -87,14 +87,14 @@ void WebSWClientConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerI
     send(Messages::WebSWServerConnection::PostMessageToServiceWorkerGlobalScope(destinationIdentifier, IPC::DataReference { scriptValue->data() }, sourceContextIdentifier, WTFMove(source)));
 }
 
-void WebSWClientConnection::serviceWorkerStartedControllingClient(ServiceWorkerIdentifier serviceWorkerIdentifier, DocumentIdentifier contextIdentifier)
+void WebSWClientConnection::serviceWorkerStartedControllingClient(ServiceWorkerIdentifier serviceWorkerIdentifier, ServiceWorkerRegistrationIdentifier registrationIdentifier, DocumentIdentifier contextIdentifier)
 {
-    send(Messages::WebSWServerConnection::ServiceWorkerStartedControllingClient(serviceWorkerIdentifier, contextIdentifier));
+    send(Messages::WebSWServerConnection::ServiceWorkerStartedControllingClient(serviceWorkerIdentifier, registrationIdentifier, contextIdentifier));
 }
 
-void WebSWClientConnection::serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier serviceWorkerIdentifier, DocumentIdentifier contextIdentifier)
+void WebSWClientConnection::serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier serviceWorkerIdentifier, ServiceWorkerRegistrationIdentifier registrationIdentifier, DocumentIdentifier contextIdentifier)
 {
-    send(Messages::WebSWServerConnection::ServiceWorkerStoppedControllingClient(serviceWorkerIdentifier, contextIdentifier));
+    send(Messages::WebSWServerConnection::ServiceWorkerStoppedControllingClient(serviceWorkerIdentifier, registrationIdentifier, contextIdentifier));
 }
 
 void WebSWClientConnection::didResolveRegistrationPromise(const ServiceWorkerRegistrationKey& key)

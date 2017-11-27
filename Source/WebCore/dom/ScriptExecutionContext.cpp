@@ -552,12 +552,12 @@ void ScriptExecutionContext::setActiveServiceWorker(RefPtr<ServiceWorker>&& serv
 
     auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID());
     if (m_activeServiceWorker)
-        connection.serviceWorkerStoppedControllingClient(m_activeServiceWorker->identifier(), downcast<Document>(*this).identifier());
+        connection.serviceWorkerStoppedControllingClient(m_activeServiceWorker->identifier(), m_activeServiceWorker->registrationIdentifier(), downcast<Document>(*this).identifier());
 
     m_activeServiceWorker = WTFMove(serviceWorker);
 
     if (m_activeServiceWorker)
-        connection.serviceWorkerStartedControllingClient(m_activeServiceWorker->identifier(), downcast<Document>(*this).identifier());
+        connection.serviceWorkerStartedControllingClient(m_activeServiceWorker->identifier(), m_activeServiceWorker->registrationIdentifier(), downcast<Document>(*this).identifier());
 }
 
 ServiceWorkerContainer* ScriptExecutionContext::serviceWorkerContainer()
