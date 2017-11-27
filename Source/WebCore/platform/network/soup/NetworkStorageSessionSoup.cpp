@@ -32,9 +32,9 @@
 #if USE(SOUP)
 
 #include "Cookie.h"
+#include "GUniquePtrSoup.h"
 #include "ResourceHandle.h"
 #include "SoupNetworkSession.h"
-#include <WebCore/GUniquePtrSoup.h>
 #include <libsoup/soup.h>
 #include <wtf/DateMath.h>
 #include <wtf/MainThread.h>
