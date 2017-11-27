@@ -2633,7 +2633,7 @@ public:
 
     bool hasBucketOwnerType()
     {
-        return op() == GetMapBucketNext;
+        return op() == GetMapBucketNext || op() == LoadKeyFromMapBucket || op() == LoadValueFromMapBucket;
     }
 
     BucketOwnerType bucketOwnerType()

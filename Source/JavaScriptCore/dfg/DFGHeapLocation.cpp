@@ -180,12 +180,8 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("MapBucketValueLoc");
         return;
 
-    case MapBucketMapNextLoc:
-        out.print("MapBucketMapNextLoc");
-        return;
-
-    case MapBucketSetNextLoc:
-        out.print("MapBucketSetNextLoc");
+    case MapBucketNextLoc:
+        out.print("MapBucketNextLoc");
         return;
 
     case WeakMapGetLoc:

@@ -1,5 +1,29 @@
 2017-11-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] Introduce {Set,Map,WeakMap}Fields
+        https://bugs.webkit.org/show_bug.cgi?id=179925
+
+        Reviewed by Saam Barati.
+
+        SetAdd and MapSet uses `write(MiscFields)`, but it is not correct. It accidentally
+        writes readonly MiscFields which is used by various nodes and make optimization
+        conservative.
+
+        We introduce JSSetFields, JSMapFields, and JSWeakMapFields to precisely model clobberizing of Map, Set, and WeakMap.
+
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasBucketOwnerType):
+
+2017-11-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Remove JSStringBuilder
         https://bugs.webkit.org/show_bug.cgi?id=180016
 

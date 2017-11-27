@@ -72,6 +72,9 @@ namespace JSC { namespace DFG {
     macro(HeapObjectCount) /* Used to reflect the fact that some allocations reveal object identity */\
     macro(RegExpState) \
     macro(MathDotRandomState) \
+    macro(JSMapFields) \
+    macro(JSSetFields) \
+    macro(JSWeakMapFields) \
     macro(InternalState) \
     macro(Absolute) \
     /* DOMJIT tells the heap range with the pair of integers. */\

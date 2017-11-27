@@ -1,3 +1,23 @@
+2017-11-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Introduce {Set,Map,WeakMap}Fields
+        https://bugs.webkit.org/show_bug.cgi?id=179925
+
+        Reviewed by Saam Barati.
+
+        * stress/map-set-clobber-map-get.js: Added.
+        (shouldBe):
+        (test):
+        * stress/map-set-does-not-clobber-set-has.js: Added.
+        (shouldBe):
+        * stress/map-set-does-not-clobber-weak-map-get.js: Added.
+        (shouldBe):
+        (test):
+        * stress/set-add-clobber-set-has.js: Added.
+        (shouldBe):
+        * stress/set-add-does-not-clobber-map-get.js: Added.
+        (shouldBe):
+
 2017-11-24  Mark Lam  <mark.lam@apple.com>
 
         Move unsafe jsc shell test functions to the $vm object.

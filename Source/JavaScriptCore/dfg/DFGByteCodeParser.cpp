@@ -2875,7 +2875,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         Node* key = get(virtualRegisterForArgument(1, registerOffset));
         Node* hash = addToGraph(MapHash, key);
         Node* bucket = addToGraph(GetMapBucket, Edge(map, MapObjectUse), Edge(key), Edge(hash));
-        Node* result = addToGraph(LoadValueFromMapBucket, OpInfo(), OpInfo(prediction), bucket);
+        Node* result = addToGraph(LoadValueFromMapBucket, OpInfo(BucketOwnerType::Map), OpInfo(prediction), bucket);
         set(VirtualRegister(resultOperand), result);
         return true;
     }
@@ -2966,7 +2966,8 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
 
         insertChecks();
         Node* bucket = get(virtualRegisterForArgument(1, registerOffset));
-        Node* result = addToGraph(LoadKeyFromMapBucket, OpInfo(), OpInfo(prediction), bucket);
+        BucketOwnerType type = intrinsic == JSSetBucketKeyIntrinsic ? BucketOwnerType::Set : BucketOwnerType::Map;
+        Node* result = addToGraph(LoadKeyFromMapBucket, OpInfo(type), OpInfo(prediction), bucket);
         set(VirtualRegister(resultOperand), result);
         return true;
     }
@@ -2976,7 +2977,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
 
         insertChecks();
         Node* bucket = get(virtualRegisterForArgument(1, registerOffset));
-        Node* result = addToGraph(LoadValueFromMapBucket, OpInfo(), OpInfo(prediction), bucket);
+        Node* result = addToGraph(LoadValueFromMapBucket, OpInfo(BucketOwnerType::Map), OpInfo(prediction), bucket);
         set(VirtualRegister(resultOperand), result);
         return true;
     }
