@@ -127,6 +127,7 @@ media/modern-media-controls/media-controller/media-controller-auto-hide-rewind-w
 media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause-fullscreen.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-click-on-video-background-to-dismiss-tracks-panel-should-not-toggle-playback.html [ Skip ]
+media/modern-media-controls/media-controller/media-controller-space-bar-toggle-playback.html [ Skip ]
 media/modern-media-controls/media-documents/media-document-audio-mac-sizing.html [ Skip ]
 media/modern-media-controls/media-documents/media-document-video-mac-sizing.html [ Skip ]
 media/modern-media-controls/playback-support/playback-support-button-click.html [ Skip ]
