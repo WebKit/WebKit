@@ -1,3 +1,22 @@
+2017-11-27  Saam Barati  <sbarati@apple.com>
+
+        Having a bad time watchpoint firing during compilation revealed a racy assertion
+        https://bugs.webkit.org/show_bug.cgi?id=180048
+        <rdar://problem/35700009>
+
+        Reviewed by Mark Lam.
+
+        While a DFG compilation is watching the having a bad time watchpoint, it was
+        asserting that the rest parameter structure has indexing type ArrayWithContiguous.
+        However, if the having a bad time watchpoint fires during the compilation,
+        this particular structure will no longer have ArrayWithContiguous indexing type.
+        This patch fixes this racy assertion to be aware that the watchpoint may fire
+        during compilation.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCreateRest):
+        (JSC::DFG::SpeculativeJIT::compileNewArrayWithSpread):
+
 2017-11-27  Tim Horton  <timothy_horton@apple.com>
 
         One too many zeroes in macOS version number in FeatureDefines
