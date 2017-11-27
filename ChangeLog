@@ -1,3 +1,13 @@
+2017-11-27  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Values of CMAKE_BUILD_TYPE from toolchain file are ignored
+        https://bugs.webkit.org/show_bug.cgi?id=179971
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * CMakeLists.txt: Call project() first, as it loads the toolchain
+        file, so that's done before checking CMAKE_BUILD_TYPE.
+
 2017-11-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Sanity-check feature defaults in WebKitFeatures.cmake
