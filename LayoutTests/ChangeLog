@@ -1,3 +1,9 @@
+2017-11-27  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, unskip service worker tests that are no longer flaky.
+
+        * TestExpectations:
+
 2017-11-27  Antoine Quint  <graouts@apple.com>
 
         Pressing the space bar while watching a fullscreen video doesn't play or pause
