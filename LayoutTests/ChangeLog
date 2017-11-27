@@ -1,3 +1,12 @@
+2017-11-27  Matt Lewis  <jlewis3@apple.com>
+
+        Fixed incorrectly marked test expectations.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2017-11-27  Alex Christensen  <achristensen@webkit.org>
 
         Run imported/w3c/web-platform-tests/url/failure.html on debug builds after r225186.
