@@ -1,5 +1,16 @@
 2017-11-27  Per Arne Vollan  <pvollan@apple.com>
 
+        [Win] The number of webkit-patch iterations on EWS should be configurable.
+        https://bugs.webkit.org/show_bug.cgi?id=178517
+
+        Reviewed by Darin Adler.
+
+        Add a new RESET_AFTER_ITERATION argument to the EWS shell script.
+
+        * EWSTools/start-queue-win.sh:
+
+2017-11-27  Per Arne Vollan  <pvollan@apple.com>
+
         [Win] Switch to VS2017 on EWS bots.
         https://bugs.webkit.org/show_bug.cgi?id=178516
 

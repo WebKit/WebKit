@@ -1,7 +1,14 @@
 #!/bin/sh
+
+if [[ $# -lt 4 ]]; then
+echo "Usage: start-queue-win.sh WEBKIT_BUGZILLA_USERNAME WEBKIT_BUGZILLA_PASSWORD BOT_ID RESET_AFTER_ITERATION"
+exit 1
+fi
+
 export WEBKIT_BUGZILLA_USERNAME=$1
 export WEBKIT_BUGZILLA_PASSWORD=$2
 export BOT_ID=$3
+export RESET_AFTER_ITERATION=$4
 
 function error_handler()
 {
@@ -52,7 +59,7 @@ function start_ews()
     echo "TASK: test-webkitpy"
     ~/WebKit/Tools/Scripts/test-webkitpy
     echo "TASK: webkit-patch win-ews"
-    ~/WebKit/Tools/Scripts/webkit-patch win-ews --bot-id=$BOT_ID --no-confirm --exit-after-iteration 10
+    ~/WebKit/Tools/Scripts/webkit-patch win-ews --bot-id=$BOT_ID --no-confirm --exit-after-iteration $RESET_AFTER_ITERATION
     echo "TASK: reboot"
     shutdown /r
 }
