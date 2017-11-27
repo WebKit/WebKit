@@ -469,7 +469,7 @@ string(REPLACE " " "\;" CXX_LIBS ${CMAKE_CXX_STANDARD_LIBRARIES})
 list(APPEND WebKitLegacy_LIBRARIES ${CXX_LIBS})
 set(CMAKE_CXX_STANDARD_LIBRARIES "")
 
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT /NODEFAULTLIB:MSVCRTD")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${MSVC_RUNTIME_LINKER_FLAGS}")
 
 # If this directory isn't created before midl runs and attempts to output WebKit.tlb,
 # It fails with an unusual error - midl failed - failed to save all changes

@@ -1,3 +1,13 @@
+2017-11-27  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake][Win] Conditionally select DLL CRT or static CRT
+        https://bugs.webkit.org/show_bug.cgi?id=170594
+
+        Reviewed by Alex Christensen.
+
+        * Source/cmake/OptionsAppleWin.cmake:
+        * Source/cmake/OptionsMSVC.cmake:
+
 2017-11-27  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Values of CMAKE_BUILD_TYPE from toolchain file are ignored

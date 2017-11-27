@@ -1,3 +1,7 @@
+# The static runtime is required for AppleWin due to WebKitSystemInterface.lib
+# being compiled with a static runtime.
+set(MSVC_STATIC_RUNTIME ON)
+
 include(OptionsWin)
 
 SET_AND_EXPOSE_TO_BUILD(USE_CF ON)
