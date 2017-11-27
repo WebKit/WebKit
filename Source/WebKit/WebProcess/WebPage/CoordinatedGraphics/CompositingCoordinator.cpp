@@ -284,16 +284,16 @@ std::unique_ptr<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(Graph
     return std::unique_ptr<GraphicsLayer>(layer);
 }
 
-void CompositingCoordinator::createUpdateAtlas(uint32_t atlasID, RefPtr<CoordinatedBuffer>&& buffer)
+void CompositingCoordinator::createUpdateAtlas(UpdateAtlas::ID id, Ref<CoordinatedBuffer>&& buffer)
 {
-    m_state.updateAtlasesToCreate.append(std::make_pair(atlasID, WTFMove(buffer)));
+    m_state.updateAtlasesToCreate.append(std::make_pair(id, WTFMove(buffer)));
 }
 
-void CompositingCoordinator::removeUpdateAtlas(uint32_t atlasID)
+void CompositingCoordinator::removeUpdateAtlas(UpdateAtlas::ID id)
 {
     if (m_isPurging)
         return;
-    m_atlasesToRemove.append(atlasID);
+    m_atlasesToRemove.append(id);
 }
 
 FloatRect CompositingCoordinator::visibleContentsRect() const

@@ -35,15 +35,15 @@ UpdateAtlas::UpdateAtlas(Client& client, const IntSize& size, CoordinatedBuffer:
     : m_client(client)
     , m_buffer(CoordinatedBuffer::create(size, flags))
 {
-    static uint32_t nextID = 0;
-    m_ID = ++nextID;
+    static ID s_nextID { 0 };
+    m_id = ++s_nextID;
 
-    m_client.createUpdateAtlas(m_ID, m_buffer.copyRef());
+    m_client.createUpdateAtlas(m_id, m_buffer.copyRef());
 }
 
 UpdateAtlas::~UpdateAtlas()
 {
-    m_client.removeUpdateAtlas(m_ID);
+    m_client.removeUpdateAtlas(m_id);
 }
 
 void UpdateAtlas::buildLayoutIfNeeded()
@@ -68,9 +68,10 @@ RefPtr<CoordinatedBuffer> UpdateAtlas::getCoordinatedBuffer(const IntSize& size,
     if (allocatedRect.isEmpty())
         return nullptr;
 
-    atlasID = m_ID;
+    atlasID = m_id;
     return m_buffer.copyRef();
 }
 
-} // namespace WebCore
+} // namespace WebKit
+
 #endif // USE(COORDINATED_GRAPHICS)

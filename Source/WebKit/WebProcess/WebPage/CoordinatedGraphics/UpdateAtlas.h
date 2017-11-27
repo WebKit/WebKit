@@ -18,8 +18,7 @@
  Boston, MA 02110-1301, USA.
  */
 
-#ifndef UpdateAtlas_h
-#define UpdateAtlas_h
+#pragma once
 
 #include "AreaAllocator.h"
 #include <WebCore/CoordinatedBuffer.h>
@@ -35,12 +34,15 @@ class IntSize;
 namespace WebKit {
 
 class UpdateAtlas {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(UpdateAtlas);
 public:
+    using ID = uint32_t;
+
     class Client {
     public:
-        virtual void createUpdateAtlas(uint32_t /* id */, RefPtr<WebCore::CoordinatedBuffer>&&) = 0;
-        virtual void removeUpdateAtlas(uint32_t /* id */) = 0;
+        virtual void createUpdateAtlas(ID, Ref<WebCore::CoordinatedBuffer>&&) = 0;
+        virtual void removeUpdateAtlas(ID) = 0;
     };
 
     UpdateAtlas(Client&, const WebCore::IntSize&, WebCore::CoordinatedBuffer::Flags);
@@ -67,15 +69,13 @@ public:
 private:
     void buildLayoutIfNeeded();
 
-private:
+    ID m_id { 0 };
     Client& m_client;
     std::unique_ptr<GeneralAreaAllocator> m_areaAllocator;
     Ref<WebCore::CoordinatedBuffer> m_buffer;
     double m_inactivityInSeconds { 0 };
-    uint32_t m_ID { 0 };
 };
 
 } // namespace WebKit
 
 #endif // USE(COORDINATED_GRAPHICS)
-#endif // UpdateAtlas_h

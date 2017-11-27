@@ -118,8 +118,8 @@ private:
     void syncLayerState(WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayerState&) override;
 
     // UpdateAtlas::Client
-    void createUpdateAtlas(uint32_t atlasID, RefPtr<WebCore::CoordinatedBuffer>&&) override;
-    void removeUpdateAtlas(uint32_t atlasID) override;
+    void createUpdateAtlas(UpdateAtlas::ID, Ref<WebCore::CoordinatedBuffer>&&) override;
+    void removeUpdateAtlas(UpdateAtlas::ID) override;
 
     // GraphicsLayerFactory
     std::unique_ptr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;

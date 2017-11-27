@@ -1,5 +1,39 @@
 2017-11-27  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordGraphics] Prettify ID value handling in UpdateAtlas and UpdateAtlas::Client
+        https://bugs.webkit.org/show_bug.cgi?id=180038
+
+        Reviewed by Carlos Garcia Campos.
+
+        In the UpdateAtlas class, provide an ID type that aliases to uint32_t.
+        The m_id member variable (ex-m_ID) uses this type, and it's also now
+        used in the Client interface.
+
+        While poking around, the header is modified to use '#pragma once',
+        and m_id is moved to the more logical first position among member
+        variables.
+
+        The static ID variable is modified to use the new type, and renamed
+        to s_nextID. Comment alongside the namespace scope closure is fixed
+        to use the appropriate name.
+
+        createUpdateAtlas() and removeUpdateAtlas() methods in the
+        CompositingCoordinator class are modified to use the UpdateAtlas::ID
+        type, and the former has the second parameter changed from RefPtr<>
+        to Ref<>.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::createUpdateAtlas):
+        (WebKit::CompositingCoordinator::removeUpdateAtlas):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+        * WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.cpp:
+        (WebKit::UpdateAtlas::UpdateAtlas):
+        (WebKit::UpdateAtlas::~UpdateAtlas):
+        (WebKit::UpdateAtlas::getCoordinatedBuffer):
+        * WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.h:
+
+2017-11-27  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordGraphics] CompositingCoordinator: clean up Client vtable, GraphicsLayerClient overrides
         https://bugs.webkit.org/show_bug.cgi?id=180037
 
