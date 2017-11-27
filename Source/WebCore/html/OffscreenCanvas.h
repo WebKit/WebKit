@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CanvasBase.h"
+#include "CanvasRenderingContext.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "IntSize.h"
@@ -37,7 +38,6 @@
 
 namespace WebCore {
 
-class CanvasRenderingContext;
 class ImageBitmap;
 class WebGLRenderingContext;
 
