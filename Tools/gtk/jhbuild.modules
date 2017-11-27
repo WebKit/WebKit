@@ -213,11 +213,9 @@
     <dependencies>
       <dep package="libffi"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/glib/2.52/glib-2.52.1.tar.xz" version="2.52.1"
+    <branch module="/pub/GNOME/sources/glib/2.54/glib-2.54.2.tar.xz" version="2.54.2"
             repo="ftp.gnome.org"
-            hash="sha256:948c26b817f2d77e2a6cdd5082c60a51bf5dea854890286a1d5d4ccde5ce586f">
-      <patch file="gdate-suppress-string-format-literal-warning.patch" strip="1"/>
-    </branch>
+            hash="sha256:bb89e5c5aad33169a8c7f28b45671c7899c12f74caf707737f784d7102758e6c"/>
   </autotools>
 
   <autotools id="glib-networking"

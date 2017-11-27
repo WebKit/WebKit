@@ -1313,9 +1313,6 @@ webkit.org/b/176803 http/tests/local/blob/send-hybrid-blob-using-open-panel.html
 
 webkit.org/b/176805 media/media-higher-prio-audio-stream.html [ Crash ]
 
-webkit.org/b/176806 media/track/track-text-track-cue-list.html [ Crash Pass ]
-webkit.org/b/176806 media/track/track-id.html [ Crash Pass ]
-
 webkit.org/b/176856 fast/mediastream/apply-constraints-video.html [ Crash ]
 
 # See also webkit.org/b/141699

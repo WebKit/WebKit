@@ -1,3 +1,15 @@
+2017-11-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Layout test media/track/track-text-track-cue-list.html crash with g_source_set_ready_time: assertion 'source->ref_count > 0' failed
+        https://bugs.webkit.org/show_bug.cgi?id=176806
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        This was caused by a GLib bug that has already been fixed. Upgrade glib to 2.54.2.
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/gdate-suppress-string-format-literal-warning.patch: Removed.
+
 2017-11-24  Darin Adler  <darin@apple.com>
 
         * TestWebKitAPI/Tests/WTF/OptionSet.cpp:
