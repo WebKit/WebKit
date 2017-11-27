@@ -7272,6 +7272,11 @@ private:
         // https://bugs.webkit.org/show_bug.cgi?id=141448
         
         LValue lengthIncludingThis = m_out.add(length, m_out.int32One);
+
+        speculate(
+            VarargsOverflow, noValue(), nullptr,
+            m_out.above(length, lengthIncludingThis));
+
         speculate(
             VarargsOverflow, noValue(), nullptr,
             m_out.above(lengthIncludingThis, m_out.constInt32(data->limit)));
