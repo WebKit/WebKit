@@ -24,11 +24,11 @@
 #include "config.h"
 #include "FEDisplacementMap.h"
 
+#include "ColorUtilities.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include <wtf/text/TextStream.h>
-
 #include <runtime/Uint8ClampedArray.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -99,15 +99,16 @@ void FEDisplacementMap::platformApplySoftware()
         return;
 
     IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    auto srcPixelArrayA = in->premultipliedResult(effectADrawingRect);
+    auto inputImage = in->premultipliedResult(effectADrawingRect);
 
     IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
-    auto srcPixelArrayB = in2->unmultipliedResult(effectBDrawingRect);
+    // The calculations using the pixel values from ‘in2’ are performed using non-premultiplied color values.
+    auto displacementImage = in2->unmultipliedResult(effectBDrawingRect);
     
-    if (!srcPixelArrayA || !srcPixelArrayB)
+    if (!inputImage || !displacementImage)
         return;
 
-    ASSERT(srcPixelArrayA->length() == srcPixelArrayB->length());
+    ASSERT(inputImage->length() == displacementImage->length());
 
     Filter& filter = this->filter();
     IntSize paintSize = absolutePaintRect().size();
@@ -117,21 +118,28 @@ void FEDisplacementMap::platformApplySoftware()
     float scaleForColorY = scaleY / 255.0;
     float scaledOffsetX = 0.5 - scaleX * 0.5;
     float scaledOffsetY = 0.5 - scaleY * 0.5;
-    int stride = paintSize.width() * 4;
+    
+    int displacementChannelX = xChannelIndex();
+    int displacementChannelY = yChannelIndex();
+
+    int rowBytes = paintSize.width() * 4;
+
     for (int y = 0; y < paintSize.height(); ++y) {
-        int line = y * stride;
+        int lineStartOffset = y * rowBytes;
+
         for (int x = 0; x < paintSize.width(); ++x) {
-            int dstIndex = line + x * 4;
-            int srcX = x + static_cast<int>(scaleForColorX * srcPixelArrayB->item(dstIndex + m_xChannelSelector - 1) + scaledOffsetX);
-            int srcY = y + static_cast<int>(scaleForColorY * srcPixelArrayB->item(dstIndex + m_yChannelSelector - 1) + scaledOffsetY);
-            for (unsigned channel = 0; channel < 4; ++channel) {
-                if (srcX < 0 || srcX >= paintSize.width() || srcY < 0 || srcY >= paintSize.height())
-                    dstPixelArray->set(dstIndex + channel, static_cast<unsigned char>(0));
-                else {
-                    unsigned char pixelValue = srcPixelArrayA->item(srcY * stride + srcX * 4 + channel);
-                    dstPixelArray->set(dstIndex + channel, pixelValue);
-                }
+            int dstIndex = lineStartOffset + x * 4;
+            
+            int srcX = x + static_cast<int>(scaleForColorX * displacementImage->item(dstIndex + displacementChannelX) + scaledOffsetX);
+            int srcY = y + static_cast<int>(scaleForColorY * displacementImage->item(dstIndex + displacementChannelY) + scaledOffsetY);
+
+            unsigned* dstPixelPtr = reinterpret_cast<unsigned*>(dstPixelArray->data() + dstIndex);
+            if (srcX < 0 || srcX >= paintSize.width() || srcY < 0 || srcY >= paintSize.height()) {
+                *dstPixelPtr = 0;
+                continue;
             }
+
+            *dstPixelPtr = *reinterpret_cast<unsigned*>(inputImage->data() + byteOffsetOfPixel(srcX, srcY, rowBytes));
         }
     }
 }

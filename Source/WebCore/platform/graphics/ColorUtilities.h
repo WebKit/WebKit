@@ -141,5 +141,11 @@ inline uint8_t clampedColorComponent(float f)
     return std::max(0, std::min(static_cast<int>(lroundf(255.0f * f)), 255));
 }
 
+inline unsigned byteOffsetOfPixel(unsigned x, unsigned y, unsigned rowBytes)
+{
+    const unsigned bytesPerPixel = 4;
+    return x * bytesPerPixel + y * rowBytes;
+}
+
 } // namespace WebCore
 
