@@ -1,3 +1,13 @@
+2017-11-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Don't crash in forEachEntry when DebugHeap is enabled.
+
+        Unreviewed, fixing crashes on leaks bots by removing an assertion.
+
+        * bmalloc/IsoTLS.cpp:
+        (bmalloc::IsoTLS::forEachEntry):
+        * test/testbmalloc.cpp: Make this test work with DebugHeap so I can catch this kind of problem in the future.
+
 2017-11-16  Filip Pizlo  <fpizlo@apple.com>
 
         Isolated Heaps caused an increase in reported leaks on the bots

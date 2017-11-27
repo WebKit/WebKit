@@ -24,6 +24,7 @@
  */
 
 #include <bmalloc/bmalloc.h>
+#include <bmalloc/Environment.h>
 #include <bmalloc/IsoHeapInlines.h>
 #include <cmath>
 #include <cstdlib>
@@ -72,6 +73,10 @@ static std::set<void*> toptrset(const std::vector<void*>& ptrs)
 
 static void assertEmptyPointerSet(const std::set<void*>& pointers)
 {
+    if (PerProcess<Environment>::get()->isDebugHeapEnabled()) {
+        printf("    skipping checks because DebugHeap.\n");
+        return;
+    }
     if (pointers.empty())
         return;
     printf("Pointer set not empty!\n");
@@ -85,6 +90,10 @@ static void assertEmptyPointerSet(const std::set<void*>& pointers)
 template<typename heapType>
 static void assertHasObjects(IsoHeap<heapType>& heap, std::set<void*> pointers)
 {
+    if (PerProcess<Environment>::get()->isDebugHeapEnabled()) {
+        printf("    skipping checks because DebugHeap.\n");
+        return;
+    }
     auto& impl = heap.impl();
     std::lock_guard<Mutex> locker(impl.lock);
     impl.forEachLiveObject(
@@ -97,6 +106,10 @@ static void assertHasObjects(IsoHeap<heapType>& heap, std::set<void*> pointers)
 template<typename heapType>
 static void assertHasOnlyObjects(IsoHeap<heapType>& heap, std::set<void*> pointers)
 {
+    if (PerProcess<Environment>::get()->isDebugHeapEnabled()) {
+        printf("    skipping checks because DebugHeap.\n");
+        return;
+    }
     auto& impl = heap.impl();
     std::lock_guard<Mutex> locker(impl.lock);
     impl.forEachLiveObject(
@@ -110,13 +123,16 @@ template<typename heapType>
 static void assertClean(IsoHeap<heapType>& heap)
 {
     scavengeThisThread();
-    auto& impl = heap.impl();
-    {
-        std::lock_guard<Mutex> locker(impl.lock);
-        CHECK(!impl.numLiveObjects());
+    if (!PerProcess<Environment>::get()->isDebugHeapEnabled()) {
+        auto& impl = heap.impl();
+        {
+            std::lock_guard<Mutex> locker(impl.lock);
+            CHECK(!impl.numLiveObjects());
+        }
     }
     heap.scavenge();
-    {
+    if (!PerProcess<Environment>::get()->isDebugHeapEnabled()) {
+        auto& impl = heap.impl();
         std::lock_guard<Mutex> locker(impl.lock);
         CHECK(!impl.numCommittedPages());
     }

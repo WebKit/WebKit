@@ -167,7 +167,8 @@ size_t IsoTLS::size()
 template<typename Func>
 void IsoTLS::forEachEntry(const Func& func)
 {
-    RELEASE_BASSERT(m_lastEntry);
+    if (!m_lastEntry)
+        return;
     PerProcess<IsoTLSLayout>::get()->head()->walkUpToInclusive(
         m_lastEntry,
         [&] (IsoTLSEntry* entry) {
