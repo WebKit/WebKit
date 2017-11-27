@@ -1,3 +1,12 @@
+2017-11-27  Tim Horton  <timothy_horton@apple.com>
+
+        One too many zeroes in macOS version number in FeatureDefines
+        https://bugs.webkit.org/show_bug.cgi?id=180011
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-11-19  Tim Horton  <timothy_horton@apple.com>
 
         Remove unused TOUCH_ICON_LOADING feature flag
