@@ -43,6 +43,7 @@
 #include "HitTestResult.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentationCookie.h"
+#include "OffscreenCanvas.h"
 #include "Page.h"
 #include "StorageArea.h"
 #include "WorkerGlobalScope.h"
@@ -1255,37 +1256,57 @@ inline void InspectorInstrumentation::didFinishRecordingCanvasFrame(HTMLCanvasEl
 inline void InspectorInstrumentation::didEnableExtension(WebGLRenderingContextBase& context, const String& extension)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-
-    if (auto* canvasElement = context.canvas()) {
-        if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(canvasElement->document()))
-            didEnableExtensionImpl(*instrumentingAgents, context, extension);
-    }
+    auto canvas = context.canvas();
+    WTF::switchOn(canvas,
+        [&] (const RefPtr<HTMLCanvasElement>& htmlCanvasElement) {
+            if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(htmlCanvasElement->document()))
+                didEnableExtensionImpl(*instrumentingAgents, context, extension);
+        },
+        [&] (const RefPtr<OffscreenCanvas>&) {
+        }
+    );
 }
 
 inline void InspectorInstrumentation::didCreateProgram(WebGLRenderingContextBase& context, WebGLProgram& program)
 {
-    if (auto* canvasElement = context.canvas()) {
-        if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(canvasElement->document()))
-            didCreateProgramImpl(*instrumentingAgents, context, program);
-    }
+    auto canvas = context.canvas();
+    WTF::switchOn(canvas,
+        [&] (const RefPtr<HTMLCanvasElement>& htmlCanvasElement) {
+            if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(htmlCanvasElement->document()))
+                didCreateProgramImpl(*instrumentingAgents, context, program);
+        },
+        [&] (const RefPtr<OffscreenCanvas>&) {
+        }
+    );
 }
 
 inline void InspectorInstrumentation::willDeleteProgram(WebGLRenderingContextBase& context, WebGLProgram& program)
 {
-    if (auto* canvasElement = context.canvas()) {
-        if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(canvasElement->document()))
-            willDeleteProgramImpl(*instrumentingAgents, program);
-    }
+    auto canvas = context.canvas();
+    WTF::switchOn(canvas,
+        [&] (const RefPtr<HTMLCanvasElement>& htmlCanvasElement) {
+            if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(htmlCanvasElement->document()))
+                willDeleteProgramImpl(*instrumentingAgents, program);
+        },
+        [&] (const RefPtr<OffscreenCanvas>&) {
+        }
+    );
 }
 
 inline bool InspectorInstrumentation::isShaderProgramDisabled(WebGLRenderingContextBase& context, WebGLProgram& program)
 {
     FAST_RETURN_IF_NO_FRONTENDS(false);
-    if (auto* canvasElement = context.canvas()) {
-        if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(canvasElement->document()))
-            return isShaderProgramDisabledImpl(*instrumentingAgents, program);
-    }
-    return false;
+    auto canvas = context.canvas();
+    return WTF::switchOn(canvas,
+        [&] (const RefPtr<HTMLCanvasElement>& htmlCanvasElement) {
+            if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(htmlCanvasElement->document()))
+                return isShaderProgramDisabledImpl(*instrumentingAgents, program);
+            return false;
+        },
+        [&] (const RefPtr<OffscreenCanvas>&) {
+            return false;
+        }
+    );
 }
 #endif
 

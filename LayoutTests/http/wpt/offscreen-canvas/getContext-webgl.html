@@ -8,7 +8,8 @@
 test(function() {
     let offscreenCanvas = new OffscreenCanvas(100, 100);
     let gl = offscreenCanvas.getContext("webgl");
-    assert_equals(gl, null);
+    assert_true(gl instanceof WebGLRenderingContext);
+    assert_equals(gl.canvas, offscreenCanvas);
 }, "Test getContext('webgl').");
 
 </script>

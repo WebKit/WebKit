@@ -37,15 +37,13 @@
 
 namespace WebCore {
 
+class CanvasRenderingContext;
 class ImageBitmap;
 class WebGLRenderingContext;
 
-// using OffscreenRenderingContext = Variant<
-// #if ENABLE(WEBGL)
-// RefPtr<WebGLRenderingContext>,
-// #endif
-// RefPtr<OffscreenCanvasRenderingContext2D>
-// >;
+#if ENABLE(WEBGL)
+using OffscreenRenderingContext = RefPtr<WebGLRenderingContext>;
+#endif
 
 class OffscreenCanvas final : public RefCounted<OffscreenCanvas>, public CanvasBase, public EventTargetWithInlineData {
     WTF_MAKE_FAST_ALLOCATED;
@@ -73,8 +71,7 @@ public:
     void setSize(const IntSize&) final;
 
 #if ENABLE(WEBGL)
-    // FIXME: Should be optional<OffscreenRenderingContext> from above.
-    ExceptionOr<RefPtr<WebGLRenderingContext>> getContext(JSC::ExecState&, RenderingContextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+    ExceptionOr<OffscreenRenderingContext> getContext(JSC::ExecState&, RenderingContextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
 #endif
     RefPtr<ImageBitmap> transferToImageBitmap();
     // void convertToBlob(ImageEncodeOptions options);
@@ -98,6 +95,7 @@ private:
     void derefCanvasBase() final { deref(); }
 
     IntSize m_size;
+    std::unique_ptr<CanvasRenderingContext> m_context;
 };
 
 }

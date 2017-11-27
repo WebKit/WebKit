@@ -65,6 +65,7 @@ class OESTextureHalfFloat;
 class OESTextureHalfFloatLinear;
 class OESVertexArrayObject;
 class OESElementIndexUint;
+class OffscreenCanvas;
 class WebGLActiveInfo;
 class WebGLContextGroup;
 class WebGLContextObject;
@@ -112,12 +113,14 @@ inline bool clip2D(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height,
     return (*clippedX != x || *clippedY != y || *clippedWidth != width || *clippedHeight != height);
 }
 
+using WebGLCanvas = WTF::Variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;
+
 class WebGLRenderingContextBase : public GPUBasedCanvasRenderingContext, private ActivityStateChangeObserver {
 public:
     static std::unique_ptr<WebGLRenderingContextBase> create(CanvasBase&, WebGLContextAttributes&, const String&);
     virtual ~WebGLRenderingContextBase();
 
-    HTMLCanvasElement* canvas();
+    WebGLCanvas canvas();
 
     int drawingBufferWidth() const;
     int drawingBufferHeight() const;
@@ -845,6 +848,9 @@ protected:
 
     // Check if EXT_draw_buffers extension is supported and if it satisfies the WebGL requirements.
     bool supportsDrawBuffers();
+
+    HTMLCanvasElement* htmlCanvas();
+    OffscreenCanvas* offscreenCanvas();
 
 private:
     bool validateArrayBufferType(const char* functionName, GC3Denum type, std::optional<JSC::TypedArrayType>);

@@ -48,6 +48,8 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
 typedef (ImageData or HTMLImageElement or HTMLCanvasElement) TexImageSource;
 #endif
 
+typedef (HTMLCanvasElement or OffscreenCanvas) WebGLCanvas;
+
 [
     Conditional=WEBGL,
     CustomIsReachable,
@@ -58,7 +60,7 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement) TexImageSource;
     ExportMacro=WEBCORE_EXPORT,
 ] interface WebGLRenderingContextBase {
 
-    readonly attribute HTMLCanvasElement canvas;
+    readonly attribute WebGLCanvas canvas;
 
     /* ClearBufferMask */
     const GLenum DEPTH_BUFFER_BIT = 0x00000100;
