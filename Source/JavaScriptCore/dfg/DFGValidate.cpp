@@ -715,7 +715,6 @@ private:
                     
                 case GetLocal:
                 case SetLocal:
-                case GetLocalUnlinked:
                 case SetArgument:
                 case Phantom:
                     VALIDATE((node), !"bad node type for SSA");

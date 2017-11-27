@@ -1052,7 +1052,6 @@ private:
 
         case PutByValAlias:
         case DoubleAsInt32:
-        case GetLocalUnlinked:
         case CheckArray:
         case CheckTypeInfoFlags:
         case Arrayify:

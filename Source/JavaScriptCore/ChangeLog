@@ -1,5 +1,45 @@
 2017-11-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] Remove GetLocalUnlinked
+        https://bugs.webkit.org/show_bug.cgi?id=180017
+
+        Reviewed by Saam Barati.
+
+        Since DFGArgumentsSimplificationPhase is removed 2 years ago, GetLocalUnlinked is no longer used in DFG.
+        This patch just removes it.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGCommon.h:
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasUnlinkedLocal):
+        (JSC::DFG::Node::convertToGetLocalUnlinked): Deleted.
+        (JSC::DFG::Node::convertToGetLocal): Deleted.
+        (JSC::DFG::Node::hasUnlinkedMachineLocal): Deleted.
+        (JSC::DFG::Node::setUnlinkedMachineLocal): Deleted.
+        (JSC::DFG::Node::unlinkedMachineLocal): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        * dfg/DFGValidate.cpp:
+
+2017-11-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Make ArgList::data() private again when we can remove callWasmFunction().
         https://bugs.webkit.org/show_bug.cgi?id=168582
 

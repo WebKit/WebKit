@@ -265,14 +265,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
-    case GetLocalUnlinked: {
-        AbstractValue value = m_state.variables().operand(node->unlinkedLocal().offset());
-        if (value.value())
-            m_state.setFoundConstants(true);
-        forNode(node) = value;
-        break;
-    }
-        
     case SetLocal: {
         m_state.variables().operand(node->local()) = forNode(node->child1());
         break;

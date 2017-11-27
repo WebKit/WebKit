@@ -528,15 +528,6 @@ public:
         children.reset();
     }
     
-    void convertToGetLocalUnlinked(VirtualRegister local)
-    {
-        m_op = GetLocalUnlinked;
-        m_flags &= ~NodeMustGenerate;
-        m_opInfo = local.offset();
-        m_opInfo2 = VirtualRegister().offset();
-        children.reset();
-    }
-    
     void convertToPutStack(StackAccessData* data)
     {
         m_op = PutStack;
@@ -671,15 +662,6 @@ public:
         ASSERT(m_op == Flush);
         m_op = PhantomLocal;
         children = AdjacencyList();
-    }
-    
-    void convertToGetLocal(VariableAccessData* variable, Node* phi)
-    {
-        ASSERT(m_op == GetLocalUnlinked);
-        m_op = GetLocal;
-        m_opInfo = variable;
-        m_opInfo2 = OpInfoWrapper();
-        children.setChild1(Edge(phi));
     }
     
     void convertToToString()
@@ -941,7 +923,6 @@ public:
     bool hasUnlinkedLocal()
     {
         switch (op()) {
-        case GetLocalUnlinked:
         case ExtractOSREntryLocal:
         case MovHint:
         case ZombieHint:
@@ -956,23 +937,6 @@ public:
     {
         ASSERT(hasUnlinkedLocal());
         return VirtualRegister(m_opInfo.as<int32_t>());
-    }
-    
-    bool hasUnlinkedMachineLocal()
-    {
-        return op() == GetLocalUnlinked;
-    }
-    
-    void setUnlinkedMachineLocal(VirtualRegister reg)
-    {
-        ASSERT(hasUnlinkedMachineLocal());
-        m_opInfo2 = reg.offset();
-    }
-    
-    VirtualRegister unlinkedMachineLocal()
-    {
-        ASSERT(hasUnlinkedMachineLocal());
-        return VirtualRegister(m_opInfo2.as<int32_t>());
     }
     
     bool hasStackAccessData()

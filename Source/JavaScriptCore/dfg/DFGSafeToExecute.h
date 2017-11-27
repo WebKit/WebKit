@@ -186,7 +186,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case Phi:
     case Flush:
     case PhantomLocal:
-    case GetLocalUnlinked:
     case SetArgument:
     case BitAnd:
     case BitOr:

@@ -2296,15 +2296,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case GetLocalUnlinked: {
-        GPRTemporary result(this);
-        
-        m_jit.load64(JITCompiler::addressFor(node->unlinkedMachineLocal()), result.gpr());
-        
-        jsValueResult(result.gpr(), node);
-        break;
-    }
-        
     case MovHint: {
         compileMovHint(m_currentNode);
         noResult(node);

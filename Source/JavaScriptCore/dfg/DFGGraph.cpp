@@ -311,11 +311,6 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
     }
     if (node->hasUnlinkedLocal()) 
         out.print(comma, node->unlinkedLocal());
-    if (node->hasUnlinkedMachineLocal()) {
-        VirtualRegister operand = node->unlinkedMachineLocal();
-        if (operand.isValid())
-            out.print(comma, "machine:", operand);
-    }
     if (node->hasConstantBuffer()) {
         out.print(comma);
         out.print(node->startConstant(), ":[");

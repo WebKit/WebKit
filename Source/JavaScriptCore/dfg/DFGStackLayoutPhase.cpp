@@ -73,15 +73,6 @@ public:
                     break;
                 }
                     
-                case GetLocalUnlinked: {
-                    VirtualRegister operand = node->unlinkedLocal();
-                    if (operand.isArgument())
-                        break;
-                    usedLocals.set(operand.toLocal());
-                    hasNodesThatNeedFixup = true;
-                    break;
-                }
-                    
                 case LoadVarargs:
                 case ForwardVarargs: {
                     LoadVarargsData* data = node->loadVarargsData();
@@ -212,7 +203,7 @@ public:
                 RELEASE_ASSERT(inlineCallFrame->calleeRecovery.isConstant());
         }
         
-        // Fix GetLocalUnlinked's variable references.
+        // Fix Varargs' variable references.
         if (hasNodesThatNeedFixup) {
             for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
                 BasicBlock* block = m_graph.block(blockIndex);
@@ -221,11 +212,6 @@ public:
                 for (unsigned nodeIndex = block->size(); nodeIndex--;) {
                     Node* node = block->at(nodeIndex);
                     switch (node->op()) {
-                    case GetLocalUnlinked: {
-                        node->setUnlinkedMachineLocal(assign(allocation, node->unlinkedLocal()));
-                        break;
-                    }
-                        
                     case LoadVarargs:
                     case ForwardVarargs: {
                         LoadVarargsData* data = node->loadVarargsData();

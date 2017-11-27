@@ -99,11 +99,6 @@ namespace JSC { namespace DFG {
     macro(CheckTierUpAndOSREnter, NodeMustGenerate) \
     macro(CheckTierUpAtReturn, NodeMustGenerate) \
     \
-    /* Get the value of a local variable, without linking into the VariableAccessData */\
-    /* network. This is only valid for variable accesses whose predictions originated */\
-    /* as something other than a local access, and thus had their own profiling. */\
-    macro(GetLocalUnlinked, NodeResultJS) \
-    \
     /* Marker for an argument being set at the prologue of a function. */\
     macro(SetArgument, 0) \
     \
