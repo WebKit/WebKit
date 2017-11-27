@@ -30,6 +30,7 @@
 #include "Color.h"
 #include "ContainerNode.h"
 #include "DocumentEventQueue.h"
+#include "DocumentIdentifier.h"
 #include "DocumentTiming.h"
 #include "FocusDirection.h"
 #include "FontSelectorClient.h"
@@ -56,6 +57,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomicStringHash.h>
 
@@ -352,9 +354,9 @@ public:
 
     void removedLastRef();
 
-    uint64_t identifier() const { return m_identifier; }
+    DocumentIdentifier identifier() const { return m_identifier; }
 
-    using DocumentsMap = HashMap<uint64_t, Document*>;
+    using DocumentsMap = HashMap<DocumentIdentifier, Document*>;
     WEBCORE_EXPORT static DocumentsMap::ValuesIteratorRange allDocuments();
     WEBCORE_EXPORT static DocumentsMap& allDocumentsMap();
 
@@ -1857,7 +1859,7 @@ private:
     bool m_grantStorageAccessOverride { false };
 
     RefPtr<DocumentTimeline> m_timeline;
-    uint64_t m_identifier;
+    DocumentIdentifier m_identifier;
 };
 
 Element* eventTargetElementForDocument(Document*);

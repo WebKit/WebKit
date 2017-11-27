@@ -118,10 +118,10 @@ void SWClientConnection::startScriptFetchForServer(const ServiceWorkerJobDataIde
     job->startScriptFetch();
 }
 
-void SWClientConnection::postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerData&& sourceData, const String& sourceOrigin)
+void SWClientConnection::postMessageToServiceWorkerClient(DocumentIdentifier destinationContextIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerData&& sourceData, const String& sourceOrigin)
 {
-    // FIXME: destinationScriptExecutionContextIdentifier can only identify a Document at the moment.
-    auto* destinationDocument = Document::allDocumentsMap().get(destinationScriptExecutionContextIdentifier);
+    // FIXME: destinationContextIdentifier can only identify a Document at the moment.
+    auto* destinationDocument = Document::allDocumentsMap().get(destinationContextIdentifier);
     if (!destinationDocument)
         return;
 
@@ -165,11 +165,11 @@ void SWClientConnection::fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifie
     });
 }
 
-void SWClientConnection::notifyClientsOfControllerChange(const HashSet<uint64_t>& scriptExecutionContexts, ServiceWorkerData&& newController)
+void SWClientConnection::notifyClientsOfControllerChange(const HashSet<DocumentIdentifier>& contextIdentifiers, ServiceWorkerData&& newController)
 {
-    ASSERT(!scriptExecutionContexts.isEmpty());
+    ASSERT(!contextIdentifiers.isEmpty());
 
-    for (auto& clientIdentifier : scriptExecutionContexts) {
+    for (auto& clientIdentifier : contextIdentifiers) {
         // FIXME: Support worker contexts.
         auto* client = Document::allDocumentsMap().get(clientIdentifier);
         if (!client)

@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "DocumentIdentifier.h"
 #include "ServiceWorkerJob.h"
 #include "ServiceWorkerTypes.h"
 #include <wtf/HashMap.h>
@@ -68,12 +69,12 @@ public:
 
     virtual void didResolveRegistrationPromise(const ServiceWorkerRegistrationKey&) = 0;
 
-    virtual void postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationIdentifier, Ref<SerializedScriptValue>&&, uint64_t sourceContextIdentifier, ServiceWorkerClientData&& source) = 0;
+    virtual void postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationIdentifier, Ref<SerializedScriptValue>&&, DocumentIdentifier sourceContextIdentifier, ServiceWorkerClientData&& source) = 0;
     virtual SWServerConnectionIdentifier serverConnectionIdentifier() const = 0;
     virtual bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOrigin&) const = 0;
 
-    virtual void serviceWorkerStartedControllingClient(ServiceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier) = 0;
-    virtual void serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier) = 0;
+    virtual void serviceWorkerStartedControllingClient(ServiceWorkerIdentifier, DocumentIdentifier) = 0;
+    virtual void serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier, DocumentIdentifier) = 0;
 
 protected:
     WEBCORE_EXPORT SWClientConnection();
@@ -82,11 +83,11 @@ protected:
     WEBCORE_EXPORT void registrationJobResolvedInServer(const ServiceWorkerJobDataIdentifier&, ServiceWorkerRegistrationData&&, ShouldNotifyWhenResolved);
     WEBCORE_EXPORT void unregistrationJobResolvedInServer(const ServiceWorkerJobDataIdentifier&, bool unregistrationResult);
     WEBCORE_EXPORT void startScriptFetchForServer(const ServiceWorkerJobDataIdentifier&);
-    WEBCORE_EXPORT void postMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerData&& source, const String& sourceOrigin);
+    WEBCORE_EXPORT void postMessageToServiceWorkerClient(DocumentIdentifier destinationContextIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerData&& source, const String& sourceOrigin);
     WEBCORE_EXPORT void updateRegistrationState(ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerData>&);
     WEBCORE_EXPORT void updateWorkerState(ServiceWorkerIdentifier, ServiceWorkerState);
     WEBCORE_EXPORT void fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier);
-    WEBCORE_EXPORT void notifyClientsOfControllerChange(const HashSet<uint64_t>& scriptExecutionContexts, ServiceWorkerData&& newController);
+    WEBCORE_EXPORT void notifyClientsOfControllerChange(const HashSet<DocumentIdentifier>& contextIdentifiers, ServiceWorkerData&& newController);
 
 private:
     virtual void scheduleJobInServer(const ServiceWorkerJobData&) = 0;

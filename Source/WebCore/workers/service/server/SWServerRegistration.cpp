@@ -147,8 +147,8 @@ void SWServerRegistration::removeClientServiceWorkerRegistration(SWServerConnect
 void SWServerRegistration::addClientUsingRegistration(const ServiceWorkerClientIdentifier& clientIdentifier)
 {
     auto addResult = m_clientsUsingRegistration.ensure(clientIdentifier.serverConnectionIdentifier, [] {
-        return HashSet<uint64_t> { };
-    }).iterator->value.add(clientIdentifier.scriptExecutionContextIdentifier);
+        return HashSet<DocumentIdentifier> { };
+    }).iterator->value.add(clientIdentifier.contextIdentifier);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
@@ -156,7 +156,7 @@ void SWServerRegistration::removeClientUsingRegistration(const ServiceWorkerClie
 {
     auto iterator = m_clientsUsingRegistration.find(clientIdentifier.serverConnectionIdentifier);
     ASSERT(iterator != m_clientsUsingRegistration.end());
-    bool wasRemoved = iterator->value.remove(clientIdentifier.scriptExecutionContextIdentifier);
+    bool wasRemoved = iterator->value.remove(clientIdentifier.contextIdentifier);
     ASSERT_UNUSED(wasRemoved, wasRemoved);
 
     if (iterator->value.isEmpty())

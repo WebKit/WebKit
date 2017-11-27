@@ -31,11 +31,11 @@ messages -> WebSWClientConnection {
     UpdateRegistrationState(WebCore::ServiceWorkerRegistrationIdentifier identifier, enum WebCore::ServiceWorkerRegistrationState state, std::optional<WebCore::ServiceWorkerData> serviceWorkerIdentifier)
     UpdateWorkerState(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, enum WebCore::ServiceWorkerState state)
     FireUpdateFoundEvent(WebCore::ServiceWorkerRegistrationIdentifier identifier)
-    NotifyClientsOfControllerChange(HashSet<uint64_t> scriptExecutionContexts, struct WebCore::ServiceWorkerData newController)
+    NotifyClientsOfControllerChange(HashSet<WebCore::DocumentIdentifier> contextIdentifiers, struct WebCore::ServiceWorkerData newController)
 
     InitializeSWOriginTableAsEmpty()
     SetSWOriginTableSharedMemory(WebKit::SharedMemory::Handle handle)
-    PostMessageToServiceWorkerClient(uint64_t destinationScriptExecutionContextIdentifier, IPC::DataReference message, struct WebCore::ServiceWorkerData source, String sourceOrigin)
+    PostMessageToServiceWorkerClient(WebCore::DocumentIdentifier destinationContextIdentifier, IPC::DataReference message, struct WebCore::ServiceWorkerData source, String sourceOrigin)
 
     DidMatchRegistration(uint64_t matchRequestIdentifier, std::optional<WebCore::ServiceWorkerRegistrationData> data)
     DidGetRegistrations(uint64_t matchRequestIdentifier, Vector<WebCore::ServiceWorkerRegistrationData> registrations)

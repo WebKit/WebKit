@@ -28,11 +28,11 @@ messages -> WebSWServerConnection {
     FinishFetchingScriptInServer(struct WebCore::ServiceWorkerFetchResult result)
     AddServiceWorkerRegistrationInServer(WebCore::ServiceWorkerRegistrationKey key, WebCore::ServiceWorkerRegistrationIdentifier identifier)
     RemoveServiceWorkerRegistrationInServer(WebCore::ServiceWorkerRegistrationKey key, WebCore::ServiceWorkerRegistrationIdentifier identifier)
-    ServiceWorkerStartedControllingClient(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier)
-    ServiceWorkerStoppedControllingClient(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier)
+    ServiceWorkerStartedControllingClient(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::DocumentIdentifier contextIdentifier)
+    ServiceWorkerStoppedControllingClient(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::DocumentIdentifier contextIdentifier)
 
     StartFetch(uint64_t identifier, std::optional<WebCore::ServiceWorkerIdentifier> serviceWorkerIdentifier, WebCore::ResourceRequest request, struct WebCore::FetchOptions options, IPC::FormDataReference requestBody)
-    PostMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationServiceWorkerIdentifier, IPC::DataReference message, uint64_t sourceContextIdentifier, struct WebCore::ServiceWorkerClientData source)
+    PostMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationServiceWorkerIdentifier, IPC::DataReference message, WebCore::DocumentIdentifier sourceContextIdentifier, struct WebCore::ServiceWorkerClientData source)
 
     DidResolveRegistrationPromise(WebCore::ServiceWorkerRegistrationKey key)
 

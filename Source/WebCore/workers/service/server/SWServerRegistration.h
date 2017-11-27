@@ -100,7 +100,7 @@ private:
     SWServer& m_server;
 
     MonotonicTime m_creationTime;
-    HashMap<SWServerConnectionIdentifier, HashSet<uint64_t /* scriptExecutionContextIdentifier */>> m_clientsUsingRegistration;
+    HashMap<SWServerConnectionIdentifier, HashSet<DocumentIdentifier>> m_clientsUsingRegistration;
 };
 
 } // namespace WebCore

@@ -170,14 +170,14 @@ void SWServer::Connection::removeServiceWorkerRegistrationInServer(const Service
     m_server.removeClientServiceWorkerRegistration(*this, key, identifier);
 }
 
-void SWServer::Connection::serviceWorkerStartedControllingClient(ServiceWorkerIdentifier serviceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier)
+void SWServer::Connection::serviceWorkerStartedControllingClient(ServiceWorkerIdentifier serviceWorkerIdentifier, DocumentIdentifier contextIdentifier)
 {
-    m_server.serviceWorkerStartedControllingClient(*this, serviceWorkerIdentifier, scriptExecutionContextIdentifier);
+    m_server.serviceWorkerStartedControllingClient(*this, serviceWorkerIdentifier, contextIdentifier);
 }
 
-void SWServer::Connection::serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier serviceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier)
+void SWServer::Connection::serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier serviceWorkerIdentifier, DocumentIdentifier contextIdentifier)
 {
-    m_server.serviceWorkerStoppedControllingClient(*this, serviceWorkerIdentifier, scriptExecutionContextIdentifier);
+    m_server.serviceWorkerStoppedControllingClient(*this, serviceWorkerIdentifier, contextIdentifier);
 }
 
 SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore)
@@ -324,7 +324,7 @@ void SWServer::removeClientServiceWorkerRegistration(Connection& connection, con
     registration->removeClientServiceWorkerRegistration(connection.identifier());
 }
 
-void SWServer::serviceWorkerStartedControllingClient(Connection& connection, ServiceWorkerIdentifier serviceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier)
+void SWServer::serviceWorkerStartedControllingClient(Connection& connection, ServiceWorkerIdentifier serviceWorkerIdentifier, DocumentIdentifier contextIdentifier)
 {
     auto* serviceWorker = m_workersByID.get(serviceWorkerIdentifier);
     if (!serviceWorker)
@@ -334,10 +334,10 @@ void SWServer::serviceWorkerStartedControllingClient(Connection& connection, Ser
     if (!registration)
         return;
 
-    registration->addClientUsingRegistration({ connection.identifier(), scriptExecutionContextIdentifier });
+    registration->addClientUsingRegistration({ connection.identifier(), contextIdentifier });
 }
 
-void SWServer::serviceWorkerStoppedControllingClient(Connection& connection, ServiceWorkerIdentifier serviceWorkerIdentifier, uint64_t scriptExecutionContextIdentifier)
+void SWServer::serviceWorkerStoppedControllingClient(Connection& connection, ServiceWorkerIdentifier serviceWorkerIdentifier, DocumentIdentifier contextIdentifier)
 {
     auto* serviceWorker = m_workersByID.get(serviceWorkerIdentifier);
     if (!serviceWorker)
@@ -347,7 +347,7 @@ void SWServer::serviceWorkerStoppedControllingClient(Connection& connection, Ser
     if (!registration)
         return;
 
-    registration->removeClientUsingRegistration({ connection.identifier(), scriptExecutionContextIdentifier });
+    registration->removeClientUsingRegistration({ connection.identifier(), contextIdentifier });
 }
 
 void SWServer::updateWorker(Connection&, const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, const URL& url, const String& script, WorkerType type)

@@ -184,6 +184,7 @@ def forward_declarations_and_headers(receiver):
             types_by_namespace['IPC'].update([('class', 'Connection')])
 
     no_forward_declaration_types = frozenset([
+        'WebCore::DocumentIdentifier',
         'WebCore::ServiceWorkerIdentifier',
         'WebCore::ServiceWorkerRegistrationIdentifier',
         'WebCore::SWServerConnectionIdentifier',

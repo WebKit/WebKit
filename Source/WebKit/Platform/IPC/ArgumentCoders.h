@@ -424,11 +424,12 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Argume
 
         HashSetType tempHashSet;
         for (uint64_t i = 0; i < hashSetSize; ++i) {
-            KeyArg key;
-            if (!decoder.decode(key))
+            std::optional<KeyArg> key;
+            decoder >> key;
+            if (!key)
                 return false;
 
-            if (!tempHashSet.add(key).isNewEntry) {
+            if (!tempHashSet.add(*key).isNewEntry) {
                 // The hash map already has the specified key, bail.
                 decoder.markInvalid();
                 return false;

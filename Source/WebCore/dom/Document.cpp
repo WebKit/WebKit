@@ -437,12 +437,6 @@ static void printNavigationErrorMessage(Frame* frame, const URL& activeURL, cons
 
 uint64_t Document::s_globalTreeVersion = 0;
 
-static uint64_t generateDocumentIdentifier()
-{
-    static uint64_t identifier = 0;
-    return ++identifier;
-}
-
 auto Document::allDocumentsMap() -> DocumentsMap&
 {
     static NeverDestroyed<DocumentsMap> documents;
@@ -512,7 +506,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_isSynthesized(constructionFlags & Synthesized)
     , m_isNonRenderedPlaceholder(constructionFlags & NonRenderedPlaceholder)
     , m_orientationNotifier(currentOrientation(frame))
-    , m_identifier(generateDocumentIdentifier())
+    , m_identifier(generateObjectIdentifier<DocumentIdentifierType>())
 {
     auto addResult = allDocumentsMap().add(m_identifier, this);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);

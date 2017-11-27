@@ -25,46 +25,11 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
-#include "DocumentIdentifier.h"
-#include "ServiceWorkerTypes.h"
-#include <wtf/text/WTFString.h>
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
 
-struct ServiceWorkerClientIdentifier {
-    SWServerConnectionIdentifier serverConnectionIdentifier;
-    DocumentIdentifier contextIdentifier;
+enum DocumentIdentifierType { };
+using DocumentIdentifier = ObjectIdentifier<DocumentIdentifierType>;
 
-    String toString() const { return String::number(serverConnectionIdentifier.toUInt64()) + "-" +  String::number(contextIdentifier.toUInt64()); }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ServiceWorkerClientIdentifier> decode(Decoder&);
-};
-
-template<class Encoder>
-void ServiceWorkerClientIdentifier::encode(Encoder& encoder) const
-{
-    encoder << serverConnectionIdentifier << contextIdentifier;
 }
-
-template<class Decoder>
-std::optional<ServiceWorkerClientIdentifier> ServiceWorkerClientIdentifier::decode(Decoder& decoder)
-{
-    std::optional<SWServerConnectionIdentifier> serverConnectionIdentifier;
-    decoder >> serverConnectionIdentifier;
-    if (!serverConnectionIdentifier)
-        return std::nullopt;
-
-    std::optional<DocumentIdentifier> contextIdentifier;
-    decoder >> contextIdentifier;
-    if (!contextIdentifier)
-        return std::nullopt;
-
-    return { { WTFMove(*serverConnectionIdentifier), WTFMove(*contextIdentifier) } };
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)
