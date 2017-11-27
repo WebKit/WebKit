@@ -465,12 +465,14 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case GetIndexedPropertyStorage:
     case GetArrayLength:
     case GetVectorLength:
-    case ArrayPush:
     case ArrayPop:
     case StringCharAt:
     case StringCharCodeAt:
         return node->arrayMode().alreadyChecked(graph, node, state.forNode(node->child1()));
-        
+
+    case ArrayPush:
+        return node->arrayMode().alreadyChecked(graph, node, state.forNode(graph.varArgChild(node, 1)));
+
     case GetTypedArrayByteOffset:
         return !(state.forNode(node->child1()).m_type & ~(SpecTypedArrayView));
             

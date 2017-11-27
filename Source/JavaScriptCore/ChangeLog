@@ -1,3 +1,13 @@
+2017-11-27  Robin Morisset  <rmorisset@apple.com>
+
+        Update DFGSafeToExecute to be aware that ArrayPush is now a varargs node
+        https://bugs.webkit.org/show_bug.cgi?id=179821
+
+        Reviewed by Saam Barati.
+
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+
 2017-11-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Add NormalizeMapKey DFG IR
