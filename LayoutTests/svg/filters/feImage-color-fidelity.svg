@@ -1,0 +1,10 @@
+<svg version="1.2" width="600" height="300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <filter id="displacement" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" x="0" y="0" width="1" height="1">
+      <feImage xlink:href="resources/green.png" result="image-out" width="200" height="200" />
+      <feFlood flood-color="black" flood-opacity="1.0" height="200" width="200" result="black-input"/>
+      <feDisplacementMap scale="0" in="image-out" in2="black-input" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+  <rect filter="url(#displacement)" fill="none" stroke="green" x="50" y="50" width="200" height="200"/>
+</svg>
