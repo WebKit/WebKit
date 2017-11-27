@@ -1,3 +1,12 @@
+2017-11-27  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Switch to VS2017 on EWS bots.
+        https://bugs.webkit.org/show_bug.cgi?id=178516
+
+        Reviewed by Darin Adler.
+
+        * EWSTools/start-queue-win.sh:
+
 2017-11-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Layout test media/track/track-text-track-cue-list.html crash with g_source_set_ready_time: assertion 'source->ref_count > 0' failed
