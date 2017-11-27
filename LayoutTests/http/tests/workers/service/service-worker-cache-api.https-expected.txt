@@ -1,7 +1,7 @@
 Registering service worker
 Service worker registered
-Status is cache is ready
+Status is Not Found
 Fetching
-Response buffer byte length is 12940
-Status is matched cache for https://127.0.0.1:8443/resources/square100.png
+Response buffer byte length is 338
+Status is Not Found
 

@@ -1,5 +1,13 @@
 2017-11-27  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rebaseline http/tests/workers/service/service-worker-cache-api.https.html
+
+        This test is currently marked as flaky.
+
+        * http/tests/workers/service/service-worker-cache-api.https-expected.txt:
+
+2017-11-27  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, unskip service worker tests that are no longer flaky.
 
         * TestExpectations:
