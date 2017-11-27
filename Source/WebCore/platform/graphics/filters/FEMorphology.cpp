@@ -4,6 +4,7 @@
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) Apple Inc. 2017. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,12 +25,12 @@
 #include "config.h"
 #include "FEMorphology.h"
 
+#include "ColorUtilities.h"
 #include "Filter.h"
-#include <wtf/text/TextStream.h>
-
 #include <runtime/Uint8ClampedArray.h>
 #include <wtf/ParallelJobs.h>
 #include <wtf/Vector.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -83,98 +84,121 @@ void FEMorphology::determineAbsolutePaintRect()
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 
-static inline bool shouldSupersedeExtremum(unsigned char newValue, unsigned char currentValue, MorphologyOperatorType type)
+static inline int pixelArrayIndex(int x, int y, int width)
 {
-    return (type == FEMORPHOLOGY_OPERATOR_ERODE && newValue < currentValue)
-        || (type == FEMORPHOLOGY_OPERATOR_DILATE && newValue > currentValue);
+    return (y * width + x) * 4;
 }
 
-static inline int pixelArrayIndex(int x, int y, int width, int colorChannel)
+template<MorphologyOperatorType type>
+ALWAYS_INLINE ColorComponents minOrMax(const ColorComponents& a, const ColorComponents& b)
 {
-    return (y * width + x) * 4 + colorChannel;
+    if (type == FEMORPHOLOGY_OPERATOR_ERODE)
+        return perComponentMin(a, b);
+
+    return perComponentMax(a, b);
 }
 
-static inline unsigned char columnExtremum(const Uint8ClampedArray& srcPixelArray, int x, int yStart, int yEnd, int width, unsigned colorChannel, MorphologyOperatorType type)
+template<MorphologyOperatorType type>
+ALWAYS_INLINE ColorComponents columnExtremum(const Uint8ClampedArray& srcPixelArray, int x, int yStart, int yEnd, int width)
 {
-    unsigned char extremum = srcPixelArray.item(pixelArrayIndex(x, yStart, width, colorChannel));
+    auto extremum = ColorComponents::fromRGBA(*reinterpret_cast<const unsigned*>(srcPixelArray.data() + pixelArrayIndex(x, yStart, width)));
+
     for (int y = yStart + 1; y < yEnd; ++y) {
-        unsigned char pixel = srcPixelArray.item(pixelArrayIndex(x, y, width, colorChannel));
-        if (shouldSupersedeExtremum(pixel, extremum, type))
-            extremum = pixel;
+        auto pixel = ColorComponents::fromRGBA(*reinterpret_cast<const unsigned*>(srcPixelArray.data() + pixelArrayIndex(x, y, width)));
+        extremum = minOrMax<type>(extremum, pixel);
     }
     return extremum;
 }
 
-static inline unsigned char kernelExtremum(const Vector<unsigned char>& kernel, MorphologyOperatorType type)
+ALWAYS_INLINE ColorComponents columnExtremum(const Uint8ClampedArray& srcPixelArray, int x, int yStart, int yEnd, int width, MorphologyOperatorType type)
 {
-    Vector<unsigned char>::const_iterator iter = kernel.begin();
-    unsigned char extremum = *iter;
-    for (Vector<unsigned char>::const_iterator end = kernel.end(); ++iter != end; ) {
-        if (shouldSupersedeExtremum(*iter, extremum, type))
-            extremum = *iter;
-    }
+    if (type == FEMORPHOLOGY_OPERATOR_ERODE)
+        return columnExtremum<FEMORPHOLOGY_OPERATOR_ERODE>(srcPixelArray, x, yStart, yEnd, width);
+
+    return columnExtremum<FEMORPHOLOGY_OPERATOR_DILATE>(srcPixelArray, x, yStart, yEnd, width);
+}
+
+using ColumnExtrema = Vector<ColorComponents, 16>;
+
+template<MorphologyOperatorType type>
+ALWAYS_INLINE ColorComponents kernelExtremum(const ColumnExtrema& kernel)
+{
+    auto extremum = kernel[0];
+    for (size_t i = 1; i < kernel.size(); ++i)
+        extremum = minOrMax<type>(extremum, kernel[i]);
+
     return extremum;
 }
 
-void FEMorphology::platformApplyGeneric(PaintingData* paintingData, int yStart, int yEnd)
+ALWAYS_INLINE ColorComponents kernelExtremum(const ColumnExtrema& kernel, MorphologyOperatorType type)
 {
-    const Uint8ClampedArray& srcPixelArray = *paintingData->srcPixelArray;
-    Uint8ClampedArray& dstPixelArray = *paintingData->dstPixelArray;
-    const int radiusX = paintingData->radiusX;
-    const int radiusY = paintingData->radiusY;
-    const int width = paintingData->width;
-    const int height = paintingData->height;
+    if (type == FEMORPHOLOGY_OPERATOR_ERODE)
+        return kernelExtremum<FEMORPHOLOGY_OPERATOR_ERODE>(kernel);
+
+    return kernelExtremum<FEMORPHOLOGY_OPERATOR_DILATE>(kernel);
+}
+
+void FEMorphology::platformApplyGeneric(const PaintingData& paintingData, int startY, int endY)
+{
+    const auto& srcPixelArray = *paintingData.srcPixelArray;
+    auto& dstPixelArray = *paintingData.dstPixelArray;
+
+    const int radiusX = paintingData.radiusX;
+    const int radiusY = paintingData.radiusY;
+    const int width = paintingData.width;
+    const int height = paintingData.height;
 
     ASSERT(radiusX <= width || radiusY <= height);
-    ASSERT(yStart >= 0 && yEnd <= height && yStart < yEnd);
+    ASSERT(startY >= 0 && endY <= height && startY < endY);
 
-    Vector<unsigned char> extrema;
-    for (int y = yStart; y < yEnd; ++y) {
-        int yStartExtrema = std::max(0, y - radiusY);
-        int yEndExtrema = std::min(height - 1, y + radiusY);
+    ColumnExtrema extrema;
+    extrema.reserveInitialCapacity(2 * radiusX + 1);
 
-        for (unsigned colorChannel = 0; colorChannel < 4; ++colorChannel) {
-            extrema.clear();
-            // Compute extremas for each columns
-            for (int x = 0; x < radiusX; ++x)
-                extrema.append(columnExtremum(srcPixelArray, x, yStartExtrema, yEndExtrema, width, colorChannel, m_type));
+    for (int y = startY; y < endY; ++y) {
+        int yRadiusStart = std::max(0, y - radiusY);
+        int yRadiusEnd = std::min(height, y + radiusY + 1);
 
-            // Kernel is filled, get extrema of next column
-            for (int x = 0; x < width; ++x) {
-                if (x < width - radiusX) {
-                    int xEnd = std::min(x + radiusX, width - 1);
-                    extrema.append(columnExtremum(srcPixelArray, xEnd, yStartExtrema, yEndExtrema + 1, width, colorChannel, m_type));
-                }
+        extrema.shrink(0);
 
-                if (x > radiusX)
-                    extrema.remove(0);
+        // We start at the left edge, so compute extreme for the radiusX columns.
+        for (int x = 0; x < radiusX; ++x)
+            extrema.append(columnExtremum(srcPixelArray, x, yRadiusStart, yRadiusEnd, width, m_type));
 
-                // The extrema original size = radiusX.
-                // Number of new addition = width - radiusX.
-                // Number of removals = width - radiusX - 1.
-                ASSERT(extrema.size() >= static_cast<size_t>(radiusX + 1));
-                dstPixelArray.set(pixelArrayIndex(x, y, width, colorChannel), kernelExtremum(extrema, m_type));
-            }
+        // Kernel is filled, get extrema of next column
+        for (int x = 0; x < width; ++x) {
+            if (x < width - radiusX)
+                extrema.append(columnExtremum(srcPixelArray, x + radiusX, yRadiusStart, yRadiusEnd, width, m_type));
+
+            if (x > radiusX)
+                extrema.remove(0);
+
+            unsigned* destPixel = reinterpret_cast<unsigned*>(dstPixelArray.data() + pixelArrayIndex(x, y, width));
+            *destPixel = kernelExtremum(extrema, m_type).toRGBA();
         }
     }
 }
 
 void FEMorphology::platformApplyWorker(PlatformApplyParameters* param)
 {
-    param->filter->platformApplyGeneric(param->paintingData, param->startY, param->endY);
+    param->filter->platformApplyGeneric(*param->paintingData, param->startY, param->endY);
 }
 
-void FEMorphology::platformApply(PaintingData* paintingData)
+void FEMorphology::platformApply(const PaintingData& paintingData)
 {
-    int optimalThreadNumber = (paintingData->width * paintingData->height) / s_minimalArea;
+    // Empirically, runtime is approximately linear over reasonable kernel sizes with a slope of about 0.65.
+    float kernelFactor = sqrt(paintingData.radiusX * paintingData.radiusY) * 0.65;
+
+    static const int minimalArea = (160 * 160); // Empirical data limit for parallel jobs
+    int optimalThreadNumber = (paintingData.width * paintingData.height * kernelFactor) / minimalArea;
+
     if (optimalThreadNumber > 1) {
         ParallelJobs<PlatformApplyParameters> parallelJobs(&WebCore::FEMorphology::platformApplyWorker, optimalThreadNumber);
         int numOfThreads = parallelJobs.numberOfJobs();
         if (numOfThreads > 1) {
             // Split the job into "jobSize"-sized jobs but there a few jobs that need to be slightly larger since
             // jobSize * jobs < total size. These extras are handled by the remainder "jobsWithExtra".
-            const int jobSize = paintingData->height / numOfThreads;
-            const int jobsWithExtra = paintingData->height % numOfThreads;
+            const int jobSize = paintingData.height / numOfThreads;
+            const int jobsWithExtra = paintingData.height % numOfThreads;
             int currentY = 0;
             for (int job = numOfThreads - 1; job >= 0; --job) {
                 PlatformApplyParameters& param = parallelJobs.parameter(job);
@@ -182,7 +206,7 @@ void FEMorphology::platformApply(PaintingData* paintingData)
                 param.startY = currentY;
                 currentY += job < jobsWithExtra ? jobSize + 1 : jobSize;
                 param.endY = currentY;
-                param.paintingData = paintingData;
+                param.paintingData = &paintingData;
             }
             parallelJobs.execute();
             return;
@@ -190,7 +214,7 @@ void FEMorphology::platformApply(PaintingData* paintingData)
         // Fallback to single thread model
     }
 
-    platformApplyGeneric(paintingData, 0, paintingData->height);
+    platformApplyGeneric(paintingData, 0, paintingData.height);
 }
 
 bool FEMorphology::platformApplyDegenerate(Uint8ClampedArray& dstPixelArray, const IntRect& imageRect, int radiusX, int radiusY)
@@ -237,7 +261,7 @@ void FEMorphology::platformApplySoftware()
 
     if (platformApplyDegenerate(*dstPixelArray, effectDrawingRect, radiusX, radiusY))
         return;
-
+    
     PaintingData paintingData;
     paintingData.srcPixelArray = srcPixelArray.get();
     paintingData.dstPixelArray = dstPixelArray;
@@ -246,7 +270,7 @@ void FEMorphology::platformApplySoftware()
     paintingData.radiusX = ceilf(radiusX * filter.filterScale());
     paintingData.radiusY = ceilf(radiusY * filter.filterScale());
 
-    platformApply(&paintingData);
+    platformApply(paintingData);
 }
 
 static TextStream& operator<<(TextStream& ts, const MorphologyOperatorType& type)

@@ -93,7 +93,12 @@ struct FloatComponents {
 
 struct ColorComponents {
     ColorComponents(const FloatComponents&);
-
+    
+    static ColorComponents fromRGBA(unsigned pixel)
+    {
+        return ColorComponents((pixel >> 24) & 0xFF, (pixel >> 16) & 0xFF, (pixel >> 8) & 0xFF, pixel & 0xFF);
+    }
+    
     ColorComponents(uint8_t a = 0, uint8_t b = 0, uint8_t c = 0, uint8_t d = 0)
     {
         components[0] = a;
@@ -101,8 +106,34 @@ struct ColorComponents {
         components[2] = c;
         components[3] = d;
     }
+    
+    unsigned toRGBA() const
+    {
+        return components[0] << 24 | components[1] << 16 | components[2] << 8 | components[3];
+    }
+
     uint8_t components[4] { };
 };
+
+inline ColorComponents perComponentMax(const ColorComponents& a, const ColorComponents& b)
+{
+    return {
+        std::max(a.components[0], b.components[0]),
+        std::max(a.components[1], b.components[1]),
+        std::max(a.components[2], b.components[2]),
+        std::max(a.components[3], b.components[3])
+    };
+}
+
+inline ColorComponents perComponentMin(const ColorComponents& a, const ColorComponents& b)
+{
+    return {
+        std::min(a.components[0], b.components[0]),
+        std::min(a.components[1], b.components[1]),
+        std::min(a.components[2], b.components[2]),
+        std::min(a.components[3], b.components[3])
+    };
+}
 
 inline uint8_t clampedColorComponent(float f)
 {

@@ -25,16 +25,13 @@
 
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include <wtf/text/TextStream.h>
-
 #include <runtime/Uint8ClampedArray.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/TextStream.h>
 
 #if USE(ACCELERATE)
 #include <Accelerate/Accelerate.h>
 #endif
-
-#define PRINT_FILTER_PERFORMANCE 0
 
 namespace WebCore {
 
@@ -283,10 +280,6 @@ void FEColorMatrix::platformApplySoftware()
     if (!resultImage)
         return;
 
-#if PRINT_FILTER_PERFORMANCE
-    MonotonicTime startTime = MonotonicTime::now();
-#endif
-
     ImageBuffer* inBuffer = in->imageBufferResult();
     if (inBuffer)
         resultImage->context().drawImageBuffer(*inBuffer, drawingRegionOfInputImage(in->absolutePaintRect()));
@@ -318,20 +311,6 @@ void FEColorMatrix::platformApplySoftware()
     }
 
     resultImage->putByteArray(Unmultiplied, *pixelArray, imageRect.size(), imageRect, IntPoint());
-
-#if PRINT_FILTER_PERFORMANCE
-    MonotonicTime endTime = MonotonicTime::now();
-    Seconds duration = endTime - startTime;
-    unsigned pixelCount = imageRect.width() * imageRect.height();
-    
-    static double totalMegapixels;
-    totalMegapixels += (double)pixelCount / 1048576.0;
-    
-    static Seconds totalTime;
-    totalTime += duration;
-    
-    WTFLogAlways("FEColorMatrix::platformApplySoftware (%dx%d) took %.4fms (ave %.4fms/mp)", imageRect.width(), imageRect.height(), duration.milliseconds(), totalTime.milliseconds() / totalMegapixels);
-#endif
 }
 
 static TextStream& operator<<(TextStream& ts, const ColorMatrixType& type)

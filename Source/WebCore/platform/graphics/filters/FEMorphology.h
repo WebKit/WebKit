@@ -67,19 +67,17 @@ private:
         int radiusY;
     };
 
-    static const int s_minimalArea = (300 * 300); // Empirical data limit for parallel jobs
-
     struct PlatformApplyParameters {
         FEMorphology* filter;
         int startY;
         int endY;
-        PaintingData* paintingData;
+        const PaintingData* paintingData;
     };
 
     static void platformApplyWorker(PlatformApplyParameters*);
 
-    inline void platformApply(PaintingData*);
-    inline void platformApplyGeneric(PaintingData*, const int yStart, const int yEnd);
+    void platformApply(const PaintingData&);
+    void platformApplyGeneric(const PaintingData&, int startY, int endY);
 
     MorphologyOperatorType m_type;
     float m_radiusX;
