@@ -431,6 +431,13 @@ webkit_settings_set_enable_mediasource                         (WebKitSettings *
                                                                 gboolean        enabled);
 
 WEBKIT_API gboolean
+webkit_settings_get_enable_encrypted_media                     (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_enable_encrypted_media                     (WebKitSettings *settings,
+                                                                gboolean        enabled);
+
+WEBKIT_API gboolean
 webkit_settings_get_allow_file_access_from_file_urls           (WebKitSettings *settings);
 
 WEBKIT_API void

@@ -152,6 +152,7 @@ enum {
     PROP_ENABLE_MEDIA_STREAM,
     PROP_ENABLE_SPATIAL_NAVIGATION,
     PROP_ENABLE_MEDIASOURCE,
+    PROP_ENABLE_ENCRYPTED_MEDIA,
     PROP_ALLOW_FILE_ACCESS_FROM_FILE_URLS,
     PROP_ALLOW_UNIVERSAL_ACCESS_FROM_FILE_URLS,
 #if PLATFORM(GTK)
@@ -348,6 +349,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
     case PROP_ENABLE_MEDIASOURCE:
         webkit_settings_set_enable_mediasource(settings, g_value_get_boolean(value));
         break;
+    case PROP_ENABLE_ENCRYPTED_MEDIA:
+        webkit_settings_set_enable_encrypted_media(settings, g_value_get_boolean(value));
+        break;
     case PROP_ALLOW_FILE_ACCESS_FROM_FILE_URLS:
         webkit_settings_set_allow_file_access_from_file_urls(settings, g_value_get_boolean(value));
         break;
@@ -515,6 +519,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_ENABLE_MEDIASOURCE:
         g_value_set_boolean(value, webkit_settings_get_enable_mediasource(settings));
+        break;
+    case PROP_ENABLE_ENCRYPTED_MEDIA:
+        g_value_set_boolean(value, webkit_settings_get_enable_encrypted_media(settings));
         break;
     case PROP_ALLOW_FILE_ACCESS_FROM_FILE_URLS:
         g_value_set_boolean(value, webkit_settings_get_allow_file_access_from_file_urls(settings));
@@ -1280,6 +1287,27 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
         g_param_spec_boolean("enable-mediasource",
             _("Enable MediaSource"),
             _("Whether MediaSource should be enabled."),
+            FALSE,
+            readWriteConstructParamFlags));
+
+
+   /**
+     * WebKitSettings:enable-encrypted-media:
+     *
+     * Enable or disable support for Encrypted Media API on pages.
+     * EncryptedMedia is an experimental JavaScript API for playing encrypted media in HTML.
+     * This property will only work as intended if the EncryptedMedia feature is enabled at build time
+     * with the ENABLE_ENCRYPTED_MEDIA flag.
+     *
+     * See https://www.w3.org/TR/encrypted-media/
+     *
+     * Since: 2.20
+     */
+    g_object_class_install_property(gObjectClass,
+        PROP_ENABLE_ENCRYPTED_MEDIA,
+        g_param_spec_boolean("enable-encrypted-media",
+            _("Enable EncryptedMedia"),
+            _("Whether EncryptedMedia should be enabled."),
             FALSE,
             readWriteConstructParamFlags));
 
@@ -3140,6 +3168,45 @@ void webkit_settings_set_enable_mediasource(WebKitSettings* settings, gboolean e
     g_object_notify(G_OBJECT(settings), "enable-mediasource");
 }
 
+/**
+ * webkit_settings_get_enable_encrypted_media:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-encrypted-media property.
+ *
+ * Returns: %TRUE if EncryptedMedia support is enabled or %FALSE otherwise.
+ *
+ * Since: 2.20
+ */
+gboolean webkit_settings_get_enable_encrypted_media(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return settings->priv->preferences->encryptedMediaAPIEnabled();
+}
+
+
+/**
+ * webkit_settings_set_enable_encrypted_media:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-encrypted-media property.
+ *
+ * Since: 2.20
+ */
+void webkit_settings_set_enable_encrypted_media(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = priv->preferences->encryptedMediaAPIEnabled();
+    if (currentValue == enabled)
+        return;
+
+    priv->preferences->setEncryptedMediaAPIEnabled(enabled);
+    g_object_notify(G_OBJECT(settings), "enable-encrypted-media");
+}
 /**
  * webkit_settings_get_allow_file_access_from_file_urls:
  * @settings: a #WebKitSettings
