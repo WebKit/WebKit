@@ -1,3 +1,18 @@
+2017-11-27  Antoine Quint  <graouts@apple.com>
+
+        Pressing the space bar while watching a fullscreen video doesn't play or pause
+        https://bugs.webkit.org/show_bug.cgi?id=180033
+        <rdar://problem/33610443>
+
+        Reviewed by Eric Carlson.
+
+        Adding a new macOS-only test that checks that pressing the space bar while playing fullscreen
+        pauses the media and resumes it when pressing the space bar again.
+
+        * media/modern-media-controls/media-controller/media-controller-space-bar-toggle-playback-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-space-bar-toggle-playback.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2017-11-27  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r225173.
