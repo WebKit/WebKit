@@ -26,7 +26,7 @@
 #include <gst/gst.h>
 #include <wtf/text/WTFString.h>
 
-#define WEBCORE_GSTREAMER_EME_UTILITIES_CLEARKEY_UUID "58147ec8-0423-4659-92e6-f52c5ce8c3cc"
+#define WEBCORE_GSTREAMER_EME_UTILITIES_CLEARKEY_UUID "1077efec-c0b2-4d02-ace3-3c1e52e2fb4b"
 
 namespace WebCore {
 
