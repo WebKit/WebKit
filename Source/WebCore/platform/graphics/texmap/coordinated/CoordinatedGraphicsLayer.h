@@ -31,7 +31,6 @@
 #include "Image.h"
 #include "IntSize.h"
 #include "TextureMapperAnimation.h"
-#include "TextureMapperPlatformLayer.h"
 #include "TiledBackingStore.h"
 #include "TiledBackingStoreClient.h"
 #include "TransformationMatrix.h"
@@ -55,9 +54,6 @@ public:
 
 class CoordinatedGraphicsLayer : public GraphicsLayer
     , public TiledBackingStoreClient
-#if USE(COORDINATED_GRAPHICS_THREADED)
-    , public TextureMapperPlatformLayer::Client
-#endif
     , public CoordinatedImageBacking::Host {
 public:
     explicit CoordinatedGraphicsLayer(Type, GraphicsLayerClient&);
@@ -147,10 +143,6 @@ private:
 
     void syncPlatformLayer();
     void updatePlatformLayer();
-#if USE(COORDINATED_GRAPHICS_THREADED)
-    void platformLayerWillBeDestroyed() override;
-    void setPlatformLayerNeedsDisplay() override;
-#endif
 
     void setDebugBorder(const Color&, float width) override;
 

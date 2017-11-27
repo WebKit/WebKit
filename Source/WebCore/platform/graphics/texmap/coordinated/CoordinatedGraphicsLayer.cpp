@@ -1209,16 +1209,6 @@ void CoordinatedGraphicsLayer::animationStartedTimerFired()
     client().notifyAnimationStarted(this, "", m_lastAnimationStartTime);
 }
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
-void CoordinatedGraphicsLayer::platformLayerWillBeDestroyed()
-{
-}
-
-void CoordinatedGraphicsLayer::setPlatformLayerNeedsDisplay()
-{
-}
-#endif
-
 } // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)
