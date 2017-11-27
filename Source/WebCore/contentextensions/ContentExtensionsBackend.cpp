@@ -76,12 +76,14 @@ std::pair<Vector<Action>, Vector<String>> ContentExtensionsBackend::actionsForRe
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double addedTimeStart = monotonicallyIncreasingTime();
 #endif
-    if (resourceLoadInfo.resourceURL.protocolIsData())
+    if (m_contentExtensions.isEmpty()
+        || !resourceLoadInfo.resourceURL.isValid()
+        || resourceLoadInfo.resourceURL.protocolIsData())
         return { };
 
     const String& urlString = resourceLoadInfo.resourceURL.string();
     ASSERT_WITH_MESSAGE(urlString.isAllASCII(), "A decoded URL should only contain ASCII characters. The matching algorithm assumes the input is ASCII.");
-    const CString& urlCString = urlString.utf8();
+    const auto urlCString = urlString.utf8();
 
     Vector<Action> finalActions;
     Vector<String> stylesheetIdentifiers;
