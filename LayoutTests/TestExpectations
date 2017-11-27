@@ -179,6 +179,7 @@ imported/w3c/web-platform-tests/service-workers/service-worker/websocket-in-serv
 imported/w3c/web-platform-tests/service-workers/service-worker/client-navigate.https.html [ Skip ]
 
 http/tests/workers/service/service-worker-cache-api.https.html [ Pass Failure ]
+webkit.org/b/179137 imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event.https.html [ Pass Failure ]
 webkit.org/b/179248 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-response-body-with-invalid-chunk.https.html [ Pass Failure ]
