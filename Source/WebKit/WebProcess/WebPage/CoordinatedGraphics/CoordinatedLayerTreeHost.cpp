@@ -205,10 +205,6 @@ void CoordinatedLayerTreeHost::layerFlushTimerFired()
     }
 }
 
-void CoordinatedLayerTreeHost::paintLayerContents(const GraphicsLayer*, GraphicsContext&, const IntRect&)
-{
-}
-
 void CoordinatedLayerTreeHost::commitSceneState(const CoordinatedGraphicsState& state)
 {
     m_isWaitingForRenderer = true;

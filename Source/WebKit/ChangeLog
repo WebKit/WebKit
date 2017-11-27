@@ -1,3 +1,29 @@
+2017-11-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] CompositingCoordinator: clean up Client vtable, GraphicsLayerClient overrides
+        https://bugs.webkit.org/show_bug.cgi?id=180037
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the CompositingCoordinator::Client::paintLayerContents() method since
+        the only implementation in CoordinatedLayerTreeHost was empty.
+
+        Subsequently, the CompositingCoordinator::paintContents() override of the
+        GraphicsLayerClient method can also be removed. The notifyAnimationStarted()
+        override is empty, just like the base method, so it's removed as well.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::deviceScaleFactor const): Bring method up
+        to the notifyFlushRequired() code, since both are overrides of the
+        GraphicsLayerClient-inherited methods.
+        (WebKit::CompositingCoordinator::pageScaleFactor const): Ditto.
+        (WebKit::CompositingCoordinator::notifyAnimationStarted): Deleted.
+        (WebKit::CompositingCoordinator::paintContents): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::paintLayerContents): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+
 2017-11-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r223073): disk cache directory is no longer copied in ProcessPoolConfiguration::copy()

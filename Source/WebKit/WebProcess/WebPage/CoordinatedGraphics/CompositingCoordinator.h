@@ -60,7 +60,6 @@ public:
         virtual void didFlushRootLayer(const WebCore::FloatRect& visibleContentRect) = 0;
         virtual void notifyFlushRequired() = 0;
         virtual void commitSceneState(const WebCore::CoordinatedGraphicsState&) = 0;
-        virtual void paintLayerContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::IntRect& clipRect) = 0;
         virtual void releaseUpdateAtlases(const Vector<uint32_t>&) = 0;
     };
 
@@ -100,9 +99,7 @@ private:
     };
 
     // GraphicsLayerClient
-    void notifyAnimationStarted(const WebCore::GraphicsLayer*, const String&, double time) override;
     void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
-    void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& clipRect, WebCore::GraphicsLayerPaintBehavior) override;
     float deviceScaleFactor() const override;
     float pageScaleFactor() const override;
 

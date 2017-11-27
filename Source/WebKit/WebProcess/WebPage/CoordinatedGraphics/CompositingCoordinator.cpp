@@ -257,19 +257,20 @@ void CompositingCoordinator::flushPendingImageBackingChanges()
         imageBacking->update();
 }
 
-void CompositingCoordinator::notifyAnimationStarted(const GraphicsLayer*, const String&, double /* time */)
-{
-}
-
 void CompositingCoordinator::notifyFlushRequired(const GraphicsLayer*)
 {
     if (!m_isDestructing && !isFlushingLayerChanges())
         m_client.notifyFlushRequired();
 }
 
-void CompositingCoordinator::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const FloatRect& clipRect, GraphicsLayerPaintBehavior)
+float CompositingCoordinator::deviceScaleFactor() const
 {
-    m_client.paintLayerContents(graphicsLayer, graphicsContext, enclosingIntRect(clipRect));
+    return m_page->deviceScaleFactor();
+}
+
+float CompositingCoordinator::pageScaleFactor() const
+{
+    return m_page->pageScaleFactor();
 }
 
 std::unique_ptr<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(GraphicsLayer::Type layerType, GraphicsLayerClient& client)
@@ -281,16 +282,6 @@ std::unique_ptr<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(Graph
     layer->setNeedsVisibleRectAdjustment();
     notifyFlushRequired(layer);
     return std::unique_ptr<GraphicsLayer>(layer);
-}
-
-float CompositingCoordinator::deviceScaleFactor() const
-{
-    return m_page->deviceScaleFactor();
-}
-
-float CompositingCoordinator::pageScaleFactor() const
-{
-    return m_page->pageScaleFactor();
 }
 
 void CompositingCoordinator::createUpdateAtlas(uint32_t atlasID, RefPtr<CoordinatedBuffer>&& buffer)
