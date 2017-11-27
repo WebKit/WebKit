@@ -82,6 +82,7 @@
 
 .spreadsheet-css-declaration .selector {
     position: relative;
+    z-index: 1;
 }
 
 .spreadsheet-css-declaration .selector.style-attribute {
