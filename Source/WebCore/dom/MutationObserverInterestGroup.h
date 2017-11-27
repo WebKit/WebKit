@@ -42,7 +42,7 @@ class QualifiedName;
 class MutationObserverInterestGroup {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MutationObserverInterestGroup(HashMap<MutationObserver*, MutationRecordDeliveryOptions>&&, MutationRecordDeliveryOptions);
+    MutationObserverInterestGroup(HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions>&&, MutationRecordDeliveryOptions);
 
     static std::unique_ptr<MutationObserverInterestGroup> createForChildListMutation(Node& target)
     {
@@ -77,7 +77,7 @@ private:
 
     bool hasOldValue(MutationRecordDeliveryOptions options) const { return options & m_oldValueFlag; }
 
-    HashMap<MutationObserver*, MutationRecordDeliveryOptions> m_observers;
+    HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> m_observers;
     MutationRecordDeliveryOptions m_oldValueFlag;
 };
 
