@@ -1,3 +1,19 @@
+2017-11-27  Jeremy Jones  <jeremyj@apple.com>
+
+        downcast to WebKit::FullscreenClient can sometimes fail.
+        https://bugs.webkit.org/show_bug.cgi?id=179849
+
+        Reviewed by Darin Adler.
+
+        There are cases during teardown where fullscreenClient() has been cleared back to an API::FullscreenClient.
+        Because those cases, WKWebView should test before downcasting to WebKit::FullscreenClient.
+
+        This is causing a crash when fullscreen delegate is cleared after a page is closed.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setFullscreenDelegate:]):
+        (-[WKWebView _fullscreenDelegate]):
+
 2017-11-27  Chris Dumez  <cdumez@apple.com>
 
         Give Document a strongly typed identifier instead of a uint64_t
