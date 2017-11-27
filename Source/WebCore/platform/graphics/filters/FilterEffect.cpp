@@ -503,7 +503,7 @@ void FilterEffect::transformResultColorSpace(ColorSpace dstColorSpace)
 #endif
 }
 
-TextStream& FilterEffect::externalRepresentation(TextStream& ts, int) const
+TextStream& FilterEffect::externalRepresentation(TextStream& ts) const
 {
     // FIXME: We should dump the subRegions of the filter primitives here later. This isn't
     // possible at the moment, because we need more detailed informations from the target object.

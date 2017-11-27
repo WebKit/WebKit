@@ -45,7 +45,7 @@ private:
     
     void determineAbsolutePaintRect() override;
 
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
 
     float m_dx;
     float m_dy;

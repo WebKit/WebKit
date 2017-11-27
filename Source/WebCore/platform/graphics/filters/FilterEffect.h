@@ -114,7 +114,7 @@ public:
 
     virtual FilterEffectType filterEffectType() const { return FilterEffectTypeUnknown; }
 
-    virtual WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention = 0) const;
+    virtual WTF::TextStream& externalRepresentation(WTF::TextStream&) const;
 
     // The following functions are SVG specific and will move to RenderSVGResourceFilterPrimitive.
     // See bug https://bugs.webkit.org/show_bug.cgi?id=45614.

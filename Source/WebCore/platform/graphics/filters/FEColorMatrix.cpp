@@ -335,10 +335,9 @@ static TextStream& operator<<(TextStream& ts, const ColorMatrixType& type)
     return ts;
 }
 
-TextStream& FEColorMatrix::externalRepresentation(TextStream& ts, int indent) const
+TextStream& FEColorMatrix::externalRepresentation(TextStream& ts) const
 {
-    writeIndent(ts, indent);
-    ts << "[feColorMatrix";
+    ts << indent << "[feColorMatrix";
     FilterEffect::externalRepresentation(ts);
     ts << " type=\"" << m_type << "\"";
     if (!m_values.isEmpty()) {
@@ -354,7 +353,9 @@ TextStream& FEColorMatrix::externalRepresentation(TextStream& ts, int indent) co
         ts << "\"";
     }
     ts << "]\n";
-    inputEffect(0)->externalRepresentation(ts, indent + 1);
+    
+    TextStream::IndentScope indentScope(ts);
+    inputEffect(0)->externalRepresentation(ts);
     return ts;
 }
 

@@ -60,10 +60,9 @@ void SourceGraphic::platformApplySoftware()
     resultImage->context().drawImageBuffer(*sourceImage, IntPoint());
 }
 
-TextStream& SourceGraphic::externalRepresentation(TextStream& ts, int indent) const
+TextStream& SourceGraphic::externalRepresentation(TextStream& ts) const
 {
-    writeIndent(ts, indent);
-    ts << "[SourceGraphic]\n";
+    ts << indent << "[SourceGraphic]\n";
     return ts;
 }
 

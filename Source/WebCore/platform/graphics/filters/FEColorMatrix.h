@@ -56,7 +56,7 @@ private:
 
     void platformApplySoftware() override;
 
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
 
     ColorMatrixType m_type;
     Vector<float> m_values;

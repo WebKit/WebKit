@@ -327,17 +327,18 @@ static TextStream& operator<<(TextStream& ts, const CompositeOperationType& type
     return ts;
 }
 
-TextStream& FEComposite::externalRepresentation(TextStream& ts, int indent) const
+TextStream& FEComposite::externalRepresentation(TextStream& ts) const
 {
-    writeIndent(ts, indent);
-    ts << "[feComposite";
+    ts << indent << "[feComposite";
     FilterEffect::externalRepresentation(ts);
     ts << " operation=\"" << m_type << "\"";
     if (m_type == FECOMPOSITE_OPERATOR_ARITHMETIC)
         ts << " k1=\"" << m_k1 << "\" k2=\"" << m_k2 << "\" k3=\"" << m_k3 << "\" k4=\"" << m_k4 << "\"";
     ts << "]\n";
-    inputEffect(0)->externalRepresentation(ts, indent + 1);
-    inputEffect(1)->externalRepresentation(ts, indent + 1);
+
+    TextStream::IndentScope indentScope(ts);
+    inputEffect(0)->externalRepresentation(ts);
+    inputEffect(1)->externalRepresentation(ts);
     return ts;
 }
 

@@ -75,14 +75,15 @@ void FEBlend::platformApplySoftware()
 }
 #endif
 
-TextStream& FEBlend::externalRepresentation(TextStream& ts, int indent) const
+TextStream& FEBlend::externalRepresentation(TextStream& ts) const
 {
-    writeIndent(ts, indent);
-    ts << "[feBlend";
+    ts << indent << "[feBlend";
     FilterEffect::externalRepresentation(ts);
     ts << " mode=\"" << (m_mode == BlendModeNormal ? "normal" : compositeOperatorName(CompositeSourceOver, m_mode)) << "\"]\n";
-    inputEffect(0)->externalRepresentation(ts, indent + 1);
-    inputEffect(1)->externalRepresentation(ts, indent + 1);
+
+    TextStream::IndentScope indentScope(ts);
+    inputEffect(0)->externalRepresentation(ts);
+    inputEffect(1)->externalRepresentation(ts);
     return ts;
 }
 

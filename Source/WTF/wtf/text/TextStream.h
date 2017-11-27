@@ -95,6 +95,30 @@ public:
 
     WTF_EXPORT_PRIVATE void writeIndent();
 
+    // Stream manipulators.
+    TextStream& operator<<(TextStream& (*func)(TextStream&))
+    {
+        return (*func)(*this);
+    }
+
+    class IndentScope {
+    public:
+        IndentScope(TextStream& ts, int amount = 1)
+            : m_stream(ts)
+            , m_amount(amount)
+        {
+            m_stream.increaseIndent(m_amount);
+        }
+        ~IndentScope()
+        {
+            m_stream.decreaseIndent(m_amount);
+        }
+
+    private:
+        TextStream& m_stream;
+        int m_amount;
+    };
+
     class GroupScope {
     public:
         GroupScope(TextStream& ts)
@@ -118,6 +142,12 @@ private:
     bool m_multiLineMode { true };
 };
 
+inline TextStream& indent(TextStream& ts)
+{
+    ts.writeIndent();
+    return ts;
+}
+
 template<typename Item>
 TextStream& operator<<(TextStream& ts, const Vector<Item>& vector)
 {
@@ -133,8 +163,10 @@ TextStream& operator<<(TextStream& ts, const Vector<Item>& vector)
     return ts << "]";
 }
 
+// Deprecated. Use TextStream::writeIndent() instead.
 WTF_EXPORT_PRIVATE void writeIndent(TextStream&, int indent);
 
 } // namespace WTF
 
 using WTF::TextStream;
+using WTF::indent;

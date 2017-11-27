@@ -78,7 +78,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static void writeLayers(TextStream&, const RenderLayer& rootLayer, RenderLayer&, const LayoutRect& paintDirtyRect, int indent = 0, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
+static void writeLayers(TextStream&, const RenderLayer& rootLayer, RenderLayer&, const LayoutRect& paintDirtyRect, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
 
 static void printBorderStyle(TextStream& ts, const EBorderStyle borderStyle)
 {
@@ -523,45 +523,47 @@ static void writeSimpleLine(TextStream& ts, const RenderText& renderText, const 
     ts << "\n";
 }
 
-void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavior behavior)
+void write(TextStream& ts, const RenderObject& o, RenderAsTextBehavior behavior)
 {
     if (is<RenderSVGShape>(o)) {
-        write(ts, downcast<RenderSVGShape>(o), indent, behavior);
+        write(ts, downcast<RenderSVGShape>(o), behavior);
         return;
     }
     if (is<RenderSVGGradientStop>(o)) {
-        writeSVGGradientStop(ts, downcast<RenderSVGGradientStop>(o), indent, behavior);
+        writeSVGGradientStop(ts, downcast<RenderSVGGradientStop>(o), behavior);
         return;
     }
     if (is<RenderSVGResourceContainer>(o)) {
-        writeSVGResourceContainer(ts, downcast<RenderSVGResourceContainer>(o), indent, behavior);
+        writeSVGResourceContainer(ts, downcast<RenderSVGResourceContainer>(o), behavior);
         return;
     }
     if (is<RenderSVGContainer>(o)) {
-        writeSVGContainer(ts, downcast<RenderSVGContainer>(o), indent, behavior);
+        writeSVGContainer(ts, downcast<RenderSVGContainer>(o), behavior);
         return;
     }
     if (is<RenderSVGRoot>(o)) {
-        write(ts, downcast<RenderSVGRoot>(o), indent, behavior);
+        write(ts, downcast<RenderSVGRoot>(o), behavior);
         return;
     }
     if (is<RenderSVGText>(o)) {
-        writeSVGText(ts, downcast<RenderSVGText>(o), indent, behavior);
+        writeSVGText(ts, downcast<RenderSVGText>(o), behavior);
         return;
     }
     if (is<RenderSVGInlineText>(o)) {
-        writeSVGInlineText(ts, downcast<RenderSVGInlineText>(o), indent, behavior);
+        writeSVGInlineText(ts, downcast<RenderSVGInlineText>(o), behavior);
         return;
     }
     if (is<RenderSVGImage>(o)) {
-        writeSVGImage(ts, downcast<RenderSVGImage>(o), indent, behavior);
+        writeSVGImage(ts, downcast<RenderSVGImage>(o), behavior);
         return;
     }
 
-    writeIndent(ts, indent);
+    ts << indent;
 
     RenderTreeAsText::writeRenderObject(ts, o, behavior);
     ts << "\n";
+
+    TextStream::IndentScope indentScope(ts);
 
     if (is<RenderText>(o)) {
         auto& text = downcast<RenderText>(o);
@@ -569,12 +571,12 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
             ASSERT(!text.firstTextBox());
             auto resolver = runResolver(downcast<RenderBlockFlow>(*text.parent()), *layout);
             for (auto run : resolver.rangeForRenderer(text)) {
-                writeIndent(ts, indent + 1);
+                ts << indent;
                 writeSimpleLine(ts, text, run);
             }
         } else {
             for (auto* box = text.firstTextBox(); box; box = box->nextTextBox()) {
-                writeIndent(ts, indent + 1);
+                ts << indent;
                 writeTextRun(ts, text, *box);
             }
         }
@@ -583,7 +585,7 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
         for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(o))) {
             if (child.hasLayer())
                 continue;
-            write(ts, child, indent + 1, behavior);
+            write(ts, child, behavior);
         }
     }
 
@@ -595,7 +597,7 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
                 if (!(behavior & RenderAsTextDontUpdateLayout))
                     view.layoutContext().layout();
                 if (RenderLayer* layer = root->layer())
-                    writeLayers(ts, *layer, *layer, layer->rect(), indent + 1, behavior);
+                    writeLayers(ts, *layer, *layer, layer->rect(), behavior);
             }
         }
     }
@@ -608,15 +610,13 @@ enum LayerPaintPhase {
 };
 
 static void writeLayer(TextStream& ts, const RenderLayer& layer, const LayoutRect& layerBounds, const LayoutRect& backgroundClipRect, const LayoutRect& clipRect,
-    LayerPaintPhase paintPhase = LayerPaintPhaseAll, int indent = 0, RenderAsTextBehavior behavior = RenderAsTextBehaviorNormal)
+    LayerPaintPhase paintPhase = LayerPaintPhaseAll, RenderAsTextBehavior behavior = RenderAsTextBehaviorNormal)
 {
     IntRect adjustedLayoutBounds = snappedIntRect(layerBounds);
     IntRect adjustedBackgroundClipRect = snappedIntRect(backgroundClipRect);
     IntRect adjustedClipRect = snappedIntRect(clipRect);
 
-    writeIndent(ts, indent);
-
-    ts << "layer ";
+    ts << indent << "layer ";
     
     if (behavior & RenderAsTextShowAddresses)
         ts << static_cast<const void*>(&layer) << " ";
@@ -671,10 +671,12 @@ static void writeLayer(TextStream& ts, const RenderLayer& layer, const LayoutRec
     ts << "\n";
 }
 
-static void writeLayerRenderers(TextStream& ts, const RenderLayer& layer, LayerPaintPhase paintPhase, int indent, RenderAsTextBehavior behavior)
+static void writeLayerRenderers(TextStream& ts, const RenderLayer& layer, LayerPaintPhase paintPhase, RenderAsTextBehavior behavior)
 {
-    if (paintPhase != LayerPaintPhaseBackground)
-        write(ts, layer.renderer(), indent + 1, behavior);
+    if (paintPhase != LayerPaintPhaseBackground) {
+        TextStream::IndentScope indentScope(ts);
+        write(ts, layer.renderer(), behavior);
+    }
 }
 
 static LayoutSize maxLayoutOverflow(const RenderBox* box)
@@ -683,7 +685,7 @@ static LayoutSize maxLayoutOverflow(const RenderBox* box)
     return LayoutSize(overflowRect.maxX(), overflowRect.maxY());
 }
 
-static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLayer& layer, const LayoutRect& paintRect, int indent, RenderAsTextBehavior behavior)
+static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLayer& layer, const LayoutRect& paintRect, RenderAsTextBehavior behavior)
 {
     // FIXME: Apply overflow to the root layer to not break every test. Complete hack. Sigh.
     LayoutRect paintDirtyRect(paintRect);
@@ -707,66 +709,69 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
     auto* negativeZOrderList = layer.negZOrderList();
     bool paintsBackgroundSeparately = negativeZOrderList && negativeZOrderList->size() > 0;
     if (shouldPaint && paintsBackgroundSeparately) {
-        writeLayer(ts, layer, layerBounds, damageRect.rect(), clipRectToApply.rect(), LayerPaintPhaseBackground, indent, behavior);
-        writeLayerRenderers(ts, layer, LayerPaintPhaseBackground, indent, behavior);
+        writeLayer(ts, layer, layerBounds, damageRect.rect(), clipRectToApply.rect(), LayerPaintPhaseBackground, behavior);
+        writeLayerRenderers(ts, layer, LayerPaintPhaseBackground, behavior);
     }
         
     if (negativeZOrderList) {
-        int currIndent = indent;
         if (behavior & RenderAsTextShowLayerNesting) {
-            writeIndent(ts, indent);
-            ts << " negative z-order list(" << negativeZOrderList->size() << ")\n";
-            ++currIndent;
+            ts << indent << " negative z-order list(" << negativeZOrderList->size() << ")\n";
+            ts.increaseIndent();
         }
         
         for (auto* currLayer : *negativeZOrderList)
-            writeLayers(ts, rootLayer, *currLayer, paintDirtyRect, currIndent, behavior);
+            writeLayers(ts, rootLayer, *currLayer, paintDirtyRect, behavior);
+
+        if (behavior & RenderAsTextShowLayerNesting)
+            ts.decreaseIndent();
     }
 
     if (shouldPaint) {
-        writeLayer(ts, layer, layerBounds, damageRect.rect(), clipRectToApply.rect(), paintsBackgroundSeparately ? LayerPaintPhaseForeground : LayerPaintPhaseAll, indent, behavior);
+        writeLayer(ts, layer, layerBounds, damageRect.rect(), clipRectToApply.rect(), paintsBackgroundSeparately ? LayerPaintPhaseForeground : LayerPaintPhaseAll, behavior);
         
         if (behavior & RenderAsTextShowLayerFragments) {
             LayerFragments layerFragments;
             layer.collectFragments(layerFragments, &rootLayer, paintDirtyRect, RenderLayer::PaginationInclusionMode::ExcludeCompositedPaginatedLayers, TemporaryClipRects, IgnoreOverlayScrollbarSize, RespectOverflowClip, offsetFromRoot);
             
             if (layerFragments.size() > 1) {
+                TextStream::IndentScope indentScope(ts, 2);
                 for (unsigned i = 0; i < layerFragments.size(); ++i) {
                     const auto& fragment = layerFragments[i];
-                    writeIndent(ts, indent + 2);
-                    ts << " fragment " << i << ": bounds in layer " << fragment.layerBounds << " fragment bounds " << fragment.boundingBox << "\n";
+                    ts << indent << " fragment " << i << ": bounds in layer " << fragment.layerBounds << " fragment bounds " << fragment.boundingBox << "\n";
                 }
             }
         }
         
-        writeLayerRenderers(ts, layer, paintsBackgroundSeparately ? LayerPaintPhaseForeground : LayerPaintPhaseAll, indent, behavior);
+        writeLayerRenderers(ts, layer, paintsBackgroundSeparately ? LayerPaintPhaseForeground : LayerPaintPhaseAll, behavior);
     }
     
     if (auto* normalFlowList = layer.normalFlowList()) {
-        int currIndent = indent;
         if (behavior & RenderAsTextShowLayerNesting) {
-            writeIndent(ts, indent);
-            ts << " normal flow list(" << normalFlowList->size() << ")\n";
-            ++currIndent;
+            ts << indent << " normal flow list(" << normalFlowList->size() << ")\n";
+            ts.increaseIndent();
         }
         
         for (auto* currLayer : *normalFlowList)
-            writeLayers(ts, rootLayer, *currLayer, paintDirtyRect, currIndent, behavior);
+            writeLayers(ts, rootLayer, *currLayer, paintDirtyRect, behavior);
+
+        if (behavior & RenderAsTextShowLayerNesting)
+            ts.decreaseIndent();
     }
 
     if (auto* positiveZOrderList = layer.posZOrderList()) {
         size_t layerCount = positiveZOrderList->size();
 
         if (layerCount) {
-            int currIndent = indent;
             if (behavior & RenderAsTextShowLayerNesting) {
-                writeIndent(ts, indent);
-                ts << " positive z-order list(" << positiveZOrderList->size() << ")\n";
-                ++currIndent;
+                ts << indent << " positive z-order list(" << positiveZOrderList->size() << ")\n";
+                ts.increaseIndent();
             }
 
             for (auto* currLayer : *positiveZOrderList)
-                writeLayers(ts, rootLayer, *currLayer, paintDirtyRect, currIndent, behavior);
+                writeLayers(ts, rootLayer, *currLayer, paintDirtyRect, behavior);
+
+            if (behavior & RenderAsTextShowLayerNesting)
+                ts.decreaseIndent();
         }
     }
 }
@@ -834,7 +839,7 @@ static String externalRepresentation(RenderBox& renderer, RenderAsTextBehavior b
     LOG(Layout, "externalRepresentation: dumping layer tree");
 
     RenderLayer& layer = *renderer.layer();
-    writeLayers(ts, layer, layer, layer.rect(), 0, behavior);
+    writeLayers(ts, layer, layer, layer.rect(), behavior);
     writeSelection(ts, renderer);
     return ts.release();
 }

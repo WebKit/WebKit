@@ -60,10 +60,10 @@ private:
 
     void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 
-    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
-    
     int xChannelIndex() const { return m_xChannelSelector - 1; }
     int yChannelIndex() const { return m_yChannelSelector - 1; }
+
+    WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
 
     ChannelSelectorType m_xChannelSelector;
     ChannelSelectorType m_yChannelSelector;

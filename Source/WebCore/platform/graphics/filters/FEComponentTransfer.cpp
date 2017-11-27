@@ -194,21 +194,21 @@ static TextStream& operator<<(TextStream& ts, const ComponentTransferFunction& f
     return ts;
 }
 
-TextStream& FEComponentTransfer::externalRepresentation(TextStream& ts, int indent) const
+TextStream& FEComponentTransfer::externalRepresentation(TextStream& ts) const
 {
-    writeIndent(ts, indent);
-    ts << "[feComponentTransfer";
+    ts << indent << "[feComponentTransfer";
     FilterEffect::externalRepresentation(ts);
     ts << " \n";
-    writeIndent(ts, indent + 2);
-    ts << "{red: " << m_redFunction << "}\n";
-    writeIndent(ts, indent + 2);
-    ts << "{green: " << m_greenFunction << "}\n";
-    writeIndent(ts, indent + 2);
-    ts << "{blue: " << m_blueFunction << "}\n";
-    writeIndent(ts, indent + 2);
-    ts << "{alpha: " << m_alphaFunction << "}]\n";
-    inputEffect(0)->externalRepresentation(ts, indent + 1);
+    {
+        TextStream::IndentScope indentScope(ts, 2);
+        ts << indent << "{red: " << m_redFunction << "}\n";
+        ts << indent <<"{green: " << m_greenFunction << "}\n";
+        ts << indent <<"{blue: " << m_blueFunction << "}\n";
+        ts << indent <<"{alpha: " << m_alphaFunction << "}]\n";
+    }
+
+    TextStream::IndentScope indentScope(ts);
+    inputEffect(0)->externalRepresentation(ts);
     return ts;
 }
 

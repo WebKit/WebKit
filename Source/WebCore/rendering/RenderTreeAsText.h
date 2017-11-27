@@ -56,7 +56,7 @@ typedef unsigned RenderAsTextBehavior;
 // You don't need pageWidthInPixels if you don't specify RenderAsTextInPrintingMode.
 WEBCORE_EXPORT String externalRepresentation(Frame*, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
 WEBCORE_EXPORT String externalRepresentation(Element*, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
-void write(WTF::TextStream&, const RenderObject&, int indent = 0, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
+void write(WTF::TextStream&, const RenderObject&, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
 void writeDebugInfo(WTF::TextStream&, const RenderObject&, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
 
 class RenderTreeAsText {

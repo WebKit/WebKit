@@ -467,10 +467,9 @@ static TextStream& operator<<(TextStream& ts, TurbulenceType type)
     return ts;
 }
 
-TextStream& FETurbulence::externalRepresentation(TextStream& ts, int indent) const
+TextStream& FETurbulence::externalRepresentation(TextStream& ts) const
 {
-    writeIndent(ts, indent);
-    ts << "[feTurbulence";
+    ts << indent << "[feTurbulence";
     FilterEffect::externalRepresentation(ts);
     ts << " type=\"" << type() << "\" "
        << "baseFrequency=\"" << baseFrequencyX() << ", " << baseFrequencyY() << "\" "
