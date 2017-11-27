@@ -62,9 +62,9 @@ static NSRange tokenRange(const String& string, NSRange range, RetainPtr<NSDicti
     if (!options)
         return [classLULookupDefinitionModule tokenRangeForString:string range:range options:nullptr];
 
-    NSDictionary *retainedOptions = nil;
-    auto result = [classLULookupDefinitionModule tokenRangeForString:string range:range options:&retainedOptions];
-    *options = adoptNS(retainedOptions);
+    NSDictionary *outOptions = nil;
+    auto result = [classLULookupDefinitionModule tokenRangeForString:string range:range options:&outOptions];
+    *options = outOptions;
     return result;
 
     END_BLOCK_OBJC_EXCEPTIONS;
