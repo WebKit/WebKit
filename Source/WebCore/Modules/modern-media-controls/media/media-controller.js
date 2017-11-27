@@ -57,8 +57,6 @@ class MediaController
         media.videoTracks.addEventListener("removetrack", this);
 
         media.addEventListener(this.fullscreenChangeEventType, this);
-
-        window.addEventListener("keydown", this);
     }
 
     // Public
@@ -102,7 +100,7 @@ class MediaController
     togglePlayback()
     {
         if (this.media.paused)
-            this.media.play().catch(e => {});
+            this.media.play();
         else
             this.media.pause();
     }
@@ -160,9 +158,6 @@ class MediaController
             this._updateControlsIfNeeded();
             if (event.type === "webkitpresentationmodechanged")
                 this._returnMediaLayerToInlineIfNeeded();
-        } else if (event.type === "keydown" && this.isFullscreen && event.key === " ") {
-            this.togglePlayback();
-            event.preventDefault();
         }
     }
 
