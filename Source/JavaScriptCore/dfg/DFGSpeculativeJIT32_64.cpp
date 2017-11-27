@@ -4822,6 +4822,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case NormalizeMapKey: {
+        compileNormalizeMapKey(node);
+        break;
+    }
+
     case GetMapBucket: {
         SpeculateCellOperand map(this, node->child1());
         JSValueOperand key(this, node->child2());

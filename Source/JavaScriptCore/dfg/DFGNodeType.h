@@ -435,6 +435,7 @@ namespace JSC { namespace DFG {
     macro(ToIndexString, NodeResultJS) \
     /* Nodes for JSMap and JSSet */ \
     macro(MapHash, NodeResultInt32) \
+    macro(NormalizeMapKey, NodeResultJS) \
     macro(GetMapBucket, NodeResultJS) \
     macro(GetMapBucketHead, NodeResultJS) \
     macro(GetMapBucketNext, NodeResultJS) \

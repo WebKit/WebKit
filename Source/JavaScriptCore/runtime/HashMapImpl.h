@@ -233,6 +233,8 @@ ALWAYS_INLINE static bool areKeysEqual(ExecState* exec, JSValue a, JSValue b)
     return sameValue(exec, a, b);
 }
 
+// Note that normalization is inlined in DFG's NormalizeMapKey.
+// Keep in sync with the implementation of DFG and FTL normalization.
 ALWAYS_INLINE JSValue normalizeMapKey(JSValue key)
 {
     if (!key.isNumber())

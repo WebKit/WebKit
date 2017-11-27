@@ -635,6 +635,16 @@ private:
                 break;
             }
 
+            case NormalizeMapKey: {
+                SpeculatedType typeMaybeNormalized = (SpecFullNumber & ~SpecInt32Only);
+                if (m_state.forNode(node->child1()).m_type & typeMaybeNormalized)
+                    break;
+
+                node->convertToIdentity();
+                changed = true;
+                break;
+            }
+
             case ParseInt: {
                 AbstractValue& value = m_state.forNode(node->child1());
                 if (!value.m_type || (value.m_type & ~SpecInt32Only))

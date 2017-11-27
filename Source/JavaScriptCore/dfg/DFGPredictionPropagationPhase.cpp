@@ -462,6 +462,13 @@ private:
             break;
         }
 
+        case NormalizeMapKey: {
+            SpeculatedType prediction = node->child1()->prediction();
+            if (prediction)
+                changed |= mergePrediction(prediction);
+            break;
+        }
+
         default:
             break;
         }
@@ -1024,6 +1031,7 @@ private:
         case GetByVal:
         case ToThis:
         case ToPrimitive: 
+        case NormalizeMapKey:
         case AtomicsAdd:
         case AtomicsAnd:
         case AtomicsCompareExchange:

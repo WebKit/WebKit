@@ -1099,6 +1099,23 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case NormalizeMapKey: {
+        if (JSValue key = forNode(node->child1()).value()) {
+            setConstant(node, *m_graph.freeze(normalizeMapKey(key)));
+            break;
+        }
+
+        SpeculatedType typeMaybeNormalized = (SpecFullNumber & ~SpecInt32Only);
+        if (!(forNode(node->child1()).m_type & typeMaybeNormalized)) {
+            m_state.setFoundConstants(true);
+            forNode(node) = forNode(node->child1());
+            break;
+        }
+
+        forNode(node).makeHeapTop();
+        break;
+    }
+
     case StringSlice: {
         forNode(node).setType(m_graph, SpecString);
         break;

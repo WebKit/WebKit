@@ -1043,6 +1043,9 @@ private:
         case MapHash:
             compileMapHash();
             break;
+        case NormalizeMapKey:
+            compileNormalizeMapKey();
+            break;
         case GetMapBucket:
             compileGetMapBucket();
             break;
@@ -8527,16 +8530,14 @@ private:
         LValue value = lowJSValue(m_node->child1());
 
         LBasicBlock isCellCase = m_out.newBlock();
-        LBasicBlock notCell = m_out.newBlock();
         LBasicBlock slowCase = m_out.newBlock();
         LBasicBlock straightHash = m_out.newBlock();
-        LBasicBlock isNumberCase = m_out.newBlock();
         LBasicBlock isStringCase = m_out.newBlock();
         LBasicBlock nonEmptyStringCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
         m_out.branch(
-            isCell(value, provenType(m_node->child1())), unsure(isCellCase), unsure(notCell));
+            isCell(value, provenType(m_node->child1())), unsure(isCellCase), unsure(straightHash));
 
         LBasicBlock lastNext = m_out.appendTo(isCellCase, isStringCase);
         LValue isString = m_out.equal(m_out.load8ZeroExt32(value, m_heaps.JSCell_typeInfoType), m_out.constInt32(StringType));
@@ -8548,19 +8549,11 @@ private:
         m_out.branch(
             m_out.equal(stringImpl, m_out.constIntPtr(0)), rarely(slowCase), usually(nonEmptyStringCase));
 
-        m_out.appendTo(nonEmptyStringCase, notCell);
+        m_out.appendTo(nonEmptyStringCase, straightHash);
         LValue hash = m_out.lShr(m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::s_flagCount));
         ValueFromBlock nonEmptyStringHashResult = m_out.anchor(hash);
         m_out.branch(m_out.equal(hash, m_out.constInt32(0)),
             unsure(slowCase), unsure(continuation));
-
-        m_out.appendTo(notCell, isNumberCase);
-        m_out.branch(
-            isNumber(value), unsure(isNumberCase), unsure(straightHash));
-
-        m_out.appendTo(isNumberCase, straightHash);
-        m_out.branch(
-            isInt32(value), unsure(straightHash), unsure(slowCase));
 
         m_out.appendTo(straightHash, slowCase);
         ValueFromBlock fastResult = m_out.anchor(wangsInt64Hash(value));
@@ -8573,6 +8566,42 @@ private:
 
         m_out.appendTo(continuation, lastNext);
         setInt32(m_out.phi(Int32, fastResult, slowResult, nonEmptyStringHashResult));
+    }
+
+    void compileNormalizeMapKey()
+    {
+        ASSERT(m_node->child1().useKind() == UntypedUse);
+
+        LBasicBlock isNumberCase = m_out.newBlock();
+        LBasicBlock notInt32NumberCase = m_out.newBlock();
+        LBasicBlock notNaNCase = m_out.newBlock();
+        LBasicBlock convertibleCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(isNumberCase);
+
+        LValue key = lowJSValue(m_node->child1());
+        ValueFromBlock fastResult = m_out.anchor(key);
+        m_out.branch(isNotNumber(key), unsure(continuation), unsure(isNumberCase));
+
+        m_out.appendTo(isNumberCase, notInt32NumberCase);
+        m_out.branch(isInt32(key), unsure(continuation), unsure(notInt32NumberCase));
+
+        m_out.appendTo(notInt32NumberCase, notNaNCase);
+        LValue doubleValue = unboxDouble(key);
+        m_out.branch(m_out.doubleNotEqualOrUnordered(doubleValue, doubleValue), unsure(continuation), unsure(notNaNCase));
+
+        m_out.appendTo(notNaNCase, convertibleCase);
+        LValue integerValue = m_out.doubleToInt(doubleValue);
+        LValue integerValueConvertedToDouble = m_out.intToDouble(integerValue);
+        m_out.branch(m_out.doubleNotEqualOrUnordered(doubleValue, integerValueConvertedToDouble), unsure(continuation), unsure(convertibleCase));
+
+        m_out.appendTo(convertibleCase, continuation);
+        ValueFromBlock slowResult = m_out.anchor(boxInt32(integerValue));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(Int64, fastResult, slowResult));
     }
 
     void compileGetMapBucket()
@@ -8676,17 +8705,13 @@ private:
             LBasicBlock bucketKeyIsCell = m_out.newBlock();
             LBasicBlock bothAreCells = m_out.newBlock();
             LBasicBlock bucketKeyIsString = m_out.newBlock();
-            LBasicBlock bucketKeyNotCell = m_out.newBlock();
-            LBasicBlock bucketKeyIsNumber = m_out.newBlock();
-            LBasicBlock bothAreNumbers = m_out.newBlock();
-            LBasicBlock bucketKeyIsInt32 = m_out.newBlock();
 
             m_out.branch(m_out.equal(key, bucketKey),
                 unsure(continuation), unsure(notBitEqual));
 
             m_out.appendTo(notBitEqual, bucketKeyIsCell);
             m_out.branch(isCell(bucketKey),
-                unsure(bucketKeyIsCell), unsure(bucketKeyNotCell));
+                unsure(bucketKeyIsCell), unsure(loopAround));
 
             m_out.appendTo(bucketKeyIsCell, bothAreCells);
             m_out.branch(isCell(key),
@@ -8696,24 +8721,8 @@ private:
             m_out.branch(isString(bucketKey),
                 unsure(bucketKeyIsString), unsure(loopAround));
 
-            m_out.appendTo(bucketKeyIsString, bucketKeyNotCell);
+            m_out.appendTo(bucketKeyIsString, loopAround);
             m_out.branch(isString(key),
-                unsure(slowPath), unsure(loopAround));
-
-            m_out.appendTo(bucketKeyNotCell, bucketKeyIsNumber);
-            m_out.branch(isNotNumber(bucketKey),
-                unsure(loopAround), unsure(bucketKeyIsNumber));
-
-            m_out.appendTo(bucketKeyIsNumber, bothAreNumbers);
-            m_out.branch(isNotNumber(key),
-                unsure(loopAround), unsure(bothAreNumbers));
-
-            m_out.appendTo(bothAreNumbers, bucketKeyIsInt32);
-            m_out.branch(isNotInt32(bucketKey),
-                unsure(slowPath), unsure(bucketKeyIsInt32));
-
-            m_out.appendTo(bucketKeyIsInt32, loopAround);
-            m_out.branch(isNotInt32(key),
                 unsure(slowPath), unsure(loopAround));
             break;
         }

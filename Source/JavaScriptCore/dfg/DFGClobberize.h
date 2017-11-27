@@ -1591,6 +1591,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(PureValue(node));
         return;
 
+    case NormalizeMapKey:
+        def(PureValue(node));
+        return;
+
     case GetMapBucket: {
         Edge& mapEdge = node->child1();
         Edge& keyEdge = node->child2();

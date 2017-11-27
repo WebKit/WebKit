@@ -2533,14 +2533,14 @@ int32_t JIT_OPERATION operationMapHash(ExecState* exec, EncodedJSValue input)
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    return jsMapHash(exec, vm, normalizeMapKey(JSValue::decode(input)));
+    return jsMapHash(exec, vm, JSValue::decode(input));
 }
 
 JSCell* JIT_OPERATION operationJSMapFindBucket(ExecState* exec, JSCell* map, EncodedJSValue key, int32_t hash)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    JSMap::BucketType** bucket = jsCast<JSMap*>(map)->findBucket(exec, normalizeMapKey(JSValue::decode(key)), hash);
+    JSMap::BucketType** bucket = jsCast<JSMap*>(map)->findBucket(exec, JSValue::decode(key), hash);
     if (!bucket)
         return vm.sentinelMapBucket.get();
     return *bucket;
@@ -2550,26 +2550,24 @@ JSCell* JIT_OPERATION operationJSSetFindBucket(ExecState* exec, JSCell* map, Enc
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    JSSet::BucketType** bucket = jsCast<JSSet*>(map)->findBucket(exec, normalizeMapKey(JSValue::decode(key)), hash);
+    JSSet::BucketType** bucket = jsCast<JSSet*>(map)->findBucket(exec, JSValue::decode(key), hash);
     if (!bucket)
         return vm.sentinelSetBucket.get();
     return *bucket;
 }
 
-// FIXME: Add NormalizeMapKey DFG node.
-// https://bugs.webkit.org/show_bug.cgi?id=179912
 void JIT_OPERATION operationSetAdd(ExecState* exec, JSCell* set, EncodedJSValue key, int32_t hash)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    jsCast<JSSet*>(set)->addNormalized(exec, normalizeMapKey(JSValue::decode(key)), JSValue(), hash);
+    jsCast<JSSet*>(set)->addNormalized(exec, JSValue::decode(key), JSValue(), hash);
 }
 
 void JIT_OPERATION operationMapSet(ExecState* exec, JSCell* map, EncodedJSValue key, EncodedJSValue value, int32_t hash)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    jsCast<JSMap*>(map)->addNormalized(exec, normalizeMapKey(JSValue::decode(key)), JSValue::decode(value), hash);
+    jsCast<JSMap*>(map)->addNormalized(exec, JSValue::decode(key), JSValue::decode(value), hash);
 }
 
 EncodedJSValue JIT_OPERATION operationGetPrototypeOfObject(ExecState* exec, JSObject* thisObject)

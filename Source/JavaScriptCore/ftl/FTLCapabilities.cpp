@@ -202,6 +202,7 @@ inline CapabilityLevel canCompile(Node* node)
     case HasOwnProperty:
     case IsCellWithType:
     case MapHash:
+    case NormalizeMapKey:
     case GetMapBucket:
     case GetMapBucketHead:
     case GetMapBucketNext:

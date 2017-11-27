@@ -1940,6 +1940,11 @@ private:
             break;
         }
 
+        case NormalizeMapKey: {
+            fixupNormalizeMapKey(node);
+            break;
+        }
+
         case WeakMapGet: {
             fixEdge<WeakMapObjectUse>(node->child1());
             fixEdge<ObjectUse>(node->child2());
@@ -3201,6 +3206,47 @@ private:
 
         fixEdge<CellUse>(node->child1());
         fixEdge<Int32Use>(node->child2());
+    }
+
+    void fixupNormalizeMapKey(Node* node)
+    {
+        if (node->child1()->shouldSpeculateBoolean()) {
+            fixEdge<BooleanUse>(node->child1());
+            node->convertToIdentity();
+            return;
+        }
+
+        if (node->child1()->shouldSpeculateInt32()) {
+            fixEdge<Int32Use>(node->child1());
+            node->convertToIdentity();
+            return;
+        }
+
+        if (node->child1()->shouldSpeculateSymbol()) {
+            fixEdge<SymbolUse>(node->child1());
+            node->convertToIdentity();
+            return;
+        }
+
+        if (node->child1()->shouldSpeculateObject()) {
+            fixEdge<ObjectUse>(node->child1());
+            node->convertToIdentity();
+            return;
+        }
+
+        if (node->child1()->shouldSpeculateString()) {
+            fixEdge<StringUse>(node->child1());
+            node->convertToIdentity();
+            return;
+        }
+
+        if (node->child1()->shouldSpeculateCell()) {
+            fixEdge<CellUse>(node->child1());
+            node->convertToIdentity();
+            return;
+        }
+
+        fixEdge<UntypedUse>(node->child1());
     }
 
     bool attemptToMakeCallDOM(Node* node)

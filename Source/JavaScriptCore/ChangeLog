@@ -1,3 +1,47 @@
+2017-11-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Add NormalizeMapKey DFG IR
+        https://bugs.webkit.org/show_bug.cgi?id=179912
+
+        Reviewed by Saam Barati.
+
+        This patch introduces NormalizeMapKey DFG node. It executes what normalizeMapKey does in inlined manner.
+        By separating this from MapHash and Map/Set related operations, we can perform CSE onto that, and we
+        do not need to call normalizeMapKey conservatively in DFG operations.
+        This can reduce slow path case in Untyped GetMapBucket since we can normalize keys in DFG/FTL.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupNormalizeMapKey):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNormalizeMapKey):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMapHash):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNormalizeMapKey):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMapBucket):
+        * runtime/HashMapImpl.h:
+
 2017-11-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [FTL] Support DeleteById and DeleteByVal

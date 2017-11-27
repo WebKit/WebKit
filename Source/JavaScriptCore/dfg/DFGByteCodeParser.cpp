@@ -2873,8 +2873,9 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         insertChecks();
         Node* map = get(virtualRegisterForArgument(0, registerOffset));
         Node* key = get(virtualRegisterForArgument(1, registerOffset));
-        Node* hash = addToGraph(MapHash, key);
-        Node* bucket = addToGraph(GetMapBucket, Edge(map, MapObjectUse), Edge(key), Edge(hash));
+        Node* normalizedKey = addToGraph(NormalizeMapKey, key);
+        Node* hash = addToGraph(MapHash, normalizedKey);
+        Node* bucket = addToGraph(GetMapBucket, Edge(map, MapObjectUse), Edge(normalizedKey), Edge(hash));
         Node* result = addToGraph(LoadValueFromMapBucket, OpInfo(BucketOwnerType::Map), OpInfo(prediction), bucket);
         set(VirtualRegister(resultOperand), result);
         return true;
@@ -2888,9 +2889,10 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         insertChecks();
         Node* mapOrSet = get(virtualRegisterForArgument(0, registerOffset));
         Node* key = get(virtualRegisterForArgument(1, registerOffset));
-        Node* hash = addToGraph(MapHash, key);
+        Node* normalizedKey = addToGraph(NormalizeMapKey, key);
+        Node* hash = addToGraph(MapHash, normalizedKey);
         UseKind useKind = intrinsic == JSSetHasIntrinsic ? SetObjectUse : MapObjectUse;
-        Node* bucket = addToGraph(GetMapBucket, OpInfo(0), Edge(mapOrSet, useKind), Edge(key), Edge(hash));
+        Node* bucket = addToGraph(GetMapBucket, OpInfo(0), Edge(mapOrSet, useKind), Edge(normalizedKey), Edge(hash));
         JSCell* sentinel = nullptr;
         if (intrinsic == JSMapHasIntrinsic)
             sentinel = m_vm->sentinelMapBucket.get();
@@ -2911,8 +2913,9 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         insertChecks();
         Node* base = get(virtualRegisterForArgument(0, registerOffset));
         Node* key = get(virtualRegisterForArgument(1, registerOffset));
-        Node* hash = addToGraph(MapHash, key);
-        addToGraph(SetAdd, base, key, hash);
+        Node* normalizedKey = addToGraph(NormalizeMapKey, key);
+        Node* hash = addToGraph(MapHash, normalizedKey);
+        addToGraph(SetAdd, base, normalizedKey, hash);
         set(VirtualRegister(resultOperand), base);
         return true;
     }
@@ -2925,10 +2928,12 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         Node* base = get(virtualRegisterForArgument(0, registerOffset));
         Node* key = get(virtualRegisterForArgument(1, registerOffset));
         Node* value = get(virtualRegisterForArgument(2, registerOffset));
-        Node* hash = addToGraph(MapHash, key);
+
+        Node* normalizedKey = addToGraph(NormalizeMapKey, key);
+        Node* hash = addToGraph(MapHash, normalizedKey);
 
         addVarArgChild(base);
-        addVarArgChild(key);
+        addVarArgChild(normalizedKey);
         addVarArgChild(value);
         addVarArgChild(hash);
         addToGraph(Node::VarArg, MapSet, OpInfo(0), OpInfo(0));
@@ -2992,8 +2997,9 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         insertChecks();
         Node* map = get(virtualRegisterForArgument(0, registerOffset));
         Node* key = get(virtualRegisterForArgument(1, registerOffset));
-        Node* hash = addToGraph(MapHash, key);
-        Node* result = addToGraph(WeakMapGet, OpInfo(), OpInfo(prediction), map, key, hash);
+        Node* normalizedKey = addToGraph(NormalizeMapKey, key);
+        Node* hash = addToGraph(MapHash, normalizedKey);
+        Node* result = addToGraph(WeakMapGet, OpInfo(), OpInfo(prediction), map, normalizedKey, hash);
         set(VirtualRegister(resultOperand), result);
         return true;
     }

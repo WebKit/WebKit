@@ -203,6 +203,7 @@ bool doesGC(Graph& graph, Node* node)
     case CheckTraps:
     case StringFromCharCode:
     case MapHash:
+    case NormalizeMapKey:
     case GetMapBucket:
     case GetMapBucketHead:
     case GetMapBucketNext:

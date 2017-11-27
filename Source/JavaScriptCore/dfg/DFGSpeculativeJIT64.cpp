@@ -5072,7 +5072,7 @@ void SpeculativeJIT::compile(Node* node)
 
         MacroAssembler::JumpList straightHash;
         MacroAssembler::JumpList done;
-        auto isNotCell = m_jit.branchIfNotCell(inputGPR);
+        straightHash.append(m_jit.branchIfNotCell(inputGPR));
         MacroAssembler::JumpList slowPath;
         straightHash.append(m_jit.branch8(MacroAssembler::NotEqual, MacroAssembler::Address(inputGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(StringType)));
         m_jit.loadPtr(MacroAssembler::Address(inputGPR, JSString::offsetOfValue()), resultGPR);
@@ -5081,11 +5081,6 @@ void SpeculativeJIT::compile(Node* node)
         m_jit.urshift32(MacroAssembler::TrustedImm32(StringImpl::s_flagCount), resultGPR);
         slowPath.append(m_jit.branchTest32(MacroAssembler::Zero, resultGPR));
         done.append(m_jit.jump());
-
-        isNotCell.link(&m_jit);
-        straightHash.append(m_jit.branchIfNotNumber(inputGPR));
-        straightHash.append(m_jit.branchIfInt32(JSValueRegs(inputGPR)));
-        slowPath.append(m_jit.jump());
 
         straightHash.link(&m_jit);
         m_jit.move(inputGPR, resultGPR);
@@ -5102,6 +5097,12 @@ void SpeculativeJIT::compile(Node* node)
         int32Result(resultGPR, node);
         break;
     }
+
+    case NormalizeMapKey: {
+        compileNormalizeMapKey(node);
+        break;
+    }
+
     case GetMapBucket: {
         SpeculateCellOperand map(this, node->child1());
         JSValueOperand key(this, node->child2(), ManualOperandSpeculation);
@@ -5182,7 +5183,8 @@ void SpeculativeJIT::compile(Node* node)
         }
         case UntypedUse: { 
             done.append(m_jit.branch64(MacroAssembler::Equal, bucketGPR, keyGPR)); // They're definitely the same value, we found the bucket we were looking for!
-            auto oneIsntCell = m_jit.branchIfNotCell(JSValueRegs(bucketGPR));
+            // The input key and bucket's key are already normalized. So if 64-bit compare fails and one is not a cell, they're definitely not equal.
+            loopAround.append(m_jit.branchIfNotCell(JSValueRegs(bucketGPR)));
             // first is a cell here.
             loopAround.append(m_jit.branchIfNotCell(JSValueRegs(keyGPR)));
             // Both are cells here.
@@ -5193,14 +5195,6 @@ void SpeculativeJIT::compile(Node* node)
                 JITCompiler::Address(keyGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(StringType)));
             // The first is a string, but the second is not, we continue to loop around.
             loopAround.append(m_jit.jump());
-
-            oneIsntCell.link(&m_jit);
-            // We've already done a 64-bit compare at this point, so if one is not a number, they're definitely not equal.
-            loopAround.append(m_jit.branchIfNotNumber(bucketGPR));
-            loopAround.append(m_jit.branchIfNotNumber(keyGPR));
-            // Both are definitely numbers. If we see a double, we go to the slow path.
-            slowPathCases.append(m_jit.branchIfNotInt32(bucketGPR));
-            slowPathCases.append(m_jit.branchIfNotInt32(keyGPR));
             break;
         }
         default:
