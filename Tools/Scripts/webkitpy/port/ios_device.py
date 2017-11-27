@@ -25,6 +25,7 @@ import logging
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.version import Version
+from webkitpy.common.version_name_map import VersionNameMap
 from webkitpy.port.config import apple_additions
 from webkitpy.port.ios import IOSPort
 
@@ -108,7 +109,8 @@ class IOSDevicePort(IOSPort):
             else:
                 if device.platform.os_version != version:
                     raise RuntimeError('Multiple connected devices have different iOS versions')
-
+        if version:
+            return VersionNameMap.map(self.host.platform).from_name(version)[1]
         return Version(version)
 
     # FIXME: These need device implementations <rdar://problem/30497991>.

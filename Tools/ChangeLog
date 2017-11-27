@@ -1,3 +1,56 @@
+2017-11-27  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Better name-version mapping (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=179621
+        <rdar://problem/35589585>
+
+        Reviewed by David Kilzer.
+
+        Mapping version numbers to version names should occur in a central location.
+        This has a few advantages. First, it makes iterating through versions easier.
+        Second, it allows for apple_additions to define an additional set of name
+        mappings. Lastly, it will allow, in a future patch, for us to track version
+        instead of version name, only mapping version to version name when required.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.__init__):
+        (PlatformInfo._determine_os_name): Use VersionNameMap instead of custom functions
+        mapping version to name.
+        (PlatformInfo._determine_linux_version): Deleted.
+        (PlatformInfo._determine_mac_version): Deleted.
+        (PlatformInfo._determine_win_version): Deleted.
+        * Scripts/webkitpy/common/system/platforminfo_unittest.py:
+        (TestPlatformInfo.test_os_name_and_wrappers):
+        (TestPlatformInfo.test_os_version):
+        (TestPlatformInfo.test_display_name):
+        (TestPlatformInfo.test_total_bytes_memory):
+        * Scripts/webkitpy/common/version.py:
+        (Version.contained_in): Add partial version mapping.
+        * Scripts/webkitpy/common/version_name_map.py: Added.
+        (VersionNameMap): Holds a mapping of version name to version object.
+        (VersionNameMap.map): Don't re-create VersionNameMap every time.
+        (VersionNameMap.__init__): Initialize mapping, use platform to
+        define the default system platform.
+        (VersionNameMap._automap_to_major_version): Some operating systems, such
+        as iOS, have a naming scheme based on their major version and os name.
+        Automatically generate such mappings.
+        (VersionNameMap.to_name): Given a version object, platform name and
+        table, find the closest matching version name.
+        (VersionNameMap.strip_name_formatting): Remove spaces and extract the major version,
+        if a version string is included in the name.
+        (VersionNameMap.from_name): Return an os name and version given a version name.
+        * Scripts/webkitpy/common/version_name_map_unittest.py: Added.
+        (VersionMapTestCase):
+        (VersionMapTestCase.test_default_system_platform):
+        (VersionMapTestCase.test_mac_version_by_name):
+        (VersionMapTestCase.test_ios_version_by_name):
+        (VersionMapTestCase.test_mac_name_by_version):
+        (VersionMapTestCase.test_ios_name_by_version):
+        * Scripts/webkitpy/common/version_unittest.py:
+        (VersionTestCase.test_contained_in):
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort.ios_version): Map os_version name to version number.
+
 2017-11-27  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][Win] Conditionally select DLL CRT or static CRT
