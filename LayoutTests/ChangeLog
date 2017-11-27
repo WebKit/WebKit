@@ -1,3 +1,86 @@
+2017-11-25  Frederic Wang  <fwang@igalia.com>
+
+        Import MathML WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=179110
+
+        Reviewed by Darin Adler.
+
+        This patch imports the MathML WPT tests and remove the corresponding unmaintained copies
+        from LayoutTests/imported/mathml-in-html5/. The only exception is for MathML tests testing
+        OpenType MATH parameters: They require Web fonts and do not work well in WebKit without
+        some tweaks because of bug 174030. For now, we only move the web fonts required by the tests
+        and keep running the legacy versions.
+
+        * TestExpectations: Skip MathML tests requiring web fonts and mark some MathML tests as failing.
+        * imported/mathml-in-html5/fonts/math/axisheight5000-verticalarrow14000.woff: Moved to imported/w3c/web-platform-tests/fonts/math/.
+        * imported/mathml-in-html5/fonts/math/fraction-axisheight7000-rulethickness1000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/fraction-denominatordisplaystylegapmin5000-rulethickness1000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/fraction-denominatordisplaystyleshiftdown6000-rulethickness1000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/fraction-denominatorgapmin4000-rulethickness1000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/fraction-denominatorshiftdown3000-rulethickness1000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/fraction-numeratordisplaystylegapmin8000-rulethickness1000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/fraction-numeratordisplaystyleshiftup2000-rulethickness1000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/fraction-numeratorgapmin9000-rulethickness1000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/fraction-numeratorshiftup11000-rulethickness1000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/fraction-rulethickness10000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/largeop-displayoperatorminheight5000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/limits-lowerlimitbaselinedropmin3000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/limits-lowerlimitgapmin11000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/limits-upperlimitbaselinerisemin5000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/limits-upperlimitgapmin7000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/lineheight5000-typolineheight2300.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/mathvariant-transforms.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/radical-degreebottomraisepercent25-rulethickness1000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/radical-displaystyleverticalgap7000-rulethickness1000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/radical-extraascender3000-rulethickness1000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/radical-kernafterdegreeminus5000-rulethickness1000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/radical-kernbeforedegree4000-rulethickness1000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/radical-rulethickness8000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/radical-verticalgap6000-rulethickness1000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/scripts-spaceafterscript3000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/scripts-subscriptbaselinedropmin9000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/scripts-subscriptshiftdown6000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/scripts-subscripttopmax4000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/scripts-subsuperscriptgapmin11000-superscriptbottommaxwithsubscript3000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/scripts-subsuperscriptgapmin11000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/scripts-superscriptbaselinedropmax10000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/scripts-superscriptbottommin8000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/scripts-superscriptshiftup7000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/scripts-superscriptshiftupcramped5000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/stack-axisheight7000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/stack-bottomdisplaystyleshiftdown5000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/stack-bottomshiftdown6000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/stack-displaystylegapmin4000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/stack-gapmin8000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/stack-topdisplaystyleshiftup3000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/stack-topshiftup9000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/stretchstack-bottomshiftdown3000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/stretchstack-gapabovemin7000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/stretchstack-gapbelowmin11000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/stretchstack-topshiftup5000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/underover-accentbaseheight4000-overbarextraascender3000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/underover-accentbaseheight4000-overbarverticalgap11000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/underover-accentbaseheight4000-underbarextradescender5000.woff: Ditto.
+        * imported/mathml-in-html5/fonts/math/underover-accentbaseheight4000-underbarverticalgap7000.woff: Ditto.
+        * imported/mathml-in-html5/mathml/presentation-markup/fractions/frac-parameters-1.html:
+        Update the URL to use the fonts in w3c/web-platform-tests/fonts/math/.
+        * imported/mathml-in-html5/mathml/presentation-markup/fractions/frac-parameters-2.html: Ditto.
+        * imported/mathml-in-html5/mathml/presentation-markup/radicals/root-parameters-1.html: Ditto.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-parameters-1.html: Ditto.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-1.html: Ditto.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-2.html: Ditto.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-3.html: Ditto.
+        * imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-4.html: Ditto.
+        * imported/mathml-in-html5/mathml/relations/css-styling/mathvariant-transforms-1-expected.html: Removed.
+        * imported/mathml-in-html5/mathml/relations/css-styling/mathvariant-transforms-1.html: Removed.
+        * imported/mathml-in-html5/mathml/relations/css-styling/mathvariant-transforms-2-expected.html: Removed.
+        * imported/mathml-in-html5/mathml/relations/css-styling/mathvariant-transforms-2.html: Removed.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/namespace-1-expected.txt: Removed.
+        * imported/mathml-in-html5/mathml/relations/html5-tree/namespace-1.html: Removed.
+        * platform/ios/TestExpectations: Updated to match the new version in imported/w3c.
+        * platform/mac/TestExpectations: Ditto.
+        * platform/win/TestExpectations: Ditto.
+
 2017-11-26  Simon Fraser  <simon.fraser@apple.com>
 
         feImage as filter input has skewed colors

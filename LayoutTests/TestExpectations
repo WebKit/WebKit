@@ -567,6 +567,22 @@ imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace.html 
 imported/w3c/web-platform-tests/html/browsers/windows/nested-browsing-contexts/frameElement.sub.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.sub.html [ Pass Failure ]
 
+# These MathML WPT tests are skipped because they are executed before Web fonts are available.
+# For now, tweaked versions remain in LayoutTests/imported/mathml-in-html5/.
+webkit.org/b/174030 imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4.html [ Skip ]
+webkit.org/b/174030 imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-1.html [ Skip ]
+webkit.org/b/174030 imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-2.html [ Skip ]
+webkit.org/b/174030 imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-1.html [ Skip ]
+webkit.org/b/174030 imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3.html [ Skip ]
+webkit.org/b/174030 imported/w3c/web-platform-tests/mathml/presentation-markup/radicals/root-parameters-1.html [ Skip ]
+webkit.org/b/174030 imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1.html [ Skip ]
+webkit.org/b/174030 imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2.html [ Skip ]
+
+# These MathML WPT tests fail.
+webkit.org/b/180013 imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-1.html [ ImageOnlyFailure ]
+webkit.org/b/180013 imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-2.html [ ImageOnlyFailure ]
+webkit.org/b/180013 imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-3.html [ Failure ]
+
 # XMLHttpRequest tests requiring DTR/WTR to allow other URLs than localhost to not be blocked and be reachable (www2.localhost)
 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-bogus.htm [ Skip ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-cors.htm [ Skip ]

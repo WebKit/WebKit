@@ -1,3 +1,169 @@
+2017-11-25  Frederic Wang  <fwang@igalia.com>
+
+        Import MathML WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=179110
+
+        Reviewed by Darin Adler.
+
+        This patch imports the MathML WPT tests and remove the corresponding unmaintained copies
+        from LayoutTests/imported/mathml-in-html5/. The only exception is for MathML tests testing
+        OpenType MATH parameters: They require Web fonts and do not work well in WebKit without
+        some tweaks because of bug 174030. For now, we only move the web fonts required by the tests
+        and keep running the legacy versions.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/mathml/OWNERS: Added.
+        * web-platform-tests/mathml/README.md: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-1-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/fractions/frac-1-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-1.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/fractions/frac-1.html.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1.html: Copied from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/fractions/frac-parameters-1.html.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2.html: Copied from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/fractions/frac-parameters-2.html.
+        * web-platform-tests/mathml/presentation-markup/fractions/w3c-import.log: Added.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-axis-height-1-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/operators/mo-axis-height-1-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/operators/mo-axis-height-1.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/operators/mo-axis-height-1.html.
+        * web-platform-tests/mathml/presentation-markup/operators/w3c-import.log: Added.
+        * web-platform-tests/mathml/presentation-markup/radicals/root-parameters-1.html: Copied from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/radicals/root-parameters-1.html.
+        * web-platform-tests/mathml/presentation-markup/radicals/w3c-import.log: Added.
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-1-expected.txt: Copied from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-1-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-1.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-1.html.
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-2-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-2-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-2.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-2.html.
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-3-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-3-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-3.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-3.html.
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-4-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-4-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-4.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-4.html.
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-5-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-5-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-5.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-5.html.
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-1.html: Copied from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-parameters-1.html.
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-1-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/subsup-1-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-1.html: Added.
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-1.html: Copied from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-1.html.
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-2.html: Copied from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-2.html.
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3.html: Copied from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-3.html.
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4.html: Copied from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/scripts/underover-parameters-4.html.
+        * web-platform-tests/mathml/presentation-markup/scripts/w3c-import.log: Added.
+        * web-platform-tests/mathml/presentation-markup/spaces/space-1-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/spaces/space-1-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/spaces/space-1.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/spaces/space-1.html.
+        * web-platform-tests/mathml/presentation-markup/spaces/space-2-expected.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/spaces/space-2-expected.html.
+        * web-platform-tests/mathml/presentation-markup/spaces/space-2.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/spaces/space-2.html.
+        * web-platform-tests/mathml/presentation-markup/spaces/w3c-import.log: Added.
+        * web-platform-tests/mathml/presentation-markup/tables/table-axis-height-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/tables/table-axis-height-expected.txt.
+        * web-platform-tests/mathml/presentation-markup/tables/table-axis-height.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/presentation-markup/tables/table-axis-height.html.
+        * web-platform-tests/mathml/presentation-markup/tables/w3c-import.log: Added.
+        * web-platform-tests/mathml/relations/css-styling/color-1-expected.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/css-styling/color-1-expected.html.
+        * web-platform-tests/mathml/relations/css-styling/color-1.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/css-styling/color-1.html.
+        * web-platform-tests/mathml/relations/css-styling/display-1-expected.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/css-styling/display-1-expected.html.
+        * web-platform-tests/mathml/relations/css-styling/display-1.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/css-styling/display-1.html.
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-1-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/css-styling/displaystyle-1-expected.txt.
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-1.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/css-styling/displaystyle-1.html.
+        * web-platform-tests/mathml/relations/css-styling/lengths-1-expected.html: Copied from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/integration-point-1-expected.html.
+        * web-platform-tests/mathml/relations/css-styling/lengths-1.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/lengths-2-expected.html: Copied from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/integration-point-1-expected.html.
+        * web-platform-tests/mathml/relations/css-styling/lengths-2.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/lengths-3-expected.txt: Added.
+        * web-platform-tests/mathml/relations/css-styling/lengths-3.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold-fraktur-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold-fraktur.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold-italic-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold-italic.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold-sans-serif-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold-sans-serif.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold-script-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold-script.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-bold.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-double-struck-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-double-struck.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-fraktur-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-fraktur.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-initial-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-initial.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-italic-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-italic.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-looped-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-looped.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-monospace-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-monospace.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif-bold-italic-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif-bold-italic.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif-italic-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif-italic.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-script-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-script.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-stretched-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-stretched.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-tailed-expected.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/mathvariant-tailed.html: Added.
+        * web-platform-tests/mathml/relations/css-styling/visibility-1-expected.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/css-styling/visibility-1-expected.html.
+        * web-platform-tests/mathml/relations/css-styling/visibility-1.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/css-styling/visibility-1.html.
+        * web-platform-tests/mathml/relations/css-styling/w3c-import.log: Added.
+        * web-platform-tests/mathml/relations/html5-tree/class-1-expected.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/class-1-expected.html.
+        * web-platform-tests/mathml/relations/html5-tree/class-1.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/class-1.html.
+        * web-platform-tests/mathml/relations/html5-tree/class-2-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/class-2-expected.txt.
+        * web-platform-tests/mathml/relations/html5-tree/class-2.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/class-2.html.
+        * web-platform-tests/mathml/relations/html5-tree/color-attributes-1-expected.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/color-attributes-1-expected.html.
+        * web-platform-tests/mathml/relations/html5-tree/color-attributes-1.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/color-attributes-1.html.
+        * web-platform-tests/mathml/relations/html5-tree/display-1-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/display-1-expected.txt.
+        * web-platform-tests/mathml/relations/html5-tree/display-1.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/display-1.html.
+        * web-platform-tests/mathml/relations/html5-tree/dynamic-1-expected.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/dynamic-1-expected.html.
+        * web-platform-tests/mathml/relations/html5-tree/dynamic-1.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/dynamic-1.html.
+        * web-platform-tests/mathml/relations/html5-tree/href-click-1-expected.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/href-click-1-expected.html.
+        * web-platform-tests/mathml/relations/html5-tree/href-click-1.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/href-click-1.html.
+        * web-platform-tests/mathml/relations/html5-tree/href-click-2-expected.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/href-click-2-expected.html.
+        * web-platform-tests/mathml/relations/html5-tree/href-click-2.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/href-click-2.html.
+        * web-platform-tests/mathml/relations/html5-tree/integration-point-1-expected.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/integration-point-1-expected.html.
+        * web-platform-tests/mathml/relations/html5-tree/integration-point-1.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/integration-point-1.html.
+        * web-platform-tests/mathml/relations/html5-tree/integration-point-2-expected.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/integration-point-2-expected.html.
+        * web-platform-tests/mathml/relations/html5-tree/integration-point-2.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/integration-point-2.html.
+        * web-platform-tests/mathml/relations/html5-tree/integration-point-3-expected.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/integration-point-3-expected.html.
+        * web-platform-tests/mathml/relations/html5-tree/integration-point-3.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/integration-point-3.html.
+        * web-platform-tests/mathml/relations/html5-tree/required-extensions-1-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/required-extensions-1-expected.txt.
+        * web-platform-tests/mathml/relations/html5-tree/required-extensions-1.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/required-extensions-1.html.
+        * web-platform-tests/mathml/relations/html5-tree/required-extensions-2-expected.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/required-extensions-2-expected.html.
+        * web-platform-tests/mathml/relations/html5-tree/required-extensions-2.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/required-extensions-2.html.
+        * web-platform-tests/mathml/relations/html5-tree/unique-identifier-1-expected.html: Added.
+        * web-platform-tests/mathml/relations/html5-tree/unique-identifier-1-iframe-1.html: Added.
+        * web-platform-tests/mathml/relations/html5-tree/unique-identifier-1-iframe-2.html: Added.
+        * web-platform-tests/mathml/relations/html5-tree/unique-identifier-1.html: Added.
+        * web-platform-tests/mathml/relations/html5-tree/unique-identifier-2-expected.txt: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/unique-identifier-2-expected.txt.
+        * web-platform-tests/mathml/relations/html5-tree/unique-identifier-2.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/unique-identifier-2.html.
+        * web-platform-tests/mathml/relations/html5-tree/unique-identifier-3-expected.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/unique-identifier-3-expected.html.
+        * web-platform-tests/mathml/relations/html5-tree/unique-identifier-3.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/html5-tree/unique-identifier-3.html.
+        * web-platform-tests/mathml/relations/html5-tree/w3c-import.log: Added.
+        * web-platform-tests/mathml/relations/text-and-math/use-typo-metrics-1-expected.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/text-and-math/use-typo-metrics-1-expected.html.
+        * web-platform-tests/mathml/relations/text-and-math/use-typo-metrics-1.html: Renamed from LayoutTests/imported/mathml-in-html5/mathml/relations/text-and-math/use-typo-metrics-1.html.
+        * web-platform-tests/mathml/relations/text-and-math/w3c-import.log: Added.
+        * web-platform-tests/mathml/tools/axisheight.py: Added.
+        * web-platform-tests/mathml/tools/fractions.py: Added.
+        * web-platform-tests/mathml/tools/largeop.py: Added.
+        * web-platform-tests/mathml/tools/limits.py: Added.
+        * web-platform-tests/mathml/tools/mathvariant-transforms.py: Added.
+        (parseCodePoint):
+        * web-platform-tests/mathml/tools/radicals.py: Added.
+        (createStretchyRadical):
+        * web-platform-tests/mathml/tools/scripts.py: Added.
+        * web-platform-tests/mathml/tools/stacks.py: Added.
+        * web-platform-tests/mathml/tools/stretchstacks.py: Added.
+        * web-platform-tests/mathml/tools/underover.py: Added.
+        * web-platform-tests/mathml/tools/use-typo-lineheight.py: Added.
+        * web-platform-tests/mathml/tools/utils/__init__.py: Added.
+        * web-platform-tests/mathml/tools/utils/mathfont.py: Added.
+        (create):
+        (drawRectangleGlyph):
+        (createSquareGlyph):
+        (drawHexaDigit):
+        (createGlyphFromValue):
+        (save):
+        * web-platform-tests/mathml/tools/utils/misc.py: Added.
+        (downloadWithProgressBar):
+        * web-platform-tests/mathml/tools/utils/w3c-import.log: Added.
+        * web-platform-tests/mathml/tools/w3c-import.log: Added.
+        * web-platform-tests/mathml/tools/xHeight.py: Added.
+        * web-platform-tests/mathml/w3c-import.log: Added.
+
 2017-11-24  Ms2ger  <Ms2ger@igalia.com>
 
         Stop importing css-shapes-1/test-plan/index.html.

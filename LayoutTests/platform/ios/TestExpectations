@@ -1364,10 +1364,10 @@ mathml/presentation/mathvariant-inheritance.html [ Skip ]
 mathml/presentation/mathvariant-tokens.html [ Skip ]
 
 # This test fails because the USE_TYPO_METRICS flag is ignored for non-math font
-webkit.org/b/150394 imported/mathml-in-html5/mathml/relations/text-and-math/use-typo-metrics-1.html [ ImageOnlyFailure ]
+webkit.org/b/150394 imported/w3c/web-platform-tests/mathml/relations/text-and-math/use-typo-metrics-1.html [ ImageOnlyFailure ]
 
-# The web font loading & relayout seems to be performed too late.
-imported/mathml-in-html5/mathml/relations/css-styling/mathvariant-transforms-1.html [ Pass ImageOnlyFailure ]
+# This test fails because iframes are expanded on iOS.
+webkit.org/b/149264 imported/w3c/web-platform-tests/mathml/relations/html5-tree/unique-identifier-1.html
 
 # These tests use key navigation to test MathML links but do not seem to work on iOS simulator.
 webkit.org/b/159662 mathml/presentation/href-enter.html [ Skip ]

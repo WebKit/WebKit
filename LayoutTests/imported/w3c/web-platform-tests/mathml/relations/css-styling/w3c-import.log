@@ -1,0 +1,62 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/color-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/color-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/display-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/display-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/displaystyle-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-2.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-3.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold-fraktur-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold-fraktur.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold-italic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold-italic.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold-sans-serif-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold-sans-serif.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold-script-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold-script.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-double-struck-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-double-struck.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-fraktur-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-fraktur.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-initial-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-initial.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-italic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-italic.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-looped-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-looped.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-monospace-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-monospace.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif-bold-italic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif-bold-italic.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif-italic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif-italic.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-sans-serif.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-script-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-script.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-stretched-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-stretched.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-tailed-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-tailed.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/visibility-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/relations/css-styling/visibility-1.html

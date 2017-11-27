@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mathml/tools/axisheight.py
+/LayoutTests/imported/w3c/web-platform-tests/mathml/tools/fractions.py
+/LayoutTests/imported/w3c/web-platform-tests/mathml/tools/largeop.py
+/LayoutTests/imported/w3c/web-platform-tests/mathml/tools/limits.py
+/LayoutTests/imported/w3c/web-platform-tests/mathml/tools/mathvariant-transforms.py
+/LayoutTests/imported/w3c/web-platform-tests/mathml/tools/radicals.py
+/LayoutTests/imported/w3c/web-platform-tests/mathml/tools/scripts.py
+/LayoutTests/imported/w3c/web-platform-tests/mathml/tools/stacks.py
+/LayoutTests/imported/w3c/web-platform-tests/mathml/tools/stretchstacks.py
+/LayoutTests/imported/w3c/web-platform-tests/mathml/tools/underover.py
+/LayoutTests/imported/w3c/web-platform-tests/mathml/tools/use-typo-lineheight.py
+/LayoutTests/imported/w3c/web-platform-tests/mathml/tools/xHeight.py

@@ -1,0 +1,27 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/subsup-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/subsup-2.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/subsup-3.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/subsup-4.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/subsup-5.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-1.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-2.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4.html
