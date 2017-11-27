@@ -1,3 +1,10 @@
+2017-11-27  Alex Christensen  <achristensen@webkit.org>
+
+        Run imported/w3c/web-platform-tests/url/failure.html on debug builds after r225186.
+
+        * TestExpectations:
+        It's still flaky, but it doesn't assert any more.
+
 2017-11-27  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline http/tests/workers/service/service-worker-cache-api.https.html

@@ -753,8 +753,7 @@ webkit.org/b/121628 [ Release ] fast/history/history-back-while-pdf-in-pagecache
 [ Debug ] fullscreen/full-screen-iframe-legacy.html [ Pass Crash ]
 webkit.org/b/151488 [ Debug ] imported/blink/editing/selection/deleteFromDocument-undo-crash.html [ Skip ]
 
-webkit.org/b/172337 [ Debug ] imported/w3c/web-platform-tests/url/failure.html [ Skip ]
-webkit.org/b/172337 [ Release ] imported/w3c/web-platform-tests/url/failure.html [ Pass Failure ]
+webkit.org/b/172337 imported/w3c/web-platform-tests/url/failure.html [ Pass Failure ]
 
 webkit.org/b/139634 [ Debug ] fast/selectors/matches-backtracking.html [ Slow ]
 webkit.org/b/139634 [ Debug ] fast/selectors/nth-child-of-register-requirement.html [ Slow ]
