@@ -1151,7 +1151,6 @@
 		86E3C619167BABEE006D760A /* JSWrapperMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E3C60C167BAB87006D760A /* JSWrapperMap.h */; };
 		86E3C61B167BABEE006D760A /* JSValueInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E3C60E167BAB87006D760A /* JSValueInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86E3C61D167BABEE006D760A /* JSVirtualMachineInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E3C611167BAB87006D760A /* JSVirtualMachineInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		86E85539111B9968001AF51E /* JSStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E85538111B9968001AF51E /* JSStringBuilder.h */; };
 		86EC9DC51328DF82002B2AD7 /* DFGByteCodeParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DB51328DF82002B2AD7 /* DFGByteCodeParser.h */; };
 		86EC9DC61328DF82002B2AD7 /* DFGGenerationInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DB61328DF82002B2AD7 /* DFGGenerationInfo.h */; };
 		86EC9DC81328DF82002B2AD7 /* DFGGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DB81328DF82002B2AD7 /* DFGGraph.h */; };
@@ -3683,7 +3682,6 @@
 		86E3C60F167BAB87006D760A /* JSVirtualMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVirtualMachine.h; sourceTree = "<group>"; };
 		86E3C610167BAB87006D760A /* JSVirtualMachine.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSVirtualMachine.mm; sourceTree = "<group>"; };
 		86E3C611167BAB87006D760A /* JSVirtualMachineInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVirtualMachineInternal.h; sourceTree = "<group>"; };
-		86E85538111B9968001AF51E /* JSStringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringBuilder.h; sourceTree = "<group>"; };
 		86EC9DB41328DF82002B2AD7 /* DFGByteCodeParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGByteCodeParser.cpp; path = dfg/DFGByteCodeParser.cpp; sourceTree = "<group>"; };
 		86EC9DB51328DF82002B2AD7 /* DFGByteCodeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGByteCodeParser.h; path = dfg/DFGByteCodeParser.h; sourceTree = "<group>"; };
 		86EC9DB61328DF82002B2AD7 /* DFGGenerationInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGGenerationInfo.h; path = dfg/DFGGenerationInfo.h; sourceTree = "<group>"; };
@@ -5852,14 +5850,14 @@
 			isa = PBXGroup;
 			children = (
 				536B31981F735E5C0037FC33 /* UnifiedSource1-mm.mm */,
-				536B31961F735E5B0037FC33 /* UnifiedSource2-mm.mm */,
-				530A66B11FA3E77A0026A545 /* UnifiedSource3-mm.mm */,
-				530A66B81FA3E77E0026A545 /* UnifiedSource4-mm.mm */,
-				530A66B51FA3E77D0026A545 /* UnifiedSource5-mm.mm */,
 				536B30DA1F71C5380037FC33 /* UnifiedSource1.cpp */,
+				536B31961F735E5B0037FC33 /* UnifiedSource2-mm.mm */,
 				536B30D21F71C5380037FC33 /* UnifiedSource2.cpp */,
+				530A66B11FA3E77A0026A545 /* UnifiedSource3-mm.mm */,
 				536B30D31F71C5380037FC33 /* UnifiedSource3.cpp */,
+				530A66B81FA3E77E0026A545 /* UnifiedSource4-mm.mm */,
 				536B30E11F71C5380037FC33 /* UnifiedSource4.cpp */,
+				530A66B51FA3E77D0026A545 /* UnifiedSource5-mm.mm */,
 				536B30E21F71C5380037FC33 /* UnifiedSource5.cpp */,
 				536B30EA1F71C5380037FC33 /* UnifiedSource6.cpp */,
 				536B30E91F71C5380037FC33 /* UnifiedSource7.cpp */,
@@ -6603,7 +6601,6 @@
 				3032175DF1AD47D8998B34E1 /* JSSourceCode.h */,
 				BC02E9B60E1842FA000F9297 /* JSString.cpp */,
 				F692A8620255597D01FF60F7 /* JSString.h */,
-				86E85538111B9968001AF51E /* JSStringBuilder.h */,
 				FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */,
 				70EC0EBC1AA0D7DA00B6AAFA /* JSStringIterator.cpp */,
 				70EC0EBD1AA0D7DA00B6AAFA /* JSStringIterator.h */,
@@ -8855,7 +8852,6 @@
 				A790DD70182F499700588807 /* JSSetIterator.h in Headers */,
 				BDFCB2BBE90F41349E1B0BED /* JSSourceCode.h in Headers */,
 				BC18C4270E16F5CD00B34460 /* JSString.h in Headers */,
-				86E85539111B9968001AF51E /* JSStringBuilder.h in Headers */,
 				FEFD6FC61D5E7992008F2F0B /* JSStringInlines.h in Headers */,
 				70EC0EC31AA0D7DA00B6AAFA /* JSStringIterator.h in Headers */,
 				2600B5A7152BAAA70091EE5F /* JSStringJoiner.h in Headers */,
@@ -9898,14 +9894,14 @@
 				0FF42746158EBE91004CB9FF /* udis86_syn-intel.c in Sources */,
 				0FF42747158EBE91004CB9FF /* udis86_syn.c in Sources */,
 				536B319A1F735E780037FC33 /* UnifiedSource1-mm.mm in Sources */,
-				536B319B1F735E780037FC33 /* UnifiedSource2-mm.mm in Sources */,
-				530A66B91FA3E78B0026A545 /* UnifiedSource3-mm.mm in Sources */,
-				530A66BA1FA3E78B0026A545 /* UnifiedSource4-mm.mm in Sources */,
-				530A66BB1FA3E78B0026A545 /* UnifiedSource5-mm.mm in Sources */,
 				536B315F1F71C5990037FC33 /* UnifiedSource1.cpp in Sources */,
+				536B319B1F735E780037FC33 /* UnifiedSource2-mm.mm in Sources */,
 				536B31571F71C5990037FC33 /* UnifiedSource2.cpp in Sources */,
+				530A66B91FA3E78B0026A545 /* UnifiedSource3-mm.mm in Sources */,
 				536B31581F71C5990037FC33 /* UnifiedSource3.cpp in Sources */,
+				530A66BA1FA3E78B0026A545 /* UnifiedSource4-mm.mm in Sources */,
 				536B31661F71C5990037FC33 /* UnifiedSource4.cpp in Sources */,
+				530A66BB1FA3E78B0026A545 /* UnifiedSource5-mm.mm in Sources */,
 				536B31671F71C5990037FC33 /* UnifiedSource5.cpp in Sources */,
 				536B316F1F71C5990037FC33 /* UnifiedSource6.cpp in Sources */,
 				536B316E1F71C5990037FC33 /* UnifiedSource7.cpp in Sources */,

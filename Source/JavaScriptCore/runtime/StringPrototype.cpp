@@ -34,7 +34,6 @@
 #include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSGlobalObjectFunctions.h"
-#include "JSStringBuilder.h"
 #include "JSStringIterator.h"
 #include "Lookup.h"
 #include "ObjectPrototype.h"

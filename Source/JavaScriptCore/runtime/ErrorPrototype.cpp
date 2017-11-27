@@ -23,8 +23,7 @@
 
 #include "Error.h"
 #include "JSFunction.h"
-#include "JSString.h"
-#include "JSStringBuilder.h"
+#include "JSStringInlines.h"
 #include "ObjectPrototype.h"
 #include "JSCInlines.h"
 #include "StringRecursionChecker.h"

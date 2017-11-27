@@ -25,15 +25,11 @@
 #include "BuiltinNames.h"
 #include "Error.h"
 #include "GetterSetter.h"
-#include "JSArray.h"
 #include "JSAsyncFunction.h"
-#include "JSFunction.h"
-#include "JSGlobalObjectFunctions.h"
-#include "JSString.h"
-#include "JSStringBuilder.h"
-#include "Interpreter.h"
-#include "Lexer.h"
 #include "JSCInlines.h"
+#include "JSFunction.h"
+#include "JSStringInlines.h"
+#include "Lexer.h"
 
 namespace JSC {
 

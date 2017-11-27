@@ -33,7 +33,6 @@
 #include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSString.h"
-#include "JSStringBuilder.h"
 #include "Lexer.h"
 
 namespace JSC {
