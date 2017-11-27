@@ -706,6 +706,12 @@ private:
         case PutSetterByVal:
             compilePutAccessorByVal();
             break;
+        case DeleteById:
+            compileDeleteById();
+            break;
+        case DeleteByVal:
+            compileDeleteByVal();
+            break;
         case GetButterfly:
         case GetButterflyWithoutCaging:
             compileGetButterfly();
@@ -4209,6 +4215,20 @@ private:
             Void,
             m_out.operation(m_node->op() == PutGetterByVal ? operationPutGetterByVal : operationPutSetterByVal),
             m_callFrame, base, subscript, m_out.constInt32(m_node->accessorAttributes()), accessor);
+    }
+
+    void compileDeleteById()
+    {
+        LValue base = lowJSValue(m_node->child1());
+        auto uid = m_graph.identifiers()[m_node->identifierNumber()];
+        setBoolean(m_out.notZero64(vmCall(Int64, m_out.operation(operationDeleteById), m_callFrame, base, m_out.constIntPtr(uid))));
+    }
+
+    void compileDeleteByVal()
+    {
+        LValue base = lowJSValue(m_node->child1());
+        LValue subscript = lowJSValue(m_node->child2());
+        setBoolean(m_out.notZero64(vmCall(Int64, m_out.operation(operationDeleteByVal), m_callFrame, base, subscript)));
     }
     
     void compileArrayPush()
