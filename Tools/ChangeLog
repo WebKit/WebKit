@@ -1,3 +1,16 @@
+2017-11-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        webkitpy: PlatformInfo raises AssertionError "assert self.os_version is not None" in Cygwin since Bug 179621
+        https://bugs.webkit.org/show_bug.cgi?id=180069
+
+        Reviewed by Daniel Bates.
+
+        "Version 10.0.16299" was interpreted as 0.0.16299. Fix the wrong
+        regexp for 'ver' command.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo._win_version_from_cmd): Replace \d with \d+.
+
 2017-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebDriver: disable XSS auditor when running WebDriver tests
