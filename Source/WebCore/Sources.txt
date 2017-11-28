@@ -418,6 +418,7 @@ bindings/js/JSWebGPURenderPassAttachmentDescriptorCustom.cpp
 bindings/js/JSWebGPURenderingContextCustom.cpp
 bindings/js/JSWorkerGlobalScopeBase.cpp
 bindings/js/JSWorkerGlobalScopeCustom.cpp
+bindings/js/JSWorkerNavigatorCustom.cpp
 bindings/js/JSXMLDocumentCustom.cpp
 bindings/js/JSXMLHttpRequestCustom.cpp
 bindings/js/JSXPathNSResolverCustom.cpp

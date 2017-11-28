@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/sw-test-pre.js"></script>
+<script>
+log("* Tests that workerNavigator.serviceWorker exists");
+log("");
+
+navigator.serviceWorker.addEventListener("message", function(event) {
+    if (event.data === "DONE") {
+        finishSWTest();
+        return;
+    }
+    log(event.data);
+});
+
+navigator.serviceWorker.register("resources/WorkerNavigator_serviceWorker-worker.js", { }).then(function(registration) {
+    registration.installing.postMessage("Object.getOwnPropertyDescriptor(self.navigator.__proto__, 'serviceWorker')");
+    registration.installing.postMessage("navigator.serviceWorker.__proto__ === self.ServiceWorkerContainer.prototype");
+    registration.installing.postMessage("navigator.serviceWorker.controller === null");
+    registration.installing.postMessage("Object.getOwnPropertyDescriptor(self, 'ServiceWorkerContainer')");
+    registration.installing.postMessage("Object.getOwnPropertyDescriptor(self, 'ServiceWorker')");
+    registration.installing.postMessage("Object.getOwnPropertyDescriptor(self, 'ServiceWorkerRegistration')");
+    registration.installing.postMessage("Object.getOwnPropertyDescriptor(self.navigator.serviceWorker.__proto__, 'controller')");
+    registration.installing.postMessage("Object.getOwnPropertyDescriptor(self.navigator.serviceWorker.__proto__, 'register')");
+    registration.installing.postMessage("Object.getOwnPropertyDescriptor(self.navigator.serviceWorker.__proto__, 'getRegistration')");
+    registration.installing.postMessage("Object.getOwnPropertyDescriptor(self.navigator.serviceWorker.__proto__, 'getRegistrations')");
+    registration.installing.postMessage("DONE");
+});
+</script>
+</body>
+</html>

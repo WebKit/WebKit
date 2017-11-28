@@ -1,3 +1,16 @@
+2017-11-28  Chris Dumez  <cdumez@apple.com>
+
+        Start exposing navigator.serviceWorker inside service workers
+        https://bugs.webkit.org/show_bug.cgi?id=180087
+
+        Reviewed by Brady Eidson.
+
+        Add layout test coverage.
+
+        * http/tests/workers/service/WorkerNavigator_serviceWorker-expected.txt: Added.
+        * http/tests/workers/service/WorkerNavigator_serviceWorker.html: Added.
+        * http/tests/workers/service/resources/WorkerNavigator_serviceWorker-worker.js: Added.
+
 2017-11-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r225098): [WPE] Some features have changed of value (70 new failures)

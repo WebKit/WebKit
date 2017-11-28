@@ -1,0 +1,13 @@
+* Tests that workerNavigator.serviceWorker exists
+
+Object.getOwnPropertyDescriptor(self.navigator.__proto__, 'serviceWorker') returned {"enumerable":true,"configurable":true}
+navigator.serviceWorker.__proto__ === self.ServiceWorkerContainer.prototype returned true
+navigator.serviceWorker.controller === null returned true
+Object.getOwnPropertyDescriptor(self, 'ServiceWorkerContainer') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'ServiceWorker') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self, 'ServiceWorkerRegistration') returned {"writable":true,"enumerable":false,"configurable":true}
+Object.getOwnPropertyDescriptor(self.navigator.serviceWorker.__proto__, 'controller') returned {"enumerable":true,"configurable":true}
+Object.getOwnPropertyDescriptor(self.navigator.serviceWorker.__proto__, 'register') returned {"writable":true,"enumerable":true,"configurable":true}
+Object.getOwnPropertyDescriptor(self.navigator.serviceWorker.__proto__, 'getRegistration') returned {"writable":true,"enumerable":true,"configurable":true}
+Object.getOwnPropertyDescriptor(self.navigator.serviceWorker.__proto__, 'getRegistrations') returned {"writable":true,"enumerable":true,"configurable":true}
+

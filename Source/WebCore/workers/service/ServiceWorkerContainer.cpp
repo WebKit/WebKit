@@ -78,6 +78,7 @@ void ServiceWorkerContainer::derefEventTarget()
 ServiceWorker* ServiceWorkerContainer::controller() const
 {
     auto* context = scriptExecutionContext();
+    ASSERT_WITH_MESSAGE(!context || is<Document>(*context) || !context->activeServiceWorker(), "Only documents can have a controller at the moment.");
     return context ? context->activeServiceWorker() : nullptr;
 }
 
@@ -87,6 +88,12 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
     if (!context || !context->sessionID().isValid()) {
         ASSERT_NOT_REACHED();
         promise->reject(Exception(InvalidStateError));
+        return;
+    }
+
+    // FIXME: Add support in workers.
+    if (!is<Document>(*context)) {
+        promise->reject(Exception { NotSupportedError, ASCIILiteral("serviceWorker.register() is not yet supported in workers") });
         return;
     }
 
@@ -212,6 +219,12 @@ void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<Deferr
         return;
     }
 
+    // FIXME: Add support in workers.
+    if (!is<Document>(*context)) {
+        promise->reject(Exception { NotSupportedError, ASCIILiteral("serviceWorker.getRegistration() is not yet supported in workers") });
+        return;
+    }
+
     URL parsedURL = context->completeURL(clientURL);
     if (!protocolHostAndPortAreEqual(parsedURL, context->url())) {
         promise->reject(Exception { SecurityError, ASCIILiteral("Origin of clientURL is not client's origin") });
@@ -256,6 +269,12 @@ void ServiceWorkerContainer::getRegistrations(RegistrationsPromise&& promise)
     auto* context = scriptExecutionContext();
     if (!context) {
         promise.reject(Exception { InvalidStateError });
+        return;
+    }
+
+    // FIXME: Add support in workers.
+    if (!is<Document>(*context)) {
+        promise.reject(Exception { NotSupportedError, ASCIILiteral("serviceWorker.getRegistrations() is not yet supported in workers") });
         return;
     }
 

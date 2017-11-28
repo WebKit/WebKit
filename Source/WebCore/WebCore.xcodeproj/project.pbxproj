@@ -7288,6 +7288,7 @@
 		46EFAF0D1E5FB9C200E7F34B /* LowPowerModeNotifierIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LowPowerModeNotifierIOS.mm; sourceTree = "<group>"; };
 		46EFAF0F1E5FB9E100E7F34B /* LowPowerModeNotifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LowPowerModeNotifier.cpp; sourceTree = "<group>"; };
 		46EFAF101E5FB9E100E7F34B /* LowPowerModeNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LowPowerModeNotifier.h; sourceTree = "<group>"; };
+		46F91BC91FCDD0FE001599C3 /* JSWorkerNavigatorCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerNavigatorCustom.cpp; sourceTree = "<group>"; };
 		490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ANGLEWebKitBridge.cpp; sourceTree = "<group>"; };
 		490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANGLEWebKitBridge.h; sourceTree = "<group>"; };
 		49291E4A134172C800E753DE /* ImageRenderingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageRenderingMode.h; sourceTree = "<group>"; };
@@ -18961,6 +18962,7 @@
 				31A088C41E737B2C003B6609 /* JSWebGPURenderingContextCustom.cpp */,
 				31A088C51E737B2C003B6609 /* JSWebGPURenderPassAttachmentDescriptorCustom.cpp */,
 				E18258AB0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp */,
+				46F91BC91FCDD0FE001599C3 /* JSWorkerNavigatorCustom.cpp */,
 				83A4A9F81CE7FD7E00709B00 /* JSXMLDocumentCustom.cpp */,
 				836C14421CDEAFCA0073493F /* JSXPathNSResolverCustom.cpp */,
 				A1C7FAA1133A5D3500D6732D /* JSXPathResultCustom.cpp */,

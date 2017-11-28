@@ -29,7 +29,7 @@
 [
     ActiveDOMObject,
     SecureContext,
-    Exposed=(Window),
+    Exposed=(Window,ServiceWorker),
     Conditional=SERVICE_WORKER,
     EnabledAtRuntime=ServiceWorker
 ] interface ServiceWorker : EventTarget {

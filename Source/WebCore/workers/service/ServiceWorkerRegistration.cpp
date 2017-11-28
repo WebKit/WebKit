@@ -121,6 +121,12 @@ void ServiceWorkerRegistration::update(Ref<DeferredPromise>&& promise)
         return;
     }
 
+    // FIXME: Add support in workers.
+    if (!is<Document>(*context)) {
+        promise->reject(Exception { NotSupportedError, ASCIILiteral("serviceWorkerRegistration.update() is not yet supported in workers") });
+        return;
+    }
+
     auto* container = context->serviceWorkerContainer();
     if (!container) {
         promise->reject(Exception(InvalidStateError));
@@ -143,6 +149,12 @@ void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)
     if (!context) {
         ASSERT_NOT_REACHED();
         promise->reject(Exception(InvalidStateError));
+        return;
+    }
+
+    // FIXME: Add support in workers.
+    if (!is<Document>(*context)) {
+        promise->reject(Exception { NotSupportedError, ASCIILiteral("serviceWorkerRegistration.unregister() is not yet supported in workers") });
         return;
     }
 
