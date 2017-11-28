@@ -1,5 +1,18 @@
 2017-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] WebDriver: disable XSS auditor when running WebDriver tests
+        https://bugs.webkit.org/show_bug.cgi?id=180075
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Some tests are now doing inline('<script>window.alert()</script>') which is rejected by the XSS auditor because
+        the script source is part of the request URL.
+
+        * Scripts/webkitpy/webdriver_tests/webdriver_driver_gtk.py:
+        (WebDriverGtk.capabilities): Disable XSS auditor.
+
+2017-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: add timeout option to run-webdriver-tests script
         https://bugs.webkit.org/show_bug.cgi?id=179940
 
