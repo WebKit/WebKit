@@ -333,7 +333,7 @@ class Simulator(object):
                 if line != '== Devices ==':
                     raise RuntimeError('Expected == Devices == header but got: "{}"'.format(line))
                 break
-            runtime = Runtime(version=Version(runtime_match.group('version')),
+            runtime = Runtime(version=Version.from_string(runtime_match.group('version')),
                               identifier=runtime_match.group('identifier'),
                               available=runtime_match.group('availability') is None,
                               is_internal_runtime=('Internal' in runtime_match.group('os')))
@@ -351,7 +351,7 @@ class Simulator(object):
         for line in lines:
             version_match = self.version_re.match(line)
             if version_match:
-                current_runtime = self.runtime(version=Version(version_match.group('version')), is_internal_runtime=bool(version_match.group('internal')))
+                current_runtime = self.runtime(version=Version.from_string(version_match.group('version')), is_internal_runtime=bool(version_match.group('internal')))
                 assert current_runtime
                 continue
 

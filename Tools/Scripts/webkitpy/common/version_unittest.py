@@ -28,23 +28,23 @@ from version import Version
 class VersionTestCase(unittest.TestCase):
 
     def test_string_constructor(self):
-        v = Version('1.2.3.4.5')
+        v = Version.from_string('1.2.3.4.5')
         self.assertEqual(v.major, 1)
         self.assertEqual(v.minor, 2)
         self.assertEqual(v.tiny, 3)
         self.assertEqual(v.micro, 4)
         self.assertEqual(v.nano, 5)
 
-    def test_list_constructor(self):
-        v = Version([1, 2, 3, 4, 5])
+    def test_from_list(self):
+        v = Version.from_iterable([1, 2, 3, 4, 5])
         self.assertEqual(v.major, 1)
         self.assertEqual(v.minor, 2)
         self.assertEqual(v.tiny, 3)
         self.assertEqual(v.micro, 4)
         self.assertEqual(v.nano, 5)
 
-    def test_tuple_constructor(self):
-        v = Version((1, 2, 3))
+    def test_from_tuple(self):
+        v = v = Version.from_iterable((1, 2, 3))
         self.assertEqual(v.major, 1)
         self.assertEqual(v.minor, 2)
         self.assertEqual(v.tiny, 3)
@@ -57,28 +57,12 @@ class VersionTestCase(unittest.TestCase):
         self.assertEqual(v.micro, 0)
         self.assertEqual(v.nano, 0)
 
-    def test_copy_constructor(self):
-        v = Version(Version([1, 2, 3, 4, 5]))
-        self.assertEqual(v.major, 1)
-        self.assertEqual(v.minor, 2)
-        self.assertEqual(v.tiny, 3)
-        self.assertEqual(v.micro, 4)
-        self.assertEqual(v.nano, 5)
-
-    def test_none_constructor(self):
-        v = Version(None)
-        self.assertEqual(v.major, 0)
-        self.assertEqual(v.minor, 0)
-        self.assertEqual(v.tiny, 0)
-        self.assertEqual(v.micro, 0)
-        self.assertEqual(v.nano, 0)
-
     def test_len(self):
-        self.assertEqual(len(Version('1.2.3.4.5')), 5)
+        self.assertEqual(len(Version(1, 2, 3, 4, 5)), 5)
         self.assertEqual(len(Version()), 5)
 
     def test_set_by_int(self):
-        v = Version(None)
+        v = Version()
         v[0] = 1
         self.assertEqual(v.major, 1)
         v[1] = 2
@@ -91,7 +75,7 @@ class VersionTestCase(unittest.TestCase):
         self.assertEqual(v.nano, 5)
 
     def test_set_by_string(self):
-        v = Version(None)
+        v = Version()
         v['major'] = 1
         self.assertEqual(v.major, 1)
         v['minor'] = 2
@@ -104,7 +88,7 @@ class VersionTestCase(unittest.TestCase):
         self.assertEqual(v.nano, 5)
 
     def test_get_by_int(self):
-        v = Version('1.2.3.4.5')
+        v = Version(1, 2, 3, 4, 5)
         self.assertEqual(v[0], v.major)
         self.assertEqual(v[1], v.minor)
         self.assertEqual(v[2], v.tiny)
@@ -112,7 +96,7 @@ class VersionTestCase(unittest.TestCase):
         self.assertEqual(v[4], v.nano)
 
     def test_get_by_string(self):
-        v = Version('1.2.3.4.5')
+        v = Version(1, 2, 3, 4, 5)
         self.assertEqual(v['major'], v.major)
         self.assertEqual(v['minor'], v.minor)
         self.assertEqual(v['tiny'], v.tiny)
@@ -120,29 +104,29 @@ class VersionTestCase(unittest.TestCase):
         self.assertEqual(v['nano'], v.nano)
 
     def test_string(self):
-        self.assertEqual(str(Version('1.2.3')), '1.2.3')
-        self.assertEqual(str(Version('1.2.0')), '1.2')
-        self.assertEqual(str(Version('1.2')), '1.2')
-        self.assertEqual(str(Version('0.0.3')), '0.0.3')
+        self.assertEqual(str(Version(1, 2, 3)), '1.2.3')
+        self.assertEqual(str(Version(1, 2, 0)), '1.2')
+        self.assertEqual(str(Version(1, 2)), '1.2')
+        self.assertEqual(str(Version(0, 0, 3)), '0.0.3')
 
     def test_contained_in(self):
-        self.assertTrue(Version('11.1').contained_in(Version('11')))
-        self.assertTrue(Version('11.1.2').contained_in(Version('11.1')))
-        self.assertFalse(Version('11').contained_in(Version('11.1')))
-        self.assertFalse(Version('11').contained_in(Version('11.1.2')))
-        self.assertFalse(Version('11.1').contained_in(Version('11.1.2')))
-        self.assertTrue(Version('11').contained_in(Version('11')))
-        self.assertTrue(Version('11.1').contained_in(Version('11.1')))
-        self.assertTrue(Version('11.1.2').contained_in(Version('11.1.2')))
-        self.assertTrue(Version('11').contained_in(Version('11.0')))
-        self.assertTrue(Version('11.0').contained_in(Version('11')))
-        self.assertTrue(Version('11').contained_in(Version('11.0.0')))
-        self.assertTrue(Version('11.0.0').contained_in(Version('11')))
-        self.assertTrue(Version('11.1').contained_in(Version('11.1.0')))
-        self.assertTrue(Version('11.1.0').contained_in(Version('11.1')))
+        self.assertTrue(Version(11, 1).contained_in(Version(11)))
+        self.assertTrue(Version(11, 1, 2).contained_in(Version(11, 1)))
+        self.assertFalse(Version(11).contained_in(Version(11, 1)))
+        self.assertFalse(Version(11).contained_in(Version(11, 1, 2)))
+        self.assertFalse(Version(11, 1).contained_in(Version(11, 1, 2)))
+        self.assertTrue(Version(11).contained_in(Version(11)))
+        self.assertTrue(Version(11, 1).contained_in(Version(11, 1)))
+        self.assertTrue(Version(11, 1, 2).contained_in(Version(11, 1, 2)))
+        self.assertTrue(Version(11).contained_in(Version(11, 0)))
+        self.assertTrue(Version(11, 0).contained_in(Version(11)))
+        self.assertTrue(Version(11).contained_in(Version(11, 0, 0)))
+        self.assertTrue(Version(11, 0, 0).contained_in(Version(11)))
+        self.assertTrue(Version(11, 1).contained_in(Version(11, 1, 0)))
+        self.assertTrue(Version(11, 1, 0).contained_in(Version(11, 1)))
 
     def test_compare_versions(self):
-        self.assertEqual(Version('1.2.3'), Version('1.2.3'))
-        self.assertGreater(Version('1.2.4'), Version('1.2.3'))
-        self.assertGreater(Version('1.3.2'), Version('1.2.3'))
-        self.assertGreater(Version('2.1.1'), Version('1.2.3'))
+        self.assertEqual(Version(1, 2, 3), Version(1, 2, 3))
+        self.assertGreater(Version(1, 2, 4), Version(1, 2, 3))
+        self.assertGreater(Version(1, 3, 2), Version(1, 2, 3))
+        self.assertGreater(Version(2, 1, 1), Version(1, 2, 3))

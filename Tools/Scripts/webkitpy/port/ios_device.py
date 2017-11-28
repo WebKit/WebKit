@@ -95,7 +95,7 @@ class IOSDevicePort(IOSPort):
     @memoized
     def ios_version(self):
         if self.get_option('version'):
-            return Version(self.get_option('version'))
+            return Version.from_string(self.get_option('version'))
 
         if not apple_additions():
             raise RuntimeError(self.NO_ON_DEVICE_TESTING)
@@ -111,7 +111,7 @@ class IOSDevicePort(IOSPort):
                     raise RuntimeError('Multiple connected devices have different iOS versions')
         if version:
             return VersionNameMap.map(self.host.platform).from_name(version)[1]
-        return Version(version)
+        return None
 
     # FIXME: These need device implementations <rdar://problem/30497991>.
     def check_for_leaks(self, process_name, process_pid):

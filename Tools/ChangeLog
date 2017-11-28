@@ -1,3 +1,70 @@
+2017-11-28  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Standardize Version representation
+        https://bugs.webkit.org/show_bug.cgi?id=179677
+        <rdar://problem/35711277>
+
+        Reviewed by Alex Christensen.
+
+        Standardize a single method of representing versions in the Version object
+        constructor. Provide static methods for converting string and lists/tuples
+        to Version objects.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.__init__): Parse Version object from string instead of using
+        the constructor.
+        (PlatformInfo.xcode_sdk_version): Ditto.
+        (PlatformInfo.xcode_version): Ditto.
+        (PlatformInfo._win_version): Construct Version object from list.
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (MockPlatformInfo.xcode_sdk_version):
+        (MockPlatformInfo.xcode_version):
+        * Scripts/webkitpy/common/version.py:
+        (Version):
+        (Version.from_string): Parse string of the form 'x.x.x'.
+        (Version.from_iterable): Construct a version object from a list, tuple or
+        other indexable object.
+        (Version.__init__): Construct a Version object from integers.
+        * Scripts/webkitpy/common/version_name_map.py:
+        (VersionNameMap.__init__): Use integer Version constructor.
+        (VersionNameMap._automap_to_major_version): Ditto.
+        (VersionNameMap.to_name):
+        (VersionNameMap.strip_name_formatting): Construct Version from string.
+        * Scripts/webkitpy/common/version_name_map_unittest.py:
+        (VersionMapTestCase.test_mac_version_by_name): Use integer Version constructor.
+        (VersionMapTestCase.test_mac_name_by_version): Ditto.
+        (VersionMapTestCase.test_ios_name_by_version): Ditto.
+        * Scripts/webkitpy/common/version_unittest.py:
+        (VersionTestCase.test_string_constructor):
+        (VersionTestCase.test_from_list):
+        (VersionTestCase.test_from_tuple):
+        (VersionTestCase.test_int_constructor):
+        (VersionTestCase.test_len):
+        (VersionTestCase.test_set_by_int):
+        (VersionTestCase.test_set_by_string):
+        (VersionTestCase.test_get_by_int):
+        (VersionTestCase.test_get_by_string):
+        (VersionTestCase.test_string):
+        (VersionTestCase.test_contained_in):
+        (VersionTestCase.test_compare_versions):
+        (VersionTestCase.test_list_constructor): Deleted.
+        (VersionTestCase.test_tuple_constructor): Deleted.
+        (VersionTestCase.test_copy_constructor): Deleted.
+        (VersionTestCase.test_none_constructor): Deleted.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.default_baseline_search_path): Handle case where ios_version is None.
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort.ios_version): Return None rather than an empty version.
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort.simulator_runtime): Parse Version object from string instead
+        of using the constructor.
+        (IOSSimulatorPort.ios_version): Return None rather than an empty version.
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Simulator._parse_runtimes): Parse Version object from string instead of using
+        the constructor.
+        (Simulator._parse_devices): Ditto.
+        * Scripts/webkitpy/xcode/simulator_unittest.py:
+
 2017-11-28  Daniel Bates  <dabates@apple.com>
 
         [Cocoa] First pass at implementing alternative presentation button element

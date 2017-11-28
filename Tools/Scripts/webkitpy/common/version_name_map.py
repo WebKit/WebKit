@@ -43,34 +43,34 @@ class VersionNameMap(object):
         self.default_system_platform = platform.os_name
         self.mapping['public'] = {
             'mac': {
-                'Leopard': Version('10.5'),
-                'Snow Leopard': Version('10.6'),
-                'Lion': Version('10.7'),
-                'Mountain Lion': Version('10.8'),
-                'Mavericks': Version('10.9'),
-                'Yosemite': Version('10.10'),
-                'El Capitan': Version('10.11'),
-                'Sierra': Version('10.12'),
-                'High Sierra': Version('10.13'),
-                'Future': Version('10.14'),
+                'Leopard': Version(10, 5),
+                'Snow Leopard': Version(10, 6),
+                'Lion': Version(10, 7),
+                'Mountain Lion': Version(10, 8),
+                'Mavericks': Version(10, 9),
+                'Yosemite': Version(10, 10),
+                'El Capitan': Version(10, 11),
+                'Sierra': Version(10, 12),
+                'High Sierra': Version(10, 13),
+                'Future': Version(10, 14),
             },
-            'ios': self._automap_to_major_version('iOS', minimum=Version('10'), maximum=Version('12')),
+            'ios': self._automap_to_major_version('iOS', minimum=Version(10), maximum=Version(12)),
             'win': {
-                'Win10': Version('10'),
-                '8.1': Version('6.3'),
-                '8': Version('6.2'),
-                '7sp0': Version('6.1.7600'),
-                'Vista': Version('6'),
-                'XP': Version('5.1'),
+                'Win10': Version(10),
+                '8.1': Version(6, 3),
+                '8': Version(6, 2),
+                '7sp0': Version(6, 1, 7600),
+                'Vista': Version(6),
+                'XP': Version(5, 1),
             },
         }
 
     @classmethod
-    def _automap_to_major_version(cls, prefix, minimum=Version('1'), maximum=Version('1')):
+    def _automap_to_major_version(cls, prefix, minimum=Version(1), maximum=Version(1)):
         result = {}
         assert minimum <= maximum
         for i in xrange((maximum.major + 1) - minimum.major):
-            result['{} {}'.format(prefix, str(Version(str(minimum.major + i))))] = Version(str(minimum.major + i))
+            result['{} {}'.format(prefix, str(Version(minimum.major + i)))] = Version(minimum.major + i)
         return result
 
     def to_name(self, version, platform=None, table='public'):
@@ -78,7 +78,6 @@ class VersionNameMap(object):
         assert table in self.mapping
         assert platform in self.mapping[table]
         closest_match = (None, None)
-        version = Version(version)
         for os_name, os_version in self.mapping[table][platform].iteritems():
             if version == os_version:
                 return os_name
@@ -93,13 +92,13 @@ class VersionNameMap(object):
         # <OS> major.minor.tiny should map to <OS> major
         if ' ' in name:
             try:
-                name = '{}{}'.format(''.join(name.split(' ')[:-1]), Version(name.split(' ')[-1]).major)
+                name = '{}{}'.format(''.join(name.split(' ')[:-1]), Version.from_string(name.split(' ')[-1]).major)
             except ValueError:
                 pass
         else:
             try:
                 split = re.split(r'\d', name)
-                name = '{}{}'.format(split[0], Version(name[(len(split) - 1):]).major)
+                name = '{}{}'.format(split[0], Version.from_string(name[(len(split) - 1):]).major)
             except ValueError:
                 pass
 

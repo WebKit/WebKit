@@ -55,14 +55,14 @@ class PlatformInfo(object):
         self.os_version = None
 
         if self.os_name.startswith('mac'):
-            version = Version(platform_module.mac_ver()[0])
+            version = Version.from_string(platform_module.mac_ver()[0])
         elif self.os_name.startswith('win'):
             version = self._win_version(sys_module)
         elif self.os_name == 'linux' or self.os_name == 'freebsd' or self.os_name == 'openbsd' or self.os_name == 'netbsd':
             version = None
         else:
             # Most other platforms (namely iOS) return conforming version strings.
-            version = Version(platform_module.release())
+            version = Version.from_string(platform_module.release())
 
         self._is_cygwin = sys_module.platform == 'cygwin'
 
@@ -145,7 +145,7 @@ class PlatformInfo(object):
             # Assumes that xcrun does not write to standard output on failure (e.g. SDK does not exist).
             xcrun_output = self._executive.run_command(['xcrun', '--sdk', sdk_name, '--show-sdk-version'], return_stderr=False, error_handler=Executive.ignore_error).rstrip()
             if xcrun_output:
-                return Version(xcrun_output)
+                return Version.from_string(xcrun_output)
         return None
 
     def xcode_simctl_list(self):
@@ -157,7 +157,7 @@ class PlatformInfo(object):
     def xcode_version(self):
         if not self.is_mac():
             raise NotImplementedError
-        return Version(self._executive.run_command(['xcodebuild', '-version']).split()[1])
+        return Version.from_string(self._executive.run_command(['xcodebuild', '-version']).split()[1])
 
     def _determine_os_name(self, sys_platform):
         if sys_platform == 'darwin':
@@ -178,8 +178,8 @@ class PlatformInfo(object):
 
     def _win_version(self, sys_module):
         if hasattr(sys_module, 'getwindowsversion'):
-            return Version(sys_module.getwindowsversion()[0:3])
-        return Version(self._win_version_from_cmd())
+            return Version.from_iterable(sys_module.getwindowsversion()[0:3])
+        return Version.from_iterable(self._win_version_from_cmd())
 
     def _win_version_from_cmd(self):
         # Note that this should only ever be called on windows, so this should always work.

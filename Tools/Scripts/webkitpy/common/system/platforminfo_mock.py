@@ -67,10 +67,10 @@ class MockPlatformInfo(object):
         return 80
 
     def xcode_sdk_version(self, sdk_name):
-        return Version('8.1')
+        return Version(8, 1)
 
     def xcode_version(self):
-        return Version('8.0')
+        return Version(8, 0)
 
     def xcode_simctl_list(self):
         return self.expected_xcode_simctl_list

@@ -36,11 +36,11 @@ class VersionMapTestCase(unittest.TestCase):
 
     def test_mac_version_by_name(self):
         map = VersionNameMap()
-        self.assertEqual(('mac', Version('10.12')), map.from_name('Sierra'))
-        self.assertEqual(('mac', Version('10.12')), map.from_name('sierra'))
-        self.assertEqual(('mac', Version('10.11')), map.from_name('El Capitan'))
-        self.assertEqual(('mac', Version('10.11')), map.from_name('elcapitan'))
-        self.assertEqual(('mac', Version('10.11')), map.from_name('el Capitan'))
+        self.assertEqual(('mac', Version(10, 12)), map.from_name('Sierra'))
+        self.assertEqual(('mac', Version(10, 12)), map.from_name('sierra'))
+        self.assertEqual(('mac', Version(10, 11)), map.from_name('El Capitan'))
+        self.assertEqual(('mac', Version(10, 11)), map.from_name('elcapitan'))
+        self.assertEqual(('mac', Version(10, 11)), map.from_name('el Capitan'))
 
     def test_ios_version_by_name(self):
         map = VersionNameMap()
@@ -52,12 +52,12 @@ class VersionMapTestCase(unittest.TestCase):
 
     def test_mac_name_by_version(self):
         map = VersionNameMap()
-        self.assertEqual('Sierra', map.to_name(version=Version('10.12'), platform='mac'))
-        self.assertEqual('El Capitan', map.to_name(version=Version('10.11'), platform='mac'))
-        self.assertEqual('El Capitan', map.to_name(version=Version('10.11.3'), platform='mac'))
+        self.assertEqual('Sierra', map.to_name(version=Version(10, 12), platform='mac'))
+        self.assertEqual('El Capitan', map.to_name(version=Version(10, 11), platform='mac'))
+        self.assertEqual('El Capitan', map.to_name(version=Version(10, 11, 3), platform='mac'))
 
     def test_ios_name_by_version(self):
         map = VersionNameMap()
-        self.assertEqual('iOS 11', map.to_name(version=Version('11'), platform='ios'))
-        self.assertEqual('iOS 10', map.to_name(version=Version('10'), platform='ios'))
-        self.assertEqual('iOS 10', map.to_name(version=Version('10.3'), platform='ios'))
+        self.assertEqual('iOS 11', map.to_name(version=Version(11), platform='ios'))
+        self.assertEqual('iOS 10', map.to_name(version=Version(10), platform='ios'))
+        self.assertEqual('iOS 10', map.to_name(version=Version(10, 3), platform='ios'))

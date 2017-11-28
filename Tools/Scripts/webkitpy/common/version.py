@@ -25,26 +25,24 @@ import collections
 
 class Version(object):
 
-    def __init__(self, ver='0'):
-        self.major = 0
-        self.minor = 0
-        self.tiny = 0
-        self.micro = 0
-        self.nano = 0
-        if isinstance(ver, int):
-            self.major = ver
-            return
-        elif isinstance(ver, str) or isinstance(ver, unicode):
-            for i in xrange(len(ver.split('.'))):
-                self[i] = ver.split('.')[i]
-            return
-        elif isinstance(ver, Version) or isinstance(ver, collections.Iterable):
-            for i in xrange(len(ver)):
-                self[i] = ver[i]
-            return
-        elif ver is None:
-            return  # Empty version is implicitly zero
-        raise ValueError('Version expected to be string, integer, tuple or list of integers')
+    @staticmethod
+    def from_string(string):
+        assert isinstance(string, str) or isinstance(string, unicode)
+        return Version.from_iterable(string.split('.'))
+
+    @staticmethod
+    def from_iterable(val):
+        result = Version()
+        for i in xrange(len(val)):
+            result[i] = int(val[i])
+        return result
+
+    def __init__(self, major=0, minor=0, tiny=0, micro=0, nano=0):
+        self.major = int(major)
+        self.minor = int(minor)
+        self.tiny = int(tiny)
+        self.micro = int(micro)
+        self.nano = int(nano)
 
     def __len__(self):
         return 5
