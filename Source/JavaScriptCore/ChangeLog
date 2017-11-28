@@ -1,3 +1,17 @@
+2017-11-27  JF Bastien  <jfbastien@apple.com>
+
+        JavaScript rest function parameter with negative index leads to bad DFG abstract interpretation
+        https://bugs.webkit.org/show_bug.cgi?id=180051
+        <rdar://problem/35614371>
+
+        Reviewed by Saam Barati.
+
+        Checking for int32 isn't sufficient when uint32 is expected
+        afterwards. While we're here, also use Checked<>.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2017-11-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Move JSONValues to WTF and convert uses of InspectorValues.h to JSONValues.h

@@ -1,3 +1,17 @@
+2017-11-27  JF Bastien  <jfbastien@apple.com>
+
+        JavaScript rest function parameter with negative index leads to bad DFG abstract interpretation
+        https://bugs.webkit.org/show_bug.cgi?id=180051
+        <rdar://problem/35614371>
+
+        Reviewed by Saam Barati.
+
+        * stress/rest-parameter-negative.js: Added.
+        (__f_5484):
+        (catch):
+        (__f_5485):
+        (__v_22598.catch):
+
 2017-11-27  Saam Barati  <sbarati@apple.com>
 
         Spread can escape when CreateRest does not
