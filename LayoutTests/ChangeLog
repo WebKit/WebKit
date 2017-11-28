@@ -1,3 +1,16 @@
+2017-11-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r225098): [WPE] Some features have changed of value (70 new failures)
+        https://bugs.webkit.org/show_bug.cgi?id=180004
+
+        Reviewed by Alex Christensen.
+
+        Remove failure expectations for layout tests that will stop failing once the buildbot master
+        is restarted. A restart is required for the build to begin using
+        -DENABLE_EXPERIMENTAL_FEATURES=ON.
+
+        * platform/wpe/TestExpectations:
+
 2017-11-28  Antoine Quint  <graouts@apple.com>
 
         Skip back and forward buttons should not hard-code their numeric amount in localised strings
