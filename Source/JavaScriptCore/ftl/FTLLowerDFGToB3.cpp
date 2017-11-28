@@ -5273,12 +5273,55 @@ private:
 
     void compileSpread()
     {
-        // It would be trivial to support this, but for now, we never create
-        // IR that would necessitate this. The reason is that Spread is only
-        // consumed by NewArrayWithSpread and Varargs operations. And it is
-        // never anything else. Also, any Spread(PhantomCreateRest) will turn
-        // into PhantomSpread(PhantomCreateRest).
-        RELEASE_ASSERT(m_node->child1()->op() != PhantomCreateRest); 
+        if (m_node->child1()->op() == PhantomCreateRest) {
+            // This IR is rare to generate since it requires escaping the Spread
+            // but not the CreateRest. In bytecode, we have only few operations that
+            // accept Spread's result as input. This usually leads to the Spread node not
+            // escaping. However, this can happen if for example we generate a PutStack on
+            // the Spread but nothing escapes the CreateRest.
+            LBasicBlock loopHeader = m_out.newBlock();
+            LBasicBlock loopBody = m_out.newBlock();
+            LBasicBlock slowAllocation = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+            LBasicBlock lastNext = m_out.insertNewBlocksBefore(loopHeader);
+
+            InlineCallFrame* inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame;
+            unsigned numberOfArgumentsToSkip = m_node->child1()->numberOfArgumentsToSkip();
+            LValue sourceStart = getArgumentsStart(inlineCallFrame, numberOfArgumentsToSkip);
+            LValue length = getSpreadLengthFromInlineCallFrame(inlineCallFrame, numberOfArgumentsToSkip);
+            static_assert(sizeof(JSValue) == 8 && 1 << 3 == 8, "Assumed in the code below.");
+            LValue size = m_out.add(
+                m_out.shl(m_out.zeroExtPtr(length), m_out.constInt32(3)),
+                m_out.constIntPtr(JSFixedArray::offsetOfData()));
+
+            LValue fastArrayValue = allocateVariableSizedCell<JSFixedArray>(size, m_graph.m_vm.fixedArrayStructure.get(), slowAllocation);
+            m_out.store32(length, fastArrayValue, m_heaps.JSFixedArray_size);
+            ValueFromBlock fastArray = m_out.anchor(fastArrayValue);
+            m_out.jump(loopHeader);
+
+            m_out.appendTo(slowAllocation, loopHeader);
+            ValueFromBlock slowArray = m_out.anchor(vmCall(Int64, m_out.operation(operationCreateFixedArray), m_callFrame, length));
+            m_out.jump(loopHeader);
+
+            m_out.appendTo(loopHeader, loopBody);
+            LValue fixedArray = m_out.phi(Int64, fastArray, slowArray);
+            ValueFromBlock startIndex = m_out.anchor(m_out.constIntPtr(0));
+            m_out.branch(m_out.isZero32(length), unsure(continuation), unsure(loopBody));
+
+            m_out.appendTo(loopBody, continuation);
+            LValue index = m_out.phi(pointerType(), startIndex);
+            LValue value = m_out.load64(
+                m_out.baseIndex(m_heaps.variables, sourceStart, index));
+            m_out.store64(value, m_out.baseIndex(m_heaps.JSFixedArray_buffer, fixedArray, index));
+            LValue nextIndex = m_out.add(m_out.constIntPtr(1), index);
+            m_out.addIncomingToPhi(index, m_out.anchor(nextIndex));
+            m_out.branch(m_out.below(nextIndex, m_out.zeroExtPtr(length)), unsure(loopBody), unsure(continuation));
+
+            m_out.appendTo(continuation, lastNext);
+            mutatorFence();
+            setJSValue(fixedArray);
+            return;
+        }
 
         LValue argument = lowCell(m_node->child1());
 

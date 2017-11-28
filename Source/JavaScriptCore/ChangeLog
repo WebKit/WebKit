@@ -1,3 +1,28 @@
+2017-11-27  Saam Barati  <sbarati@apple.com>
+
+        Spread can escape when CreateRest does not
+        https://bugs.webkit.org/show_bug.cgi?id=180057
+        <rdar://problem/35676119>
+
+        Reviewed by JF Bastien.
+
+        We previously did not handle Spread(PhantomCreateRest) only because I did not
+        think it was possible to generate this IR. I was wrong. We can generate
+        such IR when we have a PutStack(Spread) but nothing escapes the CreateRest.
+        This IR is rare to generate since we normally don't PutStack(Spread) because
+        the SetLocal almost always gets eliminated because of how our bytecode generates
+        op_spread. However, there exists a test case showing it is possible. Supporting
+        this IR pattern in FTLLower is trivial. This patch implements it and rewrites
+        the Validation rule for Spread.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileSpread):
+        * runtime/JSFixedArray.h:
+        (JSC::JSFixedArray::tryCreate):
+
 2017-11-27  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][Win] Conditionally select DLL CRT or static CRT

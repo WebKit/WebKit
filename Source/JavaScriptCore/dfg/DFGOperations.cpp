@@ -2384,6 +2384,19 @@ JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(ExecState* exec, void* buf
     return result;
 }
 
+JSCell* operationCreateFixedArray(ExecState* exec, unsigned length)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (JSFixedArray* result = JSFixedArray::tryCreate(vm, vm.fixedArrayStructure.get(), length))
+        return result;
+
+    throwOutOfMemoryError(exec, scope);
+    return nullptr;
+}
+
 JSCell* JIT_OPERATION operationSpreadGeneric(ExecState* exec, JSCell* iterable)
 {
     VM& vm = exec->vm();

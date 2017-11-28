@@ -1,3 +1,17 @@
+2017-11-27  Saam Barati  <sbarati@apple.com>
+
+        Spread can escape when CreateRest does not
+        https://bugs.webkit.org/show_bug.cgi?id=180057
+        <rdar://problem/35676119>
+
+        Reviewed by JF Bastien.
+
+        * stress/spread-escapes-but-create-rest-does-not.js: Added.
+        (assert):
+        (getProperties):
+        (theFunc):
+        (let.obj.valueOf):
+
 2017-11-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Add NormalizeMapKey DFG IR

@@ -235,6 +235,7 @@ int32_t JIT_OPERATION operationArrayIndexOfValueInt32OrContiguous(ExecState*, Bu
 JSCell* JIT_OPERATION operationSpreadFastArray(ExecState*, JSCell*);
 JSCell* JIT_OPERATION operationSpreadGeneric(ExecState*, JSCell*);
 JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(ExecState*, void*, uint32_t);
+JSCell* JIT_OPERATION operationCreateFixedArray(ExecState*, unsigned length);
 
 JSCell* JIT_OPERATION operationResolveScope(ExecState*, JSScope*, UniquedStringImpl*);
 EncodedJSValue JIT_OPERATION operationResolveScopeForHoistingFuncDeclInEval(ExecState*, JSScope*, UniquedStringImpl*);

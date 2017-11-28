@@ -790,6 +790,10 @@ private:
                     break;
                 }
 
+                case Spread:
+                    VALIDATE((node), !node->child1()->isPhantomAllocation() || node->child1()->op() == PhantomCreateRest);
+                    break;
+
                 case EntrySwitch:
                     VALIDATE((node), node->entrySwitchData()->cases.size() == m_graph.m_numberOfEntrypoints);
                     break;

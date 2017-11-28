@@ -43,6 +43,20 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(JSFixedArrayType, StructureFlags), info());
     }
 
+    ALWAYS_INLINE static JSFixedArray* tryCreate(VM& vm, Structure* structure, unsigned size)
+    {
+        Checked<size_t, RecordOverflow> checkedAllocationSize = allocationSize(size);
+        if (UNLIKELY(checkedAllocationSize.hasOverflowed()))
+            return nullptr;
+
+        void* buffer = tryAllocateCell<JSFixedArray>(vm.heap, checkedAllocationSize.unsafeGet());
+        if (UNLIKELY(!buffer))
+            return nullptr;
+        JSFixedArray* result = new (NotNull, buffer) JSFixedArray(vm, structure, size);
+        result->finishCreation(vm);
+        return result;
+    }
+
     ALWAYS_INLINE static JSFixedArray* createFromArray(ExecState* exec, VM& vm, JSArray* array)
     {
         auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -118,23 +132,6 @@ public:
     void copyToArguments(ExecState*, VirtualRegister firstElementDest, unsigned offset, unsigned length);
 
 private:
-    unsigned m_size;
-
-    ALWAYS_INLINE static JSFixedArray* tryCreate(VM& vm, Structure* structure, unsigned size)
-    {
-        Checked<size_t, RecordOverflow> checkedAllocationSize = allocationSize(size);
-        if (UNLIKELY(checkedAllocationSize.hasOverflowed()))
-            return nullptr;
-
-        void* buffer = tryAllocateCell<JSFixedArray>(vm.heap, checkedAllocationSize.unsafeGet());
-        if (UNLIKELY(!buffer))
-            return nullptr;
-        JSFixedArray* result = new (NotNull, buffer) JSFixedArray(vm, structure, size);
-        result->finishCreation(vm);
-        return result;
-    }
-
-
     JSFixedArray(VM& vm, Structure* structure, unsigned size)
         : Base(vm, structure)
         , m_size(size)
@@ -143,11 +140,12 @@ private:
             buffer()[i].setStartingValue(JSValue());
     }
 
-
     static Checked<size_t, RecordOverflow> allocationSize(Checked<size_t, RecordOverflow> numItems)
     {
         return offsetOfData() + numItems * sizeof(WriteBarrier<Unknown>);
     }
+
+    unsigned m_size;
 };
 
 } // namespace JSC
