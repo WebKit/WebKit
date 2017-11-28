@@ -1,3 +1,16 @@
+2017-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r225166): [GTK] Skipped unit tests are considered failures after glib upgrade
+        https://bugs.webkit.org/show_bug.cgi?id=180072
+
+        Reviewed by Michael Catanzaro.
+
+        This is a bug in GLib that has already been fixed. Backport the patch to fix it until there's a new GLib release
+        we can depend on.
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/glib-gtester-do-not-consider-skipped-tests-as-failures.patch: Added.
+
 2017-11-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         webkitpy: PlatformInfo raises AssertionError "assert self.os_version is not None" in Cygwin since Bug 179621
