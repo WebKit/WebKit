@@ -44,6 +44,7 @@ class PrintStream;
 WTF_EXPORT_PRIVATE void initializeMainThread();
 
 WTF_EXPORT_PRIVATE void callOnMainThread(Function<void()>&&);
+WTF_EXPORT_PRIVATE void callOnMainThreadAndWait(Function<void()>&&);
 
 #if PLATFORM(COCOA)
 WTF_EXPORT_PRIVATE void callOnWebThreadOrDispatchAsyncOnMainThread(void (^block)());
@@ -99,6 +100,7 @@ void initializeMainThreadToProcessMainThreadPlatform();
 
 using WTF::GCThreadType;
 using WTF::callOnMainThread;
+using WTF::callOnMainThreadAndWait;
 using WTF::canAccessThreadLocalDataForThread;
 using WTF::isMainThread;
 using WTF::isMainThreadOrGCThread;

@@ -1,3 +1,16 @@
+2017-11-27  Chris Dumez  <cdumez@apple.com>
+
+        Move callOnMainThreadAndWait() from SocketStreamHandleImplCFNet.cpp to MainThread.h
+        https://bugs.webkit.org/show_bug.cgi?id=180060
+
+        Reviewed by Alex Christensen.
+
+        Move callOnMainThreadAndWait() from SocketStreamHandleImplCFNet.cpp to MainThread.h so that it can be reused.
+
+        * wtf/MainThread.cpp:
+        (WTF::callOnMainThreadAndWait):
+        * wtf/MainThread.h:
+
 2017-11-27  Simon Fraser  <simon.fraser@apple.com>
 
         Use TextStream's indent tracking, rather than passing indent to all the externalRepresentation() functions

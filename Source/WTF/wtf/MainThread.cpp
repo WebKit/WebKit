@@ -35,6 +35,7 @@
 #include "StdLibExtras.h"
 #include "Threading.h"
 #include <mutex>
+#include <wtf/Condition.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadSpecific.h>
@@ -209,6 +210,32 @@ std::optional<GCThreadType> mayBeGCThread()
     if (!isGCThread->isSet())
         return std::nullopt;
     return **isGCThread;
+}
+
+void callOnMainThreadAndWait(WTF::Function<void()>&& function)
+{
+    if (isMainThread()) {
+        function();
+        return;
+    }
+
+    Lock mutex;
+    Condition conditionVariable;
+
+    bool isFinished = false;
+
+    callOnMainThread([&, function = WTFMove(function)] {
+        function();
+
+        std::lock_guard<Lock> lock(mutex);
+        isFinished = true;
+        conditionVariable.notifyOne();
+    });
+
+    std::unique_lock<Lock> lock(mutex);
+    conditionVariable.wait(lock, [&] {
+        return isFinished;
+    });
 }
 
 } // namespace WTF

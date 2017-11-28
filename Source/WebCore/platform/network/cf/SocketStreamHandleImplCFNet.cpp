@@ -151,32 +151,6 @@ CFStringRef SocketStreamHandleImpl::copyPACExecutionDescription(void*)
     return CFSTR("WebSocket proxy PAC file execution");
 }
 
-static void callOnMainThreadAndWait(WTF::Function<void()>&& function)
-{
-    if (isMainThread()) {
-        function();
-        return;
-    }
-
-    Lock mutex;
-    Condition conditionVariable;
-
-    bool isFinished = false;
-
-    callOnMainThread([&, function = WTFMove(function)] {
-        function();
-
-        std::lock_guard<Lock> lock(mutex);
-        isFinished = true;
-        conditionVariable.notifyOne();
-    });
-
-    std::unique_lock<Lock> lock(mutex);
-    conditionVariable.wait(lock, [&] {
-        return isFinished;
-    });
-}
-
 struct MainThreadPACCallbackInfo {
     MainThreadPACCallbackInfo(SocketStreamHandle* handle, CFArrayRef proxyList)
         : handle(handle), proxyList(proxyList)
