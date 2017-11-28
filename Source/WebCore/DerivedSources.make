@@ -1020,9 +1020,13 @@ endif
 endif # IOS
 
 vpath %.in $(WEBKITADDITIONS_HEADER_SEARCH_PATHS)
+vpath %.css $(WEBKITADDITIONS_HEADER_SEARCH_PATHS)
 
 ADDITIONAL_EVENT_NAMES =
 ADDITIONAL_EVENT_TARGET_FACTORY =
+ADDITIONAL_USER_AGENT_STYLE_SHEETS =
+
+-include WebCoreDerivedSourcesAdditions.make
 
 JS_BINDING_IDLS += $(ADDITIONAL_BINDING_IDLS)
 
@@ -1213,39 +1217,40 @@ ColorData.cpp : platform/ColorData.gperf $(WebCore)/make-hash-tools.pl
 
 # user agent style sheets
 
-USER_AGENT_STYLE_SHEETS = $(WebCore)/css/html.css $(WebCore)/css/quirks.css $(WebCore)/css/plugIns.css
-USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/css/svg.css
+USER_AGENT_STYLE_SHEETS = css/html.css css/quirks.css css/plugIns.css css/svg.css
 
 ifeq ($(findstring ENABLE_MATHML,$(FEATURE_DEFINES)), ENABLE_MATHML)
-    USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/css/mathml.css
+    USER_AGENT_STYLE_SHEETS += css/mathml.css
 endif
 
 ifeq ($(findstring ENABLE_VIDEO,$(FEATURE_DEFINES)), ENABLE_VIDEO)
-    USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/css/mediaControls.css
+    USER_AGENT_STYLE_SHEETS += css/mediaControls.css
 endif
 
 ifeq ($(findstring ENABLE_FULLSCREEN_API,$(FEATURE_DEFINES)), ENABLE_FULLSCREEN_API)
-    USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/css/fullscreen.css
+    USER_AGENT_STYLE_SHEETS += css/fullscreen.css
 endif
 
 ifeq ($(findstring ENABLE_SERVICE_CONTROLS,$(FEATURE_DEFINES)), ENABLE_SERVICE_CONTROLS)
-    USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/html/shadow/mac/imageControlsMac.css
+    USER_AGENT_STYLE_SHEETS += html/shadow/mac/imageControlsMac.css
 endif
 
 ifeq ($(OS),MACOS)
-    USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/Modules/plugins/QuickTimePluginReplacement.css
+    USER_AGENT_STYLE_SHEETS += Modules/plugins/QuickTimePluginReplacement.css
 endif
 
 ifeq ($(OS), Windows_NT)
-    USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/css/themeWin.css $(WebCore)/css/themeWinQuirks.css
+    USER_AGENT_STYLE_SHEETS += css/themeWin.css css/themeWinQuirks.css
 endif
 
 ifeq ($(findstring ENABLE_METER_ELEMENT,$(FEATURE_DEFINES)), ENABLE_METER_ELEMENT)
-	USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/html/shadow/meterElementShadow.css
+	USER_AGENT_STYLE_SHEETS += html/shadow/meterElementShadow.css
 endif
 
+USER_AGENT_STYLE_SHEETS += $(ADDITIONAL_USER_AGENT_STYLE_SHEETS)
+
 UserAgentStyleSheets.h : css/make-css-file-arrays.pl bindings/scripts/preprocessor.pm $(USER_AGENT_STYLE_SHEETS) $(PLATFORM_FEATURE_DEFINES)
-	$(PERL) $< --defines "$(FEATURE_DEFINES)" $@ UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
+	$(PERL) $< --defines "$(FEATURE_DEFINES)" $@ UserAgentStyleSheetsData.cpp $(foreach file, $^, $(if $(findstring $(notdir $(file)), $(USER_AGENT_STYLE_SHEETS)), $(file)))
 
 # --------
 
