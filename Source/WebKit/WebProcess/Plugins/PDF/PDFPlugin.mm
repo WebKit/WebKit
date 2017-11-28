@@ -70,6 +70,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/MouseEvent.h>
+#import <WebCore/PDFDocumentImage.h>
 #import <WebCore/Page.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PluginData.h>
@@ -979,29 +980,13 @@ JSObjectRef PDFPlugin::makeJSPDFDoc(JSContextRef ctx)
     return JSObjectMake(ctx, jsPDFDocClass, this);
 }
 
-static RetainPtr<CFMutableDataRef> convertPostScriptDataToPDF(RetainPtr<CFDataRef> postScriptData)
-{
-    // Convert PostScript to PDF using the Quartz 2D API.
-    // http://developer.apple.com/documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/dq_ps_convert/chapter_16_section_1.html
-
-    CGPSConverterCallbacks callbacks = { 0, 0, 0, 0, 0, 0, 0, 0 };
-    RetainPtr<CGPSConverterRef> converter = adoptCF(CGPSConverterCreate(0, &callbacks, 0));
-    RetainPtr<CGDataProviderRef> provider = adoptCF(CGDataProviderCreateWithCFData(postScriptData.get()));
-    RetainPtr<CFMutableDataRef> pdfData = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, 0));
-    RetainPtr<CGDataConsumerRef> consumer = adoptCF(CGDataConsumerCreateWithCFData(pdfData.get()));
-    
-    CGPSConverterConvert(converter.get(), provider.get(), consumer.get(), 0);
-    
-    return pdfData;
-}
-
 void PDFPlugin::convertPostScriptDataIfNeeded()
 {
     if (!m_isPostScript)
         return;
 
     m_suggestedFilename = String(m_suggestedFilename + ".pdf");
-    m_data = convertPostScriptDataToPDF(m_data);
+    m_data = PDFDocumentImage::convertPostScriptDataToPDF(WTFMove(m_data));
 }
 
 void PDFPlugin::pdfDocumentDidLoad()

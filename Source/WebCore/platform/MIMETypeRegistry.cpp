@@ -603,11 +603,6 @@ bool MIMETypeRegistry::isJavaAppletMIMEType(const String& mimeType)
         || startsWithLettersIgnoringASCIICase(mimeType, "application/x-java-vm");
 }
 
-bool MIMETypeRegistry::isPDFOrPostScriptMIMEType(const String& mimeType)
-{
-    return isPDFMIMEType(mimeType) || mimeType == "application/postscript";
-}
-
 bool MIMETypeRegistry::isPDFMIMEType(const String& mimeType)
 {
     if (mimeType.isEmpty())
@@ -615,6 +610,16 @@ bool MIMETypeRegistry::isPDFMIMEType(const String& mimeType)
     if (!pdfMIMETypes)
         initializePDFMIMETypes();
     return pdfMIMETypes->contains(mimeType);
+}
+
+bool MIMETypeRegistry::isPostScriptMIMEType(const String& mimeType)
+{
+    return mimeType == "application/postscript";
+}
+
+bool MIMETypeRegistry::isPDFOrPostScriptMIMEType(const String& mimeType)
+{
+    return isPDFMIMEType(mimeType) || isPostScriptMIMEType(mimeType);
 }
 
 bool MIMETypeRegistry::canShowMIMEType(const String& mimeType)

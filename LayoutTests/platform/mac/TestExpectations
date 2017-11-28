@@ -17,6 +17,7 @@ fast/forms/search/search-padding-cancel-results-buttons.html [ Pass ]
 fast/forms/search/search-results-hidden-crash.html [ Pass ]
 
 fast/url/user-visible [ Pass ]
+fast/images/eps-as-image.html [ Pass ]
 
 fast/text-autosizing/ios/ipad/programmatic-text-size-adjust.html [ Skip ]
 fast/text-autosizing/ios/ipad/text-size-adjust-inline-style.html [ Skip ]

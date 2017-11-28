@@ -94,6 +94,9 @@ private:
 
     void setBodyDataFrom(const CachedResource&) final;
 
+    bool isPDFResource() const;
+    bool isPostScriptResource() const;
+
     void createImage();
     void clearImage();
     // If not null, changeRect is the changed part of the image.
@@ -110,8 +113,9 @@ private:
     void destroyDecodedData() override;
 
     bool shouldDeferUpdateImageData() const;
+    RefPtr<SharedBuffer> convertedDataIfNeeded(SharedBuffer* data) const;
     void didUpdateImageData();
-    EncodedDataStatus updateImageData(SharedBuffer*, bool allDataReceived);
+    EncodedDataStatus updateImageData(bool allDataReceived);
     void updateData(const char* data, unsigned length) override;
     void error(CachedResource::Status) override;
     void responseReceived(const ResourceResponse&) override;

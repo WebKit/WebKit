@@ -1,3 +1,18 @@
+2017-11-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [CG] PostScript images should be supported if they are sub-resource images
+        https://bugs.webkit.org/show_bug.cgi?id=178502
+        <rdar://problem/35102988>
+
+        Reviewed by Simon Fraser.
+
+        Make convertPostScriptDataToPDF() be as static function of PDFDocumentImage
+        in WebCore.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::convertPostScriptDataIfNeeded):
+        (WebKit::convertPostScriptDataToPDF): Deleted.
+
 2017-11-28  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI for adding strings directly to a _WKVisitedLinkStore

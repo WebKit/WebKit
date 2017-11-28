@@ -54,6 +54,10 @@ public:
     }
 
     void setPdfImageCachingPolicy(PDFImageCachingPolicy);
+    
+#if PLATFORM(MAC)
+    WEBCORE_EXPORT static RetainPtr<CFMutableDataRef> convertPostScriptDataToPDF(RetainPtr<CFDataRef>&& postScriptData);
+#endif
 
 private:
     PDFDocumentImage(ImageObserver*);
@@ -101,11 +105,11 @@ private:
     AffineTransform m_cachedTransform;
     FloatSize m_cachedDestinationSize;
     FloatRect m_cachedSourceRect;
-    size_t m_cachedBytes;
+    size_t m_cachedBytes { 0 };
 
     FloatRect m_cropBox;
-    int m_rotationDegrees; // Can only be 0, 90, 180, or 270 degrees.
-    bool m_hasPage;
+    int m_rotationDegrees { 0 }; // Can only be 0, 90, 180, or 270 degrees.
+    bool m_hasPage { false };
 };
 
 }
