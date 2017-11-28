@@ -170,7 +170,7 @@ public:
     static Ref<DomainABackendDispatcher> create(BackendDispatcher&, DomainABackendDispatcherHandler*);
     void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
 private:
-    void enable(long requestId, RefPtr<InspectorObject>&& parameters);
+    void enable(long requestId, RefPtr<JSON::Object>&& parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
     void setAlternateDispatcher(AlternateDomainABackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
@@ -187,7 +187,7 @@ public:
     static Ref<DomainBBackendDispatcher> create(BackendDispatcher&, DomainBBackendDispatcherHandler*);
     void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
 private:
-    void enable(long requestId, RefPtr<InspectorObject>&& parameters);
+    void enable(long requestId, RefPtr<JSON::Object>&& parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
     void setAlternateDispatcher(AlternateDomainBBackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
@@ -237,7 +237,7 @@ private:
 #include "TestBackendDispatchers.h"
 
 #include <inspector/InspectorFrontendRouter.h>
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
@@ -275,7 +275,7 @@ void DomainABackendDispatcher::dispatch(long requestId, const String& method, Re
         m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\'', "DomainA", '.', method, "' was not found"));
 }
 
-void DomainABackendDispatcher::enable(long requestId, RefPtr<InspectorObject>&&)
+void DomainABackendDispatcher::enable(long requestId, RefPtr<JSON::Object>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -285,11 +285,11 @@ void DomainABackendDispatcher::enable(long requestId, RefPtr<InspectorObject>&&)
 #endif
 
     ErrorString error;
-    Ref<InspectorObject> result = InspectorObject::create();
+    Ref<JSON::Object> result = JSON::Object::create();
     m_agent->enable(error);
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result), false);
     else
         m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
@@ -319,7 +319,7 @@ void DomainBBackendDispatcher::dispatch(long requestId, const String& method, Re
         m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\'', "DomainB", '.', method, "' was not found"));
 }
 
-void DomainBBackendDispatcher::enable(long requestId, RefPtr<InspectorObject>&&)
+void DomainBBackendDispatcher::enable(long requestId, RefPtr<JSON::Object>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -329,11 +329,11 @@ void DomainBBackendDispatcher::enable(long requestId, RefPtr<InspectorObject>&&)
 #endif
 
     ErrorString error;
-    Ref<InspectorObject> result = InspectorObject::create();
+    Ref<JSON::Object> result = JSON::Object::create();
     m_agent->enable(error);
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result), false);
     else
         m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
@@ -376,7 +376,7 @@ void DomainBBackendDispatcher::enable(long requestId, RefPtr<InspectorObject>&&)
 #pragma once
 
 #include "TestProtocolObjects.h"
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -627,7 +627,7 @@ private:
 
 #include "TestProtocolInternal.h"
 #include "TestProtocolTypeConversions.h"
-#include <JavaScriptCore/InspectorValues.h>
+#include <wtf/JSONValues.h>
 
 namespace Inspector {
 
@@ -639,7 +639,7 @@ void ObjCInspectorDomainABackendDispatcher::enable(long requestId)
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
+        backendDispatcher()->sendResponse(requestId, JSON::Object::create(), false);
     };
 
     [m_delegate enableWithErrorCallback:errorCallback successCallback:successCallback];
@@ -654,7 +654,7 @@ void ObjCInspectorDomainBBackendDispatcher::enable(long requestId)
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
+        backendDispatcher()->sendResponse(requestId, JSON::Object::create(), false);
     };
 
     [m_delegate enableWithErrorCallback:errorCallback successCallback:successCallback];
@@ -848,7 +848,7 @@ using namespace Inspector;
 #import "TestProtocolInternal.h"
 
 #import "TestProtocolTypeConversions.h"
-#import <JavaScriptCore/InspectorValues.h>
+#import <wtf/JSONValues.h>
 
 using namespace Inspector;
 
@@ -953,7 +953,7 @@ typedef NS_ENUM(NSInteger, TestProtocolPlatform) {
 #import "TestProtocol.h"
 #import "TestProtocolJSONObjectPrivate.h"
 #import <JavaScriptCore/AugmentableInspectorController.h>
-#import <JavaScriptCore/InspectorValues.h>
+#import <wtf/JSONValues.h>
 
 
 
@@ -1112,8 +1112,8 @@ using namespace Inspector;
 
 #import "TestProtocolTypeConversions.h"
 #import <WebInspector/RWIProtocolJSONObjectPrivate.h>
-#import <JavaScriptCore/InspectorValues.h>
 #import <wtf/Assertions.h>
+#import <wtf/JSONValues.h>
 
 using namespace Inspector;
 

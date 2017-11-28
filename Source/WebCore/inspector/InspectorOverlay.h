@@ -35,20 +35,10 @@
 #include "Timer.h"
 #include <inspector/InspectorProtocolObjects.h>
 #include <wtf/Deque.h>
+#include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
-
-namespace Inspector {
-class InspectorObject;
-class InspectorValue;
-
-namespace Protocol {
-namespace OverlayTypes {
-class NodeHighlightData;
-}
-}
-}
 
 namespace WebCore {
 
@@ -151,7 +141,7 @@ private:
     void reset(const IntSize& viewportSize, const IntSize& frameViewFullSize);
     void evaluateInOverlay(const String& method);
     void evaluateInOverlay(const String& method, const String& argument);
-    void evaluateInOverlay(const String& method, RefPtr<Inspector::InspectorValue>&& argument);
+    void evaluateInOverlay(const String& method, RefPtr<JSON::Value>&& argument);
 
     Page& m_page;
     InspectorClient* m_client;

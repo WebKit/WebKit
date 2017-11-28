@@ -169,7 +169,7 @@ public:
     static Ref<CommandDomainBackendDispatcher> create(BackendDispatcher&, CommandDomainBackendDispatcherHandler*);
     void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
 private:
-    void commandWithEnumReturnValue(long requestId, RefPtr<InspectorObject>&& parameters);
+    void commandWithEnumReturnValue(long requestId, RefPtr<JSON::Object>&& parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
     void setAlternateDispatcher(AlternateCommandDomainBackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
@@ -219,7 +219,7 @@ private:
 #include "TestBackendDispatchers.h"
 
 #include <inspector/InspectorFrontendRouter.h>
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
@@ -256,7 +256,7 @@ void CommandDomainBackendDispatcher::dispatch(long requestId, const String& meth
         m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\'', "CommandDomain", '.', method, "' was not found"));
 }
 
-void CommandDomainBackendDispatcher::commandWithEnumReturnValue(long requestId, RefPtr<InspectorObject>&&)
+void CommandDomainBackendDispatcher::commandWithEnumReturnValue(long requestId, RefPtr<JSON::Object>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -266,7 +266,7 @@ void CommandDomainBackendDispatcher::commandWithEnumReturnValue(long requestId, 
 #endif
 
     ErrorString error;
-    Ref<InspectorObject> result = InspectorObject::create();
+    Ref<JSON::Object> result = JSON::Object::create();
     CommandDomainBackendDispatcherHandler::ReturnValue out_returnValue;
     m_agent->commandWithEnumReturnValue(error, &out_returnValue);
 
@@ -274,7 +274,7 @@ void CommandDomainBackendDispatcher::commandWithEnumReturnValue(long requestId, 
         result->setString(ASCIILiteral("returnValue"), Inspector::Protocol::TestHelpers::getEnumConstantValue(out_returnValue));
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result), false);
     else
         m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
@@ -317,7 +317,7 @@ void CommandDomainBackendDispatcher::commandWithEnumReturnValue(long requestId, 
 #pragma once
 
 #include "TestProtocolObjects.h"
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -382,9 +382,9 @@ namespace Inspector {
 
 void EventDomainFrontendDispatcher::eventWithEnumParameter(Parameter parameter)
 {
-    Ref<InspectorObject> jsonMessage = InspectorObject::create();
+    Ref<JSON::Object> jsonMessage = JSON::Object::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("EventDomain.eventWithEnumParameter"));
-    Ref<InspectorObject> paramsObject = InspectorObject::create();
+    Ref<JSON::Object> paramsObject = JSON::Object::create();
     paramsObject->setString(ASCIILiteral("parameter"), Inspector::Protocol::TestHelpers::getEnumConstantValue(parameter));
     jsonMessage->setObject(ASCIILiteral("params"), WTFMove(paramsObject));
 
@@ -659,7 +659,7 @@ private:
 
 #include "TestProtocolInternal.h"
 #include "TestProtocolTypeConversions.h"
-#include <JavaScriptCore/InspectorValues.h>
+#include <wtf/JSONValues.h>
 
 namespace Inspector {
 
@@ -671,9 +671,9 @@ void ObjCInspectorCommandDomainBackendDispatcher::commandWithEnumReturnValue(lon
     };
 
     id successCallback = ^(TestProtocolCommandDomainCommandWithEnumReturnValueReturnValue returnValue) {
-        Ref<InspectorObject> resultObject = InspectorObject::create();
+        Ref<JSON::Object> resultObject = JSON::Object::create();
         resultObject->setString(ASCIILiteral("returnValue"), toProtocolString(returnValue));
-        backendDispatcher()->sendResponse(requestId, WTFMove(resultObject));
+        backendDispatcher()->sendResponse(requestId, WTFMove(resultObject), false);
     };
 
     [m_delegate commandWithEnumReturnValueWithErrorCallback:errorCallback successCallback:successCallback];
@@ -856,7 +856,7 @@ using namespace Inspector;
 #import "TestProtocolInternal.h"
 
 #import "TestProtocolTypeConversions.h"
-#import <JavaScriptCore/InspectorValues.h>
+#import <wtf/JSONValues.h>
 
 using namespace Inspector;
 
@@ -879,9 +879,9 @@ using namespace Inspector;
 {
     const FrontendRouter& router = _controller->frontendRouter();
 
-    Ref<InspectorObject> jsonMessage = InspectorObject::create();
+    Ref<JSON::Object> jsonMessage = JSON::Object::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("EventDomain.eventWithEnumParameter"));
-    Ref<InspectorObject> paramsObject = InspectorObject::create();
+    Ref<JSON::Object> paramsObject = JSON::Object::create();
     paramsObject->setString(ASCIILiteral("parameter"), toProtocolString(parameter));
     jsonMessage->setObject(ASCIILiteral("params"), WTFMove(paramsObject));
     router.sendEvent(jsonMessage->toJSONString());
@@ -994,7 +994,7 @@ __attribute__((visibility ("default")))
 #import "TestProtocol.h"
 #import "TestProtocolJSONObjectPrivate.h"
 #import <JavaScriptCore/AugmentableInspectorController.h>
-#import <JavaScriptCore/InspectorValues.h>
+#import <wtf/JSONValues.h>
 
 @interface TestProtocolEventDomainDomainEventDispatcher (Private)
 - (instancetype)initWithController:(Inspector::AugmentableInspectorController*)controller;
@@ -1198,8 +1198,8 @@ using namespace Inspector;
 
 #import "TestProtocolTypeConversions.h"
 #import <WebInspector/RWIProtocolJSONObjectPrivate.h>
-#import <JavaScriptCore/InspectorValues.h>
 #import <wtf/Assertions.h>
+#import <wtf/JSONValues.h>
 
 using namespace Inspector;
 

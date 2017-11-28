@@ -114,20 +114,6 @@ list(APPEND TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/glib/WorkQueueGLib.cpp
 )
 
-add_executable(TestJavaScriptCore
-    ${test_main_SOURCES}
-    ${TESTWEBKITAPI_DIR}/TestsController.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/JavaScriptCore/InspectorValue.cpp
-)
-
-target_link_libraries(TestJavaScriptCore ${TestJavaScriptCore_LIBRARIES})
-add_dependencies(TestJavaScriptCore ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
-add_test(TestJavaScriptCore ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/JavaScriptCore/TestJavaScriptCore)
-set_tests_properties(TestJavaScriptCore PROPERTIES TIMEOUT 60)
-set_target_properties(TestJavaScriptCore PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/JavaScriptCore/
-)
-
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKit -Wno-sign-compare
                                            -Wno-undef
@@ -136,8 +122,4 @@ if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebCore -Wno-sign-compare
                                             -Wno-undef
                                             -Wno-unused-parameter)
-
-    WEBKIT_ADD_TARGET_CXX_FLAGS(TestJavaScriptCore -Wno-sign-compare
-                                                   -Wno-undef
-                                                   -Wno-unused-parameter)
 endif ()

@@ -1,3 +1,71 @@
+2017-11-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Move JSONValues to WTF and convert uses of InspectorValues.h to JSONValues.h
+        https://bugs.webkit.org/show_bug.cgi?id=173793
+
+        Reviewed by Joseph Pecoraro.
+
+        Based on patch by Brian Burg.
+
+        Move the implementation into WTF. Put the actual implementation inside
+        namespace WTF::JSONImpl so that the symbols in libwtf start with the WTF prefix.
+        Also provide a top-level JSON namespace so that clients can write JSON::Value.
+        This is essentially a typedef for the entire WTF::JSONImpl namespace.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/JSONValues.cpp: Renamed from Source/JavaScriptCore/inspector/InspectorValues.cpp.
+        (JSON::Value::null):
+        (JSON::Value::create):
+        (JSON::Value::asValue):
+        (JSON::Value::asObject):
+        (JSON::Value::asArray):
+        (JSON::Value::parseJSON):
+        (JSON::Value::toJSONString const):
+        (JSON::Value::asBoolean const):
+        (JSON::Value::asDouble const):
+        (JSON::Value::asInteger const):
+        (JSON::Value::asString const):
+        (JSON::Value::writeJSON const):
+        (JSON::Value::memoryCost const):
+        (JSON::ObjectBase::~ObjectBase):
+        (JSON::ObjectBase::asObject):
+        (JSON::ObjectBase::openAccessors):
+        (JSON::ObjectBase::memoryCost const):
+        (JSON::ObjectBase::getBoolean const):
+        (JSON::ObjectBase::getString const):
+        (JSON::ObjectBase::getObject const):
+        (JSON::ObjectBase::getArray const):
+        (JSON::ObjectBase::getValue const):
+        (JSON::ObjectBase::remove):
+        (JSON::ObjectBase::writeJSON const):
+        (JSON::ObjectBase::ObjectBase):
+        (JSON::ArrayBase::~ArrayBase):
+        (JSON::ArrayBase::asArray):
+        (JSON::ArrayBase::writeJSON const):
+        (JSON::ArrayBase::ArrayBase):
+        (JSON::ArrayBase::get const):
+        (JSON::Object::create):
+        (JSON::Array::create):
+        (JSON::ArrayBase::memoryCost const):
+        * wtf/JSONValues.h: Renamed from Source/JavaScriptCore/inspector/InspectorValues.h.
+        (JSON::ObjectBase::find):
+        (JSON::ObjectBase::find const):
+        (JSON::ObjectBase::setBoolean):
+        (JSON::ObjectBase::setInteger):
+        (JSON::ObjectBase::setDouble):
+        (JSON::ObjectBase::setString):
+        (JSON::ObjectBase::setValue):
+        (JSON::ObjectBase::setObject):
+        (JSON::ObjectBase::setArray):
+        (JSON::ArrayBase::pushBoolean):
+        (JSON::ArrayBase::pushInteger):
+        (JSON::ArrayBase::pushDouble):
+        (JSON::ArrayBase::pushString):
+        (JSON::ArrayBase::pushValue):
+        (JSON::ArrayBase::pushObject):
+        (JSON::ArrayBase::pushArray):
+
 2017-11-28  Simon Fraser  <simon.fraser@apple.com>
 
         Modernize GraphicsLayer dumping

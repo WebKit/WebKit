@@ -1,3 +1,16 @@
+2017-11-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Move JSONValues to WTF and convert uses of InspectorValues.h to JSONValues.h
+        https://bugs.webkit.org/show_bug.cgi?id=173793
+
+        Reviewed by Joseph Pecoraro.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/JSONValue.cpp: Renamed from Tools/TestWebKitAPI/Tests/JavaScriptCore/InspectorValue.cpp.
+        (TestWebKitAPI::TEST):
+
 2017-11-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Bugs filed from the flakiness dashboard should include a link to the dashboard

@@ -50,7 +50,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
     def generate_output(self):
         secondary_headers = [
             '<inspector/InspectorFrontendRouter.h>',
-            '<inspector/InspectorValues.h>',
+            '<wtf/JSONValues.h>',
             '<wtf/NeverDestroyed.h>',
             '<wtf/text/CString.h>']
 
@@ -277,9 +277,9 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
 
         lines = []
         if len(command.call_parameters) == 0:
-            lines.append('void %(domainName)sBackendDispatcher::%(commandName)s(long requestId, RefPtr<InspectorObject>&&)' % command_args)
+            lines.append('void %(domainName)sBackendDispatcher::%(commandName)s(long requestId, RefPtr<JSON::Object>&&)' % command_args)
         else:
-            lines.append('void %(domainName)sBackendDispatcher::%(commandName)s(long requestId, RefPtr<InspectorObject>&& parameters)' % command_args)
+            lines.append('void %(domainName)sBackendDispatcher::%(commandName)s(long requestId, RefPtr<JSON::Object>&& parameters)' % command_args)
         lines.append('{')
 
         if len(command.call_parameters) > 0:
@@ -295,7 +295,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
             lines.append('')
 
         lines.append('    ErrorString error;')
-        lines.append('    Ref<InspectorObject> result = InspectorObject::create();')
+        lines.append('    Ref<JSON::Object> result = JSON::Object::create();')
         if command.is_async:
             lines.append('    Ref<%(domainName)sBackendDispatcherHandler::%(callbackName)s> callback = adoptRef(*new %(domainName)sBackendDispatcherHandler::%(callbackName)s(m_backendDispatcher.copyRef(), requestId));' % command_args)
         if len(command.return_parameters) > 0:
@@ -317,7 +317,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
 
         if not command.is_async:
             lines.append('    if (!error.length())')
-            lines.append('        m_backendDispatcher->sendResponse(requestId, WTFMove(result));')
+            lines.append('        m_backendDispatcher->sendResponse(requestId, WTFMove(result), false);')
             lines.append('    else')
             lines.append('        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));')
         lines.append('}')

@@ -36,8 +36,8 @@
 #include "LayoutRect.h"
 #include <inspector/InspectorBackendDispatchers.h>
 #include <inspector/InspectorFrontendDispatchers.h>
-#include <inspector/InspectorValues.h>
 #include <inspector/ScriptDebugListener.h>
+#include <wtf/JSONValues.h>
 #include <wtf/Vector.h>
 
 namespace Inspector {
@@ -101,7 +101,7 @@ public:
     void start(ErrorString&, const int* const maxCallStackDepth = nullptr) final;
     void stop(ErrorString&) final;
     void setAutoCaptureEnabled(ErrorString&, bool) final;
-    void setInstruments(ErrorString&, const Inspector::InspectorArray&) final;
+    void setInstruments(ErrorString&, const JSON::Array&) final;
 
     int id() const { return m_id; }
 
@@ -170,7 +170,7 @@ private:
     struct TimelineRecordEntry {
         TimelineRecordEntry()
             : type(TimelineRecordType::EventDispatch) { }
-        TimelineRecordEntry(RefPtr<Inspector::InspectorObject>&& record, RefPtr<Inspector::InspectorObject>&& data, RefPtr<Inspector::InspectorArray>&& children, TimelineRecordType type)
+        TimelineRecordEntry(RefPtr<JSON::Object>&& record, RefPtr<JSON::Object>&& data, RefPtr<JSON::Array>&& children, TimelineRecordType type)
             : record(WTFMove(record))
             , data(WTFMove(data))
             , children(WTFMove(children))
@@ -178,9 +178,9 @@ private:
         {
         }
 
-        RefPtr<Inspector::InspectorObject> record;
-        RefPtr<Inspector::InspectorObject> data;
-        RefPtr<Inspector::InspectorArray> children;
+        RefPtr<JSON::Object> record;
+        RefPtr<JSON::Object> data;
+        RefPtr<JSON::Array> children;
         TimelineRecordType type;
     };
 
@@ -188,19 +188,19 @@ private:
     void internalStop();
     double timestamp();
 
-    void sendEvent(RefPtr<Inspector::InspectorObject>&&);
-    void appendRecord(RefPtr<Inspector::InspectorObject>&& data, TimelineRecordType, bool captureCallStack, Frame*);
-    void pushCurrentRecord(RefPtr<Inspector::InspectorObject>&&, TimelineRecordType, bool captureCallStack, Frame*);
+    void sendEvent(RefPtr<JSON::Object>&&);
+    void appendRecord(RefPtr<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, Frame*);
+    void pushCurrentRecord(RefPtr<JSON::Object>&&, TimelineRecordType, bool captureCallStack, Frame*);
     void pushCurrentRecord(const TimelineRecordEntry& record) { m_recordStack.append(record); }
 
-    TimelineRecordEntry createRecordEntry(RefPtr<Inspector::InspectorObject>&& data, TimelineRecordType, bool captureCallStack, Frame*);
+    TimelineRecordEntry createRecordEntry(RefPtr<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, Frame*);
 
-    void setFrameIdentifier(Inspector::InspectorObject* record, Frame*);
+    void setFrameIdentifier(JSON::Object* record, Frame*);
 
     void didCompleteRecordEntry(const TimelineRecordEntry&);
     void didCompleteCurrentRecord(TimelineRecordType);
 
-    void addRecordToTimeline(RefPtr<Inspector::InspectorObject>&&, TimelineRecordType);
+    void addRecordToTimeline(RefPtr<JSON::Object>&&, TimelineRecordType);
     void clearRecordStack();
 
     void localToPageQuad(const RenderObject&, const LayoutRect&, FloatQuad*);

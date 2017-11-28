@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "InspectorValues.h"
 #include <wtf/Assertions.h>
+#include <wtf/JSONValues.h>
 
 namespace Inspector {
 
@@ -62,14 +62,14 @@ private:
 };
 
 template<typename T>
-class Array : public InspectorArrayBase {
+class Array : public JSON::ArrayBase {
 private:
     Array() { }
 
-    InspectorArray& openAccessors()
+    JSON::Array& openAccessors()
     {
-        COMPILE_ASSERT(sizeof(InspectorArray) == sizeof(Array<T>), cannot_cast);
-        return *static_cast<InspectorArray*>(static_cast<InspectorArrayBase*>(this));
+        COMPILE_ASSERT(sizeof(JSON::Array) == sizeof(Array<T>), cannot_cast);
+        return *static_cast<JSON::Array*>(static_cast<JSON::ArrayBase*>(this));
     }
 
 public:
@@ -104,25 +104,25 @@ public:
     }
 };
 
-// Helper methods for Protocol and other Inspector types are provided by
+// Helper methods for Protocol and other JSON types are provided by
 // specializations of BindingTraits<T>. Some are generated for protocol types.
 
 template<typename T>
 struct BindingTraits {
     typedef T BindingType;
 
-    static void push(InspectorArray&, BindingType&);
-    static InspectorValue::Type typeTag();
-    static RefPtr<T> runtimeCast(RefPtr<InspectorObject>&&);
+    static void push(JSON::Array&, BindingType&);
+    static JSON::Value::Type typeTag();
+    static RefPtr<T> runtimeCast(RefPtr<JSON::Object>&&);
 #if !ASSERT_DISABLED
-    static void assertValueHasExpectedType(InspectorValue*);
+    static void assertValueHasExpectedType(JSON::Value*);
 #endif // !ASSERT_DISABLED
 };
 
-template<InspectorValue::Type TYPE>
+template<JSON::Value::Type TYPE>
 struct PrimitiveBindingTraits {
 #if !ASSERT_DISABLED
-    static void assertValueHasExpectedType(InspectorValue* value)
+    static void assertValueHasExpectedType(JSON::Value* value)
     {
         ASSERT_ARG(value, value && value->type() == TYPE);
     }
@@ -131,24 +131,24 @@ struct PrimitiveBindingTraits {
 
 template<typename T>
 struct BindingTraits<Protocol::Array<T>> {
-    static RefPtr<Array<T>> runtimeCast(RefPtr<InspectorValue>&& value)
+    static RefPtr<Array<T>> runtimeCast(RefPtr<JSON::Value>&& value)
     {
         ASSERT_ARG(value, value);
-        RefPtr<InspectorArray> array;
+        RefPtr<JSON::Array> array;
         bool castSucceeded = value->asArray(array);
         ASSERT_UNUSED(castSucceeded, castSucceeded);
 #if !ASSERT_DISABLED
         assertValueHasExpectedType(array.get());
 #endif // !ASSERT_DISABLED
-        COMPILE_ASSERT(sizeof(Array<T>) == sizeof(InspectorArray), type_cast_problem);
-        return static_cast<Array<T>*>(static_cast<InspectorArrayBase*>(array.get()));
+        COMPILE_ASSERT(sizeof(Array<T>) == sizeof(JSON::Array), type_cast_problem);
+        return static_cast<Array<T>*>(static_cast<JSON::ArrayBase*>(array.get()));
     }
 
 #if !ASSERT_DISABLED
-    static void assertValueHasExpectedType(InspectorValue* value)
+    static void assertValueHasExpectedType(JSON::Value* value)
     {
         ASSERT_ARG(value, value);
-        RefPtr<InspectorArray> array;
+        RefPtr<JSON::Array> array;
         bool castSucceeded = value->asArray(array);
         ASSERT_UNUSED(castSucceeded, castSucceeded);
         for (unsigned i = 0; i < array->length(); i++)
@@ -158,20 +158,20 @@ struct BindingTraits<Protocol::Array<T>> {
 };
 
 template<>
-struct BindingTraits<InspectorValue> {
+struct BindingTraits<JSON::Value> {
 #if !ASSERT_DISABLED
-    static void assertValueHasExpectedType(InspectorValue*)
+    static void assertValueHasExpectedType(JSON::Value*)
     {
     }
 #endif // !ASSERT_DISABLED
 };
 
-template<> struct BindingTraits<InspectorArray> : public PrimitiveBindingTraits<InspectorValue::Type::Array> { };
-template<> struct BindingTraits<InspectorObject> : public PrimitiveBindingTraits<InspectorValue::Type::Object> { };
-template<> struct BindingTraits<String> : public PrimitiveBindingTraits<InspectorValue::Type::String> { };
-template<> struct BindingTraits<bool> : public PrimitiveBindingTraits<InspectorValue::Type::Boolean> { };
-template<> struct BindingTraits<double> : public PrimitiveBindingTraits<InspectorValue::Type::Double> { };
-template<> struct BindingTraits<int> : public PrimitiveBindingTraits<InspectorValue::Type::Integer> { };
+template<> struct BindingTraits<JSON::Array> : public PrimitiveBindingTraits<JSON::Value::Type::Array> { };
+template<> struct BindingTraits<JSON::Object> : public PrimitiveBindingTraits<JSON::Value::Type::Object> { };
+template<> struct BindingTraits<String> : public PrimitiveBindingTraits<JSON::Value::Type::String> { };
+template<> struct BindingTraits<bool> : public PrimitiveBindingTraits<JSON::Value::Type::Boolean> { };
+template<> struct BindingTraits<double> : public PrimitiveBindingTraits<JSON::Value::Type::Double> { };
+template<> struct BindingTraits<int> : public PrimitiveBindingTraits<JSON::Value::Type::Integer> { };
 
 } // namespace Protocol
 

@@ -1194,6 +1194,7 @@
 		978801411471AD920041B016 /* JSDateMath.h in Headers */ = {isa = PBXBuildFile; fileRef = 9788FC231471AD0C0068CE2D /* JSDateMath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		981ED82328234D91BAECCADE /* MachineContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 28806E21155E478A93FA7B02 /* MachineContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		990DA67F1C8E316A00295159 /* generate_objc_protocol_type_conversions_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = 990DA67E1C8E311D00295159 /* generate_objc_protocol_type_conversions_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		992D6A131FBD492E000245F4 /* DeprecatedInspectorValues.h in Headers */ = {isa = PBXBuildFile; fileRef = 992D6A101FBD491C000245F4 /* DeprecatedInspectorValues.h */; };
 		992F56B71E4E84B20035953B /* RemoteInspectorXPCConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 992F56B11E4E84790035953B /* RemoteInspectorXPCConnection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9959E92B1BD17FA4001AA413 /* cssmin.py in Headers */ = {isa = PBXBuildFile; fileRef = 9959E9271BD17FA0001AA413 /* cssmin.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		9959E92D1BD17FA4001AA413 /* jsmin.py in Headers */ = {isa = PBXBuildFile; fileRef = 9959E9291BD17FA0001AA413 /* jsmin.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1303,7 +1304,6 @@
 		A58C024218E4A41A00032BC5 /* JSContextPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A58C024118E4A41A00032BC5 /* JSContextPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A593CF7D1840360300BFCE27 /* InspectorBackendDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = A593CF7B1840360300BFCE27 /* InspectorBackendDispatcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A593CF7F1840362C00BFCE27 /* InspectorAgentBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A593CF7E1840362C00BFCE27 /* InspectorAgentBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A593CF831840377100BFCE27 /* InspectorValues.h in Headers */ = {isa = PBXBuildFile; fileRef = A593CF811840377100BFCE27 /* InspectorValues.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A593CF87184038CA00BFCE27 /* InspectorAgentRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = A593CF85184038CA00BFCE27 /* InspectorAgentRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A59455931824744700CC3843 /* JSGlobalObjectDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = A59455911824744700CC3843 /* JSGlobalObjectDebuggable.h */; };
 		A5945595182479EB00CC3843 /* InspectorFrontendChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = A5945594182479EB00CC3843 /* InspectorFrontendChannel.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3765,6 +3765,8 @@
 		990DA67E1C8E311D00295159 /* generate_objc_protocol_type_conversions_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_objc_protocol_type_conversions_implementation.py; sourceTree = "<group>"; };
 		992ABCF51BEA94CA006403A0 /* RemoteAutomationTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAutomationTarget.cpp; sourceTree = "<group>"; };
 		992ABCF61BEA94CA006403A0 /* RemoteAutomationTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteAutomationTarget.h; sourceTree = "<group>"; };
+		992D6A101FBD491C000245F4 /* DeprecatedInspectorValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedInspectorValues.h; sourceTree = "<group>"; };
+		992D6A111FBD491D000245F4 /* DeprecatedInspectorValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedInspectorValues.cpp; sourceTree = "<group>"; };
 		992F56B01E4E84790035953B /* RemoteInspectorCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteInspectorCocoa.mm; sourceTree = "<group>"; };
 		992F56B11E4E84790035953B /* RemoteInspectorXPCConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteInspectorXPCConnection.h; sourceTree = "<group>"; };
 		992F56B21E4E84790035953B /* RemoteInspectorXPCConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteInspectorXPCConnection.mm; sourceTree = "<group>"; };
@@ -3926,8 +3928,6 @@
 		A593CF7A1840360300BFCE27 /* InspectorBackendDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorBackendDispatcher.cpp; sourceTree = "<group>"; };
 		A593CF7B1840360300BFCE27 /* InspectorBackendDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorBackendDispatcher.h; sourceTree = "<group>"; };
 		A593CF7E1840362C00BFCE27 /* InspectorAgentBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAgentBase.h; sourceTree = "<group>"; };
-		A593CF801840377100BFCE27 /* InspectorValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorValues.cpp; sourceTree = "<group>"; };
-		A593CF811840377100BFCE27 /* InspectorValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorValues.h; sourceTree = "<group>"; };
 		A593CF84184038CA00BFCE27 /* InspectorAgentRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAgentRegistry.cpp; sourceTree = "<group>"; };
 		A593CF85184038CA00BFCE27 /* InspectorAgentRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAgentRegistry.h; sourceTree = "<group>"; };
 		A594558E18245EDE00CC3843 /* RemoteInspectionTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteInspectionTarget.cpp; sourceTree = "<group>"; };
@@ -7543,6 +7543,15 @@
 			path = bytecode;
 			sourceTree = "<group>";
 		};
+		994053E71FCDC94100D67A27 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				992D6A111FBD491D000245F4 /* DeprecatedInspectorValues.cpp */,
+				992D6A101FBD491C000245F4 /* DeprecatedInspectorValues.h */,
+			);
+			path = cocoa;
+			sourceTree = "<group>";
+		};
 		9959E9251BD17F1E001AA413 /* Scripts */ = {
 			isa = PBXGroup;
 			children = (
@@ -7630,6 +7639,7 @@
 			children = (
 				A513E5CC185FB992007E95AD /* agents */,
 				A5EA70E319F5B0E20098F5EC /* augmentable */,
+				994053E71FCDC94100D67A27 /* cocoa */,
 				A532438D185696CA002ED692 /* protocol */,
 				A5BA15E01823409D00A82E69 /* remote */,
 				A532438E185696CE002ED692 /* scripts */,
@@ -7664,8 +7674,6 @@
 				99F1A6FC1B8E6D9400463B26 /* InspectorFrontendRouter.cpp */,
 				99F1A7001B98FBEC00463B26 /* InspectorFrontendRouter.h */,
 				A55D93AB18514F7900400DED /* InspectorProtocolTypes.h */,
-				A593CF801840377100BFCE27 /* InspectorValues.cpp */,
-				A593CF811840377100BFCE27 /* InspectorValues.h */,
 				A503FA13188E0FAF00110F14 /* JavaScriptCallFrame.cpp */,
 				A503FA14188E0FAF00110F14 /* JavaScriptCallFrame.h */,
 				A5C3A1A318C0490200C9593A /* JSGlobalObjectConsoleClient.cpp */,
@@ -8257,6 +8265,7 @@
 				FE5068651AE246390009DAB7 /* DeferredSourceDump.h in Headers */,
 				473DA4A4764C45FE871B0485 /* DefinePropertyAttributes.h in Headers */,
 				0FBB73BB1DEF8645002C009E /* DeleteAllCodeEffort.h in Headers */,
+				992D6A131FBD492E000245F4 /* DeprecatedInspectorValues.h in Headers */,
 				0F96303C1D4192CD005609D9 /* DestructionMode.h in Headers */,
 				A77A423E17A0BBFD00A8DB81 /* DFGAbstractHeap.h in Headers */,
 				A704D90317A0BAA8006BA554 /* DFGAbstractInterpreter.h in Headers */,
@@ -8667,7 +8676,6 @@
 				A55D93AC18514F7900400DED /* InspectorProtocolTypes.h in Headers */,
 				A50E4B6218809DD50068A46D /* InspectorRuntimeAgent.h in Headers */,
 				A55165D31BDF0B9E003B75C1 /* InspectorScriptProfilerAgent.h in Headers */,
-				A593CF831840377100BFCE27 /* InspectorValues.h in Headers */,
 				969A07990ED1D3AE00F1F681 /* Instruction.h in Headers */,
 				A7A8AF3B17ADB5F3005AB174 /* Int16Array.h in Headers */,
 				A7A8AF3C17ADB5F3005AB174 /* Int32Array.h in Headers */,

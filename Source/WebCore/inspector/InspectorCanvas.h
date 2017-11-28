@@ -27,7 +27,6 @@
 
 #include "CallTracerTypes.h"
 #include <inspector/InspectorProtocolObjects.h>
-#include <inspector/InspectorValues.h>
 #include <inspector/ScriptCallFrame.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
@@ -64,7 +63,7 @@ public:
 
     RefPtr<Inspector::Protocol::Recording::InitialState>&& releaseInitialState();
     RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Recording::Frame>>&& releaseFrames();
-    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>>&& releaseData();
+    RefPtr<Inspector::Protocol::Array<JSON::Value>>&& releaseData();
 
     void finalizeFrame();
     void markCurrentFrameIncomplete();
@@ -101,11 +100,11 @@ private:
 
     int indexForData(DuplicateDataVariant);
     RefPtr<Inspector::Protocol::Recording::InitialState> buildInitialState();
-    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> buildAction(const String&, Vector<RecordCanvasActionVariant>&& = { });
-    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> buildArrayForCanvasGradient(const CanvasGradient&);
-    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> buildArrayForCanvasPattern(const CanvasPattern&);
-    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> buildArrayForImageData(const ImageData&);
-    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> buildArrayForImageBitmap(const ImageBitmap&);
+    RefPtr<Inspector::Protocol::Array<JSON::Value>> buildAction(const String&, Vector<RecordCanvasActionVariant>&& = { });
+    RefPtr<Inspector::Protocol::Array<JSON::Value>> buildArrayForCanvasGradient(const CanvasGradient&);
+    RefPtr<Inspector::Protocol::Array<JSON::Value>> buildArrayForCanvasPattern(const CanvasPattern&);
+    RefPtr<Inspector::Protocol::Array<JSON::Value>> buildArrayForImageData(const ImageData&);
+    RefPtr<Inspector::Protocol::Array<JSON::Value>> buildArrayForImageBitmap(const ImageBitmap&);
 
     String m_identifier;
     HTMLCanvasElement& m_canvas;
@@ -113,9 +112,9 @@ private:
 
     RefPtr<Inspector::Protocol::Recording::InitialState> m_initialState;
     RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Recording::Frame>> m_frames;
-    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> m_currentActions;
-    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> m_actionNeedingSnapshot;
-    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> m_serializedDuplicateData;
+    RefPtr<Inspector::Protocol::Array<JSON::Value>> m_currentActions;
+    RefPtr<Inspector::Protocol::Array<JSON::Value>> m_actionNeedingSnapshot;
+    RefPtr<Inspector::Protocol::Array<JSON::Value>> m_serializedDuplicateData;
     Vector<DuplicateDataVariant> m_indexedDuplicateData;
     double m_currentFrameStartTime { NAN };
     size_t m_bufferLimit { 100 * 1024 * 1024 };

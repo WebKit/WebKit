@@ -35,14 +35,13 @@
 #include "CDMRestrictions.h"
 #include "CDMSessionType.h"
 #include "SharedBuffer.h"
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
 
 
 namespace WebCore {
-using namespace Inspector;
 
 class ClearKeyState {
     using KeyStore = HashMap<String, Vector<CDMInstanceClearKey::Key>>;
@@ -66,7 +65,7 @@ ClearKeyState& ClearKeyState::singleton()
 
 ClearKeyState::ClearKeyState() = default;
 
-static RefPtr<InspectorObject> parseJSONObject(const SharedBuffer& buffer)
+static RefPtr<JSON::Object> parseJSONObject(const SharedBuffer& buffer)
 {
     // Fail on large buffers whose size doesn't fit into a 32-bit unsigned integer.
     size_t size = buffer.size();
@@ -75,15 +74,15 @@ static RefPtr<InspectorObject> parseJSONObject(const SharedBuffer& buffer)
 
     // Parse the buffer contents as JSON, returning the root object (if any).
     String json { buffer.data(), static_cast<unsigned>(size) };
-    RefPtr<InspectorValue> value;
-    RefPtr<InspectorObject> object;
-    if (!InspectorValue::parseJSON(json, value) || !value->asObject(object))
+    RefPtr<JSON::Value> value;
+    RefPtr<JSON::Object> object;
+    if (!JSON::Value::parseJSON(json, value) || !value->asObject(object))
         return nullptr;
 
     return object;
 }
 
-static std::optional<Vector<CDMInstanceClearKey::Key>> parseLicenseFormat(const InspectorObject& root)
+static std::optional<Vector<CDMInstanceClearKey::Key>> parseLicenseFormat(const JSON::Object& root)
 {
     // If the 'keys' key is present in the root object, parse the JSON further
     // according to the specified 'license' format.
@@ -92,14 +91,14 @@ static std::optional<Vector<CDMInstanceClearKey::Key>> parseLicenseFormat(const 
         return std::nullopt;
 
     // Retrieve the keys array.
-    RefPtr<InspectorArray> keysArray;
+    RefPtr<JSON::Array> keysArray;
     if (!it->value->asArray(keysArray))
         return std::nullopt;
 
     Vector<CDMInstanceClearKey::Key> decodedKeys;
     bool validFormat = std::all_of(keysArray->begin(), keysArray->end(),
         [&decodedKeys] (const auto& value) {
-            RefPtr<InspectorObject> keyObject;
+            RefPtr<JSON::Object> keyObject;
             if (!value->asObject(keyObject))
                 return false;
 
@@ -124,7 +123,7 @@ static std::optional<Vector<CDMInstanceClearKey::Key>> parseLicenseFormat(const 
     return decodedKeys;
 }
 
-static bool parseLicenseReleaseAcknowledgementFormat(const InspectorObject& root)
+static bool parseLicenseReleaseAcknowledgementFormat(const JSON::Object& root)
 {
     // If the 'kids' key is present in the root object, parse the JSON further
     // according to the specified 'license release acknowledgement' format.
@@ -133,7 +132,7 @@ static bool parseLicenseReleaseAcknowledgementFormat(const InspectorObject& root
         return false;
 
     // Retrieve the kids array.
-    RefPtr<InspectorArray> kidsArray;
+    RefPtr<JSON::Array> kidsArray;
     if (!it->value->asArray(kidsArray))
         return false;
 
@@ -371,7 +370,7 @@ void CDMInstanceClearKey::updateLicense(const String& sessionId, LicenseType, co
         };
 
     // Parse the response buffer as an JSON object.
-    RefPtr<InspectorObject> root = parseJSONObject(response);
+    RefPtr<JSON::Object> root = parseJSONObject(response);
     if (!root) {
         dispatchCallback(false, std::nullopt, SuccessValue::Failed);
         return;
@@ -543,9 +542,9 @@ void CDMInstanceClearKey::removeSessionData(const String& sessionId, LicenseType
 
         // Construct JSON that represents the 'license release' format, creating a 'kids' array
         // of base64URL-encoded key IDs for all keys that were associated with this session.
-        auto rootObject = InspectorObject::create();
+        auto rootObject = JSON::Object::create();
         {
-            auto array = InspectorArray::create();
+            auto array = JSON::Array::create();
             for (auto& key : keyVector) {
                 ASSERT(key.keyIDData->size() <= std::numeric_limits<unsigned>::max());
                 array->pushString(WTF::base64URLEncode(key.keyIDData->data(), static_cast<unsigned>(key.keyIDData->size())));

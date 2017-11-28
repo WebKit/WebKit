@@ -26,10 +26,6 @@
 #include "config.h"
 #include "CommandResult.h"
 
-#include <inspector/InspectorValues.h>
-
-using namespace Inspector;
-
 namespace WebDriver {
 
 // These error codes are specified in JSON-RPC 2.0, Section 5.1.
@@ -42,7 +38,7 @@ enum ProtocolErrorCode {
     ServerError = -32000
 };
 
-CommandResult::CommandResult(RefPtr<InspectorValue>&& result, std::optional<ErrorCode> errorCode)
+CommandResult::CommandResult(RefPtr<JSON::Value>&& result, std::optional<ErrorCode> errorCode)
     : m_errorCode(errorCode)
 {
     if (!m_errorCode) {
@@ -53,7 +49,7 @@ CommandResult::CommandResult(RefPtr<InspectorValue>&& result, std::optional<Erro
     if (!result)
         return;
 
-    RefPtr<InspectorObject> errorObject;
+    RefPtr<JSON::Object> errorObject;
     if (!result->asObject(errorObject))
         return;
 

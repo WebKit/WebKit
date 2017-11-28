@@ -1,3 +1,156 @@
+2017-11-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Move JSONValues to WTF and convert uses of InspectorValues.h to JSONValues.h
+        https://bugs.webkit.org/show_bug.cgi?id=173793
+
+        Reviewed by Joseph Pecoraro.
+
+        Based on patch by Brian Burg.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bindings/ScriptValue.cpp:
+        (Inspector::jsToInspectorValue):
+        (Inspector::toInspectorValue):
+        (Deprecated::ScriptValue::toInspectorValue const):
+        * bindings/ScriptValue.h:
+        * inspector/AsyncStackTrace.cpp:
+        * inspector/ConsoleMessage.cpp:
+        * inspector/ContentSearchUtilities.cpp:
+        * inspector/DeprecatedInspectorValues.cpp: Added.
+        * inspector/DeprecatedInspectorValues.h: Added.
+        Keep the old symbols around in JavaScriptCore so that builds with the
+        public iOS SDK continue to work. These older SDKs include a version of
+        WebInspector.framework that expects to find InspectorArray and other
+        symbols in JavaScriptCore.framework.
+
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::getFunctionDetails):
+        (Inspector::InjectedScript::functionDetails):
+        (Inspector::InjectedScript::getPreview):
+        (Inspector::InjectedScript::getProperties):
+        (Inspector::InjectedScript::getDisplayableProperties):
+        (Inspector::InjectedScript::getInternalProperties):
+        (Inspector::InjectedScript::getCollectionEntries):
+        (Inspector::InjectedScript::saveResult):
+        (Inspector::InjectedScript::wrapCallFrames const):
+        (Inspector::InjectedScript::wrapObject const):
+        (Inspector::InjectedScript::wrapTable const):
+        (Inspector::InjectedScript::previewValue const):
+        (Inspector::InjectedScript::setExceptionValue):
+        (Inspector::InjectedScript::clearExceptionValue):
+        (Inspector::InjectedScript::inspectObject):
+        (Inspector::InjectedScript::releaseObject):
+        * inspector/InjectedScriptBase.cpp:
+        (Inspector::InjectedScriptBase::makeCall):
+        (Inspector::InjectedScriptBase::makeEvalCall):
+        * inspector/InjectedScriptBase.h:
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::injectedScriptForObjectId):
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::BackendDispatcher::CallbackBase::sendSuccess):
+        (Inspector::BackendDispatcher::dispatch):
+        (Inspector::BackendDispatcher::sendResponse):
+        (Inspector::BackendDispatcher::sendPendingErrors):
+        (Inspector::BackendDispatcher::getPropertyValue):
+        (Inspector::castToInteger):
+        (Inspector::castToNumber):
+        (Inspector::BackendDispatcher::getInteger):
+        (Inspector::BackendDispatcher::getDouble):
+        (Inspector::BackendDispatcher::getString):
+        (Inspector::BackendDispatcher::getBoolean):
+        (Inspector::BackendDispatcher::getObject):
+        (Inspector::BackendDispatcher::getArray):
+        (Inspector::BackendDispatcher::getValue):
+        * inspector/InspectorBackendDispatcher.h:
+        We need to keep around the sendResponse() variant with a parameter that
+        has the InspectorObject type, as older WebInspector.framework versions
+        expect this symbol to exist. Introduce a variant with arity 3 that can
+        be used in TOT so as to avoid having two methods with the same name, arity, and
+        different parameter types.
+
+        When system WebInspector.framework is updated, we can remove the legacy
+        method variant that uses the InspectorObject type. At that point, we can
+        transition TOT to use the 2-arity variant, and delete the 3-arity variant
+        when system WebInspector.framework is updated once more to use the 2-arity one.
+
+        * inspector/InspectorProtocolTypes.h:
+        (Inspector::Protocol::Array::openAccessors):
+        (Inspector::Protocol::PrimitiveBindingTraits::assertValueHasExpectedType):
+        (Inspector::Protocol::BindingTraits<Protocol::Array<T>>::runtimeCast):
+        (Inspector::Protocol::BindingTraits<Protocol::Array<T>>::assertValueHasExpectedType):
+        (Inspector::Protocol::BindingTraits<JSON::Value>::assertValueHasExpectedType):
+        * inspector/ScriptCallFrame.cpp:
+        * inspector/ScriptCallStack.cpp:
+        * inspector/agents/InspectorAgent.cpp:
+        (Inspector::InspectorAgent::inspect):
+        * inspector/agents/InspectorAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::buildAssertPauseReason):
+        (Inspector::buildCSPViolationPauseReason):
+        (Inspector::InspectorDebuggerAgent::buildBreakpointPauseReason):
+        (Inspector::InspectorDebuggerAgent::buildExceptionPauseReason):
+        (Inspector::buildObjectForBreakpointCookie):
+        (Inspector::InspectorDebuggerAgent::breakpointActionsFromProtocol):
+        (Inspector::parseLocation):
+        (Inspector::InspectorDebuggerAgent::setBreakpointByUrl):
+        (Inspector::InspectorDebuggerAgent::setBreakpoint):
+        (Inspector::InspectorDebuggerAgent::continueToLocation):
+        (Inspector::InspectorDebuggerAgent::schedulePauseOnNextStatement):
+        (Inspector::InspectorDebuggerAgent::didParseSource):
+        (Inspector::InspectorDebuggerAgent::breakProgram):
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::callFunctionOn):
+        (Inspector::InspectorRuntimeAgent::saveResult):
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_header.py:
+        (CppBackendDispatcherHeaderGenerator._generate_dispatcher_declaration_for_command):
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py:
+        (CppBackendDispatcherImplementationGenerator.generate_output):
+        (CppBackendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_command):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_header.py:
+        (CppFrontendDispatcherHeaderGenerator.generate_output):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_implementation.py:
+        (CppFrontendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_event):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (_generate_unchecked_setter_for_member):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py:
+        (CppProtocolTypesImplementationGenerator):
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_implementation.py:
+        (ObjCBackendDispatcherImplementationGenerator.generate_output):
+        (ObjCBackendDispatcherImplementationGenerator._generate_success_block_for_command):
+        * inspector/scripts/codegen/generate_objc_frontend_dispatcher_implementation.py:
+        (ObjCFrontendDispatcherImplementationGenerator.generate_output):
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event):
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event_out_parameters):
+        * inspector/scripts/codegen/generate_objc_internal_header.py:
+        (ObjCInternalHeaderGenerator.generate_output):
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py:
+        (ObjCProtocolTypesImplementationGenerator.generate_output):
+        * inspector/scripts/codegen/generator.py:
+        * inspector/scripts/tests/all/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/generic/expected/domain-availability.json-result:
+        * inspector/scripts/tests/generic/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/generic/expected/enum-values.json-result:
+        * inspector/scripts/tests/generic/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/generic/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/generic/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-requiring-runtime-casts.json-result:
+        * inspector/scripts/tests/generic/expected/type-with-open-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/worker-supported-domains.json-result:
+        * inspector/scripts/tests/ios/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/mac/expected/definitions-with-mac-platform.json-result:
+
 2017-11-28  Robin Morisset  <rmorisset@apple.com>
 
         Support recursive tail call optimization for polymorphic calls

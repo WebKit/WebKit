@@ -35,11 +35,8 @@
 #include <inspector/InspectorBackendDispatchers.h>
 #include <inspector/agents/InspectorDebuggerAgent.h>
 #include <wtf/HashMap.h>
+#include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
-
-namespace Inspector {
-class InspectorObject;
-}
 
 namespace WebCore {
 
@@ -87,7 +84,7 @@ private:
     void debuggerWasDisabled() override;
     void disable();
 
-    void descriptionForDOMEvent(Node& target, int breakpointType, bool insertion, Inspector::InspectorObject& description);
+    void descriptionForDOMEvent(Node& target, int breakpointType, bool insertion, JSON::Object& description);
     void updateSubtreeBreakpoints(Node*, uint32_t rootMask, bool set);
     bool hasBreakpoint(Node*, int type);
     void discardBindings();

@@ -51,7 +51,7 @@ class CppFrontendDispatcherHeaderGenerator(CppGenerator):
     def generate_output(self):
         headers = [
             '"%sProtocolObjects.h"' % self.protocol_name(),
-            '<inspector/InspectorValues.h>',
+            '<wtf/JSONValues.h>',
             '<wtf/text/WTFString.h>']
 
         header_args = {

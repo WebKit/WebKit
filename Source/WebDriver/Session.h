@@ -28,15 +28,10 @@
 #include "Capabilities.h"
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
+#include <wtf/JSONValues.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
-
-namespace Inspector {
-class InspectorArray;
-class InspectorObject;
-class InspectorValue;
-}
 
 namespace WebDriver {
 
@@ -84,7 +79,7 @@ public:
     void closeWindow(Function<void (CommandResult&&)>&&);
     void switchToWindow(const String& windowHandle, Function<void (CommandResult&&)>&&);
     void getWindowHandles(Function<void (CommandResult&&)>&&);
-    void switchToFrame(RefPtr<Inspector::InspectorValue>&&, Function<void (CommandResult&&)>&&);
+    void switchToFrame(RefPtr<JSON::Value>&&, Function<void (CommandResult&&)>&&);
     void switchToParentFrame(Function<void (CommandResult&&)>&&);
     void getWindowRect(Function<void (CommandResult&&)>&&);
     void setWindowRect(std::optional<double> x, std::optional<double> y, std::optional<double> width, std::optional<double> height, Function<void (CommandResult&&)>&&);
@@ -101,7 +96,7 @@ public:
     void elementClear(const String& elementID, Function<void (CommandResult&&)>&&);
     void elementSendKeys(const String& elementID, Vector<String>&& keys, Function<void (CommandResult&&)>&&);
     void elementSubmit(const String& elementID, Function<void (CommandResult&&)>&&);
-    void executeScript(const String& script, RefPtr<Inspector::InspectorArray>&& arguments, ExecuteScriptMode, Function<void (CommandResult&&)>&&);
+    void executeScript(const String& script, RefPtr<JSON::Array>&& arguments, ExecuteScriptMode, Function<void (CommandResult&&)>&&);
     void getAllCookies(Function<void (CommandResult&&)>&&);
     void getNamedCookie(const String& name, Function<void (CommandResult&&)>&&);
     void addCookie(const Cookie&, Function<void (CommandResult&&)>&&);
@@ -130,11 +125,11 @@ private:
     void handleUserPrompts(Function<void (CommandResult&&)>&&);
     void reportUnexpectedAlertOpen(Function<void (CommandResult&&)>&&);
 
-    RefPtr<Inspector::InspectorObject> createElement(RefPtr<Inspector::InspectorValue>&&);
-    RefPtr<Inspector::InspectorObject> createElement(const String& elementID);
-    RefPtr<Inspector::InspectorObject> extractElement(Inspector::InspectorValue&);
-    String extractElementID(Inspector::InspectorValue&);
-    RefPtr<Inspector::InspectorValue> handleScriptResult(RefPtr<Inspector::InspectorValue>&&);
+    RefPtr<JSON::Object> createElement(RefPtr<JSON::Value>&&);
+    RefPtr<JSON::Object> createElement(const String& elementID);
+    RefPtr<JSON::Object> extractElement(JSON::Value&);
+    String extractElementID(JSON::Value&);
+    RefPtr<JSON::Value> handleScriptResult(RefPtr<JSON::Value>&&);
 
     struct Point {
         int x { 0 };
@@ -155,7 +150,7 @@ private:
         ScrollIntoViewIfNeeded = 1 << 0,
         UseViewportCoordinates = 1 << 1,
     };
-    void computeElementLayout(const String& elementID, OptionSet<ElementLayoutOption>, Function<void (std::optional<Rect>&&, std::optional<Point>&&, bool, RefPtr<Inspector::InspectorObject>&&)>&&);
+    void computeElementLayout(const String& elementID, OptionSet<ElementLayoutOption>, Function<void (std::optional<Rect>&&, std::optional<Point>&&, bool, RefPtr<JSON::Object>&&)>&&);
 
     void selectOptionElement(const String& elementID, Function<void (CommandResult&&)>&&);
 
