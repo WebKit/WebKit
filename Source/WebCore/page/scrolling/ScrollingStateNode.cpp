@@ -122,28 +122,25 @@ void ScrollingStateNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsText
 void ScrollingStateNode::dump(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
 {
     ts << "\n";
-    ts.writeIndent();
-    ts << "(";
+    ts << indent << "(";
     ts.increaseIndent();
     dumpProperties(ts, behavior);
 
     if (m_children) {
         ts << "\n";
-        ts.writeIndent();
-        ts << "(";
-        ts.increaseIndent();
-        ts << "children " << children()->size();
-        for (auto& child : *m_children)
-            child->dump(ts, behavior);
-        ts << "\n";
-        ts.decreaseIndent();
-        ts.writeIndent();
-        ts << ")";
+        ts << indent <<"(";
+        {
+            TextStream::IndentScope indentScope(ts);
+            ts << "children " << children()->size();
+            for (auto& child : *m_children)
+                child->dump(ts, behavior);
+            ts << "\n";
+        }
+        ts << indent << ")";
     }
     ts << "\n";
     ts.decreaseIndent();
-    ts.writeIndent();
-    ts << ")";
+    ts << indent << ")";
 }
 
 String ScrollingStateNode::scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior behavior) const

@@ -473,20 +473,11 @@ void reportViewportWarning(Document& document, ViewportErrorCode errorCode, Stri
 
 TextStream& operator<<(TextStream& ts, const ViewportArguments& viewportArguments)
 {
-    ts.increaseIndent();
+    TextStream::IndentScope indentScope(ts);
 
-    ts << "\n";
-    ts.writeIndent();
-    ts << "(width " << viewportArguments.width << ", minWidth " << viewportArguments.minWidth << ", maxWidth " << viewportArguments.maxWidth << ")";
-
-    ts << "\n";
-    ts.writeIndent();
-    ts << "(height " << viewportArguments.height << ", minHeight " << viewportArguments.minHeight << ", maxHeight " << viewportArguments.maxHeight << ")";
-
-    ts << "\n";
-    ts.writeIndent();
-    ts << "(zoom " << viewportArguments.zoom << ", minZoom " << viewportArguments.minZoom << ", maxZoom " << viewportArguments.maxZoom << ")";
-    ts.decreaseIndent();
+    ts << "\n" << indent << "(width " << viewportArguments.width << ", minWidth " << viewportArguments.minWidth << ", maxWidth " << viewportArguments.maxWidth << ")";
+    ts << "\n" << indent << "(height " << viewportArguments.height << ", minHeight " << viewportArguments.minHeight << ", maxHeight " << viewportArguments.maxHeight << ")";
+    ts << "\n" << indent << "(zoom " << viewportArguments.zoom << ", minZoom " << viewportArguments.minZoom << ", maxZoom " << viewportArguments.maxZoom << ")";
 
     return ts;
 }

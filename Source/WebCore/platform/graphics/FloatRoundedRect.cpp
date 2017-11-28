@@ -207,17 +207,11 @@ TextStream& operator<<(TextStream& ts, const FloatRoundedRect& roundedRect)
 {
     ts << roundedRect.rect().x() << " " << roundedRect.rect().y() << " " << roundedRect.rect().width() << " " << roundedRect.rect().height() << "\n";
 
-    ts.increaseIndent();
-    ts.writeIndent();
-    ts << "topLeft=" << roundedRect.topLeftCorner().width() << " " << roundedRect.topLeftCorner().height() << "\n";
-    ts.writeIndent();
-    ts << "topRight=" << roundedRect.topRightCorner().width() << " " << roundedRect.topRightCorner().height() << "\n";
-    ts.writeIndent();
-    ts << "bottomLeft=" << roundedRect.bottomLeftCorner().width() << " " << roundedRect.bottomLeftCorner().height() << "\n";
-    ts.writeIndent();
-    ts << "bottomRight=" << roundedRect.bottomRightCorner().width() << " " << roundedRect.bottomRightCorner().height();
-    ts.decreaseIndent();
-
+    TextStream::IndentScope indentScope(ts);
+    ts << indent << "topLeft=" << roundedRect.topLeftCorner().width() << " " << roundedRect.topLeftCorner().height() << "\n";
+    ts << indent << "topRight=" << roundedRect.topRightCorner().width() << " " << roundedRect.topRightCorner().height() << "\n";
+    ts << indent << "bottomLeft=" << roundedRect.bottomLeftCorner().width() << " " << roundedRect.bottomLeftCorner().height() << "\n";
+    ts << indent << "bottomRight=" << roundedRect.bottomRightCorner().width() << " " << roundedRect.bottomRightCorner().height();
     return ts;
 }
 

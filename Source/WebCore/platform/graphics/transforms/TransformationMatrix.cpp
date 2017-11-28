@@ -1772,17 +1772,12 @@ bool TransformationMatrix::isBackFaceVisible() const
 
 TextStream& operator<<(TextStream& ts, const TransformationMatrix& transform)
 {
+    TextStream::IndentScope indentScope(ts);
     ts << "\n";
-    ts.increaseIndent();
-    ts.writeIndent();
-    ts << "[" << transform.m11() << " " << transform.m12() << " " << transform.m13() << " " << transform.m14() << "]\n";
-    ts.writeIndent();
-    ts << "[" << transform.m21() << " " << transform.m22() << " " << transform.m23() << " " << transform.m24() << "]\n";
-    ts.writeIndent();
-    ts << "[" << transform.m31() << " " << transform.m32() << " " << transform.m33() << " " << transform.m34() << "]\n";
-    ts.writeIndent();
-    ts << "[" << transform.m41() << " " << transform.m42() << " " << transform.m43() << " " << transform.m44() << "]";
-    ts.decreaseIndent();
+    ts << indent << "[" << transform.m11() << " " << transform.m12() << " " << transform.m13() << " " << transform.m14() << "]\n";
+    ts << indent << "[" << transform.m21() << " " << transform.m22() << " " << transform.m23() << " " << transform.m24() << "]\n";
+    ts << indent << "[" << transform.m31() << " " << transform.m32() << " " << transform.m33() << " " << transform.m34() << "]\n";
+    ts << indent << "[" << transform.m41() << " " << transform.m42() << " " << transform.m43() << " " << transform.m44() << "]";
     return ts;
 }
 
