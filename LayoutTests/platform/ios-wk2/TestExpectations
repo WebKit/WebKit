@@ -1309,3 +1309,5 @@ webkit.org/b/172397 [ Debug ] animations/needs-layout.html [ Pass ImageOnlyFailu
 
 webkit.org/b/179176 [ Release ] svg/wicd/test-rightsizing-a.xhtml [ Pass Failure ]
 
+webkit.org/b/178195 accessibility/ios-simulator/video-elements-ios.html [ Pass Timeout ]
+
