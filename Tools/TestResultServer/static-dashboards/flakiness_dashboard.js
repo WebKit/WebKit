@@ -1319,13 +1319,14 @@ function createBugHTML(test)
 {
     var symptom = test.isFlaky ? 'flaky' : 'failing';
     var title = encodeURIComponent('Layout Test ' + test.test + ' is ' + symptom);
+    var dashboardURL = 'https://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=' + encodeURIComponent(test.test);
     var description = encodeURIComponent('The following layout test is ' + symptom + ' on ' +
-        '[insert platform]\n\n' + test.test + '\n\nProbable cause:\n\n' +
-        '[insert probable cause]');
+        '[insert platform]\n\n' + test.test + '\n\nProbable cause:\n\n' + '[insert probable cause]' +
+        '\n\nFlakiness Dashboard:\n\n' + dashboardURL);
     
     var component = encodeURIComponent('Tools / Tests');
     url = 'https://bugs.webkit.org/enter_bug.cgi?assigned_to=webkit-unassigned%40lists.webkit.org&product=WebKit&form_name=enter_bug&component=' + component + '&short_desc=' + title + '&comment=' + description;
-    return '<a href="' + url + '" class="file-bug">File</a>';
+    return '<a href="' + url + '" class="file-bug" target="_blank">File</a>';
 }
 
 function isCrossBuilderView()
