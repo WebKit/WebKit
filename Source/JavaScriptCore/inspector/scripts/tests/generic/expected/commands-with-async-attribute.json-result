@@ -930,23 +930,23 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLSyncOptionalReturnValues(
         THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(sqlError, @"sqlError");
         THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(alternateColors, @"alternateColors");
         if (columnNames)
-            resultObject->setArray(ASCIILiteral("columnNames"), inspectorStringArray(*columnNames));
+            resultObject->setArray(ASCIILiteral("columnNames"), toJSONStringArray(*columnNames));
         if (notes)
             resultObject->setString(ASCIILiteral("notes"), *notes);
         if (timestamp)
             resultObject->setDouble(ASCIILiteral("timestamp"), *timestamp);
         if (values)
-            resultObject->setObject(ASCIILiteral("values"), [*values toInspectorObject]);
+            resultObject->setObject(ASCIILiteral("values"), [*values toJSONObject]);
         if (payload)
-            resultObject->setValue(ASCIILiteral("payload"), [*payload toInspectorObject]);
+            resultObject->setValue(ASCIILiteral("payload"), [*payload toJSONObject]);
         if (databaseId)
             resultObject->setInteger(ASCIILiteral("databaseId"), *databaseId);
         if (sqlError)
-            resultObject->setObject(ASCIILiteral("sqlError"), [*sqlError toInspectorObject]);
+            resultObject->setObject(ASCIILiteral("sqlError"), [*sqlError toJSONObject]);
         if (screenColor)
             resultObject->setString(ASCIILiteral("screenColor"), toProtocolString(*screenColor));
         if (alternateColors)
-            resultObject->setArray(ASCIILiteral("alternateColors"), inspectorStringArray(*alternateColors));
+            resultObject->setArray(ASCIILiteral("alternateColors"), toJSONStringArray(*alternateColors));
         if (printColor)
             resultObject->setString(ASCIILiteral("printColor"), toProtocolString(*printColor));
         backendDispatcher()->sendResponse(requestId, WTFMove(resultObject), false);
@@ -974,23 +974,23 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsyncOptionalReturnValues
         THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(sqlError, @"sqlError");
         THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(alternateColors, @"alternateColors");
         if (columnNames)
-            resultObject->setArray(ASCIILiteral("columnNames"), inspectorStringArray(*columnNames));
+            resultObject->setArray(ASCIILiteral("columnNames"), toJSONStringArray(*columnNames));
         if (notes)
             resultObject->setString(ASCIILiteral("notes"), *notes);
         if (timestamp)
             resultObject->setDouble(ASCIILiteral("timestamp"), *timestamp);
         if (values)
-            resultObject->setObject(ASCIILiteral("values"), [*values toInspectorObject]);
+            resultObject->setObject(ASCIILiteral("values"), [*values toJSONObject]);
         if (payload)
-            resultObject->setValue(ASCIILiteral("payload"), [*payload toInspectorObject]);
+            resultObject->setValue(ASCIILiteral("payload"), [*payload toJSONObject]);
         if (databaseId)
             resultObject->setInteger(ASCIILiteral("databaseId"), *databaseId);
         if (sqlError)
-            resultObject->setObject(ASCIILiteral("sqlError"), [*sqlError toInspectorObject]);
+            resultObject->setObject(ASCIILiteral("sqlError"), [*sqlError toJSONObject]);
         if (screenColor)
             resultObject->setString(ASCIILiteral("screenColor"), toProtocolString(*screenColor));
         if (alternateColors)
-            resultObject->setArray(ASCIILiteral("alternateColors"), inspectorStringArray(*alternateColors));
+            resultObject->setArray(ASCIILiteral("alternateColors"), toJSONStringArray(*alternateColors));
         if (printColor)
             resultObject->setString(ASCIILiteral("printColor"), toProtocolString(*printColor));
         backendDispatcher()->sendResponse(requestId, WTFMove(resultObject), false);
@@ -1017,14 +1017,14 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLSync(long requestId, int 
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(payload, @"payload");
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(sqlError, @"sqlError");
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(alternateColors, @"alternateColors");
-        resultObject->setArray(ASCIILiteral("columnNames"), inspectorStringArray(columnNames));
+        resultObject->setArray(ASCIILiteral("columnNames"), toJSONStringArray(columnNames));
         resultObject->setString(ASCIILiteral("notes"), notes);
         resultObject->setDouble(ASCIILiteral("timestamp"), timestamp);
-        resultObject->setObject(ASCIILiteral("values"), [values toInspectorObject]);
-        resultObject->setValue(ASCIILiteral("payload"), [payload toInspectorObject]);
+        resultObject->setObject(ASCIILiteral("values"), [values toJSONObject]);
+        resultObject->setValue(ASCIILiteral("payload"), [payload toJSONObject]);
         resultObject->setInteger(ASCIILiteral("databaseId"), databaseId);
-        resultObject->setObject(ASCIILiteral("sqlError"), [sqlError toInspectorObject]);
-        resultObject->setArray(ASCIILiteral("alternateColors"), inspectorStringArray(alternateColors));
+        resultObject->setObject(ASCIILiteral("sqlError"), [sqlError toJSONObject]);
+        resultObject->setArray(ASCIILiteral("alternateColors"), toJSONStringArray(alternateColors));
         resultObject->setString(ASCIILiteral("screenColor"), toProtocolString(screenColor));
         resultObject->setString(ASCIILiteral("printColor"), toProtocolString(printColor));
         backendDispatcher()->sendResponse(requestId, WTFMove(resultObject), false);
@@ -1051,15 +1051,15 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsync(long requestId, int
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(payload, @"payload");
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(sqlError, @"sqlError");
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(alternateColors, @"alternateColors");
-        resultObject->setArray(ASCIILiteral("columnNames"), inspectorStringArray(columnNames));
+        resultObject->setArray(ASCIILiteral("columnNames"), toJSONStringArray(columnNames));
         resultObject->setString(ASCIILiteral("notes"), notes);
         resultObject->setDouble(ASCIILiteral("timestamp"), timestamp);
-        resultObject->setObject(ASCIILiteral("values"), [values toInspectorObject]);
-        resultObject->setValue(ASCIILiteral("payload"), [payload toInspectorObject]);
+        resultObject->setObject(ASCIILiteral("values"), [values toJSONObject]);
+        resultObject->setValue(ASCIILiteral("payload"), [payload toJSONObject]);
         resultObject->setInteger(ASCIILiteral("databaseId"), databaseId);
-        resultObject->setObject(ASCIILiteral("sqlError"), [sqlError toInspectorObject]);
+        resultObject->setObject(ASCIILiteral("sqlError"), [sqlError toJSONObject]);
         resultObject->setString(ASCIILiteral("screenColor"), toProtocolString(screenColor));
-        resultObject->setArray(ASCIILiteral("alternateColors"), inspectorStringArray(alternateColors));
+        resultObject->setArray(ASCIILiteral("alternateColors"), toJSONStringArray(alternateColors));
         resultObject->setString(ASCIILiteral("printColor"), toProtocolString(printColor));
         backendDispatcher()->sendResponse(requestId, WTFMove(resultObject), false);
     };
@@ -1328,7 +1328,7 @@ typedef NS_ENUM(NSInteger, TestProtocolDatabaseExecuteSQLAsyncPrintColor) {
 __attribute__((visibility ("default")))
 @interface TestProtocolDatabaseError : RWIProtocolJSONObject
 - (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject;
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)jsonObject;
 - (instancetype)initWithMessage:(NSString *)message code:(int)code;
 /* required */ @property (nonatomic, copy) NSString *message;
 /* required */ @property (nonatomic, assign) int code;
@@ -1733,9 +1733,9 @@ using namespace Inspector;
 
     return self;
 }
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)object
 {
-    if (!(self = [super initWithInspectorObject:[jsonObject toInspectorObject].get()]))
+    if (!(self = [super initWithJSONObject:[object toJSONObject].get()]))
         return nil;
 
     return self;

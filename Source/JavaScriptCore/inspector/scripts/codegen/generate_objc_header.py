@@ -166,10 +166,10 @@ class ObjCHeaderGenerator(ObjCGenerator):
         lines.append('__attribute__((visibility ("default")))')
         lines.append('@interface %s : %sJSONObject' % (objc_name, ObjCGenerator.OBJC_STATIC_PREFIX))
 
-        # The initializers that take a payload or inspector object are only needed by the frontend.
+        # The initializers that take a payload or protocol object are only needed by the frontend.
         if self.get_generator_setting('generate_frontend', False):
             lines.append('- (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;')
-            lines.append('- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject;')
+            lines.append('- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)jsonObject;')
 
         required_members = filter(lambda member: not member.is_optional, declaration.type_members)
         optional_members = filter(lambda member: member.is_optional, declaration.type_members)

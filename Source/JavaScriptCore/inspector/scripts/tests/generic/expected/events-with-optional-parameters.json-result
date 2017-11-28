@@ -789,21 +789,21 @@ using namespace Inspector;
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("Database.didExecuteOptionalParameters"));
     Ref<JSON::Object> paramsObject = JSON::Object::create();
     if (columnNames)
-        paramsObject->setArray(ASCIILiteral("columnNames"), inspectorStringArray((*columnNames)));
+        paramsObject->setArray(ASCIILiteral("columnNames"), toJSONStringArray((*columnNames)));
     if (notes)
         paramsObject->setString(ASCIILiteral("notes"), (*notes));
     if (timestamp)
         paramsObject->setDouble(ASCIILiteral("timestamp"), (*timestamp));
     if (values)
-        paramsObject->setObject(ASCIILiteral("values"), [(*values) toInspectorObject]);
+        paramsObject->setObject(ASCIILiteral("values"), [(*values) toJSONObject]);
     if (payload)
-        paramsObject->setValue(ASCIILiteral("payload"), [(*payload) toInspectorObject]);
+        paramsObject->setValue(ASCIILiteral("payload"), [(*payload) toJSONObject]);
     if (sqlError)
-        paramsObject->setObject(ASCIILiteral("sqlError"), [(*sqlError) toInspectorObject]);
+        paramsObject->setObject(ASCIILiteral("sqlError"), [(*sqlError) toJSONObject]);
     if (screenColor)
         paramsObject->setString(ASCIILiteral("screenColor"), (*screenColor));
     if (alternateColors)
-        paramsObject->setArray(ASCIILiteral("alternateColors"), inspectorStringArray((*alternateColors)));
+        paramsObject->setArray(ASCIILiteral("alternateColors"), toJSONStringArray((*alternateColors)));
     if (printColor)
         paramsObject->setString(ASCIILiteral("printColor"), (*printColor));
     jsonMessage->setObject(ASCIILiteral("params"), WTFMove(paramsObject));
@@ -826,14 +826,14 @@ using namespace Inspector;
     Ref<JSON::Object> jsonMessage = JSON::Object::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("Database.didExecuteNoOptionalParameters"));
     Ref<JSON::Object> paramsObject = JSON::Object::create();
-    paramsObject->setArray(ASCIILiteral("columnNames"), inspectorStringArray(columnNames));
+    paramsObject->setArray(ASCIILiteral("columnNames"), toJSONStringArray(columnNames));
     paramsObject->setString(ASCIILiteral("notes"), notes);
     paramsObject->setDouble(ASCIILiteral("timestamp"), timestamp);
-    paramsObject->setObject(ASCIILiteral("values"), [values toInspectorObject]);
-    paramsObject->setValue(ASCIILiteral("payload"), [payload toInspectorObject]);
-    paramsObject->setObject(ASCIILiteral("sqlError"), [sqlError toInspectorObject]);
+    paramsObject->setObject(ASCIILiteral("values"), [values toJSONObject]);
+    paramsObject->setValue(ASCIILiteral("payload"), [payload toJSONObject]);
+    paramsObject->setObject(ASCIILiteral("sqlError"), [sqlError toJSONObject]);
     paramsObject->setString(ASCIILiteral("screenColor"), screenColor);
-    paramsObject->setArray(ASCIILiteral("alternateColors"), inspectorStringArray(alternateColors));
+    paramsObject->setArray(ASCIILiteral("alternateColors"), toJSONStringArray(alternateColors));
     paramsObject->setString(ASCIILiteral("printColor"), printColor);
     jsonMessage->setObject(ASCIILiteral("params"), WTFMove(paramsObject));
     router.sendEvent(jsonMessage->toJSONString());
@@ -895,7 +895,7 @@ typedef NS_ENUM(NSInteger, TestProtocolPlatform) {
 __attribute__((visibility ("default")))
 @interface TestProtocolDatabaseError : RWIProtocolJSONObject
 - (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject;
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)jsonObject;
 - (instancetype)initWithMessage:(NSString *)message code:(int)code;
 /* required */ @property (nonatomic, copy) NSString *message;
 /* required */ @property (nonatomic, assign) int code;
@@ -1163,9 +1163,9 @@ using namespace Inspector;
 
     return self;
 }
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)object
 {
-    if (!(self = [super initWithInspectorObject:[jsonObject toInspectorObject].get()]))
+    if (!(self = [super initWithJSONObject:[object toJSONObject].get()]))
         return nil;
 
     return self;

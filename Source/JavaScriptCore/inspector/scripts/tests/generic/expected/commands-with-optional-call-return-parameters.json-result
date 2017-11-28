@@ -829,23 +829,23 @@ void ObjCInspectorDatabaseBackendDispatcher::executeAllOptionalParameters(long r
         THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(sqlError, @"sqlError");
         THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(alternateColors, @"alternateColors");
         if (columnNames)
-            resultObject->setArray(ASCIILiteral("columnNames"), inspectorStringArray(*columnNames));
+            resultObject->setArray(ASCIILiteral("columnNames"), toJSONStringArray(*columnNames));
         if (notes)
             resultObject->setString(ASCIILiteral("notes"), *notes);
         if (timestamp)
             resultObject->setDouble(ASCIILiteral("timestamp"), *timestamp);
         if (values)
-            resultObject->setObject(ASCIILiteral("values"), [*values toInspectorObject]);
+            resultObject->setObject(ASCIILiteral("values"), [*values toJSONObject]);
         if (payload)
-            resultObject->setValue(ASCIILiteral("payload"), [*payload toInspectorObject]);
+            resultObject->setValue(ASCIILiteral("payload"), [*payload toJSONObject]);
         if (databaseId)
             resultObject->setInteger(ASCIILiteral("databaseId"), *databaseId);
         if (sqlError)
-            resultObject->setObject(ASCIILiteral("sqlError"), [*sqlError toInspectorObject]);
+            resultObject->setObject(ASCIILiteral("sqlError"), [*sqlError toJSONObject]);
         if (screenColor)
             resultObject->setString(ASCIILiteral("screenColor"), toProtocolString(*screenColor));
         if (alternateColors)
-            resultObject->setArray(ASCIILiteral("alternateColors"), inspectorStringArray(*alternateColors));
+            resultObject->setArray(ASCIILiteral("alternateColors"), toJSONStringArray(*alternateColors));
         if (printColor)
             resultObject->setString(ASCIILiteral("printColor"), toProtocolString(*printColor));
         backendDispatcher()->sendResponse(requestId, WTFMove(resultObject), false);
@@ -853,7 +853,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeAllOptionalParameters(long r
 
     NSArray/*<NSString>*/ *o_in_columnNames;
     if (in_columnNames)
-        o_in_columnNames = objcStringArray(in_columnNames);
+        o_in_columnNames = toObjCStringArray(in_columnNames);
     NSString *o_in_notes;
     if (in_notes)
         o_in_notes = *in_notes;
@@ -862,22 +862,22 @@ void ObjCInspectorDatabaseBackendDispatcher::executeAllOptionalParameters(long r
         o_in_timestamp = *in_timestamp;
     RWIProtocolJSONObject *o_in_values;
     if (in_values)
-        o_in_values = [[[RWIProtocolJSONObject alloc] initWithInspectorObject:in_values] autorelease];
+        o_in_values = [[[RWIProtocolJSONObject alloc] initWithJSONObject:in_values] autorelease];
     RWIProtocolJSONObject *o_in_payload;
     if (in_payload)
-        o_in_payload = [[[RWIProtocolJSONObject alloc] initWithInspectorObject:in_payload] autorelease];
+        o_in_payload = [[[RWIProtocolJSONObject alloc] initWithJSONObject:in_payload] autorelease];
     int o_in_databaseId;
     if (in_databaseId)
         o_in_databaseId = *in_databaseId;
     TestProtocolDatabaseError *o_in_sqlError;
     if (in_sqlError)
-        o_in_sqlError = [[[TestProtocolDatabaseError alloc] initWithInspectorObject:in_sqlError] autorelease];
+        o_in_sqlError = [[[TestProtocolDatabaseError alloc] initWithJSONObject:in_sqlError] autorelease];
     std::optional<TestProtocolDatabasePrimaryColors> o_in_screenColor;
     if (in_screenColor)
         o_in_screenColor = fromProtocolString<TestProtocolDatabasePrimaryColors>(*in_screenColor);
     NSArray/*<NSString>*/ *o_in_alternateColors;
     if (in_alternateColors)
-        o_in_alternateColors = objcStringArray(in_alternateColors);
+        o_in_alternateColors = toObjCStringArray(in_alternateColors);
     std::optional<TestProtocolDatabaseExecuteAllOptionalParametersPrintColor> o_in_printColor;
     if (in_printColor)
         o_in_printColor = fromProtocolString<TestProtocolDatabaseExecuteAllOptionalParametersPrintColor>(*in_printColor);
@@ -900,32 +900,32 @@ void ObjCInspectorDatabaseBackendDispatcher::executeNoOptionalParameters(long re
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(payload, @"payload");
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(sqlError, @"sqlError");
         THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(alternateColors, @"alternateColors");
-        resultObject->setArray(ASCIILiteral("columnNames"), inspectorStringArray(columnNames));
+        resultObject->setArray(ASCIILiteral("columnNames"), toJSONStringArray(columnNames));
         resultObject->setString(ASCIILiteral("notes"), notes);
         resultObject->setDouble(ASCIILiteral("timestamp"), timestamp);
-        resultObject->setObject(ASCIILiteral("values"), [values toInspectorObject]);
-        resultObject->setValue(ASCIILiteral("payload"), [payload toInspectorObject]);
+        resultObject->setObject(ASCIILiteral("values"), [values toJSONObject]);
+        resultObject->setValue(ASCIILiteral("payload"), [payload toJSONObject]);
         resultObject->setInteger(ASCIILiteral("databaseId"), databaseId);
-        resultObject->setObject(ASCIILiteral("sqlError"), [sqlError toInspectorObject]);
+        resultObject->setObject(ASCIILiteral("sqlError"), [sqlError toJSONObject]);
         resultObject->setString(ASCIILiteral("screenColor"), toProtocolString(screenColor));
-        resultObject->setArray(ASCIILiteral("alternateColors"), inspectorStringArray(alternateColors));
+        resultObject->setArray(ASCIILiteral("alternateColors"), toJSONStringArray(alternateColors));
         resultObject->setString(ASCIILiteral("printColor"), toProtocolString(printColor));
         backendDispatcher()->sendResponse(requestId, WTFMove(resultObject), false);
     };
 
-    NSArray/*<NSString>*/ *o_in_columnNames = objcStringArray(&in_columnNames);
+    NSArray/*<NSString>*/ *o_in_columnNames = toObjCStringArray(&in_columnNames);
     NSString *o_in_notes = in_notes;
     double o_in_timestamp = in_timestamp;
-    RWIProtocolJSONObject *o_in_values = [[[RWIProtocolJSONObject alloc] initWithInspectorObject:&in_values] autorelease];
-    RWIProtocolJSONObject *o_in_payload = [[[RWIProtocolJSONObject alloc] initWithInspectorObject:&in_payload] autorelease];
+    RWIProtocolJSONObject *o_in_values = [[[RWIProtocolJSONObject alloc] initWithJSONObject:&in_values] autorelease];
+    RWIProtocolJSONObject *o_in_payload = [[[RWIProtocolJSONObject alloc] initWithJSONObject:&in_payload] autorelease];
     int o_in_databaseId = in_databaseId;
-    TestProtocolDatabaseError *o_in_sqlError = [[[TestProtocolDatabaseError alloc] initWithInspectorObject:&in_sqlError] autorelease];
+    TestProtocolDatabaseError *o_in_sqlError = [[[TestProtocolDatabaseError alloc] initWithJSONObject:&in_sqlError] autorelease];
     std::optional<TestProtocolDatabasePrimaryColors> o_in_screenColor = fromProtocolString<TestProtocolDatabasePrimaryColors>(in_screenColor);
     if (!o_in_screenColor) {
         backendDispatcher()->reportProtocolError(BackendDispatcher::InvalidParams, String::format("Parameter '%s' of method '%s' cannot be processed", "screenColor", "Database.executeNoOptionalParameters"));
         return;
     }
-    NSArray/*<NSString>*/ *o_in_alternateColors = objcStringArray(&in_alternateColors);
+    NSArray/*<NSString>*/ *o_in_alternateColors = toObjCStringArray(&in_alternateColors);
     std::optional<TestProtocolDatabaseExecuteNoOptionalParametersPrintColor> o_in_printColor = fromProtocolString<TestProtocolDatabaseExecuteNoOptionalParametersPrintColor>(in_printColor);
     if (!o_in_printColor) {
         backendDispatcher()->reportProtocolError(BackendDispatcher::InvalidParams, String::format("Parameter '%s' of method '%s' cannot be processed", "printColor", "Database.executeNoOptionalParameters"));
@@ -1193,7 +1193,7 @@ typedef NS_ENUM(NSInteger, TestProtocolDatabaseExecuteNoOptionalParametersPrintC
 __attribute__((visibility ("default")))
 @interface TestProtocolDatabaseError : RWIProtocolJSONObject
 - (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject;
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)jsonObject;
 - (instancetype)initWithMessage:(NSString *)message code:(int)code;
 /* required */ @property (nonatomic, copy) NSString *message;
 /* required */ @property (nonatomic, assign) int code;
@@ -1596,9 +1596,9 @@ using namespace Inspector;
 
     return self;
 }
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)object
 {
-    if (!(self = [super initWithInspectorObject:[jsonObject toInspectorObject].get()]))
+    if (!(self = [super initWithJSONObject:[object toJSONObject].get()]))
         return nil;
 
     return self;

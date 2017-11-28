@@ -797,7 +797,7 @@ typedef NS_ENUM(NSInteger, TestProtocolRuntimeKeyPathType) {
 __attribute__((visibility ("default")))
 @interface TestProtocolRuntimeKeyPath : RWIProtocolJSONObject
 - (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject;
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)jsonObject;
 - (instancetype)initWithType:(TestProtocolRuntimeKeyPathType)type;
 /* required */ @property (nonatomic, assign) TestProtocolRuntimeKeyPathType type;
 /* optional */ @property (nonatomic, copy) NSString *string;
@@ -1065,9 +1065,9 @@ using namespace Inspector;
 
     return self;
 }
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)object
 {
-    if (!(self = [super initWithInspectorObject:[jsonObject toInspectorObject].get()]))
+    if (!(self = [super initWithJSONObject:[object toJSONObject].get()]))
         return nil;
 
     return self;
@@ -1105,12 +1105,12 @@ using namespace Inspector;
 
 - (void)setArray:(NSArray/*<NSString>*/ *)array
 {
-    [super setInspectorArray:inspectorStringArray(array) forKey:@"array"];
+    [super setJSONArray:toJSONStringArray(array) forKey:@"array"];
 }
 
 - (NSArray/*<NSString>*/ *)array
 {
-    return objcStringArray([super inspectorArrayForKey:@"array"]);
+    return toObjCStringArray([super JSONArrayForKey:@"array"]);
 }
 
 @end

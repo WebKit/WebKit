@@ -1105,7 +1105,7 @@ typedef NS_ENUM(NSInteger, TestProtocolTestCastedAnimals) {
 __attribute__((visibility ("default")))
 @interface TestProtocolTestTypeNeedingCast : RWIProtocolJSONObject
 - (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject;
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)jsonObject;
 - (instancetype)initWithString:(NSString *)string number:(int)number animals:(TestProtocolTestCastedAnimals)animals identifier:(int)identifier tree:(TestProtocolTestRecursiveObject1 *)tree;
 /* required */ @property (nonatomic, copy) NSString *string;
 /* required */ @property (nonatomic, assign) int number;
@@ -1117,14 +1117,14 @@ __attribute__((visibility ("default")))
 __attribute__((visibility ("default")))
 @interface TestProtocolTestRecursiveObject1 : RWIProtocolJSONObject
 - (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject;
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)jsonObject;
 /* optional */ @property (nonatomic, retain) TestProtocolTestRecursiveObject2 *obj;
 @end
 
 __attribute__((visibility ("default")))
 @interface TestProtocolTestRecursiveObject2 : RWIProtocolJSONObject
 - (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject;
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)jsonObject;
 /* optional */ @property (nonatomic, retain) TestProtocolTestRecursiveObject1 *obj;
 @end
 
@@ -1475,9 +1475,9 @@ using namespace Inspector;
 
     return self;
 }
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)object
 {
-    if (!(self = [super initWithInspectorObject:[jsonObject toInspectorObject].get()]))
+    if (!(self = [super initWithJSONObject:[object toJSONObject].get()]))
         return nil;
 
     return self;
@@ -1550,7 +1550,7 @@ using namespace Inspector;
     RWIProtocolJSONObject *object = [super objectForKey:@"tree"];
     if (!object)
         return nil;
-    return [[TestProtocolTestRecursiveObject1 alloc] initWithInspectorObject:[[super objectForKey:@"tree"] toInspectorObject].get()];
+    return [[TestProtocolTestRecursiveObject1 alloc] initWithJSONObject:[[super objectForKey:@"tree"] toJSONObject].get()];
 }
 
 @end
@@ -1566,9 +1566,9 @@ using namespace Inspector;
 
     return self;
 }
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)object
 {
-    if (!(self = [super initWithInspectorObject:[jsonObject toInspectorObject].get()]))
+    if (!(self = [super initWithJSONObject:[object toJSONObject].get()]))
         return nil;
 
     return self;
@@ -1584,7 +1584,7 @@ using namespace Inspector;
     RWIProtocolJSONObject *object = [super objectForKey:@"obj"];
     if (!object)
         return nil;
-    return [[TestProtocolTestRecursiveObject2 alloc] initWithInspectorObject:[[super objectForKey:@"obj"] toInspectorObject].get()];
+    return [[TestProtocolTestRecursiveObject2 alloc] initWithJSONObject:[[super objectForKey:@"obj"] toJSONObject].get()];
 }
 
 @end
@@ -1600,9 +1600,9 @@ using namespace Inspector;
 
     return self;
 }
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)object
 {
-    if (!(self = [super initWithInspectorObject:[jsonObject toInspectorObject].get()]))
+    if (!(self = [super initWithJSONObject:[object toJSONObject].get()]))
         return nil;
 
     return self;
@@ -1618,7 +1618,7 @@ using namespace Inspector;
     RWIProtocolJSONObject *object = [super objectForKey:@"obj"];
     if (!object)
         return nil;
-    return [[TestProtocolTestRecursiveObject1 alloc] initWithInspectorObject:[[super objectForKey:@"obj"] toInspectorObject].get()];
+    return [[TestProtocolTestRecursiveObject1 alloc] initWithJSONObject:[[super objectForKey:@"obj"] toJSONObject].get()];
 }
 
 @end

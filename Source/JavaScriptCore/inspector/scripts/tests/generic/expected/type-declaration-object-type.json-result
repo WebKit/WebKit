@@ -1339,7 +1339,7 @@ typedef NS_ENUM(NSInteger, TestProtocolTestParameterBundleDirectionality) {
 __attribute__((visibility ("default")))
 @interface TestProtocolDatabaseError : RWIProtocolJSONObject
 - (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject;
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)jsonObject;
 - (instancetype)initWithMessage:(NSString *)message code:(int)code;
 /* required */ @property (nonatomic, copy) NSString *message;
 /* required */ @property (nonatomic, assign) int code;
@@ -1348,7 +1348,7 @@ __attribute__((visibility ("default")))
 __attribute__((visibility ("default")))
 @interface TestProtocolDatabaseOptionalParameterBundle : RWIProtocolJSONObject
 - (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject;
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)jsonObject;
 /* optional */ @property (nonatomic, copy) NSArray/*<NSString>*/ *columnNames;
 /* optional */ @property (nonatomic, copy) NSArray/*<NSString>*/ *buttons;
 /* optional */ @property (nonatomic, assign) TestProtocolDatabaseOptionalParameterBundleDirectionality directionality;
@@ -1363,7 +1363,7 @@ __attribute__((visibility ("default")))
 __attribute__((visibility ("default")))
 @interface TestProtocolDatabaseParameterBundle : RWIProtocolJSONObject
 - (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject;
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)jsonObject;
 - (instancetype)initWithColumnNames:(NSArray/*<NSString>*/ *)columnNames buttons:(NSArray/*<NSString>*/ *)buttons directionality:(TestProtocolDatabaseParameterBundleDirectionality)directionality notes:(NSString *)notes timestamp:(double)timestamp values:(RWIProtocolJSONObject *)values payload:(RWIProtocolJSONObject *)payload error:(TestProtocolDatabaseError *)error errorList:(NSArray/*<TestProtocolDatabaseError>*/ *)errorList;
 /* required */ @property (nonatomic, copy) NSArray/*<NSString>*/ *columnNames;
 /* required */ @property (nonatomic, copy) NSArray/*<NSString>*/ *buttons;
@@ -1379,7 +1379,7 @@ __attribute__((visibility ("default")))
 __attribute__((visibility ("default")))
 @interface TestProtocolDatabaseObjectWithPropertyNameConflicts : RWIProtocolJSONObject
 - (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject;
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)jsonObject;
 - (instancetype)initWithInteger:(NSString *)integer array:(NSString *)array string:(NSString *)string value:(NSString *)value object:(NSString *)object;
 /* required */ @property (nonatomic, copy) NSString *integer;
 /* required */ @property (nonatomic, copy) NSString *array;
@@ -1391,13 +1391,13 @@ __attribute__((visibility ("default")))
 __attribute__((visibility ("default")))
 @interface TestProtocolDatabaseDummyObject : RWIProtocolJSONObject
 - (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject;
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)jsonObject;
 @end
 
 __attribute__((visibility ("default")))
 @interface TestProtocolTestParameterBundle : RWIProtocolJSONObject
 - (instancetype)initWithPayload:(NSDictionary<NSString *, id> *)payload;
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject;
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)jsonObject;
 - (instancetype)initWithDirectionality:(TestProtocolTestParameterBundleDirectionality)directionality buttons:(NSArray/*<NSString>*/ *)buttons columnNames:(NSArray/*<NSString>*/ *)columnNames notes:(NSString *)notes timestamp:(double)timestamp values:(RWIProtocolJSONObject *)values payload:(RWIProtocolJSONObject *)payload error:(TestProtocolDatabaseError *)error;
 /* required */ @property (nonatomic, assign) TestProtocolTestParameterBundleDirectionality directionality;
 /* required */ @property (nonatomic, copy) NSArray/*<NSString>*/ *buttons;
@@ -1790,9 +1790,9 @@ using namespace Inspector;
 
     return self;
 }
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)object
 {
-    if (!(self = [super initWithInspectorObject:[jsonObject toInspectorObject].get()]))
+    if (!(self = [super initWithJSONObject:[object toJSONObject].get()]))
         return nil;
 
     return self;
@@ -1862,9 +1862,9 @@ using namespace Inspector;
 
     return self;
 }
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)object
 {
-    if (!(self = [super initWithInspectorObject:[jsonObject toInspectorObject].get()]))
+    if (!(self = [super initWithJSONObject:[object toJSONObject].get()]))
         return nil;
 
     return self;
@@ -1872,22 +1872,22 @@ using namespace Inspector;
 
 - (void)setColumnNames:(NSArray/*<NSString>*/ *)columnNames
 {
-    [super setInspectorArray:inspectorStringArray(columnNames) forKey:@"columnNames"];
+    [super setJSONArray:toJSONStringArray(columnNames) forKey:@"columnNames"];
 }
 
 - (NSArray/*<NSString>*/ *)columnNames
 {
-    return objcStringArray([super inspectorArrayForKey:@"columnNames"]);
+    return toObjCStringArray([super JSONArrayForKey:@"columnNames"]);
 }
 
 - (void)setButtons:(NSArray/*<NSString>*/ *)buttons
 {
-    [super setInspectorArray:inspectorStringArray(buttons) forKey:@"buttons"];
+    [super setJSONArray:toJSONStringArray(buttons) forKey:@"buttons"];
 }
 
 - (NSArray/*<NSString>*/ *)buttons
 {
-    return objcStringArray([super inspectorArrayForKey:@"buttons"]);
+    return toObjCStringArray([super JSONArrayForKey:@"buttons"]);
 }
 
 - (void)setDirectionality:(TestProtocolDatabaseOptionalParameterBundleDirectionality)directionality
@@ -1930,7 +1930,7 @@ using namespace Inspector;
     RWIProtocolJSONObject *object = [super objectForKey:@"values"];
     if (!object)
         return nil;
-    return [[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"values"] toInspectorObject].get()];
+    return [[RWIProtocolJSONObject alloc] initWithJSONObject:[[super objectForKey:@"values"] toJSONObject].get()];
 }
 
 - (void)setPayload:(RWIProtocolJSONObject *)payload
@@ -1943,7 +1943,7 @@ using namespace Inspector;
     RWIProtocolJSONObject *object = [super objectForKey:@"payload"];
     if (!object)
         return nil;
-    return [[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"payload"] toInspectorObject].get()];
+    return [[RWIProtocolJSONObject alloc] initWithJSONObject:[[super objectForKey:@"payload"] toJSONObject].get()];
 }
 
 - (void)setError:(TestProtocolDatabaseError *)error
@@ -1956,18 +1956,18 @@ using namespace Inspector;
     RWIProtocolJSONObject *object = [super objectForKey:@"error"];
     if (!object)
         return nil;
-    return [[TestProtocolDatabaseError alloc] initWithInspectorObject:[[super objectForKey:@"error"] toInspectorObject].get()];
+    return [[TestProtocolDatabaseError alloc] initWithJSONObject:[[super objectForKey:@"error"] toJSONObject].get()];
 }
 
 - (void)setErrorList:(NSArray/*<TestProtocolDatabaseError>*/ *)errorList
 {
     THROW_EXCEPTION_FOR_BAD_TYPE_IN_ARRAY(errorList, [TestProtocolDatabaseError class]);
-    [super setInspectorArray:inspectorObjectArray(errorList) forKey:@"errorList"];
+    [super setJSONArray:toJSONObjectArray(errorList) forKey:@"errorList"];
 }
 
 - (NSArray/*<TestProtocolDatabaseError>*/ *)errorList
 {
-    return objcArray<TestProtocolDatabaseError>([super inspectorArrayForKey:@"errorList"]);
+    return toObjCArray<TestProtocolDatabaseError>([super JSONArrayForKey:@"errorList"]);
 }
 
 @end
@@ -2010,9 +2010,9 @@ using namespace Inspector;
 
     return self;
 }
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)object
 {
-    if (!(self = [super initWithInspectorObject:[jsonObject toInspectorObject].get()]))
+    if (!(self = [super initWithJSONObject:[object toJSONObject].get()]))
         return nil;
 
     return self;
@@ -2047,22 +2047,22 @@ using namespace Inspector;
 
 - (void)setColumnNames:(NSArray/*<NSString>*/ *)columnNames
 {
-    [super setInspectorArray:inspectorStringArray(columnNames) forKey:@"columnNames"];
+    [super setJSONArray:toJSONStringArray(columnNames) forKey:@"columnNames"];
 }
 
 - (NSArray/*<NSString>*/ *)columnNames
 {
-    return objcStringArray([super inspectorArrayForKey:@"columnNames"]);
+    return toObjCStringArray([super JSONArrayForKey:@"columnNames"]);
 }
 
 - (void)setButtons:(NSArray/*<NSString>*/ *)buttons
 {
-    [super setInspectorArray:inspectorStringArray(buttons) forKey:@"buttons"];
+    [super setJSONArray:toJSONStringArray(buttons) forKey:@"buttons"];
 }
 
 - (NSArray/*<NSString>*/ *)buttons
 {
-    return objcStringArray([super inspectorArrayForKey:@"buttons"]);
+    return toObjCStringArray([super JSONArrayForKey:@"buttons"]);
 }
 
 - (void)setDirectionality:(TestProtocolDatabaseParameterBundleDirectionality)directionality
@@ -2105,7 +2105,7 @@ using namespace Inspector;
     RWIProtocolJSONObject *object = [super objectForKey:@"values"];
     if (!object)
         return nil;
-    return [[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"values"] toInspectorObject].get()];
+    return [[RWIProtocolJSONObject alloc] initWithJSONObject:[[super objectForKey:@"values"] toJSONObject].get()];
 }
 
 - (void)setPayload:(RWIProtocolJSONObject *)payload
@@ -2118,7 +2118,7 @@ using namespace Inspector;
     RWIProtocolJSONObject *object = [super objectForKey:@"payload"];
     if (!object)
         return nil;
-    return [[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"payload"] toInspectorObject].get()];
+    return [[RWIProtocolJSONObject alloc] initWithJSONObject:[[super objectForKey:@"payload"] toJSONObject].get()];
 }
 
 - (void)setError:(TestProtocolDatabaseError *)error
@@ -2131,18 +2131,18 @@ using namespace Inspector;
     RWIProtocolJSONObject *object = [super objectForKey:@"error"];
     if (!object)
         return nil;
-    return [[TestProtocolDatabaseError alloc] initWithInspectorObject:[[super objectForKey:@"error"] toInspectorObject].get()];
+    return [[TestProtocolDatabaseError alloc] initWithJSONObject:[[super objectForKey:@"error"] toJSONObject].get()];
 }
 
 - (void)setErrorList:(NSArray/*<TestProtocolDatabaseError>*/ *)errorList
 {
     THROW_EXCEPTION_FOR_BAD_TYPE_IN_ARRAY(errorList, [TestProtocolDatabaseError class]);
-    [super setInspectorArray:inspectorObjectArray(errorList) forKey:@"errorList"];
+    [super setJSONArray:toJSONObjectArray(errorList) forKey:@"errorList"];
 }
 
 - (NSArray/*<TestProtocolDatabaseError>*/ *)errorList
 {
-    return objcArray<TestProtocolDatabaseError>([super inspectorArrayForKey:@"errorList"]);
+    return toObjCArray<TestProtocolDatabaseError>([super JSONArrayForKey:@"errorList"]);
 }
 
 @end
@@ -2171,9 +2171,9 @@ using namespace Inspector;
 
     return self;
 }
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)object
 {
-    if (!(self = [super initWithInspectorObject:[jsonObject toInspectorObject].get()]))
+    if (!(self = [super initWithJSONObject:[object toJSONObject].get()]))
         return nil;
 
     return self;
@@ -2260,9 +2260,9 @@ using namespace Inspector;
 
     return self;
 }
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)object
 {
-    if (!(self = [super initWithInspectorObject:[jsonObject toInspectorObject].get()]))
+    if (!(self = [super initWithJSONObject:[object toJSONObject].get()]))
         return nil;
 
     return self;
@@ -2306,9 +2306,9 @@ using namespace Inspector;
 
     return self;
 }
-- (instancetype)initWithJSONObject:(RWIProtocolJSONObject *)jsonObject
+- (instancetype)initWithProtocolObject:(RWIProtocolJSONObject *)object
 {
-    if (!(self = [super initWithInspectorObject:[jsonObject toInspectorObject].get()]))
+    if (!(self = [super initWithJSONObject:[object toJSONObject].get()]))
         return nil;
 
     return self;
@@ -2350,22 +2350,22 @@ using namespace Inspector;
 
 - (void)setButtons:(NSArray/*<NSString>*/ *)buttons
 {
-    [super setInspectorArray:inspectorStringArray(buttons) forKey:@"buttons"];
+    [super setJSONArray:toJSONStringArray(buttons) forKey:@"buttons"];
 }
 
 - (NSArray/*<NSString>*/ *)buttons
 {
-    return objcStringArray([super inspectorArrayForKey:@"buttons"]);
+    return toObjCStringArray([super JSONArrayForKey:@"buttons"]);
 }
 
 - (void)setColumnNames:(NSArray/*<NSString>*/ *)columnNames
 {
-    [super setInspectorArray:inspectorStringArray(columnNames) forKey:@"columnNames"];
+    [super setJSONArray:toJSONStringArray(columnNames) forKey:@"columnNames"];
 }
 
 - (NSArray/*<NSString>*/ *)columnNames
 {
-    return objcStringArray([super inspectorArrayForKey:@"columnNames"]);
+    return toObjCStringArray([super JSONArrayForKey:@"columnNames"]);
 }
 
 - (void)setNotes:(NSString *)notes
@@ -2398,7 +2398,7 @@ using namespace Inspector;
     RWIProtocolJSONObject *object = [super objectForKey:@"values"];
     if (!object)
         return nil;
-    return [[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"values"] toInspectorObject].get()];
+    return [[RWIProtocolJSONObject alloc] initWithJSONObject:[[super objectForKey:@"values"] toJSONObject].get()];
 }
 
 - (void)setPayload:(RWIProtocolJSONObject *)payload
@@ -2411,7 +2411,7 @@ using namespace Inspector;
     RWIProtocolJSONObject *object = [super objectForKey:@"payload"];
     if (!object)
         return nil;
-    return [[RWIProtocolJSONObject alloc] initWithInspectorObject:[[super objectForKey:@"payload"] toInspectorObject].get()];
+    return [[RWIProtocolJSONObject alloc] initWithJSONObject:[[super objectForKey:@"payload"] toJSONObject].get()];
 }
 
 - (void)setError:(TestProtocolDatabaseError *)error
@@ -2424,7 +2424,7 @@ using namespace Inspector;
     RWIProtocolJSONObject *object = [super objectForKey:@"error"];
     if (!object)
         return nil;
-    return [[TestProtocolDatabaseError alloc] initWithInspectorObject:[[super objectForKey:@"error"] toInspectorObject].get()];
+    return [[TestProtocolDatabaseError alloc] initWithJSONObject:[[super objectForKey:@"error"] toJSONObject].get()];
 }
 
 @end
