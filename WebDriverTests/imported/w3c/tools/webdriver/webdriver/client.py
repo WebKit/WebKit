@@ -509,6 +509,11 @@ class Session(object):
 
     @property
     @command
+    def source(self):
+        return self.send_session_command("GET", "source")
+
+    @property
+    @command
     def window_handle(self):
         return self.send_session_command("GET", "window")
 

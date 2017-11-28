@@ -8,6 +8,7 @@ import mozlog
 
 from tests.support.asserts import assert_error
 from tests.support.http_request import HTTPRequest
+from tests.support.wait import wait
 from tests.support import merge_dictionaries
 
 default_host = "http://127.0.0.1"
@@ -254,10 +255,15 @@ def create_dialog(session):
         session.send_session_command("POST",
                                      "execute/async",
                                      {"script": spawn, "args": []})
+        wait(session,
+             lambda s: s.send_session_command("GET", "alert/text") == text,
+             "modal has not appeared",
+             timeout=15,
+             ignored_exceptions=webdriver.NoSuchAlertException)
 
     return create_dialog
+
 
 def clear_all_cookies(session):
     """Removes all cookies associated with the current active document"""
     session.transport.send("DELETE", "session/%s/cookie" % session.session_id)
-

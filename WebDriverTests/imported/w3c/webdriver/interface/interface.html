@@ -2,20 +2,39 @@
 <body>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
-<script>
-
-test(function() {
-  if ("webdriver" in navigator) {
-    var descriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(navigator), "webdriver");
-    assert_true(descriptor !== undefined);
-    assert_true(descriptor.configurable);
-    assert_true(descriptor.enumerable);
-    assert_true(descriptor.set === undefined);
-    assert_true(navigator.webdriver);
-  } else {
-    assert_true(navigator.webdriver === undefined);
-  }
-}, "Test that the navigator.webdriver descriptor has expected properties or doesn't exist at all");
+<script src=/resources/WebIDLParser.js></script>
+<script src=/resources/idlharness.js></script>
+<script type=text/plain class=untested>
+[Exposed=Window]
+interface Navigator {
+  // objects implementing this interface also implement the interfaces given below
+};
 </script>
-</body>
-</html>
+<script type=text/plain>
+Navigator implements NavigatorAutomationInformation;
+
+[NoInterfaceObject,
+ Exposed=(Window)]
+interface NavigatorAutomationInformation {
+    readonly attribute boolean webdriver;
+    // always returns true
+};
+</script>
+<script>
+"use strict";
+
+if ("webdriver" in navigator) {
+  test(() => assert_true(navigator.webdriver), "navigator.webdriver is always true");
+  var idlArray = new IdlArray();
+  [].forEach.call(document.querySelectorAll("script[type=text\\/plain]"), function(node) {
+    if (node.className == "untested") {
+      idlArray.add_untested_idls(node.textContent);
+    } else {
+      idlArray.add_idls(node.textContent);
+    }
+  });
+  idlArray.test();
+} else {
+  done();
+}
+</script>
