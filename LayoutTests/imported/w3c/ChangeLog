@@ -1,3 +1,12 @@
+2017-11-28  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline a few skipped / flaky service worker tests
+
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/register-same-scope-different-script-url.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/skip-waiting-using-registration.https-expected.txt:
+
 2017-11-25  Frederic Wang  <fwang@igalia.com>
 
         Import MathML WPT tests

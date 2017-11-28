@@ -15,7 +15,7 @@ PASS Cache.match with string fragment "http" as query
 PASS Cache.match with responses containing "Vary" header 
 PASS Cache.match with Request and Response objects with different URLs 
 PASS Cache.match invoked multiple times for the same Request/Response 
-FAIL Cache.match blob should be sliceable assert_equals: A Response blob returned by Cache.match should be sliceable. expected (string) "simple" but got (object) null
+PASS Cache.match blob should be sliceable 
 PASS Cache.match with POST Request 
 PASS Cache.match with a non-2xx Response 
 PASS Cache.match with a network error Response 
