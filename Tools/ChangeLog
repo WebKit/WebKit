@@ -1,3 +1,17 @@
+2017-11-27  Aakash Jain  <aakash_jain@apple.com>
+
+        Do not run webkitpy tests on multiple EWSes
+        https://bugs.webkit.org/show_bug.cgi?id=179834
+
+        Reviewed by Alexey Proskuryakov.
+
+        Do not run webkitpy tests in every EWS. We now have
+        a dedicated webkitpy test EWS.
+
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run): Do not run webkitpy tests in EWSes. These tests will still run
+        when --non-interactive option is not passed. 
+
 2017-11-27  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Better name-version mapping (Part 1)
