@@ -27,13 +27,13 @@ PASS Successfully set legal fftSize 1024.
 PASS Exception thrown for illegal fftSize 1025.
 PASS Successfully set legal fftSize 2048.
 PASS Exception thrown for illegal fftSize 2049.
-PASS Exception thrown for illegal fftSize 4096.
+PASS Successfully set legal fftSize 4096.
 PASS Exception thrown for illegal fftSize 4097.
-PASS Exception thrown for illegal fftSize 8192.
+PASS Successfully set legal fftSize 8192.
 PASS Exception thrown for illegal fftSize 8193.
-PASS Exception thrown for illegal fftSize 16384.
+PASS Successfully set legal fftSize 16384.
 PASS Exception thrown for illegal fftSize 16385.
-PASS Exception thrown for illegal fftSize 32768.
+PASS Successfully set legal fftSize 32768.
 PASS Exception thrown for illegal fftSize 32769.
 PASS Exception thrown for illegal fftSize 65536.
 PASS Exception thrown for illegal fftSize 65537.

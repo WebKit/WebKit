@@ -1,3 +1,13 @@
+2017-11-28  Noah Chase  <nchase@gmail.com>
+
+        Web Audio's AnalyserNode.fftSize cannot be greater than 2048 in Safari; spec says it can be up to 32768
+        https://bugs.webkit.org/show_bug.cgi?id=180040
+
+        Reviewed by Alex Christensen.
+
+        * webaudio/realtimeanalyser-fft-sizing-expected.txt:
+        * webaudio/realtimeanalyser-fft-sizing.html:
+
 2017-11-28  Ms2ger  <Ms2ger@igalia.com>
 
         [WPE] Enable the wpt top-level directory.
