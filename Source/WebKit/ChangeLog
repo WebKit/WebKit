@@ -1,3 +1,21 @@
+2017-11-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION: Web Inspector: context menu actions "Download Image" and "Open Image in New Window" don't work
+        https://bugs.webkit.org/show_bug.cgi?id=178808
+        <rdar://problem/35176608>
+
+        Reviewed by Brian Burg.
+
+        * UIProcess/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController _webView:contextMenu:forElement:]):
+        Continue to hide the image context menu actions like we used to.
+        Investigating making these context menus work can be done as a
+        follow-up task.
+
+        * UIProcess/mac/WKWebInspectorWKWebView.mm:
+        (-[WKWebInspectorWKWebView initWithFrame:configuration:]):
+        Use nullptr instead of 0.
+
 2017-11-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Move JSONValues to WTF and convert uses of InspectorValues.h to JSONValues.h

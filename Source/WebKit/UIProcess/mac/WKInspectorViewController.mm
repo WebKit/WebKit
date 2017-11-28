@@ -189,6 +189,27 @@ using namespace WebKit;
     decisionHandler(std::max<unsigned long long>(expectedUsage, currentUsage * 1.25));
 }
 
+- (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element
+{
+    for (NSInteger i = menu.numberOfItems - 1; i >= 0; --i) {
+        NSMenuItem *item = [menu itemAtIndex:i];
+        switch (item.tag) {
+        case kWKContextMenuItemTagOpenLinkInNewWindow:
+        case kWKContextMenuItemTagOpenImageInNewWindow:
+        case kWKContextMenuItemTagOpenFrameInNewWindow:
+        case kWKContextMenuItemTagOpenMediaInNewWindow:
+        case kWKContextMenuItemTagCopyImageUrlToClipboard:
+        case kWKContextMenuItemTagCopyImageToClipboard:
+        case kWKContextMenuItemTagDownloadLinkToDisk:
+        case kWKContextMenuItemTagDownloadImageToDisk:
+            [menu removeItemAtIndex:i];
+            break;
+        }
+    }
+
+    return menu;
+}
+
 // MARK: WKNavigationDelegate methods
 
 - (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
