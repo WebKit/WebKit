@@ -37,17 +37,22 @@ function createControls(shadowRoot, media, host)
     return new MediaController(shadowRoot, media, host);
 }
 
-function UIString(string)
+function UIString(stringToLocalize)
 {
-    let localizedStrings = {};
+    let allLocalizedStrings = {};
     try {
-        localizedStrings = UIStrings;
+        allLocalizedStrings = UIStrings;
     } catch (error) {}
 
-    if (localizedStrings[string])
-        return localizedStrings[string];
+    const localizedString = allLocalizedStrings[stringToLocalize];
+    if (!localizedString)
+        return stringToLocalize;
 
-    return string;
+    // We allow an array of a string and a replacement.
+    if (Array.isArray(localizedString) && localizedString.length == 2)
+        return localizedString[0].replace("%s", UIString(localizedString[1]));
+
+    return localizedString;
 }
 
 function formatTimeByUnit(value)

@@ -1,4 +1,5 @@
 const UIStrings = {
+    "##SKIP_AMOUNT##": "15",
     "AirPlay": "AirPlay",
     "Audio": "Audio",
     "Audio Controls": "Audio Controls",
@@ -17,8 +18,8 @@ const UIStrings = {
     "Play": "Play",
     "Remaining": "Remaining",
     "Rewind": "Rewind",
-    "Skip Back 15 seconds": "Skip Back 15 seconds",
-    "Skip Forward 15 seconds": "Skip Forward 15 seconds",
+    "Skip Back 15 seconds": ["Skip Back %s seconds", "##SKIP_AMOUNT##"],
+    "Skip Forward 15 seconds": ["Skip Forward %s seconds", "##SKIP_AMOUNT##"],
     "Subtitles": "Subtitles",
     "This video is playing in picture in picture.": "This video is playing in picture in picture.",
     "This video is playing on your Apple TV": "This video is playing on your Apple TV",

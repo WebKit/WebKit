@@ -1,5 +1,19 @@
 2017-11-28  Antoine Quint  <graouts@apple.com>
 
+        Skip back and forward buttons should not hard-code their numeric amount in localised strings
+        https://bugs.webkit.org/show_bug.cgi?id=180077
+
+        Reviewed by Eric Carlson.
+
+        Add a new test to check replaced localized string work as expected.
+
+        * media/modern-media-controls/localized-strings/replaced-string-expected.txt: Added.
+        * media/modern-media-controls/localized-strings/replaced-string.html: Added.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-11-28  Antoine Quint  <graouts@apple.com>
+
         Pressing the space bar while watching a fullscreen video doesn't play or pause
         https://bugs.webkit.org/show_bug.cgi?id=180033
         <rdar://problem/33610443>

@@ -1,0 +1,14 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../../Source/WebCore/English.lproj/modern-media-controls-localized-strings.js" type="text/javascript"></script>
+<script src="../../../../Source/WebCore/Modules/modern-media-controls/main.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+description("Testing that we can load a replaced string using UIString.");
+
+UIStrings["##REPLACEMENT_VALUE##"] = "15";
+UIStrings["Test replaced string"] = ["Value %s should be printed here", "##REPLACEMENT_VALUE##"];
+
+shouldBeEqualToString("UIString('Test replaced string')", "Value 15 should be printed here");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
