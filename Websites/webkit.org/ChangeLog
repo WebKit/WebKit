@@ -1,3 +1,15 @@
+2017-11-28  Dean Jackson  <dino@apple.com>
+
+        Include gl-matrix directly since github doesn't serve the correct mime type
+        https://bugs.webkit.org/show_bug.cgi?id=180102
+        <rdar://problem/35301622>
+
+        Reviewed by Antoine Quint.
+
+        * demos/webgpu/cubes.html:
+        * demos/webgpu/gl-matrix-min.js: Added.
+        * demos/webgpu/simple.html:
+
 2017-11-13  Jon Davis  <jond@apple.com>
 
         Update safe area CSS for webkit.org
