@@ -272,7 +272,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
     }
 };
 
-InspectorBackend.MainConnection = class InspectorBackendPageConnection extends InspectorBackend.Connection
+InspectorBackend.MainConnection = class InspectorBackendMainConnection extends InspectorBackend.Connection
 {
     constructor()
     {

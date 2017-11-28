@@ -1,3 +1,14 @@
+2017-11-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ServiceWorker Inspector: Frontend changes to support Network tab and sub resources
+        https://bugs.webkit.org/show_bug.cgi?id=179642
+        <rdar://problem/35517704>
+
+        Reviewed by Brian Burg.
+
+        * inspector/protocol/Network.json:
+        Expose the NetworkAgent for a Service Worker inspector.
+
  2017-11-28  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Clean up names of conversion methods after renaming InspectorValue to JSON::Value

@@ -7,17 +7,17 @@ PASS: Targets list should always start out with the main target.
 PASS: Target list should always contain the main target.
 PASS: Main target should have an ExecutionContext.
 PASS: Main target should have the global RuntimeAgent.
-Target - Main - Page
+Target - Symbol(page) - Page
 
 -- Running test case: TargetManager.WorkerTarget.Create
 PASS: Added Target should have Worker type.
 PASS: Added Target should have an ExecutionContext.
 PASS: Added Target should have a RuntimeAgent.
 PASS: Added Target RuntimeAgent should not be the global RuntimeAgent.
-Target - Main - Page
-Target - Worker - worker-1.js
+Target - Symbol(page) - Page
+Target - Symbol(worker) - worker-1.js
 
 -- Running test case: TargetManager.WorkerTarget.Remove
 PASS: Removed Target should have Worker type.
-Target - Main - Page
+Target - Symbol(page) - Page
 

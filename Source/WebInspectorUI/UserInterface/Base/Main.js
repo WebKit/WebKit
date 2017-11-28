@@ -90,9 +90,11 @@ WI.loaded = function()
 
     // Main backend target.
     WI.mainTarget = new WI.MainTarget;
+    WI.pageTarget = WI.sharedApp.debuggableType === WI.DebuggableType.Web ? WI.mainTarget : null;
 
     // Enable agents.
-    InspectorAgent.enable();
+    if (window.InspectorAgent)
+        InspectorAgent.enable();
 
     // Perform one-time tasks.
     WI.CSSCompletions.requestCSSCompletions();
@@ -135,7 +137,7 @@ WI.loaded = function()
     // Tell the backend we are initialized after all our initialization messages have been sent.
     setTimeout(function() {
         // COMPATIBILITY (iOS 8): Inspector.initialized did not exist yet.
-        if (InspectorAgent.initialized)
+        if (window.InspectorAgent && InspectorAgent.initialized)
             InspectorAgent.initialized();
     }, 0);
 

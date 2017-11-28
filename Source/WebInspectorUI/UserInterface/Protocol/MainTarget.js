@@ -27,32 +27,56 @@ WI.MainTarget = class MainTarget extends WI.Target
 {
     constructor(connection)
     {
-        super("main", "", WI.Target.Type.Main, InspectorBackend.mainConnection);
+        let {type, displayName} = MainTarget.mainConnectionInfo();
 
-        let displayName = WI.sharedApp.debuggableType === WI.DebuggableType.Web ? WI.UIString("Main Frame") : this.displayName;
+        super("main", displayName, type, InspectorBackend.mainConnection);
+
         this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelContextExecutionIdentifier, displayName, true, null);
+        this._mainResource = null;
+    }
+
+    // Static
+
+    static mainConnectionInfo()
+    {
+        switch (WI.sharedApp.debuggableType) {
+        case WI.DebuggableType.JavaScript:
+            return {
+                type: WI.Target.Type.JSContext,
+                displayName: WI.UIString("JavaScript Context"),
+            };
+        case WI.DebuggableType.ServiceWorker:
+            return {
+                type: WI.Target.Type.ServiceWorker,
+                displayName: WI.UIString("ServiceWorker"),
+            };
+        case WI.DebuggableType.Web:
+            return {
+                type: WI.Target.Type.Page,
+                displayName: WI.UIString("Page"),
+            };
+        default:
+            console.error("Unexpected debuggable type: ", WI.sharedApp.debuggableType);
+            return {
+                type: WI.Target.Type.Page,
+                displayName: WI.UIString("Main"),
+            };
+        }
     }
 
     // Protected (Target)
 
-    get displayName()
-    {
-        switch (WI.sharedApp.debuggableType) {
-        case WI.DebuggableType.JavaScript:
-            return WI.UIString("JavaScript Context");
-        case WI.DebuggableType.ServiceWorker:
-            return WI.UIString("ServiceWorker");
-        case WI.DebuggableType.Web:
-            return WI.UIString("Page");
-        default:
-            console.error("Unexpected debuggable type: ", WI.sharedApp.debuggableType);
-            return WI.UIString("Main");
-        }
-    }
-
     get mainResource()
     {
+        if (this._mainResource)
+            return this._mainResource;
+
         let mainFrame = WI.frameResourceManager.mainFrame;
         return mainFrame ? mainFrame.mainResource : null;
+    }
+
+    set mainResource(resource)
+    {
+        this._mainResource = resource;
     }
 };

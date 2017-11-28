@@ -45,6 +45,7 @@ WI.loaded = function()
     InspectorBackend.registerCanvasDispatcher(new WI.CanvasObserver);
 
     WI.mainTarget = new WI.MainTarget;
+    WI.pageTarget = WI.sharedApp.debuggableType === WI.DebuggableType.Web ? WI.mainTarget : null;
 
     // Instantiate controllers used by tests.
     this.targetManager = new WI.TargetManager;

@@ -710,7 +710,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         targetData.addScript(script);
 
-        if (target !== WI.mainTarget && !target.mainResource) {
+        if (!target.mainResource && (target !== WI.mainResource || WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker)) {
             // FIXME: <https://webkit.org/b/164427> Web Inspector: WorkerTarget's mainResource should be a Resource not a Script
             // We make the main resource of a WorkerTarget the Script instead of the Resource
             // because the frontend may not be informed of the Resource. We should guarantee

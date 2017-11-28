@@ -15,22 +15,10 @@ function terminateWorker() {
 
 function test()
 {
-    function typeString(type) {
-        switch (type) {
-        case WI.Target.Type.Main:
-            return "Main";
-        case WI.Target.Type.Worker:
-            return "Worker";
-        default:
-            return "Unknown";
-        }
-    }
-
     function dumpTargets() {
         for (let target of WI.targets)
-            InspectorTest.log(`Target - ${typeString(target.type)} - ${target.displayName}`);
+            InspectorTest.log(`Target - ${String(target.type)} - ${target.displayName}`);
     }
-
 
     let suite = InspectorTest.createAsyncSuite("TargetManager");
 

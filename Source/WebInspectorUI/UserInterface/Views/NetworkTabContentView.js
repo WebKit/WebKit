@@ -58,7 +58,7 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.TabContentView
 
     static isTabAllowed()
     {
-        return !!window.NetworkAgent && !!window.PageAgent;
+        return !!window.NetworkAgent;
     }
 
     // Protected

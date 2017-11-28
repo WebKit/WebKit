@@ -51,7 +51,14 @@ WI.Target = class Target extends WI.Object
     // Public
 
     get identifier() { return this._identifier; }
+    set identifier(identifier) { this._identifier = identifier; }
+
     get name() { return this._name; }
+    set name(name) { this._name = name; }
+
+    get mainResource() { return this._mainResource; }
+    set mainResource(resource) { this._mainResource = resource; }
+
     get type() { return this._type; }
     get connection() { return this._connection; }
     get executionContext() { return this._executionContext; }
@@ -59,8 +66,7 @@ WI.Target = class Target extends WI.Object
     get resourceCollection() { return this._resourceCollection; }
     get extraScriptCollection() { return this._extraScriptCollection; }
 
-    get mainResource() { return this._mainResource; }
-    set mainResource(resource) { this._mainResource = resource; }
+    get displayName() { return this._name; }
 
     addResource(resource)
     {
@@ -85,7 +91,9 @@ WI.Target = class Target extends WI.Object
 };
 
 WI.Target.Type = {
-    Main: Symbol("main"),
+    Page: Symbol("page"),
+    JSContext: Symbol("jscontext"),
+    ServiceWorker: Symbol("service-worker"),
     Worker: Symbol("worker"),
 };
 

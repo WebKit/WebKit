@@ -1,3 +1,117 @@
+2017-11-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ServiceWorker Inspector: Frontend changes to support Network tab and sub resources
+        https://bugs.webkit.org/show_bug.cgi?id=179642
+        <rdar://problem/35517704>
+
+        Reviewed by Brian Burg.
+
+        This patch makes use of the NetworkAgent and ServiceWorker agents in the frontend
+        for a ServiceWorker inspection target. It also makes changes to ensure that the
+        subresources requested by a ServiceWorker appear as expected in both the Resources
+        and Network Tabs.
+
+        The backends of ServiceWorkers and DedicatedWorkers for network requests are
+        different, but we want the presentation to be very similiar. Ultimately we'd like
+        to move to more similiar backends if possible.
+
+        The first (after Inspector.enable) message a ServiceWorker inspector sends to the
+        backend is ServiceWorker.getInitializationInfo. This parallels a Page inspector
+        sending Page.getResourceTree. From the response we get enough information to
+        setup the MainTarget with enough information (targetId, URL) to know what its main
+        resource URL will be. Like DedicatedWorkers, the target's main resource will be
+        filled in with the first WI.Script matching the URL. With this initialization
+        message alone the ServiceWorker Target behaves almost identically to a Worker
+        target and Network loads associated with the target (by targetId) are added as
+        sub-resources as expected.
+
+        The biggest tension in this patch is within FrameResourceManager. The class, as
+        its name indicates, assumes page resources with Frames, navigation, and loader
+        semantics. It takes a few modifications to make it better handle resources not
+        associated with a Page. A follow-up will rename this to just ResourceManager as
+        the class' main task is now to associate Resources with Targets.
+
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        There are assumptions in a few places that the main target is a Page. Those
+        places can now be reached when the main target is a ServiceWorker. Add a
+        convenience WI.pageTarget that can be used in these places.
+
+        * UserInterface/Test/Test.js:
+        (WI.loaded):
+        Add pageTarget.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype.scriptDidParse):
+        Generalize the condition so the main target can have its main resource populated.
+        This will be the case when a ServiceWorker is the main target and its main resource
+        needs to be populated from a Script.
+
+        * UserInterface/Controllers/FrameResourceManager.js:
+        (WI.FrameResourceManager):
+        (WI.FrameResourceManager.prototype._processServiceWorkerInitializationInfo):
+        Handle ServiceWorker Resource initialization which is different from Page initialization.
+
+        (WI.FrameResourceManager.prototype._addNewResourceToFrameOrTarget):
+        (WI.FrameResourceManager.prototype._addResourceToTarget):
+        (WI.FrameResourceManager.prototype._addFrameTreeFromFrameResourceTreePayload):
+        Eliminate PageAgent, which might not be available in some targets.
+        Use pageTarget instead of mainTarget where appropriate.
+
+        * UserInterface/Controllers/TargetManager.js:
+        (WI.TargetManager.prototype.targetForIdentifier):
+        A ServiceWorker is the first time that the main target has an identifier,
+        so let TargetManager find it by target id.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource):
+        (WI.Resource.resolvedType):
+        (WI.Resource.prototype.updateForResponse):
+        For Resource.Type.Other resources include a better type inferred from the MIME type.
+        ServiceWorker loads currently don't have type information and this provides a great
+        type for such loads. This should also provide nice types for CacheStorage.add*
+        populated resources which are otherwise type-less fetches.
+
+        * UserInterface/Protocol/Connection.js:
+        Rename the class since this may no longer be a "Page".
+
+        * UserInterface/Protocol/MainTarget.js:
+        (WI.MainTarget):
+        (WI.MainTarget.mainConnectionInfo):
+        (WI.MainTarget.prototype.get mainResource):
+        (WI.MainTarget.prototype.set mainResource):
+        (WI.MainTarget.prototype.get displayName): Deleted.
+        * UserInterface/Protocol/Target.js:
+        (WI.Target.prototype.set identifier):
+        (WI.Target.prototype.set name):
+        (WI.Target.prototype.get mainResource):
+        (WI.Target.prototype.set mainResource):
+        (WI.Target.prototype.get displayName):
+        Give richer types for the main target. And allow a few things to be initialized
+        lazily, which will be necessary from an initialization message.
+
+        * UserInterface/Views/NetworkTabContentView.js:
+        (WI.NetworkTabContentView.isTabAllowed):
+        Remove a PageAgent requirement for the Network tab. A ServiceWorker will not
+        have a PageAgent, but it will have a NetworkAgent, which should be good enough.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._populateWithInitialResourcesIfNeeded):
+        Initial populate should populate all subresources of all targets.
+
+        * UserInterface/Views/ResourceContentView.js:
+        (WI.ResourceContentView.prototype.contentAvailable):
+        This was getting used by ResourceType.Other without warning. Make it warn.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WI.ResourceSidebarPanel.prototype._addScript):
+        (WI.ResourceSidebarPanel.prototype._addTargetWithMainResource):
+        * UserInterface/Views/ScriptTreeElement.js:
+        (WI.ScriptTreeElement):
+        Allow WorkerTreeElements for ServiceWorker targets which may also be the main target.
+        Also when adding such a tree element, promote the resource sidebar to a full tree
+        outline, and stop hiding disclosure buttons.
+
 2017-11-27  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: selector's field shadow is clipped at the bottom

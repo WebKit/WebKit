@@ -1,7 +1,7 @@
 {
     "domain": "Network",
     "description": "Network domain allows tracking network activities of the page. It exposes information about http, file, data and other requests and responses, their headers, bodies, timing, etc.",
-    "availability": ["web"],
+    "availability": ["web", "service-worker"],
     "types": [
         {
             "id": "LoaderId",

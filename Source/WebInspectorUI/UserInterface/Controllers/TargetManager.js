@@ -46,6 +46,9 @@ WI.TargetManager = class TargetManager extends WI.Object
         if (!targetId)
             return null;
 
+        if (targetId === WI.mainTarget.identifier)
+            return WI.mainTarget;
+
         for (let target of this._targets) {
             if (target.identifier === targetId)
                 return target;

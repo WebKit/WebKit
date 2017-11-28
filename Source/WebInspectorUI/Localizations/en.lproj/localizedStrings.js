@@ -571,7 +571,6 @@ localizedStrings["Lowest: %s"] = "Lowest: %s";
 localizedStrings["MIME Type"] = "MIME Type";
 localizedStrings["MIME Type:"] = "MIME Type:";
 localizedStrings["Main"] = "Main";
-localizedStrings["Main Frame"] = "Main Frame";
 localizedStrings["Manifest URL"] = "Manifest URL";
 localizedStrings["Margin"] = "Margin";
 localizedStrings["Mass"] = "Mass";

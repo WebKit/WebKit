@@ -273,7 +273,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             this._hideResourceDetailView();
             return;
         }
-   
+
         this._table.selectRow(rowIndex);
     }
 
@@ -860,9 +860,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         this._needsInitialPopulate = false;
 
-        console.assert(WI.frameResourceManager.mainFrame);
-
-        let populateFrameResources = (frame) => {
+        let populateResourcesForFrame = (frame) => {
             if (frame.provisionalMainResource)
                 this._pendingInsertions.push(frame.provisionalMainResource);
             else if (frame.mainResource)
@@ -872,10 +870,22 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 this._pendingInsertions.push(resource);
 
             for (let childFrame of frame.childFrameCollection.items)
-                populateFrameResources(childFrame);
+                populateResourcesForFrame(childFrame);
         };
 
-        populateFrameResources(WI.frameResourceManager.mainFrame);
+        let populateResourcesForTarget = (target) => {
+            if (target.mainResource instanceof WI.Resource)
+                this._pendingInsertions.push(target.mainResource);
+            for (let resource of target.resourceCollection.items)
+                this._pendingInsertions.push(resource);
+        };
+
+        for (let target of WI.targets) {
+            if (target === WI.pageTarget)
+                populateResourcesForFrame(WI.frameResourceManager.mainFrame);
+            else
+                populateResourcesForTarget(target);
+        }
 
         this.needsLayout();
     }

@@ -78,7 +78,7 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
 
     contentAvailable(content, base64Encoded)
     {
-        // Implemented by subclasses.
+        throw WI.NotImplementedError.subclassMustOverride();
     }
 
     showGenericErrorMessage()

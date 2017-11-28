@@ -39,7 +39,7 @@ WI.Resource = class Resource extends WI.SourceCode
         this._urlComponents = null;
         this._mimeType = mimeType;
         this._mimeTypeComponents = null;
-        this._type = type || WI.Resource.typeFromMIMEType(mimeType);
+        this._type = Resource.resolvedType(type, mimeType);
         this._loaderIdentifier = loaderIdentifier || null;
         this._requestIdentifier = requestIdentifier || null;
         this._queryStringParameters = undefined;
@@ -94,6 +94,14 @@ WI.Resource = class Resource extends WI.SourceCode
     }
 
     // Static
+
+    static resolvedType(type, mimeType)
+    {
+        if (type && type !== WI.Resource.Type.Other)
+            return type;
+
+        return Resource.typeFromMIMEType(mimeType);
+    }
 
     static typeFromMIMEType(mimeType)
     {
@@ -710,7 +718,7 @@ WI.Resource = class Resource extends WI.SourceCode
             this._url = url;
 
         this._mimeType = mimeType;
-        this._type = type || WI.Resource.typeFromMIMEType(mimeType);
+        this._type = Resource.resolvedType(type, mimeType);
         this._statusCode = statusCode;
         this._statusText = statusText;
         this._responseHeaders = responseHeaders || {};

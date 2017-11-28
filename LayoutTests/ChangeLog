@@ -1,3 +1,15 @@
+2017-11-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ServiceWorker Inspector: Frontend changes to support Network tab and sub resources
+        https://bugs.webkit.org/show_bug.cgi?id=179642
+        <rdar://problem/35517704>
+
+        Reviewed by Brian Burg.
+
+        * inspector/unit-tests/target-manager-expected.txt:
+        * inspector/unit-tests/target-manager.html:
+        Generalize.
+
 2017-11-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline fast/forms/alternative-presentation-button/replacement.html for El Capitan.

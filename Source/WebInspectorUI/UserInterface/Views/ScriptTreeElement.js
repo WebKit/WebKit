@@ -48,7 +48,7 @@ WI.ScriptTreeElement = class ScriptTreeElement extends WI.SourceCodeTreeElement
             this.addClassName(WI.ScriptTreeElement.AnonymousScriptIconStyleClassName);
 
         if (script.isMainResource()) {
-            console.assert(script.target.type === WI.Target.Type.Worker);
+            console.assert(script.target.type === WI.Target.Type.Worker || script.target.type === WI.Target.Type.ServiceWorker, script.target.type);
             this.addClassName("worker-icon");
         }
 
