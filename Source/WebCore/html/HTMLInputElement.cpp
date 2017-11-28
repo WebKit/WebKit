@@ -67,6 +67,11 @@
 #include "TouchEvent.h"
 #endif
 
+#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
+#include "AlternativePresentationButtonInputType.h"
+#include "InputTypeNames.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -229,6 +234,13 @@ HTMLElement* HTMLInputElement::placeholderElement() const
 {
     return m_inputType->placeholderElement();
 }
+
+#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
+HTMLElement* HTMLInputElement::alternativePresentationButtonElement() const
+{
+    return m_inputType->alternativePresentationButtonElement();
+}
+#endif
 
 bool HTMLInputElement::shouldAutocomplete() const
 {
@@ -479,12 +491,28 @@ void HTMLInputElement::setType(const AtomicString& type)
     setAttributeWithoutSynchronization(typeAttr, type);
 }
 
-void HTMLInputElement::updateType()
+#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
+void HTMLInputElement::setTypeWithoutUpdatingAttribute(const AtomicString& type)
+{
+    updateType(type);
+}
+#endif
+
+inline std::unique_ptr<InputType> HTMLInputElement::createInputType(const AtomicString& type)
+{
+#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
+    if (type == InputTypeNames::alternativePresentationButton())
+        return std::make_unique<AlternativePresentationButtonInputType>(*this);
+#endif
+    return InputType::create(*this, type);
+}
+
+void HTMLInputElement::updateType(const AtomicString& newType)
 {
     ASSERT(m_inputType);
-    auto newType = InputType::create(*this, attributeWithoutSynchronization(typeAttr));
+    auto newInputType = createInputType(newType);
     m_hasType = true;
-    if (m_inputType->formControlType() == newType->formControlType())
+    if (m_inputType->formControlType() == newInputType->formControlType())
         return;
 
     removeFromRadioButtonGroup();
@@ -494,9 +522,9 @@ void HTMLInputElement::updateType()
     bool didRespectHeightAndWidth = m_inputType->shouldRespectHeightAndWidthAttributes();
     bool wasSuccessfulSubmitButtonCandidate = m_inputType->canBeSuccessfulSubmitButton();
 
-    m_inputType->destroyShadowSubtree();
-
-    m_inputType = WTFMove(newType);
+    std::unique_ptr<InputType> oldInputType = WTFMove(m_inputType);
+    m_inputType = WTFMove(newInputType);
+    oldInputType->destroyShadowSubtree();
     m_inputType->createShadowSubtree();
     updateInnerTextElementEditability();
 
@@ -690,7 +718,7 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
                 unregisterForSuspensionCallbackIfNeeded();
         }
     } else if (name == typeAttr)
-        updateType();
+        updateType(value);
     else if (name == valueAttr) {
         // Changes to the value attribute may change whether or not this element has a default value.
         // If this field is autocomplete=off that might affect the return value of needsSuspensionCallback.
@@ -810,7 +838,7 @@ RenderPtr<RenderElement> HTMLInputElement::createElementRenderer(RenderStyle&& s
 void HTMLInputElement::willAttachRenderers()
 {
     if (!m_hasType)
-        updateType();
+        updateType(attributeWithoutSynchronization(typeAttr));
 }
 
 void HTMLInputElement::didAttachRenderers()

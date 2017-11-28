@@ -13,6 +13,7 @@ media/controls/ipad [ Pass ]
 media/ios [ Pass ]
 quicklook [ Pass ]
 
+fast/forms/alternative-presentation-button [ Pass ]
 fast/text-autosizing/ios [ Pass ]
 fast/zooming/ios [ Pass ]
 http/tests/preload/viewport [ Pass ]

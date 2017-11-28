@@ -312,6 +312,12 @@ namespace WebCore {
     WEBCORE_EXPORT String exitFullScreenButtonAccessibilityTitle();
 #endif
 
+#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
+    String AXAlternativePresentationButtonLabel();
+    String alternativePresentationButtonTitle();
+    String alternativePresentationButtonSubtitle();
+#endif
+
 #if USE(GLIB) && defined(GETTEXT_PACKAGE)
 #define WEB_UI_STRING(string, description) WebCore::localizedString(_(string))
 #define WEB_UI_STRING_KEY(string, key, description) WebCore::localizedString(C_(key, string))

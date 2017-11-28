@@ -165,6 +165,7 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView didNotHandleWheelEvent:(NSEvent *)event WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webView:(WKWebView *)webView handleAutoplayEvent:(_WKAutoplayEvent)event withFlags:(_WKAutoplayEventFlags)flags WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webView:(WKWebView *)webView didClickAutoFillButtonWithUserInfo:(id <NSSecureCoding>)userInfo WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_webView:(WKWebView *)webView didClickAlternativePresentationButtonWithUserInfo:(id <NSSecureCoding>)userInfo WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webView:(WKWebView *)webView getToolbarsAreVisibleWithCompletionHandler:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webView:(WKWebView *)webView saveDataToFile:(NSData *)data suggestedFilename:(NSString *)suggestedFilename mimeType:(NSString *)mimeType originatingURL:(NSURL *)url WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (CGFloat)_webViewHeaderHeight:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));

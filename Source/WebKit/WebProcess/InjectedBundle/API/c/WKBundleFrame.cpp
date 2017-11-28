@@ -40,6 +40,7 @@
 #include "WebFrame.h"
 #include "WebPage.h"
 #include <WebCore/Document.h>
+#include <WebCore/Editor.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
@@ -295,4 +296,40 @@ void WKBundleFrameFocus(WKBundleFrameRef frameRef)
         return;
 
     coreFrame->page()->focusController().setFocusedFrame(coreFrame);
+}
+
+void WKBundleSubstituteWithAlternativePresentationButton(WKBundleFrameRef frame, WKArrayRef elements, WKStringRef identifier)
+{
+#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
+    auto* coreFrame = toImpl(frame)->coreFrame();
+    if (!coreFrame)
+        return;
+    API::Array* apiAssociatedElements = toImpl(elements);
+    Vector<Ref<Element>> coreElements;
+    coreElements.reserveInitialCapacity(apiAssociatedElements->size());
+    // FIXME: Add a non-constant iterator for API::Array.
+    for (const auto* nodeHandle : apiAssociatedElements->elementsOfType<InjectedBundleNodeHandle>()) {
+        if (!nodeHandle)
+            continue;
+        Node& coreNode = *const_cast<InjectedBundleNodeHandle*>(nodeHandle)->coreNode();
+        if (is<Element>(coreNode))
+            coreElements.uncheckedAppend(downcast<Element>(coreNode));
+    }
+    coreFrame->editor().substituteWithAlternativePresentationButton(WTFMove(coreElements), toWTFString(identifier));
+#else
+    UNUSED_PARAM(frame);
+    UNUSED_PARAM(elements);
+    UNUSED_PARAM(identifier);
+#endif
+}
+
+void WKBundleRemoveAlternativePresentationButton(WKBundleFrameRef frame, WKStringRef identifier)
+{
+#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
+    if (auto* coreFrame = toImpl(frame)->coreFrame())
+        coreFrame->editor().removeAlternativePresentationButton(toWTFString(identifier));
+#else
+    UNUSED_PARAM(frame);
+    UNUSED_PARAM(identifier);
+#endif
 }

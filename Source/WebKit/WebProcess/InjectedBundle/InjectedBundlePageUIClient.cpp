@@ -212,4 +212,14 @@ void InjectedBundlePageUIClient::didClickAutoFillButton(WebPage& page, InjectedB
     userData = adoptRef(toImpl(userDataToPass));
 }
 
+void InjectedBundlePageUIClient::didClickAlternativePresentationButton(WebPage& page, InjectedBundleNodeHandle& nodeHandle, RefPtr<API::Object>& userData)
+{
+    if (!m_client.didClickAlternativePresentationButton)
+        return;
+
+    WKTypeRef userDataToPass = nullptr;
+    m_client.didClickAlternativePresentationButton(toAPI(&page), toAPI(&nodeHandle), &userDataToPass, m_client.base.clientInfo);
+    userData = adoptRef(toImpl(userDataToPass));
+}
+
 } // namespace WebKit

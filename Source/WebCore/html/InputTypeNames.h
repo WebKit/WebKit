@@ -50,6 +50,10 @@ const AtomicString& time();
 const AtomicString& url();
 const AtomicString& week();
 
+#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
+const AtomicString& alternativePresentationButton();
+#endif
+
 }
 
 } // namespace WebCore

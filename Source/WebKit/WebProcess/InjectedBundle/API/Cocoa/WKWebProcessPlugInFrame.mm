@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,10 +39,13 @@
 #import "_WKFrameHandleInternal.h"
 #import <JavaScriptCore/JSValue.h>
 #import <WebCore/CertificateInfo.h>
+#import <WebCore/Editor.h>
+#import <WebCore/Element.h>
 #import <WebCore/Frame.h>
 #import <WebCore/IntPoint.h>
 #import <WebCore/LinkIconCollector.h>
 #import <WebCore/LinkIconType.h>
+#import <wtf/Vector.h>
 
 using namespace WebKit;
 
@@ -86,6 +89,31 @@ using namespace WebKit;
 {
     JSValueRef valueRef = _frame->jsWrapperForWorld(&[rangeHandle _rangeHandle], &[world _scriptWorld]);
     return [JSValue valueWithJSValueRef:valueRef inContext:[self jsContextForWorld:world]];
+}
+
+- (void)substituteElements:(NSArray<WKWebProcessPlugInNodeHandle *> *)elements withAlternativePresentationButtonWithIdentifier:(NSString *)identifier
+{
+#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
+    size_t size = static_cast<size_t>(elements.count);
+    Vector<Ref<WebCore::Element>> coreElements;
+    coreElements.reserveInitialCapacity(size);
+    for (size_t i = 0; i < size; ++i) {
+        auto* plugInNodeHandle = [elements objectAtIndex:static_cast<NSUInteger>(i)];
+        if (!plugInNodeHandle)
+            continue;
+        auto& coreNode = *plugInNodeHandle._nodeHandle.coreNode();
+        if (is<WebCore::Element>(coreNode))
+            coreElements.uncheckedAppend(downcast<WebCore::Element>(coreNode));
+    }
+    _frame->coreFrame()->editor().substituteWithAlternativePresentationButton(WTFMove(coreElements), identifier);
+#endif
+}
+
+- (void)removeAlternativePresentationButton:(NSString *)identifier
+{
+#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
+    _frame->coreFrame()->editor().removeAlternativePresentationButton(identifier);
+#endif
 }
 
 - (WKWebProcessPlugInBrowserContextController *)_browserContextController

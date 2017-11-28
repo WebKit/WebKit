@@ -226,6 +226,10 @@ public:
     virtual HTMLElement* sliderTrackElement() const { return nullptr; }
     virtual HTMLElement* placeholderElement() const;
 
+#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
+    virtual HTMLElement* alternativePresentationButtonElement() const { return nullptr; }
+#endif
+
     // Miscellaneous functions.
 
     virtual bool rendererIsNeeded();

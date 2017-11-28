@@ -323,6 +323,8 @@ private:
 
     void handleAutoFillButtonClick(WebCore::HTMLInputElement&) final;
 
+    void handleAlternativePresentationButtonClick(WebCore::Node&) final;
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
     void addPlaybackTargetPickerClient(uint64_t /*contextId*/) final;
     void removePlaybackTargetPickerClient(uint64_t /*contextId*/) final;

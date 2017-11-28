@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundlePageUIClient_h
-#define InjectedBundlePageUIClient_h
+#pragma once
 
 #include "APIClient.h"
 #include "APIInjectedBundlePageUIClient.h"
@@ -37,7 +36,7 @@ namespace API {
 class Object;
 
 template<> struct ClientTraits<WKBundlePageUIClientBase> {
-    typedef std::tuple<WKBundlePageUIClientV0, WKBundlePageUIClientV1, WKBundlePageUIClientV2, WKBundlePageUIClientV3> Versions;
+    typedef std::tuple<WKBundlePageUIClientV0, WKBundlePageUIClientV1, WKBundlePageUIClientV2, WKBundlePageUIClientV3, WKBundlePageUIClientV4> Versions;
 };
 }
 
@@ -71,8 +70,8 @@ public:
     String plugInExtraScript() const override;
 
     void didClickAutoFillButton(WebPage&, InjectedBundleNodeHandle&, RefPtr<API::Object>& userData) override;
+
+    void didClickAlternativePresentationButton(WebPage&, InjectedBundleNodeHandle&, RefPtr<API::Object>& userData) override;
 };
 
 } // namespace WebKit
-
-#endif // InjectedBundlePageUIClient_h

@@ -1,3 +1,46 @@
+2017-11-28  Daniel Bates  <dabates@apple.com>
+
+        [Cocoa] First pass at implementing alternative presentation button element
+        https://bugs.webkit.org/show_bug.cgi?id=179785
+        Part of <rdar://problem/34917108>
+
+        Reviewed by Brent Fulgham.
+
+        Expose SPI to substitute the alternative presentation button for one or more elements
+        and remove the alternative presentation button. Add a private delegate callback when
+        the alternative presentation button is clicked.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::didClickAlternativePresentationButton): Added.
+        * UIProcess/API/C/WKPageUIClient.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate): Wired up delegate callback.
+        (WebKit::UIDelegate::UIClient::didClickAlternativePresentationButton): Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleAlternativePresentationButtonClick): Added.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageUIClient.h:
+        (API::InjectedBundle::PageUIClient::didClickAlternativePresentationButton): Added.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (-[WKWebProcessPlugInFrame substituteElements:withAlternativePresentationButtonWithIdentifier:]): Added.
+        (-[WKWebProcessPlugInFrame removeAlternativePresentationButton:]): Added.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFramePrivate.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleSubstituteWithAlternativePresentationButton): Added.
+        (WKBundleRemoveAlternativePresentationButton): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundleFramePrivate.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageUIClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::didClickAlternativePresentationButton): Added.
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::handleAlternativePresentationButtonClick): Added.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2017-11-27  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: addResult.isNewEntry WebCore::SWServerRegistration::addClientUsingRegistration(WebCore::ServiceWorkerClientIdentifier const&) + 141

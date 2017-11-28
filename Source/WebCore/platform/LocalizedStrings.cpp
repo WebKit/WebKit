@@ -625,6 +625,21 @@ String AXAutoFillContactsLabel()
     return WEB_UI_STRING("contact info auto fill", "Label for the auto fill contacts button inside a text field.");
 }
 
+String AXAlternativePresentationButtonLabel()
+{
+    return WEB_UI_STRING("alternative presentation button", "Label for the alternative presentation button.");
+}
+
+String alternativePresentationButtonTitle()
+{
+    return WEB_UI_STRING("alternative presentation button title", "Title text for alternative presentation button");
+}
+
+String alternativePresentationButtonSubtitle()
+{
+    return WEB_UI_STRING("alternative presentation button subtitle", "Subtitle text for alternative presentation button");
+}
+
 String missingPluginText()
 {
     return WEB_UI_STRING("Missing Plug-in", "Label text to be used when a plugin is missing");

@@ -6879,6 +6879,11 @@ void WebPageProxy::handleAutoFillButtonClick(const UserData& userData)
     m_uiClient->didClickAutoFillButton(*this, m_process->transformHandlesToObjects(userData.object()).get());
 }
 
+void WebPageProxy::handleAlternativePresentationButtonClick(const UserData& userData)
+{
+    m_uiClient->didClickAlternativePresentationButton(*this, m_process->transformHandlesToObjects(userData.object()).get());
+}
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 void WebPageProxy::addPlaybackTargetPickerClient(uint64_t contextId)
 {

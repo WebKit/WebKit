@@ -4294,4 +4294,30 @@ MockPaymentCoordinator& Internals::mockPaymentCoordinator() const
 }
 #endif
 
+#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
+ExceptionOr<void> Internals::substituteWithAlternativePresentationButton(Vector<RefPtr<Element>>&& elementsFromBindings, const String& identifier)
+{
+    if (!frame())
+        return Exception { InvalidAccessError };
+    if (elementsFromBindings.isEmpty())
+        return Exception { TypeError, ASCIILiteral { "Must specify at least one element to substitute." } };
+    Vector<Ref<Element>> elements;
+    elements.reserveInitialCapacity(elementsFromBindings.size());
+    for (auto& element : elementsFromBindings) {
+        if (element)
+            elements.uncheckedAppend(element.releaseNonNull());
+    }
+    frame()->editor().substituteWithAlternativePresentationButton(WTFMove(elements), identifier);
+    return { };
+}
+
+ExceptionOr<void> Internals::removeAlternativePresentationButton(const String& identifier)
+{
+    if (!frame())
+        return Exception { InvalidAccessError };
+    frame()->editor().removeAlternativePresentationButton(identifier);
+    return { };
+}
+#endif
+
 } // namespace WebCore

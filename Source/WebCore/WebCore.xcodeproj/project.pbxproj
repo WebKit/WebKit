@@ -13014,6 +13014,12 @@
 		CE7B2DB11586ABAD0098B3FA /* TextAlternativeWithRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextAlternativeWithRange.h; sourceTree = "<group>"; };
 		CE7B2DB21586ABAD0098B3FA /* TextAlternativeWithRange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextAlternativeWithRange.mm; sourceTree = "<group>"; };
 		CE7E17821C83A49100AD06AF /* ContentSecurityPolicyHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContentSecurityPolicyHash.h; path = csp/ContentSecurityPolicyHash.h; sourceTree = "<group>"; };
+		CEB828571FBBA0CE005CBEA1 /* AlternativePresentationButtonElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlternativePresentationButtonElement.h; sourceTree = "<group>"; };
+		CEB828581FBBA0CE005CBEA1 /* AlternativePresentationButtonElement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AlternativePresentationButtonElement.cpp; sourceTree = "<group>"; };
+		CEB8285A1FBBB273005CBEA1 /* AlternativePresentationButtonInputType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlternativePresentationButtonInputType.h; sourceTree = "<group>"; };
+		CEB8285B1FBBB273005CBEA1 /* AlternativePresentationButtonInputType.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AlternativePresentationButtonInputType.cpp; sourceTree = "<group>"; };
+		CEB828621FBCC142005CBEA1 /* AlternativePresentationButtonSubstitution.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlternativePresentationButtonSubstitution.h; sourceTree = "<group>"; };
+		CEB828641FBCE0D3005CBEA1 /* AlternativePresentationButtonSubstitution.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AlternativePresentationButtonSubstitution.cpp; sourceTree = "<group>"; };
 		CECADFC2153778FF00E37068 /* DictationAlternative.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DictationAlternative.cpp; sourceTree = "<group>"; };
 		CECADFC3153778FF00E37068 /* DictationAlternative.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DictationAlternative.h; sourceTree = "<group>"; };
 		CECADFC4153778FF00E37068 /* DictationCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DictationCommand.cpp; sourceTree = "<group>"; };
@@ -16132,6 +16138,7 @@
 		4150F9ED12B6E0990008C860 /* shadow */ = {
 			isa = PBXGroup;
 			children = (
+				CE0B30531FACE93500E3FA79 /* cocoa */,
 				51C4AA5118B28357007BFE9B /* mac */,
 				7C1E97251A9F9834007BF0FB /* AutoFillButtonElement.cpp */,
 				7C1E97261A9F9834007BF0FB /* AutoFillButtonElement.h */,
@@ -18973,6 +18980,8 @@
 		7C3E510718DF8F1200C112F7 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				CEB828641FBCE0D3005CBEA1 /* AlternativePresentationButtonSubstitution.cpp */,
+				CEB828621FBCC142005CBEA1 /* AlternativePresentationButtonSubstitution.h */,
 				C5227DEF1C3C6DD700F5ED54 /* DataDetection.h */,
 				C5227DF01C3C6DD700F5ED54 /* DataDetection.mm */,
 				9B55EEE81B3E8898005342BC /* EditorCocoa.mm */,
@@ -23858,6 +23867,17 @@
 				CDF2B00F1820540600F2B424 /* MockTracks.h */,
 			);
 			path = mediasource;
+			sourceTree = "<group>";
+		};
+		CE0B30531FACE93500E3FA79 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				CEB828581FBBA0CE005CBEA1 /* AlternativePresentationButtonElement.cpp */,
+				CEB828571FBBA0CE005CBEA1 /* AlternativePresentationButtonElement.h */,
+				CEB8285B1FBBB273005CBEA1 /* AlternativePresentationButtonInputType.cpp */,
+				CEB8285A1FBBB273005CBEA1 /* AlternativePresentationButtonInputType.h */,
+			);
+			path = cocoa;
 			sourceTree = "<group>";
 		};
 		CE17AD141C58522F005F4799 /* csp */ = {

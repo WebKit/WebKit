@@ -1634,6 +1634,8 @@ private:
 
     void handleAutoFillButtonClick(const UserData&);
 
+    void handleAlternativePresentationButtonClick(const UserData&);
+
     void finishInitializingWebPageAfterProcessLaunch();
 
     void handleMessage(IPC::Connection&, const String& messageName, const UserData& messageBody);

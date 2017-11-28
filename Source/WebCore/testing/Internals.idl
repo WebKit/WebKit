@@ -572,4 +572,7 @@ enum EventThrottlingBehavior {
     [EnabledAtRuntime=WebAnimations] void pauseTimeline(AnimationTimeline timeline);
     [EnabledAtRuntime=WebAnimations] void setTimelineCurrentTime(AnimationTimeline timeline, double currentTime);
     [Conditional=APPLE_PAY] readonly attribute MockPaymentCoordinator mockPaymentCoordinator;
+
+    [Conditional=ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT, MayThrowException] void substituteWithAlternativePresentationButton(sequence<Element> elements, DOMString identifier);
+    [Conditional=ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT, MayThrowException] void removeAlternativePresentationButton(DOMString identifier);
 };

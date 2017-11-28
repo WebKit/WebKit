@@ -114,6 +114,7 @@ private:
         void unavailablePluginButtonClicked(WebPageProxy&, WKPluginUnavailabilityReason, API::Dictionary&) final;
         void mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData&, WebEvent::Modifiers, API::Object*);
         void didClickAutoFillButton(WebPageProxy&, API::Object*) final;
+        void didClickAlternativePresentationButton(WebPageProxy&, API::Object*) final;
         void toolbarsAreVisible(WebPageProxy&, Function<void(bool)>&&) final;
         bool runOpenPanel(WebPageProxy*, WebFrameProxy*, const WebCore::SecurityOriginData&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) final;
         void didExceedBackgroundResourceLimitWhileInForeground(WebPageProxy&, WKResourceLimit) final;
@@ -172,6 +173,7 @@ private:
         bool webViewHandleAutoplayEventWithFlags : 1;
         bool webViewUnavailablePlugInButtonClicked : 1;
         bool webViewDidClickAutoFillButtonWithUserInfo : 1;
+        bool webViewDidClickAlternativePresentationButtonWithUserInfo : 1;
         bool webViewDrawHeaderInRectForPageWithTitleURL : 1;
         bool webViewDrawFooterInRectForPageWithTitleURL : 1;
         bool webViewGetWindowFrameWithCompletionHandler : 1;

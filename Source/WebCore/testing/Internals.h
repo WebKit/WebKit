@@ -90,7 +90,7 @@ class VoidCallback;
 class WebGLRenderingContext;
 class XMLHttpRequest;
 
-class Internals final : public RefCounted<Internals>,  private ContextDestructionObserver
+class Internals final : public RefCounted<Internals>, private ContextDestructionObserver
 #if ENABLE(MEDIA_STREAM)
     , private RealtimeMediaSource::Observer
 #endif
@@ -627,6 +627,11 @@ public:
 
 #if ENABLE(APPLE_PAY)
     MockPaymentCoordinator& mockPaymentCoordinator() const;
+#endif
+
+#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
+    ExceptionOr<void> substituteWithAlternativePresentationButton(Vector<RefPtr<Element>>&&, const String&);
+    ExceptionOr<void> removeAlternativePresentationButton(const String&);
 #endif
 
     String timelineDescription(AnimationTimeline&);
