@@ -3570,80 +3570,62 @@ void GraphicsLayerCA::getDebugBorderInfo(Color& color, float& width) const
     GraphicsLayer::getDebugBorderInfo(color, width);
 }
 
-static void dumpInnerLayer(TextStream& textStream, String label, PlatformCALayer* layer, int indent, LayerTreeAsTextBehavior behavior)
+static void dumpInnerLayer(TextStream& textStream, String label, PlatformCALayer* layer, LayerTreeAsTextBehavior behavior)
 {
     if (!layer)
         return;
 
-    writeIndent(textStream, indent + 1);
-    textStream << "(" << label << " ";
+    textStream << indent << "(" << label << " ";
     if (behavior & LayerTreeAsTextDebug)
         textStream << "id=" << layer->layerID() << " ";
-    textStream << layer->position().x() << ", " << layer->position().y()
-        << " " << layer->bounds().width() << " x " << layer->bounds().height();
+    textStream << layer->position().x() << ", " << layer->position().y() << " " << layer->bounds().width() << " x " << layer->bounds().height();
     if (layer->isHidden())
         textStream << " hidden";
     textStream << ")\n";
 }
 
-void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, int indent, LayerTreeAsTextBehavior behavior) const
+void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, LayerTreeAsTextBehavior behavior) const
 {
     if (behavior & LayerTreeAsTextIncludeVisibleRects) {
-        writeIndent(textStream, indent + 1);
-        textStream << "(visible rect " << m_visibleRect.x() << ", " << m_visibleRect.y() << " " << m_visibleRect.width() << " x " << m_visibleRect.height() << ")\n";
-
-        writeIndent(textStream, indent + 1);
-        textStream << "(coverage rect " << m_coverageRect.x() << ", " << m_coverageRect.y() << " " << m_coverageRect.width() << " x " << m_coverageRect.height() << ")\n";
-
-        writeIndent(textStream, indent + 1);
-        textStream << "(intersects coverage rect " << m_intersectsCoverageRect << ")\n";
-
-        writeIndent(textStream, indent + 1);
-        textStream << "(contentsScale " << m_layer->contentsScale() << ")\n";
+        textStream << indent << "(visible rect " << m_visibleRect.x() << ", " << m_visibleRect.y() << " " << m_visibleRect.width() << " x " << m_visibleRect.height() << ")\n";
+        textStream << indent << "(coverage rect " << m_coverageRect.x() << ", " << m_coverageRect.y() << " " << m_coverageRect.width() << " x " << m_coverageRect.height() << ")\n";
+        textStream << indent << "(intersects coverage rect " << m_intersectsCoverageRect << ")\n";
+        textStream << indent << "(contentsScale " << m_layer->contentsScale() << ")\n";
     }
 
     if (tiledBacking() && (behavior & LayerTreeAsTextIncludeTileCaches)) {
-        if (behavior & LayerTreeAsTextDebug) {
-            writeIndent(textStream, indent + 1);
-            textStream << "(tiled backing " << tiledBacking() << ")\n";
-        }
+        if (behavior & LayerTreeAsTextDebug)
+            textStream << indent << "(tiled backing " << tiledBacking() << ")\n";
 
         IntRect tileCoverageRect = tiledBacking()->tileCoverageRect();
-        writeIndent(textStream, indent + 1);
-        textStream << "(tile cache coverage " << tileCoverageRect.x() << ", " << tileCoverageRect.y() << " " << tileCoverageRect.width() << " x " << tileCoverageRect.height() << ")\n";
+        textStream << indent << "(tile cache coverage " << tileCoverageRect.x() << ", " << tileCoverageRect.y() << " " << tileCoverageRect.width() << " x " << tileCoverageRect.height() << ")\n";
 
         IntSize tileSize = tiledBacking()->tileSize();
-        writeIndent(textStream, indent + 1);
-        textStream << "(tile size " << tileSize.width() << " x " << tileSize.height() << ")\n";
+        textStream << indent << "(tile size " << tileSize.width() << " x " << tileSize.height() << ")\n";
         
         IntRect gridExtent = tiledBacking()->tileGridExtent();
-        writeIndent(textStream, indent + 1);
-        textStream << "(top left tile " << gridExtent.x() << ", " << gridExtent.y() << " tiles grid " << gridExtent.width() << " x " << gridExtent.height() << ")\n";
+        textStream << indent << "(top left tile " << gridExtent.x() << ", " << gridExtent.y() << " tiles grid " << gridExtent.width() << " x " << gridExtent.height() << ")\n";
 
-        writeIndent(textStream, indent + 1);
-        textStream << "(in window " << tiledBacking()->isInWindow() << ")\n";
+        textStream << indent << "(in window " << tiledBacking()->isInWindow() << ")\n";
     }
     
-    if (m_layer->wantsDeepColorBackingStore()) {
-        writeIndent(textStream, indent + 1);
-        textStream << "(deep color 1)\n";
-    }
-    
+    if (m_layer->wantsDeepColorBackingStore())
+        textStream << indent << "(deep color 1)\n";
+
+
     if (behavior & LayerTreeAsTextIncludeContentLayers) {
-        dumpInnerLayer(textStream, "structural layer", m_structuralLayer.get(), indent, behavior);
-        dumpInnerLayer(textStream, "contents clipping layer", m_contentsClippingLayer.get(), indent, behavior);
-        dumpInnerLayer(textStream, "shape mask layer", m_shapeMaskLayer.get(), indent, behavior);
-        dumpInnerLayer(textStream, "backdrop clipping layer", m_backdropClippingLayer.get(), indent, behavior);
-        dumpInnerLayer(textStream, "contents layer", m_contentsLayer.get(), indent, behavior);
-        dumpInnerLayer(textStream, "contents shape mask layer", m_contentsShapeMaskLayer.get(), indent, behavior);
-        dumpInnerLayer(textStream, "backdrop layer", m_backdropLayer.get(), indent, behavior);
+        dumpInnerLayer(textStream, "structural layer", m_structuralLayer.get(), behavior);
+        dumpInnerLayer(textStream, "contents clipping layer", m_contentsClippingLayer.get(), behavior);
+        dumpInnerLayer(textStream, "shape mask layer", m_shapeMaskLayer.get(), behavior);
+        dumpInnerLayer(textStream, "backdrop clipping layer", m_backdropClippingLayer.get(), behavior);
+        dumpInnerLayer(textStream, "contents layer", m_contentsLayer.get(), behavior);
+        dumpInnerLayer(textStream, "contents shape mask layer", m_contentsShapeMaskLayer.get(), behavior);
+        dumpInnerLayer(textStream, "backdrop layer", m_backdropLayer.get(), behavior);
     }
 
     if (behavior & LayerTreeAsTextDebug) {
-        writeIndent(textStream, indent + 1);
-        textStream << "(accelerates drawing " << m_acceleratesDrawing << ")\n";
-        writeIndent(textStream, indent + 1);
-        textStream << "(uses display-list drawing " << m_usesDisplayListDrawing << ")\n";
+        textStream << indent << "(accelerates drawing " << m_acceleratesDrawing << ")\n";
+        textStream << indent << "(uses display-list drawing " << m_usesDisplayListDrawing << ")\n";
     }
 }
 

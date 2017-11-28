@@ -480,7 +480,7 @@ public:
     virtual void setContentsOrientation(CompositingCoordinatesOrientation orientation) { m_contentsOrientation = orientation; }
     CompositingCoordinatesOrientation contentsOrientation() const { return m_contentsOrientation; }
 
-    void dumpLayer(WTF::TextStream&, int indent = 0, LayerTreeAsTextBehavior = LayerTreeAsTextBehaviorNormal) const;
+    void dumpLayer(WTF::TextStream&, LayerTreeAsTextBehavior = LayerTreeAsTextBehaviorNormal) const;
 
     virtual void setShowDebugBorder(bool show) { m_showDebugBorder = show; }
     bool isShowingDebugBorder() const { return m_showDebugBorder; }
@@ -609,8 +609,8 @@ protected:
     GraphicsLayer* replicatedLayer() const { return m_replicatedLayer; }
     virtual void setReplicatedLayer(GraphicsLayer* layer) { m_replicatedLayer = layer; }
 
-    void dumpProperties(WTF::TextStream&, int indent, LayerTreeAsTextBehavior) const;
-    virtual void dumpAdditionalProperties(WTF::TextStream&, int /*indent*/, LayerTreeAsTextBehavior) const { }
+    void dumpProperties(WTF::TextStream&, LayerTreeAsTextBehavior) const;
+    virtual void dumpAdditionalProperties(WTF::TextStream&, LayerTreeAsTextBehavior) const { }
 
     WEBCORE_EXPORT virtual void getDebugBorderInfo(Color&, float& width) const;
 
