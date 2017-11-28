@@ -224,14 +224,17 @@ private:
     void emitFunctionChecks(CallVariant, Node* callTarget, VirtualRegister thisArgumnt);
     void emitArgumentPhantoms(int registerOffset, int argumentCountIncludingThis);
     Node* getArgumentCount();
-    bool handleRecursiveTailCall(Node* callTargetNode, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis);
+    template<typename ChecksFunctor>
+    bool handleRecursiveTailCall(CallVariant, int registerOffset, int argumentCountIncludingThis, const ChecksFunctor& emitFunctionCheckIfNeeded);
     unsigned inliningCost(CallVariant, int argumentCountIncludingThis, InlineCallFrame::Kind); // Return UINT_MAX if it's not an inlining candidate. By convention, intrinsics have a cost of 1.
     // Handle inlining. Return true if it succeeded, false if we need to plant a call.
-    bool handleInlining(Node* callTargetNode, int resultOperand, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, VirtualRegister argumentsArgument, unsigned argumentsOffset, int argumentCountIncludingThis, unsigned nextOffset, NodeType callOp, InlineCallFrame::Kind, SpeculatedType prediction);
+    bool handleVarargsInlining(Node* callTargetNode, int resultOperand, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, VirtualRegister argumentsArgument, unsigned argumentsOffset, NodeType callOp, InlineCallFrame::Kind);
+    unsigned getInliningBalance(const CallLinkStatus&, CodeSpecializationKind);
+    enum class CallOptimizationResult { OptimizedToJump, Inlined, DidNothing };
+    CallOptimizationResult handleCallVariant(Node* callTargetNode, int resultOperand, CallVariant, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, unsigned nextOffset, InlineCallFrame::Kind, SpeculatedType prediction, unsigned& inliningBalance, BasicBlock* continuationBlock, bool needsToCheckCallee);
+    CallOptimizationResult handleInlining(Node* callTargetNode, int resultOperand, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, unsigned nextOffset, NodeType callOp, InlineCallFrame::Kind, SpeculatedType prediction);
     template<typename ChecksFunctor>
-    bool attemptToInlineCall(Node* callTargetNode, int resultOperand, CallVariant, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, InlineCallFrame::Kind, SpeculatedType prediction, unsigned& inliningBalance, BasicBlock* continuationBlock, const ChecksFunctor& insertChecks);
-    template<typename ChecksFunctor>
-    void inlineCall(Node* callTargetNode, int resultOperand, CallVariant, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, InlineCallFrame::Kind, BasicBlock* continuationBlock, const ChecksFunctor& insertChecks);
+    void inlineCall(Node* callTargetNode, int resultOperand, CallVariant, int registerOffset, int argumentCountIncludingThis, InlineCallFrame::Kind, BasicBlock* continuationBlock, const ChecksFunctor& insertChecks);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
     template<typename ChecksFunctor>
     bool handleIntrinsicCall(Node* callee, int resultOperand, Intrinsic, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction, const ChecksFunctor& insertChecks);
@@ -1234,7 +1237,7 @@ BasicBlock* ByteCodeParser::allocateUntargetableBlock()
 
 void ByteCodeParser::makeBlockTargetable(BasicBlock* block, unsigned bytecodeIndex)
 {
-    ASSERT(block->bytecodeBegin == UINT_MAX);
+    RELEASE_ASSERT(block->bytecodeBegin == UINT_MAX);
     block->bytecodeBegin = bytecodeIndex;
     // m_blockLinkingTargets must always be sorted in increasing order of bytecodeBegin
     if (m_inlineStackTop->m_blockLinkingTargets.size())
@@ -1296,21 +1299,15 @@ ByteCodeParser::Terminality ByteCodeParser::handleCall(
     
     VERBOSE_LOG("    Handling call at ", currentCodeOrigin(), ": ", callLinkStatus, "\n");
     
-    // We first check that we have profiling information about this call, and that it did not behave too polymorphically.
+    // If we have profiling information about this call, and it did not behave too polymorphically,
+    // we may be able to inline it, or in the case of recursive tail calls turn it into a jump.
     if (callLinkStatus.canOptimize()) {
         VirtualRegister thisArgument = virtualRegisterForArgument(0, registerOffset);
-
-        if (op == TailCall && handleRecursiveTailCall(callTarget, callLinkStatus, registerOffset, thisArgument, argumentCountIncludingThis))
+        auto optimizationResult = handleInlining(callTarget, result, callLinkStatus, registerOffset, thisArgument,
+            argumentCountIncludingThis, m_currentIndex + instructionSize, op, kind, prediction);
+        if (optimizationResult == CallOptimizationResult::OptimizedToJump)
             return Terminal;
-
-        // Inlining is quite complex, and managed by a pipeline of functions:
-        // handle(Varargs)Call -> handleInlining -> attemptToInlineCall -> inlineCall
-        // - handleCall and handleVarargsCall deal with the case where no inlining happens, and do some sanity checks on their arguments
-        // - handleInlining checks whether the call is polymorphic, and if so is responsible for inserting a switch on the callee
-        // - attemptToInlineCall deals with special cases such as intrinsics, it also checks the inlining heuristic (through inliningCost)
-        // - inlineCall finally does the actual inlining, after a complicated procedure to setup the stack correctly
-        unsigned nextOffset = m_currentIndex + instructionSize;
-        if (handleInlining(callTarget, result, callLinkStatus, registerOffset, thisArgument, VirtualRegister(), 0, argumentCountIncludingThis, nextOffset, op, kind, prediction)) {
+        if (optimizationResult == CallOptimizationResult::Inlined) {
             if (UNLIKELY(m_graph.compilation()))
                 m_graph.compilation()->noticeInlinedCall();
             return NonTerminal;
@@ -1347,11 +1344,15 @@ ByteCodeParser::Terminality ByteCodeParser::handleVarargsCall(Instruction* pc, N
     
     VERBOSE_LOG("    Varargs call link status at ", currentCodeOrigin(), ": ", callLinkStatus, "\n");
     
-    if (callLinkStatus.canOptimize()
-        && handleInlining(callTarget, result, callLinkStatus, firstFreeReg, VirtualRegister(thisReg), VirtualRegister(arguments), firstVarArgOffset, 0, m_currentIndex + OPCODE_LENGTH(op_call_varargs), op, InlineCallFrame::varargsKindFor(callMode), prediction)) {
-        if (UNLIKELY(m_graph.compilation()))
-            m_graph.compilation()->noticeInlinedCall();
-        return NonTerminal;
+    if (callLinkStatus.canOptimize()) {
+        if (handleVarargsInlining(callTarget, result,
+            callLinkStatus, firstFreeReg, VirtualRegister(thisReg), VirtualRegister(arguments),
+            firstVarArgOffset, op,
+            InlineCallFrame::varargsKindFor(callMode))) {
+            if (UNLIKELY(m_graph.compilation()))
+                m_graph.compilation()->noticeInlinedCall();
+            return NonTerminal;
+        }
     }
     
     CallVarargsData* data = m_graph.m_callVarargsData.add();
@@ -1420,17 +1421,13 @@ void ByteCodeParser::emitArgumentPhantoms(int registerOffset, int argumentCountI
         addToGraph(Phantom, get(virtualRegisterForArgument(i, registerOffset)));
 }
 
-bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, const CallLinkStatus& callLinkStatus, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis)
+template<typename ChecksFunctor>
+bool ByteCodeParser::handleRecursiveTailCall(CallVariant callVariant, int registerOffset, int argumentCountIncludingThis, const ChecksFunctor& emitFunctionCheckIfNeeded)
 {
     if (UNLIKELY(!Options::optimizeRecursiveTailCalls()))
         return false;
 
-    // FIXME: We currently only do this optimisation in the simple, non-polymorphic case.
-    // https://bugs.webkit.org/show_bug.cgi?id=178390
-    if (callLinkStatus.couldTakeSlowPath() || callLinkStatus.size() != 1)
-        return false;
-
-    auto targetExecutable = callLinkStatus[0].executable();
+    auto targetExecutable = callVariant.executable();
     InlineStackEntry* stackEntry = m_inlineStackTop;
     do {
         if (targetExecutable != stackEntry->executable())
@@ -1450,7 +1447,7 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, const CallLin
         }
 
         // We must add some check that the profiling information was correct and the target of this call is what we thought
-        emitFunctionChecks(callLinkStatus[0], callTargetNode, thisArgument);
+        emitFunctionCheckIfNeeded();
 
         // We must set the arguments to the right values
         int argIndex = 0;
@@ -1591,8 +1588,9 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
 }
 
 template<typename ChecksFunctor>
-void ByteCodeParser::inlineCall(Node* callTargetNode, int resultOperand, CallVariant callee, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, InlineCallFrame::Kind kind, BasicBlock* continuationBlock, const ChecksFunctor& insertChecks)
+void ByteCodeParser::inlineCall(Node* callTargetNode, int resultOperand, CallVariant callee, int registerOffset, int argumentCountIncludingThis, InlineCallFrame::Kind kind, BasicBlock* continuationBlock, const ChecksFunctor& insertChecks)
 {
+    Instruction* savedCurrentInstruction = m_currentInstruction;
     CodeSpecializationKind specializationKind = InlineCallFrame::specializationKindFor(kind);
     
     ASSERT(inliningCost(callee, argumentCountIncludingThis, kind) != UINT_MAX);
@@ -1722,32 +1720,199 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, int resultOperand, CallVar
 
     linkBlocks(inlineStackEntry.m_unlinkedBlocks, inlineStackEntry.m_blockLinkingTargets);
     
-    // If the callee returned at least once, it prepared a continuation block for us.
-    if (inlineStackEntry.m_continuationBlock)
-        m_currentBlock = inlineStackEntry.m_continuationBlock;
-    else {
-        // We are in the case where the callee never returns (for example it loops forever).
-        // In that case, all blocks should end in a terminal.
-        ASSERT(m_graph.lastBlock()->terminal());
-        // We then allocate a new block to continue in.
-        m_currentBlock = allocateTargetableBlock(nextOffset);
-    }
-    ASSERT(m_currentBlock);
+    // There is an invariant that we use here: every function has at least one op_ret somewhere.
+    // And when parseBlock encounters an op_ret, it setups a continuation block if there was none.
+    // If this invariant was to be changed, we would need to allocate a new block here in the case where there was no continuation block ready.
+    RELEASE_ASSERT(inlineStackEntry.m_continuationBlock);
+    m_currentBlock = inlineStackEntry.m_continuationBlock;
     ASSERT(!m_currentBlock->terminal());
 
     prepareToParseBlock();
+    m_currentInstruction = savedCurrentInstruction;
 }
 
-template<typename ChecksFunctor>
-bool ByteCodeParser::attemptToInlineCall(Node* callTargetNode, int resultOperand, CallVariant callee, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, InlineCallFrame::Kind kind, SpeculatedType prediction, unsigned& inliningBalance, BasicBlock* continuationBlock, const ChecksFunctor& insertChecks)
+ByteCodeParser::CallOptimizationResult ByteCodeParser::handleCallVariant(Node* callTargetNode, int resultOperand, CallVariant callee, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, unsigned nextOffset, InlineCallFrame::Kind kind, SpeculatedType prediction, unsigned& inliningBalance, BasicBlock* continuationBlock, bool needsToCheckCallee)
 {
-    CodeSpecializationKind specializationKind = InlineCallFrame::specializationKindFor(kind);
-    
-    if (!inliningBalance)
-        return false;
-    
     VERBOSE_LOG("    Considering callee ", callee, "\n");
+
+    bool didInsertChecks = false;
+    auto insertChecksWithAccounting = [&] () {
+        if (needsToCheckCallee)
+            emitFunctionChecks(callee, callTargetNode, thisArgument);
+        didInsertChecks = true;
+    };
+
+    if (kind == InlineCallFrame::TailCall && ByteCodeParser::handleRecursiveTailCall(callee, registerOffset, argumentCountIncludingThis, insertChecksWithAccounting)) {
+        RELEASE_ASSERT(didInsertChecks);
+        return CallOptimizationResult::OptimizedToJump;
+    }
+    RELEASE_ASSERT(!didInsertChecks);
+
+    if (!inliningBalance)
+        return CallOptimizationResult::DidNothing;
+
+    CodeSpecializationKind specializationKind = InlineCallFrame::specializationKindFor(kind);
+
+    auto endSpecialCase = [&] () {
+        RELEASE_ASSERT(didInsertChecks);
+        addToGraph(Phantom, callTargetNode);
+        emitArgumentPhantoms(registerOffset, argumentCountIncludingThis);
+        inliningBalance--;
+        if (continuationBlock) {
+            m_currentIndex = nextOffset;
+            m_exitOK = true;
+            processSetLocalQueue();
+            addJumpTo(continuationBlock);
+        }
+    };
+
+    if (InternalFunction* function = callee.internalFunction()) {
+        if (handleConstantInternalFunction(callTargetNode, resultOperand, function, registerOffset, argumentCountIncludingThis, specializationKind, prediction, insertChecksWithAccounting)) {
+            endSpecialCase();
+            return CallOptimizationResult::Inlined;
+        }
+        RELEASE_ASSERT(!didInsertChecks);
+        return CallOptimizationResult::DidNothing;
+    }
+
+    Intrinsic intrinsic = callee.intrinsicFor(specializationKind);
+    if (intrinsic != NoIntrinsic) {
+        if (handleIntrinsicCall(callTargetNode, resultOperand, intrinsic, registerOffset, argumentCountIncludingThis, prediction, insertChecksWithAccounting)) {
+            endSpecialCase();
+            return CallOptimizationResult::Inlined;
+        }
+        RELEASE_ASSERT(!didInsertChecks);
+        // We might still try to inline the Intrinsic because it might be a builtin JS function.
+    }
+
+    if (Options::useDOMJIT()) {
+        if (const DOMJIT::Signature* signature = callee.signatureFor(specializationKind)) {
+            if (handleDOMJITCall(callTargetNode, resultOperand, signature, registerOffset, argumentCountIncludingThis, prediction, insertChecksWithAccounting)) {
+                endSpecialCase();
+                return CallOptimizationResult::Inlined;
+            }
+            RELEASE_ASSERT(!didInsertChecks);
+        }
+    }
     
+    unsigned myInliningCost = inliningCost(callee, argumentCountIncludingThis, kind);
+    if (myInliningCost > inliningBalance)
+        return CallOptimizationResult::DidNothing;
+
+    auto insertCheck = [&] (CodeBlock*) {
+        if (needsToCheckCallee)
+            emitFunctionChecks(callee, callTargetNode, thisArgument);
+    };
+    inlineCall(callTargetNode, resultOperand, callee, registerOffset, argumentCountIncludingThis, kind, continuationBlock, insertCheck);
+    inliningBalance -= myInliningCost;
+    return CallOptimizationResult::Inlined;
+}
+
+bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, int resultOperand,
+    const CallLinkStatus& callLinkStatus, int firstFreeReg, VirtualRegister thisArgument,
+    VirtualRegister argumentsArgument, unsigned argumentsOffset,
+    NodeType callOp, InlineCallFrame::Kind kind)
+{
+    VERBOSE_LOG("Handling inlining (Varargs)...\nStack: ", currentCodeOrigin(), "\n");
+    if (callLinkStatus.maxNumArguments() > Options::maximumVarargsForInlining()) {
+        VERBOSE_LOG("Bailing inlining: too many arguments for varargs inlining.\n");
+        return false;
+    }
+    if (callLinkStatus.couldTakeSlowPath() || callLinkStatus.size() != 1) {
+        VERBOSE_LOG("Bailing inlining: polymorphic inlining is not yet supported for varargs.\n");
+        return false;
+    }
+
+    CallVariant callVariant = callLinkStatus[0];
+
+    unsigned mandatoryMinimum;
+    if (FunctionExecutable* functionExecutable = callVariant.functionExecutable())
+        mandatoryMinimum = functionExecutable->parameterCount();
+    else
+        mandatoryMinimum = 0;
+    
+    // includes "this"
+    unsigned maxNumArguments = std::max(callLinkStatus.maxNumArguments(), mandatoryMinimum + 1);
+
+    CodeSpecializationKind specializationKind = InlineCallFrame::specializationKindFor(kind);
+    if (inliningCost(callVariant, maxNumArguments, kind) > getInliningBalance(callLinkStatus, specializationKind)) {
+        VERBOSE_LOG("Bailing inlining: inlining cost too high.\n");
+        return false;
+    }
+    
+    int registerOffset = firstFreeReg + 1;
+    registerOffset -= maxNumArguments; // includes "this"
+    registerOffset -= CallFrame::headerSizeInRegisters;
+    registerOffset = -WTF::roundUpToMultipleOf(stackAlignmentRegisters(), -registerOffset);
+    
+    auto insertChecks = [&] (CodeBlock* codeBlock) {
+        emitFunctionChecks(callVariant, callTargetNode, thisArgument);
+        
+        int remappedRegisterOffset =
+        m_inlineStackTop->remapOperand(VirtualRegister(registerOffset)).offset();
+        
+        ensureLocals(VirtualRegister(remappedRegisterOffset).toLocal());
+        
+        int argumentStart = registerOffset + CallFrame::headerSizeInRegisters;
+        int remappedArgumentStart =
+        m_inlineStackTop->remapOperand(VirtualRegister(argumentStart)).offset();
+        
+        LoadVarargsData* data = m_graph.m_loadVarargsData.add();
+        data->start = VirtualRegister(remappedArgumentStart + 1);
+        data->count = VirtualRegister(remappedRegisterOffset + CallFrameSlot::argumentCount);
+        data->offset = argumentsOffset;
+        data->limit = maxNumArguments;
+        data->mandatoryMinimum = mandatoryMinimum;
+        
+        if (callOp == TailCallForwardVarargs)
+            addToGraph(ForwardVarargs, OpInfo(data));
+        else
+            addToGraph(LoadVarargs, OpInfo(data), get(argumentsArgument));
+        
+        // LoadVarargs may OSR exit. Hence, we need to keep alive callTargetNode, thisArgument
+        // and argumentsArgument for the baseline JIT. However, we only need a Phantom for
+        // callTargetNode because the other 2 are still in use and alive at this point.
+        addToGraph(Phantom, callTargetNode);
+        
+        // In DFG IR before SSA, we cannot insert control flow between after the
+        // LoadVarargs and the last SetArgument. This isn't a problem once we get to DFG
+        // SSA. Fortunately, we also have other reasons for not inserting control flow
+        // before SSA.
+        
+        VariableAccessData* countVariable = newVariableAccessData(VirtualRegister(remappedRegisterOffset + CallFrameSlot::argumentCount));
+        // This is pretty lame, but it will force the count to be flushed as an int. This doesn't
+        // matter very much, since our use of a SetArgument and Flushes for this local slot is
+        // mostly just a formality.
+        countVariable->predict(SpecInt32Only);
+        countVariable->mergeIsProfitableToUnbox(true);
+        Node* setArgumentCount = addToGraph(SetArgument, OpInfo(countVariable));
+        m_currentBlock->variablesAtTail.setOperand(countVariable->local(), setArgumentCount);
+        
+        set(VirtualRegister(argumentStart), get(thisArgument), ImmediateNakedSet);
+        for (unsigned argument = 1; argument < maxNumArguments; ++argument) {
+            VariableAccessData* variable = newVariableAccessData(VirtualRegister(remappedArgumentStart + argument));
+            variable->mergeShouldNeverUnbox(true); // We currently have nowhere to put the type check on the LoadVarargs. LoadVarargs is effectful, so after it finishes, we cannot exit.
+            
+            // For a while it had been my intention to do things like this inside the
+            // prediction injection phase. But in this case it's really best to do it here,
+            // because it's here that we have access to the variable access datas for the
+            // inlining we're about to do.
+            //
+            // Something else that's interesting here is that we'd really love to get
+            // predictions from the arguments loaded at the callsite, rather than the
+            // arguments received inside the callee. But that probably won't matter for most
+            // calls.
+            if (codeBlock && argument < static_cast<unsigned>(codeBlock->numParameters())) {
+                ConcurrentJSLocker locker(codeBlock->m_lock);
+                ValueProfile& profile = codeBlock->valueProfileForArgument(argument);
+                variable->predict(profile.computeUpdatedPrediction(locker));
+            }
+            
+            Node* setArgument = addToGraph(SetArgument, OpInfo(variable));
+            m_currentBlock->variablesAtTail.setOperand(variable->local(), setArgument);
+        }
+    };
+
     // Intrinsics and internal functions can only be inlined if we're not doing varargs. This is because
     // we currently don't have any way of getting profiling information for arguments to non-JS varargs
     // calls. The prediction propagator won't be of any help because LoadVarargs obscures the data flow,
@@ -1755,217 +1920,51 @@ bool ByteCodeParser::attemptToInlineCall(Node* callTargetNode, int resultOperand
     // those arguments. Even worse, if the intrinsic decides to exit, it won't really have anywhere to
     // exit to: LoadVarargs is effectful and it's part of the op_call_varargs, so we can't exit without
     // calling LoadVarargs twice.
-    if (!InlineCallFrame::isVarargs(kind)) {
+    inlineCall(callTargetNode, resultOperand, callVariant, registerOffset, maxNumArguments, kind, nullptr, insertChecks);
 
-        bool didInsertChecks = false;
-        auto insertChecksWithAccounting = [&] () {
-            insertChecks(nullptr);
-            didInsertChecks = true;
-        };
-
-        auto endSpecialCase = [&] () {
-            RELEASE_ASSERT(didInsertChecks);
-            addToGraph(Phantom, callTargetNode);
-            emitArgumentPhantoms(registerOffset, argumentCountIncludingThis);
-            inliningBalance--;
-            if (continuationBlock) {
-                m_currentIndex = nextOffset;
-                m_exitOK = true;
-                processSetLocalQueue();
-                addJumpTo(continuationBlock);
-            }
-        };
-    
-        if (InternalFunction* function = callee.internalFunction()) {
-            if (handleConstantInternalFunction(callTargetNode, resultOperand, function, registerOffset, argumentCountIncludingThis, specializationKind, prediction, insertChecksWithAccounting)) {
-                endSpecialCase();
-                return true;
-            }
-            RELEASE_ASSERT(!didInsertChecks);
-            return false;
-        }
-    
-        Intrinsic intrinsic = callee.intrinsicFor(specializationKind);
-        if (intrinsic != NoIntrinsic) {
-            if (handleIntrinsicCall(callTargetNode, resultOperand, intrinsic, registerOffset, argumentCountIncludingThis, prediction, insertChecksWithAccounting)) {
-                endSpecialCase();
-                return true;
-            }
-
-            RELEASE_ASSERT(!didInsertChecks);
-            // We might still try to inline the Intrinsic because it might be a builtin JS function.
-        }
-
-        if (Options::useDOMJIT()) {
-            if (const DOMJIT::Signature* signature = callee.signatureFor(specializationKind)) {
-                if (handleDOMJITCall(callTargetNode, resultOperand, signature, registerOffset, argumentCountIncludingThis, prediction, insertChecksWithAccounting)) {
-                    endSpecialCase();
-                    return true;
-                }
-                RELEASE_ASSERT(!didInsertChecks);
-            }
-        }
-    }
-    
-    unsigned myInliningCost = inliningCost(callee, argumentCountIncludingThis, kind);
-    if (myInliningCost > inliningBalance)
-        return false;
-
-    Instruction* savedCurrentInstruction = m_currentInstruction;
-    inlineCall(callTargetNode, resultOperand, callee, registerOffset, argumentCountIncludingThis, nextOffset, kind, continuationBlock, insertChecks);
-    inliningBalance -= myInliningCost;
-    m_currentInstruction = savedCurrentInstruction;
+    VERBOSE_LOG("Successful inlining (varargs, monomorphic).\nStack: ", currentCodeOrigin(), "\n");
     return true;
 }
 
-bool ByteCodeParser::handleInlining(
-    Node* callTargetNode, int resultOperand, const CallLinkStatus& callLinkStatus,
-    int registerOffsetOrFirstFreeReg, VirtualRegister thisArgument,
-    VirtualRegister argumentsArgument, unsigned argumentsOffset, int argumentCountIncludingThis,
-    unsigned nextOffset, NodeType callOp, InlineCallFrame::Kind kind, SpeculatedType prediction)
+unsigned ByteCodeParser::getInliningBalance(const CallLinkStatus& callLinkStatus, CodeSpecializationKind specializationKind)
 {
-    VERBOSE_LOG("Handling inlining...\nStack: ", currentCodeOrigin(), "\n");
-    CodeSpecializationKind specializationKind = InlineCallFrame::specializationKindFor(kind);
-    
-    if (!callLinkStatus.size()) {
-        VERBOSE_LOG("Bailing inlining.\n");
-        return false;
-    }
-    
-    if (InlineCallFrame::isVarargs(kind)
-        && callLinkStatus.maxNumArguments() > Options::maximumVarargsForInlining()) {
-        VERBOSE_LOG("Bailing inlining because of varargs.\n");
-        return false;
-    }
-        
     unsigned inliningBalance = Options::maximumFunctionForCallInlineCandidateInstructionCount();
     if (specializationKind == CodeForConstruct)
         inliningBalance = std::min(inliningBalance, Options::maximumFunctionForConstructInlineCandidateInstructionCount());
     if (callLinkStatus.isClosureCall())
         inliningBalance = std::min(inliningBalance, Options::maximumFunctionForClosureCallInlineCandidateInstructionCount());
+    return inliningBalance;
+}
+
+ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
+    Node* callTargetNode, int resultOperand, const CallLinkStatus& callLinkStatus,
+    int registerOffset, VirtualRegister thisArgument,
+    int argumentCountIncludingThis,
+    unsigned nextOffset, NodeType callOp, InlineCallFrame::Kind kind, SpeculatedType prediction)
+{
+    VERBOSE_LOG("Handling inlining...\nStack: ", currentCodeOrigin(), "\n");
     
+    CodeSpecializationKind specializationKind = InlineCallFrame::specializationKindFor(kind);
+    unsigned inliningBalance = getInliningBalance(callLinkStatus, specializationKind);
+
     // First check if we can avoid creating control flow. Our inliner does some CFG
     // simplification on the fly and this helps reduce compile times, but we can only leverage
     // this in cases where we don't need control flow diamonds to check the callee.
     if (!callLinkStatus.couldTakeSlowPath() && callLinkStatus.size() == 1) {
-        int registerOffset;
-        
-        // Only used for varargs calls.
-        unsigned mandatoryMinimum = 0;
-        unsigned maxNumArguments = 0;
-
-        if (InlineCallFrame::isVarargs(kind)) {
-            if (FunctionExecutable* functionExecutable = callLinkStatus[0].functionExecutable())
-                mandatoryMinimum = functionExecutable->parameterCount();
-            else
-                mandatoryMinimum = 0;
-            
-            // includes "this"
-            maxNumArguments = std::max(
-                callLinkStatus.maxNumArguments(),
-                mandatoryMinimum + 1);
-            
-            // We sort of pretend that this *is* the number of arguments that were passed.
-            argumentCountIncludingThis = maxNumArguments;
-            
-            registerOffset = registerOffsetOrFirstFreeReg + 1;
-            registerOffset -= maxNumArguments; // includes "this"
-            registerOffset -= CallFrame::headerSizeInRegisters;
-            registerOffset = -WTF::roundUpToMultipleOf(
-                stackAlignmentRegisters(),
-                -registerOffset);
-        } else
-            registerOffset = registerOffsetOrFirstFreeReg;
-        
-        bool result = attemptToInlineCall(
-            callTargetNode, resultOperand, callLinkStatus[0], registerOffset,
-            argumentCountIncludingThis, nextOffset, kind, prediction,
-            inliningBalance, nullptr, [&] (CodeBlock* codeBlock) {
-                emitFunctionChecks(callLinkStatus[0], callTargetNode, thisArgument);
-
-                // If we have a varargs call, we want to extract the arguments right now.
-                if (InlineCallFrame::isVarargs(kind)) {
-                    int remappedRegisterOffset =
-                        m_inlineStackTop->remapOperand(VirtualRegister(registerOffset)).offset();
-                    
-                    ensureLocals(VirtualRegister(remappedRegisterOffset).toLocal());
-                    
-                    int argumentStart = registerOffset + CallFrame::headerSizeInRegisters;
-                    int remappedArgumentStart =
-                        m_inlineStackTop->remapOperand(VirtualRegister(argumentStart)).offset();
-
-                    LoadVarargsData* data = m_graph.m_loadVarargsData.add();
-                    data->start = VirtualRegister(remappedArgumentStart + 1);
-                    data->count = VirtualRegister(remappedRegisterOffset + CallFrameSlot::argumentCount);
-                    data->offset = argumentsOffset;
-                    data->limit = maxNumArguments;
-                    data->mandatoryMinimum = mandatoryMinimum;
-
-                    if (callOp == TailCallForwardVarargs)
-                        addToGraph(ForwardVarargs, OpInfo(data));
-                    else
-                        addToGraph(LoadVarargs, OpInfo(data), get(argumentsArgument));
-
-                    // LoadVarargs may OSR exit. Hence, we need to keep alive callTargetNode, thisArgument
-                    // and argumentsArgument for the baseline JIT. However, we only need a Phantom for
-                    // callTargetNode because the other 2 are still in use and alive at this point.
-                    addToGraph(Phantom, callTargetNode);
-
-                    // In DFG IR before SSA, we cannot insert control flow between after the
-                    // LoadVarargs and the last SetArgument. This isn't a problem once we get to DFG
-                    // SSA. Fortunately, we also have other reasons for not inserting control flow
-                    // before SSA.
-            
-                    VariableAccessData* countVariable = newVariableAccessData(
-                        VirtualRegister(remappedRegisterOffset + CallFrameSlot::argumentCount));
-                    // This is pretty lame, but it will force the count to be flushed as an int. This doesn't
-                    // matter very much, since our use of a SetArgument and Flushes for this local slot is
-                    // mostly just a formality.
-                    countVariable->predict(SpecInt32Only);
-                    countVariable->mergeIsProfitableToUnbox(true);
-                    Node* setArgumentCount = addToGraph(SetArgument, OpInfo(countVariable));
-                    m_currentBlock->variablesAtTail.setOperand(countVariable->local(), setArgumentCount);
-
-                    set(VirtualRegister(argumentStart), get(thisArgument), ImmediateNakedSet);
-                    for (unsigned argument = 1; argument < maxNumArguments; ++argument) {
-                        VariableAccessData* variable = newVariableAccessData(
-                            VirtualRegister(remappedArgumentStart + argument));
-                        variable->mergeShouldNeverUnbox(true); // We currently have nowhere to put the type check on the LoadVarargs. LoadVarargs is effectful, so after it finishes, we cannot exit.
-                        
-                        // For a while it had been my intention to do things like this inside the
-                        // prediction injection phase. But in this case it's really best to do it here,
-                        // because it's here that we have access to the variable access datas for the
-                        // inlining we're about to do.
-                        //
-                        // Something else that's interesting here is that we'd really love to get
-                        // predictions from the arguments loaded at the callsite, rather than the
-                        // arguments received inside the callee. But that probably won't matter for most
-                        // calls.
-                        if (codeBlock && argument < static_cast<unsigned>(codeBlock->numParameters())) {
-                            ConcurrentJSLocker locker(codeBlock->m_lock);
-                            ValueProfile& profile = codeBlock->valueProfileForArgument(argument);
-                            variable->predict(profile.computeUpdatedPrediction(locker));
-                        }
-                        
-                        Node* setArgument = addToGraph(SetArgument, OpInfo(variable));
-                        m_currentBlock->variablesAtTail.setOperand(variable->local(), setArgument);
-                    }
-                }
-            });
-        VERBOSE_LOG("Done inlining (simple).\nStack: ", currentCodeOrigin(), "\nResult: ", result, "\n");
-        return result;
+        return handleCallVariant(
+            callTargetNode, resultOperand, callLinkStatus[0], registerOffset, thisArgument,
+            argumentCountIncludingThis, nextOffset, kind, prediction, inliningBalance, nullptr, true);
     }
-    
+
     // We need to create some kind of switch over callee. For now we only do this if we believe that
     // we're in the top tier. We have two reasons for this: first, it provides us an opportunity to
     // do more detailed polyvariant/polymorphic profiling; and second, it reduces compile times in
     // the DFG. And by polyvariant profiling we mean polyvariant profiling of *this* call. Note that
     // we could improve that aspect of this by doing polymorphic inlining but having the profiling
     // also.
-    if (!isFTL(m_graph.m_plan.mode) || !Options::usePolymorphicCallInlining()
-        || InlineCallFrame::isVarargs(kind)) {
+    if (!isFTL(m_graph.m_plan.mode) || !Options::usePolymorphicCallInlining()) {
         VERBOSE_LOG("Bailing inlining (hard).\nStack: ", currentCodeOrigin(), "\n");
-        return false;
+        return CallOptimizationResult::DidNothing;
     }
     
     // If the claim is that this did not originate from a stub, then we don't want to emit a switch
@@ -1974,7 +1973,7 @@ bool ByteCodeParser::handleInlining(
     if (!Options::usePolymorphicCallInliningForNonStubStatus()
         && !callLinkStatus.isBasedOnStub()) {
         VERBOSE_LOG("Bailing inlining (non-stub polymorphism).\nStack: ", currentCodeOrigin(), "\n");
-        return false;
+        return CallOptimizationResult::DidNothing;
     }
 
     bool allAreClosureCalls = true;
@@ -1997,12 +1996,10 @@ bool ByteCodeParser::handleInlining(
         // closure calls.
         // https://bugs.webkit.org/show_bug.cgi?id=136020
         VERBOSE_LOG("Bailing inlining (mix).\nStack: ", currentCodeOrigin(), "\n");
-        return false;
+        return CallOptimizationResult::DidNothing;
     }
 
     VERBOSE_LOG("Doing hard inlining...\nStack: ", currentCodeOrigin(), "\n");
-
-    int registerOffset = registerOffsetOrFirstFreeReg;
 
     // This makes me wish that we were in SSA all the time. We need to pick a variable into which to
     // store the callee so that it will be accessible to all of the blocks we're about to create. We
@@ -2041,12 +2038,12 @@ bool ByteCodeParser::handleInlining(
         
         Node* myCallTargetNode = getDirect(calleeReg);
         
-        bool inliningResult = attemptToInlineCall(
+        auto inliningResult = handleCallVariant(
             myCallTargetNode, resultOperand, callLinkStatus[i], registerOffset,
-            argumentCountIncludingThis, nextOffset, kind, prediction,
-            inliningBalance, continuationBlock, [&] (CodeBlock*) { });
+            thisArgument, argumentCountIncludingThis, nextOffset, kind, prediction,
+            inliningBalance, continuationBlock, false);
         
-        if (!inliningResult) {
+        if (inliningResult == CallOptimizationResult::DidNothing) {
             // That failed so we let the block die. Nothing interesting should have been added to
             // the block. We also give up on inlining any of the (less frequent) callees.
             ASSERT(m_graph.m_blocks.last() == m_currentBlock);
@@ -2067,7 +2064,7 @@ bool ByteCodeParser::handleInlining(
             thingToCaseOn = callLinkStatus[i].executable();
         }
         data.cases.append(SwitchCase(m_graph.freeze(thingToCaseOn), calleeEntryBlock));
-        VERBOSE_LOG("Finished inlining ", callLinkStatus[i], " at ", currentCodeOrigin(), ".\n");
+        VERBOSE_LOG("Finished optimizing ", callLinkStatus[i], " at ", currentCodeOrigin(), ".\n");
     }
 
     // Slow path block
@@ -2108,7 +2105,7 @@ bool ByteCodeParser::handleInlining(
     m_exitOK = true;
     
     VERBOSE_LOG("Done inlining (hard).\nStack: ", currentCodeOrigin(), "\n");
-    return true;
+    return CallOptimizationResult::Inlined;
 }
 
 template<typename ChecksFunctor>

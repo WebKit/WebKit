@@ -1,3 +1,26 @@
+2017-11-28  Robin Morisset  <rmorisset@apple.com>
+
+        Support recursive tail call optimization for polymorphic calls
+        https://bugs.webkit.org/show_bug.cgi?id=178390
+
+        Reviewed by Saam Barati.
+
+        Comes with a large but fairly simple refactoring: the inlining path for varargs and non-varargs calls now converge a lot later,
+        eliminating some redundant checks, and simplifying a few parts of the inlining pipeline.
+
+        Also removes some dead code from inlineCall(): there was a special path for when m_continuationBlock is null, but it should never be (now checked with RELEASE_ASSERT).
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleVarargsCall):
+        (JSC::DFG::ByteCodeParser::handleRecursiveTailCall):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::handleCallVariant):
+        (JSC::DFG::ByteCodeParser::handleVarargsInlining):
+        (JSC::DFG::ByteCodeParser::getInliningBalance):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::attemptToInlineCall): Deleted.
+
 2017-11-27  Saam Barati  <sbarati@apple.com>
 
         Spread can escape when CreateRest does not
