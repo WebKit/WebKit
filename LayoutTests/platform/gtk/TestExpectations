@@ -1062,8 +1062,6 @@ webkit.org/b/161586 css3/font-feature-settings-font-face-rendering.html [ ImageO
 
 webkit.org/b/161962 fast/forms/implicit-submission.html [ Failure ]
 
-webkit.org/b/161960 fast/dom/HTMLLinkElement/prefetch-beforeload.html [ Failure ]
-
 # Font variations build flag is turned off
 webkit.org/b/162815 fast/text/variations/ [ Skip ]
 webkit.org/b/162815 animations/font-variations/ [ Skip ]
@@ -1323,6 +1321,9 @@ webkit.org/b/177536 media/video-object-fit.html [ Crash ImageOnlyFailure ]
 webkit.org/b/177537 http/tests/multipart/multipart-html.php [ Crash ]
 
 webkit.org/b/177816 webgl/1.0.2/conformance/ogles/GL/vec/vec_001_to_008.html [ Crash Pass ]
+
+webkit.org/b/180097 media/video-concurrent-visible-playback.html [ Crash Pass ]
+webkit.org/b/180098 security/isSecureContext-disabled.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1899,6 +1900,8 @@ webkit.org/b/179755 media/video-empty-source.html [ Pass Crash ]
 
 webkit.org/b/179756 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker.html [ Pass Failure ]
 
+webkit.org/b/180095 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pss.https.html [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2221,6 +2224,8 @@ webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
 webkit.org/b/179261 editing/selection/drag-to-contenteditable-iframe.html [ Timeout ]
 
 webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Timeout Pass ]
+
+webkit.org/b/180096 inspector/runtime/getPreview.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3346,7 +3351,7 @@ webkit.org/b/179721 media/video-fullscreen-restriction-removed.html [ Failure ]
 webkit.org/b/179721 fullscreen/full-screen-iframe-legacy.html [ Timeout ]
 webkit.org/b/179721 media/media-fullscreen-inline.html [ Timeout ]
 webkit.org/b/179721 media/media-fullscreen-not-in-document.html [ Timeout ]
-webkit.org/b/179721 media/media-fullscreen-return-to-inline.html [ Timeout ]
+webkit.org/b/179721 media/media-fullscreen-return-to-inline.html [ Timeout Crash ]
 webkit.org/b/179721 media/video-fullscreeen-only-playback.html [ Timeout ]
 
 webkit.org/b/179722 compositing/accelerated-layers-after-back.html [ Failure ]
