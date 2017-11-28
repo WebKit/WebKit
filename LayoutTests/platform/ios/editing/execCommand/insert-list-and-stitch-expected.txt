@@ -35,5 +35,4 @@ layer at (0,0) size 800x600
               RenderListMarker at (-21,0) size 16x19: "3"
               RenderText {#text} at (0,0) size 23x19
                 text run at (0,0) width 23: "baz"
-          RenderBlock (anonymous) at (0,76) size 784x0
 caret: position 0 of child 0 {#text} of child 2 {LI} of child 0 {OL} of child 1 {DIV} of child 1 {DIV} of body
