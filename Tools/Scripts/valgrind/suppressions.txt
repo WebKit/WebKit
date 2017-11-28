@@ -594,8 +594,6 @@
 }
 
 {
-   # TextCodecICU::registerCodecs is leaking https://bugs.webkit.org/show_bug.cgi?id=118505
-   WebCore::TextCodec::registerCodecs()
    Memcheck:Leak
    fun:malloc
    fun:_ZN3WTF10fastMallocEm

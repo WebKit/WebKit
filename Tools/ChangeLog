@@ -1,3 +1,14 @@
+2017-11-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Stop silencing leaks in TextCodecICU::registerCodecs, as the problem was fixed a while ago.
+        https://bugs.webkit.org/show_bug.cgi?id=118505
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/valgrind/suppressions.txt:
+        * Scripts/webkitpy/port/leakdetector.py:
+        (LeakDetector._callstacks_to_exclude_from_leaks):
+
 2017-11-28  Ms2ger  <Ms2ger@igalia.com>
 
         Stop modifying self.expectations in TestExpectationLine.expected_behavior.

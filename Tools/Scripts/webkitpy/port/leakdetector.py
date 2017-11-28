@@ -54,12 +54,9 @@ class LeakDetector(object):
 
     def _callstacks_to_exclude_from_leaks(self):
         callstacks = [
-            'TextCodecICU::registerCodecs',  # https://bugs.webkit.org/show_bug.cgi?id=118505
+            # List substrings here, e.g.
+            # 'TextCodecICU::registerCodecs',  # https://bugs.webkit.org/show_bug.cgi?id=118505
         ]
-        if self._port.operating_system == 'mac' and self._port.is_mavericks():
-            callstacks += [
-                'AVAssetResourceLoader _poseAuthenticationChallengeWithKey:data:requestDictionary:fallbackHandler:',  # <rdar://problem/19699887> leak in AVFoundation
-            ]
         return callstacks
 
     def _leaks_args(self, pid):
