@@ -1,3 +1,11 @@
+2017-11-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/forms/alternative-presentation-button/replacement.html for El Capitan.
+
+        Unreviewed test gardening.
+
+        * platform/mac-elcapitan/fast/alternative-presentation-button/replacement-expected.txt: Added.
+
 2017-11-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [CG] PostScript images should be supported if they are sub-resource images
