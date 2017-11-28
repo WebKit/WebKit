@@ -411,7 +411,7 @@ class TestExpectationLine(object):
 
     @property
     def expected_behavior(self):
-        expectations = self.expectations
+        expectations = self.expectations[:]
         if "SLOW" in self.modifiers:
             expectations += ["SLOW"]
 

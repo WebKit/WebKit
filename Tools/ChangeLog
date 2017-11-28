@@ -1,3 +1,19 @@
+2017-11-28  Ms2ger  <Ms2ger@igalia.com>
+
+        Stop modifying self.expectations in TestExpectationLine.expected_behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=180074
+
+        Reviewed by Simon Fraser.
+
+        In particular, getting the property multiple times on a skipped test
+        expectation line (which happens when using
+        `Tools/Scripts/run-webkit-tests --print-expectations` if a directory
+        containing multiple tests is skipped) would yield [pass, skip], then
+        [pass, skip, skip], then [pass, skip, skip, skip], and so on.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationLine.expected_behavior): copy self.expectations before modifying it.
+
 2017-11-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Move JSONValues to WTF and convert uses of InspectorValues.h to JSONValues.h
