@@ -1,3 +1,20 @@
+2017-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebDriver: stop making mandatory to provide a browser path if webkitgtk:browserOptions is present in capabilities
+        https://bugs.webkit.org/show_bug.cgi?id=180012
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Everything should be optional. We might want to disable overlay scrollbars, but still using the default browser,
+        for example, as I'm doing when running the selenium tests. We might also want to provide additional browser
+        arguments, but using the default browser.
+
+        * gtk/WebDriverServiceGtk.cpp:
+        (WebDriver::WebDriverService::platformValidateCapability const): Do not consider invalid to not provide a
+        browser binary when webkitgtk:browserOptions is present.
+        (WebDriver::WebDriverService::platformParseCapabilities const): Override default capabilities with the ones
+        provided.
+
 2017-11-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: Implement get active element command
