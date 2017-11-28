@@ -89,6 +89,7 @@ public:
     void getWindowRect(Function<void (CommandResult&&)>&&);
     void setWindowRect(std::optional<double> x, std::optional<double> y, std::optional<double> width, std::optional<double> height, Function<void (CommandResult&&)>&&);
     void findElements(const String& strategy, const String& selector, FindElementsMode, const String& rootElementID, Function<void (CommandResult&&)>&&);
+    void getActiveElement(Function<void (CommandResult&&)>&&);
     void isElementSelected(const String& elementID, Function<void (CommandResult&&)>&&);
     void getElementText(const String& elementID, Function<void (CommandResult&&)>&&);
     void getElementTagName(const String& elementID, Function<void (CommandResult&&)>&&);

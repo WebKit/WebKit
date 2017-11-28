@@ -961,6 +961,47 @@ void Session::findElements(const String& strategy, const String& selector, FindE
     });
 }
 
+void Session::getActiveElement(Function<void (CommandResult&&)>&& completionHandler)
+{
+    if (!m_toplevelBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    handleUserPrompts([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
+        parameters->setString(ASCIILiteral("function"), ASCIILiteral("function() { return document.activeElement; }"));
+        parameters->setArray(ASCIILiteral("arguments"), InspectorArray::create());
+        m_host->sendCommandToBackend(ASCIILiteral("evaluateJavaScriptFunction"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+            if (response.isError || !response.responseObject) {
+                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+                return;
+            }
+            String valueString;
+            if (!response.responseObject->getString(ASCIILiteral("result"), valueString)) {
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+                return;
+            }
+            RefPtr<InspectorValue> resultValue;
+            if (!InspectorValue::parseJSON(valueString, resultValue)) {
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+                return;
+            }
+            RefPtr<InspectorObject> elementObject = createElement(WTFMove(resultValue));
+            if (!elementObject) {
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+                return;
+            }
+            completionHandler(CommandResult::success(WTFMove(elementObject)));
+        });
+    });
+}
+
 void Session::isElementSelected(const String& elementID, Function<void (CommandResult&&)>&& completionHandler)
 {
     if (!m_toplevelBrowsingContext) {
