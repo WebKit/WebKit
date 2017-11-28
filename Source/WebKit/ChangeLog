@@ -1,3 +1,15 @@
+2017-11-28  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI for adding strings directly to a _WKVisitedLinkStore
+        https://bugs.webkit.org/show_bug.cgi?id=180100
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/API/Cocoa/_WKVisitedLinkStore.h:
+        * UIProcess/API/Cocoa/_WKVisitedLinkStore.mm:
+        (-[_WKVisitedLinkStore addVisitedLinkWithString:]):
+        This is a performance optimization for rdar://problem/16321391
+
 2017-11-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION: Web Inspector: context menu actions "Download Image" and "Open Image in New Window" don't work

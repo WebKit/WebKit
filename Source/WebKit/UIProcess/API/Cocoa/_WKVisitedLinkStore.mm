@@ -57,6 +57,11 @@
     _visitedLinkStore->addVisitedLinkHash(linkHash);
 }
 
+- (void)addVisitedLinkWithString:(NSString *)string
+{
+    _visitedLinkStore->addVisitedLinkHash(WebCore::computeSharedStringHash(string));
+}
+
 - (void)removeAll
 {
     _visitedLinkStore->removeAll();
