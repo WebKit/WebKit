@@ -569,7 +569,7 @@ ServiceWorkerContainer* ScriptExecutionContext::serviceWorkerContainer()
     } else
         navigator = downcast<WorkerGlobalScope>(*this).optionalNavigator();
 
-    return navigator ? navigator->serviceWorker() : nullptr;
+    return navigator ? &navigator->serviceWorker() : nullptr;
 }
 #endif
 

@@ -60,7 +60,7 @@ protected:
 
 #if ENABLE(SERVICE_WORKER)
 public:
-    ServiceWorkerContainer* serviceWorker();
+    ServiceWorkerContainer& serviceWorker();
 
 private:
     UniqueRef<ServiceWorkerContainer> m_serviceWorkerContainer;

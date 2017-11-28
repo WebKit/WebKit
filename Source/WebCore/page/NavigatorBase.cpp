@@ -149,9 +149,9 @@ Vector<String> NavigatorBase::languages()
 }
 
 #if ENABLE(SERVICE_WORKER)
-ServiceWorkerContainer* NavigatorBase::serviceWorker()
+ServiceWorkerContainer& NavigatorBase::serviceWorker()
 {
-    return &m_serviceWorkerContainer;
+    return m_serviceWorkerContainer;
 }
 #endif
 
