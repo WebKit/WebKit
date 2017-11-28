@@ -1,3 +1,14 @@
+2017-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: add timeout option to run-webdriver-tests script
+        https://bugs.webkit.org/show_bug.cgi?id=179940
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Add a base conftest.py to load pytest_timeout plugin.
+
+        * imported/w3c/conftest.py: Added.
+
 2017-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update W3C WebDriver imported tests.

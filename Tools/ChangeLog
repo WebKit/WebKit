@@ -1,3 +1,22 @@
+2017-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: add timeout option to run-webdriver-tests script
+        https://bugs.webkit.org/show_bug.cgi?id=179940
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        We need to handle timeouts to be able to run the tests in the bots. pytest doesn't support timeouts, but there's
+        a plugin pytest_timeout that can be used for that.
+
+        * Scripts/run-webdriver-tests: Add --timeout command line option.
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module): Check if pytest_timeout is imported to install it.
+        (AutoinstallImportHook._install_pytest_timeout): Install pytest_timeout from pypi.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_w3c.py:
+        (WebDriverTestRunnerW3C.__init__): Set PYTEST_TIMEOUT env var with the timeout given.
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_executor.py:
+        (WebDriverW3CExecutor.run): Clarify that the timeout received by do_wdspec() is ignored, and pass 0 instead of 25.
+
 2017-11-27  Aakash Jain  <aakash_jain@apple.com>
 
         Do not run webkitpy tests on multiple EWSes
