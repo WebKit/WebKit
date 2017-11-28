@@ -12,9 +12,9 @@ layer at (0,0) size 800x336
                   RenderBlock {DIV} at (0,0) size 205x0
                 RenderBlock {DIV} at (0,0) size 205x26
                   RenderBlock (anonymous) at (0,0) size 205x13
-                    RenderInline {SPAN} at (0,0) size 185x13
-                      RenderText {#text} at (0,0) size 185x13
-                        text run at (0,0) width 185: "alternative presentation button title"
+                    RenderInline {SPAN} at (0,0) size 186x13
+                      RenderText {#text} at (0,0) size 186x13
+                        text run at (0,0) width 186: "alternative presentation button title"
                   RenderBlock {DIV} at (0,13) size 205x13
                     RenderText {#text} at (0,0) size 205x13
                       text run at (0,0) width 205: "alternative presentation button subtitle"

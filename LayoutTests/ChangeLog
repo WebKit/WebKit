@@ -1,3 +1,13 @@
+2017-11-28  Daniel Bates  <dabates@apple.com>
+
+        [Cocoa] First pass at implementing alternative presentation button element
+        https://bugs.webkit.org/show_bug.cgi?id=179785
+        Part of <rdar://problem/34917108>
+
+        Update expected result.
+
+        * fast/forms/alternative-presentation-button/replacement-expected.txt:
+
 2017-11-28  Charles Turner  <cturner@igalia.com>
 
         [GTK] Test gardening
