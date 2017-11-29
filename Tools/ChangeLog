@@ -1,3 +1,15 @@
+2017-11-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Viewport unit values affected by Comand-+ zoom
+        https://bugs.webkit.org/show_bug.cgi?id=145614
+
+        Reviewed by Zalan Bujtas.
+        
+        Fix Command+ and Command- in MiniBrowser to do zooming, rather than being tied
+        to editing commands.
+
+        * MiniBrowser/mac/MainMenu.xib:
+
 2017-11-29  Alex Christensen  <achristensen@webkit.org>
 
         Add test for _WKVisitedLinkStore.addVisitedLinkWithString

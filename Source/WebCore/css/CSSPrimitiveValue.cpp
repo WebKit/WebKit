@@ -640,6 +640,7 @@ double CSSPrimitiveValue::computeLengthDouble(const CSSToLengthConversionData& c
 double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversionData& conversionData, UnitType primitiveType, double value)
 {
     double factor;
+    bool applyZoom = true;
 
     switch (primitiveType) {
     case CSS_EMS:
@@ -692,15 +693,19 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
         return -1.0;
     case CSS_VH:
         factor = conversionData.viewportHeightFactor();
+        applyZoom = false;
         break;
     case CSS_VW:
         factor = conversionData.viewportWidthFactor();
+        applyZoom = false;
         break;
     case CSS_VMAX:
         factor = conversionData.viewportMaxFactor();
+        applyZoom = false;
         break;
     case CSS_VMIN:
         factor = conversionData.viewportMinFactor();
+        applyZoom = false;
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -714,7 +719,10 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
     if (conversionData.computingFontSize() || isFontRelativeLength(primitiveType))
         return result;
 
-    return result * conversionData.zoom();
+    if (applyZoom)
+        result *= conversionData.zoom();
+
+    return result;
 }
 
 ExceptionOr<void> CSSPrimitiveValue::setFloatValue(unsigned short, double)

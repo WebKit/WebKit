@@ -1,3 +1,13 @@
+2017-11-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Viewport unit values affected by Comand-+ zoom
+        https://bugs.webkit.org/show_bug.cgi?id=145614
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/css/viewport-units-zoom-expected.html: Added.
+        * fast/css/viewport-units-zoom.html: Added.
+
 2017-11-29  Ms2ger  <Ms2ger@igalia.com>
 
         Enable imported/w3c/web-platform-tests/resource-timing/single-entry-per-resource.html.
