@@ -1,5 +1,20 @@
 2017-11-28  Youenn Fablet  <youenn@apple.com>
 
+        NetworkCache::Storage should protect itself when removing operations from its maps
+        https://bugs.webkit.org/show_bug.cgi?id=180118
+
+        Reviewed by Antti Koivisto.
+
+        The operations can contain ref to the Storage object and removing them from the map may destroy the Storage object
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::remove):
+        (WebKit::NetworkCache::Storage::finishReadOperation):
+        (WebKit::NetworkCache::Storage::finishWriteOperation):
+        (WebKit::NetworkCache::Storage::traverse):
+
+2017-11-28  Youenn Fablet  <youenn@apple.com>
+
         Register Documents as ServiceWorker clients to the StorageProcess
         https://bugs.webkit.org/show_bug.cgi?id=180047
 

@@ -561,13 +561,15 @@ void Storage::remove(const Key& key)
     if (!mayContain(key))
         return;
 
+    auto protectedThis = makeRef(*this);
+
     // We can't remove the key from the Bloom filter (but some false positives are expected anyway).
     // For simplicity we also don't reduce m_approximateSize on removals.
     // The next synchronization will update everything.
 
     removeFromPendingWriteOperations(key);
 
-    serialBackgroundIOQueue().dispatch([this, protectedThis = makeRef(*this), key] () mutable {
+    serialBackgroundIOQueue().dispatch([this, protectedThis = WTFMove(protectedThis), key] () mutable {
         deleteFiles(key);
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
     });
@@ -665,6 +667,8 @@ void Storage::finishReadOperation(ReadOperation& readOperation)
             updateFileModificationTime(recordPathForKey(readOperation.key));
         else if (!readOperation.isCanceled)
             remove(readOperation.key);
+
+        auto protectedThis = makeRef(*this);
 
         ASSERT(m_activeReadOperations.contains(&readOperation));
         m_activeReadOperations.remove(&readOperation);
@@ -794,6 +798,8 @@ void Storage::finishWriteOperation(WriteOperation& writeOperation)
     if (--writeOperation.activeCount)
         return;
 
+    auto protectedThis = makeRef(*this);
+
     m_activeWriteOperations.remove(&writeOperation);
     dispatchPendingWriteOperations();
 
@@ -915,6 +921,9 @@ void Storage::traverse(const String& type, TraverseFlags flags, TraverseHandler&
         }
         RunLoop::main().dispatch([this, &traverseOperation] {
             traverseOperation.handler(nullptr, { });
+
+            auto protectedThis = makeRef(*this);
+
             m_activeTraverseOperations.remove(&traverseOperation);
         });
     });
