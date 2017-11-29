@@ -45,6 +45,7 @@ class RenderLayer;
 typedef String ErrorString;
 
 class InspectorLayerTreeAgent final : public InspectorAgentBase, public Inspector::LayerTreeBackendDispatcherHandler {
+    WTF_MAKE_NONCOPYABLE(InspectorLayerTreeAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit InspectorLayerTreeAgent(WebAgentContext&);

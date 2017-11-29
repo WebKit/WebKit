@@ -35,6 +35,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 InspectorMemoryAgent::InspectorMemoryAgent(PageAgentContext& context)

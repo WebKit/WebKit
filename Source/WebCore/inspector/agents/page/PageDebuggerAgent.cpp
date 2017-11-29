@@ -54,6 +54,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 PageDebuggerAgent::PageDebuggerAgent(PageAgentContext& context, InspectorPageAgent* pageAgent, InspectorOverlay* overlay)

@@ -30,6 +30,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 WebDebuggerAgent::WebDebuggerAgent(WebAgentContext& context)

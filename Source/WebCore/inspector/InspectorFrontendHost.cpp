@@ -59,6 +59,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 #if ENABLE(CONTEXT_MENUS)

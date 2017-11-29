@@ -31,6 +31,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 WebInjectedScriptManager::WebInjectedScriptManager(InspectorEnvironment& environment, Ref<InjectedScriptHost>&& host)

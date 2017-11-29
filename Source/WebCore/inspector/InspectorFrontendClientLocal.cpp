@@ -56,6 +56,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 static const char* inspectorAttachedHeightSetting = "inspectorAttachedHeight";

@@ -61,6 +61,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 using namespace std::literals::chrono_literals;
 

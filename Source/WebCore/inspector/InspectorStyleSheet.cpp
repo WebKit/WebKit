@@ -134,6 +134,7 @@ WebCore::CSSRuleSourceData* ParsedStyleSheet::ruleSourceDataAt(unsigned index) c
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 static CSSParserContext parserContextForDocument(Document* document)

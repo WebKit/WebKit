@@ -35,6 +35,8 @@ class JSGlobalObject;
 namespace Inspector {
 
 class JSGlobalObjectRuntimeAgent final : public InspectorRuntimeAgent {
+    WTF_MAKE_NONCOPYABLE(JSGlobalObjectRuntimeAgent);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     JSGlobalObjectRuntimeAgent(JSAgentContext&);
 

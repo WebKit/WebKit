@@ -48,6 +48,7 @@ class InspectorPageAgent;
 typedef String ErrorString;
 
 class InspectorIndexedDBAgent final : public InspectorAgentBase, public Inspector::IndexedDBBackendDispatcherHandler {
+    WTF_MAKE_NONCOPYABLE(InspectorIndexedDBAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorIndexedDBAgent(WebAgentContext&, InspectorPageAgent*);

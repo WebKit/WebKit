@@ -43,6 +43,7 @@ class InspectorDatabaseResource;
 typedef String ErrorString;
 
 class InspectorDatabaseAgent final : public InspectorAgentBase, public Inspector::DatabaseBackendDispatcherHandler {
+    WTF_MAKE_NONCOPYABLE(InspectorDatabaseAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit InspectorDatabaseAgent(WebAgentContext&);

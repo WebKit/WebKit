@@ -40,6 +40,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 WebConsoleAgent::WebConsoleAgent(AgentContext& context, InspectorHeapAgent* heapAgent)

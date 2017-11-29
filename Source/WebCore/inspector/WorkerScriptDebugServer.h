@@ -39,6 +39,7 @@ class WorkerGlobalScope;
 
 class WorkerScriptDebugServer final : public Inspector::ScriptDebugServer {
     WTF_MAKE_NONCOPYABLE(WorkerScriptDebugServer);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WorkerScriptDebugServer(WorkerGlobalScope&);
     ~WorkerScriptDebugServer() = default;

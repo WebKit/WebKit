@@ -41,6 +41,7 @@ typedef String ErrorString;
 
 class JS_EXPORT_PRIVATE InspectorScriptProfilerAgent final : public InspectorAgentBase, public ScriptProfilerBackendDispatcherHandler, public JSC::Debugger::ProfilingClient {
     WTF_MAKE_NONCOPYABLE(InspectorScriptProfilerAgent);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorScriptProfilerAgent(AgentContext&);
     virtual ~InspectorScriptProfilerAgent();

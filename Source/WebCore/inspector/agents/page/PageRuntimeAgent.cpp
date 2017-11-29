@@ -50,6 +50,7 @@ using Inspector::Protocol::Runtime::ExecutionContextDescription;
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 PageRuntimeAgent::PageRuntimeAgent(PageAgentContext& context, InspectorPageAgent* pageAgent)

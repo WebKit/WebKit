@@ -37,6 +37,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 Ref<InspectorShaderProgram> InspectorShaderProgram::create(WebGLProgram& program, InspectorCanvas& inspectorCanvas)

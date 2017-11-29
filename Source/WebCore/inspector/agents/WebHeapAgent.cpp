@@ -30,6 +30,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 struct GarbageCollectionData {

@@ -43,6 +43,7 @@ typedef String ErrorString;
 
 class JS_EXPORT_PRIVATE InspectorHeapAgent : public InspectorAgentBase, public HeapBackendDispatcherHandler, public JSC::HeapObserver {
     WTF_MAKE_NONCOPYABLE(InspectorHeapAgent);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorHeapAgent(AgentContext&);
     virtual ~InspectorHeapAgent();

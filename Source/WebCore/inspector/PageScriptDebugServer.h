@@ -36,6 +36,7 @@ class PageGroup;
 
 class PageScriptDebugServer final : public Inspector::ScriptDebugServer {
     WTF_MAKE_NONCOPYABLE(PageScriptDebugServer);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PageScriptDebugServer(Page&);
     virtual ~PageScriptDebugServer() = default;

@@ -74,6 +74,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 static const char* const requestAnimationFrameEventName = "requestAnimationFrame";

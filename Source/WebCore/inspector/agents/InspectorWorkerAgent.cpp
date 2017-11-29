@@ -31,6 +31,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 InspectorWorkerAgent::InspectorWorkerAgent(PageAgentContext& context)

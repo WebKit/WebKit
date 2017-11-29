@@ -65,6 +65,7 @@ struct WebSocketFrame;
 typedef String ErrorString;
 
 class InspectorNetworkAgent : public InspectorAgentBase, public Inspector::NetworkBackendDispatcherHandler {
+    WTF_MAKE_NONCOPYABLE(InspectorNetworkAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit InspectorNetworkAgent(WebAgentContext&);

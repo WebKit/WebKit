@@ -108,6 +108,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 using namespace HTMLNames;

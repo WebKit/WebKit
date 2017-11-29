@@ -42,6 +42,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 Ref<JSON::Object> TimelineRecordFactory::createGenericRecord(double startTime, int maxCallStackDepth)

@@ -51,6 +51,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 InspectorDOMStorageAgent::InspectorDOMStorageAgent(WebAgentContext& context, InspectorPageAgent* pageAgent)

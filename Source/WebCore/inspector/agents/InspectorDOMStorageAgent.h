@@ -49,6 +49,7 @@ class Storage;
 typedef String ErrorString;
 
 class InspectorDOMStorageAgent final : public InspectorAgentBase, public Inspector::DOMStorageBackendDispatcherHandler {
+    WTF_MAKE_NONCOPYABLE(InspectorDOMStorageAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorDOMStorageAgent(WebAgentContext&, InspectorPageAgent*);

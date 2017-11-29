@@ -44,6 +44,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 InspectorLayerTreeAgent::InspectorLayerTreeAgent(WebAgentContext& context)

@@ -28,6 +28,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 PageHeapAgent::PageHeapAgent(PageAgentContext& context)

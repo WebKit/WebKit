@@ -74,6 +74,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 Ref<InspectorCanvas> InspectorCanvas::create(HTMLCanvasElement& canvas, const String& cssCanvasName)

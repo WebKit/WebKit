@@ -49,6 +49,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 using ExecuteSQLCallback = Inspector::DatabaseBackendDispatcherHandler::ExecuteSQLCallback;

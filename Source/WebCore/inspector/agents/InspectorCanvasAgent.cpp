@@ -61,6 +61,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 InspectorCanvasAgent::InspectorCanvasAgent(WebAgentContext& context)

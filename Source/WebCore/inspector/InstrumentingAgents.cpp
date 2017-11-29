@@ -34,6 +34,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 InstrumentingAgents::InstrumentingAgents(InspectorEnvironment& environment)

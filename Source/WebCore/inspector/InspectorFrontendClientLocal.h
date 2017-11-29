@@ -45,7 +45,8 @@ class InspectorFrontendHost;
 class Page;
 
 class InspectorFrontendClientLocal : public InspectorFrontendClient {
-    WTF_MAKE_NONCOPYABLE(InspectorFrontendClientLocal); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(InspectorFrontendClientLocal);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     class WEBCORE_EXPORT Settings {
     public:

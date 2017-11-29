@@ -63,6 +63,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 #if PLATFORM(COCOA)

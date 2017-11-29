@@ -43,7 +43,8 @@ class Page;
 typedef String ErrorString;
 
 class InspectorApplicationCacheAgent final : public InspectorAgentBase, public Inspector::ApplicationCacheBackendDispatcherHandler {
-    WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorApplicationCacheAgent(WebAgentContext&, InspectorPageAgent*);
     virtual ~InspectorApplicationCacheAgent() = default;

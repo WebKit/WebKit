@@ -40,6 +40,8 @@ class WorkerGlobalScope;
 typedef String ErrorString;
 
 class WorkerRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
+    WTF_MAKE_NONCOPYABLE(WorkerRuntimeAgent);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WorkerRuntimeAgent(WorkerAgentContext&);
     ~WorkerRuntimeAgent() = default;

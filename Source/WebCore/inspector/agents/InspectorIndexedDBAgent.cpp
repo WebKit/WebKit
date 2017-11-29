@@ -86,6 +86,7 @@ typedef Inspector::IndexedDBBackendDispatcherHandler::ClearObjectStoreCallback C
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 namespace {

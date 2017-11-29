@@ -35,6 +35,7 @@
 
 
 namespace WebCore {
+
 using namespace Inspector;
 
 static int nextUnusedId = 1;
