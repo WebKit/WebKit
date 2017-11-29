@@ -113,7 +113,8 @@ typedef enum {
     fccr = 25,
     fexr = 26,
     fenr = 28,
-    fcsr = 31
+    fcsr = 31,
+    pc
 } SPRegisterID;
 
 typedef enum {
@@ -165,8 +166,8 @@ public:
     static constexpr unsigned numberOfRegisters() { return lastRegister() - firstRegister() + 1; }
 
     static constexpr SPRegisterID firstSPRegister() { return MIPSRegisters::fir; }
-    static constexpr SPRegisterID lastSPRegister() { return MIPSRegisters::fcsr; }
-    static constexpr unsigned numberOfSPRegisters() { return 5; }
+    static constexpr SPRegisterID lastSPRegister() { return MIPSRegisters::pc; }
+    static constexpr unsigned numberOfSPRegisters() { return lastSPRegister() - firstSPRegister() + 1; }
 
     static constexpr FPRegisterID firstFPRegister() { return MIPSRegisters::f0; }
     static constexpr FPRegisterID lastFPRegister() { return MIPSRegisters::f31; }
@@ -197,6 +198,8 @@ public:
             return "fenr";
         case MIPSRegisters::fcsr:
             return "fcsr";
+        case MIPSRegisters::pc:
+            return "pc";
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }

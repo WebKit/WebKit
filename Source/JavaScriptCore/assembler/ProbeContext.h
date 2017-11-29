@@ -115,7 +115,7 @@ inline void*& CPUState::pc()
 #elif CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL)
     return *reinterpret_cast<void**>(&gpr(ARMRegisters::pc));
 #elif CPU(MIPS)
-    RELEASE_ASSERT_NOT_REACHED();
+    return *reinterpret_cast<void**>(&spr(MIPSRegisters::pc));
 #else
 #error "Unsupported CPU"
 #endif

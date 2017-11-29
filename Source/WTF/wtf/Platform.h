@@ -803,9 +803,10 @@
 #if CPU(ARM_TRADITIONAL)
 #define ENABLE_DFG_JIT 1
 #endif
-/* FIXME: MIPS cannot enable the DFG until it has support for MacroAssembler::probe().
-   https://bugs.webkit.org/show_bug.cgi?id=175447
-*/
+/* Enable the DFG JIT on MIPS. */
+#if CPU(MIPS)
+#define ENABLE_DFG_JIT 1
+#endif
 #endif
 
 /* Concurrent JS only works on 64-bit platforms because it requires that
@@ -824,7 +825,7 @@
 #define ENABLE_FAST_TLS_JIT 1
 #endif
 
-#if CPU(X86) || CPU(X86_64) || CPU(ARM_THUMB2) || CPU(ARM64) || CPU(ARM_TRADITIONAL)
+#if CPU(X86) || CPU(X86_64) || CPU(ARM_THUMB2) || CPU(ARM64) || CPU(ARM_TRADITIONAL) || CPU(MIPS)
 #define ENABLE_MASM_PROBE 1
 #else
 #define ENABLE_MASM_PROBE 0

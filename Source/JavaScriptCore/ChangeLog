@@ -1,3 +1,29 @@
+2017-11-29  Stanislav Ocovaj  <stanislav.ocovaj@rt-rk.com>
+
+        [MIPS][JSC] Implement MacroAssembler::probe support on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=175447
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        This patch allows DFG JIT to be enabled on MIPS platforms.
+
+        * Sources.txt:
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::lastSPRegister):
+        (JSC::MIPSAssembler::numberOfSPRegisters):
+        (JSC::MIPSAssembler::sprName):
+        * assembler/MacroAssemblerMIPS.cpp: Added.
+        (JSC::MacroAssembler::probe):
+        * assembler/ProbeContext.cpp:
+        (JSC::Probe::executeProbe):
+        * assembler/ProbeContext.h:
+        (JSC::Probe::CPUState::pc):
+        * assembler/testmasm.cpp:
+        (JSC::isSpecialGPR):
+        (JSC::testProbePreservesGPRS):
+        (JSC::testProbeModifiesStackPointer):
+        (JSC::testProbeModifiesStackValues):
+
 2017-11-28  JF Bastien  <jfbastien@apple.com>
 
         Strict and sloppy functions shouldn't share structure
