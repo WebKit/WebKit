@@ -847,6 +847,7 @@ webkit.org/b/141467 fast/multicol/pagination/RightToLeft-rl-hittest.html [ Failu
 webkit.org/b/141698 editing/pasteboard/5761530-1.html [ Failure ]
 webkit.org/b/141699 fast/attachment/attachment-disabled-rendering.html [ Failure ]
 webkit.org/b/141699 fast/attachment/attachment-rendering.html [ Failure ]
+webkit.org/b/141699 fast/attachment/attachment-without-appearance.html [ Failure ]
 
 webkit.org/b/141831 svg/animations/animate-text-nested-transforms.html [ Failure ]
 webkit.org/b/98653  svg/text/lengthAdjust-text-metrics.html [ Failure ]
@@ -2363,7 +2364,7 @@ Bug(GTK) editing/selection/mixed-editability-10.html [ Failure ]
 webkit.org/b/93977 fast/dom/Geolocation/page-reload-cancel-permission-requests.html [ Timeout ]
 
 # Fails because MutationObservers are not notified at end-of-task.
-webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure Timeout ]
+webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Pass Failure Timeout ]
 
 # Implement testRunner.setUseDeferredFrameLoading
 # http://webkit.org/b/93980
@@ -2458,7 +2459,7 @@ webkit.org/b/138736 http/tests/appcache/auth.html [ Skip ]
 
 # There is no network load scheduling or prioritization with NetworkProcess.
 webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Failure Pass ]
-webkit.org/b/123431 http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
+webkit.org/b/123431 http/tests/local/link-stylesheet-load-order-preload.html [ Pass Failure ]
 webkit.org/b/123431 http/tests/local/link-stylesheet-load-order.html [ Failure Pass ]
 
 webkit.org/b/145253 http/tests/appcache/different-https-origin-resource-main.html  [ Failure ]

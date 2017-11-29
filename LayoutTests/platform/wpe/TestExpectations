@@ -153,7 +153,6 @@ webkit.org/b/169917 webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Slo
 fast/canvas/canvas-blend-image.html [ Failure ]
 fast/canvas/canvas-blend-solid.html [ Failure ]
 fast/canvas/canvas-createPattern-video-loading.html [ Failure ]
-fast/canvas/canvas-createPattern-video-modify.html [ Failure ]
 fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
 fast/canvas/canvas-gradient-addStop-error.html [ Failure ]
 fast/canvas/canvas-imageSmoothingQuality.html [ Failure ]
@@ -1056,3 +1055,7 @@ webkit.org/b/179761 workers/wasm-hashset-many-2.html [ Pass Timeout ]
 webkit.org/b/179897 imported/w3c/web-platform-tests/XMLHttpRequest/getallresponseheaders.htm [ Failure ]
 
 webkit.org/b/179898 svg/animations/svglengthlist-animation-3.html [ Pass Failure ]
+
+webkit.org/b/180134 webanimations/left-and-opacity-animation-yields-no-compositing.html [ Failure ]
+webkit.org/b/180134 webanimations/opacity-animation-no-longer-composited-upon-completion.html [ Failure ]
+webkit.org/b/180134 webanimations/width-and-opacity-separate-animation-yields-no-compositing.html [ Failure ]

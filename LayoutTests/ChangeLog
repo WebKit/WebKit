@@ -1,3 +1,29 @@
+2017-11-29  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK][WPE] Test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=180136
+
+        Unreviewed test gardening.
+
+        * TestExpectations: Skip more alternative-presentation-button tests.
+        * platform/gtk/TestExpectations: Updated expectations:
+          - fast/attachment/attachment-without-appearance.html: recently added test for a disabled feature.
+          - fast/dom/MutationObserver/end-of-task-delivery.html: flaky.
+          - http/tests/local/link-stylesheet-load-order-preload.html: flaky.
+        * platform/gtk/compositing/overflow/composited-scrolling-paint-phases-expected.txt: rebaseline for r225220.
+        * platform/mac/TestExpectations: Enable the skipped alternative-presentation-button tests.
+        * platform/wpe/TestExpectations: Updated expectations:
+          - fast/canvas/canvas-createPattern-video-modify.html: passing since r225060.
+          - webanimations/*: failing since they were added; bug filed.
+        * platform/wpe/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent-expected.txt:
+          DeviceMotionEvent and DeviceMotionEvent were disabled in r225098
+          (matching mac ports); the remaining difference with the platform-neutral
+          expectation is that TouchEvent is enabled here.
+        * platform/wpe/imported/w3c/web-platform-tests/dom/nodes/Document-createEvent-expected.txt:
+          DeviceMotionEvent and DeviceMotionEvent were disabled in r225098
+          (matching mac ports); the remaining difference with the platform-neutral
+          expectation is that TouchEvent is enabled here.
+
 2017-11-29  Antoine Quint  <graouts@apple.com>
 
         Pressing the space bar while watching a fullscreen video doesn't play or pause
