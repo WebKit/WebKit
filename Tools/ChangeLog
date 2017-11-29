@@ -1,3 +1,21 @@
+2017-11-29  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r213590): Scrolling to anchors broken in web views when content loaded via HTML string
+        https://bugs.webkit.org/show_bug.cgi?id=180155
+        rdar://problem/34220827
+
+        Reviewed by Zalan Bujtas.
+
+        API test that loads a page with a relative anchor, and simulates a click to scroll to it.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/MediaStreamTrackDetached.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/NoHistoryItemScrollToFragment.mm: Added.
+        (-[DidScrollToFragmentDelegate _webViewDidScroll:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/scroll-to-anchor.html: Added.
+
 2017-11-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         webkitpy EWS should be present on the dashboard.

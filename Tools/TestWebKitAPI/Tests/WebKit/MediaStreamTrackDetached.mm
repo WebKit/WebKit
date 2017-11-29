@@ -80,8 +80,6 @@ TEST(WebKit, MediaStreamTrackDetached)
     [webView loadTestPageNamed:@"mediastreamtrack-detached"];
 
     TestWebKitAPI::Util::run(&hasRecievedCorrectCaptureState);
-
-
 }
 
 } // namespace TestWebKitAPI

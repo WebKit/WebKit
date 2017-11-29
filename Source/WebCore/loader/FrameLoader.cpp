@@ -2889,7 +2889,7 @@ bool FrameLoader::shouldPerformFragmentNavigation(bool isFormSubmission, const S
 
 static bool itemAllowsScrollRestoration(HistoryItem* historyItem)
 {
-    return historyItem && historyItem->shouldRestoreScrollPosition();
+    return !historyItem || historyItem->shouldRestoreScrollPosition();
 }
 
 static bool isSameDocumentReload(bool isNewNavigation, FrameLoadType loadType)
