@@ -1,3 +1,16 @@
+2017-11-28  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: remove extra space before call frames in Canvas backtraces
+        https://bugs.webkit.org/show_bug.cgi?id=180129
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/CanvasDetailsSidebarPanel.js:
+        (WI.CanvasDetailsSidebarPanel.prototype.initialLayout):
+        * UserInterface/Views/RecordingTraceDetailsSidebarPanel.js:
+        (WI.RecordingTraceDetailsSidebarPanel):
+        Hide the disclosure buttons of these TreeOutlines as they don't have children.
+
 2017-11-28  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Clean up backtrace in Canvas details sidebar

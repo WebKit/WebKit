@@ -137,6 +137,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
 
         const selectable = false;
         let backtraceTreeOutline = new WI.TreeOutline(null, selectable);
+        backtraceTreeOutline.disclosureButtons = false;
         this._backtraceTreeController = new WI.CallFrameTreeController(backtraceTreeOutline);
 
         let backtraceRow = new WI.DetailsSectionRow;
