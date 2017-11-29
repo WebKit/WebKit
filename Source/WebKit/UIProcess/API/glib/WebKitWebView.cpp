@@ -3277,7 +3277,7 @@ static void webkitWebViewRunJavaScriptCallback(API::SerializedScriptValue* wkSer
 
     auto* jsContext = webkit_web_view_get_javascript_global_context(WEBKIT_WEB_VIEW(g_task_get_source_object(task)));
     g_task_return_pointer(task, webkitJavascriptResultCreate(jsContext,
-        *wkSerializedScriptValue->internalRepresentation()),
+        wkSerializedScriptValue->internalRepresentation()),
         reinterpret_cast<GDestroyNotify>(webkit_javascript_result_unref));
 }
 

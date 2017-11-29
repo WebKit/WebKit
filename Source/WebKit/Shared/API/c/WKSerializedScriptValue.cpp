@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "WKSerializedScriptValue.h"
-#include "WKSerializedScriptValuePrivate.h"
 
 #include "APISerializedScriptValue.h"
 #include "WKAPICast.h"
@@ -43,18 +42,7 @@ WKSerializedScriptValueRef WKSerializedScriptValueCreate(JSContextRef context, J
     return toAPI(serializedValue.leakRef());
 }
 
-WKSerializedScriptValueRef WKSerializedScriptValueCreateWithInternalRepresentation(void* internalRepresentation)
-{
-    auto serializedValue = API::SerializedScriptValue::create(static_cast<WebCore::SerializedScriptValue*>(internalRepresentation));
-    return toAPI(&serializedValue.leakRef());
-}
-
 JSValueRef WKSerializedScriptValueDeserialize(WKSerializedScriptValueRef scriptValueRef, JSContextRef contextRef, JSValueRef* exception)
 {
     return toImpl(scriptValueRef)->deserialize(contextRef, exception);
-}
-
-void* WKSerializedScriptValueGetInternalRepresentation(WKSerializedScriptValueRef scriptValueRef)
-{
-    return toImpl(scriptValueRef)->internalRepresentation();
 }

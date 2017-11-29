@@ -36,7 +36,7 @@ namespace API {
 
 class SerializedScriptValue : public API::ObjectImpl<API::Object::Type::SerializedScriptValue> {
 public:
-    static Ref<SerializedScriptValue> create(RefPtr<WebCore::SerializedScriptValue>&& serializedValue)
+    static Ref<SerializedScriptValue> create(Ref<WebCore::SerializedScriptValue>&& serializedValue)
     {
         return adoptRef(*new SerializedScriptValue(WTFMove(serializedValue)));
     }
@@ -46,7 +46,7 @@ public:
         RefPtr<WebCore::SerializedScriptValue> serializedValue = WebCore::SerializedScriptValue::create(context, value, exception);
         if (!serializedValue)
             return nullptr;
-        return adoptRef(*new SerializedScriptValue(serializedValue.get()));
+        return adoptRef(*new SerializedScriptValue(serializedValue.releaseNonNull()));
     }
     
     static Ref<SerializedScriptValue> adopt(Vector<uint8_t>&& buffer)
@@ -65,15 +65,15 @@ public:
 
     IPC::DataReference dataReference() const { return m_serializedScriptValue->data(); }
 
-    WebCore::SerializedScriptValue* internalRepresentation() { return m_serializedScriptValue.get(); }
+    WebCore::SerializedScriptValue& internalRepresentation() { return m_serializedScriptValue.get(); }
 
 private:
-    explicit SerializedScriptValue(RefPtr<WebCore::SerializedScriptValue>&& serializedScriptValue)
+    explicit SerializedScriptValue(Ref<WebCore::SerializedScriptValue>&& serializedScriptValue)
         : m_serializedScriptValue(WTFMove(serializedScriptValue))
     {
     }
 
-    RefPtr<WebCore::SerializedScriptValue> m_serializedScriptValue;
+    Ref<WebCore::SerializedScriptValue> m_serializedScriptValue;
 };
     
 }

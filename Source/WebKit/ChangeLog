@@ -1,3 +1,25 @@
+2017-11-29  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize API::SerializedScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=180115
+
+        Reviewed by Brady Eidson.
+
+        Also remove some SPI that hasn't been used anywhere since Mountain Lion.
+
+        * Shared/API/APISerializedScriptValue.h:
+        (API::SerializedScriptValue::create):
+        (API::SerializedScriptValue::internalRepresentation):
+        (API::SerializedScriptValue::SerializedScriptValue):
+        * Shared/API/c/WKSerializedScriptValue.cpp:
+        (WKSerializedScriptValueDeserialize):
+        (WKSerializedScriptValueCreateWithInternalRepresentation): Deleted.
+        (WKSerializedScriptValueGetInternalRepresentation): Deleted.
+        * Shared/API/c/WKSerializedScriptValuePrivate.h: Removed.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _evaluateJavaScript:forceUserGesture:completionHandler:]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2017-11-29  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r218064): [GTK] Broke entering fullscreen mode in debug builds
