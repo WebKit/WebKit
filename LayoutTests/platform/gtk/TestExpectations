@@ -1202,6 +1202,9 @@ webkit.org/b/179989 fast/css3-text/css3-text-justify/getComputedStyle/getCompute
 webkit.org/b/179989 fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last-inherited.html [ Failure ]
 webkit.org/b/179989 fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last.html [ Failure ]
 
+webkit.org/b/180148 accessibility/alternative-presentation-button-input-type.html [ Failure ]
+webkit.org/b/180148 accessibility/alternative-presentation-button.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
