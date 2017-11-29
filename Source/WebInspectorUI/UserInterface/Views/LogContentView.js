@@ -170,8 +170,10 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     closed()
     {
-        WI.logManager.removeEventListener(null, null, this);
-        WI.Frame.removeEventListener(null, null, this);
+        // While it may be possible to get here, this is a singleton ContentView instance
+        // that is often re-inserted back into different ContentBrowsers, so we shouldn't
+        // remove the event listeners. The singleton will never go away anyways.
+        console.assert(this === WI.consoleContentView);
 
         super.closed();
     }

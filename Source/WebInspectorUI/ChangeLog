@@ -1,3 +1,26 @@
+2017-11-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Console Tab navigation bar sometimes does not include filter bar, clear console sometimes does not work
+        https://bugs.webkit.org/show_bug.cgi?id=180124
+        <rdar://problem/35740353>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype.closed):
+        Avoid removing event listeners if this LogContentView singleton is ever closed.
+        The singleton will always be alive so we don't want to remove the event listeners
+        without a way to add them back.
+
+        * UserInterface/Base/Main.js:
+        (WI.showSplitConsole):
+        * UserInterface/Views/ConsoleTabContentView.js:
+        (WI.ConsoleTabContentView.prototype.shown):
+        When showing the ConsoleTab immediately collapse the split console so that any
+        following code that checks WI.isShowingSplitConsole will get the expected value.
+        It is also now possible to share a ContentView across ContentBrowsers via
+        tombstones, so remove the old code that would frequently close the LogContentView.
+
 2017-11-28  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: remove extra space before call frames in Canvas backtraces

@@ -886,10 +886,6 @@ WI.showSplitConsole = function()
     if (this.consoleDrawer.currentContentView === this.consoleContentView)
         return;
 
-    // Be sure to close the view in the tab content browser before showing it in the
-    // split content browser. We can only show a content view in one browser at a time.
-    if (this.consoleContentView.parentContainer)
-        this.consoleContentView.parentContainer.closeContentView(this.consoleContentView);
     this.consoleDrawer.showContentView(this.consoleContentView);
 };
 
