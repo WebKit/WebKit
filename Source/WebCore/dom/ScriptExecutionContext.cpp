@@ -560,6 +560,17 @@ void ScriptExecutionContext::setActiveServiceWorker(RefPtr<ServiceWorker>&& serv
         connection.serviceWorkerStartedControllingClient(m_activeServiceWorker->identifier(), m_activeServiceWorker->registrationIdentifier(), downcast<Document>(*this).identifier());
 }
 
+void ScriptExecutionContext::registerServiceWorker(ServiceWorker& serviceWorker)
+{
+    auto addResult = m_serviceWorkers.add(serviceWorker.identifier(), &serviceWorker);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
+
+void ScriptExecutionContext::unregisterServiceWorker(ServiceWorker& serviceWorker)
+{
+    m_serviceWorkers.remove(serviceWorker.identifier());
+}
+
 ServiceWorkerContainer* ScriptExecutionContext::serviceWorkerContainer()
 {
     NavigatorBase* navigator = nullptr;

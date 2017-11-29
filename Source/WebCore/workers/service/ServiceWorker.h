@@ -64,11 +64,8 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
-    static const HashMap<ServiceWorkerIdentifier, HashSet<ServiceWorker*>>& allWorkers();
-
 private:
     ServiceWorker(ScriptExecutionContext&, ServiceWorkerData&&);
-    static HashMap<ServiceWorkerIdentifier, HashSet<ServiceWorker*>>& mutableAllWorkers();
     void updatePendingActivityForEventDispatch();
 
     EventTargetInterface eventTargetInterface() const final;

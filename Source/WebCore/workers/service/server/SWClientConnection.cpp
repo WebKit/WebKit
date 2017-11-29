@@ -154,8 +154,11 @@ void SWClientConnection::updateRegistrationState(ServiceWorkerRegistrationIdenti
 
 void SWClientConnection::updateWorkerState(ServiceWorkerIdentifier identifier, ServiceWorkerState state)
 {
-    for (auto* worker : ServiceWorker::allWorkers().get(identifier))
-        worker->scheduleTaskToUpdateState(state);
+    // FIXME: We should iterate over all service worker clients, not only documents.
+    for (auto* document : Document::allDocuments()) {
+        if (auto* serviceWorker = document->serviceWorker(identifier))
+            serviceWorker->scheduleTaskToUpdateState(state);
+    }
 }
 
 void SWClientConnection::fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier identifier)
