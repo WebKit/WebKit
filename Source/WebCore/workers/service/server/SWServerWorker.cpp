@@ -65,17 +65,17 @@ void SWServerWorker::terminate()
     m_server.terminateWorker(*this);
 }
 
-void SWServerWorker::scriptContextFailedToStart(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const String& message)
+void SWServerWorker::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, const String& message)
 {
     m_server.scriptContextFailedToStart(jobDataIdentifier, *this, message);
 }
 
-void SWServerWorker::scriptContextStarted(const ServiceWorkerJobDataIdentifier& jobDataIdentifier)
+void SWServerWorker::scriptContextStarted(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier)
 {
     m_server.scriptContextStarted(jobDataIdentifier, *this);
 }
 
-void SWServerWorker::didFinishInstall(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, bool wasSuccessful)
+void SWServerWorker::didFinishInstall(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, bool wasSuccessful)
 {
     m_server.didFinishInstall(jobDataIdentifier, *this, wasSuccessful);
 }

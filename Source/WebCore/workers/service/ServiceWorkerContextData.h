@@ -36,7 +36,7 @@
 namespace WebCore {
 
 struct ServiceWorkerContextData {
-    ServiceWorkerJobDataIdentifier jobDataIdentifier;
+    std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier;
     ServiceWorkerRegistrationData registration;
     ServiceWorkerIdentifier serviceWorkerIdentifier;
     String script;
@@ -58,7 +58,7 @@ void ServiceWorkerContextData::encode(Encoder& encoder) const
 template<class Decoder>
 std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& decoder)
 {
-    std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier;
+    std::optional<std::optional<ServiceWorkerJobDataIdentifier>> jobDataIdentifier;
     decoder >> jobDataIdentifier;
     if (!jobDataIdentifier)
         return std::nullopt;

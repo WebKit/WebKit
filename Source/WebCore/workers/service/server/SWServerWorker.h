@@ -68,9 +68,9 @@ public:
     bool hasPendingEvents() const { return m_hasPendingEvents; }
     void setHasPendingEvents(bool value) { m_hasPendingEvents = value; }
 
-    void scriptContextFailedToStart(const ServiceWorkerJobDataIdentifier&, const String& message);
-    void scriptContextStarted(const ServiceWorkerJobDataIdentifier&);
-    void didFinishInstall(const ServiceWorkerJobDataIdentifier&, bool wasSuccessful);
+    void scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>&, const String& message);
+    void scriptContextStarted(const std::optional<ServiceWorkerJobDataIdentifier>&);
+    void didFinishInstall(const std::optional<ServiceWorkerJobDataIdentifier>&, bool wasSuccessful);
     void didFinishActivation();
     void contextTerminated();
 
