@@ -1,5 +1,16 @@
 2017-11-28  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Remove Network "Clear on load" from Settings tab now that Network tab has a toggle for it
+        https://bugs.webkit.org/show_bug.cgi?id=180123
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createGeneralSettingsView):
+
+2017-11-28  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Network Tab - Add a toggle in the network tab to control automatically clearing or preserving log across loads
         https://bugs.webkit.org/show_bug.cgi?id=180110
         <rdar://problem/34071789>

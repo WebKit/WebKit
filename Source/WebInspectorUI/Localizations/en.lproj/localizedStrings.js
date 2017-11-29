@@ -602,7 +602,6 @@ localizedStrings["Name"] = "Name";
 localizedStrings["Network"] = "Network";
 localizedStrings["Network Issue"] = "Network Issue";
 localizedStrings["Network Requests"] = "Network Requests";
-localizedStrings["Network:"] = "Network:";
 localizedStrings["New Tab"] = "New Tab";
 localizedStrings["Next Sibling"] = "Next Sibling";
 localizedStrings["No"] = "No";

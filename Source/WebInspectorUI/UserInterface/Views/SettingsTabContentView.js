@@ -202,10 +202,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         generalSettingsView.addSeparator();
 
-        generalSettingsView.addSetting(WI.UIString("Network:"), WI.settings.clearNetworkOnNavigate, WI.UIString("Clear when page loads"));
-
-        generalSettingsView.addSeparator();
-
         generalSettingsView.addSetting(WI.UIString("Console:"), WI.settings.clearLogOnNavigate, WI.UIString("Clear when page loads"));
 
         generalSettingsView.addSeparator();
