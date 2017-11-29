@@ -265,7 +265,7 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
         [representationsToRegister addData:content.dataInWebArchiveFormat->createNSData().get() forType:WebArchivePboardType];
 
     if (content.dataInAttributedStringFormat) {
-        NSAttributedString *attributedString = securelyUnarchiveObjectOfClassFromData([NSAttributedString class], content.dataInAttributedStringFormat->createNSData().get());
+        NSAttributedString *attributedString = insecurelyUnarchiveObjectOfClassFromData(content.dataInAttributedStringFormat->createNSData().get());
         if (attributedString)
             [representationsToRegister addRepresentingObject:attributedString];
     }
