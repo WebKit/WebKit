@@ -1,5 +1,24 @@
 2017-11-29  Alex Christensen  <achristensen@webkit.org>
 
+        Make WebFrameLoaderClient more robust against null pointer dereferencing
+        https://bugs.webkit.org/show_bug.cgi?id=180157
+        <rdar://problem/34895616>
+
+        Reviewed by Tim Horton.
+
+        There has always been rare null pointer crashes in this code, but they have become more common
+        now that we are waiting for completion handlers for redirects, which makes it more likely that
+        we are hitting this code after we have detached from the core frame.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::page const):
+
+2017-11-29  Alex Christensen  <achristensen@webkit.org>
+
         Fix Mac CMake build.
 
         * PlatformMac.cmake:

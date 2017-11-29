@@ -171,14 +171,14 @@ WebFrame::~WebFrame()
 }
 
 WebPage* WebFrame::page() const
-{ 
+{
     if (!m_coreFrame)
-        return 0;
+        return nullptr;
     
     if (Page* page = m_coreFrame->page())
         return WebPage::fromCorePage(page);
 
-    return 0;
+    return nullptr;
 }
 
 WebFrame* WebFrame::fromCoreFrame(Frame& frame)
