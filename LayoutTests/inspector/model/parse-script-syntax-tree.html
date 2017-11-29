@@ -271,7 +271,38 @@ function test()
     node = makeNode("\"a\"", true);
     InspectorTest.assert(node.value === "a");
     InspectorTest.assert(node.raw === "\"a\"");
+    node = makeNode("'abc'", true);
+    InspectorTest.assert(node.value === "abc");
+    InspectorTest.assert(node.raw === "'abc'");
     InspectorTest.log("passed Literal");
+
+    node = makeNode("`abc`", true);
+    InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.TemplateLiteral);
+    InspectorTest.assert(node.quasis.length === 1);
+    InspectorTest.assert(node.expressions.length === 0);
+    InspectorTest.assert(node.quasis[0].type === WI.ScriptSyntaxTree.NodeType.TemplateElement);
+    InspectorTest.assert(node.quasis[0].value.raw === "abc");
+    node = makeNode("`abc${1}def`", true);
+    InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.TemplateLiteral);
+    InspectorTest.assert(node.quasis.length === 2);
+    InspectorTest.assert(node.expressions.length === 1);
+    InspectorTest.assert(node.quasis[0].type === WI.ScriptSyntaxTree.NodeType.TemplateElement);
+    InspectorTest.assert(node.quasis[0].value.raw === "abc");
+    InspectorTest.assert(node.quasis[1].type === WI.ScriptSyntaxTree.NodeType.TemplateElement);
+    InspectorTest.assert(node.quasis[1].value.raw === "def");
+    InspectorTest.assert(node.expressions[0].type === WI.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.expressions[0].value === 1);
+    InspectorTest.log("passed TemplateLiteral, TemplateElement");
+
+    node = makeNode("tag`abcd`", true);
+    InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.TaggedTemplateExpression);
+    InspectorTest.assert(node.tag.name === "tag");
+    InspectorTest.assert(node.quasi.type === WI.ScriptSyntaxTree.NodeType.TemplateLiteral);
+    InspectorTest.assert(node.quasi.quasis.length === 1);
+    InspectorTest.assert(node.quasi.expressions.length === 0);
+    InspectorTest.assert(node.quasi.quasis[0].type === WI.ScriptSyntaxTree.NodeType.TemplateElement);
+    InspectorTest.assert(node.quasi.quasis[0].value.raw === "abcd");
+    InspectorTest.log("passed TaggedTemplateExpression");
 
     node = makeNode("label:while(true)20;", false);
     InspectorTest.assert(node.type === WI.ScriptSyntaxTree.NodeType.LabeledStatement);
@@ -539,6 +570,15 @@ function test()
     InspectorTest.assert(node.declarations[0].id.elements[0].left.name === "x");
     InspectorTest.assert(node.declarations[0].id.elements[0].right.type === WI.ScriptSyntaxTree.NodeType.Literal);
     InspectorTest.assert(node.declarations[0].id.elements[0].right.value === 20);
+    node = makeNode("function foo(a, b=1) { return a + b; }", false);
+    InspectorTest.assert(node.params.length === 2);
+    InspectorTest.assert(node.params[0].type === WI.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.params[0].name === "a");
+    InspectorTest.assert(node.params[1].type === WI.ScriptSyntaxTree.NodeType.AssignmentPattern);
+    InspectorTest.assert(node.params[1].left.type === WI.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.params[1].left.name === "b");
+    InspectorTest.assert(node.params[1].right.type === WI.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.params[1].right.value === 1);
     InspectorTest.log("passed AssignmentPattern");
 
     node = makeNode("(x) => x;", true);

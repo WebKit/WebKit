@@ -20,6 +20,8 @@ passed FunctionExpression
 passed Identifier
 passed IfStatement
 passed Literal
+passed TemplateLiteral, TemplateElement
+passed TaggedTemplateExpression
 passed LabeledStatement
 passed LogicalExpression
 passed MemberExpression

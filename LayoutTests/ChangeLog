@@ -1,3 +1,14 @@
+2017-11-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Write script syntax tree tests for template literals and default parameter values
+        https://bugs.webkit.org/show_bug.cgi?id=149450
+        <rdar://problem/22796879>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/model/parse-script-syntax-tree-expected.txt:
+        * inspector/model/parse-script-syntax-tree.html:
+
 2017-11-28  Zalan Bujtas  <zalan@apple.com>
 
         Clean up spanners before creating nested column context
