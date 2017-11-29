@@ -361,7 +361,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
         console.assert(oldText === styleText.slice(range.startOffset, range.endOffset), "_styleSheetTextRange data is invalid.");
 
-        let newStyleText = styleText.slice(0, range.startOffset) + newText + styleText.slice(range.endOffset);
+        let newStyleText = this._appendSemicolonIfNeeded(styleText.slice(0, range.startOffset)) + newText + styleText.slice(range.endOffset);
 
         let lineDelta = newText.lineCount - oldText.lineCount;
         let columnDelta = newText.lastLine.length - oldText.lastLine.length;
@@ -371,6 +371,14 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
         let propertyWasRemoved = !newText;
         this._ownerStyle.shiftPropertiesAfter(this, lineDelta, columnDelta, propertyWasRemoved);
+    }
+
+    _appendSemicolonIfNeeded(styleText)
+    {
+        if (/[^;\s]\s*$/.test(styleText))
+            return styleText.trimRight() + "; ";
+
+        return styleText;
     }
 };
 

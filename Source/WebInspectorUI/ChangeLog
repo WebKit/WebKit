@@ -1,3 +1,16 @@
+2017-11-29  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: can't add new property after property without trailing semicolon
+        https://bugs.webkit.org/show_bug.cgi?id=179587
+        <rdar://problem/35490858>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype._updateOwnerStyleText):
+        (WI.CSSProperty.prototype._appendSemicolonIfNeeded):
+        Add a semicolon before the new property if the last property doesn't have it already.
+
 2017-11-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Console Tab navigation bar sometimes does not include filter bar, clear console sometimes does not work
