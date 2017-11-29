@@ -98,6 +98,7 @@ public:
     static String splitFragmentIdentifierFromRequestURL(ResourceRequest&);
 
 #if ENABLE(SERVICE_WORKER)
+    void setClientIdentifierIfNeeded(DocumentIdentifier);
     void setSelectedServiceWorkerIdentifierIfNeeded(ServiceWorkerIdentifier);
     void setNavigationServiceWorkerRegistrationData(const std::optional<ServiceWorkerRegistrationData>&);
 #endif

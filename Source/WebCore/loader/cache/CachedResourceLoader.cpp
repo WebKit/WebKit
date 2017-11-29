@@ -693,6 +693,7 @@ void CachedResourceLoader::prepareFetch(CachedResource::Type type, CachedResourc
         if (!request.origin())
             request.setOrigin(document->securityOrigin());
 #if ENABLE(SERVICE_WORKER)
+        request.setClientIdentifierIfNeeded(document->identifier());
         if (auto* activeServiceWorker = document->activeServiceWorker())
             request.setSelectedServiceWorkerIdentifierIfNeeded(activeServiceWorker->identifier());
 #endif

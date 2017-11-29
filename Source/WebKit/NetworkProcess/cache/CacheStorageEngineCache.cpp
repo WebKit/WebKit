@@ -539,7 +539,7 @@ Storage::Record Cache::encode(const RecordInformation& recordInformation, const 
     encoder << recordInformation.size;
     encoder << record.requestHeadersGuard;
     record.request.encodeWithoutPlatformData(encoder);
-    encoder << record.options;
+    record.options.encodePersistent(encoder);
     encoder << record.referrer;
 
     encoder << record.responseHeadersGuard;
@@ -580,7 +580,7 @@ std::optional<Cache::DecodedRecord> Cache::decodeRecordHeader(const Storage::Rec
     if (!record.request.decodeWithoutPlatformData(decoder))
         return std::nullopt;
 
-    if (!decoder.decode(record.options))
+    if (!FetchOptions::decodePersistent(decoder, record.options))
         return std::nullopt;
 
     if (!decoder.decode(record.referrer))

@@ -37,6 +37,7 @@ class FetchResponse;
 class FormData;
 class ResourceRequest;
 class ResourceResponse;
+struct ServiceWorkerClientIdentifier;
 class SharedBuffer;
 class WorkerGlobalScope;
 
@@ -53,7 +54,7 @@ public:
     virtual void didNotHandle() = 0;
 };
 
-Ref<FetchEvent> dispatchFetchEvent(Ref<Client>&&, WorkerGlobalScope&, ResourceRequest&&, FetchOptions&&);
+Ref<FetchEvent> dispatchFetchEvent(Ref<Client>&&, WorkerGlobalScope&, std::optional<ServiceWorkerClientIdentifier>, ResourceRequest&&, FetchOptions&&);
 };
 
 } // namespace WebCore

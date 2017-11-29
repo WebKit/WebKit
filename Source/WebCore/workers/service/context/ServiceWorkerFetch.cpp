@@ -33,6 +33,7 @@
 #include "FetchRequest.h"
 #include "FetchResponse.h"
 #include "ResourceRequest.h"
+#include "ServiceWorkerClientIdentifier.h"
 #include "WorkerGlobalScope.h"
 
 namespace WebCore {
@@ -89,16 +90,21 @@ static void processResponse(Ref<Client>&& client, FetchResponse* response)
     client->didFinish();
 }
 
-Ref<FetchEvent> dispatchFetchEvent(Ref<Client>&& client, WorkerGlobalScope& globalScope, ResourceRequest&& request, FetchOptions&& options)
+Ref<FetchEvent> dispatchFetchEvent(Ref<Client>&& client, WorkerGlobalScope& globalScope, std::optional<ServiceWorkerClientIdentifier> clientId, ResourceRequest&& request, FetchOptions&& options)
 {
     ASSERT(globalScope.isServiceWorkerGlobalScope());
 
     auto requestHeaders = FetchHeaders::create(FetchHeaders::Guard::Immutable, HTTPHeaderMap { request.httpHeaderFields() });
     auto fetchRequest = FetchRequest::create(globalScope, FetchBody::fromFormData(request.httpBody()), WTFMove(requestHeaders),  WTFMove(request), WTFMove(options), request.httpReferrer());
 
-    // FIXME: Initialize other FetchEvent::Init fields.
     FetchEvent::Init init;
     init.request = WTFMove(fetchRequest);
+    if (options.mode == FetchOptions::Mode::Navigate) {
+        // FIXME: Set reservedClientId.
+        if (clientId)
+            init.targetClientId = clientId->toString();
+    } else if (clientId)
+        init.clientId = clientId->toString();
     init.cancelable = true;
     auto event = FetchEvent::create(eventNames().fetchEvent, WTFMove(init), Event::IsTrusted::Yes);
 

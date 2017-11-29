@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include "DocumentIdentifier.h"
 #include "ReferrerPolicy.h"
 #include <wtf/text/WTFString.h>
 
@@ -44,8 +45,10 @@ struct FetchOptions {
     FetchOptions(Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, String&&, bool);
     FetchOptions isolatedCopy() const { return { destination, mode, credentials, cache, redirect, referrerPolicy, integrity.isolatedCopy(), keepAlive }; }
 
+    template<class Encoder> void encodePersistent(Encoder&) const;
+    template<class Decoder> static bool decodePersistent(Decoder&, FetchOptions&);
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, FetchOptions&);
+    template<class Decoder> static std::optional<FetchOptions> decode(Decoder&);
 
     Destination destination { Destination::EmptyString };
     Mode mode { Mode::NoCors };
@@ -55,6 +58,7 @@ struct FetchOptions {
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
     String integrity;
     bool keepAlive { false };
+    std::optional<DocumentIdentifier> clientIdentifier;
 };
 
 inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, String&& integrity, bool keepAlive)
@@ -155,8 +159,9 @@ template<> struct EnumTraits<WebCore::FetchOptions::Redirect> {
 
 namespace WebCore {
 
-template<class Encoder> inline void FetchOptions::encode(Encoder& encoder) const
+template<class Encoder> inline void FetchOptions::encodePersistent(Encoder& encoder) const
 {
+    // Changes to encoding here should bump NetworkCache Storage format version.
     encoder << destination;
     encoder << mode;
     encoder << credentials;
@@ -167,7 +172,7 @@ template<class Encoder> inline void FetchOptions::encode(Encoder& encoder) const
     encoder << keepAlive;
 }
 
-template<class Decoder> inline bool FetchOptions::decode(Decoder& decoder, FetchOptions& options)
+template<class Decoder> inline bool FetchOptions::decodePersistent(Decoder& decoder, FetchOptions& options)
 {
     FetchOptions::Destination destination;
     if (!decoder.decode(destination))
@@ -211,6 +216,27 @@ template<class Decoder> inline bool FetchOptions::decode(Decoder& decoder, Fetch
     options.keepAlive = keepAlive;
 
     return true;
+}
+
+template<class Encoder> inline void FetchOptions::encode(Encoder& encoder) const
+{
+    encodePersistent(encoder);
+    encoder << clientIdentifier;
+}
+
+template<class Decoder> inline std::optional<FetchOptions> FetchOptions::decode(Decoder& decoder)
+{
+    FetchOptions options;
+    if (!decodePersistent(decoder, options))
+        return std::nullopt;
+
+    std::optional<std::optional<DocumentIdentifier>> clientIdentifier;
+    decoder >> clientIdentifier;
+    if (!clientIdentifier)
+        return std::nullopt;
+    options.clientIdentifier = WTFMove(clientIdentifier.value());
+
+    return WTFMove(options);
 }
 
 } // namespace WebCore

@@ -274,6 +274,12 @@ void CachedResourceRequest::setDestinationIfNotSet(FetchOptions::Destination des
 }
 
 #if ENABLE(SERVICE_WORKER)
+void CachedResourceRequest::setClientIdentifierIfNeeded(DocumentIdentifier clientIdentifier)
+{
+    if (!m_options.clientIdentifier)
+        m_options.clientIdentifier = clientIdentifier;
+}
+
 void CachedResourceRequest::setSelectedServiceWorkerIdentifierIfNeeded(ServiceWorkerIdentifier identifier)
 {
     if (isNonSubresourceRequest(m_options.destination))

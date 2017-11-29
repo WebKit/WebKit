@@ -1,3 +1,21 @@
+2017-11-29  Youenn Fablet  <youenn@apple.com>
+
+        Add support for FetchEvent.clientId
+        https://bugs.webkit.org/show_bug.cgi?id=180052
+
+        Reviewed by Chris Dumez.
+
+        Using FetchOption persistency coders for cache API and modernizing IPC FetchOptions decoding.
+
+        * WebKit/Shared/WebCoreArgumentCoders.cpp:
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::Cache::encode):
+        (WebKit::CacheStorage::Cache::decodeRecordHeader):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::startFetch):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::startFetch):
+
 2017-11-29  Alex Christensen  <achristensen@webkit.org>
 
         Make WebFrameLoaderClient more robust against null pointer dereferencing

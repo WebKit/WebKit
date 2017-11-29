@@ -141,9 +141,12 @@ void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serv
     }
 
     auto client = WebServiceWorkerFetchTaskClient::create(m_connectionToStorageProcess.copyRef(), serverConnectionIdentifier, fetchIdentifier);
+    std::optional<ServiceWorkerClientIdentifier> clientId;
+    if (options.clientIdentifier)
+        clientId = ServiceWorkerClientIdentifier { serverConnectionIdentifier, options.clientIdentifier.value() };
 
     request.setHTTPBody(formData.takeData());
-    serviceWorkerThreadProxy->thread().postFetchTask(WTFMove(client), WTFMove(request), WTFMove(options));
+    serviceWorkerThreadProxy->thread().postFetchTask(WTFMove(client), WTFMove(clientId), WTFMove(request), WTFMove(options));
 }
 
 void WebSWContextManagerConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, ServiceWorkerClientIdentifier sourceIdentifier, ServiceWorkerClientData&& sourceData)
