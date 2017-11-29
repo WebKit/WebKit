@@ -414,7 +414,7 @@ function runWithKeyDown(fn, preventDefault)
 
     if (window.testRunner) {
         if (eventSender.keyDown)
-            eventSender.keyDown(" ", []);
+            eventSender.keyDown("a", []);
         else
             eventSender.mouseDown();
     }
