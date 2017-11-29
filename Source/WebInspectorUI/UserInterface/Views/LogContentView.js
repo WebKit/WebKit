@@ -66,7 +66,14 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this._selectedSearchMatch = null;
         this._selectedSearchMatchIsValid = false;
 
-        var scopeBarItems = [
+        this._preserveLogNavigationItem = new WI.CheckboxNavigationItem("perserve-log", WI.UIString("Preserve Log"), !WI.settings.clearLogOnNavigate.value);
+        this._preserveLogNavigationItem.tooltip = WI.UIString("Do not clear the console on new page loads");
+        this._preserveLogNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, () => { WI.settings.clearLogOnNavigate.value = !WI.settings.clearLogOnNavigate.value; });
+        WI.settings.clearLogOnNavigate.addEventListener(WI.Setting.Event.Changed, this._clearLogOnNavigateSettingChanged, this);
+
+        this._checkboxsNavigationItemGroup = new WI.GroupNavigationItem([this._preserveLogNavigationItem, new WI.DividerNavigationItem]);
+
+        let scopeBarItems = [
             new WI.ScopeBarItem(WI.LogContentView.Scopes.All, WI.UIString("All"), true),
             new WI.ScopeBarItem(WI.LogContentView.Scopes.Errors, WI.UIString("Errors"), false, "errors"),
             new WI.ScopeBarItem(WI.LogContentView.Scopes.Warnings, WI.UIString("Warnings"), false, "warnings"),
@@ -119,17 +126,18 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         let navigationItems = [this._scopeBar, new WI.DividerNavigationItem];
 
         if (this._hasNonDefaultLogChannelMessage && this._messageSourceBar)
-            navigationItems.push(this._messageSourceBar);
+            navigationItems.push(this._messageSourceBar, new WI.DividerNavigationItem);
 
         if (HeapAgent.gc)
             navigationItems.push(this._garbageCollectNavigationItem);
 
         navigationItems.push(this._clearLogNavigationItem);
-        if (WI.isShowingSplitConsole()) {
-            navigationItems.push(new WI.DividerNavigationItem);
-            navigationItems.push(this._showConsoleTabNavigationItem);
-        } else if (WI.isShowingConsoleTab())
-            navigationItems.unshift(this._findBanner);
+
+        if (WI.isShowingSplitConsole())
+            navigationItems.push(new WI.DividerNavigationItem, this._showConsoleTabNavigationItem);
+        else if (WI.isShowingConsoleTab())
+            navigationItems.unshift(this._findBanner, this._checkboxsNavigationItemGroup);
+
         return navigationItems;
     }
 
@@ -832,6 +840,11 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         }, this);
 
         this.performSearch(this._currentSearchQuery);
+    }
+
+    _clearLogOnNavigateSettingChanged()
+    {
+        this._preserveLogNavigationItem.checked = !WI.settings.clearLogOnNavigate.value;
     }
 
     _keyDown(event)

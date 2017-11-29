@@ -202,10 +202,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         generalSettingsView.addSeparator();
 
-        generalSettingsView.addSetting(WI.UIString("Console:"), WI.settings.clearLogOnNavigate, WI.UIString("Clear when page loads"));
-
-        generalSettingsView.addSeparator();
-
         generalSettingsView.addSetting(WI.UIString("Debugger:"), WI.settings.showScopeChainOnPause, WI.UIString("Show Scope Chain on pause"));
 
         generalSettingsView.addSeparator();
