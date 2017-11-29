@@ -102,10 +102,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
         return;
     }
 
-    if (!m_swConnection)
-        m_swConnection = &ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(scriptExecutionContext()->sessionID());
-
-    ServiceWorkerJobData jobData(m_swConnection->serverConnectionIdentifier());
+    ServiceWorkerJobData jobData(ensureSWClientConnection().serverConnectionIdentifier());
 
     jobData.scriptURL = context->completeURL(relativeScriptURL);
     if (!jobData.scriptURL.isValid()) {
@@ -231,10 +228,7 @@ void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<Deferr
         return;
     }
 
-    if (!m_swConnection)
-        m_swConnection = &ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(context->sessionID());
-
-    return m_swConnection->matchRegistration(context->topOrigin(), parsedURL, [promise = WTFMove(promise), protectingThis = makePendingActivity(*this), this] (auto&& result) mutable {
+    return ensureSWClientConnection().matchRegistration(context->topOrigin(), parsedURL, [promise = WTFMove(promise), protectingThis = makePendingActivity(*this), this] (auto&& result) mutable {
         if (m_isStopped)
             return;
 
@@ -278,10 +272,7 @@ void ServiceWorkerContainer::getRegistrations(RegistrationsPromise&& promise)
         return;
     }
 
-    if (!m_swConnection)
-        m_swConnection = &ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(context->sessionID());
-
-    return m_swConnection->getRegistrations(context->topOrigin(), context->url(), [this, pendingActivity = makePendingActivity(*this), promise = WTFMove(promise)] (auto&& registrationDatas) mutable {
+    return ensureSWClientConnection().getRegistrations(context->topOrigin(), context->url(), [this, pendingActivity = makePendingActivity(*this), promise = WTFMove(promise)] (auto&& registrationDatas) mutable {
         if (m_isStopped)
             return;
 
@@ -416,6 +407,17 @@ const char* ServiceWorkerContainer::activeDOMObjectName() const
 bool ServiceWorkerContainer::canSuspendForDocumentSuspension() const
 {
     return !hasPendingActivity();
+}
+
+SWClientConnection& ServiceWorkerContainer::ensureSWClientConnection()
+{
+    if (!m_swConnection) {
+        ASSERT(scriptExecutionContext());
+        callOnMainThreadAndWait([this, sessionID = scriptExecutionContext()->sessionID()]() {
+            m_swConnection = &ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
+        });
+    }
+    return *m_swConnection;
 }
 
 void ServiceWorkerContainer::addRegistration(ServiceWorkerRegistration& registration)

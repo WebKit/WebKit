@@ -97,6 +97,7 @@ private:
     void jobDidFinish(ServiceWorkerJob&);
 
     SWServerConnectionIdentifier connectionIdentifier() final;
+    SWClientConnection& ensureSWClientConnection();
 
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
