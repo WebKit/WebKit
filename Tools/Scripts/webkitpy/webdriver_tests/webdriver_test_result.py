@@ -25,11 +25,14 @@ import os
 
 class WebDriverTestResult(object):
 
-    def __init__(self, test_prefix, test, status, message, backtrace=None):
-        self.test = os.path.join(test_prefix, test)
+    def __init__(self, test, status, message=None):
+        self.test = test
         self.status = status
         self.message = message
-        self.backtrace = backtrace
+        self.subtest_results = []
+
+    def add_subtest_results(self, subtest, status, message, backtrace):
+        self.subtest_results.append((subtest, status, message, backtrace))
 
     def __repr__(self):
         return "<%s.%s %s %s>" % (self.__module__, self.__class__.__name__, self.test, self.status)

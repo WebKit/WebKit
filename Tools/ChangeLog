@@ -1,3 +1,27 @@
+2017-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: add an option to dump test results to a json file
+        https://bugs.webkit.org/show_bug.cgi?id=180082
+
+        Reviewed by Brian Burg.
+
+        Add --json-output command line option to run-webdriver-tests to dump test results to a json file in a format
+        compatible with the W3C report. WebDriverTestResult now represents a test file and contains a list of
+        subtests, instead of having one WebDriverTestResult per subtest. This way we can store also the harness result
+        and dump the results to different formats.
+
+        * Scripts/run-webdriver-tests:
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_result.py:
+        (WebDriverTestResult.__init__):
+        (WebDriverTestResult):
+        (WebDriverTestResult.add_subtest_results):
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner.py:
+        (WebDriverTestRunner.print_results):
+        (WebDriverTestRunner):
+        (WebDriverTestRunner.dump_results_to_json_file):
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_w3c.py:
+        (WebDriverTestRunnerW3C.run):
+
 2017-11-28  Alexey Proskuryakov  <ap@apple.com>
 
         Stop silencing leaks in TextCodecICU::registerCodecs, as the problem was fixed a while ago.
