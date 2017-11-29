@@ -165,7 +165,7 @@ public:
 
     EventDispatcher& eventDispatcher() { return *m_eventDispatcher; }
 
-    NetworkProcessConnection& networkConnection();
+    NetworkProcessConnection& ensureNetworkProcessConnection();
     void networkProcessConnectionClosed(NetworkProcessConnection*);
     WebLoaderStrategy& webLoaderStrategy();
 
@@ -174,7 +174,7 @@ public:
 #endif
 
     void webToStorageProcessConnectionClosed(WebToStorageProcessConnection*);
-    WebToStorageProcessConnection* webToStorageProcessConnection();
+    WebToStorageProcessConnection& ensureWebToStorageProcessConnection();
 
     void setCacheModel(uint32_t);
 
@@ -383,7 +383,6 @@ private:
 
     TextCheckerState m_textCheckerState;
 
-    void ensureNetworkProcessConnection();
     RefPtr<NetworkProcessConnection> m_networkProcessConnection;
     WebLoaderStrategy& m_webLoaderStrategy;
 
@@ -398,7 +397,6 @@ private:
 
     std::unique_ptr<WebAutomationSessionProxy> m_automationSessionProxy;
 
-    void ensureWebToStorageProcessConnection();
     RefPtr<WebToStorageProcessConnection> m_webToStorageProcessConnection;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

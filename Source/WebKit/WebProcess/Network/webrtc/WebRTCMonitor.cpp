@@ -41,7 +41,7 @@ namespace WebKit {
 static inline void sendOnMainThread(Function<void(IPC::Connection&)>&& callback)
 {
     callOnMainThread([callback = WTFMove(callback)]() {
-        callback(WebProcess::singleton().networkConnection().connection());
+        callback(WebProcess::singleton().ensureNetworkProcessConnection().connection());
     });
 }
 

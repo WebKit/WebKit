@@ -55,8 +55,7 @@ WebServiceWorkerProvider::WebServiceWorkerProvider()
 
 WebCore::SWClientConnection& WebServiceWorkerProvider::serviceWorkerConnectionForSession(SessionID sessionID)
 {
-    ASSERT(WebProcess::singleton().webToStorageProcessConnection());
-    return WebProcess::singleton().webToStorageProcessConnection()->serviceWorkerConnectionForSession(sessionID);
+    return WebProcess::singleton().ensureWebToStorageProcessConnection().serviceWorkerConnectionForSession(sessionID);
 }
 
 static inline bool shouldHandleFetch(const ResourceLoaderOptions& options)
@@ -77,7 +76,7 @@ void WebServiceWorkerProvider::handleFetch(ResourceLoader& loader, CachedResourc
         return;
     }
 
-    auto& connection = WebProcess::singleton().webToStorageProcessConnection()->serviceWorkerConnectionForSession(sessionID);
+    auto& connection = WebProcess::singleton().ensureWebToStorageProcessConnection().serviceWorkerConnectionForSession(sessionID);
     auto fetch = connection.startFetch(*this, loader, loader.identifier(), WTFMove(callback));
     ASSERT(fetch->isOngoing());
 

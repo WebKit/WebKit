@@ -72,7 +72,7 @@ WebSocketStream::WebSocketStream(const WebCore::URL& url, WebCore::SocketStreamH
     : SocketStreamHandle(url, client)
     , m_client(client)
 {
-    WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::CreateSocketStream(url, sessionID, cachePartition, identifier()), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::CreateSocketStream(url, sessionID, cachePartition, identifier()), 0);
 
     ASSERT(!globalWebSocketStreamMap().contains(identifier()));
     globalWebSocketStreamMap().set(identifier(), this);
@@ -86,7 +86,7 @@ WebSocketStream::~WebSocketStream()
 
 IPC::Connection* WebSocketStream::messageSenderConnection()
 {
-    return &WebProcess::singleton().networkConnection().connection();
+    return &WebProcess::singleton().ensureNetworkProcessConnection().connection();
 }
 
 uint64_t WebSocketStream::messageSenderDestinationID()

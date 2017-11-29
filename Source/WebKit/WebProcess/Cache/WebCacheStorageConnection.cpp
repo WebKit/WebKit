@@ -53,7 +53,7 @@ WebCacheStorageConnection::~WebCacheStorageConnection()
 
 IPC::Connection& WebCacheStorageConnection::connection()
 {
-    return WebProcess::singleton().networkConnection().connection();
+    return WebProcess::singleton().ensureNetworkProcessConnection().connection();
 }
 
 void WebCacheStorageConnection::doOpen(uint64_t requestIdentifier, const String& origin, const String& cacheName)

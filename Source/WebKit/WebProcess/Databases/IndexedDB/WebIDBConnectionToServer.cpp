@@ -79,7 +79,7 @@ WebIDBConnectionToServer::~WebIDBConnectionToServer()
 
 IPC::Connection* WebIDBConnectionToServer::messageSenderConnection()
 {
-    return &WebProcess::singleton().webToStorageProcessConnection()->connection();
+    return &WebProcess::singleton().ensureWebToStorageProcessConnection().connection();
 }
 
 IDBClient::IDBConnectionToServer& WebIDBConnectionToServer::coreConnectionToServer()
@@ -297,7 +297,7 @@ static void preregisterSandboxExtensionsIfNecessary(const WebIDBResult& result)
 #endif
 
     if (!filePaths.isEmpty())
-        WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::PreregisterSandboxExtensionsForOptionallyFileBackedBlob(filePaths, result.handles()), 0);
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::PreregisterSandboxExtensionsForOptionallyFileBackedBlob(filePaths, result.handles()), 0);
 }
 
 void WebIDBConnectionToServer::didGetRecord(const WebIDBResult& result)

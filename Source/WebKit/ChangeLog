@@ -1,3 +1,78 @@
+2017-11-29  Chris Dumez  <cdumez@apple.com>
+
+        ensure*Connection() methods on WebProcess should return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=180149
+
+        Reviewed by Alex Christensen.
+
+        ensure*Connection() methods on WebProcess should return a reference instead of not returning
+        anything. Also get rid of the non-ensure variants which called "ensure" internally and are
+        no longer needed.
+
+        * Shared/mac/CookieStorageShim.mm:
+        (WebKit::webKitCookieStorageCopyRequestHeaderFieldsForURL):
+        * WebProcess/Cache/WebCacheStorageConnection.cpp:
+        (WebKit::WebCacheStorageConnection::connection):
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::messageSenderConnection):
+        (WebKit::preregisterSandboxExtensionsIfNecessary):
+        * WebProcess/Databases/WebDatabaseProvider.cpp:
+        (WebKit::WebDatabaseProvider::idbConnectionToServerForSession):
+        * WebProcess/FileAPI/BlobRegistryProxy.cpp:
+        (WebKit::BlobRegistryProxy::registerFileBlobURL):
+        (WebKit::BlobRegistryProxy::registerBlobURL):
+        (WebKit::BlobRegistryProxy::registerBlobURLOptionallyFileBacked):
+        (WebKit::BlobRegistryProxy::unregisterBlobURL):
+        (WebKit::BlobRegistryProxy::registerBlobURLForSlice):
+        (WebKit::BlobRegistryProxy::blobSize):
+        (WebKit::BlobRegistryProxy::writeBlobsToTemporaryFiles):
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::writeBlobsToTemporaryFiles):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::remove):
+        (WebKit::WebLoaderStrategy::setDefersLoading):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        (WebKit::WebLoaderStrategy::startPingLoad):
+        (WebKit::WebLoaderStrategy::preconnectTo):
+        (WebKit::WebLoaderStrategy::storeDerivedDataToCache):
+        (WebKit::WebLoaderStrategy::setCaptureExtraNetworkLoadMetricsEnabled):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::messageSenderConnection):
+        * WebProcess/Network/WebSocketStream.cpp:
+        (WebKit::WebSocketStream::WebSocketStream):
+        (WebKit::WebSocketStream::messageSenderConnection):
+        * WebProcess/Network/webrtc/LibWebRTCResolver.cpp:
+        (WebKit::sendOnMainThread):
+        * WebProcess/Network/webrtc/LibWebRTCSocket.cpp:
+        (WebKit::sendOnMainThread):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::CreateServerTcpSocket):
+        (WebKit::LibWebRTCSocketFactory::CreateUdpSocket):
+        (WebKit::LibWebRTCSocketFactory::CreateClientTcpSocket):
+        (WebKit::LibWebRTCSocketFactory::createNewConnectionSocket):
+        * WebProcess/Network/webrtc/WebRTCMonitor.cpp:
+        (WebKit::sendOnMainThread):
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::WebServiceWorkerProvider::serviceWorkerConnectionForSession):
+        (WebKit::WebServiceWorkerProvider::handleFetch):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::cookiesForDOM):
+        (WebKit::WebPlatformStrategies::setCookiesFromDOM):
+        (WebKit::WebPlatformStrategies::cookiesEnabled):
+        (WebKit::WebPlatformStrategies::cookieRequestHeaderFieldValue):
+        (WebKit::WebPlatformStrategies::getRawCookies):
+        (WebKit::WebPlatformStrategies::deleteCookie):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::startDownload):
+        (WebKit::WebFrame::convertMainResourceLoadToDownload):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureLegacyPrivateBrowsingSessionInNetworkProcess):
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+        (WebKit::WebProcess::ensureWebToStorageProcessConnection):
+        (WebKit::WebProcess::prefetchDNS):
+        * WebProcess/WebProcess.h:
+
 2017-11-29  Alex Christensen  <achristensen@webkit.org>
 
         Modernize API::SerializedScriptValue
