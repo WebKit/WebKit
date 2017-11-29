@@ -103,22 +103,31 @@ TEST(WebKit, VisitedLinkStore_AddAndRemove)
     NSURL *appleURL = [NSURL URLWithString:@"https://www.apple.com"];
     NSURL *webkitURL = [NSURL URLWithString:@"https://www.webkit.org"];
     NSURL *bugzillaURL = [NSURL URLWithString:@"https://bugs.webkit.org"];
+    NSURL *tracURL = [NSURL URLWithString:@"https://trac.webkit.org"];
+    NSString *tracString = @"https://trac.webkit.org";
     [visitedLinkStore addVisitedLinkWithURL:appleURL];
+    [visitedLinkStore addVisitedLinkWithString:tracString];
     EXPECT_TRUE([visitedLinkStore containsVisitedLinkWithURL:appleURL]);
     EXPECT_FALSE([visitedLinkStore containsVisitedLinkWithURL:webkitURL]);
     EXPECT_FALSE([visitedLinkStore containsVisitedLinkWithURL:bugzillaURL]);
+    EXPECT_TRUE([visitedLinkStore containsVisitedLinkWithURL:tracURL]);
     [visitedLinkStore addVisitedLinkWithURL:appleURL];
     [visitedLinkStore removeVisitedLinkWithURL:appleURL];
     [visitedLinkStore addVisitedLinkWithURL:webkitURL];
     EXPECT_FALSE([visitedLinkStore containsVisitedLinkWithURL:appleURL]);
     EXPECT_TRUE([visitedLinkStore containsVisitedLinkWithURL:webkitURL]);
     EXPECT_FALSE([visitedLinkStore containsVisitedLinkWithURL:bugzillaURL]);
+    EXPECT_TRUE([visitedLinkStore containsVisitedLinkWithURL:tracURL]);
     [visitedLinkStore removeVisitedLinkWithURL:appleURL];
+    [visitedLinkStore removeVisitedLinkWithURL:tracURL];
     [visitedLinkStore addVisitedLinkWithURL:appleURL];
     [visitedLinkStore addVisitedLinkWithURL:bugzillaURL];
+    EXPECT_FALSE([visitedLinkStore containsVisitedLinkWithURL:tracURL]);
     EXPECT_TRUE([visitedLinkStore containsVisitedLinkWithURL:appleURL]);
     EXPECT_TRUE([visitedLinkStore containsVisitedLinkWithURL:webkitURL]);
     EXPECT_TRUE([visitedLinkStore containsVisitedLinkWithURL:bugzillaURL]);
+    [visitedLinkStore removeVisitedLinkWithURL:tracURL];
+    EXPECT_FALSE([visitedLinkStore containsVisitedLinkWithURL:tracURL]);
 }
 
 }

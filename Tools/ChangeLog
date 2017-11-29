@@ -1,3 +1,13 @@
+2017-11-29  Alex Christensen  <achristensen@webkit.org>
+
+        Add test for _WKVisitedLinkStore.addVisitedLinkWithString
+        https://bugs.webkit.org/show_bug.cgi?id=180152
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/VisitedLinkStore.mm:
+        (TestWebKitAPI::TEST):
+
 2017-11-29  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Trying to use iOS versions from machines without iOS SDKs doesn't make sense
