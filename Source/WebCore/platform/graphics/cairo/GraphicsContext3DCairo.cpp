@@ -40,6 +40,8 @@
 #include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
 #include <cairo.h>
+#include <wtf/Deque.h>
+#include <wtf/NeverDestroyed.h>
 
 #if PLATFORM(WIN)
 #include <GLSLANG/ShaderLang.h>
@@ -65,6 +67,13 @@
 
 namespace WebCore {
 
+static const size_t MaxActiveContexts = 16;
+static Deque<GraphicsContext3D*, MaxActiveContexts>& activeContexts()
+{
+    static NeverDestroyed<Deque<GraphicsContext3D*, MaxActiveContexts>> s_activeContexts;
+    return s_activeContexts;
+}
+
 RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes attributes, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
 {
     // This implementation doesn't currently support rendering directly to the HostWindow.
@@ -82,6 +91,15 @@ RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes 
     if (!success)
         return nullptr;
 
+    auto& contexts = activeContexts();
+    if (contexts.size() >= MaxActiveContexts)
+        contexts.first()->recycleContext();
+
+    // Calling recycleContext() above should have lead to the graphics context being
+    // destroyed and thus removed from the active contexts list.
+    if (contexts.size() >= MaxActiveContexts)
+        return nullptr;
+
     // Create the GraphicsContext3D object first in order to establist a current context on this thread.
     auto context = adoptRef(new GraphicsContext3D(attributes, hostWindow, renderStyle));
 
@@ -91,6 +109,7 @@ RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes 
         return nullptr;
 #endif
 
+    contexts.append(context.get());
     return context;
 }
 
@@ -251,6 +270,9 @@ GraphicsContext3D::~GraphicsContext3D()
 
     if (m_vao)
         deleteVertexArray(m_vao);
+
+    auto* activeContext = activeContexts().takeLast([this](auto* it) { return it == this; });
+    ASSERT_UNUSED(activeContext, !!activeContext);
 }
 
 GraphicsContext3D::ImageExtractor::~ImageExtractor()

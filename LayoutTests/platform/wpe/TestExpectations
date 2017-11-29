@@ -144,13 +144,6 @@ Bug(WPE) webgl/1.0.3/conformance/glsl/bugs [ Skip ]
 # Pixel test result oddities
 Bug(WPE) webgl/webgl-border.html [ ImageOnlyFailure ]
 Bug(WPE) webgl/webgl-box-shadow.html [ ImageOnlyFailure ]
-# Unknown
-Bug(WPE) webgl/many-contexts-access-after-loss.html [ Failure ]
-Bug(WPE) webgl/many-contexts.html [ Failure ]
-Bug(WPE) webgl/max-active-contexts-console-warning.html [ Failure ]
-Bug(WPE) webgl/max-active-contexts-gc.html [ Failure ]
-Bug(WPE) webgl/max-active-contexts-oldest-context-lost.html [ Failure ]
-webkit.org/b/169917 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Timeout ]
 # Slow
 webkit.org/b/169917 webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Slow ]

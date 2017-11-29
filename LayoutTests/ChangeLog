@@ -1,3 +1,14 @@
+2017-11-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Limit the number of active contexts in GraphicsContext3DCairo
+        https://bugs.webkit.org/show_bug.cgi?id=166968
+
+        Reviewed by Alex Christensen.
+
+        * platform/gtk/TestExpectations: Unskip WebGL tests that were failing
+        due to missing active context limit management.
+        * platform/wpe/TestExpectations: Ditto.
+
 2017-11-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Write script syntax tree tests for template literals and default parameter values
