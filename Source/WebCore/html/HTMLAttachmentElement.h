@@ -54,7 +54,7 @@ public:
     String attachmentType() const;
     String attachmentPath() const;
 
-    RenderAttachment* renderer() const;
+    RenderAttachment* attachmentRenderer() const;
 
     WEBCORE_EXPORT void requestData(Function<void(RefPtr<SharedBuffer>&&)>&& callback);
     void destroyReader(AttachmentDataReader&);

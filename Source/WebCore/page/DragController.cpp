@@ -1071,7 +1071,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (is<HTMLAttachmentElement>(element) && m_dragSourceAction & DragSourceActionAttachment) {
-        auto* attachmentRenderer = downcast<HTMLAttachmentElement>(element).renderer();
+        auto* attachmentRenderer = downcast<HTMLAttachmentElement>(element).attachmentRenderer();
         if (!attachmentRenderer)
             return false;
 

@@ -35,6 +35,7 @@
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "RenderAttachment.h"
+#include "RenderBlockFlow.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
@@ -86,6 +87,11 @@ Ref<HTMLAttachmentElement> HTMLAttachmentElement::create(const QualifiedName& ta
 
 RenderPtr<RenderElement> HTMLAttachmentElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
+    if (!style.hasAppearance()) {
+        // If this attachment element doesn't have an appearance, defer rendering to child elements.
+        return createRenderer<RenderBlockFlow>(*this, WTFMove(style));
+    }
+
     return createRenderer<RenderAttachment>(*this, WTFMove(style));
 }
 
@@ -105,8 +111,14 @@ void HTMLAttachmentElement::setFile(RefPtr<File>&& file)
 
     setAttributeWithoutSynchronization(HTMLNames::webkitattachmentbloburlAttr, m_file ? m_file->url() : emptyString());
 
-    if (auto* renderer = this->renderer())
-        renderer->invalidate();
+    if (auto* renderAttachment = attachmentRenderer())
+        renderAttachment->invalidate();
+}
+
+RenderAttachment* HTMLAttachmentElement::attachmentRenderer() const
+{
+    auto* renderer = this->renderer();
+    return is<RenderAttachment>(renderer) ? downcast<RenderAttachment>(renderer) : nullptr;
 }
 
 Node::InsertedIntoAncestorResult HTMLAttachmentElement::insertedIntoAncestor(InsertionType type, ContainerNode& ancestor)
@@ -127,8 +139,8 @@ void HTMLAttachmentElement::removedFromAncestor(RemovalType type, ContainerNode&
 void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == progressAttr || name == subtitleAttr || name == titleAttr || name == typeAttr) {
-        if (auto* renderer = this->renderer())
-            renderer->invalidate();
+        if (auto* renderAttachment = attachmentRenderer())
+            renderAttachment->invalidate();
     }
 
     HTMLElement::parseAttribute(name, value);

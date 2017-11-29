@@ -59,11 +59,6 @@ private:
     bool m_shouldDrawBorder { true };
 };
 
-inline RenderAttachment* HTMLAttachmentElement::renderer() const
-{
-    return downcast<RenderAttachment>(HTMLElement::renderer());
-}
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderAttachment, isAttachment())

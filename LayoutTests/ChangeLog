@@ -1,3 +1,17 @@
+2017-11-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Allow attachment elements with no appearance to defer rendering to child nodes
+        https://bugs.webkit.org/show_bug.cgi?id=180117
+        <rdar://problem/35735339>
+
+        Reviewed by Tim Horton.
+
+        Adds a ref test verifying that an appearance-less attachment can render child nodes. More extensive testing to
+        come in a followup patch.
+
+        * fast/attachment/attachment-without-appearance-expected.html: Added.
+        * fast/attachment/attachment-without-appearance.html: Added.
+
 2017-11-28  Chris Dumez  <cdumez@apple.com>
 
         ServiceWorkerGlobalScope.clients should always return the same object
