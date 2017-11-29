@@ -1,3 +1,13 @@
+2017-11-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        webkitpy EWS should be present on the dashboard.
+        https://bugs.webkit.org/show_bug.cgi?id=179801
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueServer.js:
+        (BubbleQueueServer): Add Webkitpy EWS.
+
 2017-11-29  Simon Fraser  <simon.fraser@apple.com>
 
         Viewport unit values affected by Comand-+ zoom
