@@ -62,7 +62,15 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             ["Font", (type) => type === WI.Resource.Type.Font],
             ["Script", (type) => type === WI.Resource.Type.Script],
             ["XHR", (type) => type === WI.Resource.Type.XHR || type === WI.Resource.Type.Fetch],
-            ["Other", (type) => type === WI.Resource.Type.Other || type === WI.Resource.Type.WebSocket],
+            ["Other", (type) => {
+                return type !== WI.Resource.Type.Document
+                    && type !== WI.Resource.Type.Stylesheet
+                    && type !== WI.Resource.Type.Image
+                    && type !== WI.Resource.Type.Font
+                    && type !== WI.Resource.Type.Script
+                    && type !== WI.Resource.Type.XHR
+                    && type !== WI.Resource.Type.Fetch;
+            }],
         ];
         for (let [key, checker] of uniqueTypes) {
             let type = WI.Resource.Type[key];
