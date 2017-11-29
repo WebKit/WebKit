@@ -1,3 +1,9 @@
+2017-11-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, correct the location for an expected result file.
+
+        * platform/mac-elcapitan/fast/forms/alternative-presentation-button/replacement-expected.txt: Renamed from LayoutTests/platform/mac-elcapitan/fast/alternative-presentation-button/replacement-expected.txt.
+
 2017-11-28  Matt Lewis  <jlewis3@apple.com>
 
         Marked accessibility/ios-simulator/video-elements-ios.html as flaky timout.
