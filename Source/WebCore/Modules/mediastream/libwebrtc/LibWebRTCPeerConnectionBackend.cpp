@@ -192,6 +192,7 @@ void LibWebRTCPeerConnectionBackend::doStop()
 
     m_endpoint->stop();
 
+    m_statsPromises.clear();
     m_remoteStreams.clear();
     m_pendingReceivers.clear();
 }
