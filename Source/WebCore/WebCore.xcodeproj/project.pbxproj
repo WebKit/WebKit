@@ -3279,7 +3279,6 @@
 		B275356D0B053814002CE64F /* FloatSize.h in Headers */ = {isa = PBXBuildFile; fileRef = B275353F0B053814002CE64F /* FloatSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B275356E0B053814002CE64F /* Icon.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535400B053814002CE64F /* Icon.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B27535700B053814002CE64F /* Image.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535420B053814002CE64F /* Image.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B27535710B053814002CE64F /* ImageSource.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535430B053814002CE64F /* ImageSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B27535720B053814002CE64F /* IntPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535440B053814002CE64F /* IntPoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B27535740B053814002CE64F /* IntRect.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535460B053814002CE64F /* IntRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B27535750B053814002CE64F /* IntSize.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535470B053814002CE64F /* IntSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5367,7 +5366,6 @@
 		0F17747F1378B772009DA76A /* ScrollAnimatorIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollAnimatorIOS.mm; sourceTree = "<group>"; };
 		0F36E7361BD1837A002DB891 /* LayoutPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutPoint.cpp; sourceTree = "<group>"; };
 		0F36E7381BD184B9002DB891 /* LayoutSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutSize.cpp; sourceTree = "<group>"; };
-		0F3C725D1974874B00AEDD0C /* ImageSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageSource.cpp; sourceTree = "<group>"; };
 		0F3DD44D12F5EA1B000D9190 /* ShadowBlur.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowBlur.cpp; sourceTree = "<group>"; };
 		0F3DD44E12F5EA1B000D9190 /* ShadowBlur.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowBlur.h; sourceTree = "<group>"; };
 		0F3F0E57157030C3006DA57F /* RenderGeometryMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderGeometryMap.cpp; sourceTree = "<group>"; };
@@ -11743,7 +11741,6 @@
 		B27535400B053814002CE64F /* Icon.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Icon.h; sourceTree = "<group>"; };
 		B27535410B053814002CE64F /* Image.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Image.cpp; sourceTree = "<group>"; };
 		B27535420B053814002CE64F /* Image.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
-		B27535430B053814002CE64F /* ImageSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageSource.h; sourceTree = "<group>"; };
 		B27535440B053814002CE64F /* IntPoint.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IntPoint.h; sourceTree = "<group>"; };
 		B27535450B053814002CE64F /* IntRect.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IntRect.cpp; sourceTree = "<group>"; };
 		B27535460B053814002CE64F /* IntRect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IntRect.h; sourceTree = "<group>"; };
@@ -22717,8 +22714,6 @@
 				A8748D7412CC3F89001FBA41 /* ImageOrientation.cpp */,
 				A8748D6612CC3763001FBA41 /* ImageOrientation.h */,
 				49291E4A134172C800E753DE /* ImageRenderingMode.h */,
-				0F3C725D1974874B00AEDD0C /* ImageSource.cpp */,
-				B27535430B053814002CE64F /* ImageSource.h */,
 				5550CB411E955E3C00111AA0 /* ImageTypes.h */,
 				07941793166EA04E009416C2 /* InbandTextTrackPrivate.h */,
 				07CE77D416712A6A00C55A47 /* InbandTextTrackPrivateClient.h */,

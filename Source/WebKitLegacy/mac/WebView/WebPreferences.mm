@@ -58,7 +58,6 @@ using namespace WebCore;
 #import <AudioToolbox/AudioSession.h>
 #import <WebCore/Device.h>
 #import <WebCore/GraphicsContext.h>
-#import <WebCore/ImageSource.h>
 #import <WebCore/WebCoreThreadMessage.h>
 #endif
 

@@ -35,7 +35,7 @@
 #include "CairoUtilities.h"
 #include "GraphicsContext3DPrivate.h"
 #include "Image.h"
-#include "ImageSource.h"
+#include "ImageFrameCache.h"
 #include "NotImplemented.h"
 #include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
@@ -277,8 +277,6 @@ GraphicsContext3D::~GraphicsContext3D()
 
 GraphicsContext3D::ImageExtractor::~ImageExtractor()
 {
-    if (m_decoder)
-        delete m_decoder;
 }
 
 bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
@@ -288,12 +286,7 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
     // We need this to stay in scope because the native image is just a shallow copy of the data.
     AlphaOption alphaOption = premultiplyAlpha ? AlphaOption::Premultiplied : AlphaOption::NotPremultiplied;
     GammaAndColorProfileOption gammaAndColorProfileOption = ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied;
-    m_decoder = new ImageSource(nullptr, alphaOption, gammaAndColorProfileOption);
-    
-    if (!m_decoder)
-        return false;
-
-    ImageSource& decoder = *m_decoder;
+    ImageFrameCache decoder(nullptr, alphaOption, gammaAndColorProfileOption);
     m_alphaOp = AlphaDoNothing;
 
     if (m_image->data()) {

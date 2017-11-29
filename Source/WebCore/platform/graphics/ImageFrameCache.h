@@ -31,6 +31,7 @@
 #include <wtf/Optional.h>
 #include <wtf/SynchronizedFixedQueue.h>
 #include <wtf/WorkQueue.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -40,11 +41,15 @@ class ImageDecoder;
 class URL;
 
 class ImageFrameCache : public ThreadSafeRefCounted<ImageFrameCache> {
-    friend class ImageSource;
+    friend class BitmapImage;
 public:
-    static Ref<ImageFrameCache> create(Image* image)
+    ImageFrameCache(Image*, AlphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption = GammaAndColorProfileOption::Applied);
+    ImageFrameCache(NativeImagePtr&&);
+    ~ImageFrameCache();
+
+    static Ref<ImageFrameCache> create(Image* image, AlphaOption alphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption gammaAndColorProfileOption = GammaAndColorProfileOption::Applied)
     {
-        return adoptRef(*new ImageFrameCache(image));
+        return adoptRef(*new ImageFrameCache(image, alphaOption, gammaAndColorProfileOption));
     }
 
     static Ref<ImageFrameCache> create(NativeImagePtr&& nativeImage)
@@ -52,16 +57,17 @@ public:
         return adoptRef(*new ImageFrameCache(WTFMove(nativeImage)));
     }
 
-    ~ImageFrameCache();
-
-    void setDecoder(ImageDecoder*);
-    ImageDecoder* decoder() const;
+    void setData(SharedBuffer* data, bool allDataReceived);
+    void resetData(SharedBuffer* data);
+    EncodedDataStatus dataChanged(SharedBuffer* data, bool allDataReceived);
+    bool isAllDataReceived();
 
     unsigned decodedSize() const { return m_decodedSize; }
     void destroyAllDecodedData() { destroyDecodedData(frameCount(), frameCount()); }
     void destroyAllDecodedDataExcludeFrame(size_t excludeFrame) { destroyDecodedData(frameCount(), excludeFrame); }
     void destroyDecodedDataBeforeFrame(size_t beforeFrame) { destroyDecodedData(beforeFrame, beforeFrame); }
     void destroyIncompleteDecodedData();
+    void clearFrameBufferCache(size_t beforeFrame);
 
     void growFrames();
     void clearMetadata();
@@ -71,8 +77,9 @@ public:
     long long expectedContentLength() const;
 
     // Asynchronous image decoding
+    bool canUseAsyncDecoding();
     void startAsyncDecodingQueue();
-    void requestFrameAsyncDecodingAtIndex(size_t, SubsamplingLevel, const std::optional<IntSize>&);
+    void requestFrameAsyncDecodingAtIndex(size_t, SubsamplingLevel, const std::optional<IntSize>& = { });
     void stopAsyncDecodingQueue();
     bool hasAsyncDecodingQueue() const { return m_decodingQueue; }
     bool isAsyncDecodingQueueIdle() const;
@@ -90,8 +97,8 @@ public:
     // Image metadata which is calculated from the first ImageFrame.
     IntSize size();
     IntSize sizeRespectingOrientation();
-
     Color singlePixelSolidColor();
+    SubsamplingLevel maximumSubsamplingLevel();
 
     // ImageFrame metadata which does not require caching the ImageFrame.
     bool frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t, const DecodingOptions&);
@@ -108,13 +115,14 @@ public:
     Seconds frameDurationAtIndex(size_t);
     ImageOrientation frameOrientationAtIndex(size_t);
 
+#if USE(DIRECT2D)
+    void setTargetContext(const GraphicsContext*);
+#endif
+    NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
     NativeImagePtr frameImageAtIndex(size_t);
-    NativeImagePtr frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel);
+    NativeImagePtr frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default);
 
 private:
-    ImageFrameCache(Image*);
-    ImageFrameCache(NativeImagePtr&&);
-
     template<typename T, T (ImageDecoder::*functor)() const>
     T metadata(const T& defaultValue, std::optional<T>* cachedValue = nullptr);
 
@@ -124,6 +132,7 @@ private:
     template<typename T, typename... Args>
     T frameMetadataAtIndexCacheIfNeeded(size_t, T (ImageFrame::*functor)() const,  std::optional<T>* cachedValue, Args&&...);
 
+    bool ensureDecoderAvailable(SharedBuffer* data);
     bool isDecoderAvailable() const { return m_decoder; }
     void destroyDecodedData(size_t frameCount, size_t excludeFrame);
     void decodedSizeChanged(long long decodedSize);
@@ -144,11 +153,15 @@ private:
 
     const ImageFrame& frameAtIndexCacheIfNeeded(size_t, ImageFrame::Caching, const std::optional<SubsamplingLevel>& = { });
 
+    void dump(TextStream&);
+
     Image* m_image { nullptr };
     RefPtr<ImageDecoder> m_decoder;
+    AlphaOption m_alphaOption { AlphaOption::Premultiplied };
+    GammaAndColorProfileOption m_gammaAndColorProfileOption { GammaAndColorProfileOption::Applied };
+
     unsigned m_decodedSize { 0 };
     unsigned m_decodedPropertiesSize { 0 };
-
     Vector<ImageFrame, 1> m_frames;
 
     // Asynchronous image decoding.
@@ -180,6 +193,7 @@ private:
     std::optional<IntSize> m_size;
     std::optional<IntSize> m_sizeRespectingOrientation;
     std::optional<Color> m_singlePixelSolidColor;
+    std::optional<SubsamplingLevel> m_maximumSubsamplingLevel;
 };
     
 }

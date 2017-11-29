@@ -26,7 +26,6 @@
 #ifndef ImageSourceCG_h
 #define ImageSourceCG_h
 
-#include "ImageSource.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {

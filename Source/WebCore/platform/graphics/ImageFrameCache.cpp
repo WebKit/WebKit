@@ -47,8 +47,10 @@
 
 namespace WebCore {
 
-ImageFrameCache::ImageFrameCache(Image* image)
+ImageFrameCache::ImageFrameCache(Image* image, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
     : m_image(image)
+    , m_alphaOption(alphaOption)
+    , m_gammaAndColorProfileOption(gammaAndColorProfileOption)
 {
 }
 
@@ -73,21 +75,52 @@ ImageFrameCache::~ImageFrameCache()
     ASSERT(!hasAsyncDecodingQueue());
 }
 
-void ImageFrameCache::setDecoder(ImageDecoder* decoder)
+bool ImageFrameCache::ensureDecoderAvailable(SharedBuffer* data)
 {
-    if (m_decoder == decoder)
-        return;
+    if (!data || isDecoderAvailable())
+        return true;
+
+    m_decoder = ImageDecoder::create(*data, mimeType(), m_alphaOption, m_gammaAndColorProfileOption);
+    if (!isDecoderAvailable())
+        return false;
+    
+    if (auto expectedContentSize = expectedContentLength())
+        m_decoder->setExpectedContentSize(expectedContentSize);
 
     // Changing the decoder has to stop the decoding thread. The current frame will
     // continue decoding safely because the decoding thread has its own
     // reference of the old decoder.
     stopAsyncDecodingQueue();
-    m_decoder = decoder;
+    return true;
 }
 
-ImageDecoder* ImageFrameCache::decoder() const
+void ImageFrameCache::setData(SharedBuffer* data, bool allDataReceived)
 {
-    return m_decoder.get();
+    if (!data || !ensureDecoderAvailable(data))
+        return;
+
+    m_decoder->setData(*data, allDataReceived);
+}
+
+void ImageFrameCache::resetData(SharedBuffer* data)
+{
+    m_decoder = nullptr;
+    setData(data, isAllDataReceived());
+}
+
+EncodedDataStatus ImageFrameCache::dataChanged(SharedBuffer* data, bool allDataReceived)
+{
+    setData(data, allDataReceived);
+    clearMetadata();
+    EncodedDataStatus status = encodedDataStatus();
+    if (status >= EncodedDataStatus::SizeAvailable)
+        growFrames();
+    return status;
+}
+
+bool ImageFrameCache::isAllDataReceived()
+{
+    return isDecoderAvailable() ? m_decoder->isAllDataReceived() : frameCount();
 }
 
 void ImageFrameCache::destroyDecodedData(size_t frameCount, size_t excludeFrame)
@@ -117,6 +150,13 @@ void ImageFrameCache::destroyIncompleteDecodedData()
     }
 
     decodedSizeDecreased(decodedSize);
+}
+
+void ImageFrameCache::clearFrameBufferCache(size_t beforeFrame)
+{
+    if (!isDecoderAvailable())
+        return;
+    m_decoder->clearFrameBufferCache(beforeFrame);
 }
 
 void ImageFrameCache::decodedSizeChanged(long long decodedSize)
@@ -276,6 +316,14 @@ ImageFrameCache::FrameRequestQueue& ImageFrameCache::frameRequestQueue()
         m_frameRequestQueue = FrameRequestQueue::create();
     
     return *m_frameRequestQueue;
+}
+
+bool ImageFrameCache::canUseAsyncDecoding()
+{
+    if (!isDecoderAvailable())
+        return false;
+    // FIXME: figure out the best heuristic for enabling async image decoding.
+    return size().area() * sizeof(RGBA32) >= (frameCount() > 1 ? 100 * KB : 500 * KB);
 }
 
 void ImageFrameCache::startAsyncDecodingQueue()
@@ -510,6 +558,29 @@ Color ImageFrameCache::singlePixelSolidColor()
     return frameMetadataAtIndexCacheIfNeeded<Color>(0, (&ImageFrame::singlePixelSolidColor), &m_singlePixelSolidColor, ImageFrame::Caching::MetadataAndImage);
 }
 
+SubsamplingLevel ImageFrameCache::maximumSubsamplingLevel()
+{
+    if (m_maximumSubsamplingLevel)
+        return m_maximumSubsamplingLevel.value();
+
+    if (!isDecoderAvailable() || !m_decoder->frameAllowSubsamplingAtIndex(0))
+        return SubsamplingLevel::Default;
+
+    // FIXME: this value was chosen to be appropriate for iOS since the image
+    // subsampling is only enabled by default on iOS. Choose a different value
+    // if image subsampling is enabled on other platform.
+    const int maximumImageAreaBeforeSubsampling = 5 * 1024 * 1024;
+    SubsamplingLevel level = SubsamplingLevel::First;
+
+    for (; level < SubsamplingLevel::Last; ++level) {
+        if (frameSizeAtIndex(0, level).area().unsafeGet() < maximumImageAreaBeforeSubsampling)
+            break;
+    }
+
+    m_maximumSubsamplingLevel = level;
+    return m_maximumSubsamplingLevel.value();
+}
+
 bool ImageFrameCache::frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t index, const DecodingOptions& decodingOptions)
 {
     auto it = std::find_if(m_frameCommitQueue.begin(), m_frameCommitQueue.end(), [index, &decodingOptions](const ImageFrameRequest& frameRequest) {
@@ -563,6 +634,19 @@ ImageOrientation ImageFrameCache::frameOrientationAtIndex(size_t index)
     return frameMetadataAtIndexCacheIfNeeded<ImageOrientation>(index, (&ImageFrame::orientation), nullptr, ImageFrame::Caching::Metadata);
 }
 
+#if USE(DIRECT2D)
+void ImageFrameCache::setTargetContext(const GraphicsContext* targetContext)
+{
+    if (isDecoderAvailable() && targetContext)
+        m_decoder->setTargetContext(targetContext->platformContext())
+}
+#endif
+
+NativeImagePtr ImageFrameCache::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
+{
+    return isDecoderAvailable() ? m_decoder->createFrameImageAtIndex(index, subsamplingLevel) : nullptr;
+}
+
 NativeImagePtr ImageFrameCache::frameImageAtIndex(size_t index)
 {
     return frameMetadataAtIndex<NativeImagePtr>(index, (&ImageFrame::nativeImage));
@@ -571,6 +655,18 @@ NativeImagePtr ImageFrameCache::frameImageAtIndex(size_t index)
 NativeImagePtr ImageFrameCache::frameImageAtIndexCacheIfNeeded(size_t index, SubsamplingLevel subsamplingLevel)
 {
     return frameMetadataAtIndexCacheIfNeeded<NativeImagePtr>(index, (&ImageFrame::nativeImage), nullptr, ImageFrame::Caching::MetadataAndImage, subsamplingLevel);
+}
+
+void ImageFrameCache::dump(TextStream& ts)
+{
+    ts.dumpProperty("type", filenameExtension());
+    ts.dumpProperty("frame-count", frameCount());
+    ts.dumpProperty("repetitions", repetitionCount());
+    ts.dumpProperty("solid-color", singlePixelSolidColor());
+
+    ImageOrientation orientation = frameOrientationAtIndex(0);
+    if (orientation != OriginTopLeft)
+        ts.dumpProperty("orientation", orientation);
 }
 
 }

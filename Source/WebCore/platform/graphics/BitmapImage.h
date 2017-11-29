@@ -29,9 +29,9 @@
 
 #include "Image.h"
 #include "Color.h"
+#include "ImageFrameCache.h"
 #include "ImageObserver.h"
 #include "ImageOrientation.h"
-#include "ImageSource.h"
 #include "IntSize.h"
 
 #if USE(CG) || USE(APPKIT)
@@ -71,31 +71,31 @@ public:
     bool hasSingleSecurityOrigin() const override { return true; }
 
     EncodedDataStatus dataChanged(bool allDataReceived) override;
-    unsigned decodedSize() const { return m_source.decodedSize(); }
+    unsigned decodedSize() const { return m_source->decodedSize(); }
 
-    EncodedDataStatus encodedDataStatus() const { return m_source.encodedDataStatus(); }
-    size_t frameCount() const { return m_source.frameCount(); }
-    RepetitionCount repetitionCount() const { return m_source.repetitionCount(); }
-    String uti() const override { return m_source.uti(); }
-    String filenameExtension() const override { return m_source.filenameExtension(); }
-    std::optional<IntPoint> hotSpot() const override { return m_source.hotSpot(); }
+    EncodedDataStatus encodedDataStatus() const { return m_source->encodedDataStatus(); }
+    size_t frameCount() const { return m_source->frameCount(); }
+    RepetitionCount repetitionCount() const { return m_source->repetitionCount(); }
+    String uti() const override { return m_source->uti(); }
+    String filenameExtension() const override { return m_source->filenameExtension(); }
+    std::optional<IntPoint> hotSpot() const override { return m_source->hotSpot(); }
 
     // FloatSize due to override.
-    FloatSize size() const override { return m_source.size(); }
-    IntSize sizeRespectingOrientation() const { return m_source.sizeRespectingOrientation(); }
-    Color singlePixelSolidColor() const override { return m_source.singlePixelSolidColor(); }
-    bool frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t index, const DecodingOptions& decodingOptions) const { return m_source.frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(index, decodingOptions); }
-    DecodingStatus frameDecodingStatusAtIndex(size_t index) const { return m_source.frameDecodingStatusAtIndex(index); }
+    FloatSize size() const override { return m_source->size(); }
+    IntSize sizeRespectingOrientation() const { return m_source->sizeRespectingOrientation(); }
+    Color singlePixelSolidColor() const override { return m_source->singlePixelSolidColor(); }
+    bool frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t index, const DecodingOptions& decodingOptions) const { return m_source->frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(index, decodingOptions); }
+    DecodingStatus frameDecodingStatusAtIndex(size_t index) const { return m_source->frameDecodingStatusAtIndex(index); }
     bool frameIsCompleteAtIndex(size_t index) const { return frameDecodingStatusAtIndex(index) == DecodingStatus::Complete; }
-    bool frameHasAlphaAtIndex(size_t index) const { return m_source.frameHasAlphaAtIndex(index); }
+    bool frameHasAlphaAtIndex(size_t index) const { return m_source->frameHasAlphaAtIndex(index); }
 
-    bool frameHasFullSizeNativeImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel) { return m_source.frameHasFullSizeNativeImageAtIndex(index, subsamplingLevel); }
-    bool frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(size_t index, const std::optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions) { return m_source.frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(index, subsamplingLevel, decodingOptions); }
+    bool frameHasFullSizeNativeImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel) { return m_source->frameHasFullSizeNativeImageAtIndex(index, subsamplingLevel); }
+    bool frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(size_t index, const std::optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions) { return m_source->frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(index, subsamplingLevel, decodingOptions); }
 
-    SubsamplingLevel frameSubsamplingLevelAtIndex(size_t index) const { return m_source.frameSubsamplingLevelAtIndex(index); }
+    SubsamplingLevel frameSubsamplingLevelAtIndex(size_t index) const { return m_source->frameSubsamplingLevelAtIndex(index); }
 
-    Seconds frameDurationAtIndex(size_t index) const { return m_source.frameDurationAtIndex(index); }
-    ImageOrientation frameOrientationAtIndex(size_t index) const { return m_source.frameOrientationAtIndex(index); }
+    Seconds frameDurationAtIndex(size_t index) const { return m_source->frameDurationAtIndex(index); }
+    ImageOrientation frameOrientationAtIndex(size_t index) const { return m_source->frameOrientationAtIndex(index); }
 
     size_t currentFrame() const { return m_currentFrame; }
     bool currentFrameKnownToBeOpaque() const override { return !frameHasAlphaAtIndex(currentFrame()); }
@@ -142,7 +142,7 @@ protected:
     WEBCORE_EXPORT BitmapImage(NativeImagePtr&&, ImageObserver* = nullptr);
     WEBCORE_EXPORT BitmapImage(ImageObserver* = nullptr);
 
-    NativeImagePtr frameImageAtIndex(size_t index) { return m_source.frameImageAtIndex(index); }
+    NativeImagePtr frameImageAtIndex(size_t index) { return m_source->frameImageAtIndex(index); }
     NativeImagePtr frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default, const GraphicsContext* = nullptr);
 
     // Called to invalidate cached data. When |destroyAll| is true, we wipe out
@@ -165,7 +165,7 @@ protected:
 
     // Animation.
     enum class StartAnimationStatus { CannotStart, IncompleteData, TimerActive, DecodingActive, Started };
-    bool isAnimated() const override { return m_source.frameCount() > 1; }
+    bool isAnimated() const override { return m_source->frameCount() > 1; }
     bool shouldAnimate() const;
     void startAnimation() override { internalStartAnimation(); }
     StartAnimationStatus internalStartAnimation();
@@ -193,6 +193,7 @@ protected:
 private:
     void clearTimer();
     void startTimer(Seconds delay);
+    SubsamplingLevel subsamplingLevelForScaleFactor(GraphicsContext&, const FloatSize& scaleFactor);
     bool canDestroyDecodedData();
     void setCurrentFrameDecodingStatusIfNecessary(DecodingStatus);
     bool isBitmapImage() const override { return true; }
@@ -204,7 +205,7 @@ private:
     // Animated images over a certain size are considered large enough that we'll only hang on to one frame at a time.
     static const unsigned LargeAnimationCutoff = 30 * 1024 * 1024;
 
-    mutable ImageSource m_source;
+    mutable Ref<ImageFrameCache> m_source;
 
     size_t m_currentFrame { 0 }; // The index of the current frame of animation.
     SubsamplingLevel m_currentSubsamplingLevel { SubsamplingLevel::Default };
