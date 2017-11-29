@@ -160,6 +160,7 @@
 #include "SVGSVGElement.h"
 #include "SVGTitleElement.h"
 #include "SVGZoomEvent.h"
+#include "SWClientConnection.h"
 #include "SchemeRegistry.h"
 #include "ScopedEventQueue.h"
 #include "ScriptController.h"
@@ -174,6 +175,8 @@
 #include "SecurityPolicy.h"
 #include "SegmentedString.h"
 #include "SelectorQuery.h"
+#include "ServiceWorkerClientData.h"
+#include "ServiceWorkerProvider.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SocketProvider.h"
@@ -2327,6 +2330,7 @@ void Document::prepareForDestruction()
 
 #if ENABLE(SERVICE_WORKER)
     setActiveServiceWorker(nullptr);
+    setServiceWorkerConnection(nullptr);
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -7580,5 +7584,18 @@ void Document::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, co
         document->addConsoleMessage(WTFMove(message));
     });
 }
+
+#if ENABLE(SERVICE_WORKER)
+void Document::setServiceWorkerConnection(SWClientConnection* serviceWorkerConnection)
+{
+    if (m_serviceWorkerConnection)
+        m_serviceWorkerConnection->unregisterServiceWorkerClient(identifier());
+
+    m_serviceWorkerConnection = serviceWorkerConnection;
+
+    if (m_serviceWorkerConnection)
+        m_serviceWorkerConnection->registerServiceWorkerClient(topOrigin(), identifier(), ServiceWorkerClientData::from(*this));
+}
+#endif
 
 } // namespace WebCore

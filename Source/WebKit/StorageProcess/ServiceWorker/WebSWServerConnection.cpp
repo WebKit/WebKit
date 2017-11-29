@@ -67,6 +67,8 @@ WebSWServerConnection::WebSWServerConnection(SWServer& server, IPC::Connection& 
 WebSWServerConnection::~WebSWServerConnection()
 {
     StorageProcess::singleton().unregisterSWServerConnection(*this);
+    for (auto keyValue : m_clientOrigins)
+        server().unregisterServiceWorkerClient(keyValue.value, ServiceWorkerClientIdentifier { identifier(), keyValue.key });
 }
 
 void WebSWServerConnection::disconnectedFromWebProcess()
@@ -177,6 +179,23 @@ void WebSWServerConnection::getRegistrations(uint64_t registrationMatchRequestId
 {
     auto registrations = server().getRegistrations(topOrigin, clientURL);
     send(Messages::WebSWClientConnection::DidGetRegistrations { registrationMatchRequestIdentifier, registrations });
+}
+
+void WebSWServerConnection::registerServiceWorkerClient(SecurityOriginData&& topOrigin, DocumentIdentifier contextIdentifier, ServiceWorkerClientData&& data)
+{
+    auto clientOrigin = ClientOrigin { WTFMove(topOrigin), SecurityOriginData::fromSecurityOrigin(SecurityOrigin::create(data.url)) };
+    m_clientOrigins.add(contextIdentifier, clientOrigin);
+    server().registerServiceWorkerClient(WTFMove(clientOrigin), ServiceWorkerClientIdentifier { this->identifier(), contextIdentifier } , WTFMove(data));
+}
+
+void WebSWServerConnection::unregisterServiceWorkerClient(DocumentIdentifier contextIdentifier)
+{
+    auto iterator = m_clientOrigins.find(contextIdentifier);
+    if (iterator == m_clientOrigins.end())
+        return;
+
+    server().unregisterServiceWorkerClient(iterator->value, ServiceWorkerClientIdentifier { this->identifier(), contextIdentifier });
+    m_clientOrigins.remove(iterator);
 }
 
 template<typename U> void WebSWServerConnection::sendToContextProcess(U&& message)

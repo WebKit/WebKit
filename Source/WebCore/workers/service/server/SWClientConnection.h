@@ -76,6 +76,9 @@ public:
     virtual void serviceWorkerStartedControllingClient(ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier, DocumentIdentifier) = 0;
     virtual void serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier, DocumentIdentifier) = 0;
 
+    virtual void registerServiceWorkerClient(const SecurityOrigin& topOrigin, DocumentIdentifier, const ServiceWorkerClientData&) = 0;
+    virtual void unregisterServiceWorkerClient(DocumentIdentifier) = 0;
+
 protected:
     WEBCORE_EXPORT SWClientConnection();
 

@@ -43,6 +43,11 @@ struct ServiceWorkerClientIdentifier {
     template<class Decoder> static std::optional<ServiceWorkerClientIdentifier> decode(Decoder&);
 };
 
+inline bool operator==(const ServiceWorkerClientIdentifier& a, const ServiceWorkerClientIdentifier& b)
+{
+    return a.serverConnectionIdentifier == b.serverConnectionIdentifier &&  a.contextIdentifier == b.contextIdentifier;
+}
+
 template<class Encoder>
 void ServiceWorkerClientIdentifier::encode(Encoder& encoder) const
 {

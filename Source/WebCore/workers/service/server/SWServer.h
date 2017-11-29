@@ -27,8 +27,10 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ClientOrigin.h"
 #include "DocumentIdentifier.h"
 #include "SWServerWorker.h"
+#include "ServiceWorkerClientData.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerJob.h"
 #include "ServiceWorkerRegistrationData.h"
@@ -138,6 +140,9 @@ public:
     
     WEBCORE_EXPORT static HashSet<SWServer*>& allServers();
 
+    WEBCORE_EXPORT void registerServiceWorkerClient(ClientOrigin&&, ServiceWorkerClientIdentifier, ServiceWorkerClientData&&);
+    WEBCORE_EXPORT void unregisterServiceWorkerClient(const ClientOrigin&, ServiceWorkerClientIdentifier);
+
 private:
     void registerConnection(Connection&);
     void unregisterConnection(Connection&);
@@ -164,6 +169,12 @@ private:
     HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerJobQueue>> m_jobQueues;
 
     HashMap<ServiceWorkerIdentifier, Ref<SWServerWorker>> m_workersByID;
+
+    struct ClientInformation {
+        ServiceWorkerClientIdentifier identifier;
+        ServiceWorkerClientData data;
+    };
+    HashMap<ClientOrigin, Vector<ClientInformation>> m_clients;
 
     RefPtr<Thread> m_taskThread;
     Lock m_taskThreadLock;

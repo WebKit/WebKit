@@ -31,12 +31,14 @@
 #include "MessageSender.h"
 #include <WebCore/SWServer.h>
 #include <pal/SessionID.h>
+#include <wtf/HashMap.h>
 
 namespace IPC {
 class FormDataReference;
 }
 
 namespace WebCore {
+struct ClientOrigin;
 struct ExceptionData;
 struct ServiceWorkerClientData;
 class ServiceWorkerRegistrationKey;
@@ -82,6 +84,9 @@ private:
     void matchRegistration(uint64_t registrationMatchRequestIdentifier, const WebCore::SecurityOriginData& topOrigin, const WebCore::URL& clientURL);
     void getRegistrations(uint64_t registrationMatchRequestIdentifier, const WebCore::SecurityOriginData& topOrigin, const WebCore::URL& clientURL);
 
+    void registerServiceWorkerClient(WebCore::SecurityOriginData&& topOrigin, WebCore::DocumentIdentifier, WebCore::ServiceWorkerClientData&&);
+    void unregisterServiceWorkerClient(WebCore::DocumentIdentifier);
+
     IPC::Connection* messageSenderConnection() final { return m_contentConnection.ptr(); }
     uint64_t messageSenderDestinationID() final { return identifier().toUInt64(); }
     
@@ -91,6 +96,7 @@ private:
 
     Ref<IPC::Connection> m_contentConnection;
     RefPtr<IPC::Connection> m_contextConnection;
+    HashMap<WebCore::DocumentIdentifier, WebCore::ClientOrigin> m_clientOrigins;
 }; // class WebSWServerConnection
 
 } // namespace WebKit

@@ -71,6 +71,8 @@ private:
     void postMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, Ref<WebCore::SerializedScriptValue>&&, WebCore::DocumentIdentifier sourceContextIdentifier, WebCore::ServiceWorkerClientData&& source) final;
     void serviceWorkerStartedControllingClient(WebCore::ServiceWorkerIdentifier, WebCore::ServiceWorkerRegistrationIdentifier, WebCore::DocumentIdentifier) final;
     void serviceWorkerStoppedControllingClient(WebCore::ServiceWorkerIdentifier, WebCore::ServiceWorkerRegistrationIdentifier, WebCore::DocumentIdentifier) final;
+    void registerServiceWorkerClient(const WebCore::SecurityOrigin& topOrigin, WebCore::DocumentIdentifier, const WebCore::ServiceWorkerClientData&) final;
+    void unregisterServiceWorkerClient(WebCore::DocumentIdentifier) final;
 
     void matchRegistration(const WebCore::SecurityOrigin& topOrigin, const WebCore::URL& clientURL, RegistrationCallback&&) final;
     void didMatchRegistration(uint64_t matchRequestIdentifier, std::optional<WebCore::ServiceWorkerRegistrationData>&&);

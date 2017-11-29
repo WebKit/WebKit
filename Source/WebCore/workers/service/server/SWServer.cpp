@@ -37,6 +37,7 @@
 #include "SWServerToContextConnection.h"
 #include "SWServerWorker.h"
 #include "SecurityOrigin.h"
+#include "ServiceWorkerClientType.h"
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerJobData.h"
@@ -483,6 +484,28 @@ const SWServerRegistration* SWServer::doRegistrationMatching(const SecurityOrigi
     }
 
     return (selectedRegistration && !selectedRegistration->isUninstalling()) ? selectedRegistration : nullptr;
+}
+
+void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceWorkerClientIdentifier identifier, ServiceWorkerClientData&& data)
+{
+    m_clients.ensure(WTFMove(clientOrigin), [] {
+        return Vector<ClientInformation> { };
+    }).iterator->value.append(ClientInformation { identifier, WTFMove(data) });
+}
+
+void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, ServiceWorkerClientIdentifier identifier)
+{
+    auto iterator = m_clients.find(clientOrigin);
+    ASSERT(iterator != m_clients.end());
+
+    auto& clients = iterator->value;
+    clients.removeFirstMatching([&] (const auto& item) {
+        return identifier == item.identifier;
+    });
+    if (clients.isEmpty()) {
+        // FIXME: We might want to terminate any clientOrigin related service worker.
+        m_clients.remove(iterator);
+    }
 }
 
 } // namespace WebCore

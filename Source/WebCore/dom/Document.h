@@ -154,6 +154,7 @@ class RenderView;
 class RequestAnimationFrameCallback;
 class SVGDocumentExtensions;
 class SVGSVGElement;
+class SWClientConnection;
 class ScriptElementData;
 class ScriptModuleLoader;
 class ScriptRunner;
@@ -1388,6 +1389,10 @@ public:
     WEBCORE_EXPORT RefPtr<HTMLAttachmentElement> attachmentForIdentifier(const String& identifier) const;
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    void setServiceWorkerConnection(SWClientConnection*);
+#endif
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1860,6 +1865,10 @@ private:
 
     RefPtr<DocumentTimeline> m_timeline;
     DocumentIdentifier m_identifier;
+
+#if ENABLE(SERVICE_WORKER)
+    SWClientConnection* m_serviceWorkerConnection { nullptr };
+#endif
 };
 
 Element* eventTargetElementForDocument(Document*);

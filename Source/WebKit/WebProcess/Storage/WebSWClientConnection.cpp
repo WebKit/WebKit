@@ -97,6 +97,16 @@ void WebSWClientConnection::serviceWorkerStoppedControllingClient(ServiceWorkerI
     send(Messages::WebSWServerConnection::ServiceWorkerStoppedControllingClient(serviceWorkerIdentifier, registrationIdentifier, contextIdentifier));
 }
 
+void WebSWClientConnection::registerServiceWorkerClient(const SecurityOrigin& topOrigin, WebCore::DocumentIdentifier contextIdentifier, const WebCore::ServiceWorkerClientData& data)
+{
+    send(Messages::WebSWServerConnection::RegisterServiceWorkerClient { SecurityOriginData::fromSecurityOrigin(topOrigin), contextIdentifier, data });
+}
+
+void WebSWClientConnection::unregisterServiceWorkerClient(WebCore::DocumentIdentifier contextIdentifier)
+{
+    send(Messages::WebSWServerConnection::UnregisterServiceWorkerClient { contextIdentifier });
+}
+
 void WebSWClientConnection::didResolveRegistrationPromise(const ServiceWorkerRegistrationKey& key)
 {
     send(Messages::WebSWServerConnection::DidResolveRegistrationPromise(key));
