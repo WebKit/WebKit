@@ -31,7 +31,8 @@
     SecureContext,
     Exposed=(Window,ServiceWorker),
     Conditional=SERVICE_WORKER,
-    EnabledAtRuntime=ServiceWorker
+    EnabledAtRuntime=ServiceWorker,
+    GenerateIsReachable=Impl,
 ] interface ServiceWorkerRegistration : EventTarget {
     readonly attribute ServiceWorker? installing;
     readonly attribute ServiceWorker? waiting;

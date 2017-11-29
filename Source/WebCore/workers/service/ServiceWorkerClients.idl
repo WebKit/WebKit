@@ -27,6 +27,7 @@
     Conditional=SERVICE_WORKER,
     EnabledAtRuntime=ServiceWorker,
     Exposed=ServiceWorker,
+    GenerateIsReachable=Impl,
     InterfaceName=Clients,
 ] interface ServiceWorkerClients {
     // The objects returned will be new instances every time
