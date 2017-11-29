@@ -1,3 +1,9 @@
+2017-11-29  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Mac CMake build.
+
+        * Source/cmake/OptionsMac.cmake:
+
 2017-11-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r225098): [WPE] Some features have changed of value (70 new failures)

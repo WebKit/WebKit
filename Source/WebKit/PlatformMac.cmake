@@ -176,6 +176,7 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/Automation/mac/WebAutomationSessionMac.mm
 
+    UIProcess/API/APIAttachment.cpp
     UIProcess/API/APIUserScript.cpp
     UIProcess/API/APIUserStyleSheet.cpp
     UIProcess/API/APIWebsiteDataRecord.cpp
@@ -302,6 +303,7 @@ list(APPEND WebKit_SOURCES
     UIProcess/mac/WKFullKeyboardAccessWatcher.mm
     UIProcess/mac/WKFullScreenWindowController.mm
     UIProcess/mac/WKImmediateActionController.mm
+    UIProcess/mac/WKInspectorViewController.mm
     UIProcess/mac/WKPrintingView.mm
     UIProcess/mac/WKSharingServicePickerDelegate.mm
     UIProcess/mac/WKTextFinderClient.mm
@@ -508,6 +510,7 @@ set(WebKit_FORWARDING_HEADERS_DIRECTORIES
     Shared/API/c/cf
     Shared/API/c/mac
 
+    UIProcess
     UIProcess/Cocoa
 
     UIProcess/API/C

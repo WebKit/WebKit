@@ -90,6 +90,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/ForwardingHeaders/replay"
     "${WEBCORE_DIR}/ForwardingHeaders/runtime"
     "${WEBCORE_DIR}/ForwardingHeaders/yarr"
+    "${WEBCORE_DIR}/html/shadow/cocoa"
     "${WEBCORE_DIR}/icu"
     "${WEBCORE_DIR}/loader/archive/cf"
     "${WEBCORE_DIR}/loader/cf"
@@ -293,7 +294,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/IOSurfacePool.cpp
     platform/graphics/cg/ImageBufferCG.cpp
     platform/graphics/cg/ImageBufferDataCG.cpp
-    platform/graphics/cg/ImageCG.cpp
     platform/graphics/cg/ImageDecoderCG.cpp
     platform/graphics/cg/ImageSourceCGMac.mm
     platform/graphics/cg/IntPointCG.cpp
@@ -470,6 +470,8 @@ list(APPEND WebCore_SOURCES
     rendering/RenderThemeCocoa.mm
     rendering/RenderThemeMac.mm
     rendering/TextAutoSizing.cpp
+
+    xml/SoftLinkLibxslt.cpp
 )
 
 # FIXME: We do not need everything from all of these directories.
@@ -525,6 +527,8 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     html/forms
     html/parser
     html/shadow
+
+    inspector/agents
 
     loader/appcache
     loader/archive
