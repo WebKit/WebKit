@@ -1,3 +1,13 @@
+2017-11-29  Robin Morisset  <rmorisset@apple.com>
+
+        The recursive tail call optimisation is wrong on closures
+        https://bugs.webkit.org/show_bug.cgi?id=179835
+
+        Reviewed by Saam Barati.
+
+        * stress/closure-recursive-tail-call.js: Added.
+        (makeClosure):
+
 2017-11-27  JF Bastien  <jfbastien@apple.com>
 
         JavaScript rest function parameter with negative index leads to bad DFG abstract interpretation

@@ -1427,6 +1427,11 @@ bool ByteCodeParser::handleRecursiveTailCall(CallVariant callVariant, int regist
     if (UNLIKELY(!Options::optimizeRecursiveTailCalls()))
         return false;
 
+    // Currently we cannot do this optimisation for closures. The problem is that "emitFunctionChecks" which we use later is too coarse, only checking the executable
+    // and not the value of captured variables.
+    if (callVariant.isClosureCall())
+        return false;
+
     auto targetExecutable = callVariant.executable();
     InlineStackEntry* stackEntry = m_inlineStackTop;
     do {
@@ -1446,8 +1451,10 @@ bool ByteCodeParser::handleRecursiveTailCall(CallVariant callVariant, int regist
                 return false;
         }
 
-        // We must add some check that the profiling information was correct and the target of this call is what we thought
+        // We must add some check that the profiling information was correct and the target of this call is what we thought.
         emitFunctionCheckIfNeeded();
+        // We flush everything, as if we were in the backedge of a loop (see treatment of op_jmp in parseBlock).
+        flushForTerminal();
 
         // We must set the arguments to the right values
         int argIndex = 0;
@@ -1474,9 +1481,6 @@ bool ByteCodeParser::handleRecursiveTailCall(CallVariant callVariant, int regist
         m_currentIndex = oldIndex;
         m_inlineStackTop = oldStackTop;
         m_exitOK = false;
-
-        // We flush everything, as if we were in the backedge of a loop (see treatment of op_jmp in parseBlock).
-        flushForTerminal();
 
         BasicBlock** entryBlockPtr = tryBinarySearch<BasicBlock*, unsigned>(stackEntry->m_blockLinkingTargets, stackEntry->m_blockLinkingTargets.size(), OPCODE_LENGTH(op_enter), getBytecodeBeginForBlock);
         RELEASE_ASSERT(entryBlockPtr);

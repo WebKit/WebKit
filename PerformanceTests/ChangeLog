@@ -1,3 +1,24 @@
+2017-11-29  Robin Morisset  <rmorisset@apple.com>
+
+        The recursive tail call optimisation is wrong on closures
+        https://bugs.webkit.org/show_bug.cgi?id=179835
+
+        Reviewed by Saam Barati.
+
+        This new benchmark is a very close variant of the merge-sort benchmark, that writes mergeSorted in a kinda CPS style,
+        to stress the use of closures, and of polymorphic calls.
+
+        * TailBench9000/merge-sort-cps.js: Added.
+        (createRNG):
+        (mergeSorted):
+        (checkSorted.check):
+        (add):
+        (build):
+        (compare):
+        (checkSpectrum):
+        (buildArray):
+        (test):
+
 2017-11-22  Antti Koivisto  <antti@apple.com>
 
         Add performance test for inlines and inline-blocks without text

@@ -1,3 +1,16 @@
+2017-11-29  Robin Morisset  <rmorisset@apple.com>
+
+        The recursive tail call optimisation is wrong on closures
+        https://bugs.webkit.org/show_bug.cgi?id=179835
+
+        Reviewed by Saam Barati.
+
+        The problem is that we only check the executable of the callee, not whatever variables might have been captured.
+        As a stopgap measure this patch just does not do the optimisation for closures.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleRecursiveTailCall):
+
 2017-11-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Cleanup Inspector classes be more consistent about using fast malloc / noncopyable

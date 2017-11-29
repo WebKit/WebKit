@@ -1,3 +1,14 @@
+2017-11-29  Robin Morisset  <rmorisset@apple.com>
+
+        The recursive tail call optimisation is wrong on closures
+        https://bugs.webkit.org/show_bug.cgi?id=179835
+
+        Reviewed by Saam Barati.
+
+        This just includes merge-sort-cps.js to the list of benchmarks ran by run-jsc-benchmarks --tail-bench
+
+        * Scripts/run-jsc-benchmarks:
+
 2017-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: add an option to dump test results to a json file
