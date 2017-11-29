@@ -1,3 +1,12 @@
+2017-11-29  Ms2ger  <Ms2ger@igalia.com>
+
+        Rebaseline imported/w3c/web-platform-tests/resource-timing/single-entry-per-resource.html.
+        https://bugs.webkit.org/show_bug.cgi?id=180142
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/resource-timing/single-entry-per-resource-expected.txt:
+
 2017-11-28  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline a few skipped / flaky service worker tests
