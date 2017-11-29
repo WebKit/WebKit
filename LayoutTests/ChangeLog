@@ -1,3 +1,14 @@
+2017-11-28  Zalan Bujtas  <zalan@apple.com>
+
+        Clean up spanners before creating nested column context
+        https://bugs.webkit.org/show_bug.cgi?id=180107
+        <rdar://problem/35686655>
+        
+        Reviewed by Antti Koivisto.
+
+        * fast/multicol/crash-when-constructing-nested-columns-expected.txt: Added.
+        * fast/multicol/crash-when-constructing-nested-columns.html: Added.
+
 2017-11-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Allow attachment elements with no appearance to defer rendering to child nodes

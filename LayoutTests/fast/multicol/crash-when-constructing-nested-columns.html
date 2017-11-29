@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+PASS if no crash.
+<div style="columns: 2;"><div id=nestedColumn><div style="column-span:all;"></div></div></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetTop;
+nestedColumn.style.columns = "2";
+</script>
+</html>
