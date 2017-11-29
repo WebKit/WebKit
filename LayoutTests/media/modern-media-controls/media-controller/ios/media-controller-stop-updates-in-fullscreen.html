@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<video src="../../../content/test.mp4" style="width: 320px; height: 240px;" controls autoplay plays-inline></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing we stop updating controls while in fullscreen and then update them again when back to inline on iOS.");
+
+const media = document.querySelector("video");
+const button = document.body.appendChild(document.createElement("button"));
+button.textContent = "Enter Fullscreen";
+button.style = "position: absolute; left: 0; top: 0";
+
+let elapsedTimeWhenEnteringFullscreen;
+
+media.addEventListener("webkitpresentationmodechanged", () => {
+    debug("");
+    debug("Obtained a webkitpresentationmodechanged event");
+    debug(`media.webkitDisplayingFullscreen = ${media.webkitDisplayingFullscreen}.`);
+
+    if (media.webkitDisplayingFullscreen) {
+        shouldBeFalse("media.paused");
+        elapsedTimeWhenEnteringFullscreen = elapsedTime();
+
+        // Let time progress and check after a while that we didn't update the tree.
+        let timeupdateEventCount = 0;
+        media.addEventListener("timeupdate", () => {
+            timeupdateEventCount++;
+            if (timeupdateEventCount == 5) {
+                debug("");
+                debug("Time progressed.");
+                shouldBeTrue("elapsedTimeWhenEnteringFullscreen === elapsedTime()");
+                media.pause();
+                media.webkitExitFullscreen();
+            }
+        });
+    } else
+        shouldBecomeEqual("elapsedTimeWhenEnteringFullscreen === elapsedTime()", "false", endTest);
+});
+
+media.addEventListener("play", () => {
+    debug("");
+    debug("Obtained a 'play' event.");
+
+    startTest();
+});
+
+function enterFullscreen() {
+    debug("");
+    debug("Entering fullscreen.");
+    button.addEventListener("click", () => {
+        try {
+            media.webkitEnterFullscreen();
+        } catch(e) {
+            debug("Toggling fullscreen failed.");
+            finishJSTest();
+        }
+    });
+
+    pressOnElement(button);
+}
+
+function elapsedTime()
+{
+    return window.internals.shadowRoot(media).querySelectorAll(".time-label")[0].textContent;
+}
+
+function startTest()
+{
+    enterFullscreen();
+}
+
+function endTest()
+{
+    debug("");
+    button.remove();
+    media.remove();
+    finishJSTest();
+}
+
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>

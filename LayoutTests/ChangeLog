@@ -1,3 +1,20 @@
+2017-11-29  Antoine Quint  <graouts@apple.com>
+
+        [iOS] Media controls should stop updating while media is playing in fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=180144
+        <rdar://problem/35060379>
+
+        Reviewed by Eric Carlson.
+
+        Add a new test that enters fullscreen, checks that the elapsed time shown in the inline media controls are the same
+        at this time and after a few "timeupdate" events, ensuring the DOM is no longer updated while in fullscreen, and then
+        exits fullscreen and checks that the elapsed time controls now update as expected. This test is skipped in OpenSource
+        since it uses touch events.
+
+        * media/modern-media-controls/media-controller/ios/media-controller-stop-updates-in-fullscreen-expected.txt: Added.
+        * media/modern-media-controls/media-controller/ios/media-controller-stop-updates-in-fullscreen.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2017-11-29  Simon Fraser  <simon.fraser@apple.com>
 
         Viewport unit values affected by Comand-+ zoom

@@ -30,17 +30,31 @@ class ControlsVisibilitySupport extends MediaControllerSupport
     {
         super(mediaController);
 
-        this._controlsAttributeObserver = new MutationObserver(this._updateControls.bind(this));
-        this._controlsAttributeObserver.observe(mediaController.media, { attributes: true, attributeFilter: ["controls"] });
-
         this._updateControls();
     }
 
     // Protected
 
-    destroy()
+    enable()
     {
+        super.enable();
+
+        if (this._controlsAttributeObserver)
+            return;
+
+        this._controlsAttributeObserver = new MutationObserver(this._updateControls.bind(this));
+        this._controlsAttributeObserver.observe(this.mediaController.media, { attributes: true, attributeFilter: ["controls"] });
+    }
+
+    disable()
+    {
+        super.disable();
+
+        if (!this._controlsAttributeObserver)
+            return;
+
         this._controlsAttributeObserver.disconnect();
+        delete this._controlsAttributeObserver;
     }
 
     get mediaEvents()

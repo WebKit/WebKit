@@ -30,8 +30,15 @@ class MediaControllerSupport
     {
         this.mediaController = mediaController;
 
+        this.enable();
+    }
+
+    // Public
+
+    enable()
+    {
         for (let eventType of this.mediaEvents)
-            mediaController.media.addEventListener(eventType, this);
+            this.mediaController.media.addEventListener(eventType, this);
 
         for (let tracks of this.tracksToMonitor) {
             for (let eventType of ["change", "addtrack", "removetrack"])
@@ -41,18 +48,14 @@ class MediaControllerSupport
         if (!this.control)
             return;
 
-        this.syncControl();
-
         this.control.uiDelegate = this;
+        this.syncControl();
     }
 
-    // Public
-
-    destroy()
+    disable()
     {
-        const media = this.mediaController.media;
         for (let eventType of this.mediaEvents)
-            media.removeEventListener(eventType, this);
+            this.mediaController.media.removeEventListener(eventType, this);
 
         for (let tracks of this.tracksToMonitor) {
             for (let eventType of ["change", "addtrack", "removetrack"])
