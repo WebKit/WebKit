@@ -224,7 +224,7 @@ void CompositingCoordinator::createImageBacking(CoordinatedImageBackingID imageI
     m_state.imagesToCreate.append(imageID);
 }
 
-void CompositingCoordinator::updateImageBacking(CoordinatedImageBackingID imageID, RefPtr<CoordinatedBuffer>&& buffer)
+void CompositingCoordinator::updateImageBacking(CoordinatedImageBackingID imageID, RefPtr<Nicosia::Buffer>&& buffer)
 {
     m_shouldSyncFrame = true;
     m_state.imagesToUpdate.append(std::make_pair(imageID, WTFMove(buffer)));
@@ -284,7 +284,7 @@ std::unique_ptr<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(Graph
     return std::unique_ptr<GraphicsLayer>(layer);
 }
 
-void CompositingCoordinator::createUpdateAtlas(UpdateAtlas::ID id, Ref<CoordinatedBuffer>&& buffer)
+void CompositingCoordinator::createUpdateAtlas(UpdateAtlas::ID id, Ref<Nicosia::Buffer>&& buffer)
 {
     m_state.updateAtlasesToCreate.append(std::make_pair(id, WTFMove(buffer)));
 }
@@ -376,10 +376,10 @@ void CompositingCoordinator::purgeBackingStores()
     m_updateAtlases.clear();
 }
 
-Ref<CoordinatedBuffer> CompositingCoordinator::getCoordinatedBuffer(const IntSize& size, CoordinatedBuffer::Flags flags, uint32_t& atlasID, IntRect& allocatedRect)
+Ref<Nicosia::Buffer> CompositingCoordinator::getCoordinatedBuffer(const IntSize& size, Nicosia::Buffer::Flags flags, uint32_t& atlasID, IntRect& allocatedRect)
 {
     for (auto& atlas : m_updateAtlases) {
-        if (atlas->supportsAlpha() == (flags & CoordinatedBuffer::SupportsAlpha)) {
+        if (atlas->supportsAlpha() == (flags & Nicosia::Buffer::SupportsAlpha)) {
             if (auto buffer = atlas->getCoordinatedBuffer(size, atlasID, allocatedRect))
                 return *buffer;
         }

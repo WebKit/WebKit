@@ -30,6 +30,7 @@
 #include "GraphicsLayerTransform.h"
 #include "Image.h"
 #include "IntSize.h"
+#include "NicosiaBuffer.h"
 #include "TextureMapperAnimation.h"
 #include "TiledBackingStore.h"
 #include "TiledBackingStoreClient.h"
@@ -47,7 +48,7 @@ public:
     virtual FloatRect visibleContentsRect() const = 0;
     virtual Ref<CoordinatedImageBacking> createImageBackingIfNeeded(Image&) = 0;
     virtual void detachLayer(CoordinatedGraphicsLayer*) = 0;
-    virtual Ref<CoordinatedBuffer> getCoordinatedBuffer(const IntSize&, CoordinatedBuffer::Flags, uint32_t&, IntRect&) = 0;
+    virtual Ref<Nicosia::Buffer> getCoordinatedBuffer(const IntSize&, Nicosia::Buffer::Flags, uint32_t&, IntRect&) = 0;
 
     virtual void syncLayerState(CoordinatedLayerID, CoordinatedGraphicsLayerState&) = 0;
 };

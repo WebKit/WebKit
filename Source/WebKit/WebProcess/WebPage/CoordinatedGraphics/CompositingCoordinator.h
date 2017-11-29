@@ -30,7 +30,6 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include "UpdateAtlas.h"
-#include <WebCore/CoordinatedBuffer.h>
 #include <WebCore/CoordinatedGraphicsLayer.h>
 #include <WebCore/CoordinatedGraphicsState.h>
 #include <WebCore/CoordinatedImageBacking.h>
@@ -38,9 +37,9 @@
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/GraphicsLayerFactory.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/NicosiaBuffer.h>
 
 namespace WebCore {
-class CoordinatedBuffer;
 class GraphicsContext;
 class GraphicsLayer;
 class Page;
@@ -105,7 +104,7 @@ private:
 
     // CoordinatedImageBacking::Client
     void createImageBacking(WebCore::CoordinatedImageBackingID) override;
-    void updateImageBacking(WebCore::CoordinatedImageBackingID, RefPtr<WebCore::CoordinatedBuffer>&&) override;
+    void updateImageBacking(WebCore::CoordinatedImageBackingID, RefPtr<Nicosia::Buffer>&&) override;
     void clearImageBackingContents(WebCore::CoordinatedImageBackingID) override;
     void removeImageBacking(WebCore::CoordinatedImageBackingID) override;
 
@@ -114,11 +113,11 @@ private:
     WebCore::FloatRect visibleContentsRect() const override;
     Ref<WebCore::CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image&) override;
     void detachLayer(WebCore::CoordinatedGraphicsLayer*) override;
-    Ref<WebCore::CoordinatedBuffer> getCoordinatedBuffer(const WebCore::IntSize&, WebCore::CoordinatedBuffer::Flags, uint32_t&, WebCore::IntRect&) override;
+    Ref<Nicosia::Buffer> getCoordinatedBuffer(const WebCore::IntSize&, Nicosia::Buffer::Flags, uint32_t&, WebCore::IntRect&) override;
     void syncLayerState(WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayerState&) override;
 
     // UpdateAtlas::Client
-    void createUpdateAtlas(UpdateAtlas::ID, Ref<WebCore::CoordinatedBuffer>&&) override;
+    void createUpdateAtlas(UpdateAtlas::ID, Ref<Nicosia::Buffer>&&) override;
     void removeUpdateAtlas(UpdateAtlas::ID) override;
 
     // GraphicsLayerFactory

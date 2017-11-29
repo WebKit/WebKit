@@ -28,7 +28,6 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "CoordinatedBuffer.h"
 #include "IntPoint.h"
 #include "IntPointHash.h"
 #include "IntRect.h"

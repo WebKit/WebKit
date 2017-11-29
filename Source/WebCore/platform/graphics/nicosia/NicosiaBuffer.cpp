@@ -27,38 +27,34 @@
  */
 
 #include "config.h"
-#include "CoordinatedBuffer.h"
-
-#if USE(COORDINATED_GRAPHICS)
+#include "NicosiaBuffer.h"
 
 #include "ImageBuffer.h"
 
-namespace WebCore {
+namespace Nicosia {
 
-Ref<CoordinatedBuffer> CoordinatedBuffer::create(const IntSize& size, Flags flags)
+Ref<Buffer> Buffer::create(const WebCore::IntSize& size, Flags flags)
 {
-    return adoptRef(*new CoordinatedBuffer(size, flags));
+    return adoptRef(*new Buffer(size, flags));
 }
 
-CoordinatedBuffer::CoordinatedBuffer(const IntSize& size, Flags flags)
-    : m_imageBuffer(ImageBuffer::create(size, Unaccelerated))
+Buffer::Buffer(const WebCore::IntSize& size, Flags flags)
+    : m_imageBuffer(WebCore::ImageBuffer::create(size, WebCore::Unaccelerated))
     , m_size(size)
     , m_flags(flags)
 {
 }
 
-CoordinatedBuffer::~CoordinatedBuffer() = default;
+Buffer::~Buffer() = default;
 
-GraphicsContext& CoordinatedBuffer::context()
+WebCore::GraphicsContext& Buffer::context()
 {
     return m_imageBuffer->context();
 }
 
-RefPtr<Image> CoordinatedBuffer::uploadImage()
+RefPtr<WebCore::Image> Buffer::uploadImage()
 {
-    return m_imageBuffer->copyImage(DontCopyBackingStore);
+    return m_imageBuffer->copyImage(WebCore::DontCopyBackingStore);
 }
 
-} // namespace WebCore
-
-#endif // USE(COORDINATED_GRAPHICS)
+} // namespace Nicosia

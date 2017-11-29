@@ -21,7 +21,7 @@
 #pragma once
 
 #include "AreaAllocator.h"
-#include <WebCore/CoordinatedBuffer.h>
+#include <WebCore/NicosiaBuffer.h>
 #include <wtf/RefPtr.h>
 
 #if USE(COORDINATED_GRAPHICS)
@@ -41,16 +41,16 @@ public:
 
     class Client {
     public:
-        virtual void createUpdateAtlas(ID, Ref<WebCore::CoordinatedBuffer>&&) = 0;
+        virtual void createUpdateAtlas(ID, Ref<Nicosia::Buffer>&&) = 0;
         virtual void removeUpdateAtlas(ID) = 0;
     };
 
-    UpdateAtlas(Client&, const WebCore::IntSize&, WebCore::CoordinatedBuffer::Flags);
+    UpdateAtlas(Client&, const WebCore::IntSize&, Nicosia::Buffer::Flags);
     ~UpdateAtlas();
 
     const WebCore::IntSize& size() const { return m_buffer->size(); }
 
-    RefPtr<WebCore::CoordinatedBuffer> getCoordinatedBuffer(const WebCore::IntSize&, uint32_t&, WebCore::IntRect&);
+    RefPtr<Nicosia::Buffer> getCoordinatedBuffer(const WebCore::IntSize&, uint32_t&, WebCore::IntRect&);
     void didSwapBuffers();
     bool supportsAlpha() const { return m_buffer->supportsAlpha(); }
 
@@ -72,7 +72,7 @@ private:
     ID m_id { 0 };
     Client& m_client;
     std::unique_ptr<GeneralAreaAllocator> m_areaAllocator;
-    Ref<WebCore::CoordinatedBuffer> m_buffer;
+    Ref<Nicosia::Buffer> m_buffer;
     double m_inactivityInSeconds { 0 };
 };
 

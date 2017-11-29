@@ -24,12 +24,13 @@
  */
 
 #include "config.h"
+#include "CoordinatedImageBacking.h"
 
 #if USE(COORDINATED_GRAPHICS)
-#include "CoordinatedImageBacking.h"
 
 #include "CoordinatedGraphicsState.h"
 #include "GraphicsContext.h"
+#include "NicosiaBuffer.h"
 
 namespace WebCore {
 
@@ -100,7 +101,7 @@ void CoordinatedImageBacking::update()
         }
     }
 
-    m_buffer = CoordinatedBuffer::create(IntSize(m_image->size()), !m_image->currentFrameKnownToBeOpaque() ? CoordinatedBuffer::SupportsAlpha : CoordinatedBuffer::NoFlags);
+    m_buffer = Nicosia::Buffer::create(IntSize(m_image->size()), !m_image->currentFrameKnownToBeOpaque() ? Nicosia::Buffer::SupportsAlpha : Nicosia::Buffer::NoFlags);
     ASSERT(m_buffer);
 
     IntRect rect(IntPoint::zero(), IntSize(m_image->size()));

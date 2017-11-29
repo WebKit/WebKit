@@ -1,3 +1,30 @@
+2017-11-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Rename CoordinatedBuffer to Nicosia::Buffer
+        https://bugs.webkit.org/show_bug.cgi?id=180135
+
+        Reviewed by Carlos Garcia Campos.
+
+        Adjust code to the CoordinatedBuffer -> Nicosia::Buffer transition.
+
+        * Shared/CoordinatedGraphics/CoordinatedBackingStore.cpp:
+        (WebKit::CoordinatedBackingStoreTile::setBackBuffer):
+        (WebKit::CoordinatedBackingStore::updateTile):
+        * Shared/CoordinatedGraphics/CoordinatedBackingStore.h:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::createUpdateAtlas):
+        (WebKit::CoordinatedGraphicsScene::updateImageBacking):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::updateImageBacking):
+        (WebKit::CompositingCoordinator::createUpdateAtlas):
+        (WebKit::CompositingCoordinator::getCoordinatedBuffer):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+        * WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.cpp:
+        (WebKit::UpdateAtlas::UpdateAtlas):
+        (WebKit::UpdateAtlas::getCoordinatedBuffer):
+        * WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.h:
+
 2017-11-28  Brent Fulgham  <bfulgham@apple.com>
 
         Adopt updated NSKeyed[Un]Archiver API when available

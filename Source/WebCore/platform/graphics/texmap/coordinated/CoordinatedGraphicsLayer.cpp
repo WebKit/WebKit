@@ -970,7 +970,7 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
             SurfaceUpdateInfo updateInfo;
             IntRect targetRect;
             auto coordinatedBuffer = m_coordinator->getCoordinatedBuffer(dirtyRect.size(),
-                contentsOpaque() ? CoordinatedBuffer::NoFlags : CoordinatedBuffer::SupportsAlpha,
+                contentsOpaque() ? Nicosia::Buffer::NoFlags : Nicosia::Buffer::SupportsAlpha,
                 updateInfo.atlasID, targetRect);
             {
                 GraphicsContext& context = coordinatedBuffer->context();

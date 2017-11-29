@@ -31,9 +31,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-UpdateAtlas::UpdateAtlas(Client& client, const IntSize& size, CoordinatedBuffer::Flags flags)
+UpdateAtlas::UpdateAtlas(Client& client, const IntSize& size, Nicosia::Buffer::Flags flags)
     : m_client(client)
-    , m_buffer(CoordinatedBuffer::create(size, flags))
+    , m_buffer(Nicosia::Buffer::create(size, flags))
 {
     static ID s_nextID { 0 };
     m_id = ++s_nextID;
@@ -59,7 +59,7 @@ void UpdateAtlas::didSwapBuffers()
     m_areaAllocator = nullptr;
 }
 
-RefPtr<CoordinatedBuffer> UpdateAtlas::getCoordinatedBuffer(const IntSize& size, uint32_t& atlasID, IntRect& allocatedRect)
+RefPtr<Nicosia::Buffer> UpdateAtlas::getCoordinatedBuffer(const IntSize& size, uint32_t& atlasID, IntRect& allocatedRect)
 {
     m_inactivityInSeconds = 0;
     buildLayoutIfNeeded();

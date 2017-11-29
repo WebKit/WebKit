@@ -20,11 +20,12 @@
 */
 
 #include "config.h"
-
-#if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedGraphicsScene.h"
 
+#if USE(COORDINATED_GRAPHICS)
+
 #include "CoordinatedBackingStore.h"
+#include <WebCore/NicosiaBuffer.h>
 #include <WebCore/TextureMapper.h>
 #include <WebCore/TextureMapperBackingStore.h>
 #include <WebCore/TextureMapperGL.h>
@@ -438,7 +439,7 @@ void CoordinatedGraphicsScene::syncUpdateAtlases(const CoordinatedGraphicsState&
         createUpdateAtlas(atlas.first, atlas.second.copyRef());
 }
 
-void CoordinatedGraphicsScene::createUpdateAtlas(uint32_t atlasID, RefPtr<CoordinatedBuffer>&& buffer)
+void CoordinatedGraphicsScene::createUpdateAtlas(uint32_t atlasID, RefPtr<Nicosia::Buffer>&& buffer)
 {
     ASSERT(!m_surfaces.contains(atlasID));
     m_surfaces.add(atlasID, WTFMove(buffer));
@@ -477,7 +478,7 @@ void CoordinatedGraphicsScene::createImageBacking(CoordinatedImageBackingID imag
     m_imageBackings.add(imageID, CoordinatedBackingStore::create());
 }
 
-void CoordinatedGraphicsScene::updateImageBacking(CoordinatedImageBackingID imageID, RefPtr<CoordinatedBuffer>&& buffer)
+void CoordinatedGraphicsScene::updateImageBacking(CoordinatedImageBackingID imageID, RefPtr<Nicosia::Buffer>&& buffer)
 {
     ASSERT(m_imageBackings.contains(imageID));
     auto it = m_imageBackings.find(imageID);

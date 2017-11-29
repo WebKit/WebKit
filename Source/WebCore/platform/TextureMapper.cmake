@@ -35,11 +35,18 @@ if (USE_COORDINATED_GRAPHICS)
         platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp
         platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp
 
-        platform/graphics/texmap/coordinated/CoordinatedBuffer.cpp
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
         platform/graphics/texmap/coordinated/CoordinatedImageBacking.cpp
         platform/graphics/texmap/coordinated/Tile.cpp
         platform/graphics/texmap/coordinated/TiledBackingStore.cpp
+    )
+
+    # FIXME: Move this into Nicosia.cmake once the component is set for long-term use.
+    list(APPEND WebCore_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/platform/graphics/nicosia"
+    )
+    list(APPEND WebCore_SOURCES
+        platform/graphics/nicosia/NicosiaBuffer.cpp
     )
 else ()
     list(APPEND WebCore_SOURCES

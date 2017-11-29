@@ -28,19 +28,19 @@
 
 #pragma once
 
-#if USE(COORDINATED_GRAPHICS)
-
 #include "IntSize.h"
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
-
 class GraphicsContext;
 class Image;
 class ImageBuffer;
+}
 
-class CoordinatedBuffer : public ThreadSafeRefCounted<CoordinatedBuffer> {
+namespace Nicosia {
+
+class Buffer : public ThreadSafeRefCounted<Buffer> {
 public:
     enum Flag {
         NoFlags = 0,
@@ -48,23 +48,21 @@ public:
     };
     using Flags = unsigned;
 
-    static Ref<CoordinatedBuffer> create(const IntSize&, Flags);
-    ~CoordinatedBuffer();
+    static Ref<Buffer> create(const WebCore::IntSize&, Flags);
+    ~Buffer();
 
     bool supportsAlpha() const { return m_flags & SupportsAlpha; }
-    const IntSize& size() const { return m_size; }
+    const WebCore::IntSize& size() const { return m_size; }
 
-    GraphicsContext& context();
-    RefPtr<Image> uploadImage();
+    WebCore::GraphicsContext& context();
+    RefPtr<WebCore::Image> uploadImage();
 
 private:
-    CoordinatedBuffer(const IntSize&, Flags);
+    Buffer(const WebCore::IntSize&, Flags);
 
-    std::unique_ptr<ImageBuffer> m_imageBuffer;
-    IntSize m_size;
+    std::unique_ptr<WebCore::ImageBuffer> m_imageBuffer;
+    WebCore::IntSize m_size;
     Flags m_flags;
 };
 
-} // namespace WebCore
-
-#endif // USE(COORDINATED_GRAPHICS)
+} // namespace Nicosia

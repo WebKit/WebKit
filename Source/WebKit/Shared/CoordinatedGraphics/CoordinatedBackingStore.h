@@ -29,8 +29,8 @@
 #include <wtf/HashSet.h>
 
 
-namespace WebCore {
-class CoordinatedBuffer;
+namespace Nicosia {
+class Buffer;
 }
 
 namespace WebKit {
@@ -45,10 +45,10 @@ public:
 
     inline float scale() const { return m_scale; }
     void swapBuffers(WebCore::TextureMapper&);
-    void setBackBuffer(const WebCore::IntRect&, const WebCore::IntRect&, RefPtr<WebCore::CoordinatedBuffer>&&, const WebCore::IntPoint&);
+    void setBackBuffer(const WebCore::IntRect&, const WebCore::IntRect&, RefPtr<Nicosia::Buffer>&&, const WebCore::IntPoint&);
 
 private:
-    RefPtr<WebCore::CoordinatedBuffer> m_buffer;
+    RefPtr<Nicosia::Buffer> m_buffer;
     WebCore::IntRect m_sourceRect;
     WebCore::IntRect m_tileRect;
     WebCore::IntPoint m_bufferOffset;
@@ -60,7 +60,7 @@ public:
     void createTile(uint32_t tileID, float);
     void removeTile(uint32_t tileID);
     void removeAllTiles();
-    void updateTile(uint32_t tileID, const WebCore::IntRect&, const WebCore::IntRect&, RefPtr<WebCore::CoordinatedBuffer>&&, const WebCore::IntPoint&);
+    void updateTile(uint32_t tileID, const WebCore::IntRect&, const WebCore::IntRect&, RefPtr<Nicosia::Buffer>&&, const WebCore::IntPoint&);
     static Ref<CoordinatedBackingStore> create() { return adoptRef(*new CoordinatedBackingStore); }
     void commitTileOperations(WebCore::TextureMapper&);
     RefPtr<WebCore::BitmapTexture> texture() const override;

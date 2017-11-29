@@ -23,7 +23,6 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include <WebCore/CoordinatedBuffer.h>
 #include <WebCore/CoordinatedGraphicsState.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
@@ -44,6 +43,10 @@
 #if USE(COORDINATED_GRAPHICS_THREADED)
 #include <WebCore/TextureMapperPlatformLayerProxy.h>
 #endif
+
+namespace Nicosia {
+class Buffer;
+}
 
 namespace WebCore {
 class TextureMapperGL;
@@ -108,12 +111,12 @@ private:
     void setLayerRepaintCountIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
 
     void syncUpdateAtlases(const WebCore::CoordinatedGraphicsState&);
-    void createUpdateAtlas(uint32_t atlasID, RefPtr<WebCore::CoordinatedBuffer>&&);
+    void createUpdateAtlas(uint32_t atlasID, RefPtr<Nicosia::Buffer>&&);
     void removeUpdateAtlas(uint32_t atlasID);
 
     void syncImageBackings(const WebCore::CoordinatedGraphicsState&);
     void createImageBacking(WebCore::CoordinatedImageBackingID);
-    void updateImageBacking(WebCore::CoordinatedImageBackingID, RefPtr<WebCore::CoordinatedBuffer>&&);
+    void updateImageBacking(WebCore::CoordinatedImageBackingID, RefPtr<Nicosia::Buffer>&&);
     void clearImageBackingContents(WebCore::CoordinatedImageBackingID);
     void removeImageBacking(WebCore::CoordinatedImageBackingID);
 
@@ -162,7 +165,7 @@ private:
     HashMap<WebCore::TextureMapperLayer*, RefPtr<WebCore::TextureMapperPlatformLayerProxy>> m_platformLayerProxies;
 #endif
 
-    HashMap<uint32_t /* atlasID */, RefPtr<WebCore::CoordinatedBuffer>> m_surfaces;
+    HashMap<uint32_t /* atlasID */, RefPtr<Nicosia::Buffer>> m_surfaces;
 
     // Below two members are accessed by only the main thread. The painting thread must lock the main thread to access both members.
     CoordinatedGraphicsSceneClient* m_client;
