@@ -7973,16 +7973,8 @@ void SpeculativeJIT::compileArrayPush(Node* node)
 #endif
 
     auto getStorageBufferAddress = [&] (GPRReg storageGPR, GPRReg indexGPR, int32_t offset, GPRReg bufferGPR) {
-#if USE(JSVALUE32_64)
         static_assert(sizeof(JSValue) == 8 && 1 << 3 == 8, "This is strongly assumed in the code below.");
-        m_jit.move(indexGPR, bufferGPR);
-        m_jit.lshift32(TrustedImm32(3), bufferGPR);
-        m_jit.add32(storageGPR, bufferGPR);
-        if (offset)
-            m_jit.add32(TrustedImm32(offset), bufferGPR);
-#else
-        m_jit.getEffectiveAddress64(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, offset), bufferGPR);
-#endif
+        m_jit.getEffectiveAddress(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, offset), bufferGPR);
     };
 
     switch (node->arrayMode().type()) {

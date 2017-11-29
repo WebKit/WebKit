@@ -1,3 +1,38 @@
+2017-11-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add MacroAssembler::getEffectiveAddress in all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=180070
+
+        Reviewed by Saam Barati.
+
+        This patch adds getEffectiveAddress in all JIT platforms.
+        This is abstracted version of x86 lea.
+
+        We also fix a bug in Yarr that uses branch32 instead of branchPtr for addresses.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::getEffectiveAddress):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::getEffectiveAddress):
+        (JSC::MacroAssemblerARM64::getEffectiveAddress64): Deleted.
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::getEffectiveAddress):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::getEffectiveAddress):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::getEffectiveAddress):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::getEffectiveAddress):
+        (JSC::MacroAssemblerX86_64::getEffectiveAddress64): Deleted.
+        * assembler/testmasm.cpp:
+        (JSC::testGetEffectiveAddress):
+        (JSC::run):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArrayPush):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::tryReadUnicodeCharImpl):
+        (JSC::Yarr::YarrGenerator::tryReadUnicodeChar):
+
 2017-11-29  Robin Morisset  <rmorisset@apple.com>
 
         The recursive tail call optimisation is wrong on closures

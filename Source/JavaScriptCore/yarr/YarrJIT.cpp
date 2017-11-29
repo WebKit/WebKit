@@ -357,8 +357,8 @@ class YarrGenerator : private MacroAssembler {
         and32(surrogateTagMask, resultReg, regUnicodeTemp);
         notUnicode.append(branch32(NotEqual, regUnicodeTemp, leadingSurrogateTag));
         addPtr(TrustedImm32(2), regUnicodeInputAndTrail);
-        getEffectiveAddress64(BaseIndex(input, length, TimesTwo), regUnicodeTemp);
-        notUnicode.append(branch32(AboveOrEqual, regUnicodeInputAndTrail, regUnicodeTemp));
+        getEffectiveAddress(BaseIndex(input, length, TimesTwo), regUnicodeTemp);
+        notUnicode.append(branchPtr(AboveOrEqual, regUnicodeInputAndTrail, regUnicodeTemp));
         load16Unaligned(Address(regUnicodeInputAndTrail), regUnicodeInputAndTrail);
         and32(surrogateTagMask, regUnicodeInputAndTrail, regUnicodeTemp);
         notUnicode.append(branch32(NotEqual, regUnicodeTemp, trailingSurrogateTag));
@@ -374,7 +374,7 @@ class YarrGenerator : private MacroAssembler {
     {
         ASSERT(m_charSize == Char16);
 
-        getEffectiveAddress64(address, regUnicodeInputAndTrail);
+        getEffectiveAddress(address, regUnicodeInputAndTrail);
 
         if (resultReg == regT0)
             m_tryReadUnicodeCharacterCalls.append(nearCall());

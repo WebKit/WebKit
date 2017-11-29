@@ -128,6 +128,13 @@ public:
         m_assembler.adds(dest, src, m_assembler.getImm(imm.m_value, ARMRegisters::S0));
     }
 
+    void getEffectiveAddress(BaseIndex address, RegisterID dest)
+    {
+        m_assembler.add(dest, address.base, m_assembler.lsl(address.index, static_cast<int>(address.scale)));
+        if (address.offset)
+            add32(TrustedImm32(address.offset), dest);
+    }
+
     void and32(RegisterID src, RegisterID dest)
     {
         m_assembler.bitAnds(dest, dest, src);

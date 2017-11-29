@@ -79,6 +79,11 @@ public:
         m_assembler.adcl_im(imm.m_value >> 31, reinterpret_cast<const char*>(address.m_ptr) + sizeof(int32_t));
     }
 
+    void getEffectiveAddress(BaseIndex address, RegisterID dest)
+    {
+        return x86Lea32(address, dest);
+    }
+
     void and32(TrustedImm32 imm, AbsoluteAddress address)
     {
         m_assembler.andl_im(imm.m_value, address.m_ptr);

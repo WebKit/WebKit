@@ -364,7 +364,7 @@ public:
         m_assembler.leaq_mr(index.offset, index.base, index.index, index.scale, dest);
     }
 
-    void getEffectiveAddress64(BaseIndex address, RegisterID dest)
+    void getEffectiveAddress(BaseIndex address, RegisterID dest)
     {
         return x86Lea64(address, dest);
     }

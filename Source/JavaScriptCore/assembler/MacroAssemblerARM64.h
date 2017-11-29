@@ -1540,7 +1540,7 @@ public:
         m_assembler.strb(src, dest, simm);
     }
 
-    void getEffectiveAddress64(BaseIndex address, RegisterID dest)
+    void getEffectiveAddress(BaseIndex address, RegisterID dest)
     {
         m_assembler.add<64>(dest, address.base, address.index, ARM64Assembler::LSL, address.scale);
         if (address.offset)

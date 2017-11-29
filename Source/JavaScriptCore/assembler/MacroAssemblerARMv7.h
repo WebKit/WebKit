@@ -232,6 +232,14 @@ public:
         store32(dataTempRegister, address.m_ptr);
     }
 
+    void getEffectiveAddress(BaseIndex address, RegisterID dest)
+    {
+        m_assembler.lsl(addressTempRegister, address.index, static_cast<int>(address.scale));
+        m_assembler.add(dest, address.base, addressTempRegister);
+        if (address.offset)
+            add32(TrustedImm32(address.offset), dest);
+    }
+
     void addPtrNoFlags(TrustedImm32 imm, RegisterID srcDest)
     {
         add32(imm, srcDest);
