@@ -55,11 +55,7 @@ public:
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, std::chrono::system_clock::time_point modifiedSince, WTF::Function<void()>&& completionHandler);
     void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>&, WTF::Function<void()>&& completionHandler);
 
-    void getStorageProcessConnection(Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&&);
-
-#if ENABLE(SERVICE_WORKER)
-    void didGetWorkerContextProcessConnection(const IPC::Attachment& connection);
-#endif
+    void getStorageProcessConnection(bool isServiceWorkerProcess, Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&&);
 
 private:
     StorageProcessProxy(WebProcessPool&);
@@ -84,8 +80,7 @@ private:
     void getSandboxExtensionsForBlobFiles(uint64_t requestID, const Vector<String>& paths);
 #endif
 #if ENABLE(SERVICE_WORKER)
-    void getWorkerContextProcessConnection();
-    bool m_waitingOnWorkerContextProcessConnection { false };
+    void establishWorkerContextConnectionToStorageProcess();
 #endif
 
     // ProcessLauncher::Client

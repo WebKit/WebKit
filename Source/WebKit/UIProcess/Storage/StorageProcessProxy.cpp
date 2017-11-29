@@ -111,7 +111,7 @@ void StorageProcessProxy::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, 
     send(Messages::StorageProcess::DeleteWebsiteDataForOrigins(sessionID, dataTypes, origins, callbackID), 0);
 }
 
-void StorageProcessProxy::getStorageProcessConnection(Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&& reply)
+void StorageProcessProxy::getStorageProcessConnection(bool isServiceWorkerProcess, Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&& reply)
 {
     m_pendingConnectionReplies.append(WTFMove(reply));
 
@@ -120,7 +120,7 @@ void StorageProcessProxy::getStorageProcessConnection(Ref<Messages::WebProcessPr
         return;
     }
 
-    send(Messages::StorageProcess::CreateStorageToWebProcessConnection(), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    send(Messages::StorageProcess::CreateStorageToWebProcessConnection(isServiceWorkerProcess), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void StorageProcessProxy::didClose(IPC::Connection&)
@@ -215,26 +215,16 @@ void StorageProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
     }
 
     for (unsigned i = 0; i < m_numPendingConnectionRequests; ++i)
-        send(Messages::StorageProcess::CreateStorageToWebProcessConnection(), 0);
+        send(Messages::StorageProcess::CreateStorageToWebProcessConnection(false), 0);
     
     m_numPendingConnectionRequests = 0;
 }
 
 #if ENABLE(SERVICE_WORKER)
-void StorageProcessProxy::getWorkerContextProcessConnection()
+void StorageProcessProxy::establishWorkerContextConnectionToStorageProcess()
 {
-    ASSERT(!m_waitingOnWorkerContextProcessConnection);
-    m_waitingOnWorkerContextProcessConnection = true;
-    
-    m_processPool.getWorkerContextProcessConnection(*this);
+    m_processPool.establishWorkerContextConnectionToStorageProcess(*this);
 }
-
-void StorageProcessProxy::didGetWorkerContextProcessConnection(const IPC::Attachment& connection)
-{
-    m_waitingOnWorkerContextProcessConnection = false;
-    send(Messages::StorageProcess::DidGetWorkerContextProcessConnection(connection), 0);
-}
-
 #endif
 
 } // namespace WebKit

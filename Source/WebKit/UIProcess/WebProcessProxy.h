@@ -103,6 +103,8 @@ public:
     unsigned pageCount() const { return m_pageMap.size(); }
     unsigned visiblePageCount() const { return m_visiblePageCounter.value(); }
 
+    virtual bool isServiceWorkerProcess() const { return false; }
+
     void addVisitedLinkStore(VisitedLinkStore&);
     void addWebUserContentControllerProxy(WebUserContentControllerProxy&, WebPageCreationParameters&);
     void didDestroyVisitedLinkStore(VisitedLinkStore&);
@@ -181,10 +183,6 @@ public:
     void memoryPressureStatusChanged(bool isUnderMemoryPressure) { m_isUnderMemoryPressure = isUnderMemoryPressure; }
     bool isUnderMemoryPressure() const { return m_isUnderMemoryPressure; }
     void didExceedInactiveMemoryLimitWhileActive();
-
-#if ENABLE(SERVICE_WORKER)
-    void didGetWorkerContextConnection(const IPC::Attachment& connection);
-#endif
 
     void processTerminated();
 

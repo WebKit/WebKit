@@ -54,8 +54,4 @@ messages -> WebProcessProxy LegacyReceiver {
 
     MemoryPressureStatusChanged(bool isUnderMemoryPressure)
     DidExceedInactiveMemoryLimitWhileActive()
-
-#if ENABLE(SERVICE_WORKER)
-    DidGetWorkerContextConnection(IPC::Attachment connection)
-#endif
 }

@@ -61,7 +61,7 @@ void ServiceWorkerProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions&
 
 void ServiceWorkerProcessProxy::start(const WebPreferencesStore& store)
 {
-    send(Messages::WebProcess::GetWorkerContextConnection(m_serviceWorkerPageID, store), 0);
+    send(Messages::WebProcess::EstablishWorkerContextConnectionToStorageProcess(m_serviceWorkerPageID, store), 0);
 }
 
 void ServiceWorkerProcessProxy::didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, Ref<AuthenticationChallengeProxy>&& challenge)

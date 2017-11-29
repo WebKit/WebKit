@@ -646,6 +646,7 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
     }
 
 #if ENABLE(SERVICE_WORKER)
+    // FIXME: Remove?
     if (decoder.messageReceiverName() == Messages::WebSWContextManagerConnection::messageReceiverName()) {
         ASSERT(SWContextManager::singleton().connection());
         if (auto* contextManagerConnection = SWContextManager::singleton().connection())
@@ -1616,30 +1617,13 @@ LibWebRTCNetwork& WebProcess::libWebRTCNetwork()
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcess::getWorkerContextConnection(uint64_t pageID, const WebPreferencesStore& store)
+void WebProcess::establishWorkerContextConnectionToStorageProcess(uint64_t pageID, const WebPreferencesStore& store)
 {
-#if USE(UNIX_DOMAIN_SOCKETS)
-    IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
-    IPC::Connection::Identifier connectionIdentifier(socketPair.server);
-    IPC::Attachment connectionClientPort(socketPair.client);
-#elif OS(DARWIN)
-    mach_port_t listeningPort;
-    if (mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort) != KERN_SUCCESS)
-        CRASH();
-
-    if (mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND) != KERN_SUCCESS)
-        CRASH();
-
-    IPC::Connection::Identifier connectionIdentifier(listeningPort);
-    IPC::Attachment connectionClientPort(listeningPort, MACH_MSG_TYPE_MOVE_SEND);
-#else
-    RELEASE_ASSERT_NOT_REACHED();
-#endif
-
-    auto workerContextConnection = IPC::Connection::createServerConnection(connectionIdentifier, *this);
-    workerContextConnection->open();
-    SWContextManager::singleton().setConnection(std::make_unique<WebSWContextManagerConnection>(WTFMove(workerContextConnection), pageID, store));
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::DidGetWorkerContextConnection(connectionClientPort), 0);
+    // We are in the Service Worker context process and the call below establishes our connection to the Storage Process
+    // by calling webToStorageProcessConnection. SWContextManager needs to use the same underlying IPC::Connection as the
+    // WebToStorageProcessConnection for synchronization purposes.
+    auto& ipcConnection = ensureWebToStorageProcessConnection().connection();
+    SWContextManager::singleton().setConnection(std::make_unique<WebSWContextManagerConnection>(ipcConnection, pageID, store));
 }
 #endif
 

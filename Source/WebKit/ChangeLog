@@ -1,5 +1,49 @@
 2017-11-29  Chris Dumez  <cdumez@apple.com>
 
+        StorageToWebProcessConnection & WebSWServerToContextConnection should use the same underlying IPC::Connection
+        https://bugs.webkit.org/show_bug.cgi?id=180147
+
+        Reviewed by Brady Eidson.
+
+        StorageToWebProcessConnection & WebSWServerToContextConnection should use the same underlying IPC::Connection.
+        Otherwise, we have with 2 IPC::Connections between the StorageProcess and the ServiceWorker (aka Context) process,
+        which makes synchronization of IPC messages difficult.
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::createStorageToWebProcessConnection):
+        (WebKit::StorageProcess::createServerToContextConnection):
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageProcess.messages.in:
+        * StorageProcess/StorageToWebProcessConnection.cpp:
+        (WebKit::StorageToWebProcessConnection::didReceiveMessage):
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        (WebKit::ServiceWorkerProcessProxy::start):
+        * UIProcess/ServiceWorkerProcessProxy.h:
+        * UIProcess/Storage/StorageProcessProxy.cpp:
+        (WebKit::StorageProcessProxy::getStorageProcessConnection):
+        (WebKit::StorageProcessProxy::didFinishLaunching):
+        (WebKit::StorageProcessProxy::establishWorkerContextConnectionToStorageProcess):
+        * UIProcess/Storage/StorageProcessProxy.h:
+        * UIProcess/Storage/StorageProcessProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::getStorageProcessConnection):
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToStorageProcess):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getStorageProcessConnection):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::isServiceWorkerProcess const):
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/Storage/WebToStorageProcessConnection.cpp:
+        (WebKit::WebToStorageProcessConnection::didReceiveMessage):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage):
+        (WebKit::WebProcess::establishWorkerContextConnectionToStorageProcess):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
+2017-11-29  Chris Dumez  <cdumez@apple.com>
+
         ensure*Connection() methods on WebProcess should return a reference
         https://bugs.webkit.org/show_bug.cgi?id=180149
 

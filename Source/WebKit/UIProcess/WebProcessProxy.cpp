@@ -573,7 +573,7 @@ void WebProcessProxy::getNetworkProcessConnection(Ref<Messages::WebProcessProxy:
 
 void WebProcessProxy::getStorageProcessConnection(Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&& reply)
 {
-    m_processPool->getStorageProcessConnection(WTFMove(reply));
+    m_processPool->getStorageProcessConnection(isServiceWorkerProcess(), WTFMove(reply));
 }
 
 #if !PLATFORM(COCOA)
@@ -1224,13 +1224,6 @@ const HashSet<String>& WebProcessProxy::platformPathsWithAssumedReadAccess()
 {
     static NeverDestroyed<HashSet<String>> platformPathsWithAssumedReadAccess;
     return platformPathsWithAssumedReadAccess;
-}
-#endif
-
-#if ENABLE(SERVICE_WORKER)
-void WebProcessProxy::didGetWorkerContextConnection(const IPC::Attachment& connection)
-{
-    m_processPool->didGetWorkerContextProcessConnection(connection);
 }
 #endif
 

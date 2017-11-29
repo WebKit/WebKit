@@ -297,7 +297,7 @@ private:
     void setNetworkProxySettings(const WebCore::SoupNetworkProxySettings&);
 #endif
 #if ENABLE(SERVICE_WORKER)
-    void getWorkerContextConnection(uint64_t pageID, const WebPreferencesStore&);
+    void establishWorkerContextConnectionToStorageProcess(uint64_t pageID, const WebPreferencesStore&);
 #endif
 
     void releasePageCache();

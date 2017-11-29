@@ -41,11 +41,12 @@ public:
     void start(const WebPreferencesStore&);
     uint64_t pageID() const { return m_serviceWorkerPageID; }
 
-protected:
+private:
     // ChildProcessProxy
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) final;
 
-private:
+    bool isServiceWorkerProcess() const final { return true; }
+
     ServiceWorkerProcessProxy(WebProcessPool&, WebsiteDataStore&);
     uint64_t m_serviceWorkerPageID { 0 };
 };

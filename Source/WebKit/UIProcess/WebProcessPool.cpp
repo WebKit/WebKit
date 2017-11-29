@@ -566,11 +566,11 @@ void WebProcessPool::ensureStorageProcessAndWebsiteDataStore(WebsiteDataStore* r
     m_storageProcess->send(Messages::StorageProcess::InitializeWebsiteDataStore(relevantDataStore->storageProcessParameters()), 0);
 }
 
-void WebProcessPool::getStorageProcessConnection(Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&& reply)
+void WebProcessPool::getStorageProcessConnection(bool isServiceWorkerProcess, Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&& reply)
 {
     ensureStorageProcessAndWebsiteDataStore(nullptr);
 
-    m_storageProcess->getStorageProcessConnection(WTFMove(reply));
+    m_storageProcess->getStorageProcessConnection(isServiceWorkerProcess, WTFMove(reply));
 }
 
 void WebProcessPool::storageProcessCrashed(StorageProcessProxy* storageProcessProxy)
@@ -586,7 +586,7 @@ void WebProcessPool::storageProcessCrashed(StorageProcessProxy* storageProcessPr
 }
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcessPool::getWorkerContextProcessConnection(StorageProcessProxy& proxy)
+void WebProcessPool::establishWorkerContextConnectionToStorageProcess(StorageProcessProxy& proxy)
 {
     ASSERT_UNUSED(proxy, &proxy == m_storageProcess);
 
@@ -601,13 +601,6 @@ void WebProcessPool::getWorkerContextProcessConnection(StorageProcessProxy& prox
     initializeNewWebProcess(serviceWorkerProcessProxy.get(), m_websiteDataStore->websiteDataStore());
     m_processes.append(WTFMove(serviceWorkerProcessProxy));
     m_serviceWorkerProcess->start(m_defaultPageGroup->preferences().store());
-}
-
-void WebProcessPool::didGetWorkerContextProcessConnection(const IPC::Attachment& connection)
-{
-    if (!m_storageProcess)
-        return;
-    m_storageProcess->didGetWorkerContextProcessConnection(connection);
 }
 #endif
 

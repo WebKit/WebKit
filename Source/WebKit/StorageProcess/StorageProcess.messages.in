@@ -25,7 +25,7 @@ messages -> StorageProcess LegacyReceiver {
     InitializeWebsiteDataStore(struct WebKit::StorageProcessCreationParameters processCreationParameters)
 
     # Creates a connection for communication with a WebProcess
-    CreateStorageToWebProcessConnection()
+    CreateStorageToWebProcessConnection(bool isServiceWorkerProcess)
 
     FetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, uint64_t callbackID)
     DeleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
@@ -36,8 +36,6 @@ messages -> StorageProcess LegacyReceiver {
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    DidGetWorkerContextProcessConnection(IPC::Attachment connectionHandle)
-
     DidNotHandleFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier)
     DidFailFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier)
     DidReceiveFetchResponse(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier, WebCore::ResourceResponse response)

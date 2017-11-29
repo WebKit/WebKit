@@ -32,6 +32,6 @@ messages -> StorageProcessProxy LegacyReceiver {
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    GetWorkerContextProcessConnection()
+    EstablishWorkerContextConnectionToStorageProcess()
 #endif
 }

@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include "StorageProcess.h"
+#include "StorageProcessMessages.h"
 #include "StorageToWebProcessConnectionMessages.h"
 #include "WebIDBConnectionToClient.h"
 #include "WebIDBConnectionToClientMessages.h"
@@ -66,6 +67,11 @@ void StorageToWebProcessConnection::didReceiveMessage(IPC::Connection& connectio
 {
     if (decoder.messageReceiverName() == Messages::StorageToWebProcessConnection::messageReceiverName()) {
         didReceiveStorageToWebProcessConnectionMessage(connection, decoder);
+        return;
+    }
+
+    if (decoder.messageReceiverName() == Messages::StorageProcess::messageReceiverName()) {
+        StorageProcess::singleton().didReceiveStorageProcessMessage(connection, decoder);
         return;
     }
 

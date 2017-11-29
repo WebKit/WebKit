@@ -33,7 +33,10 @@
 #include "WebProcess.h"
 #include "WebSWClientConnection.h"
 #include "WebSWClientConnectionMessages.h"
+#include "WebSWContextManagerConnection.h"
+#include "WebSWContextManagerConnectionMessages.h"
 #include "WebServiceWorkerProvider.h"
+#include <WebCore/SWContextManager.h>
 
 using namespace PAL;
 using namespace WebCore;
@@ -71,6 +74,12 @@ void WebToStorageProcessConnection::didReceiveMessage(IPC::Connection& connectio
     }
     if (decoder.messageReceiverName() == Messages::ServiceWorkerClientFetch::messageReceiverName()) {
         WebServiceWorkerProvider::singleton().didReceiveServiceWorkerClientFetchMessage(connection, decoder);
+        return;
+    }
+    if (decoder.messageReceiverName() == Messages::WebSWContextManagerConnection::messageReceiverName()) {
+        ASSERT(SWContextManager::singleton().connection());
+        if (auto* contextManagerConnection = SWContextManager::singleton().connection())
+            static_cast<WebSWContextManagerConnection&>(*contextManagerConnection).didReceiveMessage(connection, decoder);
         return;
     }
 #endif
