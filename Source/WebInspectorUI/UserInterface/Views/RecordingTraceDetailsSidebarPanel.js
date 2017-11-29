@@ -29,6 +29,10 @@ WI.RecordingTraceDetailsSidebarPanel = class RecordingTraceDetailsSidebarPanel e
     {
         super("recording-trace", WI.UIString("Trace"));
 
+        const selectable = false;
+        this._backtraceTreeOutline = new WI.TreeOutline(null, selectable);
+        this._backtraceTreeController = new WI.CallFrameTreeController(this._backtraceTreeOutline);
+
         this._recording = null;
         this._action = null;
     }
@@ -66,6 +70,8 @@ WI.RecordingTraceDetailsSidebarPanel = class RecordingTraceDetailsSidebarPanel e
         this.contentView.element.removeChildren();
 
         let trace = this._action.trace;
+        this._backtraceTreeController.callFrames = trace;
+
         if (!trace.length) {
             let noTraceDataElement = this.contentView.element.appendChild(document.createElement("div"));
             noTraceDataElement.classList.add("no-trace-data");
@@ -76,8 +82,6 @@ WI.RecordingTraceDetailsSidebarPanel = class RecordingTraceDetailsSidebarPanel e
             return;
         }
 
-        const showFunctionName = true;
-        for (let callFrame of trace)
-            this.contentView.element.appendChild(new WI.CallFrameView(callFrame, showFunctionName));
+        this.contentView.element.appendChild(this._backtraceTreeOutline.element);
     }
 };

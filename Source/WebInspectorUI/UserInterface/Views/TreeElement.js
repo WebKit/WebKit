@@ -289,25 +289,31 @@ WI.TreeElement = class TreeElement extends WI.Object
 
     static treeElementToggled(event)
     {
-        var element = event.currentTarget;
+        let element = event.currentTarget;
         if (!element || !element.treeElement)
             return;
 
-        var toggleOnClick = element.treeElement.toggleOnClick && !element.treeElement.selectable;
-        var isInTriangle = element.treeElement.isEventWithinDisclosureTriangle(event);
+        let treeElement = element.treeElement;
+        if (!treeElement.treeOutline.selectable) {
+            treeElement.treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementClicked, {treeElement});
+            return;
+        }
+
+        let toggleOnClick = treeElement.toggleOnClick && !treeElement.selectable;
+        let isInTriangle = treeElement.isEventWithinDisclosureTriangle(event);
         if (!toggleOnClick && !isInTriangle)
             return;
 
-        if (element.treeElement.expanded) {
+        if (treeElement.expanded) {
             if (event.altKey)
-                element.treeElement.collapseRecursively();
+                treeElement.collapseRecursively();
             else
-                element.treeElement.collapse();
+                treeElement.collapse();
         } else {
             if (event.altKey)
-                element.treeElement.expandRecursively();
+                treeElement.expandRecursively();
             else
-                element.treeElement.expand();
+                treeElement.expand();
         }
         event.stopPropagation();
     }
@@ -490,6 +496,9 @@ WI.TreeElement = class TreeElement extends WI.Object
 
     selectOnMouseDown(event)
     {
+        if (!this.treeOutline.selectable)
+            return;
+
         this.select(false, true);
     }
 

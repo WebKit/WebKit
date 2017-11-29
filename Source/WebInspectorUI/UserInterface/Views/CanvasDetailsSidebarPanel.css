@@ -32,11 +32,6 @@
     -webkit-padding-start: 22.5px;
 }
 
-.sidebar > .panel.details.canvas .details-section.canvas-backtrace .call-frame {
-    margin: 3px;
-    font-size: 11px;
-}
-
 .sidebar > .panel.details.canvas > .content > .empty-content-placeholder {
     position: absolute;
     top: 0;

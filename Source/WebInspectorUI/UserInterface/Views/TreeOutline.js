@@ -28,7 +28,7 @@
 
 WI.TreeOutline = class TreeOutline extends WI.Object
 {
-    constructor(element)
+    constructor(element, selectable = true)
     {
         super();
 
@@ -53,6 +53,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._large = false;
         this._disclosureButtons = true;
         this._customIndent = false;
+        this._selectable = selectable;
 
         this._virtualizedScrollContainer = null;
         this._virtualizedTreeItemHeight = NaN;
@@ -63,6 +64,9 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._childrenListNode.addEventListener("keydown", this._treeKeyDown.bind(this), true);
 
         WI.TreeOutline._generateStyleRulesIfNeeded();
+
+        if (!this._selectable)
+            this.element.classList.add("non-selectable");
     }
 
     // Public
@@ -142,6 +146,8 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._customIndent = x;
         this.element.classList.toggle(WI.TreeOutline.CustomIndentStyleClassName, this._customIndent);
     }
+
+    get selectable() { return this._selectable; }
 
     appendChild(child)
     {
@@ -812,6 +818,7 @@ WI.TreeOutline.Event = {
     ElementAdded: Symbol("element-added"),
     ElementDidChange: Symbol("element-did-change"),
     ElementRemoved: Symbol("element-removed"),
+    ElementClicked: Symbol("element-clicked"),
     ElementDisclosureDidChanged: Symbol("element-disclosure-did-change"),
     ElementVisibilityDidChange: Symbol("element-visbility-did-change"),
     SelectionDidChange: Symbol("selection-did-change")

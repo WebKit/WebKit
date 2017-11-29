@@ -23,11 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.sidebar > .panel.details.recording-trace > .content > .call-frame {
-    height: 20px;
-    padding: 2px 5px;
-}
-
 .sidebar > .details.recording-trace > .content > .no-trace-data {
     display: flex;
     justify-content: center;

@@ -65,6 +65,10 @@
     --tree-outline-icon-margin-end: 6px;
 }
 
+.tree-outline.non-selectable .item:hover {
+    background-color: var(--selected-background-color-unfocused);
+}
+
 body[dir=ltr] .tree-outline .item :matches(.disclosure-button, .icon) {
     float: left;
 }

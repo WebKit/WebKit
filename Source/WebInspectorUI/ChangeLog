@@ -1,3 +1,55 @@
+2017-11-28  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Clean up backtrace in Canvas details sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=179807
+        <rdar://problem/35604378>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Controllers/CallFrameTreeController.js: Added.
+        Display a list of call frames in a tree outline. Browse to the represented
+        call frame's source code location when a tree element is clicked or selected.
+
+        (WI.CallFrameTreeController):
+        (WI.CallFrameTreeController.prototype.get treeOutline):
+        (WI.CallFrameTreeController.prototype.get callFrames):
+        (WI.CallFrameTreeController.prototype.set callFrames):
+        (WI.CallFrameTreeController.prototype.disconnect):
+        (WI.CallFrameTreeController.prototype._treeElementClicked):
+        (WI.CallFrameTreeController.prototype._treeSelectionDidChange):
+        (WI.CallFrameTreeController.prototype._showSourceCodeLocation):
+
+        * UserInterface/Main.html:
+
+        * UserInterface/Views/CanvasDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.canvas .details-section.canvas-backtrace .call-frame): Deleted.
+        * UserInterface/Views/CanvasDetailsSidebarPanel.js:
+        (WI.CanvasDetailsSidebarPanel.prototype.initialLayout):
+        (WI.CanvasDetailsSidebarPanel.prototype._refreshBacktraceSection):
+
+        * UserInterface/Views/RecordingTraceDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.recording-trace > .content > .call-frame): Deleted.
+        * UserInterface/Views/RecordingTraceDetailsSidebarPanel.js:
+        (WI.RecordingTraceDetailsSidebarPanel):
+        (WI.RecordingTraceDetailsSidebarPanel.prototype.updateAction):
+
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.treeElementToggled):
+        (WI.TreeElement.prototype.selectOnMouseDown):
+        Prevent selection if parent tree outline is not selectable.
+
+        * UserInterface/Views/TreeOutline.css:
+        (.tree-outline.non-selectable .item:hover):
+
+        * UserInterface/Views/TreeOutline.js:
+        Add `selectable` behavior, set at construction time. When false,
+        clicking a tree element dispatches an event instead of selecting
+        the tree element. Default true.
+
+        (WI.TreeOutline):
+        (WI.TreeOutline.prototype.get selectable):
+        Dispatch click event when not selectable, and some drive-by cleanup.
+
 2017-11-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Move console Preserve Log setting from Setting tab to Console navigation bar
