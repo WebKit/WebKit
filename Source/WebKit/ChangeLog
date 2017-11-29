@@ -1,3 +1,16 @@
+2017-11-29  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r218064): [GTK] Broke entering fullscreen mode in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=180120
+
+        Reviewed by Carlos Garcia Campos.
+
+        These assertions need to be swapped. Fixes /webkit2/WebKitWebView/fullscreen in debug mode.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseEnterFullScreen):
+        (webkitWebViewBaseExitFullScreen):
+
 2017-11-29  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Rename CoordinatedBuffer to Nicosia::Buffer
