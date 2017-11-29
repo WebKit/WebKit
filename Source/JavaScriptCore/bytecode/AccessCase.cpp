@@ -937,7 +937,9 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 state.emitExplicitExceptionHandler();
                 
                 noException.link(&jit);
-                state.restoreLiveRegistersFromStackForCall(spillState);
+                RegisterSet resultRegisterToExclude;
+                resultRegisterToExclude.set(scratchGPR);
+                state.restoreLiveRegistersFromStackForCall(spillState, resultRegisterToExclude);
             }
         }
         
