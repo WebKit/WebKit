@@ -61,6 +61,7 @@ WorkerScriptController::~WorkerScriptController()
 {
     JSLockHolder lock(vm());
     if (m_workerGlobalScopeWrapper) {
+        m_workerGlobalScopeWrapper->clearDOMGuardedObjects();
         m_workerGlobalScopeWrapper->setConsoleClient(nullptr);
         m_consoleClient = nullptr;
     }

@@ -45,10 +45,11 @@ public:
     JSC::JSValue guardedObject() const { return m_guarded.get(); }
     JSDOMGlobalObject* globalObject() const { return m_globalObject.get(); }
 
+    void clear();
+
 protected:
     DOMGuardedObject(JSDOMGlobalObject&, JSC::JSCell&);
 
-    void clear();
     void contextDestroyed() override;
     bool isEmpty() { return !m_guarded; }
 

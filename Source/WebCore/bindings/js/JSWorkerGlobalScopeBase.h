@@ -67,6 +67,8 @@ public:
     static JSC::RuntimeFlags javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
     static void queueTaskToEventLoop(JSC::JSGlobalObject&, Ref<JSC::Microtask>&&);
 
+    void clearDOMGuardedObjects();
+
 protected:
     JSWorkerGlobalScopeBase(JSC::VM&, JSC::Structure*, RefPtr<WorkerGlobalScope>&&);
     void finishCreation(JSC::VM&, JSC::JSProxy*);

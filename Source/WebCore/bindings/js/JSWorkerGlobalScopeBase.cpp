@@ -79,6 +79,13 @@ void JSWorkerGlobalScopeBase::finishCreation(VM& vm, JSProxy* proxy)
     ASSERT(inherits(vm, info()));
 }
 
+void JSWorkerGlobalScopeBase::clearDOMGuardedObjects()
+{
+    auto guardedObjects = m_guardedObjects;
+    for (auto& guarded : guardedObjects)
+        guarded->clear();
+}
+
 void JSWorkerGlobalScopeBase::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSWorkerGlobalScopeBase* thisObject = jsCast<JSWorkerGlobalScopeBase*>(cell);
