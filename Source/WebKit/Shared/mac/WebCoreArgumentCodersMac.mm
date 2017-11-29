@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Company 100 Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,7 @@
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #import <WebCore/MediaPlaybackTargetContext.h>
@@ -428,9 +429,8 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(Decoder& decoder, Resource
 
 void ArgumentCoder<ProtectionSpace>::encodePlatformData(Encoder& encoder, const ProtectionSpace& space)
 {
-    RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
-    RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
-    [archiver setRequiresSecureCoding:YES];
+    auto data = adoptNS([[NSMutableData alloc] init]);
+    auto archiver = secureArchiverFromMutableData(data.get());
     [archiver encodeObject:space.nsSpace() forKey:@"protectionSpace"];
     [archiver finishEncoding];
     IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));
@@ -442,8 +442,7 @@ bool ArgumentCoder<ProtectionSpace>::decodePlatformData(Decoder& decoder, Protec
     if (!IPC::decode(decoder, data))
         return false;
 
-    RetainPtr<NSKeyedUnarchiver> unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)data.get()]);
-    [unarchiver setRequiresSecureCoding:YES];
+    auto unarchiver = secureUnarchiverFromData((NSData *)data.get());
     @try {
         if (RetainPtr<NSURLProtectionSpace> nsSpace = [unarchiver decodeObjectOfClass:[NSURLProtectionSpace class] forKey:@"protectionSpace"])
             space = ProtectionSpace(nsSpace.get());
@@ -475,9 +474,8 @@ void ArgumentCoder<Credential>::encodePlatformData(Encoder& encoder, const Crede
     }
 
     encoder << false;
-    RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
-    RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
-    [archiver setRequiresSecureCoding:YES];
+    auto data = adoptNS([[NSMutableData alloc] init]);
+    auto archiver = secureArchiverFromMutableData(data.get());
     [archiver encodeObject:nsCredential forKey:@"credential"];
     [archiver finishEncoding];
     IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));
@@ -516,8 +514,7 @@ bool ArgumentCoder<Credential>::decodePlatformData(Decoder& decoder, Credential&
     if (!IPC::decode(decoder, data))
         return false;
 
-    RetainPtr<NSKeyedUnarchiver> unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)data.get()]);
-    [unarchiver setRequiresSecureCoding:YES];
+    auto unarchiver = secureUnarchiverFromData((NSData *)data.get());
     @try {
         if (RetainPtr<NSURLCredential> nsCredential = [unarchiver decodeObjectOfClass:[NSURLCredential class] forKey:@"credential"])
             credential = Credential(nsCredential.get());
@@ -578,9 +575,8 @@ std::optional<KeypressCommand> ArgumentCoder<KeypressCommand>::decode(Decoder& d
 #if ENABLE(CONTENT_FILTERING)
 void ArgumentCoder<ContentFilterUnblockHandler>::encode(Encoder& encoder, const ContentFilterUnblockHandler& contentFilterUnblockHandler)
 {
-    RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
-    RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
-    [archiver setRequiresSecureCoding:YES];
+    auto data = adoptNS([[NSMutableData alloc] init]);
+    auto archiver = secureArchiverFromMutableData(data.get());
     contentFilterUnblockHandler.encode(archiver.get());
     [archiver finishEncoding];
     IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));
@@ -592,8 +588,7 @@ bool ArgumentCoder<ContentFilterUnblockHandler>::decode(Decoder& decoder, Conten
     if (!IPC::decode(decoder, data))
         return false;
 
-    RetainPtr<NSKeyedUnarchiver> unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)data.get()]);
-    [unarchiver setRequiresSecureCoding:YES];
+    auto unarchiver = secureUnarchiverFromData((NSData *)data.get());
     if (!ContentFilterUnblockHandler::decode(unarchiver.get(), contentFilterUnblockHandler))
         return false;
 
@@ -612,9 +607,8 @@ static NSString *deviceContextKey()
 
 void ArgumentCoder<MediaPlaybackTargetContext>::encodePlatformData(Encoder& encoder, const MediaPlaybackTargetContext& target)
 {
-    RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
-    RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
-    [archiver setRequiresSecureCoding:YES];
+    auto data = adoptNS([[NSMutableData alloc] init]);
+    auto archiver = secureArchiverFromMutableData(data.get());
 
     if ([getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
         [archiver encodeObject:target.avOutputContext() forKey:deviceContextKey()];
@@ -633,8 +627,7 @@ bool ArgumentCoder<MediaPlaybackTargetContext>::decodePlatformData(Decoder& deco
     if (!IPC::decode(decoder, data))
         return false;
 
-    RetainPtr<NSKeyedUnarchiver> unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)data.get()]);
-    [unarchiver setRequiresSecureCoding:YES];
+    auto unarchiver = secureUnarchiverFromData((NSData *)data.get());
 
     AVOutputContext *context = nil;
     @try {

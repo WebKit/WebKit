@@ -1,3 +1,21 @@
+2017-11-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Adopt updated NSKeyed[Un]Archiver API when available
+        https://bugs.webkit.org/show_bug.cgi?id=180127
+        <rdar://problem/35710738>
+
+        Reviewed by Alex Christensen.
+
+        Add new convenience methods (and SPI headers) so we can adopt new NSKeyedArchiver
+        API that uses secure coding by default.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cocoa/NSKeyedArchiverSPI.h: Added.
+        (securelyArchivedDataWithRootObject): New convenience method.
+        (securelyUnarchiveRootObjectOfClassFromData): Ditto.
+        (secureArchiverFromMutableData): Ditto.
+        (secureUnarchiverFromData): Ditto.
+
 2017-11-28  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (High Sierra): Layout Test fast/multicol/newmulticol/spanner2.html is a flaky image failure on WK1

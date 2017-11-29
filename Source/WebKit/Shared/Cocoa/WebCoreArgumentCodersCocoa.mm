@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #import "DataReference.h"
 #import <WebCore/PaymentAuthorizationStatus.h>
+#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <pal/spi/cocoa/PassKitSPI.h>
 #import <wtf/SoftLinking.h>
 
@@ -51,9 +52,7 @@ namespace IPC {
 void ArgumentCoder<WebCore::Payment>::encode(Encoder& encoder, const WebCore::Payment& payment)
 {
     auto data = adoptNS([[NSMutableData alloc] init]);
-    auto archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
-
-    [archiver setRequiresSecureCoding:YES];
+    auto archiver = secureArchiverFromMutableData(data.get());
 
     [archiver encodeObject:payment.pkPayment() forKey:NSKeyedArchiveRootObjectKey];
     [archiver finishEncoding];
@@ -68,8 +67,7 @@ bool ArgumentCoder<WebCore::Payment>::decode(Decoder& decoder, WebCore::Payment&
         return false;
 
     auto data = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(dataReference.data())) length:dataReference.size() freeWhenDone:NO]);
-    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:data.get()]);
-    [unarchiver setRequiresSecureCoding:YES];
+    auto unarchiver = secureUnarchiverFromData(data.get());
     @try {
         PKPayment *pkPayment = [unarchiver decodeObjectOfClass:getPKPaymentClass() forKey:NSKeyedArchiveRootObjectKey];
         payment = Payment(pkPayment);
@@ -106,9 +104,7 @@ std::optional<WebCore::PaymentAuthorizationResult> ArgumentCoder<WebCore::Paymen
 void ArgumentCoder<WebCore::PaymentContact>::encode(Encoder& encoder, const WebCore::PaymentContact& paymentContact)
 {
     auto data = adoptNS([[NSMutableData alloc] init]);
-    auto archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
-
-    [archiver setRequiresSecureCoding:YES];
+    auto archiver = secureArchiverFromMutableData(data.get());
 
     [archiver encodeObject:paymentContact.pkContact() forKey:NSKeyedArchiveRootObjectKey];
     [archiver finishEncoding];
@@ -123,8 +119,7 @@ bool ArgumentCoder<WebCore::PaymentContact>::decode(Decoder& decoder, WebCore::P
         return false;
 
     auto data = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(dataReference.data())) length:dataReference.size() freeWhenDone:NO]);
-    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:data.get()]);
-    [unarchiver setRequiresSecureCoding:YES];
+    auto unarchiver = secureUnarchiverFromData(data.get());
     @try {
         PKContact *pkContact = [unarchiver decodeObjectOfClass:getPKContactClass() forKey:NSKeyedArchiveRootObjectKey];
         paymentContact = PaymentContact(pkContact);
@@ -167,9 +162,7 @@ std::optional<WebCore::PaymentError> ArgumentCoder<WebCore::PaymentError>::decod
 void ArgumentCoder<WebCore::PaymentMerchantSession>::encode(Encoder& encoder, const WebCore::PaymentMerchantSession& paymentMerchantSession)
 {
     auto data = adoptNS([[NSMutableData alloc] init]);
-    auto archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
-
-    [archiver setRequiresSecureCoding:YES];
+    auto archiver = secureArchiverFromMutableData(data.get());
 
     [archiver encodeObject:paymentMerchantSession.pkPaymentMerchantSession() forKey:NSKeyedArchiveRootObjectKey];
     [archiver finishEncoding];
@@ -184,8 +177,7 @@ bool ArgumentCoder<WebCore::PaymentMerchantSession>::decode(Decoder& decoder, We
         return false;
 
     auto data = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(dataReference.data())) length:dataReference.size() freeWhenDone:NO]);
-    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:data.get()]);
-    [unarchiver setRequiresSecureCoding:YES];
+    auto unarchiver = secureUnarchiverFromData(data.get());
     @try {
         PKPaymentMerchantSession *pkPaymentMerchantSession = [unarchiver decodeObjectOfClass:getPKPaymentMerchantSessionClass() forKey:NSKeyedArchiveRootObjectKey];
         paymentMerchantSession = PaymentMerchantSession(pkPaymentMerchantSession);
@@ -195,16 +187,13 @@ bool ArgumentCoder<WebCore::PaymentMerchantSession>::decode(Decoder& decoder, We
     }
 
     [unarchiver finishDecoding];
-
     return true;
 }
 
 void ArgumentCoder<WebCore::PaymentMethod>::encode(Encoder& encoder, const WebCore::PaymentMethod& paymentMethod)
 {
     auto data = adoptNS([[NSMutableData alloc] init]);
-    auto archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
-
-    [archiver setRequiresSecureCoding:YES];
+    auto archiver = secureArchiverFromMutableData(data.get());
 
     [archiver encodeObject:paymentMethod.pkPaymentMethod() forKey:NSKeyedArchiveRootObjectKey];
     [archiver finishEncoding];
@@ -219,8 +208,7 @@ bool ArgumentCoder<WebCore::PaymentMethod>::decode(Decoder& decoder, WebCore::Pa
         return false;
 
     auto data = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(dataReference.data())) length:dataReference.size() freeWhenDone:NO]);
-    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:data.get()]);
-    [unarchiver setRequiresSecureCoding:YES];
+    auto unarchiver = secureUnarchiverFromData(data.get());
     @try {
         PKPaymentMethod *pkPaymentMethod = [unarchiver decodeObjectOfClass:getPKPaymentMethodClass() forKey:NSKeyedArchiveRootObjectKey];
         paymentMethod = PaymentMethod(pkPaymentMethod);

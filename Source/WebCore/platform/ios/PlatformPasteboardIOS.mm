@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIImage.h>
 #import <UIKit/UIPasteboard.h>
+#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/ListHashSet.h>
 #import <wtf/SoftLinking.h>
@@ -264,7 +265,7 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
         [representationsToRegister addData:content.dataInWebArchiveFormat->createNSData().get() forType:WebArchivePboardType];
 
     if (content.dataInAttributedStringFormat) {
-        NSAttributedString *attributedString = [NSKeyedUnarchiver unarchiveObjectWithData:content.dataInAttributedStringFormat->createNSData().get()];
+        NSAttributedString *attributedString = securelyUnarchiveObjectOfClassFromData([NSAttributedString class], content.dataInAttributedStringFormat->createNSData().get());
         if (attributedString)
             [representationsToRegister addRepresentingObject:attributedString];
     }
@@ -379,11 +380,11 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
         if (!provider.teamData.length)
             continue;
 
-        id teamDataObject = [NSKeyedUnarchiver unarchiveObjectWithData:provider.teamData];
-        if (!teamDataObject || ![teamDataObject isKindOfClass:[NSDictionary class]])
+        NSDictionary *teamDataObject = insecurelyUnarchiveObjectOfClassFromData(provider.teamData);
+        if (!teamDataObject)
             continue;
 
-        id originInTeamData = [(NSDictionary *)teamDataObject objectForKey:@(originKeyForTeamData)];
+        id originInTeamData = [teamDataObject objectForKey:@(originKeyForTeamData)];
         if (![originInTeamData isKindOfClass:[NSString class]])
             continue;
         if (String((NSString *)originInTeamData) != origin)
@@ -444,8 +445,7 @@ long PlatformPasteboard::write(const PasteboardCustomData& data)
             NSMutableArray<NSString *> *typesAsNSArray = [NSMutableArray array];
             for (auto& type : data.orderedTypes)
                 [typesAsNSArray addObject:type];
-            [representationsToRegister setTeamData:[NSKeyedArchiver archivedDataWithRootObject:@{
-                @(originKeyForTeamData) : data.origin, @(customTypesKeyForTeamData) : typesAsNSArray }]];
+            [representationsToRegister setTeamData:insecurelyArchivedDataWithRootObject(@{ @(originKeyForTeamData) : data.origin, @(customTypesKeyForTeamData) : typesAsNSArray })];
             [representationsToRegister addData:serializedSharedBuffer.get() forType:@(PasteboardCustomData::cocoaType())];
         }
     }

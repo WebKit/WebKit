@@ -52,6 +52,7 @@
 #import "WebCoreNSURLExtras.h"
 #import "markup.h"
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
+#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
 namespace WebCore {
@@ -141,7 +142,7 @@ static RefPtr<SharedBuffer> archivedDataForAttributedString(NSAttributedString *
     if (!attributedString.length)
         return nullptr;
 
-    return SharedBuffer::create([NSKeyedArchiver archivedDataWithRootObject:attributedString]);
+    return SharedBuffer::create(insecurelyArchivedDataWithRootObject(attributedString));
 }
 
 String Editor::selectionInHTMLFormat()

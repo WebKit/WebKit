@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "AccessibilityIOS.h"
+#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 
 #if PLATFORM(IOS)
 
@@ -34,7 +35,7 @@ NSData *newAccessibilityRemoteToken(NSUUID *uuid)
 {
     if (!uuid)
         return nil;
-    return [NSKeyedArchiver archivedDataWithRootObject:@{ @"ax-pid" : @(getpid()), @"ax-uuid" : [uuid UUIDString], @"ax-register" : @YES }];
+    return insecurelyArchivedDataWithRootObject(@{ @"ax-pid" : @(getpid()), @"ax-uuid" : [uuid UUIDString], @"ax-register" : @YES });
 }
 
 } // namespace WebKit

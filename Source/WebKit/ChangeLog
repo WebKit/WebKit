@@ -1,3 +1,59 @@
+2017-11-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Adopt updated NSKeyed[Un]Archiver API when available
+        https://bugs.webkit.org/show_bug.cgi?id=180127
+        <rdar://problem/35710738>
+
+        Reviewed by Alex Christensen.
+
+        Switch to new NSKeyed[Un]Archiver methods when available. We do not attempt
+        to adopt secure coding in places we were not under the original API.
+
+        * Platform/ios/AccessibilityIOS.mm:
+        (WebKit::newAccessibilityRemoteToken): Use secure-by-default API.
+        * Shared/Cocoa/DataDetectionResult.mm:
+        (WebKit::DataDetectionResult::encode const): Ditto.
+        (WebKit::DataDetectionResult::decode): Ditto.
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::Payment>::encode): Ditto.
+        (IPC::ArgumentCoder<WebCore::Payment>::decode): Ditto.
+        (IPC::ArgumentCoder<WebCore::PaymentContact>::encode): Ditto.
+        (IPC::ArgumentCoder<WebCore::PaymentContact>::decode): Ditto.
+        (IPC::ArgumentCoder<WebCore::PaymentMerchantSession>::encode): Ditto.
+        (IPC::ArgumentCoder<WebCore::PaymentMerchantSession>::decode): Ditto.
+        (IPC::ArgumentCoder<WebCore::PaymentMethod>::encode): Ditto.
+        (IPC::ArgumentCoder<WebCore::PaymentMethod>::decode): Ditto.
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const): Ditto.
+        (WebKit::InteractionInformationAtPosition::decode): Ditto.
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<ProtectionSpace>::encodePlatformData): Ditto.
+        (IPC::ArgumentCoder<ProtectionSpace>::decodePlatformData): Ditto.
+        (IPC::ArgumentCoder<Credential>::encodePlatformData): Ditto.
+        (IPC::ArgumentCoder<Credential>::decodePlatformData): Ditto.
+        (IPC::ArgumentCoder<ContentFilterUnblockHandler>::encode): Ditto.
+        (IPC::ArgumentCoder<ContentFilterUnblockHandler>::decode): Ditto.
+        (IPC::ArgumentCoder<MediaPlaybackTargetContext>::encodePlatformData): Ditto.
+        (IPC::ArgumentCoder<MediaPlaybackTargetContext>::decodePlatformData): Ditto.
+        * Shared/mac/WebHitTestResultData.mm:
+        (WebKit::WebHitTestResultData::platformEncode const): Ditto.
+        (WebKit::WebHitTestResultData::platformDecode): Ditto.
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _setObject:forBundleParameter:]): Ditto.
+        (-[WKProcessPool _setObjectsForBundleParametersWithDictionary:]): Ditto.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setInputDelegate:]): Ditto.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Ditto.
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::startAssistingNode): Ditto.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _setFormDelegate:]): Ditto.
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::initialize): Ditto.
+        (WebKit::InjectedBundle::setBundleParameter): Ditto.
+        (WebKit::InjectedBundle::setBundleParameters): Ditto.
+
 2017-11-28  Youenn Fablet  <youenn@apple.com>
 
         NetworkCache::Storage should protect itself when removing operations from its maps
