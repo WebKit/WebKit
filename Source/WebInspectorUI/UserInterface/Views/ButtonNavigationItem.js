@@ -34,7 +34,7 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
 
         this._enabled = true;
 
-        this.toolTip = toolTipOrLabel;
+        this.tooltip = toolTipOrLabel;
 
         this.element.addEventListener("click", this._mouseClicked.bind(this));
 
@@ -52,20 +52,6 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
     }
 
     // Public
-
-    get toolTip()
-    {
-        return this.element.title;
-    }
-
-    set toolTip(newToolTip)
-    {
-        console.assert(newToolTip);
-        if (!newToolTip)
-            return;
-
-        this.element.title = newToolTip;
-    }
 
     get label()
     {

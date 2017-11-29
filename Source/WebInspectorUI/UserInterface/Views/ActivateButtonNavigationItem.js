@@ -56,11 +56,11 @@ WI.ActivateButtonNavigationItem = class ActivateButtonNavigationItem extends WI.
         this.element.classList.toggle(WI.ActivateButtonNavigationItem.ActivatedStyleClassName, flag);
 
         if (flag) {
-            this.toolTip = this._activatedToolTip;
+            this.tooltip = this._activatedToolTip;
             if (this._role === "tab")
                 this.element.setAttribute("aria-selected", "true");
         } else {
-            this.toolTip = this._defaultToolTip;
+            this.tooltip = this._defaultToolTip;
             if (this._role === "tab")
                 this.element.removeAttribute("aria-selected");
         }

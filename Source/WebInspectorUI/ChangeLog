@@ -1,5 +1,50 @@
 2017-11-28  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Network Tab - Add a toggle in the network tab to control automatically clearing or preserving log across loads
+        https://bugs.webkit.org/show_bug.cgi?id=180110
+        <rdar://problem/34071789>
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New strings.
+
+        * UserInterface/Views/CheckboxNavigationItem.css:
+        (.navigation-bar .item.checkbox input[type=checkbox]):
+        Tweak style to more center the checkbox vertically.
+
+        * UserInterface/Views/CheckboxNavigationItem.js:
+        (WI.CheckboxNavigationItem):
+        Fix setting the initial value of a checkbox navigation item.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype.get navigationItems):
+        (WI.NetworkTableContentView.prototype.closed):
+        (WI.NetworkTableContentView.prototype._clearNetworkOnNavigateSettingChanged):
+        Add a new checkbox for the clear on navigation setting.
+
+        * UserInterface/Views/SettingEditor.js:
+        (WI.SettingEditor.createForSetting):
+        Update the editor checkbox if the setting changes outside of the setting editor.
+
+        * UserInterface/Views/NavigationItem.js:
+        (WI.NavigationItem.prototype.get tooltip):
+        (WI.NavigationItem.prototype.set tooltip):
+        * UserInterface/Views/ActivateButtonNavigationItem.js:
+        (WI.ActivateButtonNavigationItem.prototype.set activated):
+        * UserInterface/Views/ButtonNavigationItem.js:
+        (WI.ButtonNavigationItem):
+        (WI.ButtonNavigationItem.prototype.get toolTip): Deleted.
+        (WI.ButtonNavigationItem.prototype.set toolTip): Deleted.
+        * UserInterface/Views/ToggleButtonNavigationItem.js:
+        (WI.ToggleButtonNavigationItem.prototype.set alternateToolTip):
+        (WI.ToggleButtonNavigationItem.prototype.set toggled):
+        Move tooltip to the base class and rename it from `toolTip` to `tooltip` to
+        match existing generic places like TreeElement.
+
+2017-11-28  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Include Beacon loads in the Network Table's "Other" filter
         https://bugs.webkit.org/show_bug.cgi?id=180113
 

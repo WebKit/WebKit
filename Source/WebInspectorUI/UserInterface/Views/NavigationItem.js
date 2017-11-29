@@ -88,6 +88,16 @@ WI.NavigationItem = class NavigationItem extends WI.Object
             this._parentNavigationBar.needsLayout();
     }
 
+    get tooltip()
+    {
+        return this.element.title;
+    }
+
+    set tooltip(x)
+    {
+        this.element.title = x;
+    }
+
     // Protected
 
     didAttach(navigationBar)

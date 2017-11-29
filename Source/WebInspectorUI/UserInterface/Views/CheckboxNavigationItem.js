@@ -30,7 +30,7 @@ WI.CheckboxNavigationItem = class CheckboxNavigationItem extends WI.NavigationIt
         super(identifier, "checkbox");
 
         this._checkboxElement = this.element.appendChild(document.createElement("input"));
-        this._checkboxElement.checked = !checked;
+        this._checkboxElement.checked = checked;
         this._checkboxElement.id = "checkbox-navigation-item-" + identifier;
         this._checkboxElement.type = "checkbox";
 
