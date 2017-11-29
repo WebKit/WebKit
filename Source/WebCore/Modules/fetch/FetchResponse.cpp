@@ -38,11 +38,6 @@
 
 namespace WebCore {
 
-static inline bool isRedirectStatus(int status)
-{
-    return status == 301 || status == 302 || status == 303 || status == 307 || status == 308;
-}
-
 // https://fetch.spec.whatwg.org/#null-body-status
 static inline bool isNullBodyStatus(int status)
 {
@@ -134,7 +129,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::redirect(ScriptExecutionContext& 
     URL requestURL = context.completeURL(url);
     if (!requestURL.isValid() || !requestURL.user().isEmpty() || !requestURL.pass().isEmpty())
         return Exception { TypeError };
-    if (!isRedirectStatus(status))
+    if (!ResourceResponse::isRedirectionStatusCode(status))
         return Exception { RangeError };
     auto redirectResponse = adoptRef(*new FetchResponse(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
     redirectResponse->m_response.setHTTPStatusCode(status);

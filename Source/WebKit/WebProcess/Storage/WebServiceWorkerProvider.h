@@ -41,7 +41,7 @@ class WebServiceWorkerProvider final : public WebCore::ServiceWorkerProvider {
 public:
     static WebServiceWorkerProvider& singleton();
 
-    void handleFetch(WebCore::ResourceLoader&, WebCore::CachedResource*, PAL::SessionID, ServiceWorkerClientFetch::Callback&&);
+    void handleFetch(WebCore::ResourceLoader&, WebCore::CachedResource*, PAL::SessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect, ServiceWorkerClientFetch::Callback&&);
     bool cancelFetch(uint64_t fetchIdentifier);
     void fetchFinished(uint64_t fetchIdentifier);
 

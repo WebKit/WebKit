@@ -166,12 +166,10 @@ void WebSWClientConnection::getRegistrations(const SecurityOrigin& topOrigin, co
     send(Messages::WebSWServerConnection::GetRegistrations(requestIdentifier, SecurityOriginData::fromSecurityOrigin(topOrigin), clientURL));
 }
 
-Ref<ServiceWorkerClientFetch> WebSWClientConnection::startFetch(WebServiceWorkerProvider& provider, Ref<WebCore::ResourceLoader>&& loader, uint64_t identifier, ServiceWorkerClientFetch::Callback&& callback)
+void WebSWClientConnection::startFetch(const ResourceLoader& loader, uint64_t identifier)
 {
-    ASSERT(loader->options().serviceWorkersMode != ServiceWorkersMode::None && loader->options().serviceWorkerIdentifier);
-
-    send(Messages::WebSWServerConnection::StartFetch { identifier, loader->options().serviceWorkerIdentifier, loader->originalRequest(), loader->options(), IPC::FormDataReference { loader->originalRequest().httpBody() } });
-    return ServiceWorkerClientFetch::create(provider, WTFMove(loader), identifier, m_connection.get(), WTFMove(callback));
+    ASSERT(loader.options().serviceWorkersMode != ServiceWorkersMode::None && loader.options().serviceWorkerIdentifier);
+    send(Messages::WebSWServerConnection::StartFetch { identifier, loader.options().serviceWorkerIdentifier, loader.request(), loader.options(), IPC::FormDataReference { loader.request().httpBody() } });
 }
 
 void WebSWClientConnection::postMessageToServiceWorkerClient(DocumentIdentifier destinationContextIdentifier, const IPC::DataReference& message, ServiceWorkerData&& source, const String& sourceOrigin)

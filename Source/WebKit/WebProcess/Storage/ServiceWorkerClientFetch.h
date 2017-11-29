@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "DataReference.h"
 #include "FormDataReference.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
@@ -35,17 +36,18 @@
 
 namespace WebKit {
 
+class WebSWClientConnection;
 class WebServiceWorkerProvider;
 
-class ServiceWorkerClientFetch final : public RefCounted<ServiceWorkerClientFetch>, public IPC::MessageSender, public IPC::MessageReceiver {
+class ServiceWorkerClientFetch final : public RefCounted<ServiceWorkerClientFetch>, public IPC::MessageReceiver {
 public:
     enum class Result { Succeeded, Cancelled, Unhandled };
     using Callback = WTF::CompletionHandler<void(Result)>;
 
-    static Ref<ServiceWorkerClientFetch> create(WebServiceWorkerProvider& serviceWorkerProvider, Ref<WebCore::ResourceLoader>&& loader, uint64_t identifier, Ref<IPC::Connection>&& connection, Callback&& callback)
-    {
-        return adoptRef(*new ServiceWorkerClientFetch { serviceWorkerProvider, WTFMove(loader), identifier, WTFMove(connection), WTFMove(callback) });
-    }
+    static Ref<ServiceWorkerClientFetch> create(WebServiceWorkerProvider&, Ref<WebCore::ResourceLoader>&&, uint64_t identifier, Ref<WebSWClientConnection>&&, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Callback&&);
+    ~ServiceWorkerClientFetch();
+
+    void start();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void cancel();
@@ -53,7 +55,7 @@ public:
     bool isOngoing() const { return !!m_callback; }
 
 private:
-    ServiceWorkerClientFetch(WebServiceWorkerProvider&, Ref<WebCore::ResourceLoader>&&, uint64_t identifier, Ref<IPC::Connection>&&, Callback&&);
+    ServiceWorkerClientFetch(WebServiceWorkerProvider&, Ref<WebCore::ResourceLoader>&&, uint64_t identifier, Ref<WebSWClientConnection>&&, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Callback&&);
 
     void didReceiveResponse(WebCore::ResourceResponse&&);
     void didReceiveData(const IPC::DataReference&, int64_t encodedDataLength);
@@ -62,14 +64,14 @@ private:
     void didFail();
     void didNotHandle();
 
-    IPC::Connection* messageSenderConnection() final { return m_connection.ptr(); }
-    uint64_t messageSenderDestinationID() final { return m_identifier; }
-
     WebServiceWorkerProvider& m_serviceWorkerProvider;
     Ref<WebCore::ResourceLoader> m_loader;
     uint64_t m_identifier { 0 };
-    Ref<IPC::Connection> m_connection;
+    Ref<WebSWClientConnection> m_connection;
     Callback m_callback;
+    enum class RedirectionStatus { None, Receiving, Following, Received };
+    RedirectionStatus m_redirectionStatus { RedirectionStatus::None };
+    bool m_shouldClearReferrerOnHTTPSToHTTPRedirect { true };
 };
 
 } // namespace WebKit

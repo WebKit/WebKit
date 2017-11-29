@@ -120,6 +120,42 @@ void ResourceRequestBase::setURL(const URL& url)
     m_platformRequestUpdated = false;
 }
 
+static bool shouldUseGet(const ResourceRequestBase& request, const ResourceResponse& redirectResponse)
+{
+    if (redirectResponse.httpStatusCode() == 301 || redirectResponse.httpStatusCode() == 302)
+        return equalLettersIgnoringASCIICase(request.httpMethod(), "post");
+    return redirectResponse.httpStatusCode() == 303;
+}
+
+ResourceRequest ResourceRequestBase::redirectedRequest(const ResourceResponse& redirectResponse, bool shouldClearReferrerOnHTTPSToHTTPRedirect) const
+{
+    ASSERT(redirectResponse.isRedirection());
+    // This method is based on https://fetch.spec.whatwg.org/#http-redirect-fetch.
+    // It also implements additional processing like done by CFNetwork layer.
+
+    auto request = asResourceRequest();
+    auto location = redirectResponse.httpHeaderField(HTTPHeaderName::Location);
+
+    request.setURL(location.isEmpty() ? URL { } : URL { redirectResponse.url(), location });
+
+    if (shouldUseGet(*this, redirectResponse)) {
+        request.setHTTPMethod(ASCIILiteral("GET"));
+        request.setHTTPBody(nullptr);
+        request.clearHTTPContentType();
+        request.m_httpHeaderFields.remove(HTTPHeaderName::ContentLength);
+    }
+
+    if (shouldClearReferrerOnHTTPSToHTTPRedirect && !request.url().protocolIs("https") && WebCore::protocolIs(request.httpReferrer(), "https"))
+        request.clearHTTPReferrer();
+
+    if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url()))
+        request.clearHTTPOrigin();
+    request.clearHTTPAuthorization();
+    request.m_httpHeaderFields.remove(HTTPHeaderName::ProxyAuthorization);
+
+    return request;
+}
+
 void ResourceRequestBase::removeCredentials()
 {
     updateResourceRequest(); 
@@ -520,7 +556,7 @@ bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceReque
     return arePointingToEqualData(a.httpBody(), b.httpBody());
 }
 
-bool ResourceRequestBase::compare(const ResourceRequest& a, const ResourceRequest& b)
+bool ResourceRequestBase::equal(const ResourceRequest& a, const ResourceRequest& b)
 {
     if (!equalIgnoringHeaderFields(a, b))
         return false;

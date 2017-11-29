@@ -69,7 +69,7 @@ static inline bool shouldHandleFetch(const ResourceLoaderOptions& options)
     return !!options.serviceWorkerIdentifier;
 }
 
-void WebServiceWorkerProvider::handleFetch(ResourceLoader& loader, CachedResource* resource, PAL::SessionID sessionID, ServiceWorkerClientFetch::Callback&& callback)
+void WebServiceWorkerProvider::handleFetch(ResourceLoader& loader, CachedResource* resource, PAL::SessionID sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect, ServiceWorkerClientFetch::Callback&& callback)
 {
     if (!loader.request().url().protocolIsInHTTPFamily() || !shouldHandleFetch(loader.options())) {
         callback(ServiceWorkerClientFetch::Result::Unhandled);
@@ -77,10 +77,7 @@ void WebServiceWorkerProvider::handleFetch(ResourceLoader& loader, CachedResourc
     }
 
     auto& connection = WebProcess::singleton().ensureWebToStorageProcessConnection().serviceWorkerConnectionForSession(sessionID);
-    auto fetch = connection.startFetch(*this, loader, loader.identifier(), WTFMove(callback));
-    ASSERT(fetch->isOngoing());
-
-    m_ongoingFetchTasks.add(loader.identifier(), WTFMove(fetch));
+    m_ongoingFetchTasks.add(loader.identifier(), ServiceWorkerClientFetch::create(*this, loader, loader.identifier(), connection, shouldClearReferrerOnHTTPSToHTTPRedirect, WTFMove(callback)));
 }
 
 bool WebServiceWorkerProvider::cancelFetch(uint64_t fetchIdentifier)

@@ -1,5 +1,34 @@
 2017-11-29  Youenn Fablet  <youenn@apple.com>
 
+        Add support for service worker generated redirections
+        https://bugs.webkit.org/show_bug.cgi?id=179498
+
+        Reviewed by Darin Adler.
+
+        Small refactoring to allow a service worker redirected fetch to follow the redirection through the service worker.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad): Make use of the loader request in case a network load is needed after a service worker redirection.
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp:
+        (WebKit::ServiceWorkerClientFetch::create):
+        (WebKit::ServiceWorkerClientFetch::~ServiceWorkerClientFetch):
+        (WebKit::ServiceWorkerClientFetch::ServiceWorkerClientFetch):
+        (WebKit::ServiceWorkerClientFetch::start):
+        (WebKit::ServiceWorkerClientFetch::didReceiveResponse): Check for response.
+        Generate redirected request if needed and call loader callback to process the redirection.
+        Adding some states so that if didFinish is called before the willSendRequest callback, redirection is followed.
+        (WebKit::ServiceWorkerClientFetch::didFinish):
+        In case redirection should be followed, wait for didFinish to follow it.
+        This simplifies the model although introducing some limited latency.
+        * WebProcess/Storage/ServiceWorkerClientFetch.h:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::startFetch):
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::WebServiceWorkerProvider::handleFetch):
+
+2017-11-29  Youenn Fablet  <youenn@apple.com>
+
         Add support for FetchEvent.clientId
         https://bugs.webkit.org/show_bug.cgi?id=180052
 

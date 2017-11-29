@@ -50,6 +50,7 @@ enum HTTPBodyUpdatePolicy {
 };
 
 class ResourceRequest;
+class ResourceResponse;
 
 // Do not use this type directly.  Use ResourceRequest instead.
 class ResourceRequestBase {
@@ -63,6 +64,8 @@ public:
 
     WEBCORE_EXPORT const URL& url() const;
     WEBCORE_EXPORT void setURL(const URL& url);
+
+    WEBCORE_EXPORT ResourceRequest redirectedRequest(const ResourceResponse&, bool shouldClearReferrerOnHTTPSToHTTPRedirect) const;
 
     WEBCORE_EXPORT void removeCredentials();
 
@@ -170,7 +173,7 @@ public:
     WEBCORE_EXPORT static void setDefaultAllowCookies(bool);
 #endif
 
-    static bool compare(const ResourceRequest&, const ResourceRequest&);
+    WEBCORE_EXPORT static bool equal(const ResourceRequest&, const ResourceRequest&);
 
 protected:
     // Used when ResourceRequest is initialized from a platform representation of the request
@@ -234,7 +237,7 @@ private:
 
 bool equalIgnoringHeaderFields(const ResourceRequestBase&, const ResourceRequestBase&);
 
-inline bool operator==(const ResourceRequest& a, const ResourceRequest& b) { return ResourceRequestBase::compare(a, b); }
+inline bool operator==(const ResourceRequest& a, const ResourceRequest& b) { return ResourceRequestBase::equal(a, b); }
 inline bool operator!=(ResourceRequest& a, const ResourceRequest& b) { return !(a == b); }
 
 WEBCORE_EXPORT unsigned initializeMaximumHTTPConnectionCountPerHost();

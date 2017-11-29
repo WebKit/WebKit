@@ -47,6 +47,8 @@ public:
     enum class Type { Basic, Cors, Default, Error, Opaque, Opaqueredirect };
     enum class Tainting { Basic, Cors, Opaque, Opaqueredirect };
 
+    static bool isRedirectionStatusCode(int code) { return code == 301 || code == 302 || code == 303 || code == 307 || code == 308; }
+
     struct CrossThreadData {
         CrossThreadData(const CrossThreadData&) = delete;
         CrossThreadData& operator=(const CrossThreadData&) = delete;
@@ -88,6 +90,7 @@ public:
 
     WEBCORE_EXPORT int httpStatusCode() const;
     WEBCORE_EXPORT void setHTTPStatusCode(int);
+    bool isRedirection() const { return isRedirectionStatusCode(m_httpStatusCode); }
 
     WEBCORE_EXPORT const String& httpStatusText() const;
     WEBCORE_EXPORT void setHTTPStatusText(const String&);
