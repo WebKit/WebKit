@@ -1,3 +1,21 @@
+2017-11-29  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Trying to use iOS versions from machines without iOS SDKs doesn't make sense
+        https://bugs.webkit.org/show_bug.cgi?id=179534
+        <rdar://problem/35469509>
+
+        Reviewed by Brent Fulgham.
+
+        Provide more specific information in builders.py so that machines do not try and calculate
+        an iOS SDK version while running tests.
+
+        * Scripts/webkitpy/port/builders.py: Explicitly specify a version for iOS Simulator.
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort._version_from_name): Attempt to extract the iOS version from the name
+        of the port.
+        (IOSSimulatorPort.ios_version): Use specified iOS version if a version is detected in
+        in the provided name string (just like Mac).
+
 2017-11-29  Robin Morisset  <rmorisset@apple.com>
 
         The recursive tail call optimisation is wrong on closures

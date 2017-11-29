@@ -88,8 +88,8 @@ _fuzzy_matches = {
 
 
 _ports_without_builders = [
-    r"ios-simulator",
-    r"ios-simulator-wk2",
+    r"ios-simulator-11",
+    r"ios-simulator-11-wk2",
 ]
 
 
