@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/sw-test-pre.js"></script>
+<script>
+log("* Tests that self.registration always returns the same object");
+log("");
+
+navigator.serviceWorker.addEventListener("message", function(event) {
+    log(event.data);
+    finishSWTest();
+});
+
+navigator.serviceWorker.register("resources/ServiceWorkerGlobalScope_registration_SameObject-worker.js", { }).then(function(registration) {
+    registration.installing.postMessage("runTest");
+});
+</script>
+</body>
+</html>

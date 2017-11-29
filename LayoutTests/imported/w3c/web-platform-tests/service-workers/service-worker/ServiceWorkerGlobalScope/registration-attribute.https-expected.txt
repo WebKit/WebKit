@@ -1,6 +1,5 @@
 
-Harness Error (TIMEOUT), message = null
 
-FAIL Verify registration attributes on ServiceWorkerGlobalScope assert_unreached: unregister and register should not fail: TypeError: null is not an object (evaluating 'self.registration.scope') Reached unreachable code
-FAIL Verify registration attributes on ServiceWorkerGlobalScope of the newer worker assert_unreached: unregister and register should not fail: TypeError: null is not an object (evaluating 'self.registration.scope') Reached unreachable code
+FAIL Verify registration attributes on ServiceWorkerGlobalScope assert_equals: Service Worker should respond to fetch expected "updatefound,install,statechange(installed),statechange(activating),activate,statechange(activated),fetch" but got "{\"error\": {\"message\": \"\", \"code\": 404}}"
+FAIL Verify registration attributes on ServiceWorkerGlobalScope of the newer worker promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
 

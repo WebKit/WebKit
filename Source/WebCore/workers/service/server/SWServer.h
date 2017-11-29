@@ -121,7 +121,7 @@ public:
     void postTask(CrossThreadTask&&);
     void postTaskReply(CrossThreadTask&&);
 
-    void updateWorker(Connection&, const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, const URL&, const String& script, WorkerType);
+    void updateWorker(Connection&, const ServiceWorkerJobDataIdentifier&, SWServerRegistration&, const URL&, const String& script, WorkerType);
     void terminateWorker(SWServerWorker&);
     void fireInstallEvent(SWServerWorker&);
     void fireActivateEvent(SWServerWorker&);

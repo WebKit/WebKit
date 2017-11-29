@@ -37,7 +37,7 @@ using namespace JSC;
 void JSServiceWorkerGlobalScope::visitAdditionalChildren(SlotVisitor& visitor)
 {
     visitor.addOpaqueRoot(&wrapped().clients());
-    visitor.addOpaqueRoot(wrapped().registration());
+    visitor.addOpaqueRoot(&wrapped().registration());
 }
 
 } // namespace WebCore

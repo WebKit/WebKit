@@ -27,7 +27,7 @@
 
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerJobDataIdentifier.h"
-#include "ServiceWorkerRegistrationKey.h"
+#include "ServiceWorkerRegistrationData.h"
 #include "URL.h"
 #include "WorkerType.h"
 
@@ -37,7 +37,7 @@ namespace WebCore {
 
 struct ServiceWorkerContextData {
     ServiceWorkerJobDataIdentifier jobDataIdentifier;
-    ServiceWorkerRegistrationKey registrationKey;
+    ServiceWorkerRegistrationData registration;
     ServiceWorkerIdentifier serviceWorkerIdentifier;
     String script;
     URL scriptURL;
@@ -52,7 +52,7 @@ struct ServiceWorkerContextData {
 template<class Encoder>
 void ServiceWorkerContextData::encode(Encoder& encoder) const
 {
-    encoder << jobDataIdentifier << registrationKey << serviceWorkerIdentifier << script << scriptURL << workerType;
+    encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << scriptURL << workerType;
 }
 
 template<class Decoder>
@@ -63,8 +63,9 @@ std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder
     if (!jobDataIdentifier)
         return std::nullopt;
 
-    auto registrationKey = ServiceWorkerRegistrationKey::decode(decoder);
-    if (!registrationKey)
+    std::optional<ServiceWorkerRegistrationData> registration;
+    decoder >> registration;
+    if (!registration)
         return std::nullopt;
 
     auto serviceWorkerIdentifier = ServiceWorkerIdentifier::decode(decoder);
@@ -83,7 +84,7 @@ std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder
     if (!decoder.decodeEnum(workerType))
         return std::nullopt;
     
-    return {{ WTFMove(*jobDataIdentifier), WTFMove(*registrationKey), WTFMove(*serviceWorkerIdentifier), WTFMove(script), WTFMove(scriptURL), workerType }};
+    return {{ WTFMove(*jobDataIdentifier), WTFMove(*registration), WTFMove(*serviceWorkerIdentifier), WTFMove(script), WTFMove(scriptURL), workerType }};
 }
 
 } // namespace WebCore

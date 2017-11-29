@@ -1,3 +1,24 @@
+2017-11-29  Chris Dumez  <cdumez@apple.com>
+
+        Start exposing self.registration inside service workers
+        https://bugs.webkit.org/show_bug.cgi?id=180162
+
+        Reviewed by Brady Eidson.
+
+        Add layout test coverage.
+
+        * TestExpectations:
+        Skip test that covers self.registration.update() because it now times out. We do not support update()
+        on registrations inside service workers yet so the test times out waiting for the updatefound event
+        on the registration.
+
+        * http/tests/workers/service/ServiceWorkerGlobalScope_registration_SameObject-expected.txt: Added.
+        * http/tests/workers/service/ServiceWorkerGlobalScope_registration_SameObject.html: Added.
+        * http/tests/workers/service/resources/ServiceWorkerGlobalScope_registration_SameObject-worker.js: Added.
+        * http/tests/workers/service/resources/self_registration-worker.js: Added.
+        * http/tests/workers/service/self_registration-expected.txt: Added.
+        * http/tests/workers/service/self_registration.html: Added.
+
 2017-11-29  Javier M. Mellid  <jmunhoz@igalia.com>
 
         [GTK] Test gardening

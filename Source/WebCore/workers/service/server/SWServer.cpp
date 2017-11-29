@@ -344,11 +344,11 @@ void SWServer::serviceWorkerStoppedControllingClient(Connection& connection, Ser
     registration->removeClientUsingRegistration({ connection.identifier(), contextIdentifier });
 }
 
-void SWServer::updateWorker(Connection&, const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, const URL& url, const String& script, WorkerType type)
+void SWServer::updateWorker(Connection&, const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerRegistration& registration, const URL& url, const String& script, WorkerType type)
 {
     auto serviceWorkerIdentifier = generateServiceWorkerIdentifier();
 
-    ServiceWorkerContextData data = { jobDataIdentifier, registrationKey, serviceWorkerIdentifier, script, url, type };
+    ServiceWorkerContextData data = { jobDataIdentifier, registration.data(), serviceWorkerIdentifier, script, url, type };
 
     // Right now we only ever keep up to one connection to one SW context process.
     // And it should always exist if we're calling updateWorker
@@ -375,7 +375,7 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
     auto* connection = SWServerToContextConnection::globalServerToContextConnection();
     ASSERT(connection);
 
-    auto* registration = m_registrations.get(data.registrationKey);
+    auto* registration = m_registrations.get(data.registration.key);
     RELEASE_ASSERT(registration);
 
     auto result = m_workersByID.add(data.serviceWorkerIdentifier, SWServerWorker::create(*this, *registration, connection->identifier(), data.scriptURL, data.script, data.workerType, data.serviceWorkerIdentifier));

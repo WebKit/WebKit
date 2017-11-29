@@ -1,34 +1,34 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: TypeError: null is not an object (evaluating 'self.registration.scope')
-CONSOLE MESSAGE: line 50: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating 'registrations[0].unregister')
+  
 
+Harness Error (TIMEOUT), message = null
 
-FAIL Normal redirect to same-origin scope. assert_unreached: unregister and register should not fail: TypeError: null is not an object (evaluating 'self.registration.scope') Reached unreachable code
-FAIL Normal redirect to other-origin scope. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL SW-fallbacked redirect to same-origin out-scope. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL SW-fallbacked redirect to same-origin same-scope. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL SW-fallbacked redirect to same-origin other-scope. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL SW-fallbacked redirect to other-origin out-scope. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL SW-fallbacked redirect to other-origin in-scope. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL SW-generated redirect to same-origin out-scope. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL SW-generated redirect to same-origin same-scope. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL SW-generated redirect to same-origin other-scope. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL SW-generated redirect to other-origin out-scope. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL SW-generated redirect to other-origin in-scope. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL SW-fetched redirect to same-origin out-scope. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL SW-fetched redirect to same-origin same-scope. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL SW-fetched redirect to same-origin other-scope. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL SW-fetched redirect to other-origin out-scope. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL SW-fetched redirect to other-origin in-scope. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL Redirect to same-origin out-scope with opaque redirect response. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL Redirect to same-origin same-scope with opaque redirect response. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL Redirect to same-origin other-scope with opaque redirect response. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL Redirect to other-origin out-scope with opaque redirect response. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL Redirect to other-origin in-scope with opaque redirect response. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL No location redirect response. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL Redirect to same-origin out-scope with opaque redirect response which is passed through Cache. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL Redirect to same-origin same-scope with opaque redirect response which is passed through Cache. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL Redirect to same-origin other-scope with opaque redirect response which is passed through Cache. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL Redirect to other-origin out-scope with opaque redirect response which is passed through Cache. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL Redirect to other-origin in-scope with opaque redirect response which is passed through Cache. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
-FAIL No location redirect response via Cache. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.active')"
+FAIL Normal redirect to same-origin scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+FAIL Normal redirect to other-origin scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+FAIL SW-fallbacked redirect to same-origin out-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+FAIL SW-fallbacked redirect to same-origin same-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+FAIL SW-fallbacked redirect to same-origin other-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+FAIL SW-fallbacked redirect to other-origin out-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+FAIL SW-fallbacked redirect to other-origin in-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+TIMEOUT SW-generated redirect to same-origin out-scope. Test timed out
+NOTRUN SW-generated redirect to same-origin same-scope. 
+NOTRUN SW-generated redirect to same-origin other-scope. 
+NOTRUN SW-generated redirect to other-origin out-scope. 
+NOTRUN SW-generated redirect to other-origin in-scope. 
+NOTRUN SW-fetched redirect to same-origin out-scope. 
+NOTRUN SW-fetched redirect to same-origin same-scope. 
+NOTRUN SW-fetched redirect to same-origin other-scope. 
+NOTRUN SW-fetched redirect to other-origin out-scope. 
+NOTRUN SW-fetched redirect to other-origin in-scope. 
+NOTRUN Redirect to same-origin out-scope with opaque redirect response. 
+NOTRUN Redirect to same-origin same-scope with opaque redirect response. 
+NOTRUN Redirect to same-origin other-scope with opaque redirect response. 
+NOTRUN Redirect to other-origin out-scope with opaque redirect response. 
+NOTRUN Redirect to other-origin in-scope with opaque redirect response. 
+NOTRUN No location redirect response. 
+NOTRUN Redirect to same-origin out-scope with opaque redirect response which is passed through Cache. 
+NOTRUN Redirect to same-origin same-scope with opaque redirect response which is passed through Cache. 
+NOTRUN Redirect to same-origin other-scope with opaque redirect response which is passed through Cache. 
+NOTRUN Redirect to other-origin out-scope with opaque redirect response which is passed through Cache. 
+NOTRUN Redirect to other-origin in-scope with opaque redirect response which is passed through Cache. 
+NOTRUN No location redirect response via Cache. 
 

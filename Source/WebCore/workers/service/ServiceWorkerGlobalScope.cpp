@@ -30,23 +30,19 @@
 
 #include "ServiceWorkerClients.h"
 #include "ServiceWorkerThread.h"
+#include "WorkerNavigator.h"
 
 namespace WebCore {
 
 ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(const ServiceWorkerContextData& data, const URL& url, const String& identifier, const String& userAgent, bool isOnline, ServiceWorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, PAL::SessionID sessionID)
     : WorkerGlobalScope(url, identifier, userAgent, isOnline, thread, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, connectionProxy, socketProvider, sessionID)
     , m_contextData(crossThreadCopy(data))
+    , m_registration(ServiceWorkerRegistration::getOrCreate(*this, navigator().serviceWorker(), WTFMove(m_contextData.registration)))
     , m_clients(ServiceWorkerClients::create(*this))
 {
 }
 
 ServiceWorkerGlobalScope::~ServiceWorkerGlobalScope() = default;
-
-ServiceWorkerRegistration* ServiceWorkerGlobalScope::registration()
-{
-    // FIXME: implement this.
-    return nullptr;
-}
 
 void ServiceWorkerGlobalScope::skipWaiting(Ref<DeferredPromise>&&)
 {

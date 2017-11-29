@@ -1,0 +1,8 @@
+* Add basic testing for ServiceWorkerGlobalScope.registration
+
+Received install event
+* self.registration
+scope: http://127.0.0.1:8000/workers/service/
+updateViaCache: imports
+
+

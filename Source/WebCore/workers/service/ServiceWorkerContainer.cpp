@@ -422,7 +422,7 @@ SWClientConnection& ServiceWorkerContainer::ensureSWClientConnection()
 
 void ServiceWorkerContainer::addRegistration(ServiceWorkerRegistration& registration)
 {
-    m_swConnection->addServiceWorkerRegistrationInServer(registration.identifier());
+    ensureSWClientConnection().addServiceWorkerRegistrationInServer(registration.identifier());
     m_registrations.add(registration.identifier(), &registration);
 }
 

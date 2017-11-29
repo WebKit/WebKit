@@ -49,7 +49,7 @@ public:
     bool isServiceWorkerGlobalScope() const final { return true; }
 
     ServiceWorkerClients& clients() { return m_clients.get(); }
-    ServiceWorkerRegistration* registration();
+    ServiceWorkerRegistration& registration() { return m_registration.get(); }
     
     void skipWaiting(Ref<DeferredPromise>&&);
 
@@ -61,6 +61,7 @@ private:
     ServiceWorkerGlobalScope(const ServiceWorkerContextData&, const URL&, const String& identifier, const String& userAgent, bool isOnline, ServiceWorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, PAL::SessionID);
 
     ServiceWorkerContextData m_contextData;
+    Ref<ServiceWorkerRegistration> m_registration;
     Ref<ServiceWorkerClients> m_clients;
 };
 
