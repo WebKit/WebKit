@@ -1,3 +1,52 @@
+2017-11-28  JF Bastien  <jfbastien@apple.com>
+
+        Strict and sloppy functions shouldn't share structure
+        https://bugs.webkit.org/show_bug.cgi?id=180103
+        <rdar://problem/35667847>
+
+        Reviewed by Saam Barati.
+
+        * stress/get-by-id-strict-arguments.js: Added. Used to not throw
+        because the IC was wrong.
+        (foo):
+        (bar):
+        (baz):
+        (catch):
+        * stress/get-by-id-strict-callee.js: Added. Not strictly necessary
+        in this patch, but may as well test odd strict mode corner cases.
+        (bar):
+        (baz):
+        (catch):
+        * stress/get-by-id-strict-caller.js: Added. Also IC'd wrong.
+        (foo):
+        (bar):
+        (baz):
+        (catch):
+        * stress/get-by-id-strict-nested-arguments-2.js: Added. Same as
+        next file, but with invalidation of the FunctionExecutable's
+        singletonFunction() to hit SpeculativeJIT::compileNewFunction's
+        slower path.
+        (foo):
+        (bar.const.x):
+        (bar.const.y):
+        (bar):
+        (catch):
+        * stress/get-by-id-strict-nested-arguments.js: Added. Make sure
+        strict nesting works correctly.
+        (foo):
+        (bar.baz):
+        (bar):
+        * stress/strict-function-structure.js: Added. The test used to
+        assert in objectProtoFuncHasOwnProperty.
+        (foo):
+        (bar):
+        (baz):
+        * stress/strict-nested-function-structure.js: Added. Nesting.
+        (foo):
+        (bar):
+        (baz.boo):
+        (baz):
+
 2017-11-29  Robin Morisset  <rmorisset@apple.com>
 
         The recursive tail call optimisation is wrong on closures

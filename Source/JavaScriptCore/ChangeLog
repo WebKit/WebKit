@@ -1,3 +1,38 @@
+2017-11-28  JF Bastien  <jfbastien@apple.com>
+
+        Strict and sloppy functions shouldn't share structure
+        https://bugs.webkit.org/show_bug.cgi?id=180103
+        <rdar://problem/35667847>
+
+        Reviewed by Saam Barati.
+
+        Sloppy and strict functions don't act the same when it comes to
+        arguments, caller, and callee. Sharing a structure means that
+        anything that is cached gets shared, and that's incorrect.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunction):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::create): the second ::create is always strict
+        because it applies to native functions.
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::createWithInvalidatedReallocationWatchpoint):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::strictFunctionStructure const):
+        (JSC::JSGlobalObject::sloppyFunctionStructure const):
+        (JSC::JSGlobalObject::nativeStdFunctionStructure const):
+        (JSC::JSGlobalObject::functionStructure const): Deleted. Renamed.
+        (JSC::JSGlobalObject::namedFunctionStructure const): Deleted. Drive-by, unused.
+
 2017-11-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Add MacroAssembler::getEffectiveAddress in all platforms

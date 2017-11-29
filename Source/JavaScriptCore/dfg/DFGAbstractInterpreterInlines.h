@@ -2298,8 +2298,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case NewFunction:
-        forNode(node).set(
-            m_graph, m_codeBlock->globalObjectFor(node->origin.semantic)->functionStructure());
+        if (node->castOperand<FunctionExecutable*>()->isStrictMode()) {
+            forNode(node).set(
+                m_graph, m_codeBlock->globalObjectFor(node->origin.semantic)->strictFunctionStructure());
+        } else {
+            forNode(node).set(
+                m_graph, m_codeBlock->globalObjectFor(node->origin.semantic)->sloppyFunctionStructure());
+        }
         break;
         
     case GetCallee:

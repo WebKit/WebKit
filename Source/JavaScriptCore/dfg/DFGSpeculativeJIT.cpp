@@ -6781,10 +6781,22 @@ void SpeculativeJIT::compileNewFunction(Node* node)
     }
 
     RegisteredStructure structure = m_jit.graph().registerStructure(
-        nodeType == NewGeneratorFunction ? m_jit.graph().globalObjectFor(node->origin.semantic)->generatorFunctionStructure() :
-        nodeType == NewAsyncFunction ? m_jit.graph().globalObjectFor(node->origin.semantic)->asyncFunctionStructure() :
-        nodeType == NewAsyncGeneratorFunction ? m_jit.graph().globalObjectFor(node->origin.semantic)->asyncGeneratorFunctionStructure() :
-        m_jit.graph().globalObjectFor(node->origin.semantic)->functionStructure());
+        [&] () {
+            switch (nodeType) {
+            case NewGeneratorFunction:
+                return m_jit.graph().globalObjectFor(node->origin.semantic)->generatorFunctionStructure();
+            case NewAsyncFunction:
+                return m_jit.graph().globalObjectFor(node->origin.semantic)->asyncFunctionStructure();
+            case NewAsyncGeneratorFunction:
+                return m_jit.graph().globalObjectFor(node->origin.semantic)->asyncGeneratorFunctionStructure();
+            case NewFunction:
+                if (node->castOperand<FunctionExecutable*>()->isStrictMode())
+                    return m_jit.graph().globalObjectFor(node->origin.semantic)->strictFunctionStructure();
+                return m_jit.graph().globalObjectFor(node->origin.semantic)->sloppyFunctionStructure();
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        }());
     
     GPRTemporary result(this);
     GPRTemporary scratch1(this);

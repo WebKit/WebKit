@@ -4737,11 +4737,25 @@ private:
             return;
         }
         
+
         RegisteredStructure structure = m_graph.registerStructure(
-            isGeneratorFunction ? m_graph.globalObjectFor(m_node->origin.semantic)->generatorFunctionStructure() :
-            isAsyncFunction ? m_graph.globalObjectFor(m_node->origin.semantic)->asyncFunctionStructure() :
-            isAsyncGeneratorFunction ? m_graph.globalObjectFor(m_node->origin.semantic)->asyncGeneratorFunctionStructure() :
-            m_graph.globalObjectFor(m_node->origin.semantic)->functionStructure());
+            [&] () {
+                switch (m_node->op()) {
+                case NewGeneratorFunction:
+                    return m_graph.globalObjectFor(m_node->origin.semantic)->generatorFunctionStructure();
+                case NewAsyncFunction:
+                    return m_graph.globalObjectFor(m_node->origin.semantic)->asyncFunctionStructure();
+                case NewAsyncGeneratorFunction:
+                    return m_graph.globalObjectFor(m_node->origin.semantic)->asyncGeneratorFunctionStructure();
+                case NewFunction:
+                    if (m_node->castOperand<FunctionExecutable*>()->isStrictMode())
+                        return m_graph.globalObjectFor(m_node->origin.semantic)->strictFunctionStructure();
+                    return m_graph.globalObjectFor(m_node->origin.semantic)->sloppyFunctionStructure();
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+            }());
         
         LBasicBlock slowPath = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
