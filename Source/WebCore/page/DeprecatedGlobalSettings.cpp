@@ -141,7 +141,10 @@ void DeprecatedGlobalSettings::setGStreamerEnabled(bool enabled)
         return;
 
     gGStreamerEnabled = enabled;
+
+#if ENABLE(VIDEO)
     HTMLMediaElement::resetMediaEngines();
+#endif
 }
 #endif
 
