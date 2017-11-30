@@ -104,10 +104,14 @@ inline id _Nullable insecurelyUnarchiveObjectOfClassFromData(NSData * _Nonnull d
 #pragma clang diagnostic pop
 }
 
-inline RetainPtr<NSKeyedArchiver> secureArchiverFromMutableData(NSMutableData *_Nonnull mutableData)
+inline RetainPtr<NSKeyedArchiver> secureArchiver()
 {
-    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:mutableData];
+#if USE(SECURE_ARCHIVER_API)
+    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initRequiringSecureCoding:YES];
+#else
+    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] init];
     [archiver setRequiresSecureCoding:YES];
+#endif
     return adoptNS(archiver);
 }
 

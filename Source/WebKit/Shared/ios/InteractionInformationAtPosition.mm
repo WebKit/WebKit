@@ -73,12 +73,19 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
     encoder << isDataDetectorLink;
     if (isDataDetectorLink) {
         encoder << dataDetectorIdentifier;
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200)
         RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
         auto archiver = secureArchiverFromMutableData(data.get());
         [archiver encodeObject:dataDetectorResults.get() forKey:@"dataDetectorResults"];
         [archiver finishEncoding];
         
-        IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));        
+        IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));
+#else
+        auto archiver = secureArchiver();
+        [archiver encodeObject:dataDetectorResults.get() forKey:@"dataDetectorResults"];
+
+        IPC::encode(encoder, reinterpret_cast<CFDataRef>(archiver.get().encodedData));
+#endif
     }
 #endif
 }

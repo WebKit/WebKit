@@ -51,11 +51,21 @@ namespace IPC {
 
 void ArgumentCoder<WebCore::Payment>::encode(Encoder& encoder, const WebCore::Payment& payment)
 {
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200)
     auto data = adoptNS([[NSMutableData alloc] init]);
-    auto archiver = secureArchiverFromMutableData(data.get());
+    auto archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
+
+    [archiver setRequiresSecureCoding:YES];
+#else
+    auto archiver = secureArchiver();
+#endif
 
     [archiver encodeObject:payment.pkPayment() forKey:NSKeyedArchiveRootObjectKey];
     [archiver finishEncoding];
+
+#if (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
+    auto data = archiver.get().encodedData;
+#endif
 
     encoder << DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
 }
@@ -103,11 +113,21 @@ std::optional<WebCore::PaymentAuthorizationResult> ArgumentCoder<WebCore::Paymen
 
 void ArgumentCoder<WebCore::PaymentContact>::encode(Encoder& encoder, const WebCore::PaymentContact& paymentContact)
 {
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200)
     auto data = adoptNS([[NSMutableData alloc] init]);
-    auto archiver = secureArchiverFromMutableData(data.get());
+    auto archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
+
+    [archiver setRequiresSecureCoding:YES];
+#else
+    auto archiver = secureArchiver();
+#endif
 
     [archiver encodeObject:paymentContact.pkContact() forKey:NSKeyedArchiveRootObjectKey];
     [archiver finishEncoding];
+
+#if (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
+    auto data = archiver.get().encodedData;
+#endif
 
     encoder << DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
 }
@@ -161,11 +181,21 @@ std::optional<WebCore::PaymentError> ArgumentCoder<WebCore::PaymentError>::decod
 
 void ArgumentCoder<WebCore::PaymentMerchantSession>::encode(Encoder& encoder, const WebCore::PaymentMerchantSession& paymentMerchantSession)
 {
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200)
     auto data = adoptNS([[NSMutableData alloc] init]);
-    auto archiver = secureArchiverFromMutableData(data.get());
+    auto archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
+
+    [archiver setRequiresSecureCoding:YES];
+#else
+    auto archiver = secureArchiver();
+#endif
 
     [archiver encodeObject:paymentMerchantSession.pkPaymentMerchantSession() forKey:NSKeyedArchiveRootObjectKey];
     [archiver finishEncoding];
+
+#if (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
+    auto data = archiver.get().encodedData;
+#endif
 
     encoder << DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
 }
@@ -192,11 +222,21 @@ bool ArgumentCoder<WebCore::PaymentMerchantSession>::decode(Decoder& decoder, We
 
 void ArgumentCoder<WebCore::PaymentMethod>::encode(Encoder& encoder, const WebCore::PaymentMethod& paymentMethod)
 {
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200)
     auto data = adoptNS([[NSMutableData alloc] init]);
-    auto archiver = secureArchiverFromMutableData(data.get());
+    auto archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
+
+    [archiver setRequiresSecureCoding:YES];
+#else
+    auto archiver = secureArchiver();
+#endif
 
     [archiver encodeObject:paymentMethod.pkPaymentMethod() forKey:NSKeyedArchiveRootObjectKey];
     [archiver finishEncoding];
+
+#if (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
+    auto data = archiver.get().encodedData;
+#endif
 
     encoder << DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
 }

@@ -72,17 +72,19 @@ RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const Re
     if (!nsResponse)
         return nullptr;
 
-    CFMutableDataRef responseData = CFDataCreateMutable(0, 0);
-
-    auto archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:(NSMutableData *)responseData]);
 #if USE(SECURE_ARCHIVER_API)
+    auto archiver = secureArchiver();
+    [archiver encodeObject:nsResponse forKey:LegacyWebArchiveResourceResponseKey];
+    return retainPtr((__bridge CFDataRef)archiver.get().encodedData);
+#else
     // Because of <rdar://problem/34063313> we can't use this for encoding in older OS's.
-    [archiver setRequiresSecureCoding:YES];
-#endif
+    CFMutableDataRef responseData = CFDataCreateMutable(0, 0);
+    auto archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:(NSMutableData *)responseData]);
     [archiver encodeObject:nsResponse forKey:LegacyWebArchiveResourceResponseKey];
     [archiver finishEncoding];
 
     return adoptCF(responseData);
+#endif
 }
 
 }

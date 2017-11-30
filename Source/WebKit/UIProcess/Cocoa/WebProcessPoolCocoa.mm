@@ -215,8 +215,14 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     parameters.fontWhitelist = m_fontWhitelist;
 
     if (m_bundleParameters) {
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200)
         auto data = adoptNS([[NSMutableData alloc] init]);
-        auto keyedArchiver = secureArchiverFromMutableData(data.get());
+        auto keyedArchiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
+
+        [keyedArchiver setRequiresSecureCoding:YES];
+#else
+        auto keyedArchiver = secureArchiver();
+#endif
 
         @try {
             [keyedArchiver encodeObject:m_bundleParameters.get() forKey:@"parameters"];
@@ -224,6 +230,10 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
         } @catch (NSException *exception) {
             LOG_ERROR("Failed to encode bundle parameters: %@", exception);
         }
+
+#if (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
+        auto data = retainPtr(keyedArchiver.get().encodedData);
+#endif
 
         parameters.bundleParameterData = API::Data::createWithoutCopying((const unsigned char*)[data bytes], [data length], [] (unsigned char*, const void* data) {
             [(NSData *)data release];
