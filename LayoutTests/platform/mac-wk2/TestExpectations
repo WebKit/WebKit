@@ -796,7 +796,6 @@ webkit.org/b/176122 media/video-controls-drop-and-restore-timeline.html [ Pass F
 [ HighSierra+ ] http/tests/ssl/applepay/ApplePaySessionV3.html [ Pass ]
 # <rdar://problem/31634451>
 [ HighSierra+ ] http/tests/loading/resourceLoadStatistics/partitioned-cookies-with-and-without-user-interaction.html [ Pass ]
-[ HighSierra+ ] http/tests/loading/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion.html [ Pass ]
 [ HighSierra+ ] http/tests/loading/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-with-partitioning-timeout.html [ Pass Failure ]
 [ HighSierra+ ] http/tests/loading/resourceLoadStatistics/third-party-cookie-with-and-without-user-interaction.html [ Pass Failure ]
 [ HighSierra+ ] http/tests/resourceLoadStatistics/add-partitioning-to-redirect.html [ Pass ]
@@ -837,3 +836,4 @@ webkit.org/b/179773 imported/w3c/web-platform-tests/fetch/api/abort/serviceworke
 
 webkit.org/b/176078 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-onnegotiationneeded.html [ Pass Failure ]
 
+webkit.org/b/179644 [ HighSierra Release ] http/tests/loading/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion.html [ Pass Failure ]
