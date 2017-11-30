@@ -1,3 +1,14 @@
+2017-11-30  Mark Lam  <mark.lam@apple.com>
+
+        jsc shell's flashHeapAccess() should not do JS work after releasing access to the heap.
+        https://bugs.webkit.org/show_bug.cgi?id=180219
+        <rdar://problem/35696536>
+
+        Reviewed by Filip Pizlo.
+
+        * jsc.cpp:
+        (functionFlashHeapAccess):
+
 2017-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][FTL] operationHasIndexedProperty does not consider negative int32_t

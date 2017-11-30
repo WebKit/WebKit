@@ -1720,12 +1720,15 @@ EncodedJSValue JSC_HOST_CALL functionFlashHeapAccess(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     
-    vm.heap.releaseAccess();
+    double sleepTimeMs = 0;
     if (exec->argumentCount() >= 1) {
-        double ms = exec->argument(0).toNumber(exec);
+        sleepTimeMs = exec->argument(0).toNumber(exec);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        sleep(Seconds::fromMilliseconds(ms));
     }
+
+    vm.heap.releaseAccess();
+    if (sleepTimeMs)
+        sleep(Seconds::fromMilliseconds(sleepTimeMs));
     vm.heap.acquireAccess();
     return JSValue::encode(jsUndefined());
 }
