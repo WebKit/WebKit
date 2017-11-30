@@ -22,7 +22,7 @@ class LoggingAnnotator : public gl::DebugAnnotator
     void beginEvent(const wchar_t *eventName) override {}
     void endEvent() override {}
     void setMarker(const wchar_t *markerName) override {}
-    bool getStatus() override { return false; }
+    bool getStatus() override;
     void logMessage(const gl::LogMessage &msg) const override;
 };
 

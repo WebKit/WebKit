@@ -3,21 +3,30 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// DeferGlobalInitializers is an AST traverser that moves global initializers into a function, and
-// adds a function call to that function in the beginning of main().
-// This enables initialization of globals with uniforms or non-constant globals, as allowed by
-// the WebGL spec. Some initializers referencing non-constants may need to be unfolded into if
-// statements in HLSL - this kind of steps should be done after DeferGlobalInitializers is run.
+// DeferGlobalInitializers is an AST traverser that moves global initializers into a separate
+// function that is called in the beginning of main(). This enables initialization of globals with
+// uniforms or non-constant globals, as allowed by the WebGL spec. Some initializers referencing
+// non-constants may need to be unfolded into if statements in HLSL - this kind of steps should be
+// done after DeferGlobalInitializers is run. Note that it's important that the function definition
+// is at the end of the shader, as some globals may be declared after main().
+//
+// It can also initialize all uninitialized globals.
 //
 
 #ifndef COMPILER_TRANSLATOR_DEFERGLOBALINITIALIZERS_H_
 #define COMPILER_TRANSLATOR_DEFERGLOBALINITIALIZERS_H_
 
-class TIntermBlock;
-
 namespace sh
 {
-void DeferGlobalInitializers(TIntermBlock *root);
+
+class TIntermBlock;
+class TSymbolTable;
+
+void DeferGlobalInitializers(TIntermBlock *root,
+                             bool initializeUninitializedGlobals,
+                             bool canUseLoopsToInitialize,
+                             TSymbolTable *symbolTable);
+
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_DEFERGLOBALINITIALIZERS_H_

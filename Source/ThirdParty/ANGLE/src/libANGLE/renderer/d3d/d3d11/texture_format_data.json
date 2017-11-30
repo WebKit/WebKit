@@ -56,6 +56,15 @@
     "bits": { "red": 8, "green": 8, "blue": 8, "alpha": 8 },
     "glInternalFormat": "GL_BGRA8_EXT"
   },
+  "B8G8R8A8_UNORM_SRGB": {
+    "texFormat": "DXGI_FORMAT_B8G8R8A8_UNORM_SRGB",
+    "srvFormat": "DXGI_FORMAT_B8G8R8A8_UNORM_SRGB",
+    "rtvFormat": "DXGI_FORMAT_B8G8R8A8_UNORM_SRGB",
+    "channels": "bgra",
+    "componentType": "unorm",
+    "bits": {"red": 8, "green": 8, "blue": 8,"alpha": 8},
+    "siwzzleFormat": "GL_RGBA8"
+  },
   "BC1_RGBA_UNORM_BLOCK": {
     "texFormat": "DXGI_FORMAT_BC1_UNORM",
     "srvFormat": "DXGI_FORMAT_BC1_UNORM",

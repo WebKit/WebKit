@@ -19,7 +19,8 @@
 
 namespace gl
 {
-class VaryingPacking;
+class Context;
+struct ProgramLinkedResources;
 }
 
 namespace sh
@@ -29,27 +30,23 @@ struct BlockMemberInfo;
 
 namespace rx
 {
-class ContextImpl;
-
-using LinkResult = gl::ErrorOrResult<bool>;
-
 class ProgramImpl : angle::NonCopyable
 {
   public:
     ProgramImpl(const gl::ProgramState &state) : mState(state) {}
     virtual ~ProgramImpl() {}
-    virtual void destroy(const ContextImpl *contextImpl) {}
+    virtual void destroy(const gl::Context *context) {}
 
-    virtual LinkResult load(const ContextImpl *contextImpl,
-                            gl::InfoLog &infoLog,
-                            gl::BinaryInputStream *stream)  = 0;
-    virtual gl::Error save(gl::BinaryOutputStream *stream) = 0;
+    virtual gl::LinkResult load(const gl::Context *context,
+                                gl::InfoLog &infoLog,
+                                gl::BinaryInputStream *stream) = 0;
+    virtual void save(const gl::Context *context, gl::BinaryOutputStream *stream) = 0;
     virtual void setBinaryRetrievableHint(bool retrievable) = 0;
     virtual void setSeparable(bool separable)               = 0;
 
-    virtual LinkResult link(ContextImpl *contextImpl,
-                            const gl::VaryingPacking &packing,
-                            gl::InfoLog &infoLog) = 0;
+    virtual gl::LinkResult link(const gl::Context *context,
+                                const gl::ProgramLinkedResources &resources,
+                                gl::InfoLog &infoLog)                      = 0;
     virtual GLboolean validate(const gl::Caps &caps, gl::InfoLog *infoLog) = 0;
 
     virtual void setUniform1fv(GLint location, GLsizei count, const GLfloat *v) = 0;
@@ -74,23 +71,32 @@ class ProgramImpl : angle::NonCopyable
     virtual void setUniformMatrix3x4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) = 0;
     virtual void setUniformMatrix4x3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) = 0;
 
+    // Done in the back-end to avoid having to keep a system copy of uniform data.
+    virtual void getUniformfv(const gl::Context *context,
+                              GLint location,
+                              GLfloat *params) const = 0;
+    virtual void getUniformiv(const gl::Context *context, GLint location, GLint *params) const = 0;
+    virtual void getUniformuiv(const gl::Context *context,
+                               GLint location,
+                               GLuint *params) const = 0;
+
     // TODO: synchronize in syncState when dirty bits exist.
     virtual void setUniformBlockBinding(GLuint uniformBlockIndex, GLuint uniformBlockBinding) = 0;
 
-    // May only be called after a successful link operation.
-    // Return false for inactive blocks.
-    virtual bool getUniformBlockSize(const std::string &blockName, size_t *sizeOut) const = 0;
-
-    // May only be called after a successful link operation.
-    // Returns false for inactive members.
-    virtual bool getUniformBlockMemberInfo(const std::string &memberUniformName,
-                                           sh::BlockMemberInfo *memberInfoOut) const = 0;
     // CHROMIUM_path_rendering
     // Set parameters to control fragment shader input variable interpolation
     virtual void setPathFragmentInputGen(const std::string &inputName,
                                          GLenum genMode,
                                          GLint components,
                                          const GLfloat *coeffs) = 0;
+
+    // Implementation-specific method for ignoring unreferenced uniforms. Some implementations may
+    // perform more extensive analysis and ignore some locations that ANGLE doesn't detect as
+    // unreferenced. This method is not required to be overriden by a back-end.
+    virtual void markUnusedUniformLocations(std::vector<gl::VariableLocation> *uniformLocations,
+                                            std::vector<gl::SamplerBinding> *samplerBindings)
+    {
+    }
 
   protected:
     const gl::ProgramState &mState;

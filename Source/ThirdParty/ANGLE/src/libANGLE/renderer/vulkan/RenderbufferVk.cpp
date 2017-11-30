@@ -22,32 +22,45 @@ RenderbufferVk::~RenderbufferVk()
 {
 }
 
-gl::Error RenderbufferVk::setStorage(GLenum internalformat, size_t width, size_t height)
+gl::Error RenderbufferVk::setStorage(const gl::Context *context,
+                                     GLenum internalformat,
+                                     size_t width,
+                                     size_t height)
 {
     UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::InternalError();
 }
 
-gl::Error RenderbufferVk::setStorageMultisample(size_t samples,
+gl::Error RenderbufferVk::setStorageMultisample(const gl::Context *context,
+                                                size_t samples,
                                                 GLenum internalformat,
                                                 size_t width,
                                                 size_t height)
 {
     UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::InternalError();
 }
 
-gl::Error RenderbufferVk::setStorageEGLImageTarget(egl::Image *image)
+gl::Error RenderbufferVk::setStorageEGLImageTarget(const gl::Context *context, egl::Image *image)
 {
     UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::InternalError();
 }
 
-gl::Error RenderbufferVk::getAttachmentRenderTarget(const gl::FramebufferAttachment::Target &target,
+gl::Error RenderbufferVk::getAttachmentRenderTarget(const gl::Context *context,
+                                                    GLenum binding,
+                                                    const gl::ImageIndex &imageIndex,
                                                     FramebufferAttachmentRenderTarget **rtOut)
 {
     UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::InternalError();
+}
+
+gl::Error RenderbufferVk::initializeContents(const gl::Context *context,
+                                             const gl::ImageIndex &imageIndex)
+{
+    UNIMPLEMENTED();
+    return gl::NoError();
 }
 
 }  // namespace rx

@@ -32,6 +32,8 @@ enum class Format::ID
 {angle_format_enum}
 }};
 
+constexpr uint32_t kNumANGLEFormats = {num_angle_formats};
+
 }}  // namespace angle
 """
 
@@ -61,9 +63,18 @@ static constexpr rx::FastCopyFunctionMap NoCopyFunctions;
 
 constexpr Format g_formatInfoTable[] = {{
     // clang-format off
-    {{ Format::ID::NONE, GL_NONE, GL_NONE, nullptr, NoCopyFunctions, nullptr, GL_NONE, 0, 0, 0, 0, 0, 0 }},
+    {{ Format::ID::NONE, GL_NONE, GL_NONE, nullptr, NoCopyFunctions, nullptr, nullptr, GL_NONE, 0, 0, 0, 0, 0, 0 }},
 {angle_format_info_cases}    // clang-format on
 }};
+
+// static
+Format::ID Format::InternalFormatToID(GLenum internalFormat)
+{{
+    switch (internalFormat)
+    {{
+{angle_format_switch}
+    }}
+}}
 
 // static
 const Format &Format::Get(ID id)
@@ -110,10 +121,7 @@ def get_mip_generation_function(angle_format):
         return 'nullptr'
     return 'GenerateMip<' + channel_struct + '>'
 
-def get_color_read_function(angle_format):
-    channel_struct = get_channel_struct(angle_format)
-    if channel_struct == None:
-        return 'nullptr'
+def get_color_read_write_component_type(angle_format):
     component_type_map = {
         'uint': 'GLuint',
         'int': 'GLint',
@@ -121,9 +129,24 @@ def get_color_read_function(angle_format):
         'snorm': 'GLfloat',
         'float': 'GLfloat'
     }
-    return 'ReadColor<' + channel_struct + ', '+ component_type_map[angle_format['componentType']] + '>'
+    return component_type_map[angle_format['componentType']]
 
-format_entry_template = """    {{ Format::ID::{id}, {glInternalFormat}, {fboImplementationInternalFormat}, {mipGenerationFunction}, {fastCopyFunctions}, {colorReadFunction}, {namedComponentType}, {R}, {G}, {B}, {A}, {D}, {S} }},
+def get_color_read_function(angle_format):
+    channel_struct = get_channel_struct(angle_format)
+    if channel_struct == None:
+        return 'nullptr'
+    read_component_type = get_color_read_write_component_type(angle_format)
+    return 'ReadColor<' + channel_struct + ', '+ read_component_type + '>'
+
+def get_color_write_function(angle_format):
+    channel_struct = get_channel_struct(angle_format)
+    if channel_struct == None:
+        return 'nullptr'
+    write_component_type = get_color_read_write_component_type(angle_format)
+    return 'WriteColor<' + channel_struct + ', '+ write_component_type + '>'
+
+
+format_entry_template = """    {{ Format::ID::{id}, {glInternalFormat}, {fboImplementationInternalFormat}, {mipGenerationFunction}, {fastCopyFunctions}, {colorReadFunction}, {colorWriteFunction}, {namedComponentType}, {R}, {G}, {B}, {A}, {D}, {S} }},
 """
 
 def get_named_component_type(component_type):
@@ -172,6 +195,7 @@ def json_to_table_data(format_id, json, angle_to_gl):
     # Derived values.
     parsed["mipGenerationFunction"] = get_mip_generation_function(parsed)
     parsed["colorReadFunction"] = get_color_read_function(parsed)
+    parsed["colorWriteFunction"] = get_color_write_function(parsed)
 
     for channel in "ABDGLRS":
         if parsed["bits"] != None and channel in parsed["bits"]:
@@ -203,6 +227,15 @@ def gen_enum_string(all_angle):
         enum_data += ',\n    ' + format_id
     return enum_data
 
+def gen_map_switch_string(gl_to_angle):
+    switch_data = '';
+    for gl_format in gl_to_angle:
+        angle_format = gl_to_angle[gl_format]
+        switch_data += "        case " + gl_format + ":\nreturn Format::ID::" + angle_format + ";\n"
+    switch_data += "        default:\n"
+    switch_data += "            return Format::ID::NONE;"
+    return switch_data;
+
 gl_to_angle = angle_format.load_forward_table('angle_format_map.json')
 angle_to_gl = angle_format.load_inverse_table('angle_format_map.json')
 data_source_name = 'angle_format_data.json'
@@ -211,21 +244,25 @@ all_angle = angle_to_gl.keys()
 
 angle_format_cases = parse_angle_format_table(
     all_angle, json_data, angle_to_gl)
+switch_data = gen_map_switch_string(gl_to_angle)
 output_cpp = template_autogen_inl.format(
     script_name = sys.argv[0],
     copyright_year = date.today().year,
     angle_format_info_cases = angle_format_cases,
+    angle_format_switch = switch_data,
     data_source_name = data_source_name)
 with open('Format_table_autogen.cpp', 'wt') as out_file:
     out_file.write(output_cpp)
     out_file.close()
 
 enum_data = gen_enum_string(all_angle)
+num_angle_formats = len(all_angle)
 output_h = template_autogen_h.format(
     script_name = sys.argv[0],
     copyright_year = date.today().year,
     angle_format_enum = enum_data,
-    data_source_name = data_source_name)
+    data_source_name = data_source_name,
+    num_angle_formats = num_angle_formats)
 with open('Format_ID_autogen.inl', 'wt') as out_file:
     out_file.write(output_h)
     out_file.close()

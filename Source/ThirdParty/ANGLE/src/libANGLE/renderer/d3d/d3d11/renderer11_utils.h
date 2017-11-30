@@ -18,8 +18,9 @@
 
 #include "libANGLE/Caps.h"
 #include "libANGLE/Error.h"
-#include "libANGLE/renderer/d3d/d3d11/texture_format_table.h"
 #include "libANGLE/renderer/d3d/RendererD3D.h"
+#include "libANGLE/renderer/d3d/d3d11/ResourceManager11.h"
+#include "libANGLE/renderer/d3d/d3d11/texture_format_table.h"
 
 namespace gl
 {
@@ -42,7 +43,7 @@ D3D11_BLEND ConvertBlendFunc(GLenum glBlend, bool isAlpha);
 D3D11_BLEND_OP ConvertBlendOp(GLenum glBlendOp);
 UINT8 ConvertColorMask(bool maskRed, bool maskGreen, bool maskBlue, bool maskAlpha);
 
-D3D11_CULL_MODE ConvertCullMode(bool cullEnabled, GLenum cullMode);
+D3D11_CULL_MODE ConvertCullMode(bool cullEnabled, gl::CullFaceMode cullMode);
 
 D3D11_COMPARISON_FUNC ConvertComparison(GLenum comparison);
 D3D11_DEPTH_WRITE_MASK ConvertDepthMask(bool depthWriteEnabled);
@@ -55,7 +56,7 @@ UINT ConvertMaxAnisotropy(float maxAnisotropy, D3D_FEATURE_LEVEL featureLevel);
 
 D3D11_QUERY ConvertQueryType(GLenum queryType);
 
-UINT8 GetColorMask(const gl::InternalFormat *formatInfo);
+UINT8 GetColorMask(const gl::InternalFormat &formatInfo);
 
 }  // namespace gl_d3d11
 
@@ -69,6 +70,8 @@ unsigned int GetReservedFragmentUniformVectors(D3D_FEATURE_LEVEL featureLevel);
 gl::Version GetMaximumClientVersion(D3D_FEATURE_LEVEL featureLevel);
 void GenerateCaps(ID3D11Device *device, ID3D11DeviceContext *deviceContext, const Renderer11DeviceCaps &renderer11DeviceCaps, gl::Caps *caps,
                   gl::TextureCapsMap *textureCapsMap, gl::Extensions *extensions, gl::Limitations *limitations);
+
+void GetSamplePosition(GLsizei sampleCount, size_t index, GLfloat *xy);
 
 }  // namespace d3d11_gl
 
@@ -114,45 +117,45 @@ struct PositionLayerTexCoord3DVertex
 void SetPositionLayerTexCoord3DVertex(PositionLayerTexCoord3DVertex* vertex, float x, float y,
                                       unsigned int layer, float u, float v, float s);
 
-template <typename T>
-struct PositionDepthColorVertex
+struct PositionVertex
 {
-    float x, y, z;
-    T r, g, b, a;
+    float x, y, z, w;
 };
 
-template <typename T>
-void SetPositionDepthColorVertex(PositionDepthColorVertex<T>* vertex, float x, float y, float z,
-                                 const gl::Color<T> &color)
+struct BlendStateKey final
 {
-    vertex->x = x;
-    vertex->y = y;
-    vertex->z = z;
-    vertex->r = color.red;
-    vertex->g = color.green;
-    vertex->b = color.blue;
-    vertex->a = color.alpha;
-}
+    // This will zero-initialize the struct, including padding.
+    BlendStateKey();
 
-struct BlendStateKey
-{
     gl::BlendState blendState;
-    bool mrt;
+
+    // An int so struct size rounds nicely.
+    uint32_t rtvMax;
+
     uint8_t rtvMasks[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT];
 };
 
-HRESULT SetDebugName(ID3D11DeviceChild *resource, const char *name);
+bool operator==(const BlendStateKey &a, const BlendStateKey &b);
+bool operator!=(const BlendStateKey &a, const BlendStateKey &b);
 
-template <typename T>
-HRESULT SetDebugName(angle::ComPtr<T> &resource, const char *name)
+struct RasterizerStateKey final
 {
-    return SetDebugName(resource.Get(), name);
-}
+    // This will zero-initialize the struct, including padding.
+    RasterizerStateKey();
+
+    gl::RasterizerState rasterizerState;
+
+    // Use a 32-bit int to round the struct nicely.
+    uint32_t scissorEnabled;
+};
+
+bool operator==(const RasterizerStateKey &a, const RasterizerStateKey &b);
+bool operator!=(const RasterizerStateKey &a, const RasterizerStateKey &b);
 
 template <typename outType>
 outType* DynamicCastComObject(IUnknown* object)
 {
-    outType *outObject = NULL;
+    outType *outObject = nullptr;
     HRESULT result = object->QueryInterface(__uuidof(outType), reinterpret_cast<void**>(&outObject));
     if (SUCCEEDED(result))
     {
@@ -161,7 +164,7 @@ outType* DynamicCastComObject(IUnknown* object)
     else
     {
         SafeRelease(outObject);
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -180,143 +183,63 @@ inline bool isDeviceLostError(HRESULT errorCode)
     }
 }
 
-inline ID3D11VertexShader *CompileVS(ID3D11Device *device, const BYTE *byteCode, size_t N, const char *name)
-{
-    ID3D11VertexShader *vs = nullptr;
-    HRESULT result = device->CreateVertexShader(byteCode, N, nullptr, &vs);
-    ASSERT(SUCCEEDED(result));
-    if (SUCCEEDED(result))
-    {
-        SetDebugName(vs, name);
-        return vs;
-    }
-    return nullptr;
-}
-
-template <unsigned int N>
-ID3D11VertexShader *CompileVS(ID3D11Device *device, const BYTE (&byteCode)[N], const char *name)
-{
-    return CompileVS(device, byteCode, N, name);
-}
-
-inline ID3D11GeometryShader *CompileGS(ID3D11Device *device, const BYTE *byteCode, size_t N, const char *name)
-{
-    ID3D11GeometryShader *gs = nullptr;
-    HRESULT result = device->CreateGeometryShader(byteCode, N, nullptr, &gs);
-    ASSERT(SUCCEEDED(result));
-    if (SUCCEEDED(result))
-    {
-        SetDebugName(gs, name);
-        return gs;
-    }
-    return nullptr;
-}
-
-template <unsigned int N>
-ID3D11GeometryShader *CompileGS(ID3D11Device *device, const BYTE (&byteCode)[N], const char *name)
-{
-    return CompileGS(device, byteCode, N, name);
-}
-
-inline ID3D11PixelShader *CompilePS(ID3D11Device *device, const BYTE *byteCode, size_t N, const char *name)
-{
-    ID3D11PixelShader *ps = nullptr;
-    HRESULT result = device->CreatePixelShader(byteCode, N, nullptr, &ps);
-    ASSERT(SUCCEEDED(result));
-    if (SUCCEEDED(result))
-    {
-        SetDebugName(ps, name);
-        return ps;
-    }
-    return nullptr;
-}
-
-template <unsigned int N>
-ID3D11PixelShader *CompilePS(ID3D11Device *device, const BYTE (&byteCode)[N], const char *name)
-{
-    return CompilePS(device, byteCode, N, name);
-}
-
-template <typename ResourceType>
-class LazyResource : public angle::NonCopyable
+template <ResourceType ResourceT>
+class LazyResource : angle::NonCopyable
 {
   public:
-    LazyResource() : mResource(nullptr), mAssociatedDevice(nullptr) {}
-    virtual ~LazyResource() { release(); }
+    constexpr LazyResource() : mResource() {}
+    virtual ~LazyResource() {}
 
-    virtual ResourceType *resolve(ID3D11Device *device) = 0;
-    void release() { SafeRelease(mResource); }
+    virtual gl::Error resolve(Renderer11 *renderer) = 0;
+    void reset() { mResource.reset(); }
+    GetD3D11Type<ResourceT> *get() const
+    {
+        ASSERT(mResource.valid());
+        return mResource.get();
+    }
+
+    const Resource11<GetD3D11Type<ResourceT>> &getObj() const { return mResource; }
 
   protected:
-    void checkAssociatedDevice(ID3D11Device *device);
+    LazyResource(LazyResource &&other) : mResource(std::move(other.mResource)) {}
 
-    ResourceType *mResource;
-    ID3D11Device *mAssociatedDevice;
+    // Specialized in the cpp file to avoid MSVS/Clang specific code.
+    gl::Error resolveImpl(Renderer11 *renderer,
+                          const GetDescType<ResourceT> &desc,
+                          GetInitDataType<ResourceT> *initData,
+                          const char *name);
+
+    Resource11<GetD3D11Type<ResourceT>> mResource;
 };
 
-template <typename ResourceType>
-void LazyResource<ResourceType>::checkAssociatedDevice(ID3D11Device *device)
-{
-    ASSERT(mAssociatedDevice == nullptr || device == mAssociatedDevice);
-    mAssociatedDevice = device;
-}
-
 template <typename D3D11ShaderType>
-class LazyShader final : public LazyResource<D3D11ShaderType>
+class LazyShader final : public LazyResource<GetResourceTypeFromD3D11<D3D11ShaderType>()>
 {
   public:
     // All parameters must be constexpr. Not supported in VS2013.
-    LazyShader(const BYTE *byteCode,
-               size_t byteCodeSize,
-               const char *name)
-        : mByteCode(byteCode),
-          mByteCodeSize(byteCodeSize),
-          mName(name)
+    constexpr LazyShader(const BYTE *byteCode, size_t byteCodeSize, const char *name)
+        : mByteCode(byteCode, byteCodeSize), mName(name)
     {
     }
 
-    D3D11ShaderType *resolve(ID3D11Device *device) override;
+    constexpr LazyShader(LazyShader &&shader)
+        : LazyResource<GetResourceTypeFromD3D11<D3D11ShaderType>()>(std::move(shader)),
+          mByteCode(std::move(shader.mByteCode)),
+          mName(shader.mName)
+    {
+    }
+
+    gl::Error resolve(Renderer11 *renderer) override
+    {
+        return this->resolveImpl(renderer, mByteCode, nullptr, mName);
+    }
 
   private:
-    const BYTE *mByteCode;
-    size_t mByteCodeSize;
+    ShaderData mByteCode;
     const char *mName;
 };
 
-template <>
-inline ID3D11VertexShader *LazyShader<ID3D11VertexShader>::resolve(ID3D11Device *device)
-{
-    checkAssociatedDevice(device);
-    if (mResource == nullptr)
-    {
-        mResource = CompileVS(device, mByteCode, mByteCodeSize, mName);
-    }
-    return mResource;
-}
-
-template <>
-inline ID3D11GeometryShader *LazyShader<ID3D11GeometryShader>::resolve(ID3D11Device *device)
-{
-    checkAssociatedDevice(device);
-    if (mResource == nullptr)
-    {
-        mResource = CompileGS(device, mByteCode, mByteCodeSize, mName);
-    }
-    return mResource;
-}
-
-template <>
-inline ID3D11PixelShader *LazyShader<ID3D11PixelShader>::resolve(ID3D11Device *device)
-{
-    checkAssociatedDevice(device);
-    if (mResource == nullptr)
-    {
-        mResource = CompilePS(device, mByteCode, mByteCodeSize, mName);
-    }
-    return mResource;
-}
-
-class LazyInputLayout final : public LazyResource<ID3D11InputLayout>
+class LazyInputLayout final : public LazyResource<ResourceType::InputLayout>
 {
   public:
     LazyInputLayout(const D3D11_INPUT_ELEMENT_DESC *inputDesc,
@@ -324,22 +247,22 @@ class LazyInputLayout final : public LazyResource<ID3D11InputLayout>
                     const BYTE *byteCode,
                     size_t byteCodeLen,
                     const char *debugName);
+    ~LazyInputLayout() override;
 
-    ID3D11InputLayout *resolve(ID3D11Device *device) override;
+    gl::Error resolve(Renderer11 *renderer) override;
 
   private:
-    std::vector<D3D11_INPUT_ELEMENT_DESC> mInputDesc;
-    size_t mByteCodeLen;
-    const BYTE *mByteCode;
+    InputElementArray mInputDesc;
+    ShaderData mByteCode;
     const char *mDebugName;
 };
 
-class LazyBlendState final : public LazyResource<ID3D11BlendState>
+class LazyBlendState final : public LazyResource<ResourceType::BlendState>
 {
   public:
     LazyBlendState(const D3D11_BLEND_DESC &desc, const char *debugName);
 
-    ID3D11BlendState *resolve(ID3D11Device *device) override;
+    gl::Error resolve(Renderer11 *renderer) override;
 
   private:
     D3D11_BLEND_DESC mDesc;
@@ -375,43 +298,88 @@ enum ReservedConstantBufferSlot
 void InitConstantBufferDesc(D3D11_BUFFER_DESC *constantBufferDescription, size_t byteWidth);
 }  // namespace d3d11
 
+struct GenericData
+{
+    GenericData() {}
+    ~GenericData()
+    {
+        if (object)
+        {
+            // We can have a nullptr factory when holding passed-in resources.
+            if (manager)
+            {
+                manager->onReleaseGeneric(resourceType, object);
+                manager = nullptr;
+            }
+            object->Release();
+            object = nullptr;
+        }
+    }
+
+    ResourceType resourceType  = ResourceType::Last;
+    ID3D11Resource *object     = nullptr;
+    ResourceManager11 *manager = nullptr;
+};
+
 // A helper class which wraps a 2D or 3D texture.
-class TextureHelper11 : angle::NonCopyable
+class TextureHelper11 : public Resource11Base<ID3D11Resource, std::shared_ptr, GenericData>
 {
   public:
     TextureHelper11();
-    TextureHelper11(TextureHelper11 &&toCopy);
-    ~TextureHelper11();
-    TextureHelper11 &operator=(TextureHelper11 &&texture);
+    TextureHelper11(TextureHelper11 &&other);
+    TextureHelper11(const TextureHelper11 &other);
+    ~TextureHelper11() override;
+    TextureHelper11 &operator=(TextureHelper11 &&other);
+    TextureHelper11 &operator=(const TextureHelper11 &other);
 
-    static TextureHelper11 MakeAndReference(ID3D11Resource *genericResource,
-                                            const d3d11::Format &formatSet);
-    static TextureHelper11 MakeAndPossess2D(ID3D11Texture2D *texToOwn,
-                                            const d3d11::Format &formatSet);
-    static TextureHelper11 MakeAndPossess3D(ID3D11Texture3D *texToOwn,
-                                            const d3d11::Format &formatSet);
-
-    GLenum getTextureType() const { return mTextureType; }
+    bool is2D() const { return mData->resourceType == ResourceType::Texture2D; }
+    bool is3D() const { return mData->resourceType == ResourceType::Texture3D; }
+    ResourceType getTextureType() const { return mData->resourceType; }
     gl::Extents getExtents() const { return mExtents; }
-    DXGI_FORMAT getFormat() const { return mFormat; }
+    DXGI_FORMAT getFormat() const { return mFormatSet->texFormat; }
     const d3d11::Format &getFormatSet() const { return *mFormatSet; }
     int getSampleCount() const { return mSampleCount; }
-    ID3D11Texture2D *getTexture2D() const { return mTexture2D; }
-    ID3D11Texture3D *getTexture3D() const { return mTexture3D; }
-    ID3D11Resource *getResource() const;
-    bool valid() const;
+
+    template <typename DescT, typename ResourceT>
+    void init(Resource11<ResourceT> &&texture, const DescT &desc, const d3d11::Format &format)
+    {
+        std::swap(mData->manager, texture.mData->manager);
+
+        // Can't use std::swap because texture is typed, and here we use ID3D11Resource.
+        ID3D11Resource *temp  = mData->object;
+        mData->object         = texture.mData->object;
+        texture.mData->object = static_cast<ResourceT *>(temp);
+
+        mFormatSet = &format;
+        initDesc(desc);
+    }
+
+    template <typename ResourceT>
+    void set(ResourceT *object, const d3d11::Format &format)
+    {
+        ASSERT(!valid());
+        mFormatSet     = &format;
+        mData->object  = object;
+        mData->manager = nullptr;
+
+        GetDescFromD3D11<ResourceT> desc;
+        getDesc(&desc);
+        initDesc(desc);
+    }
+
+    bool operator==(const TextureHelper11 &other) const;
+    bool operator!=(const TextureHelper11 &other) const;
+
+    void getDesc(D3D11_TEXTURE2D_DESC *desc) const;
+    void getDesc(D3D11_TEXTURE3D_DESC *desc) const;
 
   private:
-    void reset();
-    void initDesc();
+    void initDesc(const D3D11_TEXTURE2D_DESC &desc2D);
+    void initDesc(const D3D11_TEXTURE3D_DESC &desc3D);
 
-    GLenum mTextureType;
-    gl::Extents mExtents;
-    DXGI_FORMAT mFormat;
     const d3d11::Format *mFormatSet;
+    gl::Extents mExtents;
     int mSampleCount;
-    ID3D11Texture2D *mTexture2D;
-    ID3D11Texture3D *mTexture3D;
 };
 
 enum class StagingAccess
@@ -420,13 +388,43 @@ enum class StagingAccess
     READ_WRITE,
 };
 
-gl::ErrorOrResult<TextureHelper11> CreateStagingTexture(GLenum textureType,
-                                                        const d3d11::Format &formatSet,
-                                                        const gl::Extents &size,
-                                                        StagingAccess readAndWriteAccess,
-                                                        ID3D11Device *device);
-
 bool UsePresentPathFast(const Renderer11 *renderer, const gl::FramebufferAttachment *colorbuffer);
+bool UsePrimitiveRestartWorkaround(bool primitiveRestartFixedIndexEnabled, GLenum type);
+bool IsStreamingIndexData(const gl::Context *context, GLenum srcType);
+
+enum class IndexStorageType
+{
+    // Dynamic indexes are re-streamed every frame. They come from a client data pointer or
+    // from buffers that are updated frequently.
+    Dynamic,
+
+    // Static indexes are translated from the original storage once, and re-used multiple times.
+    Static,
+
+    // Direct indexes are never transated and are used directly from the source buffer. They are
+    // the fastest available path.
+    Direct,
+
+    // Not a real storage type.
+    Invalid,
+};
+
+IndexStorageType ClassifyIndexStorage(const gl::State &glState,
+                                      const gl::Buffer *elementArrayBuffer,
+                                      GLenum elementType,
+                                      GLenum destElementType,
+                                      unsigned int offset,
+                                      bool *needsTranslation);
+
+// Used for state change notifications between buffers and vertex arrays.
+using OnBufferDataDirtyBinding  = angle::ChannelBinding<size_t, const gl::Context *>;
+using OnBufferDataDirtyChannel  = angle::BroadcastChannel<size_t, const gl::Context *>;
+using OnBufferDataDirtyReceiver = angle::SignalReceiver<size_t, const gl::Context *>;
+
+// Used for state change notifications between RenderTarget11 and Framebuffer11.
+using OnRenderTargetDirtyBinding  = angle::ChannelBinding<size_t, const gl::Context *>;
+using OnRenderTargetDirtyChannel  = angle::BroadcastChannel<size_t, const gl::Context *>;
+using OnRenderTargetDirtyReceiver = angle::SignalReceiver<size_t, const gl::Context *>;
 
 }  // namespace rx
 

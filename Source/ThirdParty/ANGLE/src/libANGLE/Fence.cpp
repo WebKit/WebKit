@@ -4,7 +4,7 @@
 // found in the LICENSE file.
 //
 
-// Fence.cpp: Implements the gl::FenceNV and gl::FenceSync classes, which support the GL_NV_fence
+// Fence.cpp: Implements the gl::FenceNV and gl::Sync classes, which support the GL_NV_fence
 // extension and GLES3 sync objects.
 
 #include "libANGLE/Fence.h"
@@ -13,7 +13,7 @@
 
 #include "common/utilities.h"
 #include "libANGLE/renderer/FenceNVImpl.h"
-#include "libANGLE/renderer/FenceSyncImpl.h"
+#include "libANGLE/renderer/SyncImpl.h"
 
 namespace gl
 {
@@ -74,27 +74,36 @@ Error FenceNV::finish()
     return NoError();
 }
 
-FenceSync::FenceSync(rx::FenceSyncImpl *impl, GLuint id)
-    : RefCountObject(id), mFence(impl), mLabel(), mCondition(GL_SYNC_GPU_COMMANDS_COMPLETE), mFlags(0)
+Sync::Sync(rx::SyncImpl *impl, GLuint id)
+    : RefCountObject(id),
+      mFence(impl),
+      mLabel(),
+      mCondition(GL_SYNC_GPU_COMMANDS_COMPLETE),
+      mFlags(0)
 {
 }
 
-FenceSync::~FenceSync()
+Error Sync::onDestroy(const Context *context)
+{
+    return NoError();
+}
+
+Sync::~Sync()
 {
     SafeDelete(mFence);
 }
 
-void FenceSync::setLabel(const std::string &label)
+void Sync::setLabel(const std::string &label)
 {
     mLabel = label;
 }
 
-const std::string &FenceSync::getLabel() const
+const std::string &Sync::getLabel() const
 {
     return mLabel;
 }
 
-Error FenceSync::set(GLenum condition, GLbitfield flags)
+Error Sync::set(GLenum condition, GLbitfield flags)
 {
     Error error = mFence->set(condition, flags);
     if (error.isError())
@@ -107,20 +116,20 @@ Error FenceSync::set(GLenum condition, GLbitfield flags)
     return NoError();
 }
 
-Error FenceSync::clientWait(GLbitfield flags, GLuint64 timeout, GLenum *outResult)
+Error Sync::clientWait(GLbitfield flags, GLuint64 timeout, GLenum *outResult)
 {
     ASSERT(mCondition != GL_NONE);
     return mFence->clientWait(flags, timeout, outResult);
 }
 
-Error FenceSync::serverWait(GLbitfield flags, GLuint64 timeout)
+Error Sync::serverWait(GLbitfield flags, GLuint64 timeout)
 {
     return mFence->serverWait(flags, timeout);
 }
 
-Error FenceSync::getStatus(GLint *outResult) const
+Error Sync::getStatus(GLint *outResult) const
 {
     return mFence->getStatus(outResult);
 }
 
-}
+}  // namespace gl

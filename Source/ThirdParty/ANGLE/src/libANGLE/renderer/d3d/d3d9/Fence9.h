@@ -10,7 +10,7 @@
 #define LIBANGLE_RENDERER_D3D_D3D9_FENCE9_H_
 
 #include "libANGLE/renderer/FenceNVImpl.h"
-#include "libANGLE/renderer/FenceSyncImpl.h"
+#include "libANGLE/renderer/SyncImpl.h"
 
 namespace rx
 {

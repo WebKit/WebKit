@@ -45,7 +45,7 @@ class MockSwapChainPanel : public ISwapChainPanel,
     // IUnknown
     STDMETHOD(QueryInterface)(REFIID riid, void** ppvObject)
     {
-        *ppvObject = NULL;
+        *ppvObject = nullptr;
 
         if (IsEqualIID(IID_IUnknown, riid))
         {
@@ -309,7 +309,7 @@ TEST(NativeWindowTest, SwapChainPanelByItself)
 TEST(NativeWindowTest, SwapChainPanelInPropertySet)
 {
     // COM is required to be initialized for creation of the property set
-    EXPECT_HRESULT_SUCCEEDED(CoInitializeEx(NULL, COINIT_MULTITHREADED));
+    EXPECT_HRESULT_SUCCEEDED(CoInitializeEx(nullptr, COINIT_MULTITHREADED));
     {
         MockSwapChainPanel mockSwapChainPanel;
         ComPtr<IMap<HSTRING, IInspectable*>> propertySet;
@@ -329,7 +329,7 @@ TEST(NativeWindowTest, SwapChainPanelInPropertySet)
 TEST(NativeWindowTest, SwapChainPanelInPropertySetWithSizeAndScale)
 {
     // COM is required to be initialized for creation of the property set
-    EXPECT_HRESULT_SUCCEEDED(CoInitializeEx(NULL, COINIT_MULTITHREADED));
+    EXPECT_HRESULT_SUCCEEDED(CoInitializeEx(nullptr, COINIT_MULTITHREADED));
     {
         MockSwapChainPanel mockSwapChainPanel;
         ComPtr<IMap<HSTRING, IInspectable*>> propertySet;
@@ -369,7 +369,7 @@ TEST_P(SwapChainPanelScaleTest, ValidateScale)
     bool expectedResult = GetParam().second;
 
     // COM is required to be initialized for creation of the property set
-    EXPECT_HRESULT_SUCCEEDED(CoInitializeEx(NULL, COINIT_MULTITHREADED));
+    EXPECT_HRESULT_SUCCEEDED(CoInitializeEx(nullptr, COINIT_MULTITHREADED));
     {
         MockSwapChainPanel mockSwapChainPanel;
         ComPtr<IMap<HSTRING, IInspectable*>> propertySet;
@@ -419,7 +419,7 @@ TEST_P(SwapChainPanelSizeTest, ValidateSize)
     bool expectedResult = std::get<2>(GetParam());
 
     // COM is required to be initialized for creation of the property set
-    EXPECT_HRESULT_SUCCEEDED(CoInitializeEx(NULL, COINIT_MULTITHREADED));
+    EXPECT_HRESULT_SUCCEEDED(CoInitializeEx(nullptr, COINIT_MULTITHREADED));
     {
         MockSwapChainPanel mockSwapChainPanel;
         ComPtr<IMap<HSTRING, IInspectable*>> propertySet;

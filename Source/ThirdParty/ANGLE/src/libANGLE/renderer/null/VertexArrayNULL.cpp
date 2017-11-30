@@ -18,8 +18,4 @@ VertexArrayNULL::VertexArrayNULL(const gl::VertexArrayState &data) : VertexArray
 {
 }
 
-VertexArrayNULL::~VertexArrayNULL()
-{
-}
-
 }  // namespace rx

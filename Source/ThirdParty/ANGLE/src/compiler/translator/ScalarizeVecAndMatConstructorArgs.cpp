@@ -15,7 +15,8 @@
 
 #include "angle_gl.h"
 #include "common/angleutils.h"
-#include "compiler/translator/IntermNode.h"
+#include "compiler/translator/IntermNode_util.h"
+#include "compiler/translator/IntermTraverse.h"
 
 namespace sh
 {
@@ -47,15 +48,14 @@ bool ContainsVectorNode(const TIntermSequence &sequence)
 
 TIntermBinary *ConstructVectorIndexBinaryNode(TIntermSymbol *symbolNode, int index)
 {
-    return new TIntermBinary(EOpIndexDirect, symbolNode, TIntermTyped::CreateIndexNode(index));
+    return new TIntermBinary(EOpIndexDirect, symbolNode, CreateIndexNode(index));
 }
 
 TIntermBinary *ConstructMatrixIndexBinaryNode(TIntermSymbol *symbolNode, int colIndex, int rowIndex)
 {
     TIntermBinary *colVectorNode = ConstructVectorIndexBinaryNode(symbolNode, colIndex);
 
-    return new TIntermBinary(EOpIndexDirect, colVectorNode,
-                             TIntermTyped::CreateIndexNode(rowIndex));
+    return new TIntermBinary(EOpIndexDirect, colVectorNode, CreateIndexNode(rowIndex));
 }
 
 class ScalarizeArgsTraverser : public TIntermTraverser
@@ -63,12 +63,11 @@ class ScalarizeArgsTraverser : public TIntermTraverser
   public:
     ScalarizeArgsTraverser(sh::GLenum shaderType,
                            bool fragmentPrecisionHigh,
-                           unsigned int *temporaryIndex)
-        : TIntermTraverser(true, false, false),
+                           TSymbolTable *symbolTable)
+        : TIntermTraverser(true, false, false, symbolTable),
           mShaderType(shaderType),
           mFragmentPrecisionHigh(fragmentPrecisionHigh)
     {
-        useTemporaryIndex(temporaryIndex);
     }
 
   protected:
@@ -97,37 +96,12 @@ class ScalarizeArgsTraverser : public TIntermTraverser
 
 bool ScalarizeArgsTraverser::visitAggregate(Visit visit, TIntermAggregate *node)
 {
-    if (visit == PreVisit)
+    if (visit == PreVisit && node->getOp() == EOpConstruct)
     {
-        switch (node->getOp())
-        {
-            case EOpConstructVec2:
-            case EOpConstructVec3:
-            case EOpConstructVec4:
-            case EOpConstructBVec2:
-            case EOpConstructBVec3:
-            case EOpConstructBVec4:
-            case EOpConstructIVec2:
-            case EOpConstructIVec3:
-            case EOpConstructIVec4:
-                if (ContainsMatrixNode(*(node->getSequence())))
-                    scalarizeArgs(node, false, true);
-                break;
-            case EOpConstructMat2:
-            case EOpConstructMat2x3:
-            case EOpConstructMat2x4:
-            case EOpConstructMat3x2:
-            case EOpConstructMat3:
-            case EOpConstructMat3x4:
-            case EOpConstructMat4x2:
-            case EOpConstructMat4x3:
-            case EOpConstructMat4:
-                if (ContainsVectorNode(*(node->getSequence())))
-                    scalarizeArgs(node, true, false);
-                break;
-            default:
-                break;
-        }
+        if (node->getType().isVector() && ContainsMatrixNode(*(node->getSequence())))
+            scalarizeArgs(node, false, true);
+        else if (node->getType().isMatrix() && ContainsVectorNode(*(node->getSequence())))
+            scalarizeArgs(node, true, false);
     }
     return true;
 }
@@ -157,46 +131,8 @@ void ScalarizeArgsTraverser::scalarizeArgs(TIntermAggregate *aggregate,
                                            bool scalarizeMatrix)
 {
     ASSERT(aggregate);
-    int size = 0;
-    switch (aggregate->getOp())
-    {
-        case EOpConstructVec2:
-        case EOpConstructBVec2:
-        case EOpConstructIVec2:
-            size = 2;
-            break;
-        case EOpConstructVec3:
-        case EOpConstructBVec3:
-        case EOpConstructIVec3:
-            size = 3;
-            break;
-        case EOpConstructVec4:
-        case EOpConstructBVec4:
-        case EOpConstructIVec4:
-        case EOpConstructMat2:
-            size = 4;
-            break;
-        case EOpConstructMat2x3:
-        case EOpConstructMat3x2:
-            size = 6;
-            break;
-        case EOpConstructMat2x4:
-        case EOpConstructMat4x2:
-            size = 8;
-            break;
-        case EOpConstructMat3:
-            size = 9;
-            break;
-        case EOpConstructMat3x4:
-        case EOpConstructMat4x3:
-            size = 12;
-            break;
-        case EOpConstructMat4:
-            size = 16;
-            break;
-        default:
-            break;
-    }
+    ASSERT(!aggregate->isArray());
+    int size                  = static_cast<int>(aggregate->getType().getObjectSize());
     TIntermSequence *sequence = aggregate->getSequence();
     TIntermSequence original(*sequence);
     sequence->clear();
@@ -267,7 +203,7 @@ void ScalarizeArgsTraverser::scalarizeArgs(TIntermAggregate *aggregate,
 void ScalarizeArgsTraverser::createTempVariable(TIntermTyped *original)
 {
     ASSERT(original);
-    nextTemporaryIndex();
+    nextTemporaryId();
     TIntermDeclaration *decl = createTempInitDeclaration(original);
 
     TType type = original->getType();
@@ -293,9 +229,9 @@ void ScalarizeArgsTraverser::createTempVariable(TIntermTyped *original)
 void ScalarizeVecAndMatConstructorArgs(TIntermBlock *root,
                                        sh::GLenum shaderType,
                                        bool fragmentPrecisionHigh,
-                                       unsigned int *temporaryIndex)
+                                       TSymbolTable *symbolTable)
 {
-    ScalarizeArgsTraverser scalarizer(shaderType, fragmentPrecisionHigh, temporaryIndex);
+    ScalarizeArgsTraverser scalarizer(shaderType, fragmentPrecisionHigh, symbolTable);
     root->traverse(&scalarizer);
 }
 

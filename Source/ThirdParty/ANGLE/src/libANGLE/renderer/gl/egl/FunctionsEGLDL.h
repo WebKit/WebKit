@@ -14,16 +14,6 @@
 
 namespace rx
 {
-
-class DynamicLib final
-{
-  public:
-    void *handle;
-
-    DynamicLib();
-    ~DynamicLib();
-};
-
 class FunctionsEGLDL : public FunctionsEGL
 {
   public:
@@ -35,7 +25,6 @@ class FunctionsEGLDL : public FunctionsEGL
 
   private:
     PFNEGLGETPROCADDRESSPROC mGetProcAddressPtr;
-    static DynamicLib sNativeLib;
 };
 }  // namespace rx
 

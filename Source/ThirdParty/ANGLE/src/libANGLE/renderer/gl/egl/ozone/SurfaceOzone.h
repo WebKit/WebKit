@@ -25,11 +25,15 @@ class SurfaceOzone : public SurfaceGL
 
     FramebufferImpl *createDefaultFramebuffer(const gl::FramebufferState &state) override;
 
-    egl::Error initialize(const DisplayImpl *displayImpl) override;
+    egl::Error initialize(const egl::Display *display) override;
     egl::Error makeCurrent() override;
 
-    egl::Error swap(const DisplayImpl *displayImpl) override;
-    egl::Error postSubBuffer(EGLint x, EGLint y, EGLint width, EGLint height) override;
+    egl::Error swap(const gl::Context *context) override;
+    egl::Error postSubBuffer(const gl::Context *context,
+                             EGLint x,
+                             EGLint y,
+                             EGLint width,
+                             EGLint height) override;
     egl::Error querySurfacePointerANGLE(EGLint attribute, void **value) override;
     egl::Error bindTexImage(gl::Texture *texture, EGLint buffer) override;
     egl::Error releaseTexImage(EGLint buffer) override;

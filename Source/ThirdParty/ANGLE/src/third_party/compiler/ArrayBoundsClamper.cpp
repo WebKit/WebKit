@@ -25,6 +25,8 @@
 
 #include "third_party/compiler/ArrayBoundsClamper.h"
 
+#include "compiler/translator/IntermTraverse.h"
+
 // The built-in 'clamp' instruction only accepts floats and returns a float.  I
 // iterated a few times with our driver team who examined the output from our
 // compiler - they said the multiple casts generates more code than a single

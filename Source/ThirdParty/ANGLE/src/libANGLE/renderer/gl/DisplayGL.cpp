@@ -38,10 +38,10 @@ egl::Error DisplayGL::initialize(egl::Display *display)
     const gl::Version &maxVersion = mRenderer->getMaxSupportedESVersion();
     if (maxVersion < gl::Version(2, 0))
     {
-        return egl::Error(EGL_NOT_INITIALIZED, "OpenGL ES 2.0 is not supportable.");
+        return egl::EglNotInitialized() << "OpenGL ES 2.0 is not supportable.";
     }
 
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 void DisplayGL::terminate()
@@ -49,8 +49,8 @@ void DisplayGL::terminate()
     SafeDelete(mRenderer);
 }
 
-ImageImpl *DisplayGL::createImage(EGLenum target,
-                                  egl::ImageSibling *buffer,
+ImageImpl *DisplayGL::createImage(const egl::ImageState &state,
+                                  EGLenum target,
                                   const egl::AttributeMap &attribs)
 {
     UNIMPLEMENTED();
@@ -83,7 +83,7 @@ egl::Error DisplayGL::makeCurrent(egl::Surface *drawSurface, egl::Surface *readS
 
     if (!context)
     {
-        return egl::Error(EGL_SUCCESS);
+        return egl::NoError();
     }
 
     // Pause transform feedback before making a new surface current, to workaround anglebug.com/1426
@@ -95,7 +95,7 @@ egl::Error DisplayGL::makeCurrent(egl::Surface *drawSurface, egl::Surface *readS
         SurfaceGL *glDrawSurface = GetImplAs<SurfaceGL>(drawSurface);
         ANGLE_TRY(glDrawSurface->makeCurrent());
         mCurrentDrawSurface = drawSurface;
-        return egl::Error(EGL_SUCCESS);
+        return egl::NoError();
     }
     else
     {
@@ -107,6 +107,13 @@ gl::Version DisplayGL::getMaxSupportedESVersion() const
 {
     ASSERT(mRenderer != nullptr);
     return mRenderer->getMaxSupportedESVersion();
+}
+
+void DisplayGL::generateExtensions(egl::DisplayExtensions *outExtensions) const
+{
+    // Advertise robust resource initialization on all OpenGL backends for testing even though it is
+    // not fully implemented.
+    outExtensions->robustResourceInitialization = true;
 }
 
 egl::Error DisplayGL::makeCurrentSurfaceless(gl::Context *context)

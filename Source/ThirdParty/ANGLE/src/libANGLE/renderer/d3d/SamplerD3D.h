@@ -17,7 +17,7 @@ namespace rx
 class SamplerD3D : public SamplerImpl
 {
   public:
-    SamplerD3D() {}
+    SamplerD3D(const gl::SamplerState &state) : SamplerImpl(state) {}
     ~SamplerD3D() override {}
 };
 }

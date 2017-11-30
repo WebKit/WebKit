@@ -52,11 +52,11 @@ class TConstantUnion
         type                   = EbtYuvCscStandardEXT;
     }
 
-    int getIConst() const { return iConst; }
-    unsigned int getUConst() const { return uConst; }
-    float getFConst() const { return fConst; }
-    bool getBConst() const { return bConst; }
-    TYuvCscStandardEXT getYuvCscStandardEXTConst() const { return yuvCscStandardEXTConst; }
+    int getIConst() const;
+    unsigned int getUConst() const;
+    float getFConst() const;
+    bool getBConst() const;
+    TYuvCscStandardEXT getYuvCscStandardEXTConst() const;
 
     bool operator==(const int i) const;
     bool operator==(const unsigned int u) const;

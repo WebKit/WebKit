@@ -34,7 +34,7 @@ egl::Error StreamProducerNV12::validateD3DNV12Texture(void *pointer) const
     textureD3D->GetDevice(&device);
     if (device != mRenderer->getDevice())
     {
-        return egl::Error(EGL_BAD_PARAMETER, "Texture not created on ANGLE D3D device");
+        return egl::EglBadParameter() << "Texture not created on ANGLE D3D device";
     }
 
     // Get the description and validate it
@@ -42,17 +42,17 @@ egl::Error StreamProducerNV12::validateD3DNV12Texture(void *pointer) const
     textureD3D->GetDesc(&desc);
     if (desc.Format != DXGI_FORMAT_NV12)
     {
-        return egl::Error(EGL_BAD_PARAMETER, "Texture format not DXGI_FORMAT_NV12");
+        return egl::EglBadParameter() << "Texture format not DXGI_FORMAT_NV12";
     }
     if (desc.Width < 1 || desc.Height < 1)
     {
-        return egl::Error(EGL_BAD_PARAMETER, "Texture is of size 0");
+        return egl::EglBadParameter() << "Texture is of size 0";
     }
     if ((desc.Width % 2) != 0 || (desc.Height % 2) != 0)
     {
-        return egl::Error(EGL_BAD_PARAMETER, "Texture dimensions are not even");
+        return egl::EglBadParameter() << "Texture dimensions are not even";
     }
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 void StreamProducerNV12::postD3DNV12Texture(void *pointer, const egl::AttributeMap &attributes)

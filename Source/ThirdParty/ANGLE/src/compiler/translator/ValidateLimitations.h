@@ -18,7 +18,7 @@ class TDiagnostics;
 // 1.00 spec Appendix A.
 bool ValidateLimitations(TIntermNode *root,
                          GLenum shaderType,
-                         const TSymbolTable &symbolTable,
+                         TSymbolTable *symbolTable,
                          int shaderVersion,
                          TDiagnostics *diagnostics);
 

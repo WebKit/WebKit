@@ -21,7 +21,7 @@ class RenderTargetD3D : public FramebufferAttachmentRenderTarget
 {
   public:
     RenderTargetD3D();
-    virtual ~RenderTargetD3D();
+    ~RenderTargetD3D() override;
 
     virtual GLsizei getWidth() const = 0;
     virtual GLsizei getHeight() const = 0;
@@ -29,12 +29,13 @@ class RenderTargetD3D : public FramebufferAttachmentRenderTarget
     virtual GLenum getInternalFormat() const = 0;
     virtual GLsizei getSamples() const = 0;
     gl::Extents getExtents() const { return gl::Extents(getWidth(), getHeight(), getDepth()); }
+    bool isMultisampled() const { return getSamples() > 0; }
 
     virtual unsigned int getSerial() const;
     static unsigned int issueSerials(unsigned int count);
 
     // Only currently applies to D3D11.
-    virtual void signalDirty() {}
+    virtual void signalDirty(const gl::Context *context) {}
 
   private:
     const unsigned int mSerial;

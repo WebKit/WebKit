@@ -15,6 +15,7 @@
 
 #include "common/angleutils.h"
 #include "libANGLE/Caps.h"
+#include "libANGLE/renderer/vulkan/formatutilsvk.h"
 #include "libANGLE/renderer/vulkan/renderervk_utils.h"
 
 namespace egl
@@ -24,6 +25,7 @@ class AttributeMap;
 
 namespace rx
 {
+class FramebufferVk;
 class GlslangWrapper;
 
 namespace vk
@@ -37,7 +39,7 @@ class RendererVk : angle::NonCopyable
     RendererVk();
     ~RendererVk();
 
-    vk::Error initialize(const egl::AttributeMap &attribs);
+    vk::Error initialize(const egl::AttributeMap &attribs, const char *wsiName);
 
     std::string getVendorString() const;
     std::string getRendererDescription() const;
@@ -50,10 +52,10 @@ class RendererVk : angle::NonCopyable
     vk::ErrorOrResult<uint32_t> selectPresentQueueForSurface(VkSurfaceKHR surface);
 
     // TODO(jmadill): Use ContextImpl for command buffers to enable threaded contexts.
-    vk::CommandBuffer *getCommandBuffer();
-    vk::Error submitCommandBuffer(const vk::CommandBuffer &commandBuffer);
-    vk::Error submitAndFinishCommandBuffer(const vk::CommandBuffer &commandBuffer);
-    vk::Error submitCommandsWithSync(const vk::CommandBuffer &commandBuffer,
+    vk::Error getStartedCommandBuffer(vk::CommandBufferAndState **commandBufferOut);
+    vk::Error submitCommandBuffer(vk::CommandBufferAndState *commandBuffer);
+    vk::Error submitAndFinishCommandBuffer(vk::CommandBufferAndState *commandBuffer);
+    vk::Error submitCommandsWithSync(vk::CommandBufferAndState *commandBuffer,
                                      const vk::Semaphore &waitSemaphore,
                                      const vk::Semaphore &signalSemaphore);
     vk::Error finish();
@@ -66,30 +68,51 @@ class RendererVk : angle::NonCopyable
     vk::Error createStagingImage(TextureDimension dimension,
                                  const vk::Format &format,
                                  const gl::Extents &extent,
+                                 vk::StagingUsage usage,
                                  vk::StagingImage *imageOut);
 
     GlslangWrapper *getGlslangWrapper();
 
     Serial getCurrentQueueSerial() const;
 
+    bool isResourceInUse(const ResourceVk &resource);
+    bool isSerialInUse(Serial serial);
+
     template <typename T>
-    void enqueueGarbage(Serial serial, T &&object)
+    void releaseResource(const ResourceVk &resource, T *object)
     {
-        mGarbage.emplace_back(std::unique_ptr<vk::GarbageObject<T>>(
-            new vk::GarbageObject<T>(serial, std::move(object))));
+        Serial resourceSerial = resource.getQueueSerial();
+        releaseObject(resourceSerial, object);
     }
 
     template <typename T>
-    void enqueueGarbageOrDeleteNow(const ResourceVk &resouce, T &&object)
+    void releaseObject(Serial resourceSerial, T *object)
     {
-        if (resouce.getDeleteSchedule(mLastCompletedQueueSerial) == DeleteSchedule::NOW)
+        if (!isSerialInUse(resourceSerial))
         {
-            object.destroy(mDevice);
+            object->destroy(mDevice);
         }
         else
         {
-            enqueueGarbage(resouce.getStoredQueueSerial(), std::move(object));
+            object->dumpResources(resourceSerial, &mGarbage);
         }
+    }
+
+    uint32_t getQueueFamilyIndex() const { return mCurrentQueueFamilyIndex; }
+
+    const vk::MemoryProperties &getMemoryProperties() const { return mMemoryProperties; }
+
+    // TODO(jmadill): Don't keep a single renderpass in the Renderer.
+    gl::Error ensureInRenderPass(const gl::Context *context, FramebufferVk *framebufferVk);
+    void endRenderPass();
+
+    // This is necessary to update the cached current RenderPass Framebuffer.
+    void onReleaseRenderPass(const FramebufferVk *framebufferVk);
+
+    // TODO(jmadill): We could pass angle::Format::ID here.
+    const vk::Format &getFormat(GLenum internalFormat) const
+    {
+        return mFormatTable[internalFormat];
     }
 
   private:
@@ -99,7 +122,9 @@ class RendererVk : angle::NonCopyable
                       gl::Extensions *outExtensions,
                       gl::Limitations *outLimitations) const;
     vk::Error submit(const VkSubmitInfo &submitInfo);
+    vk::Error submitFrame(const VkSubmitInfo &submitInfo);
     vk::Error checkInFlightCommands();
+    void freeAllInFlightResources();
 
     mutable bool mCapsInitialized;
     mutable gl::Caps mNativeCaps;
@@ -119,13 +144,19 @@ class RendererVk : angle::NonCopyable
     uint32_t mCurrentQueueFamilyIndex;
     VkDevice mDevice;
     vk::CommandPool mCommandPool;
-    vk::CommandBuffer mCommandBuffer;
-    uint32_t mHostVisibleMemoryIndex;
+    vk::CommandBufferAndState mCommandBuffer;
     GlslangWrapper *mGlslangWrapper;
-    Serial mCurrentQueueSerial;
+    SerialFactory mQueueSerialFactory;
     Serial mLastCompletedQueueSerial;
-    std::vector<vk::FenceAndCommandBuffer> mInFlightCommands;
-    std::vector<std::unique_ptr<vk::IGarbageObject>> mGarbage;
+    Serial mCurrentQueueSerial;
+    std::vector<vk::CommandBufferAndSerial> mInFlightCommands;
+    std::vector<vk::FenceAndSerial> mInFlightFences;
+    std::vector<vk::GarbageObject> mGarbage;
+    vk::MemoryProperties mMemoryProperties;
+    vk::FormatTable mFormatTable;
+
+    // TODO(jmadill): Don't keep a single renderpass in the Renderer.
+    FramebufferVk *mCurrentRenderPassFramebuffer;
 };
 
 }  // namespace rx

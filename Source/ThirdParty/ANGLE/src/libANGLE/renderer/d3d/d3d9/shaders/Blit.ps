@@ -26,19 +26,19 @@ float4 luminanceps(float4 texcoord : TEXCOORD0) : COLOR
 
 float4 luminancepremultps(float4 texcoord : TEXCOORD0) : COLOR
 {
-    float4 luma = (tex2D(tex, texcoord.xy).xw * mult.xw + add.xw).xxxy;
+    float4 luma = tex2D(tex, texcoord.xy).xxxw;
     luma.rgb *= luma.a;
-    return luma;
+    return luma * mult + add;
 };
 
 float4 luminanceunmultps(float4 texcoord : TEXCOORD0) : COLOR
 {
-    float4 luma = (tex2D(tex, texcoord.xy).xw * mult.xw + add.xw).xxxy;
+    float4 luma = tex2D(tex, texcoord.xy).xxxw;
     if (luma.a > 0.0f)
     {
         luma.rgb /= luma.a;
     }
-    return luma;
+    return luma * mult + add;
 };
 
 // RGB/A Component Mask Pixel Shader
@@ -51,17 +51,17 @@ float4 componentmaskps(float4 texcoord : TEXCOORD0) : COLOR
 
 float4 componentmaskpremultps(float4 texcoord : TEXCOORD0) : COLOR
 {
-    float4 color = tex2D(tex, texcoord.xy) * mult + add;
+    float4 color = tex2D(tex, texcoord.xy);
     color.rgb *= color.a;
-    return color;
+    return color * mult + add;
 };
 
 float4 componentmaskunmultps(float4 texcoord : TEXCOORD0) : COLOR
 {
-    float4 color =  tex2D(tex, texcoord.xy) * mult + add;
+    float4 color =  tex2D(tex, texcoord.xy);
     if (color.a > 0.0f)
     {
         color.rgb /= color.a;
     }
-    return color;
+    return color * mult + add;
 };

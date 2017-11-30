@@ -19,7 +19,7 @@ class TOutputESSL : public TOutputGLSLBase
                 ShArrayIndexClampingStrategy clampingStrategy,
                 ShHashFunction64 hashFunction,
                 NameMap &nameMap,
-                TSymbolTable &symbolTable,
+                TSymbolTable *symbolTable,
                 sh::GLenum shaderType,
                 int shaderVersion,
                 bool forceHighp,

@@ -135,4 +135,19 @@ TEST(HandleAllocatorTest, SortedOrderHandle)
     EXPECT_EQ(6u, allocatedList[4]);
 }
 
+// Tests the reset method.
+TEST(HandleAllocatorTest, Reset)
+{
+    gl::HandleAllocator allocator;
+
+    for (int iteration = 0; iteration < 1; ++iteration)
+    {
+        allocator.reserve(3);
+        EXPECT_EQ(1u, allocator.allocate());
+        EXPECT_EQ(2u, allocator.allocate());
+        EXPECT_EQ(4u, allocator.allocate());
+        allocator.reset();
+    }
 }
+
+}  // anonymous namespace

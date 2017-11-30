@@ -182,7 +182,7 @@ bool X11Window::initialize(const std::string &name, size_t width, size_t height)
 {
     destroy();
 
-    mDisplay = XOpenDisplay(NULL);
+    mDisplay = XOpenDisplay(nullptr);
     if (!mDisplay)
     {
         return false;
@@ -394,7 +394,6 @@ void X11Window::processEvent(const XEvent &xEvent)
         {
             Event event;
             MouseButton button = MOUSEBUTTON_UNKNOWN;
-            int wheelX = 0;
             int wheelY = 0;
 
             // The mouse wheel updates are sent via button events.
@@ -407,10 +406,8 @@ void X11Window::processEvent(const XEvent &xEvent)
                 wheelY = -1;
                 break;
               case 6:
-                wheelX = 1;
                 break;
               case 7:
-                wheelX = -1;
                 break;
 
               case Button1:

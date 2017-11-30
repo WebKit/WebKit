@@ -21,7 +21,7 @@ class PathGL : public PathImpl
 {
   public:
     PathGL(const FunctionsGL *functions, GLuint path);
-    ~PathGL();
+    ~PathGL() override;
 
     gl::Error setCommands(GLsizei numCommands,
                           const GLubyte *commands,

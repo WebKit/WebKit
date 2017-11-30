@@ -25,19 +25,19 @@ FenceNVVk::~FenceNVVk()
 gl::Error FenceNVVk::set(GLenum condition)
 {
     UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::InternalError();
 }
 
 gl::Error FenceNVVk::test(GLboolean *outFinished)
 {
     UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::InternalError();
 }
 
 gl::Error FenceNVVk::finish()
 {
     UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::InternalError();
 }
 
 }  // namespace rx

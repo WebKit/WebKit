@@ -24,16 +24,7 @@ inline bool operator!=(const Rectangle &a, const Rectangle &b)
 
 inline bool operator==(const SamplerState &a, const SamplerState &b)
 {
-    return a.minFilter == b.minFilter &&
-           a.magFilter == b.magFilter &&
-           a.wrapS == b.wrapS &&
-           a.wrapT == b.wrapT &&
-           a.wrapR == b.wrapR &&
-           a.maxAnisotropy == b.maxAnisotropy &&
-           a.minLod == b.minLod &&
-           a.maxLod == b.maxLod &&
-           a.compareMode == b.compareMode &&
-           a.compareFunc == b.compareFunc;
+    return memcmp(&a, &b, sizeof(SamplerState)) == 0;
 }
 
 inline bool operator!=(const SamplerState &a, const SamplerState &b)
@@ -41,4 +32,4 @@ inline bool operator!=(const SamplerState &a, const SamplerState &b)
     return !(a == b);
 }
 
-}
+}  // namespace gl

@@ -1,0 +1,150 @@
+// Copyright 2015 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// This file contains a list of defective dEQP conformance tests. The expected
+// format is:
+//  {BUG#} {MODIFIERS} : {TEST_NAME} = {PASS,FAIL,FLAKY,TIMEOUT,SKIP}
+//
+// MODIFIERS can be a combination of the below list:
+//  WIN XP VISTA WIN7 MAC LEOPARD SNOWLEOPARD LION LINUX CHROMEOS MOUNTAINLION
+//  MAVERICKS
+//  NVIDIA AMD INTEL
+//  0xabcd - GPU PCI device ID. Specifying a PCI id requires a vendor.
+//  DEBUG RELEASE
+// TODO(jmadill): Add ANGLE Renderer selection modifiers
+//
+// TEST_NAME can be a specific test name, or have a '*' in the end, which
+// indicates a prefix matching.
+//
+// Examples:
+//  91530 MAC WIN LINUX : context_lost_restored = TIMEOUT
+//  91533 WIN : gl_min_uniforms = FAIL
+//  91531 MAC WIN LINUX : conformance_more_* = SKIP
+//  91532 MAC NVIDIA 0x0640 : tex_image_and_sub_image_2d_with_video = PASS FAIL
+
+// ANGLE does not yet support multithreading
+1340 WIN MAC LINUX : dEQP-EGL.functional.sharing.gles2.multithread.* = SKIP
+1340 WIN MAC LINUX : dEQP-EGL.functional.multithread.* = SKIP
+1340 WIN MAC LINUX : dEQP-EGL.functional.render.multi_thread.* = SKIP
+
+// dEQP doesn't handle configs created for extensions
+1662 WIN : dEQP-EGL.functional.color_clears.single_context.gles2.other = FAIL
+1662 WIN : dEQP-EGL.functional.color_clears.single_context.gles3.other = FAIL
+1662 WIN : dEQP-EGL.functional.color_clears.multi_context.gles2.other = FAIL
+1662 WIN : dEQP-EGL.functional.color_clears.multi_context.gles3.other = FAIL
+1662 WIN : dEQP-EGL.functional.color_clears.multi_thread.gles2.other = FAIL
+1662 WIN : dEQP-EGL.functional.color_clears.multi_thread.gles3.other = FAIL
+1662 WIN : dEQP-EGL.functional.render.single_context.gles2.other = FAIL
+1662 WIN : dEQP-EGL.functional.render.single_context.gles3.other = FAIL
+1662 WIN : dEQP-EGL.functional.render.multi_context.gles2.other = FAIL
+1662 WIN : dEQP-EGL.functional.render.multi_context.gles3.other = FAIL
+1662 WIN : dEQP-EGL.functional.render.multi_context.gles2_gles3.other = FAIL
+1662 WIN : dEQP-EGL.functional.render.multi_thread.gles2.other = FAIL
+1662 WIN : dEQP-EGL.functional.render.multi_thread.gles3.other = FAIL
+1662 WIN : dEQP-EGL.functional.native_coord_mapping.native_window.other_clear = FAIL
+1662 WIN : dEQP-EGL.functional.native_coord_mapping.native_window.other_render = FAIL
+1662 WIN : dEQP-EGL.functional.query_context.get_current_context.other = FAIL
+1662 WIN : dEQP-EGL.functional.query_context.get_current_surface.other = FAIL
+1662 WIN : dEQP-EGL.functional.query_context.get_current_display.other = FAIL
+1662 WIN : dEQP-EGL.functional.query_context.query_context.other = FAIL
+1662 WIN : dEQP-EGL.functional.native_color_mapping.native_window.other_clear = SKIP
+1662 WIN : dEQP-EGL.functional.native_color_mapping.native_window.other_render = SKIP
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  Temprory entries: they should be removed once the bugs are fixed.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+// TODO(jmadill): Triage these into permananent and temporary failures.
+1340 WIN : dEQP-EGL.functional.query_config.get_configs.get_configs_bounds = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.buffer_size = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.red_size = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.green_size = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.blue_size = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.luminance_size = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.alpha_size = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.alpha_mask_size = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.bind_to_texture_rgb = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.bind_to_texture_rgba = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.color_buffer_type = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.config_caveat = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.config_id = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.depth_size = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.level = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.max_swap_interval = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.min_swap_interval = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.native_renderable = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.native_visual_type = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.sample_buffers = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.samples = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.stencil_size = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.surface_type = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.transparent_red_value = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.transparent_green_value = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_only.transparent_blue_value = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.buffer_size = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.red_size = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.green_size = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.blue_size = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.luminance_size = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.alpha_size = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.alpha_mask_size = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.bind_to_texture_rgb = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.bind_to_texture_rgba = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.color_buffer_type = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.config_caveat = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.config_id = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.depth_size = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.level = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.max_swap_interval = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.min_swap_interval = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.native_renderable = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.native_visual_type = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.sample_buffers = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.samples = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.stencil_size = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.surface_type = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.transparent_red_value = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.transparent_green_value = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.simple.selection_and_sort.transparent_blue_value = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.random.color_sizes = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.random.color_depth_stencil_sizes = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.random.buffer_sizes = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.random.surface_type = FAIL
+1340 WIN : dEQP-EGL.functional.choose_config.random.sample_buffers = FAIL
+1340 WIN : dEQP-EGL.functional.render.single_context.gles2.rgba5551_window = FAIL
+1340 WIN : dEQP-EGL.functional.render.single_context.gles2.rgba5551_pbuffer = FAIL
+1340 WIN : dEQP-EGL.functional.render.single_context.gles3.rgba5551_window = FAIL
+1340 WIN : dEQP-EGL.functional.render.single_context.gles3.rgba5551_pbuffer = FAIL
+1340 WIN : dEQP-EGL.functional.render.multi_context.gles2.rgba5551_window = FAIL
+1340 WIN : dEQP-EGL.functional.render.multi_context.gles2.rgba5551_pbuffer = FAIL
+1340 WIN : dEQP-EGL.functional.render.multi_context.gles3.rgba5551_window = FAIL
+1340 WIN : dEQP-EGL.functional.render.multi_context.gles3.rgba5551_pbuffer = FAIL
+1340 WIN : dEQP-EGL.functional.render.multi_context.gles2_gles3.rgba5551_window = FAIL
+1340 WIN : dEQP-EGL.functional.render.multi_context.gles2_gles3.rgba5551_pbuffer = FAIL
+1340 WIN : dEQP-EGL.functional.image.modify.tex_rgb8_tex_subimage_rgb565 = FAIL
+1340 WIN : dEQP-EGL.functional.image.modify.tex_rgb565_tex_subimage_rgb8 = FAIL
+1340 WIN : dEQP-EGL.functional.image.modify.tex_rgba8_tex_subimage_rgba5_a1 = FAIL
+1340 WIN : dEQP-EGL.functional.image.modify.tex_rgba8_tex_subimage_rgba4 = FAIL
+1340 WIN : dEQP-EGL.functional.image.modify.tex_rgba5_a1_tex_subimage_rgba8 = FAIL
+1340 WIN : dEQP-EGL.functional.image.modify.tex_rgba5_a1_tex_subimage_rgba4 = FAIL
+1340 WIN : dEQP-EGL.functional.image.modify.tex_rgba4_tex_subimage_rgba8 = FAIL
+1340 WIN : dEQP-EGL.functional.image.modify.tex_rgba4_tex_subimage_rgba5_a1 = FAIL
+1340 WIN : dEQP-EGL.functional.image.modify.renderbuffer_rgba4_tex_subimage_rgba8 = FAIL
+1340 WIN : dEQP-EGL.functional.image.modify.renderbuffer_rgba4_tex_subimage_rgba5_a1 = FAIL
+1340 WIN : dEQP-EGL.functional.image.modify.renderbuffer_rgb5_a1_tex_subimage_rgba8 = FAIL
+1340 WIN : dEQP-EGL.functional.image.modify.renderbuffer_rgb5_a1_tex_subimage_rgba4 = FAIL
+1340 WIN : dEQP-EGL.functional.image.modify.renderbuffer_rgb565_tex_subimage_rgb8 = FAIL
+1340 WIN : dEQP-EGL.functional.negative_api.choose_config = SKIP
+1340 WIN : dEQP-EGL.functional.negative_api.get_display = FAIL
+1340 WIN : dEQP-EGL.functional.negative_api.surface_attrib = SKIP
+1340 WIN : dEQP-EGL.functional.negative_api.swap_interval = FAIL
+1340 WIN : dEQP-EGL.functional.native_color_mapping.native_window.* = FAIL
+1340 WIN : dEQP-EGL.functional.native_coord_mapping.native_window.* = FAIL
+1340 WIN : dEQP-EGL.functional.get_proc_address.extension.egl_ext_platform_base = FAIL
+1340 WIN : dEQP-EGL.functional.preserve_swap.preserve.no_read_before_swap.* = SKIP
+1340 WIN : dEQP-EGL.functional.preserve_swap.preserve.read_before_swap.* = SKIP
+1340 WIN : dEQP-EGL.functional.resize.back_buffer.* = SKIP
+1340 WIN : dEQP-EGL.functional.resize.pixel_density.* = SKIP

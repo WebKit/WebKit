@@ -162,7 +162,7 @@ void TDirectiveHandler::handleExtension(const pp::SourceLocation &loc,
         return;
     }
 
-    TExtensionBehavior::iterator iter = mExtensionBehavior.find(name);
+    TExtensionBehavior::iterator iter = mExtensionBehavior.find(GetExtensionByName(name.c_str()));
     if (iter != mExtensionBehavior.end())
     {
         iter->second = behaviorVal;

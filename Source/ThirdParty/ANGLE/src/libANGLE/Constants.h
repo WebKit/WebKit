@@ -9,11 +9,19 @@
 #ifndef LIBANGLE_CONSTANTS_H_
 #define LIBANGLE_CONSTANTS_H_
 
+#include "common/platform.h"
+
 namespace gl
 {
 
+// The binary cache is currently left disable by default, and the application can enable it.
+const size_t kDefaultMaxProgramCacheMemoryBytes = 0;
+
 enum
 {
+    // Implementation upper limits, real maximums depend on the hardware
+    MAX_SAMPLE_MASK_WORDS = 2,
+
     MAX_VERTEX_ATTRIBS         = 16,
     MAX_VERTEX_ATTRIB_BINDINGS = 16,
 
@@ -31,6 +39,9 @@ enum
 
     IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_BUFFERS = 4,
 
+    // Maximum number of views which are supported by the implementation of ANGLE_multiview.
+    IMPLEMENTATION_ANGLE_MULTIVIEW_MAX_VIEWS = 4,
+
     // These are the maximums the implementation can support
     // The actual GL caps are limited by the device caps
     // and should be queried from the Context
@@ -39,7 +50,12 @@ enum
     IMPLEMENTATION_MAX_3D_TEXTURE_SIZE         = 2048,
     IMPLEMENTATION_MAX_2D_ARRAY_TEXTURE_LAYERS = 2048,
 
-    IMPLEMENTATION_MAX_TEXTURE_LEVELS = 15  // 1+log2 of MAX_TEXTURE_SIZE
+    // 1+log2 of max of MAX_*_TEXTURE_SIZE
+    IMPLEMENTATION_MAX_TEXTURE_LEVELS = 15,
+
+    // Limit active textures so we can use fast bitsets.
+    IMPLEMENTATION_MAX_SHADER_TEXTURES = 32,
+    IMPLEMENTATION_MAX_ACTIVE_TEXTURES = IMPLEMENTATION_MAX_SHADER_TEXTURES * 2,
 };
 }
 

@@ -8,7 +8,7 @@
 #include "gtest/gtest.h"
 #include "libANGLE/Fence.h"
 #include "libANGLE/renderer/FenceNVImpl.h"
-#include "libANGLE/renderer/FenceSyncImpl.h"
+#include "libANGLE/renderer/SyncImpl.h"
 
 using ::testing::_;
 using ::testing::Return;
@@ -69,7 +69,7 @@ TEST_F(FenceNVTest, SetAndTestBehavior)
 {
     EXPECT_CALL(*mImpl, set(_)).WillOnce(Return(gl::NoError())).RetiresOnSaturation();
     EXPECT_FALSE(mFence->isSet());
-    mFence->set(GL_ALL_COMPLETED_NV);
+    EXPECT_FALSE(mFence->set(GL_ALL_COMPLETED_NV).isError());
     EXPECT_TRUE(mFence->isSet());
     // Fake the behavior of testing the fence before and after it's passed.
     EXPECT_CALL(*mImpl, test(_))
@@ -77,20 +77,20 @@ TEST_F(FenceNVTest, SetAndTestBehavior)
         .WillOnce(DoAll(SetArgumentPointee<0>(GL_TRUE), Return(gl::NoError())))
         .RetiresOnSaturation();
     GLboolean out;
-    mFence->test(&out);
+    EXPECT_FALSE(mFence->test(&out).isError());
     EXPECT_EQ(GL_FALSE, out);
-    mFence->test(&out);
+    EXPECT_FALSE(mFence->test(&out).isError());
     EXPECT_EQ(GL_TRUE, out);
 }
 
 //
-// FenceSync tests
+// Sync tests
 //
 
-class MockFenceSyncImpl : public rx::FenceSyncImpl
+class MockSyncImpl : public rx::SyncImpl
 {
   public:
-    virtual ~MockFenceSyncImpl() { destroy(); }
+    virtual ~MockSyncImpl() { destroy(); }
 
     MOCK_METHOD2(set, gl::Error(GLenum, GLbitfield));
     MOCK_METHOD3(clientWait, gl::Error(GLbitfield, GLuint64, GLenum *));
@@ -105,29 +105,26 @@ class FenceSyncTest : public testing::Test
   protected:
     virtual void SetUp()
     {
-        mImpl = new MockFenceSyncImpl;
+        mImpl = new MockSyncImpl;
         EXPECT_CALL(*mImpl, destroy());
-        mFence = new gl::FenceSync(mImpl, 1);
+        mFence = new gl::Sync(mImpl, 1);
         mFence->addRef();
     }
 
-    virtual void TearDown()
-    {
-        mFence->release();
-    }
+    virtual void TearDown() { mFence->release(nullptr); }
 
-    MockFenceSyncImpl *mImpl;
-    gl::FenceSync* mFence;
+    MockSyncImpl *mImpl;
+    gl::Sync *mFence;
 };
 
 TEST_F(FenceSyncTest, DestructionDeletesImpl)
 {
-    MockFenceSyncImpl* impl = new MockFenceSyncImpl;
+    MockSyncImpl *impl = new MockSyncImpl;
     EXPECT_CALL(*impl, destroy()).Times(1).RetiresOnSaturation();
 
-    gl::FenceSync* fence = new gl::FenceSync(impl, 1);
+    gl::Sync *fence = new gl::Sync(impl, 1);
     fence->addRef();
-    fence->release();
+    fence->release(nullptr);
 
     // Only needed because the mock is leaked if bugs are present,
     // which logs an error, but does not cause the test to fail.
@@ -138,7 +135,7 @@ TEST_F(FenceSyncTest, DestructionDeletesImpl)
 TEST_F(FenceSyncTest, SetAndGetStatusBehavior)
 {
     EXPECT_CALL(*mImpl, set(_, _)).WillOnce(Return(gl::NoError())).RetiresOnSaturation();
-    mFence->set(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+    EXPECT_FALSE(mFence->set(GL_SYNC_GPU_COMMANDS_COMPLETE, 0).isError());
     EXPECT_EQ(static_cast<GLenum>(GL_SYNC_GPU_COMMANDS_COMPLETE), mFence->getCondition());
     // Fake the behavior of testing the fence before and after it's passed.
     EXPECT_CALL(*mImpl, getStatus(_))
@@ -146,9 +143,9 @@ TEST_F(FenceSyncTest, SetAndGetStatusBehavior)
         .WillOnce(DoAll(SetArgumentPointee<0>(GL_SIGNALED), Return(gl::NoError())))
         .RetiresOnSaturation();
     GLint out;
-    mFence->getStatus(&out);
+    EXPECT_FALSE(mFence->getStatus(&out).isError());
     EXPECT_EQ(GL_UNSIGNALED, out);
-    mFence->getStatus(&out);
+    EXPECT_FALSE(mFence->getStatus(&out).isError());
     EXPECT_EQ(GL_SIGNALED, out);
 }
 

@@ -26,10 +26,14 @@ class OffscreenSurfaceVk : public SurfaceImpl
     OffscreenSurfaceVk(const egl::SurfaceState &surfaceState, EGLint width, EGLint height);
     ~OffscreenSurfaceVk() override;
 
-    egl::Error initialize(const DisplayImpl *displayImpl) override;
+    egl::Error initialize(const egl::Display *display) override;
     FramebufferImpl *createDefaultFramebuffer(const gl::FramebufferState &state) override;
-    egl::Error swap(const DisplayImpl *displayImpl) override;
-    egl::Error postSubBuffer(EGLint x, EGLint y, EGLint width, EGLint height) override;
+    egl::Error swap(const gl::Context *context) override;
+    egl::Error postSubBuffer(const gl::Context *context,
+                             EGLint x,
+                             EGLint y,
+                             EGLint width,
+                             EGLint height) override;
     egl::Error querySurfacePointerANGLE(EGLint attribute, void **value) override;
     egl::Error bindTexImage(gl::Texture *texture, EGLint buffer) override;
     egl::Error releaseTexImage(EGLint buffer) override;
@@ -43,8 +47,13 @@ class OffscreenSurfaceVk : public SurfaceImpl
     EGLint isPostSubBufferSupported() const override;
     EGLint getSwapBehavior() const override;
 
-    gl::Error getAttachmentRenderTarget(const gl::FramebufferAttachment::Target &target,
+    gl::Error getAttachmentRenderTarget(const gl::Context *context,
+                                        GLenum binding,
+                                        const gl::ImageIndex &imageIndex,
                                         FramebufferAttachmentRenderTarget **rtOut) override;
+
+    gl::Error initializeContents(const gl::Context *context,
+                                 const gl::ImageIndex &imageIndex) override;
 
   private:
     EGLint mWidth;
@@ -60,12 +69,16 @@ class WindowSurfaceVk : public SurfaceImpl, public ResourceVk
                     EGLint height);
     ~WindowSurfaceVk() override;
 
-    void destroy(const DisplayImpl *contextImpl) override;
+    void destroy(const egl::Display *display) override;
 
-    egl::Error initialize(const DisplayImpl *displayImpl) override;
+    egl::Error initialize(const egl::Display *display) override;
     FramebufferImpl *createDefaultFramebuffer(const gl::FramebufferState &state) override;
-    egl::Error swap(const DisplayImpl *displayImpl) override;
-    egl::Error postSubBuffer(EGLint x, EGLint y, EGLint width, EGLint height) override;
+    egl::Error swap(const gl::Context *context) override;
+    egl::Error postSubBuffer(const gl::Context *context,
+                             EGLint x,
+                             EGLint y,
+                             EGLint width,
+                             EGLint height) override;
     egl::Error querySurfacePointerANGLE(EGLint attribute, void **value) override;
     egl::Error bindTexImage(gl::Texture *texture, EGLint buffer) override;
     egl::Error releaseTexImage(EGLint buffer) override;
@@ -79,30 +92,55 @@ class WindowSurfaceVk : public SurfaceImpl, public ResourceVk
     EGLint isPostSubBufferSupported() const override;
     EGLint getSwapBehavior() const override;
 
-    gl::Error getAttachmentRenderTarget(const gl::FramebufferAttachment::Target &target,
+    gl::Error getAttachmentRenderTarget(const gl::Context *context,
+                                        GLenum binding,
+                                        const gl::ImageIndex &imageIndex,
                                         FramebufferAttachmentRenderTarget **rtOut) override;
+
+    gl::Error initializeContents(const gl::Context *context,
+                                 const gl::ImageIndex &imageIndex) override;
 
     gl::ErrorOrResult<vk::Framebuffer *> getCurrentFramebuffer(
         VkDevice device,
         const vk::RenderPass &compatibleRenderPass);
 
-  private:
-    vk::Error initializeImpl(RendererVk *renderer);
-    vk::Error nextSwapchainImage(RendererVk *renderer);
-    vk::Error swapImpl(RendererVk *renderer);
-
+  protected:
     EGLNativeWindowType mNativeWindowType;
     VkSurfaceKHR mSurface;
+    VkInstance mInstance;
+
+  private:
+    virtual vk::ErrorOrResult<gl::Extents> createSurfaceVk(RendererVk *renderer) = 0;
+    vk::Error initializeImpl(RendererVk *renderer);
+    vk::Error nextSwapchainImage(RendererVk *renderer);
+
     VkSwapchainKHR mSwapchain;
 
     RenderTargetVk mRenderTarget;
-    vk::Semaphore mImageAvailableSemaphore;
-    vk::Semaphore mRenderingCompleteSemaphore;
 
     uint32_t mCurrentSwapchainImageIndex;
-    std::vector<vk::Image> mSwapchainImages;
-    std::vector<vk::ImageView> mSwapchainImageViews;
-    std::vector<vk::Framebuffer> mSwapchainFramebuffers;
+
+    // When acquiring a new image for rendering, we keep a 'spare' semaphore. We pass this extra
+    // semaphore to VkAcquireNextImage, then hand it to the next available SwapchainImage when
+    // the command completes. We then make the old semaphore in the new SwapchainImage the spare
+    // semaphore, since we know the image is no longer using it. This avoids the chicken and egg
+    // problem with needing to know the next available image index before we acquire it.
+    vk::Semaphore mAcquireNextImageSemaphore;
+
+    struct SwapchainImage
+    {
+        SwapchainImage();
+        SwapchainImage(SwapchainImage &&other);
+        ~SwapchainImage();
+
+        vk::Image image;
+        vk::ImageView imageView;
+        vk::Framebuffer framebuffer;
+        vk::Semaphore imageAcquiredSemaphore;
+        vk::Semaphore commandsCompleteSemaphore;
+    };
+
+    std::vector<SwapchainImage> mSwapchainImages;
 };
 
 }  // namespace rx

@@ -45,7 +45,7 @@ static void appendSymbol(const sh::ShaderVariable& variable, ANGLEShaderSymbolTy
     symbols.append(std::make_pair(symbolType, variableToAppend));
     
     if (variable.isArray()) {
-        for (unsigned i = 0; i < variable.elementCount(); i++) {
+        for (unsigned i = 0; i < std::max(1u, variable.arraySizes.back()); i++) {
             std::string arrayBrackets = "[" + std::to_string(i) + "]";
             std::string arrayName = name + arrayBrackets;
             std::string arrayMappedName = mappedName + arrayBrackets;
@@ -75,7 +75,7 @@ static void getSymbolInfo(const sh::ShaderVariable& variable, ANGLEShaderSymbolT
 {
     if (variable.isStruct()) {
         if (variable.isArray()) {
-            for (unsigned i = 0; i < variable.elementCount(); i++) {
+            for (unsigned i = 0; i < std::max(1u, variable.arraySizes.back()); i++) {
                 std::string arrayBrackets = "[" + std::to_string(i) + "]";
                 std::string arrayName = variable.name + arrayBrackets;
                 std::string arrayMappedName = variable.mappedName + arrayBrackets;

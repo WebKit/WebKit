@@ -49,7 +49,7 @@ class TCache
                                 unsigned char secondarySize);
 
   private:
-    TCache() {}
+    TCache();
 
     union TypeKey {
         TypeKey(TBasicType basicType,

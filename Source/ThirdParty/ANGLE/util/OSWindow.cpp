@@ -271,6 +271,11 @@ int OSWindow::getHeight() const
     return mHeight;
 }
 
+bool OSWindow::takeScreenshot(uint8_t *pixelData)
+{
+    return false;
+}
+
 bool OSWindow::popEvent(Event *event)
 {
     if (mEvents.size() > 0 && event)

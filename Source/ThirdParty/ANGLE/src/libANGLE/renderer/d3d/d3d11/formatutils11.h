@@ -41,7 +41,7 @@ struct DXGIFormatSize
 };
 const DXGIFormatSize &GetDXGIFormatSizeInfo(DXGI_FORMAT format);
 
-struct VertexFormat : angle::NonCopyable
+struct VertexFormat : private angle::NonCopyable
 {
     constexpr VertexFormat();
     constexpr VertexFormat(VertexConversionType conversionType,

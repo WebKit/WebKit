@@ -16,9 +16,10 @@ namespace sh
 
 class TIntermAggregate;
 class TIntermBinary;
+class TIntermDeclaration;
 class TIntermNode;
 class TIntermTernary;
-class TIntermDeclaration;
+class TIntermUnary;
 
 class IntermNodePatternMatcher
 {
@@ -32,15 +33,26 @@ class IntermNodePatternMatcher
 
         // Matches expressions that return arrays with the exception of simple statements where a
         // constructor or function call result is assigned.
-        kExpressionReturningArray = 0x0002,
+        kExpressionReturningArray = 0x0001 << 1,
 
         // Matches dynamic indexing of vectors or matrices in l-values.
-        kDynamicIndexingOfVectorOrMatrixInLValue = 0x0004,
+        kDynamicIndexingOfVectorOrMatrixInLValue = 0x0001 << 2,
 
-        // Matches declarations with more than one declared variables
-        kMultiDeclaration = 0x0008,
+        // Matches declarations with more than one declared variables.
+        kMultiDeclaration = 0x0001 << 3,
+
+        // Matches declarations of arrays.
+        kArrayDeclaration = 0x0001 << 4,
+
+        // Matches declarations of structs where the struct type does not have a name.
+        kNamelessStructDeclaration = 0x0001 << 5,
+
+        // Matches array length() method.
+        kArrayLengthMethod = 0x0001 << 6
     };
     IntermNodePatternMatcher(const unsigned int mask);
+
+    bool match(TIntermUnary *node);
 
     bool match(TIntermBinary *node, TIntermNode *parentNode);
 

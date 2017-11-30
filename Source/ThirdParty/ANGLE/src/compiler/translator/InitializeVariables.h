@@ -9,23 +9,45 @@
 
 #include <GLSLANG/ShaderLang.h>
 
+#include "compiler/translator/ExtensionBehavior.h"
+#include "compiler/translator/IntermNode.h"
+
 namespace sh
 {
-class TIntermNode;
 class TSymbolTable;
 
 typedef std::vector<sh::ShaderVariable> InitVariableList;
 
-// Currently this function is only capable of initializing variables of basic types,
-// array of basic types, or struct of basic types.
-// For now it is used for the following two scenarios:
-//   1. initializing gl_Position;
-//   2. initializing ESSL 3.00 shaders' output variables (which might be structs).
-// Specifically, it's not feasible to make it work for local variables because if their
-// types are structs, we can't look into TSymbolTable to find the TType data.
-void InitializeVariables(TIntermNode *root,
+// For all of the functions below: If canUseLoopsToInitialize is set, for loops are used instead of
+// a large number of initializers where it can make sense, such as for initializing large arrays.
+
+// Return a sequence of assignment operations to initialize "initializedSymbol". initializedSymbol
+// may be an array, struct or any combination of these, as long as it contains only basic types.
+TIntermSequence *CreateInitCode(const TIntermTyped *initializedSymbol,
+                                bool canUseLoopsToInitialize,
+                                TSymbolTable *symbolTable);
+
+// Initialize all uninitialized local variables, so that undefined behavior is avoided.
+void InitializeUninitializedLocals(TIntermBlock *root,
+                                   int shaderVersion,
+                                   bool canUseLoopsToInitialize,
+                                   TSymbolTable *symbolTable);
+
+// This function can initialize all the types that CreateInitCode is able to initialize. All
+// variables must be globals which can be found in the symbol table. For now it is used for the
+// following two scenarios:
+//   1. Initializing gl_Position;
+//   2. Initializing output variables referred to in the shader source.
+// Note: The type of each lvalue in an initializer is retrieved from the symbol table. gl_FragData
+// requires special handling because the number of indices which can be initialized is determined by
+// enabled extensions.
+void InitializeVariables(TIntermBlock *root,
                          const InitVariableList &vars,
-                         const TSymbolTable &symbolTable);
+                         TSymbolTable *symbolTable,
+                         int shaderVersion,
+                         const TExtensionBehavior &extensionBehavior,
+                         bool canUseLoopsToInitialize);
+
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_INITIALIZEVARIABLES_H_

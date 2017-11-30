@@ -8,8 +8,9 @@
 #define LIBANGLE_CAPS_H_
 
 #include "angle_gl.h"
-#include "libANGLE/angletypes.h"
 #include "libANGLE/Version.h"
+#include "libANGLE/angletypes.h"
+#include "libANGLE/renderer/Format.h"
 
 #include <map>
 #include <set>
@@ -27,6 +28,8 @@ typedef std::set<GLuint> SupportedSampleSet;
 struct TextureCaps
 {
     TextureCaps();
+    TextureCaps(const TextureCaps &other);
+    ~TextureCaps();
 
     // Supports for basic texturing: glTexImage, glTexSubImage, etc
     bool texturable;
@@ -52,29 +55,32 @@ TextureCaps GenerateMinimumTextureCaps(GLenum internalFormat,
                                        const Version &clientVersion,
                                        const Extensions &extensions);
 
-class TextureCapsMap
+class TextureCapsMap final : angle::NonCopyable
 {
   public:
-    typedef std::map<GLenum, TextureCaps>::const_iterator const_iterator;
+    TextureCapsMap();
+    ~TextureCapsMap();
 
+    // These methods are deprecated. Please use angle::Format for new features.
     void insert(GLenum internalFormat, const TextureCaps &caps);
-    void remove(GLenum internalFormat);
-    void clear();
-
     const TextureCaps &get(GLenum internalFormat) const;
 
-    const_iterator begin() const;
-    const_iterator end() const;
+    void clear();
 
-    size_t size() const;
+    // Prefer using angle::Format methods.
+    const TextureCaps &get(angle::Format::ID formatID) const;
+    void set(angle::Format::ID formatID, const TextureCaps &caps);
 
   private:
-    typedef std::map<GLenum, TextureCaps> InternalFormatToCapsMap;
-    InternalFormatToCapsMap mCapsMap;
+    TextureCaps &get(angle::Format::ID formatID);
+
+    // Indexed by angle::Format::ID
+    std::array<TextureCaps, angle::kNumANGLEFormats> mFormatData;
 };
 
-TextureCapsMap GenerateMinimumTextureCapsMap(const Version &clientVersion,
-                                             const Extensions &extensions);
+void InitMinimumTextureCapsMap(const Version &clientVersion,
+                               const Extensions &extensions,
+                               TextureCapsMap *capsMap);
 
 struct Extensions
 {
@@ -207,9 +213,6 @@ struct Extensions
     // GL_NV_fence
     bool fence;
 
-    // GL_ANGLE_timer_query
-    bool timerQuery;
-
     // GL_EXT_disjoint_timer_query
     bool disjointTimerQuery;
     GLuint queryCounterBitsTimeElapsed;
@@ -217,6 +220,9 @@ struct Extensions
 
     // GL_EXT_robustness
     bool robustness;
+
+    // GL_KHR_robust_buffer_access_behavior
+    bool robustBufferAccessBehavior;
 
     // GL_EXT_blend_minmax
     bool blendMinMax;
@@ -239,17 +245,12 @@ struct Extensions
     // GL_EXT_shader_texture_lod
     bool shaderTextureLOD;
 
-    // GL_EXT_shader_framebuffer_fetch
-    bool shaderFramebufferFetch;
-
-    // GL_ARM_shader_framebuffer_fetch
-    bool ARMshaderFramebufferFetch;
-
-    // GL_NV_shader_framebuffer_fetch
-    bool NVshaderFramebufferFetch;
-
     // GL_EXT_frag_depth
     bool fragDepth;
+
+    // ANGLE_multiview
+    bool multiview;
+    GLuint maxViews;
 
     // GL_ANGLE_texture_usage
     bool textureUsage;
@@ -330,6 +331,12 @@ struct Extensions
     // GL_EXT_sRGB_write_control
     bool sRGBWriteControl;
 
+    // GL_CHROMIUM_color_buffer_float_rgb
+    bool colorBufferFloatRGB;
+
+    // GL_CHROMIUM_color_buffer_float_rgba
+    bool colorBufferFloatRGBA;
+
     // ES3 Extension support
 
     // GL_EXT_color_buffer_float
@@ -357,6 +364,20 @@ struct Extensions
 
     // GL_ANGLE_robust_resource_initialization
     bool robustResourceInitialization;
+
+    // GL_ANGLE_program_cache_control
+    bool programCacheControl;
+
+    // GL_ANGLE_texture_rectangle
+    bool textureRectangle;
+
+    // GL_EXT_geometry_shader
+    bool geometryShader;
+    // GL_EXT_geometry_shader (May 31, 2016) Table 20.43gs: Implementation dependent geometry shader
+    // limits
+    // TODO(jiawei.shao@intel.com): add all implementation dependent geometry shader limits.
+    GLuint maxGeometryOutputVertices;
+    GLuint maxGeometryShaderInvocations;
 };
 
 struct ExtensionInfo
@@ -399,6 +420,7 @@ struct Limitations
 struct TypePrecision
 {
     TypePrecision();
+    TypePrecision(const TypePrecision &other);
 
     void setIEEEFloat();
     void setTwosComplementInt(unsigned int bits);
@@ -414,11 +436,14 @@ struct TypePrecision
 struct Caps
 {
     Caps();
+    Caps(const Caps &other);
+    ~Caps();
 
     // ES 3.1 (April 29, 2015) 20.39: implementation dependent values
     GLuint64 maxElementIndex;
     GLuint max3DTextureSize;
     GLuint max2DTextureSize;
+    GLuint maxRectangleTextureSize;
     GLuint maxArrayTextureLayers;
     GLfloat maxLODBias;
     GLuint maxCubeMapTextureSize;
@@ -539,7 +564,7 @@ struct Caps
     GLuint maxSamples;
 };
 
-Caps GenerateMinimumCaps(const Version &clientVersion);
+Caps GenerateMinimumCaps(const Version &clientVersion, const Extensions &extensions);
 }
 
 namespace egl
@@ -662,8 +687,11 @@ struct DisplayExtensions
     // EGL_ANGLE_create_context_client_arrays
     bool createContextClientArrays;
 
-    // EGL_ANGLE_create_context_robust_resource_initialization
-    bool createContextRobustResourceInitialization;
+    // EGL_ANGLE_program_cache_control
+    bool programCacheControl;
+
+    // EGL_ANGLE_robust_resource_initialization
+    bool robustResourceInitialization;
 };
 
 struct DeviceExtensions
@@ -680,6 +708,7 @@ struct DeviceExtensions
 struct ClientExtensions
 {
     ClientExtensions();
+    ClientExtensions(const ClientExtensions &other);
 
     // Generate a vector of supported extension strings
     std::vector<std::string> getStrings() const;

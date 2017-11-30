@@ -6,8 +6,11 @@
 
 #include "compiler/translator/OutputGLSLBase.h"
 
+#include "angle_gl.h"
 #include "common/debug.h"
 #include "common/mathutil.h"
+#include "compiler/translator/Compiler.h"
+#include "compiler/translator/util.h"
 
 #include <cfloat>
 
@@ -16,13 +19,6 @@ namespace sh
 
 namespace
 {
-TString arrayBrackets(const TType &type)
-{
-    ASSERT(type.isArray());
-    TInfoSinkBase out;
-    out << "[" << type.getArraySize() << "]";
-    return TString(out.c_str());
-}
 
 bool isSingleStatement(TIntermNode *node)
 {
@@ -51,43 +47,6 @@ bool isSingleStatement(TIntermNode *node)
         return false;
     }
     return true;
-}
-
-// If SH_SCALARIZE_VEC_AND_MAT_CONSTRUCTOR_ARGS is enabled, layout qualifiers are spilled whenever
-// variables with specified layout qualifiers are copied. Additional checks are needed against the
-// type and storage qualifier of the variable to verify that layout qualifiers have to be outputted.
-// TODO (mradev): Fix layout qualifier spilling in ScalarizeVecAndMatConstructorArgs and remove
-// NeedsToWriteLayoutQualifier.
-bool NeedsToWriteLayoutQualifier(const TType &type)
-{
-    if (type.getBasicType() == EbtInterfaceBlock)
-    {
-        return false;
-    }
-
-    const TLayoutQualifier &layoutQualifier = type.getLayoutQualifier();
-
-    if ((type.getQualifier() == EvqFragmentOut || type.getQualifier() == EvqVertexIn) &&
-        layoutQualifier.location >= 0)
-    {
-        return true;
-    }
-
-    if (type.getQualifier() == EvqFragmentOut && layoutQualifier.yuv == true)
-    {
-        return true;
-    }
-
-    if (IsOpaqueType(type.getBasicType()) && layoutQualifier.binding != -1)
-    {
-        return true;
-    }
-
-    if (IsImage(type.getBasicType()) && layoutQualifier.imageInternalFormat != EiifUnspecified)
-    {
-        return true;
-    }
-    return false;
 }
 
 class CommaSeparatedListItemPrefixGenerator
@@ -120,18 +79,17 @@ TOutputGLSLBase::TOutputGLSLBase(TInfoSinkBase &objSink,
                                  ShArrayIndexClampingStrategy clampingStrategy,
                                  ShHashFunction64 hashFunction,
                                  NameMap &nameMap,
-                                 TSymbolTable &symbolTable,
+                                 TSymbolTable *symbolTable,
                                  sh::GLenum shaderType,
                                  int shaderVersion,
                                  ShShaderOutput output,
                                  ShCompileOptions compileOptions)
-    : TIntermTraverser(true, true, true),
+    : TIntermTraverser(true, true, true, symbolTable),
       mObjSink(objSink),
-      mDeclaringVariables(false),
+      mDeclaringVariable(false),
       mClampingStrategy(clampingStrategy),
       mHashFunction(hashFunction),
       mNameMap(nameMap),
-      mSymbolTable(symbolTable),
       mShaderType(shaderType),
       mShaderVersion(shaderVersion),
       mOutput(output),
@@ -198,8 +156,10 @@ void TOutputGLSLBase::writeBuiltInFunctionTriplet(Visit visit,
     }
 }
 
-void TOutputGLSLBase::writeLayoutQualifier(const TType &type)
+void TOutputGLSLBase::writeLayoutQualifier(TIntermTyped *variable)
 {
+    const TType &type = variable->getType();
+
     if (!NeedsToWriteLayoutQualifier(type))
     {
         return;
@@ -211,7 +171,8 @@ void TOutputGLSLBase::writeLayoutQualifier(const TType &type)
 
     CommaSeparatedListItemPrefixGenerator listItemPrefix;
 
-    if (type.getQualifier() == EvqFragmentOut || type.getQualifier() == EvqVertexIn)
+    if (type.getQualifier() == EvqFragmentOut || type.getQualifier() == EvqVertexIn ||
+        IsVarying(type.getQualifier()))
     {
         if (layoutQualifier.location >= 0)
         {
@@ -243,6 +204,11 @@ void TOutputGLSLBase::writeLayoutQualifier(const TType &type)
             out << listItemPrefix
                 << getImageInternalFormatString(layoutQualifier.imageInternalFormat);
         }
+    }
+
+    if (IsAtomicCounter(type.getBasicType()))
+    {
+        out << listItemPrefix << "offset = " << layoutQualifier.offset;
     }
 
     out << ") ";
@@ -340,7 +306,7 @@ void TOutputGLSLBase::writeVariableType(const TType &type)
     // Declare the struct if we have not done so already.
     if (type.getBasicType() == EbtStruct && !structDeclared(type.getStruct()))
     {
-        TStructure *structure = type.getStruct();
+        const TStructure *structure = type.getStruct();
 
         declareStruct(structure);
 
@@ -368,7 +334,7 @@ void TOutputGLSLBase::writeFunctionParameters(const TIntermSequence &args)
     for (TIntermSequence::const_iterator iter = args.begin(); iter != args.end(); ++iter)
     {
         const TIntermSymbol *arg = (*iter)->getAsSymbolNode();
-        ASSERT(arg != NULL);
+        ASSERT(arg != nullptr);
 
         const TType &type = arg->getType();
         writeVariableType(type);
@@ -376,7 +342,7 @@ void TOutputGLSLBase::writeFunctionParameters(const TIntermSequence &args)
         if (!arg->getName().getString().empty())
             out << " " << hashName(arg->getName());
         if (type.isArray())
-            out << arrayBrackets(type);
+            out << ArrayString(type);
 
         // Put a comma if this is not the last argument.
         if (iter != args.end() - 1)
@@ -398,7 +364,7 @@ const TConstantUnion *TOutputGLSLBase::writeConstantUnion(const TType &type,
         for (size_t i = 0; i < fields.size(); ++i)
         {
             const TType *fieldType = fields[i]->type();
-            ASSERT(fieldType != NULL);
+            ASSERT(fieldType != nullptr);
             pConstUnion = writeConstantUnion(*fieldType, pConstUnion);
             if (i != fields.size() - 1)
                 out << ", ";
@@ -450,7 +416,7 @@ void TOutputGLSLBase::writeConstructorTriplet(Visit visit, const TType &type)
         if (type.isArray())
         {
             out << getTypeName(type);
-            out << arrayBrackets(type);
+            out << ArrayString(type);
             out << "(";
         }
         else
@@ -469,8 +435,8 @@ void TOutputGLSLBase::visitSymbol(TIntermSymbol *node)
     TInfoSinkBase &out = objSink();
     out << hashVariableName(node->getName());
 
-    if (mDeclaringVariables && node->getType().isArray())
-        out << arrayBrackets(node->getType());
+    if (mDeclaringVariable && node->getType().isArray())
+        out << ArrayString(node->getType());
 }
 
 void TOutputGLSLBase::visitConstantUnion(TIntermConstantUnion *node)
@@ -503,7 +469,7 @@ bool TOutputGLSLBase::visitBinary(Visit visit, TIntermBinary *node)
             {
                 out << " = ";
                 // RHS of initialize is not being declared.
-                mDeclaringVariables = false;
+                mDeclaringVariable = false;
             }
             break;
         case EOpAssign:
@@ -546,7 +512,7 @@ bool TOutputGLSLBase::visitBinary(Visit visit, TIntermBinary *node)
             break;
 
         case EOpIndexDirect:
-            writeTriplet(visit, NULL, "[", "]");
+            writeTriplet(visit, nullptr, "[", "]");
             break;
         case EOpIndexIndirect:
             if (node->getAddIndexClamp())
@@ -560,29 +526,47 @@ bool TOutputGLSLBase::visitBinary(Visit visit, TIntermBinary *node)
                 }
                 else if (visit == PostVisit)
                 {
-                    int maxSize;
                     TIntermTyped *left = node->getLeft();
                     TType leftType     = left->getType();
 
-                    if (left->isArray())
-                    {
-                        // The shader will fail validation if the array length is not > 0.
-                        maxSize = static_cast<int>(leftType.getArraySize()) - 1;
-                    }
-                    else
-                    {
-                        maxSize = leftType.getNominalSize() - 1;
-                    }
-
                     if (mClampingStrategy == SH_CLAMP_WITH_CLAMP_INTRINSIC)
-                        out << "), 0.0, float(" << maxSize << ")))]";
+                        out << "), 0.0, float(";
                     else
-                        out << ", 0, " << maxSize << ")]";
+                        out << ", 0, ";
+
+                    if (leftType.isUnsizedArray())
+                    {
+                        // For runtime-sized arrays in ESSL 3.10 we need to call the length method
+                        // to get the length to clamp against. See ESSL 3.10 section 4.1.9. Note
+                        // that a runtime-sized array expression is guaranteed not to have side
+                        // effects, so it's fine to add the expression to the output twice.
+                        ASSERT(mShaderVersion >= 310);
+                        ASSERT(!left->hasSideEffects());
+                        left->traverse(this);
+                        out << ".length() - 1";
+                    }
+                    else
+                    {
+                        int maxSize;
+                        if (leftType.isArray())
+                        {
+                            maxSize = static_cast<int>(leftType.getOutermostArraySize()) - 1;
+                        }
+                        else
+                        {
+                            maxSize = leftType.getNominalSize() - 1;
+                        }
+                        out << maxSize;
+                    }
+                    if (mClampingStrategy == SH_CLAMP_WITH_CLAMP_INTRINSIC)
+                        out << ")))]";
+                    else
+                        out << ")]";
                 }
             }
             else
             {
-                writeTriplet(visit, NULL, "[", "]");
+                writeTriplet(visit, nullptr, "[", "]");
             }
             break;
         case EOpIndexDirectStruct:
@@ -599,7 +583,7 @@ bool TOutputGLSLBase::visitBinary(Visit visit, TIntermBinary *node)
                 const TField *field               = structure->fields()[index->getIConst(0)];
 
                 TString fieldName = field->name();
-                if (!mSymbolTable.findBuiltIn(structure->name(), mShaderVersion))
+                if (!mSymbolTable->findBuiltIn(structure->name(), mShaderVersion))
                     fieldName = hashName(TName(fieldName));
 
                 out << fieldName;
@@ -616,8 +600,14 @@ bool TOutputGLSLBase::visitBinary(Visit visit, TIntermBinary *node)
                 const TField *field               = interfaceBlock->fields()[index->getIConst(0)];
 
                 TString fieldName = field->name();
-                ASSERT(!mSymbolTable.findBuiltIn(interfaceBlock->name(), mShaderVersion));
-                fieldName = hashName(TName(fieldName));
+                if (!mSymbolTable->findBuiltIn(interfaceBlock->name(), mShaderVersion))
+                {
+                    fieldName = hashName(TName(fieldName));
+                }
+                else
+                {
+                    ASSERT(interfaceBlock->name() == "gl_PerVertex");
+                }
 
                 out << fieldName;
                 visitChildren = false;
@@ -733,6 +723,10 @@ bool TOutputGLSLBase::visitUnary(Visit visit, TIntermUnary *node)
         case EOpPreDecrement:
             preString = "(--";
             break;
+        case EOpArrayLength:
+            preString  = "((";
+            postString = ").length())";
+            break;
 
         case EOpRadians:
         case EOpDegrees:
@@ -799,7 +793,7 @@ bool TOutputGLSLBase::visitUnary(Visit visit, TIntermUnary *node)
             UNREACHABLE();
     }
 
-    writeTriplet(visit, preString.c_str(), NULL, postString.c_str());
+    writeTriplet(visit, preString.c_str(), nullptr, postString.c_str());
 
     return true;
 }
@@ -841,16 +835,9 @@ bool TOutputGLSLBase::visitIfElse(Visit visit, TIntermIfElse *node)
 
 bool TOutputGLSLBase::visitSwitch(Visit visit, TIntermSwitch *node)
 {
-    if (node->getStatementList())
-    {
-        writeTriplet(visit, "switch (", ") ", nullptr);
-        // The curly braces get written when visiting the statementList aggregate
-    }
-    else
-    {
-        // No statementList, so it won't output curly braces
-        writeTriplet(visit, "switch (", ") {", "}\n");
-    }
+    ASSERT(node->getStatementList());
+    writeTriplet(visit, "switch (", ") ", nullptr);
+    // The curly braces get written when visiting the statementList aggregate
     return true;
 }
 
@@ -924,7 +911,7 @@ bool TOutputGLSLBase::visitFunctionPrototype(Visit visit, TIntermFunctionPrototy
     const TType &type = node->getType();
     writeVariableType(type);
     if (type.isArray())
-        out << arrayBrackets(type);
+        out << ArrayString(type);
 
     out << " " << hashFunctionNameIfNeeded(*node->getFunctionSymbolInfo());
 
@@ -962,32 +949,7 @@ bool TOutputGLSLBase::visitAggregate(Visit visit, TIntermAggregate *node)
             else
                 out << ")";
             break;
-        case EOpConstructFloat:
-        case EOpConstructVec2:
-        case EOpConstructVec3:
-        case EOpConstructVec4:
-        case EOpConstructBool:
-        case EOpConstructBVec2:
-        case EOpConstructBVec3:
-        case EOpConstructBVec4:
-        case EOpConstructInt:
-        case EOpConstructIVec2:
-        case EOpConstructIVec3:
-        case EOpConstructIVec4:
-        case EOpConstructUInt:
-        case EOpConstructUVec2:
-        case EOpConstructUVec3:
-        case EOpConstructUVec4:
-        case EOpConstructMat2:
-        case EOpConstructMat2x3:
-        case EOpConstructMat2x4:
-        case EOpConstructMat3x2:
-        case EOpConstructMat3:
-        case EOpConstructMat3x4:
-        case EOpConstructMat4x2:
-        case EOpConstructMat4x3:
-        case EOpConstructMat4:
-        case EOpConstructStruct:
+        case EOpConstruct:
             writeConstructorTriplet(visit, node->getType());
             break;
 
@@ -1012,7 +974,7 @@ bool TOutputGLSLBase::visitAggregate(Visit visit, TIntermAggregate *node)
         case EOpDistance:
         case EOpDot:
         case EOpCross:
-        case EOpFaceForward:
+        case EOpFaceforward:
         case EOpReflect:
         case EOpRefract:
         case EOpMulMatrixComponentWise:
@@ -1030,6 +992,8 @@ bool TOutputGLSLBase::visitAggregate(Visit visit, TIntermAggregate *node)
         case EOpMemoryBarrierImage:
         case EOpMemoryBarrierShared:
         case EOpGroupMemoryBarrier:
+        case EOpEmitVertex:
+        case EOpEndPrimitive:
             writeBuiltInFunctionTriplet(visit, node->getOp(), node->getUseEmulatedFunction());
             break;
         default:
@@ -1046,20 +1010,23 @@ bool TOutputGLSLBase::visitDeclaration(Visit visit, TIntermDeclaration *node)
     if (visit == PreVisit)
     {
         const TIntermSequence &sequence = *(node->getSequence());
-        const TIntermTyped *variable    = sequence.front()->getAsTyped();
-        writeLayoutQualifier(variable->getType());
+        TIntermTyped *variable          = sequence.front()->getAsTyped();
+        writeLayoutQualifier(variable);
         writeVariableType(variable->getType());
-        out << " ";
-        mDeclaringVariables = true;
+        if (variable->getAsSymbolNode() == nullptr ||
+            !variable->getAsSymbolNode()->getSymbol().empty())
+        {
+            out << " ";
+        }
+        mDeclaringVariable = true;
     }
     else if (visit == InVisit)
     {
-        out << ", ";
-        mDeclaringVariables = true;
+        UNREACHABLE();
     }
     else
     {
-        mDeclaringVariables = false;
+        mDeclaringVariable = false;
     }
     return true;
 }
@@ -1090,7 +1057,7 @@ bool TOutputGLSLBase::visitLoop(Visit visit, TIntermLoop *node)
     else if (loopType == ELoopWhile)  // while loop
     {
         out << "while (";
-        ASSERT(node->getCondition() != NULL);
+        ASSERT(node->getCondition() != nullptr);
         node->getCondition()->traverse(this);
         out << ")\n";
 
@@ -1104,7 +1071,7 @@ bool TOutputGLSLBase::visitLoop(Visit visit, TIntermLoop *node)
         visitCodeBlock(node->getBody());
 
         out << "while (";
-        ASSERT(node->getCondition() != NULL);
+        ASSERT(node->getCondition() != nullptr);
         node->getCondition()->traverse(this);
         out << ");\n";
     }
@@ -1119,16 +1086,16 @@ bool TOutputGLSLBase::visitBranch(Visit visit, TIntermBranch *node)
     switch (node->getFlowOp())
     {
         case EOpKill:
-            writeTriplet(visit, "discard", NULL, NULL);
+            writeTriplet(visit, "discard", nullptr, nullptr);
             break;
         case EOpBreak:
-            writeTriplet(visit, "break", NULL, NULL);
+            writeTriplet(visit, "break", nullptr, nullptr);
             break;
         case EOpContinue:
-            writeTriplet(visit, "continue", NULL, NULL);
+            writeTriplet(visit, "continue", nullptr, nullptr);
             break;
         case EOpReturn:
-            writeTriplet(visit, "return ", NULL, NULL);
+            writeTriplet(visit, "return ", nullptr, nullptr);
             break;
         default:
             UNREACHABLE();
@@ -1140,7 +1107,7 @@ bool TOutputGLSLBase::visitBranch(Visit visit, TIntermBranch *node)
 void TOutputGLSLBase::visitCodeBlock(TIntermBlock *node)
 {
     TInfoSinkBase &out = objSink();
-    if (node != NULL)
+    if (node != nullptr)
     {
         node->traverse(this);
         // Single statements not part of a sequence need to be terminated
@@ -1156,43 +1123,18 @@ void TOutputGLSLBase::visitCodeBlock(TIntermBlock *node)
 
 TString TOutputGLSLBase::getTypeName(const TType &type)
 {
-    if (type.getBasicType() == EbtStruct)
-        return hashName(TName(type.getStruct()->name()));
-    else
-        return type.getBuiltInTypeNameString();
+    return GetTypeName(type, mHashFunction, &mNameMap);
 }
 
 TString TOutputGLSLBase::hashName(const TName &name)
 {
-    if (name.getString().empty())
-    {
-        ASSERT(!name.isInternal());
-        return name.getString();
-    }
-    if (name.isInternal())
-    {
-        // TODO(oetuaho): Would be nicer to prefix non-internal names with "_" instead, like is
-        // done in the HLSL output, but that requires fairly complex changes elsewhere in the code
-        // as well.
-        // We need to use a prefix that is reserved in WebGL in order to guarantee that the internal
-        // names don't conflict with user-defined names from WebGL.
-        return "webgl_angle_" + name.getString();
-    }
-    if (mHashFunction == nullptr)
-    {
-        return name.getString();
-    }
-    NameMap::const_iterator it = mNameMap.find(name.getString().c_str());
-    if (it != mNameMap.end())
-        return it->second.c_str();
-    TString hashedName                 = TIntermTraverser::hash(name.getString(), mHashFunction);
-    mNameMap[name.getString().c_str()] = hashedName.c_str();
-    return hashedName;
+    return HashName(name, mHashFunction, &mNameMap);
 }
 
 TString TOutputGLSLBase::hashVariableName(const TName &name)
 {
-    if (mSymbolTable.findBuiltIn(name.getString(), mShaderVersion) != NULL)
+    if (mSymbolTable->findBuiltIn(name.getString(), mShaderVersion) != nullptr ||
+        name.getString().substr(0, 3) == "gl_")
     {
         if (mCompileOptions & SH_TRANSLATE_VIEWID_OVR_TO_UNIFORM &&
             name.getString() == "gl_ViewID_OVR")
@@ -1208,10 +1150,8 @@ TString TOutputGLSLBase::hashVariableName(const TName &name)
 
 TString TOutputGLSLBase::hashFunctionNameIfNeeded(const TFunctionSymbolInfo &info)
 {
-    if (info.isMain() || info.getNameObj().isInternal())
+    if (info.isMain())
     {
-        // Internal function names are outputted as-is - they may refer to functions manually added
-        // to the output shader source that are not included in the AST at all.
         return info.getName();
     }
     else
@@ -1244,7 +1184,7 @@ void TOutputGLSLBase::declareStruct(const TStructure *structure)
             out << " ";
         out << getTypeName(*field->type()) << " " << hashName(TName(field->name()));
         if (field->type()->isArray())
-            out << arrayBrackets(*field->type());
+            out << ArrayString(*field->type());
         out << ";\n";
     }
     out << "}";
@@ -1272,12 +1212,22 @@ void TOutputGLSLBase::declareInterfaceBlockLayout(const TInterfaceBlock *interfa
             out << "std140";
             break;
 
+        case EbsStd430:
+            out << "std430";
+            break;
+
         default:
             UNREACHABLE();
             break;
     }
 
     out << ", ";
+
+    if (interfaceBlock->blockBinding() > 0)
+    {
+        out << "binding = " << interfaceBlock->blockBinding();
+        out << ", ";
+    }
 
     switch (interfaceBlock->matrixPacking())
     {
@@ -1312,10 +1262,96 @@ void TOutputGLSLBase::declareInterfaceBlock(const TInterfaceBlock *interfaceBloc
             out << " ";
         out << getTypeName(*field->type()) << " " << hashName(TName(field->name()));
         if (field->type()->isArray())
-            out << arrayBrackets(*field->type());
+            out << ArrayString(*field->type());
         out << ";\n";
     }
     out << "}";
+}
+
+void WriteGeometryShaderLayoutQualifiers(TInfoSinkBase &out,
+                                         sh::TLayoutPrimitiveType inputPrimitive,
+                                         int invocations,
+                                         sh::TLayoutPrimitiveType outputPrimitive,
+                                         int maxVertices)
+{
+    // Omit 'invocations = 1'
+    if (inputPrimitive != EptUndefined || invocations > 1)
+    {
+        out << "layout (";
+
+        if (inputPrimitive != EptUndefined)
+        {
+            out << getGeometryShaderPrimitiveTypeString(inputPrimitive);
+        }
+
+        if (invocations > 1)
+        {
+            if (inputPrimitive != EptUndefined)
+            {
+                out << ", ";
+            }
+            out << "invocations = " << invocations;
+        }
+        out << ") in;\n";
+    }
+
+    if (outputPrimitive != EptUndefined || maxVertices != -1)
+    {
+        out << "layout (";
+
+        if (outputPrimitive != EptUndefined)
+        {
+            out << getGeometryShaderPrimitiveTypeString(outputPrimitive);
+        }
+
+        if (maxVertices != -1)
+        {
+            if (outputPrimitive != EptUndefined)
+            {
+                out << ", ";
+            }
+            out << "max_vertices = " << maxVertices;
+        }
+        out << ") out;\n";
+    }
+}
+
+// If SH_SCALARIZE_VEC_AND_MAT_CONSTRUCTOR_ARGS is enabled, layout qualifiers are spilled whenever
+// variables with specified layout qualifiers are copied. Additional checks are needed against the
+// type and storage qualifier of the variable to verify that layout qualifiers have to be outputted.
+// TODO (mradev): Fix layout qualifier spilling in ScalarizeVecAndMatConstructorArgs and remove
+// NeedsToWriteLayoutQualifier.
+bool NeedsToWriteLayoutQualifier(const TType &type)
+{
+    if (type.getBasicType() == EbtInterfaceBlock)
+    {
+        return false;
+    }
+
+    const TLayoutQualifier &layoutQualifier = type.getLayoutQualifier();
+
+    if ((type.getQualifier() == EvqFragmentOut || type.getQualifier() == EvqVertexIn ||
+         IsVarying(type.getQualifier())) &&
+        layoutQualifier.location >= 0)
+    {
+        return true;
+    }
+
+    if (type.getQualifier() == EvqFragmentOut && layoutQualifier.yuv == true)
+    {
+        return true;
+    }
+
+    if (IsOpaqueType(type.getBasicType()) && layoutQualifier.binding != -1)
+    {
+        return true;
+    }
+
+    if (IsImage(type.getBasicType()) && layoutQualifier.imageInternalFormat != EiifUnspecified)
+    {
+        return true;
+    }
+    return false;
 }
 
 }  // namespace sh

@@ -18,11 +18,11 @@ namespace rx
 class ImageVk : public ImageImpl
 {
   public:
-    ImageVk();
+    ImageVk(const egl::ImageState &state);
     ~ImageVk() override;
     egl::Error initialize() override;
 
-    gl::Error orphan(egl::ImageSibling *sibling) override;
+    gl::Error orphan(const gl::Context *context, egl::ImageSibling *sibling) override;
 };
 
 }  // namespace rx

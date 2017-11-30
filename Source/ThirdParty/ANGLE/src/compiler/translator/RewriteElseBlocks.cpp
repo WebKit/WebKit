@@ -9,7 +9,8 @@
 
 #include "compiler/translator/RewriteElseBlocks.h"
 
-#include "compiler/translator/Intermediate.h"
+#include "compiler/translator/IntermNode.h"
+#include "compiler/translator/IntermNode_util.h"
 #include "compiler/translator/NodeSearch.h"
 #include "compiler/translator/SymbolTable.h"
 
@@ -22,19 +23,20 @@ namespace
 class ElseBlockRewriter : public TIntermTraverser
 {
   public:
-    ElseBlockRewriter();
+    ElseBlockRewriter(TSymbolTable *symbolTable);
 
   protected:
     bool visitFunctionDefinition(Visit visit, TIntermFunctionDefinition *aggregate) override;
     bool visitBlock(Visit visit, TIntermBlock *block) override;
 
   private:
-    const TType *mFunctionType;
-
     TIntermNode *rewriteIfElse(TIntermIfElse *ifElse);
+
+    const TType *mFunctionType;
 };
 
-ElseBlockRewriter::ElseBlockRewriter() : TIntermTraverser(true, false, true), mFunctionType(NULL)
+ElseBlockRewriter::ElseBlockRewriter(TSymbolTable *symbolTable)
+    : TIntermTraverser(true, false, true, symbolTable), mFunctionType(nullptr)
 {
 }
 
@@ -67,7 +69,7 @@ TIntermNode *ElseBlockRewriter::rewriteIfElse(TIntermIfElse *ifElse)
 {
     ASSERT(ifElse != nullptr);
 
-    nextTemporaryIndex();
+    nextTemporaryId();
 
     TIntermDeclaration *storeCondition = createTempInitDeclaration(ifElse->getCondition());
 
@@ -84,19 +86,16 @@ TIntermNode *ElseBlockRewriter::rewriteIfElse(TIntermIfElse *ifElse)
         // returns (that are unreachable) we can silence this compile error.
         if (mFunctionType && mFunctionType->getBasicType() != EbtVoid)
         {
-            TString typeString = mFunctionType->getStruct() ? mFunctionType->getStruct()->name()
-                                                            : mFunctionType->getBasicString();
-            TString rawText        = "return (" + typeString + ")0";
-            TIntermRaw *returnNode = new TIntermRaw(*mFunctionType, rawText);
-            negatedElse            = new TIntermBlock();
-            negatedElse->getSequence()->push_back(returnNode);
+            TIntermNode *returnNode = new TIntermBranch(EOpReturn, CreateZeroNode(*mFunctionType));
+            negatedElse = new TIntermBlock();
+            negatedElse->appendStatement(returnNode);
         }
 
         TIntermSymbol *conditionSymbolElse = createTempSymbol(boolType);
         TIntermUnary *negatedCondition     = new TIntermUnary(EOpLogicalNot, conditionSymbolElse);
         TIntermIfElse *falseIfElse =
             new TIntermIfElse(negatedCondition, ifElse->getFalseBlock(), negatedElse);
-        falseBlock = TIntermediate::EnsureBlock(falseIfElse);
+        falseBlock = EnsureBlock(falseIfElse);
     }
 
     TIntermSymbol *conditionSymbolSel = createTempSymbol(boolType);
@@ -109,12 +108,13 @@ TIntermNode *ElseBlockRewriter::rewriteIfElse(TIntermIfElse *ifElse)
 
     return block;
 }
-}
 
-void RewriteElseBlocks(TIntermNode *node, unsigned int *temporaryIndex)
+}  // anonymous namespace
+
+void RewriteElseBlocks(TIntermNode *node, TSymbolTable *symbolTable)
 {
-    ElseBlockRewriter rewriter;
-    rewriter.useTemporaryIndex(temporaryIndex);
+    ElseBlockRewriter rewriter(symbolTable);
     node->traverse(&rewriter);
 }
-}
+
+}  // namespace sh

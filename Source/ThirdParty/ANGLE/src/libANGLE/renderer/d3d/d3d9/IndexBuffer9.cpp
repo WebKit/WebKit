@@ -14,7 +14,7 @@ namespace rx
 
 IndexBuffer9::IndexBuffer9(Renderer9 *const renderer) : mRenderer(renderer)
 {
-    mIndexBuffer = NULL;
+    mIndexBuffer = nullptr;
     mBufferSize = 0;
     mIndexType = 0;
     mDynamic = false;
@@ -54,7 +54,8 @@ gl::Error IndexBuffer9::initialize(unsigned int bufferSize, GLenum indexType, bo
         HRESULT result = mRenderer->createIndexBuffer(bufferSize, usageFlags, format, &mIndexBuffer);
         if (FAILED(result))
         {
-            return gl::Error(GL_OUT_OF_MEMORY, "Failed to allocate internal index buffer of size, %lu.", bufferSize);
+            return gl::OutOfMemory()
+                   << "Failed to allocate internal index buffer of size " << bufferSize;
         }
     }
 
@@ -69,16 +70,16 @@ gl::Error IndexBuffer9::mapBuffer(unsigned int offset, unsigned int size, void**
 {
     if (!mIndexBuffer)
     {
-        return gl::Error(GL_OUT_OF_MEMORY, "Internal index buffer is not initialized.");
+        return gl::OutOfMemory() << "Internal index buffer is not initialized.";
     }
 
     DWORD lockFlags = mDynamic ? D3DLOCK_NOOVERWRITE : 0;
 
-    void *mapPtr = NULL;
+    void *mapPtr   = nullptr;
     HRESULT result = mIndexBuffer->Lock(offset, size, &mapPtr, lockFlags);
     if (FAILED(result))
     {
-        return gl::Error(GL_OUT_OF_MEMORY, "Failed to lock internal index buffer, HRESULT: 0x%08x.", result);
+        return gl::OutOfMemory() << "Failed to lock internal index buffer, " << gl::FmtHR(result);
     }
 
     *outMappedMemory = mapPtr;
@@ -89,13 +90,13 @@ gl::Error IndexBuffer9::unmapBuffer()
 {
     if (!mIndexBuffer)
     {
-        return gl::Error(GL_OUT_OF_MEMORY, "Internal index buffer is not initialized.");
+        return gl::OutOfMemory() << "Internal index buffer is not initialized.";
     }
 
     HRESULT result = mIndexBuffer->Unlock();
     if (FAILED(result))
     {
-        return gl::Error(GL_OUT_OF_MEMORY, "Failed to unlock internal index buffer, HRESULT: 0x%08x.", result);
+        return gl::OutOfMemory() << "Failed to unlock internal index buffer, " << gl::FmtHR(result);
     }
 
     return gl::NoError();
@@ -127,7 +128,7 @@ gl::Error IndexBuffer9::discard()
 {
     if (!mIndexBuffer)
     {
-        return gl::Error(GL_OUT_OF_MEMORY, "Internal index buffer is not initialized.");
+        return gl::OutOfMemory() << "Internal index buffer is not initialized.";
     }
 
     void *dummy;
@@ -136,13 +137,13 @@ gl::Error IndexBuffer9::discard()
     result = mIndexBuffer->Lock(0, 1, &dummy, D3DLOCK_DISCARD);
     if (FAILED(result))
     {
-        return gl::Error(GL_OUT_OF_MEMORY, "Failed to lock internal index buffer, HRESULT: 0x%08x.", result);
+        return gl::OutOfMemory() << "Failed to lock internal index buffer, " << gl::FmtHR(result);
     }
 
     result = mIndexBuffer->Unlock();
     if (FAILED(result))
     {
-        return gl::Error(GL_OUT_OF_MEMORY, "Failed to unlock internal index buffer, HRESULT: 0x%08x.", result);
+        return gl::OutOfMemory() << "Failed to unlock internal index buffer, " << gl::FmtHR(result);
     }
 
     return gl::NoError();

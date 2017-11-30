@@ -19,7 +19,7 @@ class DirectiveHandler;
 struct PreprocessorImpl;
 struct Token;
 
-struct PreprocessorSettings : angle::NonCopyable
+struct PreprocessorSettings : private angle::NonCopyable
 {
     PreprocessorSettings() : maxMacroExpansionDepth(1000) {}
     int maxMacroExpansionDepth;

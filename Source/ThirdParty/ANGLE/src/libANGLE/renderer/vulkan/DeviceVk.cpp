@@ -25,7 +25,7 @@ DeviceVk::~DeviceVk()
 egl::Error DeviceVk::getDevice(void **outValue)
 {
     UNIMPLEMENTED();
-    return egl::Error(EGL_BAD_ACCESS);
+    return egl::EglBadAccess();
 }
 
 EGLint DeviceVk::getType()

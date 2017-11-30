@@ -27,7 +27,6 @@ WindowSurfaceGLX::WindowSurfaceGLX(const egl::SurfaceState &state,
                                    RendererGL *renderer,
                                    Window window,
                                    Display *display,
-                                   glx::Context context,
                                    glx::FBConfig fbConfig)
     : SurfaceGLX(state, renderer),
       mParent(window),
@@ -35,7 +34,6 @@ WindowSurfaceGLX::WindowSurfaceGLX(const egl::SurfaceState &state,
       mDisplay(display),
       mGLX(glx),
       mGLXDisplay(glxDisplay),
-      mContext(context),
       mFBConfig(fbConfig),
       mGLXWindow(0)
 {
@@ -63,7 +61,7 @@ WindowSurfaceGLX::~WindowSurfaceGLX()
     mGLXDisplay->syncXCommands();
 }
 
-egl::Error WindowSurfaceGLX::initialize(const DisplayImpl *displayImpl)
+egl::Error WindowSurfaceGLX::initialize(const egl::Display *display)
 {
     // Check that the window's visual ID is valid, as part of the AMGLE_x11_visual
     // extension.
@@ -74,9 +72,8 @@ egl::Error WindowSurfaceGLX::initialize(const DisplayImpl *displayImpl)
 
         if (!mGLXDisplay->isValidWindowVisualId(visualId))
         {
-            return egl::Error(EGL_BAD_MATCH,
-                              "The visual of native_window doesn't match the visual given with "
-                              "ANGLE_X11_VISUAL_ID");
+            return egl::EglBadMatch() << "The visual of native_window doesn't match the visual "
+                                         "given with ANGLE_X11_VISUAL_ID";
         }
     }
 
@@ -88,13 +85,13 @@ egl::Error WindowSurfaceGLX::initialize(const DisplayImpl *displayImpl)
     XVisualInfo *visualInfo = mGLX.getVisualFromFBConfig(mFBConfig);
     if (!visualInfo)
     {
-        return egl::Error(EGL_BAD_NATIVE_WINDOW, "Failed to get the XVisualInfo for the child window.");
+        return egl::EglBadNativeWindow() << "Failed to get the XVisualInfo for the child window.";
     }
     Visual* visual = visualInfo->visual;
 
     if (!getWindowDimensions(mParent, &mParentWidth, &mParentHeight))
     {
-        return egl::Error(EGL_BAD_NATIVE_WINDOW, "Failed to get the parent window's dimensions.");
+        return egl::EglBadNativeWindow() << "Failed to get the parent window's dimensions.";
     }
 
     // The depth, colormap and visual must match otherwise we get a X error
@@ -111,7 +108,7 @@ egl::Error WindowSurfaceGLX::initialize(const DisplayImpl *displayImpl)
     if(!colormap)
     {
         XFree(visualInfo);
-        return egl::Error(EGL_BAD_NATIVE_WINDOW, "Failed to create the Colormap for the child window.");
+        return egl::EglBadNativeWindow() << "Failed to create the Colormap for the child window.";
     }
     attributes.colormap = colormap;
     attributes.border_pixel = 0;
@@ -129,19 +126,15 @@ egl::Error WindowSurfaceGLX::initialize(const DisplayImpl *displayImpl)
 
     mGLXDisplay->syncXCommands();
 
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 egl::Error WindowSurfaceGLX::makeCurrent()
 {
-    if (mGLX.makeCurrent(mGLXWindow, mContext) != True)
-    {
-        return egl::Error(EGL_BAD_DISPLAY);
-    }
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
-egl::Error WindowSurfaceGLX::swap(const DisplayImpl *displayImpl)
+egl::Error WindowSurfaceGLX::swap(const gl::Context *context)
 {
     // We need to swap before resizing as some drivers clobber the back buffer
     // when the window is resized.
@@ -154,31 +147,35 @@ egl::Error WindowSurfaceGLX::swap(const DisplayImpl *displayImpl)
         return error;
     }
 
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
-egl::Error WindowSurfaceGLX::postSubBuffer(EGLint x, EGLint y, EGLint width, EGLint height)
+egl::Error WindowSurfaceGLX::postSubBuffer(const gl::Context *context,
+                                           EGLint x,
+                                           EGLint y,
+                                           EGLint width,
+                                           EGLint height)
 {
     UNIMPLEMENTED();
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 egl::Error WindowSurfaceGLX::querySurfacePointerANGLE(EGLint attribute, void **value)
 {
     UNIMPLEMENTED();
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 egl::Error WindowSurfaceGLX::bindTexImage(gl::Texture *texture, EGLint buffer)
 {
     UNIMPLEMENTED();
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 egl::Error WindowSurfaceGLX::releaseTexImage(EGLint buffer)
 {
     UNIMPLEMENTED();
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 void WindowSurfaceGLX::setSwapInterval(EGLint interval)
@@ -215,8 +212,7 @@ egl::Error WindowSurfaceGLX::checkForResize()
     unsigned int newParentWidth, newParentHeight;
     if (!getWindowDimensions(mParent, &newParentWidth, &newParentHeight))
     {
-        return egl::Error(EGL_BAD_CURRENT_SURFACE,
-                          "Failed to retrieve the size of the parent window.");
+        return egl::EglBadCurrentSurface() << "Failed to retrieve the size of the parent window.";
     }
 
     if (mParentWidth != newParentWidth || mParentHeight != newParentHeight)
@@ -230,7 +226,12 @@ egl::Error WindowSurfaceGLX::checkForResize()
         XSync(mDisplay, False);
     }
 
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
+}
+
+glx::Drawable WindowSurfaceGLX::getDrawable() const
+{
+    return mGLXWindow;
 }
 
 bool WindowSurfaceGLX::getWindowDimensions(Window window, unsigned int *width, unsigned int *height) const

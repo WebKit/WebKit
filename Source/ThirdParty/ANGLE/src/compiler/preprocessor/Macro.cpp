@@ -12,6 +12,14 @@
 namespace pp
 {
 
+Macro::Macro() : predefined(false), disabled(false), expansionCount(0), type(kTypeObj)
+{
+}
+
+Macro::~Macro()
+{
+}
+
 bool Macro::equals(const Macro &other) const
 {
     return (type == other.type) && (name == other.name) && (parameters == other.parameters) &&

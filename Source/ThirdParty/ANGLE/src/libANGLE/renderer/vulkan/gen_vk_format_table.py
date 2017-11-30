@@ -41,21 +41,15 @@ namespace rx
 namespace vk
 {{
 
-// static
-const Format &Format::Get(GLenum internalFormat)
+void Format::initialize(VkPhysicalDevice physicalDevice, const angle::Format &angleFormat)
 {{
-    // clang-format off
-    switch (internalFormat)
+    switch (angleFormat.id)
     {{
 {format_case_data}
         default:
+            UNREACHABLE();
             break;
     }}
-    // clang-format on
-
-    UNREACHABLE();
-    static const Format noInfo(GL_NONE, angle::Format::ID::NONE, VK_FORMAT_UNDEFINED, nullptr);
-    return noInfo;
 }}
 
 }}  // namespace vk
@@ -63,57 +57,78 @@ const Format &Format::Get(GLenum internalFormat)
 }}  // namespace rx
 """
 
-format_entry_template = """{space}{{
-{space}    static constexpr Format info({internalFormat},
-{space}                                 angle::Format::ID::{formatName},
-{space}                                 {vkFormat},
-{space}                                 {initializer});
-{space}    return info;
+empty_format_entry_template = """{space}case angle::Format::ID::{format_id}:
+{space}    // This format is not implemented in Vulkan.
+{space}    break;
+"""
+
+format_entry_template = """{space}case angle::Format::ID::{format_id}:
+{space}{{
+{space}    internalFormat = {internal_format};
+{space}    textureFormatID = angle::Format::ID::{texture_format_id};
+{space}    vkTextureFormat = {vk_texture_format};
+{space}    bufferFormatID = angle::Format::ID::{buffer_format_id};
+{space}    vkBufferFormat = {vk_buffer_format};
+{space}    dataInitializerFunction = {initializer};
+{space}    break;
 {space}}}
 """
 
-def parse_format_case(internal_format, format_name, native_format):
+def gen_format_case(angle, internal_format, vk_map):
 
-    table_data = ""
+    if angle not in vk_map or angle == 'NONE':
+        return empty_format_entry_template.format(
+            space = '        ',
+            format_id = angle)
 
-    parsed = {
-        "space": "        ",
-        "internalFormat": internal_format,
-        "formatName": format_name,
-        "vkFormat": native_format,
-    }
+    texture_format_id = angle
+    buffer_format_id = angle
 
-    # Derived values.
-    parsed["initializer"] = angle_format.get_internal_format_initializer(
-        internal_format, format_name)
+    vk_format_name = vk_map[angle]
+    vk_buffer_format = vk_format_name
+    vk_texture_format = vk_format_name
 
-    return format_entry_template.format(**parsed)
+    if isinstance(vk_format_name, dict):
+        info = vk_format_name
+        vk_format_name = info["native"]
 
-def parse_json_into_cases(json_map, vk_map):
-    table_data = ''
+        if "buffer" in info:
+            buffer_format_id = info["buffer"]
+            vk_buffer_format = vk_map[buffer_format_id]
+            assert(not isinstance(vk_buffer_format, dict))
+        else:
+            vk_buffer_format = vk_format_name
 
-    for internal_format, format_name in sorted(json_map.iteritems()):
+        if "texture" in info:
+            texture_format_id = info["texture"]
+            vk_texture_format = vk_map[texture_format_id]
+            assert(not isinstance(vk_texture_format, dict))
+        else:
+            vk_texture_format = vk_format_name
 
-        if format_name not in vk_map:
-            continue
+    initializer = angle_format.get_internal_format_initializer(
+        internal_format, texture_format_id)
 
-        native_format = vk_map[format_name]
-
-        table_data += '        case ' + internal_format + ':\n'
-        table_data += parse_format_case(internal_format, format_name, native_format)
-
-    return table_data
+    return format_entry_template.format(
+        space = '        ',
+        internal_format = internal_format,
+        format_id = angle,
+        texture_format_id = texture_format_id,
+        buffer_format_id = buffer_format_id,
+        vk_buffer_format = vk_buffer_format,
+        vk_texture_format = vk_texture_format,
+        initializer = initializer)
 
 input_file_name = 'vk_format_map.json'
 out_file_name = 'vk_format_table'
 
-json_map = angle_format.load_without_override()
+angle_to_gl = angle_format.load_inverse_table(os.path.join('..', 'angle_format_map.json'))
 vk_map = angle_format.load_json(input_file_name)
+vk_cases = [gen_format_case(angle, gl, vk_map) for angle, gl in sorted(angle_to_gl.iteritems())]
 
-format_case_data = parse_json_into_cases(json_map, vk_map)
 output_cpp = template_table_autogen_cpp.format(
     copyright_year = date.today().year,
-    format_case_data = format_case_data,
+    format_case_data = "\n".join(vk_cases),
     script_name = __file__,
     out_file_name = out_file_name,
     input_file_name = input_file_name)

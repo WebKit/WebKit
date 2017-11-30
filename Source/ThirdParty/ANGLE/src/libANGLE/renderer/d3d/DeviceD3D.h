@@ -25,7 +25,7 @@ class DeviceD3D : public DeviceImpl
     egl::Error getDevice(void **outValue) override;
     EGLint getType() override;
     void generateExtensions(egl::DeviceExtensions *outExtensions) const override;
-    bool deviceExternallySourced() override { return mDeviceExternallySourced; }
+    bool deviceExternallySourced() override;
 
   private:
     void *mDevice;

@@ -21,8 +21,15 @@ namespace rx
 
 ShaderGL::ShaderGL(const gl::ShaderState &data,
                    const FunctionsGL *functions,
-                   const WorkaroundsGL &workarounds)
-    : ShaderImpl(data), mFunctions(functions), mWorkarounds(workarounds), mShaderID(0)
+                   const WorkaroundsGL &workarounds,
+                   bool isWebGL,
+                   MultiviewImplementationTypeGL multiviewImplementationType)
+    : ShaderImpl(data),
+      mFunctions(functions),
+      mWorkarounds(workarounds),
+      mShaderID(0),
+      mIsWebGL(isWebGL),
+      mMultiviewImplementationType(multiviewImplementationType)
 {
     ASSERT(mFunctions);
 }
@@ -49,6 +56,11 @@ ShCompileOptions ShaderGL::prepareSourceAndReturnOptions(std::stringstream *sour
     *sourceStream << mData.getSource();
 
     ShCompileOptions options = SH_INIT_GL_POSITION;
+
+    if (mIsWebGL)
+    {
+        options |= SH_INIT_OUTPUT_VARIABLES;
+    }
 
     if (mWorkarounds.doWhileGLSLCausesGPUHang)
     {
@@ -93,6 +105,32 @@ ShCompileOptions ShaderGL::prepareSourceAndReturnOptions(std::stringstream *sour
     if (mWorkarounds.rewriteFloatUnaryMinusOperator)
     {
         options |= SH_REWRITE_FLOAT_UNARY_MINUS_OPERATOR;
+    }
+
+    if (!mWorkarounds.dontInitializeUninitializedLocals)
+    {
+        options |= SH_INITIALIZE_UNINITIALIZED_LOCALS;
+    }
+
+    if (mWorkarounds.clampPointSize)
+    {
+        options |= SH_CLAMP_POINT_SIZE;
+    }
+
+    if (mWorkarounds.rewriteVectorScalarArithmetic)
+    {
+        options |= SH_REWRITE_VECTOR_SCALAR_ARITHMETIC;
+    }
+
+    if (mWorkarounds.dontUseLoopsToInitializeVariables)
+    {
+        options |= SH_DONT_USE_LOOPS_TO_INITIALIZE_VARIABLES;
+    }
+
+    if (mMultiviewImplementationType == MultiviewImplementationTypeGL::NV_VIEWPORT_ARRAY2)
+    {
+        options |= SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW;
+        options |= SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER;
     }
 
     return options;

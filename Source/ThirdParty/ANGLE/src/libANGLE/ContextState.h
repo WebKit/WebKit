@@ -9,20 +9,23 @@
 #ifndef LIBANGLE_CONTEXTSTATE_H_
 #define LIBANGLE_CONTEXTSTATE_H_
 
+#include "common/MemoryBuffer.h"
 #include "common/angleutils.h"
 #include "libANGLE/State.h"
 #include "libANGLE/Version.h"
+#include "libANGLE/params.h"
 
 namespace gl
 {
 class BufferManager;
 class ContextState;
-class FenceSyncManager;
 class FramebufferManager;
 class PathManager;
+class ProgramPipelineManager;
 class RenderbufferManager;
 class SamplerManager;
 class ShaderProgramManager;
+class SyncManager;
 class TextureManager;
 class ValidationContext;
 
@@ -32,7 +35,7 @@ static constexpr Version ES_3_1 = Version(3, 1);
 
 using ContextID = uintptr_t;
 
-class ContextState final : public angle::NonCopyable
+class ContextState final : angle::NonCopyable
 {
   public:
     ContextState(ContextID context,
@@ -60,6 +63,7 @@ class ContextState final : public angle::NonCopyable
 
     bool usingDisplayTextureShareGroup() const;
 
+    bool isWebGL() const;
     bool isWebGL1() const;
 
   private:
@@ -79,9 +83,10 @@ class ContextState final : public angle::NonCopyable
     TextureManager *mTextures;
     RenderbufferManager *mRenderbuffers;
     SamplerManager *mSamplers;
-    FenceSyncManager *mFenceSyncs;
+    SyncManager *mSyncs;
     PathManager *mPaths;
     FramebufferManager *mFramebuffers;
+    ProgramPipelineManager *mPipelines;
 };
 
 class ValidationContext : angle::NonCopyable
@@ -96,7 +101,7 @@ class ValidationContext : angle::NonCopyable
                       const Extensions &extensions,
                       const Limitations &limitations,
                       bool skipValidation);
-    virtual ~ValidationContext() {}
+    virtual ~ValidationContext();
 
     virtual void handleError(const Error &error) = 0;
 
@@ -122,19 +127,38 @@ class ValidationContext : angle::NonCopyable
     bool isBufferGenerated(GLuint buffer) const;
     bool isRenderbufferGenerated(GLuint renderbuffer) const;
     bool isFramebufferGenerated(GLuint framebuffer) const;
+    bool isProgramPipelineGenerated(GLuint pipeline) const;
 
     bool usingDisplayTextureShareGroup() const;
 
     // Hack for the special WebGL 1 "DEPTH_STENCIL" internal format.
     GLenum getConvertedRenderbufferFormat(GLenum internalformat) const;
 
+    bool isWebGL() const { return mState.isWebGL(); }
     bool isWebGL1() const { return mState.isWebGL1(); }
+
+    template <typename T>
+    const T &getParams() const;
 
   protected:
     ContextState mState;
     bool mSkipValidation;
     bool mDisplayTextureShareGroup;
+
+    // Caches entry point parameters and values re-used between layers.
+    mutable const ParamTypeInfo *mSavedArgsType;
+    static constexpr size_t kParamsBufferSize = 64u;
+    mutable std::array<uint8_t, kParamsBufferSize> mParamsBuffer;
 };
+
+template <typename T>
+const T &ValidationContext::getParams() const
+{
+    const T *params = reinterpret_cast<T *>(mParamsBuffer.data());
+    ASSERT(mSavedArgsType->hasDynamicType(T::TypeInfo));
+    return *params;
+}
+
 }  // namespace gl
 
 #endif  // LIBANGLE_CONTEXTSTATE_H_

@@ -51,7 +51,7 @@ class TransformFeedbackTest : public testing::Test
     {
         if (mFeedback)
         {
-            mFeedback->release();
+            mFeedback->release(nullptr);
         }
 
         // Only needed because the mock is leaked if bugs are present,
@@ -116,11 +116,11 @@ TEST_F(TransformFeedbackTest, BufferBinding)
     EXPECT_EQ(mFeedback->getIndexedBufferCount(), mCaps.maxTransformFeedbackSeparateAttributes);
 
     EXPECT_CALL(*mImpl, bindGenericBuffer(_));
-    mFeedback->bindGenericBuffer(buffer);
+    mFeedback->bindGenericBuffer(nullptr, buffer);
     EXPECT_EQ(mFeedback->getGenericBuffer().get(), buffer);
 
     EXPECT_CALL(*mImpl, bindIndexedBuffer(_, _));
-    mFeedback->bindIndexedBuffer(bindIndex, buffer, 0, 1);
+    mFeedback->bindIndexedBuffer(nullptr, bindIndex, buffer, 0, 1);
     for (size_t i = 0; i < mFeedback->getIndexedBufferCount(); i++)
     {
         if (i == bindIndex)
@@ -137,7 +137,7 @@ TEST_F(TransformFeedbackTest, BufferBinding)
     const size_t releaseCount = mFeedback->getRefCount();
     for (size_t count = 0; count < releaseCount; ++count)
     {
-        mFeedback->release();
+        mFeedback->release(nullptr);
     }
 
     mFeedback = nullptr;

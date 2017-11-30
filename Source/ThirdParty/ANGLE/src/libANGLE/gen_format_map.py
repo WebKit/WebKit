@@ -184,4 +184,3 @@ with open('format_map_autogen.cpp', 'wt') as out_file:
         es3_type_cases = es3_type_cases,
         es3_combo_cases = es3_combo_cases)
     out_file.write(output_cpp)
-    out_file.close()

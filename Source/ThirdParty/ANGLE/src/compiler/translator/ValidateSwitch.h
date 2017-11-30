@@ -18,6 +18,7 @@ class TIntermBlock;
 // Check for errors and output error messages on the context.
 // Returns true if there are no errors.
 bool ValidateSwitchStatementList(TBasicType switchType,
+                                 int shaderVersion,
                                  TDiagnostics *diagnostics,
                                  TIntermBlock *statementList,
                                  const TSourceLoc &loc);

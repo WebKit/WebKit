@@ -20,6 +20,7 @@ class SurfaceGLX : public SurfaceGL
     SurfaceGLX(const egl::SurfaceState &state, RendererGL *renderer) : SurfaceGL(state, renderer) {}
 
     virtual egl::Error checkForResize() = 0;
+    virtual glx::Drawable getDrawable() const = 0;
 };
 }
 

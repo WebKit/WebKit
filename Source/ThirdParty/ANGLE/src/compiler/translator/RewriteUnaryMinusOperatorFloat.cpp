@@ -6,7 +6,8 @@
 
 #include "compiler/translator/RewriteUnaryMinusOperatorFloat.h"
 
-#include "compiler/translator/IntermNode.h"
+#include "compiler/translator/IntermNode_util.h"
+#include "compiler/translator/IntermTraverse.h"
 
 namespace sh
 {
@@ -72,12 +73,12 @@ bool Traverser::visitUnary(Visit visit, TIntermUnary *node)
     }
 
     // 0.0 - float
-    TIntermTyped *zero = TIntermTyped::CreateZero(fValue->getType());
+    TIntermTyped *zero = CreateZeroNode(fValue->getType());
     zero->setLine(fValue->getLine());
     TIntermBinary *sub = new TIntermBinary(EOpSub, zero, fValue);
     sub->setLine(fValue->getLine());
 
-    queueReplacement(node, sub, OriginalNode::IS_DROPPED);
+    queueReplacement(sub, OriginalNode::IS_DROPPED);
 
     mFound = true;
     return false;

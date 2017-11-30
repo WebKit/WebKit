@@ -16,15 +16,11 @@ namespace rx
 SurfaceEGL::SurfaceEGL(const egl::SurfaceState &state,
                        const FunctionsEGL *egl,
                        EGLConfig config,
-                       const std::vector<EGLint> &attribList,
-                       EGLContext context,
                        RendererGL *renderer)
     : SurfaceGL(state, renderer),
       mEGL(egl),
       mConfig(config),
-      mAttribList(attribList),
-      mSurface(EGL_NO_SURFACE),
-      mContext(context)
+      mSurface(EGL_NO_SURFACE)
 {
 }
 
@@ -39,34 +35,34 @@ SurfaceEGL::~SurfaceEGL()
 
 egl::Error SurfaceEGL::makeCurrent()
 {
-    EGLBoolean success = mEGL->makeCurrent(mSurface, mContext);
-    if (success == EGL_FALSE)
-    {
-        return egl::Error(mEGL->getError(), "eglMakeCurrent failed");
-    }
-    return egl::Error(EGL_SUCCESS);
+    // Handling of makeCurrent is done in DisplayEGL
+    return egl::NoError();
 }
 
-egl::Error SurfaceEGL::swap(const DisplayImpl *displayImpl)
+egl::Error SurfaceEGL::swap(const gl::Context *context)
 {
     EGLBoolean success = mEGL->swapBuffers(mSurface);
     if (success == EGL_FALSE)
     {
         return egl::Error(mEGL->getError(), "eglSwapBuffers failed");
     }
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
-egl::Error SurfaceEGL::postSubBuffer(EGLint x, EGLint y, EGLint width, EGLint height)
+egl::Error SurfaceEGL::postSubBuffer(const gl::Context *context,
+                                     EGLint x,
+                                     EGLint y,
+                                     EGLint width,
+                                     EGLint height)
 {
     UNIMPLEMENTED();
-    return egl::Error(EGL_BAD_SURFACE);
+    return egl::EglBadSurface();
 }
 
 egl::Error SurfaceEGL::querySurfacePointerANGLE(EGLint attribute, void **value)
 {
     UNIMPLEMENTED();
-    return egl::Error(EGL_BAD_SURFACE);
+    return egl::EglBadSurface();
 }
 
 egl::Error SurfaceEGL::bindTexImage(gl::Texture *texture, EGLint buffer)
@@ -76,7 +72,7 @@ egl::Error SurfaceEGL::bindTexImage(gl::Texture *texture, EGLint buffer)
     {
         return egl::Error(mEGL->getError(), "eglBindTexImage failed");
     }
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 egl::Error SurfaceEGL::releaseTexImage(EGLint buffer)
@@ -86,7 +82,7 @@ egl::Error SurfaceEGL::releaseTexImage(EGLint buffer)
     {
         return egl::Error(mEGL->getError(), "eglReleaseTexImage failed");
     }
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 void SurfaceEGL::setSwapInterval(EGLint interval)
@@ -127,6 +123,11 @@ EGLint SurfaceEGL::getSwapBehavior() const
     EGLBoolean success = mEGL->querySurface(mSurface, EGL_SWAP_BEHAVIOR, &value);
     ASSERT(success == EGL_TRUE);
     return value;
+}
+
+EGLSurface SurfaceEGL::getSurface() const
+{
+    return mSurface;
 }
 
 }  // namespace rx

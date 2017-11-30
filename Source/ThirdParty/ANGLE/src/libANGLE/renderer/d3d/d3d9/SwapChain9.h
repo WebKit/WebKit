@@ -28,15 +28,23 @@ class SwapChain9 : public SwapChainD3D
                GLenum backBufferFormat,
                GLenum depthBufferFormat,
                EGLint orientation);
-    virtual ~SwapChain9();
+    ~SwapChain9() override;
 
-    EGLint resize(EGLint backbufferWidth, EGLint backbufferHeight);
-    virtual EGLint reset(EGLint backbufferWidth, EGLint backbufferHeight, EGLint swapInterval);
-    virtual EGLint swapRect(EGLint x, EGLint y, EGLint width, EGLint height);
-    virtual void recreate();
+    EGLint resize(const gl::Context *context, EGLint backbufferWidth, EGLint backbufferHeight)
+        override;
+    EGLint reset(const gl::Context *context,
+                 EGLint backbufferWidth,
+                 EGLint backbufferHeight,
+                 EGLint swapInterval) override;
+    EGLint swapRect(const gl::Context *context,
+                    EGLint x,
+                    EGLint y,
+                    EGLint width,
+                    EGLint height) override;
+    void recreate() override;
 
-    RenderTargetD3D *getColorRenderTarget() override { return &mColorRenderTarget; }
-    RenderTargetD3D *getDepthStencilRenderTarget() override { return &mDepthStencilRenderTarget; }
+    RenderTargetD3D *getColorRenderTarget() override;
+    RenderTargetD3D *getDepthStencilRenderTarget() override;
 
     virtual IDirect3DSurface9 *getRenderTarget();
     virtual IDirect3DSurface9 *getDepthStencil();

@@ -31,16 +31,16 @@ class ProgramGL : public ProgramImpl
               bool enablePathRendering);
     ~ProgramGL() override;
 
-    LinkResult load(const ContextImpl *contextImpl,
-                    gl::InfoLog &infoLog,
-                    gl::BinaryInputStream *stream) override;
-    gl::Error save(gl::BinaryOutputStream *stream) override;
+    gl::LinkResult load(const gl::Context *contextImpl,
+                        gl::InfoLog &infoLog,
+                        gl::BinaryInputStream *stream) override;
+    void save(const gl::Context *context, gl::BinaryOutputStream *stream) override;
     void setBinaryRetrievableHint(bool retrievable) override;
     void setSeparable(bool separable) override;
 
-    LinkResult link(ContextImpl *contextImpl,
-                    const gl::VaryingPacking &packing,
-                    gl::InfoLog &infoLog) override;
+    gl::LinkResult link(const gl::Context *contextImpl,
+                        const gl::ProgramLinkedResources &resources,
+                        gl::InfoLog &infoLog) override;
     GLboolean validate(const gl::Caps &caps, gl::InfoLog *infoLog) override;
 
     void setUniform1fv(GLint location, GLsizei count, const GLfloat *v) override;
@@ -65,23 +65,44 @@ class ProgramGL : public ProgramImpl
     void setUniformMatrix3x4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) override;
     void setUniformMatrix4x3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) override;
 
-    void setUniformBlockBinding(GLuint uniformBlockIndex, GLuint uniformBlockBinding) override;
+    void getUniformfv(const gl::Context *context, GLint location, GLfloat *params) const override;
+    void getUniformiv(const gl::Context *context, GLint location, GLint *params) const override;
+    void getUniformuiv(const gl::Context *context, GLint location, GLuint *params) const override;
 
-    bool getUniformBlockSize(const std::string &blockName, size_t *sizeOut) const override;
-    bool getUniformBlockMemberInfo(const std::string &memberUniformName,
-                                   sh::BlockMemberInfo *memberInfoOut) const override;
+    void setUniformBlockBinding(GLuint uniformBlockIndex, GLuint uniformBlockBinding) override;
 
     void setPathFragmentInputGen(const std::string &inputName,
                                  GLenum genMode,
                                  GLint components,
                                  const GLfloat *coeffs) override;
 
+    void markUnusedUniformLocations(std::vector<gl::VariableLocation> *uniformLocations,
+                                    std::vector<gl::SamplerBinding> *samplerBindings) override;
+
     GLuint getProgramID() const;
+
+    void enableSideBySideRenderingPath() const;
+    void enableLayeredRenderingPath(int baseViewIndex) const;
 
   private:
     void preLink();
     bool checkLinkStatus(gl::InfoLog &infoLog);
     void postLink();
+    void reapplyUBOBindingsIfNeeded(const gl::Context *context);
+
+    bool getUniformBlockSize(const std::string &blockName,
+                             const std::string &blockMappedName,
+                             size_t *sizeOut) const;
+    bool getUniformBlockMemberInfo(const std::string &memberUniformName,
+                                   const std::string &memberUniformMappedName,
+                                   sh::BlockMemberInfo *memberInfoOut) const;
+    bool getShaderStorageBlockMemberInfo(const std::string &memberName,
+                                         const std::string &memberMappedName,
+                                         sh::BlockMemberInfo *memberInfoOut) const;
+    bool getShaderStorageBlockSize(const std::string &blockName,
+                                   const std::string &blockMappedName,
+                                   size_t *sizeOut) const;
+    void linkResources(const gl::ProgramLinkedResources &resources);
 
     // Helper function, makes it simpler to type.
     GLint uniLoc(GLint glLocation) const { return mUniformRealLocationMap[glLocation]; }
@@ -95,12 +116,13 @@ class ProgramGL : public ProgramImpl
 
     struct PathRenderingFragmentInput
     {
-        std::string name;
+        std::string mappedName;
         GLint location;
     };
     std::vector<PathRenderingFragmentInput> mPathRenderingFragmentInputs;
 
     bool mEnablePathRendering;
+    GLint mMultiviewBaseViewLayerIndexUniformLocation;
 
     GLuint mProgramID;
 };

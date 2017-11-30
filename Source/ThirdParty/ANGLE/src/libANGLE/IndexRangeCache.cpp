@@ -15,6 +15,14 @@
 namespace gl
 {
 
+IndexRangeCache::IndexRangeCache()
+{
+}
+
+IndexRangeCache::~IndexRangeCache()
+{
+}
+
 void IndexRangeCache::addRange(GLenum type,
                                size_t offset,
                                size_t count,

@@ -1,34 +1,52 @@
 vars = {
+  'android_git': 'https://android.googlesource.com',
   'chromium_git': 'https://chromium.googlesource.com',
 }
 
 deps = {
-  "third_party/gyp":
-      Var('chromium_git') + "/external/gyp@81c2e5ff92af29bab61c982808076ddce3d200a2",
 
-  # TODO(kbr): figure out how to better stay in sync with Chromium's
-  # versions of googletest and googlemock.
-  "src/tests/third_party/googletest":
-      Var('chromium_git') + "/external/googletest.git@9855a87157778d39b95eccfb201a9dc90f6d61c6",
+  'build':
+    Var('chromium_git') + '/chromium/src/build.git' + '@' + '8a1537f019e55807420ae76c62e4ce8f56fedca1',
 
-  "src/tests/third_party/googlemock":
-      Var('chromium_git') + "/external/googlemock.git@b2cb211e49d872101d991201362d7b97d7d69910",
+  'buildtools':
+    Var('chromium_git') + '/chromium/buildtools.git' + '@' + '461b345a815c1c745ac0534a6a4bd52d123abe68',
+
+  'testing':
+    Var('chromium_git') + '/chromium/src/testing' + '@' + '6dfa36ab2e5143fa2f7353e3af5d2935af2e61f7',
 
   # Cherry is a dEQP management GUI written in Go. We use it for viewing test results.
-  "third_party/cherry":
-      "https://android.googlesource.com/platform/external/cherry@d2e26b4d864ec2a6757e7f1174e464949ca5bf73",
+  'third_party/cherry':
+    Var('android_git') + '/platform/external/cherry' + '@' + '4f8fb08d33ca5ff05a1c638f04c85bbb8d8b52cc',
 
-  "third_party/deqp/src":
-      "https://android.googlesource.com/platform/external/deqp@f4f3d8079e7a37d7675ab93583e6438d0bca0e58",
+  'third_party/deqp/src':
+    Var('android_git') + '/platform/external/deqp' + '@' + '455d82c60b096e7bd83b6a2f5ed70c61e4bfa759',
 
-  "third_party/libpng":
-      "https://android.googlesource.com/platform/external/libpng@094e181e79a3d6c23fd005679025058b7df1ad6c",
+  'third_party/glslang-angle/src':
+    Var('android_git') + '/platform/external/shaderc/glslang' + '@' + '1e275c8486325aaab34734ad9a650c0121c5efdb',
 
-  "third_party/zlib":
-      Var('chromium_git') + "/chromium/src/third_party/zlib@afd8c4593c010c045902f6c0501718f1823064a3",
+  'third_party/googletest/src':
+    Var('chromium_git') + '/external/github.com/google/googletest.git' + '@' + 'd175c8bf823e709d570772b038757fadf63bc632',
 
-  "buildtools":
-      Var('chromium_git') + '/chromium/buildtools.git@06e80a0e17319868d4a9b13f9bb6a248dc8d8b20',
+  'third_party/libpng/src':
+    Var('android_git') + '/platform/external/libpng' + '@' + '094e181e79a3d6c23fd005679025058b7df1ad6c',
+
+  'third_party/spirv-headers/src':
+    Var('android_git') + '/platform/external/shaderc/spirv-headers' + '@' + 'c470b68225a04965bf87d35e143ae92f831e8110',
+
+  'third_party/spirv-tools-angle/src':
+    Var('android_git') + '/platform/external/shaderc/spirv-tools' + '@' + '68c5f0436f1d4f1f137e608780190865d0b193ca',
+
+  'third_party/vulkan-validation-layers/src':
+    Var('android_git') + '/platform/external/vulkan-validation-layers' + '@' + 'f47c534fee2f26f6b783209d56e0ade48e30eb8d',
+
+  'third_party/zlib':
+    Var('chromium_git') + '/chromium/src/third_party/zlib' + '@' + '24ab14872e8e068ba08cc31cc3d43bcc6d5cb832',
+
+  'tools/clang':
+    Var('chromium_git') + '/chromium/src/tools/clang.git' + '@' + 'e70074db10b27867e6c873adc3ac7e5f9ee0ff6e',
+
+  'tools/gyp':
+    Var('chromium_git') + '/external/gyp' + '@' + '5e2b3ddde7cda5eb6bc09a5546a76b00e49d888f',
 }
 
 hooks = [
@@ -36,6 +54,7 @@ hooks = [
   {
     'name': 'clang_format_win',
     'pattern': '.',
+    'condition': 'host_os == "win"',
     'action': [ 'download_from_google_storage',
                 '--no_resume',
                 '--platform=win32',
@@ -47,6 +66,7 @@ hooks = [
   {
     'name': 'clang_format_mac',
     'pattern': '.',
+    'condition': 'host_os == "mac"',
     'action': [ 'download_from_google_storage',
                 '--no_resume',
                 '--platform=darwin',
@@ -58,6 +78,7 @@ hooks = [
   {
     'name': 'clang_format_linux',
     'pattern': '.',
+    'condition': 'host_os == "linux"',
     'action': [ 'download_from_google_storage',
                 '--no_resume',
                 '--platform=linux*',
@@ -70,6 +91,7 @@ hooks = [
   {
     'name': 'gn_win',
     'pattern': '.',
+    'condition': 'host_os == "win"',
     'action': [ 'download_from_google_storage',
                 '--no_resume',
                 '--platform=win32',
@@ -81,6 +103,7 @@ hooks = [
   {
     'name': 'gn_mac',
     'pattern': '.',
+    'condition': 'host_os == "mac"',
     'action': [ 'download_from_google_storage',
                 '--no_resume',
                 '--platform=darwin',
@@ -92,6 +115,7 @@ hooks = [
   {
     'name': 'gn_linux64',
     'pattern': '.',
+    'condition': 'host_os == "linux"',
     'action': [ 'download_from_google_storage',
                 '--no_resume',
                 '--platform=linux*',
@@ -101,8 +125,33 @@ hooks = [
     ],
   },
   {
-    # A change to a .gyp, .gypi, or to GYP itself should run the generator.
-    "pattern": ".",
-    "action": ["python", "build/gyp_angle"],
+    # Note: On Win, this should run after win_toolchain, as it may use it.
+    'name': 'clang',
+    'pattern': '.',
+    'action': ['python', 'tools/clang/scripts/update.py', '--if-needed'],
   },
+
+  # Pull rc binaries using checked-in hashes.
+  {
+    'name': 'rc_win',
+    'pattern': '.',
+    'condition': 'checkout_win and host_os == "win"',
+    'action': [ 'download_from_google_storage',
+                '--no_resume',
+                '--no_auth',
+                '--bucket', 'chromium-browser-clang/rc',
+                '-s', 'build/toolchain/win/rc/win/rc.exe.sha1',
+    ],
+  },
+
+  {
+    # A change to a .gyp, .gypi, or to GYP itself should run the generator.
+    'pattern': '.',
+    'action': ['python', 'gyp/gyp_angle'],
+  },
+]
+
+recursedeps = [
+  # buildtools provides clang_format.
+  'buildtools',
 ]

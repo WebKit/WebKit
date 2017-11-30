@@ -22,7 +22,7 @@ namespace
 std::string GetExecutablePathImpl()
 {
     std::array<char, MAX_PATH> executableFileBuf;
-    DWORD executablePathLen = GetModuleFileNameA(NULL, executableFileBuf.data(),
+    DWORD executablePathLen = GetModuleFileNameA(nullptr, executableFileBuf.data(),
                                                  static_cast<DWORD>(executableFileBuf.size()));
     return (executablePathLen > 0 ? std::string(executableFileBuf.data()) : "");
 }
@@ -69,6 +69,11 @@ Optional<std::string> GetCWD()
 bool SetCWD(const char *dirName)
 {
     return (SetCurrentDirectoryA(dirName) == TRUE);
+}
+
+bool SetEnvironmentVar(const char *variableName, const char *value)
+{
+    return (SetEnvironmentVariableA(variableName, value) == TRUE);
 }
 
 }  // namespace angle

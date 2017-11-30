@@ -7,10 +7,12 @@
 #ifndef COMMON_MEMORYBUFFER_H_
 #define COMMON_MEMORYBUFFER_H_
 
+#include "common/Optional.h"
 #include "common/angleutils.h"
+#include "common/debug.h"
 
-#include <cstddef>
 #include <stdint.h>
+#include <cstddef>
 
 namespace angle
 {
@@ -21,12 +23,21 @@ class MemoryBuffer final : NonCopyable
     MemoryBuffer();
     ~MemoryBuffer();
 
+    MemoryBuffer(MemoryBuffer &&other);
+    MemoryBuffer &operator=(MemoryBuffer &&other);
+
     bool resize(size_t size);
-    size_t size() const;
+    size_t size() const { return mSize; }
     bool empty() const { return mSize == 0; }
 
-    const uint8_t *data() const;
-    uint8_t *data();
+    const uint8_t *data() const { return mData; }
+    uint8_t *data()
+    {
+        ASSERT(mData);
+        return mData;
+    }
+
+    void fill(uint8_t datum);
 
   private:
     size_t mSize;
@@ -45,12 +56,17 @@ class ScratchBuffer final : NonCopyable
     // Returns true with a memory buffer of the requested size, or false on failure.
     bool get(size_t requestedSize, MemoryBuffer **memoryBufferOut);
 
+    // Same as get, but ensures new values are initialized to a fixed constant.
+    bool getInitialized(size_t requestedSize, MemoryBuffer **memoryBufferOut, uint8_t initValue);
+
     // Ticks the release counter for the scratch buffer. Also done implicitly in get().
     void tick();
 
     void clear();
 
   private:
+    bool getImpl(size_t requestedSize, MemoryBuffer **memoryBufferOut, Optional<uint8_t> initValue);
+
     const uint32_t mLifetime;
     uint32_t mResetCounter;
     MemoryBuffer mScratchMemory;
@@ -58,4 +74,4 @@ class ScratchBuffer final : NonCopyable
 
 }  // namespace angle
 
-#endif // COMMON_MEMORYBUFFER_H_
+#endif  // COMMON_MEMORYBUFFER_H_

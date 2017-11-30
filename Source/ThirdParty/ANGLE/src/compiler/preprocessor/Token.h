@@ -19,7 +19,9 @@ struct Token
 {
     enum Type
     {
-        LAST = 0,  // EOF.
+        // Calling this ERROR causes a conflict with wingdi.h
+        GOT_ERROR = -1,
+        LAST  = 0,  // EOF.
 
         IDENTIFIER = 258,
 

@@ -41,7 +41,7 @@ egl::Error DisplayImpl::validateClientBuffer(const egl::Config *configuration,
                                              const egl::AttributeMap &attribs) const
 {
     UNREACHABLE();
-    return egl::Error(EGL_BAD_DISPLAY, "DisplayImpl::validateClientBuffer unimplemented.");
+    return egl::EglBadDisplay() << "DisplayImpl::validateClientBuffer unimplemented.";
 }
 
 const egl::Caps &DisplayImpl::getCaps() const

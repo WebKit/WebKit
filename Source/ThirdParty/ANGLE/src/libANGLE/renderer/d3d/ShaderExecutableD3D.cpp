@@ -44,9 +44,13 @@ void ShaderExecutableD3D::appendDebugInfo(const std::string &info)
     mDebugInfo += info;
 }
 
-
-UniformStorageD3D::UniformStorageD3D(size_t initialSize) : mSize(initialSize)
+UniformStorageD3D::UniformStorageD3D(size_t initialSize) : mUniformData()
 {
+    bool result = mUniformData.resize(initialSize);
+    ASSERT(result);
+
+    // Uniform data is zero-initialized by default.
+    mUniformData.fill(0);
 }
 
 UniformStorageD3D::~UniformStorageD3D()
@@ -55,7 +59,13 @@ UniformStorageD3D::~UniformStorageD3D()
 
 size_t UniformStorageD3D::size() const
 {
-    return mSize;
+    return mUniformData.size();
 }
 
+uint8_t *UniformStorageD3D::getDataPointer(unsigned int registerIndex, unsigned int registerElement)
+{
+    size_t offset = ((registerIndex * 4 + registerElement) * sizeof(float));
+    return mUniformData.data() + offset;
 }
+
+}  // namespace rx

@@ -274,14 +274,26 @@ TEST(MathUtilTest, BitCount)
     EXPECT_EQ(0, gl::BitCount(0u));
     EXPECT_EQ(32, gl::BitCount(0xFFFFFFFFu));
     EXPECT_EQ(10, gl::BitCount(0x17103121u));
+
+#if defined(ANGLE_IS_64_BIT_CPU)
+    EXPECT_EQ(0, gl::BitCount(0ull));
+    EXPECT_EQ(32, gl::BitCount(0xFFFFFFFFull));
+    EXPECT_EQ(10, gl::BitCount(0x17103121ull));
+#endif  // defined(ANGLE_IS_64_BIT_CPU)
 }
 
 // Test ScanForward, which scans for the least significant 1 bit from a non-zero integer.
 TEST(MathUtilTest, ScanForward)
 {
-    EXPECT_EQ(0ul, gl::ScanForward(1ul));
-    EXPECT_EQ(16ul, gl::ScanForward(0x80010000ul));
-    EXPECT_EQ(31ul, gl::ScanForward(0x80000000ul));
+    EXPECT_EQ(0ul, gl::ScanForward(1u));
+    EXPECT_EQ(16ul, gl::ScanForward(0x80010000u));
+    EXPECT_EQ(31ul, gl::ScanForward(0x80000000u));
+
+#if defined(ANGLE_IS_64_BIT_CPU)
+    EXPECT_EQ(0ul, gl::ScanForward(1ull));
+    EXPECT_EQ(16ul, gl::ScanForward(0x80010000ull));
+    EXPECT_EQ(31ul, gl::ScanForward(0x80000000ull));
+#endif  // defined(ANGLE_IS_64_BIT_CPU)
 }
 
 // Test ScanReverse, which scans for the most significant 1 bit from a non-zero integer.
@@ -317,6 +329,40 @@ TEST(MathUtilTest, Ldexp)
     EXPECT_EQ(-5.0f, Ldexp(-0.625f, 3));
     EXPECT_EQ(std::numeric_limits<float>::infinity(), Ldexp(0.625f, 129));
     EXPECT_EQ(0.0f, Ldexp(1.0f, -129));
+}
+
+// Test that Range::extend works as expected.
+TEST(MathUtilTest, RangeExtend)
+{
+    RangeI range(0, 0);
+
+    range.extend(5);
+    EXPECT_EQ(0, range.low());
+    EXPECT_EQ(6, range.high());
+    EXPECT_EQ(6, range.length());
+
+    range.extend(-1);
+    EXPECT_EQ(-1, range.low());
+    EXPECT_EQ(6, range.high());
+    EXPECT_EQ(7, range.length());
+
+    range.extend(10);
+    EXPECT_EQ(-1, range.low());
+    EXPECT_EQ(11, range.high());
+    EXPECT_EQ(12, range.length());
+}
+
+// Test that Range iteration works as expected.
+TEST(MathUtilTest, RangeIteration)
+{
+    RangeI range(0, 10);
+    int expected = 0;
+    for (int value : range)
+    {
+        EXPECT_EQ(expected, value);
+        expected++;
+    }
+    EXPECT_EQ(range.length(), expected);
 }
 
 }  // anonymous namespace

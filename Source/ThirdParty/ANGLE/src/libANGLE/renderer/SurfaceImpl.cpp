@@ -19,10 +19,10 @@ SurfaceImpl::~SurfaceImpl()
 {
 }
 
-egl::Error SurfaceImpl::swapWithDamage(EGLint *rects, EGLint n_rects)
+egl::Error SurfaceImpl::swapWithDamage(const gl::Context *context, EGLint *rects, EGLint n_rects)
 {
     UNREACHABLE();
-    return egl::Error(EGL_BAD_SURFACE, "swapWithDamage implementation missing.");
+    return egl::EglBadSurface() << "swapWithDamage implementation missing.";
 }
 
 }  // namespace rx

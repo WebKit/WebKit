@@ -31,8 +31,8 @@ class DisplayGL : public DisplayImpl
     egl::Error initialize(egl::Display *display) override;
     void terminate() override;
 
-    ImageImpl *createImage(EGLenum target,
-                           egl::ImageSibling *buffer,
+    ImageImpl *createImage(const egl::ImageState &state,
+                           EGLenum target,
                            const egl::AttributeMap &attribs) override;
 
     ContextImpl *createContext(const gl::ContextState &state) override;
@@ -47,6 +47,8 @@ class DisplayGL : public DisplayImpl
 
   protected:
     RendererGL *getRenderer() const { return mRenderer; };
+
+    void generateExtensions(egl::DisplayExtensions *outExtensions) const override;
 
   private:
     virtual const FunctionsGL *getFunctionsGL() const = 0;

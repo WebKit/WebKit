@@ -1341,104 +1341,17 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
     )
 
     list(APPEND ANGLESupport_SOURCES
-        ${THIRDPARTY_DIR}/ANGLE/src/common/Float16ToFloat32.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/common/angleutils.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/common/debug.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/common/event_tracer.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/common/Float16ToFloat32.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/common/mathutil.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/common/MemoryBuffer.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/common/utilities.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/common/string_utils.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/common/third_party/smhasher/src/PMurHash.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/common/tls.cpp
-
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/AddAndTrueToLoopCondition.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/AddDefaultReturnStatements.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ArrayReturnValueToOutParameter.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ASTMetadataHLSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/blocklayout.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/blocklayoutHLSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/BreakVariableAliasingInInnerLoops.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/BuiltInFunctionEmulator.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/BuiltInFunctionEmulatorGLSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/BuiltInFunctionEmulatorHLSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Cache.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/CallDAG.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/CodeGen.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Compiler.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ConstantUnion.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/DeferGlobalInitializers.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Diagnostics.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/DirectiveHandler.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/EmulateGLFragColorBroadcast.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/EmulatePrecision.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ExpandIntegerPowExpressions.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ExtensionGLSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/FindSymbolNode.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/FlagStd140Structs.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/glslang_lex.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/glslang_tab.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/InfoSink.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Initialize.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/InitializeDll.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/InitializeVariables.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Intermediate.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/IntermNode.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/IntermNodePatternMatcher.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/IntermTraverse.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/intermOut.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Operator.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/OutputESSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/OutputGLSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/OutputGLSLBase.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/OutputHLSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/OutputVulkanGLSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ParseContext.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/PoolAlloc.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/PruneEmptyDeclarations.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/PrunePureLiteralStatements.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/QualifierTypes.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RecordConstantPrecision.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RegenerateStructNames.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RemoveDynamicIndexing.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RemoveInvariantDeclaration.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RemovePow.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RemoveSwitchFallThrough.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RewriteDoWhile.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RewriteElseBlocks.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RewriteUnaryMinusOperatorFloat.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RewriteTexelFetchOffset.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RewriteUnaryMinusOperatorInt.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ScalarizeVecAndMatConstructorArgs.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SearchSymbol.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SeparateArrayInitialization.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SeparateExpressionsReturningArrays.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SeparateDeclarations.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ShaderLang.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ShaderVars.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SimplifyLoopConditions.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SplitSequenceOperator.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/StructureHLSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SymbolTable.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/TextureFunctionHLSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/TranslatorESSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/TranslatorGLSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/TranslatorHLSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/TranslatorVulkan.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Types.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/UnfoldShortCircuitAST.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/UnfoldShortCircuitToIf.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/UniformHLSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/UseInterfaceBlockFields.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/util.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/UtilsHLSL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ValidateGlobalInitializer.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ValidateLimitations.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ValidateMaxParameters.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ValidateMultiviewWebGL.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ValidateOutputs.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ValidateSwitch.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/VariableInfo.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/VariablePacker.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/VersionGLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/common/uniform_type_info_autogen.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/common/utilities.cpp
 
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/DiagnosticsBase.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/DirectiveHandlerBase.cpp
@@ -1452,9 +1365,114 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/Token.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/Tokenizer.cpp
 
-        ${THIRDPARTY_DIR}/ANGLE/src/libANGLE/Platform.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ASTMetadataHLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/AddAndTrueToLoopCondition.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/AddDefaultReturnStatements.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ArrayReturnValueToOutParameter.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/BreakVariableAliasingInInnerLoops.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/BuiltInFunctionEmulator.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/BuiltInFunctionEmulatorGLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/BuiltInFunctionEmulatorHLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Cache.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/CallDAG.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ClampPointSize.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/CodeGen.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/CollectVariables.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Compiler.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ConstantUnion.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/DeclareAndInitBuiltinsForInstancedMultiview.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/DeferGlobalInitializers.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Diagnostics.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/DirectiveHandler.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/EmulateGLFragColorBroadcast.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/EmulatePrecision.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ExpandIntegerPowExpressions.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ExtensionBehavior.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ExtensionGLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/FindMain.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/FindSymbolNode.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/FlagStd140Structs.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/HashNames.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ImageFunctionHLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/InfoSink.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Initialize.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/InitializeDll.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/InitializeVariables.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/IntermNode.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/IntermNodePatternMatcher.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/IntermNode_util.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/IntermTraverse.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/IsASTDepthBelowLimit.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Operator.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/OutputESSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/OutputGLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/OutputGLSLBase.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/OutputHLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/OutputTree.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/OutputVulkanGLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ParseContext.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/PoolAlloc.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/PruneNoOps.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/QualifierTypes.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RecordConstantPrecision.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RegenerateStructNames.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RemoveArrayLengthMethod.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RemoveDynamicIndexing.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RemoveEmptySwitchStatements.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RemoveInvariantDeclaration.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RemoveNoOpCasesFromEndOfSwitchStatements.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RemovePow.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RemoveSwitchFallThrough.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RemoveUnreferencedVariables.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RewriteDoWhile.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RewriteElseBlocks.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RewriteTexelFetchOffset.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RewriteUnaryMinusOperatorFloat.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RewriteUnaryMinusOperatorInt.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/RunAtTheEndOfShader.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ScalarizeVecAndMatConstructorArgs.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SearchSymbol.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SeparateArrayInitialization.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SeparateDeclarations.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SeparateExpressionsReturningArrays.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ShaderLang.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ShaderVars.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SimplifyLoopConditions.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SplitSequenceOperator.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/StructureHLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SymbolTable.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/SymbolUniqueId.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/TextureFunctionHLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/TranslatorESSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/TranslatorGLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/TranslatorHLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/TranslatorVulkan.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/Types.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/UnfoldShortCircuitAST.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/UnfoldShortCircuitToIf.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/UniformHLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/UseInterfaceBlockFields.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/UtilsHLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ValidateGlobalInitializer.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ValidateLimitations.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ValidateMaxParameters.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ValidateOutputs.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ValidateSwitch.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/ValidateVaryingLocations.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/VariablePacker.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/VectorizeVectorScalarArithmetic.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/VersionGLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/WrapSwitchStatementsInBlocks.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/blocklayout.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/blocklayoutHLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/emulated_builtin_functions_hlsl_autogen.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/glslang_lex.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/glslang_tab.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/translator/util.cpp
 
         ${THIRDPARTY_DIR}/ANGLE/src/third_party/compiler/ArrayBoundsClamper.cpp
+
+        ${THIRDPARTY_DIR}/ANGLE/src/libANGLE/Platform.cpp
     )
 
     list(APPEND WebCore_SOURCES
@@ -1946,7 +1964,7 @@ if (ENABLE_GRAPHICS_CONTEXT_3D AND NOT WIN32)
         "${THIRDPARTY_DIR}/ANGLE/include"
         "${THIRDPARTY_DIR}/ANGLE/include/KHR"
         "${THIRDPARTY_DIR}/ANGLE/src"
-        "${THIRDPARTY_DIR}/ANGLE/src/common/third_party/numerics"
+        "${THIRDPARTY_DIR}/ANGLE/src/common/third_party/base"
     )
     list(APPEND WebCore_LIBRARIES ANGLESupport)
 

@@ -41,7 +41,7 @@ VkResult VerifyExtensionsPresent(const std::vector<VkExtensionProperties> &exten
         extensionNames.insert(extensionProp.extensionName);
     }
 
-    for (const auto &extensionName : enabledExtensionNames)
+    for (const char *extensionName : enabledExtensionNames)
     {
         if (extensionNames.count(extensionName) == 0)
         {
@@ -93,18 +93,17 @@ RendererVk::RendererVk()
       mQueue(VK_NULL_HANDLE),
       mCurrentQueueFamilyIndex(std::numeric_limits<uint32_t>::max()),
       mDevice(VK_NULL_HANDLE),
-      mHostVisibleMemoryIndex(std::numeric_limits<uint32_t>::max()),
       mGlslangWrapper(nullptr),
-      mCurrentQueueSerial(),
-      mLastCompletedQueueSerial(),
-      mInFlightCommands()
+      mLastCompletedQueueSerial(mQueueSerialFactory.generate()),
+      mCurrentQueueSerial(mQueueSerialFactory.generate()),
+      mInFlightCommands(),
+      mCurrentRenderPassFramebuffer(nullptr)
 {
-    ++mCurrentQueueSerial;
 }
 
 RendererVk::~RendererVk()
 {
-    if (!mInFlightCommands.empty())
+    if (!mInFlightCommands.empty() || !mInFlightFences.empty() || !mGarbage.empty())
     {
         vk::Error error = finish();
         if (error.isError())
@@ -121,7 +120,7 @@ RendererVk::~RendererVk()
 
     if (mCommandBuffer.valid())
     {
-        mCommandBuffer.destroy(mDevice);
+        mCommandBuffer.destroy(mDevice, mCommandPool);
     }
 
     if (mCommandPool.valid())
@@ -153,19 +152,9 @@ RendererVk::~RendererVk()
     mPhysicalDevice = VK_NULL_HANDLE;
 }
 
-vk::Error RendererVk::initialize(const egl::AttributeMap &attribs)
+vk::Error RendererVk::initialize(const egl::AttributeMap &attribs, const char *wsiName)
 {
-#if !defined(NDEBUG)
-    // Validation layers enabled by default in Debug.
-    mEnableValidationLayers = true;
-#endif
-
-    // If specified in the attributes, override the default.
-    if (attribs.contains(EGL_PLATFORM_ANGLE_ENABLE_VALIDATION_LAYER_ANGLE))
-    {
-        mEnableValidationLayers =
-            (attribs.get(EGL_PLATFORM_ANGLE_ENABLE_VALIDATION_LAYER_ANGLE, EGL_FALSE) == EGL_TRUE);
-    }
+    mEnableValidationLayers = ShouldUseDebugLayers(attribs);
 
     // If we're loading the validation layers, we could be running from any random directory.
     // Change to the executable directory so we can find the layers, then change back to the
@@ -183,9 +172,23 @@ vk::Error RendererVk::initialize(const egl::AttributeMap &attribs)
         else
         {
             previousCWD = cwd.value();
+            const char *exeDir = angle::GetExecutableDirectory();
+            if (!angle::SetCWD(exeDir))
+            {
+                ERR() << "Error setting CWD for Vulkan layers init.";
+                mEnableValidationLayers = false;
+            }
         }
-        const char *exeDir = angle::GetExecutableDirectory();
-        angle::SetCWD(exeDir);
+    }
+
+    // Override environment variable to use the ANGLE layers.
+    if (mEnableValidationLayers)
+    {
+        if (!angle::SetEnvironmentVar(g_VkLoaderLayersPathEnv, ANGLE_VK_LAYERS_DIR))
+        {
+            ERR() << "Error setting environment for Vulkan layers init.";
+            mEnableValidationLayers = false;
+        }
     }
 
     // Gather global layer properties.
@@ -215,7 +218,8 @@ vk::Error RendererVk::initialize(const egl::AttributeMap &attribs)
         if (!HasStandardValidationLayer(instanceLayerProps))
         {
             // Generate an error if the attribute was requested, warning otherwise.
-            if (attribs.contains(EGL_PLATFORM_ANGLE_ENABLE_VALIDATION_LAYER_ANGLE))
+            if (attribs.get(EGL_PLATFORM_ANGLE_DEBUG_LAYERS_ENABLED_ANGLE, EGL_DONT_CARE) ==
+                EGL_TRUE)
             {
                 ERR() << "Vulkan standard validation layers are missing.";
             }
@@ -229,11 +233,7 @@ vk::Error RendererVk::initialize(const egl::AttributeMap &attribs)
 
     std::vector<const char *> enabledInstanceExtensions;
     enabledInstanceExtensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
-#if defined(ANGLE_PLATFORM_WINDOWS)
-    enabledInstanceExtensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
-#else
-#error Unsupported Vulkan platform.
-#endif  // defined(ANGLE_PLATFORM_WINDOWS)
+    enabledInstanceExtensions.push_back(wsiName);
 
     // TODO(jmadill): Should be able to continue initialization if debug report ext missing.
     if (mEnableValidationLayers)
@@ -338,23 +338,13 @@ vk::Error RendererVk::initialize(const egl::AttributeMap &attribs)
         ANGLE_TRY(initializeDevice(firstGraphicsQueueFamily));
     }
 
-    VkPhysicalDeviceMemoryProperties memoryProperties;
-    vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice, &memoryProperties);
-
-    for (uint32_t memoryIndex = 0; memoryIndex < memoryProperties.memoryTypeCount; ++memoryIndex)
-    {
-        if ((memoryProperties.memoryTypes[memoryIndex].propertyFlags &
-             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) != 0)
-        {
-            mHostVisibleMemoryIndex = memoryIndex;
-            break;
-        }
-    }
-
-    ANGLE_VK_CHECK(mHostVisibleMemoryIndex < std::numeric_limits<uint32_t>::max(),
-                   VK_ERROR_INITIALIZATION_FAILED);
+    // Store the physical device memory properties so we can find the right memory pools.
+    mMemoryProperties.init(mPhysicalDevice);
 
     mGlslangWrapper = GlslangWrapper::GetReference();
+
+    // Initialize the format table.
+    mFormatTable.initialize(mPhysicalDevice, &mNativeTextureCaps);
 
     return vk::NoError();
 }
@@ -438,8 +428,6 @@ vk::Error RendererVk::initializeDevice(uint32_t queueFamilyIndex)
     commandPoolInfo.queueFamilyIndex = mCurrentQueueFamilyIndex;
 
     ANGLE_TRY(mCommandPool.init(mDevice, commandPoolInfo));
-
-    mCommandBuffer.setCommandPool(&mCommandPool);
 
     return vk::NoError();
 }
@@ -540,6 +528,14 @@ void RendererVk::generateCaps(gl::Caps *outCaps,
     outCaps->maxDrawBuffers      = 1;
     outCaps->maxVertexAttributes     = gl::MAX_VERTEX_ATTRIBS;
     outCaps->maxVertexAttribBindings = gl::MAX_VERTEX_ATTRIB_BINDINGS;
+    outCaps->maxVaryingVectors            = 16;
+    outCaps->maxTextureImageUnits         = 1;
+    outCaps->maxCombinedTextureImageUnits = 1;
+    outCaps->max2DTextureSize             = 1024;
+    outCaps->maxElementIndex              = std::numeric_limits<GLuint>::max() - 1;
+    outCaps->maxFragmentUniformVectors    = 8;
+    outCaps->maxVertexUniformVectors      = 8;
+    outCaps->maxColorAttachments          = 1;
 
     // Enable this for simple buffer readback testing, but some functionality is missing.
     // TODO(jmadill): Support full mapBufferRange extension.
@@ -571,19 +567,21 @@ const gl::Limitations &RendererVk::getNativeLimitations() const
     return mNativeLimitations;
 }
 
-vk::CommandBuffer *RendererVk::getCommandBuffer()
+vk::Error RendererVk::getStartedCommandBuffer(vk::CommandBufferAndState **commandBufferOut)
 {
-    return &mCommandBuffer;
+    ANGLE_TRY(mCommandBuffer.ensureStarted(mDevice, mCommandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY));
+    *commandBufferOut = &mCommandBuffer;
+    return vk::NoError();
 }
 
-vk::Error RendererVk::submitCommandBuffer(const vk::CommandBuffer &commandBuffer)
+vk::Error RendererVk::submitCommandBuffer(vk::CommandBufferAndState *commandBuffer)
 {
+    ANGLE_TRY(commandBuffer->ensureFinished());
+
     VkFenceCreateInfo fenceInfo;
     fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     fenceInfo.pNext = nullptr;
     fenceInfo.flags = 0;
-
-    VkCommandBuffer commandBufferHandle = commandBuffer.getHandle();
 
     VkSubmitInfo submitInfo;
     submitInfo.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -592,7 +590,7 @@ vk::Error RendererVk::submitCommandBuffer(const vk::CommandBuffer &commandBuffer
     submitInfo.pWaitSemaphores      = nullptr;
     submitInfo.pWaitDstStageMask    = nullptr;
     submitInfo.commandBufferCount   = 1;
-    submitInfo.pCommandBuffers      = &commandBufferHandle;
+    submitInfo.pCommandBuffers      = commandBuffer->ptr();
     submitInfo.signalSemaphoreCount = 0;
     submitInfo.pSignalSemaphores    = nullptr;
 
@@ -602,7 +600,7 @@ vk::Error RendererVk::submitCommandBuffer(const vk::CommandBuffer &commandBuffer
     return vk::NoError();
 }
 
-vk::Error RendererVk::submitAndFinishCommandBuffer(const vk::CommandBuffer &commandBuffer)
+vk::Error RendererVk::submitAndFinishCommandBuffer(vk::CommandBufferAndState *commandBuffer)
 {
     ANGLE_TRY(submitCommandBuffer(commandBuffer));
     ANGLE_TRY(finish());
@@ -610,10 +608,12 @@ vk::Error RendererVk::submitAndFinishCommandBuffer(const vk::CommandBuffer &comm
     return vk::NoError();
 }
 
-vk::Error RendererVk::submitCommandsWithSync(const vk::CommandBuffer &commandBuffer,
+vk::Error RendererVk::submitCommandsWithSync(vk::CommandBufferAndState *commandBuffer,
                                              const vk::Semaphore &waitSemaphore,
                                              const vk::Semaphore &signalSemaphore)
 {
+    ANGLE_TRY(commandBuffer->end());
+
     VkPipelineStageFlags waitStageMask  = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
 
     VkSubmitInfo submitInfo;
@@ -623,12 +623,12 @@ vk::Error RendererVk::submitCommandsWithSync(const vk::CommandBuffer &commandBuf
     submitInfo.pWaitSemaphores      = waitSemaphore.ptr();
     submitInfo.pWaitDstStageMask    = &waitStageMask;
     submitInfo.commandBufferCount   = 1;
-    submitInfo.pCommandBuffers      = commandBuffer.ptr();
+    submitInfo.pCommandBuffers      = commandBuffer->ptr();
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores    = signalSemaphore.ptr();
 
     // TODO(jmadill): Investigate how to properly queue command buffer work.
-    ANGLE_TRY(submit(submitInfo));
+    ANGLE_TRY(submitFrame(submitInfo));
 
     return vk::NoError();
 }
@@ -637,49 +637,85 @@ vk::Error RendererVk::finish()
 {
     ASSERT(mQueue != VK_NULL_HANDLE);
     ANGLE_VK_TRY(vkQueueWaitIdle(mQueue));
-    checkInFlightCommands();
+    freeAllInFlightResources();
     return vk::NoError();
+}
+
+void RendererVk::freeAllInFlightResources()
+{
+    for (auto &fence : mInFlightFences)
+    {
+        fence.get().destroy(mDevice);
+    }
+    mInFlightFences.clear();
+
+    for (auto &command : mInFlightCommands)
+    {
+        command.get().destroy(mDevice, mCommandPool);
+    }
+    mInFlightCommands.clear();
+
+    for (auto &garbage : mGarbage)
+    {
+        garbage.destroy(mDevice);
+    }
+    mGarbage.clear();
 }
 
 vk::Error RendererVk::checkInFlightCommands()
 {
-    bool anyFinished = false;
+    size_t finishedIndex = 0;
 
     // Check if any in-flight command buffers are finished.
-    for (size_t index = 0; index < mInFlightCommands.size();)
+    for (size_t index = 0; index < mInFlightFences.size(); index++)
     {
-        auto *inFlightCommand = &mInFlightCommands[index];
+        auto *inFlightFence = &mInFlightFences[index];
 
-        bool done = false;
-        ANGLE_TRY_RESULT(inFlightCommand->finished(mDevice), done);
-        if (done)
-        {
-            ASSERT(inFlightCommand->queueSerial() > mLastCompletedQueueSerial);
-            mLastCompletedQueueSerial = inFlightCommand->queueSerial();
-            inFlightCommand->destroy(mDevice);
-            mInFlightCommands.erase(mInFlightCommands.begin() + index);
-            anyFinished = true;
-        }
-        else
-        {
-            ++index;
-        }
+        VkResult result = inFlightFence->get().getStatus(mDevice);
+        if (result == VK_NOT_READY)
+            break;
+        ANGLE_VK_TRY(result);
+        finishedIndex = index + 1;
+
+        // Release the fence handle.
+        // TODO(jmadill): Re-use fences.
+        inFlightFence->get().destroy(mDevice);
     }
 
-    if (anyFinished)
-    {
-        size_t freeIndex = 0;
-        for (; freeIndex < mGarbage.size(); ++freeIndex)
-        {
-            if (!mGarbage[freeIndex]->destroyIfComplete(mDevice, mLastCompletedQueueSerial))
-                break;
-        }
+    if (finishedIndex == 0)
+        return vk::NoError();
 
-        // Remove the entries from the garbage list - they should be ready to go.
-        if (freeIndex > 0)
-        {
-            mGarbage.erase(mGarbage.begin(), mGarbage.begin() + freeIndex);
-        }
+    Serial finishedSerial = mInFlightFences[finishedIndex - 1].queueSerial();
+    mInFlightFences.erase(mInFlightFences.begin(), mInFlightFences.begin() + finishedIndex);
+
+    size_t completedCBIndex = 0;
+    for (size_t cbIndex = 0; cbIndex < mInFlightCommands.size(); ++cbIndex)
+    {
+        auto *inFlightCB = &mInFlightCommands[cbIndex];
+        if (inFlightCB->queueSerial() > finishedSerial)
+            break;
+
+        completedCBIndex = cbIndex + 1;
+        inFlightCB->get().destroy(mDevice, mCommandPool);
+    }
+
+    if (completedCBIndex == 0)
+        return vk::NoError();
+
+    mInFlightCommands.erase(mInFlightCommands.begin(),
+                            mInFlightCommands.begin() + completedCBIndex);
+
+    size_t freeIndex = 0;
+    for (; freeIndex < mGarbage.size(); ++freeIndex)
+    {
+        if (!mGarbage[freeIndex].destroyIfComplete(mDevice, finishedSerial))
+            break;
+    }
+
+    // Remove the entries from the garbage list - they should be ready to go.
+    if (freeIndex > 0)
+    {
+        mGarbage.erase(mGarbage.begin(), mGarbage.begin() + freeIndex);
     }
 
     return vk::NoError();
@@ -687,41 +723,57 @@ vk::Error RendererVk::checkInFlightCommands()
 
 vk::Error RendererVk::submit(const VkSubmitInfo &submitInfo)
 {
-    checkInFlightCommands();
-
-    // Start a Fence to record when this command buffer finishes.
-    VkFenceCreateInfo fenceInfo;
-    fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-    fenceInfo.pNext = nullptr;
-    fenceInfo.flags = 0;
-
-    vk::Fence fence;
-    ANGLE_TRY(fence.init(mDevice, fenceInfo));
-
-    ANGLE_VK_TRY(vkQueueSubmit(mQueue, 1, &submitInfo, fence.getHandle()));
+    ANGLE_VK_TRY(vkQueueSubmit(mQueue, 1, &submitInfo, VK_NULL_HANDLE));
 
     // Store this command buffer in the in-flight list.
-    mInFlightCommands.emplace_back(vk::FenceAndCommandBuffer(mCurrentQueueSerial, std::move(fence),
-                                                             std::move(mCommandBuffer)));
+    mInFlightCommands.emplace_back(std::move(mCommandBuffer), mCurrentQueueSerial);
 
     // Sanity check.
     ASSERT(mInFlightCommands.size() < 1000u);
 
-    // Increment the command buffer serial. If this fails, we need to restart ANGLE.
-    ANGLE_VK_CHECK(++mCurrentQueueSerial, VK_ERROR_OUT_OF_HOST_MEMORY);
+    // Increment the queue serial. If this fails, we should restart ANGLE.
+    // TODO(jmadill): Overflow check.
+    mCurrentQueueSerial = mQueueSerialFactory.generate();
+
+    return vk::NoError();
+}
+
+vk::Error RendererVk::submitFrame(const VkSubmitInfo &submitInfo)
+{
+    VkFenceCreateInfo createInfo;
+    createInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    createInfo.pNext = nullptr;
+    createInfo.flags = 0;
+
+    vk::Fence fence;
+    ANGLE_TRY(fence.init(mDevice, createInfo));
+
+    ANGLE_VK_TRY(vkQueueSubmit(mQueue, 1, &submitInfo, fence.getHandle()));
+
+    // Store this command buffer in the in-flight list.
+    mInFlightFences.emplace_back(std::move(fence), mCurrentQueueSerial);
+    mInFlightCommands.emplace_back(std::move(mCommandBuffer), mCurrentQueueSerial);
+
+    // Sanity check.
+    ASSERT(mInFlightCommands.size() < 1000u);
+
+    // Increment the queue serial. If this fails, we should restart ANGLE.
+    // TODO(jmadill): Overflow check.
+    mCurrentQueueSerial = mQueueSerialFactory.generate();
+
+    ANGLE_TRY(checkInFlightCommands());
+
     return vk::NoError();
 }
 
 vk::Error RendererVk::createStagingImage(TextureDimension dimension,
                                          const vk::Format &format,
                                          const gl::Extents &extent,
+                                         vk::StagingUsage usage,
                                          vk::StagingImage *imageOut)
 {
-    ASSERT(mHostVisibleMemoryIndex != std::numeric_limits<uint32_t>::max());
-
-    ANGLE_TRY(imageOut->init(mDevice, mCurrentQueueFamilyIndex, mHostVisibleMemoryIndex, dimension,
-                             format.native, extent));
-
+    ANGLE_TRY(imageOut->init(mDevice, mCurrentQueueFamilyIndex, mMemoryProperties, dimension,
+                             format.vkTextureFormat, extent, usage));
     return vk::NoError();
 }
 
@@ -733,6 +785,51 @@ GlslangWrapper *RendererVk::getGlslangWrapper()
 Serial RendererVk::getCurrentQueueSerial() const
 {
     return mCurrentQueueSerial;
+}
+
+gl::Error RendererVk::ensureInRenderPass(const gl::Context *context, FramebufferVk *framebufferVk)
+{
+    if (mCurrentRenderPassFramebuffer == framebufferVk)
+    {
+        return gl::NoError();
+    }
+
+    if (mCurrentRenderPassFramebuffer)
+    {
+        endRenderPass();
+    }
+    ANGLE_TRY(
+        framebufferVk->beginRenderPass(context, mDevice, &mCommandBuffer, mCurrentQueueSerial));
+    mCurrentRenderPassFramebuffer = framebufferVk;
+    return gl::NoError();
+}
+
+void RendererVk::endRenderPass()
+{
+    if (mCurrentRenderPassFramebuffer)
+    {
+        ASSERT(mCommandBuffer.started());
+        mCommandBuffer.endRenderPass();
+        mCurrentRenderPassFramebuffer = nullptr;
+    }
+}
+
+void RendererVk::onReleaseRenderPass(const FramebufferVk *framebufferVk)
+{
+    if (mCurrentRenderPassFramebuffer == framebufferVk)
+    {
+        endRenderPass();
+    }
+}
+
+bool RendererVk::isResourceInUse(const ResourceVk &resource)
+{
+    return isSerialInUse(resource.getQueueSerial());
+}
+
+bool RendererVk::isSerialInUse(Serial serial)
+{
+    return serial > mLastCompletedQueueSerial;
 }
 
 }  // namespace rx

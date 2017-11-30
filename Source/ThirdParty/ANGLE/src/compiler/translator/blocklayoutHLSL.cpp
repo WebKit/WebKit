@@ -30,7 +30,7 @@ void HLSLBlockEncoder::exitAggregateType()
 }
 
 void HLSLBlockEncoder::getBlockLayoutInfo(GLenum typeIn,
-                                          unsigned int arraySize,
+                                          const std::vector<unsigned int> &arraySizes,
                                           bool isRowMajorMatrix,
                                           int *arrayStrideOut,
                                           int *matrixStrideOut)
@@ -46,7 +46,7 @@ void HLSLBlockEncoder::getBlockLayoutInfo(GLenum typeIn,
     // if variables are not to be packed, or we're about to
     // pack a matrix or array, skip to the start of the next
     // register
-    if (!isPacked() || gl::IsMatrixType(type) || arraySize > 0)
+    if (!isPacked() || gl::IsMatrixType(type) || !arraySizes.empty())
     {
         nextRegister();
     }
@@ -55,13 +55,13 @@ void HLSLBlockEncoder::getBlockLayoutInfo(GLenum typeIn,
     {
         matrixStride = ComponentsPerRegister;
 
-        if (arraySize > 0)
+        if (!arraySizes.empty())
         {
             const int numRegisters = gl::MatrixRegisterCount(type, isRowMajorMatrix);
             arrayStride            = ComponentsPerRegister * numRegisters;
         }
     }
-    else if (arraySize > 0)
+    else if (!arraySizes.empty())
     {
         arrayStride = ComponentsPerRegister;
     }
@@ -79,16 +79,16 @@ void HLSLBlockEncoder::getBlockLayoutInfo(GLenum typeIn,
 }
 
 void HLSLBlockEncoder::advanceOffset(GLenum typeIn,
-                                     unsigned int arraySize,
+                                     const std::vector<unsigned int> &arraySizes,
                                      bool isRowMajorMatrix,
                                      int arrayStride,
                                      int matrixStride)
 {
     GLenum type = (mTransposeMatrices ? gl::TransposeMatrixType(typeIn) : typeIn);
 
-    if (arraySize > 0)
+    if (!arraySizes.empty())
     {
-        mCurrentOffset += arrayStride * (arraySize - 1);
+        mCurrentOffset += arrayStride * (gl::ArraySizeProduct(arraySizes) - 1);
     }
 
     if (gl::IsMatrixType(type))
@@ -135,7 +135,7 @@ void HLSLVariableRegisterCount(const ShaderVarType &variable, HLSLBlockEncoder *
 {
     if (variable.isStruct())
     {
-        for (size_t arrayElement = 0; arrayElement < variable.elementCount(); arrayElement++)
+        for (size_t arrayElement = 0; arrayElement < variable.getArraySizeProduct(); arrayElement++)
         {
             encoder->enterAggregateType();
 
@@ -150,7 +150,7 @@ void HLSLVariableRegisterCount(const ShaderVarType &variable, HLSLBlockEncoder *
     else
     {
         // We operate only on varyings and uniforms, which do not have matrix layout qualifiers
-        encoder->encodeType(variable.type, variable.arraySize, false);
+        encoder->encodeType(variable.type, variable.arraySizes, false);
     }
 }
 

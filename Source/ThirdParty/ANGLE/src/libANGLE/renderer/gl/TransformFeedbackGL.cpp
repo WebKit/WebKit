@@ -56,11 +56,12 @@ void TransformFeedbackGL::resume()
     // Do not resume directly, StateManagerGL will handle beginning and resuming transform feedback.
 }
 
-void TransformFeedbackGL::bindGenericBuffer(const BindingPointer<gl::Buffer> &binding)
+void TransformFeedbackGL::bindGenericBuffer(const gl::BindingPointer<gl::Buffer> &binding)
 {
 }
 
-void TransformFeedbackGL::bindIndexedBuffer(size_t index, const OffsetBindingPointer<gl::Buffer> &binding)
+void TransformFeedbackGL::bindIndexedBuffer(size_t index,
+                                            const gl::OffsetBindingPointer<gl::Buffer> &binding)
 {
     // Directly bind buffer (not through the StateManager methods) because the buffer bindings are
     // tracked per transform feedback object

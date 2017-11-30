@@ -4,7 +4,7 @@
 // found in the LICENSE file.
 //
 // StructureHLSL.h:
-//   Interfaces of methods for HLSL translation of GLSL structures.
+//   HLSL translation of GLSL constructors and structures.
 //
 
 #ifndef COMPILER_TRANSLATOR_STRUCTUREHLSL_H_
@@ -49,17 +49,14 @@ class StructureHLSL : angle::NonCopyable
   public:
     StructureHLSL();
 
-    // Returns the name of the constructor function. "name" parameter is the name of the type being
-    // constructed.
-    TString addConstructor(const TType &type,
-                           const TString &name,
-                           const TIntermSequence *parameters);
-    std::string structsHeader() const;
+    // Returns the name of the constructor function.
+    TString addStructConstructor(const TStructure &structure);
+    TString addBuiltInConstructor(const TType &type, const TIntermSequence *parameters);
 
-    TString defineQualified(const TStructure &structure,
-                            bool useHLSLRowMajorPacking,
-                            bool useStd140Packing);
     static TString defineNameless(const TStructure &structure);
+    void ensureStructDefined(const TStructure &structure);
+
+    std::string structsHeader() const;
 
     Std140PaddingHelper getPaddingHelper();
 
@@ -68,20 +65,33 @@ class StructureHLSL : angle::NonCopyable
 
     std::map<TString, int> mStd140StructElementIndexes;
 
-    typedef std::set<TString> StructNames;
-    StructNames mStructNames;
+    struct TStructProperties : public angle::NonCopyable
+    {
+        POOL_ALLOCATOR_NEW_DELETE();
 
-    typedef std::set<TString> Constructors;
-    Constructors mConstructors;
+        TStructProperties() {}
 
+        // Constructor is an empty string in case the struct doesn't have a constructor yet.
+        TString constructor;
+    };
+
+    // Map from struct name to struct properties.
+    typedef std::map<TString, TStructProperties *> DefinedStructs;
+    DefinedStructs mDefinedStructs;
+
+    // Struct declarations need to be kept in a vector instead of having them inside mDefinedStructs
+    // since maintaining the original order is necessary for nested structs.
     typedef std::vector<TString> StructDeclarations;
     StructDeclarations mStructDeclarations;
 
+    typedef std::set<TString> BuiltInConstructors;
+    BuiltInConstructors mBuiltInConstructors;
+
     void storeStd140ElementIndex(const TStructure &structure, bool useHLSLRowMajorPacking);
-    static TString define(const TStructure &structure,
-                          bool useHLSLRowMajorPacking,
-                          bool useStd140Packing,
-                          Std140PaddingHelper *padHelper);
+    TString defineQualified(const TStructure &structure,
+                            bool useHLSLRowMajorPacking,
+                            bool useStd140Packing);
+    DefinedStructs::iterator defineVariants(const TStructure &structure, const TString &name);
 };
 }
 

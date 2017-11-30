@@ -11,8 +11,16 @@
 
 #include <vulkan/vulkan.h>
 
+#include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/Format.h"
 #include "libANGLE/renderer/renderer_utils.h"
+
+#include <array>
+
+namespace gl
+{
+class TextureCapsMap;
+}  // namespace gl
 
 namespace rx
 {
@@ -20,34 +28,40 @@ namespace rx
 namespace vk
 {
 
-struct Format final : angle::NonCopyable
+struct Format final : private angle::NonCopyable
 {
-    constexpr Format(GLenum internalFormat,
-                     angle::Format::ID formatID,
-                     VkFormat native,
-                     InitializeTextureDataFunction initFunction);
+    Format();
 
-    static const Format &Get(GLenum internalFormat);
+    // This is an auto-generated method in vk_format_table_autogen.cpp.
+    void initialize(VkPhysicalDevice physicalDevice, const angle::Format &angleFormat);
 
-    const angle::Format &format() const;
-    LoadFunctionMap getLoadFunctions() const;
+    const angle::Format &textureFormat() const;
+    const angle::Format &bufferFormat() const;
 
     GLenum internalFormat;
-    angle::Format::ID formatID;
-    VkFormat native;
+    angle::Format::ID textureFormatID;
+    VkFormat vkTextureFormat;
+    angle::Format::ID bufferFormatID;
+    VkFormat vkBufferFormat;
     InitializeTextureDataFunction dataInitializerFunction;
+    LoadFunctionMap loadFunctions;
 };
 
-constexpr Format::Format(GLenum internalFormat,
-                         angle::Format::ID formatID,
-                         VkFormat native,
-                         InitializeTextureDataFunction initFunction)
-    : internalFormat(internalFormat),
-      formatID(formatID),
-      native(native),
-      dataInitializerFunction(initFunction)
+class FormatTable final : angle::NonCopyable
 {
-}
+  public:
+    FormatTable();
+    ~FormatTable();
+
+    // Also initializes the TextureCapsMap.
+    void initialize(VkPhysicalDevice physicalDevice, gl::TextureCapsMap *textureCapsMap);
+
+    const Format &operator[](GLenum internalFormat) const;
+
+  private:
+    // The table data is indexed by angle::Format::ID.
+    std::array<Format, angle::kNumANGLEFormats> mFormatData;
+};
 
 // TODO(jmadill): This is temporary. Figure out how to handle format conversions.
 VkFormat GetNativeVertexFormat(gl::VertexFormatType vertexFormat);

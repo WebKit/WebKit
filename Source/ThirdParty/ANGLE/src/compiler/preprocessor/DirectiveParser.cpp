@@ -215,6 +215,10 @@ DirectiveParser::DirectiveParser(Tokenizer *tokenizer,
 {
 }
 
+DirectiveParser::~DirectiveParser()
+{
+}
+
 void DirectiveParser::lex(Token *token)
 {
     do

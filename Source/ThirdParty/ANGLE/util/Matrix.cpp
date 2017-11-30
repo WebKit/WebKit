@@ -13,6 +13,8 @@
 #include <math.h>
 #include <cstddef>
 
+using namespace angle;
+
 Matrix4::Matrix4()
 {
     data[0]  = 1.0f;
@@ -76,30 +78,32 @@ Matrix4 Matrix4::identity()
 
 Matrix4 Matrix4::rotate(float angle, const Vector3 &p)
 {
-    Vector3 u   = Vector3::normalize(p);
+    Vector3 u   = p.normalized();
     float theta = static_cast<float>(angle * (M_PI / 180.0f));
     float cos_t = cosf(theta);
     float sin_t = sinf(theta);
 
-    return Matrix4(
-        cos_t + (u.x * u.x * (1.0f - cos_t)), (u.x * u.y * (1.0f - cos_t)) - (u.z * sin_t),
-        (u.x * u.z * (1.0f - cos_t)) + (u.y * sin_t), 0.0f,
-        (u.y * u.x * (1.0f - cos_t)) + (u.z * sin_t), cos_t + (u.y * u.y * (1.0f - cos_t)),
-        (u.y * u.z * (1.0f - cos_t)) - (u.x * sin_t), 0.0f,
-        (u.z * u.x * (1.0f - cos_t)) - (u.y * sin_t), (u.z * u.y * (1.0f - cos_t)) + (u.x * sin_t),
-        cos_t + (u.z * u.z * (1.0f - cos_t)), 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+    return Matrix4(cos_t + (u.x() * u.x() * (1.0f - cos_t)),
+                   (u.x() * u.y() * (1.0f - cos_t)) - (u.z() * sin_t),
+                   (u.x() * u.z() * (1.0f - cos_t)) + (u.y() * sin_t), 0.0f,
+                   (u.y() * u.x() * (1.0f - cos_t)) + (u.z() * sin_t),
+                   cos_t + (u.y() * u.y() * (1.0f - cos_t)),
+                   (u.y() * u.z() * (1.0f - cos_t)) - (u.x() * sin_t), 0.0f,
+                   (u.z() * u.x() * (1.0f - cos_t)) - (u.y() * sin_t),
+                   (u.z() * u.y() * (1.0f - cos_t)) + (u.x() * sin_t),
+                   cos_t + (u.z() * u.z() * (1.0f - cos_t)), 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 Matrix4 Matrix4::translate(const Vector3 &t)
 {
-    return Matrix4(1.0f, 0.0f, 0.0f, t.x, 0.0f, 1.0f, 0.0f, t.y, 0.0f, 0.0f, 1.0f, t.z, 0.0f, 0.0f,
-                   0.0f, 1.0f);
+    return Matrix4(1.0f, 0.0f, 0.0f, t.x(), 0.0f, 1.0f, 0.0f, t.y(), 0.0f, 0.0f, 1.0f, t.z(), 0.0f,
+                   0.0f, 0.0f, 1.0f);
 }
 
 Matrix4 Matrix4::scale(const Vector3 &s)
 {
-    return Matrix4(s.x, 0.0f, 0.0f, 0.0f, 0.0f, s.y, 0.0f, 0.0f, 0.0f, 0.0f, s.z, 0.0f, 0.0f, 0.0f,
-                   0.0f, 1.0f);
+    return Matrix4(s.x(), 0.0f, 0.0f, 0.0f, 0.0f, s.y(), 0.0f, 0.0f, 0.0f, 0.0f, s.z(), 0.0f, 0.0f,
+                   0.0f, 0.0f, 1.0f);
 }
 
 Matrix4 Matrix4::frustum(float l, float r, float b, float t, float n, float f)
@@ -205,14 +209,14 @@ Matrix4 Matrix4::transpose(const Matrix4 &mat)
 
 Vector3 Matrix4::transform(const Matrix4 &mat, const Vector3 &pt)
 {
-    Vector4 transformed = Vector4::normalize(mat * Vector4(pt.x, pt.y, pt.z, 1.0f));
-    return Vector3(transformed.x, transformed.y, transformed.z);
+    Vector4 transformed = (mat * Vector4(pt, 1.0f)).normalized();
+    return Vector3(transformed.x(), transformed.y(), transformed.z());
 }
 
 Vector3 Matrix4::transform(const Matrix4 &mat, const Vector4 &pt)
 {
-    Vector4 transformed = Vector4::normalize(mat * pt);
-    return Vector3(transformed.x, transformed.y, transformed.z);
+    Vector4 transformed = (mat * pt).normalized();
+    return Vector3(transformed.x(), transformed.y(), transformed.z());
 }
 
 Matrix4 operator*(const Matrix4 &a, const Matrix4 &b)
@@ -278,10 +282,10 @@ Matrix4 &operator*=(Matrix4 &a, float b)
 
 Vector4 operator*(const Matrix4 &a, const Vector4 &b)
 {
-    return Vector4(a.data[0] * b.x + a.data[4] * b.y + a.data[8] * b.z + a.data[12] * b.w,
-                   a.data[1] * b.x + a.data[5] * b.y + a.data[9] * b.z + a.data[13] * b.w,
-                   a.data[2] * b.x + a.data[6] * b.y + a.data[10] * b.z + a.data[14] * b.w,
-                   a.data[3] * b.x + a.data[7] * b.y + a.data[11] * b.z + a.data[15] * b.w);
+    return Vector4(a.data[0] * b.x() + a.data[4] * b.y() + a.data[8] * b.z() + a.data[12] * b.w(),
+                   a.data[1] * b.x() + a.data[5] * b.y() + a.data[9] * b.z() + a.data[13] * b.w(),
+                   a.data[2] * b.x() + a.data[6] * b.y() + a.data[10] * b.z() + a.data[14] * b.w(),
+                   a.data[3] * b.x() + a.data[7] * b.y() + a.data[11] * b.z() + a.data[15] * b.w());
 }
 
 bool operator==(const Matrix4 &a, const Matrix4 &b)

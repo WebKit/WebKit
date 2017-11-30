@@ -9,6 +9,7 @@
 
 #include "renderervk_utils.h"
 
+#include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/RendererVk.h"
 
 namespace rx
@@ -62,6 +63,7 @@ VkAccessFlags GetBasicLayoutAccessFlags(VkImageLayout layout)
             return VK_ACCESS_TRANSFER_READ_BIT;
         case VK_IMAGE_LAYOUT_UNDEFINED:
         case VK_IMAGE_LAYOUT_GENERAL:
+        case VK_IMAGE_LAYOUT_PREINITIALIZED:
             return 0;
         default:
             // TODO(jmadill): Investigate other flags.
@@ -69,11 +71,45 @@ VkAccessFlags GetBasicLayoutAccessFlags(VkImageLayout layout)
             return 0;
     }
 }
+
+VkImageUsageFlags GetStagingImageUsageFlags(vk::StagingUsage usage)
+{
+    switch (usage)
+    {
+        case vk::StagingUsage::Read:
+            return VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+        case vk::StagingUsage::Write:
+            return VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+        case vk::StagingUsage::Both:
+            return (VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT);
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+VkImageUsageFlags GetStagingBufferUsageFlags(vk::StagingUsage usage)
+{
+    switch (usage)
+    {
+        case vk::StagingUsage::Read:
+            return VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+        case vk::StagingUsage::Write:
+            return VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+        case vk::StagingUsage::Both:
+            return (VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
 }  // anonymous namespace
 
 // Mirrors std_validation_str in loader.h
 // TODO(jmadill): Possibly wrap the loader into a safe source file. Can't be included trivially.
 const char *g_VkStdValidationLayerName = "VK_LAYER_LUNARG_standard_validation";
+const char *g_VkLoaderLayersPathEnv    = "VK_LAYER_PATH";
 
 const char *VulkanResultString(VkResult result)
 {
@@ -177,20 +213,18 @@ gl::Error Error::toGL(GLenum glErrorCode) const
     }
 
     // TODO(jmadill): Set extended error code to 'vulkan internal error'.
-    const std::string &message = toString();
-    return gl::Error(glErrorCode, message.c_str());
+    return gl::Error(glErrorCode, glErrorCode, toString());
 }
 
 egl::Error Error::toEGL(EGLint eglErrorCode) const
 {
     if (!isError())
     {
-        return egl::Error(EGL_SUCCESS);
+        return egl::NoError();
     }
 
     // TODO(jmadill): Set extended error code to 'vulkan internal error'.
-    const std::string &message = toString();
-    return egl::Error(eglErrorCode, message.c_str());
+    return egl::Error(eglErrorCode, eglErrorCode, toString());
 }
 
 std::string Error::toString() const
@@ -238,43 +272,14 @@ Error CommandPool::init(VkDevice device, const VkCommandPoolCreateInfo &createIn
 }
 
 // CommandBuffer implementation.
-CommandBuffer::CommandBuffer() : mCommandPool(nullptr)
+CommandBuffer::CommandBuffer()
 {
 }
 
-void CommandBuffer::setCommandPool(CommandPool *commandPool)
+Error CommandBuffer::begin(const VkCommandBufferBeginInfo &info)
 {
-    ASSERT(!mCommandPool && commandPool->valid());
-    mCommandPool = commandPool;
-}
-
-Error CommandBuffer::begin(VkDevice device)
-{
-    if (mHandle == VK_NULL_HANDLE)
-    {
-        VkCommandBufferAllocateInfo commandBufferInfo;
-        commandBufferInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        commandBufferInfo.pNext              = nullptr;
-        commandBufferInfo.commandPool        = mCommandPool->getHandle();
-        commandBufferInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        commandBufferInfo.commandBufferCount = 1;
-
-        ANGLE_VK_TRY(vkAllocateCommandBuffers(device, &commandBufferInfo, &mHandle));
-    }
-    else
-    {
-        reset();
-    }
-
-    VkCommandBufferBeginInfo beginInfo;
-    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    beginInfo.pNext = nullptr;
-    // TODO(jmadill): Use other flags?
-    beginInfo.flags            = 0;
-    beginInfo.pInheritanceInfo = nullptr;
-
-    ANGLE_VK_TRY(vkBeginCommandBuffer(mHandle, &beginInfo));
-
+    ASSERT(valid());
+    ANGLE_VK_TRY(vkBeginCommandBuffer(mHandle, &info));
     return NoError();
 }
 
@@ -302,14 +307,41 @@ void CommandBuffer::singleImageBarrier(VkPipelineStageFlags srcStageMask,
                          nullptr, 1, &imageMemoryBarrier);
 }
 
-void CommandBuffer::destroy(VkDevice device)
+void CommandBuffer::singleBufferBarrier(VkPipelineStageFlags srcStageMask,
+                                        VkPipelineStageFlags dstStageMask,
+                                        VkDependencyFlags dependencyFlags,
+                                        const VkBufferMemoryBarrier &bufferBarrier)
+{
+    ASSERT(valid());
+    vkCmdPipelineBarrier(mHandle, srcStageMask, dstStageMask, dependencyFlags, 0, nullptr, 1,
+                         &bufferBarrier, 0, nullptr);
+}
+
+void CommandBuffer::destroy(VkDevice device, const vk::CommandPool &commandPool)
 {
     if (valid())
     {
-        ASSERT(mCommandPool && mCommandPool->valid());
-        vkFreeCommandBuffers(device, mCommandPool->getHandle(), 1, &mHandle);
+        ASSERT(commandPool.valid());
+        vkFreeCommandBuffers(device, commandPool.getHandle(), 1, &mHandle);
         mHandle = VK_NULL_HANDLE;
     }
+}
+
+Error CommandBuffer::init(VkDevice device, const VkCommandBufferAllocateInfo &createInfo)
+{
+    ASSERT(!valid());
+    ANGLE_VK_TRY(vkAllocateCommandBuffers(device, &createInfo, &mHandle));
+    return NoError();
+}
+
+void CommandBuffer::copyBuffer(const vk::Buffer &srcBuffer,
+                               const vk::Buffer &destBuffer,
+                               uint32_t regionCount,
+                               const VkBufferCopy *regions)
+{
+    ASSERT(valid());
+    ASSERT(srcBuffer.valid() && destBuffer.valid());
+    vkCmdCopyBuffer(mHandle, srcBuffer.getHandle(), destBuffer.getHandle(), regionCount, regions);
 }
 
 void CommandBuffer::clearSingleColorImage(const vk::Image &image, const VkClearColorValue &color)
@@ -333,12 +365,6 @@ void CommandBuffer::copySingleImage(const vk::Image &srcImage,
                                     const gl::Box &copyRegion,
                                     VkImageAspectFlags aspectMask)
 {
-    ASSERT(valid());
-    ASSERT(srcImage.getCurrentLayout() == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL ||
-           srcImage.getCurrentLayout() == VK_IMAGE_LAYOUT_GENERAL);
-    ASSERT(destImage.getCurrentLayout() == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL ||
-           destImage.getCurrentLayout() == VK_IMAGE_LAYOUT_GENERAL);
-
     VkImageCopy region;
     region.srcSubresource.aspectMask     = aspectMask;
     region.srcSubresource.mipLevel       = 0;
@@ -358,8 +384,21 @@ void CommandBuffer::copySingleImage(const vk::Image &srcImage,
     region.extent.height                 = copyRegion.height;
     region.extent.depth                  = copyRegion.depth;
 
-    vkCmdCopyImage(mHandle, srcImage.getHandle(), srcImage.getCurrentLayout(),
-                   destImage.getHandle(), destImage.getCurrentLayout(), 1, &region);
+    copyImage(srcImage, destImage, 1, &region);
+}
+
+void CommandBuffer::copyImage(const vk::Image &srcImage,
+                              const vk::Image &dstImage,
+                              uint32_t regionCount,
+                              const VkImageCopy *regions)
+{
+    ASSERT(valid() && srcImage.valid() && dstImage.valid());
+    ASSERT(srcImage.getCurrentLayout() == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL ||
+           srcImage.getCurrentLayout() == VK_IMAGE_LAYOUT_GENERAL);
+    ASSERT(dstImage.getCurrentLayout() == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL ||
+           dstImage.getCurrentLayout() == VK_IMAGE_LAYOUT_GENERAL);
+    vkCmdCopyImage(mHandle, srcImage.getHandle(), srcImage.getCurrentLayout(), dstImage.getHandle(),
+                   dstImage.getCurrentLayout(), 1, regions);
 }
 
 void CommandBuffer::beginRenderPass(const RenderPass &renderPass,
@@ -400,6 +439,16 @@ void CommandBuffer::draw(uint32_t vertexCount,
     vkCmdDraw(mHandle, vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
+void CommandBuffer::drawIndexed(uint32_t indexCount,
+                                uint32_t instanceCount,
+                                uint32_t firstIndex,
+                                int32_t vertexOffset,
+                                uint32_t firstInstance)
+{
+    ASSERT(valid());
+    vkCmdDrawIndexed(mHandle, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
+}
+
 void CommandBuffer::bindPipeline(VkPipelineBindPoint pipelineBindPoint,
                                  const vk::Pipeline &pipeline)
 {
@@ -408,12 +457,33 @@ void CommandBuffer::bindPipeline(VkPipelineBindPoint pipelineBindPoint,
 }
 
 void CommandBuffer::bindVertexBuffers(uint32_t firstBinding,
-                                      const std::vector<VkBuffer> &buffers,
-                                      const std::vector<VkDeviceSize> &offsets)
+                                      uint32_t bindingCount,
+                                      const VkBuffer *buffers,
+                                      const VkDeviceSize *offsets)
 {
-    ASSERT(valid() && buffers.size() == offsets.size());
-    vkCmdBindVertexBuffers(mHandle, firstBinding, static_cast<uint32_t>(buffers.size()),
-                           buffers.data(), offsets.data());
+    ASSERT(valid());
+    vkCmdBindVertexBuffers(mHandle, firstBinding, bindingCount, buffers, offsets);
+}
+
+void CommandBuffer::bindIndexBuffer(const vk::Buffer &buffer,
+                                    VkDeviceSize offset,
+                                    VkIndexType indexType)
+{
+    ASSERT(valid());
+    vkCmdBindIndexBuffer(mHandle, buffer.getHandle(), offset, indexType);
+}
+
+void CommandBuffer::bindDescriptorSets(VkPipelineBindPoint bindPoint,
+                                       const vk::PipelineLayout &layout,
+                                       uint32_t firstSet,
+                                       uint32_t descriptorSetCount,
+                                       const VkDescriptorSet *descriptorSets,
+                                       uint32_t dynamicOffsetCount,
+                                       const uint32_t *dynamicOffsets)
+{
+    ASSERT(valid());
+    vkCmdBindDescriptorSets(mHandle, bindPoint, layout.getHandle(), firstSet, descriptorSetCount,
+                            descriptorSets, dynamicOffsetCount, dynamicOffsets);
 }
 
 // Image implementation.
@@ -421,14 +491,9 @@ Image::Image() : mCurrentLayout(VK_IMAGE_LAYOUT_UNDEFINED)
 {
 }
 
-Image::Image(VkImage image) : WrappedObject(image), mCurrentLayout(VK_IMAGE_LAYOUT_UNDEFINED)
+void Image::setHandle(VkImage handle)
 {
-}
-
-void Image::retain(VkDevice device, Image &&other)
-{
-    WrappedObject::retain(device, std::move(other));
-    std::swap(mCurrentLayout, other.mCurrentLayout);
+    mHandle = handle;
 }
 
 void Image::reset()
@@ -449,6 +514,7 @@ Error Image::init(VkDevice device, const VkImageCreateInfo &createInfo)
 {
     ASSERT(!valid());
     ANGLE_VK_TRY(vkCreateImage(device, &createInfo, nullptr, &mHandle));
+    mCurrentLayout = createInfo.initialLayout;
     return NoError();
 }
 
@@ -678,19 +744,13 @@ void StagingImage::destroy(VkDevice device)
     mDeviceMemory.destroy(device);
 }
 
-void StagingImage::retain(VkDevice device, StagingImage &&other)
-{
-    mImage.retain(device, std::move(other.mImage));
-    mDeviceMemory.retain(device, std::move(other.mDeviceMemory));
-    std::swap(mSize, other.mSize);
-}
-
 Error StagingImage::init(VkDevice device,
                          uint32_t queueFamilyIndex,
-                         uint32_t hostVisibleMemoryIndex,
+                         const vk::MemoryProperties &memoryProperties,
                          TextureDimension dimension,
                          VkFormat format,
-                         const gl::Extents &extent)
+                         const gl::Extents &extent,
+                         StagingUsage usage)
 {
     VkImageCreateInfo createInfo;
 
@@ -706,26 +766,30 @@ Error StagingImage::init(VkDevice device,
     createInfo.arrayLayers   = 1;
     createInfo.samples       = VK_SAMPLE_COUNT_1_BIT;
     createInfo.tiling        = VK_IMAGE_TILING_LINEAR;
-    createInfo.usage         = (VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT);
+    createInfo.usage                 = GetStagingImageUsageFlags(usage);
     createInfo.sharingMode   = VK_SHARING_MODE_EXCLUSIVE;
     createInfo.queueFamilyIndexCount = 1;
     createInfo.pQueueFamilyIndices   = &queueFamilyIndex;
-    createInfo.initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED;
+
+    // Use Preinitialized for writable staging images - in these cases we want to map the memory
+    // before we do a copy. For readback images, use an undefined layout.
+    createInfo.initialLayout = usage == vk::StagingUsage::Read ? VK_IMAGE_LAYOUT_UNDEFINED
+                                                               : VK_IMAGE_LAYOUT_PREINITIALIZED;
 
     ANGLE_TRY(mImage.init(device, createInfo));
 
     VkMemoryRequirements memoryRequirements;
     mImage.getMemoryRequirements(device, &memoryRequirements);
 
-    // Ensure we can read this memory.
-    ANGLE_VK_CHECK((memoryRequirements.memoryTypeBits & (1 << hostVisibleMemoryIndex)) != 0,
-                   VK_ERROR_VALIDATION_FAILED_EXT);
+    // Find the right kind of memory index.
+    uint32_t memoryIndex = memoryProperties.findCompatibleMemoryIndex(
+        memoryRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
     VkMemoryAllocateInfo allocateInfo;
     allocateInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocateInfo.pNext           = nullptr;
     allocateInfo.allocationSize  = memoryRequirements.size;
-    allocateInfo.memoryTypeIndex = hostVisibleMemoryIndex;
+    allocateInfo.memoryTypeIndex = memoryIndex;
 
     ANGLE_TRY(mDeviceMemory.allocate(device, allocateInfo));
     ANGLE_TRY(mImage.bindMemory(device, mDeviceMemory));
@@ -733,6 +797,12 @@ Error StagingImage::init(VkDevice device,
     mSize = memoryRequirements.size;
 
     return NoError();
+}
+
+void StagingImage::dumpResources(Serial serial, std::vector<vk::GarbageObject> *garbageQueue)
+{
+    mImage.dumpResources(serial, garbageQueue);
+    mDeviceMemory.dumpResources(serial, garbageQueue);
 }
 
 // Buffer implementation.
@@ -744,17 +814,9 @@ void Buffer::destroy(VkDevice device)
 {
     if (valid())
     {
-        mMemory.destroy(device);
-
         vkDestroyBuffer(device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
-}
-
-void Buffer::retain(VkDevice device, Buffer &&other)
-{
-    WrappedObject::retain(device, std::move(other));
-    mMemory.retain(device, std::move(other.mMemory));
 }
 
 Error Buffer::init(VkDevice device, const VkBufferCreateInfo &createInfo)
@@ -764,10 +826,10 @@ Error Buffer::init(VkDevice device, const VkBufferCreateInfo &createInfo)
     return NoError();
 }
 
-Error Buffer::bindMemory(VkDevice device)
+Error Buffer::bindMemory(VkDevice device, const DeviceMemory &deviceMemory)
 {
-    ASSERT(valid() && mMemory.valid());
-    ANGLE_VK_TRY(vkBindBufferMemory(device, mHandle, mMemory.getHandle(), 0));
+    ASSERT(valid() && deviceMemory.valid());
+    ANGLE_VK_TRY(vkBindBufferMemory(device, mHandle, deviceMemory.getHandle(), 0));
     return NoError();
 }
 
@@ -835,6 +897,78 @@ Error PipelineLayout::init(VkDevice device, const VkPipelineLayoutCreateInfo &cr
     return NoError();
 }
 
+// DescriptorSetLayout implementation.
+DescriptorSetLayout::DescriptorSetLayout()
+{
+}
+
+void DescriptorSetLayout::destroy(VkDevice device)
+{
+    if (valid())
+    {
+        vkDestroyDescriptorSetLayout(device, mHandle, nullptr);
+        mHandle = VK_NULL_HANDLE;
+    }
+}
+
+Error DescriptorSetLayout::init(VkDevice device, const VkDescriptorSetLayoutCreateInfo &createInfo)
+{
+    ASSERT(!valid());
+    ANGLE_VK_TRY(vkCreateDescriptorSetLayout(device, &createInfo, nullptr, &mHandle));
+    return NoError();
+}
+
+// DescriptorPool implementation.
+DescriptorPool::DescriptorPool()
+{
+}
+
+void DescriptorPool::destroy(VkDevice device)
+{
+    if (valid())
+    {
+        vkDestroyDescriptorPool(device, mHandle, nullptr);
+        mHandle = VK_NULL_HANDLE;
+    }
+}
+
+Error DescriptorPool::init(VkDevice device, const VkDescriptorPoolCreateInfo &createInfo)
+{
+    ASSERT(!valid());
+    ANGLE_VK_TRY(vkCreateDescriptorPool(device, &createInfo, nullptr, &mHandle));
+    return NoError();
+}
+
+Error DescriptorPool::allocateDescriptorSets(VkDevice device,
+                                             const VkDescriptorSetAllocateInfo &allocInfo,
+                                             VkDescriptorSet *descriptorSetsOut)
+{
+    ASSERT(valid());
+    ANGLE_VK_TRY(vkAllocateDescriptorSets(device, &allocInfo, descriptorSetsOut));
+    return NoError();
+}
+
+// Sampler implementation.
+Sampler::Sampler()
+{
+}
+
+void Sampler::destroy(VkDevice device)
+{
+    if (valid())
+    {
+        vkDestroySampler(device, mHandle, nullptr);
+        mHandle = VK_NULL_HANDLE;
+    }
+}
+
+Error Sampler::init(VkDevice device, const VkSamplerCreateInfo &createInfo)
+{
+    ASSERT(!valid());
+    ANGLE_VK_TRY(vkCreateSampler(device, &createInfo, nullptr, &mHandle));
+    return NoError();
+}
+
 // Fence implementation.
 Fence::Fence()
 {
@@ -861,48 +995,74 @@ VkResult Fence::getStatus(VkDevice device) const
     return vkGetFenceStatus(device, mHandle);
 }
 
-// FenceAndCommandBuffer implementation.
-FenceAndCommandBuffer::FenceAndCommandBuffer(Serial queueSerial,
-                                             Fence &&fence,
-                                             CommandBuffer &&commandBuffer)
-    : mQueueSerial(queueSerial), mFence(std::move(fence)), mCommandBuffer(std::move(commandBuffer))
+// MemoryProperties implementation.
+MemoryProperties::MemoryProperties() : mMemoryProperties{0}
 {
 }
 
-FenceAndCommandBuffer::FenceAndCommandBuffer(FenceAndCommandBuffer &&other)
-    : mQueueSerial(std::move(other.mQueueSerial)),
-      mFence(std::move(other.mFence)),
-      mCommandBuffer(std::move(other.mCommandBuffer))
+void MemoryProperties::init(VkPhysicalDevice physicalDevice)
 {
+    ASSERT(mMemoryProperties.memoryTypeCount == 0);
+    vkGetPhysicalDeviceMemoryProperties(physicalDevice, &mMemoryProperties);
+    ASSERT(mMemoryProperties.memoryTypeCount > 0);
 }
 
-void FenceAndCommandBuffer::destroy(VkDevice device)
+uint32_t MemoryProperties::findCompatibleMemoryIndex(uint32_t bitMask, uint32_t propertyFlags) const
 {
-    mFence.destroy(device);
-    mCommandBuffer.destroy(device);
-}
+    ASSERT(mMemoryProperties.memoryTypeCount > 0);
 
-vk::ErrorOrResult<bool> FenceAndCommandBuffer::finished(VkDevice device) const
-{
-    VkResult result = mFence.getStatus(device);
-    // Should this be a part of ANGLE_VK_TRY?
-    if (result == VK_NOT_READY)
+    // TODO(jmadill): Cache compatible memory indexes after finding them once.
+    for (size_t memoryIndex : angle::BitSet32<32>(bitMask))
     {
-        return false;
+        ASSERT(memoryIndex < mMemoryProperties.memoryTypeCount);
+
+        if ((mMemoryProperties.memoryTypes[memoryIndex].propertyFlags & propertyFlags) ==
+            propertyFlags)
+        {
+            return static_cast<uint32_t>(memoryIndex);
+        }
     }
-    ANGLE_VK_TRY(result);
-    return true;
+
+    UNREACHABLE();
+    return std::numeric_limits<uint32_t>::max();
 }
 
-FenceAndCommandBuffer &FenceAndCommandBuffer::operator=(FenceAndCommandBuffer &&other)
+// StagingBuffer implementation.
+StagingBuffer::StagingBuffer() : mSize(0)
 {
-    std::swap(mQueueSerial, other.mQueueSerial);
-    mFence         = std::move(other.mFence);
-    mCommandBuffer = std::move(other.mCommandBuffer);
-    return *this;
 }
 
-}  // namespace vk
+void StagingBuffer::destroy(VkDevice device)
+{
+    mBuffer.destroy(device);
+    mDeviceMemory.destroy(device);
+    mSize = 0;
+}
+
+vk::Error StagingBuffer::init(ContextVk *contextVk, VkDeviceSize size, StagingUsage usage)
+{
+    VkBufferCreateInfo createInfo;
+    createInfo.sType                 = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    createInfo.pNext                 = nullptr;
+    createInfo.flags                 = 0;
+    createInfo.size                  = size;
+    createInfo.usage                 = GetStagingBufferUsageFlags(usage);
+    createInfo.sharingMode           = VK_SHARING_MODE_EXCLUSIVE;
+    createInfo.queueFamilyIndexCount = 0;
+    createInfo.pQueueFamilyIndices   = nullptr;
+
+    ANGLE_TRY(mBuffer.init(contextVk->getDevice(), createInfo));
+    ANGLE_TRY(AllocateBufferMemory(contextVk, static_cast<size_t>(size), &mBuffer, &mDeviceMemory,
+                                   &mSize));
+
+    return vk::NoError();
+}
+
+void StagingBuffer::dumpResources(Serial serial, std::vector<vk::GarbageObject> *garbageQueue)
+{
+    mBuffer.dumpResources(serial, garbageQueue);
+    mDeviceMemory.dumpResources(serial, garbageQueue);
+}
 
 Optional<uint32_t> FindMemoryType(const VkPhysicalDeviceMemoryProperties &memoryProps,
                                   const VkMemoryRequirements &requirements,
@@ -920,6 +1080,272 @@ Optional<uint32_t> FindMemoryType(const VkPhysicalDeviceMemoryProperties &memory
 
     return Optional<uint32_t>::Invalid();
 }
+
+Error AllocateBufferMemory(ContextVk *contextVk,
+                           size_t size,
+                           Buffer *buffer,
+                           DeviceMemory *deviceMemoryOut,
+                           size_t *requiredSizeOut)
+{
+    VkDevice device = contextVk->getDevice();
+
+    // Find a compatible memory pool index. If the index doesn't change, we could cache it.
+    // Not finding a valid memory pool means an out-of-spec driver, or internal error.
+    // TODO(jmadill): More efficient memory allocation.
+    VkMemoryRequirements memoryRequirements;
+    vkGetBufferMemoryRequirements(device, buffer->getHandle(), &memoryRequirements);
+
+    // The requirements size is not always equal to the specified API size.
+    ASSERT(memoryRequirements.size >= size);
+    *requiredSizeOut = static_cast<size_t>(memoryRequirements.size);
+
+    VkPhysicalDeviceMemoryProperties memoryProperties;
+    vkGetPhysicalDeviceMemoryProperties(contextVk->getRenderer()->getPhysicalDevice(),
+                                        &memoryProperties);
+
+    auto memoryTypeIndex =
+        FindMemoryType(memoryProperties, memoryRequirements,
+                       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+    ANGLE_VK_CHECK(memoryTypeIndex.valid(), VK_ERROR_INCOMPATIBLE_DRIVER);
+
+    VkMemoryAllocateInfo allocInfo;
+    allocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocInfo.pNext           = nullptr;
+    allocInfo.memoryTypeIndex = memoryTypeIndex.value();
+    allocInfo.allocationSize  = memoryRequirements.size;
+
+    ANGLE_TRY(deviceMemoryOut->allocate(device, allocInfo));
+    ANGLE_TRY(buffer->bindMemory(device, *deviceMemoryOut));
+
+    return NoError();
+}
+
+// GarbageObject implementation.
+GarbageObject::GarbageObject()
+    : mSerial(), mHandleType(HandleType::Invalid), mHandle(VK_NULL_HANDLE)
+{
+}
+
+GarbageObject::GarbageObject(const GarbageObject &other) = default;
+
+GarbageObject &GarbageObject::operator=(const GarbageObject &other) = default;
+
+bool GarbageObject::destroyIfComplete(VkDevice device, Serial completedSerial)
+{
+    if (completedSerial >= mSerial)
+    {
+        destroy(device);
+        return true;
+    }
+
+    return false;
+}
+
+void GarbageObject::destroy(VkDevice device)
+{
+    switch (mHandleType)
+    {
+        case HandleType::Semaphore:
+            vkDestroySemaphore(device, reinterpret_cast<VkSemaphore>(mHandle), nullptr);
+            break;
+        case HandleType::CommandBuffer:
+            // Command buffers are pool allocated.
+            UNREACHABLE();
+            break;
+        case HandleType::Fence:
+            vkDestroyFence(device, reinterpret_cast<VkFence>(mHandle), nullptr);
+            break;
+        case HandleType::DeviceMemory:
+            vkFreeMemory(device, reinterpret_cast<VkDeviceMemory>(mHandle), nullptr);
+            break;
+        case HandleType::Buffer:
+            vkDestroyBuffer(device, reinterpret_cast<VkBuffer>(mHandle), nullptr);
+            break;
+        case HandleType::Image:
+            vkDestroyImage(device, reinterpret_cast<VkImage>(mHandle), nullptr);
+            break;
+        case HandleType::ImageView:
+            vkDestroyImageView(device, reinterpret_cast<VkImageView>(mHandle), nullptr);
+            break;
+        case HandleType::ShaderModule:
+            vkDestroyShaderModule(device, reinterpret_cast<VkShaderModule>(mHandle), nullptr);
+            break;
+        case HandleType::PipelineLayout:
+            vkDestroyPipelineLayout(device, reinterpret_cast<VkPipelineLayout>(mHandle), nullptr);
+            break;
+        case HandleType::RenderPass:
+            vkDestroyRenderPass(device, reinterpret_cast<VkRenderPass>(mHandle), nullptr);
+            break;
+        case HandleType::Pipeline:
+            vkDestroyPipeline(device, reinterpret_cast<VkPipeline>(mHandle), nullptr);
+            break;
+        case HandleType::DescriptorSetLayout:
+            vkDestroyDescriptorSetLayout(device, reinterpret_cast<VkDescriptorSetLayout>(mHandle),
+                                         nullptr);
+            break;
+        case HandleType::Sampler:
+            vkDestroySampler(device, reinterpret_cast<VkSampler>(mHandle), nullptr);
+            break;
+        case HandleType::DescriptorPool:
+            vkDestroyDescriptorPool(device, reinterpret_cast<VkDescriptorPool>(mHandle), nullptr);
+            break;
+        case HandleType::Framebuffer:
+            vkDestroyFramebuffer(device, reinterpret_cast<VkFramebuffer>(mHandle), nullptr);
+            break;
+        case HandleType::CommandPool:
+            vkDestroyCommandPool(device, reinterpret_cast<VkCommandPool>(mHandle), nullptr);
+            break;
+        default:
+            UNREACHABLE();
+            break;
+    }
+}
+
+// CommandBufferAndState implementation.
+CommandBufferAndState::CommandBufferAndState() : mStarted(false)
+{
+}
+
+Error CommandBufferAndState::ensureStarted(VkDevice device,
+                                           const vk::CommandPool &commandPool,
+                                           VkCommandBufferLevel level)
+{
+    ASSERT(commandPool.valid());
+
+    if (valid() && mStarted)
+    {
+        return NoError();
+    }
+
+    if (!valid())
+    {
+        VkCommandBufferAllocateInfo createInfo;
+        createInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+        createInfo.pNext              = nullptr;
+        createInfo.commandPool        = commandPool.getHandle();
+        createInfo.level              = level;
+        createInfo.commandBufferCount = 1;
+
+        ANGLE_TRY(init(device, createInfo));
+    }
+    else
+    {
+        reset();
+    }
+
+    VkCommandBufferBeginInfo beginInfo;
+    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    beginInfo.pNext = nullptr;
+    // TODO(jmadill): Use other flags?
+    beginInfo.flags            = 0;
+    beginInfo.pInheritanceInfo = nullptr;
+
+    ANGLE_TRY(begin(beginInfo));
+    mStarted = true;
+
+    return NoError();
+}
+
+Error CommandBufferAndState::ensureFinished()
+{
+    ANGLE_TRY(end());
+    mStarted = false;
+    return NoError();
+}
+
+// RenderPassDesc implementation.
+RenderPassDesc::RenderPassDesc()
+    : colorAttachmentCount(0), depthStencilAttachmentCount(0), attachmentDescs{}
+{
+    memset(attachmentDescs.data(), 0, sizeof(VkAttachmentDescription) * attachmentDescs.size());
+}
+
+RenderPassDesc::~RenderPassDesc()
+{
+}
+
+RenderPassDesc::RenderPassDesc(const RenderPassDesc &other)
+{
+    memcpy(this, &other, sizeof(RenderPassDesc));
+}
+
+RenderPassDesc &RenderPassDesc::operator=(const RenderPassDesc &other)
+{
+    memcpy(this, &other, sizeof(RenderPassDesc));
+    return *this;
+}
+
+VkAttachmentDescription *RenderPassDesc::nextColorAttachment()
+{
+    ASSERT(colorAttachmentCount < gl::IMPLEMENTATION_MAX_DRAW_BUFFERS);
+    return &attachmentDescs[colorAttachmentCount++];
+}
+
+VkAttachmentDescription *RenderPassDesc::nextDepthStencilAttachment()
+{
+    ASSERT(depthStencilAttachmentCount == 0);
+    return &attachmentDescs[depthStencilAttachmentCount++];
+}
+
+uint32_t RenderPassDesc::attachmentCount() const
+{
+    return (colorAttachmentCount + depthStencilAttachmentCount);
+}
+
+Error InitializeRenderPassFromDesc(VkDevice device,
+                                   const RenderPassDesc &desc,
+                                   RenderPass *renderPass)
+{
+    uint32_t attachmentCount = desc.attachmentCount();
+    ASSERT(attachmentCount > 0);
+
+    gl::DrawBuffersArray<VkAttachmentReference> colorAttachmentRefs;
+
+    for (uint32_t colorIndex = 0; colorIndex < desc.colorAttachmentCount; ++colorIndex)
+    {
+        VkAttachmentReference &colorRef = colorAttachmentRefs[colorIndex];
+        colorRef.attachment             = colorIndex;
+        colorRef.layout                 = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    }
+
+    VkAttachmentReference depthStencilAttachmentRef;
+    if (desc.depthStencilAttachmentCount > 0)
+    {
+        ASSERT(desc.depthStencilAttachmentCount == 1);
+        depthStencilAttachmentRef.attachment = desc.colorAttachmentCount;
+        depthStencilAttachmentRef.layout     = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+    }
+
+    VkSubpassDescription subpassDesc;
+
+    subpassDesc.flags                = 0;
+    subpassDesc.pipelineBindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS;
+    subpassDesc.inputAttachmentCount = 0;
+    subpassDesc.pInputAttachments    = nullptr;
+    subpassDesc.colorAttachmentCount = desc.colorAttachmentCount;
+    subpassDesc.pColorAttachments    = colorAttachmentRefs.data();
+    subpassDesc.pResolveAttachments  = nullptr;
+    subpassDesc.pDepthStencilAttachment =
+        (desc.depthStencilAttachmentCount > 0 ? &depthStencilAttachmentRef : nullptr);
+    subpassDesc.preserveAttachmentCount = 0;
+    subpassDesc.pPreserveAttachments    = nullptr;
+
+    VkRenderPassCreateInfo createInfo;
+    createInfo.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+    createInfo.pNext           = nullptr;
+    createInfo.flags           = 0;
+    createInfo.attachmentCount = attachmentCount;
+    createInfo.pAttachments    = desc.attachmentDescs.data();
+    createInfo.subpassCount    = 1;
+    createInfo.pSubpasses      = &subpassDesc;
+    createInfo.dependencyCount = 0;
+    createInfo.pDependencies   = nullptr;
+
+    ANGLE_TRY(renderPass->init(device, createInfo));
+    return vk::NoError();
+}
+
+}  // namespace vk
 
 namespace gl_vk
 {
@@ -958,11 +1384,11 @@ VkCullModeFlags GetCullMode(const gl::RasterizerState &rasterState)
 
     switch (rasterState.cullMode)
     {
-        case GL_FRONT:
+        case gl::CullFaceMode::Front:
             return VK_CULL_MODE_FRONT_BIT;
-        case GL_BACK:
+        case gl::CullFaceMode::Back:
             return VK_CULL_MODE_BACK_BIT;
-        case GL_FRONT_AND_BACK:
+        case gl::CullFaceMode::FrontAndBack:
             return VK_CULL_MODE_FRONT_AND_BACK;
         default:
             UNREACHABLE();

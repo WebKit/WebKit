@@ -26,8 +26,9 @@ class TransformFeedbackVk : public TransformFeedbackImpl
     void pause() override;
     void resume() override;
 
-    void bindGenericBuffer(const BindingPointer<gl::Buffer> &binding) override;
-    void bindIndexedBuffer(size_t index, const OffsetBindingPointer<gl::Buffer> &binding) override;
+    void bindGenericBuffer(const gl::BindingPointer<gl::Buffer> &binding) override;
+    void bindIndexedBuffer(size_t index,
+                           const gl::OffsetBindingPointer<gl::Buffer> &binding) override;
 };
 
 }  // namespace rx

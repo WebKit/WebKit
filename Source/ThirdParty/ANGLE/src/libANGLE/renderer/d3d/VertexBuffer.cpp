@@ -104,8 +104,8 @@ gl::ErrorOrResult<unsigned int> VertexBufferInterface::getSpaceRequired(
 
     if (alignedSpaceRequired < spaceRequired)
     {
-        return gl::Error(GL_OUT_OF_MEMORY,
-                         "Vertex buffer overflow in VertexBufferInterface::getSpaceRequired.");
+        return gl::OutOfMemory()
+               << "Vertex buffer overflow in VertexBufferInterface::getSpaceRequired.";
     }
 
     return alignedSpaceRequired;
@@ -126,7 +126,8 @@ StreamingVertexBufferInterface::StreamingVertexBufferInterface(BufferFactoryD3D 
                                                                std::size_t initialSize)
     : VertexBufferInterface(factory, true), mWritePosition(0), mReservedSpace(0)
 {
-    setBufferSize(static_cast<unsigned int>(initialSize));
+    // TODO(jmadill): Make an initialize method that can return an error.
+    ANGLE_SWALLOW_ERR(setBufferSize(static_cast<unsigned int>(initialSize)));
 }
 
 StreamingVertexBufferInterface::~StreamingVertexBufferInterface()
@@ -167,7 +168,8 @@ gl::Error StreamingVertexBufferInterface::storeDynamicAttribute(const gl::Vertex
     checkedPosition += spaceRequired;
     if (!checkedPosition.IsValid())
     {
-        return gl::Error(GL_OUT_OF_MEMORY, "Internal error, new vertex buffer write position would overflow.");
+        return gl::OutOfMemory()
+               << "Internal error, new vertex buffer write position would overflow.";
     }
 
     ANGLE_TRY(reserveSpace(mReservedSpace));
@@ -202,10 +204,9 @@ gl::Error StreamingVertexBufferInterface::reserveVertexSpace(const gl::VertexAtt
     // Protect against integer overflow
     if (!alignedRequiredSpace.IsValid())
     {
-        return gl::Error(GL_OUT_OF_MEMORY,
-                         "Unable to reserve %u extra bytes in internal vertex buffer, "
-                         "it would result in an overflow.",
-                         requiredSpace);
+        return gl::OutOfMemory()
+               << "Unable to reserve " << requiredSpace
+               << " extra bytes in internal vertex buffer, it would result in an overflow.";
     }
 
     mReservedSpace = alignedRequiredSpace.ValueOrDie();
@@ -278,7 +279,7 @@ gl::Error StaticVertexBufferInterface::storeStaticAttribute(const gl::VertexAttr
 {
     unsigned int spaceRequired = 0;
     ANGLE_TRY_RESULT(getSpaceRequired(attrib, binding, count, instances), spaceRequired);
-    setBufferSize(spaceRequired);
+    ANGLE_TRY(setBufferSize(spaceRequired));
 
     ASSERT(attrib.enabled);
     ANGLE_TRY(mVertexBuffer->storeVertexAttributes(attrib, binding, GL_NONE, start, count,

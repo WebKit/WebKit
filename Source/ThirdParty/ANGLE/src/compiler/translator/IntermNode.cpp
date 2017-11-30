@@ -18,7 +18,6 @@
 #include "common/mathutil.h"
 #include "common/matrix_utils.h"
 #include "compiler/translator/Diagnostics.h"
-#include "compiler/translator/HashNames.h"
 #include "compiler/translator/IntermNode.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/util.h"
@@ -304,12 +303,9 @@ TIntermAggregate *TIntermAggregate::CreateBuiltInFunctionCall(const TFunction &f
 }
 
 TIntermAggregate *TIntermAggregate::CreateConstructor(const TType &type,
-                                                      TOperator op,
                                                       TIntermSequence *arguments)
 {
-    TIntermAggregate *constructorNode = new TIntermAggregate(type, op, arguments);
-    ASSERT(constructorNode->isConstructor());
-    return constructorNode;
+    return new TIntermAggregate(type, EOpConstruct, arguments);
 }
 
 TIntermAggregate *TIntermAggregate::Create(const TType &type,
@@ -343,7 +339,7 @@ void TIntermAggregate::setTypePrecisionAndQualifier(const TType &type)
         {
             // Structs should not be precision qualified, the individual members may be.
             // Built-in types on the other hand should be precision qualified.
-            if (mOp != EOpConstructStruct)
+            if (getBasicType() != EbtStruct)
             {
                 setPrecisionFromChildren();
             }
@@ -465,12 +461,30 @@ TString TIntermAggregate::getSymbolTableMangledName() const
     }
 }
 
+bool TIntermAggregate::hasSideEffects() const
+{
+    if (isFunctionCall() && mFunctionInfo.isKnownToNotHaveSideEffects())
+    {
+        for (TIntermNode *arg : mArguments)
+        {
+            if (arg->getAsTyped()->hasSideEffects())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    // Conservatively assume most aggregate operators have side-effects
+    return true;
+}
+
 void TIntermBlock::appendStatement(TIntermNode *statement)
 {
-    // Declaration nodes with no children can appear if all the declarators just added constants to
-    // the symbol table instead of generating code. They're no-ops so they aren't added to blocks.
-    if (statement != nullptr && (statement->getAsDeclarationNode() == nullptr ||
-                                 !statement->getAsDeclarationNode()->getSequence()->empty()))
+    // Declaration nodes with no children can appear if it was an empty declaration or if all the
+    // declarators just added constants to the symbol table instead of generating code. We still
+    // need to add the declaration to the AST in that case because it might be relevant to the
+    // validity of switch/case.
+    if (statement != nullptr)
     {
         mStatements.push_back(statement);
     }
@@ -489,7 +503,7 @@ void TIntermDeclaration::appendDeclarator(TIntermTyped *declarator)
            (declarator->getAsBinaryNode() != nullptr &&
             declarator->getAsBinaryNode()->getOp() == EOpInitialize));
     ASSERT(mDeclarators.empty() ||
-           declarator->getType().sameElementType(mDeclarators.back()->getAsTyped()->getType()));
+           declarator->getType().sameNonArrayType(mDeclarators.back()->getAsTyped()->getType()));
     mDeclarators.push_back(declarator);
 }
 
@@ -513,6 +527,7 @@ bool TIntermSwitch::replaceChildNode(TIntermNode *original, TIntermNode *replace
 {
     REPLACE_IF_IS(mInit, TIntermTyped, original, replacement);
     REPLACE_IF_IS(mStatementList, TIntermBlock, original, replacement);
+    ASSERT(mStatementList);
     return false;
 }
 
@@ -545,99 +560,6 @@ bool TIntermTyped::isConstructorWithOnlyConstantUnionParameters()
     return true;
 }
 
-// static
-TIntermTyped *TIntermTyped::CreateIndexNode(int index)
-{
-    TConstantUnion *u = new TConstantUnion[1];
-    u[0].setIConst(index);
-
-    TType type(EbtInt, EbpUndefined, EvqConst, 1);
-    TIntermConstantUnion *node = new TIntermConstantUnion(u, type);
-    return node;
-}
-
-// static
-TIntermTyped *TIntermTyped::CreateZero(const TType &type)
-{
-    TType constType(type);
-    constType.setQualifier(EvqConst);
-
-    if (!type.isArray() && type.getBasicType() != EbtStruct)
-    {
-        ASSERT(type.isScalar() || type.isVector() || type.isMatrix());
-
-        size_t size       = constType.getObjectSize();
-        TConstantUnion *u = new TConstantUnion[size];
-        for (size_t i = 0; i < size; ++i)
-        {
-            switch (type.getBasicType())
-            {
-                case EbtFloat:
-                    u[i].setFConst(0.0f);
-                    break;
-                case EbtInt:
-                    u[i].setIConst(0);
-                    break;
-                case EbtUInt:
-                    u[i].setUConst(0u);
-                    break;
-                case EbtBool:
-                    u[i].setBConst(false);
-                    break;
-                default:
-                    // CreateZero is called by ParseContext that keeps parsing even when an error
-                    // occurs, so it is possible for CreateZero to be called with non-basic types.
-                    // This happens only on error condition but CreateZero needs to return a value
-                    // with the correct type to continue the typecheck. That's why we handle
-                    // non-basic type by setting whatever value, we just need the type to be right.
-                    u[i].setIConst(42);
-                    break;
-            }
-        }
-
-        TIntermConstantUnion *node = new TIntermConstantUnion(u, constType);
-        return node;
-    }
-
-    TIntermSequence *arguments = new TIntermSequence();
-
-    if (type.isArray())
-    {
-        TType elementType(type);
-        elementType.clearArrayness();
-
-        size_t arraySize = type.getArraySize();
-        for (size_t i = 0; i < arraySize; ++i)
-        {
-            arguments->push_back(CreateZero(elementType));
-        }
-    }
-    else
-    {
-        ASSERT(type.getBasicType() == EbtStruct);
-
-        TStructure *structure = type.getStruct();
-        for (const auto &field : structure->fields())
-        {
-            arguments->push_back(CreateZero(*field->type()));
-        }
-    }
-
-    return TIntermAggregate::CreateConstructor(constType, sh::TypeToConstructorOperator(type),
-                                               arguments);
-}
-
-// static
-TIntermTyped *TIntermTyped::CreateBool(bool value)
-{
-    TConstantUnion *u = new TConstantUnion[1];
-    u[0].setBConst(value);
-
-    TType type(EbtBool, EbpUndefined, EvqConst, 1);
-    TIntermConstantUnion *node = new TIntermConstantUnion(u, type);
-    return node;
-}
-
 TIntermConstantUnion::TIntermConstantUnion(const TIntermConstantUnion &node) : TIntermTyped(node)
 {
     mUnionArrayPointer = node.mUnionArrayPointer;
@@ -649,12 +571,13 @@ void TFunctionSymbolInfo::setFromFunction(const TFunction &function)
     setId(TSymbolUniqueId(function));
 }
 
-TFunctionSymbolInfo::TFunctionSymbolInfo(const TSymbolUniqueId &id) : mId(new TSymbolUniqueId(id))
+TFunctionSymbolInfo::TFunctionSymbolInfo(const TSymbolUniqueId &id)
+    : mId(new TSymbolUniqueId(id)), mKnownToNotHaveSideEffects(false)
 {
 }
 
 TFunctionSymbolInfo::TFunctionSymbolInfo(const TFunctionSymbolInfo &info)
-    : mName(info.mName), mId(nullptr)
+    : mName(info.mName), mId(nullptr), mKnownToNotHaveSideEffects(info.mKnownToNotHaveSideEffects)
 {
     if (info.mId)
     {
@@ -770,43 +693,9 @@ bool TIntermOperator::isMultiplication() const
     }
 }
 
-//
-// returns true if the operator is for one of the constructors
-//
 bool TIntermOperator::isConstructor() const
 {
-    switch (mOp)
-    {
-        case EOpConstructVec2:
-        case EOpConstructVec3:
-        case EOpConstructVec4:
-        case EOpConstructMat2:
-        case EOpConstructMat2x3:
-        case EOpConstructMat2x4:
-        case EOpConstructMat3x2:
-        case EOpConstructMat3:
-        case EOpConstructMat3x4:
-        case EOpConstructMat4x2:
-        case EOpConstructMat4x3:
-        case EOpConstructMat4:
-        case EOpConstructFloat:
-        case EOpConstructIVec2:
-        case EOpConstructIVec3:
-        case EOpConstructIVec4:
-        case EOpConstructInt:
-        case EOpConstructUVec2:
-        case EOpConstructUVec3:
-        case EOpConstructUVec4:
-        case EOpConstructUInt:
-        case EOpConstructBVec2:
-        case EOpConstructBVec3:
-        case EOpConstructBVec4:
-        case EOpConstructBool:
-        case EOpConstructStruct:
-            return true;
-        default:
-            return false;
-    }
+    return (mOp == EOpConstruct);
 }
 
 bool TIntermOperator::isFunctionCall() const
@@ -916,6 +805,13 @@ TOperator TIntermBinary::GetMulAssignOpBasedOnOperands(const TType &left, const 
 //
 void TIntermUnary::promote()
 {
+    if (mOp == EOpArrayLength)
+    {
+        // Special case: the qualifier of .length() doesn't depend on the operand qualifier.
+        setType(TType(EbtInt, EbpUndefined, EvqConst));
+        return;
+    }
+
     TQualifier resultQualifier = EvqTemporary;
     if (mOperand->getQualifier() == EvqConst)
         resultQualifier = EvqConst;
@@ -1028,6 +924,44 @@ TIntermTernary::TIntermTernary(TIntermTyped *cond,
         TIntermTernary::DetermineQualifier(cond, trueExpression, falseExpression));
 }
 
+TIntermLoop::TIntermLoop(TLoopType type,
+                         TIntermNode *init,
+                         TIntermTyped *cond,
+                         TIntermTyped *expr,
+                         TIntermBlock *body)
+    : mType(type), mInit(init), mCond(cond), mExpr(expr), mBody(body)
+{
+    // Declaration nodes with no children can appear if all the declarators just added constants to
+    // the symbol table instead of generating code. They're no-ops so don't add them to the tree.
+    if (mInit && mInit->getAsDeclarationNode() &&
+        mInit->getAsDeclarationNode()->getSequence()->empty())
+    {
+        mInit = nullptr;
+    }
+}
+
+TIntermIfElse::TIntermIfElse(TIntermTyped *cond, TIntermBlock *trueB, TIntermBlock *falseB)
+    : TIntermNode(), mCondition(cond), mTrueBlock(trueB), mFalseBlock(falseB)
+{
+    // Prune empty false blocks so that there won't be unnecessary operations done on it.
+    if (mFalseBlock && mFalseBlock->getSequence()->empty())
+    {
+        mFalseBlock = nullptr;
+    }
+}
+
+TIntermSwitch::TIntermSwitch(TIntermTyped *init, TIntermBlock *statementList)
+    : TIntermNode(), mInit(init), mStatementList(statementList)
+{
+    ASSERT(mStatementList);
+}
+
+void TIntermSwitch::setStatementList(TIntermBlock *statementList)
+{
+    ASSERT(statementList);
+    mStatementList = statementList;
+}
+
 // static
 TQualifier TIntermTernary::DetermineQualifier(TIntermTyped *cond,
                                               TIntermTyped *trueExpression,
@@ -1039,6 +973,24 @@ TQualifier TIntermTernary::DetermineQualifier(TIntermTyped *cond,
         return EvqConst;
     }
     return EvqTemporary;
+}
+
+TIntermTyped *TIntermTernary::fold()
+{
+    if (mCondition->getAsConstantUnion())
+    {
+        if (mCondition->getAsConstantUnion()->getBConst(0))
+        {
+            mTrueExpression->getTypePointer()->setQualifier(mType.getQualifier());
+            return mTrueExpression;
+        }
+        else
+        {
+            mFalseExpression->getTypePointer()->setQualifier(mType.getQualifier());
+            return mFalseExpression;
+        }
+    }
+    return this;
 }
 
 void TIntermSwizzle::promote()
@@ -1114,7 +1066,8 @@ void TIntermBinary::promote()
     ASSERT(!isMultiplication() ||
            mOp == GetMulOpBasedOnOperands(mLeft->getType(), mRight->getType()));
 
-    // Comma is handled as a special case.
+    // Comma is handled as a special case. Note that the comma node qualifier depends on the shader
+    // version and so is not being set here.
     if (mOp == EOpComma)
     {
         setType(mRight->getType());
@@ -1141,7 +1094,7 @@ void TIntermBinary::promote()
         case EOpIndexIndirect:
             if (mLeft->isArray())
             {
-                mType.clearArrayness();
+                mType.toArrayElementType();
             }
             else if (mLeft->isMatrix())
             {
@@ -1320,9 +1273,9 @@ const TConstantUnion *TIntermConstantUnion::foldIndexing(int index)
 {
     if (isArray())
     {
-        ASSERT(index < static_cast<int>(getType().getArraySize()));
+        ASSERT(index < static_cast<int>(getType().getOutermostArraySize()));
         TType arrayElementType = getType();
-        arrayElementType.clearArrayness();
+        arrayElementType.toArrayElementType();
         size_t arrayElementSize = arrayElementType.getObjectSize();
         return &mUnionArrayPointer[arrayElementSize * index];
     }
@@ -1349,7 +1302,7 @@ TIntermTyped *TIntermSwizzle::fold()
     TIntermConstantUnion *operandConstant = mOperand->getAsConstantUnion();
     if (operandConstant == nullptr)
     {
-        return nullptr;
+        return this;
     }
 
     TConstantUnion *constArray = new TConstantUnion[mSwizzleOffsets.size()];
@@ -1366,22 +1319,35 @@ TIntermTyped *TIntermBinary::fold(TDiagnostics *diagnostics)
     TIntermConstantUnion *rightConstant = mRight->getAsConstantUnion();
     switch (mOp)
     {
+        case EOpComma:
+        {
+            if (mLeft->hasSideEffects())
+            {
+                return this;
+            }
+            mRight->getTypePointer()->setQualifier(mType.getQualifier());
+            return mRight;
+        }
         case EOpIndexDirect:
         {
             if (leftConstant == nullptr || rightConstant == nullptr)
             {
-                return nullptr;
+                return this;
             }
             int index = rightConstant->getIConst(0);
 
             const TConstantUnion *constArray = leftConstant->foldIndexing(index);
+            if (!constArray)
+            {
+                return this;
+            }
             return CreateFoldedNode(constArray, this, mType.getQualifier());
         }
         case EOpIndexDirectStruct:
         {
             if (leftConstant == nullptr || rightConstant == nullptr)
             {
-                return nullptr;
+                return this;
             }
             const TFieldList &fields = mLeft->getType().getStruct()->fields();
             size_t index             = static_cast<size_t>(rightConstant->getIConst(0));
@@ -1398,15 +1364,19 @@ TIntermTyped *TIntermBinary::fold(TDiagnostics *diagnostics)
         case EOpIndexIndirect:
         case EOpIndexDirectInterfaceBlock:
             // Can never be constant folded.
-            return nullptr;
+            return this;
         default:
         {
             if (leftConstant == nullptr || rightConstant == nullptr)
             {
-                return nullptr;
+                return this;
             }
             TConstantUnion *constArray =
                 leftConstant->foldBinary(mOp, rightConstant, diagnostics, mLeft->getLine());
+            if (!constArray)
+            {
+                return this;
+            }
 
             // Nodes may be constant folded without being qualified as constant.
             return CreateFoldedNode(constArray, this, mType.getQualifier());
@@ -1416,36 +1386,54 @@ TIntermTyped *TIntermBinary::fold(TDiagnostics *diagnostics)
 
 TIntermTyped *TIntermUnary::fold(TDiagnostics *diagnostics)
 {
-    TIntermConstantUnion *operandConstant = mOperand->getAsConstantUnion();
-    if (operandConstant == nullptr)
-    {
-        return nullptr;
-    }
-
     TConstantUnion *constArray = nullptr;
-    switch (mOp)
+
+    if (mOp == EOpArrayLength)
     {
-        case EOpAny:
-        case EOpAll:
-        case EOpLength:
-        case EOpTranspose:
-        case EOpDeterminant:
-        case EOpInverse:
-        case EOpPackSnorm2x16:
-        case EOpUnpackSnorm2x16:
-        case EOpPackUnorm2x16:
-        case EOpUnpackUnorm2x16:
-        case EOpPackHalf2x16:
-        case EOpUnpackHalf2x16:
-        case EOpPackUnorm4x8:
-        case EOpPackSnorm4x8:
-        case EOpUnpackUnorm4x8:
-        case EOpUnpackSnorm4x8:
-            constArray = operandConstant->foldUnaryNonComponentWise(mOp);
-            break;
-        default:
-            constArray = operandConstant->foldUnaryComponentWise(mOp, diagnostics);
-            break;
+        // The size of runtime-sized arrays may only be determined at runtime.
+        if (mOperand->hasSideEffects() || mOperand->getType().isUnsizedArray())
+        {
+            return this;
+        }
+        constArray = new TConstantUnion[1];
+        constArray->setIConst(mOperand->getOutermostArraySize());
+    }
+    else
+    {
+        TIntermConstantUnion *operandConstant = mOperand->getAsConstantUnion();
+        if (operandConstant == nullptr)
+        {
+            return this;
+        }
+
+        switch (mOp)
+        {
+            case EOpAny:
+            case EOpAll:
+            case EOpLength:
+            case EOpTranspose:
+            case EOpDeterminant:
+            case EOpInverse:
+            case EOpPackSnorm2x16:
+            case EOpUnpackSnorm2x16:
+            case EOpPackUnorm2x16:
+            case EOpUnpackUnorm2x16:
+            case EOpPackHalf2x16:
+            case EOpUnpackHalf2x16:
+            case EOpPackUnorm4x8:
+            case EOpPackSnorm4x8:
+            case EOpUnpackUnorm4x8:
+            case EOpUnpackSnorm4x8:
+                constArray = operandConstant->foldUnaryNonComponentWise(mOp);
+                break;
+            default:
+                constArray = operandConstant->foldUnaryComponentWise(mOp, diagnostics);
+                break;
+        }
+    }
+    if (constArray == nullptr)
+    {
+        return this;
     }
 
     // Nodes may be constant folded without being qualified as constant.
@@ -1459,7 +1447,7 @@ TIntermTyped *TIntermAggregate::fold(TDiagnostics *diagnostics)
     {
         if (param->getAsConstantUnion() == nullptr)
         {
-            return nullptr;
+            return this;
         }
     }
     TConstantUnion *constArray = nullptr;
@@ -2615,6 +2603,42 @@ TConstantUnion *TIntermConstantUnion::FoldAggregateConstructor(TIntermAggregate 
     return resultArray;
 }
 
+bool TIntermAggregate::CanFoldAggregateBuiltInOp(TOperator op)
+{
+    switch (op)
+    {
+        case EOpAtan:
+        case EOpPow:
+        case EOpMod:
+        case EOpMin:
+        case EOpMax:
+        case EOpClamp:
+        case EOpMix:
+        case EOpStep:
+        case EOpSmoothStep:
+        case EOpLdexp:
+        case EOpMulMatrixComponentWise:
+        case EOpOuterProduct:
+        case EOpEqualComponentWise:
+        case EOpNotEqualComponentWise:
+        case EOpLessThanComponentWise:
+        case EOpLessThanEqualComponentWise:
+        case EOpGreaterThanComponentWise:
+        case EOpGreaterThanEqualComponentWise:
+        case EOpDistance:
+        case EOpDot:
+        case EOpCross:
+        case EOpFaceforward:
+        case EOpReflect:
+        case EOpRefract:
+        case EOpBitfieldExtract:
+        case EOpBitfieldInsert:
+            return true;
+        default:
+            return false;
+    }
+}
+
 // static
 TConstantUnion *TIntermConstantUnion::FoldAggregateBuiltIn(TIntermAggregate *aggregate,
                                                            TDiagnostics *diagnostics)
@@ -3147,7 +3171,7 @@ TConstantUnion *TIntermConstantUnion::FoldAggregateBuiltIn(TIntermAggregate *agg
             break;
         }
 
-        case EOpFaceForward:
+        case EOpFaceforward:
         {
             ASSERT(basicType == EbtFloat);
             // genType faceforward(genType N, genType I, genType Nref) :
@@ -3301,134 +3325,6 @@ TConstantUnion *TIntermConstantUnion::FoldAggregateBuiltIn(TIntermAggregate *agg
             return nullptr;
     }
     return resultArray;
-}
-
-// static
-TString TIntermTraverser::hash(const TString &name, ShHashFunction64 hashFunction)
-{
-    if (hashFunction == NULL || name.empty())
-        return name;
-    khronos_uint64_t number = (*hashFunction)(name.c_str(), name.length());
-    TStringStream stream;
-    stream << HASHED_NAME_PREFIX << std::hex << number;
-    TString hashedName = stream.str();
-    return hashedName;
-}
-
-void TIntermTraverser::updateTree()
-{
-    for (size_t ii = 0; ii < mInsertions.size(); ++ii)
-    {
-        const NodeInsertMultipleEntry &insertion = mInsertions[ii];
-        ASSERT(insertion.parent);
-        if (!insertion.insertionsAfter.empty())
-        {
-            bool inserted = insertion.parent->insertChildNodes(insertion.position + 1,
-                                                               insertion.insertionsAfter);
-            ASSERT(inserted);
-        }
-        if (!insertion.insertionsBefore.empty())
-        {
-            bool inserted =
-                insertion.parent->insertChildNodes(insertion.position, insertion.insertionsBefore);
-            ASSERT(inserted);
-        }
-    }
-    for (size_t ii = 0; ii < mReplacements.size(); ++ii)
-    {
-        const NodeUpdateEntry &replacement = mReplacements[ii];
-        ASSERT(replacement.parent);
-        bool replaced =
-            replacement.parent->replaceChildNode(replacement.original, replacement.replacement);
-        ASSERT(replaced);
-
-        if (!replacement.originalBecomesChildOfReplacement)
-        {
-            // In AST traversing, a parent is visited before its children.
-            // After we replace a node, if its immediate child is to
-            // be replaced, we need to make sure we don't update the replaced
-            // node; instead, we update the replacement node.
-            for (size_t jj = ii + 1; jj < mReplacements.size(); ++jj)
-            {
-                NodeUpdateEntry &replacement2 = mReplacements[jj];
-                if (replacement2.parent == replacement.original)
-                    replacement2.parent = replacement.replacement;
-            }
-        }
-    }
-    for (size_t ii = 0; ii < mMultiReplacements.size(); ++ii)
-    {
-        const NodeReplaceWithMultipleEntry &replacement = mMultiReplacements[ii];
-        ASSERT(replacement.parent);
-        bool replaced = replacement.parent->replaceChildNodeWithMultiple(replacement.original,
-                                                                         replacement.replacements);
-        ASSERT(replaced);
-    }
-
-    clearReplacementQueue();
-}
-
-void TIntermTraverser::clearReplacementQueue()
-{
-    mReplacements.clear();
-    mMultiReplacements.clear();
-    mInsertions.clear();
-}
-
-void TIntermTraverser::queueReplacement(TIntermNode *original,
-                                        TIntermNode *replacement,
-                                        OriginalNode originalStatus)
-{
-    queueReplacementWithParent(getParentNode(), original, replacement, originalStatus);
-}
-
-void TIntermTraverser::queueReplacementWithParent(TIntermNode *parent,
-                                                  TIntermNode *original,
-                                                  TIntermNode *replacement,
-                                                  OriginalNode originalStatus)
-{
-    bool originalBecomesChild = (originalStatus == OriginalNode::BECOMES_CHILD);
-    mReplacements.push_back(NodeUpdateEntry(parent, original, replacement, originalBecomesChild));
-}
-
-TName TIntermTraverser::GetInternalFunctionName(const char *name)
-{
-    TString nameStr(name);
-    TName nameObj(nameStr);
-    nameObj.setInternal(true);
-    return nameObj;
-}
-
-TIntermFunctionPrototype *TIntermTraverser::CreateInternalFunctionPrototypeNode(
-    const TType &returnType,
-    const char *name,
-    const TSymbolUniqueId &functionId)
-{
-    TIntermFunctionPrototype *functionNode = new TIntermFunctionPrototype(returnType, functionId);
-    functionNode->getFunctionSymbolInfo()->setNameObj(GetInternalFunctionName(name));
-    return functionNode;
-}
-
-TIntermFunctionDefinition *TIntermTraverser::CreateInternalFunctionDefinitionNode(
-    const TType &returnType,
-    const char *name,
-    TIntermBlock *functionBody,
-    const TSymbolUniqueId &functionId)
-{
-    TIntermFunctionPrototype *prototypeNode =
-        CreateInternalFunctionPrototypeNode(returnType, name, functionId);
-    return new TIntermFunctionDefinition(prototypeNode, functionBody);
-}
-
-TIntermAggregate *TIntermTraverser::CreateInternalFunctionCallNode(
-    const TType &returnType,
-    const char *name,
-    const TSymbolUniqueId &functionId,
-    TIntermSequence *arguments)
-{
-    TIntermAggregate *functionNode = TIntermAggregate::CreateFunctionCall(
-        returnType, functionId, GetInternalFunctionName(name), arguments);
-    return functionNode;
 }
 
 }  // namespace sh

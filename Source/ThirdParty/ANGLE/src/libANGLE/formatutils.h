@@ -46,9 +46,12 @@ struct Type
 };
 const Type &GetTypeInfo(GLenum type);
 
+// Information about an OpenGL internal format.  Can be keyed on the internalFormat and type
+// members.
 struct InternalFormat
 {
     InternalFormat();
+    InternalFormat(const InternalFormat &other);
 
     GLuint computePixelBytes(GLenum formatType) const;
 
@@ -66,8 +69,7 @@ struct InternalFormat
                                             GLint rowLength,
                                             GLint imageHeight) const;
 
-    ErrorOrResult<GLuint> computeCompressedImageSize(GLenum formatType,
-                                                     const Extents &size) const;
+    ErrorOrResult<GLuint> computeCompressedImageSize(const Extents &size) const;
 
     ErrorOrResult<GLuint> computeSkipBytes(GLuint rowPitch,
                                            GLuint depthPitch,
@@ -81,12 +83,21 @@ struct InternalFormat
 
     bool isLUMA() const;
     GLenum getReadPixelsFormat() const;
-    GLenum getReadPixelsType() const;
+    GLenum getReadPixelsType(const Version &version) const;
+
+    // Return true if the format is a required renderbuffer format in the given version of the core
+    // spec. Note that it isn't always clear whether all the rules that apply to core required
+    // renderbuffer formats also apply to additional formats added by extensions. Because of this
+    // extension formats are conservatively not included.
+    bool isRequiredRenderbufferFormat(const Version &version) const;
 
     bool operator==(const InternalFormat &other) const;
     bool operator!=(const InternalFormat &other) const;
 
     GLenum internalFormat;
+
+    bool sized;
+    GLenum sizedInternalFormat;
 
     GLuint redBits;
     GLuint greenBits;
@@ -120,37 +131,39 @@ struct InternalFormat
     SupportCheckFunction filterSupport;
 };
 
-// A "Format" is either a sized format, or an {unsized format, type} combination.
+// A "Format" wraps an InternalFormat struct, querying it from either a sized internal format or
+// unsized internal format and type.
+// TODO(geofflang): Remove this, it doesn't add any more information than the InternalFormat object.
 struct Format
 {
     // Sized types only.
     explicit Format(GLenum internalFormat);
-    explicit Format(const InternalFormat &internalFormat);
 
     // Sized or unsized types.
-    Format(GLenum internalFormat, GLenum format, GLenum type);
+    explicit Format(const InternalFormat &internalFormat);
+    Format(GLenum internalFormat, GLenum type);
 
     Format(const Format &other);
     Format &operator=(const Format &other);
 
-    GLenum asSized() const;
     bool valid() const;
 
     static Format Invalid();
     static bool SameSized(const Format &a, const Format &b);
+    static bool EquivalentForBlit(const Format &a, const Format &b);
 
     friend std::ostream &operator<<(std::ostream &os, const Format &fmt);
 
     // This is the sized info.
     const InternalFormat *info;
-    GLenum format;
-    GLenum type;
-    bool sized;
 };
 
-const InternalFormat &GetInternalFormatInfo(GLenum internalFormat);
+const InternalFormat &GetSizedInternalFormatInfo(GLenum internalFormat);
+const InternalFormat &GetInternalFormatInfo(GLenum internalFormat, GLenum type);
 
-GLenum GetSizedInternalFormat(GLenum internalFormat, GLenum type);
+// Strip sizing information from an internal format.  Doesn't necessarily validate that the internal
+// format is valid.
+GLenum GetUnsizedFormat(GLenum internalFormat);
 
 typedef std::set<GLenum> FormatSet;
 const FormatSet &GetAllSizedInternalFormats();
@@ -283,7 +296,7 @@ enum VertexFormatType
 
 typedef std::vector<VertexFormatType> InputLayout;
 
-struct VertexFormat : angle::NonCopyable
+struct VertexFormat : private angle::NonCopyable
 {
     VertexFormat(GLenum typeIn, GLboolean normalizedIn, GLuint componentsIn, bool pureIntegerIn);
 
@@ -298,6 +311,10 @@ VertexFormatType GetVertexFormatType(const VertexAttribute &attrib);
 VertexFormatType GetVertexFormatType(const VertexAttribute &attrib, GLenum currentValueType);
 const VertexFormat &GetVertexFormatFromType(VertexFormatType vertexFormatType);
 size_t GetVertexFormatTypeSize(VertexFormatType vertexFormatType);
+
+// Check if an internal format is ever valid in ES3.  Makes no checks about support for a specific
+// context.
+bool ValidES3InternalFormat(GLenum internalFormat);
 
 // Implemented in format_map_autogen.cpp
 bool ValidES3Format(GLenum format);

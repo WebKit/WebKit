@@ -18,6 +18,7 @@ class Input
 {
   public:
     Input();
+    ~Input();
     Input(size_t count, const char *const string[], const int length[]);
 
     size_t count() const { return mCount; }

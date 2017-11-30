@@ -17,7 +17,7 @@
 #include "compiler/translator/RecordConstantPrecision.h"
 
 #include "compiler/translator/InfoSink.h"
-#include "compiler/translator/IntermNode.h"
+#include "compiler/translator/IntermTraverse.h"
 
 namespace sh
 {
@@ -28,7 +28,7 @@ namespace
 class RecordConstantPrecisionTraverser : public TIntermTraverser
 {
   public:
-    RecordConstantPrecisionTraverser();
+    RecordConstantPrecisionTraverser(TSymbolTable *symbolTable);
 
     void visitConstantUnion(TIntermConstantUnion *node) override;
 
@@ -41,8 +41,8 @@ class RecordConstantPrecisionTraverser : public TIntermTraverser
     bool mFoundHigherPrecisionConstant;
 };
 
-RecordConstantPrecisionTraverser::RecordConstantPrecisionTraverser()
-    : TIntermTraverser(true, false, true), mFoundHigherPrecisionConstant(false)
+RecordConstantPrecisionTraverser::RecordConstantPrecisionTraverser(TSymbolTable *symbolTable)
+    : TIntermTraverser(true, false, true, symbolTable), mFoundHigherPrecisionConstant(false)
 {
 }
 
@@ -139,23 +139,21 @@ void RecordConstantPrecisionTraverser::visitConstantUnion(TIntermConstantUnion *
     TIntermSequence insertions;
     insertions.push_back(createTempInitDeclaration(node, EvqConst));
     insertStatementsInParentBlock(insertions);
-    queueReplacement(node, createTempSymbol(node->getType()), OriginalNode::IS_DROPPED);
+    queueReplacement(createTempSymbol(node->getType()), OriginalNode::IS_DROPPED);
     mFoundHigherPrecisionConstant = true;
 }
 
 void RecordConstantPrecisionTraverser::nextIteration()
 {
-    nextTemporaryIndex();
+    nextTemporaryId();
     mFoundHigherPrecisionConstant = false;
 }
 
 }  // namespace
 
-void RecordConstantPrecision(TIntermNode *root, unsigned int *temporaryIndex)
+void RecordConstantPrecision(TIntermNode *root, TSymbolTable *symbolTable)
 {
-    RecordConstantPrecisionTraverser traverser;
-    ASSERT(temporaryIndex != nullptr);
-    traverser.useTemporaryIndex(temporaryIndex);
+    RecordConstantPrecisionTraverser traverser(symbolTable);
     // Iterate as necessary, and reset the traverser between iterations.
     do
     {

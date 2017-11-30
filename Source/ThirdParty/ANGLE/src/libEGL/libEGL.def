@@ -59,6 +59,10 @@ EXPORTS
     eglStreamPostD3DTextureNV12ANGLE            @65
     eglGetSyncValuesCHROMIUM                    @66
     eglSwapBuffersWithDamageEXT                 @67
+    eglProgramCacheGetAttribANGLE               @68
+    eglProgramCachePopulateANGLE                @69
+    eglProgramCacheQueryANGLE                   @70
+    eglProgramCacheResizeANGLE                  @71
 
     ; 1.5 entry points
     eglCreateSync                               @38

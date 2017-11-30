@@ -129,16 +129,14 @@ class DisplayOzone final : public DisplayEGL
     egl::ConfigSet generateConfigs() override;
 
     bool testDeviceLost() override;
-    egl::Error restoreLostDevice() override;
+    egl::Error restoreLostDevice(const egl::Display *display) override;
 
     bool isValidNativeWindow(EGLNativeWindowType window) const override;
 
     egl::Error getDevice(DeviceImpl **device) override;
 
-    egl::Error waitClient() const override;
-    egl::Error waitNative(EGLint engine,
-                          egl::Surface *drawSurface,
-                          egl::Surface *readSurface) const override;
+    egl::Error waitClient(const gl::Context *context) const override;
+    egl::Error waitNative(const gl::Context *context, EGLint engine) const override;
 
     // TODO(fjhenigman) Implement this.
     // Swap interval can be set globally or per drawable.
@@ -147,6 +145,8 @@ class DisplayOzone final : public DisplayEGL
     void setSwapInterval(EGLSurface drawable, SwapControlData *data);
 
   private:
+    egl::Error makeCurrentSurfaceless(gl::Context *context) override;
+
     GLuint makeShader(GLuint type, const char *src);
     void drawBuffer(Buffer *buffer);
     void drawWithBlit(Buffer *buffer);

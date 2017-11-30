@@ -13,15 +13,15 @@
 
 #include <GLSLANG/ShaderLang.h>
 
-class TIntermNode;
 namespace sh
 {
 
+class TIntermBlock;
 class TSymbolTable;
 
 using InterfaceBlockList = std::vector<sh::InterfaceBlock>;
 
-void UseInterfaceBlockFields(TIntermNode *root,
+void UseInterfaceBlockFields(TIntermBlock *root,
                              const InterfaceBlockList &blocks,
                              const TSymbolTable &symbolTable);
 

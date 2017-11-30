@@ -18,7 +18,7 @@ namespace rx
 class SamplerNULL : public SamplerImpl
 {
   public:
-    SamplerNULL();
+    SamplerNULL(const gl::SamplerState &state);
     ~SamplerNULL() override;
 };
 

@@ -20,7 +20,7 @@ constexpr Version::Version()
 #undef major
 #undef minor
 
-constexpr Version::Version(GLuint major_, GLuint minor_)
+constexpr Version::Version(unsigned int major_, unsigned int minor_)
     : major(major_),
       minor(minor_)
 {
@@ -56,4 +56,4 @@ inline bool operator>(const Version &a, const Version &b)
     return std::tie(a.major, a.minor) > std::tie(b.major, b.minor);
 }
 
-}
+}  // namespace gl

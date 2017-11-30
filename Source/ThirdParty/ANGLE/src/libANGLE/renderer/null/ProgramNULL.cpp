@@ -22,16 +22,15 @@ ProgramNULL::~ProgramNULL()
 {
 }
 
-LinkResult ProgramNULL::load(const ContextImpl *contextImpl,
-                             gl::InfoLog &infoLog,
-                             gl::BinaryInputStream *stream)
+gl::LinkResult ProgramNULL::load(const gl::Context *contextImpl,
+                                 gl::InfoLog &infoLog,
+                                 gl::BinaryInputStream *stream)
 {
     return true;
 }
 
-gl::Error ProgramNULL::save(gl::BinaryOutputStream *stream)
+void ProgramNULL::save(const gl::Context *context, gl::BinaryOutputStream *stream)
 {
-    return gl::NoError();
 }
 
 void ProgramNULL::setBinaryRetrievableHint(bool retrievable)
@@ -42,9 +41,9 @@ void ProgramNULL::setSeparable(bool separable)
 {
 }
 
-LinkResult ProgramNULL::link(ContextImpl *contextImpl,
-                             const gl::VaryingPacking &packing,
-                             gl::InfoLog &infoLog)
+gl::LinkResult ProgramNULL::link(const gl::Context *contextImpl,
+                                 const gl::ProgramLinkedResources &resources,
+                                 gl::InfoLog &infoLog)
 {
     return true;
 }
@@ -165,22 +164,23 @@ void ProgramNULL::setUniformMatrix4x3fv(GLint location,
 {
 }
 
+void ProgramNULL::getUniformfv(const gl::Context *context, GLint location, GLfloat *params) const
+{
+    // TODO(jmadill): Write some values.
+}
+
+void ProgramNULL::getUniformiv(const gl::Context *context, GLint location, GLint *params) const
+{
+    // TODO(jmadill): Write some values.
+}
+
+void ProgramNULL::getUniformuiv(const gl::Context *context, GLint location, GLuint *params) const
+{
+    // TODO(jmadill): Write some values.
+}
+
 void ProgramNULL::setUniformBlockBinding(GLuint uniformBlockIndex, GLuint uniformBlockBinding)
 {
-}
-
-bool ProgramNULL::getUniformBlockSize(const std::string &blockName, size_t *sizeOut) const
-{
-    // TODO(geofflang): Compute reasonable sizes?
-    *sizeOut = 0;
-    return true;
-}
-
-bool ProgramNULL::getUniformBlockMemberInfo(const std::string &memberUniformName,
-                                            sh::BlockMemberInfo *memberInfoOut) const
-{
-    // TODO(geofflang): Compute reasonable values?
-    return true;
 }
 
 void ProgramNULL::setPathFragmentInputGen(const std::string &inputName,

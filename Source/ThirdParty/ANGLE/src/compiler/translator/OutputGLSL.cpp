@@ -6,6 +6,8 @@
 
 #include "compiler/translator/OutputGLSL.h"
 
+#include "compiler/translator/Compiler.h"
+
 namespace sh
 {
 
@@ -13,7 +15,7 @@ TOutputGLSL::TOutputGLSL(TInfoSinkBase &objSink,
                          ShArrayIndexClampingStrategy clampingStrategy,
                          ShHashFunction64 hashFunction,
                          NameMap &nameMap,
-                         TSymbolTable &symbolTable,
+                         TSymbolTable *symbolTable,
                          sh::GLenum shaderType,
                          int shaderVersion,
                          ShShaderOutput output,
@@ -80,8 +82,8 @@ TString TOutputGLSL::translateTextureFunction(const TString &name)
                                          "texture2DProjGradARB",
                                          "textureCubeGradEXT",
                                          "textureCubeGradARB",
-                                         NULL,
-                                         NULL};
+                                         nullptr,
+                                         nullptr};
     static const char *legacyToCoreRename[] = {
         "texture2D", "texture", "texture2DProj", "textureProj", "texture2DLod", "textureLod",
         "texture2DProjLod", "textureProjLod", "texture2DRect", "texture", "textureCube", "texture",
@@ -89,11 +91,12 @@ TString TOutputGLSL::translateTextureFunction(const TString &name)
         // Extensions
         "texture2DLodEXT", "textureLod", "texture2DProjLodEXT", "textureProjLod",
         "textureCubeLodEXT", "textureLod", "texture2DGradEXT", "textureGrad",
-        "texture2DProjGradEXT", "textureProjGrad", "textureCubeGradEXT", "textureGrad", NULL, NULL};
+        "texture2DProjGradEXT", "textureProjGrad", "textureCubeGradEXT", "textureGrad", nullptr,
+        nullptr};
     const char **mapping =
         (sh::IsGLSL130OrNewer(getShaderOutput())) ? legacyToCoreRename : simpleRename;
 
-    for (int i = 0; mapping[i] != NULL; i += 2)
+    for (int i = 0; mapping[i] != nullptr; i += 2)
     {
         if (name == mapping[i])
         {

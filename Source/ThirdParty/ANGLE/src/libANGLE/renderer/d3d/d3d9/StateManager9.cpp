@@ -120,7 +120,7 @@ void StateManager9::syncState(const gl::State &state, const gl::State::DirtyBits
         return;
     }
 
-    for (auto dirtyBit : angle::IterateBitSet(dirtyBits))
+    for (auto dirtyBit : dirtyBits)
     {
         switch (dirtyBit)
         {
@@ -396,7 +396,7 @@ gl::Error StateManager9::setBlendDepthRasterStates(const gl::State &glState,
         mCurFrontFaceCCW = frontFaceCCW;
     }
 
-    for (auto dirtyBit : angle::IterateBitSet(mDirtyBits))
+    for (auto dirtyBit : mDirtyBits)
     {
         switch (dirtyBit)
         {
@@ -890,7 +890,7 @@ void StateManager9::setSampleMask(unsigned int sampleMask)
     mCurSampleMask = sampleMask;
 }
 
-void StateManager9::setCullMode(bool cullFace, GLenum cullMode, GLenum frontFace)
+void StateManager9::setCullMode(bool cullFace, gl::CullFaceMode cullMode, GLenum frontFace)
 {
     if (cullFace)
     {

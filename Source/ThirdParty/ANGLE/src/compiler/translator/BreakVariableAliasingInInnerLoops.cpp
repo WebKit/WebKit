@@ -10,7 +10,8 @@
 
 #include "BreakVariableAliasingInInnerLoops.h"
 
-#include "compiler/translator/IntermNode.h"
+#include "compiler/translator/IntermNode_util.h"
+#include "compiler/translator/IntermTraverse.h"
 
 // A HLSL compiler developer gave us more details on the root cause and the workaround needed:
 //     The root problem is that if the HLSL compiler is applying aliasing information even on
@@ -68,7 +69,7 @@ class AliasingBreaker : public TIntermTraverser
         // to
         //    A = (B + typeof<B>(0));
 
-        TIntermBinary *bPlusZero = new TIntermBinary(EOpAdd, B, TIntermTyped::CreateZero(type));
+        TIntermBinary *bPlusZero = new TIntermBinary(EOpAdd, B, CreateZeroNode(type));
         bPlusZero->setLine(B->getLine());
 
         binary->replaceChildNode(B, bPlusZero);

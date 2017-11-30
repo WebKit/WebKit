@@ -218,7 +218,7 @@ bool DisplayOzone::Buffer::resize(int32_t width, int32_t height)
 
     gl->genRenderbuffers(1, &mColorBuffer);
     sm->bindRenderbuffer(GL_RENDERBUFFER, mColorBuffer);
-    gl->eglImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, mImage);
+    gl->eGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, mImage);
 
     sm->bindFramebuffer(GL_FRAMEBUFFER, mGLFB);
     gl->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER,
@@ -263,7 +263,7 @@ bool DisplayOzone::Buffer::initialize(int width, int height)
 
 void DisplayOzone::Buffer::bindTexImage()
 {
-    mDisplay->mFunctionsGL->eglImageTargetTexture2DOES(GL_TEXTURE_2D, mImage);
+    mDisplay->mFunctionsGL->eGLImageTargetTexture2DOES(GL_TEXTURE_2D, mImage);
 }
 
 GLuint DisplayOzone::Buffer::getTexture()
@@ -280,7 +280,7 @@ GLuint DisplayOzone::Buffer::getTexture()
     gl->texParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     gl->texParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     ASSERT(mImage != EGL_NO_IMAGE_KHR);
-    gl->eglImageTargetTexture2DOES(GL_TEXTURE_2D, mImage);
+    gl->eGLImageTargetTexture2DOES(GL_TEXTURE_2D, mImage);
     return mTexture;
 }
 
@@ -309,7 +309,8 @@ FramebufferGL *DisplayOzone::Buffer::framebufferGL(const gl::FramebufferState &s
 {
     return new FramebufferGL(
         mGLFB, state, mDisplay->mFunctionsGL, mDisplay->getRenderer()->getWorkarounds(),
-        mDisplay->getRenderer()->getBlitter(), mDisplay->getRenderer()->getStateManager());
+        mDisplay->getRenderer()->getBlitter(), mDisplay->getRenderer()->getMultiviewClearer(),
+        mDisplay->getRenderer()->getStateManager());
 }
 
 void DisplayOzone::Buffer::present()
@@ -451,7 +452,7 @@ egl::Error DisplayOzone::initialize(egl::Display *display)
 
     if (!mGBM)
     {
-        return egl::Error(EGL_NOT_INITIALIZED, "Could not open drm device.");
+        return egl::EglNotInitialized() << "Could not open drm device.";
     }
 
     // ANGLE builds its executables with an RPATH so they pull in ANGLE's libGL and libEGL.
@@ -470,7 +471,7 @@ egl::Error DisplayOzone::initialize(egl::Display *display)
     {
         if (!mEGL->hasExtension(ext))
         {
-            return egl::Error(EGL_NOT_INITIALIZED, "need %s", ext);
+            return egl::EglNotInitialized() << "need " << ext;
         }
     }
 
@@ -497,7 +498,7 @@ egl::Error DisplayOzone::initialize(egl::Display *display)
         EGLConfig config[1];
         if (!mEGL->chooseConfig(attrib, config, 1, &numConfig) || numConfig < 1)
         {
-            return egl::Error(EGL_NOT_INITIALIZED, "Could not get EGL config.");
+            return egl::EglNotInitialized() << "Could not get EGL config.";
         }
         mConfig = config[0];
     }
@@ -506,11 +507,11 @@ egl::Error DisplayOzone::initialize(egl::Display *display)
 
     if (!mEGL->makeCurrent(EGL_NO_SURFACE, mContext))
     {
-        return egl::Error(EGL_NOT_INITIALIZED, "Could not make context current.");
+        return egl::EglNotInitialized() << "Could not make context current.";
     }
 
     mFunctionsGL = mEGL->makeFunctionsGL();
-    mFunctionsGL->initialize();
+    mFunctionsGL->initialize(display->getAttributeMap());
 
     return DisplayGL::initialize(display);
 }
@@ -683,21 +684,21 @@ void DisplayOzone::drawWithTexture(Buffer *buffer)
         };
         // clang-format on
         gl->genBuffers(1, &mVertexBuffer);
-        sm->bindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+        sm->bindBuffer(gl::BufferBinding::Array, mVertexBuffer);
         gl->bufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
         // window border triangle strip
         const GLuint borderStrip[] = {5, 0, 4, 2, 6, 3, 7, 1, 5, 0};
 
         gl->genBuffers(1, &mIndexBuffer);
-        sm->bindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer);
+        sm->bindBuffer(gl::BufferBinding::ElementArray, mIndexBuffer);
         gl->bufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(borderStrip), borderStrip, GL_STATIC_DRAW);
     }
     else
     {
         sm->useProgram(mProgram);
-        sm->bindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-        sm->bindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer);
+        sm->bindBuffer(gl::BufferBinding::Array, mVertexBuffer);
+        sm->bindBuffer(gl::BufferBinding::ElementArray, mIndexBuffer);
     }
 
     // convert from pixels to "-1 to 1" space
@@ -831,7 +832,7 @@ void DisplayOzone::terminate()
 
     if (mEGL)
     {
-        mEGL->terminate();
+        ANGLE_SWALLOW_ERR(mEGL->terminate());
         SafeDelete(mEGL);
     }
 
@@ -897,7 +898,7 @@ SurfaceImpl *DisplayOzone::createPixmapSurface(const egl::SurfaceState &state,
 egl::Error DisplayOzone::getDevice(DeviceImpl **device)
 {
     UNIMPLEMENTED();
-    return egl::Error(EGL_BAD_DISPLAY);
+    return egl::EglBadDisplay();
 }
 
 egl::ConfigSet DisplayOzone::generateConfigs()
@@ -926,10 +927,10 @@ bool DisplayOzone::testDeviceLost()
     return false;
 }
 
-egl::Error DisplayOzone::restoreLostDevice()
+egl::Error DisplayOzone::restoreLostDevice(const egl::Display *display)
 {
     UNIMPLEMENTED();
-    return egl::Error(EGL_BAD_DISPLAY);
+    return egl::EglBadDisplay();
 }
 
 bool DisplayOzone::isValidNativeWindow(EGLNativeWindowType window) const
@@ -937,23 +938,27 @@ bool DisplayOzone::isValidNativeWindow(EGLNativeWindowType window) const
     return true;
 }
 
-egl::Error DisplayOzone::waitClient() const
+egl::Error DisplayOzone::waitClient(const gl::Context *context) const
 {
     // TODO(fjhenigman) Implement this.
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
-egl::Error DisplayOzone::waitNative(EGLint engine,
-                                    egl::Surface *drawSurface,
-                                    egl::Surface *readSurface) const
+egl::Error DisplayOzone::waitNative(const gl::Context *context, EGLint engine) const
 {
     // TODO(fjhenigman) Implement this.
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 void DisplayOzone::setSwapInterval(EGLSurface drawable, SwapControlData *data)
 {
     ASSERT(data != nullptr);
+}
+
+egl::Error DisplayOzone::makeCurrentSurfaceless(gl::Context *context)
+{
+    // Nothing to do, handled in the GL layers
+    return egl::NoError();
 }
 
 }  // namespace rx

@@ -91,4 +91,15 @@ void TDiagnostics::resetErrorCount()
     mNumWarnings = 0;
 }
 
+PerformanceDiagnostics::PerformanceDiagnostics(TDiagnostics *diagnostics)
+    : mDiagnostics(diagnostics)
+{
+    ASSERT(diagnostics);
+}
+
+void PerformanceDiagnostics::warning(const TSourceLoc &loc, const char *reason, const char *token)
+{
+    mDiagnostics->warning(loc, reason, token);
+}
+
 }  // namespace sh

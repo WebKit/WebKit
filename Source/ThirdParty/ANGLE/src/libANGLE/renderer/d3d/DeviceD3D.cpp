@@ -39,11 +39,11 @@ egl::Error DeviceD3D::getDevice(void **outValue)
     if (!mIsInitialized)
     {
         *outValue = nullptr;
-        return egl::Error(EGL_BAD_DEVICE_EXT);
+        return egl::EglBadDevice();
     }
 
     *outValue = mDevice;
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 egl::Error DeviceD3D::initialize(void *device,
@@ -53,15 +53,11 @@ egl::Error DeviceD3D::initialize(void *device,
     ASSERT(!mIsInitialized);
     if (mIsInitialized)
     {
-        return egl::Error(EGL_BAD_DEVICE_EXT);
+        return egl::EglBadDevice();
     }
 
-    mDevice                  = device;
-    mDeviceType              = deviceType;
-    mDeviceExternallySourced = !!deviceExternallySourced;
-
 #if defined(ANGLE_ENABLE_D3D11)
-    if (mDeviceType == EGL_D3D11_DEVICE_ANGLE)
+    if (deviceType == EGL_D3D11_DEVICE_ANGLE)
     {
         // Validate the device
         IUnknown *iunknown = reinterpret_cast<IUnknown *>(device);
@@ -71,7 +67,7 @@ egl::Error DeviceD3D::initialize(void *device,
             iunknown->QueryInterface(__uuidof(ID3D11Device), reinterpret_cast<void **>(&d3dDevice));
         if (FAILED(hr))
         {
-            return egl::Error(EGL_BAD_ATTRIBUTE, "Invalid D3D device passed into EGLDeviceEXT");
+            return egl::EglBadAttribute() << "Invalid D3D device passed into EGLDeviceEXT";
         }
 
         // The QI to ID3D11Device adds a ref to the D3D11 device.
@@ -81,12 +77,15 @@ egl::Error DeviceD3D::initialize(void *device,
     else
 #endif
     {
-        ASSERT(!mDeviceExternallySourced);
+        ASSERT(deviceExternallySourced == EGL_FALSE);
     }
 
-    mIsInitialized = true;
+    mDevice                  = device;
+    mDeviceType              = deviceType;
+    mDeviceExternallySourced = !!deviceExternallySourced;
+    mIsInitialized           = true;
 
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 EGLint DeviceD3D::getType()
@@ -99,4 +98,8 @@ void DeviceD3D::generateExtensions(egl::DeviceExtensions *outExtensions) const
     outExtensions->deviceD3D = true;
 }
 
+bool DeviceD3D::deviceExternallySourced()
+{
+    return mDeviceExternallySourced;
+}
 }

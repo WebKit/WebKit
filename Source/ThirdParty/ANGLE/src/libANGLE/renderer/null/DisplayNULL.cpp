@@ -98,7 +98,7 @@ bool DisplayNULL::testDeviceLost()
     return false;
 }
 
-egl::Error DisplayNULL::restoreLostDevice()
+egl::Error DisplayNULL::restoreLostDevice(const egl::Display *display)
 {
     return egl::NoError();
 }
@@ -119,14 +119,12 @@ egl::Error DisplayNULL::getDevice(DeviceImpl **device)
     return egl::NoError();
 }
 
-egl::Error DisplayNULL::waitClient() const
+egl::Error DisplayNULL::waitClient(const gl::Context *context) const
 {
     return egl::NoError();
 }
 
-egl::Error DisplayNULL::waitNative(EGLint engine,
-                                   egl::Surface *drawSurface,
-                                   egl::Surface *readSurface) const
+egl::Error DisplayNULL::waitNative(const gl::Context *context, EGLint engine) const
 {
     return egl::NoError();
 }
@@ -164,11 +162,11 @@ SurfaceImpl *DisplayNULL::createPixmapSurface(const egl::SurfaceState &state,
     return new SurfaceNULL(state);
 }
 
-ImageImpl *DisplayNULL::createImage(EGLenum target,
-                                    egl::ImageSibling *buffer,
+ImageImpl *DisplayNULL::createImage(const egl::ImageState &state,
+                                    EGLenum target,
                                     const egl::AttributeMap &attribs)
 {
-    return new ImageNULL();
+    return new ImageNULL(state);
 }
 
 ContextImpl *DisplayNULL::createContext(const gl::ContextState &state)
@@ -203,6 +201,12 @@ void DisplayNULL::generateExtensions(egl::DisplayExtensions *outExtensions) cons
     outExtensions->createContextWebGLCompatibility    = true;
     outExtensions->createContextBindGeneratesResource = true;
     outExtensions->swapBuffersWithDamage              = true;
+    outExtensions->pixelFormatFloat                   = true;
+    outExtensions->surfacelessContext                 = true;
+    outExtensions->displayTextureShareGroup           = true;
+    outExtensions->createContextClientArrays          = true;
+    outExtensions->programCacheControl                = true;
+    outExtensions->robustResourceInitialization       = true;
 }
 
 void DisplayNULL::generateCaps(egl::Caps *outCaps) const

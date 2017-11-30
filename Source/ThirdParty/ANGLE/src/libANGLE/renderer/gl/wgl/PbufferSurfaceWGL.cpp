@@ -25,16 +25,14 @@ PbufferSurfaceWGL::PbufferSurfaceWGL(const egl::SurfaceState &state,
                                      bool largest,
                                      int pixelFormat,
                                      HDC deviceContext,
-                                     HGLRC wglContext,
                                      const FunctionsWGL *functions)
-    : SurfaceGL(state, renderer),
+    : SurfaceWGL(state, renderer),
       mWidth(width),
       mHeight(height),
       mLargest(largest),
       mTextureFormat(textureFormat),
       mTextureTarget(textureTarget),
       mPixelFormat(pixelFormat),
-      mShareWGLContext(wglContext),
       mParentDeviceContext(deviceContext),
       mPbuffer(nullptr),
       mPbufferDeviceContext(nullptr),
@@ -72,7 +70,7 @@ static int GetWGLTextureTarget(EGLenum eglTextureTarget)
     }
 }
 
-egl::Error PbufferSurfaceWGL::initialize(const DisplayImpl *displayImpl)
+egl::Error PbufferSurfaceWGL::initialize(const egl::Display *display)
 {
     const int pbufferCreationAttributes[] =
     {
@@ -87,7 +85,8 @@ egl::Error PbufferSurfaceWGL::initialize(const DisplayImpl *displayImpl)
     if (mPbuffer == nullptr)
     {
         DWORD error = GetLastError();
-        return egl::Error(EGL_BAD_ALLOC, "Failed to create a native WGL pbuffer, error: 0x%08x.", HRESULT_CODE(error));
+        return egl::EglBadAlloc() << "Failed to create a native WGL pbuffer, "
+                                  << gl::FmtErr(HRESULT_CODE(error));
     }
 
     // The returned pbuffer may not be as large as requested, update the size members.
@@ -95,7 +94,8 @@ egl::Error PbufferSurfaceWGL::initialize(const DisplayImpl *displayImpl)
         mFunctionsWGL->queryPbufferARB(mPbuffer, WGL_PBUFFER_HEIGHT_ARB, &mHeight) != TRUE)
     {
         DWORD error = GetLastError();
-        return egl::Error(EGL_BAD_ALLOC, "Failed to query the WGL pbuffer's dimensions, error: 0x%08x.", HRESULT_CODE(error));
+        return egl::EglBadAlloc() << "Failed to query the WGL pbuffer's dimensions, "
+                                  << gl::FmtErr(HRESULT_CODE(error));
     }
 
     mPbufferDeviceContext = mFunctionsWGL->getPbufferDCARB(mPbuffer);
@@ -105,37 +105,36 @@ egl::Error PbufferSurfaceWGL::initialize(const DisplayImpl *displayImpl)
         mPbuffer = nullptr;
 
         DWORD error = GetLastError();
-        return egl::Error(EGL_BAD_ALLOC, "Failed to get the WGL pbuffer handle, error: 0x%08x.", HRESULT_CODE(error));
+        return egl::EglBadAlloc() << "Failed to get the WGL pbuffer handle, "
+                                  << gl::FmtErr(HRESULT_CODE(error));
     }
 
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 egl::Error PbufferSurfaceWGL::makeCurrent()
 {
-    if (!mFunctionsWGL->makeCurrent(mPbufferDeviceContext, mShareWGLContext))
-    {
-        // TODO: What error type here?
-        return egl::Error(EGL_CONTEXT_LOST, "Failed to make the WGL context current.");
-    }
-
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
-egl::Error PbufferSurfaceWGL::swap(const DisplayImpl *displayImpl)
+egl::Error PbufferSurfaceWGL::swap(const gl::Context *context)
 {
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
-egl::Error PbufferSurfaceWGL::postSubBuffer(EGLint x, EGLint y, EGLint width, EGLint height)
+egl::Error PbufferSurfaceWGL::postSubBuffer(const gl::Context *context,
+                                            EGLint x,
+                                            EGLint y,
+                                            EGLint width,
+                                            EGLint height)
 {
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 egl::Error PbufferSurfaceWGL::querySurfacePointerANGLE(EGLint attribute, void **value)
 {
     *value = nullptr;
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 static int GetWGLBufferBindTarget(EGLint buffer)
@@ -152,10 +151,11 @@ egl::Error PbufferSurfaceWGL::bindTexImage(gl::Texture *texture, EGLint buffer)
     if (!mFunctionsWGL->bindTexImageARB(mPbuffer, GetWGLBufferBindTarget(buffer)))
     {
         DWORD error = GetLastError();
-        return egl::Error(EGL_BAD_SURFACE, "Failed to bind native wgl pbuffer, error: 0x%08x.", HRESULT_CODE(error));
+        return egl::EglBadSurface()
+               << "Failed to bind native wgl pbuffer, " << gl::FmtErr(HRESULT_CODE(error));
     }
 
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 egl::Error PbufferSurfaceWGL::releaseTexImage(EGLint buffer)
@@ -163,10 +163,11 @@ egl::Error PbufferSurfaceWGL::releaseTexImage(EGLint buffer)
     if (!mFunctionsWGL->releaseTexImageARB(mPbuffer, GetWGLBufferBindTarget(buffer)))
     {
         DWORD error = GetLastError();
-        return egl::Error(EGL_BAD_SURFACE, "Failed to unbind native wgl pbuffer, error: 0x%08x.", HRESULT_CODE(error));
+        return egl::EglBadSurface()
+               << "Failed to unbind native wgl pbuffer, " << gl::FmtErr(HRESULT_CODE(error));
     }
 
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 void PbufferSurfaceWGL::setSwapInterval(EGLint interval)
@@ -193,4 +194,8 @@ EGLint PbufferSurfaceWGL::getSwapBehavior() const
     return EGL_BUFFER_PRESERVED;
 }
 
+HDC PbufferSurfaceWGL::getDC() const
+{
+    return mPbufferDeviceContext;
+}
 }

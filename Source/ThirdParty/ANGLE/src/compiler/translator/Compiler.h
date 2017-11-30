@@ -14,6 +14,8 @@
 // This should not be included by driver code.
 //
 
+#include <GLSLANG/ShaderVars.h>
+
 #include "compiler/translator/BuiltInFunctionEmulator.h"
 #include "compiler/translator/CallDAG.h"
 #include "compiler/translator/Diagnostics.h"
@@ -22,13 +24,13 @@
 #include "compiler/translator/InfoSink.h"
 #include "compiler/translator/Pragma.h"
 #include "compiler/translator/SymbolTable.h"
-#include "compiler/translator/VariableInfo.h"
 #include "third_party/compiler/ArrayBoundsClamper.h"
 
 namespace sh
 {
 
 class TCompiler;
+class TParseContext;
 #ifdef ANGLE_ENABLE_HLSL
 class TranslatorHLSL;
 #endif  // ANGLE_ENABLE_HLSL
@@ -110,8 +112,15 @@ class TCompiler : public TShHandleBase
     const std::vector<sh::Attribute> &getAttributes() const { return attributes; }
     const std::vector<sh::OutputVariable> &getOutputVariables() const { return outputVariables; }
     const std::vector<sh::Uniform> &getUniforms() const { return uniforms; }
-    const std::vector<sh::Varying> &getVaryings() const { return varyings; }
+    const std::vector<sh::Varying> &getInputVaryings() const { return inputVaryings; }
+    const std::vector<sh::Varying> &getOutputVaryings() const { return outputVaryings; }
     const std::vector<sh::InterfaceBlock> &getInterfaceBlocks() const { return interfaceBlocks; }
+    const std::vector<sh::InterfaceBlock> &getUniformBlocks() const { return uniformBlocks; }
+    const std::vector<sh::InterfaceBlock> &getShaderStorageBlocks() const
+    {
+        return shaderStorageBlocks;
+    }
+    const std::vector<sh::InterfaceBlock> &getInBlocks() const { return inBlocks; }
 
     ShHashFunction64 getHashFunction() const { return hashFunction; }
     NameMap &getNameMap() { return nameMap; }
@@ -125,44 +134,52 @@ class TCompiler : public TShHandleBase
     // Get the resources set by InitBuiltInSymbolTable
     const ShBuiltInResources &getResources() const;
 
-  protected:
+    int getGeometryShaderMaxVertices() const { return mGeometryShaderMaxVertices; }
+    int getGeometryShaderInvocations() const { return mGeometryShaderInvocations; }
+    TLayoutPrimitiveType getGeometryShaderInputPrimitiveType() const
+    {
+        return mGeometryShaderInputPrimitiveType;
+    }
+    TLayoutPrimitiveType getGeometryShaderOutputPrimitiveType() const
+    {
+        return mGeometryShaderOutputPrimitiveType;
+    }
+
     sh::GLenum getShaderType() const { return shaderType; }
+
+  protected:
     // Initialize symbol-table with built-in symbols.
     bool InitBuiltInSymbolTable(const ShBuiltInResources &resources);
     // Compute the string representation of the built-in resources
     void setResourceString();
     // Return false if the call depth is exceeded.
     bool checkCallDepth();
-    // Returns true if a program has no conflicting or missing fragment outputs
-    bool validateOutputs(TIntermNode *root);
     // Add emulated functions to the built-in function emulator.
     virtual void initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,
                                              ShCompileOptions compileOptions){};
-    // Translate to object code.
-    virtual void translate(TIntermNode *root, ShCompileOptions compileOptions) = 0;
-    // Returns true if, after applying the packing rules in the GLSL 1.017 spec
-    // Appendix A, section 7, the shader does not use too many uniforms.
-    bool enforcePackingRestrictions();
+    // Translate to object code. May generate performance warnings through the diagnostics.
+    virtual void translate(TIntermBlock *root,
+                           ShCompileOptions compileOptions,
+                           PerformanceDiagnostics *perfDiagnostics) = 0;
     // Insert statements to reference all members in unused uniform blocks with standard and shared
     // layout. This is to work around a Mac driver that treats unused standard/shared
     // uniform blocks as inactive.
-    void useAllMembersInUnusedStandardAndSharedBlocks(TIntermNode *root);
+    void useAllMembersInUnusedStandardAndSharedBlocks(TIntermBlock *root);
     // Insert statements to initialize output variables in the beginning of main().
     // This is to avoid undefined behaviors.
-    void initializeOutputVariables(TIntermNode *root);
+    void initializeOutputVariables(TIntermBlock *root);
     // Insert gl_Position = vec4(0,0,0,0) to the beginning of main().
     // It is to work around a Linux driver bug where missing this causes compile failure
     // while spec says it is allowed.
     // This function should only be applied to vertex shaders.
-    void initializeGLPosition(TIntermNode *root);
+    void initializeGLPosition(TIntermBlock *root);
     // Return true if the maximum expression complexity is below the limit.
-    bool limitExpressionComplexity(TIntermNode *root);
+    bool limitExpressionComplexity(TIntermBlock *root);
     // Get built-in extensions with default behavior.
     const TExtensionBehavior &getExtensionBehavior() const;
     const char *getSourcePath() const;
     const TPragma &getPragma() const { return mPragma; }
     void writePragma(ShCompileOptions compileOptions);
-    unsigned int *getTemporaryIndex() { return &mTemporaryIndex; }
     // Relies on collectVariables having been called.
     bool isVaryingDefined(const char *varyingName);
 
@@ -177,9 +194,12 @@ class TCompiler : public TShHandleBase
     std::vector<sh::Attribute> attributes;
     std::vector<sh::OutputVariable> outputVariables;
     std::vector<sh::Uniform> uniforms;
-    std::vector<sh::ShaderVariable> expandedUniforms;
-    std::vector<sh::Varying> varyings;
+    std::vector<sh::Varying> inputVaryings;
+    std::vector<sh::Varying> outputVaryings;
     std::vector<sh::InterfaceBlock> interfaceBlocks;
+    std::vector<sh::InterfaceBlock> uniformBlocks;
+    std::vector<sh::InterfaceBlock> shaderStorageBlocks;
+    std::vector<sh::InterfaceBlock> inBlocks;
 
   private:
     // Creates the function call DAG for further analysis, returning false if there is a recursion
@@ -190,18 +210,28 @@ class TCompiler : public TShHandleBase
 
     void initSamplerDefaultPrecision(TBasicType samplerType);
 
-    // Collect info for all attribs, uniforms, varyings.
-    void collectVariables(TIntermNode *root);
+    void collectInterfaceBlocks();
 
     bool variablesCollected;
 
+    bool mGLPositionInitialized;
+
     // Removes unused function declarations and prototypes from the AST
     class UnusedPredicate;
-    bool pruneUnusedFunctions(TIntermBlock *root);
+    void pruneUnusedFunctions(TIntermBlock *root);
 
     TIntermBlock *compileTreeImpl(const char *const shaderStrings[],
                                   size_t numStrings,
                                   const ShCompileOptions compileOptions);
+
+    // Fetches and stores shader metadata that is not stored within the AST itself, such as shader
+    // version.
+    void setASTMetadata(const TParseContext &parseContext);
+
+    // Does checks that need to be run after parsing is complete and returns true if they pass.
+    bool checkAndSimplifyAST(TIntermBlock *root,
+                             const TParseContext &parseContext,
+                             ShCompileOptions compileOptions);
 
     sh::GLenum shaderType;
     ShShaderSpec shaderSpec;
@@ -248,13 +278,17 @@ class TCompiler : public TShHandleBase
     // GL_OVR_multiview num_views.
     int mNumViews;
 
+    // geometry shader parameters.
+    int mGeometryShaderMaxVertices;
+    int mGeometryShaderInvocations;
+    TLayoutPrimitiveType mGeometryShaderInputPrimitiveType;
+    TLayoutPrimitiveType mGeometryShaderOutputPrimitiveType;
+
     // name hashing.
     ShHashFunction64 hashFunction;
     NameMap nameMap;
 
     TPragma mPragma;
-
-    unsigned int mTemporaryIndex;
 };
 
 //

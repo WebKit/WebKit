@@ -12,25 +12,17 @@
 
 namespace rx
 {
-
-DynamicLib::DynamicLib() : handle(nullptr)
+namespace
 {
-}
-
-DynamicLib::~DynamicLib()
-{
-    if (handle)
-    {
-        dlclose(handle);
-        handle = nullptr;
-    }
-}
-
-// Due to a bug in Mesa (or maybe libdl) it's not possible to close and re-open libEGL.so
-// an arbitrary number of times.  End2end tests would die after a couple hundred tests.
-// So we use a static object with a destructor to close the library when the program exits.
-// TODO(fjhenigman) File a bug and put a link here.
-DynamicLib FunctionsEGLDL::sNativeLib;
+// In ideal world, we would want this to be a member of FunctionsEGLDL,
+// and call dlclose() on it in ~FunctionsEGLDL().
+// However, some GL implementations are broken and don't allow multiple
+// load/unload cycles, but only static linking with them.
+// That's why we dlopen() this handle once and never dlclose() it.
+// This is consistent with Chromium's CleanupNativeLibraries() code,
+// referencing crbug.com/250813 and http://www.xfree86.org/4.3.0/DRI11.html
+void *nativeEGLHandle;
+}  // anonymous namespace
 
 FunctionsEGLDL::FunctionsEGLDL() : mGetProcAddressPtr(nullptr)
 {
@@ -42,20 +34,20 @@ FunctionsEGLDL::~FunctionsEGLDL()
 
 egl::Error FunctionsEGLDL::initialize(EGLNativeDisplayType nativeDisplay, const char *libName)
 {
-    if (!sNativeLib.handle)
+    if (!nativeEGLHandle)
     {
-        sNativeLib.handle = dlopen(libName, RTLD_NOW);
-        if (!sNativeLib.handle)
+        nativeEGLHandle = dlopen(libName, RTLD_NOW);
+        if (!nativeEGLHandle)
         {
-            return egl::Error(EGL_NOT_INITIALIZED, "Could not dlopen native EGL: %s", dlerror());
+            return egl::EglNotInitialized() << "Could not dlopen native EGL: " << dlerror();
         }
     }
 
     mGetProcAddressPtr =
-        reinterpret_cast<PFNEGLGETPROCADDRESSPROC>(dlsym(sNativeLib.handle, "eglGetProcAddress"));
+        reinterpret_cast<PFNEGLGETPROCADDRESSPROC>(dlsym(nativeEGLHandle, "eglGetProcAddress"));
     if (!mGetProcAddressPtr)
     {
-        return egl::Error(EGL_NOT_INITIALIZED, "Could not find eglGetProcAddress");
+        return egl::EglNotInitialized() << "Could not find eglGetProcAddress";
     }
 
     return FunctionsEGL::initialize(nativeDisplay);
@@ -68,7 +60,7 @@ void *FunctionsEGLDL::getProcAddress(const char *name) const
     {
         return f;
     }
-    return dlsym(sNativeLib.handle, name);
+    return dlsym(nativeEGLHandle, name);
 }
 
 }  // namespace rx

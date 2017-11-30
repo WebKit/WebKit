@@ -20,6 +20,8 @@
 #include "compiler/translator/TranslatorVulkan.h"
 #endif  // ANGLE_ENABLE_VULKAN
 
+#include "compiler/translator/util.h"
+
 namespace sh
 {
 
@@ -30,60 +32,36 @@ namespace sh
 //
 TCompiler *ConstructCompiler(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output)
 {
-    switch (output)
-    {
-        case SH_ESSL_OUTPUT:
 #ifdef ANGLE_ENABLE_ESSL
-            return new TranslatorESSL(type, spec);
-#else
-            // This compiler is not supported in this configuration. Return NULL per the
-            // sh::ConstructCompiler API.
-            return nullptr;
+    if (IsOutputESSL(output))
+    {
+        return new TranslatorESSL(type, spec);
+    }
 #endif  // ANGLE_ENABLE_ESSL
 
-        case SH_GLSL_130_OUTPUT:
-        case SH_GLSL_140_OUTPUT:
-        case SH_GLSL_150_CORE_OUTPUT:
-        case SH_GLSL_330_CORE_OUTPUT:
-        case SH_GLSL_400_CORE_OUTPUT:
-        case SH_GLSL_410_CORE_OUTPUT:
-        case SH_GLSL_420_CORE_OUTPUT:
-        case SH_GLSL_430_CORE_OUTPUT:
-        case SH_GLSL_440_CORE_OUTPUT:
-        case SH_GLSL_450_CORE_OUTPUT:
-        case SH_GLSL_COMPATIBILITY_OUTPUT:
 #ifdef ANGLE_ENABLE_GLSL
-            return new TranslatorGLSL(type, spec, output);
-#else
-            // This compiler is not supported in this configuration. Return NULL per the
-            // sh::ConstructCompiler API.
-            return nullptr;
+    if (IsOutputGLSL(output))
+    {
+        return new TranslatorGLSL(type, spec, output);
+    }
 #endif  // ANGLE_ENABLE_GLSL
 
-        case SH_HLSL_3_0_OUTPUT:
-        case SH_HLSL_4_1_OUTPUT:
-        case SH_HLSL_4_0_FL9_3_OUTPUT:
 #ifdef ANGLE_ENABLE_HLSL
-            return new TranslatorHLSL(type, spec, output);
-#else
-            // This compiler is not supported in this configuration. Return NULL per the
-            // sh::ConstructCompiler API.
-            return nullptr;
+    if (IsOutputHLSL(output))
+    {
+        return new TranslatorHLSL(type, spec, output);
+    }
 #endif  // ANGLE_ENABLE_HLSL
 
-        case SH_GLSL_VULKAN_OUTPUT:
 #ifdef ANGLE_ENABLE_VULKAN
-            return new TranslatorVulkan(type, spec);
-#else
-            // This compiler is not supported in this configuration. Return NULL per the
-            // ShConstructCompiler API.
-            return nullptr;
+    if (IsOutputVulkan(output))
+    {
+        return new TranslatorVulkan(type, spec);
+    }
 #endif  // ANGLE_ENABLE_VULKAN
 
-        default:
-            // Unknown format. Return NULL per the sh::ConstructCompiler API.
-            return nullptr;
-    }
+    // Unsupported compiler or unknown format. Return nullptr per the sh::ConstructCompiler API.
+    return nullptr;
 }
 
 //

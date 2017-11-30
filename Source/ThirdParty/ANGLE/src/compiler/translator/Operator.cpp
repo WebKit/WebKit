@@ -30,6 +30,9 @@ const char *GetOperatorString(TOperator op)
         case EOpPreDecrement:
             return "--";
 
+        case EOpArrayLength:
+            return ".length()";
+
         case EOpAdd:
             return "+";
         case EOpSub:
@@ -234,7 +237,7 @@ const char *GetOperatorString(TOperator op)
             return "cross";
         case EOpNormalize:
             return "normalize";
-        case EOpFaceForward:
+        case EOpFaceforward:
             return "faceforward";
         case EOpReflect:
             return "reflect";
@@ -296,58 +299,6 @@ const char *GetOperatorString(TOperator op)
         case EOpContinue:
             return "continue";
 
-        case EOpConstructInt:
-            return "int";
-        case EOpConstructUInt:
-            return "uint";
-        case EOpConstructBool:
-            return "bool";
-        case EOpConstructFloat:
-            return "float";
-        case EOpConstructVec2:
-            return "vec2";
-        case EOpConstructVec3:
-            return "vec3";
-        case EOpConstructVec4:
-            return "vec4";
-        case EOpConstructBVec2:
-            return "bvec2";
-        case EOpConstructBVec3:
-            return "bvec3";
-        case EOpConstructBVec4:
-            return "bvec4";
-        case EOpConstructIVec2:
-            return "ivec2";
-        case EOpConstructIVec3:
-            return "ivec3";
-        case EOpConstructIVec4:
-            return "ivec4";
-        case EOpConstructUVec2:
-            return "uvec2";
-        case EOpConstructUVec3:
-            return "uvec3";
-        case EOpConstructUVec4:
-            return "uvec4";
-        case EOpConstructMat2:
-            return "mat2";
-        case EOpConstructMat2x3:
-            return "mat2x3";
-        case EOpConstructMat2x4:
-            return "mat2x4";
-        case EOpConstructMat3x2:
-            return "mat3x2";
-        case EOpConstructMat3:
-            return "mat3";
-        case EOpConstructMat3x4:
-            return "mat3x4";
-        case EOpConstructMat4x2:
-            return "mat4x2";
-        case EOpConstructMat4x3:
-            return "mat4x3";
-        case EOpConstructMat4:
-            return "mat4";
-        // Note: EOpConstructStruct can't be handled here
-
         case EOpAssign:
             return "=";
         case EOpInitialize:
@@ -393,6 +344,11 @@ const char *GetOperatorString(TOperator op)
             return "memoryBarrierShared";
         case EOpGroupMemoryBarrier:
             return "groupMemoryBarrier";
+
+        case EOpEmitVertex:
+            return "EmitVertex";
+        case EOpEndPrimitive:
+            return "EndPrimitive";
         default:
             break;
     }

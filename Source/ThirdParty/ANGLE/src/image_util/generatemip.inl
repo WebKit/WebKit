@@ -233,7 +233,7 @@ static MipGenerationFunction GetMipGenerationFunction(size_t sourceWidth, size_t
 
     switch (index)
     {
-      case 0: return NULL;
+      case 0: return nullptr;
       case 1: return GenerateMip_X<T>;   // W x 1 x 1
       case 2: return GenerateMip_Y<T>;   // 1 x H x 1
       case 3: return GenerateMip_XY<T>;  // W x H x 1
@@ -244,7 +244,7 @@ static MipGenerationFunction GetMipGenerationFunction(size_t sourceWidth, size_t
     }
 
     UNREACHABLE();
-    return NULL;
+    return nullptr;
 }
 
 }  // namespace priv
@@ -259,7 +259,7 @@ inline void GenerateMip(size_t sourceWidth, size_t sourceHeight, size_t sourceDe
     size_t mipDepth = std::max<size_t>(1, sourceDepth >> 1);
 
     priv::MipGenerationFunction generationFunction = priv::GetMipGenerationFunction<T>(sourceWidth, sourceHeight, sourceDepth);
-    ASSERT(generationFunction != NULL);
+    ASSERT(generationFunction != nullptr);
 
     generationFunction(sourceWidth, sourceHeight, sourceDepth, sourceData, sourceRowPitch, sourceDepthPitch,
                        mipWidth, mipHeight, mipDepth, destData, destRowPitch, destDepthPitch);

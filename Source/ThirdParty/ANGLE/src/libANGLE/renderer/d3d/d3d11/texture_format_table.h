@@ -30,7 +30,7 @@ namespace d3d11
 // on device capabilities.
 // This structure allows querying for the DXGI texture formats to use for textures, SRVs, RTVs and
 // DSVs given a GL internal format.
-struct Format final : angle::NonCopyable
+struct Format final : private angle::NonCopyable
 {
     constexpr Format();
     constexpr Format(GLenum internalFormat,

@@ -33,7 +33,7 @@ D3DBLEND ConvertBlendFunc(GLenum blend);
 D3DBLENDOP ConvertBlendOp(GLenum blendOp);
 D3DSTENCILOP ConvertStencilOp(GLenum stencilOp);
 D3DTEXTUREADDRESS ConvertTextureWrap(GLenum wrap);
-D3DCULL ConvertCullMode(GLenum cullFace, GLenum frontFace);
+D3DCULL ConvertCullMode(gl::CullFaceMode cullFace, GLenum frontFace);
 D3DCUBEMAP_FACES ConvertCubeFace(GLenum cubeFace);
 DWORD ConvertColorMask(bool red, bool green, bool blue, bool alpha);
 D3DTEXTUREFILTERTYPE ConvertMagFilter(GLenum magFilter, float maxAnisotropy);

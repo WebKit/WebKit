@@ -11,8 +11,8 @@
 
 #include "compiler/translator/SeparateExpressionsReturningArrays.h"
 
-#include "compiler/translator/IntermNode.h"
 #include "compiler/translator/IntermNodePatternMatcher.h"
+#include "compiler/translator/IntermTraverse.h"
 
 namespace sh
 {
@@ -24,7 +24,7 @@ namespace
 class SeparateExpressionsTraverser : public TIntermTraverser
 {
   public:
-    SeparateExpressionsTraverser();
+    SeparateExpressionsTraverser(TSymbolTable *symbolTable);
 
     bool visitBinary(Visit visit, TIntermBinary *node) override;
     bool visitAggregate(Visit visit, TIntermAggregate *node) override;
@@ -40,8 +40,8 @@ class SeparateExpressionsTraverser : public TIntermTraverser
     IntermNodePatternMatcher mPatternToSeparateMatcher;
 };
 
-SeparateExpressionsTraverser::SeparateExpressionsTraverser()
-    : TIntermTraverser(true, false, false),
+SeparateExpressionsTraverser::SeparateExpressionsTraverser(TSymbolTable *symbolTable)
+    : TIntermTraverser(true, false, false, symbolTable),
       mFoundArrayExpression(false),
       mPatternToSeparateMatcher(IntermNodePatternMatcher::kExpressionReturningArray)
 {
@@ -76,7 +76,7 @@ bool SeparateExpressionsTraverser::visitBinary(Visit visit, TIntermBinary *node)
     insertions.push_back(createTempInitDeclaration(node->getLeft()));
     insertStatementsInParentBlock(insertions);
 
-    queueReplacement(node, createTempSymbol(node->getType()), OriginalNode::IS_DROPPED);
+    queueReplacement(createTempSymbol(node->getType()), OriginalNode::IS_DROPPED);
 
     return false;
 }
@@ -97,7 +97,7 @@ bool SeparateExpressionsTraverser::visitAggregate(Visit visit, TIntermAggregate 
     insertions.push_back(createTempInitDeclaration(node->shallowCopy()));
     insertStatementsInParentBlock(insertions);
 
-    queueReplacement(node, createTempSymbol(node->getType()), OriginalNode::IS_DROPPED);
+    queueReplacement(createTempSymbol(node->getType()), OriginalNode::IS_DROPPED);
 
     return false;
 }
@@ -105,16 +105,14 @@ bool SeparateExpressionsTraverser::visitAggregate(Visit visit, TIntermAggregate 
 void SeparateExpressionsTraverser::nextIteration()
 {
     mFoundArrayExpression = false;
-    nextTemporaryIndex();
+    nextTemporaryId();
 }
 
 }  // namespace
 
-void SeparateExpressionsReturningArrays(TIntermNode *root, unsigned int *temporaryIndex)
+void SeparateExpressionsReturningArrays(TIntermNode *root, TSymbolTable *symbolTable)
 {
-    SeparateExpressionsTraverser traverser;
-    ASSERT(temporaryIndex != nullptr);
-    traverser.useTemporaryIndex(temporaryIndex);
+    SeparateExpressionsTraverser traverser(symbolTable);
     // Separate one expression at a time, and reset the traverser between iterations.
     do
     {

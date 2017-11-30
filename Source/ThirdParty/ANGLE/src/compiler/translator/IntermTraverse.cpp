@@ -4,8 +4,10 @@
 // found in the LICENSE file.
 //
 
-#include "compiler/translator/IntermNode.h"
+#include "compiler/translator/IntermTraverse.h"
+
 #include "compiler/translator/InfoSink.h"
+#include "compiler/translator/IntermNode_util.h"
 #include "compiler/translator/SymbolTable.h"
 
 namespace sh
@@ -101,19 +103,32 @@ void TIntermBranch::traverse(TIntermTraverser *it)
     it->traverseBranch(this);
 }
 
-TIntermTraverser::TIntermTraverser(bool preVisit, bool inVisit, bool postVisit)
+TIntermTraverser::TIntermTraverser(bool preVisit,
+                                   bool inVisit,
+                                   bool postVisit,
+                                   TSymbolTable *symbolTable)
     : preVisit(preVisit),
       inVisit(inVisit),
       postVisit(postVisit),
       mDepth(-1),
       mMaxDepth(0),
       mInGlobalScope(true),
-      mTemporaryIndex(nullptr)
+      mSymbolTable(symbolTable),
+      mTemporaryId(nullptr)
 {
 }
 
 TIntermTraverser::~TIntermTraverser()
 {
+}
+
+const TIntermBlock *TIntermTraverser::getParentBlock() const
+{
+    if (!mParentBlockStack.empty())
+    {
+        return mParentBlockStack.back().node;
+    }
+    return nullptr;
 }
 
 void TIntermTraverser::pushParentBlock(TIntermBlock *node)
@@ -164,21 +179,10 @@ void TIntermTraverser::insertStatementInParentBlock(TIntermNode *statement)
 
 TIntermSymbol *TIntermTraverser::createTempSymbol(const TType &type, TQualifier qualifier)
 {
-    // Each traversal uses at most one temporary variable, so the index stays the same within a
-    // single traversal.
-    TInfoSinkBase symbolNameOut;
-    ASSERT(mTemporaryIndex != nullptr);
-    symbolNameOut << "s" << (*mTemporaryIndex);
-    TString symbolName = symbolNameOut.c_str();
-
-    TIntermSymbol *node = new TIntermSymbol(0, symbolName, type);
-    node->setInternal(true);
-
-    ASSERT(qualifier == EvqTemporary || qualifier == EvqConst || qualifier == EvqGlobal);
-    node->getTypePointer()->setQualifier(qualifier);
-    // TODO(oetuaho): Might be useful to sanitize layout qualifier etc. on the type of the created
-    // symbol. This might need to be done in other places as well.
-    return node;
+    ASSERT(mTemporaryId != nullptr);
+    // nextTemporaryId() needs to be called when the code wants to start using another temporary
+    // symbol.
+    return CreateTempSymbolNode(*mTemporaryId, type, qualifier);
 }
 
 TIntermSymbol *TIntermTraverser::createTempSymbol(const TType &type)
@@ -188,20 +192,17 @@ TIntermSymbol *TIntermTraverser::createTempSymbol(const TType &type)
 
 TIntermDeclaration *TIntermTraverser::createTempDeclaration(const TType &type)
 {
+    ASSERT(mTemporaryId != nullptr);
     TIntermDeclaration *tempDeclaration = new TIntermDeclaration();
-    tempDeclaration->appendDeclarator(createTempSymbol(type));
+    tempDeclaration->appendDeclarator(CreateTempSymbolNode(*mTemporaryId, type, EvqTemporary));
     return tempDeclaration;
 }
 
 TIntermDeclaration *TIntermTraverser::createTempInitDeclaration(TIntermTyped *initializer,
                                                                 TQualifier qualifier)
 {
-    ASSERT(initializer != nullptr);
-    TIntermSymbol *tempSymbol           = createTempSymbol(initializer->getType(), qualifier);
-    TIntermDeclaration *tempDeclaration = new TIntermDeclaration();
-    TIntermBinary *tempInit             = new TIntermBinary(EOpInitialize, tempSymbol, initializer);
-    tempDeclaration->appendDeclarator(tempInit);
-    return tempDeclaration;
+    ASSERT(mTemporaryId != nullptr);
+    return CreateTempInitDeclarationNode(*mTemporaryId, initializer, qualifier);
 }
 
 TIntermDeclaration *TIntermTraverser::createTempInitDeclaration(TIntermTyped *initializer)
@@ -217,15 +218,15 @@ TIntermBinary *TIntermTraverser::createTempAssignment(TIntermTyped *rightNode)
     return assignment;
 }
 
-void TIntermTraverser::useTemporaryIndex(unsigned int *temporaryIndex)
+void TIntermTraverser::nextTemporaryId()
 {
-    mTemporaryIndex = temporaryIndex;
-}
-
-void TIntermTraverser::nextTemporaryIndex()
-{
-    ASSERT(mTemporaryIndex != nullptr);
-    ++(*mTemporaryIndex);
+    ASSERT(mSymbolTable);
+    if (!mTemporaryId)
+    {
+        mTemporaryId = new TSymbolUniqueId(mSymbolTable);
+        return;
+    }
+    *mTemporaryId = TSymbolUniqueId(mSymbolTable);
 }
 
 void TLValueTrackingTraverser::addToFunctionMap(const TSymbolUniqueId &id,
@@ -621,6 +622,110 @@ void TIntermTraverser::traverseAggregate(TIntermAggregate *node)
         visitAggregate(PostVisit, node);
 }
 
+bool TIntermTraverser::CompareInsertion(const NodeInsertMultipleEntry &a,
+                                        const NodeInsertMultipleEntry &b)
+{
+    if (a.parent != b.parent)
+    {
+        return a.parent > b.parent;
+    }
+    return a.position > b.position;
+}
+
+void TIntermTraverser::updateTree()
+{
+    // Sort the insertions so that insertion position is decreasing. This way multiple insertions to
+    // the same parent node are handled correctly.
+    std::sort(mInsertions.begin(), mInsertions.end(), CompareInsertion);
+    for (size_t ii = 0; ii < mInsertions.size(); ++ii)
+    {
+        // We can't know here what the intended ordering of two insertions to the same position is,
+        // so it is not supported.
+        ASSERT(ii == 0 || mInsertions[ii].position != mInsertions[ii - 1].position ||
+               mInsertions[ii].parent != mInsertions[ii - 1].parent);
+        const NodeInsertMultipleEntry &insertion = mInsertions[ii];
+        ASSERT(insertion.parent);
+        if (!insertion.insertionsAfter.empty())
+        {
+            bool inserted = insertion.parent->insertChildNodes(insertion.position + 1,
+                                                               insertion.insertionsAfter);
+            ASSERT(inserted);
+        }
+        if (!insertion.insertionsBefore.empty())
+        {
+            bool inserted =
+                insertion.parent->insertChildNodes(insertion.position, insertion.insertionsBefore);
+            ASSERT(inserted);
+        }
+    }
+    for (size_t ii = 0; ii < mReplacements.size(); ++ii)
+    {
+        const NodeUpdateEntry &replacement = mReplacements[ii];
+        ASSERT(replacement.parent);
+        bool replaced =
+            replacement.parent->replaceChildNode(replacement.original, replacement.replacement);
+        ASSERT(replaced);
+
+        if (!replacement.originalBecomesChildOfReplacement)
+        {
+            // In AST traversing, a parent is visited before its children.
+            // After we replace a node, if its immediate child is to
+            // be replaced, we need to make sure we don't update the replaced
+            // node; instead, we update the replacement node.
+            for (size_t jj = ii + 1; jj < mReplacements.size(); ++jj)
+            {
+                NodeUpdateEntry &replacement2 = mReplacements[jj];
+                if (replacement2.parent == replacement.original)
+                    replacement2.parent = replacement.replacement;
+            }
+        }
+    }
+    for (size_t ii = 0; ii < mMultiReplacements.size(); ++ii)
+    {
+        const NodeReplaceWithMultipleEntry &replacement = mMultiReplacements[ii];
+        ASSERT(replacement.parent);
+        bool replaced = replacement.parent->replaceChildNodeWithMultiple(replacement.original,
+                                                                         replacement.replacements);
+        ASSERT(replaced);
+    }
+
+    clearReplacementQueue();
+}
+
+void TIntermTraverser::clearReplacementQueue()
+{
+    mReplacements.clear();
+    mMultiReplacements.clear();
+    mInsertions.clear();
+}
+
+void TIntermTraverser::queueReplacement(TIntermNode *replacement, OriginalNode originalStatus)
+{
+    queueReplacementWithParent(getParentNode(), mPath.back(), replacement, originalStatus);
+}
+
+void TIntermTraverser::queueReplacementWithParent(TIntermNode *parent,
+                                                  TIntermNode *original,
+                                                  TIntermNode *replacement,
+                                                  OriginalNode originalStatus)
+{
+    bool originalBecomesChild = (originalStatus == OriginalNode::BECOMES_CHILD);
+    mReplacements.push_back(NodeUpdateEntry(parent, original, replacement, originalBecomesChild));
+}
+
+TLValueTrackingTraverser::TLValueTrackingTraverser(bool preVisit,
+                                                   bool inVisit,
+                                                   bool postVisit,
+                                                   TSymbolTable *symbolTable,
+                                                   int shaderVersion)
+    : TIntermTraverser(preVisit, inVisit, postVisit, symbolTable),
+      mOperatorRequiresLValue(false),
+      mInFunctionCallOutParameter(false),
+      mShaderVersion(shaderVersion)
+{
+    ASSERT(symbolTable);
+}
+
 void TLValueTrackingTraverser::traverseFunctionPrototype(TIntermFunctionPrototype *node)
 {
     TIntermSequence *sequence = node->getSequence();
@@ -691,7 +796,7 @@ void TLValueTrackingTraverser::traverseAggregate(TIntermAggregate *node)
             if (!node->isFunctionCall() && !node->isConstructor())
             {
                 builtInFunc = static_cast<TFunction *>(
-                    mSymbolTable.findBuiltIn(node->getSymbolTableMangledName(), mShaderVersion));
+                    mSymbolTable->findBuiltIn(node->getSymbolTableMangledName(), mShaderVersion));
             }
 
             size_t paramIndex = 0;

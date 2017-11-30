@@ -158,6 +158,11 @@ Optional<std::vector<wchar_t>> WidenString(size_t length, const char *cString)
     return Optional<std::vector<wchar_t>>(wcstring);
 }
 
+bool BeginsWith(const std::string &str, const std::string &prefix)
+{
+    return strncmp(str.c_str(), prefix.c_str(), prefix.length()) == 0;
+}
+
 bool BeginsWith(const std::string &str, const char *prefix)
 {
     return strncmp(str.c_str(), prefix, strlen(prefix)) == 0;
@@ -166,6 +171,11 @@ bool BeginsWith(const std::string &str, const char *prefix)
 bool BeginsWith(const char *str, const char *prefix)
 {
     return strncmp(str, prefix, strlen(prefix)) == 0;
+}
+
+bool BeginsWith(const std::string &str, const std::string &prefix, const size_t prefixLength)
+{
+    return strncmp(str.c_str(), prefix.c_str(), prefixLength) == 0;
 }
 
 bool EndsWith(const std::string &str, const char *suffix)
@@ -177,6 +187,27 @@ bool EndsWith(const std::string &str, const char *suffix)
     const char *end = str.c_str() + str.size() - len;
 
     return memcmp(end, suffix, len) == 0;
+}
+
+void ToLower(std::string *str)
+{
+    for (auto &ch : *str)
+    {
+        ch = static_cast<char>(::tolower(ch));
+    }
+}
+
+bool ReplaceSubstring(std::string *str,
+                      const std::string &substring,
+                      const std::string &replacement)
+{
+    size_t replacePos = str->find(substring);
+    if (replacePos == std::string::npos)
+    {
+        return false;
+    }
+    str->replace(replacePos, substring.size(), replacement);
+    return true;
 }
 
 }  // namespace angle

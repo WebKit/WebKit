@@ -59,7 +59,7 @@ class MockCoreWindow : public ABI::Windows::UI::Core::ICoreWindow
     // IUnknown
     STDMETHOD(QueryInterface)(REFIID riid, void** ppvObject)
     {
-        *ppvObject = NULL;
+        *ppvObject = nullptr;
 
         if (IsEqualIID(IID_IUnknown, riid))
         {
@@ -222,7 +222,7 @@ TEST(NativeWindowTest, NativeWindowValidCoreWindow)
 TEST(NativeWindowTest, NativeWindowValidCoreWindowInPropertySet)
 {
     // COM is required to be initialized for creation of the property set
-    EXPECT_HRESULT_SUCCEEDED(CoInitializeEx(NULL, COINIT_MULTITHREADED));
+    EXPECT_HRESULT_SUCCEEDED(CoInitializeEx(nullptr, COINIT_MULTITHREADED));
     {
         MockCoreWindow mockCoreWindow;
         ComPtr<IMap<HSTRING, IInspectable*>> propertySet;
@@ -241,7 +241,7 @@ TEST(NativeWindowTest, NativeWindowValidCoreWindowInPropertySet)
 TEST(NativeWindowTest, NativeWindowMissingCoreWindowInPropertySet)
 {
     // COM is required to be initialized for creation of the property set
-    EXPECT_HRESULT_SUCCEEDED(CoInitializeEx(NULL, COINIT_MULTITHREADED));
+    EXPECT_HRESULT_SUCCEEDED(CoInitializeEx(nullptr, COINIT_MULTITHREADED));
     {
         MockCoreWindow mockCoreWindow;
         ComPtr<IMap<HSTRING, IInspectable*>> propertySet;
@@ -265,7 +265,7 @@ TEST_P(CoreWindowScaleTest, ValidateScale)
     bool expectedResult = GetParam().second;
 
     // COM is required to be initialized for creation of the property set
-    EXPECT_HRESULT_SUCCEEDED(CoInitializeEx(NULL, COINIT_MULTITHREADED));
+    EXPECT_HRESULT_SUCCEEDED(CoInitializeEx(nullptr, COINIT_MULTITHREADED));
     {
         MockCoreWindow mockCoreWindow;
         ComPtr<IMap<HSTRING, IInspectable*>> propertySet;
@@ -315,7 +315,7 @@ TEST_P(CoreWindowSizeTest, ValidateSize)
     bool expectedResult = std::get<2>(GetParam());
 
     // COM is required to be initialized for creation of the property set
-    EXPECT_HRESULT_SUCCEEDED(CoInitializeEx(NULL, COINIT_MULTITHREADED));
+    EXPECT_HRESULT_SUCCEEDED(CoInitializeEx(nullptr, COINIT_MULTITHREADED));
     {
         MockCoreWindow mockCoreWindow;
         ComPtr<IMap<HSTRING, IInspectable*>> propertySet;

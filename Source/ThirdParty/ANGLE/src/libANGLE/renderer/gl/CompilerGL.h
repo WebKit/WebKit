@@ -21,8 +21,8 @@ class CompilerGL : public CompilerImpl
     CompilerGL(const FunctionsGL *functions);
     ~CompilerGL() override {}
 
-    gl::Error release() override { return gl::NoError(); }
-    ShShaderOutput getTranslatorOutputType() const override { return mTranslatorOutputType; }
+    gl::Error release() override;
+    ShShaderOutput getTranslatorOutputType() const override;
 
   private:
     ShShaderOutput mTranslatorOutputType;

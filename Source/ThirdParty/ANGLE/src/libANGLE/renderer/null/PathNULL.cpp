@@ -29,7 +29,7 @@ gl::Error PathNULL::setCommands(GLsizei numCommands,
                                 const void *coords)
 {
     UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::InternalError();
 }
 
 void PathNULL::setPathParameter(GLenum pname, GLfloat value)

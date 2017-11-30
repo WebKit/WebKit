@@ -45,33 +45,28 @@ static DeviceSet *GetDeviceSet()
 // Static factory methods
 egl::Error Device::CreateDevice(void *devicePointer, EGLint deviceType, Device **outDevice)
 {
+    *outDevice = nullptr;
+
 #if defined(ANGLE_ENABLE_D3D11)
     if (deviceType == EGL_D3D11_DEVICE_ANGLE)
     {
-        rx::DeviceD3D *deviceD3D = new rx::DeviceD3D();
-        egl::Error error = deviceD3D->initialize(devicePointer, deviceType, EGL_TRUE);
-        if (error.isError())
-        {
-            *outDevice = nullptr;
-            return error;
-        }
-
-        *outDevice = new Device(nullptr, deviceD3D);
+        std::unique_ptr<rx::DeviceD3D> deviceD3D(new rx::DeviceD3D());
+        ANGLE_TRY(deviceD3D->initialize(devicePointer, deviceType, EGL_TRUE));
+        *outDevice = new Device(nullptr, deviceD3D.release());
         GetDeviceSet()->insert(*outDevice);
-        return egl::Error(EGL_SUCCESS);
+        return NoError();
     }
 #endif
 
     // Note that creating an EGL device from inputted D3D9 parameters isn't currently supported
-    *outDevice = nullptr;
-    return egl::Error(EGL_BAD_ATTRIBUTE);
+    return EglBadAttribute();
 }
 
 egl::Error Device::CreateDevice(Display *owningDisplay, rx::DeviceImpl *impl, Device **outDevice)
 {
     *outDevice = new Device(owningDisplay, impl);
     GetDeviceSet()->insert(*outDevice);
-    return egl::Error(EGL_SUCCESS);
+    return NoError();
 }
 
 bool Device::IsValidDevice(Device *device)

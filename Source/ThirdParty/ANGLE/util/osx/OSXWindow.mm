@@ -14,6 +14,12 @@
 
 #include "common/debug.h"
 
+// On OSX 10.12 a number of AppKit interfaces have been renamed for consistency, and the previous
+// symbols tagged as deprecated. However we can't simply use the new symbols as it would break
+// compilation on our automated testing that doesn't use OSX 10.12 yet. So we just ignore the
+// warnings.
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 // Some events such as "ShouldTerminate" are sent to the whole application so we keep a list of
 // all the windows in order to forward the event to each of them. However this and calling pushEvent
 // in ApplicationDelegate is inherently unsafe in a multithreaded environment.
@@ -611,6 +617,11 @@ void OSXWindow::messageLoop()
             if (event == nil)
             {
                 break;
+            }
+
+            if ([event type] == NSAppKitDefined)
+            {
+                continue;
             }
             [NSApp sendEvent: event];
         }

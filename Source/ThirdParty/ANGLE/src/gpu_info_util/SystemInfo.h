@@ -26,6 +26,11 @@ constexpr VendorID kVendorID_Qualcomm = 0x5143;
 
 struct GPUDeviceInfo
 {
+    GPUDeviceInfo();
+    ~GPUDeviceInfo();
+
+    GPUDeviceInfo(const GPUDeviceInfo &other);
+
     VendorID vendorId = 0;
     DeviceID deviceId = 0;
 
@@ -36,6 +41,11 @@ struct GPUDeviceInfo
 
 struct SystemInfo
 {
+    SystemInfo();
+    ~SystemInfo();
+
+    SystemInfo(const SystemInfo &other);
+
     std::vector<GPUDeviceInfo> gpus;
     int primaryGPUIndex = -1;
     int activeGPUIndex  = -1;
@@ -43,8 +53,12 @@ struct SystemInfo
     bool isOptimus       = false;
     bool isAMDSwitchable = false;
 
+    // Only available on macOS
     std::string machineModelName;
     std::string machineModelVersion;
+
+    // Only available on Windows, set even on failure.
+    std::string primaryDisplayDeviceId;
 };
 
 bool GetSystemInfo(SystemInfo *info);

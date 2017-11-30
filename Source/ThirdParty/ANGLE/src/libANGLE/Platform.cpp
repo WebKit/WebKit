@@ -15,8 +15,15 @@
 namespace
 {
 // TODO(jmadill): Make methods owned by egl::Display.
-angle::PlatformMethods g_platformMethods;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wglobal-constructors"
+    angle::PlatformMethods g_platformMethods;
+#pragma clang diagnostic pop
 }  // anonymous namespace
+
+angle::PlatformMethods::PlatformMethods()
+{
+}
 
 angle::PlatformMethods *ANGLEPlatformCurrent()
 {

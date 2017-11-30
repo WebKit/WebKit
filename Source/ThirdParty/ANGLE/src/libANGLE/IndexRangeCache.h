@@ -23,6 +23,9 @@ namespace gl
 class IndexRangeCache
 {
   public:
+    IndexRangeCache();
+    ~IndexRangeCache();
+
     void addRange(GLenum type,
                   size_t offset,
                   size_t count,

@@ -14,13 +14,10 @@
 #include <export.h>
 
 #include "common/angleutils.h"
+#include "common/system_utils.h"
 
 namespace angle
 {
-
-ANGLE_EXPORT const char *GetExecutablePath();
-ANGLE_EXPORT const char *GetExecutableDirectory();
-ANGLE_EXPORT const char *GetSharedLibraryExtension();
 
 // Cross platform equivalent of the Windows Sleep function
 ANGLE_EXPORT void Sleep(unsigned int milliseconds);

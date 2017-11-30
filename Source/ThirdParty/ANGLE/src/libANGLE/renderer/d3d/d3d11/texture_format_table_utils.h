@@ -34,10 +34,15 @@ inline bool SupportsFormat(DXGI_FORMAT format, const Renderer11DeviceCaps &devic
     UINT mustSupport = D3D11_FORMAT_SUPPORT_TEXTURE2D | D3D11_FORMAT_SUPPORT_TEXTURECUBE |
                        D3D11_FORMAT_SUPPORT_SHADER_SAMPLE | D3D11_FORMAT_SUPPORT_MIP |
                        D3D11_FORMAT_SUPPORT_RENDER_TARGET;
+    UINT minimumRequiredSamples = 0;
 
     if (d3d11_gl::GetMaximumClientVersion(deviceCaps.featureLevel).major > 2)
     {
         mustSupport |= D3D11_FORMAT_SUPPORT_TEXTURE3D;
+
+        // RGBA4, RGB5A1 and RGB565 are all required multisampled renderbuffer formats in ES3 and
+        // need to support a minimum of 4 samples.
+        minimumRequiredSamples = 4;
     }
 
     bool fullSupport = false;
@@ -46,15 +51,18 @@ inline bool SupportsFormat(DXGI_FORMAT format, const Renderer11DeviceCaps &devic
         // All hardware that supports DXGI_FORMAT_B5G6R5_UNORM should support autogen mipmaps, but
         // check anyway.
         mustSupport |= D3D11_FORMAT_SUPPORT_MIP_AUTOGEN;
-        fullSupport = ((deviceCaps.B5G6R5support & mustSupport) == mustSupport);
+        fullSupport = ((deviceCaps.B5G6R5support & mustSupport) == mustSupport) &&
+                      deviceCaps.B5G6R5maxSamples >= minimumRequiredSamples;
     }
     else if (format == DXGI_FORMAT_B4G4R4A4_UNORM)
     {
-        fullSupport = ((deviceCaps.B4G4R4A4support & mustSupport) == mustSupport);
+        fullSupport = ((deviceCaps.B4G4R4A4support & mustSupport) == mustSupport) &&
+                      deviceCaps.B4G4R4A4maxSamples >= minimumRequiredSamples;
     }
     else if (format == DXGI_FORMAT_B5G5R5A1_UNORM)
     {
-        fullSupport = ((deviceCaps.B5G5R5A1support & mustSupport) == mustSupport);
+        fullSupport = ((deviceCaps.B5G5R5A1support & mustSupport) == mustSupport) &&
+                      deviceCaps.B5G5R5A1maxSamples >= minimumRequiredSamples;
     }
     else
     {

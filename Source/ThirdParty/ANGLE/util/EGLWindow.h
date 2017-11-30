@@ -20,6 +20,7 @@
 #include <EGL/eglext.h>
 
 #include "common/angleutils.h"
+#include "common/Optional.h"
 
 class OSWindow;
 
@@ -28,6 +29,11 @@ class OSWindow;
 #ifndef EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE
 #define EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE 0x6AC0
 #endif
+
+namespace angle
+{
+struct PlatformMethods;
+}
 
 struct ANGLE_EXPORT EGLPlatformParameters
 {
@@ -65,7 +71,9 @@ class ANGLE_EXPORT EGLWindow : angle::NonCopyable
     void setConfigAlphaBits(int bits) { mAlphaBits = bits; }
     void setConfigDepthBits(int bits) { mDepthBits = bits; }
     void setConfigStencilBits(int bits) { mStencilBits = bits; }
+    void setConfigComponentType(EGLenum componentType) { mComponentType = componentType; }
     void setMultisample(bool multisample) { mMultisample = multisample; }
+    void setSamples(EGLint samples) { mSamples = samples; }
     void setDebugEnabled(bool debug) { mDebug = debug; }
     void setNoErrorEnabled(bool noError) { mNoError = noError; }
     void setWebGLCompatibilityEnabled(bool webglCompatibility)
@@ -76,7 +84,16 @@ class ANGLE_EXPORT EGLWindow : angle::NonCopyable
     {
         mBindGeneratesResource = bindGeneratesResource;
     }
+    void setDebugLayersEnabled(bool enabled) { mDebugLayersEnabled = enabled; }
+    void setClientArraysEnabled(bool enabled) { mClientArraysEnabled = enabled; }
+    void setRobustAccess(bool enabled) { mRobustAccess = enabled; }
+    void setRobustResourceInit(bool enabled) { mRobustResourceInit = enabled; }
     void setSwapInterval(EGLint swapInterval) { mSwapInterval = swapInterval; }
+    void setPlatformMethods(angle::PlatformMethods *platformMethods)
+    {
+        mPlatformMethods = platformMethods;
+    }
+    void setContextProgramCacheEnabled(bool enabled) { mContextProgramCacheEnabled = enabled; }
 
     static EGLBoolean FindEGLConfig(EGLDisplay dpy, const EGLint *attrib_list, EGLConfig *config);
 
@@ -98,10 +115,23 @@ class ANGLE_EXPORT EGLWindow : angle::NonCopyable
     bool isMultisample() const { return mMultisample; }
     bool isDebugEnabled() const { return mDebug; }
     EGLint getSwapInterval() const { return mSwapInterval; }
+    const angle::PlatformMethods *getPlatformMethods() const { return mPlatformMethods; }
 
+    // Internally initializes the Display, Surface and Context.
     bool initializeGL(OSWindow *osWindow);
+
+    // Only initializes the Display and Surface.
+    bool initializeDisplayAndSurface(OSWindow *osWindow);
+
+    // Only initializes the Context.
+    bool initializeContext();
+
     void destroyGL();
     bool isGLInitialized() const;
+
+    void makeCurrent();
+
+    static bool ClientExtensionEnabled(const std::string &extName);
 
   private:
     EGLConfig mConfig;
@@ -111,6 +141,8 @@ class ANGLE_EXPORT EGLWindow : angle::NonCopyable
 
     EGLint mClientMajorVersion;
     EGLint mClientMinorVersion;
+    EGLint mEGLMajorVersion;
+    EGLint mEGLMinorVersion;
     EGLPlatformParameters mPlatform;
     int mRedBits;
     int mGreenBits;
@@ -118,12 +150,22 @@ class ANGLE_EXPORT EGLWindow : angle::NonCopyable
     int mAlphaBits;
     int mDepthBits;
     int mStencilBits;
+    EGLenum mComponentType;
     bool mMultisample;
     bool mDebug;
     bool mNoError;
     bool mWebGLCompatibility;
     bool mBindGeneratesResource;
+    bool mClientArraysEnabled;
+    bool mRobustAccess;
+    Optional<bool> mRobustResourceInit;
     EGLint mSwapInterval;
+    EGLint mSamples;
+    Optional<bool> mDebugLayersEnabled;
+    Optional<bool> mContextProgramCacheEnabled;
+    angle::PlatformMethods *mPlatformMethods;
 };
+
+ANGLE_EXPORT bool CheckExtensionExists(const char *allExtensions, const std::string &extName);
 
 #endif // UTIL_EGLWINDOW_H_

@@ -18,25 +18,25 @@ namespace
 class BitSetIteratorTest : public testing::Test
 {
   protected:
-    std::bitset<40> mStateBits;
+    BitSet<40> mStateBits;
 };
 
 // Simple iterator test.
 TEST_F(BitSetIteratorTest, Iterator)
 {
-    std::set<unsigned long> originalValues;
+    std::set<size_t> originalValues;
     originalValues.insert(2);
     originalValues.insert(6);
     originalValues.insert(8);
     originalValues.insert(35);
 
-    for (unsigned long value : originalValues)
+    for (size_t value : originalValues)
     {
         mStateBits.set(value);
     }
 
-    std::set<unsigned long> readValues;
-    for (unsigned long bit : IterateBitSet(mStateBits))
+    std::set<size_t> readValues;
+    for (size_t bit : mStateBits)
     {
         EXPECT_EQ(1u, originalValues.count(bit));
         EXPECT_EQ(0u, readValues.count(bit));
@@ -52,7 +52,7 @@ TEST_F(BitSetIteratorTest, EmptySet)
     // We don't use the FAIL gtest macro here since it returns immediately,
     // causing an unreachable code warning in MSVS
     bool sawBit = false;
-    for (unsigned long bit : IterateBitSet(mStateBits))
+    for (size_t bit : mStateBits)
     {
         sawBit = true;
         UNUSED_VARIABLE(bit);
@@ -63,7 +63,7 @@ TEST_F(BitSetIteratorTest, EmptySet)
 // Test iterating a result of combining two bitsets.
 TEST_F(BitSetIteratorTest, NonLValueBitset)
 {
-    std::bitset<40> otherBits;
+    BitSet<40> otherBits;
 
     mStateBits.set(1);
     mStateBits.set(2);
@@ -75,9 +75,10 @@ TEST_F(BitSetIteratorTest, NonLValueBitset)
     otherBits.set(3);
     otherBits.set(5);
 
-    std::set<unsigned long> seenBits;
+    std::set<size_t> seenBits;
 
-    for (unsigned long bit : IterateBitSet(mStateBits & otherBits))
+    angle::BitSet<40> maskedBits = (mStateBits & otherBits);
+    for (size_t bit : maskedBits)
     {
         EXPECT_EQ(0u, seenBits.count(bit));
         seenBits.insert(bit);
@@ -86,6 +87,26 @@ TEST_F(BitSetIteratorTest, NonLValueBitset)
     }
 
     EXPECT_EQ((mStateBits & otherBits).count(), seenBits.size());
+}
+
+// Test bit assignments.
+TEST_F(BitSetIteratorTest, BitAssignment)
+{
+    std::set<size_t> originalValues;
+    originalValues.insert(2);
+    originalValues.insert(6);
+    originalValues.insert(8);
+    originalValues.insert(35);
+
+    for (size_t value : originalValues)
+    {
+        (mStateBits[value] = false) = true;
+    }
+
+    for (size_t value : originalValues)
+    {
+        EXPECT_TRUE(mStateBits.test(value));
+    }
 }
 
 }  // anonymous namespace

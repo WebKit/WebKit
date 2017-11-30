@@ -143,7 +143,8 @@ HRESULT CoreWindowNativeWindow::createSwapChain(ID3D11Device *device,
                                                 bool containsAlpha,
                                                 IDXGISwapChain1 **swapChain)
 {
-    if (device == NULL || factory == NULL || swapChain == NULL || width == 0 || height == 0)
+    if (device == nullptr || factory == nullptr || swapChain == nullptr || width == 0 ||
+        height == 0)
     {
         return E_INVALIDARG;
     }

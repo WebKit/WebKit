@@ -9,7 +9,7 @@
 #ifndef COMPILER_TRANSLATOR_NODESEARCH_H_
 #define COMPILER_TRANSLATOR_NODESEARCH_H_
 
-#include "compiler/translator/IntermNode.h"
+#include "compiler/translator/IntermTraverse.h"
 
 namespace sh
 {

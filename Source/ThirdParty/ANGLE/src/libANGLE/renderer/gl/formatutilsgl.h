@@ -28,6 +28,8 @@ namespace nativegl
 struct SupportRequirement
 {
     SupportRequirement();
+    SupportRequirement(const SupportRequirement &other);
+    ~SupportRequirement();
 
     // Version that this format became supported without extensions
     gl::Version version;
@@ -42,6 +44,8 @@ struct SupportRequirement
 struct InternalFormat
 {
     InternalFormat();
+    InternalFormat(const InternalFormat &other);
+    ~InternalFormat();
 
     SupportRequirement texture;
     SupportRequirement filter;

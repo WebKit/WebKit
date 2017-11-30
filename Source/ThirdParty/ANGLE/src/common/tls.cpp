@@ -56,7 +56,7 @@ TLSIndex CreateTLSIndex()
 
 #elif defined(ANGLE_PLATFORM_POSIX)
     // Create global pool key
-    if ((pthread_key_create(&index, NULL)) != 0)
+    if ((pthread_key_create(&index, nullptr)) != 0)
     {
         index = TLS_INVALID_INDEX;
     }
@@ -133,7 +133,7 @@ void *GetTLSValue(TLSIndex index)
     assert(index != TLS_INVALID_INDEX && "GetTLSValue(): Invalid TLS Index");
     if (index == TLS_INVALID_INDEX)
     {
-        return NULL;
+        return nullptr;
     }
 
 #ifdef ANGLE_PLATFORM_WINDOWS

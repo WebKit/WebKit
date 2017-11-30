@@ -14,23 +14,21 @@
 namespace sh
 {
 
-class TOutputVulkanGLSL : public TOutputGLSLBase
+class TOutputVulkanGLSL : public TOutputGLSL
 {
   public:
     TOutputVulkanGLSL(TInfoSinkBase &objSink,
                       ShArrayIndexClampingStrategy clampingStrategy,
                       ShHashFunction64 hashFunction,
                       NameMap &nameMap,
-                      TSymbolTable &symbolTable,
+                      TSymbolTable *symbolTable,
                       sh::GLenum shaderType,
                       int shaderVersion,
                       ShShaderOutput output,
                       ShCompileOptions compileOptions);
 
   protected:
-    void writeLayoutQualifier(const TType &type) override;
-    bool writeVariablePrecision(TPrecision precision) override;
-    void visitSymbol(TIntermSymbol *node) override;
+    void writeLayoutQualifier(TIntermTyped *variable) override;
 };
 
 }  // namespace sh

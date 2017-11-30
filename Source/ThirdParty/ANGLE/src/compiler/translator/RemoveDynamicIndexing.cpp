@@ -9,9 +9,11 @@
 
 #include "compiler/translator/RemoveDynamicIndexing.h"
 
+#include "compiler/translator/Diagnostics.h"
 #include "compiler/translator/InfoSink.h"
-#include "compiler/translator/IntermNode.h"
 #include "compiler/translator/IntermNodePatternMatcher.h"
+#include "compiler/translator/IntermNode_util.h"
+#include "compiler/translator/IntermTraverse.h"
 #include "compiler/translator/SymbolTable.h"
 
 namespace sh
@@ -56,25 +58,26 @@ std::string GetIndexFunctionName(const TType &type, bool write)
     return nameSink.str();
 }
 
-TIntermSymbol *CreateBaseSymbol(const TType &type, TQualifier qualifier)
+TIntermSymbol *CreateBaseSymbol(const TType &type, TQualifier qualifier, TSymbolTable *symbolTable)
 {
-    TIntermSymbol *symbol = new TIntermSymbol(0, "base", type);
+    TIntermSymbol *symbol = new TIntermSymbol(symbolTable->nextUniqueId(), "base", type);
     symbol->setInternal(true);
     symbol->getTypePointer()->setQualifier(qualifier);
     return symbol;
 }
 
-TIntermSymbol *CreateIndexSymbol()
+TIntermSymbol *CreateIndexSymbol(TSymbolTable *symbolTable)
 {
-    TIntermSymbol *symbol = new TIntermSymbol(0, "index", TType(EbtInt, EbpHigh));
+    TIntermSymbol *symbol =
+        new TIntermSymbol(symbolTable->nextUniqueId(), "index", TType(EbtInt, EbpHigh));
     symbol->setInternal(true);
     symbol->getTypePointer()->setQualifier(EvqIn);
     return symbol;
 }
 
-TIntermSymbol *CreateValueSymbol(const TType &type)
+TIntermSymbol *CreateValueSymbol(const TType &type, TSymbolTable *symbolTable)
 {
-    TIntermSymbol *symbol = new TIntermSymbol(0, "value", type);
+    TIntermSymbol *symbol = new TIntermSymbol(symbolTable->nextUniqueId(), "value", type);
     symbol->setInternal(true);
     symbol->getTypePointer()->setQualifier(EvqIn);
     return symbol;
@@ -87,22 +90,6 @@ TIntermConstantUnion *CreateIntConstantNode(int i)
     return new TIntermConstantUnion(constant, TType(EbtInt, EbpHigh));
 }
 
-TIntermBinary *CreateIndexDirectBaseSymbolNode(const TType &indexedType,
-                                               const TType &fieldType,
-                                               const int index,
-                                               TQualifier baseQualifier)
-{
-    TIntermSymbol *baseSymbol = CreateBaseSymbol(indexedType, baseQualifier);
-    TIntermBinary *indexNode =
-        new TIntermBinary(EOpIndexDirect, baseSymbol, TIntermTyped::CreateIndexNode(index));
-    return indexNode;
-}
-
-TIntermBinary *CreateAssignValueSymbolNode(TIntermTyped *targetNode, const TType &assignedValueType)
-{
-    return new TIntermBinary(EOpAssign, targetNode, CreateValueSymbol(assignedValueType));
-}
-
 TIntermTyped *EnsureSignedInt(TIntermTyped *node)
 {
     if (node->getBasicType() == EbtInt)
@@ -110,7 +97,7 @@ TIntermTyped *EnsureSignedInt(TIntermTyped *node)
 
     TIntermSequence *arguments = new TIntermSequence();
     arguments->push_back(node);
-    return TIntermAggregate::CreateConstructor(TType(EbtInt), EOpConstructInt, arguments);
+    return TIntermAggregate::CreateConstructor(TType(EbtInt), arguments);
 }
 
 TType GetFieldType(const TType &indexedType)
@@ -172,7 +159,8 @@ TType GetFieldType(const TType &indexedType)
 // Note that else is not used in above functions to avoid the RewriteElseBlocks transformation.
 TIntermFunctionDefinition *GetIndexFunctionDefinition(TType type,
                                                       bool write,
-                                                      const TSymbolUniqueId &functionId)
+                                                      const TSymbolUniqueId &functionId,
+                                                      TSymbolTable *symbolTable)
 {
     ASSERT(!type.isArray());
     // Conservatively use highp here, even if the indexed type is not highp. That way the code can't
@@ -199,19 +187,20 @@ TIntermFunctionDefinition *GetIndexFunctionDefinition(TType type,
     }
 
     std::string functionName                = GetIndexFunctionName(type, write);
-    TIntermFunctionPrototype *prototypeNode = TIntermTraverser::CreateInternalFunctionPrototypeNode(
-        returnType, functionName.c_str(), functionId);
+    TIntermFunctionPrototype *prototypeNode =
+        CreateInternalFunctionPrototypeNode(returnType, functionName.c_str(), functionId);
 
     TQualifier baseQualifier     = EvqInOut;
     if (!write)
         baseQualifier        = EvqIn;
-    TIntermSymbol *baseParam = CreateBaseSymbol(type, baseQualifier);
+    TIntermSymbol *baseParam = CreateBaseSymbol(type, baseQualifier, symbolTable);
     prototypeNode->getSequence()->push_back(baseParam);
-    TIntermSymbol *indexParam = CreateIndexSymbol();
+    TIntermSymbol *indexParam = CreateIndexSymbol(symbolTable);
     prototypeNode->getSequence()->push_back(indexParam);
+    TIntermSymbol *valueParam = nullptr;
     if (write)
     {
-        TIntermSymbol *valueParam = CreateValueSymbol(fieldType);
+        valueParam = CreateValueSymbol(fieldType, symbolTable);
         prototypeNode->getSequence()->push_back(valueParam);
     }
 
@@ -222,10 +211,11 @@ TIntermFunctionDefinition *GetIndexFunctionDefinition(TType type,
         statementList->getSequence()->push_back(caseNode);
 
         TIntermBinary *indexNode =
-            CreateIndexDirectBaseSymbolNode(type, fieldType, i, baseQualifier);
+            new TIntermBinary(EOpIndexDirect, baseParam->deepCopy(), CreateIndexNode(i));
         if (write)
         {
-            TIntermBinary *assignNode = CreateAssignValueSymbolNode(indexNode, fieldType);
+            TIntermBinary *assignNode =
+                new TIntermBinary(EOpAssign, indexNode, valueParam->deepCopy());
             statementList->getSequence()->push_back(assignNode);
             TIntermBranch *returnNode = new TIntermBranch(EOpReturn, nullptr);
             statementList->getSequence()->push_back(returnNode);
@@ -243,13 +233,13 @@ TIntermFunctionDefinition *GetIndexFunctionDefinition(TType type,
     TIntermBranch *breakNode = new TIntermBranch(EOpBreak, nullptr);
     statementList->getSequence()->push_back(breakNode);
 
-    TIntermSwitch *switchNode = new TIntermSwitch(CreateIndexSymbol(), statementList);
+    TIntermSwitch *switchNode = new TIntermSwitch(indexParam->deepCopy(), statementList);
 
     TIntermBlock *bodyNode = new TIntermBlock();
     bodyNode->getSequence()->push_back(switchNode);
 
     TIntermBinary *cond =
-        new TIntermBinary(EOpLessThan, CreateIndexSymbol(), CreateIntConstantNode(0));
+        new TIntermBinary(EOpLessThan, indexParam->deepCopy(), CreateIntConstantNode(0));
     cond->setType(TType(EbtBool, EbpUndefined));
 
     // Two blocks: one accesses (either reads or writes) the first element and returns,
@@ -257,17 +247,19 @@ TIntermFunctionDefinition *GetIndexFunctionDefinition(TType type,
     TIntermBlock *useFirstBlock = new TIntermBlock();
     TIntermBlock *useLastBlock  = new TIntermBlock();
     TIntermBinary *indexFirstNode =
-        CreateIndexDirectBaseSymbolNode(type, fieldType, 0, baseQualifier);
+        new TIntermBinary(EOpIndexDirect, baseParam->deepCopy(), CreateIndexNode(0));
     TIntermBinary *indexLastNode =
-        CreateIndexDirectBaseSymbolNode(type, fieldType, numCases - 1, baseQualifier);
+        new TIntermBinary(EOpIndexDirect, baseParam->deepCopy(), CreateIndexNode(numCases - 1));
     if (write)
     {
-        TIntermBinary *assignFirstNode = CreateAssignValueSymbolNode(indexFirstNode, fieldType);
+        TIntermBinary *assignFirstNode =
+            new TIntermBinary(EOpAssign, indexFirstNode, valueParam->deepCopy());
         useFirstBlock->getSequence()->push_back(assignFirstNode);
         TIntermBranch *returnNode = new TIntermBranch(EOpReturn, nullptr);
         useFirstBlock->getSequence()->push_back(returnNode);
 
-        TIntermBinary *assignLastNode = CreateAssignValueSymbolNode(indexLastNode, fieldType);
+        TIntermBinary *assignLastNode =
+            new TIntermBinary(EOpAssign, indexLastNode, valueParam->deepCopy());
         useLastBlock->getSequence()->push_back(assignLastNode);
     }
     else
@@ -290,7 +282,9 @@ TIntermFunctionDefinition *GetIndexFunctionDefinition(TType type,
 class RemoveDynamicIndexingTraverser : public TLValueTrackingTraverser
 {
   public:
-    RemoveDynamicIndexingTraverser(const TSymbolTable &symbolTable, int shaderVersion);
+    RemoveDynamicIndexingTraverser(TSymbolTable *symbolTable,
+                                   int shaderVersion,
+                                   PerformanceDiagnostics *perfDiagnostics);
 
     bool visitBinary(Visit visit, TIntermBinary *node) override;
 
@@ -304,8 +298,8 @@ class RemoveDynamicIndexingTraverser : public TLValueTrackingTraverser
     // Maps of types that are indexed to the indexing function ids used for them. Note that these
     // can not store multiple variants of the same type with different precisions - only one
     // precision gets stored.
-    std::map<TType, TSymbolUniqueId> mIndexedVecAndMatrixTypes;
-    std::map<TType, TSymbolUniqueId> mWrittenVecAndMatrixTypes;
+    std::map<TType, TSymbolUniqueId *> mIndexedVecAndMatrixTypes;
+    std::map<TType, TSymbolUniqueId *> mWrittenVecAndMatrixTypes;
 
     bool mUsedTreeInsertion;
 
@@ -314,13 +308,18 @@ class RemoveDynamicIndexingTraverser : public TLValueTrackingTraverser
     //   V[j++][i]++.
     // where V is an array of vectors, j++ will only be evaluated once.
     bool mRemoveIndexSideEffectsInSubtree;
+
+    PerformanceDiagnostics *mPerfDiagnostics;
 };
 
-RemoveDynamicIndexingTraverser::RemoveDynamicIndexingTraverser(const TSymbolTable &symbolTable,
-                                                               int shaderVersion)
+RemoveDynamicIndexingTraverser::RemoveDynamicIndexingTraverser(
+    TSymbolTable *symbolTable,
+    int shaderVersion,
+    PerformanceDiagnostics *perfDiagnostics)
     : TLValueTrackingTraverser(true, false, false, symbolTable, shaderVersion),
       mUsedTreeInsertion(false),
-      mRemoveIndexSideEffectsInSubtree(false)
+      mRemoveIndexSideEffectsInSubtree(false),
+      mPerfDiagnostics(perfDiagnostics)
 {
 }
 
@@ -331,13 +330,15 @@ void RemoveDynamicIndexingTraverser::insertHelperDefinitions(TIntermNode *root)
     TIntermSequence insertions;
     for (auto &type : mIndexedVecAndMatrixTypes)
     {
-        insertions.push_back(GetIndexFunctionDefinition(type.first, false, type.second));
+        insertions.push_back(
+            GetIndexFunctionDefinition(type.first, false, *type.second, mSymbolTable));
     }
     for (auto &type : mWrittenVecAndMatrixTypes)
     {
-        insertions.push_back(GetIndexFunctionDefinition(type.first, true, type.second));
+        insertions.push_back(
+            GetIndexFunctionDefinition(type.first, true, *type.second, mSymbolTable));
     }
-    mInsertions.push_back(NodeInsertMultipleEntry(rootBlock, 0, insertions, TIntermSequence()));
+    rootBlock->insertChildNodes(0, insertions);
 }
 
 // Create a call to dyn_index_*() based on an indirect indexing op node
@@ -352,9 +353,10 @@ TIntermAggregate *CreateIndexFunctionCall(TIntermBinary *node,
 
     TType fieldType                = GetFieldType(node->getLeft()->getType());
     std::string functionName       = GetIndexFunctionName(node->getLeft()->getType(), false);
-    TIntermAggregate *indexingCall = TIntermTraverser::CreateInternalFunctionCallNode(
-        fieldType, functionName.c_str(), functionId, arguments);
+    TIntermAggregate *indexingCall =
+        CreateInternalFunctionCallNode(fieldType, functionName.c_str(), functionId, arguments);
     indexingCall->setLine(node->getLine());
+    indexingCall->getFunctionSymbolInfo()->setKnownToNotHaveSideEffects(true);
     return indexingCall;
 }
 
@@ -371,8 +373,8 @@ TIntermAggregate *CreateIndexedWriteFunctionCall(TIntermBinary *node,
     arguments->push_back(writtenValue);
 
     std::string functionName           = GetIndexFunctionName(node->getLeft()->getType(), true);
-    TIntermAggregate *indexedWriteCall = TIntermTraverser::CreateInternalFunctionCallNode(
-        TType(EbtVoid), functionName.c_str(), functionId, arguments);
+    TIntermAggregate *indexedWriteCall =
+        CreateInternalFunctionCallNode(TType(EbtVoid), functionName.c_str(), functionId, arguments);
     indexedWriteCall->setLine(node->getLine());
     return indexedWriteCall;
 }
@@ -404,6 +406,10 @@ bool RemoveDynamicIndexingTraverser::visitBinary(Visit visit, TIntermBinary *nod
         }
         else if (IntermNodePatternMatcher::IsDynamicIndexingOfVectorOrMatrix(node))
         {
+            mPerfDiagnostics->warning(node->getLine(),
+                                      "Performance: dynamic indexing of vectors and "
+                                      "matrices is emulated and can be slow.",
+                                      "[]");
             bool write = isLValueRequiredHere();
 
 #if defined(ANGLE_ENABLE_ASSERTS)
@@ -415,7 +421,7 @@ bool RemoveDynamicIndexingTraverser::visitBinary(Visit visit, TIntermBinary *nod
 #endif
 
             const TType &type = node->getLeft()->getType();
-            TSymbolUniqueId indexingFunctionId;
+            TSymbolUniqueId *indexingFunctionId = new TSymbolUniqueId(mSymbolTable);
             if (mIndexedVecAndMatrixTypes.find(type) == mIndexedVecAndMatrixTypes.end())
             {
                 mIndexedVecAndMatrixTypes[type] = indexingFunctionId;
@@ -457,7 +463,7 @@ bool RemoveDynamicIndexingTraverser::visitBinary(Visit visit, TIntermBinary *nod
                 // TODO(oetuaho@nvidia.com): This is not optimal if the expression using the value
                 // only writes it and doesn't need the previous value. http://anglebug.com/1116
 
-                TSymbolUniqueId indexedWriteFunctionId;
+                TSymbolUniqueId *indexedWriteFunctionId = new TSymbolUniqueId(mSymbolTable);
                 if (mWrittenVecAndMatrixTypes.find(type) == mWrittenVecAndMatrixTypes.end())
                 {
                     mWrittenVecAndMatrixTypes[type] = indexedWriteFunctionId;
@@ -477,22 +483,22 @@ bool RemoveDynamicIndexingTraverser::visitBinary(Visit visit, TIntermBinary *nod
                 initIndex->setLine(node->getLine());
                 insertionsBefore.push_back(initIndex);
 
-                // Create a node for referring to the index after the nextTemporaryIndex() call
+                // Create a node for referring to the index after the nextTemporaryId() call
                 // below.
                 TIntermSymbol *tempIndex = createTempSymbol(indexInitializer->getType());
 
                 TIntermAggregate *indexingCall =
-                    CreateIndexFunctionCall(node, tempIndex, indexingFunctionId);
+                    CreateIndexFunctionCall(node, tempIndex, *indexingFunctionId);
 
-                nextTemporaryIndex();  // From now on, creating temporary symbols that refer to the
-                                       // field value.
+                nextTemporaryId();  // From now on, creating temporary symbols that refer to the
+                                    // field value.
                 insertionsBefore.push_back(createTempInitDeclaration(indexingCall));
 
                 TIntermAggregate *indexedWriteCall = CreateIndexedWriteFunctionCall(
-                    node, tempIndex, createTempSymbol(fieldType), indexedWriteFunctionId);
+                    node, tempIndex, createTempSymbol(fieldType), *indexedWriteFunctionId);
                 insertionsAfter.push_back(indexedWriteCall);
                 insertStatementsInParentBlock(insertionsBefore, insertionsAfter);
-                queueReplacement(node, createTempSymbol(fieldType), OriginalNode::IS_DROPPED);
+                queueReplacement(createTempSymbol(fieldType), OriginalNode::IS_DROPPED);
                 mUsedTreeInsertion = true;
             }
             else
@@ -504,8 +510,8 @@ bool RemoveDynamicIndexingTraverser::visitBinary(Visit visit, TIntermBinary *nod
                 // If the index_expr is unsigned, we'll convert it to signed.
                 ASSERT(!mRemoveIndexSideEffectsInSubtree);
                 TIntermAggregate *indexingCall = CreateIndexFunctionCall(
-                    node, EnsureSignedInt(node->getRight()), indexingFunctionId);
-                queueReplacement(node, indexingCall, OriginalNode::IS_DROPPED);
+                    node, EnsureSignedInt(node->getRight()), *indexingFunctionId);
+                queueReplacement(indexingCall, OriginalNode::IS_DROPPED);
             }
         }
     }
@@ -516,32 +522,29 @@ void RemoveDynamicIndexingTraverser::nextIteration()
 {
     mUsedTreeInsertion               = false;
     mRemoveIndexSideEffectsInSubtree = false;
-    nextTemporaryIndex();
+    nextTemporaryId();
 }
 
 }  // namespace
 
 void RemoveDynamicIndexing(TIntermNode *root,
-                           unsigned int *temporaryIndex,
-                           const TSymbolTable &symbolTable,
-                           int shaderVersion)
+                           TSymbolTable *symbolTable,
+                           int shaderVersion,
+                           PerformanceDiagnostics *perfDiagnostics)
 {
-    RemoveDynamicIndexingTraverser traverser(symbolTable, shaderVersion);
-    ASSERT(temporaryIndex != nullptr);
-    traverser.useTemporaryIndex(temporaryIndex);
+    RemoveDynamicIndexingTraverser traverser(symbolTable, shaderVersion, perfDiagnostics);
     do
     {
         traverser.nextIteration();
         root->traverse(&traverser);
         traverser.updateTree();
     } while (traverser.usedTreeInsertion());
-    // TOOD(oetuaho@nvidia.com): It might be nicer to add the helper definitions also in the middle
+    // TODO(oetuaho@nvidia.com): It might be nicer to add the helper definitions also in the middle
     // of traversal. Now the tree ends up in an inconsistent state in the middle, since there are
     // function call nodes with no corresponding definition nodes. This needs special handling in
     // TIntermLValueTrackingTraverser, and creates intricacies that are not easily apparent from a
     // superficial reading of the code.
     traverser.insertHelperDefinitions(root);
-    traverser.updateTree();
 }
 
 }  // namespace sh

@@ -14,7 +14,7 @@
 namespace rx
 {
 
-SamplerNULL::SamplerNULL() : SamplerImpl()
+SamplerNULL::SamplerNULL(const gl::SamplerState &state) : SamplerImpl(state)
 {
 }
 

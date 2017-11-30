@@ -17,6 +17,7 @@
 
 namespace gl
 {
+class Context;
 class Framebuffer;
 struct ImageIndex;
 struct Box;
@@ -51,34 +52,40 @@ class ImageD3D : angle::NonCopyable
 
     virtual bool redefine(GLenum target, GLenum internalformat, const gl::Extents &size, bool forceRelease) = 0;
 
-    virtual gl::Error loadData(const gl::Box &area,
+    virtual gl::Error loadData(const gl::Context *context,
+                               const gl::Box &area,
                                const gl::PixelUnpackState &unpack,
                                GLenum type,
                                const void *input,
                                bool applySkipImages) = 0;
-    virtual gl::Error loadCompressedData(const gl::Box &area, const void *input) = 0;
+    virtual gl::Error loadCompressedData(const gl::Context *context,
+                                         const gl::Box &area,
+                                         const void *input) = 0;
 
-    virtual gl::Error setManagedSurface2D(TextureStorage *storage, int level)
-    {
-        return gl::NoError();
-    };
-    virtual gl::Error setManagedSurfaceCube(TextureStorage *storage, int face, int level)
-    {
-        return gl::NoError();
-    };
-    virtual gl::Error setManagedSurface3D(TextureStorage *storage, int level)
-    {
-        return gl::NoError();
-    };
-    virtual gl::Error setManagedSurface2DArray(TextureStorage *storage, int layer, int level)
-    {
-        return gl::NoError();
-    };
-    virtual gl::Error copyToStorage(TextureStorage *storage, const gl::ImageIndex &index, const gl::Box &region) = 0;
+    virtual gl::Error setManagedSurface2D(const gl::Context *context,
+                                          TextureStorage *storage,
+                                          int level);
+    virtual gl::Error setManagedSurfaceCube(const gl::Context *context,
+                                            TextureStorage *storage,
+                                            int face,
+                                            int level);
+    virtual gl::Error setManagedSurface3D(const gl::Context *context,
+                                          TextureStorage *storage,
+                                          int level);
+    virtual gl::Error setManagedSurface2DArray(const gl::Context *context,
+                                               TextureStorage *storage,
+                                               int layer,
+                                               int level);
+    virtual gl::Error copyToStorage(const gl::Context *context,
+                                    TextureStorage *storage,
+                                    const gl::ImageIndex &index,
+                                    const gl::Box &region) = 0;
 
-    virtual gl::Error copyFromTexStorage(const gl::ImageIndex &imageIndex,
+    virtual gl::Error copyFromTexStorage(const gl::Context *context,
+                                         const gl::ImageIndex &imageIndex,
                                          TextureStorage *source) = 0;
-    virtual gl::Error copyFromFramebuffer(const gl::Offset &destOffset,
+    virtual gl::Error copyFromFramebuffer(const gl::Context *context,
+                                          const gl::Offset &destOffset,
                                           const gl::Rectangle &sourceArea,
                                           const gl::Framebuffer *source) = 0;
 

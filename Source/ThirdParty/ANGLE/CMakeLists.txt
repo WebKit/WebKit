@@ -49,7 +49,11 @@ set(ANGLE_SOURCES
     src/common/mathutil.cpp
     src/common/MemoryBuffer.cpp
     src/common/string_utils.cpp
+    src/common/system_utils_linux.cpp
+    src/common/system_utils_mac.cpp
+    src/common/third_party/smhasher/src/PMurHash.cpp
     src/common/tls.cpp
+    src/common/uniform_type_info_autogen.cpp
     src/common/utilities.cpp
     src/compiler/preprocessor/DiagnosticsBase.cpp
     src/compiler/preprocessor/DirectiveHandlerBase.cpp
@@ -62,93 +66,114 @@ set(ANGLE_SOURCES
     src/compiler/preprocessor/Preprocessor.cpp
     src/compiler/preprocessor/Token.cpp
     src/compiler/preprocessor/Tokenizer.cpp
+    src/compiler/translator/ASTMetadataHLSL.cpp
     src/compiler/translator/AddAndTrueToLoopCondition.cpp
     src/compiler/translator/AddDefaultReturnStatements.cpp
     src/compiler/translator/ArrayReturnValueToOutParameter.cpp
-    src/compiler/translator/blocklayout.cpp
     src/compiler/translator/BreakVariableAliasingInInnerLoops.cpp
     src/compiler/translator/BuiltInFunctionEmulator.cpp
     src/compiler/translator/BuiltInFunctionEmulatorGLSL.cpp
+    src/compiler/translator/BuiltInFunctionEmulatorHLSL.cpp
     src/compiler/translator/Cache.cpp
     src/compiler/translator/CallDAG.cpp
+    src/compiler/translator/ClampPointSize.cpp
     src/compiler/translator/CodeGen.cpp
+    src/compiler/translator/CollectVariables.cpp
     src/compiler/translator/Compiler.cpp
     src/compiler/translator/ConstantUnion.cpp
+    src/compiler/translator/DeclareAndInitBuiltinsForInstancedMultiview.cpp
     src/compiler/translator/DeferGlobalInitializers.cpp
     src/compiler/translator/Diagnostics.cpp
     src/compiler/translator/DirectiveHandler.cpp
     src/compiler/translator/EmulateGLFragColorBroadcast.cpp
     src/compiler/translator/EmulatePrecision.cpp
     src/compiler/translator/ExpandIntegerPowExpressions.cpp
+    src/compiler/translator/ExtensionBehavior.cpp
     src/compiler/translator/ExtensionGLSL.cpp
+    src/compiler/translator/FindMain.cpp
     src/compiler/translator/FindSymbolNode.cpp
     src/compiler/translator/FlagStd140Structs.cpp
-    src/compiler/translator/glslang_lex.cpp
-    src/compiler/translator/glslang_tab.cpp
+    src/compiler/translator/HashNames.cpp
+    src/compiler/translator/ImageFunctionHLSL.cpp
     src/compiler/translator/InfoSink.cpp
     src/compiler/translator/Initialize.cpp
     src/compiler/translator/InitializeDll.cpp
     src/compiler/translator/InitializeVariables.cpp
-    src/compiler/translator/Intermediate.cpp
     src/compiler/translator/IntermNode.cpp
     src/compiler/translator/IntermNodePatternMatcher.cpp
-    src/compiler/translator/intermOut.cpp
+    src/compiler/translator/IntermNode_util.cpp
     src/compiler/translator/IntermTraverse.cpp
+    src/compiler/translator/IsASTDepthBelowLimit.cpp
     src/compiler/translator/Operator.cpp
     src/compiler/translator/OutputESSL.cpp
     src/compiler/translator/OutputGLSL.cpp
     src/compiler/translator/OutputGLSLBase.cpp
+    src/compiler/translator/OutputHLSL.cpp
+    src/compiler/translator/OutputTree.cpp
     src/compiler/translator/OutputVulkanGLSL.cpp
     src/compiler/translator/ParseContext.cpp
     src/compiler/translator/PoolAlloc.cpp
-    src/compiler/translator/PruneEmptyDeclarations.cpp
-    src/compiler/translator/PrunePureLiteralStatements.cpp
+    src/compiler/translator/PruneNoOps.cpp
     src/compiler/translator/QualifierTypes.cpp
     src/compiler/translator/RecordConstantPrecision.cpp
     src/compiler/translator/RegenerateStructNames.cpp
+    src/compiler/translator/RemoveArrayLengthMethod.cpp
     src/compiler/translator/RemoveDynamicIndexing.cpp
+    src/compiler/translator/RemoveEmptySwitchStatements.cpp
     src/compiler/translator/RemoveInvariantDeclaration.cpp
+    src/compiler/translator/RemoveNoOpCasesFromEndOfSwitchStatements.cpp
     src/compiler/translator/RemovePow.cpp
     src/compiler/translator/RemoveSwitchFallThrough.cpp
+    src/compiler/translator/RemoveUnreferencedVariables.cpp
     src/compiler/translator/RewriteDoWhile.cpp
     src/compiler/translator/RewriteElseBlocks.cpp
-    src/compiler/translator/RewriteUnaryMinusOperatorFloat.cpp
     src/compiler/translator/RewriteTexelFetchOffset.cpp
+    src/compiler/translator/RewriteUnaryMinusOperatorFloat.cpp
     src/compiler/translator/RewriteUnaryMinusOperatorInt.cpp
+    src/compiler/translator/RunAtTheEndOfShader.cpp
     src/compiler/translator/ScalarizeVecAndMatConstructorArgs.cpp
     src/compiler/translator/SearchSymbol.cpp
-    src/compiler/translator/SearchSymbol.cpp
-    src/compiler/translator/SearchSymbol.cpp
+    src/compiler/translator/SeparateArrayInitialization.cpp
     src/compiler/translator/SeparateDeclarations.cpp
     src/compiler/translator/SeparateExpressionsReturningArrays.cpp
     src/compiler/translator/ShaderLang.cpp
     src/compiler/translator/ShaderVars.cpp
     src/compiler/translator/SimplifyLoopConditions.cpp
     src/compiler/translator/SplitSequenceOperator.cpp
+    src/compiler/translator/StructureHLSL.cpp
     src/compiler/translator/SymbolTable.cpp
+    src/compiler/translator/SymbolUniqueId.cpp
+    src/compiler/translator/TextureFunctionHLSL.cpp
     src/compiler/translator/TranslatorESSL.cpp
     src/compiler/translator/TranslatorGLSL.cpp
+    src/compiler/translator/TranslatorHLSL.cpp
     src/compiler/translator/TranslatorVulkan.cpp
     src/compiler/translator/Types.cpp
     src/compiler/translator/UnfoldShortCircuitAST.cpp
     src/compiler/translator/UnfoldShortCircuitToIf.cpp
+    src/compiler/translator/UniformHLSL.cpp
     src/compiler/translator/UseInterfaceBlockFields.cpp
-    src/compiler/translator/util.cpp
+    src/compiler/translator/UtilsHLSL.cpp
     src/compiler/translator/ValidateGlobalInitializer.cpp
     src/compiler/translator/ValidateLimitations.cpp
     src/compiler/translator/ValidateMaxParameters.cpp
-    src/compiler/translator/ValidateMultiviewWebGL.cpp
     src/compiler/translator/ValidateOutputs.cpp
     src/compiler/translator/ValidateSwitch.cpp
-    src/compiler/translator/VariableInfo.cpp
+    src/compiler/translator/ValidateVaryingLocations.cpp
     src/compiler/translator/VariablePacker.cpp
+    src/compiler/translator/VectorizeVectorScalarArithmetic.cpp
     src/compiler/translator/VersionGLSL.cpp
-    src/compiler/translator/VersionGLSL.cpp
+    src/compiler/translator/WrapSwitchStatementsInBlocks.cpp
+    src/compiler/translator/blocklayout.cpp
+    src/compiler/translator/blocklayoutHLSL.cpp
+    src/compiler/translator/emulated_builtin_functions_hlsl_autogen.cpp
+    src/compiler/translator/glslang_lex.cpp
+    src/compiler/translator/glslang_tab.cpp
+    src/compiler/translator/util.cpp
     src/image_util/copyimage.cpp
     src/image_util/imageformats.cpp
-    src/image_util/loadimage_etc.cpp
     src/image_util/loadimage.cpp
-    src/libANGLE/angletypes.cpp
+    src/image_util/loadimage_etc.cpp
     src/libANGLE/AttributeMap.cpp
     src/libANGLE/Buffer.cpp
     src/libANGLE/Caps.cpp
@@ -160,10 +185,7 @@ set(ANGLE_SOURCES
     src/libANGLE/Device.cpp
     src/libANGLE/Display.cpp
     src/libANGLE/Error.cpp
-    src/libANGLE/es3_copy_conversion_table_autogen.cpp
     src/libANGLE/Fence.cpp
-    src/libANGLE/format_map_autogen.cpp
-    src/libANGLE/formatutils.cpp
     src/libANGLE/Framebuffer.cpp
     src/libANGLE/FramebufferAttachment.cpp
     src/libANGLE/HandleAllocator.cpp
@@ -172,22 +194,15 @@ set(ANGLE_SOURCES
     src/libANGLE/ImageIndex.cpp
     src/libANGLE/IndexRangeCache.cpp
     src/libANGLE/LoggingAnnotator.cpp
+    src/libANGLE/MemoryProgramCache.cpp
+    src/libANGLE/PackedGLEnums_autogen.cpp
     src/libANGLE/Path.cpp
     src/libANGLE/Platform.cpp
     src/libANGLE/Program.cpp
+    src/libANGLE/ProgramLinkedResources.cpp
+    src/libANGLE/ProgramPipeline.cpp
     src/libANGLE/Query.cpp
-    src/libANGLE/queryconversions.cpp
-    src/libANGLE/queryutils.cpp
     src/libANGLE/Renderbuffer.cpp
-    src/libANGLE/renderer/ContextImpl.cpp
-    src/libANGLE/renderer/DeviceImpl.cpp
-    src/libANGLE/renderer/DisplayImpl.cpp
-    src/libANGLE/renderer/Format_table_autogen.cpp
-    src/libANGLE/renderer/SurfaceImpl.cpp
-    src/libANGLE/renderer/TextureImpl.cpp
-    src/libANGLE/renderer/load_functions_table_autogen.cpp
-    src/libANGLE/renderer/renderer_utils.cpp
-    src/libANGLE/renderer/driver_utils.cpp
     src/libANGLE/ResourceManager.cpp
     src/libANGLE/Sampler.cpp
     src/libANGLE/Shader.cpp
@@ -198,16 +213,31 @@ set(ANGLE_SOURCES
     src/libANGLE/Thread.cpp
     src/libANGLE/TransformFeedback.cpp
     src/libANGLE/Uniform.cpp
-    src/libANGLE/UniformLinker.cpp
+    src/libANGLE/VaryingPacking.cpp
+    src/libANGLE/VertexArray.cpp
+    src/libANGLE/VertexAttribute.cpp
+    src/libANGLE/WorkerThread.cpp
+    src/libANGLE/angletypes.cpp
+    src/libANGLE/es3_copy_conversion_table_autogen.cpp
+    src/libANGLE/format_map_autogen.cpp
+    src/libANGLE/formatutils.cpp
+    src/libANGLE/params.cpp
+    src/libANGLE/queryconversions.cpp
+    src/libANGLE/queryutils.cpp
+    src/libANGLE/renderer/ContextImpl.cpp
+    src/libANGLE/renderer/DeviceImpl.cpp
+    src/libANGLE/renderer/DisplayImpl.cpp
+    src/libANGLE/renderer/Format_table_autogen.cpp
+    src/libANGLE/renderer/SurfaceImpl.cpp
+    src/libANGLE/renderer/TextureImpl.cpp
+    src/libANGLE/renderer/driver_utils.cpp
+    src/libANGLE/renderer/load_functions_table_autogen.cpp
+    src/libANGLE/renderer/renderer_utils.cpp
     src/libANGLE/validationEGL.cpp
     src/libANGLE/validationES.cpp
     src/libANGLE/validationES2.cpp
     src/libANGLE/validationES3.cpp
     src/libANGLE/validationES31.cpp
-    src/libANGLE/VaryingPacking.cpp
-    src/libANGLE/VertexArray.cpp
-    src/libANGLE/VertexAttribute.cpp
-    src/libANGLE/WorkerThread.cpp
     src/third_party/compiler/ArrayBoundsClamper.cpp
 )
 
@@ -222,15 +252,17 @@ if (NOT WIN32)
     list(APPEND ANGLE_SOURCES
         src/libANGLE/renderer/gl/BlitGL.cpp
         src/libANGLE/renderer/gl/BufferGL.cpp
+        src/libANGLE/renderer/gl/ClearMultiviewGL.cpp
         src/libANGLE/renderer/gl/CompilerGL.cpp
         src/libANGLE/renderer/gl/ContextGL.cpp
+        src/libANGLE/renderer/gl/DispatchTableGL_autogen.cpp
         src/libANGLE/renderer/gl/DisplayGL.cpp
         src/libANGLE/renderer/gl/FenceNVGL.cpp
-        src/libANGLE/renderer/gl/FenceSyncGL.cpp
         src/libANGLE/renderer/gl/FramebufferGL.cpp
         src/libANGLE/renderer/gl/FunctionsGL.cpp
         src/libANGLE/renderer/gl/PathGL.cpp
         src/libANGLE/renderer/gl/ProgramGL.cpp
+        src/libANGLE/renderer/gl/ProgramPipelineGL.cpp
         src/libANGLE/renderer/gl/QueryGL.cpp
         src/libANGLE/renderer/gl/RenderbufferGL.cpp
         src/libANGLE/renderer/gl/RendererGL.cpp
@@ -238,11 +270,34 @@ if (NOT WIN32)
         src/libANGLE/renderer/gl/ShaderGL.cpp
         src/libANGLE/renderer/gl/StateManagerGL.cpp
         src/libANGLE/renderer/gl/SurfaceGL.cpp
+        src/libANGLE/renderer/gl/SyncGL.cpp
         src/libANGLE/renderer/gl/TextureGL.cpp
         src/libANGLE/renderer/gl/TransformFeedbackGL.cpp
         src/libANGLE/renderer/gl/VertexArrayGL.cpp
+        src/libANGLE/renderer/gl/egl/DisplayEGL.cpp
+        src/libANGLE/renderer/gl/egl/FunctionsEGL.cpp
+        src/libANGLE/renderer/gl/egl/FunctionsEGLDL.cpp
+        src/libANGLE/renderer/gl/egl/PbufferSurfaceEGL.cpp
+        src/libANGLE/renderer/gl/egl/SurfaceEGL.cpp
+        src/libANGLE/renderer/gl/egl/WindowSurfaceEGL.cpp
+        src/libANGLE/renderer/gl/egl/android/DisplayAndroid.cpp
+        src/libANGLE/renderer/gl/egl/egl_utils.cpp
+        src/libANGLE/renderer/gl/egl/ozone/DisplayOzone.cpp
+        src/libANGLE/renderer/gl/egl/ozone/SurfaceOzone.cpp
         src/libANGLE/renderer/gl/formatutilsgl.cpp
+        src/libANGLE/renderer/gl/glx/DisplayGLX.cpp
+        src/libANGLE/renderer/gl/glx/FunctionsGLX.cpp
+        src/libANGLE/renderer/gl/glx/PbufferSurfaceGLX.cpp
+        src/libANGLE/renderer/gl/glx/WindowSurfaceGLX.cpp
+        src/libANGLE/renderer/gl/null_functions.cpp
         src/libANGLE/renderer/gl/renderergl_utils.cpp
+        src/libANGLE/renderer/gl/wgl/D3DTextureSurfaceWGL.cpp
+        src/libANGLE/renderer/gl/wgl/DXGISwapChainWindowSurfaceWGL.cpp
+        src/libANGLE/renderer/gl/wgl/DisplayWGL.cpp
+        src/libANGLE/renderer/gl/wgl/FunctionsWGL.cpp
+        src/libANGLE/renderer/gl/wgl/PbufferSurfaceWGL.cpp
+        src/libANGLE/renderer/gl/wgl/WindowSurfaceWGL.cpp
+        src/libANGLE/renderer/gl/wgl/wgl_utils.cpp
     )
     list(APPEND ANGLE_COMPILE_DEFINITIONS
         ANGLE_ENABLE_OPENGL

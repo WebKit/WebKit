@@ -19,7 +19,6 @@ class VertexArrayNULL : public VertexArrayImpl
 {
   public:
     VertexArrayNULL(const gl::VertexArrayState &data);
-    ~VertexArrayNULL() override;
 };
 
 }  // namespace rx

@@ -16,6 +16,26 @@
 namespace gl
 {
 
+Debug::Control::Control()
+{
+}
+
+Debug::Control::~Control()
+{
+}
+
+Debug::Control::Control(const Control &other) = default;
+
+Debug::Group::Group()
+{
+}
+
+Debug::Group::~Group()
+{
+}
+
+Debug::Group::Group(const Group &other) = default;
+
 Debug::Debug()
     : mOutputEnabled(false),
       mCallbackFunction(nullptr),
@@ -26,6 +46,10 @@ Debug::Debug()
       mGroups()
 {
     pushDefaultGroup();
+}
+
+Debug::~Debug()
+{
 }
 
 void Debug::setMaxLoggedMessages(GLuint maxLoggedMessages)

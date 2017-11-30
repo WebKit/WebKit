@@ -358,6 +358,40 @@ void R8G8B8A8::average(R8G8B8A8 *dst, const R8G8B8A8 *src1, const R8G8B8A8 *src2
                        (*(uint32_t *)src1 & *(uint32_t *)src2);
 }
 
+void R8G8B8A8SRGB::readColor(gl::ColorF *dst, const R8G8B8A8SRGB *src)
+{
+    dst->red   = gl::normalizedToFloat(src->R);
+    dst->green = gl::normalizedToFloat(src->G);
+    dst->blue  = gl::normalizedToFloat(src->B);
+    dst->alpha = gl::normalizedToFloat(src->A);
+}
+
+void R8G8B8A8SRGB::writeColor(R8G8B8A8SRGB *dst, const gl::ColorF *src)
+{
+    dst->R = gl::floatToNormalized<uint8_t>(src->red);
+    dst->G = gl::floatToNormalized<uint8_t>(src->green);
+    dst->B = gl::floatToNormalized<uint8_t>(src->blue);
+    dst->A = gl::floatToNormalized<uint8_t>(src->alpha);
+}
+
+void R8G8B8A8SRGB::average(R8G8B8A8SRGB *dst, const R8G8B8A8SRGB *src1, const R8G8B8A8SRGB *src2)
+{
+    dst->R =
+        gl::linearToSRGB(static_cast<uint8_t>((static_cast<uint16_t>(gl::sRGBToLinear(src1->R)) +
+                                               static_cast<uint16_t>(gl::sRGBToLinear(src2->R))) >>
+                                              1));
+    dst->G =
+        gl::linearToSRGB(static_cast<uint8_t>((static_cast<uint16_t>(gl::sRGBToLinear(src1->G)) +
+                                               static_cast<uint16_t>(gl::sRGBToLinear(src2->G))) >>
+                                              1));
+    dst->B =
+        gl::linearToSRGB(static_cast<uint8_t>((static_cast<uint16_t>(gl::sRGBToLinear(src1->B)) +
+                                               static_cast<uint16_t>(gl::sRGBToLinear(src2->B))) >>
+                                              1));
+    dst->A = static_cast<uint8_t>(
+        (static_cast<uint16_t>(src1->A) + static_cast<uint16_t>(src2->A)) >> 1);
+}
+
 void B8G8R8A8::readColor(gl::ColorUI *dst, const B8G8R8A8 *src)
 {
     dst->red   = src->R;

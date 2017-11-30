@@ -13,6 +13,7 @@
 #include <EGL/eglext.h>
 
 #include "common/debug.h"
+#include "libANGLE/Display.h"
 #include "libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.h"
 #include "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
 
@@ -36,7 +37,7 @@ class FunctionsGLCGL : public FunctionsGL
     ~FunctionsGLCGL() override { dlclose(mDylibHandle); }
 
   private:
-    void *loadProcAddress(const std::string &function) override
+    void *loadProcAddress(const std::string &function) const override
     {
         return dlsym(mDylibHandle, function.c_str());
     }
@@ -68,14 +69,14 @@ egl::Error DisplayCGL::initialize(egl::Display *display)
 
         if (pixelFormat == nullptr)
         {
-            return egl::Error(EGL_NOT_INITIALIZED, "Could not create the context's pixel format.");
+            return egl::EglNotInitialized() << "Could not create the context's pixel format.";
         }
     }
 
     CGLCreateContext(pixelFormat, nullptr, &mContext);
     if (mContext == nullptr)
     {
-        return egl::Error(EGL_NOT_INITIALIZED, "Could not create the CGL context.");
+        return egl::EglNotInitialized() << "Could not create the CGL context.";
     }
     CGLSetCurrentContext(mContext);
 
@@ -87,11 +88,11 @@ egl::Error DisplayCGL::initialize(egl::Display *display)
     }
     if (!handle)
     {
-        return egl::Error(EGL_NOT_INITIALIZED, "Could not open the OpenGL Framework.");
+        return egl::EglNotInitialized() << "Could not open the OpenGL Framework.";
     }
 
     mFunctions = new FunctionsGLCGL(handle);
-    mFunctions->initialize();
+    mFunctions->initialize(display->getAttributeMap());
 
     return DisplayGL::initialize(display);
 }
@@ -145,7 +146,7 @@ SurfaceImpl *DisplayCGL::createPixmapSurface(const egl::SurfaceState &state,
 egl::Error DisplayCGL::getDevice(DeviceImpl **device)
 {
     UNIMPLEMENTED();
-    return egl::Error(EGL_BAD_DISPLAY);
+    return egl::EglBadDisplay();
 }
 
 egl::ConfigSet DisplayCGL::generateConfigs()
@@ -220,10 +221,10 @@ bool DisplayCGL::testDeviceLost()
     return false;
 }
 
-egl::Error DisplayCGL::restoreLostDevice()
+egl::Error DisplayCGL::restoreLostDevice(const egl::Display *display)
 {
     UNIMPLEMENTED();
-    return egl::Error(EGL_BAD_DISPLAY);
+    return egl::EglBadDisplay();
 }
 
 bool DisplayCGL::isValidNativeWindow(EGLNativeWindowType window) const
@@ -249,6 +250,8 @@ void DisplayCGL::generateExtensions(egl::DisplayExtensions *outExtensions) const
 
     // Contexts are virtualized so textures can be shared globally
     outExtensions->displayTextureShareGroup = true;
+
+    DisplayGL::generateExtensions(outExtensions);
 }
 
 void DisplayCGL::generateCaps(egl::Caps *outCaps) const
@@ -256,18 +259,16 @@ void DisplayCGL::generateCaps(egl::Caps *outCaps) const
     outCaps->textureNPOT = true;
 }
 
-egl::Error DisplayCGL::waitClient() const
+egl::Error DisplayCGL::waitClient(const gl::Context *context) const
 {
     // TODO(cwallez) UNIMPLEMENTED()
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
-egl::Error DisplayCGL::waitNative(EGLint engine,
-                                  egl::Surface *drawSurface,
-                                  egl::Surface *readSurface) const
+egl::Error DisplayCGL::waitNative(const gl::Context *context, EGLint engine) const
 {
     // TODO(cwallez) UNIMPLEMENTED()
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 egl::Error DisplayCGL::makeCurrentSurfaceless(gl::Context *context)

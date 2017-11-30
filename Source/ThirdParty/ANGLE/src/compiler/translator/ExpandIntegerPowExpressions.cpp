@@ -11,7 +11,7 @@
 #include <cmath>
 #include <cstdlib>
 
-#include "compiler/translator/IntermNode.h"
+#include "compiler/translator/IntermTraverse.h"
 
 namespace sh
 {
@@ -22,10 +22,10 @@ namespace
 class Traverser : public TIntermTraverser
 {
   public:
-    static void Apply(TIntermNode *root, unsigned int *tempIndex);
+    static void Apply(TIntermNode *root, TSymbolTable *symbolTable);
 
   private:
-    Traverser();
+    Traverser(TSymbolTable *symbolTable);
     bool visitAggregate(Visit visit, TIntermAggregate *node) override;
     void nextIteration();
 
@@ -33,10 +33,9 @@ class Traverser : public TIntermTraverser
 };
 
 // static
-void Traverser::Apply(TIntermNode *root, unsigned int *tempIndex)
+void Traverser::Apply(TIntermNode *root, TSymbolTable *symbolTable)
 {
-    Traverser traverser;
-    traverser.useTemporaryIndex(tempIndex);
+    Traverser traverser(symbolTable);
     do
     {
         traverser.nextIteration();
@@ -48,14 +47,14 @@ void Traverser::Apply(TIntermNode *root, unsigned int *tempIndex)
     } while (traverser.mFound);
 }
 
-Traverser::Traverser() : TIntermTraverser(true, false, false)
+Traverser::Traverser(TSymbolTable *symbolTable) : TIntermTraverser(true, false, false, symbolTable)
 {
 }
 
 void Traverser::nextIteration()
 {
     mFound = false;
-    nextTemporaryIndex();
+    nextTemporaryId();
 }
 
 bool Traverser::visitAggregate(Visit visit, TIntermAggregate *node)
@@ -111,7 +110,7 @@ bool Traverser::visitAggregate(Visit visit, TIntermAggregate *node)
     }
 
     // Potential problem case detected, apply workaround.
-    nextTemporaryIndex();
+    nextTemporaryId();
 
     TIntermTyped *lhs = sequence->at(0)->getAsTyped();
     ASSERT(lhs);
@@ -139,16 +138,16 @@ bool Traverser::visitAggregate(Visit visit, TIntermAggregate *node)
         current                       = div;
     }
 
-    queueReplacement(node, current, OriginalNode::IS_DROPPED);
+    queueReplacement(current, OriginalNode::IS_DROPPED);
     mFound = true;
     return false;
 }
 
 }  // anonymous namespace
 
-void ExpandIntegerPowExpressions(TIntermNode *root, unsigned int *tempIndex)
+void ExpandIntegerPowExpressions(TIntermNode *root, TSymbolTable *symbolTable)
 {
-    Traverser::Apply(root, tempIndex);
+    Traverser::Apply(root, symbolTable);
 }
 
 }  // namespace sh

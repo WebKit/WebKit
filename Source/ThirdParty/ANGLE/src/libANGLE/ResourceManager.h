@@ -12,10 +12,10 @@
 
 #include "angle_gl.h"
 #include "common/angleutils.h"
-#include "libANGLE/angletypes.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/HandleAllocator.h"
 #include "libANGLE/HandleRangeAllocator.h"
+#include "libANGLE/ResourceMap.h"
 
 namespace rx
 {
@@ -27,11 +27,12 @@ namespace gl
 class Buffer;
 struct Caps;
 class Context;
-class FenceSync;
+class Sync;
 class Framebuffer;
 struct Limitations;
 class Path;
 class Program;
+class ProgramPipeline;
 class Renderbuffer;
 class Sampler;
 class Shader;
@@ -63,6 +64,11 @@ class TypedResourceManager : public ResourceManagerBase<HandleAllocatorType>
     TypedResourceManager() {}
 
     void deleteObject(const Context *context, GLuint handle);
+    bool isHandleGenerated(GLuint handle) const
+    {
+        // Zero is always assumed to have been generated implicitly.
+        return handle == 0 || mObjectMap.contains(handle);
+    }
 
   protected:
     ~TypedResourceManager() override;
@@ -71,11 +77,10 @@ class TypedResourceManager : public ResourceManagerBase<HandleAllocatorType>
     template <typename... ArgTypes>
     ResourceType *checkObjectAllocation(rx::GLImplFactory *factory, GLuint handle, ArgTypes... args)
     {
-        auto objectMapIter = mObjectMap.find(handle);
-
-        if (objectMapIter != mObjectMap.end() && objectMapIter->second != nullptr)
+        ResourceType *value = mObjectMap.query(handle);
+        if (value)
         {
-            return objectMapIter->second;
+            return value;
         }
 
         if (handle == 0)
@@ -83,14 +88,16 @@ class TypedResourceManager : public ResourceManagerBase<HandleAllocatorType>
             return nullptr;
         }
 
-        return allocateObject<ArgTypes...>(objectMapIter, factory, handle, args...);
-    }
+        ResourceType *object = ImplT::AllocateNewObject(factory, handle, args...);
 
-    template <typename... ArgTypes>
-    ResourceType *allocateObject(typename ResourceMap<ResourceType>::iterator &objectMapIter,
-                                 rx::GLImplFactory *factory,
-                                 GLuint handle,
-                                 ArgTypes... args);
+        if (!mObjectMap.contains(handle))
+        {
+            this->mHandleAllocator.reserve(handle);
+        }
+        mObjectMap.assign(handle, object);
+
+        return object;
+    }
 
     void reset(const Context *context) override;
 
@@ -102,7 +109,6 @@ class BufferManager : public TypedResourceManager<Buffer, HandleAllocator, Buffe
   public:
     GLuint createBuffer();
     Buffer *getBuffer(GLuint handle) const;
-    bool isBufferGenerated(GLuint buffer) const;
 
     Buffer *checkBufferAllocation(rx::GLImplFactory *factory, GLuint handle)
     {
@@ -111,7 +117,7 @@ class BufferManager : public TypedResourceManager<Buffer, HandleAllocator, Buffe
 
     // TODO(jmadill): Investigate design which doesn't expose these methods publicly.
     static Buffer *AllocateNewObject(rx::GLImplFactory *factory, GLuint handle);
-    static void DeleteObject(Buffer *buffer);
+    static void DeleteObject(const Context *context, Buffer *buffer);
 
   protected:
     ~BufferManager() override {}
@@ -120,6 +126,8 @@ class BufferManager : public TypedResourceManager<Buffer, HandleAllocator, Buffe
 class ShaderProgramManager : public ResourceManagerBase<HandleAllocator>
 {
   public:
+    ShaderProgramManager();
+
     GLuint createShader(rx::GLImplFactory *factory,
                         const Limitations &rendererLimitations,
                         GLenum type);
@@ -148,9 +156,8 @@ class TextureManager : public TypedResourceManager<Texture, HandleAllocator, Tex
   public:
     GLuint createTexture();
     Texture *getTexture(GLuint handle) const;
-    bool isTextureGenerated(GLuint texture) const;
 
-    void invalidateTextureComplenessCache();
+    void signalAllTexturesDirty() const;
 
     Texture *checkTextureAllocation(rx::GLImplFactory *factory, GLuint handle, GLenum target)
     {
@@ -158,7 +165,7 @@ class TextureManager : public TypedResourceManager<Texture, HandleAllocator, Tex
     }
 
     static Texture *AllocateNewObject(rx::GLImplFactory *factory, GLuint handle, GLenum target);
-    static void DeleteObject(Texture *texture);
+    static void DeleteObject(const Context *context, Texture *texture);
 
   protected:
     ~TextureManager() override {}
@@ -169,8 +176,7 @@ class RenderbufferManager
 {
   public:
     GLuint createRenderbuffer();
-    Renderbuffer *getRenderbuffer(GLuint handle);
-    bool isRenderbufferGenerated(GLuint renderbuffer) const;
+    Renderbuffer *getRenderbuffer(GLuint handle) const;
 
     Renderbuffer *checkRenderbufferAllocation(rx::GLImplFactory *factory, GLuint handle)
     {
@@ -178,7 +184,7 @@ class RenderbufferManager
     }
 
     static Renderbuffer *AllocateNewObject(rx::GLImplFactory *factory, GLuint handle);
-    static void DeleteObject(Renderbuffer *renderbuffer);
+    static void DeleteObject(const Context *context, Renderbuffer *renderbuffer);
 
   protected:
     ~RenderbufferManager() override {}
@@ -188,8 +194,8 @@ class SamplerManager : public TypedResourceManager<Sampler, HandleAllocator, Sam
 {
   public:
     GLuint createSampler();
-    Sampler *getSampler(GLuint handle);
-    bool isSampler(GLuint sampler);
+    Sampler *getSampler(GLuint handle) const;
+    bool isSampler(GLuint sampler) const;
 
     Sampler *checkSamplerAllocation(rx::GLImplFactory *factory, GLuint handle)
     {
@@ -197,27 +203,29 @@ class SamplerManager : public TypedResourceManager<Sampler, HandleAllocator, Sam
     }
 
     static Sampler *AllocateNewObject(rx::GLImplFactory *factory, GLuint handle);
-    static void DeleteObject(Sampler *sampler);
+    static void DeleteObject(const Context *context, Sampler *sampler);
 
   protected:
     ~SamplerManager() override {}
 };
 
-class FenceSyncManager : public TypedResourceManager<FenceSync, HandleAllocator, FenceSyncManager>
+class SyncManager : public TypedResourceManager<Sync, HandleAllocator, SyncManager>
 {
   public:
-    GLuint createFenceSync(rx::GLImplFactory *factory);
-    FenceSync *getFenceSync(GLuint handle);
+    GLuint createSync(rx::GLImplFactory *factory);
+    Sync *getSync(GLuint handle) const;
 
-    static void DeleteObject(FenceSync *fenceSync);
+    static void DeleteObject(const Context *context, Sync *sync);
 
   protected:
-    ~FenceSyncManager() override {}
+    ~SyncManager() override {}
 };
 
 class PathManager : public ResourceManagerBase<HandleRangeAllocator>
 {
   public:
+    PathManager();
+
     ErrorOrResult<GLuint> createPaths(rx::GLImplFactory *factory, GLsizei range);
     void deletePaths(GLuint first, GLsizei range);
     Path *getPath(GLuint handle) const;
@@ -238,9 +246,8 @@ class FramebufferManager
     GLuint createFramebuffer();
     Framebuffer *getFramebuffer(GLuint handle) const;
     void setDefaultFramebuffer(Framebuffer *framebuffer);
-    bool isFramebufferGenerated(GLuint framebuffer);
 
-    void invalidateFramebufferComplenessCache();
+    void invalidateFramebufferComplenessCache() const;
 
     Framebuffer *checkFramebufferAllocation(rx::GLImplFactory *factory,
                                             const Caps &caps,
@@ -252,10 +259,29 @@ class FramebufferManager
     static Framebuffer *AllocateNewObject(rx::GLImplFactory *factory,
                                           GLuint handle,
                                           const Caps &caps);
-    static void DeleteObject(Framebuffer *framebuffer);
+    static void DeleteObject(const Context *context, Framebuffer *framebuffer);
 
   protected:
     ~FramebufferManager() override {}
+};
+
+class ProgramPipelineManager
+    : public TypedResourceManager<ProgramPipeline, HandleAllocator, ProgramPipelineManager>
+{
+  public:
+    GLuint createProgramPipeline();
+    ProgramPipeline *getProgramPipeline(GLuint handle) const;
+
+    ProgramPipeline *checkProgramPipelineAllocation(rx::GLImplFactory *factory, GLuint handle)
+    {
+        return checkObjectAllocation(factory, handle);
+    }
+
+    static ProgramPipeline *AllocateNewObject(rx::GLImplFactory *factory, GLuint handle);
+    static void DeleteObject(const Context *context, ProgramPipeline *pipeline);
+
+  protected:
+    ~ProgramPipelineManager() override {}
 };
 
 }  // namespace gl

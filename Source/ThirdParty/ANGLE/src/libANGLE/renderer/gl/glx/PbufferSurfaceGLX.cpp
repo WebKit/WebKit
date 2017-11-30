@@ -21,14 +21,12 @@ PbufferSurfaceGLX::PbufferSurfaceGLX(const egl::SurfaceState &state,
                                      EGLint height,
                                      bool largest,
                                      const FunctionsGLX &glx,
-                                     glx::Context context,
                                      glx::FBConfig fbConfig)
     : SurfaceGLX(state, renderer),
       mWidth(width),
       mHeight(height),
       mLargest(largest),
       mGLX(glx),
-      mContext(context),
       mFBConfig(fbConfig),
       mPbuffer(0)
 {
@@ -42,7 +40,7 @@ PbufferSurfaceGLX::~PbufferSurfaceGLX()
     }
 }
 
-egl::Error PbufferSurfaceGLX::initialize(const DisplayImpl *displayImpl)
+egl::Error PbufferSurfaceGLX::initialize(const egl::Display *display)
 {
     // Avoid creating 0-sized PBuffers as it fails on the Intel Mesa driver
     // as commented on https://bugs.freedesktop.org/show_bug.cgi?id=38869 so we
@@ -61,7 +59,7 @@ egl::Error PbufferSurfaceGLX::initialize(const DisplayImpl *displayImpl)
     mPbuffer = mGLX.createPbuffer(mFBConfig, attribs);
     if (!mPbuffer)
     {
-        return egl::Error(EGL_BAD_ALLOC, "Failed to create a native GLX pbuffer.");
+        return egl::EglBadAlloc() << "Failed to create a native GLX pbuffer.";
     }
 
     if (mLargest)
@@ -70,44 +68,44 @@ egl::Error PbufferSurfaceGLX::initialize(const DisplayImpl *displayImpl)
         mGLX.queryDrawable(mPbuffer, GLX_HEIGHT, &mHeight);
     }
 
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 egl::Error PbufferSurfaceGLX::makeCurrent()
 {
-    if (mGLX.makeCurrent(mPbuffer, mContext) != True)
-    {
-        return egl::Error(EGL_BAD_DISPLAY);
-    }
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
-egl::Error PbufferSurfaceGLX::swap(const DisplayImpl *displayImpl)
+egl::Error PbufferSurfaceGLX::swap(const gl::Context *context)
 {
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
-egl::Error PbufferSurfaceGLX::postSubBuffer(EGLint x, EGLint y, EGLint width, EGLint height)
+egl::Error PbufferSurfaceGLX::postSubBuffer(const gl::Context *context,
+                                            EGLint x,
+                                            EGLint y,
+                                            EGLint width,
+                                            EGLint height)
 {
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 egl::Error PbufferSurfaceGLX::querySurfacePointerANGLE(EGLint attribute, void **value)
 {
     UNIMPLEMENTED();
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 egl::Error PbufferSurfaceGLX::bindTexImage(gl::Texture *texture, EGLint buffer)
 {
     UNIMPLEMENTED();
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 egl::Error PbufferSurfaceGLX::releaseTexImage(EGLint buffer)
 {
     UNIMPLEMENTED();
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 void PbufferSurfaceGLX::setSwapInterval(EGLint interval)
@@ -138,6 +136,12 @@ EGLint PbufferSurfaceGLX::getSwapBehavior() const
 egl::Error PbufferSurfaceGLX::checkForResize()
 {
     // The size of pbuffers never change
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
+
+glx::Drawable PbufferSurfaceGLX::getDrawable() const
+{
+    return mPbuffer;
+}
+
 }  // namespace rx

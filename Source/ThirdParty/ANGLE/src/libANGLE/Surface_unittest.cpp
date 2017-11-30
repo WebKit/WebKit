@@ -25,15 +25,15 @@ namespace
 class MockSurfaceImpl : public rx::SurfaceImpl
 {
   public:
-    MockSurfaceImpl() : SurfaceImpl(mockState), mockState(nullptr) {}
+    MockSurfaceImpl() : SurfaceImpl(mockState), mockState(nullptr, egl::AttributeMap()) {}
     virtual ~MockSurfaceImpl() { destructor(); }
 
-    MOCK_METHOD1(destroy, void(const DisplayImpl *));
-    MOCK_METHOD1(initialize, egl::Error(const DisplayImpl *));
+    MOCK_METHOD1(destroy, void(const egl::Display *));
+    MOCK_METHOD1(initialize, egl::Error(const egl::Display *));
     MOCK_METHOD1(createDefaultFramebuffer, rx::FramebufferImpl *(const gl::FramebufferState &data));
-    MOCK_METHOD1(swap, egl::Error(const DisplayImpl *));
-    MOCK_METHOD2(swapWithDamage, egl::Error(EGLint *, EGLint));
-    MOCK_METHOD4(postSubBuffer, egl::Error(EGLint, EGLint, EGLint, EGLint));
+    MOCK_METHOD1(swap, egl::Error(const gl::Context *));
+    MOCK_METHOD3(swapWithDamage, egl::Error(const gl::Context *, EGLint *, EGLint));
+    MOCK_METHOD5(postSubBuffer, egl::Error(const gl::Context *, EGLint, EGLint, EGLint, EGLint));
     MOCK_METHOD2(querySurfacePointerANGLE, egl::Error(EGLint, void**));
     MOCK_METHOD2(bindTexImage, egl::Error(gl::Texture*, EGLint));
     MOCK_METHOD1(releaseTexImage, egl::Error(EGLint));
@@ -43,7 +43,11 @@ class MockSurfaceImpl : public rx::SurfaceImpl
     MOCK_CONST_METHOD0(getHeight, EGLint());
     MOCK_CONST_METHOD0(isPostSubBufferSupported, EGLint(void));
     MOCK_CONST_METHOD0(getSwapBehavior, EGLint(void));
-    MOCK_METHOD2(getAttachmentRenderTarget, gl::Error(const gl::FramebufferAttachment::Target &, rx::FramebufferAttachmentRenderTarget **));
+    MOCK_METHOD4(getAttachmentRenderTarget,
+                 gl::Error(const gl::Context *,
+                           GLenum,
+                           const gl::ImageIndex &,
+                           rx::FramebufferAttachmentRenderTarget **));
 
     MOCK_METHOD0(destructor, void());
 
@@ -64,7 +68,7 @@ TEST(SurfaceTest, DestructionDeletesImpl)
     EXPECT_CALL(*impl, destroy(_)).Times(1).RetiresOnSaturation();
     EXPECT_CALL(*impl, destructor()).Times(1).RetiresOnSaturation();
 
-    surface->onDestroy(nullptr);
+    EXPECT_FALSE(surface->onDestroy(nullptr).isError());
 
     // Only needed because the mock is leaked if bugs are present,
     // which logs an error, but does not cause the test to fail.

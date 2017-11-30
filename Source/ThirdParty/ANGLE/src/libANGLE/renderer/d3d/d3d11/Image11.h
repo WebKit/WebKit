@@ -10,10 +10,10 @@
 #ifndef LIBANGLE_RENDERER_D3D_D3D11_IMAGE11_H_
 #define LIBANGLE_RENDERER_D3D_D3D11_IMAGE11_H_
 
-#include "libANGLE/renderer/d3d/ImageD3D.h"
-#include "libANGLE/ImageIndex.h"
-
 #include "common/debug.h"
+#include "libANGLE/ImageIndex.h"
+#include "libANGLE/renderer/d3d/ImageD3D.h"
+#include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
 
 namespace gl
 {
@@ -31,38 +31,57 @@ class Image11 : public ImageD3D
 {
   public:
     Image11(Renderer11 *renderer);
-    virtual ~Image11();
+    ~Image11() override;
 
-    static gl::Error generateMipmap(Image11 *dest,
+    static gl::Error GenerateMipmap(const gl::Context *context,
+                                    Image11 *dest,
                                     Image11 *src,
                                     const Renderer11DeviceCaps &rendererCaps);
+    static gl::Error CopyImage(const gl::Context *context,
+                               Image11 *dest,
+                               Image11 *source,
+                               const gl::Rectangle &sourceRect,
+                               const gl::Offset &destOffset,
+                               bool unpackFlipY,
+                               bool unpackPremultiplyAlpha,
+                               bool unpackUnmultiplyAlpha,
+                               const Renderer11DeviceCaps &rendererCaps);
 
-    virtual bool isDirty() const;
+    bool isDirty() const override;
 
-    virtual gl::Error copyToStorage(TextureStorage *storage, const gl::ImageIndex &index, const gl::Box &region);
+    gl::Error copyToStorage(const gl::Context *context,
+                            TextureStorage *storage,
+                            const gl::ImageIndex &index,
+                            const gl::Box &region) override;
 
     bool redefine(GLenum target, GLenum internalformat, const gl::Extents &size, bool forceRelease) override;
 
     DXGI_FORMAT getDXGIFormat() const;
 
-    gl::Error loadData(const gl::Box &area,
+    gl::Error loadData(const gl::Context *context,
+                       const gl::Box &area,
                        const gl::PixelUnpackState &unpack,
                        GLenum type,
                        const void *input,
                        bool applySkipImages) override;
-    gl::Error loadCompressedData(const gl::Box &area, const void *input) override;
+    gl::Error loadCompressedData(const gl::Context *context,
+                                 const gl::Box &area,
+                                 const void *input) override;
 
-    gl::Error copyFromTexStorage(const gl::ImageIndex &imageIndex, TextureStorage *source) override;
-    gl::Error copyFromFramebuffer(const gl::Offset &destOffset,
+    gl::Error copyFromTexStorage(const gl::Context *context,
+                                 const gl::ImageIndex &imageIndex,
+                                 TextureStorage *source) override;
+    gl::Error copyFromFramebuffer(const gl::Context *context,
+                                  const gl::Offset &destOffset,
                                   const gl::Rectangle &sourceArea,
                                   const gl::Framebuffer *source) override;
 
-    gl::Error recoverFromAssociatedStorage();
-    bool isAssociatedStorageValid(TextureStorage11* textureStorage) const;
+    gl::Error recoverFromAssociatedStorage(const gl::Context *context);
+    void verifyAssociatedStorageValid(TextureStorage11 *textureStorage) const;
     void disassociateStorage();
 
   protected:
-    gl::Error map(D3D11_MAP mapType, D3D11_MAPPED_SUBRESOURCE *map);
+    gl::Error map(const gl::Context *context, D3D11_MAP mapType, D3D11_MAPPED_SUBRESOURCE *map);
     void unmap();
 
   private:
@@ -71,14 +90,15 @@ class Image11 : public ImageD3D
                                     const TextureHelper11 &textureHelper,
                                     UINT sourceSubResource);
 
-    gl::Error getStagingTexture(ID3D11Resource **outStagingTexture, unsigned int *outSubresourceIndex);
+    gl::Error getStagingTexture(const TextureHelper11 **outStagingTexture,
+                                unsigned int *outSubresourceIndex);
     gl::Error createStagingTexture();
     void releaseStagingTexture();
 
     Renderer11 *mRenderer;
 
     DXGI_FORMAT mDXGIFormat;
-    ID3D11Resource *mStagingTexture;
+    TextureHelper11 mStagingTexture;
     unsigned int mStagingSubresource;
 
     bool mRecoverFromStorage;

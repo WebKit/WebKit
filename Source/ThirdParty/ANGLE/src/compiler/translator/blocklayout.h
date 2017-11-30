@@ -11,6 +11,7 @@
 #define COMMON_BLOCKLAYOUT_H_
 
 #include <cstddef>
+#include <map>
 #include <vector>
 
 #include "angle_gl.h"
@@ -26,22 +27,44 @@ struct InterfaceBlock;
 
 struct BlockMemberInfo
 {
-    BlockMemberInfo() : offset(-1), arrayStride(-1), matrixStride(-1), isRowMajorMatrix(false) {}
+    BlockMemberInfo()
+        : offset(-1),
+          arrayStride(-1),
+          matrixStride(-1),
+          isRowMajorMatrix(false),
+          topLevelArrayStride(-1)
+    {
+    }
 
     BlockMemberInfo(int offset, int arrayStride, int matrixStride, bool isRowMajorMatrix)
         : offset(offset),
           arrayStride(arrayStride),
           matrixStride(matrixStride),
-          isRowMajorMatrix(isRowMajorMatrix)
+          isRowMajorMatrix(isRowMajorMatrix),
+          topLevelArrayStride(-1)
     {
     }
 
-    static BlockMemberInfo getDefaultBlockInfo() { return BlockMemberInfo(-1, -1, -1, false); }
+    BlockMemberInfo(int offset,
+                    int arrayStride,
+                    int matrixStride,
+                    bool isRowMajorMatrix,
+                    int topLevelArrayStride)
+        : offset(offset),
+          arrayStride(arrayStride),
+          matrixStride(matrixStride),
+          isRowMajorMatrix(isRowMajorMatrix),
+          topLevelArrayStride(topLevelArrayStride)
+    {
+    }
+
+    static BlockMemberInfo getDefaultBlockInfo() { return BlockMemberInfo(-1, -1, -1, false, -1); }
 
     int offset;
     int arrayStride;
     int matrixStride;
     bool isRowMajorMatrix;
+    int topLevelArrayStride;  // Only used for shader storage block members.
 };
 
 class BlockLayoutEncoder
@@ -50,7 +73,9 @@ class BlockLayoutEncoder
     BlockLayoutEncoder();
     virtual ~BlockLayoutEncoder() {}
 
-    BlockMemberInfo encodeType(GLenum type, unsigned int arraySize, bool isRowMajorMatrix);
+    BlockMemberInfo encodeType(GLenum type,
+                               const std::vector<unsigned int> &arraySizes,
+                               bool isRowMajorMatrix);
 
     size_t getBlockSize() const { return mCurrentOffset * BytesPerComponent; }
 
@@ -69,15 +94,15 @@ class BlockLayoutEncoder
     void nextRegister();
 
     virtual void getBlockLayoutInfo(GLenum type,
-                                    unsigned int arraySize,
+                                    const std::vector<unsigned int> &arraySizes,
                                     bool isRowMajorMatrix,
                                     int *arrayStrideOut,
                                     int *matrixStrideOut) = 0;
     virtual void advanceOffset(GLenum type,
-                               unsigned int arraySize,
+                               const std::vector<unsigned int> &arraySizes,
                                bool isRowMajorMatrix,
                                int arrayStride,
-                               int matrixStride) = 0;
+                               int matrixStride)          = 0;
 };
 
 // Block layout according to the std140 block layout
@@ -93,16 +118,27 @@ class Std140BlockEncoder : public BlockLayoutEncoder
 
   protected:
     void getBlockLayoutInfo(GLenum type,
-                            unsigned int arraySize,
+                            const std::vector<unsigned int> &arraySizes,
                             bool isRowMajorMatrix,
                             int *arrayStrideOut,
                             int *matrixStrideOut) override;
     void advanceOffset(GLenum type,
-                       unsigned int arraySize,
+                       const std::vector<unsigned int> &arraySizes,
                        bool isRowMajorMatrix,
                        int arrayStride,
                        int matrixStride) override;
 };
-}
+
+using BlockLayoutMap = std::map<std::string, BlockMemberInfo>;
+
+// Only valid to call with ShaderVariable, InterfaceBlockField and Uniform.
+template <typename VarT>
+void GetUniformBlockInfo(const std::vector<VarT> &fields,
+                         const std::string &prefix,
+                         sh::BlockLayoutEncoder *encoder,
+                         bool inRowMajorLayout,
+                         BlockLayoutMap *blockLayoutMap);
+
+}  // namespace sh
 
 #endif  // COMMON_BLOCKLAYOUT_H_

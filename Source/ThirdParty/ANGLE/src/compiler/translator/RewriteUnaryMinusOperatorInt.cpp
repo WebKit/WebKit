@@ -8,7 +8,7 @@
 
 #include "compiler/translator/RewriteUnaryMinusOperatorInt.h"
 
-#include "compiler/translator/IntermNode.h"
+#include "compiler/translator/IntermTraverse.h"
 
 namespace sh
 {
@@ -96,7 +96,7 @@ bool Traverser::visitUnary(Visit visit, TIntermUnary *node)
     TIntermBinary *add = new TIntermBinary(EOpAdd, bitwiseNot, oneNode);
     add->setLine(opr->getLine());
 
-    queueReplacement(node, add, OriginalNode::IS_DROPPED);
+    queueReplacement(add, OriginalNode::IS_DROPPED);
 
     mFound = true;
     return false;

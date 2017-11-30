@@ -72,6 +72,36 @@ TConstantUnion::TConstantUnion()
     type   = EbtVoid;
 }
 
+int TConstantUnion::getIConst() const
+{
+    ASSERT(type == EbtInt);
+    return iConst;
+}
+
+unsigned int TConstantUnion::getUConst() const
+{
+    ASSERT(type == EbtUInt);
+    return uConst;
+}
+
+float TConstantUnion::getFConst() const
+{
+    ASSERT(type == EbtFloat);
+    return fConst;
+}
+
+bool TConstantUnion::getBConst() const
+{
+    ASSERT(type == EbtBool);
+    return bConst;
+}
+
+TYuvCscStandardEXT TConstantUnion::getYuvCscStandardEXTConst() const
+{
+    ASSERT(type == EbtYuvCscStandardEXT);
+    return yuvCscStandardEXTConst;
+}
+
 bool TConstantUnion::cast(TBasicType newType, const TConstantUnion &constant)
 {
     switch (newType)

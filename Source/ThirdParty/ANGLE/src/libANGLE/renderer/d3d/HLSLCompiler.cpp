@@ -6,6 +6,8 @@
 
 #include "libANGLE/renderer/d3d/HLSLCompiler.h"
 
+#include <sstream>
+
 #include "common/utilities.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/features.h"
@@ -137,7 +139,7 @@ gl::Error HLSLCompiler::ensureInitialized()
     if (!mD3DCompilerModule)
     {
         ERR() << "D3D compiler module not found.";
-        return gl::Error(GL_OUT_OF_MEMORY, "D3D compiler module not found.");
+        return gl::OutOfMemory() << "D3D compiler module not found.";
     }
 
     mD3DCompileFunc = reinterpret_cast<pD3DCompile>(GetProcAddress(mD3DCompilerModule, "D3DCompile"));
@@ -156,7 +158,7 @@ gl::Error HLSLCompiler::ensureInitialized()
 
     if (mD3DCompileFunc == nullptr)
     {
-        return gl::Error(GL_OUT_OF_MEMORY, "Error finding D3DCompile entry point.");
+        return gl::OutOfMemory() << "Error finding D3DCompile entry point.";
     }
 
     mInitialized = true;
@@ -190,7 +192,9 @@ gl::Error HLSLCompiler::compileToBinary(gl::InfoLog &infoLog, const std::string 
     if (gl::DebugAnnotationsActive())
     {
         std::string sourcePath = getTempPath();
-        std::string sourceText = FormatString("#line 2 \"%s\"\n\n%s", sourcePath.c_str(), hlsl.c_str());
+        std::ostringstream stream;
+        stream << "#line 2 \"" << sourcePath << "\"\n\n" << hlsl;
+        std::string sourceText = stream.str();
         writeFile(sourcePath.c_str(), sourceText.c_str(), sourceText.size());
     }
 #endif
@@ -217,7 +221,10 @@ gl::Error HLSLCompiler::compileToBinary(gl::InfoLog &infoLog, const std::string 
             SafeRelease(errorMessage);
 
             infoLog.appendSanitized(message.c_str());
-            WARN() << std::endl << hlsl;
+
+            // This produces unbelievable amounts of spam in about:gpu.
+            // WARN() << std::endl << hlsl;
+
             WARN() << std::endl << message;
 
             if ((message.find("error X3531:") != std::string::npos ||  // "can't unroll loops marked with loop attribute"
@@ -275,7 +282,8 @@ gl::Error HLSLCompiler::compileToBinary(gl::InfoLog &infoLog, const std::string 
         if (result == E_OUTOFMEMORY)
         {
             *outCompiledBlob = nullptr;
-            return gl::Error(GL_OUT_OF_MEMORY, "HLSL compiler had an unexpected failure, result: 0x%X.", result);
+            return gl::OutOfMemory()
+                   << "HLSL compiler had an unexpected failure, " << gl::FmtHR(result);
         }
 
         infoLog << "Warning: D3D shader compilation failed with " << configs[i].name << " flags. ("

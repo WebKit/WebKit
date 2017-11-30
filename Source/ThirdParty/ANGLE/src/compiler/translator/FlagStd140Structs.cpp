@@ -3,75 +3,73 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
+// FlagStd140Structs.cpp: Find structs in std140 blocks, where the padding added in the translator
+// conflicts with the "natural" unpadded type.
 
 #include "compiler/translator/FlagStd140Structs.h"
+
+#include "compiler/translator/IntermTraverse.h"
 
 namespace sh
 {
 
-bool FlagStd140Structs::visitBinary(Visit visit, TIntermBinary *binaryNode)
+namespace
 {
-    if (binaryNode->getRight()->getBasicType() == EbtStruct)
+
+class FlagStd140StructsTraverser : public TIntermTraverser
+{
+  public:
+    FlagStd140StructsTraverser() : TIntermTraverser(true, false, false) {}
+
+    const std::vector<MappedStruct> getMappedStructs() const { return mMappedStructs; }
+
+  protected:
+    bool visitDeclaration(Visit visit, TIntermDeclaration *node) override;
+
+  private:
+    void mapBlockStructMembers(TIntermSymbol *blockDeclarator, TInterfaceBlock *block);
+
+    std::vector<MappedStruct> mMappedStructs;
+};
+
+void FlagStd140StructsTraverser::mapBlockStructMembers(TIntermSymbol *blockDeclarator,
+                                                       TInterfaceBlock *block)
+{
+    for (auto *field : block->fields())
     {
-        switch (binaryNode->getOp())
+        if (field->type()->getBasicType() == EbtStruct)
         {
-            case EOpIndexDirectInterfaceBlock:
-            case EOpIndexDirectStruct:
-                if (isInStd140InterfaceBlock(binaryNode->getLeft()))
-                {
-                    mFlaggedNodes.push_back(binaryNode);
-                }
-                break;
-
-            default:
-                break;
+            MappedStruct mappedStruct;
+            mappedStruct.blockDeclarator = blockDeclarator;
+            mappedStruct.field           = field;
+            mMappedStructs.push_back(mappedStruct);
         }
-        return false;
-    }
-
-    if (binaryNode->getOp() == EOpIndexDirectStruct)
-    {
-        return false;
-    }
-
-    return visit == PreVisit;
-}
-
-void FlagStd140Structs::visitSymbol(TIntermSymbol *symbol)
-{
-    if (isInStd140InterfaceBlock(symbol) && symbol->getBasicType() == EbtStruct)
-    {
-        mFlaggedNodes.push_back(symbol);
     }
 }
 
-bool FlagStd140Structs::isInStd140InterfaceBlock(TIntermTyped *node) const
+bool FlagStd140StructsTraverser::visitDeclaration(Visit visit, TIntermDeclaration *node)
 {
-    TIntermBinary *binaryNode = node->getAsBinaryNode();
-
-    if (binaryNode)
+    TIntermTyped *declarator = node->getSequence()->back()->getAsTyped();
+    if (declarator->getBasicType() == EbtInterfaceBlock)
     {
-        return isInStd140InterfaceBlock(binaryNode->getLeft());
+        TInterfaceBlock *block = declarator->getType().getInterfaceBlock();
+        if (block->blockStorage() == EbsStd140)
+        {
+            mapBlockStructMembers(declarator->getAsSymbolNode(), block);
+        }
     }
-
-    const TType &type = node->getType();
-
-    // determine if we are in the standard layout
-    const TInterfaceBlock *interfaceBlock = type.getInterfaceBlock();
-    if (interfaceBlock)
-    {
-        return (interfaceBlock->blockStorage() == EbsStd140);
-    }
-
     return false;
 }
 
-std::vector<TIntermTyped *> FlagStd140ValueStructs(TIntermNode *node)
+}  // anonymous namespace
+
+std::vector<MappedStruct> FlagStd140Structs(TIntermNode *node)
 {
-    FlagStd140Structs flaggingTraversal;
+    FlagStd140StructsTraverser flaggingTraversal;
 
     node->traverse(&flaggingTraversal);
 
-    return flaggingTraversal.getFlaggedNodes();
+    return flaggingTraversal.getMappedStructs();
 }
-}
+
+}  // namespace sh

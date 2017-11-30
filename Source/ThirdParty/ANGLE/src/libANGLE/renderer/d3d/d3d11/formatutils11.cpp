@@ -200,7 +200,7 @@ const DXGIFormatSize &GetDXGIFormatSizeInfo(DXGI_FORMAT format)
 }
 
 constexpr VertexFormat::VertexFormat()
-    : conversionType(VERTEX_CONVERT_NONE), nativeFormat(DXGI_FORMAT_UNKNOWN), copyFunction(NULL)
+    : conversionType(VERTEX_CONVERT_NONE), nativeFormat(DXGI_FORMAT_UNKNOWN), copyFunction(nullptr)
 {
 }
 

@@ -18,7 +18,7 @@
 namespace gl
 {
 struct VertexAttribute;
-struct VertexBinding;
+class VertexBinding;
 }
 
 namespace rx
@@ -37,14 +37,14 @@ class BufferD3D : public BufferImpl
 {
   public:
     BufferD3D(const gl::BufferState &state, BufferFactoryD3D *factory);
-    virtual ~BufferD3D();
+    ~BufferD3D() override;
 
     unsigned int getSerial() const { return mSerial; }
 
     virtual size_t getSize() const = 0;
     virtual bool supportsDirectBinding() const = 0;
-    virtual gl::Error markTransformFeedbackUsage() = 0;
-    virtual gl::Error getData(const uint8_t **outData) = 0;
+    virtual gl::Error markTransformFeedbackUsage(const gl::Context *context) = 0;
+    virtual gl::Error getData(const gl::Context *context, const uint8_t **outData) = 0;
 
     // Warning: you should ensure binding really matches attrib.bindingIndex before using this
     // function.
@@ -52,12 +52,13 @@ class BufferD3D : public BufferImpl
                                                        const gl::VertexBinding &binding);
     StaticIndexBufferInterface *getStaticIndexBuffer();
 
-    virtual void initializeStaticData();
-    virtual void invalidateStaticData();
+    virtual void initializeStaticData(const gl::Context *context);
+    virtual void invalidateStaticData(const gl::Context *context);
 
-    void promoteStaticUsage(int dataSize);
+    void promoteStaticUsage(const gl::Context *context, int dataSize);
 
-    gl::Error getIndexRange(GLenum type,
+    gl::Error getIndexRange(const gl::Context *context,
+                            GLenum type,
                             size_t offset,
                             size_t count,
                             bool primitiveRestartEnabled,
@@ -68,7 +69,7 @@ class BufferD3D : public BufferImpl
 
   protected:
     void updateSerial();
-    void updateD3DBufferUsage(GLenum usage);
+    void updateD3DBufferUsage(const gl::Context *context, gl::BufferUsage usage);
     void emptyStaticBufferCache();
 
     BufferFactoryD3D *mFactory;

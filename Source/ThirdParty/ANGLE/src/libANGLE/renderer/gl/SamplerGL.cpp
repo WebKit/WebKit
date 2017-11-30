@@ -33,8 +33,10 @@ static inline void SyncSamplerStateMember(const rx::FunctionsGL *functions,
 namespace rx
 {
 
-SamplerGL::SamplerGL(const FunctionsGL *functions, StateManagerGL *stateManager)
-    : SamplerImpl(),
+SamplerGL::SamplerGL(const gl::SamplerState &state,
+                     const FunctionsGL *functions,
+                     StateManagerGL *stateManager)
+    : SamplerImpl(state),
       mFunctions(functions),
       mStateManager(stateManager),
       mAppliedSamplerState(),
@@ -49,20 +51,20 @@ SamplerGL::~SamplerGL()
     mSamplerID = 0;
 }
 
-void SamplerGL::syncState(const gl::SamplerState &samplerState) const
+void SamplerGL::syncState(const gl::Context *context)
 {
     // clang-format off
-    SyncSamplerStateMember(mFunctions, mSamplerID, samplerState, mAppliedSamplerState, GL_TEXTURE_MIN_FILTER, &gl::SamplerState::minFilter);
-    SyncSamplerStateMember(mFunctions, mSamplerID, samplerState, mAppliedSamplerState, GL_TEXTURE_MAG_FILTER, &gl::SamplerState::magFilter);
-    SyncSamplerStateMember(mFunctions, mSamplerID, samplerState, mAppliedSamplerState, GL_TEXTURE_WRAP_S, &gl::SamplerState::wrapS);
-    SyncSamplerStateMember(mFunctions, mSamplerID, samplerState, mAppliedSamplerState, GL_TEXTURE_WRAP_T, &gl::SamplerState::wrapT);
-    SyncSamplerStateMember(mFunctions, mSamplerID, samplerState, mAppliedSamplerState, GL_TEXTURE_WRAP_R, &gl::SamplerState::wrapR);
-    SyncSamplerStateMember(mFunctions, mSamplerID, samplerState, mAppliedSamplerState, GL_TEXTURE_MAX_ANISOTROPY_EXT, &gl::SamplerState::maxAnisotropy);
-    SyncSamplerStateMember(mFunctions, mSamplerID, samplerState, mAppliedSamplerState, GL_TEXTURE_MIN_LOD, &gl::SamplerState::minLod);
-    SyncSamplerStateMember(mFunctions, mSamplerID, samplerState, mAppliedSamplerState, GL_TEXTURE_MAX_LOD, &gl::SamplerState::maxLod);
-    SyncSamplerStateMember(mFunctions, mSamplerID, samplerState, mAppliedSamplerState, GL_TEXTURE_COMPARE_MODE, &gl::SamplerState::compareMode);
-    SyncSamplerStateMember(mFunctions, mSamplerID, samplerState, mAppliedSamplerState, GL_TEXTURE_COMPARE_FUNC, &gl::SamplerState::compareFunc);
-    SyncSamplerStateMember(mFunctions, mSamplerID, samplerState, mAppliedSamplerState, GL_TEXTURE_SRGB_DECODE_EXT, &gl::SamplerState::sRGBDecode);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MIN_FILTER, &gl::SamplerState::minFilter);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MAG_FILTER, &gl::SamplerState::magFilter);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_WRAP_S, &gl::SamplerState::wrapS);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_WRAP_T, &gl::SamplerState::wrapT);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_WRAP_R, &gl::SamplerState::wrapR);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MAX_ANISOTROPY_EXT, &gl::SamplerState::maxAnisotropy);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MIN_LOD, &gl::SamplerState::minLod);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MAX_LOD, &gl::SamplerState::maxLod);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_COMPARE_MODE, &gl::SamplerState::compareMode);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_COMPARE_FUNC, &gl::SamplerState::compareFunc);
+    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_SRGB_DECODE_EXT, &gl::SamplerState::sRGBDecode);
     // clang-format on
 }
 

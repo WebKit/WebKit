@@ -3,16 +3,22 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// DeferGlobalInitializers is an AST traverser that moves global initializers into a function, and
-// adds a function call to that function in the beginning of main().
-// This enables initialization of globals with uniforms or non-constant globals, as allowed by
-// the WebGL spec. Some initializers referencing non-constants may need to be unfolded into if
-// statements in HLSL - this kind of steps should be done after DeferGlobalInitializers is run.
+// DeferGlobalInitializers is an AST traverser that moves global initializers into a separate
+// function that is called in the beginning of main(). This enables initialization of globals with
+// uniforms or non-constant globals, as allowed by the WebGL spec. Some initializers referencing
+// non-constants may need to be unfolded into if statements in HLSL - this kind of steps should be
+// done after DeferGlobalInitializers is run. Note that it's important that the function definition
+// is at the end of the shader, as some globals may be declared after main().
+//
+// It can also initialize all uninitialized globals.
 //
 
 #include "compiler/translator/DeferGlobalInitializers.h"
 
+#include "compiler/translator/FindMain.h"
+#include "compiler/translator/InitializeVariables.h"
 #include "compiler/translator/IntermNode.h"
+#include "compiler/translator/IntermNode_util.h"
 #include "compiler/translator/SymbolTable.h"
 
 namespace sh
@@ -21,44 +27,32 @@ namespace sh
 namespace
 {
 
-class DeferGlobalInitializersTraverser : public TIntermTraverser
+void GetDeferredInitializers(TIntermDeclaration *declaration,
+                             bool initializeUninitializedGlobals,
+                             bool canUseLoopsToInitialize,
+                             TIntermSequence *deferredInitializersOut,
+                             TSymbolTable *symbolTable)
 {
-  public:
-    DeferGlobalInitializersTraverser();
+    // SeparateDeclarations should have already been run.
+    ASSERT(declaration->getSequence()->size() == 1);
 
-    bool visitBinary(Visit visit, TIntermBinary *node) override;
-
-    void insertInitFunction(TIntermBlock *root);
-
-  private:
-    TIntermSequence mDeferredInitializers;
-};
-
-DeferGlobalInitializersTraverser::DeferGlobalInitializersTraverser()
-    : TIntermTraverser(true, false, false)
-{
-}
-
-bool DeferGlobalInitializersTraverser::visitBinary(Visit visit, TIntermBinary *node)
-{
-    if (node->getOp() == EOpInitialize)
+    TIntermNode *declarator = declaration->getSequence()->back();
+    TIntermBinary *init     = declarator->getAsBinaryNode();
+    if (init)
     {
-        TIntermSymbol *symbolNode = node->getLeft()->getAsSymbolNode();
+        TIntermSymbol *symbolNode = init->getLeft()->getAsSymbolNode();
         ASSERT(symbolNode);
-        TIntermTyped *expression = node->getRight();
+        TIntermTyped *expression = init->getRight();
 
-        if (mInGlobalScope && (expression->getQualifier() != EvqConst ||
-                               (expression->getAsConstantUnion() == nullptr &&
-                                !expression->isConstructorWithOnlyConstantUnionParameters())))
+        if ((expression->getQualifier() != EvqConst ||
+             (expression->getAsConstantUnion() == nullptr &&
+              !expression->isConstructorWithOnlyConstantUnionParameters())))
         {
             // For variables which are not constant, defer their real initialization until
             // after we initialize uniforms.
-            // Deferral is done also in any cases where the variable has not been constant folded,
-            // since otherwise there's a chance that HLSL output will generate extra statements
-            // from the initializer expression.
-            TIntermBinary *deferredInit =
-                new TIntermBinary(EOpAssign, symbolNode->deepCopy(), node->getRight());
-            mDeferredInitializers.push_back(deferredInit);
+            // Deferral is done also in any cases where the variable has not been constant
+            // folded, since otherwise there's a chance that HLSL output will generate extra
+            // statements from the initializer expression.
 
             // Change const global to a regular global if its initialization is deferred.
             // This can happen if ANGLE has not been able to fold the constant expression used
@@ -67,82 +61,87 @@ bool DeferGlobalInitializersTraverser::visitBinary(Visit visit, TIntermBinary *n
                    symbolNode->getQualifier() == EvqGlobal);
             if (symbolNode->getQualifier() == EvqConst)
             {
-                // All of the siblings in the same declaration need to have consistent qualifiers.
-                auto *siblings = getParentNode()->getAsDeclarationNode()->getSequence();
-                for (TIntermNode *siblingNode : *siblings)
-                {
-                    TIntermBinary *siblingBinary = siblingNode->getAsBinaryNode();
-                    if (siblingBinary)
-                    {
-                        ASSERT(siblingBinary->getOp() == EOpInitialize);
-                        siblingBinary->getLeft()->getTypePointer()->setQualifier(EvqGlobal);
-                    }
-                    siblingNode->getAsTyped()->getTypePointer()->setQualifier(EvqGlobal);
-                }
-                // This node is one of the siblings.
-                ASSERT(symbolNode->getQualifier() == EvqGlobal);
+                symbolNode->getTypePointer()->setQualifier(EvqGlobal);
             }
+
+            TIntermBinary *deferredInit =
+                new TIntermBinary(EOpAssign, symbolNode->deepCopy(), init->getRight());
+            deferredInitializersOut->push_back(deferredInit);
+
             // Remove the initializer from the global scope and just declare the global instead.
-            queueReplacement(node, symbolNode, OriginalNode::IS_DROPPED);
+            declaration->replaceChildNode(init, symbolNode);
         }
     }
-    return false;
+    else if (initializeUninitializedGlobals)
+    {
+        TIntermSymbol *symbolNode = declarator->getAsSymbolNode();
+        ASSERT(symbolNode);
+
+        // Ignore ANGLE internal variables.
+        if (symbolNode->getName().isInternal())
+            return;
+
+        if (symbolNode->getQualifier() == EvqGlobal && symbolNode->getSymbol() != "")
+        {
+            TIntermSequence *initCode =
+                CreateInitCode(symbolNode, canUseLoopsToInitialize, symbolTable);
+            deferredInitializersOut->insert(deferredInitializersOut->end(), initCode->begin(),
+                                            initCode->end());
+        }
+    }
 }
 
-void DeferGlobalInitializersTraverser::insertInitFunction(TIntermBlock *root)
+void InsertInitCallToMain(TIntermBlock *root,
+                          TIntermSequence *deferredInitializers,
+                          TSymbolTable *symbolTable)
 {
-    if (mDeferredInitializers.empty())
-    {
-        return;
-    }
-    TSymbolUniqueId initFunctionId;
+    TIntermBlock *initGlobalsBlock = new TIntermBlock();
+    initGlobalsBlock->getSequence()->swap(*deferredInitializers);
 
-    const char *functionName = "initializeDeferredGlobals";
+    TSymbolUniqueId initGlobalsFunctionId(symbolTable);
 
-    // Add function prototype to the beginning of the shader
-    TIntermFunctionPrototype *functionPrototypeNode =
-        CreateInternalFunctionPrototypeNode(TType(EbtVoid), functionName, initFunctionId);
-    root->getSequence()->insert(root->getSequence()->begin(), functionPrototypeNode);
+    const char *kInitGlobalsFunctionName = "initGlobals";
 
-    // Add function definition to the end of the shader
-    TIntermBlock *functionBodyNode = new TIntermBlock();
-    TIntermSequence *functionBody  = functionBodyNode->getSequence();
-    for (const auto &deferredInit : mDeferredInitializers)
-    {
-        functionBody->push_back(deferredInit);
-    }
-    TIntermFunctionDefinition *functionDefinition = CreateInternalFunctionDefinitionNode(
-        TType(EbtVoid), functionName, functionBodyNode, initFunctionId);
-    root->getSequence()->push_back(functionDefinition);
+    TIntermFunctionPrototype *initGlobalsFunctionPrototype =
+        CreateInternalFunctionPrototypeNode(TType(), kInitGlobalsFunctionName, initGlobalsFunctionId);
+    root->getSequence()->insert(root->getSequence()->begin(), initGlobalsFunctionPrototype);
+    TIntermFunctionDefinition *initGlobalsFunctionDefinition = CreateInternalFunctionDefinitionNode(
+        TType(), kInitGlobalsFunctionName, initGlobalsBlock, initGlobalsFunctionId);
+    root->appendStatement(initGlobalsFunctionDefinition);
 
-    // Insert call into main function
-    for (TIntermNode *node : *root->getSequence())
-    {
-        TIntermFunctionDefinition *nodeFunction = node->getAsFunctionDefinition();
-        if (nodeFunction != nullptr && nodeFunction->getFunctionSymbolInfo()->isMain())
-        {
-            TIntermAggregate *functionCallNode = CreateInternalFunctionCallNode(
-                TType(EbtVoid), functionName, initFunctionId, nullptr);
+    TIntermAggregate *initGlobalsCall = CreateInternalFunctionCallNode(
+        TType(), kInitGlobalsFunctionName, initGlobalsFunctionId, new TIntermSequence());
 
-            TIntermBlock *mainBody = nodeFunction->getBody();
-            ASSERT(mainBody != nullptr);
-            mainBody->getSequence()->insert(mainBody->getSequence()->begin(), functionCallNode);
-        }
-    }
+    TIntermBlock *mainBody = FindMainBody(root);
+    mainBody->getSequence()->insert(mainBody->getSequence()->begin(), initGlobalsCall);
 }
 
 }  // namespace
 
-void DeferGlobalInitializers(TIntermBlock *root)
+void DeferGlobalInitializers(TIntermBlock *root,
+                             bool initializeUninitializedGlobals,
+                             bool canUseLoopsToInitialize,
+                             TSymbolTable *symbolTable)
 {
-    DeferGlobalInitializersTraverser traverser;
-    root->traverse(&traverser);
+    TIntermSequence *deferredInitializers = new TIntermSequence();
 
-    // Replace the initializers of the global variables.
-    traverser.updateTree();
+    // Loop over all global statements and process the declarations. This is simpler than using a
+    // traverser.
+    for (TIntermNode *statement : *root->getSequence())
+    {
+        TIntermDeclaration *declaration = statement->getAsDeclarationNode();
+        if (declaration)
+        {
+            GetDeferredInitializers(declaration, initializeUninitializedGlobals,
+                                    canUseLoopsToInitialize, deferredInitializers, symbolTable);
+        }
+    }
 
     // Add the function with initialization and the call to that.
-    traverser.insertInitFunction(root);
+    if (!deferredInitializers->empty())
+    {
+        InsertInitCallToMain(root, deferredInitializers, symbolTable);
+    }
 }
 
 }  // namespace sh

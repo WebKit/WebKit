@@ -37,6 +37,21 @@ Error::Error(Error &&other)
 {
 }
 
+// automatic error type conversion
+Error::Error(egl::Error &&eglErr)
+    : mCode(GL_INVALID_OPERATION),
+      mID(0),
+      mMessage(std::move(eglErr.mMessage))
+{
+}
+
+Error::Error(egl::Error eglErr)
+    : mCode(GL_INVALID_OPERATION),
+      mID(0),
+      mMessage(std::move(eglErr.mMessage))
+{
+}
+
 Error &Error::operator=(const Error &other)
 {
     mCode = other.mCode;
@@ -82,7 +97,7 @@ bool Error::isError() const
     return (mCode != GL_NO_ERROR);
 }
 
-}
+}  // namespace gl
 
 namespace egl
 {
@@ -108,6 +123,21 @@ Error::Error(Error &&other)
     : mCode(other.mCode),
       mID(other.mID),
       mMessage(std::move(other.mMessage))
+{
+}
+
+// automatic error type conversion
+Error::Error(gl::Error &&glErr)
+    : mCode(EGL_BAD_ACCESS),
+      mID(0),
+      mMessage(std::move(glErr.mMessage))
+{
+}
+
+Error::Error(gl::Error glErr)
+    : mCode(EGL_BAD_ACCESS),
+      mID(0),
+      mMessage(std::move(glErr.mMessage))
 {
 }
 

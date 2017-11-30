@@ -28,15 +28,18 @@ class WindowSurfaceGLX : public SurfaceGLX
                      RendererGL *renderer,
                      Window window,
                      Display *display,
-                     glx::Context context,
                      glx::FBConfig fbConfig);
     ~WindowSurfaceGLX() override;
 
-    egl::Error initialize(const DisplayImpl *displayImpl) override;
+    egl::Error initialize(const egl::Display *display) override;
     egl::Error makeCurrent() override;
 
-    egl::Error swap(const DisplayImpl *displayImpl) override;
-    egl::Error postSubBuffer(EGLint x, EGLint y, EGLint width, EGLint height) override;
+    egl::Error swap(const gl::Context *context) override;
+    egl::Error postSubBuffer(const gl::Context *context,
+                             EGLint x,
+                             EGLint y,
+                             EGLint width,
+                             EGLint height) override;
     egl::Error querySurfacePointerANGLE(EGLint attribute, void **value) override;
     egl::Error bindTexImage(gl::Texture *texture, EGLint buffer) override;
     egl::Error releaseTexImage(EGLint buffer) override;
@@ -49,6 +52,7 @@ class WindowSurfaceGLX : public SurfaceGLX
     EGLint getSwapBehavior() const override;
 
     egl::Error checkForResize() override;
+    glx::Drawable getDrawable() const override;
 
   private:
     bool getWindowDimensions(Window window, unsigned int *width, unsigned int *height) const;
@@ -61,7 +65,6 @@ class WindowSurfaceGLX : public SurfaceGLX
     const FunctionsGLX &mGLX;
     DisplayGLX *mGLXDisplay;
 
-    glx::Context mContext;
     glx::FBConfig mFBConfig;
     glx::Window mGLXWindow;
 

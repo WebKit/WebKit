@@ -13,7 +13,7 @@ namespace gl
 
 // [OpenGL ES 3.1] (November 3, 2016) Section 20 Page 361
 // Table 20.2: Vertex Array Object State
-VertexBinding::VertexBinding() : stride(16u), divisor(0), offset(0)
+VertexBinding::VertexBinding() : mStride(16u), mDivisor(0), mOffset(0)
 {
 }
 
@@ -22,16 +22,18 @@ VertexBinding::VertexBinding(VertexBinding &&binding)
     *this = std::move(binding);
 }
 
+VertexBinding::~VertexBinding()
+{
+}
+
 VertexBinding &VertexBinding::operator=(VertexBinding &&binding)
 {
     if (this != &binding)
     {
-        stride  = binding.stride;
-        divisor = binding.divisor;
-        offset  = binding.offset;
-
-        buffer.set(binding.buffer.get());
-        binding.buffer.set(nullptr);
+        mStride  = binding.mStride;
+        mDivisor = binding.mDivisor;
+        mOffset  = binding.mOffset;
+        std::swap(binding.mBuffer, mBuffer);
     }
     return *this;
 }
@@ -103,33 +105,58 @@ size_t ComputeVertexAttributeStride(const VertexAttribute &attrib, const VertexB
 {
     // In ES 3.1, VertexAttribPointer will store the type size in the binding stride.
     // Hence, rendering always uses the binding's stride.
-    return attrib.enabled ? binding.stride : 16u;
+    return attrib.enabled ? binding.getStride() : 16u;
 }
 
 // Warning: you should ensure binding really matches attrib.bindingIndex before using this function.
 GLintptr ComputeVertexAttributeOffset(const VertexAttribute &attrib, const VertexBinding &binding)
 {
-    return attrib.relativeOffset + binding.offset;
+    return attrib.relativeOffset + binding.getOffset();
 }
 
-size_t ComputeVertexBindingElementCount(const VertexBinding &binding,
-                                        size_t drawCount,
-                                        size_t instanceCount)
+size_t ComputeVertexBindingElementCount(GLuint divisor, size_t drawCount, size_t instanceCount)
 {
     // For instanced rendering, we draw "instanceDrawCount" sets of "vertexDrawCount" vertices.
     //
     // A vertex attribute with a positive divisor loads one instanced vertex for every set of
     // non-instanced vertices, and the instanced vertex index advances once every "mDivisor"
     // instances.
-    if (instanceCount > 0 && binding.divisor > 0)
+    if (instanceCount > 0 && divisor > 0)
     {
         // When instanceDrawCount is not a multiple attrib.divisor, the division must round up.
         // For instance, with 5 non-instanced vertices and a divisor equal to 3, we need 2 instanced
         // vertices.
-        return (instanceCount + binding.divisor - 1u) / binding.divisor;
+        return (instanceCount + divisor - 1u) / divisor;
     }
 
     return drawCount;
+}
+
+GLenum GetVertexAttributeBaseType(const VertexAttribute &attrib)
+{
+    if (attrib.pureInteger)
+    {
+        switch (attrib.type)
+        {
+            case GL_BYTE:
+            case GL_SHORT:
+            case GL_INT:
+                return GL_INT;
+
+            case GL_UNSIGNED_BYTE:
+            case GL_UNSIGNED_SHORT:
+            case GL_UNSIGNED_INT:
+                return GL_UNSIGNED_INT;
+
+            default:
+                UNREACHABLE();
+                return GL_NONE;
+        }
+    }
+    else
+    {
+        return GL_FLOAT;
+    }
 }
 
 }  // namespace gl

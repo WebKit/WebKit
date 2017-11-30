@@ -375,4 +375,34 @@ EGLBoolean EGLAPIENTRY eglSwapBuffersWithDamageEXT(EGLDisplay dpy,
 {
     return egl::SwapBuffersWithDamageEXT(dpy, surface, rects, n_rects);
 }
+
+EGLint EGLAPIENTRY eglProgramCacheGetAttribANGLE(EGLDisplay dpy, EGLenum attrib)
+{
+    return egl::ProgramCacheGetAttribANGLE(dpy, attrib);
 }
+
+void EGLAPIENTRY eglProgramCacheQueryANGLE(EGLDisplay dpy,
+                                           EGLint index,
+                                           void *key,
+                                           EGLint *keysize,
+                                           void *binary,
+                                           EGLint *binarysize)
+{
+    egl::ProgramCacheQueryANGLE(dpy, index, key, keysize, binary, binarysize);
+}
+
+void EGLAPIENTRY eglProgramCachePopulateANGLE(EGLDisplay dpy,
+                                              const void *key,
+                                              EGLint keysize,
+                                              const void *binary,
+                                              EGLint binarysize)
+{
+    egl::ProgramCachePopulateANGLE(dpy, key, keysize, binary, binarysize);
+}
+
+EGLint EGLAPIENTRY eglProgramCacheResizeANGLE(EGLDisplay dpy, EGLint limit, EGLenum mode)
+{
+    return egl::ProgramCacheResizeANGLE(dpy, limit, mode);
+}
+
+}  // extern "C"

@@ -7,11 +7,11 @@
 #ifndef COMPILER_TRANSLATOR_EMULATE_PRECISION_H_
 #define COMPILER_TRANSLATOR_EMULATE_PRECISION_H_
 
+#include "GLSLANG/ShaderLang.h"
 #include "common/angleutils.h"
 #include "compiler/translator/Compiler.h"
 #include "compiler/translator/InfoSink.h"
-#include "compiler/translator/IntermNode.h"
-#include "GLSLANG/ShaderLang.h"
+#include "compiler/translator/IntermTraverse.h"
 
 // This class gathers all compound assignments from the AST and can then write
 // the functions required for their precision emulation. This way there is no
@@ -24,7 +24,7 @@ namespace sh
 class EmulatePrecision : public TLValueTrackingTraverser
 {
   public:
-    EmulatePrecision(const TSymbolTable &symbolTable, int shaderVersion);
+    EmulatePrecision(TSymbolTable *symbolTable, int shaderVersion);
 
     void visitSymbol(TIntermSymbol *node) override;
     bool visitBinary(Visit visit, TIntermBinary *node) override;

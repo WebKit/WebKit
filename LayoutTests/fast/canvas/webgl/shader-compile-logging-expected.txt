@@ -1,11 +1,13 @@
-CONSOLE MESSAGE: line 19: WebGL: ERROR: 0:2: 'attribute' :  supported in vertex shaders only 
+CONSOLE MESSAGE: line 19: WebGL: ERROR: 0:2: 'attribute' :  supported in vertex shaders only
 CONSOLE MESSAGE: line 19: WebGL: ERROR: 0:2: '' : No precision specified for (float)
 CONSOLE MESSAGE: line 19: WebGL: ERROR: 0:4: 'gl_Position' : undeclared identifier
+CONSOLE MESSAGE: line 19: WebGL: ERROR: 0:4: 'assign' : l-value required (can't modify a const)
 CONSOLE MESSAGE: line 19: WebGL: ERROR: 0:4: '=' : dimension mismatch
-CONSOLE MESSAGE: line 19: WebGL: ERROR: 0:4: 'assign' : cannot convert from 'attribute 4-component vector of float' to 'float'
+CONSOLE MESSAGE: line 19: WebGL: ERROR: 0:4: 'assign' : cannot convert from 'attribute 4-component vector of float' to 'const highp float'
 CONSOLE MESSAGE: line 19: WebGL: ERROR: 0:7: 'FRAGMENT_SHADER' : syntax error
 CONSOLE MESSAGE: line 29: WebGL: ERROR: 0:3: 'gl_FragColor' : undeclared identifier
+CONSOLE MESSAGE: line 29: WebGL: ERROR: 0:3: 'assign' : l-value required (can't modify a const)
 CONSOLE MESSAGE: line 29: WebGL: ERROR: 0:3: '=' : dimension mismatch
-CONSOLE MESSAGE: line 29: WebGL: ERROR: 0:3: 'assign' : cannot convert from 'const 4-component vector of float' to 'float'
+CONSOLE MESSAGE: line 29: WebGL: ERROR: 0:3: 'assign' : cannot convert from 'const 4-component vector of float' to 'const highp float'
 CONSOLE MESSAGE: line 29: WebGL: ERROR: 0:6: 'VERTEX_SHADER' : syntax error
 Tests that WebGL shader compile errors/warnings are logged to the console.

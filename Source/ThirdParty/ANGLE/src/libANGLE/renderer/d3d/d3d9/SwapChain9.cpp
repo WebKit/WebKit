@@ -56,7 +56,7 @@ void SwapChain9::release()
 
     if (mNativeWindow->getNativeWindow())
     {
-        mShareHandle = NULL;
+        mShareHandle = nullptr;
     }
 }
 
@@ -79,17 +79,20 @@ static DWORD convertInterval(EGLint interval)
 #endif
 }
 
-EGLint SwapChain9::resize(int backbufferWidth, int backbufferHeight)
+EGLint SwapChain9::resize(const gl::Context *context, int backbufferWidth, int backbufferHeight)
 {
     // D3D9 does not support resizing swap chains without recreating them
-    return reset(backbufferWidth, backbufferHeight, mSwapInterval);
+    return reset(context, backbufferWidth, backbufferHeight, mSwapInterval);
 }
 
-EGLint SwapChain9::reset(int backbufferWidth, int backbufferHeight, EGLint swapInterval)
+EGLint SwapChain9::reset(const gl::Context *context,
+                         int backbufferWidth,
+                         int backbufferHeight,
+                         EGLint swapInterval)
 {
     IDirect3DDevice9 *device = mRenderer->getDevice();
 
-    if (device == NULL)
+    if (device == nullptr)
     {
         return EGL_BAD_ACCESS;
     }
@@ -116,7 +119,7 @@ EGLint SwapChain9::reset(int backbufferWidth, int backbufferHeight, EGLint swapI
     }
     else
     {
-        HANDLE *pShareHandle = NULL;
+        HANDLE *pShareHandle = nullptr;
         if (!mNativeWindow->getNativeWindow() && mRenderer->getShareHandleSupport())
         {
             pShareHandle = &mShareHandle;
@@ -229,14 +232,14 @@ EGLint SwapChain9::reset(int backbufferWidth, int backbufferHeight, EGLint swapI
 
         result = mSwapChain->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &mBackBuffer);
         ASSERT(SUCCEEDED(result));
-        InvalidateRect(window, NULL, FALSE);
+        InvalidateRect(window, nullptr, FALSE);
     }
 
     if (mDepthBufferFormat != GL_NONE)
     {
-        result = device->CreateDepthStencilSurface(backbufferWidth, backbufferHeight,
-                                                   depthBufferd3dFormatInfo.renderFormat,
-                                                   D3DMULTISAMPLE_NONE, 0, FALSE, &mDepthStencil, NULL);
+        result = device->CreateDepthStencilSurface(
+            backbufferWidth, backbufferHeight, depthBufferd3dFormatInfo.renderFormat,
+            D3DMULTISAMPLE_NONE, 0, FALSE, &mDepthStencil, nullptr);
 
         if (FAILED(result))
         {
@@ -265,7 +268,11 @@ EGLint SwapChain9::reset(int backbufferWidth, int backbufferHeight, EGLint swapI
 }
 
 // parameters should be validated/clamped by caller
-EGLint SwapChain9::swapRect(EGLint x, EGLint y, EGLint width, EGLint height)
+EGLint SwapChain9::swapRect(const gl::Context *context,
+                            EGLint x,
+                            EGLint y,
+                            EGLint width,
+                            EGLint height)
 {
     if (!mSwapChain)
     {
@@ -285,11 +292,11 @@ EGLint SwapChain9::swapRect(EGLint x, EGLint y, EGLint width, EGLint height)
     device->SetRenderState(D3DRS_COLORWRITEENABLE, D3DCOLORWRITEENABLE_ALPHA | D3DCOLORWRITEENABLE_BLUE | D3DCOLORWRITEENABLE_GREEN | D3DCOLORWRITEENABLE_RED);
     device->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
     device->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
-    device->SetPixelShader(NULL);
-    device->SetVertexShader(NULL);
+    device->SetPixelShader(nullptr);
+    device->SetVertexShader(nullptr);
 
     device->SetRenderTarget(0, mBackBuffer);
-    device->SetDepthStencilSurface(NULL);
+    device->SetDepthStencilSurface(nullptr);
 
     device->SetTexture(0, mOffscreenTexture);
     device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
@@ -328,7 +335,7 @@ EGLint SwapChain9::swapRect(EGLint x, EGLint y, EGLint width, EGLint height)
     device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, quad, 6 * sizeof(float));
     mRenderer->endScene();
 
-    device->SetTexture(0, NULL);
+    device->SetTexture(0, nullptr);
 
     RECT rect =
     {
@@ -336,7 +343,7 @@ EGLint SwapChain9::swapRect(EGLint x, EGLint y, EGLint width, EGLint height)
         static_cast<LONG>(x + width), static_cast<LONG>(mHeight - y)
     };
 
-    HRESULT result = mSwapChain->Present(&rect, &rect, NULL, NULL, 0);
+    HRESULT result = mSwapChain->Present(&rect, &rect, nullptr, nullptr, 0);
 
     mRenderer->markAllStateDirty();
 
@@ -413,7 +420,7 @@ void *SwapChain9::getKeyedMutex()
 egl::Error SwapChain9::getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc)
 {
     UNREACHABLE();
-    return egl::Error(EGL_BAD_SURFACE);
+    return egl::EglBadSurface();
 }
 
 void SwapChain9::recreate()
@@ -424,7 +431,7 @@ void SwapChain9::recreate()
     }
 
     IDirect3DDevice9 *device = mRenderer->getDevice();
-    if (device == NULL)
+    if (device == nullptr)
     {
         return;
     }
@@ -433,7 +440,7 @@ void SwapChain9::recreate()
     HRESULT result = mSwapChain->GetPresentParameters(&presentParameters);
     ASSERT(SUCCEEDED(result));
 
-    IDirect3DSwapChain9* newSwapChain = NULL;
+    IDirect3DSwapChain9 *newSwapChain = nullptr;
     result = device->CreateAdditionalSwapChain(&presentParameters, &newSwapChain);
     if (FAILED(result))
     {
@@ -448,4 +455,13 @@ void SwapChain9::recreate()
     ASSERT(SUCCEEDED(result));
 }
 
+RenderTargetD3D *SwapChain9::getColorRenderTarget()
+{
+    return &mColorRenderTarget;
+}
+
+RenderTargetD3D *SwapChain9::getDepthStencilRenderTarget()
+{
+    return &mDepthStencilRenderTarget;
+}
 }

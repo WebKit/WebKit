@@ -21,9 +21,7 @@ def reject_duplicate_keys(pairs):
 
 def load_json(path):
     with open(path) as map_file:
-        file_data = map_file.read()
-        map_file.close()
-        return json.loads(file_data, object_pairs_hook=reject_duplicate_keys)
+        return json.loads(map_file.read(), object_pairs_hook=reject_duplicate_keys)
 
 def load_forward_table(path):
     pairs = load_json(path)

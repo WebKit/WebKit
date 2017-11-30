@@ -138,18 +138,73 @@ TEST(StringUtilsTest, HexStringToUIntBasic)
 
 // Note: ReadFileToString is harder to test
 
-
-TEST(StringUtilsTest, BeginsEndsWith)
+class BeginsWithTest : public testing::Test
 {
-    ASSERT_FALSE(BeginsWith("foo", "bar"));
-    ASSERT_FALSE(BeginsWith("", "foo"));
-    ASSERT_FALSE(BeginsWith("foo", "foobar"));
+  public:
+    BeginsWithTest() : mMode(TestMode::CHAR_ARRAY) {}
 
-    ASSERT_TRUE(BeginsWith("foobar", "foo"));
-    ASSERT_TRUE(BeginsWith("foobar", ""));
-    ASSERT_TRUE(BeginsWith("foo", "foo"));
-    ASSERT_TRUE(BeginsWith("", ""));
+    enum class TestMode
+    {
+        CHAR_ARRAY,
+        STRING_AND_CHAR_ARRAY,
+        STRING
+    };
 
+    void setMode(TestMode mode) { mMode = mode; }
+
+    bool runBeginsWith(const char *str, const char *prefix)
+    {
+        if (mMode == TestMode::CHAR_ARRAY)
+        {
+            return BeginsWith(str, prefix);
+        }
+        if (mMode == TestMode::STRING_AND_CHAR_ARRAY)
+        {
+            return BeginsWith(std::string(str), prefix);
+        }
+        return BeginsWith(std::string(str), std::string(prefix));
+    }
+
+    void runTest()
+    {
+        ASSERT_FALSE(runBeginsWith("foo", "bar"));
+        ASSERT_FALSE(runBeginsWith("", "foo"));
+        ASSERT_FALSE(runBeginsWith("foo", "foobar"));
+
+        ASSERT_TRUE(runBeginsWith("foobar", "foo"));
+        ASSERT_TRUE(runBeginsWith("foobar", ""));
+        ASSERT_TRUE(runBeginsWith("foo", "foo"));
+        ASSERT_TRUE(runBeginsWith("", ""));
+    }
+
+  private:
+    TestMode mMode;
+};
+
+// Test that BeginsWith works correctly for const char * arguments.
+TEST_F(BeginsWithTest, CharArrays)
+{
+    setMode(TestMode::CHAR_ARRAY);
+    runTest();
+}
+
+// Test that BeginsWith works correctly for std::string and const char * arguments.
+TEST_F(BeginsWithTest, StringAndCharArray)
+{
+    setMode(TestMode::STRING_AND_CHAR_ARRAY);
+    runTest();
+}
+
+// Test that BeginsWith works correctly for std::string arguments.
+TEST_F(BeginsWithTest, Strings)
+{
+    setMode(TestMode::STRING);
+    runTest();
+}
+
+// Test that EndsWith works correctly.
+TEST(EndsWithTest, EndsWith)
+{
     ASSERT_FALSE(EndsWith("foo", "bar"));
     ASSERT_FALSE(EndsWith("", "bar"));
     ASSERT_FALSE(EndsWith("foo", "foobar"));
@@ -160,4 +215,4 @@ TEST(StringUtilsTest, BeginsEndsWith)
     ASSERT_TRUE(EndsWith("", ""));
 }
 
-}
+}  // anonymous namespace

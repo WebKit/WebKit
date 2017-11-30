@@ -9,37 +9,6 @@
 namespace gl
 {
 
-inline bool operator==(const VertexBinding &a, const VertexBinding &b)
-{
-    return a.stride == b.stride &&
-           a.divisor == b.divisor &&
-           a.offset == b.offset &&
-           a.buffer.get() == b.buffer.get();
-}
-
-inline bool operator!=(const VertexBinding &a, const VertexBinding &b)
-{
-    return !(a == b);
-}
-
-inline bool operator==(const VertexAttribute &a, const VertexAttribute &b)
-{
-    return a.enabled == b.enabled &&
-           a.type == b.type &&
-           a.size == b.size &&
-           a.normalized == b.normalized &&
-           a.pureInteger == b.pureInteger &&
-           a.pointer == b.pointer &&
-           a.relativeOffset == b.relativeOffset &&
-           a.vertexAttribArrayStride == b.vertexAttribArrayStride &&
-           a.bindingIndex == b.bindingIndex;
-}
-
-inline bool operator!=(const VertexAttribute &a, const VertexAttribute &b)
-{
-    return !(a == b);
-}
-
 inline VertexAttribCurrentValueData::VertexAttribCurrentValueData()
     : Type(GL_FLOAT)
 {

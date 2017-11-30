@@ -21,11 +21,16 @@ class MockRenderbufferImpl : public RenderbufferImpl
 {
   public:
     virtual ~MockRenderbufferImpl() { destructor(); }
-    MOCK_METHOD3(setStorage, gl::Error(GLenum, size_t, size_t));
-    MOCK_METHOD4(setStorageMultisample, gl::Error(size_t, GLenum, size_t, size_t));
-    MOCK_METHOD1(setStorageEGLImageTarget, gl::Error(egl::Image *));
+    MOCK_METHOD4(setStorage, gl::Error(const gl::Context *, GLenum, size_t, size_t));
+    MOCK_METHOD5(setStorageMultisample,
+                 gl::Error(const gl::Context *, size_t, GLenum, size_t, size_t));
+    MOCK_METHOD2(setStorageEGLImageTarget, gl::Error(const gl::Context *, egl::Image *));
 
-    MOCK_METHOD2(getAttachmentRenderTarget, gl::Error(const gl::FramebufferAttachment::Target &, FramebufferAttachmentRenderTarget **));
+    MOCK_METHOD4(getAttachmentRenderTarget,
+                 gl::Error(const gl::Context *,
+                           GLenum,
+                           const gl::ImageIndex &,
+                           FramebufferAttachmentRenderTarget **));
 
     MOCK_METHOD0(destructor, void());
 };

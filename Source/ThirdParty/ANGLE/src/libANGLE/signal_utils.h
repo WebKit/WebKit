@@ -6,6 +6,8 @@
 // signal_utils:
 //   Helper classes for tracking dependent state changes between objects.
 //   These changes are signaled to the dependent class via channels.
+//   See design document:
+//   https://docs.google.com/document/d/15Edfotqg6_l1skTEL8ADQudF_oIdNa7i8Po43k6jMd4/
 
 #ifndef LIBANGLE_SIGNAL_UTILS_H_
 #define LIBANGLE_SIGNAL_UTILS_H_
@@ -41,6 +43,8 @@ class BroadcastChannel final : NonCopyable
     void signal(MessageT... message) const;
 
     void reset();
+
+    bool empty() const;
 
   private:
     // Only the ChannelBinding class should add or remove receivers.
@@ -99,6 +103,12 @@ void BroadcastChannel<ChannelID, MessageT...>::reset()
         receiver->onChannelClosed();
     }
     mReceivers.clear();
+}
+
+template <typename ChannelID, typename... MessageT>
+bool BroadcastChannel<ChannelID, MessageT...>::empty() const
+{
+    return mReceivers.empty();
 }
 
 // The dependent class keeps bindings to the host's BroadcastChannel.

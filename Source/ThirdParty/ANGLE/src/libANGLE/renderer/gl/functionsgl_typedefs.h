@@ -46,6 +46,8 @@ typedef khronos_int64_t  GLint64;
 typedef khronos_uint64_t GLuint64;
 typedef struct __GLsync *GLsync;
 
+// TODO(jmadill): It's likely we can auto-generate this file from gl.xml.
+
 namespace rx
 {
 typedef void (INTERNAL_GL_APIENTRY *GLDEBUGPROC)(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam);
@@ -395,8 +397,19 @@ typedef GLboolean (INTERNAL_GL_APIENTRY *PFNGLISSYNCPROC)(GLsync);
 typedef void (INTERNAL_GL_APIENTRY *PFNGLMULTIDRAWELEMENTSBASEVERTEXPROC)(GLenum, const GLsizei *, GLenum, const GLvoid *const*, GLsizei, const GLint *);
 typedef void (INTERNAL_GL_APIENTRY *PFNGLPROVOKINGVERTEXPROC)(GLenum);
 typedef void (INTERNAL_GL_APIENTRY *PFNGLSAMPLEMASKIPROC)(GLuint, GLbitfield);
-typedef void (INTERNAL_GL_APIENTRY *PFNGLTEXIMAGE2DMULTISAMPLEPROC)(GLenum, GLsizei, GLint, GLsizei, GLsizei, GLboolean);
-typedef void (INTERNAL_GL_APIENTRY *PFNGLTEXIMAGE3DMULTISAMPLEPROC)(GLenum, GLsizei, GLint, GLsizei, GLsizei, GLsizei, GLboolean);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLTEXIMAGE2DMULTISAMPLEPROC)(GLenum,
+                                                                   GLsizei,
+                                                                   GLenum,
+                                                                   GLsizei,
+                                                                   GLsizei,
+                                                                   GLboolean);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLTEXIMAGE3DMULTISAMPLEPROC)(GLenum,
+                                                                   GLsizei,
+                                                                   GLenum,
+                                                                   GLsizei,
+                                                                   GLsizei,
+                                                                   GLsizei,
+                                                                   GLboolean);
 typedef void (INTERNAL_GL_APIENTRY *PFNGLWAITSYNCPROC)(GLsync, GLbitfield, GLuint64);
 
 // 3.3
@@ -647,7 +660,8 @@ typedef void (INTERNAL_GL_APIENTRY *PFNGLBLITNAMEDFRAMEBUFFERPROC)(GLuint, GLuin
 typedef GLenum (INTERNAL_GL_APIENTRY *PFNGLCHECKNAMEDFRAMEBUFFERSTATUSPROC)(GLuint, GLenum);
 typedef void (INTERNAL_GL_APIENTRY *PFNGLCLEARNAMEDBUFFERDATAPROC)(GLuint, GLenum, GLenum, GLenum, const void *);
 typedef void (INTERNAL_GL_APIENTRY *PFNGLCLEARNAMEDBUFFERSUBDATAPROC)(GLuint, GLenum, GLintptr, GLsizeiptr, GLenum, GLenum, const void *);
-typedef void (INTERNAL_GL_APIENTRY *PFNGLCLEARNAMEDFRAMEBUFFERFIPROC)(GLuint, GLenum, const GLfloat, GLint);
+typedef void(
+    INTERNAL_GL_APIENTRY *PFNGLCLEARNAMEDFRAMEBUFFERFIPROC)(GLuint, GLenum, GLint, GLfloat, GLint);
 typedef void (INTERNAL_GL_APIENTRY *PFNGLCLEARNAMEDFRAMEBUFFERFVPROC)(GLuint, GLenum, GLint, const GLfloat *);
 typedef void (INTERNAL_GL_APIENTRY *PFNGLCLEARNAMEDFRAMEBUFFERIVPROC)(GLuint, GLenum, GLint, const GLint *);
 typedef void (INTERNAL_GL_APIENTRY *PFNGLCLEARNAMEDFRAMEBUFFERUIVPROC)(GLuint, GLenum, GLint, const GLuint *);
@@ -753,6 +767,150 @@ typedef void (INTERNAL_GL_APIENTRY *PFNGLVERTEXARRAYELEMENTBUFFERPROC)(GLuint, G
 typedef void (INTERNAL_GL_APIENTRY *PFNGLVERTEXARRAYVERTEXBUFFERPROC)(GLuint, GLuint, GLuint, GLintptr, GLsizei);
 typedef void (INTERNAL_GL_APIENTRY *PFNGLVERTEXARRAYVERTEXBUFFERSPROC)(GLuint, GLuint, GLsizei, const GLuint *, const GLintptr *, const GLsizei *);
 
+// GL_EXT_discard_framebuffer
+typedef void(INTERNAL_GL_APIENTRY *PFNGLDISCARDFRAMEBUFFEREXTPROC)(GLenum target,
+                                                                   GLsizei numAttachments,
+                                                                   const GLenum *attachments);
+
+// GL_OES_EGL_image
+typedef void *GLeglImageOES;
+typedef void(INTERNAL_GL_APIENTRY *PFNGLEGLIMAGETARGETTEXTURE2DOESPROC)(GLenum target,
+                                                                        GLeglImageOES image);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLEGLIMAGETARGETRENDERBUFFERSTORAGEOESPROC)(
+    GLenum target,
+    GLeglImageOES image);
+
+// NV_path_rendering (originally written against 3.2 compatibility profile)
+typedef void(INTERNAL_GL_APIENTRY *PFNGLMATRIXLOADFEXTPROC)(GLenum matrixMode, const GLfloat *m);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLMATRIXLOADFNVPROC)(GLenum matrixMode, const GLfloat *m);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLMATRIXLOADIDENTITYNVPROC)(GLenum matrixMode);
+typedef GLuint(INTERNAL_GL_APIENTRY *PFNGLGENPATHSNVPROC)(GLsizei range);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLDELETEPATHSNVPROC)(GLuint path, GLsizei range);
+typedef GLboolean(INTERNAL_GL_APIENTRY *PFNGLISPATHNVPROC)(GLuint path);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLPATHCOMMANDSNVPROC)(GLuint path,
+                                                            GLsizei numCommands,
+                                                            const GLubyte *commands,
+                                                            GLsizei numCoords,
+                                                            GLenum coordType,
+                                                            const void *coords);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLPATHPARAMETERINVPROC)(GLuint path,
+                                                              GLenum pname,
+                                                              GLint value);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLPATHPARAMETERFNVPROC)(GLuint path,
+                                                              GLenum pname,
+                                                              GLfloat value);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLGETPATHPARAMETERIVNVPROC)(GLuint path,
+                                                                  GLenum pname,
+                                                                  GLint *value);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLGETPATHPARAMETERFVNVPROC)(GLuint path,
+                                                                  GLenum pname,
+                                                                  GLfloat *value);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLPATHSTENCILFUNCNVPROC)(GLenum func, GLint ref, GLuint mask);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLSTENCILFILLPATHNVPROC)(GLuint path,
+                                                               GLenum fillMode,
+                                                               GLuint mask);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLSTENCILSTROKEPATHNVPROC)(GLuint path,
+                                                                 GLint reference,
+                                                                 GLuint mask);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLCOVERFILLPATHNVPROC)(GLuint path, GLenum coverMode);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLCOVERSTROKEPATHNVPROC)(GLuint path, GLenum coverMode);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLSTENCILTHENCOVERFILLPATHNVPROC)(GLuint path,
+                                                                        GLenum fillMode,
+                                                                        GLuint mask,
+                                                                        GLenum coverMode);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLSTENCILTHENCOVERSTROKEPATHNVPROC)(GLuint path,
+                                                                          GLint reference,
+                                                                          GLuint mask,
+                                                                          GLenum coverMode);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLCOVERFILLPATHINSTANCEDNVPROC)(
+    GLsizei numPaths,
+    GLenum pathNameType,
+    const void *paths,
+    GLuint pathBase,
+    GLenum coverMode,
+    GLenum transformType,
+    const GLfloat *transformValues);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLCOVERSTROKEPATHINSTANCEDNVPROC)(
+    GLsizei numPaths,
+    GLenum pathNameType,
+    const void *paths,
+    GLuint pathBase,
+    GLenum coverMode,
+    GLenum transformType,
+    const GLfloat *transformValues);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLSTENCILFILLPATHINSTANCEDNVPROC)(
+    GLsizei numPaths,
+    GLenum pathNameType,
+    const void *paths,
+    GLuint pathBase,
+    GLenum fillMode,
+    GLuint mask,
+    GLenum transformType,
+    const GLfloat *transformValues);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLSTENCILSTROKEPATHINSTANCEDNVPROC)(
+    GLsizei numPaths,
+    GLenum pathNameType,
+    const void *paths,
+    GLuint pathBase,
+    GLint reference,
+    GLuint mask,
+    GLenum transformType,
+    const GLfloat *transformValues);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLSTENCILTHENCOVERFILLPATHINSTANCEDNVPROC)(
+    GLsizei numPaths,
+    GLenum pathNameType,
+    const void *paths,
+    GLuint pathBase,
+    GLenum fillMode,
+    GLuint mask,
+    GLenum coverMode,
+    GLenum transformType,
+    const GLfloat *transformValues);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLSTENCILTHENCOVERSTROKEPATHINSTANCEDNVPROC)(
+    GLsizei numPaths,
+    GLenum pathNameType,
+    const void *paths,
+    GLuint pathBase,
+    GLint reference,
+    GLuint mask,
+    GLenum coverMode,
+    GLenum transformType,
+    const GLfloat *transformValues);
+
+typedef void(INTERNAL_GL_APIENTRY *PFNGLBINDFRAGMENTINPUTLOCATIONNVPROC)(GLuint program,
+                                                                         GLint location,
+                                                                         const GLchar *name);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLPROGRAMPATHFRAGMENTINPUTGENNVPROC)(GLuint program,
+                                                                           GLint location,
+                                                                           GLenum genMode,
+                                                                           GLint components,
+                                                                           const GLfloat *coeffs);
+
+// ES 3.2
+typedef void(INTERNAL_GL_APIENTRY *PFNGLBLENDBARRIERPROC)(void);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLPRIMITIVEBOUNDINGBOXPROC)(GLfloat minX,
+                                                                  GLfloat minY,
+                                                                  GLfloat minZ,
+                                                                  GLfloat minW,
+                                                                  GLfloat maxX,
+                                                                  GLfloat maxY,
+                                                                  GLfloat maxZ,
+                                                                  GLfloat maxW);
+
+// GL_NV_internalformat_sample_query
+typedef void(INTERNAL_GL_APIENTRY *PFNGLGETINTERNALFORMATSAMPLEIVNVPROC)(GLenum target,
+                                                                         GLenum internalformat,
+                                                                         GLsizei samples,
+                                                                         GLenum pname,
+                                                                         GLsizei bufSize,
+                                                                         GLint *params);
+
+// EXT_debug_marker
+typedef void(INTERNAL_GL_APIENTRY *PFNGLINSERTEVENTMARKEREXTPROC)(GLsizei length,
+                                                                  const GLchar *marker);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLPUSHGROUPMARKEREXTPROC)(GLsizei length,
+                                                                const GLchar *marker);
+typedef void(INTERNAL_GL_APIENTRY *PFNGLPOPGROUPMARKEREXTPROC)(void);
 }
 
 #endif // LIBANGLE_RENDERER_GL_FUNCTIONSGLTYPEDEFS_H_

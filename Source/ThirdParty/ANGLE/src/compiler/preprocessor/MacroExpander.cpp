@@ -458,6 +458,10 @@ MacroExpander::MacroContext::MacroContext() : macro(0), index(0)
 {
 }
 
+MacroExpander::MacroContext::~MacroContext()
+{
+}
+
 bool MacroExpander::MacroContext::empty() const
 {
     return index == replacements.size();

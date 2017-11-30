@@ -20,6 +20,7 @@ const char *GetExecutableDirectory();
 const char *GetSharedLibraryExtension();
 Optional<std::string> GetCWD();
 bool SetCWD(const char *dirName);
+bool SetEnvironmentVar(const char *variableName, const char *value);
 
 }  // namespace angle
 

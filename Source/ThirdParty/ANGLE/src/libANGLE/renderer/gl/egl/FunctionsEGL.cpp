@@ -112,10 +112,10 @@ FunctionsEGL::~FunctionsEGL()
 
 egl::Error FunctionsEGL::initialize(EGLNativeDisplayType nativeDisplay)
 {
-#define ANGLE_GET_PROC_OR_ERROR(MEMBER, NAME)                                            \
-    if (!SetPtr(MEMBER, getProcAddress(#NAME)))                                          \
-    {                                                                                    \
-        return egl::Error(EGL_NOT_INITIALIZED, "Could not load EGL entry point " #NAME); \
+#define ANGLE_GET_PROC_OR_ERROR(MEMBER, NAME)                                       \
+    if (!SetPtr(MEMBER, getProcAddress(#NAME)))                                     \
+    {                                                                               \
+        return egl::EglNotInitialized() << "Could not load EGL entry point " #NAME; \
     }
 
     ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->bindAPIPtr, eglBindAPI);
@@ -142,7 +142,7 @@ egl::Error FunctionsEGL::initialize(EGLNativeDisplayType nativeDisplay)
     mEGLDisplay = mFnPtrs->getDisplayPtr(nativeDisplay);
     if (mEGLDisplay == EGL_NO_DISPLAY)
     {
-        return egl::Error(EGL_NOT_INITIALIZED, "Failed to get system egl display");
+        return egl::EglNotInitialized() << "Failed to get system egl display";
     }
     if (mFnPtrs->initializePtr(mEGLDisplay, &majorVersion, &minorVersion) != EGL_TRUE)
     {
@@ -150,7 +150,7 @@ egl::Error FunctionsEGL::initialize(EGLNativeDisplayType nativeDisplay)
     }
     if (majorVersion < 1 || (majorVersion == 1 && minorVersion < 4))
     {
-        return egl::Error(EGL_NOT_INITIALIZED, "Unsupported EGL version (require at least 1.4).");
+        return egl::EglNotInitialized() << "Unsupported EGL version (require at least 1.4).";
     }
     if (mFnPtrs->bindAPIPtr(EGL_OPENGL_ES_API) != EGL_TRUE)
     {
@@ -179,15 +179,15 @@ egl::Error FunctionsEGL::initialize(EGLNativeDisplayType nativeDisplay)
 
 #undef ANGLE_GET_PROC_OR_ERROR
 
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 egl::Error FunctionsEGL::terminate()
 {
-    if (mFnPtrs->terminatePtr(mEGLDisplay) == EGL_TRUE)
+    if (mFnPtrs->terminatePtr == nullptr || mFnPtrs->terminatePtr(mEGLDisplay) == EGL_TRUE)
     {
         mEGLDisplay = nullptr;
-        return egl::Error(EGL_SUCCESS);
+        return egl::NoError();
     }
     return egl::Error(mFnPtrs->getErrorPtr());
 }
@@ -200,7 +200,7 @@ class FunctionsGLEGL : public FunctionsGL
     ~FunctionsGLEGL() override {}
 
   private:
-    void *loadProcAddress(const std::string &function) override
+    void *loadProcAddress(const std::string &function) const override
     {
         return mEGL.getProcAddress(function.c_str());
     }

@@ -3,47 +3,24 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
+// RemoveSwitchFallThrough.h: Remove fall-through from switch statements.
+// Note that it is unsafe to do further AST transformations on the AST generated
+// by this function. It leaves duplicate nodes in the AST making replacements
+// unreliable.
 
 #ifndef COMPILER_TRANSLATOR_REMOVESWITCHFALLTHROUGH_H_
 #define COMPILER_TRANSLATOR_REMOVESWITCHFALLTHROUGH_H_
 
-#include "compiler/translator/IntermNode.h"
-
 namespace sh
 {
 
-class RemoveSwitchFallThrough : public TIntermTraverser
-{
-  public:
-    // When given a statementList from a switch AST node, return an updated
-    // statementList that has fall-through removed.
-    static TIntermBlock *removeFallThrough(TIntermBlock *statementList);
+class TIntermBlock;
+class PerformanceDiagnostics;
 
-  private:
-    RemoveSwitchFallThrough(TIntermBlock *statementList);
-
-    void visitSymbol(TIntermSymbol *node) override;
-    void visitConstantUnion(TIntermConstantUnion *node) override;
-    bool visitBinary(Visit, TIntermBinary *node) override;
-    bool visitUnary(Visit, TIntermUnary *node) override;
-    bool visitTernary(Visit visit, TIntermTernary *node) override;
-    bool visitIfElse(Visit visit, TIntermIfElse *node) override;
-    bool visitSwitch(Visit, TIntermSwitch *node) override;
-    bool visitCase(Visit, TIntermCase *node) override;
-    bool visitAggregate(Visit, TIntermAggregate *node) override;
-    bool visitBlock(Visit, TIntermBlock *node) override;
-    bool visitLoop(Visit, TIntermLoop *node) override;
-    bool visitBranch(Visit, TIntermBranch *node) override;
-
-    void outputSequence(TIntermSequence *sequence, size_t startIndex);
-    void handlePreviousCase();
-
-    TIntermBlock *mStatementList;
-    TIntermBlock *mStatementListOut;
-    bool mLastStatementWasBreak;
-    TIntermBlock *mPreviousCase;
-    std::vector<TIntermBlock *> mCasesSharingBreak;
-};
+// When given a statementList from a switch AST node, return an updated
+// statementList that has fall-through removed.
+TIntermBlock *RemoveSwitchFallThrough(TIntermBlock *statementList,
+                                      PerformanceDiagnostics *perfDiagnostics);
 
 }  // namespace sh
 

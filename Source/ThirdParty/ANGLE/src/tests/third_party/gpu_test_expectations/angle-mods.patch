@@ -1,0 +1,538 @@
+diff -u -rupN gpu_test_expectations_reverted/HowToMakeChanges.md gpu_test_expectations/HowToMakeChanges.md
+--- gpu_test_expectations_reverted/HowToMakeChanges.md	1969-12-31 19:00:00.000000000 -0500
++++ gpu_test_expectations/HowToMakeChanges.md	2016-09-13 10:06:02.000000000 -0400
+@@ -0,0 +1,22 @@
++Because the ```gpu_test_expectations``` directory is based on parts of Chromium's ```gpu/config```
++directory, we want to keep a patch of the changes added to make it compile with ANGLE. This
++will allow us to merge Chromium changes easily in our ```gpu_test_expectations```.
++
++In order to make a change to this directory, do the following:
++
++ * copy the directory somewhere like in ```gpu_test_expectations_reverted```
++ * in ```gpu_test_expectations_reverted``` run ```patch -p 1 -R < angle-mods.patch```
++ * do your changes in ```gpu_test_expectations```
++ * delete angle-mods.patch in both directories
++ * run ```diff -rupN gpu_test_expectations_reverted gpu_test_expectations > angle-mods.patch```
++ * copy ```angle-mods.patch``` in ```gpu_test_expectations```
++
++How to update from Chromium:
++
++ * ```git apply -R angle-mods.patch```, ```git add . -u```, ```git commit```
++ * Copy over Chromium files, ```git add . -u```, ```git commit```
++ * ```git revert HEAD~```
++ * ```rm angle-mods.patch```
++ * ```git diff HEAD~ (`)ls(`) > angle-mods.patch```,```git add angle-mods.patch```, ```git commit --amend```
++ * ```git rebase -i``` to squash the three patches into one.
++
+diff -u -rupN gpu_test_expectations_reverted/angle_config.h gpu_test_expectations/angle_config.h
+--- gpu_test_expectations_reverted/angle_config.h	1969-12-31 19:00:00.000000000 -0500
++++ gpu_test_expectations/angle_config.h	2017-09-11 17:18:07.000000000 -0400
+@@ -0,0 +1,73 @@
++//
++// Copyright 2015 The ANGLE Project Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++//
++// angle_config.h:
++//   Helpers for importing the gpu test expectations package from Chrome.
++//
++
++#ifndef ANGLE_GPU_TEST_EXPECTATIONS_ANGLE_CONFIG_H_
++#define ANGLE_GPU_TEST_EXPECTATIONS_ANGLE_CONFIG_H_
++
++#include <stdint.h>
++
++#include <iostream>
++
++#include "common/debug.h"
++#include "common/string_utils.h"
++
++#define DCHECK_EQ(A,B) ASSERT((A) == (B))
++#define DCHECK_NE(A,B) ASSERT((A) != (B))
++#define DCHECK(X) ASSERT(X)
++#define DLOG(X) std::cerr
++#define LOG(X) std::cerr
++
++#define GPU_EXPORT
++
++// Shim Chromium's types by importing symbols in the correct namespaces
++namespace base
++{
++    using angle::kWhitespaceASCII;
++    using angle::TRIM_WHITESPACE;
++    using angle::KEEP_WHITESPACE;
++    using angle::SPLIT_WANT_ALL;
++    using angle::SPLIT_WANT_NONEMPTY;
++    using angle::SplitString;
++    using angle::SplitStringAlongWhitespace;
++    using angle::HexStringToUInt;
++    using angle::ReadFileToString;
++
++    using TimeDelta = int;
++}  // namespace base
++
++namespace gfx
++{
++    class Size
++    {
++      public:
++        int width() const { return 0; }
++        int height() const { return 0; }
++    };
++}  // namespace gfx
++
++struct DxDiagNode
++{
++};
++
++// TODO(jmadill): other platforms
++// clang-format off
++#if defined(_WIN32) || defined(_WIN64)
++#    define OS_WIN
++#elif defined(ANDROID)
++#    define OS_ANDROID
++#elif defined(__linux__)
++#    define OS_LINUX
++#elif defined(__APPLE__)
++#    define OS_MACOSX
++#else
++#    error "Unsupported platform"
++#endif
++// clang-format on
++
++#endif
+diff -u -rupN gpu_test_expectations_reverted/gpu_info.cc gpu_test_expectations/gpu_info.cc
+--- gpu_test_expectations_reverted/gpu_info.cc	2017-10-30 14:30:27.000000000 -0400
++++ gpu_test_expectations/gpu_info.cc	2017-10-27 13:46:39.000000000 -0400
+@@ -4,7 +4,7 @@
+ 
+ #include <stdint.h>
+ 
+-#include "gpu/config/gpu_info.h"
++#include "gpu_info.h"
+ 
+ namespace {
+ 
+@@ -100,7 +100,7 @@ const GPUInfo::GPUDevice& GPUInfo::activ
+     if (secondary_gpu.active)
+       return secondary_gpu;
+   }
+-  DLOG(ERROR) << "No active GPU found, returning primary GPU.";
++  DLOG(ERROR) << "No active GPU found, returning primary GPU.\n";
+   return gpu;
+ }
+ 
+diff -u -rupN gpu_test_expectations_reverted/gpu_info.h gpu_test_expectations/gpu_info.h
+--- gpu_test_expectations_reverted/gpu_info.h	2017-10-30 14:30:27.000000000 -0400
++++ gpu_test_expectations/gpu_info.h	2017-10-27 13:46:39.000000000 -0400
+@@ -2,8 +2,8 @@
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+ 
+-#ifndef GPU_CONFIG_GPU_INFO_H_
+-#define GPU_CONFIG_GPU_INFO_H_
++#ifndef ANGLE_GPU_CONFIG_GPU_INFO_H_
++#define ANGLE_GPU_CONFIG_GPU_INFO_H_
+ 
+ // Provides access to the GPU information for the system
+ // on which chrome is currently running.
+@@ -13,12 +13,7 @@
+ #include <string>
+ #include <vector>
+ 
+-#include "base/time/time.h"
+-#include "base/version.h"
+-#include "build/build_config.h"
+-#include "gpu/config/dx_diag_node.h"
+-#include "gpu/gpu_export.h"
+-#include "ui/gfx/geometry/size.h"
++#include "angle_config.h"
+ 
+ #if defined(USE_X11)
+ typedef unsigned long VisualID;
+@@ -299,4 +294,4 @@ struct GPU_EXPORT GPUInfo {
+ 
+ }  // namespace gpu
+ 
+-#endif  // GPU_CONFIG_GPU_INFO_H_
++#endif  // ANGLE_GPU_CONFIG_GPU_INFO_H_
+diff -u -rupN gpu_test_expectations_reverted/gpu_test_config.cc gpu_test_expectations/gpu_test_config.cc
+--- gpu_test_expectations_reverted/gpu_test_config.cc	2017-10-30 14:30:27.000000000 -0400
++++ gpu_test_expectations/gpu_test_config.cc	2017-10-30 14:44:19.000000000 -0400
+@@ -2,21 +2,53 @@
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+ 
+-#include "gpu/config/gpu_test_config.h"
++#include "gpu_test_config.h"
+ 
+ #include <stddef.h>
+ #include <stdint.h>
+ 
+-#include "base/logging.h"
+-#include "base/sys_info.h"
+-#include "gpu/config/gpu_info.h"
+-#include "gpu/config/gpu_info_collector.h"
+-#include "gpu/config/gpu_test_expectations_parser.h"
++#include "gpu_info.h"
++#include "gpu_test_expectations_parser.h"
+ 
+-#if defined(OS_WIN)
+-#include "base/win/windows_version.h"
++#if defined(OS_MACOSX)
++#include "gpu_test_config_mac.h"
++#endif
++
++#if !defined(OS_ANDROID)
++#include "gpu_info_util/SystemInfo.h"
+ #endif
+ 
++#if defined(OS_WIN)
++
++namespace base {
++namespace {
++
++// Disable the deprecated function warning for GetVersionEx
++#pragma warning(disable: 4996)
++
++class SysInfo
++{
++  public:
++    static void OperatingSystemVersionNumbers(
++        int32_t *major_version, int32_t *minor_version, int32_t *bugfix_version);
++};
++
++// static
++void SysInfo::OperatingSystemVersionNumbers(
++    int32_t *major_version, int32_t *minor_version, int32_t *bugfix_version)
++{
++  OSVERSIONINFOEX version_info = { sizeof version_info };
++  ::GetVersionEx(reinterpret_cast<OSVERSIONINFO*>(&version_info));
++  *major_version = version_info.dwMajorVersion;
++  *minor_version = version_info.dwMinorVersion;
++  *bugfix_version = version_info.dwBuildNumber;
++}
++
++} // anonymous namespace
++} // namespace base
++
++#endif // defined(OS_WIN)
++
+ namespace gpu {
+ 
+ namespace {
+@@ -46,8 +78,7 @@ GPUTestConfig::OS GetCurrentOS() {
+   int32_t major_version = 0;
+   int32_t minor_version = 0;
+   int32_t bugfix_version = 0;
+-  base::SysInfo::OperatingSystemVersionNumbers(
+-      &major_version, &minor_version, &bugfix_version);
++  angle::GetOperatingSystemVersionNumbers(&major_version, &minor_version, &bugfix_version);
+   if (major_version == 10) {
+     switch (minor_version) {
+       case 5:
+@@ -76,6 +107,26 @@ GPUTestConfig::OS GetCurrentOS() {
+   return GPUTestConfig::kOsUnknown;
+ }
+ 
++#if !defined(OS_ANDROID)
++CollectInfoResult CollectBasicGraphicsInfo(GPUInfo* gpu_info) {
++  angle::SystemInfo info;
++  if (!angle::GetSystemInfo(&info)) {
++    return kCollectInfoFatalFailure;
++  }
++  const angle::GPUDeviceInfo& gpu = info.gpus[info.primaryGPUIndex];
++  gpu_info->gpu.vendor_id = gpu.vendorId;
++  gpu_info->gpu.device_id = gpu.deviceId;
++  gpu_info->gpu.active = true;
++  return kCollectInfoSuccess;
++}
++#else
++CollectInfoResult CollectBasicGraphicsInfo(GPUInfo* gpu_info) {
++  gpu_info->gpu.vendor_id = 0;
++  gpu_info->gpu.device_id = 0;
++  gpu_info->gpu.active = true;
++  return kCollectInfoNonFatalFailure;
++}
++#endif  // defined(OS_ANDROID)
+ }  // namespace anonymous
+ 
+ GPUTestConfig::GPUTestConfig()
+@@ -260,7 +311,7 @@ bool GPUTestBotConfig::LoadCurrentConfig
+     GPUInfo my_gpu_info;
+     CollectInfoResult result = CollectBasicGraphicsInfo(&my_gpu_info);
+     if (result != kCollectInfoSuccess) {
+-      LOG(ERROR) << "Fail to identify GPU";
++      LOG(ERROR) << "Fail to identify GPU\n";
+       DisableGPUInfoValidation();
+       rt = true;
+     } else {
+@@ -271,7 +322,7 @@ bool GPUTestBotConfig::LoadCurrentConfig
+   }
+   set_os(GetCurrentOS());
+   if (os() == kOsUnknown) {
+-    LOG(ERROR) << "Unknown OS";
++    LOG(ERROR) << "Unknown OS\n";
+     rt = false;
+   }
+ #if defined(NDEBUG)
+diff -u -rupN gpu_test_expectations_reverted/gpu_test_config.h gpu_test_expectations/gpu_test_config.h
+--- gpu_test_expectations_reverted/gpu_test_config.h	2017-10-30 14:30:27.000000000 -0400
++++ gpu_test_expectations/gpu_test_config.h	2017-10-27 13:46:39.000000000 -0400
+@@ -2,16 +2,15 @@
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+ 
+-#ifndef GPU_CONFIG_GPU_TEST_CONFIG_H_
+-#define GPU_CONFIG_GPU_TEST_CONFIG_H_
++#ifndef ANGLE_GPU_CONFIG_GPU_TEST_CONFIG_H_
++#define ANGLE_GPU_CONFIG_GPU_TEST_CONFIG_H_
+ 
+ #include <stdint.h>
+ 
+ #include <string>
+ #include <vector>
+ 
+-#include "base/compiler_specific.h"
+-#include "gpu/gpu_export.h"
++#include "angle_config.h"
+ 
+ namespace gpu {
+ 
+@@ -145,5 +144,5 @@ class GPU_EXPORT GPUTestBotConfig : publ
+ 
+ }  // namespace gpu
+ 
+-#endif  // GPU_CONFIG_GPU_TEST_CONFIG_H_
++#endif  // ANGLE_GPU_CONFIG_GPU_TEST_CONFIG_H_
+ 
+diff -u -rupN gpu_test_expectations_reverted/gpu_test_config_mac.h gpu_test_expectations/gpu_test_config_mac.h
+--- gpu_test_expectations_reverted/gpu_test_config_mac.h	1969-12-31 19:00:00.000000000 -0500
++++ gpu_test_expectations/gpu_test_config_mac.h	2017-10-30 14:44:19.000000000 -0400
+@@ -0,0 +1,24 @@
++//
++// Copyright 2015 The ANGLE Project Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++//
++// gpu_test_config_mac.h:
++//   Helper functions for gpu_test_config that have to be compiled in ObjectiveC++
++//
++
++#ifndef ANGLE_GPU_TEST_EXPECTATIONS_GPU_TEST_CONFIG_MAC_H_
++#define ANGLE_GPU_TEST_EXPECTATIONS_GPU_TEST_CONFIG_MAC_H_
++
++#include "gpu_info.h"
++
++namespace angle
++{
++
++void GetOperatingSystemVersionNumbers(int32_t *major_version,
++                                      int32_t *minor_version,
++                                      int32_t *bugfix_version);
++
++} // namespace angle
++
++#endif // ANGLE_GPU_TEST_EXPECTATIONS_GPU_TEST_CONFIG_MAC_H_
+diff -u -rupN gpu_test_expectations_reverted/gpu_test_config_mac.mm gpu_test_expectations/gpu_test_config_mac.mm
+--- gpu_test_expectations_reverted/gpu_test_config_mac.mm	1969-12-31 19:00:00.000000000 -0500
++++ gpu_test_expectations/gpu_test_config_mac.mm	2017-10-30 14:31:32.000000000 -0400
+@@ -0,0 +1,49 @@
++// Copyright (c) 2012 The Chromium Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++// gpu_test_config_mac.mm:
++//   Helper functions for gpu_test_config that have to be compiled in ObjectiveC++
++
++#include "gpu_test_config_mac.h"
++
++#import <Cocoa/Cocoa.h>
++
++// OSX 10.8 deprecates Gestalt but doesn't make the operatingSystemVersion property part of the
++// public interface of NSProcessInfo until 10.10. Add a forward declaration.
++#if !defined(MAC_OS_X_VERSION_10_10) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_10
++@interface NSProcessInfo (YosemiteSDK)
++@property(readonly) NSOperatingSystemVersion operatingSystemVersion;
++@end
++#endif
++
++namespace angle
++{
++
++void GetOperatingSystemVersionNumbers(int32_t *major_version,
++                                      int32_t *minor_version,
++                                      int32_t *bugfix_version)
++{
++#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_8
++    Gestalt(gestaltSystemVersionMajor, reinterpret_cast<SInt32 *>(major_version));
++    Gestalt(gestaltSystemVersionMinor, reinterpret_cast<SInt32 *>(minor_version));
++    Gestalt(gestaltSystemVersionBugFix, reinterpret_cast<SInt32 *>(bugfix_version));
++#else
++    if (@available(macOS 10.10, *))
++    {
++        NSOperatingSystemVersion version = [[NSProcessInfo processInfo] operatingSystemVersion];
++        *major_version                   = version.majorVersion;
++        *minor_version                   = version.minorVersion;
++        *bugfix_version                  = version.patchVersion;
++    }
++    else
++    {
++        // This can only happen on 10.9
++        *major_version  = 10;
++        *minor_version  = 9;
++        *bugfix_version = 0;
++    }
++#endif
++}
++
++} // namespace angle
+diff -u -rupN gpu_test_expectations_reverted/gpu_test_expectations_parser.cc gpu_test_expectations/gpu_test_expectations_parser.cc
+--- gpu_test_expectations_reverted/gpu_test_expectations_parser.cc	2017-10-30 14:30:35.000000000 -0400
++++ gpu_test_expectations/gpu_test_expectations_parser.cc	2017-10-27 13:46:39.000000000 -0400
+@@ -2,17 +2,47 @@
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+ 
+-#include "gpu/config/gpu_test_expectations_parser.h"
++#include "gpu_test_expectations_parser.h"
+ 
+ #include <stddef.h>
+ #include <stdint.h>
+ 
+-#include "base/files/file_util.h"
+-#include "base/logging.h"
+-#include "base/strings/string_number_conversions.h"
+-#include "base/strings/string_split.h"
+-#include "base/strings/string_util.h"
+-#include "base/strings/stringprintf.h"
++#include "angle_config.h"
++#include "common/angleutils.h"
++
++namespace base {
++
++namespace {
++
++bool StartsWithASCII(const std::string& str,
++                     const std::string& search,
++                     bool case_sensitive) {
++  ASSERT(!case_sensitive);
++  return str.compare(0, search.length(), search) == 0;
++}
++
++template <class Char> inline Char ToLowerASCII(Char c) {
++  return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
++}
++
++template<typename Iter>
++static inline bool DoLowerCaseEqualsASCII(Iter a_begin,
++                                          Iter a_end,
++                                          const char* b) {
++  for (Iter it = a_begin; it != a_end; ++it, ++b) {
++    if (!*b || base::ToLowerASCII(*it) != *b)
++      return false;
++  }
++  return *b == 0;
++}
++
++bool LowerCaseEqualsASCII(const std::string& a, const char* b) {
++  return DoLowerCaseEqualsASCII(a.begin(), a.end(), b);
++}
++
++} // anonymous namespace
++
++} // namespace base
+ 
+ namespace gpu {
+ 
+@@ -153,9 +183,9 @@ const char* kErrorMessage[] = {
+ };
+ 
+ Token ParseToken(const std::string& word) {
+-  if (base::StartsWith(word, "//", base::CompareCase::INSENSITIVE_ASCII))
++  if (base::StartsWithASCII(word, "//", false))
+     return kTokenComment;
+-  if (base::StartsWith(word, "0x", base::CompareCase::INSENSITIVE_ASCII))
++  if (base::StartsWithASCII(word, "0x", false))
+     return kConfigGPUDeviceID;
+ 
+   for (int32_t i = 0; i < kNumberOfExactMatchTokens; ++i) {
+@@ -211,8 +241,8 @@ bool GPUTestExpectationsParser::LoadTest
+   return rt;
+ }
+ 
+-bool GPUTestExpectationsParser::LoadTestExpectations(
+-    const base::FilePath& path) {
++bool GPUTestExpectationsParser::LoadTestExpectationsFromFile(
++    const std::string& path) {
+   entries_.clear();
+   error_messages_.clear();
+ 
+@@ -542,20 +572,17 @@ bool GPUTestExpectationsParser::DetectCo
+ 
+ void GPUTestExpectationsParser::PushErrorMessage(
+     const std::string& message, size_t line_number) {
+-  error_messages_.push_back(
+-      base::StringPrintf("Line %d : %s",
+-                         static_cast<int>(line_number), message.c_str()));
++  error_messages_.push_back("Line " + ToString(line_number) +
++                            " : " + message.c_str());
+ }
+ 
+ void GPUTestExpectationsParser::PushErrorMessage(
+     const std::string& message,
+     size_t entry1_line_number,
+     size_t entry2_line_number) {
+-  error_messages_.push_back(
+-      base::StringPrintf("Line %d and %d : %s",
+-                         static_cast<int>(entry1_line_number),
+-                         static_cast<int>(entry2_line_number),
+-                         message.c_str()));
++  error_messages_.push_back("Line " + ToString(entry1_line_number) +
++                            " and " + ToString(entry2_line_number) +
++                            " : " + message.c_str());
+ }
+ 
+ GPUTestExpectationsParser:: GPUTestExpectationEntry::GPUTestExpectationEntry()
+diff -u -rupN gpu_test_expectations_reverted/gpu_test_expectations_parser.h gpu_test_expectations/gpu_test_expectations_parser.h
+--- gpu_test_expectations_reverted/gpu_test_expectations_parser.h	2017-10-30 14:30:35.000000000 -0400
++++ gpu_test_expectations/gpu_test_expectations_parser.h	2017-09-11 17:18:07.000000000 -0400
+@@ -2,8 +2,8 @@
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+ 
+-#ifndef GPU_CONFIG_GPU_TEST_EXPECTATIONS_PARSER_H_
+-#define GPU_CONFIG_GPU_TEST_EXPECTATIONS_PARSER_H_
++#ifndef ANGLE_GPU_CONFIG_GPU_TEST_EXPECTATIONS_PARSER_H_
++#define ANGLE_GPU_CONFIG_GPU_TEST_EXPECTATIONS_PARSER_H_
+ 
+ #include <stddef.h>
+ #include <stdint.h>
+@@ -11,9 +11,8 @@
+ #include <string>
+ #include <vector>
+ 
+-#include "base/files/file_path.h"
+-#include "gpu/config/gpu_test_config.h"
+-#include "gpu/gpu_export.h"
++#include "angle_config.h"
++#include "gpu_test_config.h"
+ 
+ namespace gpu {
+ 
+@@ -34,7 +33,7 @@ class GPU_EXPORT GPUTestExpectationsPars
+   // save all the entries. Otherwise, generate error messages.
+   // Return true if parsing succeeds.
+   bool LoadTestExpectations(const std::string& data);
+-  bool LoadTestExpectations(const base::FilePath& path);
++  bool LoadTestExpectationsFromFile(const std::string& path);
+ 
+   // Query error messages from the last LoadTestExpectations() call.
+   const std::vector<std::string>& GetErrorMessages() const;
+@@ -87,5 +86,5 @@ class GPU_EXPORT GPUTestExpectationsPars
+ 
+ }  // namespace gpu
+ 
+-#endif  // GPU_CONFIG_GPU_TEST_EXPECTATIONS_PARSER_H_
++#endif  // ANGLE_GPU_CONFIG_GPU_TEST_EXPECTATIONS_PARSER_H_
+ 

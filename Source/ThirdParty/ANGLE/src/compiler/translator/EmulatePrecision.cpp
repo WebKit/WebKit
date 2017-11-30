@@ -157,7 +157,7 @@ void RoundingHelperWriter::writeCompoundAssignmentHelper(TInfoSinkBase &sink,
         "}\n";
     sink <<
         lTypeStr << " angle_compound_" << opNameStr << "_frl(inout " << lTypeStr << " x, in " << rTypeStr << " y) {\n"
-        "    x = angle_frl(angle_frm(x) " << opStr << " y);\n"
+        "    x = angle_frl(angle_frl(x) " << opStr << " y);\n"
         "    return x;\n"
         "}\n";
     // clang-format on
@@ -448,7 +448,10 @@ TIntermAggregate *createRoundingFunctionCallNode(TIntermTyped *roundedChild)
         roundFunctionName      = "angle_frl";
     TIntermSequence *arguments = new TIntermSequence();
     arguments->push_back(roundedChild);
-    return createInternalFunctionCallNode(roundedChild->getType(), roundFunctionName, arguments);
+    TIntermAggregate *callNode =
+        createInternalFunctionCallNode(roundedChild->getType(), roundFunctionName, arguments);
+    callNode->getFunctionSymbolInfo()->setKnownToNotHaveSideEffects(true);
+    return callNode;
 }
 
 TIntermAggregate *createCompoundAssignmentFunctionCallNode(TIntermTyped *left,
@@ -464,10 +467,10 @@ TIntermAggregate *createCompoundAssignmentFunctionCallNode(TIntermTyped *left,
     TIntermSequence *arguments = new TIntermSequence();
     arguments->push_back(left);
     arguments->push_back(right);
-    return createInternalFunctionCallNode(TType(EbtVoid), functionName, arguments);
+    return createInternalFunctionCallNode(left->getType(), functionName, arguments);
 }
 
-bool parentUsesResult(TIntermNode *parent, TIntermNode *node)
+bool ParentUsesResult(TIntermNode *parent, TIntermTyped *node)
 {
     if (!parent)
     {
@@ -490,9 +493,27 @@ bool parentUsesResult(TIntermNode *parent, TIntermNode *node)
     return true;
 }
 
+bool ParentConstructorTakesCareOfRounding(TIntermNode *parent, TIntermTyped *node)
+{
+    if (!parent)
+    {
+        return false;
+    }
+    TIntermAggregate *parentConstructor = parent->getAsAggregate();
+    if (!parentConstructor || parentConstructor->getOp() != EOpConstruct)
+    {
+        return false;
+    }
+    if (parentConstructor->getPrecision() != node->getPrecision())
+    {
+        return false;
+    }
+    return canRoundFloat(parentConstructor->getType());
+}
+
 }  // namespace anonymous
 
-EmulatePrecision::EmulatePrecision(const TSymbolTable &symbolTable, int shaderVersion)
+EmulatePrecision::EmulatePrecision(TSymbolTable *symbolTable, int shaderVersion)
     : TLValueTrackingTraverser(true, true, true, symbolTable, shaderVersion),
       mDeclaringVariables(false)
 {
@@ -500,10 +521,13 @@ EmulatePrecision::EmulatePrecision(const TSymbolTable &symbolTable, int shaderVe
 
 void EmulatePrecision::visitSymbol(TIntermSymbol *node)
 {
-    if (canRoundFloat(node->getType()) && !mDeclaringVariables && !isLValueRequiredHere())
+    TIntermNode *parent = getParentNode();
+    if (canRoundFloat(node->getType()) && ParentUsesResult(parent, node) &&
+        !ParentConstructorTakesCareOfRounding(parent, node) && !mDeclaringVariables &&
+        !isLValueRequiredHere())
     {
         TIntermNode *replacement = createRoundingFunctionCallNode(node);
-        queueReplacement(node, replacement, OriginalNode::BECOMES_CHILD);
+        queueReplacement(replacement, OriginalNode::BECOMES_CHILD);
     }
 }
 
@@ -545,12 +569,13 @@ bool EmulatePrecision::visitBinary(Visit visit, TIntermBinary *node)
             case EOpMatrixTimesMatrix:
             {
                 TIntermNode *parent = getParentNode();
-                if (!parentUsesResult(parent, node))
+                if (!ParentUsesResult(parent, node) ||
+                    ParentConstructorTakesCareOfRounding(parent, node))
                 {
                     break;
                 }
                 TIntermNode *replacement = createRoundingFunctionCallNode(node);
-                queueReplacement(node, replacement, OriginalNode::BECOMES_CHILD);
+                queueReplacement(replacement, OriginalNode::BECOMES_CHILD);
                 break;
             }
 
@@ -562,7 +587,7 @@ bool EmulatePrecision::visitBinary(Visit visit, TIntermBinary *node)
                              node->getRight()->getType().getBuiltInTypeNameString()));
                 TIntermNode *replacement = createCompoundAssignmentFunctionCallNode(
                     node->getLeft(), node->getRight(), "add");
-                queueReplacement(node, replacement, OriginalNode::IS_DROPPED);
+                queueReplacement(replacement, OriginalNode::IS_DROPPED);
                 break;
             }
             case EOpSubAssign:
@@ -572,7 +597,7 @@ bool EmulatePrecision::visitBinary(Visit visit, TIntermBinary *node)
                              node->getRight()->getType().getBuiltInTypeNameString()));
                 TIntermNode *replacement = createCompoundAssignmentFunctionCallNode(
                     node->getLeft(), node->getRight(), "sub");
-                queueReplacement(node, replacement, OriginalNode::IS_DROPPED);
+                queueReplacement(replacement, OriginalNode::IS_DROPPED);
                 break;
             }
             case EOpMulAssign:
@@ -586,7 +611,7 @@ bool EmulatePrecision::visitBinary(Visit visit, TIntermBinary *node)
                              node->getRight()->getType().getBuiltInTypeNameString()));
                 TIntermNode *replacement = createCompoundAssignmentFunctionCallNode(
                     node->getLeft(), node->getRight(), "mul");
-                queueReplacement(node, replacement, OriginalNode::IS_DROPPED);
+                queueReplacement(replacement, OriginalNode::IS_DROPPED);
                 break;
             }
             case EOpDivAssign:
@@ -596,7 +621,7 @@ bool EmulatePrecision::visitBinary(Visit visit, TIntermBinary *node)
                              node->getRight()->getType().getBuiltInTypeNameString()));
                 TIntermNode *replacement = createCompoundAssignmentFunctionCallNode(
                     node->getLeft(), node->getRight(), "div");
-                queueReplacement(node, replacement, OriginalNode::IS_DROPPED);
+                queueReplacement(replacement, OriginalNode::IS_DROPPED);
                 break;
             }
             default:
@@ -637,26 +662,31 @@ bool EmulatePrecision::visitFunctionPrototype(Visit visit, TIntermFunctionProtot
 
 bool EmulatePrecision::visitAggregate(Visit visit, TIntermAggregate *node)
 {
-    bool visitChildren = true;
+    if (visit != PreVisit)
+        return true;
     switch (node->getOp())
     {
-        case EOpConstructStruct:
         case EOpCallInternalRawFunction:
         case EOpCallFunctionInAST:
             // User-defined function return values are not rounded. The calculations that produced
             // the value inside the function definition should have been rounded.
             break;
+        case EOpConstruct:
+            if (node->getBasicType() == EbtStruct)
+            {
+                break;
+            }
         default:
             TIntermNode *parent = getParentNode();
-            if (canRoundFloat(node->getType()) && visit == PreVisit &&
-                parentUsesResult(parent, node))
+            if (canRoundFloat(node->getType()) && ParentUsesResult(parent, node) &&
+                !ParentConstructorTakesCareOfRounding(parent, node))
             {
                 TIntermNode *replacement = createRoundingFunctionCallNode(node);
-                queueReplacement(node, replacement, OriginalNode::BECOMES_CHILD);
+                queueReplacement(replacement, OriginalNode::BECOMES_CHILD);
             }
             break;
     }
-    return visitChildren;
+    return true;
 }
 
 bool EmulatePrecision::visitUnary(Visit visit, TIntermUnary *node)
@@ -675,7 +705,7 @@ bool EmulatePrecision::visitUnary(Visit visit, TIntermUnary *node)
             if (canRoundFloat(node->getType()) && visit == PreVisit)
             {
                 TIntermNode *replacement = createRoundingFunctionCallNode(node);
-                queueReplacement(node, replacement, OriginalNode::BECOMES_CHILD);
+                queueReplacement(replacement, OriginalNode::BECOMES_CHILD);
             }
             break;
     }

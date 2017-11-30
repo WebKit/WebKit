@@ -10,12 +10,14 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 #include <limits>
 #include <stdio.h>
 
 #include "common/angleutils.h"
 #include "common/debug.h"
+#include "common/third_party/smhasher/src/PMurHash.h"
 #include "compiler/translator/PoolAlloc.h"
 
 namespace sh
@@ -76,6 +78,23 @@ class TVector : public std::vector<T, pool_allocator<T>>
     TVector(size_type i) : std::vector<T, pool_allocator<T>>(i) {}
 };
 
+template <class K, class D, class H = std::hash<K>, class CMP = std::equal_to<K>>
+class TUnorderedMap : public std::unordered_map<K, D, H, CMP, pool_allocator<std::pair<const K, D>>>
+{
+  public:
+    POOL_ALLOCATOR_NEW_DELETE();
+    typedef pool_allocator<std::pair<const K, D>> tAllocator;
+
+    TUnorderedMap() : std::unordered_map<K, D, H, CMP, tAllocator>() {}
+    // use correct two-stage name lookup supported in gcc 3.4 and above
+    TUnorderedMap(const tAllocator &a)
+        : std::unordered_map<K, D, H, CMP, tAllocator>(
+              std::unordered_map<K, D, H, CMP, tAllocator>::key_compare(),
+              a)
+    {
+    }
+};
+
 template <class K, class D, class CMP = std::less<K>>
 class TMap : public std::map<K, D, CMP, pool_allocator<std::pair<const K, D>>>
 {
@@ -103,5 +122,17 @@ inline TString str(T i)
 }
 
 }  // namespace sh
+
+namespace std
+{
+template <>
+struct hash<sh::TString>
+{
+    size_t operator()(const sh::TString &s) const
+    {
+        return angle::PMurHash32(0, s.data(), static_cast<int>(s.length()));
+    }
+};
+}  // namespace std
 
 #endif  // COMPILER_TRANSLATOR_COMMON_H_

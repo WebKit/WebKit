@@ -41,7 +41,7 @@ bool MemoryBuffer::resize(size_t size)
     }
 
     // Only reallocate if the size has changed.
-    uint8_t *newMemory = reinterpret_cast<uint8_t*>(malloc(sizeof(uint8_t) * size));
+    uint8_t *newMemory = reinterpret_cast<uint8_t *>(malloc(sizeof(uint8_t) * size));
     if (newMemory == nullptr)
     {
         return false;
@@ -60,20 +60,24 @@ bool MemoryBuffer::resize(size_t size)
     return true;
 }
 
-size_t MemoryBuffer::size() const
+void MemoryBuffer::fill(uint8_t datum)
 {
-    return mSize;
+    if (!empty())
+    {
+        std::fill(mData, mData + mSize, datum);
+    }
 }
 
-const uint8_t *MemoryBuffer::data() const
+MemoryBuffer::MemoryBuffer(MemoryBuffer &&other) : MemoryBuffer()
 {
-    return mData;
+    *this = std::move(other);
 }
 
-uint8_t *MemoryBuffer::data()
+MemoryBuffer &MemoryBuffer::operator=(MemoryBuffer &&other)
 {
-    ASSERT(mData);
-    return mData;
+    std::swap(mSize, other.mSize);
+    std::swap(mData, other.mData);
+    return *this;
 }
 
 // ScratchBuffer implementation.
@@ -87,6 +91,20 @@ ScratchBuffer::~ScratchBuffer()
 }
 
 bool ScratchBuffer::get(size_t requestedSize, MemoryBuffer **memoryBufferOut)
+{
+    return getImpl(requestedSize, memoryBufferOut, Optional<uint8_t>::Invalid());
+}
+
+bool ScratchBuffer::getInitialized(size_t requestedSize,
+                                   MemoryBuffer **memoryBufferOut,
+                                   uint8_t initValue)
+{
+    return getImpl(requestedSize, memoryBufferOut, Optional<uint8_t>(initValue));
+}
+
+bool ScratchBuffer::getImpl(size_t requestedSize,
+                            MemoryBuffer **memoryBufferOut,
+                            Optional<uint8_t> initValue)
 {
     if (mScratchMemory.size() == requestedSize)
     {
@@ -108,6 +126,10 @@ bool ScratchBuffer::get(size_t requestedSize, MemoryBuffer **memoryBufferOut)
             return false;
         }
         mResetCounter = mLifetime;
+        if (initValue.valid())
+        {
+            mScratchMemory.fill(initValue.value());
+        }
     }
 
     ASSERT(mScratchMemory.size() >= requestedSize);

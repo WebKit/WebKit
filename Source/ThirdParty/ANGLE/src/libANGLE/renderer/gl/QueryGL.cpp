@@ -245,7 +245,7 @@ class SyncProviderGLSync : public SyncProviderGL
         mSync = mFunctions->fenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
     }
 
-    virtual ~SyncProviderGLSync() { mFunctions->deleteSync(mSync); }
+    ~SyncProviderGLSync() override { mFunctions->deleteSync(mSync); }
 
     gl::Error flush(bool force, bool *finished) override
     {
@@ -278,13 +278,13 @@ class SyncProviderGLQuery : public SyncProviderGL
         : mFunctions(functions), mQuery(0)
     {
         mFunctions->genQueries(1, &mQuery);
-        stateManager->pauseQuery(queryType);
+        ANGLE_SWALLOW_ERR(stateManager->pauseQuery(queryType));
         mFunctions->beginQuery(queryType, mQuery);
         mFunctions->endQuery(queryType);
-        stateManager->resumeQuery(queryType);
+        ANGLE_SWALLOW_ERR(stateManager->resumeQuery(queryType));
     }
 
-    virtual ~SyncProviderGLQuery() { mFunctions->deleteQueries(1, &mQuery); }
+    ~SyncProviderGLQuery() override { mFunctions->deleteQueries(1, &mQuery); }
 
     gl::Error flush(bool force, bool *finished) override
     {
@@ -348,7 +348,7 @@ gl::Error SyncQueryGL::end()
     else
     {
         ASSERT(false);
-        return gl::Error(GL_INVALID_OPERATION, "No native support for sync queries.");
+        return gl::InternalError() << "No native support for sync queries.";
     }
     return gl::NoError();
 }

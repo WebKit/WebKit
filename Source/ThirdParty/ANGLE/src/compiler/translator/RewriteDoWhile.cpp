@@ -9,7 +9,7 @@
 
 #include "compiler/translator/RewriteDoWhile.h"
 
-#include "compiler/translator/IntermNode.h"
+#include "compiler/translator/IntermTraverse.h"
 
 namespace sh
 {
@@ -44,7 +44,9 @@ namespace
 class DoWhileRewriter : public TIntermTraverser
 {
   public:
-    DoWhileRewriter() : TIntermTraverser(true, false, false) {}
+    DoWhileRewriter(TSymbolTable *symbolTable) : TIntermTraverser(true, false, false, symbolTable)
+    {
+    }
 
     bool visitBlock(Visit, TIntermBlock *node) override
     {
@@ -66,6 +68,9 @@ class DoWhileRewriter : public TIntermTraverser
             {
                 continue;
             }
+
+            // Found a loop to change.
+            nextTemporaryId();
 
             TType boolType = TType(EbtBool);
 
@@ -137,8 +142,6 @@ class DoWhileRewriter : public TIntermTraverser
             replacement.push_back(newLoop);
 
             node->replaceChildNodeWithMultiple(loop, replacement);
-
-            nextTemporaryIndex();
         }
         return true;
     }
@@ -146,12 +149,9 @@ class DoWhileRewriter : public TIntermTraverser
 
 }  // anonymous namespace
 
-void RewriteDoWhile(TIntermNode *root, unsigned int *temporaryIndex)
+void RewriteDoWhile(TIntermNode *root, TSymbolTable *symbolTable)
 {
-    ASSERT(temporaryIndex != 0);
-
-    DoWhileRewriter rewriter;
-    rewriter.useTemporaryIndex(temporaryIndex);
+    DoWhileRewriter rewriter(symbolTable);
 
     root->traverse(&rewriter);
 }

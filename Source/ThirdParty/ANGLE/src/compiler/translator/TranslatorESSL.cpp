@@ -8,7 +8,6 @@
 
 #include "compiler/translator/BuiltInFunctionEmulatorGLSL.h"
 #include "compiler/translator/EmulatePrecision.h"
-#include "compiler/translator/PrunePureLiteralStatements.h"
 #include "compiler/translator/RecordConstantPrecision.h"
 #include "compiler/translator/OutputESSL.h"
 #include "angle_gl.h"
@@ -30,12 +29,10 @@ void TranslatorESSL::initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,
     }
 }
 
-void TranslatorESSL::translate(TIntermNode *root, ShCompileOptions compileOptions)
+void TranslatorESSL::translate(TIntermBlock *root,
+                               ShCompileOptions compileOptions,
+                               PerformanceDiagnostics * /*perfDiagnostics*/)
 {
-    // The ESSL output doesn't define a default precision for float, so float literal statements
-    // end up with no precision which is invalid ESSL.
-    PrunePureLiteralStatements(root);
-
     TInfoSinkBase &sink = getInfoSink().obj;
 
     int shaderVer = getShaderVersion();
@@ -56,13 +53,13 @@ void TranslatorESSL::translate(TIntermNode *root, ShCompileOptions compileOption
 
     if (precisionEmulation)
     {
-        EmulatePrecision emulatePrecision(getSymbolTable(), shaderVer);
+        EmulatePrecision emulatePrecision(&getSymbolTable(), shaderVer);
         root->traverse(&emulatePrecision);
         emulatePrecision.updateTree();
         emulatePrecision.writeEmulationHelpers(sink, shaderVer, SH_ESSL_OUTPUT);
     }
 
-    RecordConstantPrecision(root, getTemporaryIndex());
+    RecordConstantPrecision(root, &getSymbolTable());
 
     // Write emulated built-in functions if needed.
     if (!getBuiltInFunctionEmulator().isOutputEmpty())
@@ -71,14 +68,14 @@ void TranslatorESSL::translate(TIntermNode *root, ShCompileOptions compileOption
         if (getShaderType() == GL_FRAGMENT_SHADER)
         {
             sink << "#if defined(GL_FRAGMENT_PRECISION_HIGH)\n"
-                 << "#define webgl_emu_precision highp\n"
+                 << "#define emu_precision highp\n"
                  << "#else\n"
-                 << "#define webgl_emu_precision mediump\n"
+                 << "#define emu_precision mediump\n"
                  << "#endif\n\n";
         }
         else
         {
-            sink << "#define webgl_emu_precision highp\n";
+            sink << "#define emu_precision highp\n";
         }
 
         getBuiltInFunctionEmulator().outputEmulatedFunctions(sink);
@@ -95,9 +92,16 @@ void TranslatorESSL::translate(TIntermNode *root, ShCompileOptions compileOption
              << ", local_size_z=" << localSize[2] << ") in;\n";
     }
 
+    if (getShaderType() == GL_GEOMETRY_SHADER_OES)
+    {
+        WriteGeometryShaderLayoutQualifiers(
+            sink, getGeometryShaderInputPrimitiveType(), getGeometryShaderInvocations(),
+            getGeometryShaderOutputPrimitiveType(), getGeometryShaderMaxVertices());
+    }
+
     // Write translated shader.
     TOutputESSL outputESSL(sink, getArrayIndexClampingStrategy(), getHashFunction(), getNameMap(),
-                           getSymbolTable(), getShaderType(), shaderVer, precisionEmulation,
+                           &getSymbolTable(), getShaderType(), shaderVer, precisionEmulation,
                            compileOptions);
 
     if (compileOptions & SH_TRANSLATE_VIEWID_OVR_TO_UNIFORM)
@@ -120,32 +124,58 @@ void TranslatorESSL::writeExtensionBehavior(ShCompileOptions compileOptions)
 {
     TInfoSinkBase &sink                   = getInfoSink().obj;
     const TExtensionBehavior &extBehavior = getExtensionBehavior();
+    const bool isMultiviewExtEmulated =
+        (compileOptions &
+         (SH_TRANSLATE_VIEWID_OVR_TO_UNIFORM | SH_INITIALIZE_BUILTINS_FOR_INSTANCED_MULTIVIEW |
+          SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER)) != 0u;
     for (TExtensionBehavior::const_iterator iter = extBehavior.begin(); iter != extBehavior.end();
          ++iter)
     {
         if (iter->second != EBhUndefined)
         {
+            const bool isMultiview = (iter->first == TExtension::OVR_multiview);
             if (getResources().NV_shader_framebuffer_fetch &&
-                iter->first == "GL_EXT_shader_framebuffer_fetch")
+                iter->first == TExtension::EXT_shader_framebuffer_fetch)
             {
                 sink << "#extension GL_NV_shader_framebuffer_fetch : "
-                     << getBehaviorString(iter->second) << "\n";
+                     << GetBehaviorString(iter->second) << "\n";
             }
-            else if (getResources().NV_draw_buffers && iter->first == "GL_EXT_draw_buffers")
+            else if (getResources().NV_draw_buffers && iter->first == TExtension::EXT_draw_buffers)
             {
-                sink << "#extension GL_NV_draw_buffers : " << getBehaviorString(iter->second)
+                sink << "#extension GL_NV_draw_buffers : " << GetBehaviorString(iter->second)
                      << "\n";
             }
-            else if (compileOptions & SH_TRANSLATE_VIEWID_OVR_TO_UNIFORM &&
-                     (iter->first == "GL_OVR_multiview" || iter->first == "GL_OVR_multiview2"))
+            else if (isMultiview && isMultiviewExtEmulated)
             {
-                // No output
-                continue;
+                if (getShaderType() == GL_VERTEX_SHADER &&
+                    (compileOptions & SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER) != 0u)
+                {
+                    // Emit the NV_viewport_array2 extension in a vertex shader if the
+                    // SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER option is set and the
+                    // OVR_multiview(2) extension is requested.
+                    sink << "#extension GL_NV_viewport_array2 : require\n";
+                }
+            }
+            else if (iter->first == TExtension::OES_geometry_shader)
+            {
+                sink << "#ifdef GL_OES_geometry_shader\n"
+                     << "#extension GL_OES_geometry_shader : " << GetBehaviorString(iter->second)
+                     << "\n"
+                     << "#elif defined GL_EXT_geometry_shader\n"
+                     << "#extension GL_EXT_geometry_shader : " << GetBehaviorString(iter->second)
+                     << "\n";
+                if (iter->second == EBhRequire)
+                {
+                    sink << "#else\n"
+                         << "#error \"No geometry shader extensions available.\" // Only generate "
+                            "this if the extension is \"required\"\n";
+                }
+                sink << "#endif\n";
             }
             else
             {
-                sink << "#extension " << iter->first << " : " << getBehaviorString(iter->second)
-                     << "\n";
+                sink << "#extension " << GetExtensionNameString(iter->first) << " : "
+                     << GetBehaviorString(iter->second) << "\n";
             }
         }
     }

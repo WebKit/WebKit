@@ -30,7 +30,7 @@ constexpr D3DFORMAT D3DFMT_NULL = ((D3DFORMAT)(MAKEFOURCC('N', 'U', 'L', 'L')));
 // A map to determine the pixel size and mip generation function of a given D3D format
 typedef std::map<D3DFORMAT, D3DFormat> D3D9FormatInfoMap;
 
-constexpr D3DFormat::D3DFormat()
+D3DFormat::D3DFormat()
     : pixelBytes(0),
       blockWidth(0),
       blockHeight(0),
@@ -45,17 +45,17 @@ constexpr D3DFormat::D3DFormat()
 {
 }
 
-constexpr D3DFormat::D3DFormat(GLuint bits,
-                               GLuint blockWidth,
-                               GLuint blockHeight,
-                               GLuint redBits,
-                               GLuint greenBits,
-                               GLuint blueBits,
-                               GLuint alphaBits,
-                               GLuint lumBits,
-                               GLuint depthBits,
-                               GLuint stencilBits,
-                               Format::ID formatID)
+D3DFormat::D3DFormat(GLuint bits,
+                     GLuint blockWidth,
+                     GLuint blockHeight,
+                     GLuint redBits,
+                     GLuint greenBits,
+                     GLuint blueBits,
+                     GLuint alphaBits,
+                     GLuint lumBits,
+                     GLuint depthBits,
+                     GLuint stencilBits,
+                     Format::ID formatID)
     : pixelBytes(bits / 8),
       blockWidth(blockWidth),
       blockHeight(blockHeight),
@@ -74,14 +74,13 @@ const D3DFormat &GetD3DFormatInfo(D3DFORMAT format)
 {
     if (format == D3DFMT_NULL)
     {
-        static constexpr D3DFormat info(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Format::ID::NONE);
+        static const D3DFormat info(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Format::ID::NONE);
         return info;
     }
 
     if (format == D3DFMT_INTZ)
     {
-        static constexpr D3DFormat info(32, 1, 1, 0, 0, 0, 0, 0, 24, 8,
-                                        Format::ID::D24_UNORM_S8_UINT);
+        static const D3DFormat info(32, 1, 1, 0, 0, 0, 0, 0, 24, 8, Format::ID::D24_UNORM_S8_UINT);
         return info;
     }
 
@@ -89,136 +88,129 @@ const D3DFormat &GetD3DFormatInfo(D3DFORMAT format)
     {
         case D3DFMT_UNKNOWN:
         {
-            static constexpr D3DFormat info(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Format::ID::NONE);
+            static const D3DFormat info(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Format::ID::NONE);
             return info;
         }
 
         case D3DFMT_L8:
         {
-            static constexpr D3DFormat info(8, 1, 1, 0, 0, 0, 0, 8, 0, 0, Format::ID::L8_UNORM);
+            static const D3DFormat info(8, 1, 1, 0, 0, 0, 0, 8, 0, 0, Format::ID::L8_UNORM);
             return info;
         }
         case D3DFMT_A8:
         {
-            static constexpr D3DFormat info(8, 1, 1, 0, 0, 0, 8, 0, 0, 0, Format::ID::A8_UNORM);
+            static const D3DFormat info(8, 1, 1, 0, 0, 0, 8, 0, 0, 0, Format::ID::A8_UNORM);
             return info;
         }
         case D3DFMT_A8L8:
         {
-            static constexpr D3DFormat info(16, 1, 1, 0, 0, 0, 8, 8, 0, 0, Format::ID::L8A8_UNORM);
+            static const D3DFormat info(16, 1, 1, 0, 0, 0, 8, 8, 0, 0, Format::ID::L8A8_UNORM);
             return info;
         }
 
         case D3DFMT_A4R4G4B4:
         {
-            static constexpr D3DFormat info(16, 1, 1, 4, 4, 4, 4, 0, 0, 0,
-                                            Format::ID::B4G4R4A4_UNORM);
+            static const D3DFormat info(16, 1, 1, 4, 4, 4, 4, 0, 0, 0, Format::ID::B4G4R4A4_UNORM);
             return info;
         }
         case D3DFMT_A1R5G5B5:
         {
-            static constexpr D3DFormat info(16, 1, 1, 5, 5, 5, 1, 0, 0, 0,
-                                            Format::ID::B5G5R5A1_UNORM);
+            static const D3DFormat info(16, 1, 1, 5, 5, 5, 1, 0, 0, 0, Format::ID::B5G5R5A1_UNORM);
             return info;
         }
         case D3DFMT_R5G6B5:
         {
-            static constexpr D3DFormat info(16, 1, 1, 5, 6, 5, 0, 0, 0, 0,
-                                            Format::ID::R5G6B5_UNORM);
+            static const D3DFormat info(16, 1, 1, 5, 6, 5, 0, 0, 0, 0, Format::ID::R5G6B5_UNORM);
             return info;
         }
         case D3DFMT_X8R8G8B8:
         {
-            static constexpr D3DFormat info(32, 1, 1, 8, 8, 8, 0, 0, 0, 0,
-                                            Format::ID::B8G8R8X8_UNORM);
+            static const D3DFormat info(32, 1, 1, 8, 8, 8, 0, 0, 0, 0, Format::ID::B8G8R8X8_UNORM);
             return info;
         }
         case D3DFMT_A8R8G8B8:
         {
-            static constexpr D3DFormat info(32, 1, 1, 8, 8, 8, 8, 0, 0, 0,
-                                            Format::ID::B8G8R8A8_UNORM);
+            static const D3DFormat info(32, 1, 1, 8, 8, 8, 8, 0, 0, 0, Format::ID::B8G8R8A8_UNORM);
             return info;
         }
 
         case D3DFMT_R16F:
         {
-            static constexpr D3DFormat info(16, 1, 1, 16, 0, 0, 0, 0, 0, 0, Format::ID::R16_FLOAT);
+            static const D3DFormat info(16, 1, 1, 16, 0, 0, 0, 0, 0, 0, Format::ID::R16_FLOAT);
             return info;
         }
         case D3DFMT_G16R16F:
         {
-            static constexpr D3DFormat info(32, 1, 1, 16, 16, 0, 0, 0, 0, 0,
-                                            Format::ID::R16G16_FLOAT);
+            static const D3DFormat info(32, 1, 1, 16, 16, 0, 0, 0, 0, 0, Format::ID::R16G16_FLOAT);
             return info;
         }
         case D3DFMT_A16B16G16R16F:
         {
-            static constexpr D3DFormat info(64, 1, 1, 16, 16, 16, 16, 0, 0, 0,
-                                            Format::ID::R16G16B16A16_FLOAT);
+            static const D3DFormat info(64, 1, 1, 16, 16, 16, 16, 0, 0, 0,
+                                        Format::ID::R16G16B16A16_FLOAT);
             return info;
         }
         case D3DFMT_R32F:
         {
-            static constexpr D3DFormat info(32, 1, 1, 32, 0, 0, 0, 0, 0, 0, Format::ID::R32_FLOAT);
+            static const D3DFormat info(32, 1, 1, 32, 0, 0, 0, 0, 0, 0, Format::ID::R32_FLOAT);
             return info;
         }
         case D3DFMT_G32R32F:
         {
-            static constexpr D3DFormat info(64, 1, 1, 32, 32, 0, 0, 0, 0, 0,
-                                            Format::ID::R32G32_FLOAT);
+            static const D3DFormat info(64, 1, 1, 32, 32, 0, 0, 0, 0, 0, Format::ID::R32G32_FLOAT);
             return info;
         }
         case D3DFMT_A32B32G32R32F:
         {
-            static constexpr D3DFormat info(128, 1, 1, 32, 32, 32, 32, 0, 0, 0,
-                                            Format::ID::R32G32B32A32_FLOAT);
+            static const D3DFormat info(128, 1, 1, 32, 32, 32, 32, 0, 0, 0,
+                                        Format::ID::R32G32B32A32_FLOAT);
             return info;
         }
 
         case D3DFMT_D16:
         {
-            static constexpr D3DFormat info(16, 1, 1, 0, 0, 0, 0, 0, 16, 0, Format::ID::D16_UNORM);
+            static const D3DFormat info(16, 1, 1, 0, 0, 0, 0, 0, 16, 0, Format::ID::D16_UNORM);
             return info;
         }
         case D3DFMT_D24S8:
         {
-            static constexpr D3DFormat info(32, 1, 1, 0, 0, 0, 0, 0, 24, 8,
-                                            Format::ID::D24_UNORM_S8_UINT);
+            static const D3DFormat info(32, 1, 1, 0, 0, 0, 0, 0, 24, 8,
+                                        Format::ID::D24_UNORM_S8_UINT);
             return info;
         }
         case D3DFMT_D24X8:
         {
-            static constexpr D3DFormat info(32, 1, 1, 0, 0, 0, 0, 0, 24, 0, Format::ID::D16_UNORM);
+            static const D3DFormat info(32, 1, 1, 0, 0, 0, 0, 0, 24, 0, Format::ID::D16_UNORM);
             return info;
         }
         case D3DFMT_D32:
         {
-            static constexpr D3DFormat info(32, 1, 1, 0, 0, 0, 0, 0, 32, 0, Format::ID::D32_UNORM);
+            static const D3DFormat info(32, 1, 1, 0, 0, 0, 0, 0, 32, 0, Format::ID::D32_UNORM);
             return info;
         }
 
         case D3DFMT_DXT1:
         {
-            static constexpr D3DFormat info(64, 4, 4, 0, 0, 0, 0, 0, 0, 0,
-                                            Format::ID::BC1_RGBA_UNORM_BLOCK);
+            static const D3DFormat info(64, 4, 4, 0, 0, 0, 0, 0, 0, 0,
+                                        Format::ID::BC1_RGBA_UNORM_BLOCK);
             return info;
         }
         case D3DFMT_DXT3:
         {
-            static constexpr D3DFormat info(128, 4, 4, 0, 0, 0, 0, 0, 0, 0,
-                                            Format::ID::BC2_RGBA_UNORM_BLOCK);
+            static const D3DFormat info(128, 4, 4, 0, 0, 0, 0, 0, 0, 0,
+                                        Format::ID::BC2_RGBA_UNORM_BLOCK);
             return info;
         }
         case D3DFMT_DXT5:
         {
-            static constexpr D3DFormat info(128, 4, 4, 0, 0, 0, 0, 0, 0, 0,
-                                            Format::ID::BC3_RGBA_UNORM_BLOCK);
+            static const D3DFormat info(128, 4, 4, 0, 0, 0, 0, 0, 0, 0,
+                                        Format::ID::BC3_RGBA_UNORM_BLOCK);
             return info;
         }
 
         default:
         {
-            static constexpr D3DFormat defaultInfo;
+            static const D3DFormat defaultInfo;
             return defaultInfo;
         }
     }
@@ -252,7 +244,7 @@ typedef std::map<GLenum, TextureFormat> D3D9FormatMap;
 TextureFormat::TextureFormat()
     : texFormat(D3DFMT_UNKNOWN),
       renderFormat(D3DFMT_UNKNOWN),
-      dataInitializerFunction(NULL),
+      dataInitializerFunction(nullptr),
       loadFunction(UnreachableLoad)
 {
 }
@@ -266,7 +258,8 @@ static inline void InsertD3D9FormatInfo(D3D9FormatMap *map, GLenum internalForma
 
     static const InternalFormatInitialzerMap dataInitializationMap = BuildInternalFormatInitialzerMap();
     InternalFormatInitialzerMap::const_iterator dataInitIter = dataInitializationMap.find(internalFormat);
-    info.dataInitializerFunction = (dataInitIter != dataInitializationMap.end()) ? dataInitIter->second : NULL;
+    info.dataInitializerFunction =
+        (dataInitIter != dataInitializationMap.end()) ? dataInitIter->second : nullptr;
 
     info.loadFunction = loadFunction;
 
@@ -549,7 +542,7 @@ public:
 VertexFormat::VertexFormat()
     : conversionType(VERTEX_CONVERT_NONE),
       outputElementSize(0),
-      copyFunction(NULL),
+      copyFunction(nullptr),
       nativeFormat(D3DDECLTYPE_UNUSED),
       componentType(GL_NONE)
 {

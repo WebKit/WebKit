@@ -19,6 +19,10 @@ struct Workarounds
     // driver may be in an inconsistent state if this happens, and some users of ANGLE rely on this
     // notification to prevent further execution.
     bool loseContextOnOutOfMemory = false;
+
+    // Program binaries don't contain transform feedback varyings on Qualcomm GPUs.
+    // Work around this by disabling the program cache for programs with transform feedback.
+    bool disableProgramCachingForTransformFeedback = false;
 };
 }  // namespace gl
 

@@ -86,4 +86,9 @@ bool SetCWD(const char *dirName)
     return (chdir(dirName) == 0);
 }
 
+bool SetEnvironmentVar(const char *variableName, const char *value)
+{
+    return (setenv(variableName, value, 1) == 0);
+}
+
 }  // namespace angle

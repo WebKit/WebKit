@@ -3,9 +3,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
+// ValidateOutputs validates fragment shader outputs. It checks for conflicting locations,
+// out-of-range locations, that locations are specified when using multiple outputs, and YUV output
+// validity.
 
 #include "compiler/translator/ValidateOutputs.h"
+
+#include <set>
+
 #include "compiler/translator/InfoSink.h"
+#include "compiler/translator/IntermTraverse.h"
 #include "compiler/translator/ParseContext.h"
 
 namespace sh
@@ -18,18 +25,38 @@ void error(const TIntermSymbol &symbol, const char *reason, TDiagnostics *diagno
     diagnostics->error(symbol.getLine(), reason, symbol.getSymbol().c_str());
 }
 
-}  // namespace
+class ValidateOutputsTraverser : public TIntermTraverser
+{
+  public:
+    ValidateOutputsTraverser(const TExtensionBehavior &extBehavior, int maxDrawBuffers);
 
-ValidateOutputs::ValidateOutputs(const TExtensionBehavior &extBehavior, int maxDrawBuffers)
+    void validate(TDiagnostics *diagnostics) const;
+
+    void visitSymbol(TIntermSymbol *) override;
+
+  private:
+    int mMaxDrawBuffers;
+    bool mAllowUnspecifiedOutputLocationResolution;
+    bool mUsesFragDepth;
+
+    typedef std::vector<TIntermSymbol *> OutputVector;
+    OutputVector mOutputs;
+    OutputVector mUnspecifiedLocationOutputs;
+    OutputVector mYuvOutputs;
+    std::set<std::string> mVisitedSymbols;
+};
+
+ValidateOutputsTraverser::ValidateOutputsTraverser(const TExtensionBehavior &extBehavior,
+                                                   int maxDrawBuffers)
     : TIntermTraverser(true, false, false),
       mMaxDrawBuffers(maxDrawBuffers),
       mAllowUnspecifiedOutputLocationResolution(
-          IsExtensionEnabled(extBehavior, "GL_EXT_blend_func_extended")),
+          IsExtensionEnabled(extBehavior, TExtension::EXT_blend_func_extended)),
       mUsesFragDepth(false)
 {
 }
 
-void ValidateOutputs::visitSymbol(TIntermSymbol *symbol)
+void ValidateOutputsTraverser::visitSymbol(TIntermSymbol *symbol)
 {
     TString name         = symbol->getSymbol();
     TQualifier qualifier = symbol->getQualifier();
@@ -60,7 +87,7 @@ void ValidateOutputs::visitSymbol(TIntermSymbol *symbol)
     }
 }
 
-void ValidateOutputs::validate(TDiagnostics *diagnostics) const
+void ValidateOutputsTraverser::validate(TDiagnostics *diagnostics) const
 {
     ASSERT(diagnostics);
     OutputVector validOutputs(mMaxDrawBuffers);
@@ -68,7 +95,9 @@ void ValidateOutputs::validate(TDiagnostics *diagnostics) const
     for (const auto &symbol : mOutputs)
     {
         const TType &type         = symbol->getType();
-        const size_t elementCount = static_cast<size_t>(type.isArray() ? type.getArraySize() : 1u);
+        ASSERT(!type.isArrayOfArrays());  // Disallowed in GLSL ES 3.10 section 4.3.6.
+        const size_t elementCount =
+            static_cast<size_t>(type.isArray() ? type.getOutermostArraySize() : 1u);
         const size_t location     = static_cast<size_t>(type.getLayoutQualifier().location);
 
         ASSERT(type.getLayoutQualifier().location != -1);
@@ -126,6 +155,20 @@ void ValidateOutputs::validate(TDiagnostics *diagnostics) const
                   diagnostics);
         }
     }
+}
+
+}  // anonymous namespace
+
+bool ValidateOutputs(TIntermBlock *root,
+                     const TExtensionBehavior &extBehavior,
+                     int maxDrawBuffers,
+                     TDiagnostics *diagnostics)
+{
+    ValidateOutputsTraverser validateOutputs(extBehavior, maxDrawBuffers);
+    root->traverse(&validateOutputs);
+    int numErrorsBefore = diagnostics->numErrors();
+    validateOutputs.validate(diagnostics);
+    return (diagnostics->numErrors() == numErrorsBefore);
 }
 
 }  // namespace sh

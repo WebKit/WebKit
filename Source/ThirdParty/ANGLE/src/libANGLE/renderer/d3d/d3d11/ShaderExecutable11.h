@@ -11,6 +11,7 @@
 #define LIBANGLE_RENDERER_D3D_D3D11_SHADEREXECUTABLE11_H_
 
 #include "libANGLE/renderer/d3d/ShaderExecutableD3D.h"
+#include "libANGLE/renderer/d3d/d3d11/ResourceManager11.h"
 
 namespace rx
 {
@@ -20,39 +21,42 @@ class UniformStorage11;
 class ShaderExecutable11 : public ShaderExecutableD3D
 {
   public:
-    ShaderExecutable11(const void *function, size_t length, ID3D11PixelShader *executable);
-    ShaderExecutable11(const void *function, size_t length, ID3D11VertexShader *executable, ID3D11GeometryShader *streamOut);
-    ShaderExecutable11(const void *function, size_t length, ID3D11GeometryShader *executable);
-    ShaderExecutable11(const void *function, size_t length, ID3D11ComputeShader *executable);
+    ShaderExecutable11(const void *function, size_t length, d3d11::PixelShader &&executable);
+    ShaderExecutable11(const void *function,
+                       size_t length,
+                       d3d11::VertexShader &&executable,
+                       d3d11::GeometryShader &&streamOut);
+    ShaderExecutable11(const void *function, size_t length, d3d11::GeometryShader &&executable);
+    ShaderExecutable11(const void *function, size_t length, d3d11::ComputeShader &&executable);
 
-    virtual ~ShaderExecutable11();
+    ~ShaderExecutable11() override;
 
-    ID3D11PixelShader *getPixelShader() const;
-    ID3D11VertexShader *getVertexShader() const;
-    ID3D11GeometryShader *getGeometryShader() const;
-    ID3D11GeometryShader *getStreamOutShader() const;
-    ID3D11ComputeShader *getComputeShader() const;
+    const d3d11::PixelShader &getPixelShader() const;
+    const d3d11::VertexShader &getVertexShader() const;
+    const d3d11::GeometryShader &getGeometryShader() const;
+    const d3d11::GeometryShader &getStreamOutShader() const;
+    const d3d11::ComputeShader &getComputeShader() const;
 
   private:
-    ID3D11PixelShader *mPixelExecutable;
-    ID3D11VertexShader *mVertexExecutable;
-    ID3D11GeometryShader *mGeometryExecutable;
-    ID3D11GeometryShader *mStreamOutExecutable;
-    ID3D11ComputeShader *mComputeExecutable;
+    d3d11::PixelShader mPixelExecutable;
+    d3d11::VertexShader mVertexExecutable;
+    d3d11::GeometryShader mGeometryExecutable;
+    d3d11::GeometryShader mStreamOutExecutable;
+    d3d11::ComputeShader mComputeExecutable;
 };
 
 class UniformStorage11 : public UniformStorageD3D
 {
   public:
-    UniformStorage11(Renderer11 *renderer, size_t initialSize);
-    virtual ~UniformStorage11();
+    UniformStorage11(size_t initialSize);
+    ~UniformStorage11() override;
 
-    ID3D11Buffer *getConstantBuffer() const { return mConstantBuffer; }
+    gl::Error getConstantBuffer(Renderer11 *renderer, const d3d11::Buffer **bufferOut);
 
   private:
-    ID3D11Buffer *mConstantBuffer;
+    d3d11::Buffer mConstantBuffer;
 };
 
-}
+}  // namespace rx
 
 #endif // LIBANGLE_RENDERER_D3D_D3D11_SHADEREXECUTABLE11_H_

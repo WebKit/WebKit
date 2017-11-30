@@ -39,7 +39,10 @@ RenderbufferGL::~RenderbufferGL()
     mRenderbufferID = 0;
 }
 
-gl::Error RenderbufferGL::setStorage(GLenum internalformat, size_t width, size_t height)
+gl::Error RenderbufferGL::setStorage(const gl::Context *context,
+                                     GLenum internalformat,
+                                     size_t width,
+                                     size_t height)
 {
     mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mRenderbufferID);
 
@@ -51,7 +54,11 @@ gl::Error RenderbufferGL::setStorage(GLenum internalformat, size_t width, size_t
     return gl::NoError();
 }
 
-gl::Error RenderbufferGL::setStorageMultisample(size_t samples, GLenum internalformat, size_t width, size_t height)
+gl::Error RenderbufferGL::setStorageMultisample(const gl::Context *context,
+                                                size_t samples,
+                                                GLenum internalformat,
+                                                size_t width,
+                                                size_t height)
 {
     mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mRenderbufferID);
 
@@ -72,7 +79,7 @@ gl::Error RenderbufferGL::setStorageMultisample(size_t samples, GLenum internalf
             error = mFunctions->getError();
             if (error == GL_OUT_OF_MEMORY)
             {
-                return gl::Error(GL_OUT_OF_MEMORY);
+                return gl::OutOfMemory();
             }
 
             ASSERT(error == GL_NO_ERROR);
@@ -82,10 +89,10 @@ gl::Error RenderbufferGL::setStorageMultisample(size_t samples, GLenum internalf
     return gl::NoError();
 }
 
-gl::Error RenderbufferGL::setStorageEGLImageTarget(egl::Image *image)
+gl::Error RenderbufferGL::setStorageEGLImageTarget(const gl::Context *context, egl::Image *image)
 {
     UNIMPLEMENTED();
-    return gl::Error(GL_INVALID_OPERATION);
+    return gl::InternalError();
 }
 
 GLuint RenderbufferGL::getRenderbufferID() const
@@ -93,4 +100,11 @@ GLuint RenderbufferGL::getRenderbufferID() const
     return mRenderbufferID;
 }
 
+gl::Error RenderbufferGL::initializeContents(const gl::Context *context,
+                                             const gl::ImageIndex &imageIndex)
+{
+    // TODO(jmadill):
+    return gl::NoError();
 }
+
+}  // namespace rx

@@ -157,6 +157,18 @@ struct R8G8B8A8
     static void average(R8G8B8A8 *dst, const R8G8B8A8 *src1, const R8G8B8A8 *src2);
 };
 
+struct R8G8B8A8SRGB
+{
+    uint8_t R;
+    uint8_t G;
+    uint8_t B;
+    uint8_t A;
+
+    static void readColor(gl::ColorF *dst, const R8G8B8A8SRGB *src);
+    static void writeColor(R8G8B8A8SRGB *dst, const gl::ColorF *src);
+    static void average(R8G8B8A8SRGB *dst, const R8G8B8A8SRGB *src1, const R8G8B8A8SRGB *src2);
+};
+
 struct B8G8R8A8
 {
     uint8_t B;

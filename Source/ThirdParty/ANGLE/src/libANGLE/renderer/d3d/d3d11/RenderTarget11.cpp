@@ -200,21 +200,21 @@ RenderTarget11::RenderTarget11(const d3d11::Format &formatSet) : mFormatSet(form
 
 RenderTarget11::~RenderTarget11()
 {
-    signalDirty();
+    ASSERT(mBroadcastChannel.empty());
 }
 
-void RenderTarget11::signalDirty()
+void RenderTarget11::signalDirty(const gl::Context *context)
 {
-    mBroadcastChannel.signal();
+    mBroadcastChannel.signal(context);
 
     // Clear the list. We can't do this in the receiver because it would mutate during iteration.
     mBroadcastChannel.reset();
 }
 
-TextureRenderTarget11::TextureRenderTarget11(ID3D11RenderTargetView *rtv,
-                                             ID3D11Resource *resource,
-                                             ID3D11ShaderResourceView *srv,
-                                             ID3D11ShaderResourceView *blitSRV,
+TextureRenderTarget11::TextureRenderTarget11(d3d11::RenderTargetView &&rtv,
+                                             const TextureHelper11 &resource,
+                                             const d3d11::SharedSRV &srv,
+                                             const d3d11::SharedSRV &blitSRV,
                                              GLenum internalFormat,
                                              const d3d11::Format &formatSet,
                                              GLsizei width,
@@ -229,41 +229,21 @@ TextureRenderTarget11::TextureRenderTarget11(ID3D11RenderTargetView *rtv,
       mSamples(samples),
       mSubresourceIndex(0),
       mTexture(resource),
-      mRenderTarget(rtv),
-      mDepthStencil(NULL),
-      mShaderResource(srv),
-      mBlitShaderResource(blitSRV)
+      mRenderTarget(std::move(rtv)),
+      mDepthStencil(),
+      mShaderResource(srv.makeCopy()),
+      mBlitShaderResource(blitSRV.makeCopy())
 {
-    if (mTexture)
+    if (mRenderTarget.valid() && mTexture.valid())
     {
-        mTexture->AddRef();
-    }
-
-    if (mRenderTarget)
-    {
-        mRenderTarget->AddRef();
-    }
-
-    if (mShaderResource)
-    {
-        mShaderResource->AddRef();
-    }
-
-    if (mBlitShaderResource)
-    {
-        mBlitShaderResource->AddRef();
-    }
-
-    if (mRenderTarget && mTexture)
-    {
-        mSubresourceIndex = GetRTVSubresourceIndex(mTexture, mRenderTarget);
+        mSubresourceIndex = GetRTVSubresourceIndex(mTexture.get(), mRenderTarget.get());
     }
     ASSERT(mFormatSet.formatID != angle::Format::ID::NONE || mWidth == 0 || mHeight == 0);
 }
 
-TextureRenderTarget11::TextureRenderTarget11(ID3D11DepthStencilView *dsv,
-                                             ID3D11Resource *resource,
-                                             ID3D11ShaderResourceView *srv,
+TextureRenderTarget11::TextureRenderTarget11(d3d11::DepthStencilView &&dsv,
+                                             const TextureHelper11 &resource,
+                                             const d3d11::SharedSRV &srv,
                                              GLenum internalFormat,
                                              const d3d11::Format &formatSet,
                                              GLsizei width,
@@ -278,63 +258,43 @@ TextureRenderTarget11::TextureRenderTarget11(ID3D11DepthStencilView *dsv,
       mSamples(samples),
       mSubresourceIndex(0),
       mTexture(resource),
-      mRenderTarget(NULL),
-      mDepthStencil(dsv),
-      mShaderResource(srv),
-      mBlitShaderResource(nullptr)
+      mRenderTarget(),
+      mDepthStencil(std::move(dsv)),
+      mShaderResource(srv.makeCopy()),
+      mBlitShaderResource()
 {
-    if (mTexture)
+    if (mDepthStencil.valid() && mTexture.valid())
     {
-        mTexture->AddRef();
-    }
-
-    if (mDepthStencil)
-    {
-        mDepthStencil->AddRef();
-    }
-
-    if (mShaderResource)
-    {
-        mShaderResource->AddRef();
-    }
-
-    if (mDepthStencil && mTexture)
-    {
-        mSubresourceIndex = GetDSVSubresourceIndex(mTexture, mDepthStencil);
+        mSubresourceIndex = GetDSVSubresourceIndex(mTexture.get(), mDepthStencil.get());
     }
     ASSERT(mFormatSet.formatID != angle::Format::ID::NONE || mWidth == 0 || mHeight == 0);
 }
 
 TextureRenderTarget11::~TextureRenderTarget11()
 {
-    SafeRelease(mTexture);
-    SafeRelease(mRenderTarget);
-    SafeRelease(mDepthStencil);
-    SafeRelease(mShaderResource);
-    SafeRelease(mBlitShaderResource);
 }
 
-ID3D11Resource *TextureRenderTarget11::getTexture() const
+const TextureHelper11 &TextureRenderTarget11::getTexture() const
 {
     return mTexture;
 }
 
-ID3D11RenderTargetView *TextureRenderTarget11::getRenderTargetView() const
+const d3d11::RenderTargetView &TextureRenderTarget11::getRenderTargetView() const
 {
     return mRenderTarget;
 }
 
-ID3D11DepthStencilView *TextureRenderTarget11::getDepthStencilView() const
+const d3d11::DepthStencilView &TextureRenderTarget11::getDepthStencilView() const
 {
     return mDepthStencil;
 }
 
-ID3D11ShaderResourceView *TextureRenderTarget11::getShaderResourceView() const
+const d3d11::SharedSRV &TextureRenderTarget11::getShaderResourceView() const
 {
     return mShaderResource;
 }
 
-ID3D11ShaderResourceView *TextureRenderTarget11::getBlitShaderResourceView() const
+const d3d11::SharedSRV &TextureRenderTarget11::getBlitShaderResourceView() const
 {
     return mBlitShaderResource;
 }
@@ -405,32 +365,33 @@ GLenum SurfaceRenderTarget11::getInternalFormat() const
 
 GLsizei SurfaceRenderTarget11::getSamples() const
 {
-    // Our EGL surfaces do not support multisampling.
-    return 0;
+    return mSwapChain->getSamples();
 }
 
-ID3D11Resource *SurfaceRenderTarget11::getTexture() const
+const TextureHelper11 &SurfaceRenderTarget11::getTexture() const
 {
     return (mDepth ? mSwapChain->getDepthStencilTexture() : mSwapChain->getOffscreenTexture());
 }
 
-ID3D11RenderTargetView *SurfaceRenderTarget11::getRenderTargetView() const
+const d3d11::RenderTargetView &SurfaceRenderTarget11::getRenderTargetView() const
 {
-    return (mDepth ? NULL : mSwapChain->getRenderTarget());
+    ASSERT(!mDepth);
+    return mSwapChain->getRenderTarget();
 }
 
-ID3D11DepthStencilView *SurfaceRenderTarget11::getDepthStencilView() const
+const d3d11::DepthStencilView &SurfaceRenderTarget11::getDepthStencilView() const
 {
-    return (mDepth ? mSwapChain->getDepthStencil() : NULL);
+    ASSERT(mDepth);
+    return mSwapChain->getDepthStencil();
 }
 
-ID3D11ShaderResourceView *SurfaceRenderTarget11::getShaderResourceView() const
+const d3d11::SharedSRV &SurfaceRenderTarget11::getShaderResourceView() const
 {
     return (mDepth ? mSwapChain->getDepthStencilShaderResource()
                    : mSwapChain->getRenderTargetShaderResource());
 }
 
-ID3D11ShaderResourceView *SurfaceRenderTarget11::getBlitShaderResourceView() const
+const d3d11::SharedSRV &SurfaceRenderTarget11::getBlitShaderResourceView() const
 {
     // The SurfaceRenderTargetView format should always be such that the normal SRV works for blits.
     return getShaderResourceView();

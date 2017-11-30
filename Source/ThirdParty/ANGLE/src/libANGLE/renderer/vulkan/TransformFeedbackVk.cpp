@@ -43,13 +43,13 @@ void TransformFeedbackVk::resume()
     UNIMPLEMENTED();
 }
 
-void TransformFeedbackVk::bindGenericBuffer(const BindingPointer<gl::Buffer> &binding)
+void TransformFeedbackVk::bindGenericBuffer(const gl::BindingPointer<gl::Buffer> &binding)
 {
     UNIMPLEMENTED();
 }
 
 void TransformFeedbackVk::bindIndexedBuffer(size_t index,
-                                            const OffsetBindingPointer<gl::Buffer> &binding)
+                                            const gl::OffsetBindingPointer<gl::Buffer> &binding)
 {
     UNIMPLEMENTED();
 }

@@ -10,6 +10,7 @@
 #ifndef LIBANGLE_RENDERER_D3D_SHADEREXECUTABLED3D_H_
 #define LIBANGLE_RENDERER_D3D_SHADEREXECUTABLED3D_H_
 
+#include "common/MemoryBuffer.h"
 #include "common/debug.h"
 
 #include <vector>
@@ -45,10 +46,12 @@ class UniformStorageD3D : angle::NonCopyable
 
     size_t size() const;
 
+    uint8_t *getDataPointer(unsigned int registerIndex, unsigned int registerElement);
+
   private:
-    size_t mSize;
+    angle::MemoryBuffer mUniformData;
 };
 
-}
+}  // namespace rx
 
 #endif // LIBANGLE_RENDERER_D3D_SHADEREXECUTABLED3D_H_

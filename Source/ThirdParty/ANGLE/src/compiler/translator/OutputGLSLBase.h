@@ -9,8 +9,9 @@
 
 #include <set>
 
-#include "compiler/translator/IntermNode.h"
-#include "compiler/translator/ParseContext.h"
+#include "compiler/translator/HashNames.h"
+#include "compiler/translator/InfoSink.h"
+#include "compiler/translator/IntermTraverse.h"
 
 namespace sh
 {
@@ -22,7 +23,7 @@ class TOutputGLSLBase : public TIntermTraverser
                     ShArrayIndexClampingStrategy clampingStrategy,
                     ShHashFunction64 hashFunction,
                     NameMap &nameMap,
-                    TSymbolTable &symbolTable,
+                    TSymbolTable *symbolTable,
                     sh::GLenum shaderType,
                     int shaderVersion,
                     ShShaderOutput output,
@@ -39,7 +40,7 @@ class TOutputGLSLBase : public TIntermTraverser
     TInfoSinkBase &objSink() { return mObjSink; }
     void writeFloat(TInfoSinkBase &out, float f);
     void writeTriplet(Visit visit, const char *preStr, const char *inStr, const char *postStr);
-    virtual void writeLayoutQualifier(const TType &type);
+    virtual void writeLayoutQualifier(TIntermTyped *variable);
     void writeInvariantQualifier(const TType &type);
     void writeVariableType(const TType &type);
     virtual bool writeVariablePrecision(TPrecision precision) = 0;
@@ -87,7 +88,7 @@ class TOutputGLSLBase : public TIntermTraverser
     const char *mapQualifierToString(TQualifier qialifier);
 
     TInfoSinkBase &mObjSink;
-    bool mDeclaringVariables;
+    bool mDeclaringVariable;
 
     // This set contains all the ids of the structs from every scope.
     std::set<int> mDeclaredStructs;
@@ -99,8 +100,6 @@ class TOutputGLSLBase : public TIntermTraverser
 
     NameMap &mNameMap;
 
-    TSymbolTable &mSymbolTable;
-
     sh::GLenum mShaderType;
 
     const int mShaderVersion;
@@ -109,6 +108,14 @@ class TOutputGLSLBase : public TIntermTraverser
 
     ShCompileOptions mCompileOptions;
 };
+
+void WriteGeometryShaderLayoutQualifiers(TInfoSinkBase &out,
+                                         sh::TLayoutPrimitiveType inputPrimitive,
+                                         int invocations,
+                                         sh::TLayoutPrimitiveType outputPrimitive,
+                                         int maxVertices);
+
+bool NeedsToWriteLayoutQualifier(const TType &type);
 
 }  // namespace sh
 

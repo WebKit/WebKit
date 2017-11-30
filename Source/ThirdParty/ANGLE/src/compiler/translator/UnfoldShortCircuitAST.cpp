@@ -51,7 +51,7 @@ bool UnfoldShortCircuitAST::visitBinary(Visit visit, TIntermBinary *node)
     }
     if (replacement)
     {
-        queueReplacement(node, replacement, OriginalNode::IS_DROPPED);
+        queueReplacement(replacement, OriginalNode::IS_DROPPED);
     }
     return true;
 }

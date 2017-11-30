@@ -35,7 +35,7 @@ class ANGLE_EXPORT OSWindow
     // normalized unsigned byte BGRA array. Note that it will be used to test the window
     // manager's behavior so it needs to take an actual screenshot of the screen and not
     // just grab the pixels of the window. Returns if it was successful.
-    virtual bool takeScreenshot(uint8_t *pixelData) { return false; }
+    virtual bool takeScreenshot(uint8_t *pixelData);
 
     virtual EGLNativeWindowType getNativeWindow() const = 0;
     virtual EGLNativeDisplayType getNativeDisplay() const = 0;

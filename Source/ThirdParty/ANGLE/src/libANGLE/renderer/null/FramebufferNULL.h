@@ -21,48 +21,52 @@ class FramebufferNULL : public FramebufferImpl
     FramebufferNULL(const gl::FramebufferState &state);
     ~FramebufferNULL() override;
 
-    gl::Error discard(size_t count, const GLenum *attachments) override;
-    gl::Error invalidate(size_t count, const GLenum *attachments) override;
-    gl::Error invalidateSub(size_t count,
+    gl::Error discard(const gl::Context *context, size_t count, const GLenum *attachments) override;
+    gl::Error invalidate(const gl::Context *context,
+                         size_t count,
+                         const GLenum *attachments) override;
+    gl::Error invalidateSub(const gl::Context *context,
+                            size_t count,
                             const GLenum *attachments,
                             const gl::Rectangle &area) override;
 
-    gl::Error clear(ContextImpl *context, GLbitfield mask) override;
-    gl::Error clearBufferfv(ContextImpl *context,
+    gl::Error clear(const gl::Context *context, GLbitfield mask) override;
+    gl::Error clearBufferfv(const gl::Context *context,
                             GLenum buffer,
                             GLint drawbuffer,
                             const GLfloat *values) override;
-    gl::Error clearBufferuiv(ContextImpl *context,
+    gl::Error clearBufferuiv(const gl::Context *context,
                              GLenum buffer,
                              GLint drawbuffer,
                              const GLuint *values) override;
-    gl::Error clearBufferiv(ContextImpl *context,
+    gl::Error clearBufferiv(const gl::Context *context,
                             GLenum buffer,
                             GLint drawbuffer,
                             const GLint *values) override;
-    gl::Error clearBufferfi(ContextImpl *context,
+    gl::Error clearBufferfi(const gl::Context *context,
                             GLenum buffer,
                             GLint drawbuffer,
                             GLfloat depth,
                             GLint stencil) override;
 
-    GLenum getImplementationColorReadFormat() const override;
-    GLenum getImplementationColorReadType() const override;
-    gl::Error readPixels(ContextImpl *context,
+    GLenum getImplementationColorReadFormat(const gl::Context *context) const override;
+    GLenum getImplementationColorReadType(const gl::Context *context) const override;
+    gl::Error readPixels(const gl::Context *context,
                          const gl::Rectangle &area,
                          GLenum format,
                          GLenum type,
-                         GLvoid *pixels) const override;
+                         void *pixels) override;
 
-    gl::Error blit(ContextImpl *context,
+    gl::Error blit(const gl::Context *context,
                    const gl::Rectangle &sourceArea,
                    const gl::Rectangle &destArea,
                    GLbitfield mask,
                    GLenum filter) override;
 
-    bool checkStatus() const override;
+    bool checkStatus(const gl::Context *context) const override;
 
-    void syncState(ContextImpl *contextImpl, const gl::Framebuffer::DirtyBits &dirtyBits) override;
+    void syncState(const gl::Context *context,
+                   const gl::Framebuffer::DirtyBits &dirtyBits) override;
 
     gl::Error getSamplePosition(size_t index, GLfloat *xy) const override;
 };

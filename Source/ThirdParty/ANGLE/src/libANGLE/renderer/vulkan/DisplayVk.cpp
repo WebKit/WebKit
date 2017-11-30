@@ -31,7 +31,8 @@ egl::Error DisplayVk::initialize(egl::Display *display)
 {
     ASSERT(!mRenderer && display != nullptr);
     mRenderer.reset(new RendererVk());
-    return mRenderer->initialize(display->getAttributeMap()).toEGL(EGL_NOT_INITIALIZED);
+    return mRenderer->initialize(display->getAttributeMap(), getWSIName())
+        .toEGL(EGL_NOT_INITIALIZED);
 }
 
 void DisplayVk::terminate()
@@ -43,7 +44,7 @@ egl::Error DisplayVk::makeCurrent(egl::Surface * /*drawSurface*/,
                                   egl::Surface * /*readSurface*/,
                                   gl::Context * /*context*/)
 {
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
 egl::ConfigSet DisplayVk::generateConfigs()
@@ -97,16 +98,10 @@ bool DisplayVk::testDeviceLost()
     return false;
 }
 
-egl::Error DisplayVk::restoreLostDevice()
+egl::Error DisplayVk::restoreLostDevice(const egl::Display *display)
 {
     UNIMPLEMENTED();
-    return egl::Error(EGL_BAD_ACCESS);
-}
-
-bool DisplayVk::isValidNativeWindow(EGLNativeWindowType window) const
-{
-    // TODO(jmadill): Cross-platform this.
-    return (IsWindow(window) == TRUE);
+    return egl::EglBadAccess();
 }
 
 std::string DisplayVk::getVendorString() const
@@ -122,21 +117,19 @@ std::string DisplayVk::getVendorString() const
 
 egl::Error DisplayVk::getDevice(DeviceImpl **device)
 {
-    return egl::Error(EGL_SUCCESS);
+    return egl::NoError();
 }
 
-egl::Error DisplayVk::waitClient() const
+egl::Error DisplayVk::waitClient(const gl::Context *context) const
 {
     UNIMPLEMENTED();
-    return egl::Error(EGL_BAD_ACCESS);
+    return egl::EglBadAccess();
 }
 
-egl::Error DisplayVk::waitNative(EGLint engine,
-                                 egl::Surface *drawSurface,
-                                 egl::Surface *readSurface) const
+egl::Error DisplayVk::waitNative(const gl::Context *context, EGLint engine) const
 {
     UNIMPLEMENTED();
-    return egl::Error(EGL_BAD_ACCESS);
+    return egl::EglBadAccess();
 }
 
 SurfaceImpl *DisplayVk::createWindowSurface(const egl::SurfaceState &state,
@@ -146,7 +139,7 @@ SurfaceImpl *DisplayVk::createWindowSurface(const egl::SurfaceState &state,
     EGLint width  = attribs.getAsInt(EGL_WIDTH, 0);
     EGLint height = attribs.getAsInt(EGL_HEIGHT, 0);
 
-    return new WindowSurfaceVk(state, window, width, height);
+    return createWindowSurfaceVk(state, window, width, height);
 }
 
 SurfaceImpl *DisplayVk::createPbufferSurface(const egl::SurfaceState &state,
@@ -177,8 +170,8 @@ SurfaceImpl *DisplayVk::createPixmapSurface(const egl::SurfaceState &state,
     return static_cast<SurfaceImpl *>(0);
 }
 
-ImageImpl *DisplayVk::createImage(EGLenum target,
-                                  egl::ImageSibling *buffer,
+ImageImpl *DisplayVk::createImage(const egl::ImageState &state,
+                                  EGLenum target,
                                   const egl::AttributeMap &attribs)
 {
     UNIMPLEMENTED();

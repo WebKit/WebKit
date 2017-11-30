@@ -11,7 +11,7 @@
 #define COMPILER_TRANSLATOR_UNFOLDSHORTCIRCUITAST_H_
 
 #include "common/angleutils.h"
-#include "compiler/translator/IntermNode.h"
+#include "compiler/translator/IntermTraverse.h"
 
 namespace sh
 {
