@@ -2310,7 +2310,7 @@ static void runInteractive(GlobalObject* globalObject)
             shouldQuit = !line;
             if (!line)
                 break;
-            source = source + line;
+            source = source + String::fromUTF8(line);
             source = source + '\n';
             checkSyntax(vm, makeSource(source, sourceOrigin), error);
             if (!line[0]) {

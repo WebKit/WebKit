@@ -1,3 +1,15 @@
+2017-11-30  Michael Saboff  <msaboff@apple.com>
+
+        Allow JSC command line tool to accept UTF8
+        https://bugs.webkit.org/show_bug.cgi?id=180205
+
+        Reviewed by Keith Miller.
+
+        This unifies the UTF8 handling of interactive mode with that of source files.
+
+        * jsc.cpp:
+        (runInteractive):
+
 2017-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION(r225314): [Linux] More than 2000 jsc tests are failing after r225314
