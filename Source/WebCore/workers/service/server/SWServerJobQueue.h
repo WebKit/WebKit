@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class SWServerJobQueue {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SWServerJobQueue(SWServer&, const ServiceWorkerRegistrationKey&);
     SWServerJobQueue(const SWServerRegistration&) = delete;

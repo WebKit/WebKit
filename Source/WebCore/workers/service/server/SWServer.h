@@ -60,9 +60,11 @@ struct ServiceWorkerFetchResult;
 struct ServiceWorkerRegistrationData;
 
 class SWServer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     class Connection {
-    friend class SWServer;
+        WTF_MAKE_FAST_ALLOCATED;
+        friend class SWServer;
     public:
         WEBCORE_EXPORT virtual ~Connection();
 

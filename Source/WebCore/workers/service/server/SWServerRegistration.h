@@ -44,6 +44,7 @@ struct ExceptionData;
 struct ServiceWorkerFetchResult;
 
 class SWServerRegistration {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     SWServerRegistration(SWServer&, const ServiceWorkerRegistrationKey&, ServiceWorkerUpdateViaCache, const URL& scopeURL, const URL& scriptURL);
     ~SWServerRegistration();
