@@ -1,3 +1,20 @@
+2017-11-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WKAttachmentTests.InPlaceImageAttachmentToggleDisplayMode times out on macOS bots
+        https://bugs.webkit.org/show_bug.cgi?id=180200
+
+        Reviewed by Alexey Proskuryakov.
+
+        Rewrites an API test to avoid checking against the hard-coded platform-dependent size of an attachment element.
+        Instead, first insert the attachment element as an icon and compute its size, and then check that the size of
+        the element is restored to this original value after toggling the display mode to in-place mode and back.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (-[TestWKWebView attachmentElementSize]):
+        (-[TestWKWebView waitForAttachmentElementSizeToBecome:]):
+        (TestWebKitAPI::TEST):
+        (platformAttachmentIconElementSize): Deleted.
+
 2017-11-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Stop building Wayland in JHBuild moduleset

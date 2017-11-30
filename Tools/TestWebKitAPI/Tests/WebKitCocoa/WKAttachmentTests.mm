@@ -34,15 +34,6 @@
 
 #if WK_API_ENABLED
 
-CGSize platformAttachmentIconElementSize()
-{
-#if PLATFORM(IOS)
-    return CGSizeMake(160, 119);
-#else
-    return CGSizeMake(61, 89);
-#endif
-}
-
 @interface AttachmentUpdateObserver : NSObject <WKUIDelegatePrivate>
 @property (nonatomic, readonly) NSArray *inserted;
 @property (nonatomic, readonly) NSArray *removed;
@@ -192,18 +183,22 @@ static _WKAttachmentDisplayOptions *displayOptionsWithMode(_WKAttachmentDisplayM
     return attachment.autorelease();
 }
 
+- (CGSize)attachmentElementSize
+{
+    __block CGSize size;
+    __block bool doneEvaluatingScript = false;
+    [self evaluateJavaScript:@"r = document.querySelector('attachment').getBoundingClientRect(); [r.width, r.height]" completionHandler:^(NSArray<NSNumber *> *sizeResult, NSError *) {
+        size = CGSizeMake(sizeResult.firstObject.floatValue, sizeResult.lastObject.floatValue);
+        doneEvaluatingScript = true;
+    }];
+    TestWebKitAPI::Util::run(&doneEvaluatingScript);
+    return size;
+}
+
 - (void)waitForAttachmentElementSizeToBecome:(CGSize)expectedSize
 {
     while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
-        __block bool doneEvaluatingScript = false;
-        __block BOOL sizeIsEqual = NO;
-        [self evaluateJavaScript:@"r = document.querySelector('attachment').getBoundingClientRect(); [r.width, r.height]" completionHandler:^(NSArray<NSNumber *> *sizeResult, NSError *) {
-            CGSize observedSize { sizeResult.firstObject.floatValue, sizeResult.lastObject.floatValue };
-            sizeIsEqual = CGSizeEqualToSize(expectedSize, observedSize);
-            doneEvaluatingScript = true;
-        }];
-        TestWebKitAPI::Util::run(&doneEvaluatingScript);
-        if (sizeIsEqual)
+        if (CGSizeEqualToSize(self.attachmentElementSize, expectedSize))
             break;
     }
 }
@@ -499,15 +494,19 @@ TEST(WKAttachmentTests, InPlaceImageAttachmentToggleDisplayMode)
     RetainPtr<_WKAttachment> attachment;
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
-        attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"icon.png" contentType:@"image/png" data:imageData.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeInPlace)]);
-        observer.expectAttachmentUpdates(@[], @[attachment.get()]);
+        attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"icon.png" contentType:@"image/png" data:imageData.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeAsIcon)]);
         [attachment expectRequestedDataToBe:imageData.get()];
-        [webView waitForAttachmentElementSizeToBecome:CGSizeMake(215, 174)];
+        observer.expectAttachmentUpdates(@[], @[attachment.get()]);
     }
+    CGSize iconAttachmentSize = [webView attachmentElementSize];
+
+    [attachment synchronouslySetDisplayOptions:displayOptionsWithMode(_WKAttachmentDisplayModeInPlace) error:nil];
+    [attachment expectRequestedDataToBe:imageData.get()];
+    [webView waitForAttachmentElementSizeToBecome:CGSizeMake(215, 174)];
 
     [attachment synchronouslySetDisplayOptions:displayOptionsWithMode(_WKAttachmentDisplayModeAsIcon) error:nil];
     [attachment expectRequestedDataToBe:imageData.get()];
-    [webView waitForAttachmentElementSizeToBecome:platformAttachmentIconElementSize()];
+    [webView waitForAttachmentElementSizeToBecome:iconAttachmentSize];
 
     [attachment synchronouslySetDisplayOptions:displayOptionsWithMode(_WKAttachmentDisplayModeInPlace) error:nil];
     [attachment expectRequestedDataToBe:imageData.get()];
