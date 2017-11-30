@@ -59,7 +59,7 @@ class IDBConnectionProxy;
 
 struct WorkerThreadStartupData;
 
-class WorkerThread : public RefCounted<WorkerThread> {
+class WorkerThread : public ThreadSafeRefCounted<WorkerThread> {
 public:
     virtual ~WorkerThread();
 
