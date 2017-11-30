@@ -1,3 +1,18 @@
+2017-11-28  Filip Pizlo  <fpizlo@apple.com>
+
+        CodeBlockSet::deleteUnmarkedAndUnreferenced can be a little more efficient
+        https://bugs.webkit.org/show_bug.cgi?id=180108
+
+        Reviewed by Saam Barati.
+        
+        This was creating a vector of things to remove and then removing them. I think I remember writing
+        this code, and I did that because at the time we did not have removeAllMatching, which is
+        definitely better. This is a minuscule optimization for Speedometer. I wanted to land this
+        obvious improvement before I did more fundamental things to this code.
+
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::deleteUnmarkedAndUnreferenced):
+
 2017-11-29  Filip Pizlo  <fpizlo@apple.com>
 
         GC should support isoheaps

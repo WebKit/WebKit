@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "JSCInlines.h"
+#include "SuperSampler.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {
@@ -74,19 +75,26 @@ void CodeBlockSet::lastChanceToFinalize(VM& vm)
 void CodeBlockSet::deleteUnmarkedAndUnreferenced(VM& vm, CollectionScope scope)
 {
     LockHolder locker(&m_lock);
-    Vector<CodeBlock*> unmarked;
+    
+    // Destroying a CodeBlock takes about 1us on average in Speedometer. Full collections in Speedometer
+    // usually have ~2000 CodeBlocks to process. The time it takes to process the whole list varies a
+    // lot. In one extreme case I saw 18ms (on my fast MBP).
+    //
+    // FIXME: use Subspace instead of HashSet and adopt Subspace-based constraint solving. This may
+    // remove the need to eagerly destruct CodeBlocks.
+    // https://bugs.webkit.org/show_bug.cgi?id=180089
+    //
+    // FIXME: make CodeBlock::~CodeBlock a lot faster. It seems insane for that to take 1us or more.
+    // https://bugs.webkit.org/show_bug.cgi?id=180109
     
     auto consider = [&] (HashSet<CodeBlock*>& set) {
-        for (CodeBlock* codeBlock : set) {
-            if (Heap::isMarked(codeBlock))
-                continue;;
-            unmarked.append(codeBlock);
-        }
-        for (CodeBlock* codeBlock : unmarked) {
-            codeBlock->structure(vm)->classInfo()->methodTable.destroy(codeBlock);
-            set.remove(codeBlock);
-        }
-        unmarked.shrink(0);
+        set.removeIf(
+            [&] (CodeBlock* codeBlock) -> bool {
+                if (Heap::isMarked(codeBlock))
+                    return false;
+                codeBlock->structure(vm)->classInfo()->methodTable.destroy(codeBlock);
+                return true;
+            });
     };
 
     switch (scope) {
