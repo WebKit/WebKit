@@ -1,3 +1,17 @@
+2017-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use AllocatorIfExists for MaterializeNewObject
+        https://bugs.webkit.org/show_bug.cgi?id=180189
+
+        Reviewed by Filip Pizlo.
+
+        I don't think anyone guarantees this allocator exists at this phase.
+        And nullptr allocator just works here. We change AllocatorForMode
+        to AllocatorIfExists to accept nullptr for allocator.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+
 2017-11-30  Mark Lam  <mark.lam@apple.com>
 
         Let's scramble MacroAssemblerCodePtr values.
