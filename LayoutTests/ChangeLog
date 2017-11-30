@@ -1,3 +1,22 @@
+2017-11-29  Chris Dumez  <cdumez@apple.com>
+
+        LayoutTest http/tests/workers/service/registration-clear-redundant-worker.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=179778
+
+        Reviewed by Youenn Fablet.
+
+        As per the specification [1], when clearing a registration, the registration's workers are first
+        marked as redundant *before* the registration's worker is set to null.
+
+        The test was waiting for the service worker's state to become redundant and then checking in a
+        setTimeout(0) that the registration's worker became null. However, a setTimeout(0) is racy here.
+        To address the issue, we now use setInterval() and wait until the worker becomes null.
+
+        [1] https://w3c.github.io/ServiceWorker/#clear-registration-algorithm
+
+        * TestExpectations:
+        * http/tests/workers/service/registration-clear-redundant-worker.html:
+
 2017-11-29  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorkerClient objects should be reused if there is already one existing with the same identifier

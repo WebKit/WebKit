@@ -15,21 +15,22 @@ navigator.serviceWorker.register("resources/resources/empty-worker.js", { }).the
         }).then(function() {
             waitForState(worker, "redundant").then(function() {
                 log("PASS: Worker became redundant after unregistering");
-                setTimeout(function() {
-                    if (registration.installing)
-                        log("FAIL: registration.installing should be null");
-                    else
-                        log("PASS: registration.installing is null");
+                if (registration.installing)
+                    log("FAIL: registration.installing should be null");
+                else
+                    log("PASS: registration.installing is null");
 
-                    if (registration.waiting)
-                        log("FAIL: registration.waiting should be null");
-                    else
-                        log("PASS: registration.waiting is null");
+                if (registration.waiting)
+                    log("FAIL: registration.waiting should be null");
+                else
+                    log("PASS: registration.waiting is null");
 
+                handle = setInterval(function() {
                     if (registration.active)
-                        log("FAIL: registration.active should be null");
-                    else
-                        log("PASS: registration.active is null");
+                        return;
+
+                    log("PASS: registration.active is null");
+                    clearInterval(handle);
 
                     finishSWTest();
                 }, 0);
