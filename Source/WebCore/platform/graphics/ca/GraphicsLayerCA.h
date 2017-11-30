@@ -157,6 +157,7 @@ public:
         int treeDepth { 0 };
         bool ancestorHadChanges { false };
         bool ancestorHasTransformAnimation { false };
+        bool ancestorStartedOrEndedTransformAnimation { false };
         bool ancestorWithTransformAnimationIntersectsCoverageRect { false };
         bool ancestorIsViewportConstrained { false };
     };

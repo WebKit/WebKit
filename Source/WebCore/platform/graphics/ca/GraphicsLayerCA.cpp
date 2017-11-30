@@ -1462,6 +1462,9 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
     }
     setVisibleAndCoverageRects(rects, m_isViewportConstrained || commitState.ancestorIsViewportConstrained);
 
+    if (commitState.ancestorStartedOrEndedTransformAnimation)
+        addUncommittedChanges(CoverageRectChanged);
+
 #ifdef VISIBLE_TILE_WASH
     // Use having a transform as a key to making the tile wash layer. If every layer gets a wash,
     // they start to obscure useful information.
@@ -1501,9 +1504,18 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
     if (affectedByPageScale)
         baseRelativePosition += m_position;
 
+    bool wasRunningTransformAnimation = isRunningTransformAnimation();
+
     commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition);
 
-    if (isRunningTransformAnimation()) {
+    bool nowRunningTransformAnimation = wasRunningTransformAnimation;
+    if (m_uncommittedChanges & AnimationChanged)
+        nowRunningTransformAnimation = isRunningTransformAnimation();
+
+    if (wasRunningTransformAnimation != nowRunningTransformAnimation)
+        childCommitState.ancestorStartedOrEndedTransformAnimation = true;
+
+    if (nowRunningTransformAnimation) {
         childCommitState.ancestorHasTransformAnimation = true;
         if (m_intersectsCoverageRect)
             childCommitState.ancestorWithTransformAnimationIntersectsCoverageRect = true;
