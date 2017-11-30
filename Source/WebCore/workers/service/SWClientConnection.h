@@ -30,6 +30,7 @@
 #include "DocumentIdentifier.h"
 #include "ServiceWorkerJob.h"
 #include "ServiceWorkerTypes.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
 

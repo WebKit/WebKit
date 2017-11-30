@@ -1151,6 +1151,7 @@
 		46EB37CC1F97CCD200B65523 /* JSServiceWorkerClients.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EB37C51F97CCCB00B65523 /* JSServiceWorkerClients.h */; };
 		46EB37CE1F97CCD200B65523 /* JSServiceWorkerWindowClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EB37C71F97CCCB00B65523 /* JSServiceWorkerWindowClient.h */; };
 		46EBEA021B7D4D6500BE4941 /* CollectionTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EBEA011B7D4D5D00BE4941 /* CollectionTraversal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		46ECB6381FD0A3C80088E5AD /* SWClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 46ECB6371FD0A3BB0088E5AD /* SWClientConnection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46EF142A1F97B7D800C2A524 /* ServiceWorkerWindowClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EF14201F97B7BA00C2A524 /* ServiceWorkerWindowClient.h */; };
 		46EF142C1F97B7D800C2A524 /* ServiceWorkerClients.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EF14221F97B7BA00C2A524 /* ServiceWorkerClients.h */; };
 		46EF142D1F97B7D800C2A524 /* ServiceWorkerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EF14241F97B7BA00C2A524 /* ServiceWorkerClient.h */; };
@@ -1340,7 +1341,6 @@
 		5174E20A10A1F44F00F95E6F /* PopStateEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5174E20810A1F44F00F95E6F /* PopStateEvent.h */; };
 		51771DFF1BDB485000CAE8E4 /* MemoryObjectStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51771DFD1BDB475600CAE8E4 /* MemoryObjectStore.h */; };
 		517A52F01F47535B00DCDC0A /* SWServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A52EE1F47535900DCDC0A /* SWServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517A531D1F4B53B100DCDC0A /* SWClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A52FF1F478CCE00DCDC0A /* SWClientConnection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517A53291F4B90B900DCDC0A /* ServiceWorkerRegistrationKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A53261F4B90B200DCDC0A /* ServiceWorkerRegistrationKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517A53461F50C17F00DCDC0A /* SWServerWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A53421F50C16100DCDC0A /* SWServerWorker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517A534F1F54A8BA00DCDC0A /* ServiceWorkerRegistrationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A534C1F549D4A00DCDC0A /* ServiceWorkerRegistrationData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7278,6 +7278,8 @@
 		46EB37C61F97CCCB00B65523 /* JSServiceWorkerWindowClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSServiceWorkerWindowClient.cpp; sourceTree = "<group>"; };
 		46EB37C71F97CCCB00B65523 /* JSServiceWorkerWindowClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSServiceWorkerWindowClient.h; sourceTree = "<group>"; };
 		46EBEA011B7D4D5D00BE4941 /* CollectionTraversal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionTraversal.h; sourceTree = "<group>"; };
+		46ECB6361FD0A3BB0088E5AD /* SWClientConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWClientConnection.cpp; sourceTree = "<group>"; };
+		46ECB6371FD0A3BB0088E5AD /* SWClientConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWClientConnection.h; sourceTree = "<group>"; };
 		46EF14201F97B7BA00C2A524 /* ServiceWorkerWindowClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerWindowClient.h; sourceTree = "<group>"; };
 		46EF14211F97B7BA00C2A524 /* ServiceWorkerClients.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerClients.cpp; sourceTree = "<group>"; };
 		46EF14221F97B7BA00C2A524 /* ServiceWorkerClients.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerClients.h; sourceTree = "<group>"; };
@@ -7679,8 +7681,6 @@
 		51771DFD1BDB475600CAE8E4 /* MemoryObjectStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryObjectStore.h; sourceTree = "<group>"; };
 		517A52EE1F47535900DCDC0A /* SWServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWServer.h; sourceTree = "<group>"; };
 		517A52EF1F47535900DCDC0A /* SWServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWServer.cpp; sourceTree = "<group>"; };
-		517A52FE1F478CCE00DCDC0A /* SWClientConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWClientConnection.cpp; sourceTree = "<group>"; };
-		517A52FF1F478CCE00DCDC0A /* SWClientConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWClientConnection.h; sourceTree = "<group>"; };
 		517A53241F4B904A00DCDC0A /* ServiceWorkerJobData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerJobData.cpp; sourceTree = "<group>"; };
 		517A53261F4B90B200DCDC0A /* ServiceWorkerRegistrationKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerRegistrationKey.h; sourceTree = "<group>"; };
 		517A53271F4B90B200DCDC0A /* ServiceWorkerRegistrationKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerRegistrationKey.cpp; sourceTree = "<group>"; };
@@ -17135,8 +17135,6 @@
 		517A52EC1F47532D00DCDC0A /* server */ = {
 			isa = PBXGroup;
 			children = (
-				517A52FE1F478CCE00DCDC0A /* SWClientConnection.cpp */,
-				517A52FF1F478CCE00DCDC0A /* SWClientConnection.h */,
 				4151E5B91FBA4C7600E47E2D /* SWOriginStore.cpp */,
 				4151E5B71FBA4C7500E47E2D /* SWOriginStore.h */,
 				517A52EF1F47535900DCDC0A /* SWServer.cpp */,
@@ -17329,6 +17327,8 @@
 				46EF14251F97B7BA00C2A524 /* ServiceWorkerWindowClient.cpp */,
 				46EF14201F97B7BA00C2A524 /* ServiceWorkerWindowClient.h */,
 				46EF14261F97B7BA00C2A524 /* ServiceWorkerWindowClient.idl */,
+				46ECB6361FD0A3BB0088E5AD /* SWClientConnection.cpp */,
+				46ECB6371FD0A3BB0088E5AD /* SWClientConnection.h */,
 			);
 			path = service;
 			sourceTree = "<group>";
@@ -27198,7 +27198,6 @@
 				B51A2F3F17D7D3AE0072517A /* ImageQualityController.h in Headers */,
 				49291E4B134172C800E753DE /* ImageRenderingMode.h in Headers */,
 				7C193BC11F5E0EED0088F3E6 /* ImageSmoothingQuality.h in Headers */,
-				B27535710B053814002CE64F /* ImageSource.h in Headers */,
 				4B3480940EEF50D400AC1B41 /* ImageSourceCG.h in Headers */,
 				5550CB421E955E3C00111AA0 /* ImageTypes.h in Headers */,
 				26F756B31B3B66F70005DD79 /* ImmutableNFA.h in Headers */,
@@ -29419,7 +29418,7 @@
 				8485228B1190173C006EDC7F /* SVGVKernElement.h in Headers */,
 				B2227AF60D00BF220071B782 /* SVGZoomAndPan.h in Headers */,
 				B2E4EC980D00C22B00432643 /* SVGZoomEvent.h in Headers */,
-				517A531D1F4B53B100DCDC0A /* SWClientConnection.h in Headers */,
+				46ECB6381FD0A3C80088E5AD /* SWClientConnection.h in Headers */,
 				46658DC91FA24B8700F7DD54 /* SWContextManager.h in Headers */,
 				4151E5BB1FBA4C7A00E47E2D /* SWOriginStore.h in Headers */,
 				517A52F01F47535B00DCDC0A /* SWServer.h in Headers */,

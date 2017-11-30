@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "Event.h"
 #include "EventNames.h"
 #include "Exception.h"
 #include "IDLTypes.h"

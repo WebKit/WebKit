@@ -29,7 +29,6 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "SecurityOrigin.h"
-#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

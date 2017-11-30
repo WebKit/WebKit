@@ -2175,6 +2175,7 @@ workers/WorkerThread.cpp
 workers/service/ExtendableEvent.cpp
 workers/service/ExtendableMessageEvent.cpp
 workers/service/FetchEvent.cpp
+workers/service/SWClientConnection.cpp
 workers/service/ServiceWorker.cpp
 workers/service/ServiceWorkerClient.cpp
 workers/service/ServiceWorkerClientData.cpp
@@ -2199,7 +2200,6 @@ workers/service/context/ServiceWorkerThread.cpp
 workers/service/context/ServiceWorkerThreadProxy.cpp
 workers/service/context/SWContextManager.cpp
 
-workers/service/server/SWClientConnection.cpp
 workers/service/server/SWOriginStore.cpp
 workers/service/server/SWServer.cpp
 workers/service/server/SWServerJobQueue.cpp
