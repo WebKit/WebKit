@@ -38,6 +38,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFullScreen);
 
 class RenderFullScreenPlaceholder final : public RenderBlockFlow {
+    WTF_MAKE_ISO_ALLOCATED(RenderFullScreenPlaceholder);
 public:
     RenderFullScreenPlaceholder(Document& document, RenderStyle&& style)
         : RenderBlockFlow(document, WTFMove(style))
@@ -47,6 +48,8 @@ public:
 private:
     bool isRenderFullScreenPlaceholder() const override { return true; }
 };
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFullScreenPlaceholder);
 
 RenderFullScreen::RenderFullScreen(Document& document, RenderStyle&& style)
     : RenderFlexibleBox(document, WTFMove(style))
