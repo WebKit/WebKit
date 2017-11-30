@@ -1,3 +1,16 @@
+2017-11-30  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Enable all wpt touch-events tests.
+        https://bugs.webkit.org/show_bug.cgi?id=180198
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/touch-events/create-touch-touchlist-expected.txt: Added.
+        * web-platform-tests/touch-events/historical-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/touch-events/historical-expected.txt.
+        * web-platform-tests/touch-events/touch-globaleventhandler-interface-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/touch-events/touch-globaleventhandler-interface-expected.txt.
+        * web-platform-tests/touch-events/touch-retargeting-expected.txt:
+        * web-platform-tests/touch-events/touch-touchevent-constructor-expected.txt:
+
 2017-11-29  Chris Dumez  <cdumez@apple.com>
 
         Start exposing self.registration inside service workers

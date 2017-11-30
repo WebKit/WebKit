@@ -3077,10 +3077,7 @@ webkit.org/b/163829 svg/W3C-SVG-1.1/fonts-desc-02-t.svg [ Failure ]
 webkit.org/b/163831 svg/custom/acid3-test-77.html [ Failure ]
 webkit.org/b/163832 svg/custom/filter-update-different-root.html [ ImageOnlyFailure ]
 
-webkit.org/b/163857 imported/w3c/web-platform-tests/touch-events/create-touch-touchlist.html [ Skip ]
 webkit.org/b/163858 fast/events/touch/touch-constructor.html [ Skip ]
-webkit.org/b/163858 imported/w3c/web-platform-tests/touch-events/touch-retargeting.html [ Skip ]
-webkit.org/b/163858 imported/w3c/web-platform-tests/touch-events/touch-touchevent-constructor.html [ Skip ]
 
 webkit.org/b/163971 fast/borders/border-image-space.html [ ImageOnlyFailure ]
 
