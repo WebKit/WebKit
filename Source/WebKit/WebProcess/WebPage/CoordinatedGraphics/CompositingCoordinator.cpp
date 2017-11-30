@@ -35,6 +35,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/InspectorController.h>
 #include <WebCore/MainFrame.h>
+#include <WebCore/NicosiaPaintingEngine.h>
 #include <WebCore/Page.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/SetForScope.h>
@@ -50,6 +51,7 @@ namespace WebKit {
 CompositingCoordinator::CompositingCoordinator(Page* page, CompositingCoordinator::Client& client)
     : m_page(page)
     , m_client(client)
+    , m_paintingEngine(Nicosia::PaintingEngine::create())
     , m_releaseInactiveAtlasesTimer(RunLoop::main(), this, &CompositingCoordinator::releaseInactiveAtlasesTimerFired)
 {
 #if USE(GLIB_EVENT_LOOP)
@@ -395,6 +397,11 @@ Ref<Nicosia::Buffer> CompositingCoordinator::getCoordinatedBuffer(const IntSize&
     auto buffer = m_updateAtlases.last()->getCoordinatedBuffer(size, atlasID, allocatedRect);
     RELEASE_ASSERT(buffer);
     return *buffer;
+}
+
+Nicosia::PaintingEngine& CompositingCoordinator::paintingEngine()
+{
+    return *m_paintingEngine;
 }
 
 const Seconds releaseInactiveAtlasesTimerInterval { 500_ms };

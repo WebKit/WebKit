@@ -1,3 +1,22 @@
+2017-11-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Move CoordinatedGraphicsLayer painting behind Nicosia::PaintingEngine
+        https://bugs.webkit.org/show_bug.cgi?id=180141
+
+        Reviewed by Carlos Garcia Campos.
+
+        CompositingCoordinator must implement the paintingEngine() method now
+        that the method's been added to the CoordinatedGraphicsLayerClient
+        interface. The CompositingCoordinator manages the Nicosia::PaintingEngine
+        object through the new m_paintingEngine member variable, and returns the
+        reference to this object in the paintingEngine() method.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::CompositingCoordinator):
+        (WebKit::CompositingCoordinator::paintingEngine):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+        Drop unnecessary typedefs.
+
 2017-11-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Implement SPI for clients to make an attachment element display in-place

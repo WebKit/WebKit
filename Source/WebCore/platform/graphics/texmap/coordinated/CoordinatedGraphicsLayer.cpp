@@ -30,6 +30,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerFactory.h"
+#include "NicosiaPaintingEngine.h"
 #include "ScrollableArea.h"
 #include "TextureMapperPlatformLayerProxyProvider.h"
 #include <wtf/CurrentTime.h>
@@ -972,26 +973,11 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
             auto coordinatedBuffer = m_coordinator->getCoordinatedBuffer(dirtyRect.size(),
                 contentsOpaque() ? Nicosia::Buffer::NoFlags : Nicosia::Buffer::SupportsAlpha,
                 updateInfo.atlasID, targetRect);
-            {
-                GraphicsContext& context = coordinatedBuffer->context();
-                context.save();
-                context.clip(targetRect);
-                context.translate(targetRect.x(), targetRect.y());
 
-                if (coordinatedBuffer->supportsAlpha()) {
-                    context.setCompositeOperation(CompositeCopy);
-                    context.fillRect(IntRect(IntPoint::zero(), dirtyRect.size()), Color::transparent);
-                    context.setCompositeOperation(CompositeSourceOver);
-                }
-
-                context.translate(-dirtyRect.x(), -dirtyRect.y());
-                float backingStoreScale = m_mainBackingStore->contentsScale();
-                context.scale(FloatSize(backingStoreScale, backingStoreScale));
-
-                paintGraphicsLayerContents(context, m_mainBackingStore->mapToContents(dirtyRect));
-
-                context.restore();
-            }
+            if (!m_coordinator->paintingEngine().paint(*this, WTFMove(coordinatedBuffer),
+                dirtyRect, m_mainBackingStore->mapToContents(dirtyRect),
+                targetRect, m_mainBackingStore->contentsScale()))
+                continue;
 
             updateInfo.surfaceOffset = targetRect.location();
             updateInfo.updateRect = dirtyRect;

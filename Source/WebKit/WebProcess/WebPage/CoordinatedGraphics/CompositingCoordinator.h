@@ -39,6 +39,10 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/NicosiaBuffer.h>
 
+namespace Nicosia {
+class PaintingEngine;
+}
+
 namespace WebCore {
 class GraphicsContext;
 class GraphicsLayer;
@@ -114,6 +118,7 @@ private:
     Ref<WebCore::CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image&) override;
     void detachLayer(WebCore::CoordinatedGraphicsLayer*) override;
     Ref<Nicosia::Buffer> getCoordinatedBuffer(const WebCore::IntSize&, Nicosia::Buffer::Flags, uint32_t&, WebCore::IntRect&) override;
+    Nicosia::PaintingEngine& paintingEngine() override;
     void syncLayerState(WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayerState&) override;
 
     // UpdateAtlas::Client
@@ -144,10 +149,10 @@ private:
 
     WebCore::CoordinatedGraphicsState m_state;
 
-    typedef HashMap<WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayer*> LayerMap;
-    LayerMap m_registeredLayers;
-    typedef HashMap<WebCore::CoordinatedImageBackingID, RefPtr<WebCore::CoordinatedImageBacking> > ImageBackingMap;
-    ImageBackingMap m_imageBackings;
+    HashMap<WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayer*> m_registeredLayers;
+    HashMap<WebCore::CoordinatedImageBackingID, RefPtr<WebCore::CoordinatedImageBacking>> m_imageBackings;
+
+    std::unique_ptr<Nicosia::PaintingEngine> m_paintingEngine;
     Vector<std::unique_ptr<UpdateAtlas>> m_updateAtlases;
     Vector<uint32_t> m_atlasesToRemove;
 
