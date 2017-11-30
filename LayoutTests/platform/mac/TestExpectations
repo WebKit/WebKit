@@ -1756,3 +1756,4 @@ webkit.org/b/179342 http/tests/workers/service/registration-task-queue-schedulin
 [ HighSierra+ ] imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html [ Failure ]
 [ HighSierra+ ] imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Failure ]
 
+webkit.org/b/165311 [ Sierra+ ] media/modern-media-controls/pip-support/pip-support-click.html [ Pass Failure ]
