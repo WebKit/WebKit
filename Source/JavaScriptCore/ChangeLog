@@ -1,3 +1,26 @@
+2017-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION(r225314): [Linux] More than 2000 jsc tests are failing after r225314
+        https://bugs.webkit.org/show_bug.cgi?id=180185
+
+        Reviewed by Carlos Garcia Campos.
+
+        After r225314, we start using AllocatorForMode::MustAlreadyHaveAllocator for JSRopeString's allocatorFor.
+        But it is different from the original code used before r225314. Since DFGSpeculativeJIT::emitAllocateJSCell
+        can accept nullptr allocator, the behavior of the original code is AllocatorForMode::AllocatorIfExists.
+        And JSRopeString's allocator may not exist at this point if any JSRopeString is not allocated. But MakeRope
+        DFG node can be emitted if we see untaken path includes String + String code.
+
+        This patch fixes Linux JSC crashes by changing JSRopeString's AllocatorForMode to AllocatorIfExists.
+        As a result, only one user of AllocatorForMode::MustAlreadyHaveAllocator is MaterializeNewObject in FTL.
+        I'm not sure why this condition (MustAlreadyHaveAllocator) is ensured. But this code is the same to the
+        original code used before r225314.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMakeRope):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMakeRope):
+
 2017-11-28  Filip Pizlo  <fpizlo@apple.com>
 
         CodeBlockSet::deleteUnmarkedAndUnreferenced can be a little more efficient
