@@ -37,6 +37,7 @@
 
 static bool testDone;
 
+#if PLATFORM(MAC)
 @interface DidScrollToFragmentDelegate : NSObject <WKUIDelegatePrivate>
 @end
 
@@ -49,6 +50,25 @@ static bool testDone;
 
 @end
 
+#endif
+#if PLATFORM(IOS)
+
+@interface DidScrollToFragmentScrollViewDelegate : NSObject <UIScrollViewDelegate>
+
+@end
+
+@implementation DidScrollToFragmentScrollViewDelegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    // Ignore scrolls to 0,0 and from inset changes.
+    if (scrollView.contentOffset.y > 300)
+        testDone = true;
+}
+
+@end
+#endif
+
 namespace TestWebKitAPI {
 
 TEST(WebKit, NoHistoryItemScrollToFragment)
@@ -56,8 +76,15 @@ TEST(WebKit, NoHistoryItemScrollToFragment)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
+
+#if PLATFORM(MAC)
     auto delegate = adoptNS([[DidScrollToFragmentDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
+#endif
+#if PLATFORM(IOS)
+    auto delegateForScrollView = adoptNS([[DidScrollToFragmentScrollViewDelegate alloc] init]);
+    [webView scrollView].delegate = delegateForScrollView.get();
+#endif
 
     NSURL* resourceURL = [[NSBundle mainBundle] URLForResource:@"scroll-to-anchor" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     NSString *testFileContents = [NSString stringWithContentsOfURL:resourceURL encoding:NSUTF8StringEncoding error:nil];
