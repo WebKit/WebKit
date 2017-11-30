@@ -40,6 +40,10 @@ void executeProbe(State* state)
     auto& cpu = context.cpu;
     void* originalLR = cpu.gpr<void*>(ARM64Registers::lr);
     void* originalPC = cpu.pc();
+#elif CPU(MIPS)
+    auto& cpu = context.cpu;
+    void* originalRA = cpu.gpr<void*>(MIPSRegisters::ra);
+    void* originalPC = cpu.pc();
 #endif
 
     state->initializeStackFunction = nullptr;
@@ -49,6 +53,9 @@ void executeProbe(State* state)
 #if CPU(ARM64)
     // The ARM64 probe trampoline does not support changing both lr and pc.
     RELEASE_ASSERT(originalPC == cpu.pc() || originalLR == cpu.gpr<void*>(ARM64Registers::lr));
+#elif CPU(MIPS)
+    // The MIPS probe trampoline does not support changing both ra and pc.
+    RELEASE_ASSERT(originalPC == cpu.pc() || originalRA == cpu.gpr<void*>(MIPSRegisters::ra));
 #endif
 
     if (context.hasWritesToFlush()) {

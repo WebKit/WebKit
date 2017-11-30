@@ -135,6 +135,9 @@ bool isSpecialGPR(MacroAssembler::RegisterID id)
 #if CPU(ARM64)
     if (id == ARM64Registers::x18)
         return true;
+#elif CPU(MIPS)
+    if (id == MIPSRegisters::zero || id == MIPSRegisters::k0 || id == MIPSRegisters::k1)
+        return true;
 #endif
     return false;
 }
@@ -400,6 +403,9 @@ void testProbePreservesGPRS()
                 CHECK_EQ(cpu.gpr(id), testWord(id));
             }
             for (auto id = CCallHelpers::firstFPRegister(); id <= CCallHelpers::lastFPRegister(); id = nextID(id))
+#if CPU(MIPS)
+                if (!(id & 1))
+#endif
                 CHECK_EQ(cpu.fpr<uint64_t>(id), testWord64(id));
         });
 
@@ -426,6 +432,9 @@ void testProbePreservesGPRS()
                 CHECK_EQ(cpu.gpr(id), originalState.gpr(id));
             }
             for (auto id = CCallHelpers::firstFPRegister(); id <= CCallHelpers::lastFPRegister(); id = nextID(id))
+#if CPU(MIPS)
+                if (!(id & 1))
+#endif
                 CHECK_EQ(cpu.fpr<uint64_t>(id), originalState.fpr<uint64_t>(id));
         });
 
@@ -441,7 +450,9 @@ void testProbeModifiesStackPointer(WTF::Function<void*(Probe::Context&)> compute
     CPUState originalState;
     void* originalSP { nullptr };
     void* modifiedSP { nullptr };
+#if !(CPU(MIPS))
     uintptr_t modifiedFlags { 0 };
+#endif
     
 #if CPU(X86) || CPU(X86_64)
     auto flagsSPR = X86Registers::eflags;
@@ -473,9 +484,11 @@ void testProbeModifiesStackPointer(WTF::Function<void*(Probe::Context&)> compute
                 cpu.fpr(id) = bitwise_cast<double>(testWord64(id));
             }
 
+#if !(CPU(MIPS))
             originalState.spr(flagsSPR) = cpu.spr(flagsSPR);
             modifiedFlags = originalState.spr(flagsSPR) ^ flagsMask;
             cpu.spr(flagsSPR) = modifiedFlags;
+#endif
 
             originalSP = cpu.sp();
             modifiedSP = computeModifiedStackPointer(context);
@@ -496,8 +509,13 @@ void testProbeModifiesStackPointer(WTF::Function<void*(Probe::Context&)> compute
                 CHECK_EQ(cpu.gpr(id), testWord(id));
             }
             for (auto id = CCallHelpers::firstFPRegister(); id <= CCallHelpers::lastFPRegister(); id = nextID(id))
+#if CPU(MIPS)
+                if (!(id & 1))
+#endif
                 CHECK_EQ(cpu.fpr<uint64_t>(id), testWord64(id));
+#if !(CPU(MIPS))
             CHECK_EQ(cpu.spr(flagsSPR) & flagsMask, modifiedFlags & flagsMask);
+#endif
             CHECK_EQ(cpu.sp(), modifiedSP);
         });
 
@@ -512,7 +530,9 @@ void testProbeModifiesStackPointer(WTF::Function<void*(Probe::Context&)> compute
             }
             for (auto id = CCallHelpers::firstFPRegister(); id <= CCallHelpers::lastFPRegister(); id = nextID(id))
                 cpu.fpr(id) = originalState.fpr(id);
+#if !(CPU(MIPS))
             cpu.spr(flagsSPR) = originalState.spr(flagsSPR);
+#endif
             cpu.sp() = originalSP;
         });
 
@@ -526,8 +546,13 @@ void testProbeModifiesStackPointer(WTF::Function<void*(Probe::Context&)> compute
                 CHECK_EQ(cpu.gpr(id), originalState.gpr(id));
             }
             for (auto id = CCallHelpers::firstFPRegister(); id <= CCallHelpers::lastFPRegister(); id = nextID(id))
+#if CPU(MIPS)
+                if (!(id & 1))
+#endif
                 CHECK_EQ(cpu.fpr<uint64_t>(id), originalState.fpr<uint64_t>(id));
+#if !(CPU(MIPS))
             CHECK_EQ(cpu.spr(flagsSPR) & flagsMask, originalState.spr(flagsSPR) & flagsMask);
+#endif
             CHECK_EQ(cpu.sp(), originalSP);
         });
 
@@ -640,9 +665,11 @@ void testProbeModifiesStackValues()
                 originalState.fpr(id) = cpu.fpr(id);
                 cpu.fpr(id) = bitwise_cast<double>(testWord64(id));
             }
+#if !(CPU(MIPS))
             originalState.spr(flagsSPR) = cpu.spr(flagsSPR);
             modifiedFlags = originalState.spr(flagsSPR) ^ flagsMask;
             cpu.spr(flagsSPR) = modifiedFlags;
+#endif
 
             // Ensure that we'll be writing over the regions of the stack where the Probe::State is.
             originalSP = cpu.sp();
@@ -676,8 +703,13 @@ void testProbeModifiesStackValues()
                 CHECK_EQ(cpu.gpr(id), testWord(id));
             }
             for (auto id = CCallHelpers::firstFPRegister(); id <= CCallHelpers::lastFPRegister(); id = nextID(id))
+#if CPU(MIPS)
+                if (!(id & 1))
+#endif
                 CHECK_EQ(cpu.fpr<uint64_t>(id), testWord64(id));
+#if !(CPU(MIPS))
             CHECK_EQ(cpu.spr(flagsSPR) & flagsMask, modifiedFlags & flagsMask);
+#endif
             CHECK_EQ(cpu.sp(), newSP);
 
             // Validate the stack values.
@@ -701,7 +733,9 @@ void testProbeModifiesStackValues()
             }
             for (auto id = CCallHelpers::firstFPRegister(); id <= CCallHelpers::lastFPRegister(); id = nextID(id))
                 cpu.fpr(id) = originalState.fpr(id);
+#if !(CPU(MIPS))
             cpu.spr(flagsSPR) = originalState.spr(flagsSPR);
+#endif
             cpu.sp() = originalSP;
         });
 

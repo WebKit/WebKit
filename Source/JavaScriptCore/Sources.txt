@@ -47,6 +47,7 @@ assembler/MacroAssemblerARM.cpp
 assembler/MacroAssemblerARM64.cpp
 assembler/MacroAssemblerARMv7.cpp
 assembler/MacroAssemblerCodeRef.cpp
+assembler/MacroAssemblerMIPS.cpp
 assembler/MacroAssemblerPrinter.cpp
 assembler/MacroAssemblerX86Common.cpp
 assembler/Printer.cpp
