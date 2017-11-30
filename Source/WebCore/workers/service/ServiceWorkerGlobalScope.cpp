@@ -28,8 +28,10 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ServiceWorkerClient.h"
 #include "ServiceWorkerClients.h"
 #include "ServiceWorkerThread.h"
+#include "ServiceWorkerWindowClient.h"
 #include "WorkerNavigator.h"
 
 namespace WebCore {
@@ -56,6 +58,23 @@ EventTargetInterface ServiceWorkerGlobalScope::eventTargetInterface() const
 ServiceWorkerThread& ServiceWorkerGlobalScope::thread()
 {
     return static_cast<ServiceWorkerThread&>(WorkerGlobalScope::thread());
+}
+
+ServiceWorkerClient* ServiceWorkerGlobalScope::serviceWorkerClient(ServiceWorkerClientIdentifier identifier)
+{
+    return m_clientMap.get(identifier);
+}
+
+void ServiceWorkerGlobalScope::addServiceWorkerClient(ServiceWorkerClient& client)
+{
+    auto result = m_clientMap.add(client.identifier(), &client);
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void ServiceWorkerGlobalScope::removeServiceWorkerClient(ServiceWorkerClient& client)
+{
+    auto isRemoved = m_clientMap.remove(client.identifier());
+    ASSERT_UNUSED(isRemoved, isRemoved);
 }
 
 } // namespace WebCore

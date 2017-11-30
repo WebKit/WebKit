@@ -109,7 +109,7 @@ void ServiceWorkerThread::postMessageToServiceWorkerGlobalScope(Ref<SerializedSc
     ScriptExecutionContext::Task task([this, channels = WTFMove(channels), message = WTFMove(message), sourceIdentifier, sourceData = sourceData.isolatedCopy()] (ScriptExecutionContext& context) mutable {
         auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
         auto ports = MessagePort::entanglePorts(serviceWorkerGlobalScope, WTFMove(channels));
-        RefPtr<ServiceWorkerClient> source = ServiceWorkerWindowClient::create(context, sourceIdentifier, WTFMove(sourceData));
+        RefPtr<ServiceWorkerClient> source = ServiceWorkerClient::getOrCreate(serviceWorkerGlobalScope, sourceIdentifier, WTFMove(sourceData));
         auto sourceOrigin = SecurityOrigin::create(source->url());
         auto messageEvent = ExtendableMessageEvent::create(WTFMove(ports), WTFMove(message), sourceOrigin->toString(), { }, ExtendableMessageEventSource { source });
         serviceWorkerGlobalScope.dispatchEvent(messageEvent);

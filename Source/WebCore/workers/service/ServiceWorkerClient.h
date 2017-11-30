@@ -39,6 +39,8 @@ class JSValue;
 
 namespace WebCore {
 
+class ServiceWorkerGlobalScope;
+
 class ServiceWorkerClient : public RefCounted<ServiceWorkerClient>, public ContextDestructionObserver {
 public:
     using Identifier = ServiceWorkerClientIdentifier;
@@ -46,10 +48,7 @@ public:
     using Type = ServiceWorkerClientType;
     using FrameType = ServiceWorkerClientFrameType;
 
-    static Ref<ServiceWorkerClient> create(ScriptExecutionContext& context, ServiceWorkerClientIdentifier identifier, ServiceWorkerClientData&& data)
-    {
-        return adoptRef(*new ServiceWorkerClient(context, identifier, WTFMove(data)));
-    }
+    static Ref<ServiceWorkerClient> getOrCreate(ServiceWorkerGlobalScope&, ServiceWorkerClientIdentifier, ServiceWorkerClientData&&);
 
     ~ServiceWorkerClient();
 
@@ -63,7 +62,7 @@ public:
     ExceptionOr<void> postMessage(ScriptExecutionContext&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&& transfer);
 
 protected:
-    ServiceWorkerClient(ScriptExecutionContext&, ServiceWorkerClientIdentifier, ServiceWorkerClientData&&);
+    ServiceWorkerClient(ServiceWorkerGlobalScope&, ServiceWorkerClientIdentifier, ServiceWorkerClientData&&);
 
     ServiceWorkerClientIdentifier m_identifier;
     ServiceWorkerClientData m_data;

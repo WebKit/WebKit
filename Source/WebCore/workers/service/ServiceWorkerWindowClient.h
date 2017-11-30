@@ -33,10 +33,11 @@
 namespace WebCore {
 
 class DeferredPromise;
+class ServiceWorkerGlobalScope;
 
 class ServiceWorkerWindowClient final : public ServiceWorkerClient {
 public:
-    static Ref<ServiceWorkerWindowClient> create(ScriptExecutionContext& context, ServiceWorkerClientIdentifier identifier, ServiceWorkerClientData&& data)
+    static Ref<ServiceWorkerWindowClient> create(ServiceWorkerGlobalScope& context, ServiceWorkerClientIdentifier identifier, ServiceWorkerClientData&& data)
     {
         return adoptRef(*new ServiceWorkerWindowClient(context, identifier, WTFMove(data)));
     }
@@ -48,7 +49,7 @@ public:
     void navigate(const String& url, Ref<DeferredPromise>&&);
 
 private:
-    ServiceWorkerWindowClient(ScriptExecutionContext&, ServiceWorkerClientIdentifier, ServiceWorkerClientData&&);
+    ServiceWorkerWindowClient(ServiceWorkerGlobalScope&, ServiceWorkerClientIdentifier, ServiceWorkerClientData&&);
 };
 
 } // namespace WebCore

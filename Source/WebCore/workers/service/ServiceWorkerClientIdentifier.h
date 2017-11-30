@@ -37,6 +37,8 @@ struct ServiceWorkerClientIdentifier {
     SWServerConnectionIdentifier serverConnectionIdentifier;
     DocumentIdentifier contextIdentifier;
 
+    unsigned hash() const;
+
     String toString() const { return String::number(serverConnectionIdentifier.toUInt64()) + "-" +  String::number(contextIdentifier.toUInt64()); }
 
     template<class Encoder> void encode(Encoder&) const;
@@ -70,6 +72,37 @@ std::optional<ServiceWorkerClientIdentifier> ServiceWorkerClientIdentifier::deco
     return { { WTFMove(*serverConnectionIdentifier), WTFMove(*contextIdentifier) } };
 }
 
+inline unsigned ServiceWorkerClientIdentifier::hash() const
+{
+    unsigned hashes[2];
+    hashes[0] = WTF::intHash(serverConnectionIdentifier.toUInt64());
+    hashes[1] = WTF::intHash(contextIdentifier.toUInt64());
+
+    return StringHasher::hashMemory(hashes, sizeof(hashes));
+}
+
 } // namespace WebCore
+
+namespace WTF {
+
+struct ServiceWorkerClientIdentifierHash {
+    static unsigned hash(const WebCore::ServiceWorkerClientIdentifier& key) { return key.hash(); }
+    static bool equal(const WebCore::ServiceWorkerClientIdentifier& a, const WebCore::ServiceWorkerClientIdentifier& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+
+template<> struct HashTraits<WebCore::ServiceWorkerClientIdentifier> : GenericHashTraits<WebCore::ServiceWorkerClientIdentifier> {
+    static WebCore::ServiceWorkerClientIdentifier emptyValue() { return { }; }
+
+    static void constructDeletedValue(WebCore::ServiceWorkerClientIdentifier& slot) { slot.serverConnectionIdentifier = makeObjectIdentifier<WebCore::SWServerConnectionIdentifierType>(std::numeric_limits<uint64_t>::max()); }
+
+    static bool isDeletedValue(const WebCore::ServiceWorkerClientIdentifier& slot) { return slot.serverConnectionIdentifier.toUInt64() == std::numeric_limits<uint64_t>::max(); }
+};
+
+template<> struct DefaultHash<WebCore::ServiceWorkerClientIdentifier> {
+    typedef ServiceWorkerClientIdentifierHash Hash;
+};
+
+}
 
 #endif // ENABLE(SERVICE_WORKER)

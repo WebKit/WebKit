@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ServiceWorkerClientIdentifier.h"
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerRegistration.h"
 #include "WorkerGlobalScope.h"
@@ -34,6 +35,8 @@
 namespace WebCore {
 
 class DeferredPromise;
+struct ServiceWorkerClientData;
+class ServiceWorkerClient;
 class ServiceWorkerClients;
 class ServiceWorkerThread;
 
@@ -57,12 +60,17 @@ public:
 
     ServiceWorkerThread& thread();
 
+    ServiceWorkerClient* serviceWorkerClient(ServiceWorkerClientIdentifier);
+    void addServiceWorkerClient(ServiceWorkerClient&);
+    void removeServiceWorkerClient(ServiceWorkerClient&);
+
 private:
     ServiceWorkerGlobalScope(const ServiceWorkerContextData&, const URL&, const String& identifier, const String& userAgent, bool isOnline, ServiceWorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, PAL::SessionID);
 
     ServiceWorkerContextData m_contextData;
     Ref<ServiceWorkerRegistration> m_registration;
     Ref<ServiceWorkerClients> m_clients;
+    HashMap<ServiceWorkerClientIdentifier, ServiceWorkerClient*> m_clientMap;
 };
 
 } // namespace WebCore

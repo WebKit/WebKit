@@ -1,3 +1,14 @@
+2017-11-29  Youenn Fablet  <youenn@apple.com>
+
+        ServiceWorkerClient objects should be reused if there is already one existing with the same identifier
+        https://bugs.webkit.org/show_bug.cgi?id=180143
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/workers/service/resources/basic-ServiceWorker-postMessage-worker.js:
+        (event.else):
+        * http/tests/workers/service/resources/basic-ServiceWorker-postMessage.js:
+
 2017-11-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/w3c/web-platform-tests/XMLHttpRequest/firing-events-http-no-content-length.html as flaky.
