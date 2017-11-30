@@ -1,3 +1,12 @@
+2017-11-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark http/tests/workers/service/registration-clear-redundant-worker.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=179778
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2017-11-29  Youenn Fablet  <youenn@apple.com>
 
         Add support for service worker generated redirections
