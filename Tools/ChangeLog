@@ -1,3 +1,14 @@
+2017-11-30  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Move python code from master.cfg in separate files
+        https://bugs.webkit.org/show_bug.cgi?id=180180
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Moved code to steps.py and master.cfg appropriately.
+        * BuildSlaveSupport/build.webkit.org-config/factories.py: Moved all factory related code from master.cfg.
+        * BuildSlaveSupport/build.webkit.org-config/steps.py: Moved all steps related code from master.cfg
+
 2017-11-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WKAttachmentTests.InPlaceImageAttachmentToggleDisplayMode times out on macOS bots
