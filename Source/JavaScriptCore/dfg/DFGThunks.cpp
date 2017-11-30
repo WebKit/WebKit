@@ -123,15 +123,12 @@ MacroAssemblerCodeRef osrEntryThunkGenerator(VM* vm)
     
     jit.move(GPRInfo::returnValueGPR2, GPRInfo::regT0);
     jit.loadPtr(MacroAssembler::Address(GPRInfo::regT0, offsetOfFrameSize), GPRInfo::regT1); // Load the frame size.
-    jit.move(GPRInfo::regT1, GPRInfo::regT2);
-    jit.lshiftPtr(MacroAssembler::Imm32(3), GPRInfo::regT2);
-    jit.move(GPRInfo::callFrameRegister, MacroAssembler::stackPointerRegister);
-    jit.subPtr(GPRInfo::regT2, MacroAssembler::stackPointerRegister);
+    jit.negPtr(GPRInfo::regT1, GPRInfo::regT2);
+    jit.getEffectiveAddress(MacroAssembler::BaseIndex(GPRInfo::callFrameRegister, GPRInfo::regT2, MacroAssembler::TimesEight), MacroAssembler::stackPointerRegister);
     
     MacroAssembler::Label loop = jit.label();
     jit.subPtr(MacroAssembler::TrustedImm32(1), GPRInfo::regT1);
-    jit.move(GPRInfo::regT1, GPRInfo::regT4);
-    jit.negPtr(GPRInfo::regT4);
+    jit.negPtr(GPRInfo::regT1, GPRInfo::regT4);
     jit.load32(MacroAssembler::BaseIndex(GPRInfo::regT0, GPRInfo::regT1, MacroAssembler::TimesEight, offsetOfLocals), GPRInfo::regT2);
     jit.load32(MacroAssembler::BaseIndex(GPRInfo::regT0, GPRInfo::regT1, MacroAssembler::TimesEight, offsetOfLocals + sizeof(int32_t)), GPRInfo::regT3);
     jit.store32(GPRInfo::regT2, MacroAssembler::BaseIndex(GPRInfo::callFrameRegister, GPRInfo::regT4, MacroAssembler::TimesEight, -static_cast<intptr_t>(sizeof(Register))));

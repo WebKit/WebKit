@@ -1,3 +1,35 @@
+2017-11-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use getEffectiveAddress more in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=180154
+
+        Reviewed by Mark Lam.
+
+        We can use MacroAssembler::getEffectiveAddress for stack height calculation.
+        And we also add MacroAssembler::negPtr(src, dest) variation.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::negPtr):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::neg32):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::neg32):
+        (JSC::MacroAssemblerARM64::neg64):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::neg32):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::neg32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::neg32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::neg64):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrEntryThunkGenerator):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetVarargsFrame):
+
 2017-11-30  Mark Lam  <mark.lam@apple.com>
 
         jsc shell's flashHeapAccess() should not do JS work after releasing access to the heap.

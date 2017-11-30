@@ -7233,8 +7233,7 @@ private:
                     jit.addPtr(CCallHelpers::TrustedImm32(stackAlignmentRegisters() - 1), scratchGPR1);
                     jit.andPtr(CCallHelpers::TrustedImm32(~(stackAlignmentRegisters() - 1)), scratchGPR1);
                     jit.negPtr(scratchGPR1);
-                    jit.lshiftPtr(CCallHelpers::Imm32(3), scratchGPR1);
-                    jit.addPtr(GPRInfo::callFrameRegister, scratchGPR1);
+                    jit.getEffectiveAddress(CCallHelpers::BaseIndex(GPRInfo::callFrameRegister, scratchGPR1, CCallHelpers::TimesEight), scratchGPR1);
 
                     // Before touching stack values, we should update the stack pointer to protect them from signal stack.
                     jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), scratchGPR1, CCallHelpers::stackPointerRegister);

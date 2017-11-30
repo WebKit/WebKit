@@ -619,6 +619,12 @@ public:
         m_assembler.negq_r(dest);
     }
 
+    void neg64(RegisterID src, RegisterID dest)
+    {
+        move(src, dest);
+        m_assembler.negq_r(dest);
+    }
+
     void neg64(Address dest)
     {
         m_assembler.negq_m(dest.offset, dest.base);

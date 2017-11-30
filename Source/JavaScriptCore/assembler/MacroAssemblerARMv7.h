@@ -348,6 +348,11 @@ public:
         m_assembler.neg(srcDest, srcDest);
     }
 
+    void neg32(RegisterID src, RegisterID dest)
+    {
+        m_assembler.neg(dest, src);
+    }
+
     void or32(RegisterID src, RegisterID dest)
     {
         m_assembler.orr(dest, dest, src);

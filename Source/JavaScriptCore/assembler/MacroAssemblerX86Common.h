@@ -511,6 +511,12 @@ public:
         m_assembler.negl_r(srcDest);
     }
 
+    void neg32(RegisterID src, RegisterID dest)
+    {
+        move32IfNeeded(src, dest);
+        m_assembler.negl_r(dest);
+    }
+
     void neg32(Address srcDest)
     {
         m_assembler.negl_m(srcDest.offset, srcDest.base);

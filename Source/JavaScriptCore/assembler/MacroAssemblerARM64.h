@@ -568,9 +568,19 @@ public:
         m_assembler.neg<32>(dest, dest);
     }
 
+    void neg32(RegisterID src, RegisterID dest)
+    {
+        m_assembler.neg<32>(dest, src);
+    }
+
     void neg64(RegisterID dest)
     {
         m_assembler.neg<64>(dest, dest);
+    }
+
+    void neg64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.neg<64>(dest, src);
     }
 
     void or32(RegisterID src, RegisterID dest)

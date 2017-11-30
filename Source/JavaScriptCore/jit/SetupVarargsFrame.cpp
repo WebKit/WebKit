@@ -56,8 +56,7 @@ void emitSetVarargsFrame(CCallHelpers& jit, GPRReg lengthGPR, bool lengthInclude
     
     // Now resultGPR has the right stack frame offset in Register units.
     jit.negPtr(resultGPR);
-    jit.lshiftPtr(CCallHelpers::Imm32(3), resultGPR);
-    jit.addPtr(GPRInfo::callFrameRegister, resultGPR);
+    jit.getEffectiveAddress(CCallHelpers::BaseIndex(GPRInfo::callFrameRegister, resultGPR, CCallHelpers::TimesEight), resultGPR);
 }
 
 static void emitSetupVarargsFrameFastCase(VM& vm, CCallHelpers& jit, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, ValueRecovery argCountRecovery, VirtualRegister firstArgumentReg, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase)

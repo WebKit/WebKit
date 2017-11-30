@@ -597,6 +597,11 @@ public:
         neg32(dest);
     }
 
+    void negPtr(RegisterID src, RegisterID dest)
+    {
+        neg32(src, dest);
+    }
+
     void orPtr(RegisterID src, RegisterID dest)
     {
         or32(src, dest);
@@ -904,6 +909,11 @@ public:
     void negPtr(RegisterID dest)
     {
         neg64(dest);
+    }
+
+    void negPtr(RegisterID src, RegisterID dest)
+    {
+        neg64(src, dest);
     }
 
     void orPtr(RegisterID src, RegisterID dest)

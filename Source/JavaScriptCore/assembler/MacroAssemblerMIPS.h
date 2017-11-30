@@ -384,6 +384,11 @@ public:
         m_assembler.subu(srcDest, MIPSRegisters::zero, srcDest);
     }
 
+    void neg32(RegisterID src, RegisterID dest)
+    {
+        m_assembler.subu(dest, MIPSRegisters::zero, src);
+    }
+
     void or32(RegisterID src, RegisterID dest)
     {
         m_assembler.orInsn(dest, dest, src);

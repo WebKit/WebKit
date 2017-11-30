@@ -224,6 +224,11 @@ public:
         m_assembler.rsbs(srcDest, srcDest, ARMAssembler::getOp2Byte(0));
     }
 
+    void neg32(RegisterID src, RegisterID dest)
+    {
+        m_assembler.rsbs(dest, src, ARMAssembler::getOp2Byte(0));
+    }
+
     void or32(RegisterID src, RegisterID dest)
     {
         m_assembler.orrs(dest, dest, src);
