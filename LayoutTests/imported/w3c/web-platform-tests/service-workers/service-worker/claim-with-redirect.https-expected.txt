@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Cannot update a null/nonexistent service worker registration
+CONSOLE MESSAGE: line 27: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating 'r.update')
   
 
 FAIL Claim works after redirection to another origin assert_equals: expected (string) "updated" but got (undefined) undefined

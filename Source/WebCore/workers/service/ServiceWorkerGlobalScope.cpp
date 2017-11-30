@@ -46,8 +46,10 @@ ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(const ServiceWorkerContextDat
 
 ServiceWorkerGlobalScope::~ServiceWorkerGlobalScope() = default;
 
-void ServiceWorkerGlobalScope::skipWaiting(Ref<DeferredPromise>&&)
+void ServiceWorkerGlobalScope::skipWaiting(Ref<DeferredPromise>&& promise)
 {
+    // FIXME: Implement this.
+    promise->reject(Exception { NotSupportedError, ASCIILiteral("self.skipWaiting() is not yet supported") });
 }
 
 EventTargetInterface ServiceWorkerGlobalScope::eventTargetInterface() const
