@@ -1,3 +1,9 @@
+2017-11-30  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, unskip a few Service Workers tests that no longer seem to be flaky.
+
+        * TestExpectations:
+
 2017-11-30  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Enable all wpt touch-events tests.
