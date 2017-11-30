@@ -1603,37 +1603,6 @@ void Session::elementSendKeys(const String& elementID, Vector<String>&& keys, Fu
     });
 }
 
-void Session::elementSubmit(const String& elementID, Function<void (CommandResult&&)>&& completionHandler)
-{
-    if (!m_toplevelBrowsingContext) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
-        return;
-    }
-
-    handleUserPrompts([this, elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
-        if (result.isError()) {
-            completionHandler(WTFMove(result));
-            return;
-        }
-        RefPtr<JSON::Array> arguments = JSON::Array::create();
-        arguments->pushString(createElement(elementID)->toJSONString());
-
-        RefPtr<JSON::Object> parameters = JSON::Object::create();
-        parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
-        if (m_currentBrowsingContext)
-            parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
-        parameters->setString(ASCIILiteral("function"), FormSubmitJavaScript);
-        parameters->setArray(ASCIILiteral("arguments"), WTFMove(arguments));
-        m_host->sendCommandToBackend(ASCIILiteral("evaluateJavaScriptFunction"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
-            if (response.isError) {
-                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
-                return;
-            }
-            completionHandler(CommandResult::success());
-        });
-    });
-}
-
 RefPtr<JSON::Value> Session::handleScriptResult(RefPtr<JSON::Value>&& resultValue)
 {
     RefPtr<JSON::Array> resultArray;

@@ -1,3 +1,20 @@
+2017-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: remove elementSubmit command
+        https://bugs.webkit.org/show_bug.cgi?id=180186
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        It's not in the spec, we had it only because selenium used it, but now it uses execute_script with custom code
+        to implement submit, so we can just remove it.
+
+        * Session.cpp:
+        (WebDriver::Session::elementSubmit): Deleted.
+        * Session.h:
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::elementSubmit): Deleted.
+        * WebDriverService.h:
+
 2017-11-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Move JSONValues to WTF and convert uses of InspectorValues.h to JSONValues.h

@@ -92,7 +92,6 @@ private:
     void elementClick(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void elementClear(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void elementSendKeys(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void elementSubmit(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void executeScript(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void executeAsyncScript(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getAllCookies(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
