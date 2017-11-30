@@ -1,3 +1,87 @@
+2017-11-30  Antti Koivisto  <antti@apple.com>
+
+        Add StyleBench
+        https://bugs.webkit.org/show_bug.cgi?id=180140
+
+        Reviewed by Simon Fraser and Joseph Pecoraro.
+
+        StyleBench tests performance of the CSS style resolution and style invalidation. Each test run
+        creates a large document and a large stylesheet using varying settings. It then applies
+        a series of mutations to the document and measures the time to update the style and rendering.
+        The resulting layout is simple, most of the pressure is on selector matching.
+
+        StyleBench uses Speedometer framework for UI and measurements. For profiling purposes, it can also
+        be run locally by opening style-bench.html directly.
+
+        There are currently four subtests:
+
+        - child and descendant combinators only (all other tests have these too).
+        - sibling combinators: '~' and '+'
+        - positional pseudo classes: :nth-child and similar
+        - ::before and ::after pseudo elements
+
+        The measured DOM mutations are:
+
+        - add classes
+        - remove classes
+        - add leaf elements
+        - remove leaf elements
+
+        * StyleBench: Added.
+        * StyleBench/InteractiveRunner.html: Added.
+
+            Copied and customized from Speedometer.
+
+        * StyleBench/index.html: Added.
+
+            Copied and customized from Speedometer.
+
+        * StyleBench/resources: Added.
+        * StyleBench/resources/style-bench.html: Added.
+        * StyleBench/resources/style-bench.js: Added.
+
+            The test class.
+
+        (Random):
+        (Random.prototype.get next):
+        (Random.prototype.chance):
+        (Random.prototype.number):
+        (nextAnimationFrame):
+        (defaultConfiguration):
+        (descendantCombinatorConfiguration):
+        (siblingCombinatorConfiguration):
+        (pseudoClassConfiguration):
+        (beforeAndAfterConfiguration):
+        (predefinedConfigurations):
+
+            Four predefined configurations.
+
+        (prototype.randomElementName):
+        (prototype.randomCombinator):
+        (prototype.randomPseudoClass):
+        (prototype.makeSimpleSelector):
+        (prototype.makeSelector):
+        (prototype.get randomColorComponent):
+        (prototype.makeDeclaration):
+        (prototype.makeRule):
+        (prototype.makeStylesheet):
+        (prototype.makeStyle):
+        (prototype.makeElement):
+        (prototype.makeTreeWithDepth):
+        (prototype.makeTree):
+        (prototype.updateCachedTestElements):
+        (prototype.randomTreeElement):
+        (prototype.addClasses):
+        (prototype.removeClasses):
+        (prototype.addLeafElements):
+        (prototype.removeLeafElements):
+        (prototype.async.runForever):
+        * StyleBench/resources/tests.js: Added.
+        (makeSteps):
+        (makeSuite):
+
+            Generates Speedometer Suites.
+
 2017-11-29  Robin Morisset  <rmorisset@apple.com>
 
         The recursive tail call optimisation is wrong on closures

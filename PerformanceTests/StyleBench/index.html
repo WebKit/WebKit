@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>StyleBench 0.1</title>
+    <link rel="stylesheet" href="../Speedometer/resources/main.css">
+    <script src="../Speedometer/resources/main.js" defer></script>
+    <script src="../Speedometer/resources/benchmark-runner.js" defer></script>
+    <script src="../Speedometer/resources/benchmark-report.js" defer></script>
+    <script src="../resources/statistics.js" defer></script>
+    <script src="resources/style-bench.js" defer></script>
+    <script src="resources/tests.js" defer></script>
+    <script>
+        addEventListener('load', () => {
+            if (!window.location.protocol.startsWith('http'))
+                showSection('local-message', false);
+        });
+    </script>
+</head>
+<body>
+<main>
+    <a id="logo-link" href="javascript:showHome()"></a>
+
+    <section id="home" class="selected">
+        <p>
+            StyleBench is a browser benchmark that measures the performance of the style resolution mechanism.
+        </p>
+        <p id="screen-size-warning"><strong>
+            Your browser window is too small. For most accurate results, please make the view port size at least 850px by 650px.<br>
+            It's currently <span id="screen-size"></span>.
+        </strong>
+        <div class="buttons">
+            <button onclick="startTest()">Start Test</button>
+        </div>
+        <p class="show-about"><a href="javascript:showAbout()">About StyleBench</a></p>
+    </section>
+
+    <section id="running">
+        <div id="testContainer"></div>
+        <div id="progress"><div id="progress-completed"></div></div>
+        <div id="info"></div>
+    </section>
+
+    <section id="summarized-results">
+        <h1>Runs / Minute</h1>
+        <div class="gauge"><div class="window"><div class="needle"></div></div></div>
+        <hr>
+        <div id="result-number"></div>
+        <div id="confidence-number"></div>
+        <div class="buttons">
+            <button onclick="startTest()">Test Again</button>
+            <button class="show-details" onclick="showResultDetails()">Details</button>
+        </div>
+    </section>
+
+    <section id="detailed-results">
+        <h1>Detailed Results</h1>
+        <table class="results-table"></table>
+        <table class="results-table"></table>
+        <div class="arithmetic-mean"><label>Arithmetic Mean:</label><span id="results-with-statistics"></span></div>
+        <div class="buttons">
+            <button onclick="startTest()">Test Again</button>
+            <button id="show-summary" onclick="showResultsSummary()">Summary</button>
+        </div>
+        <p class="show-about"><a href="javascript:showAbout()">About StyleBench</a></p>
+    </section>
+
+    <section id="about">
+        <h1>About StyleBench</h1>
+
+        <p>StyleBench tests performance of CSS style resolution and style invalidation. Each test run creates a large document and a large stylesheet using varying settings. It then applies a series of mutations to the document and measures the time to update the rendering. The resulting layout is simple, most of the pressure is on selector matching.</p>
+
+        <p>StyleBench uses Speedometer framework for UI and measurements.</p>
+    </section>
+    <section id="local-message">
+        <h2>Access via 'file:' protocol</h1>
+        <p>To run locally, launch a web server under PerformanceTests directory with 'python -m SimpleHTTPServer 8001' and access via <a href="http://localhost:8001/StyleBench">http://localhost:8001/StyleBench</a>.
+        </p>
+        <p>
+            Individual tests (without measurement) can also be run locally by opening <a href="resources/style-bench.html">PerformanceTests/StyleBench/resources/style-bench.html</a>
+        </p>
+    </section>
+</main>
+</body>
+</html>
