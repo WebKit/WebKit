@@ -71,7 +71,7 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
 
 - (NSURLRequest *)request
 {
-    return _urlSchemeTask->task().request().nsURLRequest(DoNotUpdateHTTPBody);
+    return _urlSchemeTask->task().request().nsURLRequest(UpdateHTTPBody);
 }
 
 - (void)didReceiveResponse:(NSURLResponse *)response

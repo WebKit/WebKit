@@ -76,6 +76,7 @@
 #include "PrintInfo.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
+#include "URLSchemeTaskParameters.h"
 #include "UserMediaPermissionRequestProxy.h"
 #include "UserMediaProcessManager.h"
 #include "WKContextPrivate.h"
@@ -7124,12 +7125,12 @@ WebURLSchemeHandler* WebPageProxy::urlSchemeHandlerForScheme(const String& schem
     return m_urlSchemeHandlersByScheme.get(scheme);
 }
 
-void WebPageProxy::startURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier, const WebCore::ResourceRequest& request)
+void WebPageProxy::startURLSchemeTask(URLSchemeTaskParameters&& parameters)
 {
-    auto iterator = m_urlSchemeHandlersByIdentifier.find(handlerIdentifier);
+    auto iterator = m_urlSchemeHandlersByIdentifier.find(parameters.handlerIdentifier);
     MESSAGE_CHECK(iterator != m_urlSchemeHandlersByIdentifier.end());
 
-    iterator->value->startTask(*this, taskIdentifier, request);
+    iterator->value->startTask(*this, parameters.taskIdentifier, WTFMove(parameters.request));
 }
 
 void WebPageProxy::stopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier)

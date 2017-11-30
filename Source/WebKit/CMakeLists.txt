@@ -184,6 +184,7 @@ set(WebKit_SOURCES
     Shared/SharedStringHashTableReadOnly.cpp
     Shared/SharedStringHashTable.cpp
     Shared/StatisticsData.cpp
+    Shared/URLSchemeTaskParameters.cpp
     Shared/UpdateInfo.cpp
     Shared/UserData.cpp
     Shared/WebBackForwardListItem.cpp

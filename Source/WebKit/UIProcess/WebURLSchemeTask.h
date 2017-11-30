@@ -44,7 +44,7 @@ class WebPageProxy;
 class WebURLSchemeTask : public RefCounted<WebURLSchemeTask>, public InstanceCounted<WebURLSchemeTask> {
     WTF_MAKE_NONCOPYABLE(WebURLSchemeTask);
 public:
-    static Ref<WebURLSchemeTask> create(WebURLSchemeHandler&, WebPageProxy&, uint64_t identifier, const WebCore::ResourceRequest&);
+    static Ref<WebURLSchemeTask> create(WebURLSchemeHandler&, WebPageProxy&, uint64_t identifier, WebCore::ResourceRequest&&);
 
     uint64_t identifier() const { return m_identifier; }
     uint64_t pageID() const { return m_pageIdentifier; }
@@ -68,7 +68,7 @@ public:
     void pageDestroyed();
 
 private:
-    WebURLSchemeTask(WebURLSchemeHandler&, WebPageProxy&, uint64_t identifier, const WebCore::ResourceRequest&);
+    WebURLSchemeTask(WebURLSchemeHandler&, WebPageProxy&, uint64_t identifier, WebCore::ResourceRequest&&);
 
     Ref<WebURLSchemeHandler> m_urlSchemeHandler;
     WebPageProxy* m_page;

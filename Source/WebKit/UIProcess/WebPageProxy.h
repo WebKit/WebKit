@@ -233,6 +233,7 @@ struct LoadParameters;
 struct PlatformPopupMenuData;
 struct PrintInfo;
 struct WebPopupItem;
+struct URLSchemeTaskParameters;
 
 #if USE(QUICK_LOOK)
 class QuickLookDocumentData;
@@ -1636,7 +1637,7 @@ private:
 #endif
 #endif
 
-    void startURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier, const WebCore::ResourceRequest&);
+    void startURLSchemeTask(URLSchemeTaskParameters&&);
     void stopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier);
 
     void handleAutoFillButtonClick(const UserData&);

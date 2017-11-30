@@ -49,9 +49,9 @@ WebURLSchemeHandler::~WebURLSchemeHandler()
     ASSERT(m_tasks.isEmpty());
 }
 
-void WebURLSchemeHandler::startTask(WebPageProxy& page, uint64_t taskIdentifier, const ResourceRequest& request)
+void WebURLSchemeHandler::startTask(WebPageProxy& page, uint64_t taskIdentifier, ResourceRequest&& request)
 {
-    auto result = m_tasks.add(taskIdentifier, WebURLSchemeTask::create(*this, page, taskIdentifier, request));
+    auto result = m_tasks.add(taskIdentifier, WebURLSchemeTask::create(*this, page, taskIdentifier, WTFMove(request)));
     ASSERT(result.isNewEntry);
 
     auto pageEntry = m_tasksByPageIdentifier.add(page.pageID(), HashSet<uint64_t>());

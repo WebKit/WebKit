@@ -498,7 +498,7 @@ messages -> WebPageProxy {
 
     SetIsUsingHighPerformanceWebGL(bool isUsingHighPerformanceWebGL)
 
-    StartURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceRequest request)
+    StartURLSchemeTask(struct WebKit::URLSchemeTaskParameters parameters)
     StopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier)
 
     RequestStorageAccess(String subFrameHost, String topFrameHost, uint64_t contextID)

@@ -1,3 +1,31 @@
+2017-11-30  Alex Christensen  <achristensen@webkit.org>
+
+        WKURLSchemeHandler.request should include HTTPBody
+        https://bugs.webkit.org/show_bug.cgi?id=180220
+
+        Reviewed by Brady Eidson.
+
+        * Shared/URLSchemeTaskParameters.cpp: Added.
+        (WebKit::URLSchemeTaskParameters::encode const):
+        (WebKit::URLSchemeTaskParameters::decode):
+        * Shared/URLSchemeTaskParameters.h: Added.
+        * UIProcess/API/Cocoa/WKURLSchemeTask.mm:
+        (-[WKURLSchemeTaskImpl request]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::startURLSchemeTask):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebURLSchemeHandler.cpp:
+        (WebKit::WebURLSchemeHandler::startTask):
+        * UIProcess/WebURLSchemeHandler.h:
+        * UIProcess/WebURLSchemeTask.cpp:
+        (WebKit::WebURLSchemeTask::create):
+        (WebKit::WebURLSchemeTask::WebURLSchemeTask):
+        * UIProcess/WebURLSchemeTask.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebURLSchemeTaskProxy.cpp:
+        (WebKit::WebURLSchemeTaskProxy::startLoading):
+
 2017-11-30  Darin Adler  <darin@apple.com>
 
         [Mac] remove unneeded RetainPtr use introduced in r225142

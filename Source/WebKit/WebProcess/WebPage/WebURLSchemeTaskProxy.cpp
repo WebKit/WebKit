@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebURLSchemeTaskProxy.h"
 
+#include "URLSchemeTaskParameters.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -51,7 +52,7 @@ WebURLSchemeTaskProxy::WebURLSchemeTaskProxy(WebURLSchemeHandlerProxy& handler, 
 void WebURLSchemeTaskProxy::startLoading()
 {
     ASSERT(m_coreLoader);
-    m_urlSchemeHandler.page().send(Messages::WebPageProxy::StartURLSchemeTask(m_urlSchemeHandler.identifier(), m_coreLoader->identifier(), m_request));
+    m_urlSchemeHandler.page().send(Messages::WebPageProxy::StartURLSchemeTask({m_urlSchemeHandler.identifier(), m_coreLoader->identifier(), m_request}));
 }
 
 void WebURLSchemeTaskProxy::stopLoading()

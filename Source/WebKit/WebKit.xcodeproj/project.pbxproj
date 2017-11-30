@@ -1196,6 +1196,8 @@
 		5C1427131C23F89E00D41183 /* DownloadCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C1427091C23F86900D41183 /* DownloadCocoa.mm */; };
 		5C1427181C23F8B700D41183 /* LegacyCustomProtocolManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1427141C23F8B000D41183 /* LegacyCustomProtocolManager.h */; };
 		5C14271D1C23F8CF00D41183 /* LegacyCustomProtocolManagerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C14271B1C23F8CC00D41183 /* LegacyCustomProtocolManagerCocoa.mm */; };
+		5C19A5201FD0B29500EEA323 /* URLSchemeTaskParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C19A51F1FD0B14700EEA323 /* URLSchemeTaskParameters.h */; };
+		5C19A5211FD0B29A00EEA323 /* URLSchemeTaskParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C19A51E1FD0B14600EEA323 /* URLSchemeTaskParameters.cpp */; };
 		5C20CB9D1BB0DCFA00895BB1 /* NetworkSessionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */; };
 		5C20CBA01BB1ECD800895BB1 /* NetworkSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */; };
 		5C298DA01C3DF02100470AFE /* PendingDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C298D9E1C3DEF2900470AFE /* PendingDownload.h */; };
@@ -3574,6 +3576,8 @@
 		5C1427141C23F8B000D41183 /* LegacyCustomProtocolManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegacyCustomProtocolManager.h; path = NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.h; sourceTree = "<group>"; };
 		5C1427151C23F8B000D41183 /* LegacyCustomProtocolManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LegacyCustomProtocolManager.messages.in; path = NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in; sourceTree = "<group>"; };
 		5C14271B1C23F8CC00D41183 /* LegacyCustomProtocolManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LegacyCustomProtocolManagerCocoa.mm; path = NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm; sourceTree = "<group>"; };
+		5C19A51E1FD0B14600EEA323 /* URLSchemeTaskParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLSchemeTaskParameters.cpp; sourceTree = "<group>"; };
+		5C19A51F1FD0B14700EEA323 /* URLSchemeTaskParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLSchemeTaskParameters.h; sourceTree = "<group>"; };
 		5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkSessionCocoa.mm; path = NetworkProcess/cocoa/NetworkSessionCocoa.mm; sourceTree = "<group>"; };
 		5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkSession.h; path = NetworkProcess/NetworkSession.h; sourceTree = "<group>"; };
 		5C298D9E1C3DEF2900470AFE /* PendingDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PendingDownload.h; path = NetworkProcess/Downloads/PendingDownload.h; sourceTree = "<group>"; };
@@ -5124,6 +5128,8 @@
 				1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */,
 				1A64245D12DE29A100CAAE2C /* UpdateInfo.cpp */,
 				1A64245C12DE29A100CAAE2C /* UpdateInfo.h */,
+				5C19A51E1FD0B14600EEA323 /* URLSchemeTaskParameters.cpp */,
+				5C19A51F1FD0B14700EEA323 /* URLSchemeTaskParameters.h */,
 				1AC1336518565B5700F3EC05 /* UserData.cpp */,
 				1AC1336618565B5700F3EC05 /* UserData.h */,
 				2684054A18B866FF0022C38B /* VisibleContentRectUpdateInfo.cpp */,
@@ -8934,6 +8940,7 @@
 				515BE1A91D55293400DD7C68 /* UIGamepadProvider.h in Headers */,
 				CEE4AE2B1A5DCF430002F49B /* UIKitSPI.h in Headers */,
 				1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */,
+				5C19A5201FD0B29500EEA323 /* URLSchemeTaskParameters.h in Headers */,
 				1AC1336818565B5700F3EC05 /* UserData.h in Headers */,
 				CD491B081E70D05F00009066 /* UserMediaCaptureManager.h in Headers */,
 				CD491B0E1E732E4D00009066 /* UserMediaCaptureManagerMessages.h in Headers */,
@@ -10543,6 +10550,7 @@
 				51E949971D76211300EC9EB9 /* UIGamepadProviderIOS.mm in Sources */,
 				515BE1B71D5A94FD00DD7C68 /* UIGamepadProviderMac.mm in Sources */,
 				1A64245F12DE29A100CAAE2C /* UpdateInfo.cpp in Sources */,
+				5C19A5211FD0B29A00EEA323 /* URLSchemeTaskParameters.cpp in Sources */,
 				1AC1336718565B5700F3EC05 /* UserData.cpp in Sources */,
 				CD491B071E70D05F00009066 /* UserMediaCaptureManager.cpp in Sources */,
 				CD491B0D1E732E4D00009066 /* UserMediaCaptureManagerMessageReceiver.cpp in Sources */,

@@ -25,47 +25,22 @@
 
 #pragma once
 
-#include "WebURLSchemeTask.h"
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <WebCore/ResourceRequest.h>
 
-namespace WebCore {
-class ResourceRequest;
+namespace IPC {
+class Encoder;
+class Decoder;
 }
 
 namespace WebKit {
 
-class WebPageProxy;
-
-class WebURLSchemeHandler : public RefCounted<WebURLSchemeHandler> {
-    WTF_MAKE_NONCOPYABLE(WebURLSchemeHandler);
-public:
-    virtual ~WebURLSchemeHandler();
-
-    uint64_t identifier() const { return m_identifier; }
-
-    void startTask(WebPageProxy&, uint64_t taskIdentifier, WebCore::ResourceRequest&&);
-    void stopTask(WebPageProxy&, uint64_t taskIdentifier);
-    void stopAllTasksForPage(WebPageProxy&);
-    void taskCompleted(WebURLSchemeTask&);
-
-protected:
-    WebURLSchemeHandler();
-
-private:
-    virtual void platformStartTask(WebPageProxy&, WebURLSchemeTask&) = 0;
-    virtual void platformStopTask(WebPageProxy&, WebURLSchemeTask&) = 0;
-    virtual void platformTaskCompleted(WebURLSchemeTask&) = 0;
-
-    void removeTaskFromPageMap(uint64_t pageID, uint64_t taskID);
-
-    uint64_t m_identifier;
-
-    HashMap<uint64_t, Ref<WebURLSchemeTask>> m_tasks;
-    HashMap<uint64_t, HashSet<uint64_t>> m_tasksByPageIdentifier;
-
-}; // class WebURLSchemeHandler
+struct URLSchemeTaskParameters {
+    uint64_t handlerIdentifier { 0 };
+    uint64_t taskIdentifier { 0 };
+    WebCore::ResourceRequest request;
+    
+    void encode(IPC::Encoder&) const;
+    static std::optional<URLSchemeTaskParameters> decode(IPC::Decoder&);
+};
 
 } // namespace WebKit

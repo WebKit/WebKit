@@ -23,49 +23,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "URLSchemeTaskParameters.h"
 
-#include "WebURLSchemeTask.h"
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-
-namespace WebCore {
-class ResourceRequest;
-}
+#include "Decoder.h"
+#include "Encoder.h"
+#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 
-class WebPageProxy;
+void URLSchemeTaskParameters::encode(IPC::Encoder& encoder) const
+{
+    encoder << handlerIdentifier;
+    encoder << taskIdentifier;
+    encoder << request;
+    if (request.httpBody()) {
+        encoder << true;
+        request.httpBody()->encode(encoder);
+    } else
+        encoder << false;
+}
 
-class WebURLSchemeHandler : public RefCounted<WebURLSchemeHandler> {
-    WTF_MAKE_NONCOPYABLE(WebURLSchemeHandler);
-public:
-    virtual ~WebURLSchemeHandler();
+std::optional<URLSchemeTaskParameters> URLSchemeTaskParameters::decode(IPC::Decoder& decoder)
+{
+    std::optional<uint64_t> handlerIdentifier;
+    decoder >> handlerIdentifier;
+    if (!handlerIdentifier)
+        return std::nullopt;
+    
+    std::optional<uint64_t> taskIdentifier;
+    decoder >> taskIdentifier;
+    if (!taskIdentifier)
+        return std::nullopt;
 
-    uint64_t identifier() const { return m_identifier; }
+    WebCore::ResourceRequest request;
+    if (!decoder.decode(request))
+        return std::nullopt;
 
-    void startTask(WebPageProxy&, uint64_t taskIdentifier, WebCore::ResourceRequest&&);
-    void stopTask(WebPageProxy&, uint64_t taskIdentifier);
-    void stopAllTasksForPage(WebPageProxy&);
-    void taskCompleted(WebURLSchemeTask&);
+    std::optional<bool> hasHTTPBody;
+    decoder >> hasHTTPBody;
+    if (!hasHTTPBody)
+        return std::nullopt;
+    if (*hasHTTPBody) {
+        RefPtr<WebCore::FormData> formData = WebCore::FormData::decode(decoder);
+        if (!formData)
+            return std::nullopt;
+        request.setHTTPBody(WTFMove(formData));
+    }
 
-protected:
-    WebURLSchemeHandler();
-
-private:
-    virtual void platformStartTask(WebPageProxy&, WebURLSchemeTask&) = 0;
-    virtual void platformStopTask(WebPageProxy&, WebURLSchemeTask&) = 0;
-    virtual void platformTaskCompleted(WebURLSchemeTask&) = 0;
-
-    void removeTaskFromPageMap(uint64_t pageID, uint64_t taskID);
-
-    uint64_t m_identifier;
-
-    HashMap<uint64_t, Ref<WebURLSchemeTask>> m_tasks;
-    HashMap<uint64_t, HashSet<uint64_t>> m_tasksByPageIdentifier;
-
-}; // class WebURLSchemeHandler
-
+    return {{ WTFMove(*handlerIdentifier), WTFMove(*taskIdentifier), WTFMove(request) }};
+}
+    
 } // namespace WebKit

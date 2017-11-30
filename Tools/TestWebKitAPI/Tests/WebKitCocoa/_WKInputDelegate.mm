@@ -45,7 +45,9 @@ static bool willSubmitFormValuesCalled;
 {
     EXPECT_TRUE(willSubmitFormValuesCalled);
     EXPECT_STREQ(task.request.URL.absoluteString.UTF8String, "test:///formtarget");
-    EXPECT_NULL(task.request.HTTPBody);
+    EXPECT_NOT_NULL(task.request.HTTPBody);
+    EXPECT_EQ(task.request.HTTPBody.length, 62u);
+    EXPECT_STREQ(static_cast<const char*>(task.request.HTTPBody.bytes), "testname1=testvalue1&testname2=testvalue2&testname3=testvalue3");
     done = true;
 }
 
