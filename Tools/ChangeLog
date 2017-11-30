@@ -1,3 +1,12 @@
+2017-11-29  Aakash Jain  <aakash_jain@apple.com>
+
+        Fix build.webkit.org broken unit-test after r225080
+        https://bugs.webkit.org/show_bug.cgi?id=180176
+
+        Reviewed by Carlos Garcia Campos.
+
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py: Updated expected_build_steps.
+
 2017-11-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Implement SPI for clients to make an attachment element display in-place
