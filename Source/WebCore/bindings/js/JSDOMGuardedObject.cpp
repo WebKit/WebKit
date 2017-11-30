@@ -53,6 +53,7 @@ void DOMGuardedObject::clear()
         m_globalObject->guardedObjects(locker).remove(this);
     }
     m_guarded.clear();
+    m_globalObject.clear();
 }
 
 void DOMGuardedObject::contextDestroyed()

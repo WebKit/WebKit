@@ -74,12 +74,8 @@ protected:
 private:
     WEBCORE_EXPORT ServiceWorkerThread(const ServiceWorkerContextData&, PAL::SessionID, WorkerLoaderProxy&, WorkerDebuggerProxy&);
 
-    void updateExtendedEventsSet(ExtendableEvent* newEvent = nullptr);
-    bool hasPendingEvents() const { return !m_extendedEvents.isEmpty(); }
-
     ServiceWorkerContextData m_data;
     WorkerObjectProxy& m_workerObjectProxy;
-    Vector<Ref<ExtendableEvent>> m_extendedEvents;
 };
 
 } // namespace WebCore

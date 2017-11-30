@@ -99,8 +99,9 @@ void ServiceWorkerThread::postFetchTask(Ref<ServiceWorkerFetch::Client>&& client
     // FIXME: instead of directly using runLoop(), we should be using something like WorkerGlobalScopeProxy.
     // FIXME: request and options come straigth from IPC so are already isolated. We should be able to take benefit of that.
     runLoop().postTaskForMode([this, client = WTFMove(client), clientId, request = request.isolatedCopy(), options = options.isolatedCopy()] (ScriptExecutionContext& context) mutable {
-        auto fetchEvent = ServiceWorkerFetch::dispatchFetchEvent(WTFMove(client), downcast<WorkerGlobalScope>(context), clientId, WTFMove(request), WTFMove(options));
-        updateExtendedEventsSet(fetchEvent.ptr());
+        auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
+        auto fetchEvent = ServiceWorkerFetch::dispatchFetchEvent(WTFMove(client), serviceWorkerGlobalScope, clientId, WTFMove(request), WTFMove(options));
+        serviceWorkerGlobalScope.updateExtendedEventsSet(fetchEvent.ptr());
     }, WorkerRunLoop::defaultMode());
 }
 
@@ -114,7 +115,7 @@ void ServiceWorkerThread::postMessageToServiceWorkerGlobalScope(Ref<SerializedSc
         auto messageEvent = ExtendableMessageEvent::create(WTFMove(ports), WTFMove(message), sourceOrigin->toString(), { }, ExtendableMessageEventSource { source });
         serviceWorkerGlobalScope.dispatchEvent(messageEvent);
         serviceWorkerGlobalScope.thread().workerObjectProxy().confirmMessageFromWorkerObject(serviceWorkerGlobalScope.hasPendingActivity());
-        updateExtendedEventsSet(messageEvent.ptr());
+        serviceWorkerGlobalScope.updateExtendedEventsSet(messageEvent.ptr());
     });
     runLoop().postTask(WTFMove(task));
 }
@@ -162,36 +163,6 @@ void ServiceWorkerThread::fireActivateEvent()
         });
     });
     runLoop().postTask(WTFMove(task));
-}
-
-// https://w3c.github.io/ServiceWorker/#update-service-worker-extended-events-set-algorithm
-void ServiceWorkerThread::updateExtendedEventsSet(ExtendableEvent* newEvent)
-{
-    ASSERT(!isMainThread());
-    ASSERT(!newEvent || !newEvent->isBeingDispatched());
-    bool hadPendingEvents = hasPendingEvents();
-    m_extendedEvents.removeAllMatching([](auto& event) {
-        return !event->pendingPromiseCount();
-    });
-
-    if (newEvent && newEvent->pendingPromiseCount()) {
-        m_extendedEvents.append(*newEvent);
-        newEvent->whenAllExtendLifetimePromisesAreSettled([this](auto&&) {
-            updateExtendedEventsSet();
-        });
-        // Clear out the event's target as it is the WorkerGlobalScope and we do not want to keep it
-        // alive unnecessarily.
-        newEvent->setTarget(nullptr);
-    }
-
-    bool hasPendingEvents = this->hasPendingEvents();
-    if (hasPendingEvents == hadPendingEvents)
-        return;
-
-    callOnMainThread([identifier = this->identifier(), hasPendingEvents] {
-        if (auto* connection = SWContextManager::singleton().connection())
-            connection->setServiceWorkerHasPendingEvents(identifier, hasPendingEvents);
-    });
 }
 
 } // namespace WebCore

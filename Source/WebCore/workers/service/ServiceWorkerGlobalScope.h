@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class DeferredPromise;
+class ExtendableEvent;
 struct ServiceWorkerClientData;
 class ServiceWorkerClient;
 class ServiceWorkerClients;
@@ -64,13 +65,18 @@ public:
     void addServiceWorkerClient(ServiceWorkerClient&);
     void removeServiceWorkerClient(ServiceWorkerClient&);
 
+    void updateExtendedEventsSet(ExtendableEvent* newEvent = nullptr);
+
 private:
     ServiceWorkerGlobalScope(const ServiceWorkerContextData&, const URL&, const String& identifier, const String& userAgent, bool isOnline, ServiceWorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, PAL::SessionID);
+
+    bool hasPendingEvents() const { return !m_extendedEvents.isEmpty(); }
 
     ServiceWorkerContextData m_contextData;
     Ref<ServiceWorkerRegistration> m_registration;
     Ref<ServiceWorkerClients> m_clients;
     HashMap<ServiceWorkerClientIdentifier, ServiceWorkerClient*> m_clientMap;
+    Vector<Ref<ExtendableEvent>> m_extendedEvents;
 };
 
 } // namespace WebCore

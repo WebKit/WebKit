@@ -28,6 +28,8 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ExtendableEvent.h"
+#include "SWContextManager.h"
 #include "ServiceWorkerClient.h"
 #include "ServiceWorkerClients.h"
 #include "ServiceWorkerThread.h"
@@ -77,6 +79,36 @@ void ServiceWorkerGlobalScope::removeServiceWorkerClient(ServiceWorkerClient& cl
 {
     auto isRemoved = m_clientMap.remove(client.identifier());
     ASSERT_UNUSED(isRemoved, isRemoved);
+}
+
+// https://w3c.github.io/ServiceWorker/#update-service-worker-extended-events-set-algorithm
+void ServiceWorkerGlobalScope::updateExtendedEventsSet(ExtendableEvent* newEvent)
+{
+    ASSERT(!isMainThread());
+    ASSERT(!newEvent || !newEvent->isBeingDispatched());
+    bool hadPendingEvents = hasPendingEvents();
+    m_extendedEvents.removeAllMatching([](auto& event) {
+        return !event->pendingPromiseCount();
+    });
+
+    if (newEvent && newEvent->pendingPromiseCount()) {
+        m_extendedEvents.append(*newEvent);
+        newEvent->whenAllExtendLifetimePromisesAreSettled([this](auto&&) {
+            updateExtendedEventsSet();
+        });
+        // Clear out the event's target as it is the WorkerGlobalScope and we do not want to keep it
+        // alive unnecessarily.
+        newEvent->setTarget(nullptr);
+    }
+
+    bool hasPendingEvents = this->hasPendingEvents();
+    if (hasPendingEvents == hadPendingEvents)
+        return;
+
+    callOnMainThread([threadIdentifier = thread().identifier(), hasPendingEvents] {
+        if (auto* connection = SWContextManager::singleton().connection())
+            connection->setServiceWorkerHasPendingEvents(threadIdentifier, hasPendingEvents);
+    });
 }
 
 } // namespace WebCore
