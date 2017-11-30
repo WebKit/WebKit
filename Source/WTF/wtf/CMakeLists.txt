@@ -127,6 +127,7 @@ set(WTF_HEADERS
     SharedTask.h
     SaturatedArithmetic.h
     ScopedLambda.h
+    ScrambledPtr.h
     Seconds.h
     SegmentedVector.h
     SmallPtrSet.h
@@ -256,6 +257,7 @@ set(WTF_SOURCES
     RefCountedLeakCounter.cpp
     RunLoop.cpp
     SHA1.cpp
+    ScrambledPtr.cpp
     Seconds.cpp
     SixCharacterHash.cpp
     StackBounds.cpp

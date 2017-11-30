@@ -103,7 +103,7 @@ void OMGPlan::work(CompilationEffort)
 
     omgEntrypoint.calleeSaveRegisters = WTFMove(parseAndCompileResult.value()->entrypoint.calleeSaveRegisters);
 
-    void* entrypoint;
+    MacroAssemblerCodePtr entrypoint;
     {
         ASSERT(m_codeBlock.ptr() == m_module->codeBlockFor(mode()));
         Ref<Callee> callee = Callee::create(WTFMove(omgEntrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
@@ -119,9 +119,9 @@ void OMGPlan::work(CompilationEffort)
         m_codeBlock->m_optimizedCallees[m_functionIndex] = WTFMove(callee);
 
         for (auto& call : unlinkedCalls) {
-            void* entrypoint;
+            MacroAssemblerCodePtr entrypoint;
             if (call.functionIndexSpace < m_module->moduleInformation().importFunctionCount())
-                entrypoint = m_codeBlock->m_wasmToWasmExitStubs[call.functionIndexSpace].code().executableAddress();
+                entrypoint = m_codeBlock->m_wasmToWasmExitStubs[call.functionIndexSpace].code();
             else
                 entrypoint = m_codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(call.functionIndexSpace).entrypoint();
 
@@ -136,7 +136,7 @@ void OMGPlan::work(CompilationEffort)
     resetInstructionCacheOnAllThreads();
     WTF::storeStoreFence(); // This probably isn't necessary but it's good to be paranoid.
 
-    m_codeBlock->m_wasmIndirectCallEntryPoints[m_functionIndex] = entrypoint;
+    m_codeBlock->m_wasmIndirectCallEntryPoints[m_functionIndex] = entrypoint.executableAddress();
     {
         LockHolder holder(m_codeBlock->m_lock);
 
@@ -144,7 +144,7 @@ void OMGPlan::work(CompilationEffort)
             for (auto& call : callsites) {
                 dataLogLnIf(WasmOMGPlanInternal::verbose, "Considering repatching call at: ", RawPointer(call.callLocation.dataLocation()), " that targets ", call.functionIndexSpace);
                 if (call.functionIndexSpace == functionIndexSpace) {
-                    dataLogLnIf(WasmOMGPlanInternal::verbose, "Repatching call at: ", RawPointer(call.callLocation.dataLocation()), " to ", RawPointer(entrypoint));
+                    dataLogLnIf(WasmOMGPlanInternal::verbose, "Repatching call at: ", RawPointer(call.callLocation.dataLocation()), " to ", RawPointer(entrypoint.executableAddress()));
                     MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel(entrypoint));
                 }
             }

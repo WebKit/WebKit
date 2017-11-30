@@ -470,7 +470,7 @@ private:
                 patchpoint->effects.terminal = true;
                 
                 patchpoint->appendSomeRegister(index);
-                patchpoint->numGPScratchRegisters++;
+                patchpoint->numGPScratchRegisters = 2;
                 // Technically, we don't have to clobber macro registers on X86_64. This is probably
                 // OK though.
                 patchpoint->clobber(RegisterSet::macroScratchRegisters());
@@ -505,10 +505,14 @@ private:
                         
                         GPRReg index = params[0].gpr();
                         GPRReg scratch = params.gpScratch(0);
-                        
+                        GPRReg descramblerKey = params.gpScratch(1);
+
+                        jit.move(CCallHelpers::TrustedImm64(g_masmScrambledPtrKey), descramblerKey);
                         jit.move(CCallHelpers::TrustedImmPtr(jumpTable), scratch);
-                        jit.jump(CCallHelpers::BaseIndex(scratch, index, CCallHelpers::timesPtr()));
-                        
+                        jit.load64(CCallHelpers::BaseIndex(scratch, index, CCallHelpers::timesPtr()), scratch);
+                        jit.xor64(descramblerKey, scratch);
+                        jit.jump(scratch);
+
                         // These labels are guaranteed to be populated before either late paths or
                         // link tasks run.
                         Vector<Box<CCallHelpers::Label>> labels = params.successorLabels();

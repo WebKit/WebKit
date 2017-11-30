@@ -91,8 +91,7 @@ void ftlThunkAwareRepatchCall(CodeBlock* codeBlock, CodeLocationCall call, Funct
             MacroAssemblerCodePtr::createFromExecutableAddress(
                 MacroAssembler::readCallTarget(call).executableAddress()));
         key = key.withCallTarget(newCalleeFunction.executableAddress());
-        newCalleeFunction = FunctionPtr(
-            thunks.getSlowPathCallThunk(key).code().executableAddress());
+        newCalleeFunction = FunctionPtr(thunks.getSlowPathCallThunk(key).code());
     }
 #else // ENABLE(FTL_JIT)
     UNUSED_PARAM(codeBlock);

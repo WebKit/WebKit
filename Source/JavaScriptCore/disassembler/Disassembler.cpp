@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@ void disassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* 
     if (tryToDisassemble(codePtr, size, prefix, out))
         return;
     
-    out.printf("%sdisassembly not available for range %p...%p\n", prefix, codePtr.executableAddress(), static_cast<char*>(codePtr.executableAddress()) + size);
+    out.printf("%sdisassembly not available for range %p...%p\n", prefix, codePtr.executableAddress(), codePtr.executableAddress<char*>() + size);
 }
 
 namespace {

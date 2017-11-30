@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,44 +20,30 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
-#include "UDis86Disassembler.h"
+#include "ScrambledPtr.h"
 
-#if USE(UDIS86)
+#include <wtf/CryptographicallyRandomNumber.h>
 
-#include "MacroAssemblerCodeRef.h"
-#include "udis86.h"
+namespace WTF {
 
-namespace JSC {
-
-bool tryToDisassembleWithUDis86(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, PrintStream& out)
+uintptr_t makeScrambledPtrKey()
 {
-    ud_t disassembler;
-    ud_init(&disassembler);
-    ud_set_input_buffer(&disassembler, codePtr.executableAddress<unsigned char*>(), size);
-#if CPU(X86_64)
-    ud_set_mode(&disassembler, 64);
+    uintptr_t key = cryptographicallyRandomNumber();
+#if USE(JSVALUE64) && !OS(WINDOWS)
+    key = (key << 32) ^ (static_cast<uintptr_t>(cryptographicallyRandomNumber()) << 3);
+    // Ensure that the scrambled bits (pointer ^ key) do not make a valid pointer and
+    // cannot be 0. We ensure that it is zero so that the scrambled bits can also be
+    // used for a notmal zero check without needing to descramble first.
+    key |= (static_cast<uintptr_t>(0x1) << 63);
 #else
-    ud_set_mode(&disassembler, 32);
+    key = 0; // Scrambling is not supported on 32-bit or non-darwin platforms yet.
 #endif
-    ud_set_pc(&disassembler, codePtr.executableAddress<uintptr_t>());
-    ud_set_syntax(&disassembler, UD_SYN_ATT);
-    
-    uint64_t currentPC = disassembler.pc;
-    while (ud_disassemble(&disassembler)) {
-        char pcString[20];
-        snprintf(pcString, sizeof(pcString), "0x%lx", static_cast<unsigned long>(currentPC));
-        out.printf("%s%16s: %s\n", prefix, pcString, ud_insn_asm(&disassembler));
-        currentPC = disassembler.pc;
-    }
-    
-    return true;
+    return key;
 }
 
-} // namespace JSC
-
-#endif // USE(UDIS86)
+} // namespace WTF
 

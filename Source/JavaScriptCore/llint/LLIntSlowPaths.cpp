@@ -191,7 +191,8 @@ namespace JSC { namespace LLInt {
 extern "C" SlowPathReturnType llint_trace_operand(ExecState* exec, Instruction* pc, int fromWhere, int operand)
 {
     LLINT_BEGIN();
-    dataLogF("%p / %p: executing bc#%zu, op#%u: Trace(%d): %d: %d\n",
+    dataLogF("<%d> %p / %p: executing bc#%zu, op#%u: Trace(%d): %d: %d\n",
+            currentThread(),
             exec->codeBlock(),
             exec,
             static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),
@@ -214,7 +215,8 @@ extern "C" SlowPathReturnType llint_trace_value(ExecState* exec, Instruction* pc
     } u;
     u.asValue = JSValue::encode(value);
     dataLogF(
-        "%p / %p: executing bc#%zu, op#%u: Trace(%d): %d: %d: %08x:%08x: %s\n",
+        "<%d> %p / %p: executing bc#%zu, op#%u: Trace(%d): %d: %d: %08x:%08x: %s\n",
+        currentThread(),
         exec->codeBlock(),
         exec,
         static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),
@@ -230,7 +232,7 @@ extern "C" SlowPathReturnType llint_trace_value(ExecState* exec, Instruction* pc
 
 LLINT_SLOW_PATH_DECL(trace_prologue)
 {
-    dataLogF("%p / %p: in prologue of ", exec->codeBlock(), exec);
+    dataLogF("<%d> %p / %p: in prologue of ", currentThread(), exec->codeBlock(), exec);
     dataLog(*exec->codeBlock(), "\n");
     LLINT_END_IMPL();
 }
@@ -240,7 +242,7 @@ static void traceFunctionPrologue(ExecState* exec, const char* comment, CodeSpec
     JSFunction* callee = jsCast<JSFunction*>(exec->jsCallee());
     FunctionExecutable* executable = callee->jsExecutable();
     CodeBlock* codeBlock = executable->codeBlockFor(kind);
-    dataLogF("%p / %p: in %s of ", codeBlock, exec, comment);
+    dataLogF("<%d> %p / %p: in %s of ", currentThread(), codeBlock, exec, comment);
     dataLog(*codeBlock);
     dataLogF(" function %p, executable %p; numVars = %u, numParameters = %u, numCalleeLocals = %u, caller = %p.\n",
         callee, executable, codeBlock->m_numVars, codeBlock->numParameters(), codeBlock->m_numCalleeLocals, exec->callerFrame());
@@ -273,7 +275,8 @@ LLINT_SLOW_PATH_DECL(trace_arityCheck_for_construct)
 LLINT_SLOW_PATH_DECL(trace)
 {
     OpcodeID opcodeID = Interpreter::getOpcodeID(pc[0].u.opcode);
-    dataLogF("%p / %p: executing bc#%zu, %s, pc = %p\n",
+    dataLogF("<%d> %p / %p: executing bc#%zu, %s, pc = %p\n",
+            currentThread(),
             exec->codeBlock(),
             exec,
             static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),
@@ -291,7 +294,8 @@ LLINT_SLOW_PATH_DECL(trace)
 
 LLINT_SLOW_PATH_DECL(special_trace)
 {
-    dataLogF("%p / %p: executing special case bc#%zu, op#%u, return PC is %p\n",
+    dataLogF("<%d> %p / %p: executing special case bc#%zu, op#%u, return PC is %p\n",
+            currentThread(),
             exec->codeBlock(),
             exec,
             static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),
@@ -1305,6 +1309,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
             execCallee->setCallee(asObject(callee));
             vm.hostCallReturnValue = JSValue::decode(callData.native.function(execCallee));
             
+            MasmScrambledPtr::assertIsNotScrambled(LLInt::getCodePtr(getHostCallReturnValue));
             LLINT_CALL_RETURN(execCallee, execCallee, LLInt::getCodePtr(getHostCallReturnValue));
         }
         
@@ -1328,6 +1333,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
         execCallee->setCallee(asObject(callee));
         vm.hostCallReturnValue = JSValue::decode(constructData.native.function(execCallee));
 
+        MasmScrambledPtr::assertIsNotScrambled(LLInt::getCodePtr(getHostCallReturnValue));
         LLINT_CALL_RETURN(execCallee, execCallee, LLInt::getCodePtr(getHostCallReturnValue));
     }
     
@@ -1368,6 +1374,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
                 callLinkInfo->machineCodeTarget = codePtr;
             }
 
+            MasmScrambledPtr::assertIsNotScrambled(codePtr.executableAddress());
             LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress());
         }
         throwScope.release();
@@ -1418,6 +1425,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
             codeBlock->linkIncomingCall(exec, callLinkInfo);
     }
 
+    MasmScrambledPtr::assertIsNotScrambled(codePtr.executableAddress());
     LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress());
 }
 

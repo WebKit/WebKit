@@ -84,7 +84,7 @@ JITCode::CodePtr JITCode::addressForCall(ArityCheckMode arityCheck)
 
 void* JITCode::executableAddressAtOffset(size_t offset)
 {
-    return reinterpret_cast<char*>(m_addressForCall.executableAddress()) + offset;
+    return m_addressForCall.executableAddress<char*>() + offset;
 }
 
 void* JITCode::dataAddressAtOffset(size_t)

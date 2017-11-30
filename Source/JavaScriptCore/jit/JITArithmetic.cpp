@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -716,7 +716,7 @@ void JIT::emitMathICFast(JITUnaryMathIC<Generator>* mathIC, Instruction* current
 #if ENABLE(MATH_IC_STATS)
     auto inlineEnd = label();
     addLinkTask([=] (LinkBuffer& linkBuffer) {
-        size_t size = static_cast<char*>(linkBuffer.locationOf(inlineEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(inlineStart).executableAddress());
+        size_t size = linkBuffer.locationOf(inlineEnd).executableAddress<char*>() - linkBuffer.locationOf(inlineStart).executableAddress<char*>();
         mathIC->m_generatedCodeSize += size;
     });
 #endif
@@ -789,7 +789,7 @@ void JIT::emitMathICFast(JITBinaryMathIC<Generator>* mathIC, Instruction* curren
 #if ENABLE(MATH_IC_STATS)
     auto inlineEnd = label();
     addLinkTask([=] (LinkBuffer& linkBuffer) {
-        size_t size = static_cast<char*>(linkBuffer.locationOf(inlineEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(inlineStart).executableAddress());
+        size_t size = linkBuffer.locationOf(inlineEnd).executableAddress<char*>() - linkBuffer.locationOf(inlineStart).executableAddress<char*>();
         mathIC->m_generatedCodeSize += size;
     });
 #endif
@@ -829,7 +829,7 @@ void JIT::emitMathICSlow(JITUnaryMathIC<Generator>* mathIC, Instruction* current
 #if ENABLE(MATH_IC_STATS)
     auto slowPathEnd = label();
     addLinkTask([=] (LinkBuffer& linkBuffer) {
-        size_t size = static_cast<char*>(linkBuffer.locationOf(slowPathEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(slowPathStart).executableAddress());
+        size_t size = linkBuffer.locationOf(slowPathEnd).executableAddress<char*>() - linkBuffer.locationOf(slowPathStart).executableAddress<char*>();
         mathIC->m_generatedCodeSize += size;
     });
 #endif
@@ -895,7 +895,7 @@ void JIT::emitMathICSlow(JITBinaryMathIC<Generator>* mathIC, Instruction* curren
 #if ENABLE(MATH_IC_STATS)
     auto slowPathEnd = label();
     addLinkTask([=] (LinkBuffer& linkBuffer) {
-        size_t size = static_cast<char*>(linkBuffer.locationOf(slowPathEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(slowPathStart).executableAddress());
+        size_t size = linkBuffer.locationOf(slowPathEnd).executableAddress<char*>() - linkBuffer.locationOf(slowPathStart).executableAddress<char*>();
         mathIC->m_generatedCodeSize += size;
     });
 #endif

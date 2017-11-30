@@ -67,7 +67,7 @@ CodeBlock::CodeBlock(Context* context, MemoryMode mode, ModuleInformation& modul
                 ASSERT_UNUSED(result, result.isNewEntry);
             }
             m_callees[calleeIndex] = WTFMove(wasmEntrypointCallee);
-            m_wasmIndirectCallEntryPoints[calleeIndex] = m_callees[calleeIndex]->entrypoint();
+            m_wasmIndirectCallEntryPoints[calleeIndex] = m_callees[calleeIndex]->entrypoint().executableAddress();
         });
 
         m_wasmToWasmExitStubs = m_plan->takeWasmToWasmExitStubs();

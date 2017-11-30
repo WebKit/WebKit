@@ -1,3 +1,151 @@
+2017-11-30  Mark Lam  <mark.lam@apple.com>
+
+        Let's scramble MacroAssemblerCodePtr values.
+        https://bugs.webkit.org/show_bug.cgi?id=180169
+        <rdar://problem/35758340>
+
+        Reviewed by Filip Pizlo, Saam Barati, and JF Bastien.
+
+        1. MacroAssemblerCodePtr now stores a ScrambledPtr instead of a void*.
+
+        2. MacroAssemblerCodePtr's executableAddress() and dataLocation() now take a
+           template argument type that will be used to cast the result.  This makes the
+           client code that uses these functions a little less verbose.
+
+        3. Change the code base in general to minimize passing void* code pointers around.
+           We now pass MacroAssemblerCodePtr as much as possible, and descramble it only
+           at the last moment when we need the underlying code pointer.
+
+        4. Added some MasmScrambledPtr paranoid asserts that are disabled (not built) by
+           default.  I'm leaving them in because they are instrumental in finding bugs
+           where not all MacroAssemblerCodePtr values were not scrambled as expected.
+           I expect them to be useful in the near future as we add more scrambling.
+
+        5. Also disable the casting operator on MacroAssemblerCodePtr (except for
+           explicit casts to a boolean).  This ensures that clients will always explicitly
+           use scrambledBits() or executableAddress() to get a value based on which value
+           they actually need.
+
+        5. Added currentThread() id to the logging in LLIntSlowPath trace functions.
+           This was helpful when debugging tests that ran multiple VMs concurrently on
+           different threads.
+
+        MacroAssemblerCodePtr is currently supported on 64-bit builds (including the
+        CLoop).  It is not yet supported in 32-bit and Windows because we don't
+        currently have a way to read a global variable from their LLInt code.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::differenceBetweenCodePtr):
+        (JSC::AbstractMacroAssembler::linkPointer):
+        * assembler/CodeLocation.h:
+        (JSC::CodeLocationCommon::instructionAtOffset):
+        (JSC::CodeLocationCommon::labelAtOffset):
+        (JSC::CodeLocationCommon::jumpAtOffset):
+        (JSC::CodeLocationCommon::callAtOffset):
+        (JSC::CodeLocationCommon::nearCallAtOffset):
+        (JSC::CodeLocationCommon::dataLabelPtrAtOffset):
+        (JSC::CodeLocationCommon::dataLabel32AtOffset):
+        (JSC::CodeLocationCommon::dataLabelCompactAtOffset):
+        (JSC::CodeLocationCommon::convertibleLoadAtOffset):
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::finalizeCodeWithDisassembly):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::link):
+        (JSC::LinkBuffer::patch):
+        * assembler/MacroAssemblerCodeRef.cpp:
+        (JSC::MacroAssemblerCodePtr::initialize):
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::FunctionPtr::FunctionPtr):
+        (JSC::FunctionPtr::value const):
+        (JSC::FunctionPtr::executableAddress const):
+        (JSC::ReturnAddressPtr::ReturnAddressPtr):
+        (JSC::ReturnAddressPtr::value const):
+        (JSC::MacroAssemblerCodePtr::MacroAssemblerCodePtr):
+        (JSC::MacroAssemblerCodePtr::createFromExecutableAddress):
+        (JSC::MacroAssemblerCodePtr::scrambledPtr const):
+        (JSC::MacroAssemblerCodePtr:: const):
+        (JSC::MacroAssemblerCodePtr::operator! const):
+        (JSC::MacroAssemblerCodePtr::operator bool const):
+        (JSC::MacroAssemblerCodePtr::operator== const):
+        (JSC::MacroAssemblerCodePtr::hash const):
+        (JSC::MacroAssemblerCodePtr::emptyValue):
+        (JSC::MacroAssemblerCodePtr::deletedValue):
+        (JSC::MacroAssemblerCodePtr::executableAddress const): Deleted.
+        (JSC::MacroAssemblerCodePtr::dataLocation const): Deleted.
+        * b3/B3LowerMacros.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testInterpreter):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::dumpDisassembly):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+        (JSC::DFG::SpeculativeJIT::emitSwitchImm):
+        (JSC::DFG::SpeculativeJIT::emitSwitchCharStringJump):
+        (JSC::DFG::SpeculativeJIT::emitSwitchChar):
+        * dfg/DFGSpeculativeJIT.h:
+        * disassembler/Disassembler.cpp:
+        (JSC::disassemble):
+        * disassembler/UDis86Disassembler.cpp:
+        (JSC::tryToDisassembleWithUDis86):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::executableAddressAtOffset):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        * interpreter/InterpreterInlines.h:
+        (JSC::Interpreter::getOpcodeID):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitMathICFast):
+        (JSC::JIT::emitMathICSlow):
+        * jit/JITCode.cpp:
+        (JSC::JITCodeWithCodeRef::executableAddressAtOffset):
+        (JSC::JITCodeWithCodeRef::dataAddressAtOffset):
+        (JSC::JITCodeWithCodeRef::offsetOf):
+        * jit/JITDisassembler.cpp:
+        (JSC::JITDisassembler::dumpDisassembly):
+        * jit/PCToCodeOriginMap.cpp:
+        (JSC::PCToCodeOriginMap::PCToCodeOriginMap):
+        * jit/Repatch.cpp:
+        (JSC::ftlThunkAwareRepatchCall):
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+        (JSC::boundThisNoArgsFunctionCallGenerator):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::llint_trace_operand):
+        (JSC::LLInt::llint_trace_value):
+        (JSC::LLInt::handleHostCall):
+        (JSC::LLInt::setUpCall):
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/cloop.rb:
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::complete):
+        * wasm/WasmCallee.h:
+        (JSC::Wasm::Callee::entrypoint const):
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        * wasm/js/WebAssemblyFunction.h:
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::create):
+
 2017-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Remove easy toRemove & map.remove() use

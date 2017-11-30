@@ -1,3 +1,31 @@
+2017-11-30  Mark Lam  <mark.lam@apple.com>
+
+        Let's scramble MacroAssemblerCodePtr values.
+        https://bugs.webkit.org/show_bug.cgi?id=180169
+        <rdar://problem/35758340>
+
+        Reviewed by Filip Pizlo, Saam Barati, and JF Bastien.
+
+        Introduce a ScrambledPtr class to facilitate scrambling.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/ScrambledPtr.cpp: Added.
+        (WTF::makeScrambledPtrKey):
+        * wtf/ScrambledPtr.h: Added.
+        (WTF::ScrambledPtr::ScrambledPtr):
+        (WTF::ScrambledPtr::paranoidAssertIsScrambled const):
+        (WTF::ScrambledPtr::paranoidAssertIsNotScrambled const):
+        (WTF::ScrambledPtr:: const):
+        (WTF::ScrambledPtr::operator-> const):
+        (WTF::ScrambledPtr::scrambledBits const):
+        (WTF::ScrambledPtr::operator! const):
+        (WTF::ScrambledPtr::operator bool const):
+        (WTF::ScrambledPtr::operator== const):
+        (WTF::ScrambledPtr::operator==):
+        (WTF::ScrambledPtr::scramble):
+        (WTF::ScrambledPtr::descramble):
+
 2017-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Remove easy toRemove & map.remove() use

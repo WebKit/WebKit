@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2012-2014, 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -213,7 +213,11 @@ MacroAssemblerCodeRef virtualThunkFor(VM* vm, CallLinkInfo& callLinkInfo)
     
     // Now we know that we have a CodeBlock, and we're committed to making a fast
     // call.
-    
+#if USE(JSVALUE64)
+    jit.move(CCallHelpers::TrustedImm64(g_masmScrambledPtrKey), GPRInfo::regT1);
+    jit.xor64(GPRInfo::regT1, GPRInfo::regT4);
+#endif
+
     // Make a tail call. This will return back to JIT code.
     JSInterfaceJIT::Label callCode(jit.label());
     emitPointerValidation(jit, GPRInfo::regT4);
@@ -1158,6 +1162,10 @@ MacroAssemblerCodeRef boundThisNoArgsFunctionCallGenerator(VM* vm)
         GPRInfo::regT0);
     CCallHelpers::Jump noCode = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT0);
     
+#if USE(JSVALUE64)
+    jit.move(CCallHelpers::TrustedImm64(g_masmScrambledPtrKey), GPRInfo::regT1);
+    jit.xor64(GPRInfo::regT1, GPRInfo::regT0);
+#endif
     emitPointerValidation(jit, GPRInfo::regT0);
     jit.call(GPRInfo::regT0);
     

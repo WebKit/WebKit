@@ -2041,8 +2041,8 @@ char* JIT_OPERATION operationFindSwitchImmTargetForDouble(
     double asDouble = value.asDouble();
     int32_t asInt32 = static_cast<int32_t>(asDouble);
     if (asDouble == asInt32)
-        return static_cast<char*>(table.ctiForValue(asInt32).executableAddress());
-    return static_cast<char*>(table.ctiDefault.executableAddress());
+        return table.ctiForValue(asInt32).executableAddress<char*>();
+    return table.ctiDefault.executableAddress<char*>();
 }
 
 char* JIT_OPERATION operationSwitchString(ExecState* exec, size_t tableIndex, JSString* string)
@@ -2050,7 +2050,7 @@ char* JIT_OPERATION operationSwitchString(ExecState* exec, size_t tableIndex, JS
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    return static_cast<char*>(exec->codeBlock()->stringSwitchJumpTable(tableIndex).ctiForValue(string->value(exec).impl()).executableAddress());
+    return exec->codeBlock()->stringSwitchJumpTable(tableIndex).ctiForValue(string->value(exec).impl()).executableAddress<char*>();
 }
 
 int32_t JIT_OPERATION operationSwitchStringAndGetBranchOffset(ExecState* exec, size_t tableIndex, JSString* string)

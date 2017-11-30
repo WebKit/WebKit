@@ -1821,7 +1821,7 @@ private:
 #if ENABLE(MATH_IC_STATS)
                         auto slowPathEnd = jit.label();
                         jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                            size_t size = static_cast<char*>(linkBuffer.locationOf(slowPathEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(slowPathStart).executableAddress());
+                            size_t size = linkBuffer.locationOf(slowPathEnd).executableAddress<char*>() - linkBuffer.locationOf(slowPathStart).executableAddress<char*>();
                             mathIC->m_generatedCodeSize += size;
                         });
 #endif
@@ -1835,7 +1835,7 @@ private:
 #if ENABLE(MATH_IC_STATS)
                 auto inlineEnd = jit.label();
                 jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                    size_t size = static_cast<char*>(linkBuffer.locationOf(inlineEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(inlineStart).executableAddress());
+                    size_t size = linkBuffer.locationOf(inlineEnd).executableAddress<char*>() - linkBuffer.locationOf(inlineStart).executableAddress<char*>();
                     mathIC->m_generatedCodeSize += size;
                 });
 #endif
@@ -1914,7 +1914,7 @@ private:
 #if ENABLE(MATH_IC_STATS)
                         auto slowPathEnd = jit.label();
                         jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                            size_t size = static_cast<char*>(linkBuffer.locationOf(slowPathEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(slowPathStart).executableAddress());
+                            size_t size = linkBuffer.locationOf(slowPathEnd).executableAddress<char*>() - linkBuffer.locationOf(slowPathStart).executableAddress<char*>();
                             mathIC->m_generatedCodeSize += size;
                         });
 #endif
@@ -1928,7 +1928,7 @@ private:
 #if ENABLE(MATH_IC_STATS)
                 auto inlineEnd = jit.label();
                 jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                    size_t size = static_cast<char*>(linkBuffer.locationOf(inlineEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(inlineStart).executableAddress());
+                    size_t size = linkBuffer.locationOf(inlineEnd).executableAddress<char*>() - linkBuffer.locationOf(inlineStart).executableAddress<char*>();
                     mathIC->m_generatedCodeSize += size;
                 });
 #endif
@@ -6765,7 +6765,7 @@ private:
                     [=] (LinkBuffer& linkBuffer) {
                         MacroAssemblerCodePtr linkCall =
                             vm->getCTIStub(linkCallThunkGenerator).code();
-                        linkBuffer.link(slowCall, FunctionPtr(linkCall.executableAddress()));
+                        linkBuffer.link(slowCall, FunctionPtr(linkCall));
 
                         callLinkInfo->setCallLocations(
                             CodeLocationLabel(linkBuffer.locationOfNearCall(slowCall)),
@@ -7076,7 +7076,7 @@ private:
                     [=] (LinkBuffer& linkBuffer) {
                         MacroAssemblerCodePtr linkCall =
                             vm->getCTIStub(linkCallThunkGenerator).code();
-                        linkBuffer.link(slowCall, FunctionPtr(linkCall.executableAddress()));
+                        linkBuffer.link(slowCall, FunctionPtr(linkCall));
 
                         callLinkInfo->setCallLocations(
                             CodeLocationLabel(linkBuffer.locationOfNearCall(slowCall)),
@@ -7346,7 +7346,7 @@ private:
                     [=] (LinkBuffer& linkBuffer) {
                         MacroAssemblerCodePtr linkCall =
                             vm->getCTIStub(linkCallThunkGenerator).code();
-                        linkBuffer.link(slowCall, FunctionPtr(linkCall.executableAddress()));
+                        linkBuffer.link(slowCall, FunctionPtr(linkCall));
                         
                         callLinkInfo->setCallLocations(
                             CodeLocationLabel(linkBuffer.locationOfNearCall(slowCall)),
@@ -7629,7 +7629,7 @@ private:
                     [=] (LinkBuffer& linkBuffer) {
                         MacroAssemblerCodePtr linkCall =
                             vm->getCTIStub(linkCallThunkGenerator).code();
-                        linkBuffer.link(slowCall, FunctionPtr(linkCall.executableAddress()));
+                        linkBuffer.link(slowCall, FunctionPtr(linkCall));
                         
                         callLinkInfo->setCallLocations(
                             CodeLocationLabel(linkBuffer.locationOfNearCall(slowCall)),

@@ -627,7 +627,7 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
     if (UNLIKELY(patchBuffer.didFailToAllocate()))
         return makeUnexpected(BindingFailure::OutOfMemory);
 
-    patchBuffer.link(slowCall, FunctionPtr(vm->getCTIStub(linkCallThunkGenerator).code().executableAddress()));
+    patchBuffer.link(slowCall, FunctionPtr(vm->getCTIStub(linkCallThunkGenerator).code()));
     CodeLocationLabel callReturnLocation(patchBuffer.locationOfNearCall(slowCall));
     CodeLocationLabel hotPathBegin(patchBuffer.locationOf(targetToCheck));
     CodeLocationNearCall hotPathOther = patchBuffer.locationOfNearCall(fastCall);

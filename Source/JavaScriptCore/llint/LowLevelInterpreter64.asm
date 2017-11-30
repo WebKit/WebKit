@@ -1946,8 +1946,15 @@ macro doCall(slowPath, prepareCall)
     storei PC, ArgumentCount + TagOffset[cfr]
     storei t2, ArgumentCount + PayloadOffset[t3]
     move t3, sp
-    prepareCall(LLIntCallLinkInfo::machineCodeTarget[t1], t2, t3, t4)
-    callTargetFunction(LLIntCallLinkInfo::machineCodeTarget[t1])
+    if X86_64_WIN
+        prepareCall(LLIntCallLinkInfo::machineCodeTarget[t1], t2, t3, t4)
+        callTargetFunction(LLIntCallLinkInfo::machineCodeTarget[t1])
+    else
+        loadp _g_masmScrambledPtrKey, t2
+        xorp LLIntCallLinkInfo::machineCodeTarget[t1], t2
+        prepareCall(t2, t1, t3, t4)
+        callTargetFunction(t2)
+    end
 
 .opCallSlow:
     slowPathForCall(slowPath, prepareCall)

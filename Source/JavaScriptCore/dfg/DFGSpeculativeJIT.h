@@ -2858,9 +2858,9 @@ public:
         BasicBlock* target;
     };
     
-    void emitSwitchIntJump(SwitchData*, GPRReg value, GPRReg scratch);
+    void emitSwitchIntJump(SwitchData*, GPRReg value, GPRReg scratch, GPRReg scratch2);
     void emitSwitchImm(Node*, SwitchData*);
-    void emitSwitchCharStringJump(SwitchData*, GPRReg value, GPRReg scratch);
+    void emitSwitchCharStringJump(SwitchData*, GPRReg value, GPRReg scratch, GPRReg scratch2);
     void emitSwitchChar(Node*, SwitchData*);
     void emitBinarySwitchStringRecurse(
         SwitchData*, const Vector<StringSwitchCase>&, unsigned numChecked,

@@ -146,6 +146,7 @@
 		E38D6E271F5522E300A75CC4 /* StringBuilderJSON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38D6E261F5522E300A75CC4 /* StringBuilderJSON.cpp */; };
 		E4A0AD391A96245500536DF6 /* WorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD371A96245500536DF6 /* WorkQueue.cpp */; };
 		E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */; };
+		FE85416E1FBE285D008DA5DA /* ScrambledPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE85416C1FBE285B008DA5DA /* ScrambledPtr.cpp */; };
 		FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDACD3B1630F83F00C69634 /* StackStats.cpp */; };
 /* End PBXBuildFile section */
 
@@ -597,6 +598,8 @@
 		EF7D6CD59D8642A8A0DA86AD /* StackTrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackTrace.h; sourceTree = "<group>"; };
 		F72BBDB107FA424886178B9E /* SymbolImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolImpl.cpp; sourceTree = "<group>"; };
 		FE8225301B2A1E5B00BA68FD /* NakedPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NakedPtr.h; sourceTree = "<group>"; };
+		FE85416C1FBE285B008DA5DA /* ScrambledPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrambledPtr.cpp; sourceTree = "<group>"; };
+		FE85416D1FBE285C008DA5DA /* ScrambledPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrambledPtr.h; sourceTree = "<group>"; };
 		FE86A8741E59440200111BBF /* ForbidHeapAllocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForbidHeapAllocation.h; sourceTree = "<group>"; };
 		FE8925AF1D00DAEC0046907E /* Indenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Indenter.h; sourceTree = "<group>"; };
 		FEDACD3B1630F83F00C69634 /* StackStats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackStats.cpp; sourceTree = "<group>"; };
@@ -980,6 +983,8 @@
 				1469419516EAAFF80024E146 /* SchedulePairMac.mm */,
 				1A3524AA1D63A2FF0031729B /* Scope.h */,
 				0FEC84B01BDACD390080FF74 /* ScopedLambda.h */,
+				FE85416C1FBE285B008DA5DA /* ScrambledPtr.cpp */,
+				FE85416D1FBE285C008DA5DA /* ScrambledPtr.h */,
 				0F66B2841DC97BAB004A1D3F /* Seconds.cpp */,
 				0F66B2851DC97BAB004A1D3F /* Seconds.h */,
 				A8A47306151A825B004123FF /* SegmentedVector.h */,
@@ -1459,6 +1464,7 @@
 				1C181C7F1D3078DA00F5FA16 /* TextBreakIterator.cpp in Sources */,
 				1C181C961D30800A00F5FA16 /* TextBreakIteratorInternalICUMac.mm in Sources */,
 				A3E4DD931F3A803400DED0B4 /* TextStream.cpp in Sources */,
+				FE85416E1FBE285D008DA5DA /* ScrambledPtr.cpp in Sources */,
 				E311FB171F0A568B003C08DE /* ThreadGroup.cpp in Sources */,
 				A8A4744A151A825B004123FF /* Threading.cpp in Sources */,
 				A8A4744E151A825B004123FF /* ThreadingPthreads.cpp in Sources */,

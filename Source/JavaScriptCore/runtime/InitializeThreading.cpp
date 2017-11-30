@@ -37,6 +37,7 @@
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "LLIntData.h"
+#include "MacroAssemblerCodeRef.h"
 #include "Options.h"
 #include "StructureIDTable.h"
 #include "SuperSampler.h"
@@ -58,6 +59,7 @@ void initializeThreading()
 
     std::call_once(initializeThreadingOnceFlag, []{
         WTF::initializeThreading();
+        MacroAssemblerCodePtr::initialize();
         Options::initialize();
 #if ENABLE(WRITE_BARRIER_PROFILING)
         WriteBarrierCounters::initialize();
