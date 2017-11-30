@@ -3275,3 +3275,6 @@ webkit.org/b/178127 media/modern-media-controls/media-controller/media-controlle
 
 # <rdar://problem/33731086>
 media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]
+
+# Skip WebGL while the ANGLE update has caused many failures
+webgl [ Skip ]
