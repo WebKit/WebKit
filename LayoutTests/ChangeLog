@@ -1,3 +1,15 @@
+2017-11-29  Antoine Quint  <graouts@apple.com>
+
+        Move modern media controls test expectations from ios-simulator to ios
+        https://bugs.webkit.org/show_bug.cgi?id=180158
+
+        Reviewed by Dean Jackson.
+
+        We shouldn't be using the ios-simulator platform for these, ios is the right one.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2017-11-29  Chris Dumez  <cdumez@apple.com>
 
         LayoutTest http/tests/workers/service/registration-clear-redundant-worker.html is a flaky failure
