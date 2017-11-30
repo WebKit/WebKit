@@ -107,8 +107,6 @@ inline Butterfly* Butterfly::createOrGrowPropertyStorage(
     if (!oldButterfly)
         return create(vm, intendedOwner, 0, newPropertyCapacity, false, IndexingHeader(), 0);
 
-    oldButterfly = oldButterfly->caged();
-
     size_t preCapacity = oldButterfly->indexingHeader()->preCapacity(structure);
     size_t indexingPayloadSizeInBytes = oldButterfly->indexingHeader()->indexingPayloadSizeInBytes(structure);
     bool hasIndexingHeader = structure->hasIndexingHeader(intendedOwner);

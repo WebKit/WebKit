@@ -378,7 +378,6 @@ private:
                     break;
                     
                 case GetButterfly:
-                case GetButterflyWithoutCaging:
                     // This barely works. The danger is that the GetButterfly is used by something that
                     // does something escaping to a candidate. Fortunately, the only butterfly-using ops
                     // that we exempt here also use the candidate directly. If there ever was a

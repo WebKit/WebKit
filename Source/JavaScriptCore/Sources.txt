@@ -315,7 +315,6 @@ dfg/DFGEdge.cpp
 dfg/DFGEpoch.cpp
 dfg/DFGFailedFinalizer.cpp
 dfg/DFGFinalizer.cpp
-dfg/DFGFixedButterflyAccessUncagingPhase.cpp
 dfg/DFGFixupPhase.cpp
 dfg/DFGFlowIndexing.cpp
 dfg/DFGFlushFormat.cpp

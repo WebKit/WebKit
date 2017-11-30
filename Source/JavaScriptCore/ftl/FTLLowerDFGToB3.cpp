@@ -713,7 +713,6 @@ private:
             compileDeleteByVal();
             break;
         case GetButterfly:
-        case GetButterflyWithoutCaging:
             compileGetButterfly();
             break;
         case ConstantStoragePointer:
@@ -3382,8 +3381,6 @@ private:
     void compileGetButterfly()
     {
         LValue butterfly = m_out.loadPtr(lowCell(m_node->child1()), m_heaps.JSObject_butterfly);
-        if (m_node->op() != GetButterflyWithoutCaging)
-            butterfly = caged(Gigacage::JSValue, butterfly);
         setStorage(butterfly);
     }
 

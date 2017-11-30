@@ -118,7 +118,6 @@ bool doesGC(Graph& graph, Node* node)
     case CheckStructureImmediate:
     case GetExecutable:
     case GetButterfly:
-    case GetButterflyWithoutCaging:
     case CheckSubClass:
     case CheckArray:
     case GetScope:

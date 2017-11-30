@@ -535,7 +535,6 @@
 		0FD8A32817D51F5700CA2C40 /* DFGTierUpCheckInjectionPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD8A32017D51F5700CA2C40 /* DFGTierUpCheckInjectionPhase.h */; };
 		0FD8A32A17D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD8A32217D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.h */; };
 		0FD8A32C17D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD8A32417D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.h */; };
-		0FD9EA891F29162C00F32BEE /* DFGFixedButterflyAccessUncagingPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD9EA871F29162C00F32BEE /* DFGFixedButterflyAccessUncagingPhase.h */; };
 		0FDB2CC9173DA520007B3C1B /* FTLAbbreviatedTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDB2CC7173DA51E007B3C1B /* FTLAbbreviatedTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FDB2CCA173DA523007B3C1B /* FTLValueFromBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDB2CC8173DA51E007B3C1B /* FTLValueFromBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FDB2CE8174830A2007B3C1B /* DFGWorklist.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDB2CE6174830A2007B3C1B /* DFGWorklist.h */; };
@@ -2658,8 +2657,6 @@
 		0FD8A32217D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGToFTLDeferredCompilationCallback.h; path = dfg/DFGToFTLDeferredCompilationCallback.h; sourceTree = "<group>"; };
 		0FD8A32317D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGToFTLForOSREntryDeferredCompilationCallback.cpp; path = dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp; sourceTree = "<group>"; };
 		0FD8A32417D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGToFTLForOSREntryDeferredCompilationCallback.h; path = dfg/DFGToFTLForOSREntryDeferredCompilationCallback.h; sourceTree = "<group>"; };
-		0FD9EA861F29162C00F32BEE /* DFGFixedButterflyAccessUncagingPhase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DFGFixedButterflyAccessUncagingPhase.cpp; path = dfg/DFGFixedButterflyAccessUncagingPhase.cpp; sourceTree = "<group>"; };
-		0FD9EA871F29162C00F32BEE /* DFGFixedButterflyAccessUncagingPhase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DFGFixedButterflyAccessUncagingPhase.h; path = dfg/DFGFixedButterflyAccessUncagingPhase.h; sourceTree = "<group>"; };
 		0FDB2CC7173DA51E007B3C1B /* FTLAbbreviatedTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FTLAbbreviatedTypes.h; path = ftl/FTLAbbreviatedTypes.h; sourceTree = "<group>"; };
 		0FDB2CC8173DA51E007B3C1B /* FTLValueFromBlock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FTLValueFromBlock.h; path = ftl/FTLValueFromBlock.h; sourceTree = "<group>"; };
 		0FDB2CE5174830A2007B3C1B /* DFGWorklist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGWorklist.cpp; path = dfg/DFGWorklist.cpp; sourceTree = "<group>"; };
@@ -7045,8 +7042,6 @@
 				A7BFF3BF179868940002F462 /* DFGFiltrationResult.h */,
 				A78A976E179738B8009DF744 /* DFGFinalizer.cpp */,
 				A78A976F179738B8009DF744 /* DFGFinalizer.h */,
-				0FD9EA861F29162C00F32BEE /* DFGFixedButterflyAccessUncagingPhase.cpp */,
-				0FD9EA871F29162C00F32BEE /* DFGFixedButterflyAccessUncagingPhase.h */,
 				0F2BDC12151C5D4A00CD8910 /* DFGFixupPhase.cpp */,
 				0F2BDC13151C5D4A00CD8910 /* DFGFixupPhase.h */,
 				0F20177D1DCADC3000EA5950 /* DFGFlowIndexing.cpp */,
@@ -8335,7 +8330,6 @@
 				A78A9775179738B8009DF744 /* DFGFailedFinalizer.h in Headers */,
 				A7BFF3C0179868940002F462 /* DFGFiltrationResult.h in Headers */,
 				A78A9777179738B8009DF744 /* DFGFinalizer.h in Headers */,
-				0FD9EA891F29162C00F32BEE /* DFGFixedButterflyAccessUncagingPhase.h in Headers */,
 				0F2BDC16151C5D4F00CD8910 /* DFGFixupPhase.h in Headers */,
 				0F2017801DCADC3500EA5950 /* DFGFlowIndexing.h in Headers */,
 				0F2017821DCADD4200EA5950 /* DFGFlowMap.h in Headers */,

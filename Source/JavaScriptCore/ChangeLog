@@ -1,3 +1,71 @@
+2017-11-29  Saam Barati  <sbarati@apple.com>
+
+        Remove pointer caging for double arrays
+        https://bugs.webkit.org/show_bug.cgi?id=180163
+
+        Reviewed by Mark Lam.
+
+        This patch removes pointer caging from double arrays. Like
+        my previous removals of pointer caging, this is a security vs
+        performance tradeoff. We believe that butterflies being allocated
+        in the cage and with a 32GB runway gives us enough security that
+        pointer caging the butterfly just for double arrays does not add
+        enough security benefit for the performance hit it incurs.
+        
+        This patch also removes the GetButterflyWithoutCaging node and
+        the FixedButterflyAccessUncaging phase. The node is no longer needed
+        because now all GetButterfly nodes are not caged. The phase is removed
+        since we no longer have two nodes.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixedButterflyAccessUncagingPhase.cpp: Removed.
+        * dfg/DFGFixedButterflyAccessUncagingPhase.h: Removed.
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileSpread):
+        (JSC::DFG::SpeculativeJIT::compileArraySlice):
+        (JSC::DFG::SpeculativeJIT::compileGetButterfly):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantStructureChecks):
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantArrayChecks):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetButterfly):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitDoubleLoad):
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        * runtime/Butterfly.h:
+        (JSC::Butterfly::pointer):
+        (JSC::Butterfly::contiguousDouble):
+        (JSC::Butterfly::caged): Deleted.
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::createOrGrowPropertyStorage):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::ensureLengthSlow):
+        (JSC::JSObject::reallocateAndShrinkButterfly):
+
 2017-11-29  Stanislav Ocovaj  <stanislav.ocovaj@rt-rk.com>
 
         [MIPS][JSC] Implement MacroAssembler::probe support on MIPS

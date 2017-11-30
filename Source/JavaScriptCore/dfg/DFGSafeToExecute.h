@@ -240,7 +240,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case CheckStructureOrEmpty:
     case GetExecutable:
     case GetButterfly:
-    case GetButterflyWithoutCaging:
     case CallDOMGetter:
     case CallDOM:
     case CheckSubClass:

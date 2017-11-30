@@ -41,7 +41,6 @@
 #include "DFGCriticalEdgeBreakingPhase.h"
 #include "DFGDCEPhase.h"
 #include "DFGFailedFinalizer.h"
-#include "DFGFixedButterflyAccessUncagingPhase.h"
 #include "DFGFixupPhase.h"
 #include "DFGGraphSafepoint.h"
 #include "DFGIntegerCheckCombiningPhase.h"
@@ -464,7 +463,6 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         RUN_PHASE(performCFA);
         RUN_PHASE(performGlobalStoreBarrierInsertion);
         RUN_PHASE(performStoreBarrierClustering);
-        RUN_PHASE(performFixedButterflyAccessUncaging);
         if (Options::useMovHintRemoval())
             RUN_PHASE(performMovHintRemoval);
         RUN_PHASE(performCleanUp);

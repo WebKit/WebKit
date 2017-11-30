@@ -255,7 +255,6 @@ private:
                 case ReallocatePropertyStorage:
                 case NukeStructureAndSetButterfly:
                 case GetButterfly:
-                case GetButterflyWithoutCaging:
                 case GetByVal:
                 case PutByValDirect:
                 case PutByVal:
@@ -332,7 +331,6 @@ private:
                 case PutStructure:
                 case ReallocatePropertyStorage:
                 case GetButterfly:
-                case GetButterflyWithoutCaging:
                 case GetByVal:
                 case PutByValDirect:
                 case PutByVal:

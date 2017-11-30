@@ -1044,11 +1044,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(HeapLocation(ButterflyLoc, JSObject_butterfly, node->child1()), LazyNode(node));
         return;
 
-    case GetButterflyWithoutCaging:
-        read(JSObject_butterfly);
-        def(HeapLocation(ButterflyWithoutCagingLoc, JSObject_butterfly, node->child1()), LazyNode(node));
-        return;
-
     case CheckSubClass:
         def(PureValue(node, node->classInfo()));
         return;
