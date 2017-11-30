@@ -221,6 +221,7 @@ bool ServiceWorkerRegistration::canSuspendForDocumentSuspension() const
 void ServiceWorkerRegistration::stop()
 {
     m_isStopped = true;
+    removeAllEventListeners();
     updatePendingActivityForEventDispatch();
 }
 

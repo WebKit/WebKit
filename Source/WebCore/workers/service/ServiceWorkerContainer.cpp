@@ -445,6 +445,12 @@ void ServiceWorkerContainer::scheduleTaskToFireControllerChangeEvent()
     });
 }
 
+void ServiceWorkerContainer::stop()
+{
+    m_isStopped = true;
+    removeAllEventListeners();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

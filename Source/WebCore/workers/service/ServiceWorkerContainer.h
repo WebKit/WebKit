@@ -105,7 +105,7 @@ private:
     EventTargetInterface eventTargetInterface() const final { return ServiceWorkerContainerEventTargetInterfaceType; }
     void refEventTarget() final;
     void derefEventTarget() final;
-    void stop() final { m_isStopped = true; }
+    void stop() final;
 
     ReadyPromise m_readyPromise;
 

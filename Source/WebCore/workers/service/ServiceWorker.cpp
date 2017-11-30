@@ -149,6 +149,7 @@ bool ServiceWorker::canSuspendForDocumentSuspension() const
 void ServiceWorker::stop()
 {
     m_isStopped = true;
+    removeAllEventListeners();
     scriptExecutionContext()->unregisterServiceWorker(*this);
     updatePendingActivityForEventDispatch();
 }
