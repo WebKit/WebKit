@@ -54,8 +54,7 @@ class LeakDetector(object):
 
     def _callstacks_to_exclude_from_leaks(self):
         callstacks = [
-            # List substrings here, e.g.
-            # 'TextCodecICU::registerCodecs',  # https://bugs.webkit.org/show_bug.cgi?id=118505
+            'WTF::BitVector::OutOfLineBits::create', # https://bugs.webkit.org/show_bug.cgi?id=121662
         ]
         return callstacks
 
