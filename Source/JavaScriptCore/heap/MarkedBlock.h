@@ -132,7 +132,7 @@ public:
         
         // This is to be called by Subspace.
         template<typename DestroyFunc>
-        void finishSweepKnowingSubspace(FreeList*, const DestroyFunc&);
+        void finishSweepKnowingHeapCellType(FreeList*, const DestroyFunc&);
         
         void unsweepWithNoNewlyAllocated();
         

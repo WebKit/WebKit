@@ -81,6 +81,10 @@ public:
 
     static const bool needsDestruction = true;
     static void destroy(JSCell*);
+    
+    // Force subclasses to override this.
+    template<typename>
+    static void subspaceFor(VM&) { }
         
     CodeBlockHash hashFor(CodeSpecializationKind) const;
 

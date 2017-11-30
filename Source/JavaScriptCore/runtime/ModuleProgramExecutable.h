@@ -35,6 +35,12 @@ public:
     typedef ScriptExecutable Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
+    template<typename CellType>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.moduleProgramExecutableSpace;
+    }
+
     static ModuleProgramExecutable* create(ExecState*, const SourceCode&);
 
     static void destroy(JSCell*);

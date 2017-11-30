@@ -47,7 +47,7 @@ private:
     
 public:
     template<typename CellType>
-    static Subspace* subspaceFor(VM& vm)
+    static CompleteSubspace* subspaceFor(VM& vm)
     {
         RELEASE_ASSERT(!CellType::needsDestruction);
         return &vm.jsValueGigacageCellSpace;

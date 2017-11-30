@@ -45,12 +45,12 @@ JSDOMWindow& JSDOMObject::domWindow() const
     return *domWindow;
 }
 
-Subspace* outputConstraintSubspaceFor(VM& vm)
+CompleteSubspace* outputConstraintSubspaceFor(VM& vm)
 {
     return &static_cast<JSVMClientData*>(vm.clientData)->outputConstraintSpace();
 }
 
-Subspace* globalObjectOutputConstraintSubspaceFor(VM& vm)
+CompleteSubspace* globalObjectOutputConstraintSubspaceFor(VM& vm)
 {
     return &static_cast<JSVMClientData*>(vm.clientData)->globalObjectOutputConstraintSpace();
 }

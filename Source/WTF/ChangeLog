@@ -1,3 +1,28 @@
+2017-11-29  Filip Pizlo  <fpizlo@apple.com>
+
+        GC should support isoheaps
+        https://bugs.webkit.org/show_bug.cgi?id=179288
+
+        Reviewed by Saam Barati.
+        
+        One of my favorite data structures in the GC is a singly-linked list that knows its tail, so that
+        things get added to it at the end rather that at the beginning. In this patch, I use this to put
+        the same node on multiple lists, which our existing linked list templates also don't support.
+        
+        This adds a new linked list that does those things:
+        
+        - It supports append(). It could also support prepend(), but currently there is no need for it.
+        
+        - It supports nodes that are on multiple lists. The GC uses std::mem_fn() to create a lambda that the
+          list uses to set next.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/SinglyLinkedListWithTail.h: Added.
+        (WTF::SinglyLinkedListWithTail::isEmpty const):
+        (WTF::SinglyLinkedListWithTail::append):
+        (WTF::SinglyLinkedListWithTail::first const):
+        (WTF::SinglyLinkedListWithTail::last const):
+
 2017-11-29  Stanislav Ocovaj  <stanislav.ocovaj@rt-rk.com>
 
         [DFG][MIPS] Enable DFG JIT on MIPS.

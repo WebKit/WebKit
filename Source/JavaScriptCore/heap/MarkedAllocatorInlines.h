@@ -35,21 +35,12 @@ inline bool MarkedAllocator::isFreeListedCell(const void* target) const
     return m_freeList.contains(bitwise_cast<HeapCell*>(target));
 }
 
-ALWAYS_INLINE void* MarkedAllocator::tryAllocate(GCDeferralContext* deferralContext)
+ALWAYS_INLINE void* MarkedAllocator::allocate(GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
     return m_freeList.allocate(
         [&] () -> HeapCell* {
             sanitizeStackForVM(heap()->vm());
-            return static_cast<HeapCell*>(tryAllocateSlowCase(deferralContext));
-        });
-}
-
-ALWAYS_INLINE void* MarkedAllocator::allocate(GCDeferralContext* deferralContext)
-{
-    return m_freeList.allocate(
-        [&] () -> HeapCell* {
-            sanitizeStackForVM(heap()->vm());
-            return static_cast<HeapCell*>(allocateSlowCase(deferralContext));
+            return static_cast<HeapCell*>(allocateSlowCase(deferralContext, failureMode));
         });
 }
 

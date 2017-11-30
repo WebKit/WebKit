@@ -26,8 +26,12 @@
 #pragma once
 
 #include <wtf/PrintStream.h>
+#include <wtf/SinglyLinkedListWithTail.h>
 
 namespace JSC {
+
+class MarkedAllocator;
+class Subspace;
 
 class AlignedMemoryAllocator {
     WTF_MAKE_NONCOPYABLE(AlignedMemoryAllocator);
@@ -40,6 +44,15 @@ public:
     virtual void freeAlignedMemory(void*) = 0;
     
     virtual void dump(PrintStream&) const = 0;
+
+    void registerAllocator(MarkedAllocator*);
+    MarkedAllocator* firstAllocator() const { return m_allocators.first(); }
+
+    void registerSubspace(Subspace*);
+
+private:
+    SinglyLinkedListWithTail<MarkedAllocator> m_allocators;
+    SinglyLinkedListWithTail<Subspace> m_subspaces;
 };
 
 } // namespace WTF

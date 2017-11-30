@@ -1,3 +1,240 @@
+2017-11-29  Filip Pizlo  <fpizlo@apple.com>
+
+        GC should support isoheaps
+        https://bugs.webkit.org/show_bug.cgi?id=179288
+
+        Reviewed by Saam Barati.
+        
+        This expands the power of the Subspace API in JSC:
+        
+        - Everything associated with describing the types of objects is now part of the HeapCellType class.
+          We have different HeapCellTypes for different destruction strategies. Any Subspace can use any
+          HeapCellType; these are orthogonal things.
+        
+        - There are now two variants of Subspace: CompleteSubspace, which can allocate any size objects using
+          any AlignedMemoryAllocator; and IsoSubspace, which can allocate just one size of object and uses a
+          special virtual memory pool for that purpose. Like bmalloc's IsoHeap, IsoSubspace hoards virtual
+          pages but releases the physical pages as part of the respective allocator's scavenging policy
+          (the Scavenger in bmalloc for IsoHeap and the incremental sweep and full sweep in Riptide for
+          IsoSubspace).
+        
+        So far, this patch just puts subtypes of ExecutableBase in IsoSubspaces. If it works, we can use it
+        for more things.
+        
+        This does not have any effect on JetStream (0.18% faster with p = 0.69).
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/ObjectAllocationProfileInlines.h:
+        (JSC::ObjectAllocationProfile::initializeProfile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        (JSC::DFG::SpeculativeJIT::compileMakeRope):
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMakeRope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorageWithSizeImpl):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatorForSize):
+        * heap/AlignedMemoryAllocator.cpp:
+        (JSC::AlignedMemoryAllocator::registerAllocator):
+        (JSC::AlignedMemoryAllocator::registerSubspace):
+        * heap/AlignedMemoryAllocator.h:
+        (JSC::AlignedMemoryAllocator::firstAllocator const):
+        * heap/AllocationFailureMode.h: Added.
+        * heap/CompleteSubspace.cpp: Added.
+        (JSC::CompleteSubspace::CompleteSubspace):
+        (JSC::CompleteSubspace::~CompleteSubspace):
+        (JSC::CompleteSubspace::allocatorFor):
+        (JSC::CompleteSubspace::allocate):
+        (JSC::CompleteSubspace::allocateNonVirtual):
+        (JSC::CompleteSubspace::allocatorForSlow):
+        (JSC::CompleteSubspace::allocateSlow):
+        (JSC::CompleteSubspace::tryAllocateSlow):
+        * heap/CompleteSubspace.h: Added.
+        (JSC::CompleteSubspace::offsetOfAllocatorForSizeStep):
+        (JSC::CompleteSubspace::allocatorForSizeStep):
+        (JSC::CompleteSubspace::allocatorForNonVirtual):
+        * heap/HeapCellType.cpp: Added.
+        (JSC::HeapCellType::HeapCellType):
+        (JSC::HeapCellType::~HeapCellType):
+        (JSC::HeapCellType::finishSweep):
+        (JSC::HeapCellType::destroy):
+        * heap/HeapCellType.h: Added.
+        (JSC::HeapCellType::attributes const):
+        * heap/IsoAlignedMemoryAllocator.cpp: Added.
+        (JSC::IsoAlignedMemoryAllocator::IsoAlignedMemoryAllocator):
+        (JSC::IsoAlignedMemoryAllocator::~IsoAlignedMemoryAllocator):
+        (JSC::IsoAlignedMemoryAllocator::tryAllocateAlignedMemory):
+        (JSC::IsoAlignedMemoryAllocator::freeAlignedMemory):
+        (JSC::IsoAlignedMemoryAllocator::dump const):
+        * heap/IsoAlignedMemoryAllocator.h: Added.
+        * heap/IsoSubspace.cpp: Added.
+        (JSC::IsoSubspace::IsoSubspace):
+        (JSC::IsoSubspace::~IsoSubspace):
+        (JSC::IsoSubspace::allocatorFor):
+        (JSC::IsoSubspace::allocatorForNonVirtual):
+        (JSC::IsoSubspace::allocate):
+        (JSC::IsoSubspace::allocateNonVirtual):
+        * heap/IsoSubspace.h: Added.
+        (JSC::IsoSubspace::size const):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::MarkedAllocator):
+        (JSC::MarkedAllocator::setSubspace):
+        (JSC::MarkedAllocator::allocateSlowCase):
+        (JSC::MarkedAllocator::tryAllocateSlowCase): Deleted.
+        (JSC::MarkedAllocator::allocateSlowCaseImpl): Deleted.
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::nextAllocatorInAlignedMemoryAllocator const):
+        (JSC::MarkedAllocator::setNextAllocatorInAlignedMemoryAllocator):
+        * heap/MarkedAllocatorInlines.h:
+        (JSC::MarkedAllocator::allocate):
+        (JSC::MarkedAllocator::tryAllocate): Deleted.
+        * heap/MarkedBlock.h:
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::Handle::finishSweepKnowingHeapCellType):
+        (JSC::MarkedBlock::Handle::finishSweepKnowingSubspace): Deleted.
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::addMarkedAllocator):
+        * heap/MarkedSpace.h:
+        * heap/Subspace.cpp:
+        (JSC::Subspace::Subspace):
+        (JSC::Subspace::initialize):
+        (JSC::Subspace::finishSweep):
+        (JSC::Subspace::destroy):
+        (JSC::Subspace::prepareForAllocation):
+        (JSC::Subspace::findEmptyBlockToSteal):
+        (): Deleted.
+        (JSC::Subspace::allocate): Deleted.
+        (JSC::Subspace::tryAllocate): Deleted.
+        (JSC::Subspace::allocatorForSlow): Deleted.
+        (JSC::Subspace::allocateSlow): Deleted.
+        (JSC::Subspace::tryAllocateSlow): Deleted.
+        (JSC::Subspace::didAllocate): Deleted.
+        * heap/Subspace.h:
+        (JSC::Subspace::heapCellType const):
+        (JSC::Subspace::nextSubspaceInAlignedMemoryAllocator const):
+        (JSC::Subspace::setNextSubspaceInAlignedMemoryAllocator):
+        (JSC::Subspace::offsetOfAllocatorForSizeStep): Deleted.
+        (JSC::Subspace::allocatorForSizeStep): Deleted.
+        (JSC::Subspace::tryAllocatorFor): Deleted.
+        (JSC::Subspace::allocatorFor): Deleted.
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitAllocateJSObjectWithKnownSize):
+        (JSC::AssemblyHelpers::emitAllocateVariableSized):
+        (JSC::AssemblyHelpers::emitAllocateVariableSizedCell):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_object):
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::createUninitialized):
+        (JSC::Butterfly::tryCreate):
+        (JSC::Butterfly::growArrayRight):
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::overrideThings):
+        * runtime/DirectArguments.h:
+        (JSC::DirectArguments::subspaceFor):
+        * runtime/DirectEvalExecutable.h:
+        * runtime/EvalExecutable.h:
+        * runtime/ExecutableBase.h:
+        (JSC::ExecutableBase::subspaceFor):
+        * runtime/FunctionExecutable.h:
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::initModifiedArgumentsDescriptor):
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapBuffer::create):
+        * runtime/IndirectEvalExecutable.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryCreateUninitializedRestricted):
+        (JSC::JSArray::unshiftCountSlowCase):
+        * runtime/JSArray.h:
+        (JSC::JSArray::tryCreate):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+        * runtime/JSCell.h:
+        (JSC::subspaceFor):
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::subspaceFor):
+        (JSC::tryAllocateCellHelper):
+        (JSC::allocateCell):
+        (JSC::tryAllocateCell):
+        * runtime/JSDestructibleObject.h:
+        (JSC::JSDestructibleObject::subspaceFor):
+        * runtime/JSDestructibleObjectHeapCellType.cpp: Copied from Source/JavaScriptCore/runtime/JSDestructibleObjectSubspace.cpp.
+        (JSC::JSDestructibleObjectHeapCellType::JSDestructibleObjectHeapCellType):
+        (JSC::JSDestructibleObjectHeapCellType::~JSDestructibleObjectHeapCellType):
+        (JSC::JSDestructibleObjectHeapCellType::finishSweep):
+        (JSC::JSDestructibleObjectHeapCellType::destroy):
+        (JSC::JSDestructibleObjectSubspace::JSDestructibleObjectSubspace): Deleted.
+        (JSC::JSDestructibleObjectSubspace::~JSDestructibleObjectSubspace): Deleted.
+        (JSC::JSDestructibleObjectSubspace::finishSweep): Deleted.
+        (JSC::JSDestructibleObjectSubspace::destroy): Deleted.
+        * runtime/JSDestructibleObjectHeapCellType.h: Copied from Source/JavaScriptCore/runtime/JSDestructibleObjectSubspace.h.
+        * runtime/JSDestructibleObjectSubspace.cpp: Removed.
+        * runtime/JSDestructibleObjectSubspace.h: Removed.
+        * runtime/JSLexicalEnvironment.h:
+        (JSC::JSLexicalEnvironment::subspaceFor):
+        * runtime/JSSegmentedVariableObject.h:
+        (JSC::JSSegmentedVariableObject::subspaceFor):
+        * runtime/JSSegmentedVariableObjectHeapCellType.cpp: Copied from Source/JavaScriptCore/runtime/JSSegmentedVariableObjectSubspace.cpp.
+        (JSC::JSSegmentedVariableObjectHeapCellType::JSSegmentedVariableObjectHeapCellType):
+        (JSC::JSSegmentedVariableObjectHeapCellType::~JSSegmentedVariableObjectHeapCellType):
+        (JSC::JSSegmentedVariableObjectHeapCellType::finishSweep):
+        (JSC::JSSegmentedVariableObjectHeapCellType::destroy):
+        (JSC::JSSegmentedVariableObjectSubspace::JSSegmentedVariableObjectSubspace): Deleted.
+        (JSC::JSSegmentedVariableObjectSubspace::~JSSegmentedVariableObjectSubspace): Deleted.
+        (JSC::JSSegmentedVariableObjectSubspace::finishSweep): Deleted.
+        (JSC::JSSegmentedVariableObjectSubspace::destroy): Deleted.
+        * runtime/JSSegmentedVariableObjectHeapCellType.h: Copied from Source/JavaScriptCore/runtime/JSSegmentedVariableObjectSubspace.h.
+        * runtime/JSSegmentedVariableObjectSubspace.cpp: Removed.
+        * runtime/JSSegmentedVariableObjectSubspace.h: Removed.
+        * runtime/JSString.h:
+        (JSC::JSString::subspaceFor):
+        * runtime/JSStringHeapCellType.cpp: Copied from Source/JavaScriptCore/runtime/JSStringSubspace.cpp.
+        (JSC::JSStringHeapCellType::JSStringHeapCellType):
+        (JSC::JSStringHeapCellType::~JSStringHeapCellType):
+        (JSC::JSStringHeapCellType::finishSweep):
+        (JSC::JSStringHeapCellType::destroy):
+        (JSC::JSStringSubspace::JSStringSubspace): Deleted.
+        (JSC::JSStringSubspace::~JSStringSubspace): Deleted.
+        (JSC::JSStringSubspace::finishSweep): Deleted.
+        (JSC::JSStringSubspace::destroy): Deleted.
+        * runtime/JSStringHeapCellType.h: Copied from Source/JavaScriptCore/runtime/JSStringSubspace.h.
+        * runtime/JSStringSubspace.cpp: Removed.
+        * runtime/JSStringSubspace.h: Removed.
+        * runtime/ModuleProgramExecutable.h:
+        * runtime/NativeExecutable.h:
+        * runtime/ProgramExecutable.h:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::tryCreateUninitializedRegExpMatchesArray):
+        * runtime/ScopedArguments.h:
+        (JSC::ScopedArguments::subspaceFor):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::gigacageAuxiliarySpace):
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        * wasm/js/JSWebAssemblyCodeBlockHeapCellType.cpp: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyCodeBlockSubspace.cpp.
+        (JSC::JSWebAssemblyCodeBlockHeapCellType::JSWebAssemblyCodeBlockHeapCellType):
+        (JSC::JSWebAssemblyCodeBlockHeapCellType::~JSWebAssemblyCodeBlockHeapCellType):
+        (JSC::JSWebAssemblyCodeBlockHeapCellType::finishSweep):
+        (JSC::JSWebAssemblyCodeBlockHeapCellType::destroy):
+        (JSC::JSWebAssemblyCodeBlockSubspace::JSWebAssemblyCodeBlockSubspace): Deleted.
+        (JSC::JSWebAssemblyCodeBlockSubspace::~JSWebAssemblyCodeBlockSubspace): Deleted.
+        (JSC::JSWebAssemblyCodeBlockSubspace::finishSweep): Deleted.
+        (JSC::JSWebAssemblyCodeBlockSubspace::destroy): Deleted.
+        * wasm/js/JSWebAssemblyCodeBlockHeapCellType.h: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyCodeBlockSubspace.h.
+        * wasm/js/JSWebAssemblyCodeBlockSubspace.cpp: Removed.
+        * wasm/js/JSWebAssemblyCodeBlockSubspace.h: Removed.
+        * wasm/js/JSWebAssemblyMemory.h:
+        (JSC::JSWebAssemblyMemory::subspaceFor):
+
 2017-11-29  Saam Barati  <sbarati@apple.com>
 
         Remove pointer caging for double arrays

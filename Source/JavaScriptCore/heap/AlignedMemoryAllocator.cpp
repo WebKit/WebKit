@@ -26,6 +26,9 @@
 #include "config.h"
 #include "AlignedMemoryAllocator.h"
 
+#include "MarkedAllocator.h"
+#include "Subspace.h"
+
 namespace JSC { 
 
 AlignedMemoryAllocator::AlignedMemoryAllocator()
@@ -34,6 +37,24 @@ AlignedMemoryAllocator::AlignedMemoryAllocator()
 
 AlignedMemoryAllocator::~AlignedMemoryAllocator()
 {
+}
+
+void AlignedMemoryAllocator::registerAllocator(MarkedAllocator* allocator)
+{
+    RELEASE_ASSERT(!allocator->nextAllocatorInAlignedMemoryAllocator());
+    
+    if (m_allocators.isEmpty()) {
+        for (Subspace* subspace = m_subspaces.first(); subspace; subspace = subspace->nextSubspaceInAlignedMemoryAllocator())
+            subspace->didCreateFirstAllocator(allocator);
+    }
+    
+    m_allocators.append(std::mem_fn(&MarkedAllocator::setNextAllocatorInAlignedMemoryAllocator), allocator);
+}
+
+void AlignedMemoryAllocator::registerSubspace(Subspace* subspace)
+{
+    RELEASE_ASSERT(!subspace->nextSubspaceInAlignedMemoryAllocator());
+    m_subspaces.append(std::mem_fn(&Subspace::setNextSubspaceInAlignedMemoryAllocator), subspace);
 }
 
 } // namespace JSC

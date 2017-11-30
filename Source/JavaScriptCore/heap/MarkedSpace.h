@@ -32,10 +32,12 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/SentinelLinkedList.h>
+#include <wtf/SinglyLinkedListWithTail.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
 
+class CompleteSubspace;
 class Heap;
 class HeapIterationScope;
 class LLIntOffsetsExtractor;
@@ -155,10 +157,10 @@ public:
     LargeAllocation** largeAllocationsForThisCollectionEnd() const { return m_largeAllocationsForThisCollectionEnd; }
     unsigned largeAllocationsForThisCollectionSize() const { return m_largeAllocationsForThisCollectionSize; }
     
-    MarkedAllocator* firstAllocator() const { return m_firstAllocator; }
+    MarkedAllocator* firstAllocator() const { return m_allocators.first(); }
     
     Lock& allocatorLock() { return m_allocatorLock; }
-    MarkedAllocator* addMarkedAllocator(const AbstractLocker&, Subspace*, size_t cellSize);
+    void addMarkedAllocator(const AbstractLocker&, MarkedAllocator*);
     
     // When this is true it means that we have flipped but the mark bits haven't converged yet.
     bool isMarking() const { return m_isMarking; }
@@ -168,14 +170,12 @@ public:
     JS_EXPORT_PRIVATE static std::array<size_t, numSizeClasses> s_sizeClassForSizeStep;
     
 private:
+    friend class CompleteSubspace;
     friend class LLIntOffsetsExtractor;
     friend class JIT;
     friend class WeakSet;
     friend class Subspace;
     
-    void* allocateSlow(Subspace&, GCDeferralContext*, size_t);
-    void* tryAllocateSlow(Subspace&, GCDeferralContext*, size_t);
-
     // Use this version when calling from within the GC where we know that the allocators
     // have already been stopped.
     template<typename Functor> void forEachLiveCell(const Functor&);
@@ -210,9 +210,7 @@ private:
     SentinelLinkedList<WeakSet, BasicRawSentinelNode<WeakSet>> m_newActiveWeakSets;
 
     Lock m_allocatorLock;
-    Bag<MarkedAllocator> m_bagOfAllocators;
-    MarkedAllocator* m_firstAllocator { nullptr };
-    MarkedAllocator* m_lastAllocator { nullptr };
+    SinglyLinkedListWithTail<MarkedAllocator> m_allocators;
 
     friend class HeapVerifier;
 };
@@ -229,7 +227,7 @@ template <typename Functor> inline void MarkedSpace::forEachBlock(const Functor&
 template <typename Functor>
 void MarkedSpace::forEachAllocator(const Functor& functor)
 {
-    for (MarkedAllocator* allocator = m_firstAllocator; allocator; allocator = allocator->nextAllocator()) {
+    for (MarkedAllocator* allocator = m_allocators.first(); allocator; allocator = allocator->nextAllocator()) {
         if (functor(*allocator) == IterationStatus::Done)
             return;
     }

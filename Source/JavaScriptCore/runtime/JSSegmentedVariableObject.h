@@ -89,7 +89,7 @@ public:
     static void destroy(JSCell*);
     
     template<typename>
-    static Subspace* subspaceFor(VM& vm)
+    static CompleteSubspace* subspaceFor(VM& vm)
     {
         return &vm.segmentedVariableObjectSpace;
     }

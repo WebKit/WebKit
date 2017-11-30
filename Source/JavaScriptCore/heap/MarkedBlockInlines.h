@@ -272,7 +272,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
 }
 
 template<typename DestroyFunc>
-void MarkedBlock::Handle::finishSweepKnowingSubspace(FreeList* freeList, const DestroyFunc& destroyFunc)
+void MarkedBlock::Handle::finishSweepKnowingHeapCellType(FreeList* freeList, const DestroyFunc& destroyFunc)
 {
     SweepMode sweepMode = freeList ? SweepToFreeList : SweepOnly;
     SweepDestructionMode destructionMode = this->sweepDestructionMode();

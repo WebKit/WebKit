@@ -58,7 +58,7 @@ public:
     }
 
     template<typename CellType>
-    static Subspace* subspaceFor(VM& vm)
+    static CompleteSubspace* subspaceFor(VM& vm)
     {
         return &vm.webAssemblyCodeBlockSpace;
     }

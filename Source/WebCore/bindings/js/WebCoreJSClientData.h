@@ -59,8 +59,8 @@ public:
     WebCoreBuiltinNames& builtinNames() { return m_builtinNames; }
     JSBuiltinFunctions& builtinFunctions() { return m_builtinFunctions; }
     
-    JSC::Subspace& outputConstraintSpace() { return m_outputConstraintSpace; }
-    JSC::Subspace& globalObjectOutputConstraintSpace() { return m_globalObjectOutputConstraintSpace; }
+    JSC::CompleteSubspace& outputConstraintSpace() { return m_outputConstraintSpace; }
+    JSC::CompleteSubspace& globalObjectOutputConstraintSpace() { return m_globalObjectOutputConstraintSpace; }
     
     template<typename Func>
     void forEachOutputConstraintSpace(const Func& func)
@@ -76,8 +76,8 @@ private:
     JSBuiltinFunctions m_builtinFunctions;
     WebCoreBuiltinNames m_builtinNames;
     
-    JSC::JSDestructibleObjectSubspace m_outputConstraintSpace;
-    JSC::JSSegmentedVariableObjectSubspace m_globalObjectOutputConstraintSpace;
+    JSC::CompleteSubspace m_outputConstraintSpace;
+    JSC::CompleteSubspace m_globalObjectOutputConstraintSpace;
 };
 
 } // namespace WebCore
