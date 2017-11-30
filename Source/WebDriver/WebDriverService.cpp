@@ -984,9 +984,20 @@ static std::optional<String> findElementOrCompleteWithError(JSON::Object& parame
     return elementID;
 }
 
+static inline bool isValidStrategy(const String& strategy)
+{
+    // §12.1 Locator Strategies.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-table-of-location-strategies
+    return strategy == "css selector"
+        || strategy == "link text"
+        || strategy == "partial link text"
+        || strategy == "tag name"
+        || strategy == "xpath";
+}
+
 static bool findStrategyAndSelectorOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler, String& strategy, String& selector)
 {
-    if (!parameters.getString(ASCIILiteral("using"), strategy)) {
+    if (!parameters.getString(ASCIILiteral("using"), strategy) || !isValidStrategy(strategy)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return false;
     }

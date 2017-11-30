@@ -1,5 +1,23 @@
 2017-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: locator strategy should be validated before trying to find elements
+        https://bugs.webkit.org/show_bug.cgi?id=180187
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        We currently rely on the js atom to raise an exception in case the locator strategy is not valid, but in case of
+        find element from element, if the element doesn't exist we fail with stale element error instead of invalid
+        argument as expected. So, let's validate the strategies when parsing them, which would also avoid going to the
+        browser in cae of invalid strategy.
+
+        Fixes: imported/w3c/webdriver/tests/retrieval/find_element_from_element.py::test_invalid_using_argument[a]
+
+        * WebDriverService.cpp:
+        (WebDriver::isValidStrategy):
+        (WebDriver::findStrategyAndSelectorOrCompleteWithError):
+
+2017-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: remove elementSubmit command
         https://bugs.webkit.org/show_bug.cgi?id=180186
 
