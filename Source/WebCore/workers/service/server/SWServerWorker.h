@@ -32,7 +32,7 @@
 #include "ServiceWorkerRegistrationKey.h"
 #include "ServiceWorkerTypes.h"
 #include "URL.h"
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -41,7 +41,7 @@ class SWServerRegistration;
 enum class WorkerType;
 struct ServiceWorkerJobDataIdentifier;
 
-class SWServerWorker : public ThreadSafeRefCounted<SWServerWorker> {
+class SWServerWorker : public RefCounted<SWServerWorker> {
 public:
     template <typename... Args> static Ref<SWServerWorker> create(Args&&... args)
     {

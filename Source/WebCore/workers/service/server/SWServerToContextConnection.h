@@ -29,7 +29,7 @@
 
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerTypes.h"
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -37,7 +37,7 @@ class SWServer;
 struct ServiceWorkerContextData;
 struct ServiceWorkerJobDataIdentifier;
 
-class SWServerToContextConnection : public ThreadSafeRefCounted<SWServerToContextConnection> {
+class SWServerToContextConnection : public RefCounted<SWServerToContextConnection> {
 public:
     WEBCORE_EXPORT virtual ~SWServerToContextConnection();
 
