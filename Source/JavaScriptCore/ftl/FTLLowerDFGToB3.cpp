@@ -9428,7 +9428,7 @@ private:
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(m_out.equal(
                 m_out.constInt64(JSValue::encode(jsBoolean(true))), 
-                vmCall(Int64, m_out.operation(operationHasIndexedProperty), m_callFrame, base, index, internalMethodType)));
+                vmCall(Int64, m_out.operation(operationHasIndexedPropertyByInt), m_callFrame, base, index, internalMethodType)));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -9464,7 +9464,7 @@ private:
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(m_out.equal(
                 m_out.constInt64(JSValue::encode(jsBoolean(true))), 
-                vmCall(Int64, m_out.operation(operationHasIndexedProperty), m_callFrame, base, index, internalMethodType)));
+                vmCall(Int64, m_out.operation(operationHasIndexedPropertyByInt), m_callFrame, base, index, internalMethodType)));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);

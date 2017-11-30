@@ -80,6 +80,7 @@ EncodedJSValue JIT_OPERATION operationGetByIdWithThis(ExecState*, EncodedJSValue
 EncodedJSValue JIT_OPERATION operationGetByValWithThis(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetPrototypeOf(ExecState*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetPrototypeOfObject(ExecState*, JSObject*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationHasIndexedPropertyByInt(ExecState*, JSCell*, int32_t, int32_t);
 char* JIT_OPERATION operationNewArray(ExecState*, Structure*, void*, size_t) WTF_INTERNAL;
 char* JIT_OPERATION operationNewArrayBuffer(ExecState*, Structure*, size_t, size_t) WTF_INTERNAL;
 char* JIT_OPERATION operationNewEmptyArray(ExecState*, Structure*) WTF_INTERNAL;

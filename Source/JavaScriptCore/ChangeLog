@@ -1,3 +1,37 @@
+2017-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] operationHasIndexedProperty does not consider negative int32_t
+        https://bugs.webkit.org/show_bug.cgi?id=180190
+
+        Reviewed by Mark Lam.
+
+        If DFG HasIndexedProperty node observes negative index, it goes to a slow
+        path by calling operationHasIndexedProperty. The problem is that
+        operationHasIndexedProperty does not account negative index. Negative index
+        was used as uint32 array index.
+
+        In this patch we add a path for negative index in operationHasIndexedProperty.
+        And rename it to operationHasIndexedPropertyByInt to make intension clear.
+        We also move operationHasIndexedPropertyByInt from JITOperations to DFGOperations
+        since it is only used in DFG and FTL.
+
+        While fixing this bug, we found that our op_in does not record OutOfBound feedback.
+        This causes repeated OSR exit and significantly regresses the performance. We opened
+        a bug to track this issue[1].
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=180192
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasIndexedProperty):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+
 2017-11-30  Michael Saboff  <msaboff@apple.com>
 
         Allow JSC command line tool to accept UTF8

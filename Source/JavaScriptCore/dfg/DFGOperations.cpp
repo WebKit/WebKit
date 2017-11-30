@@ -634,7 +634,7 @@ ALWAYS_INLINE EncodedJSValue getByValCellInt(ExecState* exec, JSCell* base, int3
     NativeCallFrameTracer tracer(vm, exec);
     
     if (index < 0) {
-        // Go the slowest way possible becase negative indices don't use indexed storage.
+        // Go the slowest way possible because negative indices don't use indexed storage.
         return JSValue::encode(JSValue(base).get(exec, Identifier::from(exec, index)));
     }
 
@@ -1806,6 +1806,18 @@ char* JIT_OPERATION operationEnsureArrayStorage(ExecState* exec, JSCell* cell)
         return 0;
 
     return reinterpret_cast<char*>(asObject(cell)->ensureArrayStorage(vm));
+}
+
+EncodedJSValue JIT_OPERATION operationHasIndexedPropertyByInt(ExecState* exec, JSCell* baseCell, int32_t subscript, int32_t internalMethodType)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    JSObject* object = baseCell->toObject(exec, exec->lexicalGlobalObject());
+    if (UNLIKELY(subscript < 0)) {
+        // Go the slowest way possible because negative indices don't use indexed storage.
+        return JSValue::encode(jsBoolean(object->hasPropertyGeneric(exec, Identifier::from(exec, subscript), static_cast<PropertySlot::InternalMethodType>(internalMethodType))));
+    }
+    return JSValue::encode(jsBoolean(object->hasPropertyGeneric(exec, subscript, static_cast<PropertySlot::InternalMethodType>(internalMethodType))));
 }
 
 StringImpl* JIT_OPERATION operationResolveRope(ExecState* exec, JSString* string)
