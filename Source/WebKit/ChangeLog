@@ -1,3 +1,20 @@
+2017-11-30  Darin Adler  <darin@apple.com>
+
+        [Mac] remove unneeded RetainPtr use introduced in r225142
+        https://bugs.webkit.org/show_bug.cgi?id=180202
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h: Got rid of unnecessary RetainPtr.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::lookupTextAtLocation const): Ditto.
+        * WebProcess/WebPage/WebPage.h: Ditto.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation): Ditto.
+        (WebKit::WebPage::performDictionaryLookupForSelection): Ditto.
+        (WebKit::WebPage::performImmediateActionHitTestAtLocation): Ditto.
+        (WebKit::WebPage::lookupTextAtLocation): Ditto.
+
 2017-11-30  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Move CoordinatedGraphicsLayer painting behind Nicosia::PaintingEngine

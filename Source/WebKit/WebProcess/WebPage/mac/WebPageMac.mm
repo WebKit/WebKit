@@ -400,7 +400,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
 
     // Find the frame the point is over.
     HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(roundedIntPoint(floatPoint)));
-    RetainPtr<NSDictionary> options;
+    NSDictionary *options = nil;
     auto range = DictionaryLookup::rangeAtHitTestResult(result, &options);
     if (!range)
         return;
@@ -409,14 +409,14 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     if (!frame)
         return;
 
-    performDictionaryLookupForRange(*frame, *range, options.get(), TextIndicatorPresentationTransition::Bounce);
+    performDictionaryLookupForRange(*frame, *range, options, TextIndicatorPresentationTransition::Bounce);
 }
 
 void WebPage::performDictionaryLookupForSelection(Frame& frame, const VisibleSelection& selection, TextIndicatorPresentationTransition presentationTransition)
 {
-    RetainPtr<NSDictionary> options;
+    NSDictionary *options = nil;
     if (auto selectedRange = DictionaryLookup::rangeForSelection(selection, &options))
-        performDictionaryLookupForRange(frame, *selectedRange, options.get(), presentationTransition);
+        performDictionaryLookupForRange(frame, *selectedRange, options, presentationTransition);
 }
 
 void WebPage::performDictionaryLookupOfCurrentSelection()
@@ -1007,7 +1007,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
         immediateActionResult.lookupText = lookupRange->text();
         if (auto* node = hitTestResult.innerNode()) {
             if (auto* frame = node->document().frame()) {
-                auto options = std::get<RetainPtr<NSDictionary>>(lookupResult).get();
+                auto options = std::get<NSDictionary *>(lookupResult);
                 immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForRange(*frame, *lookupRange, options, TextIndicatorPresentationTransition::FadeIn);
             }
         }
@@ -1066,8 +1066,8 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
                     if (is<PluginDocument>(document))
                         downcast<PluginDocument>(document).setFocusedElement(element);
 
-                    auto selection = std::get<RetainPtr<PDFSelection>>(lookupResult).get();
-                    auto options = std::get<RetainPtr<NSDictionary>>(lookupResult).get();
+                    auto selection = std::get<PDFSelection *>(lookupResult);
+                    auto options = std::get<NSDictionary *>(lookupResult);
 
                     immediateActionResult.lookupText = lookupText;
                     immediateActionResult.isTextNode = true;
@@ -1085,7 +1085,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     send(Messages::WebPageProxy::DidPerformImmediateActionHitTest(immediateActionResult, immediateActionHitTestPreventsDefault, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
-std::tuple<RefPtr<WebCore::Range>, RetainPtr<NSDictionary>> WebPage::lookupTextAtLocation(FloatPoint locationInViewCoordinates)
+std::tuple<RefPtr<WebCore::Range>, NSDictionary *> WebPage::lookupTextAtLocation(FloatPoint locationInViewCoordinates)
 {
     auto& mainFrame = corePage()->mainFrame();
     if (!mainFrame.view() || !mainFrame.view()->renderView())
@@ -1093,7 +1093,7 @@ std::tuple<RefPtr<WebCore::Range>, RetainPtr<NSDictionary>> WebPage::lookupTextA
 
     auto point = roundedIntPoint(locationInViewCoordinates);
     auto result = mainFrame.eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(point));
-    RetainPtr<NSDictionary> options;
+    NSDictionary *options = nil;
     auto range = DictionaryLookup::rangeAtHitTestResult(result, &options);
     return { WTFMove(range), WTFMove(options) };
 }

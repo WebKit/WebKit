@@ -108,7 +108,7 @@ public:
 
     bool showContextMenuAtPoint(const WebCore::IntPoint&);
 
-    std::tuple<String, RetainPtr<PDFSelection>, RetainPtr<NSDictionary>> lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const;
+    std::tuple<String, PDFSelection *, NSDictionary *> lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const;
     WebCore::FloatRect rectForSelectionInRootView(PDFSelection *) const;
 
     CGFloat scaleFactor() const;

@@ -52,20 +52,14 @@ SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUTermOptionDisableSearchTermIndicator, NSSt
 
 namespace WebCore {
 
-static NSRange tokenRange(const String& string, NSRange range, RetainPtr<NSDictionary>* options)
+static NSRange tokenRange(const String& string, NSRange range, NSDictionary **options)
 {
     if (!getLULookupDefinitionModuleClass())
         return NSMakeRange(NSNotFound, 0);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    if (!options)
-        return [classLULookupDefinitionModule tokenRangeForString:string range:range options:nullptr];
-
-    NSDictionary *outOptions = nil;
-    auto result = [classLULookupDefinitionModule tokenRangeForString:string range:range options:&outOptions];
-    *options = outOptions;
-    return result;
+    return [classLULookupDefinitionModule tokenRangeForString:string range:range options:options];
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
@@ -84,7 +78,7 @@ static bool selectionContainsPosition(const VisiblePosition& position, const Vis
     return selectedRange->contains(position);
 }
 
-RefPtr<Range> DictionaryLookup::rangeForSelection(const VisibleSelection& selection, RetainPtr<NSDictionary>* options)
+RefPtr<Range> DictionaryLookup::rangeForSelection(const VisibleSelection& selection, NSDictionary **options)
 {
     auto selectedRange = selection.toNormalizedRange();
     if (!selectedRange)
@@ -109,7 +103,7 @@ RefPtr<Range> DictionaryLookup::rangeForSelection(const VisibleSelection& select
     return selectedRange;
 }
 
-RefPtr<Range> DictionaryLookup::rangeAtHitTestResult(const HitTestResult& hitTestResult, RetainPtr<NSDictionary>* options)
+RefPtr<Range> DictionaryLookup::rangeAtHitTestResult(const HitTestResult& hitTestResult, NSDictionary **options)
 {
     auto* node = hitTestResult.innerNonSharedNode();
     if (!node || !node->renderer())
@@ -168,7 +162,7 @@ static void expandSelectionByCharacters(PDFSelection *selection, NSInteger numbe
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-NSString *DictionaryLookup::stringForPDFSelection(PDFSelection *selection, RetainPtr<NSDictionary>* options)
+NSString *DictionaryLookup::stringForPDFSelection(PDFSelection *selection, NSDictionary **options)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 

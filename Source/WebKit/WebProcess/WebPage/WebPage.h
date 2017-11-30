@@ -1275,7 +1275,7 @@ private:
 
 #if PLATFORM(MAC)
     void performImmediateActionHitTestAtLocation(WebCore::FloatPoint);
-    std::tuple<RefPtr<WebCore::Range>, RetainPtr<NSDictionary>> lookupTextAtLocation(WebCore::FloatPoint);
+    std::tuple<RefPtr<WebCore::Range>, NSDictionary *> lookupTextAtLocation(WebCore::FloatPoint);
     void immediateActionDidUpdate();
     void immediateActionDidCancel();
     void immediateActionDidComplete();

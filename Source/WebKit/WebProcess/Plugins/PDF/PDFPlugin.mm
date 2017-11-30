@@ -2016,7 +2016,7 @@ static NSPoint pointInLayoutSpaceForPointInWindowSpace(PDFLayerController* pdfLa
     return NSPointFromCGPoint(newPoint);
 }
 
-std::tuple<String, RetainPtr<PDFSelection>, RetainPtr<NSDictionary>> PDFPlugin::lookupTextAtLocation(const WebCore::FloatPoint& locationInViewCoordinates, WebHitTestResultData& data) const
+std::tuple<String, PDFSelection *, NSDictionary *> PDFPlugin::lookupTextAtLocation(const WebCore::FloatPoint& locationInViewCoordinates, WebHitTestResultData& data) const
 {
     auto selection = [m_pdfLayerController currentSelection];
     if (existingSelectionContainsPoint(locationInViewCoordinates))
@@ -2052,13 +2052,13 @@ std::tuple<String, RetainPtr<PDFSelection>, RetainPtr<NSDictionary>> PDFPlugin::
         return { selection.string, selection, nil };
     }
 
-    RetainPtr<NSDictionary> options;
+    NSDictionary *options = nil;
     NSString *lookupText = DictionaryLookup::stringForPDFSelection(selection, &options);
     if (!lookupText.length)
         return { emptyString(), selection, nil };
 
     [m_pdfLayerController setCurrentSelection:selection];
-    return { lookupText, selection, WTFMove(options) };
+    return { lookupText, selection, options };
 }
 
 static NSRect rectInViewSpaceForRectInLayoutSpace(PDFLayerController* pdfLayerController, NSRect layoutSpaceRect)

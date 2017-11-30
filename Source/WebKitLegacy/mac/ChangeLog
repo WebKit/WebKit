@@ -1,3 +1,14 @@
+2017-11-30  Darin Adler  <darin@apple.com>
+
+        [Mac] remove unneeded RetainPtr use introduced in r225142
+        https://bugs.webkit.org/show_bug.cgi?id=180202
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _animationControllerForText]): Got rid of unnecessary
+        RetainPtr.
+
 2017-11-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove the ImageSource from the class hierarchy that connects BitmapImage to ImageFrame
