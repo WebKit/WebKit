@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include "CaptureDevice.h"
 #include "Logging.h"
 #include "MediaConstraints.h"
+#include "MockRealtimeMediaSourceCenter.h"
 #include "NotImplemented.h"
 #include "RealtimeMediaSourceSettings.h"
 #include <wtf/UUID.h>
@@ -42,9 +43,6 @@
 namespace WebCore {
 
 class MockRealtimeAudioSourceFactory : public RealtimeMediaSource::AudioCaptureFactory
-#if PLATFORM(IOS)
-    , public RealtimeMediaSource::SingleSourceFactory<MockRealtimeAudioSource>
-#endif
 {
 public:
     CaptureSourceOrError createAudioCaptureSource(const String& deviceID, const MediaConstraints* constraints) final {
@@ -94,7 +92,7 @@ MockRealtimeAudioSource::MockRealtimeAudioSource(const String& deviceID, const S
 MockRealtimeAudioSource::~MockRealtimeAudioSource()
 {
 #if PLATFORM(IOS)
-    mockAudioCaptureSourceFactory().unsetActiveSource(*this);
+    MockRealtimeMediaSourceCenter::audioCaptureSourceFactory().unsetActiveSource(*this);
 #endif
 }
 
@@ -122,7 +120,7 @@ void MockRealtimeAudioSource::initializeSupportedConstraints(RealtimeMediaSource
 void MockRealtimeAudioSource::startProducingData()
 {
 #if PLATFORM(IOS)
-    mockAudioCaptureSourceFactory().setActiveSource(*this);
+    MockRealtimeMediaSourceCenter::audioCaptureSourceFactory().setActiveSource(*this);
 #endif
 
     if (!sampleRate())

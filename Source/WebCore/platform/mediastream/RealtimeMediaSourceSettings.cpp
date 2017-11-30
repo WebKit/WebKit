@@ -37,58 +37,34 @@
 
 namespace WebCore {
 
-static const AtomicString& userFacing()
+String RealtimeMediaSourceSettings::facingMode(RealtimeMediaSourceSettings::VideoFacingMode mode)
 {
-    static NeverDestroyed<AtomicString> userFacing("user", AtomicString::ConstructFromLiteral);
-    return userFacing;
-}
-static const AtomicString& environmentFacing()
-{
-    static NeverDestroyed<AtomicString> environmentFacing("environment", AtomicString::ConstructFromLiteral);
-    return environmentFacing;
-}
-
-static const AtomicString& leftFacing()
-{
-    static NeverDestroyed<AtomicString> leftFacing("left", AtomicString::ConstructFromLiteral);
-    return leftFacing;
-}
-
-static const AtomicString& rightFacing()
-{
-    static NeverDestroyed<AtomicString> rightFacing("right", AtomicString::ConstructFromLiteral);
-    return rightFacing;
-}
-
-const AtomicString& RealtimeMediaSourceSettings::facingMode(RealtimeMediaSourceSettings::VideoFacingMode mode)
-{
-    switch (mode) {
-    case RealtimeMediaSourceSettings::User:
-        return userFacing();
-    case RealtimeMediaSourceSettings::Environment:
-        return environmentFacing();
-    case RealtimeMediaSourceSettings::Left:
-        return leftFacing();
-    case RealtimeMediaSourceSettings::Right:
-        return rightFacing();
-    case RealtimeMediaSourceSettings::Unknown:
-        return emptyAtom();
-    }
-    
-    ASSERT_NOT_REACHED();
-    return emptyAtom();
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("unknown"),
+        MAKE_STATIC_STRING_IMPL("user"),
+        MAKE_STATIC_STRING_IMPL("environment"),
+        MAKE_STATIC_STRING_IMPL("left"),
+        MAKE_STATIC_STRING_IMPL("right"),
+    };
+    static_assert(static_cast<size_t>(RealtimeMediaSourceSettings::VideoFacingMode::Unknown) == 0, "RealtimeMediaSourceSettings::VideoFacingMode::Unknown is not 0 as expected");
+    static_assert(static_cast<size_t>(RealtimeMediaSourceSettings::VideoFacingMode::User) == 1, "RealtimeMediaSourceSettings::VideoFacingMode::User is not 1 as expected");
+    static_assert(static_cast<size_t>(RealtimeMediaSourceSettings::VideoFacingMode::Environment) == 2, "RealtimeMediaSourceSettings::VideoFacingMode::Environment is not 2 as expected");
+    static_assert(static_cast<size_t>(RealtimeMediaSourceSettings::VideoFacingMode::Left) == 3, "RealtimeMediaSourceSettings::VideoFacingMode::Left is not 3 as expected");
+    static_assert(static_cast<size_t>(RealtimeMediaSourceSettings::VideoFacingMode::Right) == 4, "RealtimeMediaSourceSettings::VideoFacingMode::Right is not 4 as expected");
+    ASSERT(static_cast<size_t>(mode) < WTF_ARRAY_LENGTH(values));
+    return values[static_cast<size_t>(mode)];
 }
 
 RealtimeMediaSourceSettings::VideoFacingMode RealtimeMediaSourceSettings::videoFacingModeEnum(const String& mode)
 {
-    if (mode == userFacing())
-        return RealtimeMediaSourceSettings::User;
-    if (mode == environmentFacing())
-        return RealtimeMediaSourceSettings::Environment;
-    if (mode == leftFacing())
-        return RealtimeMediaSourceSettings::Left;
-    if (mode == rightFacing())
-        return RealtimeMediaSourceSettings::Right;
+    if (mode == "user")
+        return RealtimeMediaSourceSettings::VideoFacingMode::User;
+    if (mode == "environment")
+        return RealtimeMediaSourceSettings::VideoFacingMode::Environment;
+    if (mode == "left")
+        return RealtimeMediaSourceSettings::VideoFacingMode::Left;
+    if (mode == "right")
+        return RealtimeMediaSourceSettings::VideoFacingMode::Right;
 
     return RealtimeMediaSourceSettings::Unknown;
 }

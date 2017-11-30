@@ -38,6 +38,7 @@
 #include "IntRect.h"
 #include "Logging.h"
 #include "MediaConstraints.h"
+#include "MockRealtimeMediaSourceCenter.h"
 #include "NotImplemented.h"
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceSettings.h"
@@ -49,9 +50,6 @@
 namespace WebCore {
 
 class MockRealtimeVideoSourceFactory : public RealtimeMediaSource::VideoCaptureFactory
-#if PLATFORM(IOS)
-    , public RealtimeMediaSource::SingleSourceFactory<MockRealtimeVideoSource>
-#endif
 {
 public:
     CaptureSourceOrError createVideoCaptureSource(const String& deviceID, const MediaConstraints* constraints) final {
@@ -114,14 +112,14 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(const String& deviceID, const S
 MockRealtimeVideoSource::~MockRealtimeVideoSource()
 {
 #if PLATFORM(IOS)
-    mockVideoCaptureSourceFactory().unsetActiveSource(*this);
+    MockRealtimeMediaSourceCenter::videoCaptureSourceFactory().unsetActiveSource(*this);
 #endif
 }
 
 void MockRealtimeVideoSource::startProducingData()
 {
 #if PLATFORM(IOS)
-    mockVideoCaptureSourceFactory().setActiveSource(*this);
+    MockRealtimeMediaSourceCenter::videoCaptureSourceFactory().setActiveSource(*this);
 #endif
 
     if (size().isEmpty()) {

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,27 +69,14 @@ public:
     
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() { return m_supportedConstraints; }
 
-    virtual RealtimeMediaSource::AudioCaptureFactory& defaultAudioFactory() = 0;
-    virtual RealtimeMediaSource::VideoCaptureFactory& defaultVideoFactory() = 0;
+    WEBCORE_EXPORT virtual void setAudioFactory(RealtimeMediaSource::AudioCaptureFactory&) { }
+    WEBCORE_EXPORT virtual void unsetAudioFactory(RealtimeMediaSource::AudioCaptureFactory&) { }
+    WEBCORE_EXPORT virtual RealtimeMediaSource::AudioCaptureFactory& audioFactory() = 0;
 
-    virtual CaptureDeviceManager& defaultAudioCaptureDeviceManager() = 0;
-    virtual CaptureDeviceManager& defaultVideoCaptureDeviceManager() = 0;
+    virtual RealtimeMediaSource::VideoCaptureFactory& videoFactory() = 0;
 
-    WEBCORE_EXPORT void setAudioFactory(RealtimeMediaSource::AudioCaptureFactory&);
-    WEBCORE_EXPORT void unsetAudioFactory(RealtimeMediaSource::AudioCaptureFactory&);
-    WEBCORE_EXPORT RealtimeMediaSource::AudioCaptureFactory& audioFactory();
-
-    WEBCORE_EXPORT void setVideoFactory(RealtimeMediaSource::VideoCaptureFactory&);
-    WEBCORE_EXPORT void unsetVideoFactory(RealtimeMediaSource::VideoCaptureFactory&);
-    WEBCORE_EXPORT RealtimeMediaSource::VideoCaptureFactory& videoFactory();
-
-    WEBCORE_EXPORT void setAudioCaptureDeviceManager(CaptureDeviceManager&);
-    WEBCORE_EXPORT void unsetAudioCaptureDeviceManager(CaptureDeviceManager&);
-    CaptureDeviceManager& audioCaptureDeviceManager();
-
-    WEBCORE_EXPORT void setVideoCaptureDeviceManager(CaptureDeviceManager&);
-    WEBCORE_EXPORT void unsetVideoCaptureDeviceManager(CaptureDeviceManager&);
-    CaptureDeviceManager& videoCaptureDeviceManager();
+    virtual CaptureDeviceManager& audioCaptureDeviceManager() = 0;
+    virtual CaptureDeviceManager& videoCaptureDeviceManager() = 0;
 
     String hashStringWithSalt(const String& id, const String& hashSalt);
     WEBCORE_EXPORT std::optional<CaptureDevice> captureDeviceWithUniqueID(const String& id, const String& hashSalt);
@@ -107,9 +94,6 @@ protected:
 
     static RealtimeMediaSourceCenter& platformCenter();
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
-
-    RealtimeMediaSource::AudioCaptureFactory* m_audioFactory { nullptr };
-    RealtimeMediaSource::VideoCaptureFactory* m_videoFactory { nullptr };
 
     CaptureDeviceManager* m_audioCaptureDeviceManager { nullptr };
     CaptureDeviceManager* m_videoCaptureDeviceManager { nullptr };

@@ -45,7 +45,7 @@ class PixelBufferConformerCV;
 
 class AVVideoCaptureSource : public AVMediaCaptureSource, private OrientationNotifier::Observer {
 public:
-    static CaptureSourceOrError create(AVCaptureDevice*, const AtomicString&, const MediaConstraints*);
+    static CaptureSourceOrError create(const AtomicString&, const MediaConstraints*);
 
     WEBCORE_EXPORT static VideoCaptureFactory& factory();
 
@@ -88,8 +88,6 @@ private:
     RetainPtr<NSString> m_pendingPreset;
     RetainPtr<CMSampleBufferRef> m_buffer;
     RetainPtr<AVCaptureVideoDataOutput> m_videoOutput;
-
-    std::unique_ptr<PixelBufferConformerCV> m_pixelBufferConformer;
 
     int32_t m_width { 0 };
     int32_t m_height { 0 };

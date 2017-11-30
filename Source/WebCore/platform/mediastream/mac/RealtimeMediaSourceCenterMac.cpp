@@ -44,6 +44,35 @@
 
 namespace WebCore {
 
+class VideoCaptureSourceFactoryMac final : public RealtimeMediaSource::VideoCaptureFactory
+{
+public:
+    CaptureSourceOrError createVideoCaptureSource(const String& id, const MediaConstraints* constraints) final
+    {
+        return AVVideoCaptureSource::create(id, constraints);
+    }
+
+#if PLATFORM(IOS)
+private:
+    void setVideoCapturePageState(bool interrupted, bool pageMuted)
+    {
+        if (activeSource())
+            activeSource()->setInterrupted(interrupted, pageMuted);
+    }
+#endif
+};
+
+RealtimeMediaSource::VideoCaptureFactory& RealtimeMediaSourceCenterMac::videoCaptureSourceFactory()
+{
+    static NeverDestroyed<VideoCaptureSourceFactoryMac> factory;
+    return factory.get();
+}
+
+RealtimeMediaSource::AudioCaptureFactory& RealtimeMediaSourceCenterMac::audioCaptureSourceFactory()
+{
+    return RealtimeMediaSourceCenterMac::singleton().audioFactory();
+}
+
 RealtimeMediaSourceCenterMac& RealtimeMediaSourceCenterMac::singleton()
 {
     ASSERT(isMainThread());
@@ -56,28 +85,25 @@ RealtimeMediaSourceCenter& RealtimeMediaSourceCenter::platformCenter()
     return RealtimeMediaSourceCenterMac::singleton();
 }
 
-RealtimeMediaSourceCenterMac::RealtimeMediaSourceCenterMac()
-{
-    m_supportedConstraints.setSupportsSampleRate(false);
-    m_supportedConstraints.setSupportsSampleSize(false);
-    m_supportedConstraints.setSupportsEchoCancellation(false);
-    m_supportedConstraints.setSupportsGroupId(true);
-}
+RealtimeMediaSourceCenterMac::RealtimeMediaSourceCenterMac() = default;
 
 RealtimeMediaSourceCenterMac::~RealtimeMediaSourceCenterMac() = default;
 
 
-RealtimeMediaSource::AudioCaptureFactory& RealtimeMediaSourceCenterMac::defaultAudioFactory()
+RealtimeMediaSource::AudioCaptureFactory& RealtimeMediaSourceCenterMac::audioFactory()
 {
+    if (m_audioFactoryOverride)
+        return *m_audioFactoryOverride;
+
     return CoreAudioCaptureSource::factory();
 }
 
-RealtimeMediaSource::VideoCaptureFactory& RealtimeMediaSourceCenterMac::defaultVideoFactory()
+RealtimeMediaSource::VideoCaptureFactory& RealtimeMediaSourceCenterMac::videoFactory()
 {
-    return AVVideoCaptureSource::factory();
+    return videoCaptureSourceFactory();
 }
 
-CaptureDeviceManager& RealtimeMediaSourceCenterMac::defaultAudioCaptureDeviceManager()
+CaptureDeviceManager& RealtimeMediaSourceCenterMac::audioCaptureDeviceManager()
 {
 #if PLATFORM(MAC)
     return CoreAudioCaptureDeviceManager::singleton();
@@ -86,7 +112,7 @@ CaptureDeviceManager& RealtimeMediaSourceCenterMac::defaultAudioCaptureDeviceMan
 #endif
 }
 
-CaptureDeviceManager& RealtimeMediaSourceCenterMac::defaultVideoCaptureDeviceManager()
+CaptureDeviceManager& RealtimeMediaSourceCenterMac::videoCaptureDeviceManager()
 {
     return AVCaptureDeviceManager::singleton();
 }

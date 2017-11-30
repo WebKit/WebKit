@@ -41,13 +41,10 @@ public:
     enum SourceType { None, Camera, Microphone };
     enum VideoFacingMode { Unknown, User, Environment, Left, Right };
 
-    static const AtomicString& facingMode(RealtimeMediaSourceSettings::VideoFacingMode);
-
+    static String facingMode(RealtimeMediaSourceSettings::VideoFacingMode);
     static RealtimeMediaSourceSettings::VideoFacingMode videoFacingModeEnum(const String&);
 
-    explicit RealtimeMediaSourceSettings()
-    {
-    }
+    explicit RealtimeMediaSourceSettings() = default;
 
     bool supportsWidth() const { return m_supportedConstraints.supportsWidth(); }
     uint32_t width() const { return m_width; }
