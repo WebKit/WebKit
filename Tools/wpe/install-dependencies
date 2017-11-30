@@ -122,6 +122,7 @@ function installDependenciesWithApt {
         libvpx-dev \
         libxcb-xkb-dev \
         libxml-libxml-perl \
+        libwayland-dev \
         luajit"
 
     # These are dependencies necessary for using webkit-patch
@@ -210,8 +211,9 @@ function installDependenciesWithPacman {
         mesa-libgl \
         opus \
         orc \
-        perl-xml-libxml\
-        v4l-utils"
+        perl-xml-libxml \
+        v4l-utils \
+        wayland"
 
     # These are dependencies necessary for using webkit-patch
     packages="$packages \
@@ -292,7 +294,8 @@ function installDependenciesWithDnf {
         opus-devel \
         orc-devel \
         perl-XML-LibXML \
-        pulseaudio-libs-devel"
+        pulseaudio-libs-devel \
+        wayland-devel"
 
     # These are dependencies necessary for using webkit-patch
     packages="$packages

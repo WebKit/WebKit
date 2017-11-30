@@ -16,7 +16,6 @@
       <dep package="freetype6"/>
       <dep package="harfbuzz"/>
       <dep package="xkbcommon"/>
-      <dep package="wayland"/>
       <dep package="webkit-gstreamer-testing-dependencies"/>
       <dep package="wpe"/>
       <dep package="wpe-mesa"/>
@@ -36,8 +35,6 @@
       href="http://cairographics.org"/>
   <repository type="tarball" name="freedesktop.org"
       href="http://www.freedesktop.org"/>
-  <repository type="tarball" name="wayland.freedesktop.org"
-      href="http://wayland.freedesktop.org"/>
   <repository type="git" name="github.com"
       href="https://github.com"/>
   <repository type="tarball" name="github-tarball"
@@ -161,14 +158,6 @@
             hash="sha1:7127993bfb69e13cdff25fb8b3c8f26ce6be5bfa"/>
   </autotools>
 
-  <autotools id="wayland"
-             autogen-sh="configure"
-             autogenargs="--disable-documentation">
-    <branch module="releases/wayland-1.10.0.tar.xz" version="1.10.0"
-            repo="wayland.freedesktop.org"
-            hash="sha256:4bf6e790aa6f50ab3825676282ecd75850ec9c4767af96ecb7127b1f3c3d60dc"/>
-  </autotools>
-
   <cmake id="wpe">
     <branch repo="github.com" module="WebPlatformForEmbedded/WPEBackend.git"
             tag="3013faaebab42e7ef7497b3850a2902978eb3d6f" />
@@ -178,7 +167,6 @@
     <dependencies>
       <dep package="wpe" />
       <dep package="glib" />
-      <dep package="wayland" />
       <dep package="xkbcommon" />
     </dependencies>
     <branch repo="github.com" module="WebPlatformForEmbedded/WPEBackend-mesa.git"

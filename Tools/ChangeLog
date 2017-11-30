@@ -1,3 +1,18 @@
+2017-11-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Stop building Wayland in JHBuild moduleset
+        https://bugs.webkit.org/show_bug.cgi?id=179951
+
+        Reviewed by Žan Doberšek.
+
+        Since Wayland is not used for running tests, and since it does not seem to depend on
+        anything in the JHBuild moduleset, I think we can remove it safely without having to worry
+        that the system version of Wayland might use libraries in the JHBuild environment (which
+        would be unsafe).
+
+        * wpe/install-dependencies: Install Wayland.
+        * wpe/jhbuild.modules: Stop building Wayland.
+
 2017-11-30  Alexey Proskuryakov  <ap@apple.com>
 
         Silence the BitVector leak for
