@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "BCompiler.h"
+
 #ifdef __APPLE__
 #include <Availability.h>
 #include <AvailabilityMacros.h>

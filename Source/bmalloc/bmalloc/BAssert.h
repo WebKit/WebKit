@@ -34,7 +34,9 @@
 
 #if defined(NDEBUG) && BOS(DARWIN)
 
-#if BCPU(X86_64) || BCPU(X86)
+#if BASAN_ENABLED
+#define BBreakpointTrap()  __builtin_trap()
+#elif BCPU(X86_64) || BCPU(X86)
 #define BBreakpointTrap()  __asm__ volatile ("int3")
 #elif BCPU(ARM_THUMB2)
 #define BBreakpointTrap()  __asm__ volatile ("bkpt #0")
@@ -54,9 +56,22 @@
 
 #else // not defined(NDEBUG) && BOS(DARWIN)
 
+#if BASAN_ENABLED
+#define BCRASH() __builtin_trap()
+#else
+
+#if defined(__GNUC__) // GCC or Clang
 #define BCRASH() do { \
     *(int*)0xbbadbeef = 0; \
+    __builtin_trap(); \
 } while (0)
+#else
+#define BCRASH() do { \
+    *(int*)0xbbadbeef = 0; \
+    ((void(*)())0)(); \
+} while (0)
+#endif // defined(__GNUC__)
+#endif // BASAN_ENABLED
 
 #endif // defined(NDEBUG) && BOS(DARWIN)
 

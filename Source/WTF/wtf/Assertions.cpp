@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2007, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc.  All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2011 University of Szeged. All rights reserved.
  *
@@ -267,13 +267,17 @@ void WTFCrash()
         globalHook();
 
     WTFReportBacktrace();
+#if ASAN_ENABLED
+    __builtin_trap();
+#else
     *(int *)(uintptr_t)0xbbadbeef = 0;
     // More reliable, but doesn't say BBADBEEF.
 #if COMPILER(GCC_OR_CLANG)
     __builtin_trap();
 #else
     ((void(*)())0)();
-#endif
+#endif // COMPILER(GCC_OR_CLANG)
+#endif // ASAN_ENABLED
 }
 #else
 // We need to keep WTFCrash() around (even on non-debug OS(DARWIN) builds) as a workaround

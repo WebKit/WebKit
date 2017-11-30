@@ -1,3 +1,20 @@
+2017-11-29  JF Bastien  <jfbastien@apple.com>
+
+        WTF / bmalloc: don't write to 0xbbadbeef when ASAN is looking
+        https://bugs.webkit.org/show_bug.cgi?id=180175
+
+        Reviewed by Mark Lam.
+
+        ASAN knows that 0xbbadbeef is a bbad aaddress, and tells us so
+        when we write to it, say in an assert. That creates bbad error
+        reports where ASAN thinks we write to an invalid address, instead
+        of thinking that we hit an assertion. In some cases, tooling that
+        use fuzzers aggregate similar issues, and think that we just have
+        the one bug and not a bunch of different asserts.
+
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+
 2017-11-29  Filip Pizlo  <fpizlo@apple.com>
 
         GC should support isoheaps

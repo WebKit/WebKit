@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2007, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -206,7 +206,9 @@ WTF_EXPORT_PRIVATE void WTFInstallReportBacktraceOnCrashHook();
 
 WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached();
 
-#if CPU(X86_64) || CPU(X86)
+#if ASAN_ENABLED
+#define WTFBreakpointTrap()  __builtin_trap()
+#elif CPU(X86_64) || CPU(X86)
 #define WTFBreakpointTrap()  __asm__ volatile ("int3")
 #elif CPU(ARM_THUMB2)
 #define WTFBreakpointTrap()  __asm__ volatile ("bkpt #0")
