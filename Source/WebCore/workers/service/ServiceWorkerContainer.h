@@ -53,13 +53,12 @@ public:
     ServiceWorkerContainer(ScriptExecutionContext&, NavigatorBase&);
     ~ServiceWorkerContainer();
 
-    typedef WebCore::RegistrationOptions RegistrationOptions;
-
     ServiceWorker* controller() const;
 
     using ReadyPromise = DOMPromiseProxy<IDLInterface<ServiceWorkerRegistration>>;
     ReadyPromise& ready() { return m_readyPromise; }
 
+    using RegistrationOptions = ServiceWorkerRegistrationOptions;
     void addRegistration(const String& scriptURL, const RegistrationOptions&, Ref<DeferredPromise>&&);
     void removeRegistration(const URL& scopeURL, Ref<DeferredPromise>&&);
     void updateRegistration(const URL& scopeURL, const URL& scriptURL, WorkerType, Ref<DeferredPromise>&&);

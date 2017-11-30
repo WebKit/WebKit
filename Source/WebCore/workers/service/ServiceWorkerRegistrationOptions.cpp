@@ -30,14 +30,9 @@
 
 namespace WebCore {
 
-RegistrationOptions RegistrationOptions::isolatedCopy() const
+ServiceWorkerRegistrationOptions ServiceWorkerRegistrationOptions::isolatedCopy() const
 {
-    RegistrationOptions result;
-    result.scope = scope.isolatedCopy();
-    result.type = type;
-    result.updateViaCache = updateViaCache;
-
-    return result;
+    return ServiceWorkerRegistrationOptions { scope.isolatedCopy(), type, updateViaCache };
 }
 
 } // namespace WebCore
