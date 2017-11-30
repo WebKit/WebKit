@@ -106,6 +106,12 @@ void SWContextManager::terminateWorker(ServiceWorkerIdentifier identifier)
     });
 }
 
+void SWContextManager::forEachServiceWorkerThread(const WTF::Function<void(ServiceWorkerThreadProxy&)>& apply)
+{
+    for (auto& workerThread : m_workerMap.values())
+        apply(*workerThread);
+}
+
 } // namespace WebCore
 
 #endif

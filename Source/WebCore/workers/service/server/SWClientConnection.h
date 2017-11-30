@@ -95,7 +95,6 @@ protected:
 private:
     virtual void scheduleJobInServer(const ServiceWorkerJobData&) = 0;
     virtual void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) = 0;
-    void forEachContainer(const WTF::Function<void(ServiceWorkerContainer&)>& apply);
 
     HashMap<ServiceWorkerJobIdentifier, RefPtr<ServiceWorkerJob>> m_scheduledJobs;
 };

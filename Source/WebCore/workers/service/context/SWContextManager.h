@@ -63,6 +63,8 @@ public:
     WEBCORE_EXPORT void fireActivateEvent(ServiceWorkerIdentifier);
     WEBCORE_EXPORT void terminateWorker(ServiceWorkerIdentifier);
 
+    void forEachServiceWorkerThread(const WTF::Function<void(ServiceWorkerThreadProxy&)>&);
+
 private:
     SWContextManager() = default;
 

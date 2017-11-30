@@ -32,10 +32,12 @@
 #include "ExceptionData.h"
 #include "MessageEvent.h"
 #include "Microtasks.h"
+#include "SWContextManager.h"
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerRegistration.h"
+#include <wtf/CrossThreadCopier.h>
 
 namespace WebCore {
 
@@ -136,25 +138,30 @@ void SWClientConnection::postMessageToServiceWorkerClient(DocumentIdentifier des
     container->dispatchEvent(messageEvent);
 }
 
-void SWClientConnection::forEachContainer(const WTF::Function<void(ServiceWorkerContainer&)>& apply)
-{
-    // FIXME: We should iterate over all service worker clients, not only documents.
-    for (auto* document : Document::allDocuments()) {
-        if (auto* container = document->serviceWorkerContainer())
-            apply(*container);
-    }
-}
-
 void SWClientConnection::updateRegistrationState(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerData>& serviceWorkerData)
 {
-    forEachContainer([&](ServiceWorkerContainer& container) {
-        container.scheduleTaskToUpdateRegistrationState(identifier, state, serviceWorkerData);
+    SWContextManager::singleton().forEachServiceWorkerThread([identifier, state, &serviceWorkerData] (auto& workerThread) {
+        workerThread.thread().runLoop().postTask([identifier, state, serviceWorkerData = crossThreadCopy(serviceWorkerData)](ScriptExecutionContext& context) mutable {
+            if (auto* container = context.serviceWorkerContainer())
+                container->scheduleTaskToUpdateRegistrationState(identifier, state, WTFMove(serviceWorkerData));
+        });
     });
+
+    for (auto* document : Document::allDocuments()) {
+        if (auto* container = document->serviceWorkerContainer())
+            container->scheduleTaskToUpdateRegistrationState(identifier, state, serviceWorkerData);
+    }
 }
 
 void SWClientConnection::updateWorkerState(ServiceWorkerIdentifier identifier, ServiceWorkerState state)
 {
-    // FIXME: We should iterate over all service worker clients, not only documents.
+    SWContextManager::singleton().forEachServiceWorkerThread([identifier, state] (auto& workerThread) {
+        workerThread.thread().runLoop().postTask([identifier, state](ScriptExecutionContext& context) {
+            if (auto* serviceWorker = context.serviceWorker(identifier))
+                serviceWorker->scheduleTaskToUpdateState(state);
+        });
+    });
+
     for (auto* document : Document::allDocuments()) {
         if (auto* serviceWorker = document->serviceWorker(identifier))
             serviceWorker->scheduleTaskToUpdateState(state);
@@ -163,9 +170,17 @@ void SWClientConnection::updateWorkerState(ServiceWorkerIdentifier identifier, S
 
 void SWClientConnection::fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier identifier)
 {
-    forEachContainer([&](ServiceWorkerContainer& container) {
-        container.scheduleTaskToFireUpdateFoundEvent(identifier);
+    SWContextManager::singleton().forEachServiceWorkerThread([identifier] (auto& workerThread) {
+        workerThread.thread().runLoop().postTask([identifier](ScriptExecutionContext& context) {
+            if (auto* container = context.serviceWorkerContainer())
+                container->scheduleTaskToFireUpdateFoundEvent(identifier);
+        });
     });
+
+    for (auto* document : Document::allDocuments()) {
+        if (auto* container = document->serviceWorkerContainer())
+            container->scheduleTaskToFireUpdateFoundEvent(identifier);
+    }
 }
 
 void SWClientConnection::notifyClientsOfControllerChange(const HashSet<DocumentIdentifier>& contextIdentifiers, ServiceWorkerData&& newController)

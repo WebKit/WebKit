@@ -122,21 +122,23 @@ void ServiceWorkerThread::postMessageToServiceWorkerGlobalScope(Ref<SerializedSc
 void ServiceWorkerThread::fireInstallEvent()
 {
     ScriptExecutionContext::Task task([jobDataIdentifier = m_data.jobDataIdentifier, serviceWorkerIdentifier = this->identifier()] (ScriptExecutionContext& context) mutable {
-        auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
-        auto installEvent = ExtendableEvent::create(eventNames().installEvent, { }, ExtendableEvent::IsTrusted::Yes);
-        serviceWorkerGlobalScope.dispatchEvent(installEvent);
+        context.postTask([jobDataIdentifier, serviceWorkerIdentifier](ScriptExecutionContext& context) {
+            auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
+            auto installEvent = ExtendableEvent::create(eventNames().installEvent, { }, ExtendableEvent::IsTrusted::Yes);
+            serviceWorkerGlobalScope.dispatchEvent(installEvent);
 
-        installEvent->whenAllExtendLifetimePromisesAreSettled([jobDataIdentifier, serviceWorkerIdentifier](HashSet<Ref<DOMPromise>>&& extendLifetimePromises) {
-            bool hasRejectedAnyPromise = false;
-            for (auto& promise : extendLifetimePromises) {
-                if (promise->status() == DOMPromise::Status::Rejected) {
-                    hasRejectedAnyPromise = true;
-                    break;
+            installEvent->whenAllExtendLifetimePromisesAreSettled([jobDataIdentifier, serviceWorkerIdentifier](HashSet<Ref<DOMPromise>>&& extendLifetimePromises) {
+                bool hasRejectedAnyPromise = false;
+                for (auto& promise : extendLifetimePromises) {
+                    if (promise->status() == DOMPromise::Status::Rejected) {
+                        hasRejectedAnyPromise = true;
+                        break;
+                    }
                 }
-            }
-            callOnMainThread([jobDataIdentifier, serviceWorkerIdentifier, hasRejectedAnyPromise] () mutable {
-                if (auto* connection = SWContextManager::singleton().connection())
-                    connection->didFinishInstall(jobDataIdentifier, serviceWorkerIdentifier, !hasRejectedAnyPromise);
+                callOnMainThread([jobDataIdentifier, serviceWorkerIdentifier, hasRejectedAnyPromise] () mutable {
+                    if (auto* connection = SWContextManager::singleton().connection())
+                        connection->didFinishInstall(jobDataIdentifier, serviceWorkerIdentifier, !hasRejectedAnyPromise);
+                });
             });
         });
     });
@@ -146,14 +148,16 @@ void ServiceWorkerThread::fireInstallEvent()
 void ServiceWorkerThread::fireActivateEvent()
 {
     ScriptExecutionContext::Task task([serviceWorkerIdentifier = this->identifier()] (ScriptExecutionContext& context) mutable {
-        auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
-        auto activateEvent = ExtendableEvent::create(eventNames().activateEvent, { }, ExtendableEvent::IsTrusted::Yes);
-        serviceWorkerGlobalScope.dispatchEvent(activateEvent);
+        context.postTask([serviceWorkerIdentifier](ScriptExecutionContext& context) {
+            auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
+            auto activateEvent = ExtendableEvent::create(eventNames().activateEvent, { }, ExtendableEvent::IsTrusted::Yes);
+            serviceWorkerGlobalScope.dispatchEvent(activateEvent);
 
-        activateEvent->whenAllExtendLifetimePromisesAreSettled([serviceWorkerIdentifier](HashSet<Ref<DOMPromise>>&&) {
-            callOnMainThread([serviceWorkerIdentifier] () mutable {
-                if (auto* connection = SWContextManager::singleton().connection())
-                    connection->didFinishActivation(serviceWorkerIdentifier);
+            activateEvent->whenAllExtendLifetimePromisesAreSettled([serviceWorkerIdentifier](HashSet<Ref<DOMPromise>>&&) {
+                callOnMainThread([serviceWorkerIdentifier] () mutable {
+                    if (auto* connection = SWContextManager::singleton().connection())
+                        connection->didFinishActivation(serviceWorkerIdentifier);
+                });
             });
         });
     });

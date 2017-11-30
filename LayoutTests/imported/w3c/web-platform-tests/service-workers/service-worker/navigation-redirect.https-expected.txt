@@ -9,15 +9,15 @@ FAIL SW-fallbacked redirect to same-origin same-scope. promise_test: Unhandled r
 FAIL SW-fallbacked redirect to same-origin other-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
 FAIL SW-fallbacked redirect to other-origin out-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
 FAIL SW-fallbacked redirect to other-origin in-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
-TIMEOUT SW-generated redirect to same-origin out-scope. Test timed out
-NOTRUN SW-generated redirect to same-origin same-scope. 
-NOTRUN SW-generated redirect to same-origin other-scope. 
-NOTRUN SW-generated redirect to other-origin out-scope. 
-NOTRUN SW-generated redirect to other-origin in-scope. 
-NOTRUN SW-fetched redirect to same-origin out-scope. 
-NOTRUN SW-fetched redirect to same-origin same-scope. 
-NOTRUN SW-fetched redirect to same-origin other-scope. 
-NOTRUN SW-fetched redirect to other-origin out-scope. 
+FAIL SW-generated redirect to same-origin out-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+FAIL SW-generated redirect to same-origin same-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+FAIL SW-generated redirect to same-origin other-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+FAIL SW-generated redirect to other-origin out-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+FAIL SW-generated redirect to other-origin in-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+FAIL SW-fetched redirect to same-origin out-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+FAIL SW-fetched redirect to same-origin same-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+FAIL SW-fetched redirect to same-origin other-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+TIMEOUT SW-fetched redirect to other-origin out-scope. Test timed out
 NOTRUN SW-fetched redirect to other-origin in-scope. 
 NOTRUN Redirect to same-origin out-scope with opaque redirect response. 
 NOTRUN Redirect to same-origin same-scope with opaque redirect response. 

@@ -68,9 +68,6 @@ ServiceWorker::~ServiceWorker()
 
 void ServiceWorker::scheduleTaskToUpdateState(State state)
 {
-    // FIXME: Once we support service workers from workers, this might need to change.
-    RELEASE_ASSERT(isMainThread());
-
     auto* context = scriptExecutionContext();
     if (!context)
         return;

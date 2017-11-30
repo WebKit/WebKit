@@ -1,8 +1,36 @@
 * Add basic testing for ServiceWorkerGlobalScope.registration
 
+Received updatefound event on self.registration
 Received install event
 * self.registration
 scope: http://127.0.0.1:8000/workers/service/
 updateViaCache: imports
+installing worker:
+- scriptURL: http://127.0.0.1:8000/workers/service/resources/self_registration-worker.js
+- state: installing
+waiting worker: null
+active worker: null
+
+Received statechange event on service worker
+Received statechange event on service worker
+Received activate event
+* self.registration
+scope: http://127.0.0.1:8000/workers/service/
+updateViaCache: imports
+installing worker: null
+waiting worker: null
+active worker:
+- scriptURL: http://127.0.0.1:8000/workers/service/resources/self_registration-worker.js
+- state: activating
+
+Received statechange event on service worker
+* self.registration
+scope: http://127.0.0.1:8000/workers/service/
+updateViaCache: imports
+installing worker: null
+waiting worker: null
+active worker:
+- scriptURL: http://127.0.0.1:8000/workers/service/resources/self_registration-worker.js
+- state: activated
 
 
