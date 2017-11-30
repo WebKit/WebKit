@@ -46,6 +46,7 @@ class Status:
     DOWNLOADED = 0
     UP_TO_DATE = 1
     COULD_NOT_FIND = 2
+    USE_EXISTING_VERSION = 3
 
 
 def parse_args(argv):
@@ -81,12 +82,16 @@ def find_latest_release(args):
     return None, None
 
 
-def has_latest_release(version_info_path, version_info):
+def existing_version_info(version_info_path):
     if not os.path.exists(version_info_path):
-        return False
+        return None
 
     with open(version_info_path) as file:
-        return json.load(file) == version_info
+        return json.load(file)
+
+
+def has_latest_release(version_info_path, version_info):
+    return existing_version_info(version_info_path) == version_info
 
 
 def download_release(source_url, target_path):
@@ -102,24 +107,36 @@ def save_version_info(version_info_path, version_info):
 def main(argv):
     args = parse_args(argv)
 
-    print 'Seeking latest release of {} from {}...'.format(args.filename, args.repo)
-    release_url, version_info = find_latest_release(args)
-
-    if not release_url:
-        print 'No release found!'
-        return Status.COULD_NOT_FIND
-
     binary_path = os.path.join(args.output_dir, args.filename)
     version_info_path = binary_path + '.version'
 
-    if has_latest_release(version_info_path, version_info):
-        print 'Already up-to-date!'
-        return Status.UP_TO_DATE
+    print 'Seeking latest release of {} from {}...'.format(args.filename, args.repo)
+
+    try:
+        release_url, version_info = find_latest_release(args)
+
+        if not release_url:
+            print 'No release found!'
+            return Status.COULD_NOT_FIND
+
+        if has_latest_release(version_info_path, version_info):
+            print 'Already up-to-date:', existing_version_info(version_info_path)
+            return Status.UP_TO_DATE
+
+    except urllib2.URLError, error:
+        print error
+
+        version_info = existing_version_info(version_info_path)
+        if version_info:
+            print 'Use existing version:', version_info
+            return Status.USE_EXISTING_VERSION
+        else:
+            return Status.COULD_NOT_FIND
 
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
 
-    print 'Downloading to {}...'.format(os.path.abspath(args.output_dir))
+    print 'Downloading {} to {}...'.format(version_info['tag_name'], os.path.abspath(args.output_dir))
     download_release(release_url, binary_path)
     save_version_info(version_info_path, version_info)
     print 'Done!'
