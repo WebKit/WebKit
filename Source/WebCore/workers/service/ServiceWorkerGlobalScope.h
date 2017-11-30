@@ -40,14 +40,14 @@ class ServiceWorkerClient;
 class ServiceWorkerClients;
 class ServiceWorkerThread;
 
-class ServiceWorkerGlobalScope : public WorkerGlobalScope {
+class ServiceWorkerGlobalScope final : public WorkerGlobalScope {
 public:
     template<typename... Args> static Ref<ServiceWorkerGlobalScope> create(Args&&... args)
     {
         return adoptRef(*new ServiceWorkerGlobalScope(std::forward<Args>(args)...));
     }
 
-    virtual ~ServiceWorkerGlobalScope();
+    ~ServiceWorkerGlobalScope();
 
     bool isServiceWorkerGlobalScope() const final { return true; }
 
