@@ -123,6 +123,20 @@ bool CalcExpressionOperation::operator==(const CalcExpressionNode& other) const
     return other.type() == CalcExpressionNodeOperation && *this == toCalcExpressionOperation(other);
 }
 
+bool operator==(const CalcExpressionOperation& a, const CalcExpressionOperation& b)
+{
+    if (a.getOperator() != b.getOperator())
+        return false;
+    // Maybe Vectors of unique_ptrs should always do deep compare?
+    if (a.children().size() != b.children().size())
+        return false;
+    for (unsigned i = 0; i < a.children().size(); ++i) {
+        if (!(*a.children()[i] == *b.children()[i]))
+            return false;
+    }
+    return true;
+}
+
 void CalcExpressionOperation::dump(TextStream& ts) const
 {
     if (m_operator == CalcMin || m_operator == CalcMax) {
