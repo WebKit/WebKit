@@ -176,7 +176,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/register-foreign-
 imported/w3c/web-platform-tests/service-workers/service-worker/respond-with-body-accessed-response.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/serviceworker-message-event-historical.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-using-registration.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-without-client.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-navigation-fetch-event.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-oneday.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-recovery.https.html [ Skip ]
