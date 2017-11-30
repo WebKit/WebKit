@@ -152,6 +152,10 @@ enum SyntheticClickType : int8_t;
 
 enum class TextIndicatorPresentationTransition : uint8_t;
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+class HTMLAttachmentElement;
+struct AttachmentDisplayOptions;
+#endif
 }
 
 namespace WebKit {
@@ -1011,8 +1015,9 @@ public:
     void storageAccessResponse(bool wasGranted, uint64_t contextId);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    void insertAttachment(const String& identifier, const String& filename, std::optional<String> contentType, const IPC::DataReference&, CallbackID);
+    void insertAttachment(const String& identifier, const WebCore::AttachmentDisplayOptions&, const String& filename, std::optional<String> contentType, const IPC::DataReference&, CallbackID);
     void requestAttachmentData(const String& identifier, CallbackID);
+    void setAttachmentDisplayOptions(const String& identifier, const WebCore::AttachmentDisplayOptions&, CallbackID);
 #endif
 
 private:
@@ -1325,6 +1330,10 @@ private:
     RefPtr<WebImage> snapshotNode(WebCore::Node&, SnapshotOptions, unsigned maximumPixelCount = std::numeric_limits<unsigned>::max());
 #if USE(CF)
     RetainPtr<CFDataRef> pdfSnapshotAtSize(const WebCore::IntRect&, const WebCore::IntSize& bitmapSize, SnapshotOptions);
+#endif
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    RefPtr<WebCore::HTMLAttachmentElement> attachmentElementWithIdentifier(const String& identifier) const;
 #endif
 
     uint64_t m_pageID;

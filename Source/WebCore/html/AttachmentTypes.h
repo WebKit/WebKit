@@ -25,25 +25,37 @@
 
 #pragma once
 
-#import "APIAttachment.h"
-#import "_WKAttachment.h"
+#if ENABLE(ATTACHMENT_ELEMENT)
 
-namespace API {
+namespace WebCore {
 
-inline _WKAttachment *wrapper(API::Attachment& attachment)
+enum class AttachmentDisplayMode {
+    Auto,
+    InPlace,
+    AsIcon
+};
+
+struct AttachmentDisplayOptions {
+    AttachmentDisplayMode mode { AttachmentDisplayMode::Auto };
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<AttachmentDisplayOptions> decode(Decoder&);
+};
+
+template<class Encoder> inline void AttachmentDisplayOptions::encode(Encoder& encoder) const
 {
-    ASSERT([attachment.wrapper() isKindOfClass:[_WKAttachment class]]);
-    return (_WKAttachment *)attachment.wrapper();
+    encoder.encodeEnum(mode);
 }
 
+template<class Decoder> inline std::optional<AttachmentDisplayOptions> AttachmentDisplayOptions::decode(Decoder& decoder)
+{
+    AttachmentDisplayMode mode;
+    if (!decoder.decodeEnum(mode))
+        return std::nullopt;
+
+    return {{ mode }};
 }
 
-@interface _WKAttachmentDisplayOptions ()
-@property (nonatomic, readonly) WebCore::AttachmentDisplayOptions coreDisplayOptions;
-@end
+} // namespace WebCore
 
-@interface _WKAttachment () <WKObject> {
-@package
-    API::ObjectStorage<API::Attachment> _attachment;
-}
-@end
+#endif // ENABLE(ATTACHMENT_ELEMENT)

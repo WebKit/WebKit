@@ -5767,23 +5767,16 @@ void WebPage::invokeSharedBufferCallback(RefPtr<SharedBuffer>&& buffer, Callback
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void WebPage::insertAttachment(const String& identifier, const String& filename, std::optional<String> contentType, const IPC::DataReference& data, CallbackID callbackID)
+void WebPage::insertAttachment(const String& identifier, const AttachmentDisplayOptions& options, const String& filename, std::optional<String> contentType, const IPC::DataReference& data, CallbackID callbackID)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
-    frame.editor().insertAttachment(identifier, filename, SharedBuffer::create(data.data(), data.size()), contentType);
+    frame.editor().insertAttachment(identifier, options, filename, SharedBuffer::create(data.data(), data.size()), contentType);
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
 void WebPage::requestAttachmentData(const String& identifier, CallbackID callbackID)
 {
-    // FIXME: We don't currently handle attachment data requests for attachment elements in subframes.
-    auto* frame = mainFrame();
-    if (!frame || !frame->document()) {
-        invokeSharedBufferCallback({ }, callbackID);
-        return;
-    }
-
-    auto attachment = frame->document()->attachmentForIdentifier(identifier);
+    auto attachment = attachmentElementWithIdentifier(identifier);
     if (!attachment) {
         invokeSharedBufferCallback({ }, callbackID);
         return;
@@ -5795,6 +5788,25 @@ void WebPage::requestAttachmentData(const String& identifier, CallbackID callbac
         else
             protectedThis->invokeSharedBufferCallback({ }, callbackID);
     });
+}
+
+void WebPage::setAttachmentDisplayOptions(const String& identifier, const AttachmentDisplayOptions& options, CallbackID callbackID)
+{
+    if (auto attachment = attachmentElementWithIdentifier(identifier)) {
+        attachment->document().updateLayout();
+        attachment->updateDisplayMode(options.mode);
+    }
+    send(Messages::WebPageProxy::VoidCallback(callbackID));
+}
+
+RefPtr<HTMLAttachmentElement> WebPage::attachmentElementWithIdentifier(const String& identifier) const
+{
+    // FIXME: Handle attachment elements in subframes too as well.
+    auto* frame = mainFrame();
+    if (!frame || !frame->document())
+        return nullptr;
+
+    return frame->document()->attachmentForIdentifier(identifier);
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)

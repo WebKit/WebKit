@@ -27,11 +27,21 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/WebKitPrivate.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
+
+CGSize platformAttachmentIconElementSize()
+{
+#if PLATFORM(IOS)
+    return CGSizeMake(160, 119);
+#else
+    return CGSizeMake(61, 89);
+#endif
+}
 
 @interface AttachmentUpdateObserver : NSObject <WKUIDelegatePrivate>
 @property (nonatomic, readonly) NSArray *inserted;
@@ -139,6 +149,25 @@ static NSData *testImageData()
     return [NSData dataWithContentsOfURL:url];
 }
 
+static NSData *testVideoData()
+{
+    NSURL *url = [[NSBundle mainBundle] URLForResource:@"test" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"];
+    return [NSData dataWithContentsOfURL:url];
+}
+
+static NSData *testPDFData()
+{
+    NSURL *url = [[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"];
+    return [NSData dataWithContentsOfURL:url];
+}
+
+static _WKAttachmentDisplayOptions *displayOptionsWithMode(_WKAttachmentDisplayMode mode)
+{
+    _WKAttachmentDisplayOptions *options = [[[_WKAttachmentDisplayOptions alloc] init] autorelease];
+    options.mode = mode;
+    return options;
+}
+
 @implementation TestWKWebView (AttachmentTesting)
 
 - (BOOL)_synchronouslyExecuteEditCommand:(NSString *)command argument:(NSString *)argument
@@ -161,6 +190,22 @@ static NSData *testImageData()
     }];
     TestWebKitAPI::Util::run(&done);
     return attachment.autorelease();
+}
+
+- (void)waitForAttachmentElementSizeToBecome:(CGSize)expectedSize
+{
+    while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
+        __block bool doneEvaluatingScript = false;
+        __block BOOL sizeIsEqual = NO;
+        [self evaluateJavaScript:@"r = document.querySelector('attachment').getBoundingClientRect(); [r.width, r.height]" completionHandler:^(NSArray<NSNumber *> *sizeResult, NSError *) {
+            CGSize observedSize { sizeResult.firstObject.floatValue, sizeResult.lastObject.floatValue };
+            sizeIsEqual = CGSizeEqualToSize(expectedSize, observedSize);
+            doneEvaluatingScript = true;
+        }];
+        TestWebKitAPI::Util::run(&doneEvaluatingScript);
+        if (sizeIsEqual)
+            break;
+    }
 }
 
 - (NSString *)valueOfAttribute:(NSString *)attributeName forQuerySelector:(NSString *)querySelector
@@ -187,6 +232,21 @@ static NSData *testImageData()
 @end
 
 @implementation _WKAttachment (AttachmentTesting)
+
+- (void)synchronouslySetDisplayOptions:(_WKAttachmentDisplayOptions *)options error:(NSError **)error
+{
+    __block RetainPtr<NSError> resultError;
+    __block bool done = false;
+    [self setDisplayOptions:options completion:^(NSError *error) {
+        resultError = retainPtr(error);
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+
+    if (error)
+        *error = resultError.autorelease();
+}
 
 - (NSData *)synchronouslyRequestData:(NSError **)error
 {
@@ -430,6 +490,92 @@ TEST(WKAttachmentTests, MultipleSimultaneousAttachmentDataRequests)
 
     EXPECT_TRUE([dataForFirstRequest isEqualToData:htmlData.get()]);
     EXPECT_TRUE([dataForSecondRequest isEqualToData:htmlData.get()]);
+}
+
+TEST(WKAttachmentTests, InPlaceImageAttachmentToggleDisplayMode)
+{
+    auto webView = webViewForTestingAttachments();
+    RetainPtr<NSData> imageData = testImageData();
+    RetainPtr<_WKAttachment> attachment;
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"icon.png" contentType:@"image/png" data:imageData.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeInPlace)]);
+        observer.expectAttachmentUpdates(@[], @[attachment.get()]);
+        [attachment expectRequestedDataToBe:imageData.get()];
+        [webView waitForAttachmentElementSizeToBecome:CGSizeMake(215, 174)];
+    }
+
+    [attachment synchronouslySetDisplayOptions:displayOptionsWithMode(_WKAttachmentDisplayModeAsIcon) error:nil];
+    [attachment expectRequestedDataToBe:imageData.get()];
+    [webView waitForAttachmentElementSizeToBecome:platformAttachmentIconElementSize()];
+
+    [attachment synchronouslySetDisplayOptions:displayOptionsWithMode(_WKAttachmentDisplayModeInPlace) error:nil];
+    [attachment expectRequestedDataToBe:imageData.get()];
+    [webView waitForAttachmentElementSizeToBecome:CGSizeMake(215, 174)];
+}
+
+TEST(WKAttachmentTests, InPlaceImageAttachmentParagraphInsertion)
+{
+    auto webView = webViewForTestingAttachments();
+    RetainPtr<NSData> imageData = testImageData();
+    RetainPtr<_WKAttachment> attachment;
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"icon.png" contentType:@"image/png" data:imageData.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeInPlace)]);
+        observer.expectAttachmentUpdates(@[], @[attachment.get()]);
+    }
+    [webView expectUpdatesAfterCommand:@"InsertParagraph" withArgument:nil expectedRemovals:@[] expectedInsertions:@[]];
+    [webView expectUpdatesAfterCommand:@"DeleteBackward" withArgument:nil expectedRemovals:@[] expectedInsertions:@[]];
+    [webView stringByEvaluatingJavaScript:@"getSelection().collapse(document.body)"];
+    [webView expectUpdatesAfterCommand:@"InsertParagraph" withArgument:nil expectedRemovals:@[] expectedInsertions:@[]];
+    [webView expectUpdatesAfterCommand:@"DeleteBackward" withArgument:nil expectedRemovals:@[] expectedInsertions:@[]];
+
+    [attachment expectRequestedDataToBe:imageData.get()];
+    [webView waitForAttachmentElementSizeToBecome:CGSizeMake(215, 174)];
+
+    [webView expectUpdatesAfterCommand:@"DeleteForward" withArgument:nil expectedRemovals:@[attachment.get()] expectedInsertions:@[]];
+}
+
+TEST(WKAttachmentTests, InPlaceVideoAttachmentInsertionWithinList)
+{
+    auto webView = webViewForTestingAttachments();
+    RetainPtr<NSData> videoData = testVideoData();
+    RetainPtr<_WKAttachment> attachment;
+
+    [webView _synchronouslyExecuteEditCommand:@"InsertOrderedList" argument:nil];
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"test.mp4" contentType:@"video/mp4" data:videoData.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeInPlace)]);
+        observer.expectAttachmentUpdates(@[], @[attachment.get()]);
+    }
+    [webView waitForAttachmentElementSizeToBecome:CGSizeMake(320, 240)];
+
+    [webView expectUpdatesAfterCommand:@"DeleteBackward" withArgument:nil expectedRemovals:@[attachment.get()] expectedInsertions:@[]];
+    [webView expectUpdatesAfterCommand:@"Undo" withArgument:nil expectedRemovals:@[] expectedInsertions:@[attachment.get()]];
+    [webView expectUpdatesAfterCommand:@"InsertOrderedList" withArgument:nil expectedRemovals:@[] expectedInsertions:@[]];
+
+    [webView waitForAttachmentElementSizeToBecome:CGSizeMake(320, 240)];
+    [attachment expectRequestedDataToBe:videoData.get()];
+}
+
+TEST(WKAttachmentTests, InPlacePDFAttachmentCutAndPaste)
+{
+    auto webView = webViewForTestingAttachments();
+    RetainPtr<NSData> pdfData = testPDFData();
+    RetainPtr<_WKAttachment> attachment;
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"test.pdf" contentType:@"application/pdf" data:pdfData.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeInPlace)]);
+        observer.expectAttachmentUpdates(@[], @[attachment.get()]);
+        [webView waitForAttachmentElementSizeToBecome:CGSizeMake(130, 29)];
+    }
+
+    [webView _synchronouslyExecuteEditCommand:@"SelectAll" argument:nil];
+    [webView expectUpdatesAfterCommand:@"Cut" withArgument:nil expectedRemovals:@[attachment.get()] expectedInsertions:@[]];
+
+    [webView expectUpdatesAfterCommand:@"Paste" withArgument:nil expectedRemovals:@[] expectedInsertions:@[attachment.get()]];
+    [webView waitForAttachmentElementSizeToBecome:CGSizeMake(130, 29)];
+    [attachment expectRequestedDataToBe:pdfData.get()];
 }
 
 } // namespace TestWebKitAPI

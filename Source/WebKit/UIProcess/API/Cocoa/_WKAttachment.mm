@@ -31,6 +31,7 @@
 #import "APIAttachment.h"
 #import "WKErrorPrivate.h"
 #import "_WKAttachmentInternal.h"
+#import <WebCore/AttachmentTypes.h>
 #import <WebCore/SharedBuffer.h>
 #import <wtf/BlockPtr.h>
 
@@ -40,11 +41,30 @@ using namespace WebKit;
 
 - (instancetype)init
 {
-    if (self = [super init]) {
+    if (self = [super init])
         _mode = _WKAttachmentDisplayModeAuto;
-        _expandsImageToMaximumWidth = NO;
-    }
+
     return self;
+}
+
+- (WebCore::AttachmentDisplayOptions)coreDisplayOptions
+{
+    WebCore::AttachmentDisplayMode mode;
+    switch (self.mode) {
+    case _WKAttachmentDisplayModeAuto:
+        mode = WebCore::AttachmentDisplayMode::Auto;
+        break;
+    case _WKAttachmentDisplayModeAsIcon:
+        mode = WebCore::AttachmentDisplayMode::AsIcon;
+        break;
+    case _WKAttachmentDisplayModeInPlace:
+        mode = WebCore::AttachmentDisplayMode::InPlace;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        mode = WebCore::AttachmentDisplayMode::Auto;
+    }
+    return { mode };
 }
 
 @end
@@ -71,6 +91,20 @@ using namespace WebKit;
             capturedBlock(buffer->createNSData().autorelease(), nil);
         else
             capturedBlock(nil, [NSError errorWithDomain:WKErrorDomain code:1 userInfo:nil]);
+    });
+}
+
+- (void)setDisplayOptions:(_WKAttachmentDisplayOptions *)options completion:(void(^)(NSError *))completionHandler
+{
+    auto coreOptions = options ? options.coreDisplayOptions : WebCore::AttachmentDisplayOptions { };
+    _attachment->setDisplayOptions(coreOptions, [capturedBlock = makeBlockPtr(completionHandler)] (CallbackBase::Error error) {
+        if (!capturedBlock)
+            return;
+
+        if (error == CallbackBase::Error::None)
+            capturedBlock(nil);
+        else
+            capturedBlock([NSError errorWithDomain:WKErrorDomain code:1 userInfo:nil]);
     });
 }
 

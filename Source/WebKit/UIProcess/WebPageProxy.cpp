@@ -28,6 +28,7 @@
 #include "WebPageProxy.h"
 
 #include "APIArray.h"
+#include "APIAttachment.h"
 #include "APIContextMenuClient.h"
 #include "APIFindClient.h"
 #include "APIFindMatchesClient.h"
@@ -113,6 +114,7 @@
 #include "WebURLSchemeHandler.h"
 #include "WebUserContentControllerProxy.h"
 #include "WebsiteDataStore.h"
+#include <WebCore/AttachmentTypes.h>
 #include <WebCore/BitmapImage.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
@@ -7147,7 +7149,7 @@ void WebPageProxy::requestStorageAccess(String&& subFrameHost, String&& topFrame
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void WebPageProxy::insertAttachment(const String& identifier, const String& filename, std::optional<String> contentType, SharedBuffer& data, Function<void(CallbackBase::Error)>&& callback)
+void WebPageProxy::insertAttachment(const String& identifier, const AttachmentDisplayOptions& options, const String& filename, std::optional<String> contentType, SharedBuffer& data, Function<void(CallbackBase::Error)>&& callback)
 {
     if (!isValid()) {
         callback(CallbackBase::Error::OwnerWasInvalidated);
@@ -7155,7 +7157,7 @@ void WebPageProxy::insertAttachment(const String& identifier, const String& file
     }
 
     auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
-    m_process->send(Messages::WebPage::InsertAttachment(identifier, filename, contentType, IPC::SharedBufferDataReference { &data }, callbackID), m_pageID);
+    m_process->send(Messages::WebPage::InsertAttachment(identifier, options, filename, contentType, IPC::SharedBufferDataReference { &data }, callbackID), m_pageID);
 }
 
 void WebPageProxy::requestAttachmentData(const String& identifier, Function<void(RefPtr<SharedBuffer>, CallbackBase::Error)>&& callback)
@@ -7167,6 +7169,17 @@ void WebPageProxy::requestAttachmentData(const String& identifier, Function<void
 
     auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::RequestAttachmentData(identifier, callbackID), m_pageID);
+}
+
+void WebPageProxy::setAttachmentDisplayOptions(const String& identifier, AttachmentDisplayOptions options, Function<void(CallbackBase::Error)>&& callback)
+{
+    if (!isValid()) {
+        callback(CallbackBase::Error::OwnerWasInvalidated);
+        return;
+    }
+
+    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
+    m_process->send(Messages::WebPage::SetAttachmentDisplayOptions(identifier, options, callbackID), m_pageID);
 }
 
 void WebPageProxy::didInsertAttachment(const String& identifier)

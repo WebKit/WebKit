@@ -38,12 +38,12 @@ typedef NS_ENUM(NSInteger, _WKAttachmentDisplayMode) {
 WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKAttachmentDisplayOptions : NSObject
 @property (nonatomic) _WKAttachmentDisplayMode mode;
-@property (nonatomic) BOOL expandsImageToMaximumWidth;
 @end
 
 WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKAttachment : NSObject
 - (void)requestData:(void(^)(NSData *, NSError *))completionHandler;
+- (void)setDisplayOptions:(_WKAttachmentDisplayOptions *)options completion:(void(^)(NSError *))completionHandler;
 @end
 
 #endif

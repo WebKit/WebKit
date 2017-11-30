@@ -3791,21 +3791,21 @@ void Editor::notifyClientOfAttachmentUpdates()
     m_insertedAttachmentIdentifiers.clear();
 }
 
-void Editor::insertAttachment(const String& identifier, const String& filename, const String& filepath, std::optional<String> contentType)
+void Editor::insertAttachment(const String& identifier, const AttachmentDisplayOptions& options, const String& filename, const String& filepath, std::optional<String> contentType)
 {
     if (!contentType)
         contentType = File::contentTypeForFile(filename);
-    insertAttachmentFromFile(identifier, filename, *contentType, File::create(filepath));
+    insertAttachmentFromFile(identifier, options, filename, *contentType, File::create(filepath));
 }
 
-void Editor::insertAttachment(const String& identifier, const String& filename, Ref<SharedBuffer>&& data, std::optional<String> contentType)
+void Editor::insertAttachment(const String& identifier, const AttachmentDisplayOptions& options, const String& filename, Ref<SharedBuffer>&& data, std::optional<String> contentType)
 {
     if (!contentType)
         contentType = File::contentTypeForFile(filename);
-    insertAttachmentFromFile(identifier, filename, *contentType, File::create(Blob::create(data, *contentType), filename));
+    insertAttachmentFromFile(identifier, options, filename, *contentType, File::create(Blob::create(data, *contentType), filename));
 }
 
-void Editor::insertAttachmentFromFile(const String& identifier, const String& filename, const String& contentType, Ref<File>&& file)
+void Editor::insertAttachmentFromFile(const String& identifier, const AttachmentDisplayOptions& options, const String& filename, const String& contentType, Ref<File>&& file)
 {
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document());
     attachment->setAttribute(HTMLNames::titleAttr, filename);
@@ -3813,6 +3813,7 @@ void Editor::insertAttachmentFromFile(const String& identifier, const String& fi
     attachment->setAttribute(HTMLNames::typeAttr, contentType);
     attachment->setUniqueIdentifier(identifier);
     attachment->setFile(WTFMove(file));
+    attachment->updateDisplayMode(options.mode);
 
     auto fragmentToInsert = document().createDocumentFragment();
     fragmentToInsert->appendChild(attachment.get());

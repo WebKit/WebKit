@@ -4613,6 +4613,7 @@
 		F3ABFE0C130E9DA000E7F7D1 /* InstrumentingAgents.h in Headers */ = {isa = PBXBuildFile; fileRef = F3ABFE0B130E9DA000E7F7D1 /* InstrumentingAgents.h */; };
 		F3D461491161D53200CA0D09 /* JSErrorHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = F3D461471161D53200CA0D09 /* JSErrorHandler.h */; };
 		F433E9031DBBDBA200EF0D14 /* StaticPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F433E9021DBBDBA200EF0D14 /* StaticPasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F43759B41FCF48FA00100706 /* AttachmentTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = F43759B31FCF48FA00100706 /* AttachmentTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F44EBBD91DB5D21400277334 /* StaticRange.h in Headers */ = {isa = PBXBuildFile; fileRef = F44EBBD81DB5D21400277334 /* StaticRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F45C231E1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h in Headers */ = {isa = PBXBuildFile; fileRef = F45C231C1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F46729281E0DE68500ACC3D8 /* ScrollSnapOffsetsInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F46729251E0DE5AB00ACC3D8 /* ScrollSnapOffsetsInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13963,6 +13964,7 @@
 		F3D461471161D53200CA0D09 /* JSErrorHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSErrorHandler.h; sourceTree = "<group>"; };
 		F433E9021DBBDBA200EF0D14 /* StaticPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticPasteboard.h; sourceTree = "<group>"; };
 		F433E9041DBBDBC200EF0D14 /* StaticPasteboard.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StaticPasteboard.cpp; sourceTree = "<group>"; };
+		F43759B31FCF48FA00100706 /* AttachmentTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AttachmentTypes.h; sourceTree = "<group>"; };
 		F44EBBD61DB5D1B600277334 /* StaticRange.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StaticRange.idl; sourceTree = "<group>"; };
 		F44EBBD81DB5D21400277334 /* StaticRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticRange.h; sourceTree = "<group>"; };
 		F44EBBDA1DB5DD9D00277334 /* StaticRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StaticRange.cpp; sourceTree = "<group>"; };
@@ -19453,6 +19455,7 @@
 				97C1F5511228558800EDE616 /* parser */,
 				4150F9ED12B6E0990008C860 /* shadow */,
 				B1AD4E7713A12A7200846B27 /* track */,
+				F43759B31FCF48FA00100706 /* AttachmentTypes.h */,
 				A5F6E16C132ED46E008EDAE3 /* Autocapitalize.cpp */,
 				A501920C132EBF2E008BFE55 /* Autocapitalize.h */,
 				A5A7AA42132F0ECC00D3A3C2 /* AutocapitalizeTypes.h */,
@@ -26053,6 +26056,7 @@
 				FD5686CA13AC180200B69C68 /* AsyncAudioDecoder.h in Headers */,
 				E1CDE9221501916900862CC5 /* AsyncFileStream.h in Headers */,
 				0FFD4D6118651FA300512F6E /* AsyncScrollingCoordinator.h in Headers */,
+				F43759B41FCF48FA00100706 /* AttachmentTypes.h in Headers */,
 				A8C4A80D09D563270003AC8D /* Attr.h in Headers */,
 				A8C4A80B09D563270003AC8D /* Attribute.h in Headers */,
 				E4A814DA1C70E10D00BF85AC /* AttributeChangeInvalidation.h in Headers */,

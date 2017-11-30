@@ -176,6 +176,12 @@ template <typename> class RectEdges;
 using FloatBoxExtent = RectEdges<float>;
 }
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+namespace WebCore {
+struct AttachmentDisplayOptions;
+}
+#endif
+
 #if PLATFORM(GTK)
 typedef GtkWidget* PlatformWidget;
 #endif
@@ -1216,8 +1222,9 @@ public:
     void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t webProcessContextId);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    void insertAttachment(const String& identifier, const String& filename, std::optional<String> contentType, WebCore::SharedBuffer& data, Function<void(CallbackBase::Error)>&&);
+    void insertAttachment(const String& identifier, const WebCore::AttachmentDisplayOptions&, const String& filename, std::optional<String> contentType, WebCore::SharedBuffer& data, Function<void(CallbackBase::Error)>&&);
     void requestAttachmentData(const String& identifier, Function<void(RefPtr<WebCore::SharedBuffer>, CallbackBase::Error)>&&);
+    void setAttachmentDisplayOptions(const String& identifier, WebCore::AttachmentDisplayOptions, Function<void(CallbackBase::Error)>&&);
 #endif
 
 private:

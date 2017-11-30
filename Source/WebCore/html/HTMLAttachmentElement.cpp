@@ -28,14 +28,20 @@
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
+#include "DOMURL.h"
+#include "Document.h"
 #include "Editor.h"
 #include "File.h"
 #include "FileReaderLoader.h"
 #include "FileReaderLoaderClient.h"
 #include "Frame.h"
+#include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "HTMLVideoElement.h"
+#include "MIMETypeRegistry.h"
 #include "RenderAttachment.h"
 #include "RenderBlockFlow.h"
+#include "ShadowRoot.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
@@ -113,6 +119,12 @@ void HTMLAttachmentElement::setFile(RefPtr<File>&& file)
 
     if (auto* renderAttachment = attachmentRenderer())
         renderAttachment->invalidate();
+
+    if (auto image = innerImage())
+        image->setAttributeWithoutSynchronization(srcAttr, emptyString());
+    if (auto video = innerVideo())
+        video->setAttributeWithoutSynchronization(srcAttr, emptyString());
+    populateShadowRootIfNecessary();
 }
 
 RenderAttachment* HTMLAttachmentElement::attachmentRenderer() const
@@ -172,6 +184,82 @@ String HTMLAttachmentElement::attachmentType() const
 String HTMLAttachmentElement::attachmentPath() const
 {
     return attributeWithoutSynchronization(webkitattachmentpathAttr);
+}
+
+void HTMLAttachmentElement::updateDisplayMode(AttachmentDisplayMode mode)
+{
+    mode = mode == AttachmentDisplayMode::Auto ? defaultDisplayMode() : mode;
+
+    switch (mode) {
+    case AttachmentDisplayMode::InPlace:
+        populateShadowRootIfNecessary();
+        setInlineStyleProperty(CSSPropertyWebkitAppearance, CSSValueNone, true);
+        setInlineStyleProperty(CSSPropertyDisplay, CSSValueInlineBlock, true);
+        break;
+    case AttachmentDisplayMode::AsIcon:
+        removeInlineStyleProperty(CSSPropertyWebkitAppearance);
+        removeInlineStyleProperty(CSSPropertyDisplay);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    invalidateStyleAndRenderersForSubtree();
+}
+
+Ref<HTMLImageElement> HTMLAttachmentElement::ensureInnerImage()
+{
+    if (auto image = innerImage())
+        return *image;
+
+    auto image = HTMLImageElement::create(document());
+    ensureUserAgentShadowRoot().appendChild(image);
+    return image;
+}
+
+Ref<HTMLVideoElement> HTMLAttachmentElement::ensureInnerVideo()
+{
+    if (auto video = innerVideo())
+        return *video;
+
+    auto video = HTMLVideoElement::create(document());
+    ensureUserAgentShadowRoot().appendChild(video);
+    return video;
+}
+
+RefPtr<HTMLImageElement> HTMLAttachmentElement::innerImage() const
+{
+    if (auto root = userAgentShadowRoot())
+        return childrenOfType<HTMLImageElement>(*root).first();
+    return nullptr;
+}
+
+RefPtr<HTMLVideoElement> HTMLAttachmentElement::innerVideo() const
+{
+    if (auto root = userAgentShadowRoot())
+        return childrenOfType<HTMLVideoElement>(*root).first();
+    return nullptr;
+}
+
+void HTMLAttachmentElement::populateShadowRootIfNecessary()
+{
+    auto mimeType = attachmentType();
+    if (!m_file || mimeType.isEmpty())
+        return;
+
+    if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType) || MIMETypeRegistry::isPDFMIMEType(mimeType)) {
+        auto image = ensureInnerImage();
+        if (image->attributeWithoutSynchronization(srcAttr).isEmpty())
+            image->setAttributeWithoutSynchronization(srcAttr, DOMURL::createObjectURL(document(), *m_file));
+
+    } else if (MIMETypeRegistry::isSupportedMediaMIMEType(mimeType)) {
+        auto video = ensureInnerVideo();
+        if (video->attributeWithoutSynchronization(srcAttr).isEmpty()) {
+            video->setAttributeWithoutSynchronization(srcAttr, DOMURL::createObjectURL(document(), *m_file));
+            video->setAttributeWithoutSynchronization(controlsAttr, emptyString());
+        }
+    }
 }
 
 void HTMLAttachmentElement::requestData(Function<void(RefPtr<SharedBuffer>&&)>&& callback)

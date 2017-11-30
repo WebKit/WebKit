@@ -90,6 +90,7 @@
 #import "_WKSessionStateInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
 #import "_WKWebsitePoliciesInternal.h"
+#import <WebCore/AttachmentTypes.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/JSDOMBinding.h>
@@ -4193,8 +4194,9 @@ static int32_t activeOrientation(WKWebView *webView)
 #if ENABLE(ATTACHMENT_ELEMENT)
     auto identifier = createCanonicalUUIDString();
 
+    auto coreOptions = options ? options.coreDisplayOptions : WebCore::AttachmentDisplayOptions { };
     auto buffer = WebCore::SharedBuffer::create(data);
-    _page->insertAttachment(identifier, filename, contentType.length ? std::optional<String> { contentType } : std::nullopt, buffer.get(), [capturedHandler = makeBlockPtr(completionHandler), capturedBuffer = buffer.copyRef()] (WebKit::CallbackBase::Error error) {
+    _page->insertAttachment(identifier, coreOptions, filename, contentType.length ? std::optional<String> { contentType } : std::nullopt, buffer.get(), [capturedHandler = makeBlockPtr(completionHandler), capturedBuffer = buffer.copyRef()] (WebKit::CallbackBase::Error error) {
         if (capturedHandler)
             capturedHandler(error == WebKit::CallbackBase::Error::None);
     });

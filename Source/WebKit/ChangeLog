@@ -1,3 +1,49 @@
+2017-11-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Implement SPI for clients to make an attachment element display in-place
+        https://bugs.webkit.org/show_bug.cgi?id=180153
+        <rdar://problem/35735252>
+
+        Reviewed by Tim Horton.
+
+        Add new WebKit SPI, -[_WKAttachment setDisplayOptions:completion:], and add plumbing for attachment display
+        options to the web content process. Changes covered by 4 new API tests.
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * UIProcess/API/APIAttachment.cpp:
+        (API::Attachment::setDisplayOptions):
+        * UIProcess/API/APIAttachment.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _insertAttachmentWithFilename:contentType:data:options:completion:]):
+
+        Respect given display options when inserting a new attachment.
+
+        * UIProcess/API/Cocoa/_WKAttachment.h:
+        * UIProcess/API/Cocoa/_WKAttachment.mm:
+        (-[_WKAttachmentDisplayOptions coreDisplayOptions]):
+
+        Introduce a helper to convert from the Cocoa _WKAttachmentDisplayOptions object to platform-agnostic
+        AttachmentDisplayOptions.
+
+        (-[_WKAttachment setDisplayOptions:completion:]):
+        (WebKit::if): Deleted.
+        * UIProcess/API/Cocoa/_WKAttachmentInternal.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::insertAttachment):
+        (WebKit::WebPageProxy::setAttachmentDisplayOptions):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::insertAttachment):
+        (WebKit::WebPage::requestAttachmentData):
+        (WebKit::WebPage::setAttachmentDisplayOptions):
+        (WebKit::WebPage::attachmentElementWithIdentifier const):
+
+        Pull common logic to retrieve an attachment element matching a given identifier out into a helper.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2017-11-29  Brent Fulgham  <bfulgham@apple.com>
 
         Part 2: Adopt updated NSKeyed[Un]Archiver API when available
