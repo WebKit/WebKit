@@ -1,3 +1,20 @@
+2017-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove easy toRemove & map.remove() use
+        https://bugs.webkit.org/show_bug.cgi?id=180208
+
+        Reviewed by Mark Lam.
+
+        In this patch, we replace Vector<> toRemove & map.remove loop with removeIf,
+        to optimize this common pattern. This patch only modifies apparent ones.
+        But we can apply this refactoring further to OAS phase in the future.
+
+        * b3/B3MoveConstants.cpp:
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * wasm/WasmSignature.cpp:
+        (JSC::Wasm::SignatureInformation::tryCleanup):
+
 2017-11-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Use getEffectiveAddress more in JSC

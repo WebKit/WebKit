@@ -135,7 +135,7 @@ public:
     bool remove(const KeyType&);
     bool remove(iterator);
     template<typename Functor>
-    void removeIf(Functor&&);
+    bool removeIf(Functor&&);
     void clear();
 
     MappedTakeType take(const KeyType&); // efficient combination of get with remove
@@ -443,9 +443,9 @@ inline bool HashMap<T, U, V, W, X>::remove(iterator it)
 
 template<typename T, typename U, typename V, typename W, typename X>
 template<typename Functor>
-inline void HashMap<T, U, V, W, X>::removeIf(Functor&& functor)
+inline bool HashMap<T, U, V, W, X>::removeIf(Functor&& functor)
 {
-    m_impl.removeIf(std::forward<Functor>(functor));
+    return m_impl.removeIf(std::forward<Functor>(functor));
 }
 
 template<typename T, typename U, typename V, typename W, typename X>

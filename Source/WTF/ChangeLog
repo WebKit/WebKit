@@ -1,3 +1,21 @@
+2017-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove easy toRemove & map.remove() use
+        https://bugs.webkit.org/show_bug.cgi?id=180208
+
+        Reviewed by Mark Lam.
+
+        Return bool from removeIf. It is true if removeIf removes at least one entry.
+        This interface is similar to existing HashSet::remove, which returns true
+        if it actually removes entry.
+
+        * wtf/HashMap.h:
+        (WTF::X>::removeIf):
+        * wtf/HashSet.h:
+        (WTF::V>::removeIf):
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::removeIf):
+
 2017-11-30  Chris Dumez  <cdumez@apple.com>
 
         Populate self.registration.installing/waiting/active inside service workers

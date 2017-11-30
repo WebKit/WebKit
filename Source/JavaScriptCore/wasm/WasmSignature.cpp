@@ -144,20 +144,18 @@ void SignatureInformation::tryCleanup()
     SignatureInformation& info = singleton();
     LockHolder lock(info.m_lock);
 
-    Vector<std::pair<SignatureIndex, Signature*>> toRemove;
-    for (const auto& pair : info.m_indexMap) {
-        const Ref<Signature>& signature = pair.value;
-        if (signature->refCount() == 1) {
-            // We're the only owner.
-            toRemove.append(std::make_pair(pair.key, signature.ptr()));
-        }
-    }
-    for (const auto& pair : toRemove) {
-        bool removed = info.m_signatureMap.remove(SignatureHash { pair.second });
-        ASSERT_UNUSED(removed, removed);
-        removed = info.m_indexMap.remove(pair.first);
-        ASSERT_UNUSED(removed, removed);
-    }
+    info.m_indexMap.removeIf(
+        [&] (const auto& pair) {
+            const Ref<Signature>& signature = pair.value;
+            if (signature->refCount() == 1) {
+                // We're the only owner.
+                bool removed = info.m_signatureMap.remove(SignatureHash { signature.ptr() });
+                ASSERT_UNUSED(removed, removed);
+                return true;
+            }
+            return false;
+        });
+
     if (info.m_signatureMap.isEmpty()) {
         ASSERT(info.m_indexMap.isEmpty());
         info.m_nextIndex = Signature::firstValidIndex;

@@ -192,20 +192,10 @@ private:
     {
         bool changed;
         do {
-            changed = false;
-            Vector<Node*, 1> toRemove;
-
-            for (Node* candidate : m_candidates) {
-                if (!isStillValidCandidate(candidate))
-                    toRemove.append(candidate);
-            }
-
-            if (toRemove.size()) {
-                changed = true;
-                for (Node* node : toRemove)
-                    m_candidates.remove(node);
-            }
-
+            changed = m_candidates.removeIf(
+                [&] (Node* candidate) {
+                    return !isStillValidCandidate(candidate);
+                });
         } while (changed);
     }
 
