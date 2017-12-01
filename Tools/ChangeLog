@@ -1,3 +1,15 @@
+2017-11-30  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r224791): cookies are shared between ephemeral sessions in the same process pool
+        https://bugs.webkit.org/show_bug.cgi?id=180235
+
+        Reviewed by Joseph Pecoraro.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/CookiePrivateBrowsing.mm: Added.
+        (-[CookiePrivateBrowsingDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TEST):
+
 2017-11-30  Stephan Szabo  <stephan.szabo@sony.com>
 
         Make LegacyCustomProtocolManager optional for network process

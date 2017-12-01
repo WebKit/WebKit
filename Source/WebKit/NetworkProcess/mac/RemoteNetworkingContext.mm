@@ -97,7 +97,7 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePara
         SandboxExtension::consumePermanently(parameters.cookieStoragePathExtensionHandle);
 
     RetainPtr<CFHTTPCookieStorageRef> uiProcessCookieStorage;
-    if (!parameters.uiProcessCookieStorageIdentifier.isEmpty())
+    if (!sessionID.isEphemeral() && !parameters.uiProcessCookieStorageIdentifier.isEmpty())
         uiProcessCookieStorage = cookieStorageFromIdentifyingData(parameters.uiProcessCookieStorageIdentifier);
 
     NetworkStorageSession::ensureSession(sessionID, base + '.' + String::number(sessionID.sessionID()), WTFMove(uiProcessCookieStorage));
@@ -106,7 +106,7 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePara
     for (const auto& cookie : parameters.pendingCookies)
         session->setCookie(cookie);
 
-    if (!parameters.cacheStorageDirectory.isNull()) {
+    if (!sessionID.isEphemeral() && !parameters.cacheStorageDirectory.isNull()) {
         SandboxExtension::consumePermanently(parameters.cacheStorageDirectoryExtensionHandle);
         session->setCacheStorageDirectory(WTFMove(parameters.cacheStorageDirectory));
         session->setCacheStoragePerOriginQuota(parameters.cacheStoragePerOriginQuota);

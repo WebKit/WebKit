@@ -1,3 +1,18 @@
+2017-11-30  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r224791): cookies are shared between ephemeral sessions in the same process pool
+        https://bugs.webkit.org/show_bug.cgi?id=180235
+
+        Reviewed by Joseph Pecoraro.
+
+        In r224791 I assumed that uiProcessCookieStorageIdentifier would be empty in the ephemeral session initialization message.
+        This is not the case.  We did not catch this because almost all of our ephemeral session testing uses the legacyPrivateSessionID.
+        I add checks for if the SessionID is ephemeral like we already have in WebFrameNetworkingContext::ensureWebsiteDataStoreSession.
+        I also add an API test that makes sure cookies are not shared between ephemeral sessions the way they are made through the API.
+
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+
 2017-11-30  Stephan Szabo  <stephan.szabo@sony.com>
 
         Make LegacyCustomProtocolManager optional for network process
