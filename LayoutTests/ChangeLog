@@ -1,3 +1,14 @@
+2017-12-01  Dean Jackson  <dino@apple.com>
+
+        Use SH_INITIALIZE_UNINITIALIZED_LOCALS now that ANGLE has been updated
+        https://bugs.webkit.org/show_bug.cgi?id=177929
+        <rdar://problem/34866210>
+
+        Reviewed by Sam Weinig.
+
+        * fast/canvas/webgl/uninitialized-locals-expected.txt: Added.
+        * fast/canvas/webgl/uninitialized-locals.html: Added.
+
 2017-12-01  Brady Eidson  <beidson@apple.com>
 
         Add Internals.terminateServiceWorker, and the ability to restart service workers for postMessage.
