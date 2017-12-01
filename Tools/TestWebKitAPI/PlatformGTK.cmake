@@ -100,6 +100,7 @@ add_executable(TestWebCore
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/URL.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/URLParser.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/UserAgentQuirks.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/SampleMap.cpp
 )
 
 target_link_libraries(TestWebCore ${test_webcore_LIBRARIES})
