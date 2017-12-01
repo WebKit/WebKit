@@ -150,7 +150,9 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
         // This is just for some extra safety instead of leaving a cached
         // value in there. If we ever forget to set the value to be a real
         // bounds, this will force every stack overflow check to immediately
-        // fire.
+        // fire. The stack limit never changes while executing except when
+        // WebAssembly is used through the JSC API: API users can ask the code
+        // to migrate threads.
         wasmInstance->setCachedStackLimit(bitwise_cast<void*>(std::numeric_limits<uintptr_t>::max()));
     }
     vm.wasmContext.store(prevWasmInstance, vm.softStackLimit());

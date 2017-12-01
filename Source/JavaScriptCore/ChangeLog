@@ -1,3 +1,57 @@
+2017-12-01  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: restore cached stack limit after out-call
+        https://bugs.webkit.org/show_bug.cgi?id=179106
+        <rdar://problem/35337525>
+
+        Reviewed by Saam Barati.
+
+        We cache the stack limit on the Instance so that we can do fast
+        stack checks where required. In regular usage the stack limit
+        never changes because we always run on the same thread, but in
+        rare cases an API user can totally migrate which thread (and
+        therefore stack) is used for execution between WebAssembly
+        traces. For that reason we set the cached stack limit to
+        UINTPTR_MAX on the outgoing Instance when transitioning back into
+        a different Instance. We usually restore the cached stack limit in
+        Context::store, but this wasn't called on all code paths. We had a
+        bug where an Instance calling into itself indirectly would
+        therefore fail to restore its cached stack limit properly.
+
+        This patch therefore restores the cached stack limit after direct
+        calls which could be to imports (both wasm->wasm and
+        wasm->embedder). We have to do all of them because we have no way
+        of knowing what imports will do (they're known at instantiation
+        time, not compilation time, and different instances can have
+        different imports). To make this efficient we also add a pointer
+        to the canonical location of the stack limit (i.e. the extra
+        indirection we're trying to save by caching the stack limit on the
+        Instance in the first place). This is potentially a small perf hit
+        on imported direct calls.
+
+        It's hard to say what the performance cost will be because we
+        haven't seen much code in the wild which does this. We're adding
+        two dependent loads and a store of the loaded value, which is
+        unlikely to get used soon after. It's more code, but on an
+        out-of-order processor it doesn't contribute to the critical path.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::B3IRGenerator::addGrowMemory):
+        (JSC::Wasm::B3IRGenerator::addCall):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::Instance):
+        (JSC::Wasm::Instance::create):
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::offsetOfPointerToActualStackLimit):
+        (JSC::Wasm::Instance::cachedStackLimit const):
+        (JSC::Wasm::Instance::setCachedStackLimit):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::create):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+
 2017-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Use JSFixedArray for op_new_array_buffer

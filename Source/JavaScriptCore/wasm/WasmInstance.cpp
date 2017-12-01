@@ -41,11 +41,12 @@ size_t globalMemoryByteSize(Module& module)
 }
 }
 
-Instance::Instance(Context* context, Ref<Module>&& module, EntryFrame** topEntryFramePointer, StoreTopCallFrameCallback&& storeTopCallFrame)
+Instance::Instance(Context* context, Ref<Module>&& module, EntryFrame** pointerToTopEntryFrame, void** pointerToActualStackLimit, StoreTopCallFrameCallback&& storeTopCallFrame)
     : m_context(context)
     , m_module(WTFMove(module))
     , m_globals(MallocPtr<uint64_t>::malloc(globalMemoryByteSize(m_module.get())))
-    , m_topEntryFramePointer(topEntryFramePointer)
+    , m_pointerToTopEntryFrame(pointerToTopEntryFrame)
+    , m_pointerToActualStackLimit(pointerToActualStackLimit)
     , m_storeTopCallFrame(WTFMove(storeTopCallFrame))
     , m_numImportFunctions(m_module->moduleInformation().importFunctionCount())
 {
@@ -53,9 +54,9 @@ Instance::Instance(Context* context, Ref<Module>&& module, EntryFrame** topEntry
         new (importFunctionInfo(i)) ImportFunctionInfo();
 }
 
-Ref<Instance> Instance::create(Context* context, Ref<Module>&& module, EntryFrame** topEntryFramePointer, StoreTopCallFrameCallback&& storeTopCallFrame)
+Ref<Instance> Instance::create(Context* context, Ref<Module>&& module, EntryFrame** pointerToTopEntryFrame, void** pointerToActualStackLimit, StoreTopCallFrameCallback&& storeTopCallFrame)
 {
-    return adoptRef(*new (NotNull, fastMalloc(allocationSize(module->moduleInformation().importFunctionCount()))) Instance(context, WTFMove(module), topEntryFramePointer, WTFMove(storeTopCallFrame)));
+    return adoptRef(*new (NotNull, fastMalloc(allocationSize(module->moduleInformation().importFunctionCount()))) Instance(context, WTFMove(module), pointerToTopEntryFrame, pointerToActualStackLimit, WTFMove(storeTopCallFrame)));
 }
 
 Instance::~Instance() { }

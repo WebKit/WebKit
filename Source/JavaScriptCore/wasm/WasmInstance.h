@@ -44,7 +44,7 @@ class Instance : public ThreadSafeRefCounted<Instance> {
 public:
     using StoreTopCallFrameCallback = WTF::Function<void(void*)>;
 
-    static Ref<Instance> create(Context*, Ref<Module>&&, EntryFrame** topEntryFramePointer, StoreTopCallFrameCallback&&);
+    static Ref<Instance> create(Context*, Ref<Module>&&, EntryFrame** pointerToTopEntryFrame, void** pointerToActualStackLimit, StoreTopCallFrameCallback&&);
 
     void finalizeCreation(void* owner, Ref<CodeBlock>&& codeBlock)
     {
@@ -78,11 +78,20 @@ public:
     static ptrdiff_t offsetOfMemory() { return OBJECT_OFFSETOF(Instance, m_memory); }
     static ptrdiff_t offsetOfGlobals() { return OBJECT_OFFSETOF(Instance, m_globals); }
     static ptrdiff_t offsetOfTable() { return OBJECT_OFFSETOF(Instance, m_table); }
-    static ptrdiff_t offsetOfTopEntryFramePointer() { return OBJECT_OFFSETOF(Instance, m_topEntryFramePointer); }
+    static ptrdiff_t offsetOfPointerToTopEntryFrame() { return OBJECT_OFFSETOF(Instance, m_pointerToTopEntryFrame); }
 
+    static ptrdiff_t offsetOfPointerToActualStackLimit() { return OBJECT_OFFSETOF(Instance, m_pointerToActualStackLimit); }
     static ptrdiff_t offsetOfCachedStackLimit() { return OBJECT_OFFSETOF(Instance, m_cachedStackLimit); }
-    void* cachedStackLimit() const { return m_cachedStackLimit; }
-    void setCachedStackLimit(void* limit) { m_cachedStackLimit = limit; }
+    void* cachedStackLimit() const
+    {
+        ASSERT(*m_pointerToActualStackLimit == m_cachedStackLimit);
+        return m_cachedStackLimit;
+    }
+    void setCachedStackLimit(void* limit)
+    {
+        ASSERT(*m_pointerToActualStackLimit == limit || bitwise_cast<void*>(std::numeric_limits<uintptr_t>::max()) == limit);
+        m_cachedStackLimit = limit;
+    }
 
     // Tail accessors.
     static size_t offsetOfTail() { return WTF::roundUpToMultipleOf<sizeof(uint64_t)>(sizeof(Instance)); }
@@ -111,7 +120,7 @@ public:
     }
 
 private:
-    Instance(Context*, Ref<Module>&&, EntryFrame**, StoreTopCallFrameCallback&&);
+    Instance(Context*, Ref<Module>&&, EntryFrame**, void**, StoreTopCallFrameCallback&&);
     
     static size_t allocationSize(Checked<size_t> numImportFunctions)
     {
@@ -125,7 +134,8 @@ private:
     RefPtr<Memory> m_memory;
     RefPtr<Table> m_table;
     MallocPtr<uint64_t> m_globals;
-    EntryFrame** m_topEntryFramePointer { nullptr };
+    EntryFrame** m_pointerToTopEntryFrame { nullptr };
+    void** m_pointerToActualStackLimit { nullptr };
     void* m_cachedStackLimit { bitwise_cast<void*>(std::numeric_limits<uintptr_t>::max()) };
     StoreTopCallFrameCallback m_storeTopCallFrame;
     unsigned m_numImportFunctions { 0 };

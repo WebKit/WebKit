@@ -1,3 +1,15 @@
+2017-12-01  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: restore cached stack limit after out-call
+        https://bugs.webkit.org/show_bug.cgi?id=179106
+        <rdar://problem/35337525>
+
+        Reviewed by Saam Barati.
+
+        * wasm/function-tests/double-instance.js: Added.
+        (const.imp.boom):
+        (const.imp.get callAnother):
+
 2017-11-30  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: improve stack trace

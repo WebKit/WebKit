@@ -170,7 +170,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
 
     // FIXME: These objects could be pretty big we should try to throw OOM here.
     auto* jsInstance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm.heap)) JSWebAssemblyInstance(vm, instanceStructure, 
-        Wasm::Instance::create(&vm.wasmContext, WTFMove(module), &vm.topEntryFrame, WTFMove(storeTopCallFrame)));
+        Wasm::Instance::create(&vm.wasmContext, WTFMove(module), &vm.topEntryFrame, vm.addressOfSoftStackLimit(), WTFMove(storeTopCallFrame)));
     jsInstance->finishCreation(vm, jsModule, moduleNamespace);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
