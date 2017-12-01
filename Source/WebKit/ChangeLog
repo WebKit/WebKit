@@ -1,3 +1,39 @@
+2017-11-30  Brian Burg  <bburg@apple.com>
+
+        Web Automation: computeElementLayout does not correctly translate iframe client coordinates to main frame coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=180213
+        <rdar://problem/30260141>
+
+        Reviewed by Simon Fraser.
+
+        The current implementation computes points in terms of the frame in which the element is located.
+        However, WebDriver expects coordinates to be relative to the top-level document since
+        these coordinates are used for generating click events, among other things.
+
+        To convert from frame client coordinates to main frame client coordinates, round-trip
+        both inViewCenterPoint and elementBounds to root view coordinates and back
+        to the main frame's contents/client coordinates. Then convert this to page coordinates if needed.
+
+        This progresses several tests in the Selenium Python test suite:
+
+         - event_firing_webdriver_tests.py::test_should_fire_navigation_events
+         - frame_switching_tests.py::testShouldBeAbleToClickInAFrameThatRewritesTopWindowLocation
+         - frame_switching_tests.py::testShouldBeAbleToSwitchToTheTopIfTheFrameIsDeletedFromUnderUs
+         - frame_switching_tests.py::testShouldBeAbleToSwitchToTheTopIfTheFrameIsDeletedFromUnderUsWithFrameIndex
+         - frame_switching_tests.py::testShouldBeAbleToSwitchToTheTopIfTheFrameIsDeletedFromUnderUsWithWebelement
+         - frame_switching_tests.py::testShouldNotBeAbleToDoAnythingTheFrameIsDeletedFromUnderUs
+         - position_and_size_tests.py::testShouldGetCoordinatesOfAnInvisibleElement
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::computeElementLayout):
+        Get both the frame and main frame FrameViews and convert coordinates to the root view.
+        This is somewhat lossy as clientToDocument* deals with FloatPoints but contentsToRootView
+        deals with IntPoints. For the purposes of WebDriver, lossiness is not a problem since
+        integer values are expected anyway.
+
+        The imperative nature of the coordinate calculations is difficult to debug, so I converted
+        this function to only assign to each variable once.
+
 2017-11-30  Alex Christensen  <achristensen@webkit.org>
 
         WKURLSchemeHandler.request should include HTTPBody
