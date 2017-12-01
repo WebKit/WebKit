@@ -1,3 +1,16 @@
+2017-12-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r225412.
+
+        Breaks 32-bit macOS builds.
+
+        Reverted changeset:
+
+        "Unreviewed, fix byte order macros and address new -Wunknown-
+        pragmas warnings"
+        https://bugs.webkit.org/show_bug.cgi?id=180177
+        https://trac.webkit.org/changeset/225412
+
 2017-12-01  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix byte order macros and address new -Wunknown-pragmas warnings

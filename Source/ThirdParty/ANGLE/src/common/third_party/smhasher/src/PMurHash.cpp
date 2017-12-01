@@ -74,12 +74,6 @@ on big endian machines, or a byte-by-byte read if the endianess is unknown.
  * ROTL32(x,r)      Rotate x left by r bits
  */
 
-#if defined(__GNUC__)
-  #define __BIG_ENDIAN __ORDER_BIG_ENDIAN__
-  #define __LITTLE_ENDIAN __ORDER_LITTLE_ENDIAN__
-  #define __BYTE_ORDER __BYTE_ORDER__
-#endif
-
 /* Convention is to define __BYTE_ORDER == to one of these values */
 #if !defined(__BIG_ENDIAN)
   #define __BIG_ENDIAN 4321
@@ -117,14 +111,10 @@ on big endian machines, or a byte-by-byte read if the endianess is unknown.
 /* Now find best way we can to READ_UINT32 */
 #if __BYTE_ORDER==__LITTLE_ENDIAN
   /* CPU endian matches murmurhash algorithm, so read 32-bit word directly */
-#if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wcast-align"
-#endif
   #define READ_UINT32(ptr)   (*((uint32_t*)(ptr)))
-#if defined(__clang__)
 #pragma clang diagnostic pop
-#endif
 #elif __BYTE_ORDER==__BIG_ENDIAN
   /* TODO: Add additional cases below where a compiler provided bswap32 is available */
   #if defined(__GNUC__) && (__GNUC__>4 || (__GNUC__==4 && __GNUC_MINOR__>=3))
@@ -231,28 +221,20 @@ void PMurHash32_Process(uint32_t *ph1, uint32_t *pcarry, const void *key, int le
   switch(n) { /* how many bytes in c */
   case 0: /* c=[----]  w=[3210]  b=[3210]=w            c'=[----] */
     for( ; ptr < end ; ptr+=4) {
-#if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wcast-align"
-#endif
       uint32_t k1 = READ_UINT32(ptr);
-#if defined(__clang__)
 #pragma clang diagnostic pop
-#endif
       DOBLOCK(h1, k1);
     }
     break;
   case 1: /* c=[0---]  w=[4321]  b=[3210]=c>>24|w<<8   c'=[4---] */
     for( ; ptr < end ; ptr+=4) {
       uint32_t k1 = c>>24;
-#if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wcast-align"
-#endif
       c = READ_UINT32(ptr);
-#if defined(__clang__)
 #pragma clang diagnostic pop
-#endif
       k1 |= c<<8;
       DOBLOCK(h1, k1);
     }
@@ -260,14 +242,10 @@ void PMurHash32_Process(uint32_t *ph1, uint32_t *pcarry, const void *key, int le
   case 2: /* c=[10--]  w=[5432]  b=[3210]=c>>16|w<<16  c'=[54--] */
     for( ; ptr < end ; ptr+=4) {
       uint32_t k1 = c>>16;
-#if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wcast-align"
-#endif
       c = READ_UINT32(ptr);
-#if defined(__clang__)
 #pragma clang diagnostic pop
-#endif
       k1 |= c<<16;
       DOBLOCK(h1, k1);
     }
@@ -275,14 +253,10 @@ void PMurHash32_Process(uint32_t *ph1, uint32_t *pcarry, const void *key, int le
   case 3: /* c=[210-]  w=[6543]  b=[3210]=c>>8|w<<24   c'=[654-] */
     for( ; ptr < end ; ptr+=4) {
       uint32_t k1 = c>>8;
-#if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wcast-align"
-#endif
       c = READ_UINT32(ptr);
-#if defined(__clang__)
 #pragma clang diagnostic pop
-#endif
       k1 |= c<<24;
       DOBLOCK(h1, k1);
     }
