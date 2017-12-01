@@ -1,3 +1,15 @@
+2017-12-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ gardening. Updating baselines affected in r225366.
+
+        * platform/gtk/css3/filters/effect-reference-expected.txt:
+        * platform/gtk/css3/filters/effect-reference-hw-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+        * platform/gtk/svg/custom/feComponentTransfer-Discrete-expected.txt:
+        * platform/gtk/svg/custom/feComponentTransfer-Gamma-expected.txt:
+        * platform/gtk/svg/custom/feComponentTransfer-Linear-expected.txt:
+        * platform/gtk/svg/custom/feComponentTransfer-Table-expected.txt:
+
 2017-12-01  Matt Lewis  <jlewis3@apple.com>
 
         Marked imported/w3c/web-platform-tests/service-workers/service-worker/worker-interception.https.html as flaky on macOS.
