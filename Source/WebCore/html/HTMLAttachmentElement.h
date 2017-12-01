@@ -51,6 +51,7 @@ public:
     void setUniqueIdentifier(const String&);
 
     WEBCORE_EXPORT void updateDisplayMode(AttachmentDisplayMode);
+    WEBCORE_EXPORT void updateFileWithData(Ref<SharedBuffer>&& data, std::optional<String>&& newContentType = std::nullopt, std::optional<String>&& newFilename = std::nullopt);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;
@@ -75,6 +76,7 @@ private:
     RefPtr<HTMLVideoElement> innerVideo() const;
 
     void populateShadowRootIfNecessary();
+    void invalidateShadowRootChildrenIfNecessary();
 
     AttachmentDisplayMode defaultDisplayMode() const
     {

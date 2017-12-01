@@ -1,3 +1,20 @@
+2017-12-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Implement SPI for clients to update a given attachment's data
+        https://bugs.webkit.org/show_bug.cgi?id=180184
+        <rdar://problem/35355731>
+
+        Reviewed by Tim Horton.
+
+        Adds two new API tests to exercise the attachment data update flow.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::ObserveAttachmentUpdatesForScope::ObserveAttachmentUpdatesForScope):
+        (-[_WKAttachment synchronouslySetDisplayOptions:error:]):
+        (-[_WKAttachment synchronouslyRequestData:]):
+        (-[_WKAttachment synchronouslySetData:newContentType:newFilename:error:]):
+        (TestWebKitAPI::TEST):
+
 2017-12-01  Alicia Boya García  <aboya@igalia.com>
 
         [GTK] Add SampleMap.cpp API tests to CMake

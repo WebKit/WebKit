@@ -82,7 +82,7 @@ public:
     ObserveAttachmentUpdatesForScope(TestWKWebView *webView)
         : m_webView(webView)
     {
-        m_previousDelegate = retainPtr(webView.UIDelegate);
+        m_previousDelegate = webView.UIDelegate;
         m_observer = adoptNS([[AttachmentUpdateObserver alloc] init]);
         webView.UIDelegate = m_observer.get();
     }
@@ -233,7 +233,7 @@ static _WKAttachmentDisplayOptions *displayOptionsWithMode(_WKAttachmentDisplayM
     __block RetainPtr<NSError> resultError;
     __block bool done = false;
     [self setDisplayOptions:options completion:^(NSError *error) {
-        resultError = retainPtr(error);
+        resultError = error;
         done = true;
     }];
 
@@ -249,8 +249,8 @@ static _WKAttachmentDisplayOptions *displayOptionsWithMode(_WKAttachmentDisplayM
     __block RetainPtr<NSError> resultError;
     __block bool done = false;
     [self requestData:^(NSData *data, NSError *error) {
-        result = retainPtr(data);
-        resultError = retainPtr(error);
+        result = data;
+        resultError = error;
         done = true;
     }];
 
@@ -260,6 +260,21 @@ static _WKAttachmentDisplayOptions *displayOptionsWithMode(_WKAttachmentDisplayM
         *error = resultError.autorelease();
 
     return result.autorelease();
+}
+
+- (void)synchronouslySetData:(NSData *)data newContentType:(NSString *)newContentType newFilename:(NSString *)newFilename error:(NSError **)error
+{
+    __block RetainPtr<NSError> resultError;
+    __block bool done = false;
+    [self setData:data newContentType:newContentType newFilename:newFilename completion:^(NSError *error) {
+        resultError = error;
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+
+    if (error)
+        *error = resultError.autorelease();
 }
 
 - (void)expectRequestedDataToBe:(NSData *)expectedData
@@ -286,7 +301,7 @@ TEST(WKAttachmentTests, AttachmentElementInsertion)
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
         // Use the given content type for the attachment element's type.
-        firstAttachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"foo" contentType:@"text/html" data:testHTMLData() options:nil]);
+        firstAttachment = [webView synchronouslyInsertAttachmentWithFilename:@"foo" contentType:@"text/html" data:testHTMLData() options:nil];
         EXPECT_WK_STREQ(@"foo", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
         EXPECT_WK_STREQ(@"text/html", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
         EXPECT_WK_STREQ(@"38 bytes", [webView valueOfAttribute:@"subtitle" forQuerySelector:@"attachment"]);
@@ -299,7 +314,7 @@ TEST(WKAttachmentTests, AttachmentElementInsertion)
         ObserveAttachmentUpdatesForScope scope(webView.get());
         // Since no content type is explicitly specified, compute it from the file extension.
         [webView _executeEditCommand:@"DeleteBackward" argument:nil completion:nil];
-        secondAttachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"bar.png" contentType:nil data:testImageData() options:nil]);
+        secondAttachment = [webView synchronouslyInsertAttachmentWithFilename:@"bar.png" contentType:nil data:testImageData() options:nil];
         EXPECT_WK_STREQ(@"bar.png", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
         EXPECT_WK_STREQ(@"image/png", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
         EXPECT_WK_STREQ(@"37 KB", [webView valueOfAttribute:@"subtitle" forQuerySelector:@"attachment"]);
@@ -316,7 +331,7 @@ TEST(WKAttachmentTests, AttachmentUpdatesWhenInsertingAndDeletingNewline)
     RetainPtr<_WKAttachment> attachment;
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
-        attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"foo.txt" contentType:@"text/plain" data:testHTMLData() options:nil]);
+        attachment = [webView synchronouslyInsertAttachmentWithFilename:@"foo.txt" contentType:@"text/plain" data:testHTMLData() options:nil];
         observer.expectAttachmentUpdates(@[ ], @[attachment.get()]);
     }
     [webView expectUpdatesAfterCommand:@"InsertParagraph" withArgument:nil expectedRemovals:@[] expectedInsertions:@[]];
@@ -334,11 +349,11 @@ TEST(WKAttachmentTests, AttachmentUpdatesWhenInsertingAndDeletingNewline)
 TEST(WKAttachmentTests, AttachmentUpdatesWhenUndoingAndRedoing)
 {
     auto webView = webViewForTestingAttachments();
-    RetainPtr<NSData> htmlData = retainPtr(testHTMLData());
+    RetainPtr<NSData> htmlData = testHTMLData();
     RetainPtr<_WKAttachment> attachment;
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
-        attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"foo.txt" contentType:@"text/plain" data:testHTMLData() options:nil]);
+        attachment = [webView synchronouslyInsertAttachmentWithFilename:@"foo.txt" contentType:@"text/plain" data:testHTMLData() options:nil];
         observer.expectAttachmentUpdates(@[ ], @[attachment.get()]);
     }
     [webView expectUpdatesAfterCommand:@"Undo" withArgument:nil expectedRemovals:@[attachment.get()] expectedInsertions:@[]];
@@ -364,7 +379,7 @@ TEST(WKAttachmentTests, AttachmentUpdatesWhenChangingFontStyles)
     [webView _synchronouslyExecuteEditCommand:@"InsertText" argument:@"Hello"];
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
-        attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"foo.txt" contentType:@"text/plain" data:testHTMLData() options:nil]);
+        attachment = [webView synchronouslyInsertAttachmentWithFilename:@"foo.txt" contentType:@"text/plain" data:testHTMLData() options:nil];
         observer.expectAttachmentUpdates(@[ ], @[attachment.get()]);
     }
     [webView expectUpdatesAfterCommand:@"InsertText" withArgument:@"World" expectedRemovals:@[] expectedInsertions:@[]];
@@ -385,7 +400,7 @@ TEST(WKAttachmentTests, AttachmentUpdatesWhenInsertingLists)
     RetainPtr<_WKAttachment> attachment;
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
-        attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"foo.txt" contentType:@"text/plain" data:testHTMLData() options:nil]);
+        attachment = [webView synchronouslyInsertAttachmentWithFilename:@"foo.txt" contentType:@"text/plain" data:testHTMLData() options:nil];
         observer.expectAttachmentUpdates(@[ ], @[attachment.get()]);
     }
     [webView expectUpdatesAfterCommand:@"InsertOrderedList" withArgument:nil expectedRemovals:@[] expectedInsertions:@[]];
@@ -421,7 +436,7 @@ TEST(WKAttachmentTests, AttachmentUpdatesWhenCuttingAndPasting)
     RetainPtr<_WKAttachment> attachment;
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
-        attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"foo.txt" contentType:@"text/plain" data:testHTMLData() options:nil]);
+        attachment = [webView synchronouslyInsertAttachmentWithFilename:@"foo.txt" contentType:@"text/plain" data:testHTMLData() options:nil];
         observer.expectAttachmentUpdates(@[], @[attachment.get()]);
     }
     [attachment expectRequestedDataToBe:testHTMLData()];
@@ -446,7 +461,7 @@ TEST(WKAttachmentTests, AttachmentDataForEmptyFile)
     RetainPtr<_WKAttachment> attachment;
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
-        attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"empty.txt" contentType:@"text/plain" data:[NSData data] options:nil]);
+        attachment = [webView synchronouslyInsertAttachmentWithFilename:@"empty.txt" contentType:@"text/plain" data:[NSData data] options:nil];
         observer.expectAttachmentUpdates(@[], @[attachment.get()]);
     }
     [attachment expectRequestedDataToBe:[NSData data]];
@@ -465,7 +480,7 @@ TEST(WKAttachmentTests, MultipleSimultaneousAttachmentDataRequests)
     RetainPtr<_WKAttachment> attachment;
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
-        attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"foo.txt" contentType:@"text/plain" data:htmlData.get() options:nil]);
+        attachment = [webView synchronouslyInsertAttachmentWithFilename:@"foo.txt" contentType:@"text/plain" data:htmlData.get() options:nil];
         observer.expectAttachmentUpdates(@[], @[attachment.get()]);
     }
     __block RetainPtr<NSData> dataForFirstRequest;
@@ -473,11 +488,11 @@ TEST(WKAttachmentTests, MultipleSimultaneousAttachmentDataRequests)
     __block bool done = false;
     [attachment requestData:^(NSData *data, NSError *error) {
         EXPECT_TRUE(!error);
-        dataForFirstRequest = retainPtr(data);
+        dataForFirstRequest = data;
     }];
     [attachment requestData:^(NSData *data, NSError *error) {
         EXPECT_TRUE(!error);
-        dataForSecondRequest = retainPtr(data);
+        dataForSecondRequest = data;
         done = true;
     }];
 
@@ -494,7 +509,7 @@ TEST(WKAttachmentTests, InPlaceImageAttachmentToggleDisplayMode)
     RetainPtr<_WKAttachment> attachment;
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
-        attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"icon.png" contentType:@"image/png" data:imageData.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeAsIcon)]);
+        attachment = [webView synchronouslyInsertAttachmentWithFilename:@"icon.png" contentType:@"image/png" data:imageData.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeAsIcon)];
         [attachment expectRequestedDataToBe:imageData.get()];
         observer.expectAttachmentUpdates(@[], @[attachment.get()]);
     }
@@ -520,7 +535,7 @@ TEST(WKAttachmentTests, InPlaceImageAttachmentParagraphInsertion)
     RetainPtr<_WKAttachment> attachment;
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
-        attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"icon.png" contentType:@"image/png" data:imageData.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeInPlace)]);
+        attachment = [webView synchronouslyInsertAttachmentWithFilename:@"icon.png" contentType:@"image/png" data:imageData.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeInPlace)];
         observer.expectAttachmentUpdates(@[], @[attachment.get()]);
     }
     [webView expectUpdatesAfterCommand:@"InsertParagraph" withArgument:nil expectedRemovals:@[] expectedInsertions:@[]];
@@ -544,7 +559,7 @@ TEST(WKAttachmentTests, InPlaceVideoAttachmentInsertionWithinList)
     [webView _synchronouslyExecuteEditCommand:@"InsertOrderedList" argument:nil];
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
-        attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"test.mp4" contentType:@"video/mp4" data:videoData.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeInPlace)]);
+        attachment = [webView synchronouslyInsertAttachmentWithFilename:@"test.mp4" contentType:@"video/mp4" data:videoData.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeInPlace)];
         observer.expectAttachmentUpdates(@[], @[attachment.get()]);
     }
     [webView waitForAttachmentElementSizeToBecome:CGSizeMake(320, 240)];
@@ -564,7 +579,7 @@ TEST(WKAttachmentTests, InPlacePDFAttachmentCutAndPaste)
     RetainPtr<_WKAttachment> attachment;
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
-        attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"test.pdf" contentType:@"application/pdf" data:pdfData.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeInPlace)]);
+        attachment = [webView synchronouslyInsertAttachmentWithFilename:@"test.pdf" contentType:@"application/pdf" data:pdfData.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeInPlace)];
         observer.expectAttachmentUpdates(@[], @[attachment.get()]);
         [webView waitForAttachmentElementSizeToBecome:CGSizeMake(130, 29)];
     }
@@ -575,6 +590,89 @@ TEST(WKAttachmentTests, InPlacePDFAttachmentCutAndPaste)
     [webView expectUpdatesAfterCommand:@"Paste" withArgument:nil expectedRemovals:@[] expectedInsertions:@[attachment.get()]];
     [webView waitForAttachmentElementSizeToBecome:CGSizeMake(130, 29)];
     [attachment expectRequestedDataToBe:pdfData.get()];
+}
+
+TEST(WKAttachmentTests, ChangeAttachmentDataAndFileInformation)
+{
+    auto webView = webViewForTestingAttachments();
+    RetainPtr<_WKAttachment> attachment;
+    {
+        RetainPtr<NSData> pdfData = testPDFData();
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        attachment = [webView synchronouslyInsertAttachmentWithFilename:@"test.pdf" contentType:@"application/pdf" data:pdfData.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeAsIcon)];
+        [attachment expectRequestedDataToBe:pdfData.get()];
+        EXPECT_WK_STREQ(@"test.pdf", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
+        EXPECT_WK_STREQ(@"application/pdf", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+        observer.expectAttachmentUpdates(@[], @[attachment.get()]);
+    }
+    {
+        RetainPtr<NSData> imageData = testImageData();
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [attachment synchronouslySetData:imageData.get() newContentType:@"image/png" newFilename:@"icon.png" error:nil];
+        [attachment expectRequestedDataToBe:imageData.get()];
+        EXPECT_WK_STREQ(@"icon.png", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
+        EXPECT_WK_STREQ(@"image/png", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+        observer.expectAttachmentUpdates(@[], @[]);
+    }
+    {
+        RetainPtr<NSData> textData = testHTMLData();
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [attachment synchronouslySetDisplayOptions:displayOptionsWithMode(_WKAttachmentDisplayModeAsIcon) error:nil];
+        // The new content type should be inferred from the file name.
+        [attachment synchronouslySetData:textData.get() newContentType:nil newFilename:@"foo.txt" error:nil];
+        [attachment expectRequestedDataToBe:textData.get()];
+        EXPECT_WK_STREQ(@"foo.txt", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
+        EXPECT_WK_STREQ(@"text/plain", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+        observer.expectAttachmentUpdates(@[], @[]);
+    }
+    {
+        RetainPtr<NSData> secondTextData = [@"Hello world" dataUsingEncoding:NSUTF8StringEncoding];
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        // Both the previous file name and type should be inferred.
+        [attachment synchronouslySetData:secondTextData.get() newContentType:nil newFilename:nil error:nil];
+        [attachment expectRequestedDataToBe:secondTextData.get()];
+        EXPECT_WK_STREQ(@"foo.txt", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
+        EXPECT_WK_STREQ(@"text/plain", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+        observer.expectAttachmentUpdates(@[], @[]);
+    }
+    [webView expectUpdatesAfterCommand:@"DeleteBackward" withArgument:nil expectedRemovals:@[attachment.get()] expectedInsertions:@[]];
+}
+
+TEST(WKAttachmentTests, ChangeAttachmentDataUpdatesWithInPlaceDisplay)
+{
+    auto webView = webViewForTestingAttachments();
+    RetainPtr<_WKAttachment> attachment;
+    {
+        RetainPtr<NSData> pdfData = testPDFData();
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        attachment = [webView synchronouslyInsertAttachmentWithFilename:@"test.pdf" contentType:@"application/pdf" data:pdfData.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeInPlace)];
+        [webView waitForAttachmentElementSizeToBecome:CGSizeMake(130, 29)];
+        [attachment expectRequestedDataToBe:pdfData.get()];
+        EXPECT_WK_STREQ(@"test.pdf", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
+        EXPECT_WK_STREQ(@"application/pdf", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+        observer.expectAttachmentUpdates(@[], @[attachment.get()]);
+    }
+    {
+        RetainPtr<NSData> videoData = testVideoData();
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [attachment synchronouslySetData:videoData.get() newContentType:@"video/mp4" newFilename:@"test.mp4" error:nil];
+        [webView waitForAttachmentElementSizeToBecome:CGSizeMake(320, 240)];
+        [attachment expectRequestedDataToBe:videoData.get()];
+        EXPECT_WK_STREQ(@"test.mp4", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
+        EXPECT_WK_STREQ(@"video/mp4", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+        observer.expectAttachmentUpdates(@[], @[]);
+    }
+    {
+        RetainPtr<NSData> imageData = testImageData();
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [attachment synchronouslySetData:imageData.get() newContentType:@"image/png" newFilename:@"icon.png" error:nil];
+        [webView waitForAttachmentElementSizeToBecome:CGSizeMake(215, 174)];
+        [attachment expectRequestedDataToBe:imageData.get()];
+        EXPECT_WK_STREQ(@"icon.png", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
+        EXPECT_WK_STREQ(@"image/png", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+        observer.expectAttachmentUpdates(@[], @[]);
+    }
+    [webView expectUpdatesAfterCommand:@"DeleteBackward" withArgument:nil expectedRemovals:@[attachment.get()] expectedInsertions:@[]];
 }
 
 } // namespace TestWebKitAPI

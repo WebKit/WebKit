@@ -29,6 +29,8 @@
 
 #if WK_API_ENABLED
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef NS_ENUM(NSInteger, _WKAttachmentDisplayMode) {
     _WKAttachmentDisplayModeAuto = 1,
     _WKAttachmentDisplayModeInPlace,
@@ -42,8 +44,11 @@ WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 
 WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKAttachment : NSObject
-- (void)requestData:(void(^)(NSData *, NSError *))completionHandler;
-- (void)setDisplayOptions:(_WKAttachmentDisplayOptions *)options completion:(void(^)(NSError *))completionHandler;
+- (void)requestData:(void(^)(NSData * _Nullable, NSError * _Nullable))completionHandler;
+- (void)setDisplayOptions:(_WKAttachmentDisplayOptions *)options completion:(void(^ _Nullable)(NSError * _Nullable))completionHandler;
+- (void)setData:(NSData *)data newContentType:(nullable NSString *)newContentType newFilename:(nullable NSString *)newFilename completion:(void(^ _Nullable)(NSError * _Nullable))completionHandler;
 @end
+
+NS_ASSUME_NONNULL_END
 
 #endif

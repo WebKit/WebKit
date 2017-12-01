@@ -3802,7 +3802,7 @@ void Editor::insertAttachment(const String& identifier, const AttachmentDisplayO
 {
     if (!contentType)
         contentType = File::contentTypeForFile(filename);
-    insertAttachmentFromFile(identifier, options, filename, *contentType, File::create(Blob::create(data, *contentType), filename));
+    insertAttachmentFromFile(identifier, options, filename, *contentType, File::create(Blob::create(WTFMove(data), *contentType), filename));
 }
 
 void Editor::insertAttachmentFromFile(const String& identifier, const AttachmentDisplayOptions& options, const String& filename, const String& contentType, Ref<File>&& file)

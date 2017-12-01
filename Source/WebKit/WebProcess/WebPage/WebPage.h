@@ -1018,6 +1018,7 @@ public:
     void insertAttachment(const String& identifier, const WebCore::AttachmentDisplayOptions&, const String& filename, std::optional<String> contentType, const IPC::DataReference&, CallbackID);
     void requestAttachmentData(const String& identifier, CallbackID);
     void setAttachmentDisplayOptions(const String& identifier, const WebCore::AttachmentDisplayOptions&, CallbackID);
+    void setAttachmentDataAndContentType(const String& identifier, const IPC::DataReference&, std::optional<String> newContentType, std::optional<String> newFilename, CallbackID);
 #endif
 
 private:

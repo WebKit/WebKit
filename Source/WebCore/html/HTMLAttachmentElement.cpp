@@ -43,6 +43,7 @@
 #include "RenderBlockFlow.h"
 #include "ShadowRoot.h"
 #include "SharedBuffer.h"
+#include <pal/FileSizeFormatter.h>
 
 namespace WebCore {
 
@@ -120,11 +121,20 @@ void HTMLAttachmentElement::setFile(RefPtr<File>&& file)
     if (auto* renderAttachment = attachmentRenderer())
         renderAttachment->invalidate();
 
-    if (auto image = innerImage())
-        image->setAttributeWithoutSynchronization(srcAttr, emptyString());
-    if (auto video = innerVideo())
-        video->setAttributeWithoutSynchronization(srcAttr, emptyString());
+    invalidateShadowRootChildrenIfNecessary();
     populateShadowRootIfNecessary();
+}
+
+void HTMLAttachmentElement::invalidateShadowRootChildrenIfNecessary()
+{
+    if (auto image = innerImage()) {
+        image->setAttributeWithoutSynchronization(srcAttr, emptyString());
+        image->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone, true);
+    }
+    if (auto video = innerVideo()) {
+        video->setAttributeWithoutSynchronization(srcAttr, emptyString());
+        video->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone, true);
+    }
 }
 
 RenderAttachment* HTMLAttachmentElement::attachmentRenderer() const
@@ -208,6 +218,18 @@ void HTMLAttachmentElement::updateDisplayMode(AttachmentDisplayMode mode)
     invalidateStyleAndRenderersForSubtree();
 }
 
+void HTMLAttachmentElement::updateFileWithData(Ref<SharedBuffer>&& data, std::optional<String>&& newContentType, std::optional<String>&& newFilename)
+{
+    auto filename = newFilename ? *newFilename : attachmentTitle();
+    auto contentType = newContentType ? *newContentType : File::contentTypeForFile(filename);
+    auto file = File::create(Blob::create(WTFMove(data), contentType), filename);
+
+    setAttributeWithoutSynchronization(titleAttr, filename);
+    setAttributeWithoutSynchronization(subtitleAttr, fileSizeDescription(file->size()));
+    setAttributeWithoutSynchronization(typeAttr, contentType);
+    setFile(WTFMove(file));
+}
+
 Ref<HTMLImageElement> HTMLAttachmentElement::ensureInnerImage()
 {
     if (auto image = innerImage())
@@ -250,14 +272,17 @@ void HTMLAttachmentElement::populateShadowRootIfNecessary()
 
     if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType) || MIMETypeRegistry::isPDFMIMEType(mimeType)) {
         auto image = ensureInnerImage();
-        if (image->attributeWithoutSynchronization(srcAttr).isEmpty())
+        if (image->attributeWithoutSynchronization(srcAttr).isEmpty()) {
             image->setAttributeWithoutSynchronization(srcAttr, DOMURL::createObjectURL(document(), *m_file));
+            image->setInlineStyleProperty(CSSPropertyDisplay, CSSValueInline, true);
+        }
 
     } else if (MIMETypeRegistry::isSupportedMediaMIMEType(mimeType)) {
         auto video = ensureInnerVideo();
         if (video->attributeWithoutSynchronization(srcAttr).isEmpty()) {
             video->setAttributeWithoutSynchronization(srcAttr, DOMURL::createObjectURL(document(), *m_file));
             video->setAttributeWithoutSynchronization(controlsAttr, emptyString());
+            video->setInlineStyleProperty(CSSPropertyDisplay, CSSValueInline, true);
         }
     }
 }

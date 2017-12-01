@@ -108,6 +108,20 @@ using namespace WebKit;
     });
 }
 
+- (void)setData:(NSData *)data newContentType:(NSString *)newContentType newFilename:(NSString *)newFilename completion:(void(^)(NSError *))completionHandler
+{
+    auto buffer = WebCore::SharedBuffer::create(data);
+    _attachment->setDataAndContentType(buffer.get(), newContentType, newFilename, [capturedBlock = makeBlockPtr(completionHandler), capturedBuffer = buffer.copyRef()] (CallbackBase::Error error) {
+        if (!capturedBlock)
+            return;
+
+        if (error == CallbackBase::Error::None)
+            capturedBlock(nil);
+        else
+            capturedBlock([NSError errorWithDomain:WKErrorDomain code:1 userInfo:nil]);
+    });
+}
+
 - (NSString *)uniqueIdentifier
 {
     return _attachment->identifier();

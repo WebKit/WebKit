@@ -5799,6 +5799,15 @@ void WebPage::setAttachmentDisplayOptions(const String& identifier, const Attach
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
+void WebPage::setAttachmentDataAndContentType(const String& identifier, const IPC::DataReference& data, std::optional<String> newContentType, std::optional<String> newFilename, CallbackID callbackID)
+{
+    if (auto attachment = attachmentElementWithIdentifier(identifier)) {
+        attachment->document().updateLayout();
+        attachment->updateFileWithData(SharedBuffer::create(data.data(), data.size()), WTFMove(newContentType), WTFMove(newFilename));
+    }
+    send(Messages::WebPageProxy::VoidCallback(callbackID));
+}
+
 RefPtr<HTMLAttachmentElement> WebPage::attachmentElementWithIdentifier(const String& identifier) const
 {
     // FIXME: Handle attachment elements in subframes too as well.

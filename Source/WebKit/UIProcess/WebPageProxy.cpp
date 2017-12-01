@@ -7183,6 +7183,17 @@ void WebPageProxy::setAttachmentDisplayOptions(const String& identifier, Attachm
     m_process->send(Messages::WebPage::SetAttachmentDisplayOptions(identifier, options, callbackID), m_pageID);
 }
 
+void WebPageProxy::setAttachmentDataAndContentType(const String& identifier, SharedBuffer& data, std::optional<String>&& newContentType, std::optional<String>&& newFilename, Function<void(CallbackBase::Error)>&& callback)
+{
+    if (!isValid()) {
+        callback(CallbackBase::Error::OwnerWasInvalidated);
+        return;
+    }
+
+    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
+    m_process->send(Messages::WebPage::SetAttachmentDataAndContentType(identifier, IPC::SharedBufferDataReference { &data }, WTFMove(newContentType), WTFMove(newFilename), callbackID), m_pageID);
+}
+
 void WebPageProxy::didInsertAttachment(const String& identifier)
 {
     m_pageClient.didInsertAttachment(identifier);

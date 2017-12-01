@@ -1226,6 +1226,7 @@ public:
     void insertAttachment(const String& identifier, const WebCore::AttachmentDisplayOptions&, const String& filename, std::optional<String> contentType, WebCore::SharedBuffer& data, Function<void(CallbackBase::Error)>&&);
     void requestAttachmentData(const String& identifier, Function<void(RefPtr<WebCore::SharedBuffer>, CallbackBase::Error)>&&);
     void setAttachmentDisplayOptions(const String& identifier, WebCore::AttachmentDisplayOptions, Function<void(CallbackBase::Error)>&&);
+    void setAttachmentDataAndContentType(const String& identifier, WebCore::SharedBuffer& data, std::optional<String>&& newContentType, std::optional<String>&& newFilename, Function<void(CallbackBase::Error)>&&);
 #endif
 
 private:

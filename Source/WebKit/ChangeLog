@@ -1,3 +1,31 @@
+2017-12-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Implement SPI for clients to update a given attachment's data
+        https://bugs.webkit.org/show_bug.cgi?id=180184
+        <rdar://problem/35355731>
+
+        Reviewed by Tim Horton.
+
+        Add plumbing to the web process for setting the attachment data (and optionally, the content type and/or file
+        name) of a given attachment. See WebCore ChangeLog for more detail. Changes covered by new API tests.
+
+        * UIProcess/API/APIAttachment.cpp:
+        (API::Attachment::setDataAndContentType):
+        * UIProcess/API/APIAttachment.h:
+        * UIProcess/API/Cocoa/_WKAttachment.h:
+
+        Add nullability annotations around _WKAttachment SPI methods.
+
+        * UIProcess/API/Cocoa/_WKAttachment.mm:
+        (-[_WKAttachment setData:newContentType:newFilename:completion:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setAttachmentDataAndContentType):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setAttachmentDataAndContentType):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2017-12-01  Brady Eidson  <beidson@apple.com>
 
         Add Internals.terminateServiceWorker, and the ability to restart service workers for postMessage.
