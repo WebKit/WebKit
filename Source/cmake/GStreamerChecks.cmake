@@ -32,6 +32,12 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         endif ()
     endif ()
 
+    if (ENABLE_MEDIA_SOURCE)
+        if (PC_GSTREAMER_VERSION VERSION_LESS "1.8")
+            message(FATAL_ERROR "GStreamer 1.8 is needed for ENABLE_MEDIA_SOURCE.")
+        endif ()
+    endif ()
+
     if (USE_GSTREAMER_GL)
         if (PC_GSTREAMER_VERSION VERSION_LESS "1.10")
             set(USE_GSTREAMER_GL OFF)
