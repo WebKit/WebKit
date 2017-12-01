@@ -4140,9 +4140,10 @@ void SpeculativeJIT::compile(Node* node)
         
     case NewArrayBuffer: {
         JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
+        JSFixedArray* array = node->castOperand<JSFixedArray*>();
+        unsigned numElements = array->length();
         IndexingType indexingType = node->indexingType();
         if (!globalObject->isHavingABadTime() && !hasAnyArrayStorage(indexingType)) {
-            unsigned numElements = node->numConstants();
             unsigned vectorLengthHint = node->vectorLengthHint();
             ASSERT(vectorLengthHint >= numElements);
             
@@ -4155,22 +4156,16 @@ void SpeculativeJIT::compile(Node* node)
             emitAllocateRawObject(resultGPR, m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType)), storageGPR, numElements, vectorLengthHint);
             
             DFG_ASSERT(m_jit.graph(), node, indexingType & IsArray);
-            JSValue* data = m_jit.codeBlock()->constantBuffer(node->startConstant());
-            if (indexingType == ArrayWithDouble) {
-                for (unsigned index = 0; index < node->numConstants(); ++index) {
-                    double value = data[index].asNumber();
-                    m_jit.store64(
-                        Imm64(bitwise_cast<int64_t>(value)),
-                        MacroAssembler::Address(storageGPR, sizeof(double) * index));
-                }
-            } else {
-                for (unsigned index = 0; index < node->numConstants(); ++index) {
-                    m_jit.store64(
-                        Imm64(JSValue::encode(data[index])),
-                        MacroAssembler::Address(storageGPR, sizeof(JSValue) * index));
-                }
+
+            for (unsigned index = 0; index < numElements; ++index) {
+                int64_t value;
+                if (indexingType == ArrayWithDouble)
+                    value = bitwise_cast<int64_t>(array->get(index).asNumber());
+                else
+                    value = JSValue::encode(array->get(index));
+                static_assert(sizeof(double) == sizeof(JSValue), "");
+                m_jit.store64(Imm64(value), MacroAssembler::Address(storageGPR, sizeof(JSValue) * index));
             }
-            
             cellResult(resultGPR, node);
             break;
         }
@@ -4178,7 +4173,7 @@ void SpeculativeJIT::compile(Node* node)
         flushRegisters();
         GPRFlushedCallResult result(this);
         
-        callOperation(operationNewArrayBuffer, result.gpr(), m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())), node->startConstant(), node->numConstants());
+        callOperation(operationNewArrayBuffer, result.gpr(), m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())), TrustedImmPtr(node->cellOperand()), numElements);
         m_jit.exceptionCheck();
         
         cellResult(result.gpr(), node);

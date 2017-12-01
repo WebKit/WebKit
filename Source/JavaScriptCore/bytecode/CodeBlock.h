@@ -568,30 +568,6 @@ public:
     const Vector<BitVector>& bitVectors() const { return m_unlinkedCode->bitVectors(); }
     const BitVector& bitVector(size_t i) { return m_unlinkedCode->bitVector(i); }
 
-    unsigned numberOfConstantBuffers() const
-    {
-        if (!m_rareData)
-            return 0;
-        return m_rareData->m_constantBuffers.size();
-    }
-    unsigned addConstantBuffer(const Vector<JSValue>& buffer)
-    {
-        createRareDataIfNecessary();
-        unsigned size = m_rareData->m_constantBuffers.size();
-        m_rareData->m_constantBuffers.append(buffer);
-        return size;
-    }
-
-    Vector<JSValue>& constantBufferAsVector(unsigned index)
-    {
-        ASSERT(m_rareData);
-        return m_rareData->m_constantBuffers[index];
-    }
-    JSValue* constantBuffer(unsigned index)
-    {
-        return constantBufferAsVector(index).data();
-    }
-
     Heap* heap() const { return &m_vm->heap; }
     JSGlobalObject* globalObject() { return m_globalObject.get(); }
 
@@ -870,9 +846,6 @@ public:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         Vector<HandlerInfo> m_exceptionHandlers;
-
-        // Buffers used for large array literals
-        Vector<Vector<JSValue>> m_constantBuffers;
 
         // Jump Tables
         Vector<SimpleJumpTable> m_switchJumpTables;

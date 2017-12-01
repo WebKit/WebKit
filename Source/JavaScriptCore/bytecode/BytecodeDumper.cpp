@@ -763,10 +763,9 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
     }
     case op_new_array_buffer: {
         int dst = (++it)->u.operand;
-        int argv = (++it)->u.operand;
-        int argc = (++it)->u.operand;
+        int array = (++it)->u.operand;
         printLocationAndOp(out, location, it, "new_array_buffer");
-        out.printf("%s, %d, %d", registerName(dst).data(), argv, argc);
+        out.printf("%s, %s", registerName(dst).data(), registerName(array).data());
         ++it; // Skip array allocation profile.
         break;
     }

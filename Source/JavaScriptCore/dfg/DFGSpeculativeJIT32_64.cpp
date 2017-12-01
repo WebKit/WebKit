@@ -3930,9 +3930,10 @@ void SpeculativeJIT::compile(Node* node)
         
     case NewArrayBuffer: {
         JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
+        JSFixedArray* array = node->castOperand<JSFixedArray*>();
+        unsigned numElements = array->length();
         IndexingType indexingType = node->indexingType();
         if (!globalObject->isHavingABadTime() && !hasAnyArrayStorage(indexingType)) {
-            unsigned numElements = node->numConstants();
             
             GPRTemporary result(this);
             GPRTemporary storage(this);
@@ -3941,26 +3942,21 @@ void SpeculativeJIT::compile(Node* node)
             GPRReg storageGPR = storage.gpr();
 
             emitAllocateRawObject(resultGPR, m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType)), storageGPR, numElements, numElements);
-            
-            if (node->indexingType() == ArrayWithDouble) {
-                JSValue* data = m_jit.codeBlock()->constantBuffer(node->startConstant());
-                for (unsigned index = 0; index < node->numConstants(); ++index) {
-                    union {
-                        int32_t halves[2];
-                        double value;
-                    } u;
-                    u.value = data[index].asNumber();
-                    m_jit.store32(Imm32(u.halves[0]), MacroAssembler::Address(storageGPR, sizeof(double) * index));
-                    m_jit.store32(Imm32(u.halves[1]), MacroAssembler::Address(storageGPR, sizeof(double) * index + sizeof(int32_t)));
-                }
-            } else {
-                int32_t* data = bitwise_cast<int32_t*>(m_jit.codeBlock()->constantBuffer(node->startConstant()));
-                for (unsigned index = 0; index < node->numConstants() * 2; ++index) {
-                    m_jit.store32(
-                        Imm32(data[index]), MacroAssembler::Address(storageGPR, sizeof(int32_t) * index));
-                }
+
+            for (unsigned index = 0; index < numElements; ++index) {
+                union {
+                    int32_t halves[2];
+                    double doubleValue;
+                    int64_t encodedValue;
+                } u;
+                if (node->indexingType() == ArrayWithDouble)
+                    u.doubleValue = array->get(index).asNumber();
+                else
+                    u.encodedValue = JSValue::encode(array->get(index));
+                static_assert(sizeof(double) == sizeof(JSValue), "");
+                m_jit.store32(Imm32(u.halves[0]), MacroAssembler::Address(storageGPR, sizeof(JSValue) * index));
+                m_jit.store32(Imm32(u.halves[1]), MacroAssembler::Address(storageGPR, sizeof(JSValue) * index + sizeof(int32_t)));
             }
-            
             cellResult(resultGPR, node);
             break;
         }
@@ -3968,7 +3964,7 @@ void SpeculativeJIT::compile(Node* node)
         flushRegisters();
         GPRFlushedCallResult result(this);
         
-        callOperation(operationNewArrayBuffer, result.gpr(), m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())), node->startConstant(), node->numConstants());
+        callOperation(operationNewArrayBuffer, result.gpr(), m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(node->indexingType())), TrustedImmPtr(node->cellOperand()), numElements);
         m_jit.exceptionCheck();
         
         cellResult(result.gpr(), node);

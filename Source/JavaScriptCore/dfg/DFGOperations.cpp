@@ -1403,11 +1403,11 @@ char* JIT_OPERATION operationNewArrayWithSizeAndHint(ExecState* exec, Structure*
     return bitwise_cast<char*>(result);
 }
 
-char* JIT_OPERATION operationNewArrayBuffer(ExecState* exec, Structure* arrayStructure, size_t start, size_t size)
+JSCell* JIT_OPERATION operationNewArrayBuffer(ExecState* exec, Structure* arrayStructure, JSCell* fixedArray, size_t size)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    return bitwise_cast<char*>(constructArray(exec, arrayStructure, exec->codeBlock()->constantBuffer(start), size));
+    return constructArray(exec, arrayStructure, jsCast<JSFixedArray*>(fixedArray)->values(), size);
 }
 
 char* JIT_OPERATION operationNewInt8ArrayWithSize(

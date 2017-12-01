@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "JSCInlines.h"
+#include <wtf/CommaPrinter.h>
 
 namespace JSC {
 
@@ -49,6 +50,17 @@ void JSFixedArray::copyToArguments(ExecState* exec, VirtualRegister firstElement
         else
             exec->r(firstElementDest + i) = jsUndefined();
     }
+}
+
+void JSFixedArray::dumpToStream(const JSCell* cell, PrintStream& out)
+{
+    VM& vm = *cell->vm();
+    const auto* thisObject = jsCast<const JSFixedArray*>(cell);
+    out.printf("<%p, %s, [%u], [", thisObject, thisObject->className(vm), thisObject->length());
+    CommaPrinter comma;
+    for (unsigned index = 0; index < thisObject->length(); ++index)
+        out.print(comma, thisObject->get(index));
+    out.print("]>");
 }
 
 } // namespace JSC

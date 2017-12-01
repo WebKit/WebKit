@@ -548,12 +548,6 @@ LLINT_SLOW_PATH_DECL(slow_path_new_array_with_size)
     LLINT_RETURN(constructArrayWithSizeQuirk(exec, pc[3].u.arrayAllocationProfile, exec->lexicalGlobalObject(), LLINT_OP_C(2).jsValue()));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_new_array_buffer)
-{
-    LLINT_BEGIN();
-    LLINT_RETURN(constructArray(exec, pc[4].u.arrayAllocationProfile, exec->codeBlock()->constantBuffer(pc[2].u.operand), pc[3].u.operand));
-}
-
 LLINT_SLOW_PATH_DECL(slow_path_new_regexp)
 {
     LLINT_BEGIN();

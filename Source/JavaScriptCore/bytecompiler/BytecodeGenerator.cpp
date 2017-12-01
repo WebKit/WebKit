@@ -40,6 +40,7 @@
 #include "Interpreter.h"
 #include "JSAsyncGeneratorFunction.h"
 #include "JSCInlines.h"
+#include "JSFixedArray.h"
 #include "JSFunction.h"
 #include "JSGeneratorFunction.h"
 #include "JSLexicalEnvironment.h"
@@ -3120,11 +3121,6 @@ RegisterID* BytecodeGenerator::emitNewObject(RegisterID* dst)
     return dst;
 }
 
-unsigned BytecodeGenerator::addConstantBuffer(unsigned length)
-{
-    return m_codeBlock->addConstantBuffer(length);
-}
-
 JSString* BytecodeGenerator::addStringConstant(const Identifier& identifier)
 {
     JSString*& stringInMap = m_stringMap.add(identifier.impl(), nullptr).iterator->value;
@@ -3165,17 +3161,15 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
         }
         if (!hadVariableExpression) {
             ASSERT(length == checkLength);
-            unsigned constantBufferIndex = addConstantBuffer(length);
-            JSValue* constantBuffer = m_codeBlock->constantBuffer(constantBufferIndex).data();
+            auto* array = JSFixedArray::create(*m_vm, length);
             unsigned index = 0;
             for (ElementNode* n = elements; index < length; n = n->next()) {
                 ASSERT(n->value()->isConstant());
-                constantBuffer[index++] = static_cast<ConstantNode*>(n->value())->jsValue(*this);
+                array->set(*m_vm, index++, static_cast<ConstantNode*>(n->value())->jsValue(*this));
             }
             emitOpcode(op_new_array_buffer);
             instructions().append(dst->index());
-            instructions().append(constantBufferIndex);
-            instructions().append(length);
+            instructions().append(addConstantValue(array)->index());
             instructions().append(newArrayAllocationProfile());
             return dst;
         }

@@ -1,3 +1,114 @@
+2017-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use JSFixedArray for op_new_array_buffer
+        https://bugs.webkit.org/show_bug.cgi?id=180084
+
+        Reviewed by Saam Barati.
+
+        For op_new_array_buffer, we have a special constant buffer in CodeBlock.
+        But using JSFixedArray is better because,
+
+        1. In DFG, we have special hashing mechanism to avoid duplicating constant buffer from the same CodeBlock.
+           If we use JSFixedArray, this is unnecessary since JSFixedArray is handled just as JS constant.
+
+        2. In a subsequent patch[1], we would like to support Spread(PhantomNewArrayBuffer). If NewArrayBuffer
+           has JSFixedArray, we can just emit a held JSFixedArray.
+
+        3. We can reduce length of op_new_array_buffer since JSFixedArray holds this.
+
+        4. We can fold NewArrayBufferData into uint64_t. No need to maintain a bag of NewArrayBufferData in DFG.
+
+        5. We do not need to look up constant buffer from CodeBlock if buffer data is necessary. Our NewArrayBuffer
+           DFG node has JSFixedArray as its cellOperand. This makes materializing PhantomNewArrayBuffer easy, which
+           will be introduced in [1].
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=179762
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numberOfConstantBuffers const): Deleted.
+        (JSC::CodeBlock::addConstantBuffer): Deleted.
+        (JSC::CodeBlock::constantBufferAsVector): Deleted.
+        (JSC::CodeBlock::constantBuffer): Deleted.
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::shrinkToFit):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::constantBufferCount): Deleted.
+        (JSC::UnlinkedCodeBlock::addConstantBuffer): Deleted.
+        (JSC::UnlinkedCodeBlock::constantBuffer const): Deleted.
+        (JSC::UnlinkedCodeBlock::constantBuffer): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitNewArray):
+        (JSC::BytecodeGenerator::addConstantBuffer): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ConstantBufferKey::ConstantBufferKey): Deleted.
+        (JSC::DFG::ConstantBufferKey::operator== const): Deleted.
+        (JSC::DFG::ConstantBufferKey::hash const): Deleted.
+        (JSC::DFG::ConstantBufferKey::isHashTableDeletedValue const): Deleted.
+        (JSC::DFG::ConstantBufferKey::codeBlock const): Deleted.
+        (JSC::DFG::ConstantBufferKey::index const): Deleted.
+        (JSC::DFG::ConstantBufferKeyHash::hash): Deleted.
+        (JSC::DFG::ConstantBufferKeyHash::equal): Deleted.
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasNewArrayBufferData):
+        (JSC::DFG::Node::newArrayBufferData):
+        (JSC::DFG::Node::hasVectorLengthHint):
+        (JSC::DFG::Node::vectorLengthHint):
+        (JSC::DFG::Node::indexingType):
+        (JSC::DFG::Node::hasCellOperand):
+        (JSC::DFG::Node::OpInfoWrapper::operator=):
+        (JSC::DFG::Node::OpInfoWrapper::asNewArrayBufferData const):
+        (JSC::DFG::Node::hasConstantBuffer): Deleted.
+        (JSC::DFG::Node::startConstant): Deleted.
+        (JSC::DFG::Node::numConstants): Deleted.
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayBuffer):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_array_buffer): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/JSFixedArray.cpp:
+        (JSC::JSFixedArray::dumpToStream):
+        * runtime/JSFixedArray.h:
+        (JSC::JSFixedArray::create):
+        (JSC::JSFixedArray::get const):
+        (JSC::JSFixedArray::set):
+        (JSC::JSFixedArray::buffer const):
+        (JSC::JSFixedArray::values const):
+        (JSC::JSFixedArray::length const):
+        (JSC::JSFixedArray::get): Deleted.
+
 2017-11-30  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: improve stack trace

@@ -349,7 +349,6 @@ void CodeBlock::finishCreation(VM& vm, CopyParsedBlockTag, CodeBlock& other)
         createRareDataIfNecessary();
         
         m_rareData->m_exceptionHandlers = other.m_rareData->m_exceptionHandlers;
-        m_rareData->m_constantBuffers = other.m_rareData->m_constantBuffers;
         m_rareData->m_switchJumpTables = other.m_rareData->m_switchJumpTables;
         m_rareData->m_stringSwitchJumpTables = other.m_rareData->m_stringSwitchJumpTables;
     }
@@ -461,13 +460,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
     if (unlinkedCodeBlock->hasRareData()) {
         createRareDataIfNecessary();
-        if (size_t count = unlinkedCodeBlock->constantBufferCount()) {
-            m_rareData->m_constantBuffers.grow(count);
-            for (size_t i = 0; i < count; i++) {
-                const UnlinkedCodeBlock::ConstantBuffer& buffer = unlinkedCodeBlock->constantBuffer(i);
-                m_rareData->m_constantBuffers[i] = buffer;
-            }
-        }
         if (size_t count = unlinkedCodeBlock->numberOfExceptionHandlers()) {
             m_rareData->m_exceptionHandlers.resizeToFit(count);
             for (size_t i = 0; i < count; i++) {

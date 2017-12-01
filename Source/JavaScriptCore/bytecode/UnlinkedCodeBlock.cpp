@@ -407,7 +407,6 @@ void UnlinkedCodeBlock::shrinkToFit()
     if (m_rareData) {
         m_rareData->m_exceptionHandlers.shrinkToFit();
         m_rareData->m_regexps.shrinkToFit();
-        m_rareData->m_constantBuffers.shrinkToFit();
         m_rareData->m_switchJumpTables.shrinkToFit();
         m_rareData->m_stringSwitchJumpTables.shrinkToFit();
         m_rareData->m_expressionInfoFatPositions.shrinkToFit();

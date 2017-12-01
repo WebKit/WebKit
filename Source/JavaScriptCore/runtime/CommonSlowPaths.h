@@ -284,6 +284,7 @@ SLOW_PATH_HIDDEN_DECL(slow_path_define_data_property);
 SLOW_PATH_HIDDEN_DECL(slow_path_define_accessor_property);
 SLOW_PATH_HIDDEN_DECL(slow_path_throw_static_error);
 SLOW_PATH_HIDDEN_DECL(slow_path_new_array_with_spread);
+SLOW_PATH_HIDDEN_DECL(slow_path_new_array_buffer);
 SLOW_PATH_HIDDEN_DECL(slow_path_spread);
 
 using SlowPathFunction = SlowPathReturnType(SLOW_PATH *)(ExecState*, Instruction*);

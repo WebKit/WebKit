@@ -1034,15 +1034,6 @@ void JIT::emit_op_new_array_with_size(Instruction* currentInstruction)
 #endif
 }
 
-void JIT::emit_op_new_array_buffer(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    int valuesIndex = currentInstruction[2].u.operand;
-    int size = currentInstruction[3].u.operand;
-    const JSValue* values = codeBlock()->constantBuffer(valuesIndex);
-    callOperation(operationNewArrayBufferWithProfile, dst, currentInstruction[4].u.arrayAllocationProfile, values, size);
-}
-
 #if USE(JSVALUE64)
 void JIT::emit_op_has_structure_property(Instruction* currentInstruction)
 {

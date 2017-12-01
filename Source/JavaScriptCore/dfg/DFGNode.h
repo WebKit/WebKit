@@ -97,11 +97,16 @@ struct MultiPutByOffsetData {
 };
 
 struct NewArrayBufferData {
-    unsigned startConstant;
-    unsigned numConstants;
-    unsigned vectorLengthHint;
-    IndexingType indexingType;
+    union {
+        struct {
+            unsigned vectorLengthHint;
+            unsigned indexingType;
+        };
+        uint64_t asQuadWord;
+    };
 };
+static_assert(sizeof(IndexingType) <= sizeof(unsigned), "");
+static_assert(sizeof(NewArrayBufferData) == sizeof(uint64_t), "");
 
 struct BranchTarget {
     BranchTarget()
@@ -1085,30 +1090,26 @@ public:
         return m_flags & NodeMayHaveNonNumberResult;
     }
 
-    bool hasConstantBuffer()
+    bool hasNewArrayBufferData()
     {
         return op() == NewArrayBuffer;
     }
     
-    NewArrayBufferData* newArrayBufferData()
+    NewArrayBufferData newArrayBufferData()
     {
-        ASSERT(hasConstantBuffer());
-        return m_opInfo.as<NewArrayBufferData*>();
-    }
-    
-    unsigned startConstant()
-    {
-        return newArrayBufferData()->startConstant;
-    }
-    
-    unsigned numConstants()
-    {
-        return newArrayBufferData()->numConstants;
+        ASSERT(hasNewArrayBufferData());
+        return m_opInfo2.asNewArrayBufferData();
     }
 
+    unsigned hasVectorLengthHint()
+    {
+        return op() == NewArrayBuffer;
+    }
+    
     unsigned vectorLengthHint()
     {
-        return newArrayBufferData()->vectorLengthHint;
+        ASSERT(hasVectorLengthHint());
+        return newArrayBufferData().vectorLengthHint;
     }
     
     bool hasIndexingType()
@@ -1141,7 +1142,7 @@ public:
     {
         ASSERT(hasIndexingType());
         if (op() == NewArrayBuffer)
-            return newArrayBufferData()->indexingType;
+            return static_cast<IndexingType>(newArrayBufferData().indexingType);
         return static_cast<IndexingType>(m_opInfo.as<uint32_t>());
     }
     
@@ -1639,6 +1640,7 @@ public:
         case CreateActivation:
         case MaterializeCreateActivation:
         case NewRegexp:
+        case NewArrayBuffer:
         case CompareEqPtr:
         case CallObjectConstructor:
         case DirectCall:
@@ -2756,6 +2758,11 @@ private:
             u.pointer = bitwise_cast<void*>(structure);
             return *this;
         }
+        OpInfoWrapper& operator=(NewArrayBufferData newArrayBufferData)
+        {
+            u.int64 = bitwise_cast<uint64_t>(newArrayBufferData);
+            return *this;
+        }
         template <typename T>
         ALWAYS_INLINE auto as() const -> typename std::enable_if<std::is_pointer<T>::value && !std::is_const<typename std::remove_pointer<T>::type>::value, T>::type
         {
@@ -2779,6 +2786,10 @@ private:
         ALWAYS_INLINE RegisteredStructure asRegisteredStructure() const
         {
             return bitwise_cast<RegisteredStructure>(u.pointer);
+        }
+        ALWAYS_INLINE NewArrayBufferData asNewArrayBufferData() const
+        {
+            return bitwise_cast<NewArrayBufferData>(u.int64);
         }
 
         union {

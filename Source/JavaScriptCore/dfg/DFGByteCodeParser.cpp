@@ -48,6 +48,7 @@
 #include "GetByIdStatus.h"
 #include "Heap.h"
 #include "JSCInlines.h"
+#include "JSFixedArray.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
 #include "NumberConstructor.h"
@@ -80,76 +81,6 @@ static const bool verbose = true;
 if (DFGByteCodeParserInternal::verbose && Options::verboseDFGBytecodeParsing()) \
 dataLog(__VA_ARGS__); \
 } while (false)
-
-class ConstantBufferKey {
-public:
-    ConstantBufferKey()
-        : m_codeBlock(0)
-        , m_index(0)
-    {
-    }
-    
-    ConstantBufferKey(WTF::HashTableDeletedValueType)
-        : m_codeBlock(0)
-        , m_index(1)
-    {
-    }
-    
-    ConstantBufferKey(CodeBlock* codeBlock, unsigned index)
-        : m_codeBlock(codeBlock)
-        , m_index(index)
-    {
-    }
-    
-    bool operator==(const ConstantBufferKey& other) const
-    {
-        return m_codeBlock == other.m_codeBlock
-            && m_index == other.m_index;
-    }
-    
-    unsigned hash() const
-    {
-        return WTF::PtrHash<CodeBlock*>::hash(m_codeBlock) ^ m_index;
-    }
-    
-    bool isHashTableDeletedValue() const
-    {
-        return !m_codeBlock && m_index;
-    }
-    
-    CodeBlock* codeBlock() const { return m_codeBlock; }
-    unsigned index() const { return m_index; }
-    
-private:
-    CodeBlock* m_codeBlock;
-    unsigned m_index;
-};
-
-struct ConstantBufferKeyHash {
-    static unsigned hash(const ConstantBufferKey& key) { return key.hash(); }
-    static bool equal(const ConstantBufferKey& a, const ConstantBufferKey& b)
-    {
-        return a == b;
-    }
-    
-    static const bool safeToCompareToEmptyOrDeleted = true;
-};
-
-} } // namespace JSC::DFG
-
-namespace WTF {
-
-template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::DFG::ConstantBufferKey> {
-    typedef JSC::DFG::ConstantBufferKeyHash Hash;
-};
-
-template<typename T> struct HashTraits;
-template<> struct HashTraits<JSC::DFG::ConstantBufferKey> : SimpleClassHashTraits<JSC::DFG::ConstantBufferKey> { };
-
-} // namespace WTF
-
-namespace JSC { namespace DFG {
 
 // === ByteCodeParser ===
 //
@@ -1103,8 +1034,6 @@ private:
     // The number of var args passed to the next var arg node.
     unsigned m_numPassedVarArgs;
 
-    HashMap<ConstantBufferKey, unsigned> m_constantBufferCache;
-    
     struct InlineStackEntry {
         ByteCodeParser* m_byteCodeParser;
         
@@ -1121,7 +1050,6 @@ private:
         // (the machine code block, which is the transitive, though not necessarily
         // direct, caller).
         Vector<unsigned> m_identifierRemap;
-        Vector<unsigned> m_constantBufferRemap;
         Vector<unsigned> m_switchRemap;
         
         // These are blocks whose terminal is a Jump, Branch or Switch, and whose target has not yet been linked.
@@ -4482,25 +4410,18 @@ void ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_new_array_buffer: {
-            int startConstant = currentInstruction[2].u.operand;
-            int numConstants = currentInstruction[3].u.operand;
-            ArrayAllocationProfile* profile = currentInstruction[4].u.arrayAllocationProfile;
-            NewArrayBufferData data;
-            data.startConstant = m_inlineStackTop->m_constantBufferRemap[startConstant];
-            data.numConstants = numConstants;
+            FrozenValue* frozen = get(VirtualRegister(currentInstruction[2].u.operand))->constant();
+            JSFixedArray* fixedArray = frozen->cast<JSFixedArray*>();
+            ArrayAllocationProfile* profile = currentInstruction[3].u.arrayAllocationProfile;
+            NewArrayBufferData data { };
             data.indexingType = profile->selectIndexingType();
-            data.vectorLengthHint = std::max<unsigned>(profile->vectorLengthHint(), numConstants);
+            data.vectorLengthHint = std::max<unsigned>(profile->vectorLengthHint(), fixedArray->length());
 
             // If this statement has never executed, we'll have the wrong indexing type in the profile.
-            for (int i = 0; i < numConstants; ++i) {
-                data.indexingType =
-                    leastUpperBoundOfIndexingTypeAndValue(
-                        data.indexingType,
-                        m_codeBlock->constantBuffer(data.startConstant)[i]);
-            }
+            for (unsigned index = 0; index < fixedArray->length(); ++index)
+                data.indexingType = leastUpperBoundOfIndexingTypeAndValue(data.indexingType, fixedArray->get(index));
             
-            m_graph.m_newArrayBufferData.append(WTFMove(data));
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(NewArrayBuffer, OpInfo(&m_graph.m_newArrayBufferData.last())));
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(NewArrayBuffer, OpInfo(frozen), OpInfo(data.asQuadWord)));
             NEXT_OPCODE(op_new_array_buffer);
         }
             
@@ -6440,27 +6361,12 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         m_inlineCallFrame->kind = kind;
         
         m_identifierRemap.resize(codeBlock->numberOfIdentifiers());
-        m_constantBufferRemap.resize(codeBlock->numberOfConstantBuffers());
         m_switchRemap.resize(codeBlock->numberOfSwitchJumpTables());
 
         for (size_t i = 0; i < codeBlock->numberOfIdentifiers(); ++i) {
             UniquedStringImpl* rep = codeBlock->identifier(i).impl();
             unsigned index = byteCodeParser->m_graph.identifiers().ensure(rep);
             m_identifierRemap[i] = index;
-        }
-        for (unsigned i = 0; i < codeBlock->numberOfConstantBuffers(); ++i) {
-            // If we inline the same code block multiple times, we don't want to needlessly
-            // duplicate its constant buffers.
-            HashMap<ConstantBufferKey, unsigned>::iterator iter =
-                byteCodeParser->m_constantBufferCache.find(ConstantBufferKey(codeBlock, i));
-            if (iter != byteCodeParser->m_constantBufferCache.end()) {
-                m_constantBufferRemap[i] = iter->value;
-                continue;
-            }
-            Vector<JSValue>& buffer = codeBlock->constantBufferAsVector(i);
-            unsigned newIndex = byteCodeParser->m_codeBlock->addConstantBuffer(buffer);
-            m_constantBufferRemap[i] = newIndex;
-            byteCodeParser->m_constantBufferCache.add(ConstantBufferKey(codeBlock, i), newIndex);
         }
         for (unsigned i = 0; i < codeBlock->numberOfSwitchJumpTables(); ++i) {
             m_switchRemap[i] = byteCodeParser->m_codeBlock->numberOfSwitchJumpTables();
@@ -6476,12 +6382,9 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         m_inlineCallFrame = 0;
 
         m_identifierRemap.resize(codeBlock->numberOfIdentifiers());
-        m_constantBufferRemap.resize(codeBlock->numberOfConstantBuffers());
         m_switchRemap.resize(codeBlock->numberOfSwitchJumpTables());
         for (size_t i = 0; i < codeBlock->numberOfIdentifiers(); ++i)
             m_identifierRemap[i] = i;
-        for (size_t i = 0; i < codeBlock->numberOfConstantBuffers(); ++i)
-            m_constantBufferRemap[i] = i;
         for (size_t i = 0; i < codeBlock->numberOfSwitchJumpTables(); ++i)
             m_switchRemap[i] = i;
     }

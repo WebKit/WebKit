@@ -1046,8 +1046,6 @@ namespace JSC {
         RegisterID* addConstantEmptyValue();
         unsigned addRegExp(RegExp*);
 
-        unsigned addConstantBuffer(unsigned length);
-        
         UnlinkedFunctionExecutable* makeFunction(FunctionMetadataNode* metadata)
         {
             DerivedContextType newDerivedContextType = DerivedContextType::None;

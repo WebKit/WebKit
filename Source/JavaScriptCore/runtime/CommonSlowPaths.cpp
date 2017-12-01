@@ -1074,6 +1074,13 @@ SLOW_PATH_DECL(slow_path_new_array_with_spread)
     RETURN(result);
 }
 
+SLOW_PATH_DECL(slow_path_new_array_buffer)
+{
+    BEGIN();
+    auto* fixedArray = jsCast<JSFixedArray*>(OP_C(2).jsValue());
+    RETURN(constructArray(exec, pc[3].u.arrayAllocationProfile, fixedArray->values(), fixedArray->length()));
+}
+
 SLOW_PATH_DECL(slow_path_spread)
 {
     BEGIN();

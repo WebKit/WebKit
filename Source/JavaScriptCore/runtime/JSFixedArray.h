@@ -57,6 +57,13 @@ public:
         return result;
     }
 
+    static JSFixedArray* create(VM& vm, unsigned length)
+    {
+        auto* array = tryCreate(vm, vm.fixedArrayStructure.get(), length);
+        RELEASE_ASSERT(array);
+        return array;
+    }
+
     ALWAYS_INLINE static JSFixedArray* createFromArray(ExecState* exec, VM& vm, JSArray* array)
     {
         auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -110,17 +117,26 @@ public:
         return result;
     }
 
-    ALWAYS_INLINE JSValue get(unsigned index)
+    ALWAYS_INLINE JSValue get(unsigned index) const
     {
         ASSERT(index < m_size);
         return buffer()[index].get();
     }
 
+    void set(VM& vm, unsigned index, JSValue value)
+    {
+        ASSERT(index < m_size);
+        return buffer()[index].set(vm, this, value);
+    }
+
     ALWAYS_INLINE WriteBarrier<Unknown>* buffer() { return bitwise_cast<WriteBarrier<Unknown>*>(bitwise_cast<char*>(this) + offsetOfData()); }
+    ALWAYS_INLINE WriteBarrier<Unknown>* buffer() const { return const_cast<JSFixedArray*>(this)->buffer(); }
+    ALWAYS_INLINE const JSValue* values() const { return bitwise_cast<const JSValue*>(buffer()); }
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
     unsigned size() const { return m_size; }
+    unsigned length() const { return m_size; }
 
     static size_t offsetOfSize() { return OBJECT_OFFSETOF(JSFixedArray, m_size); }
 
@@ -130,6 +146,8 @@ public:
     }
 
     void copyToArguments(ExecState*, VirtualRegister firstElementDest, unsigned offset, unsigned length);
+
+    static void dumpToStream(const JSCell*, PrintStream&);
 
 private:
     JSFixedArray(VM& vm, Structure* structure, unsigned size)

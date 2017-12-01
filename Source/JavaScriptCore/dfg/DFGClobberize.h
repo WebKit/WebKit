@@ -35,6 +35,7 @@
 #include "DFGPureValue.h"
 #include "DOMJITCallDOMGetterSnippet.h"
 #include "DOMJITSignature.h"
+#include "JSFixedArray.h"
 
 namespace JSC { namespace DFG {
 
@@ -1389,7 +1390,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(HeapObjectCount);
         write(HeapObjectCount);
 
-        unsigned numElements = node->numConstants();
+        JSFixedArray* array = node->castOperand<JSFixedArray*>();
+        unsigned numElements = array->length();
         def(HeapLocation(ArrayLengthLoc, Butterfly_publicLength, node),
             LazyNode(graph.freeze(jsNumber(numElements))));
 
@@ -1417,11 +1419,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             return;
         }
 
-        JSValue* data = graph.m_codeBlock->constantBuffer(node->startConstant());
         if (numElements < graph.m_uint32ValuesInUse.size()) {
             for (unsigned index = 0; index < numElements; ++index) {
                 def(HeapLocation(indexedPropertyLoc, heap, node, LazyNode(graph.freeze(jsNumber(index)))),
-                    LazyNode(graph.freeze(data[index]), op));
+                    LazyNode(graph.freeze(array->get(index)), op));
             }
         } else {
             Vector<uint32_t> possibleIndices;
@@ -1432,7 +1433,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             }
             for (uint32_t index : possibleIndices) {
                 def(HeapLocation(indexedPropertyLoc, heap, node, LazyNode(graph.freeze(jsNumber(index)))),
-                    LazyNode(graph.freeze(data[index]), op));
+                    LazyNode(graph.freeze(array->get(index)), op));
             }
         }
         return;

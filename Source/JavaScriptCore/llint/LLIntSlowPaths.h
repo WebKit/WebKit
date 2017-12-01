@@ -66,7 +66,6 @@ LLINT_SLOW_PATH_HIDDEN_DECL(stack_check);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_object);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_array);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_array_with_size);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_array_buffer);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_regexp);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_instanceof);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_instanceof_custom);

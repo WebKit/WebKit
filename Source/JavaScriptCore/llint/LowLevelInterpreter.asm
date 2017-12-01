@@ -1364,7 +1364,7 @@ _llint_op_new_array_with_size:
 
 _llint_op_new_array_buffer:
     traceExecution()
-    callOpcodeSlowPath(_llint_slow_path_new_array_buffer)
+    callOpcodeSlowPath(_slow_path_new_array_buffer)
     dispatch(constexpr op_new_array_buffer_length)
 
 

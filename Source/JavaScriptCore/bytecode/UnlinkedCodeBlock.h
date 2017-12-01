@@ -323,29 +323,6 @@ public:
     size_t numberOfPropertyAccessInstructions() const { return m_propertyAccessInstructions.size(); }
     const Vector<unsigned>& propertyAccessInstructions() const { return m_propertyAccessInstructions; }
 
-    typedef Vector<JSValue> ConstantBuffer;
-
-    size_t constantBufferCount() { ASSERT(m_rareData); return m_rareData->m_constantBuffers.size(); }
-    unsigned addConstantBuffer(unsigned length)
-    {
-        createRareDataIfNecessary();
-        unsigned size = m_rareData->m_constantBuffers.size();
-        m_rareData->m_constantBuffers.append(Vector<JSValue>(length));
-        return size;
-    }
-
-    const ConstantBuffer& constantBuffer(unsigned index) const
-    {
-        ASSERT(m_rareData);
-        return m_rareData->m_constantBuffers[index];
-    }
-
-    ConstantBuffer& constantBuffer(unsigned index)
-    {
-        ASSERT(m_rareData);
-        return m_rareData->m_constantBuffers[index];
-    }
-
     bool hasRareData() const { return m_rareData.get(); }
 
     int lineNumberForBytecodeOffset(unsigned bytecodeOffset);
@@ -494,9 +471,6 @@ public:
 
         // Rare Constants
         Vector<WriteBarrier<RegExp>> m_regexps;
-
-        // Buffers used for large array literals
-        Vector<ConstantBuffer> m_constantBuffers;
 
         // Jump Tables
         Vector<UnlinkedSimpleJumpTable> m_switchJumpTables;

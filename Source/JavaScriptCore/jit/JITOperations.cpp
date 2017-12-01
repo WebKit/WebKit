@@ -1178,13 +1178,6 @@ EncodedJSValue JIT_OPERATION operationNewArrayWithProfile(ExecState* exec, Array
     return JSValue::encode(constructArrayNegativeIndexed(exec, profile, values, size));
 }
 
-EncodedJSValue JIT_OPERATION operationNewArrayBufferWithProfile(ExecState* exec, ArrayAllocationProfile* profile, const JSValue* values, int size)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    return JSValue::encode(constructArray(exec, profile, values, size));
-}
-
 EncodedJSValue JIT_OPERATION operationNewArrayWithSizeAndProfile(ExecState* exec, ArrayAllocationProfile* profile, EncodedJSValue size)
 {
     VM* vm = &exec->vm();
