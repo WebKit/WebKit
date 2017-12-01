@@ -40,12 +40,14 @@ namespace WebCore {
 
 static inline JSC::JSValue callFunction(JSC::ExecState& state, JSC::JSValue jsFunction, JSC::JSValue thisValue, const JSC::ArgList& arguments)
 {
-    auto scope = DECLARE_CATCH_SCOPE(state.vm());
+    auto scope = DECLARE_THROW_SCOPE(state.vm());
     JSC::CallData callData;
     auto callType = JSC::getCallData(jsFunction, callData);
     ASSERT(callType != JSC::CallType::None);
     auto result = call(&state, jsFunction, callType, callData, thisValue, arguments);
-    scope.assertNoException();
+
+    EXCEPTION_ASSERT_UNUSED(scope, !scope.exception() || isTerminatedExecutionException(state.vm(), scope.exception()));
+
     return result;
 }
 
