@@ -105,7 +105,7 @@ public:
     bool remove(const ValueType&);
     bool remove(iterator);
     template<typename Functor>
-    void removeIf(const Functor&);
+    bool removeIf(const Functor&);
     void clear();
 
     TakeType take(const ValueType&);
@@ -275,9 +275,9 @@ inline bool HashSet<T, U, V>::remove(const ValueType& value)
 
 template<typename T, typename U, typename V>
 template<typename Functor>
-inline void HashSet<T, U, V>::removeIf(const Functor& functor)
+inline bool HashSet<T, U, V>::removeIf(const Functor& functor)
 {
-    m_impl.removeIf(functor);
+    return m_impl.removeIf(functor);
 }
 
 template<typename T, typename U, typename V>

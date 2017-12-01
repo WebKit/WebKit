@@ -1,3 +1,21 @@
+2017-11-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove easy toRemove & map.remove() use in OAS phase
+        https://bugs.webkit.org/show_bug.cgi?id=180208
+
+        Reviewed by Mark Lam.
+
+        In this patch, we replace Vector<> toRemove & map.remove loop with removeIf,
+        to optimize this common pattern. This patch only modifies apparent ones.
+        But we can apply this refactoring further to OAS phase in the future.
+
+        One thing we should care is that predicate of removeIf should not touch the
+        removing set itself. In this patch, we apply this change to (1) apparently
+        correct one and (2) things in DFG OAS phase since it is very slow.
+
+        * b3/B3MoveConstants.cpp:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+
 2017-11-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r225362.
