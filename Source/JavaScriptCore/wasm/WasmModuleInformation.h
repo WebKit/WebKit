@@ -57,6 +57,7 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     uint32_t internalFunctionCount() const { return internalFunctionSignatureIndices.size(); }
 
     const Vector<uint8_t> source;
+    const CString hash;
 
     Vector<Import> imports;
     Vector<SignatureIndex> importFunctionSignatureIndices;

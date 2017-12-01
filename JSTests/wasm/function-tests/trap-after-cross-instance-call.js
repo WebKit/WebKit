@@ -52,7 +52,7 @@ let foo2 = new WebAssembly.Instance(module, importObject).exports.foo;
 
 
 function wasmFrameCountFromError(e) {
-    let stackFrames = e.stack.split("\n").filter((s) => s.indexOf("wasm function") !== -1);
+    let stackFrames = e.stack.split("\n").filter((s) => s.indexOf("wasm-") !== -1);
     return stackFrames.length;
 }
 

@@ -64,9 +64,9 @@ assert.eq(result, 1 + 42);
 assert.truthy(stacktrace);
 stacktrace = stacktrace.split("\n");
 assert.falsy(stacktrace[0].indexOf("_silly") === -1);
-assert.eq(stacktrace[1], "wasm function@[wasm code]"); // the wasm->js stub
-assert.eq(stacktrace[2], "wasm function: _eggs@[wasm code]");
-assert.eq(stacktrace[3], "wasm function: _bacon@[wasm code]");
-assert.eq(stacktrace[4], "wasm function: _spam@[wasm code]");
-assert.eq(stacktrace[5], "wasm function: _parrot@[wasm code]");
-assert.eq(stacktrace[6], "wasm function@[wasm code]"); // wasm entry
+assert.eq(stacktrace[1], "wasm-stub@[wasm code]"); // the wasm->js stub
+assert.eq(stacktrace[2], "C74B341C862F831F4F75068DF4E42AB36FB3446F.wasm-function[_eggs]@[wasm code]");
+assert.eq(stacktrace[3], "C74B341C862F831F4F75068DF4E42AB36FB3446F.wasm-function[_bacon]@[wasm code]");
+assert.eq(stacktrace[4], "C74B341C862F831F4F75068DF4E42AB36FB3446F.wasm-function[_spam]@[wasm code]");
+assert.eq(stacktrace[5], "C74B341C862F831F4F75068DF4E42AB36FB3446F.wasm-function[_parrot]@[wasm code]");
+assert.eq(stacktrace[6], "wasm-stub@[wasm code]"); // wasm entry

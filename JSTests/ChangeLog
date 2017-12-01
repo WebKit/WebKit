@@ -1,3 +1,30 @@
+2017-11-30  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: improve stack trace
+        https://bugs.webkit.org/show_bug.cgi?id=179343
+
+        Reviewed by Saam Barati.
+
+        Update the tests to follow the new format. Notably, SHA1 module
+        hash is now included in traces, and stubs are properly identified.
+
+        * wasm/assert.js: Add an assertion which matches regular expressions.
+        * wasm/function-tests/nameSection.js:
+        * wasm/function-tests/stack-overflow.js:
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.assertOverflows):
+        (assertOverflows.assertThrows.wasm.1):
+        (assertOverflows.assertThrows.wasm.0):
+        (assertOverflows.assertThrows):
+        (assertOverflows):
+        * wasm/function-tests/stack-trace.js:
+        (import.Builder.from.string_appeared_here.assert): Deleted.
+        * wasm/function-tests/trap-after-cross-instance-call.js:
+        (wasmFrameCountFromError):
+        * wasm/function-tests/trap-load-2.js:
+        (wasmFrameCountFromError):
+        * wasm/function-tests/trap-load.js:
+        (wasmFrameCountFromError):
+
 2017-11-30  Mark Lam  <mark.lam@apple.com>
 
         jsc shell's flashHeapAccess() should not do JS work after releasing access to the heap.

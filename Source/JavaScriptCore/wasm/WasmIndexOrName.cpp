@@ -39,17 +39,18 @@ IndexOrName::IndexOrName(Index index, std::pair<const Name*, RefPtr<NameSection>
             m_indexName.name = name.first;
         else
             m_indexName.index = indexTag | index;
-        m_nameSection = WTFMove(name.second);
     }
+    m_nameSection = WTFMove(name.second);
 }
 
 String makeString(const IndexOrName& ion)
 {
     if (ion.isEmpty())
-        return String();
+        return String("wasm-stub");
+    const String moduleName = ion.nameSection()->moduleName.size() ? String(ion.nameSection()->moduleName.data(), ion.nameSection()->moduleName.size()) : String(ion.nameSection()->moduleHash.data(), ion.nameSection()->moduleHash.size());
     if (ion.isIndex())
-        return String::number(ion.m_indexName.index & ~IndexOrName::indexTag);
-    return String(ion.m_indexName.name->data(), ion.m_indexName.name->size());
-};
+        return makeString(moduleName, ".wasm-function[", String::number(ion.m_indexName.index & ~IndexOrName::indexTag), "]");
+    return makeString(moduleName, ".wasm-function[", String(ion.m_indexName.name->data(), ion.m_indexName.name->size()), "]");
+}
 
 } } // namespace JSC::Wasm

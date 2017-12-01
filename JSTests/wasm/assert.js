@@ -89,6 +89,13 @@ export const eq = (lhs, rhs, msg) => {
     }
 };
 
+export const matches = (lhs, rhs, msg) => {
+    if (typeof lhs !== "string" || !(rhs instanceof RegExp))
+        _fail(`Expected string and regex object, got ${typeof lhs} and ${typeof rhs}`, msg);
+    if (!rhs.test(lhs))
+        _fail(`"${msg}" does not match ${rhs}`, msg);
+};
+
 const canonicalizeI32 = (number) => {
     if (Math.round(number) === number && number >= 2 ** 31)
         number = number - 2 ** 32;

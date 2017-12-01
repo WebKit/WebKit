@@ -279,10 +279,7 @@ String StackVisitor::Frame::functionName() const
 
     switch (codeType()) {
     case CodeType::Wasm:
-        if (m_wasmFunctionIndexOrName.isEmpty())
-            traceLine = makeString("wasm function");
-        else
-            traceLine = makeString("wasm function: ", makeString(m_wasmFunctionIndexOrName));
+        traceLine = makeString(m_wasmFunctionIndexOrName);
         break;
     case CodeType::Eval:
         traceLine = ASCIILiteral("eval code");

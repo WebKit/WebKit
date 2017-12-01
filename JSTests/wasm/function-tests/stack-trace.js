@@ -1,9 +1,5 @@
 import Builder from '../Builder.js'
-
-function assert(b) {
-    if (!b)
-        throw new Error("Bad");
-}
+import * as assert from '../assert.js'
 
 const builder = (new Builder())
     .Type().End()
@@ -40,18 +36,18 @@ let imp = () => {
 const bin = builder.WebAssembly().get();
 const module = new WebAssembly.Module(bin);
 let instance = new WebAssembly.Instance(module, {imp: {f: imp}});
-assert(!stacktrace);
+assert.falsy(stacktrace);
 for (let i = 0; i < 10000; ++i) {
     instance.exports.entry();
-    assert(stacktrace);
+    assert.truthy(stacktrace);
     stacktrace = stacktrace.split("\n");
-    assert(stacktrace[0].indexOf("imp") !== -1); // the arrow function import named "imp".
-    assert(stacktrace[1] === "wasm function@[wasm code]"); // the wasm->js stub
-    assert(stacktrace[2] === "wasm function: 4@[wasm code]");
-    assert(stacktrace[3] === "wasm function: 2@[wasm code]");
-    assert(stacktrace[4] === "wasm function: 3@[wasm code]");
-    assert(stacktrace[5] === "wasm function: 1@[wasm code]");
-    assert(stacktrace[6] === "wasm function@[wasm code]"); // wasm entry
+    assert.truthy(stacktrace[0].indexOf("imp") !== -1); // the arrow function import named "imp".
+    assert.eq(stacktrace[1], "wasm-stub@[wasm code]"); // the wasm->js stub
+    assert.eq(stacktrace[2], "2C77E97D775063A868EF4437DA260245AFA94583.wasm-function[4]@[wasm code]");
+    assert.eq(stacktrace[3], "2C77E97D775063A868EF4437DA260245AFA94583.wasm-function[2]@[wasm code]");
+    assert.eq(stacktrace[4], "2C77E97D775063A868EF4437DA260245AFA94583.wasm-function[3]@[wasm code]");
+    assert.eq(stacktrace[5], "2C77E97D775063A868EF4437DA260245AFA94583.wasm-function[1]@[wasm code]");
+    assert.eq(stacktrace[6], "wasm-stub@[wasm code]"); // wasm entry
 
     stacktrace = null;
 }

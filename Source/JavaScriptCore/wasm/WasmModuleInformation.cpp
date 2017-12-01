@@ -29,12 +29,23 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmNameSection.h"
+#include <wtf/SHA1.h>
+
+namespace {
+CString sha1(const Vector<uint8_t>& input)
+{
+    SHA1 hash;
+    hash.addBytes(input);
+    return hash.computeHexDigest();
+}
+}
 
 namespace JSC { namespace Wasm {
 
 ModuleInformation::ModuleInformation(Vector<uint8_t>&& sourceBytes)
     : source(WTFMove(sourceBytes))
-    , nameSection(new NameSection())
+    , hash(sha1(source))
+    , nameSection(new NameSection(hash))
 {
 }
 ModuleInformation::~ModuleInformation() { }

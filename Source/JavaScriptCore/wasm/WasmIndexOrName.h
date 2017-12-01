@@ -43,6 +43,7 @@ struct IndexOrName {
     bool isEmpty() const { return bitwise_cast<Index>(m_indexName) & emptyTag; }
     bool isIndex() const { return bitwise_cast<Index>(m_indexName) & indexTag; }
     bool isName() const { return !(isEmpty() || isName()); }
+    NameSection* nameSection() const { return m_nameSection ? m_nameSection.get() : nullptr; }
 
     friend String makeString(const IndexOrName&);
 

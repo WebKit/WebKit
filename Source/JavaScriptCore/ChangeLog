@@ -1,3 +1,37 @@
+2017-11-30  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: improve stack trace
+        https://bugs.webkit.org/show_bug.cgi?id=179343
+
+        Reviewed by Saam Barati.
+
+        Stack traces now include:
+
+          - Module name, if provided by the name section.
+          - Module SHA1 hash if no name was provided
+          - Stub identification, to differentiate from user code
+          - Slightly different naming to match design from:
+              https://github.com/WebAssembly/design/blob/master/Web.md#developer-facing-display-conventions
+
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::functionName const):
+        * runtime/StackFrame.cpp:
+        (JSC::StackFrame::functionName const):
+        (JSC::StackFrame::visitChildren):
+        * wasm/WasmIndexOrName.cpp:
+        (JSC::Wasm::IndexOrName::IndexOrName):
+        (JSC::Wasm::makeString):
+        * wasm/WasmIndexOrName.h:
+        (JSC::Wasm::IndexOrName::nameSection const):
+        * wasm/WasmModuleInformation.cpp:
+        (JSC::Wasm::ModuleInformation::ModuleInformation):
+        * wasm/WasmModuleInformation.h:
+        * wasm/WasmNameSection.h:
+        (JSC::Wasm::NameSection::NameSection):
+        (JSC::Wasm::NameSection::get):
+        * wasm/WasmNameSectionParser.cpp:
+        (JSC::Wasm::NameSectionParser::parse):
+
 2017-11-30  Stephan Szabo  <stephan.szabo@sony.com>
 
         Make LegacyCustomProtocolManager optional for network process
