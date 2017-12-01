@@ -1,3 +1,13 @@
+2017-11-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix some NSOperationQueue leaks
+        https://bugs.webkit.org/show_bug.cgi?id=180221
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::performDragOperation):
+
 2017-11-30  Brian Burg  <bburg@apple.com>
 
         Web Automation: computeElementLayout does not correctly translate iframe client coordinates to main frame coordinates

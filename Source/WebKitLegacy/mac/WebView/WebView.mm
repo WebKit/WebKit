@@ -6729,7 +6729,8 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
             NSFilePromiseReceiver *item = draggingItem.item;
             NSDictionary *options = @{ };
 
-            [item receivePromisedFilesAtDestination:dropLocation options:options operationQueue:[NSOperationQueue new] reader:^(NSURL * _Nonnull fileURL, NSError * _Nullable errorOrNil) {
+            RetainPtr<NSOperationQueue> queue = adoptNS([NSOperationQueue new]);
+            [item receivePromisedFilesAtDestination:dropLocation options:options operationQueue:queue.get() reader:^(NSURL * _Nonnull fileURL, NSError * _Nullable errorOrNil) {
                 if (errorOrNil)
                     return;
 
