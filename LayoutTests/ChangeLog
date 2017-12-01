@@ -1,3 +1,14 @@
+2017-11-30  Zalan Bujtas  <zalan@apple.com>
+
+        [Simple line layout] Incorrect repaint rect with vertically shrinking content.
+        https://bugs.webkit.org/show_bug.cgi?id=180223
+        <rdar://problem/34122210>
+
+        Reviewed by Simon Fraser.
+
+        * fast/repaint/simple-line-layout-shrinking-content-expected.txt: Added.
+        * fast/repaint/simple-line-layout-shrinking-content.html: Added.
+
 2017-11-30  Simon Fraser  <simon.fraser@apple.com>
 
         Improve filter logging
