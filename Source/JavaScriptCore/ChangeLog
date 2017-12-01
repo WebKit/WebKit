@@ -1,5 +1,20 @@
 2017-12-01  JF Bastien  <jfbastien@apple.com>
 
+        WebAssembly: stack trace improvement follow-ups
+        https://bugs.webkit.org/show_bug.cgi?id=180273
+
+        Reviewed by Saam Barati.
+
+        * wasm/WasmIndexOrName.cpp:
+        (JSC::Wasm::makeString):
+        * wasm/WasmIndexOrName.h:
+        (JSC::Wasm::IndexOrName::nameSection const):
+        * wasm/WasmNameSection.h:
+        (JSC::Wasm::NameSection::NameSection):
+        (JSC::Wasm::NameSection::get):
+
+2017-12-01  JF Bastien  <jfbastien@apple.com>
+
         WebAssembly: restore cached stack limit after out-call
         https://bugs.webkit.org/show_bug.cgi?id=179106
         <rdar://problem/35337525>
