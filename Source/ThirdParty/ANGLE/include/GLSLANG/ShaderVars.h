@@ -281,13 +281,17 @@ struct WorkGroupSize
 {
     // Must have a trivial default constructor since it is used in YYSTYPE.
     WorkGroupSize() = default;
+#if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-braces"
+#endif
     explicit constexpr WorkGroupSize(int initialSize)
         : localSizeQualifiers{initialSize, initialSize, initialSize}
     {
     }
+#if defined(__clang__)
 #pragma clang diagnostic pop
+#endif
 
     void fill(int fillValue);
     void setLocalSize(int localSizeX, int localSizeY, int localSizeZ);

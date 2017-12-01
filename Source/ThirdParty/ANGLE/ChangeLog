@@ -1,3 +1,17 @@
+2017-12-01  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix -Wunknown-pragmas warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=180177
+
+        It seems GCC has started to warn about unrecognized Clang pragmas. Oh well.
+
+        This is not sent upstream, because the Clang pragmas appear to be downstream WebKit
+        additions. changes.diff is not updated, because it was not updated in yesterday's ANGLE
+        update.
+
+        * include/GLSLANG/ShaderVars.h:
+        * src/libANGLE/Platform.cpp:
+
 2017-11-30  Alex Christensen  <achristensen@webkit.org>
 
         Speculative WinCairo fix.
