@@ -1319,6 +1319,21 @@ editing/deleting/smart-delete-002.html [ Failure ]
 editing/deleting/smart-delete-across-editable-boundaries.html [ Failure ]
 editing/deleting/smart-editing-disabled-mac.html [ Failure ]
 
+# editing/execCommand tests to triage
+webkit.org/b/180270 editing/execCommand/button.html [ Failure ]
+webkit.org/b/180269 editing/execCommand/createLink.html [ Failure ]
+webkit.org/b/180271 editing/execCommand/hilitecolor.html [ Failure ]
+webkit.org/b/180268 editing/execCommand/query-command-state.html [ Failure ]
+webkit.org/b/180267 editing/execCommand/remove-format-multiple-elements-mac.html [ Failure ]
+webkit.org/b/180267 editing/execCommand/remove-format-multiple-elements-win.html [ Failure ]
+webkit.org/b/180267 editing/execCommand/remove-formatting-2.html [ Failure ]
+webkit.org/b/180269 editing/execCommand/toggle-link-mac.html [ Failure ]
+webkit.org/b/180269 editing/execCommand/toggle-unlink-mac.html
+webkit.org/b/180269 editing/execCommand/unlink.html [ Failure ]
+
+webkit.org/b/180275 editing/caret/color-span-inside-editable-background.html [ ImageOnlyFailure ]
+webkit.org/b/180725 editing/caret/color-span-inside-editable.html [ ImageOnlyFailure ]
+
 # Font tests that fail:
 fonts/font-fallback-prefers-pictographs.html [ ImageOnlyFailure ]
 

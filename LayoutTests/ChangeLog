@@ -1,3 +1,13 @@
+2017-12-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update TestExpectations for various editing tests on iOS.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios-wk2/editing/deleting/5144139-2-expected.txt:
+        * platform/ios/TestExpectations:
+
 2017-12-01  Dean Jackson  <dino@apple.com>
 
         Use SH_INITIALIZE_UNINITIALIZED_LOCALS now that ANGLE has been updated
