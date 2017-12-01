@@ -35,7 +35,6 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSServiceWorkerRegistration.h"
 #include "Logging.h"
-#include "Microtasks.h"
 #include "NavigatorBase.h"
 #include "ResourceError.h"
 #include "ScriptExecutionContext.h"
@@ -308,20 +307,29 @@ void ServiceWorkerContainer::scheduleTaskToFireUpdateFoundEvent(ServiceWorkerReg
         registration->scheduleTaskToFireUpdateFoundEvent();
 }
 
-void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, ServiceWorkerRegistrationData&& data, WTF::Function<void()>&& promiseResolvedHandler)
+void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, ServiceWorkerRegistrationData&& data, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
 {
     auto guard = WTF::makeScopeExit([this, &job] {
         jobDidFinish(job);
     });
 
+    WTF::Function<void()> notifyWhenResolvedIfNeeded = [] { };
+    if (shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes) {
+        notifyWhenResolvedIfNeeded = [connection = m_swConnection, registrationKey = data.key.isolatedCopy()]() mutable {
+            callOnMainThread([connection = WTFMove(connection), registrationKey = WTFMove(registrationKey)] {
+                connection->didResolveRegistrationPromise(registrationKey);
+            });
+        };
+    }
+
     if (isStopped()) {
-        promiseResolvedHandler();
+        notifyWhenResolvedIfNeeded();
         return;
     }
 
-    scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this), job = makeRef(job), data = WTFMove(data), promiseResolvedHandler = WTFMove(promiseResolvedHandler)](ScriptExecutionContext& context) mutable {
+    scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this), job = makeRef(job), data = WTFMove(data), notifyWhenResolvedIfNeeded = WTFMove(notifyWhenResolvedIfNeeded)](ScriptExecutionContext& context) mutable {
         if (isStopped()) {
-            promiseResolvedHandler();
+            notifyWhenResolvedIfNeeded();
             return;
         }
 
@@ -331,9 +339,7 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
 
         job->promise().resolve<IDLInterface<ServiceWorkerRegistration>>(WTFMove(registration));
 
-        MicrotaskQueue::mainThreadQueue().append(std::make_unique<VoidMicrotask>([promiseResolvedHandler = WTFMove(promiseResolvedHandler)] {
-            promiseResolvedHandler();
-        }));
+        notifyWhenResolvedIfNeeded();
     });
 }
 

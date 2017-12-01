@@ -87,10 +87,7 @@ void SWClientConnection::registrationJobResolvedInServer(const ServiceWorkerJobD
     }
 
     auto key = registrationData.key;
-    job->resolvedWithRegistration(WTFMove(registrationData), [this, protectedThis = makeRef(*this), key, shouldNotifyWhenResolved] {
-        if (shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes)
-            didResolveRegistrationPromise(key);
-    });
+    job->resolvedWithRegistration(WTFMove(registrationData), shouldNotifyWhenResolved);
 }
 
 void SWClientConnection::unregistrationJobResolvedInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, bool unregistrationResult)
