@@ -507,10 +507,14 @@ public:
 
     void pruneByLiveness(const NodeSet& live)
     {
-        m_pointers.removeIf(
-            [&] (const auto& entry) {
-                return !live.contains(entry.key);
-            });
+        Vector<Node*> toRemove;
+        for (const auto& entry : m_pointers) {
+            if (!live.contains(entry.key))
+                toRemove.append(entry.key);
+        }
+        for (Node* node : toRemove)
+            m_pointers.remove(node);
+
         prune();
     }
 
@@ -678,10 +682,15 @@ private:
         }
 
         // Remove unreachable allocations
-        m_allocations.removeIf(
-            [&] (const auto& entry) {
-                return !reachable.contains(entry.key);
-            });
+        {
+            Vector<Node*> toRemove;
+            for (const auto& entry : m_allocations) {
+                if (!reachable.contains(entry.key))
+                    toRemove.append(entry.key);
+            }
+            for (Node* identifier : toRemove)
+                m_allocations.remove(identifier);
+        }
     }
 
     bool m_reached = false;
@@ -1240,10 +1249,14 @@ private:
     {
         // We don't create materializations if the escapee is not a
         // sink candidate
-        escapees.removeIf(
-            [&] (const auto& entry) {
-                return !m_sinkCandidates.contains(entry.key);
-            });
+        Vector<Node*> toRemove;
+        for (const auto& entry : escapees) {
+            if (!m_sinkCandidates.contains(entry.key))
+                toRemove.append(entry.key);
+        }
+        for (Node* identifier : toRemove)
+            escapees.remove(identifier);
+
         if (escapees.isEmpty())
             return;
 

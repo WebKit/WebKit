@@ -342,8 +342,10 @@ private:
     }
 
     Procedure& m_proc;
+    Vector<Value*> m_toRemove;
     HashMap<ValueKey, unsigned> m_constTable;
     int64_t* m_dataSection;
+    HashMap<ValueKey, Value*> m_constants;
     InsertionSet m_insertionSet;
 };
 
