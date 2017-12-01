@@ -1,3 +1,18 @@
+2017-11-30  Dewei Zhu  <dewei_zhu@apple.com>
+
+        HTTP server driver is responsible for ensuring the dependencies of HTTP server.
+        https://bugs.webkit.org/show_bug.cgi?id=180231
+
+        Reviewed by Stephanie Lewis.
+
+        Added the logic to ensure system environment meet the requirments of launching the http server.
+
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        (SimpleHTTPServerDriver.serve):
+        (SimpleHTTPServerDriver.set_device_id):
+        (SimpleHTTPServerDriver):
+        (SimpleHTTPServerDriver._ensure_http_server_dependencies):
+
 2017-11-30  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [WinCairo] Cannot build without Internet connection

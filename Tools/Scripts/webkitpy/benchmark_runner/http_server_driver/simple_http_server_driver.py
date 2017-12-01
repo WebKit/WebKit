@@ -25,6 +25,7 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
         self._server_process = None
         self._server_port = 0
         self._ip = '127.0.0.1'
+        self._ensure_http_server_dependencies()
 
     def serve(self, web_root):
         _log.info('Launching an http server')
@@ -93,3 +94,14 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
 
     def set_device_id(self, device_id):
         pass
+
+    def _ensure_http_server_dependencies(self):
+        _log.info('Ensure dependencies of http server is satisfied')
+        from pkg_resources import require, VersionConflict, DistributionNotFound
+        try:
+            require("Twisted>=15.5.0")
+            import twisted
+        except (ImportError, VersionConflict, DistributionNotFound):
+            _log.info("Will install twisted in webkitpy, and twisted will be used by webkitpy only")
+            sys.path.append(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../../..')))
+            from webkitpy.thirdparty.autoinstalled.twisted_15_5_0 import twisted
