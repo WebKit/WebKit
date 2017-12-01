@@ -63,7 +63,7 @@ private:
     int xChannelIndex() const { return m_xChannelSelector - 1; }
     int yChannelIndex() const { return m_yChannelSelector - 1; }
 
-    WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 
     ChannelSelectorType m_xChannelSelector;
     ChannelSelectorType m_yChannelSelector;

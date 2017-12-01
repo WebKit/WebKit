@@ -56,17 +56,17 @@ void FEMerge::platformApplySoftware()
     }
 }
 
-TextStream& FEMerge::externalRepresentation(TextStream& ts) const
+TextStream& FEMerge::externalRepresentation(TextStream& ts, RepresentationType representation) const
 {
     ts << indent << "[feMerge";
-    FilterEffect::externalRepresentation(ts);
+    FilterEffect::externalRepresentation(ts, representation);
     unsigned size = numberOfEffectInputs();
     ASSERT(size > 0);
     ts << " mergeNodes=\"" << size << "\"]\n";
 
     TextStream::IndentScope indentScope(ts);
     for (unsigned i = 0; i < size; ++i)
-        inputEffect(i)->externalRepresentation(ts);
+        inputEffect(i)->externalRepresentation(ts, representation);
     return ts;
 }
 

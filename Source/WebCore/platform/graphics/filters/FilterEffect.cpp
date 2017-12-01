@@ -503,11 +503,28 @@ void FilterEffect::transformResultColorSpace(ColorSpace dstColorSpace)
 #endif
 }
 
-TextStream& FilterEffect::externalRepresentation(TextStream& ts) const
+TextStream& FilterEffect::externalRepresentation(TextStream& ts, RepresentationType representationType) const
 {
     // FIXME: We should dump the subRegions of the filter primitives here later. This isn't
     // possible at the moment, because we need more detailed informations from the target object.
+    
+    if (representationType == RepresentationType::Debugging) {
+        TextStream::IndentScope indentScope(ts);
+        ts.dumpProperty("alpha image", m_alphaImage);
+        ts.dumpProperty("operating colorspace", m_operatingColorSpace);
+        ts.dumpProperty("result colorspace", m_resultColorSpace);
+        ts << "\n" << indent;
+    }
     return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const FilterEffect& filter)
+{
+    // Use a new stream because we want multiline mode for logging filters.
+    TextStream filterStream;
+    filter.externalRepresentation(filterStream, FilterEffect::RepresentationType::Debugging);
+    
+    return ts << filterStream.release();
 }
 
 } // namespace WebCore

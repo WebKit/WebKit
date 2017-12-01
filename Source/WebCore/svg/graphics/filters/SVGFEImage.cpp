@@ -137,7 +137,7 @@ void FEImage::platformApplySoftware()
     resultImage->context().drawImage(*m_image, destRect, srcRect);
 }
 
-TextStream& FEImage::externalRepresentation(TextStream& ts) const
+TextStream& FEImage::externalRepresentation(TextStream& ts, RepresentationType representation) const
 {
     FloatSize imageSize;
     if (m_image)
@@ -145,7 +145,7 @@ TextStream& FEImage::externalRepresentation(TextStream& ts) const
     else if (RenderObject* renderer = referencedRenderer())
         imageSize = enclosingIntRect(renderer->repaintRectInLocalCoordinates()).size();
     ts << indent << "[feImage";
-    FilterEffect::externalRepresentation(ts);
+    FilterEffect::externalRepresentation(ts, representation);
     ts << " image-size=\"" << imageSize.width() << "x" << imageSize.height() << "\"]\n";
     // FIXME: should this dump also object returned by SVGFEImage::image() ?
     return ts;

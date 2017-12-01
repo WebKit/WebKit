@@ -43,7 +43,7 @@ private:
 
     void determineAbsolutePaintRect() override;
     void platformApplySoftware() override;
-    WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 
     FilterEffectType filterEffectType() const override { return FilterEffectTypeSourceInput; }
 };

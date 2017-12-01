@@ -63,7 +63,7 @@ void SourceAlpha::platformApplySoftware()
     filterContext.drawImageBuffer(*imageBuffer, IntPoint(), CompositeDestinationIn);
 }
 
-TextStream& SourceAlpha::externalRepresentation(TextStream& ts) const
+TextStream& SourceAlpha::externalRepresentation(TextStream& ts, RepresentationType) const
 {
     ts << indent << "[SourceAlpha]\n";
     return ts;

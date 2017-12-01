@@ -86,14 +86,14 @@ void FETile::platformApplySoftware()
     filterContext.fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()));
 }
 
-TextStream& FETile::externalRepresentation(TextStream& ts) const
+TextStream& FETile::externalRepresentation(TextStream& ts, RepresentationType representation) const
 {
     ts << indent << "[feTile";
-    FilterEffect::externalRepresentation(ts);
+    FilterEffect::externalRepresentation(ts, representation);
     ts << "]\n";
 
     TextStream::IndentScope indentScope(ts);
-    inputEffect(0)->externalRepresentation(ts);
+    inputEffect(0)->externalRepresentation(ts, representation);
 
     return ts;
 }

@@ -44,7 +44,7 @@ private:
     void platformApplyNEON(unsigned char* srcPixelArrayA, unsigned char* srcPixelArrayB, unsigned char* dstPixelArray,
                            unsigned colorArrayLength);
 
-    WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 
     FEBlend(Filter&, BlendMode);
 

@@ -539,14 +539,14 @@ void FEGaussianBlur::platformApplySoftware()
     platformApply(*resultPixelArray, *tmpImageData, kernelSize.width(), kernelSize.height(), paintSize);
 }
 
-TextStream& FEGaussianBlur::externalRepresentation(TextStream& ts) const
+TextStream& FEGaussianBlur::externalRepresentation(TextStream& ts, RepresentationType representation) const
 {
     ts << indent << "[feGaussianBlur";
-    FilterEffect::externalRepresentation(ts);
+    FilterEffect::externalRepresentation(ts, representation);
     ts << " stdDeviation=\"" << m_stdX << ", " << m_stdY << "\"]\n";
 
     TextStream::IndentScope indentScope(ts);
-    inputEffect(0)->externalRepresentation(ts);
+    inputEffect(0)->externalRepresentation(ts, representation);
     return ts;
 }
 

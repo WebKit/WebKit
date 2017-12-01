@@ -79,7 +79,7 @@ private:
 
     void platformApplySoftware() override;
 
-    WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 
     ComponentTransferFunction m_redFunction;
     ComponentTransferFunction m_greenFunction;

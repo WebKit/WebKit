@@ -185,30 +185,45 @@ static TextStream& operator<<(TextStream& ts, ComponentTransferType type)
 
 static TextStream& operator<<(TextStream& ts, const ComponentTransferFunction& function)
 {
-    ts << "type=\"" << function.type 
-       << "\" slope=\"" << function.slope
-       << "\" intercept=\"" << function.intercept
-       << "\" amplitude=\"" << function.amplitude
-       << "\" exponent=\"" << function.exponent
-       << "\" offset=\"" << function.offset << "\"";
+    ts << "type=\"" << function.type;
+
+    switch (function.type) {
+    case FECOMPONENTTRANSFER_TYPE_UNKNOWN:
+        break;
+    case FECOMPONENTTRANSFER_TYPE_IDENTITY:
+        break;
+    case FECOMPONENTTRANSFER_TYPE_TABLE:
+        ts << " " << function.tableValues;
+        break;
+    case FECOMPONENTTRANSFER_TYPE_DISCRETE:
+        ts << " " << function.tableValues;
+        break;
+    case FECOMPONENTTRANSFER_TYPE_LINEAR:
+        ts << "\" slope=\"" << function.slope << "\" intercept=\"" << function.intercept << "\"";
+        break;
+    case FECOMPONENTTRANSFER_TYPE_GAMMA:
+        ts << "\" amplitude=\"" << function.amplitude << "\" exponent=\"" << function.exponent << "\" offset=\"" << function.offset << "\"";
+        break;
+    }
+
     return ts;
 }
 
-TextStream& FEComponentTransfer::externalRepresentation(TextStream& ts) const
+TextStream& FEComponentTransfer::externalRepresentation(TextStream& ts, RepresentationType representation) const
 {
     ts << indent << "[feComponentTransfer";
-    FilterEffect::externalRepresentation(ts);
-    ts << " \n";
+    FilterEffect::externalRepresentation(ts, representation);
+    ts << "\n";
     {
         TextStream::IndentScope indentScope(ts, 2);
         ts << indent << "{red: " << m_redFunction << "}\n";
-        ts << indent <<"{green: " << m_greenFunction << "}\n";
-        ts << indent <<"{blue: " << m_blueFunction << "}\n";
-        ts << indent <<"{alpha: " << m_alphaFunction << "}]\n";
+        ts << indent << "{green: " << m_greenFunction << "}\n";
+        ts << indent << "{blue: " << m_blueFunction << "}\n";
+        ts << indent << "{alpha: " << m_alphaFunction << "}]\n";
     }
 
     TextStream::IndentScope indentScope(ts);
-    inputEffect(0)->externalRepresentation(ts);
+    inputEffect(0)->externalRepresentation(ts, representation);
     return ts;
 }
 

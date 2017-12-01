@@ -70,7 +70,7 @@ private:
     void determineAbsolutePaintRect() override;
 
     void platformApplySoftware() override;
-    WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 
     inline void platformArithmeticSoftware(const Uint8ClampedArray& source, Uint8ClampedArray& destination, float k1, float k2, float k3, float k4);
 

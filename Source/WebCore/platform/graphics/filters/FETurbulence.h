@@ -112,7 +112,7 @@ private:
 
     void platformApplySoftware() override;
     void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
-    WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const override;
 
     void initPaint(PaintingData&);
     StitchData computeStitching(IntSize tileSize, float& baseFrequencyX, float& baseFrequencyY) const;

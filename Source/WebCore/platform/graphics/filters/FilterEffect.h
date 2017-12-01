@@ -114,7 +114,8 @@ public:
 
     virtual FilterEffectType filterEffectType() const { return FilterEffectTypeUnknown; }
 
-    virtual WTF::TextStream& externalRepresentation(WTF::TextStream&) const;
+    enum class RepresentationType { TestOutput, Debugging };
+    virtual WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType = RepresentationType::TestOutput) const;
 
     // The following functions are SVG specific and will move to RenderSVGResourceFilterPrimitive.
     // See bug https://bugs.webkit.org/show_bug.cgi?id=45614.
@@ -220,6 +221,8 @@ private:
     ColorSpace m_operatingColorSpace { ColorSpaceLinearRGB };
     ColorSpace m_resultColorSpace { ColorSpaceSRGB };
 };
+
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FilterEffect&);
 
 } // namespace WebCore
 

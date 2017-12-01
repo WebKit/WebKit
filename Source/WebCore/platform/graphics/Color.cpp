@@ -649,11 +649,6 @@ Color blend(const Color& from, const Color& to, double progress, bool blendPremu
         blend(from.alpha(), to.alpha(), progress));
 }
 
-TextStream& operator<<(TextStream& ts, const Color& color)
-{
-    return ts << color.nameForRenderTreeAsText();
-}
-
 void Color::tagAsValid()
 {
     m_colorData.rgbaAndFlags |= validRGBAColor;
@@ -663,6 +658,30 @@ ExtendedColor& Color::asExtended() const
 {
     ASSERT(isExtended());
     return *m_colorData.extendedColor;
+}
+
+TextStream& operator<<(TextStream& ts, const Color& color)
+{
+    return ts << color.nameForRenderTreeAsText();
+}
+
+TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
+{
+    switch (colorSpace) {
+    case ColorSpaceDeviceRGB:
+        ts << "DeviceRGB";
+        break;
+    case ColorSpaceSRGB:
+        ts << "sRGB";
+        break;
+    case ColorSpaceLinearRGB:
+        ts << "LinearRGB";
+        break;
+    case ColorSpaceDisplayP3:
+        ts << "DisplayP3";
+        break;
+    }
+    return ts;
 }
 
 } // namespace WebCore

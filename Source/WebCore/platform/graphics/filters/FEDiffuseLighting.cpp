@@ -47,16 +47,16 @@ bool FEDiffuseLighting::setDiffuseConstant(float diffuseConstant)
     return true;
 }
 
-TextStream& FEDiffuseLighting::externalRepresentation(TextStream& ts) const
+TextStream& FEDiffuseLighting::externalRepresentation(TextStream& ts, RepresentationType representation) const
 {
     ts << indent << "[feDiffuseLighting";
-    FilterEffect::externalRepresentation(ts);
+    FilterEffect::externalRepresentation(ts, representation);
     ts << " surfaceScale=\"" << m_surfaceScale << "\" "
        << "diffuseConstant=\"" << m_diffuseConstant << "\" "
        << "kernelUnitLength=\"" << m_kernelUnitLengthX << ", " << m_kernelUnitLengthY << "\"]\n";
 
     TextStream::IndentScope indentScope(ts);
-    inputEffect(0)->externalRepresentation(ts);
+    inputEffect(0)->externalRepresentation(ts, representation);
     return ts;
 }
 

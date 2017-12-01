@@ -289,15 +289,15 @@ static TextStream& operator<<(TextStream& ts, const MorphologyOperatorType& type
     return ts;
 }
 
-TextStream& FEMorphology::externalRepresentation(TextStream& ts) const
+TextStream& FEMorphology::externalRepresentation(TextStream& ts, RepresentationType representation) const
 {
     ts << indent << "[feMorphology";
-    FilterEffect::externalRepresentation(ts);
+    FilterEffect::externalRepresentation(ts, representation);
     ts << " operator=\"" << morphologyOperator() << "\" "
        << "radius=\"" << radiusX() << ", " << radiusY() << "\"]\n";
 
     TextStream::IndentScope indentScope(ts);
-    inputEffect(0)->externalRepresentation(ts);
+    inputEffect(0)->externalRepresentation(ts, representation);
     return ts;
 }
 

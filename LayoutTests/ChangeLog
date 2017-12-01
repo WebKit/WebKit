@@ -1,3 +1,22 @@
+2017-11-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Improve filter logging
+        https://bugs.webkit.org/show_bug.cgi?id=180182
+
+        Reviewed by Sam Weinig.
+
+        Improve logging of FEComponentTransfer ComponentTransferFunctions by logging the data
+        that's appropriate for the function type, and rebaseline affected tests.
+
+        * css3/filters/effect-reference-expected.txt:
+        * css3/filters/effect-reference-hw-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Discrete-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Gamma-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Linear-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Table-expected.txt:
+        * svg/filters/filter-refresh-expected.txt:
+
 2017-11-30  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, unskip service worker test that no longer times out after r225346.

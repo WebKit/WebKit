@@ -173,6 +173,8 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     if (!lastEffect || lastEffect->totalNumberOfEffectInputs() > maxTotalOfEffectInputs)
         return false;
 
+    LOG_WITH_STREAM(Filters, stream << "RenderSVGResourceFilter::applyResource\n" << *filterData->builder->lastEffect());
+
     RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(*lastEffect);
     FloatRect subRegion = lastEffect->maxEffectRect();
     // At least one FilterEffect has a too big image size,

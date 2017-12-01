@@ -166,17 +166,17 @@ static TextStream& operator<<(TextStream& ts, const ChannelSelectorType& type)
     return ts;
 }
 
-TextStream& FEDisplacementMap::externalRepresentation(TextStream& ts) const
+TextStream& FEDisplacementMap::externalRepresentation(TextStream& ts, RepresentationType representation) const
 {
     ts << indent << "[feDisplacementMap";
-    FilterEffect::externalRepresentation(ts);
+    FilterEffect::externalRepresentation(ts, representation);
     ts << " scale=\"" << m_scale << "\" "
        << "xChannelSelector=\"" << m_xChannelSelector << "\" "
        << "yChannelSelector=\"" << m_yChannelSelector << "\"]\n";
 
     TextStream::IndentScope indentScope(ts);
-    inputEffect(0)->externalRepresentation(ts);
-    inputEffect(1)->externalRepresentation(ts);
+    inputEffect(0)->externalRepresentation(ts, representation);
+    inputEffect(1)->externalRepresentation(ts, representation);
     return ts;
 }
 

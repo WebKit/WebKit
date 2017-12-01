@@ -114,14 +114,14 @@ void FEDropShadow::platformApplySoftware()
     resultImage->context().drawImageBuffer(*sourceImage, drawingRegion);
 }
 
-TextStream& FEDropShadow::externalRepresentation(TextStream& ts) const
+TextStream& FEDropShadow::externalRepresentation(TextStream& ts, RepresentationType representation) const
 {
     ts << indent <<"[feDropShadow";
-    FilterEffect::externalRepresentation(ts);
+    FilterEffect::externalRepresentation(ts, representation);
     ts << " stdDeviation=\"" << m_stdX << ", " << m_stdY << "\" dx=\"" << m_dx << "\" dy=\"" << m_dy << "\" flood-color=\"" << m_shadowColor.nameForRenderTreeAsText() <<"\" flood-opacity=\"" << m_shadowOpacity << "]\n";
 
     TextStream::IndentScope indentScope(ts);
-    inputEffect(0)->externalRepresentation(ts);
+    inputEffect(0)->externalRepresentation(ts, representation);
     return ts;
 }
     

@@ -67,10 +67,10 @@ void FEFlood::platformApplySoftware()
     resultImage->context().fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()), color);
 }
 
-TextStream& FEFlood::externalRepresentation(TextStream& ts) const
+TextStream& FEFlood::externalRepresentation(TextStream& ts, RepresentationType representation) const
 {
     ts << indent << "[feFlood";
-    FilterEffect::externalRepresentation(ts);
+    FilterEffect::externalRepresentation(ts, representation);
     ts << " flood-color=\"" << floodColor().nameForRenderTreeAsText() << "\" "
        << "flood-opacity=\"" << floodOpacity() << "\"]\n";
     return ts;

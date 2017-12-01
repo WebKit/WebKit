@@ -49,7 +49,7 @@ private:
 
     void platformApplySoftware() final;
     void determineAbsolutePaintRect() final;
-    WTF::TextStream& externalRepresentation(WTF::TextStream&) const final;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, RepresentationType) const final;
 
     RefPtr<Image> m_image;
 

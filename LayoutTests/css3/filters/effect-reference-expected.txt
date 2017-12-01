@@ -12,11 +12,11 @@ layer at (0,0) size 800x600
             [feMorphology operator="DILATE" radius="10.00, 10.00"]
               [SourceGraphic]
           RenderSVGResourceFilter {filter} [id="componenttransfer"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [feComponentTransfer 
-                {red: type="LINEAR" slope="0.50" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}
-                {green: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}
-                {blue: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}
-                {alpha: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}]
+            [feComponentTransfer
+                {red: type="LINEAR" slope="0.50" intercept="0.00"}
+                {green: type="UNKNOWN}
+                {blue: type="UNKNOWN}
+                {alpha: type="UNKNOWN}]
               [SourceGraphic]
           RenderSVGResourceFilter {filter} [id="blurY"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
             [feGaussianBlur stdDeviation="0.00, 5.00"]
