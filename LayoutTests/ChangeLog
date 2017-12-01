@@ -1,3 +1,14 @@
+2017-12-01  Zalan Bujtas  <zalan@apple.com>
+
+        Nullptr deref in WebCore::RenderTableCaption::containingBlockLogicalWidthForContent
+        https://bugs.webkit.org/show_bug.cgi?id=180251
+        <rdar://problem/34138562>
+
+        Reviewed by Simon Fraser.
+
+        * fast/table/caption-crash-when-layer-backed-expected.txt: Added.
+        * fast/table/caption-crash-when-layer-backed.html: Added.
+
 2017-12-01  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ gardening. Updating baselines affected in r225366.

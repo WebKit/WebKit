@@ -2493,7 +2493,9 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
 
 LayoutUnit RenderBoxModelObject::containingBlockLogicalWidthForContent() const
 {
-    return containingBlock()->availableLogicalWidth();
+    if (auto* containingBlock = this->containingBlock())
+        return containingBlock->availableLogicalWidth();
+    return { };
 }
 
 RenderBoxModelObject* RenderBoxModelObject::continuation() const
