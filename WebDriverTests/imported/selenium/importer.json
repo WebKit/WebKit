@@ -1,0 +1,32 @@
+{
+    "repository": "https://github.com/SeleniumHQ/selenium.git",
+    "revision": "57fe00346d1c4d6d3f8e33ae4d7426940e795a30",
+    "paths_to_import": [
+        "common",
+        "py/conftest.py",
+        "py/setup.cfg",
+        "py/selenium",
+        "py/test"
+    ],
+    "paths_to_skip": [
+        "common/src/web/Page.aspx",
+        "common/src/web/Page.aspx.cs",
+        "common/src/web/Redirect.aspx",
+        "common/src/web/Redirect.aspx.cs",
+        "common/src/web/Settings.StyleCop",
+        "py/selenium/webdriver/android",
+        "py/selenium/webdriver/blackberry",
+        "py/selenium/webdriver/chrome",
+        "py/selenium/webdriver/edge",
+        "py/selenium/webdriver/firefox",
+        "py/selenium/webdriver/ie",
+        "py/selenium/webdriver/opera",
+        "py/selenium/webdriver/phantomjs",
+        "py/test/unit",
+        "py/test/selenium/webdriver/chrome",
+        "py/test/selenium/webdriver/firefox",
+        "py/test/selenium/webdriver/ie",
+        "py/test/selenium/webdriver/marionette",
+        "py/test/selenium/webdriver/phantomjs"
+    ]
+}

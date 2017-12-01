@@ -34,9 +34,19 @@ class WebDriver(object):
     def capabilities(self):
         raise NotImplementedError
 
+    def browser_path(self):
+        return None
+
+    def browser_args(self):
+        return []
+
     def browser_env(self):
         return {}
 
+    def selenium_name(self):
+        """Return the name of the driver used by Selenium, passed to pytest using --driver command line option.
+          If this is not implemented, Selenium tests will not be run."""
+        return None
 
 _drivers = {}
 

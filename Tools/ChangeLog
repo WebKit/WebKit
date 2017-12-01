@@ -1,3 +1,64 @@
+2017-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: add support for importing and running selenium tests
+        https://bugs.webkit.org/show_bug.cgi?id=180145
+
+        Reviewed by Brian Burg.
+
+        We currently import and run W3C tests, which are the best ones to ensure our implementation is spec
+        compliant. However, the selenium API is what user will actually use in the end, so it's important to ensure that
+        we don't break the selenium support. This patch adds webdriver_test_runner_selenium.py and
+        webdriver_selenium_executor.py to run selenium tests. The script import-w3c-webdriver-tests has been renamed as
+        import-webdriver-tests and it can now import selenium tests too.
+
+        * Scripts/import-w3c-webdriver-tests: Removed.
+        * Scripts/import-webdriver-tests: Added.
+        (Importer):
+        (Importer.__init__):
+        (Importer.download_tests):
+        (Importer.import_tests):
+        (Importer.import_tests.should_skip_file):
+        * Scripts/webkitpy/webdriver_tests/webdriver_driver.py:
+        (WebDriver.browser_path):
+        (WebDriver):
+        (WebDriver.browser_args):
+        (WebDriver.selenium_name):
+        * Scripts/webkitpy/webdriver_tests/webdriver_driver_gtk.py:
+        (WebDriverGtk.browser_path):
+        (WebDriverGtk):
+        (WebDriverGtk.browser_args):
+        (WebDriverGtk.capabilities):
+        (WebDriverGtk.selenium_name):
+        * Scripts/webkitpy/webdriver_tests/webdriver_driver_wpe.py:
+        (WebDriverWPE.browser_args):
+        (WebDriverWPE.capabilities):
+        * Scripts/webkitpy/webdriver_tests/webdriver_selenium_executor.py: Added.
+        (_ensure_directory_in_path):
+        (CollectRecorder):
+        (CollectRecorder.__init__):
+        (CollectRecorder.pytest_collectreport):
+        (WebDriverSeleniumExecutor):
+        (WebDriverSeleniumExecutor.__init__):
+        (WebDriverSeleniumExecutor.collect):
+        (WebDriverSeleniumExecutor.run):
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner.py:
+        (WebDriverTestRunner):
+        (WebDriverTestRunner.__init__):
+        (WebDriverTestRunner.run):
+        (WebDriverTestRunner.print_results):
+        (WebDriverTestRunner.dump_results_to_json_file):
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_selenium.py: Added.
+        (WebDriverTestRunnerSelenium):
+        (WebDriverTestRunnerSelenium.__init__):
+        (WebDriverTestRunnerSelenium._tests_dir):
+        (WebDriverTestRunnerSelenium.collect_tests):
+        (WebDriverTestRunnerSelenium.run):
+        (WebDriverTestRunnerSelenium.results):
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_w3c.py:
+        (WebDriverTestRunnerW3C.__init__):
+        (WebDriverTestRunnerW3C.run):
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_executor.py:
+
 2017-11-30  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r224791): cookies are shared between ephemeral sessions in the same process pool
