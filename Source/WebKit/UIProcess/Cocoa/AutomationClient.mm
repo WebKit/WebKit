@@ -77,7 +77,7 @@ void AutomationClient::requestAutomationSession(const String& sessionIdentifier)
 
 void AutomationClient::requestAutomationSessionWithCapabilities(NSString *sessionIdentifier, NSDictionary *forwardedCapabilities)
 {
-    _WKAutomationSessionConfiguration *configuration = [_WKAutomationSessionConfiguration new];
+    _WKAutomationSessionConfiguration *configuration = [[[_WKAutomationSessionConfiguration alloc] init] autorelease];
     if (NSNumber *value = forwardedCapabilities[WIRAllowInsecureMediaCaptureCapabilityKey]) {
         if ([value isKindOfClass:[NSNumber class]])
             configuration.allowsInsecureMediaCapture = value.boolValue;
