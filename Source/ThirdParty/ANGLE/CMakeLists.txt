@@ -1,7 +1,7 @@
 include_directories(
     .
     src
-    src/common/third_party/numerics
+    src/common/third_party/base
     include
     include/KHR
 )
@@ -50,9 +50,8 @@ set(ANGLE_SOURCES
     src/common/mathutil.cpp
     src/common/MemoryBuffer.cpp
     src/common/string_utils.cpp
-    src/common/system_utils_linux.cpp
-    src/common/system_utils_mac.cpp
     src/common/third_party/smhasher/src/PMurHash.cpp
+    src/common/third_party/base/anglebase/sha1.cc
     src/common/tls.cpp
     src/common/uniform_type_info_autogen.cpp
     src/common/utilities.cpp

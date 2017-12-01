@@ -1,3 +1,13 @@
+2017-12-01  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        Fix WinCairo build break after r225340
+        https://bugs.webkit.org/show_bug.cgi?id=180230
+
+        Unreviewed build fix.
+
+        * CMakeLists.txt: Add missing sources.
+        * PlatformWin.cmake: Add missing sources.
+
 2017-12-01  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix -Wunknown-pragmas warnings.

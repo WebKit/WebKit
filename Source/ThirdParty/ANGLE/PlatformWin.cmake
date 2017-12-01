@@ -37,70 +37,28 @@ list(APPEND ANGLEGLESv2_LIBRARIES
 
 list(APPEND ANGLE_SOURCES
     src/common/system_utils_win.cpp
+    src/compiler/translator/AddDefaultReturnStatements.cpp
+    src/compiler/translator/ArrayReturnValueToOutParameter.cpp
     src/compiler/translator/ASTMetadataHLSL.cpp
+    src/compiler/translator/blocklayoutHLSL.cpp
     src/compiler/translator/BuiltInFunctionEmulatorHLSL.cpp
     src/compiler/translator/OutputHLSL.cpp
+    src/compiler/translator/RemoveDynamicIndexing.cpp
+    src/compiler/translator/RemoveSwitchFallThrough.cpp
+    src/compiler/translator/RewriteElseBlocks.cpp
     src/compiler/translator/SeparateArrayInitialization.cpp
+    src/compiler/translator/SeparateExpressionsReturningArrays.cpp
     src/compiler/translator/StructureHLSL.cpp
     src/compiler/translator/TextureFunctionHLSL.cpp
+    src/compiler/translator/ImageFunctionHLSL.cpp
     src/compiler/translator/TranslatorHLSL.cpp
+    src/compiler/translator/UnfoldShortCircuitToIf.cpp
     src/compiler/translator/UniformHLSL.cpp
     src/compiler/translator/UtilsHLSL.cpp
-    src/compiler/translator/blocklayoutHLSL.cpp
+    src/compiler/translator/WrapSwitchStatementsInBlocks.cpp
+    src/compiler/translator/emulated_builtin_functions_hlsl_autogen.cpp
     src/libANGLE/renderer/d3d/BufferD3D.cpp
     src/libANGLE/renderer/d3d/CompilerD3D.cpp
-    src/libANGLE/renderer/d3d/SwapChainD3D.cpp
-    src/libANGLE/renderer/d3d/d3d11/Blit11.cpp
-    src/libANGLE/renderer/d3d/d3d11/Buffer11.cpp
-    src/libANGLE/renderer/d3d/d3d11/Clear11.cpp
-    src/libANGLE/renderer/d3d/d3d11/Context11.cpp
-    src/libANGLE/renderer/d3d/d3d11/DebugAnnotator11.cpp
-    src/libANGLE/renderer/d3d/d3d11/dxgi_format_map_autogen.cpp
-    src/libANGLE/renderer/d3d/d3d11/dxgi_support_table.cpp
-    src/libANGLE/renderer/d3d/d3d11/Fence11.cpp
-    src/libANGLE/renderer/d3d/d3d11/formatutils11.cpp
-    src/libANGLE/renderer/d3d/d3d11/Framebuffer11.cpp
-    src/libANGLE/renderer/d3d/d3d11/Image11.cpp
-    src/libANGLE/renderer/d3d/d3d11/IndexBuffer11.cpp
-    src/libANGLE/renderer/d3d/d3d11/InputLayoutCache.cpp
-    src/libANGLE/renderer/d3d/d3d11/PixelTransfer11.cpp
-    src/libANGLE/renderer/d3d/d3d11/Query11.cpp
-    src/libANGLE/renderer/d3d/d3d11/renderer11_utils.cpp
-    src/libANGLE/renderer/d3d/d3d11/Renderer11.cpp
-    src/libANGLE/renderer/d3d/d3d11/RenderStateCache.cpp
-    src/libANGLE/renderer/d3d/d3d11/RenderTarget11.cpp
-    src/libANGLE/renderer/d3d/d3d11/ShaderExecutable11.cpp
-    src/libANGLE/renderer/d3d/d3d11/StateManager11.cpp
-    src/libANGLE/renderer/d3d/d3d11/StreamProducerNV12.cpp
-    src/libANGLE/renderer/d3d/d3d11/SwapChain11.cpp
-    src/libANGLE/renderer/d3d/d3d11/texture_format_table_autogen.cpp
-    src/libANGLE/renderer/d3d/d3d11/texture_format_table.cpp
-    src/libANGLE/renderer/d3d/d3d11/TextureStorage11.cpp
-    src/libANGLE/renderer/d3d/d3d11/TransformFeedback11.cpp
-    src/libANGLE/renderer/d3d/d3d11/Trim11.cpp
-    src/libANGLE/renderer/d3d/d3d11/VertexArray11.cpp
-    src/libANGLE/renderer/d3d/d3d11/VertexBuffer11.cpp
-    src/libANGLE/renderer/d3d/d3d11/win32/NativeWindow11Win32.cpp
-    src/libANGLE/renderer/d3d/d3d9/Blit9.cpp
-    src/libANGLE/renderer/d3d/d3d9/Buffer9.cpp
-    src/libANGLE/renderer/d3d/d3d9/Context9.cpp
-    src/libANGLE/renderer/d3d/d3d9/DebugAnnotator9.cpp
-    src/libANGLE/renderer/d3d/d3d9/Fence9.cpp
-    src/libANGLE/renderer/d3d/d3d9/formatutils9.cpp
-    src/libANGLE/renderer/d3d/d3d9/Framebuffer9.cpp
-    src/libANGLE/renderer/d3d/d3d9/Image9.cpp
-    src/libANGLE/renderer/d3d/d3d9/IndexBuffer9.cpp
-    src/libANGLE/renderer/d3d/d3d9/NativeWindow9.cpp
-    src/libANGLE/renderer/d3d/d3d9/Query9.cpp
-    src/libANGLE/renderer/d3d/d3d9/renderer9_utils.cpp
-    src/libANGLE/renderer/d3d/d3d9/Renderer9.cpp
-    src/libANGLE/renderer/d3d/d3d9/RenderTarget9.cpp
-    src/libANGLE/renderer/d3d/d3d9/ShaderExecutable9.cpp
-    src/libANGLE/renderer/d3d/d3d9/StateManager9.cpp
-    src/libANGLE/renderer/d3d/d3d9/SwapChain9.cpp
-    src/libANGLE/renderer/d3d/d3d9/TextureStorage9.cpp
-    src/libANGLE/renderer/d3d/d3d9/VertexBuffer9.cpp
-    src/libANGLE/renderer/d3d/d3d9/VertexDeclarationCache.cpp
     src/libANGLE/renderer/d3d/DeviceD3D.cpp
     src/libANGLE/renderer/d3d/DisplayD3D.cpp
     src/libANGLE/renderer/d3d/DynamicHLSL.cpp
@@ -118,9 +76,63 @@ list(APPEND ANGLE_SOURCES
     src/libANGLE/renderer/d3d/ShaderD3D.cpp
     src/libANGLE/renderer/d3d/ShaderExecutableD3D.cpp
     src/libANGLE/renderer/d3d/SurfaceD3D.cpp
+    src/libANGLE/renderer/d3d/SwapChainD3D.cpp
     src/libANGLE/renderer/d3d/TextureD3D.cpp
     src/libANGLE/renderer/d3d/VertexBuffer.cpp
     src/libANGLE/renderer/d3d/VertexDataManager.cpp
+    src/libANGLE/renderer/d3d/d3d11/Blit11.cpp
+    src/libANGLE/renderer/d3d/d3d11/Buffer11.cpp
+    src/libANGLE/renderer/d3d/d3d11/Clear11.cpp
+    src/libANGLE/renderer/d3d/d3d11/Context11.cpp
+    src/libANGLE/renderer/d3d/d3d11/DebugAnnotator11.cpp
+    src/libANGLE/renderer/d3d/d3d11/dxgi_format_map_autogen.cpp
+    src/libANGLE/renderer/d3d/d3d11/dxgi_support_table.cpp
+    src/libANGLE/renderer/d3d/d3d11/Fence11.cpp
+    src/libANGLE/renderer/d3d/d3d11/formatutils11.cpp
+    src/libANGLE/renderer/d3d/d3d11/Framebuffer11.cpp
+    src/libANGLE/renderer/d3d/d3d11/Image11.cpp
+    src/libANGLE/renderer/d3d/d3d11/IndexBuffer11.cpp
+    src/libANGLE/renderer/d3d/d3d11/InputLayoutCache.cpp
+    src/libANGLE/renderer/d3d/d3d11/PixelTransfer11.cpp
+    src/libANGLE/renderer/d3d/d3d11/ProgramPipeline11.cpp
+    src/libANGLE/renderer/d3d/d3d11/Query11.cpp
+    src/libANGLE/renderer/d3d/d3d11/Renderer11.cpp
+    src/libANGLE/renderer/d3d/d3d11/ResourceManager11.cpp
+    src/libANGLE/renderer/d3d/d3d11/renderer11_utils.cpp
+    src/libANGLE/renderer/d3d/d3d11/RenderStateCache.cpp
+    src/libANGLE/renderer/d3d/d3d11/RenderTarget11.cpp
+    src/libANGLE/renderer/d3d/d3d11/ShaderExecutable11.cpp
+    src/libANGLE/renderer/d3d/d3d11/StateManager11.cpp
+    src/libANGLE/renderer/d3d/d3d11/StreamProducerNV12.cpp
+    src/libANGLE/renderer/d3d/d3d11/SwapChain11.cpp
+    src/libANGLE/renderer/d3d/d3d11/TextureStorage11.cpp
+    src/libANGLE/renderer/d3d/d3d11/TransformFeedback11.cpp
+    src/libANGLE/renderer/d3d/d3d11/Trim11.cpp
+    src/libANGLE/renderer/d3d/d3d11/texture_format_table_autogen.cpp
+    src/libANGLE/renderer/d3d/d3d11/texture_format_table.cpp
+    src/libANGLE/renderer/d3d/d3d11/VertexArray11.cpp
+    src/libANGLE/renderer/d3d/d3d11/VertexBuffer11.cpp
+    src/libANGLE/renderer/d3d/d3d9/Blit9.cpp
+    src/libANGLE/renderer/d3d/d3d9/Buffer9.cpp
+    src/libANGLE/renderer/d3d/d3d9/Context9.cpp
+    src/libANGLE/renderer/d3d/d3d9/DebugAnnotator9.cpp
+    src/libANGLE/renderer/d3d/d3d9/Fence9.cpp
+    src/libANGLE/renderer/d3d/d3d9/formatutils9.cpp
+    src/libANGLE/renderer/d3d/d3d9/Framebuffer9.cpp
+    src/libANGLE/renderer/d3d/d3d9/Image9.cpp
+    src/libANGLE/renderer/d3d/d3d9/IndexBuffer9.cpp
+    src/libANGLE/renderer/d3d/d3d9/NativeWindow9.cpp
+    src/libANGLE/renderer/d3d/d3d9/Query9.cpp
+    src/libANGLE/renderer/d3d/d3d9/Renderer9.cpp
+    src/libANGLE/renderer/d3d/d3d9/renderer9_utils.cpp
+    src/libANGLE/renderer/d3d/d3d9/RenderTarget9.cpp
+    src/libANGLE/renderer/d3d/d3d9/ShaderExecutable9.cpp
+    src/libANGLE/renderer/d3d/d3d9/StateManager9.cpp
+    src/libANGLE/renderer/d3d/d3d9/SwapChain9.cpp
+    src/libANGLE/renderer/d3d/d3d9/TextureStorage9.cpp
+    src/libANGLE/renderer/d3d/d3d9/VertexBuffer9.cpp
+    src/libANGLE/renderer/d3d/d3d9/VertexDeclarationCache.cpp
+    src/libANGLE/renderer/d3d/d3d11/win32/NativeWindow11Win32.cpp
     src/third_party/systeminfo/SystemInfo.cpp
 )
 
