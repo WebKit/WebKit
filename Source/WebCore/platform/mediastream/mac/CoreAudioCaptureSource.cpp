@@ -56,8 +56,9 @@ using namespace PAL;
 class CoreAudioCaptureSourceFactory : public RealtimeMediaSource::AudioCaptureFactory
 {
 public:
-    CaptureSourceOrError createAudioCaptureSource(const String& deviceID, const MediaConstraints* constraints) final {
-        return CoreAudioCaptureSource::create(deviceID, constraints);
+    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
+    {
+        return CoreAudioCaptureSource::create(device.persistentId(), constraints);
     }
 };
 

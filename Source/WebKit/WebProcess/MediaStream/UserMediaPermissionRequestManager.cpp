@@ -146,14 +146,14 @@ void UserMediaPermissionRequestManager::removeMediaRequestFromMaps(UserMediaRequ
     m_userMediaRequestToIDMap.remove(&request);
 }
 
-void UserMediaPermissionRequestManager::userMediaAccessWasGranted(uint64_t requestID, String&& audioDeviceUID, String&& videoDeviceUID, String&& deviceIdentifierHashSalt)
+void UserMediaPermissionRequestManager::userMediaAccessWasGranted(uint64_t requestID, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, String&& deviceIdentifierHashSalt)
 {
     auto request = m_idToUserMediaRequestMap.take(requestID);
     if (!request)
         return;
     removeMediaRequestFromMaps(*request);
 
-    request->allow(WTFMove(audioDeviceUID), WTFMove(videoDeviceUID), WTFMove(deviceIdentifierHashSalt));
+    request->allow(WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(deviceIdentifierHashSalt));
 }
 
 void UserMediaPermissionRequestManager::userMediaAccessWasDenied(uint64_t requestID, WebCore::UserMediaRequest::MediaAccessDenialReason reason, String&& invalidConstraint)

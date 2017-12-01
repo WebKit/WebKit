@@ -36,6 +36,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "CaptureDeviceManager.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -154,11 +155,11 @@ void UserMediaRequest::start()
     m_controller->requestUserMediaAccess(*this);
 }
 
-void UserMediaRequest::allow(String&& audioDeviceUID, String&& videoDeviceUID, String&& deviceIdentifierHashSalt)
+void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, String&& deviceIdentifierHashSalt)
 {
-    RELEASE_LOG(MediaStream, "UserMediaRequest::allow %s %s", audioDeviceUID.utf8().data(), videoDeviceUID.utf8().data());
-    m_allowedAudioDeviceUID = WTFMove(audioDeviceUID);
-    m_allowedVideoDeviceUID = WTFMove(videoDeviceUID);
+    RELEASE_LOG(MediaStream, "UserMediaRequest::allow %s %s", audioDevice ? audioDevice.persistentId().utf8().data() : "", videoDevice ? videoDevice.persistentId().utf8().data() : "");
+    m_allowedAudioDevice = audioDevice;
+    m_allowedVideoDevice = videoDevice;
 
     RefPtr<UserMediaRequest> protectedThis = this;
     RealtimeMediaSourceCenter::NewMediaStreamHandler callback = [this, protectedThis = WTFMove(protectedThis)](RefPtr<MediaStreamPrivate>&& privateStream) mutable {
@@ -185,7 +186,7 @@ void UserMediaRequest::allow(String&& audioDeviceUID, String&& videoDeviceUID, S
     m_audioConstraints.deviceIDHashSalt = deviceIdentifierHashSalt;
     m_videoConstraints.deviceIDHashSalt = WTFMove(deviceIdentifierHashSalt);
 
-    RealtimeMediaSourceCenter::singleton().createMediaStream(WTFMove(callback), m_allowedAudioDeviceUID, m_allowedVideoDeviceUID, &m_audioConstraints, &m_videoConstraints);
+    RealtimeMediaSourceCenter::singleton().createMediaStream(WTFMove(callback), WTFMove(audioDevice), WTFMove(videoDevice), &m_audioConstraints, &m_videoConstraints);
 
     if (!m_scriptExecutionContext)
         return;

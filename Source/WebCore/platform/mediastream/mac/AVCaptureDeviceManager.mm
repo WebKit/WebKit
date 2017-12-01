@@ -127,8 +127,8 @@ void AVCaptureDeviceManager::refreshAVCaptureDevicesOfType(CaptureDevice::Device
         if (!hasMatchingType)
             continue;
 
-        std::optional<CaptureDevice> existingCaptureDevice = captureDeviceFromPersistentID(platformDevice.uniqueID);
-        if (existingCaptureDevice && existingCaptureDevice->type() == type)
+        CaptureDevice existingCaptureDevice = captureDeviceFromPersistentID(platformDevice.uniqueID);
+        if (existingCaptureDevice && existingCaptureDevice.type() == type)
             continue;
 
         CaptureDevice captureDevice(platformDevice.uniqueID, type, platformDevice.localizedName);

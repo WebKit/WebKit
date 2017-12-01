@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM)
-
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -60,6 +58,8 @@ public:
     bool enabled() const { return m_enabled; }
     void setEnabled(bool enabled) { m_enabled = enabled; }
 
+    explicit operator bool() const { return m_type != DeviceType::Unknown; }
+
 private:
     String m_persistentId;
     DeviceType m_type { DeviceType::Unknown };
@@ -70,4 +70,3 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)

@@ -20,6 +20,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include <WebCore/CaptureDevice.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -33,23 +34,24 @@ class UserMediaPermissionRequestManagerProxy;
 
 class UserMediaPermissionRequestProxy : public API::ObjectImpl<API::Object::Type::UserMediaPermissionRequest> {
 public:
-    static Ref<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, uint64_t mainFrameID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<String>&& videoDeviceUIDs, Vector<String>&& audioDeviceUIDs, String&& deviceIDHashSalt)
+    static Ref<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, uint64_t mainFrameID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& videoDevices, Vector<WebCore::CaptureDevice>&& audioDevices, String&& deviceIDHashSalt)
     {
-        return adoptRef(*new UserMediaPermissionRequestProxy(manager, userMediaID, mainFrameID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(videoDeviceUIDs), WTFMove(audioDeviceUIDs), WTFMove(deviceIDHashSalt)));
+        return adoptRef(*new UserMediaPermissionRequestProxy(manager, userMediaID, mainFrameID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(videoDevices), WTFMove(audioDevices), WTFMove(deviceIDHashSalt)));
     }
 
     void allow(const String& videoDeviceUID, const String& audioDeviceUID);
+    void allow();
 
     enum class UserMediaAccessDenialReason { NoConstraints, UserMediaDisabled, NoCaptureDevices, InvalidConstraint, HardwareError, PermissionDenied, OtherFailure };
     void deny(UserMediaAccessDenialReason);
 
     void invalidate();
 
-    bool requiresAudio() const { return m_audioDeviceUIDs.size(); }
-    bool requiresVideo() const { return m_videoDeviceUIDs.size(); }
+    bool requiresAudio() const { return m_eligibleAudioDevices.size(); }
+    bool requiresVideo() const { return m_eligibleVideoDevices.size(); }
 
-    const Vector<String>& videoDeviceUIDs() const { return m_videoDeviceUIDs; }
-    const Vector<String>& audioDeviceUIDs() const { return m_audioDeviceUIDs; }
+    Vector<String> videoDeviceUIDs() const;
+    Vector<String> audioDeviceUIDs() const;
 
     uint64_t mainFrameID() const { return m_mainFrameID; }
     uint64_t frameID() const { return m_frameID; }
@@ -59,7 +61,7 @@ public:
     const String& deviceIdentifierHashSalt() const { return m_deviceIdentifierHashSalt; }
 
 private:
-    UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, uint64_t userMediaID, uint64_t mainFrameID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<String>&& videoDeviceUIDs, Vector<String>&& audioDeviceUIDs, String&&);
+    UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, uint64_t userMediaID, uint64_t mainFrameID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& videoDevices, Vector<WebCore::CaptureDevice>&& audioDevices, String&&);
 
     UserMediaPermissionRequestManagerProxy* m_manager;
     uint64_t m_userMediaID;
@@ -67,8 +69,8 @@ private:
     uint64_t m_frameID;
     Ref<WebCore::SecurityOrigin> m_userMediaDocumentSecurityOrigin;
     Ref<WebCore::SecurityOrigin> m_topLevelDocumentSecurityOrigin;
-    Vector<String> m_videoDeviceUIDs;
-    Vector<String> m_audioDeviceUIDs;
+    Vector<WebCore::CaptureDevice> m_eligibleVideoDevices;
+    Vector<WebCore::CaptureDevice> m_eligibleAudioDevices;
     String m_deviceIdentifierHashSalt;
 };
 

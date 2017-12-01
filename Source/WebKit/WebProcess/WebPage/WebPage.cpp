@@ -3588,9 +3588,9 @@ void WebPage::prepareToSendUserMediaPermissionRequest()
 }
 #endif
 
-void WebPage::userMediaAccessWasGranted(uint64_t userMediaID, String&& audioDeviceUID, String&& videoDeviceUID, String&& mediaDeviceIdentifierHashSalt)
+void WebPage::userMediaAccessWasGranted(uint64_t userMediaID, WebCore::CaptureDevice&& audioDevice, WebCore::CaptureDevice&& videoDevice, String&& mediaDeviceIdentifierHashSalt)
 {
-    m_userMediaPermissionRequestManager->userMediaAccessWasGranted(userMediaID, WTFMove(audioDeviceUID), WTFMove(videoDeviceUID), WTFMove(mediaDeviceIdentifierHashSalt));
+    m_userMediaPermissionRequestManager->userMediaAccessWasGranted(userMediaID, WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(mediaDeviceIdentifierHashSalt));
 }
 
 void WebPage::userMediaAccessWasDenied(uint64_t userMediaID, uint64_t reason, String&& invalidConstraint)

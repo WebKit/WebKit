@@ -58,12 +58,12 @@ public:
     WEBCORE_EXPORT static RealtimeMediaSourceCenter& singleton();
     static void setSharedStreamCenterOverride(RealtimeMediaSourceCenter*);
 
-    using ValidConstraintsHandler = WTF::Function<void(Vector<String>&& audioDeviceUIDs, Vector<String>&& videoDeviceUIDs, String&&)>;
+    using ValidConstraintsHandler = WTF::Function<void(Vector<CaptureDevice>&& audioDeviceUIDs, Vector<CaptureDevice>&& videoDeviceUIDs, String&&)>;
     using InvalidConstraintsHandler = WTF::Function<void(const String& invalidConstraint)>;
     virtual void validateRequestConstraints(ValidConstraintsHandler&&, InvalidConstraintsHandler&&, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints, String&&);
 
     using NewMediaStreamHandler = std::function<void(RefPtr<MediaStreamPrivate>&&)>;
-    virtual void createMediaStream(NewMediaStreamHandler&&, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints);
+    virtual void createMediaStream(NewMediaStreamHandler&&, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints);
 
     WEBCORE_EXPORT virtual Vector<CaptureDevice> getMediaStreamDevices();
     
@@ -79,7 +79,7 @@ public:
     virtual CaptureDeviceManager& videoCaptureDeviceManager() = 0;
 
     String hashStringWithSalt(const String& id, const String& hashSalt);
-    WEBCORE_EXPORT std::optional<CaptureDevice> captureDeviceWithUniqueID(const String& id, const String& hashSalt);
+    WEBCORE_EXPORT CaptureDevice captureDeviceWithUniqueID(const String& id, const String& hashSalt);
     WEBCORE_EXPORT ExceptionOr<void> setDeviceEnabled(const String&, bool);
 
     using DevicesChangedObserverToken = unsigned;

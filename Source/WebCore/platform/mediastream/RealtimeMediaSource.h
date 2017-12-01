@@ -113,7 +113,7 @@ public:
     {
     public:
         virtual ~AudioCaptureFactory() = default;
-        virtual CaptureSourceOrError createAudioCaptureSource(const String& audioDeviceID, const MediaConstraints*) = 0;
+        virtual CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, const MediaConstraints*) = 0;
 
     protected:
         AudioCaptureFactory() = default;
@@ -126,7 +126,7 @@ public:
     {
     public:
         virtual ~VideoCaptureFactory() = default;
-        virtual CaptureSourceOrError createVideoCaptureSource(const String& videoDeviceID, const MediaConstraints*) = 0;
+        virtual CaptureSourceOrError createVideoCaptureSource(const CaptureDevice&, const MediaConstraints*) = 0;
         virtual void setVideoCapturePageState(bool, bool) { }
 
     protected:

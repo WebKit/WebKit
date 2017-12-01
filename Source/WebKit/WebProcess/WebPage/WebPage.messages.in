@@ -301,7 +301,7 @@ messages -> WebPage LegacyReceiver {
 
 #if ENABLE(MEDIA_STREAM)
     # MediaSteam
-    UserMediaAccessWasGranted(uint64_t userMediaID, String audioDeviceUID, String videoDeviceUID, String mediaDeviceIdentifierHashSalt)
+    UserMediaAccessWasGranted(uint64_t userMediaID, WebCore::CaptureDevice audioDevice, WebCore::CaptureDevice videoDevice, String mediaDeviceIdentifierHashSalt)
     UserMediaAccessWasDenied(uint64_t userMediaID, uint64_t reason, String invalidConstraint)
     DidCompleteMediaDeviceEnumeration(uint64_t userMediaID, Vector<WebCore::CaptureDevice> devices, String mediaDeviceIdentifierHashSalt, bool hasPersistentAccess)
 #if ENABLE(SANDBOX_EXTENSIONS)

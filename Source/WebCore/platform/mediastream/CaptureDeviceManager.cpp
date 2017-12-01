@@ -66,17 +66,17 @@ Vector<CaptureDevice> CaptureDeviceManager::getVideoSourcesInfo()
     return sourcesInfo;
 }
 
-std::optional<CaptureDevice> CaptureDeviceManager::captureDeviceFromPersistentID(const String& captureDeviceID)
+CaptureDevice CaptureDeviceManager::captureDeviceFromPersistentID(const String& captureDeviceID)
 {
     for (auto& device : captureDevices()) {
         if (device.persistentId() == captureDeviceID)
             return device;
     }
 
-    return std::nullopt;
+    return { };
 }
 
-std::optional<CaptureDevice> CaptureDeviceManager::deviceWithUID(const String& deviceUID, RealtimeMediaSource::Type type)
+CaptureDevice CaptureDeviceManager::deviceWithUID(const String& deviceUID, RealtimeMediaSource::Type type)
 {
     for (auto& captureDevice : captureDevices()) {
         CaptureDevice::DeviceType deviceType;
@@ -101,7 +101,7 @@ std::optional<CaptureDevice> CaptureDeviceManager::deviceWithUID(const String& d
         return captureDevice;
     }
 
-    return std::nullopt;
+    return { };
 }
 
 static CaptureDeviceManager::ObserverToken nextObserverToken()

@@ -45,7 +45,7 @@ public:
 
     void startUserMediaRequest(WebCore::UserMediaRequest&);
     void cancelUserMediaRequest(WebCore::UserMediaRequest&);
-    void userMediaAccessWasGranted(uint64_t, String&& audioDeviceUID, String&& videoDeviceUID, String&& deviceIdentifierHashSalt);
+    void userMediaAccessWasGranted(uint64_t, WebCore::CaptureDevice&& audioDevice, WebCore::CaptureDevice&& videoDevice, String&& deviceIdentifierHashSalt);
     void userMediaAccessWasDenied(uint64_t, WebCore::UserMediaRequest::MediaAccessDenialReason, String&&);
 
     void enumerateMediaDevices(WebCore::MediaDevicesEnumerationRequest&);

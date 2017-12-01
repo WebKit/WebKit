@@ -47,9 +47,9 @@ namespace WebCore {
 class VideoCaptureSourceFactoryMac final : public RealtimeMediaSource::VideoCaptureFactory
 {
 public:
-    CaptureSourceOrError createVideoCaptureSource(const String& id, const MediaConstraints* constraints) final
+    CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
     {
-        return AVVideoCaptureSource::create(id, constraints);
+        return AVVideoCaptureSource::create(device.persistentId(), constraints);
     }
 
 #if PLATFORM(IOS)

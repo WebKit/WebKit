@@ -22,7 +22,7 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> UserMediaCaptureManagerProxy {
-    CreateMediaSourceForCaptureDeviceWithConstraints(uint64_t id, String deviceID, WebCore::RealtimeMediaSource::Type type, struct WebCore::MediaConstraints constraints) -> (bool success, String invalidConstraints, WebCore::RealtimeMediaSourceSettings settings)
+    CreateMediaSourceForCaptureDeviceWithConstraints(uint64_t id, WebCore::CaptureDevice device, WebCore::RealtimeMediaSource::Type type, struct WebCore::MediaConstraints constraints) -> (bool success, String invalidConstraints, WebCore::RealtimeMediaSourceSettings settings)
     StartProducingData(uint64_t id)
     StopProducingData(uint64_t id)
     Capabilities(uint64_t id) -> (WebCore::RealtimeMediaSourceCapabilities capabilities)

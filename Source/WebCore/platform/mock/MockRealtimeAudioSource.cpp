@@ -45,10 +45,11 @@ namespace WebCore {
 class MockRealtimeAudioSourceFactory : public RealtimeMediaSource::AudioCaptureFactory
 {
 public:
-    CaptureSourceOrError createAudioCaptureSource(const String& deviceID, const MediaConstraints* constraints) final {
-        for (auto& device : MockRealtimeMediaSource::audioDevices()) {
-            if (device.persistentId() == deviceID)
-                return MockRealtimeAudioSource::create(deviceID, device.label(), constraints);
+    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
+    {
+        for (auto& mockDevice : MockRealtimeMediaSource::audioDevices()) {
+            if (mockDevice.persistentId() == device.persistentId())
+                return MockRealtimeAudioSource::create(mockDevice.persistentId(), mockDevice.label(), constraints);
         }
         return { };
     }

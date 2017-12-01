@@ -4132,11 +4132,11 @@ ExceptionOr<void> Internals::setMediaDeviceState(const String& id, const String&
         return Exception { InvalidAccessError, makeString("\"" + property, "\" is not a valid property for this method.") };
 
     auto salt = document->deviceIDHashSalt();
-    std::optional<CaptureDevice> device = RealtimeMediaSourceCenter::singleton().captureDeviceWithUniqueID(id, salt);
+    CaptureDevice device = RealtimeMediaSourceCenter::singleton().captureDeviceWithUniqueID(id, salt);
     if (!device)
         return Exception { InvalidAccessError, makeString("device with ID \"" + id, "\" not found.") };
 
-    auto result = RealtimeMediaSourceCenter::singleton().setDeviceEnabled(device->persistentId(), value);
+    auto result = RealtimeMediaSourceCenter::singleton().setDeviceEnabled(device.persistentId(), value);
     if (result.hasException())
         return result.releaseException();
 

@@ -92,14 +92,14 @@ RealtimeMediaSourceCenter::RealtimeMediaSourceCenter()
 
 RealtimeMediaSourceCenter::~RealtimeMediaSourceCenter() = default;
 
-void RealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler&& completionHandler, const String& audioDeviceID, const String& videoDeviceID, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints)
+void RealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler&& completionHandler, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints)
 {
     Vector<Ref<RealtimeMediaSource>> audioSources;
     Vector<Ref<RealtimeMediaSource>> videoSources;
     String invalidConstraint;
 
-    if (!audioDeviceID.isEmpty()) {
-        auto audioSource = audioFactory().createAudioCaptureSource(audioDeviceID, audioConstraints);
+    if (audioDevice) {
+        auto audioSource = audioFactory().createAudioCaptureSource(WTFMove(audioDevice), audioConstraints);
         if (audioSource)
             audioSources.append(audioSource.source());
         else {
@@ -111,8 +111,9 @@ void RealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler&& comple
             return;
         }
     }
-    if (!videoDeviceID.isEmpty()) {
-        auto videoSource = videoFactory().createVideoCaptureSource(videoDeviceID, videoConstraints);
+
+    if (videoDevice) {
+        auto videoSource = videoFactory().createVideoCaptureSource(WTFMove(videoDevice), videoConstraints);
         if (videoSource)
             videoSources.append(videoSource.source());
         else {
@@ -170,14 +171,14 @@ String RealtimeMediaSourceCenter::hashStringWithSalt(const String& id, const Str
     return SHA1::hexDigest(digest).data();
 }
 
-std::optional<CaptureDevice> RealtimeMediaSourceCenter::captureDeviceWithUniqueID(const String& uniqueID, const String& idHashSalt)
+CaptureDevice RealtimeMediaSourceCenter::captureDeviceWithUniqueID(const String& uniqueID, const String& idHashSalt)
 {
     for (auto& device : getMediaStreamDevices()) {
         if (uniqueID == hashStringWithSalt(device.persistentId(), idHashSalt))
             return device;
     }
 
-    return std::nullopt;
+    return { };
 }
 
 ExceptionOr<void> RealtimeMediaSourceCenter::setDeviceEnabled(const String& id, bool enabled)
@@ -221,7 +222,7 @@ void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandl
 {
     struct DeviceInfo {
         unsigned fitnessScore;
-        String id;
+        CaptureDevice device;
     };
 
     struct {
@@ -242,13 +243,13 @@ void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandl
         String invalidConstraint;
         CaptureSourceOrError sourceOrError;
         if (device.type() == CaptureDevice::DeviceType::Video && videoConstraints.isValid) {
-            auto sourceOrError = videoFactory().createVideoCaptureSource(device.persistentId(), nullptr);
+            auto sourceOrError = videoFactory().createVideoCaptureSource(device, nullptr);
             if (sourceOrError && sourceOrError.captureSource->supportsConstraints(videoConstraints, invalidConstraint))
-                videoDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device.persistentId()});
+                videoDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device});
         } else if (device.type() == CaptureDevice::DeviceType::Audio && audioConstraints.isValid) {
-            auto sourceOrError = audioFactory().createAudioCaptureSource(device.persistentId(), nullptr);
+            auto sourceOrError = audioFactory().createAudioCaptureSource(device, nullptr);
             if (sourceOrError && sourceOrError.captureSource->supportsConstraints(audioConstraints, invalidConstraint))
-                audioDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device.persistentId()});
+                audioDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device});
         }
 
         if (!invalidConstraint.isEmpty() && firstInvalidConstraint.isEmpty())
@@ -260,23 +261,23 @@ void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandl
         return;
     }
 
-    Vector<String> audioSourceIds;
+    Vector<CaptureDevice> audioDevices;
     if (!audioDeviceInfo.isEmpty()) {
-        audioSourceIds.reserveInitialCapacity(audioDeviceInfo.size());
         std::sort(audioDeviceInfo.begin(), audioDeviceInfo.end(), sortBasedOnFitnessScore);
-        for (auto& info : audioDeviceInfo)
-            audioSourceIds.uncheckedAppend(WTFMove(info.id));
+        audioDevices = WTF::map(audioDeviceInfo, [] (auto& info) {
+            return info.device;
+        });
     }
 
-    Vector<String> videoSourceIds;
+    Vector<CaptureDevice> videoDevices;
     if (!videoDeviceInfo.isEmpty()) {
-        videoSourceIds.reserveInitialCapacity(videoDeviceInfo.size());
         std::sort(videoDeviceInfo.begin(), videoDeviceInfo.end(), sortBasedOnFitnessScore);
-        for (auto& info : videoDeviceInfo)
-            videoSourceIds.uncheckedAppend(WTFMove(info.id));
+        videoDevices = WTF::map(videoDeviceInfo, [] (auto& info) {
+            return info.device;
+        });
     }
 
-    validHandler(WTFMove(audioSourceIds), WTFMove(videoSourceIds), WTFMove(deviceIdentifierHashSalt));
+    validHandler(WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(deviceIdentifierHashSalt));
 }
 
 void RealtimeMediaSourceCenter::setVideoCapturePageState(bool interrupted, bool pageMuted)

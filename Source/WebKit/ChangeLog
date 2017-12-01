@@ -1,3 +1,33 @@
+2017-12-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Use CaptureDevice instead of device ID to identify devices
+        https://bugs.webkit.org/show_bug.cgi?id=180206
+        <rdar://problem/35775758>
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted):
+        (WebKit::UserMediaPermissionRequestManagerProxy::grantAccess):
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::allow):
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::userMediaAccessWasGranted):
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::userMediaAccessWasGranted):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::createCaptureSource):
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+
 2017-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: link and partial links queries don't work in xhtml documents

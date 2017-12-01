@@ -21,6 +21,7 @@
 #include "UserMediaPermissionRequestProxy.h"
 
 #include "UserMediaPermissionRequestManagerProxy.h"
+#include <WebCore/CaptureDeviceManager.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
@@ -30,15 +31,15 @@ using namespace WebCore;
 
 namespace WebKit {
 
-UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, uint64_t mainFrameID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<String>&& audioDeviceUIDs, Vector<String>&& videoDeviceUIDs, String&& deviceIDHashSalt)
+UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, uint64_t mainFrameID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, String&& deviceIDHashSalt)
     : m_manager(&manager)
     , m_userMediaID(userMediaID)
     , m_mainFrameID(mainFrameID)
     , m_frameID(frameID)
     , m_userMediaDocumentSecurityOrigin(WTFMove(userMediaDocumentOrigin))
     , m_topLevelDocumentSecurityOrigin(WTFMove(topLevelDocumentOrigin))
-    , m_videoDeviceUIDs(WTFMove(videoDeviceUIDs))
-    , m_audioDeviceUIDs(WTFMove(audioDeviceUIDs))
+    , m_eligibleVideoDevices(WTFMove(videoDevices))
+    , m_eligibleAudioDevices(WTFMove(audioDevices))
     , m_deviceIdentifierHashSalt(WTFMove(deviceIDHashSalt))
 {
 }
@@ -49,7 +50,38 @@ void UserMediaPermissionRequestProxy::allow(const String& audioDeviceUID, const 
     if (!m_manager)
         return;
 
-    m_manager->userMediaAccessWasGranted(m_userMediaID, audioDeviceUID, videoDeviceUID);
+#if ENABLE(MEDIA_STREAM)
+    CaptureDevice audioDevice;
+    if (!audioDeviceUID.isEmpty()) {
+        audioDevice = RealtimeMediaSourceCenter::singleton().audioCaptureDeviceManager().deviceWithUID(audioDeviceUID, RealtimeMediaSource::Type::Audio);
+        ASSERT(audioDevice);
+    }
+
+    CaptureDevice videoDevice;
+    if (!videoDeviceUID.isEmpty()) {
+        videoDevice = RealtimeMediaSourceCenter::singleton().videoCaptureDeviceManager().deviceWithUID(videoDeviceUID, RealtimeMediaSource::Type::Video);
+        ASSERT(videoDevice);
+    }
+
+    m_manager->userMediaAccessWasGranted(m_userMediaID, WTFMove(audioDevice), WTFMove(videoDevice));
+#else
+    UNUSED_PARAM(audioDeviceUID);
+    UNUSED_PARAM(videoDeviceUID);
+#endif
+
+    invalidate();
+}
+
+void UserMediaPermissionRequestProxy::allow()
+{
+    ASSERT(m_manager);
+    if (!m_manager)
+        return;
+
+    auto audioDevice = !m_eligibleAudioDevices.isEmpty() ? m_eligibleAudioDevices[0] : CaptureDevice();
+    auto videoDevice = !m_eligibleVideoDevices.isEmpty() ? m_eligibleVideoDevices[0] : CaptureDevice();
+
+    m_manager->userMediaAccessWasGranted(m_userMediaID, WTFMove(audioDevice), WTFMove(videoDevice));
     invalidate();
 }
 
@@ -65,6 +97,20 @@ void UserMediaPermissionRequestProxy::deny(UserMediaAccessDenialReason reason)
 void UserMediaPermissionRequestProxy::invalidate()
 {
     m_manager = nullptr;
+}
+
+Vector<String> UserMediaPermissionRequestProxy::videoDeviceUIDs() const
+{
+    return WTF::map(m_eligibleVideoDevices, [] (auto& device) {
+        return device.persistentId();
+    });
+}
+
+Vector<String> UserMediaPermissionRequestProxy::audioDeviceUIDs() const
+{
+    return WTF::map(m_eligibleAudioDevices, [] (auto& device) {
+        return device.persistentId();
+    });
 }
 
 } // namespace WebKit

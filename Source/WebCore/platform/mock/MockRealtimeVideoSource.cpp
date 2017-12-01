@@ -52,13 +52,15 @@ namespace WebCore {
 class MockRealtimeVideoSourceFactory : public RealtimeMediaSource::VideoCaptureFactory
 {
 public:
-    CaptureSourceOrError createVideoCaptureSource(const String& deviceID, const MediaConstraints* constraints) final {
-        for (auto& device : MockRealtimeMediaSource::videoDevices()) {
-            if (device.persistentId() == deviceID)
-                return MockRealtimeVideoSource::create(deviceID, device.label(), constraints);
+    CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
+    {
+        for (auto& mockDevice : MockRealtimeMediaSource::videoDevices()) {
+            if (mockDevice.persistentId() == device.persistentId())
+                return MockRealtimeVideoSource::create(mockDevice.persistentId(), mockDevice.label(), constraints);
         }
         return { };
     }
+
 #if PLATFORM(IOS)
 private:
     void setVideoCapturePageState(bool interrupted, bool pageMuted)
