@@ -1,3 +1,12 @@
+2017-11-30  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Make LegacyCustomProtocolManager optional for network process
+        https://bugs.webkit.org/show_bug.cgi?id=176230
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-11-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix some NSOperationQueue leaks

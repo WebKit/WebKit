@@ -39,7 +39,9 @@
 #include "DownloadProxyMessages.h"
 #include "GamepadData.h"
 #include "HighPerformanceGraphicsUsageSampler.h"
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
 #include "LegacyCustomProtocolManagerMessages.h"
+#endif
 #include "LogInitialization.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
@@ -366,10 +368,12 @@ void WebProcessPool::setAutomationClient(std::unique_ptr<API::AutomationClient>&
 
 void WebProcessPool::setLegacyCustomProtocolManagerClient(std::unique_ptr<API::CustomProtocolManagerClient>&& customProtocolManagerClient)
 {
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     if (!customProtocolManagerClient)
         m_customProtocolManagerClient = std::make_unique<API::CustomProtocolManagerClient>();
     else
         m_customProtocolManagerClient = WTFMove(customProtocolManagerClient);
+#endif
 }
 
 void WebProcessPool::setMaximumNumberOfProcesses(unsigned maximumNumberOfProcesses)
@@ -1638,15 +1642,19 @@ void WebProcessPool::setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(
 
 void WebProcessPool::registerSchemeForCustomProtocol(const String& scheme)
 {
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     if (!globalURLSchemesWithCustomProtocolHandlers().contains(scheme))
         m_urlSchemesRegisteredForCustomProtocols.add(scheme);
     sendToNetworkingProcess(Messages::LegacyCustomProtocolManager::RegisterScheme(scheme));
+#endif
 }
 
 void WebProcessPool::unregisterSchemeForCustomProtocol(const String& scheme)
 {
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     m_urlSchemesRegisteredForCustomProtocols.remove(scheme);
     sendToNetworkingProcess(Messages::LegacyCustomProtocolManager::UnregisterScheme(scheme));
+#endif
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

@@ -32,7 +32,9 @@
 #include "ChildProcessMessages.h"
 #include "DataReference.h"
 #include "DownloadProxyMessages.h"
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
 #include "LegacyCustomProtocolManager.h"
+#endif
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcessCreationParameters.h"
@@ -114,7 +116,9 @@ NetworkProcess::NetworkProcess()
 
     addSupplement<AuthenticationManager>();
     addSupplement<WebCookieManager>();
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     addSupplement<LegacyCustomProtocolManager>();
+#endif
 }
 
 NetworkProcess::~NetworkProcess()
@@ -244,7 +248,9 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
         NetworkStorageSession::switchToNewTestingSession();
 
 #if USE(NETWORK_SESSION)
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     parameters.defaultSessionParameters.legacyCustomProtocolManager = supplement<LegacyCustomProtocolManager>();
+#endif
     SessionTracker::setSession(PAL::SessionID::defaultSessionID(), NetworkSession::create(WTFMove(parameters.defaultSessionParameters)));
 #endif
 

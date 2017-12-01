@@ -28,7 +28,9 @@
 
 #include "AuthenticationChallengeProxy.h"
 #include "DownloadProxyMessages.h"
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
 #include "LegacyCustomProtocolManagerProxyMessages.h"
+#endif
 #include "Logging.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
@@ -70,7 +72,9 @@ NetworkProcessProxy::NetworkProcessProxy(WebProcessPool& processPool)
     : ChildProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
     , m_processPool(processPool)
     , m_numPendingConnectionRequests(0)
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     , m_customProtocolManagerProxy(*this)
+#endif
     , m_throttler(*this, processPool.shouldTakeUIBackgroundAssertion())
 {
     connect();
@@ -235,7 +239,9 @@ void NetworkProcessProxy::didClose(IPC::Connection&)
 {
     if (m_downloadProxyMap)
         m_downloadProxyMap->processDidClose();
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     m_customProtocolManagerProxy.invalidate();
+#endif
 
     m_tokenForHoldingLockedFiles = nullptr;
 

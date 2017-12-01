@@ -61,6 +61,8 @@ list(APPEND StorageProcess_SOURCES
 )
 
 list(APPEND WebKit_SOURCES
+    NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp
+
     NetworkProcess/CustomProtocols/soup/LegacyCustomProtocolManagerSoup.cpp
 
     NetworkProcess/cache/NetworkCacheCodersSoup.cpp
@@ -209,6 +211,8 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/Launcher/glib/ProcessLauncherGLib.cpp
 
+    UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp
+
     UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
     UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
 
@@ -276,7 +280,11 @@ list(APPEND WebKit_SOURCES
 )
 
 list(APPEND WebKit_MESSAGES_IN_FILES
+    NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in
+
     UIProcess/API/wpe/CompositingManagerProxy.messages.in
+
+    UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in
 )
 
 list(APPEND WebKit_DERIVED_SOURCES
