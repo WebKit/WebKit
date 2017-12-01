@@ -153,9 +153,14 @@ static inline bool hasAnyArrayStorage(IndexingType indexingType)
     return static_cast<uint8_t>(indexingType & IndexingShapeMask) >= ArrayStorageShape;
 }
 
-static inline bool shouldUseSlowPut(IndexingType indexingType)
+static inline bool hasSlowPutArrayStorage(IndexingType indexingType)
 {
     return (indexingType & IndexingShapeMask) == SlowPutArrayStorageShape;
+}
+
+static inline bool shouldUseSlowPut(IndexingType indexingType)
+{
+    return hasSlowPutArrayStorage(indexingType);
 }
 
 inline IndexingType indexingTypeForValue(JSValue value)

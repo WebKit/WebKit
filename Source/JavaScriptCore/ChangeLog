@@ -1,3 +1,25 @@
+2017-12-01  Saam Barati  <sbarati@apple.com>
+
+        Having a bad time needs to handle ArrayClass indexing type as well
+        https://bugs.webkit.org/show_bug.cgi?id=180274
+        <rdar://problem/35667869>
+
+        Reviewed by Keith Miller and Mark Lam.
+
+        We need to make sure to transition ArrayClass to SlowPutArrayStorage as well.
+        Otherwise, we'll end up with the wrong Structure, which will lead us to not
+        adhere to the spec. The bug was that we were not considering ArrayClass inside 
+        hasBrokenIndexing. This patch rewrites that function to automatically opt
+        in non-empty indexing types as broken, instead of having to opt out all
+        non-empty indexing types besides SlowPutArrayStorage.
+
+        * runtime/IndexingType.h:
+        (JSC::hasSlowPutArrayStorage):
+        (JSC::shouldUseSlowPut):
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::switchToSlowPutArrayStorage):
+
 2017-12-01  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: stack trace improvement follow-ups

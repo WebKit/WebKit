@@ -1,3 +1,16 @@
+2017-12-01  Saam Barati  <sbarati@apple.com>
+
+        Having a bad time needs to handle ArrayClass indexing type as well
+        https://bugs.webkit.org/show_bug.cgi?id=180274
+        <rdar://problem/35667869>
+
+        Reviewed by Keith Miller and Mark Lam.
+
+        * stress/array-prototype-slow-put-having-a-bad-time-2.js: Added.
+        (assert):
+        * stress/array-prototype-slow-put-having-a-bad-time.js: Added.
+        (assert):
+
 2017-12-01  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: restore cached stack limit after out-call
