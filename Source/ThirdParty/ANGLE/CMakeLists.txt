@@ -24,12 +24,13 @@ set(ANGLEEGL_COMPILE_DEFINITIONS
 set(ANGLEGLESv2_SOURCES
     src/libGLESv2/entry_points_egl.cpp
     src/libGLESv2/entry_points_egl_ext.cpp
-    src/libGLESv2/entry_points_gles_2_0.cpp
+    src/libGLESv2/entry_points_gles_2_0_autogen.cpp
     src/libGLESv2/entry_points_gles_2_0_ext.cpp
-    src/libGLESv2/entry_points_gles_3_0.cpp
-    src/libGLESv2/entry_points_gles_3_1.cpp
+    src/libGLESv2/entry_points_gles_3_0_autogen.cpp
+    src/libGLESv2/entry_points_gles_3_1_autogen.cpp
     src/libGLESv2/global_state.cpp
     src/libGLESv2/libGLESv2.cpp
+    src/libGLESv2/proc_table_autogen.cpp
 )
 
 set(ANGLEGLESv2_COMPILE_DEFINITIONS

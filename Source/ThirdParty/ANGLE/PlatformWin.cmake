@@ -121,7 +121,6 @@ list(APPEND ANGLE_SOURCES
     src/libANGLE/renderer/d3d/TextureD3D.cpp
     src/libANGLE/renderer/d3d/VertexBuffer.cpp
     src/libANGLE/renderer/d3d/VertexDataManager.cpp
-    src/third_party/murmurhash/MurmurHash3.cpp
     src/third_party/systeminfo/SystemInfo.cpp
 )
 
