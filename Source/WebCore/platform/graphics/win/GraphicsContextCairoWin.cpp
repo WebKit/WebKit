@@ -80,6 +80,7 @@ void GraphicsContext::platformInit(HDC dc, bool hasAlpha)
     cairo_t* cr = createCairoContextWithHDC(dc, hasAlpha);
 
     m_data = new GraphicsContextPlatformPrivate(std::make_unique<PlatformContextCairo>(cr));
+    m_data->platformContext.setGraphicsContextPrivate(m_data);
     m_data->m_hdc = dc;
     if (platformContext()->cr()) {
         // Make sure the context starts in sync with our state.
