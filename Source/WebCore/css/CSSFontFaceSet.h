@@ -46,9 +46,9 @@ public:
 
 class CSSFontFaceSet final : public RefCounted<CSSFontFaceSet>, public CSSFontFace::Client {
 public:
-    static Ref<CSSFontFaceSet> create()
+    static Ref<CSSFontFaceSet> create(CSSFontSelector* owningFontSelector = nullptr)
     {
-        return adoptRef(*new CSSFontFaceSet());
+        return adoptRef(*new CSSFontFaceSet(owningFontSelector));
     }
     ~CSSFontFaceSet();
 
@@ -75,14 +75,14 @@ public:
 
     bool hasActiveFontFaces() { return status() == Status::Loading; }
 
-    ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> matchingFaces(const String& font, const String& text);
+    ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> matchingFacesExcludingPreinstalledFonts(const String& font, const String& text);
 
     // CSSFontFace::Client needs to be able to be held in a RefPtr.
     void ref() final { RefCounted::ref(); }
     void deref() final { RefCounted::deref(); }
 
 private:
-    CSSFontFaceSet();
+    CSSFontFaceSet(CSSFontSelector*);
 
     void removeFromFacesLookupTable(const CSSFontFace&, const CSSValueList& familiesToSearchFor);
     void addToFacesLookupTable(CSSFontFace&);
@@ -107,6 +107,7 @@ private:
     size_t m_facesPartitionIndex { 0 }; // All entries in m_faces before this index are CSS-connected.
     Status m_status { Status::Loaded };
     HashSet<CSSFontFaceSetClient*> m_clients;
+    CSSFontSelector* m_owningFontSelector;
     unsigned m_activeCount { 0 };
 };
 

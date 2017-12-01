@@ -1,3 +1,13 @@
+2017-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Free FontFaceSets may include fonts that were never actually added to them
+        https://bugs.webkit.org/show_bug.cgi?id=180164
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/font-face-api-preinstalled-expected.txt: Added.
+        * fast/text/font-face-api-preinstalled.html: Added.
+
 2017-12-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update TestExpectations for various editing tests on iOS.

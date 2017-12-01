@@ -125,7 +125,7 @@ void FontFaceSet::clear()
 
 void FontFaceSet::load(const String& font, const String& text, LoadPromise&& promise)
 {
-    auto matchingFacesResult = m_backing->matchingFaces(font, text);
+    auto matchingFacesResult = m_backing->matchingFacesExcludingPreinstalledFonts(font, text);
     if (matchingFacesResult.hasException()) {
         promise.reject(matchingFacesResult.releaseException());
         return;
