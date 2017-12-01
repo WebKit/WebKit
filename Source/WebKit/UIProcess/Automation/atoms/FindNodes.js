@@ -35,18 +35,12 @@ function(strategy, ancestorElement, query, firstResultOnly, timeoutDuration, cal
         strategy = "css selector";
         query = "[name=\"" + escape(query) + "\"]";
         break;
-    case "link text":
-        strategy = "xpath";
-        query = ".//a[@href][normalize-space(descendant-or-self::text()) = \"" + escape(query) + "\"]";
-        break;
-    case "partial link text":
-        strategy = "xpath";
-        query = ".//a[@href][contains(normalize-space(descendant-or-self::text()), \"" + escape(query) + "\")]";
-        break;
     }
 
     switch (strategy) {
     case "css selector":
+    case "link text":
+    case "partial link text":
     case "tag name":
     case "class name":
     case "xpath":
@@ -69,6 +63,32 @@ function(strategy, ancestorElement, query, firstResultOnly, timeoutDuration, cal
                 if (firstResultOnly)
                     return ancestorElement.querySelector(query) || null;
                 return Array.from(ancestorElement.querySelectorAll(query));
+
+            case "link text":
+                let linkTextResult = [];
+                for (let link of ancestorElement.getElementsByTagName("a")) {
+                    if (link.text.trim() == query) {
+                        linkTextResult.push(link);
+                        if (firstResultOnly)
+                            break;
+                    }
+                }
+                if (firstResultOnly)
+                    return linkTextResult[0] || null;
+                return linkTextResult;
+
+            case "partial link text":
+                let partialLinkResult = [];
+                for (let link of ancestorElement.getElementsByTagName("a")) {
+                    if (link.text.includes(query)) {
+                        partialLinkResult.push(link);
+                        if (firstResultOnly)
+                            break;
+                    }
+                }
+                if (firstResultOnly)
+                    return partialLinkResult[0] || null;
+                return partialLinkResult;
 
             case "tag name":
                 let tagNameResult = ancestorElement.getElementsByTagName(query);

@@ -1,3 +1,27 @@
+2017-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: link and partial links queries don't work in xhtml documents
+        https://bugs.webkit.org/show_bug.cgi?id=180191
+
+        Reviewed by Brian Burg.
+
+        We convert the queries to use xpath, which works for html documents, but it doesn't work for xhtml. In case of
+        xhtml we would need to provide a namespace resolver and elements would need to be prefixed with 'xhtml:'. It's
+        easier to simply iterate the link elements and compare the text.
+
+        Fixes: imported/w3c/webdriver/tests/retrieval/find_element_from_element.py::test_xhtml_namespace[link text-full link text]
+               imported/w3c/webdriver/tests/retrieval/find_element_from_element.py::test_xhtml_namespace[partial link text-link text]
+               imported/w3c/webdriver/tests/retrieval/find_element_from_elements.py::test_xhtml_namespace[link text-full link text]
+               imported/w3c/webdriver/tests/retrieval/find_element_from_elements.py::test_xhtml_namespace[partial link text-link text]
+               imported/w3c/webdriver/tests/retrieval/find_element.py::test_xhtml_namespace[link text-full link text]
+               imported/w3c/webdriver/tests/retrieval/find_element.py::test_xhtml_namespace[partial link text-link text]
+               imported/w3c/webdriver/tests/retrieval/find_elements.py::test_xhtml_namespace[link text-full link text]
+               imported/w3c/webdriver/tests/retrieval/find_elements.py::test_xhtml_namespace[partial link text-link text]
+
+        * UIProcess/Automation/atoms/FindNodes.js:
+        (switch):
+        (tryToFindNode):
+
 2017-11-30  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r224791): cookies are shared between ephemeral sessions in the same process pool
