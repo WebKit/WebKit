@@ -90,6 +90,10 @@ class VoidCallback;
 class WebGLRenderingContext;
 class XMLHttpRequest;
 
+#if ENABLE(SERVICE_WORKER)
+class ServiceWorker;
+#endif
+
 class Internals final : public RefCounted<Internals>, private ContextDestructionObserver
 #if ENABLE(MEDIA_STREAM)
     , private RealtimeMediaSource::Observer
@@ -623,6 +627,7 @@ public:
     Ref<FetchEvent> createBeingDispatchedFetchEvent(ScriptExecutionContext&);
     using HasRegistrationPromise = DOMPromiseDeferred<IDLBoolean>;
     void hasServiceWorkerRegistration(const String& clientURL, HasRegistrationPromise&&);
+    void terminateServiceWorker(ServiceWorker&);
 #endif
 
 #if ENABLE(APPLE_PAY)

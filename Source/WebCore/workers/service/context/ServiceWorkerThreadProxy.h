@@ -56,6 +56,9 @@ public:
     ServiceWorkerThread& thread() { return m_serviceWorkerThread.get(); }
     ServiceWorkerInspectorProxy& inspectorProxy() { return m_inspectorProxy; }
 
+    bool isTerminatingOrTerminated() const { return m_isTerminatingOrTerminated; }
+    void setTerminatingOrTerminated(bool terminating) { m_isTerminatingOrTerminated = terminating; }
+
 private:
     WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, const ServiceWorkerContextData&, PAL::SessionID, CacheStorageProvider&);
 
@@ -74,6 +77,8 @@ private:
     CacheStorageProvider& m_cacheStorageProvider;
     RefPtr<CacheStorageConnection> m_cacheStorageConnection;
     PAL::SessionID m_sessionID;
+    bool m_isTerminatingOrTerminated { false };
+
     ServiceWorkerInspectorProxy m_inspectorProxy;
 #if ENABLE(REMOTE_INSPECTOR)
     std::unique_ptr<ServiceWorkerDebuggable> m_remoteDebuggable;

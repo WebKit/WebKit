@@ -31,7 +31,8 @@
     SecureContext,
     Exposed=(Window,ServiceWorker),
     Conditional=SERVICE_WORKER,
-    EnabledAtRuntime=ServiceWorker
+    EnabledAtRuntime=ServiceWorker,
+    ExportMacro=WEBCORE_EXPORT
 ] interface ServiceWorker : EventTarget {
     readonly attribute USVString scriptURL;
     readonly attribute ServiceWorkerState state;

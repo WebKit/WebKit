@@ -118,11 +118,22 @@ void WebSWServerConnection::updateWorkerStateInClient(ServiceWorkerIdentifier wo
 
 void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier, const ResourceRequest& request, const FetchOptions& options, const IPC::FormDataReference& formData)
 {
+    // It's possible this specific worker cannot be re-run (e.g. its registration has been removed)
+    if (serviceWorkerIdentifier && !server().invokeRunServiceWorker(*serviceWorkerIdentifier))
+        return;
+
+    // FIXME: If we don't have a ServiceWorkerIdentifier here then we need to create and run the appropriate Service Worker,
+    // but it's unclear that we have enough information here to do that.
+
     sendToContextProcess(Messages::WebSWContextManagerConnection::StartFetch { identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options, formData });
 }
 
 void WebSWServerConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationServiceWorkerIdentifier, const IPC::DataReference& message, DocumentIdentifier sourceContextIdentifier, ServiceWorkerClientData&& sourceData)
 {
+    // It's possible this specific worker cannot be re-run (e.g. its registration has been removed)
+    if (!server().invokeRunServiceWorker(destinationServiceWorkerIdentifier))
+        return;
+
     ServiceWorkerClientIdentifier sourceIdentifier { identifier(), sourceContextIdentifier };
     sendToContextProcess(Messages::WebSWContextManagerConnection::PostMessageToServiceWorkerGlobalScope { destinationServiceWorkerIdentifier, message, sourceIdentifier, WTFMove(sourceData) });
 }

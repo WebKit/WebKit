@@ -60,6 +60,14 @@ SWServerWorker::~SWServerWorker()
     ASSERT_UNUSED(taken, taken == this);
 }
 
+ServiceWorkerContextData SWServerWorker::contextData() const
+{
+    auto* registration = m_server.getRegistration(m_registrationKey);
+    ASSERT(registration);
+
+    return { std::nullopt, registration->data(), m_data.identifier, m_script, m_data.scriptURL, m_data.type };
+}
+
 void SWServerWorker::terminate()
 {
     m_server.terminateWorker(*this);

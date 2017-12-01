@@ -29,6 +29,7 @@
 
 #include "Connection.h"
 #include "MessageReceiver.h"
+#include "WebSWContextManagerConnectionMessages.h"
 #include <WebCore/SWContextManager.h>
 #include <WebCore/ServiceWorkerTypes.h>
 
@@ -51,6 +52,7 @@ public:
     WebSWContextManagerConnection(Ref<IPC::Connection>&&, uint64_t pageID, const WebPreferencesStore&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
 
 private:
     void updatePreferences(const WebPreferencesStore&);
@@ -70,6 +72,7 @@ private:
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier);
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier);
     void terminateWorker(WebCore::ServiceWorkerIdentifier);
+    void syncTerminateWorker(WebCore::ServiceWorkerIdentifier, Ref<Messages::WebSWContextManagerConnection::SyncTerminateWorker::DelayedReply>&&);
 
     Ref<IPC::Connection> m_connectionToStorageProcess;
     uint64_t m_pageID { 0 };

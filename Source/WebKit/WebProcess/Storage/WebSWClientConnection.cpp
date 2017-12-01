@@ -190,6 +190,11 @@ void WebSWClientConnection::connectionToServerLost()
     clearPendingJobs();
 }
 
+void WebSWClientConnection::syncTerminateWorker(ServiceWorkerIdentifier identifier)
+{
+    sendSync(Messages::WebSWServerConnection::SyncTerminateWorker(identifier), Messages::WebSWServerConnection::SyncTerminateWorker::Reply());
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(SERVICE_WORKER)

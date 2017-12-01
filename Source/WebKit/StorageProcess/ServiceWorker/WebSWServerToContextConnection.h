@@ -59,6 +59,7 @@ private:
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier) final;
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier) final;
     void terminateWorker(WebCore::ServiceWorkerIdentifier) final;
+    void syncTerminateWorker(WebCore::ServiceWorkerIdentifier) final;
 
     Ref<IPC::Connection> m_ipcConnection;
     

@@ -53,7 +53,7 @@ public:
 
     explicit operator bool() const { return !!m_function; }
 
-    Out operator()(In... in)
+    Out operator()(In... in) const
     {
         ASSERT_WITH_MESSAGE(m_function, "Completion handler should not be called more than once");
         auto function = WTFMove(m_function);
@@ -61,7 +61,7 @@ public:
     }
 
 private:
-    WTF::Function<Out(In...)> m_function;
+    mutable WTF::Function<Out(In...)> m_function;
 };
 
 } // namespace WTF

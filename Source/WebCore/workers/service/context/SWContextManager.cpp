@@ -69,8 +69,8 @@ ServiceWorkerThreadProxy* SWContextManager::serviceWorkerThreadProxy(ServiceWork
 void SWContextManager::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destination, Ref<SerializedScriptValue>&& message, ServiceWorkerClientIdentifier sourceIdentifier, ServiceWorkerClientData&& sourceData)
 {
     auto* serviceWorker = m_workerMap.get(destination);
-    if (!serviceWorker)
-        return;
+    ASSERT(serviceWorker);
+    ASSERT(!serviceWorker->isTerminatingOrTerminated());
 
     // FIXME: We should pass valid MessagePortChannels.
     serviceWorker->thread().postMessageToServiceWorkerGlobalScope(WTFMove(message), nullptr, sourceIdentifier, WTFMove(sourceData));
@@ -94,15 +94,27 @@ void SWContextManager::fireActivateEvent(ServiceWorkerIdentifier identifier)
     serviceWorker->thread().fireActivateEvent();
 }
 
-void SWContextManager::terminateWorker(ServiceWorkerIdentifier identifier)
+void SWContextManager::terminateWorker(ServiceWorkerIdentifier identifier, Function<void()>&& completionHandler)
 {
     auto* serviceWorker = m_workerMap.get(identifier);
     if (!serviceWorker)
         return;
 
-    serviceWorker->thread().stop([identifier] {
+    serviceWorker->setTerminatingOrTerminated(true);
+
+    serviceWorker->thread().stop([this, identifier, completionHandler = WTFMove(completionHandler)] {
         if (auto* connection = SWContextManager::singleton().connection())
             connection->workerTerminated(identifier);
+
+        if (completionHandler)
+            completionHandler();
+        
+        auto worker = m_workerMap.take(identifier);
+        ASSERT(worker);
+        
+        // Spin the runloop before releasing the worker thread proxy, as there would otherwise be
+        // a race towards its destruction.
+        callOnMainThread([worker = WTFMove(worker)] { });
     });
 }
 

@@ -66,6 +66,8 @@ public:
 
     void connectionToServerLost();
 
+    void syncTerminateWorker(WebCore::ServiceWorkerIdentifier) final;
+
 private:
     WebSWClientConnection(IPC::Connection&, PAL::SessionID);
 

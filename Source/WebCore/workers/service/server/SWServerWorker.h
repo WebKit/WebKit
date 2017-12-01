@@ -39,6 +39,7 @@ namespace WebCore {
 class SWServer;
 class SWServerRegistration;
 enum class WorkerType;
+struct ServiceWorkerContextData;
 struct ServiceWorkerJobDataIdentifier;
 
 class SWServerWorker : public RefCounted<SWServerWorker> {
@@ -53,7 +54,16 @@ public:
 
     void terminate();
 
-    SWServer& server();
+    enum class State {
+        Running,
+        Terminating,
+        NotRunning,
+    };
+    bool isRunning() const { return m_state == State::Running; }
+    bool isTerminating() const { return m_state == State::Terminating; }
+    void setState(State state) { m_state = state; }
+
+    SWServer& server() { return m_server; }
     const ServiceWorkerRegistrationKey& registrationKey() const { return m_registrationKey; }
     const URL& scriptURL() const { return m_data.scriptURL; }
     const String& script() const { return m_script; }
@@ -77,6 +87,7 @@ public:
     WEBCORE_EXPORT static SWServerWorker* existingWorkerForIdentifier(ServiceWorkerIdentifier);
 
     const ServiceWorkerData& data() const { return m_data; }
+    ServiceWorkerContextData contextData() const;
 
 private:
     SWServerWorker(SWServer&, SWServerRegistration&, SWServerToContextConnectionIdentifier, const URL&, const String& script, WorkerType, ServiceWorkerIdentifier);
@@ -87,6 +98,7 @@ private:
     ServiceWorkerData m_data;
     String m_script;
     bool m_hasPendingEvents { false };
+    State m_state { State::NotRunning };
 };
 
 } // namespace WebCore

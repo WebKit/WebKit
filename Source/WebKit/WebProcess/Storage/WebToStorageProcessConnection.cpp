@@ -86,6 +86,19 @@ void WebToStorageProcessConnection::didReceiveMessage(IPC::Connection& connectio
     ASSERT_NOT_REACHED();
 }
 
+void WebToStorageProcessConnection::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+{
+#if ENABLE(SERVICE_WORKER)
+    if (decoder.messageReceiverName() == Messages::WebSWContextManagerConnection::messageReceiverName()) {
+        ASSERT(SWContextManager::singleton().connection());
+        if (auto* contextManagerConnection = SWContextManager::singleton().connection())
+            static_cast<WebSWContextManagerConnection&>(*contextManagerConnection).didReceiveSyncMessage(connection, decoder, replyEncoder);
+        return;
+    }
+#endif
+    ASSERT_NOT_REACHED();
+}
+
 void WebToStorageProcessConnection::didClose(IPC::Connection& connection)
 {
 #if ENABLE(INDEXED_DATABASE)

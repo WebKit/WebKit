@@ -87,6 +87,13 @@ SWServer::~SWServer()
     allServers().remove(this);
 }
 
+SWServerWorker* SWServer::workerByID(ServiceWorkerIdentifier identifier) const
+{
+    auto* worker = SWServerWorker::existingWorkerForIdentifier(identifier);
+    ASSERT(!worker || &worker->server() == this);
+    return worker;
+}
+
 SWServerRegistration* SWServer::getRegistration(const ServiceWorkerRegistrationKey& registrationKey)
 {
     return m_registrations.get(registrationKey);
@@ -186,6 +193,12 @@ void SWServer::Connection::serviceWorkerStartedControllingClient(ServiceWorkerId
 void SWServer::Connection::serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier serviceWorkerIdentifier, ServiceWorkerRegistrationIdentifier registrationIdentifier, DocumentIdentifier contextIdentifier)
 {
     m_server.serviceWorkerStoppedControllingClient(*this, serviceWorkerIdentifier, registrationIdentifier, contextIdentifier);
+}
+
+void SWServer::Connection::syncTerminateWorker(ServiceWorkerIdentifier identifier)
+{
+    if (auto* worker = m_server.workerByID(identifier))
+        m_server.syncTerminateWorker(*worker);
 }
 
 SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore)
@@ -299,12 +312,6 @@ void SWServer::didFinishActivation(SWServerWorker& worker)
         SWServerJobQueue::didFinishActivation(*registration, worker.identifier());
 }
 
-void SWServer::workerContextTerminated(SWServerWorker& worker)
-{
-    auto result = m_workersByID.remove(worker.identifier());
-    ASSERT_UNUSED(result, result);
-}
-
 void SWServer::didResolveRegistrationPromise(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey)
 {
     ASSERT_UNUSED(connection, m_connections.contains(connection.identifier()));
@@ -387,20 +394,83 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
     auto* registration = m_registrations.get(data.registration.key);
     RELEASE_ASSERT(registration);
 
-    auto result = m_workersByID.add(data.serviceWorkerIdentifier, SWServerWorker::create(*this, *registration, connection->identifier(), data.scriptURL, data.script, data.workerType, data.serviceWorkerIdentifier));
-    ASSERT_UNUSED(result, result.isNewEntry);
+    auto result = m_runningOrTerminatingWorkers.add(data.serviceWorkerIdentifier, SWServerWorker::create(*this, *registration, connection->identifier(), data.scriptURL, data.script, data.workerType, data.serviceWorkerIdentifier));
+    ASSERT(result.isNewEntry);
+
+    result.iterator->value->setState(SWServerWorker::State::Running);
 
     connection->installServiceWorkerContext(data);
 }
 
+bool SWServer::invokeRunServiceWorker(ServiceWorkerIdentifier identifier)
+{
+    if (auto* worker = m_runningOrTerminatingWorkers.get(identifier)) {
+        if (worker->isRunning())
+            return true;
+    }
+
+    // Nobody should have a ServiceWorkerIdentifier for a SWServerWorker that doesn't exist.
+    auto* worker = workerByID(identifier);
+    ASSERT(worker);
+
+    // If the registration for a working has been removed then the request to run
+    // the worker is moot.
+    if (!getRegistration(worker->registrationKey()))
+        return false;
+
+    m_runningOrTerminatingWorkers.add(identifier, *worker);
+    worker->setState(SWServerWorker::State::Running);
+
+    auto* connection = SWServerToContextConnection::globalServerToContextConnection();
+    ASSERT(connection);
+    connection->installServiceWorkerContext(worker->contextData());
+    
+    return true;
+}
 
 void SWServer::terminateWorker(SWServerWorker& worker)
 {
+    terminateWorkerInternal(worker, Asynchronous);
+}
+
+void SWServer::syncTerminateWorker(SWServerWorker& worker)
+{
+    terminateWorkerInternal(worker, Synchronous);
+}
+
+void SWServer::terminateWorkerInternal(SWServerWorker& worker, TerminationMode mode)
+{
     auto* connection = SWServerToContextConnection::connectionForIdentifier(worker.contextConnectionIdentifier());
-    if (connection)
-        connection->terminateWorker(worker.identifier());
-    else
+    if (!connection) {
         LOG_ERROR("Request to terminate a worker whose context connection does not exist");
+        return;
+    }
+
+    ASSERT(m_runningOrTerminatingWorkers.get(worker.identifier()) == &worker);
+    ASSERT(!worker.isTerminating());
+
+    worker.setState(SWServerWorker::State::Terminating);
+
+    switch (mode) {
+    case Asynchronous:
+        connection->terminateWorker(worker.identifier());
+        break;
+    case Synchronous:
+        connection->syncTerminateWorker(worker.identifier());
+        break;
+    };
+}
+
+void SWServer::workerContextTerminated(SWServerWorker& worker)
+{
+    ASSERT(worker.isTerminating());
+
+    worker.setState(SWServerWorker::State::NotRunning);
+
+    // At this point if no registrations are referencing the worker then it will be destroyed,
+    // removing itself from the m_workersByID map.
+    auto result = m_runningOrTerminatingWorkers.take(worker.identifier());
+    ASSERT_UNUSED(result, result && result->ptr() == &worker);
 }
 
 void SWServer::fireInstallEvent(SWServerWorker& worker)

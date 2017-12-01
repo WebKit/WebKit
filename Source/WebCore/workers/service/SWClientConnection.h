@@ -73,6 +73,7 @@ public:
     virtual void postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationIdentifier, Ref<SerializedScriptValue>&&, DocumentIdentifier sourceContextIdentifier, ServiceWorkerClientData&& source) = 0;
     virtual SWServerConnectionIdentifier serverConnectionIdentifier() const = 0;
     virtual bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOrigin&) const = 0;
+    virtual void syncTerminateWorker(ServiceWorkerIdentifier) = 0;
 
     virtual void serviceWorkerStartedControllingClient(ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier, DocumentIdentifier) = 0;
     virtual void serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier, DocumentIdentifier) = 0;

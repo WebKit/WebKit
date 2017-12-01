@@ -90,6 +90,7 @@ public:
         WEBCORE_EXPORT void removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier);
         WEBCORE_EXPORT void serviceWorkerStartedControllingClient(ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier, DocumentIdentifier);
         WEBCORE_EXPORT void serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier, DocumentIdentifier);
+        WEBCORE_EXPORT void syncTerminateWorker(ServiceWorkerIdentifier);
 
     private:
         // Messages to the client WebProcess
@@ -108,7 +109,6 @@ public:
     WEBCORE_EXPORT void clearAll();
     WEBCORE_EXPORT void clear(const SecurityOrigin&);
 
-
     SWServerRegistration* getRegistration(const ServiceWorkerRegistrationKey&);
     void addRegistration(std::unique_ptr<SWServerRegistration>&&);
     void removeRegistration(const ServiceWorkerRegistrationKey&);
@@ -125,9 +125,10 @@ public:
 
     void updateWorker(Connection&, const ServiceWorkerJobDataIdentifier&, SWServerRegistration&, const URL&, const String& script, WorkerType);
     void terminateWorker(SWServerWorker&);
+    void syncTerminateWorker(SWServerWorker&);
     void fireInstallEvent(SWServerWorker&);
     void fireActivateEvent(SWServerWorker&);
-    SWServerWorker* workerByID(ServiceWorkerIdentifier identifier) const { return m_workersByID.get(identifier); }
+    WEBCORE_EXPORT SWServerWorker* workerByID(ServiceWorkerIdentifier) const;
     
     Connection* getConnection(SWServerConnectionIdentifier identifier) { return m_connections.get(identifier); }
     SWOriginStore& originStore() { return m_originStore; }
@@ -144,6 +145,8 @@ public:
 
     WEBCORE_EXPORT void registerServiceWorkerClient(ClientOrigin&&, ServiceWorkerClientIdentifier, ServiceWorkerClientData&&);
     WEBCORE_EXPORT void unregisterServiceWorkerClient(const ClientOrigin&, ServiceWorkerClientIdentifier);
+
+    WEBCORE_EXPORT bool invokeRunServiceWorker(ServiceWorkerIdentifier);
 
 private:
     void registerConnection(Connection&);
@@ -165,12 +168,18 @@ private:
 
     void installContextData(const ServiceWorkerContextData&);
 
+    enum TerminationMode {
+        Synchronous,
+        Asynchronous,
+    };
+    void terminateWorkerInternal(SWServerWorker&, TerminationMode);
+
     HashMap<SWServerConnectionIdentifier, Connection*> m_connections;
     HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerRegistration>> m_registrations;
     HashMap<ServiceWorkerRegistrationIdentifier, SWServerRegistration*> m_registrationsByID;
     HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerJobQueue>> m_jobQueues;
 
-    HashMap<ServiceWorkerIdentifier, Ref<SWServerWorker>> m_workersByID;
+    HashMap<ServiceWorkerIdentifier, Ref<SWServerWorker>> m_runningOrTerminatingWorkers;
 
     struct ClientInformation {
         ServiceWorkerClientIdentifier identifier;

@@ -40,6 +40,8 @@ messages -> WebSWServerConnection {
     GetRegistrations(uint64_t serviceRegistrationMatchRequestIdentifier, struct WebCore::SecurityOriginData topOrigin, WebCore::URL clientURL)
     RegisterServiceWorkerClient(struct WebCore::SecurityOriginData topOrigin, WebCore::DocumentIdentifier identifier, struct WebCore::ServiceWorkerClientData data)
     UnregisterServiceWorkerClient(WebCore::DocumentIdentifier identifier)
+
+    SyncTerminateWorker(WebCore::ServiceWorkerIdentifier workerIdentifier) -> ()
 }
 
 #endif // ENABLE(SERVICE_WORKER)

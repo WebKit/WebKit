@@ -132,6 +132,7 @@
 #include "ScrollingMomentumCalculator.h"
 #include "SecurityOrigin.h"
 #include "SerializedScriptValue.h"
+#include "ServiceWorker.h"
 #include "ServiceWorkerProvider.h"
 #include "ServiceWorkerRegistrationData.h"
 #include "Settings.h"
@@ -4269,6 +4270,14 @@ void Internals::hasServiceWorkerRegistration(const String& clientURL, HasRegistr
     return ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(contextDocument()->sessionID()).matchRegistration(contextDocument()->topOrigin(), parsedURL, [promise = WTFMove(promise)] (auto&& result) mutable {
         promise.resolve(!!result);
     });
+}
+
+void Internals::terminateServiceWorker(ServiceWorker& worker)
+{
+    if (!contextDocument())
+        return;
+
+    ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(contextDocument()->sessionID()).syncTerminateWorker(worker.identifier());
 }
 #endif
 
