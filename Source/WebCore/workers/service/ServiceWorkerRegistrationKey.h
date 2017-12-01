@@ -35,7 +35,7 @@ namespace WebCore {
 class ServiceWorkerRegistrationKey {
 public:
     ServiceWorkerRegistrationKey() = default;
-    WEBCORE_EXPORT ServiceWorkerRegistrationKey(URL&& clientURL, SecurityOriginData&& topOrigin, URL&& scope);
+    WEBCORE_EXPORT ServiceWorkerRegistrationKey(SecurityOriginData&& topOrigin, URL&& scope);
 
     static ServiceWorkerRegistrationKey emptyKey();
     unsigned hash() const;
@@ -46,8 +46,8 @@ public:
     size_t scopeLength() const { return m_scope.string().length(); }
 
     const SecurityOriginData& topOrigin() const { return m_topOrigin; }
-    const URL& clientCreationURL() const { return m_clientCreationURL; }
-    void setClientCreationURL(URL&& url) { m_clientCreationURL = WTFMove(url); }
+    const URL& scope() const { return m_scope; }
+    void setScope(URL&& scope) { m_scope = WTFMove(scope); }
 
     ServiceWorkerRegistrationKey isolatedCopy() const;
 
@@ -59,7 +59,6 @@ public:
 #endif
 
 private:
-    URL m_clientCreationURL;
     SecurityOriginData m_topOrigin;
     URL m_scope;
 };
@@ -67,16 +66,12 @@ private:
 template<class Encoder>
 void ServiceWorkerRegistrationKey::encode(Encoder& encoder) const
 {
-    encoder << m_clientCreationURL << m_topOrigin << m_scope;
+    encoder << m_topOrigin << m_scope;
 }
 
 template<class Decoder>
 std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::decode(Decoder& decoder)
 {
-    URL clientCreationURL;
-    if (!decoder.decode(clientCreationURL))
-        return std::nullopt;
-
     std::optional<SecurityOriginData> topOrigin;
     decoder >> topOrigin;
     if (!topOrigin)
@@ -86,7 +81,7 @@ std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::decode
     if (!decoder.decode(scope))
         return std::nullopt;
 
-    return { { WTFMove(clientCreationURL), WTFMove(*topOrigin), WTFMove(scope) } };
+    return ServiceWorkerRegistrationKey { WTFMove(*topOrigin), WTFMove(scope) };
 }
 
 } // namespace WebCore
@@ -102,8 +97,8 @@ struct ServiceWorkerRegistrationKeyHash {
 template<> struct HashTraits<WebCore::ServiceWorkerRegistrationKey> : GenericHashTraits<WebCore::ServiceWorkerRegistrationKey> {
     static WebCore::ServiceWorkerRegistrationKey emptyValue() { return WebCore::ServiceWorkerRegistrationKey::emptyKey(); }
 
-    static void constructDeletedValue(WebCore::ServiceWorkerRegistrationKey& slot) { slot.setClientCreationURL(WebCore::URL(HashTableDeletedValue)); }
-    static bool isDeletedValue(const WebCore::ServiceWorkerRegistrationKey& slot) { return slot.clientCreationURL().isHashTableDeletedValue(); }
+    static void constructDeletedValue(WebCore::ServiceWorkerRegistrationKey& slot) { slot.setScope(WebCore::URL(HashTableDeletedValue)); }
+    static bool isDeletedValue(const WebCore::ServiceWorkerRegistrationKey& slot) { return slot.scope().isHashTableDeletedValue(); }
 };
 
 template<> struct DefaultHash<WebCore::ServiceWorkerRegistrationKey> {

@@ -44,7 +44,7 @@ ServiceWorkerRegistrationKey ServiceWorkerJobData::registrationKey() const
 {
     URL scope = scopeURL;
     scope.removeFragmentIdentifier();
-    return { URL { clientCreationURL }, SecurityOriginData { topOrigin }, WTFMove(scope) };
+    return { SecurityOriginData { topOrigin }, WTFMove(scope) };
 }
 
 ServiceWorkerJobData ServiceWorkerJobData::isolatedCopy() const

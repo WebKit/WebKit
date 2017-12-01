@@ -1,3 +1,14 @@
+2017-12-01  Chris Dumez  <cdumez@apple.com>
+
+        Drop clientCreationURL from ServiceWorkerRegistrationKey
+        https://bugs.webkit.org/show_bug.cgi?id=180255
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/service-workers/service-worker/multiple-register.https-expected.txt:
+
 2017-11-30  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, unskip service worker test that no longer times out after r225346.

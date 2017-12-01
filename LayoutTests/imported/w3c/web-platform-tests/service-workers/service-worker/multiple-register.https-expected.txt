@@ -1,6 +1,5 @@
 
-
 PASS Subsequent registrations resolve to the same registration object 
-FAIL Subsequent registrations from a different iframe resolve to the different registration object but they refer to the same registration and workers assert_unreached: unexpected rejection: assert_equals: installing worker should be null expected null but got object "[object ServiceWorker]" Reached unreachable code
+PASS Subsequent registrations from a different iframe resolve to the different registration object but they refer to the same registration and workers 
 PASS Concurrent registrations resolve to the same registration object 
 
