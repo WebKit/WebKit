@@ -1,3 +1,10 @@
+2017-11-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed build fix, suppress deprecation warnings.
+
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtensionImpl::sandboxExtensionForType):
+
 2017-11-30  Daniel Bates  <dabates@apple.com>
 
         Expose SPI didClickAlternativePresentationButtonWithUserInfo on iOS
