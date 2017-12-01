@@ -177,6 +177,19 @@ void WebSWClientConnection::postMessageToServiceWorkerClient(DocumentIdentifier 
     SWClientConnection::postMessageToServiceWorkerClient(destinationContextIdentifier, SerializedScriptValue::adopt(message.vector()), WTFMove(source), sourceOrigin);
 }
 
+void WebSWClientConnection::connectionToServerLost()
+{
+    auto registrationTasks = WTFMove(m_ongoingMatchRegistrationTasks);
+    for (auto& callback : registrationTasks.values())
+        callback(std::nullopt);
+
+    auto getRegistrationTasks = WTFMove(m_ongoingGetRegistrationsTasks);
+    for (auto& callback : getRegistrationTasks.values())
+        callback({ });
+
+    clearPendingJobs();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(SERVICE_WORKER)

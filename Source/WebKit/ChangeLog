@@ -1,3 +1,22 @@
+2017-12-01  Youenn Fablet  <youenn@apple.com>
+
+        Clear WebSWClientConnection in case storage process IPC connection is closing
+        https://bugs.webkit.org/show_bug.cgi?id=180210
+
+        Reviewed by Chris Dumez.
+
+        Clear the sw connection maps when connection is closing.
+        Call related completion handlers for each connection.
+
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::connectionToServerLost):
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebToStorageProcessConnection.cpp:
+        (WebKit::WebToStorageProcessConnection::didClose):
+        (WebKit::WebToStorageProcessConnection::idbConnectionToServerForSession):
+        (WebKit::WebToStorageProcessConnection::serviceWorkerConnectionForSession):
+        * WebProcess/Storage/WebToStorageProcessConnection.h:
+
 2017-12-01  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Use CaptureDevice instead of device ID to identify devices

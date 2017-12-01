@@ -1867,7 +1867,7 @@ private:
     DocumentIdentifier m_identifier;
 
 #if ENABLE(SERVICE_WORKER)
-    SWClientConnection* m_serviceWorkerConnection { nullptr };
+    RefPtr<SWClientConnection> m_serviceWorkerConnection;
 #endif
 };
 

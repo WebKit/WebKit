@@ -46,11 +46,10 @@ namespace WebKit {
 class WebSWOriginTable;
 class WebServiceWorkerProvider;
 
-class WebSWClientConnection : public WebCore::SWClientConnection, public IPC::MessageSender, public IPC::MessageReceiver {
+class WebSWClientConnection final : public WebCore::SWClientConnection, public IPC::MessageSender, public IPC::MessageReceiver {
 public:
-    WebSWClientConnection(IPC::Connection&, PAL::SessionID);
-    WebSWClientConnection(const WebSWClientConnection&) = delete;
-    ~WebSWClientConnection() final;
+    static Ref<WebSWClientConnection> create(IPC::Connection& connection, PAL::SessionID sessionID) { return adoptRef(*new WebSWClientConnection { connection, sessionID }); }
+    ~WebSWClientConnection();
 
     WebCore::SWServerConnectionIdentifier serverConnectionIdentifier() const final { return m_identifier; }
 
@@ -65,7 +64,11 @@ public:
 
     void postMessageToServiceWorkerClient(WebCore::DocumentIdentifier destinationContextIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerData&& source, const String& sourceOrigin);
 
+    void connectionToServerLost();
+
 private:
+    WebSWClientConnection(IPC::Connection&, PAL::SessionID);
+
     void scheduleJobInServer(const WebCore::ServiceWorkerJobData&) final;
     void finishFetchingScriptInServer(const WebCore::ServiceWorkerFetchResult&) final;
     void postMessageToServiceWorkerGlobalScope(WebCore::ServiceWorkerIdentifier destinationIdentifier, Ref<WebCore::SerializedScriptValue>&&, WebCore::DocumentIdentifier sourceContextIdentifier, WebCore::ServiceWorkerClientData&& source) final;

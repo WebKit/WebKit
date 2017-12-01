@@ -201,6 +201,13 @@ void SWClientConnection::notifyClientsOfControllerChange(const HashSet<DocumentI
     }
 }
 
+void SWClientConnection::clearPendingJobs()
+{
+    auto jobs = WTFMove(m_scheduledJobs);
+    for (auto& job : jobs.values())
+        job->failedWithException(Exception { TypeError, ASCIILiteral("Internal error") });
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

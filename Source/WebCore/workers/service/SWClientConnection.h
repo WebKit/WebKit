@@ -93,6 +93,8 @@ protected:
     WEBCORE_EXPORT void fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier);
     WEBCORE_EXPORT void notifyClientsOfControllerChange(const HashSet<DocumentIdentifier>& contextIdentifiers, ServiceWorkerData&& newController);
 
+    WEBCORE_EXPORT void clearPendingJobs();
+
 private:
     virtual void scheduleJobInServer(const ServiceWorkerJobData&) = 0;
     virtual void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) = 0;

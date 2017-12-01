@@ -51,7 +51,7 @@ public:
     IPC::Connection& connection() { return m_connection.get(); }
 
 #if ENABLE(INDEXED_DATABASE)
-    WebIDBConnectionToServer& idbConnectionToServerForSession(const PAL::SessionID&);
+    WebIDBConnectionToServer& idbConnectionToServerForSession(PAL::SessionID);
 #endif
 #if ENABLE(SERVICE_WORKER)
     WebSWClientConnection& serviceWorkerConnectionForSession(PAL::SessionID);
@@ -77,7 +77,7 @@ private:
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    HashMap<PAL::SessionID, std::unique_ptr<WebSWClientConnection>> m_swConnectionsBySession;
+    HashMap<PAL::SessionID, RefPtr<WebSWClientConnection>> m_swConnectionsBySession;
     HashMap<WebCore::SWServerConnectionIdentifier, WebSWClientConnection*> m_swConnectionsByIdentifier;
 #endif
 };
