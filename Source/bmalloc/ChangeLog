@@ -1,3 +1,18 @@
+2017-12-01  Michael Saboff  <msaboff@apple.com>
+
+        Gigacage should not be enabled for ARM64_32
+        https://bugs.webkit.org/show_bug.cgi?id=180265
+
+        Reviewed by Saam Barati.
+
+        Disabled Gigacage for ARM64_32.
+        In the process, restructured Gigacage::shouldBeEnabled() with GIGACAGE_ENABLED set
+        to 0 to avoid a dead code compiler warning.
+
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::shouldBeEnabled):
+        * bmalloc/Gigacage.h:
+
 2017-11-29  JF Bastien  <jfbastien@apple.com>
 
         WTF / bmalloc: don't write to 0xbbadbeef when ASAN is looking

@@ -52,7 +52,9 @@
 #define JSVALUE_GIGACAGE_MASK GIGACAGE_SIZE_TO_MASK(JSVALUE_GIGACAGE_SIZE)
 #define STRING_GIGACAGE_MASK GIGACAGE_SIZE_TO_MASK(STRING_GIGACAGE_SIZE)
 
-#if (BOS(DARWIN) || BOS(LINUX)) && (BCPU(ARM64) || BCPU(X86_64))
+// FIXME: Make WasmBench run with gigacage on iOS and re-enable on ARM64:
+// https://bugs.webkit.org/show_bug.cgi?id=178557
+#if (BOS(DARWIN) || BOS(LINUX)) && (/* (BCPU(ARM64) && !defined(__ILP32__))  || */ BCPU(X86_64))
 #define GIGACAGE_ENABLED 1
 #else
 #define GIGACAGE_ENABLED 0
