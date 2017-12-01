@@ -426,9 +426,9 @@ static Ref<Inspector::Protocol::Page::Cookie> buildObjectForCookie(const Cookie&
         .release();
 }
 
-static Ref<Inspector::Protocol::Array<Inspector::Protocol::Page::Cookie>> buildArrayForCookies(ListHashSet<Cookie>& cookiesList)
+static Ref<JSON::ArrayOf<Inspector::Protocol::Page::Cookie>> buildArrayForCookies(ListHashSet<Cookie>& cookiesList)
 {
-    auto cookies = Inspector::Protocol::Array<Inspector::Protocol::Page::Cookie>::create();
+    auto cookies = JSON::ArrayOf<Inspector::Protocol::Page::Cookie>::create();
 
     for (const auto& cookie : cookiesList)
         cookies->addItem(buildObjectForCookie(cookie));
@@ -479,7 +479,7 @@ static Vector<URL> allResourcesURLsForFrame(Frame* frame)
     return result;
 }
 
-void InspectorPageAgent::getCookies(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::Cookie>>& cookies)
+void InspectorPageAgent::getCookies(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::Cookie>>& cookies)
 {
     // If we can get raw cookies.
     ListHashSet<Cookie> rawCookiesList;
@@ -517,7 +517,7 @@ void InspectorPageAgent::getCookies(ErrorString&, RefPtr<Inspector::Protocol::Ar
     if (rawCookiesImplemented)
         cookies = buildArrayForCookies(rawCookiesList);
     else
-        cookies = Inspector::Protocol::Array<Inspector::Protocol::Page::Cookie>::create();
+        cookies = JSON::ArrayOf<Inspector::Protocol::Page::Cookie>::create();
 }
 
 void InspectorPageAgent::deleteCookie(ErrorString&, const String& cookieName, const String& url)
@@ -555,9 +555,9 @@ static bool textContentForCachedResource(CachedResource* cachedResource, String*
     return false;
 }
 
-void InspectorPageAgent::searchInResource(ErrorString& errorString, const String& frameId, const String& url, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, const String* optionalRequestId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>>& results)
+void InspectorPageAgent::searchInResource(ErrorString& errorString, const String& frameId, const String& url, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, const String* optionalRequestId, RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>& results)
 {
-    results = Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>::create();
+    results = JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>::create();
 
     bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
     bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
@@ -605,9 +605,9 @@ static Ref<Inspector::Protocol::Page::SearchResult> buildObjectForSearchResult(c
         .release();
 }
 
-void InspectorPageAgent::searchInResources(ErrorString&, const String& text, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::SearchResult>>& result)
+void InspectorPageAgent::searchInResources(ErrorString&, const String& text, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>& result)
 {
-    result = Inspector::Protocol::Array<Inspector::Protocol::Page::SearchResult>::create();
+    result = JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>::create();
 
     bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
     bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
@@ -831,7 +831,7 @@ Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjec
     ASSERT_ARG(frame, frame);
 
     Ref<Inspector::Protocol::Page::Frame> frameObject = buildObjectForFrame(frame);
-    auto subresources = Inspector::Protocol::Array<Inspector::Protocol::Page::FrameResource>::create();
+    auto subresources = JSON::ArrayOf<Inspector::Protocol::Page::FrameResource>::create();
     auto result = Inspector::Protocol::Page::FrameResourceTree::create()
         .setFrame(WTFMove(frameObject))
         .setResources(subresources.copyRef())
@@ -856,10 +856,10 @@ Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjec
         subresources->addItem(WTFMove(resourceObject));
     }
 
-    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::FrameResourceTree>> childrenArray;
+    RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::FrameResourceTree>> childrenArray;
     for (Frame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         if (!childrenArray) {
-            childrenArray = Inspector::Protocol::Array<Inspector::Protocol::Page::FrameResourceTree>::create();
+            childrenArray = JSON::ArrayOf<Inspector::Protocol::Page::FrameResourceTree>::create();
             result->setChildFrames(childrenArray);
         }
         childrenArray->addItem(buildObjectForFrameTree(child));

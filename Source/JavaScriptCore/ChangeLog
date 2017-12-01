@@ -1,3 +1,87 @@
+2017-12-01  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: move Inspector::Protocol::Array<T> to JSON namespace
+        https://bugs.webkit.org/show_bug.cgi?id=173662
+
+        Reviewed by Joseph Pecoraro.
+
+        Adopt new type names. Fix protocol generator to use correct type names.
+
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::addToFrontend):
+        Improve namings and use 'auto' when the type is obvious and repeated.
+
+        * inspector/ContentSearchUtilities.cpp:
+        (Inspector::ContentSearchUtilities::searchInTextByLines):
+        * inspector/ContentSearchUtilities.h:
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::getProperties):
+        (Inspector::InjectedScript::getDisplayableProperties):
+        (Inspector::InjectedScript::getInternalProperties):
+        (Inspector::InjectedScript::getCollectionEntries):
+        (Inspector::InjectedScript::wrapCallFrames const):
+        * inspector/InjectedScript.h:
+        * inspector/InspectorProtocolTypes.h:
+        (Inspector::Protocol::BindingTraits<JSON::ArrayOf<T>>::runtimeCast):
+        (Inspector::Protocol::Array::Array): Deleted.
+        (Inspector::Protocol::Array::openAccessors): Deleted.
+        (Inspector::Protocol::Array::addItem): Deleted.
+        (Inspector::Protocol::Array::create): Deleted.
+        (Inspector::Protocol::BindingTraits<Protocol::Array<T>>::runtimeCast): Deleted.
+        (Inspector::Protocol::BindingTraits<Protocol::Array<T>>::assertValueHasExpectedType): Deleted.
+        Move the implementation out of this file.
+
+        * inspector/ScriptCallStack.cpp:
+        (Inspector::ScriptCallStack::buildInspectorArray const):
+        * inspector/ScriptCallStack.h:
+        * inspector/agents/InspectorAgent.cpp:
+        (Inspector::InspectorAgent::activateExtraDomain):
+        (Inspector::InspectorAgent::activateExtraDomains):
+        * inspector/agents/InspectorAgent.h:
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::getLoggingChannels):
+        * inspector/agents/InspectorConsoleAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::setBreakpointByUrl):
+        (Inspector::InspectorDebuggerAgent::searchInContent):
+        (Inspector::InspectorDebuggerAgent::currentCallFrames):
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::getProperties):
+        (Inspector::InspectorRuntimeAgent::getDisplayableProperties):
+        (Inspector::InspectorRuntimeAgent::getCollectionEntries):
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        (Inspector::InspectorRuntimeAgent::getBasicBlocks):
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::buildSamples):
+        Use more 'auto' and rename a variable.
+
+        * inspector/scripts/codegen/cpp_generator.py:
+        (CppGenerator.cpp_protocol_type_for_type):
+        Adopt new type names. This exposed a latent bug where we should have been
+        unwrapping an AliasedType prior to generating a C++ type for it. The aliased
+        type may be an array, in which case we would have generated the wrong type.
+
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (_generate_typedefs_for_domain.JSON):
+        (_generate_typedefs_for_domain.Inspector): Deleted.
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator.protocol_type_for_type):
+        (ObjCGenerator.objc_protocol_export_expression_for_variable):
+        * inspector/scripts/tests/generic/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-object-type.json-result:
+        Rebaseline.
+
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::allStructureRepresentations const):
+        (JSC::StructureShape::inspectorRepresentation):
+        * runtime/TypeSet.h:
+
 2017-12-01  Saam Barati  <sbarati@apple.com>
 
         Having a bad time needs to handle ArrayClass indexing type as well

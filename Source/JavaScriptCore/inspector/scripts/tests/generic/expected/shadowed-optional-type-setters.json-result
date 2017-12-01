@@ -400,7 +400,7 @@ public:
         JSON::ObjectBase::setString(ASCIILiteral("string"), value);
     }
 
-    void setArray(RefPtr<Inspector::Protocol::Array<String>> value)
+    void setArray(RefPtr<JSON::ArrayOf<String>> value)
     {
         JSON::ObjectBase::setArray(ASCIILiteral("array"), WTFMove(value));
     }

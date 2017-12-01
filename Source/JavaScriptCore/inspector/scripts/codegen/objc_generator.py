@@ -262,7 +262,7 @@ class ObjCGenerator(Generator):
             return 'Inspector::Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
         if (isinstance(_type, ArrayType)):
             sub_type = ObjCGenerator.protocol_type_for_type(_type.element_type)
-            return 'Inspector::Protocol::Array<%s>' % sub_type
+            return 'JSON::ArrayOf<%s>' % sub_type
         return None
 
     @staticmethod
@@ -375,7 +375,7 @@ class ObjCGenerator(Generator):
         if category is ObjCTypeCategory.Array:
             protocol_type = ObjCGenerator.protocol_type_for_type(var_type.element_type)
             objc_class = self.objc_class_for_type(var_type.element_type)
-            if protocol_type == 'Inspector::Protocol::Array<String>':
+            if protocol_type == 'JSON::ArrayOf<String>':
                 return 'toJSONStringArrayArray(%s)' % var_name
             if protocol_type is 'String' and objc_class is 'NSString':
                 return 'toJSONStringArray(%s)' % var_name

@@ -69,7 +69,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 
-using Inspector::Protocol::Array;
+using JSON::ArrayOf;
 using Inspector::Protocol::IndexedDB::DatabaseWithObjectStores;
 using Inspector::Protocol::IndexedDB::DataEntry;
 using Inspector::Protocol::IndexedDB::Key;
@@ -176,7 +176,7 @@ static RefPtr<KeyPath> keyPathFromIDBKeyPath(const std::optional<IDBKeyPath>& id
         keyPath->setString(string);
         return keyPath;
     }, [](const Vector<String>& vector) {
-        auto array = Inspector::Protocol::Array<String>::create();
+        auto array = JSON::ArrayOf<String>::create();
         for (auto& string : vector)
             array->addItem(string);
         RefPtr<KeyPath> keyPath = KeyPath::create().setType(KeyPath::Type::Array).release();
@@ -225,14 +225,14 @@ public:
             return;
     
         auto& databaseInfo = database.info();
-        auto objectStores = Inspector::Protocol::Array<Inspector::Protocol::IndexedDB::ObjectStore>::create();
+        auto objectStores = JSON::ArrayOf<Inspector::Protocol::IndexedDB::ObjectStore>::create();
         auto objectStoreNames = databaseInfo.objectStoreNames();
         for (auto& name : objectStoreNames) {
             auto* objectStoreInfo = databaseInfo.infoForExistingObjectStore(name);
             if (!objectStoreInfo)
                 continue;
 
-            auto indexes = Inspector::Protocol::Array<Inspector::Protocol::IndexedDB::ObjectStoreIndex>::create();
+            auto indexes = JSON::ArrayOf<Inspector::Protocol::IndexedDB::ObjectStoreIndex>::create();
     
             for (auto& indexInfo : objectStoreInfo->indexMap().values()) {
                 auto objectStoreIndex = ObjectStoreIndex::create()
@@ -419,14 +419,14 @@ private:
         : EventListener(EventListener::CPPEventListenerType)
         , m_injectedScript(injectedScript)
         , m_requestCallback(WTFMove(requestCallback))
-        , m_result(Array<DataEntry>::create())
+        , m_result(JSON::ArrayOf<DataEntry>::create())
         , m_skipCount(skipCount)
         , m_pageSize(pageSize)
     {
     }
     InjectedScript m_injectedScript;
     Ref<RequestDataCallback> m_requestCallback;
-    Ref<Array<DataEntry>> m_result;
+    Ref<JSON::ArrayOf<DataEntry>> m_result;
     int m_skipCount;
     unsigned m_pageSize;
 };
@@ -580,7 +580,7 @@ void InspectorIndexedDBAgent::requestDatabaseNames(ErrorString& errorString, con
         if (!callback->isActive())
             return;
 
-        Ref<Inspector::Protocol::Array<String>> databaseNameArray = Inspector::Protocol::Array<String>::create();
+        Ref<JSON::ArrayOf<String>> databaseNameArray = JSON::ArrayOf<String>::create();
         for (auto& databaseName : databaseNames)
             databaseNameArray->addItem(databaseName);
 

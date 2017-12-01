@@ -133,6 +133,12 @@ TEST(JSONValue, Construct)
         EXPECT_TRUE(object->type() == JSON::Value::Type::Object);
         EXPECT_EQ(object->size(), 0);
     }
+
+    {
+        auto array = JSON::ArrayOf<String>::create();
+        EXPECT_TRUE(array->type() == JSON::Value::Type::Array);
+        EXPECT_EQ(array->length(), 0U);
+    }
 }
 
 TEST(JSONArray, Basic)
@@ -200,6 +206,90 @@ TEST(JSONArray, Basic)
 
     value = it->get();
     EXPECT_TRUE(value->type() == JSON::Value::Type::Boolean);
+    ++it;
+    EXPECT_FALSE(it == array->end());
+
+    value = it->get();
+    EXPECT_TRUE(value->type() == JSON::Value::Type::Integer);
+    ++it;
+    EXPECT_FALSE(it == array->end());
+
+    value = it->get();
+    EXPECT_TRUE(value->type() == JSON::Value::Type::Double);
+    ++it;
+    EXPECT_FALSE(it == array->end());
+
+    value = it->get();
+    EXPECT_TRUE(value->type() == JSON::Value::Type::String);
+    ++it;
+    EXPECT_FALSE(it == array->end());
+
+    value = it->get();
+    EXPECT_TRUE(value->type() == JSON::Value::Type::Object);
+    ++it;
+    EXPECT_FALSE(it == array->end());
+
+    value = it->get();
+    EXPECT_TRUE(value->type() == JSON::Value::Type::Array);
+    ++it;
+    EXPECT_TRUE(it == array->end());
+}
+
+TEST(JSONArrayOf, Basic)
+{
+    Ref<JSON::ArrayOf<JSON::Value>> array = JSON::ArrayOf<JSON::Value>::create();
+
+    array->addItem(JSON::Value::null());
+    EXPECT_EQ(array->length(), 1U);
+    auto value = array->get(0);
+    EXPECT_TRUE(value->isNull());
+
+    // Note: addItem(bool) is not implemented because it would be ambiguous
+    // with addItem(RefPtr<T>), and the latter is much more common to do.
+
+    array->addItem(1);
+    EXPECT_EQ(array->length(), 2U);
+    value = array->get(1);
+    EXPECT_TRUE(value->type() == JSON::Value::Type::Integer);
+    int integerValue;
+    EXPECT_TRUE(value->asInteger(integerValue));
+    EXPECT_EQ(integerValue, 1);
+
+    array->addItem(1.5);
+    EXPECT_EQ(array->length(), 3U);
+    value = array->get(2);
+    EXPECT_TRUE(value->type() == JSON::Value::Type::Double);
+    double doubleValue;
+    EXPECT_TRUE(value->asDouble(doubleValue));
+    EXPECT_EQ(doubleValue, 1.5);
+
+    array->addItem("webkit");
+    EXPECT_EQ(array->length(), 4U);
+    value = array->get(3);
+    EXPECT_TRUE(value->type() == JSON::Value::Type::String);
+    String stringValue;
+    EXPECT_TRUE(value->asString(stringValue));
+    EXPECT_EQ(stringValue, "webkit");
+
+    array->addItem(JSON::Object::create());
+    EXPECT_EQ(array->length(), 5U);
+    value = array->get(4);
+    EXPECT_TRUE(value->type() == JSON::Value::Type::Object);
+    RefPtr<JSON::Object> objectValue;
+    EXPECT_TRUE(value->asObject(objectValue));
+    EXPECT_EQ(objectValue->size(), 0);
+
+    array->addItem(JSON::Array::create());
+    EXPECT_EQ(array->length(), 6U);
+    value = array->get(5);
+    EXPECT_TRUE(value->type() == JSON::Value::Type::Array);
+    RefPtr<JSON::Array> arrayValue;
+    EXPECT_TRUE(value->asArray(arrayValue));
+    EXPECT_EQ(arrayValue->length(), 0U);
+
+    auto it = array->begin();
+    value = it->get();
+    EXPECT_TRUE(value->type() == JSON::Value::Type::Null);
     ++it;
     EXPECT_FALSE(it == array->end());
 

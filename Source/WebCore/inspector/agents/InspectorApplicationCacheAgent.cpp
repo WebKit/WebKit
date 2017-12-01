@@ -85,9 +85,9 @@ void InspectorApplicationCacheAgent::networkStateChanged()
     m_frontendDispatcher->networkStateUpdated(NetworkStateNotifier::singleton().onLine());
 }
 
-void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::ApplicationCache::FrameWithManifest>>& result)
+void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::ApplicationCache::FrameWithManifest>>& result)
 {
-    result = Inspector::Protocol::Array<Inspector::Protocol::ApplicationCache::FrameWithManifest>::create();
+    result = JSON::ArrayOf<Inspector::Protocol::ApplicationCache::FrameWithManifest>::create();
 
     for (Frame* frame = &m_pageAgent->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* documentLoader = frame->loader().documentLoader();
@@ -145,9 +145,9 @@ Ref<Inspector::Protocol::ApplicationCache::ApplicationCache> InspectorApplicatio
         .release();
 }
 
-Ref<Inspector::Protocol::Array<Inspector::Protocol::ApplicationCache::ApplicationCacheResource>> InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources(const Vector<ApplicationCacheHost::ResourceInfo>& applicationCacheResources)
+Ref<JSON::ArrayOf<Inspector::Protocol::ApplicationCache::ApplicationCacheResource>> InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources(const Vector<ApplicationCacheHost::ResourceInfo>& applicationCacheResources)
 {
-    auto result = Inspector::Protocol::Array<Inspector::Protocol::ApplicationCache::ApplicationCacheResource>::create();
+    auto result = JSON::ArrayOf<Inspector::Protocol::ApplicationCache::ApplicationCacheResource>::create();
     for (auto& info : applicationCacheResources)
         result->addItem(buildObjectForApplicationCacheResource(info));
     return result;

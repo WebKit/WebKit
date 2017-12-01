@@ -61,7 +61,7 @@ public:
     // Called from the front-end.
     void enable(ErrorString&) override;
     void disable(ErrorString&) override;
-    void getDOMStorageItems(ErrorString&, const JSON::Object& storageId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Array<String>>>& items) override;
+    void getDOMStorageItems(ErrorString&, const JSON::Object& storageId, RefPtr<JSON::ArrayOf<JSON::ArrayOf<String>>>& items) override;
     void setDOMStorageItem(ErrorString&, const JSON::Object& storageId, const String& key, const String& value) override;
     void removeDOMStorageItem(ErrorString&, const JSON::Object& storageId, const String& key) override;
 

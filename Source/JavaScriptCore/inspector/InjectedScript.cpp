@@ -38,8 +38,6 @@
 #include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
-using Inspector::Protocol::Array;
-
 namespace Inspector {
 
 InjectedScript::InjectedScript()
@@ -141,7 +139,7 @@ void InjectedScript::getPreview(ErrorString& errorString, const String& objectId
     *result = BindingTraits<Inspector::Protocol::Runtime::ObjectPreview>::runtimeCast(WTFMove(resultValue));
 }
 
-void InjectedScript::getProperties(ErrorString& errorString, const String& objectId, bool ownProperties, bool generatePreview, RefPtr<Array<Inspector::Protocol::Runtime::PropertyDescriptor>>* properties)
+void InjectedScript::getProperties(ErrorString& errorString, const String& objectId, bool ownProperties, bool generatePreview, RefPtr<JSON::ArrayOf<Inspector::Protocol::Runtime::PropertyDescriptor>>* properties)
 {
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("getProperties"), inspectorEnvironment()->functionCallHandler());
     function.appendArgument(objectId);
@@ -155,10 +153,10 @@ void InjectedScript::getProperties(ErrorString& errorString, const String& objec
         return;
     }
 
-    *properties = BindingTraits<Array<Inspector::Protocol::Runtime::PropertyDescriptor>>::runtimeCast(WTFMove(result));
+    *properties = BindingTraits<JSON::ArrayOf<Inspector::Protocol::Runtime::PropertyDescriptor>>::runtimeCast(WTFMove(result));
 }
 
-void InjectedScript::getDisplayableProperties(ErrorString& errorString, const String& objectId, bool generatePreview, RefPtr<Array<Inspector::Protocol::Runtime::PropertyDescriptor>>* properties)
+void InjectedScript::getDisplayableProperties(ErrorString& errorString, const String& objectId, bool generatePreview, RefPtr<JSON::ArrayOf<Inspector::Protocol::Runtime::PropertyDescriptor>>* properties)
 {
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("getDisplayableProperties"), inspectorEnvironment()->functionCallHandler());
     function.appendArgument(objectId);
@@ -171,10 +169,10 @@ void InjectedScript::getDisplayableProperties(ErrorString& errorString, const St
         return;
     }
 
-    *properties = BindingTraits<Array<Inspector::Protocol::Runtime::PropertyDescriptor>>::runtimeCast(WTFMove(result));
+    *properties = BindingTraits<JSON::ArrayOf<Inspector::Protocol::Runtime::PropertyDescriptor>>::runtimeCast(WTFMove(result));
 }
 
-void InjectedScript::getInternalProperties(ErrorString& errorString, const String& objectId, bool generatePreview, RefPtr<Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>* properties)
+void InjectedScript::getInternalProperties(ErrorString& errorString, const String& objectId, bool generatePreview, RefPtr<JSON::ArrayOf<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>* properties)
 {
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("getInternalProperties"), inspectorEnvironment()->functionCallHandler());
     function.appendArgument(objectId);
@@ -187,11 +185,11 @@ void InjectedScript::getInternalProperties(ErrorString& errorString, const Strin
         return;
     }
 
-    auto array = BindingTraits<Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>::runtimeCast(WTFMove(result));
+    auto array = BindingTraits<JSON::ArrayOf<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>::runtimeCast(WTFMove(result));
     *properties = array->length() > 0 ? array : nullptr;
 }
 
-void InjectedScript::getCollectionEntries(ErrorString& errorString, const String& objectId, const String& objectGroup, int startIndex, int numberToFetch, RefPtr<Protocol::Array<Protocol::Runtime::CollectionEntry>>* entries)
+void InjectedScript::getCollectionEntries(ErrorString& errorString, const String& objectId, const String& objectGroup, int startIndex, int numberToFetch, RefPtr<JSON::ArrayOf<Protocol::Runtime::CollectionEntry>>* entries)
 {
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("getCollectionEntries"), inspectorEnvironment()->functionCallHandler());
     function.appendArgument(objectId);
@@ -206,7 +204,7 @@ void InjectedScript::getCollectionEntries(ErrorString& errorString, const String
         return;
     }
 
-    *entries = BindingTraits<Array<Protocol::Runtime::CollectionEntry>>::runtimeCast(WTFMove(result));
+    *entries = BindingTraits<JSON::ArrayOf<Protocol::Runtime::CollectionEntry>>::runtimeCast(WTFMove(result));
 }
 
 void InjectedScript::saveResult(ErrorString& errorString, const String& callArgumentJSON, Inspector::Protocol::OptOutput<int>* savedResultIndex)
@@ -226,7 +224,7 @@ void InjectedScript::saveResult(ErrorString& errorString, const String& callArgu
         *savedResultIndex = savedResultIndexInt;
 }
 
-Ref<Array<Inspector::Protocol::Debugger::CallFrame>> InjectedScript::wrapCallFrames(JSC::JSValue callFrames) const
+Ref<JSON::ArrayOf<Inspector::Protocol::Debugger::CallFrame>> InjectedScript::wrapCallFrames(JSC::JSValue callFrames) const
 {
     ASSERT(!hasNoValue());
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("wrapCallFrames"), inspectorEnvironment()->functionCallHandler());
@@ -235,13 +233,13 @@ Ref<Array<Inspector::Protocol::Debugger::CallFrame>> InjectedScript::wrapCallFra
     bool hadException = false;
     auto callFramesValue = callFunctionWithEvalEnabled(function, hadException);
     if (!callFramesValue)
-        return Array<Inspector::Protocol::Debugger::CallFrame>::create();
+        return JSON::ArrayOf<Inspector::Protocol::Debugger::CallFrame>::create();
     ASSERT(!hadException);
     RefPtr<JSON::Value> result = toInspectorValue(*scriptState(), callFramesValue);
     if (result->type() == JSON::Value::Type::Array)
-        return BindingTraits<Array<Inspector::Protocol::Debugger::CallFrame>>::runtimeCast(WTFMove(result)).releaseNonNull();
+        return BindingTraits<JSON::ArrayOf<Inspector::Protocol::Debugger::CallFrame>>::runtimeCast(WTFMove(result)).releaseNonNull();
 
-    return Array<Inspector::Protocol::Debugger::CallFrame>::create();
+    return JSON::ArrayOf<Inspector::Protocol::Debugger::CallFrame>::create();
 }
 
 RefPtr<Inspector::Protocol::Runtime::RemoteObject> InjectedScript::wrapObject(JSC::JSValue value, const String& groupName, bool generatePreview) const

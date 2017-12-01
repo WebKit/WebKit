@@ -235,10 +235,10 @@ void InspectorConsoleAgent::addConsoleMessage(std::unique_ptr<ConsoleMessage> co
     }
 }
 
-void InspectorConsoleAgent::getLoggingChannels(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Console::Channel>>& channels)
+void InspectorConsoleAgent::getLoggingChannels(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Console::Channel>>& channels)
 {
     // Default implementation has no logging channels.
-    channels = Inspector::Protocol::Array<Inspector::Protocol::Console::Channel>::create();
+    channels = JSON::ArrayOf<Inspector::Protocol::Console::Channel>::create();
 }
 
 void InspectorConsoleAgent::setLoggingChannelLevel(ErrorString& errorString, const String&, const String&)

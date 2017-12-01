@@ -337,7 +337,7 @@ class ParameterBundle;
 
 // Typedefs.
 namespace Database {
-typedef Inspector::Protocol::Array<Inspector::Protocol::Database::Error> ErrorList;
+typedef JSON::ArrayOf<Inspector::Protocol::Database::Error> ErrorList;
 } // Database
 // End of typedefs.
 
@@ -475,12 +475,12 @@ public:
         return Builder<NoFieldsSet>(JSON::Object::create());
     }
 
-    void setColumnNames(RefPtr<Inspector::Protocol::Array<String>> value)
+    void setColumnNames(RefPtr<JSON::ArrayOf<String>> value)
     {
         JSON::ObjectBase::setArray(ASCIILiteral("columnNames"), WTFMove(value));
     }
 
-    void setButtons(RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Database::MouseButton>> value)
+    void setButtons(RefPtr<JSON::ArrayOf<Inspector::Protocol::Database::MouseButton>> value)
     {
         JSON::ObjectBase::setArray(ASCIILiteral("buttons"), WTFMove(value));
     }
@@ -560,14 +560,14 @@ public:
         friend class ParameterBundle;
     public:
 
-        Builder<STATE | ColumnNamesSet>& setColumnNames(RefPtr<Inspector::Protocol::Array<String>> value)
+        Builder<STATE | ColumnNamesSet>& setColumnNames(RefPtr<JSON::ArrayOf<String>> value)
         {
             COMPILE_ASSERT(!(STATE & ColumnNamesSet), property_columnNames_already_set);
             m_result->setArray(ASCIILiteral("columnNames"), value);
             return castState<ColumnNamesSet>();
         }
 
-        Builder<STATE | ButtonsSet>& setButtons(RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Database::MouseButton>> value)
+        Builder<STATE | ButtonsSet>& setButtons(RefPtr<JSON::ArrayOf<Inspector::Protocol::Database::MouseButton>> value)
         {
             COMPILE_ASSERT(!(STATE & ButtonsSet), property_buttons_already_set);
             m_result->setArray(ASCIILiteral("buttons"), value);
@@ -793,14 +793,14 @@ public:
             return castState<DirectionalitySet>();
         }
 
-        Builder<STATE | ButtonsSet>& setButtons(RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Database::MouseButton>> value)
+        Builder<STATE | ButtonsSet>& setButtons(RefPtr<JSON::ArrayOf<Inspector::Protocol::Database::MouseButton>> value)
         {
             COMPILE_ASSERT(!(STATE & ButtonsSet), property_buttons_already_set);
             m_result->setArray(ASCIILiteral("buttons"), value);
             return castState<ButtonsSet>();
         }
 
-        Builder<STATE | ColumnNamesSet>& setColumnNames(RefPtr<Inspector::Protocol::Array<String>> value)
+        Builder<STATE | ColumnNamesSet>& setColumnNames(RefPtr<JSON::ArrayOf<String>> value)
         {
             COMPILE_ASSERT(!(STATE & ColumnNamesSet), property_columnNames_already_set);
             m_result->setArray(ASCIILiteral("columnNames"), value);

@@ -104,7 +104,7 @@ public:
 
     void setIndicating(bool);
 
-    WEBCORE_EXPORT Ref<Inspector::Protocol::Array<Inspector::Protocol::OverlayTypes::NodeHighlightData>> buildObjectForHighlightedNodes() const;
+    WEBCORE_EXPORT Ref<JSON::ArrayOf<Inspector::Protocol::OverlayTypes::NodeHighlightData>> buildObjectForHighlightedNodes() const;
 
     WEBCORE_EXPORT void didComposite(Frame&);
 

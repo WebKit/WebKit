@@ -83,11 +83,11 @@ private:
     {
         auto& rowList = resultSet.rows();
 
-        auto columnNames = Inspector::Protocol::Array<String>::create();
+        auto columnNames = JSON::ArrayOf<String>::create();
         for (auto& column : rowList.columnNames())
             columnNames->addItem(column);
 
-        auto values = Inspector::Protocol::Array<JSON::Value>::create();
+        auto values = JSON::ArrayOf<JSON::Value>::create();
         for (auto& value : rowList.values()) {
             auto inspectorValue = WTF::switchOn(value,
                 [] (const std::nullptr_t&) { return JSON::Value::null(); },
@@ -256,14 +256,14 @@ void InspectorDatabaseAgent::disable(ErrorString&)
     m_enabled = false;
 }
 
-void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString& error, const String& databaseId, RefPtr<Inspector::Protocol::Array<String>>& names)
+void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString& error, const String& databaseId, RefPtr<JSON::ArrayOf<String>>& names)
 {
     if (!m_enabled) {
         error = ASCIILiteral("Database agent is not enabled");
         return;
     }
 
-    names = Inspector::Protocol::Array<String>::create();
+    names = JSON::ArrayOf<String>::create();
 
     if (auto* database = databaseForId(databaseId)) {
         for (auto& tableName : database->tableNames())

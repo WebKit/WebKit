@@ -141,7 +141,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             typedef_lines = []
             if len(declaration.description) > 0:
                 typedef_lines.append('/* %s */' % declaration.description)
-            typedef_lines.append('typedef Inspector::Protocol::Array<%s> %s;' % (element_type, declaration.type_name))
+            typedef_lines.append('typedef JSON::ArrayOf<%s> %s;' % (element_type, declaration.type_name))
             sections.append('\n'.join(typedef_lines))
 
         lines = []

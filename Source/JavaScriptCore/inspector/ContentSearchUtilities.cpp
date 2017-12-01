@@ -151,9 +151,9 @@ int countRegularExpressionMatches(const RegularExpression& regex, const String& 
     return result;
 }
 
-Ref<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex)
+Ref<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex)
 {
-    Ref<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>> result = Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>::create();
+    auto result = JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>::create();
 
     RegularExpression regex = ContentSearchUtilities::createSearchRegex(query, caseSensitive, isRegex);
     Vector<std::pair<size_t, String>> matches = getRegularExpressionMatchesByLines(regex, text);

@@ -233,7 +233,7 @@ Ref<Inspector::Protocol::Automation::BrowsingContext> WebAutomationSession::buil
 
 // Platform-independent Commands.
 
-void WebAutomationSession::getNextContext(Ref<WebAutomationSession>&& protectedThis, Vector<Ref<WebPageProxy>>&& pages, Ref<Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingContext>> contexts, Ref<WebAutomationSession::GetBrowsingContextsCallback>&& callback)
+void WebAutomationSession::getNextContext(Ref<WebAutomationSession>&& protectedThis, Vector<Ref<WebPageProxy>>&& pages, Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>> contexts, Ref<WebAutomationSession::GetBrowsingContextsCallback>&& callback)
 {
     if (pages.isEmpty()) {
         callback->sendSuccess(WTFMove(contexts));
@@ -259,7 +259,7 @@ void WebAutomationSession::getBrowsingContexts(Inspector::ErrorString& errorStri
         }
     }
     
-    getNextContext(makeRef(*this), WTFMove(pages), Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingContext>::create(), WTFMove(callback));
+    getNextContext(makeRef(*this), WTFMove(pages), JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>::create(), WTFMove(callback));
 }
 
 void WebAutomationSession::getBrowsingContext(Inspector::ErrorString& errorString, const String& handle, Ref<GetBrowsingContextCallback>&& callback)
@@ -1117,9 +1117,9 @@ static Ref<Inspector::Protocol::Automation::Cookie> buildObjectForCookie(const W
         .release();
 }
 
-static Ref<Inspector::Protocol::Array<Inspector::Protocol::Automation::Cookie>> buildArrayForCookies(Vector<WebCore::Cookie>& cookiesList)
+static Ref<JSON::ArrayOf<Inspector::Protocol::Automation::Cookie>> buildArrayForCookies(Vector<WebCore::Cookie>& cookiesList)
 {
-    auto cookies = Inspector::Protocol::Array<Inspector::Protocol::Automation::Cookie>::create();
+    auto cookies = JSON::ArrayOf<Inspector::Protocol::Automation::Cookie>::create();
 
     for (const auto& cookie : cookiesList)
         cookies->addItem(buildObjectForCookie(cookie));
@@ -1240,9 +1240,9 @@ void WebAutomationSession::deleteAllCookies(ErrorString& errorString, const Stri
     cookieManager->deleteCookiesForHostname(page->websiteDataStore().sessionID(), activeURL.host());
 }
 
-void WebAutomationSession::getSessionPermissions(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Automation::SessionPermissionData>>& out_permissions)
+void WebAutomationSession::getSessionPermissions(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Automation::SessionPermissionData>>& out_permissions)
 {
-    auto permissionsObjectArray = Inspector::Protocol::Array<Inspector::Protocol::Automation::SessionPermissionData>::create();
+    auto permissionsObjectArray = JSON::ArrayOf<Inspector::Protocol::Automation::SessionPermissionData>::create();
     auto getUserMediaPermissionObject = Inspector::Protocol::Automation::SessionPermissionData::create()
         .setPermission(Inspector::Protocol::Automation::SessionPermission::GetUserMedia)
         .setValue(m_permissionForGetUserMedia)

@@ -116,12 +116,12 @@ void InspectorAgent::activateExtraDomain(const String& domainName)
 {
     if (!m_enabled) {
         if (!m_pendingExtraDomainsData)
-            m_pendingExtraDomainsData = Inspector::Protocol::Array<String>::create();
+            m_pendingExtraDomainsData = JSON::ArrayOf<String>::create();
         m_pendingExtraDomainsData->addItem(domainName);
         return;
     }
 
-    auto domainNames = Inspector::Protocol::Array<String>::create();
+    auto domainNames = JSON::ArrayOf<String>::create();
     domainNames->addItem(domainName);
     m_frontendDispatcher->activateExtraDomains(WTFMove(domainNames));
 }
@@ -131,7 +131,7 @@ void InspectorAgent::activateExtraDomains(const Vector<String>& extraDomains)
     if (extraDomains.isEmpty())
         return;
 
-    auto domainNames = Inspector::Protocol::Array<String>::create();
+    auto domainNames = JSON::ArrayOf<String>::create();
     for (auto domainName : extraDomains)
         domainNames->addItem(domainName);
 

@@ -48,7 +48,7 @@ WebConsoleAgent::WebConsoleAgent(AgentContext& context, InspectorHeapAgent* heap
 {
 }
 
-void WebConsoleAgent::getLoggingChannels(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Console::Channel>>& channels)
+void WebConsoleAgent::getLoggingChannels(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Console::Channel>>& channels)
 {
     static const struct ChannelTable {
         NeverDestroyed<String> name;
@@ -58,7 +58,7 @@ void WebConsoleAgent::getLoggingChannels(ErrorString&, RefPtr<Inspector::Protoco
         { MAKE_STATIC_STRING_IMPL("Media"), Inspector::Protocol::Console::ChannelSource::Media },
     };
 
-    channels = Inspector::Protocol::Array<Inspector::Protocol::Console::Channel>::create();
+    channels = JSON::ArrayOf<Inspector::Protocol::Console::Channel>::create();
 
     size_t length = WTF_ARRAY_LENGTH(channelTable);
     for (size_t i = 0; i < length; ++i) {

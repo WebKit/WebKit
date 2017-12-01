@@ -423,6 +423,48 @@ inline void ArrayBase::pushArray(RefPtr<ArrayBase>&& value)
     m_map.append(WTFMove(value));
 }
 
+template<typename T>
+class ArrayOf : public ArrayBase {
+private:
+    ArrayOf() { }
+
+    Array& castedArray()
+    {
+        COMPILE_ASSERT(sizeof(Array) == sizeof(ArrayOf<T>), cannot_cast);
+        return *static_cast<Array*>(static_cast<ArrayBase*>(this));
+    }
+
+public:
+    void addItem(RefPtr<T>&& value)
+    {
+        castedArray().pushValue(WTFMove(value));
+    }
+    
+    void addItem(const String& value)
+    {
+        castedArray().pushString(value);
+    }
+
+    void addItem(int value)
+    {
+        castedArray().pushInteger(value);
+    }
+
+    void addItem(double value)
+    {
+        castedArray().pushDouble(value);
+    }
+
+    static Ref<ArrayOf<T>> create()
+    {
+        return adoptRef(*new ArrayOf<T>());
+    }
+
+    using ArrayBase::get;
+    using ArrayBase::begin;
+    using ArrayBase::end;
+};
+
 } // namespace JSONImpl
 
 } // namespace WTF

@@ -152,8 +152,8 @@ public:
         Yellow = 5,
         Black = 6,
     }; // enum class PrintColor
-    virtual void executeAllOptionalParameters(ErrorString&, const JSON::Array* opt_in_columnNames, const String* const opt_in_notes, const double* const opt_in_timestamp, const JSON::Object* opt_in_values, const JSON::Value* const opt_in_payload, const int* const opt_in_databaseId, const JSON::Object* opt_in_sqlError, const String* const opt_in_screenColor, const JSON::Array* opt_in_alternateColors, const String* const opt_in_printColor, RefPtr<Inspector::Protocol::Array<String>>& opt_out_columnNames, Inspector::Protocol::OptOutput<String>* opt_out_notes, Inspector::Protocol::OptOutput<double>* opt_out_timestamp, Inspector::Protocol::OptOutput<JSON::Object>* opt_out_values, Inspector::Protocol::OptOutput<JSON::Value>* opt_out_payload, Inspector::Protocol::OptOutput<int>* opt_out_databaseId, RefPtr<Inspector::Protocol::Database::Error>& opt_out_sqlError, Inspector::Protocol::Database::PrimaryColors* opt_out_screenColor, RefPtr<Inspector::Protocol::Database::ColorList>& opt_out_alternateColors, DatabaseBackendDispatcherHandler::PrintColor* opt_out_printColor) = 0;
-    virtual void executeNoOptionalParameters(ErrorString&, const JSON::Array& in_columnNames, const String& in_notes, double in_timestamp, const JSON::Object& in_values, JSON::Value in_payload, int in_databaseId, const JSON::Object& in_sqlError, const String& in_screenColor, const JSON::Array& in_alternateColors, const String& in_printColor, RefPtr<Inspector::Protocol::Array<String>>& out_columnNames, String* out_notes, double* out_timestamp, JSON::Object* out_values, JSON::Value* out_payload, int* out_databaseId, RefPtr<Inspector::Protocol::Database::Error>& out_sqlError, Inspector::Protocol::Database::PrimaryColors* out_screenColor, RefPtr<Inspector::Protocol::Database::ColorList>& out_alternateColors, DatabaseBackendDispatcherHandler::PrintColor* out_printColor) = 0;
+    virtual void executeAllOptionalParameters(ErrorString&, const JSON::Array* opt_in_columnNames, const String* const opt_in_notes, const double* const opt_in_timestamp, const JSON::Object* opt_in_values, const JSON::Value* const opt_in_payload, const int* const opt_in_databaseId, const JSON::Object* opt_in_sqlError, const String* const opt_in_screenColor, const JSON::Array* opt_in_alternateColors, const String* const opt_in_printColor, RefPtr<JSON::ArrayOf<String>>& opt_out_columnNames, Inspector::Protocol::OptOutput<String>* opt_out_notes, Inspector::Protocol::OptOutput<double>* opt_out_timestamp, Inspector::Protocol::OptOutput<JSON::Object>* opt_out_values, Inspector::Protocol::OptOutput<JSON::Value>* opt_out_payload, Inspector::Protocol::OptOutput<int>* opt_out_databaseId, RefPtr<Inspector::Protocol::Database::Error>& opt_out_sqlError, Inspector::Protocol::Database::PrimaryColors* opt_out_screenColor, RefPtr<Inspector::Protocol::Database::ColorList>& opt_out_alternateColors, DatabaseBackendDispatcherHandler::PrintColor* opt_out_printColor) = 0;
+    virtual void executeNoOptionalParameters(ErrorString&, const JSON::Array& in_columnNames, const String& in_notes, double in_timestamp, const JSON::Object& in_values, JSON::Value in_payload, int in_databaseId, const JSON::Object& in_sqlError, const String& in_screenColor, const JSON::Array& in_alternateColors, const String& in_printColor, RefPtr<JSON::ArrayOf<String>>& out_columnNames, String* out_notes, double* out_timestamp, JSON::Object* out_values, JSON::Value* out_payload, int* out_databaseId, RefPtr<Inspector::Protocol::Database::Error>& out_sqlError, Inspector::Protocol::Database::PrimaryColors* out_screenColor, RefPtr<Inspector::Protocol::Database::ColorList>& out_alternateColors, DatabaseBackendDispatcherHandler::PrintColor* out_printColor) = 0;
 protected:
     virtual ~DatabaseBackendDispatcherHandler();
 };
@@ -289,12 +289,12 @@ void DatabaseBackendDispatcher::executeAllOptionalParameters(long requestId, Ref
 
     ErrorString error;
     Ref<JSON::Object> result = JSON::Object::create();
-    RefPtr<Inspector::Protocol::Array<String>> out_columnNames;
+    RefPtr<JSON::ArrayOf<String>> out_columnNames;
     Inspector::Protocol::OptOutput<String> out_notes;
     Inspector::Protocol::OptOutput<double> out_timestamp;
     Inspector::Protocol::OptOutput<JSON::Object> out_values;
     Inspector::Protocol::OptOutput<JSON::Value> out_payload;
-    Inspector::Protocol::OptOutput<Inspector::Protocol::Database::DatabaseId> out_databaseId;
+    Inspector::Protocol::OptOutput<int> out_databaseId;
     RefPtr<Inspector::Protocol::Database::Error> out_sqlError;
     Inspector::Protocol::Database::PrimaryColors out_screenColor;
     RefPtr<Inspector::Protocol::Database::ColorList> out_alternateColors;
@@ -355,12 +355,12 @@ void DatabaseBackendDispatcher::executeNoOptionalParameters(long requestId, RefP
 
     ErrorString error;
     Ref<JSON::Object> result = JSON::Object::create();
-    RefPtr<Inspector::Protocol::Array<String>> out_columnNames;
+    RefPtr<JSON::ArrayOf<String>> out_columnNames;
     String out_notes;
     double out_timestamp;
     JSON::Object out_values;
     JSON::Value out_payload;
-    Inspector::Protocol::Database::DatabaseId out_databaseId;
+    int out_databaseId;
     RefPtr<Inspector::Protocol::Database::Error> out_sqlError;
     Inspector::Protocol::Database::PrimaryColors out_screenColor;
     RefPtr<Inspector::Protocol::Database::ColorList> out_alternateColors;
@@ -530,7 +530,7 @@ enum class PrimaryColors;
 namespace Database {
 /* Unique identifier of Database object. */
 typedef int DatabaseId;
-typedef Inspector::Protocol::Array<Inspector::Protocol::Database::PrimaryColors> ColorList;
+typedef JSON::ArrayOf<Inspector::Protocol::Database::PrimaryColors> ColorList;
 } // Database
 // End of typedefs.
 

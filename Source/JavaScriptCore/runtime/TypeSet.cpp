@@ -217,9 +217,9 @@ String TypeSet::leastCommonAncestor() const
     return StructureShape::leastCommonAncestor(m_structureHistory);
 }
 
-Ref<Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>> TypeSet::allStructureRepresentations() const
+Ref<JSON::ArrayOf<Inspector::Protocol::Runtime::StructureDescription>> TypeSet::allStructureRepresentations() const
 {
-    auto description = Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>::create();
+    auto description = JSON::ArrayOf<Inspector::Protocol::Runtime::StructureDescription>::create();
 
     for (auto& shape : m_structureHistory)
         description->addItem(shape->inspectorRepresentation());
@@ -504,8 +504,8 @@ Ref<Inspector::Protocol::Runtime::StructureDescription> StructureShape::inspecto
     RefPtr<StructureShape> currentShape(this);
 
     while (currentShape) {
-        auto fields = Inspector::Protocol::Array<String>::create();
-        auto optionalFields = Inspector::Protocol::Array<String>::create();
+        auto fields = JSON::ArrayOf<String>::create();
+        auto optionalFields = JSON::ArrayOf<String>::create();
         for (auto field : currentShape->m_fields)
             fields->addItem(field.get());
         for (auto field : currentShape->m_optionalFields)

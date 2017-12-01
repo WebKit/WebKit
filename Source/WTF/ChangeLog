@@ -1,3 +1,18 @@
+2017-12-01  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: move Inspector::Protocol::Array<T> to JSON namespace
+        https://bugs.webkit.org/show_bug.cgi?id=173662
+
+        Reviewed by Joseph Pecoraro.
+
+        Move Inspector::Protocol::Array<T> to JSON::ArrayOf<T>.
+
+        * wtf/JSONValues.h:
+        (WTF::JSONImpl::ArrayOf::ArrayOf):
+        (WTF::JSONImpl::ArrayOf::openAccessors):
+        (WTF::JSONImpl::ArrayOf::addItem):
+        (WTF::JSONImpl::ArrayOf::create):
+
 2017-12-01  Brady Eidson  <beidson@apple.com>
 
         Add Internals.terminateServiceWorker, and the ability to restart service workers for postMessage.

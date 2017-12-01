@@ -234,8 +234,8 @@ class FrontendRouter;
 class DatabaseFrontendDispatcher {
 public:
     DatabaseFrontendDispatcher(FrontendRouter& frontendRouter) : m_frontendRouter(frontendRouter) { }
-    void didExecuteOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String* const notes, const double* const timestamp, RefPtr<JSON::Object> values, RefPtr<JSON::Value> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors* const screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String* const printColor);
-    void didExecuteNoOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String& notes, double timestamp, RefPtr<JSON::Object> values, RefPtr<JSON::Value> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors& screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String& printColor);
+    void didExecuteOptionalParameters(RefPtr<JSON::ArrayOf<String>> columnNames, const String* const notes, const double* const timestamp, RefPtr<JSON::Object> values, RefPtr<JSON::Value> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const String* const screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String* const printColor);
+    void didExecuteNoOptionalParameters(RefPtr<JSON::ArrayOf<String>> columnNames, const String& notes, double timestamp, RefPtr<JSON::Object> values, RefPtr<JSON::Value> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const String& screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String& printColor);
 private:
     FrontendRouter& m_frontendRouter;
 };
@@ -282,7 +282,7 @@ private:
 
 namespace Inspector {
 
-void DatabaseFrontendDispatcher::didExecuteOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String* const notes, const double* const timestamp, RefPtr<JSON::Object> values, RefPtr<JSON::Value> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors* const screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String* const printColor)
+void DatabaseFrontendDispatcher::didExecuteOptionalParameters(RefPtr<JSON::ArrayOf<String>> columnNames, const String* const notes, const double* const timestamp, RefPtr<JSON::Object> values, RefPtr<JSON::Value> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const String* const screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String* const printColor)
 {
     Ref<JSON::Object> jsonMessage = JSON::Object::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("Database.didExecuteOptionalParameters"));
@@ -310,7 +310,7 @@ void DatabaseFrontendDispatcher::didExecuteOptionalParameters(RefPtr<Inspector::
     m_frontendRouter.sendEvent(jsonMessage->toJSONString());
 }
 
-void DatabaseFrontendDispatcher::didExecuteNoOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String& notes, double timestamp, RefPtr<JSON::Object> values, RefPtr<JSON::Value> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors& screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String& printColor)
+void DatabaseFrontendDispatcher::didExecuteNoOptionalParameters(RefPtr<JSON::ArrayOf<String>> columnNames, const String& notes, double timestamp, RefPtr<JSON::Object> values, RefPtr<JSON::Value> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const String& screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String& printColor)
 {
     Ref<JSON::Object> jsonMessage = JSON::Object::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("Database.didExecuteNoOptionalParameters"));
@@ -387,7 +387,7 @@ namespace Database {
 /* Unique identifier of Database object. */
 typedef String DatabaseId;
 typedef String PrimaryColors;
-typedef Inspector::Protocol::Array<Inspector::Protocol::Database::PrimaryColors> ColorList;
+typedef JSON::ArrayOf<String> ColorList;
 } // Database
 // End of typedefs.
 

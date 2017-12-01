@@ -430,7 +430,7 @@ bool InspectorCSSAgent::forcePseudoState(const Element& element, CSSSelector::Ps
     }
 }
 
-void InspectorCSSAgent::getMatchedStylesForNode(ErrorString& errorString, int nodeId, const bool* includePseudo, const bool* includeInherited, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::RuleMatch>>& matchedCSSRules, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::PseudoIdMatches>>& pseudoIdMatches, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::InheritedStyleEntry>>& inheritedEntries)
+void InspectorCSSAgent::getMatchedStylesForNode(ErrorString& errorString, int nodeId, const bool* includePseudo, const bool* includeInherited, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>>& matchedCSSRules, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>>& pseudoIdMatches, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::InheritedStyleEntry>>& inheritedEntries)
 {
     Element* element = elementForId(errorString, nodeId);
     if (!element)
@@ -454,7 +454,7 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString& errorString, int no
     if (!originalElement->isPseudoElement()) {
         // Pseudo elements.
         if (!includePseudo || *includePseudo) {
-            auto pseudoElements = Inspector::Protocol::Array<Inspector::Protocol::CSS::PseudoIdMatches>::create();
+            auto pseudoElements = JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>::create();
             for (PseudoId pseudoId = FIRST_PUBLIC_PSEUDOID; pseudoId < AFTER_LAST_INTERNAL_PSEUDOID; pseudoId = static_cast<PseudoId>(pseudoId + 1)) {
                 auto matchedRules = styleResolver.pseudoStyleRulesForElement(element, pseudoId, StyleResolver::AllCSSRules);
                 if (!matchedRules.isEmpty()) {
@@ -471,7 +471,7 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString& errorString, int no
 
         // Inherited styles.
         if (!includeInherited || *includeInherited) {
-            auto entries = Inspector::Protocol::Array<Inspector::Protocol::CSS::InheritedStyleEntry>::create();
+            auto entries = JSON::ArrayOf<Inspector::Protocol::CSS::InheritedStyleEntry>::create();
             Element* parentElement = element->parentElement();
             while (parentElement) {
                 StyleResolver& parentStyleResolver = parentElement->styleResolver();
@@ -508,7 +508,7 @@ void InspectorCSSAgent::getInlineStylesForNode(ErrorString& errorString, int nod
         attributesStyle = nullptr;
 }
 
-void InspectorCSSAgent::getComputedStyleForNode(ErrorString& errorString, int nodeId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSComputedStyleProperty>>& style)
+void InspectorCSSAgent::getComputedStyleForNode(ErrorString& errorString, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::CSSComputedStyleProperty>>& style)
 {
     auto* element = elementForId(errorString, nodeId);
     if (!element)
@@ -519,9 +519,9 @@ void InspectorCSSAgent::getComputedStyleForNode(ErrorString& errorString, int no
     style = inspectorStyle->buildArrayForComputedStyle();
 }
 
-void InspectorCSSAgent::getAllStyleSheets(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSStyleSheetHeader>>& styleInfos)
+void InspectorCSSAgent::getAllStyleSheets(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::CSSStyleSheetHeader>>& styleInfos)
 {
-    styleInfos = Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSStyleSheetHeader>::create();
+    styleInfos = JSON::ArrayOf<Inspector::Protocol::CSS::CSSStyleSheetHeader>::create();
 
     Vector<InspectorStyleSheet*> inspectorStyleSheets;
     collectAllStyleSheets(inspectorStyleSheets);
@@ -711,9 +711,9 @@ void InspectorCSSAgent::addRule(ErrorString& errorString, const String& styleShe
     result = inspectorStyleSheet->buildObjectForRule(rule, nullptr);
 }
 
-void InspectorCSSAgent::getSupportedCSSProperties(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSPropertyInfo>>& cssProperties)
+void InspectorCSSAgent::getSupportedCSSProperties(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>>& cssProperties)
 {
-    auto properties = Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSPropertyInfo>::create();
+    auto properties = JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>::create();
     for (int i = firstCSSProperty; i <= lastCSSProperty; ++i) {
         CSSPropertyID id = convertToCSSPropertyID(i);
         if (isInternalCSSProperty(id))
@@ -728,7 +728,7 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString&, RefPtr<Inspector
             properties->addItem(WTFMove(property));
             continue;
         }
-        auto longhands = Inspector::Protocol::Array<String>::create();
+        auto longhands = JSON::ArrayOf<String>::create();
         for (unsigned j = 0; j < shorthand.length(); ++j) {
             CSSPropertyID longhandID = shorthand.properties()[j];
             longhands->addItem(getPropertyNameString(longhandID));
@@ -739,9 +739,9 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString&, RefPtr<Inspector
     cssProperties = WTFMove(properties);
 }
 
-void InspectorCSSAgent::getSupportedSystemFontFamilyNames(ErrorString&, RefPtr<Inspector::Protocol::Array<String>>& fontFamilyNames)
+void InspectorCSSAgent::getSupportedSystemFontFamilyNames(ErrorString&, RefPtr<JSON::ArrayOf<String>>& fontFamilyNames)
 {
-    auto families = Inspector::Protocol::Array<String>::create();
+    auto families = JSON::ArrayOf<String>::create();
 
     Vector<String> systemFontFamilies = FontCache::singleton().systemFontFamilies();
     for (const auto& familyName : systemFontFamilies)
@@ -888,9 +888,9 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(
     return inspectorStyleSheet ? inspectorStyleSheet->buildObjectForRule(rule, nullptr) : nullptr;
 }
 
-RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::RuleMatch>> InspectorCSSAgent::buildArrayForMatchedRuleList(const Vector<RefPtr<StyleRule>>& matchedRules, StyleResolver& styleResolver, Element& element, PseudoId pseudoId)
+RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>> InspectorCSSAgent::buildArrayForMatchedRuleList(const Vector<RefPtr<StyleRule>>& matchedRules, StyleResolver& styleResolver, Element& element, PseudoId pseudoId)
 {
-    auto result = Inspector::Protocol::Array<Inspector::Protocol::CSS::RuleMatch>::create();
+    auto result = JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>::create();
 
     SelectorChecker::CheckingContext context(SelectorChecker::Mode::CollectingRules);
     context.pseudoId = pseudoId ? pseudoId : element.pseudoId();
@@ -901,7 +901,7 @@ RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::RuleMatch>> Inspecto
         if (!ruleObject)
             continue;
 
-        auto matchingSelectors = Inspector::Protocol::Array<int>::create();
+        auto matchingSelectors = JSON::ArrayOf<int>::create();
         const CSSSelectorList& selectorList = matchedRule->selectorList();
         int index = 0;
         for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {

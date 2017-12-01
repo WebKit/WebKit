@@ -166,11 +166,11 @@ void InspectorScriptProfilerAgent::addEvent(double startTime, double endTime, Pr
 #if ENABLE(SAMPLING_PROFILER)
 static Ref<Protocol::ScriptProfiler::Samples> buildSamples(VM& vm, Vector<SamplingProfiler::StackTrace>&& samplingProfilerStackTraces)
 {
-    Ref<Protocol::Array<Protocol::ScriptProfiler::StackTrace>> stackTraces = Protocol::Array<Protocol::ScriptProfiler::StackTrace>::create();
+    auto stackTraces = JSON::ArrayOf<Protocol::ScriptProfiler::StackTrace>::create();
     for (SamplingProfiler::StackTrace& stackTrace : samplingProfilerStackTraces) {
-        Ref<Protocol::Array<Protocol::ScriptProfiler::StackFrame>> frames = Protocol::Array<Protocol::ScriptProfiler::StackFrame>::create();
+        auto frames = JSON::ArrayOf<Protocol::ScriptProfiler::StackFrame>::create();
         for (SamplingProfiler::StackFrame& stackFrame : stackTrace.frames) {
-            Ref<Protocol::ScriptProfiler::StackFrame> frame = Protocol::ScriptProfiler::StackFrame::create()
+            auto frameObject = Protocol::ScriptProfiler::StackFrame::create()
                 .setSourceID(String::number(stackFrame.sourceID()))
                 .setName(stackFrame.displayName(vm))
                 .setLine(stackFrame.functionStartLine())
@@ -183,10 +183,10 @@ static Ref<Protocol::ScriptProfiler::Samples> buildSamples(VM& vm, Vector<Sampli
                     .setLine(stackFrame.lineNumber())
                     .setColumn(stackFrame.columnNumber())
                     .release();
-                frame->setExpressionLocation(WTFMove(expressionLocation));
+                frameObject->setExpressionLocation(WTFMove(expressionLocation));
             }
 
-            frames->addItem(WTFMove(frame));
+            frames->addItem(WTFMove(frameObject));
         }
         Ref<Protocol::ScriptProfiler::StackTrace> inspectorStackTrace = Protocol::ScriptProfiler::StackTrace::create()
             .setTimestamp(stackTrace.timestamp)

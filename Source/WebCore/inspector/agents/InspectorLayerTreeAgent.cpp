@@ -102,9 +102,9 @@ void InspectorLayerTreeAgent::pseudoElementDestroyed(PseudoElement& pseudoElemen
     unbindPseudoElement(&pseudoElement);
 }
 
-void InspectorLayerTreeAgent::layersForNode(ErrorString& errorString, int nodeId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>& layers)
+void InspectorLayerTreeAgent::layersForNode(ErrorString& errorString, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>>& layers)
 {
-    layers = Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>::create();
+    layers = JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>::create();
 
     auto* node = m_instrumentingAgents.inspectorDOMAgent()->nodeForId(nodeId);
     if (!node) {
@@ -122,7 +122,7 @@ void InspectorLayerTreeAgent::layersForNode(ErrorString& errorString, int nodeId
         gatherLayersUsingRenderObjectHierarchy(errorString, downcast<RenderElement>(*renderer), layers);
 }
 
-void InspectorLayerTreeAgent::gatherLayersUsingRenderObjectHierarchy(ErrorString& errorString, RenderElement& renderer, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>& layers)
+void InspectorLayerTreeAgent::gatherLayersUsingRenderObjectHierarchy(ErrorString& errorString, RenderElement& renderer, RefPtr<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>>& layers)
 {
     if (renderer.hasLayer()) {
         gatherLayersUsingRenderLayerHierarchy(errorString, downcast<RenderLayerModelObject>(renderer).layer(), layers);
@@ -133,7 +133,7 @@ void InspectorLayerTreeAgent::gatherLayersUsingRenderObjectHierarchy(ErrorString
         gatherLayersUsingRenderObjectHierarchy(errorString, child, layers);
 }
 
-void InspectorLayerTreeAgent::gatherLayersUsingRenderLayerHierarchy(ErrorString& errorString, RenderLayer* renderLayer, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>& layers)
+void InspectorLayerTreeAgent::gatherLayersUsingRenderLayerHierarchy(ErrorString& errorString, RenderLayer* renderLayer, RefPtr<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>>& layers)
 {
     if (renderLayer->isComposited())
         layers->addItem(buildObjectForLayer(errorString, renderLayer));

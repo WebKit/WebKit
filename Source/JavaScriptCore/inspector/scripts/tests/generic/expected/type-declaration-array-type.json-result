@@ -331,11 +331,11 @@ typedef int BreakpointId;
 
 namespace Runtime {
 typedef int ObjectId;
-typedef Inspector::Protocol::Array<int> LuckyNumbers;
-typedef Inspector::Protocol::Array<String> BabyNames;
-typedef Inspector::Protocol::Array<Inspector::Protocol::Runtime::ObjectId> NewObjects;
-typedef Inspector::Protocol::Array<Inspector::Protocol::Debugger::BreakpointId> OldObjects;
-typedef Inspector::Protocol::Array<Inspector::Protocol::Debugger::Reason> StopReasons;
+typedef JSON::ArrayOf<int> LuckyNumbers;
+typedef JSON::ArrayOf<String> BabyNames;
+typedef JSON::ArrayOf<int> NewObjects;
+typedef JSON::ArrayOf<int> OldObjects;
+typedef JSON::ArrayOf<Inspector::Protocol::Debugger::Reason> StopReasons;
 } // Runtime
 // End of typedefs.
 

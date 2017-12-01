@@ -61,49 +61,6 @@ private:
     WTF_MAKE_NONCOPYABLE(OptOutput);
 };
 
-template<typename T>
-class Array : public JSON::ArrayBase {
-private:
-    Array() { }
-
-    JSON::Array& openAccessors()
-    {
-        COMPILE_ASSERT(sizeof(JSON::Array) == sizeof(Array<T>), cannot_cast);
-        return *static_cast<JSON::Array*>(static_cast<JSON::ArrayBase*>(this));
-    }
-
-public:
-    void addItem(Ref<T>&& value)
-    {
-        openAccessors().pushValue(&value.get());
-    }
-
-    void addItem(RefPtr<T>&& value)
-    {
-        openAccessors().pushValue(WTFMove(value));
-    }
-    
-    void addItem(const String& value)
-    {
-        openAccessors().pushString(value);
-    }
-
-    void addItem(int value)
-    {
-        openAccessors().pushInteger(value);
-    }
-
-    void addItem(double value)
-    {
-        openAccessors().pushDouble(value);
-    }
-
-    static Ref<Array<T>> create()
-    {
-        return adoptRef(*new Array<T>());
-    }
-};
-
 // Helper methods for Protocol and other JSON types are provided by
 // specializations of BindingTraits<T>. Some are generated for protocol types.
 
@@ -130,8 +87,8 @@ struct PrimitiveBindingTraits {
 };
 
 template<typename T>
-struct BindingTraits<Protocol::Array<T>> {
-    static RefPtr<Array<T>> runtimeCast(RefPtr<JSON::Value>&& value)
+struct BindingTraits<JSON::ArrayOf<T>> {
+    static RefPtr<JSON::ArrayOf<T>> runtimeCast(RefPtr<JSON::Value>&& value)
     {
         ASSERT_ARG(value, value);
         RefPtr<JSON::Array> array;
@@ -140,8 +97,8 @@ struct BindingTraits<Protocol::Array<T>> {
 #if !ASSERT_DISABLED
         assertValueHasExpectedType(array.get());
 #endif // !ASSERT_DISABLED
-        COMPILE_ASSERT(sizeof(Array<T>) == sizeof(JSON::Array), type_cast_problem);
-        return static_cast<Array<T>*>(static_cast<JSON::ArrayBase*>(array.get()));
+        COMPILE_ASSERT(sizeof(JSON::ArrayOf<T>) == sizeof(JSON::Array), type_cast_problem);
+        return static_cast<JSON::ArrayOf<T>*>(static_cast<JSON::ArrayBase*>(array.get()));
     }
 
 #if !ASSERT_DISABLED

@@ -1,3 +1,19 @@
+2017-12-01  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: move Inspector::Protocol::Array<T> to JSON namespace
+        https://bugs.webkit.org/show_bug.cgi?id=173662
+
+        Reviewed by Joseph Pecoraro.
+
+        Adopt new type names.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::getNextContext):
+        (WebKit::WebAutomationSession::getBrowsingContexts):
+        (WebKit::buildArrayForCookies):
+        (WebKit::WebAutomationSession::getSessionPermissions):
+        * UIProcess/Automation/WebAutomationSession.h:
+
 2017-12-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Implement SPI for clients to update a given attachment's data

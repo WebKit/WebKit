@@ -172,26 +172,26 @@ static Inspector::Protocol::Console::ConsoleMessage::Level messageLevelValue(Mes
 
 void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDispatcher, InjectedScriptManager& injectedScriptManager, bool generatePreview)
 {
-    Ref<Inspector::Protocol::Console::ConsoleMessage> jsonObj = Inspector::Protocol::Console::ConsoleMessage::create()
+    auto messageObject = Inspector::Protocol::Console::ConsoleMessage::create()
         .setSource(messageSourceValue(m_source))
         .setLevel(messageLevelValue(m_level))
         .setText(m_message)
         .release();
 
     // FIXME: only send out type for ConsoleAPI source messages.
-    jsonObj->setType(messageTypeValue(m_type));
-    jsonObj->setLine(static_cast<int>(m_line));
-    jsonObj->setColumn(static_cast<int>(m_column));
-    jsonObj->setUrl(m_url);
-    jsonObj->setRepeatCount(static_cast<int>(m_repeatCount));
+    messageObject->setType(messageTypeValue(m_type));
+    messageObject->setLine(static_cast<int>(m_line));
+    messageObject->setColumn(static_cast<int>(m_column));
+    messageObject->setUrl(m_url);
+    messageObject->setRepeatCount(static_cast<int>(m_repeatCount));
 
     if (m_source == MessageSource::Network && !m_requestId.isEmpty())
-        jsonObj->setNetworkRequestId(m_requestId);
+        messageObject->setNetworkRequestId(m_requestId);
 
     if (m_arguments && m_arguments->argumentCount()) {
         InjectedScript injectedScript = injectedScriptManager.injectedScriptFor(m_arguments->globalState());
         if (!injectedScript.hasNoValue()) {
-            Ref<Inspector::Protocol::Array<Inspector::Protocol::Runtime::RemoteObject>> jsonArgs = Inspector::Protocol::Array<Inspector::Protocol::Runtime::RemoteObject>::create();
+            auto argumentsObject = JSON::ArrayOf<Inspector::Protocol::Runtime::RemoteObject>::create();
             if (m_type == MessageType::Table && generatePreview && m_arguments->argumentCount()) {
                 Deprecated::ScriptValue table = m_arguments->argumentAt(0);
                 Deprecated::ScriptValue columns = m_arguments->argumentCount() > 1 ? m_arguments->argumentAt(1) : Deprecated::ScriptValue();
@@ -200,9 +200,9 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
                     ASSERT_NOT_REACHED();
                     return;
                 }
-                jsonArgs->addItem(inspectorValue.copyRef());
+                argumentsObject->addItem(inspectorValue.copyRef());
                 if (m_arguments->argumentCount() > 1)
-                    jsonArgs->addItem(injectedScript.wrapObject(columns, ASCIILiteral("console"), true));
+                    argumentsObject->addItem(injectedScript.wrapObject(columns, ASCIILiteral("console"), true));
             } else {
                 for (unsigned i = 0; i < m_arguments->argumentCount(); ++i) {
                     RefPtr<Inspector::Protocol::Runtime::RemoteObject> inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), ASCIILiteral("console"), generatePreview);
@@ -210,17 +210,17 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
                         ASSERT_NOT_REACHED();
                         return;
                     }
-                    jsonArgs->addItem(inspectorValue.copyRef());
+                    argumentsObject->addItem(inspectorValue.copyRef());
                 }
             }
-            jsonObj->setParameters(WTFMove(jsonArgs));
+            messageObject->setParameters(WTFMove(argumentsObject));
         }
     }
 
     if (m_callStack)
-        jsonObj->setStackTrace(m_callStack->buildInspectorArray());
+        messageObject->setStackTrace(m_callStack->buildInspectorArray());
 
-    consoleFrontendDispatcher.messageAdded(WTFMove(jsonObj));
+    consoleFrontendDispatcher.messageAdded(WTFMove(messageObject));
 }
 
 void ConsoleMessage::updateRepeatCountInConsole(ConsoleFrontendDispatcher& consoleFrontendDispatcher)

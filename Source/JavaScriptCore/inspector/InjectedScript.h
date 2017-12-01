@@ -56,13 +56,13 @@ public:
     void getFunctionDetails(ErrorString&, const String& functionId, RefPtr<Protocol::Debugger::FunctionDetails>* result);
     void functionDetails(ErrorString&, JSC::JSValue, RefPtr<Protocol::Debugger::FunctionDetails>* result);
     void getPreview(ErrorString&, const String& objectId, RefPtr<Protocol::Runtime::ObjectPreview>* result);
-    void getProperties(ErrorString&, const String& objectId, bool ownProperties, bool generatePreview, RefPtr<Protocol::Array<Protocol::Runtime::PropertyDescriptor>>* result);
-    void getDisplayableProperties(ErrorString&, const String& objectId, bool generatePreview, RefPtr<Protocol::Array<Protocol::Runtime::PropertyDescriptor>>* result);
-    void getInternalProperties(ErrorString&, const String& objectId, bool generatePreview, RefPtr<Protocol::Array<Protocol::Runtime::InternalPropertyDescriptor>>* result);
-    void getCollectionEntries(ErrorString&, const String& objectId, const String& objectGroup, int startIndex, int numberToFetch, RefPtr<Protocol::Array<Protocol::Runtime::CollectionEntry>>* entries);
+    void getProperties(ErrorString&, const String& objectId, bool ownProperties, bool generatePreview, RefPtr<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>* result);
+    void getDisplayableProperties(ErrorString&, const String& objectId, bool generatePreview, RefPtr<JSON::ArrayOf<Protocol::Runtime::PropertyDescriptor>>* result);
+    void getInternalProperties(ErrorString&, const String& objectId, bool generatePreview, RefPtr<JSON::ArrayOf<Protocol::Runtime::InternalPropertyDescriptor>>* result);
+    void getCollectionEntries(ErrorString&, const String& objectId, const String& objectGroup, int startIndex, int numberToFetch, RefPtr<JSON::ArrayOf<Protocol::Runtime::CollectionEntry>>* entries);
     void saveResult(ErrorString&, const String& callArgumentJSON, Inspector::Protocol::OptOutput<int>* savedResultIndex);
 
-    Ref<Protocol::Array<Protocol::Debugger::CallFrame>> wrapCallFrames(JSC::JSValue) const;
+    Ref<JSON::ArrayOf<Protocol::Debugger::CallFrame>> wrapCallFrames(JSC::JSValue) const;
     RefPtr<Protocol::Runtime::RemoteObject> wrapObject(JSC::JSValue, const String& groupName, bool generatePreview = false) const;
     RefPtr<Protocol::Runtime::RemoteObject> wrapTable(JSC::JSValue table, JSC::JSValue columns) const;
     RefPtr<Protocol::Runtime::ObjectPreview> previewValue(JSC::JSValue) const;

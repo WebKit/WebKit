@@ -191,13 +191,13 @@ void InspectorCanvasAgent::requestContent(ErrorString& errorString, const String
         errorString = ASCIILiteral("Unsupported canvas context type");
 }
 
-void InspectorCanvasAgent::requestCSSCanvasClientNodes(ErrorString& errorString, const String& canvasId, RefPtr<Inspector::Protocol::Array<int>>& result)
+void InspectorCanvasAgent::requestCSSCanvasClientNodes(ErrorString& errorString, const String& canvasId, RefPtr<JSON::ArrayOf<int>>& result)
 {
     auto* inspectorCanvas = assertInspectorCanvas(errorString, canvasId);
     if (!inspectorCanvas)
         return;
 
-    result = Inspector::Protocol::Array<int>::create();
+    result = JSON::ArrayOf<int>::create();
     for (Element* element : inspectorCanvas->canvas().cssCanvasClients()) {
         if (int documentNodeId = m_instrumentingAgents.inspectorDOMAgent()->boundNodeId(&element->document()))
             result->addItem(m_instrumentingAgents.inspectorDOMAgent()->pushNodeToFrontend(errorString, documentNodeId, element));

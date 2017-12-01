@@ -29,6 +29,7 @@
 #include "RuntimeType.h"
 #include "StructureSet.h"
 #include <wtf/HashSet.h>
+#include <wtf/JSONValues.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -36,7 +37,6 @@
 
 namespace Inspector {
 namespace Protocol  {
-template<typename T> class Array;
 
 namespace Runtime {
 class StructureDescription;
@@ -89,7 +89,7 @@ public:
     void invalidateCache();
     String dumpTypes() const;
     String displayName() const;
-    Ref<Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>> allStructureRepresentations() const;
+    Ref<JSON::ArrayOf<Inspector::Protocol::Runtime::StructureDescription>> allStructureRepresentations() const;
     String toJSONString() const;
     bool isOverflown() const { return m_isOverflown; }
     String leastCommonAncestor() const;

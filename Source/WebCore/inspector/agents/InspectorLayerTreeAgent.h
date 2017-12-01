@@ -63,7 +63,7 @@ public:
     // Called from the front-end.
     void enable(ErrorString&) override;
     void disable(ErrorString&) override;
-    void layersForNode(ErrorString&, int nodeId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>&) override;
+    void layersForNode(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>>&) override;
     void reasonsForCompositingLayer(ErrorString&, const String& layerId, RefPtr<Inspector::Protocol::LayerTree::CompositingReasons>&) override;
 
 private:
@@ -71,8 +71,8 @@ private:
     String bind(const RenderLayer*);
     void unbind(const RenderLayer*);
 
-    void gatherLayersUsingRenderObjectHierarchy(ErrorString&, RenderElement&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>&);
-    void gatherLayersUsingRenderLayerHierarchy(ErrorString&, RenderLayer*, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>&);
+    void gatherLayersUsingRenderObjectHierarchy(ErrorString&, RenderElement&, RefPtr<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>>&);
+    void gatherLayersUsingRenderLayerHierarchy(ErrorString&, RenderLayer*, RefPtr<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>>&);
 
     Ref<Inspector::Protocol::LayerTree::Layer> buildObjectForLayer(ErrorString&, RenderLayer*);
     Ref<Inspector::Protocol::LayerTree::IntRect> buildObjectForIntRect(const IntRect&);

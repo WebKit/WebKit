@@ -62,17 +62,17 @@ public:
     void callFunctionOn(ErrorString&, const String& objectId, const String& expression, const JSON::Array* optionalArguments, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* const generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown) final;
     void releaseObject(ErrorString&, const ErrorString& objectId) final;
     void getPreview(ErrorString&, const String& objectId, RefPtr<Inspector::Protocol::Runtime::ObjectPreview>&) final;
-    void getProperties(ErrorString&, const String& objectId, const bool* const ownProperties, const bool* const generatePreview, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) final;
-    void getDisplayableProperties(ErrorString&, const String& objectId, const bool* const generatePreview, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) final;
-    void getCollectionEntries(ErrorString&, const String& objectId, const String* const objectGroup, const int* const startIndex, const int* const numberToFetch, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::CollectionEntry>>& entries) final;
+    void getProperties(ErrorString&, const String& objectId, const bool* const ownProperties, const bool* const generatePreview, RefPtr<JSON::ArrayOf<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<JSON::ArrayOf<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) final;
+    void getDisplayableProperties(ErrorString&, const String& objectId, const bool* const generatePreview, RefPtr<JSON::ArrayOf<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<JSON::ArrayOf<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) final;
+    void getCollectionEntries(ErrorString&, const String& objectId, const String* const objectGroup, const int* const startIndex, const int* const numberToFetch, RefPtr<JSON::ArrayOf<Inspector::Protocol::Runtime::CollectionEntry>>& entries) final;
     void saveResult(ErrorString&, const JSON::Object& callArgument, const int* const executionContextId, Inspector::Protocol::OptOutput<int>* savedResultIndex) final;
     void releaseObjectGroup(ErrorString&, const String& objectGroup) final;
-    void getRuntimeTypesForVariablesAtOffsets(ErrorString&, const JSON::Array& locations, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::TypeDescription>>&) override;
+    void getRuntimeTypesForVariablesAtOffsets(ErrorString&, const JSON::Array& locations, RefPtr<JSON::ArrayOf<Inspector::Protocol::Runtime::TypeDescription>>&) override;
     void enableTypeProfiler(ErrorString&) override;
     void disableTypeProfiler(ErrorString&) override;
     void enableControlFlowProfiler(ErrorString&) override;
     void disableControlFlowProfiler(ErrorString&) override;
-    void getBasicBlocks(ErrorString&, const String& in_sourceID, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::BasicBlock>>& out_basicBlocks) override;
+    void getBasicBlocks(ErrorString&, const String& in_sourceID, RefPtr<JSON::ArrayOf<Inspector::Protocol::Runtime::BasicBlock>>& out_basicBlocks) override;
 
     bool enabled() const { return m_enabled; }
 
