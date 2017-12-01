@@ -1,3 +1,17 @@
+2017-12-01  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix byte order macros and address new -Wunknown-pragmas warnings
+        https://bugs.webkit.org/show_bug.cgi?id=180177
+        <rdar://problem/35774734>
+
+        I'm not sure how this code was developed, as it seems to have been designed for GCC, but it
+        does not use any of GCC's documented byte order macros, and accordingly does not work. Let's
+        fix it to guarantee there are no problems when building with GCC. I presume it should help
+        Clang as well.
+
+        * src/common/third_party/smhasher/src/PMurHash.cpp:
+        (angle::PMurHash32_Process):
+
 2017-12-01  Tomoki Imai  <Tomoki.Imai@sony.com>
 
         Fix WinCairo build break after r225340
