@@ -1,3 +1,13 @@
+2017-12-01  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update TestExpectations for editing/input tests on iOS.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2017-12-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Free FontFaceSets may include fonts that were never actually added to them

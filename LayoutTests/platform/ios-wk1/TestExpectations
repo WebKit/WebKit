@@ -124,7 +124,6 @@ editing/style/apple-style-editable-mix.html [ Failure ]
 # Editing tests that time out:
 editing/deleting/delete-button-background-image-none.html
 editing/input/page-up-down-scrolls.html
-editing/input/reveal-contenteditable-on-input-vertically.html
 editing/selection/caret-at-bidi-boundary.html
 editing/spelling/context-menu-suggestions-multiword-selection.html
 editing/spelling/delete-into-misspelled-word.html

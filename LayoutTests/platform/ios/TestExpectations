@@ -789,7 +789,14 @@ editing/deleting/forward-delete-key.html [ Skip ]
 editing/deleting/skip-virama-001.html [ Skip ]
 editing/input/option-page-up-down.html [ Skip ]
 editing/input/page-up-down-scrolls.html [ Skip ]
+editing/input/password-echo-passnode.html [ Skip ]
+editing/input/password-echo-passnode2.html [ Skip ]
+editing/input/password-echo-passnode3.html [ Skip ]
 editing/input/reveal-caret-of-transformed-multiline-input.html [ Skip ]
+editing/input/reveal-edit-on-input-vertically.html [ Skip ]
+editing/input/reveal-contenteditable-on-input-vertically.html [ Skip ]
+editing/input/scroll-to-edge-if-line-break-at-end-of-document-contenteditable.html [ Skip ]
+editing/input/scroll-to-edge-if-paragraph-separator-at-end-of-document-contenteditable.html [ Skip ]
 editing/input/scroll-viewport-page-up-down.html [ Skip ]
 editing/input/setting-input-value-cancel-ime-composition.html [ Skip ]
 editing/input/style-change-during-input.html [ Skip ]
@@ -1333,6 +1340,8 @@ webkit.org/b/180269 editing/execCommand/unlink.html [ Failure ]
 
 webkit.org/b/180275 editing/caret/color-span-inside-editable-background.html [ ImageOnlyFailure ]
 webkit.org/b/180725 editing/caret/color-span-inside-editable.html [ ImageOnlyFailure ]
+
+webkit.org/b/180286 editing/input/editable-container-with-word-wrap-normal.html [ Failure ]
 
 # Font tests that fail:
 fonts/font-fallback-prefers-pictographs.html [ ImageOnlyFailure ]
