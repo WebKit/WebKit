@@ -28,37 +28,21 @@
 #include "Decoder.h"
 #include "Encoder.h"
 #include "WebCoreArgumentCoders.h"
-#include <WebCore/HTMLElement.h>
 #include <WebCore/HTMLMenuItemElement.h>
 #include <WebCore/HTMLNames.h>
-#include <WebCore/Node.h>
-#include <vector>
 
 namespace WebKit {
 
-ItemType TouchBarMenuItemData::getItemType(String value)
+static ItemType getItemType(const String&)
 {
     return ItemType::Button;
 }
 
-TouchBarMenuItemData::TouchBarMenuItemData()
-{
-}
-
-TouchBarMenuItemData::TouchBarMenuItemData(WebCore::HTMLMenuItemElement& element)
+TouchBarMenuItemData::TouchBarMenuItemData(const WebCore::HTMLMenuItemElement& element)
 {
     itemType = getItemType(element.attributeWithoutSynchronization(WebCore::HTMLNames::typeAttr));
     identifier = element.attributeWithoutSynchronization(WebCore::HTMLNames::idAttr);
-    commandName = element.attributeWithoutSynchronization(WebCore::HTMLNames::onclickAttr);
     priority = element.attributeWithoutSynchronization(WebCore::HTMLNames::valueAttr).toFloat();
-}
-    
-TouchBarMenuItemData::TouchBarMenuItemData(const TouchBarMenuItemData& other)
-    : itemType(other.itemType)
-    , identifier(other.identifier)
-    , commandName(other.commandName)
-    , priority(other.priority)
-{
 }
 
 void TouchBarMenuItemData::encode(IPC::Encoder& encoder) const
@@ -66,7 +50,6 @@ void TouchBarMenuItemData::encode(IPC::Encoder& encoder) const
     encoder.encodeEnum(itemType);
     
     encoder << identifier;
-    encoder << commandName;
     encoder << priority;
 }
 
@@ -77,9 +60,6 @@ std::optional<TouchBarMenuItemData> TouchBarMenuItemData::decode(IPC::Decoder& d
         return std::nullopt;
     
     if (!decoder.decode(result.identifier))
-        return std::nullopt;
-    
-    if (!decoder.decode(result.commandName))
         return std::nullopt;
     
     if (!decoder.decode(result.priority))

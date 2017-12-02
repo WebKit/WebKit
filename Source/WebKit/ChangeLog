@@ -1,3 +1,42 @@
+2017-12-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make some minor adjustments to TouchBarMenuData and TouchBarMenuItemData
+        https://bugs.webkit.org/show_bug.cgi?id=180305
+
+        Reviewed by Joseph Pecoraro.
+
+        Mark some methods and parameters as const, use the default constructor in more places, and also remove a few
+        extraneous imported headers.
+
+        * Shared/TouchBarMenuData.cpp:
+        (WebKit::TouchBarMenuData::TouchBarMenuData):
+
+        Add a FIXME regarding the use of the 'id' attribute.
+
+        (WebKit::TouchBarMenuData::decode):
+        * Shared/TouchBarMenuData.h:
+        (WebKit::TouchBarMenuData::items const):
+        (WebKit::TouchBarMenuData::setID):
+        (WebKit::TouchBarMenuData::isPageCustomized const):
+        (WebKit::TouchBarMenuData::items): Deleted.
+        (WebKit::TouchBarMenuData::isPageCustomized): Deleted.
+        * Shared/TouchBarMenuItemData.cpp:
+        (WebKit::getItemType):
+
+        Change a helper method from a static class function to a static function in the implementation file.
+
+        (WebKit::TouchBarMenuItemData::TouchBarMenuItemData):
+        (WebKit::TouchBarMenuItemData::encode const):
+        (WebKit::TouchBarMenuItemData::decode):
+        (WebKit::TouchBarMenuItemData::getItemType): Deleted.
+        * Shared/TouchBarMenuItemData.h:
+        (WebKit::operator==):
+
+        Remove the commandName member variable, since it doesn't make sense to propagate an event handler
+        attribute from WebCore to the client layer.
+
+        * UIProcess/WebPageProxy.messages.in:
+
 2017-12-01  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ debug build fix. Replace ASSERT_UNUSED() with UNUSED_PARAM()

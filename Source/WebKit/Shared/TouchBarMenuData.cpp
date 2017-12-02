@@ -30,30 +30,21 @@
 #include "Encoder.h"
 #include "TouchBarMenuItemData.h"
 #include "WebCoreArgumentCoders.h"
-#include <WebCore/HTMLElement.h>
 #include <WebCore/HTMLMenuElement.h>
 #include <WebCore/HTMLNames.h>
-#include <WebCore/Node.h>
 
 namespace WebKit {
     
-TouchBarMenuData::TouchBarMenuData()
-{
-}
-    
-TouchBarMenuData::TouchBarMenuData(WebCore::HTMLMenuElement& element)
+TouchBarMenuData::TouchBarMenuData(const WebCore::HTMLMenuElement& element)
 {
     if (!element.isTouchBarMenu())
         return;
+
+    // FIXME: We can't rely on using the 'id' attribute of the element here to distinguish
+    // between different menu items. For instance, a menuitem may have the same 'id' as
+    // another, or have no 'id' at all.
     m_id = element.attributeWithoutSynchronization(WebCore::HTMLNames::idAttr);
     m_isPageCustomized = true;
-}
-    
-TouchBarMenuData::TouchBarMenuData(const TouchBarMenuData& touchBarMenuData)
-    : m_items(touchBarMenuData.m_items)
-    , m_id(touchBarMenuData.m_id)
-    , m_isPageCustomized(touchBarMenuData.m_isPageCustomized)
-{
 }
     
 void TouchBarMenuData::addMenuItem(const TouchBarMenuItemData& data)
@@ -73,10 +64,7 @@ void TouchBarMenuData::encode(IPC::Encoder& encoder) const
 
 bool TouchBarMenuData::decode(IPC::Decoder& decoder, TouchBarMenuData& data)
 {
-    if (!decoder.decode(data.m_items))
-        return false;
-    
-    return true;
+    return decoder.decode(data.m_items);
 }
     
 }

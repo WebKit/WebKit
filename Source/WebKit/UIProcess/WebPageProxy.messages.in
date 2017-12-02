@@ -314,7 +314,6 @@ messages -> WebPageProxy {
     StartDrag(struct WebKit::WebSelectionData selection, uint64_t dragOperation, WebKit::ShareableBitmap::Handle dragImage)
 #endif
 
-
 #if ENABLE(DATA_INTERACTION)
     DidPerformDataInteractionControllerOperation(bool handled)
     DidHandleStartDataInteractionRequest(bool started)

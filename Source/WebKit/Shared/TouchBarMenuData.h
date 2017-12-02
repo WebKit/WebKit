@@ -26,7 +26,6 @@
 #pragma once
 #include "ArgumentCoders.h"
 #include "TouchBarMenuItemData.h"
-#include <WebCore/HTMLMenuElement.h>
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
@@ -34,24 +33,28 @@ class Decoder;
 class Encoder;
 }
 
+namespace WebCore {
+class HTMLMenuElement;
+}
+
 namespace WebKit {
 
 class TouchBarMenuData {
 public:
-    explicit TouchBarMenuData();
-    explicit TouchBarMenuData(WebCore::HTMLMenuElement&);
-    explicit TouchBarMenuData(const TouchBarMenuData&);
+    explicit TouchBarMenuData() = default;
+    explicit TouchBarMenuData(const WebCore::HTMLMenuElement&);
+    explicit TouchBarMenuData(const TouchBarMenuData&) = default;
 
     void addMenuItem(const TouchBarMenuItemData&);
     void removeMenuItem(const TouchBarMenuItemData&);
     
-    const Vector<TouchBarMenuItemData>& items() { return m_items; }
+    const Vector<TouchBarMenuItemData>& items() const { return m_items; }
     
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, TouchBarMenuData&);
     
-    void setID(String);
-    bool isPageCustomized() { return m_isPageCustomized; }
+    void setID(const String& identifier) { m_id = identifier; }
+    bool isPageCustomized() const { return m_isPageCustomized; }
     void setIsPageCustomized(bool customized) { m_isPageCustomized = customized; }
     
 private:

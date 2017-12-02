@@ -25,12 +25,15 @@
 
 #pragma once
 #include "ArgumentCoders.h"
-#include <WebCore/HTMLMenuItemElement.h>
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
 class Decoder;
 class Encoder;
+}
+
+namespace WebCore {
+class HTMLMenuItemElement;
 }
 
 namespace WebKit {
@@ -41,20 +44,17 @@ enum ItemType {
 };
 
 struct TouchBarMenuItemData {
-    explicit TouchBarMenuItemData();
-    explicit TouchBarMenuItemData(WebCore::HTMLMenuItemElement&);
-    explicit TouchBarMenuItemData(const TouchBarMenuItemData&);
+    explicit TouchBarMenuItemData() = default;
+    explicit TouchBarMenuItemData(const WebCore::HTMLMenuItemElement&);
+    explicit TouchBarMenuItemData(const TouchBarMenuItemData&) = default;
     
     void encode(IPC::Encoder&) const;
     static std::optional<TouchBarMenuItemData> decode(IPC::Decoder&);
-    static ItemType getItemType(String);
-    
-    bool validTouchBarDisplay { true };
     
     ItemType itemType { ItemType::Button };
     String identifier;
-    String commandName;
     float priority { 0.0 };
+    bool validTouchBarDisplay { true };
 };
     
 // Touch Bar Menu Items will be ordered based on priority.
@@ -82,7 +82,6 @@ inline bool operator==(const TouchBarMenuItemData& lhs, const TouchBarMenuItemDa
 {
     return lhs.itemType == rhs.itemType
     && lhs.identifier == rhs.identifier
-    && lhs.commandName == rhs.commandName
     && lhs.priority == rhs.priority;
 }
 
