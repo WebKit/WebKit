@@ -87,6 +87,7 @@ WebPageProxy* RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow()
     [m_inspectorView.get() setDelegate:m_objCAdapter.get()];
 
     m_window = WebInspectorProxy::createFrontendWindow(NSZeroRect);
+    [m_window setFrameAutosaveName:@"WKRemoteWebInspectorWindowFrame"];
 
     NSView *contentView = m_window.get().contentView;
     [webView() setFrame:contentView.bounds];
