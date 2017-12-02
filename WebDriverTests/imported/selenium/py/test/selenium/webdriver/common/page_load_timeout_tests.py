@@ -20,7 +20,7 @@ import pytest
 from selenium.common.exceptions import TimeoutException
 
 
-@pytest.yield_fixture(autouse=True)
+@pytest.fixture(autouse=True)
 def reset_timeouts(driver):
     yield
     driver.set_page_load_timeout(300)

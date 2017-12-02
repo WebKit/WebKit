@@ -2,7 +2,6 @@
     "repository": "https://github.com/w3c/web-platform-tests.git",
     "revision": "2b50389ee72d89dd0be12bc6ca54a6e95c98d163",
     "paths_to_import": [
-        "tools/pytest",
         "tools/webdriver",
         "tools/wptrunner",
         "webdriver"

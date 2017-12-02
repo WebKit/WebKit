@@ -29,7 +29,7 @@ from selenium.common.exceptions import (
     WebDriverException)
 
 
-@pytest.yield_fixture(autouse=True)
+@pytest.fixture(autouse=True)
 def close_alert(driver):
     yield
     try:

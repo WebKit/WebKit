@@ -28,7 +28,7 @@ from selenium.webdriver.support.events import EventFiringWebDriver, AbstractEven
 from selenium.webdriver.support.ui import WebDriverWait
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def log():
     log = BytesIO()
     yield log

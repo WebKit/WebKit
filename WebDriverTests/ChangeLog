@@ -1,3 +1,24 @@
+2017-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: auto-install pytest instead of importing it from wpt tools directory
+        https://bugs.webkit.org/show_bug.cgi?id=180243
+
+        Reviewed by Brian Burg.
+
+        * imported/selenium/py/conftest.py: Stop patching this to use yield_fixture, new pytest supports this.
+        * imported/selenium/py/setup.cfg: Stop patching this, since pytest supports tool:pytest as group name.
+        * imported/selenium/py/test/selenium/webdriver/common/alerts_tests.py: Stop patching this to use yield_fixture,
+        new pytest supports this.
+        * imported/selenium/py/test/selenium/webdriver/common/cookie_tests.py: Ditto.
+        * imported/selenium/py/test/selenium/webdriver/common/frame_switching_tests.py: Ditto.
+        * imported/selenium/py/test/selenium/webdriver/common/page_load_timeout_tests.py: Ditto.
+        * imported/selenium/py/test/selenium/webdriver/common/window_switching_tests.py: Ditto.
+        * imported/selenium/py/test/selenium/webdriver/safari/conftest.py: Ditto.
+        * imported/selenium/py/test/selenium/webdriver/support/event_firing_webdriver_tests.py: Ditto.
+        * imported/w3c/importer.json: Stop importing pytest.
+        * imported/w3c/pytest.ini: Added.
+        * imported/w3c/tools/pytest/: Removed.
+
 2017-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: add support for importing and running selenium tests

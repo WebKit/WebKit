@@ -94,8 +94,8 @@ class WebDriverTestRunnerW3C(object):
                 harness_result, test_results = executor.run(test)
                 result = WebDriverTestResult(test_name, *harness_result)
                 if harness_result[0] == 'OK':
-                    for test_result in test_results:
-                        result.add_subtest_results(*test_result)
+                    for subtest, status, message, backtrace in test_results:
+                        result.add_subtest_results(os.path.basename(subtest), status, message, backtrace)
                 else:
                     # FIXME: handle other results.
                     pass

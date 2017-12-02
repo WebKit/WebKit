@@ -1,3 +1,22 @@
+2017-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: auto-install pytest instead of importing it from wpt tools directory
+        https://bugs.webkit.org/show_bug.cgi?id=180243
+
+        Reviewed by Brian Burg.
+
+        We don't really need the (old) version included in wpt tools dir, so we can simply remove it and use autoinstall
+        instead.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module): Check pytest.
+        (AutoinstallImportHook._install_pytest): Install pytest.
+        * Scripts/webkitpy/webdriver_tests/webdriver_selenium_executor.py: Import autoinstalled pytest.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_w3c.py:
+        (WebDriverTestRunnerW3C.run): Update the subtest path since the new pytest uses a different strategy for
+        rootdir.
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_executor.py: Import autoinstalled pytest.
+
 2017-12-01  Dewei Zhu  <dewei_zhu@apple.com>
 
         Hardcoded python path is not compatible with virtual environment.

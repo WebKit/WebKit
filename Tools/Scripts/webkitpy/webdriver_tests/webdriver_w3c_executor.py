@@ -28,6 +28,8 @@ from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
 import webkitpy.thirdparty.autoinstalled.mozlog
 import webkitpy.thirdparty.autoinstalled.mozprocess
+import webkitpy.thirdparty.autoinstalled.pytest
+import webkitpy.thirdparty.autoinstalled.pytest_timeout
 from mozlog import structuredlog
 
 w3c_tools_dir = WebKitFinder(FileSystem()).path_from_webkit_base('WebDriverTests', 'imported', 'w3c', 'tools')
@@ -36,11 +38,9 @@ w3c_tools_dir = WebKitFinder(FileSystem()).path_from_webkit_base('WebDriverTests
 def _ensure_directory_in_path(directory):
     if not directory in sys.path:
         sys.path.insert(0, directory)
-_ensure_directory_in_path(os.path.join(w3c_tools_dir, 'pytest'))
 _ensure_directory_in_path(os.path.join(w3c_tools_dir, 'webdriver'))
 _ensure_directory_in_path(os.path.join(w3c_tools_dir, 'wptrunner'))
 
-import webkitpy.thirdparty.autoinstalled.pytest_timeout
 from wptrunner.executors.base import WdspecExecutor, WebDriverProtocol
 from wptrunner.webdriver_server import WebDriverServer
 

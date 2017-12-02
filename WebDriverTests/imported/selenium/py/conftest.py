@@ -67,7 +67,7 @@ def pytest_ignore_collect(path, config):
 driver_instance = None
 
 
-@pytest.yield_fixture(scope='function')
+@pytest.fixture(scope='function')
 def driver(request):
     kwargs = {}
 
@@ -157,7 +157,7 @@ def pages(driver, webserver):
     return Pages()
 
 
-@pytest.yield_fixture(autouse=True, scope='session')
+@pytest.fixture(autouse=True, scope='session')
 def server(request):
     drivers = request.config.getoption('drivers')
     if drivers is None or 'Remote' not in drivers:
@@ -196,7 +196,7 @@ def server(request):
         print('Selenium server has been terminated')
 
 
-@pytest.yield_fixture(autouse=True, scope='session')
+@pytest.fixture(autouse=True, scope='session')
 def webserver():
     webserver = SimpleWebServer(host=get_lan_ip())
     webserver.start()
