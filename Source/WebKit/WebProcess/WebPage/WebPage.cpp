@@ -5127,7 +5127,7 @@ void WebPage::didInsertMenuElement(HTMLMenuElement& element)
 #if PLATFORM(COCOA)
     sendTouchBarMenuDataAddedUpdate(element);
 #else
-    ASSERT_UNUSED(element, element);
+    UNUSED_PARAM(element);
 #endif
 }
 
@@ -5136,7 +5136,7 @@ void WebPage::didRemoveMenuElement(HTMLMenuElement& element)
 #if PLATFORM(COCOA)
     sendTouchBarMenuDataRemovedUpdate(element);
 #else
-    ASSERT_UNUSED(element, element);
+    UNUSED_PARAM(element);
 #endif
 }
 
@@ -5145,7 +5145,7 @@ void WebPage::didInsertMenuItemElement(HTMLMenuItemElement& element)
 #if PLATFORM(COCOA)
     sendTouchBarMenuItemDataAddedUpdate(element);
 #else
-    ASSERT_UNUSED(element, element);
+    UNUSED_PARAM(element);
 #endif
 }
 
@@ -5154,7 +5154,7 @@ void WebPage::didRemoveMenuItemElement(HTMLMenuItemElement& element)
 #if PLATFORM(COCOA)
     sendTouchBarMenuItemDataRemovedUpdate(element);
 #else
-    ASSERT_UNUSED(element, element);
+    UNUSED_PARAM(element);
 #endif
 }
 

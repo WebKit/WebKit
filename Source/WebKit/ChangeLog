@@ -1,3 +1,15 @@
+2017-12-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ debug build fix. Replace ASSERT_UNUSED() with UNUSED_PARAM()
+        in WebKit::WebPage methods that used to operate on HTMLMenuElement pointer
+        values (which have been converted to references).
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didInsertMenuElement):
+        (WebKit::WebPage::didRemoveMenuElement):
+        (WebKit::WebPage::didInsertMenuItemElement):
+        (WebKit::WebPage::didRemoveMenuItemElement):
+
 2017-12-01  Simon Fraser  <simon.fraser@apple.com>
 
         Reduce the number of calls to ViewportConfiguration::updateConfiguration()
