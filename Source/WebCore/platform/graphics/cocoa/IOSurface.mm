@@ -372,6 +372,11 @@ IOSurfaceID IOSurface::surfaceID() const
 #endif
 }
 
+size_t IOSurface::bytesPerRow() const
+{
+    return IOSurfaceGetBytesPerRow(m_surface.get());
+}
+
 bool IOSurface::isInUse() const
 {
     return IOSurfaceIsInUse(m_surface.get());

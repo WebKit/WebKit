@@ -48,6 +48,39 @@ public:
         RGB10,
         RGB10A8,
     };
+    
+    class Locker {
+    public:
+        enum class AccessMode {
+            ReadOnly,
+            ReadWrite
+        };
+
+        Locker(IOSurface& surface, AccessMode mode = AccessMode::ReadOnly)
+            : m_surface(surface)
+            , m_flags(flagsFromMode(mode))
+        {
+            IOSurfaceLock(m_surface.surface(), m_flags, nullptr);
+        }
+
+        ~Locker()
+        {
+            IOSurfaceUnlock(m_surface.surface(), m_flags, nullptr);
+        }
+
+        void * surfaceBaseAddress() const
+        {
+            return IOSurfaceGetBaseAddress(m_surface.surface());
+        }
+
+    private:
+        static uint32_t flagsFromMode(AccessMode mode)
+        {
+            return mode == AccessMode::ReadOnly ? kIOSurfaceLockReadOnly : 0;
+        }
+        IOSurface& m_surface;
+        uint32_t m_flags;
+    };
 
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IntSize, CGColorSpaceRef, Format = Format::RGBA);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IntSize, IntSize contextSize, CGColorSpaceRef, Format = Format::RGBA);
@@ -89,9 +122,11 @@ public:
 
     IntSize size() const { return m_size; }
     size_t totalBytes() const { return m_totalBytes; }
+
     CGColorSpaceRef colorSpace() const { return m_colorSpace.get(); }
     WEBCORE_EXPORT Format format() const;
     IOSurfaceID surfaceID() const;
+    size_t bytesPerRow() const;
 
     WEBCORE_EXPORT bool isInUse() const;
 

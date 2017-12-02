@@ -131,10 +131,8 @@ Vector<uint8_t> ImageBufferData::toBGRAData(bool accelerateRendering, int width,
         return result;
     }
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    IOSurfaceRef surfaceRef = surface->surface();
-    IOSurfaceLock(surfaceRef, kIOSurfaceLockReadOnly, nullptr);
-    transferData(result.data(), IOSurfaceGetBaseAddress(surfaceRef), width, height, IOSurfaceGetBytesPerRow(surfaceRef));
-    IOSurfaceUnlock(surfaceRef, kIOSurfaceLockReadOnly, nullptr);
+    IOSurface::Locker lock(*surface);
+    transferData(result.data(), lock.surfaceBaseAddress(), width, height, surface->bytesPerRow());
 #else
     ASSERT_NOT_REACHED();
 #endif
@@ -303,14 +301,11 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication output
         }
     } else {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-        // FIXME: WebCore::IOSurface should have a locking RAII object and base-address getter.
-        IOSurfaceRef surfaceRef = surface->surface();
-        IOSurfaceLock(surfaceRef, kIOSurfaceLockReadOnly, nullptr);
-        srcBytesPerRow = IOSurfaceGetBytesPerRow(surfaceRef);
-        srcRows = static_cast<uint8_t*>(IOSurfaceGetBaseAddress(surfaceRef)) + originy * srcBytesPerRow + originx * 4;
+        IOSurface::Locker lock(*surface);
+        srcBytesPerRow = surface->bytesPerRow();
+        srcRows = static_cast<uint8_t*>(lock.surfaceBaseAddress()) + originy * srcBytesPerRow + originx * 4;
 
 #if USE(ACCELERATE)
-
         vImage_Buffer src;
         src.width = width.unsafeGet();
         src.height = height.unsafeGet();
@@ -389,7 +384,6 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication output
             }
         }
 #endif // USE(ACCELERATE)
-        IOSurfaceUnlock(surfaceRef, kIOSurfaceLockReadOnly, nullptr);
 #else
         ASSERT_NOT_REACHED();
 #endif // USE(IOSURFACE_CANVAS_BACKING_STORE)
@@ -529,10 +523,9 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
         }
     } else {
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-        IOSurfaceRef surfaceRef = surface->surface();
-        IOSurfaceLock(surfaceRef, 0, nullptr);
-        destBytesPerRow = IOSurfaceGetBytesPerRow(surfaceRef);
-        destRows = static_cast<uint8_t*>(IOSurfaceGetBaseAddress(surfaceRef)) + (desty * destBytesPerRow + destx * 4).unsafeGet();
+        IOSurface::Locker lock(*surface, IOSurface::Locker::AccessMode::ReadWrite);
+        destBytesPerRow = surface->bytesPerRow();
+        destRows = static_cast<uint8_t*>(lock.surfaceBaseAddress()) + (desty * destBytesPerRow + destx * 4).unsafeGet();
 
 #if USE(ACCELERATE)
         vImage_Buffer src;
@@ -595,8 +588,6 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
             srcRows += srcBytesPerRow;
         }
 #endif // USE(ACCELERATE)
-
-        IOSurfaceUnlock(surfaceRef, 0, nullptr);
 #else
         ASSERT_NOT_REACHED();
 #endif // USE(IOSURFACE_CANVAS_BACKING_STORE)
