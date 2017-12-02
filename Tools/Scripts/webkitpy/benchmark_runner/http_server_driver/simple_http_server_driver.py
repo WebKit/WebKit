@@ -30,7 +30,7 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
     def serve(self, web_root):
         _log.info('Launching an http server')
         http_server_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "http_server/twisted_http_server.py")
-        self._server_process = subprocess.Popen(["/usr/bin/python", http_server_path, web_root], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self._server_process = subprocess.Popen(["python", http_server_path, web_root], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         max_attempt = 5
         interval = 0.5
