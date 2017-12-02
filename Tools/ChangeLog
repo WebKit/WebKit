@@ -1,3 +1,14 @@
+2017-12-01  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Move python code to load config from master.cfg in separate file
+        https://bugs.webkit.org/show_bug.cgi?id=180278
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Moved appropriate code to loadConfig.py
+        * BuildSlaveSupport/build.webkit.org-config/loadConfig.py: Ditto.
+        * BuildSlaveSupport/build.webkit.org-config/steps.py: Removed extra import.
+
 2017-12-01  Brian Burg  <bburg@apple.com>
 
         Web Inspector: move Inspector::Protocol::Array<T> to JSON namespace

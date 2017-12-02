@@ -24,8 +24,6 @@ from buildbot.process import buildstep, factory, properties
 from buildbot.steps import master, shell, source, transfer, trigger
 from buildbot.status.builder import SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION
 
-from factories import *
-
 from twisted.internet import defer
 
 import os
