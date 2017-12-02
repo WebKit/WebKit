@@ -102,6 +102,11 @@ enum RenderingMode {
     Accelerated
 };
 
+enum class AlphaPremultiplication {
+    Premultiplied,
+    Unpremultiplied
+};
+
 String compositeOperatorName(CompositeOperator, BlendMode);
 bool parseBlendMode(const String&, BlendMode&);
 bool parseCompositeAndBlendOperator(const String&, CompositeOperator&, BlendMode&);
@@ -117,6 +122,7 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, CompositeOperator);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WindRule);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, LineCap);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, LineJoin);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, AlphaPremultiplication);
 
 } // namespace WebCore
 

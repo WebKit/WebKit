@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const IntSize& size, bool /* accelerateRendering */, bool /* unmultiplied */, float /* resolutionScale */) const
+RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication, const IntRect& rect, const IntSize& size, bool /* accelerateRendering */, float /* resolutionScale */) const
 {
     auto platformContext = context->platformContext();
 
@@ -84,7 +84,7 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const In
     return result;
 }
 
-void ImageBufferData::putData(const Uint8ClampedArray& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool /* accelerateRendering */, bool unmultiplied, float resolutionScale)
+void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplication sourceFormat, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool /* accelerateRendering */, float resolutionScale)
 {
     auto platformContext = context->platformContext();
     COMPtr<ID2D1BitmapRenderTarget> renderTarget(Query, platformContext);
@@ -140,7 +140,7 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, const IntSize& so
         for (int x = 0; x < width.unsafeGet(); x++) {
             int basex = x * 4;
             uint8_t alpha = srcRows[basex + 3];
-            if (unmultiplied && alpha != 255) {
+            if (sourceFormat == AlphaPremultiplication::Unpremultiplied && alpha != 255) {
                 row[basex] = (srcRows[basex] * alpha + 254) / 255;
                 row[basex + 1] = (srcRows[basex + 1] * alpha + 254) / 255;
                 row[basex + 2] = (srcRows[basex + 2] * alpha + 254) / 255;

@@ -225,9 +225,9 @@ ImageBuffer* FilterEffect::imageBufferResult()
 
     IntRect destinationRect(IntPoint(), m_absolutePaintRect.size());
     if (m_premultipliedImageResult)
-        m_imageBufferResult->putByteArray(Premultiplied, *m_premultipliedImageResult, destinationRect.size(), destinationRect, IntPoint());
+        m_imageBufferResult->putByteArray(*m_premultipliedImageResult, AlphaPremultiplication::Premultiplied, destinationRect.size(), destinationRect, IntPoint());
     else
-        m_imageBufferResult->putByteArray(Unmultiplied, *m_unmultipliedImageResult, destinationRect.size(), destinationRect, IntPoint());
+        m_imageBufferResult->putByteArray(*m_unmultipliedImageResult, AlphaPremultiplication::Unpremultiplied, destinationRect.size(), destinationRect, IntPoint());
     return m_imageBufferResult.get();
 }
 

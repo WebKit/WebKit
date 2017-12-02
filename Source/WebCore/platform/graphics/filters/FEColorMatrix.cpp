@@ -310,7 +310,7 @@ void FEColorMatrix::platformApplySoftware()
         break;
     }
 
-    resultImage->putByteArray(Unmultiplied, *pixelArray, imageRect.size(), imageRect, IntPoint());
+    resultImage->putByteArray(*pixelArray, AlphaPremultiplication::Unpremultiplied, imageRect.size(), imageRect, IntPoint());
 }
 
 static TextStream& operator<<(TextStream& ts, const ColorMatrixType& type)

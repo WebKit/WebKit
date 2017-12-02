@@ -181,5 +181,17 @@ TextStream& operator<<(TextStream& ts, LineJoin joinStyle)
     return ts;
 }
 
-
+TextStream& operator<<(TextStream& ts, AlphaPremultiplication premultiplication)
+{
+    switch (premultiplication) {
+    case AlphaPremultiplication::Premultiplied:
+        ts << "premultiplied";
+        break;
+    case AlphaPremultiplication::Unpremultiplied:
+        ts << "unpremultiplied";
+        break;
+    }
+    return ts;
 }
+
+} // namespace WebCore

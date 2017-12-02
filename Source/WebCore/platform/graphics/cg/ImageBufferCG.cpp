@@ -397,7 +397,7 @@ RefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRect& r
     if (pixelArrayDimensions)
         *pixelArrayDimensions = srcRect.size();
 
-    return m_data.getData(srcRect, internalSize(), context().isAcceleratedContext(), true, 1);
+    return m_data.getData(AlphaPremultiplication::Unpremultiplied, srcRect, internalSize(), context().isAcceleratedContext(), 1);
 }
 
 RefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, IntSize* pixelArrayDimensions, CoordinateSystem coordinateSystem) const
@@ -412,10 +412,10 @@ RefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& 
     if (pixelArrayDimensions)
         *pixelArrayDimensions = srcRect.size();
 
-    return m_data.getData(srcRect, internalSize(), context().isAcceleratedContext(), false, 1);
+    return m_data.getData(AlphaPremultiplication::Premultiplied, srcRect, internalSize(), context().isAcceleratedContext(), 1);
 }
 
-void ImageBuffer::putByteArray(Multiply multiplied, const Uint8ClampedArray& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem coordinateSystem)
+void ImageBuffer::putByteArray(const Uint8ClampedArray& source, AlphaPremultiplication sourceFormat, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem coordinateSystem)
 {
     if (context().isAcceleratedContext())
         flushContext();
@@ -427,7 +427,7 @@ void ImageBuffer::putByteArray(Multiply multiplied, const Uint8ClampedArray& sou
         scaledSourceSize.scale(m_resolutionScale);
     }
 
-    m_data.putData(source, scaledSourceSize, scaledSourceRect, destPoint, internalSize(), context().isAcceleratedContext(), multiplied == Unmultiplied, 1);
+    m_data.putData(source, sourceFormat, scaledSourceSize, scaledSourceRect, destPoint, internalSize(), context().isAcceleratedContext(), 1);
     
     // Force recreating the IOSurface cached image if it is requested through CGIOSurfaceContextCreateImage().
     // See https://bugs.webkit.org/show_bug.cgi?id=157966 for explaining why this is necessary.
