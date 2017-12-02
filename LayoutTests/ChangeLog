@@ -1,3 +1,12 @@
+2017-12-01  Matt Lewis  <jlewis3@apple.com>
+
+        Marked imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html as flaky timeout on wk1.
+        https://bugs.webkit.org/show_bug.cgi?id=172044
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-12-01  Daniel Bates  <dabates@apple.com>
 
         AlternativePresentationButtonSubstitution::unapply() may not undo substitution
