@@ -56,6 +56,14 @@ public:
         bool widthIsSet { false };
         bool heightIsSet { false };
         bool initialScaleIsSet { false };
+
+        bool operator==(const Parameters& other) const
+        {
+            return width == other.width && height == other.height
+                && initialScale == other.initialScale && minimumScale == other.minimumScale && maximumScale == other.maximumScale
+                && allowsUserScaling == other.allowsUserScaling && allowsShrinkToFit == other.allowsShrinkToFit && avoidsUnsafeArea == other.avoidsUnsafeArea
+                && widthIsSet == other.widthIsSet && heightIsSet == other.heightIsSet && initialScaleIsSet == other.initialScaleIsSet;
+        }
     };
 
     WEBCORE_EXPORT ViewportConfiguration();

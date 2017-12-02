@@ -252,10 +252,7 @@ FloatSize WebPage::availableScreenSize() const
 
 void WebPage::didReceiveMobileDocType(bool isMobileDoctype)
 {
-    if (isMobileDoctype)
-        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::xhtmlMobileParameters());
-    else
-        resetViewportDefaultConfiguration(m_mainFrame.get());
+    resetViewportDefaultConfiguration(m_mainFrame.get(), isMobileDoctype);
 }
 
 void WebPage::savePageState(HistoryItem& historyItem)
@@ -2595,7 +2592,7 @@ void WebPage::synchronizeDynamicViewportUpdate(double& newTargetScale, FloatPoin
     nextValidLayerTreeTransactionID = downcast<RemoteLayerTreeDrawingArea>(*m_drawingArea).nextTransactionID();
 }
 
-void WebPage::resetViewportDefaultConfiguration(WebFrame* frame)
+void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileDocType)
 {
     if (m_useTestingViewportConfiguration) {
         m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::testingParameters());
@@ -2604,6 +2601,11 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame)
 
     if (!frame) {
         m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::webpageParameters());
+        return;
+    }
+
+    if (hasMobileDocType) {
+        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::xhtmlMobileParameters());
         return;
     }
 

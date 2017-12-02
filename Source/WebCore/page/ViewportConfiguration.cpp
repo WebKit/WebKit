@@ -62,6 +62,9 @@ void ViewportConfiguration::setDefaultConfiguration(const ViewportConfiguration:
     ASSERT(defaultConfiguration.minimumScale > 0);
     ASSERT(defaultConfiguration.maximumScale >= defaultConfiguration.minimumScale);
 
+    if (m_defaultConfiguration == defaultConfiguration)
+        return;
+
     m_defaultConfiguration = defaultConfiguration;
     updateConfiguration();
 }

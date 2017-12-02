@@ -1,3 +1,22 @@
+2017-12-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reduce the number of calls to ViewportConfiguration::updateConfiguration()
+        https://bugs.webkit.org/show_bug.cgi?id=180299
+
+        Reviewed by Zalan Bujtas.
+
+        There are several calls to ViewportConfiguration::setDefaultConfiguration() during loading
+        with the same arguments. We can avoid unnecessary calls to updateConfiguration() by returning
+        early if the configuration hasn't changed.
+
+        Also move the fetching of ViewportConfiguration::xhtmlMobileParameters() from didReceiveMobileDocType()
+        into resetViewportDefaultConfiguration() where we grab all the other default configs.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::didReceiveMobileDocType):
+        (WebKit::WebPage::resetViewportDefaultConfiguration):
+
 2017-12-01  Aishwarya Nirmal  <anirmal@apple.com>
 
         [Touch Bar Web API] Object representing Touch Bar Menu to send between Web and UI Processes

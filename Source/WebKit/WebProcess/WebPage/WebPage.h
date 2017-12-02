@@ -1056,7 +1056,7 @@ private:
     void didReceiveSyncWebPageMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
 #if PLATFORM(IOS)
-    void resetViewportDefaultConfiguration(WebFrame* mainFrame);
+    void resetViewportDefaultConfiguration(WebFrame* mainFrame, bool hasMobileDocType = false);
     void viewportConfigurationChanged();
     void updateViewportSizeForCSSViewportUnits();
 
