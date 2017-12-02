@@ -149,8 +149,12 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncATan(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncATan2(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     double arg0 = exec->argument(0).toNumber(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     double arg1 = exec->argument(1).toNumber(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(jsDoubleNumber(atan2(arg0, arg1)));
 }
 
@@ -220,10 +224,13 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncLog(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncMax(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     unsigned argsCount = exec->argumentCount();
     double result = -std::numeric_limits<double>::infinity();
     for (unsigned k = 0; k < argsCount; ++k) {
         double val = exec->uncheckedArgument(k).toNumber(exec);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (std::isnan(val)) {
             result = PNaN;
         } else if (val > result || (!val && !result && !std::signbit(val)))
@@ -234,10 +241,13 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncMax(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncMin(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     unsigned argsCount = exec->argumentCount();
     double result = +std::numeric_limits<double>::infinity();
     for (unsigned k = 0; k < argsCount; ++k) {
         double val = exec->uncheckedArgument(k).toNumber(exec);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (std::isnan(val)) {
             result = PNaN;
         } else if (val < result || (!val && !result && std::signbit(val)))
@@ -250,8 +260,13 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncPow(ExecState* exec)
 {
     // ECMA 15.8.2.1.13
 
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     double arg = exec->argument(0).toNumber(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     double arg2 = exec->argument(1).toNumber(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     return JSValue::encode(JSValue(operationMathPow(arg, arg2)));
 }
