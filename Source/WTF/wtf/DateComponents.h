@@ -28,14 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DateComponents_h
-#define DateComponents_h
+#pragma once
 
 #include <limits>
 #include <unicode/utypes.h>
 #include <wtf/Forward.h>
 
-namespace WebCore {
+namespace WTF {
 
 // A DateComponents instance represents one of the following date and time combinations:
 // * Month type: year-month
@@ -86,7 +85,7 @@ public:
 
     // Returns an ISO 8601 representation for this instance.
     // The format argument is valid for DateTime, DateTimeLocal, and Time types.
-    String toString(SecondFormat format = None) const;
+    WTF_EXPORT_PRIVATE String toString(SecondFormat = None) const;
 
     // parse*() and setMillisecondsSince*() functions are initializers for an
     // DateComponents instance. If these functions return false, the instance
@@ -102,17 +101,17 @@ public:
     // failures, and the trailing extra characters don't cause parse failures.
 
     // Sets year and month.
-    bool parseMonth(const UChar* src, unsigned length, unsigned start, unsigned& end);
+    WTF_EXPORT_PRIVATE bool parseMonth(const UChar* src, unsigned length, unsigned start, unsigned& end);
     // Sets year, month and monthDay.
-    bool parseDate(const UChar* src, unsigned length, unsigned start, unsigned& end);
+    WTF_EXPORT_PRIVATE bool parseDate(const UChar* src, unsigned length, unsigned start, unsigned& end);
     // Sets year and week.
-    bool parseWeek(const UChar* src, unsigned length, unsigned start, unsigned& end);
+    WTF_EXPORT_PRIVATE bool parseWeek(const UChar* src, unsigned length, unsigned start, unsigned& end);
     // Sets hour, minute, second and millisecond.
-    bool parseTime(const UChar* src, unsigned length, unsigned start, unsigned& end);
+    WTF_EXPORT_PRIVATE bool parseTime(const UChar* src, unsigned length, unsigned start, unsigned& end);
     // Sets year, month, monthDay, hour, minute, second and millisecond.
-    bool parseDateTimeLocal(const UChar* src, unsigned length, unsigned start, unsigned& end);
+    WTF_EXPORT_PRIVATE bool parseDateTimeLocal(const UChar* src, unsigned length, unsigned start, unsigned& end);
     // Sets year, month, monthDay, hour, minute, second and millisecond, and adjusts timezone.
-    bool parseDateTime(const UChar* src, unsigned length, unsigned start, unsigned& end);
+    WTF_EXPORT_PRIVATE bool parseDateTime(const UChar* src, unsigned length, unsigned start, unsigned& end);
 
     // The following setMillisecondsSinceEpochFor*() functions take
     // the number of milliseconds since 1970-01-01 00:00:00.000 UTC as
@@ -121,29 +120,29 @@ public:
     // false if they fail.
 
     // For Date type. Updates m_year, m_month and m_monthDay.
-    bool setMillisecondsSinceEpochForDate(double ms);
+    WTF_EXPORT_PRIVATE bool setMillisecondsSinceEpochForDate(double);
     // For DateTime type. Updates m_year, m_month, m_monthDay, m_hour, m_minute, m_second and m_millisecond.
-    bool setMillisecondsSinceEpochForDateTime(double ms);
+    WTF_EXPORT_PRIVATE bool setMillisecondsSinceEpochForDateTime(double);
     // For DateTimeLocal type. Updates m_year, m_month, m_monthDay, m_hour, m_minute, m_second and m_millisecond.
-    bool setMillisecondsSinceEpochForDateTimeLocal(double ms);
+    WTF_EXPORT_PRIVATE bool setMillisecondsSinceEpochForDateTimeLocal(double);
     // For Month type. Updates m_year and m_month.
-    bool setMillisecondsSinceEpochForMonth(double ms);
+    WTF_EXPORT_PRIVATE bool setMillisecondsSinceEpochForMonth(double);
     // For Week type. Updates m_year and m_week.
-    bool setMillisecondsSinceEpochForWeek(double ms);
+    WTF_EXPORT_PRIVATE bool setMillisecondsSinceEpochForWeek(double);
 
     // For Time type. Updates m_hour, m_minute, m_second and m_millisecond.
-    bool setMillisecondsSinceMidnight(double ms);
+    WTF_EXPORT_PRIVATE bool setMillisecondsSinceMidnight(double);
 
     // Another initializer for Month type. Updates m_year and m_month.
-    bool setMonthsSinceEpoch(double months);
+    WTF_EXPORT_PRIVATE bool setMonthsSinceEpoch(double);
 
     // Returns the number of milliseconds from 1970-01-01 00:00:00 UTC.
     // For a DateComponents initialized with parseDateTimeLocal(),
     // millisecondsSinceEpoch() returns a value for UTC timezone.
-    double millisecondsSinceEpoch() const;
+    WTF_EXPORT_PRIVATE double millisecondsSinceEpoch() const;
     // Returns the number of months from 1970-01.
     // Do not call this for types other than Month.
-    double monthsSinceEpoch() const;
+    WTF_EXPORT_PRIVATE double monthsSinceEpoch() const;
     static inline double invalidMilliseconds() { return std::numeric_limits<double>::quiet_NaN(); }
 
     // Minimum and maxmimum limits for setMillisecondsSince*(),
@@ -179,8 +178,8 @@ private:
     // Helper for millisecondsSinceEpoch().
     double millisecondsSinceEpochForTime() const;
     // Helpers for setMillisecondsSinceEpochFor*().
-    bool setMillisecondsSinceEpochForDateInternal(double ms);
-    void setMillisecondsSinceMidnightInternal(double ms);
+    bool setMillisecondsSinceEpochForDateInternal(double);
+    void setMillisecondsSinceMidnightInternal(double);
     // Helper for toString().
     String toStringForTime(SecondFormat) const;
 
@@ -208,6 +207,6 @@ private:
 };
 
 
-} // namespace WebCore
+} // namespace WTF
 
-#endif // DateComponents_h
+using WTF::DateComponents;

@@ -32,7 +32,6 @@
 #import "CSSPrimitiveValue.h"
 #import "CSSToLengthConversionData.h"
 #import "CSSValueKeywords.h"
-#import "DateComponents.h"
 #import "Document.h"
 #import "File.h"
 #import "FloatRoundedRect.h"
@@ -70,6 +69,7 @@
 #import <objc/runtime.h>
 #import <pal/spi/cocoa/CoreTextSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
+#import <wtf/DateComponents.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RefPtr.h>
 #import <wtf/SoftLinking.h>

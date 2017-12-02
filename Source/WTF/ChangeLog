@@ -1,3 +1,18 @@
+2017-12-01  Christopher Reid  <chris.reid@sony.com>
+
+        Move DateComponents into WTF
+        https://bugs.webkit.org/show_bug.cgi?id=180211
+
+        Reviewed by Myles C. Maxfield.
+
+        Moved DateComponents from WebCore/platform into WTF.
+        Removed isLeapYear from DateComponents as DateMath already has that function.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/DateComponents.cpp: Renamed from Source\WebCore\platform\DateComponents.cpp.
+        * wtf/DateComponents.h: Renamed from Source\WebCore\platform\DateComponents.h.
+
 2017-12-01  Youenn Fablet  <youenn@apple.com>
 
         Implement https://w3c.github.io/ServiceWorker/#clients-get

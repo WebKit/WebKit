@@ -223,6 +223,7 @@ set(WTF_SOURCES
     CryptographicallyRandomNumber.cpp
     CurrentTime.cpp
     DataLog.cpp
+    DateComponents.cpp
     DateMath.cpp
     DecimalNumber.cpp
     FastBitVector.cpp

@@ -35,20 +35,16 @@
 #include "HTMLTextFormControlElement.h"
 #include "RenderPtr.h"
 #include "StepRange.h"
+#include <wtf/DateComponents.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
-
-#if PLATFORM(IOS)
-#include "DateComponents.h"
-#endif
 
 namespace WebCore {
 
 class BeforeTextInsertedEvent;
 class Chrome;
 class DOMFormData;
-class DateComponents;
 class DragData;
 class Event;
 class FileList;

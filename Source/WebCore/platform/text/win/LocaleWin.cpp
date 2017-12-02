@@ -31,7 +31,6 @@
 #include "config.h"
 #include "LocaleWin.h"
 
-#include "DateComponents.h"
 #include "DateTimeFormat.h"
 #include "LocalizedStrings.h"
 #include <limits>

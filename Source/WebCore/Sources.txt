@@ -1386,7 +1386,6 @@ platform/ContentType.cpp
 platform/ContextMenu.cpp
 platform/ContextMenuItem.cpp
 platform/Cursor.cpp
-platform/DateComponents.cpp
 platform/Decimal.cpp
 platform/DragData.cpp
 platform/DragImage.cpp

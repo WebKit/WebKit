@@ -39,7 +39,8 @@ namespace WebCore {
 
 class DateTimeInputType final : public BaseChooserOnlyDateAndTimeInputType {
 public:
-    explicit DateTimeInputType(HTMLInputElement& element) : BaseDateTimeInputType(element) { }
+    explicit DateTimeInputType(HTMLInputElement& element)
+        : BaseChooserOnlyDateAndTimeInputType(element) { }
 
 private:
     const AtomicString& formControlType() const override;
