@@ -71,7 +71,8 @@
                 "InvalidSelector",
                 "ElementNotInteractable",
                 "ElementNotSelectable",
-                "ScreenshotError"
+                "ScreenshotError",
+                "UnexpectedAlertOpen"
             ]
         },
         {

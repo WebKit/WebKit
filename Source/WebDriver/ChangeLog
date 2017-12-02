@@ -1,3 +1,31 @@
+2017-12-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: handle user prompts shown while executing scripts
+        https://bugs.webkit.org/show_bug.cgi?id=179979
+
+        Reviewed by Brian Burg.
+
+        15.2 Executing Script
+        https://w3c.github.io/webdriver/webdriver-spec.html#executing-script
+
+        The rules to execute a function body are as follows. The algorithm will return success with the JSON
+        representation of the function’s return value, or an error if the evaluation of the function results in a
+        JavaScript exception being thrown or at any point during its execution an unhandled user prompt appears.
+
+        If at any point during the algorithm a user prompt appears, the user prompt handler must be invoked. If its
+        return value is an error, it must immediately return with that error and abort all subsequent substeps of this
+        algorithm.
+
+        This will be covered by new WPT tests that will be available after the next upgrade.
+
+        * CommandResult.cpp:
+        (WebDriver::CommandResult::CommandResult): Handle UnexpectedAlertOpen internal error.
+        * Session.cpp:
+        (WebDriver::Session::handleUserPrompts): Move code to handleUnexpectedAlertOpen() and call it instead.
+        (WebDriver::Session::handleUnexpectedAlertOpen): Code moved here to be used also by executeScript().
+        (WebDriver::Session::executeScript): In case of UnexpectedAlertOpen error, call handleUnexpectedAlertOpen().
+        * Session.h:
+
 2017-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: implement status command

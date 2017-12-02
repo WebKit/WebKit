@@ -551,14 +551,26 @@ void WebAutomationSession::loadTimerFired()
 void WebAutomationSession::willShowJavaScriptDialog(WebPageProxy& page)
 {
     // Wait until the next run loop iteration to give time for the client to show the dialog,
-    // then check if page is loading and the dialog is still present. The dialog will block the
-    // load in case of normal strategy, so we want to dispatch all pending navigation callbacks.
+    // then check if the dialog is still present. If the page is loading, the dialog will block
+    // the load in case of normal strategy, so we want to dispatch all pending navigation callbacks.
+    // If the dialog was shown during a script execution, we want to finish the evaluateJavaScriptFunction
+    // operation with an unexpected alert open error.
     RunLoop::main().dispatch([this, protectedThis = makeRef(*this), page = makeRef(page)] {
-        if (!page->isValid() || !page->pageLoadState().isLoading() || !m_client || !m_client->isShowingJavaScriptDialogOnPage(*this, page))
+        if (!page->isValid() || !m_client || !m_client->isShowingJavaScriptDialogOnPage(*this, page))
             return;
 
-        respondToPendingFrameNavigationCallbacksWithTimeout(m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame);
-        respondToPendingPageNavigationCallbacksWithTimeout(m_pendingNormalNavigationInBrowsingContextCallbacksPerPage);
+        if (page->pageLoadState().isLoading()) {
+            respondToPendingFrameNavigationCallbacksWithTimeout(m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame);
+            respondToPendingPageNavigationCallbacksWithTimeout(m_pendingNormalNavigationInBrowsingContextCallbacksPerPage);
+        }
+
+        if (!m_evaluateJavaScriptFunctionCallbacks.isEmpty()) {
+            Inspector::ErrorString unexpectedAlertOpenError = STRING_FOR_PREDEFINED_ERROR_NAME(UnexpectedAlertOpen);
+            for (auto key : m_evaluateJavaScriptFunctionCallbacks.keys()) {
+                auto callback = m_evaluateJavaScriptFunctionCallbacks.take(key);
+                callback->sendFailure(unexpectedAlertOpenError);
+            }
+        }
     });
 }
 
