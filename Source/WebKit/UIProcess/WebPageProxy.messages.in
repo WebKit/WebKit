@@ -314,6 +314,7 @@ messages -> WebPageProxy {
     StartDrag(struct WebKit::WebSelectionData selection, uint64_t dragOperation, WebKit::ShareableBitmap::Handle dragImage)
 #endif
 
+
 #if ENABLE(DATA_INTERACTION)
     DidPerformDataInteractionControllerOperation(bool handled)
     DidHandleStartDataInteractionRequest(bool started)
@@ -346,6 +347,10 @@ messages -> WebPageProxy {
     SearchWithSpotlight(String string)
 
     SearchTheWeb(String string)
+
+    TouchBarMenuDataChanged(WebKit::TouchBarMenuData touchBarMenuData)
+    TouchBarMenuItemDataAdded(struct WebKit::TouchBarMenuItemData touchBarMenuItemData)
+    TouchBarMenuItemDataRemoved(struct WebKit::TouchBarMenuItemData touchBarMenuItemData)
 #endif
 
 #if USE(APPKIT)

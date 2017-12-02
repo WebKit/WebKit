@@ -23,7 +23,12 @@
 #include "config.h"
 #include "HTMLMenuElement.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "Document.h"
+#include "HTMLMenuItemElement.h"
 #include "HTMLNames.h"
+#include "Page.h"
 
 namespace WebCore {
 
@@ -33,6 +38,45 @@ inline HTMLMenuElement::HTMLMenuElement(const QualifiedName& tagName, Document& 
     : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(menuTag));
+}
+
+Node::InsertedIntoAncestorResult HTMLMenuElement::insertedIntoAncestor(InsertionType type, ContainerNode& ancestor)
+{
+    auto result = HTMLElement::insertedIntoAncestor(type, ancestor);
+    if (type.connectedToDocument && RuntimeEnabledFeatures::sharedFeatures().menuItemElementEnabled() && m_isTouchBarMenu) {
+        if (auto* page = document().page())
+            page->chrome().client().didInsertMenuElement(*this);
+    }
+    return result;
+}
+
+void HTMLMenuElement::removedFromAncestor(RemovalType type, ContainerNode& ancestor)
+{
+    HTMLElement::removedFromAncestor(type, ancestor);
+    if (type.disconnectedFromDocument && RuntimeEnabledFeatures::sharedFeatures().menuItemElementEnabled() && m_isTouchBarMenu) {
+        if (auto* page = document().page())
+            page->chrome().client().didRemoveMenuElement(*this);
+    }
+}
+
+void HTMLMenuElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
+{
+    if (name != typeAttr || !RuntimeEnabledFeatures::sharedFeatures().menuItemElementEnabled()) {
+        HTMLElement::parseAttribute(name, value);
+        return;
+    }
+    bool wasTouchBarMenu = m_isTouchBarMenu;
+    m_isTouchBarMenu = equalLettersIgnoringASCIICase(value, "touchbar");
+    if (!wasTouchBarMenu && m_isTouchBarMenu) {
+        if (auto* page = document().page()) {
+            page->chrome().client().didInsertMenuElement(*this);
+            for (auto& child : childrenOfType<Element>(*this))
+                page->chrome().client().didInsertMenuItemElement(downcast<HTMLMenuItemElement>(child));
+        }
+    } else if (wasTouchBarMenu && !m_isTouchBarMenu) {
+        if (auto* page = document().page())
+            page->chrome().client().didRemoveMenuElement(*this);
+    }
 }
 
 Ref<HTMLMenuElement> HTMLMenuElement::create(const QualifiedName& tagName, Document& document)

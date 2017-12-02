@@ -104,6 +104,8 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 
 #if PLATFORM(COCOA)
 #include "LayerRepresentation.h"
+#include "TouchBarMenuData.h"
+#include "TouchBarMenuItemData.h"
 #endif
 
 #if PLATFORM(GTK)
@@ -482,7 +484,11 @@ public:
     bool canDelete() const { return hasSelectedRange() && isContentEditable(); }
     bool hasSelectedRange() const { return m_editorState.selectionIsRange; }
     bool isContentEditable() const { return m_editorState.isContentEditable; }
-    
+
+#if PLATFORM(COCOA)
+    const TouchBarMenuData& touchBarMenuData() const { return m_touchBarMenuData; }
+#endif
+
     bool maintainsInactiveSelection() const;
     void setMaintainsInactiveSelection(bool);
     void setEditable(bool);
@@ -1220,6 +1226,13 @@ public:
 #endif
     void editorStateChanged(const EditorState&);
 
+#if PLATFORM(COCOA)
+    void touchBarMenuDataRemoved();
+    void touchBarMenuDataChanged(const TouchBarMenuData&);
+    void touchBarMenuItemDataAdded(const TouchBarMenuItemData&);
+    void touchBarMenuItemDataRemoved(const TouchBarMenuItemData&);
+#endif
+
     void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t webProcessContextId);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -1782,6 +1795,10 @@ private:
 
     EditorState m_editorState;
     bool m_isEditable { false };
+
+#if PLATFORM(COCOA)
+    TouchBarMenuData m_touchBarMenuData;
+#endif
 
     double m_textZoomFactor { 1 };
     double m_pageZoomFactor { 1 };

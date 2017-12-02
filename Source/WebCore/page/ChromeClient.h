@@ -468,6 +468,11 @@ public:
 
     virtual void requestStorageAccess(String&& /*subFrameHost*/, String&& /*topFrameHost*/, WTF::Function<void (bool)>&& callback) { callback(false); }
 
+    virtual void didInsertMenuElement(HTMLMenuElement&) { }
+    virtual void didRemoveMenuElement(HTMLMenuElement&) { }
+    virtual void didInsertMenuItemElement(HTMLMenuItemElement&) { }
+    virtual void didRemoveMenuItemElement(HTMLMenuItemElement&) { }
+
 protected:
     virtual ~ChromeClient() = default;
 };

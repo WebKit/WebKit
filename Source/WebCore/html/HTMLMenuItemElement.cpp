@@ -26,7 +26,12 @@
 #include "config.h"
 #include "HTMLMenuItemElement.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "Document.h"
+#include "HTMLMenuElement.h"
 #include "HTMLNames.h"
+#include "Page.h"
 
 namespace WebCore {
 
@@ -37,10 +42,33 @@ inline HTMLMenuItemElement::HTMLMenuItemElement(const QualifiedName& tagName, Do
 {
     ASSERT(hasTagName(menuitemTag));
 }
-    
+
+Node::InsertedIntoAncestorResult HTMLMenuItemElement::insertedIntoAncestor(InsertionType type, ContainerNode& ancestor)
+{
+    auto result = HTMLElement::insertedIntoAncestor(type, ancestor);
+    if (type.connectedToDocument) {
+        if (auto* page = document().page()) {
+            if (is<HTMLMenuElement>(ancestor) && downcast<HTMLMenuElement>(ancestor).isTouchBarMenu())
+                page->chrome().client().didInsertMenuItemElement(*this);
+        }
+    }
+    return result;
+}
+
+void HTMLMenuItemElement::removedFromAncestor(RemovalType type, ContainerNode& ancestor)
+{
+    HTMLElement::removedFromAncestor(type, ancestor);
+    if (type.disconnectedFromDocument) {
+        if (auto* page = document().page()) {
+            if (is<HTMLMenuElement>(ancestor) && downcast<HTMLMenuElement>(ancestor).isTouchBarMenu())
+                page->chrome().client().didRemoveMenuItemElement(*this);
+        }
+    }
+}
+
 Ref<HTMLMenuItemElement> HTMLMenuItemElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new HTMLMenuItemElement(tagName, document));
 }
-    
+
 }

@@ -35,6 +35,9 @@ public:
     
 private:
     HTMLMenuItemElement(const QualifiedName&, Document&);
+
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
+    void removedFromAncestor(RemovalType, ContainerNode&) final;
 };
 
 } // namespace WebCore

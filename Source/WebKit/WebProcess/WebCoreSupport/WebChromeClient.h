@@ -42,6 +42,11 @@ public:
 private:
     ~WebChromeClient();
 
+    void didInsertMenuElement(WebCore::HTMLMenuElement&);
+    void didRemoveMenuElement(WebCore::HTMLMenuElement&);
+    void didInsertMenuItemElement(WebCore::HTMLMenuItemElement&);
+    void didRemoveMenuItemElement(WebCore::HTMLMenuItemElement&);
+
     void chromeDestroyed() final;
     
     void setWindowRect(const WebCore::FloatRect&) final;

@@ -1,3 +1,62 @@
+2017-12-01  Aishwarya Nirmal  <anirmal@apple.com>
+
+        [Touch Bar Web API] Object representing Touch Bar Menu to send between Web and UI Processes
+        https://bugs.webkit.org/show_bug.cgi?id=179714
+
+        Reviewed by Wenson Hsieh.
+
+        These changes define the TouchBarMenuData and TouchBarMenuItemData objects which draw information
+        from touch bar HTMLMenuElement and HTMLMenuItemElement. These objects represent the contents of
+        the page-customized touch bar. Changes to the html elements representing the touch bar are sent 
+        to the UI process.
+
+        * Shared/TouchBarMenuData.cpp: Copied from Source/WebCore/html/HTMLMenuItemElement.cpp.
+        (WebKit::TouchBarMenuData::TouchBarMenuData):
+        (WebKit::TouchBarMenuData::addMenuItem):
+        (WebKit::TouchBarMenuData::removeMenuItem):
+        (WebKit::TouchBarMenuData::encode const):
+        (WebKit::TouchBarMenuData::decode):
+        * Shared/TouchBarMenuData.h: Copied from Source/WebCore/html/HTMLMenuItemElement.h.
+        (WebKit::TouchBarMenuData::items):
+        (WebKit::TouchBarMenuData::isPageCustomized):
+        (WebKit::TouchBarMenuData::setIsPageCustomized):
+        * Shared/TouchBarMenuItemData.cpp: Added.
+        (WebKit::TouchBarMenuItemData::getItemType):
+        (WebKit::TouchBarMenuItemData::TouchBarMenuItemData):
+        (WebKit::TouchBarMenuItemData::encode const):
+        (WebKit::TouchBarMenuItemData::decode):
+        * Shared/TouchBarMenuItemData.h: Added.
+        (WebKit::operator<):
+        (WebKit::operator>):
+        (WebKit::operator<=):
+        (WebKit::operator>=):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::touchBarMenuDataChanged):
+        (WebKit::WebPageProxy::touchBarMenuItemDataAdded):
+        (WebKit::WebPageProxy::touchBarMenuItemDataRemoved):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::touchBarMenuData const):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::didInsertMenuElement):
+        (WebKit::WebChromeClient::didRemoveMenuElement):
+        (WebKit::WebChromeClient::didInsertMenuItemElement):
+        (WebKit::WebChromeClient::didRemoveMenuItemElement):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didInsertMenuElement):
+        (WebKit::WebPage::didRemoveMenuElement):
+        (WebKit::WebPage::didInsertMenuItemElement):
+        (WebKit::WebPage::didRemoveMenuItemElement):
+        (WebKit::WebPage::sendTouchBarMenuDataRemovedUpdate):
+        (WebKit::WebPage::sendTouchBarMenuDataAddedUpdate):
+        (WebKit::WebPage::sendTouchBarMenuItemDataAddedUpdate):
+        (WebKit::WebPage::sendTouchBarMenuItemDataRemovedUpdate):
+        * WebProcess/WebPage/WebPage.h:
+
 2017-12-01  Daniel Bates  <dabates@apple.com>
 
         Alternative Presentation Button: Provide a way to query for the replaced elements

@@ -49,6 +49,8 @@
 #include <WebCore/ActivityState.h>
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/HTMLMenuElement.h>
+#include <WebCore/HTMLMenuItemElement.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSizeHash.h>
 #include <WebCore/Page.h>
@@ -123,6 +125,8 @@ class Frame;
 class FrameSelection;
 class FrameView;
 class GraphicsContext;
+class HTMLMenuElement;
+class HTMLMenuItemElement;
 class HTMLPlugInElement;
 class HTMLPlugInImageElement;
 class IntPoint;
@@ -305,6 +309,11 @@ public:
     String userAgent(WebFrame*, const WebCore::URL&) const;
     String platformUserAgent(const WebCore::URL&) const;
     WebCore::KeyboardUIMode keyboardUIMode();
+
+    void didInsertMenuElement(WebCore::HTMLMenuElement&);
+    void didRemoveMenuElement(WebCore::HTMLMenuElement&);
+    void didInsertMenuItemElement(WebCore::HTMLMenuItemElement&);
+    void didRemoveMenuItemElement(WebCore::HTMLMenuItemElement&);
 
     const String& overrideContentSecurityPolicy() const { return m_overrideContentSecurityPolicy; }
 
@@ -1035,6 +1044,13 @@ private:
     void platformDetach();
     void platformEditorState(WebCore::Frame&, EditorState& result, IncludePostLayoutDataHint) const;
     void sendEditorStateUpdate();
+
+#if PLATFORM(COCOA)
+    void sendTouchBarMenuDataAddedUpdate(WebCore::HTMLMenuElement&);
+    void sendTouchBarMenuDataRemovedUpdate(WebCore::HTMLMenuElement&);
+    void sendTouchBarMenuItemDataAddedUpdate(WebCore::HTMLMenuItemElement&);
+    void sendTouchBarMenuItemDataRemovedUpdate(WebCore::HTMLMenuItemElement&);
+#endif
 
     void didReceiveWebPageMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveSyncWebPageMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);

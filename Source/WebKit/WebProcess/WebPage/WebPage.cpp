@@ -152,6 +152,8 @@
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLImageElement.h>
 #include <WebCore/HTMLInputElement.h>
+#include <WebCore/HTMLMenuElement.h>
+#include <WebCore/HTMLMenuItemElement.h>
 #include <WebCore/HTMLOListElement.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HTMLPlugInImageElement.h>
@@ -223,6 +225,8 @@
 #include "PDFPlugin.h"
 #include "PlaybackSessionManager.h"
 #include "RemoteLayerTreeTransaction.h"
+#include "TouchBarMenuData.h"
+#include "TouchBarMenuItemData.h"
 #include "VideoFullscreenManager.h"
 #include "WKStringCF.h"
 #include <WebCore/LegacyWebArchive.h>
@@ -5118,6 +5122,42 @@ void WebPage::didFinishLoad(WebFrame* frame)
 #endif
 }
 
+void WebPage::didInsertMenuElement(HTMLMenuElement& element)
+{
+#if PLATFORM(COCOA)
+    sendTouchBarMenuDataAddedUpdate(element);
+#else
+    ASSERT_UNUSED(element, element);
+#endif
+}
+
+void WebPage::didRemoveMenuElement(HTMLMenuElement& element)
+{
+#if PLATFORM(COCOA)
+    sendTouchBarMenuDataRemovedUpdate(element);
+#else
+    ASSERT_UNUSED(element, element);
+#endif
+}
+
+void WebPage::didInsertMenuItemElement(HTMLMenuItemElement& element)
+{
+#if PLATFORM(COCOA)
+    sendTouchBarMenuItemDataAddedUpdate(element);
+#else
+    ASSERT_UNUSED(element, element);
+#endif
+}
+
+void WebPage::didRemoveMenuItemElement(HTMLMenuItemElement& element)
+{
+#if PLATFORM(COCOA)
+    sendTouchBarMenuItemDataRemovedUpdate(element);
+#else
+    ASSERT_UNUSED(element, element);
+#endif
+}
+
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
 static const int primarySnapshottedPlugInSearchLimit = 3000;
 static const float primarySnapshottedPlugInSearchBucketSize = 1.1;
@@ -5338,6 +5378,28 @@ void WebPage::sendEditorStateUpdate()
         m_drawingArea->scheduleCompositingLayerFlush();
     }
 }
+
+#if PLATFORM(COCOA)
+void WebPage::sendTouchBarMenuDataRemovedUpdate(HTMLMenuElement& element)
+{
+    send(Messages::WebPageProxy::TouchBarMenuDataChanged(TouchBarMenuData { }));
+}
+
+void WebPage::sendTouchBarMenuDataAddedUpdate(HTMLMenuElement& element)
+{
+    send(Messages::WebPageProxy::TouchBarMenuDataChanged(TouchBarMenuData {element}));
+}
+
+void WebPage::sendTouchBarMenuItemDataAddedUpdate(HTMLMenuItemElement& element)
+{
+    send(Messages::WebPageProxy::TouchBarMenuItemDataAdded(TouchBarMenuItemData {element}));
+}
+
+void WebPage::sendTouchBarMenuItemDataRemovedUpdate(HTMLMenuItemElement& element)
+{
+    send(Messages::WebPageProxy::TouchBarMenuItemDataRemoved(TouchBarMenuItemData {element}));
+}
+#endif
 
 void WebPage::sendPartialEditorStateAndSchedulePostLayoutUpdate()
 {

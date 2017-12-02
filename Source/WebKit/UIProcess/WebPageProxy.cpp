@@ -155,6 +155,8 @@
 #if PLATFORM(COCOA)
 #include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteLayerTreeScrollingPerformanceData.h"
+#include "TouchBarMenuData.h"
+#include "TouchBarMenuItemData.h"
 #include "VideoFullscreenManagerProxy.h"
 #include "VideoFullscreenManagerProxyMessages.h"
 #include "ViewSnapshotStore.h"
@@ -7147,6 +7149,23 @@ void WebPageProxy::requestStorageAccess(String&& subFrameHost, String&& topFrame
         m_process->send(Messages::WebPage::StorageAccessResponse(wasGranted, webProcessContextId), m_pageID);
     });
 }
+
+#if PLATFORM(COCOA)
+void WebPageProxy::touchBarMenuDataChanged(const TouchBarMenuData& touchBarMenuData)
+{
+    m_touchBarMenuData = touchBarMenuData;
+}
+
+void WebPageProxy::touchBarMenuItemDataAdded(const TouchBarMenuItemData& touchBarMenuItemData)
+{
+    m_touchBarMenuData.addMenuItem(touchBarMenuItemData);
+}
+
+void WebPageProxy::touchBarMenuItemDataRemoved(const TouchBarMenuItemData& touchBarMenuItemData)
+{
+    m_touchBarMenuData.removeMenuItem(touchBarMenuItemData);
+}
+#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
