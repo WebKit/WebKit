@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ServiceWorkerClientInformation.h"
 #include "ServiceWorkerData.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerRegistrationKey.h"
@@ -41,6 +42,7 @@ class SWServer;
 class SWServerRegistration;
 struct ServiceWorkerClientData;
 struct ServiceWorkerClientIdentifier;
+struct ServiceWorkerClientQueryOptions;
 struct ServiceWorkerContextData;
 struct ServiceWorkerJobDataIdentifier;
 enum class WorkerType;
@@ -87,6 +89,7 @@ public:
     void didFinishActivation();
     void contextTerminated();
     std::optional<ServiceWorkerClientData> findClientByIdentifier(ServiceWorkerClientIdentifier);
+    void matchAll(const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&);
 
     WEBCORE_EXPORT static SWServerWorker* existingWorkerForIdentifier(ServiceWorkerIdentifier);
 

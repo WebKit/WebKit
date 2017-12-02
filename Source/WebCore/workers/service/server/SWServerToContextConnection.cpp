@@ -114,6 +114,15 @@ void SWServerToContextConnection::findClientByIdentifier(uint64_t requestIdentif
         globalServerToContextConnection()->findClientByIdentifierCompleted(requestIdentifier, worker->findClientByIdentifier(clientId), false);
 }
 
+void SWServerToContextConnection::matchAll(uint64_t requestIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const ServiceWorkerClientQueryOptions& options)
+{
+    if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier)) {
+        worker->matchAll(options, [requestIdentifier] (auto&& data) {
+            globalServerToContextConnection()->matchAllCompleted(requestIdentifier, data);
+        });
+    }
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

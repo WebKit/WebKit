@@ -220,6 +220,19 @@ void WebSWContextManagerConnection::findClientByIdentifierCompleted(uint64_t req
     }
 }
 
+void WebSWContextManagerConnection::matchAll(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, const ServiceWorkerClientQueryOptions& options, ServiceWorkerClientsMatchAllCallback&& callback)
+{
+    auto requestIdentifier = ++m_previousRequestIdentifier;
+    m_matchAllRequests.add(requestIdentifier, WTFMove(callback));
+    m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::MatchAll { requestIdentifier, serviceWorkerIdentifier, options }, 0);
+}
+
+void WebSWContextManagerConnection::matchAllCompleted(uint64_t requestIdentifier, Vector<ServiceWorkerClientInformation>&& clientsData)
+{
+    if (auto callback = m_matchAllRequests.take(requestIdentifier))
+        callback(WTFMove(clientsData));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

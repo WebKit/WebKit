@@ -74,18 +74,40 @@ void ServiceWorkerClients::get(ScriptExecutionContext& context, const String& id
     });
 }
 
-void ServiceWorkerClients::matchAll(const ClientQueryOptions&, Ref<DeferredPromise>&& promise)
+
+static inline void matchAllCompleted(ServiceWorkerGlobalScope& scope, DeferredPromise& promise, Vector<ServiceWorkerClientInformation>&& clientsData)
 {
-    promise->reject(Exception { NotSupportedError, ASCIILiteral("clients.matchAll() is not yet supported") });
+    auto clients = WTF::map(clientsData, [&] (auto&& client) {
+        return ServiceWorkerClient::getOrCreate(scope, client.identifier, WTFMove(client.data));
+    });
+    promise.resolve<IDLSequence<IDLInterface<ServiceWorkerClient>>>(WTFMove(clients));
 }
 
-void ServiceWorkerClients::openWindow(const String& url, Ref<DeferredPromise>&& promise)
+void ServiceWorkerClients::matchAll(ScriptExecutionContext& context, const ClientQueryOptions& options, Ref<DeferredPromise>&& promise)
+{
+    auto promisePointer = promise.ptr();
+    m_pendingPromises.add(promisePointer, WTFMove(promise));
+
+    auto serviceWorkerIdentifier = downcast<ServiceWorkerGlobalScope>(context).thread().identifier();
+
+    callOnMainThread([promisePointer, serviceWorkerIdentifier, options] () mutable {
+        auto connection = SWContextManager::singleton().connection();
+        connection->matchAll(serviceWorkerIdentifier, options, [promisePointer, serviceWorkerIdentifier] (auto&& clientsData) mutable {
+            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promisePointer, clientsData = crossThreadCopy(clientsData)] (auto& scope) mutable {
+                if (auto promise = scope.clients().m_pendingPromises.take(promisePointer))
+                    matchAllCompleted(scope, *promise, WTFMove(clientsData));
+            });
+        });
+    });
+}
+
+void ServiceWorkerClients::openWindow(ScriptExecutionContext&, const String& url, Ref<DeferredPromise>&& promise)
 {
     UNUSED_PARAM(url);
     promise->reject(Exception { NotSupportedError, ASCIILiteral("clients.openWindow() is not yet supported") });
 }
 
-void ServiceWorkerClients::claim(Ref<DeferredPromise>&& promise)
+void ServiceWorkerClients::claim(ScriptExecutionContext&, Ref<DeferredPromise>&& promise)
 {
     promise->reject(Exception { NotSupportedError, ASCIILiteral("clients.claim() is not yet supported") });
 }

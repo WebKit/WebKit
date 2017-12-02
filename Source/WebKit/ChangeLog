@@ -1,3 +1,22 @@
+2017-12-02  Youenn Fablet  <youenn@apple.com>
+
+        Implement https://w3c.github.io/ServiceWorker/#clients-getall
+        https://bugs.webkit.org/show_bug.cgi?id=180276
+
+        Reviewed by Chris Dumez.
+
+        Add IPC plumbery for clients.matchAll between ServiceWorker process and Storage process.
+
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::matchAllCompleted):
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.messages.in:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::matchAll):
+        (WebKit::WebSWContextManagerConnection::matchAllCompleted):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2017-12-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remote Web Inspector window always shows up at the default size

@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ServiceWorkerClientQueryOptions.h"
 #include "ServiceWorkerClientType.h"
 #include "ServiceWorkerIdentifier.h"
 #include <wtf/Ref.h>
@@ -46,15 +47,12 @@ public:
         return adoptRef(*new ServiceWorkerClients);
     }
 
-    struct ClientQueryOptions {
-        bool includeUncontrolled { false };
-        ServiceWorkerClientType type { ServiceWorkerClientType::Window };
-    };
+    using ClientQueryOptions = ServiceWorkerClientQueryOptions;
 
     void get(ScriptExecutionContext&, const String& id, Ref<DeferredPromise>&&);
-    void matchAll(const ClientQueryOptions&, Ref<DeferredPromise>&&);
-    void openWindow(const String& url, Ref<DeferredPromise>&&);
-    void claim(Ref<DeferredPromise>&&);
+    void matchAll(ScriptExecutionContext&, const ClientQueryOptions&, Ref<DeferredPromise>&&);
+    void openWindow(ScriptExecutionContext&, const String& url, Ref<DeferredPromise>&&);
+    void claim(ScriptExecutionContext&, Ref<DeferredPromise>&&);
 
 private:
     ServiceWorkerClients() = default;

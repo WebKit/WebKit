@@ -1,4 +1,4 @@
 
-FAIL Clients.matchAll() should not show an old window as controlled after it navigates. assert_unreached: unexpected rejection: matchAll() rejected with "NotSupportedError: clients.matchAll() is not yet supported" Reached unreachable code
-FAIL Clients.matchAll() should not show an old window after it navigates. assert_unreached: unexpected rejection: matchAll() rejected with "NotSupportedError: clients.matchAll() is not yet supported" Reached unreachable code
+PASS Clients.matchAll() should not show an old window as controlled after it navigates. 
+FAIL Clients.matchAll() should not show an old window after it navigates. assert_unreached: unexpected rejection: assert_equals: expected number of clients expected 3 but got 2 Reached unreachable code
 

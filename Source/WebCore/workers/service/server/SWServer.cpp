@@ -41,6 +41,7 @@
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerJobData.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
@@ -312,8 +313,11 @@ void SWServer::didFinishActivation(SWServerWorker& worker)
         SWServerJobQueue::didFinishActivation(*registration, worker.identifier());
 }
 
+// https://w3c.github.io/ServiceWorker/#clients-get
 std::optional<ServiceWorkerClientData> SWServer::findClientByIdentifier(const ClientOrigin& origin, ServiceWorkerClientIdentifier clientIdentifier)
 {
+    // FIXME: Support WindowClient additional properties.
+
     auto iterator = m_clients.find(origin);
     if (iterator == m_clients.end())
         return std::nullopt;
@@ -324,6 +328,27 @@ std::optional<ServiceWorkerClientData> SWServer::findClientByIdentifier(const Cl
     });
 
     return (position != notFound) ? std::make_optional(clients[position].data) : std::nullopt;
+}
+
+// https://w3c.github.io/ServiceWorker/#clients-getall
+void SWServer::matchAll(SWServerWorker& worker, const ServiceWorkerClientQueryOptions& options, ServiceWorkerClientsMatchAllCallback&& callback)
+{
+    // FIXME: Support reserved client filtering.
+    // FIXME: Support WindowClient additional properties.
+
+    auto clients = m_clients.get(worker.origin());
+
+    if (!options.includeUncontrolled) {
+        clients.removeAllMatching([&] (const auto& client) {
+            return worker.identifier() != m_clientToControllingWorker.get(client.identifier);
+        });
+    }
+    if (options.type != ServiceWorkerClientType::All) {
+        clients.removeAllMatching([&] (const auto& client) {
+            return options.type != client.data.type;
+        });
+    }
+    callback(WTFMove(clients));
 }
 
 void SWServer::didResolveRegistrationPromise(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey)
@@ -356,22 +381,31 @@ void SWServer::removeClientServiceWorkerRegistration(Connection& connection, Ser
     registration->removeClientServiceWorkerRegistration(connection.identifier());
 }
 
-void SWServer::serviceWorkerStartedControllingClient(Connection& connection, ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier registrationIdentifier, DocumentIdentifier contextIdentifier)
+void SWServer::serviceWorkerStartedControllingClient(Connection& connection, ServiceWorkerIdentifier serviceWorkerIdentifier, ServiceWorkerRegistrationIdentifier registrationIdentifier, DocumentIdentifier contextIdentifier)
 {
     auto* registration = m_registrationsByID.get(registrationIdentifier);
     if (!registration)
         return;
 
-    registration->addClientUsingRegistration({ connection.identifier(), contextIdentifier });
+    ServiceWorkerClientIdentifier clientIdentifier { connection.identifier(), contextIdentifier };
+    registration->addClientUsingRegistration(clientIdentifier);
+
+    auto result = m_clientToControllingWorker.add(clientIdentifier, serviceWorkerIdentifier);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-void SWServer::serviceWorkerStoppedControllingClient(Connection& connection, ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier registrationIdentifier, DocumentIdentifier contextIdentifier)
+void SWServer::serviceWorkerStoppedControllingClient(Connection& connection, ServiceWorkerIdentifier serviceWorkerIdentifier, ServiceWorkerRegistrationIdentifier registrationIdentifier, DocumentIdentifier contextIdentifier)
 {
+    UNUSED_PARAM(serviceWorkerIdentifier);
     auto* registration = m_registrationsByID.get(registrationIdentifier);
     if (!registration)
         return;
 
-    registration->removeClientUsingRegistration({ connection.identifier(), contextIdentifier });
+    ServiceWorkerClientIdentifier clientIdentifier { connection.identifier(), contextIdentifier };
+    registration->removeClientUsingRegistration(clientIdentifier);
+
+    auto result = m_clientToControllingWorker.take(clientIdentifier);
+    ASSERT_UNUSED(result, result == serviceWorkerIdentifier);
 }
 
 void SWServer::updateWorker(Connection&, const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerRegistration& registration, const URL& url, const String& script, WorkerType type)
@@ -582,8 +616,8 @@ const SWServerRegistration* SWServer::doRegistrationMatching(const SecurityOrigi
 void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceWorkerClientIdentifier identifier, ServiceWorkerClientData&& data)
 {
     m_clients.ensure(WTFMove(clientOrigin), [] {
-        return Vector<ClientInformation> { };
-    }).iterator->value.append(ClientInformation { identifier, WTFMove(data) });
+        return Vector<ServiceWorkerClientInformation> { };
+    }).iterator->value.append(ServiceWorkerClientInformation { identifier, WTFMove(data) });
 }
 
 void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, ServiceWorkerClientIdentifier identifier)

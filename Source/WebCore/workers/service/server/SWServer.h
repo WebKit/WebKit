@@ -55,6 +55,7 @@ class SWServerToContextConnection;
 enum class ServiceWorkerRegistrationState;
 enum class ServiceWorkerState;
 struct ExceptionData;
+struct ServiceWorkerClientQueryOptions;
 struct ServiceWorkerContextData;
 struct ServiceWorkerFetchResult;
 struct ServiceWorkerRegistrationData;
@@ -139,6 +140,7 @@ public:
     void didFinishActivation(SWServerWorker&);
     void workerContextTerminated(SWServerWorker&);
     std::optional<ServiceWorkerClientData> findClientByIdentifier(const ClientOrigin&, ServiceWorkerClientIdentifier);
+    void matchAll(SWServerWorker&, const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&);
 
     WEBCORE_EXPORT void serverToContextConnectionCreated();
     
@@ -182,11 +184,8 @@ private:
 
     HashMap<ServiceWorkerIdentifier, Ref<SWServerWorker>> m_runningOrTerminatingWorkers;
 
-    struct ClientInformation {
-        ServiceWorkerClientIdentifier identifier;
-        ServiceWorkerClientData data;
-    };
-    HashMap<ClientOrigin, Vector<ClientInformation>> m_clients;
+    HashMap<ClientOrigin, Vector<ServiceWorkerClientInformation>> m_clients;
+    HashMap<ServiceWorkerClientIdentifier, ServiceWorkerIdentifier> m_clientToControllingWorker;
 
     RefPtr<Thread> m_taskThread;
     Lock m_taskThreadLock;

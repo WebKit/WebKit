@@ -111,6 +111,11 @@ std::optional<ServiceWorkerClientData> SWServerWorker::findClientByIdentifier(Se
     return m_server.findClientByIdentifier(origin(), clientId);
 }
 
+void SWServerWorker::matchAll(const ServiceWorkerClientQueryOptions& options, ServiceWorkerClientsMatchAllCallback&& callback)
+{
+    return m_server.matchAll(*this, options, WTFMove(callback));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

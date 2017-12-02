@@ -32,6 +32,7 @@ messages -> WebSWServerToContextConnection {
     SetServiceWorkerHasPendingEvents(WebCore::ServiceWorkerIdentifier identifier, bool hasPendingEvents);
     WorkerTerminated(WebCore::ServiceWorkerIdentifier identifier);
     FindClientByIdentifier(uint64_t requestIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, struct WebCore::ServiceWorkerClientIdentifier clientIdentifier);
+    MatchAll(uint64_t matchAllRequestIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, struct WebCore::ServiceWorkerClientQueryOptions options);
 }
 
 #endif // ENABLE(SERVICE_WORKER)

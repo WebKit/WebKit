@@ -28,6 +28,8 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "ExceptionOr.h"
+#include "ServiceWorkerClientInformation.h"
+#include "ServiceWorkerClientQueryOptions.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerThreadProxy.h"
 #include <wtf/CompletionHandler.h>
@@ -36,7 +38,6 @@
 namespace WebCore {
 
 class SerializedScriptValue;
-struct ServiceWorkerClientIdentifier;
 class ServiceWorkerGlobalScope;
 
 class SWContextManager {
@@ -56,6 +57,7 @@ public:
 
         using FindClientByIdentifierCallback = WTF::CompletionHandler<void(ExceptionOr<std::optional<ServiceWorkerClientData>>&&)>;
         virtual void findClientByIdentifier(ServiceWorkerIdentifier, ServiceWorkerClientIdentifier, FindClientByIdentifierCallback&&) = 0;
+        virtual void matchAll(ServiceWorkerIdentifier, const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&) = 0;
     };
 
     WEBCORE_EXPORT void setConnection(std::unique_ptr<Connection>&&);
