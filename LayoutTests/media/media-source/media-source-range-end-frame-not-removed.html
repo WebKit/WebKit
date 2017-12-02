@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-range-ends</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var samples;
+    var bufferedSamples;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest()
+    {
+        findMediaElement();
+
+        source = new MediaSource();
+        waitForEventOn(source, 'sourceopen', sourceOpen);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen()
+    {
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        waitForEventOn(sourceBuffer, 'updateend', loadSamples1, false, true);
+        initSegment = makeAInit(6, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+    }
+
+    function loadSamples1()
+    {
+        samples = concatenateSamples([
+            makeASample(3, 3, 1, 1, SAMPLE_FLAG.SYNC, 0),
+            makeASample(4, 4, 1, 1, SAMPLE_FLAG.SYNC, 0),
+            makeASample(5, 5, 1, 1, SAMPLE_FLAG.SYNC, 0),
+        ]);
+        waitForEventOn(sourceBuffer, 'updateend', loadSamples2, false, true);
+        run('sourceBuffer.appendBuffer(samples)');
+    }
+
+    function loadSamples2()
+    {
+        samples = concatenateSamples([
+            makeASample(0, 0, 1, 1, SAMPLE_FLAG.SYNC, 0),
+            makeASample(1, 1, 1, 1, SAMPLE_FLAG.SYNC, 0),
+            makeASample(2, 2, 1, 1, SAMPLE_FLAG.SYNC, 0),
+        ]);
+        waitForEventOn(sourceBuffer, 'updateend', samplesAdded, false, true);
+        run('sourceBuffer.appendBuffer(samples)');
+    }
+
+    function samplesAdded()
+    {
+        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        testExpected("bufferedSamples.length", 6);
+        bufferedSamples.forEach(consoleWrite);
+
+        testExpected("sourceBuffer.buffered.length", 1);
+        testExpected("sourceBuffer.buffered.start(0)", 0);
+        testExpected("sourceBuffer.buffered.end(0)", 6);
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>

@@ -1,3 +1,17 @@
+2017-12-01  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE] Use correct range end checks in sourceBufferPrivateDidReceiveSample()
+        https://bugs.webkit.org/show_bug.cgi?id=179690
+
+        Reviewed by Jer Noble.
+
+        Added test cases for bug #179690.
+
+        * media/media-source/media-source-range-end-frame-not-removed-expected.txt: Added.
+        * media/media-source/media-source-range-end-frame-not-removed.html: Added.
+        * media/media-source/media-source-range-start-frame-replaced-expected.txt: Added.
+        * media/media-source/media-source-range-start-frame-replaced.html: Added.
+
 2017-12-01  Ms2ger  <Ms2ger@igalia.com>
 
         [WPE] Enable wpt css tests.

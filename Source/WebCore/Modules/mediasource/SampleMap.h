@@ -63,8 +63,7 @@ public:
     WEBCORE_EXPORT reverse_iterator reverseFindSampleContainingPresentationTime(const MediaTime&);
     WEBCORE_EXPORT reverse_iterator reverseFindSampleBeforePresentationTime(const MediaTime&);
     WEBCORE_EXPORT iterator_range findSamplesBetweenPresentationTimes(const MediaTime&, const MediaTime&);
-    WEBCORE_EXPORT iterator_range findSamplesWithinPresentationRange(const MediaTime&, const MediaTime&);
-    WEBCORE_EXPORT iterator_range findSamplesWithinPresentationRangeFromEnd(const MediaTime&, const MediaTime&);
+    WEBCORE_EXPORT iterator_range findSamplesBetweenPresentationTimesFromEnd(const MediaTime&, const MediaTime&);
 
 private:
     MapType m_samples;
