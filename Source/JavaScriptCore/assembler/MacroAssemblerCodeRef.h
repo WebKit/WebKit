@@ -26,10 +26,10 @@
 #pragma once
 
 #include "ExecutableAllocator.h"
+#include "JSCScrambledPtr.h"
 #include <wtf/DataLog.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RefPtr.h>
-#include <wtf/ScrambledPtr.h>
 #include <wtf/text/CString.h>
 
 // ASSERT_VALID_CODE_POINTER checks that ptr is a non-null pointer, and that it is a valid
@@ -50,10 +50,6 @@
 #endif
 
 namespace JSC {
-
-extern "C" JS_EXPORTDATA uintptr_t g_masmScrambledPtrKey;
-
-using MasmScrambledPtr = ScrambledPtr<g_masmScrambledPtrKey>;
 
 class MacroAssemblerCodePtr;
 
@@ -323,7 +319,7 @@ public:
     T executableAddress() const
     {
         m_value.assertIsScrambled();
-        return m_value ? m_value.descramble<T>() : static_cast<T>(0);
+        return m_value ? m_value.descrambled<T>() : static_cast<T>(0);
     }
 #if CPU(ARM_THUMB2)
     // To use this pointer as a data address remove the decoration.
@@ -332,7 +328,7 @@ public:
     {
         m_value.assertIsScrambled();
         ASSERT_VALID_CODE_POINTER(m_value);
-        return bitwise_cast<T>(m_value ? m_value.descramble<char*>() - 1 : nullptr);
+        return bitwise_cast<T>(m_value ? m_value.descrambled<char*>() - 1 : nullptr);
     }
 #else
     template<typename T = void*>
@@ -340,7 +336,7 @@ public:
     {
         m_value.assertIsScrambled();
         ASSERT_VALID_CODE_POINTER(m_value);
-        return m_value ? m_value.descramble<T>() : static_cast<T>(0);
+        return m_value ? m_value.descrambled<T>() : static_cast<T>(0);
     }
 #endif
 
@@ -388,7 +384,7 @@ public:
     bool isEmptyValue() const { return m_value == emptyValue(); }
     bool isDeletedValue() const { return m_value == deletedValue(); }
 
-    unsigned hash() const { return IntHash<uintptr_t>::hash(m_value.scrambledBits()); }
+    unsigned hash() const { return IntHash<uintptr_t>::hash(m_value.bits()); }
 
     static void initialize();
 

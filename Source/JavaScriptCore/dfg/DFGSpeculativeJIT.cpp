@@ -868,8 +868,8 @@ void SpeculativeJIT::checkArray(Node* node)
         m_jit.branchPtr(
             MacroAssembler::NotEqual,
             MacroAssembler::Address(temp.gpr(), Structure::classInfoOffset()),
-            TrustedImmPtr(expectedClassInfo)));
-    
+            TrustedImmPtr(ClassInfoScrambledPtr(expectedClassInfo).bits())));
+
     noResult(m_currentNode);
 }
 
@@ -8705,6 +8705,10 @@ void SpeculativeJIT::compileCheckSubClass(Node* node)
 
         m_jit.emitLoadStructure(*m_jit.vm(), baseGPR, otherGPR, specifiedGPR);
         m_jit.loadPtr(CCallHelpers::Address(otherGPR, Structure::classInfoOffset()), otherGPR);
+#if USE(JSVALUE64)
+        m_jit.move(CCallHelpers::TrustedImm64(g_classInfoScrambledPtrKey), specifiedGPR);
+        m_jit.xor64(specifiedGPR, otherGPR);
+#endif
         m_jit.move(CCallHelpers::TrustedImmPtr(node->classInfo()), specifiedGPR);
 
         CCallHelpers::Label loop = m_jit.label();
@@ -8999,7 +9003,7 @@ void SpeculativeJIT::compileNewStringObject(Node* node)
         slowPath);
     
     m_jit.storePtr(
-        TrustedImmPtr(StringObject::info()),
+        TrustedImmPtr(ClassInfoScrambledPtr(StringObject::info()).bits()),
         JITCompiler::Address(resultGPR, JSDestructibleObject::classInfoOffset()));
 #if USE(JSVALUE64)
     m_jit.store64(

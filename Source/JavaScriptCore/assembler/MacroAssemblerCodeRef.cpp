@@ -33,16 +33,6 @@
 
 namespace JSC {
 
-uintptr_t g_masmScrambledPtrKey;
-
-void MacroAssemblerCodePtr::initialize()
-{
-    static std::once_flag initializeOnceFlag;
-    std::call_once(initializeOnceFlag, [] {
-        g_masmScrambledPtrKey = makeScrambledPtrKey();
-    });
-}
-
 MacroAssemblerCodePtr MacroAssemblerCodePtr::createLLIntCodePtr(OpcodeID codeId)
 {
     return createFromExecutableAddress(LLInt::getCodePtr(codeId));

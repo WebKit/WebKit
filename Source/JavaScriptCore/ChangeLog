@@ -1,3 +1,44 @@
+2017-12-01  Mark Lam  <mark.lam@apple.com>
+
+        Let's scramble ClassInfo pointers in cells.
+        https://bugs.webkit.org/show_bug.cgi?id=180291
+        <rdar://problem/35807620>
+
+        Reviewed by JF Bastien.
+
+        * API/JSCallbackObject.h:
+        * API/JSObjectRef.cpp:
+        (classInfoPrivate):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * assembler/MacroAssemblerCodeRef.cpp:
+        (JSC::MacroAssemblerCodePtr::initialize): Deleted.
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodePtr:: const):
+        (JSC::MacroAssemblerCodePtr::hash const):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        (JSC::DFG::SpeculativeJIT::compileCheckSubClass):
+        (JSC::DFG::SpeculativeJIT::compileNewStringObject):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewStringObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckSubClass):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitAllocateDestructibleObject):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::loadArgumentWithSpecificClass):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/JSCScrambledPtr.cpp: Added.
+        (JSC::initializeScrambledPtrKeys):
+        * runtime/JSCScrambledPtr.h: Added.
+        * runtime/JSDestructibleObject.h:
+        (JSC::JSDestructibleObject::classInfo const):
+        * runtime/JSSegmentedVariableObject.h:
+        (JSC::JSSegmentedVariableObject::classInfo const):
+        * runtime/Structure.h:
+        * runtime/VM.h:
+
 2017-12-01  Brian Burg  <bburg@apple.com>
 
         Web Inspector: move Inspector::Protocol::Array<T> to JSON namespace

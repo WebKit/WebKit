@@ -769,6 +769,7 @@ runtime/JSAsyncFunction.cpp
 runtime/JSAsyncGeneratorFunction.cpp
 runtime/JSBoundFunction.cpp
 runtime/JSCJSValue.cpp
+runtime/JSCScrambledPtr.cpp
 runtime/JSCallee.cpp
 runtime/JSCell.cpp
 runtime/JSCustomGetterSetterFunction.cpp

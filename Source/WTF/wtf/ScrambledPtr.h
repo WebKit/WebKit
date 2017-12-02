@@ -40,12 +40,11 @@ namespace WTF {
 
 using ScrambledPtrBits = uintptr_t;
 
-template<uintptr_t& key>
+template<typename T, uintptr_t& key, typename = std::enable_if_t<std::is_pointer<T>::value>>
 class ScrambledPtr {
 public:
     ScrambledPtr() { }
 
-    template<typename T, typename = typename std::enable_if<std::is_pointer<T>::value>::type>
     explicit ScrambledPtr(T ptr)
         : m_scrambledBits(scramble(ptr))
     {
@@ -61,26 +60,26 @@ public:
     }
 
 #if ENABLE(SCRAMBLED_PTR_ASSERTS)
-    template<typename T = void*>
-    static bool isScrambled(T value) { return !value || (reinterpret_cast<uintptr_t>(value) & 0xffff000000000000); }
-    template<typename T = void*>
-    static void assertIsScrambled(T value) { RELEASE_ASSERT(isScrambled(value)); }
-    template<typename T = void*>
-    static void assertIsNotScrambled(T value) { RELEASE_ASSERT(!isScrambled(value)); }
+    template<typename U = void*>
+    static bool isScrambled(U value) { return !value || (reinterpret_cast<uintptr_t>(value) & 0xffff000000000000); }
+    template<typename U = void*>
+    static void assertIsScrambled(U value) { RELEASE_ASSERT(isScrambled(value)); }
+    template<typename U = void*>
+    static void assertIsNotScrambled(U value) { RELEASE_ASSERT(!isScrambled(value)); }
 #else
-    template<typename T = void*> static void assertIsScrambled(T) { }
-    template<typename T = void*> static void assertIsNotScrambled(T) { }
+    template<typename U = void*> static void assertIsScrambled(U) { }
+    template<typename U = void*> static void assertIsNotScrambled(U) { }
 #endif
     void assertIsScrambled() const { assertIsScrambled(m_scrambledBits); }
     void assertIsNotScrambled() const { assertIsNotScrambled(m_scrambledBits); }
 
-    template<typename T = void*>
-    T descramble() const { return descramble<T>(m_scrambledBits); }
+    template<typename U = T>
+    U descrambled() const { return descramble<U>(m_scrambledBits); }
 
-    template<typename T, typename = typename std::enable_if<std::is_pointer<T>::value>::type>
     ALWAYS_INLINE T operator->() const { return descramble<T>(m_scrambledBits); }
 
-    ScrambledPtrBits scrambledBits() const { return m_scrambledBits; }
+    template<typename U = ScrambledPtrBits>
+    U bits() const { return bitwise_cast<U>(m_scrambledBits); }
 
     bool operator!() const { return !m_scrambledBits; }
     explicit operator bool() const { return !!m_scrambledBits; }
@@ -93,20 +92,27 @@ public:
     template<typename PtrType = void*, typename = typename std::enable_if<std::is_pointer<PtrType>::value>::type>
     bool operator==(const PtrType b)
     {
-        return descramble<PtrType>() == b;
+        return descrambled<PtrType>() == b;
     }
+
+    ScrambledPtr& operator=(T ptr)
+    {
+        m_scrambledBits = ptr ? scramble(ptr) : 0;
+        return *this;
+    }
+    ScrambledPtr& operator=(const ScrambledPtr&) = default;
 
 private:
 #if USE(JSVALUE64)
-    template<typename T>
-    ALWAYS_INLINE static ScrambledPtrBits scramble(T ptr) { return bitwise_cast<ScrambledPtrBits>(ptr) ^ key; }
-    template<typename T>
-    ALWAYS_INLINE static T descramble(ScrambledPtrBits scrambledBits) { return bitwise_cast<T>(scrambledBits ^ key); }
+    template<typename U>
+    ALWAYS_INLINE static ScrambledPtrBits scramble(U ptr) { return bitwise_cast<ScrambledPtrBits>(ptr) ^ key; }
+    template<typename U>
+    ALWAYS_INLINE static U descramble(ScrambledPtrBits scrambledBits) { return bitwise_cast<U>(scrambledBits ^ key); }
 #else
-    template<typename T>
-    ALWAYS_INLINE static ScrambledPtrBits scramble(T ptr) { return bitwise_cast<ScrambledPtrBits>(ptr); }
-    template<typename T>
-    ALWAYS_INLINE static T descramble(ScrambledPtrBits scrambledBits) { return bitwise_cast<T>(scrambledBits); }
+    template<typename U>
+    ALWAYS_INLINE static ScrambledPtrBits scramble(U ptr) { return bitwise_cast<ScrambledPtrBits>(ptr); }
+    template<typename U>
+    ALWAYS_INLINE static U descramble(ScrambledPtrBits scrambledBits) { return bitwise_cast<U>(scrambledBits); }
 #endif
 
     ScrambledPtrBits m_scrambledBits { 0 };

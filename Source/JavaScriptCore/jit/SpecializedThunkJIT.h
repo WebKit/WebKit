@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,7 +77,7 @@ namespace JSC {
         {
             loadCellArgument(argument, dst);
             emitLoadStructure(*vm(), dst, scratch, dst);
-            appendFailure(branchPtr(NotEqual, Address(scratch, Structure::classInfoOffset()), TrustedImmPtr(classInfo)));
+            appendFailure(branchPtr(NotEqual, Address(scratch, Structure::classInfoOffset()), TrustedImmPtr(ClassInfoScrambledPtr(classInfo).bits())));
             // We have to reload the argument since emitLoadStructure clobbered it.
             loadCellArgument(argument, dst);
         }
