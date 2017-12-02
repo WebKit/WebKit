@@ -1,5 +1,21 @@
 2017-12-01  JF Bastien  <jfbastien@apple.com>
 
+        Try proxying all function arguments
+        https://bugs.webkit.org/show_bug.cgi?id=180306
+
+        Reviewed by Saam Barati.
+
+        * stress/proxy-all-the-parameters.js: Added.
+        (isPropertyOfType):
+        (getProperties):
+        (generateObjects):
+        (getObjects):
+        (getFunctions):
+        (get throw):
+        (let.o.of.getObjects.let.f.of.getFunctions.catch):
+
+2017-12-01  JF Bastien  <jfbastien@apple.com>
+
         JavaScriptCore: missing exception checks in Math functions that take more than one argument
         https://bugs.webkit.org/show_bug.cgi?id=180297
         <rdar://problem/35745556>
