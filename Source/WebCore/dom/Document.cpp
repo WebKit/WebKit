@@ -220,6 +220,7 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringBuffer.h>
+#include <wtf/text/TextStream.h>
 #include <yarr/RegularExpression.h>
 
 #if ENABLE(DEVICE_ORIENTATION)
@@ -3381,10 +3382,14 @@ void Document::processViewport(const String& features, ViewportArguments::Type o
 {
     ASSERT(!features.isNull());
 
+    LOG_WITH_STREAM(Viewports, stream << "Document::processViewport " << features);
+
     if (origin < m_viewportArguments.type)
         return;
 
     m_viewportArguments = ViewportArguments(origin);
+
+    LOG_WITH_STREAM(Viewports, stream  << " resolved to " << m_viewportArguments);
 
     processFeaturesString(features, FeatureMode::Viewport, [this](StringView key, StringView value) {
         setViewportFeature(m_viewportArguments, *this, key, value);

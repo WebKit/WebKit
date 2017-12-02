@@ -744,6 +744,8 @@ void FrameLoader::didBeginDocument(bool dispatch)
 
 void FrameLoader::finishedParsing()
 {
+    LOG(Loading, "WebCoreLoading %s: Finished parsing", m_frame.tree().uniqueName().string().utf8().data());
+
     m_frame.injectUserScripts(InjectAtDocumentEnd);
 
     if (m_stateMachine.creatingInitialEmptyDocument())

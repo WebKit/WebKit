@@ -101,7 +101,7 @@ public:
     WEBCORE_EXPORT static Parameters testingParameters();
     
 #ifndef NDEBUG
-    WTF::CString description() const;
+    String description() const;
     WEBCORE_EXPORT void dump() const;
 #endif
 
@@ -127,5 +127,6 @@ private:
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ViewportConfiguration::Parameters&);
+WTF::TextStream& operator<<(WTF::TextStream&, const ViewportConfiguration&);
 
 } // namespace WebCore

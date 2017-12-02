@@ -92,6 +92,7 @@ namespace WebCore {
     M(Tiling) \
     M(Threading) \
     M(URLParser) \
+    M(Viewports) \
     M(WebAudio) \
     M(WebGL) \
     M(WebGPU) \

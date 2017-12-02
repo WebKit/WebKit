@@ -1,3 +1,31 @@
+2017-12-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a log channel for viewports
+        https://bugs.webkit.org/show_bug.cgi?id=180295
+
+        Reviewed by Zalan Bujtas.
+
+        Add a "Viewports" log channel to log viewport scaling information, and enhance the
+        WebKit "VisibleRects" channel to log additional data for the same reason.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]):
+        (-[WKWebView _dynamicViewportUpdateChangedTargetToScale:position:nextValidLayerTreeTransactionID:]):
+        (-[WKWebView _dispatchSetMinimumLayoutSize:]):
+        (-[WKWebView _endAnimatedResize]):
+        (-[WKWebView _resizeWhileHidingContentWithUpdates:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setFixedLayoutSize):
+        (WebKit::WebPage::mainFrameDidLayout):
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::scaleAfterViewportWidthChange):
+        (WebKit::WebPage::setViewportConfigurationMinimumLayoutSize):
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::WebPage::resetViewportDefaultConfiguration):
+        (WebKit::WebPage::viewportConfigurationChanged):
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2017-12-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: handle user prompts shown while executing scripts

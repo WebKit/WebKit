@@ -301,6 +301,8 @@ void ScrollView::setFixedLayoutSize(const IntSize& newSize)
 {
     if (fixedLayoutSize() == newSize)
         return;
+
+    LOG_WITH_STREAM(Layout, stream << "ScrollView " << this << " setFixedLayoutSize " << newSize);
     m_fixedLayoutSize = newSize;
     if (m_useFixedLayout)
         availableContentSizeChanged(AvailableSizeChangeReason::AreaSizeChanged);

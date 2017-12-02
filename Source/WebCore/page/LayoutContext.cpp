@@ -119,6 +119,8 @@ LayoutContext::LayoutContext(FrameView& frameView)
 
 void LayoutContext::layout()
 {
+    LOG_WITH_STREAM(Layout, stream << "FrameView " << &view() << " LayoutContext::layout() with size " << view().layoutSize());
+
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!frame().document()->inRenderTreeUpdate());
     ASSERT(!view().isPainting());
     ASSERT(frame().view() == &view());
@@ -142,7 +144,7 @@ void LayoutContext::layout()
 
 #if !LOG_DISABLED
     if (m_firstLayout && !frame().ownerElement())
-        LOG(Layout, "FrameView %p elapsed time before first layout: %.3fs\n", this, document()->timeSinceDocumentCreation().value());
+        LOG(Layout, "FrameView %p elapsed time before first layout: %.3fs", this, document()->timeSinceDocumentCreation().value());
 #endif
 #if PLATFORM(IOS)
     if (view().updateFixedPositionLayoutRect() && subtreeLayoutRoot())

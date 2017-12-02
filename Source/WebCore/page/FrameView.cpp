@@ -301,6 +301,8 @@ void FrameView::resetScrollbarsAndClearContentsSize()
 {
     resetScrollbars();
 
+    LOG(Layout, "FrameView %p resetScrollbarsAndClearContentsSize", this);
+
     setScrollbarsSuppressed(true);
     setContentsSize(IntSize());
     setScrollbarsSuppressed(false);
@@ -2103,6 +2105,8 @@ bool FrameView::scrollToFragment(const URL& url)
 
 bool FrameView::scrollToAnchor(const String& fragmentIdentifier)
 {
+    LOG(Scrolling, "FrameView::scrollToAnchor %s", fragmentIdentifier.utf8().data());
+
     // If our URL has no ref, then we have no place we need to jump to.
     if (fragmentIdentifier.isNull())
         return false;
@@ -2118,6 +2122,8 @@ bool FrameView::scrollToAnchor(const String& fragmentIdentifier)
     document.setGotoAnchorNeededAfterStylesheetsLoad(false);
 
     Element* anchorElement = document.findAnchor(fragmentIdentifier);
+
+    LOG(Scrolling, " anchorElement is %p", anchorElement);
 
     // Setting to null will clear the current target.
     document.setCSSTarget(anchorElement);
@@ -2157,6 +2163,8 @@ bool FrameView::scrollToAnchor(const String& fragmentIdentifier)
 
 void FrameView::maintainScrollPositionAtAnchor(ContainerNode* anchorNode)
 {
+    LOG(Scrolling, "FrameView::maintainScrollPositionAtAnchor at %p", anchorNode);
+
     m_maintainScrollPositionAnchor = anchorNode;
     if (!m_maintainScrollPositionAnchor)
         return;
@@ -2186,6 +2194,8 @@ void FrameView::scrollElementToRect(const Element& element, const IntRect& rect)
 
 void FrameView::setScrollPosition(const ScrollPosition& scrollPosition)
 {
+    LOG_WITH_STREAM(Scrolling, stream << "FrameView::setScrollPosition " << scrollPosition << " , clearing anchor");
+
     SetForScope<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
     m_maintainScrollPositionAnchor = nullptr;
     Page* page = frame().page();
@@ -2949,6 +2959,9 @@ bool FrameView::shouldUpdate() const
 void FrameView::scrollToAnchor()
 {
     RefPtr<ContainerNode> anchorNode = m_maintainScrollPositionAnchor;
+
+    LOG_WITH_STREAM(Scrolling, stream << "FrameView::scrollToAnchor() " << anchorNode.get());
+
     if (!anchorNode)
         return;
 
@@ -2959,6 +2972,8 @@ void FrameView::scrollToAnchor()
     bool insideFixed = false;
     if (anchorNode != frame().document() && anchorNode->renderer())
         rect = anchorNode->renderer()->absoluteAnchorRect(&insideFixed);
+
+    LOG_WITH_STREAM(Scrolling, stream << " anchor node rect " << rect);
 
     // Scroll nested layers and frames to reveal the anchor.
     // Align to the top and to the closest side (this matches other browsers).
@@ -2973,6 +2988,7 @@ void FrameView::scrollToAnchor()
         cache->handleScrolledToAnchor(anchorNode.get());
 
     // scrollRectToVisible can call into setScrollPosition(), which resets m_maintainScrollPositionAnchor.
+    LOG_WITH_STREAM(Scrolling, stream << " restoring anchor node to " << anchorNode.get());
     m_maintainScrollPositionAnchor = anchorNode;
 }
 
@@ -3305,6 +3321,8 @@ void FrameView::autoSizeIfEnabled()
         document->updateLayoutIgnorePendingStylesheets();
     }
     m_didRunAutosize = true;
+
+    LOG_WITH_STREAM(Layout, stream << "FrameView " << this << " autoSizeIfEnabled() changed size from " << size << " to " << frameRect().size());
 }
 
 void FrameView::setAutoSizeFixedMinimumHeight(int fixedMinimumHeight)
@@ -3882,6 +3900,8 @@ bool FrameView::wasScrolledByUser() const
 
 void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
 {
+    LOG(Scrolling, "FrameView::setWasScrolledByUser at %d", wasScrolledByUser);
+
     if (m_inProgrammaticScroll)
         return;
     m_maintainScrollPositionAnchor = nullptr;
