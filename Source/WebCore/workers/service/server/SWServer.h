@@ -138,6 +138,7 @@ public:
     void didFinishInstall(const std::optional<ServiceWorkerJobDataIdentifier>&, SWServerWorker&, bool wasSuccessful);
     void didFinishActivation(SWServerWorker&);
     void workerContextTerminated(SWServerWorker&);
+    std::optional<ServiceWorkerClientData> findClientByIdentifier(const ClientOrigin&, ServiceWorkerClientIdentifier);
 
     WEBCORE_EXPORT void serverToContextConnectionCreated();
     

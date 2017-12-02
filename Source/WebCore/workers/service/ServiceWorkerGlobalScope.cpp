@@ -42,7 +42,7 @@ ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(const ServiceWorkerContextDat
     : WorkerGlobalScope(url, identifier, userAgent, isOnline, thread, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, connectionProxy, socketProvider, sessionID)
     , m_contextData(crossThreadCopy(data))
     , m_registration(ServiceWorkerRegistration::getOrCreate(*this, navigator().serviceWorker(), WTFMove(m_contextData.registration)))
-    , m_clients(ServiceWorkerClients::create(*this))
+    , m_clients(ServiceWorkerClients::create())
 {
 }
 

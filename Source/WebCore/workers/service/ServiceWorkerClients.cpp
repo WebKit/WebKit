@@ -29,29 +29,49 @@
 #include "ServiceWorkerClients.h"
 
 #include "JSDOMPromiseDeferred.h"
+#include "JSServiceWorkerWindowClient.h"
+#include "ServiceWorkerGlobalScope.h"
 
 namespace WebCore {
 
-ServiceWorkerClients::ServiceWorkerClients(ScriptExecutionContext& context)
-    : ActiveDOMObject(&context)
+static inline void didFinishGetRequest(ServiceWorkerGlobalScope& scope, DeferredPromise& promise, ServiceWorkerClientIdentifier identifier, ExceptionOr<std::optional<ServiceWorkerClientData>>&& clientData)
 {
-    suspendIfNeeded();
+    if (clientData.hasException()) {
+        promise.reject(clientData.releaseException());
+        return;
+    }
+    auto data = clientData.releaseReturnValue();
+    if (!data) {
+        promise.resolve();
+        return;
+    }
+
+    promise.resolve<IDLInterface<ServiceWorkerClient>>(ServiceWorkerClient::getOrCreate(scope, identifier, WTFMove(data.value())));
 }
 
-const char* ServiceWorkerClients::activeDOMObjectName() const
+void ServiceWorkerClients::get(ScriptExecutionContext& context, const String& id, Ref<DeferredPromise>&& promise)
 {
-    return "ServiceWorkerClients";
-}
+    auto identifier = ServiceWorkerClientIdentifier::fromString(id);
+    if (!identifier) {
+        promise->resolve();
+        return;
+    }
+    auto clientIdentifier = identifier.value();
 
-bool ServiceWorkerClients::canSuspendForDocumentSuspension() const
-{
-    return !hasPendingActivity();
-}
+    auto serviceWorkerIdentifier = downcast<ServiceWorkerGlobalScope>(context).thread().identifier();
 
-void ServiceWorkerClients::get(const String& id, Ref<DeferredPromise>&& promise)
-{
-    UNUSED_PARAM(id);
-    promise->reject(Exception { NotSupportedError, ASCIILiteral("clients.get() is not yet supported") });
+    auto promisePointer = promise.ptr();
+    m_pendingPromises.add(promisePointer, WTFMove(promise));
+
+    callOnMainThread([promisePointer, serviceWorkerIdentifier, clientIdentifier] () {
+        auto connection = SWContextManager::singleton().connection();
+        connection->findClientByIdentifier(serviceWorkerIdentifier, clientIdentifier, [promisePointer, serviceWorkerIdentifier, clientIdentifier] (auto&& clientData) {
+            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promisePointer, clientIdentifier, data = crossThreadCopy(clientData)] (auto& context) mutable {
+                if (auto promise = context.clients().m_pendingPromises.take(promisePointer))
+                    didFinishGetRequest(context, *promise, clientIdentifier, WTFMove(data));
+            });
+        });
+    });
 }
 
 void ServiceWorkerClients::matchAll(const ClientQueryOptions&, Ref<DeferredPromise>&& promise)

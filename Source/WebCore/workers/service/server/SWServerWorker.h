@@ -36,11 +36,14 @@
 
 namespace WebCore {
 
+struct ClientOrigin;
 class SWServer;
 class SWServerRegistration;
-enum class WorkerType;
+struct ServiceWorkerClientData;
+struct ServiceWorkerClientIdentifier;
 struct ServiceWorkerContextData;
 struct ServiceWorkerJobDataIdentifier;
+enum class WorkerType;
 
 class SWServerWorker : public RefCounted<SWServerWorker> {
 public:
@@ -83,11 +86,13 @@ public:
     void didFinishInstall(const std::optional<ServiceWorkerJobDataIdentifier>&, bool wasSuccessful);
     void didFinishActivation();
     void contextTerminated();
+    std::optional<ServiceWorkerClientData> findClientByIdentifier(ServiceWorkerClientIdentifier);
 
     WEBCORE_EXPORT static SWServerWorker* existingWorkerForIdentifier(ServiceWorkerIdentifier);
 
     const ServiceWorkerData& data() const { return m_data; }
     ServiceWorkerContextData contextData() const;
+    const ClientOrigin& origin() const;
 
 private:
     SWServerWorker(SWServer&, SWServerRegistration&, SWServerToContextConnectionIdentifier, const URL&, const String& script, WorkerType, ServiceWorkerIdentifier);
@@ -99,6 +104,7 @@ private:
     String m_script;
     bool m_hasPendingEvents { false };
     State m_state { State::NotRunning };
+    mutable std::optional<ClientOrigin> m_origin;
 };
 
 } // namespace WebCore

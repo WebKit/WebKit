@@ -46,8 +46,8 @@ WTF_EXPORT_STRING_API unsigned charactersToUIntStrict(const LChar*, size_t, bool
 WTF_EXPORT_STRING_API unsigned charactersToUIntStrict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
 int64_t charactersToInt64Strict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
 int64_t charactersToInt64Strict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
-uint64_t charactersToUInt64Strict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
-uint64_t charactersToUInt64Strict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
+WTF_EXPORT_STRING_API uint64_t charactersToUInt64Strict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
+WTF_EXPORT_STRING_API uint64_t charactersToUInt64Strict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
 intptr_t charactersToIntPtrStrict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
 intptr_t charactersToIntPtrStrict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
 

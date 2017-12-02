@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 #include "SWContextManager.h"
 #include "ServiceWorkerClientIdentifier.h"
+#include "ServiceWorkerGlobalScope.h"
 
 namespace WebCore {
 
@@ -122,6 +123,15 @@ void SWContextManager::forEachServiceWorkerThread(const WTF::Function<void(Servi
 {
     for (auto& workerThread : m_workerMap.values())
         apply(*workerThread);
+}
+
+void SWContextManager::postTaskToServiceWorker(ServiceWorkerIdentifier identifier, WTF::Function<void(ServiceWorkerGlobalScope&)>&& task)
+{
+    if (auto* serviceWorker = m_workerMap.get(identifier)) {
+        serviceWorker->thread().runLoop().postTask([task = WTFMove(task)] (auto& context) {
+            task(downcast<ServiceWorkerGlobalScope>(context));
+        });
+    }
 }
 
 } // namespace WebCore

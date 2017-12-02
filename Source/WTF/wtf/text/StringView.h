@@ -29,6 +29,7 @@
 #include <limits.h>
 #include <unicode/utypes.h>
 #include <wtf/Forward.h>
+#include <wtf/Optional.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
@@ -146,6 +147,7 @@ public:
     int toInt() const;
     int toInt(bool& isValid) const;
     int toIntStrict(bool& isValid) const;
+    std::optional<uint64_t> toUInt64Strict() const;
     float toFloat(bool& isValid) const;
 
     static void invalidate(const StringImpl&);
@@ -521,6 +523,13 @@ inline int StringView::toIntStrict(bool& isValid) const
     if (is8Bit())
         return charactersToIntStrict(characters8(), m_length, &isValid);
     return charactersToIntStrict(characters16(), m_length, &isValid);
+}
+
+inline std::optional<uint64_t> StringView::toUInt64Strict() const
+{
+    bool isValid;
+    uint64_t result = is8Bit() ? charactersToUInt64Strict(characters8(), m_length, &isValid) : charactersToUInt64Strict(characters16(), m_length, &isValid);
+    return isValid ? std::make_optional(result) : std::nullopt;
 }
 
 inline String StringView::toStringWithoutCopying() const

@@ -1,0 +1,27 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+
+promise_test(async (test) => {
+    var promise = new Promise((resolve) => {
+        navigator.serviceWorker.addEventListener("message", test.step_func((event) => {
+            assert_equals(event.data, "PASS");
+            resolve();
+        }));
+    });
+
+    var registration = await navigator.serviceWorker.register("resources/serviceworkerclients-get-worker.js", { scope : "/noone" });
+    var worker = registration.installing;
+    if (!worker)
+        worker = registration.active;
+    worker.postMessage("start");
+
+    await promise;
+}, "Testing clients.get");
+</script>
+</body>
+</html>

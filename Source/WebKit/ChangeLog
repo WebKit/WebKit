@@ -1,3 +1,22 @@
+2017-12-01  Youenn Fablet  <youenn@apple.com>
+
+        Implement https://w3c.github.io/ServiceWorker/#clients-get
+        https://bugs.webkit.org/show_bug.cgi?id=180167
+
+        Reviewed by Chris Dumez.
+
+        Add IPC plumbery for clientFromId between ServiceWorker process and Storage process.
+
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::clientFromIdCompleted):
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.messages.in:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::findClientByIdentifier):
+        (WebKit::WebSWContextManagerConnection::findClientByIdentifierCompleted):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2017-12-01  Brian Burg  <bburg@apple.com>
 
         Web Inspector: move Inspector::Protocol::Array<T> to JSON namespace

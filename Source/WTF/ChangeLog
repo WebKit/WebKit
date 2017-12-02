@@ -1,3 +1,14 @@
+2017-12-01  Youenn Fablet  <youenn@apple.com>
+
+        Implement https://w3c.github.io/ServiceWorker/#clients-get
+        https://bugs.webkit.org/show_bug.cgi?id=180167
+
+        Reviewed by Chris Dumez.
+
+        * wtf/text/StringView.h:
+        (WTF::StringView::toUInt64Strict const):
+        * wtf/text/WTFString.h:
+
 2017-12-01  Brian Burg  <bburg@apple.com>
 
         Web Inspector: move Inspector::Protocol::Array<T> to JSON namespace

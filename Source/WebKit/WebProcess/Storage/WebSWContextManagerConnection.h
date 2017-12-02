@@ -63,6 +63,7 @@ private:
     void didFinishActivation(WebCore::ServiceWorkerIdentifier) final;
     void setServiceWorkerHasPendingEvents(WebCore::ServiceWorkerIdentifier, bool) final;
     void workerTerminated(WebCore::ServiceWorkerIdentifier) final;
+    void findClientByIdentifier(WebCore::ServiceWorkerIdentifier, WebCore::ServiceWorkerClientIdentifier, FindClientByIdentifierCallback&&) final;
 
     // IPC messages.
     void serviceWorkerStartedWithMessage(std::optional<WebCore::ServiceWorkerJobDataIdentifier>, WebCore::ServiceWorkerIdentifier, const String& exceptionMessage) final;
@@ -73,10 +74,14 @@ private:
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier);
     void terminateWorker(WebCore::ServiceWorkerIdentifier);
     void syncTerminateWorker(WebCore::ServiceWorkerIdentifier, Ref<Messages::WebSWContextManagerConnection::SyncTerminateWorker::DelayedReply>&&);
+    void findClientByIdentifierCompleted(uint64_t requestIdentifier, std::optional<WebCore::ServiceWorkerClientData>&&, bool hasSecurityError);
 
     Ref<IPC::Connection> m_connectionToStorageProcess;
     uint64_t m_pageID { 0 };
     uint64_t m_previousServiceWorkerID { 0 };
+
+    HashMap<uint64_t, FindClientByIdentifierCallback> m_findClientByIdentifierRequests;
+    uint64_t m_previousRequestIdentifier { 0 };
 };
 
 } // namespace WebKit

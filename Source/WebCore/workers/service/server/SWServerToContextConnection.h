@@ -34,6 +34,8 @@
 namespace WebCore {
 
 class SWServer;
+struct ServiceWorkerClientData;
+struct ServiceWorkerClientIdentifier;
 struct ServiceWorkerContextData;
 struct ServiceWorkerJobDataIdentifier;
 
@@ -49,6 +51,7 @@ public:
     virtual void fireActivateEvent(ServiceWorkerIdentifier) = 0;
     virtual void terminateWorker(ServiceWorkerIdentifier) = 0;
     virtual void syncTerminateWorker(ServiceWorkerIdentifier) = 0;
+    virtual void findClientByIdentifierCompleted(uint64_t requestIdentifier, const std::optional<ServiceWorkerClientData>&, bool hasSecurityError) = 0;
 
     // Messages back from the SW host process
     WEBCORE_EXPORT void scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>&, ServiceWorkerIdentifier, const String& message);
@@ -57,6 +60,7 @@ public:
     WEBCORE_EXPORT void didFinishActivation(ServiceWorkerIdentifier);
     WEBCORE_EXPORT void setServiceWorkerHasPendingEvents(ServiceWorkerIdentifier, bool hasPendingEvents);
     WEBCORE_EXPORT void workerTerminated(ServiceWorkerIdentifier);
+    WEBCORE_EXPORT void findClientByIdentifier(uint64_t clientIdRequestIdentifier, ServiceWorkerIdentifier, ServiceWorkerClientIdentifier);
 
     static SWServerToContextConnection* connectionForIdentifier(SWServerToContextConnectionIdentifier);
 

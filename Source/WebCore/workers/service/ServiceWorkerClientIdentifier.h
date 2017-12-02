@@ -40,6 +40,7 @@ struct ServiceWorkerClientIdentifier {
     unsigned hash() const;
 
     String toString() const { return String::number(serverConnectionIdentifier.toUInt64()) + "-" +  String::number(contextIdentifier.toUInt64()); }
+    static std::optional<ServiceWorkerClientIdentifier> fromString(StringView);
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerClientIdentifier> decode(Decoder&);
@@ -48,6 +49,23 @@ struct ServiceWorkerClientIdentifier {
 inline bool operator==(const ServiceWorkerClientIdentifier& a, const ServiceWorkerClientIdentifier& b)
 {
     return a.serverConnectionIdentifier == b.serverConnectionIdentifier &&  a.contextIdentifier == b.contextIdentifier;
+}
+
+inline std::optional<ServiceWorkerClientIdentifier> ServiceWorkerClientIdentifier::fromString(StringView string)
+{
+    ServiceWorkerClientIdentifier clientIdentifier;
+
+    unsigned counter = 0;
+    for (auto item : string.split('-')) {
+        auto identifier = item.toUInt64Strict();
+        if (!identifier || !*identifier)
+            return std::nullopt;
+        if (!counter++)
+            clientIdentifier.serverConnectionIdentifier = makeObjectIdentifier<SWServerConnectionIdentifierType>(identifier.value());
+        else if (counter == 2)
+            clientIdentifier.contextIdentifier = makeObjectIdentifier<DocumentIdentifierType>(identifier.value());
+    }
+    return (counter == 2) ? std::make_optional(WTFMove(clientIdentifier)) : std::nullopt;
 }
 
 template<class Encoder>

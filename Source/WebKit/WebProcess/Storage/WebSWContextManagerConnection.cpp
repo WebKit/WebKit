@@ -48,6 +48,7 @@
 #include <WebCore/PageConfiguration.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/SerializedScriptValue.h>
+#include <WebCore/ServiceWorkerClientData.h>
 #include <WebCore/ServiceWorkerClientIdentifier.h>
 #include <pal/SessionID.h>
 
@@ -199,6 +200,24 @@ void WebSWContextManagerConnection::setServiceWorkerHasPendingEvents(ServiceWork
 void WebSWContextManagerConnection::workerTerminated(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::WorkerTerminated(serviceWorkerIdentifier), 0);
+}
+
+void WebSWContextManagerConnection::findClientByIdentifier(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, ServiceWorkerClientIdentifier clientIdentifier, FindClientByIdentifierCallback&& callback)
+{
+    auto requestIdentifier = ++m_previousRequestIdentifier;
+    m_findClientByIdentifierRequests.add(requestIdentifier, WTFMove(callback));
+    m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::FindClientByIdentifier { requestIdentifier, serviceWorkerIdentifier, clientIdentifier }, 0);
+}
+
+void WebSWContextManagerConnection::findClientByIdentifierCompleted(uint64_t requestIdentifier, std::optional<ServiceWorkerClientData>&& clientData, bool hasSecurityError)
+{
+    if (auto callback = m_findClientByIdentifierRequests.take(requestIdentifier)) {
+        if (hasSecurityError) {
+            callback(Exception { SecurityError });
+            return;
+        }
+        callback(WTFMove(clientData));
+    }
 }
 
 } // namespace WebCore

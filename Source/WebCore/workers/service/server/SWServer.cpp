@@ -312,6 +312,20 @@ void SWServer::didFinishActivation(SWServerWorker& worker)
         SWServerJobQueue::didFinishActivation(*registration, worker.identifier());
 }
 
+std::optional<ServiceWorkerClientData> SWServer::findClientByIdentifier(const ClientOrigin& origin, ServiceWorkerClientIdentifier clientIdentifier)
+{
+    auto iterator = m_clients.find(origin);
+    if (iterator == m_clients.end())
+        return std::nullopt;
+
+    auto& clients = iterator->value;
+    auto position = clients.findMatching([&] (const auto& client) {
+        return clientIdentifier == client.identifier;
+    });
+
+    return (position != notFound) ? std::make_optional(clients[position].data) : std::nullopt;
+}
+
 void SWServer::didResolveRegistrationPromise(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey)
 {
     ASSERT_UNUSED(connection, m_connections.contains(connection.identifier()));

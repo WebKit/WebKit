@@ -60,6 +60,7 @@ private:
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier) final;
     void terminateWorker(WebCore::ServiceWorkerIdentifier) final;
     void syncTerminateWorker(WebCore::ServiceWorkerIdentifier) final;
+    void findClientByIdentifierCompleted(uint64_t requestIdentifier, const std::optional<WebCore::ServiceWorkerClientData>&, bool hasSecurityError) final;
 
     Ref<IPC::Connection> m_ipcConnection;
     

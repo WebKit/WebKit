@@ -73,6 +73,14 @@ void SWServerWorker::terminate()
     m_server.terminateWorker(*this);
 }
 
+const ClientOrigin& SWServerWorker::origin() const
+{
+    if (!m_origin)
+        m_origin = ClientOrigin { m_registrationKey.topOrigin(), SecurityOriginData::fromSecurityOrigin(SecurityOrigin::create(m_data.scriptURL)) };
+
+    return *m_origin;
+}
+
 void SWServerWorker::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, const String& message)
 {
     m_server.scriptContextFailedToStart(jobDataIdentifier, *this, message);
@@ -96,6 +104,11 @@ void SWServerWorker::didFinishActivation()
 void SWServerWorker::contextTerminated()
 {
     m_server.workerContextTerminated(*this);
+}
+
+std::optional<ServiceWorkerClientData> SWServerWorker::findClientByIdentifier(ServiceWorkerClientIdentifier clientId)
+{
+    return m_server.findClientByIdentifier(origin(), clientId);
 }
 
 } // namespace WebCore

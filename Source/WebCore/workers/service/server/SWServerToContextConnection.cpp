@@ -108,6 +108,12 @@ void SWServerToContextConnection::workerTerminated(ServiceWorkerIdentifier servi
         worker->contextTerminated();
 }
 
+void SWServerToContextConnection::findClientByIdentifier(uint64_t requestIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, ServiceWorkerClientIdentifier clientId)
+{
+    if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
+        globalServerToContextConnection()->findClientByIdentifierCompleted(requestIdentifier, worker->findClientByIdentifier(clientId), false);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

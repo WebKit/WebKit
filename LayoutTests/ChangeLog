@@ -1,3 +1,14 @@
+2017-12-01  Youenn Fablet  <youenn@apple.com>
+
+        Implement https://w3c.github.io/ServiceWorker/#clients-get
+        https://bugs.webkit.org/show_bug.cgi?id=180167
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/workers/service/resources/serviceworkerclients-get-worker.js: Added.
+        * http/tests/workers/service/serviceworkerclients-get.https-expected.txt: Added.
+        * http/tests/workers/service/serviceworkerclients-get.https.html: Added.
+
 2017-12-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update TestExpectations for editing/input tests on iOS.
