@@ -31,8 +31,7 @@
 #include "IDBDatabaseIdentifier.h"
 #include "UniqueIDBDatabase.h"
 #include "UniqueIDBDatabaseConnection.h"
-#include <wtf/CrossThreadQueue.h>
-#include <wtf/CrossThreadTask.h>
+#include <wtf/CrossThreadTaskHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/Ref.h>
@@ -51,7 +50,7 @@ namespace IDBServer {
 
 class IDBBackingStoreTemporaryFileHandler;
 
-class IDBServer : public RefCounted<IDBServer> {
+class IDBServer : public RefCounted<IDBServer>, public CrossThreadTaskHandler {
 public:
     static Ref<IDBServer> create(IDBBackingStoreTemporaryFileHandler&);
     WEBCORE_EXPORT static Ref<IDBServer> create(const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler&);
@@ -118,19 +117,8 @@ private:
     void performCloseAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>&, uint64_t callbackID);
     void didPerformCloseAndDeleteDatabases(uint64_t callbackID);
 
-    void databaseRunLoop();
-    void handleTaskRepliesOnMainThread();
-
     HashMap<uint64_t, RefPtr<IDBConnectionToClient>> m_connectionMap;
     HashMap<IDBDatabaseIdentifier, std::unique_ptr<UniqueIDBDatabase>> m_uniqueIDBDatabaseMap;
-
-    RefPtr<Thread> m_thread { nullptr };
-    Lock m_databaseThreadCreationLock;
-    Lock m_mainThreadReplyLock;
-    bool m_mainThreadReplyScheduled { false };
-
-    CrossThreadQueue<CrossThreadTask> m_databaseQueue;
-    CrossThreadQueue<CrossThreadTask> m_databaseReplyQueue;
 
     HashMap<uint64_t, UniqueIDBDatabaseConnection*> m_databaseConnections;
     HashMap<IDBResourceIdentifier, UniqueIDBDatabaseTransaction*> m_transactions;

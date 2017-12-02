@@ -21,6 +21,7 @@ set(WTF_HEADERS
     Condition.h
     CrossThreadCopier.h
     CrossThreadTask.h
+    CrossThreadTaskHandler.h
     CryptographicUtilities.h
     CryptographicallyRandomNumber.h
     CurrentTime.h
@@ -219,6 +220,7 @@ set(WTF_SOURCES
     ClockType.cpp
     CompilationThread.cpp
     CrossThreadCopier.cpp
+    CrossThreadTaskHandler.cpp
     CryptographicUtilities.cpp
     CryptographicallyRandomNumber.cpp
     CurrentTime.cpp

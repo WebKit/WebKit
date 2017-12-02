@@ -53,24 +53,17 @@ Ref<IDBServer> IDBServer::create(const String& databaseDirectoryPath, IDBBacking
 }
 
 IDBServer::IDBServer(IDBBackingStoreTemporaryFileHandler& fileHandler)
-    : m_backingStoreTemporaryFileHandler(fileHandler)
+    : CrossThreadTaskHandler("IndexedDatabase Server")
+    , m_backingStoreTemporaryFileHandler(fileHandler)
 {
-    Locker<Lock> locker(m_databaseThreadCreationLock);
-    m_thread = Thread::create("IndexedDatabase Server", [this] {
-        databaseRunLoop();
-    });
 }
 
 IDBServer::IDBServer(const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler& fileHandler)
-    : m_databaseDirectoryPath(databaseDirectoryPath)
+    : CrossThreadTaskHandler("IndexedDatabase Server")
+    , m_databaseDirectoryPath(databaseDirectoryPath)
     , m_backingStoreTemporaryFileHandler(fileHandler)
 {
     LOG(IndexedDB, "IDBServer created at path %s", databaseDirectoryPath.utf8().data());
-
-    Locker<Lock> locker(m_databaseThreadCreationLock);
-    m_thread = Thread::create("IndexedDatabase Server", [this] {
-        databaseRunLoop();
-    });
 }
 
 void IDBServer::registerConnection(IDBConnectionToClient& connection)
@@ -488,43 +481,12 @@ void IDBServer::didGetAllDatabaseNames(uint64_t serverConnectionIdentifier, uint
 
 void IDBServer::postDatabaseTask(CrossThreadTask&& task)
 {
-    m_databaseQueue.append(WTFMove(task));
+    postTask(WTFMove(task));
 }
 
 void IDBServer::postDatabaseTaskReply(CrossThreadTask&& task)
 {
-    m_databaseReplyQueue.append(WTFMove(task));
-
-    Locker<Lock> locker(m_mainThreadReplyLock);
-    if (m_mainThreadReplyScheduled)
-        return;
-
-    m_mainThreadReplyScheduled = true;
-    callOnMainThread([this] {
-        handleTaskRepliesOnMainThread();
-    });
-}
-
-void IDBServer::databaseRunLoop()
-{
-    ASSERT(!isMainThread());
-    {
-        Locker<Lock> locker(m_databaseThreadCreationLock);
-    }
-
-    while (!m_databaseQueue.isKilled())
-        m_databaseQueue.waitForMessage().performTask();
-}
-
-void IDBServer::handleTaskRepliesOnMainThread()
-{
-    {
-        Locker<Lock> locker(m_mainThreadReplyLock);
-        m_mainThreadReplyScheduled = false;
-    }
-
-    while (auto task = m_databaseReplyQueue.tryGetMessage())
-        task->performTask();
+    postTaskReply(WTFMove(task));
 }
 
 static uint64_t generateDeleteCallbackID()
