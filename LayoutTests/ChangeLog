@@ -1,5 +1,19 @@
 2017-12-01  Daniel Bates  <dabates@apple.com>
 
+        AlternativePresentationButtonSubstitution::unapply() may not undo substitution
+        https://bugs.webkit.org/show_bug.cgi?id=180279
+        <rdar://problem/35800599>
+
+        Reviewed by Simon Fraser.
+
+        Update test to ensure that we undo the alternative presentation button substitution
+        made to an HTML label element.
+
+        * fast/forms/alternative-presentation-button/replace-and-remove-expected.html:
+        * fast/forms/alternative-presentation-button/replace-and-remove.html:
+
+2017-12-01  Daniel Bates  <dabates@apple.com>
+
         Alternative Presentation Button: Provide a way to query for the replaced elements
         https://bugs.webkit.org/show_bug.cgi?id=180114
         <rdar://problem/35710539>

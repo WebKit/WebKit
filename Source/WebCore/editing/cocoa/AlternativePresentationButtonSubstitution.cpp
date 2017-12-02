@@ -110,6 +110,7 @@ void AlternativePresentationButtonSubstitution::unapply()
         m_shadowHost->userAgentShadowRoot()->removeChild(*m_alternativePresentationButtonElement);
         ASSERT(!m_shadowHost->userAgentShadowRoot()->countChildNodes());
         m_shadowHost->removeShadowRoot();
+        m_shadowHost->invalidateStyleAndRenderersForSubtree();
     };
     auto restoreStyles = [&] {
         for (auto& savedDisplayStyle : m_savedDisplayStyles) {
