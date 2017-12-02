@@ -47,13 +47,13 @@ namespace WebCore {
 
 BitmapImage::BitmapImage(ImageObserver* observer)
     : Image(observer)
-    , m_source(ImageFrameCache::create(this))
+    , m_source(ImageSource::create(this))
 {
 }
 
 BitmapImage::BitmapImage(NativeImagePtr&& image, ImageObserver* observer)
     : Image(observer)
-    , m_source(ImageFrameCache::create(WTFMove(image)))
+    , m_source(ImageSource::create(WTFMove(image)))
 {
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,21 +40,21 @@ class Image;
 class ImageDecoder;
 class URL;
 
-class ImageFrameCache : public ThreadSafeRefCounted<ImageFrameCache> {
+class ImageSource : public ThreadSafeRefCounted<ImageSource> {
     friend class BitmapImage;
 public:
-    ImageFrameCache(Image*, AlphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption = GammaAndColorProfileOption::Applied);
-    ImageFrameCache(NativeImagePtr&&);
-    ~ImageFrameCache();
+    ImageSource(Image*, AlphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption = GammaAndColorProfileOption::Applied);
+    ImageSource(NativeImagePtr&&);
+    ~ImageSource();
 
-    static Ref<ImageFrameCache> create(Image* image, AlphaOption alphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption gammaAndColorProfileOption = GammaAndColorProfileOption::Applied)
+    static Ref<ImageSource> create(Image* image, AlphaOption alphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption gammaAndColorProfileOption = GammaAndColorProfileOption::Applied)
     {
-        return adoptRef(*new ImageFrameCache(image, alphaOption, gammaAndColorProfileOption));
+        return adoptRef(*new ImageSource(image, alphaOption, gammaAndColorProfileOption));
     }
 
-    static Ref<ImageFrameCache> create(NativeImagePtr&& nativeImage)
+    static Ref<ImageSource> create(NativeImagePtr&& nativeImage)
     {
-        return adoptRef(*new ImageFrameCache(WTFMove(nativeImage)));
+        return adoptRef(*new ImageSource(WTFMove(nativeImage)));
     }
 
     void setData(SharedBuffer* data, bool allDataReceived);
@@ -195,5 +195,5 @@ private:
     std::optional<Color> m_singlePixelSolidColor;
     std::optional<SubsamplingLevel> m_maximumSubsamplingLevel;
 };
-    
+
 }

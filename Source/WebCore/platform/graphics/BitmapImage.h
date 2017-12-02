@@ -29,9 +29,9 @@
 
 #include "Image.h"
 #include "Color.h"
-#include "ImageFrameCache.h"
 #include "ImageObserver.h"
 #include "ImageOrientation.h"
+#include "ImageSource.h"
 #include "IntSize.h"
 
 #if USE(CG) || USE(APPKIT)
@@ -205,7 +205,7 @@ private:
     // Animated images over a certain size are considered large enough that we'll only hang on to one frame at a time.
     static const unsigned LargeAnimationCutoff = 30 * 1024 * 1024;
 
-    mutable Ref<ImageFrameCache> m_source;
+    mutable Ref<ImageSource> m_source;
 
     size_t m_currentFrame { 0 }; // The index of the current frame of animation.
     SubsamplingLevel m_currentSubsamplingLevel { SubsamplingLevel::Default };

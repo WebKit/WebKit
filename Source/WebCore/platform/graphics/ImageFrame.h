@@ -37,7 +37,7 @@
 namespace WebCore {
 
 class ImageFrame {
-    friend class ImageFrameCache;
+    friend class ImageSource;
 public:
     enum class Caching { Metadata, MetadataAndImage };
 

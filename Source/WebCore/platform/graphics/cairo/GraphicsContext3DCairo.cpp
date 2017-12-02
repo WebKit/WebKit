@@ -35,7 +35,7 @@
 #include "CairoUtilities.h"
 #include "GraphicsContext3DPrivate.h"
 #include "Image.h"
-#include "ImageFrameCache.h"
+#include "ImageSource.h"
 #include "NotImplemented.h"
 #include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
@@ -286,14 +286,14 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
     // We need this to stay in scope because the native image is just a shallow copy of the data.
     AlphaOption alphaOption = premultiplyAlpha ? AlphaOption::Premultiplied : AlphaOption::NotPremultiplied;
     GammaAndColorProfileOption gammaAndColorProfileOption = ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied;
-    ImageFrameCache decoder(nullptr, alphaOption, gammaAndColorProfileOption);
+    ImageSource source(nullptr, alphaOption, gammaAndColorProfileOption);
     m_alphaOp = AlphaDoNothing;
 
     if (m_image->data()) {
-        decoder.setData(m_image->data(), true);
-        if (!decoder.frameCount())
+        source.setData(m_image->data(), true);
+        if (!source.frameCount())
             return false;
-        m_imageSurface = decoder.createFrameImageAtIndex(0);
+        m_imageSurface = source.createFrameImageAtIndex(0);
     } else {
         m_imageSurface = m_image->nativeImageForCurrentFrame();
         // 1. For texImage2D with HTMLVideoElment input, assume no PremultiplyAlpha had been applied and the alpha value is 0xFF for each pixel,
