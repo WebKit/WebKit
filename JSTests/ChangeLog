@@ -1,3 +1,20 @@
+2017-12-01  JF Bastien  <jfbastien@apple.com>
+
+        JavaScriptCore: add test for weird class static getters
+        https://bugs.webkit.org/show_bug.cgi?id=180281
+        <rdar://problem/35592139>
+
+        Reviewed by Mark Lam.
+
+        I fixed a bug for it in r224927 and didn't add a test. Do so.
+
+        * stress/class-static-get-weird.js: Added.
+        (c.prototype.get name):
+        (c):
+        (c.prototype.get arguments):
+        (c.prototype.get caller):
+        (c.prototype.get length):
+
 2017-12-01  Saam Barati  <sbarati@apple.com>
 
         Having a bad time needs to handle ArrayClass indexing type as well
