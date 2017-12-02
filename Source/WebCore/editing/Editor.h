@@ -520,6 +520,8 @@ public:
     // FIXME: Have this take an AlternativePresentationButtonElement& instead of an identifier.
     WEBCORE_EXPORT void removeAlternativePresentationButton(const String&);
 
+    WEBCORE_EXPORT Vector<Ref<Element>> elementsReplacedByAlternativePresentationButton(const String&);
+
     void didInsertAlternativePresentationButtonElement(AlternativePresentationButtonElement&);
     void didRemoveAlternativePresentationButtonElement(AlternativePresentationButtonElement&);
 #endif

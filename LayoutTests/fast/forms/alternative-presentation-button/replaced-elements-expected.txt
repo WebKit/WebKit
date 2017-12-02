@@ -1,0 +1,13 @@
+Tests that the elements returned by internals.elementsReplacedByAlternativePresentationButton() are the same as the elements passed to internals.substituteWithAlternativePresentationButton() ignoring order.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.elementsReplacedByAlternativePresentationButton(1).length is 0
+PASS single input element
+PASS multiple elements
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

@@ -4327,6 +4327,13 @@ ExceptionOr<void> Internals::removeAlternativePresentationButton(const String& i
     frame()->editor().removeAlternativePresentationButton(identifier);
     return { };
 }
+
+ExceptionOr<Vector<Ref<Element>>> Internals::elementsReplacedByAlternativePresentationButton(const String& identifier)
+{
+    if (!frame())
+        return Exception { InvalidAccessError };
+    return frame()->editor().elementsReplacedByAlternativePresentationButton(identifier);
+}
 #endif
 
 } // namespace WebCore

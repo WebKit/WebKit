@@ -576,4 +576,5 @@ enum EventThrottlingBehavior {
 
     [Conditional=ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT, MayThrowException] void substituteWithAlternativePresentationButton(sequence<Element> elements, DOMString identifier);
     [Conditional=ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT, MayThrowException] void removeAlternativePresentationButton(DOMString identifier);
+    [Conditional=ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT, MayThrowException] sequence<Element> elementsReplacedByAlternativePresentationButton(DOMString identifier);
 };

@@ -126,6 +126,16 @@ void AlternativePresentationButtonSubstitution::unapply()
     detachShadowRoot();
 }
 
+Vector<Ref<Element>> AlternativePresentationButtonSubstitution::replacedElements()
+{
+    Vector<Ref<Element>> result;
+    result.reserveInitialCapacity(m_savedDisplayStyles.size() + 1);
+    result.uncheckedAppend(m_shadowHost.copyRef());
+    for (auto& savedDisplayStyle : m_savedDisplayStyles)
+        result.uncheckedAppend(savedDisplayStyle.element.copyRef());
+    return result;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)

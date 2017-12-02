@@ -116,6 +116,21 @@ using namespace WebKit;
 #endif
 }
 
+- (NSArray<WKWebProcessPlugInNodeHandle *> *)elementsReplacedByAlternativePresentationButtonWithIdentifier:(NSString *)identifier
+{
+#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
+    auto replacedElements = _frame->coreFrame()->editor().elementsReplacedByAlternativePresentationButton(identifier);
+    if (replacedElements.isEmpty())
+        return nil;
+    auto nodeHandles = adoptNS([NSMutableArray arrayWithCapacity:replacedElements.size()]);
+    for (auto& element : replacedElements)
+        [nodeHandles addObject:wrapper(InjectedBundleNodeHandle::getOrCreate(element).get())];
+    return nodeHandles.autorelease();
+#else
+    return nil;
+#endif
+}
+
 - (WKWebProcessPlugInBrowserContextController *)_browserContextController
 {
     return wrapper(*_frame->page());

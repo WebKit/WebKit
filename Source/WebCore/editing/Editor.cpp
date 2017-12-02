@@ -3857,6 +3857,16 @@ void Editor::removeAlternativePresentationButton(const String& identifier)
     substitution->unapply();
 }
 
+Vector<Ref<Element>> Editor::elementsReplacedByAlternativePresentationButton(const String& identifier)
+{
+    if (!m_alternativePresentationButtonIdentifierToElementMap.contains(identifier))
+        return { };
+    auto* button = m_alternativePresentationButtonIdentifierToElementMap.get(identifier);
+    ASSERT(m_alternativePresentationButtonElementToSubstitutionMap.contains(button));
+    auto substitution = m_alternativePresentationButtonElementToSubstitutionMap.get(button);
+    return substitution->replacedElements();
+}
+
 void Editor::didInsertAlternativePresentationButtonElement(AlternativePresentationButtonElement& button)
 {
     ASSERT(!m_alternativePresentationButtonElementToSubstitutionMap.contains(&button));

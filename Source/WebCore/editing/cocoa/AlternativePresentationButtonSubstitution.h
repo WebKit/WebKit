@@ -46,6 +46,8 @@ public:
     void apply();
     void unapply();
 
+    Vector<Ref<Element>> replacedElements();
+
 private:
     void initializeSavedDisplayStyles(Vector<Ref<Element>>&&);
 

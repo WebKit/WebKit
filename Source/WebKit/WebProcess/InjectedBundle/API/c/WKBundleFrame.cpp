@@ -333,3 +333,21 @@ void WKBundleRemoveAlternativePresentationButton(WKBundleFrameRef frame, WKStrin
     UNUSED_PARAM(identifier);
 #endif
 }
+
+WKArrayRef WKBundleElementsReplacedByAlternativePresentationButton(WKBundleFrameRef frame, WKStringRef identifier)
+{
+#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
+    auto* coreFrame = toImpl(frame)->coreFrame();
+    if (!coreFrame)
+        return nullptr;
+    auto replacedElements = coreFrame->editor().elementsReplacedByAlternativePresentationButton(toWTFString(identifier));
+    Vector<RefPtr<API::Object>> apiReplacedElements;
+    apiReplacedElements.reserveInitialCapacity(replacedElements.size());
+    for (auto& element : replacedElements)
+        apiReplacedElements.uncheckedAppend(InjectedBundleNodeHandle::getOrCreate(element));
+    return toAPI(&API::Array::create(WTFMove(apiReplacedElements)).leakRef());
+#else
+    UNUSED_PARAM(identifier);
+    return nullptr;
+#endif
+}

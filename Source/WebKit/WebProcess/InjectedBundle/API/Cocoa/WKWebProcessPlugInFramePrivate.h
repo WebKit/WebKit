@@ -44,6 +44,7 @@
 
 - (void)substituteElements:(NSArray<WKWebProcessPlugInNodeHandle *> *)elements withAlternativePresentationButtonWithIdentifier:(NSString *)identifier;
 - (void)removeAlternativePresentationButton:(NSString *)identifier;
+- (NSArray<WKWebProcessPlugInNodeHandle *> *)elementsReplacedByAlternativePresentationButtonWithIdentifier:(NSString *)identifier;
 
 @end
 

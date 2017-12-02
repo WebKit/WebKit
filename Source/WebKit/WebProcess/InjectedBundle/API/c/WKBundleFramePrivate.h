@@ -58,6 +58,7 @@ WK_EXPORT void WKBundleFrameFocus(WKBundleFrameRef frame);
 
 WK_EXPORT void WKBundleSubstituteWithAlternativePresentationButton(WKBundleFrameRef frame, WKArrayRef elements, WKStringRef identifier);
 WK_EXPORT void WKBundleRemoveAlternativePresentationButton(WKBundleFrameRef frame, WKStringRef identifier);
+WK_EXPORT WKArrayRef WKBundleElementsReplacedByAlternativePresentationButton(WKBundleFrameRef frame, WKStringRef identifier);
 
 #ifdef __cplusplus
 }
