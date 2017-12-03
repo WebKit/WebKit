@@ -81,8 +81,15 @@ public:
 
     void notifyClientsOfControllerChange();
 
+    void clear();
+    bool tryClear();
+    void tryActivate();
+    void didFinishActivation(ServiceWorkerIdentifier);
+
 private:
     void forEachConnection(const WTF::Function<void(SWServer::Connection&)>&);
+
+    void activate();
 
     ServiceWorkerRegistrationIdentifier m_identifier;
     ServiceWorkerRegistrationKey m_registrationKey;

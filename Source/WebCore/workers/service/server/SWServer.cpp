@@ -146,7 +146,7 @@ void SWServer::clearAll()
 {
     m_jobQueues.clear();
     while (!m_registrations.isEmpty())
-        SWServerJobQueue::clearRegistration(*this, *m_registrations.begin()->value);
+        m_registrations.begin()->value->clear();
     ASSERT(m_registrationsByID.isEmpty());
     m_originStore->clearAll();
 }
@@ -310,7 +310,7 @@ void SWServer::didFinishInstall(const std::optional<ServiceWorkerJobDataIdentifi
 void SWServer::didFinishActivation(SWServerWorker& worker)
 {
     if (auto* registration = getRegistration(worker.registrationKey()))
-        SWServerJobQueue::didFinishActivation(*registration, worker.identifier());
+        registration->didFinishActivation(worker.identifier());
 }
 
 // https://w3c.github.io/ServiceWorker/#clients-get

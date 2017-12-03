@@ -52,10 +52,7 @@ public:
     void scriptContextFailedToStart(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier, const String& message);
     void scriptContextStarted(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier);
     void didFinishInstall(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier, bool wasSuccessful);
-    static void didFinishActivation(SWServerRegistration&, ServiceWorkerIdentifier);
     void didResolveRegistrationPromise();
-
-    static void clearRegistration(SWServer&, SWServerRegistration&);
 
 private:
     void jobTimerFired();
@@ -67,10 +64,7 @@ private:
     void runUnregisterJob(const ServiceWorkerJobData&);
     void runUpdateJob(const ServiceWorkerJobData&);
 
-    void tryClearRegistration(SWServerRegistration&);
     void install(SWServerRegistration&, ServiceWorkerIdentifier);
-    static void tryActivate(SWServer&, SWServerRegistration&);
-    static void activate(SWServer&, SWServerRegistration&);
 
     bool isCurrentlyProcessingJob(const ServiceWorkerJobDataIdentifier&) const;
 

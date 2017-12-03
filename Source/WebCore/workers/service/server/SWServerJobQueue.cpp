@@ -73,7 +73,7 @@ void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, con
 
         // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
         if (!newestWorker)
-            clearRegistration(m_server, *registration);
+            registration->clear();
 
         // Invoke Finish Job with job and abort these steps.
         finishCurrentJob();
@@ -105,7 +105,7 @@ void SWServerJobQueue::scriptContextFailedToStart(const ServiceWorkerJobDataIden
 
     // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
     if (!registration->getNewestWorker())
-        clearRegistration(m_server, *registration);
+        registration->clear();
 
     // Invoke Finish Job with job and abort these steps.
     finishCurrentJob();
@@ -175,7 +175,8 @@ void SWServerJobQueue::didFinishInstall(const ServiceWorkerJobDataIdentifier& jo
 
         // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
         if (!registration->getNewestWorker())
-            clearRegistration(m_server, *registration);
+            registration->clear();
+
         // Invoke Finish Job with job and abort these steps.
         finishCurrentJob();
         return;
@@ -196,70 +197,7 @@ void SWServerJobQueue::didFinishInstall(const ServiceWorkerJobDataIdentifier& jo
     finishCurrentJob();
 
     // FIXME: Wait for all the tasks queued by Update Worker State invoked in this algorithm have executed.
-    tryActivate(m_server, *registration);
-}
-
-// https://w3c.github.io/ServiceWorker/#try-activate-algorithm
-void SWServerJobQueue::tryActivate(SWServer& server, SWServerRegistration& registration)
-{
-    // If registration's waiting worker is null, return.
-    if (!registration.waitingWorker())
-        return;
-    // If registration's active worker is not null and registration's active worker's state is activating, return.
-    if (registration.activeWorker() && registration.activeWorker()->state() == ServiceWorkerState::Activating)
-        return;
-
-    // Invoke Activate with registration if either of the following is true:
-    // - registration's active worker is null.
-    // - The result of running Service Worker Has No Pending Events with registration's active worker is true,
-    //   and no service worker client is using registration
-    // FIXME: Check for the skip waiting flag.
-    if (!registration.activeWorker() || !registration.activeWorker()->hasPendingEvents())
-        activate(server, registration);
-}
-
-// https://w3c.github.io/ServiceWorker/#activate
-void SWServerJobQueue::activate(SWServer& server, SWServerRegistration& registration)
-{
-    // If registration's waiting worker is null, abort these steps.
-    if (!registration.waitingWorker())
-        return;
-
-    // If registration's active worker is not null, then:
-    if (auto* activeWorker = registration.activeWorker()) {
-        // Terminate registration's active worker.
-        activeWorker->terminate();
-        // Run the Update Worker State algorithm passing registration's active worker and redundant as the arguments.
-        registration.updateWorkerState(*activeWorker, ServiceWorkerState::Redundant);
-    }
-    // Run the Update Registration State algorithm passing registration, "active" and registration's waiting worker as the arguments.
-    registration.updateRegistrationState(ServiceWorkerRegistrationState::Active, registration.waitingWorker());
-    // Run the Update Registration State algorithm passing registration, "waiting" and null as the arguments.
-    registration.updateRegistrationState(ServiceWorkerRegistrationState::Waiting, nullptr);
-    // Run the Update Worker State algorithm passing registration's active worker and activating as the arguments.
-    registration.updateWorkerState(*registration.activeWorker(), ServiceWorkerState::Activating);
-    // FIXME: For each service worker client client whose creation URL matches registration's scope url...
-
-    // For each service worker client client who is using registration:
-    // - Set client's active worker to registration's active worker.
-    // - Invoke Notify Controller Change algorithm with client as the argument.
-    registration.notifyClientsOfControllerChange();
-
-    // FIXME: Invoke Run Service Worker algorithm with activeWorker as the argument.
-
-    // Queue a task to fire the activate event.
-    ASSERT(registration.activeWorker());
-    server.fireActivateEvent(*registration.activeWorker());
-}
-
-// https://w3c.github.io/ServiceWorker/#activate (post activate event steps).
-void SWServerJobQueue::didFinishActivation(SWServerRegistration& registration, ServiceWorkerIdentifier serviceWorkerIdentifier)
-{
-    if (!registration.activeWorker() || registration.activeWorker()->identifier() != serviceWorkerIdentifier)
-        return;
-
-    // Run the Update Worker State algorithm passing registration's active worker and activated as the arguments.
-    registration.updateWorkerState(*registration.activeWorker(), ServiceWorkerState::Activated);
+    registration->tryActivate();
 }
 
 // https://w3c.github.io/ServiceWorker/#run-job
@@ -346,46 +284,8 @@ void SWServerJobQueue::runUnregisterJob(const ServiceWorkerJobData& job)
     m_server.resolveUnregistrationJob(job, m_registrationKey, true);
 
     // Invoke Try Clear Registration with registration.
-    tryClearRegistration(*registration);
+    registration->tryClear();
     finishCurrentJob();
-}
-
-// https://w3c.github.io/ServiceWorker/#try-clear-registration-algorithm
-void SWServerJobQueue::tryClearRegistration(SWServerRegistration& registration)
-{
-    if (registration.hasClientsUsingRegistration())
-        return;
-
-    if (registration.installingWorker() && registration.installingWorker()->hasPendingEvents())
-        return;
-    if (registration.waitingWorker() && registration.waitingWorker()->hasPendingEvents())
-        return;
-    if (registration.activeWorker() && registration.activeWorker()->hasPendingEvents())
-        return;
-
-    clearRegistration(m_server, registration);
-}
-
-// https://w3c.github.io/ServiceWorker/#clear-registration
-static void clearRegistrationWorker(SWServerRegistration& registration, SWServerWorker* worker, ServiceWorkerRegistrationState state)
-{
-    if (!worker)
-        return;
-
-    worker->terminate();
-    registration.updateWorkerState(*worker, ServiceWorkerState::Redundant);
-    registration.updateRegistrationState(state, nullptr);
-}
-
-// https://w3c.github.io/ServiceWorker/#clear-registration
-void SWServerJobQueue::clearRegistration(SWServer& server, SWServerRegistration& registration)
-{
-    clearRegistrationWorker(registration, registration.installingWorker(), ServiceWorkerRegistrationState::Installing);
-    clearRegistrationWorker(registration, registration.waitingWorker(), ServiceWorkerRegistrationState::Waiting);
-    clearRegistrationWorker(registration, registration.activeWorker(), ServiceWorkerRegistrationState::Active);
-
-    // Remove scope to registration map[scopeString].
-    server.removeRegistration(registration.key());
 }
 
 // https://w3c.github.io/ServiceWorker/#update-algorithm
