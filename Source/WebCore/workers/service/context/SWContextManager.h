@@ -54,6 +54,7 @@ public:
         virtual void didFinishActivation(ServiceWorkerIdentifier) = 0;
         virtual void setServiceWorkerHasPendingEvents(ServiceWorkerIdentifier, bool) = 0;
         virtual void workerTerminated(ServiceWorkerIdentifier) = 0;
+        virtual void skipWaiting(ServiceWorkerIdentifier, WTF::Function<void()>&& callback) = 0;
 
         using FindClientByIdentifierCallback = WTF::CompletionHandler<void(ExceptionOr<std::optional<ServiceWorkerClientData>>&&)>;
         virtual void findClientByIdentifier(ServiceWorkerIdentifier, ServiceWorkerClientIdentifier, FindClientByIdentifierCallback&&) = 0;

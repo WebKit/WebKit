@@ -116,6 +116,15 @@ void SWServerWorker::matchAll(const ServiceWorkerClientQueryOptions& options, Se
     return m_server.matchAll(*this, options, WTFMove(callback));
 }
 
+void SWServerWorker::skipWaiting()
+{
+    m_isSkipWaitingFlagSet = true;
+
+    auto* registration = m_server.getRegistration(m_registrationKey);
+    ASSERT(registration);
+    registration->tryActivate();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

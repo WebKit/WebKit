@@ -1,3 +1,17 @@
+2017-12-03  Chris Dumez  <cdumez@apple.com>
+
+        Implement self.skipWaiting() inside service workers
+        https://bugs.webkit.org/show_bug.cgi?id=180329
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests that are now passing.
+
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/update.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/claim-with-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/postmessage-from-waiting-serviceworker.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/skip-waiting-without-client.https-expected.txt:
+
 2017-12-02  Chris Dumez  <cdumez@apple.com>
 
         Support container.register() / registration.unregister() /  inside service workers

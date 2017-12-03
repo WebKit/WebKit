@@ -197,6 +197,13 @@ void WebSWContextManagerConnection::setServiceWorkerHasPendingEvents(ServiceWork
     m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::SetServiceWorkerHasPendingEvents(serviceWorkerIdentifier, hasPendingEvents), 0);
 }
 
+void WebSWContextManagerConnection::skipWaiting(ServiceWorkerIdentifier serviceWorkerIdentifier, WTF::Function<void()>&& callback)
+{
+    auto callbackID = ++m_previousRequestIdentifier;
+    m_skipWaitingRequests.add(callbackID, WTFMove(callback));
+    m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::SkipWaiting(serviceWorkerIdentifier, callbackID), 0);
+}
+
 void WebSWContextManagerConnection::workerTerminated(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::WorkerTerminated(serviceWorkerIdentifier), 0);
@@ -231,6 +238,12 @@ void WebSWContextManagerConnection::matchAllCompleted(uint64_t requestIdentifier
 {
     if (auto callback = m_matchAllRequests.take(requestIdentifier))
         callback(WTFMove(clientsData));
+}
+
+void WebSWContextManagerConnection::didFinishSkipWaiting(uint64_t callbackID)
+{
+    if (auto callback = m_skipWaitingRequests.take(callbackID))
+        callback();
 }
 
 } // namespace WebCore

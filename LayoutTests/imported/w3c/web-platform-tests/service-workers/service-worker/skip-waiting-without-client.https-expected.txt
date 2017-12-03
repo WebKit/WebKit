@@ -1,4 +1,4 @@
 
 PASS Test single skipWaiting() when no client attached 
-FAIL skipWaiting promise_test: Unhandled rejection with value: object "NotSupportedError: self.skipWaiting() is not yet supported"
+PASS skipWaiting 
 

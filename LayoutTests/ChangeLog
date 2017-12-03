@@ -1,3 +1,17 @@
+2017-12-03  Chris Dumez  <cdumez@apple.com>
+
+        Implement self.skipWaiting() inside service workers
+        https://bugs.webkit.org/show_bug.cgi?id=180329
+
+        Reviewed by Darin Adler.
+
+        * http/tests/workers/service/resources/service-worker-fetch-worker.js:
+        add self.skipWaiting() now that we properly wait when the registation's
+        active worker is in use. This is needed because this worker script is
+        used by http/tests/workers/service/controller-change.html. The
+        'controllerchange' event is only fired if an active worker is being
+        replaced while in use due to the waiting worker calling skipWaiting().
+
 2017-12-02  Chris Dumez  <cdumez@apple.com>
 
         Support container.register() / registration.unregister() /  inside service workers

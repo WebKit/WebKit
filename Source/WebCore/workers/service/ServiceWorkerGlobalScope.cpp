@@ -50,8 +50,15 @@ ServiceWorkerGlobalScope::~ServiceWorkerGlobalScope() = default;
 
 void ServiceWorkerGlobalScope::skipWaiting(Ref<DeferredPromise>&& promise)
 {
-    // FIXME: Implement this.
-    promise->reject(Exception { NotSupportedError, ASCIILiteral("self.skipWaiting() is not yet supported") });
+    callOnMainThread([this, protectedThis = makeRef(*this), threadIdentifier = thread().identifier(), promise = WTFMove(promise)]() mutable {
+        if (auto* connection = SWContextManager::singleton().connection()) {
+            connection->skipWaiting(threadIdentifier, [this, protectedThis = WTFMove(protectedThis), promise = WTFMove(promise)]() mutable {
+                thread().runLoop().postTask([promise = WTFMove(promise), protectedThis = WTFMove(protectedThis)](auto&) {
+                    promise->resolve();
+                });
+            });
+        }
+    });
 }
 
 EventTargetInterface ServiceWorkerGlobalScope::eventTargetInterface() const

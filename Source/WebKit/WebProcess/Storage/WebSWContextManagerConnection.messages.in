@@ -32,6 +32,7 @@ messages -> WebSWContextManagerConnection {
     SyncTerminateWorker(WebCore::ServiceWorkerIdentifier identifier) -> () Delayed
     FindClientByIdentifierCompleted(uint64_t clientIdRequestIdentifier, std::optional<WebCore::ServiceWorkerClientData> data, bool hasSecurityError)
     MatchAllCompleted(uint64_t matchAllRequestIdentifier, Vector<WebCore::ServiceWorkerClientInformation> clientsData)
+    DidFinishSkipWaiting(uint64_t callbackID)
 }
 
 #endif

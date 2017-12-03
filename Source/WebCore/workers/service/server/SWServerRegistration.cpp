@@ -232,9 +232,8 @@ void SWServerRegistration::tryActivate()
     // Invoke Activate with registration if either of the following is true:
     // - registration's active worker is null.
     // - The result of running Service Worker Has No Pending Events with registration's active worker is true,
-    //   and no service worker client is using registration
-    // FIXME: Check for the skip waiting flag.
-    if (!activeWorker() || !activeWorker()->hasPendingEvents())
+    //   and no service worker client is using registration or registration's waiting worker's skip waiting flag is set.
+    if (!activeWorker() || (!activeWorker()->hasPendingEvents() && (!hasClientsUsingRegistration() || waitingWorker()->isSkipWaitingFlagSet())))
         activate();
 }
 

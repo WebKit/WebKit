@@ -91,6 +91,11 @@ void WebSWServerToContextConnection::matchAllCompleted(uint64_t requestIdentifie
     send(Messages::WebSWContextManagerConnection::MatchAllCompleted { requestIdentifier, clientsData });
 }
 
+void WebSWServerToContextConnection::didFinishSkipWaiting(uint64_t callbackID)
+{
+    send(Messages::WebSWContextManagerConnection::DidFinishSkipWaiting { callbackID });
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(SERVICE_WORKER)

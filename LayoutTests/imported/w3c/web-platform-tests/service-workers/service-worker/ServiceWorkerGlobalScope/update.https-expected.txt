@@ -1,4 +1,3 @@
 
-
-FAIL Update a registration on ServiceWorkerGlobalScope assert_equals: events seen by the worker expected "updatefound,activate,fetch,message,updatefound,fetch" but got "updatefound,activate,fetch"
+PASS Update a registration on ServiceWorkerGlobalScope 
 

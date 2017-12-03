@@ -91,6 +91,9 @@ public:
     std::optional<ServiceWorkerClientData> findClientByIdentifier(ServiceWorkerClientIdentifier);
     void matchAll(const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&);
 
+    void skipWaiting();
+    bool isSkipWaitingFlagSet() const { return m_isSkipWaitingFlagSet; }
+
     WEBCORE_EXPORT static SWServerWorker* existingWorkerForIdentifier(ServiceWorkerIdentifier);
 
     const ServiceWorkerData& data() const { return m_data; }
@@ -108,6 +111,7 @@ private:
     bool m_hasPendingEvents { false };
     State m_state { State::NotRunning };
     mutable std::optional<ClientOrigin> m_origin;
+    bool m_isSkipWaitingFlagSet { false };
 };
 
 } // namespace WebCore

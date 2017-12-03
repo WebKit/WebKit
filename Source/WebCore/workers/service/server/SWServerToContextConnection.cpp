@@ -123,6 +123,14 @@ void SWServerToContextConnection::matchAll(uint64_t requestIdentifier, ServiceWo
     }
 }
 
+void SWServerToContextConnection::skipWaiting(ServiceWorkerIdentifier serviceWorkerIdentifier, uint64_t callbackID)
+{
+    if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
+        worker->skipWaiting();
+
+    didFinishSkipWaiting(callbackID);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

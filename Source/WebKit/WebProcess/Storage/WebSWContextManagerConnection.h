@@ -66,6 +66,7 @@ private:
     void workerTerminated(WebCore::ServiceWorkerIdentifier) final;
     void findClientByIdentifier(WebCore::ServiceWorkerIdentifier, WebCore::ServiceWorkerClientIdentifier, FindClientByIdentifierCallback&&) final;
     void matchAll(WebCore::ServiceWorkerIdentifier, const WebCore::ServiceWorkerClientQueryOptions&, WebCore::ServiceWorkerClientsMatchAllCallback&&) final;
+    void skipWaiting(WebCore::ServiceWorkerIdentifier, WTF::Function<void()>&& callback) final;
 
     // IPC messages.
     void serviceWorkerStartedWithMessage(std::optional<WebCore::ServiceWorkerJobDataIdentifier>, WebCore::ServiceWorkerIdentifier, const String& exceptionMessage) final;
@@ -78,6 +79,7 @@ private:
     void syncTerminateWorker(WebCore::ServiceWorkerIdentifier, Ref<Messages::WebSWContextManagerConnection::SyncTerminateWorker::DelayedReply>&&);
     void findClientByIdentifierCompleted(uint64_t requestIdentifier, std::optional<WebCore::ServiceWorkerClientData>&&, bool hasSecurityError);
     void matchAllCompleted(uint64_t matchAllRequestIdentifier, Vector<WebCore::ServiceWorkerClientInformation>&&);
+    void didFinishSkipWaiting(uint64_t callbackID);
 
     Ref<IPC::Connection> m_connectionToStorageProcess;
     uint64_t m_pageID { 0 };
@@ -85,6 +87,7 @@ private:
 
     HashMap<uint64_t, FindClientByIdentifierCallback> m_findClientByIdentifierRequests;
     HashMap<uint64_t, WebCore::ServiceWorkerClientsMatchAllCallback> m_matchAllRequests;
+    HashMap<uint64_t, WTF::Function<void()>> m_skipWaitingRequests;
     uint64_t m_previousRequestIdentifier { 0 };
 };
 
