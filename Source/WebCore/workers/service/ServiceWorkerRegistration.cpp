@@ -116,7 +116,6 @@ void ServiceWorkerRegistration::update(Ref<DeferredPromise>&& promise)
 {
     auto* context = scriptExecutionContext();
     if (!context) {
-        ASSERT_NOT_REACHED();
         promise->reject(Exception(InvalidStateError));
         return;
     }
@@ -135,24 +134,11 @@ void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)
 {
     auto* context = scriptExecutionContext();
     if (!context) {
-        ASSERT_NOT_REACHED();
         promise->reject(Exception(InvalidStateError));
         return;
     }
 
-    // FIXME: Add support in workers.
-    if (!is<Document>(*context)) {
-        promise->reject(Exception { NotSupportedError, ASCIILiteral("serviceWorkerRegistration.unregister() is not yet supported in workers") });
-        return;
-    }
-
-    auto* container = context->serviceWorkerContainer();
-    if (!container) {
-        promise->reject(Exception(InvalidStateError));
-        return;
-    }
-
-    container->removeRegistration(m_registrationData.scopeURL, WTFMove(promise));
+    m_container->removeRegistration(m_registrationData.scopeURL, WTFMove(promise));
 }
 
 void ServiceWorkerRegistration::updateStateFromServer(ServiceWorkerRegistrationState state, RefPtr<ServiceWorker>&& serviceWorker)

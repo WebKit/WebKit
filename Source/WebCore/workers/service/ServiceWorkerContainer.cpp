@@ -94,12 +94,6 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
         return;
     }
 
-    // FIXME: Add support in workers.
-    if (!is<Document>(*context)) {
-        promise->reject(Exception { NotSupportedError, ASCIILiteral("serviceWorker.register() is not yet supported in workers") });
-        return;
-    }
-
     if (relativeScriptURL.isEmpty()) {
         promise->reject(Exception { TypeError, ASCIILiteral("serviceWorker.register() cannot be called with an empty script URL") });
         return;

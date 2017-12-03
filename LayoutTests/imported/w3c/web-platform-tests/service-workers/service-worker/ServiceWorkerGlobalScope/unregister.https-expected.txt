@@ -1,8 +1,7 @@
 
-Harness Error (TIMEOUT), message = null
 
-TIMEOUT Unregister on script evaluation Test timed out
-NOTRUN Unregister on installing event 
-NOTRUN Unregister on activate event 
-NOTRUN Unregister controlling service worker 
+PASS Unregister on script evaluation 
+PASS Unregister on installing event 
+PASS Unregister on activate event 
+FAIL Unregister controlling service worker promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
 

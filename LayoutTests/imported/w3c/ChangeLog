@@ -1,5 +1,16 @@
 2017-12-02  Chris Dumez  <cdumez@apple.com>
 
+        Support container.register() / registration.unregister() /  inside service workers
+        https://bugs.webkit.org/show_bug.cgi?id=180326
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline WPT test that now passes most checks.
+
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/unregister.https-expected.txt:
+
+2017-12-02  Chris Dumez  <cdumez@apple.com>
+
         Support serviceWorkerRegistration.update() inside service workers
         https://bugs.webkit.org/show_bug.cgi?id=180215
 
