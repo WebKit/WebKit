@@ -31,16 +31,12 @@
 
 namespace JSC {
 
-namespace {
-
-struct DestroyFunc {
+struct JSSegmentedVariableObjectDestroyFunc {
     ALWAYS_INLINE void operator()(VM&, JSCell* cell) const
     {
         static_cast<JSSegmentedVariableObject*>(cell)->classInfo()->methodTable.destroy(cell);
     }
 };
-
-} // anonymous namespace
 
 JSSegmentedVariableObjectHeapCellType::JSSegmentedVariableObjectHeapCellType()
     : HeapCellType(AllocatorAttributes(NeedsDestruction, HeapCell::JSCell))
@@ -53,12 +49,12 @@ JSSegmentedVariableObjectHeapCellType::~JSSegmentedVariableObjectHeapCellType()
 
 void JSSegmentedVariableObjectHeapCellType::finishSweep(MarkedBlock::Handle& handle, FreeList* freeList)
 {
-    handle.finishSweepKnowingHeapCellType(freeList, DestroyFunc());
+    handle.finishSweepKnowingHeapCellType(freeList, JSSegmentedVariableObjectDestroyFunc());
 }
 
 void JSSegmentedVariableObjectHeapCellType::destroy(VM& vm, JSCell* cell)
 {
-    DestroyFunc()(vm, cell);
+    JSSegmentedVariableObjectDestroyFunc()(vm, cell);
 }
 
 } // namespace JSC

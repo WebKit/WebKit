@@ -1,3 +1,29 @@
+2017-12-03  Caio Lima  <ticaiolima@gmail.com>
+
+        Rename DestroyFunc to avoid redefinition on unified build
+        https://bugs.webkit.org/show_bug.cgi?id=180335
+
+        Reviewed by Filip Pizlo.
+
+        Changing DestroyFunc structures to more specific names to avoid
+        conflits on unified builds.
+
+        * heap/HeapCellType.cpp:
+        (JSC::HeapCellType::finishSweep):
+        (JSC::HeapCellType::destroy):
+        * runtime/JSDestructibleObjectHeapCellType.cpp:
+        (JSC::JSDestructibleObjectHeapCellType::finishSweep):
+        (JSC::JSDestructibleObjectHeapCellType::destroy):
+        * runtime/JSSegmentedVariableObjectHeapCellType.cpp:
+        (JSC::JSSegmentedVariableObjectHeapCellType::finishSweep):
+        (JSC::JSSegmentedVariableObjectHeapCellType::destroy):
+        * runtime/JSStringHeapCellType.cpp:
+        (JSC::JSStringHeapCellType::finishSweep):
+        (JSC::JSStringHeapCellType::destroy):
+        * wasm/js/JSWebAssemblyCodeBlockHeapCellType.cpp:
+        (JSC::JSWebAssemblyCodeBlockHeapCellType::finishSweep):
+        (JSC::JSWebAssemblyCodeBlockHeapCellType::destroy):
+
 2017-12-01  JF Bastien  <jfbastien@apple.com>
 
         JavaScriptCore: missing exception checks in Math functions that take more than one argument

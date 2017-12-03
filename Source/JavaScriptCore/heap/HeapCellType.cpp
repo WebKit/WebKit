@@ -31,13 +31,11 @@
 
 namespace JSC {
 
-namespace {
-
 // Writing it this way ensures that when you pass this as a functor, the callee is specialized for
 // this callback. If you wrote this as a normal function then the callee would be specialized for
 // the function's type and it would have indirect calls to that function. And unlike a lambda, it's
 // possible to mark this ALWAYS_INLINE.
-struct DestroyFunc {
+struct DefaultDestroyFunc {
     ALWAYS_INLINE void operator()(VM& vm, JSCell* cell) const
     {
         ASSERT(cell->structureID());
@@ -48,8 +46,6 @@ struct DestroyFunc {
         destroy(cell);
     }
 };
-
-} // anonymous namespace
 
 HeapCellType::HeapCellType(AllocatorAttributes attributes)
     : m_attributes(attributes)
@@ -62,12 +58,12 @@ HeapCellType::~HeapCellType()
 
 void HeapCellType::finishSweep(MarkedBlock::Handle& block, FreeList* freeList)
 {
-    block.finishSweepKnowingHeapCellType(freeList, DestroyFunc());
+    block.finishSweepKnowingHeapCellType(freeList, DefaultDestroyFunc());
 }
 
 void HeapCellType::destroy(VM& vm, JSCell* cell)
 {
-    DestroyFunc()(vm, cell);
+    DefaultDestroyFunc()(vm, cell);
 }
 
 } // namespace JSC

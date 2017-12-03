@@ -34,17 +34,13 @@
 
 namespace JSC {
 
-namespace {
-
-struct DestroyFunc {
+struct JSWebAssemblyCodeBlockDestroyFunc {
     ALWAYS_INLINE void operator()(VM&, JSCell* cell) const
     {
         static_assert(std::is_final<JSWebAssemblyCodeBlock>::value, "Otherwise, this code would not be correct.");
         JSWebAssemblyCodeBlock::info()->methodTable.destroy(cell);
     }
 };
-
-} // anonymous namespace
 
 JSWebAssemblyCodeBlockHeapCellType::JSWebAssemblyCodeBlockHeapCellType()
     : HeapCellType(AllocatorAttributes(NeedsDestruction, HeapCell::JSCell))
@@ -57,12 +53,12 @@ JSWebAssemblyCodeBlockHeapCellType::~JSWebAssemblyCodeBlockHeapCellType()
 
 void JSWebAssemblyCodeBlockHeapCellType::finishSweep(MarkedBlock::Handle& handle, FreeList* freeList)
 {
-    handle.finishSweepKnowingHeapCellType(freeList, DestroyFunc());
+    handle.finishSweepKnowingHeapCellType(freeList, JSWebAssemblyCodeBlockDestroyFunc());
 }
 
 void JSWebAssemblyCodeBlockHeapCellType::destroy(VM& vm, JSCell* cell)
 {
-    DestroyFunc()(vm, cell);
+    JSWebAssemblyCodeBlockDestroyFunc()(vm, cell);
 }
 
 } // namespace JSC

@@ -31,16 +31,12 @@
 
 namespace JSC {
 
-namespace {
-
-struct DestroyFunc {
+struct JSStringDestroyFunc {
     ALWAYS_INLINE void operator()(VM&, JSCell* cell) const
     {
         static_cast<JSString*>(cell)->JSString::~JSString();
     }
 };
-
-} // anonymous namespace
 
 JSStringHeapCellType::JSStringHeapCellType()
     : HeapCellType(AllocatorAttributes(NeedsDestruction, HeapCell::JSCell))
@@ -53,12 +49,12 @@ JSStringHeapCellType::~JSStringHeapCellType()
 
 void JSStringHeapCellType::finishSweep(MarkedBlock::Handle& handle, FreeList* freeList)
 {
-    handle.finishSweepKnowingHeapCellType(freeList, DestroyFunc());
+    handle.finishSweepKnowingHeapCellType(freeList, JSStringDestroyFunc());
 }
 
 void JSStringHeapCellType::destroy(VM& vm, JSCell* cell)
 {
-    DestroyFunc()(vm, cell);
+    JSStringDestroyFunc()(vm, cell);
 }
 
 } // namespace JSC
