@@ -121,18 +121,6 @@ void ServiceWorkerRegistration::update(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    // FIXME: Add support in workers.
-    if (!is<Document>(*context)) {
-        promise->reject(Exception { NotSupportedError, ASCIILiteral("serviceWorkerRegistration.update() is not yet supported in workers") });
-        return;
-    }
-
-    auto* container = context->serviceWorkerContainer();
-    if (!container) {
-        promise->reject(Exception(InvalidStateError));
-        return;
-    }
-
     auto* newestWorker = getNewestWorker();
     if (!newestWorker) {
         promise->reject(Exception(InvalidStateError, ASCIILiteral("newestWorker is null")));
@@ -140,7 +128,7 @@ void ServiceWorkerRegistration::update(Ref<DeferredPromise>&& promise)
     }
 
     // FIXME: Support worker types.
-    container->updateRegistration(m_registrationData.scopeURL, newestWorker->scriptURL(), WorkerType::Classic, WTFMove(promise));
+    m_container->updateRegistration(m_registrationData.scopeURL, newestWorker->scriptURL(), WorkerType::Classic, WTFMove(promise));
 }
 
 void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)

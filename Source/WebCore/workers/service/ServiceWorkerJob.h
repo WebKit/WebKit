@@ -68,6 +68,8 @@ public:
 
     void fetchScriptWithContext(ScriptExecutionContext&);
 
+    const DocumentOrWorkerIdentifier& contextIdentifier() { return m_contextIdentifier; }
+
 private:
     ServiceWorkerJob(ServiceWorkerJobClient&, Ref<DeferredPromise>&&, ServiceWorkerJobData&&);
 
@@ -83,7 +85,7 @@ private:
 
     bool m_completed { false };
 
-    Ref<RunLoop> m_runLoop { RunLoop::current() };
+    DocumentOrWorkerIdentifier m_contextIdentifier;
     RefPtr<WorkerScriptLoader> m_scriptLoader;
     ResourceResponse m_lastResponse;
 

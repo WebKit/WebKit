@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/sw-test-pre.js"></script>
+<script>
+log("* Add basic testing for ServiceWorkerGlobalScope.registration.update()");
+log("");
+
+navigator.serviceWorker.register("resources/self_registration_update-worker.js", { }).then(function(_registration) {
+    registration = _registration;
+    worker = registration.installing;
+
+    waitForState(worker, "activated").then(function() {
+        registration.addEventListener("updatefound", function() {
+            log("PASS: registration was successfuly updated by the service worker");
+            waitForState(worker, "redundant").then(function() {
+                log("PASS: service worker became redundant");
+                if (registration.active === worker)
+                    log("PASS: Old worker is still the registration's active worker");
+                else
+                    log("FAIL: Old worker is still the registration's active worker");
+
+                if (!self.registration.waiting || self.registration.waiting === worker)
+                    log("FAIL: New worker should be the registration's waiting worker");
+                else
+                    log("PASS: New worker should be the registration's waiting worker");
+                finishSWTest();
+            });
+        });
+        worker.postMessage("update");
+    });
+});
+</script>
+</body>
+</html>

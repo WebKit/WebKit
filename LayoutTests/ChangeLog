@@ -1,3 +1,17 @@
+2017-12-02  Chris Dumez  <cdumez@apple.com>
+
+        Support serviceWorkerRegistration.update() inside service workers
+        https://bugs.webkit.org/show_bug.cgi?id=180215
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage and unskip WPT test that no longer times out.
+
+        * TestExpectations:
+        * http/tests/workers/service/resources/self_registration_update-worker.js: Added.
+        * http/tests/workers/service/self_registration_update-expected.txt: Added.
+        * http/tests/workers/service/self_registration_update.html: Added.
+
 2017-12-02  Youenn Fablet  <youenn@apple.com>
 
         Implement https://w3c.github.io/ServiceWorker/#clients-getall

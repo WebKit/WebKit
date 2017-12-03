@@ -96,6 +96,8 @@ private:
     void jobDidFinish(ServiceWorkerJob&);
 
     SWServerConnectionIdentifier connectionIdentifier() final;
+    DocumentOrWorkerIdentifier contextIdentifier() final;
+
     SWClientConnection& ensureSWClientConnection();
 
     const char* activeDOMObjectName() const final;

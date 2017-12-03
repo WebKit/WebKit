@@ -1,0 +1,7 @@
+* Add basic testing for ServiceWorkerGlobalScope.registration.update()
+
+PASS: registration was successfuly updated by the service worker
+PASS: service worker became redundant
+PASS: Old worker is still the registration's active worker
+PASS: New worker should be the registration's waiting worker
+

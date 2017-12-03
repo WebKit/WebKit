@@ -95,6 +95,7 @@ protected:
     WEBCORE_EXPORT void notifyClientsOfControllerChange(const HashSet<DocumentIdentifier>& contextIdentifiers, ServiceWorkerData&& newController);
 
     WEBCORE_EXPORT void clearPendingJobs();
+    WEBCORE_EXPORT void postTaskTo(const DocumentOrWorkerIdentifier&, WTF::Function<void()>&&);
 
 private:
     virtual void scheduleJobInServer(const ServiceWorkerJobData&) = 0;

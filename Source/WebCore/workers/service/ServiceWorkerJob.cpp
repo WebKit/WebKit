@@ -41,6 +41,7 @@ ServiceWorkerJob::ServiceWorkerJob(ServiceWorkerJobClient& client, Ref<DeferredP
     : m_client(client)
     , m_jobData(WTFMove(jobData))
     , m_promise(WTFMove(promise))
+    , m_contextIdentifier(client.contextIdentifier())
 {
 }
 

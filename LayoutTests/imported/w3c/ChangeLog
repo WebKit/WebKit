@@ -1,3 +1,19 @@
+2017-12-02  Chris Dumez  <cdumez@apple.com>
+
+        Support serviceWorkerRegistration.update() inside service workers
+        https://bugs.webkit.org/show_bug.cgi?id=180215
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT test that no longer times out. The test still fails even
+        though we support update(). The issue is that the second frame load
+        uses the new worker (because of the update()) instead of the old one.
+        The test seems to expect that the new service worker is still in
+        waiting state at the point the second frame is loaded. However, for us
+        it is already activated.
+
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/update.https-expected.txt:
+
 2017-12-02  Youenn Fablet  <youenn@apple.com>
 
         Implement https://w3c.github.io/ServiceWorker/#clients-getall

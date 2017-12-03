@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "Exception.h"
@@ -40,9 +41,11 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorker.h"
+#include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerJob.h"
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerProvider.h"
+#include "ServiceWorkerThread.h"
 #include "URL.h"
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
@@ -196,15 +199,20 @@ void ServiceWorkerContainer::updateRegistration(const URL& scopeURL, const URL& 
 
 void ServiceWorkerContainer::scheduleJob(Ref<ServiceWorkerJob>&& job)
 {
+#ifndef NDEBUG
+    ASSERT(m_creationThread == currentThread());
+#endif
+
     ASSERT(m_swConnection);
 
     setPendingActivity(this);
 
-    ServiceWorkerJob& rawJob = job.get();
-    auto result = m_jobMap.add(rawJob.identifier(), WTFMove(job));
+    auto result = m_jobMap.add(job->identifier(), job.copyRef());
     ASSERT_UNUSED(result, result.isNewEntry);
 
-    m_swConnection->scheduleJob(rawJob);
+    callOnMainThread([connection = m_swConnection, job = WTFMove(job)] {
+        connection->scheduleJob(job);
+    });
 }
 
 void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<DeferredPromise>&& promise)
@@ -293,6 +301,10 @@ void ServiceWorkerContainer::startMessages()
 
 void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const Exception& exception)
 {
+#ifndef NDEBUG
+    ASSERT(m_creationThread == currentThread());
+#endif
+
     if (auto* context = scriptExecutionContext()) {
         context->postTask([job = makeRef(job), exception](ScriptExecutionContext&) {
             job->promise().reject(exception);
@@ -303,12 +315,20 @@ void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const
 
 void ServiceWorkerContainer::scheduleTaskToFireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier identifier)
 {
+#ifndef NDEBUG
+    ASSERT(m_creationThread == currentThread());
+#endif
+
     if (auto* registration = m_registrations.get(identifier))
         registration->scheduleTaskToFireUpdateFoundEvent();
 }
 
 void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, ServiceWorkerRegistrationData&& data, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
 {
+#ifndef NDEBUG
+    ASSERT(m_creationThread == currentThread());
+#endif
+
     auto guard = WTF::makeScopeExit([this, &job] {
         jobDidFinish(job);
     });
@@ -345,6 +365,10 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
 
 void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJob& job, bool unregistrationResult)
 {
+#ifndef NDEBUG
+    ASSERT(m_creationThread == currentThread());
+#endif
+
     auto guard = WTF::makeScopeExit([this, &job] {
         jobDidFinish(job);
     });
@@ -362,12 +386,18 @@ void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJo
 
 void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job)
 {
+#ifndef NDEBUG
+    ASSERT(m_creationThread == currentThread());
+#endif
+
     LOG(ServiceWorker, "SeviceWorkerContainer %p starting script fetch for job %s", this, job.identifier().loggingString().utf8().data());
 
     auto* context = scriptExecutionContext();
     if (!context) {
         LOG_ERROR("ServiceWorkerContainer::jobResolvedWithRegistration called but the container's ScriptExecutionContext is gone");
-        m_swConnection->failedFetchingScript(job, { errorDomainWebKitInternal, 0, job.data().scriptURL, ASCIILiteral("Attempt to fetch service worker script with no ScriptExecutionContext") });
+        callOnMainThread([connection = m_swConnection, job = makeRef(job)] {
+            connection->failedFetchingScript(job, { errorDomainWebKitInternal, 0, job->data().scriptURL, ASCIILiteral("Attempt to fetch service worker script with no ScriptExecutionContext") });
+        });
         jobDidFinish(job);
         return;
     }
@@ -377,23 +407,39 @@ void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job)
 
 void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, const String& script)
 {
+#ifndef NDEBUG
+    ASSERT(m_creationThread == currentThread());
+#endif
+
     LOG(ServiceWorker, "SeviceWorkerContainer %p finished fetching script for job %s", this, job.identifier().loggingString().utf8().data());
 
-    m_swConnection->finishedFetchingScript(job, script);
+    callOnMainThread([connection = m_swConnection, job = makeRef(job), script = script.isolatedCopy()] {
+        connection->finishedFetchingScript(job, script);
+    });
 }
 
 void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const ResourceError& error, std::optional<Exception>&& exception)
 {
+#ifndef NDEBUG
+    ASSERT(m_creationThread == currentThread());
+#endif
+
     LOG(ServiceWorker, "SeviceWorkerContainer %p failed fetching script for job %s", this, job.identifier().loggingString().utf8().data());
 
     if (exception)
         job.promise().reject(*exception);
 
-    m_swConnection->failedFetchingScript(job, error);
+    callOnMainThread([connection = m_swConnection, job = makeRef(job), error = error.isolatedCopy()] {
+        connection->failedFetchingScript(job, error);
+    });
 }
 
 void ServiceWorkerContainer::jobDidFinish(ServiceWorkerJob& job)
 {
+#ifndef NDEBUG
+    ASSERT(m_creationThread == currentThread());
+#endif
+
     auto taken = m_jobMap.take(job.identifier());
     ASSERT_UNUSED(taken, !taken || taken->ptr() == &job);
 
@@ -429,18 +475,30 @@ SWClientConnection& ServiceWorkerContainer::ensureSWClientConnection()
 
 void ServiceWorkerContainer::addRegistration(ServiceWorkerRegistration& registration)
 {
+#ifndef NDEBUG
+    ASSERT(m_creationThread == currentThread());
+#endif
+
     ensureSWClientConnection().addServiceWorkerRegistrationInServer(registration.identifier());
     m_registrations.add(registration.identifier(), &registration);
 }
 
 void ServiceWorkerContainer::removeRegistration(ServiceWorkerRegistration& registration)
 {
+#ifndef NDEBUG
+    ASSERT(m_creationThread == currentThread());
+#endif
+
     m_swConnection->removeServiceWorkerRegistrationInServer(registration.identifier());
     m_registrations.remove(registration.identifier());
 }
 
 void ServiceWorkerContainer::scheduleTaskToFireControllerChangeEvent()
 {
+#ifndef NDEBUG
+    ASSERT(m_creationThread == currentThread());
+#endif
+
     if (m_isStopped)
         return;
 
@@ -456,6 +514,18 @@ void ServiceWorkerContainer::stop()
 {
     m_isStopped = true;
     removeAllEventListeners();
+}
+
+DocumentOrWorkerIdentifier ServiceWorkerContainer::contextIdentifier()
+{
+#ifndef NDEBUG
+    ASSERT(m_creationThread == currentThread());
+#endif
+
+    ASSERT(scriptExecutionContext());
+    if (is<ServiceWorkerGlobalScope>(*scriptExecutionContext()))
+        return downcast<ServiceWorkerGlobalScope>(*scriptExecutionContext()).thread().identifier();
+    return downcast<Document>(*scriptExecutionContext()).identifier();
 }
 
 } // namespace WebCore

@@ -27,8 +27,11 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "DocumentIdentifier.h"
+#include "ServiceWorkerIdentifier.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/Variant.h>
 
 namespace WebCore {
 
@@ -66,6 +69,8 @@ using SWServerToContextConnectionIdentifier = ObjectIdentifier<SWServerToContext
 
 enum SWServerConnectionIdentifierType { };
 using SWServerConnectionIdentifier = ObjectIdentifier<SWServerConnectionIdentifierType>;
+
+using DocumentOrWorkerIdentifier = Variant<DocumentIdentifier, ServiceWorkerIdentifier>;
 
 } // namespace WebCore
 
