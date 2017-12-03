@@ -1,5 +1,11 @@
 2017-12-03  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, mark imported/w3c/web-platform-tests/service-workers/service-worker/registration-service-worker-attributes.https.html as flaky
+
+        * TestExpectations:
+
+2017-12-03  Chris Dumez  <cdumez@apple.com>
+
         Support serviceWorker.postMessage() inside service workers
         https://bugs.webkit.org/show_bug.cgi?id=180328
 

@@ -189,6 +189,7 @@ imported/w3c/web-platform-tests/service-workers/service-worker/foreign-fetch-cor
 imported/w3c/web-platform-tests/service-workers/service-worker/multiple-update.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/performance-timeline.https.html [ Pass Failure ]
 webkit.org/b/179194 imported/w3c/web-platform-tests/service-workers/service-worker/registration-mime-types.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/service-workers/service-worker/registration-service-worker-attributes.https.html [ Pass Failure ]
 webkit.org/b/179138 imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/service-worker-csp-connect.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/service-worker-csp-default.https.html [ Pass Failure ]
