@@ -67,14 +67,24 @@ ServiceWorkerThreadProxy* SWContextManager::serviceWorkerThreadProxy(ServiceWork
     return m_workerMap.get(identifier);
 }
 
-void SWContextManager::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destination, Ref<SerializedScriptValue>&& message, ServiceWorkerClientIdentifier sourceIdentifier, ServiceWorkerClientData&& sourceData)
+void SWContextManager::postMessageToServiceWorker(ServiceWorkerIdentifier destination, Ref<SerializedScriptValue>&& message, ServiceWorkerClientIdentifier sourceIdentifier, ServiceWorkerClientData&& sourceData)
 {
     auto* serviceWorker = m_workerMap.get(destination);
     ASSERT(serviceWorker);
     ASSERT(!serviceWorker->isTerminatingOrTerminated());
 
     // FIXME: We should pass valid MessagePortChannels.
-    serviceWorker->thread().postMessageToServiceWorkerGlobalScope(WTFMove(message), nullptr, sourceIdentifier, WTFMove(sourceData));
+    serviceWorker->thread().postMessageToServiceWorker(WTFMove(message), nullptr, sourceIdentifier, WTFMove(sourceData));
+}
+
+void SWContextManager::postMessageToServiceWorker(ServiceWorkerIdentifier destination, Ref<SerializedScriptValue>&& message, ServiceWorkerData&& sourceData)
+{
+    auto* serviceWorker = m_workerMap.get(destination);
+    ASSERT(serviceWorker);
+    ASSERT(!serviceWorker->isTerminatingOrTerminated());
+
+    // FIXME: We should pass valid MessagePortChannels.
+    serviceWorker->thread().postMessageToServiceWorker(WTFMove(message), nullptr, WTFMove(sourceData));
 }
 
 void SWContextManager::fireInstallEvent(ServiceWorkerIdentifier identifier)

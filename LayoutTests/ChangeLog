@@ -1,5 +1,16 @@
 2017-12-03  Chris Dumez  <cdumez@apple.com>
 
+        Support serviceWorker.postMessage() inside service workers
+        https://bugs.webkit.org/show_bug.cgi?id=180328
+
+        Reviewed by Darin Adler.
+
+        Unskip WPT test that no longer times out.
+
+        * TestExpectations:
+
+2017-12-03  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, unskip / rebaseline a few web platform tests.
 
         * TestExpectations:

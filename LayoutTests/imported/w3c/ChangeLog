@@ -1,5 +1,16 @@
 2017-12-03  Chris Dumez  <cdumez@apple.com>
 
+        Support serviceWorker.postMessage() inside service workers
+        https://bugs.webkit.org/show_bug.cgi?id=180328
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event.https-expected.txt:
+
+2017-12-03  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, unskip / rebaseline a few web platform tests.
 
         * web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https-expected.txt:

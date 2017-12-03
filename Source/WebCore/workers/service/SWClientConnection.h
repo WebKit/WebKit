@@ -47,6 +47,7 @@ enum class ServiceWorkerState;
 enum class ShouldNotifyWhenResolved;
 struct ExceptionData;
 struct ServiceWorkerClientData;
+struct ServiceWorkerClientIdentifier;
 struct ServiceWorkerData;
 struct ServiceWorkerFetchResult;
 struct ServiceWorkerRegistrationData;
@@ -70,7 +71,9 @@ public:
 
     virtual void didResolveRegistrationPromise(const ServiceWorkerRegistrationKey&) = 0;
 
-    virtual void postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationIdentifier, Ref<SerializedScriptValue>&&, DocumentIdentifier sourceContextIdentifier, ServiceWorkerClientData&& source) = 0;
+    virtual void postMessageToServiceWorker(ServiceWorkerIdentifier destination, Ref<SerializedScriptValue>&& message, ServiceWorkerClientIdentifier sourceIdentifier, ServiceWorkerClientData&& sourceData) = 0;
+    virtual void postMessageToServiceWorker(ServiceWorkerIdentifier destination, Ref<SerializedScriptValue>&& message, ServiceWorkerIdentifier source) = 0;
+
     virtual SWServerConnectionIdentifier serverConnectionIdentifier() const = 0;
     virtual bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOrigin&) const = 0;
     virtual void syncTerminateWorker(ServiceWorkerIdentifier) = 0;

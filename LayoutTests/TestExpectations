@@ -145,7 +145,6 @@ imported/w3c/web-platform-tests/secure-contexts/shared-worker-secure-first.https
 
 # Skip service worker tests that are timing out.
 imported/w3c/web-platform-tests/fetch/api/abort/general-serviceworker.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/detached-context.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/extendable-event-waituntil.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/foreign-fetch-basics.https.html [ Skip ]

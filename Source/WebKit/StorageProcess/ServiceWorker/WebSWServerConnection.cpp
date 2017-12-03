@@ -128,14 +128,26 @@ void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, std::optional<S
     sendToContextProcess(Messages::WebSWContextManagerConnection::StartFetch { identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options, formData });
 }
 
-void WebSWServerConnection::postMessageToServiceWorkerGlobalScope(ServiceWorkerIdentifier destinationServiceWorkerIdentifier, const IPC::DataReference& message, DocumentIdentifier sourceContextIdentifier, ServiceWorkerClientData&& sourceData)
+void WebSWServerConnection::postMessageToServiceWorkerFromClient(ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, ServiceWorkerClientIdentifier sourceIdentifier, ServiceWorkerClientData&& sourceData)
 {
     // It's possible this specific worker cannot be re-run (e.g. its registration has been removed)
-    if (!server().invokeRunServiceWorker(destinationServiceWorkerIdentifier))
+    if (!server().invokeRunServiceWorker(destinationIdentifier))
         return;
 
-    ServiceWorkerClientIdentifier sourceIdentifier { identifier(), sourceContextIdentifier };
-    sendToContextProcess(Messages::WebSWContextManagerConnection::PostMessageToServiceWorkerGlobalScope { destinationServiceWorkerIdentifier, message, sourceIdentifier, WTFMove(sourceData) });
+    sendToContextProcess(Messages::WebSWContextManagerConnection::PostMessageToServiceWorkerFromClient { destinationIdentifier, message, sourceIdentifier, WTFMove(sourceData) });
+}
+
+void WebSWServerConnection::postMessageToServiceWorkerFromServiceWorker(ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, ServiceWorkerIdentifier sourceIdentifier)
+{
+    // It's possible this specific worker cannot be re-run (e.g. its registration has been removed)
+    if (!server().invokeRunServiceWorker(destinationIdentifier))
+        return;
+
+    auto* sourceWorker = server().workerByID(sourceIdentifier);
+    if (!sourceWorker)
+        return;
+
+    sendToContextProcess(Messages::WebSWContextManagerConnection::PostMessageToServiceWorkerFromServiceWorker { destinationIdentifier, message, sourceWorker->data() });
 }
 
 void WebSWServerConnection::didReceiveFetchResponse(uint64_t fetchIdentifier, const ResourceResponse& response)
