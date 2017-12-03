@@ -1,5 +1,20 @@
 2017-12-03  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, unskip / rebaseline a few web platform tests.
+
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-on-evaluation.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/postmessage-to-client.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/register-same-scope-different-script-url.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/serviceworker-message-event-historical.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/skip-waiting-using-registration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister-then-register-new-script.https-expected.txt:
+
+2017-12-03  Chris Dumez  <cdumez@apple.com>
+
         Implement self.skipWaiting() inside service workers
         https://bugs.webkit.org/show_bug.cgi?id=180329
 

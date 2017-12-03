@@ -1,6 +1,4 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Test MessageEvent supplants ServiceWorkerMessageEvent. Test timed out
+PASS Test MessageEvent supplants ServiceWorkerMessageEvent. 
 

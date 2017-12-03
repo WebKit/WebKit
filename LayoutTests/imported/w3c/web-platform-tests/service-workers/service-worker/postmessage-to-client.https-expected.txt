@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT postMessage from ServiceWorker to Client. Test timed out
+PASS postMessage from ServiceWorker to Client. 
 

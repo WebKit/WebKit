@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Test Clients.matchAll() on script evaluation Test timed out
+PASS Test Clients.matchAll() on script evaluation 
 
