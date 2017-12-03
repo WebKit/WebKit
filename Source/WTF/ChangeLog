@@ -1,3 +1,30 @@
+2017-12-03  Darin Adler  <darin@apple.com>
+
+        Add WTF::Hasher, an easier to use replacement for WTF::IntegerHasher
+        https://bugs.webkit.org/show_bug.cgi?id=180318
+
+        Reviewed by JF Bastien.
+
+        * WTF.xcodeproj/project.pbxproj: Added Hasher.h.
+        * wtf/CMakeLists.txt: Ditto.
+
+        * wtf/Forward.h: Added Hasher and TextStream.
+
+        * wtf/Hasher.h: Moved StringHasher into a separate header. Added Hasher.
+        Marked IntegerHasher deprecated.
+
+        * wtf/text/CString.cpp: Include StringHasher.h instead of Hasher.h.
+        * wtf/text/StringHash.h: Ditto.
+
+        * wtf/text/StringHasher.h: Added. Moved StringHasher here from Hasher.h.
+
+        * wtf/text/StringImpl.h: Include StringHasher.h instead of Hasher.h.
+
+        * wtf/text/WTFString.h: Added a hash function. This was useful in some
+        adoption I was doing in WebCore, not included in this patch.
+
+        * wtf/unicode/UTF8.cpp: Include StringHasher.h instead of Hasher.h.
+
 2017-12-02  Brady Eidson  <beidson@apple.com>
 
         Factor out the "databaseTaskQueue" parts of IDBServer into something reusable.

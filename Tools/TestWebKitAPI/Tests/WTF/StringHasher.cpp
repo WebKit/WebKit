@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include <wtf/Hasher.h>
+#include <wtf/text/StringHasher.h>
 
 namespace TestWebKitAPI {
 

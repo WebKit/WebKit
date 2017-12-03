@@ -186,6 +186,7 @@ set(WTF_HEADERS
     text/StringBuffer.h
     text/StringCommon.h
     text/StringHash.h
+    text/StringHasher.h
     text/StringImpl.h
     text/StringMalloc.h
     text/StringVector.h

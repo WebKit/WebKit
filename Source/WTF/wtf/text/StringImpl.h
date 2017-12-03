@@ -27,15 +27,13 @@
 #include <unicode/ustring.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/Forward.h>
-#include <wtf/Hasher.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/ConversionMode.h>
 #include <wtf/text/StringCommon.h>
-#include <wtf/text/StringMalloc.h>
+#include <wtf/text/StringHasher.h>
 #include <wtf/text/StringVector.h>
 
 #if USE(CF)

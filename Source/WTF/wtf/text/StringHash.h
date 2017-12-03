@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2008, 2012-2013, 2016 Apple Inc. All rights reserved
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved
  * Copyright (C) Research In Motion Limited 2009. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -22,9 +22,9 @@
 #ifndef StringHash_h
 #define StringHash_h
 
-#include <wtf/text/AtomicString.h>
 #include <wtf/HashTraits.h>
-#include <wtf/Hasher.h>
+#include <wtf/text/AtomicString.h>
+#include <wtf/text/StringHasher.h>
 
 namespace WTF {
 

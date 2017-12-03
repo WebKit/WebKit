@@ -357,6 +357,7 @@ public:
     String(WTF::HashTableDeletedValueType) : m_impl(WTF::HashTableDeletedValue) { }
     bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
 
+    unsigned hash() const { return isNull() ? 0 : impl()->hash(); }
     unsigned existingHash() const { return isNull() ? 0 : impl()->existingHash(); }
 
 #ifndef NDEBUG

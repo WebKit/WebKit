@@ -103,6 +103,7 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/HashCountedSet.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/HashMap.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/HashSet.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/Hasher.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/IntegerToStringConversion.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/JSONValue.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/LEBDecoder.cpp

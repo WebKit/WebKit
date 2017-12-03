@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@
 #include "UTF8.h"
 
 #include "ASCIICType.h"
-#include <wtf/Hasher.h>
+#include <wtf/text/StringHasher.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WTF {

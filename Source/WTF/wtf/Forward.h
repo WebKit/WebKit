@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006, 2009, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -34,6 +34,7 @@ class BinarySemaphore;
 class CString;
 class CrashOnOverflow;
 class FunctionDispatcher;
+class Hasher;
 class OrdinalNumber;
 class PrintStream;
 class SHA1;
@@ -42,6 +43,7 @@ class StringBuilder;
 class StringImpl;
 class StringView;
 class TextPosition;
+class TextStream;
 
 struct FastMalloc;
 
@@ -69,14 +71,15 @@ template<typename ValueArg, typename = typename DefaultHash<ValueArg>::Hash, typ
 using WTF::AtomicString;
 using WTF::AtomicStringImpl;
 using WTF::BinarySemaphore;
-using WTF::CompletionHandler;
 using WTF::CString;
+using WTF::CompletionHandler;
 using WTF::Expected;
 using WTF::Function;
 using WTF::FunctionDispatcher;
 using WTF::HashCountedSet;
 using WTF::HashMap;
 using WTF::HashSet;
+using WTF::Hasher;
 using WTF::LazyNeverDestroyed;
 using WTF::NeverDestroyed;
 using WTF::OptionSet;
@@ -91,5 +94,6 @@ using WTF::StringBuilder;
 using WTF::StringImpl;
 using WTF::StringView;
 using WTF::TextPosition;
+using WTF::TextStream;
 using WTF::Variant;
 using WTF::Vector;
