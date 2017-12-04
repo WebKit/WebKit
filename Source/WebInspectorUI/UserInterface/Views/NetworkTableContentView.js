@@ -1042,17 +1042,12 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     _showEmptyFilterResultsMessage()
     {
         if (!this._emptyFilterResultsMessageElement) {
-            let message = WI.UIString("No Filter Results");
             let buttonElement = document.createElement("button");
             buttonElement.textContent = WI.UIString("Clear filters");
             buttonElement.addEventListener("click", () => { this._resetFilters(); });
 
-            this._emptyFilterResultsMessageElement = document.createElement("div");
-            this._emptyFilterResultsMessageElement.className = "empty-content-placeholder";
-
-            let messageElement = this._emptyFilterResultsMessageElement.appendChild(document.createElement("div"));
-            messageElement.className = "message";
-            messageElement.append(message, document.createElement("br"), buttonElement);
+            this._emptyFilterResultsMessageElement = WI.createMessageTextView(WI.UIString("No Filter Results"));
+            this._emptyFilterResultsMessageElement.appendChild(buttonElement);
         }
 
         this.element.appendChild(this._emptyFilterResultsMessageElement);

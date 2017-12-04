@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.sidebar > .panel.navigation.recording > :matches(.content, .empty-content-placeholder) {
+.sidebar > .panel.navigation.recording > .content {
     top: var(--navigation-bar-height);
 }
 

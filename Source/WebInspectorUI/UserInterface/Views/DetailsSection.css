@@ -301,6 +301,10 @@ body[dir=rtl] .details-section > .content > .group > .row.simple > .value .go-to
     padding: 4px 6px;
 }
 
+.details-section > .content > .group > .row > .message-text-view {
+    position: static;
+}
+
 .details-section > .content .data-grid {
     border-left: none;
     border-right: none;

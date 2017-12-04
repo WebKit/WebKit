@@ -165,6 +165,7 @@ body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
 
 .message-text-view {
     display: flex;
+    flex-direction: column;
     z-index: var(--z-index-popover);
 
     position: absolute;
@@ -173,25 +174,23 @@ body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
     right: 0;
     bottom: 0;
 
-    padding-left: 20%;
-    padding-right: 20%;
-
     justify-content: center;
     align-items: center;
 
-    line-height: 20px;
     white-space: pre-wrap;
     text-align: center;
+    font-size: 13px;
+    color: var(--text-color-gray-medium);
+}
 
-    font-size: 18px;
-    font-weight: bold;
-
-    color: hsl(0, 0%, 74%);
-    background-color: white;
+.message-text-view > .message {
+    display: inline-block;
+    padding: 15px;
+    font-size: var(--message-text-view-font-size);
 }
 
 .message-text-view.error {
-    color: hsl(0, 86%, 47%);
+    color: var(--error-text-color);
 }
 
 .resource-link {

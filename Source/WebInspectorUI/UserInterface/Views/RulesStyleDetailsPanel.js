@@ -35,13 +35,7 @@ WI.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WI.StyleDetails
         this._ruleMediaAndInherticanceList = [];
         this._propertyToSelectAndHighlight = null;
 
-        this._emptyFilterResultsElement = document.createElement("div");
-        this._emptyFilterResultsElement.classList.add("no-filter-results");
-
-        this._emptyFilterResultsMessage = document.createElement("div");
-        this._emptyFilterResultsMessage.classList.add("no-filter-results-message");
-        this._emptyFilterResultsMessage.textContent = WI.UIString("No Results Found");
-        this._emptyFilterResultsElement.appendChild(this._emptyFilterResultsMessage);
+        this._emptyFilterResultsElement = WI.createMessageTextView(WI.UIString("No Results Found"));
 
         this._boundRemoveSectionWithActiveEditor = this._removeSectionWithActiveEditor.bind(this);
     }

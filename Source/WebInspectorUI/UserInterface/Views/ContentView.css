@@ -52,3 +52,13 @@
 .content-view .details-section:last-child {
     border-bottom: none;
 }
+
+.content-view > .message-text-view {
+    background-color: var(--panel-background-color-light);
+}
+
+.content-view > .message-text-view > .message {
+    font-size: var(--message-text-view-large-font-size);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}

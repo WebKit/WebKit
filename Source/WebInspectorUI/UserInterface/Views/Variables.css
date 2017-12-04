@@ -59,7 +59,8 @@
     --console-secondary-text-color: hsla(0, 0%, 0%, 0.33);
     --console-prompt-min-height: 30px;
 
-    --sidebar-no-results-message-font-size: 16px;
+    --message-text-view-font-size: 16px;
+    --message-text-view-large-font-size: 28px;
 
     --text-color-gray-dark: hsl(0, 0%, 20%);
     --text-color-gray-medium: hsl(0, 0%, 52%);

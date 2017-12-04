@@ -66,23 +66,10 @@
     padding-top: 15px;
 }
 
-.sidebar > .panel.details.css-style > .content > .rules:not(.filter-non-matching) > .no-filter-results {
+.sidebar > .panel.details.css-style > .content > .rules > .message-text-view {
+    top: var(--navigation-bar-height);
+}
+
+.sidebar > .panel.details.css-style > .content > .rules:not(.filter-non-matching) > .message-text-view {
     display: none;
-}
-
-.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules.filter-non-matching > .no-filter-results {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules.filter-non-matching > .no-filter-results > .no-filter-results-message {
-    padding: 5px 15px 6px;
-    font-size: var(--sidebar-no-results-message-font-size);
-    color: var(--text-color-gray-medium);
 }

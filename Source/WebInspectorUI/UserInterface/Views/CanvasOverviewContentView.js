@@ -29,7 +29,12 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
     {
         console.assert(representedObject instanceof WI.CanvasCollection);
 
-        super(representedObject, WI.CanvasContentView, WI.UIString("No canvas contexts found"));
+        let contentPlaceholder = WI.createMessageTextView(WI.UIString("No Canvas Contexts"));
+        let descriptionElement = contentPlaceholder.appendChild(document.createElement("div"));
+        descriptionElement.className = "description";
+        descriptionElement.textContent = WI.UIString("Waiting for canvas contexts created by script or CSS.");
+
+        super(representedObject, WI.CanvasContentView, contentPlaceholder);
 
         this.element.classList.add("canvas-overview");
 

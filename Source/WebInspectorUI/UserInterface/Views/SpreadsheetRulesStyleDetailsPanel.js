@@ -40,12 +40,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         this._ruleMediaAndInherticanceList = [];
         this._propertyToSelectAndHighlight = null;
 
-        this._emptyFilterResultsElement = document.createElement("div");
-        this._emptyFilterResultsElement.classList.add("no-filter-results");
-
-        this._emptyFilterResultsMessage = this._emptyFilterResultsElement.appendChild(document.createElement("div"));
-        this._emptyFilterResultsMessage.classList.add("no-filter-results-message");
-        this._emptyFilterResultsMessage.textContent = WI.UIString("No Results Found");
+        this._emptyFilterResultsElement = WI.createMessageTextView(WI.UIString("No Results Found"));
     }
 
     // Public

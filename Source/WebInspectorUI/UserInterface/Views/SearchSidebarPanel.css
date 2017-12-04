@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.sidebar > .panel.navigation.search > :matches(.content, .empty-content-placeholder) {
+.sidebar > .panel.navigation.search > :matches(.content, .message-text-view) {
     top: calc(var(--navigation-bar-height) - 1px);
 }
 
@@ -75,6 +75,6 @@ body[dir=rtl] .sidebar > .panel.navigation.search .item.source-code-match {
     cursor: pointer;
 }
 
-.sidebar > .panel.navigation.search.changed > :matches(.content, .empty-content-placeholder) {
+.sidebar > .panel.navigation.search.changed > :matches(.content, .message-text-view) {
     top: calc(var(--navigation-bar-height) + 40px - 1px);
 }

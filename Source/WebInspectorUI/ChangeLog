@@ -1,3 +1,123 @@
+2017-12-04  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Canvas Tab initial user interface needs some polish
+        https://bugs.webkit.org/show_bug.cgi?id=179330
+        <rdar://problem/35367581>
+
+        Reviewed by Joseph Pecoraro.
+
+        Update the Canvas overview placeholder text and prevent appearance of
+        the vertical scrollbar when no canvases exist. This patch also includes
+        a bunch of cleanup of code that creates content placeholder text throughout
+        the UI, and makes sure all text is styled consistently.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        Updated Canvas overview message text.
+
+        * UserInterface/Base/Main.js:
+        Make the "message text view" a container with child message element, instead
+        of a simple element with text content. This makes it simpler to customize
+        the message (by adding buttons, more text, etc).
+
+        * UserInterface/Views/CanvasDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.canvas .details-section.canvas-extensions .content > ul):
+        (.sidebar > .panel.details.canvas > .content > .empty-content-placeholder): Deleted.
+        (.sidebar > .panel.details.canvas > .content > .empty-content-placeholder > .message): Deleted.
+        * UserInterface/Views/CanvasDetailsSidebarPanel.js:
+        (WI.CanvasDetailsSidebarPanel.prototype.initialLayout):
+
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView):
+        Customize the content placeholder to include a description beneath
+        the "No Canvas Contexts" message.
+
+        * UserInterface/Views/CollectionContentView.css:
+        (.content-view.collection):
+        Change overflow-y to auto, to prevent scrollbar from appearing when
+        "Show scroll bars" system preference is enabled on macOS.
+
+        * UserInterface/Views/CollectionContentView.js:
+        Add support for custom content placeholders.
+        (WI.CollectionContentView):
+        (WI.CollectionContentView.prototype._showContentPlaceholder):
+        (WI.CollectionContentView.prototype._hideContentPlaceholder):
+
+        * UserInterface/Views/ContentView.css:
+        (.content-view > .message-text-view):
+        (.content-view > .message-text-view > .message):
+
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger > .content):
+        (.sidebar > .panel.navigation.debugger > :matches(.content, .empty-content-placeholder)): Deleted.
+
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section > .content > .group > .row > .message-text-view):
+
+        * UserInterface/Views/Main.css:
+        (.message-text-view):
+        (.message-text-view > .message):
+        (.message-text-view.error):
+
+        * UserInterface/Views/NavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation > .overflow-shadow):
+        (.sidebar > .panel.navigation > .content .empty-content-placeholder): Deleted.
+        (.sidebar > .panel.navigation > .content > .empty-content-placeholder): Deleted.
+        (.sidebar > .panel.navigation > .content .empty-content-placeholder > .message): Deleted.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WI.NavigationSidebarPanel.prototype.showEmptyContentPlaceholder):
+        (WI.NavigationSidebarPanel.prototype._createEmptyContentPlaceholderIfNeeded):
+
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.content-view.network .message-text-view):
+        (.content-view.network .message-text-view > .message):
+        Workaround to prevent "No Filter Results" message from being styled like
+        "full width" messages displayed in ContentViews (large, bold font).
+        This is needed because the placeholder message element is a immediate child
+        of the network content view, rather than the network table.
+
+        (.content-view.network .empty-content-placeholder): Deleted.
+        (body[dir=ltr] .content-view.network .empty-content-placeholder): Deleted.
+        (body[dir=rtl] .content-view.network .empty-content-placeholder): Deleted.
+        (.content-view.network .empty-content-placeholder > .message): Deleted.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._showEmptyFilterResultsMessage):
+
+        * UserInterface/Views/RecordingNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.recording > .content):
+        (.sidebar > .panel.navigation.recording > :matches(.content, .empty-content-placeholder)): Deleted.
+
+        * UserInterface/Views/ResourceSidebarPanel.css:
+        (.sidebar > .panel.navigation.resource > .content):
+        (.sidebar > .panel.navigation.resource > :matches(.content, .empty-content-placeholder)): Deleted.
+
+        * UserInterface/Views/RulesStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style > .content > .rules > .message-text-view):
+        (.sidebar > .panel.details.css-style > .content > .rules:not(.filter-non-matching) > .message-text-view):
+        (.sidebar > .panel.details.css-style > .content > .rules:not(.filter-non-matching) > .no-filter-results): Deleted.
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules.filter-non-matching > .no-filter-results): Deleted.
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules.filter-non-matching > .no-filter-results > .no-filter-results-message): Deleted.
+
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WI.RulesStyleDetailsPanel):
+
+        * UserInterface/Views/SearchSidebarPanel.css:
+        (.sidebar > .panel.navigation.search > :matches(.content, .message-text-view)):
+        (.sidebar > .panel.navigation.search.changed > :matches(.content, .message-text-view)):
+        (.sidebar > .panel.navigation.search > :matches(.content, .empty-content-placeholder)): Deleted.
+        (.sidebar > .panel.navigation.search.changed > :matches(.content, .empty-content-placeholder)): Deleted.
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel):
+
+        * UserInterface/Views/StorageSidebarPanel.css:
+        (.sidebar > .panel.navigation.storage > .content):
+        (.sidebar > .panel.navigation.storage > :matches(.content, .empty-content-placeholder)): Deleted.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+
 2017-11-29  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: can't add new property after property without trailing semicolon

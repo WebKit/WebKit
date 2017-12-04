@@ -116,39 +116,14 @@ body[dir=rtl] .network-table .cell.name > .status {
     top: calc(var(--navigation-bar-height) - var(--timeline-ruler-height));
 }
 
-.content-view.network .empty-content-placeholder {
-    position: absolute;
+.content-view.network .message-text-view {
     top: var(--navigation-bar-height);
-    bottom: 0;
-    padding: 0;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
     background: var(--odd-zebra-stripe-row-background-color);
-    --empty-content-placeholder-start: 0;
 }
 
-body[dir=ltr] .content-view.network .empty-content-placeholder {
-    left: var(--empty-content-placeholder-start);
-}
-
-body[dir=rtl] .content-view.network .empty-content-placeholder {
-    right: var(--empty-content-placeholder-start);
-}
-
-.content-view.network .empty-content-placeholder > .message {
-    display: inline-block;
-    white-space: nowrap;
-
-    font-size: var(--sidebar-no-results-message-font-size);
-    color: var(--text-color-gray-medium);
-
-    padding: 5px 15px 6px;
-    line-height: 25px;
-    text-align: center;
+.content-view.network .message-text-view > .message {
+    font-size: var(--message-text-view-font-size);
+    font-weight: normal;
 }
 
 .waterfall .block {

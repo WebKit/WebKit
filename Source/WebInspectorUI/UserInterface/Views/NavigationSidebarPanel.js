@@ -253,11 +253,9 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
 
         treeOutline = treeOutline || this._contentTreeOutline;
 
-        let emptyContentPlaceholderElement = this._createEmptyContentPlaceholderIfNeeded(treeOutline);
-        if (emptyContentPlaceholderElement.parentNode && emptyContentPlaceholderElement.children[0].textContent === message)
+        let emptyContentPlaceholderElement = this._createEmptyContentPlaceholderIfNeeded(treeOutline, message);
+        if (emptyContentPlaceholderElement.parentNode)
             return;
-
-        emptyContentPlaceholderElement.children[0].textContent = message;
 
         let emptyContentPlaceholderParentElement = treeOutline.element.parentNode;
         emptyContentPlaceholderParentElement.appendChild(emptyContentPlaceholderElement);
@@ -715,19 +713,14 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         }
     }
 
-    _createEmptyContentPlaceholderIfNeeded(treeOutline)
+    _createEmptyContentPlaceholderIfNeeded(treeOutline, message)
     {
         let emptyContentPlaceholderElement = this._emptyContentPlaceholderElements.get(treeOutline);
         if (emptyContentPlaceholderElement)
             return emptyContentPlaceholderElement;
 
-        emptyContentPlaceholderElement = document.createElement("div");
-        emptyContentPlaceholderElement.classList.add(WI.NavigationSidebarPanel.EmptyContentPlaceholderElementStyleClassName);
+        emptyContentPlaceholderElement = WI.createMessageTextView(message);
         this._emptyContentPlaceholderElements.set(treeOutline, emptyContentPlaceholderElement);
-
-        let emptyContentPlaceholderMessageElement = document.createElement("div");
-        emptyContentPlaceholderMessageElement.className = WI.NavigationSidebarPanel.EmptyContentPlaceholderMessageElementStyleClassName;
-        emptyContentPlaceholderElement.appendChild(emptyContentPlaceholderMessageElement);
 
         return emptyContentPlaceholderElement;
     }
@@ -754,5 +747,3 @@ WI.NavigationSidebarPanel.WasExpandedDuringFilteringSymbol = Symbol("was-expande
 
 WI.NavigationSidebarPanel.OverflowShadowElementStyleClassName = "overflow-shadow";
 WI.NavigationSidebarPanel.ContentTreeOutlineElementStyleClassName = "navigation-sidebar-panel-content-tree-outline";
-WI.NavigationSidebarPanel.EmptyContentPlaceholderElementStyleClassName = "empty-content-placeholder";
-WI.NavigationSidebarPanel.EmptyContentPlaceholderMessageElementStyleClassName = "message";

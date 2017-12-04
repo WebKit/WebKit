@@ -148,12 +148,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         this._backtraceSection.element.hidden = true;
         this._sections.push(this._backtraceSection);
 
-        this._emptyContentPlaceholder = document.createElement("div");
-        this._emptyContentPlaceholder.className = "empty-content-placeholder";
-
-        let emptyContentPlaceholderMessage = this._emptyContentPlaceholder.appendChild(document.createElement("div"));
-        emptyContentPlaceholderMessage.className = "message";
-        emptyContentPlaceholderMessage.textContent = WI.UIString("No Canvas Selected");
+        this._emptyContentPlaceholder = WI.createMessageTextView(WI.UIString("No Canvas Selected"));
     }
 
     layout()
