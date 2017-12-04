@@ -1,7 +1,5 @@
 const verbose = false;
 
-const ignore = ['quit', 'readline', 'waitForReport', 'flashHeapAccess', 'leaving', 'getReport'];
-
 function isPropertyOfType(obj, name, type) {
     let desc;
     desc = Object.getOwnPropertyDescriptor(obj, name)
@@ -22,6 +20,8 @@ function* generateObjects(root = this, level = 0) {
         return;
     let obj_names = getProperties(root, 'object');
     for (let obj_name of obj_names) {
+        if (obj_name.startsWith('$'))
+            continue; // Ignore internal objects.
         let obj = root[obj_name];
         yield obj;
         yield* generateObjects(obj, level + 1);
@@ -44,8 +44,6 @@ const thrower = new Proxy({}, { get() { throw 0xc0defefe; } });
 
 for (let o of getObjects()) {
     for (let f of getFunctions(o)) {
-        if (ignore.includes(f))
-            continue;
         const arityPlusOne = o[f].length + 1;
         if (verbose)
             print(`Calling ${o}['${f}'](${Array(arityPlusOne).fill("thrower")})`);

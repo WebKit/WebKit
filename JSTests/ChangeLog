@@ -1,3 +1,18 @@
+2017-12-04  JF Bastien  <jfbastien@apple.com>
+
+        Proxy all functions, except the $ objects
+        https://bugs.webkit.org/show_bug.cgi?id=180375
+
+        Reviewed by Saam Barati.
+
+        It looks like this test may have broken some executions because I
+        call some internal objects. Explicitly ignore objects whose name
+        starts with "$" because it's a bad idea anyways.
+
+        * stress/proxy-all-the-parameters.js:
+        (generateObjects):
+        (get throw):
+
 2017-12-04  Saam Barati  <sbarati@apple.com>
 
         We need to leave room on the top of the stack for the FTL TailCall slow path so it doesn't overwrite things we want to retrieve when doing a stack walk when throwing an exception
