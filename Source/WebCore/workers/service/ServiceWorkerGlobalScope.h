@@ -77,6 +77,9 @@ private:
     Ref<ServiceWorkerClients> m_clients;
     HashMap<ServiceWorkerClientIdentifier, ServiceWorkerClient*> m_clientMap;
     Vector<Ref<ExtendableEvent>> m_extendedEvents;
+
+    uint64_t m_lastRequestIdentifier { 0 };
+    HashMap<uint64_t, RefPtr<DeferredPromise>> m_pendingSkipWaitingPromises;
 };
 
 } // namespace WebCore
