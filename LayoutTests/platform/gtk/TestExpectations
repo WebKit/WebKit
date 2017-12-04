@@ -903,9 +903,6 @@ Bug(GTK) editing/spelling/markers.html [ Skip ]
 # Requires ENABLE(MEDIA_CAPTURE)
 webkit.org/b/85958 fast/forms/file/file-input-capture.html [ Failure ]
 
-# CURSOR_VISIBILITY is not enabled in gtk
-webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Failure ]
-
 webkit.org/b/146718 accessibility/aria-hidden-false-works-in-subtrees.html [ Failure ]
 
 webkit.org/b/146720 media/accessiblity-describes-video.html [ Failure ]

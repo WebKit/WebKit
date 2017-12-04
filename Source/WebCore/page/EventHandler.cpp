@@ -1589,14 +1589,19 @@ void EventHandler::cancelAutoHideCursorTimer()
 {
     if (m_autoHideCursorTimer.isActive())
         m_autoHideCursorTimer.stop();
+
+    if (auto page = m_frame.page())
+        page->chrome().setCursorHiddenUntilMouseMoves(false);
 }
 
 void EventHandler::autoHideCursorTimerFired()
 {
-    m_currentMouseCursor = noneCursor();
     FrameView* view = m_frame.view();
-    if (view && view->isActive())
-        view->setCursor(m_currentMouseCursor);
+    if (!view || !view->isActive())
+        return;
+
+    if (auto page = m_frame.page())
+        page->chrome().setCursorHiddenUntilMouseMoves(true);
 }
 #endif
 
