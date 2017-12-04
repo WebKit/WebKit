@@ -15,6 +15,11 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/404.py
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/about-blank-replacement-frame.py
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/about-blank-replacement-ping-frame.py
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/about-blank-replacement-popup-frame.py
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/about-blank-replacement-uncontrolled-nested-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/about-blank-replacement-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/appcache-ordering.install.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/appcache-ordering.is-appcached.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/appcache-ordering.is-appcached.js
@@ -72,6 +77,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-event-network-error-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-event-respond-with-argument-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-event-respond-with-argument-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-event-respond-with-partial-stream-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-event-respond-with-readable-stream-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-event-respond-with-readable-stream-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-event-respond-with-response-body-with-invalid-chunk-iframe.html
@@ -112,16 +118,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-rewrite-worker-referrer-policy.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-rewrite-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-waits-for-activate-worker.js
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/foreign-fetch-cors-worker.js
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/foreign-fetch-event-worker.js
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/foreign-fetch-helper-iframe.html
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/foreign-fetch-helper-script.js
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/foreign-fetch-helper-worker.js
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/foreign-fetch-helpers.js
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/foreign-fetch-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/frame-for-getregistrations.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/http-to-https-redirect-and-register-iframe.html
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/iframe-register-link-element.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/immutable-prototype-serviceworker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-mime-type-worker.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-scripts-echo.py
@@ -132,7 +130,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-scripts-version.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/indexeddb-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/install-event-type-worker.js
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/install-worker-helper.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/interfaces-idls.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/interfaces-worker.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/invalid-blobtype-iframe.https.html
@@ -143,7 +140,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/invalid-header-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/iso-latin1-header-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/iso-latin1-header-worker.js
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/link-header.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/load_worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/loaded.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/malformed-worker.py
@@ -187,7 +183,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/referer-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/referrer-policy-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/register-closed-window-iframe.html
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/register-foreign-fetch-errors-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/register-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/registration-tests-basic.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/registration-tests-mime-types.js
@@ -200,12 +195,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/reply-to-message.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/request-end-to-end-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/request-headers.py
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/resource-timing-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/resource-timing-iframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/resource-timing-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/respond-then-throw-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/respond-with-body-accessed-response-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/respond-with-body-accessed-response-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/respond-with-body-accessed-response.jsonp
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/sandboxed-iframe-fetch-event-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/sandboxed-iframe-fetch-event-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/sandboxed-iframe-navigator-serviceworker-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/service-worker-csp-worker.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/shared-worker-controlled.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/shared-worker-import.js

@@ -1,5 +1,106 @@
 2017-12-03  Chris Dumez  <cdumez@apple.com>
 
+        Re-sync Service Workers web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=180336
+
+        Reviewed by Darin Adler.
+
+        Re-sync Service Workers web-platform-tests from upstream 6df98083a2be.
+
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/unregister-controlling-worker.html: Added.
+        * web-platform-tests/service-workers/service-worker/about-blank-replacement.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/about-blank-replacement.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/activation.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-partial-stream.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-partial-stream.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-event.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/foreign-fetch-basics.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/foreign-fetch-basics.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/foreign-fetch-cors.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/foreign-fetch-cors.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/foreign-fetch-event.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/foreign-fetch-event.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/foreign-fetch-workers.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/foreign-fetch-workers.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/iframe-sandbox-register-link-element.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/iframe-sandbox-register-link-element.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/interfaces-window.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/link-element-register-basic.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/link-element-register-basic.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/link-element-register-mime-types.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/link-element-register-mime-types.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/link-element-register-scope.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/link-element-register-scope.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/link-element-register-script-url.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/link-element-register-script-url.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/link-element-register-script.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/link-element-register-script.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/link-element-register-security-error.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/link-element-register-security-error.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/navigation-preload/empty-preload-response-body.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-preload/resources/empty-preload-response-body-scope.html: Added.
+        * web-platform-tests/service-workers/service-worker/register-foreign-fetch-errors.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/register-foreign-fetch-errors.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/register-link-header.https-expected.txt: Removed.
+        * web-platform-tests/service-workers/service-worker/register-link-header.https.html: Removed.
+        * web-platform-tests/service-workers/service-worker/registration-iframe.https.html:
+        * web-platform-tests/service-workers/service-worker/registration-updateviacache.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html:
+        * web-platform-tests/service-workers/service-worker/resource-timing.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/resource-timing.https.html:
+        * web-platform-tests/service-workers/service-worker/resources/about-blank-replacement-frame.py: Added.
+        (main):
+        * web-platform-tests/service-workers/service-worker/resources/about-blank-replacement-ping-frame.py: Added.
+        (main):
+        * web-platform-tests/service-workers/service-worker/resources/about-blank-replacement-popup-frame.py: Added.
+        (main):
+        * web-platform-tests/service-workers/service-worker/resources/about-blank-replacement-uncontrolled-nested-frame.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/about-blank-replacement-worker.js: Added.
+        (async.getClientByURL):
+        (async.pingPong.waitForPong.return.new.Promise):
+        (async.pingPong.waitForPong):
+        (async.pingPong):
+        (async.evt.url.searchParams):
+        (async.evt.evt.respondWith.async):
+        (evt.evt.waitUntil.async):
+        * web-platform-tests/service-workers/service-worker/resources/clients-get-worker.js:
+        (self.onfetch):
+        * web-platform-tests/service-workers/service-worker/resources/empty.js: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-respond-with-partial-stream-worker.js: Added.
+        (evt.evt.request.url.includes):
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-test-worker.js:
+        (handleClientId):
+        * web-platform-tests/service-workers/service-worker/resources/foreign-fetch-cors-worker.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/foreign-fetch-event-worker.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/foreign-fetch-helper-iframe.html: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/foreign-fetch-helper-script.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/foreign-fetch-helper-worker.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/foreign-fetch-helpers.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/foreign-fetch-worker.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/iframe-register-link-element.html: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/install-worker-helper.html: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/interfaces-idls.js:
+        * web-platform-tests/service-workers/service-worker/resources/link-header.py: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/register-foreign-fetch-errors-worker.js: Removed.
+        * web-platform-tests/service-workers/service-worker/resources/resource-timing-iframe.sub.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/resource-timing-iframe.html.
+        * web-platform-tests/service-workers/service-worker/resources/sandboxed-iframe-fetch-event-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/sandboxed-iframe-fetch-event-worker.js: Added.
+        (event.waitUntil.self.clients.matchAll.then):
+        * web-platform-tests/service-workers/service-worker/resources/sandboxed-iframe-navigator-serviceworker-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/test-helpers.sub.js:
+        * web-platform-tests/service-workers/service-worker/resources/w3c-import.log:
+        * web-platform-tests/service-workers/service-worker/sandboxed-iframe-fetch-event.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/sandboxed-iframe-fetch-event.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/sandboxed-iframe-navigator-serviceworker.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/sandboxed-iframe-navigator-serviceworker.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/service-worker-csp-connect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/service-worker-csp-default.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/service-worker-csp-script.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/w3c-import.log:
+
+2017-12-03  Chris Dumez  <cdumez@apple.com>
+
         Support serviceWorker.postMessage() inside service workers
         https://bugs.webkit.org/show_bug.cgi?id=180328
 

@@ -1,5 +1,18 @@
 2017-12-03  Chris Dumez  <cdumez@apple.com>
 
+        Re-sync Service Workers web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=180336
+
+        Reviewed by Darin Adler.
+
+        Skip new tests that are timing out and remove entries for tests
+        that were removed.
+
+        * TestExpectations:
+        * tests-options.json:
+
+2017-12-03  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, mark imported/w3c/web-platform-tests/service-workers/service-worker/registration-service-worker-attributes.https.html as flaky
 
         * TestExpectations:

@@ -1,6 +1,0 @@
- 
-
-FAIL fetch can trigger service worker installation promise_test: Unhandled rejection with value: object "UnknownError: serviceWorker.ready() is not yet implemented"
-FAIL An iframe can trigger service worker installation promise_test: Unhandled rejection with value: object "UnknownError: serviceWorker.ready() is not yet implemented"
-FAIL A stylesheet can trigger service worker installation promise_test: Unhandled rejection with value: object "UnknownError: serviceWorker.ready() is not yet implemented"
-

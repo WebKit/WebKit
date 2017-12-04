@@ -1361,6 +1361,9 @@
     "imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-storage.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/about-blank-replacement.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-redirect.https.html": [
         "slow"
     ],

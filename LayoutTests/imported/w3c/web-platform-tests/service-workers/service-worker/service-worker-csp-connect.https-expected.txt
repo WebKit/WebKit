@@ -1,6 +1,6 @@
 
 PASS CSP test for connect-src in ServiceWorkerGlobalScope 
-FAIL importScripts test for connect-src assert_false: Importing the other origins script should not fail. expected false got true
+PASS importScripts test for connect-src 
 FAIL Fetch test for connect-src assert_unreached: unexpected rejection: assert_unreached: fetch should fail. Reached unreachable code Reached unreachable code
 FAIL Redirected fetch test for connect-src assert_unreached: unexpected rejection: assert_unreached: Redirected fetch should fail. Reached unreachable code Reached unreachable code
 

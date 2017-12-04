@@ -1,16 +1,8 @@
 
-FAIL register-via-api-updateViaCache-undefined assert_not_equals: Main script should have updated got disallowed value 1510380120.157005
-FAIL register-via-api-updateViaCache-imports assert_not_equals: Main script should have updated got disallowed value 1510380120.495792
-FAIL register-via-api-updateViaCache-all assert_equals: No new service worker expected null but got object "[object ServiceWorker]"
-FAIL register-via-api-updateViaCache-none assert_not_equals: Main script should have updated got disallowed value 1510380120.846384
-FAIL register-via-link-element-updateViaCache-undefined promise_test: Unhandled rejection with value: object "Error: link rel=serviceworker not supported"
-FAIL register-via-link-element-updateViaCache-imports promise_test: Unhandled rejection with value: object "Error: link rel=serviceworker not supported"
-FAIL register-via-link-element-updateViaCache-all promise_test: Unhandled rejection with value: object "Error: link rel=serviceworker not supported"
-FAIL register-via-link-element-updateViaCache-none promise_test: Unhandled rejection with value: object "Error: link rel=serviceworker not supported"
-FAIL register-via-link-header-updateViaCache-undefined promise_test: Unhandled rejection with value: object "Error: link rel=serviceworker not supported"
-FAIL register-via-link-header-updateViaCache-imports promise_test: Unhandled rejection with value: object "Error: link rel=serviceworker not supported"
-FAIL register-via-link-header-updateViaCache-all promise_test: Unhandled rejection with value: object "Error: link rel=serviceworker not supported"
-FAIL register-via-link-header-updateViaCache-none promise_test: Unhandled rejection with value: object "Error: link rel=serviceworker not supported"
+FAIL register-with-updateViaCache-undefined assert_not_equals: Main script should have updated got disallowed value 1512338030.075291
+FAIL register-with-updateViaCache-imports assert_not_equals: Main script should have updated got disallowed value 1512338030.414841
+FAIL register-with-updateViaCache-all assert_equals: No new service worker expected null but got object "[object ServiceWorker]"
+FAIL register-with-updateViaCache-none assert_not_equals: Main script should have updated got disallowed value 1512338030.773353
 PASS register-with-updateViaCache-undefined-then-undefined 
 PASS register-with-updateViaCache-undefined-then-imports 
 FAIL register-with-updateViaCache-undefined-then-all assert_equals: reg.updateViaCache updated expected "all" but got "imports"

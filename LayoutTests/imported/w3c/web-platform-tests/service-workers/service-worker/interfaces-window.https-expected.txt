@@ -49,7 +49,7 @@ PASS ServiceWorkerRegistration interface: window.registrationInstance must inher
 PASS ServiceWorkerRegistration interface: window.registrationInstance must inherit property "active" with the proper type 
 FAIL ServiceWorkerRegistration interface: window.registrationInstance must inherit property "navigationPreload" with the proper type assert_inherits: property "navigationPreload" not found in prototype chain
 PASS ServiceWorkerRegistration interface: window.registrationInstance must inherit property "scope" with the proper type 
-FAIL ServiceWorkerRegistration interface: window.registrationInstance must inherit property "updateViaCache" with the proper type Unrecognized type ServiceWorkerUpdateViaCache
+PASS ServiceWorkerRegistration interface: window.registrationInstance must inherit property "updateViaCache" with the proper type 
 PASS ServiceWorkerRegistration interface: window.registrationInstance must inherit property "update()" with the proper type 
 PASS ServiceWorkerRegistration interface: window.registrationInstance must inherit property "unregister()" with the proper type 
 PASS ServiceWorkerRegistration interface: window.registrationInstance must inherit property "onupdatefound" with the proper type 

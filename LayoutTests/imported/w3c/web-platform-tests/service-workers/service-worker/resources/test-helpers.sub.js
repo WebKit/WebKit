@@ -257,3 +257,14 @@ function register_using_link(script, options) {
       })
     .then(() => navigator.serviceWorker.getRegistration(scope));
 }
+
+function with_sandboxed_iframe(url, sandbox) {
+  return new Promise(function(resolve) {
+      var frame = document.createElement('iframe');
+      frame.sandbox = sandbox;
+      frame.src = url;
+      frame.onload = function() { resolve(frame); };
+      document.body.appendChild(frame);
+    });
+}
+

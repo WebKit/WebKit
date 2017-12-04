@@ -23,7 +23,6 @@ interface ServiceWorkerGlobalScope : WorkerGlobalScope {
   attribute EventHandler oninstall;
   attribute EventHandler onactivate;
   attribute EventHandler onfetch;
-  attribute EventHandler onforeignfetch;
 
   // event
   attribute EventHandler onmessage; // event.source of the message events is Client object
@@ -74,6 +73,12 @@ enum ServiceWorkerState {
   "activating",
   "activated",
   "redundant"
+};
+
+enum ServiceWorkerUpdateViaCache {
+    "imports",
+    "all",
+    "none"
 };
 
 [SecureContext, Exposed=(Window,Worker)]

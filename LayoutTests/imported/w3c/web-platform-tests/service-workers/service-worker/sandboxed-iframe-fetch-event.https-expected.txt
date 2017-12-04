@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 27: [blocked] The page at https://localhost:9443/service-workers/service-worker/sandboxed-iframe-fetch-event.https.html was not allowed to display insecure content from blob:null/1e18072d-e067-4b6a-8346-212ade1e573e.
+
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT ServiceWorker FetchEvent for sandboxed iframe. Test timed out
+

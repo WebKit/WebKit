@@ -1,7 +1,0 @@
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Registering normal scope Test timed out
-NOTRUN Registering scope with fragment 
-NOTRUN Registering same scope as the script directory 
-
