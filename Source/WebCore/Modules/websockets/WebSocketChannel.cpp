@@ -232,7 +232,8 @@ void WebSocketChannel::fail(const String& reason)
     m_deflateFramer.didFail();
     m_hasContinuousFrame = false;
     m_continuousFrameData.clear();
-    m_client->didReceiveMessageError();
+    if (m_client)
+        m_client->didReceiveMessageError();
 
     if (m_handle && !m_closed)
         m_handle->disconnect(); // Will call didCloseSocketStream() but maybe not synchronously.
