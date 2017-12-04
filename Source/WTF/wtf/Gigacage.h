@@ -97,6 +97,16 @@ ALWAYS_INLINE BasePtrs& basePtrs()
     return *reinterpret_cast<BasePtrs*>(g_gigacageBasePtrs);
 }
 
+ALWAYS_INLINE void*& basePtr(Kind kind)
+{
+    return basePtr(basePtrs(), kind);
+}
+
+ALWAYS_INLINE bool isEnabled(Kind kind)
+{
+    return !!basePtr(kind);
+}
+
 ALWAYS_INLINE size_t mask(Kind) { return 0; }
 
 template<typename T>

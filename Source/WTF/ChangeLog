@@ -1,3 +1,18 @@
+2017-12-03  Tomas Popela  <tpopela@redhat.com>
+
+        Build fails on x86_64 and arm64 with BMalloc disabled
+        https://bugs.webkit.org/show_bug.cgi?id=180188
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add missing methods in WTF's Gigacage.h and fix g_gigacageBasePtr
+        definition.
+
+        * wtf/Gigacage.cpp:
+        * wtf/Gigacage.h:
+        (Gigacage::basePtr):
+        (Gigacage::isEnabled):
+
 2017-12-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         WTF shouldn't have both Thread and ThreadIdentifier
