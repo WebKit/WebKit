@@ -16,3 +16,7 @@ if (ENABLE_SUBTLE_CRYPTO)
         crypto/tasn1/Utilities.cpp
     )
 endif ()
+
+list(APPEND PAL_SYSTEM_INCLUDE_DIRECTORIES
+    ${GLIB_INCLUDE_DIRS}
+)
