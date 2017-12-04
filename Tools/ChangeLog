@@ -1,3 +1,18 @@
+2017-12-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Exclude some more leak callstacks
+        https://bugs.webkit.org/show_bug.cgi?id=180379
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/port/leakdetector.py:
+        (LeakDetector._types_to_exclude_from_leaks):
+        (LeakDetector._callstacks_to_exclude_from_leaks):
+        (LeakDetector._leaks_args):
+        (LeakDetector._types_to_exlude_from_leaks): Deleted.
+        * Scripts/webkitpy/port/leakdetector_unittest.py:
+        (LeakDetectorTest.test_leaks_args):
+
 2017-12-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         WTF shouldn't have both Thread and ThreadIdentifier

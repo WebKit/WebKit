@@ -48,13 +48,16 @@ class LeakDetector(object):
     # This allows us ignore known leaks and only be alerted when new leaks occur. Some leaks are in the old
     # versions of the system frameworks that are being used by the leaks bots. Even though a leak has been
     # fixed, it will be listed here until the bot has been updated with the newer frameworks.
-    def _types_to_exlude_from_leaks(self):
+    def _types_to_exclude_from_leaks(self):
         # Currently we don't have any type excludes from OS leaks, but we will likely again in the future.
         return []
 
     def _callstacks_to_exclude_from_leaks(self):
         callstacks = [
             'WTF::BitVector::OutOfLineBits::create', # https://bugs.webkit.org/show_bug.cgi?id=121662
+            'WebCore::createPrivateStorageSession', # <rdar://problem/35189565>
+            'CIDeviceManagerStartMonitoring', # <rdar://problem/35711052>
+            'NSSpellChecker init', # <rdar://problem/35434615>
         ]
         return callstacks
 
@@ -62,7 +65,7 @@ class LeakDetector(object):
         leaks_args = []
         for callstack in self._callstacks_to_exclude_from_leaks():
             leaks_args += ['--exclude-callstack=%s' % callstack]
-        for excluded_type in self._types_to_exlude_from_leaks():
+        for excluded_type in self._types_to_exclude_from_leaks():
             leaks_args += ['--exclude-type=%s' % excluded_type]
         leaks_args.append(pid)
         return leaks_args

@@ -49,7 +49,7 @@ class LeakDetectorTest(unittest.TestCase):
     def test_leaks_args(self):
         detector = self._make_detector()
         detector._callstacks_to_exclude_from_leaks = lambda: ['foo bar', 'BAZ']
-        detector._types_to_exlude_from_leaks = lambda: ['abcdefg', 'hi jklmno']
+        detector._types_to_exclude_from_leaks = lambda: ['abcdefg', 'hi jklmno']
         expected_args = ['--exclude-callstack=foo bar', '--exclude-callstack=BAZ', '--exclude-type=abcdefg', '--exclude-type=hi jklmno', 1234]
         self.assertEqual(detector._leaks_args(1234), expected_args)
 
