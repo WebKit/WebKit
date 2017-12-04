@@ -161,6 +161,7 @@ private:
 
     RefPtr<WebSWServerToContextConnection> m_serverToContextConnection;
     bool m_waitingForServerToContextProcessConnection { false };
+    HashMap<PAL::SessionID, String> m_swDatabasePaths;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::SWServer>> m_swServers;
     HashMap<WebCore::SWServerConnectionIdentifier, WebSWServerConnection*> m_swServerConnections;
 #endif

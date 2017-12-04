@@ -390,6 +390,7 @@ public:
     // FIXME: Move these to API::WebsiteDataStore.
     static String legacyPlatformDefaultLocalStorageDirectory();
     static String legacyPlatformDefaultIndexedDBDatabaseDirectory();
+    static String legacyPlatformDefaultServiceWorkerRegistrationDirectory();
     static String legacyPlatformDefaultWebSQLDatabaseDirectory();
     static String legacyPlatformDefaultMediaKeysStorageDirectory();
     static String legacyPlatformDefaultMediaCacheDirectory();

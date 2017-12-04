@@ -105,7 +105,7 @@ public:
         Identifier m_identifier;
     };
 
-    WEBCORE_EXPORT explicit SWServer(UniqueRef<SWOriginStore>&&);
+    WEBCORE_EXPORT explicit SWServer(UniqueRef<SWOriginStore>&&, const String& registrationDatabaseDirectory);
     WEBCORE_EXPORT ~SWServer();
 
     WEBCORE_EXPORT void clearAll();

@@ -62,6 +62,7 @@
 using namespace WebCore;
 
 NSString *WebDatabaseDirectoryDefaultsKey = @"WebDatabaseDirectory";
+NSString *WebServiceWorkerRegistrationDirectoryDefaultsKey = @"WebServiceWorkerRegistrationDirectory";
 NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
 NSString *WebStorageDirectoryDefaultsKey = @"WebKitLocalStorageDatabasePathPreferenceKey";
 NSString *WebKitJSCJITEnabledDefaultsKey = @"WebKitJSCJITEnabledDefaultsKey";
@@ -387,6 +388,16 @@ String WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory()
     // We should fix this, and move WebSQL into a subdirectory (https://bugs.webkit.org/show_bug.cgi?id=124807)
     // In the meantime, an entity name prefixed with three underscores will not conflict with any WebSQL entities.
     return FileSystem::pathByAppendingComponent(legacyPlatformDefaultWebSQLDatabaseDirectory(), "___IndexedDB");
+}
+
+String WebProcessPool::legacyPlatformDefaultServiceWorkerRegistrationDirectory()
+{
+    registerUserDefaultsIfNeeded();
+
+    NSString *directory = [[NSUserDefaults standardUserDefaults] objectForKey:WebServiceWorkerRegistrationDirectoryDefaultsKey];
+    if (!directory || ![directory isKindOfClass:[NSString class]])
+        directory = @"~/Library/WebKit/ServiceWorkers";
+    return stringByResolvingSymlinksInPath([directory stringByStandardizingPath]);
 }
 
 String WebProcessPool::legacyPlatformDefaultLocalStorageDirectory()

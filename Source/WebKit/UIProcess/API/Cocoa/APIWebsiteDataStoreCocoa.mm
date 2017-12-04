@@ -72,6 +72,11 @@ String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
     return websiteDataDirectoryFileSystemRepresentation("IndexedDB");
 }
 
+String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory()
+{
+    return websiteDataDirectoryFileSystemRepresentation("ServiceWorkers");
+}
+
 String WebsiteDataStore::defaultLocalStorageDirectory()
 {
     return websiteDataDirectoryFileSystemRepresentation("LocalStorage");

@@ -143,14 +143,22 @@ void StorageProcess::initializeWebsiteDataStore(const StorageProcessCreationPara
     // IMPORTANT: Do not change the directory structure for indexed databases on disk without first consulting a reviewer from Apple (<rdar://problem/17454712>)
     // *********
 
-    auto addResult = m_idbDatabasePaths.add(parameters.sessionID, String());
-    if (!addResult.isNewEntry)
-        return;
-
-    addResult.iterator->value = parameters.indexedDatabaseDirectory;
-    SandboxExtension::consumePermanently(parameters.indexedDatabaseDirectoryExtensionHandle);
-
-    postStorageTask(createCrossThreadTask(*this, &StorageProcess::ensurePathExists, parameters.indexedDatabaseDirectory));
+    auto addResult = m_idbDatabasePaths.ensure(parameters.sessionID, [path = parameters.indexedDatabaseDirectory] {
+        return path;
+    });
+    if (addResult.isNewEntry) {
+        SandboxExtension::consumePermanently(parameters.indexedDatabaseDirectoryExtensionHandle);
+        postStorageTask(createCrossThreadTask(*this, &StorageProcess::ensurePathExists, parameters.indexedDatabaseDirectory));
+    }
+#endif
+#if ENABLE(SERVICE_WORKER)
+    addResult = m_swDatabasePaths.ensure(parameters.sessionID, [path = parameters.serviceWorkerRegistrationDirectory] {
+        return path;
+    });
+    if (addResult.isNewEntry) {
+        SandboxExtension::consumePermanently(parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
+        postStorageTask(createCrossThreadTask(*this, &StorageProcess::ensurePathExists, parameters.serviceWorkerRegistrationDirectory));
+    }
 #endif
 }
 
@@ -371,10 +379,17 @@ void StorageProcess::didGetSandboxExtensionsForBlobFiles(uint64_t requestID, San
 SWServer& StorageProcess::swServerForSession(PAL::SessionID sessionID)
 {
     auto result = m_swServers.add(sessionID, nullptr);
-    if (result.isNewEntry)
-        result.iterator->value = std::make_unique<SWServer>(makeUniqueRef<WebSWOriginStore>());
+    if (!result.isNewEntry) {
+        ASSERT(result.iterator->value);
+        return *result.iterator->value;
+    }
 
-    ASSERT(result.iterator->value);
+    auto path = m_swDatabasePaths.get(sessionID);
+    // There should already be a registered path for this PAL::SessionID.
+    // If there's not, then where did this PAL::SessionID come from?
+    ASSERT(!path.isEmpty());
+
+    result.iterator->value = std::make_unique<SWServer>(makeUniqueRef<WebSWOriginStore>(), path);
     return *result.iterator->value;
 }
 

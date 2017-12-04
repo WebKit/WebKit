@@ -106,6 +106,11 @@ String WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory()
     return API::WebsiteDataStore::defaultIndexedDBDatabaseDirectory();
 }
 
+String WebProcessPool::legacyPlatformDefaultServiceWorkerRegistrationDirectory()
+{
+    return API::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory();
+}
+
 String WebProcessPool::legacyPlatformDefaultLocalStorageDirectory()
 {
     return API::WebsiteDataStore::defaultLocalStorageDirectory();

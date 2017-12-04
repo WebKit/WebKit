@@ -111,6 +111,13 @@ String WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory()
     return WebCore::FileSystem::stringFromFileSystemRepresentation(indexedDBDatabaseDirectory.get());
 }
 
+String WebProcessPool::legacyPlatformDefaultServiceWorkerRegistrationDirectory()
+{
+    // FIXME: Implement when implementing ServiceWorkers
+    notImplemented();
+    return String();
+}
+
 String WebProcessPool::legacyPlatformDefaultLocalStorageDirectory()
 {
     GUniquePtr<gchar> storageDirectory(g_build_filename(g_get_user_data_dir(), "wpe", "localstorage", nullptr));

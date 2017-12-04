@@ -58,6 +58,7 @@ public:
     static String defaultMediaCacheDirectory();
 
     static String defaultIndexedDBDatabaseDirectory();
+    static String defaultServiceWorkerRegistrationDirectory();
     static String defaultLocalStorageDirectory();
     static String defaultMediaKeysStorageDirectory();
     static String defaultWebSQLDatabaseDirectory();

@@ -36,21 +36,29 @@ StorageProcessCreationParameters::StorageProcessCreationParameters()
 
 void StorageProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
-#if ENABLE(INDEXED_DATABASE)
     encoder << sessionID;
-    encoder << indexedDatabaseDirectory;
-    encoder << indexedDatabaseDirectoryExtensionHandle;
+#if ENABLE(INDEXED_DATABASE)
+    encoder << indexedDatabaseDirectory << indexedDatabaseDirectoryExtensionHandle;
+#endif
+#if ENABLE(SERVICE_WORKER)
+    encoder << serviceWorkerRegistrationDirectory << serviceWorkerRegistrationDirectoryExtensionHandle;
 #endif
 }
 
 bool StorageProcessCreationParameters::decode(IPC::Decoder& decoder, StorageProcessCreationParameters& result)
 {
-#if ENABLE(INDEXED_DATABASE)
     if (!decoder.decode(result.sessionID))
         return false;
+#if ENABLE(INDEXED_DATABASE)
     if (!decoder.decode(result.indexedDatabaseDirectory))
         return false;
     if (!decoder.decode(result.indexedDatabaseDirectoryExtensionHandle))
+        return false;
+#endif
+#if ENABLE(SERVICE_WORKER)
+    if (!decoder.decode(result.serviceWorkerRegistrationDirectory))
+        return false;
+    if (!decoder.decode(result.serviceWorkerRegistrationDirectoryExtensionHandle))
         return false;
 #endif
 
