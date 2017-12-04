@@ -63,6 +63,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <glib/gi18n-lib.h>
 #include <memory>
+#include <pal/system/SleepDisabler.h>
 #include <wtf/HashMap.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -190,9 +191,7 @@ struct _WebKitWebViewBasePrivate {
 
 #if ENABLE(FULLSCREEN_API)
     bool fullScreenModeActive { false };
-    GRefPtr<GDBusProxy> screenSaverProxy;
-    GRefPtr<GCancellable> screenSaverInhibitCancellable;
-    unsigned screenSaverCookie { 0 };
+    std::unique_ptr<PAL::SleepDisabler> sleepDisabler;
 #endif
 
     std::unique_ptr<AcceleratedBackingStore> acceleratedBackingStore;
@@ -500,10 +499,10 @@ void webkitWebViewBaseChildMoveResize(WebKitWebViewBase* webView, GtkWidget* chi
 static void webkitWebViewBaseDispose(GObject* gobject)
 {
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(gobject);
-    g_cancellable_cancel(webView->priv->screenSaverInhibitCancellable.get());
     webkitWebViewBaseSetToplevelOnScreenWindow(webView, nullptr);
     webView->priv->pageProxy->close();
     webView->priv->acceleratedBackingStore = nullptr;
+    webView->priv->sleepDisabler = nullptr;
     G_OBJECT_CLASS(webkit_web_view_base_parent_class)->dispose(gobject);
 }
 
@@ -1231,75 +1230,6 @@ void webkitWebViewBaseForwardNextWheelEvent(WebKitWebViewBase* webkitWebViewBase
     webkitWebViewBase->priv->shouldForwardNextWheelEvent = true;
 }
 
-#if ENABLE(FULLSCREEN_API)
-static void screenSaverInhibitedCallback(GDBusProxy* screenSaverProxy, GAsyncResult* result, WebKitWebViewBase* webViewBase)
-{
-    GRefPtr<GVariant> returnValue = adoptGRef(g_dbus_proxy_call_finish(screenSaverProxy, result, nullptr));
-    if (returnValue)
-        g_variant_get(returnValue.get(), "(u)", &webViewBase->priv->screenSaverCookie);
-    webViewBase->priv->screenSaverInhibitCancellable = nullptr;
-}
-
-static void webkitWebViewBaseSendInhibitMessageToScreenSaver(WebKitWebViewBase* webViewBase)
-{
-    WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    ASSERT(priv->screenSaverProxy);
-    priv->screenSaverCookie = 0;
-    if (!priv->screenSaverInhibitCancellable)
-        priv->screenSaverInhibitCancellable = adoptGRef(g_cancellable_new());
-    g_dbus_proxy_call(priv->screenSaverProxy.get(), "Inhibit", g_variant_new("(ss)", g_get_prgname(), _("Website running in fullscreen mode")),
-        G_DBUS_CALL_FLAGS_NONE, -1, priv->screenSaverInhibitCancellable.get(), reinterpret_cast<GAsyncReadyCallback>(screenSaverInhibitedCallback), webViewBase);
-}
-
-static void screenSaverProxyCreatedCallback(GObject*, GAsyncResult* result, WebKitWebViewBase* webViewBase)
-{
-    // WebKitWebViewBase cancels the proxy creation on dispose, which means this could be called
-    // after the web view has been destroyed and g_dbus_proxy_new_for_bus_finish will return nullptr.
-    // So, make sure we don't use the web view unless we have a valid proxy.
-    // See https://bugs.webkit.org/show_bug.cgi?id=151653.
-    GRefPtr<GDBusProxy> proxy = adoptGRef(g_dbus_proxy_new_for_bus_finish(result, nullptr));
-    if (!proxy)
-        return;
-
-    webViewBase->priv->screenSaverProxy = proxy;
-    webkitWebViewBaseSendInhibitMessageToScreenSaver(webViewBase);
-}
-
-static void webkitWebViewBaseInhibitScreenSaver(WebKitWebViewBase* webViewBase)
-{
-    WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    if (priv->screenSaverCookie) {
-        // Already inhibited.
-        return;
-    }
-
-    if (priv->screenSaverProxy) {
-        webkitWebViewBaseSendInhibitMessageToScreenSaver(webViewBase);
-        return;
-    }
-
-    priv->screenSaverInhibitCancellable = adoptGRef(g_cancellable_new());
-    g_dbus_proxy_new_for_bus(G_BUS_TYPE_SESSION, static_cast<GDBusProxyFlags>(G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES | G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS),
-        nullptr, "org.freedesktop.ScreenSaver", "/ScreenSaver", "org.freedesktop.ScreenSaver", priv->screenSaverInhibitCancellable.get(),
-        reinterpret_cast<GAsyncReadyCallback>(screenSaverProxyCreatedCallback), webViewBase);
-}
-
-static void webkitWebViewBaseUninhibitScreenSaver(WebKitWebViewBase* webViewBase)
-{
-    WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    if (!priv->screenSaverCookie) {
-        // Not inhibited or it's being inhibited.
-        g_cancellable_cancel(priv->screenSaverInhibitCancellable.get());
-        return;
-    }
-
-    // If we have a cookie we should have a proxy.
-    ASSERT(priv->screenSaverProxy);
-    g_dbus_proxy_call(priv->screenSaverProxy.get(), "UnInhibit", g_variant_new("(u)", priv->screenSaverCookie), G_DBUS_CALL_FLAGS_NONE, -1, nullptr, nullptr, nullptr);
-    priv->screenSaverCookie = 0;
-}
-#endif
-
 void webkitWebViewBaseEnterFullScreen(WebKitWebViewBase* webkitWebViewBase)
 {
 #if ENABLE(FULLSCREEN_API)
@@ -1314,7 +1244,7 @@ void webkitWebViewBaseEnterFullScreen(WebKitWebViewBase* webkitWebViewBase)
         gtk_window_fullscreen(GTK_WINDOW(topLevelWindow));
     fullScreenManagerProxy->didEnterFullScreen();
     priv->fullScreenModeActive = true;
-    webkitWebViewBaseInhibitScreenSaver(webkitWebViewBase);
+    priv->sleepDisabler = PAL::SleepDisabler::create(_("Website running in fullscreen mode"), PAL::SleepDisabler::Type::Display);
 #endif
 }
 
@@ -1332,7 +1262,7 @@ void webkitWebViewBaseExitFullScreen(WebKitWebViewBase* webkitWebViewBase)
         gtk_window_unfullscreen(GTK_WINDOW(topLevelWindow));
     fullScreenManagerProxy->didExitFullScreen();
     priv->fullScreenModeActive = false;
-    webkitWebViewBaseUninhibitScreenSaver(webkitWebViewBase);
+    priv->sleepDisabler = nullptr;
 #endif
 }
 

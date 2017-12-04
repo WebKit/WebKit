@@ -6607,6 +6607,7 @@ void HTMLMediaElement::updateSleepDisabling()
 
 HTMLMediaElement::SleepType HTMLMediaElement::shouldDisableSleep() const
 {
+    // See https://bugs.webkit.org/show_bug.cgi?id=180197 before removing this guard.
 #if !PLATFORM(COCOA)
     return SleepType::None;
 #endif

@@ -1,3 +1,20 @@
+2017-12-04  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Implement PAL::SleepDisabler
+        https://bugs.webkit.org/show_bug.cgi?id=178485
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDispose):
+        (webkitWebViewBaseEnterFullScreen):
+        (webkitWebViewBaseExitFullScreen):
+        (screenSaverInhibitedCallback): Deleted.
+        (webkitWebViewBaseSendInhibitMessageToScreenSaver): Deleted.
+        (screenSaverProxyCreatedCallback): Deleted.
+        (webkitWebViewBaseInhibitScreenSaver): Deleted.
+        (webkitWebViewBaseUninhibitScreenSaver): Deleted.
+
 2017-12-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         WTF shouldn't have both Thread and ThreadIdentifier
