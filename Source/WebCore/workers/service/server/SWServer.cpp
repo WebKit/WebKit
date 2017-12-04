@@ -52,6 +52,8 @@ static ServiceWorkerIdentifier generateServiceWorkerIdentifier()
     return generateObjectIdentifier<ServiceWorkerIdentifierType>();
 }
 
+static Seconds terminationDelay { 60_s };
+
 SWServer::Connection::Connection(SWServer& server)
     : m_server(server)
     , m_identifier(generateObjectIdentifier<SWServerConnectionIdentifierType>())
@@ -322,7 +324,7 @@ std::optional<ServiceWorkerClientData> SWServer::findClientByIdentifier(const Cl
     if (iterator == m_clients.end())
         return std::nullopt;
 
-    auto& clients = iterator->value;
+    auto& clients = iterator->value.clients;
     auto position = clients.findMatching([&] (const auto& client) {
         return clientIdentifier == client.identifier;
     });
@@ -336,7 +338,7 @@ void SWServer::matchAll(SWServerWorker& worker, const ServiceWorkerClientQueryOp
     // FIXME: Support reserved client filtering.
     // FIXME: Support WindowClient additional properties.
 
-    auto clients = m_clients.get(worker.origin());
+    auto clients = m_clients.find(worker.origin())->value.clients;
 
     if (!options.includeUncontrolled) {
         clients.removeAllMatching([&] (const auto& client) {
@@ -615,9 +617,13 @@ const SWServerRegistration* SWServer::doRegistrationMatching(const SecurityOrigi
 
 void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceWorkerClientIdentifier identifier, ServiceWorkerClientData&& data)
 {
-    m_clients.ensure(WTFMove(clientOrigin), [] {
-        return Vector<ServiceWorkerClientInformation> { };
-    }).iterator->value.append(ServiceWorkerClientInformation { identifier, WTFMove(data) });
+    auto& clientsData = m_clients.ensure(WTFMove(clientOrigin), [] {
+        return Clients { };
+    }).iterator->value;
+
+    clientsData.clients.append(ServiceWorkerClientInformation { identifier, WTFMove(data) });
+    if (clientsData.terminateServiceWorkersTimer)
+        clientsData.terminateServiceWorkersTimer = nullptr;
 }
 
 void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, ServiceWorkerClientIdentifier identifier)
@@ -625,14 +631,23 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
     auto iterator = m_clients.find(clientOrigin);
     ASSERT(iterator != m_clients.end());
 
-    auto& clients = iterator->value;
+    auto& clients = iterator->value.clients;
     clients.removeFirstMatching([&] (const auto& item) {
         return identifier == item.identifier;
     });
-    if (clients.isEmpty()) {
-        // FIXME: We might want to terminate any clientOrigin related service worker.
-        m_clients.remove(iterator);
-    }
+
+    if (!clients.isEmpty() || m_runningOrTerminatingWorkers.isEmpty())
+        return;
+
+    ASSERT(!iterator->value.terminateServiceWorkersTimer);
+    iterator->value.terminateServiceWorkersTimer = std::make_unique<Timer>([clientOrigin, this] {
+        for (auto& worker : m_runningOrTerminatingWorkers.values()) {
+            if (worker->origin() == clientOrigin)
+                terminateWorker(worker);
+        }
+        m_clients.remove(clientOrigin);
+    });
+    iterator->value.terminateServiceWorkersTimer->startOneShot(terminationDelay);
 }
 
 } // namespace WebCore

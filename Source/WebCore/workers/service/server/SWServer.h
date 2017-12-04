@@ -59,6 +59,7 @@ struct ServiceWorkerClientQueryOptions;
 struct ServiceWorkerContextData;
 struct ServiceWorkerFetchResult;
 struct ServiceWorkerRegistrationData;
+class Timer;
 
 class SWServer {
     WTF_MAKE_FAST_ALLOCATED;
@@ -184,7 +185,11 @@ private:
 
     HashMap<ServiceWorkerIdentifier, Ref<SWServerWorker>> m_runningOrTerminatingWorkers;
 
-    HashMap<ClientOrigin, Vector<ServiceWorkerClientInformation>> m_clients;
+    struct Clients {
+        Vector<ServiceWorkerClientInformation> clients;
+        std::unique_ptr<Timer> terminateServiceWorkersTimer;
+    };
+    HashMap<ClientOrigin, Clients> m_clients;
     HashMap<ServiceWorkerClientIdentifier, ServiceWorkerIdentifier> m_clientToControllingWorker;
 
     RefPtr<Thread> m_taskThread;
