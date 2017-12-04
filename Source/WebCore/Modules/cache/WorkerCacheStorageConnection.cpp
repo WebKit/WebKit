@@ -124,7 +124,7 @@ void WorkerCacheStorageConnection::doRemove(uint64_t requestIdentifier, uint64_t
 {
     callOnMainThread([workerThread = makeRef(m_scope.thread()), mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier] () mutable {
         mainThreadConnection->remove(cacheIdentifier, [workerThread = WTFMove(workerThread), requestIdentifier, cacheIdentifier] (const CacheIdentifierOrError& result) mutable {
-            ASSERT_UNUSED(cacheIdentifier, !result.hasValue() || result.value().identifier == cacheIdentifier);
+            ASSERT_UNUSED(cacheIdentifier, !result.has_value() || result.value().identifier == cacheIdentifier);
             workerThread->runLoop().postTaskForMode([requestIdentifier, result] (auto& scope) mutable {
                 downcast<WorkerGlobalScope>(scope).cacheStorageConnection().removeCompleted(requestIdentifier, result);
             }, WorkerRunLoop::defaultMode());
@@ -137,7 +137,7 @@ void WorkerCacheStorageConnection::doRetrieveCaches(uint64_t requestIdentifier, 
     callOnMainThread([workerThread = makeRef(m_scope.thread()), mainThreadConnection = m_mainThreadConnection, requestIdentifier, origin = origin.isolatedCopy(), updateCounter] () mutable {
         mainThreadConnection->retrieveCaches(origin, updateCounter, [workerThread = WTFMove(workerThread), requestIdentifier] (CacheInfosOrError&& result) mutable {
             CacheInfosOrError isolatedResult;
-            if (!result.hasValue())
+            if (!result.has_value())
                 isolatedResult = WTFMove(result);
             else
                 isolatedResult = result.value().isolatedCopy();
@@ -170,7 +170,7 @@ static inline Vector<CrossThreadRecordData> recordsDataFromRecords(const Vector<
 
 static inline Expected<Vector<CrossThreadRecordData>, Error> recordsDataOrErrorFromRecords(const RecordsOrError& result)
 {
-    if (!result.hasValue())
+    if (!result.has_value())
         return makeUnexpected(result.error());
 
     return recordsDataFromRecords(result.value());
@@ -183,7 +183,7 @@ static inline Vector<Record> recordsFromRecordsData(Vector<CrossThreadRecordData
 
 static inline RecordsOrError recordsOrErrorFromRecordsData(Expected<Vector<CrossThreadRecordData>, Error>&& recordsData)
 {
-    if (!recordsData.hasValue())
+    if (!recordsData.has_value())
         return makeUnexpected(recordsData.error());
     return recordsFromRecordsData(WTFMove(recordsData.value()));
 }

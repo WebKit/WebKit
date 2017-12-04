@@ -142,7 +142,7 @@ void DOMCacheStorage::retrieveCaches(WTF::Function<void(std::optional<Exception>
     setPendingActivity(this);
     m_connection->retrieveCaches(origin, m_updateCounter, [this, callback = WTFMove(callback)](CacheInfosOrError&& result) mutable {
         if (!m_isStopped) {
-            if (!result.hasValue()) {
+            if (!result.has_value()) {
                 callback(DOMCacheEngine::errorToException(result.error()));
                 return;
             }
@@ -191,7 +191,7 @@ void DOMCacheStorage::open(const String& name, DOMPromiseDeferred<IDLInterface<D
         setPendingActivity(this);
         m_connection->open(origin, name, [this, name, promise = WTFMove(promise)](const CacheIdentifierOrError& result) mutable {
             if (!m_isStopped) {
-                if (!result.hasValue())
+                if (!result.has_value())
                     promise.reject(DOMCacheEngine::errorToException(result.error()));
                 else {
                     if (result.value().hadStorageError)
@@ -227,7 +227,7 @@ void DOMCacheStorage::remove(const String& name, DOMPromiseDeferred<IDLBoolean>&
         setPendingActivity(this);
         m_connection->remove(m_caches[position]->identifier(), [this, name, promise = WTFMove(promise)](const CacheIdentifierOrError& result) mutable {
             if (!m_isStopped) {
-                if (!result.hasValue())
+                if (!result.has_value())
                     promise.reject(DOMCacheEngine::errorToException(result.error()));
                 else {
                     if (result.value().hadStorageError)

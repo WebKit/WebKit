@@ -47,7 +47,7 @@ const ClassInfo JSWebAssemblyModule::s_info = { "WebAssembly.Module", &Base::s_i
 JSWebAssemblyModule* JSWebAssemblyModule::createStub(VM& vm, ExecState* exec, Structure* structure, Wasm::Module::ValidationResult&& result)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
-    if (!result.hasValue()) {
+    if (!result.has_value()) {
         throwException(exec, scope, JSWebAssemblyCompileError::create(exec, vm, structure->globalObject()->WebAssemblyCompileErrorStructure(), result.error()));
         return nullptr;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@ static int testParseHTMLInteger(const String& input)
 {
     auto optionalResult = parseHTMLInteger(input);
     EXPECT_TRUE(!!optionalResult);
-    return optionalResult.valueOr(0);
+    return optionalResult.value_or(0);
 }
 
 static bool parseHTMLIntegerFails(const String& input)
@@ -101,7 +101,7 @@ static unsigned testParseHTMLNonNegativeInteger(const String& input)
 {
     auto optionalResult = parseHTMLNonNegativeInteger(input);
     EXPECT_TRUE(!!optionalResult);
-    return optionalResult.valueOr(0);
+    return optionalResult.value_or(0);
 }
 
 static bool parseHTMLNonNegativeIntegerFails(const String& input)

@@ -256,7 +256,7 @@ public:
     void appendRecord(Expected<Record, Error>&& result, uint64_t recordIdentifier, uint64_t updateCounter)
     {
         ASSERT(RunLoop::isMain());
-        if (!result.hasValue()) {
+        if (!result.has_value()) {
             m_failedRecords.append(recordIdentifier);
             return;
         }
@@ -492,7 +492,7 @@ void Cache::updateRecordToDisk(RecordInformation& existingRecord, Record&& recor
 {
     ++existingRecord.updateResponseCounter;
     readRecordFromDisk(existingRecord, [caches = makeRef(m_caches), identifier = m_identifier, recordIdentifier = existingRecord.identifier, record = WTFMove(record), taskCounter = WTFMove(taskCounter)](Expected<Record, Error>&& result) mutable {
-        if (!result.hasValue())
+        if (!result.has_value())
             return;
 
         auto* cache = caches->find(identifier);

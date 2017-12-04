@@ -97,10 +97,10 @@ protected:
         return fail(__VA_ARGS__);                \
     } while (0)
 
-#define WASM_FAIL_IF_HELPER_FAILS(helper) do {   \
-        auto helperResult = helper;              \
-        if (UNLIKELY(!helperResult))             \
-            return helperResult.getUnexpected(); \
+#define WASM_FAIL_IF_HELPER_FAILS(helper) do {                      \
+        auto helperResult = helper;                                 \
+        if (UNLIKELY(!helperResult))                                \
+            return makeUnexpected(WTFMove(helperResult.error()));   \
     } while (0)
 
 private:

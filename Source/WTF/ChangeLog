@@ -1,3 +1,95 @@
+2017-12-04  JF Bastien  <jfbastien@apple.com>
+
+        Update std::expected to match libc++ coding style
+        https://bugs.webkit.org/show_bug.cgi?id=180264
+
+        Reviewed by Alex Christensen.
+
+        As of https://wg21.link/p0323r4 std::expected is on its way to the
+        Library Fundamentals v3 TS (LEWG and EWG voted for this, but LWG
+        hasn't done wording review yet, hence "on its way"). The API is
+        therefore pretty close to what will be in the TS, and I've gotten
+        requests for an easily usable implementation of std::expected. I
+        talked to our clang team and they'll help me migrate our
+        implementation to libc++, but our implementation has to look more
+        like libc++ than it does now. Once in libc++ I'll maintain changes
+        on both sides to make sure neither is out-of-date for too long.
+
+        - Fork std::unexpected into its own header.
+        - Add mild support for an exception-based implementation, but
+          don't do noexcept yet.
+        - Rename everything to follow STL style, and keep a global using
+          or variable alias where possible to reduce WebKit code churn.
+        - Minor API updates to remove things that aren't in the proposal
+          anymore.
+
+        * wtf/Expected.h:
+        (std::experimental::fundamentals_v3::bad_expected_access<void>::bad_expected_access):
+        (std::experimental::fundamentals_v3::bad_expected_access::bad_expected_access):
+        (std::experimental::fundamentals_v3::bad_expected_access::error):
+        (std::experimental::fundamentals_v3::bad_expected_access::error const):
+        (std::experimental::fundamentals_v3::__expected_detail::constexpr_base::constexpr_base):
+        (std::experimental::fundamentals_v3::__expected_detail::base::base):
+        (std::experimental::fundamentals_v3::__expected_detail::base::~base):
+        (std::experimental::fundamentals_v3::expected::expected):
+        (std::experimental::fundamentals_v3::expected::operator=):
+        (std::experimental::fundamentals_v3::expected::swap):
+        (std::experimental::fundamentals_v3::expected::operator-> const):
+        (std::experimental::fundamentals_v3::expected::operator->):
+        (std::experimental::fundamentals_v3::expected::operator* const):
+        (std::experimental::fundamentals_v3::expected::operator*):
+        (std::experimental::fundamentals_v3::expected::has_value const):
+        (std::experimental::fundamentals_v3::expected::value const):
+        (std::experimental::fundamentals_v3::expected::value):
+        (std::experimental::fundamentals_v3::expected::error const):
+        (std::experimental::fundamentals_v3::expected::error):
+        (std::experimental::fundamentals_v3::expected::value_or const):
+        (std::experimental::fundamentals_v3::expected::value_or):
+        (std::experimental::fundamentals_v3::operator==):
+        (std::experimental::fundamentals_v3::operator!=):
+        (std::experimental::fundamentals_v3::swap):
+        (WTF::Unexpected::Unexpected): Deleted.
+        (WTF::Unexpected::value const): Deleted.
+        (WTF::Unexpected::value): Deleted.
+        (WTF::operator==): Deleted.
+        (WTF::operator!=): Deleted.
+        (WTF::makeUnexpected): Deleted.
+        (WTF::ExpectedDetail::Throw): Deleted.
+        (WTF::ExpectedDetail::destroy): Deleted.
+        (WTF::ExpectedDetail::std::is_trivially_destructible<T>::value): Deleted.
+        (WTF::ExpectedDetail::ConstexprBase::ConstexprBase): Deleted.
+        (WTF::ExpectedDetail::Base::Base): Deleted.
+        (WTF::ExpectedDetail::Base::~Base): Deleted.
+        (WTF::Expected::Expected): Deleted.
+        (WTF::Expected::operator=): Deleted.
+        (WTF::Expected::swap): Deleted.
+        (WTF::Expected::operator-> const): Deleted.
+        (WTF::Expected::operator->): Deleted.
+        (WTF::Expected::operator* const): Deleted.
+        (WTF::Expected::operator*): Deleted.
+        (WTF::Expected::operator bool const): Deleted.
+        (WTF::Expected::hasValue const): Deleted.
+        (WTF::Expected::value const): Deleted.
+        (WTF::Expected::value): Deleted.
+        (WTF::Expected::error const): Deleted.
+        (WTF::Expected::error): Deleted.
+        (WTF::Expected::getUnexpected const): Deleted.
+        (WTF::Expected::valueOr const): Deleted.
+        (WTF::Expected::valueOr): Deleted.
+        (WTF::swap): Deleted.
+        (WTF::makeExpected): Deleted.
+        (WTF::makeExpectedFromError): Deleted.
+        * wtf/Forward.h:
+        * wtf/Optional.h:
+        * wtf/StdLibExtras.h:
+        * wtf/Unexpected.h: Added.
+        (std::experimental::fundamentals_v3::unexpected::unexpected):
+        (std::experimental::fundamentals_v3::unexpected::value const):
+        (std::experimental::fundamentals_v3::unexpected::value):
+        (std::experimental::fundamentals_v3::operator==):
+        (std::experimental::fundamentals_v3::operator!=):
+        (makeUnexpected):
+
 2017-12-03  Tomas Popela  <tpopela@redhat.com>
 
         Build fails on x86_64 and arm64 with BMalloc disabled

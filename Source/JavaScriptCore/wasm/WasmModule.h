@@ -45,7 +45,7 @@ using SignatureIndex = uint32_t;
 
 class Module : public ThreadSafeRefCounted<Module> {
 public:
-    using ValidationResult = WTF::Expected<RefPtr<Module>, String>;
+    using ValidationResult = Expected<RefPtr<Module>, String>;
     typedef void CallbackType(ValidationResult&&);
     using AsyncValidationCallback = RefPtr<SharedTask<CallbackType>>;
 

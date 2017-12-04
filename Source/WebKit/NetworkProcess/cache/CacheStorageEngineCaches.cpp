@@ -142,7 +142,7 @@ void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
         readCachesFromDisk([this, callback = WTFMove(callback)](Expected<Vector<Cache>, Error>&& result) mutable {
             makeDirty();
 
-            if (!result.hasValue()) {
+            if (!result.has_value()) {
                 callback(result.error());
 
                 auto pendingCallbacks = WTFMove(m_pendingInitializationCallbacks);
@@ -350,7 +350,7 @@ void Caches::readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, Error
         }
 
         auto result = decodeCachesNames(data, error);
-        if (!result.hasValue()) {
+        if (!result.has_value()) {
             callback(makeUnexpected(result.error()));
             return;
         }

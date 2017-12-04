@@ -469,7 +469,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
         }
 
         auto cachedResource = m_document.cachedResourceLoader().requestRawResource(WTFMove(newRequest));
-        m_resource = cachedResource.valueOr(nullptr);
+        m_resource = cachedResource.value_or(nullptr);
         if (m_resource)
             m_resource->addClient(*this);
         else

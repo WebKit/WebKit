@@ -525,6 +525,29 @@ template<class B0, class B1, class B2, class... Bn> struct wtf_conjunction_impl<
 template<class... _Args> struct conjunction : wtf_conjunction_impl<_Args...> { };
 #endif
 
+#if __cplusplus < 201703L
+
+// These are inline variable for C++17 and later.
+#define __IN_PLACE_INLINE_VARIABLE static const
+
+struct in_place_t {
+    explicit in_place_t() = default;
+};
+__IN_PLACE_INLINE_VARIABLE constexpr in_place_t in_place { };
+
+template <class T> struct in_place_type_t {
+    explicit in_place_type_t() = default;
+};
+template <class T>
+__IN_PLACE_INLINE_VARIABLE constexpr in_place_type_t<T> in_place_type { };
+
+template <size_t I> struct in_place_index_t {
+    explicit in_place_index_t() = default;
+};
+template <size_t I>
+__IN_PLACE_INLINE_VARIABLE constexpr in_place_index_t<I> in_place_index { };
+#endif // __cplusplus < 201703L
+
 } // namespace std
 
 #define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)

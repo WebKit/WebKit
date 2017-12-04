@@ -31,15 +31,19 @@
 #include <string>
 
 #include <wtf/Expected.h>
+#include <wtf/Unexpected.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Ref.h>
 
-namespace WTF {
+namespace std {
 
 template<typename T0, typename T1> std::ostream& operator<<(std::ostream& os, const std::pair<T0, T1>& p)
 {
     return os << '(' << p.first << ", " << p.second << ')';
 }
+
+namespace experimental {
+inline namespace fundamentals_v3 {
 
 template<class E> std::ostream& operator<<(std::ostream& os, const Unexpected<E>& u)
 {
@@ -48,19 +52,20 @@ template<class E> std::ostream& operator<<(std::ostream& os, const Unexpected<E>
 
 template<class T, class E> std::ostream& operator<<(std::ostream& os, const Expected<T, E>& e)
 {
-    if (e.hasValue())
+    if (e.has_value())
         return os << e.value();
     return os << e.error();
 }
 
 template<class E> std::ostream& operator<<(std::ostream& os, const Expected<void, E>& e)
 {
-    if (e.hasValue())
+    if (e.has_value())
         return os << "";
     return os << e.error();
 }
 
-}
+}}} // namespace std::experimental::fundamentals_v3
+
 
 namespace TestWebKitAPI {
 
@@ -111,79 +116,62 @@ TEST(WTF_Expected, expected)
     typedef Expected<foo, std::string> FooString;
     {
         auto e = E();
-        EXPECT_TRUE(e.hasValue());
+        EXPECT_TRUE(e.has_value());
         EXPECT_EQ(e.value(), 0);
-        EXPECT_EQ(e.valueOr(3.14), 0);
+        EXPECT_EQ(e.value_or(3.14), 0);
     }
     {
         constexpr E e;
-        EXPECT_TRUE(e.hasValue());
+        EXPECT_TRUE(e.has_value());
         EXPECT_EQ(e.value(), 0);
-        EXPECT_EQ(e.valueOr(3.14), 0);
+        EXPECT_EQ(e.value_or(3.14), 0);
     }
     {
         auto e = E(42);
-        EXPECT_TRUE(e.hasValue());
+        EXPECT_TRUE(e.has_value());
         EXPECT_EQ(e.value(), 42);
-        EXPECT_EQ(e.valueOr(3.14), 42);
+        EXPECT_EQ(e.value_or(3.14), 42);
         const auto e2(e);
-        EXPECT_TRUE(e2.hasValue());
+        EXPECT_TRUE(e2.has_value());
         EXPECT_EQ(e2.value(), 42);
-        EXPECT_EQ(e2.valueOr(3.14), 42);
+        EXPECT_EQ(e2.value_or(3.14), 42);
         E e3;
         e3 = e2;
-        EXPECT_TRUE(e3.hasValue());
+        EXPECT_TRUE(e3.has_value());
         EXPECT_EQ(e3.value(), 42);
-        EXPECT_EQ(e3.valueOr(3.14), 42);
+        EXPECT_EQ(e3.value_or(3.14), 42);
         const E e4 = e2;
-        EXPECT_TRUE(e4.hasValue());
+        EXPECT_TRUE(e4.has_value());
         EXPECT_EQ(e4.value(), 42);
-        EXPECT_EQ(e4.valueOr(3.14), 42);
+        EXPECT_EQ(e4.value_or(3.14), 42);
     }
     {
         constexpr E c(42);
-        EXPECT_TRUE(c.hasValue());
+        EXPECT_TRUE(c.has_value());
         EXPECT_EQ(c.value(), 42);
-        EXPECT_EQ(c.valueOr(3.14), 42);
+        EXPECT_EQ(c.value_or(3.14), 42);
         constexpr const auto c2(c);
-        EXPECT_TRUE(c2.hasValue());
+        EXPECT_TRUE(c2.has_value());
         EXPECT_EQ(c2.value(), 42);
-        EXPECT_EQ(c2.valueOr(3.14), 42);
+        EXPECT_EQ(c2.value_or(3.14), 42);
     }
     {
         auto u = E(makeUnexpected(oops));
-        EXPECT_FALSE(u.hasValue());
+        EXPECT_FALSE(u.has_value());
         EXPECT_EQ(u.error(), oops);
-        EXPECT_EQ(u.getUnexpected().value(), oops);
-        EXPECT_EQ(u.valueOr(3.14), 3);
+        EXPECT_EQ(u.value_or(3.14), 3);
     }
     {
         auto uv = EV(makeUnexpected(oops));
-        EXPECT_FALSE(uv.hasValue());
+        EXPECT_FALSE(uv.has_value());
         EXPECT_EQ(uv.error(), oops);
-        EXPECT_EQ(uv.getUnexpected().value(), oops);
-        EXPECT_EQ(uv.valueOr(3.14), 3);
+        EXPECT_EQ(uv.value_or(3.14), 3);
     }
     {
         E e = makeUnexpected(oops);
-        EXPECT_FALSE(e.hasValue());
+        EXPECT_FALSE(e.has_value());
         EXPECT_EQ(e.error(), oops);
-        EXPECT_EQ(e.getUnexpected().value(), oops);
-        EXPECT_EQ(e.valueOr(3.14), 3);
-    }
-    {
-        auto e = makeExpectedFromError<int, const char*>(oops);
-        EXPECT_FALSE(e.hasValue());
-        EXPECT_EQ(e.error(), oops);
-        EXPECT_EQ(e.getUnexpected().value(), oops);
-        EXPECT_EQ(e.valueOr(3.14), 3);
-    }
-    {
-        auto e = makeExpectedFromError<int, const void*>(oops);
-        EXPECT_FALSE(e.hasValue());
-        EXPECT_EQ(e.error(), oops);
-        EXPECT_EQ(e.getUnexpected().value(), oops);
-        EXPECT_EQ(e.valueOr(3.14), 3);
+        EXPECT_EQ(e.value_or(3.14), 3);
     }
     {
         auto e = FooChar(42);
@@ -236,51 +224,36 @@ TEST(WTF_Expected, void)
     typedef Expected<void, std::string> String;
     {
         auto e = E();
-        EXPECT_TRUE(e.hasValue());
+        EXPECT_TRUE(e.has_value());
         const auto e2(e);
-        EXPECT_TRUE(e2.hasValue());
+        EXPECT_TRUE(e2.has_value());
         EXPECT_EQ(e, e2);
         E e3;
         e3 = e2;
-        EXPECT_TRUE(e3.hasValue());
+        EXPECT_TRUE(e3.has_value());
         EXPECT_EQ(e, e3);
     }
     {
         constexpr E c;
-        EXPECT_TRUE(c.hasValue());
+        EXPECT_TRUE(c.has_value());
         constexpr const auto c2(c);
-        EXPECT_TRUE(c2.hasValue());
+        EXPECT_TRUE(c2.has_value());
         EXPECT_EQ(c, c2);
     }
     {
         auto u = E(makeUnexpected(oops));
-        EXPECT_FALSE(u.hasValue());
+        EXPECT_FALSE(u.has_value());
         EXPECT_EQ(u.error(), oops);
-        EXPECT_EQ(u.getUnexpected().value(), oops);
     }
     {
         auto uv = EV(makeUnexpected(oops));
-        EXPECT_FALSE(uv.hasValue());
+        EXPECT_FALSE(uv.has_value());
         EXPECT_EQ(uv.error(), oops);
-        EXPECT_EQ(uv.getUnexpected().value(), oops);
     }
     {
         E e = makeUnexpected(oops);
-        EXPECT_FALSE(e.hasValue());
+        EXPECT_FALSE(e.has_value());
         EXPECT_EQ(e.error(), oops);
-        EXPECT_EQ(e.getUnexpected().value(), oops);
-    }
-    {
-        auto e = makeExpectedFromError<void, const char*>(oops);
-        EXPECT_FALSE(e.hasValue());
-        EXPECT_EQ(e.error(), oops);
-        EXPECT_EQ(e.getUnexpected().value(), oops);
-    }
-    {
-        auto e = makeExpectedFromError<void, const void*>(oops);
-        EXPECT_FALSE(e.hasValue());
-        EXPECT_EQ(e.error(), oops);
-        EXPECT_EQ(e.getUnexpected().value(), oops);
     }
     {
         auto e0 = E();
@@ -312,7 +285,7 @@ TEST(WTF_Expected, void)
     }
     {
         typedef Expected<std::pair<int, int>, std::string> Et;
-        EXPECT_EQ(Et(WTF::InPlace, 1, 2), Et(WTF::InPlace, 1, 2));
+        EXPECT_EQ(Et(std::in_place, 1, 2), Et(std::in_place, 1, 2));
     }
 }
 
@@ -465,7 +438,7 @@ TEST(WTF_Expected, Ref)
     {
         RefLogger a("a");
         Expected<Ref<RefLogger>, int> expected = Ref<RefLogger>(a);
-        EXPECT_TRUE(expected.hasValue());
+        EXPECT_TRUE(expected.has_value());
         EXPECT_EQ(&a, expected.value().ptr());
     }
 
@@ -473,8 +446,8 @@ TEST(WTF_Expected, Ref)
 
     {
         RefLogger a("a");
-        Expected<Ref<RefLogger>, int> expected = makeExpected<Ref<RefLogger>, int>(Ref<RefLogger>(a));
-        EXPECT_TRUE(expected.hasValue());
+        Expected<Ref<RefLogger>, int> expected = Expected<Ref<RefLogger>, int>(Ref<RefLogger>(a));
+        EXPECT_TRUE(expected.has_value());
         EXPECT_EQ(&a, expected.value().ptr());
     }
 
@@ -483,7 +456,7 @@ TEST(WTF_Expected, Ref)
     {
         RefLogger a("a");
         Expected<int, Ref<RefLogger>> expected = makeUnexpected(Ref<RefLogger>(a));
-        EXPECT_FALSE(expected.hasValue());
+        EXPECT_FALSE(expected.has_value());
         EXPECT_EQ(&a, expected.error().ptr());
     }
 
@@ -492,7 +465,7 @@ TEST(WTF_Expected, Ref)
     {
         RefLogger a("a");
         Expected<void, Ref<RefLogger>> expected = makeUnexpected(Ref<RefLogger>(a));
-        EXPECT_FALSE(expected.hasValue());
+        EXPECT_FALSE(expected.has_value());
         EXPECT_EQ(&a, expected.error().ptr());
     }
 

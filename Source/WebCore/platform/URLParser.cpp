@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2314,11 +2314,11 @@ Expected<URLParser::IPv4Address, URLParser::IPv4ParsingError> URLParser::parseIP
     if (!iterator.atEnd() || !items.size() || items.size() > 4)
         return makeUnexpected(IPv4ParsingError::NotIPv4);
     for (const auto& item : items) {
-        if (!item.hasValue() && item.error() == IPv4PieceParsingError::Failure)
+        if (!item.has_value() && item.error() == IPv4PieceParsingError::Failure)
             return makeUnexpected(IPv4ParsingError::NotIPv4);
     }
     for (const auto& item : items) {
-        if (!item.hasValue() && item.error() == IPv4PieceParsingError::Overflow)
+        if (!item.has_value() && item.error() == IPv4PieceParsingError::Overflow)
             return makeUnexpected(IPv4ParsingError::Failure);
     }
     if (items.size() > 1) {

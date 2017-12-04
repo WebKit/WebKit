@@ -179,14 +179,14 @@ auto ModuleParser::parseImport() -> PartialResult
             bool isImport = true;
             PartialResult result = parseTableHelper(isImport);
             if (UNLIKELY(!result))
-                return result.getUnexpected();
+                return makeUnexpected(WTFMove(result.error()));
             break;
         }
         case ExternalKind::Memory: {
             bool isImport = true;
             PartialResult result = parseMemoryHelper(isImport);
             if (UNLIKELY(!result))
-                return result.getUnexpected();
+                return makeUnexpected(WTFMove(result.error()));
             break;
         }
         case ExternalKind::Global: {
@@ -263,7 +263,7 @@ auto ModuleParser::parseTableHelper(bool isImport) -> PartialResult
     std::optional<uint32_t> maximum;
     PartialResult limits = parseResizableLimits(initial, maximum);
     if (UNLIKELY(!limits))
-        return limits.getUnexpected();
+        return makeUnexpected(WTFMove(limits.error()));
     WASM_PARSER_FAIL_IF(initial > maxTableEntries, "Table's initial page count of ", initial, " is too big, maximum ", maxTableEntries);
 
     ASSERT(!maximum || *maximum >= initial);
@@ -285,7 +285,7 @@ auto ModuleParser::parseTable() -> PartialResult
     bool isImport = false;
     PartialResult result = parseTableHelper(isImport);
     if (UNLIKELY(!result))
-        return result.getUnexpected();
+        return makeUnexpected(WTFMove(result.error()));
 
     return { };
 }
@@ -303,7 +303,7 @@ auto ModuleParser::parseMemoryHelper(bool isImport) -> PartialResult
         std::optional<uint32_t> maximum;
         PartialResult limits = parseResizableLimits(initial, maximum);
         if (UNLIKELY(!limits))
-            return limits.getUnexpected();
+            return makeUnexpected(WTFMove(limits.error()));
         ASSERT(!maximum || *maximum >= initial);
         WASM_PARSER_FAIL_IF(!PageCount::isValid(initial), "Memory's initial page count of ", initial, " is invalid");
 

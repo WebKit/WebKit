@@ -165,7 +165,7 @@ void NetworkRTCProvider::didReceiveNetworkRTCSocketMessage(IPC::Connection& conn
 void NetworkRTCProvider::createResolver(uint64_t identifier, const String& address)
 {
     auto resolver = std::make_unique<NetworkRTCResolver>([this, identifier](NetworkRTCResolver::AddressesOrError&& result) mutable {
-        if (!result.hasValue()) {
+        if (!result.has_value()) {
             if (result.error() != NetworkRTCResolver::Error::Cancelled)
                 m_connection->connection().send(Messages::WebRTCResolver::ResolvedAddressError(1), identifier);
             return;

@@ -107,7 +107,7 @@ void CrossOriginPreflightChecker::startPreflight()
         preflightRequest.setInitiator(m_loader.options().initiator);
 
     ASSERT(!m_resource);
-    m_resource = m_loader.document().cachedResourceLoader().requestRawResource(WTFMove(preflightRequest)).valueOr(nullptr);
+    m_resource = m_loader.document().cachedResourceLoader().requestRawResource(WTFMove(preflightRequest)).value_or(nullptr);
     if (m_resource)
         m_resource->addClient(*this);
 }

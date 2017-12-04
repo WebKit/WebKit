@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -482,10 +482,10 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Argume
     }
 };
 
-template<typename ValueType, typename ErrorType> struct ArgumentCoder<WTF::Expected<ValueType, ErrorType>> {
-    static void encode(Encoder& encoder, const WTF::Expected<ValueType, ErrorType>& expected)
+template<typename ValueType, typename ErrorType> struct ArgumentCoder<Expected<ValueType, ErrorType>> {
+    static void encode(Encoder& encoder, const Expected<ValueType, ErrorType>& expected)
     {
-        if (!expected.hasValue()) {
+        if (!expected.has_value()) {
             encoder << false;
             encoder << expected.error();
             return;
@@ -494,7 +494,7 @@ template<typename ValueType, typename ErrorType> struct ArgumentCoder<WTF::Expec
         encoder << expected.value();
     }
 
-    static std::optional<WTF::Expected<ValueType, ErrorType>> decode(Decoder& decoder)
+    static std::optional<Expected<ValueType, ErrorType>> decode(Decoder& decoder)
     {
         std::optional<bool> hasValue;
         decoder >> hasValue;
@@ -507,7 +507,7 @@ template<typename ValueType, typename ErrorType> struct ArgumentCoder<WTF::Expec
             if (!value)
                 return std::nullopt;
             
-            WTF::Expected<ValueType, ErrorType> expected(WTFMove(*value));
+            Expected<ValueType, ErrorType> expected(WTFMove(*value));
             return WTFMove(expected);
         }
         std::optional<ErrorType> error;

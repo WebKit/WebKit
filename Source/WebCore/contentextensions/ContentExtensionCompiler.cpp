@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -287,7 +287,7 @@ static void compileToBytecode(CombinedURLFilters&& filters, UniversalActionSet&&
 std::error_code compileRuleList(ContentExtensionCompilationClient& client, String&& ruleJSON)
 {
     auto ruleList = parseRuleList(WTFMove(ruleJSON));
-    if (!ruleList.hasValue())
+    if (!ruleList.has_value())
         return ruleList.error();
     Vector<ContentExtensionRule> parsedRuleList = WTFMove(ruleList.value());
 

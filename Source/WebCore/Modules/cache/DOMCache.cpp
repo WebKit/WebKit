@@ -420,12 +420,12 @@ void DOMCache::retrieveRecords(const URL& url, WTF::Function<void(std::optional<
 
     m_connection->retrieveRecords(m_identifier, retrieveURL, [this, callback = WTFMove(callback)](RecordsOrError&& result) {
         if (!m_isStopped) {
-            if (!result.hasValue()) {
+            if (!result.has_value()) {
                 callback(DOMCacheEngine::errorToException(result.error()));
                 return;
             }
 
-            if (result.hasValue())
+            if (result.has_value())
                 updateRecords(WTFMove(result.value()));
             callback(std::nullopt);
         }
@@ -469,7 +469,7 @@ void DOMCache::batchDeleteOperation(const FetchRequest& request, CacheQueryOptio
     setPendingActivity(this);
     m_connection->batchDeleteOperation(m_identifier, request.internalRequest(), WTFMove(options), [this, callback = WTFMove(callback)](RecordIdentifiersOrError&& result) {
         if (!m_isStopped) {
-            if (!result.hasValue())
+            if (!result.has_value())
                 callback(DOMCacheEngine::errorToException(result.error()));
             else
                 callback(!result.value().isEmpty());
@@ -512,7 +512,7 @@ void DOMCache::batchPutOperation(Vector<Record>&& records, WTF::Function<void(Ex
     setPendingActivity(this);
     m_connection->batchPutOperation(m_identifier, WTFMove(records), [this, callback = WTFMove(callback)](RecordIdentifiersOrError&& result) {
         if (!m_isStopped) {
-            if (!result.hasValue())
+            if (!result.has_value())
                 callback(DOMCacheEngine::errorToException(result.error()));
             else
                 callback({ });

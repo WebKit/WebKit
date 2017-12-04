@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,7 +81,7 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceReque
     if (m_mediaElement)
         cacheRequest.setInitiator(*m_mediaElement.get());
 
-    auto resource = m_document->cachedResourceLoader().requestMedia(WTFMove(cacheRequest)).valueOr(nullptr);
+    auto resource = m_document->cachedResourceLoader().requestMedia(WTFMove(cacheRequest)).value_or(nullptr);
     if (!resource)
         return nullptr;
 

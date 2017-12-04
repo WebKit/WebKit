@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -158,7 +158,7 @@ inline unsigned limitToOnlyHTMLNonNegative(unsigned value, unsigned defaultValue
 inline unsigned limitToOnlyHTMLNonNegative(StringView stringValue, unsigned defaultValue = 0)
 {
     ASSERT(defaultValue <= maxHTMLNonNegativeInteger);
-    unsigned value = parseHTMLNonNegativeInteger(stringValue).valueOr(defaultValue);
+    unsigned value = parseHTMLNonNegativeInteger(stringValue).value_or(defaultValue);
     ASSERT(value <= maxHTMLNonNegativeInteger);
     return value;
 }

@@ -63,7 +63,7 @@ CachedResourceHandle<CachedScript> CachedScriptFetcher::requestScriptWithCache(D
     if (!m_initiatorName.isNull())
         request.setInitiator(m_initiatorName);
 
-    return document.cachedResourceLoader().requestScript(WTFMove(request)).valueOr(nullptr);
+    return document.cachedResourceLoader().requestScript(WTFMove(request)).value_or(nullptr);
 }
 
 }

@@ -282,10 +282,6 @@ constexpr U convert(U v) { return v; }
 constexpr struct trivial_init_t{} trivial_init{};
 
 
-// 20.5.6, In-place construction
-constexpr struct in_place_t{} in_place{};
-
-
 // 20.5.7, Disengaged state indicator
 struct nullopt_t
 {

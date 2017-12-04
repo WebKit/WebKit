@@ -86,7 +86,7 @@ static Expected<Vector<String>, std::error_code> getStringList(ExecState& exec, 
 static Expected<Vector<String>, std::error_code> getDomainList(ExecState& exec, const JSObject* arrayObject)
 {
     auto strings = getStringList(exec, arrayObject);
-    if (!strings.hasValue())
+    if (!strings.has_value())
         return strings;
     for (auto& domain : strings.value()) {
         // Domains should be punycode encoded lower case.
@@ -175,7 +175,7 @@ static Expected<Trigger, std::error_code> loadTrigger(ExecState& exec, const JSO
     const JSValue ifDomainValue = triggerObject.get(&exec, Identifier::fromString(&exec, "if-domain"));
     if (!scope.exception() && ifDomainValue.isObject()) {
         auto ifDomain = getDomainList(exec, asObject(ifDomainValue));
-        if (!ifDomain.hasValue())
+        if (!ifDomain.has_value())
             return makeUnexpected(ifDomain.error());
         trigger.conditions = WTFMove(ifDomain.value());
         if (trigger.conditions.isEmpty())
@@ -190,7 +190,7 @@ static Expected<Trigger, std::error_code> loadTrigger(ExecState& exec, const JSO
         if (trigger.conditionType != Trigger::ConditionType::None)
             return makeUnexpected(ContentExtensionError::JSONMultipleConditions);
         auto unlessDomain = getDomainList(exec, asObject(unlessDomainValue));
-        if (!unlessDomain.hasValue())
+        if (!unlessDomain.has_value())
             return makeUnexpected(unlessDomain.error());
         trigger.conditions = WTFMove(unlessDomain.value());
         if (trigger.conditions.isEmpty())
@@ -204,7 +204,7 @@ static Expected<Trigger, std::error_code> loadTrigger(ExecState& exec, const JSO
         if (trigger.conditionType != Trigger::ConditionType::None)
             return makeUnexpected(ContentExtensionError::JSONMultipleConditions);
         auto ifTopURL = getStringList(exec, asObject(ifTopURLValue));
-        if (!ifTopURL.hasValue())
+        if (!ifTopURL.has_value())
             return makeUnexpected(ifTopURL.error());
         trigger.conditions = WTFMove(ifTopURL.value());
         if (trigger.conditions.isEmpty())
@@ -218,7 +218,7 @@ static Expected<Trigger, std::error_code> loadTrigger(ExecState& exec, const JSO
         if (trigger.conditionType != Trigger::ConditionType::None)
             return makeUnexpected(ContentExtensionError::JSONMultipleConditions);
         auto unlessTopURL = getStringList(exec, asObject(unlessTopURLValue));
-        if (!unlessTopURL.hasValue())
+        if (!unlessTopURL.has_value())
             return makeUnexpected(unlessTopURL.error());
         trigger.conditions = WTFMove(unlessTopURL.value());
         if (trigger.conditions.isEmpty())
@@ -288,11 +288,11 @@ static Expected<std::optional<Action>, std::error_code> loadAction(ExecState& ex
 static Expected<std::optional<ContentExtensionRule>, std::error_code> loadRule(ExecState& exec, const JSObject& ruleObject)
 {
     auto trigger = loadTrigger(exec, ruleObject);
-    if (!trigger.hasValue())
+    if (!trigger.has_value())
         return makeUnexpected(trigger.error());
 
     auto action = loadAction(exec, ruleObject);
-    if (!action.hasValue())
+    if (!action.has_value())
         return makeUnexpected(action.error());
 
     if (action.value())
@@ -340,7 +340,7 @@ static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(
             return makeUnexpected(ContentExtensionError::JSONInvalidRule);
 
         auto rule = loadRule(exec, *ruleObject);
-        if (!rule.hasValue())
+        if (!rule.has_value())
             return makeUnexpected(rule.error());
         if (rule.value())
             ruleList.append(*rule.value());
@@ -364,7 +364,7 @@ Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(String&& r
 
     vm = nullptr;
 
-    if (!ruleList.hasValue())
+    if (!ruleList.has_value())
         return makeUnexpected(ruleList.error());
 
     if (ruleList->isEmpty())

@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2016 Apple Inc. All rights reserved.
+Copyright (C) 2016-2017 Apple Inc. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
@@ -95,7 +95,7 @@ template<typename ReturnType> template<typename OtherType> inline ExceptionOr<Re
 
 template<typename ReturnType> inline bool ExceptionOr<ReturnType>::hasException() const
 {
-    return !m_value.hasValue();
+    return !m_value.has_value();
 }
 
 template<typename ReturnType> inline const Exception& ExceptionOr<ReturnType>::exception() const
@@ -160,7 +160,7 @@ inline ExceptionOr<void>::ExceptionOr(Exception&& exception)
 
 inline bool ExceptionOr<void>::hasException() const
 {
-    return !m_value.hasValue();
+    return !m_value.has_value();
 }
 
 inline const Exception& ExceptionOr<void>::exception() const

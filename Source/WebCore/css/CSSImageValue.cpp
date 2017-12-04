@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -72,7 +72,7 @@ CachedImage* CSSImageValue::loadImage(CachedResourceLoader& loader, const Resour
             ASSERT(loader.document());
             request.updateForAccessControl(*loader.document());
         }
-        m_cachedImage = loader.requestImage(WTFMove(request)).valueOr(nullptr);
+        m_cachedImage = loader.requestImage(WTFMove(request)).value_or(nullptr);
     }
     return m_cachedImage.get();
 }

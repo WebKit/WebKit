@@ -71,12 +71,12 @@ template<typename ReturnType> inline CallbackResult<ReturnType>::CallbackResult(
 
 template<typename ReturnType> inline CallbackResultType CallbackResult<ReturnType>::type() const
 {
-    return m_value.hasValue() ? CallbackResultType::Success : m_value.error();
+    return m_value.has_value() ? CallbackResultType::Success : m_value.error();
 }
 
 template<typename ReturnType> inline auto CallbackResult<ReturnType>::releaseReturnValue() -> ReturnType&&
 {
-    ASSERT(m_value.hasValue());
+    ASSERT(m_value.has_value());
     return WTFMove(m_value.value());
 }
 

@@ -119,7 +119,7 @@ Engine::Engine(String&& rootPath)
 void Engine::open(const String& origin, const String& cacheName, CacheIdentifierCallback&& callback)
 {
     readCachesFromDisk(origin, [cacheName, callback = WTFMove(callback)](CachesOrError&& cachesOrError) mutable {
-        if (!cachesOrError.hasValue()) {
+        if (!cachesOrError.has_value()) {
             callback(makeUnexpected(cachesOrError.error()));
             return;
         }
@@ -149,7 +149,7 @@ void Engine::remove(uint64_t cacheIdentifier, CacheIdentifierCallback&& callback
 void Engine::retrieveCaches(const String& origin, uint64_t updateCounter, CacheInfosCallback&& callback)
 {
     readCachesFromDisk(origin, [updateCounter, callback = WTFMove(callback)](CachesOrError&& cachesOrError) mutable {
-        if (!cachesOrError.hasValue()) {
+        if (!cachesOrError.has_value()) {
             callback(makeUnexpected(cachesOrError.error()));
             return;
         }
@@ -161,7 +161,7 @@ void Engine::retrieveCaches(const String& origin, uint64_t updateCounter, CacheI
 void Engine::retrieveRecords(uint64_t cacheIdentifier, WebCore::URL&& url, RecordsCallback&& callback)
 {
     readCache(cacheIdentifier, [url = WTFMove(url), callback = WTFMove(callback)](CacheOrError&& result) mutable {
-        if (!result.hasValue()) {
+        if (!result.has_value()) {
             callback(makeUnexpected(result.error()));
             return;
         }
@@ -172,7 +172,7 @@ void Engine::retrieveRecords(uint64_t cacheIdentifier, WebCore::URL&& url, Recor
 void Engine::putRecords(uint64_t cacheIdentifier, Vector<Record>&& records, RecordIdentifiersCallback&& callback)
 {
     readCache(cacheIdentifier, [records = WTFMove(records), callback = WTFMove(callback)](CacheOrError&& result) mutable {
-        if (!result.hasValue()) {
+        if (!result.has_value()) {
             callback(makeUnexpected(result.error()));
             return;
         }
@@ -184,7 +184,7 @@ void Engine::putRecords(uint64_t cacheIdentifier, Vector<Record>&& records, Reco
 void Engine::deleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, RecordIdentifiersCallback&& callback)
 {
     readCache(cacheIdentifier, [request = WTFMove(request), options = WTFMove(options), callback = WTFMove(callback)](CacheOrError&& result) mutable {
-        if (!result.hasValue()) {
+        if (!result.has_value()) {
             callback(makeUnexpected(result.error()));
             return;
         }
@@ -397,7 +397,7 @@ void Engine::fetchEntries(bool shouldComputeSize, WTF::CompletionHandler<void(Ve
 
             auto cacheOrigin = origin->securityOrigin()->toString();
             protectedThis->readCachesFromDisk(cacheOrigin, [origin = WTFMove(origin.value()), taskCounter = WTFMove(taskCounter)] (CachesOrError&& result) mutable {
-                if (!result.hasValue())
+                if (!result.has_value())
                     return;
                 taskCounter->addOrigin(WTFMove(origin), result.value().get().storageSize());
 
@@ -440,7 +440,7 @@ void Engine::clearCachesForOrigin(const String& origin, CallbackAggregator& task
 void Engine::clearMemoryRepresentation(const String& origin, WebCore::DOMCacheEngine::CompletionCallback&& callback)
 {
     readCachesFromDisk(origin, [callback = WTFMove(callback)](CachesOrError&& result) {
-        if (!result.hasValue()) {
+        if (!result.has_value()) {
             callback(result.error());
             return;
         }
