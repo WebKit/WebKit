@@ -91,17 +91,15 @@ static Record fromCrossThreadRecordData(CrossThreadRecordData&& data)
 Ref<WorkerCacheStorageConnection> WorkerCacheStorageConnection::create(WorkerGlobalScope& scope)
 {
     auto connection = adoptRef(*new WorkerCacheStorageConnection(scope));
-    callOnMainThread([protectedConnection = connection.copyRef()]() mutable {
-        ASSERT(isMainThread());
-        protectedConnection->m_mainThreadConnection = protectedConnection->m_proxy.createCacheStorageConnection();
+    callOnMainThreadAndWait([workerThread = makeRef(scope.thread()), connection = connection.ptr()]() mutable {
+        connection->m_mainThreadConnection = workerThread->workerLoaderProxy().createCacheStorageConnection();
     });
+    ASSERT(connection->m_mainThreadConnection);
     return connection;
 }
 
 WorkerCacheStorageConnection::WorkerCacheStorageConnection(WorkerGlobalScope& scope)
     : m_scope(scope)
-    , m_proxy(m_scope.thread().workerLoaderProxy())
-    , m_taskMode(WorkerRunLoop::defaultMode().isolatedCopy())
 {
 }
 
@@ -113,73 +111,55 @@ WorkerCacheStorageConnection::~WorkerCacheStorageConnection()
 
 void WorkerCacheStorageConnection::doOpen(uint64_t requestIdentifier, const String& origin, const String& cacheName)
 {
-    callOnMainThread([this, protectedThis = makeRef(*this), requestIdentifier, origin = origin.isolatedCopy(), cacheName = cacheName.isolatedCopy()]() mutable {
-        ASSERT(isMainThread());
-        ASSERT(m_mainThreadConnection);
-
-        m_mainThreadConnection->open(origin, cacheName, [this, protectedThis = WTFMove(protectedThis), requestIdentifier](const CacheIdentifierOrError& result) mutable {
-            m_proxy.postTaskForModeToWorkerGlobalScope([this, protectedThis = WTFMove(protectedThis), requestIdentifier, result](ScriptExecutionContext& context) mutable {
-                ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-                openCompleted(requestIdentifier, result);
-            }, m_taskMode);
+    callOnMainThread([workerThread = makeRef(m_scope.thread()), mainThreadConnection = m_mainThreadConnection, requestIdentifier, origin = origin.isolatedCopy(), cacheName = cacheName.isolatedCopy()] () mutable {
+        mainThreadConnection->open(origin, cacheName, [workerThread = WTFMove(workerThread), requestIdentifier] (const CacheIdentifierOrError& result) mutable {
+            workerThread->runLoop().postTaskForMode([requestIdentifier, result] (auto& scope) mutable {
+                downcast<WorkerGlobalScope>(scope).cacheStorageConnection().openCompleted(requestIdentifier, result);
+            }, WorkerRunLoop::defaultMode());
         });
     });
 }
 
 void WorkerCacheStorageConnection::doRemove(uint64_t requestIdentifier, uint64_t cacheIdentifier)
 {
-    callOnMainThread([this, protectedThis = makeRef(*this), requestIdentifier, cacheIdentifier]() mutable {
-        ASSERT(isMainThread());
-        ASSERT(m_mainThreadConnection);
-
-        m_mainThreadConnection->remove(cacheIdentifier, [this, protectedThis = WTFMove(protectedThis), requestIdentifier, cacheIdentifier](const CacheIdentifierOrError& result) mutable {
+    callOnMainThread([workerThread = makeRef(m_scope.thread()), mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier] () mutable {
+        mainThreadConnection->remove(cacheIdentifier, [workerThread = WTFMove(workerThread), requestIdentifier, cacheIdentifier] (const CacheIdentifierOrError& result) mutable {
             ASSERT_UNUSED(cacheIdentifier, !result.hasValue() || result.value().identifier == cacheIdentifier);
-            m_proxy.postTaskForModeToWorkerGlobalScope([this, protectedThis = WTFMove(protectedThis), requestIdentifier, result](ScriptExecutionContext& context) mutable {
-                ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-                removeCompleted(requestIdentifier, result);
-            }, m_taskMode);
+            workerThread->runLoop().postTaskForMode([requestIdentifier, result] (auto& scope) mutable {
+                downcast<WorkerGlobalScope>(scope).cacheStorageConnection().removeCompleted(requestIdentifier, result);
+            }, WorkerRunLoop::defaultMode());
         });
     });
 }
 
 void WorkerCacheStorageConnection::doRetrieveCaches(uint64_t requestIdentifier, const String& origin, uint64_t updateCounter)
 {
-    callOnMainThread([this, protectedThis = makeRef(*this), requestIdentifier, origin = origin.isolatedCopy(), updateCounter]() mutable {
-        ASSERT(isMainThread());
-        ASSERT(m_mainThreadConnection);
-
-        m_mainThreadConnection->retrieveCaches(origin, updateCounter, [this, protectedThis = WTFMove(protectedThis), requestIdentifier](CacheInfosOrError&& result) mutable {
+    callOnMainThread([workerThread = makeRef(m_scope.thread()), mainThreadConnection = m_mainThreadConnection, requestIdentifier, origin = origin.isolatedCopy(), updateCounter] () mutable {
+        mainThreadConnection->retrieveCaches(origin, updateCounter, [workerThread = WTFMove(workerThread), requestIdentifier] (CacheInfosOrError&& result) mutable {
             CacheInfosOrError isolatedResult;
             if (!result.hasValue())
                 isolatedResult = WTFMove(result);
             else
                 isolatedResult = result.value().isolatedCopy();
 
-            m_proxy.postTaskForModeToWorkerGlobalScope([this, protectedThis = WTFMove(protectedThis), requestIdentifier, result = WTFMove(isolatedResult)](ScriptExecutionContext& context) mutable {
-                ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-                updateCaches(requestIdentifier, WTFMove(result));
-            }, m_taskMode);
+            workerThread->runLoop().postTaskForMode([requestIdentifier, result = WTFMove(isolatedResult)] (auto& scope) mutable {
+                downcast<WorkerGlobalScope>(scope).cacheStorageConnection().updateCaches(requestIdentifier, WTFMove(result));
+            }, WorkerRunLoop::defaultMode());
         });
     });
 }
 
 void WorkerCacheStorageConnection::reference(uint64_t cacheIdentifier)
 {
-    callOnMainThread([this, protectedThis = makeRef(*this), cacheIdentifier]() {
-        ASSERT(isMainThread());
-        ASSERT(m_mainThreadConnection);
-
-        m_mainThreadConnection->reference(cacheIdentifier);
+    callOnMainThread([mainThreadConnection = m_mainThreadConnection, cacheIdentifier]() {
+        mainThreadConnection->reference(cacheIdentifier);
     });
 }
 
 void WorkerCacheStorageConnection::dereference(uint64_t cacheIdentifier)
 {
-    callOnMainThread([this, protectedThis = makeRef(*this), cacheIdentifier]() {
-        ASSERT(isMainThread());
-        ASSERT(m_mainThreadConnection);
-
-        m_mainThreadConnection->dereference(cacheIdentifier);
+    callOnMainThread([mainThreadConnection = m_mainThreadConnection, cacheIdentifier]() {
+        mainThreadConnection->dereference(cacheIdentifier);
     });
 }
 
@@ -210,47 +190,33 @@ static inline RecordsOrError recordsOrErrorFromRecordsData(Expected<Vector<Cross
 
 void WorkerCacheStorageConnection::doRetrieveRecords(uint64_t requestIdentifier, uint64_t cacheIdentifier, const URL& url)
 {
-    callOnMainThread([this, protectedThis = makeRef(*this), requestIdentifier, cacheIdentifier, url = url.isolatedCopy()]() mutable {
-        ASSERT(isMainThread());
-        ASSERT(m_mainThreadConnection);
-
-        m_mainThreadConnection->retrieveRecords(cacheIdentifier, url, [this, protectedThis = WTFMove(protectedThis), requestIdentifier](RecordsOrError&& result) mutable {
-            m_proxy.postTaskForModeToWorkerGlobalScope([this, protectedThis = WTFMove(protectedThis), result = recordsDataOrErrorFromRecords(result), requestIdentifier](ScriptExecutionContext& context) mutable {
-                ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-                updateRecords(requestIdentifier, recordsOrErrorFromRecordsData(WTFMove(result)));
-            }, m_taskMode);
+    callOnMainThread([workerThread = makeRef(m_scope.thread()), mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier, url = url.isolatedCopy()]() mutable {
+        mainThreadConnection->retrieveRecords(cacheIdentifier, url, [workerThread = WTFMove(workerThread), requestIdentifier](RecordsOrError&& result) mutable {
+            workerThread->runLoop().postTaskForMode([result = recordsDataOrErrorFromRecords(result), requestIdentifier] (auto& scope) mutable {
+                downcast<WorkerGlobalScope>(scope).cacheStorageConnection().updateRecords(requestIdentifier, recordsOrErrorFromRecordsData(WTFMove(result)));
+            }, WorkerRunLoop::defaultMode());
         });
     });
 }
 
 void WorkerCacheStorageConnection::doBatchDeleteOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, const ResourceRequest& request, CacheQueryOptions&& options)
 {
-    callOnMainThread([this, protectedThis = makeRef(*this), requestIdentifier, cacheIdentifier, request = request.isolatedCopy(), options = options.isolatedCopy()]() mutable {
-        ASSERT(isMainThread());
-        ASSERT(m_mainThreadConnection);
-
-        m_mainThreadConnection->batchDeleteOperation(cacheIdentifier, request, WTFMove(options), [this, protectedThis = WTFMove(protectedThis), requestIdentifier](RecordIdentifiersOrError&& result) mutable {
-
-            m_proxy.postTaskForModeToWorkerGlobalScope([this, protectedThis = WTFMove(protectedThis), requestIdentifier, result = WTFMove(result)](ScriptExecutionContext& context) mutable {
-                ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-                deleteRecordsCompleted(requestIdentifier, WTFMove(result));
-            }, m_taskMode);
+    callOnMainThread([workerThread = makeRef(m_scope.thread()), mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier, request = request.isolatedCopy(), options = options.isolatedCopy()]() mutable {
+        mainThreadConnection->batchDeleteOperation(cacheIdentifier, request, WTFMove(options), [workerThread = WTFMove(workerThread), requestIdentifier](RecordIdentifiersOrError&& result) mutable {
+            workerThread->runLoop().postTaskForMode([requestIdentifier, result = WTFMove(result)] (auto& scope) mutable {
+                downcast<WorkerGlobalScope>(scope).cacheStorageConnection().deleteRecordsCompleted(requestIdentifier, WTFMove(result));
+            }, WorkerRunLoop::defaultMode());
         });
     });
 }
 
 void WorkerCacheStorageConnection::doBatchPutOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<Record>&& records)
 {
-    callOnMainThread([this, protectedThis = makeRef(*this), requestIdentifier, cacheIdentifier, recordsData = recordsDataFromRecords(records)]() mutable {
-        ASSERT(isMainThread());
-        ASSERT(m_mainThreadConnection);
-
-        m_mainThreadConnection->batchPutOperation(cacheIdentifier, recordsFromRecordsData(WTFMove(recordsData)), [this, protectedThis = WTFMove(protectedThis), requestIdentifier](RecordIdentifiersOrError&& result) mutable {
-
-            m_proxy.postTaskForModeToWorkerGlobalScope([this, protectedThis = WTFMove(protectedThis), requestIdentifier, result = WTFMove(result)](ScriptExecutionContext& context) mutable {
-                ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-                putRecordsCompleted(requestIdentifier, WTFMove(result));
-            }, m_taskMode);
+    callOnMainThread([workerThread = makeRef(m_scope.thread()), mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier, recordsData = recordsDataFromRecords(records)]() mutable {
+        mainThreadConnection->batchPutOperation(cacheIdentifier, recordsFromRecordsData(WTFMove(recordsData)), [workerThread = WTFMove(workerThread), requestIdentifier] (RecordIdentifiersOrError&& result) mutable {
+            workerThread->runLoop().postTaskForMode([requestIdentifier, result = WTFMove(result)] (auto& scope) mutable {
+                downcast<WorkerGlobalScope>(scope).cacheStorageConnection().putRecordsCompleted(requestIdentifier, WTFMove(result));
+            }, WorkerRunLoop::defaultMode());
         });
     });
 }

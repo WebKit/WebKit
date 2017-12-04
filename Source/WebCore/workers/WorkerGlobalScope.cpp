@@ -395,7 +395,7 @@ Performance& WorkerGlobalScope::performance() const
     return *m_performance;
 }
 
-CacheStorageConnection& WorkerGlobalScope::cacheStorageConnection()
+WorkerCacheStorageConnection& WorkerGlobalScope::cacheStorageConnection()
 {
     if (!m_cacheStorageConnection)
         m_cacheStorageConnection = WorkerCacheStorageConnection::create(*this);

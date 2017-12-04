@@ -71,7 +71,7 @@ public:
     void stopIndexedDatabase();
 #endif
 
-    CacheStorageConnection& cacheStorageConnection();
+    WorkerCacheStorageConnection& cacheStorageConnection();
 
     WorkerScriptController* script() { return m_script.get(); }
     void clearScript() { m_script = nullptr; }
