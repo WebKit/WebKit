@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Igalia S.L. All rights reserved.
+ * Copyright (C) 2017 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,36 +21,44 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
 
-#pragma once
+#include "config.h"
+#include "MathMLRootElement.h"
 
 #if ENABLE(MATHML)
 
-#include "MathMLPresentationElement.h"
+#include "RenderMathMLRoot.h"
 
 namespace WebCore {
 
-enum class ScriptType;
+using namespace MathMLNames;
 
-class MathMLScriptsElement : public MathMLPresentationElement {
-public:
-    static Ref<MathMLScriptsElement> create(const QualifiedName& tagName, Document&);
-    ScriptType scriptType() const { return m_scriptType; }
-    const Length& subscriptShift();
-    const Length& superscriptShift();
+static RootType rootTypeOf(const QualifiedName& tagName)
+{
+    if (tagName == msqrtTag)
+        return RootType::SquareRoot;
+    ASSERT(tagName == mrootTag);
+    return RootType::RootWithIndex;
+}
 
-protected:
-    MathMLScriptsElement(const QualifiedName& tagName, Document&);
+inline MathMLRootElement::MathMLRootElement(const QualifiedName& tagName, Document& document)
+    : MathMLRowElement(tagName, document)
+    , m_rootType(rootTypeOf(tagName))
+{
+}
 
-private:
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+Ref<MathMLRootElement> MathMLRootElement::create(const QualifiedName& tagName, Document& document)
+{
+    return adoptRef(*new MathMLRootElement(tagName, document));
+}
 
-    const ScriptType m_scriptType;
-    std::optional<Length> m_subscriptShift;
-    std::optional<Length> m_superscriptShift;
-};
+RenderPtr<RenderElement> MathMLRootElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+{
+    ASSERT(hasTagName(msqrtTag) || hasTagName(mrootTag));
+    return createRenderer<RenderMathMLRoot>(*this, WTFMove(style));
+}
 
 }
 

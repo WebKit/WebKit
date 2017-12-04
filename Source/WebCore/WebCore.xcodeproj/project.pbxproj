@@ -4664,6 +4664,7 @@
 		FA654A6C1108ABED002615E0 /* MathMLTokenElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FA654A6A1108ABED002615E0 /* MathMLTokenElement.h */; };
 		FA654A6C1108ABED002616F1 /* MathMLOperatorElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FA654A6A1108ABED002616F1 /* MathMLOperatorElement.h */; };
 		FA654A6C1108ABED002626F1 /* MathMLUnderOverElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FA654A6A1108ABED002626F1 /* MathMLUnderOverElement.h */; };
+		FA765A6C1108ABED00782A5C /* MathMLRootElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FA765A6A1108ABED00782A5C /* MathMLRootElement.h */; };
 		FA765A6C1108ABED002615E0 /* MathMLRowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FA765A6A1108ABED002615E0 /* MathMLRowElement.h */; };
 		FABE72F51059C1EB00D888CC /* MathMLAnnotationElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FABE72EE1059C1EB00D888CC /* MathMLAnnotationElement.h */; };
 		FABE72F51059C1EB00D999DD /* MathMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FABE72EE1059C1EB00D999DD /* MathMLElement.h */; };
@@ -14079,6 +14080,8 @@
 		FA654A6A1108ABED002616F1 /* MathMLOperatorElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLOperatorElement.h; sourceTree = "<group>"; };
 		FA654A6A1108ABED002626F1 /* MathMLUnderOverElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLUnderOverElement.h; sourceTree = "<group>"; };
 		FA6E466FCD0418A9966A5B60 /* DNSResolveQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DNSResolveQueue.h; sourceTree = "<group>"; };
+		FA765A691108ABED00782A5C /* MathMLRootElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLRootElement.cpp; sourceTree = "<group>"; };
+		FA765A6A1108ABED00782A5C /* MathMLRootElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLRootElement.h; sourceTree = "<group>"; };
 		FA765A691108ABED002615E0 /* MathMLRowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLRowElement.cpp; sourceTree = "<group>"; };
 		FA765A6A1108ABED002615E0 /* MathMLRowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLRowElement.h; sourceTree = "<group>"; };
 		FABE72ED1059C1EB00D888CC /* MathMLAnnotationElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLAnnotationElement.cpp; sourceTree = "<group>"; };
@@ -25545,6 +25548,8 @@
 				B59CA849D41E6F65D81198BC /* MathMLPaddedElement.h */,
 				FABE72EF1059C1EB00D999DD /* MathMLPresentationElement.cpp */,
 				FABE72F01059C1EB00D999DD /* MathMLPresentationElement.h */,
+				FA765A691108ABED00782A5C /* MathMLRootElement.cpp */,
+				FA765A6A1108ABED00782A5C /* MathMLRootElement.h */,
 				FA765A691108ABED002615E0 /* MathMLRowElement.cpp */,
 				FA765A6A1108ABED002615E0 /* MathMLRowElement.h */,
 				B59CA59AF170D8FAA5B8C9AD /* MathMLScriptsElement.cpp */,
@@ -28191,6 +28196,7 @@
 				44A28AAF12DFB8BF00AE923B /* MathMLNames.h in Headers */,
 				FA654A6C1108ABED002616F1 /* MathMLOperatorElement.h in Headers */,
 				FABE72F71059C1EB00D999DD /* MathMLPresentationElement.h in Headers */,
+				FA765A6C1108ABED00782A5C /* MathMLRootElement.h in Headers */,
 				FA765A6C1108ABED002615E0 /* MathMLRowElement.h in Headers */,
 				4FA65A6C1108ABED002615E0 /* MathMLSpaceElement.h in Headers */,
 				439176E012DA25E17BAF80A2 /* MathMLStyle.h in Headers */,

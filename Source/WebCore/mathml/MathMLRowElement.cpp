@@ -32,7 +32,6 @@
 #include "MathMLOperatorElement.h"
 #include "RenderMathMLFenced.h"
 #include "RenderMathMLMenclose.h"
-#include "RenderMathMLRoot.h"
 #include "RenderMathMLRow.h"
 
 namespace WebCore {
@@ -61,9 +60,6 @@ void MathMLRowElement::childrenChanged(const ChildChange& change)
 
 RenderPtr<RenderElement> MathMLRowElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    if (hasTagName(msqrtTag) || hasTagName(mrootTag))
-        return createRenderer<RenderMathMLRoot>(*this, WTFMove(style));
-
     if (hasTagName(mfencedTag))
         return createRenderer<RenderMathMLFenced>(*this, WTFMove(style));
 

@@ -33,13 +33,15 @@
 
 namespace WebCore {
 
-class MathMLRowElement;
+class MathMLRootElement;
+
+enum class RootType { SquareRoot, RootWithIndex };
 
 // Render base^(1/index), or sqrt(base) using radical notation.
 class RenderMathMLRoot final : public RenderMathMLRow {
     WTF_MAKE_ISO_ALLOCATED(RenderMathMLRoot);
 public:
-    RenderMathMLRoot(MathMLRowElement&, RenderStyle&&);
+    RenderMathMLRoot(MathMLRootElement&, RenderStyle&&);
     void updateStyle();
 
 private:
@@ -48,6 +50,8 @@ private:
     RenderBox& getIndex() const;
     bool isRenderMathMLRoot() const final { return true; }
     const char* renderName() const final { return "RenderMathMLRoot"; }
+    MathMLRootElement& element() const;
+    RootType rootType() const;
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 
@@ -72,9 +76,7 @@ private:
     LayoutUnit m_radicalOperatorTop;
     LayoutUnit m_baseWidth;
 
-    enum RootType { SquareRoot, RootWithIndex };
-    RootType m_kind;
-    bool isRenderMathMLSquareRoot() const final { return m_kind == SquareRoot; }
+    bool isRenderMathMLSquareRoot() const final { return rootType() == RootType::SquareRoot; }
 };
 
 } // namespace WebCore

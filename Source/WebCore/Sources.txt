@@ -1254,6 +1254,7 @@ mathml/MathMLOperatorDictionary.cpp
 mathml/MathMLOperatorElement.cpp
 mathml/MathMLPaddedElement.cpp
 mathml/MathMLPresentationElement.cpp
+mathml/MathMLRootElement.cpp
 mathml/MathMLRowElement.cpp
 mathml/MathMLScriptsElement.cpp
 mathml/MathMLSelectElement.cpp

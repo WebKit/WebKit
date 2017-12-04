@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Igalia S.L. All rights reserved.
+ * Copyright (C) 2017 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,29 +27,22 @@
 
 #if ENABLE(MATHML)
 
-#include "MathMLPresentationElement.h"
+#include "MathMLRowElement.h"
 
 namespace WebCore {
 
-enum class ScriptType;
+enum class RootType;
 
-class MathMLScriptsElement : public MathMLPresentationElement {
+class MathMLRootElement final : public MathMLRowElement {
 public:
-    static Ref<MathMLScriptsElement> create(const QualifiedName& tagName, Document&);
-    ScriptType scriptType() const { return m_scriptType; }
-    const Length& subscriptShift();
-    const Length& superscriptShift();
-
-protected:
-    MathMLScriptsElement(const QualifiedName& tagName, Document&);
+    static Ref<MathMLRootElement> create(const QualifiedName& tagName, Document&);
+    RootType rootType() const { return m_rootType; }
 
 private:
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    MathMLRootElement(const QualifiedName& tagName, Document&);
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
-    const ScriptType m_scriptType;
-    std::optional<Length> m_subscriptShift;
-    std::optional<Length> m_superscriptShift;
+    const RootType m_rootType;
 };
 
 }

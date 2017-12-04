@@ -92,11 +92,11 @@ bool RenderMathMLUnderOver::isValid() const
     if (!child)
         return false;
     child = child->nextSiblingBox();
-    switch (m_scriptType) {
-    case Over:
-    case Under:
+    switch (scriptType()) {
+    case ScriptType::Over:
+    case ScriptType::Under:
         return !child;
-    case UnderOver:
+    case ScriptType::UnderOver:
         return child && !child->nextSiblingBox();
     default:
         ASSERT_NOT_REACHED();
@@ -120,16 +120,16 @@ RenderBox& RenderMathMLUnderOver::base() const
 RenderBox& RenderMathMLUnderOver::under() const
 {
     ASSERT(isValid());
-    ASSERT(m_scriptType == Under || m_scriptType == UnderOver);
+    ASSERT(scriptType() == ScriptType::Under || scriptType() == ScriptType::UnderOver);
     return *firstChildBox()->nextSiblingBox();
 }
 
 RenderBox& RenderMathMLUnderOver::over() const
 {
     ASSERT(isValid());
-    ASSERT(m_scriptType == Over || m_scriptType == UnderOver);
+    ASSERT(scriptType() == ScriptType::Over || scriptType() == ScriptType::UnderOver);
     auto* secondChild = firstChildBox()->nextSiblingBox();
-    return m_scriptType == Over ? *secondChild : *secondChild->nextSiblingBox();
+    return scriptType() == ScriptType::Over ? *secondChild : *secondChild->nextSiblingBox();
 }
 
 
@@ -150,10 +150,10 @@ void RenderMathMLUnderOver::computePreferredLogicalWidths()
 
     LayoutUnit preferredWidth = base().maxPreferredLogicalWidth();
 
-    if (m_scriptType == Under || m_scriptType == UnderOver)
+    if (scriptType() == ScriptType::Under || scriptType() == ScriptType::UnderOver)
         preferredWidth = std::max(preferredWidth, under().maxPreferredLogicalWidth());
 
-    if (m_scriptType == Over || m_scriptType == UnderOver)
+    if (scriptType() == ScriptType::Over || scriptType() == ScriptType::UnderOver)
         preferredWidth = std::max(preferredWidth, over().maxPreferredLogicalWidth());
 
     m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = preferredWidth;
@@ -168,7 +168,7 @@ LayoutUnit RenderMathMLUnderOver::horizontalOffset(const RenderBox& child) const
 
 bool RenderMathMLUnderOver::hasAccent(bool accentUnder) const
 {
-    ASSERT(m_scriptType == UnderOver || (accentUnder && m_scriptType == Under) || (!accentUnder && m_scriptType == Over));
+    ASSERT(scriptType() == ScriptType::UnderOver || (accentUnder && scriptType() == ScriptType::Under) || (!accentUnder && scriptType() == ScriptType::Over));
 
     const MathMLElement::BooleanValue& attributeValue = accentUnder ? element().accentUnder() : element().accent();
     if (attributeValue == MathMLElement::BooleanValue::True)
@@ -264,19 +264,19 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
     stretchHorizontalOperatorsAndLayoutChildren();
 
     ASSERT(!base().needsLayout());
-    ASSERT(m_scriptType == Over || !under().needsLayout());
-    ASSERT(m_scriptType == Under || !over().needsLayout());
+    ASSERT(scriptType() == ScriptType::Over || !under().needsLayout());
+    ASSERT(scriptType() == ScriptType::Under || !over().needsLayout());
     
     LayoutUnit logicalWidth = base().logicalWidth();
-    if (m_scriptType == Under || m_scriptType == UnderOver)
+    if (scriptType() == ScriptType::Under || scriptType() == ScriptType::UnderOver)
         logicalWidth = std::max(logicalWidth, under().logicalWidth());
-    if (m_scriptType == Over || m_scriptType == UnderOver)
+    if (scriptType() == ScriptType::Over || scriptType() == ScriptType::UnderOver)
         logicalWidth = std::max(logicalWidth, over().logicalWidth());
     setLogicalWidth(logicalWidth);
 
     VerticalParameters parameters = verticalParameters();
     LayoutUnit verticalOffset = 0;
-    if (m_scriptType == Over || m_scriptType == UnderOver) {
+    if (scriptType() == ScriptType::Over || scriptType() == ScriptType::UnderOver) {
         verticalOffset += parameters.overExtraAscender;
         over().setLocation(LayoutPoint(horizontalOffset(over()), verticalOffset));
         if (parameters.useUnderOverBarFallBack) {
@@ -294,7 +294,7 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
     }
     base().setLocation(LayoutPoint(horizontalOffset(base()), verticalOffset));
     verticalOffset += base().logicalHeight();
-    if (m_scriptType == Under || m_scriptType == UnderOver) {
+    if (scriptType() == ScriptType::Under || scriptType() == ScriptType::UnderOver) {
         if (parameters.useUnderOverBarFallBack) {
             if (!hasAccentUnder())
                 verticalOffset += parameters.underGapMin;

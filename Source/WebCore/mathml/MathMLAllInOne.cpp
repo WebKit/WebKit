@@ -34,6 +34,7 @@
 #include "MathMLOperatorElement.cpp"
 #include "MathMLPaddedElement.cpp"
 #include "MathMLPresentationElement.cpp"
+#include "MathMLRootElement.cpp"
 #include "MathMLRowElement.cpp"
 #include "MathMLScriptsElement.cpp"
 #include "MathMLSelectElement.cpp"
