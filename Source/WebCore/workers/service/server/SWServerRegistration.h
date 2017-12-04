@@ -90,6 +90,7 @@ private:
     void forEachConnection(const WTF::Function<void(SWServer::Connection&)>&);
 
     void activate();
+    void handleClientUnload();
 
     ServiceWorkerRegistrationIdentifier m_identifier;
     ServiceWorkerRegistrationKey m_registrationKey;

@@ -161,6 +161,8 @@ void SWServerRegistration::removeClientUsingRegistration(const ServiceWorkerClie
 
     if (iterator->value.isEmpty())
         m_clientsUsingRegistration.remove(iterator);
+
+    handleClientUnload();
 }
 
 // https://w3c.github.io/ServiceWorker/#notify-controller-change
@@ -279,6 +281,16 @@ void SWServerRegistration::didFinishActivation(ServiceWorkerIdentifier serviceWo
 
     // Run the Update Worker State algorithm passing registration's active worker and activated as the arguments.
     updateWorkerState(*activeWorker(), ServiceWorkerState::Activated);
+}
+
+// https://w3c.github.io/ServiceWorker/#on-client-unload-algorithm
+void SWServerRegistration::handleClientUnload()
+{
+    if (hasClientsUsingRegistration())
+        return;
+    if (isUninstalling() && tryClear())
+        return;
+    tryActivate();
 }
 
 } // namespace WebCore
