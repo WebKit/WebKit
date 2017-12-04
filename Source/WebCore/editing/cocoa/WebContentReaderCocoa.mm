@@ -95,7 +95,7 @@ static NSDictionary *attributesForAttributedStringConversion()
         @"InterchangeNewline": @YES,
         @"CoalesceTabSpans": @YES,
         @"OutputBaseURL": [(NSURL *)URL::fakeURLWithRelativePart(emptyString()) retain], // The value needs +1 refcount, as NSAttributedString over-releases it.
-        @"WebResourceHandler": [WebArchiveResourceWebResourceHandler new],
+        @"WebResourceHandler": [[WebArchiveResourceWebResourceHandler new] autorelease],
     };
 }
 
