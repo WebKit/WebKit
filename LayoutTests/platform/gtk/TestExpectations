@@ -847,7 +847,6 @@ webkit.org/b/141467 fast/multicol/pagination/RightToLeft-rl-hittest.html [ Failu
 webkit.org/b/141698 editing/pasteboard/5761530-1.html [ Failure ]
 webkit.org/b/141699 fast/attachment/attachment-disabled-rendering.html [ Failure ]
 webkit.org/b/141699 fast/attachment/attachment-rendering.html [ Failure ]
-webkit.org/b/141699 fast/attachment/attachment-without-appearance.html [ Failure ]
 
 webkit.org/b/141831 svg/animations/animate-text-nested-transforms.html [ Failure ]
 webkit.org/b/98653  svg/text/lengthAdjust-text-metrics.html [ Failure ]
@@ -1176,10 +1175,10 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-byte-stream
 webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.serviceworker.https.html [ Failure ]
 
 # Loading MP4 as an image is not supported by GTK
-fast/images/animated-image-mp4.html [ Skip ]
+webkit.org/b/180370 fast/images/animated-image-mp4.html [ Skip ]
+webkit.org/b/180370 http/tests/images/image-supports-video.html [ Skip ]
 
-webkit.org/b/177632 fast/text/flag-codepoint.html [ ImageOnlyFailure ]
-
+# GTK ought to support the new modern pasteboard API
 webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-rich-text.html [ Failure ]
 webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-plain-text.html [ Failure ]
 webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-custom.html [ Failure ]
@@ -1187,26 +1186,28 @@ webkit.org/b/177633 http/tests/misc/copy-resolves-urls.html [ Failure ]
 webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html [ Skip ]
 webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-in-same-origin.html [ Skip ]
 
-webkit.org/b/179052 compositing/contents-format/subpixel-antialiased-nested-layer.html [ Failure ]
-
-webkit.org/b/179989 http/tests/misc/prefetch-purpose.html [ Timeout ]
-webkit.org/b/179989 http/tests/misc/link-rel-prefetch-and-subresource.html [ Timeout ]
-webkit.org/b/179989 fast/dom/HTMLLinkElement/subresource.html [ Timeout ]
-webkit.org/b/179989 fast/dom/HTMLLinkElement/prefetch-onload.html [ Timeout ]
-webkit.org/b/179989 fast/dom/HTMLLinkElement/prefetch-onerror.html [ Timeout ]
-webkit.org/b/179989 fast/dom/HTMLLinkElement/prefetch.html [ Timeout ]
-webkit.org/b/179989 fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html [ Timeout ]
-webkit.org/b/179989 fast/dom/HTMLLinkElement/link-and-subresource-test.html [ Timeout ]
+# We should consider enabling ENABLE_LINK_PREFETCH and ENABLE_CSS3_TEXT
+webkit.org/b/179989 http/tests/misc/prefetch-purpose.html [ Skip ]
+webkit.org/b/179989 http/tests/misc/link-rel-prefetch-and-subresource.html [ Skip ]
+webkit.org/b/179989 fast/dom/HTMLLinkElement/subresource.html [ Skip ]
+webkit.org/b/179989 fast/dom/HTMLLinkElement/prefetch-onload.html [ Skip ]
+webkit.org/b/179989 fast/dom/HTMLLinkElement/prefetch-onerror.html [ Skip ]
+webkit.org/b/179989 fast/dom/HTMLLinkElement/prefetch.html [ Skip ]
+webkit.org/b/179989 fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html [ Skip ]
+webkit.org/b/179989 fast/dom/HTMLLinkElement/link-and-subresource-test.html [ Skip ]
 webkit.org/b/179989 fast/css3-text/css3-text-justify/getComputedStyle/getComputedStyle-text-justify-inherited.html [ Failure ]
 webkit.org/b/179989 fast/css3-text/css3-text-justify/getComputedStyle/getComputedStyle-text-justify.html [ Failure ]
 webkit.org/b/179989 fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last-inherited.html [ Failure ]
 webkit.org/b/179989 fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last.html [ Failure ]
 
-webkit.org/b/180148 accessibility/alternative-presentation-button-input-type.html [ Failure ]
-webkit.org/b/180148 accessibility/alternative-presentation-button.html [ Failure ]
+# These tests rely on an iOS feature.
+webkit.org/b/180148 accessibility/alternative-presentation-button-input-type.html [ Skip ]
+webkit.org/b/180148 accessibility/alternative-presentation-button.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# End of Expected failures
+# End of Expected failures.
+#
+# Don't add anything above here without a comment explaining why the test should fail.
 #////////////////////////////////////////////////////////////////////////////////////////
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1322,6 +1323,8 @@ webkit.org/b/177816 webgl/1.0.2/conformance/ogles/GL/vec/vec_001_to_008.html [ C
 
 webkit.org/b/180097 media/video-concurrent-visible-playback.html [ Crash Pass ]
 webkit.org/b/180098 security/isSecureContext-disabled.html [ Crash Pass ]
+
+webkit.org/b/173540 imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_tests1.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1899,6 +1902,8 @@ webkit.org/b/179755 media/video-empty-source.html [ Pass Crash ]
 webkit.org/b/179756 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker.html [ Pass Failure ]
 
 webkit.org/b/180095 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pss.https.html [ Pass Failure ]
+
+webkit.org/b/180369 http/tests/security/mixedContent/insecure-xhr-in-main-frame.html [ Pass Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -3353,6 +3358,12 @@ webkit.org/b/179722 compositing/accelerated-layers-after-back.html [ Failure ]
 webkit.org/b/179113 fast/inline/padding-ellipsis-right.html [ ImageOnlyFailure ]
 webkit.org/b/179113 fast/text/ellipsis-text-rtl.html [ ImageOnlyFailure ]
 webkit.org/b/179113 imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-013.html [ ImageOnlyFailure ]
+
+webkit.org/b/177632 fast/text/flag-codepoint.html [ ImageOnlyFailure ]
+
+webkit.org/b/179052 compositing/contents-format/subpixel-antialiased-nested-layer.html [ Failure ]
+
+webkit.org/b/180371 fast/attachment/attachment-without-appearance.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
