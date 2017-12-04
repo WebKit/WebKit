@@ -1,3 +1,14 @@
+2017-12-04  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r211531): Text flow changes and overlaps other text after double-click selecting paragraph
+        https://bugs.webkit.org/show_bug.cgi?id=180377
+        <rdar://problem/34337967>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/float/simple-line-layout-float-shrink-line-expected.html: Added.
+        * fast/block/float/simple-line-layout-float-shrink-line.html: Added.
+
 2017-12-04  Antoine Quint  <graouts@apple.com>
 
         <video> and scale() transforms yield shrunk small or clipped controls
