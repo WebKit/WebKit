@@ -84,12 +84,13 @@ private:
     void findElementsFromElement(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getActiveElement(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void isElementSelected(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
+    void getElementAttribute(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
+    void getElementProperty(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getElementText(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getElementTagName(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getElementRect(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void isElementEnabled(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void isElementDisplayed(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
-    void getElementAttribute(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void elementClick(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void elementClear(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void elementSendKeys(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);

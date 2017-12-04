@@ -127,6 +127,7 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
 
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/selected", &WebDriverService::isElementSelected },
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/attribute/$name", &WebDriverService::getElementAttribute },
+    { HTTPMethod::Get, "/session/$sessionId/element/$elementId/property/$name", &WebDriverService::getElementProperty },
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/text", &WebDriverService::getElementText },
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/name", &WebDriverService::getElementTagName },
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/rect", &WebDriverService::getElementRect },
@@ -1131,6 +1132,26 @@ void WebDriverService::getElementAttribute(RefPtr<JSON::Object>&& parameters, Fu
     }
 
     m_session->getElementAttribute(elementID.value(), attribute, WTFMove(completionHandler));
+}
+
+void WebDriverService::getElementProperty(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §13.3 Get Element Property
+    // https://w3c.github.io/webdriver/webdriver-spec.html#get-element-property
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
+        return;
+
+    auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
+    if (!elementID)
+        return;
+
+    String attribute;
+    if (!parameters->getString(ASCIILiteral("name"), attribute)) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        return;
+    }
+
+    m_session->getElementProperty(elementID.value(), attribute, WTFMove(completionHandler));
 }
 
 void WebDriverService::getElementText(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)

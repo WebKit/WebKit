@@ -1,3 +1,27 @@
+2017-12-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: implement element property command
+        https://bugs.webkit.org/show_bug.cgi?id=180244
+
+        Reviewed by Brian Burg.
+
+        13.3 Get Element Property
+        https://w3c.github.io/webdriver/webdriver-spec.html#get-element-property
+
+        Fixes: imported/w3c/webdriver/tests/state/get_element_property.py::test_no_browsing_context
+               imported/w3c/webdriver/tests/state/get_element_property.py::test_handle_prompt_dismiss
+               imported/w3c/webdriver/tests/state/get_element_property.py::test_handle_prompt_accept
+               imported/w3c/webdriver/tests/state/get_element_property.py::test_handle_prompt_missing_value
+               imported/w3c/webdriver/tests/state/get_element_property.py::test_element_stale
+
+        * Session.cpp:
+        (WebDriver::Session::getElementAttribute):
+        (WebDriver::Session::getElementProperty):
+        * Session.h:
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::getElementProperty):
+        * WebDriverService.h:
+
 2017-12-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: handle user prompts shown while executing scripts
