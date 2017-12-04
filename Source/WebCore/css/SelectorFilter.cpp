@@ -96,21 +96,30 @@ void SelectorFilter::pushParent(Element* parent)
     pushParentStackFrame(parent);
 }
 
-static inline void collectDescendantSelectorIdentifierHashes(const CSSSelector* selector, unsigned*& hash)
+static inline void collectDescendantSelectorIdentifierHashes(const CSSSelector& selector, const SelectorFilter::Hashes& hashes, SelectorFilter::Hashes::iterator& hashIt)
 {
-    switch (selector->match()) {
+    auto addIfNew = [&] (unsigned hash) {
+        for (auto it = hashes.begin(); it != hashIt; ++it) {
+            if (*it == hash)
+                return;
+        }
+        *hashIt = hash;
+        hashIt++;
+    };
+
+    switch (selector.match()) {
     case CSSSelector::Id:
-        if (!selector->value().isEmpty())
-            (*hash++) = selector->value().impl()->existingHash() * IdAttributeSalt;
+        if (!selector.value().isEmpty())
+            addIfNew(selector.value().impl()->existingHash() * IdAttributeSalt);
         break;
     case CSSSelector::Class:
-        if (!selector->value().isEmpty())
-            (*hash++) = selector->value().impl()->existingHash() * ClassAttributeSalt;
+        if (!selector.value().isEmpty())
+            addIfNew(selector.value().impl()->existingHash() * ClassAttributeSalt);
         break;
     case CSSSelector::Tag: {
-        const AtomicString& tagLowercaseLocalName = selector->tagLowercaseLocalName();
+        auto& tagLowercaseLocalName = selector.tagLowercaseLocalName();
         if (tagLowercaseLocalName != starAtom())
-            (*hash++) = tagLowercaseLocalName.impl()->existingHash() * TagNameSalt;
+            addIfNew(tagLowercaseLocalName.impl()->existingHash() * TagNameSalt);
         break;
     }
     default:
@@ -118,11 +127,12 @@ static inline void collectDescendantSelectorIdentifierHashes(const CSSSelector* 
     }
 }
 
-void SelectorFilter::collectIdentifierHashes(const CSSSelector* selector, unsigned* identifierHashes, unsigned maximumIdentifierCount)
+void SelectorFilter::collectIdentifierHashes(const CSSSelector& rightmostSelector, Hashes& hashes)
 {
-    unsigned* hash = identifierHashes;
-    unsigned* end = identifierHashes + maximumIdentifierCount;
+    auto* selector = &rightmostSelector;
     auto relation = selector->relation();
+
+    auto hashIt = hashes.begin();
 
     // Skip the topmost selector. It is handled quickly by the rule hashes.
     bool skipOverSubselectors = true;
@@ -131,7 +141,7 @@ void SelectorFilter::collectIdentifierHashes(const CSSSelector* selector, unsign
         switch (relation) {
         case CSSSelector::Subselector:
             if (!skipOverSubselectors)
-                collectDescendantSelectorIdentifierHashes(selector, hash);
+                collectDescendantSelectorIdentifierHashes(*selector, hashes, hashIt);
             break;
         case CSSSelector::DirectAdjacent:
         case CSSSelector::IndirectAdjacent:
@@ -141,14 +151,15 @@ void SelectorFilter::collectIdentifierHashes(const CSSSelector* selector, unsign
         case CSSSelector::DescendantSpace:
         case CSSSelector::Child:
             skipOverSubselectors = false;
-            collectDescendantSelectorIdentifierHashes(selector, hash);
+            collectDescendantSelectorIdentifierHashes(*selector, hashes, hashIt);
             break;
         }
-        if (hash == end)
+        if (hashIt == hashes.end())
             return;
         relation = selector->relation();
     }
-    *hash = 0;
+
+    *hashIt = 0;
 }
 
 }

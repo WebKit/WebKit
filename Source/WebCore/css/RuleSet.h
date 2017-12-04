@@ -23,6 +23,7 @@
 
 #include "RuleFeature.h"
 #include "SelectorCompiler.h"
+#include "SelectorFilter.h"
 #include "StyleRule.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -76,9 +77,7 @@ public:
     unsigned linkMatchType() const { return m_linkMatchType; }
     bool hasDocumentSecurityOrigin() const { return m_hasDocumentSecurityOrigin; }
     PropertyWhitelistType propertyWhitelistType() const { return static_cast<PropertyWhitelistType>(m_propertyWhitelistType); }
-    // Try to balance between memory usage (there can be lots of RuleData objects) and good filtering performance.
-    static const unsigned maximumIdentifierCount = 4;
-    const unsigned* descendantSelectorIdentifierHashes() const { return m_descendantSelectorIdentifierHashes; }
+    const SelectorFilter::Hashes& descendantSelectorIdentifierHashes() const { return m_descendantSelectorIdentifierHashes; }
 
     void disableSelectorFiltering() { m_descendantSelectorIdentifierHashes[0] = 0; }
 
@@ -112,8 +111,7 @@ private:
     unsigned m_containsUncommonAttributeSelector : 1;
     unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
     unsigned m_propertyWhitelistType : 2;
-    // Use plain array instead of a Vector to minimize memory overhead.
-    unsigned m_descendantSelectorIdentifierHashes[maximumIdentifierCount];
+    SelectorFilter::Hashes m_descendantSelectorIdentifierHashes;
 #if ENABLE(CSS_SELECTOR_JIT)
     mutable SelectorCompilationStatus m_compilationStatus;
     mutable JSC::MacroAssemblerCodeRef m_compiledSelectorCodeRef;
