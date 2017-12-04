@@ -47,6 +47,8 @@ public:
         return adoptRef(*new ImageDecoderDirect2D());
     }
 
+    static bool supportsMediaType(MediaType type) { return type == MediaType::Image; }
+
     static size_t bytesDecodedToDetermineProperties();
 
     String filenameExtension() const final;

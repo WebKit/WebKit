@@ -3302,3 +3302,6 @@ media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]
 
 # Skip WebGL while the ANGLE update has caused many failures
 webgl [ Skip ]
+
+# Requries AVFoundation support <rdar://problem/34502208>
+http/tests/images/image-supports-video.html

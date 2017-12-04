@@ -58,4 +58,26 @@ RefPtr<ImageDecoder> ImageDecoder::create(SharedBuffer& data, const String& mime
 #endif
 }
 
+bool ImageDecoder::supportsMediaType(MediaType type)
+{
+    bool supports = false;
+#if HAVE(AVSAMPLEBUFFERGENERATOR)
+    if (ImageDecoderAVFObjC::supportsMediaType(type))
+        supports = true;
+#endif
+
+#if USE(CG)
+    if (ImageDecoderCG::supportsMediaType(type))
+        supports = true;
+#elif USE(DIRECT2D)
+    if (ImageDecoderDirect2D::supportsMediaType(type))
+        supports = true;
+#else
+    if (ScalableImageDecoder::supportsMediaType(type))
+        supports = true;
+#endif
+
+    return supports;
+}
+
 }

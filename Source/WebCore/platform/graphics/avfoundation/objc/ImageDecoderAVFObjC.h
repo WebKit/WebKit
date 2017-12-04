@@ -48,6 +48,7 @@ class MediaTime;
 
 namespace WebCore {
 
+class ContentType;
 class PixelBufferConformerCV;
 class WebCoreDecompressionSession;
 
@@ -55,6 +56,9 @@ class ImageDecoderAVFObjC : public ImageDecoder {
 public:
     static RefPtr<ImageDecoderAVFObjC> create(SharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
     virtual ~ImageDecoderAVFObjC();
+
+    static bool supportsMediaType(MediaType);
+    static bool supportsContentType(const ContentType&);
 
     size_t bytesDecodedToDetermineProperties() const override { return 0; }
     static bool canDecodeType(const String& mimeType);

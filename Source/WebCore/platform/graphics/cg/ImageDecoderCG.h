@@ -38,6 +38,8 @@ public:
     {
         return adoptRef(*new ImageDecoderCG(data, alphaOption, gammaAndColorProfileOption));
     }
+
+    static bool supportsMediaType(MediaType type) { return type == MediaType::Image; }
     
     size_t bytesDecodedToDetermineProperties() const final;
 

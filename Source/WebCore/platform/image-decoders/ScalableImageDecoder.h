@@ -56,6 +56,8 @@ public:
     {
     }
 
+    static bool supportsMediaType(MediaType type) { return type == MediaType::Image; }
+
     // Returns nullptr if we can't sniff a supported type from the provided data (possibly
     // because there isn't enough data yet).
     static RefPtr<ScalableImageDecoder> create(SharedBuffer& data, AlphaOption, GammaAndColorProfileOption);

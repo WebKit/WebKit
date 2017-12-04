@@ -55,6 +55,11 @@
 #include "ArchiveFactory.h"
 #endif
 
+#if HAVE(AVSAMPLEBUFFERGENERATOR)
+#include "ContentType.h"
+#include "ImageDecoderAVFObjC.h"
+#endif
+
 namespace WebCore {
 
 static HashSet<String, ASCIICaseInsensitiveHash>* supportedImageResourceMIMETypes;
@@ -450,9 +455,17 @@ bool MIMETypeRegistry::isSupportedImageMIMEType(const String& mimeType)
     return supportedImageMIMETypes->contains(getNormalizedMIMEType(mimeType));
 }
 
-bool MIMETypeRegistry::isSupportedImageOrSVGMIMEType(const String& mimeType)
+bool MIMETypeRegistry::isSupportedImageVideoOrSVGMIMEType(const String& mimeType)
 {
-    return isSupportedImageMIMEType(mimeType) || equalLettersIgnoringASCIICase(mimeType, "image/svg+xml");
+    if (isSupportedImageMIMEType(mimeType) || equalLettersIgnoringASCIICase(mimeType, "image/svg+xml"))
+        return true;
+
+#if HAVE(AVSAMPLEBUFFERGENERATOR)
+    if (ImageDecoderAVFObjC::supportsContentType(ContentType(mimeType)))
+        return true;
+#endif
+
+    return false;
 }
 
 bool MIMETypeRegistry::isSupportedImageResourceMIMEType(const String& mimeType)

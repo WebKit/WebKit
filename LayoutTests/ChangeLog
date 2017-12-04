@@ -1,3 +1,17 @@
+2017-12-04  Jer Noble  <jer.noble@apple.com>
+
+        Include 'video/*' in image request Accept header if browser supports video media in image contexts.
+        https://bugs.webkit.org/show_bug.cgi?id=179178
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/images/image-supports-video-expected.txt: Added.
+        * http/tests/images/image-supports-video.html: Added.
+        * http/tests/misc/resources/image-checks-for-accept.php:
+        * http/tests/resources/redirect-to-video-if-accepted.php: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/the-img-element/update-the-source-set-expected.txt: Added.
+
 2017-12-03  Chris Dumez  <cdumez@apple.com>
 
         Re-sync Service Workers web-platform-tests from upstream

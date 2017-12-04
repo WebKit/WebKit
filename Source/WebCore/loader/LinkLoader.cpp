@@ -181,7 +181,7 @@ bool LinkLoader::isSupportedType(CachedResource::Type resourceType, const String
         return true;
     switch (resourceType) {
     case CachedResource::ImageResource:
-        return MIMETypeRegistry::isSupportedImageOrSVGMIMEType(mimeType);
+        return MIMETypeRegistry::isSupportedImageVideoOrSVGMIMEType(mimeType);
     case CachedResource::Script:
         return MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType);
     case CachedResource::CSSStyleSheet:

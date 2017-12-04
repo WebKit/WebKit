@@ -33,6 +33,7 @@
 #include "Element.h"
 #include "FrameLoader.h"
 #include "HTTPHeaderValues.h"
+#include "ImageDecoder.h"
 #include "MemoryCache.h"
 #include "SecurityPolicy.h"
 #include <wtf/NeverDestroyed.h>
@@ -145,6 +146,8 @@ static inline String acceptHeaderValueFromType(CachedResource::Type type)
     case CachedResource::Type::MainResource:
         return ASCIILiteral("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
     case CachedResource::Type::ImageResource:
+        if (ImageDecoder::supportsMediaType(ImageDecoder::MediaType::Video))
+            return ASCIILiteral("image/png,image/svg+xml,image/*;q=0.8,video/*;q=0.8,*/*;q=0.5");
         return ASCIILiteral("image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5");
     case CachedResource::Type::CSSStyleSheet:
         return ASCIILiteral("text/css,*/*;q=0.1");

@@ -47,8 +47,8 @@ public:
     // image (e.g., <img> tags).
     WEBCORE_EXPORT static bool isSupportedImageMIMEType(const String& mimeType);
 
-    // Check to see if a MIME type is suitable for being loaded as an image, including SVG.
-    WEBCORE_EXPORT static bool isSupportedImageOrSVGMIMEType(const String& mimeType);
+    // Check to see if a MIME type is suitable for being loaded as an image, including SVG and Video (where supported).
+    WEBCORE_EXPORT static bool isSupportedImageVideoOrSVGMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is suitable for being loaded as an image
     // document in a frame.

@@ -28,7 +28,9 @@
 
 #if HAVE(AVSAMPLEBUFFERGENERATOR)
 
+#import "AVFoundationMIMETypeCache.h"
 #import "AffineTransform.h"
+#import "ContentType.h"
 #import "FloatQuad.h"
 #import "FloatRect.h"
 #import "FloatSize.h"
@@ -309,8 +311,25 @@ ImageDecoderAVFObjC::ImageDecoderAVFObjC(SharedBuffer& data, const String& mimeT
 
 ImageDecoderAVFObjC::~ImageDecoderAVFObjC() = default;
 
+bool ImageDecoderAVFObjC::supportsMediaType(MediaType type)
+{
+    if (type == MediaType::Video)
+        return getAVURLAssetClass() && canLoad_VideoToolbox_VTCreateCGImageFromCVPixelBuffer();
+    return false;
+}
+
+bool ImageDecoderAVFObjC::supportsContentType(const ContentType& type)
+{
+    if (getAVURLAssetClass() && canLoad_VideoToolbox_VTCreateCGImageFromCVPixelBuffer())
+        return AVFoundationMIMETypeCache::singleton().types().contains(type.containerType());
+    return false;
+}
+
 bool ImageDecoderAVFObjC::canDecodeType(const String& mimeType)
 {
+    if (!supportsMediaType(MediaType::Video))
+        return nullptr;
+
     return [getAVURLAssetClass() isPlayableExtendedMIMEType:mimeType];
 }
 

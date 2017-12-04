@@ -46,6 +46,12 @@ public:
     static RefPtr<ImageDecoder> create(SharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
     virtual ~ImageDecoder() = default;
 
+    enum class MediaType {
+        Image,
+        Video,
+    };
+    static bool supportsMediaType(MediaType);
+
     virtual size_t bytesDecodedToDetermineProperties() const = 0;
 
     virtual EncodedDataStatus encodedDataStatus() const = 0;
