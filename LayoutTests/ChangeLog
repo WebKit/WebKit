@@ -1,5 +1,19 @@
 2017-12-04  Antoine Quint  <graouts@apple.com>
 
+        <video> and scale() transforms yield shrunk small or clipped controls
+        https://bugs.webkit.org/show_bug.cgi?id=180358
+        <rdar://problem/34436124>
+
+        Reviewed by Dean Jackson.
+
+        Write a new test that ensures that we reflect the width and height, not accounting
+        for borders, of the host media element when sizing media controls.
+
+        * media/modern-media-controls/css/transformed-media-expected.txt: Added.
+        * media/modern-media-controls/css/transformed-media.html: Added.
+
+2017-12-04  Antoine Quint  <graouts@apple.com>
+
         Cursor is not visible after exiting full screen video
         https://bugs.webkit.org/show_bug.cgi?id=180247
         <rdar://problem/33885922>
