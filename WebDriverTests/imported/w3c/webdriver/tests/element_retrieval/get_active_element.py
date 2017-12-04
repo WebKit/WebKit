@@ -69,7 +69,7 @@ def test_handle_prompt_dismiss(new_session, add_browser_capabilites):
     response = get_active_element(session)
     assert_is_active_element(session, response)
     assert_dialog_handled(session, "dismiss #2")
-    assert read_global(session, "dismiss2") is None
+    assert read_global(session, "dismiss2") is False
 
     create_dialog(session)("prompt", text="dismiss #3", result_var="dismiss3")
 

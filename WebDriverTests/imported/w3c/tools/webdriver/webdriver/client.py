@@ -42,7 +42,7 @@ class Timeouts(object):
     def _set(self, key, secs):
         body = {key: secs * 1000}
         timeouts = self.session.send_session_command("POST", "timeouts", body)
-        return timeouts[key]
+        return None
 
     @property
     def script(self):

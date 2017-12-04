@@ -1,3 +1,15 @@
+2017-12-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update W3C WebDriver imported tests.
+
+        * imported/w3c/importer.json:
+        * imported/w3c/tools/webdriver/webdriver/client.py:
+        * imported/w3c/tools/webdriver/webdriver/error.py:
+        * imported/w3c/webdriver/tests/element_retrieval/get_active_element.py:
+        * imported/w3c/webdriver/tests/interaction/element_clear.py:
+        * imported/w3c/webdriver/tests/sessions/status.py:
+        * imported/w3c/webdriver/tests/support/wait.py:
+
 2017-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: auto-install pytest instead of importing it from wpt tools directory
