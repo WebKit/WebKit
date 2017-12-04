@@ -66,7 +66,7 @@ public:
     void appendChild(Ref<ScrollingTreeNode>&&);
     void removeChild(ScrollingTreeNode&);
 
-    WEBCORE_EXPORT ScrollingTreeFrameScrollingNode* enclosingFrameNode() const;
+    WEBCORE_EXPORT ScrollingTreeFrameScrollingNode* enclosingFrameNodeIncludingSelf();
 
     WEBCORE_EXPORT void dump(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const;
 

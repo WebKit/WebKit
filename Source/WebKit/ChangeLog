@@ -1,3 +1,21 @@
+2017-12-04  Frederic Wang  <fwang@igalia.com>
+
+        Make ScrollingTreeNode::enclosingFrameNode return the node itself for frame nodes
+        https://bugs.webkit.org/show_bug.cgi?id=180353
+
+        Reviewed by Antonio Gomes.
+
+        This function was introduced in bug 175135 to solve a rendering bug with fixed positioned
+        nodes in overflow nodes. For a frame node, the reference frame to use for fixed nodes is
+        actually the frame node itself or otherwise we will get the same rendering bug. This patch
+        makes enclosingFrameNode return the node itself when it is a frame node and renames it to
+        clarify this behavior. Currently, enclosingFrameNode is not used for frame nodes so the
+        behavior is unchanged.
+
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::updateChildNodesAfterScroll): Use auto* and
+        the new function name.
+
 2017-12-04  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Implement PAL::SleepDisabler
