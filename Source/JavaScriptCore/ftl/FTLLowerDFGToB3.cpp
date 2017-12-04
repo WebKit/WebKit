@@ -6983,6 +6983,16 @@ private:
         Node* node = m_node;
         unsigned numArgs = node->numChildren() - 1;
 
+        // It seems counterintuitive that this is needed given that tail calls don't create a new frame
+        // on the stack. However, the tail call slow path builds the frame at SP instead of FP before
+        // calling into the slow path C code. This slow path may decide to throw an exception because
+        // the callee we're trying to call is not callable. Throwing an exception will cause us to walk
+        // the stack, which may read, for the sake of the correctness of this code, arbitrary slots on the
+        // stack to recover state. This call arg area ensures the call frame shuffler does not overwrite
+        // any of the slots the stack walking code requires when on the slow path.
+        m_proc.requestCallArgAreaSizeInBytes(
+            WTF::roundUpToMultipleOf(stackAlignmentBytes(), (CallFrame::headerSizeInRegisters + numArgs) * sizeof(EncodedJSValue)));
+
         LValue jsCallee = lowJSValue(m_graph.varArgChild(node, 0));
         
         // We want B3 to give us all of the arguments using whatever mechanism it thinks is

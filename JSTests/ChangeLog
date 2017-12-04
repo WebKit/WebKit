@@ -1,3 +1,23 @@
+2017-12-04  Saam Barati  <sbarati@apple.com>
+
+        We need to leave room on the top of the stack for the FTL TailCall slow path so it doesn't overwrite things we want to retrieve when doing a stack walk when throwing an exception
+        https://bugs.webkit.org/show_bug.cgi?id=180366
+        <rdar://problem/35685877>
+
+        Reviewed by Michael Saboff.
+
+        * stress/ftl-tail-call-throw-exception-from-slow-path-recover-stack-values.js: Added.
+        (theParent):
+        (test1.base.getParentStaticValue):
+        (test1.base):
+        (test1.__v_24888.prototype.set prop):
+        (test1.__v_24888):
+        (test2.base.getParentStaticValue):
+        (test2.base):
+        (test2.__v_24888.prototype.set prop):
+        (test2.__v_24888):
+        (test2):
+
 2017-12-01  JF Bastien  <jfbastien@apple.com>
 
         Try proxying all function arguments
