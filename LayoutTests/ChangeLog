@@ -1,3 +1,15 @@
+2017-12-04  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Rebaseline imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-showModal.html
+        https://bugs.webkit.org/show_bug.cgi?id=180357
+
+        Unreviewed test gardening.
+
+        The difference with the platform-neutral expectation is whitespace-only.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-showModal-expected.txt: Added.
+
 2017-12-04  Jer Noble  <jer.noble@apple.com>
 
         Include 'video/*' in image request Accept header if browser supports video media in image contexts.
