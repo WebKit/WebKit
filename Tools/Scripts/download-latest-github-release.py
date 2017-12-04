@@ -46,7 +46,7 @@ class Status:
     DOWNLOADED = 0
     UP_TO_DATE = 1
     COULD_NOT_FIND = 2
-    USE_EXISTING_VERSION = 3
+    USING_EXISTING = 3
 
 
 def parse_args(argv):
@@ -69,9 +69,8 @@ def find_latest_release(args):
 
     try:
         response = urllib2.urlopen(request)
-    except urllib2.HTTPError, error:
-        if error.code != 404:
-            print error.code, error.reason
+    except urllib2.URLError as error:
+        print error
         return None, None
 
     data = json.loads(response.read())
@@ -82,21 +81,17 @@ def find_latest_release(args):
     return None, None
 
 
-def existing_version_info(version_info_path):
+def download_release(source_url, target_path):
+    with open(target_path, 'wb') as file:
+        file.write(urllib2.urlopen(source_url).read())
+
+
+def load_version_info(version_info_path):
     if not os.path.exists(version_info_path):
         return None
 
     with open(version_info_path) as file:
         return json.load(file)
-
-
-def has_latest_release(version_info_path, version_info):
-    return existing_version_info(version_info_path) == version_info
-
-
-def download_release(source_url, target_path):
-    with open(target_path, 'wb') as file:
-        file.write(urllib2.urlopen(source_url).read())
 
 
 def save_version_info(version_info_path, version_info):
@@ -110,35 +105,37 @@ def main(argv):
     binary_path = os.path.join(args.output_dir, args.filename)
     version_info_path = binary_path + '.version'
 
-    print 'Seeking latest release of {} from {}...'.format(args.filename, args.repo)
+    print 'Updating {}...'.format(args.filename)
 
-    try:
-        release_url, version_info = find_latest_release(args)
+    existing_version_info = load_version_info(version_info_path)
+    if existing_version_info:
+        print 'Found existing release:', existing_version_info['tag_name']
+    else:
+        print 'No existing release found.'
 
-        if not release_url:
-            print 'No release found!'
-            return Status.COULD_NOT_FIND
+    print 'Seeking latest release from {}...'.format(args.repo)
+    release_url, latest_version_info = find_latest_release(args)
 
-        if has_latest_release(version_info_path, version_info):
-            print 'Already up-to-date:', existing_version_info(version_info_path)
-            return Status.UP_TO_DATE
+    if not latest_version_info:
+        if existing_version_info:
+            print 'Falling back to existing release!'
+            return Status.USING_EXISTING
 
-    except urllib2.URLError, error:
-        print error
+        print 'No release found!'
+        return Status.COULD_NOT_FIND
 
-        version_info = existing_version_info(version_info_path)
-        if version_info:
-            print 'Use existing version:', version_info
-            return Status.USE_EXISTING_VERSION
-        else:
-            return Status.COULD_NOT_FIND
+    print 'Found latest release:', latest_version_info['tag_name']
+
+    if latest_version_info == existing_version_info:
+        print 'Already up-to-date!'
+        return Status.UP_TO_DATE
 
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
 
-    print 'Downloading {} to {}...'.format(version_info['tag_name'], os.path.abspath(args.output_dir))
+    print 'Downloading to {}...'.format(os.path.abspath(args.output_dir))
     download_release(release_url, binary_path)
-    save_version_info(version_info_path, version_info)
+    save_version_info(version_info_path, latest_version_info)
     print 'Done!'
 
     return Status.DOWNLOADED

@@ -1,3 +1,23 @@
+2017-12-04  Ross Kirsling  <ross.kirsling@sony.com>
+
+        download-latest-github-release.py should use existing release ANY time latest is not found
+        https://bugs.webkit.org/show_bug.cgi?id=180293
+
+        Reviewed by Per Arne Vollan.
+
+        * Scripts/download-latest-github-release.py:
+        (find_latest_release):
+        Handle all URLErrors, not just HTTPErrors. Stop special-casing 404s.
+
+        (main):
+        Rearrange logic so any failure to detect a latest release falls back to an existing release. Improve logging.
+
+        (Status):
+        (download_release):
+        (load_version_info): Renamed from existing_version info.
+        (has_latest_release): Deleted.
+        Cleanup.
+
 2017-12-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Exclude some more leak callstacks
