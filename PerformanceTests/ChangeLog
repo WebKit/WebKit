@@ -1,3 +1,10 @@
+2017-12-04  Antti Koivisto  <antti@apple.com>
+
+        Fix StyleBench/InteractiveRunner.html
+        https://bugs.webkit.org/show_bug.cgi?id=180355
+
+        * StyleBench/InteractiveRunner.html:
+
 2017-12-01  Antti Koivisto  <antti@apple.com>
 
         Add StyleBench
