@@ -496,6 +496,16 @@ function performActions() {
     executeFrameFunction();
 }
 
+function performConsoleActions() {
+    console.record(context, {name: "TEST"});
+
+    context.createTexture();
+
+    console.recordEnd(context);
+
+    context.createBuffer();
+}
+
 function test() {
     let suite = InspectorTest.createAsyncSuite("Canvas.recordingWebGL");
 
@@ -529,6 +539,14 @@ function test() {
         description: "Check that the recording is stopped when it reaches the memory limit.",
         test(resolve, reject) {
             startRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {memoryLimit: 10});
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.recordingWebGL.Console",
+        description: "Check that a recording can be triggered by console.record().",
+        test(resolve, reject) {
+            consoleRecord(resolve, reject);
         },
     });
 

@@ -173,6 +173,8 @@ WI.NativeConstructorFunctionParameters = {
         log: "message, [...values]",
         profile: "name",
         profileEnd: "name",
+        record: "object, [options]",
+        recordEnd: "object",
         table: "data, [columns]",
         takeHeapSnapshot: "[label]",
         time: "name = \"default\"",

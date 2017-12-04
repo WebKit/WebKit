@@ -103,16 +103,12 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
 
         if (representedObject instanceof WI.CanvasCollection || representedObject instanceof WI.ShaderProgram) {
             this._overviewNavigationItem.hidden = true;
-            WI.navigationSidebar.collapsed = true;
             return;
         }
 
         if (representedObject instanceof WI.Recording) {
             this._overviewNavigationItem.hidden = false;
-            representedObject.actions.then((actions) => {
-                this.navigationSidebarPanel.recording = representedObject;
-                WI.navigationSidebar.collapsed = false;
-            });
+            this.navigationSidebarPanel.recording = representedObject;
             return;
         }
 
@@ -245,7 +241,9 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
             return;
         }
 
-        this._recordingAdded(recording);
+        this._recordingAdded(recording, {
+            suppressShowRecording: event.data.fromConsole,
+        });
     }
 
     _navigationSidebarImport(event)

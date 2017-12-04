@@ -46,7 +46,46 @@ for (property in console) {
 
 debug("");
 shouldBe("Object.getOwnPropertyNames(console).length", "enumerablePropertyCount");
+
+const consoleRecordArguments = [
+	`undefined`,
+	`null`,
+	`1`,
+	`"test"`,
+	`[]`,
+	`{}`,
+	`window`,
+	`console`,
+];
+
+debug("");
+debug("fuzzing of target for console.record");
+shouldNotThrow(`console.record()`);
+for (let argument of consoleRecordArguments)
+	shouldNotThrow(`console.record(${argument})`);
+
+debug("");
+debug("fuzzing of options for console.record");
+for (let argument of consoleRecordArguments)
+	shouldNotThrow(`console.record({}, ${argument})`);
+
+debug("");
+debug("fuzzing of target for console.recordEnd");
+shouldNotThrow(`console.recordEnd()`);
+for (let argument of consoleRecordArguments)
+	shouldNotThrow(`console.recordEnd(${argument})`);
+
+debug("");
+debug("ensure multiple calls don't throw");
+shouldNotThrow(`console.recordEnd(window.canvas)`);
+shouldNotThrow(`console.recordEnd(window.canvas)`);
+shouldNotThrow(`console.recordEnd(window.canvas)`);
+shouldNotThrow(`console.record(window.canvas)`);
+shouldNotThrow(`console.record(window.canvas)`);
+shouldNotThrow(`console.record(window.canvas)`);
+
 </script>
 <script src="../resources/js-test-post.js"></script>
+<canvas id="canvas"></canvas>
 </body>
 </html>

@@ -74,4 +74,7 @@ void WorkerConsoleClient::profileEnd(JSC::ExecState*, const String&) { }
 void WorkerConsoleClient::takeHeapSnapshot(JSC::ExecState*, const String&) { }
 void WorkerConsoleClient::timeStamp(JSC::ExecState*, Ref<ScriptArguments>&&) { }
 
+void WorkerConsoleClient::record(JSC::ExecState*, Ref<ScriptArguments>&&) { }
+void WorkerConsoleClient::recordEnd(JSC::ExecState*, Ref<ScriptArguments>&&) { }
+
 } // namespace WebCore

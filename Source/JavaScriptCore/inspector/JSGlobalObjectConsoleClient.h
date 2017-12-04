@@ -53,6 +53,8 @@ protected:
     void time(JSC::ExecState*, const String& title) override;
     void timeEnd(JSC::ExecState*, const String& title) override;
     void timeStamp(JSC::ExecState*, Ref<ScriptArguments>&&) override;
+    void record(JSC::ExecState*, Ref<ScriptArguments>&&) override;
+    void recordEnd(JSC::ExecState*, Ref<ScriptArguments>&&) override;
 
 private:
     void warnUnimplemented(const String& method);

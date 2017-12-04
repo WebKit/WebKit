@@ -35,7 +35,8 @@
                 { "name": "version", "type": "integer", "description": "Used for future/backwards compatibility." },
                 { "name": "type", "$ref": "Type" },
                 { "name": "initialState", "$ref": "InitialState", "description": "JSON data of inital state of object before recording." },
-                { "name": "data", "type": "array", "items": { "type": "any" }, "description": "Array of objects that can be referenced by index. Used to avoid duplicating objects." }
+                { "name": "data", "type": "array", "items": { "type": "any" }, "description": "Array of objects that can be referenced by index. Used to avoid duplicating objects." },
+                { "name": "name", "type": "string", "optional": true }
             ]
         }
     ]

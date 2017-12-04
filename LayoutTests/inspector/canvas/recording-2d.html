@@ -395,6 +395,16 @@ function performActions() {
     executeFrameFunction();
 }
 
+function performConsoleActions() {
+    console.record(ctx, {name: "TEST"});
+
+    ctx.fill();
+
+    console.recordEnd(ctx);
+
+    ctx.stroke();
+}
+
 function performNaNActions() {
     ctx.globalAlpha = NaN;
 }
@@ -432,6 +442,14 @@ function test() {
         description: "Check that the recording is stopped when it reaches the memory limit.",
         test(resolve, reject) {
             startRecording(WI.Canvas.ContextType.Canvas2D, resolve, reject, {memoryLimit: 10});
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.recording2D.Console",
+        description: "Check that a recording can be triggered by console.record().",
+        test(resolve, reject) {
+            consoleRecord(resolve, reject);
         },
     });
 
@@ -476,18 +494,20 @@ function test() {
         description: "Check that a canvas is still able to be recorded after stopping a recording with no actions.",
         test(resolve, reject) {
             let canvas = getCanvas(WI.Canvas.ContextType.Canvas2D);
-            if (!canvas)
-                throw "Missing 2D canvas.";
+            if (!canvas) {
+                reject("Missing 2D canvas.");
+                return;
+            }
 
             let eventCount = 0;
             function handleRecordingStopped(event) {
                 InspectorTest.assert(event.data.canvas === canvas, "We should have stopped recording the selected canvas.");
-                ++eventCount;
+                InspectorTest.assert(!event.data.recording, "The recording payload should be null.");
 
+                ++eventCount;
                 if (eventCount == 1)
                     InspectorTest.pass("A recording should have been started and stopped once.");
-
-                if (eventCount >= 2) {
+                else if (eventCount >= 2) {
                     InspectorTest.pass("A recording should have been started and stopped twice.");
 
                     WI.canvasManager.removeEventListener(handleRecordingStopped);

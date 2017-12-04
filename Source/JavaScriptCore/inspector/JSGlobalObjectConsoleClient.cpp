@@ -165,6 +165,9 @@ void JSGlobalObjectConsoleClient::timeStamp(ExecState*, Ref<ScriptArguments>&&)
     warnUnimplemented(ASCIILiteral("console.timeStamp"));
 }
 
+void JSGlobalObjectConsoleClient::record(ExecState*, Ref<ScriptArguments>&&) { }
+void JSGlobalObjectConsoleClient::recordEnd(ExecState*, Ref<ScriptArguments>&&) { }
+
 void JSGlobalObjectConsoleClient::warnUnimplemented(const String& method)
 {
     String message = method + " is currently ignored in JavaScript context inspection.";

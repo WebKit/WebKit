@@ -1,3 +1,25 @@
+2017-12-04  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: provide method for recording CanvasRenderingContext2D from JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=175166
+        <rdar://problem/34040740>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/Recording.json:
+        Add optional `name` that will be used by the frontend for uniquely identifying the Recording.
+
+        * inspector/JSGlobalObjectConsoleClient.h:
+        * inspector/JSGlobalObjectConsoleClient.cpp:
+        (Inspector::JSGlobalObjectConsoleClient::record):
+        (Inspector::JSGlobalObjectConsoleClient::recordEnd):
+
+        * runtime/ConsoleClient.h:
+        * runtime/ConsoleObject.cpp:
+        (JSC::ConsoleObject::finishCreation):
+        (JSC::consoleProtoFuncRecord):
+        (JSC::consoleProtoFuncRecordEnd):
+
 2017-12-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         WTF shouldn't have both Thread and ThreadIdentifier

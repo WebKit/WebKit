@@ -74,6 +74,8 @@ protected:
     void time(JSC::ExecState*, const String& title) override;
     void timeEnd(JSC::ExecState*, const String& title) override;
     void timeStamp(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
+    void record(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
+    void recordEnd(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
 
 private:
     Page& m_page;

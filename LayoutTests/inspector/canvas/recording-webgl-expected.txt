@@ -1500,3 +1500,8 @@ data:
   16: "_evaluateAndWrap"
   17: [16,3,122,108]
 
+-- Running test case: Canvas.recordingWebGL.Console
+PASS: The recording should have the name "TEST".
+PASS: The recording should have one frame.
+PASS: The first frame should have one action.
+

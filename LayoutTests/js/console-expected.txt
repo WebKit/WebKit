@@ -163,7 +163,61 @@ PASS descriptor.configurable is true
 PASS descriptor.writable is true
 PASS descriptor.enumerable is true
 
+console.record
+PASS typeof console.record is "function"
+PASS console.record.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
+console.recordEnd
+PASS typeof console.recordEnd is "function"
+PASS console.recordEnd.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
 PASS Object.getOwnPropertyNames(console).length is enumerablePropertyCount
+
+fuzzing of target for console.record
+PASS console.record() did not throw exception.
+PASS console.record(undefined) did not throw exception.
+PASS console.record(null) did not throw exception.
+PASS console.record(1) did not throw exception.
+PASS console.record("test") did not throw exception.
+PASS console.record([]) did not throw exception.
+PASS console.record({}) did not throw exception.
+PASS console.record(window) did not throw exception.
+PASS console.record(console) did not throw exception.
+
+fuzzing of options for console.record
+PASS console.record({}, undefined) did not throw exception.
+PASS console.record({}, null) did not throw exception.
+PASS console.record({}, 1) did not throw exception.
+PASS console.record({}, "test") did not throw exception.
+PASS console.record({}, []) did not throw exception.
+PASS console.record({}, {}) did not throw exception.
+PASS console.record({}, window) did not throw exception.
+PASS console.record({}, console) did not throw exception.
+
+fuzzing of target for console.recordEnd
+PASS console.recordEnd() did not throw exception.
+PASS console.recordEnd(undefined) did not throw exception.
+PASS console.recordEnd(null) did not throw exception.
+PASS console.recordEnd(1) did not throw exception.
+PASS console.recordEnd("test") did not throw exception.
+PASS console.recordEnd([]) did not throw exception.
+PASS console.recordEnd({}) did not throw exception.
+PASS console.recordEnd(window) did not throw exception.
+PASS console.recordEnd(console) did not throw exception.
+
+ensure multiple calls don't throw
+PASS console.recordEnd(window.canvas) did not throw exception.
+PASS console.recordEnd(window.canvas) did not throw exception.
+PASS console.recordEnd(window.canvas) did not throw exception.
+PASS console.record(window.canvas) did not throw exception.
+PASS console.record(window.canvas) did not throw exception.
+PASS console.record(window.canvas) did not throw exception.
 PASS successfullyParsed is true
 
 TEST COMPLETE

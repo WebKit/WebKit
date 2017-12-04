@@ -68,6 +68,9 @@ public:
     void finalizeFrame();
     void markCurrentFrameIncomplete();
 
+    const String& recordingName() const { return m_recordingName; }
+    void setRecordingName(const String& name) { m_recordingName = name; }
+
     void setBufferLimit(long);
     bool hasBufferSpace() const;
     long bufferUsed() const { return m_bufferUsed; }
@@ -116,6 +119,8 @@ private:
     RefPtr<JSON::ArrayOf<JSON::Value>> m_actionNeedingSnapshot;
     RefPtr<JSON::ArrayOf<JSON::Value>> m_serializedDuplicateData;
     Vector<DuplicateDataVariant> m_indexedDuplicateData;
+
+    String m_recordingName;
     double m_currentFrameStartTime { NAN };
     size_t m_bufferLimit { 100 * 1024 * 1024 };
     size_t m_bufferUsed { 0 };

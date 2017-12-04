@@ -58,6 +58,9 @@ WI.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarPanel exten
         }
 
         this._recording.actions.then((actions) => {
+            if (recording !== this._recording)
+                return;
+
             this.contentTreeOutline.element.dataset.indent = Number.countDigits(actions.length);
 
             if (actions[0] instanceof WI.RecordingInitialStateAction)

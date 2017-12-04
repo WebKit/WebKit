@@ -168,10 +168,13 @@ WI.CanvasManager = class CanvasManager extends WI.Object
     {
         // Called from WI.CanvasObserver.
 
-        this._recordingCanvas = null;
-
         let canvas = this._canvasIdentifierMap.get(canvasIdentifier);
         console.assert(canvas);
+
+        let fromConsole = canvas !== this._recordingCanvas;
+        if (!fromConsole)
+            this._recordingCanvas = null;
+
         if (!canvas)
             return;
 
@@ -179,12 +182,12 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         let recording = recordingPayload ? WI.Recording.fromPayload(recordingPayload, frames) : null;
         if (recording) {
             recording.source = canvas;
-            recording.createDisplayName();
+            recording.createDisplayName(recordingPayload.name);
 
             canvas.recordingCollection.add(recording);
         }
 
-        this.dispatchEventToListeners(WI.CanvasManager.Event.RecordingStopped, {canvas, recording});
+        this.dispatchEventToListeners(WI.CanvasManager.Event.RecordingStopped, {canvas, recording, fromConsole});
     }
 
     extensionEnabled(canvasIdentifier, extension)

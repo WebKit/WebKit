@@ -57,6 +57,8 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTimeStamp(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncGroup(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncGroupCollapsed(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncGroupEnd(ExecState*);
+static EncodedJSValue JSC_HOST_CALL consoleProtoFuncRecord(ExecState*);
+static EncodedJSValue JSC_HOST_CALL consoleProtoFuncRecordEnd(ExecState*);
 
 const ClassInfo ConsoleObject::s_info = { "Console", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ConsoleObject) };
 
@@ -95,6 +97,8 @@ void ConsoleObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("group", consoleProtoFuncGroup, static_cast<unsigned>(PropertyAttribute::None), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("groupCollapsed", consoleProtoFuncGroupCollapsed, static_cast<unsigned>(PropertyAttribute::None), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("groupEnd", consoleProtoFuncGroupEnd, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("record", consoleProtoFuncRecord, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("recordEnd", consoleProtoFuncRecordEnd, static_cast<unsigned>(PropertyAttribute::None), 0);
 }
 
 static String valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue value)
@@ -364,6 +368,26 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncGroupEnd(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     client->groupEnd(exec, Inspector::createScriptArguments(exec, 0));
+    return JSValue::encode(jsUndefined());
+}
+
+static EncodedJSValue JSC_HOST_CALL consoleProtoFuncRecord(ExecState* exec)
+{
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
+    if (!client)
+        return JSValue::encode(jsUndefined());
+
+    client->record(exec, Inspector::createScriptArguments(exec, 0));
+    return JSValue::encode(jsUndefined());
+}
+
+static EncodedJSValue JSC_HOST_CALL consoleProtoFuncRecordEnd(ExecState* exec)
+{
+    ConsoleClient* client = exec->lexicalGlobalObject()->consoleClient();
+    if (!client)
+        return JSValue::encode(jsUndefined());
+
+    client->recordEnd(exec, Inspector::createScriptArguments(exec, 0));
     return JSValue::encode(jsUndefined());
 }
 

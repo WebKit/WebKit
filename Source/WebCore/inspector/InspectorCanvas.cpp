@@ -102,6 +102,7 @@ void InspectorCanvas::resetRecordingData()
     m_actionNeedingSnapshot = nullptr;
     m_serializedDuplicateData = nullptr;
     m_indexedDuplicateData.clear();
+    m_recordingName = { };
     m_bufferLimit = 100 * 1024 * 1024;
     m_bufferUsed = 0;
     m_singleFrame = true;

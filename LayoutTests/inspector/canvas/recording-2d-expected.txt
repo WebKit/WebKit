@@ -1522,6 +1522,11 @@ data:
   29: "_evaluateAndWrap"
   30: [29,10,122,108]
 
+-- Running test case: Canvas.recording2D.Console
+PASS: The recording should have the name "TEST".
+PASS: The recording should have one frame.
+PASS: The first frame should have one action.
+
 -- Running test case: Canvas.recording2D.ActionParameterNaN
 PASS: The recording should have 1 frame.
 PASS: The first frame should have 1 action.

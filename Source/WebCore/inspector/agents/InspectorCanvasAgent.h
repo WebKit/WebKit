@@ -87,6 +87,7 @@ public:
     void didChangeCanvasMemory(HTMLCanvasElement&);
     void recordCanvasAction(CanvasRenderingContext&, const String&, Vector<RecordCanvasActionVariant>&& = { });
     void didFinishRecordingCanvasFrame(HTMLCanvasElement&, bool forceDispatch = false);
+    void consoleStartRecordingCanvas(HTMLCanvasElement&, JSC::ExecState&, JSC::JSObject* options);
 #if ENABLE(WEBGL)
     void didEnableExtension(WebGLRenderingContextBase&, const String&);
     void didCreateProgram(WebGLRenderingContextBase&, WebGLProgram&);

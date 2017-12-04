@@ -882,6 +882,12 @@ void InspectorInstrumentation::stopProfilingImpl(InstrumentingAgents& instrument
         timelineAgent->stopFromConsole(exec, title);
 }
 
+void InspectorInstrumentation::consoleStartRecordingCanvasImpl(InstrumentingAgents& instrumentingAgents, HTMLCanvasElement& canvasElement, JSC::ExecState& exec, JSC::JSObject* options)
+{
+    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
+        canvasAgent->consoleStartRecordingCanvas(canvasElement, exec, options);
+}
+
 void InspectorInstrumentation::didOpenDatabaseImpl(InstrumentingAgents& instrumentingAgents, RefPtr<Database>&& database, const String& domain, const String& name, const String& version)
 {
     if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())

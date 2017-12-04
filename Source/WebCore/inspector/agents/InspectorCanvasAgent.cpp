@@ -522,9 +522,36 @@ void InspectorCanvasAgent::didFinishRecordingCanvasFrame(HTMLCanvasElement& canv
         .setData(inspectorCanvas->releaseData())
         .release();
 
+    const String& name = inspectorCanvas->recordingName();
+    if (!name.isEmpty())
+        recording->setName(name);
+
     m_frontendDispatcher->recordingFinished(inspectorCanvas->identifier(), WTFMove(recording));
 
     inspectorCanvas->resetRecordingData();
+}
+
+void InspectorCanvasAgent::consoleStartRecordingCanvas(HTMLCanvasElement& canvasElement, JSC::ExecState& exec, JSC::JSObject* options)
+{
+    auto* inspectorCanvas = findInspectorCanvas(canvasElement);
+    if (!inspectorCanvas)
+        return;
+
+    if (inspectorCanvas->canvas().renderingContext()->callTracingActive())
+        return;
+
+    inspectorCanvas->resetRecordingData();
+
+    if (options) {
+        if (JSC::JSValue optionName = options->get(&exec, JSC::Identifier::fromString(&exec, "name")))
+            inspectorCanvas->setRecordingName(optionName.toWTFString(&exec));
+        if (JSC::JSValue optionSingleFrame = options->get(&exec, JSC::Identifier::fromString(&exec, "singleFrame")))
+            inspectorCanvas->setSingleFrame(optionSingleFrame.toBoolean(&exec));
+        if (JSC::JSValue optionMemoryLimit = options->get(&exec, JSC::Identifier::fromString(&exec, "memoryLimit")))
+            inspectorCanvas->setBufferLimit(optionMemoryLimit.toNumber(&exec));
+    }
+
+    inspectorCanvas->canvas().renderingContext()->setCallTracingActive(true);
 }
 
 #if ENABLE(WEBGL)

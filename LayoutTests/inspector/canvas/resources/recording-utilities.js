@@ -144,4 +144,15 @@ TestPage.registerInitializer(() => {
 
         return canvas;
     };
+
+    window.consoleRecord = function(resolve, reject) {
+        WI.canvasManager.awaitEvent(WI.CanvasManager.Event.RecordingStopped).then((event) => {
+            let recording = event.data.recording;
+            InspectorTest.expectEqual(recording.displayName, "TEST", "The recording should have the name \"TEST\".");
+            InspectorTest.expectEqual(recording.frames.length, 1, "The recording should have one frame.");
+            InspectorTest.expectEqual(recording.frames[0].actions.length, 1, "The first frame should have one action.");
+        }).then(resolve, reject);
+
+        InspectorTest.evaluateInPage(`performConsoleActions()`);
+    };
 });

@@ -62,6 +62,8 @@ public:
     virtual void time(ExecState*, const String& title) = 0;
     virtual void timeEnd(ExecState*, const String& title) = 0;
     virtual void timeStamp(ExecState*, Ref<Inspector::ScriptArguments>&&) = 0;
+    virtual void record(ExecState*, Ref<Inspector::ScriptArguments>&&) = 0;
+    virtual void recordEnd(ExecState*, Ref<Inspector::ScriptArguments>&&) = 0;
 
 private:
     enum ArgumentRequirement { ArgumentRequired, ArgumentNotRequired };
