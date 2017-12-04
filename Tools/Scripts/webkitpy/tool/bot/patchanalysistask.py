@@ -369,7 +369,7 @@ class PatchAnalysisTask(object):
         elif hasattr(self._delegate, 'group') and self._delegate.group() == "bindings":
             return self._retry_bindings_tests()
         elif hasattr(self._delegate, 'group') and self._delegate.group() == "webkitpy":
-            return False
+            return self.report_failure()
         else:
             return self._retry_layout_tests()
 

@@ -1,3 +1,16 @@
+2017-12-03  Aakash Jain  <aakash_jain@apple.com>
+
+        webkitpy EWS keeps retrying a failing patch
+        https://bugs.webkit.org/show_bug.cgi?id=180302
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        (PatchAnalysisTask._test_patch): Instead of returning false, call report_failure() 
+        which raises an exception, this exception is catched by earlywarningsystem.py and
+        it posts a comment on bugzilla. Returning false simply unlocks the patch and returns
+        it to the queue.
+
 2017-12-03  Darin Adler  <darin@apple.com>
 
         Add WTF::Hasher, an easier to use replacement for WTF::IntegerHasher
