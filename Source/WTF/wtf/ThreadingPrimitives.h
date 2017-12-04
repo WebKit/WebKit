@@ -45,7 +45,6 @@
 
 namespace WTF {
 
-using ThreadIdentifier = uint32_t;
 using ThreadFunction = void (*)(void* argument);
 
 #if USE(PTHREADS)
@@ -53,6 +52,7 @@ using PlatformThreadHandle = pthread_t;
 using PlatformMutex = pthread_mutex_t;
 using PlatformCondition = pthread_cond_t;
 #elif OS(WINDOWS)
+using ThreadIdentifier = uint32_t;
 using PlatformThreadHandle = HANDLE;
 struct PlatformMutex {
     CRITICAL_SECTION m_internalMutex;

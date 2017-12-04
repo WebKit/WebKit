@@ -280,9 +280,9 @@ int Thread::waitForCompletion()
     int joinResult = pthread_join(handle, 0);
 
     if (joinResult == EDEADLK)
-        LOG_ERROR("ThreadIdentifier %u was found to be deadlocked trying to quit", m_id);
+        LOG_ERROR("Thread %p was found to be deadlocked trying to quit", this);
     else if (joinResult)
-        LOG_ERROR("ThreadIdentifier %u was unable to be joined.\n", m_id);
+        LOG_ERROR("Thread %p was unable to be joined.\n", this);
 
     std::lock_guard<std::mutex> locker(m_mutex);
     ASSERT(joinableState() == Joinable);
@@ -300,7 +300,7 @@ void Thread::detach()
     std::lock_guard<std::mutex> locker(m_mutex);
     int detachResult = pthread_detach(m_handle);
     if (detachResult)
-        LOG_ERROR("ThreadIdentifier %u was unable to be detached\n", m_id);
+        LOG_ERROR("Thread %p was unable to be detached\n", this);
 
     if (!hasExited())
         didBecomeDetached();
@@ -308,18 +308,13 @@ void Thread::detach()
 
 Thread& Thread::initializeCurrentTLS()
 {
-    // Not a WTF-created thread, ThreadIdentifier is not established yet.
+    // Not a WTF-created thread, Thread is not established yet.
     Ref<Thread> thread = adoptRef(*new Thread());
     thread->establishPlatformSpecificHandle(pthread_self());
     thread->initializeInThread();
     initializeCurrentThreadEvenIfNonWTFCreated();
 
     return initializeTLS(WTFMove(thread));
-}
-
-ThreadIdentifier Thread::currentID()
-{
-    return current().id();
 }
 
 bool Thread::signal(int signalNumber)
@@ -333,7 +328,7 @@ bool Thread::signal(int signalNumber)
 
 auto Thread::suspend() -> Expected<void, PlatformSuspendError>
 {
-    RELEASE_ASSERT_WITH_MESSAGE(id() != currentThread(), "We do not support suspending the current thread itself.");
+    RELEASE_ASSERT_WITH_MESSAGE(this != &Thread::current(), "We do not support suspending the current thread itself.");
     // During suspend, suspend or resume should not be executed from the other threads.
     // We use global lock instead of per thread lock.
     // Consider the following case, there are threads A and B.
@@ -451,13 +446,9 @@ void Thread::establishPlatformSpecificHandle(pthread_t handle)
 {
     std::lock_guard<std::mutex> locker(m_mutex);
     m_handle = handle;
-    if (!m_id) {
-        static std::atomic<ThreadIdentifier> provider { 0 };
-        m_id = ++provider;
 #if OS(DARWIN)
-        m_platformThread = pthread_mach_thread_np(handle);
+    m_platformThread = pthread_mach_thread_np(handle);
 #endif
-    }
 }
 
 #if !HAVE(FAST_TLS)

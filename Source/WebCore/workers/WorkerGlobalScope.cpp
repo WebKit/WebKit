@@ -86,7 +86,7 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& identifier, c
 
 WorkerGlobalScope::~WorkerGlobalScope()
 {
-    ASSERT(currentThread() == thread().threadID());
+    ASSERT(thread().thread() == &Thread::current());
 
     m_performance = nullptr;
     m_crypto = nullptr;
@@ -329,7 +329,7 @@ void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, con
 
 bool WorkerGlobalScope::isContextThread() const
 {
-    return currentThread() == thread().threadID();
+    return thread().thread() == &Thread::current();
 }
 
 bool WorkerGlobalScope::isJSExecutionForbidden() const

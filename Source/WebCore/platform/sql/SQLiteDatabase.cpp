@@ -105,7 +105,7 @@ bool SQLiteDatabase::open(const String& filename, bool forWebSQLDatabase)
     }
 
     if (isOpen())
-        m_openingThread = currentThread();
+        m_openingThread = &Thread::current();
     else
         m_openErrorMessage = "sqlite_open returned null";
 
@@ -129,7 +129,7 @@ void SQLiteDatabase::close()
 {
     if (m_db) {
         // FIXME: This is being called on the main thread during JS GC. <rdar://problem/5739818>
-        // ASSERT(currentThread() == m_openingThread);
+        // ASSERT(m_openingThread == &Thread::current());
         sqlite3* db = m_db;
         {
             LockHolder locker(m_databaseClosingMutex);
@@ -138,7 +138,7 @@ void SQLiteDatabase::close()
         sqlite3_close(db);
     }
 
-    m_openingThread = 0;
+    m_openingThread = nullptr;
     m_openError = SQLITE_ERROR;
     m_openErrorMessage = CString();
 }

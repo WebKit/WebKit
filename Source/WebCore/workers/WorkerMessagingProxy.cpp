@@ -59,7 +59,7 @@ WorkerMessagingProxy::WorkerMessagingProxy(Worker& workerObject)
     , m_workerObject(&workerObject)
 {
     ASSERT((is<Document>(*m_scriptExecutionContext) && isMainThread())
-        || (is<WorkerGlobalScope>(*m_scriptExecutionContext) && currentThread() == downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread().threadID()));
+        || (is<WorkerGlobalScope>(*m_scriptExecutionContext) && downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread().thread() == &Thread::current()));
 
     // Nobody outside this class ref counts this object. The original ref
     // is balanced by the deref in workerGlobalScopeDestroyedInternal.
@@ -69,7 +69,7 @@ WorkerMessagingProxy::~WorkerMessagingProxy()
 {
     ASSERT(!m_workerObject);
     ASSERT((is<Document>(*m_scriptExecutionContext) && isMainThread())
-        || (is<WorkerGlobalScope>(*m_scriptExecutionContext) && currentThread() == downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread().threadID()));
+        || (is<WorkerGlobalScope>(*m_scriptExecutionContext) && downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread().thread() == &Thread::current()));
 }
 
 void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const String& userAgent, bool isOnline, const String& sourceCode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, MonotonicTime timeOrigin, JSC::RuntimeFlags runtimeFlags, PAL::SessionID sessionID)

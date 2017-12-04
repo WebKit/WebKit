@@ -51,12 +51,12 @@ class TransactionOperation : public ThreadSafeRefCounted<TransactionOperation> {
 public:
     virtual ~TransactionOperation()
     {
-        ASSERT(m_originThreadID == currentThread());
+        ASSERT(m_originThread.ptr() == &Thread::current());
     }
 
     void perform()
     {
-        ASSERT(m_originThreadID == currentThread());
+        ASSERT(m_originThread.ptr() == &Thread::current());
         ASSERT(m_performFunction);
         m_performFunction();
         m_performFunction = { };
@@ -64,7 +64,7 @@ public:
 
     void transitionToCompleteOnThisThread(const IDBResultData& data)
     {
-        ASSERT(m_originThreadID == currentThread());
+        ASSERT(m_originThread.ptr() == &Thread::current());
         m_transaction->operationCompletedOnServer(data, *this);
     }
 
@@ -72,7 +72,7 @@ public:
     {
         ASSERT(isMainThread());
 
-        if (m_originThreadID == currentThread())
+        if (m_originThread.ptr() == &Thread::current())
             transitionToCompleteOnThisThread(data);
         else {
             m_transaction->performCallbackOnOriginThread(*this, &TransactionOperation::transitionToCompleteOnThisThread, data);
@@ -83,7 +83,7 @@ public:
 
     void doComplete(const IDBResultData& data)
     {
-        ASSERT(m_originThreadID == currentThread());
+        ASSERT(m_originThread.ptr() == &Thread::current());
 
         // Due to race conditions between the server sending an "operation complete" message and the client
         // forcefully aborting an operation, it's unavoidable that this method might be called twice.
@@ -102,7 +102,7 @@ public:
 
     const IDBResourceIdentifier& identifier() const { return m_identifier; }
 
-    ThreadIdentifier originThreadID() const { return m_originThreadID; }
+    Thread& originThread() const { return m_originThread.get(); }
 
     IDBRequest* idbRequest() { return m_idbRequest.get(); }
 
@@ -135,7 +135,7 @@ private:
     IDBTransaction& transaction() { return m_transaction.get(); }
     IndexedDB::IndexRecordType indexRecordType() const { return m_indexRecordType; }
 
-    ThreadIdentifier m_originThreadID { currentThread() };
+    Ref<Thread> m_originThread { Thread::current() };
     RefPtr<IDBRequest> m_idbRequest;
     bool m_nextRequestCanGoToServer { true };
 };

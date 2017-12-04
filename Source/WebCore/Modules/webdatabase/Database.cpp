@@ -287,7 +287,7 @@ void Database::close()
 
 void Database::performClose()
 {
-    ASSERT(currentThread() == databaseThread().getThreadID());
+    ASSERT(databaseThread().getThread() == &Thread::current());
 
     {
         LockHolder locker(m_transactionInProgressMutex);
@@ -768,7 +768,7 @@ SecurityOriginData Database::securityOrigin()
 {
     if (m_scriptExecutionContext->isContextThread())
         return SecurityOriginData::fromSecurityOrigin(m_contextThreadSecurityOrigin.get());
-    if (currentThread() == databaseThread().getThreadID())
+    if (databaseThread().getThread() == &Thread::current())
         return SecurityOriginData::fromSecurityOrigin(m_databaseThreadSecurityOrigin.get());
     RELEASE_ASSERT_NOT_REACHED();
 }

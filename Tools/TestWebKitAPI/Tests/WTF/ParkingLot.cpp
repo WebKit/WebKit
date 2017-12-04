@@ -51,7 +51,6 @@ struct SingleLatchTest {
                 Thread::create(
                     "Parking Test Thread",
                     [&] () {
-                        EXPECT_NE(0u, currentThread());
                         down();
 
                         std::lock_guard<std::mutex> locker(lock);

@@ -80,7 +80,9 @@ public:
     friend class ThreadGroup;
     friend class AtomicStringTable;
     friend WTF_EXPORT_PRIVATE void initializeThreading();
+#if OS(WINDOWS)
     friend WTF_EXPORT_PRIVATE int waitForThreadCompletion(ThreadIdentifier);
+#endif
 
     WTF_EXPORT_PRIVATE ~Thread();
 
@@ -91,11 +93,15 @@ public:
     // Returns Thread object.
     static Thread& current();
 
+#if OS(WINDOWS)
     // Returns ThreadIdentifier directly. It is useful if the user only cares about identity
     // of threads. At that time, users should know that holding this ThreadIdentifier does not ensure
     // that the thread information is alive. While Thread::current() is not safe if it is called
     // from the destructor of the other TLS data, currentID() always returns meaningful thread ID.
     WTF_EXPORT_PRIVATE static ThreadIdentifier currentID();
+
+    ThreadIdentifier id() const { return m_id; }
+#endif
 
     WTF_EXPORT_PRIVATE void changePriority(int);
     WTF_EXPORT_PRIVATE int waitForCompletion();
@@ -136,18 +142,6 @@ public:
     WTF_EXPORT_PRIVATE static void yield();
 
     WTF_EXPORT_PRIVATE void dump(PrintStream& out) const;
-
-    ThreadIdentifier id() const { return m_id; }
-
-    bool operator==(const Thread& thread)
-    {
-        return id() == thread.id();
-    }
-
-    bool operator!=(const Thread& thread)
-    {
-        return id() != thread.id();
-    }
 
     static void initializePlatformThreading();
 
@@ -280,7 +274,6 @@ protected:
 
     // WordLock & Lock rely on ThreadSpecific. But Thread object can be destroyed even after ThreadSpecific things are destroyed.
     std::mutex m_mutex;
-    ThreadIdentifier m_id { 0 };
     JoinableState m_joinableState { Joinable };
     bool m_isShuttingDown { false };
     bool m_didExit { false };
@@ -288,7 +281,9 @@ protected:
     StackBounds m_stack { StackBounds::emptyBounds() };
     Vector<std::weak_ptr<ThreadGroup>> m_threadGroups;
     PlatformThreadHandle m_handle;
-#if OS(DARWIN)
+#if OS(WINDOWS)
+    ThreadIdentifier m_id { 0 };
+#elif OS(DARWIN)
     mach_port_t m_platformThread;
 #elif USE(PTHREADS)
     PlatformRegisters* m_platformRegisters { nullptr };
@@ -306,11 +301,6 @@ protected:
     void* m_savedStackPointerAtVMEntry { nullptr };
     void* m_savedLastStackTop;
 };
-
-inline ThreadIdentifier currentThread()
-{
-    return Thread::currentID();
-}
 
 inline Thread* Thread::currentMayBeNull()
 {
@@ -345,11 +335,10 @@ inline Thread& Thread::current()
 
 } // namespace WTF
 
-using WTF::ThreadIdentifier;
 using WTF::Thread;
-using WTF::currentThread;
 
 #if OS(WINDOWS)
+using WTF::ThreadIdentifier;
 using WTF::createThread;
 using WTF::waitForThreadCompletion;
 #endif

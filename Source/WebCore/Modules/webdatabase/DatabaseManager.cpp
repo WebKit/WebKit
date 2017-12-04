@@ -257,7 +257,7 @@ DatabaseDetails DatabaseManager::detailsForNameAndOrigin(const String& name, Sec
         std::lock_guard<Lock> lock { m_proposedDatabasesMutex };
         for (auto* proposedDatabase : m_proposedDatabases) {
             if (proposedDatabase->details().name() == name && proposedDatabase->origin().equal(&origin)) {
-                ASSERT(proposedDatabase->details().threadID() == Thread::currentID() || isMainThread());
+                ASSERT(&proposedDatabase->details().thread() == &Thread::current() || isMainThread());
                 return proposedDatabase->details();
             }
         }

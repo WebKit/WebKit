@@ -103,7 +103,7 @@ private:
     Vector<TimerBase*>* m_cachedThreadGlobalTimerHeap { nullptr };
 
 #ifndef NDEBUG
-    ThreadIdentifier m_thread;
+    Ref<Thread> m_thread { Thread::current() };
     bool m_wasDeleted { false };
 #endif
 
@@ -140,9 +140,9 @@ inline bool TimerBase::isActive() const
 {
     // FIXME: Write this in terms of USE(WEB_THREAD) instead of PLATFORM(IOS).
 #if !PLATFORM(IOS)
-    ASSERT(m_thread == currentThread());
+    ASSERT(m_thread.ptr() == &Thread::current());
 #else
-    ASSERT(WebThreadIsCurrent() || pthread_main_np() || m_thread == currentThread());
+    ASSERT(WebThreadIsCurrent() || pthread_main_np() || m_thread.ptr() == &Thread::current());
 #endif // PLATFORM(IOS)
     return static_cast<bool>(m_nextFireTime);
 }

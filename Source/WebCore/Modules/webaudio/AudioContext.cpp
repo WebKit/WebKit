@@ -100,9 +100,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
-// FIXME: check the proper way to reference an undefined thread ID
-const int UndefinedThreadIdentifier = 0xffffffff;
-
 const unsigned MaxPeriodicWaveLength = 4096;
 
 namespace WebCore {
@@ -136,7 +133,6 @@ AudioContext::AudioContext(Document& document)
     : ActiveDOMObject(&document)
     , m_mediaSession(PlatformMediaSession::create(*this))
     , m_eventQueue(std::make_unique<GenericEventQueue>(*this))
-    , m_graphOwnerThread(UndefinedThreadIdentifier)
 {
     constructCommon();
 
@@ -152,7 +148,6 @@ AudioContext::AudioContext(Document& document, unsigned numberOfChannels, size_t
     , m_isOfflineContext(true)
     , m_mediaSession(PlatformMediaSession::create(*this))
     , m_eventQueue(std::make_unique<GenericEventQueue>(*this))
-    , m_graphOwnerThread(UndefinedThreadIdentifier)
 {
     constructCommon();
 
@@ -696,23 +691,23 @@ void AudioContext::lock(bool& mustReleaseLock)
     // Don't allow regular lock in real-time audio thread.
     ASSERT(isMainThread());
 
-    ThreadIdentifier thisThread = currentThread();
+    Thread& thisThread = Thread::current();
 
-    if (thisThread == m_graphOwnerThread) {
+    if (&thisThread == m_graphOwnerThread) {
         // We already have the lock.
         mustReleaseLock = false;
     } else {
         // Acquire the lock.
         m_contextGraphMutex.lock();
-        m_graphOwnerThread = thisThread;
+        m_graphOwnerThread = &thisThread;
         mustReleaseLock = true;
     }
 }
 
 bool AudioContext::tryLock(bool& mustReleaseLock)
 {
-    ThreadIdentifier thisThread = currentThread();
-    bool isAudioThread = thisThread == audioThread();
+    Thread& thisThread = Thread::current();
+    bool isAudioThread = &thisThread == audioThread();
 
     // Try to catch cases of using try lock on main thread - it should use regular lock.
     ASSERT(isAudioThread || isAudioThreadFinished());
@@ -725,7 +720,7 @@ bool AudioContext::tryLock(bool& mustReleaseLock)
     
     bool hasLock;
     
-    if (thisThread == m_graphOwnerThread) {
+    if (&thisThread == m_graphOwnerThread) {
         // Thread already has the lock.
         hasLock = true;
         mustReleaseLock = false;
@@ -734,7 +729,7 @@ bool AudioContext::tryLock(bool& mustReleaseLock)
         hasLock = m_contextGraphMutex.tryLock();
         
         if (hasLock)
-            m_graphOwnerThread = thisThread;
+            m_graphOwnerThread = &thisThread;
 
         mustReleaseLock = hasLock;
     }
@@ -744,20 +739,20 @@ bool AudioContext::tryLock(bool& mustReleaseLock)
 
 void AudioContext::unlock()
 {
-    ASSERT(currentThread() == m_graphOwnerThread);
+    ASSERT(m_graphOwnerThread == &Thread::current());
 
-    m_graphOwnerThread = UndefinedThreadIdentifier;
+    m_graphOwnerThread = nullptr;
     m_contextGraphMutex.unlock();
 }
 
 bool AudioContext::isAudioThread() const
 {
-    return currentThread() == m_audioThread;
+    return m_audioThread == &Thread::current();
 }
 
 bool AudioContext::isGraphOwner() const
 {
-    return currentThread() == m_graphOwnerThread;
+    return m_graphOwnerThread == &Thread::current();
 }
 
 void AudioContext::addDeferredFinishDeref(AudioNode* node)

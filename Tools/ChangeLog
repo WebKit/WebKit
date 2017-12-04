@@ -1,3 +1,21 @@
+2017-12-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        WTF shouldn't have both Thread and ThreadIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=180308
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree):
+        (runThread): Deleted.
+        (runPthread): Deleted.
+        (testThreadIdentifierMap): Deleted.
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/ParkingLot.cpp:
+        * TestWebKitAPI/Tests/WTF/Threading.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2017-12-03  Aakash Jain  <aakash_jain@apple.com>
 
         webkitpy EWS keeps retrying a failing patch

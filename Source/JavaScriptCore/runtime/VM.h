@@ -711,7 +711,7 @@ public:
 
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
     StackTrace* nativeStackTraceOfLastThrow() const { return m_nativeStackTraceOfLastThrow.get(); }
-    ThreadIdentifier throwingThread() const { return m_throwingThread; }
+    Thread* throwingThread() const { return m_throwingThread.get(); }
 #endif
 
 #if USE(CF)
@@ -754,7 +754,7 @@ private:
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
         m_needExceptionCheck = false;
         m_nativeStackTraceOfLastThrow = nullptr;
-        m_throwingThread = 0;
+        m_throwingThread = nullptr;
 #endif
         m_exception = nullptr;
     }
@@ -806,7 +806,7 @@ private:
     mutable bool m_needExceptionCheck { false };
     std::unique_ptr<StackTrace> m_nativeStackTraceOfLastThrow;
     std::unique_ptr<StackTrace> m_nativeStackTraceOfLastSimulatedThrow;
-    ThreadIdentifier m_throwingThread;
+    RefPtr<Thread> m_throwingThread;
 #endif
 
     bool m_failNextNewCodeBlock { false };

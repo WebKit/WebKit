@@ -164,7 +164,7 @@ void ScriptExecutionContext::dispatchMessagePortEvents()
 void ScriptExecutionContext::createdMessagePort(MessagePort& messagePort)
 {
     ASSERT((is<Document>(*this) && isMainThread())
-        || (is<WorkerGlobalScope>(*this) && currentThread() == downcast<WorkerGlobalScope>(*this).thread().threadID()));
+        || (is<WorkerGlobalScope>(*this) && downcast<WorkerGlobalScope>(*this).thread().thread() == &Thread::current()));
 
     m_messagePorts.add(&messagePort);
 }
@@ -172,7 +172,7 @@ void ScriptExecutionContext::createdMessagePort(MessagePort& messagePort)
 void ScriptExecutionContext::destroyedMessagePort(MessagePort& messagePort)
 {
     ASSERT((is<Document>(*this) && isMainThread())
-        || (is<WorkerGlobalScope>(*this) && currentThread() == downcast<WorkerGlobalScope>(*this).thread().threadID()));
+        || (is<WorkerGlobalScope>(*this) && downcast<WorkerGlobalScope>(*this).thread().thread() == &Thread::current()));
 
     m_messagePorts.remove(&messagePort);
 }

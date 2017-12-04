@@ -340,13 +340,13 @@ private:
 // --------------------------------
 
 static int globalDescriptor = 0;
-static ThreadIdentifier libxmlLoaderThread = 0;
+static Thread* libxmlLoaderThread { nullptr };
 
 static int matchFunc(const char*)
 {
     // Only match loads initiated due to uses of libxml2 from within XMLDocumentParser to avoid
     // interfering with client applications that also use libxml2.  http://bugs.webkit.org/show_bug.cgi?id=17353
-    return XMLDocumentParserScope::currentCachedResourceLoader && currentThread() == libxmlLoaderThread;
+    return XMLDocumentParserScope::currentCachedResourceLoader && libxmlLoaderThread == &Thread::current();
 }
 
 class OffsetBuffer {
@@ -432,7 +432,7 @@ static bool shouldAllowExternalLoad(const URL& url)
 static void* openFunc(const char* uri)
 {
     ASSERT(XMLDocumentParserScope::currentCachedResourceLoader);
-    ASSERT(currentThread() == libxmlLoaderThread);
+    ASSERT(&Thread::current() == libxmlLoaderThread);
 
     URL url(URL(), uri);
 
@@ -495,17 +495,20 @@ static void errorFunc(void*, const char*, ...)
 }
 #endif
 
-static bool didInit = false;
-
-Ref<XMLParserContext> XMLParserContext::createStringParser(xmlSAXHandlerPtr handlers, void* userData)
+static void initializeXMLParser()
 {
-    if (!didInit) {
+    static std::once_flag flag;
+    std::call_once(flag, [&] {
         xmlInitParser();
         xmlRegisterInputCallbacks(matchFunc, openFunc, readFunc, closeFunc);
         xmlRegisterOutputCallbacks(matchFunc, openFunc, writeFunc, closeFunc);
-        libxmlLoaderThread = currentThread();
-        didInit = true;
-    }
+        libxmlLoaderThread = &Thread::current();
+    });
+}
+
+Ref<XMLParserContext> XMLParserContext::createStringParser(xmlSAXHandlerPtr handlers, void* userData)
+{
+    initializeXMLParser();
 
     xmlParserCtxtPtr parser = xmlCreatePushParserCtxt(handlers, 0, 0, 0, 0);
     parser->_private = userData;
@@ -522,13 +525,7 @@ Ref<XMLParserContext> XMLParserContext::createStringParser(xmlSAXHandlerPtr hand
 // Chunk should be encoded in UTF-8
 RefPtr<XMLParserContext> XMLParserContext::createMemoryParser(xmlSAXHandlerPtr handlers, void* userData, const CString& chunk)
 {
-    if (!didInit) {
-        xmlInitParser();
-        xmlRegisterInputCallbacks(matchFunc, openFunc, readFunc, closeFunc);
-        xmlRegisterOutputCallbacks(matchFunc, openFunc, writeFunc, closeFunc);
-        libxmlLoaderThread = currentThread();
-        didInit = true;
-    }
+    initializeXMLParser();
 
     // appendFragmentSource() checks that the length doesn't overflow an int.
     xmlParserCtxtPtr parser = xmlCreateMemoryParserCtxt(chunk.data(), chunk.length());

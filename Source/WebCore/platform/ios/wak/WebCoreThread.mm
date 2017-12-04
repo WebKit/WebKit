@@ -656,7 +656,6 @@ void *RunWebThread(void *arg)
     
     // Make sure that the WebThread and the main thread share the same ThreadGlobalData objects.
     WebCore::threadGlobalData().setWebCoreThreadData();
-    initializeWebThreadIdentifier();
 
 #if HAVE(PTHREAD_SETNAME_NP)
     pthread_setname_np("WebThread");
@@ -766,7 +765,7 @@ static void StartWebThread()
         startupCondition.wait(startupLock);
     }
 
-    initializeApplicationUIThreadIdentifier();
+    initializeApplicationUIThread();
 }
 
 static int WebTimedConditionLock (pthread_cond_t *condition, pthread_mutex_t *lock, CFAbsoluteTime interval)

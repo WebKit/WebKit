@@ -40,8 +40,7 @@ ScrollingThread::ScrollingThread()
 
 bool ScrollingThread::isCurrentThread()
 {
-    RefPtr<Thread> thread = ScrollingThread::singleton().m_thread;
-    return thread && thread->id() == currentThread();
+    return ScrollingThread::singleton().m_thread == &Thread::current();
 }
 
 void ScrollingThread::dispatch(Function<void ()>&& function)

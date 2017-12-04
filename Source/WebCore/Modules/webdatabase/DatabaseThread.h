@@ -58,7 +58,7 @@ public:
 
     void recordDatabaseOpen(Database&);
     void recordDatabaseClosed(Database&);
-    ThreadIdentifier getThreadID() { return m_thread ? m_thread->id() : 0; }
+    Thread* getThread() { return m_thread.get(); }
 
     SQLTransactionCoordinator* transactionCoordinator() { return m_transactionCoordinator.get(); }
 

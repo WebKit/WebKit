@@ -1,3 +1,56 @@
+2017-12-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        WTF shouldn't have both Thread and ThreadIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=180308
+
+        Reviewed by Darin Adler.
+
+        We should use a pointer of WTF::Thread instead of ThreadIdentifier.
+
+        One problem is that Windows support library uses WTF::createThread,
+        which returns ThreadIdentifier. So we cannot drop ThreadIdentifier
+        in Windows environment. This patch keeps ThreadIdentifier in Windows.
+
+        * wtf/MainThread.cpp:
+        (WTF::initializeMainThread):
+        (WTF::isMainThread):
+        (WTF::canAccessThreadLocalDataForThread):
+        * wtf/MainThread.h:
+        * wtf/ParkingLot.cpp:
+        (WTF::ParkingLot::parkConditionallyImpl):
+        (WTF::ParkingLot::unparkOne):
+        (WTF::ParkingLot::unparkOneImpl):
+        (WTF::ParkingLot::unparkCount):
+        * wtf/RecursiveLockAdapter.h:
+        (WTF::RecursiveLockAdapter::lock):
+        (WTF::RecursiveLockAdapter::unlock):
+        (WTF::RecursiveLockAdapter::tryLock):
+        * wtf/Threading.cpp:
+        (WTF::Thread::dump const):
+        * wtf/Threading.h:
+        (WTF::Thread::id const):
+        (WTF::Thread::operator==): Deleted.
+        (WTF::Thread::operator!=): Deleted.
+        (WTF::currentThread): Deleted.
+        * wtf/ThreadingPrimitives.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::Thread::waitForCompletion):
+        (WTF::Thread::detach):
+        (WTF::Thread::initializeCurrentTLS):
+        (WTF::Thread::suspend):
+        (WTF::Thread::establishPlatformSpecificHandle):
+        (WTF::Thread::currentID): Deleted.
+        * wtf/ThreadingWin.cpp:
+        (WTF::Thread::waitForCompletion):
+        (WTF::Thread::suspend):
+        (WTF::Thread::currentDying):
+        * wtf/mac/MainThreadMac.mm:
+        (WTF::initializeApplicationUIThread):
+        (WTF::initializeWebThreadPlatform):
+        (WTF::canAccessThreadLocalDataForThread):
+        (WTF::initializeApplicationUIThreadIdentifier): Deleted.
+        (WTF::initializeWebThreadIdentifier): Deleted.
+
 2017-12-03  Darin Adler  <darin@apple.com>
 
         Add WTF::Hasher, an easier to use replacement for WTF::IntegerHasher

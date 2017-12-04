@@ -151,7 +151,7 @@ bool MachineThreads::tryCopyOtherThreadStacks(const AbstractLocker& locker, void
     {
         unsigned index = 0;
         for (auto& thread : threads) {
-            if (thread.get() != currentThread) {
+            if (thread.ptr() != &currentThread) {
                 auto result = thread->suspend();
                 if (result)
                     isSuspended.set(index);
@@ -160,8 +160,8 @@ bool MachineThreads::tryCopyOtherThreadStacks(const AbstractLocker& locker, void
                     // These threads will be removed from the ThreadGroup. Thus, we do not do anything here except for reporting.
                     ASSERT(result.error() != KERN_SUCCESS);
                     WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION,
-                        "JavaScript garbage collection encountered an invalid thread (err 0x%x): Thread [%d/%d: %p] id %u.",
-                        result.error(), index, threads.size(), thread.ptr(), thread->id());
+                        "JavaScript garbage collection encountered an invalid thread (err 0x%x): Thread [%d/%d: %p].",
+                        result.error(), index, threads.size(), thread.ptr());
 #endif
                 }
             }

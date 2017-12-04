@@ -146,7 +146,7 @@ void ScheduledAction::execute(Document& document)
 void ScheduledAction::execute(WorkerGlobalScope& workerGlobalScope)
 {
     // In a Worker, the execution should always happen on a worker thread.
-    ASSERT(workerGlobalScope.thread().threadID() == currentThread());
+    ASSERT(workerGlobalScope.thread().thread() == &Thread::current());
 
     WorkerScriptController* scriptController = workerGlobalScope.script();
 

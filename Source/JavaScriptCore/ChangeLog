@@ -1,3 +1,29 @@
+2017-12-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        WTF shouldn't have both Thread and ThreadIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=180308
+
+        Reviewed by Darin Adler.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::llint_trace_operand):
+        (JSC::LLInt::llint_trace_value):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::traceFunctionPrologue):
+        * runtime/ExceptionScope.cpp:
+        (JSC::ExceptionScope::unexpectedExceptionMessage):
+        * runtime/JSLock.h:
+        (JSC::JSLock::currentThreadIsHoldingLock):
+        * runtime/VM.cpp:
+        (JSC::VM::throwException):
+        * runtime/VM.h:
+        (JSC::VM::throwingThread const):
+        (JSC::VM::clearException):
+        * tools/HeapVerifier.cpp:
+        (JSC::HeapVerifier::printVerificationHeader):
+
 2017-12-03  Caio Lima  <ticaiolima@gmail.com>
 
         Rename DestroyFunc to avoid redefinition on unified build

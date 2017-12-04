@@ -91,7 +91,7 @@ private:
     std::unique_ptr<RunLoop::Timer<TextureMapperPlatformLayerProxy>> m_releaseUnusedBuffersTimer;
 
 #ifndef NDEBUG
-    ThreadIdentifier m_compositorThreadID { 0 };
+    RefPtr<Thread> m_compositorThread;
 #endif
 
     void compositorThreadUpdateTimerFired();

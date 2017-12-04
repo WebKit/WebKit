@@ -78,7 +78,6 @@ private:
     IntPoint m_dragPoint;
 
 #if PLATFORM(COCOA)
-    ThreadIdentifier m_threadID { 0 };
     RetainPtr<CALayer> m_layer;
     RetainPtr<CALayer> m_containerLayer;
 #endif

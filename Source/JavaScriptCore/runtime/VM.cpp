@@ -689,7 +689,7 @@ void VM::throwException(ExecState* exec, Exception* exception)
 
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
     m_nativeStackTraceOfLastThrow = StackTrace::captureStackTrace(Options::unexpectedExceptionStackTraceLimit());
-    m_throwingThread = currentThread();
+    m_throwingThread = &Thread::current();
 #endif
 }
 

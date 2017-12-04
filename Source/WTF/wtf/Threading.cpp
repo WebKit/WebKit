@@ -273,7 +273,7 @@ qos_class_t Thread::adjustedQOSClass(qos_class_t originalClass)
 
 void Thread::dump(PrintStream& out) const
 {
-    out.print(m_id);
+    out.print("Thread:", RawPointer(this));
 }
 
 #if !HAVE(FAST_TLS)

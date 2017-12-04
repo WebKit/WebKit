@@ -58,9 +58,10 @@ TextureMapperPlatformLayerProxy::~TextureMapperPlatformLayerProxy()
 void TextureMapperPlatformLayerProxy::activateOnCompositingThread(Compositor* compositor, TextureMapperLayer* targetLayer)
 {
 #ifndef NDEBUG
-    m_compositorThreadID = m_compositorThreadID ? m_compositorThreadID : WTF::currentThread();
+    if (!m_compositorThread)
+        m_compositorThread = &Thread::current();
 #endif
-    ASSERT(m_compositorThreadID == WTF::currentThread());
+    ASSERT(m_compositorThread == &Thread::current());
     ASSERT(compositor);
     ASSERT(targetLayer);
     LockHolder locker(m_lock);
@@ -80,7 +81,7 @@ void TextureMapperPlatformLayerProxy::activateOnCompositingThread(Compositor* co
 
 void TextureMapperPlatformLayerProxy::invalidate()
 {
-    ASSERT(m_compositorThreadID == WTF::currentThread());
+    ASSERT(m_compositorThread == &Thread::current());
     Function<void()> updateFunction;
     {
         LockHolder locker(m_lock);
@@ -120,7 +121,7 @@ void TextureMapperPlatformLayerProxy::pushNextBuffer(std::unique_ptr<TextureMapp
 std::unique_ptr<TextureMapperPlatformLayerBuffer> TextureMapperPlatformLayerProxy::getAvailableBuffer(const IntSize& size, GLint internalFormat)
 {
     ASSERT(m_lock.isHeld());
-    ASSERT(m_compositorThreadID == WTF::currentThread());
+    ASSERT(m_compositorThread == &Thread::current());
     std::unique_ptr<TextureMapperPlatformLayerBuffer> availableBuffer;
 
     auto buffers = WTFMove(m_usedBuffers);
@@ -144,7 +145,7 @@ std::unique_ptr<TextureMapperPlatformLayerBuffer> TextureMapperPlatformLayerProx
 void TextureMapperPlatformLayerProxy::appendToUnusedBuffers(std::unique_ptr<TextureMapperPlatformLayerBuffer> buffer)
 {
     ASSERT(m_lock.isHeld());
-    ASSERT(m_compositorThreadID == WTF::currentThread());
+    ASSERT(m_compositorThread == &Thread::current());
     m_usedBuffers.append(WTFMove(buffer));
     scheduleReleaseUnusedBuffers();
 }
@@ -172,7 +173,7 @@ void TextureMapperPlatformLayerProxy::releaseUnusedBuffersTimerFired()
 
 void TextureMapperPlatformLayerProxy::swapBuffer()
 {
-    ASSERT(m_compositorThreadID == WTF::currentThread());
+    ASSERT(m_compositorThread == &Thread::current());
     LockHolder locker(m_lock);
     if (!m_targetLayer || !m_pendingBuffer)
         return;

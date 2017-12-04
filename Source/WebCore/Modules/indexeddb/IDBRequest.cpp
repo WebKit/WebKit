@@ -143,7 +143,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBIndex& index, Indexed
 
 IDBRequest::~IDBRequest()
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     if (m_result) {
         WTF::switchOn(m_result.value(),
@@ -163,7 +163,7 @@ ExceptionOr<std::optional<IDBRequest::Result>> IDBRequest::result() const
 
 ExceptionOr<DOMException*> IDBRequest::error() const
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     if (!isDone())
         return Exception { InvalidStateError, ASCIILiteral("Failed to read the 'error' property from 'IDBRequest': The request has not finished.") };
@@ -173,7 +173,7 @@ ExceptionOr<DOMException*> IDBRequest::error() const
 
 void IDBRequest::setSource(IDBCursor& cursor)
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
     ASSERT(!m_cursorRequestNotifier);
 
     m_source = Source { &cursor };
@@ -185,7 +185,7 @@ void IDBRequest::setSource(IDBCursor& cursor)
 
 void IDBRequest::setVersionChangeTransaction(IDBTransaction& transaction)
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
     ASSERT(!m_transaction);
     ASSERT(transaction.isVersionChange());
     ASSERT(!transaction.isFinishedOrFinishing());
@@ -195,13 +195,13 @@ void IDBRequest::setVersionChangeTransaction(IDBTransaction& transaction)
 
 RefPtr<WebCore::IDBTransaction> IDBRequest::transaction() const
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
     return m_shouldExposeTransactionToDOM ? m_transaction : nullptr;
 }
 
 uint64_t IDBRequest::sourceObjectStoreIdentifier() const
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     if (!m_source)
         return 0;
@@ -215,7 +215,7 @@ uint64_t IDBRequest::sourceObjectStoreIdentifier() const
 
 uint64_t IDBRequest::sourceIndexIdentifier() const
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     if (!m_source)
         return 0;
@@ -229,14 +229,14 @@ uint64_t IDBRequest::sourceIndexIdentifier() const
 
 IndexedDB::ObjectStoreRecordType IDBRequest::requestedObjectStoreRecordType() const
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     return m_requestedObjectStoreRecordType;
 }
 
 IndexedDB::IndexRecordType IDBRequest::requestedIndexRecordType() const
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
     ASSERT(m_source);
     ASSERT(WTF::holds_alternative<RefPtr<IDBIndex>>(m_source.value()));
 
@@ -245,33 +245,33 @@ IndexedDB::IndexRecordType IDBRequest::requestedIndexRecordType() const
 
 EventTargetInterface IDBRequest::eventTargetInterface() const
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     return IDBRequestEventTargetInterfaceType;
 }
 
 const char* IDBRequest::activeDOMObjectName() const
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     return "IDBRequest";
 }
 
 bool IDBRequest::canSuspendForDocumentSuspension() const
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
     return false;
 }
 
 bool IDBRequest::hasPendingActivity() const
 {
-    ASSERT(currentThread() == originThreadID() || mayBeGCThread());
+    ASSERT(&originThread() == &Thread::current() || mayBeGCThread());
     return m_hasPendingActivity;
 }
 
 void IDBRequest::stop()
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
     ASSERT(!m_contextStopped);
 
     cancelForStop();
@@ -288,7 +288,7 @@ void IDBRequest::cancelForStop()
 
 void IDBRequest::enqueueEvent(Ref<Event>&& event)
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
     if (!scriptExecutionContext() || m_contextStopped)
         return;
 
@@ -300,7 +300,7 @@ void IDBRequest::dispatchEvent(Event& event)
 {
     LOG(IndexedDB, "IDBRequest::dispatchEvent - %s (%p)", event.type().string().utf8().data(), this);
 
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
     ASSERT(m_hasPendingActivity);
     ASSERT(!m_contextStopped);
 
@@ -347,7 +347,7 @@ void IDBRequest::uncaughtExceptionInEventHandler()
 {
     LOG(IndexedDB, "IDBRequest::uncaughtExceptionInEventHandler");
 
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     if (m_transaction && m_idbError.code() != AbortError)
         m_transaction->abortDueToFailedRequest(DOMException::create(AbortError, ASCIILiteral("IDBTransaction will abort due to uncaught exception in an event handler")));
@@ -355,7 +355,7 @@ void IDBRequest::uncaughtExceptionInEventHandler()
 
 void IDBRequest::setResult(const IDBKeyData& keyData)
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     auto* context = scriptExecutionContext();
     if (!context)
@@ -374,7 +374,7 @@ void IDBRequest::setResult(const IDBKeyData& keyData)
 
 void IDBRequest::setResult(const Vector<IDBKeyData>& keyDatas)
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     auto* context = scriptExecutionContext();
     if (!context)
@@ -393,7 +393,7 @@ void IDBRequest::setResult(const Vector<IDBKeyData>& keyDatas)
 
 void IDBRequest::setResult(const Vector<IDBValue>& values)
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     auto* context = scriptExecutionContext();
     if (!context)
@@ -412,7 +412,7 @@ void IDBRequest::setResult(const Vector<IDBValue>& values)
 
 void IDBRequest::setResult(uint64_t number)
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     auto* context = scriptExecutionContext();
     if (!context)
@@ -423,7 +423,7 @@ void IDBRequest::setResult(uint64_t number)
 
 void IDBRequest::setResultToStructuredClone(const IDBValue& value)
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     LOG(IndexedDB, "IDBRequest::setResultToStructuredClone");
 
@@ -444,7 +444,7 @@ void IDBRequest::setResultToStructuredClone(const IDBValue& value)
 
 void IDBRequest::setResultToUndefined()
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     auto* context = scriptExecutionContext();
     if (!context)
@@ -455,7 +455,7 @@ void IDBRequest::setResultToUndefined()
 
 IDBCursor* IDBRequest::resultCursor()
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     if (!m_result)
         return nullptr;
@@ -468,7 +468,7 @@ IDBCursor* IDBRequest::resultCursor()
 
 void IDBRequest::willIterateCursor(IDBCursor& cursor)
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
     ASSERT(isDone());
     ASSERT(scriptExecutionContext());
     ASSERT(m_transaction);
@@ -490,7 +490,7 @@ void IDBRequest::willIterateCursor(IDBCursor& cursor)
 
 void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
     ASSERT(m_pendingCursor);
 
     m_result = std::nullopt;
@@ -509,7 +509,7 @@ void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
 
 void IDBRequest::completeRequestAndDispatchEvent(const IDBResultData& resultData)
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     m_readyState = ReadyState::Done;
 
@@ -524,7 +524,7 @@ void IDBRequest::onError()
 {
     LOG(IndexedDB, "IDBRequest::onError");
 
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
     ASSERT(!m_idbError.isNull());
 
     m_domError = m_idbError.toDOMException();
@@ -534,14 +534,14 @@ void IDBRequest::onError()
 void IDBRequest::onSuccess()
 {
     LOG(IndexedDB, "IDBRequest::onSuccess");
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     enqueueEvent(Event::create(eventNames().successEvent, false, false));
 }
 
 void IDBRequest::setResult(Ref<IDBDatabase>&& database)
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     m_result = Result { RefPtr<IDBDatabase> { WTFMove(database) } };
 }

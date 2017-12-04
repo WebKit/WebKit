@@ -66,8 +66,8 @@ static pthread_t mainThreadPthread;
 static NSThread* mainThreadNSThread;
 
 #if USE(WEB_THREAD)
-static ThreadIdentifier sApplicationUIThreadIdentifier;
-static ThreadIdentifier sWebThreadIdentifier;
+static Thread* sApplicationUIThread;
+static Thread* sWebThread;
 #endif
 
 void initializeMainThreadPlatform()
@@ -173,16 +173,10 @@ bool isWebThread()
     return pthread_equal(pthread_self(), mainThreadPthread);
 }
 
-void initializeApplicationUIThreadIdentifier()
+void initializeApplicationUIThread()
 {
     ASSERT(pthread_main_np());
-    sApplicationUIThreadIdentifier = currentThread();
-}
-
-void initializeWebThreadIdentifier()
-{
-    ASSERT(!pthread_main_np());
-    sWebThreadIdentifier = currentThread();
+    sApplicationUIThread = &Thread::current();
 }
 
 void initializeWebThreadPlatform()
@@ -192,16 +186,18 @@ void initializeWebThreadPlatform()
     mainThreadEstablishedAsPthreadMain = false;
     mainThreadPthread = pthread_self();
     mainThreadNSThread = [[NSThread currentThread] retain];
+
+    sWebThread = &Thread::current();
 }
 
-bool canAccessThreadLocalDataForThread(ThreadIdentifier threadId)
+bool canAccessThreadLocalDataForThread(Thread& thread)
 {
-    ThreadIdentifier currentThreadId = currentThread();
-    if (threadId == currentThreadId)
+    Thread& currentThread = Thread::current();
+    if (&thread == &currentThread)
         return true;
 
-    if (threadId == sWebThreadIdentifier || threadId == sApplicationUIThreadIdentifier)
-        return (currentThreadId == sWebThreadIdentifier || currentThreadId == sApplicationUIThreadIdentifier) && webThreadIsUninitializedOrLockedOrDisabled();
+    if (&thread == sWebThread || &thread == sApplicationUIThread)
+        return (&currentThread == sWebThread || &currentThread == sApplicationUIThread) && webThreadIsUninitializedOrLockedOrDisabled();
 
     return false;
 }

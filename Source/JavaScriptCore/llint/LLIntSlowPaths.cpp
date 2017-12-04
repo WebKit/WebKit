@@ -191,8 +191,8 @@ namespace JSC { namespace LLInt {
 extern "C" SlowPathReturnType llint_trace_operand(ExecState* exec, Instruction* pc, int fromWhere, int operand)
 {
     LLINT_BEGIN();
-    dataLogF("<%d> %p / %p: executing bc#%zu, op#%u: Trace(%d): %d: %d\n",
-            currentThread(),
+    dataLogF("<%p> %p / %p: executing bc#%zu, op#%u: Trace(%d): %d: %d\n",
+            &Thread::current(),
             exec->codeBlock(),
             exec,
             static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),
@@ -215,8 +215,8 @@ extern "C" SlowPathReturnType llint_trace_value(ExecState* exec, Instruction* pc
     } u;
     u.asValue = JSValue::encode(value);
     dataLogF(
-        "<%d> %p / %p: executing bc#%zu, op#%u: Trace(%d): %d: %d: %08x:%08x: %s\n",
-        currentThread(),
+        "<%p> %p / %p: executing bc#%zu, op#%u: Trace(%d): %d: %d: %08x:%08x: %s\n",
+        &Thread::current(),
         exec->codeBlock(),
         exec,
         static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),
@@ -232,7 +232,7 @@ extern "C" SlowPathReturnType llint_trace_value(ExecState* exec, Instruction* pc
 
 LLINT_SLOW_PATH_DECL(trace_prologue)
 {
-    dataLogF("<%d> %p / %p: in prologue of ", currentThread(), exec->codeBlock(), exec);
+    dataLogF("<%p> %p / %p: in prologue of ", &Thread::current(), exec->codeBlock(), exec);
     dataLog(*exec->codeBlock(), "\n");
     LLINT_END_IMPL();
 }
@@ -242,7 +242,7 @@ static void traceFunctionPrologue(ExecState* exec, const char* comment, CodeSpec
     JSFunction* callee = jsCast<JSFunction*>(exec->jsCallee());
     FunctionExecutable* executable = callee->jsExecutable();
     CodeBlock* codeBlock = executable->codeBlockFor(kind);
-    dataLogF("<%d> %p / %p: in %s of ", currentThread(), codeBlock, exec, comment);
+    dataLogF("<%p> %p / %p: in %s of ", &Thread::current(), codeBlock, exec, comment);
     dataLog(*codeBlock);
     dataLogF(" function %p, executable %p; numVars = %u, numParameters = %u, numCalleeLocals = %u, caller = %p.\n",
         callee, executable, codeBlock->m_numVars, codeBlock->numParameters(), codeBlock->m_numCalleeLocals, exec->callerFrame());
@@ -275,8 +275,8 @@ LLINT_SLOW_PATH_DECL(trace_arityCheck_for_construct)
 LLINT_SLOW_PATH_DECL(trace)
 {
     OpcodeID opcodeID = Interpreter::getOpcodeID(pc[0].u.opcode);
-    dataLogF("<%d> %p / %p: executing bc#%zu, %s, pc = %p\n",
-            currentThread(),
+    dataLogF("<%p> %p / %p: executing bc#%zu, %s, pc = %p\n",
+            &Thread::current(),
             exec->codeBlock(),
             exec,
             static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),
@@ -294,8 +294,8 @@ LLINT_SLOW_PATH_DECL(trace)
 
 LLINT_SLOW_PATH_DECL(special_trace)
 {
-    dataLogF("<%d> %p / %p: executing special case bc#%zu, op#%u, return PC is %p\n",
-            currentThread(),
+    dataLogF("<%p> %p / %p: executing special case bc#%zu, op#%u, return PC is %p\n",
+            &Thread::current(),
             exec->codeBlock(),
             exec,
             static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),

@@ -44,7 +44,7 @@ namespace WTF {
 
 static bool callbacksPaused; // This global variable is only accessed from main thread.
 #if !PLATFORM(COCOA)
-static ThreadIdentifier mainThreadIdentifier;
+static Thread* mainThread { nullptr };
 #endif
 
 static StaticLock mainThreadFunctionQueueMutex;
@@ -62,7 +62,7 @@ void initializeMainThread()
     std::call_once(initializeKey, [] {
         initializeThreading();
 #if !PLATFORM(COCOA)
-        mainThreadIdentifier = currentThread();
+        mainThread = &Thread::current();
 #endif
         initializeMainThreadPlatform();
         initializeGCThreads();
@@ -72,7 +72,7 @@ void initializeMainThread()
 #if !PLATFORM(COCOA)
 bool isMainThread()
 {
-    return currentThread() == mainThreadIdentifier;
+    return mainThread == &Thread::current();
 }
 #endif
 
@@ -98,9 +98,9 @@ void initializeWebThread()
 #endif // PLATFORM(COCOA)
 
 #if !USE(WEB_THREAD)
-bool canAccessThreadLocalDataForThread(ThreadIdentifier threadId)
+bool canAccessThreadLocalDataForThread(Thread& thread)
 {
-    return threadId == currentThread();
+    return &thread == &Thread::current();
 }
 #endif
 

@@ -178,8 +178,8 @@ public:
     // Thread Safety and Graph Locking:
     //
     
-    void setAudioThread(ThreadIdentifier thread) { m_audioThread = thread; } // FIXME: check either not initialized or the same
-    ThreadIdentifier audioThread() const { return m_audioThread; }
+    void setAudioThread(Thread& thread) { m_audioThread = &thread; } // FIXME: check either not initialized or the same
+    Thread* audioThread() const { return m_audioThread; }
     bool isAudioThread() const;
 
     // Returns true only after the audio thread has been started and then shutdown.
@@ -381,8 +381,10 @@ private:
 
     // Graph locking.
     Lock m_contextGraphMutex;
-    volatile ThreadIdentifier m_audioThread { 0 };
-    volatile ThreadIdentifier m_graphOwnerThread; // if the lock is held then this is the thread which owns it, otherwise == UndefinedThreadIdentifier
+    // FIXME: Using volatile seems incorrect.
+    // https://bugs.webkit.org/show_bug.cgi?id=180332
+    Thread* volatile m_audioThread { nullptr };
+    Thread* volatile m_graphOwnerThread { nullptr }; // if the lock is held then this is the thread which owns it, otherwise == nullptr.
 
     AsyncAudioDecoder m_audioDecoder;
 

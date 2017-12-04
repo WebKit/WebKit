@@ -1,3 +1,15 @@
+2017-12-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        WTF shouldn't have both Thread and ThreadIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=180308
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/glib/IconDatabase.cpp:
+        * UIProcess/GenericCallback.h:
+        (WebKit::GenericCallback::~GenericCallback):
+        (WebKit::GenericCallback::performCallbackWithReturnValue):
+
 2017-12-03  Chris Dumez  <cdumez@apple.com>
 
         Support serviceWorker.postMessage() inside service workers

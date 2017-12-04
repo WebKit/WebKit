@@ -1224,8 +1224,8 @@ static bool shouldAutoActivateFontIfNeeded(const AtomicString& family)
 #ifndef NDEBUG
     // This cache is not thread safe so the following assertion is there to
     // make sure this function is always called from the same thread.
-    static ThreadIdentifier initThreadId = currentThread();
-    ASSERT(currentThread() == initThreadId);
+    static Thread* initThread = &Thread::current();
+    ASSERT(initThread == &Thread::current());
 #endif
 
     static NeverDestroyed<HashSet<AtomicString>> knownFamilies;

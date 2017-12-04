@@ -90,7 +90,7 @@ private:
     ResourceResponse m_lastResponse;
 
 #if !ASSERT_DISABLED
-    ThreadIdentifier m_creationThread { currentThread() };
+    Ref<Thread> m_creationThread { Thread::current() };
 #endif
 };
 

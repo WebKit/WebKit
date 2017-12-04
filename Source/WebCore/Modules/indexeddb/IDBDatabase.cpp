@@ -64,7 +64,7 @@ IDBDatabase::IDBDatabase(ScriptExecutionContext& context, IDBClient::IDBConnecti
 
 IDBDatabase::~IDBDatabase()
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     if (!m_closedInServer)
         m_connectionProxy->databaseConnectionClosed(*this);
@@ -74,7 +74,7 @@ IDBDatabase::~IDBDatabase()
 
 bool IDBDatabase::hasPendingActivity() const
 {
-    ASSERT(currentThread() == originThreadID() || mayBeGCThread());
+    ASSERT(&originThread() == &Thread::current() || mayBeGCThread());
 
     if (m_closedInServer)
         return false;
@@ -87,19 +87,19 @@ bool IDBDatabase::hasPendingActivity() const
 
 const String IDBDatabase::name() const
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
     return m_info.name();
 }
 
 uint64_t IDBDatabase::version() const
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
     return m_info.version();
 }
 
 RefPtr<DOMStringList> IDBDatabase::objectStoreNames() const
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
     for (auto& name : m_info.objectStoreNames())
@@ -110,7 +110,7 @@ RefPtr<DOMStringList> IDBDatabase::objectStoreNames() const
 
 void IDBDatabase::renameObjectStore(IDBObjectStore& objectStore, const String& newName)
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
     ASSERT(m_versionChangeTransaction);
     ASSERT(m_info.hasObjectStore(objectStore.info().name()));
 
@@ -121,7 +121,7 @@ void IDBDatabase::renameObjectStore(IDBObjectStore& objectStore, const String& n
 
 void IDBDatabase::renameIndex(IDBIndex& index, const String& newName)
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
     ASSERT(m_versionChangeTransaction);
     ASSERT(m_info.hasObjectStore(index.objectStore().info().name()));
     ASSERT(m_info.infoForExistingObjectStore(index.objectStore().info().name())->hasIndex(index.info().name()));
@@ -135,7 +135,7 @@ ExceptionOr<Ref<IDBObjectStore>> IDBDatabase::createObjectStore(const String& na
 {
     LOG(IndexedDB, "IDBDatabase::createObjectStore - (%s %s)", m_info.name().utf8().data(), name.utf8().data());
 
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
     ASSERT(!m_versionChangeTransaction || m_versionChangeTransaction->isVersionChange());
 
     if (!m_versionChangeTransaction)
@@ -165,7 +165,7 @@ ExceptionOr<Ref<IDBTransaction>> IDBDatabase::transaction(StringOrVectorOfString
 {
     LOG(IndexedDB, "IDBDatabase::transaction");
 
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     if (m_closePending)
         return Exception { InvalidStateError, ASCIILiteral("Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.") };
@@ -215,7 +215,7 @@ ExceptionOr<void> IDBDatabase::deleteObjectStore(const String& objectStoreName)
 {
     LOG(IndexedDB, "IDBDatabase::deleteObjectStore");
 
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     if (!m_versionChangeTransaction)
         return Exception { InvalidStateError, ASCIILiteral("Failed to execute 'deleteObjectStore' on 'IDBDatabase': The database is not running a version change transaction.") };
@@ -236,7 +236,7 @@ void IDBDatabase::close()
 {
     LOG(IndexedDB, "IDBDatabase::close - %" PRIu64, m_databaseConnectionIdentifier);
 
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     if (!m_closePending) {
         m_closePending = true;
@@ -259,7 +259,7 @@ void IDBDatabase::connectionToServerLost(const IDBError& error)
 {
     LOG(IndexedDB, "IDBDatabase::connectionToServerLost - %" PRIu64, m_databaseConnectionIdentifier);
 
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     m_closePending = true;
     m_closedInServer = true;
@@ -284,7 +284,7 @@ void IDBDatabase::maybeCloseInServer()
 {
     LOG(IndexedDB, "IDBDatabase::maybeCloseInServer - %" PRIu64, m_databaseConnectionIdentifier);
 
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     if (m_closedInServer)
         return;
@@ -301,13 +301,13 @@ void IDBDatabase::maybeCloseInServer()
 
 const char* IDBDatabase::activeDOMObjectName() const
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
     return "IDBDatabase";
 }
 
 bool IDBDatabase::canSuspendForDocumentSuspension() const
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     // FIXME: This value will sometimes be false when database operations are actually in progress.
     // Such database operations do not yet exist.
@@ -318,7 +318,7 @@ void IDBDatabase::stop()
 {
     LOG(IndexedDB, "IDBDatabase::stop - %" PRIu64, m_databaseConnectionIdentifier);
 
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     removeAllEventListeners();
 
@@ -341,7 +341,7 @@ Ref<IDBTransaction> IDBDatabase::startVersionChangeTransaction(const IDBTransact
 {
     LOG(IndexedDB, "IDBDatabase::startVersionChangeTransaction %s", info.identifier().loggingString().utf8().data());
 
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
     ASSERT(!m_versionChangeTransaction);
     ASSERT(info.mode() == IDBTransactionMode::Versionchange);
     ASSERT(!m_closePending);
@@ -359,7 +359,7 @@ void IDBDatabase::didStartTransaction(IDBTransaction& transaction)
 {
     LOG(IndexedDB, "IDBDatabase::didStartTransaction %s", transaction.info().identifier().loggingString().utf8().data());
     ASSERT(!m_versionChangeTransaction);
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     // It is possible for the client to have aborted a transaction before the server replies back that it has started.
     if (m_abortingTransactions.contains(transaction.info().identifier()))
@@ -372,7 +372,7 @@ void IDBDatabase::willCommitTransaction(IDBTransaction& transaction)
 {
     LOG(IndexedDB, "IDBDatabase::willCommitTransaction %s", transaction.info().identifier().loggingString().utf8().data());
 
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     auto refTransaction = m_activeTransactions.take(transaction.info().identifier());
     ASSERT(refTransaction);
@@ -383,7 +383,7 @@ void IDBDatabase::didCommitTransaction(IDBTransaction& transaction)
 {
     LOG(IndexedDB, "IDBDatabase::didCommitTransaction %s", transaction.info().identifier().loggingString().utf8().data());
 
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     if (m_versionChangeTransaction == &transaction)
         m_info.setVersion(transaction.info().newVersion());
@@ -395,7 +395,7 @@ void IDBDatabase::willAbortTransaction(IDBTransaction& transaction)
 {
     LOG(IndexedDB, "IDBDatabase::willAbortTransaction %s", transaction.info().identifier().loggingString().utf8().data());
 
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     auto refTransaction = m_activeTransactions.take(transaction.info().identifier());
     if (!refTransaction)
@@ -415,7 +415,7 @@ void IDBDatabase::didAbortTransaction(IDBTransaction& transaction)
 {
     LOG(IndexedDB, "IDBDatabase::didAbortTransaction %s", transaction.info().identifier().loggingString().utf8().data());
 
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     if (transaction.isVersionChange()) {
         ASSERT(transaction.originalDatabaseInfo());
@@ -431,7 +431,7 @@ void IDBDatabase::didCommitOrAbortTransaction(IDBTransaction& transaction)
 {
     LOG(IndexedDB, "IDBDatabase::didCommitOrAbortTransaction %s", transaction.info().identifier().loggingString().utf8().data());
 
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     if (m_versionChangeTransaction == &transaction)
         m_versionChangeTransaction = nullptr;
@@ -461,7 +461,7 @@ void IDBDatabase::fireVersionChangeEvent(const IDBResourceIdentifier& requestIde
     uint64_t currentVersion = m_info.version();
     LOG(IndexedDB, "IDBDatabase::fireVersionChangeEvent - current version %" PRIu64 ", requested version %" PRIu64 ", connection %" PRIu64 " (%p)", currentVersion, requestedVersion, m_databaseConnectionIdentifier, this);
 
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     if (!scriptExecutionContext() || m_closePending) {
         connectionProxy().didFireVersionChangeEvent(m_databaseConnectionIdentifier, requestIdentifier);
@@ -476,7 +476,7 @@ void IDBDatabase::fireVersionChangeEvent(const IDBResourceIdentifier& requestIde
 void IDBDatabase::dispatchEvent(Event& event)
 {
     LOG(IndexedDB, "IDBDatabase::dispatchEvent (%" PRIu64 ") (%p)", m_databaseConnectionIdentifier, this);
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     auto protectedThis = makeRef(*this);
 
@@ -488,7 +488,7 @@ void IDBDatabase::dispatchEvent(Event& event)
 
 void IDBDatabase::didCreateIndexInfo(const IDBIndexInfo& info)
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     auto* objectStore = m_info.infoForExistingObjectStore(info.objectStoreIdentifier());
     ASSERT(objectStore);
@@ -497,7 +497,7 @@ void IDBDatabase::didCreateIndexInfo(const IDBIndexInfo& info)
 
 void IDBDatabase::didDeleteIndexInfo(const IDBIndexInfo& info)
 {
-    ASSERT(currentThread() == originThreadID());
+    ASSERT(&originThread() == &Thread::current());
 
     auto* objectStore = m_info.infoForExistingObjectStore(info.objectStoreIdentifier());
     ASSERT(objectStore);

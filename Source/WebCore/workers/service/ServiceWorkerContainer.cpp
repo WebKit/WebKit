@@ -64,7 +64,7 @@ ServiceWorkerContainer::ServiceWorkerContainer(ScriptExecutionContext& context, 
 ServiceWorkerContainer::~ServiceWorkerContainer()
 {
 #ifndef NDEBUG
-    ASSERT(m_creationThread == currentThread());
+    ASSERT(m_creationThread.ptr() == &Thread::current());
 #endif
 }
 
@@ -194,7 +194,7 @@ void ServiceWorkerContainer::updateRegistration(const URL& scopeURL, const URL& 
 void ServiceWorkerContainer::scheduleJob(Ref<ServiceWorkerJob>&& job)
 {
 #ifndef NDEBUG
-    ASSERT(m_creationThread == currentThread());
+    ASSERT(m_creationThread.ptr() == &Thread::current());
 #endif
 
     ASSERT(m_swConnection);
@@ -296,7 +296,7 @@ void ServiceWorkerContainer::startMessages()
 void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const Exception& exception)
 {
 #ifndef NDEBUG
-    ASSERT(m_creationThread == currentThread());
+    ASSERT(m_creationThread.ptr() == &Thread::current());
 #endif
 
     if (auto* context = scriptExecutionContext()) {
@@ -310,7 +310,7 @@ void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const
 void ServiceWorkerContainer::scheduleTaskToFireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier identifier)
 {
 #ifndef NDEBUG
-    ASSERT(m_creationThread == currentThread());
+    ASSERT(m_creationThread.ptr() == &Thread::current());
 #endif
 
     if (auto* registration = m_registrations.get(identifier))
@@ -320,7 +320,7 @@ void ServiceWorkerContainer::scheduleTaskToFireUpdateFoundEvent(ServiceWorkerReg
 void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, ServiceWorkerRegistrationData&& data, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
 {
 #ifndef NDEBUG
-    ASSERT(m_creationThread == currentThread());
+    ASSERT(m_creationThread.ptr() == &Thread::current());
 #endif
 
     auto guard = WTF::makeScopeExit([this, &job] {
@@ -360,7 +360,7 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
 void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJob& job, bool unregistrationResult)
 {
 #ifndef NDEBUG
-    ASSERT(m_creationThread == currentThread());
+    ASSERT(m_creationThread.ptr() == &Thread::current());
 #endif
 
     auto guard = WTF::makeScopeExit([this, &job] {
@@ -381,7 +381,7 @@ void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJo
 void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job)
 {
 #ifndef NDEBUG
-    ASSERT(m_creationThread == currentThread());
+    ASSERT(m_creationThread.ptr() == &Thread::current());
 #endif
 
     LOG(ServiceWorker, "SeviceWorkerContainer %p starting script fetch for job %s", this, job.identifier().loggingString().utf8().data());
@@ -402,7 +402,7 @@ void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job)
 void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, const String& script)
 {
 #ifndef NDEBUG
-    ASSERT(m_creationThread == currentThread());
+    ASSERT(m_creationThread.ptr() == &Thread::current());
 #endif
 
     LOG(ServiceWorker, "SeviceWorkerContainer %p finished fetching script for job %s", this, job.identifier().loggingString().utf8().data());
@@ -415,7 +415,7 @@ void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, con
 void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const ResourceError& error, std::optional<Exception>&& exception)
 {
 #ifndef NDEBUG
-    ASSERT(m_creationThread == currentThread());
+    ASSERT(m_creationThread.ptr() == &Thread::current());
 #endif
 
     LOG(ServiceWorker, "SeviceWorkerContainer %p failed fetching script for job %s", this, job.identifier().loggingString().utf8().data());
@@ -431,7 +431,7 @@ void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const
 void ServiceWorkerContainer::jobDidFinish(ServiceWorkerJob& job)
 {
 #ifndef NDEBUG
-    ASSERT(m_creationThread == currentThread());
+    ASSERT(m_creationThread.ptr() == &Thread::current());
 #endif
 
     auto taken = m_jobMap.take(job.identifier());
@@ -470,7 +470,7 @@ SWClientConnection& ServiceWorkerContainer::ensureSWClientConnection()
 void ServiceWorkerContainer::addRegistration(ServiceWorkerRegistration& registration)
 {
 #ifndef NDEBUG
-    ASSERT(m_creationThread == currentThread());
+    ASSERT(m_creationThread.ptr() == &Thread::current());
 #endif
 
     ensureSWClientConnection().addServiceWorkerRegistrationInServer(registration.identifier());
@@ -480,7 +480,7 @@ void ServiceWorkerContainer::addRegistration(ServiceWorkerRegistration& registra
 void ServiceWorkerContainer::removeRegistration(ServiceWorkerRegistration& registration)
 {
 #ifndef NDEBUG
-    ASSERT(m_creationThread == currentThread());
+    ASSERT(m_creationThread.ptr() == &Thread::current());
 #endif
 
     m_swConnection->removeServiceWorkerRegistrationInServer(registration.identifier());
@@ -490,7 +490,7 @@ void ServiceWorkerContainer::removeRegistration(ServiceWorkerRegistration& regis
 void ServiceWorkerContainer::scheduleTaskToFireControllerChangeEvent()
 {
 #ifndef NDEBUG
-    ASSERT(m_creationThread == currentThread());
+    ASSERT(m_creationThread.ptr() == &Thread::current());
 #endif
 
     if (m_isStopped)
@@ -513,7 +513,7 @@ void ServiceWorkerContainer::stop()
 DocumentOrWorkerIdentifier ServiceWorkerContainer::contextIdentifier()
 {
 #ifndef NDEBUG
-    ASSERT(m_creationThread == currentThread());
+    ASSERT(m_creationThread.ptr() == &Thread::current());
 #endif
 
     ASSERT(scriptExecutionContext());

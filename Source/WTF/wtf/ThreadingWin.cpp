@@ -185,7 +185,7 @@ int Thread::waitForCompletion()
 
     DWORD joinResult = WaitForSingleObject(handle, INFINITE);
     if (joinResult == WAIT_FAILED)
-        LOG_ERROR("ThreadIdentifier %u was found to be deadlocked trying to quit", m_id);
+        LOG_ERROR("Thread %p was found to be deadlocked trying to quit", this);
 
     std::lock_guard<std::mutex> locker(m_mutex);
     ASSERT(joinableState() == Joinable);
@@ -216,7 +216,7 @@ void Thread::detach()
 
 auto Thread::suspend() -> Expected<void, PlatformSuspendError>
 {
-    RELEASE_ASSERT_WITH_MESSAGE(id() != currentThread(), "We do not support suspending the current thread itself.");
+    RELEASE_ASSERT_WITH_MESSAGE(this != &Thread::current(), "We do not support suspending the current thread itself.");
     LockHolder locker(globalSuspendLock);
     DWORD result = SuspendThread(m_handle);
     if (result != (DWORD)-1)
@@ -293,7 +293,7 @@ Thread* Thread::currentDying()
     ASSERT(s_key != InvalidThreadSpecificKey);
     // After FLS is destroyed, this map offers the value until the second thread exit callback is called.
     std::lock_guard<std::mutex> locker(threadMapMutex());
-    return threadMap().get(currentThread());
+    return threadMap().get(currentID());
 }
 
 // FIXME: Remove this workaround code once <rdar://problem/31793213> is fixed.

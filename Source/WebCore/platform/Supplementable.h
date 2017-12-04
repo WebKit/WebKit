@@ -98,33 +98,33 @@ class Supplementable {
 public:
     void provideSupplement(const char* key, std::unique_ptr<Supplement<T>> supplement)
     {
-        ASSERT(canAccessThreadLocalDataForThread(m_threadId));
+        ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
         ASSERT(!m_supplements.get(key));
         m_supplements.set(key, WTFMove(supplement));
     }
 
     void removeSupplement(const char* key)
     {
-        ASSERT(canAccessThreadLocalDataForThread(m_threadId));
+        ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
         m_supplements.remove(key);
     }
 
     Supplement<T>* requireSupplement(const char* key)
     {
-        ASSERT(canAccessThreadLocalDataForThread(m_threadId));
+        ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
         return m_supplements.get(key);
     }
 
 #if !ASSERT_DISABLED
 protected:
-    Supplementable() : m_threadId(currentThread()) { }
+    Supplementable() = default;
 #endif
 
 private:
     typedef HashMap<const char*, std::unique_ptr<Supplement<T>>, PtrHash<const char*>> SupplementMap;
     SupplementMap m_supplements;
 #if !ASSERT_DISABLED
-    ThreadIdentifier m_threadId;
+    Ref<Thread> m_thread { Thread::current() };
 #endif
 };
 

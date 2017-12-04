@@ -106,7 +106,7 @@ void DatabaseThread::databaseThread()
     // Clean up the list of all pending transactions on this database thread
     m_transactionCoordinator->shutdown();
 
-    LOG(StorageAPI, "About to detach thread %i and clear the ref to DatabaseThread %p, which currently has %i ref(s)", m_thread->id(), this, refCount());
+    LOG(StorageAPI, "About to detach thread %p and clear the ref to DatabaseThread %p, which currently has %i ref(s)", m_thread.get(), this, refCount());
 
     // Close the databases that we ran transactions on. This ensures that if any transactions are still open, they are rolled back and we don't leave the database in an
     // inconsistent or locked state.
@@ -138,7 +138,7 @@ void DatabaseThread::recordDatabaseOpen(Database& database)
 {
     LockHolder lock(m_openDatabaseSetMutex);
 
-    ASSERT(currentThread() == m_thread->id());
+    ASSERT(m_thread == &Thread::current());
     ASSERT(!m_openDatabaseSet.contains(&database));
     m_openDatabaseSet.add(&database);
 }
@@ -147,7 +147,7 @@ void DatabaseThread::recordDatabaseClosed(Database& database)
 {
     LockHolder lock(m_openDatabaseSetMutex);
 
-    ASSERT(currentThread() == m_thread->id());
+    ASSERT(m_thread == &Thread::current());
     ASSERT(m_queue.killed() || m_openDatabaseSet.contains(&database));
     m_openDatabaseSet.remove(&database);
 }

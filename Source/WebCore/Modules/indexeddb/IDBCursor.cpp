@@ -61,7 +61,7 @@ IDBCursor::IDBCursor(IDBTransaction& transaction, IDBObjectStore& objectStore, c
     , m_info(info)
     , m_source(&objectStore)
 {
-    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
+    ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());
 
     suspendIfNeeded();
 }
@@ -71,19 +71,19 @@ IDBCursor::IDBCursor(IDBTransaction& transaction, IDBIndex& index, const IDBCurs
     , m_info(info)
     , m_source(&index)
 {
-    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
+    ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());
 
     suspendIfNeeded();
 }
 
 IDBCursor::~IDBCursor()
 {
-    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
+    ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());
 }
 
 bool IDBCursor::sourcesDeleted() const
 {
-    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
+    ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());
 
     return WTF::switchOn(m_source,
         [] (const RefPtr<IDBObjectStore>& objectStore) { return objectStore->isDeleted(); },
@@ -101,14 +101,14 @@ IDBObjectStore& IDBCursor::effectiveObjectStore() const
 
 IDBTransaction& IDBCursor::transaction() const
 {
-    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
+    ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());
     return effectiveObjectStore().transaction();
 }
 
 ExceptionOr<Ref<IDBRequest>> IDBCursor::update(ExecState& state, JSValue value)
 {
     LOG(IndexedDB, "IDBCursor::update");
-    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
+    ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());
 
     if (sourcesDeleted())
         return Exception { InvalidStateError, ASCIILiteral("Failed to execute 'update' on 'IDBCursor': The cursor's source or effective object store has been deleted.") };
@@ -149,7 +149,7 @@ ExceptionOr<Ref<IDBRequest>> IDBCursor::update(ExecState& state, JSValue value)
 ExceptionOr<void> IDBCursor::advance(unsigned count)
 {
     LOG(IndexedDB, "IDBCursor::advance");
-    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
+    ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());
 
     if (!m_request)
         return Exception { InvalidStateError };
@@ -234,7 +234,7 @@ ExceptionOr<void> IDBCursor::continueFunction(ExecState& execState, JSValue keyV
 ExceptionOr<void> IDBCursor::continueFunction(const IDBKeyData& key)
 {
     LOG(IndexedDB, "IDBCursor::continueFunction (to key %s)", key.loggingString().utf8().data());
-    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
+    ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());
 
     if (!m_request)
         return Exception { InvalidStateError };
@@ -268,7 +268,7 @@ ExceptionOr<void> IDBCursor::continueFunction(const IDBKeyData& key)
 
 void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, unsigned count)
 {
-    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
+    ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());
 
     ++m_outstandingRequestCount;
 
@@ -278,7 +278,7 @@ void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, unsigned count)
 
 void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, const IDBKeyData& primaryKey)
 {
-    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
+    ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());
 
     ++m_outstandingRequestCount;
 
@@ -289,7 +289,7 @@ void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, const IDBKeyData& 
 ExceptionOr<Ref<WebCore::IDBRequest>> IDBCursor::deleteFunction(ExecState& state)
 {
     LOG(IndexedDB, "IDBCursor::deleteFunction");
-    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
+    ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());
 
     if (sourcesDeleted())
         return Exception { InvalidStateError, ASCIILiteral("Failed to execute 'delete' on 'IDBCursor': The cursor's source or effective object store has been deleted.") };
@@ -320,7 +320,7 @@ ExceptionOr<Ref<WebCore::IDBRequest>> IDBCursor::deleteFunction(ExecState& state
 void IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
 {
     LOG(IndexedDB, "IDBCursor::setGetResult - current key %s", getResult.keyData().loggingString().substring(0, 100).utf8().data());
-    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
+    ASSERT(&effectiveObjectStore().transaction().database().originThread() == &Thread::current());
 
     auto* context = request.scriptExecutionContext();
     if (!context)

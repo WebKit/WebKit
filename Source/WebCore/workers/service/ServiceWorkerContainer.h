@@ -119,7 +119,7 @@ private:
     HashMap<ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistration*> m_registrations;
 
 #ifndef NDEBUG
-    ThreadIdentifier m_creationThread { currentThread() };
+    Ref<Thread> m_creationThread { Thread::current() };
 #endif
 };
 

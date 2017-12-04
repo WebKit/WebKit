@@ -143,7 +143,7 @@ void HeapVerifier::printVerificationHeader()
     RELEASE_ASSERT(m_heap->collectionScope());
     CollectionScope scope = currentCycle().scope;
     MonotonicTime gcCycleTimestamp = currentCycle().timestamp;
-    dataLog("Verifying heap in [p", getCurrentProcessID(), ", t", currentThread(), "] vm ",
+    dataLog("Verifying heap in [p", getCurrentProcessID(), ", ", Thread::current(), "] vm ",
         RawPointer(m_heap->vm()), " on ", scope, " GC @ ", gcCycleTimestamp, "\n");
 }
 
