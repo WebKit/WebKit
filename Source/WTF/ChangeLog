@@ -1,3 +1,25 @@
+2017-12-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Use m_suspendCount instead of m_suspended flag in Thread
+        https://bugs.webkit.org/show_bug.cgi?id=180427
+
+        Reviewed by Carlos Garcia Campos.
+
+        When resuming the thread, signal handler is reinvoked once before `sigsuspend` is resumed.
+        But this handler should not do anything since it is just a signal for `sigsuspend`.
+        Previously, we use m_suspenedd flag to distinguish between suspending and resuming signal
+        handler invocations.
+
+        But this additional m_suspended flag is not necessary since we can use m_suspendCount instead.
+        This patch drops m_suspended and use m_suspendCount. Since semaphore operations emit full memory
+        barrier, m_suspendCount is loaded and stored as we expect.
+
+        * wtf/Threading.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::Thread::signalHandlerSuspendResume):
+        (WTF::Thread::suspend):
+        (WTF::Thread::resume):
+
 2017-12-04  Simon Fraser  <simon.fraser@apple.com>
 
         Minor DisplayRefreshMonitor-related cleanup

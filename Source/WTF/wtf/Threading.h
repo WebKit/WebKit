@@ -288,7 +288,6 @@ protected:
 #elif USE(PTHREADS)
     PlatformRegisters* m_platformRegisters { nullptr };
     unsigned m_suspendCount { 0 };
-    std::atomic<bool> m_suspended { false };
 #endif
 
     AtomicStringTable* m_currentAtomicStringTable { nullptr };

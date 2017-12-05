@@ -144,10 +144,10 @@ static UNUSED_FUNCTION bool isOnAlternativeSignalStack()
 
 void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
 {
-    // Touching thread local atomic types from signal handlers is allowed.
+    // Touching a global variable atomic types from signal handlers is allowed.
     Thread* thread = targetThread.load();
 
-    if (thread->m_suspended.load(std::memory_order_acquire)) {
+    if (thread->m_suspendCount) {
         // This is signal handler invocation that is intended to be used to resume sigsuspend.
         // So this handler invocation itself should not process.
         //
@@ -350,14 +350,12 @@ auto Thread::suspend() -> Expected<void, PlatformSuspendError>
     if (!m_suspendCount) {
         // Ideally, we would like to use pthread_sigqueue. It allows us to pass the argument to the signal handler.
         // But it can be used in a few platforms, like Linux.
-        // Instead, we use Thread* stored in the thread local storage to pass it to the signal handler.
+        // Instead, we use Thread* stored in a global variable to pass it to the signal handler.
         targetThread.store(this);
         int result = pthread_kill(m_handle, SigThreadSuspendResume);
         if (result)
             return makeUnexpected(result);
         globalSemaphoreForSuspendResume->wait();
-        // Release barrier ensures that this operation is always executed after all the above processing is done.
-        m_suspended.store(true, std::memory_order_release);
     }
     ++m_suspendCount;
     return { };
@@ -377,14 +375,12 @@ void Thread::resume()
         // There are several ways to distinguish the handler invocation for suspend and resume.
         // 1. Use different signal numbers. And check the signal number in the handler.
         // 2. Use some arguments to distinguish suspend and resume in the handler. If pthread_sigqueue can be used, we can take this.
-        // 3. Use thread local storage with atomic variables in the signal handler.
-        // In this implementaiton, we take (3). suspended flag is used to distinguish it.
+        // 3. Use thread's flag.
+        // In this implementaiton, we take (3). m_suspendCount is used to distinguish it.
         targetThread.store(this);
         if (pthread_kill(m_handle, SigThreadSuspendResume) == ESRCH)
             return;
         globalSemaphoreForSuspendResume->wait();
-        // Release barrier ensures that this operation is always executed after all the above processing is done.
-        m_suspended.store(false, std::memory_order_release);
     }
     --m_suspendCount;
 #endif
