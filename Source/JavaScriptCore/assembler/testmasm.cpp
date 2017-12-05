@@ -183,7 +183,7 @@ void testGetEffectiveAddress(size_t pointer, ptrdiff_t length, int32_t offset, C
         jit.getEffectiveAddress(CCallHelpers::BaseIndex(GPRInfo::regT0, GPRInfo::regT1, scale, offset), GPRInfo::returnValueGPR);
         jit.emitFunctionEpilogue();
         jit.ret();
-    }), pointer + offset + (1 << static_cast<int>(scale)) * length);
+    }), pointer + offset + (static_cast<size_t>(1) << static_cast<int>(scale)) * length);
 }
 
 // branchTruncateDoubleToInt32(), when encountering Infinity, -Infinity or a

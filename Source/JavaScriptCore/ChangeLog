@@ -1,3 +1,15 @@
+2017-12-05  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win64] Compile error in testmasm.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=180436
+
+        Reviewed by Mark Lam.
+
+        Fix MSVC warning (32-bit shift implicitly converted to 64 bits).
+        
+        * assembler/testmasm.cpp:
+        (JSC::testGetEffectiveAddress):
+
 2017-12-01  Filip Pizlo  <fpizlo@apple.com>
 
         GC constraint solving should be parallel
