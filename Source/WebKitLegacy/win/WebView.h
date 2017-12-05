@@ -568,9 +568,9 @@ private:
     DWORD m_lastDropEffect { 0 };
 
     // GraphicsLayerClient
-    virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time);
-    virtual void notifyFlushRequired(const WebCore::GraphicsLayer*);
-    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& inClip);
+    void notifyAnimationStarted(const WebCore::GraphicsLayer*, const String&, double time) override;
+    void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
+    void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& inClip, WebCore::GraphicsLayerPaintBehavior) override;
 
     // CACFLayerTreeHostClient
     virtual void flushPendingGraphicsLayerChanges();

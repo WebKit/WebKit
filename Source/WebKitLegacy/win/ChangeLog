@@ -1,3 +1,19 @@
+2017-12-05  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Scrollbars are sometimes not rendered in accelerated compositing mode.
+        https://bugs.webkit.org/show_bug.cgi?id=180431
+        <rdar://problem/34531264>
+
+        Reviewed by Simon Fraser.
+
+        Fix the signatures of GraphicsLayerClient that should have been overridden, and use
+        'override' to make sure this doesn't break in the future.
+
+        * WebView.cpp:
+        (WebView::notifyAnimationStarted):
+        (WebView::paintContents):
+        * WebView.h:
+
 2017-11-23  Darin Adler  <darin@apple.com>
 
         Fix dictionary leak in lookup, convert FindOptions to OptionSet, tweak code style nearby

@@ -7301,7 +7301,7 @@ HRESULT WebView::nextDisplayIsSynchronous()
     return S_OK;
 }
 
-void WebView::notifyAnimationStarted(const GraphicsLayer*, double)
+void WebView::notifyAnimationStarted(const GraphicsLayer*, const String&, double)
 {
     // We never set any animations on our backing layer.
     ASSERT_NOT_REACHED();
@@ -7312,7 +7312,7 @@ void WebView::notifyFlushRequired(const GraphicsLayer*)
     flushPendingGraphicsLayerChangesSoon();
 }
 
-void WebView::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const FloatRect& inClipPixels)
+void WebView::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const FloatRect& inClipPixels, GraphicsLayerPaintBehavior)
 {
     Frame* frame = core(m_mainFrame);
     if (!frame)

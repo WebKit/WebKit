@@ -2880,6 +2880,9 @@ bool RenderLayerCompositor::shouldCompositeOverflowControls() const
     if (documentUsesTiledBacking())
         return true;
 
+    if (m_overflowControlsHostLayer && isMainFrameCompositor())
+        return true;
+
 #if !USE(COORDINATED_GRAPHICS_THREADED)
     if (!frameView.hasOverlayScrollbars())
         return false;
