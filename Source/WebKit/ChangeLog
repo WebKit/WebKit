@@ -1,3 +1,14 @@
+2017-12-04  Brady Eidson  <beidson@apple.com>
+
+        Followup to:
+        Get a directory path to SWServers for storing ServiceWorker registrations
+        https://bugs.webkit.org/show_bug.cgi?id=180362
+
+        Unreviewed.
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::swServerForSession): Change this ASSERT which is invalid in private browsing sessions.
+
 2017-12-04  Simon Fraser  <simon.fraser@apple.com>
 
         Minor DisplayRefreshMonitor-related cleanup

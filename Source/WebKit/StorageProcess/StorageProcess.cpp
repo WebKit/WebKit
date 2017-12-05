@@ -387,7 +387,7 @@ SWServer& StorageProcess::swServerForSession(PAL::SessionID sessionID)
     auto path = m_swDatabasePaths.get(sessionID);
     // There should already be a registered path for this PAL::SessionID.
     // If there's not, then where did this PAL::SessionID come from?
-    ASSERT(!path.isEmpty());
+    ASSERT(sessionID.isEphemeral() || !path.isEmpty());
 
     result.iterator->value = std::make_unique<SWServer>(makeUniqueRef<WebSWOriginStore>(), path);
     return *result.iterator->value;
