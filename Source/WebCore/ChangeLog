@@ -1,3 +1,19 @@
+2017-12-05  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r225528. rdar://problem/35838154
+
+    2017-12-05  Alex Christensen  <achristensen@webkit.org>
+
+            Fix non-unified build after r225381
+            https://bugs.webkit.org/show_bug.cgi?id=180434
+
+            Reviewed by Keith Miller.
+
+            * loader/ResourceTimingInformation.cpp:
+            FrameLoader.h is included in other files that are combined with this file in unified builds,
+            but we need to merge r225381 to a branch that doesn't use unified builds.  This build failure
+            would've come up randomly in the future when we add files, too.
+
 2017-12-04  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r225381. rdar://problem/35838154
