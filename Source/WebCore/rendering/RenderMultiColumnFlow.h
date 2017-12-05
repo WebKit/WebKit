@@ -97,7 +97,6 @@ public:
 
     typedef HashMap<RenderBox*, WeakPtr<RenderMultiColumnSpannerPlaceholder>> SpannerMap;
     SpannerMap& spannerMap() { return *m_spannerMap; }
-    std::unique_ptr<SpannerMap> takeSpannerMap() { return WTFMove(m_spannerMap); }
 
 private:
     bool isRenderMultiColumnFlow() const override { return true; }

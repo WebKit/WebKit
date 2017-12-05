@@ -350,46 +350,26 @@ void RenderMultiColumnFlow::fragmentedFlowDescendantInserted(RenderObject& newDe
     if (gShiftingSpanner || newDescendant.isInFlowRenderFragmentedFlow())
         return;
 
-    Vector<RenderPtr<RenderObject>> spannersToDelete;
-
-    RenderObject* subtreeRoot = &newDescendant;
-    for (auto* descendant = &newDescendant; descendant; descendant = (descendant ? descendant->nextInPreOrder(subtreeRoot) : nullptr)) {
+    auto* subtreeRoot = &newDescendant;
+    auto* descendant = subtreeRoot;
+    while (descendant) {
+        // Skip nested multicolumn flows.
+        if (is<RenderMultiColumnFlow>(*descendant)) {
+            descendant = descendant->nextSibling();
+            continue;
+        }
         if (is<RenderMultiColumnSpannerPlaceholder>(*descendant)) {
             // A spanner's placeholder has been inserted. The actual spanner renderer is moved from
             // where it would otherwise occur (if it weren't a spanner) to becoming a sibling of the
             // column sets.
             RenderMultiColumnSpannerPlaceholder& placeholder = downcast<RenderMultiColumnSpannerPlaceholder>(*descendant);
-            if (placeholder.fragmentedFlow() != this) {
-                // This isn't our spanner! It shifted here from an ancestor multicolumn block. It's going to end up
-                // becoming our spanner instead, but for it to do that we first have to nuke the original spanner,
-                // and get the spanner content back into this flow thread.
-                RenderBox* spanner = placeholder.spanner();
-                
-                // Insert after the placeholder, but don't let a notification happen.
-                gShiftingSpanner = true;
-                RenderBlockFlow& ancestorBlock = downcast<RenderBlockFlow>(*spanner->parent());
-                ancestorBlock.moveChildTo(placeholder.parentBox(), spanner, placeholder.nextSibling(), RenderBoxModelObject::NormalizeAfterInsertion::Yes);
-                gShiftingSpanner = false;
-                
-                // We have to nuke the placeholder, since the ancestor already lost the mapping to it when
-                // we shifted the placeholder down into this flow thread.
-                placeholder.fragmentedFlow()->spannerMap().remove(spanner);
-
-                spannersToDelete.append(placeholder.parent()->takeChild(placeholder));
-
-                if (subtreeRoot == descendant)
-                    subtreeRoot = spanner;
-                // Now we process the spanner.
-                descendant = processPossibleSpannerDescendant(subtreeRoot, *spanner);
-                continue;
-            }
-            
             ASSERT(!spannerMap().get(placeholder.spanner()));
-            spannerMap().add(placeholder.spanner(), makeWeakPtr(placeholder));
+            spannerMap().add(placeholder.spanner(), makeWeakPtr(downcast<RenderMultiColumnSpannerPlaceholder>(descendant)));
             ASSERT(!placeholder.firstChild()); // There should be no children here, but if there are, we ought to skip them.
-            continue;
-        }
-        descendant = processPossibleSpannerDescendant(subtreeRoot, *descendant);
+        } else
+            descendant = processPossibleSpannerDescendant(subtreeRoot, *descendant);
+        if (descendant)
+            descendant = descendant->nextInPreOrder(subtreeRoot);
     }
 }
 
