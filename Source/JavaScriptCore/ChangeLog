@@ -1,3 +1,16 @@
+2017-12-05  Filip Pizlo  <fpizlo@apple.com>
+
+        IsoAlignedMemoryAllocator needs to free all of its memory when the VM destructs
+        https://bugs.webkit.org/show_bug.cgi?id=180425
+
+        Reviewed by Saam Barati.
+        
+        Failure to do so causes leaks after starting workers.
+
+        * heap/IsoAlignedMemoryAllocator.cpp:
+        (JSC::IsoAlignedMemoryAllocator::~IsoAlignedMemoryAllocator):
+        (JSC::IsoAlignedMemoryAllocator::tryAllocateAlignedMemory):
+
 2017-12-05  Per Arne Vollan  <pvollan@apple.com>
 
         [Win64] Compile error in testmasm.cpp.

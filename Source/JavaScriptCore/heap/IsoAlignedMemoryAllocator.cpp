@@ -34,6 +34,12 @@ IsoAlignedMemoryAllocator::IsoAlignedMemoryAllocator()
 
 IsoAlignedMemoryAllocator::~IsoAlignedMemoryAllocator()
 {
+    for (unsigned i = 0; i < m_blocks.size(); ++i) {
+        void* block = m_blocks[i];
+        if (!m_committed[i])
+            OSAllocator::commit(block, MarkedBlock::blockSize, true, false);
+        fastFree(block);
+    }
 }
 
 void* IsoAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignment, size_t size)
@@ -53,7 +59,9 @@ void* IsoAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignment, size
         return result;
     }
     
-    void* result = fastAlignedMalloc(MarkedBlock::blockSize, MarkedBlock::blockSize);
+    void* result = tryFastAlignedMalloc(MarkedBlock::blockSize, MarkedBlock::blockSize);
+    if (!result)
+        return nullptr;
     unsigned index = m_blocks.size();
     m_blocks.append(result);
     m_blockIndices.add(result, index);
