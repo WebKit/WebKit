@@ -23,9 +23,10 @@
  * DAMAGE.
  */
 
-#pragma once
+#ifndef PlatformLocale_h
+#define PlatformLocale_h
 
-#include <wtf/DateComponents.h>
+#include "DateComponents.h"
 #include <wtf/Language.h>
 #include <wtf/text/WTFString.h>
 
@@ -154,3 +155,4 @@ inline std::unique_ptr<Locale> Locale::createDefault()
 }
 
 }
+#endif

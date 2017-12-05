@@ -33,8 +33,8 @@
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
+#include "DateComponents.h"
 #include "InputType.h"
-#include <wtf/DateComponents.h>
 
 namespace WebCore {
 

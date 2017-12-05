@@ -28,7 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef LocaleMac_h
+#define LocaleMac_h
 
 #include "PlatformLocale.h"
 #include <wtf/Forward.h>
@@ -40,11 +41,9 @@ OBJC_CLASS NSCalendar;
 OBJC_CLASS NSDateFormatter;
 OBJC_CLASS NSLocale;
 
-namespace WTF {
-class DateComponents;
-}
-
 namespace WebCore {
+
+class DateComponents;
 
 class LocaleMac : public Locale {
 public:
@@ -99,3 +98,4 @@ private:
 };
 
 } // namespace WebCore
+#endif

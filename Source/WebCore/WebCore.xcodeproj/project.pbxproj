@@ -2839,6 +2839,7 @@
 		A54A0C6C1DB831F90017A90B /* WorkerInspectorProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A54A0C6A1DB831F20017A90B /* WorkerInspectorProxy.h */; };
 		A554B5F31E38393A001D4E03 /* PerformanceUserTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = A554B5F11E383936001D4E03 /* PerformanceUserTiming.h */; };
 		A55639D11C6F09E300806D8E /* WorkerConsoleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A55639D01C6EFD5900806D8E /* WorkerConsoleClient.h */; };
+		A5732B0B136A161D005C8D7C /* DateComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = A5732B09136A161D005C8D7C /* DateComponents.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A578F4351DE00EEB003DFC6A /* PromiseRejectionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A578F4331DE00ED6003DFC6A /* PromiseRejectionEvent.h */; };
 		A578F43C1DE01423003DFC6A /* JSPromiseRejectionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A578F43A1DE013FB003DFC6A /* JSPromiseRejectionEvent.h */; };
 		A578F43F1DE0B630003DFC6A /* RejectedPromiseTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = A578F43E1DE0B62B003DFC6A /* RejectedPromiseTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10726,6 +10727,8 @@
 		A554B5F11E383936001D4E03 /* PerformanceUserTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceUserTiming.h; sourceTree = "<group>"; };
 		A55639CF1C6EFD5900806D8E /* WorkerConsoleClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerConsoleClient.cpp; sourceTree = "<group>"; };
 		A55639D01C6EFD5900806D8E /* WorkerConsoleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerConsoleClient.h; sourceTree = "<group>"; };
+		A5732B08136A161D005C8D7C /* DateComponents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateComponents.cpp; sourceTree = "<group>"; };
+		A5732B09136A161D005C8D7C /* DateComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateComponents.h; sourceTree = "<group>"; };
 		A578F4321DE00ED6003DFC6A /* PromiseRejectionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PromiseRejectionEvent.cpp; sourceTree = "<group>"; };
 		A578F4331DE00ED6003DFC6A /* PromiseRejectionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PromiseRejectionEvent.h; sourceTree = "<group>"; };
 		A578F4341DE00ED6003DFC6A /* PromiseRejectionEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PromiseRejectionEvent.idl; sourceTree = "<group>"; };
@@ -23485,6 +23488,8 @@
 				46C696C91E7205E400597937 /* CPUMonitor.h */,
 				E11AF15011B9A1A300805103 /* Cursor.cpp */,
 				F587868402DE3B8601EA4122 /* Cursor.h */,
+				A5732B08136A161D005C8D7C /* DateComponents.cpp */,
+				A5732B09136A161D005C8D7C /* DateComponents.h */,
 				37C738F11EDBDE87003F2B0B /* DateTimeChooser.h */,
 				37C738F21EDBDE87003F2B0B /* DateTimeChooserClient.h */,
 				45FEA5CD156DDE8C00654101 /* Decimal.cpp */,
@@ -26587,6 +26592,7 @@
 				81AC599A131636E60009A7E0 /* DataTransferItemList.h in Headers */,
 				E4A007831B820EC8002C5A6E /* DataURLDecoder.h in Headers */,
 				E4A007831B820EC8002C5A6E /* DataURLDecoder.h in Headers */,
+				A5732B0B136A161D005C8D7C /* DateComponents.h in Headers */,
 				F55B3DB61251F12D003EF269 /* DateInputType.h in Headers */,
 				37C738F31EDBDE8A003F2B0B /* DateTimeChooser.h in Headers */,
 				37C738F41EDBDE8D003F2B0B /* DateTimeChooserClient.h in Headers */,

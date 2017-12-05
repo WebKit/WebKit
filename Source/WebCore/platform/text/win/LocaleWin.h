@@ -28,7 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef LocaleWin_h
+#define LocaleWin_h
 
 #include "PlatformLocale.h"
 #include <windows.h>
@@ -38,6 +39,7 @@
 
 namespace WebCore {
 
+class DateComponents;
 struct DateFormatToken;
 
 class LocaleWin : public Locale {
@@ -86,3 +88,4 @@ private:
 };
 
 } // namespace WebCore
+#endif

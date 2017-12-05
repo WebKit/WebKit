@@ -1,3 +1,15 @@
+2017-12-05  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r225430.
+
+        This caused an API failure on release.
+
+        Reverted changeset:
+
+        "Move DateComponents into WTF"
+        https://bugs.webkit.org/show_bug.cgi?id=180211
+        https://trac.webkit.org/changeset/225430
+
 2017-12-05  Michael Saboff  <msaboff@apple.com>
 
         Make WebKit build for ARM64_32

@@ -28,8 +28,8 @@
 // FIXME: Rename this file to LocalizedDataCacheIOS.h and remove this guard.
 #if PLATFORM(IOS)
 
+#include "DateComponents.h"
 #include "FontCascade.h"
-#include <wtf/DateComponents.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 

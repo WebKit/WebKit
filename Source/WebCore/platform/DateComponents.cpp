@@ -37,7 +37,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
 
-namespace WTF {
+namespace WebCore {
 
 // HTML5 specification defines minimum week of year is one.
 const int DateComponents::minimumWeekNumber = 1;
@@ -50,6 +50,17 @@ static const int maximumDayInMaximumMonth = 13;
 static const int maximumWeekInMaximumYear = 37; // The week of 275760-09-13
 
 static const int daysInMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+static bool isLeapYear(int year)
+{
+    if (year % 4)
+        return false;
+    if (!(year % 400))
+        return true;
+    if (!(year % 100))
+        return false;
+    return true;
+}
 
 // 'month' is 0-based.
 static int maxDayOfMonth(int year, int month)
@@ -184,8 +195,7 @@ bool DateComponents::addDay(int dayDiff)
             if (day > maxDay) {
                 day = 1;
                 ++month;
-                // month is 0-origin.
-                if (month >= 12) {
+                if (month >= 12) { // month is 0-origin.
                     month = 0;
                     ++year;
                 }
@@ -715,4 +725,4 @@ String DateComponents::toString(SecondFormat format) const
     return String("(Invalid DateComponents)");
 }
 
-} // namespace WTF
+} // namespace WebCore

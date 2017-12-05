@@ -34,6 +34,7 @@
 #include "CheckboxInputType.h"
 #include "ColorInputType.h"
 #include "DOMFormData.h"
+#include "DateComponents.h"
 #include "DateInputType.h"
 #include "DateTimeInputType.h"
 #include "DateTimeLocalInputType.h"
@@ -74,7 +75,6 @@
 #include "WeekInputType.h"
 #include <limits>
 #include <wtf/Assertions.h>
-#include <wtf/DateComponents.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/TextBreakIterator.h>
