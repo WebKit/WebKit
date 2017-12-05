@@ -44,7 +44,7 @@ namespace JSC { namespace Wasm {
 
 ModuleInformation::ModuleInformation(Vector<uint8_t>&& sourceBytes)
     : source(WTFMove(sourceBytes))
-    , hash(sha1(source))
+    , hash(Options::useEagerWebAssemblyModuleHashing() ? std::make_optional(sha1(source)) : std::nullopt)
     , nameSection(new NameSection(hash))
 {
 }

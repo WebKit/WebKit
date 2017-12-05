@@ -1,3 +1,25 @@
+2017-12-05  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: don't eagerly checksum
+        https://bugs.webkit.org/show_bug.cgi?id=180441
+        <rdar://problem/35156628>
+
+        Reviewed by Saam Barati.
+
+        Make checksumming of module optional for now. The bots think the
+        checksum hurt compile-time. I'd measured it and couldn't see a
+        difference, and still can't at this point in time, but we'll see
+        if disabling it fixes the bots. If so then I can make it lazy upon
+        first backtrace construction, or I can try out MD5 instead of
+        SHA1.
+
+        * runtime/Options.h:
+        * wasm/WasmModuleInformation.cpp:
+        (JSC::Wasm::ModuleInformation::ModuleInformation):
+        * wasm/WasmModuleInformation.h:
+        * wasm/WasmNameSection.h:
+        (JSC::Wasm::NameSection::NameSection):
+
 2017-12-05  Filip Pizlo  <fpizlo@apple.com>
 
         IsoAlignedMemoryAllocator needs to free all of its memory when the VM destructs

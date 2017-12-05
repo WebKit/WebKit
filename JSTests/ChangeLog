@@ -1,3 +1,21 @@
+2017-12-05  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: don't eagerly checksum
+        https://bugs.webkit.org/show_bug.cgi?id=180441
+        <rdar://problem/35156628>
+
+        Reviewed by Saam Barati.
+
+        Checksum is now disabled, so tests only have <?> as the module
+        name.
+
+        * wasm/function-tests/nameSection.js:
+        * wasm/function-tests/stack-overflow.js:
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.assertOverflows):
+        (assertOverflows.assertThrows):
+        (assertOverflows):
+        * wasm/function-tests/stack-trace.js:
+
 2017-12-04  JF Bastien  <jfbastien@apple.com>
 
         Proxy all functions, except the $ objects

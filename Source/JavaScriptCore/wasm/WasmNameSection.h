@@ -38,11 +38,17 @@ struct NameSection : public ThreadSafeRefCounted<NameSection> {
     WTF_MAKE_NONCOPYABLE(NameSection);
 
 public:
-    NameSection(const CString &hash)
-        : moduleHash(hash.length())
+    NameSection(const std::optional<CString> &hash)
+        : moduleHash(hash ? hash->length() : 3)
     {
-        for (size_t i = 0; i < hash.length(); ++i)
-            moduleHash[i] = static_cast<uint8_t>(*(hash.data() + i));
+        if (hash) {
+            for (size_t i = 0; i < hash->length(); ++i)
+                moduleHash[i] = static_cast<uint8_t>(*(hash->data() + i));
+        } else {
+            moduleHash[0] = '<';
+            moduleHash[1] = '?';
+            moduleHash[2] = '>';
+        }
     }
 
     std::pair<const Name*, RefPtr<NameSection>> get(size_t functionIndexSpace)
