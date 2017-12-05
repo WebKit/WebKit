@@ -1,3 +1,21 @@
+2017-12-04  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r225239. rdar://problem/35839454
+
+    2017-11-27  JF Bastien  <jfbastien@apple.com>
+
+            JavaScript rest function parameter with negative index leads to bad DFG abstract interpretation
+            https://bugs.webkit.org/show_bug.cgi?id=180051
+            <rdar://problem/35614371>
+
+            Reviewed by Saam Barati.
+
+            * stress/rest-parameter-negative.js: Added.
+            (__f_5484):
+            (catch):
+            (__f_5485):
+            (__v_22598.catch):
+
 2017-11-28  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r224539. rdar://problem/35698788
