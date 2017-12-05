@@ -45,6 +45,7 @@ static ARIAAttributeMap& ariaAttributeMap()
             AXPropertyName name;
             QualifiedName ariaAttribute;
         } attributes[] = {
+            { AXPropertyName::ActiveDescendant, aria_activedescendantAttr },
             { AXPropertyName::Atomic, aria_atomicAttr },
             { AXPropertyName::Autocomplete, aria_autocompleteAttr },
             { AXPropertyName::Busy, aria_busyAttr },
@@ -53,7 +54,9 @@ static ARIAAttributeMap& ariaAttributeMap()
             { AXPropertyName::ColIndex, aria_colindexAttr },
             { AXPropertyName::ColSpan, aria_colspanAttr },
             { AXPropertyName::Current, aria_currentAttr },
+            { AXPropertyName::Details, aria_detailsAttr },
             { AXPropertyName::Disabled, aria_disabledAttr },
+            { AXPropertyName::ErrorMessage, aria_errormessageAttr },
             { AXPropertyName::Expanded, aria_expandedAttr },
             { AXPropertyName::HasPopUp, aria_haspopupAttr },
             { AXPropertyName::Hidden, aria_hiddenAttr },
@@ -177,6 +180,23 @@ static bool isPropertyValueFloat(AXPropertyName propertyName)
     }
 }
 
+static bool isPropertyValueRelation(AXPropertyName propertyName)
+{
+    switch (propertyName) {
+    case AXPropertyName::ActiveDescendant:
+    case AXPropertyName::Details:
+    case AXPropertyName::ErrorMessage:
+        return true;
+    default:
+        return false;
+    }
+}
+
+QualifiedName AccessibleNode::attributeFromAXPropertyName(AXPropertyName propertyName)
+{
+    return ariaAttributeMap().get(propertyName);
+}
+
 bool AccessibleNode::hasProperty(Element& element, AXPropertyName propertyName)
 {
     if (auto* accessibleNode = element.existingAccessibleNode()) {
@@ -218,6 +238,14 @@ void AccessibleNode::setOptionalProperty(AXPropertyName propertyName, std::optio
 void AccessibleNode::setStringProperty(AXPropertyName propertyName, const String& value)
 {
     setProperty(propertyName, value, value.isEmpty());
+}
+
+void AccessibleNode::setRelationProperty(AXPropertyName propertyName, AccessibleNode* value)
+{
+    Vector<RefPtr<AccessibleNode>> accessibleNodes;
+    if (value)
+        accessibleNodes.append(value);
+    setProperty(propertyName, accessibleNodes, !value);
 }
 
 const String AccessibleNode::effectiveStringValueForElement(Element& element, AXPropertyName propertyName)
@@ -306,10 +334,63 @@ double AccessibleNode::effectiveDoubleValueForElement(Element& element, AXProper
     return 0.0;
 }
 
+RefPtr<AccessibleNode> AccessibleNode::singleRelationValueForProperty(Element& element, AXPropertyName propertyName)
+{
+    Vector<RefPtr<AccessibleNode>> accessibleNodes = relationsValueForProperty(element, propertyName);
+    size_t size = accessibleNodes.size();
+    ASSERT(!size || size == 1);
+    if (size)
+        return accessibleNodes.first();
+    return nullptr;
+}
+
+Vector<RefPtr<AccessibleNode>> AccessibleNode::relationsValueForProperty(Element& element, AXPropertyName propertyName)
+{
+    const PropertyValueVariant&& variant = AccessibleNode::valueForProperty(element, propertyName);
+    if (WTF::holds_alternative<Vector<RefPtr<AccessibleNode>>>(variant))
+        return WTF::get<Vector<RefPtr<AccessibleNode>>>(variant);
+    return Vector<RefPtr<AccessibleNode>> { };
+}
+
+Vector<RefPtr<Element>> AccessibleNode::effectiveElementsValueForElement(Element& element, AXPropertyName propertyName)
+{
+    Vector<RefPtr<Element>> elements;
+    auto value = relationsValueForProperty(element, propertyName);
+    if (value.size()) {
+        for (auto accessibleNode : value)
+            elements.append(&accessibleNode->m_ownerElement);
+        return elements;
+    }
+
+    if (ariaAttributeMap().contains(propertyName) && isPropertyValueRelation(propertyName)) {
+        const AtomicString& attrStr = element.attributeWithoutSynchronization(ariaAttributeMap().get(propertyName));
+        if (attrStr.isNull() || attrStr.isEmpty())
+            return elements;
+        auto spaceSplitString = SpaceSplitString(attrStr, false);
+        size_t length = spaceSplitString.size();
+        for (size_t i = 0; i < length; ++i) {
+            if (auto* idElement = element.treeScope().getElementById(spaceSplitString[i]))
+                elements.append(idElement);
+        }
+    }
+    return elements;
+}
+
 void AccessibleNode::notifyAttributeChanged(const WebCore::QualifiedName& name)
 {
     if (AXObjectCache* cache = m_ownerElement.document().axObjectCache())
         cache->handleAttributeChanged(name, &m_ownerElement);
+}
+
+RefPtr<AccessibleNode> AccessibleNode::activeDescendant() const
+{
+    return singleRelationValueForProperty(m_ownerElement, AXPropertyName::ActiveDescendant);
+}
+
+void AccessibleNode::setActiveDescendant(AccessibleNode* value)
+{
+    setRelationProperty(AXPropertyName::ActiveDescendant, value);
+    notifyAttributeChanged(aria_activedescendantAttr);
 }
 
 std::optional<bool> AccessibleNode::atomic() const
@@ -400,10 +481,33 @@ void AccessibleNode::setCurrent(const String& current)
     notifyAttributeChanged(aria_currentAttr);
 }
 
+RefPtr<AccessibleNode> AccessibleNode::details() const
+{
+    return singleRelationValueForProperty(m_ownerElement, AXPropertyName::Details);
+}
+
+void AccessibleNode::setDetails(AccessibleNode* value)
+{
+    setRelationProperty(AXPropertyName::Details, value);
+    notifyAttributeChanged(aria_detailsAttr);
+}
+
 std::optional<bool> AccessibleNode::disabled() const
 {
     return optionalValueForProperty<bool>(m_ownerElement, AXPropertyName::Disabled);
 }
+
+RefPtr<AccessibleNode> AccessibleNode::errorMessage() const
+{
+    return singleRelationValueForProperty(m_ownerElement, AXPropertyName::ErrorMessage);
+}
+
+void AccessibleNode::setErrorMessage(AccessibleNode* value)
+{
+    setRelationProperty(AXPropertyName::ErrorMessage, value);
+    notifyAttributeChanged(aria_errormessageAttr);
+}
+
 
 void AccessibleNode::setDisabled(std::optional<bool> value)
 {

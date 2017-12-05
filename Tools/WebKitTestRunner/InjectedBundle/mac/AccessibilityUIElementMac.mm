@@ -417,6 +417,26 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaControlsElementAtInde
     return nullptr;
 }
 
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDetailsElementAtIndex(unsigned index)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray* details = [m_element accessibilityAttributeValue:@"AXDetailsElements"];
+    if (index < [details count])
+        return AccessibilityUIElement::create([details objectAtIndex:index]);
+    END_AX_OBJC_EXCEPTIONS
+    return nullptr;
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaErrorMessageElementAtIndex(unsigned index)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray* errorMessages = [m_element accessibilityAttributeValue:@"AXErrorMessageElements"];
+    if (index < [errorMessages count])
+        return AccessibilityUIElement::create([errorMessages objectAtIndex:index]);
+    END_AX_OBJC_EXCEPTIONS
+    return nullptr;
+}
+
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedRowAtIndex(unsigned index)
 {
     BEGIN_AX_OBJC_EXCEPTIONS

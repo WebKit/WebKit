@@ -2438,15 +2438,8 @@ AccessibilityObject* AccessibilityRenderObject::activeDescendant() const
     if (!m_renderer)
         return nullptr;
     
-    const AtomicString& activeDescendantAttrStr = getAttribute(aria_activedescendantAttr);
-    if (activeDescendantAttrStr.isNull() || activeDescendantAttrStr.isEmpty())
-        return nullptr;
     
-    Element* element = this->element();
-    if (!element)
-        return nullptr;
-    
-    Element* target = element->treeScope().getElementById(activeDescendantAttrStr);
+    Element* target = elementValueForProperty(AXPropertyName::ActiveDescendant);
     if (!target)
         return nullptr;
     

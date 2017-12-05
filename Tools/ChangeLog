@@ -1,3 +1,19 @@
+2017-12-04  Nan Wang  <n_wang@apple.com>
+
+        AX: AOM: Implement relation type properties
+        https://bugs.webkit.org/show_bug.cgi?id=179500
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        (WTR::AccessibilityUIElement::ariaDetailsElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaErrorMessageElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaDescribedByReferencingElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaDetailsReferencingElementAtIndex):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::ariaDetailsElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaErrorMessageElementAtIndex):
+
 2017-12-04  Simon Fraser  <simon.fraser@apple.com>
 
         Minor DisplayRefreshMonitor-related cleanup

@@ -36,10 +36,11 @@
 
 namespace WebCore {
 
-typedef Variant<std::nullptr_t, String, bool, int, unsigned, double> PropertyValueVariant;
+typedef Variant<std::nullptr_t, String, bool, int, unsigned, double, Vector<RefPtr<AccessibleNode>>> PropertyValueVariant;
 
 enum class AXPropertyName {
     None,
+    ActiveDescendant,
     Atomic,
     Autocomplete,
     Busy,
@@ -48,7 +49,9 @@ enum class AXPropertyName {
     ColIndex,
     ColSpan,
     Current,
+    Details,
     Disabled,
+    ErrorMessage,
     Expanded,
     HasPopUp,
     Hidden,
@@ -105,12 +108,19 @@ public:
     void ref() { m_ownerElement.ref(); }
     void deref() { m_ownerElement.deref(); }
 
+    static QualifiedName attributeFromAXPropertyName(AXPropertyName);
+
     static const String effectiveStringValueForElement(Element&, AXPropertyName);
     static std::optional<bool> effectiveBoolValueForElement(Element&, AXPropertyName);
     static int effectiveIntValueForElement(Element&, AXPropertyName);
     static unsigned effectiveUnsignedValueForElement(Element&, AXPropertyName);
     static double effectiveDoubleValueForElement(Element&, AXPropertyName);
+    static Vector<RefPtr<Element>> effectiveElementsValueForElement(Element&, AXPropertyName);
+    static Vector<RefPtr<AccessibleNode>> relationsValueForProperty(Element&, AXPropertyName);
     static bool hasProperty(Element&, AXPropertyName);
+
+    RefPtr<AccessibleNode> activeDescendant() const;
+    void setActiveDescendant(AccessibleNode*);
 
     std::optional<bool> atomic() const;
     void setAtomic(std::optional<bool>);
@@ -136,8 +146,14 @@ public:
     String current() const;
     void setCurrent(const String&);
 
+    RefPtr<AccessibleNode> details() const;
+    void setDetails(AccessibleNode*);
+
     std::optional<bool> disabled() const;
     void setDisabled(std::optional<bool>);
+
+    RefPtr<AccessibleNode> errorMessage() const;
+    void setErrorMessage(AccessibleNode*);
 
     std::optional<bool> expanded() const;
     void setExpanded(std::optional<bool>);
@@ -233,10 +249,12 @@ private:
     static const PropertyValueVariant valueForProperty(Element&, AXPropertyName);
     static const String stringValueForProperty(Element&, AXPropertyName);
     template<typename T> static std::optional<T> optionalValueForProperty(Element&, AXPropertyName);
+    static RefPtr<AccessibleNode> singleRelationValueForProperty(Element&, AXPropertyName);
     
     void setProperty(AXPropertyName, PropertyValueVariant&&, bool);
     template<typename T> void setOptionalProperty(AXPropertyName, std::optional<T>);
     void setStringProperty(AXPropertyName, const String&);
+    void setRelationProperty(AXPropertyName, AccessibleNode*);
     
     void notifyAttributeChanged(const WebCore::QualifiedName&);
 

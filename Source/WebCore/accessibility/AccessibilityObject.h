@@ -899,6 +899,7 @@ public:
     int intValueForProperty(AXPropertyName) const;
     unsigned unsignedValueForProperty(AXPropertyName) const;
     double doubleValueForProperty(AXPropertyName) const;
+    Element* elementValueForProperty(AXPropertyName) const;
 
     virtual VisiblePositionRange visiblePositionRange() const { return VisiblePositionRange(); }
     virtual VisiblePositionRange visiblePositionRangeForLine(unsigned) const { return VisiblePositionRange(); }
@@ -1168,6 +1169,8 @@ protected:
 
     void ariaElementsFromAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
     void ariaElementsReferencedByAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
+    void elementsFromProperty(AccessibilityChildrenVector&, AXPropertyName) const;
+    void elementsReferencedByProperty(AccessibilityChildrenVector&, AXPropertyName) const;
 
     AccessibilityObject* radioGroupAncestor() const;
 

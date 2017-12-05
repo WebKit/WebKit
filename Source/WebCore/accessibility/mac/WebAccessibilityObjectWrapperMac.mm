@@ -3202,6 +3202,21 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([attributeName isEqualToString:@"AXReadOnlyValue"])
         return m_object->readOnlyValue();
 
+    if ([attributeName isEqualToString:@"AXIsActiveDescendantOfFocusedContainer"])
+        return [NSNumber numberWithBool:m_object->isActiveDescendantOfFocusedContainer()];
+
+    if ([attributeName isEqualToString:@"AXDetailsElements"]) {
+        AccessibilityObject::AccessibilityChildrenVector details;
+        m_object->ariaDetailsElements(details);
+        return convertToNSArray(details);
+    }
+
+    if ([attributeName isEqualToString:@"AXErrorMessageElements"]) {
+        AccessibilityObject::AccessibilityChildrenVector errorMessages;
+        m_object->ariaErrorMessageElements(errorMessages);
+        return convertToNSArray(errorMessages);
+    }
+
     if (m_object->isWebArea() && [attributeName isEqualToString:NSAccessibilityPreventKeyboardDOMEventDispatchAttribute])
         return [NSNumber numberWithBool:m_object->preventKeyboardDOMEventDispatch()];
     
