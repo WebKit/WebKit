@@ -81,7 +81,7 @@ void SWClientConnection::jobRejectedInServer(const ServiceWorkerJobDataIdentifie
         return;
     }
 
-    postTaskTo(job->contextIdentifier(), [job, exceptionData = exceptionData.isolatedCopy()] {
+    ScriptExecutionContext::postTaskTo(job->contextIdentifier(), [job, exceptionData = exceptionData.isolatedCopy()](ScriptExecutionContext&) {
         job->failedWithException(exceptionData.toException());
     });
 }
@@ -96,7 +96,7 @@ void SWClientConnection::registrationJobResolvedInServer(const ServiceWorkerJobD
         return;
     }
 
-    postTaskTo(job->contextIdentifier(), [job, registrationData = registrationData.isolatedCopy(), shouldNotifyWhenResolved]() mutable {
+    ScriptExecutionContext::postTaskTo(job->contextIdentifier(), [job, registrationData = registrationData.isolatedCopy(), shouldNotifyWhenResolved](ScriptExecutionContext&) mutable {
         job->resolvedWithRegistration(WTFMove(registrationData), shouldNotifyWhenResolved);
     });
 }
@@ -111,7 +111,7 @@ void SWClientConnection::unregistrationJobResolvedInServer(const ServiceWorkerJo
         return;
     }
 
-    postTaskTo(job->contextIdentifier(), [job, unregistrationResult] {
+    ScriptExecutionContext::postTaskTo(job->contextIdentifier(), [job, unregistrationResult](ScriptExecutionContext&) {
         job->resolvedWithUnregistrationResult(unregistrationResult);
     });
 }
@@ -131,7 +131,7 @@ void SWClientConnection::startScriptFetchForServer(const ServiceWorkerJobDataIde
         return;
     }
 
-    postTaskTo(job->contextIdentifier(), [job] {
+    ScriptExecutionContext::postTaskTo(job->contextIdentifier(), [job](ScriptExecutionContext&) {
         job->startScriptFetch();
     });
 }
@@ -232,28 +232,10 @@ void SWClientConnection::clearPendingJobs()
 
     auto jobs = WTFMove(m_scheduledJobs);
     for (auto& job : jobs.values()) {
-        postTaskTo(job->contextIdentifier(), [job] {
+        ScriptExecutionContext::postTaskTo(job->contextIdentifier(), [job](ScriptExecutionContext&) {
             job->failedWithException(Exception { TypeError, ASCIILiteral("Internal error") });
         });
     }
-}
-
-void SWClientConnection::postTaskTo(const DocumentOrWorkerIdentifier& contextIdentifier, WTF::Function<void()>&& task)
-{
-    ASSERT(isMainThread());
-
-    switchOn(contextIdentifier, [&](DocumentIdentifier identifier) {
-        auto* document = Document::allDocumentsMap().get(identifier);
-        if (!document)
-            return;
-        document->postTask([task = WTFMove(task)](ScriptExecutionContext&) {
-            task();
-        });
-    }, [&](ServiceWorkerIdentifier identifier) {
-        SWContextManager::singleton().postTaskToServiceWorker(identifier, [task = WTFMove(task)](ServiceWorkerGlobalScope&) {
-            task();
-        });
-    });
 }
 
 } // namespace WebCore

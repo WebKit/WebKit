@@ -1,3 +1,16 @@
+2017-12-04  Chris Dumez  <cdumez@apple.com>
+
+        Support container.getRegistration() / getRegistrations() inside service workers
+        https://bugs.webkit.org/show_bug.cgi?id=180360
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * http/tests/workers/service/ServiceWorkerGlobalScope_getRegistration-expected.txt: Added.
+        * http/tests/workers/service/ServiceWorkerGlobalScope_getRegistration.html: Added.
+        * http/tests/workers/service/resources/ServiceWorkerGlobalScope_getRegistration-worker.js: Added.
+
 2017-12-04  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: Implement relation type properties

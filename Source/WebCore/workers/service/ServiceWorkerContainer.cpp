@@ -218,30 +218,45 @@ void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<Deferr
         return;
     }
 
-    // FIXME: Add support in workers.
-    if (!is<Document>(*context)) {
-        promise->reject(Exception { NotSupportedError, ASCIILiteral("serviceWorker.getRegistration() is not yet supported in workers") });
-        return;
-    }
-
     URL parsedURL = context->completeURL(clientURL);
     if (!protocolHostAndPortAreEqual(parsedURL, context->url())) {
         promise->reject(Exception { SecurityError, ASCIILiteral("Origin of clientURL is not client's origin") });
         return;
     }
 
-    return ensureSWClientConnection().matchRegistration(context->topOrigin(), parsedURL, [promise = WTFMove(promise), protectingThis = makePendingActivity(*this), this] (auto&& result) mutable {
-        if (m_isStopped)
-            return;
+    uint64_t pendingPromiseIdentifier = ++m_lastPendingPromiseIdentifier;
+    auto pendingPromise = std::make_unique<PendingPromise>(WTFMove(promise), makePendingActivity(*this));
+    m_pendingPromises.add(pendingPromiseIdentifier, WTFMove(pendingPromise));
 
-        if (!result) {
-            promise->resolve();
-            return;
-        }
-
-        auto registration = ServiceWorkerRegistration::getOrCreate(*scriptExecutionContext(), *this, WTFMove(result.value()));
-        promise->resolve<IDLInterface<ServiceWorkerRegistration>>(WTFMove(registration));
+    auto contextIdentifier = this->contextIdentifier();
+    callOnMainThread([connection = makeRef(ensureSWClientConnection()), this, topOrigin = context->topOrigin().isolatedCopy(), parsedURL = parsedURL.isolatedCopy(), contextIdentifier, pendingPromiseIdentifier]() mutable {
+        connection->matchRegistration(topOrigin, parsedURL, [this, contextIdentifier, pendingPromiseIdentifier] (auto&& result) mutable {
+            ScriptExecutionContext::postTaskTo(contextIdentifier, [this, pendingPromiseIdentifier, result = crossThreadCopy(result)](ScriptExecutionContext&) mutable {
+                didFinishGetRegistrationRequest(pendingPromiseIdentifier, WTFMove(result));
+            });
+        });
     });
+}
+
+void ServiceWorkerContainer::didFinishGetRegistrationRequest(uint64_t pendingPromiseIdentifier, std::optional<ServiceWorkerRegistrationData>&& result)
+{
+#ifndef NDEBUG
+    ASSERT(m_creationThread.ptr() == &Thread::current());
+#endif
+
+    auto pendingPromise = m_pendingPromises.take(pendingPromiseIdentifier);
+    if (!pendingPromise)
+        return;
+
+    ASSERT(!m_isStopped);
+
+    if (!result) {
+        pendingPromise->promise->resolve();
+        return;
+    }
+
+    auto registration = ServiceWorkerRegistration::getOrCreate(*scriptExecutionContext(), *this, WTFMove(result.value()));
+    pendingPromise->promise->resolve<IDLInterface<ServiceWorkerRegistration>>(WTFMove(registration));
 }
 
 void ServiceWorkerContainer::scheduleTaskToUpdateRegistrationState(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerData>& serviceWorkerData)
@@ -260,33 +275,46 @@ void ServiceWorkerContainer::scheduleTaskToUpdateRegistrationState(ServiceWorker
     });
 }
 
-void ServiceWorkerContainer::getRegistrations(RegistrationsPromise&& promise)
+void ServiceWorkerContainer::getRegistrations(Ref<DeferredPromise>&& promise)
 {
     auto* context = scriptExecutionContext();
     if (!context) {
-        promise.reject(Exception { InvalidStateError });
+        promise->reject(Exception { InvalidStateError });
         return;
     }
 
-    // FIXME: Add support in workers.
-    if (!is<Document>(*context)) {
-        promise.reject(Exception { NotSupportedError, ASCIILiteral("serviceWorker.getRegistrations() is not yet supported in workers") });
-        return;
-    }
+    uint64_t pendingPromiseIdentifier = ++m_lastPendingPromiseIdentifier;
+    auto pendingPromise = std::make_unique<PendingPromise>(WTFMove(promise), makePendingActivity(*this));
+    m_pendingPromises.add(pendingPromiseIdentifier, WTFMove(pendingPromise));
 
-    return ensureSWClientConnection().getRegistrations(context->topOrigin(), context->url(), [this, pendingActivity = makePendingActivity(*this), promise = WTFMove(promise)] (auto&& registrationDatas) mutable {
-        if (m_isStopped)
-            return;
-
-        Vector<Ref<ServiceWorkerRegistration>> registrations;
-        registrations.reserveInitialCapacity(registrationDatas.size());
-        for (auto& registrationData : registrationDatas) {
-            auto registration = ServiceWorkerRegistration::getOrCreate(*scriptExecutionContext(), *this, WTFMove(registrationData));
-            registrations.uncheckedAppend(WTFMove(registration));
-        }
-
-        promise.resolve(WTFMove(registrations));
+    auto contextIdentifier = this->contextIdentifier();
+    auto contextURL = context->url();
+    callOnMainThread([connection = makeRef(ensureSWClientConnection()), this, topOrigin = context->topOrigin().isolatedCopy(), contextURL = contextURL.isolatedCopy(), contextIdentifier, pendingPromiseIdentifier]() mutable {
+        connection->getRegistrations(topOrigin, contextURL, [this, contextIdentifier, pendingPromiseIdentifier] (auto&& registrationDatas) mutable {
+            ScriptExecutionContext::postTaskTo(contextIdentifier, [this, pendingPromiseIdentifier, registrationDatas = crossThreadCopy(registrationDatas)](ScriptExecutionContext&) mutable {
+                didFinishGetRegistrationsRequest(pendingPromiseIdentifier, WTFMove(registrationDatas));
+            });
+        });
     });
+}
+
+void ServiceWorkerContainer::didFinishGetRegistrationsRequest(uint64_t pendingPromiseIdentifier, Vector<ServiceWorkerRegistrationData>&& registrationDatas)
+{
+#ifndef NDEBUG
+    ASSERT(m_creationThread.ptr() == &Thread::current());
+#endif
+
+    auto pendingPromise = m_pendingPromises.take(pendingPromiseIdentifier);
+    if (!pendingPromise)
+        return;
+
+    ASSERT(!m_isStopped);
+
+    auto registrations = WTF::map(WTFMove(registrationDatas), [&] (auto&& registrationData) {
+        return ServiceWorkerRegistration::getOrCreate(*scriptExecutionContext(), *this, WTFMove(registrationData));
+    });
+
+    pendingPromise->promise->resolve<IDLSequence<IDLInterface<ServiceWorkerRegistration>>>(WTFMove(registrations));
 }
 
 void ServiceWorkerContainer::startMessages()
@@ -508,6 +536,7 @@ void ServiceWorkerContainer::stop()
 {
     m_isStopped = true;
     removeAllEventListeners();
+    m_pendingPromises.clear();
 }
 
 DocumentOrWorkerIdentifier ServiceWorkerContainer::contextIdentifier()

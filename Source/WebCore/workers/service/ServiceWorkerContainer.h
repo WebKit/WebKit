@@ -68,8 +68,7 @@ public:
     void scheduleTaskToFireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier);
     void scheduleTaskToFireControllerChangeEvent();
 
-    using RegistrationsPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<ServiceWorkerRegistration>>>;
-    void getRegistrations(RegistrationsPromise&&);
+    void getRegistrations(Ref<DeferredPromise>&&);
 
     ServiceWorkerRegistration* registration(ServiceWorkerRegistrationIdentifier identifier) const { return m_registrations.get(identifier); }
 
@@ -94,6 +93,9 @@ private:
     void jobFailedLoadingScript(ServiceWorkerJob&, const ResourceError&, std::optional<Exception>&&) final;
 
     void jobDidFinish(ServiceWorkerJob&);
+
+    void didFinishGetRegistrationRequest(uint64_t requestIdentifier, std::optional<ServiceWorkerRegistrationData>&&);
+    void didFinishGetRegistrationsRequest(uint64_t requestIdentifier, Vector<ServiceWorkerRegistrationData>&&);
 
     SWServerConnectionIdentifier connectionIdentifier() final;
     DocumentOrWorkerIdentifier contextIdentifier() final;
@@ -121,6 +123,19 @@ private:
 #ifndef NDEBUG
     Ref<Thread> m_creationThread { Thread::current() };
 #endif
+
+    struct PendingPromise {
+        PendingPromise(Ref<DeferredPromise>&& promise, Ref<PendingActivity<ServiceWorkerContainer>>&& pendingActivity)
+            : promise(WTFMove(promise))
+            , pendingActivity(WTFMove(pendingActivity))
+        { }
+
+        Ref<DeferredPromise> promise;
+        Ref<PendingActivity<ServiceWorkerContainer>> pendingActivity;
+    };
+
+    uint64_t m_lastPendingPromiseIdentifier { 0 };
+    HashMap<uint64_t, std::unique_ptr<PendingPromise>> m_pendingPromises;
 };
 
 } // namespace WebCore

@@ -44,8 +44,10 @@
 #include "RejectedPromiseTracker.h"
 #include "ResourceRequest.h"
 #include "SWClientConnection.h"
+#include "SWContextManager.h"
 #include "ScriptState.h"
 #include "ServiceWorker.h"
+#include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerProvider.h"
 #include "Settings.h"
 #include "WorkerGlobalScope.h"
@@ -581,6 +583,24 @@ ServiceWorkerContainer* ScriptExecutionContext::serviceWorkerContainer()
         navigator = downcast<WorkerGlobalScope>(*this).optionalNavigator();
 
     return navigator ? &navigator->serviceWorker() : nullptr;
+}
+
+void ScriptExecutionContext::postTaskTo(const DocumentOrWorkerIdentifier& contextIdentifier, WTF::Function<void(ScriptExecutionContext&)>&& task)
+{
+    ASSERT(isMainThread());
+
+    switchOn(contextIdentifier, [&] (DocumentIdentifier identifier) {
+        auto* document = Document::allDocumentsMap().get(identifier);
+        if (!document)
+            return;
+        document->postTask([task = WTFMove(task)](auto& scope) {
+            task(scope);
+        });
+    }, [&](ServiceWorkerIdentifier identifier) {
+        SWContextManager::singleton().postTaskToServiceWorker(identifier, [task = WTFMove(task)](auto& scope) {
+            task(scope);
+        });
+    });
 }
 #endif
 

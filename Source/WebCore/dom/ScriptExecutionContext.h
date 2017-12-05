@@ -30,7 +30,7 @@
 #include "ActiveDOMObject.h"
 #include "DOMTimer.h"
 #include "SecurityContext.h"
-#include "ServiceWorkerIdentifier.h"
+#include "ServiceWorkerTypes.h"
 #include <heap/HandleTypes.h>
 #include <runtime/ConsoleTypes.h>
 #include <wtf/CrossThreadTask.h>
@@ -246,6 +246,8 @@ public:
     ServiceWorker* serviceWorker(ServiceWorkerIdentifier identifier) { return m_serviceWorkers.get(identifier); }
 
     ServiceWorkerContainer* serviceWorkerContainer();
+
+    WEBCORE_EXPORT static void postTaskTo(const DocumentOrWorkerIdentifier&, WTF::Function<void(ScriptExecutionContext&)>&&);
 #endif
 
 protected:

@@ -1,3 +1,20 @@
+2017-12-04  Chris Dumez  <cdumez@apple.com>
+
+        Support container.getRegistration() / getRegistrations() inside service workers
+        https://bugs.webkit.org/show_bug.cgi?id=180360
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/service-workers/service-worker/activation.https-expected.txt:
+        Rebaseline test with slightly different output.
+
+        * web-platform-tests/service-workers/service-worker/skip-waiting-without-using-registration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/skip-waiting-without-using-registration.https.html:
+        With my change, this test started running and passing a check before timing out. When investigating the time
+        out, I found out that this is caused by the test unregistering the worker while the test is still running
+        in the service worker, which causes the worker to terminate early. To address the issue, we no longer add
+        a cleanup step to unregister. The test now passes all checks.
+
 2017-12-03  Chris Dumez  <cdumez@apple.com>
 
         Re-sync Service Workers web-platform-tests from upstream

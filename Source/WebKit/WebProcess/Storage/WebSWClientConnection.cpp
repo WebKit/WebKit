@@ -137,18 +137,24 @@ void WebSWClientConnection::initializeSWOriginTableAsEmpty()
 
 void WebSWClientConnection::didMatchRegistration(uint64_t matchingRequest, std::optional<ServiceWorkerRegistrationData>&& result)
 {
+    ASSERT(isMainThread());
+
     if (auto completionHandler = m_ongoingMatchRegistrationTasks.take(matchingRequest))
         completionHandler(WTFMove(result));
 }
 
 void WebSWClientConnection::didGetRegistrations(uint64_t matchingRequest, Vector<ServiceWorkerRegistrationData>&& registrations)
 {
+    ASSERT(isMainThread());
+
     if (auto completionHandler = m_ongoingGetRegistrationsTasks.take(matchingRequest))
         completionHandler(WTFMove(registrations));
 }
 
 void WebSWClientConnection::matchRegistration(const SecurityOrigin& topOrigin, const URL& clientURL, RegistrationCallback&& callback)
 {
+    ASSERT(isMainThread());
+
     if (!mayHaveServiceWorkerRegisteredForOrigin(topOrigin)) {
         callback(std::nullopt);
         return;
@@ -161,6 +167,8 @@ void WebSWClientConnection::matchRegistration(const SecurityOrigin& topOrigin, c
 
 void WebSWClientConnection::getRegistrations(const SecurityOrigin& topOrigin, const URL& clientURL, GetRegistrationsCallback&& callback)
 {
+    ASSERT(isMainThread());
+
     if (!mayHaveServiceWorkerRegisteredForOrigin(topOrigin)) {
         callback({ });
         return;
