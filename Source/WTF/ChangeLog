@@ -1,3 +1,15 @@
+2017-12-05  Filip Pizlo  <fpizlo@apple.com>
+
+        bmalloc IsoHeap needs to allow a thread to deallocate some size for the first time
+        https://bugs.webkit.org/show_bug.cgi?id=180443
+
+        Reviewed by Saam Barati.
+        
+        With this change it's possible to reenable isoheaps on iOS.
+
+        * wtf/IsoMalloc.h:
+        * wtf/IsoMallocInlines.h:
+
 2017-12-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Remove m_atomicStringTableDestructor in Thread by querying the condition at thread destruction

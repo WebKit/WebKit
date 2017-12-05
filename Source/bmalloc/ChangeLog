@@ -1,3 +1,28 @@
+2017-12-05  Filip Pizlo  <fpizlo@apple.com>
+
+        bmalloc IsoHeap needs to allow a thread to deallocate some size for the first time
+        https://bugs.webkit.org/show_bug.cgi?id=180443
+
+        Reviewed by Saam Barati.
+
+        It's true that we can expect a heap to already be initialized if we try to deallocate in it.  But it
+        may not have its deallocator initialized on this thread yet.
+        
+        This is easily fixed by adding a null check on the deallocate path. That's probably not going to
+        change perf at all. But doing that allows me to get rid of a lot of weird stuff I previously did to
+        avoid that null check, like creating a dummy TLS in the DebugHeap case.
+
+        * bmalloc/IsoTLS.cpp:
+        (bmalloc::IsoTLS::debugFree):
+        (bmalloc::IsoTLS::deallocateSlow): Deleted.
+        * bmalloc/IsoTLS.h:
+        * bmalloc/IsoTLSInlines.h:
+        (bmalloc::IsoTLS::allocateImpl):
+        (bmalloc::IsoTLS::allocateSlow):
+        (bmalloc::IsoTLS::deallocateImpl):
+        (bmalloc::IsoTLS::deallocateSlow):
+        (bmalloc::IsoTLS::ensureHeapAndEntries):
+
 2017-12-01  Michael Saboff  <msaboff@apple.com>
 
         Gigacage should not be enabled for ARM64_32

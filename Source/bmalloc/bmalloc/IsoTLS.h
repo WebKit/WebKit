@@ -72,7 +72,8 @@ private:
     template<typename Config>
     void deallocateFast(unsigned offset, void* p);
     
-    BEXPORT static void deallocateSlow(void* p);
+    template<typename Config, typename Type>
+    static void deallocateSlow(api::IsoHeap<Type>&, void* p);
     
     static IsoTLS* get();
     static void set(IsoTLS*);
@@ -92,7 +93,7 @@ private:
     template<typename Func>
     void forEachEntry(const Func&);
     
-    BEXPORT static bool isUsingDebugHeap();
+    static bool isUsingDebugHeap();
     
     struct DebugMallocResult {
         void* ptr { nullptr };
@@ -100,6 +101,7 @@ private:
     };
     
     BEXPORT static DebugMallocResult debugMalloc(size_t);
+    BEXPORT static bool debugFree(void*);
     
     IsoTLSEntry* m_lastEntry { nullptr };
     unsigned m_extent { 0 };

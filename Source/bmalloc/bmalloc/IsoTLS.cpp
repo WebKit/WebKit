@@ -52,15 +52,6 @@ IsoTLS::IsoTLS()
 {
 }
 
-void IsoTLS::deallocateSlow(void* p)
-{
-    // If we go down this path and we aren't in debug heap mode, then this means we have some corruption.
-    // Think of this as really being an assertion about offset < tls->m_extent.
-    RELEASE_BASSERT(PerProcess<Environment>::get()->isDebugHeapEnabled());
-    
-    PerProcess<DebugHeap>::get()->free(p);
-}
-
 IsoTLS* IsoTLS::ensureEntries(unsigned offset)
 {
     RELEASE_BASSERT(!get() || offset >= get()->m_extent);
@@ -187,6 +178,15 @@ auto IsoTLS::debugMalloc(size_t size) -> DebugMallocResult
     if ((result.usingDebugHeap = isUsingDebugHeap()))
         result.ptr = PerProcess<DebugHeap>::get()->malloc(size);
     return result;
+}
+
+bool IsoTLS::debugFree(void* p)
+{
+    if (isUsingDebugHeap()) {
+        PerProcess<DebugHeap>::get()->free(p);
+        return true;
+    }
+    return false;
 }
 
 } // namespace bmalloc

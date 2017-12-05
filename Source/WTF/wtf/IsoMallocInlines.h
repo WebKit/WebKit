@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if (defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC) || PLATFORM(IOS)
+#if (defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC)
 
 #include <wtf/FastMalloc.h>
 
