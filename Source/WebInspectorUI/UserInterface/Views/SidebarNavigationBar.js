@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.navigation-bar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
+WI.SidebarNavigationBar = class SidebarNavigationBar extends WI.NavigationBar
+{
+    constructor(element, navigationItems, role, label)
+    {
+        super(element, navigationItems, role, label);
 
-    border-bottom: 1px solid var(--border-color);
+        this.element.classList.add("sidebar-navigation-bar");
+        this._holderElement = this.element.appendChild(document.createElement("div"));
+        this._holderElement.className = "holder";
+    }
 
-    height: var(--navigation-bar-height);
+    // Public
 
-    white-space: nowrap;
-    overflow: hidden;
+    insertNavigationItem(navigationItem, index)
+    {
+        return super.insertNavigationItem(navigationItem, index, this._holderElement);
+    }
 
-    outline: none;
-}
+    // Private
 
-.navigation-bar .item,
-.sidebar-navigation-bar > .holder .item {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-
-    height: auto;
-    outline: none;
-}
-
-.navigation-bar .item.force-hidden {
-    display: none;
-}
-
-.sidebar-navigation-bar {
-    display: block;
-    text-align: center;
-    height: var(--navigation-bar-height);
-    border-bottom: 1px solid var(--border-color);
-}
-
-.sidebar-navigation-bar .holder {
-    display: inline-flex;
-    align-items: center;
-    height: var(--navigation-bar-height);
-    padding: 0 2px;
-    border-bottom: none;
-}
+    _calculateMinimumWidth()
+    {
+        return this._holderElement.offsetWidth;
+    }
+};

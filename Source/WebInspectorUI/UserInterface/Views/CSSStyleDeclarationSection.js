@@ -320,15 +320,15 @@ WI.CSSStyleDeclarationSection = class CSSStyleDeclarationSection extends WI.Obje
 
     findMatchingPropertiesAndSelectors(needle)
     {
-        this._element.classList.remove(WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName, WI.CSSStyleDetailsSidebarPanel.FilterMatchingSectionHasLabelClassName);
+        this._element.classList.remove(WI.GeneralStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName, WI.GeneralStyleDetailsSidebarPanel.FilterMatchingSectionHasLabelClassName);
 
         var hasMatchingSelector = false;
 
         for (var selectorElement of this._selectorElements) {
-            selectorElement.classList.remove(WI.CSSStyleDetailsSidebarPanel.FilterMatchSectionClassName);
+            selectorElement.classList.remove(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
 
             if (needle && selectorElement.textContent.includes(needle)) {
-                selectorElement.classList.add(WI.CSSStyleDetailsSidebarPanel.FilterMatchSectionClassName);
+                selectorElement.classList.add(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
                 hasMatchingSelector = true;
             }
         }
@@ -341,7 +341,7 @@ WI.CSSStyleDeclarationSection = class CSSStyleDeclarationSection extends WI.Obje
         var hasMatchingProperty = this._propertiesTextEditor.findMatchingProperties(needle);
 
         if (!hasMatchingProperty && !hasMatchingSelector) {
-            this._element.classList.add(WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
+            this._element.classList.add(WI.GeneralStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
             return false;
         }
 

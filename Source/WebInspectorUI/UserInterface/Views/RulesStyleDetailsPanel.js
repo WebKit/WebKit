@@ -355,7 +355,7 @@ WI.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WI.StyleDetails
     {
         for (var labels of this._ruleMediaAndInherticanceList) {
             for (var i = 0; i < labels.length; ++i) {
-                labels[i].classList.toggle(WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName, filterBar.hasActiveFilters());
+                labels[i].classList.toggle(WI.GeneralStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName, filterBar.hasActiveFilters());
 
                 if (i === labels.length - 1)
                     labels[i].classList.toggle("filter-matching-label", filterBar.hasActiveFilters());
@@ -369,9 +369,9 @@ WI.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WI.StyleDetails
             if (section.findMatchingPropertiesAndSelectors(filterBar.filters.text) && filterBar.hasActiveFilters()) {
                 if (this._ruleMediaAndInherticanceList[i].length) {
                     for (var label of this._ruleMediaAndInherticanceList[i])
-                        label.classList.remove(WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
+                        label.classList.remove(WI.GeneralStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
                 } else
-                    section.element.classList.add(WI.CSSStyleDetailsSidebarPanel.FilterMatchingSectionHasLabelClassName);
+                    section.element.classList.add(WI.GeneralStyleDetailsSidebarPanel.FilterMatchingSectionHasLabelClassName);
 
                 matchFound = true;
             }

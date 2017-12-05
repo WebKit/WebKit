@@ -247,8 +247,9 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         let experimentalSettingsView = new WI.SettingsView("experimental", WI.UIString("Experimental"));
 
         if (window.CSSAgent) {
-            experimentalSettingsView.addSetting(WI.UIString("Styles Panel:"), WI.settings.experimentalLegacyStyleEditor, WI.UIString("Legacy Style Editor"));
-            experimentalSettingsView.addSeparator();
+            let stylesGroup = experimentalSettingsView.addGroup(WI.UIString("Styles Sidebar:"));
+            stylesGroup.addSetting(WI.settings.experimentalLegacyStyleEditor, WI.UIString("Legacy Style Editor"));
+            stylesGroup.addSetting(WI.settings.experimentalLegacyVisualSidebar, WI.UIString("Legacy Visual Styles Panel"));
         }
 
         if (window.LayerTreeAgent) {
@@ -271,6 +272,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         }
 
         listenForChange(WI.settings.experimentalLegacyStyleEditor);
+        listenForChange(WI.settings.experimentalLegacyVisualSidebar);
         listenForChange(WI.settings.experimentalEnableLayersTab);
 
         this.addSettingsView(experimentalSettingsView);

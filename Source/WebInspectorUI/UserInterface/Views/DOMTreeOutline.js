@@ -362,7 +362,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
     _ondragover(event)
     {
-        if (event.dataTransfer.types.includes(WI.CSSStyleDetailsSidebarPanel.ToggledClassesDragType)) {
+        if (event.dataTransfer.types.includes(WI.GeneralStyleDetailsSidebarPanel.ToggledClassesDragType)) {
             event.preventDefault();
             event.dataTransfer.dropEffect = "copy";
             return false;
@@ -444,7 +444,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
             this._nodeBeingDragged.moveTo(parentNode, anchorNode, callback.bind(this));
         } else {
-            let className = event.dataTransfer.getData(WI.CSSStyleDetailsSidebarPanel.ToggledClassesDragType);
+            let className = event.dataTransfer.getData(WI.GeneralStyleDetailsSidebarPanel.ToggledClassesDragType);
             if (className && treeElement)
                 treeElement.representedObject.toggleClass(className, true);
         }

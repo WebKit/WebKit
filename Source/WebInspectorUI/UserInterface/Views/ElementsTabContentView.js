@@ -29,10 +29,13 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
     {
         let {image, title} = WI.ElementsTabContentView.tabInfo();
         let tabBarItem = new WI.GeneralTabBarItem(image, title);
-        let detailsSidebarPanelConstructors = [WI.DOMNodeDetailsSidebarPanel, WI.CSSStyleDetailsSidebarPanel];
+        let detailsSidebarPanelConstructors = [WI.RulesStyleDetailsSidebarPanel, WI.ComputedStyleDetailsSidebarPanel, WI.DOMNodeDetailsSidebarPanel];
 
         if (window.LayerTreeAgent && !WI.settings.experimentalEnableLayersTab.value)
             detailsSidebarPanelConstructors.push(WI.LayerTreeDetailsSidebarPanel);
+
+        if (WI.settings.experimentalLegacyVisualSidebar.value)
+            detailsSidebarPanelConstructors.push(WI.VisualStyleDetailsSidebarPanel);
 
         super(identifier || "elements", "elements", tabBarItem, null, detailsSidebarPanelConstructors, true);
 

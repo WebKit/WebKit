@@ -23,38 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel extends WI.DOMDetailsSidebarPanel
+WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel extends WI.DOMDetailsSidebarPanel
 {
-    constructor()
+    constructor(identifier, displayName, panelConstructor)
     {
-        const dontCreateNavigationItem = true;
-        super("css-style", WI.UIString("Styles"), dontCreateNavigationItem);
+        super(identifier, displayName);
 
-        this._selectedPanel = null;
-        this._computedStyleDetailsPanel = new WI.ComputedStyleDetailsPanel(this);
-        this._rulesStyleDetailsPanel = new WI.RulesStyleDetailsPanel(this);
-        this._visualStyleDetailsPanel = new WI.VisualStyleDetailsPanel(this);
+        this.element.classList.add("css-style");
+        this._panel = new panelConstructor(this);
 
-        if (WI.settings.experimentalLegacyStyleEditor.value)
-            this._activeRulesStyleDetailsPanel = this._rulesStyleDetailsPanel;
-        else
-            this._activeRulesStyleDetailsPanel = new WI.SpreadsheetRulesStyleDetailsPanel(this);
-
-        this._panels = [this._computedStyleDetailsPanel, this._activeRulesStyleDetailsPanel, this._visualStyleDetailsPanel];
-        this._panelNavigationInfo = [this._computedStyleDetailsPanel.navigationInfo, this._activeRulesStyleDetailsPanel.navigationInfo, this._visualStyleDetailsPanel.navigationInfo];
-
-        this._lastSelectedPanelSetting = new WI.Setting("last-selected-style-details-panel", this._activeRulesStyleDetailsPanel.navigationInfo.identifier);
         this._classListContainerToggledSetting = new WI.Setting("class-list-container-toggled", false);
-
-        this._initiallySelectedPanel = this._panelMatchingIdentifier(this._lastSelectedPanelSetting.value) || this._activeRulesStyleDetailsPanel;
-
-        this._navigationItem = new WI.ScopeRadioButtonNavigationItem(this.identifier, this.displayName, this._panelNavigationInfo, this._initiallySelectedPanel.navigationInfo);
-        this._navigationItem.addEventListener(WI.ScopeRadioButtonNavigationItem.Event.SelectedItemChanged, this._handleSelectedItemChanged, this);
-
         this._forcedPseudoClassCheckboxes = {};
     }
 
     // Public
+
+    get panel() { return this._panel; }
 
     supportsDOMNode(nodeToInspect)
     {
@@ -65,26 +49,35 @@ WI.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel extends WI.DO
     {
         super.visibilityDidChange();
 
-        if (!this._selectedPanel)
+        if (!this._panel)
             return;
 
         if (!this.visible) {
-            this._selectedPanel.hidden();
+            this._panel.hidden();
             return;
         }
 
         this._updateNoForcedPseudoClassesScrollOffset();
 
-        this._selectedPanel.shown();
-        this._selectedPanel.markAsNeedsRefresh(this.domNode);
+        this._panel.shown();
+        this._panel.markAsNeedsRefresh(this.domNode);
     }
 
     computedStyleDetailsPanelShowProperty(property)
     {
-        this._activeRulesStyleDetailsPanel.scrollToSectionAndHighlightProperty(property);
-        this._switchPanels(this._activeRulesStyleDetailsPanel);
+        this.parentSidebar.selectedSidebarPanel = "style-rules";
 
-        this._navigationItem.selectedItemIdentifier = this._lastSelectedPanelSetting.value;
+        let styleRulesPanel = null;
+        for (let sidebarPanel of this.parentSidebar.sidebarPanels) {
+            if (!(sidebarPanel instanceof WI.RulesStyleDetailsSidebarPanel))
+                continue;
+
+            styleRulesPanel = sidebarPanel;
+            break;
+        }
+
+        console.assert(styleRulesPanel, "Styles panel is missing.");
+        styleRulesPanel.panel.scrollToSectionAndHighlightProperty(property);
     }
 
     // Protected
@@ -96,11 +89,7 @@ WI.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel extends WI.DO
             return;
 
         this.contentView.element.scrollTop = this._initialScrollOffset;
-
-        for (let panel of this._panels) {
-            panel.element._savedScrollTop = undefined;
-            panel.markAsNeedsRefresh(domNode);
-        }
+        this._panel.markAsNeedsRefresh(domNode);
 
         this._updatePseudoClassCheckboxes();
 
@@ -163,13 +152,9 @@ WI.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel extends WI.DO
             this.contentView.element.appendChild(this._forcedPseudoClassContainer);
         }
 
-        this._computedStyleDetailsPanel.addEventListener(WI.StyleDetailsPanel.Event.Refreshed, this._filterDidChange, this);
-        this._rulesStyleDetailsPanel.addEventListener(WI.StyleDetailsPanel.Event.Refreshed, this._filterDidChange, this);
+        this._panel.addEventListener(WI.StyleDetailsPanel.Event.Refreshed, this._filterDidChange, this);
 
-        console.assert(this._initiallySelectedPanel, "Should have an initially selected panel.");
-
-        this._switchPanels(this._initiallySelectedPanel);
-        this._initiallySelectedPanel = null;
+        this._showPanel(this._panel);
 
         let optionsContainer = this.element.createChild("div", "options-container");
 
@@ -212,8 +197,8 @@ WI.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel extends WI.DO
 
         this._updateNoForcedPseudoClassesScrollOffset();
 
-        if (this._selectedPanel)
-            this._selectedPanel.sizeDidChange();
+        if (this._panel)
+            this._panel.sizeDidChange();
     }
 
     // Private
@@ -222,66 +207,26 @@ WI.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel extends WI.DO
     {
         if (!WI.cssStyleManager.canForcePseudoClasses())
             return 0;
-        return this.domNode && this.domNode.enabledPseudoClasses.length ? 0 : WI.CSSStyleDetailsSidebarPanel.NoForcedPseudoClassesScrollOffset;
+        return this.domNode && this.domNode.enabledPseudoClasses.length ? 0 : WI.GeneralStyleDetailsSidebarPanel.NoForcedPseudoClassesScrollOffset;
     }
 
     _updateNoForcedPseudoClassesScrollOffset()
     {
         if (this._forcedPseudoClassContainer)
-            WI.CSSStyleDetailsSidebarPanel.NoForcedPseudoClassesScrollOffset = this._forcedPseudoClassContainer.offsetHeight;
+            WI.GeneralStyleDetailsSidebarPanel.NoForcedPseudoClassesScrollOffset = this._forcedPseudoClassContainer.offsetHeight;
     }
 
-    _panelMatchingIdentifier(identifier)
+    _showPanel()
     {
-        let selectedPanel = null;
-        for (let panel of this._panels) {
-            if (panel.navigationInfo.identifier !== identifier)
-                continue;
+        this.contentView.addSubview(this._panel);
 
-            selectedPanel = panel;
-            break;
-        }
-
-        return selectedPanel;
-    }
-
-    _handleSelectedItemChanged()
-    {
-        let selectedIdentifier = this._navigationItem.selectedItemIdentifier;
-        let selectedPanel = this._panelMatchingIdentifier(selectedIdentifier);
-        this._switchPanels(selectedPanel);
-    }
-
-    _switchPanels(selectedPanel)
-    {
-        console.assert(selectedPanel);
-
-        if (this._selectedPanel) {
-            this._selectedPanel.hidden();
-            this._selectedPanel.element._savedScrollTop = this.contentView.element.scrollTop;
-            this.contentView.removeSubview(this._selectedPanel);
-        }
-
-        this._selectedPanel = selectedPanel;
-        if (!this._selectedPanel)
-            return;
-
-        this.contentView.addSubview(this._selectedPanel);
-
-        if (typeof this._selectedPanel.element._savedScrollTop === "number")
-            this.contentView.element.scrollTop = this._selectedPanel.element._savedScrollTop;
-        else
-            this.contentView.element.scrollTop = this._initialScrollOffset;
-
-        let hasFilter = typeof this._selectedPanel.filterDidChange === "function";
+        let hasFilter = typeof this._panel.filterDidChange === "function";
         this.contentView.element.classList.toggle("has-filter-bar", hasFilter);
         if (this._filterBar)
-            this.contentView.element.classList.toggle(WI.CSSStyleDetailsSidebarPanel.FilterInProgressClassName, hasFilter && this._filterBar.hasActiveFilters());
+            this.contentView.element.classList.toggle(WI.GeneralStyleDetailsSidebarPanel.FilterInProgressClassName, hasFilter && this._filterBar.hasActiveFilters());
 
-        this.contentView.element.classList.toggle("supports-new-rule", typeof this._selectedPanel.newRuleButtonClicked === "function");
-        this._selectedPanel.shown();
-
-        this._lastSelectedPanelSetting.value = selectedPanel.navigationInfo.identifier;
+        this.contentView.element.classList.toggle("supports-new-rule", typeof this._panel.newRuleButtonClicked === "function");
+        this._panel.shown();
     }
 
     _forcedPseudoClassCheckboxChanged(pseudoClass, event)
@@ -321,17 +266,16 @@ WI.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel extends WI.DO
             this._populateClassToggles();
     }
 
-
     _newRuleButtonClicked()
     {
-        if (this._selectedPanel && typeof this._selectedPanel.newRuleButtonClicked === "function")
-            this._selectedPanel.newRuleButtonClicked();
+        if (this._panel && typeof this._panel.newRuleButtonClicked === "function")
+            this._panel.newRuleButtonClicked();
     }
 
     _newRuleButtonContextMenu(event)
     {
-        if (this._selectedPanel && typeof this._selectedPanel.newRuleButtonContextMenu === "function")
-            this._selectedPanel.newRuleButtonContextMenu(event);
+        if (this._panel && typeof this._panel.newRuleButtonContextMenu === "function")
+            this._panel.newRuleButtonContextMenu(event);
     }
 
     _classToggleButtonClicked(event)
@@ -373,9 +317,9 @@ WI.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel extends WI.DO
             this._classListContainer.children[1].remove();
 
         let classes = this.domNode.getAttribute("class");
-        let classToggledMap = this.domNode[WI.CSSStyleDetailsSidebarPanel.ToggledClassesSymbol];
+        let classToggledMap = this.domNode[WI.GeneralStyleDetailsSidebarPanel.ToggledClassesSymbol];
         if (!classToggledMap)
-            classToggledMap = this.domNode[WI.CSSStyleDetailsSidebarPanel.ToggledClassesSymbol] = new Map;
+            classToggledMap = this.domNode[WI.GeneralStyleDetailsSidebarPanel.ToggledClassesSymbol] = new Map;
 
         if (classes && classes.length) {
             for (let className of classes.split(/\s+/))
@@ -397,7 +341,7 @@ WI.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel extends WI.DO
         if (!className || !className.length)
             return;
 
-        let classToggledMap = this.domNode[WI.CSSStyleDetailsSidebarPanel.ToggledClassesSymbol];
+        let classToggledMap = this.domNode[WI.GeneralStyleDetailsSidebarPanel.ToggledClassesSymbol];
         if (!classToggledMap)
             return;
 
@@ -417,7 +361,7 @@ WI.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel extends WI.DO
         classNameTitle.textContent = className;
         classNameTitle.draggable = true;
         classNameTitle.addEventListener("dragstart", (event) => {
-            event.dataTransfer.setData(WI.CSSStyleDetailsSidebarPanel.ToggledClassesDragType, className);
+            event.dataTransfer.setData(WI.GeneralStyleDetailsSidebarPanel.ToggledClassesDragType, className);
             event.dataTransfer.effectAllowed = "copy";
         });
 
@@ -437,9 +381,9 @@ WI.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel extends WI.DO
 
     _filterDidChange()
     {
-        this.contentView.element.classList.toggle(WI.CSSStyleDetailsSidebarPanel.FilterInProgressClassName, this._filterBar.hasActiveFilters());
+        this.contentView.element.classList.toggle(WI.GeneralStyleDetailsSidebarPanel.FilterInProgressClassName, this._filterBar.hasActiveFilters());
 
-        this._selectedPanel.filterDidChange(this._filterBar);
+        this._panel.filterDidChange(this._filterBar);
     }
 
     _styleSheetAddedOrRemoved()
@@ -448,12 +392,12 @@ WI.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel extends WI.DO
     }
 };
 
-WI.CSSStyleDetailsSidebarPanel.NoForcedPseudoClassesScrollOffset = 30; // Default height of the forced pseudo classes container. Updated in sizeDidChange.
-WI.CSSStyleDetailsSidebarPanel.FilterInProgressClassName = "filter-in-progress";
-WI.CSSStyleDetailsSidebarPanel.FilterMatchingSectionHasLabelClassName = "filter-section-has-label";
-WI.CSSStyleDetailsSidebarPanel.FilterMatchSectionClassName = "filter-matching";
-WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName = "filter-section-non-matching";
-WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInPropertyClassName = "filter-property-non-matching";
+WI.GeneralStyleDetailsSidebarPanel.NoForcedPseudoClassesScrollOffset = 30; // Default height of the forced pseudo classes container. Updated in sizeDidChange.
+WI.GeneralStyleDetailsSidebarPanel.FilterInProgressClassName = "filter-in-progress";
+WI.GeneralStyleDetailsSidebarPanel.FilterMatchingSectionHasLabelClassName = "filter-section-has-label";
+WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName = "filter-matching";
+WI.GeneralStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName = "filter-section-non-matching";
+WI.GeneralStyleDetailsSidebarPanel.NoFilterMatchInPropertyClassName = "filter-property-non-matching";
 
-WI.CSSStyleDetailsSidebarPanel.ToggledClassesSymbol = Symbol("css-style-details-sidebar-panel-toggled-classes-symbol");
-WI.CSSStyleDetailsSidebarPanel.ToggledClassesDragType = "text/classname";
+WI.GeneralStyleDetailsSidebarPanel.ToggledClassesSymbol = Symbol("css-style-details-sidebar-panel-toggled-classes-symbol");
+WI.GeneralStyleDetailsSidebarPanel.ToggledClassesDragType = "text/classname";

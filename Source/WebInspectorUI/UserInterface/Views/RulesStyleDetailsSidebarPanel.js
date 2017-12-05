@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.navigation-bar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
+WI.RulesStyleDetailsSidebarPanel = class RulesStyleDetailsSidebarPanel extends WI.GeneralStyleDetailsSidebarPanel
+{
+    constructor()
+    {
+        let rulesStyleDetailsPanelConstructor;
 
-    border-bottom: 1px solid var(--border-color);
+        if (WI.settings.experimentalLegacyStyleEditor.value)
+            rulesStyleDetailsPanelConstructor = WI.RulesStyleDetailsPanel;
+        else
+            rulesStyleDetailsPanelConstructor = WI.SpreadsheetRulesStyleDetailsPanel;
 
-    height: var(--navigation-bar-height);
-
-    white-space: nowrap;
-    overflow: hidden;
-
-    outline: none;
-}
-
-.navigation-bar .item,
-.sidebar-navigation-bar > .holder .item {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-
-    height: auto;
-    outline: none;
-}
-
-.navigation-bar .item.force-hidden {
-    display: none;
-}
-
-.sidebar-navigation-bar {
-    display: block;
-    text-align: center;
-    height: var(--navigation-bar-height);
-    border-bottom: 1px solid var(--border-color);
-}
-
-.sidebar-navigation-bar .holder {
-    display: inline-flex;
-    align-items: center;
-    height: var(--navigation-bar-height);
-    padding: 0 2px;
-    border-bottom: none;
-}
+        super("style-rules", "Styles", rulesStyleDetailsPanelConstructor);
+    }
+};

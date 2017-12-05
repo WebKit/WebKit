@@ -125,7 +125,7 @@ WI.StyleDetailsPanel = class StyleDetailsPanel extends WI.View
     {
         if (!WI.cssStyleManager.canForcePseudoClasses())
             return 0;
-        return this.nodeStyles.node.enabledPseudoClasses.length ? 0 : WI.CSSStyleDetailsSidebarPanel.NoForcedPseudoClassesScrollOffset;
+        return this.nodeStyles.node.enabledPseudoClasses.length ? 0 : WI.GeneralStyleDetailsSidebarPanel.NoForcedPseudoClassesScrollOffset;
     }
 
     _refreshNodeStyles()

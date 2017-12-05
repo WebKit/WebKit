@@ -30,7 +30,7 @@ WI.SearchTabContentView = class SearchTabContentView extends WI.ContentBrowserTa
         let {image, title} = WI.SearchTabContentView.tabInfo();
         let tabBarItem = new WI.GeneralTabBarItem(image, title);
         let detailsSidebarPanelConstructors = [WI.ResourceDetailsSidebarPanel, WI.ProbeDetailsSidebarPanel,
-            WI.DOMNodeDetailsSidebarPanel, WI.CSSStyleDetailsSidebarPanel];
+            WI.DOMNodeDetailsSidebarPanel, WI.ComputedStyleDetailsSidebarPanel, WI.RulesStyleDetailsSidebarPanel];
 
         if (window.LayerTreeAgent && !WI.settings.experimentalEnableLayersTab.value)
             detailsSidebarPanelConstructors.push(WI.LayerTreeDetailsSidebarPanel);

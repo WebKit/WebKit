@@ -421,13 +421,17 @@ WI.NavigationBar = class NavigationBar extends WI.View
 
     _calculateMinimumWidth()
     {
+        let visibleNavigationItems = this._visibleNavigationItems;
+        if (!visibleNavigationItems.length)
+            return 0;
+
         const wasCollapsed = this.element.classList.contains(WI.NavigationBar.CollapsedStyleClassName);
 
         // Add the collapsed style class to calculate the width of the items when they are collapsed.
         if (!wasCollapsed)
             this.element.classList.add(WI.NavigationBar.CollapsedStyleClassName);
 
-        let totalItemWidth = this._visibleNavigationItems.reduce((total, item) => total + item.minimumWidth, 0);
+        let totalItemWidth = visibleNavigationItems.reduce((total, item) => total + item.minimumWidth, 0);
 
         // Remove the collapsed style class if we were not collapsed before.
         if (!wasCollapsed)

@@ -1,3 +1,86 @@
+2017-12-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: make Computed a top-level sidebar tab
+        https://bugs.webkit.org/show_bug.cgi?id=174229
+        <rdar://problem/33170193>
+
+        Reviewed by Matt Baker.
+
+        Styles dropdown tab selector was removed. Styles and Computed are now top-level sidebar tabs.
+
+        Visual styles is no longer visible in the Styles sidebar tabs by default but can be enabled in the settings.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Main.html:
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WI.CSSStyleDeclarationSection.prototype.findMatchingPropertiesAndSelectors):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WI.CSSStyleDeclarationTextEditor.prototype.findMatchingProperties):
+        (WI.CSSStyleDeclarationTextEditor.prototype.removeNonMatchingProperties):
+        * UserInterface/Views/ComputedStyleDetailsSidebarPanel.js: Added.
+        (WI.ComputedStyleDetailsSidebarPanel):
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline.prototype._ondragover):
+        (WI.DOMTreeOutline.prototype._ondrop):
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView):
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.css: Renamed from Source/WebInspectorUI/UserInterface/Views/CSSStyleDetailsSidebarPanel.css.
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.js: Renamed from Source/WebInspectorUI/UserInterface/Views/CSSStyleDetailsSidebarPanel.js.
+        (WI.GeneralStyleDetailsSidebarPanel):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.get panel):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.visibilityDidChange):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.computedStyleDetailsPanelShowProperty):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.layout):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.initialLayout):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.sizeDidChange):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype.get _initialScrollOffset):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype._updateNoForcedPseudoClassesScrollOffset):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype._showPanel):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype._newRuleButtonClicked):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype._newRuleButtonContextMenu):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype._populateClassToggles):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype._createToggleForClassName):
+        (WI.GeneralStyleDetailsSidebarPanel.prototype._filterDidChange):
+        Styles and Computed tabs share a few UI components, such as force state (:hover, :focus, etc.),
+        filter field, and CSS class toggle components. To implement this, CSSStyleDetailsSidebarPanel was renamed
+        to GeneralStyleDetailsSidebarPanel.
+
+        CSSStyleDetailsSidebarPanel used to support several panels. This is no longer the case with GeneralStyleDetailsSidebarPanel:
+        - _initiallySelectedPanel was removed.
+        - _selectedPanel was replaced by _panel.
+
+        * UserInterface/Views/GroupNavigationItem.js:
+        (WI.GroupNavigationItem.prototype.get minimumWidth):
+        * UserInterface/Views/NavigationBar.css:
+        (.navigation-bar .item,):
+        (.sidebar-navigation-bar):
+        (.sidebar-navigation-bar .holder):
+        * UserInterface/Views/NavigationBar.js:
+        (WI.NavigationBar.prototype._calculateMinimumWidth):
+        Minor optimization: don't toggle class names when there are no visible navigation items.
+
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WI.RulesStyleDetailsPanel.prototype.filterDidChange):
+        * UserInterface/Views/RulesStyleDetailsSidebarPanel.js: Copied from Source/WebInspectorUI/UserInterface/Views/NavigationBar.css.
+        (WI.RulesStyleDetailsSidebarPanel):
+        * UserInterface/Views/SearchTabContentView.js:
+        (WI.SearchTabContentView):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+        * UserInterface/Views/Sidebar.js:
+        (WI.Sidebar):
+        * UserInterface/Views/SidebarNavigationBar.js: Copied from Source/WebInspectorUI/UserInterface/Views/NavigationBar.css.
+        (WI.SidebarNavigationBar):
+        (WI.SidebarNavigationBar.prototype.insertNavigationItem):
+        (WI.SidebarNavigationBar.prototype._calculateMinimumWidth):
+        SidebarNavigationBar wraps navigation items in an element so it can correctly calculate the width of all items with spacing between them.
+
+        * UserInterface/Views/StyleDetailsPanel.js:
+        (WI.StyleDetailsPanel.prototype.get _initialScrollOffset):
+        * UserInterface/Views/VisualStyleDetailsSidebarPanel.js: Copied from Source/WebInspectorUI/UserInterface/Views/NavigationBar.css.
+        (WI.VisualStyleDetailsSidebarPanel):
+
 2017-12-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: content views for resources loaded through XHR do not reflect declared mime-type

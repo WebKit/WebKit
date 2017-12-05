@@ -250,9 +250,9 @@ WI.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor extends W
             var property = propertiesList[i];
 
             if (matchingProperties[i])
-                property.__filterResultClassName = WI.CSSStyleDetailsSidebarPanel.FilterMatchSectionClassName;
+                property.__filterResultClassName = WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName;
             else
-                property.__filterResultClassName = WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInPropertyClassName;
+                property.__filterResultClassName = WI.GeneralStyleDetailsSidebarPanel.NoFilterMatchInPropertyClassName;
 
             this._updateTextMarkerForPropertyIfNeeded(property);
         }
@@ -288,7 +288,7 @@ WI.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor extends W
 
             if (indexesOfNeedle.length) {
                 matchingPropertyNames.push(property.name);
-                property.__filterResultClassName = WI.CSSStyleDetailsSidebarPanel.FilterMatchSectionClassName;
+                property.__filterResultClassName = WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName;
                 property.__filterResultNeedlePosition = {start: indexesOfNeedle, length: needle.length};
             }
         }
