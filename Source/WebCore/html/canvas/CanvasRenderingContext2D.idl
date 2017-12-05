@@ -53,10 +53,7 @@
     void setFillColor(unrestricted float c, unrestricted float m, unrestricted float y, unrestricted float k, unrestricted float a);
 
     // Non-standard functionality (CanvasImageData).
-    readonly attribute float webkitBackingStorePixelRatio;
-    [MayThrowException] ImageData webkitGetImageDataHD(float sx, float sy, float sw, float sh);
-    void webkitPutImageDataHD(ImageData imagedata, float dx, float dy);
-    void webkitPutImageDataHD(ImageData imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
+    readonly attribute float webkitBackingStorePixelRatio; // Always returns 1.
 
     // Non-standard legacy alias (CanvasImageSmoothing).
     [ImplementedAs=imageSmoothingEnabled] attribute boolean webkitImageSmoothingEnabled;

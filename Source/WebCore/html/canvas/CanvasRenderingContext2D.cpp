@@ -2122,11 +2122,6 @@ ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2D::getImageData(float sx, 
     return getImageData(ImageBuffer::LogicalCoordinateSystem, sx, sy, sw, sh);
 }
 
-ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2D::webkitGetImageDataHD(float sx, float sy, float sw, float sh) const
-{
-    return getImageData(ImageBuffer::BackingStoreCoordinateSystem, sx, sy, sw, sh);
-}
-
 ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2D::getImageData(ImageBuffer::CoordinateSystem coordinateSystem, float sx, float sy, float sw, float sh) const
 {
     if (!canvas().originClean()) {
@@ -2180,19 +2175,9 @@ void CanvasRenderingContext2D::putImageData(ImageData& data, float dx, float dy)
     putImageData(data, dx, dy, 0, 0, data.width(), data.height());
 }
 
-void CanvasRenderingContext2D::webkitPutImageDataHD(ImageData& data, float dx, float dy)
-{
-    webkitPutImageDataHD(data, dx, dy, 0, 0, data.width(), data.height());
-}
-
 void CanvasRenderingContext2D::putImageData(ImageData& data, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight)
 {
     putImageData(data, ImageBuffer::LogicalCoordinateSystem, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight);
-}
-
-void CanvasRenderingContext2D::webkitPutImageDataHD(ImageData& data, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight)
-{
-    putImageData(data, ImageBuffer::BackingStoreCoordinateSystem, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight);
 }
 
 void CanvasRenderingContext2D::drawFocusIfNeeded(Element& element)

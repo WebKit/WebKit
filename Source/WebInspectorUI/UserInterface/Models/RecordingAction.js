@@ -267,7 +267,6 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         case "strokeStyle":
         // 2D (non-standard)
         case "drawImageFromRect":
-        case "webkitPutImageDataHD":
             return this._parameters.slice(0, 1);
         }
 
@@ -338,8 +337,6 @@ WI.RecordingAction._functionNames = {
         "strokeText",
         "transform",
         "translate",
-        "webkitGetImageDataHD",
-        "webkitPutImageDataHD",
     ]),
     [WI.Recording.Type.CanvasWebGL]: new Set([
         "activeTexture",
@@ -496,7 +493,6 @@ WI.RecordingAction._visualNames = {
         "stroke",
         "strokeRect",
         "strokeText",
-        "webkitPutImageDataHD",
     ]),
     [WI.Recording.Type.CanvasWebGL]: new Set([
         "clear",

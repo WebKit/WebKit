@@ -364,9 +364,6 @@ function performActions() {
             ctx.translate(1, 2);
         },
         () => {
-            ignoreException(() => ctx.webkitGetImageDataHD(1, 2, 3, 4));
-        },
-        () => {
             ctx.webkitImageSmoothingEnabled;
             ctx.webkitImageSmoothingEnabled = true;
         },
@@ -377,10 +374,6 @@ function performActions() {
         () => {
             ctx.webkitLineDashOffset;
             ctx.webkitLineDashOffset = 1;
-        },
-        () => {
-            ctx.webkitPutImageDataHD(imageData14, 5, 6);
-            ctx.webkitPutImageDataHD(imageData23, 7, 8, 9, 10, 11, 12);
         },
         () => {
             TestPage.dispatchEventToFrontend("LastFrame");

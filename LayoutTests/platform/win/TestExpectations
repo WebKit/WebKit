@@ -488,7 +488,6 @@ webkit.org/b/149774 css3/font-variant-small-caps-synthesis.html [ Skip ] # WontF
 # https://bugs.webkit.org/show_bug.cgi?id=87919
 webkit.org/b/87919 compositing/tiled-layers-hidpi.html
 webkit.org/b/87919 fast/canvas/2d.backingStorePixelRatio.html
-webkit.org/b/87919 fast/canvas/2d.imageDataHD.html
 webkit.org/b/87919 fast/hidpi
 webkit.org/b/87919 svg/as-image/image-respects-deviceScaleFactor.html
 webkit.org/b/87919 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]

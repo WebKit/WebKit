@@ -270,8 +270,6 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
             case "imageSmoothingEnabled":
             case "imageSmoothingQuality":
             case "putImageData":
-            case "webkitGetImageDataHD":
-            case "webkitPutImageDataHD":
             case "webkitImageSmoothingEnabled":
                 return "image";
 

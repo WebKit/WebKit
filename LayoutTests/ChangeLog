@@ -1,3 +1,16 @@
+2017-12-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove webkitGetImageDataHD and webkitPutImageDataHD from canvas API
+        https://bugs.webkit.org/show_bug.cgi?id=180387
+
+        Reviewed by Dean Jackson.
+
+        Remove the test.
+
+        * fast/canvas/2d.imageDataHD-expected.txt: Removed.
+        * fast/canvas/2d.imageDataHD.html: Removed.
+        * platform/win/TestExpectations:
+
 2017-12-05  Ali Juma  <ajuma@chromium.org>
 
         [Win] Skip tests that depend on UIScriptController::zoomToScale

@@ -1,3 +1,23 @@
+2017-12-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove webkitGetImageDataHD and webkitPutImageDataHD from canvas API
+        https://bugs.webkit.org/show_bug.cgi?id=180387
+
+        Reviewed by Dean Jackson.
+
+        CanvasRenderingContext2D.webkitGetImageDataHD and webkitPutImageDataHD were never standardized,
+        and Blink removed support in 2014 (https://groups.google.com/a/chromium.org/forum/#!topic/blink-dev/FOPH5dloGG8).
+
+        Since our canvas backing store is always 1x, they have no use anyway, so remove them.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction.prototype.getImageParameters):
+        (WI.RecordingAction):
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement._classNameForAction.classNameForActionName):
+        (WI.RecordingActionTreeElement._classNameForAction):
+
 2017-12-04  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: provide method for recording CanvasRenderingContext2D from JavaScript
