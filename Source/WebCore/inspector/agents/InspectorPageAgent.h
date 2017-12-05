@@ -50,7 +50,6 @@ class MainFrame;
 class Page;
 class RenderObject;
 class SharedBuffer;
-class TextResourceDecoder;
 class URL;
 
 typedef String ErrorString;
@@ -75,7 +74,6 @@ public:
         OtherResource,
     };
 
-    static bool cachedResourceContent(CachedResource*, String* result, bool* base64Encoded);
     static bool sharedBufferContent(RefPtr<SharedBuffer>&&, const String& textEncodingName, bool withBase64Encode, String* result);
     static void resourceContent(ErrorString&, Frame*, const URL&, String* result, bool* base64Encoded);
     static String sourceMapURLForResource(CachedResource*);
@@ -85,7 +83,6 @@ public:
     static ResourceType inspectorResourceType(CachedResource::Type);
     static ResourceType inspectorResourceType(const CachedResource&);
     static Inspector::Protocol::Page::ResourceType cachedResourceTypeJSON(const CachedResource&);
-    static RefPtr<TextResourceDecoder> createTextDecoder(const String& mimeType, const String& textEncodingName);
 
     // Page API for InspectorFrontend
     void enable(ErrorString&) override;

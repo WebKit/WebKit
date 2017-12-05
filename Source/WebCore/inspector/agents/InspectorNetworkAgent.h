@@ -57,6 +57,7 @@ class ResourceError;
 class ResourceLoader;
 class ResourceRequest;
 class ResourceResponse;
+class TextResourceDecoder;
 class URL;
 class WebSocket;
 
@@ -70,6 +71,11 @@ class InspectorNetworkAgent : public InspectorAgentBase, public Inspector::Netwo
 public:
     explicit InspectorNetworkAgent(WebAgentContext&);
     virtual ~InspectorNetworkAgent();
+
+    static bool shouldTreatAsText(const String& mimeType);
+    static Ref<TextResourceDecoder> createTextDecoder(const String& mimeType, const String& textEncodingName);
+    static std::optional<String> textContentForCachedResource(CachedResource&);
+    static bool cachedResourceContent(CachedResource&, String* result, bool* base64Encoded);
 
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
@@ -85,7 +91,6 @@ public:
     void didFailLoading(unsigned long identifier, DocumentLoader*, const ResourceError&);
     void didLoadResourceFromMemoryCache(DocumentLoader*, CachedResource&);
     void didReceiveThreadableLoaderResponse(unsigned long identifier, DocumentThreadableLoader&);
-    void didFinishXHRLoading(unsigned long identifier, const String& decodedText);
     void willLoadXHRSynchronously();
     void didLoadXHRSynchronously();
     void didReceiveScriptResponse(unsigned long identifier);
@@ -103,8 +108,6 @@ public:
 
     void searchOtherRequests(const JSC::Yarr::RegularExpression&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>&);
     void searchInRequest(ErrorString&, const String& requestId, const String& query, bool caseSensitive, bool isRegex, RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>&);
-
-    RefPtr<Inspector::Protocol::Network::Initiator> buildInitiatorObject(Document*);
 
     // Called from frontend.
     void enable(ErrorString&) final;
@@ -128,6 +131,7 @@ private:
 
     WebSocket* webSocketForRequestId(const String& requestId);
 
+    RefPtr<Inspector::Protocol::Network::Initiator> buildInitiatorObject(Document*);
     Ref<Inspector::Protocol::Network::ResourceTiming> buildObjectForTiming(const NetworkLoadMetrics&, ResourceLoader&);
     Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLoadMetrics&);
     RefPtr<Inspector::Protocol::Network::Response> buildObjectForResourceResponse(const ResourceResponse&, ResourceLoader*);

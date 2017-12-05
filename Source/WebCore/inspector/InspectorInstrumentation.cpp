@@ -617,14 +617,6 @@ void InspectorInstrumentation::didFailLoadingImpl(InstrumentingAgents& instrumen
         consoleAgent->didFailLoading(identifier, error); // This should come AFTER resource notification, front-end relies on this.
 }
 
-void InspectorInstrumentation::didFinishXHRLoadingImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, std::optional<String> decodedText)
-{
-    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent()) {
-        if (decodedText)
-            networkAgent->didFinishXHRLoading(identifier, *decodedText);
-    }
-}
-
 void InspectorInstrumentation::willLoadXHRSynchronouslyImpl(InstrumentingAgents& instrumentingAgents)
 {
     if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())

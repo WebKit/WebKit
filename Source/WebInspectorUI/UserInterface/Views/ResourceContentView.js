@@ -81,6 +81,11 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
         throw WI.NotImplementedError.subclassMustOverride();
     }
 
+    showGenericNoContentMessage()
+    {
+        this.showMessage(WI.UIString("Resource has no content"));
+    }
+
     showGenericErrorMessage()
     {
         this._contentError(WI.UIString("An error occurred trying to load the resource."));

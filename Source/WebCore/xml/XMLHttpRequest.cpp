@@ -925,7 +925,7 @@ void XMLHttpRequest::didFail(const ResourceError& error)
     networkError();
 }
 
-void XMLHttpRequest::didFinishLoading(unsigned long identifier)
+void XMLHttpRequest::didFinishLoading(unsigned long)
 {
     if (m_error)
         return;
@@ -937,11 +937,6 @@ void XMLHttpRequest::didFinishLoading(unsigned long identifier)
         m_responseBuilder.append(m_decoder->flush());
 
     m_responseBuilder.shrinkToFit();
-
-    std::optional<String> decodedText;
-    if (!m_binaryResponseBuilder)
-        decodedText = m_responseBuilder.toStringPreserveCapacity();
-    InspectorInstrumentation::didFinishXHRLoading(scriptExecutionContext(), identifier, decodedText);
 
     bool hadLoader = m_loader;
     m_loader = nullptr;

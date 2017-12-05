@@ -76,42 +76,21 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
         if (this._responseContentView)
             return this._responseContentView;
 
-        switch (this._resource.type) {
-        case WI.Resource.Type.Document:
-        case WI.Resource.Type.Script:
-        case WI.Resource.Type.Stylesheet:
+        this._responseContentView = this._contentViewForResourceType(this._resource.type);
+        if (this._responseContentView)
+            return this._responseContentView;
+
+        let typeFromMIMEType = WI.Resource.typeFromMIMEType(this._resource.mimeType);
+        this._responseContentView = this._contentViewForResourceType(typeFromMIMEType);
+        if (this._responseContentView)
+            return this._responseContentView;
+
+        if (WI.shouldTreatMIMETypeAsText(this._resource.mimeType)) {
             this._responseContentView = new WI.TextResourceContentView(this._resource);
-            break;
-
-        case WI.Resource.Type.XHR:
-        case WI.Resource.Type.Fetch:
-        case WI.Resource.Type.Ping:
-        case WI.Resource.Type.Beacon:
-            // FIXME: <https://webkit.org/b/165495> Web Inspector: XHR / Fetch for non-text content should not show garbled text
-            // The response content for these requests may not always be text.
-            this._responseContentView = new WI.TextResourceContentView(this._resource);
-            break;
-
-        case WI.Resource.Type.Image:
-            if (this._resource.mimeTypeComponents.type === "image/svg+xml")
-                this._responseContentView = new WI.SVGImageResourceClusterContentView(this._resource);
-            else
-                this._responseContentView = new WI.ImageResourceContentView(this._resource);
-            break;
-
-        case WI.Resource.Type.Font:
-            this._responseContentView = new WI.FontResourceContentView(this._resource);
-            break;
-
-        case WI.Resource.Type.WebSocket:
-            this._responseContentView = new WI.WebSocketContentView(this._resource);
-            break;
-
-        default:
-            this._responseContentView = new WI.GenericResourceContentView(this._resource);
-            break;
+            return this._responseContentView;
         }
 
+        this._responseContentView = new WI.GenericResourceContentView(this._resource);
         return this._responseContentView;
     }
 
@@ -222,6 +201,30 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
     _canShowCustomResponseContentView()
     {
         return !!this._customResponseContentViewConstructor;
+    }
+
+    _contentViewForResourceType(type)
+    {
+        switch (type) {
+        case WI.Resource.Type.Document:
+        case WI.Resource.Type.Script:
+        case WI.Resource.Type.Stylesheet:
+            return new WI.TextResourceContentView(this._resource);
+
+        case WI.Resource.Type.Image:
+            if (this._resource.mimeTypeComponents.type === "image/svg+xml")
+                return new WI.SVGImageResourceClusterContentView(this._resource);
+            return new WI.ImageResourceContentView(this._resource);
+
+        case WI.Resource.Type.Font:
+            return new WI.FontResourceContentView(this._resource);
+
+        case WI.Resource.Type.WebSocket:
+            return new WI.WebSocketContentView(this._resource);
+
+        default:
+            return null;
+        }
     }
 
     _pathComponentForContentView(contentView)

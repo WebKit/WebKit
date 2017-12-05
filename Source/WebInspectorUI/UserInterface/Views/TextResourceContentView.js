@@ -130,6 +130,11 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         this._textEditor.close();
     }
 
+    contentAvailable(content, base64Encoded)
+    {
+        // Do nothing.
+    }
+
     get supportsSave()
     {
         return super.supportsSave || this.resource instanceof WI.CSSStyleSheet;
@@ -210,7 +215,7 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         this._codeCoverageButtonNavigationItem.activated = WI.enableControlFlowProfilerSetting.value;
 
         if (!this._textEditor.string)
-            this.showMessage(WI.UIString("Resource has no content"));
+            this.showGenericNoContentMessage();
     }
 
     _togglePrettyPrint(event)

@@ -32,10 +32,12 @@
 #include "config.h"
 #include "InspectorNetworkAgent.h"
 
+#include "CachedCSSStyleSheet.h"
 #include "CachedRawResource.h"
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequestInitiators.h"
+#include "CachedScript.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DocumentThreadableLoader.h"
@@ -47,6 +49,7 @@
 #include "InstrumentingAgents.h"
 #include "JSMainThreadExecState.h"
 #include "JSWebSocket.h"
+#include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "NetworkResourcesData.h"
 #include "Page.h"
@@ -58,6 +61,7 @@
 #include "ScriptState.h"
 #include "ScriptableDocumentParser.h"
 #include "SubresourceLoader.h"
+#include "TextResourceDecoder.h"
 #include "ThreadableLoaderClient.h"
 #include "URL.h"
 #include "WebSocket.h"
@@ -67,7 +71,6 @@
 #include <inspector/IdentifiersFactory.h>
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
-#include <inspector/InspectorFrontendRouter.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
 #include <runtime/JSCInlines.h>
@@ -75,6 +78,7 @@
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
 
 typedef Inspector::NetworkBackendDispatcherHandler::LoadResourceCallback LoadResourceCallback;
@@ -456,11 +460,6 @@ void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, Documen
         didReceiveData(identifier, nullptr, cachedResource->encodedSize(), 0);
 }
 
-static bool isErrorStatusCode(int statusCode)
-{
-    return statusCode >= 400;
-}
-
 void InspectorNetworkAgent::didReceiveData(unsigned long identifier, const char* data, int dataLength, int encodedDataLength)
 {
     if (m_hiddenRequestIdentifiers.contains(identifier))
@@ -470,7 +469,7 @@ void InspectorNetworkAgent::didReceiveData(unsigned long identifier, const char*
 
     if (data) {
         NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
-        if (resourceData && !m_loadingXHRSynchronously && (!resourceData->cachedResource() || resourceData->cachedResource()->dataBufferingPolicy() == DoNotBufferData || isErrorStatusCode(resourceData->httpStatusCode())))
+        if (resourceData && !m_loadingXHRSynchronously)
             m_resourcesData->maybeAddResourceData(requestId, data, dataLength);
     }
 
@@ -567,11 +566,6 @@ void InspectorNetworkAgent::didReceiveThreadableLoaderResponse(unsigned long ide
         m_resourcesData->setResourceType(IdentifiersFactory::requestId(identifier), InspectorPageAgent::XHRResource);
 }
 
-void InspectorNetworkAgent::didFinishXHRLoading(unsigned long identifier, const String& decodedText)
-{
-    m_resourcesData->setResourceContent(IdentifiersFactory::requestId(identifier), decodedText);
-}
-
 void InspectorNetworkAgent::willLoadXHRSynchronously()
 {
     m_loadingXHRSynchronously = true;
@@ -590,8 +584,9 @@ void InspectorNetworkAgent::willDestroyCachedResource(CachedResource& cachedReso
 
     String content;
     bool base64Encoded;
-    if (!InspectorPageAgent::cachedResourceContent(&cachedResource, &content, &base64Encoded))
+    if (!InspectorNetworkAgent::cachedResourceContent(cachedResource, &content, &base64Encoded))
         return;
+
     for (auto& id : requestIds)
         m_resourcesData->setResourceContent(id, content, base64Encoded);
 }
@@ -778,7 +773,7 @@ void InspectorNetworkAgent::getResponseBody(ErrorString& errorString, const Stri
     }
 
     if (resourceData->cachedResource()) {
-        if (InspectorPageAgent::cachedResourceContent(resourceData->cachedResource(), content, base64Encoded))
+        if (InspectorNetworkAgent::cachedResourceContent(*resourceData->cachedResource(), content, base64Encoded))
             return;
     }
 
@@ -868,6 +863,84 @@ void InspectorNetworkAgent::resolveWebSocket(ErrorString& errorString, const Str
     result = injectedScript.wrapObject(webSocketAsScriptValue(state, webSocket), objectGroupName);
 }
 
+bool InspectorNetworkAgent::shouldTreatAsText(const String& mimeType)
+{
+    return startsWithLettersIgnoringASCIICase(mimeType, "text/")
+        || MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType)
+        || MIMETypeRegistry::isSupportedJSONMIMEType(mimeType)
+        || MIMETypeRegistry::isXMLMIMEType(mimeType);
+}
+
+Ref<TextResourceDecoder> InspectorNetworkAgent::createTextDecoder(const String& mimeType, const String& textEncodingName)
+{
+    if (!textEncodingName.isEmpty())
+        return TextResourceDecoder::create(ASCIILiteral("text/plain"), textEncodingName);
+
+    if (MIMETypeRegistry::isTextMIMEType(mimeType))
+        return TextResourceDecoder::create(mimeType, "UTF-8");
+    if (MIMETypeRegistry::isXMLMIMEType(mimeType)) {
+        auto decoder = TextResourceDecoder::create(ASCIILiteral("application/xml"));
+        decoder->useLenientXMLDecoding();
+        return decoder;
+    }
+
+    return TextResourceDecoder::create(ASCIILiteral("text/plain"), "UTF-8");
+}
+
+std::optional<String> InspectorNetworkAgent::textContentForCachedResource(CachedResource& cachedResource)
+{
+    if (!InspectorNetworkAgent::shouldTreatAsText(cachedResource.mimeType()))
+        return std::nullopt;
+
+    String result;
+    bool base64Encoded;
+    if (InspectorNetworkAgent::cachedResourceContent(cachedResource, &result, &base64Encoded)) {
+        ASSERT(!base64Encoded);
+        return result;
+    }
+
+    return std::nullopt;
+}
+
+bool InspectorNetworkAgent::cachedResourceContent(CachedResource& resource, String* result, bool* base64Encoded)
+{
+    ASSERT(result);
+    ASSERT(base64Encoded);
+
+    if (!resource.encodedSize()) {
+        *base64Encoded = false;
+        *result = String();
+        return true;
+    }
+
+    switch (resource.type()) {
+    case CachedResource::CSSStyleSheet:
+        *base64Encoded = false;
+        *result = downcast<CachedCSSStyleSheet>(resource).sheetText();
+        // The above can return a null String if the MIME type is invalid.
+        return !result->isNull();
+    case CachedResource::Script:
+        *base64Encoded = false;
+        *result = downcast<CachedScript>(resource).script().toString();
+        return true;
+    default:
+        auto* buffer = resource.resourceBuffer();
+        if (!buffer)
+            return false;
+
+        if (InspectorNetworkAgent::shouldTreatAsText(resource.mimeType())) {
+            auto decoder = InspectorNetworkAgent::createTextDecoder(resource.mimeType(), resource.response().textEncodingName());
+            *base64Encoded = false;
+            *result = decoder->decodeAndFlush(buffer->data(), buffer->size());
+            return true;
+        }
+
+        *base64Encoded = true;
+        *result = base64Encode(buffer->data(), buffer->size());
+        return true;
+    }
+}
+
 static Ref<Inspector::Protocol::Page::SearchResult> buildObjectForSearchResult(const String& requestId, const String& frameId, const String& url, int matchesCount)
 {
     auto searchResult = Inspector::Protocol::Page::SearchResult::create()
@@ -879,11 +952,22 @@ static Ref<Inspector::Protocol::Page::SearchResult> buildObjectForSearchResult(c
     return searchResult;
 }
 
+static std::optional<String> textContentForResourceData(const NetworkResourcesData::ResourceData& resourceData)
+{
+    if (resourceData.hasContent() && !resourceData.base64Encoded())
+        return resourceData.content();
+
+    if (resourceData.cachedResource())
+        return InspectorNetworkAgent::textContentForCachedResource(*resourceData.cachedResource());
+
+    return std::nullopt;
+}
+
 void InspectorNetworkAgent::searchOtherRequests(const JSC::Yarr::RegularExpression& regex, RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>& result)
 {
     Vector<NetworkResourcesData::ResourceData*> resources = m_resourcesData->resources();
     for (auto* resourceData : resources) {
-        if (resourceData->hasContent()) {
+        if (auto textContent = textContentForResourceData(*resourceData)) {
             int matchesCount = ContentSearchUtilities::countRegularExpressionMatches(regex, resourceData->content());
             if (matchesCount)
                 result->addItem(buildObjectForSearchResult(resourceData->requestId(), resourceData->frameId(), resourceData->url(), matchesCount));

@@ -1594,6 +1594,19 @@ function decodeBase64ToBlob(base64Data, mimeType)
     return new Blob(byteArrays, {type: mimeType});
 }
 
+function textToBlob(text, mimeType)
+{
+    return new Blob([text], {type: mimeType});
+}
+
+function blobAsText(blob, callback)
+{
+    console.assert(blob instanceof Blob);
+    let fileReader = new FileReader;
+    fileReader.addEventListener("loadend", () => { callback(fileReader.result); });
+    fileReader.readAsText(blob);
+}
+
 if (!window.handlePromiseException) {
     window.handlePromiseException = function handlePromiseException(error)
     {

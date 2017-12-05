@@ -136,11 +136,14 @@ WI.SVGImageResourceClusterContentView = class SVGImageResourceClusterContentView
             contentViewToShow = new WI.TextContentView("", this._resource.mimeType);
 
             this._resource.requestContent().then((result) => {
-                let fileReader = new FileReader;
-                fileReader.addEventListener("loadend", () => {
-                    contentViewToShow.textEditor.string = fileReader.result;
+                if (typeof result.content === "string") {
+                    contentViewToShow.textEditor.string = result.content;
+                    return;
+                }
+
+                blobAsText(result.content, (text) => {
+                    contentViewToShow.textEditor.string = text;
                 });
-                fileReader.readAsText(result.content);
             });
             break;
 

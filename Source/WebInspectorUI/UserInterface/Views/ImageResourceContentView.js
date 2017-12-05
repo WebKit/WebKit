@@ -48,13 +48,18 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
 
     contentAvailable(content, base64Encoded)
     {
+        this.removeLoadingIndicator();
+
+        if (!content) {
+            this.showGenericNoContentMessage();
+            return;
+        }
+
         let objectURL = this.resource.createObjectURL();
         if (!objectURL) {
             this.showGenericErrorMessage();
             return;
         }
-
-        this.removeLoadingIndicator();
 
         this._imageElement = document.createElement("img");
         this._imageElement.addEventListener("load", function() { URL.revokeObjectURL(objectURL); });

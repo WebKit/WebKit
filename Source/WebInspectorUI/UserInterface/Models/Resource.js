@@ -380,6 +380,11 @@ WI.Resource = class Resource extends WI.SourceCode
         if (content instanceof Blob)
             return URL.createObjectURL(content);
 
+        if (typeof content === "string") {
+            let blob = textToBlob(content, this._mimeType);
+            return URL.createObjectURL(blob);
+        }
+
         return null;
     }
 
@@ -1129,7 +1134,6 @@ WI.Resource._mimeTypeMap = {
     "text/xml": WI.Resource.Type.Document,
     "text/plain": WI.Resource.Type.Document,
     "application/xhtml+xml": WI.Resource.Type.Document,
-    "image/svg+xml": WI.Resource.Type.Document,
 
     "text/css": WI.Resource.Type.Stylesheet,
     "text/xsl": WI.Resource.Type.Stylesheet,
@@ -1138,6 +1142,7 @@ WI.Resource._mimeTypeMap = {
     "text/x-scss": WI.Resource.Type.Stylesheet,
 
     "application/pdf": WI.Resource.Type.Image,
+    "image/svg+xml": WI.Resource.Type.Image,
 
     "application/x-font-type1": WI.Resource.Type.Font,
     "application/x-font-ttf": WI.Resource.Type.Font,

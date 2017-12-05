@@ -42,6 +42,18 @@ function test()
 {
     let suite = InspectorTest.createAsyncSuite("Network.getResponseBody.XHR");
 
+    function contentAsText(content) {
+        return new Promise((resolve) => {
+            if (typeof content === "string") {
+                resolve(content)
+                return;
+            }
+            blobAsText(content, (text) => {
+                resolve(text);
+            });
+        });
+    }
+
     function addTestCase({name, description, expression, contentHandler}) {
         suite.addTestCase({
             name, description,
@@ -63,8 +75,9 @@ function test()
         name: "Network.getResponseBody.XHR.Text",
         description: "Get text/plain content as text.",
         expression: "createXHRForText()",
-        contentHandler({error, sourceCode, content}) {
+        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
             InspectorTest.expectEqual(sourceCode.mimeType, "text/plain", "MIMEType should be 'text/plain'.");
+            InspectorTest.expectEqual(rawBase64Encoded, false, "Content should not be base64Encoded.");
             InspectorTest.expectEqual(content, "Plain text resource.\n", "Text content should match data.txt.");
         }
     });
@@ -73,19 +86,23 @@ function test()
         name: "Network.getResponseBody.XHR.HTML",
         description: "Get text/html content as text.",
         expression: "createXHRForHTML()",
-        contentHandler({error, sourceCode, content}) {
+        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
             InspectorTest.expectEqual(sourceCode.mimeType, "text/html", "MIMEType should be 'text/html'.");
+            InspectorTest.expectEqual(rawBase64Encoded, false, "Content should not be base64Encoded.");
             InspectorTest.expectEqual(content, "<span>Hello World</span>\n", "Text content should match data.html.");
         }
     });
 
     addTestCase({
         name: "Network.getResponseBody.XHR.JSON",
-        description: "Get application/octet-stream content as text.",
+        description: "Get application/octet-stream content as base64Encoded text.",
         expression: "createXHRForJSON()",
-        contentHandler({error, sourceCode, content}) {
+        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
             InspectorTest.expectEqual(sourceCode.mimeType, "application/octet-stream", "MIMEType should be 'application/octet-stream'.");
-            InspectorTest.expectEqual(content, `{"json": true, "value": 42}\n`, "JSON content should match data.json.");
+            InspectorTest.expectEqual(rawBase64Encoded, true, "Content should be base64Encoded.");
+            return contentAsText(content).then((text) => {
+                InspectorTest.expectEqual(text, `{"json": true, "value": 42}\n`, "JSON content should match data.json.");
+            });
         }
     });
 
@@ -93,8 +110,9 @@ function test()
         name: "Network.getResponseBody.XHR.JSON2",
         description: "Get application/json content as text.",
         expression: "createXHRForJSON2()",
-        contentHandler({error, sourceCode, content}) {
+        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
             InspectorTest.expectEqual(sourceCode.mimeType, "application/json", "MIMEType should be 'application/json'.");
+            InspectorTest.expectEqual(rawBase64Encoded, false, "Content should not be base64Encoded.");
             InspectorTest.expectEqual(content, `{"json":true,"value":42}`, "JSON content should match specified content.");
         }
     });
@@ -103,8 +121,9 @@ function test()
         name: "Network.getResponseBody.XHR.JSON3",
         description: "Get arbitrary +json content as text.",
         expression: "createXHRForJSON3()",
-        contentHandler({error, sourceCode, content}) {
+        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
             InspectorTest.expectEqual(sourceCode.mimeType, "application/vnd.api+json", "MIMEType should be 'application/vnd.api+json'.");
+            InspectorTest.expectEqual(rawBase64Encoded, false, "Content should not be base64Encoded.");
             InspectorTest.expectEqual(content, `{"json":true,"value":999}`, "JSON content should match specified content.");
         }
     });
@@ -113,8 +132,9 @@ function test()
         name: "Network.getResponseBody.XHR.SVG",
         description: "Get image/svg+xml content as text.",
         expression: "createXHRForSVG()",
-        contentHandler({error, sourceCode, content}) {
+        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
             InspectorTest.expectEqual(sourceCode.mimeType, "image/svg+xml", "MIMEType should be 'image/svg+xml'.");
+            InspectorTest.expectEqual(rawBase64Encoded, false, "Content should not be base64Encoded.");
             InspectorTest.expectEqual(content,
 `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 200">
@@ -128,10 +148,10 @@ function test()
         name: "Network.getResponseBody.XHR.PNG",
         description: "Get image/png content.",
         expression: "createXHRForPNG()",
-        contentHandler({error, sourceCode, content}) {
-            // FIXME: <https://webkit.org/b/165495> Web Inspector: XHR / Fetch for non-text content should not show garbled text
+        contentHandler({error, sourceCode, content, rawBase64Encoded}) {
             InspectorTest.expectEqual(sourceCode.mimeType, "image/png", "MIMEType should be 'image/png'.");
-            InspectorTest.expectEqual(typeof content, "string", "Image content should be text.");
+            InspectorTest.expectEqual(rawBase64Encoded, true, "Content should be base64Encoded.");
+            InspectorTest.expectThat(content instanceof Blob, "Image content should be a Blob.");
         }
     });
 

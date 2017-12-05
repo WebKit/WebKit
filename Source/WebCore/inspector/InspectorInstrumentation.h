@@ -195,7 +195,6 @@ public:
     static void continueAfterXFrameOptionsDenied(Frame&, unsigned long identifier, DocumentLoader&, const ResourceResponse&);
     static void continueWithPolicyDownload(Frame&, unsigned long identifier, DocumentLoader&, const ResourceResponse&);
     static void continueWithPolicyIgnore(Frame&, unsigned long identifier, DocumentLoader&, const ResourceResponse&);
-    static void didFinishXHRLoading(ScriptExecutionContext*, unsigned long identifier, std::optional<String> decodedText);
     static void willLoadXHRSynchronously(ScriptExecutionContext*);
     static void didLoadXHRSynchronously(ScriptExecutionContext*);
     static void scriptImported(ScriptExecutionContext&, unsigned long identifier, const String& sourceString);
@@ -366,7 +365,6 @@ private:
     static void didReceiveDataImpl(InstrumentingAgents&, unsigned long identifier, const char* data, int dataLength, int encodedDataLength);
     static void didFinishLoadingImpl(InstrumentingAgents&, unsigned long identifier, DocumentLoader*, const NetworkLoadMetrics&, ResourceLoader*);
     static void didFailLoadingImpl(InstrumentingAgents&, unsigned long identifier, DocumentLoader*, const ResourceError&);
-    static void didFinishXHRLoadingImpl(InstrumentingAgents&, unsigned long identifier, std::optional<String> decodedText);
     static void willLoadXHRSynchronouslyImpl(InstrumentingAgents&);
     static void didLoadXHRSynchronouslyImpl(InstrumentingAgents&);
     static void scriptImportedImpl(InstrumentingAgents&, unsigned long identifier, const String& sourceString);
@@ -1009,13 +1007,6 @@ inline void InspectorInstrumentation::continueWithPolicyIgnore(Frame& frame, uns
     // Treat the same as didReceiveResponse.
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         didReceiveResourceResponseImpl(*instrumentingAgents, identifier, &loader, response, nullptr);
-}
-
-inline void InspectorInstrumentation::didFinishXHRLoading(ScriptExecutionContext* context, unsigned long identifier, std::optional<String> decodedText)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        didFinishXHRLoadingImpl(*instrumentingAgents, identifier, decodedText);
 }
 
 inline void InspectorInstrumentation::willLoadXHRSynchronously(ScriptExecutionContext* context)

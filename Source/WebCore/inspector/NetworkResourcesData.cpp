@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,9 +31,11 @@
 #include "NetworkResourcesData.h"
 
 #include "CachedResource.h"
+#include "InspectorNetworkAgent.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
+#include <wtf/text/Base64.h>
 
 namespace WebCore {
 
@@ -44,10 +47,6 @@ static const size_t maximumSingleResourceContentSize = 10 * 1000 * 1000; // 10MB
 NetworkResourcesData::ResourceData::ResourceData(const String& requestId, const String& loaderId)
     : m_requestId(requestId)
     , m_loaderId(loaderId)
-    , m_base64Encoded(false)
-    , m_isContentEvicted(false)
-    , m_type(InspectorPageAgent::OtherResource)
-    , m_cachedResource(nullptr)
 {
 }
 
@@ -104,10 +103,22 @@ void NetworkResourcesData::ResourceData::appendData(const char* data, size_t dat
 size_t NetworkResourcesData::ResourceData::decodeDataToContent()
 {
     ASSERT(!hasContent());
+
     size_t dataLength = m_dataBuffer->size();
-    m_content = m_decoder->decodeAndFlush(m_dataBuffer->data(), m_dataBuffer->size());
+
+    if (m_decoder) {
+        m_base64Encoded = false;
+        m_content = m_decoder->decodeAndFlush(m_dataBuffer->data(), dataLength);
+    } else {
+        m_base64Encoded = true;
+        m_content = base64Encode(m_dataBuffer->data(), dataLength);
+    }
+
     m_dataBuffer = nullptr;
-    return contentSizeInBytes(m_content) - dataLength;
+
+    size_t decodedLength = contentSizeInBytes(m_content);
+    ASSERT(decodedLength >= dataLength);
+    return decodedLength - dataLength;
 }
 
 NetworkResourcesData::NetworkResourcesData()
@@ -144,11 +155,14 @@ void NetworkResourcesData::responseReceived(const String& requestId, const Strin
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
         return;
+
     resourceData->setFrameId(frameId);
     resourceData->setURL(response.url());
-    resourceData->setDecoder(InspectorPageAgent::createTextDecoder(response.mimeType(), response.textEncodingName()));
     resourceData->setHTTPStatusCode(response.httpStatusCode());
     resourceData->setType(type);
+
+    if (InspectorNetworkAgent::shouldTreatAsText(response.mimeType()))
+        resourceData->setDecoder(InspectorNetworkAgent::createTextDecoder(response.mimeType(), response.textEncodingName()));
 }
 
 void NetworkResourcesData::setResourceType(const String& requestId, InspectorPageAgent::ResourceType type)
@@ -172,11 +186,13 @@ void NetworkResourcesData::setResourceContent(const String& requestId, const Str
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
         return;
+
     size_t dataLength = contentSizeInBytes(content);
     if (dataLength > m_maximumSingleResourceContentSize)
         return;
     if (resourceData->isContentEvicted())
         return;
+
     if (ensureFreeSpace(dataLength) && !resourceData->isContentEvicted()) {
         // We can not be sure that we didn't try to save this request data while it was loading, so remove it, if any.
         if (resourceData->hasContent() || resourceData->hasData())
@@ -187,17 +203,32 @@ void NetworkResourcesData::setResourceContent(const String& requestId, const Str
     }
 }
 
+static bool shouldBufferResourceData(const NetworkResourcesData::ResourceData& resourceData)
+{
+    if (resourceData.decoder())
+        return true;
+
+    // Buffer data for Web Inspector when the rest of the system would not normally buffer.
+    if (resourceData.cachedResource() && resourceData.cachedResource()->dataBufferingPolicy() == DoNotBufferData)
+        return true;
+
+    return false;
+}
+
 void NetworkResourcesData::maybeAddResourceData(const String& requestId, const char* data, size_t dataLength)
 {
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
         return;
-    if (!resourceData->decoder())
+
+    if (!shouldBufferResourceData(*resourceData))
         return;
+
     if (resourceData->dataLength() + dataLength > m_maximumSingleResourceContentSize)
         m_contentSize -= resourceData->evictContent();
     if (resourceData->isContentEvicted())
         return;
+
     if (ensureFreeSpace(dataLength) && !resourceData->isContentEvicted()) {
         m_requestIdsDeque.append(requestId);
         resourceData->appendData(data, dataLength);
@@ -210,8 +241,10 @@ void NetworkResourcesData::maybeDecodeDataToContent(const String& requestId)
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
         return;
+
     if (!resourceData->hasData())
         return;
+
     m_contentSize += resourceData->decodeDataToContent();
     size_t dataLength = contentSizeInBytes(resourceData->content());
     if (dataLength > m_maximumSingleResourceContentSize)
