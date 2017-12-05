@@ -52,7 +52,7 @@ static ServiceWorkerIdentifier generateServiceWorkerIdentifier()
     return generateObjectIdentifier<ServiceWorkerIdentifierType>();
 }
 
-static Seconds terminationDelay { 60_s };
+static Seconds terminationDelay { 10_s };
 
 SWServer::Connection::Connection(SWServer& server)
     : m_server(server)
