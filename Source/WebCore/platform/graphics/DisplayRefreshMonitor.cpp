@@ -116,7 +116,7 @@ void DisplayRefreshMonitor::displayDidRefresh()
 
     {
         LockHolder lock(m_mutex);
-        m_previousFrameDone = true;
+        setIsPreviousFrameDone(true);
     }
 
     DisplayRefreshMonitorManager::sharedManager().displayDidRefresh(*this);

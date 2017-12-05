@@ -1,3 +1,15 @@
+2017-12-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Minor DisplayRefreshMonitor-related cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=179802
+
+        Reviewed by Sam Weinig.
+
+        Use RunLoopObserver::WellKnownRunLoopOrders. We want to fire before layer flushing.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_configurationPreferenceValues):
+
 2017-12-04  Brent Fulgham  <bfulgham@apple.com>
 
         Don't force creation of process pool when enabling resource load statistics

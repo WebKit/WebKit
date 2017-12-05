@@ -1,3 +1,14 @@
+2017-12-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Minor DisplayRefreshMonitor-related cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=179802
+
+        Reviewed by Sam Weinig.
+
+        New trace point for when the CVDisplayLink fires on its own thread.
+
+        * Tracing/SystemTracePoints.plist:
+
 2017-12-04  David Quesada  <david_quesada@apple.com>
 
         Add a class for parsing application manifests

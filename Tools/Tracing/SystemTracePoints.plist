@@ -196,6 +196,16 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>Display Refresh Dispatch to main thread</string>
+                 <key>Type</key>
+                 <string>Impulse</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>Code</key>
+                 <string>5026</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Paint WebHTMLView</string>
                  <key>Type</key>
                  <string>Interval</string>

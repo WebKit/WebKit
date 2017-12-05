@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LayerFlushScheduler_h
-#define LayerFlushScheduler_h
+#pragma once
 
 #include "LayerFlushSchedulerClient.h"
 #include "RunLoopObserver.h"
@@ -61,4 +60,3 @@ private:
 
 } // namespace WebCore
 
-#endif // LayerFlushScheduler_h

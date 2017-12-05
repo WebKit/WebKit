@@ -36,8 +36,6 @@
 
 namespace WebCore {
 
-static const CFIndex layerFlushRunLoopOrder = (CFIndex)RunLoopObserver::WellKnownRunLoopOrders::CoreAnimationCommit - 1;
-
 static CFRunLoopRef currentRunLoop()
 {
 #if PLATFORM(IOS)
@@ -58,7 +56,7 @@ LayerFlushScheduler::LayerFlushScheduler(LayerFlushSchedulerClient* client)
 {
     ASSERT_ARG(client, client);
 
-    m_runLoopObserver = std::make_unique<RunLoopObserver>(layerFlushRunLoopOrder, [this]() {
+    m_runLoopObserver = std::make_unique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::LayerFlush), [this]() {
         if (this->isSuspended())
             return;
         this->layerFlushCallback();

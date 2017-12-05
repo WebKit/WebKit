@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RunLoopObserver_h
-#define RunLoopObserver_h
+#pragma once
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/Function.h>
@@ -51,7 +50,11 @@ public:
     bool isScheduled() const { return m_runLoopObserver; }
 
     enum class WellKnownRunLoopOrders : CFIndex {
-        CoreAnimationCommit = 2000000
+        CoreAnimationCommit     = 2000000,
+        LayerFlush              = CoreAnimationCommit - 1,
+        ActivityStateChange     = CoreAnimationCommit - 2,
+        InspectorFrameBegin     = 0,
+        InspectorFrameEnd       = CoreAnimationCommit + 1 
     };
 
 protected:
@@ -67,4 +70,3 @@ private:
 
 } // namespace WebCore
 
-#endif // RunLoopObserver_h

@@ -73,6 +73,7 @@ enum TracePointCode {
     UpdateTouchRegionsEnd,
     DisplayListRecordStart,
     DisplayListRecordEnd,
+    DisplayRefreshDispatchingToMainThread,
 
     WebKitRange = 10000,
     WebHTMLViewPaintStart,
