@@ -220,9 +220,9 @@ class MediaController
         // First, we traverse the node hierarchy up from the media element to compute the effective
         // transform matrix applied to the media element.
         let node = this.media;
-        let transform = new WebKitCSSMatrix;
+        let transform = new DOMMatrix;
         while (node && node instanceof HTMLElement) {
-            transform = transform.multiply(new WebKitCSSMatrix(getComputedStyle(node).transform));
+            transform = transform.multiply(new DOMMatrix(getComputedStyle(node).transform));
             node = node.parentNode;
         }
 
