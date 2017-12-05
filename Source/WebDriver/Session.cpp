@@ -2123,6 +2123,8 @@ void Session::takeScreenshot(std::optional<String> elementID, std::optional<bool
             parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
         if (elementID)
             parameters->setString(ASCIILiteral("nodeHandle"), elementID.value());
+        else
+            parameters->setBoolean(ASCIILiteral("clipToViewport"), true);
         if (scrollIntoView.value_or(false))
             parameters->setBoolean(ASCIILiteral("scrollIntoViewIfNeeded"), true);
         m_host->sendCommandToBackend(ASCIILiteral("takeScreenshot"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {

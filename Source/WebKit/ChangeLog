@@ -1,3 +1,27 @@
+2017-12-04  Brian Burg  <bburg@apple.com>
+
+        Web Automation: add flag to preserve legacy page screenshot behavior
+        https://bugs.webkit.org/show_bug.cgi?id=180313
+        <rdar://problem/34379930>
+
+        Reviewed by Joseph Pecoraro.
+
+        For compatibility with JSON Wire Protocol implemented by Safari,
+        we need to retain the ability to perform whole page contents
+        snapshots using Automation.takeScreenshot. Add an extra flag,
+        clipToViewport, which can be used by W3C-conforming drivers.
+
+        * UIProcess/Automation/Automation.json: Add new flag.
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::takeScreenshot):
+        * WebProcess/Automation/WebAutomationSessionProxy.h:
+        * WebProcess/Automation/WebAutomationSessionProxy.messages.in:
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::snapshotRectForScreenshot):
+        (WebKit::WebAutomationSessionProxy::takeScreenshot):
+        If the flag is false, take a screenshot of the whole page contents.
+
 2017-12-04  JF Bastien  <jfbastien@apple.com>
 
         Update std::expected to match libc++ coding style

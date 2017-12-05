@@ -1,3 +1,17 @@
+2017-12-04  Brian Burg  <bburg@apple.com>
+
+        Web Automation: add flag to preserve legacy page screenshot behavior
+        https://bugs.webkit.org/show_bug.cgi?id=180313
+        <rdar://problem/34379930>
+
+        Reviewed by Joseph Pecoraro.
+
+        Set the clipToViewport flag to true when sending Automation.takeScreenshot.
+        This preserves the current behavior for this driver implementation.
+
+        * Session.cpp:
+        (WebDriver::Session::takeScreenshot):
+
 2017-12-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: implement element property command

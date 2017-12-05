@@ -662,7 +662,7 @@ void WebAutomationSessionProxy::selectOptionElement(uint64_t pageID, uint64_t fr
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidSelectOptionElement(callbackID, { }), 0);
 }
 
-static WebCore::IntRect snapshotRectForScreenshot(WebPage& page, WebCore::Element* element)
+static WebCore::IntRect snapshotRectForScreenshot(WebPage& page, WebCore::Element* element, bool clipToViewport)
 {
     if (element) {
         if (!element->renderer())
@@ -673,12 +673,12 @@ static WebCore::IntRect snapshotRectForScreenshot(WebPage& page, WebCore::Elemen
     }
 
     if (auto* frameView = page.mainFrameView())
-        return frameView->visibleContentRect();
+        return clipToViewport ? frameView->visibleContentRect() : WebCore::IntRect(WebCore::IntPoint(0, 0), frameView->contentsSize());
 
     return { };
 }
 
-void WebAutomationSessionProxy::takeScreenshot(uint64_t pageID, uint64_t frameID, String nodeHandle, bool scrollIntoViewIfNeeded, uint64_t callbackID)
+void WebAutomationSessionProxy::takeScreenshot(uint64_t pageID, uint64_t frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, uint64_t callbackID)
 {
     ShareableBitmap::Handle handle;
 
@@ -707,7 +707,7 @@ void WebAutomationSessionProxy::takeScreenshot(uint64_t pageID, uint64_t frameID
     }
 
     String screenshotErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::ScreenshotError);
-    WebCore::IntRect snapshotRect = snapshotRectForScreenshot(*page, coreElement);
+    WebCore::IntRect snapshotRect = snapshotRectForScreenshot(*page, coreElement, clipToViewport);
     if (snapshotRect.isEmpty()) {
         WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, screenshotErrorType), 0);
         return;
