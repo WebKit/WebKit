@@ -61,7 +61,7 @@ bool MarkedAllocator::isPagedOut(double deadline)
     unsigned itersSinceLastTimeCheck = 0;
     for (auto* block : m_blocks) {
         if (block)
-            block->block().updateNeedsDestruction();
+            holdLock(block->block().lock());
         ++itersSinceLastTimeCheck;
         if (itersSinceLastTimeCheck >= Heap::s_timeCheckResolution) {
             double currentTime = WTF::monotonicallyIncreasingTime();
@@ -442,6 +442,33 @@ void MarkedAllocator::assertNoUnswept()
     dataLog("Assertion failed: unswept not empty in ", *this, ".\n");
     dumpBits();
     ASSERT_NOT_REACHED();
+}
+
+RefPtr<SharedTask<MarkedBlock::Handle*()>> MarkedAllocator::parallelNotEmptyBlockSource()
+{
+    class Task : public SharedTask<MarkedBlock::Handle*()> {
+    public:
+        Task(MarkedAllocator& allocator)
+            : m_allocator(allocator)
+        {
+        }
+        
+        MarkedBlock::Handle* run() override
+        {
+            auto locker = holdLock(m_lock);
+            m_index = m_allocator.m_markingNotEmpty.findBit(m_index, true);
+            if (m_index >= m_allocator.m_blocks.size())
+                return nullptr;
+            return m_allocator.m_blocks[m_index++];
+        }
+        
+    private:
+        MarkedAllocator& m_allocator;
+        size_t m_index { 0 };
+        Lock m_lock;
+    };
+    
+    return adoptRef(new Task(*this));
 }
 
 void MarkedAllocator::dump(PrintStream& out) const

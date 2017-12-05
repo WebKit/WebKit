@@ -165,6 +165,11 @@ public:
     // When this is true it means that we have flipped but the mark bits haven't converged yet.
     bool isMarking() const { return m_isMarking; }
     
+    WeakSet* activeWeakSetsBegin() { return m_activeWeakSets.begin(); }
+    WeakSet* activeWeakSetsEnd() { return m_activeWeakSets.end(); }
+    WeakSet* newActiveWeakSetsBegin() { return m_newActiveWeakSets.begin(); }
+    WeakSet* newActiveWeakSetsEnd() { return m_newActiveWeakSets.end(); }
+    
     void dumpBits(PrintStream& = WTF::dataFile());
     
     JS_EXPORT_PRIVATE static std::array<size_t, numSizeClasses> s_sizeClassForSizeStep;

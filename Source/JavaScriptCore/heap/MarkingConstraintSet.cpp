@@ -26,60 +26,18 @@
 #include "config.h"
 #include "MarkingConstraintSet.h"
 
+#include "JSCInlines.h"
+#include "MarkingConstraintSolver.h"
 #include "Options.h"
+#include "SimpleMarkingConstraint.h"
+#include "SuperSampler.h"
 #include <wtf/Function.h>
 #include <wtf/TimeWithDynamicClockType.h>
 
 namespace JSC {
 
-class MarkingConstraintSet::ExecutionContext {
-public:
-    ExecutionContext(MarkingConstraintSet& set, SlotVisitor& visitor, MonotonicTime timeout)
-        : m_set(set)
-        , m_visitor(visitor)
-        , m_timeout(timeout)
-    {
-    }
-    
-    bool didVisitSomething() const
-    {
-        return m_didVisitSomething;
-    }
-    
-    bool shouldTimeOut() const
-    {
-        return didVisitSomething() && hasElapsed(m_timeout);
-    }
-    
-    // Returns false if it times out.
-    bool drain(BitVector& unexecuted)
-    {
-        for (size_t index : unexecuted) {
-            execute(index);
-            unexecuted.clear(index);
-            if (shouldTimeOut())
-                return false;
-        }
-        return true;
-    }
-    
-    bool didExecute(size_t index) const { return m_executed.get(index); }
-
-    void execute(size_t index)
-    {
-        m_set.m_set[index]->execute(m_visitor, m_didVisitSomething, m_timeout);
-        m_executed.set(index);
-    }
-    
-private:
-    MarkingConstraintSet& m_set;
-    SlotVisitor& m_visitor;
-    MonotonicTime m_timeout;
-    BitVector m_executed;
-    bool m_didVisitSomething { false };
-};
-
-MarkingConstraintSet::MarkingConstraintSet()
+MarkingConstraintSet::MarkingConstraintSet(Heap& heap)
+    : m_heap(heap)
 {
 }
 
@@ -107,18 +65,9 @@ void MarkingConstraintSet::didStartMarking()
     m_iteration = 1;
 }
 
-void MarkingConstraintSet::add(CString abbreviatedName, CString name, ::Function<void(SlotVisitor&, const VisitingTimeout&)> function, ConstraintVolatility volatility)
+void MarkingConstraintSet::add(CString abbreviatedName, CString name, ::Function<void(SlotVisitor&)> function, ConstraintVolatility volatility, ConstraintConcurrency concurrency)
 {
-    add(std::make_unique<MarkingConstraint>(WTFMove(abbreviatedName), WTFMove(name), WTFMove(function), volatility));
-}
-
-void MarkingConstraintSet::add(
-    CString abbreviatedName, CString name,
-    ::Function<void(SlotVisitor&, const VisitingTimeout&)> executeFunction,
-    ::Function<double(SlotVisitor&)> quickWorkEstimateFunction,
-    ConstraintVolatility volatility)
-{
-    add(std::make_unique<MarkingConstraint>(WTFMove(abbreviatedName), WTFMove(name), WTFMove(executeFunction), WTFMove(quickWorkEstimateFunction), volatility));
+    add(std::make_unique<SimpleMarkingConstraint>(WTFMove(abbreviatedName), WTFMove(name), WTFMove(function), volatility, concurrency));
 }
 
 void MarkingConstraintSet::add(
@@ -131,9 +80,9 @@ void MarkingConstraintSet::add(
     m_set.append(WTFMove(constraint));
 }
 
-bool MarkingConstraintSet::executeConvergence(SlotVisitor& visitor, MonotonicTime timeout)
+bool MarkingConstraintSet::executeConvergence(SlotVisitor& visitor)
 {
-    bool result = executeConvergenceImpl(visitor, timeout);
+    bool result = executeConvergenceImpl(visitor);
     if (Options::logGC())
         dataLog(" ");
     return result;
@@ -148,27 +97,27 @@ bool MarkingConstraintSet::isWavefrontAdvancing(SlotVisitor& visitor)
     return false;
 }
 
-bool MarkingConstraintSet::executeConvergenceImpl(SlotVisitor& visitor, MonotonicTime timeout)
+bool MarkingConstraintSet::executeConvergenceImpl(SlotVisitor& visitor)
 {
-    ExecutionContext executionContext(*this, visitor, timeout);
+    SuperSamplerScope superSamplerScope(false);
+    MarkingConstraintSolver solver(*this);
     
     unsigned iteration = m_iteration++;
     
     if (Options::logGC())
         dataLog("i#", iteration, ":");
 
-    // If there are any constraints that we have not executed at all during this cycle, then
-    // we should execute those now.
-    if (!executionContext.drain(m_unexecutedRoots))
+    if (iteration == 1) {
+        // First iteration is before any visitor draining, so it's unlikely to trigger any constraints
+        // other than roots.
+        solver.drain(m_unexecutedRoots);
         return false;
+    }
     
-    // First iteration is before any visitor draining, so it's unlikely to trigger any constraints other
-    // than roots.
-    if (iteration == 1)
+    if (iteration == 2) {
+        solver.drain(m_unexecutedOutgrowths);
         return false;
-    
-    if (!executionContext.drain(m_unexecutedOutgrowths))
-        return false;
+    }
     
     // We want to keep preferring the outgrowth constraints - the ones that need to be fixpointed
     // even in a stop-the-world GC - until they stop producing. They have a tendency to go totally
@@ -215,33 +164,16 @@ bool MarkingConstraintSet::executeConvergenceImpl(SlotVisitor& visitor, Monotoni
             return a->volatility() > b->volatility();
         });
     
-    for (MarkingConstraint* constraint : m_ordered) {
-        size_t i = constraint->index();
-        
-        if (executionContext.didExecute(i))
-            continue;
-        executionContext.execute(i);
-        
-        // Once we're in convergence, it makes the most sense to let some marking happen anytime
-        // we find work.
-        // FIXME: Maybe this should execute all constraints until timeout? Not clear if that's
-        // better or worse. Maybe even better is this:
-        // - If the visitor is empty, keep running.
-        // - If the visitor is has at least N things, return.
-        // - Else run until timeout.
-        // https://bugs.webkit.org/show_bug.cgi?id=166832
-        if (executionContext.didVisitSomething())
-            return false;
-    }
+    solver.converge(m_ordered);
     
-    return true;
+    // Return true if we've converged. That happens if we did not visit anything.
+    return !solver.didVisitSomething();
 }
 
 void MarkingConstraintSet::executeAll(SlotVisitor& visitor)
 {
-    bool didVisitSomething = false;
     for (auto& constraint : m_set)
-        constraint->execute(visitor, didVisitSomething, MonotonicTime::infinity());
+        constraint->execute(visitor);
     if (Options::logGC())
         dataLog(" ");
 }

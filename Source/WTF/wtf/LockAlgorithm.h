@@ -35,7 +35,15 @@ namespace WTF {
 // field. The limit of one lock is due to the use of the field's address as a key to find the lock's
 // queue.
 
-template<typename LockType, LockType isHeldBit, LockType hasParkedBit>
+template<typename LockType>
+struct EmptyLockHooks {
+    static LockType lockHook(LockType value) { return value; }
+    static LockType unlockHook(LockType value) { return value; }
+    static LockType parkHook(LockType value) { return value; }
+    static LockType handoffHook(LockType value) { return value; }
+};
+
+template<typename LockType, LockType isHeldBit, LockType hasParkedBit, typename Hooks = EmptyLockHooks<LockType>>
 class LockAlgorithm {
     static const bool verbose = false;
     static const LockType mask = isHeldBit | hasParkedBit;
@@ -43,7 +51,7 @@ class LockAlgorithm {
 public:
     static bool lockFastAssumingZero(Atomic<LockType>& lock)
     {
-        return lock.compareExchangeWeak(0, isHeldBit, std::memory_order_acquire);
+        return lock.compareExchangeWeak(0, Hooks::lockHook(isHeldBit), std::memory_order_acquire);
     }
     
     static bool lockFast(Atomic<LockType>& lock)
@@ -53,6 +61,7 @@ public:
                 if (value & isHeldBit)
                     return false;
                 value |= isHeldBit;
+                value = Hooks::lockHook(value);
                 return true;
             },
             std::memory_order_acquire);
@@ -67,17 +76,17 @@ public:
     static bool tryLock(Atomic<LockType>& lock)
     {
         for (;;) {
-            uint8_t currentByteValue = lock.load(std::memory_order_relaxed);
-            if (currentByteValue & isHeldBit)
+            LockType currentValue = lock.load(std::memory_order_relaxed);
+            if (currentValue & isHeldBit)
                 return false;
-            if (lock.compareExchangeWeak(currentByteValue, currentByteValue | isHeldBit, std::memory_order_acquire))
+            if (lock.compareExchangeWeak(currentValue, Hooks::lockHook(currentValue | isHeldBit), std::memory_order_acquire))
                 return true;
         }
     }
 
     static bool unlockFastAssumingZero(Atomic<LockType>& lock)
     {
-        return lock.compareExchangeWeak(isHeldBit, 0, std::memory_order_release);
+        return lock.compareExchangeWeak(isHeldBit, Hooks::unlockHook(0), std::memory_order_release);
     }
     
     static bool unlockFast(Atomic<LockType>& lock)
@@ -87,6 +96,7 @@ public:
                 if ((value & mask) != isHeldBit)
                     return false;
                 value &= ~isHeldBit;
+                value = Hooks::unlockHook(value);
                 return true;
             },
             std::memory_order_relaxed);

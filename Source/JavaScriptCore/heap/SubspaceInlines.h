@@ -84,6 +84,53 @@ void Subspace::forEachMarkedCell(const Func& func)
 }
 
 template<typename Func>
+RefPtr<SharedTask<void(SlotVisitor&)>> Subspace::forEachMarkedCellInParallel(const Func& func)
+{
+    class Task : public SharedTask<void(SlotVisitor&)> {
+    public:
+        Task(Subspace& subspace, const Func& func)
+            : m_subspace(subspace)
+            , m_blockSource(subspace.parallelNotEmptyMarkedBlockSource())
+            , m_func(func)
+        {
+        }
+        
+        void run(SlotVisitor& visitor) override
+        {
+            while (MarkedBlock::Handle* handle = m_blockSource->run()) {
+                handle->forEachMarkedCell(
+                    [&] (HeapCell* cell, HeapCell::Kind kind) -> IterationStatus {
+                        m_func(visitor, cell, kind);
+                        return IterationStatus::Continue;
+                    });
+            }
+            
+            {
+                auto locker = holdLock(m_lock);
+                if (!m_needToVisitLargeAllocations)
+                    return;
+                m_needToVisitLargeAllocations = false;
+            }
+            
+            m_subspace.forEachLargeAllocation(
+                [&] (LargeAllocation* allocation) {
+                    if (allocation->isMarked())
+                        m_func(visitor, allocation->cell(), m_subspace.m_attributes.cellKind);
+                });
+        }
+        
+    private:
+        Subspace& m_subspace;
+        RefPtr<SharedTask<MarkedBlock::Handle*()>> m_blockSource;
+        Func m_func;
+        Lock m_lock;
+        bool m_needToVisitLargeAllocations { true };
+    };
+    
+    return adoptRef(new Task(*this, func));
+}
+
+template<typename Func>
 void Subspace::forEachLiveCell(const Func& func)
 {
     forEachMarkedBlock(

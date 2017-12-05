@@ -31,6 +31,7 @@
 #include "JSCInlines.h"
 #include "MarkedAllocatorInlines.h"
 #include "MarkedBlockInlines.h"
+#include "ParallelSourceAdapter.h"
 #include "PreventCollectionScope.h"
 #include "SubspaceInlines.h"
 
@@ -86,6 +87,43 @@ MarkedBlock::Handle* Subspace::findEmptyBlockToSteal()
             return block;
     }
     return nullptr;
+}
+
+RefPtr<SharedTask<MarkedAllocator*()>> Subspace::parallelAllocatorSource()
+{
+    class Task : public SharedTask<MarkedAllocator*()> {
+    public:
+        Task(MarkedAllocator* allocator)
+            : m_allocator(allocator)
+        {
+        }
+        
+        MarkedAllocator* run() override
+        {
+            auto locker = holdLock(m_lock);
+            MarkedAllocator* result = m_allocator;
+            if (result)
+                m_allocator = result->nextAllocatorInSubspace();
+            return result;
+        }
+        
+    private:
+        MarkedAllocator* m_allocator;
+        Lock m_lock;
+    };
+    
+    return adoptRef(new Task(m_firstAllocator));
+}
+
+RefPtr<SharedTask<MarkedBlock::Handle*()>> Subspace::parallelNotEmptyMarkedBlockSource()
+{
+    return createParallelSourceAdapter<MarkedAllocator*, MarkedBlock::Handle*>(
+        parallelAllocatorSource(),
+        [] (MarkedAllocator* allocator) -> RefPtr<SharedTask<MarkedBlock::Handle*()>> {
+            if (!allocator)
+                return nullptr;
+            return allocator->parallelNotEmptyBlockSource();
+        });
 }
 
 } // namespace JSC

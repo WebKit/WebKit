@@ -67,6 +67,11 @@ inline MarkedSpace* MarkedBlock::Handle::space() const
 
 inline bool MarkedBlock::marksConveyLivenessDuringMarking(HeapVersion markingVersion)
 {
+    return marksConveyLivenessDuringMarking(m_markingVersion, markingVersion);
+}
+
+inline bool MarkedBlock::marksConveyLivenessDuringMarking(HeapVersion myMarkingVersion, HeapVersion markingVersion)
+{
     // This returns true if any of these is true:
     // - We just created the block and so the bits are clear already.
     // - This block has objects marked during the last GC, and so its version was up-to-date just
@@ -82,39 +87,114 @@ inline bool MarkedBlock::marksConveyLivenessDuringMarking(HeapVersion markingVer
     ASSERT(space()->isMarking());
     if (heap()->collectionScope() != CollectionScope::Full)
         return false;
-    return m_markingVersion == MarkedSpace::nullVersion
-        || MarkedSpace::nextVersion(m_markingVersion) == markingVersion;
+    return myMarkingVersion == MarkedSpace::nullVersion
+        || MarkedSpace::nextVersion(myMarkingVersion) == markingVersion;
 }
 
-inline bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, bool isMarking, const HeapCell* cell)
+ALWAYS_INLINE bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, bool isMarking, const HeapCell* cell)
 {
-    ASSERT(!isFreeListed());
-    
-    if (UNLIKELY(hasAnyNewlyAllocated())) {
-        if (isNewlyAllocated(cell))
-            return true;
-    }
-    
     if (allocator()->isAllocated(NoLockingNecessary, this))
         return true;
     
+    // We need to do this while holding the lock because marks might be stale. In that case, newly
+    // allocated will not yet be valid. Consider this interleaving.
+    // 
+    // One thread is doing this:
+    //
+    // 1) IsLiveChecksNewlyAllocated: We check if newly allocated is valid. If it is valid, and the bit is
+    //    set, we return true. Let's assume that this executes atomically. It doesn't have to in general,
+    //    but we can assume that for the purpose of seeing this bug.
+    //
+    // 2) IsLiveChecksMarks: Having failed that, we check the mark bits. This step implies the rest of
+    //    this function. It happens under a lock so it's atomic.
+    //
+    // Another thread is doing:
+    //
+    // 1) AboutToMarkSlow: This is the entire aboutToMarkSlow function, and let's say it's atomic. It
+    //    sorta is since it holds a lock, but that doesn't actually make it atomic with respect to
+    //    IsLiveChecksNewlyAllocated, since that does not hold a lock in our scenario.
+    //
+    // The harmful interleaving happens if we start out with a block that has stale mark bits that
+    // nonetheless convey liveness during marking (the off-by-one version trick). The interleaving is
+    // just:
+    //
+    // IsLiveChecksNewlyAllocated AboutToMarkSlow IsLiveChecksMarks
+    //
+    // We started with valid marks but invalid newly allocated. So, the first part doesn't think that
+    // anything is live, but dutifully drops down to the marks step. But in the meantime, we clear the
+    // mark bits and transfer their contents into newlyAllocated. So IsLiveChecksMarks also sees nothing
+    // live. Ooops!
+    //
+    // Fortunately, since this is just a read critical section, we can use a CountingLock.
+    //
+    // Probably many users of CountingLock could use its lambda-based and locker-based APIs. But here, we
+    // need to ensure that everything is ALWAYS_INLINE. It's hard to do that when using lambdas. It's
+    // more reliable to write it inline instead. Empirically, it seems like how inline this is has some
+    // impact on perf - around 2% on splay if you get it wrong.
+
     MarkedBlock& block = this->block();
     
-    if (block.areMarksStale()) {
+    auto count = block.m_lock.tryOptimisticFencelessRead();
+    if (count.value) {
+        Dependency fenceBefore = Dependency::fence(count.input);
+        MarkedBlock::Handle* fencedThis = fenceBefore.consume(this);
+        
+        ASSERT(!fencedThis->isFreeListed());
+        
+        HeapVersion myNewlyAllocatedVersion = fencedThis->m_newlyAllocatedVersion;
+        if (myNewlyAllocatedVersion == newlyAllocatedVersion) {
+            bool result = fencedThis->isNewlyAllocated(cell);
+            if (block.m_lock.fencelessValidate(count.value, Dependency::fence(result)))
+                return result;
+        } else {
+            MarkedBlock& fencedBlock = *fenceBefore.consume(&block);
+            
+            HeapVersion myMarkingVersion = fencedBlock.m_markingVersion;
+            if (myMarkingVersion != markingVersion
+                && (!isMarking || !fencedBlock.marksConveyLivenessDuringMarking(myMarkingVersion, markingVersion))) {
+                if (block.m_lock.fencelessValidate(count.value, Dependency::fence(myMarkingVersion)))
+                    return false;
+            } else {
+                bool result = fencedBlock.m_marks.get(block.atomNumber(cell));
+                if (block.m_lock.fencelessValidate(count.value, Dependency::fence(result)))
+                    return result;
+            }
+        }
+    }
+    
+    auto locker = holdLock(block.m_lock);
+
+    ASSERT(!isFreeListed());
+    
+    HeapVersion myNewlyAllocatedVersion = m_newlyAllocatedVersion;
+    if (myNewlyAllocatedVersion == newlyAllocatedVersion)
+        return isNewlyAllocated(cell);
+    
+    if (block.areMarksStale(markingVersion)) {
         if (!isMarking)
             return false;
         if (!block.marksConveyLivenessDuringMarking(markingVersion))
             return false;
     }
-
+    
     return block.m_marks.get(block.atomNumber(cell));
 }
 
-inline bool MarkedBlock::Handle::isLiveCell(HeapVersion markingVersion, bool isMarking, const void* p)
+inline bool MarkedBlock::Handle::isLiveCell(HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, bool isMarking, const void* p)
 {
     if (!m_block->isAtom(p))
         return false;
-    return isLive(markingVersion, isMarking, static_cast<const HeapCell*>(p));
+    return isLive(markingVersion, newlyAllocatedVersion, isMarking, static_cast<const HeapCell*>(p));
+}
+
+inline bool MarkedBlock::Handle::isLive(const HeapCell* cell)
+{
+    return isLive(space()->markingVersion(), space()->newlyAllocatedVersion(), space()->isMarking(), cell);
+}
+
+inline bool MarkedBlock::Handle::isLiveCell(const void* p)
+{
+    return isLiveCell(space()->markingVersion(), space()->newlyAllocatedVersion(), space()->isMarking(), p);
 }
 
 // The following has to be true for specialization to kick in:
@@ -386,6 +466,15 @@ inline MarkedBlock::Handle::MarksMode MarkedBlock::Handle::marksMode()
 template <typename Functor>
 inline IterationStatus MarkedBlock::Handle::forEachLiveCell(const Functor& functor)
 {
+    // FIXME: This is not currently efficient to use in the constraint solver because isLive() grabs a
+    // lock to protect itself from concurrent calls to aboutToMarkSlow(). But we could get around this by
+    // having this function grab the lock before and after the iteration, and check if the marking version
+    // changed. If it did, just run again. Inside the loop, we only need to ensure that if a race were to
+    // happen, we will just overlook objects. I think that because of how aboutToMarkSlow() does things,
+    // a race ought to mean that it just returns false when it should have returned true - but this is
+    // something that would have to be verified carefully.
+    // https://bugs.webkit.org/show_bug.cgi?id=180315
+    
     HeapCell::Kind kind = m_attributes.cellKind;
     for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
         HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&m_block->atoms()[i]);

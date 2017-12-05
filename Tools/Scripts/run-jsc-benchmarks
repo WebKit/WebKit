@@ -50,7 +50,8 @@ LONGSPIDER_PATH = PERFORMANCETESTS_PATH + "LongSpider"
 V8_PATH = PERFORMANCETESTS_PATH + "SunSpider" + "tests" + "v8-v6"
 TAILBENCH_PATH = PERFORMANCETESTS_PATH + "TailBench9000"
 MICROBENCHMARKS_PATH = OPENSOURCE_PATH + "JSTests" + "microbenchmarks"
-OCTANE_WRAPPER_PATH = PERFORMANCETESTS_PATH + "Octane" + "wrappers"
+OPENSOURCE_OCTANE_PATH = PERFORMANCETESTS_PATH + "Octane"
+OCTANE_WRAPPER_PATH = OPENSOURCE_OCTANE_PATH + "wrappers"
 JSBENCH_PATH = PERFORMANCETESTS_PATH + "JSBench"
 SIXSPEED_PATH = PERFORMANCETESTS_PATH + "SixSpeed" + "tests"
 SIXSPEED_WRAPPER_PATH = PERFORMANCETESTS_PATH + "SixSpeed" + "wrappers"
@@ -841,6 +842,20 @@ class SingleFileTimedBenchmarkParameters
   end
 end
 
+# Benchmark that consists of a single file and must be loaded in its own global object each
+# time (i.e. run()), but returns its result in a custom way.
+class SingleFileCustomTimedBenchmarkParameters
+  attr_reader :benchPath
+  
+  def initialize(benchPath)
+    @benchPath = benchPath
+  end
+  
+  def kind
+    :singleFileCustomTimedBenchmark
+  end
+end
+
 # Benchmark that consists of one or more data files that should be loaded globally, followed
 # by a command to run the benchmark.
 class MultiFileTimedBenchmarkParameters
@@ -965,6 +980,25 @@ def emitBenchRunCodeFile(name, plan, benchParams)
         doublePuts($stderr,file,"    if (__bencher_index >= #{warmup}) print(\"#{name}: #{plan.vm}: #{plan.iteration}: \" + (__bencher_index - #{warmup}) + \": Time: \"+((__after-__before)/__runs));")
         doublePuts($stderr,file,"}")
         doublePuts($stderr,file,"#{benchParams.tearDownCommand.js}")
+      elsif benchParams.kind == :singleFileCustomTimedBenchmark
+        doublePuts($stderr,file,"function __bencher_run(__bencher_what) {")
+        doublePuts($stderr,file,"   var __bencher_result = {value: null};")
+        $rerun.times {
+          doublePuts($stderr,file,"   run(__bencher_what, __bencher_result);")
+        }
+        doublePuts($stderr,file,"   if (__bencher_result.value == null)")
+        doublePuts($stderr,file,"      throw new Error(\"Null result\");")
+        doublePuts($stderr,file,"   return __bencher_result.value;")
+        doublePuts($stderr,file,"}")
+        $warmup.times {
+          doublePuts($stderr,file,"__bencher_run(#{benchParams.benchPath.inspect})")
+          doublePuts($stderr,file,"gc();") unless plan.vm.shouldMeasureGC
+        }
+        $inner.times {
+          | innerIndex |
+          doublePuts($stderr,file,"print(\"#{name}: #{plan.vm}: #{plan.iteration}: #{innerIndex}: Time: \"+__bencher_run(#{benchParams.benchPath.inspect}));")
+          doublePuts($stderr,file,"gc();") unless plan.vm.shouldMeasureGC
+        }
       else
         raise unless benchParams.kind == :singleFileTimedBenchmark
         doublePuts($stderr,file,"function __bencher_run(__bencher_what) {")
@@ -1591,6 +1625,19 @@ class OctaneBenchmark
       ensureFile("Octane-#{v}", "#{OCTANE_WRAPPER_PATH}/#{v}.js")
     }
     emitBenchRunCode(fullname, plan, ThroughputBenchmarkParameters.new(files, simpleCommand("jscSetUp();"), simpleCommand("jscRun();"), simpleCommand("jscTearDown();"), @doWarmup, @deterministic, @minimumIterations))
+  end
+end
+
+class CustomTimedBenchmark
+  include Benchmark
+  
+  def initialize(name, fullPath)
+    @name = name
+    @fullPath = fullPath
+  end
+  
+  def emitRunCode(plan)
+    emitBenchRunCode(fullname, plan, SingleFileCustomTimedBenchmarkParameters.new(ensureFile("CustomTimed-#{@name}", @fullPath)))
   end
 end
 
@@ -3010,6 +3057,7 @@ begin
     | args |
     OCTANE.add OctaneBenchmark.new(*args)
   }
+  OCTANE.add CustomTimedBenchmark.new("splay-latency", (OPENSOURCE_OCTANE_PATH + "splay.js").to_s)
 
   KRAKEN = BenchmarkSuite.new("Kraken", :arithmeticMean, -1)
   ["ai-astar", "audio-beat-detection", "audio-dft", "audio-fft",

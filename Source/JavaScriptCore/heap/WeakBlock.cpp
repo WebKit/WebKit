@@ -111,7 +111,7 @@ void WeakBlock::specializedVisit(ContainerType& container, SlotVisitor& visitor)
             continue;
 
         JSValue jsValue = weakImpl->jsValue();
-        if (container.isMarkedConcurrently(markingVersion, jsValue.asCell()))
+        if (container.isMarked(markingVersion, jsValue.asCell()))
             continue;
         
         if (!weakHandleOwner->isReachableFromOpaqueRoots(Handle<Unknown>::wrapSlot(&const_cast<JSValue&>(jsValue)), weakImpl->context(), visitor))

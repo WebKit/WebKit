@@ -1,3 +1,204 @@
+2017-12-01  Filip Pizlo  <fpizlo@apple.com>
+
+        GC constraint solving should be parallel
+        https://bugs.webkit.org/show_bug.cgi?id=179934
+
+        Reviewed by JF Bastien.
+        
+        This makes it possible to do constraint solving in parallel. This looks like a 1% Speedometer
+        speed-up. It's more than 1% on trunk-Speedometer.
+        
+        The constraint solver supports running constraints in parallel in two different ways:
+        
+        - Run multiple constraints in parallel to each other. This only works for constraints that can
+          tolerate other constraints running concurrently to them (constraint.concurrency() ==
+          ConstraintConcurrency::Concurrent). This is the most basic kind of parallelism that the
+          constraint solver supports. All constraints except the JSC SPI constraints are concurrent. We
+          could probably make them concurrent, but I'm playing it safe for now.
+        
+        - A constraint can create parallel work for itself, which the constraint solver will interleave
+          with other stuff. A constraint can report that it has parallel work by returning
+          ConstraintParallelism::Parallel from its executeImpl() function. Then the solver will allow that
+          constraint's doParallelWorkImpl() function to run on as many GC marker threads as are available,
+          for as long as that function wants to run.
+        
+        It's not possible to have a non-concurrent constraint that creates parallel work.
+        
+        The parallelism is implemented in terms of the existing GC marker threads. This turns out to be
+        most natural for two reasons:
+        
+        - No need to start any other threads.
+        
+        - The constraints all want to be passed a SlotVisitor. Running on the marker threads means having
+          access to those threads' SlotVisitors. Also, it means less load balancing. The solver will
+          create work on each marking thread's SlotVisitor. When the solver is done "stealing" a marker
+          thread, that thread will have work it can start doing immediately. Before this change, we had to
+          contribute the work found by the constraint solver to the global worklist so that it could be
+          distributed to the marker threads by load balancing. This change probably helps to avoid that
+          load balancing step.
+        
+        A lot of this change is about making it easy to iterate GC data structures in parallel. This
+        change makes almost all constraints parallel-enabled, but only the DOM's output constraint uses
+        the parallel work API. That constraint iterates the marked cells in two subspaces. This change
+        makes it very easy to compose parallel iterators over subspaces, allocators, blocks, and cells.
+        The marked cell parallel iterator is composed out of parallel iterators for the others. A parallel
+        iterator is just an iterator that can do an atomic next() very quickly. We abstract them using
+        RefPtr<SharedTask<...()>>, where ... is the type returned from the iterator. We know it's done
+        when it returns a falsish version of ... (in the current code, that's always a pointer type, so
+        done is indicated by null).
+        
+        * API/JSMarkingConstraintPrivate.cpp:
+        (JSContextGroupAddMarkingConstraint):
+        * API/JSVirtualMachine.mm:
+        (scanExternalObjectGraph):
+        (scanExternalRememberedSet):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::propagateTransitions const):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitWeakly):
+        (JSC::CodeBlock::shouldJettisonDueToOldAge):
+        (JSC::shouldMarkTransition):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::determineLiveness):
+        * dfg/DFGWorklist.cpp:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * heap/ConstraintParallelism.h: Added.
+        (WTF::printInternal):
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::addToRememberedSet):
+        (JSC::Heap::runFixpointPhase):
+        (JSC::Heap::stopThePeriphery):
+        (JSC::Heap::resumeThePeriphery):
+        (JSC::Heap::addCoreConstraints):
+        (JSC::Heap::setBonusVisitorTask):
+        (JSC::Heap::runTaskInParallel):
+        (JSC::Heap::forEachSlotVisitor): Deleted.
+        * heap/Heap.h:
+        (JSC::Heap::worldIsRunning const):
+        (JSC::Heap::runFunctionInParallel):
+        * heap/HeapInlines.h:
+        (JSC::Heap::worldIsStopped const):
+        (JSC::Heap::isMarked):
+        (JSC::Heap::incrementDeferralDepth):
+        (JSC::Heap::decrementDeferralDepth):
+        (JSC::Heap::decrementDeferralDepthAndGCIfNeeded):
+        (JSC::Heap::forEachSlotVisitor):
+        (JSC::Heap::collectorBelievesThatTheWorldIsStopped const): Deleted.
+        (JSC::Heap::isMarkedConcurrently): Deleted.
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::appendNode):
+        * heap/LargeAllocation.h:
+        (JSC::LargeAllocation::isMarked):
+        (JSC::LargeAllocation::isMarkedConcurrently): Deleted.
+        * heap/LockDuringMarking.h:
+        (JSC::lockDuringMarking):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::parallelNotEmptyBlockSource):
+        * heap/MarkedAllocator.h:
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::aboutToMark):
+        (JSC::MarkedBlock::isMarked):
+        (JSC::MarkedBlock::areMarksStaleWithDependency): Deleted.
+        (JSC::MarkedBlock::isMarkedConcurrently): Deleted.
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::activeWeakSetsBegin):
+        (JSC::MarkedSpace::activeWeakSetsEnd):
+        (JSC::MarkedSpace::newActiveWeakSetsBegin):
+        (JSC::MarkedSpace::newActiveWeakSetsEnd):
+        * heap/MarkingConstraint.cpp:
+        (JSC::MarkingConstraint::MarkingConstraint):
+        (JSC::MarkingConstraint::execute):
+        (JSC::MarkingConstraint::quickWorkEstimate):
+        (JSC::MarkingConstraint::workEstimate):
+        (JSC::MarkingConstraint::doParallelWork):
+        (JSC::MarkingConstraint::finishParallelWork):
+        (JSC::MarkingConstraint::doParallelWorkImpl):
+        (JSC::MarkingConstraint::finishParallelWorkImpl):
+        * heap/MarkingConstraint.h:
+        (JSC::MarkingConstraint::lastExecuteParallelism const):
+        (JSC::MarkingConstraint::parallelism const):
+        (JSC::MarkingConstraint::quickWorkEstimate): Deleted.
+        (JSC::MarkingConstraint::workEstimate): Deleted.
+        * heap/MarkingConstraintSet.cpp:
+        (JSC::MarkingConstraintSet::MarkingConstraintSet):
+        (JSC::MarkingConstraintSet::add):
+        (JSC::MarkingConstraintSet::executeConvergence):
+        (JSC::MarkingConstraintSet::executeConvergenceImpl):
+        (JSC::MarkingConstraintSet::executeAll):
+        (JSC::MarkingConstraintSet::ExecutionContext::ExecutionContext): Deleted.
+        (JSC::MarkingConstraintSet::ExecutionContext::didVisitSomething const): Deleted.
+        (JSC::MarkingConstraintSet::ExecutionContext::shouldTimeOut const): Deleted.
+        (JSC::MarkingConstraintSet::ExecutionContext::drain): Deleted.
+        (JSC::MarkingConstraintSet::ExecutionContext::didExecute const): Deleted.
+        (JSC::MarkingConstraintSet::ExecutionContext::execute): Deleted.
+        (): Deleted.
+        * heap/MarkingConstraintSet.h:
+        * heap/MarkingConstraintSolver.cpp: Added.
+        (JSC::MarkingConstraintSolver::MarkingConstraintSolver):
+        (JSC::MarkingConstraintSolver::~MarkingConstraintSolver):
+        (JSC::MarkingConstraintSolver::didVisitSomething const):
+        (JSC::MarkingConstraintSolver::execute):
+        (JSC::MarkingConstraintSolver::drain):
+        (JSC::MarkingConstraintSolver::converge):
+        (JSC::MarkingConstraintSolver::runExecutionThread):
+        (JSC::MarkingConstraintSolver::didExecute):
+        * heap/MarkingConstraintSolver.h: Added.
+        * heap/OpaqueRootSet.h: Removed.
+        * heap/ParallelSourceAdapter.h: Added.
+        (JSC::ParallelSourceAdapter::ParallelSourceAdapter):
+        (JSC::createParallelSourceAdapter):
+        * heap/SimpleMarkingConstraint.cpp: Added.
+        (JSC::SimpleMarkingConstraint::SimpleMarkingConstraint):
+        (JSC::SimpleMarkingConstraint::~SimpleMarkingConstraint):
+        (JSC::SimpleMarkingConstraint::quickWorkEstimate):
+        (JSC::SimpleMarkingConstraint::executeImpl):
+        * heap/SimpleMarkingConstraint.h: Added.
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::didStartMarking):
+        (JSC::SlotVisitor::reset):
+        (JSC::SlotVisitor::appendToMarkStack):
+        (JSC::SlotVisitor::visitChildren):
+        (JSC::SlotVisitor::updateMutatorIsStopped):
+        (JSC::SlotVisitor::mutatorIsStoppedIsUpToDate const):
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::performIncrementOfDraining):
+        (JSC::SlotVisitor::didReachTermination):
+        (JSC::SlotVisitor::hasWork):
+        (JSC::SlotVisitor::drainFromShared):
+        (JSC::SlotVisitor::drainInParallelPassively):
+        (JSC::SlotVisitor::waitForTermination):
+        (JSC::SlotVisitor::addOpaqueRoot): Deleted.
+        (JSC::SlotVisitor::containsOpaqueRoot const): Deleted.
+        (JSC::SlotVisitor::containsOpaqueRootTriState const): Deleted.
+        (JSC::SlotVisitor::mergeIfNecessary): Deleted.
+        (JSC::SlotVisitor::mergeOpaqueRootsIfProfitable): Deleted.
+        (JSC::SlotVisitor::mergeOpaqueRoots): Deleted.
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::addOpaqueRoot):
+        (JSC::SlotVisitor::containsOpaqueRoot const):
+        (JSC::SlotVisitor::vm):
+        (JSC::SlotVisitor::vm const):
+        * heap/Subspace.cpp:
+        (JSC::Subspace::parallelAllocatorSource):
+        (JSC::Subspace::parallelNotEmptyMarkedBlockSource):
+        * heap/Subspace.h:
+        * heap/SubspaceInlines.h:
+        (JSC::Subspace::forEachMarkedCellInParallel):
+        * heap/VisitCounter.h: Added.
+        (JSC::VisitCounter::VisitCounter):
+        (JSC::VisitCounter::visitCount const):
+        * heap/VisitingTimeout.h: Removed.
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::specializedVisit):
+        * runtime/Structure.cpp:
+        (JSC::Structure::isCheapDuringGC):
+        (JSC::Structure::markIfCheap):
+
 2017-12-04  JF Bastien  <jfbastien@apple.com>
 
         Math: don't redundantly check for exceptions, just release scope

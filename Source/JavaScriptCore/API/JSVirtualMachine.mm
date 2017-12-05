@@ -283,9 +283,8 @@ static void scanExternalObjectGraph(JSC::VM& vm, JSC::SlotVisitor& visitor, void
         while (!stack.isEmpty()) {
             void* nextRoot = stack.last();
             stack.removeLast();
-            if (visitor.containsOpaqueRootTriState(nextRoot) == TrueTriState)
+            if (!visitor.addOpaqueRoot(nextRoot))
                 continue;
-            visitor.addOpaqueRoot(nextRoot);
 
             auto appendOwnedObjects = [&] {
                 NSMapTable *ownedObjects = [externalObjectGraph objectForKey:static_cast<id>(nextRoot)];
@@ -327,8 +326,6 @@ void scanExternalRememberedSet(JSC::VM& vm, JSC::SlotVisitor& visitor)
         }
         [externalRememberedSet removeAllObjects];
     }
-
-    visitor.mergeIfNecessary();
 }
 
 #endif // JSC_OBJC_API_ENABLED

@@ -28,7 +28,6 @@
 #include "HandleTypes.h"
 #include "IterationStatus.h"
 #include "MarkStack.h"
-#include "OpaqueRootSet.h"
 #include "VisitRaceKey.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/text/CString.h>
@@ -95,10 +94,9 @@ public:
     void appendHiddenUnbarriered(JSValue);
     void appendHiddenUnbarriered(JSCell*);
 
-    JS_EXPORT_PRIVATE void addOpaqueRoot(void*);
+    bool addOpaqueRoot(void*); // Returns true if the root was new.
     
-    JS_EXPORT_PRIVATE bool containsOpaqueRoot(void*) const;
-    TriState containsOpaqueRootTriState(void*) const;
+    bool containsOpaqueRoot(void*) const;
 
     bool isEmpty() { return m_collectorStack.isEmpty() && m_mutatorStack.isEmpty(); }
 
@@ -121,6 +119,8 @@ public:
 
     SharedDrainResult drainInParallel(MonotonicTime timeout = MonotonicTime::infinity());
     SharedDrainResult drainInParallelPassively(MonotonicTime timeout = MonotonicTime::infinity());
+    
+    SharedDrainResult waitForTermination(MonotonicTime timeout = MonotonicTime::infinity());
 
     // Attempts to perform an increment of draining that involves only walking `bytes` worth of data. This
     // is likely to accidentally walk more or less than that. It will usually mark more than bytes. It may
@@ -128,8 +128,6 @@ public:
     // rare cases happen temporarily even if we're not reaching termination).
     size_t performIncrementOfDraining(size_t bytes);
     
-    JS_EXPORT_PRIVATE void mergeIfNecessary();
-
     // This informs the GC about auxiliary of some size that we are keeping alive. If you don't do
     // this then the space will be freed at end of GC.
     void markAuxiliary(const void* base);
@@ -194,10 +192,6 @@ private:
     
     void noteLiveAuxiliaryCell(HeapCell*);
     
-    void mergeOpaqueRoots();
-
-    void mergeOpaqueRootsIfProfitable();
-
     void visitChildren(const JSCell*);
     
     void donateKnownParallel();
@@ -215,7 +209,6 @@ private:
 
     MarkStackArray m_collectorStack;
     MarkStackArray m_mutatorStack;
-    OpaqueRootSet m_opaqueRoots; // Handle-owning data structures not visible to the garbage collector.
     bool m_ignoreNewOpaqueRoots { false }; // Useful as a debugging mode.
     
     size_t m_bytesVisited;

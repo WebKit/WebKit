@@ -354,6 +354,7 @@ constexpr bool enableAsyncIteration = false;
     \
     v(unsigned, minimumNumberOfScansBetweenRebalance, 100, Normal, nullptr) \
     v(unsigned, numberOfGCMarkers, computeNumberOfGCMarkers(8), Normal, nullptr) \
+    v(bool, useParallelMarkingConstraintSolver, true, Normal, nullptr) \
     v(unsigned, opaqueRootMergeThreshold, 1000, Normal, nullptr) \
     v(double, minHeapUtilization, 0.8, Normal, nullptr) \
     v(double, minMarkedBlockUtilization, 0.9, Normal, nullptr) \

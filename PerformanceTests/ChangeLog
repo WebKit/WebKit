@@ -1,3 +1,59 @@
+2017-12-01  Filip Pizlo  <fpizlo@apple.com>
+
+        GC constraint solving should be parallel
+        https://bugs.webkit.org/show_bug.cgi?id=179934
+
+        Reviewed by JF Bastien.
+        
+        Added a version of splay that measures latency in a way that run-jsc-benchmarks groks.
+
+        * Octane/splay.js: Added.
+        (this.Setup.setup.setup):
+        (this.TearDown.tearDown.tearDown):
+        (Benchmark):
+        (BenchmarkResult):
+        (BenchmarkResult.prototype.valueOf):
+        (BenchmarkSuite):
+        (alert):
+        (Math.random):
+        (BenchmarkSuite.ResetRNG):
+        (RunStep):
+        (BenchmarkSuite.RunSuites):
+        (BenchmarkSuite.CountBenchmarks):
+        (BenchmarkSuite.GeometricMean):
+        (BenchmarkSuite.GeometricMeanTime):
+        (BenchmarkSuite.AverageAbovePercentile):
+        (BenchmarkSuite.GeometricMeanLatency):
+        (BenchmarkSuite.FormatScore):
+        (BenchmarkSuite.prototype.NotifyStep):
+        (BenchmarkSuite.prototype.NotifyResult):
+        (BenchmarkSuite.prototype.NotifyError):
+        (BenchmarkSuite.prototype.RunSingleBenchmark):
+        (RunNextSetup):
+        (RunNextBenchmark):
+        (RunNextTearDown):
+        (BenchmarkSuite.prototype.RunStep):
+        (GeneratePayloadTree):
+        (GenerateKey):
+        (SplayUpdateStats):
+        (InsertNewNode):
+        (SplaySetup):
+        (SplayTearDown):
+        (SplayRun):
+        (SplayTree):
+        (SplayTree.prototype.isEmpty):
+        (SplayTree.prototype.insert):
+        (SplayTree.prototype.remove):
+        (SplayTree.prototype.find):
+        (SplayTree.prototype.findMax):
+        (SplayTree.prototype.findGreatestLessThan):
+        (SplayTree.prototype.exportKeys):
+        (SplayTree.prototype.splay_):
+        (SplayTree.Node):
+        (SplayTree.Node.prototype.traverse_):
+        (report):
+        (start):
+
 2017-12-04  Antti Koivisto  <antti@apple.com>
 
         Fix StyleBench/InteractiveRunner.html

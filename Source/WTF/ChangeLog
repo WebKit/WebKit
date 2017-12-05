@@ -1,3 +1,83 @@
+2017-12-01  Filip Pizlo  <fpizlo@apple.com>
+
+        GC constraint solving should be parallel
+        https://bugs.webkit.org/show_bug.cgi?id=179934
+
+        Reviewed by JF Bastien.
+        
+        This does some changes to make it easier to do parallel constraint solving:
+        
+        - I finally removed dependencyWith. This was a silly construct whose only purpose is to confuse
+          people about what it means to have a dependency chain. I took that as an opportunity to grealy
+          simplify the GC's use of dependency chaining.
+        
+        - Added more logic to Deque<>, since I use it for part of the load balancer.
+        
+        - Made it possible to profile lock contention. See
+          https://bugs.webkit.org/show_bug.cgi?id=180250#c0 for some preliminary measurements.
+        
+        - Introduced holdLockIf, which makes it easy to perform predicated lock acquisition. We use that
+          to pick a lock in WebCore.
+        
+        - Introduced CountingLock. It's like WTF::Lock except it also enables optimistic read transactions
+          sorta like Java's StampedLock.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Atomics.h:
+        (WTF::dependency):
+        (WTF::DependencyWith::DependencyWith): Deleted.
+        (WTF::dependencyWith): Deleted.
+        * wtf/BitVector.h:
+        (WTF::BitVector::iterator::operator++):
+        * wtf/CMakeLists.txt:
+        * wtf/ConcurrentPtrHashSet.cpp: Added.
+        (WTF::ConcurrentPtrHashSet::ConcurrentPtrHashSet):
+        (WTF::ConcurrentPtrHashSet::~ConcurrentPtrHashSet):
+        (WTF::ConcurrentPtrHashSet::deleteOldTables):
+        (WTF::ConcurrentPtrHashSet::clear):
+        (WTF::ConcurrentPtrHashSet::initialize):
+        (WTF::ConcurrentPtrHashSet::addSlow):
+        (WTF::ConcurrentPtrHashSet::resizeIfNecessary):
+        (WTF::ConcurrentPtrHashSet::resizeAndAdd):
+        (WTF::ConcurrentPtrHashSet::Table::create):
+        * wtf/ConcurrentPtrHashSet.h: Added.
+        (WTF::ConcurrentPtrHashSet::contains):
+        (WTF::ConcurrentPtrHashSet::add):
+        (WTF::ConcurrentPtrHashSet::size const):
+        (WTF::ConcurrentPtrHashSet::Table::maxLoad const):
+        (WTF::ConcurrentPtrHashSet::hash):
+        (WTF::ConcurrentPtrHashSet::cast):
+        (WTF::ConcurrentPtrHashSet::containsImpl const):
+        (WTF::ConcurrentPtrHashSet::addImpl):
+        * wtf/Deque.h:
+        (WTF::inlineCapacity>::takeFirst):
+        * wtf/FastMalloc.h:
+        * wtf/Lock.cpp:
+        (WTF::LockBase::lockSlow):
+        * wtf/Locker.h:
+        (WTF::holdLockIf):
+        * wtf/ScopedLambda.h:
+        * wtf/SharedTask.h:
+        (WTF::SharedTask<PassedResultType):
+        (WTF::SharedTask<ResultType): Deleted.
+        * wtf/StackShot.h: Added.
+        (WTF::StackShot::StackShot):
+        (WTF::StackShot::operator=):
+        (WTF::StackShot::array const):
+        (WTF::StackShot::size const):
+        (WTF::StackShot::operator bool const):
+        (WTF::StackShot::operator== const):
+        (WTF::StackShot::hash const):
+        (WTF::StackShot::isHashTableDeletedValue const):
+        (WTF::StackShot::operator> const):
+        (WTF::StackShot::deletedValueArray):
+        (WTF::StackShotHash::hash):
+        (WTF::StackShotHash::equal):
+        * wtf/StackShotProfiler.h: Added.
+        (WTF::StackShotProfiler::StackShotProfiler):
+        (WTF::StackShotProfiler::profile):
+        (WTF::StackShotProfiler::run):
+
 2017-12-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Use m_suspendCount instead of m_suspended flag in Thread

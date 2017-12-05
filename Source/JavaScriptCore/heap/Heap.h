@@ -44,6 +44,7 @@
 #include "WeakHandleOwner.h"
 #include "WeakReferenceHarvester.h"
 #include <wtf/AutomaticThread.h>
+#include <wtf/ConcurrentPtrHashSet.h>
 #include <wtf/Deque.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
@@ -73,6 +74,7 @@ class JSValue;
 class LLIntOffsetsExtractor;
 class MachineThreads;
 class MarkStackArray;
+class MarkStackMergingConstraint;
 class MarkedAllocator;
 class MarkedArgumentBuffer;
 class MarkingConstraint;
@@ -114,7 +116,6 @@ public:
     static const unsigned s_timeCheckResolution = 16;
 
     static bool isMarked(const void*);
-    static bool isMarkedConcurrently(const void*);
     static bool testAndSetMarked(HeapVersion, const void*);
     
     static size_t cellSize(const void*);
@@ -154,7 +155,8 @@ public:
     MutatorState mutatorState() const { return m_mutatorState; }
     std::optional<CollectionScope> collectionScope() const { return m_collectionScope; }
     bool hasHeapAccess() const;
-    bool collectorBelievesThatTheWorldIsStopped() const;
+    bool worldIsStopped() const;
+    bool worldIsRunning() const { return !worldIsStopped(); }
 
     // We're always busy on the collection threads. On the main thread, this returns true if we're
     // helping heap.
@@ -349,6 +351,7 @@ public:
     void allowCollection();
     
     uint64_t mutatorExecutionVersion() const { return m_mutatorExecutionVersion; }
+    uint64_t phaseVersion() const { return m_phaseVersion; }
     
     JS_EXPORT_PRIVATE void addMarkingConstraint(std::unique_ptr<MarkingConstraint>);
     
@@ -358,6 +361,17 @@ public:
     
     void addHeapFinalizerCallback(const HeapFinalizerCallback&);
     void removeHeapFinalizerCallback(const HeapFinalizerCallback&);
+    
+    void runTaskInParallel(RefPtr<SharedTask<void(SlotVisitor&)>>);
+    
+    template<typename Func>
+    void runFunctionInParallel(const Func& func)
+    {
+        runTaskInParallel(createSharedTask<void(SlotVisitor&)>(func));
+    }
+
+    template<typename Func>
+    void forEachSlotVisitor(const Func&);
 
 private:
     friend class AllocatingScope;
@@ -373,6 +387,7 @@ private:
     friend class HeapVerifier;
     friend class JITStubRoutine;
     friend class LLIntOffsetsExtractor;
+    friend class MarkStackMergingConstraint;
     friend class MarkedSpace;
     friend class MarkedAllocator;
     friend class MarkedBlock;
@@ -525,8 +540,10 @@ private:
     template<typename Func>
     void iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(const Func&);
     
-    void assertSharedMarkStacksEmpty();
+    void assertMarkStacksEmpty();
 
+    void setBonusVisitorTask(RefPtr<SharedTask<void(SlotVisitor&)>>);
+    
     const HeapType m_heapType;
     const size_t m_ramSize;
     const size_t m_minBytesPerCycle;
@@ -579,9 +596,6 @@ private:
     Vector<SlotVisitor*> m_availableParallelSlotVisitors;
     Lock m_parallelSlotVisitorLock;
     
-    template<typename Func>
-    void forEachSlotVisitor(const Func&);
-
     HandleSet m_handleSet;
     HandleStack m_handleStack;
     std::unique_ptr<CodeBlockSet> m_codeBlocks;
@@ -633,8 +647,7 @@ private:
     unsigned m_numberOfWaitingParallelMarkers { 0 };
     bool m_parallelMarkersShouldExit { false };
 
-    Lock m_opaqueRootsMutex;
-    HashSet<const void*> m_opaqueRoots;
+    ConcurrentPtrHashSet m_opaqueRoots;
 
     static const size_t s_blockFragmentLength = 32;
 
@@ -642,6 +655,7 @@ private:
     ListableHandler<UnconditionalFinalizer>::List m_unconditionalFinalizers;
 
     ParallelHelperClient m_helperClient;
+    RefPtr<SharedTask<void(SlotVisitor&)>> m_bonusVisitorTask;
 
 #if ENABLE(RESOURCE_USAGE)
     size_t m_blockBytesAllocated { 0 };
@@ -657,7 +671,7 @@ private:
     static const unsigned needFinalizeBit = 1u << 4u;
     static const unsigned mutatorWaitingBit = 1u << 5u; // Allows the mutator to use this as a condition variable.
     Atomic<unsigned> m_worldState;
-    bool m_collectorBelievesThatTheWorldIsStopped { false };
+    bool m_worldIsStopped { false };
     MonotonicTime m_beforeGC;
     MonotonicTime m_afterGC;
     MonotonicTime m_stopTime;
@@ -672,6 +686,7 @@ private:
     bool m_threadIsStopping { false };
     bool m_mutatorDidRun { true };
     uint64_t m_mutatorExecutionVersion { 0 };
+    uint64_t m_phaseVersion { 0 };
     Box<Lock> m_threadLock;
     RefPtr<AutomaticThreadCondition> m_threadCondition; // The mutator must not wait on this. It would cause a deadlock.
     RefPtr<AutomaticThread> m_thread;
@@ -693,6 +708,7 @@ private:
     uintptr_t m_barriersExecuted { 0 };
     
     CurrentThreadState* m_currentThreadState { nullptr };
+    WTF::Thread* m_currentThread { nullptr }; // It's OK if this becomes a dangling pointer.
 };
 
 } // namespace JSC

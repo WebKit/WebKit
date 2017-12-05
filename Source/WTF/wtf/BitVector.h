@@ -308,6 +308,13 @@ public:
             return *this;
         }
 
+        iterator operator++(int)
+        {
+            iterator result = *this;
+            ++(*this);
+            return result;
+        }
+
         bool isAtEnd() const
         {
             return m_index >= m_bitVector->size();

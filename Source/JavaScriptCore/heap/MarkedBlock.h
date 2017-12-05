@@ -29,6 +29,7 @@
 #include <wtf/Atomics.h>
 #include <wtf/Bitmap.h>
 #include <wtf/HashFunctions.h>
+#include <wtf/CountingLock.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -161,8 +162,8 @@ public:
         size_t markCount();
         size_t size();
         
-        inline bool isLive(HeapVersion markingVersion, bool isMarking, const HeapCell*);
-        inline bool isLiveCell(HeapVersion markingVersion, bool isMarking, const void*);
+        bool isLive(HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, bool isMarking, const HeapCell*);
+        inline bool isLiveCell(HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, bool isMarking, const void*);
 
         bool isLive(const HeapCell*);
         bool isLiveCell(const void*);
@@ -258,7 +259,6 @@ public:
 
     bool isMarked(const void*);
     bool isMarked(HeapVersion markingVersion, const void*);
-    bool isMarkedConcurrently(HeapVersion markingVersion, const void*);
     bool isMarked(const void*, Dependency);
     bool testAndSetMarked(const void*, Dependency);
         
@@ -280,7 +280,6 @@ public:
 
     JS_EXPORT_PRIVATE bool areMarksStale();
     bool areMarksStale(HeapVersion markingVersion);
-    DependencyWith<bool> areMarksStaleWithDependency(HeapVersion markingVersion);
     
     Dependency aboutToMark(HeapVersion markingVersion);
         
@@ -290,15 +289,12 @@ public:
     JS_EXPORT_PRIVATE void assertMarksNotStale();
 #endif
         
-    bool needsDestruction() const { return m_needsDestruction; }
-    
-    // This is usually a no-op, and we use it as a no-op that touches the page in isPagedOut().
-    void updateNeedsDestruction();
-    
     void resetMarks();
     
     bool isMarkedRaw(const void* p);
     HeapVersion markingVersion() const { return m_markingVersion; }
+    
+    CountingLock& lock() { return m_lock; }
 
 private:
     static const size_t atomAlignmentMask = atomSize - 1;
@@ -314,11 +310,12 @@ private:
     void noteMarkedSlow();
     
     inline bool marksConveyLivenessDuringMarking(HeapVersion markingVersion);
+    inline bool marksConveyLivenessDuringMarking(HeapVersion myMarkingVersion, HeapVersion markingVersion);
         
-    WTF::Bitmap<atomsPerBlock> m_marks;
+    Handle& m_handle;
+    VM* m_vm;
 
-    bool m_needsDestruction;
-    Lock m_lock;
+    CountingLock m_lock;
     
     // The actual mark count can be computed by doing: m_biasedMarkCount - m_markCountBias. Note
     // that this count is racy. It will accurately detect whether or not exactly zero things were
@@ -348,9 +345,8 @@ private:
     int16_t m_markCountBias;
 
     HeapVersion m_markingVersion;
-    
-    Handle& m_handle;
-    VM* m_vm;
+
+    WTF::Bitmap<atomsPerBlock> m_marks;
 };
 
 inline MarkedBlock::Handle& MarkedBlock::handle()
@@ -498,18 +494,12 @@ inline bool MarkedBlock::areMarksStale(HeapVersion markingVersion)
     return markingVersion != m_markingVersion;
 }
 
-ALWAYS_INLINE DependencyWith<bool> MarkedBlock::areMarksStaleWithDependency(HeapVersion markingVersion)
-{
-    HeapVersion version = m_markingVersion;
-    return dependencyWith(dependency(version), version != markingVersion);
-}
-
 inline Dependency MarkedBlock::aboutToMark(HeapVersion markingVersion)
 {
-    auto result = areMarksStaleWithDependency(markingVersion);
-    if (UNLIKELY(result.value))
+    HeapVersion version = m_markingVersion;
+    if (UNLIKELY(version != markingVersion))
         aboutToMarkSlow(markingVersion);
-    return result.dependency;
+    return Dependency::fence(version);
 }
 
 inline void MarkedBlock::Handle::assertMarksNotStale()
@@ -524,15 +514,10 @@ inline bool MarkedBlock::isMarkedRaw(const void* p)
 
 inline bool MarkedBlock::isMarked(HeapVersion markingVersion, const void* p)
 {
-    return areMarksStale(markingVersion) ? false : isMarkedRaw(p);
-}
-
-inline bool MarkedBlock::isMarkedConcurrently(HeapVersion markingVersion, const void* p)
-{
-    auto result = areMarksStaleWithDependency(markingVersion);
-    if (result.value)
+    HeapVersion version = m_markingVersion;
+    if (UNLIKELY(version != markingVersion))
         return false;
-    return m_marks.get(atomNumber(p), result.dependency);
+    return m_marks.get(atomNumber(p), Dependency::fence(version));
 }
 
 inline bool MarkedBlock::isMarked(const void* p, Dependency dependency)

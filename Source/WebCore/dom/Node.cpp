@@ -29,6 +29,7 @@
 #include "Attr.h"
 #include "BeforeLoadEvent.h"
 #include "ChildListMutationScope.h"
+#include "CommonVM.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ContainerNodeAlgorithms.h"
 #include "ContextMenuController.h"
@@ -2162,7 +2163,14 @@ EventTargetData* Node::eventTargetData()
 
 EventTargetData* Node::eventTargetDataConcurrently()
 {
-    auto locker = holdLock(s_eventTargetDataMapLock);
+    // Not holding the lock when the world is stopped accelerates parallel constraint solving, which
+    // calls this function from many threads. Parallel constraint solving can happen with the world
+    // running or stopped, but if we do it with a running world, then we're usually mixing constraint
+    // solving with other work. Therefore, the most likely time for contention on this lock is when the
+    // world is stopped. We don't have to hold the lock when the world is stopped, because a stopped world
+    // means that we will never mutate the event target data map.
+    JSC::VM* vm = commonVMOrNull();
+    auto locker = holdLockIf(s_eventTargetDataMapLock, vm && vm->heap.worldIsRunning());
     return hasEventTargetData() ? eventTargetDataMap().get(this) : nullptr;
 }
 
@@ -2171,6 +2179,9 @@ EventTargetData& Node::ensureEventTargetData()
     if (hasEventTargetData())
         return *eventTargetDataMap().get(this);
 
+    JSC::VM* vm = commonVMOrNull();
+    RELEASE_ASSERT(!vm || vm->heap.worldIsRunning());
+
     auto locker = holdLock(s_eventTargetDataMapLock);
     setHasEventTargetData(true);
     return *eventTargetDataMap().add(this, std::make_unique<EventTargetData>()).iterator->value;
@@ -2178,6 +2189,8 @@ EventTargetData& Node::ensureEventTargetData()
 
 void Node::clearEventTargetData()
 {
+    JSC::VM* vm = commonVMOrNull();
+    RELEASE_ASSERT(!vm || vm->heap.worldIsRunning());
     auto locker = holdLock(s_eventTargetDataMapLock);
     eventTargetDataMap().remove(this);
 }

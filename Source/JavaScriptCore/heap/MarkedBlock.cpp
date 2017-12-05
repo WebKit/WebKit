@@ -86,9 +86,9 @@ MarkedBlock::Handle::~Handle()
 }
 
 MarkedBlock::MarkedBlock(VM& vm, Handle& handle)
-    : m_markingVersion(MarkedSpace::nullVersion)
-    , m_handle(handle)
+    : m_handle(handle)
     , m_vm(&vm)
+    , m_markingVersion(MarkedSpace::nullVersion)
 {
     if (false)
         dataLog(RawPointer(this), ": Allocated.\n");
@@ -200,7 +200,7 @@ void MarkedBlock::Handle::zap(const FreeList& freeList)
 void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion)
 {
     ASSERT(vm()->heap.objectSpace().isMarking());
-    LockHolder locker(m_lock);
+    auto locker = holdLock(m_lock);
     
     if (!areMarksStale(markingVersion))
         return;
@@ -223,15 +223,19 @@ void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion)
             dataLog(RawPointer(this), ": Doing things.\n");
         HeapVersion newlyAllocatedVersion = space()->newlyAllocatedVersion();
         if (handle().m_newlyAllocatedVersion == newlyAllocatedVersion) {
-            // Merge the contents of marked into newlyAllocated. If we get the full set of bits
-            // then invalidate newlyAllocated and set allocated.
-            handle().m_newlyAllocated.mergeAndClear(m_marks);
+            // When do we get here? The block could not have been filled up. The newlyAllocated bits would
+            // have had to be created since the end of the last collection. The only things that create
+            // them are aboutToMarkSlow, lastChanceToFinalize, and stopAllocating. If it had been
+            // aboutToMarkSlow, then we shouldn't be here since the marks wouldn't be stale anymore. It
+            // cannot be lastChanceToFinalize. So it must be stopAllocating. That means that we just
+            // computed the newlyAllocated bits just before the start of an increment. When we are in that
+            // mode, it seems as if newlyAllocated should subsume marks.
+            ASSERT(handle().m_newlyAllocated.subsumes(m_marks));
+            m_marks.clearAll();
         } else {
-            // Replace the contents of newlyAllocated with marked. If we get the full set of
-            // bits then invalidate newlyAllocated and set allocated.
             handle().m_newlyAllocated.setAndClear(m_marks);
+            handle().m_newlyAllocatedVersion = newlyAllocatedVersion;
         }
-        handle().m_newlyAllocatedVersion = newlyAllocatedVersion;
     }
     clearHasAnyMarked();
     WTF::storeStoreFence();
@@ -321,11 +325,6 @@ void MarkedBlock::Handle::removeFromAllocator()
     m_allocator->removeBlock(this);
 }
 
-void MarkedBlock::updateNeedsDestruction()
-{
-    m_needsDestruction = handle().needsDestruction();
-}
-
 void MarkedBlock::Handle::didAddToAllocator(MarkedAllocator* allocator, size_t index)
 {
     ASSERT(m_index == std::numeric_limits<size_t>::max());
@@ -345,8 +344,6 @@ void MarkedBlock::Handle::didAddToAllocator(MarkedAllocator* allocator, size_t i
     if (m_attributes.cellKind != HeapCell::JSCell)
         RELEASE_ASSERT(m_attributes.destruction == DoesNotNeedDestruction);
     
-    block().updateNeedsDestruction();
-    
     double markCountBias = -(Options::minMarkedBlockUtilization() * cellsPerBlock());
     
     // The mark count bias should be comfortably within this range.
@@ -364,16 +361,6 @@ void MarkedBlock::Handle::didRemoveFromAllocator()
     
     m_index = std::numeric_limits<size_t>::max();
     m_allocator = nullptr;
-}
-
-bool MarkedBlock::Handle::isLive(const HeapCell* cell)
-{
-    return isLive(space()->markingVersion(), space()->isMarking(), cell);
-}
-
-bool MarkedBlock::Handle::isLiveCell(const void* p)
-{
-    return isLiveCell(space()->markingVersion(), space()->isMarking(), p);
 }
 
 #if !ASSERT_DISABLED

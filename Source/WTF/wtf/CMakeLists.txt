@@ -18,7 +18,9 @@ set(WTF_HEADERS
     ClockType.h
     CompilationThread.h
     Compiler.h
+    ConcurrentPtrHashSet.h
     Condition.h
+    CountingLock.h
     CrossThreadCopier.h
     CrossThreadTask.h
     CrossThreadTaskHandler.h
@@ -133,6 +135,8 @@ set(WTF_HEADERS
     SegmentedVector.h
     SmallPtrSet.h
     StackBounds.h
+    StackShot.h
+    StackShotProfiler.h
     StackStats.h
     StackTrace.h
     StdLibExtras.h
@@ -220,6 +224,8 @@ set(WTF_SOURCES
     CPUTime.cpp
     ClockType.cpp
     CompilationThread.cpp
+    ConcurrentPtrHashSet.cpp
+    CountingLock.cpp
     CrossThreadCopier.cpp
     CrossThreadTaskHandler.cpp
     CryptographicUtilities.cpp

@@ -135,7 +135,7 @@ void MachineThreads::tryCopyOtherThreadStack(Thread& thread, void* buffer, size_
     *size += stack.second;
 }
 
-bool MachineThreads::tryCopyOtherThreadStacks(const AbstractLocker& locker, void* buffer, size_t capacity, size_t* size)
+bool MachineThreads::tryCopyOtherThreadStacks(const AbstractLocker& locker, void* buffer, size_t capacity, size_t* size, Thread& currentThreadForGC)
 {
     // Prevent two VMs from suspending each other's threads at the same time,
     // which can cause deadlock: <rdar://problem/20300842>.
@@ -145,13 +145,14 @@ bool MachineThreads::tryCopyOtherThreadStacks(const AbstractLocker& locker, void
     *size = 0;
 
     Thread& currentThread = Thread::current();
-    const auto& threads = m_threadGroup->threads(locker);
+    const ListHashSet<Ref<Thread>>& threads = m_threadGroup->threads(locker);
     BitVector isSuspended(threads.size());
 
     {
         unsigned index = 0;
-        for (auto& thread : threads) {
-            if (thread.ptr() != &currentThread) {
+        for (const Ref<Thread>& thread : threads) {
+            if (thread.ptr() != &currentThread
+                && thread.ptr() != &currentThreadForGC) {
                 auto result = thread->suspend();
                 if (result)
                     isSuspended.set(index);
@@ -199,7 +200,7 @@ static void growBuffer(size_t size, void** buffer, size_t* capacity)
     *buffer = fastMalloc(*capacity);
 }
 
-void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, CurrentThreadState* currentThreadState)
+void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, CurrentThreadState* currentThreadState, Thread* currentThread)
 {
     if (currentThreadState)
         gatherFromCurrentThread(conservativeRoots, jitStubRoutines, codeBlocks, *currentThreadState);
@@ -208,7 +209,7 @@ void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoot
     size_t capacity = 0;
     void* buffer = nullptr;
     auto locker = holdLock(m_threadGroup->getLock());
-    while (!tryCopyOtherThreadStacks(locker, buffer, capacity, &size))
+    while (!tryCopyOtherThreadStacks(locker, buffer, capacity, &size, *currentThread))
         growBuffer(size, &buffer, &capacity);
 
     if (!buffer)

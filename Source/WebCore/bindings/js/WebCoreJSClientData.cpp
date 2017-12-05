@@ -26,14 +26,12 @@
 #include "config.h"
 #include "WebCoreJSClientData.h"
 
+#include "DOMGCOutputConstraint.h"
 #include "JSDOMBinding.h"
 #include <heap/FastMallocAlignedMemoryAllocator.h>
 #include <heap/HeapInlines.h>
 #include <heap/MarkingConstraint.h>
-#include <heap/MarkedAllocatorInlines.h>
-#include <heap/MarkedBlockInlines.h>
 #include <heap/SubspaceInlines.h>
-#include <heap/VisitingTimeout.h>
 #include <runtime/JSDestructibleObjectHeapCellType.h>
 #include <runtime/JSSegmentedVariableObjectHeapCellType.h>
 #include <runtime/VM.h>
@@ -74,43 +72,7 @@ void JSVMClientData::initNormalWorld(VM* vm)
     JSVMClientData* clientData = new JSVMClientData(*vm);
     vm->clientData = clientData; // ~VM deletes this pointer.
     
-    auto constraint = std::make_unique<MarkingConstraint>(
-        "Wcoc", "WebCore Output Constraints",
-        [vm, clientData, lastExecutionVersion = vm->heap.mutatorExecutionVersion()]
-        (SlotVisitor& slotVisitor, const VisitingTimeout&) mutable {
-            Heap& heap = vm->heap;
-            
-            if (heap.mutatorExecutionVersion() == lastExecutionVersion)
-                return;
-            
-            lastExecutionVersion = heap.mutatorExecutionVersion();
-
-            // We have to manage the visit count here ourselves. We need to know that if this adds
-            // opaque roots then we cannot declare termination yet. The way we signal this to the
-            // constraint solver is by adding to the visit count.
-            
-            size_t numOpaqueRootsBefore = heap.numOpaqueRoots();
-
-            // FIXME: Make this parallel!
-            unsigned numRevisited = 0;
-            clientData->forEachOutputConstraintSpace(
-                [&] (Subspace& subspace) {
-                    subspace.forEachMarkedCell(
-                        [&] (HeapCell* heapCell, HeapCell::Kind) {
-                            JSCell* cell = static_cast<JSCell*>(heapCell);
-                            cell->methodTable(*vm)->visitOutputConstraints(cell, slotVisitor);
-                            numRevisited++;
-                        });
-                });
-            if (Options::logGC())
-                dataLog("(", numRevisited, ")");
-            
-            slotVisitor.mergeIfNecessary();
-            
-            slotVisitor.addToVisitCount(heap.numOpaqueRoots() - numOpaqueRootsBefore);
-        },
-        ConstraintVolatility::SeldomGreyed);
-    vm->heap.addMarkingConstraint(WTFMove(constraint));
+    vm->heap.addMarkingConstraint(std::make_unique<DOMGCOutputConstraint>(*vm, *clientData));
         
     clientData->m_normalWorld = DOMWrapperWorld::create(*vm, true);
     vm->m_typedArrayController = adoptRef(new WebCoreTypedArrayController());

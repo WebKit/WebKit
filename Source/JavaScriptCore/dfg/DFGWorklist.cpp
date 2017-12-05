@@ -104,13 +104,13 @@ protected:
             dataLog(m_worklist, ": Compiling ", m_plan->key(), " asynchronously\n");
         
         // There's no way for the GC to be safepointing since we own rightToRun.
-        if (m_plan->vm->heap.collectorBelievesThatTheWorldIsStopped()) {
+        if (m_plan->vm->heap.worldIsStopped()) {
             dataLog("Heap is stoped but here we are! (1)\n");
             RELEASE_ASSERT_NOT_REACHED();
         }
         m_plan->compileInThread(&m_data);
         if (m_plan->stage != Plan::Cancelled) {
-            if (m_plan->vm->heap.collectorBelievesThatTheWorldIsStopped()) {
+            if (m_plan->vm->heap.worldIsStopped()) {
                 dataLog("Heap is stopped but here we are! (2)\n");
                 RELEASE_ASSERT_NOT_REACHED();
             }
@@ -130,7 +130,7 @@ protected:
             
             m_worklist.m_readyPlans.append(m_plan);
             
-            RELEASE_ASSERT(!m_plan->vm->heap.collectorBelievesThatTheWorldIsStopped());
+            RELEASE_ASSERT(!m_plan->vm->heap.worldIsStopped());
             m_worklist.m_planCompiled.notifyAll();
         }
         

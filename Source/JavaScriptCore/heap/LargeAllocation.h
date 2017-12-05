@@ -76,7 +76,7 @@ public:
     ALWAYS_INLINE bool isMarked() { return m_isMarked.load(std::memory_order_relaxed); }
     ALWAYS_INLINE bool isMarked(HeapCell*) { return isMarked(); }
     ALWAYS_INLINE bool isMarked(HeapCell*, Dependency) { return isMarked(); }
-    ALWAYS_INLINE bool isMarkedConcurrently(HeapVersion, HeapCell*) { return isMarked(); }
+    ALWAYS_INLINE bool isMarked(HeapVersion, HeapCell*) { return isMarked(); }
     bool isLive() { return isMarked() || isNewlyAllocated(); }
     
     bool hasValidCell() const { return m_hasValidCell; }
@@ -110,7 +110,7 @@ public:
     
     const AllocatorAttributes& attributes() const { return m_attributes; }
     
-    Dependency aboutToMark(HeapVersion) { return nullDependency(); }
+    Dependency aboutToMark(HeapVersion) { return Dependency(); }
     
     ALWAYS_INLINE bool testAndSetMarked()
     {

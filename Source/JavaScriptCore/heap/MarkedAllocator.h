@@ -31,6 +31,7 @@
 #include "MarkedBlock.h"
 #include <wtf/DataLog.h>
 #include <wtf/FastBitVector.h>
+#include <wtf/SharedTask.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -102,6 +103,8 @@ public:
 
     template<typename Functor> void forEachBlock(const Functor&);
     template<typename Functor> void forEachNotEmptyBlock(const Functor&);
+    
+    RefPtr<SharedTask<MarkedBlock::Handle*()>> parallelNotEmptyBlockSource();
     
     void addBlock(MarkedBlock::Handle*);
     void removeBlock(MarkedBlock::Handle*);

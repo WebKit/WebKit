@@ -500,13 +500,16 @@ heap/JITStubRoutineSet.cpp
 heap/LargeAllocation.cpp
 heap/MachineStackMarker.cpp
 heap/MarkStack.cpp
+heap/MarkStackMergingConstraint.cpp
 heap/MarkedAllocator.cpp
 heap/MarkedBlock.cpp
 heap/MarkedSpace.cpp
 heap/MarkingConstraint.cpp
 heap/MarkingConstraintSet.cpp
+heap/MarkingConstraintSolver.cpp
 heap/MutatorScheduler.cpp
 heap/MutatorState.cpp
+heap/SimpleMarkingConstraint.cpp
 heap/SlotVisitor.cpp
 heap/SpaceTimeMutatorScheduler.cpp
 heap/StochasticSpaceTimeMutatorScheduler.cpp

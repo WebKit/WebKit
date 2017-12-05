@@ -27,30 +27,18 @@
 #include "MarkingConstraint.h"
 
 #include "JSCInlines.h"
+#include "VisitCounter.h"
 
 namespace JSC {
 
-MarkingConstraint::MarkingConstraint(
-    CString abbreviatedName, CString name,
-    ::Function<void(SlotVisitor&, const VisitingTimeout&)> executeFunction,
-    ConstraintVolatility volatility)
-    : m_abbreviatedName(abbreviatedName)
-    , m_name(WTFMove(name))
-    , m_executeFunction(WTFMove(executeFunction))
-    , m_volatility(volatility)
-{
-}
+static constexpr bool verboseMarkingConstraint = false;
 
-MarkingConstraint::MarkingConstraint(
-    CString abbreviatedName, CString name,
-    ::Function<void(SlotVisitor&, const VisitingTimeout&)> executeFunction,
-    ::Function<double(SlotVisitor&)> quickWorkEstimateFunction,
-    ConstraintVolatility volatility)
+MarkingConstraint::MarkingConstraint(CString abbreviatedName, CString name, ConstraintVolatility volatility, ConstraintConcurrency concurrency, ConstraintParallelism parallelism)
     : m_abbreviatedName(abbreviatedName)
     , m_name(WTFMove(name))
-    , m_executeFunction(WTFMove(executeFunction))
-    , m_quickWorkEstimateFunction(WTFMove(quickWorkEstimateFunction))
     , m_volatility(volatility)
+    , m_concurrency(concurrency)
+    , m_parallelism(parallelism)
 {
 }
 
@@ -63,14 +51,74 @@ void MarkingConstraint::resetStats()
     m_lastVisitCount = 0;
 }
 
-void MarkingConstraint::execute(SlotVisitor& visitor, bool& didVisitSomething, MonotonicTime timeout)
+ConstraintParallelism MarkingConstraint::execute(SlotVisitor& visitor)
+{
+    VisitCounter visitCounter(visitor);
+    ConstraintParallelism result = executeImpl(visitor);
+    m_lastVisitCount += visitCounter.visitCount();
+    if (verboseMarkingConstraint && visitCounter.visitCount())
+        dataLog("(", abbreviatedName(), " visited ", visitCounter.visitCount(), " in execute)");
+    if (result == ConstraintParallelism::Parallel) {
+        // It's illegal to produce parallel work if you haven't advertised it upfront because the solver
+        // has optimizations for constraints that promise to never produce parallel work.
+        RELEASE_ASSERT(m_parallelism == ConstraintParallelism::Parallel);
+    }
+    return result;
+}
+
+double MarkingConstraint::quickWorkEstimate(SlotVisitor&)
+{
+    return 0;
+}
+
+double MarkingConstraint::workEstimate(SlotVisitor& visitor)
+{
+    return lastVisitCount() + quickWorkEstimate(visitor);
+}
+
+void MarkingConstraint::prepareToExecute(const AbstractLocker& constraintSolvingLocker, SlotVisitor& visitor)
 {
     if (Options::logGC())
         dataLog(abbreviatedName());
-    VisitingTimeout visitingTimeout(visitor, didVisitSomething, timeout);
-    m_executeFunction(visitor, visitingTimeout);
-    m_lastVisitCount = visitingTimeout.visitCount(visitor);
-    didVisitSomething = visitingTimeout.didVisitSomething(visitor);
+    VisitCounter visitCounter(visitor);
+    prepareToExecuteImpl(constraintSolvingLocker, visitor);
+    m_lastVisitCount = visitCounter.visitCount();
+    if (verboseMarkingConstraint && visitCounter.visitCount())
+        dataLog("(", abbreviatedName(), " visited ", visitCounter.visitCount(), " in prepareToExecute)");
+}
+
+void MarkingConstraint::doParallelWork(SlotVisitor& visitor)
+{
+    VisitCounter visitCounter(visitor);
+    doParallelWorkImpl(visitor);
+    if (verboseMarkingConstraint && visitCounter.visitCount())
+        dataLog("(", abbreviatedName(), " visited ", visitCounter.visitCount(), " in doParallelWork)");
+    {
+        auto locker = holdLock(m_lock);
+        m_lastVisitCount += visitCounter.visitCount();
+    }
+}
+
+void MarkingConstraint::finishParallelWork(SlotVisitor& visitor)
+{
+    VisitCounter visitCounter(visitor);
+    finishParallelWorkImpl(visitor);
+    m_lastVisitCount += visitCounter.visitCount();
+    if (verboseMarkingConstraint && visitCounter.visitCount())
+        dataLog("(", abbreviatedName(), " visited ", visitCounter.visitCount(), " in finishParallelWork)");
+}
+
+void MarkingConstraint::prepareToExecuteImpl(const AbstractLocker&, SlotVisitor&)
+{
+}
+
+void MarkingConstraint::doParallelWorkImpl(SlotVisitor&)
+{
+    UNREACHABLE_FOR_PLATFORM();
+}
+
+void MarkingConstraint::finishParallelWorkImpl(SlotVisitor&)
+{
 }
 
 } // namespace JSC

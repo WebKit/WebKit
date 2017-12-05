@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/DataLog.h>
 #include <wtf/LockAlgorithm.h>
 #include <wtf/ParkingLot.h>
 #include <wtf/Threading.h>
@@ -35,8 +36,8 @@
 
 namespace WTF {
 
-template<typename LockType, LockType isHeldBit, LockType hasParkedBit>
-void LockAlgorithm<LockType, isHeldBit, hasParkedBit>::lockSlow(Atomic<LockType>& lock)
+template<typename LockType, LockType isHeldBit, LockType hasParkedBit, typename Hooks>
+void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::lockSlow(Atomic<LockType>& lock)
 {
     // This magic number turns out to be optimal based on past JikesRVM experiments.
     static const unsigned spinLimit = 40;
@@ -44,15 +45,17 @@ void LockAlgorithm<LockType, isHeldBit, hasParkedBit>::lockSlow(Atomic<LockType>
     unsigned spinCount = 0;
     
     for (;;) {
-        uint8_t currentByteValue = lock.load();
+        LockType currentValue = lock.load();
         
         // We allow ourselves to barge in.
-        if (!(currentByteValue & isHeldBit)
-            && lock.compareExchangeWeak(currentByteValue, currentByteValue | isHeldBit))
-            return;
+        if (!(currentValue & isHeldBit)) {
+            if (lock.compareExchangeWeak(currentValue, Hooks::lockHook(currentValue | isHeldBit)))
+                return;
+            continue;
+        }
 
         // If there is nobody parked and we haven't spun too much, we can just try to spin around.
-        if (!(currentByteValue & hasParkedBit) && spinCount < spinLimit) {
+        if (!(currentValue & hasParkedBit) && spinCount < spinLimit) {
             spinCount++;
             Thread::yield();
             continue;
@@ -60,13 +63,25 @@ void LockAlgorithm<LockType, isHeldBit, hasParkedBit>::lockSlow(Atomic<LockType>
 
         // Need to park. We do this by setting the parked bit first, and then parking. We spin around
         // if the parked bit wasn't set and we failed at setting it.
-        if (!(currentByteValue & hasParkedBit)
-            && !lock.compareExchangeWeak(currentByteValue, currentByteValue | hasParkedBit))
-            continue;
+        if (!(currentValue & hasParkedBit)) {
+            LockType newValue = Hooks::parkHook(currentValue | hasParkedBit);
+            if (!lock.compareExchangeWeak(currentValue, newValue))
+                continue;
+            currentValue = newValue;
+        }
+        
+        if (!(currentValue & isHeldBit)) {
+            dataLog("Lock not held!\n");
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        if (!(currentValue & hasParkedBit)) {
+            dataLog("Lock not parked!\n");
+            RELEASE_ASSERT_NOT_REACHED();
+        }
 
         // We now expect the value to be isHeld|hasParked. So long as that's the case, we can park.
         ParkingLot::ParkResult parkResult =
-            ParkingLot::compareAndPark(&lock, currentByteValue | isHeldBit | hasParkedBit);
+            ParkingLot::compareAndPark(&lock, currentValue);
         if (parkResult.wasUnparked) {
             switch (static_cast<Token>(parkResult.token)) {
             case DirectHandoff:
@@ -87,8 +102,8 @@ void LockAlgorithm<LockType, isHeldBit, hasParkedBit>::lockSlow(Atomic<LockType>
     }
 }
 
-template<typename LockType, LockType isHeldBit, LockType hasParkedBit>
-void LockAlgorithm<LockType, isHeldBit, hasParkedBit>::unlockSlow(Atomic<LockType>& lock, Fairness fairness)
+template<typename LockType, LockType isHeldBit, LockType hasParkedBit, typename Hooks>
+void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::unlockSlow(Atomic<LockType>& lock, Fairness fairness)
 {
     // We could get here because the weak CAS in unlock() failed spuriously, or because there is
     // someone parked. So, we need a CAS loop: even if right now the lock is just held, it could
@@ -100,7 +115,7 @@ void LockAlgorithm<LockType, isHeldBit, hasParkedBit>::unlockSlow(Atomic<LockTyp
             || (oldByteValue & mask) == (isHeldBit | hasParkedBit));
         
         if ((oldByteValue & mask) == isHeldBit) {
-            if (lock.compareExchangeWeak(oldByteValue, oldByteValue & ~isHeldBit))
+            if (lock.compareExchangeWeak(oldByteValue, Hooks::unlockHook(oldByteValue & ~isHeldBit)))
                 return;
             continue;
         }
@@ -120,12 +135,21 @@ void LockAlgorithm<LockType, isHeldBit, hasParkedBit>::unlockSlow(Atomic<LockTyp
                 if (result.didUnparkThread && (fairness == Fair || result.timeToBeFair)) {
                     // We don't unlock anything. Instead, we hand the lock to the thread that was
                     // waiting.
+                    lock.transaction(
+                        [&] (LockType& value) -> bool {
+                            LockType newValue = Hooks::handoffHook(value);
+                            if (newValue == value)
+                                return false;
+                            value = newValue;
+                            return true;
+                        });
                     return DirectHandoff;
                 }
                 
                 lock.transaction(
                     [&] (LockType& value) -> bool {
                         value &= ~mask;
+                        value = Hooks::unlockHook(value);
                         if (result.mayHaveMoreThreads)
                             value |= hasParkedBit;
                         return true;

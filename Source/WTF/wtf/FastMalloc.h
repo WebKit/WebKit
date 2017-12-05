@@ -234,8 +234,7 @@ using WTF::fastAlignedFree;
 #define WTF_PRIVATE_INLINE inline
 #endif
 
-#define WTF_MAKE_FAST_ALLOCATED \
-public: \
+#define WTF_MAKE_FAST_ALLOCATED_IMPL \
     void* operator new(size_t, void* p) { return p; } \
     void* operator new[](size_t, void* p) { return p; } \
     \
@@ -263,7 +262,15 @@ public: \
         ASSERT(location); \
         return location; \
     } \
+
+#define WTF_MAKE_FAST_ALLOCATED \
+public: \
+    WTF_MAKE_FAST_ALLOCATED_IMPL \
 private: \
+typedef int __thisIsHereToForceASemicolonAfterThisMacro
+
+#define WTF_MAKE_STRUCT_FAST_ALLOCATED \
+    WTF_MAKE_FAST_ALLOCATED_IMPL \
 typedef int __thisIsHereToForceASemicolonAfterThisMacro
 
 #endif /* WTF_FastMalloc_h */

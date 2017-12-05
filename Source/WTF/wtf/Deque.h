@@ -100,6 +100,11 @@ public:
     template<typename U, typename Func>
     void appendAndBubble(U&&, const Func&);
     
+    // Remove and return the first element for which the callback returns true. Returns a null version of
+    // T if it the callback always returns false.
+    template<typename Func>
+    T takeFirst(const Func&);
+
     // Remove and return the last element for which the callback returns true. Returns a null version of
     // T if it the callback always returns false.
     template<typename Func>
@@ -567,6 +572,25 @@ inline void Deque<T, inlineCapacity>::appendAndBubble(U&& value, const Func& fun
         std::swap(*prev, *iter);
         iter = prev;
     }
+}
+
+template<typename T, size_t inlineCapacity>
+template<typename Func>
+inline T Deque<T, inlineCapacity>::takeFirst(const Func& func)
+{
+    unsigned count = 0;
+    unsigned size = this->size();
+    while (count < size) {
+        T candidate = takeFirst();
+        if (func(candidate)) {
+            while (count--)
+                prepend(takeLast());
+            return candidate;
+        }
+        count++;
+        append(WTFMove(candidate));
+    }
+    return T();
 }
 
 template<typename T, size_t inlineCapacity>

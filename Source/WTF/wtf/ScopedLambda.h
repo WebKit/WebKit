@@ -174,6 +174,13 @@ private:
 
 // This is for when you already refer to a functor by reference, and you know its lifetime is
 // good. This just creates a ScopedLambda that points to your functor.
+//
+// Note that this is always wrong:
+//
+// auto ref = scopedLambdaRef([...] (...) {...});
+//
+// Because the scopedLambdaRef will refer to the lambda by reference, and the lambda will die after the
+// semicolon. Use scopedLambda() in that case.
 template<typename FunctionType, typename Functor>
 ScopedLambdaRefFunctor<FunctionType, Functor> scopedLambdaRef(const Functor& functor)
 {

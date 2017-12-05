@@ -44,7 +44,7 @@ class MachineThreads {
 public:
     MachineThreads();
 
-    void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, CurrentThreadState*);
+    void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, CurrentThreadState*, Thread*);
 
     // Only needs to be called by clients that can use the same heap from multiple threads.
     void addCurrentThread() { m_threadGroup->addCurrentThread(); }
@@ -56,7 +56,7 @@ private:
     void gatherFromCurrentThread(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, CurrentThreadState&);
 
     void tryCopyOtherThreadStack(Thread&, void*, size_t capacity, size_t*);
-    bool tryCopyOtherThreadStacks(const AbstractLocker&, void*, size_t capacity, size_t*);
+    bool tryCopyOtherThreadStacks(const AbstractLocker&, void*, size_t capacity, size_t*, Thread&);
 
     std::shared_ptr<ThreadGroup> m_threadGroup;
 };

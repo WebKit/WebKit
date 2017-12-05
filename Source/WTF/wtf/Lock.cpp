@@ -27,11 +27,16 @@
 #include "Lock.h"
 
 #include <wtf/LockAlgorithmInlines.h>
+#include <wtf/StackShotProfiler.h>
 
 namespace WTF {
 
+static constexpr bool profileLockContention = false;
+
 void LockBase::lockSlow()
 {
+    if (profileLockContention)
+        STACK_SHOT_PROFILE(4, 2, 5);
     DefaultLockAlgorithm::lockSlow(m_byte);
 }
 

@@ -209,12 +209,11 @@ inline const T GCSegmentedArray<T>::removeLast()
 template <typename T>
 inline bool GCSegmentedArray<T>::isEmpty()
 {
+    // This happens to be safe to call concurrently. It's important to preserve that capability.
     if (m_top)
         return false;
-    if (m_segments.head()->next()) {
-        ASSERT(m_segments.head()->next()->m_top == s_segmentCapacity);
+    if (m_segments.head()->next())
         return false;
-    }
     return true;
 }
 

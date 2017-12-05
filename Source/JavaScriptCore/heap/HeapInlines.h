@@ -63,30 +63,20 @@ inline bool Heap::hasHeapAccess() const
     return m_worldState.load() & hasAccessBit;
 }
 
-inline bool Heap::collectorBelievesThatTheWorldIsStopped() const
+inline bool Heap::worldIsStopped() const
 {
-    return m_collectorBelievesThatTheWorldIsStopped;
+    return m_worldIsStopped;
 }
 
+// FIXME: This should be an instance method, so that it can get the markingVersion() quickly.
+// https://bugs.webkit.org/show_bug.cgi?id=179988
 ALWAYS_INLINE bool Heap::isMarked(const void* rawCell)
 {
-    ASSERT(mayBeGCThread() != GCThreadType::Helper);
     HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
     if (cell->isLargeAllocation())
         return cell->largeAllocation().isMarked();
     MarkedBlock& block = cell->markedBlock();
-    return block.isMarked(
-        block.vm()->heap.objectSpace().markingVersion(), cell);
-}
-
-ALWAYS_INLINE bool Heap::isMarkedConcurrently(const void* rawCell)
-{
-    HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
-    if (cell->isLargeAllocation())
-        return cell->largeAllocation().isMarked();
-    MarkedBlock& block = cell->markedBlock();
-    return block.isMarkedConcurrently(
-        block.vm()->heap.objectSpace().markingVersion(), cell);
+    return block.isMarked(block.vm()->heap.objectSpace().markingVersion(), cell);
 }
 
 ALWAYS_INLINE bool Heap::testAndSetMarked(HeapVersion markingVersion, const void* rawCell)
@@ -179,19 +169,19 @@ inline void Heap::releaseSoon(RetainPtr<T>&& object)
 
 inline void Heap::incrementDeferralDepth()
 {
-    ASSERT(!mayBeGCThread() || m_collectorBelievesThatTheWorldIsStopped);
+    ASSERT(!mayBeGCThread() || m_worldIsStopped);
     m_deferralDepth++;
 }
 
 inline void Heap::decrementDeferralDepth()
 {
-    ASSERT(!mayBeGCThread() || m_collectorBelievesThatTheWorldIsStopped);
+    ASSERT(!mayBeGCThread() || m_worldIsStopped);
     m_deferralDepth--;
 }
 
 inline void Heap::decrementDeferralDepthAndGCIfNeeded()
 {
-    ASSERT(!mayBeGCThread() || m_collectorBelievesThatTheWorldIsStopped);
+    ASSERT(!mayBeGCThread() || m_worldIsStopped);
     m_deferralDepth--;
     
     if (UNLIKELY(m_didDeferGCWork)) {
@@ -267,6 +257,16 @@ inline void Heap::stopIfNecessary()
 {
     if (mayNeedToStop())
         stopIfNecessarySlow();
+}
+
+template<typename Func>
+void Heap::forEachSlotVisitor(const Func& func)
+{
+    auto locker = holdLock(m_parallelSlotVisitorLock);
+    func(*m_collectorSlotVisitor);
+    func(*m_mutatorSlotVisitor);
+    for (auto& slotVisitor : m_parallelSlotVisitors)
+        func(*slotVisitor);
 }
 
 } // namespace JSC

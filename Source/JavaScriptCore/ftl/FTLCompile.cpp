@@ -71,7 +71,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
     if (safepointResult.didGetCancelled())
         return;
-    RELEASE_ASSERT(!state.graph.m_vm.heap.collectorBelievesThatTheWorldIsStopped());
+    RELEASE_ASSERT(!state.graph.m_vm.heap.worldIsStopped());
     
     if (state.allocationFailed)
         return;

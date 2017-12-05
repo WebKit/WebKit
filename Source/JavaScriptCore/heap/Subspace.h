@@ -69,17 +69,24 @@ public:
     template<typename Func>
     void forEachAllocator(const Func&);
     
+    RefPtr<SharedTask<MarkedAllocator*()>> parallelAllocatorSource();
+    
     template<typename Func>
     void forEachMarkedBlock(const Func&);
     
     template<typename Func>
     void forEachNotEmptyMarkedBlock(const Func&);
     
+    JS_EXPORT_PRIVATE RefPtr<SharedTask<MarkedBlock::Handle*()>> parallelNotEmptyMarkedBlockSource();
+    
     template<typename Func>
     void forEachLargeAllocation(const Func&);
     
     template<typename Func>
     void forEachMarkedCell(const Func&);
+    
+    template<typename Func>
+    RefPtr<SharedTask<void(SlotVisitor&)>> forEachMarkedCellInParallel(const Func&);
 
     template<typename Func>
     void forEachLiveCell(const Func&);

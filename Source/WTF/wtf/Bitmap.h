@@ -40,13 +40,13 @@ public:
         return bitmapSize;
     }
 
-    bool get(size_t, Dependency = nullDependency()) const;
+    bool get(size_t, Dependency = Dependency()) const;
     void set(size_t);
     void set(size_t, bool);
     bool testAndSet(size_t);
     bool testAndClear(size_t);
-    bool concurrentTestAndSet(size_t, Dependency = nullDependency());
-    bool concurrentTestAndClear(size_t, Dependency = nullDependency());
+    bool concurrentTestAndSet(size_t, Dependency = Dependency());
+    bool concurrentTestAndClear(size_t, Dependency = Dependency());
     size_t nextPossiblyUnset(size_t) const;
     void clear(size_t);
     void clearAll();
@@ -138,7 +138,7 @@ inline Bitmap<bitmapSize, WordType>::Bitmap()
 template<size_t bitmapSize, typename WordType>
 inline bool Bitmap<bitmapSize, WordType>::get(size_t n, Dependency dependency) const
 {
-    return !!(bits[n / wordSize + dependency] & (one << (n % wordSize)));
+    return !!(dependency.consume(this)->bits[n / wordSize] & (one << (n % wordSize)));
 }
 
 template<size_t bitmapSize, typename WordType>
@@ -181,7 +181,7 @@ ALWAYS_INLINE bool Bitmap<bitmapSize, WordType>::concurrentTestAndSet(size_t n, 
 {
     WordType mask = one << (n % wordSize);
     size_t index = n / wordSize;
-    WordType* data = bits.data() + index + dependency;
+    WordType* data = dependency.consume(bits.data()) + index;
     return !bitwise_cast<Atomic<WordType>*>(data)->transactionRelaxed(
         [&] (WordType& value) -> bool {
             if (value & mask)
@@ -197,7 +197,7 @@ ALWAYS_INLINE bool Bitmap<bitmapSize, WordType>::concurrentTestAndClear(size_t n
 {
     WordType mask = one << (n % wordSize);
     size_t index = n / wordSize;
-    WordType* data = bits.data() + index + dependency;
+    WordType* data = dependency.consume(bits.data()) + index;
     return !bitwise_cast<Atomic<WordType>*>(data)->transactionRelaxed(
         [&] (WordType& value) -> bool {
             if (!(value & mask))

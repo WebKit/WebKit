@@ -59,9 +59,11 @@ namespace WTF {
 // state in member fields. This can be more natural if you want fine-grained control over what
 // state is shared between instances of the task.
 template<typename FunctionType> class SharedTask;
-template<typename ResultType, typename... ArgumentTypes>
-class SharedTask<ResultType (ArgumentTypes...)> : public ThreadSafeRefCounted<SharedTask<ResultType (ArgumentTypes...)>> {
+template<typename PassedResultType, typename... ArgumentTypes>
+class SharedTask<PassedResultType (ArgumentTypes...)> : public ThreadSafeRefCounted<SharedTask<PassedResultType (ArgumentTypes...)>> {
 public:
+    typedef PassedResultType ResultType;
+    
     SharedTask() { }
     virtual ~SharedTask() { }
 

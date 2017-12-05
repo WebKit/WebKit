@@ -1,3 +1,16 @@
+2017-12-01  Filip Pizlo  <fpizlo@apple.com>
+
+        GC constraint solving should be parallel
+        https://bugs.webkit.org/show_bug.cgi?id=179934
+
+        Reviewed by JF Bastien.
+
+        * Scripts/run-jsc-benchmarks: Add splay-latency test, since this change needed to be carefully validated with that benchmark.
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/ConcurrentPtrHashSet.cpp: Added. This has unit tests of the new concurrent data structure. The tests focus on correctness under serial execution, which appears to be enough for now (it's so easy to catch a concurrency bug by just running the GC).
+        (TestWebKitAPI::TEST):
+
 2017-12-04  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: Implement relation type properties

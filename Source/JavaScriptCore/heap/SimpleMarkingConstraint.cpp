@@ -23,46 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "SlotVisitor.h"
-#include <wtf/TimeWithDynamicClockType.h>
+#include "config.h"
+#include "SimpleMarkingConstraint.h"
 
 namespace JSC {
 
-class VisitingTimeout {
-public:
-    VisitingTimeout()
-    {
-    }
-    
-    VisitingTimeout(SlotVisitor& visitor, bool didVisitSomething, MonotonicTime timeout)
-        : m_didVisitSomething(didVisitSomething)
-        , m_visitCountBefore(visitor.visitCount())
-        , m_timeout(timeout)
-    {
-    }
-    
-    size_t visitCount(SlotVisitor& visitor) const
-    {
-        return visitor.visitCount() - m_visitCountBefore;
-    }
+SimpleMarkingConstraint::SimpleMarkingConstraint(
+    CString abbreviatedName, CString name,
+    ::Function<void(SlotVisitor&)> executeFunction,
+    ConstraintVolatility volatility, ConstraintConcurrency concurrency)
+    : MarkingConstraint(WTFMove(abbreviatedName), WTFMove(name), volatility, concurrency, ConstraintParallelism::Sequential)
+    , m_executeFunction(WTFMove(executeFunction))
+{
+}
 
-    bool didVisitSomething(SlotVisitor& visitor) const
-    {
-        return m_didVisitSomething || visitCount(visitor);
-    }
-    
-    bool shouldTimeOut(SlotVisitor& visitor) const
-    {
-        return didVisitSomething(visitor) && hasElapsed(m_timeout);
-    }
-    
-private:
-    bool m_didVisitSomething { false };
-    size_t m_visitCountBefore { 0 };
-    MonotonicTime m_timeout;
-};
+SimpleMarkingConstraint::~SimpleMarkingConstraint()
+{
+}
+
+ConstraintParallelism SimpleMarkingConstraint::executeImpl(SlotVisitor& visitor)
+{
+    m_executeFunction(visitor);
+    return ConstraintParallelism::Sequential;
+}
 
 } // namespace JSC
 

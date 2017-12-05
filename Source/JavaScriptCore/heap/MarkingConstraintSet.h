@@ -31,9 +31,12 @@
 
 namespace JSC {
 
+class Heap;
+class MarkingConstraintSolver;
+
 class MarkingConstraintSet {
 public:
-    MarkingConstraintSet();
+    MarkingConstraintSet(Heap&);
     ~MarkingConstraintSet();
     
     void didStartMarking();
@@ -41,15 +44,9 @@ public:
     void add(
         CString abbreviatedName,
         CString name,
-        ::Function<void(SlotVisitor&, const VisitingTimeout&)>,
-        ConstraintVolatility);
-    
-    void add(
-        CString abbreviatedName,
-        CString name,
-        ::Function<void(SlotVisitor&, const VisitingTimeout&)>,
-        ::Function<double(SlotVisitor&)>,
-        ConstraintVolatility);
+        ::Function<void(SlotVisitor&)>,
+        ConstraintVolatility,
+        ConstraintConcurrency = ConstraintConcurrency::Concurrent);
     
     void add(std::unique_ptr<MarkingConstraint>);
     
@@ -60,21 +57,19 @@ public:
     
     // Returns true if this executed all constraints and none of them produced new work. This
     // assumes that you've alraedy visited roots and drained from there.
-    bool executeConvergence(
-        SlotVisitor&,
-        MonotonicTime timeout = MonotonicTime::infinity());
+    bool executeConvergence(SlotVisitor&);
     
     // Simply runs all constraints without any shenanigans.
     void executeAll(SlotVisitor&);
     
 private:
-    class ExecutionContext;
-    friend class ExecutionContext;
+    friend class MarkingConstraintSolver;
     
-    bool executeConvergenceImpl(SlotVisitor&, MonotonicTime timeout);
+    bool executeConvergenceImpl(SlotVisitor&);
     
-    bool drain(SlotVisitor&, MonotonicTime, BitVector& unexecuted, BitVector& executed, bool& didVisitSomething);
+    bool drain(SlotVisitor&, BitVector& unexecuted, BitVector& executed, bool& didVisitSomething);
     
+    Heap& m_heap;
     BitVector m_unexecutedRoots;
     BitVector m_unexecutedOutgrowths;
     Vector<std::unique_ptr<MarkingConstraint>> m_set;

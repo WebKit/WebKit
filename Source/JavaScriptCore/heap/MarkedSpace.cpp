@@ -421,7 +421,7 @@ void MarkedSpace::endMarking()
                 handle->resetAllocated();
             });
     }
-        
+    
     m_newlyAllocatedVersion = nextVersion(m_newlyAllocatedVersion);
     
     for (unsigned i = m_largeAllocationsOffsetForThisCollection; i < m_largeAllocations.size(); ++i)
