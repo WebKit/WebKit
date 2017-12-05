@@ -75,12 +75,14 @@ public:
 
         WEBCORE_EXPORT void didResolveRegistrationPromise(const ServiceWorkerRegistrationKey&);
         const SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const { return m_server.doRegistrationMatching(topOrigin, clientURL); }
+        void resolveRegistrationReadyRequests(SWServerRegistration&);
 
         // Messages to the client WebProcess
         virtual void updateRegistrationStateInClient(ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerData>&) = 0;
         virtual void updateWorkerStateInClient(ServiceWorkerIdentifier, ServiceWorkerState) = 0;
         virtual void fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier) = 0;
         virtual void notifyClientsOfControllerChange(const HashSet<DocumentIdentifier>& contextIdentifiers, const ServiceWorkerData& newController) = 0;
+        virtual void registrationReady(uint64_t registrationReadyRequestIdentifier, ServiceWorkerRegistrationData&&) = 0;
 
     protected:
         WEBCORE_EXPORT explicit Connection(SWServer&);
@@ -91,6 +93,7 @@ public:
         WEBCORE_EXPORT void addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier);
         WEBCORE_EXPORT void removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier);
         WEBCORE_EXPORT void syncTerminateWorker(ServiceWorkerIdentifier);
+        WEBCORE_EXPORT void whenRegistrationReady(uint64_t registrationReadyRequestIdentifier, const SecurityOriginData& topOrigin, const URL& clientURL);
 
     private:
         // Messages to the client WebProcess
@@ -99,8 +102,15 @@ public:
         virtual void resolveUnregistrationJobInClient(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, bool registrationResult) = 0;
         virtual void startScriptFetchInClient(const ServiceWorkerJobDataIdentifier&) = 0;
 
+        struct RegistrationReadyRequest {
+            SecurityOriginData topOrigin;
+            URL clientURL;
+            uint64_t identifier;
+        };
+
         SWServer& m_server;
         Identifier m_identifier;
+        Vector<RegistrationReadyRequest> m_registrationReadyRequests;
     };
 
     WEBCORE_EXPORT explicit SWServer(UniqueRef<SWOriginStore>&&, const String& registrationDatabaseDirectory);
@@ -151,6 +161,7 @@ public:
     WEBCORE_EXPORT bool invokeRunServiceWorker(ServiceWorkerIdentifier);
 
     void setClientActiveWorker(ServiceWorkerClientIdentifier, ServiceWorkerIdentifier);
+    void resolveRegistrationReadyRequests(SWServerRegistration&);
 
 private:
     void registerConnection(Connection&);

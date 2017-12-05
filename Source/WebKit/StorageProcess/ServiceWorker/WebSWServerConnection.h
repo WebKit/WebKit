@@ -77,6 +77,7 @@ private:
     void updateWorkerStateInClient(WebCore::ServiceWorkerIdentifier, WebCore::ServiceWorkerState) final;
     void fireUpdateFoundEvent(WebCore::ServiceWorkerRegistrationIdentifier) final;
     void notifyClientsOfControllerChange(const HashSet<WebCore::DocumentIdentifier>& contextIdentifiers, const WebCore::ServiceWorkerData& newController);
+    void registrationReady(uint64_t registrationReadyRequestIdentifier, WebCore::ServiceWorkerRegistrationData&&) final;
 
     void startFetch(uint64_t fetchIdentifier, std::optional<WebCore::ServiceWorkerIdentifier>, const WebCore::ResourceRequest&, const WebCore::FetchOptions&, const IPC::FormDataReference&);
 
@@ -95,11 +96,10 @@ private:
     template<typename U> void sendToContextProcess(U&& message);
 
     PAL::SessionID m_sessionID;
-
     Ref<IPC::Connection> m_contentConnection;
     RefPtr<IPC::Connection> m_contextConnection;
     HashMap<WebCore::DocumentIdentifier, WebCore::ClientOrigin> m_clientOrigins;
-}; // class WebSWServerConnection
+};
 
 } // namespace WebKit
 

@@ -57,8 +57,6 @@ ServiceWorkerContainer::ServiceWorkerContainer(ScriptExecutionContext& context, 
     , m_navigator(navigator)
 {
     suspendIfNeeded();
-
-    m_readyPromise.reject(Exception { UnknownError, ASCIILiteral("serviceWorker.ready() is not yet implemented") });
 }
 
 ServiceWorkerContainer::~ServiceWorkerContainer()
@@ -76,6 +74,31 @@ void ServiceWorkerContainer::refEventTarget()
 void ServiceWorkerContainer::derefEventTarget()
 {
     m_navigator.deref();
+}
+
+auto ServiceWorkerContainer::ready() -> ReadyPromise&
+{
+    if (!m_readyPromise) {
+        m_readyPromise = std::make_unique<ReadyPromise>();
+
+        auto* context = scriptExecutionContext();
+        if (!context)
+            return *m_readyPromise;
+
+        auto contextIdentifier = this->contextIdentifier();
+        callOnMainThread([this, connection = makeRef(ensureSWClientConnection()), topOrigin = context->topOrigin().isolatedCopy(), clientURL = context->url().isolatedCopy(), contextIdentifier]() mutable {
+            connection->whenRegistrationReady(topOrigin, clientURL, [this, contextIdentifier](auto&& registrationData) {
+                ScriptExecutionContext::postTaskTo(contextIdentifier, [this, registrationData = crossThreadCopy(registrationData)](auto&) mutable {
+                    if (m_isStopped)
+                        return;
+
+                    auto registration = ServiceWorkerRegistration::getOrCreate(*scriptExecutionContext(), *this, WTFMove(registrationData));
+                    m_readyPromise->resolve(WTFMove(registration));
+                });
+            });
+        });
+    }
+    return *m_readyPromise;
 }
 
 ServiceWorker* ServiceWorkerContainer::controller() const

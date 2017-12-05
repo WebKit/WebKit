@@ -36,6 +36,7 @@ messages -> WebSWServerConnection {
     DidResolveRegistrationPromise(WebCore::ServiceWorkerRegistrationKey key)
 
     MatchRegistration(uint64_t serviceRegistrationMatchRequestIdentifier, struct WebCore::SecurityOriginData topOrigin, WebCore::URL clientURL)
+    WhenRegistrationReady(uint64_t serviceRegistrationMatchRequestIdentifier, struct WebCore::SecurityOriginData topOrigin, WebCore::URL clientURL)
     GetRegistrations(uint64_t serviceRegistrationMatchRequestIdentifier, struct WebCore::SecurityOriginData topOrigin, WebCore::URL clientURL)
     RegisterServiceWorkerClient(struct WebCore::SecurityOriginData topOrigin, WebCore::DocumentIdentifier identifier, struct WebCore::ServiceWorkerClientData data, std::optional<WebCore::ServiceWorkerIdentifier> controllingServiceWorkerIdentifier)
     UnregisterServiceWorkerClient(WebCore::DocumentIdentifier identifier)

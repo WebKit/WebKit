@@ -150,9 +150,23 @@ void WebSWClientConnection::matchRegistration(const SecurityOrigin& topOrigin, c
         return;
     }
 
-    uint64_t requestIdentifier = ++m_previousMatchRegistrationTaskIdentifier;
-    m_ongoingMatchRegistrationTasks.add(requestIdentifier, WTFMove(callback));
-    send(Messages::WebSWServerConnection::MatchRegistration(requestIdentifier, SecurityOriginData::fromSecurityOrigin(topOrigin), clientURL));
+    uint64_t callbackID = ++m_previousCallbackIdentifier;
+    m_ongoingMatchRegistrationTasks.add(callbackID, WTFMove(callback));
+    send(Messages::WebSWServerConnection::MatchRegistration(callbackID, SecurityOriginData::fromSecurityOrigin(topOrigin), clientURL));
+}
+
+void WebSWClientConnection::whenRegistrationReady(const SecurityOrigin& topOrigin, const URL& clientURL, WhenRegistrationReadyCallback&& callback)
+{
+    uint64_t callbackID = ++m_previousCallbackIdentifier;
+    m_ongoingRegistrationReadyTasks.add(callbackID, WTFMove(callback));
+    send(Messages::WebSWServerConnection::WhenRegistrationReady(callbackID, SecurityOriginData::fromSecurityOrigin(topOrigin), clientURL));
+}
+
+void WebSWClientConnection::registrationReady(uint64_t callbackID, WebCore::ServiceWorkerRegistrationData&& registrationData)
+{
+    ASSERT(registrationData.activeWorker);
+    if (auto callback = m_ongoingRegistrationReadyTasks.take(callbackID))
+        callback(WTFMove(registrationData));
 }
 
 void WebSWClientConnection::getRegistrations(const SecurityOrigin& topOrigin, const URL& clientURL, GetRegistrationsCallback&& callback)
@@ -164,9 +178,9 @@ void WebSWClientConnection::getRegistrations(const SecurityOrigin& topOrigin, co
         return;
     }
 
-    uint64_t requestIdentifier = ++m_previousGetRegistrationsTaskIdentifier;
-    m_ongoingGetRegistrationsTasks.add(requestIdentifier, WTFMove(callback));
-    send(Messages::WebSWServerConnection::GetRegistrations(requestIdentifier, SecurityOriginData::fromSecurityOrigin(topOrigin), clientURL));
+    uint64_t callbackID = ++m_previousCallbackIdentifier;
+    m_ongoingGetRegistrationsTasks.add(callbackID, WTFMove(callback));
+    send(Messages::WebSWServerConnection::GetRegistrations(callbackID, SecurityOriginData::fromSecurityOrigin(topOrigin), clientURL));
 }
 
 void WebSWClientConnection::startFetch(const ResourceLoader& loader, uint64_t identifier)

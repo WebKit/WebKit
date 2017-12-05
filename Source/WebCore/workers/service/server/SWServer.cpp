@@ -644,6 +644,34 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
     m_clientToControllingWorker.remove(workerIterator);
 }
 
+void SWServer::resolveRegistrationReadyRequests(SWServerRegistration& registration)
+{
+    for (auto* connection : m_connections.values())
+        connection->resolveRegistrationReadyRequests(registration);
+}
+
+void SWServer::Connection::whenRegistrationReady(uint64_t registrationReadyRequestIdentifier, const SecurityOriginData& topOrigin, const URL& clientURL)
+{
+    if (auto* registration = doRegistrationMatching(topOrigin, clientURL)) {
+        if (registration->activeWorker()) {
+            registrationReady(registrationReadyRequestIdentifier, registration->data());
+            return;
+        }
+    }
+    m_registrationReadyRequests.append({ topOrigin, clientURL, registrationReadyRequestIdentifier });
+}
+
+void SWServer::Connection::resolveRegistrationReadyRequests(SWServerRegistration& registration)
+{
+    m_registrationReadyRequests.removeAllMatching([&](auto& request) {
+        if (!registration.key().isMatching(request.topOrigin, request.clientURL))
+            return false;
+
+        registrationReady(request.identifier, registration.data());
+        return true;
+    });
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

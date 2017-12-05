@@ -1,3 +1,14 @@
+2017-12-05  Chris Dumez  <cdumez@apple.com>
+
+        Add support for ServiceWorkerContainer.prototype.ready
+        https://bugs.webkit.org/show_bug.cgi?id=180383
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline WPT test coverage container.ready now that it is passing.
+
+        * web-platform-tests/service-workers/service-worker/ready.https-expected.txt:
+
 2017-12-04  Chris Dumez  <cdumez@apple.com>
 
         Support container.getRegistration() / getRegistrations() inside service workers

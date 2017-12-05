@@ -81,6 +81,8 @@ private:
     void matchRegistration(const WebCore::SecurityOrigin& topOrigin, const WebCore::URL& clientURL, RegistrationCallback&&) final;
     void didMatchRegistration(uint64_t matchRequestIdentifier, std::optional<WebCore::ServiceWorkerRegistrationData>&&);
     void didGetRegistrations(uint64_t matchRequestIdentifier, Vector<WebCore::ServiceWorkerRegistrationData>&&);
+    void whenRegistrationReady(const WebCore::SecurityOrigin& topOrigin, const WebCore::URL& clientURL, WhenRegistrationReadyCallback&&) final;
+    void registrationReady(uint64_t callbackID, WebCore::ServiceWorkerRegistrationData&&);
 
     void getRegistrations(const WebCore::SecurityOrigin& topOrigin, const WebCore::URL& clientURL, GetRegistrationsCallback&&) final;
 
@@ -100,11 +102,10 @@ private:
     Ref<IPC::Connection> m_connection;
     UniqueRef<WebSWOriginTable> m_swOriginTable;
 
-    uint64_t m_previousMatchRegistrationTaskIdentifier { 0 };
+    uint64_t m_previousCallbackIdentifier { 0 };
     HashMap<uint64_t, RegistrationCallback> m_ongoingMatchRegistrationTasks;
-
-    uint64_t m_previousGetRegistrationsTaskIdentifier { 0 };
     HashMap<uint64_t, GetRegistrationsCallback> m_ongoingGetRegistrationsTasks;
+    HashMap<uint64_t, WhenRegistrationReadyCallback> m_ongoingRegistrationReadyTasks;
 
 }; // class WebSWServerConnection
 

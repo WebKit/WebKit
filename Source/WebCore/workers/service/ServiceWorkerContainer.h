@@ -56,7 +56,7 @@ public:
     ServiceWorker* controller() const;
 
     using ReadyPromise = DOMPromiseProxy<IDLInterface<ServiceWorkerRegistration>>;
-    ReadyPromise& ready() { return m_readyPromise; }
+    ReadyPromise& ready();
 
     using RegistrationOptions = ServiceWorkerRegistrationOptions;
     void addRegistration(const String& scriptURL, const RegistrationOptions&, Ref<DeferredPromise>&&);
@@ -110,7 +110,7 @@ private:
     void derefEventTarget() final;
     void stop() final;
 
-    ReadyPromise m_readyPromise;
+    std::unique_ptr<ReadyPromise> m_readyPromise;
 
     NavigatorBase& m_navigator;
 

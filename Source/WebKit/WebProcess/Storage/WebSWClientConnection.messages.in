@@ -39,6 +39,7 @@ messages -> WebSWClientConnection {
 
     DidMatchRegistration(uint64_t matchRequestIdentifier, std::optional<WebCore::ServiceWorkerRegistrationData> data)
     DidGetRegistrations(uint64_t matchRequestIdentifier, Vector<WebCore::ServiceWorkerRegistrationData> registrations)
+    RegistrationReady(uint64_t registrationReadyRequestIdentifier, struct WebCore::ServiceWorkerRegistrationData data)
 }
 
 #endif // ENABLE(SERVICE_WORKER)

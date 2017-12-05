@@ -261,6 +261,9 @@ void SWServerRegistration::activate()
     updateWorkerState(*activeWorker(), ServiceWorkerState::Activating);
     // FIXME: For each service worker client whose creation URL matches registration's scope url...
 
+    // The registration now has an active worker so we need to check if there are any ready promises that were waiting for this.
+    m_server.resolveRegistrationReadyRequests(*this);
+
     // For each service worker client who is using registration:
     // - Set client's active worker to registration's active worker.
     for (auto keyValue : m_clientsUsingRegistration) {
@@ -295,6 +298,19 @@ void SWServerRegistration::handleClientUnload()
     if (isUninstalling() && tryClear())
         return;
     tryActivate();
+}
+
+void SWServerRegistration::setIsUninstalling(bool value)
+{
+    if (m_uninstalling == value)
+        return;
+
+    m_uninstalling = value;
+
+    if (!m_uninstalling && activeWorker()) {
+        // Registration with active worker has been resurrected, we need to check if any ready promises were waiting for this.
+        m_server.resolveRegistrationReadyRequests(*this);
+    }
 }
 
 } // namespace WebCore

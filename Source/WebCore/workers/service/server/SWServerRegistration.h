@@ -56,7 +56,7 @@ public:
     WEBCORE_EXPORT ServiceWorkerRegistrationData data() const;
 
     bool isUninstalling() const { return m_uninstalling; }
-    void setIsUninstalling(bool value) { m_uninstalling = value; }
+    void setIsUninstalling(bool);
 
     void setLastUpdateTime(double time) { m_lastUpdateTime = time; }
     ServiceWorkerUpdateViaCache updateViaCache() const { return m_updateViaCache; }
