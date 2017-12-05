@@ -630,6 +630,20 @@ webkit.org/b/158836 imported/w3c/web-platform-tests/encrypted-media [ Skip ]
 # Credential Management not supported
 credentials/ [ Skip ]
 
+# UIScriptController::zoomToScale is not implemented on Windows.
+webkit.org/b/180424 fast/visual-viewport/rtl-zoomed-rects.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/viewport-dimensions-exclude-custom-scrollbars.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/viewport-dimensions-exclude-scrollbars.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/viewport-dimensions-iframe.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/viewport-dimensions-under-page-zoom.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/viewport-dimensions.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/zoomed-fixed-header-and-footer.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/zoomed-fixed.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/zoomed-rects.html [ Skip ]
+webkit.org/b/180424 fast/zooming/client-rect-in-fixed-zoomed.html [ Skip ]
+webkit.org/b/180424 fast/zooming/uiscript-zooming.html [ Skip ]
+
 ################################################################################
 ###########    End Missing Functionality Prevents Testing         ##############
 ################################################################################
@@ -3186,15 +3200,8 @@ fast/text/variations/advances.html [ Failure ]
 fast/text/variations/getComputedStyle.html [ Failure ]
 fast/text/whitespace/023.html [ Failure ]
 fast/transforms/bounding-rect-zoom.html [ Failure ]
-fast/visual-viewport/rtl-zoomed-rects.html [ Failure ]
-fast/visual-viewport/zoomed-fixed-header-and-footer.html [ Failure ]
-fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html [ Failure ]
-fast/visual-viewport/zoomed-fixed.html [ Failure ]
-fast/visual-viewport/zoomed-rects.html [ Failure ]
 fast/xsl/xslt-extra-content-at-end.xml [ Failure ]
 fast/xsl/xslt-missing-namespace-in-xslt.xml [ Failure ]
-fast/zooming/client-rect-in-fixed-zoomed.html [ Failure ]
-fast/zooming/uiscript-zooming.html [ Failure ]
 fonts/sans-serif.html [ Failure ]
 http/tests/cache/memory-cache-pruning.html [ Failure ]
 http/tests/loading/hidpi-preload-picture-sizes.html [ Failure ]

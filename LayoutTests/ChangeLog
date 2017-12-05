@@ -1,3 +1,16 @@
+2017-12-05  Ali Juma  <ajuma@chromium.org>
+
+        [Win] Skip tests that depend on UIScriptController::zoomToScale
+        https://bugs.webkit.org/show_bug.cgi?id=180423
+
+        Reviewed by Frédéric Wang.
+
+        Test gardening.
+        
+        UIScriptController::zoomToScale is not implemented on Windows, so skip tests that use it.
+
+        * platform/win/TestExpectations:
+
 2017-12-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening. Rebaseline a quintet of SVG tests.
