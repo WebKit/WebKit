@@ -1,3 +1,14 @@
+2017-12-05  Chris Dumez  <cdumez@apple.com>
+
+        XMLHttpRequest should not be exposed to service workers
+        https://bugs.webkit.org/show_bug.cgi?id=180446
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline WPT test that has one more check passing.
+
+        * web-platform-tests/service-workers/service-worker/interfaces-sw.https-expected.txt:
+
 2017-12-05  Youenn Fablet  <youenn@apple.com>
 
         Implement https://w3c.github.io/ServiceWorker/#clients-claim

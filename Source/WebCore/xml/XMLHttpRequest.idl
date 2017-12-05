@@ -43,7 +43,7 @@ enum XMLHttpRequestResponseType {
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,
     ExportMacro=WEBCORE_EXPORT,
-    Exposed=(Window,Worker),
+    Exposed=(Window,DedicatedWorker),
     JSCustomMarkFunction,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,

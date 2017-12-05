@@ -4,7 +4,7 @@ Harness Error (TIMEOUT), message = null
 PASS Interfaces and attributes in ServiceWorkerGlobalScope 
 TIMEOUT test setup (cache creation) Test timed out
 FAIL Event constructors assert_equals: Default FetchEvent.clientId should be null expected (object) null but got (string) ""
-FAIL xhr is not exposed assert_false: expected false got true
+PASS xhr is not exposed 
 PASS ServiceWorkerGlobalScope interface: existence and properties of interface object 
 PASS ServiceWorkerGlobalScope interface object length 
 PASS ServiceWorkerGlobalScope interface object name 
