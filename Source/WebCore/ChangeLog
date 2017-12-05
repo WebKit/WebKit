@@ -1,3 +1,24 @@
+2017-12-04  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r225381. rdar://problem/35838154
+
+    2017-11-30  Alex Christensen  <achristensen@webkit.org>
+
+            Extra PerformanceEntryList entry after iframe navigation
+            https://bugs.webkit.org/show_bug.cgi?id=178433
+
+            Reviewed by Joseph Pecoraro.
+
+            Test: http/tests/security/PerformanceEntryList-parent-only-first-navigation.html
+
+            When an iframe is loaded, its main resource load should be reported to the parent frame's PerformanceEntryList.
+            Subsequent main resource loads should not.
+
+            * loader/FrameLoader.h:
+            (WebCore::FrameLoader::shouldReportResourceTimingToParentFrame):
+            * loader/ResourceTimingInformation.cpp:
+            (WebCore::ResourceTimingInformation::addResourceTiming):
+
 2017-11-30  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r225141. rdar://problem/35732184
