@@ -1,9 +1,7 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS Register different scripts concurrently 
 PASS Register then register new script URL 
 FAIL Register then register new script URL that 404s assert_unreached: unexpected rejection: assert_unreached: register should reject Reached unreachable code Reached unreachable code
 FAIL Register then register new script that does not install assert_unreached: unexpected rejection: assert_equals: on redundant, installing should be null expected null but got object "[object ServiceWorker]" Reached unreachable code
-TIMEOUT Register same-scope new script url effect on controller Test timed out
+PASS Register same-scope new script url effect on controller 
 
