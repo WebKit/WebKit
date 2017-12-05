@@ -35,7 +35,8 @@ inline JSFunction* JSFunction::createWithInvalidatedReallocationWatchpoint(
     VM& vm, FunctionExecutable* executable, JSScope* scope)
 {
     ASSERT(executable->singletonFunction()->hasBeenInvalidated());
-    return createImpl(vm, executable, scope, scope->globalObject(vm)->functionStructure());
+    Structure* structure = executable->isStrictMode() ? scope->globalObject(vm)->strictFunctionStructure() : scope->globalObject(vm)->sloppyFunctionStructure();
+    return createImpl(vm, executable, scope, structure);
 }
 
 inline JSFunction::JSFunction(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
