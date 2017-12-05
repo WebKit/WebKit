@@ -430,7 +430,7 @@ void FrameView::invalidateRect(const IntRect& rect)
         return;
 
     IntRect repaintRect = rect;
-    repaintRect.move(renderer->borderLeft() + renderer->paddingLeft(), renderer->borderTop() + renderer->paddingTop());
+    repaintRect.moveBy(roundedIntPoint(renderer->contentBoxLocation()));
     renderer->repaintRectangle(repaintRect);
 }
 
@@ -4384,10 +4384,8 @@ IntRect FrameView::convertToContainingView(const IntRect& localRect) const
             if (!renderer)
                 return localRect;
                 
-            IntRect rect(localRect);
-            // Add borders and padding??
-            rect.move(renderer->borderLeft() + renderer->paddingLeft(),
-                      renderer->borderTop() + renderer->paddingTop());
+            auto rect = localRect;
+            rect.moveBy(roundedIntPoint(renderer->contentBoxLocation()));
             return parentView.convertFromRendererToContainingView(renderer, rect);
         }
         
@@ -4408,10 +4406,8 @@ IntRect FrameView::convertFromContainingView(const IntRect& parentRect) const
             if (!renderer)
                 return parentRect;
 
-            IntRect rect = parentView.convertFromContainingViewToRenderer(renderer, parentRect);
-            // Subtract borders and padding
-            rect.move(-renderer->borderLeft() - renderer->paddingLeft(),
-                      -renderer->borderTop() - renderer->paddingTop());
+            auto rect = parentView.convertFromContainingViewToRenderer(renderer, parentRect);
+            rect.moveBy(-roundedIntPoint(renderer->contentBoxLocation()));
             return rect;
         }
         
@@ -4432,11 +4428,8 @@ IntPoint FrameView::convertToContainingView(const IntPoint& localPoint) const
             if (!renderer)
                 return localPoint;
                 
-            IntPoint point(localPoint);
-
-            // Add borders and padding
-            point.move(renderer->borderLeft() + renderer->paddingLeft(),
-                       renderer->borderTop() + renderer->paddingTop());
+            auto point = localPoint;
+            point.moveBy(roundedIntPoint(renderer->contentBoxLocation()));
             return parentView.convertFromRendererToContainingView(renderer, point);
         }
         
@@ -4457,10 +4450,8 @@ IntPoint FrameView::convertFromContainingView(const IntPoint& parentPoint) const
             if (!renderer)
                 return parentPoint;
 
-            IntPoint point = parentView.convertFromContainingViewToRenderer(renderer, parentPoint);
-            // Subtract borders and padding
-            point.move(-renderer->borderLeft() - renderer->paddingLeft(),
-                       -renderer->borderTop() - renderer->paddingTop());
+            auto point = parentView.convertFromContainingViewToRenderer(renderer, parentPoint);
+            point.moveBy(-roundedIntPoint(renderer->contentBoxLocation()));
             return point;
         }
         

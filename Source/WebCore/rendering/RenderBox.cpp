@@ -660,11 +660,13 @@ RoundedRect::Radii RenderBox::borderRadii() const
 
 LayoutRect RenderBox::contentBoxRect() const
 {
-    LayoutUnit x = borderLeft() + paddingLeft();
-    if (shouldPlaceBlockDirectionScrollbarOnLeft())
-        x += verticalScrollbarWidth();
-    LayoutUnit y = borderTop() + paddingTop();
-    return LayoutRect(x, y, contentWidth(), contentHeight());
+    return { contentBoxLocation(), contentSize() };
+}
+
+LayoutPoint RenderBox::contentBoxLocation() const
+{
+    LayoutUnit scrollbarSpace = shouldPlaceBlockDirectionScrollbarOnLeft() ? verticalScrollbarWidth() : 0;
+    return { borderLeft() + paddingLeft() + scrollbarSpace, borderTop() + paddingTop() };
 }
 
 IntRect RenderBox::absoluteContentBox() const

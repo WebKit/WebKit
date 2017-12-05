@@ -127,12 +127,12 @@ public:
         m_y *= scaleY;
     }
 
-    FloatPoint scaled(float scale)
+    FloatPoint scaled(float scale) const
     {
         return { m_x * scale, m_y * scale };
     }
 
-    FloatPoint scaled(float scaleX, float scaleY)
+    FloatPoint scaled(float scaleX, float scaleY) const
     {
         return { m_x * scaleX, m_y * scaleY };
     }
