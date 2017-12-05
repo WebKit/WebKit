@@ -1,5 +1,15 @@
 2017-12-05  Aakash Jain  <aakash_jain@apple.com>
 
+        [build.webkit.org] Rename mastercfg_unittest to steps_unittest
+        https://bugs.webkit.org/show_bug.cgi?id=180432
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py: Copied from BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py.
+
+2017-12-05  Aakash Jain  <aakash_jain@apple.com>
+
         [build.webkit.org] Fix style issues in mastercfg_unittest.py
         https://bugs.webkit.org/show_bug.cgi?id=180439
 
