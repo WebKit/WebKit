@@ -102,6 +102,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
             succeeded = task.run()
             if not succeeded:
                 # Caller unlocks when review_patch returns True, so we only need to unlock on transient failure.
+                # Unlocking the patch would result in patch being re-tried.
                 self._unlock_patch(patch)
             return succeeded
         except PatchIsNotValid as error:

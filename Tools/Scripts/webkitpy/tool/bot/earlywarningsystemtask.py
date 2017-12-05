@@ -54,6 +54,12 @@ class EarlyWarningSystemTask(PatchAnalysisTask):
         return True
 
     def run(self):
+        """
+        Returns True if the patch passes EWS.
+        Raises an exception if the patch fails EWS.
+        Returns False if the patch status can not be ascertained. AbstractEarlyWarningSystem.review_patch()
+        will unlock the patch so that it would be retried.
+        """
         if not self._clean():
             return False
         if not self._update():

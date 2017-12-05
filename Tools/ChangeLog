@@ -1,3 +1,15 @@
+2017-12-04  Aakash Jain  <aakash_jain@apple.com>
+
+        Add docstring in EarlyWarningSystemTask to explain return values
+        https://bugs.webkit.org/show_bug.cgi?id=180303
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/tool/bot/earlywarningsystemtask.py:
+        (EarlyWarningSystemTask.run): Added docstring to explain return values.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem.review_patch): Added comment to explain the result of unlocking a patch.
+
 2017-12-04  JF Bastien  <jfbastien@apple.com>
 
         Update std::expected to match libc++ coding style
