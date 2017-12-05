@@ -1,3 +1,25 @@
+2017-12-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Rename a static helper in TouchBarMenuItemData.cpp to match style guidelines.
+        https://bugs.webkit.org/show_bug.cgi?id=180305
+
+        Reviewed by Andy Estes.
+
+        Style guidelines state that we should use bare words for getters, so getItemType should just be
+        itemType. Since this collides with the itemType member variable, this patch also renames that
+        member variable to the more concise "type".
+
+        No change in behavior.
+
+        * Shared/TouchBarMenuItemData.cpp:
+        (WebKit::itemType):
+        (WebKit::TouchBarMenuItemData::TouchBarMenuItemData):
+        (WebKit::TouchBarMenuItemData::encode const):
+        (WebKit::TouchBarMenuItemData::decode):
+        (WebKit::getItemType): Deleted.
+        * Shared/TouchBarMenuItemData.h:
+        (WebKit::operator==):
+
 2017-12-04  Brian Burg  <bburg@apple.com>
 
         Web Automation: add flag to preserve legacy page screenshot behavior

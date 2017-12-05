@@ -33,21 +33,21 @@
 
 namespace WebKit {
 
-static ItemType getItemType(const String&)
+static ItemType itemType(const String&)
 {
     return ItemType::Button;
 }
 
 TouchBarMenuItemData::TouchBarMenuItemData(const WebCore::HTMLMenuItemElement& element)
 {
-    itemType = getItemType(element.attributeWithoutSynchronization(WebCore::HTMLNames::typeAttr));
+    type = itemType(element.attributeWithoutSynchronization(WebCore::HTMLNames::typeAttr));
     identifier = element.attributeWithoutSynchronization(WebCore::HTMLNames::idAttr);
     priority = element.attributeWithoutSynchronization(WebCore::HTMLNames::valueAttr).toFloat();
 }
 
 void TouchBarMenuItemData::encode(IPC::Encoder& encoder) const
 {
-    encoder.encodeEnum(itemType);
+    encoder.encodeEnum(type);
     
     encoder << identifier;
     encoder << priority;
@@ -56,7 +56,7 @@ void TouchBarMenuItemData::encode(IPC::Encoder& encoder) const
 std::optional<TouchBarMenuItemData> TouchBarMenuItemData::decode(IPC::Decoder& decoder)
 {
     TouchBarMenuItemData result;
-    if (!decoder.decodeEnum(result.itemType))
+    if (!decoder.decodeEnum(result.type))
         return std::nullopt;
     
     if (!decoder.decode(result.identifier))

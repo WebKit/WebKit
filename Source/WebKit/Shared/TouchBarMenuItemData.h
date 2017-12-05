@@ -51,7 +51,7 @@ struct TouchBarMenuItemData {
     void encode(IPC::Encoder&) const;
     static std::optional<TouchBarMenuItemData> decode(IPC::Decoder&);
     
-    ItemType itemType { ItemType::Button };
+    ItemType type { ItemType::Button };
     String identifier;
     float priority { 0.0 };
     bool validTouchBarDisplay { true };
@@ -80,9 +80,9 @@ inline bool operator>=(const TouchBarMenuItemData& lhs, const TouchBarMenuItemDa
 
 inline bool operator==(const TouchBarMenuItemData& lhs, const TouchBarMenuItemData& rhs)
 {
-    return lhs.itemType == rhs.itemType
-    && lhs.identifier == rhs.identifier
-    && lhs.priority == rhs.priority;
+    return lhs.type == rhs.type
+        && lhs.identifier == rhs.identifier
+        && lhs.priority == rhs.priority;
 }
 
 inline bool operator!=(const TouchBarMenuItemData& lhs, const TouchBarMenuItemData& rhs)
