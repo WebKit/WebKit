@@ -1,3 +1,13 @@
+2017-12-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Rebaseline a quintet of SVG tests.
+
+        * platform/wpe/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+        * platform/wpe/svg/custom/feComponentTransfer-Discrete-expected.txt:
+        * platform/wpe/svg/custom/feComponentTransfer-Gamma-expected.txt:
+        * platform/wpe/svg/custom/feComponentTransfer-Linear-expected.txt:
+        * platform/wpe/svg/custom/feComponentTransfer-Table-expected.txt:
+
 2017-12-04  Chris Dumez  <cdumez@apple.com>
 
         Support container.getRegistration() / getRegistrations() inside service workers
