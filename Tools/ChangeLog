@@ -1,3 +1,14 @@
+2017-12-05  Michael Saboff  <msaboff@apple.com>
+
+        Make WebKit build for ARM64_32
+        https://bugs.webkit.org/show_bug.cgi?id=180447
+
+        Reviewed by Mark Lam.
+
+        Add an instance of the _TestWTFAlwaysMissing for arm64_32 architecture.
+
+        * TestWebKitAPI/Tests/WTF/darwin/libTestWTFAlwaysMissing-iOS-v2.tbd:
+
 2017-12-05  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Rename mastercfg_unittest to steps_unittest

@@ -37,7 +37,11 @@ inline bool isNullFunctionPointer(T* functionPointer)
     // null. When weak-linking a library, function pointers can be null. We use non-C code to
     // prevent the C compiler from using the definition to optimize out the null check.
     asm(
+#if CPU(ARM64) && defined(__ILP32__)
+        "mov %w1, %w0"
+#else
         "mov %1, %0"
+#endif
         : "=r" (result)
         : "r" (functionPointer)
     );

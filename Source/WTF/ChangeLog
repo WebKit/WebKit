@@ -1,3 +1,15 @@
+2017-12-05  Michael Saboff  <msaboff@apple.com>
+
+        Make WebKit build for ARM64_32
+        https://bugs.webkit.org/show_bug.cgi?id=180447
+
+        Reviewed by Mark Lam.
+
+        Add the 'w' (32bit) pointer qualifier for ARM64_32 pointers in inline assembly.
+
+        * wtf/darwin/WeakLinking.h:
+        (WTF::isNullFunctionPointer):
+
 2017-12-05  Filip Pizlo  <fpizlo@apple.com>
 
         bmalloc IsoHeap needs to allow a thread to deallocate some size for the first time
