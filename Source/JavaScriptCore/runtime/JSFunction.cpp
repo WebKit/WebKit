@@ -65,7 +65,8 @@ bool JSFunction::isHostFunctionNonInline() const
 
 JSFunction* JSFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope)
 {
-    return create(vm, executable, scope, scope->globalObject(vm)->functionStructure());
+    Structure* structure = executable->isStrictMode() ? scope->globalObject(vm)->strictFunctionStructure() : scope->globalObject(vm)->sloppyFunctionStructure();
+    return create(vm, executable, scope, structure);
 }
 
 JSFunction* JSFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
@@ -78,7 +79,8 @@ JSFunction* JSFunction::create(VM& vm, FunctionExecutable* executable, JSScope* 
 JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, int length, const String& name, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor, const DOMJIT::Signature* signature)
 {
     NativeExecutable* executable = vm.getHostFunction(nativeFunction, intrinsic, nativeConstructor, signature, name);
-    JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, globalObject, globalObject->functionStructure());
+    Structure* structure = globalObject->strictFunctionStructure();
+    JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, globalObject, structure);
     // Can't do this during initialization because getHostFunction might do a GC allocation.
     function->finishCreation(vm, executable, length, name);
     return function;
