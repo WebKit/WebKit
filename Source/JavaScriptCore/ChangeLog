@@ -1,3 +1,20 @@
+2017-12-04  JF Bastien  <jfbastien@apple.com>
+
+        Math: don't redundantly check for exceptions, just release scope
+        https://bugs.webkit.org/show_bug.cgi?id=180395
+
+        Rubber stamped by Mark Lam.
+
+        Two of the exceptions checks could just have been exception scope
+        releases before the return, which is ever-so-slightly more
+        efficient. The same technically applies where we have loops over
+        parameters, but doing the scope release there isn't really more
+        efficient and is way harder to read.
+
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncATan2):
+        (JSC::mathProtoFuncPow):
+
 2017-12-04  David Quesada  <david_quesada@apple.com>
 
         Add a class for parsing application manifests

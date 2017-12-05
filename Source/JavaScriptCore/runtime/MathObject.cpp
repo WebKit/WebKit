@@ -153,8 +153,8 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncATan2(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
     double arg0 = exec->argument(0).toNumber(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    scope.release();
     double arg1 = exec->argument(1).toNumber(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(jsDoubleNumber(atan2(arg0, arg1)));
 }
 
@@ -265,8 +265,8 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncPow(ExecState* exec)
 
     double arg = exec->argument(0).toNumber(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    scope.release();
     double arg2 = exec->argument(1).toNumber(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     return JSValue::encode(JSValue(operationMathPow(arg, arg2)));
 }
