@@ -1,3 +1,27 @@
+2017-12-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Remove m_atomicStringTableDestructor in Thread by querying the condition at thread destruction
+        https://bugs.webkit.org/show_bug.cgi?id=180429
+
+        Reviewed by Alex Christensen.
+
+        We now have a pointer to the AtomicStringTable::destroy in Thread.
+        This pointer becomes nullptr only when the thread is the web thread not to destroy AtomicStringTable
+        twice in the UI thread and the web thread.
+
+        Instead of having a pointer in each Thread, we query whether the current thread is the web thread at
+        Thread destruction. And use this information to call AtomicStringTable::destroy. Then, we can drop
+        m_atomicStringTableDestructor field in Thread.
+
+        * wtf/Threading.cpp:
+        (WTF::Thread::didExit):
+        * wtf/Threading.h:
+        * wtf/mac/MainThreadMac.mm:
+        * wtf/text/AtomicStringTable.cpp:
+        (WTF::AtomicStringTable::create):
+        (WTF::AtomicStringTable::destroy):
+        * wtf/text/AtomicStringTable.h:
+
 2017-12-01  Filip Pizlo  <fpizlo@apple.com>
 
         GC constraint solving should be parallel

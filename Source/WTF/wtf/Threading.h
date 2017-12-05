@@ -56,8 +56,6 @@ class AbstractLocker;
 class AtomicStringTable;
 class ThreadMessageData;
 
-using AtomicStringTableDestructor = void (*)(AtomicStringTable*);
-
 enum class ThreadGroupAddResult;
 
 class ThreadGroup;
@@ -292,7 +290,6 @@ protected:
 
     AtomicStringTable* m_currentAtomicStringTable { nullptr };
     AtomicStringTable* m_defaultAtomicStringTable { nullptr };
-    AtomicStringTableDestructor m_atomicStringTableDestructor { nullptr };
 
 #if ENABLE(STACK_STATS)
     StackStats::PerThreadStats m_stackStats;

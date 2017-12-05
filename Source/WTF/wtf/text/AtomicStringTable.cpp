@@ -35,20 +35,12 @@ void AtomicStringTable::create(Thread& thread)
     // On iOS, one AtomicStringTable is shared between the main UI thread and the WebThread.
     static AtomicStringTable* sharedStringTable = new AtomicStringTable;
 
-    bool currentThreadIsWebThread = isWebThread();
-    if (currentThreadIsWebThread || isUIThread())
+    if (isWebThread() || isUIThread()) {
         thread.m_defaultAtomicStringTable = sharedStringTable;
-    else
-        thread.m_defaultAtomicStringTable = new AtomicStringTable;
-
-    // We do the following so that its destruction happens only
-    // once - on the main UI thread.
-    if (!currentThreadIsWebThread)
-        thread.m_atomicStringTableDestructor = AtomicStringTable::destroy;
-#else
-    thread.m_defaultAtomicStringTable = new AtomicStringTable;
-    thread.m_atomicStringTableDestructor = AtomicStringTable::destroy;
+        return;
+    }
 #endif // USE(WEB_THREAD)
+    thread.m_defaultAtomicStringTable = new AtomicStringTable;
 }
 
 AtomicStringTable::~AtomicStringTable()
@@ -59,6 +51,12 @@ AtomicStringTable::~AtomicStringTable()
 
 void AtomicStringTable::destroy(AtomicStringTable* table)
 {
+#if USE(WEB_THREAD)
+    // We do the following so that destruction of default atomic string table happens only
+    // once - on the main UI thread.
+    if (isWebThread())
+        return;
+#endif // USE(WEB_THREAD)
     delete table;
 }
 

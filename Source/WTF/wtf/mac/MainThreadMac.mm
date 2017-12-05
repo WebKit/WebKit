@@ -168,6 +168,7 @@ bool isUIThread()
     return pthread_main_np();
 }
 
+// Keep in mind that isWebThread can be called even when destroying the current thread.
 bool isWebThread()
 {
     return pthread_equal(pthread_self(), mainThreadPthread);

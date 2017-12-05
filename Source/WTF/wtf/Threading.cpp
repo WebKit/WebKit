@@ -197,8 +197,8 @@ void Thread::didExit()
             threadGroup->m_threads.remove(*this);
         }
     }
-    if (m_atomicStringTableDestructor)
-        m_atomicStringTableDestructor(m_defaultAtomicStringTable);
+
+    AtomicStringTable::destroy(m_defaultAtomicStringTable);
 
     // We would like to say "thread is exited" after unregistering threads from thread groups.
     // So we need to separate m_isShuttingDown from m_didExit.

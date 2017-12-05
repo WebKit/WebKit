@@ -37,11 +37,10 @@ public:
     WTF_EXPORT_PRIVATE ~AtomicStringTable();
 
     static void create(Thread&);
+    static void destroy(AtomicStringTable*);
     HashSet<StringImpl*>& table() { return m_table; }
 
 private:
-    static void destroy(AtomicStringTable*);
-
     HashSet<StringImpl*> m_table;
 };
 
