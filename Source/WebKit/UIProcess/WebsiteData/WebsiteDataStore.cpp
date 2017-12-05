@@ -1326,7 +1326,9 @@ void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
     }
 
     m_resourceLoadStatistics = nullptr;
-    for (auto& processPool : processPools())
+
+    auto existingProcessPools = processPools(std::numeric_limits<size_t>::max(), false);
+    for (auto& processPool : existingProcessPools)
         processPool->setResourceLoadStatisticsEnabled(false);
 }
 
