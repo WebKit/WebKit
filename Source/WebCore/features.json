@@ -552,7 +552,7 @@
     {
         "name": "Web App Manifest",
         "status": {
-            "status": "Under Consideration",
+            "status": "In Development",
             "enabled-by-default": false
         },
         "url": "https://www.w3.org/TR/appmanifest/",

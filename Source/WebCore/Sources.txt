@@ -23,6 +23,12 @@
 
 Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp
 
+#if ENABLE_APPLICATION_MANIFEST
+
+Modules/applicationmanifest/ApplicationManifestParser.cpp
+
+#endif
+
 Modules/beacon/NavigatorBeacon.cpp
 
 Modules/cache/CacheStorageConnection.cpp

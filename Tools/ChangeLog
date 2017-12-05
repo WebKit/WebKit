@@ -1,3 +1,29 @@
+2017-12-04  David Quesada  <david_quesada@apple.com>
+
+        Add a class for parsing application manifests
+        https://bugs.webkit.org/show_bug.cgi?id=177973
+        rdar://problem/34747949
+
+        Reviewed by Geoffrey Garen.
+
+        Add basic unit tests for ApplicationManifestParser. For each of the implemented top-level properties,
+        attempt to parse manifests with varying types of valid and invalid data to ensure the resulting
+        ApplicationManifest is configured with the appropriate values per the spec.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig: Add ENABLE_APPLICATION_MANIFEST feature flag.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/ApplicationManifestParser.cpp: Added.
+        (ApplicationManifestParserTest::SetUp):
+        (ApplicationManifestParserTest::parseString):
+        (ApplicationManifestParserTest::parseTopLevelProperty):
+        (ApplicationManifestParserTest::testStartURL):
+        (ApplicationManifestParserTest::testName):
+        (ApplicationManifestParserTest::testDescription):
+        (ApplicationManifestParserTest::testShortName):
+        (ApplicationManifestParserTest::testScope):
+        (assertManifestHasDefaultValues):
+        (TEST_F):
+
 2017-12-04  Aakash Jain  <aakash_jain@apple.com>
 
         Add docstring in EarlyWarningSystemTask to explain return values
