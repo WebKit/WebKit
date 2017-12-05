@@ -300,6 +300,17 @@ void SWServerRegistration::handleClientUnload()
     tryActivate();
 }
 
+void SWServerRegistration::controlClient(ServiceWorkerClientIdentifier identifier)
+{
+    ASSERT(activeWorker());
+
+    addClientUsingRegistration(identifier);
+
+    HashSet<DocumentIdentifier> identifiers;
+    identifiers.add(identifier.contextIdentifier);
+    m_server.getConnection(identifier.serverConnectionIdentifier)->notifyClientsOfControllerChange(identifiers, activeWorker()->data());
+}
+
 void SWServerRegistration::setIsUninstalling(bool value)
 {
     if (m_uninstalling == value)

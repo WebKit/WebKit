@@ -55,6 +55,7 @@ public:
     virtual void syncTerminateWorker(ServiceWorkerIdentifier) = 0;
     virtual void findClientByIdentifierCompleted(uint64_t requestIdentifier, const std::optional<ServiceWorkerClientData>&, bool hasSecurityError) = 0;
     virtual void matchAllCompleted(uint64_t requestIdentifier, const Vector<ServiceWorkerClientInformation>&) = 0;
+    virtual void claimCompleted(uint64_t requestIdentifier) = 0;
     virtual void didFinishSkipWaiting(uint64_t callbackID) = 0;
 
     // Messages back from the SW host process
@@ -67,6 +68,7 @@ public:
     WEBCORE_EXPORT void workerTerminated(ServiceWorkerIdentifier);
     WEBCORE_EXPORT void findClientByIdentifier(uint64_t clientIdRequestIdentifier, ServiceWorkerIdentifier, ServiceWorkerClientIdentifier);
     WEBCORE_EXPORT void matchAll(uint64_t requestIdentifier, ServiceWorkerIdentifier, const ServiceWorkerClientQueryOptions&);
+    WEBCORE_EXPORT void claim(uint64_t requestIdentifier, ServiceWorkerIdentifier);
 
     static SWServerToContextConnection* connectionForIdentifier(SWServerToContextConnectionIdentifier);
 

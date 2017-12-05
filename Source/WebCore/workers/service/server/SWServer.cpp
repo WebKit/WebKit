@@ -344,6 +344,31 @@ void SWServer::matchAll(SWServerWorker& worker, const ServiceWorkerClientQueryOp
     callback(WTFMove(clients));
 }
 
+void SWServer::claim(SWServerWorker& worker)
+{
+    auto& origin = worker.origin();
+    auto iterator = m_clients.find(origin);
+    if (iterator == m_clients.end())
+        return;
+
+    auto& clients = iterator->value.clients;
+    for (auto& client : clients) {
+        auto* registration = doRegistrationMatching(origin.topOrigin, client.data.url);
+        if (!(registration && registration->key() == worker.registrationKey()))
+            continue;
+
+        auto result = m_clientToControllingWorker.add(client.identifier, worker.identifier());
+        if (!result.isNewEntry) {
+            if (result.iterator->value == worker.identifier())
+                continue;
+            if (auto* controllingRegistration = registrationFromServiceWorkerIdentifier(result.iterator->value))
+                controllingRegistration->removeClientUsingRegistration(client.identifier);
+            result.iterator->value = worker.identifier();
+        }
+        registration->controlClient(client.identifier);
+    }
+}
+
 void SWServer::didResolveRegistrationPromise(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey)
 {
     ASSERT_UNUSED(connection, m_connections.contains(connection.identifier()));
@@ -566,9 +591,9 @@ void SWServer::unregisterConnection(Connection& connection)
         registration->unregisterServerConnection(connection.identifier());
 }
 
-const SWServerRegistration* SWServer::doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const
+SWServerRegistration* SWServer::doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL)
 {
-    const SWServerRegistration* selectedRegistration = nullptr;
+    SWServerRegistration* selectedRegistration = nullptr;
     for (auto& registration : m_registrations.values()) {
         if (!registration->key().isMatching(topOrigin, clientURL))
             continue;

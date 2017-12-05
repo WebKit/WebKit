@@ -59,6 +59,7 @@ public:
         using FindClientByIdentifierCallback = WTF::CompletionHandler<void(ExceptionOr<std::optional<ServiceWorkerClientData>>&&)>;
         virtual void findClientByIdentifier(ServiceWorkerIdentifier, ServiceWorkerClientIdentifier, FindClientByIdentifierCallback&&) = 0;
         virtual void matchAll(ServiceWorkerIdentifier, const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&) = 0;
+        virtual void claim(ServiceWorkerIdentifier, WTF::CompletionHandler<void()>&&) = 0;
     };
 
     WEBCORE_EXPORT void setConnection(std::unique_ptr<Connection>&&);

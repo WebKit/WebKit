@@ -80,6 +80,7 @@ public:
     void unregisterServerConnection(SWServerConnectionIdentifier);
 
     void notifyClientsOfControllerChange();
+    void controlClient(ServiceWorkerClientIdentifier);
 
     void clear();
     bool tryClear();

@@ -116,12 +116,34 @@ void SWServerWorker::matchAll(const ServiceWorkerClientQueryOptions& options, Se
     return m_server.matchAll(*this, options, WTFMove(callback));
 }
 
+void SWServerWorker::claim()
+{
+    return m_server.claim(*this);
+}
+
 void SWServerWorker::skipWaiting()
 {
     m_isSkipWaitingFlagSet = true;
 
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
+    registration->tryActivate();
+}
+
+void SWServerWorker::setHasPendingEvents(bool hasPendingEvents)
+{
+    if (m_hasPendingEvents == hasPendingEvents)
+        return;
+
+    m_hasPendingEvents = hasPendingEvents;
+    if (m_hasPendingEvents)
+        return;
+
+    // Do tryClear/tryActivate, as per https://w3c.github.io/ServiceWorker/#wait-until-method.
+    auto* registration = m_server.getRegistration(m_registrationKey);
+    ASSERT(registration);
+    if (registration->isUninstalling() && registration->tryClear())
+        return;
     registration->tryActivate();
 }
 

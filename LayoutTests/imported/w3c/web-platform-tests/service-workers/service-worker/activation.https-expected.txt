@@ -1,7 +1,7 @@
 
 
-FAIL loss of controllees triggers activation assert_not_equals: got disallowed value null
-FAIL finishing a request triggers activation assert_not_equals: got disallowed value null
-FAIL skipWaiting bypasses no controllee requirement assert_not_equals: got disallowed value null
-FAIL finishing a request triggers unregister assert_not_equals: got disallowed value null
+PASS loss of controllees triggers activation 
+PASS finishing a request triggers activation 
+PASS skipWaiting bypasses no controllee requirement 
+FAIL finishing a request triggers unregister assert_equals: expected null but got object "[object ServiceWorker]"
 

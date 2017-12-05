@@ -245,6 +245,19 @@ void WebSWContextManagerConnection::matchAllCompleted(uint64_t requestIdentifier
         callback(WTFMove(clientsData));
 }
 
+void WebSWContextManagerConnection::claim(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, CompletionHandler<void()>&& callback)
+{
+    auto requestIdentifier = ++m_previousRequestIdentifier;
+    m_claimRequests.add(requestIdentifier, WTFMove(callback));
+    m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::Claim { requestIdentifier, serviceWorkerIdentifier }, 0);
+}
+
+void WebSWContextManagerConnection::claimCompleted(uint64_t claimRequestIdentifier)
+{
+    if (auto callback = m_claimRequests.take(claimRequestIdentifier))
+        callback();
+}
+
 void WebSWContextManagerConnection::didFinishSkipWaiting(uint64_t callbackID)
 {
     if (auto callback = m_skipWaitingRequests.take(callbackID))

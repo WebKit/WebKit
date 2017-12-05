@@ -107,9 +107,29 @@ void ServiceWorkerClients::openWindow(ScriptExecutionContext&, const String& url
     promise->reject(Exception { NotSupportedError, ASCIILiteral("clients.openWindow() is not yet supported") });
 }
 
-void ServiceWorkerClients::claim(ScriptExecutionContext&, Ref<DeferredPromise>&& promise)
+void ServiceWorkerClients::claim(ScriptExecutionContext& context, Ref<DeferredPromise>&& promise)
 {
-    promise->reject(Exception { NotSupportedError, ASCIILiteral("clients.claim() is not yet supported") });
+    auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
+
+    auto serviceWorkerIdentifier = serviceWorkerGlobalScope.thread().identifier();
+
+    if (!serviceWorkerGlobalScope.registration().active() || serviceWorkerGlobalScope.registration().active()->identifier() != serviceWorkerIdentifier) {
+        promise->reject(Exception { InvalidStateError, ASCIILiteral("Service worker is not active") });
+        return;
+    }
+
+    auto promisePointer = promise.ptr();
+    m_pendingPromises.add(promisePointer, WTFMove(promise));
+
+    callOnMainThread([promisePointer, serviceWorkerIdentifier] () mutable {
+        auto connection = SWContextManager::singleton().connection();
+        connection->claim(serviceWorkerIdentifier, [promisePointer, serviceWorkerIdentifier] () mutable {
+            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promisePointer] (auto& scope) mutable {
+                if (auto promise = scope.clients().m_pendingPromises.take(promisePointer))
+                    promise.value()->resolve();
+            });
+        });
+    });
 }
 
 } // namespace WebCore

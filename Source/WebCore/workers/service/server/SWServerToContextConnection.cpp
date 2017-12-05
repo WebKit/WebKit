@@ -123,6 +123,14 @@ void SWServerToContextConnection::matchAll(uint64_t requestIdentifier, ServiceWo
     }
 }
 
+void SWServerToContextConnection::claim(uint64_t requestIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier)
+{
+    if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier)) {
+        worker->claim();
+        globalServerToContextConnection()->claimCompleted(requestIdentifier);
+    }
+}
+
 void SWServerToContextConnection::skipWaiting(ServiceWorkerIdentifier serviceWorkerIdentifier, uint64_t callbackID)
 {
     if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))

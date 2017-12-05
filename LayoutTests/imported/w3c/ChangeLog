@@ -1,5 +1,14 @@
 2017-12-05  Youenn Fablet  <youenn@apple.com>
 
+        Implement https://w3c.github.io/ServiceWorker/#clients-claim
+        https://bugs.webkit.org/show_bug.cgi?id=180261
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/service-workers/service-worker/activation.https-expected.txt:
+
+2017-12-05  Youenn Fablet  <youenn@apple.com>
+
         Unskip some more Service Worker tests
         https://bugs.webkit.org/show_bug.cgi?id=180428
 

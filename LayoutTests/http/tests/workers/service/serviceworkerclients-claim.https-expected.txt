@@ -1,0 +1,4 @@
+
+PASS Setup worker 
+PASS Test self.clients.claim 
+

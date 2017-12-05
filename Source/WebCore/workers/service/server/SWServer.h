@@ -74,7 +74,7 @@ public:
         Identifier identifier() const { return m_identifier; }
 
         WEBCORE_EXPORT void didResolveRegistrationPromise(const ServiceWorkerRegistrationKey&);
-        const SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const { return m_server.doRegistrationMatching(topOrigin, clientURL); }
+        SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) { return m_server.doRegistrationMatching(topOrigin, clientURL); }
         void resolveRegistrationReadyRequests(SWServerRegistration&);
 
         // Messages to the client WebProcess
@@ -150,6 +150,7 @@ public:
     void workerContextTerminated(SWServerWorker&);
     std::optional<ServiceWorkerClientData> findClientByIdentifier(const ClientOrigin&, ServiceWorkerClientIdentifier);
     void matchAll(SWServerWorker&, const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&);
+    void claim(SWServerWorker&);
 
     WEBCORE_EXPORT void serverToContextConnectionCreated();
     
@@ -177,7 +178,7 @@ private:
     void addClientServiceWorkerRegistration(Connection&, ServiceWorkerRegistrationIdentifier);
     void removeClientServiceWorkerRegistration(Connection&, ServiceWorkerRegistrationIdentifier);
 
-    WEBCORE_EXPORT const SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const;
+    WEBCORE_EXPORT SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL);
 
     void installContextData(const ServiceWorkerContextData&);
 

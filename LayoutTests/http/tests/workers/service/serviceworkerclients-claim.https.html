@@ -1,0 +1,52 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+var scope = "/workers/service/serviceworkerclients-claim.https.html";
+var activeWorker;
+
+promise_test(async (test) => {
+    var registration = await navigator.serviceWorker.getRegistration(scope);
+    if (registration && registration.scope === scope)
+        await registration.unregister();
+
+    var registration = await navigator.serviceWorker.register("serviceworkerclients-claim-worker.js", { scope : scope });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+promise_test(async (test) => {
+    var promise = new Promise((resolve, reject) => {
+        navigator.serviceWorker.addEventListener("message", test.step_func((event) => {
+            if (event.data === "CLAIMED") {
+                resolve();
+                return;
+            }
+            if (!event.data.startsWith("PASS")) {
+                reject(event.data);
+                return;
+            }
+        }));
+    });
+
+    activeWorker.postMessage("start");
+    await promise;
+
+    var response = await fetch("pinkelephant");
+    var text = await response.text();
+    assert_equals(text, "PASS");
+}, "Test self.clients.claim");
+</script>
+</body>
+</html>

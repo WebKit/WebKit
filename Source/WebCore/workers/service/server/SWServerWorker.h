@@ -81,7 +81,7 @@ public:
     void setState(ServiceWorkerState state) { m_data.state = state; }
 
     bool hasPendingEvents() const { return m_hasPendingEvents; }
-    void setHasPendingEvents(bool value) { m_hasPendingEvents = value; }
+    void setHasPendingEvents(bool);
 
     void scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>&, const String& message);
     void scriptContextStarted(const std::optional<ServiceWorkerJobDataIdentifier>&);
@@ -90,6 +90,7 @@ public:
     void contextTerminated();
     std::optional<ServiceWorkerClientData> findClientByIdentifier(ServiceWorkerClientIdentifier);
     void matchAll(const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&);
+    void claim();
 
     void skipWaiting();
     bool isSkipWaitingFlagSet() const { return m_isSkipWaitingFlagSet; }
