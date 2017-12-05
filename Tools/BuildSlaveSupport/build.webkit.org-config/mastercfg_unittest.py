@@ -47,7 +47,7 @@ class BuildBotConfigLoader(object):
         globals()['open'] = __builtins__.open  # Stop mocking open().
 
 
-class MasterCfgTest(unittest.TestCase):
+class RunWebKitTestsTest(unittest.TestCase):
     def test_nrwt_leaks_parsing(self):
         run_webkit_tests = RunWebKitTests()  # pylint is confused by the way we import the module ... pylint: disable-msg=E0602
         log_text = """

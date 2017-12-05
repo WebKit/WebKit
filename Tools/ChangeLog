@@ -1,3 +1,13 @@
+2017-12-05  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Rename MasterCfgTest to RunWebKitTestsTest
+        https://bugs.webkit.org/show_bug.cgi?id=180391
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        (RunWebKitTestsTest): Renamed from MasterCfgTest.
+
 2017-12-01  Filip Pizlo  <fpizlo@apple.com>
 
         GC constraint solving should be parallel
