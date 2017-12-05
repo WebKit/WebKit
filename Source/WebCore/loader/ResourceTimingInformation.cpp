@@ -30,6 +30,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "HTMLFrameOwnerElement.h"
 #include "LoadTiming.h"
 #include "Performance.h"
