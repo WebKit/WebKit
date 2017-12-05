@@ -1,3 +1,15 @@
+2017-12-05  Alex Christensen  <achristensen@webkit.org>
+
+        Fix crash when loading a file URL that does not have a fileSystemPath representation
+        https://bugs.webkit.org/show_bug.cgi?id=180448
+        <rdar://problem/22805921>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::assumeReadAccessToBaseURL):
+        Check if a String is null before adding it to a HashSet.
+
 2017-12-05  Youenn Fablet  <youenn@apple.com>
 
         Implement https://w3c.github.io/ServiceWorker/#clients-claim

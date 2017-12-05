@@ -121,4 +121,10 @@ TEST(WKWebView, LoadAlternateHTMLStringFromProvisionalLoadErrorBackToBack)
     }
 }
 
+TEST(WKWebView, LoadAlternateHTMLStringNoFileSystemPath)
+{
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    [webView loadHTMLString:@"<html>hi</html>" baseURL:[NSURL URLWithString:@"file:///.file/id="]];
+}
+
 #endif

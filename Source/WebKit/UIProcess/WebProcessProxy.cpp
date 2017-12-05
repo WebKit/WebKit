@@ -445,10 +445,13 @@ void WebProcessProxy::assumeReadAccessToBaseURL(const String& urlString)
     // There's a chance that urlString does not point to a directory.
     // Get url's base URL to add to m_localPathsWithAssumedReadAccess.
     URL baseURL(URL(), url.baseAsString());
+    String path = baseURL.fileSystemPath();
+    if (path.isNull())
+        return;
     
     // Client loads an alternate string. This doesn't grant universal file read, but the web process is assumed
     // to have read access to this directory already.
-    m_localPathsWithAssumedReadAccess.add(baseURL.fileSystemPath());
+    m_localPathsWithAssumedReadAccess.add(path);
 }
 
 bool WebProcessProxy::hasAssumedReadAccessToURL(const URL& url) const
