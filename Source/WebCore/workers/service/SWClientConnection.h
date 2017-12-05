@@ -78,10 +78,7 @@ public:
     virtual bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOrigin&) const = 0;
     virtual void syncTerminateWorker(ServiceWorkerIdentifier) = 0;
 
-    virtual void serviceWorkerStartedControllingClient(ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier, DocumentIdentifier) = 0;
-    virtual void serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier, DocumentIdentifier) = 0;
-
-    virtual void registerServiceWorkerClient(const SecurityOrigin& topOrigin, DocumentIdentifier, const ServiceWorkerClientData&) = 0;
+    virtual void registerServiceWorkerClient(const SecurityOrigin& topOrigin, DocumentIdentifier, const ServiceWorkerClientData&, const std::optional<ServiceWorkerIdentifier>&) = 0;
     virtual void unregisterServiceWorkerClient(DocumentIdentifier) = 0;
 
 protected:

@@ -545,21 +545,7 @@ ServiceWorker* ScriptExecutionContext::activeServiceWorker() const
 
 void ScriptExecutionContext::setActiveServiceWorker(RefPtr<ServiceWorker>&& serviceWorker)
 {
-    // Add support for workers.
-    if (!is<Document>(*this))
-        return;
-
-    if (m_activeServiceWorker == serviceWorker)
-        return;
-
-    auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID());
-    if (m_activeServiceWorker)
-        connection.serviceWorkerStoppedControllingClient(m_activeServiceWorker->identifier(), m_activeServiceWorker->registrationIdentifier(), downcast<Document>(*this).identifier());
-
     m_activeServiceWorker = WTFMove(serviceWorker);
-
-    if (m_activeServiceWorker)
-        connection.serviceWorkerStartedControllingClient(m_activeServiceWorker->identifier(), m_activeServiceWorker->registrationIdentifier(), downcast<Document>(*this).identifier());
 }
 
 void ScriptExecutionContext::registerServiceWorker(ServiceWorker& serviceWorker)

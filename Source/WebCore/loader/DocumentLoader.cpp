@@ -874,11 +874,11 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
         if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled()) {
             // FIXME: We should probably register the client as soon as we do the related navigation fetch.
             // We can probably implement this when supporting FetchEvent.reservedClientId.
-            m_frame->document()->setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(m_frame->page()->sessionID()));
             if (m_serviceWorkerRegistrationData && m_serviceWorkerRegistrationData->activeWorker) {
                 m_frame->document()->setActiveServiceWorker(ServiceWorker::getOrCreate(*m_frame->document(), WTFMove(m_serviceWorkerRegistrationData->activeWorker.value())));
                 m_serviceWorkerRegistrationData = { };
             }
+            m_frame->document()->setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(m_frame->page()->sessionID()));
         }
 #endif
         // Call receivedFirstData() exactly once per load. We should only reach this point multiple times

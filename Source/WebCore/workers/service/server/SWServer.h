@@ -90,8 +90,6 @@ public:
         WEBCORE_EXPORT void finishFetchingScriptInServer(const ServiceWorkerFetchResult&);
         WEBCORE_EXPORT void addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier);
         WEBCORE_EXPORT void removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier);
-        WEBCORE_EXPORT void serviceWorkerStartedControllingClient(ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier, DocumentIdentifier);
-        WEBCORE_EXPORT void serviceWorkerStoppedControllingClient(ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier, DocumentIdentifier);
         WEBCORE_EXPORT void syncTerminateWorker(ServiceWorkerIdentifier);
 
     private:
@@ -147,10 +145,12 @@ public:
     
     WEBCORE_EXPORT static HashSet<SWServer*>& allServers();
 
-    WEBCORE_EXPORT void registerServiceWorkerClient(ClientOrigin&&, ServiceWorkerClientIdentifier, ServiceWorkerClientData&&);
+    WEBCORE_EXPORT void registerServiceWorkerClient(ClientOrigin&&, ServiceWorkerClientIdentifier, ServiceWorkerClientData&&, const std::optional<ServiceWorkerIdentifier>& controllingServiceWorkerIdentifier);
     WEBCORE_EXPORT void unregisterServiceWorkerClient(const ClientOrigin&, ServiceWorkerClientIdentifier);
 
     WEBCORE_EXPORT bool invokeRunServiceWorker(ServiceWorkerIdentifier);
+
+    void setClientActiveWorker(ServiceWorkerClientIdentifier, ServiceWorkerIdentifier);
 
 private:
     void registerConnection(Connection&);
@@ -165,12 +165,12 @@ private:
 
     void addClientServiceWorkerRegistration(Connection&, ServiceWorkerRegistrationIdentifier);
     void removeClientServiceWorkerRegistration(Connection&, ServiceWorkerRegistrationIdentifier);
-    void serviceWorkerStartedControllingClient(Connection&, ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier, DocumentIdentifier);
-    void serviceWorkerStoppedControllingClient(Connection&, ServiceWorkerIdentifier, ServiceWorkerRegistrationIdentifier, DocumentIdentifier);
 
     WEBCORE_EXPORT const SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const;
 
     void installContextData(const ServiceWorkerContextData&);
+
+    SWServerRegistration* registrationFromServiceWorkerIdentifier(ServiceWorkerIdentifier);
 
     enum TerminationMode {
         Synchronous,

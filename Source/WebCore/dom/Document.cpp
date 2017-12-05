@@ -7597,8 +7597,11 @@ void Document::setServiceWorkerConnection(SWClientConnection* serviceWorkerConne
 
     m_serviceWorkerConnection = serviceWorkerConnection;
 
-    if (m_serviceWorkerConnection)
-        m_serviceWorkerConnection->registerServiceWorkerClient(topOrigin(), identifier(), ServiceWorkerClientData::from(*this));
+    if (!m_serviceWorkerConnection)
+        return;
+
+    auto controllingServiceWorkerIdentifier = activeServiceWorker() ? std::make_optional<ServiceWorkerIdentifier>(activeServiceWorker()->identifier()) : std::nullopt;
+    m_serviceWorkerConnection->registerServiceWorkerClient(topOrigin(), identifier(), ServiceWorkerClientData::from(*this), controllingServiceWorkerIdentifier);
 }
 #endif
 

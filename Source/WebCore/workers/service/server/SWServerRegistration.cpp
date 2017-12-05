@@ -259,10 +259,14 @@ void SWServerRegistration::activate()
     updateRegistrationState(ServiceWorkerRegistrationState::Waiting, nullptr);
     // Run the Update Worker State algorithm passing registration's active worker and activating as the arguments.
     updateWorkerState(*activeWorker(), ServiceWorkerState::Activating);
-    // FIXME: For each service worker client client whose creation URL matches registration's scope url...
+    // FIXME: For each service worker client whose creation URL matches registration's scope url...
 
-    // For each service worker client client who is using registration:
+    // For each service worker client who is using registration:
     // - Set client's active worker to registration's active worker.
+    for (auto keyValue : m_clientsUsingRegistration) {
+        for (auto& clientIdentifier : keyValue.value)
+            m_server.setClientActiveWorker(ServiceWorkerClientIdentifier { keyValue.key, clientIdentifier }, activeWorker()->identifier());
+    }
     // - Invoke Notify Controller Change algorithm with client as the argument.
     notifyClientsOfControllerChange();
 

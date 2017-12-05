@@ -1,3 +1,21 @@
+2017-12-05  Youenn Fablet  <youenn@apple.com>
+
+        Implement setting of service worker to client in SWServer without going to WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=180382
+
+        Reviewed by Chris Dumez.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::registerServiceWorkerClient):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::registerServiceWorkerClient):
+        (WebKit::WebSWClientConnection::serviceWorkerStartedControllingClient): Deleted.
+        (WebKit::WebSWClientConnection::serviceWorkerStoppedControllingClient): Deleted.
+        * WebProcess/Storage/WebSWClientConnection.h:
+
 2017-12-04  Chris Dumez  <cdumez@apple.com>
 
         Support container.getRegistration() / getRegistrations() inside service workers
