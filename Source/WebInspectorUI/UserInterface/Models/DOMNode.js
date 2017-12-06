@@ -636,6 +636,8 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     get displayName()
     {
+        if (this.isPseudoElement())
+            return "::" + this._pseudoType;
         return this.nodeNameInCorrectCase() + this.escapedIdSelector + this.escapedClassSelector;
     }
 

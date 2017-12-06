@@ -34,7 +34,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
 
         this.element.classList.add("spreadsheet-style-panel");
 
-        this._inheritedHeaderMap = new Map;
+        this._headerMap = new Map;
         this._sections = [];
         this._newRuleSelector = null;
         this._ruleMediaAndInherticanceList = [];
@@ -54,6 +54,12 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
             super.refresh(significantChange);
             return;
         }
+
+        this.removeAllSubviews();
+
+        let previousStyle = null;
+        this._headerMap.clear();
+        this._sections = [];
 
         let uniqueOrderedStyles = (orderedStyles) => {
             let uniqueStyles = [];
@@ -79,34 +85,19 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
             return uniqueStyles;
         };
 
-        let createInheritedHeader = (style) => {
-            let inheritedHeader = document.createElement("h2");
-            inheritedHeader.classList.add("section-inherited");
-            inheritedHeader.append(WI.UIString("Inherited From: "), WI.linkifyNodeReference(style.node, {
+        let createHeader = (text, node) => {
+            let header = this.element.appendChild(document.createElement("h2"));
+            header.classList.add("section-header");
+            header.append(text);
+            header.append(" ", WI.linkifyNodeReference(node, {
                 maxLength: 100,
                 excludeRevealElement: true,
             }));
 
-            this._inheritedHeaderMap.set(style.node, inheritedHeader);
-
-            return inheritedHeader;
+            this._headerMap.set(node, header);
         };
 
-        this.removeAllSubviews();
-
-        let orderedStyles = uniqueOrderedStyles(this.nodeStyles.orderedStyles);
-        let previousStyle = null;
-
-        this._inheritedHeaderMap.clear();
-        this._sections = [];
-
-        for (let style of orderedStyles) {
-            if (style.inherited && (!previousStyle || previousStyle.node !== style.node))
-                this.element.append(createInheritedHeader(style));
-
-            // FIXME: <https://webkit.org/b/176187> Display matching pseudo-styles
-            // FIXME: <https://webkit.org/b/176289> Display at-rule section headers (@media, @keyframes, etc.)
-
+        let createSection = (style) => {
             let section = style[WI.SpreadsheetRulesStyleDetailsPanel.RuleSection];
             if (!section) {
                 section = new WI.SpreadsheetCSSStyleDeclarationSection(this, style);
@@ -123,7 +114,25 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
             this._sections.push(section);
 
             previousStyle = style;
+        };
+
+        for (let style of uniqueOrderedStyles(this.nodeStyles.orderedStyles)) {
+            if (style.inherited && (!previousStyle || previousStyle.node !== style.node))
+                createHeader(WI.UIString("Inherited From"), style.node);
+
+            createSection(style);
         }
+
+        let pseudoElements = Array.from(this.nodeStyles.node.pseudoElements().values());
+        Promise.all(pseudoElements.map((pseudoElement) => WI.cssStyleManager.stylesForNode(pseudoElement).refreshIfNeeded()))
+        .then((pseudoNodeStyles) => {
+            for (let pseudoNodeStyle of pseudoNodeStyles) {
+                createHeader(WI.UIString("Pseudo Element"), pseudoNodeStyle.node);
+
+                for (let style of uniqueOrderedStyles(pseudoNodeStyle.orderedStyles))
+                    createSection(style);
+            }
+        });
 
         this._newRuleSelector = null;
 
@@ -230,8 +239,8 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         if (this._filterText)
             this.element.classList.add("filter-non-matching");
 
-        for (let inheritedHeader of this._inheritedHeaderMap.values())
-            inheritedHeader.classList.remove(WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
+        for (let header of this._headerMap.values())
+            header.classList.remove(WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
 
         for (let section of this._sections)
             section.applyFilter(this._filterText);
@@ -252,10 +261,10 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
     {
         if (event.data.matches)
             this.element.classList.remove("filter-non-matching");
-        else if (event.target.style.inherited) {
-            let inheritedHeader = this._inheritedHeaderMap.get(event.target.style.node);
-            if (inheritedHeader)
-                inheritedHeader.classList.add(WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
+        else {
+            let header = this._headerMap.get(event.target.style.node);
+            if (header)
+                header.classList.add(WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
         }
     }
 

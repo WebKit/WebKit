@@ -63,9 +63,11 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
     refreshIfNeeded()
     {
+        if (this._pendingRefreshTask)
+            return this._pendingRefreshTask;
         if (!this._needsRefresh)
-            return;
-        this.refresh();
+            return Promise.resolve(this);
+        return this.refresh();
     }
 
     refresh()
@@ -258,6 +260,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         this._pendingRefreshTask = Promise.all([fetchedMatchedStylesPromise.promise, fetchedInlineStylesPromise.promise, fetchedComputedStylesPromise.promise])
         .then(() => {
             this._pendingRefreshTask = null;
+            return this;
         });
 
         return this._pendingRefreshTask;

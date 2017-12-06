@@ -102,7 +102,7 @@
     color: hsl(0, 0%, 33%);
 }
 
-.spreadsheet-style-panel .section-inherited {
+.spreadsheet-style-panel .section-header {
     margin: 0;
     padding: 4px 6px;
     font-size: inherit;
@@ -111,11 +111,11 @@
     border-bottom: 0.5px solid hsla(0, 0%, 0%, 0.2);
 }
 
-.spreadsheet-style-panel .section-inherited .node-link {
+.spreadsheet-style-panel .section-header .node-link {
     color: inherit;
 }
 
-.spreadsheet-style-panel .section-inherited .node-link:hover {
+.spreadsheet-style-panel .section-header .node-link:hover {
     color: black;
 }
 
