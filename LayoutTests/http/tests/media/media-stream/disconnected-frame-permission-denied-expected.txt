@@ -1,4 +1,3 @@
-frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)
 Tests that when a getUserMedia request is made, permission is denied and its Frame is disconnected before a callback is made, the error callback is invoked with PERMISSION_DENIED.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS error.name is "NotAllowedError"
 
-PASS No callbacks invoked
+PASS Error callback invoked
 PASS successfullyParsed is true
 
 TEST COMPLETE

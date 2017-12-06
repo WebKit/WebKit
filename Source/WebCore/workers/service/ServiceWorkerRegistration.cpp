@@ -114,8 +114,7 @@ ServiceWorkerUpdateViaCache ServiceWorkerRegistration::updateViaCache() const
 
 void ServiceWorkerRegistration::update(Ref<DeferredPromise>&& promise)
 {
-    auto* context = scriptExecutionContext();
-    if (!context) {
+    if (m_isStopped) {
         promise->reject(Exception(InvalidStateError));
         return;
     }
@@ -132,8 +131,7 @@ void ServiceWorkerRegistration::update(Ref<DeferredPromise>&& promise)
 
 void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)
 {
-    auto* context = scriptExecutionContext();
-    if (!context) {
+    if (m_isStopped) {
         promise->reject(Exception(InvalidStateError));
         return;
     }

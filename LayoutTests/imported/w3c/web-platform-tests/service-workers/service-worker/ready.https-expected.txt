@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
 
 PASS ready returns the same Promise object 
 PASS ready returns a Promise object in the context of the related document 

@@ -88,6 +88,9 @@ void ServiceWorker::scheduleTaskToUpdateState(State state)
 
 ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
 {
+    if (m_isStopped)
+        return Exception { InvalidStateError };
+
     if (state() == State::Redundant)
         return Exception { InvalidStateError, ASCIILiteral("Service Worker state is redundant") };
 

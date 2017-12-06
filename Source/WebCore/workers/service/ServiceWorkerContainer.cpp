@@ -111,8 +111,7 @@ ServiceWorker* ServiceWorkerContainer::controller() const
 void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, const RegistrationOptions& options, Ref<DeferredPromise>&& promise)
 {
     auto* context = scriptExecutionContext();
-    if (!context || !context->sessionID().isValid()) {
-        ASSERT_NOT_REACHED();
+    if (m_isStopped || !context->sessionID().isValid()) {
         promise->reject(Exception(InvalidStateError));
         return;
     }
@@ -234,15 +233,16 @@ void ServiceWorkerContainer::scheduleJob(Ref<ServiceWorkerJob>&& job)
 
 void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<DeferredPromise>&& promise)
 {
-    auto* context = scriptExecutionContext();
-    if (!context) {
-        ASSERT_NOT_REACHED();
+    if (m_isStopped) {
         promise->reject(Exception { InvalidStateError });
         return;
     }
 
-    URL parsedURL = context->completeURL(clientURL);
-    if (!protocolHostAndPortAreEqual(parsedURL, context->url())) {
+    ASSERT(scriptExecutionContext());
+    auto& context = *scriptExecutionContext();
+
+    URL parsedURL = context.completeURL(clientURL);
+    if (!protocolHostAndPortAreEqual(parsedURL, context.url())) {
         promise->reject(Exception { SecurityError, ASCIILiteral("Origin of clientURL is not client's origin") });
         return;
     }
@@ -252,7 +252,7 @@ void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<Deferr
     m_pendingPromises.add(pendingPromiseIdentifier, WTFMove(pendingPromise));
 
     auto contextIdentifier = this->contextIdentifier();
-    callOnMainThread([connection = makeRef(ensureSWClientConnection()), this, topOrigin = context->topOrigin().isolatedCopy(), parsedURL = parsedURL.isolatedCopy(), contextIdentifier, pendingPromiseIdentifier]() mutable {
+    callOnMainThread([connection = makeRef(ensureSWClientConnection()), this, topOrigin = context.topOrigin().isolatedCopy(), parsedURL = parsedURL.isolatedCopy(), contextIdentifier, pendingPromiseIdentifier]() mutable {
         connection->matchRegistration(topOrigin, parsedURL, [this, contextIdentifier, pendingPromiseIdentifier] (auto&& result) mutable {
             ScriptExecutionContext::postTaskTo(contextIdentifier, [this, pendingPromiseIdentifier, result = crossThreadCopy(result)](ScriptExecutionContext&) mutable {
                 didFinishGetRegistrationRequest(pendingPromiseIdentifier, WTFMove(result));
@@ -300,19 +300,21 @@ void ServiceWorkerContainer::scheduleTaskToUpdateRegistrationState(ServiceWorker
 
 void ServiceWorkerContainer::getRegistrations(Ref<DeferredPromise>&& promise)
 {
-    auto* context = scriptExecutionContext();
-    if (!context) {
+    if (m_isStopped) {
         promise->reject(Exception { InvalidStateError });
         return;
     }
+
+    ASSERT(scriptExecutionContext());
+    auto& context = *scriptExecutionContext();
 
     uint64_t pendingPromiseIdentifier = ++m_lastPendingPromiseIdentifier;
     auto pendingPromise = std::make_unique<PendingPromise>(WTFMove(promise), makePendingActivity(*this));
     m_pendingPromises.add(pendingPromiseIdentifier, WTFMove(pendingPromise));
 
     auto contextIdentifier = this->contextIdentifier();
-    auto contextURL = context->url();
-    callOnMainThread([connection = makeRef(ensureSWClientConnection()), this, topOrigin = context->topOrigin().isolatedCopy(), contextURL = contextURL.isolatedCopy(), contextIdentifier, pendingPromiseIdentifier]() mutable {
+    auto contextURL = context.url();
+    callOnMainThread([connection = makeRef(ensureSWClientConnection()), this, topOrigin = context.topOrigin().isolatedCopy(), contextURL = contextURL.isolatedCopy(), contextIdentifier, pendingPromiseIdentifier]() mutable {
         connection->getRegistrations(topOrigin, contextURL, [this, contextIdentifier, pendingPromiseIdentifier] (auto&& registrationDatas) mutable {
             ScriptExecutionContext::postTaskTo(contextIdentifier, [this, pendingPromiseIdentifier, registrationDatas = crossThreadCopy(registrationDatas)](ScriptExecutionContext&) mutable {
                 didFinishGetRegistrationsRequest(pendingPromiseIdentifier, WTFMove(registrationDatas));

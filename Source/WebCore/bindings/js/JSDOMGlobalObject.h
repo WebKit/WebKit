@@ -129,4 +129,6 @@ JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext*, JSC::ExecState*)
 JSDOMGlobalObject* toJSDOMGlobalObject(Document*, DOMWrapperWorld&);
 JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext*, DOMWrapperWorld&);
 
+WEBCORE_EXPORT JSDOMGlobalObject& callerGlobalObject(JSC::ExecState&);
+
 } // namespace WebCore

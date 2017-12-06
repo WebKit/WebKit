@@ -1,9 +1,8 @@
 
-Harness Error (TIMEOUT), message = null
 
-TIMEOUT accessing a ServiceWorkerRegistration from a removed iframe Test timed out
-NOTRUN accessing a ServiceWorker object from a removed iframe 
-NOTRUN accessing navigator.serviceWorker on a detached iframe 
+PASS accessing a ServiceWorkerRegistration from a removed iframe 
+PASS accessing a ServiceWorker object from a removed iframe 
+PASS accessing navigator.serviceWorker on a detached iframe 
 FAIL accessing navigator on a removed frame assert_throws: function "() => get_navigator()" did not throw
 FAIL accessing navigator.serviceWorker on a removed about:blank frame undefined is not an object (evaluating 'get_navigator().serviceWorker')
 

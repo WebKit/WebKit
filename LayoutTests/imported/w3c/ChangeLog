@@ -1,3 +1,15 @@
+2017-12-06  Chris Dumez  <cdumez@apple.com>
+
+        ServiceWorkers API should reject promises when calling objects inside detached frames
+        https://bugs.webkit.org/show_bug.cgi?id=180444
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline test now that it is passing some checks.
+
+        * web-platform-tests/service-workers/service-worker/detached-context.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/register-closed-window.https-expected.txt:
+
 2017-12-06  Youenn Fablet  <youenn@apple.com>
 
         Service Worker fetch should filter HTTP headers that are added by CachedResourceLoader/CachedResource

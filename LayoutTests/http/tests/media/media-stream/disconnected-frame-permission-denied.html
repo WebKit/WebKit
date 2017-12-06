@@ -17,6 +17,7 @@ var error;
 var options = {audio: true, video: true};
 function onIframeLoaded() {
     iframeNavigator = iframe.contentWindow.navigator;
+    iframe.contentWindow.onunload = onIframeUnloaded;
     iframeNavigator.mediaDevices.getUserMedia(options)
         .then(stream => {
             testFailed('Success callback invoked unexpectedly');
@@ -38,11 +39,11 @@ function onIframeUnloaded() {
             finishJSTest();
         })
         .catch(err => {
-            testFailed('Error callback invoked unexpectedly');
+            testPassed('Error callback invoked');
             finishJSTest();
         });
     setTimeout(function() {
-        testPassed('No callbacks invoked');
+        testFailed('No callbacks invoked');
         finishJSTest();
     }, 100);
 }

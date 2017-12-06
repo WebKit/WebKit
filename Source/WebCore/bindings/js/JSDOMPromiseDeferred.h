@@ -264,7 +264,7 @@ inline JSC::JSValue callPromiseFunction(JSC::ExecState& state)
     JSC::VM& vm = state.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    JSDOMGlobalObject& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject());
+    auto& globalObject = callerGlobalObject(state);
     JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::create(&state, &globalObject);
 
     // promiseDeferred can be null when terminating a Worker abruptly.
@@ -284,7 +284,7 @@ inline JSC::JSValue callPromiseFunction(JSC::ExecState& state, PromiseFunctor fu
     JSC::VM& vm = state.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    JSDOMGlobalObject& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject());
+    auto& globalObject = callerGlobalObject(state);
     JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::create(&state, &globalObject);
 
     // promiseDeferred can be null when terminating a Worker abruptly.

@@ -1,3 +1,21 @@
+2017-12-06  Chris Dumez  <cdumez@apple.com>
+
+        ServiceWorkers API should reject promises when calling objects inside detached frames
+        https://bugs.webkit.org/show_bug.cgi?id=180444
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        Unskip test that no longer times out and starts passing a few checks.
+
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+        Rebaseline test now that promise is rejected.
+
+        * http/tests/media/media-stream/disconnected-frame-permission-denied-expected.txt:
+        * http/tests/media/media-stream/disconnected-frame-permission-denied.html:
+        Update and rebaseline test now that the promise is rejected. I verified that this
+        behavior is consistent with Chrome.
+
 2017-12-06  Matt Lewis  <jlewis3@apple.com>
 
         Marked storage/indexeddb/modern/idbtransaction-objectstore-failures-private.html as flaky on macOS.
