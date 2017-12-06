@@ -116,11 +116,6 @@ body[dir=rtl] .network-table .cell.name > .status {
     top: calc(var(--navigation-bar-height) - var(--timeline-ruler-height));
 }
 
-.content-view.network .message-text-view {
-    top: var(--navigation-bar-height);
-    background: var(--odd-zebra-stripe-row-background-color);
-}
-
 .content-view.network .message-text-view > .message {
     font-size: var(--message-text-view-font-size);
     font-weight: normal;

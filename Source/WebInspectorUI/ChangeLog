@@ -1,3 +1,13 @@
+2017-12-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Empty Message View in Network Tab has padding at top
+        https://bugs.webkit.org/show_bug.cgi?id=180453
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.content-view.network .message-text-view): Deleted.
+
 2017-12-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: make Computed a top-level sidebar tab
