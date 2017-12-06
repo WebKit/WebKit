@@ -163,11 +163,15 @@ sub spawnGenerateBindingsIfNeeded
 {
     return if $abort;
     return unless @idlFilesToUpdate;
-    my $file = shift @idlFilesToUpdate;
-    $currentCount++;
-    my $basename = basename($file);
-    printProgress("[$currentCount/$totalCount] $basename");
-    my $pid = spawnCommand($perl, @args, $file);
+    my $batchCount = 30;
+    # my $batchCount = int(($totalCount - $currentCount) / $numOfJobs) || 1;
+    my @files = splice(@idlFilesToUpdate, 0, $batchCount);
+    for (@files) {
+        $currentCount++;
+        my $basename = basename($_);
+        printProgress("[$currentCount/$totalCount] $basename");
+    }
+    my $pid = spawnCommand($perl, @args, @files);
     $abort = 1 unless defined $pid;
 }
 

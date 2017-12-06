@@ -71,9 +71,7 @@ GetOptions('include=s@' => \@idlDirectories,
            'additionalIdlFiles=s' => \$additionalIdlFiles,
            'idlAttributesFile=s' => \$idlAttributesFile);
 
-my $targetIdlFile = $ARGV[0];
-
-die('Must specify input file.') unless defined($targetIdlFile);
+die('Must specify input file.') unless @ARGV;
 die('Must specify generator') unless defined($generator);
 die('Must specify output directory.') unless defined($outputDirectory);
 die('Must specify IDL attributes file.') unless defined($idlAttributesFile);
@@ -81,140 +79,148 @@ die('Must specify IDL attributes file.') unless defined($idlAttributesFile);
 if (!$outputHeadersDirectory) {
     $outputHeadersDirectory = $outputDirectory;
 }
-$targetIdlFile = Cwd::realpath($targetIdlFile);
-if ($verbose) {
-    print "$generator: $targetIdlFile\n";
-}
-my $targetInterfaceName = fileparse($targetIdlFile, ".idl");
 
-my $idlFound = 0;
-my @supplementedIdlFiles;
-if ($supplementalDependencyFile) {
-    # The format of a supplemental dependency file:
-    #
-    # DOMWindow.idl P.idl Q.idl R.idl
-    # Document.idl S.idl
-    # Event.idl
-    # ...
-    #
-    # The above indicates that DOMWindow.idl is supplemented by P.idl, Q.idl and R.idl,
-    # Document.idl is supplemented by S.idl, and Event.idl is supplemented by no IDLs.
-    # The IDL that supplements another IDL (e.g. P.idl) never appears in the dependency file.
-    open FH, "< $supplementalDependencyFile" or die "Cannot open $supplementalDependencyFile\n";
-    while (my $line = <FH>) {
-        my ($idlFile, @followingIdlFiles) = split(/\s+/, $line);
-        if ($idlFile and fileparse($idlFile) eq fileparse($targetIdlFile)) {
-            $idlFound = 1;
-            @supplementedIdlFiles = sort @followingIdlFiles;
-        }
-    }
-    close FH;
+generateBindings($_) for (@ARGV);
 
-    # $additionalIdlFiles is list of IDL files which should not be included in
-    # DerivedSources*.cpp (i.e. they are not described in the supplemental
-    # dependency file) but should generate .h and .cpp files.
-    if (!$idlFound and $additionalIdlFiles) {
-        my @idlFiles = shellwords($additionalIdlFiles);
-        $idlFound = grep { $_ and fileparse($_) eq fileparse($targetIdlFile) } @idlFiles;
-    }
-
-    if (!$idlFound) {
-        my $codeGen = CodeGenerator->new(\@idlDirectories, $generator, $outputDirectory, $outputHeadersDirectory, $preprocessor, $writeDependencies, $verbose);
-
-        # We generate empty .h and .cpp files just to tell build scripts that .h and .cpp files are created.
-        generateEmptyHeaderAndCpp($codeGen->FileNamePrefix(), $targetInterfaceName, $outputHeadersDirectory, $outputDirectory);
-        exit 0;
-    }
-}
-
-my $input;
+sub generateBindings
 {
-    local $INPUT_RECORD_SEPARATOR;
-    open(JSON, "<", $idlAttributesFile) or die "Couldn't open $idlAttributesFile: $!";
-    $input = <JSON>;
-    close(JSON);
-}
+    my ($targetIdlFile) = @_;
 
-my $jsonDecoder = JSON::PP->new->utf8;
-my $jsonHashRef = $jsonDecoder->decode($input);
-my $idlAttributes = $jsonHashRef->{attributes};
+    $targetIdlFile = Cwd::realpath($targetIdlFile);
+    if ($verbose) {
+        print "$generator: $targetIdlFile\n";
+    }
+    my $targetInterfaceName = fileparse($targetIdlFile, ".idl");
 
-# Parse the target IDL file.
-my $targetParser = IDLParser->new(!$verbose);
-my $targetDocument = $targetParser->Parse($targetIdlFile, $defines, $preprocessor, $idlAttributes);
-
-foreach my $idlFile (@supplementedIdlFiles) {
-    next if $idlFile eq $targetIdlFile;
-
-    my $interfaceName = fileparse($idlFile, ".idl");
-    my $parser = IDLParser->new(!$verbose);
-    my $document = $parser->Parse($idlFile, $defines, $preprocessor, $idlAttributes);
-
-    foreach my $interface (@{$document->interfaces}) {
-        if (!$interface->isPartial || $interface->type->name eq $targetInterfaceName) {
-            my $targetDataNode;
-            my @targetGlobalContexts;
-            foreach my $interface (@{$targetDocument->interfaces}) {
-                if ($interface->type->name eq $targetInterfaceName) {
-                    $targetDataNode = $interface;
-                    my $exposedAttribute = $targetDataNode->extendedAttributes->{"Exposed"} || "Window";
-                    $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
-                    @targetGlobalContexts = split(",", $exposedAttribute);
-                    last;
-                }
+    my $idlFound = 0;
+    my @supplementedIdlFiles;
+    if ($supplementalDependencyFile) {
+        # The format of a supplemental dependency file:
+        #
+        # DOMWindow.idl P.idl Q.idl R.idl
+        # Document.idl S.idl
+        # Event.idl
+        # ...
+        #
+        # The above indicates that DOMWindow.idl is supplemented by P.idl, Q.idl and R.idl,
+        # Document.idl is supplemented by S.idl, and Event.idl is supplemented by no IDLs.
+        # The IDL that supplements another IDL (e.g. P.idl) never appears in the dependency file.
+        open FH, "< $supplementalDependencyFile" or die "Cannot open $supplementalDependencyFile\n";
+        while (my $line = <FH>) {
+            my ($idlFile, @followingIdlFiles) = split(/\s+/, $line);
+            if ($idlFile and fileparse($idlFile) eq fileparse($targetIdlFile)) {
+                $idlFound = 1;
+                @supplementedIdlFiles = sort @followingIdlFiles;
             }
-            die "Not found an interface ${targetInterfaceName} in ${targetInterfaceName}.idl." unless defined $targetDataNode;
+        }
+        close FH;
 
-            # Support for attributes of partial interfaces.
-            foreach my $attribute (@{$interface->attributes}) {
-                next unless shouldPropertyBeExposed($attribute, \@targetGlobalContexts);
+        # $additionalIdlFiles is list of IDL files which should not be included in
+        # DerivedSources*.cpp (i.e. they are not described in the supplemental
+        # dependency file) but should generate .h and .cpp files.
+        if (!$idlFound and $additionalIdlFiles) {
+            my @idlFiles = shellwords($additionalIdlFiles);
+            $idlFound = grep { $_ and fileparse($_) eq fileparse($targetIdlFile) } @idlFiles;
+        }
 
-                # Record that this attribute is implemented by $interfaceName.
-                $attribute->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial && !$attribute->extendedAttributes->{Reflect};
+        if (!$idlFound) {
+            my $codeGen = CodeGenerator->new(\@idlDirectories, $generator, $outputDirectory, $outputHeadersDirectory, $preprocessor, $writeDependencies, $verbose);
 
-                # Add interface-wide extended attributes to each attribute.
-                foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
-                    $attribute->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
-                }
-                push(@{$targetDataNode->attributes}, $attribute);
-            }
-
-            # Support for methods of partial interfaces.
-            foreach my $operation (@{$interface->operations}) {
-                next unless shouldPropertyBeExposed($operation, \@targetGlobalContexts);
-
-                # Record that this method is implemented by $interfaceName.
-                $operation->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
-
-                # Add interface-wide extended attributes to each method.
-                foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
-                    $operation->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
-                }
-                push(@{$targetDataNode->operations}, $operation);
-            }
-
-            # Support for constants of partial interfaces.
-            foreach my $constant (@{$interface->constants}) {
-                next unless shouldPropertyBeExposed($constant, \@targetGlobalContexts);
-
-                # Record that this constant is implemented by $interfaceName.
-                $constant->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
-
-                # Add interface-wide extended attributes to each constant.
-                foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
-                    $constant->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
-                }
-                push(@{$targetDataNode->constants}, $constant);
-            }
-        } else {
-            die "$idlFile is not a supplemental dependency of $targetIdlFile. There maybe a bug in the supplemental dependency generator (preprocess-idls.pl).\n";
+            # We generate empty .h and .cpp files just to tell build scripts that .h and .cpp files are created.
+            generateEmptyHeaderAndCpp($codeGen->FileNamePrefix(), $targetInterfaceName, $outputHeadersDirectory, $outputDirectory);
+            return;
         }
     }
-}
 
-# Generate desired output for the target IDL file.
-my $codeGen = CodeGenerator->new(\@idlDirectories, $generator, $outputDirectory, $outputHeadersDirectory, $preprocessor, $writeDependencies, $verbose, $targetIdlFile, $idlAttributes);
-$codeGen->ProcessDocument($targetDocument, $defines);
+    my $input;
+    {
+        local $INPUT_RECORD_SEPARATOR;
+        open(JSON, "<", $idlAttributesFile) or die "Couldn't open $idlAttributesFile: $!";
+        $input = <JSON>;
+        close(JSON);
+    }
+
+    my $jsonDecoder = JSON::PP->new->utf8;
+    my $jsonHashRef = $jsonDecoder->decode($input);
+    my $idlAttributes = $jsonHashRef->{attributes};
+
+    # Parse the target IDL file.
+    my $targetParser = IDLParser->new(!$verbose);
+    my $targetDocument = $targetParser->Parse($targetIdlFile, $defines, $preprocessor, $idlAttributes);
+
+    foreach my $idlFile (@supplementedIdlFiles) {
+        next if $idlFile eq $targetIdlFile;
+
+        my $interfaceName = fileparse($idlFile, ".idl");
+        my $parser = IDLParser->new(!$verbose);
+        my $document = $parser->Parse($idlFile, $defines, $preprocessor, $idlAttributes);
+
+        foreach my $interface (@{$document->interfaces}) {
+            if (!$interface->isPartial || $interface->type->name eq $targetInterfaceName) {
+                my $targetDataNode;
+                my @targetGlobalContexts;
+                foreach my $interface (@{$targetDocument->interfaces}) {
+                    if ($interface->type->name eq $targetInterfaceName) {
+                        $targetDataNode = $interface;
+                        my $exposedAttribute = $targetDataNode->extendedAttributes->{"Exposed"} || "Window";
+                        $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
+                        @targetGlobalContexts = split(",", $exposedAttribute);
+                        last;
+                    }
+                }
+                die "Not found an interface ${targetInterfaceName} in ${targetInterfaceName}.idl." unless defined $targetDataNode;
+
+                # Support for attributes of partial interfaces.
+                foreach my $attribute (@{$interface->attributes}) {
+                    next unless shouldPropertyBeExposed($attribute, \@targetGlobalContexts);
+
+                    # Record that this attribute is implemented by $interfaceName.
+                    $attribute->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial && !$attribute->extendedAttributes->{Reflect};
+
+                    # Add interface-wide extended attributes to each attribute.
+                    foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
+                        $attribute->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
+                    }
+                    push(@{$targetDataNode->attributes}, $attribute);
+                }
+
+                # Support for methods of partial interfaces.
+                foreach my $operation (@{$interface->operations}) {
+                    next unless shouldPropertyBeExposed($operation, \@targetGlobalContexts);
+
+                    # Record that this method is implemented by $interfaceName.
+                    $operation->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
+
+                    # Add interface-wide extended attributes to each method.
+                    foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
+                        $operation->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
+                    }
+                    push(@{$targetDataNode->operations}, $operation);
+                }
+
+                # Support for constants of partial interfaces.
+                foreach my $constant (@{$interface->constants}) {
+                    next unless shouldPropertyBeExposed($constant, \@targetGlobalContexts);
+
+                    # Record that this constant is implemented by $interfaceName.
+                    $constant->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
+
+                    # Add interface-wide extended attributes to each constant.
+                    foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
+                        $constant->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
+                    }
+                    push(@{$targetDataNode->constants}, $constant);
+                }
+            } else {
+                die "$idlFile is not a supplemental dependency of $targetIdlFile. There maybe a bug in the supplemental dependency generator (preprocess-idls.pl).\n";
+            }
+        }
+    }
+
+    # Generate desired output for the target IDL file.
+    my $codeGen = CodeGenerator->new(\@idlDirectories, $generator, $outputDirectory, $outputHeadersDirectory, $preprocessor, $writeDependencies, $verbose, $targetIdlFile, $idlAttributes);
+    $codeGen->ProcessDocument($targetDocument, $defines);
+}
 
 # Attributes / Operations / Constants of supplemental interfaces can have an [Exposed=XX] attribute which restricts
 # on which global contexts they should be exposed.
