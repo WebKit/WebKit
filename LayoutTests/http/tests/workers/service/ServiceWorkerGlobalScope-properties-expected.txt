@@ -17,5 +17,4 @@ Object.getOwnPropertyDescriptor(self, 'ServiceWorkerGlobalScope') returned {"wri
 Object.getOwnPropertyDescriptor(self, 'WebSocket') returned {"writable":true,"enumerable":false,"configurable":true}
 Object.getOwnPropertyDescriptor(self, 'WindowClient') returned {"writable":true,"enumerable":false,"configurable":true}
 Object.getOwnPropertyDescriptor(self, 'WorkerGlobalScope') returned {"writable":true,"enumerable":false,"configurable":true}
-Object.getOwnPropertyDescriptor(self, 'XMLHttpRequest') returned {"writable":true,"enumerable":false,"configurable":true}
 

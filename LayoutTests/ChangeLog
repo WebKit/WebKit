@@ -1,3 +1,10 @@
+2017-12-05  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline service worker test after r225549.
+
+        * http/tests/workers/service/ServiceWorkerGlobalScope-properties-expected.txt:
+        * http/tests/workers/service/ServiceWorkerGlobalScope-properties.html:
+
 2017-12-05  Simon Fraser  <simon.fraser@apple.com>
 
         Composited frames incorrectly get requestAnimationFrame throttled
