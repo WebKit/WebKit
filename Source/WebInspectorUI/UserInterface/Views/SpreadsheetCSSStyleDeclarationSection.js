@@ -196,7 +196,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         if (!this.didInitialLayout)
             return;
 
-        this._element.classList.remove(WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
+        this._element.classList.remove(WI.GeneralStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
 
         this._propertiesEditor.applyFilter(this._filterText);
     }
@@ -426,27 +426,27 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
     {
         let matchesMedia = false;
         for (let mediaElement of this._mediaElements) {
-            mediaElement.classList.remove(WI.CSSStyleDetailsSidebarPanel.FilterMatchSectionClassName);
+            mediaElement.classList.remove(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
 
             if (mediaElement.textContent.includes(this._filterText)) {
-                mediaElement.classList.add(WI.CSSStyleDetailsSidebarPanel.FilterMatchSectionClassName);
+                mediaElement.classList.add(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
                 matchesMedia = true;
             }
         }
 
         let matchesSelector = false;
         for (let selectorElement of this._selectorElements) {
-            selectorElement.classList.remove(WI.CSSStyleDetailsSidebarPanel.FilterMatchSectionClassName);
+            selectorElement.classList.remove(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
 
             if (selectorElement.textContent.includes(this._filterText)) {
-                selectorElement.classList.add(WI.CSSStyleDetailsSidebarPanel.FilterMatchSectionClassName);
+                selectorElement.classList.add(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName);
                 matchesSelector = true;
             }
         }
 
         let matches = event.data.matches || matchesMedia || matchesSelector;
         if (!matches)
-            this._element.classList.add(WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
+            this._element.classList.add(WI.GeneralStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
 
         this.dispatchEventToListeners(WI.SpreadsheetCSSStyleDeclarationSection.Event.FilterApplied, {matches});
     }

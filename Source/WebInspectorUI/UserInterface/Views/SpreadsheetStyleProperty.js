@@ -134,8 +134,8 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         let matchesName = this._nameElement.textContent.includes(filterText);
         let matchesValue = this._valueElement.textContent.includes(filterText);
         let matches = matchesName || matchesValue;
-        this._contentElement.classList.toggle(WI.CSSStyleDetailsSidebarPanel.FilterMatchSectionClassName, matches);
-        this._contentElement.classList.toggle(WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInPropertyClassName, !matches);
+        this._contentElement.classList.toggle(WI.GeneralStyleDetailsSidebarPanel.FilterMatchSectionClassName, matches);
+        this._contentElement.classList.toggle(WI.GeneralStyleDetailsSidebarPanel.NoFilterMatchInPropertyClassName, !matches);
         return matches;
     }
 

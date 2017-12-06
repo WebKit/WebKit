@@ -240,7 +240,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
             this.element.classList.add("filter-non-matching");
 
         for (let header of this._headerMap.values())
-            header.classList.remove(WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
+            header.classList.remove(WI.GeneralStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
 
         for (let section of this._sections)
             section.applyFilter(this._filterText);
@@ -264,7 +264,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         else {
             let header = this._headerMap.get(event.target.style.node);
             if (header)
-                header.classList.add(WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
+                header.classList.add(WI.GeneralStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
         }
     }
 

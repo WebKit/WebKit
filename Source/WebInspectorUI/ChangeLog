@@ -1,5 +1,23 @@
 2017-12-06  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: REGRESSION(r225569): CSSStyleDetailsSidebarPanel no longer exists
+        https://bugs.webkit.org/show_bug.cgi?id=180466
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.applyFilter):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleEditorFilterApplied):
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.applyFilter):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype._handleSectionFilterApplied):
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.applyFilter):
+
+2017-12-06  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: Styles Redesign: display related pseudo-elements
         https://bugs.webkit.org/show_bug.cgi?id=176187
         <rdar://problem/34194917>
