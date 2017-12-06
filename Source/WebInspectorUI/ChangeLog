@@ -1,5 +1,19 @@
 2017-12-05  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: Styles Redesign: for newly added properties, pressing delete in empty value field should focus on name field
+        https://bugs.webkit.org/show_bug.cgi?id=179831
+        <rdar://problem/35626976>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField.prototype._handleKeyDown):
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidBackspace):
+
+2017-12-05  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: [PARITY] Styles Redesign: Make filtering work
         https://bugs.webkit.org/show_bug.cgi?id=178331
         <rdar://problem/35001015>

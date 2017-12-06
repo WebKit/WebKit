@@ -275,6 +275,14 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._renderValue(this._valueElement.textContent);
     }
 
+    spreadsheetTextFieldDidBackspace(textField)
+    {
+        if (textField === this._nameTextField)
+            this.spreadsheetTextFieldDidCommit(textField, {direction: "backward"});
+        else if (textField === this._valueTextField)
+            this._nameTextField.startEditing();
+    }
+
     // Private
 
     _renderValue(value)

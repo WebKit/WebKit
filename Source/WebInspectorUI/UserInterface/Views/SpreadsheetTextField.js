@@ -262,6 +262,18 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
                 this._delegate.spreadsheetTextFieldDidChange(this);
         }
 
+        if (event.key === "Backspace") {
+            if (!this.value) {
+                event.stop();
+                this.stopEditing();
+
+                if (this._delegate && this._delegate.spreadsheetTextFieldDidBackspace)
+                    this._delegate.spreadsheetTextFieldDidBackspace(this);
+
+                return;
+            }
+        }
+
         if (event.key === "Escape") {
             event.stop();
             this._discardChange();
