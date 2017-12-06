@@ -1,3 +1,18 @@
+2017-12-06  Saam Barati  <sbarati@apple.com>
+
+        ASSERTION FAILED: vm->currentThreadIsHoldingAPILock() in void JSC::sanitizeStackForVM(JSC::VM *)
+        https://bugs.webkit.org/show_bug.cgi?id=180438
+        <rdar://problem/35862342>
+
+        Reviewed by Yusuke Suzuki.
+
+        A couple inspector methods that take stacktraces need
+        to grab the JSLock.
+
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::createScriptCallStack):
+        (Inspector::createScriptCallStackForConsole):
+
 2017-12-05  Stephan Szabo  <stephan.szabo@sony.com>
 
         Switch windows build to Visual Studio 2017
