@@ -41,6 +41,9 @@
 
 namespace WebCore {
 
+#if ENABLE(APPLICATION_MANIFEST)
+class CachedApplicationManifest;
+#endif
 class CachedCSSStyleSheet;
 class CachedSVGDocument;
 class CachedFont;
@@ -95,6 +98,9 @@ public:
 #endif
 #if ENABLE(VIDEO_TRACK)
     ResourceErrorOr<CachedResourceHandle<CachedTextTrack>> requestTextTrack(CachedResourceRequest&&);
+#endif
+#if ENABLE(APPLICATION_MANIFEST)
+    ResourceErrorOr<CachedResourceHandle<CachedApplicationManifest>> requestApplicationManifest(CachedResourceRequest&&);
 #endif
 
     // Logs an access denied message to the console for the specified URL.

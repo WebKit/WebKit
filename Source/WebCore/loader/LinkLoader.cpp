@@ -171,6 +171,11 @@ static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClien
 #endif
         // None of these values is currently supported as an `as` value.
         ASSERT_NOT_REACHED();
+#if ENABLE(APPLICATION_MANIFEST)
+    case CachedResource::ApplicationManifest:
+        // FIXME: Support preloading the manifest.
+        ASSERT_NOT_REACHED();
+#endif
     }
     return nullptr;
 }
@@ -198,6 +203,9 @@ bool LinkLoader::isSupportedType(CachedResource::Type resourceType, const String
         return MIMETypeRegistry::isSupportedTextTrackMIMEType(mimeType);
 #endif
     case CachedResource::RawResource:
+#if ENABLE(APPLICATION_MANIFEST)
+    case CachedResource::ApplicationManifest:
+#endif
         return true;
     default:
         ASSERT_NOT_REACHED();

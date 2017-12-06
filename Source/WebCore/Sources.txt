@@ -27,6 +27,10 @@ Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp
 
 Modules/applicationmanifest/ApplicationManifestParser.cpp
 
+loader/ApplicationManifestLoader.cpp
+
+loader/cache/CachedApplicationManifest.cpp
+
 #endif
 
 Modules/beacon/NavigatorBeacon.cpp

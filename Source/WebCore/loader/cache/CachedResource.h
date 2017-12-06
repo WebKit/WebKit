@@ -84,6 +84,9 @@ public:
 #if ENABLE(VIDEO_TRACK)
         , TextTrackResource
 #endif
+#if ENABLE(APPLICATION_MANIFEST)
+        , ApplicationManifest
+#endif
     };
 
     enum Status {

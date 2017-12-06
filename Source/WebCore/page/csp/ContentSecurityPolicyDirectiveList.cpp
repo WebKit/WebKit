@@ -243,6 +243,16 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     return operativeDirective;
 }
 
+#if ENABLE(APPLICATION_MANIFEST)
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForManifest(const URL& url, bool didReceiveRedirectResponse) const
+{
+    ContentSecurityPolicySourceListDirective* operativeDirective = this->operativeDirective(m_manifestSrc.get());
+    if (checkSource(operativeDirective, url, didReceiveRedirectResponse))
+        return nullptr;
+    return operativeDirective;
+}
+#endif // ENABLE(APPLICATION_MANIFEST)
+
 const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForMedia(const URL& url, bool didReceiveRedirectResponse) const
 {
     ContentSecurityPolicySourceListDirective* operativeDirective = this->operativeDirective(m_mediaSrc.get());
@@ -475,6 +485,10 @@ void ContentSecurityPolicyDirectiveList::addDirective(const String& name, const 
         setCSPDirective<ContentSecurityPolicySourceListDirective>(name, value, m_imgSrc);
     else if (equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::fontSrc))
         setCSPDirective<ContentSecurityPolicySourceListDirective>(name, value, m_fontSrc);
+#if ENABLE(APPLICATION_MANIFEST)
+    else if (equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::manifestSrc))
+        setCSPDirective<ContentSecurityPolicySourceListDirective>(name, value, m_manifestSrc);
+#endif
     else if (equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::mediaSrc))
         setCSPDirective<ContentSecurityPolicySourceListDirective>(name, value, m_mediaSrc);
     else if (equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::connectSrc))

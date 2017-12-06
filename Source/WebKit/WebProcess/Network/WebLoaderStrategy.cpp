@@ -121,6 +121,9 @@ static Seconds maximumBufferingTime(CachedResource* resource)
     case CachedResource::SVGFontResource:
 #endif
     case CachedResource::FontResource:
+#if ENABLE(APPLICATION_MANIFEST)
+    case CachedResource::ApplicationManifest:
+#endif
         return Seconds::infinity();
     case CachedResource::ImageResource:
         return 500_ms;

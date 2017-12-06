@@ -1751,7 +1751,9 @@
 		628D214E12131EF40055DCFC /* FrameNetworkingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 628D214D12131EF40055DCFC /* FrameNetworkingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		62C1217D11AB9E77003C462C /* SuspendableTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 62C1217B11AB9E77003C462C /* SuspendableTimer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		62CD325A1157E57C0063B0A7 /* CustomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 62CD32571157E57C0063B0A7 /* CustomEvent.h */; };
+		63152D191F9531EE007A5E4B /* ApplicationManifestLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 63152D171F9531EE007A5E4B /* ApplicationManifestLoader.h */; };
 		63189AE30E83A33300012E41 /* NodeRareData.h in Headers */ = {isa = PBXBuildFile; fileRef = 63189AE20E83A33300012E41 /* NodeRareData.h */; settings = {ATTRIBUTES = (); }; };
+		6353E1E61F91743100A34208 /* CachedApplicationManifest.h in Headers */ = {isa = PBXBuildFile; fileRef = 6353E1E41F91743100A34208 /* CachedApplicationManifest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6354F4C91F7AFC9400D89DF3 /* ApplicationManifestParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 6354F4C71F7AFC9400D89DF3 /* ApplicationManifestParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		63BD4A5F1F778E9F00438722 /* ApplicationManifest.h in Headers */ = {isa = PBXBuildFile; fileRef = 63BD4A5D1F778E9F00438722 /* ApplicationManifest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		63D7B32D0E78CD3F00F7617C /* NodeRenderStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 63D7B32C0E78CD3F00F7617C /* NodeRenderStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8382,7 +8384,11 @@
 		62CD32561157E57C0063B0A7 /* CustomEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomEvent.cpp; sourceTree = "<group>"; };
 		62CD32571157E57C0063B0A7 /* CustomEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomEvent.h; sourceTree = "<group>"; };
 		62CD32581157E57C0063B0A7 /* CustomEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CustomEvent.idl; sourceTree = "<group>"; };
+		63152D171F9531EE007A5E4B /* ApplicationManifestLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplicationManifestLoader.h; sourceTree = "<group>"; };
+		63152D181F9531EE007A5E4B /* ApplicationManifestLoader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ApplicationManifestLoader.cpp; sourceTree = "<group>"; };
 		63189AE20E83A33300012E41 /* NodeRareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeRareData.h; sourceTree = "<group>"; };
+		6353E1E41F91743100A34208 /* CachedApplicationManifest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CachedApplicationManifest.h; sourceTree = "<group>"; };
+		6353E1E51F91743100A34208 /* CachedApplicationManifest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CachedApplicationManifest.cpp; sourceTree = "<group>"; };
 		6354F4C71F7AFC9400D89DF3 /* ApplicationManifestParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplicationManifestParser.h; sourceTree = "<group>"; };
 		6354F4C81F7AFC9400D89DF3 /* ApplicationManifestParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ApplicationManifestParser.cpp; sourceTree = "<group>"; };
 		637B7ADE0E8767B800E32194 /* ElementRareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementRareData.h; sourceTree = "<group>"; };
@@ -21788,6 +21794,8 @@
 		A8D2B2521287A56000AF4DDA /* cache */ = {
 			isa = PBXGroup;
 			children = (
+				6353E1E51F91743100A34208 /* CachedApplicationManifest.cpp */,
+				6353E1E41F91743100A34208 /* CachedApplicationManifest.h */,
 				BCB16C000979C3BD00467741 /* CachedCSSStyleSheet.cpp */,
 				BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */,
 				BC64B4C90CB4295D005F2B62 /* CachedFont.cpp */,
@@ -23299,6 +23307,8 @@
 				5126E6B60A2E3AEF005C29FA /* icon */,
 				A15E31F01E0CB075004B371C /* ios */,
 				93A1EAA20A5634D8006960A0 /* mac */,
+				63152D181F9531EE007A5E4B /* ApplicationManifestLoader.cpp */,
+				63152D171F9531EE007A5E4B /* ApplicationManifestLoader.h */,
 				A149786C1ABAF33800CEF7E4 /* ContentFilter.cpp */,
 				A149786D1ABAF33800CEF7E4 /* ContentFilter.h */,
 				E1424C91164B52C800F32D40 /* CookieJar.cpp */,
@@ -26080,6 +26090,7 @@
 				1A8F6BC10DB55CDC001DB794 /* ApplicationCacheResource.h in Headers */,
 				1A2AAC590DC2A3B100A20D9A /* ApplicationCacheStorage.h in Headers */,
 				63BD4A5F1F778E9F00438722 /* ApplicationManifest.h in Headers */,
+				63152D191F9531EE007A5E4B /* ApplicationManifestLoader.h in Headers */,
 				6354F4C91F7AFC9400D89DF3 /* ApplicationManifestParser.h in Headers */,
 				9B417064125662B3006B28FC /* ApplyBlockElementCommand.h in Headers */,
 				93309DD9099E64920056E581 /* ApplyStyleCommand.h in Headers */,
@@ -26220,6 +26231,7 @@
 				1A569CFC0D7E2B82007C3983 /* c_runtime.h in Headers */,
 				1A569CFE0D7E2B82007C3983 /* c_utility.h in Headers */,
 				07C046C41E42508B007201E7 /* CAAudioStreamDescription.h in Headers */,
+				6353E1E61F91743100A34208 /* CachedApplicationManifest.h in Headers */,
 				BCB16C1A0979C3BD00467741 /* CachedCSSStyleSheet.h in Headers */,
 				BC64B4CC0CB4295D005F2B62 /* CachedFont.h in Headers */,
 				1AEF4E67170E160300AB2799 /* CachedFontClient.h in Headers */,

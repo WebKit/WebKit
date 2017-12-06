@@ -77,6 +77,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(APPLICATION_MANIFEST)
+#include "CachedApplicationManifest.h"
+#endif
+
 #if ENABLE(VIDEO_TRACK)
 #include "CachedTextTrack.h"
 #endif
@@ -133,6 +137,10 @@ static CachedResource* createResource(CachedResource::Type type, CachedResourceR
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
         return new CachedTextTrack(WTFMove(request), sessionID);
+#endif
+#if ENABLE(APPLICATION_MANIFEST)
+    case CachedResource::ApplicationManifest:
+        return new CachedApplicationManifest(WTFMove(request), sessionID);
 #endif
     }
     ASSERT_NOT_REACHED();
@@ -322,6 +330,13 @@ ResourceErrorOr<CachedResourceHandle<CachedRawResource>> CachedResourceLoader::r
     return castCachedResourceTo<CachedRawResource>(requestResource(CachedResource::MainResource, WTFMove(request)));
 }
 
+#if ENABLE(APPLICATION_MANIFEST)
+ResourceErrorOr<CachedResourceHandle<CachedApplicationManifest>> CachedResourceLoader::requestApplicationManifest(CachedResourceRequest&& request)
+{
+    return castCachedResourceTo<CachedApplicationManifest>(requestResource(CachedResource::ApplicationManifest, WTFMove(request)));
+}
+#endif // ENABLE(APPLICATION_MANIFEST)
+
 static MixedContentChecker::ContentType contentTypeFromResourceType(CachedResource::Type type)
 {
     switch (type) {
@@ -360,6 +375,10 @@ static MixedContentChecker::ContentType contentTypeFromResourceType(CachedResour
 
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
+        return MixedContentChecker::ContentType::Active;
+#endif
+#if ENABLE(APPLICATION_MANIFEST)
+    case CachedResource::ApplicationManifest:
         return MixedContentChecker::ContentType::Active;
 #endif
     default:
@@ -418,6 +437,9 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
     case CachedResource::LinkSubresource:
         // Prefetch cannot affect the current document.
 #endif
+#if ENABLE(APPLICATION_MANIFEST)
+    case CachedResource::ApplicationManifest:
+#endif
         break;
     }
     return true;
@@ -466,6 +488,12 @@ bool CachedResourceLoader::allowedByContentSecurityPolicy(CachedResource::Type t
     case CachedResource::Beacon:
     case CachedResource::RawResource:
         return true;
+#if ENABLE(APPLICATION_MANIFEST)
+    case CachedResource::ApplicationManifest:
+        if (!m_document->contentSecurityPolicy()->allowManifestFromSource(url, redirectResponseReceived))
+            return false;
+        break;
+#endif
     default:
         ASSERT_NOT_REACHED();
     }

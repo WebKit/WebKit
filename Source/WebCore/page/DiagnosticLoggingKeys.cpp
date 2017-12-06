@@ -413,6 +413,13 @@ String DiagnosticLoggingKeys::applicationCacheKey()
     return ASCIILiteral("applicationCache");
 }
 
+#if ENABLE(APPLICATION_MANIFEST)
+String DiagnosticLoggingKeys::applicationManifestKey()
+{
+    return ASCIILiteral("applicationManifest");
+}
+#endif
+
 String DiagnosticLoggingKeys::audioKey()
 {
     return ASCIILiteral("audio");

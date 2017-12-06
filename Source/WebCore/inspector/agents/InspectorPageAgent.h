@@ -71,6 +71,9 @@ public:
         PingResource,
         BeaconResource,
         WebSocketResource,
+#if ENABLE(APPLICATION_MANIFEST)
+        ApplicationManifestResource,
+#endif
         OtherResource,
     };
 

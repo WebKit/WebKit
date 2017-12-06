@@ -70,6 +70,10 @@ ResourceType toResourceType(CachedResource::Type type)
     case CachedResource::LinkSubresource:
         ASSERT_NOT_REACHED();
 #endif
+#if ENABLE(APPLICATION_MANIFEST)
+    case CachedResource::ApplicationManifest:
+        return ResourceType::Raw;
+#endif
     };
     return ResourceType::Raw;
 }

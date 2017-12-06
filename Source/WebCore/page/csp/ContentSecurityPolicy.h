@@ -103,6 +103,9 @@ public:
     bool allowImageFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
     bool allowStyleFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
     bool allowFontFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
+#if ENABLE(APPLICATION_MANIFEST)
+    bool allowManifestFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
+#endif
     bool allowMediaFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
 
     bool allowChildFrameFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;

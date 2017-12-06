@@ -63,6 +63,9 @@ public:
     const ContentSecurityPolicyDirective* violatedDirectiveForFrame(const URL&, bool didReceiveRedirectResponse) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForFrameAncestor(const Frame&) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForImage(const URL&, bool didReceiveRedirectResponse) const;
+#if ENABLE(APPLICATION_MANIFEST)
+    const ContentSecurityPolicyDirective* violatedDirectiveForManifest(const URL&, bool didReceiveRedirectResponse) const;
+#endif
     const ContentSecurityPolicyDirective* violatedDirectiveForMedia(const URL&, bool didReceiveRedirectResponse) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForObjectSource(const URL&, bool didReceiveRedirectResponse, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForPluginType(const String& type, const String& typeAttribute) const;
@@ -121,6 +124,9 @@ private:
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_frameAncestors;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_frameSrc;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_imgSrc;
+#if ENABLE(APPLICATION_MANIFEST)
+    std::unique_ptr<ContentSecurityPolicySourceListDirective> m_manifestSrc;
+#endif
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_mediaSrc;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_objectSrc;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_scriptSrc;

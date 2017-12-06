@@ -36,6 +36,10 @@
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(APPLICATION_MANIFEST)
+#include "ApplicationManifest.h"
+#endif
+
 #if ENABLE(CONTENT_FILTERING)
 #include "ContentFilterUnblockHandler.h"
 #endif
@@ -356,6 +360,10 @@ public:
 
     virtual void getLoadDecisionForIcons(const Vector<std::pair<WebCore::LinkIcon&, uint64_t>>&) { }
     virtual void finishedLoadingIcon(uint64_t, SharedBuffer*) { }
+
+#if ENABLE(APPLICATION_MANIFEST)
+    virtual void finishedLoadingApplicationManifest(uint64_t, const std::optional<ApplicationManifest>&) { }
+#endif
 };
 
 } // namespace WebCore

@@ -102,6 +102,10 @@ ResourceLoadPriority CachedResource::defaultPriorityForResourceType(Type type)
     case CachedResource::TextTrackResource:
         return ResourceLoadPriority::Low;
 #endif
+#if ENABLE(APPLICATION_MANIFEST)
+    case CachedResource::ApplicationManifest:
+        return ResourceLoadPriority::Low;
+#endif
     }
     ASSERT_NOT_REACHED();
     return ResourceLoadPriority::Low;

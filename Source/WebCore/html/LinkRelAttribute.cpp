@@ -65,6 +65,10 @@ LinkRelAttribute::LinkRelAttribute(Document& document, const String& rel)
     else if (equalLettersIgnoringASCIICase(rel, "alternate stylesheet") || equalLettersIgnoringASCIICase(rel, "stylesheet alternate")) {
         isStyleSheet = true;
         isAlternate = true;
+#if ENABLE(APPLICATION_MANIFEST)
+    } else if (equalLettersIgnoringASCIICase(rel, "manifest")) {
+        isApplicationManifest = true;
+#endif
     } else {
         // Tokenize the rel attribute and set bits based on specific keywords that we find.
         String relCopy = rel;
@@ -97,6 +101,9 @@ bool LinkRelAttribute::isSupported(Document& document, StringView attribute)
         "alternate", "dns-prefetch", "icon", "stylesheet", "apple-touch-icon", "apple-touch-icon-precomposed",
 #if ENABLE(LINK_PREFETCH)
         "prefetch", "subresource",
+#endif
+#if ENABLE(APPLICATION_MANIFEST)
+        "manifest",
 #endif
     };
 

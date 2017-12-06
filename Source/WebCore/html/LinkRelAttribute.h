@@ -51,6 +51,9 @@ struct LinkRelAttribute {
     bool isLinkPrefetch { false };
     bool isLinkSubresource { false };
 #endif
+#if ENABLE(APPLICATION_MANIFEST)
+    bool isApplicationManifest { false };
+#endif
 
     LinkRelAttribute();
     LinkRelAttribute(Document&, const String&);

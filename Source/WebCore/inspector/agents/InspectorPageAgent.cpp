@@ -70,6 +70,10 @@
 #include <wtf/text/StringBuilder.h>
 #include <yarr/RegularExpression.h>
 
+#if ENABLE(APPLICATION_MANIFEST)
+#include "CachedApplicationManifest.h"
+#endif
+
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
 #include "LegacyWebArchive.h"
 #endif
@@ -204,6 +208,10 @@ Inspector::Protocol::Page::ResourceType InspectorPageAgent::resourceTypeJSON(Ins
         return Inspector::Protocol::Page::ResourceType::WebSocket;
     case OtherResource:
         return Inspector::Protocol::Page::ResourceType::Other;
+#if ENABLE(APPLICATION_MANIFEST)
+    case ApplicationManifestResource:
+        break;
+#endif
     }
     return Inspector::Protocol::Page::ResourceType::Other;
 }
@@ -229,6 +237,10 @@ InspectorPageAgent::ResourceType InspectorPageAgent::inspectorResourceType(Cache
         return InspectorPageAgent::DocumentResource;
     case CachedResource::Beacon:
         return InspectorPageAgent::BeaconResource;
+#if ENABLE(APPLICATION_MANIFEST)
+    case CachedResource::ApplicationManifest:
+        return InspectorPageAgent::ApplicationManifestResource;
+#endif
     case CachedResource::MediaResource:
     case CachedResource::Icon:
     case CachedResource::RawResource:

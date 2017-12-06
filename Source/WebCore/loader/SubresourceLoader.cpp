@@ -471,6 +471,11 @@ static void logResourceLoaded(Frame* frame, CachedResource::Type type)
     case CachedResource::SVGDocumentResource:
         resourceType = DiagnosticLoggingKeys::svgDocumentKey();
         break;
+#if ENABLE(APPLICATION_MANIFEST)
+    case CachedResource::ApplicationManifest:
+        resourceType = DiagnosticLoggingKeys::applicationManifestKey();
+        break;
+#endif
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
     case CachedResource::LinkSubresource:

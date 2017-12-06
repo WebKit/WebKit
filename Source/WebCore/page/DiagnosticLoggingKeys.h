@@ -34,6 +34,9 @@ public:
     WEBCORE_EXPORT static String activeInForegroundTabKey();
     WEBCORE_EXPORT static String activeInBackgroundTabOnlyKey();
     static String applicationCacheKey();
+#if ENABLE(APPLICATION_MANIFEST)
+    static String applicationManifestKey();
+#endif
     static String audioKey();
     WEBCORE_EXPORT static String backNavigationDeltaKey();
     WEBCORE_EXPORT static String cacheControlNoStoreKey();

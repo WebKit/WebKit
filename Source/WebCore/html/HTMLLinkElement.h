@@ -73,6 +73,10 @@ public:
 
     WEBCORE_EXPORT DOMTokenList& relList();
 
+#if ENABLE(APPLICATION_MANIFEST)
+    bool isApplicationManifest() const { return m_relAttribute.isApplicationManifest; }
+#endif
+
 private:
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
