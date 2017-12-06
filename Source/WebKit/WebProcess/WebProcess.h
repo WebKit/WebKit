@@ -232,6 +232,10 @@ public:
 
     WebCacheStorageProvider& cacheStorageProvider() { return m_cacheStorageProvider.get(); }
 
+#if PLATFORM(IOS)
+    void accessibilityProcessSuspendedNotification(bool);
+#endif
+
 private:
     WebProcess();
     ~WebProcess();

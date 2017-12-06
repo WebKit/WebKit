@@ -70,7 +70,16 @@
 #import <stdio.h>
 
 #if PLATFORM(IOS)
+#import <UIKit/UIAccessibility.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <AXRuntime/AXDefines.h>
+#import <AXRuntime/AXNotificationConstants.h>
+#else
+#define kAXPidStatusChangedNotification 0
+#endif
+
 #endif
 
 #if USE(OS_STATE)
@@ -522,5 +531,12 @@ void _WKSetCrashReportApplicationSpecificInformation(NSString *infoString)
 {
     return setCrashReportApplicationSpecificInformation((__bridge CFStringRef)infoString);
 }
+
+#if PLATFORM(IOS)
+void WebProcess::accessibilityProcessSuspendedNotification(bool suspended)
+{
+    UIAccessibilityPostNotification(kAXPidStatusChangedNotification, @{ @"pid" : @(getpid()), @"suspended" : @(suspended) });
+}
+#endif
 
 } // namespace WebKit
