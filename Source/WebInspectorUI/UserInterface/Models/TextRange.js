@@ -128,6 +128,12 @@ WI.TextRange = class TextRange
         return new WI.TextRange(startLine, startColumn, endLine, endColumn);
     }
 
+    collapseToStart()
+    {
+        console.assert(!isNaN(this._startLine), "TextRange needs line/column data.");
+        return new WI.TextRange(this._startLine, this._startColumn, this._startLine, this._startColumn);
+    }
+
     collapseToEnd()
     {
         console.assert(!isNaN(this._endLine), "TextRange needs line/column data.");

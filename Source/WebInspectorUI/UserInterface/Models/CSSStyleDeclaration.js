@@ -418,13 +418,14 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
     _rangeAfterPropertyAtIndex(index)
     {
-        if (index > 0) {
-            let property = this.allVisibleProperties[index];
-            if (property && property.styleSheetTextRange)
-                return property.styleSheetTextRange.collapseToEnd();
-        }
+        if (index < 0)
+            return this._styleSheetTextRange.collapseToStart();
 
-        return this._styleSheetTextRange.collapseToEnd();
+        if (index >= this.allVisibleProperties.length)
+            return this._styleSheetTextRange.collapseToEnd();
+
+        let property = this.allVisibleProperties[index];
+        return property.styleSheetTextRange.collapseToEnd();
     }
 };
 

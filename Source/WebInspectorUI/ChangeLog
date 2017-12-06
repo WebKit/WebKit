@@ -1,3 +1,16 @@
+2017-12-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: adding a property before or after the first one appends it to the end
+        https://bugs.webkit.org/show_bug.cgi?id=180321
+        <rdar://problem/35816402>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration.prototype._rangeAfterPropertyAtIndex):
+        * UserInterface/Models/TextRange.js:
+        (WI.TextRange.prototype.collapseToStart):
+
 2017-12-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Empty Message View in Network Tab has padding at top
