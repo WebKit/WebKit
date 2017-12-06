@@ -158,13 +158,13 @@ RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned position, A
     , m_containsUncommonAttributeSelector(WebCore::containsUncommonAttributeSelector(*selector()))
     , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector()))
     , m_propertyWhitelistType(determinePropertyWhitelistType(selector()))
+    , m_descendantSelectorIdentifierHashes(SelectorFilter::collectHashes(*selector()))
 #if ENABLE(CSS_SELECTOR_JIT) && CSS_SELECTOR_JIT_PROFILING
     , m_compiledSelectorUseCount(0)
 #endif
 {
     ASSERT(m_position == position);
     ASSERT(m_selectorIndex == selectorIndex);
-    SelectorFilter::collectIdentifierHashes(*selector(), m_descendantSelectorIdentifierHashes);
 }
 
 RuleSet::RuleSet() = default;

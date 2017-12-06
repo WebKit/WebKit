@@ -49,7 +49,7 @@ public:
 
     using Hashes = std::array<unsigned, 4>;
     bool fastRejectSelector(const Hashes&) const;
-    static void collectIdentifierHashes(const CSSSelector&, Hashes&);
+    static Hashes collectHashes(const CSSSelector&);
 
 private:
     struct ParentStackFrame {
@@ -67,8 +67,10 @@ private:
 
 inline bool SelectorFilter::fastRejectSelector(const Hashes& hashes) const
 {
-    for (unsigned n = 0; n < hashes.size() && hashes[n]; ++n) {
-        if (!m_ancestorIdentifierFilter.mayContain(hashes[n]))
+    for (auto& hash : hashes) {
+        if (!hash)
+            return false;
+        if (!m_ancestorIdentifierFilter.mayContain(hash))
             return true;
     }
     return false;
