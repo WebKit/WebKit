@@ -1,3 +1,22 @@
+2017-12-06  Dean Jackson  <dino@apple.com>
+
+        Some iOS tests failing after ANGLE update
+        https://bugs.webkit.org/show_bug.cgi?id=180487
+        <rdar://problem/35885969>
+
+        Reviewed by Antoine Quint.
+
+        The iOS OpenGL compiler doesn't like function declarations with
+        nameless array parameters. See:
+        <rdar://problem/35885989> Nameless array parameters in function declaration cause compiler error
+
+        While that is being fixed, tell ANGLE's translator to not cull
+        the names from parameters. This is not a bug in ANGLE, so we won't
+        fix it upstream at the moment.
+
+        * src/compiler/translator/ParseContext.cpp:
+        (sh::TParseContext::addFunctionPrototypeDeclaration):
+
 2017-12-01  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix byte order macros and address new -Wunknown-pragmas warnings

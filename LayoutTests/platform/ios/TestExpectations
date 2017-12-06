@@ -2957,7 +2957,6 @@ webgl/1.0.3/conformance/extensions/webgl-compressed-texture-pvrtc.html [ Failure
 webgl/1.0.3/conformance/glsl/misc/shader-struct-scope.html [ Failure ]
 webgl/1.0.3/conformance/glsl/misc/shaders-with-invariance.html [ Failure ]
 webgl/1.0.3/conformance/glsl/misc/shaders-with-name-conflicts.html [ Failure ]
-webgl/1.0.3/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Failure ]
 webgl/1.0.3/conformance/renderbuffers/feedback-loop.html [ Failure ]
 webgl/1.0.3/conformance/rendering/point-no-attributes.html [ Failure ]
 webgl/1.0.3/conformance/textures/texture-copying-feedback-loops.html [ Failure ]
@@ -3080,7 +3079,6 @@ webgl/1.0.2/conformance/ogles/GL/log/log_001_to_008.html [ Skip ]
 webgl/1.0.2/conformance/ogles/GL/log2/log2_001_to_008.html [ Skip ]
 
 # <rdar://problem/33135669>
-webgl/1.0.2/conformance/textures/gl-teximage.html [ Failure ]
 fast/canvas/webgl/gl-teximage.html [ Failure ]
 
 # <rdar://problem/30517283>
@@ -3299,9 +3297,6 @@ webkit.org/b/178127 media/modern-media-controls/media-controller/media-controlle
 
 # <rdar://problem/33731086>
 media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]
-
-# Skip WebGL while the ANGLE update has caused many failures
-webgl [ Skip ]
 
 # Requries AVFoundation support <rdar://problem/34502208>
 http/tests/images/image-supports-video.html
