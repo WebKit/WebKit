@@ -5898,4 +5898,32 @@ RefPtr<HTMLAttachmentElement> WebPage::attachmentElementWithIdentifier(const Str
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
+#if ENABLE(APPLICATION_MANIFEST)
+void WebPage::getApplicationManifest(CallbackID callbackID)
+{
+    ASSERT(callbackID.isValid());
+    Document* mainFrameDocument = m_mainFrame->coreFrame()->document();
+    DocumentLoader* loader = mainFrameDocument ? mainFrameDocument->loader() : nullptr;
+
+    if (!loader) {
+        send(Messages::WebPageProxy::ApplicationManifestCallback(std::nullopt, callbackID));
+        return;
+    }
+
+    auto coreCallbackID = loader->loadApplicationManifest();
+    if (!coreCallbackID) {
+        send(Messages::WebPageProxy::ApplicationManifestCallback(std::nullopt, callbackID));
+        return;
+    }
+
+    m_applicationManifestFetchCallbackMap.add(coreCallbackID, callbackID.toInteger());
+}
+
+void WebPage::didFinishLoadingApplicationManifest(uint64_t coreCallbackID, const std::optional<WebCore::ApplicationManifest>& manifest)
+{
+    auto callbackID = CallbackID::fromInteger(m_applicationManifestFetchCallbackMap.take(coreCallbackID));
+    send(Messages::WebPageProxy::ApplicationManifestCallback(manifest, callbackID));
+}
+#endif // ENABLE(APPLICATION_MANIFEST)
+
 } // namespace WebKit

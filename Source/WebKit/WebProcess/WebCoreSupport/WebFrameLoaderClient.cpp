@@ -1840,4 +1840,15 @@ void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackIdentifier, Shar
     }
 }
 
+#if ENABLE(APPLICATION_MANIFEST)
+void WebFrameLoaderClient::finishedLoadingApplicationManifest(uint64_t callbackIdentifier, const std::optional<WebCore::ApplicationManifest>& manifest)
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    webPage->didFinishLoadingApplicationManifest(callbackIdentifier, manifest);
+}
+#endif // ENABLE(APPLICATION_MANIFEST)
+
 } // namespace WebKit

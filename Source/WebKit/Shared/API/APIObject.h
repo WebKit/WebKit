@@ -97,6 +97,9 @@ public:
         
         // UIProcess types
         ApplicationCacheManager,
+#if ENABLE(APPLICATION_MANIFEST)
+        ApplicationManifest,
+#endif
         Attachment,
         AutomationSession,
         BackForwardList,

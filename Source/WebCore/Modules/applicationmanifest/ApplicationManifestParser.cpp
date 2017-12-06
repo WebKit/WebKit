@@ -79,12 +79,12 @@ ApplicationManifest ApplicationManifestParser::parseManifest(const String& text,
 
 void ApplicationManifestParser::logManifestPropertyNotAString(const String& propertyName)
 {
-    logDeveloperWarning("The \"" + propertyName + "\" application manifest property is not a string.");
+    logDeveloperWarning("The value of \"" + propertyName + "\" is not a string.");
 }
 
 void ApplicationManifestParser::logManifestPropertyInvalidURL(const String& propertyName)
 {
-    logDeveloperWarning("The \"" + propertyName + "\" application manifest property is not a valid URL.");
+    logDeveloperWarning("The value of \"" + propertyName + "\" is not a valid URL.");
 }
 
 void ApplicationManifestParser::logDeveloperWarning(const String& message)

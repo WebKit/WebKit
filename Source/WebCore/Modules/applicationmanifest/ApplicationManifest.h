@@ -28,6 +28,7 @@
 #if ENABLE(APPLICATION_MANIFEST)
 
 #include "URL.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -37,7 +38,35 @@ struct ApplicationManifest {
     String description;
     URL scope;
     URL startURL;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<ApplicationManifest> decode(Decoder&);
 };
+
+template<class Encoder>
+void ApplicationManifest::encode(Encoder& encoder) const
+{
+    encoder << name << shortName << description << scope << startURL;
+}
+
+template<class Decoder>
+std::optional<ApplicationManifest> ApplicationManifest::decode(Decoder& decoder)
+{
+    ApplicationManifest result;
+
+    if (!decoder.decode(result.name))
+        return std::nullopt;
+    if (!decoder.decode(result.shortName))
+        return std::nullopt;
+    if (!decoder.decode(result.description))
+        return std::nullopt;
+    if (!decoder.decode(result.scope))
+        return std::nullopt;
+    if (!decoder.decode(result.startURL))
+        return std::nullopt;
+
+    return result;
+}
 
 } // namespace WebCore
 

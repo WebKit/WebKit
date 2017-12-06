@@ -405,6 +405,9 @@ public:
 
     void removeAllSessionCredentials(JSValueRef);
     void callDidRemoveAllSessionCredentialsCallback();
+    
+    void getApplicationManifestThen(JSValueRef);
+    void didGetApplicationManifest();
 
 private:
     TestRunner();

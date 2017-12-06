@@ -1228,6 +1228,10 @@
 		5CE85B201C88E64B0070BFCE /* PingLoad.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE85B1F1C88E6430070BFCE /* PingLoad.h */; };
 		5CFECB041E1ED1CC00F88504 /* LegacyCustomProtocolManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CFECB031E1ED1C800F88504 /* LegacyCustomProtocolManager.cpp */; };
 		617A52D81F43A9DA00DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 617A52D71F43A9B600DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp */; };
+		63108F961F96719C00A0DB84 /* _WKApplicationManifest.h in Headers */ = {isa = PBXBuildFile; fileRef = 63108F941F96719C00A0DB84 /* _WKApplicationManifest.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		63108F971F96719C00A0DB84 /* _WKApplicationManifest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63108F951F96719C00A0DB84 /* _WKApplicationManifest.mm */; };
+		63108F991F9671F700A0DB84 /* _WKApplicationManifestInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 63108F981F9671F700A0DB84 /* _WKApplicationManifestInternal.h */; };
+		634842511FB26E7100946E3C /* APIApplicationManifest.h in Headers */ = {isa = PBXBuildFile; fileRef = 6348424F1FB26E7100946E3C /* APIApplicationManifest.h */; };
 		636353A51E9858DF0009F8AF /* _WKGeolocationCoreLocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 63FABE191E970D65003011D5 /* _WKGeolocationCoreLocationProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		63C32C251E9810D900699BD0 /* _WKGeolocationPosition.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63C32C231E9810D900699BD0 /* _WKGeolocationPosition.mm */; };
 		63C32C261E9810D900699BD0 /* _WKGeolocationPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C32C241E9810D900699BD0 /* _WKGeolocationPosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3618,6 +3622,10 @@
 		5D442A5516D5856700AC3331 /* PluginService.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PluginService.entitlements; sourceTree = "<group>"; };
 		5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
 		617A52D71F43A9B600DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerClientFetchMessageReceiver.cpp; sourceTree = "<group>"; };
+		63108F941F96719C00A0DB84 /* _WKApplicationManifest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKApplicationManifest.h; sourceTree = "<group>"; };
+		63108F951F96719C00A0DB84 /* _WKApplicationManifest.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKApplicationManifest.mm; sourceTree = "<group>"; };
+		63108F981F9671F700A0DB84 /* _WKApplicationManifestInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKApplicationManifestInternal.h; sourceTree = "<group>"; };
+		6348424F1FB26E7100946E3C /* APIApplicationManifest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIApplicationManifest.h; sourceTree = "<group>"; };
 		63C32C231E9810D900699BD0 /* _WKGeolocationPosition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKGeolocationPosition.mm; sourceTree = "<group>"; };
 		63C32C241E9810D900699BD0 /* _WKGeolocationPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKGeolocationPosition.h; sourceTree = "<group>"; };
 		63C32C271E98119000699BD0 /* _WKGeolocationPositionInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKGeolocationPositionInternal.h; sourceTree = "<group>"; };
@@ -5795,6 +5803,9 @@
 				37A5E01218BBF937000A081E /* _WKActivatedElementInfo.h */,
 				37A5E01118BBF937000A081E /* _WKActivatedElementInfo.mm */,
 				379A873518BBFA4300588AF2 /* _WKActivatedElementInfoInternal.h */,
+				63108F941F96719C00A0DB84 /* _WKApplicationManifest.h */,
+				63108F951F96719C00A0DB84 /* _WKApplicationManifest.mm */,
+				63108F981F9671F700A0DB84 /* _WKApplicationManifestInternal.h */,
 				F44291911FA59107002CC93E /* _WKAttachment.h */,
 				F44291931FA59311002CC93E /* _WKAttachment.mm */,
 				F44291951FA5942A002CC93E /* _WKAttachmentInternal.h */,
@@ -7195,6 +7206,7 @@
 				37C4C08318149C2A003688B9 /* Cocoa */,
 				BC8A501311765F4500757573 /* cpp */,
 				BC111B47112F616900337BAB /* mac */,
+				6348424F1FB26E7100946E3C /* APIApplicationManifest.h */,
 				2E5C770D1FA7D429005932C3 /* APIAttachment.cpp */,
 				2E5C770C1FA7D429005932C3 /* APIAttachment.h */,
 				99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */,
@@ -8462,6 +8474,8 @@
 			files = (
 				37A5E01418BBF93F000A081E /* _WKActivatedElementInfo.h in Headers */,
 				379A873618BBFA4300588AF2 /* _WKActivatedElementInfoInternal.h in Headers */,
+				63108F961F96719C00A0DB84 /* _WKApplicationManifest.h in Headers */,
+				63108F991F9671F700A0DB84 /* _WKApplicationManifestInternal.h in Headers */,
 				F44291921FA591C9002CC93E /* _WKAttachment.h in Headers */,
 				F44291961FA5942A002CC93E /* _WKAttachmentInternal.h in Headers */,
 				99E714C51C124A0400665B3A /* _WKAutomationDelegate.h in Headers */,
@@ -8537,6 +8551,7 @@
 				A19DD3C01D07D16800AC823B /* _WKWebViewPrintFormatterInternal.h in Headers */,
 				A182D5B51BE6BD250087A7CC /* AccessibilityIOS.h in Headers */,
 				A7D792D81767CCA300881CBE /* ActivityAssertion.h in Headers */,
+				634842511FB26E7100946E3C /* APIApplicationManifest.h in Headers */,
 				BC64697011DBE603006455B0 /* APIArray.h in Headers */,
 				2E5C770E1FA7D429005932C3 /* APIAttachment.h in Headers */,
 				99C81D5D1C21F38B005C4C82 /* APIAutomationClient.h in Headers */,
@@ -10110,6 +10125,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				37A5E01318BBF937000A081E /* _WKActivatedElementInfo.mm in Sources */,
+				63108F971F96719C00A0DB84 /* _WKApplicationManifest.mm in Sources */,
 				F44291941FA59311002CC93E /* _WKAttachment.mm in Sources */,
 				990D28B21C65209400986977 /* _WKAutomationSession.mm in Sources */,
 				99788ACC1F421DE200C08000 /* _WKAutomationSessionConfiguration.mm in Sources */,

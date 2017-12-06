@@ -491,4 +491,8 @@ messages -> WebPage LegacyReceiver {
     SetAttachmentDisplayOptions(String identifier, struct WebCore::AttachmentDisplayOptions options, WebKit::CallbackID callbackID)
     SetAttachmentDataAndContentType(String identifier, IPC::DataReference data, std::optional<String> newContentType, std::optional<String> newFilename, WebKit::CallbackID callbackID)
 #endif
+
+#if ENABLE(APPLICATION_MANIFEST)
+    GetApplicationManifest(WebKit::CallbackID callbackID)
+#endif
 }

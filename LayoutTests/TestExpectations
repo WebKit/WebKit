@@ -1110,8 +1110,6 @@ webkit.org/b/111869 http/tests/security/contentSecurityPolicy/eval-blocked-and-s
 webkit.org/b/153148 http/tests/security/contentSecurityPolicy/eval-allowed-in-report-only-mode-and-sends-report.php
 webkit.org/b/153150 http/tests/security/contentSecurityPolicy/1.1/child-src/frame-fires-load-event-when-blocked.html
 webkit.org/b/153150 http/tests/security/contentSecurityPolicy/1.1/child-src/frame-fires-load-event-when-redirect-blocked.html
-webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html # Needs testRunner.getManifestThen()
-webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-blocked.html # Needs testRunner.getManifestThen()
 webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/scripthash-basic-blocked-error-event.html
 webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/stylehash-basic-blocked-error-event.html
 webkit.org/b/153155 http/tests/security/contentSecurityPolicy/1.1/stylehash-svg-style-basic-blocked-error-event.html
@@ -1650,3 +1648,9 @@ webkit.org/b/179287 http/wpt/web-animations/interfaces/AnimationTimeline/documen
 webkit.org/b/179287 http/wpt/web-animations/timing-model/animations/set-the-animation-start-time.html [ Pass Failure ]
 
 webkit.org/b/177440 imported/w3c/web-platform-tests/html/browsers/origin/relaxing-the-same-origin-restriction/document_domain_setter_null.tentative.html [ Pass Failure ]
+
+# Application Manifest tests
+webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Skip ]
+webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-blocked.html [ Skip ]
+webkit.org/b/158205 applicationmanifest/ [ Skip ]
+

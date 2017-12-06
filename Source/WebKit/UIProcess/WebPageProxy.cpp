@@ -5313,6 +5313,17 @@ void WebPageProxy::editingRangeCallback(const EditingRange& range, CallbackID ca
     callback->performCallbackWithReturnValue(range);
 }
 
+#if ENABLE(APPLICATION_MANIFEST)
+void WebPageProxy::applicationManifestCallback(const std::optional<WebCore::ApplicationManifest>& manifestOrNull, CallbackID callbackID)
+{
+    auto callback = m_callbacks.take<ApplicationManifestCallback>(callbackID);
+    if (!callback)
+        return;
+
+    callback->performCallbackWithReturnValue(manifestOrNull);
+}
+#endif
+
 #if PLATFORM(COCOA)
 void WebPageProxy::machSendRightCallback(const MachSendRight& sendRight, CallbackID callbackID)
 {
@@ -7230,5 +7241,19 @@ void WebPageProxy::didRemoveAttachment(const String& identifier)
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
+
+#if ENABLE(APPLICATION_MANIFEST)
+void WebPageProxy::getApplicationManifest(Function<void(const std::optional<WebCore::ApplicationManifest>&, CallbackBase::Error)>&& callbackFunction)
+{
+    if (!isValid()) {
+        callbackFunction(std::nullopt, CallbackBase::Error::Unknown);
+        return;
+    }
+
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    m_loadDependentStringCallbackIDs.add(callbackID);
+    m_process->send(Messages::WebPage::GetApplicationManifest(callbackID), m_pageID);
+}
+#endif
 
 } // namespace WebKit

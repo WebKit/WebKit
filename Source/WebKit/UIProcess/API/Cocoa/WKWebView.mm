@@ -117,6 +117,10 @@
 #import <wtf/spi/darwin/dyldSPI.h>
 #import <wtf/text/TextStream.h>
 
+#if ENABLE(APPLICATION_MANIFEST)
+#import "_WKApplicationManifestInternal.h"
+#endif
+
 #if ENABLE(DATA_DETECTION)
 #import "WKDataDetectorTypesInternal.h"
 #endif
@@ -4342,6 +4346,25 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
         } else
             handler(string, nil);
     });
+}
+
+- (void)_getApplicationManifestWithCompletionHandler:(void (^)(_WKApplicationManifest *))completionHandler
+{
+#if ENABLE(APPLICATION_MANIFEST)
+    _page->getApplicationManifest([completionHandler = makeBlockPtr(completionHandler)](const std::optional<WebCore::ApplicationManifest>& manifest, WebKit::CallbackBase::Error error) {
+        UNUSED(error);
+        if (completionHandler) {
+            if (manifest) {
+                auto apiManifest = API::ApplicationManifest::create(*manifest);
+                completionHandler(wrapper(apiManifest));
+            } else
+                completionHandler(nil);
+        }
+    });
+#else
+    if (completionHandler)
+        completionHandler(nil);
+#endif
 }
 
 - (_WKPaginationMode)_paginationMode

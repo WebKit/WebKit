@@ -306,4 +306,6 @@ interface TestRunner {
     void terminateNetworkProcess();
 
     void removeAllSessionCredentials(object callback);
+
+    void getApplicationManifestThen(object callback);
 };

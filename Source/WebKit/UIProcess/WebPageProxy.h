@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -158,6 +158,7 @@ class SharedBuffer;
 class TextIndicator;
 class ValidationBubble;
 
+struct ApplicationManifest;
 struct DictionaryPopupInfo;
 struct ExceptionDetails;
 struct FileChooserSettings;
@@ -265,6 +266,10 @@ struct QueuedTouchEvents {
 
 typedef GenericCallback<const String&, bool, int32_t> ValidateCommandCallback;
 typedef GenericCallback<const WebCore::IntRect&, const EditingRange&> RectForCharacterRangeCallback;
+
+#if ENABLE(APPLICATION_MANIFEST)
+typedef GenericCallback<const std::optional<WebCore::ApplicationManifest>&> ApplicationManifestCallback;
+#endif
 
 #if PLATFORM(MAC)
 typedef GenericCallback<const AttributedString&, const EditingRange&> AttributedStringForCharacterRangeCallback;
@@ -1244,6 +1249,10 @@ public:
     void setAttachmentDataAndContentType(const String& identifier, WebCore::SharedBuffer& data, std::optional<String>&& newContentType, std::optional<String>&& newFilename, Function<void(CallbackBase::Error)>&&);
 #endif
 
+#if ENABLE(APPLICATION_MANIFEST)
+    void getApplicationManifest(Function<void(const std::optional<WebCore::ApplicationManifest>&, CallbackBase::Error)>&&);
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -1504,6 +1513,9 @@ private:
     void validateCommandCallback(const String&, bool, int, CallbackID);
     void unsignedCallback(uint64_t, CallbackID);
     void editingRangeCallback(const EditingRange&, CallbackID);
+#if ENABLE(APPLICATION_MANIFEST)
+    void applicationManifestCallback(const std::optional<WebCore::ApplicationManifest>&, CallbackID);
+#endif
 #if PLATFORM(COCOA)
     void machSendRightCallback(const WebCore::MachSendRight&, CallbackID);
 #endif

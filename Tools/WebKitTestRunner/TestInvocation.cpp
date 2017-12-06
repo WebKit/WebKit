@@ -1246,6 +1246,19 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return result;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "GetApplicationManifest")) {
+#ifdef __BLOCKS__
+        WKPageGetApplicationManifest_b(TestController::singleton().mainWebView()->page(), ^{
+            WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("DidGetApplicationManifest"));
+            WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
+        });
+#else
+        // FIXME: Add API for loading the manifest on non-__BLOCKS__ ports.
+        ASSERT_NOT_REACHED();
+#endif
+        return nullptr;
+    }
+
     ASSERT_NOT_REACHED();
     return nullptr;
 }

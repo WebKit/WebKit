@@ -87,6 +87,10 @@
 #include <WebCore/ViewportConfiguration.h>
 #endif
 
+#if ENABLE(APPLICATION_MANIFEST)
+#include <WebCore/ApplicationManifest.h>
+#endif
+
 #if ENABLE(IOS_TOUCH_EVENTS)
 #include <WebKitAdditions/PlatformTouchEventIOS.h>
 #elif ENABLE(TOUCH_EVENTS)
@@ -1031,6 +1035,11 @@ public:
     void setAttachmentDataAndContentType(const String& identifier, const IPC::DataReference&, std::optional<String> newContentType, std::optional<String> newFilename, CallbackID);
 #endif
 
+#if ENABLE(APPLICATION_MANIFEST)
+    void getApplicationManifest(CallbackID);
+    void didFinishLoadingApplicationManifest(uint64_t, const std::optional<WebCore::ApplicationManifest>&);
+#endif
+
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);
 
@@ -1645,6 +1654,10 @@ private:
     HashMap<uint64_t, WebURLSchemeHandlerProxy*> m_identifierToURLSchemeHandlerProxyMap;
 
     HashMap<uint64_t, WTF::Function<void (bool granted)>> m_storageAccessResponseCallbackMap;
+
+#if ENABLE(APPLICATION_MANIFEST)
+    HashMap<uint64_t, uint64_t> m_applicationManifestFetchCallbackMap;
+#endif
 };
 
 } // namespace WebKit

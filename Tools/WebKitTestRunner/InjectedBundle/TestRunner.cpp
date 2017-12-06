@@ -652,6 +652,7 @@ enum {
     StatisticsDidRunTelemetryCallbackID,
     StatisticsDidClearThroughWebsiteDataRemovalCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
+    GetApplicationManifestCallbackID,
     FirstUIScriptCallbackID = 100
 };
 
@@ -1872,6 +1873,19 @@ uint64_t TestRunner::domCacheSize(JSStringRef origin)
     WKTypeRef returnData = 0;
     WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), &returnData);
     return WKUInt64GetValue(static_cast<WKUInt64Ref>(returnData));
+}
+
+void TestRunner::getApplicationManifestThen(JSValueRef callback)
+{
+    cacheTestRunnerCallback(GetApplicationManifestCallbackID, callback);
+    
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("GetApplicationManifest"));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, nullptr);
+}
+
+void TestRunner::didGetApplicationManifest()
+{
+    callTestRunnerCallback(GetApplicationManifestCallbackID);
 }
 
 } // namespace WTR

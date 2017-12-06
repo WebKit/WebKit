@@ -2760,3 +2760,17 @@ ProcessID WKPageGetProcessIdentifier(WKPageRef page)
 {
     return toImpl(page)->processIdentifier();
 }
+
+#ifdef __BLOCKS__
+void WKPageGetApplicationManifest_b(WKPageRef page, WKPageGetApplicationManifestBlock block)
+{
+#if ENABLE(APPLICATION_MANIFEST)
+    toImpl(page)->getApplicationManifest([block](const std::optional<WebCore::ApplicationManifest> &manifest, CallbackBase::Error) {
+        block();
+    });
+#else // ENABLE(APPLICATION_MANIFEST)
+    UNUSED_PARAM(page);
+    block();
+#endif // not ENABLE(APPLICATION_MANIFEST)
+}
+#endif

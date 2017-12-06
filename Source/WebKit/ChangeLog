@@ -1,3 +1,55 @@
+2017-12-06  David Quesada  <david_quesada@apple.com>
+
+        [Web App Manifest] Add SPI for fetching the manifest
+        https://bugs.webkit.org/show_bug.cgi?id=180294
+        rdar://problem/34747968
+
+        Reviewed by Geoffrey Garen.
+
+        Add a new method -[WKWebView _getApplicationManifestWithCompletionHandler:] to request
+        the manifest associated with the current page.
+
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * UIProcess/API/APIApplicationManifest.h: Copied from Source/WebCore/Modules/applicationmanifest/ApplicationManifest.h.
+            Add a new API object type for application manifests.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetApplicationManifest_b):
+            Add a C version of this SPI for WebKitTestRunner.
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _getApplicationManifestWithCompletionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKApplicationManifest.h: Copied from Source/WebCore/Modules/applicationmanifest/ApplicationManifest.h.
+        * UIProcess/API/Cocoa/_WKApplicationManifest.mm: Added.
+        (-[_WKApplicationManifest initWithCoder:]):
+        (-[_WKApplicationManifest encodeWithCoder:]):
+        (+[_WKApplicationManifest applicationManifestFromJSON:manifestURL:documentURL:]):
+        (-[_WKApplicationManifest _apiObject]):
+        (nullableNSString):
+        (-[_WKApplicationManifest name]):
+        (-[_WKApplicationManifest shortName]):
+        (-[_WKApplicationManifest applicationDescription]):
+        (-[_WKApplicationManifest scope]):
+        (-[_WKApplicationManifest startURL]):
+        * UIProcess/API/Cocoa/_WKApplicationManifestInternal.h: Copied from Source/WebCore/Modules/applicationmanifest/ApplicationManifest.h.
+        (API::wrapper):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::applicationManifestCallback):
+        (WebKit::WebPageProxy::getApplicationManifest):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::finishedLoadingApplicationManifest):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getApplicationManifest):
+        (WebKit::WebPage::didFinishLoadingApplicationManifest):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2017-12-06  Per Arne Vollan  <pvollan@apple.com>
 
         The WebProcess should use the NSRunLoop runloop type.

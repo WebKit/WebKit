@@ -81,6 +81,10 @@
 #import "_WKUserStyleSheetInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
 
+#if ENABLE(APPLICATION_MANIFEST)
+#import "_WKApplicationManifestInternal.h"
+#endif
+
 static const size_t minimumObjectAlignment = 8;
 static_assert(minimumObjectAlignment >= alignof(void*), "Objects should always be at least pointer-aligned.");
 static const size_t maximumExtraSpaceForAlignment = minimumObjectAlignment - alignof(void*);
@@ -119,6 +123,12 @@ void* Object::newObject(size_t size, Type type)
     // API::Object, so they are allocated using +alloc.
 
     switch (type) {
+#if ENABLE(APPLICATION_MANIFEST)
+    case Type::ApplicationManifest:
+        wrapper = [_WKApplicationManifest alloc];
+        break;
+#endif
+
     case Type::Array:
         wrapper = [WKNSArray alloc];
         break;

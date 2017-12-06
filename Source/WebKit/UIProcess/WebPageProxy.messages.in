@@ -167,6 +167,9 @@ messages -> WebPageProxy {
     EditingRangeCallback(struct WebKit::EditingRange range, WebKit::CallbackID callbackID)
     UnsignedCallback(uint64_t result, WebKit::CallbackID callbackID)
     RectForCharacterRangeCallback(WebCore::IntRect rect, struct WebKit::EditingRange actualRange, WebKit::CallbackID callbackID)
+#if ENABLE(APPLICATION_MANIFEST)
+    ApplicationManifestCallback(std::optional<WebCore::ApplicationManifest> manifest, WebKit::CallbackID callbackID)
+#endif
 #if PLATFORM(MAC)
     AttributedStringForCharacterRangeCallback(struct WebKit::AttributedString string, struct WebKit::EditingRange actualRange, WebKit::CallbackID callbackID)
     FontAtSelectionCallback(String fontName, double fontSize, bool selectioHasMultipleFonts, WebKit::CallbackID callbackID)

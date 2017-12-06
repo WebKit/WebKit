@@ -1,3 +1,33 @@
+2017-12-06  David Quesada  <david_quesada@apple.com>
+
+        [Web App Manifest] Add SPI for fetching the manifest
+        https://bugs.webkit.org/show_bug.cgi?id=180294
+        rdar://problem/34747968
+
+        Reviewed by Geoffrey Garen.
+
+        * TestExpectations:
+            Skip the app manifest-related layout tests for now while the feature is still disabled.
+            Also moved the expectations disabling the manifest-src layout tests (which now pass
+            when the feature is enabled) to the same location in the file.
+        * applicationmanifest/developer-warnings-expected.txt: Added.
+        * applicationmanifest/developer-warnings.html: Added.
+        * applicationmanifest/multiple-links-expected.txt: Added.
+        * applicationmanifest/multiple-links.html: Added.
+            Add a layout test to verify only the first manifest link is loaded when there
+            are multiple on the page.
+        * applicationmanifest/resources/developer-warnings.manifest: Added.
+            Add a layout test to verify that warnings generated while parsing the manifest are
+            logged to the console.
+        * http/tests/security/contentSecurityPolicy/manifest-src-allowed.html:
+            Replaced calls to getManifestThen() with getApplicationManifestThen().
+        * http/tests/security/contentSecurityPolicy/manifest-src-blocked-expected.txt:
+            Updated the expected console message to reflect the current wording for CSP violations.
+        * http/tests/security/contentSecurityPolicy/manifest-src-blocked.html:
+            Replaced calls to getManifestThen() with getApplicationManifestThen().
+        * http/tests/security/contentSecurityPolicy/manifest.test/manifest.json:
+            Removed a trailing newline that was causing JSON parsing to fail.
+
 2017-12-06  Youenn Fablet  <youenn@apple.com>
 
         Import WPT workers test suite

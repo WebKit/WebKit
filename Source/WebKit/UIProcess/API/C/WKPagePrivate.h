@@ -178,6 +178,11 @@ WK_EXPORT void WKPageSetIgnoresViewportScaleLimits(WKPageRef page, bool ignoresV
 
 WK_EXPORT WKProcessID WKPageGetProcessIdentifier(WKPageRef page);
 
+#ifdef __BLOCKS__
+typedef void (^WKPageGetApplicationManifestBlock)(void);
+WK_EXPORT void WKPageGetApplicationManifest_b(WKPageRef page, WKPageGetApplicationManifestBlock block);
+#endif
+
 #ifdef __cplusplus
 }
 #endif
