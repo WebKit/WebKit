@@ -1,3 +1,19 @@
+2017-12-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Introduce Nicosia::PaintingContext, add Cairo implementation
+        https://bugs.webkit.org/show_bug.cgi?id=180239
+
+        Reviewed by Michael Catanzaro.
+
+        With Nicosia::Buffer now only providing the memory area into which the
+        tile content was rasterized, we can simplify the BitmapTexture update
+        greatly -- we don't have to create a BitmapImage anymore and retrieve
+        memory pointer from the contained cairo_surface_t object. Instead, we
+        just copy to GPU the memory that Nicosia::Buffer controls.
+
+        * Shared/CoordinatedGraphics/CoordinatedBackingStore.cpp:
+        (WebKit::CoordinatedBackingStoreTile::swapBuffers):
+
 2017-12-05  Brent Fulgham  <bfulgham@apple.com>
 
         Limit user agent versioning to an upper bound

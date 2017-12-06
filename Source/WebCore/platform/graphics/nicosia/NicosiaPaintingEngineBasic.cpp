@@ -32,6 +32,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "NicosiaBuffer.h"
+#include "NicosiaPaintingContext.h"
 
 namespace Nicosia {
 
@@ -42,23 +43,28 @@ PaintingEngineBasic::~PaintingEngineBasic() = default;
 
 bool PaintingEngineBasic::paint(GraphicsLayer& layer, Ref<Buffer>&& buffer, const IntRect& sourceRect, const IntRect& mappedSourceRect, const IntRect& targetRect, float contentsScale)
 {
-    auto& context = buffer->context();
-    context.save();
-    context.clip(targetRect);
-    context.translate(targetRect.x(), targetRect.y());
+    bool supportsAlpha = buffer->supportsAlpha();
+    PaintingContext::paint(buffer,
+        [&layer, sourceRect, mappedSourceRect, targetRect, contentsScale, supportsAlpha]
+        (GraphicsContext& context)
+        {
+            context.save();
+            context.clip(targetRect);
+            context.translate(targetRect.x(), targetRect.y());
 
-    if (buffer->supportsAlpha()) {
-        context.setCompositeOperation(CompositeCopy);
-        context.fillRect(IntRect(IntPoint::zero(), sourceRect.size()), Color::transparent);
-        context.setCompositeOperation(CompositeSourceOver);
-    }
+            if (supportsAlpha) {
+                context.setCompositeOperation(CompositeCopy);
+                context.fillRect(IntRect(IntPoint::zero(), sourceRect.size()), Color::transparent);
+                context.setCompositeOperation(CompositeSourceOver);
+            }
 
-    context.translate(-sourceRect.x(), -sourceRect.y());
-    context.scale(FloatSize(contentsScale, contentsScale));
+            context.translate(-sourceRect.x(), -sourceRect.y());
+            context.scale(FloatSize(contentsScale, contentsScale));
 
-    layer.paintGraphicsLayerContents(context, mappedSourceRect);
+            layer.paintGraphicsLayerContents(context, mappedSourceRect);
 
-    context.restore();
+            context.restore();
+        });
     return true;
 }
 

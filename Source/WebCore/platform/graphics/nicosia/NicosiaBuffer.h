@@ -29,14 +29,9 @@
 #pragma once
 
 #include "IntSize.h"
-#include <wtf/RefPtr.h>
+#include <wtf/MallocPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
-
-namespace WebCore {
-class GraphicsContext;
-class Image;
-class ImageBuffer;
-}
 
 namespace Nicosia {
 
@@ -53,14 +48,13 @@ public:
 
     bool supportsAlpha() const { return m_flags & SupportsAlpha; }
     const WebCore::IntSize& size() const { return m_size; }
-
-    WebCore::GraphicsContext& context();
-    RefPtr<WebCore::Image> uploadImage();
+    int stride() const { return m_size.width() * 4; }
+    unsigned char* data() const { return m_data.get(); }
 
 private:
     Buffer(const WebCore::IntSize&, Flags);
 
-    std::unique_ptr<WebCore::ImageBuffer> m_imageBuffer;
+    MallocPtr<unsigned char> m_data;
     WebCore::IntSize m_size;
     Flags m_flags;
 };

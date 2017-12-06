@@ -29,7 +29,7 @@
 #include "config.h"
 #include "NicosiaBuffer.h"
 
-#include "ImageBuffer.h"
+#include <wtf/FastMalloc.h>
 
 namespace Nicosia {
 
@@ -39,22 +39,17 @@ Ref<Buffer> Buffer::create(const WebCore::IntSize& size, Flags flags)
 }
 
 Buffer::Buffer(const WebCore::IntSize& size, Flags flags)
-    : m_imageBuffer(WebCore::ImageBuffer::create(size, WebCore::Unaccelerated))
-    , m_size(size)
+    : m_size(size)
     , m_flags(flags)
 {
+    auto checkedArea = size.area() * 4;
+    unsigned char* bufferData;
+    if (!tryFastZeroedMalloc(checkedArea.unsafeGet()).getValue(bufferData))
+        return;
+
+    m_data = adoptMallocPtr(bufferData);
 }
 
 Buffer::~Buffer() = default;
-
-WebCore::GraphicsContext& Buffer::context()
-{
-    return m_imageBuffer->context();
-}
-
-RefPtr<WebCore::Image> Buffer::uploadImage()
-{
-    return m_imageBuffer->copyImage(WebCore::DontCopyBackingStore);
-}
 
 } // namespace Nicosia
