@@ -1,5 +1,17 @@
 2017-12-06  Dean Jackson  <dino@apple.com>
 
+        Update ANGLE's changes.diff
+        https://bugs.webkit.org/show_bug.cgi?id=180491
+
+        Reviewed by Antoine Quint.
+
+        Here is the list of things we've changed from the
+        ANGLE commit that we merged in.
+
+        * changes.diff:
+
+2017-12-06  Dean Jackson  <dino@apple.com>
+
         Some iOS tests failing after ANGLE update
         https://bugs.webkit.org/show_bug.cgi?id=180487
         <rdar://problem/35885969>
