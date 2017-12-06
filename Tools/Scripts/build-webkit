@@ -288,7 +288,7 @@ if (isAppleWinWebKit() || isWinCairo()) {
 
     chdirWebKit();
     if (exitStatus(generateBuildSystemFromCMakeProject($prefixPath, @cmakeArgs))) {
-        die "Run \"C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat\" before build-webkit when using ninja";
+        die "Run Visual Studio 2017 installation vcvars.bat before build-webkit when using ninja";
     }
 
     exit 0 if isGenerateProjectOnly();

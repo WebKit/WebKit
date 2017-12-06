@@ -161,7 +161,6 @@ my $windowsSourceDir;
 my $winVersion;
 my $willUseVCExpressWhenBuilding = 0;
 my $vsWhereFoundInstallation;
-my $vsWhereLegacyInstallation;
 
 # Defined in VCSUtils.
 sub exitStatus($);
@@ -634,37 +633,6 @@ sub pickCurrentVisualStudioInstallation
     return undef;
 }
 
-sub pickLegacyVisualStudioInstallation
-{
-    return $vsWhereLegacyInstallation if defined $vsWhereLegacyInstallation;
-
-    requireModulesForVSWhere();
-    determineSourceDir();
-
-    my $vsWhereOut = `$sourceDir/WebKitLibraries/win/tools/vswhere -nologo -legacy -format json`;
-    my $installations_all = [];
-    eval {
-        $installations_all = JSON::PP::decode_json(Encode::encode('UTF-8' => Encode::decode(console_in => $vsWhereOut)));
-    };
-    print "Error getting Visual Studio Legacy Location: $@\n" if $@;
-    undef $@;
-
-    # It's possible that a non-legacy installation without msbuild
-    # would not be found by the latest, but would be found by this
-    # vswhere call, and we want to skip those, so check for versions
-    # with an installation version before 15.0.
-    my @installations = grep { $_->{installationVersion} < 15 } @$installations_all;
-
-    # We don't get much information that would let us choose between
-    # legacy installations, so we'll take the first.
-    if (scalar @installations) {
-        my $installation = $installations[0];
-        $vsWhereLegacyInstallation = $installation;
-        return $installation;
-    }
-    return undef;
-}
-
 sub visualStudioInstallDir
 {
     return $vsInstallDir if defined $vsInstallDir;
@@ -675,11 +643,7 @@ sub visualStudioInstallDir
     } else {
         $vsInstallDir = visualStudioInstallDirVSWhere();
         if (not -e $vsInstallDir) {
-            $vsInstallDir = visualStudioInstallDirLegacy();
-        }
-        if (not -e $vsInstallDir) {
             $vsInstallDir = visualStudioInstallDirFallback();
-            print "Fallback $vsInstallDir\n";
         }
     }
     chomp($vsInstallDir = `cygpath "$vsInstallDir"`) if isCygwin();
@@ -693,15 +657,6 @@ sub visualStudioInstallDirVSWhere
     pickCurrentVisualStudioInstallation();
     if (defined($vsWhereFoundInstallation)) {
         return $vsWhereFoundInstallation->{installationPath};
-    }
-    return undef;
-}
-
-sub visualStudioInstallDirLegacy
-{
-    pickLegacyVisualStudioInstallation();
-    if (defined($vsWhereLegacyInstallation)) {
-        return $vsWhereLegacyInstallation->{installationPath};
     }
     return undef;
 }
@@ -721,56 +676,21 @@ sub visualStudioInstallDirFallback
             return $installdir;
         }
     }
-    return File::Spec->catdir(programFilesPathX86(), "Microsoft Visual Studio 14.0");
+    return undef;
 }
 
 sub msBuildInstallDir
 {
     return $msBuildInstallDir if defined $msBuildInstallDir;
 
-    my $version = visualStudioVersion();
-    if ($version >= 15.0) {
-        my $installDir = visualStudioInstallDir();
-        $msBuildInstallDir = File::Spec->catdir($installDir,
-            "MSBuild", $version, "bin");
-    } else {
-        $msBuildInstallDir = File::Spec->catdir(programFilesPathX86(), 
-            "MSBuild", "14.0", "Bin")
-    }
+    my $installDir = visualStudioInstallDir();
+    $msBuildInstallDir = File::Spec->catdir($installDir,
+        "MSBuild", "15.0", "bin");
 
     chomp($msBuildInstallDir = `cygpath "$msBuildInstallDir"`) if isCygwin();
 
     print "Using MSBuild: $msBuildInstallDir\n";
     return $msBuildInstallDir;
-}
-
-sub visualStudioVersion
-{
-    return $vsVersion if defined $vsVersion;
-
-    my $installDir = visualStudioInstallDir();
-    $vsVersion = visualStudioVersionFromInstallDir($installDir);
-
-    print "Using Visual Studio $vsVersion\n";
-    return $vsVersion;
-}
-
-sub visualStudioVersionFromInstallDir
-{
-    my ($dir) = @_;
-    my $version;
-
-    if ($dir =~ m|Microsoft Visual Studio[/\\]2017|) {
-        $version = "15.0";
-    }
-
-    if (!defined($version)) {
-        if ($dir =~ /Microsoft Visual Studio ([0-9]+\.[0-9]*)/) {
-            $version = $1;
-        }
-    }
-
-    return $version;
 }
 
 sub determineConfigurationForVisualStudio
@@ -1858,13 +1778,13 @@ sub setupAppleWinEnv()
     } else {
         if (!defined $ENV{'WEBKIT_LIBRARIES'} || !$ENV{'WEBKIT_LIBRARIES'}) {
             print "Warning: You must set the 'WebKit_Libraries' environment variable\n";
-            print "         to be able build WebKit from within Visual Studio 2013 and newer.\n";
+            print "         to be able build WebKit from within Visual Studio 2017 and newer.\n";
             print "         Make sure that 'WebKit_Libraries' points to the\n";
             print "         'WebKitLibraries/win' directory, not the 'WebKitLibraries/' directory.\n\n";
         }
         if (!defined $ENV{'WEBKIT_OUTPUTDIR'} || !$ENV{'WEBKIT_OUTPUTDIR'}) {
             print "Warning: You must set the 'WebKit_OutputDir' environment variable\n";
-            print "         to be able build WebKit from within Visual Studio 2013 and newer.\n\n";
+            print "         to be able build WebKit from within Visual Studio 2017 and newer.\n\n";
         }
         if (!defined $ENV{'MSBUILDDISABLENODEREUSE'} || !$ENV{'MSBUILDDISABLENODEREUSE'}) {
             print "Warning: You should set the 'MSBUILDDISABLENODEREUSE' environment variable to '1'\n";
@@ -1885,19 +1805,14 @@ sub setupCygwinEnv()
 
     my $programFilesPath = programFilesPath();
     my $visualStudioPath = File::Spec->catfile(visualStudioInstallDir(), qw(Common7 IDE devenv.com));
-    if (-e $visualStudioPath) {
-        # Visual Studio is installed;
-        if (visualStudioVersion() eq "12") {
-            $visualStudioPath = File::Spec->catfile(visualStudioInstallDir(), qw(Common7 IDE devenv.exe));
-        }
-    } else {
+    if (!-e $visualStudioPath) {
         # Visual Studio not found, try VC++ Express
         $visualStudioPath = File::Spec->catfile(visualStudioInstallDir(), qw(Common7 IDE WDExpress.exe));
         if (! -e $visualStudioPath) {
             print "*************************************************************\n";
             print "Cannot find '$visualStudioPath'\n";
             print "Please execute the file 'vcvars32.bat' from\n";
-            print "'$programFilesPath\\Microsoft Visual Studio 14.0\\VC\\bin\\'\n";
+            print "your Visual Studio 2017 installation\n";
             print "to setup the necessary environment variables.\n";
             print "*************************************************************\n";
             die;
@@ -2224,11 +2139,7 @@ sub generateBuildSystemFromCMakeProject
             push @args, "Ninja";
         }
     } elsif (isAnyWindows() && isWin64()) {
-        if (visualStudioVersion() >= 15) {
-            push @args, '-G "Visual Studio 15 2017 Win64"';
-        } else {
-            push @args, '-G "Visual Studio 14 2015 Win64"';
-        }
+        push @args, '-G "Visual Studio 15 2017 Win64"';
     }
     # Do not show progress of generating bindings in interactive Ninja build not to leave noisy lines on tty
     push @args, '-DSHOW_BINDINGS_GENERATION_PROGRESS=1' unless ($willUseNinja && -t STDOUT);

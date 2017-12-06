@@ -1,3 +1,13 @@
+2017-12-05  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Switch windows build to Visual Studio 2017
+        https://bugs.webkit.org/show_bug.cgi?id=172412
+
+        Reviewed by Per Arne Vollan.
+
+        * WTF.vcxproj/WTF.proj:
+        * wtf/Compiler.h:
+
 2017-12-05  Andy Estes  <aestes@apple.com>
 
         [Darwin] Simplify use of TargetConditionals

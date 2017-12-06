@@ -1,3 +1,23 @@
+2017-12-05  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Switch windows build to Visual Studio 2017
+        https://bugs.webkit.org/show_bug.cgi?id=172412
+
+        Reviewed by Per Arne Vollan.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+        (visualStudioInstallDir):
+        (visualStudioInstallDirFallback):
+        (msBuildInstallDir):
+        (setupAppleWinEnv):
+        (setupCygwinEnv):
+        (generateBuildSystemFromCMakeProject):
+        (pickLegacyVisualStudioInstallation): Deleted.
+        (visualStudioInstallDirLegacy): Deleted.
+        (visualStudioVersion): Deleted.
+        (visualStudioVersionFromInstallDir): Deleted.
+
 2017-12-05  Alex Christensen  <achristensen@webkit.org>
 
         Fix crash when loading a file URL that does not have a fileSystemPath representation

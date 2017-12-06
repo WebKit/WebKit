@@ -1,3 +1,12 @@
+2017-12-05  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Switch windows build to Visual Studio 2017
+        https://bugs.webkit.org/show_bug.cgi?id=172412
+
+        Reviewed by Per Arne Vollan.
+
+        * Source/cmake/OptionsMSVC.cmake:
+
 2017-12-01  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Make description of ENABLE_DRAG_SUPPORT more informative

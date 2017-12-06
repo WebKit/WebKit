@@ -1,3 +1,12 @@
+2017-12-05  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Switch windows build to Visual Studio 2017
+        https://bugs.webkit.org/show_bug.cgi?id=172412
+
+        Reviewed by Per Arne Vollan.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.proj:
+
 2017-12-05  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: don't eagerly checksum
