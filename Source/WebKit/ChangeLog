@@ -1,3 +1,10 @@
+2017-12-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed build fix, removed unused lambda capture.
+
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::open):
+
 2017-12-06  John Wilander  <wilander@apple.com>
 
         Storage Access API: Make document.hasStorageAccess a function and always allow access for same-origin iframes

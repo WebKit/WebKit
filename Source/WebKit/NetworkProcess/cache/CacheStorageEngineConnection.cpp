@@ -55,7 +55,7 @@ CacheStorageEngineConnection::~CacheStorageEngineConnection()
 
 void CacheStorageEngineConnection::open(PAL::SessionID sessionID, uint64_t requestIdentifier, const String& origin, const String& cacheName)
 {
-    Engine::from(sessionID).open(origin, cacheName, [connection = makeRef(m_connection.connection()), this, sessionID, requestIdentifier](const CacheIdentifierOrError& result) {
+    Engine::from(sessionID).open(origin, cacheName, [connection = makeRef(m_connection.connection()), sessionID, requestIdentifier](const CacheIdentifierOrError& result) {
         connection->send(Messages::WebCacheStorageConnection::OpenCompleted(requestIdentifier, result), sessionID.sessionID());
     });
 }
