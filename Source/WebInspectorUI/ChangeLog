@@ -1,3 +1,14 @@
+2017-12-06  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Style Redesign: filtering removes header if one rule has no match even if others do
+        https://bugs.webkit.org/show_bug.cgi?id=180467
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.applyFilter):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype._handleSectionFilterApplied):
+
 2017-12-06  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Details section headers overlap Classes container in the Computed Styles panel
