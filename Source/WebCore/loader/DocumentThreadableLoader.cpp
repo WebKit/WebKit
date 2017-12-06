@@ -405,9 +405,12 @@ void DocumentThreadableLoader::didFail(unsigned long, const ResourceError& error
 {
     ASSERT(m_client);
 #if ENABLE(SERVICE_WORKER)
-    if (m_bypassingPreflightForServiceWorkerRequest) {
+    if (m_bypassingPreflightForServiceWorkerRequest && error.isAccessControl()) {
+        clearResource();
+
         m_options.serviceWorkersMode = ServiceWorkersMode::None;
-        makeCrossOriginAccessRequest(WTFMove(m_bypassingPreflightForServiceWorkerRequest.value()));
+        makeCrossOriginAccessRequestWithPreflight(WTFMove(m_bypassingPreflightForServiceWorkerRequest.value()));
+        ASSERT(!m_bypassingPreflightForServiceWorkerRequest);
         return;
     }
 #endif
