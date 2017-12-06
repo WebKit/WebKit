@@ -1,3 +1,17 @@
+2017-12-05  Andy Estes  <aestes@apple.com>
+
+        [Darwin] Simplify use of TargetConditionals
+        https://bugs.webkit.org/show_bug.cgi?id=180455
+        <rdar://problem/35142971>
+
+        Reviewed by Tim Horton.
+
+        There's no need to check if TARGET_* macros are defined on Darwin platforms, since
+        TargetConditionals.h always defines them. Also, we can simplify
+        (TARGET_OS_EMBEDDED || TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR) to TARGET_OS_IPHONE.
+
+        * wtf/Platform.h:
+
 2017-12-05  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r225430.

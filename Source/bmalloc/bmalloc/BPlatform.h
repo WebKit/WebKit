@@ -52,15 +52,15 @@
 #define BOS_WINDOWS 1
 #endif
 
-#if BOS(DARWIN) && ((defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED) \
-    || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE) \
-    || (defined(TARGET_IPHONE_SIMULATOR) && TARGET_IPHONE_SIMULATOR))
+#if BOS(DARWIN)
+#if TARGET_OS_IPHONE
 #define BPLATFORM_IOS 1
-#if (defined(TARGET_IPHONE_SIMULATOR) && TARGET_IPHONE_SIMULATOR)
+#if TARGET_IPHONE_SIMULATOR
 #define BPLATFORM_IOS_SIMULATOR 1
 #endif
-#elif BOS(DARWIN) && defined(TARGET_OS_MAC) && TARGET_OS_MAC
+#elif TARGET_OS_MAC
 #define BPLATFORM_MAC 1
+#endif
 #endif
 
 /* ==== Policy decision macros: these define policy choices for a particular port. ==== */
