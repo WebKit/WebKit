@@ -1,3 +1,22 @@
+2017-12-06  Youenn Fablet  <youenn@apple.com>
+
+        CacheStorageEngineConnection should protect its IPC Connection when doing asynchronous tasks
+        https://bugs.webkit.org/show_bug.cgi?id=180461
+
+        Reviewed by Chris Dumez.
+
+        Protecting the IPC connection instead of the CacheStorageEngineConnection
+        since CacheStorageEngineConnection only keeps a reference to the NetworkConnectionToWebProcess.
+
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::open):
+        (WebKit::CacheStorageEngineConnection::remove):
+        (WebKit::CacheStorageEngineConnection::caches):
+        (WebKit::CacheStorageEngineConnection::retrieveRecords):
+        (WebKit::CacheStorageEngineConnection::deleteMatchingRecords):
+        (WebKit::CacheStorageEngineConnection::putRecords):
+        (WebKit::CacheStorageEngineConnection::clearMemoryRepresentation):
+
 2017-12-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Introduce Nicosia::PaintingContext, add Cairo implementation
