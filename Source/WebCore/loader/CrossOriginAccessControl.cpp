@@ -123,7 +123,6 @@ void cleanRedirectedRequestForAccessControl(ResourceRequest& request)
     request.clearHTTPReferrer();
     request.clearHTTPOrigin();
     request.clearHTTPUserAgent();
-    request.clearHTTPAccept();
     request.clearHTTPAcceptEncoding();
 }
 

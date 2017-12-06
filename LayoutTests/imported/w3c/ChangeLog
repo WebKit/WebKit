@@ -1,3 +1,12 @@
+2017-12-06  Youenn Fablet  <youenn@apple.com>
+
+        Service Worker fetch should filter HTTP headers that are added by CachedResourceLoader/CachedResource
+        https://bugs.webkit.org/show_bug.cgi?id=180462
+
+        Reviewed by Geoffrey Garen.
+
+        * web-platform-tests/service-workers/service-worker/fetch-response-taint.https-expected.txt:
+
 2017-12-05  Chris Dumez  <cdumez@apple.com>
 
         ServiceWorkerGlobalScope prototype chain should be immutable
