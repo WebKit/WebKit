@@ -1,3 +1,13 @@
+2017-12-05  Chris Dumez  <cdumez@apple.com>
+
+        ServiceWorkerGlobalScope prototype chain should be immutable
+        https://bugs.webkit.org/show_bug.cgi?id=180450
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        Unskip test that no longer times out.
+
 2017-12-05  Brent Fulgham  <bfulgham@apple.com>
 
         Limit user agent versioning to an upper bound

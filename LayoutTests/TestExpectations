@@ -149,7 +149,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/detached-context.
 imported/w3c/web-platform-tests/service-workers/service-worker/extendable-event-waituntil.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-partial-stream.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/http-to-https-redirect-and-register.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/interfaces-sw.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/broken-chunked-encoding.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/chunked-encoding.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/get-state.https.html [ Skip ]

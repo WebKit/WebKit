@@ -33,6 +33,8 @@
     Exposed=DedicatedWorker,
     Global=(Worker,DedicatedWorker),
     JSGenerateToNativeObject,
+    IsImmutablePrototypeExoticObject,
+    IsImmutablePrototypeExoticObjectOnPrototype,
 ] interface DedicatedWorkerGlobalScope : WorkerGlobalScope {
     [CallWith=ScriptState, MayThrowException] void postMessage(any message, optional sequence<object> transfer = []);
 
