@@ -36,8 +36,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
 
         this._inheritedHeaderMap = new Map;
         this._sections = [];
-        this._inspectorSection = null;
-        this._isInspectorSectionPendingFocus = false;
+        this._newRuleSelector = null;
         this._ruleMediaAndInherticanceList = [];
         this._propertyToSelectAndHighlight = null;
         this._filterText = null;
@@ -116,8 +115,8 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
 
             section.addEventListener(WI.SpreadsheetCSSStyleDeclarationSection.Event.FilterApplied, this._handleSectionFilterApplied, this);
 
-            if (this._isInspectorSectionPendingFocus && style.isInspectorRule())
-                this._inspectorSection = section;
+            if (this._newRuleSelector === style.selectorText && !style.hasProperties())
+                section.startEditingRuleSelector();
 
             this.addSubview(section);
             section.needsLayout();
@@ -125,6 +124,8 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
 
             previousStyle = style;
         }
+
+        this._newRuleSelector = null;
 
         this.element.append(this._emptyFilterResultsElement);
 
@@ -154,6 +155,43 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         if (this._propertyToSelectAndHighlight) {
             this.scrollToSectionAndHighlightProperty(this._propertyToSelectAndHighlight);
             this._propertyToSelectAndHighlight = null;
+        }
+    }
+
+    newRuleButtonClicked()
+    {
+        if (this.nodeStyles.node.isInUserAgentShadowTree())
+            return;
+
+        this._addNewRule();
+    }
+
+    newRuleButtonContextMenu(event)
+    {
+        if (this.nodeStyles.node.isInUserAgentShadowTree())
+            return;
+
+        let styleSheets = WI.cssStyleManager.styleSheets.filter(styleSheet => styleSheet.hasInfo() && !styleSheet.isInlineStyleTag() && !styleSheet.isInlineStyleAttributeStyleSheet());
+        if (!styleSheets.length)
+            return;
+
+        let contextMenu = WI.ContextMenu.createFromEvent(event);
+
+        const handler = null;
+        const disabled = true;
+        contextMenu.appendItem(WI.UIString("Available Style Sheets"), handler, disabled);
+
+        let [inspectorStyleSheets, regularStyleSheets] = styleSheets.partition(styleSheet => styleSheet.isInspectorStyleSheet());
+        console.assert(inspectorStyleSheets.length <= 1, "There should never be more than one inspector style sheet");
+
+        contextMenu.appendItem(WI.UIString("Inspector Style Sheet"), () => {
+            this._addNewRule(inspectorStyleSheets.length ? inspectorStyleSheets[0].id : null);
+        });
+
+        for (let styleSheet of regularStyleSheets) {
+            contextMenu.appendItem(styleSheet.displayName, () => {
+                this._addNewRule(styleSheet.id);
+            });
         }
     }
 
@@ -219,6 +257,17 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
             if (inheritedHeader)
                 inheritedHeader.classList.add(WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
         }
+    }
+
+    // Private
+
+    _addNewRule(stylesheetId)
+    {
+        const justSelector = true;
+        this._newRuleSelector = this.nodeStyles.node.appropriateSelectorFor(justSelector);
+
+        const text = "";
+        this.nodeStyles.addRule(this._newRuleSelector, text, stylesheetId);
     }
 };
 

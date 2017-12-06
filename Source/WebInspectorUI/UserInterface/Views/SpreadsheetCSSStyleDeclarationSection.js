@@ -39,6 +39,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         this._selectorElements = [];
         this._mediaElements = [];
         this._filterText = null;
+        this._shouldFocusSelectorElement = false;
         this._wasFocused = false;
     }
 
@@ -112,11 +113,20 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
         this._renderOrigin();
         this._renderSelector();
+
+        if (this._shouldFocusSelectorElement)
+            this.startEditingRuleSelector();
     }
 
     startEditingRuleSelector()
     {
+        if (!this._selectorElement) {
+            this._shouldFocusSelectorElement = true;
+            return;
+        }
+
         this._selectorElement.focus();
+        this._shouldFocusSelectorElement = false;
     }
 
     highlightProperty(property)

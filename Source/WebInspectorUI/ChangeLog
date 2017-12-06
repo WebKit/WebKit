@@ -1,3 +1,27 @@
+2017-12-06  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: [PARITY] Styles Redesign: Ability to add new style rules
+        https://bugs.webkit.org/show_bug.cgi?id=178329
+        <rdar://problem/35001005>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.refresh):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.newRuleButtonClicked):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.newRuleButtonContextMenu):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype._addNewRule):
+        Implement the two functions that CSSStyleDetailsSidebarPanel expects to exist in order for
+        the selected panel to support adding a new rule.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.layout):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.startEditingRuleSelector):
+        If the _selectorElement has not been created yet, set a flag and focus it once layout() has
+        been called (thereby ensuring that initialLayout() has been called).
+
 2017-12-05  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Styles Redesign: for newly added properties, pressing delete in empty value field should focus on name field
