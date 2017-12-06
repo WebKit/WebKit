@@ -70,6 +70,11 @@ void ChildProcess::setApplicationIsDaemon()
     OSStatus error = SetApplicationIsDaemon(true);
     ASSERT_UNUSED(error, error == noErr);
 
+    launchServicesCheckIn();
+}
+
+void ChildProcess::launchServicesCheckIn()
+{
     _LSSetApplicationLaunchServicesServerConnectionStatus(0, 0);
     RetainPtr<CFDictionaryRef> unused = _LSApplicationCheckIn(-2, CFBundleGetInfoDictionary(CFBundleGetMainBundle()));
 }

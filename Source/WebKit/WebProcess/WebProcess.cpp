@@ -216,6 +216,11 @@ WebProcess::~WebProcess()
 
 void WebProcess::initializeProcess(const ChildProcessInitializationParameters& parameters)
 {
+#if PLATFORM(COCOA) && !PLATFORM(IOS)
+    // This call is needed when the WebProcess is not running the NSApplication event loop.
+    // Otherwise, calling enableSandboxStyleFileQuarantine() will fail.
+    launchServicesCheckIn();
+#endif
     platformInitializeProcess(parameters);
 }
 

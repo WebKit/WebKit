@@ -45,7 +45,7 @@
 		<key>ServiceType</key>
 		<string>Application</string>
 		<key>RunLoopType</key>
-		<string>_NSApplicationMain</string>
+		<string>NSRunLoop</string>
 		<key>_MultipleInstances</key>
 		<true/>
 		<key>_HighBitsASLR</key>

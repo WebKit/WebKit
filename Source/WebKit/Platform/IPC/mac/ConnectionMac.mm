@@ -586,6 +586,9 @@ bool Connection::kill()
 static void AccessibilityProcessSuspendedNotification(bool suspended)
 {
 #if PLATFORM(MAC)
+    // Calling _AXUIElementNotifyProcessSuspendStatus will crash if the NSApplication event loop is not running.
+    if (![NSApp isRunning])
+        return;
     _AXUIElementNotifyProcessSuspendStatus(suspended ? AXSuspendStatusSuspended : AXSuspendStatusRunning);
 #elif PLATFORM(IOS)
     UIAccessibilityPostNotification(kAXPidStatusChangedNotification, @{ @"pid" : @(getpid()), @"suspended" : @(suspended) });

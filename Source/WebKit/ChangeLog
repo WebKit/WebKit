@@ -1,3 +1,22 @@
+2017-12-06  Per Arne Vollan  <pvollan@apple.com>
+
+        The WebProcess should use the NSRunLoop runloop type.
+        https://bugs.webkit.org/show_bug.cgi?id=179804
+        <rdar://problem/14012823>
+
+        Reviewed by Brent Fulgham.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::AccessibilityProcessSuspendedNotification):
+        * Shared/ChildProcess.h:
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::launchServicesCheckIn):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::shouldLeakBoost):
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX.plist:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeProcess):
+
 2017-12-06  Nan Wang  <n_wang@apple.com>
 
         AX: [iOS] Post accessibility notification when a web process changes its suspended state

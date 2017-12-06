@@ -77,7 +77,8 @@ static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
     return true;
 #else
     // On Mac, leak a boost onto the NetworkProcess.
-    return launchOptions.processType == ProcessLauncher::ProcessType::Network;
+    return launchOptions.processType == ProcessLauncher::ProcessType::Network
+        || launchOptions.processType == ProcessLauncher::ProcessType::Web;
 #endif
 }
 

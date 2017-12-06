@@ -30,6 +30,10 @@ namespace WebCore {
 
 void EventLoop::cycle()
 {
+    if (![NSApp isRunning]) {
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
+        return;
+    }
     [NSApp setWindowsNeedUpdate:YES];
     if (NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny untilDate:[NSDate dateWithTimeIntervalSinceNow:0.05] inMode:NSDefaultRunLoopMode dequeue:YES])
         [NSApp sendEvent:event];

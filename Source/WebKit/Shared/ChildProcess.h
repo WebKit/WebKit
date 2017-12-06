@@ -70,6 +70,7 @@ public:
 
 #if PLATFORM(COCOA)
     void setApplicationIsDaemon();
+    void launchServicesCheckIn();
     void setQOS(int latencyQOS, int throughputQOS);
 #endif
 
