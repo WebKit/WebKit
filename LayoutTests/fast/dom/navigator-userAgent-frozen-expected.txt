@@ -1,0 +1,12 @@
+Confirm WebKit does not report versions above the frozen maximums.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Major version number is within bounds.
+PASS Minor version number is within bounds.
+PASS Tiny version number is within bounds.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

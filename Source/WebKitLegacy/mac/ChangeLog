@@ -1,3 +1,16 @@
+2017-12-05  Brent Fulgham  <bfulgham@apple.com>
+
+        Limit user agent versioning to an upper bound
+        https://bugs.webkit.org/show_bug.cgi?id=180365
+        <rdar://problem/34550617>
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebView/WebView.mm:
+        (+[WebView _standardUserAgentWithApplicationName:]): Don't pass the WebKit bundle version when
+        creating the User Agent string.
+        (webKitBundleVersionString): Deleted.
+
 2017-12-05  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Stop specifying TARGET_OS_EMBEDDED in postprocess-headers.sh's unifdef options

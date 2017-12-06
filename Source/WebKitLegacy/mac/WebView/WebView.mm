@@ -1132,14 +1132,9 @@ static CFMutableSetRef allWebViewsSet;
 
 @implementation WebView (WebPrivate)
 
-static String webKitBundleVersionString()
-{
-    return [[NSBundle bundleForClass:[WebView class]] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
-}
-
 + (NSString *)_standardUserAgentWithApplicationName:(NSString *)applicationName
 {
-    return standardUserAgentWithApplicationName(applicationName, webKitBundleVersionString());
+    return standardUserAgentWithApplicationName(applicationName);
 }
 
 #if PLATFORM(IOS)

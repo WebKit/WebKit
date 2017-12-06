@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,10 +38,10 @@ namespace WebCore {
 #error Unknown architecture
 #endif
 
-String standardUserAgentWithApplicationName(const String& applicationName, const String& fullWebKitVersionString)
+String standardUserAgentWithApplicationName(const String& applicationName)
 {
     String osVersion = systemMarketingVersionForUserAgentString();
-    String webKitVersionString = userAgentBundleVersionFromFullVersionString(fullWebKitVersionString);
+    String webKitVersionString = userAgentBundleVersion();
 
     if (applicationName.isEmpty())
         return makeString("Mozilla/5.0 (Macintosh; " PROCESSOR " Mac OS X ", osVersion, ") AppleWebKit/", webKitVersionString, " (KHTML, like Gecko)");

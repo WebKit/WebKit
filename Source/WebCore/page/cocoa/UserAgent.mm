@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,6 @@
 #import "config.h"
 #import "UserAgent.h"
 
-#import "SystemVersion.h"
-
 namespace WebCore {
 
 String systemMarketingVersionForUserAgentString()
@@ -35,38 +33,22 @@ String systemMarketingVersionForUserAgentString()
     // Use underscores instead of dots because when we first added the Mac OS X version to the user agent string
     // we were concerned about old DHTML libraries interpreting "4." as Netscape 4. That's no longer a concern for us
     // but we're sticking with the underscores for compatibility with the format used by older versions of Safari.
-    return [systemMarketingVersion() stringByReplacingOccurrencesOfString:@"." withString:@"_"];
+#if PLATFORM(MAC)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    return ASCIILiteral("10_13_4");
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    return ASCIILiteral("10_12_6");
+#else
+    return ASCIILiteral("10_11_6");
+#endif
+#else
+    return ASCIILiteral("11_3");
+#endif
 }
 
-static NSString *userVisibleWebKitBundleVersionFromFullVersion(NSString *fullWebKitVersion)
+String userAgentBundleVersion()
 {
-    // If the version is longer than 3 digits then the leading digits represent the version of the OS. Our user agent
-    // string should not include the leading digits, so strip them off and report the rest as the version. <rdar://problem/4997547>
-    NSRange nonDigitRange = [fullWebKitVersion rangeOfCharacterFromSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]];
-    if (nonDigitRange.location == NSNotFound && fullWebKitVersion.length > 3)
-        return [fullWebKitVersion substringFromIndex:fullWebKitVersion.length - 3];
-    if (nonDigitRange.location != NSNotFound && nonDigitRange.location > 3)
-        return [fullWebKitVersion substringFromIndex:nonDigitRange.location - 3];
-    return fullWebKitVersion;
-}
-
-String userAgentBundleVersionFromFullVersionString(const String& fullWebKitVersion)
-{
-    // We include at most three components of the bundle version in the user agent string.
-    NSString *bundleVersion = userVisibleWebKitBundleVersionFromFullVersion(fullWebKitVersion);
-    NSScanner *scanner = [NSScanner scannerWithString:bundleVersion];
-    NSInteger periodCount = 0;
-    while (true) {
-        if (![scanner scanUpToString:@"." intoString:nullptr] || scanner.isAtEnd)
-            return bundleVersion;
-
-        if (++periodCount == 3)
-            return [bundleVersion substringToIndex:scanner.scanLocation];
-
-        ++scanner.scanLocation;
-    }
-
-    ASSERT_NOT_REACHED();
+    return ASCIILiteral("605.1.15");
 }
 
 } // namespace WebCore

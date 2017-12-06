@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,7 +77,7 @@ static inline NSString *deviceNameForUserAgent()
     return name.autorelease();
 }
 
-String standardUserAgentWithApplicationName(const String& applicationName, const String& fullWebKitVersionString)
+String standardUserAgentWithApplicationName(const String& applicationName)
 {
     // Check to see if there is a user agent override for all WebKit clients.
     CFPropertyListRef override = CFPreferencesCopyAppValue(CFSTR("UserAgent"), CFSTR("com.apple.WebFoundation"));
@@ -88,7 +88,7 @@ String standardUserAgentWithApplicationName(const String& applicationName, const
     }
 
     // FIXME: We should implement this with String and/or StringBuilder instead.
-    NSString *webKitVersion = userAgentBundleVersionFromFullVersionString(fullWebKitVersionString);
+    NSString *webKitVersion = userAgentBundleVersion();
     NSString *osMarketingVersionString = systemMarketingVersionForUserAgentString();
     if (applicationName.isEmpty())
         return [NSString stringWithFormat:@"Mozilla/5.0 (%@; CPU %@ %@ like Mac OS X) AppleWebKit/%@ (KHTML, like Gecko)", deviceNameForUserAgent(), osNameForUserAgent(), osMarketingVersionString, webKitVersion];

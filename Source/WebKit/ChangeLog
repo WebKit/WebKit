@@ -1,3 +1,19 @@
+2017-12-05  Brent Fulgham  <bfulgham@apple.com>
+
+        Limit user agent versioning to an upper bound
+        https://bugs.webkit.org/show_bug.cgi?id=180365
+        <rdar://problem/34550617>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::standardUserAgent): Don't pass the WebKit bundle version when
+        creatin the User Agent string.
+        (WebKit::webKitBundleVersionString): Deleted.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::standardUserAgent): Ditto.
+        (WebKit::webKitBundleVersionString): Deleted.
+
 2017-12-05  Alex Christensen  <achristensen@webkit.org>
 
         Fix crash when loading a file URL that does not have a fileSystemPath representation
