@@ -3079,6 +3079,7 @@ webgl/1.0.2/conformance/ogles/GL/log/log_001_to_008.html [ Skip ]
 webgl/1.0.2/conformance/ogles/GL/log2/log2_001_to_008.html [ Skip ]
 
 # <rdar://problem/33135669>
+webgl/1.0.2/conformance/textures/gl-teximage.html [ Failure ]
 fast/canvas/webgl/gl-teximage.html [ Failure ]
 
 # <rdar://problem/30517283>

@@ -1,3 +1,11 @@
+2017-12-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark webgl/1.0.2/conformance/textures/gl-teximage.html as failing again.
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2017-12-06  David Quesada  <david_quesada@apple.com>
 
         [Web App Manifest] Add SPI for fetching the manifest
