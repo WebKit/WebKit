@@ -35,6 +35,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         this.style = style;
         this._propertyViews = [];
         this._propertyPendingStartEditing = null;
+        this._filterText = null;
     }
 
     // Public
@@ -66,6 +67,9 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             propertyViewPendingStartEditing.nameTextField.startEditing();
             this._propertyPendingStartEditing = null;
         }
+
+        if (this._filterText)
+            this.applyFilter(this._filterText);
     }
 
     detached()
@@ -222,6 +226,22 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         this._propertyViews.remove(propertyView);
     }
 
+    applyFilter(filterText)
+    {
+        this._filterText = filterText;
+
+        if (!this.didInitialLayout)
+            return;
+
+        let matches = false;
+        for (let propertyView of this._propertyViews) {
+            if (propertyView.applyFilter(this._filterText))
+                matches = true;
+        }
+
+        this.dispatchEventToListeners(WI.SpreadsheetCSSStyleDeclarationEditor.Event.FilterApplied, {matches});
+    }
+
     // Private
 
     get _propertiesToRender()
@@ -240,6 +260,10 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         } else
             this.needsLayout();
     }
+};
+
+WI.SpreadsheetCSSStyleDeclarationEditor.Event = {
+    FilterApplied: "spreadsheet-css-style-declaration-editor-filter-applied",
 };
 
 WI.SpreadsheetCSSStyleDeclarationEditor.StyleClassName = "spreadsheet-style-declaration-editor";

@@ -34,11 +34,13 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
 
         this.element.classList.add("spreadsheet-style-panel");
 
+        this._inheritedHeaderMap = new Map;
         this._sections = [];
         this._inspectorSection = null;
         this._isInspectorSectionPendingFocus = false;
         this._ruleMediaAndInherticanceList = [];
         this._propertyToSelectAndHighlight = null;
+        this._filterText = null;
 
         this._emptyFilterResultsElement = WI.createMessageTextView(WI.UIString("No Results Found"));
     }
@@ -86,6 +88,8 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
                 excludeRevealElement: true,
             }));
 
+            this._inheritedHeaderMap.set(style.node, inheritedHeader);
+
             return inheritedHeader;
         };
 
@@ -94,6 +98,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         let orderedStyles = uniqueOrderedStyles(this.nodeStyles.orderedStyles);
         let previousStyle = null;
 
+        this._inheritedHeaderMap.clear();
         this._sections = [];
 
         for (let style of orderedStyles) {
@@ -109,6 +114,8 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
                 style[WI.SpreadsheetRulesStyleDetailsPanel.RuleSection] = section;
             }
 
+            section.addEventListener(WI.SpreadsheetCSSStyleDeclarationSection.Event.FilterApplied, this._handleSectionFilterApplied, this);
+
             if (this._isInspectorSectionPendingFocus && style.isInspectorRule())
                 this._inspectorSection = section;
 
@@ -120,6 +127,9 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         }
 
         this.element.append(this._emptyFilterResultsElement);
+
+        if (this._filterText)
+            this.applyFilter(this._filterText);
 
         super.refresh(significantChange);
     }
@@ -169,6 +179,45 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
                 section._propertiesEditor.startEditingLastProperty();
                 break;
             }
+        }
+    }
+
+    applyFilter(filterText)
+    {
+        this._filterText = filterText;
+
+        if (!this.didInitialLayout)
+            return;
+
+        if (this._filterText)
+            this.element.classList.add("filter-non-matching");
+
+        for (let inheritedHeader of this._inheritedHeaderMap.values())
+            inheritedHeader.classList.remove(WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
+
+        for (let section of this._sections)
+            section.applyFilter(this._filterText);
+    }
+
+    // Protected
+
+    filterDidChange(filterBar)
+    {
+        super.filterDidChange(filterBar);
+
+        this.applyFilter(filterBar.filters.text);
+    }
+
+    // Private
+
+    _handleSectionFilterApplied(event)
+    {
+        if (event.data.matches)
+            this.element.classList.remove("filter-non-matching");
+        else if (event.target.style.inherited) {
+            let inheritedHeader = this._inheritedHeaderMap.get(event.target.style.node);
+            if (inheritedHeader)
+                inheritedHeader.classList.add(WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
         }
     }
 };

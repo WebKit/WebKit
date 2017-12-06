@@ -1,3 +1,47 @@
+2017-12-05  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: [PARITY] Styles Redesign: Make filtering work
+        https://bugs.webkit.org/show_bug.cgi?id=178331
+        <rdar://problem/35001015>
+
+        Reviewed by Timothy Hatcher.
+
+        Since both the sections and editors (per-section) use View semantics, we cannot simply
+        search for instances of the filtered text since not all of the subviews may have called
+        layout() yet. Instead, we have to rely on event listeners to relay information as to whether
+        the filtered text was matched up the chain, applying the correct style classes along the way.
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.refresh):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.applyFilter):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.filterDidChange):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype._handleSectionFilterApplied):
+        Save the "Inherited From" elements so that they can be hidden if no styles inherited from
+        that node match the filter.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.initialLayout):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.layout):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.applyFilter):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._renderSelector):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._createMediaHeader):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleEditorFilterApplied):
+        Save the media header elements so that they can also be filtered.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.layout):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.applyFilter):
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty):
+        (WI.SpreadsheetStyleProperty.prototype.applyFilter):
+        (WI.SpreadsheetStyleProperty.prototype._update):
+        Move the name and value elements to a new container so that filter highlight won't also
+        apply to the checkbox or warning element.
+
 2017-12-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: adding a property before or after the first one appends it to the end

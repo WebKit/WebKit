@@ -36,6 +36,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._element = document.createElement("div");
         this._element.dataset.propertyIndex = index;
 
+        this._contentElement = null;
         this._nameElement = null;
         this._valueElement = null;
 
@@ -128,6 +129,16 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._element.title = elementTitle;
     }
 
+    applyFilter(filterText)
+    {
+        let matchesName = this._nameElement.textContent.includes(filterText);
+        let matchesValue = this._valueElement.textContent.includes(filterText);
+        let matches = matchesName || matchesValue;
+        this._contentElement.classList.toggle(WI.CSSStyleDetailsSidebarPanel.FilterMatchSectionClassName, matches);
+        this._contentElement.classList.toggle(WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInPropertyClassName, !matches);
+        return matches;
+    }
+
     // Private
 
     _remove()
@@ -158,16 +169,18 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             });
         }
 
-        if (!this._property.enabled)
-            this.element.append("/* ");
+        this._contentElement = this.element.appendChild(document.createElement("span"));
 
-        this._nameElement = this.element.appendChild(document.createElement("span"));
+        if (!this._property.enabled)
+            this._contentElement.append("/* ");
+
+        this._nameElement = this._contentElement.appendChild(document.createElement("span"));
         this._nameElement.classList.add("name");
         this._nameElement.textContent = this._property.name;
 
-        this.element.append(": ");
+        this._contentElement.append(": ");
 
-        this._valueElement = this.element.appendChild(document.createElement("span"));
+        this._valueElement = this._contentElement.appendChild(document.createElement("span"));
         this._valueElement.classList.add("value");
         this._renderValue(this._property.rawValue);
 
@@ -186,13 +199,13 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._setupJumpToSymbol(this._valueElement);
         }
 
-        this.element.append(";");
+        this._contentElement.append(";");
 
         if (this._property.enabled) {
             this._warningElement = this.element.appendChild(document.createElement("span"));
             this._warningElement.className = "warning";
         } else
-            this.element.append(" */");
+            this._contentElement.append(" */");
 
         this.updateStatus();
     }
