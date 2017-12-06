@@ -160,7 +160,10 @@ void AudioTrack::languageChanged(const AtomicString& language)
 
 void AudioTrack::willRemove()
 {
-    mediaElement()->removeAudioTrack(*this);
+    auto element = makeRefPtr(mediaElement());
+    if (!element)
+        return;
+    element->removeAudioTrack(*this);
 }
 
 void AudioTrack::updateKindFromPrivate()

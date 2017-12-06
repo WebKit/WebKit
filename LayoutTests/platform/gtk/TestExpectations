@@ -3052,7 +3052,7 @@ webkit.org/b/163383 accessibility/roles-computedRoleString.html [ Failure ]
 
 webkit.org/b/163512 media/media-controls-accessibility.html [ Failure ]
 webkit.org/b/163521 media/tab-focus-inside-media-elements.html [ Failure ]
-webkit.org/b/163523 media/track/track-manual-mode.html [ Failure Crash ]
+webkit.org/b/163523 media/track/track-manual-mode.html [ Failure ]
 webkit.org/b/163524 media/track/video-track-alternate-groups.html [ Failure ]
 webkit.org/b/163525 media/video-background-tab-playback.html [ Failure Pass Crash Timeout ]
 webkit.org/b/163526 media/video-controls-drop-and-restore-timeline.html [ Failure ]
@@ -3500,9 +3500,7 @@ webkit.org/b/160119 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 webkit.org/b/160119 media/click-volume-bar-not-pausing.html [ Timeout Failure Pass ]
 
-# This one has its own bug because the crashes were preexisting; only the
-# timeout is caused by the switch to threaded compositor.
-webkit.org/b/160131 media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Crash Timeout Pass ]
+webkit.org/b/160131 media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Timeout Pass ]
 
 webkit.org/b/160131 plugins/return-error-from-new-stream-doesnt-invoke-destroy-stream.html [ Timeout Pass ]
 

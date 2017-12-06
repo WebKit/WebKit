@@ -1,3 +1,12 @@
+2017-12-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Layout test media/track/track-in-band-duplicate-tracks-when-source-changes.html crashes and times out
+        https://bugs.webkit.org/show_bug.cgi?id=160131
+
+        Reviewed by Eric Carlson.
+
+        * platform/gtk/TestExpectations:
+
 2017-12-05  Chris Dumez  <cdumez@apple.com>
 
         ServiceWorkerGlobalScope prototype chain should be immutable
