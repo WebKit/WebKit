@@ -164,6 +164,7 @@ imported/w3c/web-platform-tests/service-workers/service-worker/update-recovery.h
 imported/w3c/web-platform-tests/service-workers/service-worker/websocket-in-service-worker.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/client-navigate.https.html [ Skip ]
 
+webkit.org/b/179342 http/tests/workers/service/registration-task-queue-scheduling-1.html [ Pass Failure ]
 http/tests/workers/service/service-worker-cache-api.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/about-blank-replacement.https.html [ Pass Failure ]
 webkit.org/b/179137 imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https.html [ Pass Failure ]
