@@ -1,5 +1,15 @@
 2017-12-06  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Details section headers overlap Classes container in the Computed Styles panel
+        https://bugs.webkit.org/show_bug.cgi?id=180380
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content ~ :matches(.options-container, .class-list-container)):
+
+2017-12-06  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Canvas Tab initial user experience is poor when no canvases exist
         https://bugs.webkit.org/show_bug.cgi?id=179329
         <rdar://problem/35842036>

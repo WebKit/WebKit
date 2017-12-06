@@ -67,7 +67,8 @@
     display: flex;
     align-items: center;
     position: absolute;
-    z-index: 1;
+    /* Make sure options and class containers are above details section headers, but below popovers. */
+    z-index: calc(var(--z-index-header) + 1);
     width: 100%;
     border-top: 1px solid var(--border-color);
 }
