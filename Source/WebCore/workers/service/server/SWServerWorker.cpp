@@ -141,7 +141,9 @@ void SWServerWorker::setHasPendingEvents(bool hasPendingEvents)
 
     // Do tryClear/tryActivate, as per https://w3c.github.io/ServiceWorker/#wait-until-method.
     auto* registration = m_server.getRegistration(m_registrationKey);
-    ASSERT(registration);
+    if (!registration)
+        return;
+
     if (registration->isUninstalling() && registration->tryClear())
         return;
     registration->tryActivate();
