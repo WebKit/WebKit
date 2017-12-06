@@ -1,3 +1,53 @@
+2017-12-06  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Canvas Tab initial user experience is poor when no canvases exist
+        https://bugs.webkit.org/show_bug.cgi?id=179329
+        <rdar://problem/35842036>
+
+        Reviewed by Timothy Hatcher.
+
+        This patch adds a new method, WI.createNavigationItemHelp, for creating command
+        help to display in a message text view. The method accepts a format string and
+        NavigationItem, and returns a DOM element. For example,
+
+            WI.createNavigationItemHelp("Press %s to do X.", navigationItem)
+
+        returns:
+
+            <div class="navigation-item-help">
+                Press <div class="navigation-bar"><div class="item">...</div></div> to do X.
+            </div>
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager.prototype.importRecording):
+        Importing a recording should be a manager command with a corresponding
+        event, so that it's decoupled from any specific location in the UI.
+
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView):
+
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView):
+        (WI.CanvasTabContentView.prototype.attached):
+        (WI.CanvasTabContentView.prototype._recordingImportedOrStopped):
+        (WI.CanvasTabContentView.prototype._recordingStopped): Deleted.
+        (WI.CanvasTabContentView.prototype._navigationSidebarImport): Deleted.
+
+        * UserInterface/Views/Main.css:
+        (.message-text-view .navigation-item-help):
+        (.message-text-view .navigation-item-help .navigation-bar):
+        (.message-text-view .navigation-item-help .navigation-bar > .item):
+        New styles for a NavigationItem appearing inline as part of descriptive
+        text. Wrapped in a fake navigation bar so navigation item styles are picked up.
+
+        * UserInterface/Views/RecordingNavigationSidebarPanel.js:
+        (WI.RecordingNavigationSidebarPanel.prototype.initialLayout):
+        (WI.RecordingNavigationSidebarPanel.prototype._importNavigationItemClicked): Deleted.
+        Moved import code to CanvasManager.
+
 2017-12-06  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: REGRESSION(r225569): CSSStyleDetailsSidebarPanel no longer exists

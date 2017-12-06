@@ -702,6 +702,7 @@ localizedStrings["Position X"] = "Position X";
 localizedStrings["Position Y"] = "Position Y";
 localizedStrings["Prefer indent using:"] = "Prefer indent using:";
 localizedStrings["Preserve Log"] = "Preserve Log";
+localizedStrings["Press %s to load a recording from file."] = "Press %s to load a recording from file.";
 localizedStrings["Pressed"] = "Pressed";
 localizedStrings["Pretty print"] = "Pretty print";
 localizedStrings["Preview"] = "Preview";

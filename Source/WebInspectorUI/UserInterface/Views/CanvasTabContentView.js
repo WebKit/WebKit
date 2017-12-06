@@ -54,7 +54,6 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
         this.contentBrowser.navigationBar.insertNavigationItem(this._overviewNavigationItem, 2);
         this.contentBrowser.navigationBar.insertNavigationItem(new WI.DividerNavigationItem, 3);
 
-        this.navigationSidebarPanel.addEventListener(WI.RecordingNavigationSidebarPanel.Event.Import, this._navigationSidebarImport, this);
         this.navigationSidebarPanel.contentTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._navigationSidebarTreeOutlineSelectionChanged, this);
     }
 
@@ -141,7 +140,8 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
 
         WI.canvasManager.addEventListener(WI.CanvasManager.Event.CanvasAdded, this._handleCanvasAdded, this);
         WI.canvasManager.addEventListener(WI.CanvasManager.Event.CanvasRemoved, this._handleCanvasRemoved, this);
-        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStopped, this._recordingStopped, this);
+        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingImported, this._recordingImportedOrStopped, this);
+        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingStopped, this._recordingImportedOrStopped, this);
         WI.RecordingContentView.addEventListener(WI.RecordingContentView.Event.RecordingActionIndexChanged, this._recordingActionIndexChanged, this);
 
         let canvases = new Set(Array.from(this._canvasCollection.items).concat(WI.canvasManager.canvases));
@@ -233,35 +233,15 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
         console.assert(false, "Unexpected representedObject.", representedObject);
     }
 
-    _recordingStopped(event)
+    _recordingImportedOrStopped(event)
     {
         let recording = event.data.recording;
-        if (!recording) {
-            // FIXME: <https://webkit.org/b/178185> Web Inspector: Canvas tab: show detailed status during canvas recording
+        if (!recording)
             return;
-        }
 
         this._recordingAdded(recording, {
             suppressShowRecording: event.data.fromConsole,
         });
-    }
-
-    _navigationSidebarImport(event)
-    {
-        let {filename, payload} = event.data;
-        let recording = WI.Recording.fromPayload(payload);
-        if (!recording) {
-            WI.Recording.synthesizeError(WI.UIString("unsupported version."));
-            return;
-        }
-
-        let extensionStart = filename.lastIndexOf(".");
-        if (extensionStart !== -1)
-            filename = filename.substring(0, extensionStart);
-
-        recording.createDisplayName(filename);
-
-        this._recordingAdded(recording);
     }
 
     _navigationSidebarTreeOutlineSelectionChanged(event)

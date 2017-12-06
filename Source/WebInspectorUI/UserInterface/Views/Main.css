@@ -189,6 +189,29 @@ body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
     font-size: var(--message-text-view-font-size);
 }
 
+.message-text-view .navigation-item-help {
+    display: inline-flex;
+    padding: 10px 0;
+}
+
+.message-text-view .navigation-item-help .navigation-bar {
+    height: auto;
+    padding: 0 4px;
+    border-bottom: none;
+    overflow: visible;
+}
+
+.message-text-view .navigation-item-help .navigation-bar > .item {
+    /* Adjust button top by the border thickness, to keep button text on the baseline. */
+    position: relative;
+    top: -1px;
+
+    padding: 1px 4px;
+    font-size: 11px;
+    border-radius: 4px;
+    border: solid 1px var(--border-color);
+}
+
 .message-text-view.error {
     color: var(--error-text-color);
 }

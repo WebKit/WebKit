@@ -34,6 +34,13 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
         descriptionElement.className = "description";
         descriptionElement.textContent = WI.UIString("Waiting for canvas contexts created by script or CSS.");
 
+        let importNavigationItem = new WI.ButtonNavigationItem("import-recording", WI.UIString("Import"), "Images/Import.svg", 15, 15);
+        importNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
+        importNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => { WI.canvasManager.importRecording(); });
+
+        let importHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to load a recording from file."), importNavigationItem);
+        contentPlaceholder.appendChild(importHelpElement);
+
         super(representedObject, WI.CanvasContentView, contentPlaceholder);
 
         this.element.classList.add("canvas-overview");
