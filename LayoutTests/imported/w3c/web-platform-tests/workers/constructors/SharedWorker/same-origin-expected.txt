@@ -1,0 +1,13 @@
+
+Harness Error (TIMEOUT), message = null
+
+FAIL unsupported_scheme assert_throws: function "function () { new SharedWorker('unsupported:', ''); }" threw object "ReferenceError: Can't find variable: SharedWorker" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+FAIL data_url Can't find variable: SharedWorker
+TIMEOUT javascript_url Test timed out
+TIMEOUT about_blank Test timed out
+TIMEOUT opera_com Test timed out
+TIMEOUT port_81 Test timed out
+TIMEOUT https_port_80 Test timed out
+TIMEOUT https_port_8000 Test timed out
+TIMEOUT http_port_8012 Test timed out
+

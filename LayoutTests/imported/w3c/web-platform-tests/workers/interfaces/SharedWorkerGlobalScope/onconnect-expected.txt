@@ -1,0 +1,3 @@
+
+FAIL onconnect Can't find variable: SharedWorker
+

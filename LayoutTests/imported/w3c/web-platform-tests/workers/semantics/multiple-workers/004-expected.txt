@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 10: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: line 5: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: line 5: ReferenceError: Can't find variable: SharedWorker
+
+FAIL shared worker with multiple documents ReferenceError: Can't find variable: SharedWorker
+ 

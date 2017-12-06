@@ -1,0 +1,3 @@
+
+FAIL members of SharedWorkerGlobalScope Can't find variable: SharedWorker
+

@@ -1,0 +1,3 @@
+
+PASS readonlyness of members of Navigator 
+

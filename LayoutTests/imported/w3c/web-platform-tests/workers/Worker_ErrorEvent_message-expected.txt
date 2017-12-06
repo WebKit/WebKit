@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 3: Error: Error Message
+
+PASS  AbstractWorker ErrorEvent.message  
+

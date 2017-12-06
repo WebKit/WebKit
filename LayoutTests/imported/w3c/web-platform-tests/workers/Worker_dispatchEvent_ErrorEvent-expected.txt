@@ -1,0 +1,4 @@
+
+PASS  ErrorEvent and Worker.dispatchEvent()  
+PASS initErrorEvent 
+

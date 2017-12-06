@@ -1,0 +1,30 @@
+<!--
+var log = [];
+var neverEncounteredValue = "This is not the value you are looking for.";
+for (x in navigator) {
+  // this should silently fail and not throw per webidl
+  navigator[x] = neverEncounteredValue;
+  if (navigator[x] === neverEncounteredValue)
+    log.push(x);
+}
+postMessage(log.join(', '));
+/*
+-->
+<!doctype html>
+<title>readonlyness of members of Navigator</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id=log></div>
+<script>
+async_test(function() {
+  var worker = new Worker('#');
+  worker.onmessage = this.step_func(function(e) {
+    assert_equals(e.data, '');
+    this.done();
+  });
+});
+</script>
+<!--
+*/
+//-->
+

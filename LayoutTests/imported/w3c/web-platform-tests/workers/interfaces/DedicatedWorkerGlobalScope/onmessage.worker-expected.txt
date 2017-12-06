@@ -1,0 +1,6 @@
+
+PASS Setting onmessage to 1 
+FAIL Setting onmessage to an object assert_unreached: Reached unreachable code
+PASS Setting onmessage to a function 
+PASS Setting onmessage to 1 (again) 
+

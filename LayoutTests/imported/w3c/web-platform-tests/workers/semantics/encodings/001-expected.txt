@@ -1,0 +1,3 @@
+
+FAIL encoding, dedicated worker assert_equals: expected "å" but got "Ã¥"
+

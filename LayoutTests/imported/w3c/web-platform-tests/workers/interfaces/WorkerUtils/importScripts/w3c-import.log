@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/001.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/002.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/003.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/004.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/005.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/006.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/007.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/008.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/009.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/010.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/011.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/012.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/1
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/null
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/undefined

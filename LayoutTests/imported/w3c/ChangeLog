@@ -1,3 +1,14 @@
+2017-12-06  Youenn Fablet  <youenn@apple.com>
+
+        Import WPT workers test suite
+        https://bugs.webkit.org/show_bug.cgi?id=180464
+
+        Reviewed by Chris Dumez.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * workers: Added.
+
 2017-12-06  Chris Dumez  <cdumez@apple.com>
 
         ServiceWorkers API should reject promises when calling objects inside detached frames

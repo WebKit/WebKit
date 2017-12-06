@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 17: ReferenceError: Can't find variable: SharedWorker
+
+FAIL Web Workers: SharedWorker - same name, different URL ReferenceError: Can't find variable: SharedWorker
+

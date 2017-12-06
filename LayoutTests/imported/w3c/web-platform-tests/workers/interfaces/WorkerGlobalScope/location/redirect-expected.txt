@@ -1,0 +1,3 @@
+
+FAIL location with a worker in separate file that redirects assert_equals: expected "http://localhost:8800/workers/interfaces/WorkerGlobalScope/location/post-location-members.js?a" but got "http://localhost:8800/workers/interfaces/WorkerGlobalScope/location/helper-redirect.py?fail"
+

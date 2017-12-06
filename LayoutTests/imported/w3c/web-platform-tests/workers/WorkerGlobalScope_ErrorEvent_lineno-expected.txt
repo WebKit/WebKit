@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 3: Error: Error Message
+
+PASS  WorkerGlobalScope onerror event handler argument: line  
+

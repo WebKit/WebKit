@@ -1,0 +1,3 @@
+
+FAIL shared worker in two documents and window.onerror Can't find variable: SharedWorker
+

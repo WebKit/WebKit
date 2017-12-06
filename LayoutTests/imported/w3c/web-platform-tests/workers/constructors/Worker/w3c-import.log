@@ -1,0 +1,33 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/1
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/AbstractWorker.onerror.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/Blob-url.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/DedicatedWorkerGlobalScope-members.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/ctor-1.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/ctor-null.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/ctor-undefined.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/expected-self-properties.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/no-arguments-ctor.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/null
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/resolve-empty-string.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/same-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/terminate.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/undefined
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/unexpected-self-properties.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/unresolvable-url.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/use-base-url.html

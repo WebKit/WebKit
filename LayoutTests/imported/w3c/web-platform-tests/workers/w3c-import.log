@@ -1,0 +1,76 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/workers/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/workers/README.md
+/LayoutTests/imported/w3c/web-platform-tests/workers/SharedWorker_blobUrl.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_colno.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_filename.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_lineno.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_message.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerGlobalScope_close.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerGlobalScope_importScripts.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerGlobalScope_importScripts_NetworkErr.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerGlobalScope_importScripts_NosniffErr.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerGlobalScope_setInterval.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerGlobalScope_setTimeout.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerLocation-origin.sub.window.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerLocation.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerLocation_hash.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerLocation_hash_encoding.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerLocation_hash_nonexist.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerLocation_host.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerLocation_hostname.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerLocation_href.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerLocation_pathname.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerLocation_port.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerLocation_protocol.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerLocation_search.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerLocation_search_empty.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerLocation_search_fragment.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerLocation_search_nonexist.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerNavigator_appName.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerNavigator_appVersion.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerNavigator_onLine.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerNavigator_platform.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/WorkerNavigator_userAgent.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/Worker_ErrorEvent_bubbles_cancelable.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/Worker_ErrorEvent_error.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/Worker_ErrorEvent_filename.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/Worker_ErrorEvent_lineno.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/Worker_ErrorEvent_message.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/Worker_ErrorEvent_type.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/Worker_NosniffErr.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/Worker_basic.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/Worker_cross_origin_security_err.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/Worker_dispatchEvent_ErrorEvent.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/Worker_script_mimetype.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/Worker_terminate_event_queue.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/data-url-shared-window.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/data-url-shared.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/data-url.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/name-property.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/nested_worker.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/opaque-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/postMessage_DataCloneErr.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/postMessage_clone_port.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/postMessage_clone_port_error.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/postMessage_event_properties.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/postMessage_ports_readonly_array.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/postMessage_target_source.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/shared-worker-name-via-options.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/worker-performance.worker.js

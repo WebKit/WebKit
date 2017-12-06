@@ -328,7 +328,7 @@
     "web-platform-tests/webusb": "skip", 
     "web-platform-tests/webvr": "skip", 
     "web-platform-tests/webvtt": "skip", 
-    "web-platform-tests/workers": "skip", 
+    "web-platform-tests/workers": "import", 
     "web-platform-tests/worklets": "skip", 
     "web-platform-tests/x-frame-options": "skip"
 }

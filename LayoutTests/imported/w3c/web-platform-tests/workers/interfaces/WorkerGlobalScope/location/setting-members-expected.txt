@@ -1,0 +1,3 @@
+
+PASS setting members of WorkerLocation 
+

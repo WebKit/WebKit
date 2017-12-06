@@ -1,0 +1,3 @@
+
+FAIL Blob URL shared by document on SharedWorker promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+

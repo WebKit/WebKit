@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: line 18: ReferenceError: Can't find variable: SharedWorker
+
+Harness Error (TIMEOUT), message = null
+
+FAIL application/javascript MIME allowed Can't find variable: SharedWorker
+FAIL text/plain MIME allowed Can't find variable: SharedWorker
+FAIL empty MIME allowed Can't find variable: SharedWorker
+FAIL communication goes both ways Can't find variable: SharedWorker
+FAIL indexedDB inaccessible Can't find variable: SharedWorker
+FAIL Web SQL Database inaccessible Can't find variable: SharedWorker
+FAIL cross-origin worker Can't find variable: SharedWorker
+FAIL worker has opaque origin Can't find variable: SharedWorker
+TIMEOUT A data: URL shared worker should not be shared among origins. Test timed out
+

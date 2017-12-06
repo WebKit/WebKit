@@ -618,6 +618,20 @@
         "web-platform-tests/service-workers/service-worker/multi-globals/incumbent/incumbent.https.html",
         "web-platform-tests/service-workers/service-worker/multi-globals/relevant/relevant.https.html",
         "web-platform-tests/test_keys_wdspec.html",
-        "web-platform-tests/upgrade-insecure-requests/support/post-origin-to-parent.html"
+        "web-platform-tests/upgrade-insecure-requests/support/post-origin-to-parent.html",
+        "web-platform-tests/workers/data-url-shared-window.html",
+        "web-platform-tests/workers/non-automated/application-cache-dedicated.html",
+        "web-platform-tests/workers/non-automated/infinite-nested.html",
+        "web-platform-tests/workers/non-automated/infinite-sibling-and-nested.html",
+        "web-platform-tests/workers/non-automated/infinite-sibling.html",
+        "web-platform-tests/workers/non-automated/navigator-onLine.html",
+        "web-platform-tests/workers/semantics/multiple-workers/004-1.html",
+        "web-platform-tests/workers/semantics/multiple-workers/008-1.html",
+        "web-platform-tests/workers/semantics/navigation/001-1.html",
+        "web-platform-tests/workers/semantics/reporting-errors/004-1.html",
+        "web-platform-tests/workers/semantics/xhr/001-1.xml",
+        "web-platform-tests/workers/semantics/xhr/support/001-1.xml",
+        "web-platform-tests/workers/support/WorkerLocation-origin.html",
+        "web-platform-tests/workers/support/sandboxed-tests.html"
     ]
 }

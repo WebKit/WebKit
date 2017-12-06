@@ -192,6 +192,22 @@ imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tain
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ DumpJSConsoleLogInStdErr Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update.https.html [ Pass Failure Timeout ]
 
+# Skip workers tests that are timing out or are SharedWorker related only
+imported/w3c/web-platform-tests/workers/constructors/Worker/same-origin.html [ Skip ]
+imported/w3c/web-platform-tests/workers/data-url-shared.html [ Skip ]
+imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/006.html [ Skip ]
+imported/w3c/web-platform-tests/workers/nested_worker.worker.html [ Skip ]
+imported/w3c/web-platform-tests/workers/opaque-origin.html [ Skip ]
+imported/w3c/web-platform-tests/workers/semantics/interface-objects/003.html [ Skip ]
+imported/w3c/web-platform-tests/workers/semantics/structured-clone/shared.html [ Skip ]
+imported/w3c/web-platform-tests/workers/semantics/structured-clone/dedicated.html [ Skip ]
+imported/w3c/web-platform-tests/workers/semantics/multiple-workers/003.html [ Skip ]
+imported/w3c/web-platform-tests/workers/semantics/multiple-workers/005.html [ Skip ]
+imported/w3c/web-platform-tests/workers/Worker_cross_origin_security_err.htm [ Skip ]
+
+imported/w3c/web-platform-tests/workers/constructors/SharedWorker [ Skip ]
+imported/w3c/web-platform-tests/workers/SharedWorker_blobUrl.html [ Skip ]
+
 # textarea.animate is not supported
 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-018.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-019.html [ Skip ]

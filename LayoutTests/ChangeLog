@@ -1,5 +1,14 @@
 2017-12-06  Youenn Fablet  <youenn@apple.com>
 
+        Import WPT workers test suite
+        https://bugs.webkit.org/show_bug.cgi?id=180464
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations: skip some timing out tests or testing shared workers.
+
+2017-12-06  Youenn Fablet  <youenn@apple.com>
+
         Preflight should bypass service worker
         https://bugs.webkit.org/show_bug.cgi?id=180463
 

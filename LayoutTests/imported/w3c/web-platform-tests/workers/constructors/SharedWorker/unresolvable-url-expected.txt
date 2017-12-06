@@ -1,0 +1,5 @@
+
+FAIL resolving broken url assert_throws: function "function () {
+    var worker = new SharedWorker('http://foo bar');
+  }" threw object "ReferenceError: Can't find variable: SharedWorker" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+
