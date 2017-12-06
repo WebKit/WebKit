@@ -394,9 +394,9 @@ public:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    void cdmInstanceAttached(const CDMInstance&);
-    void cdmInstanceDetached(const CDMInstance&);
-    void attemptToDecryptWithInstance(const CDMInstance&);
+    void cdmInstanceAttached(CDMInstance&);
+    void cdmInstanceDetached(CDMInstance&);
+    void attemptToDecryptWithInstance(CDMInstance&);
 #endif
 
     bool paused() const;

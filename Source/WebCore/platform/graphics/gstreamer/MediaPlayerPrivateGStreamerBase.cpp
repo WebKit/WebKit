@@ -1142,7 +1142,7 @@ unsigned MediaPlayerPrivateGStreamerBase::videoDecodedByteCount() const
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)
-void MediaPlayerPrivateGStreamerBase::cdmInstanceAttached(const CDMInstance& instance)
+void MediaPlayerPrivateGStreamerBase::cdmInstanceAttached(CDMInstance& instance)
 {
     ASSERT(!m_cdmInstance);
     m_cdmInstance = &instance;
@@ -1150,7 +1150,7 @@ void MediaPlayerPrivateGStreamerBase::cdmInstanceAttached(const CDMInstance& ins
     m_protectionCondition.notifyAll();
 }
 
-void MediaPlayerPrivateGStreamerBase::cdmInstanceDetached(const CDMInstance& instance)
+void MediaPlayerPrivateGStreamerBase::cdmInstanceDetached(CDMInstance& instance)
 {
 #ifdef NDEBUG
     UNUSED_PARAM(instance);
@@ -1161,7 +1161,7 @@ void MediaPlayerPrivateGStreamerBase::cdmInstanceDetached(const CDMInstance& ins
     m_protectionCondition.notifyAll();
 }
 
-void MediaPlayerPrivateGStreamerBase::attemptToDecryptWithInstance(const CDMInstance& instance)
+void MediaPlayerPrivateGStreamerBase::attemptToDecryptWithInstance(CDMInstance& instance)
 {
     ASSERT(m_cdmInstance.get() == &instance);
     GST_TRACE("instance %p, current stored %p", &instance, m_cdmInstance.get());

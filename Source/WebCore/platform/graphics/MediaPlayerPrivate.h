@@ -237,9 +237,9 @@ public:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    virtual void cdmInstanceAttached(const CDMInstance&) { }
-    virtual void cdmInstanceDetached(const CDMInstance&) { }
-    virtual void attemptToDecryptWithInstance(const CDMInstance&) { }
+    virtual void cdmInstanceAttached(CDMInstance&) { }
+    virtual void cdmInstanceDetached(CDMInstance&) { }
+    virtual void attemptToDecryptWithInstance(CDMInstance&) { }
 #endif
 
 #if ENABLE(VIDEO_TRACK)

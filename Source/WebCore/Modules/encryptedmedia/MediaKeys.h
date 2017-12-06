@@ -65,6 +65,7 @@ public:
     void attemptToResumePlaybackOnClients();
 
     bool hasOpenSessions() const;
+    CDMInstance& cdmInstance() { return m_instance; }
     const CDMInstance& cdmInstance() const { return m_instance; }
 
 protected:

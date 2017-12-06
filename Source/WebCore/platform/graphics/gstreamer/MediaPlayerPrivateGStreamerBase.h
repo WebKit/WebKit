@@ -137,12 +137,12 @@ public:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    void cdmInstanceAttached(const CDMInstance&) override;
-    void cdmInstanceDetached(const CDMInstance&) override;
+    void cdmInstanceAttached(CDMInstance&) override;
+    void cdmInstanceDetached(CDMInstance&) override;
     void dispatchDecryptionKey(GstBuffer*);
     void handleProtectionEvent(GstEvent*);
     void attemptToDecryptWithLocalInstance();
-    void attemptToDecryptWithInstance(const CDMInstance&) override;
+    void attemptToDecryptWithInstance(CDMInstance&) override;
 #endif
 
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);

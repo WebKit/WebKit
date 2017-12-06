@@ -936,7 +936,7 @@ MediaTime MediaPlayerPrivateGStreamerMSE::maxMediaTimeSeekable() const
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)
-void MediaPlayerPrivateGStreamerMSE::attemptToDecryptWithInstance(const CDMInstance& instance)
+void MediaPlayerPrivateGStreamerMSE::attemptToDecryptWithInstance(CDMInstance& instance)
 {
     if (is<CDMInstanceClearKey>(instance)) {
         auto& ckInstance = downcast<CDMInstanceClearKey>(instance);

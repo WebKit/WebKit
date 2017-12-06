@@ -600,17 +600,17 @@ void MediaPlayer::keyAdded()
 #endif
     
 #if ENABLE(ENCRYPTED_MEDIA)
-void MediaPlayer::cdmInstanceAttached(const CDMInstance& instance)
+void MediaPlayer::cdmInstanceAttached(CDMInstance& instance)
 {
     m_private->cdmInstanceAttached(instance);
 }
 
-void MediaPlayer::cdmInstanceDetached(const CDMInstance& instance)
+void MediaPlayer::cdmInstanceDetached(CDMInstance& instance)
 {
     m_private->cdmInstanceDetached(instance);
 }
 
-void MediaPlayer::attemptToDecryptWithInstance(const CDMInstance& instance)
+void MediaPlayer::attemptToDecryptWithInstance(CDMInstance& instance)
 {
     m_private->attemptToDecryptWithInstance(instance);
 }
