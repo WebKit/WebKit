@@ -1,0 +1,36 @@
+X XX XXX X
+X XXX X
+XX XXXX XX XXX X
+X XXX
+X
+XX XXX X XX XXX X
+X XXX X
+XX XXXX XX XXX X
+X XXX
+X
+XX XXX 
+
+X XX XXX X
+X XXX X
+XX XXXX XX XXX X
+X XXX
+X
+XX XXX X XX XXX X
+X XXX X
+XX XXXX XX XXX X
+X XXX
+X
+XX XXX
+
+PASS .grid 1 
+PASS .grid 2 
+FAIL .grid 3 assert_equals: 
+<div class="grid RTL">
+  <div data-offset-x="300" data-offset-y="0" data-expected-width="60" data-expected-height="10" class="firstRowFirstColumn">X XX X</div>
+  <div data-offset-x="150" data-offset-y="0" data-expected-width="70" data-expected-height="30" class="firstRowSecondColumn">XX X<br>X XXX X<br>XX XXX</div>
+  <div data-offset-x="300" data-offset-y="150" data-expected-width="60" data-expected-height="10" class="secondRowFirstColumn">X XX X</div>
+  <div data-offset-x="150" data-offset-y="150" data-expected-width="60" data-expected-height="40" class="secondRowSecondColumn">XX X<br>X XXX<br>X<br>XX XXX</div>
+</div>
+offsetLeft expected 300 but got 340
+PASS .grid 4 
+

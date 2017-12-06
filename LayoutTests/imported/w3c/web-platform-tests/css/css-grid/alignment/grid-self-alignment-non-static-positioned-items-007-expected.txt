@@ -1,0 +1,57 @@
+X XX XXX X
+X XXX X
+XX XXXX XX XXX X
+X XXX
+X
+XX XXX X XX XXX X
+X XXX X
+XX XXXX XX XXX X
+X XXX
+X
+XX XXX 
+
+X XX XXX X
+X XXX X
+XX XXXX XX XXX X
+X XXX
+X
+XX XXX X XX XXX X
+X XXX X
+XX XXXX XX XXX X
+X XXX
+X
+XX XXX
+
+FAIL .grid 1 assert_equals: 
+<div class="grid verticalRL">
+  <div data-offset-x="105" data-offset-y="90" data-expected-width="60" data-expected-height="10" class="firstRowFirstColumn horizontal">X XX X</div>
+  <div data-offset-x="170" data-offset-y="160" data-expected-width="70" data-expected-height="30" class="firstRowSecondColumn horizontal">XX X<br>X XXX X<br>XX XXX</div>
+  <div data-offset-x="20" data-offset-y="10" data-expected-width="60" data-expected-height="10" class="secondRowFirstColumn horizontal RTL">X XX X</div>
+  <div data-offset-x="5" data-offset-y="110" data-expected-width="40" data-expected-height="60" class="secondRowSecondColumn verticalLR">XX X<br>X XXX<br>X<br>XX XXX</div>
+</div>
+offsetTop expected 90 but got 0
+FAIL .grid 2 assert_equals: 
+<div class="grid verticalLR">
+  <div data-offset-x="5" data-offset-y="90" data-expected-width="60" data-expected-height="10" class="firstRowFirstColumn horizontal">X XX X</div>
+  <div data-offset-x="70" data-offset-y="160" data-expected-width="70" data-expected-height="30" class="firstRowSecondColumn horizontal">XX X<br>X XXX X<br>XX XXX</div>
+  <div data-offset-x="195" data-offset-y="10" data-expected-width="10" data-expected-height="60" class="secondRowFirstColumn verticalRL">X XX X</div>
+  <div data-offset-x="155" data-offset-y="110" data-expected-width="60" data-expected-height="40" class="secondRowSecondColumn horizontal RTL">XX X<br>X XXX<br>X<br>XX XXX</div>
+</div>
+offsetTop expected 90 but got 0
+FAIL .grid 3 assert_equals: 
+<div class="grid RTL">
+  <div data-offset-x="155" data-offset-y="0" data-expected-width="10" data-expected-height="60" class="firstRowFirstColumn verticalLR">X XX X</div>
+  <div data-offset-x="110" data-offset-y="80" data-expected-width="30" data-expected-height="70" class="firstRowSecondColumn verticalRL">XX X<br>X XXX X<br>XX XXX</div>
+  <div data-offset-x="190" data-offset-y="160" data-expected-width="60" data-expected-height="10" class="secondRowFirstColumn LTR">X XX X</div>
+  <div data-offset-x="5" data-offset-y="160" data-expected-width="40" data-expected-height="60" class="secondRowSecondColumn verticalRL RTL">XX X<br>X XXX<br>X<br>XX XXX</div>
+</div>
+offsetTop expected 0 but got 90
+FAIL .grid 4 assert_equals: 
+<div class="grid">
+  <div data-offset-x="5" data-offset-y="0" data-expected-width="10" data-expected-height="60" class="firstRowFirstColumn verticalLR">X XX X</div>
+  <div data-offset-x="210" data-offset-y="80" data-expected-width="30" data-expected-height="70" class="firstRowSecondColumn verticalRL">XX X<br>X XXX X<br>XX XXX</div>
+  <div data-offset-x="0" data-offset-y="160" data-expected-width="60" data-expected-height="10" class="secondRowFirstColumn RTL">X XX X</div>
+  <div data-offset-x="105" data-offset-y="160" data-expected-width="40" data-expected-height="60" class="secondRowSecondColumn verticalLR RTL">XX X<br>X XXX<br>X<br>XX XXX</div>
+</div>
+offsetTop expected 80 but got 0
+

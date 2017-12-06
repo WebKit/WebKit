@@ -1,3 +1,17 @@
+2017-12-05  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Update imported Web Platform Tests
+        https://bugs.webkit.org/show_bug.cgi?id=180345
+
+        Reviewed by Manuel Rego Casasnovas and Youenn Fablet.
+
+        Added specific bugs to the expectations file for the new imported tests that fail for now.
+        Removed from the expectations file a test that has been deleted recently.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2017-12-05  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline service worker test after r225549.

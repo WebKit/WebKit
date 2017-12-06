@@ -1,3 +1,14 @@
+2017-12-05  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Update imported Web Platform Tests
+        https://bugs.webkit.org/show_bug.cgi?id=180345
+
+        Reviewed by Manuel Rego Casasnovas and Youenn Fablet.
+
+        Import new grid related Web Platform tests.
+        Rename the css/css-grid-1/ folder to css/css-grid/ to sync upstream folder hierarchy.
+        Imported css/resources/ because the check-layout-th.js script has been moved there.
+
 2017-12-05  Chris Dumez  <cdumez@apple.com>
 
         XMLHttpRequest should not be exposed to service workers

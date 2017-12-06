@@ -26,6 +26,8 @@
         "web-platform-tests/beacon/navigate.iFrame.sub.html",
         "web-platform-tests/css/css-grid-1/grid-items/ref-filled-green-100px-square-image.html",
         "web-platform-tests/css/css-grid-1/test-plan/index.html",
+        "web-platform-tests/css/css-grid/grid-items/ref-filled-green-100px-square-image.html",
+        "web-platform-tests/css/css-grid/test-plan/index.html",
         "web-platform-tests/css/css-shapes-1/test-plan/index.html",
         "web-platform-tests/css/css-ui-3/canvas-cursor-001.html",
         "web-platform-tests/css/css-ui-3/canvas-cursor-002.html",

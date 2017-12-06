@@ -3381,7 +3381,6 @@ imported/w3c/css/css-color-3/t422-rgba-onscreen-multiple-boxes-c.xht [ Pass ]
 imported/w3c/css/css-color-3/t425-hsla-onscreen-multiple-boxes-c.xht [ Pass ]
 
 imported/w3c/web-platform-tests/2dcontext/transformations/canvas_transformations_reset_001.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-grid-1/grid-layout-properties.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-pseudo-4/first-letter-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-pseudo-4/first-letter-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-001.html [ Pass ]
