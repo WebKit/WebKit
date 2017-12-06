@@ -5,56 +5,13 @@
         const userShouldGrantAccess = hashArguments[0] === "userShouldGrantAccess";
         const userShouldBeConsulted = hashArguments[1] === "userShouldBeConsulted";
         const policyShouldGrantAccess = hashArguments[2] === "policyShouldGrantAccess";
-        const isSameOriginIframe = hashArguments[3] === "isSameOriginIframe";
 
         if (internals && userShouldGrantAccess)
                 internals.setUserGrantsStorageAccess(true);
 
-        function storageAccessShouldBeFalse() {
-            if (document.hasStorageAccess)
-                top.postMessage("FAIL document.hasStorageAccess was true when it was not supposed to.", "http://127.0.0.1:8000");
-            if (requestStorageAccessResolved)
-                top.postMessage("FAIL requestStorageAccessResolved was true when it was not supposed to.", "http://127.0.0.1:8000");
-        }
-
-        function storageAccessShouldBeTrue() {
-            if (!document.hasStorageAccess)
-                top.postMessage("FAIL document.hasStorageAccess was false when it was not supposed to.", "http://127.0.0.1:8000");
-            if (!requestStorageAccessResolved)
-                top.postMessage("FAIL requestStorageAccessResolved was false when it was not supposed to.", "http://127.0.0.1:8000");
-        }
-
         var requestStorageAccessResolved;
 
-        function makeRequestWithoutUserGesture() {
-            storageAccessShouldBeFalse();
-
-            var promise = document.requestStorageAccess();
-            promise.then(
-                function () {
-                    requestStorageAccessResolved = true;
-                    continueAfterRequestWithoutUserGesture();
-                },
-                function () {
-                    requestStorageAccessResolved = false;
-                    continueAfterRequestWithoutUserGesture();
-                }
-            );
-        }
-
-        function continueAfterRequestWithoutUserGesture() {
-            if (isSameOriginIframe && policyShouldGrantAccess)
-                storageAccessShouldBeTrue();
-            else
-                storageAccessShouldBeFalse();
-        }
-
         function makeRequestWithUserGesture() {
-            if (isSameOriginIframe && policyShouldGrantAccess)
-                storageAccessShouldBeTrue();
-            else
-                storageAccessShouldBeFalse();
-
             var promise = document.requestStorageAccess();
             promise.then(
                 function () {
@@ -69,26 +26,34 @@
         }
 
         function continueAfterRequestWithUserGesture() {
-            if (requestStorageAccessResolved
-                && document.hasStorageAccess
-                && (userShouldGrantAccess || !userShouldBeConsulted)
-                && policyShouldGrantAccess)
-                top.postMessage("PASS document.hasStorageAccess was granted.", "http://127.0.0.1:8000");
-            else if (!document.hasStorageAccess
-                    && !requestStorageAccessResolved
-                    && ((!userShouldGrantAccess && userShouldBeConsulted) || !policyShouldGrantAccess))
-                top.postMessage("PASS document.hasStorageAccess was denied.", "http://127.0.0.1:8000");
-            else
-                top.postMessage("FAIL document.hasStorageAccess was " +
-                    (document.hasStorageAccess ? "" : "not ") +
-                    "granted and requestStorageAccessResolved was " +
-                    (requestStorageAccessResolved ? "" : "not ") +
-                    "granted but should " +
-                    (userShouldGrantAccess && policyShouldGrantAccess ? "" : "not ") +
-                    "have been granted.", "http://127.0.0.1:8000");
+            var promise = document.hasStorageAccess();
+            promise.then(
+                function (hasAccess) {
+                    if (requestStorageAccessResolved
+                        && hasAccess
+                        && (userShouldGrantAccess || !userShouldBeConsulted)
+                        && policyShouldGrantAccess)
+                        top.postMessage("PASS Storage access was granted.", "http://127.0.0.1:8000");
+                    else if (!hasAccess
+                        && !requestStorageAccessResolved
+                        && ((!userShouldGrantAccess && userShouldBeConsulted) || !policyShouldGrantAccess))
+                        top.postMessage("PASS Storage access was denied.", "http://127.0.0.1:8000");
+                    else
+                        top.postMessage("FAIL Storage access was " +
+                            (hasAccess ? "" : "not ") +
+                            "granted and requestStorageAccessResolved was " +
+                            (requestStorageAccessResolved ? "" : "not ") +
+                            "granted but should " +
+                            (userShouldGrantAccess && policyShouldGrantAccess ? "" : "not ") +
+                            "have been granted.", "http://127.0.0.1:8000");
+                },
+                function (reason) {
+                    top.postMessage("FAIL document.hasStorageAccess() was rejected. Reason: " + reason, "http://127.0.0.1:8000");
+                }
+            );
         }
     </script>
 </head>
-<body onload="makeRequestWithoutUserGesture()" onclick="makeRequestWithUserGesture()">
+<body onclick="makeRequestWithUserGesture()">
 </body>
 </html>

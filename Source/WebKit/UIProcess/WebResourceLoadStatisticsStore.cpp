@@ -245,7 +245,30 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<WebCor
     processStatisticsAndDataRecords();
 }
 
-void WebResourceLoadStatisticsStore::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::Function<void (bool)>&& callback)
+void WebResourceLoadStatisticsStore::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::CompletionHandler<void (bool)>&& callback)
+{
+    ASSERT(subFrameHost != topFrameHost);
+    ASSERT(RunLoop::isMain());
+    
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), subFramePrimaryDomain = isolatedPrimaryDomain(subFrameHost), topFramePrimaryDomain = isolatedPrimaryDomain(topFrameHost), callback = WTFMove(callback)] () mutable {
+        
+        auto& topFrameStatistic = ensureResourceStatisticsForPrimaryDomain(topFramePrimaryDomain);
+        if (topFrameStatistic.storageAccessUnderTopFrameOrigins.contains(subFramePrimaryDomain)) {
+            callback(true);
+            return;
+        }
+        
+        auto& subFrameStatistic = ensureResourceStatisticsForPrimaryDomain(subFramePrimaryDomain);
+        if (shouldBlockCookies(subFrameStatistic)) {
+            callback(false);
+            return;
+        }
+        
+        callback(!shouldPartitionCookies(subFrameStatistic));
+    });
+}
+
+void WebResourceLoadStatisticsStore::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::CompletionHandler<void (bool)>&& callback)
 {
     ASSERT(subFrameHost != topFrameHost);
     ASSERT(RunLoop::isMain());
@@ -270,6 +293,7 @@ void WebResourceLoadStatisticsStore::requestStorageAccess(String&& subFrameHost,
         }
         
         m_updateStorageAccessForPrevalentDomainsHandler(subFramePrimaryDomain, topFramePrimaryDomain, true, WTFMove(callback));
+        topFrameStatistic.storageAccessUnderTopFrameOrigins.add(subFramePrimaryDomain);
     });
 }
     

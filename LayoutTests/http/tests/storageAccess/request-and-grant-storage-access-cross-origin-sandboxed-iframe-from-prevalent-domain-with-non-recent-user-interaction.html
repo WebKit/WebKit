@@ -59,11 +59,13 @@
                         eventSender.keyDown("escape");
                     else {
                         testFailed("No eventSender.");
+                        setEnableFeature(false);
                         finishJSTest();
                     }
                 },
                 function () {
                     testFailed("Promise rejected.");
+                    setEnableFeature(false);
                     finishJSTest();
                 }
             );

@@ -4,7 +4,7 @@
     <script src="/js-test-resources/js-test.js"></script>
     <script src="/js-test-resources/ui-helper.js"></script>
     <script>
-        description("Tests that same-origin iframe storage access is denied if the iframe is not sandboxed.");
+        description("Tests that same-origin iframe storage access is granted if the iframe is not sandboxed.");
         jsTestIsAsync = true;
 
         window.addEventListener("message", receiveMessage, false);
@@ -46,6 +46,6 @@
     </script>
 </head>
 <body>
-    <iframe onload="runTest()" id="theIframe" src="http://127.0.0.1:8000/storageAccess/resources/request-storage-access-iframe.html#userShouldDenyAccess,userShouldNotBeConsulted,policyShouldDenyAccess,isSameOriginIframe"></iframe>
+    <iframe onload="runTest()" id="theIframe" src="http://127.0.0.1:8000/storageAccess/resources/request-storage-access-iframe.html#userShouldDenyAccess,userShouldNotBeConsulted,policyShouldGrantAccess,isSameOriginIframe"></iframe>
 </body>
 </html>

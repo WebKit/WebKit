@@ -42,6 +42,7 @@
 #include "SearchPopupMenu.h"
 #include "WebCoreKeyboardUIMode.h"
 #include <runtime/ConsoleTypes.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Seconds.h>
 
@@ -466,7 +467,8 @@ public:
     virtual void reportProcessCPUTime(Seconds, ActivityStateForCPUSampling) { }
     virtual RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) = 0;
 
-    virtual void requestStorageAccess(String&& /*subFrameHost*/, String&& /*topFrameHost*/, WTF::Function<void (bool)>&& callback) { callback(false); }
+    virtual void hasStorageAccess(String&& /*subFrameHost*/, String&& /*topFrameHost*/, WTF::CompletionHandler<void (bool)>&& callback) { callback(false); }
+    virtual void requestStorageAccess(String&& /*subFrameHost*/, String&& /*topFrameHost*/, WTF::CompletionHandler<void (bool)>&& callback) { callback(false); }
 
     virtual void didInsertMenuElement(HTMLMenuElement&) { }
     virtual void didRemoveMenuElement(HTMLMenuElement&) { }

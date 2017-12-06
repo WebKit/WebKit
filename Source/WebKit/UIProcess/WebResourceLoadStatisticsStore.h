@@ -29,6 +29,7 @@
 #include "ResourceLoadStatisticsClassifier.h"
 #include "ResourceLoadStatisticsPersistentStorage.h"
 #include "WebsiteDataType.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
@@ -80,7 +81,8 @@ public:
 
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&& origins);
 
-    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::Function<void (bool)>&& callback);
+    void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::CompletionHandler<void (bool)>&& callback);
+    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::CompletionHandler<void (bool)>&& callback);
     void requestStorageAccessCallback(bool wasGranted, uint64_t contextId);
 
     void processWillOpenConnection(WebProcessProxy&, IPC::Connection&);

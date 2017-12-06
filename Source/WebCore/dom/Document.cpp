@@ -7397,16 +7397,50 @@ Logger& Document::logger()
     return *m_logger;
 }
 
+void Document::hasStorageAccess(Ref<DeferredPromise>&& passedPromise)
+{
+    ASSERT(settings().storageAccessAPIEnabled());
+
+    RefPtr<DeferredPromise> promise(WTFMove(passedPromise));
+
+    if (!m_frame || securityOrigin().isUnique()) {
+        promise->resolve<IDLBoolean>(false);
+        return;
+    }
+    
+    if (m_frame->isMainFrame()) {
+        promise->resolve<IDLBoolean>(true);
+        return;
+    }
+    
+    auto& securityOrigin = this->securityOrigin();
+    auto& topSecurityOrigin = topDocument().securityOrigin();
+    if (securityOrigin.equal(&topSecurityOrigin)) {
+        promise->resolve<IDLBoolean>(true);
+        return;
+    }
+
+    if (Page* page = this->page()) {
+        auto iframeHost = securityOrigin.host();
+        auto topHost = topSecurityOrigin.host();
+        page->chrome().client().hasStorageAccess(WTFMove(iframeHost), WTFMove(topHost), [documentReference = m_weakFactory.createWeakPtr(*this), promise] (bool hasAccess) {
+            Document* document = documentReference.get();
+            if (!document)
+                return;
+            
+            promise->resolve<IDLBoolean>(hasAccess);
+        });
+        return;
+    }
+
+    promise->reject();
+}
+
 void Document::requestStorageAccess(Ref<DeferredPromise>&& passedPromise)
 {
     ASSERT(settings().storageAccessAPIEnabled());
     
     RefPtr<DeferredPromise> promise(WTFMove(passedPromise));
-    
-    if (m_hasStorageAccess) {
-        promise->resolve();
-        return;
-    }
     
     if (!m_frame || securityOrigin().isUnique()) {
         promise->reject();
@@ -7414,7 +7448,14 @@ void Document::requestStorageAccess(Ref<DeferredPromise>&& passedPromise)
     }
     
     if (m_frame->isMainFrame()) {
-        m_hasStorageAccess = true;
+        promise->resolve();
+        return;
+    }
+    
+    auto& topDocument = this->topDocument();
+    auto& topSecurityOrigin = topDocument.securityOrigin();
+    auto& securityOrigin = this->securityOrigin();
+    if (securityOrigin.equal(&topSecurityOrigin)) {
         promise->resolve();
         return;
     }
@@ -7426,20 +7467,11 @@ void Document::requestStorageAccess(Ref<DeferredPromise>&& passedPromise)
     }
 
     // The iframe has to be a direct child of the top document.
-    auto& topDocument = this->topDocument();
     if (&topDocument != parentDocument()) {
         promise->reject();
         return;
     }
 
-    auto& securityOrigin = this->securityOrigin();
-    auto& topSecurityOrigin = topDocument.securityOrigin();
-    if (securityOrigin.equal(&topSecurityOrigin)) {
-        m_hasStorageAccess = true;
-        promise->resolve();
-        return;
-    }
-    
     if (!UserGestureIndicator::processingUserGesture()) {
         promise->reject();
         return;
@@ -7461,10 +7493,9 @@ void Document::requestStorageAccess(Ref<DeferredPromise>&& passedPromise)
             if (!document)
                 return;
 
-            if (wasGranted) {
-                document->m_hasStorageAccess = true;
+            if (wasGranted)
                 promise->resolve();
-            } else
+            else
                 promise->reject();
         });
         return;

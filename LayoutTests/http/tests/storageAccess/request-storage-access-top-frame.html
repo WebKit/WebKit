@@ -7,6 +7,14 @@
     description("Tests that top frame storage access is always granted in case the page requests it.");
     jsTestIsAsync = true;
 
+    function setEnableFeature(enable) {
+        if (!enable)
+            testRunner.statisticsResetToConsistentState();
+        internals.setResourceLoadStatisticsEnabled(enable);
+        testRunner.setCookieStoragePartitioningEnabled(enable);
+        testRunner.setStorageAccessAPIEnabled(enable);
+    }
+
     function activateElement(elementId) {
         var element = document.getElementById(elementId);
         var centerX = element.offsetLeft + element.offsetWidth / 2;
@@ -16,32 +24,14 @@
             },
             function () {
                 testFailed("Promise rejected.");
+                setEnableFeature(false);
                 finishJSTest();
             }
         );
     }
 
+    var hasStorageAccess;
     var requestStorageAccessResolved;
-
-    function makeRequestWithoutUserGesture() {
-        var promise = document.requestStorageAccess();
-        promise.then(
-            function () {
-                requestStorageAccessResolved = true;
-                continueAfterRequestWithoutUserGesture();
-            },
-            function () {
-                requestStorageAccessResolved = false;
-                continueAfterRequestWithoutUserGesture();
-            }
-        );
-    }
-
-    function continueAfterRequestWithoutUserGesture() {
-        shouldBe("requestStorageAccessResolved", "true");
-        shouldBe("document.hasStorageAccess", "true");
-        activateElement("theButton");
-    }
 
     function makeRequestWithUserGesture() {
         var promise = document.requestStorageAccess();
@@ -58,13 +48,25 @@
     }
 
     function continueAfterRequestWithUserGesture() {
-        shouldBe("requestStorageAccessResolved", "true");
-        shouldBe("document.hasStorageAccess", "true");
-        finishJSTest();
+        var promise = document.hasStorageAccess();
+        promise.then(
+            function (hasAccess) {
+                hasStorageAccess = hasAccess;
+                shouldBe("requestStorageAccessResolved", "true");
+                shouldBe("hasStorageAccess", "true");
+                setEnableFeature(false);
+                finishJSTest();
+            },
+            function (reason) {
+                testFailed("document.hasStorageAccess() was rejected. Reason: " + reason);
+                setEnableFeature(false);
+                finishJSTest();
+            }
+        );
     }
 
     function runTest() {
-        makeRequestWithoutUserGesture();
+        activateElement("theButton");
     }
 </script>
 <button id="theButton" onclick="makeRequestWithUserGesture()">Request Access</button>

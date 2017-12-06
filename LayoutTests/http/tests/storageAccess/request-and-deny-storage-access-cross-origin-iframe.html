@@ -7,7 +7,18 @@
         description("Tests that cross-origin iframe storage access is denied if the iframe is not sandboxed.");
         jsTestIsAsync = true;
 
+        const hostUnderTest = "localhost:8000";
+        const statisticsUrl = "http://" + hostUnderTest + "/temp";
+
         window.addEventListener("message", receiveMessage, false);
+
+        function setEnableFeature(enable) {
+            if (!enable)
+                testRunner.statisticsResetToConsistentState();
+            internals.setResourceLoadStatisticsEnabled(enable);
+            testRunner.setCookieStoragePartitioningEnabled(enable);
+            testRunner.setStorageAccessAPIEnabled(enable);
+        }
 
         function receiveMessage(event) {
             if (event.origin === "http://localhost:8000") {
@@ -17,6 +28,7 @@
                     testFailed(event.data.replace("FAIL ", ""));
             } else
                 testFailed("Received a message from an unexpected origin: " + event.origin);
+            setEnableFeature(false);
             finishJSTest();
         }
 
@@ -30,17 +42,29 @@
                         eventSender.keyDown("escape");
                     else {
                         testFailed("No eventSender.");
+                        setEnableFeature(false);
                         finishJSTest();
                     }
                 },
                 function () {
                     testFailed("Promise rejected.");
+                    setEnableFeature(false);
                     finishJSTest();
                 }
             );
         }
 
         function runTest() {
+            setEnableFeature(true);
+
+            testRunner.setStatisticsPrevalentResource(statisticsUrl, true);
+            if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                testFailed("Host did not get set as prevalent resource.");
+            testRunner.setStatisticsHasHadNonRecentUserInteraction(statisticsUrl);
+            if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+                testFailed("Host did not get logged for user interaction.");
+            testRunner.statisticsUpdateCookiePartitioning();
+
             activateElement("theIframe");
         }
     </script>

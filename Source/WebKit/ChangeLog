@@ -1,3 +1,42 @@
+2017-12-06  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Make document.hasStorageAccess a function and always allow access for same-origin iframes
+        https://bugs.webkit.org/show_bug.cgi?id=176944
+        <rdar://problem/34440658>
+
+        Reviewed by Brent Fulgham.
+
+        This change introduces document.hasStorageAccess() as a function which
+        returns a promise instead of being a property. Since cookie access can
+        be due to both a granted request and recent user interaction as first
+        party, the WebKit::WebResourceLoadStatisticsStore needs to be consulted.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::hasStorageAccess):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::hasStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+            Now adds an entry for granted access. A bug found through testing.
+            Switched from WTF::Function to WTF::CompletionHandler.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::hasStorageAccess):
+        (WebKit::WebsiteDataStore::requestStorageAccess):
+            Switched from WTF::Function to WTF::CompletionHandler.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::hasStorageAccess):
+        (WebKit::WebChromeClient::requestStorageAccess):
+            Switched from WTF::Function to WTF::CompletionHandler.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::hasStorageAccess):
+        (WebKit::WebPage::requestStorageAccess):
+            Switched from WTF::Function to WTF::CompletionHandler.
+        * WebProcess/WebPage/WebPage.h:
+
 2017-12-06  Youenn Fablet  <youenn@apple.com>
 
         CacheStorageEngineConnection should protect its IPC Connection when doing asynchronous tasks

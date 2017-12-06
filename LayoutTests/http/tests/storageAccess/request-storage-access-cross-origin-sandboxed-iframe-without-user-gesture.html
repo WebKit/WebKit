@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script>
+        description("Tests that cross-origin iframe storage access is denied if the iframe is sandboxed, has the allow token, but calls the API without a user gesture being processed.");
+        jsTestIsAsync = true;
+
+        const hostUnderTest = "localhost:8000";
+        const statisticsUrl = "http://" + hostUnderTest + "/temp";
+
+        window.addEventListener("message", receiveMessage, false);
+
+        function setEnableFeature(enable) {
+            if (!enable)
+                testRunner.statisticsResetToConsistentState();
+            internals.setResourceLoadStatisticsEnabled(enable);
+            testRunner.setCookieStoragePartitioningEnabled(enable);
+            testRunner.setStorageAccessAPIEnabled(enable);
+        }
+
+        function receiveMessage(event) {
+            if (event.origin === "http://localhost:8000") {
+                if (event.data.indexOf("PASS") !== -1)
+                    testPassed(event.data.replace("PASS ", ""));
+                else
+                    testFailed(event.data.replace("FAIL ", ""));
+            } else
+                testFailed("Received a message from an unexpected origin: " + event.origin);
+            setEnableFeature(false);
+            finishJSTest();
+        }
+
+        setEnableFeature(true);
+
+        testRunner.setStatisticsPrevalentResource(statisticsUrl, true);
+        if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
+            testFailed("Host did not get set as prevalent resource.");
+        testRunner.setStatisticsHasHadNonRecentUserInteraction(statisticsUrl);
+        if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+            testFailed("Host did not get logged for user interaction.");
+        testRunner.statisticsUpdateCookiePartitioning();
+
+    </script>
+</head>
+<body>
+<iframe sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals" id="theIframe" src="http://localhost:8000/storageAccess/resources/request-storage-access-without-user-gesture-iframe.html#userShouldGrantAccess,userShouldNotBeConsulted,policyShouldNotGrantAccess,isNotSameOriginIframe"></iframe>
+</body>
+</html>

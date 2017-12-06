@@ -3,7 +3,7 @@ Tests that cross-origin iframe storage access is denied if the iframe is not san
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.hasStorageAccess was denied.
+PASS Storage access was denied.
 PASS successfullyParsed is true
 
 TEST COMPLETE

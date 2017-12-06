@@ -1,0 +1,59 @@
+<html>
+<head>
+    <script>
+        const hashArguments = document.location.hash.substring(1).split(",");
+        const userShouldGrantAccess = hashArguments[0] === "userShouldGrantAccess";
+        const userShouldBeConsulted = hashArguments[1] === "userShouldBeConsulted";
+        const policyShouldGrantAccess = hashArguments[2] === "policyShouldGrantAccess";
+
+        if (internals && userShouldGrantAccess)
+                internals.setUserGrantsStorageAccess(true);
+
+        var requestStorageAccessResolved;
+
+        function makeRequestWithoutUserGesture() {
+            var promise = document.requestStorageAccess();
+            promise.then(
+                function () {
+                    requestStorageAccessResolved = true;
+                    continueAfterRequestWithoutUserGesture();
+                },
+                function () {
+                    requestStorageAccessResolved = false;
+                    continueAfterRequestWithoutUserGesture();
+                }
+            );
+        }
+
+        function continueAfterRequestWithoutUserGesture() {
+            var promise = document.hasStorageAccess();
+            promise.then(
+                function (hasAccess) {
+                    if (requestStorageAccessResolved
+                        && hasAccess
+                        && (userShouldGrantAccess || !userShouldBeConsulted)
+                        && policyShouldGrantAccess)
+                        top.postMessage("PASS Storage access was granted.", "http://127.0.0.1:8000");
+                    else if (!hasAccess
+                        && !requestStorageAccessResolved
+                        && ((!userShouldGrantAccess && userShouldBeConsulted) || !policyShouldGrantAccess))
+                        top.postMessage("PASS Storage access was denied.", "http://127.0.0.1:8000");
+                    else
+                        top.postMessage("FAIL Storage access was " +
+                            (hasAccess ? "" : "not ") +
+                            "granted and requestStorageAccessResolved was " +
+                            (requestStorageAccessResolved ? "" : "not ") +
+                            "granted but should " +
+                            (userShouldGrantAccess && policyShouldGrantAccess ? "" : "not ") +
+                            "have been granted.", "http://127.0.0.1:8000");
+                },
+                function (reason) {
+                    top.postMessage("FAIL document.hasStorageAccess() was rejected. Reason: " + reason, "http://127.0.0.1:8000");
+                }
+            );
+        }
+    </script>
+</head>
+<body onload="makeRequestWithoutUserGesture()">
+</body>
+</html>
