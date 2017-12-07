@@ -217,8 +217,11 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         if (WI.LogManager.supportsLogChannels()) {
             const logLevels = [
                 [WI.LoggingChannel.Level.Off, WI.UIString("Off")],
-                [WI.LoggingChannel.Level.Basic, WI.UIString("Basic")],
-                [WI.LoggingChannel.Level.Verbose, WI.UIString("Verbose")],
+                [WI.LoggingChannel.Level.Log, WI.UIString("Log")],
+                [WI.LoggingChannel.Level.Error, WI.UIString("Error")],
+                [WI.LoggingChannel.Level.Warning, WI.UIString("Warning")],
+                [WI.LoggingChannel.Level.Info, WI.UIString("Info")],
+                [WI.LoggingChannel.Level.Debug, WI.UIString("Debug")],
             ];
             const editorLabels = {
                 media: WI.UIString("Media Logging:"),
