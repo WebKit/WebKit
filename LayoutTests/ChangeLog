@@ -1,3 +1,15 @@
+2017-12-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        AX: Layout test imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_tests1.html flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=173540
+        <rdar://problem/35386393>
+
+        Unreviewed test gardening.
+
+        r225613 fixed the flaky crash.
+
+        * platform/gtk/TestExpectations: Unmarked the test case.
+
 2017-12-06  Matt Lewis  <jlewis3@apple.com>
 
         Adjusted expectations for inspector/worker/resources-in-worker.html.
