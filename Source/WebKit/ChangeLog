@@ -1,3 +1,13 @@
+2017-12-07  Youenn Fablet  <youenn@apple.com>
+
+        CacheStorage Cache should not remove any disk entry when clearing its memory representation
+        https://bugs.webkit.org/show_bug.cgi?id=180546
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::Cache::clearMemoryRepresentation):
+
 2017-12-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Add SPI to disallow user-installed fonts

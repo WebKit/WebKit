@@ -121,11 +121,6 @@ void Cache::dispose()
 
 void Cache::clearMemoryRepresentation()
 {
-    for (auto& records : m_records.values()) {
-        for (auto& record : records)
-            removeRecordFromDisk(record);
-    }
-
     m_records = { };
     m_nextRecordIdentifier = 0;
     m_state = State::Uninitialized;
