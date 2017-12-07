@@ -216,7 +216,11 @@
         "MediaStream": {
             "filename": r"Source/WebCore/Modules/mediastream"
                         r"|Source/WebCore/platform/mediastream"
-                        r"|LayoutTests/fast/mediastream",
+                        r"|LayoutTests/fast/mediastream"
+                        r"|Source/WebKit/WebProcess/MediaStream/"
+                        r"|LayoutTests/http/tests/media/media-stream/"
+                        r"|LayoutTests/fast/mediastream/"
+                        r"|LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/",
         },
         "Accessibility": {
             "filename": r"Source/WebCore/accessibility"
@@ -342,6 +346,14 @@
                         r"|LayoutTests/crypto/"
                         r"|LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/",
         },
+        "WebRTC": {
+            "filename": r"Source/ThirdParty/libwebrtc/"
+                        r"|Source/WebKit/Shared/*RTC*"
+                        r"|Source/WebKit/NetworkProcess/webrtc/"
+                        r"|Source/WebKit/WebProcess/Network/webrtc/"
+                        r"|LayoutTests/webrtc/"
+                        r"|LayoutTests/imported/w3c/web-platform-tests/webrtc/",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -383,7 +395,7 @@
         "NetworkCache": [ "cgarcia@igalia.com", "cdumez@apple.com" ],
         "StreamsAPI": [ "benjamin@webkit.org", "calvaris@igalia.com", "youennf@gmail.com" ],
         "Track": [ "eric.carlson@apple.com", "philipj@opera.com", "calvaris@igalia.com" ],
-        "MediaStream": [ "tommyw@google.com", "hta@google.com", "sergio.correia@openbossa.org" ],
+        "MediaStream": [ "tommyw@google.com", "hta@google.com", "sergio.correia@openbossa.org", "eric.carlson@apple.com" ],
         "OpenGL" : [ "noam@webkit.org", "dino@apple.com", "kondapallykalyan@gmail.com" ],
         "PerformanceTests": [ "rniwa@webkit.org", "cdumez@apple.com" ],
         "RegionsDevelopment|RegionsExpectationsMore|RegionsExpectationsLess|RegionsUsage": [ "WebkitBugTracker@adobe.com" ],

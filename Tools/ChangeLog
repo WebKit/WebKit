@@ -1,3 +1,13 @@
+2017-12-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Add WebRTC watchlist rule, update MediaStream rule
+        https://bugs.webkit.org/show_bug.cgi?id=180536
+        <rdar://problem/35914066>
+
+        Reviewed by Youenn Fablet.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2017-12-06  Chris Dumez  <cdumez@apple.com>
 
         We should be able to recover after a Service Worker process crash
