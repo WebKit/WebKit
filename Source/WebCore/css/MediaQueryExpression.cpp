@@ -46,6 +46,9 @@ static inline bool featureWithValidIdent(const AtomicString& mediaFeature)
     || mediaFeature == MediaFeatureNames::hover
     || mediaFeature == MediaFeatureNames::invertedColors
     || mediaFeature == MediaFeatureNames::pointer
+#if ENABLE(APPLICATION_MANIFEST)
+    || mediaFeature == MediaFeatureNames::displayMode
+#endif
     || mediaFeature == MediaFeatureNames::prefersReducedMotion;
 }
 
@@ -153,6 +156,9 @@ static inline bool isFeatureValidWithoutValue(const AtomicString& mediaFeature)
         || mediaFeature == MediaFeatureNames::prefersReducedMotion
         || mediaFeature == MediaFeatureNames::devicePixelRatio
         || mediaFeature == MediaFeatureNames::resolution
+#if ENABLE(APPLICATION_MANIFEST)
+        || mediaFeature == MediaFeatureNames::displayMode
+#endif
         || mediaFeature == MediaFeatureNames::videoPlayableInline;
 }
 

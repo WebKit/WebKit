@@ -28,15 +28,24 @@
 #if ENABLE(APPLICATION_MANIFEST)
 
 #include "URL.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/Optional.h>
 
 namespace WebCore {
 
 struct ApplicationManifest {
+    enum class Display {
+        Browser,
+        MinimalUI,
+        Standalone,
+        Fullscreen,
+    };
+
     String name;
     String shortName;
     String description;
     URL scope;
+    Display display;
     URL startURL;
 
     template<class Encoder> void encode(Encoder&) const;
@@ -46,7 +55,7 @@ struct ApplicationManifest {
 template<class Encoder>
 void ApplicationManifest::encode(Encoder& encoder) const
 {
-    encoder << name << shortName << description << scope << startURL;
+    encoder << name << shortName << description << scope << display << startURL;
 }
 
 template<class Decoder>
@@ -62,6 +71,8 @@ std::optional<ApplicationManifest> ApplicationManifest::decode(Decoder& decoder)
         return std::nullopt;
     if (!decoder.decode(result.scope))
         return std::nullopt;
+    if (!decoder.decodeEnum(result.display))
+        return std::nullopt;
     if (!decoder.decode(result.startURL))
         return std::nullopt;
 
@@ -69,6 +80,20 @@ std::optional<ApplicationManifest> ApplicationManifest::decode(Decoder& decoder)
 }
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ApplicationManifest::Display> {
+    using values = EnumValues<
+        WebCore::ApplicationManifest::Display,
+        WebCore::ApplicationManifest::Display::Browser,
+        WebCore::ApplicationManifest::Display::MinimalUI,
+        WebCore::ApplicationManifest::Display::Standalone,
+        WebCore::ApplicationManifest::Display::Fullscreen
+    >;
+};
+
+} // namespace WTF;
 
 #endif // ENABLE(APPLICATION_MANIFEST)
 

@@ -43,6 +43,7 @@ private:
     ApplicationManifest parseManifest(const String&, const URL&, const URL&);
 
     URL parseStartURL(const JSON::Object&, const URL&);
+    ApplicationManifest::Display parseDisplay(const JSON::Object&);
     String parseName(const JSON::Object&);
     String parseDescription(const JSON::Object&);
     String parseShortName(const JSON::Object&);

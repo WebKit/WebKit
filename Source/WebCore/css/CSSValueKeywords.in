@@ -1346,3 +1346,10 @@ auto-fit
 swap
 fallback
 optional
+
+#if defined(ENABLE_APPLICATION_MANIFEST) && ENABLE_APPLICATION_MANIFEST
+fullscreen
+standalone
+minimal-ui
+browser
+#endif

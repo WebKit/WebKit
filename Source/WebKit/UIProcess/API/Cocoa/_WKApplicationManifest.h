@@ -33,6 +33,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSInteger, _WKApplicationManifestDisplayMode) {
+    _WKApplicationManifestDisplayModeBrowser,
+    _WKApplicationManifestDisplayModeMinimalUI,
+    _WKApplicationManifestDisplayModeStandalone,
+    _WKApplicationManifestDisplayModeFullScreen,
+} WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKApplicationManifest : NSObject <NSCoding>
 
@@ -41,8 +48,9 @@ WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 @property (nonatomic, readonly, nullable, copy) NSString *applicationDescription;
 @property (nonatomic, readonly, nullable, copy) NSURL *scope;
 @property (nonatomic, readonly, copy) NSURL *startURL;
+@property (nonatomic, readonly) _WKApplicationManifestDisplayMode displayMode;
 
-+ (_WKApplicationManifest *)applicationManifestFromJSON:(NSString *)json manifestURL:(NSURL *)manifestURL documentURL:(nullable NSURL *)documentURL;
++ (_WKApplicationManifest *)applicationManifestFromJSON:(NSString *)json manifestURL:(nullable NSURL *)manifestURL documentURL:(nullable NSURL *)documentURL;
 
 @end
 

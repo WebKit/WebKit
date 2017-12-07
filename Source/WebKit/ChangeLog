@@ -1,3 +1,17 @@
+2017-12-07  David Quesada  <david_quesada@apple.com>
+
+        [Web App Manifest] Support display-mode media feature
+        https://bugs.webkit.org/show_bug.cgi?id=180376
+        rdar://problem/35837993
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/API/Cocoa/_WKApplicationManifest.h:
+        * UIProcess/API/Cocoa/_WKApplicationManifest.mm:
+        (-[_WKApplicationManifest initWithCoder:]):
+        (-[_WKApplicationManifest encodeWithCoder:]):
+        (-[_WKApplicationManifest displayMode]):
+
 2017-12-07  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed build fix after r225622.

@@ -734,6 +734,33 @@ static bool prefersReducedMotionEvaluate(CSSValue* value, const CSSToLengthConve
     return downcast<CSSPrimitiveValue>(*value).valueID() == (userPrefersReducedMotion ? CSSValueReduce : CSSValueNoPreference);
 }
 
+#if ENABLE(APPLICATION_MANIFEST)
+static bool displayModeEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
+{
+    if (!value)
+        return true;
+
+    auto keyword = downcast<CSSPrimitiveValue>(*value).valueID();
+
+    auto manifest = frame.mainFrame().applicationManifest();
+    if (!manifest)
+        return keyword == CSSValueBrowser;
+
+    switch (manifest->display) {
+    case ApplicationManifest::Display::Fullscreen:
+        return keyword == CSSValueFullscreen;
+    case ApplicationManifest::Display::Standalone:
+        return keyword == CSSValueStandalone;
+    case ApplicationManifest::Display::MinimalUI:
+        return keyword == CSSValueMinimalUi;
+    case ApplicationManifest::Display::Browser:
+        return keyword == CSSValueBrowser;
+    }
+
+    return false;
+}
+#endif // ENABLE(APPLICATION_MANIFEST)
+
 // Use this function instead of calling add directly to avoid inlining.
 static void add(MediaQueryFunctionMap& map, AtomicStringImpl* key, MediaQueryFunction value)
 {

@@ -31,6 +31,7 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKApplicationManifest.h>
 
@@ -38,7 +39,7 @@ namespace TestWebKitAPI {
 
 TEST(WebKit, ApplicationManifestCoding)
 {
-    auto jsonString = @"{ \"name\": \"TestName\", \"short_name\": \"TestShortName\", \"description\": \"TestDescription\", \"scope\": \"https://test.com/app\", \"start_url\": \"https://test.com/app/index.html\" }";
+    auto jsonString = @"{ \"name\": \"TestName\", \"short_name\": \"TestShortName\", \"description\": \"TestDescription\", \"scope\": \"https://test.com/app\", \"start_url\": \"https://test.com/app/index.html\", \"display\": \"minimal-ui\" }";
     RetainPtr<_WKApplicationManifest> manifest { [_WKApplicationManifest applicationManifestFromJSON:jsonString manifestURL:[NSURL URLWithString:@"https://test.com/manifest.json"] documentURL:[NSURL URLWithString:@"https://test.com/"]] };
     
     manifest = [NSKeyedUnarchiver unarchiveObjectWithData:[NSKeyedArchiver archivedDataWithRootObject:manifest.get()]];
@@ -49,6 +50,7 @@ TEST(WebKit, ApplicationManifestCoding)
     EXPECT_STREQ("TestDescription", manifest.get().applicationDescription.UTF8String);
     EXPECT_STREQ("https://test.com/app", manifest.get().scope.absoluteString.UTF8String);
     EXPECT_STREQ("https://test.com/app/index.html", manifest.get().startURL.absoluteString.UTF8String);
+    EXPECT_EQ(_WKApplicationManifestDisplayModeMinimalUI,  manifest.get().displayMode);
 }
 
 TEST(WebKit, ApplicationManifestBasic)
@@ -100,6 +102,38 @@ TEST(WebKit, ApplicationManifestBasic)
         done = true;
     }];
     Util::run(&done);
+}
+
+TEST(WebKit, ApplicationManifestDisplayMode)
+{
+    static bool done;
+    NSDictionary *displayModesAndExpectedContent = @{
+        @"": @"(display-mode) (display-mode: browser)",
+        @"browser": @"(display-mode) (display-mode: browser)",
+        @"minimal-ui": @"(display-mode) (display-mode: minimal-ui)",
+        @"standalone": @"(display-mode) (display-mode: standalone)",
+        @"fullscreen": @"(display-mode) (display-mode: fullscreen)",
+    };
+
+    NSURL *baseURL = [[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"TestWebKitAPI.resources"];
+    [displayModesAndExpectedContent enumerateKeysAndObjectsUsingBlock:^(NSString *displayMode, NSString *expectedPageContent, BOOL* stop) {
+        @autoreleasepool {
+            NSString *m2 = displayMode.length ? [NSString stringWithFormat:@"{\"display\": \"%@\"}", displayMode] : @"{}";
+            RetainPtr<_WKApplicationManifest> manifest = [_WKApplicationManifest applicationManifestFromJSON:m2 manifestURL:[baseURL URLByAppendingPathComponent:@"manifest.json"] documentURL:baseURL];
+            auto config = adoptNS([[WKWebViewConfiguration alloc] init]);
+            config.get()._applicationManifest = manifest.get();
+            auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:config.get()]);
+            [webView synchronouslyLoadTestPageNamed:@"display-mode"];
+            
+            done = false;
+            [webView _getContentsAsStringWithCompletionHandler:^(NSString *contents, NSError *error) {
+                done = true;
+                EXPECT_STREQ(expectedPageContent.UTF8String, contents.UTF8String);
+            }];
+            Util::run(&done);
+            [webView removeFromSuperview];
+        }
+    }];
 }
 
 } // namespace TestWebKitAPI

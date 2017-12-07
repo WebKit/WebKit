@@ -69,6 +69,7 @@ ApplicationManifest ApplicationManifestParser::parseManifest(const String& text,
     ApplicationManifest parsedManifest;
 
     parsedManifest.startURL = parseStartURL(*manifest, documentURL);
+    parsedManifest.display = parseDisplay(*manifest);
     parsedManifest.name = parseName(*manifest);
     parsedManifest.description = parseDescription(*manifest);
     parsedManifest.shortName = parseShortName(*manifest);
@@ -122,6 +123,33 @@ URL ApplicationManifestParser::parseStartURL(const JSON::Object& manifest, const
     }
 
     return startURL;
+}
+
+ApplicationManifest::Display ApplicationManifestParser::parseDisplay(const JSON::Object& manifest)
+{
+    RefPtr<JSON::Value> value;
+    if (!manifest.getValue(ASCIILiteral("display"), value))
+        return ApplicationManifest::Display::Browser;
+
+    String stringValue;
+    if (!value->asString(stringValue)) {
+        logManifestPropertyNotAString(ASCIILiteral("display"));
+        return ApplicationManifest::Display::Browser;
+    }
+
+    stringValue = stringValue.stripWhiteSpace().convertToASCIILowercase();
+
+    if (stringValue == "fullscreen")
+        return ApplicationManifest::Display::Fullscreen;
+    if (stringValue == "standalone")
+        return ApplicationManifest::Display::Standalone;
+    if (stringValue == "minimal-ui")
+        return ApplicationManifest::Display::MinimalUI;
+    if (stringValue == "browser")
+        return ApplicationManifest::Display::Browser;
+
+    logDeveloperWarning(ASCIILiteral("\"") + stringValue + ASCIILiteral("\" is not a valid display mode."));
+    return ApplicationManifest::Display::Browser;
 }
 
 String ApplicationManifestParser::parseName(const JSON::Object& manifest)

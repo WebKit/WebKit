@@ -41,6 +41,7 @@
     NSString *shortName = [aDecoder decodeObjectForKey:@"short_name"];
     NSString *description = [aDecoder decodeObjectForKey:@"description"];
     NSURL *scopeURL = [aDecoder decodeObjectForKey:@"scope"];
+    NSInteger display = [aDecoder decodeIntegerForKey:@"display"];
     NSURL *startURL = [aDecoder decodeObjectForKey:@"start_url"];
 
     WebCore::ApplicationManifest coreApplicationManifest {
@@ -48,6 +49,7 @@
         WTF::String(shortName),
         WTF::String(description),
         WebCore::URL(scopeURL),
+        static_cast<WebCore::ApplicationManifest::Display>(display),
         WebCore::URL(startURL)
     };
 
@@ -69,6 +71,7 @@
     [aCoder encodeObject:self.shortName forKey:@"short_name"];
     [aCoder encodeObject:self.applicationDescription forKey:@"description"];
     [aCoder encodeObject:self.scope forKey:@"scope"];
+    [aCoder encodeInteger:static_cast<NSInteger>(_applicationManifest->applicationManifest().display) forKey:@"display"];
     [aCoder encodeObject:self.startURL forKey:@"start_url"];
 }
 
@@ -111,6 +114,22 @@ static NSString *nullableNSString(const WTF::String& string)
 - (NSURL *)startURL
 {
     return _applicationManifest->applicationManifest().startURL;
+}
+
+- (_WKApplicationManifestDisplayMode)displayMode
+{
+    switch (_applicationManifest->applicationManifest().display) {
+    case WebCore::ApplicationManifest::Display::Browser:
+        return _WKApplicationManifestDisplayModeBrowser;
+    case WebCore::ApplicationManifest::Display::MinimalUI:
+        return _WKApplicationManifestDisplayModeMinimalUI;
+    case WebCore::ApplicationManifest::Display::Standalone:
+        return _WKApplicationManifestDisplayModeStandalone;
+    case WebCore::ApplicationManifest::Display::Fullscreen:
+        return _WKApplicationManifestDisplayModeFullScreen;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 #else // ENABLE(APPLICATION_MANIFEST)
@@ -158,6 +177,11 @@ static NSString *nullableNSString(const WTF::String& string)
 - (NSURL *)startURL
 {
     return nil;
+}
+
+- (_WKApplicationManifestDisplayMode)displayMode
+{
+    return _WKApplicationManifestDisplayModeBrowser;
 }
 
 #endif // ENABLE(APPLICATION_MANIFEST)

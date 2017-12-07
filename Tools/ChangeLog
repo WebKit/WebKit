@@ -1,3 +1,34 @@
+2017-12-07  David Quesada  <david_quesada@apple.com>
+
+        [Web App Manifest] Support display-mode media feature
+        https://bugs.webkit.org/show_bug.cgi?id=180376
+        rdar://problem/35837993
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/ApplicationManifestParser.cpp:
+        (WebCore::operator<<):
+        (ApplicationManifestParserTest::testDisplay):
+        (TEST_F):
+            Add unit tests for the parsing of the 'display' manifest property.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ApplicationManifest.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/display-mode.html: Added.
+            Update API tests to include _WKApplicationManifest.displayMode.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::parseStringTestHeaderValueAsRelativePath):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformCreateWebView):
+            Teach WKTR to look for and apply an app manifest. A new <!--webkit-test-runner-->
+            directive 'applicationManifest' can specify a path (relative to the test file itself)
+            to a JSON app manifest to be applied to the web view before running the test.
+
 2017-12-07  Eric Carlson  <eric.carlson@apple.com>
 
         Add WebRTC watchlist rule, update MediaStream rule

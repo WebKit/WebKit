@@ -1,3 +1,18 @@
+2017-12-07  David Quesada  <david_quesada@apple.com>
+
+        [Web App Manifest] Support display-mode media feature
+        https://bugs.webkit.org/show_bug.cgi?id=180376
+        rdar://problem/35837993
+
+        Reviewed by Geoffrey Garen.
+
+        * applicationmanifest/display-mode-expected.txt: Added.
+        * applicationmanifest/display-mode-subframe-expected.txt: Added.
+        * applicationmanifest/display-mode-subframe.html: Added.
+        * applicationmanifest/display-mode.html: Added.
+        * applicationmanifest/resources/display-mode-subframe-1.html: Added.
+        * applicationmanifest/resources/standalone.manifest: Added.
+
 2017-12-07  Jer Noble  <jer.noble@apple.com>
 
         Creating a second AVPlayerItemVideoOutput causes flakey failures

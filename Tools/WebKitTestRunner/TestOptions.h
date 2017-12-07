@@ -57,6 +57,7 @@ struct TestOptions {
 
     float deviceScaleFactor { 1 };
     Vector<String> overrideLanguages;
+    std::string applicationManifest;
     
     TestOptions(const std::string& pathOrURL);
 
@@ -80,7 +81,8 @@ struct TestOptions {
             || enableCredentialManagement != options.enableCredentialManagement
             || enableIsSecureContextAttribute != options.enableIsSecureContextAttribute
             || enableInspectorAdditions != options.enableInspectorAdditions
-            || dumpJSConsoleLogInStdErr != options.dumpJSConsoleLogInStdErr)
+            || dumpJSConsoleLogInStdErr != options.dumpJSConsoleLogInStdErr
+            || applicationManifest != options.applicationManifest)
             return false;
 
         return true;
