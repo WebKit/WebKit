@@ -1,0 +1,39 @@
+  
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Should receive no cookies.
+Did not receive cookie named 'firstPartyCookie'.
+Did not receive cookie named 'thirdPartyCookie'.
+Client-side document.cookie:
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+Setting partitioned, third party cookie.
+
+
+--------
+Frame: '<!--framePath //<!--frame2-->-->'
+--------
+Should only receive partitioned, third party cookie.
+Did not receive cookie named 'firstPartyCookie'.
+Received cookie named 'thirdPartyCookie'.
+Client-side document.cookie: thirdPartyCookie=value
+
+--------
+Frame: '<!--framePath //<!--frame3-->-->'
+--------
+After removal, should receive no cookies.
+Did not receive cookie named 'firstPartyCookie'.
+Did not receive cookie named 'thirdPartyCookie'.
+Client-side document.cookie:
+
+--------
+Frame: '<!--framePath //<!--frame4-->-->'
+--------
+After user interaction, should receive no cookies.
+Did not receive cookie named 'firstPartyCookie'.
+Did not receive cookie named 'thirdPartyCookie'.
+Client-side document.cookie:

@@ -1,0 +1,3 @@
+PASS Host classified as prevalent resource.
+PASS Host is no longer a prevalent resource after the store was cleared.
+

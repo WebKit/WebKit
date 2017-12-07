@@ -1,0 +1,17 @@
+Tests that telemetry for prevalent resources is calculated correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Hosts classified as prevalent resources.
+PASS testResult.totalPrevalentResources is 0
+PASS testResult.totalPrevalentResourcesWithUserInteraction is 0
+PASS testResult.top3SubframeUnderTopFrameOrigins is 0
+PASS Hosts classified as prevalent resources.
+PASS testResult.totalPrevalentResources is 4
+PASS testResult.totalPrevalentResourcesWithUserInteraction is 1
+PASS testResult.top3SubframeUnderTopFrameOrigins is 4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -20,5 +20,5 @@ if(!empty($_GET["name3"])) {
 ?>
 <p id="output"></p>
 <script>
-    document.getElementById("output").textContent = "Client-side document.cookie: " + document.cookie;
+    document.getElementById("output").textContent = "Client-side document.cookie: " + document.cookie.replace(/ /g,'').split(';').sort();
 </script>

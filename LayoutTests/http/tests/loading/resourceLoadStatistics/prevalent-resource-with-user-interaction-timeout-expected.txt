@@ -1,8 +1,0 @@
-main frame - didStartProvisionalLoadForFrame
-main frame - didCommitLoadForFrame
-main frame - didReceiveTitle: Tests for Prevalent Resource With User Interaction Timeout
-main frame - didFinishDocumentLoadForFrame
-main frame - didHandleOnloadEventsForFrame
-main frame - didFinishLoadForFrame
-PASS Cookie deleted.
-

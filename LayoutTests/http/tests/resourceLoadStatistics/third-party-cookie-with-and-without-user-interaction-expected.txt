@@ -1,0 +1,43 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Setting cookie as third party.
+
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+Should receive both the cookie set in a first-party context and in a third-party context.
+Received cookie named 'firstPartyCookie'.
+Received cookie named 'thirdPartyCookie'.
+Did not receive cookie named 'partitionedThirdPartyCookie'.
+Client-side document.cookie: firstPartyCookie=value,thirdPartyCookie=value
+
+--------
+Frame: '<!--framePath //<!--frame2-->-->'
+--------
+Setting partitioned, third party cookie.
+
+
+--------
+Frame: '<!--framePath //<!--frame3-->-->'
+--------
+Should only receive partitioned, third party cookie.
+Did not receive cookie named 'firstPartyCookie'.
+Did not receive cookie named 'thirdPartyCookie'.
+Received cookie named 'partitionedThirdPartyCookie'.
+Client-side document.cookie: partitionedThirdPartyCookie=value
+
+--------
+Frame: '<!--framePath //<!--frame4-->-->'
+--------
+After user interaction, should receive non-partitioned cookies set in a first-party context and in a third-party context.
+Received cookie named 'firstPartyCookie'.
+Received cookie named 'thirdPartyCookie'.
+Did not receive cookie named 'partitionedThirdPartyCookie'.
+Client-side document.cookie: firstPartyCookie=value,thirdPartyCookie=value

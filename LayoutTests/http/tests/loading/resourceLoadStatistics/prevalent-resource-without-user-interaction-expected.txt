@@ -1,8 +1,0 @@
-main frame - didStartProvisionalLoadForFrame
-main frame - didCommitLoadForFrame
-main frame - didReceiveTitle: Tests for Prevalent Resource Without User Interaction
-main frame - didFinishDocumentLoadForFrame
-main frame - didHandleOnloadEventsForFrame
-main frame - didFinishLoadForFrame
-PASS Cookie deleted.
-

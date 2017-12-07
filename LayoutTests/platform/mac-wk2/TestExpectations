@@ -742,9 +742,9 @@ webkit.org/b/167757 workers/bomb.html [ Pass Timeout ]
 webkit.org/b/172397 [ Debug ] animations/needs-layout.html [ Pass ImageOnlyFailure ]
 
 # Touch events are not available on open source bots, thus only tested on Mac.
-http/tests/loading/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Pass ]
-http/tests/loading/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Pass ]
-http/tests/loading/resourceLoadStatistics/user-interaction-reported-after-website-data-removal.html [ Pass ]
+http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Pass ]
+http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Pass ]
+http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal.html [ Pass ]
 http/tests/storageAccess/request-and-deny-storage-access-cross-origin-iframe.html [ Pass ]
 http/tests/storageAccess/request-and-deny-storage-access-cross-origin-sandboxed-iframe.html [ Pass ]
 http/tests/storageAccess/request-and-grant-storage-access-cross-origin-non-sandboxed-iframe.html [ Pass ]
@@ -796,9 +796,10 @@ webkit.org/b/176122 media/video-controls-drop-and-restore-timeline.html [ Pass F
 [ HighSierra+ ] http/tests/ssl/applepay/ApplePayError.html [ Pass ]
 [ HighSierra+ ] http/tests/ssl/applepay/ApplePaySessionV3.html [ Pass ]
 # <rdar://problem/31634451>
-[ HighSierra+ ] http/tests/loading/resourceLoadStatistics/partitioned-cookies-with-and-without-user-interaction.html [ Pass ]
-[ HighSierra+ ] http/tests/loading/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-with-partitioning-timeout.html [ Pass Failure ]
-[ HighSierra+ ] http/tests/loading/resourceLoadStatistics/third-party-cookie-with-and-without-user-interaction.html [ Pass Failure ]
+[ HighSierra+ ] http/tests/resourceLoadStatistics/partitioned-cookies-with-and-without-user-interaction.html [ Pass ]
+[ HighSierra+ ] http/tests/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-with-partitioning-timeout.html [ Pass ]
+[ HighSierra+ ] http/tests/resourceLoadStatistics/third-party-cookie-with-and-without-user-interaction.html [ Pass ]
+[ HighSierra+ ] http/tests/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion.html [ Pass Timeout ]
 [ HighSierra+ ] http/tests/resourceLoadStatistics/add-partitioning-to-redirect.html [ Pass ]
 [ HighSierra+ ] http/tests/resourceLoadStatistics/remove-partitioning-from-redirect.html [ Pass ]
 
@@ -816,9 +817,9 @@ webkit.org/b/177214 [ ElCapitan Debug ] imported/w3c/web-platform-tests/FileAPI/
 
 webkit.org/b/177687 http/tests/inspector/network/resource-sizes-memory-cache.html [ Pass Failure ]
 
-webkit.org/b/178472 http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html [ Pass Timeout ]
+webkit.org/b/178472 http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html [ Pass ]
 
-webkit.org/b/178536 [ HighSierra ] http/tests/loading/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Pass Timeout ]
+webkit.org/b/178536 [ HighSierra ] http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Pass Timeout ]
 
 webkit.org/b/176881 plugins/js-from-destroy.html [ Pass Failure ]
 
@@ -836,8 +837,6 @@ webkit.org/b/179176 [ Release ] svg/wicd/test-rightsizing-a.xhtml [ Pass Failure
 webkit.org/b/179773 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Pass Failure ]
 
 webkit.org/b/176078 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-onnegotiationneeded.html [ Pass Failure ]
-
-webkit.org/b/179644 [ HighSierra Release ] http/tests/loading/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion.html [ Pass Failure ]
 
 webkit.org/b/179351 imported/w3c/web-platform-tests/service-workers/service-worker/worker-interception.https.html [ Pass Failure ]
 
