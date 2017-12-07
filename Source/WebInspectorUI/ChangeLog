@@ -1,5 +1,17 @@
 2017-12-06  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: Canvas: spurious warnings shown for commands that changed pixel contents
+        https://bugs.webkit.org/show_bug.cgi?id=180505
+        <rdar://problem/35891651>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction.prototype.apply.getContent):
+        (WI.RecordingAction.prototype.apply):
+
+2017-12-06  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: Style Redesign: filtering removes header if one rule has no match even if others do
         https://bugs.webkit.org/show_bug.cgi?id=180467
 
