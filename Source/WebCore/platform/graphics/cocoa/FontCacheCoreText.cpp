@@ -37,6 +37,7 @@
 
 #define SHOULD_USE_CORE_TEXT_FONT_LOOKUP (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200)
 #define HAS_CORE_TEXT_WIDTH_ATTRIBUTE ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000))
+#define CAN_DISALLOW_USER_INSTALLED_FONTS ((PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400))
 
 namespace WebCore {
 
@@ -829,10 +830,32 @@ static float fontWeightFromCoreText(CGFloat weight)
 
 class FontDatabase {
 public:
+#if !CAN_DISALLOW_USER_INSTALLED_FONTS
     static FontDatabase& singleton()
     {
-        static NeverDestroyed<FontDatabase> database;
+        static NeverDestroyed<FontDatabase> database(FontCache::AllowUserInstalledFonts::Yes);
         return database;
+    }
+#endif
+
+    static FontDatabase& singletonAllowingUserInstalledFonts()
+    {
+#if CAN_DISALLOW_USER_INSTALLED_FONTS
+        static NeverDestroyed<FontDatabase> database(FontCache::AllowUserInstalledFonts::Yes);
+        return database;
+#else
+        return singleton();
+#endif
+    }
+
+    static FontDatabase& singletonDisallowingUserInstalledFonts()
+    {
+#if CAN_DISALLOW_USER_INSTALLED_FONTS
+        static NeverDestroyed<FontDatabase> database(FontCache::AllowUserInstalledFonts::No);
+        return database;
+#else
+        return singleton();
+#endif
     }
 
     FontDatabase(const FontDatabase&) = delete;
@@ -885,9 +908,19 @@ public:
         auto folded = familyName.foldCase();
         return m_familyNameToFontDescriptors.ensure(folded, [&] {
             auto familyNameString = folded.createCFString();
-            CFTypeRef keys[] = { kCTFontFamilyNameAttribute };
-            CFTypeRef values[] = { familyNameString.get() };
-            auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+            RetainPtr<CFDictionaryRef> attributes;
+#if CAN_DISALLOW_USER_INSTALLED_FONTS
+            if (m_allowUserInstalledFonts == FontCache::AllowUserInstalledFonts::No) {
+                CFTypeRef keys[] = { kCTFontFamilyNameAttribute, kCTFontUserInstalledAttribute };
+                CFTypeRef values[] = { familyNameString.get(), kCFBooleanFalse };
+                attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+            } else
+#endif
+            {
+                CFTypeRef keys[] = { kCTFontFamilyNameAttribute };
+                CFTypeRef values[] = { familyNameString.get() };
+                attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+            }
             auto fontDescriptorToMatch = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
             if (auto matches = adoptCF(CTFontDescriptorCreateMatchingFontDescriptors(fontDescriptorToMatch.get(), nullptr))) {
                 auto count = CFArrayGetCount(matches.get());
@@ -913,9 +946,19 @@ public:
 #else
             CFStringRef nameAttribute = kCTFontNameAttribute;
 #endif
-            CFTypeRef keys[] = { kCTFontEnabledAttribute, nameAttribute };
-            CFTypeRef values[] = { kCFBooleanTrue, postScriptNameString.get() };
-            auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+            RetainPtr<CFDictionaryRef> attributes;
+#if CAN_DISALLOW_USER_INSTALLED_FONTS
+            if (m_allowUserInstalledFonts == FontCache::AllowUserInstalledFonts::No) {
+                CFTypeRef keys[] = { kCTFontEnabledAttribute, nameAttribute, kCTFontUserInstalledAttribute };
+                CFTypeRef values[] = { kCFBooleanTrue, postScriptNameString.get(), kCFBooleanFalse };
+                attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+            } else
+#endif
+            {
+                CFTypeRef keys[] = { kCTFontEnabledAttribute, nameAttribute };
+                CFTypeRef values[] = { kCFBooleanTrue, postScriptNameString.get() };
+                attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+            }
             auto fontDescriptorToMatch = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
             auto match = adoptCF(static_cast<CTFontDescriptorRef>(CTFontDescriptorCreateMatchingFontDescriptor(fontDescriptorToMatch.get(), nullptr)));
             return InstalledFont(match.get());
@@ -931,10 +974,14 @@ public:
 private:
     friend class NeverDestroyed<FontDatabase>;
 
-    FontDatabase() = default;
+    FontDatabase(FontCache::AllowUserInstalledFonts allowUserInstalledFonts)
+        : m_allowUserInstalledFonts(allowUserInstalledFonts)
+    {
+    }
 
     HashMap<String, InstalledFontFamily> m_familyNameToFontDescriptors;
     HashMap<String, InstalledFont> m_postScriptNameToFontDescriptors;
+    FontCache::AllowUserInstalledFonts m_allowUserInstalledFonts;
 };
 
 // Because this struct holds intermediate values which may be in the compressed -1 - 1 GX range, we don't want to use the relatively large
@@ -1124,9 +1171,10 @@ static const FontDatabase::InstalledFont* findClosestFont(const FontDatabase::In
 }
 #endif
 
-Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamily(const AtomicString& familyName)
+Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamily(const AtomicString& familyName, AllowUserInstalledFonts allowUserInstalledFonts)
 {
-    const auto& fonts = FontDatabase::singleton().collectionForFamily(familyName.string());
+    auto& fontDatabase = allowUserInstalledFonts == AllowUserInstalledFonts::Yes ? FontDatabase::singletonAllowingUserInstalledFonts() : FontDatabase::singletonDisallowingUserInstalledFonts();
+    const auto& fonts = fontDatabase.collectionForFamily(familyName.string());
     if (fonts.isEmpty())
         return { };
 
@@ -1142,17 +1190,19 @@ struct FontLookup {
     bool createdFromPostScriptName { false };
 };
 
-static FontLookup platformFontLookupWithFamily(const AtomicString& family, FontSelectionRequest request, float size)
+static FontLookup platformFontLookupWithFamily(const AtomicString& family, FontSelectionRequest request, float size, bool mayRepresentUserInstalledFont)
 {
     const auto& whitelist = fontWhitelist();
     if (!isSystemFont(family) && whitelist.size() && !whitelist.contains(family))
         return { nullptr };
 
 #if SHOULD_USE_CORE_TEXT_FONT_LOOKUP
+    UNUSED_PARAM(mayRepresentUserInstalledFont);
     CTFontSymbolicTraits traits = (isFontWeightBold(request.weight) ? kCTFontTraitBold : 0) | (isItalic(request.slope) ? kCTFontTraitItalic : 0);
     return { adoptCF(CTFontCreateForCSS(family.string().createCFString().get(), static_cast<float>(request.weight), traits, size)) };
 #else
-    const auto& familyFonts = FontDatabase::singleton().collectionForFamily(family.string());
+    auto& fontDatabase = mayRepresentUserInstalledFont ? FontDatabase::singletonAllowingUserInstalledFonts() : FontDatabase::singletonDisallowingUserInstalledFonts();
+    const auto& familyFonts = fontDatabase.collectionForFamily(family.string());
     if (familyFonts.isEmpty()) {
         // The CSS spec states that font-family only accepts a name of an actual font family. However, in WebKit, we claim to also
         // support supplying a PostScript name instead. However, this creates problems when the other properties (font-weight,
@@ -1161,7 +1211,7 @@ static FontLookup platformFontLookupWithFamily(const AtomicString& family, FontS
         // font-style specifies italic, then we run the regular matching algorithm on the family of the PostScript font. This way,
         // if content simply states "font-family: PostScriptName;" without specifying the other font properties, it will be honored,
         // but if a <b> appears as a descendent element, it will be honored too.
-        const auto& postScriptFont = FontDatabase::singleton().fontForPostScriptName(family);
+        const auto& postScriptFont = fontDatabase.fontForPostScriptName(family);
         if (!postScriptFont.fontDescriptor)
             return { nullptr };
         if ((isItalic(request.slope) && !isItalic(postScriptFont.capabilities.slope.maximum))
@@ -1169,7 +1219,7 @@ static FontLookup platformFontLookupWithFamily(const AtomicString& family, FontS
             auto postScriptFamilyName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(postScriptFont.fontDescriptor.get(), kCTFontFamilyNameAttribute)));
             if (!postScriptFamilyName)
                 return { nullptr };
-            const auto& familyFonts = FontDatabase::singleton().collectionForFamily(String(postScriptFamilyName.get()));
+            const auto& familyFonts = fontDatabase.collectionForFamily(String(postScriptFamilyName.get()));
             if (familyFonts.isEmpty())
                 return { nullptr };
             if (const auto* installedFont = findClosestFont(familyFonts, request)) {
@@ -1200,7 +1250,8 @@ static void invalidateFontCache()
 
     FontDescription::invalidateCaches();
 
-    FontDatabase::singleton().clear();
+    FontDatabase::singletonAllowingUserInstalledFonts().clear();
+    FontDatabase::singletonDisallowingUserInstalledFonts().clear();
 
     FontCache::singleton().invalidate();
 }
@@ -1214,7 +1265,7 @@ static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, const Fon
     FontLookup fontLookup;
     fontLookup.result = platformFontWithFamilySpecialCase(family, request, size);
     if (!fontLookup.result)
-        fontLookup = platformFontLookupWithFamily(family, request, size);
+        fontLookup = platformFontLookupWithFamily(family, request, size, fontDescription.mayRepresentUserInstalledFont());
     return preparePlatformFont(fontLookup.result.get(), fontDescription, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities, size, !fontLookup.createdFromPostScriptName);
 }
 

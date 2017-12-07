@@ -1919,3 +1919,13 @@ bool WKPreferencesGetAccessibilityObjectModelEnabled(WKPreferencesRef preference
 {
     return toImpl(preferencesRef)->accessibilityObjectModelEnabled();
 }
+
+void WKPreferencesSetShouldDisallowUserInstalledFonts(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setShouldDisallowUserInstalledFonts(flag);
+}
+
+bool WKPreferencesGetShouldDisallowUserInstalledFonts(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->shouldDisallowUserInstalledFonts();
+}

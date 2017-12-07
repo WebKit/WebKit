@@ -1,3 +1,29 @@
+2017-12-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Add SPI to disallow user-installed fonts
+        https://bugs.webkit.org/show_bug.cgi?id=180062
+        <rdar://problem/35042408>
+
+        Reviewed by Simon Fraser.
+
+        * WebKitTestRunner/InjectedBundle/ActivateFonts.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::resetAfterTest):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/InjectedBundle/cocoa/ActivateFontsCocoa.mm:
+        (WTR::resourcesDirectoryURL):
+        (WTR::activateFonts):
+        (WTR::installFakeHelvetica):
+        (WTR::uninstallFakeHelvetica):
+        * WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm:
+        (WTR::TestRunner::installFakeHelvetica):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/fonts/FakeHelvetica-Helvetica-400.ttf: Added.
+        * WebKitTestRunner/fonts/FakeHelvetica-Helvetica-500.ttf: Added.
+        * WebKitTestRunner/fonts/FakeHelvetica-Helvetica2-400.ttf: Added.
+        * WebKitTestRunner/fonts/FakeHelvetica-Helvetica2-500.ttf: Added.
+
 2017-12-07  David Quesada  <david_quesada@apple.com>
 
         [Web App Manifest] Support display-mode media feature

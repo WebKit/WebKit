@@ -29,6 +29,8 @@
 namespace WTR {
 
 void activateFonts();
+void installFakeHelvetica(WKStringRef configuration);
+void uninstallFakeHelvetica();
 
 } // namespace WTR
 

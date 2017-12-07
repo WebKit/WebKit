@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InjectedBundlePage.h"
 
+#include "ActivateFonts.h"
 #include "InjectedBundle.h"
 #include "StringFunctions.h"
 #include "WebCoreTestSupport.h"
@@ -435,6 +436,8 @@ void InjectedBundlePage::resetAfterTest()
 
     // User scripts need to be removed after the test and before loading about:blank, as otherwise they would run in about:blank, and potentially leak results into a subsequest test.
     WKBundlePageRemoveAllUserContent(m_page);
+
+    uninstallFakeHelvetica();
 }
 
 // Loader Client Callbacks

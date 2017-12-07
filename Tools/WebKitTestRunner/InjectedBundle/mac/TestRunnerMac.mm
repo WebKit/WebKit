@@ -26,6 +26,7 @@
 #import "config.h"
 #import "TestRunner.h"
 
+#import "ActivateFonts.h"
 #import "InjectedBundle.h"
 #import <JavaScriptCore/JSStringRefCF.h>
 
@@ -89,6 +90,11 @@ JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
     CFStringRef urlString = CFURLGetString(url.get());
     return adopt(JSStringCreateWithCFString(urlString));
 #endif
+}
+
+void TestRunner::installFakeHelvetica(JSStringRef configuration)
+{
+    WTR::installFakeHelvetica(toWK(configuration).get());
 }
 
 } // namespace WTR

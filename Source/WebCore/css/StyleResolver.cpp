@@ -1792,6 +1792,7 @@ void StyleResolver::initializeFontStyle()
     fontDescription.setOneFamily(standardFamily);
     fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
     setFontSize(fontDescription, Style::fontSizeForKeyword(CSSValueMedium, false, document()));
+    fontDescription.setMayRepresentUserInstalledFont(!settings().shouldDisallowUserInstalledFonts());
     setFontDescription(fontDescription);
 }
 

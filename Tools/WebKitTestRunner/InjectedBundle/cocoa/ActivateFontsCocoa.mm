@@ -28,6 +28,8 @@
 
 #import <CoreFoundation/CoreFoundation.h>
 #import <CoreText/CTFontManager.h>
+#import <WebKit/WKStringCF.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 
@@ -42,6 +44,12 @@
 @end
 
 namespace WTR {
+
+static NSURL *resourcesDirectoryURL()
+{
+    static NeverDestroyed<RetainPtr<NSURL *>> resourcesDirectory([[NSBundle bundleForClass:[WKTRFontActivatorDummyClass class]] resourceURL]);
+    return resourcesDirectory.get().get();
+}
 
 #if USE(APPKIT)
 
@@ -108,9 +116,8 @@ void activateFonts()
     };
 
     NSMutableArray *fontURLs = [NSMutableArray array];
-    NSURL *resourcesDirectory = [[NSBundle bundleForClass:[WKTRFontActivatorDummyClass class]] resourceURL];
     for (unsigned i = 0; fontFileNames[i]; ++i) {
-        NSURL *fontURL = [resourcesDirectory URLByAppendingPathComponent:[NSString stringWithUTF8String:fontFileNames[i]]];
+        NSURL *fontURL = [resourcesDirectoryURL() URLByAppendingPathComponent:[NSString stringWithUTF8String:fontFileNames[i]]];
         [fontURLs addObject:[fontURL absoluteURL]];
     }
 
@@ -124,6 +131,31 @@ void activateFonts()
 #if USE(APPKIT)
     activateSystemCoreWebFonts();
 #endif // USE(APPKIT)
+}
+
+void installFakeHelvetica(WKStringRef configuration)
+{
+    RetainPtr<CFStringRef> configurationString = adoptCF(WKStringCopyCFString(kCFAllocatorDefault, configuration));
+    NSURL *resourceURL = [resourcesDirectoryURL() URLByAppendingPathComponent:[NSString stringWithFormat:@"FakeHelvetica-%@.ttf", configurationString.get()]];
+    CFErrorRef error = nullptr;
+    CTFontManagerRegisterFontsForURL(static_cast<CFURLRef>(resourceURL), kCTFontManagerScopeProcess, &error);
+}
+
+void uninstallFakeHelvetica()
+{
+    NSFileManager *defaultManager = [NSFileManager defaultManager];
+    NSError *nsError = nil;
+    NSArray *urls = [defaultManager contentsOfDirectoryAtURL:resourcesDirectoryURL() includingPropertiesForKeys:@[NSURLNameKey] options:NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsHiddenFiles error:&nsError];
+    ASSERT(urls && !nsError);
+    if (!urls || nsError)
+        return;
+    NSMutableArray *fontsToRemove = [NSMutableArray array];
+    for (NSURL *url in urls) {
+        if ([[url lastPathComponent] hasPrefix:@"FakeHelvetica"])
+            [fontsToRemove addObject:url];
+    }
+    CFArrayRef errors = nullptr;
+    CTFontManagerUnregisterFontsForURLs(static_cast<CFArrayRef>(fontsToRemove), kCTFontManagerScopeProcess, &errors);
 }
 
 }

@@ -1903,3 +1903,6 @@ webkit.org/b/172092 [ Release ] fast/parser/adoption-agency-unload-iframe-4.html
 
 # FIXME: For some reason EventSender.keyDown() does not work.
 webkit.org/b/178490 fast/text/scroll-text-overflow-ellipsis.html [ Skip ]
+
+# User-installed fonts test infrastructure is not present in WK1
+webkit.org/b/180062 fast/text/user-installed-fonts [ ImageOnlyFailure ]

@@ -657,6 +657,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setJavaScriptCanAccessClipboard(javaScriptCanAccessClipboard);
 }
 
+- (BOOL)_shouldDisallowUserInstalledFonts
+{
+    return _preferences->shouldDisallowUserInstalledFonts();
+}
+
+- (void)_setShouldDisallowUserInstalledFonts:(BOOL)_shouldDisallowUserInstalledFonts
+{
+    _preferences->setShouldDisallowUserInstalledFonts(_shouldDisallowUserInstalledFonts);
+}
+
 #if PLATFORM(MAC)
 - (void)_setJavaEnabledForLocalFiles:(BOOL)enabled
 {

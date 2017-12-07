@@ -1757,3 +1757,7 @@ webkit.org/b/165311 [ Sierra+ ] media/modern-media-controls/pip-support/pip-supp
 
 webkit.org/b/176693 storage/indexeddb/modern/idbtransaction-objectstore-failures-private.html [ Pass Failure ]
 
+# User-installed font infrastructure is ony present on certain OSes.
+webkit.org/b/180062 [ ElCapitan Sierra HighSierra ] fast/text/user-installed-fonts/disable.html [ ImageOnlyFailure ]
+webkit.org/b/180062 [ ElCapitan Sierra HighSierra ] fast/text/user-installed-fonts/shadow-postscript.html [ ImageOnlyFailure ]
+webkit.org/b/180062 [ ElCapitan Sierra HighSierra ] fast/text/user-installed-fonts/shadow.html [ ImageOnlyFailure ]

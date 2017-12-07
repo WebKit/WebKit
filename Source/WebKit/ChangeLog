@@ -1,3 +1,21 @@
+2017-12-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Add SPI to disallow user-installed fonts
+        https://bugs.webkit.org/show_bug.cgi?id=180062
+        <rdar://problem/35042408>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetShouldDisallowUserInstalledFonts):
+        (WKPreferencesGetShouldDisallowUserInstalledFonts):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _shouldDisallowUserInstalledFonts]):
+        (-[WKPreferences _setShouldDisallowUserInstalledFonts:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2017-12-07  David Quesada  <david_quesada@apple.com>
 
         [Web App Manifest] Support display-mode media feature

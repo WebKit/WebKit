@@ -3308,3 +3308,9 @@ media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]
 
 # Requries AVFoundation support <rdar://problem/34502208>
 http/tests/images/image-supports-video.html
+
+# User-installed font infrastructure is ony present on certain OSes.
+webkit.org/b/180062 fast/text/user-installed-fonts/disable.html [ ImageOnlyFailure ]
+webkit.org/b/180062 fast/text/user-installed-fonts/shadow-family.html [ ImageOnlyFailure ]
+webkit.org/b/180062 fast/text/user-installed-fonts/shadow-postscript.html [ ImageOnlyFailure ]
+webkit.org/b/180062 fast/text/user-installed-fonts/shadow.html [ ImageOnlyFailure ]

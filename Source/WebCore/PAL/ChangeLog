@@ -1,3 +1,13 @@
+2017-12-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Add SPI to disallow user-installed fonts
+        https://bugs.webkit.org/show_bug.cgi?id=180062
+        <rdar://problem/35042408>
+
+        Reviewed by Simon Fraser.
+
+        * pal/spi/cocoa/CoreTextSPI.h:
+
 2017-12-02  Darin Adler  <darin@apple.com>
 
         Modernize some aspects of text codecs, eliminate WebKit use of strcasecmp

@@ -661,6 +661,10 @@ storageBlockingPolicy:
   initial: SecurityOrigin::AllowAllStorage
   onChange: storageBlockingPolicyChanged
 
+shouldDisallowUserInstalledFonts:
+  initial: false
+  onChange: setNeedsRecalcStyleInAllFrames
+
 # Only set by Layout Tests.
 mediaTypeOverride:
   type: String

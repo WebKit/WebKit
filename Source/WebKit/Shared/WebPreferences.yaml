@@ -1034,6 +1034,10 @@ VisibleDebugOverlayRegions:
   defaultValue: 0
   category: debug
 
+ShouldDisallowUserInstalledFonts:
+  type: bool
+  defaultValue: false
+
 
 # For experimental features:
 # The type should be boolean.

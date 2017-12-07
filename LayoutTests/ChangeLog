@@ -1,3 +1,39 @@
+2017-12-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Add SPI to disallow user-installed fonts
+        https://bugs.webkit.org/show_bug.cgi?id=180062
+        <rdar://problem/35042408>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/user-installed-font-expected.html: Added.
+        * fast/text/user-installed-font.html: Added.
+        * fast/text/user-installed-fonts/disable-expected-mismatch.html: Added.
+        * fast/text/user-installed-fonts/disable.html: Added.
+        * fast/text/user-installed-fonts/shadow-disable-expected-mismatch.html: Added.
+        * fast/text/user-installed-fonts/shadow-disable.html: Added.
+        * fast/text/user-installed-fonts/shadow-expected.html: Added.
+        * fast/text/user-installed-fonts/shadow-family-disable-expected-mismatch.html: Added.
+        * fast/text/user-installed-fonts/shadow-family-disable.html: Added.
+        * fast/text/user-installed-fonts/shadow-family-expected.html: Added.
+        * fast/text/user-installed-fonts/shadow-family.html: Added.
+        * fast/text/user-installed-fonts/shadow-postscript-disable-expected-mismatch.html: Added.
+        * fast/text/user-installed-fonts/shadow-postscript-disable.html: Added.
+        * fast/text/user-installed-fonts/shadow-postscript-expected.html: Added.
+        * fast/text/user-installed-fonts/shadow-postscript-family-disable-expected-mismatch.html: Added.
+        * fast/text/user-installed-fonts/shadow-postscript-family-disable.html: Added.
+        * fast/text/user-installed-fonts/shadow-postscript-family-expected.html: Added.
+        * fast/text/user-installed-fonts/shadow-postscript-family.html: Added.
+        * fast/text/user-installed-fonts/shadow-postscript.html: Added.
+        * fast/text/user-installed-fonts/shadow.html: Added.
+        * platform/gtk/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2017-12-07  John Wilander  <wilander@apple.com>
 
         Move all tests under http/tests/loading/resourceLoadStatistics/ to http/tests/resourceLoadStatistics/ and remove expected failures

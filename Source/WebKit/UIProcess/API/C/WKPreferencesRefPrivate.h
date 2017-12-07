@@ -544,6 +544,10 @@ WK_EXPORT bool WKPreferencesGetStorageAccessAPIEnabled(WKPreferencesRef);
 // Defaults to false
 WK_EXPORT void WKPreferencesSetAccessibilityObjectModelEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetAccessibilityObjectModelEnabled(WKPreferencesRef);
+
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetShouldDisallowUserInstalledFonts(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetShouldDisallowUserInstalledFonts(WKPreferencesRef);
     
 #ifdef __cplusplus
 }

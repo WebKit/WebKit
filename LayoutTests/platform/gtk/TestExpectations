@@ -3357,6 +3357,8 @@ webkit.org/b/179052 compositing/contents-format/subpixel-antialiased-nested-laye
 
 webkit.org/b/180371 fast/attachment/attachment-without-appearance.html [ ImageOnlyFailure ]
 
+webkit.org/b/180062 fast/text/user-installed-fonts [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

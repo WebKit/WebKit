@@ -28,6 +28,7 @@
 
 #include "CSSFontFaceSource.h"
 #include "CSSFontFamily.h"
+#include "CSSFontSelector.h"
 #include "CSSFontStyleValue.h"
 #include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
@@ -103,7 +104,10 @@ void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const String& famil
     if (m_locallyInstalledFacesLookupTable.contains(familyName))
         return;
 
-    Vector<FontSelectionCapabilities> capabilities = FontCache::singleton().getFontSelectionCapabilitiesInFamily(familyName);
+    FontCache::AllowUserInstalledFonts allowUserInstalledFonts = FontCache::AllowUserInstalledFonts::Yes;
+    if (m_owningFontSelector->document() && m_owningFontSelector->document()->settings().shouldDisallowUserInstalledFonts())
+        allowUserInstalledFonts = FontCache::AllowUserInstalledFonts::No;
+    Vector<FontSelectionCapabilities> capabilities = FontCache::singleton().getFontSelectionCapabilitiesInFamily(familyName, allowUserInstalledFonts);
     if (capabilities.isEmpty())
         return;
 

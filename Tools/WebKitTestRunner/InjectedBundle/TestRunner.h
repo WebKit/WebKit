@@ -410,6 +410,8 @@ public:
     void getApplicationManifestThen(JSValueRef);
     void didGetApplicationManifest();
 
+    void installFakeHelvetica(JSStringRef configuration);
+
 private:
     TestRunner();
 
