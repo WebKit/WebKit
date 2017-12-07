@@ -386,7 +386,16 @@ RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes 
     return context;
 }
 
-GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWindow*, GraphicsContext3D::RenderStyle)
+Ref<GraphicsContext3D> GraphicsContext3D::createShared(GraphicsContext3D& sharedContext)
+{
+    auto context = adoptRef(*new GraphicsContext3D(sharedContext.getContextAttributes(), nullptr, sharedContext.m_renderStyle, &sharedContext));
+
+    manager().addContext(context.ptr());
+
+    return context;
+}
+
+GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWindow*, GraphicsContext3D::RenderStyle, GraphicsContext3D* sharedContext)
     : m_attrs(attrs)
 #if PLATFORM(IOS)
     , m_compiler(SH_ESSL_OUTPUT)
@@ -395,7 +404,10 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
 {
 #if PLATFORM(IOS)
     EAGLRenderingAPI api = m_attrs.useGLES3 ? kEAGLRenderingAPIOpenGLES3 : kEAGLRenderingAPIOpenGLES2;
-    m_contextObj = [[EAGLContext alloc] initWithAPI:api];
+    if (!sharedContext)
+        m_contextObj = [[EAGLContext alloc] initWithAPI:api];
+    else
+        m_contextObj = [[EAGLContext alloc] initWithAPI:api sharegroup:sharedContext->m_contextObj.sharegroup];
     makeContextCurrent();
 #else
     Vector<CGLPixelFormatAttribute> attribs;
@@ -442,7 +454,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     if (!numPixelFormats)
         return;
 
-    CGLError err = CGLCreateContext(pixelFormatObj, 0, &m_contextObj);
+    CGLError err = CGLCreateContext(pixelFormatObj, sharedContext ? sharedContext->m_contextObj : nullptr, &m_contextObj);
     GLint abortOnBlacklist = 0;
 #if PLATFORM(MAC)
     CGLSetParameter(m_contextObj, kCGLCPAbortOnGPURestartStatusBlacklisted, &abortOnBlacklist);

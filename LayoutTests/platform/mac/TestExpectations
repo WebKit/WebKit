@@ -1725,9 +1725,6 @@ webkit.org/b/176878 [ Debug ] fast/multicol/spanner-crash-when-adding-summary.ht
 # <rdar://problem/33850189>
 [ HighSierra+ ] http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
 
-# <rdar://problem/34507977>
-webkit.org/b/177119 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Pass Failure ]
-
 # Release logging not supported
 [ ElCapitan ] inspector/console/webcore-logging.html [ Skip ]
 

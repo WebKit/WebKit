@@ -185,8 +185,10 @@ bool WebCoreDecompressionSession::shouldDecodeSample(CMSampleBufferRef sample, b
         return true;
 
     auto currentTime = CMTimebaseGetTime(m_timebase.get());
-    auto presentationTimeStamp = CMSampleBufferGetPresentationTimeStamp(sample);
-    if (CMTimeCompare(presentationTimeStamp, currentTime) >= 0)
+    auto presentationStartTime = CMSampleBufferGetPresentationTimeStamp(sample);
+    auto duration = CMSampleBufferGetDuration(sample);
+    auto presentationEndTime = CMTimeAdd(presentationStartTime, duration);
+    if (CMTimeCompare(presentationEndTime, currentTime) >= 0)
         return true;
 
     CFArrayRef attachments = CMSampleBufferGetSampleAttachmentsArray(sample, false);

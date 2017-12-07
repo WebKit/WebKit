@@ -648,7 +648,6 @@ void MediaPlayerPrivateAVFoundationObjC::destroyContextVideoRenderer()
 {
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     destroyVideoOutput();
-    destroyOpenGLVideoOutput();
 #endif
     destroyImageGenerator();
 }
@@ -752,6 +751,9 @@ bool MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame() const
 {
     if (currentRenderingMode() == MediaRenderingToLayer)
         return m_cachedIsReadyForDisplay;
+
+    if (m_videoOutput && (m_lastPixelBuffer || [m_videoOutput hasNewPixelBufferForItemTime:[m_avPlayerItem currentTime]]))
+        return true;
 
     return m_videoFrameHasDrawn;
 }
@@ -2292,7 +2294,7 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoOutput()
     m_videoOutput = 0;
 }
 
-RetainPtr<CVPixelBufferRef> MediaPlayerPrivateAVFoundationObjC::createPixelBuffer()
+bool MediaPlayerPrivateAVFoundationObjC::updateLastPixelBuffer()
 {
     if (!m_videoOutput)
         createVideoOutput();
@@ -2301,9 +2303,11 @@ RetainPtr<CVPixelBufferRef> MediaPlayerPrivateAVFoundationObjC::createPixelBuffe
     CMTime currentTime = [m_avPlayerItem.get() currentTime];
 
     if (![m_videoOutput.get() hasNewPixelBufferForItemTime:currentTime])
-        return 0;
+        return false;
 
-    return adoptCF([m_videoOutput.get() copyPixelBufferForItemTime:currentTime itemTimeForDisplay:nil]);
+    m_lastPixelBuffer = adoptCF([m_videoOutput.get() copyPixelBufferForItemTime:currentTime itemTimeForDisplay:nil]);
+    m_lastImage = nullptr;
+    return true;
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::videoOutputHasAvailableFrame()
@@ -2322,12 +2326,10 @@ bool MediaPlayerPrivateAVFoundationObjC::videoOutputHasAvailableFrame()
 
 void MediaPlayerPrivateAVFoundationObjC::updateLastImage()
 {
-    RetainPtr<CVPixelBufferRef> pixelBuffer = createPixelBuffer();
-
     // Calls to copyPixelBufferForItemTime:itemTimeForDisplay: may return nil if the pixel buffer
     // for the requested time has already been retrieved. In this case, the last valid image (if any)
     // should be displayed.
-    if (!pixelBuffer)
+    if (!updateLastPixelBuffer() && (m_lastImage || !m_lastPixelBuffer))
         return;
 
     if (!m_pixelBufferConformer) {
@@ -2343,7 +2345,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage()
     double start = monotonicallyIncreasingTime();
 #endif
 
-    m_lastImage = m_pixelBufferConformer->createImageFromPixelBuffer(pixelBuffer.get());
+    m_lastImage = m_pixelBufferConformer->createImageFromPixelBuffer(m_lastPixelBuffer.get());
 
 #if !RELEASE_LOG_DISABLED
     DEBUG_LOG(LOGIDENTIFIER, "creating buffer took ", monotonicallyIncreasingTime() - start);
@@ -2381,76 +2383,21 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& c
 
 }
 
-void MediaPlayerPrivateAVFoundationObjC::createOpenGLVideoOutput()
-{
-    INFO_LOG(LOGIDENTIFIER);
-
-    if (!m_avPlayerItem || m_openGLVideoOutput)
-        return;
-
-#if PLATFORM(IOS)
-    NSDictionary* attributes = @{(NSString *)kCVPixelBufferIOSurfaceOpenGLESFBOCompatibilityKey: @YES};
-#else
-    NSDictionary* attributes = @{(NSString *)kCVPixelBufferIOSurfaceOpenGLFBOCompatibilityKey: @YES};
-#endif
-    m_openGLVideoOutput = adoptNS([[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes]);
-    ASSERT(m_openGLVideoOutput);
-
-    [m_avPlayerItem.get() addOutput:m_openGLVideoOutput.get()];
-}
-
-void MediaPlayerPrivateAVFoundationObjC::destroyOpenGLVideoOutput()
-{
-    if (!m_openGLVideoOutput)
-        return;
-
-    INFO_LOG(LOGIDENTIFIER);
-
-    if (m_avPlayerItem)
-        [m_avPlayerItem.get() removeOutput:m_openGLVideoOutput.get()];
-
-    m_openGLVideoOutput = 0;
-}
-
-void MediaPlayerPrivateAVFoundationObjC::updateLastOpenGLImage()
-{
-    if (!m_openGLVideoOutput)
-        return;
-
-    CMTime currentTime = [m_openGLVideoOutput itemTimeForHostTime:CACurrentMediaTime()];
-    if (![m_openGLVideoOutput hasNewPixelBufferForItemTime:currentTime])
-        return;
-
-    m_lastOpenGLImage = adoptCF([m_openGLVideoOutput copyPixelBufferForItemTime:currentTime itemTimeForDisplay:nil]);
-}
-
 bool MediaPlayerPrivateAVFoundationObjC::copyVideoTextureToPlatformTexture(GraphicsContext3D* context, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY)
 {
     ASSERT(context);
 
-    if (!m_openGLVideoOutput)
-        createOpenGLVideoOutput();
-
-    updateLastOpenGLImage();
-
-    if (!m_lastOpenGLImage)
+    updateLastPixelBuffer();
+    if (!m_lastPixelBuffer)
         return false;
 
-    size_t width = CVPixelBufferGetWidth(m_lastOpenGLImage.get());
-    size_t height = CVPixelBufferGetHeight(m_lastOpenGLImage.get());
-
-    if (!m_textureCache) {
-        m_textureCache = TextureCacheCV::create(*context);
-        if (!m_textureCache)
-            return false;
-    }
-
-    RetainPtr<CVOpenGLTextureRef> videoTexture = m_textureCache->textureFromImage(m_lastOpenGLImage.get(), outputTarget, level, internalFormat, format, type);
+    size_t width = CVPixelBufferGetWidth(m_lastPixelBuffer.get());
+    size_t height = CVPixelBufferGetHeight(m_lastPixelBuffer.get());
 
     if (!m_videoTextureCopier)
         m_videoTextureCopier = std::make_unique<VideoTextureCopierCV>(*context);
 
-    return m_videoTextureCopier->copyVideoTextureToPlatformTexture(videoTexture.get(), width, height, outputTexture, outputTarget, level, internalFormat, format, type, premultiplyAlpha, flipY);
+    return m_videoTextureCopier->copyImageToPlatformTexture(m_lastPixelBuffer.get(), width, height, outputTexture, outputTarget, level, internalFormat, format, type, premultiplyAlpha, flipY);
 }
 
 NativeImagePtr MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime()

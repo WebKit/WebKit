@@ -58,11 +58,6 @@ OBJC_CLASS AVAssetResourceLoadingRequest;
 
 typedef struct CGImage *CGImageRef;
 typedef struct __CVBuffer *CVPixelBufferRef;
-#if PLATFORM(IOS)
-typedef struct  __CVOpenGLESTextureCache *CVOpenGLESTextureCacheRef;
-#else
-typedef struct __CVOpenGLTextureCache* CVOpenGLTextureCacheRef;
-#endif
 
 namespace WebCore {
 
@@ -265,16 +260,12 @@ private:
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     void createVideoOutput();
     void destroyVideoOutput();
-    RetainPtr<CVPixelBufferRef> createPixelBuffer();
+    bool updateLastPixelBuffer();
     void updateLastImage();
     bool videoOutputHasAvailableFrame();
     void paintWithVideoOutput(GraphicsContext&, const FloatRect&);
     NativeImagePtr nativeImageForCurrentTime() override;
     void waitForVideoOutputMediaDataWillChange();
-
-    void createOpenGLVideoOutput();
-    void destroyOpenGLVideoOutput();
-    void updateLastOpenGLImage();
 
     bool copyVideoTextureToPlatformTexture(GraphicsContext3D*, Platform3DObject, GC3Denum target, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY) override;
 #endif
@@ -363,13 +354,10 @@ private:
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     RetainPtr<AVPlayerItemVideoOutput> m_videoOutput;
     RetainPtr<WebCoreAVFPullDelegate> m_videoOutputDelegate;
+    RetainPtr<CVPixelBufferRef> m_lastPixelBuffer;
     RetainPtr<CGImageRef> m_lastImage;
     dispatch_semaphore_t m_videoOutputSemaphore;
-
-    RetainPtr<AVPlayerItemVideoOutput> m_openGLVideoOutput;
-    std::unique_ptr<TextureCacheCV> m_textureCache;
     std::unique_ptr<VideoTextureCopierCV> m_videoTextureCopier;
-    RetainPtr<CVPixelBufferRef> m_lastOpenGLImage;
 #endif
 
     std::unique_ptr<PixelBufferConformerCV> m_pixelBufferConformer;

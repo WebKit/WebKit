@@ -745,6 +745,10 @@ public:
     ~GraphicsContext3D();
 
 #if PLATFORM(COCOA)
+    static Ref<GraphicsContext3D> createShared(GraphicsContext3D& sharedContext);
+#endif
+
+#if PLATFORM(COCOA)
     PlatformGraphicsContext3D platformGraphicsContext3D() const { return m_contextObj; }
     Platform3DObject platformTexture() const { return m_texture; }
     CALayer* platformLayer() const { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }
@@ -1287,7 +1291,7 @@ public:
     unsigned textureSeed(GC3Duint texture) { return m_state.textureSeedCount.count(texture); }
 
 private:
-    GraphicsContext3D(GraphicsContext3DAttributes, HostWindow*, RenderStyle = RenderOffscreen);
+    GraphicsContext3D(GraphicsContext3DAttributes, HostWindow*, RenderStyle = RenderOffscreen, GraphicsContext3D* sharedContext = nullptr);
 
     // Helper for packImageData/extractImageData/extractTextureData which implement packing of pixel
     // data into the specified OpenGL destination format and type.
