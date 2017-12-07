@@ -1,3 +1,17 @@
+2017-12-07  Alex Christensen  <achristensen@webkit.org>
+
+        Always synchronously continue with fragment navigations
+        https://bugs.webkit.org/show_bug.cgi?id=180544
+        <rdar://problem/34815986> and <rdar://problem/35126690>
+
+        Reviewed by Geoffrey Garen.
+
+        * http/tests/dom/document-fragment-expected.txt: Added.
+        * http/tests/dom/document-fragment.html: Added.
+        Add a test that verifies that the fragment of the document is set immediately during a fragment navigation,
+        even if decidePolicyForNavigationAction is called asynchronously.  Also verify the order of various events
+        associated with the navigation.
+
 2017-12-07  Youenn Fablet  <youenn@apple.com>
 
         Activate IDB and WebSockets in service workers

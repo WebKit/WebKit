@@ -1,3 +1,16 @@
+2017-12-07  Alex Christensen  <achristensen@webkit.org>
+
+        Always synchronously continue with fragment navigations
+        https://bugs.webkit.org/show_bug.cgi?id=180544
+        <rdar://problem/34815986> and <rdar://problem/35126690>
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DecidePolicyForNavigationAction.mm:
+        (-[DecidePolicyForNavigationActionFragmentDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (TEST):
+        Add a test that verifies that decidePolicyForNavigationAction is called for fragment navigations.
+
 2017-12-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Add SPI to disallow user-installed fonts

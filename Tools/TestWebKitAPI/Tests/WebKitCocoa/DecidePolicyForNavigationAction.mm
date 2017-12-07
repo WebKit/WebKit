@@ -526,6 +526,41 @@ TEST(WebKit, DecidePolicyForNavigationActionForPOSTFormSubmissionThatRedirectsTo
     action = nullptr;
 }
 
+static size_t calls;
+static bool done;
+
+@interface DecidePolicyForNavigationActionFragmentDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation DecidePolicyForNavigationActionFragmentDelegate
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    decisionHandler(WKNavigationActionPolicyAllow);
+    const char* url = navigationAction.request.URL.absoluteString.UTF8String;
+    switch (calls++) {
+    case 0:
+        EXPECT_STREQ(url, "http://webkit.org/");
+        return;
+    case 1:
+        EXPECT_STREQ(url, "http://webkit.org/#fragment");
+        done = true;
+        return;
+    }
+    ASSERT_NOT_REACHED();
+}
+
+@end
+
+TEST(WebKit, DecidePolicyForNavigationActionFragment)
+{
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto delegate = adoptNS([[DecidePolicyForNavigationActionFragmentDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadHTMLString:@"<script>window.location.href='#fragment';</script>" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    TestWebKitAPI::Util::run(&done);
+}
+
 #endif
 
 #endif

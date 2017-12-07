@@ -1315,9 +1315,8 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
         oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
         policyChecker().setLoadType(newLoadType);
-        policyChecker().checkNavigationPolicy(WTFMove(request), false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState, [this] (const ResourceRequest& request, FormState*, bool shouldContinue) {
-            continueFragmentScrollAfterNavigationPolicy(request, shouldContinue);
-        });
+        continueFragmentScrollAfterNavigationPolicy(request, true);
+        policyChecker().checkNavigationPolicy(WTFMove(request), false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState, [] (const ResourceRequest&, FormState*, bool) { });
         return;
     }
 
@@ -1475,9 +1474,8 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         oldDocumentLoader->setTriggeringAction(action);
         oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
-        policyChecker().checkNavigationPolicy(ResourceRequest(loader->request()), false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState, [this] (const ResourceRequest& request, FormState*, bool shouldContinue) {
-            continueFragmentScrollAfterNavigationPolicy(request, shouldContinue);
-        });
+        continueFragmentScrollAfterNavigationPolicy(loader->request(), true);
+        policyChecker().checkNavigationPolicy(ResourceRequest(loader->request()), false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState, [] (const ResourceRequest&, FormState*, bool) { });
         return;
     }
 
