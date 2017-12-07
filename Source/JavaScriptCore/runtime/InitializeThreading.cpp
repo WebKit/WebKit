@@ -59,7 +59,7 @@ void initializeThreading()
 
     std::call_once(initializeThreadingOnceFlag, []{
         WTF::initializeThreading();
-        initializeScrambledPtrKeys();
+        initializePoison();
         Options::initialize();
 #if ENABLE(WRITE_BARRIER_PROFILING)
         WriteBarrierCounters::initialize();

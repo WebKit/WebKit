@@ -1,3 +1,47 @@
+2017-12-07  Mark Lam  <mark.lam@apple.com>
+
+        [Re-landing r225620] Refactoring: Rename ScrambledPtr to Poisoned.
+        https://bugs.webkit.org/show_bug.cgi?id=180514
+
+        Reviewed by Saam Barati and JF Bastien.
+
+        Re-landing r225620 with speculative build fix for GCC 7.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Poisoned.cpp: Copied from Source/WTF/wtf/ScrambledPtr.cpp.
+        (WTF::makePoison):
+        (WTF::makeScrambledPtrKey): Deleted.
+        * wtf/Poisoned.h: Copied from Source/WTF/wtf/ScrambledPtr.h.
+        (WTF::PoisonedImpl::PoisonedImpl):
+        (WTF::PoisonedImpl::assertIsPoisoned const):
+        (WTF::PoisonedImpl::assertIsNotPoisoned const):
+        (WTF::PoisonedImpl::unpoisoned const):
+        (WTF::PoisonedImpl::operator-> const):
+        (WTF::PoisonedImpl::bits const):
+        (WTF::PoisonedImpl::operator! const):
+        (WTF::PoisonedImpl::operator bool const):
+        (WTF::PoisonedImpl::operator== const):
+        (WTF::PoisonedImpl::operator==):
+        (WTF::PoisonedImpl::operator=):
+        (WTF::PoisonedImpl::poison):
+        (WTF::PoisonedImpl::unpoison):
+        (WTF::ScrambledPtr::ScrambledPtr): Deleted.
+        (WTF::ScrambledPtr::assertIsScrambled const): Deleted.
+        (WTF::ScrambledPtr::assertIsNotScrambled const): Deleted.
+        (WTF::ScrambledPtr::descrambled const): Deleted.
+        (WTF::ScrambledPtr::operator-> const): Deleted.
+        (WTF::ScrambledPtr::bits const): Deleted.
+        (WTF::ScrambledPtr::operator! const): Deleted.
+        (WTF::ScrambledPtr::operator bool const): Deleted.
+        (WTF::ScrambledPtr::operator== const): Deleted.
+        (WTF::ScrambledPtr::operator==): Deleted.
+        (WTF::ScrambledPtr::operator=): Deleted.
+        (WTF::ScrambledPtr::scramble): Deleted.
+        (WTF::ScrambledPtr::descramble): Deleted.
+        * wtf/ScrambledPtr.cpp: Removed.
+        * wtf/ScrambledPtr.h: Removed.
+
 2017-12-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r225620

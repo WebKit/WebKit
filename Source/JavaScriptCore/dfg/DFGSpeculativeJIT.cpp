@@ -868,7 +868,7 @@ void SpeculativeJIT::checkArray(Node* node)
         m_jit.branchPtr(
             MacroAssembler::NotEqual,
             MacroAssembler::Address(temp.gpr(), Structure::classInfoOffset()),
-            TrustedImmPtr(ClassInfoScrambledPtr(expectedClassInfo).bits())));
+            TrustedImmPtr(PoisonedClassInfoPtr(expectedClassInfo).bits())));
 
     noResult(m_currentNode);
 }
@@ -8706,7 +8706,7 @@ void SpeculativeJIT::compileCheckSubClass(Node* node)
         m_jit.emitLoadStructure(*m_jit.vm(), baseGPR, otherGPR, specifiedGPR);
         m_jit.loadPtr(CCallHelpers::Address(otherGPR, Structure::classInfoOffset()), otherGPR);
 #if USE(JSVALUE64)
-        m_jit.move(CCallHelpers::TrustedImm64(g_classInfoScrambledPtrKey), specifiedGPR);
+        m_jit.move(CCallHelpers::TrustedImm64(g_classInfoPoison), specifiedGPR);
         m_jit.xor64(specifiedGPR, otherGPR);
 #endif
         m_jit.move(CCallHelpers::TrustedImmPtr(node->classInfo()), specifiedGPR);
@@ -9003,7 +9003,7 @@ void SpeculativeJIT::compileNewStringObject(Node* node)
         slowPath);
     
     m_jit.storePtr(
-        TrustedImmPtr(ClassInfoScrambledPtr(StringObject::info()).bits()),
+        TrustedImmPtr(PoisonedClassInfoPtr(StringObject::info()).bits()),
         JITCompiler::Address(resultGPR, JSDestructibleObject::classInfoOffset()));
 #if USE(JSVALUE64)
     m_jit.store64(
@@ -9774,7 +9774,7 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
 }
 
 void SpeculativeJIT::emitSwitchIntJump(
-    SwitchData* data, GPRReg value, GPRReg scratch, GPRReg descramblerKeyScratch)
+    SwitchData* data, GPRReg value, GPRReg scratch, GPRReg poisonScratch)
 {
     SimpleJumpTable& table = m_jit.codeBlock()->switchJumpTable(data->switchTableIndex);
     table.ensureCTITable();
@@ -9782,15 +9782,15 @@ void SpeculativeJIT::emitSwitchIntJump(
     addBranch(
         m_jit.branch32(JITCompiler::AboveOrEqual, value, Imm32(table.ctiOffsets.size())),
         data->fallThrough.block);
-    UNUSED_PARAM(descramblerKeyScratch); // Placate the 32-bit build.
+    UNUSED_PARAM(poisonScratch); // Placate the 32-bit build.
 #if USE(JSVALUE64)
-    m_jit.move(TrustedImm64(g_masmScrambledPtrKey), descramblerKeyScratch);
+    m_jit.move(TrustedImm64(g_masmPoison), poisonScratch);
 #endif
     m_jit.move(TrustedImmPtr(table.ctiOffsets.begin()), scratch);
     m_jit.loadPtr(JITCompiler::BaseIndex(scratch, value, JITCompiler::timesPtr()), scratch);
     
 #if USE(JSVALUE64)
-    m_jit.xor64(descramblerKeyScratch, scratch);
+    m_jit.xor64(poisonScratch, scratch);
 #endif
     m_jit.jump(scratch);
     data->didUseJumpTable = true;

@@ -107,6 +107,7 @@ set(WTF_HEADERS
     ParkingLot.h
     Platform.h
     PlatformRegisters.h
+    Poisoned.h
     PrintStream.h
     ProcessID.h
     RAMSize.h
@@ -130,7 +131,6 @@ set(WTF_HEADERS
     SharedTask.h
     SaturatedArithmetic.h
     ScopedLambda.h
-    ScrambledPtr.h
     Seconds.h
     SegmentedVector.h
     SmallPtrSet.h
@@ -258,6 +258,7 @@ set(WTF_SOURCES
     ParallelHelperPool.cpp
     ParallelJobsGeneric.cpp
     ParkingLot.cpp
+    Poisoned.cpp
     PrintStream.cpp
     RAMSize.cpp
     RandomDevice.cpp
@@ -266,7 +267,6 @@ set(WTF_SOURCES
     RefCountedLeakCounter.cpp
     RunLoop.cpp
     SHA1.cpp
-    ScrambledPtr.cpp
     Seconds.cpp
     SixCharacterHash.cpp
     StackBounds.cpp

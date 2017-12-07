@@ -27,7 +27,7 @@
 #ifndef JSCallbackObject_h
 #define JSCallbackObject_h
 
-#include "JSCScrambledPtr.h"
+#include "JSCPoisonedPtr.h"
 #include "JSObjectRef.h"
 #include "JSValueRef.h"
 #include "JSObject.h"
@@ -234,7 +234,7 @@ private:
     static EncodedJSValue callbackGetter(ExecState*, EncodedJSValue, PropertyName);
 
     std::unique_ptr<JSCallbackObjectData> m_callbackObjectData;
-    ClassInfoScrambledPtr m_classInfo;
+    PoisonedClassInfoPtr m_classInfo;
 };
 
 } // namespace JSC

@@ -1720,7 +1720,7 @@
 		FE1C0FFD1B193E9800B53FCA /* Exception.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1C0FFC1B193E9800B53FCA /* Exception.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE20CE9E15F04A9500DF3430 /* LLIntCLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = FE20CE9C15F04A9500DF3430 /* LLIntCLoop.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE2A87601F02381600EB31B2 /* MinimumReservedZoneSize.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2A875F1F02381600EB31B2 /* MinimumReservedZoneSize.h */; };
-		FE2B0B691FD227E00075DA5F /* JSCScrambledPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2B0B671FD0D2960075DA5F /* JSCScrambledPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE2B0B691FD227E00075DA5F /* JSCPoisonedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2B0B671FD0D2960075DA5F /* JSCPoisonedPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE3022D31E3D73A500BAC493 /* SigillCrashAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3022D11E3D739600BAC493 /* SigillCrashAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE3022D71E42857300BAC493 /* VMInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3022D51E42856700BAC493 /* VMInspector.h */; };
 		FE318FE01CAC982F00DFCC54 /* ECMAScriptSpecInternalFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = FE318FDE1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.h */; };
@@ -4598,8 +4598,8 @@
 		FE20CE9B15F04A9500DF3430 /* LLIntCLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntCLoop.cpp; path = llint/LLIntCLoop.cpp; sourceTree = "<group>"; };
 		FE20CE9C15F04A9500DF3430 /* LLIntCLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntCLoop.h; path = llint/LLIntCLoop.h; sourceTree = "<group>"; };
 		FE2A875F1F02381600EB31B2 /* MinimumReservedZoneSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MinimumReservedZoneSize.h; sourceTree = "<group>"; };
-		FE2B0B671FD0D2960075DA5F /* JSCScrambledPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCScrambledPtr.h; sourceTree = "<group>"; };
-		FE2B0B681FD0D2970075DA5F /* JSCScrambledPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCScrambledPtr.cpp; sourceTree = "<group>"; };
+		FE2B0B671FD0D2960075DA5F /* JSCPoisonedPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCPoisonedPtr.h; sourceTree = "<group>"; };
+		FE2B0B681FD0D2970075DA5F /* JSCPoisonedPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCPoisonedPtr.cpp; sourceTree = "<group>"; };
 		FE2E6A7A1D6EA5FE0060F896 /* ThrowScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThrowScope.cpp; sourceTree = "<group>"; };
 		FE3022D01E3D739600BAC493 /* SigillCrashAnalyzer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SigillCrashAnalyzer.cpp; sourceTree = "<group>"; };
 		FE3022D11E3D739600BAC493 /* SigillCrashAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SigillCrashAnalyzer.h; sourceTree = "<group>"; };
@@ -6543,8 +6543,8 @@
 				F692A8870255597D01FF60F7 /* JSCJSValue.cpp */,
 				14ABB36E099C076400E2A24F /* JSCJSValue.h */,
 				865A30F0135007E100CDB49E /* JSCJSValueInlines.h */,
-				FE2B0B681FD0D2970075DA5F /* JSCScrambledPtr.cpp */,
-				FE2B0B671FD0D2960075DA5F /* JSCScrambledPtr.h */,
+				FE2B0B681FD0D2970075DA5F /* JSCPoisonedPtr.cpp */,
+				FE2B0B671FD0D2960075DA5F /* JSCPoisonedPtr.h */,
 				72AAF7CB1D0D318B005E60BE /* JSCustomGetterSetterFunction.cpp */,
 				72AAF7CC1D0D318B005E60BE /* JSCustomGetterSetterFunction.h */,
 				0F2B66BD17B6B5AB00A7AE3F /* JSDataView.cpp */,
@@ -8155,7 +8155,7 @@
 				0FEC852A1BDACDAC0080FF74 /* B3PhaseScope.h in Headers */,
 				0F37308D1C0BD29100052BFA /* B3PhiChildren.h in Headers */,
 				0FEC852C1BDACDAC0080FF74 /* B3Procedure.h in Headers */,
-				FE2B0B691FD227E00075DA5F /* JSCScrambledPtr.h in Headers */,
+				FE2B0B691FD227E00075DA5F /* JSCPoisonedPtr.h in Headers */,
 				0FEC852D1BDACDAC0080FF74 /* B3ProcedureInlines.h in Headers */,
 				0F725CAA1C503DED00AD943A /* B3PureCSE.h in Headers */,
 				43422A671C16267800E2EB98 /* B3ReduceDoubleToFloat.h in Headers */,

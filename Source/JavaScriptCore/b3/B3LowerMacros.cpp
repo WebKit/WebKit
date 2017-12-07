@@ -505,12 +505,12 @@ private:
                         
                         GPRReg index = params[0].gpr();
                         GPRReg scratch = params.gpScratch(0);
-                        GPRReg descramblerKey = params.gpScratch(1);
+                        GPRReg poisonScratch = params.gpScratch(1);
 
-                        jit.move(CCallHelpers::TrustedImm64(g_masmScrambledPtrKey), descramblerKey);
+                        jit.move(CCallHelpers::TrustedImm64(g_masmPoison), poisonScratch);
                         jit.move(CCallHelpers::TrustedImmPtr(jumpTable), scratch);
                         jit.load64(CCallHelpers::BaseIndex(scratch, index, CCallHelpers::timesPtr()), scratch);
-                        jit.xor64(descramblerKey, scratch);
+                        jit.xor64(poisonScratch, scratch);
                         jit.jump(scratch);
 
                         // These labels are guaranteed to be populated before either late paths or

@@ -13030,12 +13030,12 @@ void testInterpreter()
                 params.proc().addDataSection(sizeof(MacroAssemblerCodePtr) * labels.size()));
 
             GPRReg scratch = params.gpScratch(0);
-            GPRReg descramblerKey = params.gpScratch(1);
+            GPRReg poisonScratch = params.gpScratch(1);
 
             jit.move(CCallHelpers::TrustedImmPtr(jumpTable), scratch);
-            jit.move(CCallHelpers::TrustedImm64(g_masmScrambledPtrKey), descramblerKey);
+            jit.move(CCallHelpers::TrustedImm64(g_masmPoison), poisonScratch);
             jit.load64(CCallHelpers::BaseIndex(scratch, params[0].gpr(), CCallHelpers::timesPtr()), scratch);
-            jit.xor64(descramblerKey, scratch);
+            jit.xor64(poisonScratch, scratch);
             jit.jump(scratch);
 
             jit.addLinkTask(
