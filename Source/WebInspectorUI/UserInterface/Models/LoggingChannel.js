@@ -52,9 +52,6 @@ WI.LoggingChannel = class LoggingChannel
 
 WI.LoggingChannel.Level = {
     Off: "off",
-    Log: "log",
-    Error: "error",
-    Warning: "warning",
-    Info: "info",
-    Debug: "debug",
+    Basic: "basic",
+    Verbose: "verbose",
 };
