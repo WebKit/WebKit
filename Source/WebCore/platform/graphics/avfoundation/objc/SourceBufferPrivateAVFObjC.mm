@@ -108,9 +108,11 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 
 @interface WebAVStreamDataParserListener : NSObject<AVStreamDataParserOutputHandling> {
     WeakPtr<WebCore::SourceBufferPrivateAVFObjC> _parent;
+    OSObjectPtr<dispatch_semaphore_t> _abortSemaphore;
     AVStreamDataParser* _parser;
 }
 @property (assign) WeakPtr<WebCore::SourceBufferPrivateAVFObjC> parent;
+@property (assign) OSObjectPtr<dispatch_semaphore_t> abortSemaphore;
 - (id)initWithParser:(AVStreamDataParser*)parser parent:(WeakPtr<WebCore::SourceBufferPrivateAVFObjC>)parent;
 @end
 
@@ -129,6 +131,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 }
 
 @synthesize parent=_parent;
+@synthesize abortSemaphore=_abortSemaphore;
 
 - (void)dealloc
 {
@@ -203,10 +206,22 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 
     // We must call synchronously to the main thread, as the AVStreamSession must be associated
     // with the streamDataParser before the delegate method returns.
-    dispatch_sync(dispatch_get_main_queue(), [parent = _parent, trackID]() {
+    OSObjectPtr<dispatch_semaphore_t> respondedSemaphore = adoptOSObject(dispatch_semaphore_create(0));
+    callOnMainThread([parent = _parent, trackID, respondedSemaphore]() {
         if (parent)
             parent->willProvideContentKeyRequestInitializationDataForTrackID(trackID);
+        dispatch_semaphore_signal(respondedSemaphore.get());
     });
+
+    while (true) {
+        if (!dispatch_semaphore_wait(respondedSemaphore.get(), dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_MSEC * 100)))
+            return;
+
+        if (!dispatch_semaphore_wait(_abortSemaphore.get(), dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_MSEC * 100))) {
+            dispatch_semaphore_signal(_abortSemaphore.get());
+            return;
+        }
+    }
 }
 
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didProvideContentKeyRequestInitializationData:(NSData *)initData forTrackID:(CMPersistentTrackID)trackID
@@ -218,7 +233,16 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
         if (parent)
             parent->didProvideContentKeyRequestInitializationDataForTrackID(protectedInitData.get(), trackID, hasSessionSemaphore);
     });
-    dispatch_semaphore_wait(hasSessionSemaphore.get(), DISPATCH_TIME_FOREVER);
+
+    while (true) {
+        if (!dispatch_semaphore_wait(hasSessionSemaphore.get(), dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_MSEC * 100)))
+            return;
+
+        if (!dispatch_semaphore_wait(_abortSemaphore.get(), dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_MSEC * 100))) {
+            dispatch_semaphore_signal(_abortSemaphore.get());
+            return;
+        }
+    }
 }
 @end
 
@@ -487,6 +511,7 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
     , m_mediaSource(parent)
 {
     CMNotificationCenterAddListener(CMNotificationCenterGetDefaultLocalCenter(), this, bufferWasConsumedCallback, kCMSampleBufferConsumerNotification_BufferConsumed, nullptr, 0);
+    m_delegate.get().abortSemaphore = adoptOSObject(dispatch_semaphore_create(0));
 }
 
 SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
@@ -713,9 +738,11 @@ void SourceBufferPrivateAVFObjC::abort()
     // semaphore, the m_isAppendingGroup wait operation will deadlock.
     if (m_hasSessionSemaphore)
         dispatch_semaphore_signal(m_hasSessionSemaphore.get());
+    dispatch_semaphore_signal(m_delegate.get().abortSemaphore.get());
     dispatch_group_wait(m_isAppendingGroup.get(), DISPATCH_TIME_FOREVER);
     m_appendWeakFactory.revokeAll();
     m_delegate.get().parent = m_appendWeakFactory.createWeakPtr(*this);
+    m_delegate.get().abortSemaphore = adoptOSObject(dispatch_semaphore_create(0));
 }
 
 void SourceBufferPrivateAVFObjC::resetParserState()
