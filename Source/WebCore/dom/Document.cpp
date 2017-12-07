@@ -2339,10 +2339,10 @@ void Document::prepareForDestruction()
 #endif
 
 #if HAVE(ACCESSIBILITY)
-    // Sub-frames need to cleanup Nodes in the text marker cache when the Document disappears.
     if (this != &topDocument()) {
-        if (AXObjectCache* cache = existingAXObjectCache())
-            cache->clearTextMarkerNodesInUse(this);
+        // Let the ax cache know that this subframe goes out of scope.
+        if (auto* cache = existingAXObjectCache())
+            cache->prepareForDocumentDestruction(*this);
     }
 #endif
 

@@ -326,8 +326,8 @@ void Node::willBeDeletedFrom(Document& document)
     document.removeTouchEventHandler(*this, EventHandlerRemoval::All);
 #endif
 
-    if (AXObjectCache* cache = document.existingAXObjectCache())
-        cache->remove(this);
+    if (auto* cache = document.existingAXObjectCache())
+        cache->remove(*this);
 }
 
 void Node::materializeRareData()
@@ -2009,7 +2009,7 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
 
     if (AXObjectCache::accessibilityEnabled()) {
         if (auto* cache = oldDocument.existingAXObjectCache())
-            cache->remove(this);
+            cache->remove(*this);
     }
 
     if (auto* eventTargetData = this->eventTargetData()) {

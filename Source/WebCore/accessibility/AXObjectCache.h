@@ -158,7 +158,7 @@ public:
     AccessibilityObject* get(Node*);
     
     void remove(RenderObject*);
-    void remove(Node*);
+    void remove(Node&);
     void remove(Widget*);
     void remove(AXID);
 
@@ -320,7 +320,7 @@ public:
 
     void frameLoadingEventNotification(Frame*, AXLoadingEvent);
 
-    void clearTextMarkerNodesInUse(Document*);
+    void prepareForDocumentDestruction(const Document&);
 
     void startCachingComputedObjectAttributesUntilTreeMutates();
     void stopCachingComputedObjectAttributes();
@@ -361,7 +361,7 @@ protected:
 
     // This is a weak reference cache for knowing if Nodes used by TextMarkers are valid.
     void setNodeInUse(Node* n) { m_textMarkerNodes.add(n); }
-    void removeNodeForUse(Node* n) { m_textMarkerNodes.remove(n); }
+    void removeNodeForUse(Node& n) { m_textMarkerNodes.remove(&n); }
     bool isNodeInUse(Node* n) { return m_textMarkerNodes.contains(n); }
     
     // CharacterOffset functions.
@@ -419,7 +419,7 @@ private:
     HashMap<RenderObject*, AXID> m_renderObjectMapping;
     HashMap<Widget*, AXID> m_widgetObjectMapping;
     HashMap<Node*, AXID> m_nodeObjectMapping;
-    HashSet<Node*> m_textMarkerNodes;
+    ListHashSet<Node*> m_textMarkerNodes;
     std::unique_ptr<AXComputedObjectAttributeCache> m_computedObjectAttributeCache;
     WEBCORE_EXPORT static bool gAccessibilityEnabled;
     WEBCORE_EXPORT static bool gAccessibilityEnhancedUserInterfaceEnabled;
@@ -528,7 +528,7 @@ inline void AXObjectCache::updateCacheAfterNodeIsAttached(Node*) { }
 inline RefPtr<Range> AXObjectCache::rangeForNodeContents(Node*) { return nullptr; }
 inline void AXObjectCache::remove(AXID) { }
 inline void AXObjectCache::remove(RenderObject*) { }
-inline void AXObjectCache::remove(Node*) { }
+inline void AXObjectCache::remove(Node&) { }
 inline void AXObjectCache::remove(Widget*) { }
 inline void AXObjectCache::selectedChildrenChanged(RenderObject*) { }
 inline void AXObjectCache::selectedChildrenChanged(Node*) { }
