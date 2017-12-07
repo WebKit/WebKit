@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "TextCodec.h"
-#include <wtf/Forward.h>
+#include <pal/text/UnencodableHandling.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -47,7 +47,7 @@ public:
 
     WEBCORE_EXPORT String decode(const char*, size_t length, bool stopOnError, bool& sawError) const;
     String decode(const char*, size_t length) const;
-    CString encode(StringView, UnencodableHandling) const;
+    Vector<uint8_t> encode(StringView, UnencodableHandling) const;
 
     UChar backslashAsCurrencySymbol() const;
     bool isByteBasedEncoding() const { return !isNonByteBasedEncoding(); }

@@ -28,7 +28,6 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include <stdarg.h>
-#include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>

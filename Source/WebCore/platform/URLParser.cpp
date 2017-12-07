@@ -621,9 +621,9 @@ template<typename CharacterType>
 void URLParser::encodeQuery(const Vector<UChar>& source, const TextEncoding& encoding, CodePointIterator<CharacterType> iterator)
 {
     // FIXME: It is unclear in the spec what to do when encoding fails. The behavior should be specified and tested.
-    CString encoded = encoding.encode(StringView(source.data(), source.size()), URLEncodedEntitiesForUnencodables);
-    const char* data = encoded.data();
-    size_t length = encoded.length();
+    auto encoded = encoding.encode(StringView(source.data(), source.size()), UnencodableHandling::URLEncodedEntities);
+    auto* data = encoded.data();
+    size_t length = encoded.size();
     
     if (!length == !iterator.atEnd()) {
         syntaxViolation(iterator);

@@ -42,7 +42,6 @@
 #include <time.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
-#include <wtf/StringExtras.h>
 
 #if HAVE(LANGINFO_H)
 #include <langinfo.h>

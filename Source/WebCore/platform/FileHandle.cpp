@@ -29,8 +29,6 @@
 #include "config.h"
 #include "FileHandle.h"
 
-#include <wtf/StringExtras.h>
-
 namespace WebCore {
 
 FileHandle::FileHandle(const String& path, FileSystem::FileOpenMode mode)

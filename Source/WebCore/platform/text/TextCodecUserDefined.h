@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2007-2017 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TextCodecUserDefined_h
-#define TextCodecUserDefined_h
+#pragma once
 
 #include "TextCodec.h"
 
 namespace WebCore {
 
-    class TextCodecUserDefined : public TextCodec {
-    public:
-        static void registerEncodingNames(EncodingNameRegistrar);
-        static void registerCodecs(TextCodecRegistrar);
+class TextCodecUserDefined : public TextCodec {
+public:
+    static void registerEncodingNames(EncodingNameRegistrar);
+    static void registerCodecs(TextCodecRegistrar);
 
-        String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) override;
-        CString encode(const UChar*, size_t length, UnencodableHandling) override;
-    };
+private:
+    String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) final;
+    Vector<uint8_t> encode(StringView, UnencodableHandling) final;
+};
 
 } // namespace WebCore
-
-#endif // TextCodecUserDefined_h

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,195 +32,80 @@
 #include "config.h"
 #include "LineEnding.h"
 
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/Vector.h>
 
-namespace {
+namespace WTF {
 
-class OutputBuffer {
-public:
-    virtual uint8_t* allocate(size_t) = 0;
-    virtual void copy(const CString&) = 0;
-    virtual ~OutputBuffer() { }
-};
-
-class CStringBuffer : public OutputBuffer {
-public:
-    CStringBuffer(CString& buffer)
-        : m_buffer(buffer)
-    {
-    }
-    virtual ~CStringBuffer() { }
-
-    uint8_t* allocate(size_t size) override
-    {
-        char* ptr;
-        m_buffer = CString::newUninitialized(size, ptr);
-        return reinterpret_cast<uint8_t*>(ptr);
-    }
-
-    void copy(const CString& source) override
-    {
-        m_buffer = source;
-    }
-
-    const CString& buffer() const { return m_buffer; }
-
-private:
-    CString m_buffer;
-};
-
-#if OS(WINDOWS)
-class VectorCharAppendBuffer : public OutputBuffer {
-public:
-    VectorCharAppendBuffer(Vector<uint8_t>& buffer)
-        : m_buffer(buffer)
-    {
-    }
-    virtual ~VectorCharAppendBuffer() { }
-
-    uint8_t* allocate(size_t size) override
-    {
-        size_t oldSize = m_buffer.size();
-        m_buffer.grow(oldSize + size);
-        return m_buffer.data() + oldSize;
-    }
-
-    void copy(const CString& source) override
-    {
-        m_buffer.append(source.data(), source.length());
-    }
-
-private:
-    Vector<uint8_t>& m_buffer;
-};
-#endif
-
-void internalNormalizeLineEndingsToCRLF(const CString& from, OutputBuffer& buffer)
+Vector<uint8_t> normalizeLineEndingsToLF(Vector<uint8_t>&& vector)
 {
-    if (!from.length())
-        return;
-    // Compute the new length.
-    size_t newLen = 0;
-    const char* p = from.data();
-    while (p < from.data() + from.length()) {
-        char c = *p++;
-        if (c == '\r') {
-            // Safe to look ahead because of trailing '\0'.
-            if (*p != '\n') {
-                // Turn CR into CRLF.
-                newLen += 2;
-            }
-        } else if (c == '\n') {
-            // Turn LF into CRLF.
-            newLen += 2;
+    auto q = vector.data();
+    for (auto p = vector.data(), end = p + vector.size(); p != end; ) {
+        auto character = *p++;
+        if (character == '\r') {
+            // Turn CRLF and CR into LF.
+            if (p != end && *p == '\n')
+                ++p;
+            *q++ = '\n';
         } else {
             // Leave other characters alone.
-            newLen += 1;
+            *q++ = character;
         }
     }
-    if (newLen < from.length())
-        return;
+    vector.shrink(q - vector.data());
+    return WTFMove(vector);
+}
 
-    if (newLen == from.length()) {
-        buffer.copy(from);
-        return;
+Vector<uint8_t> normalizeLineEndingsToCRLF(Vector<uint8_t>&& source)
+{
+    size_t resultLength = 0;
+    for (auto p = source.data(), end = p + source.size(); p != end; ) {
+        auto character = *p++;
+        if (character == '\r') {
+            // Turn CR or CRLF into CRLF;
+            if (p != end && *p == '\n')
+                ++p;
+            resultLength += 2;
+        } else if (character == '\n') {
+            // Turn LF into CRLF.
+            resultLength += 2;
+        } else {
+            // Leave other characters alone.
+            resultLength += 1;
+        }
     }
 
-    p = from.data();
-    uint8_t* q = buffer.allocate(newLen);
+    if (resultLength == source.size())
+        return WTFMove(source);
 
-    // Make a copy of the string.
-    while (p < from.data() + from.length()) {
-        char c = *p++;
-        if (c == '\r') {
-            // Safe to look ahead because of trailing '\0'.
-            if (*p != '\n') {
-                // Turn CR into CRLF.
-                *q++ = '\r';
-                *q++ = '\n';
-            }
-        } else if (c == '\n') {
+    Vector<uint8_t> result(resultLength);
+    auto q = result.data();
+    for (auto p = source.data(), end = p + source.size(); p != end; ) {
+        auto character = *p++;
+        if (character == '\r') {
+            // Turn CR or CRLF into CRLF;
+            if (p != end && *p == '\n')
+                ++p;
+            *q++ = '\r';
+            *q++ = '\n';
+        } else if (character == '\n') {
             // Turn LF into CRLF.
             *q++ = '\r';
             *q++ = '\n';
         } else {
             // Leave other characters alone.
-            *q++ = c;
+            *q++ = character;
         }
     }
+    ASSERT(q == result.data() + resultLength);
+    return result;
 }
 
-};
-
-namespace WTF {
-
-// Normalize all line-endings to CR or LF.
-static void normalizeToCROrLF(const CString& from, Vector<uint8_t>& result, bool toCR)
-{
-    // Compute the new length.
-    size_t newLen = 0;
-    bool needFix = false;
-    const char* p = from.data();
-    char fromEndingChar = toCR ? '\n' : '\r';
-    char toEndingChar = toCR ? '\r' : '\n';
-    while (p < from.data() + from.length()) {
-        char c = *p++;
-        if (c == '\r' && *p == '\n') {
-            // Turn CRLF into CR or LF.
-            p++;
-            needFix = true;
-        } else if (c == fromEndingChar) {
-            // Turn CR/LF into LF/CR.
-            needFix = true;
-        }
-        newLen += 1;
-    }
-
-    // Grow the result buffer.
-    p = from.data();
-    size_t oldResultSize = result.size();
-    result.grow(oldResultSize + newLen);
-    uint8_t* q = result.data() + oldResultSize;
-
-    // If no need to fix the string, just copy the string over.
-    if (!needFix) {
-        memcpy(q, p, from.length());
-        return;
-    }
-
-    // Make a copy of the string.
-    while (p < from.data() + from.length()) {
-        char c = *p++;
-        if (c == '\r' && *p == '\n') {
-            // Turn CRLF or CR into CR or LF.
-            p++;
-            *q++ = toEndingChar;
-        } else if (c == fromEndingChar) {
-            // Turn CR/LF into LF/CR.
-            *q++ = toEndingChar;
-        } else {
-            // Leave other characters alone.
-            *q++ = c;
-        }
-    }
-}
-
-CString normalizeLineEndingsToCRLF(const CString& from)
-{
-    CString result;
-    ::CStringBuffer buffer(result);
-    internalNormalizeLineEndingsToCRLF(from, buffer);
-    return buffer.buffer();
-}
-
-void normalizeAndAppendLineEndingsToNative(const CString& from, Vector<uint8_t>& result)
+Vector<uint8_t> normalizeLineEndingsToNative(Vector<uint8_t>&& from)
 {
 #if OS(WINDOWS)
-    VectorCharAppendBuffer buffer(result);
-    internalNormalizeLineEndingsToCRLF(from, buffer);
+    return normalizeLineEndingsToCRLF(WTFMove(from));
 #else
-    normalizeToCROrLF(from, result, false);
+    return normalizeLineEndingsToLF(WTFMove(from));
 #endif
 }
 

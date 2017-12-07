@@ -51,7 +51,6 @@
 #include "TextResourceDecoder.h"
 #include "TreeDepthLimit.h"
 #include <wtf/Ref.h>
-#include <wtf/StringExtras.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 

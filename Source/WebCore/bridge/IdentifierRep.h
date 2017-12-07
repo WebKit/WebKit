@@ -23,12 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef IdentifierRep_h
-#define IdentifierRep_h
+#pragma once
 
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/StringExtras.h>
 #include <string.h>
 
 namespace WebCore {
@@ -70,4 +68,3 @@ private:
 
 } // namespace WebCore
 
-#endif // IdentifierRep_h

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,29 +27,24 @@
 #include "config.h"
 #include "TextCodec.h"
 
-#include <wtf/StringExtras.h>
-#include <wtf/text/WTFString.h>
+#include <array>
 
 namespace WebCore {
 
-TextCodec::~TextCodec() = default;
-
-int TextCodec::getUnencodableReplacement(unsigned codePoint, UnencodableHandling handling, UnencodableReplacementArray replacement)
+int TextCodec::getUnencodableReplacement(UChar32 codePoint, UnencodableHandling handling, UnencodableReplacementArray& replacement)
 {
     switch (handling) {
-        case QuestionMarksForUnencodables:
-            replacement[0] = '?';
-            replacement[1] = 0;
-            return 1;
-        case EntitiesForUnencodables:
-            snprintf(replacement, sizeof(UnencodableReplacementArray), "&#%u;", codePoint);
-            return static_cast<int>(strlen(replacement));
-        case URLEncodedEntitiesForUnencodables:
-            snprintf(replacement, sizeof(UnencodableReplacementArray), "%%26%%23%u%%3B", codePoint);
-            return static_cast<int>(strlen(replacement));
+    case UnencodableHandling::QuestionMarks:
+        replacement.data()[0] = '?';
+        replacement.data()[1] = 0;
+        return 1;
+    case UnencodableHandling::Entities:
+        return snprintf(replacement.data(), sizeof(UnencodableReplacementArray), "&#%u;", codePoint);
+    case UnencodableHandling::URLEncodedEntities:
+        return snprintf(replacement.data(), sizeof(UnencodableReplacementArray), "%%26%%23%u%%3B", codePoint);
     }
     ASSERT_NOT_REACHED();
-    replacement[0] = 0;
+    replacement.data()[0] = 0;
     return 0;
 }
 

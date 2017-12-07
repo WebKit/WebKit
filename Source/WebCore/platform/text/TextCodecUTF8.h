@@ -26,6 +26,7 @@
 #pragma once
 
 #include "TextCodec.h"
+#include <wtf/text/LChar.h>
 
 namespace WebCore {
 
@@ -36,7 +37,7 @@ public:
 
 private:
     String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) override;
-    CString encode(const UChar*, size_t length, UnencodableHandling) override;
+    Vector<uint8_t> encode(StringView, UnencodableHandling) final;
 
     bool handlePartialSequence(LChar*& destination, const uint8_t*& source, const uint8_t* end, bool flush);
     void handlePartialSequence(UChar*& destination, const uint8_t*& source, const uint8_t* end, bool flush, bool stopOnError, bool& sawError);

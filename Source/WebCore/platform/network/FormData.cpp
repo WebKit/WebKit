@@ -81,16 +81,17 @@ Ref<FormData> FormData::create(const void* data, size_t size)
 
 Ref<FormData> FormData::create(const CString& string)
 {
-    auto result = create();
-    result->appendData(string.data(), string.length());
-    return result;
+    return create(string.data(), string.length());
 }
 
 Ref<FormData> FormData::create(const Vector<char>& vector)
 {
-    auto result = create();
-    result->appendData(vector.data(), vector.size());
-    return result;
+    return create(vector.data(), vector.size());
+}
+
+Ref<FormData> FormData::create(const Vector<uint8_t>& vector)
+{
+    return create(vector.data(), vector.size());
 }
 
 Ref<FormData> FormData::create(const DOMFormData& formData, EncodingType encodingType)
@@ -114,7 +115,9 @@ Ref<FormData> FormData::copy() const
 
 Ref<FormData> FormData::isolatedCopy() const
 {
-    // FIXME: isolatedCopy() (historically deepCopy()) only copies certain values from `this`. Why is that?
+    // FIXME: isolatedCopy() does not copy m_identifier, m_boundary, or m_containsPasswordData.
+    // Is all of that correct and intentional?
+
     auto formData = create();
 
     formData->m_alwaysStream = m_alwaysStream;
@@ -183,9 +186,9 @@ void FormData::appendBlob(const URL& blobURL)
     m_lengthInBytes = std::nullopt;
 }
 
-static CString normalizeStringData(TextEncoding& encoding, const String& value)
+static Vector<uint8_t> normalizeStringData(TextEncoding& encoding, const String& value)
 {
-    return normalizeLineEndingsToCRLF(encoding.encode(value, EntitiesForUnencodables));
+    return normalizeLineEndingsToCRLF(encoding.encode(value, UnencodableHandling::Entities));
 }
 
 void FormData::appendMultiPartFileValue(const File& file, Vector<char>& header, TextEncoding& encoding, Document* document)
@@ -230,7 +233,7 @@ void FormData::appendMultiPartStringValue(const String& string, Vector<char>& he
     appendData(header.data(), header.size());
 
     auto normalizedStringData = normalizeStringData(encoding, string);
-    appendData(normalizedStringData.data(), normalizedStringData.length());
+    appendData(normalizedStringData.data(), normalizedStringData.size());
 }
 
 void FormData::appendMultiPartKeyValuePairItems(const DOMFormData& formData, Document* document)

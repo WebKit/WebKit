@@ -33,7 +33,6 @@
 #include <string.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/DataLog.h>
-#include <wtf/StringExtras.h>
 #include <wtf/text/StringBuilder.h>
 
 #if HAVE(REGEX_H)

@@ -75,14 +75,14 @@ static NSMutableDictionary *webPreferencesInstances;
 
 static unsigned webPreferencesInstanceCountWithPrivateBrowsingEnabled;
 
-static bool contains(const char* const array[], int count, const char* item)
+template<unsigned size> static bool contains(const char* const (&array)[size], const char* item)
 {
     if (!item)
         return false;
-
-    for (int i = 0; i < count; i++)
-        if (!strcasecmp(array[i], item))
+    for (auto* string : array) {
+        if (equalIgnoringASCIICase(string, item))
             return true;
+    }
     return false;
 }
 
@@ -139,11 +139,11 @@ static WebCacheModel cacheModelForMainBundle(void)
         };
 
         const char* bundleID = [[[NSBundle mainBundle] bundleIdentifier] UTF8String];
-        if (contains(documentViewerIDs, sizeof(documentViewerIDs) / sizeof(documentViewerIDs[0]), bundleID))
+        if (contains(documentViewerIDs, bundleID))
             return WebCacheModelDocumentViewer;
-        if (contains(documentBrowserIDs, sizeof(documentBrowserIDs) / sizeof(documentBrowserIDs[0]), bundleID))
+        if (contains(documentBrowserIDs, bundleID))
             return WebCacheModelDocumentBrowser;
-        if (contains(primaryWebBrowserIDs, sizeof(primaryWebBrowserIDs) / sizeof(primaryWebBrowserIDs[0]), bundleID))
+        if (contains(primaryWebBrowserIDs, bundleID))
             return WebCacheModelPrimaryWebBrowser;
 
         bool isLinkedAgainstWebKit = WebKitLinkedOnOrAfter(0);

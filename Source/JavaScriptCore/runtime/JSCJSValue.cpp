@@ -34,7 +34,6 @@
 #include "JSGlobalObject.h"
 #include "NumberObject.h"
 #include <wtf/MathExtras.h>
-#include <wtf/StringExtras.h>
 
 namespace JSC {
 

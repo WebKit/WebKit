@@ -27,7 +27,6 @@
 
 #import "WebHistoryItemInternal.h"
 #import <WebCore/HistoryItem.h>
-#import <wtf/StringExtras.h>
 
 using namespace WebCore;
 

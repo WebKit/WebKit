@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,18 +32,18 @@
 #pragma once
 
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
 
 namespace WTF {
 
-// Normalize all line-endings in the given string to CRLF.
-WTF_EXPORT CString normalizeLineEndingsToCRLF(const CString& from);
+// Normalize all line-endings in the given string.
+WTF_EXPORT Vector<uint8_t> normalizeLineEndingsToLF(Vector<uint8_t>&&);
+WTF_EXPORT Vector<uint8_t> normalizeLineEndingsToCRLF(Vector<uint8_t>&&);
 
-// Normalize all line-endings in the given string to the native line-endings and append the result to the given buffer.
-// (Normalize to CRLF on Windows and normalize to LF on all other platforms.)
-WTF_EXPORT void normalizeAndAppendLineEndingsToNative(const CString& from, Vector<uint8_t>& result);
+// Normalize all line-endings to CRLF on Windows, to LF on all other platforms.
+WTF_EXPORT Vector<uint8_t> normalizeLineEndingsToNative(Vector<uint8_t>&&);
 
 } // namespace WTF
 
 using WTF::normalizeLineEndingsToCRLF;
-using WTF::normalizeAndAppendLineEndingsToNative;
+using WTF::normalizeLineEndingsToLF;
+using WTF::normalizeLineEndingsToNative;

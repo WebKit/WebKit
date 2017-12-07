@@ -34,13 +34,11 @@ class File;
 class SharedBuffer;
 class TextEncoding;
 
+// FIXME: Convert this to a Variant of structs and remove "Type" and also the "m_" prefixes from the data members.
+// The member functions can become non-member fucntions.
 class FormDataElement {
 public:
-    enum class Type {
-        Data,
-        EncodedFile,
-        EncodedBlob,
-    };
+    enum class Type { Data, EncodedFile, EncodedBlob };
 
     FormDataElement()
         : m_type(Type::Data)
@@ -74,10 +72,8 @@ public:
 
     FormDataElement isolatedCopy() const;
 
-    template<typename Encoder>
-    void encode(Encoder&) const;
-    template<typename Decoder>
-    static std::optional<FormDataElement> decode(Decoder&);
+    template<typename Encoder> void encode(Encoder&) const;
+    template<typename Decoder> static std::optional<FormDataElement> decode(Decoder&);
 
     Type m_type;
     Vector<char> m_data;
@@ -87,9 +83,8 @@ public:
     int64_t m_fileLength;
     double m_expectedFileModificationTime;
     // FIXME: Generated file support in FormData is almost identical to Blob, they should be merged.
-    // We can't just switch to using Blobs for all files for two reasons:
-    // 1. Not all platforms enable BLOB support.
-    // 2. EncodedFile form data elements do not have a valid m_expectedFileModificationTime, meaning that we always upload the latest content from disk.
+    // We can't just switch to using Blobs for all files because EncodedFile form data elements do not
+    // have a valid m_expectedFileModificationTime, meaning we always upload the latest content from disk.
     String m_generatedFilename;
     bool m_shouldGenerateFile;
     bool m_ownsGeneratedFile;
@@ -116,7 +111,6 @@ inline bool operator!=(const FormDataElement& a, const FormDataElement& b)
 {
     return !(a == b);
 }
-
 
 template<typename Encoder>
 void FormDataElement::encode(Encoder& encoder) const
@@ -204,6 +198,7 @@ public:
     WEBCORE_EXPORT static Ref<FormData> create(const void*, size_t);
     static Ref<FormData> create(const CString&);
     static Ref<FormData> create(const Vector<char>&);
+    static Ref<FormData> create(const Vector<uint8_t>&);
     static Ref<FormData> create(const DOMFormData&, EncodingType = FormURLEncoded);
     static Ref<FormData> createMultiPart(const DOMFormData&, Document*);
     WEBCORE_EXPORT ~FormData();
@@ -300,6 +295,7 @@ void FormData::encode(Encoder& encoder) const
     encoder << m_boundary;
     encoder << m_elements;
     encoder << m_identifier;
+    // FIXME: Does not encode m_containsPasswordData. Why is that OK?
 }
 
 template<typename Decoder>

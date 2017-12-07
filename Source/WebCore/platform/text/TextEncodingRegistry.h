@@ -26,7 +26,7 @@
 #pragma once
 
 #include <memory>
-#include <wtf/text/WTFString.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -39,22 +39,15 @@ WEBCORE_EXPORT std::unique_ptr<TextCodec> newTextCodec(const TextEncoding&);
 
 // Only TextEncoding should use the following functions directly.
 const char* atomicCanonicalTextEncodingName(const char* alias);
-template <typename CharacterType>
-const char* atomicCanonicalTextEncodingName(const CharacterType*, size_t);
 const char* atomicCanonicalTextEncodingName(const String&);
 bool noExtendedTextEncodingNameUsed();
 bool isJapaneseEncoding(const char* canonicalEncodingName);
 bool shouldShowBackslashAsCurrencySymbolIn(const char* canonicalEncodingName);
-bool isReplacementEncoding(const char* alias);
-bool isReplacementEncoding(const String& alias);
 
 WEBCORE_EXPORT String defaultTextEncodingNameForSystemLanguage();
+
 #if PLATFORM(COCOA)
 WEBCORE_EXPORT CFStringEncoding webDefaultCFStringEncoding();
-#endif
-
-#ifndef NDEBUG
-void dumpTextEncodingNameMap();
 #endif
 
 } // namespace WebCore

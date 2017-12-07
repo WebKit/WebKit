@@ -1,3 +1,14 @@
+2017-12-02  Darin Adler  <darin@apple.com>
+
+        Modernize some aspects of text codecs, eliminate WebKit use of strcasecmp
+        https://bugs.webkit.org/show_bug.cgi?id=180009
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::initializeProtectionSpace): Use equalLettersIgnoringASCIICase instead
+        of strcasecmp.
+
 2017-12-06  David Quesada  <david_quesada@apple.com>
 
         [Web App Manifest] Add SPI for applying a manifest to a top-level browsing context

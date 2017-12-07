@@ -33,7 +33,6 @@
 
 #include <libxslt/templates.h>
 #include <libxslt/xsltutils.h>
-#include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/Collator.h>
 

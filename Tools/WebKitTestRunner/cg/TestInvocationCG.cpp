@@ -33,7 +33,6 @@
 #include <WebKit/WKImageCG.h>
 #include <wtf/MD5.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/StringExtras.h>
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
 #include <LaunchServices/UTCoreTypes.h>

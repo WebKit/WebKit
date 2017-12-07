@@ -45,7 +45,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/StackTrace.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -524,7 +523,7 @@ WTFLogChannel* WTFLogChannelByName(WTFLogChannel* channels[], size_t count, cons
 {
     for (size_t i = 0; i < count; ++i) {
         WTFLogChannel* channel = channels[i];
-        if (!strcasecmp(name, channel->name))
+        if (equalIgnoringASCIICase(name, channel->name))
             return channel;
     }
 

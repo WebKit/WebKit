@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Electronic Arts, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,32 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_StringExtras_h
-#define WTF_StringExtras_h
+#pragma once
 
-#include <stdarg.h>
-#include <stdio.h>
 #include <string.h>
-
-#if HAVE(STRINGS_H) 
-#include <strings.h> 
-#endif 
-
-#if COMPILER(MSVC)
-
-// FIXME: We should stop using these entirely and use suitable versions of equalIgnoringASCIICase instead.
-
-inline int strncasecmp(const char* s1, const char* s2, size_t len)
-{
-    return _strnicmp(s1, s2, len);
-}
-
-inline int strcasecmp(const char* s1, const char* s2)
-{
-    return _stricmp(s1, s2);
-}
-
-#endif
 
 #if !HAVE(STRNSTR)
 
@@ -66,5 +43,3 @@ inline char* strnstr(const char* buffer, const char* target, size_t bufferLength
 }
 
 #endif
-
-#endif // WTF_StringExtras_h

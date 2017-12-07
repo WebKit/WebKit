@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,22 +30,13 @@
 
 namespace WebCore {
 
-std::unique_ptr<TextCodec> TextCodecReplacement::create(const TextEncoding&, const void*)
-{
-    return std::make_unique<TextCodecReplacement>();
-}
-
-TextCodecReplacement::TextCodecReplacement()
-{
-}
-
 void TextCodecReplacement::registerEncodingNames(EncodingNameRegistrar registrar)
 {
-    // The 'replacement' itself is not a valid label. It is the name of
+    // The string 'replacement' itself is not a valid label. It is the name of
     // a group of legacy encoding labels. Hence, it cannot be used directly.
+    // The TextEncoding class implements the above rule; here we register it normally.
     registrar("replacement", "replacement");
 
-    // The labels
     registrar("csiso2022kr", "replacement");
     registrar("hz-gb-2312", "replacement");
     registrar("iso-2022-cn", "replacement");
@@ -55,7 +46,9 @@ void TextCodecReplacement::registerEncodingNames(EncodingNameRegistrar registrar
 
 void TextCodecReplacement::registerCodecs(TextCodecRegistrar registrar)
 {
-    registrar("replacement", create, 0);
+    registrar("replacement", [] {
+        return std::make_unique<TextCodecReplacement>();
+    });
 }
 
 String TextCodecReplacement::decode(const char*, size_t, bool, bool, bool& sawError)
@@ -63,9 +56,8 @@ String TextCodecReplacement::decode(const char*, size_t, bool, bool, bool& sawEr
     sawError = true;
     if (m_sentEOF)
         return emptyString();
-
     m_sentEOF = true;
-    return String(&replacementCharacter, 1);
+    return String { &replacementCharacter, 1 };
 }
 
 } // namespace WebCore

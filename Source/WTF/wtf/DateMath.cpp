@@ -77,7 +77,6 @@
 #include "CurrentTime.h"
 #include "MathExtras.h"
 #include "StdLibExtras.h"
-#include "StringExtras.h"
 
 #include <algorithm>
 #include <limits.h>

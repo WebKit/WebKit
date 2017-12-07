@@ -543,6 +543,7 @@
 		93AF4ECE1506F064007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93AF4ECD1506F064007FD57E /* NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp */; };
 		93AF4ED11506F130007FD57E /* lots-of-images.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93AF4ECF1506F123007FD57E /* lots-of-images.html */; };
 		93CFA8671CEB9E38000565A8 /* autofocused-text-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93CFA8661CEB9DE1000565A8 /* autofocused-text-input.html */; };
+		93E2C5551FD3204100E1DF6A /* LineEnding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E2C5541FD3204100E1DF6A /* LineEnding.cpp */; };
 		93E2D2761ED7D53200FA76F6 /* offscreen-iframe-of-media-document.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93E2D2751ED7D51700FA76F6 /* offscreen-iframe-of-media-document.html */; };
 		93E6193B1F931B3A00AF245E /* TextCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A258981F92FF15003E510C /* TextCodec.cpp */; };
 		93F1DB3414DA20870024C362 /* NewFirstVisuallyNonEmptyLayout_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1DB3314DA20870024C362 /* NewFirstVisuallyNonEmptyLayout_Bundle.cpp */; };
@@ -1525,6 +1526,7 @@
 		93CFA8681CEBCFED000565A8 /* CandidateTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CandidateTests.mm; sourceTree = "<group>"; };
 		93D3D19B17B1A7B000C7C415 /* all-content-in-one-iframe.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "all-content-in-one-iframe.html"; sourceTree = "<group>"; };
 		93D3D19D17B1A84200C7C415 /* LayoutMilestonesWithAllContentInFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutMilestonesWithAllContentInFrame.cpp; sourceTree = "<group>"; };
+		93E2C5541FD3204100E1DF6A /* LineEnding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LineEnding.cpp; sourceTree = "<group>"; };
 		93E2D2751ED7D51700FA76F6 /* offscreen-iframe-of-media-document.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "offscreen-iframe-of-media-document.html"; sourceTree = "<group>"; };
 		93E943F11CD3E87E00AC08C2 /* VideoControlsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoControlsManager.mm; sourceTree = "<group>"; };
 		93F1DB3014DA20760024C362 /* NewFirstVisuallyNonEmptyLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewFirstVisuallyNonEmptyLayout.cpp; sourceTree = "<group>"; };
@@ -2625,6 +2627,7 @@
 				531C1D8D1DF8EF72006E979F /* LEBDecoder.cpp */,
 				A57D54F71F3397B400A97AA7 /* LifecycleLogger.cpp */,
 				A57D54F81F3397B400A97AA7 /* LifecycleLogger.h */,
+				93E2C5541FD3204100E1DF6A /* LineEnding.cpp */,
 				26300B1716755CD90066886D /* ListHashSet.cpp */,
 				0FFC45A41B73EBE20085BD62 /* Lock.cpp */,
 				A57D54F41F3395D000A97AA7 /* Logger.cpp */,
@@ -2773,7 +2776,6 @@
 			isa = PBXGroup;
 			children = (
 				7560917619259C59009EF06E /* ios */,
-				FE217ECB1640A54A0052988B /* JavaScriptCore */,
 				C07E6CAD13FD67650038B22B /* mac */,
 				C08587F913FEC39B001EF4E5 /* TestWebKitAPI */,
 				440A1D3614A01000008A66F2 /* WebCore */,
@@ -2984,13 +2986,6 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		FE217ECB1640A54A0052988B /* JavaScriptCore */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = JavaScriptCore;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -3186,6 +3181,7 @@
 				7A0509411FB9F06400B33FB8 /* JSONValue.cpp in Sources */,
 				531C1D8E1DF8EF72006E979F /* LEBDecoder.cpp in Sources */,
 				A57D54F91F3397B400A97AA7 /* LifecycleLogger.cpp in Sources */,
+				93E2C5551FD3204100E1DF6A /* LineEnding.cpp in Sources */,
 				7C83DEE81D0A590C00FEBCF3 /* ListHashSet.cpp in Sources */,
 				7C83DF1D1D0A590C00FEBCF3 /* Lock.cpp in Sources */,
 				A57D54F61F3395D000A97AA7 /* Logger.cpp in Sources */,

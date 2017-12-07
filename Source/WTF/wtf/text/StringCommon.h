@@ -45,6 +45,9 @@ template<typename CharacterType, unsigned lowercaseLettersLength> bool equalLett
 
 template<typename StringClass, unsigned length> bool equalLettersIgnoringASCIICaseCommon(const StringClass&, const char (&lowercaseLetters)[length]);
 
+bool equalIgnoringASCIICase(const char*, const char*);
+template<unsigned lowercaseLettersLength> bool equalLettersIgnoringASCIICase(const char*, const char (&lowercaseLetters)[lowercaseLettersLength]);
+
 template<typename T>
 inline T loadUnaligned(const char* s)
 {
@@ -650,6 +653,18 @@ template<typename StringClass, unsigned length> inline bool startsWithLettersIgn
 {
     const char* pointer = lowercaseLetters;
     return startsWithLettersIgnoringASCIICaseCommonWithoutLength(string, pointer);
+}
+
+inline bool equalIgnoringASCIICase(const char* a, const char* b)
+{
+    auto length = strlen(a);
+    return length == strlen(b) && equalIgnoringASCIICase(a, b, length);
+}
+
+template<unsigned lowercaseLettersLength> inline bool equalLettersIgnoringASCIICase(const char* string, const char (&lowercaseLetters)[lowercaseLettersLength])
+{
+    auto length = strlen(lowercaseLetters);
+    return strlen(string) == length && equalLettersIgnoringASCIICase(string, lowercaseLetters, length);
 }
 
 }

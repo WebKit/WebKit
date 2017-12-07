@@ -1,3 +1,24 @@
+2017-12-02  Darin Adler  <darin@apple.com>
+
+        Modernize some aspects of text codecs, eliminate WebKit use of strcasecmp
+        https://bugs.webkit.org/show_bug.cgi?id=180009
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp: Removed include of StringExtras.h.
+
+        * TestWebKitAPI/CMakeLists.txt: Added LineEnding.cpp.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Ditto.
+        * TestWebKitAPI/Tests/WTF/LineEnding.cpp: Added. Has tests for the LineEnding
+        functions rewritten in this patch.
+
+        * TestWebKitAPI/Tests/WebCore/TextCodec.cpp: Updated test now that the decode
+        function doesn't have defaults for as many arguments any more. Also changed so
+        that the tests log the fact that the decode function returns an error and updated
+        expected results to expect all the errors.
+
+        * WebKitTestRunner/cg/TestInvocationCG.cpp: Ditto.
+
 2017-12-06  Alexey Proskuryakov  <ap@apple.com>
 
         Exclude another leak callstack.

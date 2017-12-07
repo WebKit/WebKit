@@ -39,7 +39,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/StringExtras.h>
 
 #if PLATFORM(WIN)
 #include "MD5.h"

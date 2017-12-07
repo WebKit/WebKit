@@ -1,3 +1,39 @@
+2017-12-02  Darin Adler  <darin@apple.com>
+
+        Modernize some aspects of text codecs, eliminate WebKit use of strcasecmp
+        https://bugs.webkit.org/show_bug.cgi?id=180009
+
+        Reviewed by Alex Christensen.
+
+        * wtf/Assertions.cpp: Removed include of StringExtras.h.
+        (WTFLogChannelByName): Use equalIgnoringASCIICase instead of strcasecmp.
+        * wtf/DateMath.cpp: Removed include of StringExtras.h.
+        * wtf/MD5.cpp: Ditto. Also removed include of CString.h.
+        * wtf/SHA1.cpp: Ditto.
+
+        * wtf/StringExtras.h:
+        (strncasecmp): Deleted.
+        (strcasecmp): Deleted.
+
+        * wtf/StringPrintStream.cpp: Removed include of StringExtras.h.
+        * wtf/text/Base64.cpp: Ditto.
+
+        * wtf/text/LineEnding.cpp:
+        (WTF::normalizeLineEndingsToLF): Replaced old more general purpose function with
+        this. Changed argument type to vector and used an rvalue reference and return value.
+        Also fixed some small logic errors.
+        (WTF::normalizeLineEndingsToCRLF): Ditto.
+        (WTF::normalizeLineEndingsToNative): Updated for above changes.
+        * wtf/text/LineEnding.h: Updated for above changes.
+
+        * wtf/text/StringCommon.h:
+        (WTF::equalIgnoringASCIICase): Added overload for const char*.
+        (WTF::equalLettersIgnoringASCIICase): Ditto.
+
+        * wtf/text/TextStream.cpp: Removed include of StringExtras.h.
+        * wtf/text/WTFString.cpp: Ditto.
+        * wtf/unicode/icu/CollatorICU.cpp: Ditto.
+
 2017-12-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Remove XXXLockBase since constexpr constructor can initialize static variables without calling global constructors

@@ -1,3 +1,22 @@
+2017-12-02  Darin Adler  <darin@apple.com>
+
+        Modernize some aspects of text codecs, eliminate WebKit use of strcasecmp
+        https://bugs.webkit.org/show_bug.cgi?id=180009
+
+        Reviewed by Alex Christensen.
+
+        * bytecode/ArrayProfile.cpp: Removed include of StringExtras.h.
+        * bytecode/CodeBlock.cpp: Ditto.
+        * bytecode/ExecutionCounter.cpp: Ditto.
+        * runtime/ConfigFile.cpp: Ditto.
+        * runtime/DatePrototype.cpp: Ditto.
+        * runtime/IndexingType.cpp: Ditto.
+        * runtime/JSCJSValue.cpp: Ditto.
+        * runtime/JSDateMath.cpp: Ditto.
+        * runtime/JSGlobalObjectFunctions.cpp: Ditto.
+        * runtime/Options.cpp: Ditto.
+        (JSC::parse): Use equalLettersIgnoringASCIICase instead of strcasecmp.
+
 2017-12-06  Saam Barati  <sbarati@apple.com>
 
         ASSERTION FAILED: vm->currentThreadIsHoldingAPILock() in void JSC::sanitizeStackForVM(JSC::VM *)

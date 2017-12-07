@@ -42,7 +42,6 @@
 #include <wtf/DataLog.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/StringExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/threads/Signals.h>
 
@@ -71,11 +70,11 @@ void Options::enableRestrictedOptions(bool enableOrNot)
     
 static bool parse(const char* string, bool& value)
 {
-    if (!strcasecmp(string, "true") || !strcasecmp(string, "yes") || !strcmp(string, "1")) {
+    if (equalLettersIgnoringASCIICase(string, "true") || equalLettersIgnoringASCIICase(string, "yes") || !strcmp(string, "1")) {
         value = true;
         return true;
     }
-    if (!strcasecmp(string, "false") || !strcasecmp(string, "no") || !strcmp(string, "0")) {
+    if (equalLettersIgnoringASCIICase(string, "false") || equalLettersIgnoringASCIICase(string, "no") || !strcmp(string, "0")) {
         value = false;
         return true;
     }
@@ -127,17 +126,17 @@ static bool parse(const char* string, const char*& value)
 
 static bool parse(const char* string, GCLogging::Level& value)
 {
-    if (!strcasecmp(string, "none") || !strcasecmp(string, "no") || !strcasecmp(string, "false") || !strcmp(string, "0")) {
+    if (equalLettersIgnoringASCIICase(string, "none") || equalLettersIgnoringASCIICase(string, "no") || equalLettersIgnoringASCIICase(string, "false") || !strcmp(string, "0")) {
         value = GCLogging::None;
         return true;
     }
 
-    if (!strcasecmp(string, "basic") || !strcasecmp(string, "yes") || !strcasecmp(string, "true") || !strcmp(string, "1")) {
+    if (equalLettersIgnoringASCIICase(string, "basic") || equalLettersIgnoringASCIICase(string, "yes") || equalLettersIgnoringASCIICase(string, "true") || !strcmp(string, "1")) {
         value = GCLogging::Basic;
         return true;
     }
 
-    if (!strcasecmp(string, "verbose") || !strcmp(string, "2")) {
+    if (equalLettersIgnoringASCIICase(string, "verbose") || !strcmp(string, "2")) {
         value = GCLogging::Verbose;
         return true;
     }

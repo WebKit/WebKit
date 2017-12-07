@@ -1,3 +1,20 @@
+2017-12-02  Darin Adler  <darin@apple.com>
+
+        Modernize some aspects of text codecs, eliminate WebKit use of strcasecmp
+        https://bugs.webkit.org/show_bug.cgi?id=180009
+
+        Reviewed by Alex Christensen.
+
+        * History/HistoryPropertyList.mm: Removed include of StringExtras.h.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (WebKit::getAuthenticationInfo): Use equalLettersIgnoringASCIICase instead
+        of strcasecmp.
+
+        * WebView/WebPreferences.mm:
+        (contains): Ditto. Also made this a template so it's easier to call on an array.
+        (cacheModelForMainBundle): Take advantage of the above to make it cleaner.
+
 2017-12-05  Brent Fulgham  <bfulgham@apple.com>
 
         Limit user agent versioning to an upper bound

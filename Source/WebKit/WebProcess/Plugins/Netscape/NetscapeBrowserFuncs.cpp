@@ -880,9 +880,9 @@ static NPError NPN_SetValueForURL(NPP npp, NPNURLVariable variable, const char* 
 static bool initializeProtectionSpace(const char* protocol, const char* host, int port, const char* scheme, const char* realm, ProtectionSpace& protectionSpace)
 {
     ProtectionSpaceServerType serverType;
-    if (!strcasecmp(protocol, "http"))
+    if (equalLettersIgnoringASCIICase(protocol, "http"))
         serverType = ProtectionSpaceServerHTTP;
-    else if (!strcasecmp(protocol, "https"))
+    else if (equalLettersIgnoringASCIICase(protocol, "https"))
         serverType = ProtectionSpaceServerHTTPS;
     else {
         // We only care about http and https.
@@ -891,9 +891,9 @@ static bool initializeProtectionSpace(const char* protocol, const char* host, in
 
     ProtectionSpaceAuthenticationScheme authenticationScheme = ProtectionSpaceAuthenticationSchemeDefault;
     if (serverType == ProtectionSpaceServerHTTP) {
-        if (!strcasecmp(scheme, "basic"))
+        if (equalLettersIgnoringASCIICase(scheme, "basic"))
             authenticationScheme = ProtectionSpaceAuthenticationSchemeHTTPBasic;
-        else if (!strcmp(scheme, "digest"))
+        else if (equalLettersIgnoringASCIICase(scheme, "digest"))
             authenticationScheme = ProtectionSpaceAuthenticationSchemeHTTPDigest;
     }
 

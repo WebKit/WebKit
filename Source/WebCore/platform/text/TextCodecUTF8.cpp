@@ -55,9 +55,9 @@ void TextCodecUTF8::registerEncodingNames(EncodingNameRegistrar registrar)
 
 void TextCodecUTF8::registerCodecs(TextCodecRegistrar registrar)
 {
-    registrar("UTF-8", [] (const TextEncoding&, const void*) -> std::unique_ptr<TextCodec> {
+    registrar("UTF-8", [] {
         return std::make_unique<TextCodecUTF8>();
-    }, nullptr);
+    });
 }
 
 static inline int nonASCIISequenceLength(uint8_t firstByte)
@@ -432,22 +432,17 @@ upConvertTo16Bit:
     return String::adopt(WTFMove(buffer16));
 }
 
-CString TextCodecUTF8::encode(const UChar* characters, size_t length, UnencodableHandling)
+Vector<uint8_t> TextCodecUTF8::encode(StringView string, UnencodableHandling)
 {
     // The maximum number of UTF-8 bytes needed per UTF-16 code unit is 3.
     // BMP characters take only one UTF-16 code unit and can take up to 3 bytes (3x).
     // Non-BMP characters take two UTF-16 code units and can take up to 4 bytes (2x).
-    if (length > std::numeric_limits<size_t>::max() / 3)
-        CRASH();
-
-    Vector<char, 3000> bytes(length * 3);
+    Vector<uint8_t> bytes(WTF::checkedProduct<size_t>(string.length(), 3).unsafeGet());
     size_t bytesWritten = 0;
-    for (size_t i = 0; i < length; ) {
-        UChar32 character;
-        U16_NEXT(characters, i, length, character);
+    for (auto character : string.codePoints())
         U8_APPEND_UNSAFE(bytes.data(), bytesWritten, character);
-    }
-    return CString { bytes.data(), bytesWritten };
+    bytes.shrink(bytesWritten);
+    return bytes;
 }
 
 } // namespace WebCore

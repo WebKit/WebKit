@@ -33,8 +33,6 @@
 #include "SHA1.h"
 
 #include "Assertions.h"
-
-#include "StringExtras.h"
 #include "text/CString.h"
 
 namespace WTF {

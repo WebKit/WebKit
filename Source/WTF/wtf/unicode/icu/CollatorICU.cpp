@@ -36,7 +36,6 @@
 #include <mutex>
 #include <unicode/ucol.h>
 #include <wtf/Lock.h>
-#include <wtf/StringExtras.h>
 #include <wtf/text/StringView.h>
 
 #if OS(DARWIN) && USE(CF)

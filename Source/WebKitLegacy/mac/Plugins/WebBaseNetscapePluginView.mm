@@ -854,11 +854,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-bool getAuthenticationInfo(const char* protocolStr, const char* hostStr, int32_t port, const char* schemeStr, const char* realmStr,
-                           CString& username, CString& password)
+bool getAuthenticationInfo(const char* protocolStr, const char* hostStr, int32_t port, const char* schemeStr, const char* realmStr, CString& username, CString& password)
 {
-    if (strcasecmp(protocolStr, "http") != 0 && 
-        strcasecmp(protocolStr, "https") != 0)
+    if (!equalLettersIgnoringASCIICase(protocolStr, "http") && !equalLettersIgnoringASCIICase(protocolStr, "https"))
         return false;
 
     NSString *host = [NSString stringWithUTF8String:hostStr];
@@ -874,10 +872,10 @@ bool getAuthenticationInfo(const char* protocolStr, const char* hostStr, int32_t
         return NPERR_GENERIC_ERROR;
     
     NSString *authenticationMethod = NSURLAuthenticationMethodDefault;
-    if (!strcasecmp(protocolStr, "http")) {
-        if (!strcasecmp(schemeStr, "basic"))
+    if (equalLettersIgnoringASCIICase(protocolStr, "http")) {
+        if (equalLettersIgnoringASCIICase(schemeStr, "basic"))
             authenticationMethod = NSURLAuthenticationMethodHTTPBasic;
-        else if (!strcasecmp(schemeStr, "digest"))
+        else if (equalLettersIgnoringASCIICase(schemeStr, "digest"))
             authenticationMethod = NSURLAuthenticationMethodHTTPDigest;
     }
     

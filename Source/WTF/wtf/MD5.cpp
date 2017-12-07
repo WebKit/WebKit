@@ -51,10 +51,6 @@
 #include "MD5.h"
 
 #include "Assertions.h"
-#ifndef NDEBUG
-#include "StringExtras.h"
-#include "text/CString.h"
-#endif
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {

@@ -457,9 +457,9 @@ void ResourceHandleCurlDelegate::handleDataURL()
 
         // didReceiveResponse might cause the client to be deleted.
         if (m_handle->client()) {
-            CString encodedData = encoding.encode(data, URLEncodedEntitiesForUnencodables);
-            if (encodedData.length())
-                m_handle->client()->didReceiveBuffer(m_handle, SharedBuffer::create(encodedData.data(), encodedData.length()), originalSize);
+            auto encodedData = encoding.encode(data, UnencodableHandling::URLEncodedEntities);
+            if (encodedData.size())
+                m_handle->client()->didReceiveBuffer(m_handle, SharedBuffer::create(WTFMove(encodedData)), originalSize);
         }
     }
 

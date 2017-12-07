@@ -1,3 +1,14 @@
+2017-12-02  Darin Adler  <darin@apple.com>
+
+        Modernize some aspects of text codecs, eliminate WebKit use of strcasecmp
+        https://bugs.webkit.org/show_bug.cgi?id=180009
+
+        Reviewed by Alex Christensen.
+
+        * PAL.xcodeproj/project.pbxproj: Added UnencodableHandling.h.
+        * pal/text/UnencodableHandling.h: Moved the UnencodableHandling enumeration
+        here from TextCodec.h and changed it to an enum class.
+
 2017-12-04  David Quesada  <david_quesada@apple.com>
 
         Add a class for parsing application manifests

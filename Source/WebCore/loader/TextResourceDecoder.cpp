@@ -1,6 +1,6 @@
 /*
     Copyright (C) 1999 Lars Knoll (knoll@mpi-hd.mpg.de)
-    Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2012 Apple Inc. All rights reserved.
+    Copyright (C) 2003-2017 Apple Inc. All rights reserved.
     Copyright (C) 2005, 2006, 2007 Alexey Proskuryakov (ap@nypop.com)
 
     This library is free software; you can redistribute it and/or
@@ -31,7 +31,6 @@
 #include "TextEncodingDetector.h"
 #include "TextEncodingRegistry.h"
 #include <wtf/ASCIICType.h>
-#include <wtf/StringExtras.h>
 
 
 namespace WebCore {
@@ -322,18 +321,16 @@ const TextEncoding& TextResourceDecoder::defaultEncoding(ContentType contentType
     return specifiedDefaultEncoding;
 }
 
-TextResourceDecoder::TextResourceDecoder(const String& mimeType, const TextEncoding& specifiedDefaultEncoding, bool usesEncodingDetector)
+inline TextResourceDecoder::TextResourceDecoder(const String& mimeType, const TextEncoding& specifiedDefaultEncoding, bool usesEncodingDetector)
     : m_contentType(determineContentType(mimeType))
     , m_encoding(defaultEncoding(m_contentType, specifiedDefaultEncoding))
-    , m_source(DefaultEncoding)
-    , m_hintEncoding(nullptr)
-    , m_checkedForBOM(false)
-    , m_checkedForCSSCharset(false)
-    , m_checkedForHeadCharset(false)
-    , m_useLenientXMLDecoding(false)
-    , m_sawError(false)
     , m_usesEncodingDetector(usesEncodingDetector)
 {
+}
+
+Ref<TextResourceDecoder> TextResourceDecoder::create(const String& mimeType, const TextEncoding& defaultEncoding, bool usesEncodingDetector)
+{
+    return adoptRef(*new TextResourceDecoder(mimeType, defaultEncoding, usesEncodingDetector));
 }
 
 TextResourceDecoder::~TextResourceDecoder() = default;
@@ -346,7 +343,7 @@ void TextResourceDecoder::setEncoding(const TextEncoding& encoding, EncodingSour
 
     // When encoding comes from meta tag (i.e. it cannot be XML files sent via XHR),
     // treat x-user-defined as windows-1252 (bug 18270)
-    if (source == EncodingFromMetaTag && strcasecmp(encoding.name(), "x-user-defined") == 0)
+    if (source == EncodingFromMetaTag && equalLettersIgnoringASCIICase(encoding.name(), "x-user-defined"))
         m_encoding = "windows-1252";
     else if (source == EncodingFromMetaTag || source == EncodingFromXMLHeader || source == EncodingFromCSSCharset)        
         m_encoding = encoding.closestByteBasedEquivalent();
@@ -593,35 +590,33 @@ void TextResourceDecoder::detectJapaneseEncoding(const char* data, size_t len)
 //   in the first place. 
 bool TextResourceDecoder::shouldAutoDetect() const
 {
-    // Just checking m_hintEncoding suffices here because it's only set
-    // in setHintEncoding when the source is AutoDetectedEncoding.
     return m_usesEncodingDetector
-        && (m_source == DefaultEncoding || (m_source == EncodingFromParentFrame && m_hintEncoding)); 
+        && (m_source == DefaultEncoding || (m_source == EncodingFromParentFrame && m_parentFrameAutoDetectedEncoding));
 }
 
-String TextResourceDecoder::decode(const char* data, size_t len)
+String TextResourceDecoder::decode(const char* data, size_t length)
 {
     size_t lengthOfBOM = 0;
     if (!m_checkedForBOM)
-        lengthOfBOM = checkForBOM(data, len);
+        lengthOfBOM = checkForBOM(data, length);
 
     bool movedDataToBuffer = false;
 
     if (m_contentType == CSS && !m_checkedForCSSCharset)
-        if (!checkForCSSCharset(data, len, movedDataToBuffer))
+        if (!checkForCSSCharset(data, length, movedDataToBuffer))
             return emptyString();
 
     if ((m_contentType == HTML || m_contentType == XML) && !m_checkedForHeadCharset) // HTML and XML
-        if (!checkForHeadCharset(data, len, movedDataToBuffer))
+        if (!checkForHeadCharset(data, length, movedDataToBuffer))
             return emptyString();
 
     // FIXME: It is wrong to change the encoding downstream after we have already done some decoding.
     if (shouldAutoDetect()) {
         if (m_encoding.isJapanese())
-            detectJapaneseEncoding(data, len); // FIXME: We should use detectTextEncoding() for all languages.
+            detectJapaneseEncoding(data, length); // FIXME: We should use detectTextEncoding() for all languages.
         else {
             TextEncoding detectedEncoding;
-            if (detectTextEncoding(data, len, m_hintEncoding, &detectedEncoding))
+            if (detectTextEncoding(data, length, m_parentFrameAutoDetectedEncoding, &detectedEncoding))
                 setEncoding(detectedEncoding, AutoDetectedEncoding);
         }
     }
@@ -632,12 +627,12 @@ String TextResourceDecoder::decode(const char* data, size_t len)
         m_codec = newTextCodec(m_encoding);
 
     if (m_buffer.isEmpty())
-        return m_codec->decode(data + lengthOfBOM, len - lengthOfBOM, false, m_contentType == XML, m_sawError);
+        return m_codec->decode(data + lengthOfBOM, length - lengthOfBOM, false, m_contentType == XML, m_sawError);
 
     if (!movedDataToBuffer) {
         size_t oldSize = m_buffer.size();
-        m_buffer.grow(oldSize + len);
-        memcpy(m_buffer.data() + oldSize, data, len);
+        m_buffer.grow(oldSize + length);
+        memcpy(m_buffer.data() + oldSize, data, length);
     }
 
     String result = m_codec->decode(m_buffer.data() + lengthOfBOM, m_buffer.size() - lengthOfBOM, false, m_contentType == XML && !m_useLenientXMLDecoding, m_sawError);
@@ -647,15 +642,14 @@ String TextResourceDecoder::decode(const char* data, size_t len)
 
 String TextResourceDecoder::flush()
 {
-   // If we can not identify the encoding even after a document is completely
-   // loaded, we need to detect the encoding if other conditions for
-   // autodetection is satisfied.
+    // If we can not identify the encoding even after a document is completely
+    // loaded, we need to detect the encoding if other conditions for
+    // autodetection is satisfied.
     if (m_buffer.size() && shouldAutoDetect()
         && ((!m_checkedForHeadCharset && (m_contentType == HTML || m_contentType == XML)) || (!m_checkedForCSSCharset && (m_contentType == CSS)))) {
-         TextEncoding detectedEncoding;
-         if (detectTextEncoding(m_buffer.data(), m_buffer.size(),
-                                m_hintEncoding, &detectedEncoding))
-             setEncoding(detectedEncoding, AutoDetectedEncoding);
+        TextEncoding detectedEncoding;
+        if (detectTextEncoding(m_buffer.data(), m_buffer.size(), m_parentFrameAutoDetectedEncoding, &detectedEncoding))
+            setEncoding(detectedEncoding, AutoDetectedEncoding);
     }
 
     if (!m_codec)

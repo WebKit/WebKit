@@ -29,7 +29,6 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/StringExtras.h>
 
 namespace WTF {
 

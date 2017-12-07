@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,61 +24,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TextCodec_h
-#define TextCodec_h
+#pragma once
 
 #include <memory>
+#include <pal/text/UnencodableHandling.h>
+#include <unicode/umachine.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
-    class TextEncoding;
 
-    // Specifies what will happen when a character is encountered that is
-    // not encodable in the character set.
-    enum UnencodableHandling {
-        // Substitutes the replacement character "?".
-        QuestionMarksForUnencodables,
+class TextEncoding;
 
-        // Encodes the character as an XML entity. For example, U+06DE
-        // would be "&#1758;" (0x6DE = 1758 in octal).
-        EntitiesForUnencodables,
+using UnencodableReplacementArray = std::array<char, 32>;
 
-        // Encodes the character as en entity as above, but escaped
-        // non-alphanumeric characters. This is used in URLs.
-        // For example, U+6DE would be "%26%231758%3B".
-        URLEncodedEntitiesForUnencodables
-    };
+class TextCodec {
+    WTF_MAKE_NONCOPYABLE(TextCodec); WTF_MAKE_FAST_ALLOCATED;
+public:
+    TextCodec() = default;
+    virtual ~TextCodec() = default;
 
-    typedef char UnencodableReplacementArray[32];
+    virtual String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) = 0;
+    virtual Vector<uint8_t> encode(StringView, UnencodableHandling) = 0;
 
-    class TextCodec {
-        WTF_MAKE_NONCOPYABLE(TextCodec); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        TextCodec() { }
-        virtual ~TextCodec();
+    // Fills a null-terminated string representation of the given
+    // unencodable character into the given replacement buffer.
+    // The length of the string (not including the null) will be returned.
+    static int getUnencodableReplacement(UChar32, UnencodableHandling, UnencodableReplacementArray&);
+};
 
-        String decode(const char* str, size_t length, bool flush = false)
-        {
-            bool ignored;
-            return decode(str, length, flush, false, ignored);
-        }
-        
-        virtual String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) = 0;
-        virtual CString encode(const UChar*, size_t length, UnencodableHandling) = 0;
+using EncodingNameRegistrar = void (*)(const char* alias, const char* name);
 
-        // Fills a null-terminated string representation of the given
-        // unencodable character into the given replacement buffer. 
-        // The length of the string (not including the null) will be returned.
-        static int getUnencodableReplacement(unsigned codePoint, UnencodableHandling, UnencodableReplacementArray);
-    };
-
-    typedef void (*EncodingNameRegistrar)(const char* alias, const char* name);
-
-    typedef std::unique_ptr<TextCodec> (*NewTextCodecFunction)(const TextEncoding&, const void* additionalData);
-    typedef void (*TextCodecRegistrar)(const char* name, NewTextCodecFunction, const void* additionalData);
+using NewTextCodecFunction = WTF::Function<std::unique_ptr<TextCodec>()>;
+using TextCodecRegistrar = void (*)(const char* name, NewTextCodecFunction&&);
 
 } // namespace WebCore
 
-#endif // TextCodec_h

@@ -76,7 +76,7 @@ std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDiges
 
 std::optional<ResourceCryptographicDigest> decodeEncodedResourceCryptographicDigest(const EncodedResourceCryptographicDigest&);
 
-ResourceCryptographicDigest cryptographicDigestForBytes(ResourceCryptographicDigest::Algorithm, const char* bytes, size_t length);
+ResourceCryptographicDigest cryptographicDigestForBytes(ResourceCryptographicDigest::Algorithm, const void* bytes, size_t length);
 
 }
 

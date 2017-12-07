@@ -1416,10 +1416,10 @@ static String computeContentSecurityPolicySHA256Hash(const Element& element)
     // See <https://bugs.webkit.org/show_bug.cgi?id=155184>.
     TextEncoding documentEncoding = element.document().textEncoding();
     const TextEncoding& encodingToUse = documentEncoding.isValid() ? documentEncoding : UTF8Encoding();
-    CString content = encodingToUse.encode(TextNodeTraversal::contentsAsString(element), EntitiesForUnencodables);
+    auto content = encodingToUse.encode(TextNodeTraversal::contentsAsString(element), UnencodableHandling::Entities);
     auto cryptoDigest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    cryptoDigest->addBytes(content.data(), content.length());
-    Vector<uint8_t> digest = cryptoDigest->computeHash();
+    cryptoDigest->addBytes(content.data(), content.size());
+    auto digest = cryptoDigest->computeHash();
     return makeString("sha256-", base64Encode(digest.data(), digest.size()));
 }
 

@@ -74,6 +74,12 @@ Ref<SharedBuffer> SharedBuffer::create(Vector<char>&& vector)
     return adoptRef(*new SharedBuffer(WTFMove(vector)));
 }
 
+// FIXME: Move the whole class from Vector<char> to Vector<uint8_t> and make this efficient, replacing the Vector<char> version above.
+Ref<SharedBuffer> SharedBuffer::create(Vector<uint8_t>&& vector)
+{
+    return adoptRef(*new SharedBuffer { vector.data(), vector.size() });
+}
+
 void SharedBuffer::combineIntoOneSegment() const
 {
 #if !ASSERT_DISABLED

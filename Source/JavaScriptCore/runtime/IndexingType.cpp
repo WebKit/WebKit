@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IndexingType.h"
 
-#include <wtf/StringExtras.h>
-
 namespace JSC {
 
 IndexingType leastUpperBoundOfIndexingTypes(IndexingType a, IndexingType b)

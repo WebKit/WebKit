@@ -27,8 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DecodeEscapeSequences_h
-#define DecodeEscapeSequences_h
+#pragma once
 
 #include "TextEncoding.h"
 #include <wtf/ASCIICType.h>
@@ -155,11 +154,11 @@ String decodeEscapeSequences(StringView string, const TextEncoding& encoding)
     return result.toString();
 }
 
-inline Vector<char> decodeURLEscapeSequencesAsData(StringView string, const TextEncoding& encoding)
+inline Vector<uint8_t> decodeURLEscapeSequencesAsData(StringView string, const TextEncoding& encoding)
 {
     ASSERT(encoding.isValid());
 
-    Vector<char> result;
+    Vector<uint8_t> result;
     size_t decodedPosition = 0;
     size_t searchPosition = 0;
     while (true) {
@@ -173,10 +172,9 @@ inline Vector<char> decodeURLEscapeSequencesAsData(StringView string, const Text
                 continue;
             }
         }
+
         // Strings are encoded as requested.
-        auto stringFragment = string.substring(decodedPosition, encodedRunPosition - decodedPosition);
-        auto encodedStringFragment = encoding.encode(stringFragment, URLEncodedEntitiesForUnencodables);
-        result.append(encodedStringFragment.data(), encodedStringFragment.length());
+        result.appendVector(encoding.encode(string.substring(decodedPosition, encodedRunPosition - decodedPosition), UnencodableHandling::URLEncodedEntities));
 
         if (encodedRunPosition == notFound)
             return result;
@@ -192,4 +190,3 @@ inline Vector<char> decodeURLEscapeSequencesAsData(StringView string, const Text
 
 } // namespace WebCore
 
-#endif // DecodeEscapeSequences_h

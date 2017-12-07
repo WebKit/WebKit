@@ -60,7 +60,8 @@ public:
     static RefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath);
 
     static Ref<SharedBuffer> create(Vector<char>&&);
-    
+    static Ref<SharedBuffer> create(Vector<uint8_t>&&);
+
 #if USE(FOUNDATION)
     RetainPtr<NSData> createNSData() const;
     RetainPtr<NSArray> createNSDataArray() const;

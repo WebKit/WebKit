@@ -53,7 +53,6 @@
 #include "XMLNSNames.h"
 #include "XMLDocumentParserScope.h"
 #include <libxml/parserInternals.h>
-#include <wtf/StringExtras.h>
 #include <wtf/unicode/UTF8.h>
 
 #if ENABLE(XSLT)

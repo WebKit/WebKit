@@ -109,6 +109,7 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/JSONValue.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/LEBDecoder.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/LifecycleLogger.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/LineEnding.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/ListHashSet.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Lock.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Logger.cpp

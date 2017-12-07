@@ -47,7 +47,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
 
 using namespace WebCore;
