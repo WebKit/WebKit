@@ -151,7 +151,7 @@ void WebSWServerConnection::postMessageToServiceWorkerFromServiceWorker(ServiceW
         return;
 
     // It's possible this specific worker cannot be re-run (e.g. its registration has been removed)
-    server().runServiceWorkerIfNecessary(destinationIdentifier, [destinationIdentifier, message = WTFMove(message), sourceIdentifier, sourceData = sourceWorker->data()](bool success, auto& contextConnection) mutable {
+    server().runServiceWorkerIfNecessary(destinationIdentifier, [destinationIdentifier, message = WTFMove(message), sourceData = sourceWorker->data()](bool success, auto& contextConnection) mutable {
         if (!success)
             return;
 
