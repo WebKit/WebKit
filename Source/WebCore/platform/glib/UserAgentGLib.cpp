@@ -69,9 +69,10 @@ static const String platformVersionForUAString()
 #endif
 }
 
-static const char* versionForUAString()
+static inline const char* versionForUAString()
 {
-    return USER_AGENT_MAJOR_VERSION "." USER_AGENT_MINOR_VERSION;
+    // https://bugs.webkit.org/show_bug.cgi?id=180365
+    return "605.1.15";
 }
 
 static String buildUserAgentString(const UserAgentQuirks& quirks)
