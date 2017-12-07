@@ -1,3 +1,14 @@
+2017-12-06  Jeff Miller  <jeffm@apple.com>
+
+        -[WKWebViewConfiguration copyWithZone] doesn't copy _groupIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=180504
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        Copy _groupIdentifier.
+
 2017-12-06  David Quesada  <david_quesada@apple.com>
 
         [Web App Manifest] Add SPI for fetching the manifest

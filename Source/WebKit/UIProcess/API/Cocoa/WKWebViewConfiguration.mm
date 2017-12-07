@@ -361,6 +361,8 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_legacyEncryptedMediaAPIEnabled = self->_legacyEncryptedMediaAPIEnabled;
     configuration->_allowMediaContentTypesRequiringHardwareSupportAsFallback = self->_allowMediaContentTypesRequiringHardwareSupportAsFallback;
 
+    configuration->_groupIdentifier = adoptNS([self->_groupIdentifier copyWithZone:zone]);
+
     return configuration;
 }
 
