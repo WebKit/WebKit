@@ -410,7 +410,8 @@ void DocumentThreadableLoader::didFail(unsigned long, const ResourceError& error
 
         m_options.serviceWorkersMode = ServiceWorkersMode::None;
         makeCrossOriginAccessRequestWithPreflight(WTFMove(m_bypassingPreflightForServiceWorkerRequest.value()));
-        ASSERT(!m_bypassingPreflightForServiceWorkerRequest);
+        ASSERT(m_bypassingPreflightForServiceWorkerRequest->isNull());
+        m_bypassingPreflightForServiceWorkerRequest = std::nullopt;
         return;
     }
 #endif
