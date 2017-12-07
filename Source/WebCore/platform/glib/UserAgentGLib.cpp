@@ -63,9 +63,8 @@ static const String platformVersionForUAString()
 #else
     // We will always claim to be Safari in Intel Mac OS X, since Safari without
     // OS X or anything on ARM triggers mobile versions of some websites.
-    //
-    // FIXME: The final result should include OS version, e.g. "Intel Mac OS X 10_8_4".
-    static NeverDestroyed<const String> uaOSVersion(MAKE_STATIC_STRING_IMPL("Intel Mac OS X"));
+    // Version is frozen per https://bugs.webkit.org/show_bug.cgi?id=180365
+    static NeverDestroyed<const String> uaOSVersion(MAKE_STATIC_STRING_IMPL("Intel Mac OS X 10_13_4"));
     return uaOSVersion;
 #endif
 }

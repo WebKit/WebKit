@@ -118,7 +118,8 @@ String UserAgentQuirks::stringForQuirk(UserAgentQuirk quirk)
         // Get versions from https://chromium.googlesource.com/chromium/src.git
         return ASCIILiteral("Chrome/58.0.3029.81");
     case NeedsMacintoshPlatform:
-        return ASCIILiteral("Macintosh; Intel Mac OS X 10_12");
+        // Frozen per https://bugs.webkit.org/show_bug.cgi?id=180365
+        return ASCIILiteral("Macintosh; Intel Mac OS X 10_13_4");
     case NeedsLinuxDesktopPlatform:
         return ASCIILiteral("X11; Linux x86_64");
     case NumUserAgentQuirks:
