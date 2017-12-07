@@ -1,3 +1,22 @@
+2017-12-06  Chris Dumez  <cdumez@apple.com>
+
+        We should be able to recover after a Service Worker process crash
+        https://bugs.webkit.org/show_bug.cgi?id=180477
+
+        Reviewed by Brady Eidson and Youenn Fablet.
+
+        Add testRunner API to terminate the Service Worker process.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::terminateServiceWorkerProcess):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::terminateServiceWorkerProcess):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+
 2017-12-02  Darin Adler  <darin@apple.com>
 
         Modernize some aspects of text codecs, eliminate WebKit use of strcasecmp

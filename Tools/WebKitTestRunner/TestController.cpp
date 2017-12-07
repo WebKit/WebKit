@@ -2274,6 +2274,11 @@ void TestController::terminateNetworkProcess()
     WKContextTerminateNetworkProcess(platformContext());
 }
 
+void TestController::terminateServiceWorkerProcess()
+{
+    WKContextTerminateServiceWorkerProcess(platformContext());
+}
+
 #if !PLATFORM(COCOA)
 void TestController::platformWillRunTest(const TestInvocation&)
 {

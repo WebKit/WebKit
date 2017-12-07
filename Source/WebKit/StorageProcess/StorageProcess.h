@@ -98,6 +98,10 @@ public:
 
     void didReceiveStorageProcessMessage(IPC::Connection&, IPC::Decoder&);
 
+#if ENABLE(SERVICE_WORKER)
+    void connectionToContextProcessWasClosed();
+#endif
+
 private:
     StorageProcess();
 
@@ -133,6 +137,7 @@ private:
 
     void postMessageToServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier& destinationIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin);
     WebSWOriginStore& swOriginStoreForSession(PAL::SessionID);
+    bool needsServerToContextConnection() const;
 #endif
 #if ENABLE(INDEXED_DATABASE)
     Vector<WebCore::SecurityOriginData> indexedDatabaseOrigins(const String& path);

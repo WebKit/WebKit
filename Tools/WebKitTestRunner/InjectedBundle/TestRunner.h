@@ -402,6 +402,7 @@ public:
     void setOpenPanelFiles(JSValueRef);
 
     void terminateNetworkProcess();
+    void terminateServiceWorkerProcess();
 
     void removeAllSessionCredentials(JSValueRef);
     void callDidRemoveAllSessionCredentialsCallback();

@@ -188,6 +188,7 @@ public:
     void setOpenPanelFileURLs(WKArrayRef fileURLs) { m_openPanelFileURLs = fileURLs; }
 
     void terminateNetworkProcess();
+    void terminateServiceWorkerProcess();
 
     void removeAllSessionCredentials();
 

@@ -744,6 +744,12 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "TerminateServiceWorkerProcess")) {
+        ASSERT(!messageBody);
+        TestController::singleton().terminateServiceWorkerProcess();
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "RunUIProcessScript")) {
         WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
         WKRetainPtr<WKStringRef> scriptKey(AdoptWK, WKStringCreateWithUTF8CString("Script"));

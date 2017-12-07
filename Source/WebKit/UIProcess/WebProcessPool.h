@@ -262,6 +262,7 @@ public:
     void clearCachedCredentials();
     void terminateStorageProcess();
     void terminateNetworkProcess();
+    void terminateServiceWorkerProcess();
 
     void syncNetworkProcessCookies();
 
@@ -633,6 +634,7 @@ private:
     Paths m_resolvedPaths;
 
     HashMap<PAL::SessionID, HashSet<WebPageProxy*>> m_sessionToPagesMap;
+    RunLoop::Timer<WebProcessPool> m_serviceWorkerProcessTerminationTimer;
 };
 
 template<typename T>

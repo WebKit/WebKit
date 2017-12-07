@@ -421,11 +421,19 @@ void SWServer::updateWorker(Connection&, const ServiceWorkerJobDataIdentifier& j
 
 void SWServer::serverToContextConnectionCreated()
 {
-    ASSERT(SWServerToContextConnection::globalServerToContextConnection());
-    for (auto& data : m_pendingContextDatas)
+    auto* connection = SWServerToContextConnection::globalServerToContextConnection();
+    ASSERT(connection);
+
+    auto pendingContextDatas = WTFMove(m_pendingContextDatas);
+    for (auto& data : pendingContextDatas)
         installContextData(data);
-    
-    m_pendingContextDatas.clear();
+
+    auto serviceWorkerRunRequests = WTFMove(m_serviceWorkerRunRequests);
+    for (auto& item : serviceWorkerRunRequests) {
+        bool success = runServiceWorker(item.key);
+        for (auto& callback : item.value)
+            callback(success, *connection);
+    }
 }
 
 void SWServer::installContextData(const ServiceWorkerContextData& data)
@@ -446,29 +454,47 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
     connection->installServiceWorkerContext(data);
 }
 
-bool SWServer::invokeRunServiceWorker(ServiceWorkerIdentifier identifier)
+void SWServer::runServiceWorkerIfNecessary(ServiceWorkerIdentifier identifier, RunServiceWorkerCallback&& callback)
 {
+    auto* connection = SWServerToContextConnection::globalServerToContextConnection();
     if (auto* worker = m_runningOrTerminatingWorkers.get(identifier)) {
-        if (worker->isRunning())
-            return true;
+        if (worker->isRunning()) {
+            ASSERT(connection);
+            callback(true, *connection);
+            return;
+        }
     }
 
-    // Nobody should have a ServiceWorkerIdentifier for a SWServerWorker that doesn't exist.
+    if (!connection) {
+        m_serviceWorkerRunRequests.ensure(identifier, [&] {
+            return Vector<RunServiceWorkerCallback> { };
+        }).iterator->value.append(WTFMove(callback));
+        return;
+    }
+
+    callback(runServiceWorker(identifier), *connection);
+}
+
+bool SWServer::runServiceWorker(ServiceWorkerIdentifier identifier)
+{
     auto* worker = workerByID(identifier);
-    ASSERT(worker);
+    if (!worker)
+        return false;
 
     // If the registration for a working has been removed then the request to run
     // the worker is moot.
     if (!getRegistration(worker->registrationKey()))
         return false;
 
-    m_runningOrTerminatingWorkers.add(identifier, *worker);
+    auto addResult = m_runningOrTerminatingWorkers.add(identifier, *worker);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+
     worker->setState(SWServerWorker::State::Running);
 
     auto* connection = SWServerToContextConnection::globalServerToContextConnection();
     ASSERT(connection);
     connection->installServiceWorkerContext(worker->contextData());
-    
+
     return true;
 }
 
@@ -505,10 +531,14 @@ void SWServer::terminateWorkerInternal(SWServerWorker& worker, TerminationMode m
     };
 }
 
+void SWServer::markAllWorkersAsTerminated()
+{
+    while (!m_runningOrTerminatingWorkers.isEmpty())
+        workerContextTerminated(m_runningOrTerminatingWorkers.begin()->value);
+}
+
 void SWServer::workerContextTerminated(SWServerWorker& worker)
 {
-    ASSERT(worker.isTerminating());
-
     worker.setState(SWServerWorker::State::NotRunning);
 
     // At this point if no registrations are referencing the worker then it will be destroyed,

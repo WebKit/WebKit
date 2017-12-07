@@ -1138,6 +1138,12 @@ void TestRunner::terminateNetworkProcess()
     WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), nullptr);
 }
 
+void TestRunner::terminateServiceWorkerProcess()
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("TerminateServiceWorkerProcess"));
+    WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), nullptr);
+}
+
 static unsigned nextUIScriptCallbackID()
 {
     static unsigned callbackID = FirstUIScriptCallbackID;

@@ -115,6 +115,8 @@ namespace WebKit {
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, processPoolCounter, ("WebProcessPool"));
 
+static const Seconds serviceWorkerTerminationDelay { 5_s };
+
 static uint64_t generateListenerIdentifier()
 {
     static uint64_t nextIdentifier = 1;
@@ -244,6 +246,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_processSuppressionDisabledForPageCounter([this](RefCounterEvent) { updateProcessSuppressionState(); })
     , m_hiddenPageThrottlingAutoIncreasesCounter([this](RefCounterEvent) { m_hiddenPageThrottlingTimer.startOneShot(0_s); })
     , m_hiddenPageThrottlingTimer(RunLoop::main(), this, &WebProcessPool::updateHiddenPageThrottlingAutoIncreaseLimit)
+    , m_serviceWorkerProcessTerminationTimer(RunLoop::main(), this, &WebProcessPool::terminateServiceWorkerProcess)
 {
     if (m_configuration->shouldHaveLegacyDataStore())
         m_websiteDataStore = API::WebsiteDataStore::createLegacy(legacyWebsiteDataStoreConfiguration(m_configuration));
@@ -697,6 +700,10 @@ WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore& websiteDa
     auto& process = processProxy.get();
     initializeNewWebProcess(process, websiteDataStore);
     m_processes.append(WTFMove(processProxy));
+
+    if (m_serviceWorkerProcessTerminationTimer.isActive())
+        m_serviceWorkerProcessTerminationTimer.stop();
+
     return process;
 }
 
@@ -943,8 +950,8 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
     // FIXME: We should do better than this. For now, we just destroy the ServiceWorker process
     // whenever there is no regular WebContent process remaining.
     if (m_processes.size() == 1 && m_processes[0] == m_serviceWorkerProcess) {
-        m_serviceWorkerProcess = nullptr;
-        m_processes.clear();
+        if (!m_serviceWorkerProcessTerminationTimer.isActive())
+            m_serviceWorkerProcessTerminationTimer.startOneShot(serviceWorkerTerminationDelay);
     }
 #endif
 }
@@ -1406,6 +1413,18 @@ void WebProcessPool::terminateNetworkProcess()
     m_networkProcess->terminate();
     m_networkProcess = nullptr;
     m_didNetworkProcessCrash = true;
+}
+
+void WebProcessPool::terminateServiceWorkerProcess()
+{
+#if ENABLE(SERVICE_WORKER)
+    if (!m_serviceWorkerProcess)
+        return;
+
+    m_serviceWorkerProcess->requestTermination(ProcessTerminationReason::RequestedByClient);
+    ASSERT(!m_processes.contains(m_serviceWorkerProcess));
+    ASSERT(!m_serviceWorkerProcess);
+#endif
 }
 
 void WebProcessPool::syncNetworkProcessCookies()

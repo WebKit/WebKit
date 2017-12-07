@@ -120,8 +120,17 @@ void StorageToWebProcessConnection::didReceiveSyncMessage(IPC::Connection& conne
     ASSERT_NOT_REACHED();
 }
 
-void StorageToWebProcessConnection::didClose(IPC::Connection&)
+void StorageToWebProcessConnection::didClose(IPC::Connection& connection)
 {
+    UNUSED_PARAM(connection);
+
+#if ENABLE(SERVICE_WORKER)
+    if (StorageProcess::singleton().globalServerToContextConnection() && StorageProcess::singleton().globalServerToContextConnection()->ipcConnection() == &connection) {
+        // Service Worker process exited.
+        StorageProcess::singleton().connectionToContextProcessWasClosed();
+    }
+#endif
+
 #if ENABLE(INDEXED_DATABASE)
     auto idbConnections = m_webIDBConnections;
     for (auto& connection : idbConnections.values())

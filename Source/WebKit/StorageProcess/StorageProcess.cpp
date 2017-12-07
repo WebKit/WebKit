@@ -86,8 +86,7 @@ void StorageProcess::didClose(IPC::Connection& connection)
 {
 #if ENABLE(SERVICE_WORKER)
     if (m_serverToContextConnection && m_serverToContextConnection->ipcConnection() == &connection) {
-        m_serverToContextConnection->connectionClosed();
-        m_serverToContextConnection = nullptr;
+        connectionToContextProcessWasClosed();
         return;
     }
 #else
@@ -95,6 +94,38 @@ void StorageProcess::didClose(IPC::Connection& connection)
 #endif
     stopRunLoop();
 }
+
+#if ENABLE(SERVICE_WORKER)
+void StorageProcess::connectionToContextProcessWasClosed()
+{
+    if (!m_serverToContextConnection)
+        return;
+
+    bool shouldRelaunch = needsServerToContextConnection();
+
+    m_serverToContextConnection->connectionClosed();
+    m_serverToContextConnection = nullptr;
+
+    for (auto& swServer : m_swServers.values())
+        swServer->markAllWorkersAsTerminated();
+
+    if (shouldRelaunch)
+        createServerToContextConnection();
+}
+
+// The rule is that we need a context process (and a connection to it) as long as we have SWServerConnections to regular WebProcesses.
+bool StorageProcess::needsServerToContextConnection() const
+{
+    if (m_swServerConnections.isEmpty())
+        return false;
+
+    // If the last SWServerConnection is to the context process, then we no longer need the context connection.
+    if (m_swServerConnections.size() == 1 && m_serverToContextConnection && &m_swServerConnections.begin()->value->ipcConnection() == m_serverToContextConnection->ipcConnection())
+        return false;
+
+    return true;
+}
+#endif
 
 void StorageProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {

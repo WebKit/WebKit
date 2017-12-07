@@ -74,6 +74,7 @@
 // Test only. Should be called only while no web content processes are running.
 - (void)_terminateStorageProcess;
 - (void)_terminateNetworkProcess;
+- (void)_terminateServiceWorkerProcess;
 
 // Test only.
 - (pid_t)_networkProcessIdentifier WK_API_AVAILABLE(macosx(10.13), ios(11.0));

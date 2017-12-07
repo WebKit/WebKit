@@ -1,3 +1,59 @@
+2017-12-06  Chris Dumez  <cdumez@apple.com>
+
+        We should be able to recover after a Service Worker process crash
+        https://bugs.webkit.org/show_bug.cgi?id=180477
+
+        Reviewed by Brady Eidson and Youenn Fablet.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::startFetch):
+        (WebKit::WebSWServerConnection::postMessageToServiceWorkerFromClient):
+        (WebKit::WebSWServerConnection::postMessageToServiceWorkerFromServiceWorker):
+        Update calls to SWServer::runServiceWorkerIfNecessary() that that it is asynchronous
+        and takes in a lambda.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        (WebKit::WebSWServerConnection::ipcConnection const):
+        Add getter for the underlying IPC connection.
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::didClose):
+        (WebKit::StorageProcess::connectionToContextProcessWasClosed):
+        Move some code to connectionToContextProcessWasClosed() to avoid duplication.
+        Also, relaunch the Service Worker process if it has exited but we still
+        have SWServer connections to regular Web Processes.
+
+        (WebKit::StorageProcess::needsServerToContextConnection const):
+        Utility function to determine if we still need the service worker process.
+        The current rule is that we need the service worker (aka "context") process
+        if we still have SWServer connections to regular Web Processes.
+
+        * StorageProcess/StorageProcess.h:
+
+        * StorageProcess/StorageToWebProcessConnection.cpp:
+        (WebKit::StorageToWebProcessConnection::didClose):
+        If didClose() is called for the connection to the service worker context,
+        let the StorageProcess know so that it can clear its state and relaunch
+        the process if necessary.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextTerminateServiceWorkerProcess):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _terminateServiceWorkerProcess]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        Add SPI to terminate the service worker process.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::m_serviceWorkerProcessTerminationTimer):
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::terminateServiceWorkerProcess):
+        * UIProcess/WebProcessPool.h:
+        We used to shutdown the ServiceWorker process right away as soon as the last regular
+        WebProcess was gone. We now give it a grace period of 5 seconds in case a new
+        WebProcess gets launched shortly after.
+
 2017-12-02  Darin Adler  <darin@apple.com>
 
         Modernize some aspects of text codecs, eliminate WebKit use of strcasecmp

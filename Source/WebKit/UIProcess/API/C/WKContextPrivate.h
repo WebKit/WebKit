@@ -89,6 +89,7 @@ WK_EXPORT void WKContextWarmInitialProcess(WKContextRef context);
 WK_EXPORT void WKContextSetUsesNetworkProcess(WKContextRef, bool);
 
 WK_EXPORT void WKContextTerminateNetworkProcess(WKContextRef);
+WK_EXPORT void WKContextTerminateServiceWorkerProcess(WKContextRef);
 
 WK_EXPORT void WKContextSetAllowsAnySSLCertificateForWebSocketTesting(WKContextRef, bool);
 WK_EXPORT void WKContextSetAllowsAnySSLCertificateForServiceWorkerTesting(WKContextRef, bool);
