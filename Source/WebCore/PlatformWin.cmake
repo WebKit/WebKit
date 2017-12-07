@@ -236,6 +236,8 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     svg/properties
 
     svg/graphics/filters
+
+    workers/service
 )
 
 if (USE_CF)
