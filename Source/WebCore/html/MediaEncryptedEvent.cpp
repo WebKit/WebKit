@@ -37,6 +37,8 @@ namespace WebCore {
 
 MediaEncryptedEvent::MediaEncryptedEvent(const AtomicString& type, const MediaEncryptedEventInit& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)
+    , m_initDataType(initializer.initDataType)
+    , m_initData(initializer.initData)
 {
 }
 
@@ -45,18 +47,6 @@ MediaEncryptedEvent::~MediaEncryptedEvent() = default;
 EventInterface MediaEncryptedEvent::eventInterface() const
 {
     return MediaEncryptedEventInterfaceType;
-}
-
-String MediaEncryptedEvent::initDataType()
-{
-    notImplemented();
-    return emptyString();
-}
-
-ArrayBuffer* MediaEncryptedEvent::initData()
-{
-    notImplemented();
-    return nullptr;
 }
 
 } // namespace WebCore

@@ -1747,6 +1747,7 @@ webkit.org/b/175998 http/tests/security/mixedContent/insecure-css-with-secure-co
 [ ElCapitan Sierra ] platform/mac/media/encrypted-media/fps-requestMediaKeySystemAccess.html [ Skip ]
 [ ElCapitan Sierra ] platform/mac/media/encrypted-media/fps-createSession.html [ Skip ]
 [ ElCapitan Sierra ] platform/mac/media/encrypted-media/fps-generateRequest.html [ Skip ]
+[ ElCapitan Sierra ] platform/mac/media/encrypted-media/fps-encrypted-event.html [ Skip ]
 
 # rdar://problem/35395437
 [ HighSierra+ ] imported/w3c/web-platform-tests/media-source/mediasource-play.html [ Failure ]

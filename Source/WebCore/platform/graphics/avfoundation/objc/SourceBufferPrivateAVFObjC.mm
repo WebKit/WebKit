@@ -40,6 +40,7 @@
 #import "MediaSampleAVFObjC.h"
 #import "MediaSourcePrivateAVFObjC.h"
 #import "NotImplemented.h"
+#import "SharedBuffer.h"
 #import "SourceBufferPrivateClient.h"
 #import "TimeRanges.h"
 #import "VideoTrackPrivateMediaSourceAVFObjC.h"
@@ -672,7 +673,16 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
             dispatch_semaphore_signal(m_hasSessionSemaphore.get());
         m_hasSessionSemaphore = hasSessionSemaphore;
     }
-#else
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    if (m_mediaSource) {
+        auto initDataBuffer = SharedBuffer::create(initData);
+        m_mediaSource->player()->initializationDataEncountered("sinf", initDataBuffer->tryCreateArrayBuffer());
+    }
+#endif
+
+#if !ENABLE(ENCRYPTED_MEDIA) && !ENABLE(LEGACY_ENCRYPTED_MEDIA)
     UNUSED_PARAM(initData);
     UNUSED_PARAM(trackID);
     UNUSED_PARAM(hasSessionSemaphore);

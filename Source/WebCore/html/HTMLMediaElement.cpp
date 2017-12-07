@@ -2584,7 +2584,13 @@ bool HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array* initData)
     if (!RuntimeEnabledFeatures::sharedFeatures().legacyEncryptedMediaAPIEnabled())
         return false;
 
-    if (!hasEventListeners("webkitneedkey")) {
+    if (!hasEventListeners("webkitneedkey")
+#if ENABLE(ENCRYPTED_MEDIA)
+        // Only fire an error if ENCRYPTED_MEDIA is not enabled, to give clients of the 
+        // "encrypted" event a chance to handle it without resulting in a synthetic error.
+        && !RuntimeEnabledFeatures::sharedFeatures().encryptedMediaAPIEnabled()
+#endif
+        ) {
         m_error = MediaError::create(MediaError::MEDIA_ERR_ENCRYPTED);
         scheduleEvent(eventNames().errorEvent);
         return false;
@@ -2718,6 +2724,9 @@ void HTMLMediaElement::setMediaKeys(MediaKeys* mediaKeys, Ref<DeferredPromise>&&
 
 void HTMLMediaElement::mediaPlayerInitializationDataEncountered(const String& initDataType, RefPtr<ArrayBuffer>&& initData)
 {
+    if (!RuntimeEnabledFeatures::sharedFeatures().encryptedMediaAPIEnabled())
+        return;
+
     // https://w3c.github.io/encrypted-media/#initdata-encountered
     // W3C Editor's Draft 23 June 2017
 

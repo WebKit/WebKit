@@ -50,14 +50,17 @@ public:
 
     virtual ~MediaEncryptedEvent();
 
-    String initDataType();
-    JSC::ArrayBuffer* initData();
+    String initDataType() { return m_initDataType; }
+    JSC::ArrayBuffer* initData() { return m_initData.get(); }
 
 private:
     MediaEncryptedEvent(const AtomicString&, const MediaEncryptedEventInit&, IsTrusted);
 
     // Event
     EventInterface eventInterface() const override;
+
+    String m_initDataType;
+    RefPtr<JSC::ArrayBuffer> m_initData;
 };
 
 } // namespace WebCore

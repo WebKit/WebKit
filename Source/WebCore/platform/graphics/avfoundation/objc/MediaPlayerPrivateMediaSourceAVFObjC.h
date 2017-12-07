@@ -126,6 +126,9 @@ public:
     CDMSessionMediaSourceAVFObjC* cdmSession() const { return m_session; }
     void keyNeeded(Uint8Array*);
 #endif
+#if ENABLE(ENCRYPTED_MEDIA)
+    void initializationDataEncountered(const String&, RefPtr<ArrayBuffer>&&);
+#endif
 
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
     bool shouldCheckHardwareSupport() const;

@@ -957,6 +957,13 @@ void MediaPlayerPrivateMediaSourceAVFObjC::keyNeeded(Uint8Array* initData)
 }
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+void MediaPlayerPrivateMediaSourceAVFObjC::initializationDataEncountered(const String& initDataType, RefPtr<ArrayBuffer>&& initData)
+{
+    m_player->initializationDataEncountered(initDataType, WTFMove(initData));
+}
+#endif
+
 const Vector<ContentType>& MediaPlayerPrivateMediaSourceAVFObjC::mediaContentTypesRequiringHardwareSupport() const
 {
     return m_player->mediaContentTypesRequiringHardwareSupport();
