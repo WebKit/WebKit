@@ -129,7 +129,8 @@ public:
     };
 #endif
 
-    // FIXME: Remove this class once the sync layout inside SVGImage::draw is removed.
+    // FIXME: Remove this class once the sync layout inside SVGImage::draw is removed
+    // and refactored the code in RenderFrameBase::performLayoutWithFlattening.
     class DisableAssertionsInScope {
     public:
         DisableAssertionsInScope()

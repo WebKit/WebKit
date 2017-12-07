@@ -29,6 +29,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLFrameElementBase.h"
+#include "NoEventDispatchAssertion.h"
 #include "RenderView.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -73,6 +74,8 @@ RenderView* RenderFrameBase::childRenderView() const
 
 void RenderFrameBase::performLayoutWithFlattening(bool hasFixedWidth, bool hasFixedHeight)
 {
+    // FIXME: Refactor frame flattening code so that we don't need to disable assertions here.
+    NoEventDispatchAssertion::DisableAssertionsInScope scope;
     if (!childRenderView())
         return;
 
