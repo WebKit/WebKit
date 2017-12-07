@@ -1,3 +1,16 @@
+2017-12-07  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Enable imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-api-texttracks.html.
+        https://bugs.webkit.org/show_bug.cgi?id=168799
+
+        Unreviewed test gardening.
+
+        It hasn't failed in half a year (last failure was on r216594). I don't know
+        what fixed it, but there doesn't seem to be a reason to keep the flaky
+        annotation.
+
+        * platform/gtk/TestExpectations:
+
 2017-12-07  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Remove duplicated tests that are now present in WPT
