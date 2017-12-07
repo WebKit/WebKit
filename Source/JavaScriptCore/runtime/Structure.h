@@ -468,7 +468,7 @@ public:
 
     void setObjectToStringValue(ExecState*, VM&, JSString* value, PropertySlot toStringTagSymbolSlot);
 
-    const ClassInfo* classInfo() const { return m_classInfo.unpoisoned(); }
+    const ClassInfo* classInfo() const { return m_classInfo.descrambled(); }
 
     static ptrdiff_t structureIDOffset()
     {
@@ -798,7 +798,7 @@ private:
 
     RefPtr<UniquedStringImpl> m_nameInPrevious;
 
-    PoisonedClassInfoPtr m_classInfo;
+    ClassInfoScrambledPtr m_classInfo;
 
     StructureTransitionTable m_transitionTable;
 

@@ -94,7 +94,7 @@ public:
         return &vm.segmentedVariableObjectSpace;
     }
     
-    const ClassInfo* classInfo() const { return m_classInfo.unpoisoned(); }
+    const ClassInfo* classInfo() const { return m_classInfo.descrambled(); }
     
 protected:
     JSSegmentedVariableObject(VM&, Structure*, JSScope*);
@@ -107,7 +107,7 @@ private:
     SegmentedVector<WriteBarrier<Unknown>, 16> m_variables;
     ConcurrentJSLock m_lock;
     bool m_alreadyDestroyed { false }; // We use these assertions to check that we aren't doing ancient hacks that result in this being destroyed more than once.
-    PoisonedClassInfoPtr m_classInfo;
+    ClassInfoScrambledPtr m_classInfo;
 };
 
 } // namespace JSC

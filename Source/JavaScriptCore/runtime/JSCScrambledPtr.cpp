@@ -24,26 +24,21 @@
  */
 
 #include "config.h"
-#include "Poisoned.h"
+#include "JSCScrambledPtr.h"
 
-#include <wtf/CryptographicallyRandomNumber.h>
+namespace JSC {
 
-namespace WTF {
+uintptr_t g_classInfoScrambledPtrKey;
+uintptr_t g_masmScrambledPtrKey;
 
-uintptr_t makePoison()
+void initializeScrambledPtrKeys()
 {
-    uintptr_t key = cryptographicallyRandomNumber();
-#if USE(JSVALUE64) && !OS(WINDOWS)
-    key = (key << 32) ^ (static_cast<uintptr_t>(cryptographicallyRandomNumber()) << 3);
-    // Ensure that the poisoned bits (pointer ^ key) do not make a valid pointer and
-    // cannot be 0. We ensure that it is zero so that the poisoned bits can also be
-    // used for a notmal zero check without needing to decoded first.
-    key |= (static_cast<uintptr_t>(0x1) << 63);
-#else
-    key = 0; // Poisoning is not supported on 32-bit or non-darwin platforms yet.
-#endif
-    return key;
+    static std::once_flag initializeOnceFlag;
+    std::call_once(initializeOnceFlag, [] {
+        g_classInfoScrambledPtrKey = makeScrambledPtrKey();
+        g_masmScrambledPtrKey = makeScrambledPtrKey();
+    });
 }
 
-} // namespace WTF
+} // namespace JSC
 

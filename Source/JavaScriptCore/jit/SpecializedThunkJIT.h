@@ -77,7 +77,7 @@ namespace JSC {
         {
             loadCellArgument(argument, dst);
             emitLoadStructure(*vm(), dst, scratch, dst);
-            appendFailure(branchPtr(NotEqual, Address(scratch, Structure::classInfoOffset()), TrustedImmPtr(PoisonedClassInfoPtr(classInfo).bits())));
+            appendFailure(branchPtr(NotEqual, Address(scratch, Structure::classInfoOffset()), TrustedImmPtr(ClassInfoScrambledPtr(classInfo).bits())));
             // We have to reload the argument since emitLoadStructure clobbered it.
             loadCellArgument(argument, dst);
         }

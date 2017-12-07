@@ -1,3 +1,31 @@
+2017-12-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, rolling out r225620
+        https://bugs.webkit.org/show_bug.cgi?id=180514
+        <rdar://problem/35901694>
+
+        It broke the build with GCC 7, and I don't know how to fix it.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Poisoned.h: Removed.
+        * wtf/ScrambledPtr.cpp: Renamed from Source/WTF/wtf/Poisoned.cpp.
+        (WTF::makeScrambledPtrKey):
+        * wtf/ScrambledPtr.h: Added.
+        (WTF::ScrambledPtr::ScrambledPtr):
+        (WTF::ScrambledPtr::assertIsScrambled const):
+        (WTF::ScrambledPtr::assertIsNotScrambled const):
+        (WTF::ScrambledPtr::descrambled const):
+        (WTF::ScrambledPtr::operator-> const):
+        (WTF::ScrambledPtr::bits const):
+        (WTF::ScrambledPtr::operator! const):
+        (WTF::ScrambledPtr::operator bool const):
+        (WTF::ScrambledPtr::operator== const):
+        (WTF::ScrambledPtr::operator==):
+        (WTF::ScrambledPtr::operator=):
+        (WTF::ScrambledPtr::scramble):
+        (WTF::ScrambledPtr::descramble):
+
 2017-12-06  Mark Lam  <mark.lam@apple.com>
 
         Refactoring: Rename ScrambledPtr to Poisoned.

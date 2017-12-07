@@ -26,7 +26,7 @@
 #pragma once
 
 #include "ExecutableAllocator.h"
-#include "JSCPoisonedPtr.h"
+#include "JSCScrambledPtr.h"
 #include <wtf/DataLog.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RefPtr.h>
@@ -67,7 +67,7 @@ public:
     FunctionPtr(returnType(*value)())
         : m_value((void*)value)
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -75,7 +75,7 @@ public:
     FunctionPtr(returnType(*value)(argType1))
         : m_value((void*)value)
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -83,7 +83,7 @@ public:
     FunctionPtr(returnType(*value)(argType1, argType2))
         : m_value((void*)value)
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -91,7 +91,7 @@ public:
     FunctionPtr(returnType(*value)(argType1, argType2, argType3))
         : m_value((void*)value)
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -99,7 +99,7 @@ public:
     FunctionPtr(returnType(*value)(argType1, argType2, argType3, argType4))
         : m_value((void*)value)
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -107,7 +107,7 @@ public:
     FunctionPtr(returnType(*value)(argType1, argType2, argType3, argType4, argType5))
         : m_value((void*)value)
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -115,7 +115,7 @@ public:
     FunctionPtr(returnType(*value)(argType1, argType2, argType3, argType4, argType5, argType6))
         : m_value((void*)value)
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 // MSVC doesn't seem to treat functions with different calling conventions as
@@ -126,7 +126,7 @@ public:
     FunctionPtr(returnType (CDECL *value)())
         : m_value((void*)value)
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -134,7 +134,7 @@ public:
     FunctionPtr(returnType (CDECL *value)(argType1))
         : m_value((void*)value)
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -142,7 +142,7 @@ public:
     FunctionPtr(returnType (CDECL *value)(argType1, argType2))
         : m_value((void*)value)
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -150,7 +150,7 @@ public:
     FunctionPtr(returnType (CDECL *value)(argType1, argType2, argType3))
         : m_value((void*)value)
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -158,7 +158,7 @@ public:
     FunctionPtr(returnType (CDECL *value)(argType1, argType2, argType3, argType4))
         : m_value((void*)value)
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 #endif
@@ -169,7 +169,7 @@ public:
     FunctionPtr(returnType (FASTCALL *value)())
         : m_value((void*)value)
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -177,7 +177,7 @@ public:
     FunctionPtr(returnType (FASTCALL *value)(argType1))
         : m_value((void*)value)
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -185,7 +185,7 @@ public:
     FunctionPtr(returnType (FASTCALL *value)(argType1, argType2))
         : m_value((void*)value)
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -193,7 +193,7 @@ public:
     FunctionPtr(returnType (FASTCALL *value)(argType1, argType2, argType3))
         : m_value((void*)value)
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -201,7 +201,7 @@ public:
     FunctionPtr(returnType (FASTCALL *value)(argType1, argType2, argType3, argType4))
         : m_value((void*)value)
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 #endif
@@ -213,7 +213,7 @@ public:
         // (I guess on RVTC function pointers have a different constness to GCC/MSVC?)
         : m_value((void*)value)
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -221,12 +221,12 @@ public:
 
     void* value() const
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         return m_value;
     }
     void* executableAddress() const
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         return m_value;
     }
 
@@ -247,20 +247,20 @@ public:
     explicit ReturnAddressPtr(void* value)
         : m_value(value)
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
     explicit ReturnAddressPtr(FunctionPtr function)
         : m_value(function.value())
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
     void* value() const
     {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        MasmScrambledPtr::assertIsNotScrambled(m_value);
         return m_value;
     }
     
@@ -288,7 +288,7 @@ public:
         : m_value(value)
 #endif
     {
-        m_value.assertIsPoisoned();
+        m_value.assertIsScrambled();
         ASSERT(value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
@@ -298,8 +298,8 @@ public:
         ASSERT(value);
         ASSERT_VALID_CODE_POINTER(value);
         MacroAssemblerCodePtr result;
-        result.m_value = PoisonedMasmPtr(value);
-        result.m_value.assertIsPoisoned();
+        result.m_value = MasmScrambledPtr(value);
+        result.m_value.assertIsScrambled();
         return result;
     }
 
@@ -309,42 +309,42 @@ public:
         : m_value(ra.value())
     {
         ASSERT(ra.value());
-        m_value.assertIsPoisoned();
+        m_value.assertIsScrambled();
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
-    PoisonedMasmPtr poisonedPtr() const { return m_value; }
+    MasmScrambledPtr scrambledPtr() const { return m_value; }
 
     template<typename T = void*>
     T executableAddress() const
     {
-        m_value.assertIsPoisoned();
-        return m_value.unpoisoned<T>();
+        m_value.assertIsScrambled();
+        return m_value ? m_value.descrambled<T>() : static_cast<T>(0);
     }
 #if CPU(ARM_THUMB2)
     // To use this pointer as a data address remove the decoration.
     template<typename T = void*>
     T dataLocation() const
     {
-        m_value.assertIsPoisoned();
+        m_value.assertIsScrambled();
         ASSERT_VALID_CODE_POINTER(m_value);
-        return bitwise_cast<T>(m_value ? m_value.unpoisoned<char*>() - 1 : nullptr);
+        return bitwise_cast<T>(m_value ? m_value.descrambled<char*>() - 1 : nullptr);
     }
 #else
     template<typename T = void*>
     T dataLocation() const
     {
-        m_value.assertIsPoisoned();
+        m_value.assertIsScrambled();
         ASSERT_VALID_CODE_POINTER(m_value);
-        return m_value.unpoisoned<T>();
+        return m_value ? m_value.descrambled<T>() : static_cast<T>(0);
     }
 #endif
 
     bool operator!() const
     {
-#if ENABLE(POISON_ASSERTS)
+#if ENABLE(SCRAMBLED_PTR_ASSERTS)
         if (!isEmptyValue() && !isDeletedValue())
-            m_value.assertIsPoisoned();
+            m_value.assertIsScrambled();
 #endif
         return !m_value;
     }
@@ -352,17 +352,17 @@ public:
     
     bool operator==(const MacroAssemblerCodePtr& other) const
     {
-#if ENABLE(POISON_ASSERTS)
+#if ENABLE(SCRAMBLED_PTR_ASSERTS)
         if (!isEmptyValue() && !isDeletedValue())
-            m_value.assertIsPoisoned();
+            m_value.assertIsScrambled();
         if (!other.isEmptyValue() && !other.isDeletedValue())
-            other.m_value.assertIsPoisoned();
+            other.m_value.assertIsScrambled();
 #endif
         return m_value == other.m_value;
     }
 
     // Disallow any casting operations (except for booleans). Instead, the client
-    // should be asking for poisonedPtr() or executableAddress() explicitly.
+    // should be asking for scrambledPtr() or executableAddress() explicitly.
     template<typename T, typename = std::enable_if_t<!std::is_same<T, bool>::value>>
     operator T() = delete;
 
@@ -389,10 +389,10 @@ public:
     static void initialize();
 
 private:
-    static PoisonedMasmPtr emptyValue() { return PoisonedMasmPtr(1); }
-    static PoisonedMasmPtr deletedValue() { return PoisonedMasmPtr(2); }
+    static MasmScrambledPtr emptyValue() { return MasmScrambledPtr(1); }
+    static MasmScrambledPtr deletedValue() { return MasmScrambledPtr(2); }
 
-    PoisonedMasmPtr m_value;
+    MasmScrambledPtr m_value;
 };
 
 struct MacroAssemblerCodePtrHash {
@@ -479,7 +479,7 @@ private:
 inline FunctionPtr::FunctionPtr(MacroAssemblerCodePtr ptr)
     : m_value(ptr.executableAddress())
 {
-    PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+    MasmScrambledPtr::assertIsNotScrambled(m_value);
     ASSERT_VALID_CODE_POINTER(m_value);
 }
 

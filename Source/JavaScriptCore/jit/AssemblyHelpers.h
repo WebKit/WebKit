@@ -1625,7 +1625,7 @@ public:
     void emitAllocateDestructibleObject(VM& vm, GPRReg resultGPR, Structure* structure, GPRReg scratchGPR1, GPRReg scratchGPR2, JumpList& slowPath)
     {
         emitAllocateJSObject<ClassType>(vm, resultGPR, TrustedImmPtr(structure), TrustedImmPtr(0), scratchGPR1, scratchGPR2, slowPath);
-        storePtr(TrustedImmPtr(PoisonedClassInfoPtr(structure->classInfo()).bits()), Address(resultGPR, JSDestructibleObject::classInfoOffset()));
+        storePtr(TrustedImmPtr(ClassInfoScrambledPtr(structure->classInfo()).bits()), Address(resultGPR, JSDestructibleObject::classInfoOffset()));
     }
     
     void emitInitializeInlineStorage(GPRReg baseGPR, unsigned inlineCapacity)

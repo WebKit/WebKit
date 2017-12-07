@@ -24,21 +24,26 @@
  */
 
 #include "config.h"
-#include "JSCPoisonedPtr.h"
+#include "ScrambledPtr.h"
 
-namespace JSC {
+#include <wtf/CryptographicallyRandomNumber.h>
 
-uintptr_t g_classInfoPoison;
-uintptr_t g_masmPoison;
+namespace WTF {
 
-void initializePoison()
+uintptr_t makeScrambledPtrKey()
 {
-    static std::once_flag initializeOnceFlag;
-    std::call_once(initializeOnceFlag, [] {
-        g_classInfoPoison = makePoison();
-        g_masmPoison = makePoison();
-    });
+    uintptr_t key = cryptographicallyRandomNumber();
+#if USE(JSVALUE64) && !OS(WINDOWS)
+    key = (key << 32) ^ (static_cast<uintptr_t>(cryptographicallyRandomNumber()) << 3);
+    // Ensure that the scrambled bits (pointer ^ key) do not make a valid pointer and
+    // cannot be 0. We ensure that it is zero so that the scrambled bits can also be
+    // used for a notmal zero check without needing to descramble first.
+    key |= (static_cast<uintptr_t>(0x1) << 63);
+#else
+    key = 0; // Scrambling is not supported on 32-bit or non-darwin platforms yet.
+#endif
+    return key;
 }
 
-} // namespace JSC
+} // namespace WTF
 
