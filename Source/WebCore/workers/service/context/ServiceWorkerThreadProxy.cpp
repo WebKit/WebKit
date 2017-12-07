@@ -47,10 +47,19 @@ static inline UniqueRef<Page> createPageForServiceWorker(PageConfiguration&& con
     return page;
 }
 
+static inline IDBClient::IDBConnectionProxy* idbConnectionProxy(Document& document)
+{
+#if ENABLE(INDEXED_DATABASE)
+    return document.idbConnectionProxy();
+#else
+    return nullptr;
+#endif
+}
+
 ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfiguration, const ServiceWorkerContextData& data, PAL::SessionID sessionID, CacheStorageProvider& cacheStorageProvider)
     : m_page(createPageForServiceWorker(WTFMove(pageConfiguration), data.scriptURL))
     , m_document(*m_page->mainFrame().document())
-    , m_serviceWorkerThread(ServiceWorkerThread::create(data, sessionID, *this, *this))
+    , m_serviceWorkerThread(ServiceWorkerThread::create(data, sessionID, *this, *this, idbConnectionProxy(m_document), m_document->socketProvider()))
     , m_cacheStorageProvider(cacheStorageProvider)
     , m_sessionID(sessionID)
     , m_inspectorProxy(*this)

@@ -1,3 +1,17 @@
+2017-12-07  Youenn Fablet  <youenn@apple.com>
+
+        Activate IDB and WebSockets in service workers
+        https://bugs.webkit.org/show_bug.cgi?id=180534
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/workers/service/resources/serviceworker-idb-worker.js: Added.
+        * http/tests/workers/service/resources/serviceworker-websocket-worker.js: Added.
+        * http/tests/workers/service/serviceworker-idb.https-expected.txt: Added.
+        * http/tests/workers/service/serviceworker-idb.https.html: Added.
+        * http/tests/workers/service/serviceworker-websocket.https-expected.txt: Added.
+        * http/tests/workers/service/serviceworker-websocket.https.html: Added.
+
 2017-12-07  Jer Noble  <jer.noble@apple.com>
 
         [EME] Support the 'encrypted' event for FPS encrypted streams

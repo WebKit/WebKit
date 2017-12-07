@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+var activeWorker;
+var scope = "whatever fits your IDB needs";
+
+promise_test(async (test) => {
+    var registration = await navigator.serviceWorker.getRegistration(scope);
+    if (registration && registration.scope === scope)
+        await registration.unregister();
+
+    var registration = await navigator.serviceWorker.register("resources/serviceworker-idb-worker.js", { scope : scope });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+promise_test(async (test) => {
+    var promise = new Promise((resolve, reject) => {
+        navigator.serviceWorker.addEventListener("message", test.step_func((event) => {
+            if (event.data === "PASS") {
+                resolve();
+                return;
+            }
+            reject(event.data);
+        }));
+    });
+
+    activeWorker.postMessage("TESTIDB-1");
+    await promise;
+}, "Ensure self.indexedDB is not null or undefined in service worker");
+</script>
+</body>
+</html>

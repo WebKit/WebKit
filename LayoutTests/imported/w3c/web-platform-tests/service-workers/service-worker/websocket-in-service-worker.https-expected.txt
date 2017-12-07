@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Verify WebSockets can be created in a Service Worker Test timed out
+FAIL Verify WebSockets can be created in a Service Worker assert_equals: expected "PASS" but got "FAIL: Got an error event"
 

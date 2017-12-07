@@ -1,3 +1,12 @@
+2017-12-07  Youenn Fablet  <youenn@apple.com>
+
+        Activate IDB and WebSockets in service workers
+        https://bugs.webkit.org/show_bug.cgi?id=180534
+
+        Reviewed by Brady Eidson.
+
+        * web-platform-tests/service-workers/service-worker/websocket-in-service-worker.https-expected.txt:
+
 2017-12-07  Ms2ger  <Ms2ger@igalia.com>
 
         Update imported/w3c/web-platform-tests/css/css-pseudo-4/marker-font-properties.html from upstream.
