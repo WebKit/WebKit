@@ -38,7 +38,7 @@ using namespace Inspector;
 
 ServiceWorkerDebuggable::ServiceWorkerDebuggable(ServiceWorkerThreadProxy& serviceWorkerThreadProxy, const ServiceWorkerContextData& data)
     : m_serviceWorkerThreadProxy(serviceWorkerThreadProxy)
-    , m_scriptURL(data.scriptURL)
+    , m_scopeURL(data.registration.scopeURL)
 {
 }
 
