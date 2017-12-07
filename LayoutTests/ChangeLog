@@ -1,3 +1,16 @@
+2017-12-07  Jer Noble  <jer.noble@apple.com>
+
+        [EME] Support generateRequest() in CDMFairPlayStreaming
+        https://bugs.webkit.org/show_bug.cgi?id=179752
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/media/encrypted-media/fps-createSession-expected.txt: Added.
+        * platform/mac/media/encrypted-media/fps-createSession.html: Added.
+        * platform/mac/media/encrypted-media/fps-generateRequest-expected.txt: Added.
+        * platform/mac/media/encrypted-media/fps-generateRequest.html: Added.
+
 2017-12-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r224931.

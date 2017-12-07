@@ -28,6 +28,7 @@
 
 #if HAVE(AVCONTENTKEYSESSION)
 
+#import "CDMFairPlayStreaming.h"
 #import "CDMKeySystemConfiguration.h"
 #import "NotImplemented.h"
 #import "SharedBuffer.h"
@@ -226,6 +227,12 @@ void CDMInstanceFairPlayStreamingAVFObjC::requestLicense(LicenseType licenseType
         callback(SharedBuffer::create(), emptyString(), false, Failed);
         return;
     }
+
+    if (!m_serverCertificate) {
+        callback(SharedBuffer::create(), emptyString(), false, Failed);
+        return;
+    }
+
     m_requestLicenseCallback = WTFMove(callback);
 
     [m_session processContentKeyRequestWithIdentifier:nil initializationData:initData->createNSData().get() options:nil];
@@ -268,10 +275,15 @@ void CDMInstanceFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyRequest 
     if (!m_requestLicenseCallback)
         return;
 
-#pragma clang diagnostic push 
-#pragma clang diagnostic ignored "-Wnonnull"
     RetainPtr<NSData> appIdentifier = m_serverCertificate ? m_serverCertificate->createNSData() : nullptr;
-    [m_request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:nil options:nil completionHandler:[this, weakThis = createWeakPtr()] (NSData *contentKeyRequestData, NSError *error) mutable {
+    Vector<Ref<SharedBuffer>> keyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(SharedBuffer::create(request.initializationData));
+    if (keyIDs.isEmpty()) {
+        m_requestLicenseCallback(SharedBuffer::create(), m_sessionId, false, Failed);
+        return;
+    }
+
+    RetainPtr<NSData> contentIdentifier = keyIDs.first()->createNSData();
+    [m_request makeStreamingContentKeyRequestDataForApp:appIdentifier.get() contentIdentifier:contentIdentifier.get() options:nil completionHandler:[this, weakThis = createWeakPtr()] (NSData *contentKeyRequestData, NSError *error) mutable {
         callOnMainThread([this, weakThis = WTFMove(weakThis), error = retainPtr(error), contentKeyRequestData = retainPtr(contentKeyRequestData)] {
             if (!weakThis || !m_requestLicenseCallback)
                 return;
@@ -282,7 +294,6 @@ void CDMInstanceFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyRequest 
                 m_requestLicenseCallback(SharedBuffer::create(contentKeyRequestData.get()), m_sessionId, false, Succeeded);
         });
     }];
-#pragma clang diagnostic pop
 }
 
 void CDMInstanceFairPlayStreamingAVFObjC::didProvideRenewingRequest(AVContentKeyRequest *request)
