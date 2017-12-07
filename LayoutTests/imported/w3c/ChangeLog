@@ -1,3 +1,13 @@
+2017-12-07  Ms2ger  <Ms2ger@igalia.com>
+
+        Update imported/w3c/web-platform-tests/css/css-pseudo-4/marker-font-properties.html from upstream.
+        https://bugs.webkit.org/show_bug.cgi?id=177362
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/css/css-pseudo-4/marker-font-properties-expected.html:
+        * web-platform-tests/css/css-pseudo-4/marker-font-properties.html:
+
 2017-12-06  Youenn Fablet  <youenn@apple.com>
 
         Import WPT workers test suite

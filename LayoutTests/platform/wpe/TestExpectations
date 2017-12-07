@@ -231,7 +231,6 @@ imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg [ Timeout
 # ========
 imported/w3c/web-platform-tests/css/css-grid-1/grid-items/grid-items-sizing-alignment-001.html [ Pass ]
 
-webkit.org/b/177362 imported/w3c/web-platform-tests/css/css-pseudo-4/marker-font-properties.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo-4/first-letter-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-pseudo-4/first-letter-003.html [ Pass ]
 
