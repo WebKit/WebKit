@@ -1,3 +1,63 @@
+2017-12-07  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Remove duplicated tests that are now present in WPT
+        https://bugs.webkit.org/show_bug.cgi?id=180511
+
+        Reviewed by Youenn Fablet.
+
+        These tests have been moved to WPT upstream repository in the following
+        Blink commits:
+        - https://chromium-review.googlesource.com/c/chromium/src/+/674931
+        - https://chromium-review.googlesource.com/c/chromium/src/+/730707
+
+        As we have just updated the WPT imported tests in r225561,
+        we can get rid now of the duplicates.
+
+        * fast/css-grid-layout/absolute-positioning-definite-sizes-expected.txt: Removed.
+        * fast/css-grid-layout/absolute-positioning-definite-sizes.html: Removed.
+        * fast/css-grid-layout/absolute-positioning-grid-container-containing-block-expected.txt: Removed.
+        * fast/css-grid-layout/absolute-positioning-grid-container-containing-block.html: Removed.
+        * fast/css-grid-layout/absolute-positioning-grid-container-parent-expected.txt: Removed.
+        * fast/css-grid-layout/absolute-positioning-grid-container-parent.html: Removed.
+        * fast/css-grid-layout/fit-content-columns-expected.html: Removed.
+        * fast/css-grid-layout/fit-content-columns.html: Removed.
+        * fast/css-grid-layout/fit-content-rows-expected.html: Removed.
+        * fast/css-grid-layout/fit-content-rows.html: Removed.
+        * fast/css-grid-layout/grid-change-fit-content-argument-expected.txt: Removed.
+        * fast/css-grid-layout/grid-change-fit-content-argument.html: Removed.
+        * fast/css-grid-layout/grid-positioned-children-writing-modes-expected.html: Removed.
+        * fast/css-grid-layout/grid-positioned-children-writing-modes.html: Removed.
+        * fast/css-grid-layout/grid-positioned-item-dynamic-change-expected.html: Removed.
+        * fast/css-grid-layout/grid-positioned-item-dynamic-change.html: Removed.
+        * fast/css-grid-layout/grid-positioned-items-background-expected.html: Removed.
+        * fast/css-grid-layout/grid-positioned-items-background-rtl-expected.html: Removed.
+        * fast/css-grid-layout/grid-positioned-items-background-rtl.html: Removed.
+        * fast/css-grid-layout/grid-positioned-items-background.html: Removed.
+        * fast/css-grid-layout/grid-positioned-items-content-alignment-expected.txt: Removed.
+        * fast/css-grid-layout/grid-positioned-items-content-alignment-rtl-expected.txt: Removed.
+        * fast/css-grid-layout/grid-positioned-items-content-alignment-rtl.html: Removed.
+        * fast/css-grid-layout/grid-positioned-items-content-alignment.html: Removed.
+        * fast/css-grid-layout/grid-positioned-items-gaps-expected.txt: Removed.
+        * fast/css-grid-layout/grid-positioned-items-gaps-rtl-expected.txt: Removed.
+        * fast/css-grid-layout/grid-positioned-items-gaps-rtl.html: Removed.
+        * fast/css-grid-layout/grid-positioned-items-gaps.html: Removed.
+        * fast/css-grid-layout/grid-positioned-items-implicit-grid-expected.txt: Removed.
+        * fast/css-grid-layout/grid-positioned-items-implicit-grid-line-expected.txt: Removed.
+        * fast/css-grid-layout/grid-positioned-items-implicit-grid-line.html: Removed.
+        * fast/css-grid-layout/grid-positioned-items-implicit-grid.html: Removed.
+        * fast/css-grid-layout/grid-positioned-items-padding-expected.txt: Removed.
+        * fast/css-grid-layout/grid-positioned-items-padding.html: Removed.
+        * fast/css-grid-layout/grid-positioned-items-unknown-named-grid-line-expected.txt: Removed.
+        * fast/css-grid-layout/grid-positioned-items-unknown-named-grid-line.html: Removed.
+        * fast/css-grid-layout/grid-positioned-items-within-grid-implicit-track-expected.txt: Removed.
+        * fast/css-grid-layout/grid-positioned-items-within-grid-implicit-track.html: Removed.
+        * fast/css-grid-layout/grid-sizing-positioned-items-expected.txt: Removed.
+        * fast/css-grid-layout/grid-sizing-positioned-items.html: Removed.
+        * fast/css-grid-layout/positioned-grid-items-should-not-create-implicit-tracks-expected.txt: Removed.
+        * fast/css-grid-layout/positioned-grid-items-should-not-create-implicit-tracks.html: Removed.
+        * fast/css-grid-layout/positioned-grid-items-should-not-take-up-space-expected.txt: Removed.
+        * fast/css-grid-layout/positioned-grid-items-should-not-take-up-space.html: Removed.
+
 2017-12-06  Chris Dumez  <cdumez@apple.com>
 
         We should be able to recover after a Service Worker process crash

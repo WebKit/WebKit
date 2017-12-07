@@ -1,5 +1,0 @@
-Items should extend to fill the width of the absolutely positioned grid container.
-
-XXX X
-XX XXX XX
-PASS

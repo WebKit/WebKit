@@ -1,3 +1,0 @@
-This test checks that positioned items shouldn't create implicit tracks on the grid.
-
-PASS
