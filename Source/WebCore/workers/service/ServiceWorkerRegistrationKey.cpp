@@ -76,6 +76,13 @@ bool ServiceWorkerRegistrationKey::originIsMatching(const SecurityOriginData& to
     return protocolHostAndPortAreEqual(clientURL, m_scope);
 }
 
+static const char separatorCharacter = '_';
+
+String ServiceWorkerRegistrationKey::toDatabaseKey() const
+{
+    return makeString(m_topOrigin.protocol, separatorCharacter, m_topOrigin.host, separatorCharacter, m_topOrigin.port.value_or(0), separatorCharacter, m_scope.path());
+}
+
 #ifndef NDEBUG
 String ServiceWorkerRegistrationKey::loggingString() const
 {

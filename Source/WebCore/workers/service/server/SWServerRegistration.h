@@ -33,6 +33,7 @@
 #include "ServiceWorkerTypes.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/WallTime.h>
 
 namespace WebCore {
 
@@ -58,7 +59,7 @@ public:
     bool isUninstalling() const { return m_uninstalling; }
     void setIsUninstalling(bool);
 
-    void setLastUpdateTime(double time) { m_lastUpdateTime = time; }
+    void setLastUpdateTime(WallTime time) { m_lastUpdateTime = time; }
     ServiceWorkerUpdateViaCache updateViaCache() const { return m_updateViaCache; }
 
     void updateRegistrationState(ServiceWorkerRegistrationState, SWServerWorker*);
@@ -104,7 +105,7 @@ private:
     RefPtr<SWServerWorker> m_waitingWorker;
     RefPtr<SWServerWorker> m_activeWorker;
 
-    double m_lastUpdateTime { 0 };
+    WallTime m_lastUpdateTime;
     
     HashCountedSet<SWServerConnectionIdentifier> m_connectionsWithClientRegistrations;
     SWServer& m_server;

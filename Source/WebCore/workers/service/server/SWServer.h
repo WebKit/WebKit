@@ -29,6 +29,7 @@
 
 #include "ClientOrigin.h"
 #include "DocumentIdentifier.h"
+#include "RegistrationStore.h"
 #include "SWServerWorker.h"
 #include "ServiceWorkerClientData.h"
 #include "ServiceWorkerIdentifier.h"
@@ -213,6 +214,7 @@ private:
     Lock m_mainThreadReplyLock;
     bool m_mainThreadReplyScheduled { false };
     UniqueRef<SWOriginStore> m_originStore;
+    RegistrationStore m_registrationStore;
     Deque<ServiceWorkerContextData> m_pendingContextDatas;
 };
 

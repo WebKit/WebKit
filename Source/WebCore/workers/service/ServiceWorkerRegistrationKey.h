@@ -54,6 +54,8 @@ public:
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerRegistrationKey> decode(Decoder&);
 
+    String toDatabaseKey() const;
+
 #ifndef NDEBUG
     String loggingString() const;
 #endif

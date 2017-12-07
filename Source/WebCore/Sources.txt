@@ -2212,6 +2212,8 @@ workers/service/context/ServiceWorkerThread.cpp
 workers/service/context/ServiceWorkerThreadProxy.cpp
 workers/service/context/SWContextManager.cpp
 
+workers/service/server/RegistrationDatabase.cpp
+workers/service/server/RegistrationStore.cpp
 workers/service/server/SWOriginStore.cpp
 workers/service/server/SWServer.cpp
 workers/service/server/SWServerJobQueue.cpp

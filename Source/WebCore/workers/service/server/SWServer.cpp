@@ -31,6 +31,7 @@
 #include "ExceptionCode.h"
 #include "ExceptionData.h"
 #include "Logging.h"
+#include "RegistrationStore.h"
 #include "SWOriginStore.h"
 #include "SWServerJobQueue.h"
 #include "SWServerRegistration.h"
@@ -124,6 +125,7 @@ void SWServer::removeRegistration(const ServiceWorkerRegistrationKey& key)
     ASSERT_UNUSED(wasRemoved, wasRemoved);
 
     m_originStore->remove(topOrigin);
+    m_registrationStore.removeRegistration(*registration);
 }
 
 Vector<ServiceWorkerRegistrationData> SWServer::getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL)
@@ -196,6 +198,7 @@ void SWServer::Connection::syncTerminateWorker(ServiceWorkerIdentifier identifie
 
 SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, const String& registrationDatabaseDirectory)
     : m_originStore(WTFMove(originStore))
+    , m_registrationStore(registrationDatabaseDirectory)
 {
     UNUSED_PARAM(registrationDatabaseDirectory);
     allServers().add(this);
@@ -401,9 +404,9 @@ void SWServer::removeClientServiceWorkerRegistration(Connection& connection, Ser
 
 void SWServer::updateWorker(Connection&, const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerRegistration& registration, const URL& url, const String& script, WorkerType type)
 {
-    auto serviceWorkerIdentifier = generateServiceWorkerIdentifier();
+    registration.setLastUpdateTime(WallTime::now());
 
-    ServiceWorkerContextData data = { jobDataIdentifier, registration.data(), serviceWorkerIdentifier, script, url, type };
+    ServiceWorkerContextData data = { jobDataIdentifier, registration.data(), generateServiceWorkerIdentifier(), script, url, type };
 
     // Right now we only ever keep up to one connection to one SW context process.
     // And it should always exist if we're calling updateWorker
@@ -427,6 +430,8 @@ void SWServer::serverToContextConnectionCreated()
 
 void SWServer::installContextData(const ServiceWorkerContextData& data)
 {
+    m_registrationStore.updateRegistration(data);
+
     auto* connection = SWServerToContextConnection::globalServerToContextConnection();
     ASSERT(connection);
 
