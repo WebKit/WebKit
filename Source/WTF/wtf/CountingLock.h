@@ -55,6 +55,9 @@ namespace WTF {
 // The latter is important for us because some GC paths are known to be sensitive to fences on ARM.
 
 class CountingLock {
+    WTF_MAKE_NONCOPYABLE(CountingLock);
+    WTF_MAKE_FAST_ALLOCATED;
+
     typedef unsigned LockType;
     
     static constexpr LockType isHeldBit = 1;
@@ -77,14 +80,7 @@ class CountingLock {
     typedef LockAlgorithm<LockType, isHeldBit, hasParkedBit, LockHooks> ExclusiveAlgorithm;
     
 public:
-    CountingLock()
-    {
-        m_word.storeRelaxed(0);
-    }
-    
-    ~CountingLock()
-    {
-    }
+    CountingLock() = default;
     
     bool tryLock()
     {
@@ -265,7 +261,7 @@ private:
         return result;
     }
     
-    Atomic<LockType> m_word;
+    Atomic<LockType> m_word { 0 };
 };
 
 } // namespace WTF

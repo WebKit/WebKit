@@ -30,16 +30,7 @@
 
 namespace WTF {
 
-void ReadWriteLockBase::construct()
-{
-    m_lock.construct();
-    m_cond.construct();
-    m_isWriteLocked = false;
-    m_numReaders = 0;
-    m_numWaitingWriters = 0;
-}
-
-void ReadWriteLockBase::readLock()
+void ReadWriteLock::readLock()
 {
     auto locker = holdLock(m_lock);
     while (m_isWriteLocked || m_numWaitingWriters)
@@ -47,7 +38,7 @@ void ReadWriteLockBase::readLock()
     m_numReaders++;
 }
 
-void ReadWriteLockBase::readUnlock()
+void ReadWriteLock::readUnlock()
 {
     auto locker = holdLock(m_lock);
     m_numReaders--;
@@ -55,7 +46,7 @@ void ReadWriteLockBase::readUnlock()
         m_cond.notifyAll();
 }
 
-void ReadWriteLockBase::writeLock()
+void ReadWriteLock::writeLock()
 {
     auto locker = holdLock(m_lock);
     while (m_isWriteLocked || m_numReaders) {
@@ -66,7 +57,7 @@ void ReadWriteLockBase::writeLock()
     m_isWriteLocked = true;
 }
 
-void ReadWriteLockBase::writeUnlock()
+void ReadWriteLock::writeUnlock()
 {
     auto locker = holdLock(m_lock);
     m_isWriteLocked = false;

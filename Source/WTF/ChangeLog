@@ -1,3 +1,87 @@
+2017-12-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Remove XXXLockBase since constexpr constructor can initialize static variables without calling global constructors
+        https://bugs.webkit.org/show_bug.cgi?id=180495
+
+        Reviewed by Mark Lam.
+
+        Very nice feature of C++11 is that constexpr constructor can initialize static global variables
+        without calling global constructors. We do not need to have XXXLockBase with derived XXXLock
+        class since StaticXXXLock can have constructors as long as it is constexpr.
+        We remove bunch of these classes, and set `XXXLock() = default;` explicitly for readability.
+        C++11's default constructor is constexpr as long as its member's default constructor / default
+        initializer is constexpr.
+
+        * wtf/Condition.h:
+        (WTF::ConditionBase::construct): Deleted.
+        (WTF::ConditionBase::waitUntil): Deleted.
+        (WTF::ConditionBase::waitFor): Deleted.
+        (WTF::ConditionBase::wait): Deleted.
+        (WTF::ConditionBase::notifyOne): Deleted.
+        (WTF::ConditionBase::notifyAll): Deleted.
+        (WTF::Condition::Condition): Deleted.
+        * wtf/CountingLock.h:
+        (WTF::CountingLock::CountingLock): Deleted.
+        (WTF::CountingLock::~CountingLock): Deleted.
+        * wtf/Lock.cpp:
+        (WTF::Lock::lockSlow):
+        (WTF::Lock::unlockSlow):
+        (WTF::Lock::unlockFairlySlow):
+        (WTF::Lock::safepointSlow):
+        (WTF::LockBase::lockSlow): Deleted.
+        (WTF::LockBase::unlockSlow): Deleted.
+        (WTF::LockBase::unlockFairlySlow): Deleted.
+        (WTF::LockBase::safepointSlow): Deleted.
+        * wtf/Lock.h:
+        (WTF::LockBase::construct): Deleted.
+        (WTF::LockBase::lock): Deleted.
+        (WTF::LockBase::tryLock): Deleted.
+        (WTF::LockBase::try_lock): Deleted.
+        (WTF::LockBase::unlock): Deleted.
+        (WTF::LockBase::unlockFairly): Deleted.
+        (WTF::LockBase::safepoint): Deleted.
+        (WTF::LockBase::isHeld const): Deleted.
+        (WTF::LockBase::isLocked const): Deleted.
+        (WTF::LockBase::isFullyReset const): Deleted.
+        (WTF::Lock::Lock): Deleted.
+        * wtf/ReadWriteLock.cpp:
+        (WTF::ReadWriteLock::readLock):
+        (WTF::ReadWriteLock::readUnlock):
+        (WTF::ReadWriteLock::writeLock):
+        (WTF::ReadWriteLock::writeUnlock):
+        (WTF::ReadWriteLockBase::construct): Deleted.
+        (WTF::ReadWriteLockBase::readLock): Deleted.
+        (WTF::ReadWriteLockBase::readUnlock): Deleted.
+        (WTF::ReadWriteLockBase::writeLock): Deleted.
+        (WTF::ReadWriteLockBase::writeUnlock): Deleted.
+        * wtf/ReadWriteLock.h:
+        (WTF::ReadWriteLock::read):
+        (WTF::ReadWriteLock::write):
+        (WTF::ReadWriteLockBase::ReadLock::tryLock): Deleted.
+        (WTF::ReadWriteLockBase::ReadLock::lock): Deleted.
+        (WTF::ReadWriteLockBase::ReadLock::unlock): Deleted.
+        (WTF::ReadWriteLockBase::WriteLock::tryLock): Deleted.
+        (WTF::ReadWriteLockBase::WriteLock::lock): Deleted.
+        (WTF::ReadWriteLockBase::WriteLock::unlock): Deleted.
+        (WTF::ReadWriteLockBase::read): Deleted.
+        (WTF::ReadWriteLockBase::write): Deleted.
+        (WTF::ReadWriteLock::ReadWriteLock): Deleted.
+        * wtf/RecursiveLockAdapter.h:
+        (WTF::RecursiveLockAdapter::RecursiveLockAdapter): Deleted.
+        * wtf/WordLock.cpp:
+        (WTF::WordLock::lockSlow):
+        (WTF::WordLock::unlockSlow):
+        (WTF::WordLockBase::lockSlow): Deleted.
+        (WTF::WordLockBase::unlockSlow): Deleted.
+        * wtf/WordLock.h:
+        (WTF::WordLockBase::lock): Deleted.
+        (WTF::WordLockBase::unlock): Deleted.
+        (WTF::WordLockBase::isHeld const): Deleted.
+        (WTF::WordLockBase::isLocked const): Deleted.
+        (WTF::WordLockBase::isFullyReset const): Deleted.
+        (WTF::WordLock::WordLock): Deleted.
+        * wtf/WorkQueue.cpp:
+
 2017-12-05  Stephan Szabo  <stephan.szabo@sony.com>
 
         Switch windows build to Visual Studio 2017

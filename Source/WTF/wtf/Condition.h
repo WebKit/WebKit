@@ -41,20 +41,16 @@ namespace WTF {
 // one byte of memory. notifyOne() and notifyAll() require just a load and branch for the fast
 // case where no thread is waiting. This condition variable, when used with WTF::Lock, can
 // outperform a system condition variable and lock by up to 58x.
-
-// This is a struct without a constructor or destructor so that it can be statically initialized.
-// Use Lock in instance variables.
-struct ConditionBase {
+class Condition {
+    WTF_MAKE_NONCOPYABLE(Condition);
+public:
     // Condition will accept any kind of time and convert it internally, but this typedef tells
     // you what kind of time Condition would be able to use without conversions. However, if you
     // are unlikely to be affected by the cost of conversions, it is better to use MonotonicTime.
-    typedef ParkingLot::Time Time;
-    
-    void construct()
-    {
-        m_hasWaiters.store(false);
-    }
-    
+    using Time = ParkingLot::Time;
+
+    Condition() = default;
+
     // Wait on a parking queue while releasing the given lock. It will unlock the lock just before
     // parking, and relock it upon wakeup. Returns true if we woke up due to some call to
     // notifyOne() or notifyAll(). Returns false if we woke up due to a timeout. Note that this form
@@ -174,19 +170,10 @@ struct ConditionBase {
     }
     
 private:
-    Atomic<bool> m_hasWaiters;
+    Atomic<bool> m_hasWaiters { false };
 };
 
-class Condition : public ConditionBase {
-    WTF_MAKE_NONCOPYABLE(Condition);
-public:
-    Condition()
-    {
-        construct();
-    }
-};
-
-typedef ConditionBase StaticCondition;
+using StaticCondition = Condition;
 
 } // namespace WTF
 

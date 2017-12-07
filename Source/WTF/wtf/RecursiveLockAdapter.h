@@ -32,10 +32,8 @@ namespace WTF {
 template<typename LockType>
 class RecursiveLockAdapter {
 public:
-    RecursiveLockAdapter()
-    {
-    }
-    
+    RecursiveLockAdapter() = default;
+
     void lock()
     {
         Thread& me = Thread::current();
