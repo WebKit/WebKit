@@ -476,10 +476,6 @@ void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVe
         if (properties && properties->isEmpty() && !matchRequest.includeEmptyRules)
             continue;
 
-        // FIXME: Exposing the non-standard getMatchedCSSRules API to web is the only reason this is needed.
-        if (m_sameOriginOnly && !ruleData.hasDocumentSecurityOrigin())
-            continue;
-
         unsigned specificity;
         if (ruleMatches(ruleData, specificity))
             addMatchedRule(ruleData, specificity, matchRequest.styleScopeOrdinal, ruleRange);

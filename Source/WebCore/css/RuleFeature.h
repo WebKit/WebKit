@@ -34,15 +34,13 @@ class RuleData;
 class StyleRule;
 
 struct RuleFeature {
-    RuleFeature(StyleRule* rule, unsigned selectorIndex, bool hasDocumentSecurityOrigin)
+    RuleFeature(StyleRule* rule, unsigned selectorIndex)
         : rule(rule)
         , selectorIndex(selectorIndex)
-        , hasDocumentSecurityOrigin(hasDocumentSecurityOrigin) 
-    { 
+    {
     }
     StyleRule* rule;
     unsigned selectorIndex;
-    bool hasDocumentSecurityOrigin;
 };
 
 struct RuleFeatureSet {

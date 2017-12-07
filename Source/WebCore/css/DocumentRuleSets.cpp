@@ -114,7 +114,7 @@ static std::unique_ptr<RuleSet> makeRuleSet(const Vector<RuleFeature>& rules)
         return nullptr;
     auto ruleSet = std::make_unique<RuleSet>();
     for (size_t i = 0; i < size; ++i)
-        ruleSet->addRule(rules[i].rule, rules[i].selectorIndex, rules[i].hasDocumentSecurityOrigin ? RuleHasDocumentSecurityOrigin : RuleHasNoSpecialState);
+        ruleSet->addRule(rules[i].rule, rules[i].selectorIndex);
     ruleSet->shrinkToFit();
     return ruleSet;
 }

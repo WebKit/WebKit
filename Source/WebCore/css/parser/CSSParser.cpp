@@ -72,12 +72,13 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
 #endif
 }
 
-CSSParserContext::CSSParserContext(Document& document, const URL& baseURL, const String& charset)
-    : baseURL(baseURL.isNull() ? document.baseURL() : baseURL)
+CSSParserContext::CSSParserContext(Document& document, const URL& sheetBaseURL, const String& charset)
+    : baseURL(sheetBaseURL.isNull() ? document.baseURL() : sheetBaseURL)
     , charset(charset)
     , mode(document.inQuirksMode() ? HTMLQuirksMode : HTMLStandardMode)
     , isHTMLDocument(document.isHTMLDocument())
     , cssGridLayoutEnabled(document.isCSSGridLayoutEnabled())
+    , hasDocumentSecurityOrigin(document.securityOrigin().canRequest(baseURL))
 {
     needsSiteSpecificQuirks = document.settings().needsSiteSpecificQuirks();
     enforcesCSSMIMETypeInNoQuirksMode = document.settings().enforceCSSMIMETypeInNoQuirksMode();
@@ -111,7 +112,8 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.springTimingFunctionEnabled == b.springTimingFunctionEnabled
         && a.constantPropertiesEnabled == b.constantPropertiesEnabled
         && a.conicGradientsEnabled == b.conicGradientsEnabled
-        && a.deferredCSSParserEnabled == b.deferredCSSParserEnabled;
+        && a.deferredCSSParserEnabled == b.deferredCSSParserEnabled
+        && a.hasDocumentSecurityOrigin == b.hasDocumentSecurityOrigin;
 }
 
 CSSParser::CSSParser(const CSSParserContext& context)

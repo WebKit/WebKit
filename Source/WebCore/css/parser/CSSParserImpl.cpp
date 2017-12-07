@@ -738,14 +738,14 @@ RefPtr<StyleRule> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelude, C
         CSSParserTokenRange blockCopy = block;
         blockCopy.consumeWhitespace();
         if (!blockCopy.atEnd()) {
-            rule = StyleRule::create(createDeferredStyleProperties(block));
+            rule = StyleRule::create(createDeferredStyleProperties(block), m_context.hasDocumentSecurityOrigin);
             rule->wrapperAdoptSelectorList(selectorList);
             return rule;
         }
     }
 
     consumeDeclarationList(block, StyleRule::Style);
-    rule = StyleRule::create(createStyleProperties(m_parsedProperties, m_context.mode));
+    rule = StyleRule::create(createStyleProperties(m_parsedProperties, m_context.mode), m_context.hasDocumentSecurityOrigin);
     rule->wrapperAdoptSelectorList(selectorList);
     return rule;
 }
