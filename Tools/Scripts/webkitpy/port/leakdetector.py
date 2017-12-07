@@ -58,6 +58,7 @@ class LeakDetector(object):
             'WebCore::createPrivateStorageSession', # <rdar://problem/35189565>
             'CIDeviceManagerStartMonitoring', # <rdar://problem/35711052>
             'NSSpellChecker init', # <rdar://problem/35434615>
+            'NSColor controlHighlightColor', # <rdar://problem/35816332>
         ]
         return callstacks
 

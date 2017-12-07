@@ -1,3 +1,9 @@
+2017-12-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Exclude another leak callstack.
+
+        * Scripts/webkitpy/port/leakdetector.py: (LeakDetector._callstacks_to_exclude_from_leaks):
+
 2017-12-06  Jeff Miller  <jeffm@apple.com>
 
         -[WKWebViewConfiguration copyWithZone] doesn't copy _groupIdentifier
