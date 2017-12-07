@@ -224,7 +224,6 @@ http/tests/paymentrequest [ Skip ]
 http/tests/inspector/paymentrequest [ Skip ]
 imported/w3c/web-platform-tests/payment-request [ Skip ]
 
-webkit.org/b/179786 imported/w3c/web-platform-tests/2dcontext/the-canvas-state/canvas_state_restore_001.htm [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/2dcontext/transformations/canvas_transformations_reset_001.html [ ImageOnlyFailure ]
 webkit.org/b/179607 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-and-redirects-async.htm [ Pass Failure ]
 webkit.org/b/179607 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-and-redirects-async-same-origin.htm [ Pass Failure ]
