@@ -43,6 +43,7 @@ class WebUserContentControllerProxy;
 
 namespace API {
 
+class ApplicationManifest;
 class WebsiteDataStore;
 
 class PageConfiguration : public ObjectImpl<Object::Type::PageConfiguration> {
@@ -106,6 +107,11 @@ public:
     const WTF::String& overrideContentSecurityPolicy() const { return m_overrideContentSecurityPolicy; }
     void setOverrideContentSecurityPolicy(const WTF::String& overrideContentSecurityPolicy) { m_overrideContentSecurityPolicy = overrideContentSecurityPolicy; }
 
+#if ENABLE(APPLICATION_MANIFEST)
+    const ApplicationManifest* applicationManifest() const;
+    void setApplicationManifest(ApplicationManifest*);
+#endif
+
 private:
 
     RefPtr<WebKit::WebProcessPool> m_processPool;
@@ -131,6 +137,10 @@ private:
     std::optional<double> m_cpuLimit;
 
     WTF::String m_overrideContentSecurityPolicy;
+
+#if ENABLE(APPLICATION_MANIFEST)
+    RefPtr<ApplicationManifest> m_applicationManifest;
+#endif
 };
 
 } // namespace API

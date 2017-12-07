@@ -419,6 +419,10 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.paymentCoordinatorClient = new WebPaymentCoordinator(*this);
 #endif
 
+#if ENABLE(APPLICATION_MANIFEST)
+    pageConfiguration.applicationManifest = parameters.applicationManifest;
+#endif
+
     m_page = std::make_unique<Page>(WTFMove(pageConfiguration));
     updatePreferences(parameters.store);
 

@@ -33,10 +33,6 @@
 #import "_WKApplicationManifest.h"
 #import <WebCore/ApplicationManifest.h>
 
-namespace WebCore {
-struct ApplicationManifest;
-}
-
 #if ENABLE(APPLICATION_MANIFEST)
 namespace API {
 

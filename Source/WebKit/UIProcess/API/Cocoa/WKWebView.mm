@@ -537,6 +537,10 @@ static void validate(WKWebViewConfiguration *configuration)
     pageConfiguration->setWaitsForPaintAfterViewDidMoveToWindow([_configuration _waitsForPaintAfterViewDidMoveToWindow]);
     pageConfiguration->setControlledByAutomation([_configuration _isControlledByAutomation]);
 
+#if ENABLE(APPLICATION_MANIFEST)
+    pageConfiguration->setApplicationManifest([_configuration _applicationManifest] ? [configuration _applicationManifest]->_applicationManifest.get() : nullptr);
+#endif
+
 #if PLATFORM(MAC)
     if (auto cpuLimit = [_configuration _cpuLimit])
         pageConfiguration->setCPULimit(cpuLimit);

@@ -51,6 +51,9 @@ inline MainFrame::MainFrame(Page& page, PageConfiguration& configuration)
 #if ENABLE(APPLE_PAY)
     , m_paymentCoordinator(std::make_unique<PaymentCoordinator>(*configuration.paymentCoordinatorClient))
 #endif
+#if ENABLE(APPLICATION_MANIFEST)
+    , m_applicationManifest(configuration.applicationManifest)
+#endif
     , m_performanceLogging(std::make_unique<PerformanceLogging>(*this))
 {
 }

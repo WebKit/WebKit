@@ -25,12 +25,13 @@
 
 #pragma once
 
+#if ENABLE(APPLICATION_MANIFEST)
+
 #include "APIObject.h"
 #include <WebCore/ApplicationManifest.h>
 
 namespace API {
 
-#if ENABLE(APPLICATION_MANIFEST)
 class ApplicationManifest final : public ObjectImpl<Object::Type::ApplicationManifest> {
 public:
     static Ref<ApplicationManifest> create(const WebCore::ApplicationManifest& applicationManifest)
@@ -48,7 +49,7 @@ public:
 private:
     WebCore::ApplicationManifest m_applicationManifest;
 };
-#endif
 
 } // namespace API
 
+#endif // ENABLE(APPLICATION_MANIFEST)

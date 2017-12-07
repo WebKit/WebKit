@@ -26,8 +26,13 @@
 #pragma once
 
 #include <wtf/Noncopyable.h>
+#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/UniqueRef.h>
+
+#if ENABLE(APPLICATION_MANIFEST)
+#include "ApplicationManifest.h"
+#endif
 
 namespace WebCore {
 
@@ -73,6 +78,10 @@ public:
     InspectorClient* inspectorClient { nullptr };
 #if ENABLE(APPLE_PAY)
     PaymentCoordinatorClient* paymentCoordinatorClient { nullptr };
+#endif
+
+#if ENABLE(APPLICATION_MANIFEST)
+    std::optional<ApplicationManifest> applicationManifest;
 #endif
 
     UniqueRef<LibWebRTCProvider> libWebRTCProvider;

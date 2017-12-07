@@ -36,6 +36,7 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
 #endif
 
 @class WKWebView;
+@class _WKApplicationManifest;
 @class _WKVisitedLinkStore;
 @class _WKWebsiteDataStore;
 
@@ -66,6 +67,7 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
 @property (nonatomic, setter=_setApplePayEnabled:) BOOL _applePayEnabled WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 @property (nonatomic, setter=_setWaitsForPaintAfterViewDidMoveToWindow:) BOOL _waitsForPaintAfterViewDidMoveToWindow WK_API_AVAILABLE(macosx(10.12.3), ios(10.3));
 @property (nonatomic, setter=_setControlledByAutomation:, getter=_isControlledByAutomation) BOOL _controlledByAutomation WK_API_AVAILABLE(macosx(10.12.3), ios(10.3));
+@property (nonatomic, setter=_setApplicationManifest:) _WKApplicationManifest *_applicationManifest WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, setter=_setAlwaysRunsAtForegroundPriority:) BOOL _alwaysRunsAtForegroundPriority WK_API_AVAILABLE(ios(9_0));

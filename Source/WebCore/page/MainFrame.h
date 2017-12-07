@@ -26,7 +26,12 @@
 #pragma once
 
 #include "Frame.h"
+#include <wtf/Optional.h>
 #include <wtf/Vector.h>
+
+#if ENABLE(APPLICATION_MANIFEST)
+#include "ApplicationManifest.h"
+#endif
 
 namespace WebCore {
 
@@ -67,6 +72,10 @@ public:
     WEBCORE_EXPORT void setPaymentCoordinator(std::unique_ptr<PaymentCoordinator>&&);
 #endif
 
+#if ENABLE(APPLICATION_MANIFEST)
+    const std::optional<ApplicationManifest>& applicationManifest() const { return m_applicationManifest; }
+#endif
+
     PerformanceLogging& performanceLogging() const { return *m_performanceLogging; }
 
     void didCompleteLoad();
@@ -90,6 +99,10 @@ private:
 
 #if ENABLE(APPLE_PAY)
     std::unique_ptr<PaymentCoordinator> m_paymentCoordinator;
+#endif
+
+#if ENABLE(APPLICATION_MANIFEST)
+    std::optional<ApplicationManifest> m_applicationManifest;
 #endif
 
     std::unique_ptr<PerformanceLogging> m_performanceLogging;

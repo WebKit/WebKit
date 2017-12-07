@@ -1,3 +1,40 @@
+2017-12-06  David Quesada  <david_quesada@apple.com>
+
+        [Web App Manifest] Add SPI for applying a manifest to a top-level browsing context
+        https://bugs.webkit.org/show_bug.cgi?id=180368
+        rdar://problem/34748067
+
+        Reviewed by Geoffrey Garen.
+
+        Add a new property WKWebViewConfiguration._applicationManifest to specify manifest
+        to apply to application contexts (aka. top-level browsing contexts, i.e. web views).
+        The manifest is ultimately stored on the MainFrame of the Pages created from the
+        web view configuration.
+
+        No new tests, no change in behavior.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy const):
+        (API::PageConfiguration::applicationManifest const):
+        (API::PageConfiguration::setApplicationManifest):
+        * UIProcess/API/APIPageConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _applicationManifest]):
+        (-[WKWebViewConfiguration _setApplicationManifest:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/_WKApplicationManifestInternal.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_cpuLimit):
+
 2017-12-06  Jeff Miller  <jeffm@apple.com>
 
         -[WKWebViewConfiguration copyWithZone] doesn't copy _groupIdentifier

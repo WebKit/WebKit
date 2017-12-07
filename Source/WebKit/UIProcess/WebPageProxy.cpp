@@ -144,6 +144,10 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/text/StringView.h>
 
+#if ENABLE(APPLICATION_MANIFEST)
+#include "APIApplicationManifest.h"
+#endif
+
 #if ENABLE(ASYNC_SCROLLING)
 #include "RemoteScrollingCoordinatorProxy.h"
 #endif
@@ -5810,6 +5814,10 @@ WebPageCreationParameters WebPageProxy::creationParameters()
 #if USE(LIBWEBRTC)
     parameters.enumeratingAllNetworkInterfacesEnabled = m_preferences->enumeratingAllNetworkInterfacesEnabled();
 #endif
+#endif
+
+#if ENABLE(APPLICATION_MANIFEST)
+    parameters.applicationManifest = m_configuration->applicationManifest() ? std::optional<WebCore::ApplicationManifest>(m_configuration->applicationManifest()->applicationManifest()) : std::nullopt;
 #endif
 
     m_process->addWebUserContentControllerProxy(m_userContentController, parameters);

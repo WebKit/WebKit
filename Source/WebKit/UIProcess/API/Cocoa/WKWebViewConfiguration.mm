@@ -146,6 +146,10 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     BOOL _waitsForPaintAfterViewDidMoveToWindow;
     BOOL _controlledByAutomation;
 
+#if ENABLE(APPLICATION_MANIFEST)
+    RetainPtr<_WKApplicationManifest> _applicationManifest;
+#endif
+
 #if ENABLE(APPLE_PAY)
     BOOL _applePayEnabled;
 #endif
@@ -352,6 +356,9 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 #endif
 #if ENABLE(APPLE_PAY)
     configuration->_applePayEnabled = self->_applePayEnabled;
+#endif
+#if ENABLE(APPLICATION_MANIFEST)
+    configuration->_applicationManifest = self->_applicationManifest;
 #endif
     configuration->_needsStorageAccessFromFileURLsQuirk = self->_needsStorageAccessFromFileURLsQuirk;
     configuration->_overrideContentSecurityPolicy = adoptNS([self->_overrideContentSecurityPolicy copyWithZone:zone]);
@@ -744,6 +751,22 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setControlledByAutomation:(BOOL)controlledByAutomation
 {
     _controlledByAutomation = controlledByAutomation;
+}
+
+- (_WKApplicationManifest *)_applicationManifest
+{
+#if ENABLE(APPLICATION_MANIFEST)
+    return _applicationManifest.get();
+#else
+    return nil;
+#endif
+}
+
+- (void)_setApplicationManifest:(_WKApplicationManifest *)applicationManifest
+{
+#if ENABLE(APPLICATION_MANIFEST)
+    _applicationManifest = applicationManifest;
+#endif
 }
 
 #if PLATFORM(MAC)
