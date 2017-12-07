@@ -2515,10 +2515,7 @@ void Document::clearAXObjectCache()
 AXObjectCache* Document::existingAXObjectCacheSlow() const
 {
     ASSERT(hasEverCreatedAnAXObjectCache);
-    Document& topDocument = this->topDocument();
-    if (!topDocument.hasLivingRenderTree())
-        return nullptr;
-    return topDocument.m_axObjectCache.get();
+    return topDocument().m_axObjectCache.get();
 }
 
 AXObjectCache* Document::axObjectCache() const

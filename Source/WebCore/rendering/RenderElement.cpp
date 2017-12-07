@@ -651,8 +651,10 @@ RenderPtr<RenderObject> RenderElement::takeChildInternal(RenderObject& oldChild)
     if (!renderTreeBeingDestroyed() && is<RenderElement>(oldChild))
         RenderCounter::rendererRemovedFromTree(downcast<RenderElement>(oldChild));
 
-    if (AXObjectCache* cache = document().existingAXObjectCache())
-        cache->childrenChanged(this);
+    if (!renderTreeBeingDestroyed()) {
+        if (AXObjectCache* cache = document().existingAXObjectCache())
+            cache->childrenChanged(this);
+    }
 
     return RenderPtr<RenderObject>(&oldChild);
 }
