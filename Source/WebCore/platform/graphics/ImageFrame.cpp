@@ -97,7 +97,7 @@ unsigned ImageFrame::clearImage()
 
     clearNativeImageSubimages(m_nativeImage);
     m_nativeImage = nullptr;
-    m_decodingOptions = { };
+    m_decodingOptions = DecodingOptions();
 
     return frameBytes;
 }

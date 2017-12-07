@@ -27,23 +27,14 @@
 #include "ImageSource.h"
 
 #include "Image.h"
+#include "ImageDecoder.h"
 #include "ImageObserver.h"
 #include "Logging.h"
 #include "URL.h"
-#include <wtf/SystemTracing.h>
-
-#if USE(CG)
-#include "ImageDecoderCG.h"
-#elif USE(DIRECT2D)
-#include "ImageDecoderDirect2D.h"
-#include <WinCodec.h>
-#else
-#include "ImageDecoder.h"
-#endif
-
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
+#include <wtf/SystemTracing.h>
 
 namespace WebCore {
 
@@ -406,7 +397,7 @@ const ImageFrame& ImageSource::frameAtIndexCacheIfNeeded(size_t index, ImageFram
 {
     ASSERT(index < m_frames.size());
     ImageFrame& frame = m_frames[index];
-    if (!isDecoderAvailable() || frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(index, DecodingMode::Asynchronous))
+    if (!isDecoderAvailable() || frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(index, DecodingOptions(DecodingMode::Asynchronous)))
         return frame;
 
     SubsamplingLevel subsamplingLevelValue = subsamplingLevel ? subsamplingLevel.value() : frame.subsamplingLevel();
@@ -426,7 +417,7 @@ const ImageFrame& ImageSource::frameAtIndexCacheIfNeeded(size_t index, ImageFram
         // We have to perform synchronous image decoding in this code.
         NativeImagePtr nativeImage = m_decoder->createFrameImageAtIndex(index, subsamplingLevelValue);
         // Clean the old native image and set a new one.
-        cacheNativeImageAtIndex(WTFMove(nativeImage), index, subsamplingLevelValue, DecodingMode::Synchronous);
+        cacheNativeImageAtIndex(WTFMove(nativeImage), index, subsamplingLevelValue, DecodingOptions(DecodingMode::Synchronous));
         break;
     }
 

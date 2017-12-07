@@ -1,3 +1,21 @@
+2017-12-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Support the decoding="sync/async" syntax for image async attribute
+        https://bugs.webkit.org/show_bug.cgi?id=179432
+
+        Reviewed by Darin Adler.
+
+        * fast/images/async-attribute-with-small-image-expected.html: Removed.
+        * fast/images/async-attribute-with-small-image.html: Removed.
+        * fast/images/decode-decoding-attribute-async-large-image-expected.html: Added.
+        * fast/images/decode-decoding-attribute-async-large-image.html: Added.
+        * fast/images/decoding-attribute-async-small-image-expected.html: Added.
+        * fast/images/decoding-attribute-async-small-image.html: Added.
+        * fast/images/decoding-attribute-dynamic-async-small-image-expected.html: Added.
+        * fast/images/decoding-attribute-dynamic-async-small-image.html: Added.
+        * fast/images/decoding-attribute-sync-large-image-expected.html: Added.
+        * fast/images/decoding-attribute-sync-large-image.html: Added.
+
 2017-12-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         AX: Layout test imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_tests1.html flaky crash

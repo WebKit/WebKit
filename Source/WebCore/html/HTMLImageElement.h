@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "DecodingOptions.h"
 #include "FormNamedItem.h"
 #include "GraphicsTypes.h"
 #include "HTMLElement.h"
@@ -79,6 +80,8 @@ public:
 
     WEBCORE_EXPORT bool complete() const;
 
+    DecodingMode decodingMode() const;
+    
     WEBCORE_EXPORT void decode(Ref<DeferredPromise>&&);
 
 #if PLATFORM(IOS)

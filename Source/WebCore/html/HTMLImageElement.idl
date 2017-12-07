@@ -40,7 +40,7 @@
     [Reflect] attribute DOMString useMap;
     [Reflect] attribute unsigned long vspace;
     attribute unsigned long width;
-    [Reflect] attribute boolean async;
+    [Reflect] attribute DOMString decoding;
 
     // Extensions
     readonly attribute boolean complete;

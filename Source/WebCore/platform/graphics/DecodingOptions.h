@@ -32,14 +32,14 @@
 namespace WebCore {
 
 enum class DecodingMode {
-    None,
+    Auto,
     Synchronous,
     Asynchronous
 };
 
 class DecodingOptions {
 public:
-    DecodingOptions(DecodingMode decodingMode = DecodingMode::None)
+    explicit DecodingOptions(DecodingMode decodingMode = DecodingMode::Auto)
         : m_decodingModeOrSize(decodingMode)
     {
     }
@@ -54,9 +54,9 @@ public:
         return m_decodingModeOrSize == other.m_decodingModeOrSize;
     }
 
-    bool isNone() const
+    bool isAuto() const
     {
-        return hasDecodingMode() && WTF::get<DecodingMode>(m_decodingModeOrSize) == DecodingMode::None;
+        return hasDecodingMode() && WTF::get<DecodingMode>(m_decodingModeOrSize) == DecodingMode::Auto;
     }
     
     bool isSynchronous() const
@@ -71,7 +71,7 @@ public:
 
     bool isAsynchronousCompatibleWith(const DecodingOptions& decodingOptions) const
     {
-        if (isNone() || decodingOptions.isNone())
+        if (isAuto() || decodingOptions.isAuto())
             return false;
 
         // Comparing DecodingOptions with isAsynchronous() should not happen.
