@@ -214,7 +214,7 @@ MacroAssemblerCodeRef virtualThunkFor(VM* vm, CallLinkInfo& callLinkInfo)
     // Now we know that we have a CodeBlock, and we're committed to making a fast
     // call.
 #if USE(JSVALUE64)
-    jit.move(CCallHelpers::TrustedImm64(g_masmScrambledPtrKey), GPRInfo::regT1);
+    jit.move(CCallHelpers::TrustedImm64(g_masmPoison), GPRInfo::regT1);
     jit.xor64(GPRInfo::regT1, GPRInfo::regT4);
 #endif
 
@@ -1163,7 +1163,7 @@ MacroAssemblerCodeRef boundThisNoArgsFunctionCallGenerator(VM* vm)
     CCallHelpers::Jump noCode = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT0);
     
 #if USE(JSVALUE64)
-    jit.move(CCallHelpers::TrustedImm64(g_masmScrambledPtrKey), GPRInfo::regT1);
+    jit.move(CCallHelpers::TrustedImm64(g_masmPoison), GPRInfo::regT1);
     jit.xor64(GPRInfo::regT1, GPRInfo::regT0);
 #endif
     emitPointerValidation(jit, GPRInfo::regT0);

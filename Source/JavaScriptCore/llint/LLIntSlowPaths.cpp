@@ -1303,7 +1303,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
             execCallee->setCallee(asObject(callee));
             vm.hostCallReturnValue = JSValue::decode(callData.native.function(execCallee));
             
-            MasmScrambledPtr::assertIsNotScrambled(LLInt::getCodePtr(getHostCallReturnValue));
+            PoisonedMasmPtr::assertIsNotPoisoned(LLInt::getCodePtr(getHostCallReturnValue));
             LLINT_CALL_RETURN(execCallee, execCallee, LLInt::getCodePtr(getHostCallReturnValue));
         }
         
@@ -1327,7 +1327,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
         execCallee->setCallee(asObject(callee));
         vm.hostCallReturnValue = JSValue::decode(constructData.native.function(execCallee));
 
-        MasmScrambledPtr::assertIsNotScrambled(LLInt::getCodePtr(getHostCallReturnValue));
+        PoisonedMasmPtr::assertIsNotPoisoned(LLInt::getCodePtr(getHostCallReturnValue));
         LLINT_CALL_RETURN(execCallee, execCallee, LLInt::getCodePtr(getHostCallReturnValue));
     }
     
@@ -1368,7 +1368,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
                 callLinkInfo->machineCodeTarget = codePtr;
             }
 
-            MasmScrambledPtr::assertIsNotScrambled(codePtr.executableAddress());
+            PoisonedMasmPtr::assertIsNotPoisoned(codePtr.executableAddress());
             LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress());
         }
         throwScope.release();
@@ -1419,7 +1419,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
             codeBlock->linkIncomingCall(exec, callLinkInfo);
     }
 
-    MasmScrambledPtr::assertIsNotScrambled(codePtr.executableAddress());
+    PoisonedMasmPtr::assertIsNotPoisoned(codePtr.executableAddress());
     LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress());
 }
 

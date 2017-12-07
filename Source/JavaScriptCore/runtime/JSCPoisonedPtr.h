@@ -25,19 +25,19 @@
 
 #pragma once
 
-#include <wtf/ScrambledPtr.h>
+#include <wtf/Poisoned.h>
 
 namespace JSC {
 
-extern "C" JS_EXPORTDATA uintptr_t g_classInfoScrambledPtrKey;
-extern "C" JS_EXPORTDATA uintptr_t g_masmScrambledPtrKey;
+extern "C" JS_EXPORTDATA uintptr_t g_classInfoPoison;
+extern "C" JS_EXPORTDATA uintptr_t g_masmPoison;
 
 struct ClassInfo;
 
-using ClassInfoScrambledPtr = ScrambledPtr<const ClassInfo*, g_classInfoScrambledPtrKey>;
-using MasmScrambledPtr = ScrambledPtr<void*, g_masmScrambledPtrKey>;
+using PoisonedClassInfoPtr = Poisoned<g_classInfoPoison, const ClassInfo*>;
+using PoisonedMasmPtr = Poisoned<g_masmPoison, void*>;
 
-void initializeScrambledPtrKeys();
+void initializePoison();
 
 } // namespace JSC
 

@@ -1950,7 +1950,7 @@ macro doCall(slowPath, prepareCall)
         prepareCall(LLIntCallLinkInfo::machineCodeTarget[t1], t2, t3, t4)
         callTargetFunction(LLIntCallLinkInfo::machineCodeTarget[t1])
     else
-        loadp _g_masmScrambledPtrKey, t2
+        loadp _g_masmPoison, t2
         xorp LLIntCallLinkInfo::machineCodeTarget[t1], t2
         prepareCall(t2, t1, t3, t4)
         callTargetFunction(t2)
