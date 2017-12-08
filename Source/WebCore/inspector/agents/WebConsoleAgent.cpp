@@ -66,23 +66,17 @@ void WebConsoleAgent::getLoggingChannels(ErrorString&, RefPtr<JSON::ArrayOf<Insp
         if (!logChannel)
             return;
 
-        Inspector::Protocol::Console::ChannelLevel level = Inspector::Protocol::Console::ChannelLevel::Off;
+        auto level = Inspector::Protocol::Console::ChannelLevel::Off;
         if (logChannel->state != WTFLogChannelOff) {
             switch (logChannel->level) {
             case WTFLogLevelAlways:
-                level = Inspector::Protocol::Console::ChannelLevel::Log;
-                break;
             case WTFLogLevelError:
-                level = Inspector::Protocol::Console::ChannelLevel::Error;
-                break;
             case WTFLogLevelWarning:
-                level = Inspector::Protocol::Console::ChannelLevel::Warning;
+                level = Inspector::Protocol::Console::ChannelLevel::Basic;
                 break;
             case WTFLogLevelInfo:
-                level = Inspector::Protocol::Console::ChannelLevel::Info;
-                break;
             case WTFLogLevelDebug:
-                level = Inspector::Protocol::Console::ChannelLevel::Debug;
+                level = Inspector::Protocol::Console::ChannelLevel::Verbose;
                 break;
             }
         }
@@ -105,15 +99,9 @@ static std::optional<std::pair<WTFLogChannelState, WTFLogLevel>> channelConfigur
         level = WTFLogLevelError;
     } else {
         state = WTFLogChannelOn;
-        if (equalIgnoringASCIICase(levelString, "log"))
-            level = WTFLogLevelAlways;
-        else if (equalIgnoringASCIICase(levelString, "error"))
-            level = WTFLogLevelError;
-        else if (equalIgnoringASCIICase(levelString, "warning"))
+        if (equalIgnoringASCIICase(levelString, "basic"))
             level = WTFLogLevelWarning;
-        else if (equalIgnoringASCIICase(levelString, "info"))
-            level = WTFLogLevelInfo;
-        else if (equalIgnoringASCIICase(levelString, "debug"))
+        else if (equalIgnoringASCIICase(levelString, "verbose"))
             level = WTFLogLevelDebug;
         else
             return std::nullopt;

@@ -12,7 +12,7 @@
         {
             "id": "ChannelLevel",
             "type": "string",
-            "enum": ["off", "log", "error", "warning", "info", "debug"],
+            "enum": ["off", "basic", "verbose"],
             "description": "Level of logging."
         },
         {

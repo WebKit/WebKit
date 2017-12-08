@@ -126,7 +126,7 @@ function test()
             let channel = WI.logManager.customLoggingChannels.find(channel => channel.source === WI.ConsoleMessage.MessageSource.Media);
             InspectorTest.expectThat(channel.level === WI.LoggingChannel.Level.Off, "Media logging disabled.");
 
-            ConsoleAgent.setLoggingChannelLevel(channel.source, WI.LoggingChannel.Level.Log)
+            ConsoleAgent.setLoggingChannelLevel(channel.source, WI.LoggingChannel.Level.Basic)
             ConsoleAgent.getLoggingChannels((error, channels) => {
                 if (error) {
                     InspectorTest.fail(`ConsoleAgent.getLoggingChannels() failed with error ${error}`);
@@ -134,7 +134,7 @@ function test()
                 }
             
                 let mediaChannel = channels.find(channel => channel.source === WI.ConsoleMessage.MessageSource.Media);
-                InspectorTest.expectThat(mediaChannel.level === WI.LoggingChannel.Level.Log, "Media logging has been enabled.");
+                InspectorTest.expectThat(mediaChannel.level === WI.LoggingChannel.Level.Basic, "Media logging has been enabled.");
 
                 let logListener = WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, (event) => {
                     let message = event.data.message;
