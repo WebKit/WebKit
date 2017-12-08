@@ -101,7 +101,7 @@ private:
             // Set up thread-specific value's memory pointer before invoking constructor, in case any function it calls
             // needs to access the value, to avoid recursion.
             owner->setInTLS(this);
-            new (NotNull, storagePointer()) T;
+            new (NotNull, storagePointer()) T();
         }
 
         ~Data()

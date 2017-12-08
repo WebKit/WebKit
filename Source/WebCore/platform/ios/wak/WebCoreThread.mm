@@ -42,6 +42,7 @@
 #import <runtime/JSLock.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
+#import <wtf/RecursiveLockAdapter.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Threading.h>
 #import <wtf/text/AtomicString.h>
@@ -56,14 +57,13 @@
 #define LOG_RELEASES 0
 
 #define DistantFuture   (86400.0 * 2000 * 365.2425 + 86400.0)   // same as +[NSDate distantFuture]
-#define MaxArgCount         5
-#define DrawWaitInterval     10
-#define DelegateWaitInterval 10
 
-static void _WebThreadAutoLock(void);
-static bool _WebTryThreadLock(bool shouldTry);
+static const constexpr Seconds DelegateWaitInterval { 10_s };
+
+static void _WebThreadAutoLock();
+static void _WebThreadLock();
 static void _WebThreadLockFromAnyThread(bool shouldLog);
-static void _WebThreadUnlock(void);
+static void _WebThreadUnlock();
 
 @interface NSObject(ForwardDeclarations)
 -(void)_webcore_releaseOnWebThread;
@@ -91,9 +91,12 @@ extern void NSPopAutoreleasePool(NSAutoreleasePoolMark token);
 }
 #endif
 
-static int WebTimedConditionLock(pthread_cond_t* condition, pthread_mutex_t* lock, CFAbsoluteTime interval);
+using StaticRecursiveLock = WTF::RecursiveLockAdapter<StaticLock>;
 
-static pthread_mutex_t webLock;
+static StaticRecursiveLock webLock;
+static StaticLock webThreadReleaseLock;
+static StaticRecursiveLock webCoreReleaseLock;
+
 static NSAutoreleasePoolMark autoreleasePoolMark;
 static CFRunLoopRef webThreadRunLoop;
 static NSRunLoop* webThreadNSRunLoop;
@@ -109,14 +112,13 @@ typedef enum {
     IgnoreAutoreleasePool
 } AutoreleasePoolOperation;
 
-static pthread_mutex_t WebThreadReleaseLock = PTHREAD_MUTEX_INITIALIZER;
 static CFRunLoopSourceRef WebThreadReleaseSource;
 static CFMutableArrayRef WebThreadReleaseObjArray;
 
 static void MainThreadAdoptAndRelease(id obj);
 
-static pthread_mutex_t delegateLock = PTHREAD_MUTEX_INITIALIZER;
-static pthread_cond_t delegateCondition = PTHREAD_COND_INITIALIZER;
+static StaticLock delegateLock;
+static StaticCondition delegateCondition;
 static NSInvocation* delegateInvocation;
 static CFRunLoopSourceRef delegateSource = nullptr;
 static BOOL delegateHandled;
@@ -130,14 +132,12 @@ static StaticLock startupLock;
 static StaticCondition startupCondition;
 
 static WebThreadContext* webThreadContext;
-static pthread_key_t threadContextKey;
 static unsigned mainThreadLockCount;
 static unsigned otherThreadLockCount;
 static unsigned sMainThreadModalCount;
 
 WEBCORE_EXPORT volatile bool webThreadShouldYield;
 
-static pthread_mutex_t WebCoreReleaseLock;
 static void WebCoreObjCDeallocOnWebThreadImpl(id self, SEL _cmd);
 static void WebCoreObjCDeallocWithWebThreadLock(Class cls);
 static void WebCoreObjCDeallocWithWebThreadLockImpl(id self, SEL _cmd);
@@ -160,25 +160,23 @@ static void HandleDelegateSource(void*)
 
     _WebThreadAutoLock();
 
-    int result = pthread_mutex_lock(&delegateLock);
-    ASSERT_WITH_MESSAGE(!result, "delegate lock failed with code:%d", result);
+    {
+        auto locker = holdLock(delegateLock);
 
 #if LOG_MESSAGES
-    if ([[delegateInvocation target] isKindOfClass:[NSNotificationCenter class]]) {
-        id argument0;
-        [delegateInvocation getArgument:&argument0 atIndex:0];
-        NSLog(@"notification receive: %@", argument0);
-    } else
-        NSLog(@"delegate receive: %@", NSStringFromSelector([delegateInvocation selector]));
+        if ([[delegateInvocation target] isKindOfClass:[NSNotificationCenter class]]) {
+            id argument0;
+            [delegateInvocation getArgument:&argument0 atIndex:0];
+            NSLog(@"notification receive: %@", argument0);
+        } else
+            NSLog(@"delegate receive: %@", NSStringFromSelector([delegateInvocation selector]));
 #endif
 
-    SendMessage(delegateInvocation);
+        SendMessage(delegateInvocation);
 
-    delegateHandled = YES;
-    pthread_cond_signal(&delegateCondition);
-
-    result = pthread_mutex_unlock(&delegateLock);
-    ASSERT_WITH_MESSAGE(!result, "delegate unlock failed with code:%d", result);
+        delegateHandled = YES;
+        delegateCondition.notifyOne();
+    }
 
 #if LOG_MAIN_THREAD_LOCKING
     sendingDelegateMessage = NO;
@@ -193,8 +191,7 @@ static void SendDelegateMessage(NSInvocation* invocation)
     }
 
     ASSERT(delegateSource);
-    int result = pthread_mutex_lock(&delegateLock);
-    ASSERT_WITH_MESSAGE(!result, "delegate lock failed with code:%d", result);
+    delegateLock.lock();
 
     delegateInvocation = invocation;
     delegateHandled = NO;
@@ -217,7 +214,7 @@ static void SendDelegateMessage(NSInvocation* invocation)
         CFRunLoopWakeUp(CFRunLoopGetMain());
 
         while (!delegateHandled) {
-            if (WebTimedConditionLock(&delegateCondition, &delegateLock, DelegateWaitInterval)) {
+            if (!delegateCondition.waitFor(delegateLock, DelegateWaitInterval)) {
                 id delegateInformation;
                 if ([[delegateInvocation target] isKindOfClass:[NSNotificationCenter class]])
                     [delegateInvocation getArgument:&delegateInformation atIndex:0];
@@ -225,15 +222,13 @@ static void SendDelegateMessage(NSInvocation* invocation)
                     delegateInformation = NSStringFromSelector([delegateInvocation selector]);
     
                 CFStringRef mode = CFRunLoopCopyCurrentMode(CFRunLoopGetMain());
-                NSLog(@"%s: delegate (%@) failed to return after waiting %d seconds. main run loop mode: %@", __PRETTY_FUNCTION__, delegateInformation, DelegateWaitInterval, mode);
+                NSLog(@"%s: delegate (%@) failed to return after waiting %f seconds. main run loop mode: %@", __PRETTY_FUNCTION__, delegateInformation, DelegateWaitInterval.seconds(), mode);
                 if (mode)
                     CFRelease(mode);
             }
         }
-        result = pthread_mutex_unlock(&delegateLock);
-
-        ASSERT_WITH_MESSAGE(!result, "delegate unlock failed with code:%d", result);
-        _WebTryThreadLock(false);
+        delegateLock.unlock();
+        _WebThreadLock();
     }
 }
 
@@ -252,7 +247,7 @@ void WebThreadRunOnMainThread(void(^delegateBlock)())
     dispatch_sync(dispatch_get_main_queue(), delegateBlockCopy);
     Block_release(delegateBlockCopy);
 
-    _WebTryThreadLock(false);
+    _WebThreadLock();
 }
 
 static void MainThreadAdoptAndRelease(id obj)
@@ -281,29 +276,13 @@ void WebThreadAdoptAndRelease(id obj)
     NSLog(@"Release send [main thread]: %@", obj);
 #endif        
 
-    int result = pthread_mutex_lock(&WebThreadReleaseLock);
-    ASSERT_WITH_MESSAGE(!result, "Release lock failed with code:%d", result);
+    auto locker = holdLock(webThreadReleaseLock);
 
     if (WebThreadReleaseObjArray == nil)
         WebThreadReleaseObjArray = CFArrayCreateMutable(kCFAllocatorSystemDefault, 0, nullptr);
     CFArrayAppendValue(WebThreadReleaseObjArray, obj);
     CFRunLoopSourceSignal(WebThreadReleaseSource);
     CFRunLoopWakeUp(webThreadRunLoop);
-
-    result = pthread_mutex_unlock(&WebThreadReleaseLock);    
-    ASSERT_WITH_MESSAGE(!result, "Release unlock failed with code:%d", result);
-}
-
-static inline void lockWebCoreReleaseLock()
-{
-    int lockcode = pthread_mutex_lock(&WebCoreReleaseLock);
-    ASSERT_WITH_MESSAGE_UNUSED(lockcode, !lockcode, "WebCoreReleaseLock lock failed with code:%d", lockcode);
-}
-
-static inline void unlockWebCoreReleaseLock()
-{
-    int lockcode = pthread_mutex_unlock(&WebCoreReleaseLock);
-    ASSERT_WITH_MESSAGE_UNUSED(lockcode, !lockcode, "WebCoreReleaseLock unlock failed with code:%d", lockcode);
 }
 
 void WebCoreObjCDeallocOnWebThread(Class cls)
@@ -365,49 +344,45 @@ void WebCoreObjCDeallocOnWebThreadImpl(id self, SEL)
         return;
     }
 
-    lockWebCoreReleaseLock();
-    if ([self retainCount] == 1) {
-        // This is the only reference retaining the object, so we can
-        // safely release the WebCoreReleaseLock now.
-        unlockWebCoreReleaseLock();
-        if (WebThreadIsCurrent())
+    {
+        auto locker = holdLock(webCoreReleaseLock);
+        if ([self retainCount] != 1) {
+            // This is not the only reference retaining the object, so another
+            // thread could also call release - hold the lock whilst calling
+            // release to avoid a race condition.
             [self _webcore_releaseOnWebThread];
-        else
-            WebThreadAdoptAndRelease(self);
-    } else {
-        // This is not the only reference retaining the object, so another
-        // thread could also call release - hold the lock whilst calling
-        // release to avoid a race condition.
-        [self _webcore_releaseOnWebThread];
-        unlockWebCoreReleaseLock();
+            return;
+        }
+        // This is the only reference retaining the object, so we can
+        // safely release the webCoreReleaseLock now.
     }
+    if (WebThreadIsCurrent())
+        [self _webcore_releaseOnWebThread];
+    else
+        WebThreadAdoptAndRelease(self);
 }
 
 void WebCoreObjCDeallocWithWebThreadLockImpl(id self, SEL)
 {
-    lockWebCoreReleaseLock();
+    auto locker = holdLock(webCoreReleaseLock);
     if (WebThreadIsLockedOrDisabled() || 1 != [self retainCount])
         [self _webcore_releaseWithWebThreadLock];
     else
         WebThreadAdoptAndRelease(self);
-    unlockWebCoreReleaseLock();
 }
 
 static void HandleWebThreadReleaseSource(void*)
 {
     ASSERT(WebThreadIsCurrent());
 
-    int result = pthread_mutex_lock(&WebThreadReleaseLock);
-    ASSERT_WITH_MESSAGE(!result, "Release lock failed with code:%d", result);
-
     CFMutableArrayRef objects = nullptr;
-    if (CFArrayGetCount(WebThreadReleaseObjArray)) {
-        objects = CFArrayCreateMutableCopy(nullptr, 0, WebThreadReleaseObjArray);
-        CFArrayRemoveAllValues(WebThreadReleaseObjArray);
+    {
+        auto locker = holdLock(webThreadReleaseLock);
+        if (CFArrayGetCount(WebThreadReleaseObjArray)) {
+            objects = CFArrayCreateMutableCopy(nullptr, 0, WebThreadReleaseObjArray);
+            CFArrayRemoveAllValues(WebThreadReleaseObjArray);
+        }
     }
-
-    result = pthread_mutex_unlock(&WebThreadReleaseLock);
-    ASSERT_WITH_MESSAGE(!result, "Release unlock failed with code:%d", result);
 
     if (!objects)
         return;
@@ -482,14 +457,14 @@ static void _WebThreadAutoLock(void)
 
     if (!mainThreadLockCount) {
         CFRunLoopAddObserver(CFRunLoopGetCurrent(), mainRunLoopAutoUnlockObserver, kCFRunLoopCommonModes);    
-        _WebTryThreadLock(false);
+        _WebThreadLock();
         CFRunLoopWakeUp(CFRunLoopGetMain());
     }
 }
 
 static void WebRunLoopLockInternal(AutoreleasePoolOperation poolOperation)
 {
-    _WebTryThreadLock(false);
+    _WebThreadLock();
     if (poolOperation == PushOrPopAutoreleasePool)
         autoreleasePoolMark = NSPushAutoreleasePool(0);
     isWebThreadLocked = YES;
@@ -593,23 +568,14 @@ void WebRunLoopDisableNested()
     isNestedWebThreadRunLoop = NO;
 }
 
-static WebThreadContext* CurrentThreadContext(void)
+static ThreadSpecific<WebThreadContext, WTF::CanBeGCThread::True>* threadContext;
+static WebThreadContext* CurrentThreadContext()
 {
     static std::once_flag flag;
     std::call_once(flag, [] {
-        int error = pthread_key_create(&threadContextKey, [] (void* threadContext) {
-            if (threadContext)
-                free(threadContext);
-        });
-        RELEASE_ASSERT(!error);
+        threadContext = new ThreadSpecific<WebThreadContext, WTF::CanBeGCThread::True>();
     });
-
-    WebThreadContext* threadContext = (WebThreadContext*)pthread_getspecific(threadContextKey);
-    if (!threadContext) {
-        threadContext = static_cast<WebThreadContext*>(calloc(sizeof(WebThreadContext), 1));
-        pthread_setspecific(threadContextKey, threadContext);
-    }        
-    return threadContext;
+    return *threadContext;
 }
 
 static void* RunWebThread(void*)
@@ -681,18 +647,6 @@ static void StartWebThread()
     WebCoreObjCDeallocOnWebThread([WAKWindow class]);
     WebCoreObjCDeallocWithWebThreadLock([WAKView class]);
 
-    pthread_mutexattr_t mattr;
-    pthread_mutexattr_init(&mattr);
-    pthread_mutexattr_settype(&mattr, PTHREAD_MUTEX_RECURSIVE);
-    pthread_mutex_init(&webLock, &mattr);
-    pthread_mutexattr_destroy(&mattr);            
-
-    pthread_mutexattr_t mutex_attr;
-    pthread_mutexattr_init(&mutex_attr);
-    pthread_mutexattr_settype(&mutex_attr, PTHREAD_MUTEX_RECURSIVE);    
-    pthread_mutex_init(&WebCoreReleaseLock, &mutex_attr);
-    pthread_mutexattr_destroy(&mutex_attr);
-
     CFRunLoopRef runLoop = CFRunLoopGetCurrent();
     CFRunLoopSourceContext delegateSourceContext = {0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, HandleDelegateSource};
     delegateSource = CFRunLoopSourceCreate(nullptr, 0, &delegateSourceContext);
@@ -735,21 +689,11 @@ static void StartWebThread()
     initializeApplicationUIThread();
 }
 
-static int WebTimedConditionLock(pthread_cond_t* condition, pthread_mutex_t* lock, CFAbsoluteTime interval)
-{
-    struct timespec time;
-    CFAbsoluteTime at = CFAbsoluteTimeGetCurrent() + interval;
-    time.tv_sec = (time_t)(floor(at) + kCFAbsoluteTimeIntervalSince1970);
-    time.tv_nsec = (int32_t)((at - floor(at)) * 1000000000.0);        
-    return pthread_cond_timedwait(condition, lock, &time);
-}
-
-
 #if LOG_WEB_LOCK || LOG_MAIN_THREAD_LOCKING
 static unsigned lockCount;
 #endif
 
-static bool _WebTryThreadLock(bool shouldTry)
+static void _WebThreadLock()
 {
     // Suspend the web thread if the main thread is trying to lock.
     bool onMainThread = pthread_main_np();
@@ -759,45 +703,30 @@ static bool _WebTryThreadLock(bool shouldTry)
         NSLog(@"%s, %p: Tried to obtain the web lock from a thread other than the main thread or the web thread. This may be a result of calling to UIKit from a secondary thread. Crashing now...", __PRETTY_FUNCTION__, CurrentThreadContext());
         CRASH();
     }
-        
-            
-    bool busy = false;
-    if (shouldTry) {
-        int result = pthread_mutex_trylock(&webLock);
-        if (result == EBUSY)
-            busy = true;
-        else
-            ASSERT_WITH_MESSAGE(!result, "try web lock failed with code:%d", result);
-    } else {
-        int result = pthread_mutex_lock(&webLock);
-        ASSERT_WITH_MESSAGE_UNUSED(result, !result, "web lock failed with code:%d", result);
-    }
-    
-    if (!busy) {
+
+    webLock.lock();
+
 #if LOG_WEB_LOCK || LOG_MAIN_THREAD_LOCKING
-        lockCount++;
+    lockCount++;
 #if LOG_WEB_LOCK
-        NSLog(@"lock   %d, web-thread: %d", lockCount, WebThreadIsCurrent());
+    NSLog(@"lock   %d, web-thread: %d", lockCount, WebThreadIsCurrent());
 #endif
 #endif
-        if (onMainThread) {
-            ASSERT(CFRunLoopGetCurrent() == CFRunLoopGetMain());
-            webThreadShouldYield = false;
-            mainThreadLockCount++;
+    if (onMainThread) {
+        ASSERT(CFRunLoopGetCurrent() == CFRunLoopGetMain());
+        webThreadShouldYield = false;
+        mainThreadLockCount++;
 #if LOG_MAIN_THREAD_LOCKING
-            if (!sendingDelegateMessage && lockCount == 1)
-                NSLog(@"Main thread locking outside of delegate messages.");
+        if (!sendingDelegateMessage && lockCount == 1)
+            NSLog(@"Main thread locking outside of delegate messages.");
 #endif
-        } else {
-            webThreadLockCount++;
-            if (webThreadLockCount > 1) {
-                NSLog(@"%s, %p: Multiple locks on web thread not allowed! Please file a bug. Crashing now...", __PRETTY_FUNCTION__, CurrentThreadContext());
-                CRASH();
-            }
+    } else {
+        webThreadLockCount++;
+        if (webThreadLockCount > 1) {
+            NSLog(@"%s, %p: Multiple locks on web thread not allowed! Please file a bug. Crashing now...", __PRETTY_FUNCTION__, CurrentThreadContext());
+            CRASH();
         }
     }
-    
-    return !busy;
 }
 
 void WebThreadLock(void)
@@ -835,8 +764,8 @@ static void _WebThreadLockFromAnyThread(bool shouldLog)
     if (shouldLog)
         NSLog(@"%s, %p: Obtaining the web lock from a thread other than the main thread or the web thread. UIKit should not be called from a secondary thread.", __PRETTY_FUNCTION__, CurrentThreadContext());
 
-    pthread_mutex_lock(&webLock);
-    
+    webLock.lock();
+
     // This used for any thread other than the web thread.
     otherThreadLockCount++;
     webThreadShouldYield = false;
@@ -853,9 +782,8 @@ void WebThreadUnlockFromAnyThread()
     
     ASSERT(otherThreadLockCount);
     otherThreadLockCount--;
-    
-    int result = pthread_mutex_unlock(&webLock); 
-    ASSERT_WITH_MESSAGE_UNUSED(result, !result, "web unlock failed with code:%d", result);
+
+    webLock.unlock();
 }
 
 void WebThreadUnlockGuardForMail()
@@ -867,7 +795,7 @@ void WebThreadUnlockGuardForMail()
     CFRelease(mainRunLoopUnlockGuardObserver);
 }
 
-void _WebThreadUnlock(void)
+void _WebThreadUnlock()
 {
 #if LOG_WEB_LOCK || LOG_MAIN_THREAD_LOCKING
     lockCount--;
@@ -883,9 +811,8 @@ void _WebThreadUnlock(void)
         webThreadLockCount--;
         webThreadShouldYield = false;
     }
-    
-    int result = pthread_mutex_unlock(&webLock); 
-    ASSERT_WITH_MESSAGE_UNUSED(result, !result, "web unlock failed with code:%d", result);    
+
+    webLock.unlock();
 }
 
 bool WebThreadIsLocked(void)

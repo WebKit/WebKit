@@ -1,3 +1,15 @@
+2017-12-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use WTF Locking primitives in WebThread and drop pthread_xxx use
+        https://bugs.webkit.org/show_bug.cgi?id=180445
+
+        Reviewed by Saam Barati.
+
+        Add initializer form to fill struct with zero if struct does not have any default initializers.
+
+        * wtf/ThreadSpecific.h:
+        (WTF::ThreadSpecific::Data::Data):
+
 2017-12-07  Mark Lam  <mark.lam@apple.com>
 
         Apply poisoning to some native code pointers.
