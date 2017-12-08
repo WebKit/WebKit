@@ -905,8 +905,7 @@ CString RemoteLayerTreeTransaction::description() const
     ts.dumpProperty("avoidsUnsafeArea", m_avoidsUnsafeArea);
     ts.dumpProperty("isInStableState", m_isInStableState);
     ts.dumpProperty("renderTreeSize", m_renderTreeSize);
-
-    ts << "root-layer " << m_rootLayerID << ")";
+    ts.dumpProperty("root-layer", m_rootLayerID);
 
     if (!m_createdLayers.isEmpty()) {
         TextStream::GroupScope group(ts);
@@ -934,6 +933,12 @@ CString RemoteLayerTreeTransaction::description() const
 
     if (!m_destroyedLayerIDs.isEmpty())
         ts.dumpProperty<Vector<GraphicsLayer::PlatformLayerID>>("destroyed-layers", m_destroyedLayerIDs);
+
+    if (m_editorState) {
+        TextStream::GroupScope scope(ts);
+        ts << "EditorState";
+        ts << *m_editorState;
+    }
 
     ts.endGroup();
 

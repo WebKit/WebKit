@@ -1,3 +1,18 @@
+2017-12-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Add logging for EditorState in RemoteLayerTree transactions
+        https://bugs.webkit.org/show_bug.cgi?id=180515
+
+        Reviewed by Wenson Hsieh.
+       
+        Make EditorState TextStream-able, and dump it in layer tree transactions.
+
+        * Shared/EditorState.cpp:
+        (WebKit::operator<<):
+        * Shared/EditorState.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::description const):
+
 2017-12-07  Youenn Fablet  <youenn@apple.com>
 
         CacheStorage Cache should not remove any disk entry when clearing its memory representation

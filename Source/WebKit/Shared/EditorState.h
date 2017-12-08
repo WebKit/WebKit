@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EditorState_h
-#define EditorState_h
+#pragma once
 
 #include "ArgumentCoders.h"
 #include <WebCore/Color.h>
@@ -34,6 +33,10 @@
 #if PLATFORM(IOS)
 #include <WebCore/SelectionRect.h>
 #endif
+
+namespace WTF {
+class TextStream;
+};
 
 namespace WebKit {
 
@@ -139,6 +142,6 @@ inline auto EditorState::postLayoutData() const -> const PostLayoutData&
     return m_postLayoutData;
 }
 
-}
+WTF::TextStream& operator<<(WTF::TextStream&, const EditorState&);
 
-#endif // EditorState_h
+} // namespace WebKit
