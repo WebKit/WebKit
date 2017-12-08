@@ -581,6 +581,7 @@ uint64_t InjectedBundle::webNotificationID(JSContextRef jsContext, JSValueRef js
 Ref<API::Data> InjectedBundle::createWebDataFromUint8Array(JSContextRef context, JSValueRef data)
 {
     JSC::ExecState* execState = toJS(context);
+    JSLockHolder lock(execState);
     RefPtr<Uint8Array> arrayData = WebCore::toUnsharedUint8Array(execState->vm(), toJS(execState, data));
     return API::Data::create(static_cast<unsigned char*>(arrayData->baseAddress()), arrayData->byteLength());
 }
