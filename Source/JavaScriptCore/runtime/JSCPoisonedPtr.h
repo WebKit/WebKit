@@ -29,13 +29,14 @@
 
 namespace JSC {
 
-extern "C" JS_EXPORTDATA uintptr_t g_classInfoPoison;
-extern "C" JS_EXPORTDATA uintptr_t g_masmPoison;
+extern "C" JS_EXPORTDATA uintptr_t g_globalDataPoison;
+extern "C" JS_EXPORTDATA uintptr_t g_jitCodePoison;
+extern "C" JS_EXPORTDATA uintptr_t g_nativeCodePoison;
 
 struct ClassInfo;
 
-using PoisonedClassInfoPtr = Poisoned<g_classInfoPoison, const ClassInfo*>;
-using PoisonedMasmPtr = Poisoned<g_masmPoison, void*>;
+using PoisonedClassInfoPtr = Poisoned<g_globalDataPoison, const ClassInfo*>;
+using PoisonedMasmPtr = Poisoned<g_jitCodePoison, void*>;
 
 void initializePoison();
 

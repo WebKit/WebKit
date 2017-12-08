@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ExecutableBase.h"
+#include "JSCPoisonedPtr.h"
 
 namespace JSC {
 namespace DOMJIT {
@@ -51,8 +52,8 @@ public:
 
     CodeBlockHash hashFor(CodeSpecializationKind) const;
 
-    NativeFunction function() { return m_function; }
-    NativeFunction constructor() { return m_constructor; }
+    NativeFunction function() { return m_function.unpoisoned(); }
+    NativeFunction constructor() { return m_constructor.unpoisoned(); }
         
     NativeFunction nativeFunctionFor(CodeSpecializationKind kind)
     {
@@ -89,11 +90,12 @@ protected:
 
 private:
     friend class ExecutableBase;
+    using PoisonedNativeFunction = Poisoned<g_nativeCodePoison, NativeFunction>;
 
     NativeExecutable(VM&, NativeFunction function, NativeFunction constructor, Intrinsic, const DOMJIT::Signature*);
 
-    NativeFunction m_function;
-    NativeFunction m_constructor;
+    PoisonedNativeFunction m_function;
+    PoisonedNativeFunction m_constructor;
     const DOMJIT::Signature* m_signature;
 
     String m_name;

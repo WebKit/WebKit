@@ -1,5 +1,34 @@
 2017-12-07  Mark Lam  <mark.lam@apple.com>
 
+        Apply poisoning to some native code pointers.
+        https://bugs.webkit.org/show_bug.cgi?id=180541
+        <rdar://problem/35916875>
+
+        Reviewed by Filip Pizlo.
+
+        Ensure that the resultant poisoned bits still looks like a pointer in that its
+        bottom bits are 0, just like the alignment bits of a pointer.  This allows the
+        client to use the bottom bits of the poisoned bits as flag bits just like the
+        client was previously able to do with pointer values.
+
+        Note: we only ensure that the bottom alignment bits of the generated poison
+        value is 0.  We're not masking out the poisoned bits.  This means that the bottom
+        bits of the poisoned bits will only be null if the original pointer is aligned.
+        Hence, if the client applies the poison to an unaligned pointer, we do not lose
+        any information on the low bits.
+
+        Also removed 2 wrong assertions in PoisonedImpl's constructors.  We were
+        asserting that Poisoned will never be used with a null value, but that's invalid.
+        We do want to allow a null value so that we don't have to constantly do null
+        checks in the clients.  This was uncovered by some layout tests.
+
+        * wtf/Poisoned.cpp:
+        (WTF::makePoison):
+        * wtf/Poisoned.h:
+        (WTF::PoisonedImpl::PoisonedImpl):
+
+2017-12-07  Mark Lam  <mark.lam@apple.com>
+
         [Re-landing r225620] Refactoring: Rename ScrambledPtr to Poisoned.
         https://bugs.webkit.org/show_bug.cgi?id=180514
 

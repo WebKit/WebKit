@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2006, 2007, 2008, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *
@@ -24,6 +24,7 @@
 #pragma once
 
 #include "CodeSpecializationKind.h"
+#include "JSCPoisonedPtr.h"
 #include "JSDestructibleObject.h"
 
 namespace JSC {
@@ -55,9 +56,9 @@ public:
     NativeFunction nativeFunctionFor(CodeSpecializationKind kind)
     {
         if (kind == CodeForCall)
-            return m_functionForCall;
+            return m_functionForCall.unpoisoned();
         ASSERT(kind == CodeForConstruct);
-        return m_functionForConstruct;
+        return m_functionForConstruct.unpoisoned();
     }
 
     static ptrdiff_t offsetOfNativeFunctionFor(CodeSpecializationKind kind)
@@ -69,6 +70,8 @@ public:
     }
 
 protected:
+    using PoisonedNativeFunction = Poisoned<g_nativeCodePoison, NativeFunction>;
+
     JS_EXPORT_PRIVATE InternalFunction(VM&, Structure*, NativeFunction functionForCall, NativeFunction functionForConstruct);
 
     enum class NameVisibility { Visible, Anonymous };
@@ -79,8 +82,8 @@ protected:
     JS_EXPORT_PRIVATE static ConstructType getConstructData(JSCell*, ConstructData&);
     JS_EXPORT_PRIVATE static CallType getCallData(JSCell*, CallData&);
 
-    NativeFunction m_functionForCall;
-    NativeFunction m_functionForConstruct;
+    PoisonedNativeFunction m_functionForCall;
+    PoisonedNativeFunction m_functionForConstruct;
     WriteBarrier<JSString> m_originalName;
 };
 

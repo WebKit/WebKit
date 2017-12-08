@@ -11171,7 +11171,7 @@ private:
 
             LValue structure = loadStructure(cell);
             LValue poisonedClassInfo = m_out.loadPtr(structure, m_heaps.Structure_classInfo);
-            LValue classInfo = m_out.bitXor(poisonedClassInfo, m_out.constInt64(g_classInfoPoison));
+            LValue classInfo = m_out.bitXor(poisonedClassInfo, m_out.constInt64(g_globalDataPoison));
             ValueFromBlock otherAtStart = m_out.anchor(classInfo);
             m_out.jump(loop);
 

@@ -88,7 +88,7 @@ CallType InternalFunction::getCallData(JSCell* cell, CallData& callData)
 {
     auto* function = jsCast<InternalFunction*>(cell);
     ASSERT(function->m_functionForCall);
-    callData.native.function = function->m_functionForCall;
+    callData.native.function = function->m_functionForCall.unpoisoned();
     return CallType::Host;
 }
 
@@ -97,7 +97,7 @@ ConstructType InternalFunction::getConstructData(JSCell* cell, ConstructData& co
     auto* function = jsCast<InternalFunction*>(cell);
     if (function->m_functionForConstruct == callHostFunctionAsConstructor)
         return ConstructType::None;
-    constructData.native.function = function->m_functionForConstruct;
+    constructData.native.function = function->m_functionForConstruct.unpoisoned();
     return ConstructType::Host;
 }
 

@@ -23,32 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "Poisoned.h"
+#pragma once
 
-#include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/Poisoned.h>
 
-namespace WTF {
+namespace JSC {
 
-uintptr_t makePoison()
-{
-    uintptr_t key = cryptographicallyRandomNumber();
-#if USE(JSVALUE64) && !OS(WINDOWS)
-    key = (key << 32) ^ (static_cast<uintptr_t>(cryptographicallyRandomNumber()) << 3);
-    // Ensure that the poisoned bits (pointer ^ key) do not make a valid pointer and
-    // cannot be 0. We ensure that it is zero so that the poisoned bits can also be
-    // used for a notmal zero check without needing to decoded first.
-    key |= (static_cast<uintptr_t>(0x1) << 63);
-    // Ensure that the bottom alignment bits are still 0 so that the poisoned bits will
-    // still preserve the properties of a pointer where these bits are expected to be 0.
-    // This allows the poisoned bits to be used in place of the pointer by clients that
-    // rely on this property of pointers and sets flags in the low bits.
-    key &= ~static_cast<uintptr_t>(0x7);
-#else
-    key = 0; // Poisoning is not supported on 32-bit or non-darwin platforms yet.
-#endif
-    return key;
-}
+enum Poison {
+    NotPoisoned = 0,
+    TransitionMapPoison,
+    WeakImplPoison,
+};
 
-} // namespace WTF
+} // namespace JSC
 

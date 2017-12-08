@@ -28,15 +28,17 @@
 
 namespace JSC {
 
-uintptr_t g_classInfoPoison;
-uintptr_t g_masmPoison;
+uintptr_t g_globalDataPoison;
+uintptr_t g_jitCodePoison;
+uintptr_t g_nativeCodePoison;
 
 void initializePoison()
 {
     static std::once_flag initializeOnceFlag;
     std::call_once(initializeOnceFlag, [] {
-        g_classInfoPoison = makePoison();
-        g_masmPoison = makePoison();
+        g_globalDataPoison = makePoison();
+        g_jitCodePoison = makePoison();
+        g_nativeCodePoison = makePoison();
     });
 }
 

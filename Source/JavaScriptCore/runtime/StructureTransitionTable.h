@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IndexingType.h"
+#include "JSCPoison.h"
 #include "WeakGCMap.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/text/UniquedStringImpl.h>
@@ -186,6 +187,8 @@ public:
 
 private:
     friend class SingleSlotTransitionWeakOwner;
+    using PoisonedTransitionMapPtr = Int32Poisoned<TransitionMapPoison, TransitionMap*>;
+    using PoisonedWeakImplPtr = Int32Poisoned<WeakImplPoison, WeakImpl*>;
 
     bool isUsingSingleSlot() const
     {
@@ -195,13 +198,13 @@ private:
     TransitionMap* map() const
     {
         ASSERT(!isUsingSingleSlot());
-        return reinterpret_cast<TransitionMap*>(m_data);
+        return PoisonedTransitionMapPtr(m_data).unpoisoned();
     }
 
     WeakImpl* weakImpl() const
     {
         ASSERT(isUsingSingleSlot());
-        return reinterpret_cast<WeakImpl*>(m_data & ~UsingSingleSlotFlag);
+        return PoisonedWeakImplPtr(m_data & ~UsingSingleSlotFlag).unpoisoned();
     }
 
     void setMap(TransitionMap* map)
@@ -212,7 +215,7 @@ private:
             WeakSet::deallocate(impl);
 
         // This implicitly clears the flag that indicates we're using a single transition
-        m_data = reinterpret_cast<intptr_t>(map);
+        m_data = PoisonedTransitionMapPtr(map).bits();
 
         ASSERT(!isUsingSingleSlot());
     }

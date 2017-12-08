@@ -47,17 +47,13 @@ public:
 
     explicit PoisonedImpl(T ptr)
         : m_poisonedBits(poison(ptr))
-    {
-        ASSERT(ptr && m_poisonedBits);
-    }
+    { }
 
     PoisonedImpl(const PoisonedImpl&) = default;
 
     explicit PoisonedImpl(PoisonedBits poisonedBits)
         : m_poisonedBits(poisonedBits)
-    {
-        ASSERT(m_poisonedBits);
-    }
+    { }
 
 #if ENABLE(POISON_ASSERTS)
     template<typename U = void*>

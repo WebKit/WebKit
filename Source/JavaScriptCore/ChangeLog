@@ -1,3 +1,50 @@
+2017-12-07  Mark Lam  <mark.lam@apple.com>
+
+        Apply poisoning to some native code pointers.
+        https://bugs.webkit.org/show_bug.cgi?id=180541
+        <rdar://problem/35916875>
+
+        Reviewed by Filip Pizlo.
+
+        Renamed g_classInfoPoison to g_globalDataPoison.
+        Renamed g_masmPoison to g_jitCodePoison.
+        Introduced g_nativeCodePoison.
+        Applied g_nativeCodePoison to poisoning some native code pointers.
+
+        Introduced non-random Int32 poison values (in JSCPoison.h) for use with pointers
+        to malloc allocated data structures (where needed).
+
+        * API/JSCallbackFunction.h:
+        (JSC::JSCallbackFunction::functionCallback):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CustomGetterSetter.h:
+        (JSC::CustomGetterSetter::getter const):
+        (JSC::CustomGetterSetter::setter const):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::getCallData):
+        (JSC::InternalFunction::getConstructData):
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::nativeFunctionFor):
+        * runtime/JSCPoison.h: Added.
+        * runtime/JSCPoisonedPtr.cpp:
+        (JSC::initializePoison):
+        * runtime/JSCPoisonedPtr.h:
+        * runtime/Lookup.h:
+        * runtime/NativeExecutable.cpp:
+        (JSC::NativeExecutable::hashFor const):
+        * runtime/NativeExecutable.h:
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::setSingleTransition):
+        * runtime/StructureTransitionTable.h:
+        (JSC::StructureTransitionTable::StructureTransitionTable):
+        (JSC::StructureTransitionTable::isUsingSingleSlot const):
+        (JSC::StructureTransitionTable::map const):
+        (JSC::StructureTransitionTable::weakImpl const):
+        (JSC::StructureTransitionTable::setMap):
+
 2017-12-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Fix style in remote inspector classes
