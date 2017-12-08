@@ -37,7 +37,6 @@
 #include <wtf/Ref.h>
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 #if USE(WINDOWS_EVENT_LOOP)
 #include <wtf/win/WorkItemContext.h>

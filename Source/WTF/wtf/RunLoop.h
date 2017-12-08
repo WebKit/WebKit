@@ -162,7 +162,7 @@ private:
 
     void performWork();
 
-    Mutex m_functionQueueLock;
+    Lock m_functionQueueLock;
     Deque<Function<void()>> m_functionQueue;
 
 #if USE(WINDOWS_EVENT_LOOP)

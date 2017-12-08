@@ -1,5 +1,39 @@
 2017-12-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [WTF] Remove remaining use of Mutex
+        https://bugs.webkit.org/show_bug.cgi?id=180579
+
+        Reviewed by Alex Christensen.
+
+        Mutex should be only used in low-level Locking and Threading.
+        Other ones should use WTF::Lock and WTF::Condition instead.
+        This patch replaces WTF::Mutex with WTF::Lock in WTF if it
+        is not related to threading or locking implementation.
+
+        And we also use WTF::Lock and WTF::Condition in WTF::BinarySemaphore.
+
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::performWork):
+        (WTF::RunLoop::dispatch):
+        * wtf/RunLoop.h:
+        * wtf/WorkQueue.cpp:
+        * wtf/WorkQueue.h:
+        * wtf/threads/BinarySemaphore.cpp:
+        (WTF::BinarySemaphore::signal):
+        (WTF::BinarySemaphore::wait):
+        (WTF::BinarySemaphore::BinarySemaphore): Deleted.
+        (WTF::BinarySemaphore::~BinarySemaphore): Deleted.
+        * wtf/threads/BinarySemaphore.h:
+        * wtf/win/WorkQueueWin.cpp:
+        (WTF::WorkQueue::registerHandle):
+        (WTF::WorkQueue::unregisterAndCloseHandle):
+        (WTF::WorkQueue::dispatch):
+        (WTF::WorkQueue::timerCallback):
+        (WTF::WorkQueue::dispatchAfter):
+        (WTF::TimerContext::TimerContext): Deleted.
+
+2017-12-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Use StaticLock and Lock instead of Mutex in Windows WebKitLegacy
         https://bugs.webkit.org/show_bug.cgi?id=180572
 

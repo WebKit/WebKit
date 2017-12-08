@@ -1,3 +1,14 @@
+2017-12-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Remove remaining use of Mutex
+        https://bugs.webkit.org/show_bug.cgi?id=180579
+
+        Reviewed by Alex Christensen.
+
+        Remove unused "BinarySemaphore.h".
+
+        * Platform/IPC/win/ConnectionWin.cpp:
+
 2017-12-08  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] WebInspectorProxyClient needs a virtual destructor

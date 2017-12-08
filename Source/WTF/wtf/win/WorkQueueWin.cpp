@@ -54,14 +54,14 @@ void WorkQueue::registerHandle(HANDLE handle, Function<void()>&& function)
     if (!::RegisterWaitForSingleObject(&context->waitHandle().m_handle, handle, handleCallback, context.ptr(), INFINITE, WT_EXECUTEDEFAULT))
         ASSERT_WITH_MESSAGE(m_timerQueue, "::RegisterWaitForSingleObject %lu", ::GetLastError());
 
-    MutexLocker lock(m_itemsMapLock);
+    auto locker = holdLock(m_itemsMapLock);
     ASSERT_ARG(handle, !m_itemsMap.contains(handle));
     m_itemsMap.set(handle, WTFMove(context));
 }
 
 void WorkQueue::unregisterAndCloseHandle(HANDLE handle)
 {
-    MutexLocker locker(m_itemsMapLock);
+    auto locker = holdLock(m_itemsMapLock);
     ASSERT_ARG(handle, m_itemsMap.contains(handle));
 
     unregisterWaitAndDestroyItemSoon(WTFMove(m_itemsMap.take(handle).value()));
@@ -135,7 +135,7 @@ void WorkQueue::platformInvalidate()
 
 void WorkQueue::dispatch(Function<void()>&& function)
 {
-    MutexLocker locker(m_functionQueueLock);
+    auto locker = holdLock(m_functionQueueLock);
     m_functionQueue.append(WTFMove(function));
 
     // Spawn a work thread to perform the work we just added. As an optimization, we avoid
@@ -153,17 +153,13 @@ void WorkQueue::dispatch(Function<void()>&& function)
 struct TimerContext : public ThreadSafeRefCounted<TimerContext> {
     static RefPtr<TimerContext> create() { return adoptRef(new TimerContext); }
 
-    WorkQueue* queue;
+    Lock timerLock;
+    WorkQueue* queue { nullptr };
+    HANDLE timer { nullptr };
     Function<void()> function;
-    Mutex timerMutex;
-    HANDLE timer;
 
 private:
-    TimerContext()
-        : queue(nullptr)
-        , timer(0)
-    {
-    }
+    TimerContext() = default;
 };
 
 void WorkQueue::timerCallback(void* context, BOOLEAN timerOrWaitFired)
@@ -176,7 +172,7 @@ void WorkQueue::timerCallback(void* context, BOOLEAN timerOrWaitFired)
 
     timerContext->queue->dispatch(WTFMove(timerContext->function));
 
-    MutexLocker lock(timerContext->timerMutex);
+    auto locker = holdLock(timerContext->timerLock);
     ASSERT(timerContext->timer);
     ASSERT(timerContext->queue->m_timerQueue);
     if (!::DeleteTimerQueueTimer(timerContext->queue->m_timerQueue, timerContext->timer, 0)) {
@@ -198,7 +194,7 @@ void WorkQueue::dispatchAfter(Seconds duration, Function<void()>&& function)
         // The timer callback could fire before ::CreateTimerQueueTimer even returns, so we protect
         // context->timer with a mutex to ensure the timer callback doesn't access it before the
         // timer handle has been stored in it.
-        MutexLocker lock(context->timerMutex);
+        auto locker = holdLock(context->timerLock);
 
         int64_t milliseconds = duration.milliseconds();
 

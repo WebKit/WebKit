@@ -111,10 +111,9 @@ private:
 #elif USE(WINDOWS_EVENT_LOOP)
     volatile LONG m_isWorkThreadRegistered;
 
-    Mutex m_functionQueueLock;
+    Lock m_functionQueueLock;
+    Lock m_itemsMapLock;
     Vector<Function<void()>> m_functionQueue;
-
-    Mutex m_itemsMapLock;
     HashMap<HANDLE, Ref<WorkItemContext>> m_itemsMap;
 
     HANDLE m_timerQueue;

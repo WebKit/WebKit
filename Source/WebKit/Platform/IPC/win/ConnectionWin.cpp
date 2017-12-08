@@ -29,7 +29,6 @@
 #include "DataReference.h"
 #include <wtf/RandomNumber.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 using namespace std;
 
