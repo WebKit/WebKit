@@ -51,7 +51,7 @@ class SharedBuffer;
 enum class SerializationReturnCode;
 
 enum class SerializationErrorMode { NonThrowing, Throwing };
-enum class SerializationContext { Default, WorkerPostMessage };
+enum class SerializationContext { Default, WorkerPostMessage, WindowPostMessage };
 
 using ArrayBufferContentsArray = Vector<JSC::ArrayBufferContents>;
 #if ENABLE(WEBASSEMBLY)
