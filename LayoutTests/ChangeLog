@@ -1,3 +1,15 @@
+2017-12-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS: Many AMP pages hit a release assertion inside Document::updateStyleIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=180550
+
+        Reviewed by Simon Fraser.
+
+        Add a test for r225647.
+
+        * fast/frames/flattening/non-flattening-frame-inside-flattening-iframe-crash-expected.txt: Added.
+        * fast/frames/flattening/non-flattening-frame-inside-flattening-iframe-crash.html: Added.
+
 2017-12-07  Eric Carlson  <eric.carlson@apple.com>
 
         Simplify log channel configuration UI
