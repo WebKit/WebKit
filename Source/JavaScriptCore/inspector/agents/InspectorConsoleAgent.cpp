@@ -83,9 +83,11 @@ void InspectorConsoleAgent::enable(ErrorString&)
         expiredMessage.addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, false);
     }
 
-    size_t messageCount = m_consoleMessages.size();
-    for (size_t i = 0; i < messageCount; ++i)
-        m_consoleMessages[i]->addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, false);
+    Vector<std::unique_ptr<ConsoleMessage>> messages;
+    m_consoleMessages.swap(messages);
+
+    for (size_t i = 0; i < messages.size(); ++i)
+        messages[i]->addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, false);
 }
 
 void InspectorConsoleAgent::disable(ErrorString&)

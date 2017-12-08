@@ -1,3 +1,15 @@
+2017-12-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CRASH at InspectorConsoleAgent::enable when iterating mutable list of buffered console messages
+        https://bugs.webkit.org/show_bug.cgi?id=180590
+        <rdar://problem/35882767>
+
+        Reviewed by Mark Lam.
+
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::enable):
+        Swap the messages to a Vector that won't change during iteration.
+
 2017-12-08  Michael Saboff  <msaboff@apple.com>
 
         YARR: Coalesce constructed character classes
