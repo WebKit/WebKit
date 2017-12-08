@@ -1,3 +1,17 @@
+2017-12-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use StaticLock instead of NeverDestroyed<Lock>
+        https://bugs.webkit.org/show_bug.cgi?id=180507
+
+        Reviewed by Saam Barati.
+
+        * DumpRenderTree/JavaScriptThreading.cpp:
+        (javaScriptThreads):
+        (runJavaScriptThread):
+        (startJavaScriptThreads):
+        (stopJavaScriptThreads):
+        (javaScriptThreadsMutex): Deleted.
+
 2017-12-07  Alex Christensen  <achristensen@webkit.org>
 
         Always synchronously continue with fragment navigations

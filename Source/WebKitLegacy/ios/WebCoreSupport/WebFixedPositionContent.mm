@@ -49,11 +49,7 @@
 using namespace WebCore;
 using namespace std;
 
-static Lock& WebFixedPositionContentDataLock()
-{
-    static NeverDestroyed<Lock> mutex;
-    return mutex;
-}
+static StaticLock webFixedPositionContentDataLock;
 
 struct ViewportConstrainedLayerData {
     ViewportConstrainedLayerData()
@@ -104,7 +100,7 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
 
 - (void)scrollOrZoomChanged:(CGRect)positionedObjectsRect
 {
-    LockHolder lock(WebFixedPositionContentDataLock());
+    auto locker = holdLock(webFixedPositionContentDataLock);
 
     LayerInfoMap::const_iterator end = _private->m_viewportConstrainedLayers.end();
     for (LayerInfoMap::const_iterator it = _private->m_viewportConstrainedLayers.begin(); it != end; ++it) {
@@ -143,7 +139,7 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
 
 - (void)overflowScrollPositionForLayer:(CALayer *)scrollLayer changedTo:(CGPoint)scrollPosition
 {
-    LockHolder lock(WebFixedPositionContentDataLock());
+    auto locker = holdLock(webFixedPositionContentDataLock);
 
     LayerInfoMap::const_iterator end = _private->m_viewportConstrainedLayers.end();
     for (LayerInfoMap::const_iterator it = _private->m_viewportConstrainedLayers.begin(); it != end; ++it) {
@@ -176,7 +172,7 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
 
 - (void)setViewportConstrainedLayers:(WTF::HashMap<CALayer *, std::unique_ptr<WebCore::ViewportConstraints>>&)layerMap stickyContainerMap:(WTF::HashMap<CALayer*, CALayer*>&)stickyContainers
 {
-    LockHolder lock(WebFixedPositionContentDataLock());
+    auto locker = holdLock(webFixedPositionContentDataLock);
 
     _private->m_viewportConstrainedLayers.clear();
 
@@ -193,7 +189,7 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
 
 - (BOOL)hasFixedOrStickyPositionLayers
 {
-    LockHolder lock(WebFixedPositionContentDataLock());
+    auto locker = holdLock(webFixedPositionContentDataLock);
     return !_private->m_viewportConstrainedLayers.isEmpty();
 }
 

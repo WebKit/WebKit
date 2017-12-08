@@ -178,29 +178,29 @@ CurlShareHandle::~CurlShareHandle()
 
 void CurlShareHandle::lockCallback(CURL*, curl_lock_data data, curl_lock_access, void*)
 {
-    if (Lock* mutex = mutexFor(data))
+    if (auto* mutex = mutexFor(data))
         mutex->lock();
 }
 
 void CurlShareHandle::unlockCallback(CURL*, curl_lock_data data, void*)
 {
-    if (Lock* mutex = mutexFor(data))
+    if (auto* mutex = mutexFor(data))
         mutex->unlock();
 }
 
-Lock* CurlShareHandle::mutexFor(curl_lock_data data)
+StaticLock* CurlShareHandle::mutexFor(curl_lock_data data)
 {
-    static NeverDestroyed<Lock> cookieMutex;
-    static NeverDestroyed<Lock> dnsMutex;
-    static NeverDestroyed<Lock> shareMutex;
+    static StaticLock cookieMutex;
+    static StaticLock dnsMutex;
+    static StaticLock shareMutex;
 
     switch (data) {
     case CURL_LOCK_DATA_COOKIE:
-        return &cookieMutex.get();
+        return &cookieMutex;
     case CURL_LOCK_DATA_DNS:
-        return &dnsMutex.get();
+        return &dnsMutex;
     case CURL_LOCK_DATA_SHARE:
-        return &shareMutex.get();
+        return &shareMutex;
     default:
         ASSERT_NOT_REACHED();
         return nullptr;

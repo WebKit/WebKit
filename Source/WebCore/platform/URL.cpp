@@ -275,11 +275,7 @@ static void assertProtocolIsGood(StringView protocol)
 
 #endif
 
-static Lock& defaultPortForProtocolMapForTestingLock()
-{
-    static NeverDestroyed<Lock> lock;
-    return lock;
-}
+static StaticLock defaultPortForProtocolMapForTestingLock;
 
 using DefaultPortForProtocolMapForTesting = HashMap<String, uint16_t>;
 static DefaultPortForProtocolMapForTesting*& defaultPortForProtocolMapForTesting()
@@ -298,13 +294,13 @@ static DefaultPortForProtocolMapForTesting& ensureDefaultPortForProtocolMapForTe
 
 void registerDefaultPortForProtocolForTesting(uint16_t port, const String& protocol)
 {
-    LockHolder locker(defaultPortForProtocolMapForTestingLock());
+    auto locker = holdLock(defaultPortForProtocolMapForTestingLock);
     ensureDefaultPortForProtocolMapForTesting().add(protocol, port);
 }
 
 void clearDefaultPortForProtocolMapForTesting()
 {
-    LockHolder locker(defaultPortForProtocolMapForTestingLock());
+    auto locker = holdLock(defaultPortForProtocolMapForTestingLock);
     if (auto* map = defaultPortForProtocolMapForTesting())
         map->clear();
 }
@@ -312,7 +308,7 @@ void clearDefaultPortForProtocolMapForTesting()
 std::optional<uint16_t> defaultPortForProtocol(StringView protocol)
 {
     if (auto* overrideMap = defaultPortForProtocolMapForTesting()) {
-        LockHolder locker(defaultPortForProtocolMapForTestingLock());
+        auto locker = holdLock(defaultPortForProtocolMapForTestingLock);
         ASSERT(overrideMap); // No need to null check again here since overrideMap cannot become null after being non-null.
         auto iterator = overrideMap->find(protocol.toStringWithoutCopying());
         if (iterator != overrideMap->end())

@@ -46,11 +46,7 @@ NSSet *QLPreviewGetSupportedMIMETypesSet()
     return set;
 }
 
-static Lock& qlPreviewConverterDictionaryMutex()
-{
-    static NeverDestroyed<Lock> mutex;
-    return mutex;
-}
+static StaticLock qlPreviewConverterDictionaryLock;
 
 static NSMutableDictionary *QLPreviewConverterDictionary()
 {
@@ -66,7 +62,7 @@ static NSMutableDictionary *QLContentDictionary()
 
 void removeQLPreviewConverterForURL(NSURL *url)
 {
-    LockHolder lock(qlPreviewConverterDictionaryMutex());
+    auto locker = holdLock(qlPreviewConverterDictionaryLock);
     [QLPreviewConverterDictionary() removeObjectForKey:url];
     [QLContentDictionary() removeObjectForKey:url];
 }
@@ -75,7 +71,7 @@ static void addQLPreviewConverterWithFileForURL(NSURL *url, id converter, NSStri
 {
     ASSERT(url);
     ASSERT(converter);
-    LockHolder lock(qlPreviewConverterDictionaryMutex());
+    auto locker = holdLock(qlPreviewConverterDictionaryLock);
     [QLPreviewConverterDictionary() setObject:converter forKey:url];
     [QLContentDictionary() setObject:(fileName ? fileName : @"") forKey:url];
 }

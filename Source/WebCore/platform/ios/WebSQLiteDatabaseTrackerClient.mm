@@ -84,11 +84,7 @@ void WebSQLiteDatabaseTrackerClient::hysteresisUpdated(PAL::HysteresisState stat
 
 }
 
-static Lock& transactionBackgroundTaskIdentifierLock()
-{
-    static NeverDestroyed<Lock> mutex;
-    return mutex;
-}
+static StaticLock transactionBackgroundTaskIdentifierLock;
 
 static NSUInteger transactionBackgroundTaskIdentifier;
 
@@ -111,7 +107,7 @@ static NSUInteger getTransactionBackgroundTaskIdentifier()
 
 + (void)startBackgroundTask
 {
-    LockHolder lock(transactionBackgroundTaskIdentifierLock());
+    auto locker = holdLock(transactionBackgroundTaskIdentifierLock);
 
     // If there's already an existing background task going on, there's no need to start a new one.
     WebBackgroundTaskController *backgroundTaskController = [WebBackgroundTaskController sharedController];
@@ -126,7 +122,7 @@ static NSUInteger getTransactionBackgroundTaskIdentifier()
 
 + (void)endBackgroundTask
 {
-    LockHolder lock(transactionBackgroundTaskIdentifierLock());
+    auto locker = holdLock(transactionBackgroundTaskIdentifierLock);
 
     // It is possible that we were unable to start the background task when the first transaction began.
     // Don't try to end the task in that case.

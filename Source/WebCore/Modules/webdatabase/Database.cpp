@@ -341,7 +341,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
 #if PLATFORM(IOS)
     {
         // Make sure we wait till the background removal of the empty database files finished before trying to open any database.
-        LockHolder locker(DatabaseTracker::openDatabaseMutex());
+        auto locker = holdLock(DatabaseTracker::openDatabaseMutex());
     }
 #endif
 

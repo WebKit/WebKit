@@ -83,7 +83,7 @@ public:
 private:
     static void lockCallback(CURL*, curl_lock_data, curl_lock_access, void*);
     static void unlockCallback(CURL*, curl_lock_data, void*);
-    static Lock* mutexFor(curl_lock_data);
+    static StaticLock* mutexFor(curl_lock_data);
 
     CURLSH* m_shareHandle { nullptr };
 };

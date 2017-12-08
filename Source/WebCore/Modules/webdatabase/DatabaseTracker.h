@@ -100,7 +100,7 @@ public:
     // MobileSafari will grab this mutex on the main thread before dispatching the task to 
     // clean up zero byte database files.  Any operations to open new database will have to
     // wait for that task to finish by waiting on this mutex.
-    static Lock& openDatabaseMutex();
+    static StaticLock& openDatabaseMutex();
     
     WEBCORE_EXPORT static void emptyDatabaseFilesRemovalTaskWillBeScheduled();
     WEBCORE_EXPORT static void emptyDatabaseFilesRemovalTaskDidFinish();

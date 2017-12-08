@@ -1,3 +1,16 @@
+2017-12-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use StaticLock instead of NeverDestroyed<Lock>
+        https://bugs.webkit.org/show_bug.cgi?id=180507
+
+        Reviewed by Saam Barati.
+
+        * WebLocalizableStrings.cpp:
+        (findCachedString):
+        (cacheString):
+        (mainBundleLocStrings): Deleted.
+        (frameworkLocStringsMutex): Deleted.
+
 2017-12-05  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Scrollbars are sometimes not rendered in accelerated compositing mode.
