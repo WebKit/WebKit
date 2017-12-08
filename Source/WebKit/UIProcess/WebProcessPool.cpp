@@ -216,7 +216,7 @@ static HashSet<String, ASCIICaseInsensitiveHash>& globalURLSchemesWithCustomProt
 
 WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     : m_configuration(configuration.copy())
-    , m_defaultPageGroup(WebPageGroup::createNonNull())
+    , m_defaultPageGroup(WebPageGroup::create())
     , m_injectedBundleClient(std::make_unique<API::InjectedBundleClient>())
     , m_automationClient(std::make_unique<API::AutomationClient>())
     , m_downloadClient(std::make_unique<API::DownloadClient>())

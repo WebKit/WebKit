@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageGroup_h
-#define WebPageGroup_h
+#pragma once
 
 #include "APIObject.h"
 #include "WebPageGroupData.h"
@@ -44,7 +43,7 @@ class WebPageGroup : public API::ObjectImpl<API::Object::Type::PageGroup> {
 public:
     WebPageGroup(const String& identifier = String(), bool visibleToInjectedBundle = true, bool visibleToHistoryClient = true);
     static Ref<WebPageGroup> create(const String& identifier = String(), bool visibleToInjectedBundle = true, bool visibleToHistoryClient = true);
-    static Ref<WebPageGroup> createNonNull(const String& identifier = String(), bool visibleToInjectedBundle = true, bool visibleToHistoryClient = true);
+
     static WebPageGroup* get(uint64_t pageGroupID);
 
     virtual ~WebPageGroup();
@@ -58,17 +57,14 @@ public:
 
     void setPreferences(WebPreferences*);
     WebPreferences& preferences() const;
-    void preferencesDidChange();
 
     WebUserContentControllerProxy& userContentController();
 
 private:
     WebPageGroupData m_data;
     RefPtr<WebPreferences> m_preferences;
-    RefPtr<WebUserContentControllerProxy> m_userContentController;
+    Ref<WebUserContentControllerProxy> m_userContentController;
     HashSet<WebPageProxy*> m_pages;
 };
 
 } // namespace WebKit
-
-#endif // WebPageGroup_h

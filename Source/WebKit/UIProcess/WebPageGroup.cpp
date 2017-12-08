@@ -59,11 +59,6 @@ Ref<WebPageGroup> WebPageGroup::create(const String& identifier, bool visibleToI
     return adoptRef(*new WebPageGroup(identifier, visibleToInjectedBundle, visibleToHistoryClient));
 }
 
-Ref<WebPageGroup> WebPageGroup::createNonNull(const String& identifier, bool visibleToInjectedBundle, bool visibleToHistoryClient)
-{
-    return adoptRef(*new WebPageGroup(identifier, visibleToInjectedBundle, visibleToHistoryClient));
-}
-
 WebPageGroup* WebPageGroup::get(uint64_t pageGroupID)
 {
     return webPageGroupMap().get(pageGroupID);
@@ -129,17 +124,9 @@ WebPreferences& WebPageGroup::preferences() const
     return *m_preferences;
 }
 
-void WebPageGroup::preferencesDidChange()
-{
-    for (HashSet<WebPageProxy*>::iterator it = m_pages.begin(), end = m_pages.end(); it != end; ++it) {
-        WebPageProxy* page = *it;
-        page->preferencesDidChange();
-    }
-}
-
 WebUserContentControllerProxy& WebPageGroup::userContentController()
 {
-    return *m_userContentController;
+    return m_userContentController;
 }
 
 } // namespace WebKit

@@ -1,5 +1,20 @@
 2017-12-08  Alex Christensen  <achristensen@webkit.org>
 
+        Remove unused code in WebPageGroup
+        https://bugs.webkit.org/show_bug.cgi?id=180604
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::userContentController):
+        (WebKit::WebPageGroup::createNonNull): Deleted.
+        (WebKit::WebPageGroup::preferencesDidChange): Deleted.
+        * UIProcess/WebPageGroup.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+
+2017-12-08  Alex Christensen  <achristensen@webkit.org>
+
         Modernize APIWebsiteDataStore.h and WebProcessPool.h
         https://bugs.webkit.org/show_bug.cgi?id=180588
 
