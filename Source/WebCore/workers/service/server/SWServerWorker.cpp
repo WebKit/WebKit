@@ -70,7 +70,8 @@ ServiceWorkerContextData SWServerWorker::contextData() const
 
 void SWServerWorker::terminate()
 {
-    m_server.terminateWorker(*this);
+    if (isRunning())
+        m_server.terminateWorker(*this);
 }
 
 const ClientOrigin& SWServerWorker::origin() const

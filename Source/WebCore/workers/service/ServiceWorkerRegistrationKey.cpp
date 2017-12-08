@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "SecurityOrigin.h"
 #include "URLHash.h"
 
 namespace WebCore {
@@ -74,6 +75,15 @@ bool ServiceWorkerRegistrationKey::originIsMatching(const SecurityOriginData& to
         return false;
 
     return protocolHostAndPortAreEqual(clientURL, m_scope);
+}
+
+bool ServiceWorkerRegistrationKey::relatesToOrigin(const SecurityOrigin& origin) const
+{
+    if (m_topOrigin == SecurityOriginData::fromSecurityOrigin(origin))
+        return true;
+
+    auto scopeOrigin = SecurityOrigin::create(m_scope);
+    return scopeOrigin->isSameOriginAs(origin);
 }
 
 static const char separatorCharacter = '_';

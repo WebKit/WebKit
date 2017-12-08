@@ -117,8 +117,8 @@ public:
     WEBCORE_EXPORT SWServer(UniqueRef<SWOriginStore>&&, String&& registrationDatabaseDirectory, PAL::SessionID);
     WEBCORE_EXPORT ~SWServer();
 
-    WEBCORE_EXPORT void clearAll();
-    WEBCORE_EXPORT void clear(const SecurityOrigin&);
+    WEBCORE_EXPORT void clearAll(WTF::CompletionHandler<void()>&&);
+    WEBCORE_EXPORT void clear(const SecurityOrigin&, WTF::CompletionHandler<void()>&&);
 
     SWServerRegistration* getRegistration(const ServiceWorkerRegistrationKey&);
     void addRegistration(std::unique_ptr<SWServerRegistration>&&);

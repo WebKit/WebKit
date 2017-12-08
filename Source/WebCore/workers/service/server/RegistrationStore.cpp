@@ -51,7 +51,7 @@ void RegistrationStore::scheduleDatabasePushIfNecessary()
     m_databasePushTimer.startOneShot(0_s);
 }
 
-void RegistrationStore::pushChangesToDatabase()
+void RegistrationStore::pushChangesToDatabase(WTF::CompletionHandler<void()>&& completionHandler)
 {
     Vector<ServiceWorkerContextData> changesToPush;
     changesToPush.reserveInitialCapacity(m_updatedRegistrations.size());
@@ -59,7 +59,24 @@ void RegistrationStore::pushChangesToDatabase()
         changesToPush.uncheckedAppend(WTFMove(value));
 
     m_updatedRegistrations.clear();
-    m_database.pushChanges(WTFMove(changesToPush));
+    m_database.pushChanges(WTFMove(changesToPush), WTFMove(completionHandler));
+}
+
+void RegistrationStore::clearAll(WTF::CompletionHandler<void()>&& completionHandler)
+{
+    m_updatedRegistrations.clear();
+    m_databasePushTimer.stop();
+    m_database.clearAll(WTFMove(completionHandler));
+}
+
+void RegistrationStore::flushChanges(WTF::CompletionHandler<void()>&& completionHandler)
+{
+    if (m_databasePushTimer.isActive()) {
+        pushChangesToDatabase(WTFMove(completionHandler));
+        m_databasePushTimer.stop();
+        return;
+    }
+    completionHandler();
 }
 
 void RegistrationStore::updateRegistration(const ServiceWorkerContextData& data)

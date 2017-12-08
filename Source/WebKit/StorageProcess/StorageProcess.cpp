@@ -43,6 +43,7 @@
 #include <WebCore/ServiceWorkerClientIdentifier.h>
 #include <WebCore/TextEncoding.h>
 #include <pal/SessionID.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/MainThread.h>
 
@@ -295,50 +296,42 @@ void StorageProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
 
 void StorageProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
 {
-    auto completionHandler = [this, callbackID]() {
+    auto callbackAggregator = CallbackAggregator::create([this, callbackID] {
         parentProcessConnection()->send(Messages::StorageProcessProxy::DidDeleteWebsiteData(callbackID), 0);
-    };
+    });
 
 #if ENABLE(SERVICE_WORKER)
     if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations)) {
         if (auto* server = m_swServers.get(sessionID))
-            server->clearAll();
+            server->clearAll([callbackAggregator = callbackAggregator.copyRef()] { });
     }
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
-        idbServer(sessionID).closeAndDeleteDatabasesModifiedSince(modifiedSince, WTFMove(completionHandler));
-        return;
-    }
+    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases))
+        idbServer(sessionID).closeAndDeleteDatabasesModifiedSince(modifiedSince, [callbackAggregator = WTFMove(callbackAggregator)] { });
 #endif
-
-    completionHandler();
 }
 
 void StorageProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& securityOriginDatas, uint64_t callbackID)
 {
-    auto completionHandler = [this, callbackID]() {
+    auto callbackAggregator = CallbackAggregator::create([this, callbackID]() {
         parentProcessConnection()->send(Messages::StorageProcessProxy::DidDeleteWebsiteDataForOrigins(callbackID), 0);
-    };
+    });
 
 #if ENABLE(SERVICE_WORKER)
     if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations)) {
         if (auto* server = m_swServers.get(sessionID)) {
             for (auto& originData : securityOriginDatas)
-                server->clear(originData.securityOrigin());
+                server->clear(originData.securityOrigin(), [callbackAggregator = callbackAggregator.copyRef()] { });
         }
     }
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-    if (!websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
-        idbServer(sessionID).closeAndDeleteDatabasesForOrigins(securityOriginDatas, WTFMove(completionHandler));
-        return;
-    }
+    if (!websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases))
+        idbServer(sessionID).closeAndDeleteDatabasesForOrigins(securityOriginDatas, [callbackAggregator = WTFMove(callbackAggregator)] { });
 #endif
-
-    completionHandler();
 }
 
 #if ENABLE(SANDBOX_EXTENSIONS)

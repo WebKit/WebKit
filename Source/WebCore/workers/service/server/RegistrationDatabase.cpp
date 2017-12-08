@@ -35,6 +35,8 @@
 #include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
+#include "SecurityOrigin.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
@@ -48,18 +50,21 @@ static const String v1RecordsTableSchema(const String& tableName)
 
 static const String v1RecordsTableSchema()
 {
+    ASSERT(!isMainThread());
     static NeverDestroyed<WTF::String> schema(v1RecordsTableSchema("Records"));
     return schema;
 }
 
 static const String v1RecordsTableSchemaAlternate()
 {
+    ASSERT(!isMainThread());
     static NeverDestroyed<WTF::String> schema(v1RecordsTableSchema("\"Records\""));
     return schema;
 }
 
 static const String& databaseFilename()
 {
+    ASSERT(isMainThread());
     static NeverDestroyed<String> filename = "ServiceWorkerRegistrations.sqlite3";
     return filename;
 }
@@ -68,10 +73,13 @@ RegistrationDatabase::RegistrationDatabase(RegistrationStore& store, const Strin
     : CrossThreadTaskHandler("ServiceWorker I/O Thread")
     , m_store(store)
     , m_databaseDirectory(databaseDirectory)
+    , m_databaseFilePath(FileSystem::pathByAppendingComponent(m_databaseDirectory, databaseFilename()))
 {
     ASSERT(isMainThread());
 
-    postTask(createCrossThreadTask(*this, &RegistrationDatabase::openSQLiteDatabase, FileSystem::pathByAppendingComponent(m_databaseDirectory, databaseFilename())));
+    postTask(CrossThreadTask([this] {
+        importRecordsIfNecessary();
+    }));
 }
 
 RegistrationDatabase::~RegistrationDatabase()
@@ -95,8 +103,8 @@ void RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
         postTaskReply(createCrossThreadTask(*this, &RegistrationDatabase::databaseFailedToOpen));
     });
 
-    SQLiteFileSystem::ensureDatabaseDirectoryExists(m_databaseDirectory.isolatedCopy());
-    
+    SQLiteFileSystem::ensureDatabaseDirectoryExists(m_databaseDirectory);
+
     m_database = std::make_unique<SQLiteDatabase>();
     if (!m_database->open(fullFilename)) {
         errorMessage = "Failed to open registration database";
@@ -112,6 +120,15 @@ void RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
         return;
     
     scopeExit.release();
+}
+
+void RegistrationDatabase::importRecordsIfNecessary()
+{
+    ASSERT(!isMainThread());
+
+    if (FileSystem::fileExists(m_databaseFilePath))
+        openSQLiteDatabase(m_databaseFilePath);
+
     postTaskReply(createCrossThreadTask(*this, &RegistrationDatabase::databaseOpenedAndRecordsImported));
 }
 
@@ -202,15 +219,41 @@ static std::optional<WorkerType> stringToWorkerType(const String& type)
     return std::nullopt;
 }
 
-void RegistrationDatabase::pushChanges(Vector<ServiceWorkerContextData>&& datas)
+void RegistrationDatabase::pushChanges(Vector<ServiceWorkerContextData>&& datas, WTF::CompletionHandler<void()>&& completionHandler)
 {
-    postTask(createCrossThreadTask(*this, &RegistrationDatabase::doPushChanges, datas));
+    postTask(CrossThreadTask([this, datas = crossThreadCopy(datas), completionHandler = WTFMove(completionHandler)]() mutable {
+        doPushChanges(WTFMove(datas));
+
+        if (!completionHandler)
+            return;
+
+        postTaskReply(CrossThreadTask([completionHandler = WTFMove(completionHandler)] {
+            completionHandler();
+        }));
+    }));
+}
+
+void RegistrationDatabase::clearAll(WTF::CompletionHandler<void()>&& completionHandler)
+{
+    postTask(CrossThreadTask([this, completionHandler = WTFMove(completionHandler)]() mutable {
+        m_database = nullptr;
+
+        SQLiteFileSystem::deleteDatabaseFile(m_databaseFilePath);
+        SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_databaseDirectory);
+
+        postTaskReply(CrossThreadTask([completionHandler = WTFMove(completionHandler)] {
+            completionHandler();
+        }));
+    }));
 }
 
 void RegistrationDatabase::doPushChanges(Vector<ServiceWorkerContextData>&& datas)
 {
-    if (!m_database)
-        return;
+    if (!m_database) {
+        openSQLiteDatabase(m_databaseFilePath);
+        if (!m_database)
+            return;
+    }
 
     SQLiteTransaction transaction(*m_database);
     transaction.begin();

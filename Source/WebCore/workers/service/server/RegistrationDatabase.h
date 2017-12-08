@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "SecurityOrigin.h"
 #include <wtf/CrossThreadTaskHandler.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,14 +45,17 @@ public:
 
     bool isClosed() const { return !m_database; }
 
-    void pushChanges(Vector<ServiceWorkerContextData>&&);
+    void pushChanges(Vector<ServiceWorkerContextData>&&, WTF::CompletionHandler<void()>&&);
+    void clearAll(WTF::CompletionHandler<void()>&&);
 
 private:
     // Methods to be run on the task thread
     void openSQLiteDatabase(const String& fullFilename);
     String ensureValidRecordsTable();
     String importRecords();
+    void importRecordsIfNecessary();
     void doPushChanges(Vector<ServiceWorkerContextData>&&);
+    void doClearOrigin(const SecurityOrigin&);
 
     // Replies to the main thread
     void addRegistrationToStore(ServiceWorkerContextData&&);
@@ -60,6 +64,7 @@ private:
 
     RegistrationStore& m_store;
     String m_databaseDirectory;
+    String m_databaseFilePath;
     std::unique_ptr<SQLiteDatabase> m_database;
 };
 

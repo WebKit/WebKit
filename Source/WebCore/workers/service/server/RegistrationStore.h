@@ -32,6 +32,7 @@
 #include "ServiceWorkerRegistrationData.h"
 #include "ServiceWorkerRegistrationKey.h"
 #include "Timer.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
@@ -46,6 +47,9 @@ public:
     explicit RegistrationStore(SWServer&, const String& databaseDirectory);
     ~RegistrationStore();
 
+    void clearAll(WTF::CompletionHandler<void()>&&);
+    void flushChanges(WTF::CompletionHandler<void()>&&);
+
     // Callbacks from the SWServer
     void updateRegistration(const ServiceWorkerContextData&);
     void removeRegistration(SWServerRegistration&);
@@ -57,7 +61,8 @@ public:
 
 private:
     void scheduleDatabasePushIfNecessary();
-    void pushChangesToDatabase();
+    void pushChangesToDatabase(WTF::CompletionHandler<void()>&&);
+    void pushChangesToDatabase() { pushChangesToDatabase({ }); }
 
     SWServer& m_server;
     RegistrationDatabase m_database;

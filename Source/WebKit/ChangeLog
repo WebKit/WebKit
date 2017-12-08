@@ -1,3 +1,14 @@
+2017-12-08  Chris Dumez  <cdumez@apple.com>
+
+        Clearing all Website Data should remove service worker registrations on disk
+        https://bugs.webkit.org/show_bug.cgi?id=180558
+
+        Reviewed by Youenn Fablet.
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::deleteWebsiteData):
+        (WebKit::StorageProcess::deleteWebsiteDataForOrigins):
+
 2017-12-08  Youenn Fablet  <youenn@apple.com>
 
         WebServiceWorkerProvider should use Cancellation error to notify DTL that it cannot handle a fetch

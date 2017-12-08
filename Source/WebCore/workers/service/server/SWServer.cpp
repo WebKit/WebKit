@@ -147,20 +147,33 @@ Vector<ServiceWorkerRegistrationData> SWServer::getRegistrations(const SecurityO
     return matchingRegistrationDatas;
 }
 
-void SWServer::clearAll()
+void SWServer::clearAll(WTF::CompletionHandler<void()>&& completionHandler)
 {
     m_jobQueues.clear();
     while (!m_registrations.isEmpty())
         m_registrations.begin()->value->clear();
     ASSERT(m_registrationsByID.isEmpty());
     m_originStore->clearAll();
+    m_registrationStore.clearAll(WTFMove(completionHandler));
 }
 
-void SWServer::clear(const SecurityOrigin& origin)
+void SWServer::clear(const SecurityOrigin& origin, WTF::CompletionHandler<void()>&& completionHandler)
 {
-    m_originStore->clear(origin);
+    m_jobQueues.removeIf([&](auto& keyAndValue) {
+        return keyAndValue.key.relatesToOrigin(origin);
+    });
 
-    // FIXME: We should clear entries in m_registrations, m_jobQueues and m_workersByID.
+    Vector<SWServerRegistration*> registrationsToRemove;
+    for (auto& keyAndValue : m_registrations) {
+        if (keyAndValue.key.relatesToOrigin(origin))
+            registrationsToRemove.append(keyAndValue.value.get());
+    }
+
+    // Calling SWServerRegistration::clear() takes care of updating m_registrations, m_originStore and m_registrationStore.
+    for (auto* registration : registrationsToRemove)
+        registration->clear();
+
+    m_registrationStore.flushChanges(WTFMove(completionHandler));
 }
 
 void SWServer::Connection::scheduleJobInServer(const ServiceWorkerJobData& jobData)

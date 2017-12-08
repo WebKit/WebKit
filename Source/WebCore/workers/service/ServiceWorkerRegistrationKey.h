@@ -49,6 +49,8 @@ public:
     const URL& scope() const { return m_scope; }
     void setScope(URL&& scope) { m_scope = WTFMove(scope); }
 
+    bool relatesToOrigin(const SecurityOrigin&) const;
+
     ServiceWorkerRegistrationKey isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
