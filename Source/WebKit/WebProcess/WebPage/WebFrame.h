@@ -63,8 +63,8 @@ class InjectedBundleNodeHandle;
 class InjectedBundleRangeHandle;
 class InjectedBundleScriptWorld;
 class WebPage;
+class WebsitePolicies;
 struct FrameInfoData;
-struct WebsitePolicies;
 
 class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame> {
 public:
@@ -86,7 +86,7 @@ public:
     enum class ForNavigationAction { No, Yes };
     uint64_t setUpPolicyListener(WebCore::FramePolicyFunction&&, ForNavigationAction);
     void invalidatePolicyListener();
-    void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyAction, uint64_t navigationID, DownloadID, WebsitePolicies&&);
+    void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyAction, uint64_t navigationID, DownloadID, std::optional<WebsitePolicies>&&);
 
     uint64_t setUpWillSubmitFormListener(WTF::Function<void(void)>&&);
     void continueWillSubmitForm(uint64_t);

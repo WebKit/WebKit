@@ -889,7 +889,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 
     // Notify the UIProcess.
     Ref<WebFrame> protect(*m_frame);
-    WebsitePolicies websitePolicies;
+    std::optional<WebsitePolicies> websitePolicies;
     if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), SecurityOriginData::fromFrame(coreFrame), documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingFrame && originatingFrame->page() ? originatingFrame->page()->pageID() : 0, navigationAction.resourceRequest(), request, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())), Messages::WebPageProxy::DecidePolicyForNavigationAction::Reply(receivedPolicyAction, newNavigationID, policyAction, downloadID, websitePolicies))) {
         m_frame->didReceivePolicyDecision(listenerID, PolicyAction::Ignore, 0, { }, { });
         return;

@@ -2281,7 +2281,7 @@ void WebPageProxy::centerSelectionInVisibleArea()
     m_process->send(Messages::WebPage::CenterSelectionInVisibleArea(), m_pageID);
 }
 
-void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& frame, uint64_t listenerID, API::Navigation* navigation, const WebsitePolicies& websitePolicies)
+void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& frame, uint64_t listenerID, API::Navigation* navigation, std::optional<WebsitePolicies>&& websitePolicies)
 {
     if (!isValid())
         return;
@@ -3685,7 +3685,7 @@ void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
         m_frameSetLargestFrame = value ? m_mainFrame : 0;
 }
 
-void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, NavigationActionData&& navigationActionData, const FrameInfoData& originatingFrameInfoData, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, ResourceRequest&& request, uint64_t listenerID, const UserData& userData, bool& receivedPolicyAction, uint64_t& newNavigationID, WebCore::PolicyAction& policyAction, DownloadID& downloadID, WebsitePolicies& websitePolicies)
+void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, NavigationActionData&& navigationActionData, const FrameInfoData& originatingFrameInfoData, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, ResourceRequest&& request, uint64_t listenerID, const UserData& userData, bool& receivedPolicyAction, uint64_t& newNavigationID, WebCore::PolicyAction& policyAction, DownloadID& downloadID, std::optional<WebsitePolicies>& websitePolicies)
 {
     PageClientProtector protector(m_pageClient);
 

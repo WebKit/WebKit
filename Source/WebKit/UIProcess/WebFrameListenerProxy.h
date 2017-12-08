@@ -34,7 +34,7 @@
 namespace WebKit {
 
 class WebFrameProxy;
-struct WebsitePolicies;
+class WebsitePolicies;
 
 class WebFrameListenerProxy : public API::Object {
 public:
@@ -48,7 +48,7 @@ public:
 protected:
     WebFrameListenerProxy(WebFrameProxy*, uint64_t listenerID);
 
-    void receivedPolicyDecision(WebCore::PolicyAction, const WebsitePolicies&);
+    void receivedPolicyDecision(WebCore::PolicyAction, std::optional<WebsitePolicies>&&);
 
 private:
     RefPtr<WebFrameProxy> m_frame;

@@ -36,9 +36,9 @@ WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(WebFrameProxy* frame, u
 {
 }
 
-void WebFramePolicyListenerProxy::use(const WebsitePolicies& websitePolicies)
+void WebFramePolicyListenerProxy::use(std::optional<WebsitePolicies>&& websitePolicies)
 {
-    receivedPolicyDecision(WebCore::PolicyAction::Use, websitePolicies);
+    receivedPolicyDecision(WebCore::PolicyAction::Use, WTFMove(websitePolicies));
 }
 
 void WebFramePolicyListenerProxy::download()

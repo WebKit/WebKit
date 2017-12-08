@@ -393,7 +393,7 @@ bool NavigationState::NavigationClient::willGoToBackForwardListItem(WebPageProxy
 }
 #endif
 
-static void tryAppLink(RefPtr<API::NavigationAction>&& navigationAction, const String& currentMainFrameURL, WTF::Function<void(bool)>&& completionHandler)
+static void tryAppLink(Ref<API::NavigationAction>&& navigationAction, const String& currentMainFrameURL, WTF::Function<void(bool)>&& completionHandler)
 {
 #if HAVE(APP_LINKS)
     if (!navigationAction->shouldOpenAppLinks()) {
@@ -460,24 +460,24 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
     
     auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), delegateHasWebsitePolicies ? @selector(_webView:decidePolicyForNavigationAction:decisionHandler:) : @selector(webView:decidePolicyForNavigationAction:decisionHandler:));
     
-    auto decisionHandlerWithPolicies = [localListener = RefPtr<WebFramePolicyListenerProxy>(WTFMove(listener)), localNavigationAction = navigationAction.copyRef(), checker = WTFMove(checker), mainFrameURLString](WKNavigationActionPolicy actionPolicy, _WKWebsitePolicies *websitePolicies) mutable {
+    auto decisionHandlerWithPolicies = [localListener = WTFMove(listener), navigationAction = navigationAction.copyRef(), checker = WTFMove(checker), mainFrameURLString](WKNavigationActionPolicy actionPolicy, _WKWebsitePolicies *websitePolicies) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
 
-        WebsitePolicies policies;
+        std::optional<WebsitePolicies> policies;
         if (websitePolicies)
             policies = websitePolicies->_websitePolicies->websitePolicies();
 
         switch (actionPolicy) {
         case WKNavigationActionPolicyAllow:
-            tryAppLink(WTFMove(localNavigationAction), mainFrameURLString, [localListener = WTFMove(localListener), policies = WTFMove(policies)](bool followedLinkToApp) mutable {
+            tryAppLink(WTFMove(navigationAction), mainFrameURLString, [localListener = WTFMove(localListener), policies = WTFMove(policies)](bool followedLinkToApp) mutable {
                 if (followedLinkToApp) {
                     localListener->ignore();
                     return;
                 }
 
-                localListener->use(policies);
+                localListener->use(WTFMove(policies));
             });
         
             break;
@@ -494,7 +494,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             break;
         case _WKNavigationActionPolicyAllowWithoutTryingAppLink:
 #pragma clang diagnostic pop
-            localListener->use(policies);
+            localListener->use(WTFMove(policies));
             break;
         }
     };

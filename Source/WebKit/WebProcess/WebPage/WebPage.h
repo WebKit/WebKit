@@ -210,6 +210,7 @@ class WebUserContentController;
 class VideoFullscreenManager;
 class WebWheelEvent;
 class WebTouchEvent;
+class WebsitePolicies;
 class RemoteLayerTreeTransaction;
 
 struct AssistedNodeInformation;
@@ -223,7 +224,6 @@ struct PrintInfo;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
 struct WebSelectionData;
-struct WebsitePolicies;
 
 enum class DragControllerAction;
 enum FindOptions : uint16_t;
@@ -1189,7 +1189,7 @@ private:
     void updatePreferences(const WebPreferencesStore&);
     void updatePreferencesGenerated(const WebPreferencesStore&);
 
-    void didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, WebCore::PolicyAction, uint64_t navigationID, const DownloadID&, WebsitePolicies&&);
+    void didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, WebCore::PolicyAction, uint64_t navigationID, const DownloadID&, std::optional<WebsitePolicies>&&);
     void continueWillSubmitForm(uint64_t frameID, uint64_t listenerID);
     void setUserAgent(const String&);
     void setCustomTextEncodingName(const String&);

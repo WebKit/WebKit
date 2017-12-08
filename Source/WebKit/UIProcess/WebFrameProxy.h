@@ -51,7 +51,7 @@ namespace WebKit {
 class WebCertificateInfo;
 class WebFramePolicyListenerProxy;
 class WebPageProxy;
-struct WebsitePolicies;
+class WebsitePolicies;
 
 typedef GenericCallback<API::Data*> DataCallback;
 
@@ -114,7 +114,7 @@ public:
     void didChangeTitle(const String&);
 
     // Policy operations.
-    void receivedPolicyDecision(WebCore::PolicyAction, uint64_t listenerID, API::Navigation*, const WebsitePolicies&);
+    void receivedPolicyDecision(WebCore::PolicyAction, uint64_t listenerID, API::Navigation*, std::optional<WebsitePolicies>&&);
     WebFramePolicyListenerProxy& setUpPolicyListenerProxy(uint64_t listenerID);
 
 #if ENABLE(CONTENT_FILTERING)

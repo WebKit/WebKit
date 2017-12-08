@@ -843,7 +843,7 @@ public:
     void performDictionaryLookupOfCurrentSelection();
 #endif
 
-    void receivedPolicyDecision(WebCore::PolicyAction, WebFrameProxy&, uint64_t listenerID, API::Navigation* navigationID, const WebsitePolicies&);
+    void receivedPolicyDecision(WebCore::PolicyAction, WebFrameProxy&, uint64_t listenerID, API::Navigation* navigationID, std::optional<WebsitePolicies>&&);
 
     void backForwardRemovedItem(uint64_t itemID);
 
@@ -1326,7 +1326,7 @@ private:
 
     void didDestroyNavigation(uint64_t navigationID);
 
-    void decidePolicyForNavigationAction(uint64_t frameID, const WebCore::SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, NavigationActionData&&, const FrameInfoData&, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, uint64_t listenerID, const UserData&, bool& receivedPolicyAction, uint64_t& newNavigationID, WebCore::PolicyAction&, DownloadID&, WebsitePolicies&);
+    void decidePolicyForNavigationAction(uint64_t frameID, const WebCore::SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, NavigationActionData&&, const FrameInfoData&, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, uint64_t listenerID, const UserData&, bool& receivedPolicyAction, uint64_t& newNavigationID, WebCore::PolicyAction&, DownloadID&, std::optional<WebsitePolicies>&);
     void decidePolicyForNewWindowAction(uint64_t frameID, const WebCore::SecurityOriginData& frameSecurityOrigin, NavigationActionData&&, WebCore::ResourceRequest&&, const String& frameName, uint64_t listenerID, const UserData&);
     void decidePolicyForResponse(uint64_t frameID, const WebCore::SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, uint64_t listenerID, const UserData&);
     void decidePolicyForResponseSync(uint64_t frameID, const WebCore::SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, uint64_t listenerID, const UserData&, bool& receivedPolicyAction, WebCore::PolicyAction&, DownloadID&);
@@ -1867,7 +1867,7 @@ private:
     bool m_syncNavigationActionPolicyActionIsValid { false };
     WebCore::PolicyAction m_syncNavigationActionPolicyAction { WebCore::PolicyAction::Use };
     DownloadID m_syncNavigationActionPolicyDownloadID { 0 };
-    WebsitePolicies m_syncNavigationActionPolicyWebsitePolicies;
+    std::optional<WebsitePolicies> m_syncNavigationActionPolicyWebsitePolicies;
 
     bool m_shouldSuppressAppLinksInNextNavigationPolicyDecision { false };
 

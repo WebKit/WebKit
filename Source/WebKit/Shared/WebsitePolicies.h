@@ -46,7 +46,8 @@ enum class WebsiteAutoplayQuirk {
     ArbitraryUserGestures = 1 << 2,
 };
 
-struct WebsitePolicies {
+class WebsitePolicies {
+public:
 
     bool contentBlockersEnabled { true };
     OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks;

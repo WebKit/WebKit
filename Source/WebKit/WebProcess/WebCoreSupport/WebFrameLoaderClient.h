@@ -35,7 +35,7 @@ namespace WebKit {
 
 class PluginView;
 class WebFrame;
-struct WebsitePolicies;
+class WebsitePolicies;
     
 class WebFrameLoaderClient final : public WebCore::FrameLoaderClient {
 public:

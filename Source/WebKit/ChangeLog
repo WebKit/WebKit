@@ -1,3 +1,48 @@
+2017-12-08  Alex Christensen  <achristensen@webkit.org>
+
+        Pass std::optional<WebsitePolicies> instead of WebsitePolicies
+        https://bugs.webkit.org/show_bug.cgi?id=180563
+
+        Reviewed by Andy Estes.
+
+        WebsitePolicies are only passed along when a decidePolicyForNavigationAction SPI completion handler
+        is called with a valid _WKWebsitePolicies object.  In other cases, we don't have one.  Rather than
+        making WebsitePolicies have a default value for everything that won't change policies, pass
+        a std::optional<WebsitePolicies> which indicates better when we don't have new policies.
+
+        No change in behavior, but this will enable me to add things to WebsitePolicies that have no default value.
+
+        * Shared/WebsitePolicies.h:
+        Make WebsitePolicies a class with public members because the IPC code generators don't understand std::optional<struct type>
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::tryAppLink):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        * UIProcess/WebFrameListenerProxy.cpp:
+        (WebKit::WebFrameListenerProxy::receivedPolicyDecision):
+        * UIProcess/WebFrameListenerProxy.h:
+        * UIProcess/WebFramePolicyListenerProxy.cpp:
+        (WebKit::WebFramePolicyListenerProxy::use):
+        * UIProcess/WebFramePolicyListenerProxy.h:
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::receivedPolicyDecision):
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::didReceivePolicyDecision):
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceivePolicyDecision):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2017-12-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Remove remaining use of Mutex
