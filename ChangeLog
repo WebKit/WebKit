@@ -1,3 +1,17 @@
+2017-12-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][Ninja] Incremental build failure of WTF
+        https://bugs.webkit.org/show_bug.cgi?id=180521
+
+        Reviewed by Konstantin Tokarev.
+
+        WTF included its forwarding headers in Windows ports. The
+        directory DerivedSources/ForwardingHeaders shouldn't be a include
+        path for WTF.
+
+        * Source/cmake/OptionsWin.cmake:
+        Removed DerivedSources/ForwardingHeaders and DerivedSources from include paths.
+
 2017-12-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Freeze WebKit version in user agent
