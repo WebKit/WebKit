@@ -41,18 +41,18 @@ public:
     PageDebuggable(Page&);
     ~PageDebuggable() = default;
 
-    Inspector::RemoteControllableTarget::Type type() const override { return Inspector::RemoteControllableTarget::Type::Web; }
+    Inspector::RemoteControllableTarget::Type type() const final { return Inspector::RemoteControllableTarget::Type::Web; }
 
-    String name() const override;
-    String url() const override;
-    bool hasLocalDebugger() const override;
+    String name() const final;
+    String url() const final;
+    bool hasLocalDebugger() const final;
 
-    void connect(Inspector::FrontendChannel*, bool isAutomaticConnection = false, bool immediatelyPause = false) override;
-    void disconnect(Inspector::FrontendChannel*) override;
-    void dispatchMessageFromRemote(const String& message) override;
-    void setIndicating(bool) override;
+    void connect(Inspector::FrontendChannel*, bool isAutomaticConnection = false, bool immediatelyPause = false) final;
+    void disconnect(Inspector::FrontendChannel*) final;
+    void dispatchMessageFromRemote(const String& message) final;
+    void setIndicating(bool) final;
 
-    String nameOverride() const { return m_nameOverride; }
+    const String& nameOverride() const { return m_nameOverride; }
     void setNameOverride(const String&);
 
 private:

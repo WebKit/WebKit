@@ -42,7 +42,7 @@ public:
     void setRemoteDebuggingAllowed(bool);
 
 #if USE(CF)
-    CFRunLoopRef targetRunLoop() override { return m_runLoop.get(); }
+    CFRunLoopRef targetRunLoop() const final { return m_runLoop.get(); }
     void setTargetRunLoop(CFRunLoopRef runLoop) { m_runLoop = runLoop; }
 #endif
 
@@ -57,9 +57,10 @@ public:
     virtual void unpauseForInitializedInspector();
 
     // RemoteControllableTarget overrides.
-    bool remoteControlAllowed() const override;
+    bool remoteControlAllowed() const final;
+
 private:
-    bool m_allowed {false};
+    bool m_allowed { false };
 #if USE(CF)
     RetainPtr<CFRunLoopRef> m_runLoop;
 #endif

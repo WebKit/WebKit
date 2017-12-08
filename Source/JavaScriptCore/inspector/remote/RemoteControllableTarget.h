@@ -58,10 +58,11 @@ public:
 
 #if USE(CF)
     // The dispatch block will be scheduled on a global run loop if null is returned.
-    virtual CFRunLoopRef targetRunLoop() { return nullptr; }
+    virtual CFRunLoopRef targetRunLoop() const { return nullptr; }
 #endif
+
 private:
-    unsigned m_identifier {0};
+    unsigned m_identifier { 0 };
 };
 
 } // namespace Inspector
