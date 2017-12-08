@@ -1900,12 +1900,7 @@ void AccessibilityNodeObject::colorValue(int& r, int& g, int& b) const
     if (!is<HTMLInputElement>(node()))
         return;
 
-    auto& input = downcast<HTMLInputElement>(*node());
-    if (!input.isColorControl())
-        return;
-
-    // HTMLInputElement::value always returns a string parseable by Color().
-    Color color(input.value());
+    auto color = downcast<HTMLInputElement>(*node()).valueAsColor();
     r = color.red();
     g = color.green();
     b = color.blue();

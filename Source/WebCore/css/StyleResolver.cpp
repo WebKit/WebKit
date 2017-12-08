@@ -1800,8 +1800,7 @@ void StyleResolver::setFontSize(FontCascadeDescription& fontDescription, float s
 
 bool StyleResolver::colorFromPrimitiveValueIsDerivedFromElement(const CSSPrimitiveValue& value)
 {
-    int ident = value.valueID();
-    switch (ident) {
+    switch (value.valueID()) {
     case CSSValueWebkitText:
     case CSSValueWebkitLink:
     case CSSValueWebkitActivelink:
@@ -1817,26 +1816,23 @@ Color StyleResolver::colorFromPrimitiveValue(const CSSPrimitiveValue& value, boo
     if (value.isRGBColor())
         return value.color();
 
-    const State& state = m_state;
-    CSSValueID ident = value.valueID();
-    switch (ident) {
-    case 0:
-        return Color();
+    auto identifier = value.valueID();
+    switch (identifier) {
     case CSSValueWebkitText:
         return document().textColor();
     case CSSValueWebkitLink:
-        return (state.element()->isLink() && forVisitedLink) ? document().visitedLinkColor() : document().linkColor();
+        return (m_state.element()->isLink() && forVisitedLink) ? document().visitedLinkColor() : document().linkColor();
     case CSSValueWebkitActivelink:
         return document().activeLinkColor();
     case CSSValueWebkitFocusRingColor:
         return RenderTheme::focusRingColor();
     case CSSValueCurrentcolor:
         // Color is an inherited property so depending on it effectively makes the property inherited.
-        state.style()->setHasExplicitlyInheritedProperties();
-        return state.style()->color();
-    default: {
-        return StyleColor::colorFromKeyword(ident);
-    }
+        // FIXME: Setting the flag as a side effect of calling this function is a bit oblique. Can we do better?
+        m_state.style()->setHasExplicitlyInheritedProperties();
+        return m_state.style()->color();
+    default:
+        return StyleColor::colorFromKeyword(identifier);
     }
 }
 

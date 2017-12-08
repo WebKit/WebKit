@@ -45,26 +45,26 @@ public:
     virtual ~ColorInputType();
 
 private:
-    void didChooseColor(const Color&) override;
-    void didEndChooser() override;
-    IntRect elementRectRelativeToRootView() const override;
-    Color currentColor() override;
-    bool shouldShowSuggestions() const override;
-    Vector<Color> suggestions() const override;
-    bool isColorControl() const override;
-    const AtomicString& formControlType() const override;
-    bool supportsRequired() const override;
-    String fallbackValue() const override;
-    String sanitizeValue(const String&) const override;
-    void createShadowSubtree() override;
-    void setValue(const String&, bool valueChanged, TextFieldEventBehavior) override;
-    void handleDOMActivateEvent(Event&) override;
-    void detach() override;
-    bool shouldRespectListAttribute() override;
-    bool typeMismatchFor(const String&) const override;
-    bool shouldResetOnDocumentActivation() override;
-    Color valueAsColor() const override;
-    void selectColor(const Color&) override;
+    void didChooseColor(const Color&) final;
+    void didEndChooser() final;
+    IntRect elementRectRelativeToRootView() const final;
+    Color currentColor() final;
+    bool shouldShowSuggestions() const final;
+    Vector<Color> suggestions() const final;
+    bool isColorControl() const final;
+    const AtomicString& formControlType() const final;
+    bool supportsRequired() const final;
+    String fallbackValue() const final;
+    String sanitizeValue(const String&) const final;
+    void createShadowSubtree() final;
+    void setValue(const String&, bool valueChanged, TextFieldEventBehavior) final;
+    void handleDOMActivateEvent(Event&) final;
+    void detach() final;
+    bool shouldRespectListAttribute() final;
+    bool typeMismatchFor(const String&) const final;
+    bool shouldResetOnDocumentActivation() final;
+    Color valueAsColor() const final;
+    void selectColor(StringView) final;
 
     void endColorChooser();
     void updateColorSwatch();

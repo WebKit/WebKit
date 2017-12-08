@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -45,7 +45,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLOptionElement.h"
 #include "InputTypeNames.h"
-#include "RenderObject.h"
 #include "RenderView.h"
 #include "ScopedEventQueue.h"
 #include "ShadowRoot.h"
@@ -55,30 +54,26 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static bool isValidSimpleColorString(const String& value)
+// https://html.spec.whatwg.org/multipage/infrastructure.html#valid-simple-colour
+static bool isValidSimpleColor(StringView string)
 {
-    // See https://html.spec.whatwg.org/multipage/infrastructure.html#valid-simple-colour
-
-    if (value.isEmpty())
+    if (string.length() != 7)
         return false;
-    if (value[0] != '#')
+    if (string[0] != '#')
         return false;
-    if (value.length() != 7)
-        return false;
-    if (value.is8Bit()) {
-        const LChar* characters = value.characters8();
-        for (unsigned i = 1, length = value.length(); i < length; ++i) {
-            if (!isASCIIHexDigit(characters[i]))
-                return false;
-        }
-    } else {
-        const UChar* characters = value.characters16();
-        for (unsigned i = 1, length = value.length(); i < length; ++i) {
-            if (!isASCIIHexDigit(characters[i]))
-                return false;
-        }
+    for (unsigned i = 1; i < 7; ++i) {
+        if (!isASCIIHexDigit(string[i]))
+            return false;
     }
     return true;
+}
+
+// https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#rules-for-parsing-simple-colour-values
+static std::optional<RGBA32> parseSimpleColorValue(StringView string)
+{
+    if (!isValidSimpleColor(string))
+        return std::nullopt;
+    return makeRGB(toASCIIHexValue(string[1], string[2]), toASCIIHexValue(string[3], string[4]), toASCIIHexValue(string[5], string[6]));
 }
 
 ColorInputType::~ColorInputType()
@@ -108,7 +103,7 @@ String ColorInputType::fallbackValue() const
 
 String ColorInputType::sanitizeValue(const String& proposedValue) const
 {
-    if (!isValidSimpleColorString(proposedValue))
+    if (!isValidSimpleColor(proposedValue))
         return fallbackValue();
 
     return proposedValue.convertToASCIILowercase();
@@ -116,7 +111,7 @@ String ColorInputType::sanitizeValue(const String& proposedValue) const
 
 Color ColorInputType::valueAsColor() const
 {
-    return Color(element().value());
+    return parseSimpleColorValue(element().value()).value();
 }
 
 void ColorInputType::createShadowSubtree()
@@ -130,7 +125,7 @@ void ColorInputType::createShadowSubtree()
     colorSwatch->setPseudo(AtomicString("-webkit-color-swatch", AtomicString::ConstructFromLiteral));
     wrapperElement->appendChild(colorSwatch);
     element().userAgentShadowRoot()->appendChild(wrapperElement);
-    
+
     updateColorSwatch();
 }
 
@@ -176,7 +171,7 @@ bool ColorInputType::shouldRespectListAttribute()
 
 bool ColorInputType::typeMismatchFor(const String& value) const
 {
-    return !isValidSimpleColorString(value);
+    return !isValidSimpleColor(value);
 }
 
 bool ColorInputType::shouldResetOnDocumentActivation()
@@ -266,9 +261,10 @@ Vector<Color> ColorInputType::suggestions() const
     return suggestions;
 }
 
-void ColorInputType::selectColor(const Color& color)
+void ColorInputType::selectColor(StringView string)
 {
-    didChooseColor(color);
+    if (auto color = parseSimpleColorValue(string))
+        didChooseColor(color.value());
 }
 
 } // namespace WebCore

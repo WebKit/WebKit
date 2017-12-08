@@ -119,22 +119,6 @@ Ref<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(const StyleRe
     return result;
 }
 
-static inline int interpolate(int min, int max, float position)
-{
-    return min + static_cast<int>(position * (max - min));
-}
-
-static inline Color interpolate(const Color& color1, const Color& color2, float position)
-{
-    // FIXME: ExtendedColor - Doesn't work with extended colors, and really should be a helper in Color.h, not here.
-    int red = interpolate(color1.red(), color2.red(), position);
-    int green = interpolate(color1.green(), color2.green(), position);
-    int blue = interpolate(color1.blue(), color2.blue(), position);
-    int alpha = interpolate(color1.alpha(), color2.alpha(), position);
-
-    return Color(red, green, blue, alpha);
-}
-
 class LinearGradientAdapter {
 public:
     explicit LinearGradientAdapter(Gradient::LinearData& data)
@@ -421,8 +405,9 @@ Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradie
         // calculate colors
         for (size_t y = 0; y < 9; ++y) {
             float relativeOffset = (newStops[y].offset - offset1) / (offset2 - offset1);
-            float multiplier = powf(relativeOffset, logf(.5f) / logf(midpoint));
-            newStops[y].color = interpolate(color1, color2, multiplier);
+            float multiplier = std::pow(relativeOffset, std::log(.5f) / std::log(midpoint));
+            // FIXME: Why not premultiply here?
+            newStops[y].color = blend(color1, color2, multiplier, false /* do not premultiply */);
         }
 
         stops.remove(x);

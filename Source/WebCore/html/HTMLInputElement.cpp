@@ -1605,12 +1605,13 @@ Color HTMLInputElement::valueAsColor() const
     return m_inputType->valueAsColor();
 }
 
-void HTMLInputElement::selectColor(const Color& color)
+void HTMLInputElement::selectColor(StringView color)
 {
     m_inputType->selectColor(color);
 }
 
 #if ENABLE(DATALIST_ELEMENT)
+
 RefPtr<HTMLElement> HTMLInputElement::list() const
 {
     return dataList();
@@ -1643,6 +1644,7 @@ void HTMLInputElement::listAttributeTargetChanged()
 {
     m_inputType->listAttributeTargetChanged();
 }
+
 #endif // ENABLE(DATALIST_ELEMENT)
 
 bool HTMLInputElement::isSteppable() const

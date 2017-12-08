@@ -1237,7 +1237,7 @@ String Internals::visiblePlaceholder(Element& element)
 
 void Internals::selectColorInColorChooser(HTMLInputElement& element, const String& colorValue)
 {
-    element.selectColor(Color(colorValue));
+    element.selectColor(colorValue);
 }
 
 ExceptionOr<Vector<String>> Internals::formControlStateOfPreviousHistoryItem()
@@ -1565,8 +1565,15 @@ ExceptionOr<void> Internals::setViewBaseBackgroundColor(const String& colorValue
     if (!document || !document->view())
         return Exception { InvalidAccessError };
 
-    document->view()->setBaseBackgroundColor(Color(colorValue));
-    return { };
+    if (colorValue == "transparent") {
+        document->view()->setBaseBackgroundColor(Color::transparent);
+        return { };
+    }
+    if (colorValue == "white") {
+        document->view()->setBaseBackgroundColor(Color::white);
+        return { };
+    }
+    return Exception { SyntaxError };
 }
 
 ExceptionOr<void> Internals::setPagination(const String& mode, int gap, int pageLength)
