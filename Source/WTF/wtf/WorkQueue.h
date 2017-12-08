@@ -118,9 +118,6 @@ private:
 
     HANDLE m_timerQueue;
 #elif USE(GLIB_EVENT_LOOP) || USE(GENERIC_EVENT_LOOP)
-    RefPtr<Thread> m_workQueueThread;
-    Lock m_initializeRunLoopConditionMutex;
-    Condition m_initializeRunLoopCondition;
     RunLoop* m_runLoop;
 #endif
 };
