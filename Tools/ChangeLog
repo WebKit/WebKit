@@ -1,3 +1,25 @@
+2017-12-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ and WPE build fix.
+
+        Add TestRunner::installFakeHelvetica(), WTR::installFakeHelvetica()
+        and WTF::uninstallFakeHelvetica() definitions, filling out the
+        declarations added in r225641. This fills up missing symbols in the
+        WKTR's InjectedBundle library, unbreaking layout tests for both
+        configurations.
+
+        * WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp:
+        (WTR::installFakeHelvetica):
+        (WTR::uninstallFakeHelvetica):
+        * WebKitTestRunner/InjectedBundle/gtk/TestRunnerGtk.cpp:
+        (WTR::TestRunner::inspectorTestStubURL):
+        (WTR::TestRunner::installFakeHelvetica):
+        * WebKitTestRunner/InjectedBundle/wpe/ActivateFontsWPE.cpp:
+        (WTR::installFakeHelvetica):
+        (WTR::uninstallFakeHelvetica):
+        * WebKitTestRunner/InjectedBundle/wpe/TestRunnerWPE.cpp:
+        (WTR::TestRunner::installFakeHelvetica):
+
 2017-12-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use StaticLock instead of NeverDestroyed<Lock>

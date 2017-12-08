@@ -155,4 +155,12 @@ void activateFonts()
     initializeFontConfigSetting();
 }
 
+void installFakeHelvetica(WKStringRef)
+{
+}
+
+void uninstallFakeHelvetica()
+{
+}
+
 }

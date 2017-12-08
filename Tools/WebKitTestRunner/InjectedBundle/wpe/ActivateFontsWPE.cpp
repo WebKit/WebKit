@@ -142,4 +142,12 @@ void activateFonts()
     numFonts = FcConfigGetFonts(config, FcSetApplication)->nfont;
 }
 
+void installFakeHelvetica(WKStringRef)
+{
+}
+
+void uninstallFakeHelvetica()
+{
+}
+
 } // namespace WTR

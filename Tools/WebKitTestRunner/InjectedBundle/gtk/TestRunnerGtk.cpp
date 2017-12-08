@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TestRunner.h"
 
+#include "ActivateFonts.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleUtilities.h"
 #include <glib.h>
@@ -69,6 +70,11 @@ JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
 JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
 {
     return JSStringCreateWithUTF8CString("resource:///org/webkitgtk/inspector/UserInterface/TestStub.html");
+}
+
+void TestRunner::installFakeHelvetica(JSStringRef configuration)
+{
+    WTR::installFakeHelvetica(toWK(configuration).get());
 }
 
 } // namespace WTR
