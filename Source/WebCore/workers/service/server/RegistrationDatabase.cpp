@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "RegistrationStore.h"
 #include "SQLiteDatabase.h"
+#include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
 #include <wtf/MainThread.h>
@@ -89,10 +90,12 @@ void RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
     String errorMessage;
     auto scopeExit = makeScopeExit([&, errorMessage = &errorMessage] {
         ASSERT_UNUSED(errorMessage, !errorMessage->isNull());
-        LOG_ERROR("Failed to open Service Worker registration database: %s", errorMessage->utf8().data());
+        RELEASE_LOG_ERROR(ServiceWorker, "Failed to open Service Worker registration database: %s", errorMessage->utf8().data());
         m_database = nullptr;
         postTaskReply(createCrossThreadTask(*this, &RegistrationDatabase::databaseFailedToOpen));
     });
+
+    SQLiteFileSystem::ensureDatabaseDirectoryExists(m_databaseDirectory.isolatedCopy());
     
     m_database = std::make_unique<SQLiteDatabase>();
     if (!m_database->open(fullFilename)) {
@@ -206,14 +209,15 @@ void RegistrationDatabase::pushChanges(Vector<ServiceWorkerContextData>&& datas)
 
 void RegistrationDatabase::doPushChanges(Vector<ServiceWorkerContextData>&& datas)
 {
-    ASSERT(m_database);
+    if (!m_database)
+        return;
 
     SQLiteTransaction transaction(*m_database);
     transaction.begin();
 
     SQLiteStatement sql(*m_database, ASCIILiteral("INSERT INTO Records VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"));
     if (sql.prepare() != SQLITE_OK) {
-        LOG_ERROR("Failed to prepare statement to store registration data into records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
+        RELEASE_LOG_ERROR(ServiceWorker, "Failed to prepare statement to store registration data into records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
         return;
     }
 
@@ -223,7 +227,7 @@ void RegistrationDatabase::doPushChanges(Vector<ServiceWorkerContextData>&& data
             if (sql.prepare() != SQLITE_OK
                 || sql.bindText(1, data.registration.key.toDatabaseKey()) != SQLITE_OK
                 || sql.step() != SQLITE_DONE) {
-                LOG_ERROR("Failed to remove registration data from records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
+                RELEASE_LOG_ERROR(ServiceWorker, "Failed to remove registration data from records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
                 return;
             }
 
@@ -240,7 +244,7 @@ void RegistrationDatabase::doPushChanges(Vector<ServiceWorkerContextData>&& data
             || sql.bindText(8, data.script) != SQLITE_OK
             || sql.bindText(9, workerTypeToString(data.workerType)) != SQLITE_OK
             || sql.step() != SQLITE_DONE) {
-            LOG_ERROR("Failed to store registration data into records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
+            RELEASE_LOG_ERROR(ServiceWorker, "Failed to store registration data into records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
             return;
         }
     }
