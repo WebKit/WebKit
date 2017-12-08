@@ -95,6 +95,7 @@ struct WebProcessCreationParameters {
     String mediaKeyStorageDirectory;
 
     String webCoreLoggingChannels;
+    String webKitLoggingChannels;
 
     Vector<String> urlSchemesRegisteredAsEmptyDocument;
     Vector<String> urlSchemesRegisteredAsSecure;

@@ -264,6 +264,7 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
     parameters.webCoreLoggingChannels = [[NSUserDefaults standardUserDefaults] stringForKey:@"WebCoreLogging"];
+    parameters.webKitLoggingChannels = [[NSUserDefaults standardUserDefaults] stringForKey:@"WebKit2Logging"];
 #endif
 
     // FIXME: Remove this and related parameter when <rdar://problem/29448368> is fixed.

@@ -1,5 +1,31 @@
 2017-12-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Propagate WebKit2Logging channels to the Web Process
+        https://bugs.webkit.org/show_bug.cgi?id=180517
+
+        Reviewed by Tim Horton.
+
+        If you set WebKit2Logging, you want those channels active in both the UI process and
+        the web process, but without tricky 'defaults' gyrations, setting them in the web process
+        was hard.
+
+        Instead, send them through to the process via WebProcessCreationParameters, as we do
+        for WebCoreLogging channels.
+
+        * Platform/LogInitialization.h:
+        * Platform/Logging.cpp:
+        (WebKit::initializeLogChannelsIfNecessary):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
+2017-12-07  Simon Fraser  <simon.fraser@apple.com>
+
         Add logging for EditorState in RemoteLayerTree transactions
         https://bugs.webkit.org/show_bug.cgi?id=180515
 

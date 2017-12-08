@@ -42,15 +42,17 @@ static WTFLogChannel* logChannels[] = {
 namespace WebKit {
 
 static const size_t logChannelCount = WTF_ARRAY_LENGTH(logChannels);
+static bool logChannelsNeedInitialization = true;
 
-void initializeLogChannelsIfNecessary()
+void initializeLogChannelsIfNecessary(std::optional<String> logChannelString)
 {
-    static bool haveInitializedLoggingChannels = false;
-    if (haveInitializedLoggingChannels)
+    if (!logChannelsNeedInitialization && !logChannelString)
         return;
-    haveInitializedLoggingChannels = true;
-    
-    WTFInitializeLogChannelStatesFromString(logChannels, logChannelCount, logLevelString().utf8().data());
+
+    logChannelsNeedInitialization = false;
+
+    String enabledChannelsString = logChannelString ? logChannelString.value() : logLevelString();
+    WTFInitializeLogChannelStatesFromString(logChannels, logChannelCount, enabledChannelsString.utf8().data());
 }
 
 } // namespace WebKit
