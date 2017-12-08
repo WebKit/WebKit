@@ -36,9 +36,9 @@ namespace JSC { namespace Yarr {
 #define YarrStackSpaceForBackTrackInfoBackReference 2
 #define YarrStackSpaceForBackTrackInfoAlternative 1 // One per alternative.
 #define YarrStackSpaceForBackTrackInfoParentheticalAssertion 1
-#define YarrStackSpaceForBackTrackInfoParenthesesOnce 1 // Only for !fixed quantifiers.
+#define YarrStackSpaceForBackTrackInfoParenthesesOnce 2
 #define YarrStackSpaceForBackTrackInfoParenthesesTerminal 1
-#define YarrStackSpaceForBackTrackInfoParentheses 2
+#define YarrStackSpaceForBackTrackInfoParentheses 4
 #define YarrStackSpaceForDotStarEnclosure 1
 
 static const unsigned quantifyInfinite = UINT_MAX;
@@ -52,9 +52,10 @@ enum JSRegExpResult {
     JSRegExpMatch = 1,
     JSRegExpNoMatch = 0,
     JSRegExpErrorNoMatch = -1,
-    JSRegExpErrorHitLimit = -2,
-    JSRegExpErrorNoMemory = -3,
-    JSRegExpErrorInternal = -4
+    JSRegExpJITCodeFailure = -2,
+    JSRegExpErrorHitLimit = -3,
+    JSRegExpErrorNoMemory = -4,
+    JSRegExpErrorInternal = -5,
 };
 
 enum YarrCharSize {

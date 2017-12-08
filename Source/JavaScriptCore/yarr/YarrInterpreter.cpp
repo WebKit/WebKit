@@ -27,6 +27,7 @@
 #include "config.h"
 #include "YarrInterpreter.h"
 
+#include "Options.h"
 #include "SuperSampler.h"
 #include "Yarr.h"
 #include "YarrCanonicalize.h"
@@ -1669,6 +1670,11 @@ public:
         emitDisjunction(m_pattern.m_body);
         regexEnd();
 
+#ifndef NDEBUG
+        if (Options::dumpCompiledRegExpPatterns())
+            dumpDisjunction(m_bodyDisjunction.get());
+#endif
+
         return std::make_unique<BytecodePattern>(WTFMove(m_bodyDisjunction), m_allParenthesesInfo, m_pattern, allocator, lock);
     }
 
@@ -1828,16 +1834,6 @@ public:
 
         return beginTerm;
     }
-
-#ifndef NDEBUG
-    void dumpDisjunction(ByteDisjunction* disjunction)
-    {
-        dataLogF("ByteDisjunction(%p):\n\t", disjunction);
-        for (unsigned i = 0; i < disjunction->terms.size(); ++i)
-            dataLogF("{ %d } ", disjunction->terms[i].type);
-        dataLogF("\n");
-    }
-#endif
 
     void closeAlternative(int beginTerm)
     {
@@ -2111,6 +2107,244 @@ public:
             }
         }
     }
+#ifndef NDEBUG
+    void dumpDisjunction(ByteDisjunction* disjunction, unsigned nesting = 0)
+    {
+        PrintStream& out = WTF::dataFile();
+
+        unsigned termIndexNest = 0;
+
+        if (!nesting) {
+            out.printf("ByteDisjunction(%p):\n", disjunction);
+            nesting = 1;
+        } else {
+            termIndexNest = nesting - 1;
+            nesting = 2;
+        }
+
+        auto outputTermIndexAndNest = [&](size_t index, unsigned termNesting) {
+            for (unsigned nestingDepth = 0; nestingDepth < termIndexNest; nestingDepth++)
+                out.print("  ");
+            out.printf("%4lu", index);
+            for (unsigned nestingDepth = 0; nestingDepth < termNesting; nestingDepth++)
+                out.print("  ");
+        };
+
+        auto dumpQuantity = [&](ByteTerm& term) {
+            if (term.atom.quantityType == QuantifierFixedCount && term.atom.quantityMinCount == 1 && term.atom.quantityMaxCount == 1)
+                return;
+
+            out.print(" {", term.atom.quantityMinCount);
+            if (term.atom.quantityMinCount != term.atom.quantityMaxCount) {
+                if (term.atom.quantityMaxCount == UINT_MAX)
+                    out.print(",inf");
+                else
+                    out.print(",", term.atom.quantityMaxCount);
+            }
+            out.print("}");
+            if (term.atom.quantityType == QuantifierGreedy)
+                out.print(" greedy");
+            else if (term.atom.quantityType == QuantifierNonGreedy)
+                out.print(" non-greedy");
+        };
+
+        auto dumpCaptured = [&](ByteTerm& term) {
+            if (term.capture())
+                out.print(" captured (#", term.atom.subpatternId, ")");
+        };
+
+        auto dumpInverted = [&](ByteTerm& term) {
+            if (term.invert())
+                out.print(" inverted");
+        };
+
+        auto dumpInputPosition = [&](ByteTerm& term) {
+            out.printf(" inputPosition %u", term.inputPosition);
+        };
+
+        auto dumpCharacter = [&](ByteTerm& term) {
+            out.print(" ");
+            dumpUChar32(out, term.atom.patternCharacter);
+        };
+
+        auto dumpCharClass = [&](ByteTerm& term) {
+            out.print(" ");
+            dumpCharacterClass(out, &m_pattern, term.atom.characterClass);
+        };
+
+        for (size_t idx = 0; idx < disjunction->terms.size(); ++idx) {
+            ByteTerm term = disjunction->terms[idx];
+
+            bool outputNewline = true;
+
+            switch (term.type) {
+            case ByteTerm::TypeBodyAlternativeBegin:
+                outputTermIndexAndNest(idx, nesting++);
+                out.print("BodyAlternativeBegin");
+                if (term.alternative.onceThrough)
+                    out.print(" onceThrough");
+                break;
+            case ByteTerm::TypeBodyAlternativeDisjunction:
+                outputTermIndexAndNest(idx, nesting - 1);
+                out.print("BodyAlternativeDisjunction");
+                break;
+            case ByteTerm::TypeBodyAlternativeEnd:
+                outputTermIndexAndNest(idx, --nesting);
+                out.print("BodyAlternativeEnd");
+                break;
+            case ByteTerm::TypeAlternativeBegin:
+                outputTermIndexAndNest(idx, nesting++);
+                out.print("AlternativeBegin");
+                break;
+            case ByteTerm::TypeAlternativeDisjunction:
+                outputTermIndexAndNest(idx, nesting - 1);
+                out.print("AlternativeDisjunction");
+                break;
+            case ByteTerm::TypeAlternativeEnd:
+                outputTermIndexAndNest(idx, --nesting);
+                out.print("AlternativeEnd");
+                break;
+            case ByteTerm::TypeSubpatternBegin:
+                outputTermIndexAndNest(idx, nesting++);
+                out.print("SubpatternBegin");
+                break;
+            case ByteTerm::TypeSubpatternEnd:
+                outputTermIndexAndNest(idx, --nesting);
+                out.print("SubpatternEnd");
+                break;
+            case ByteTerm::TypeAssertionBOL:
+                outputTermIndexAndNest(idx, nesting);
+                out.print("AssertionBOL");
+                break;
+            case ByteTerm::TypeAssertionEOL:
+                outputTermIndexAndNest(idx, nesting);
+                out.print("AssertionEOL");
+                break;
+            case ByteTerm::TypeAssertionWordBoundary:
+                outputTermIndexAndNest(idx, nesting);
+                out.print("AssertionWordBoundary");
+                break;
+            case ByteTerm::TypePatternCharacterOnce:
+                outputTermIndexAndNest(idx, nesting);
+                out.print("PatternCharacterOnce");
+                dumpInverted(term);
+                dumpInputPosition(term);
+                dumpCharacter(term);
+                dumpQuantity(term);
+                break;
+            case ByteTerm::TypePatternCharacterFixed:
+                outputTermIndexAndNest(idx, nesting);
+                out.print("PatternCharacterFixed");
+                dumpInverted(term);
+                dumpInputPosition(term);
+                dumpCharacter(term);
+                out.print(" {", term.atom.quantityMinCount, "}");
+                break;
+            case ByteTerm::TypePatternCharacterGreedy:
+                outputTermIndexAndNest(idx, nesting);
+                out.print("PatternCharacterGreedy");
+                dumpInverted(term);
+                dumpInputPosition(term);
+                dumpCharacter(term);
+                dumpQuantity(term);
+                break;
+            case ByteTerm::TypePatternCharacterNonGreedy:
+                outputTermIndexAndNest(idx, nesting);
+                out.print("PatternCharacterNonGreedy");
+                dumpInverted(term);
+                dumpInputPosition(term);
+                dumpCharacter(term);
+                dumpQuantity(term);
+                break;
+            case ByteTerm::TypePatternCasedCharacterOnce:
+                outputTermIndexAndNest(idx, nesting);
+                out.print("PatternCasedCharacterOnce");
+                break;
+            case ByteTerm::TypePatternCasedCharacterFixed:
+                outputTermIndexAndNest(idx, nesting);
+                out.print("PatternCasedCharacterFixed");
+                break;
+            case ByteTerm::TypePatternCasedCharacterGreedy:
+                outputTermIndexAndNest(idx, nesting);
+                out.print("PatternCasedCharacterGreedy");
+                break;
+            case ByteTerm::TypePatternCasedCharacterNonGreedy:
+                outputTermIndexAndNest(idx, nesting);
+                out.print("PatternCasedCharacterNonGreedy");
+                break;
+            case ByteTerm::TypeCharacterClass:
+                outputTermIndexAndNest(idx, nesting);
+                out.print("CharacterClass");
+                dumpInverted(term);
+                dumpInputPosition(term);
+                dumpCharClass(term);
+                dumpQuantity(term);
+                break;
+            case ByteTerm::TypeBackReference:
+                outputTermIndexAndNest(idx, nesting);
+                out.print("BackReference #", term.atom.subpatternId);
+                dumpQuantity(term);
+                break;
+            case ByteTerm::TypeParenthesesSubpattern:
+                outputTermIndexAndNest(idx, nesting);
+                out.print("ParenthesesSubpattern");
+                dumpCaptured(term);
+                dumpInverted(term);
+                dumpInputPosition(term);
+                dumpQuantity(term);
+                out.print("\n");
+                outputNewline = false;
+                dumpDisjunction(term.atom.parenthesesDisjunction, nesting);
+                break;
+            case ByteTerm::TypeParenthesesSubpatternOnceBegin:
+                outputTermIndexAndNest(idx, nesting++);
+                out.print("ParenthesesSubpatternOnceBegin");
+                dumpCaptured(term);
+                dumpInverted(term);
+                dumpInputPosition(term);
+                break;
+            case ByteTerm::TypeParenthesesSubpatternOnceEnd:
+                outputTermIndexAndNest(idx, --nesting);
+                out.print("ParenthesesSubpatternOnceEnd");
+                break;
+            case ByteTerm::TypeParenthesesSubpatternTerminalBegin:
+                outputTermIndexAndNest(idx, nesting++);
+                out.print("ParenthesesSubpatternTerminalBegin");
+                dumpInverted(term);
+                dumpInputPosition(term);
+                break;
+            case ByteTerm::TypeParenthesesSubpatternTerminalEnd:
+                outputTermIndexAndNest(idx, --nesting);
+                out.print("ParenthesesSubpatternTerminalEnd");
+                break;
+            case ByteTerm::TypeParentheticalAssertionBegin:
+                outputTermIndexAndNest(idx, nesting++);
+                out.print("ParentheticalAssertionBegin");
+                dumpInverted(term);
+                dumpInputPosition(term);
+                break;
+            case ByteTerm::TypeParentheticalAssertionEnd:
+                outputTermIndexAndNest(idx, --nesting);
+                out.print("ParentheticalAssertionEnd");
+                break;
+            case ByteTerm::TypeCheckInput:
+                outputTermIndexAndNest(idx, nesting);
+                out.print("CheckInput ", term.checkInputCount);
+                break;
+            case ByteTerm::TypeUncheckInput:
+                outputTermIndexAndNest(idx, nesting);
+                out.print("UncheckInput ", term.checkInputCount);
+                break;
+            case ByteTerm::TypeDotStarEnclosure:
+                outputTermIndexAndNest(idx, nesting);
+                out.print("DotStarEnclosure");
+                break;
+            }
+            if (outputNewline)
+                out.print("\n");
+        }
+    }
+#endif
 
 private:
     YarrPattern& m_pattern;
@@ -2152,7 +2386,7 @@ COMPILE_ASSERT(sizeof(BackTrackInfoBackReference) == (YarrStackSpaceForBackTrack
 COMPILE_ASSERT(sizeof(BackTrackInfoAlternative) == (YarrStackSpaceForBackTrackInfoAlternative * sizeof(uintptr_t)), CheckYarrStackSpaceForBackTrackInfoAlternative);
 COMPILE_ASSERT(sizeof(BackTrackInfoParentheticalAssertion) == (YarrStackSpaceForBackTrackInfoParentheticalAssertion * sizeof(uintptr_t)), CheckYarrStackSpaceForBackTrackInfoParentheticalAssertion);
 COMPILE_ASSERT(sizeof(BackTrackInfoParenthesesOnce) == (YarrStackSpaceForBackTrackInfoParenthesesOnce * sizeof(uintptr_t)), CheckYarrStackSpaceForBackTrackInfoParenthesesOnce);
-COMPILE_ASSERT(sizeof(Interpreter<UChar>::BackTrackInfoParentheses) == (YarrStackSpaceForBackTrackInfoParentheses * sizeof(uintptr_t)), CheckYarrStackSpaceForBackTrackInfoParentheses);
+COMPILE_ASSERT(sizeof(Interpreter<UChar>::BackTrackInfoParentheses) <= (YarrStackSpaceForBackTrackInfoParentheses * sizeof(uintptr_t)), CheckYarrStackSpaceForBackTrackInfoParentheses);
 
 
 } }

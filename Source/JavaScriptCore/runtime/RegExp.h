@@ -140,6 +140,8 @@ private:
 
     RegExpState m_state;
 
+    void byteCodeCompileIfNecessary(VM*);
+
     void compile(VM*, Yarr::YarrCharSize);
     void compileIfNecessary(VM&, Yarr::YarrCharSize);
 

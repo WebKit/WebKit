@@ -1,3 +1,94 @@
+2017-12-08  Michael Saboff  <msaboff@apple.com>
+
+        YARR: JIT RegExps with greedy parenthesized sub patterns
+        https://bugs.webkit.org/show_bug.cgi?id=180538
+
+        Reviewed by JF Bastien.
+
+        This patch adds JIT support for regular expressions containing greedy counted
+        parenthesis.  An example expression that couldn't be JIT'ed before is /q(a|b)*q/.
+
+        Just like in the interpreter, expressions with nested parenthetical subpatterns
+        require saving the results of previous matches of the parentheses contents along
+        with any associated state.  This saved state is needed in the case that we need
+        to backtrack.  This state is called ParenContext within the code space allocated
+        for this ParenContext is managed using a simple block allocator within the JIT'ed
+        code.  The raw space managed by this allocator is passed into the JIT'ed function.
+
+        Since this fixed sized space may be exceeded, this patch adds a fallback mechanism.
+        If the JIT'ed code exhausts all its ParenContext space, it returns a new error
+        JSRegExpJITCodeFailure.  The caller will then bytecompile and interpret the
+        expression.
+
+        Due to increased register usage by the parenthesis handling code, the use of
+        registers by the JIT engine was restructured, with registers used for Unicode
+        pattern matching replaced with constants.
+
+        Reworked some of the context structures that are used across the interpreter
+        and JIT implementations to make them a little more uniform and to handle the
+        needs of JIT'ing the new parentheses forms.
+
+        To help with development and debugging of this code, compiled patterns dumping
+        code was enhanced.  Also added the ability to also dump interpreter ByteCodes.
+
+        * runtime/RegExp.cpp:
+        (JSC::byteCodeCompilePattern):
+        (JSC::RegExp::byteCodeCompileIfNecessary):
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+        * runtime/RegExp.h:
+        * runtime/RegExpInlines.h:
+        (JSC::RegExp::matchInline):
+        * testRegExp.cpp:
+        (parseRegExpLine):
+        (runFromFiles):
+        * yarr/Yarr.h:
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::compile):
+        (JSC::Yarr::ByteCompiler::dumpDisjunction):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::ParenContextSizes::ParenContextSizes):
+        (JSC::Yarr::YarrGenerator::ParenContextSizes::numSubpatterns):
+        (JSC::Yarr::YarrGenerator::ParenContextSizes::frameSlots):
+        (JSC::Yarr::YarrGenerator::ParenContext::sizeFor):
+        (JSC::Yarr::YarrGenerator::ParenContext::nextOffset):
+        (JSC::Yarr::YarrGenerator::ParenContext::beginOffset):
+        (JSC::Yarr::YarrGenerator::ParenContext::matchAmountOffset):
+        (JSC::Yarr::YarrGenerator::ParenContext::subpatternOffset):
+        (JSC::Yarr::YarrGenerator::ParenContext::savedFrameOffset):
+        (JSC::Yarr::YarrGenerator::initParenContextFreeList):
+        (JSC::Yarr::YarrGenerator::allocatePatternContext):
+        (JSC::Yarr::YarrGenerator::freePatternContext):
+        (JSC::Yarr::YarrGenerator::savePatternContext):
+        (JSC::Yarr::YarrGenerator::restorePatternContext):
+        (JSC::Yarr::YarrGenerator::tryReadUnicodeCharImpl):
+        (JSC::Yarr::YarrGenerator::storeToFrame):
+        (JSC::Yarr::YarrGenerator::generateJITFailReturn):
+        (JSC::Yarr::YarrGenerator::clearMatches):
+        (JSC::Yarr::YarrGenerator::generate):
+        (JSC::Yarr::YarrGenerator::backtrack):
+        (JSC::Yarr::YarrGenerator::opCompileParenthesesSubpattern):
+        (JSC::Yarr::YarrGenerator::generateEnter):
+        (JSC::Yarr::YarrGenerator::generateReturn):
+        (JSC::Yarr::YarrGenerator::YarrGenerator):
+        (JSC::Yarr::YarrGenerator::compile):
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::YarrCodeBlock::execute):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::indentForNestingLevel):
+        (JSC::Yarr::dumpUChar32):
+        (JSC::Yarr::dumpCharacterClass):
+        (JSC::Yarr::PatternTerm::dump):
+        (JSC::Yarr::YarrPattern::dumpPattern):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::PatternTerm::containsAnyCaptures):
+        (JSC::Yarr::BackTrackInfoParenthesesOnce::returnAddressIndex):
+        (JSC::Yarr::BackTrackInfoParentheses::beginIndex):
+        (JSC::Yarr::BackTrackInfoParentheses::returnAddressIndex):
+        (JSC::Yarr::BackTrackInfoParentheses::matchAmountIndex):
+        (JSC::Yarr::BackTrackInfoParentheses::patternContextHeadIndex):
+        (JSC::Yarr::BackTrackInfoAlternative::offsetIndex): Deleted.
+
 2017-12-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CRASH at InspectorConsoleAgent::enable when iterating mutable list of buffered console messages
