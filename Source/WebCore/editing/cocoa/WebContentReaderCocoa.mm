@@ -38,7 +38,7 @@
 #import "FrameLoader.h"
 #import "FrameLoaderClient.h"
 #import "HTMLBodyElement.h"
-#import "HTMLIframeElement.h"
+#import "HTMLIFrameElement.h"
 #import "HTMLImageElement.h"
 #import "LegacyWebArchive.h"
 #import "MainFrame.h"
