@@ -101,6 +101,7 @@ RefPtr<ImageBitmap> OffscreenCanvas::transferToImageBitmap()
     if (!m_context)
         return nullptr;
 
+#if ENABLE(WEBGL)
     if (!is<WebGLRenderingContext>(*m_context))
         return nullptr;
 
@@ -128,6 +129,9 @@ RefPtr<ImageBitmap> OffscreenCanvas::transferToImageBitmap()
     gc3d->clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
 
     return WTFMove(imageBitmap);
+#else
+    return nullptr;
+#endif
 }
 
 }
