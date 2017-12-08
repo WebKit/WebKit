@@ -48,11 +48,6 @@
 
 namespace WebCore {
 
-static ServiceWorkerIdentifier generateServiceWorkerIdentifier()
-{
-    return generateObjectIdentifier<ServiceWorkerIdentifierType>();
-}
-
 static Seconds terminationDelay { 10_s };
 
 SWServer::Connection::Connection(SWServer& server)
@@ -101,6 +96,12 @@ SWServerWorker* SWServer::workerByID(ServiceWorkerIdentifier identifier) const
 SWServerRegistration* SWServer::getRegistration(const ServiceWorkerRegistrationKey& registrationKey)
 {
     return m_registrations.get(registrationKey);
+}
+
+void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data)
+{
+    addRegistration(std::make_unique<SWServerRegistration>(*this, data.registration.key, data.registration.updateViaCache, data.registration.scopeURL, data.scriptURL));
+    tryInstallContextData(WTFMove(data));
 }
 
 void SWServer::addRegistration(std::unique_ptr<SWServerRegistration>&& registration)
@@ -198,7 +199,7 @@ void SWServer::Connection::syncTerminateWorker(ServiceWorkerIdentifier identifie
 
 SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, const String& registrationDatabaseDirectory)
     : m_originStore(WTFMove(originStore))
-    , m_registrationStore(registrationDatabaseDirectory)
+    , m_registrationStore(*this, registrationDatabaseDirectory)
 {
     UNUSED_PARAM(registrationDatabaseDirectory);
     allServers().add(this);
@@ -405,11 +406,13 @@ void SWServer::removeClientServiceWorkerRegistration(Connection& connection, Ser
 void SWServer::updateWorker(Connection&, const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerRegistration& registration, const URL& url, const String& script, WorkerType type)
 {
     registration.setLastUpdateTime(WallTime::now());
+    tryInstallContextData({ jobDataIdentifier, registration.data(), generateObjectIdentifier<ServiceWorkerIdentifierType>(), script, url, type, false });
+}
 
-    ServiceWorkerContextData data = { jobDataIdentifier, registration.data(), generateServiceWorkerIdentifier(), script, url, type };
-
+void SWServer::tryInstallContextData(ServiceWorkerContextData&& data)
+{
     // Right now we only ever keep up to one connection to one SW context process.
-    // And it should always exist if we're calling updateWorker
+    // And it should always exist if we're trying to install context data.
     auto* connection = SWServerToContextConnection::globalServerToContextConnection();
     if (!connection) {
         m_pendingContextDatas.append(WTFMove(data));
@@ -438,7 +441,8 @@ void SWServer::serverToContextConnectionCreated()
 
 void SWServer::installContextData(const ServiceWorkerContextData& data)
 {
-    m_registrationStore.updateRegistration(data);
+    if (!data.loadedFromDisk)
+        m_registrationStore.updateRegistration(data);
 
     auto* connection = SWServerToContextConnection::globalServerToContextConnection();
     ASSERT(connection);
@@ -446,10 +450,18 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
     auto* registration = m_registrations.get(data.registration.key);
     RELEASE_ASSERT(registration);
 
-    auto result = m_runningOrTerminatingWorkers.add(data.serviceWorkerIdentifier, SWServerWorker::create(*this, *registration, connection->identifier(), data.scriptURL, data.script, data.workerType, data.serviceWorkerIdentifier));
-    ASSERT(result.isNewEntry);
+    auto worker = SWServerWorker::create(*this, *registration, connection->identifier(), data.scriptURL, data.script, data.workerType, data.serviceWorkerIdentifier);
 
-    result.iterator->value->setState(SWServerWorker::State::Running);
+    // We don't immediately launch all workers that were just read in from disk,
+    // as it is unlikely they will be needed immediately.
+    if (data.loadedFromDisk) {
+        registration->updateRegistrationState(ServiceWorkerRegistrationState::Active, worker.ptr());
+        return;
+    }
+
+    worker->setState(SWServerWorker::State::Running);
+    auto result = m_runningOrTerminatingWorkers.add(data.serviceWorkerIdentifier, WTFMove(worker));
+    ASSERT_UNUSED(result, result.isNewEntry);
 
     connection->installServiceWorkerContext(data);
 }

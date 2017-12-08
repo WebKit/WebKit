@@ -55,6 +55,7 @@ public:
     template<class Decoder> static std::optional<ServiceWorkerRegistrationKey> decode(Decoder&);
 
     String toDatabaseKey() const;
+    static std::optional<ServiceWorkerRegistrationKey> fromDatabaseKey(const String&);
 
 #ifndef NDEBUG
     String loggingString() const;

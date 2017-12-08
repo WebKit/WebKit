@@ -42,6 +42,7 @@ struct ServiceWorkerContextData {
     String script;
     URL scriptURL;
     WorkerType workerType;
+    bool loadedFromDisk;
     
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerContextData> decode(Decoder&);
@@ -52,7 +53,7 @@ struct ServiceWorkerContextData {
 template<class Encoder>
 void ServiceWorkerContextData::encode(Encoder& encoder) const
 {
-    encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << scriptURL << workerType;
+    encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << scriptURL << workerType << loadedFromDisk;
 }
 
 template<class Decoder>
@@ -83,8 +84,12 @@ std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder
     WorkerType workerType;
     if (!decoder.decodeEnum(workerType))
         return std::nullopt;
-    
-    return {{ WTFMove(*jobDataIdentifier), WTFMove(*registration), WTFMove(*serviceWorkerIdentifier), WTFMove(script), WTFMove(scriptURL), workerType }};
+
+    bool loadedFromDisk;
+    if (!decoder.decode(loadedFromDisk))
+        return std::nullopt;
+
+    return {{ WTFMove(*jobDataIdentifier), WTFMove(*registration), WTFMove(*serviceWorkerIdentifier), WTFMove(script), WTFMove(scriptURL), workerType, loadedFromDisk}};
 }
 
 } // namespace WebCore

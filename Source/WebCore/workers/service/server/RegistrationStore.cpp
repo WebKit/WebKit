@@ -32,8 +32,9 @@
 
 namespace WebCore {
 
-RegistrationStore::RegistrationStore(const String& databaseDirectory)
-    : m_database(*this, databaseDirectory)
+RegistrationStore::RegistrationStore(SWServer& server, const String& databaseDirectory)
+    : m_server(server)
+    , m_database(*this, databaseDirectory)
     , m_databasePushTimer(*this, &RegistrationStore::pushChangesToDatabase)
 {
 }
@@ -75,6 +76,11 @@ void RegistrationStore::removeRegistration(SWServerRegistration& registration)
     scheduleDatabasePushIfNecessary();
 }
 
+void RegistrationStore::addRegistrationFromDatabase(ServiceWorkerContextData&& context)
+{
+    m_server.addRegistrationFromStore(WTFMove(context));
+}
+
 void RegistrationStore::databaseFailedToOpen()
 {
     // FIXME: Handle error in some appropriate manner.
@@ -84,7 +90,7 @@ void RegistrationStore::databaseOpenedAndRecordsImported()
 {
     // FIXME: Once we actually do the imports, conclude the importing phase here.
 }
-    
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

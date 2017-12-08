@@ -42,6 +42,7 @@ class SWServerWorker;
 enum class ServiceWorkerRegistrationState;
 enum class ServiceWorkerState;
 struct ExceptionData;
+struct ServiceWorkerContextData;
 struct ServiceWorkerFetchResult;
 
 class SWServerRegistration {

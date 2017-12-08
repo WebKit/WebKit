@@ -165,6 +165,18 @@ static String updateViaCacheToString(ServiceWorkerUpdateViaCache update)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+static std::optional<ServiceWorkerUpdateViaCache> stringToUpdateViaCache(const String& update)
+{
+    if (update == "Imports")
+        return ServiceWorkerUpdateViaCache::Imports;
+    if (update == "All")
+        return ServiceWorkerUpdateViaCache::All;
+    if (update == "None")
+        return ServiceWorkerUpdateViaCache::None;
+
+    return std::nullopt;
+}
+
 static String workerTypeToString(WorkerType workerType)
 {
     switch (workerType) {
@@ -175,6 +187,16 @@ static String workerTypeToString(WorkerType workerType)
     }
 
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+static std::optional<WorkerType> stringToWorkerType(const String& type)
+{
+    if (type == "Classic")
+        return WorkerType::Classic;
+    if (type == "Module")
+        return WorkerType::Module;
+
+    return std::nullopt;
 }
 
 void RegistrationDatabase::pushChanges(Vector<ServiceWorkerContextData>&& datas)
@@ -191,7 +213,7 @@ void RegistrationDatabase::doPushChanges(Vector<ServiceWorkerContextData>&& data
 
     SQLiteStatement sql(*m_database, ASCIILiteral("INSERT INTO Records VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"));
     if (sql.prepare() != SQLITE_OK) {
-        LOG_ERROR("Failed to prepared statement to store registration data into records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
+        LOG_ERROR("Failed to prepare statement to store registration data into records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
         return;
     }
 
@@ -231,8 +253,48 @@ void RegistrationDatabase::doPushChanges(Vector<ServiceWorkerContextData>&& data
 String RegistrationDatabase::importRecords()
 {
     ASSERT(!isMainThread());
-    // FIXME: Implement
+
+    SQLiteStatement sql(*m_database, ASCIILiteral("SELECT * FROM Records;"));
+    if (sql.prepare() != SQLITE_OK)
+        return String::format("Failed to prepare statement to retrieve registrations from records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
+
+    int result = sql.step();
+
+    for (; result == SQLITE_ROW; result = sql.step()) {
+        auto key = ServiceWorkerRegistrationKey::fromDatabaseKey(sql.getColumnText(0));
+        auto originURL = URL { URL(), sql.getColumnText(1) };
+        auto scopePath = sql.getColumnText(2);
+        auto topOrigin = SecurityOriginData::fromDatabaseIdentifier(sql.getColumnText(3));
+        auto lastUpdateCheckTime = WallTime::fromRawSeconds(sql.getColumnDouble(4));
+        auto updateViaCache = stringToUpdateViaCache(sql.getColumnText(5));
+        auto scriptURL = URL { URL(), sql.getColumnText(6) };
+        auto script = sql.getColumnText(7);
+        auto workerType = stringToWorkerType(sql.getColumnText(8));
+
+        // Validate the input for this registration.
+        // If any part of this input is invalid, let's skip this registration.
+        // FIXME: Should we return an error skipping *all* registrations?
+        if (!key || !originURL.isValid() || !topOrigin || !updateViaCache || !scriptURL.isValid() || !workerType)
+            continue;
+
+        auto workerIdentifier = generateObjectIdentifier<ServiceWorkerIdentifierType>();
+        auto registrationIdentifier = generateObjectIdentifier<ServiceWorkerRegistrationIdentifierType>();
+        auto serviceWorkerData = ServiceWorkerData { workerIdentifier, scriptURL, ServiceWorkerState::Activated, *workerType, registrationIdentifier };
+        auto registration = ServiceWorkerRegistrationData { WTFMove(*key), registrationIdentifier, URL(originURL, scopePath), *updateViaCache, lastUpdateCheckTime, std::nullopt, std::nullopt, WTFMove(serviceWorkerData) };
+        auto contextData = ServiceWorkerContextData { std::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(scriptURL), *workerType, true };
+
+        postTaskReply(createCrossThreadTask(*this, &RegistrationDatabase::addRegistrationToStore, WTFMove(contextData)));
+    }
+
+    if (result != SQLITE_DONE)
+        return String::format("Failed to import at least one registration from records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
+
     return { };
+}
+
+void RegistrationDatabase::addRegistrationToStore(ServiceWorkerContextData&& context)
+{
+    m_store.addRegistrationFromDatabase(WTFMove(context));
 }
 
 void RegistrationDatabase::databaseFailedToOpen()

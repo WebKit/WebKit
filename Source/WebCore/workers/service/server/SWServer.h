@@ -168,6 +168,8 @@ public:
     void setClientActiveWorker(ServiceWorkerClientIdentifier, ServiceWorkerIdentifier);
     void resolveRegistrationReadyRequests(SWServerRegistration&);
 
+    void addRegistrationFromStore(ServiceWorkerContextData&&);
+
 private:
     void registerConnection(Connection&);
     void unregisterConnection(Connection&);
@@ -185,6 +187,7 @@ private:
     WEBCORE_EXPORT SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL);
     bool runServiceWorker(ServiceWorkerIdentifier);
 
+    void tryInstallContextData(ServiceWorkerContextData&&);
     void installContextData(const ServiceWorkerContextData&);
 
     SWServerRegistration* registrationFromServiceWorkerIdentifier(ServiceWorkerIdentifier);

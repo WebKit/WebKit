@@ -52,8 +52,9 @@ private:
     String ensureValidRecordsTable();
     String importRecords();
     void doPushChanges(Vector<ServiceWorkerContextData>&&);
-    
+
     // Replies to the main thread
+    void addRegistrationToStore(ServiceWorkerContextData&&);
     void databaseFailedToOpen();
     void databaseOpenedAndRecordsImported(); 
 

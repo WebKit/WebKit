@@ -65,7 +65,7 @@ ServiceWorkerContextData SWServerWorker::contextData() const
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
 
-    return { std::nullopt, registration->data(), m_data.identifier, m_script, m_data.scriptURL, m_data.type };
+    return { std::nullopt, registration->data(), m_data.identifier, m_script, m_data.scriptURL, m_data.type, false };
 }
 
 void SWServerWorker::terminate()

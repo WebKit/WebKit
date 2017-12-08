@@ -80,7 +80,45 @@ static const char separatorCharacter = '_';
 
 String ServiceWorkerRegistrationKey::toDatabaseKey() const
 {
-    return makeString(m_topOrigin.protocol, separatorCharacter, m_topOrigin.host, separatorCharacter, m_topOrigin.port.value_or(0), separatorCharacter, m_scope.path());
+    if (m_topOrigin.port)
+        return makeString(m_topOrigin.protocol, separatorCharacter, m_topOrigin.host, separatorCharacter, String::number(m_topOrigin.port.value()), separatorCharacter, m_scope.string());
+    return makeString(m_topOrigin.protocol, separatorCharacter, m_topOrigin.host, separatorCharacter, separatorCharacter, m_scope.string());
+}
+
+std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::fromDatabaseKey(const String& key)
+{
+    auto first = key.find(separatorCharacter, 0);
+    auto second = key.find(separatorCharacter, first + 1);
+    auto third = key.find(separatorCharacter, second + 1);
+
+    if (first == second || second == third)
+        return std::nullopt;
+
+    std::optional<uint16_t> shortPort;
+
+    // If there's a gap between third and second, we expect to have a port to decode
+    if (third - second > 1) {
+        bool ok;
+        unsigned port;
+        if (key.is8Bit())
+            port = charactersToUIntStrict(key.characters8() + second + 1, third - second - 1 , &ok);
+        else
+            port = charactersToUIntStrict(key.characters16() + second + 1, third - second - 1, &ok);
+
+        if (!ok)
+            return std::nullopt;
+
+        if (port > std::numeric_limits<uint16_t>::max())
+            return std::nullopt;
+
+        shortPort = static_cast<uint16_t>(port);
+    }
+
+    auto scope = URL { URL(), key.substring(third + 1) };
+    if (!scope.isValid())
+        return std::nullopt;
+
+    return ServiceWorkerRegistrationKey { { key.substring(0, first), key.substring(first + 1, second - first - 1), shortPort }, WTFMove(scope) };
 }
 
 #ifndef NDEBUG

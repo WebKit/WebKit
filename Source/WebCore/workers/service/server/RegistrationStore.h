@@ -37,12 +37,13 @@
 
 namespace WebCore {
 
+class SWServer;
 class SWServerRegistration;
 
 class RegistrationStore {
 WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit RegistrationStore(const String& databaseDirectory);
+    explicit RegistrationStore(SWServer&, const String& databaseDirectory);
     ~RegistrationStore();
 
     // Callbacks from the SWServer
@@ -50,6 +51,7 @@ public:
     void removeRegistration(SWServerRegistration&);
 
     // Callbacks from the database
+    void addRegistrationFromDatabase(ServiceWorkerContextData&&);
     void databaseFailedToOpen();
     void databaseOpenedAndRecordsImported();
 
@@ -57,6 +59,7 @@ private:
     void scheduleDatabasePushIfNecessary();
     void pushChangesToDatabase();
 
+    SWServer& m_server;
     RegistrationDatabase m_database;
 
     HashMap<ServiceWorkerRegistrationKey, ServiceWorkerContextData> m_updatedRegistrations;
