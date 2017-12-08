@@ -162,20 +162,16 @@ static FullscreenWindowTracker& fullscreenWindowTracker()
 
 #if defined(__i386__)
 
-static pthread_once_t shouldCallRealDebuggerOnce = PTHREAD_ONCE_INIT;
-static bool isUserbreakSet = false;
-
-static void initShouldCallRealDebugger()
-{
-    char* var = getenv("USERBREAK");
-    
-    if (var)
-        isUserbreakSet = atoi(var);
-}
-
 static bool shouldCallRealDebugger()
 {
-    pthread_once(&shouldCallRealDebuggerOnce, initShouldCallRealDebugger);
+    static bool isUserbreakSet = false;
+    static dispatch_once_t flag;
+    dispatch_once(&flag, ^{
+        char* var = getenv("USERBREAK");
+
+        if (var)
+            isUserbreakSet = atoi(var);
+    });
     
     return isUserbreakSet;
 }

@@ -315,7 +315,7 @@ inline Thread& Thread::current()
     //    on secondary ones, so there is no need for synchronization here.
     // WRT JavaScriptCore:
     //    Thread::initializeTLSKey() is initially called from initializeThreading(), ensuring
-    //    this is initially called in a pthread_once locked context.
+    //    this is initially called in a std::call_once locked context.
 #if !HAVE(FAST_TLS)
     if (UNLIKELY(Thread::s_key == InvalidThreadSpecificKey))
         WTF::initializeThreading();

@@ -1,5 +1,17 @@
 2017-12-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Remove pthread_once in favor of dispatch_once
+        https://bugs.webkit.org/show_bug.cgi?id=180591
+
+        Reviewed by Saam Barati.
+
+        Fix the comment.
+
+        * wtf/Threading.h:
+        (WTF::Thread::current):
+
+2017-12-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [WTF][Linux][GTK] Fix a minor bug in generic/WorkQueue when WorkQueue is immediately destroyed
         https://bugs.webkit.org/show_bug.cgi?id=180586
 

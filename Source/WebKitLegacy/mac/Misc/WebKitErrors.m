@@ -32,7 +32,7 @@
 #import <WebKitLegacy/WebKitErrorsPrivate.h>
 #import <WebKitLegacy/WebNSURLExtras.h>
 
-#import <pthread.h>
+#import <dispatch/dispatch.h>
 
 NSString *WebKitErrorDomain = @"WebKitErrorDomain";
 
@@ -58,16 +58,39 @@ NSString * const WebKitErrorPlugInPageURLStringKey =    @"WebKitErrorPlugInPageU
 
 #define WebKitErrorDescriptionGeolocationLocationUnknown UI_STRING_INTERNAL("The current location cannot be found.", "WebKitErrorGeolocationLocationUnknown description")
 
-static pthread_once_t registerErrorsControl = PTHREAD_ONCE_INIT;
-static void registerErrors(void);
-
 @implementation NSError (WebKitExtras)
 
 static NSMutableDictionary *descriptions = nil;
 
 + (void)_registerWebKitErrors
 {
-    pthread_once(&registerErrorsControl, registerErrors);
+    static dispatch_once_t flag;
+    dispatch_once(&flag, ^{
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+            // Policy errors
+            WebKitErrorDescriptionCannotShowMIMEType,                   [NSNumber numberWithInt: WebKitErrorCannotShowMIMEType],
+            WebKitErrorDescriptionCannotShowURL,                        [NSNumber numberWithInt: WebKitErrorCannotShowURL],
+            WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange,   [NSNumber numberWithInt: WebKitErrorFrameLoadInterruptedByPolicyChange],
+            WebKitErrorDescriptionCannotUseRestrictedPort,              [NSNumber numberWithInt: WebKitErrorCannotUseRestrictedPort],
+            WebKitErrorDescriptionFrameLoadBlockedByContentFilter,      [NSNumber numberWithInt: WebKitErrorFrameLoadBlockedByContentFilter],
+
+            // Plug-in and java errors
+            WebKitErrorDescriptionCannotFindPlugin,                     [NSNumber numberWithInt: WebKitErrorCannotFindPlugIn],
+            WebKitErrorDescriptionCannotLoadPlugin,                     [NSNumber numberWithInt: WebKitErrorCannotLoadPlugIn],
+            WebKitErrorDescriptionJavaUnavailable,                      [NSNumber numberWithInt: WebKitErrorJavaUnavailable],
+            WebKitErrorDescriptionPlugInCancelledConnection,            [NSNumber numberWithInt: WebKitErrorPlugInCancelledConnection],
+            WebKitErrorDescriptionPlugInWillHandleLoad,                 [NSNumber numberWithInt: WebKitErrorPlugInWillHandleLoad],
+
+            // Geolocation errors
+            WebKitErrorDescriptionGeolocationLocationUnknown,           [NSNumber numberWithInt: WebKitErrorGeolocationLocationUnknown],
+            nil];
+
+        [NSError _webkit_addErrorsWithCodesAndDescriptions:dict inDomain:WebKitErrorDomain];
+
+        [pool drain];
+    });
 }
 
 -(id)_webkit_initWithDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL
@@ -143,34 +166,6 @@ static NSMutableDictionary *descriptions = nil;
         descriptions = [[NSMutableDictionary alloc] init];
 
     [descriptions setObject:dictionary forKey:domain];
-}
-
-static void registerErrors()
-{
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
-    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-        // Policy errors
-        WebKitErrorDescriptionCannotShowMIMEType,                   [NSNumber numberWithInt: WebKitErrorCannotShowMIMEType],
-        WebKitErrorDescriptionCannotShowURL,                        [NSNumber numberWithInt: WebKitErrorCannotShowURL],
-        WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange,   [NSNumber numberWithInt: WebKitErrorFrameLoadInterruptedByPolicyChange],
-        WebKitErrorDescriptionCannotUseRestrictedPort,              [NSNumber numberWithInt: WebKitErrorCannotUseRestrictedPort],
-        WebKitErrorDescriptionFrameLoadBlockedByContentFilter,      [NSNumber numberWithInt: WebKitErrorFrameLoadBlockedByContentFilter],
-
-        // Plug-in and java errors
-        WebKitErrorDescriptionCannotFindPlugin,                     [NSNumber numberWithInt: WebKitErrorCannotFindPlugIn],
-        WebKitErrorDescriptionCannotLoadPlugin,                     [NSNumber numberWithInt: WebKitErrorCannotLoadPlugIn],
-        WebKitErrorDescriptionJavaUnavailable,                      [NSNumber numberWithInt: WebKitErrorJavaUnavailable],
-        WebKitErrorDescriptionPlugInCancelledConnection,            [NSNumber numberWithInt: WebKitErrorPlugInCancelledConnection],
-        WebKitErrorDescriptionPlugInWillHandleLoad,                 [NSNumber numberWithInt: WebKitErrorPlugInWillHandleLoad],
-
-        // Geolocation errors
-        WebKitErrorDescriptionGeolocationLocationUnknown,           [NSNumber numberWithInt: WebKitErrorGeolocationLocationUnknown],
-        nil];
-
-    [NSError _webkit_addErrorsWithCodesAndDescriptions:dict inDomain:WebKitErrorDomain];
-
-    [pool drain];
 }
 
 @end
