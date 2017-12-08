@@ -1,3 +1,13 @@
+2017-12-07  Jessie Berlin  <jberlin@webkit.org>
+
+        Ignore deprecation warnings.
+
+        * WebView/WebHTMLView.mm:
+        (-[NSWindow _web_borderView]):
+        (-[WebHTMLView _setAsideSubviews]):
+        * WebView/WebView.mm:
+        (-[WebView encodeWithCoder:]):
+
 2017-12-02  Darin Adler  <darin@apple.com>
 
         Modernize some aspects of text codecs, eliminate WebKit use of strcasecmp

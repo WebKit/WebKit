@@ -623,7 +623,10 @@ static std::optional<NSInteger> toTag(ContextMenuAction action)
 
 - (NSView *)_web_borderView
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     return _borderView;
+#pragma clang diagnostic pop
 }
 
 @end
@@ -1564,13 +1567,19 @@ static NSCellStateValue kit(TriState state)
 #if PLATFORM(MAC)
     ASSERT(!_private->subviewsSetAside);
     ASSERT(_private->savedSubviews == nil);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     _private->savedSubviews = _subviews;
+#pragma clang diagnostic pop
     // We need to keep the layer-hosting view in the subviews, otherwise the layers flash.
     if (_private->layerHostingView) {
         NSArray* newSubviews = [[NSArray alloc] initWithObjects:_private->layerHostingView, nil];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         _subviews = newSubviews;
     } else
         _subviews = nil;
+#pragma clang diagnostic pop
     _private->subviewsSetAside = YES;
 #endif
  }
@@ -1580,11 +1589,14 @@ static NSCellStateValue kit(TriState state)
 #if PLATFORM(MAC)
     ASSERT(_private->subviewsSetAside);
     if (_private->layerHostingView) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [_subviews release];
         _subviews = _private->savedSubviews;
     } else {
         ASSERT(_subviews == nil);
         _subviews = _private->savedSubviews;
+#pragma clang diagnostic pop
     }
     _private->savedSubviews = nil;
     _private->subviewsSetAside = NO;
