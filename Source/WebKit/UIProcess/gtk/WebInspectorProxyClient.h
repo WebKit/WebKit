@@ -33,6 +33,7 @@ class WebInspectorProxy;
 
 class WebInspectorProxyClient {
 public:
+    virtual ~WebInspectorProxyClient() = default;
     virtual bool openWindow(WebInspectorProxy&) = 0;
     virtual void didClose(WebInspectorProxy&) = 0;
     virtual bool bringToFront(WebInspectorProxy&) = 0;
