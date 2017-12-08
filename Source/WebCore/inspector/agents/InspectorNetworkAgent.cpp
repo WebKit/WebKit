@@ -450,7 +450,7 @@ void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, Documen
     String frameId = frameIdentifier(loader);
     String loaderId = loaderIdentifier(loader);
 
-    m_resourcesData->responseReceived(requestId, frameId, response, type);
+    m_resourcesData->responseReceived(requestId, frameId, response, type, shouldForceBufferingNetworkResourceData());
 
     m_frontendDispatcher->responseReceived(requestId, frameId, loaderId, timestamp(), InspectorPageAgent::resourceTypeJSON(type), resourceResponse);
 

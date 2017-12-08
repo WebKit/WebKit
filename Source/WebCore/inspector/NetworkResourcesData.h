@@ -87,6 +87,9 @@ public:
         CachedResource* cachedResource() const { return m_cachedResource; }
         void setCachedResource(CachedResource* cachedResource) { m_cachedResource = cachedResource; }
 
+        bool forceBufferData() const { return m_forceBufferData; }
+        void setForceBufferData(bool force) { m_forceBufferData = force; }
+
     private:
         bool hasData() const { return m_dataBuffer; }
         size_t dataLength() const;
@@ -107,6 +110,7 @@ public:
         int m_httpStatusCode { 0 };
         bool m_isContentEvicted { false };
         bool m_base64Encoded { false };
+        bool m_forceBufferData { false };
     };
 
     NetworkResourcesData();
@@ -114,7 +118,7 @@ public:
 
     void resourceCreated(const String& requestId, const String& loaderId, InspectorPageAgent::ResourceType);
     void resourceCreated(const String& requestId, const String& loaderId, CachedResource&);
-    void responseReceived(const String& requestId, const String& frameId, const ResourceResponse&, InspectorPageAgent::ResourceType);
+    void responseReceived(const String& requestId, const String& frameId, const ResourceResponse&, InspectorPageAgent::ResourceType, bool forceBufferData);
     void setResourceType(const String& requestId, InspectorPageAgent::ResourceType);
     InspectorPageAgent::ResourceType resourceType(const String& requestId);
     void setResourceContent(const String& requestId, const String& content, bool base64Encoded = false);

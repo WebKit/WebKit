@@ -123,6 +123,7 @@ public:
     virtual Vector<WebSocket*> activeWebSockets(const LockHolder&) = 0;
     virtual void setResourceCachingDisabled(bool) = 0;
     virtual ScriptExecutionContext* scriptExecutionContext(ErrorString&, const String& frameId) = 0;
+    virtual bool shouldForceBufferingNetworkResourceData() const = 0;
 
 private:
     void enable();

@@ -42,6 +42,7 @@ private:
     Vector<WebSocket*> activeWebSockets(const LockHolder&) final;
     void setResourceCachingDisabled(bool) final;
     ScriptExecutionContext* scriptExecutionContext(ErrorString&, const String& frameId) final;
+    bool shouldForceBufferingNetworkResourceData() const final { return true; }
 
     WorkerGlobalScope& m_workerGlobalScope;
 };

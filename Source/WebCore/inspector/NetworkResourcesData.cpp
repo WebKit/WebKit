@@ -150,7 +150,7 @@ void NetworkResourcesData::resourceCreated(const String& requestId, const String
     m_requestIdToResourceDataMap.set(requestId, WTFMove(resourceData));
 }
 
-void NetworkResourcesData::responseReceived(const String& requestId, const String& frameId, const ResourceResponse& response, InspectorPageAgent::ResourceType type)
+void NetworkResourcesData::responseReceived(const String& requestId, const String& frameId, const ResourceResponse& response, InspectorPageAgent::ResourceType type, bool forceBufferData)
 {
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
@@ -160,6 +160,7 @@ void NetworkResourcesData::responseReceived(const String& requestId, const Strin
     resourceData->setURL(response.url());
     resourceData->setHTTPStatusCode(response.httpStatusCode());
     resourceData->setType(type);
+    resourceData->setForceBufferData(forceBufferData);
 
     if (InspectorNetworkAgent::shouldTreatAsText(response.mimeType()))
         resourceData->setDecoder(InspectorNetworkAgent::createTextDecoder(response.mimeType(), response.textEncodingName()));
@@ -205,6 +206,9 @@ void NetworkResourcesData::setResourceContent(const String& requestId, const Str
 
 static bool shouldBufferResourceData(const NetworkResourcesData::ResourceData& resourceData)
 {
+    if (resourceData.forceBufferData())
+        return true;
+
     if (resourceData.decoder())
         return true;
 
