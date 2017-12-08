@@ -1,4 +1,4 @@
+CONSOLE MESSAGE: Did not parse stylesheet at 'https://localhost:9443/service-workers/service-worker/resources/cross-origin-html.css' because non CSS MIME types are not allowed for cross-origin stylesheets.
 
-
-FAIL Mime type checking of CSS files fetched via SW. assert_equals: The color must not be overridden by cross origin non CSS file. expected "rgb(0, 0, 255)" but got "rgb(255, 0, 0)"
+PASS Mime type checking of CSS files fetched via SW. 
 

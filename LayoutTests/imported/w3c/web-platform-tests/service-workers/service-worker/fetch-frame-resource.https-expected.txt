@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 51: Blocked a frame with origin "https://localhost:9443" from accessing a frame with origin "null".  The frame requesting access has a protocol of "https", the frame being accessed has a protocol of "https". Protocols must match.
+
 
 PASS Basic type response could be loaded in the iframe. 
 PASS CORS type response could be loaded in the iframe. 

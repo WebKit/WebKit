@@ -65,11 +65,11 @@ void ServiceWorkerClientFetch::start()
     m_connection->startFetch(m_loader, m_loader->identifier());
 }
 
-void ServiceWorkerClientFetch::didReceiveResponse(WebCore::ResourceResponse&& response)
+void ServiceWorkerClientFetch::didReceiveResponse(ResourceResponse&& response)
 {
     auto protectedThis = makeRef(*this);
 
-    if (response.isRedirection()) {
+    if (response.isRedirection() && response.tainting() != ResourceResponse::Tainting::Opaqueredirect) {
         m_redirectionStatus = RedirectionStatus::Receiving;
         // FIXME: Get shouldClearReferrerOnHTTPSToHTTPRedirect value from
         m_loader->willSendRequest(m_loader->request().redirectedRequest(response, m_shouldClearReferrerOnHTTPSToHTTPRedirect), response, [protectedThis = makeRef(*this), this](ResourceRequest&& request) {

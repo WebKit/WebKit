@@ -1,3 +1,13 @@
+2017-12-08  Youenn Fablet  <youenn@apple.com>
+
+        FetchResponse should keep unfiltered ResourceResponse so that it can be used in Service Worker
+        https://bugs.webkit.org/show_bug.cgi?id=179641
+        <rdar://problem/35923570>
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+
 2017-12-08  Konstantin Tokarev  <annulen@yandex.ru>
 
         [python] Replace print operator with print() function for python3 compatibility

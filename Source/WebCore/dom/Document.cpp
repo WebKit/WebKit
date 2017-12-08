@@ -5464,7 +5464,13 @@ void Document::initSecurityContext()
     if (shouldEnforceContentDispositionAttachmentSandbox())
         applyContentDispositionAttachmentSandbox();
 
-    setSecurityOriginPolicy(SecurityOriginPolicy::create(isSandboxed(SandboxOrigin) ? SecurityOrigin::createUnique() : SecurityOrigin::create(m_url)));
+    bool isSecurityOriginUnique = isSandboxed(SandboxOrigin);
+    if (!isSecurityOriginUnique) {
+        auto* loader = m_frame->loader().documentLoader();
+        isSecurityOriginUnique = loader && loader->response().tainting() == ResourceResponse::Tainting::Opaque;
+    }
+
+    setSecurityOriginPolicy(SecurityOriginPolicy::create(isSecurityOriginUnique ? SecurityOrigin::createUnique() : SecurityOrigin::create(m_url)));
     setContentSecurityPolicy(std::make_unique<ContentSecurityPolicy>(*this));
 
     String overrideContentSecurityPolicy = m_frame->loader().client().overrideContentSecurityPolicy();

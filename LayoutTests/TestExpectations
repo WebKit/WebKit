@@ -191,6 +191,8 @@ imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tain
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ DumpJSConsoleLogInStdErr Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update.https.html [ Pass Failure Timeout ]
 
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-response-taint.https.html [ DumpJSConsoleLogInStdErr ]
+
 # Skip workers tests that are timing out or are SharedWorker related only
 imported/w3c/web-platform-tests/workers/constructors/Worker/same-origin.html [ Skip ]
 imported/w3c/web-platform-tests/workers/data-url-shared.html [ Skip ]
