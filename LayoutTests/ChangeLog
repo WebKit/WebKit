@@ -1,3 +1,16 @@
+2017-12-08  Dean Jackson  <dino@apple.com>
+
+        Implement transferToImageBitmap for WebGL offscreen canvas objects
+        https://bugs.webkit.org/show_bug.cgi?id=180603
+        <rdar://problem/34147143>
+
+        Reviewed by Sam Weinig.
+
+        * http/wpt/offscreen-canvas/transferToImageBitmap-empty-expected.txt: Renamed from LayoutTests/http/wpt/offscreen-canvas/transferToImageBitmap-expected.txt.
+        * http/wpt/offscreen-canvas/transferToImageBitmap-empty.html: Renamed from LayoutTests/http/wpt/offscreen-canvas/transferToImageBitmap.html.
+        * http/wpt/offscreen-canvas/transferToImageBitmap-webgl-expected.html: Added.
+        * http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html: Added.
+
 2017-12-08  Youenn Fablet  <youenn@apple.com>
 
         Service Worker should use a correct SessionID

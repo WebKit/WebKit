@@ -98,7 +98,36 @@ ExceptionOr<OffscreenRenderingContext> OffscreenCanvas::getContext(JSC::ExecStat
 
 RefPtr<ImageBitmap> OffscreenCanvas::transferToImageBitmap()
 {
-    return nullptr;
+    if (!m_context)
+        return nullptr;
+
+    if (!is<WebGLRenderingContext>(*m_context))
+        return nullptr;
+
+    auto webGLContext = &downcast<WebGLRenderingContext>(*m_context);
+
+    // FIXME: We're supposed to create an ImageBitmap using the backing
+    // store from this canvas (or its context), but for now we'll just
+    // create a new bitmap and paint into it.
+
+    auto imageBitmap = ImageBitmap::create(m_size);
+    if (!imageBitmap->buffer())
+        return nullptr;
+
+    auto* gc3d = webGLContext->graphicsContext3D();
+    gc3d->paintRenderingResultsToCanvas(imageBitmap->buffer());
+
+    // FIXME: The transfer algorithm requires that the canvas effectively
+    // creates a new backing store. Since we're not doing that yet, we
+    // need to erase what's there.
+
+    GC3Dfloat clearColor[4];
+    gc3d->getFloatv(GraphicsContext3D::COLOR_CLEAR_VALUE, clearColor);
+    gc3d->clearColor(0, 0, 0, 0);
+    gc3d->clear(GraphicsContext3D::COLOR_BUFFER_BIT | GraphicsContext3D::DEPTH_BUFFER_BIT | GraphicsContext3D::STENCIL_BUFFER_BIT);
+    gc3d->clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
+
+    return imageBitmap;
 }
 
 }

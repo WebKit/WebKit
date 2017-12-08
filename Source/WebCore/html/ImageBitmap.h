@@ -40,6 +40,7 @@ class HTMLVideoElement;
 class ImageBuffer;
 class ImageData;
 class IntRect;
+class IntSize;
 class PendingImageBitmap;
 class ScriptExecutionContext;
 struct ImageBitmapOptions;
@@ -61,6 +62,8 @@ public:
 
     static void createPromise(ScriptExecutionContext&, Source&&, ImageBitmapOptions&&, Promise&&);
     static void createPromise(ScriptExecutionContext&, Source&&, ImageBitmapOptions&&, int sx, int sy, int sw, int sh, Promise&&);
+
+    static Ref<ImageBitmap> create(IntSize);
 
     ~ImageBitmap();
 

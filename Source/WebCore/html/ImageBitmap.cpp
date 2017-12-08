@@ -54,6 +54,13 @@ static RenderingMode bufferRenderingMode = Accelerated;
 static RenderingMode bufferRenderingMode = Unaccelerated;
 #endif
 
+Ref<ImageBitmap> ImageBitmap::create(IntSize size)
+{
+    auto imageBitmap = adoptRef(*new ImageBitmap);
+    imageBitmap->m_bitmapData = ImageBuffer::create(FloatSize(size.width(), size.height()), bufferRenderingMode);
+    return imageBitmap;
+}
+
 Ref<ImageBitmap> ImageBitmap::create()
 {
     return adoptRef(*new ImageBitmap);
