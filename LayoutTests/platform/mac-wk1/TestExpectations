@@ -388,7 +388,7 @@ css3/viewport-percentage-lengths/vh-auto-size.html [ Skip ]
 
 webkit.org/b/170877 [ Debug ] webgl/1.0.2/conformance/glsl/misc/shader-with-reserved-words.html [ Pass Timeout ]
 
-imported/w3c/web-platform-tests/XMLHttpRequest/event-upload-progress-crossorigin.htm [ Pass Crash ]
+webkit.org/b/180554 imported/w3c/web-platform-tests/XMLHttpRequest/event-upload-progress-crossorigin.htm [ Skip ]
 
 # Beacon is not supported on WK1.
 http/tests/blink/sendbeacon/ [ Skip ]

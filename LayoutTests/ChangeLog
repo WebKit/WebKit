@@ -1,3 +1,13 @@
+2017-12-07  Matt Lewis  <jlewis3@apple.com>
+
+        Skipped imported/w3c/web-platform-tests/XMLHttpRequest/event-upload-progress-crossorigin.htm on macOS WK1
+        https://bugs.webkit.org/show_bug.cgi?id=180554
+        https://bugs.webkit.org/show_bug.cgi?id=180553
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-12-07  Alex Christensen  <achristensen@webkit.org>
 
         Always synchronously continue with fragment navigations
