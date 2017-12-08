@@ -63,8 +63,10 @@ template<typename T> inline constexpr bool test(T value, uintptr_t mask)
     return !!(reinterpret_cast<uintptr_t>(value) & mask);
 }
 
-inline constexpr bool isPowerOfTwo(size_t size)
+template <typename T>
+inline constexpr bool isPowerOfTwo(T size)
 {
+    static_assert(std::is_integral<T>::value, "");
     return size && !(size & (size - 1));
 }
 

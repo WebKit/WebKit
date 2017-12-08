@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Algorithm.h"
 #include "BAssert.h"
 #include "BExport.h"
 #include "BInline.h"
@@ -33,9 +34,7 @@
 #include <inttypes.h>
 
 #if BCPU(ARM64)
-// FIXME: This can probably be a lot bigger on iOS. I just haven't tried to make it bigger yet.
-// https://bugs.webkit.org/show_bug.cgi?id=177605
-#define PRIMITIVE_GIGACAGE_SIZE 0x40000000llu
+#define PRIMITIVE_GIGACAGE_SIZE 0x80000000llu
 #define JSVALUE_GIGACAGE_SIZE 0x40000000llu
 #define STRING_GIGACAGE_SIZE 0x40000000llu
 #define GIGACAGE_ALLOCATION_CAN_FAIL 1
@@ -46,15 +45,18 @@
 #define GIGACAGE_ALLOCATION_CAN_FAIL 0
 #endif
 
+static_assert(bmalloc::isPowerOfTwo(PRIMITIVE_GIGACAGE_SIZE), "");
+static_assert(bmalloc::isPowerOfTwo(JSVALUE_GIGACAGE_SIZE), "");
+static_assert(bmalloc::isPowerOfTwo(STRING_GIGACAGE_SIZE), "");
+
 #define GIGACAGE_SIZE_TO_MASK(size) ((size) - 1)
 
 #define PRIMITIVE_GIGACAGE_MASK GIGACAGE_SIZE_TO_MASK(PRIMITIVE_GIGACAGE_SIZE)
 #define JSVALUE_GIGACAGE_MASK GIGACAGE_SIZE_TO_MASK(JSVALUE_GIGACAGE_SIZE)
 #define STRING_GIGACAGE_MASK GIGACAGE_SIZE_TO_MASK(STRING_GIGACAGE_SIZE)
 
-// FIXME: Make WasmBench run with gigacage on iOS and re-enable on ARM64:
-// https://bugs.webkit.org/show_bug.cgi?id=178557
-#if (BOS(DARWIN) || BOS(LINUX)) && (/* (BCPU(ARM64) && !defined(__ILP32__))  || */ BCPU(X86_64))
+#if ((BOS(DARWIN) || BOS(LINUX)) && \
+    (BCPU(X86_64) || (BCPU(ARM64) && !defined(__ILP32__) && (!BPLATFORM(IOS) || __IPHONE_OS_VERSION_MIN_REQUIRED >= 110300))))
 #define GIGACAGE_ENABLED 1
 #else
 #define GIGACAGE_ENABLED 0

@@ -34,13 +34,12 @@
 #include <cstdio>
 #include <mutex>
 
-#if BCPU(ARM64)
-// FIXME: There is no good reason for ARM64 to be special.
-// https://bugs.webkit.org/show_bug.cgi?id=177605
-#define GIGACAGE_RUNWAY 0
-#else
+// This is exactly 32GB because inside JSC, indexed accesses for arrays, typed arrays, etc,
+// use unsigned 32-bit ints as indices. The items those indices access are 8 bytes or less
+// in size. 2^32 * 8 = 32GB. This means if an access on a caged type happens to go out of
+// bounds, the access is guaranteed to land somewhere else in the cage or inside the runway.
+// If this were less than 32GB, those OOB accesses could reach outside of the cage.
 #define GIGACAGE_RUNWAY (32llu * 1024 * 1024 * 1024)
-#endif
 
 char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE] __attribute__((aligned(GIGACAGE_BASE_PTRS_SIZE)));
 

@@ -1,3 +1,15 @@
+2017-12-08  Saam Barati  <sbarati@apple.com>
+
+        Enable gigacage on iOS with a 32GB runway and ensure it doesn't break WasmBench
+        https://bugs.webkit.org/show_bug.cgi?id=178557
+
+        Reviewed by Mark Lam.
+
+        * bmalloc/Algorithm.h:
+        (bmalloc::isPowerOfTwo):
+        * bmalloc/Gigacage.cpp:
+        * bmalloc/Gigacage.h:
+
 2017-12-05  Andy Estes  <aestes@apple.com>
 
         [Darwin] Simplify use of TargetConditionals
