@@ -1,3 +1,12 @@
+2017-12-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Tools/ImageDiff/cg/PlatformImageCG.cpp doesn't need to include <wtf/MathExtras.h>
+        https://bugs.webkit.org/show_bug.cgi?id=180578
+
+        Reviewed by Konstantin Tokarev.
+
+        * ImageDiff/cg/PlatformImageCG.cpp: Removed unnecessary #include <wtf/MathExtras.h>.
+
 2017-12-08  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE build fix after r225671.

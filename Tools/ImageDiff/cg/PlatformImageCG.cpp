@@ -37,7 +37,6 @@
 #include <windows.h>
 #include <fcntl.h>
 #include <io.h>
-#include <wtf/MathExtras.h>
 #endif
 
 #if __APPLE__
