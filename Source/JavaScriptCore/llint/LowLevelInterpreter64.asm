@@ -2076,7 +2076,9 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     loadp JSFunction::m_executable[t1], t1
     checkStackPointerAlignment(t3, 0xdead0001)
     if C_LOOP
-        cloopCallNative executableOffsetToFunction[t1]
+        loadp _g_nativeCodePoison, t2
+        xorp executableOffsetToFunction[t1], t2
+        cloopCallNative t2
     else
         if X86_64_WIN
             subp 32, sp
@@ -2117,7 +2119,9 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     loadp Callee[cfr], t1
     checkStackPointerAlignment(t3, 0xdead0001)
     if C_LOOP
-        cloopCallNative offsetOfFunction[t1]
+        loadp _g_nativeCodePoison, t2
+        xorp offsetOfFunction[t1], t2
+        cloopCallNative t2
     else
         if X86_64_WIN
             subp 32, sp

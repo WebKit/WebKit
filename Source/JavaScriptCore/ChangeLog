@@ -1,3 +1,13 @@
+2017-12-08  Mark Lam  <mark.lam@apple.com>
+
+        Need to unpoison native function pointers for CLoop.
+        https://bugs.webkit.org/show_bug.cgi?id=180601
+        <rdar://problem/35942028>
+
+        Reviewed by JF Bastien.
+
+        * llint/LowLevelInterpreter64.asm:
+
 2017-12-08  Michael Saboff  <msaboff@apple.com>
 
         YARR: JIT RegExps with greedy parenthesized sub patterns
