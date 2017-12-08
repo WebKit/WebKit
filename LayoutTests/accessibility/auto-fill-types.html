@@ -21,13 +21,13 @@
         debug("Initial auto-fill available: " + axTextField.boolAttributeValue("AXValueAutofillAvailable"));
         debug("Auto-fill type: " + axTextField.stringAttributeValue("AXValueAutofillType"));
 
-        window.internals.setShowAutoFillButton(document.getElementById("textfield"), "AutoFillButtonTypeContacts");
+        window.internals.setShowAutoFillButton(document.getElementById("textfield"), "Contacts");
         var contactsButton = axTextField.childAtIndex(1);
         debug("Contact button role: " + contactsButton.role);
         debug("Contact button label: " + contactsButton.description);
         debug("Auto-fill type: " + axTextField.stringAttributeValue("AXValueAutofillType"));
 
-        window.internals.setShowAutoFillButton(document.getElementById("textfield"), "AutoFillButtonTypeCredentials");
+        window.internals.setShowAutoFillButton(document.getElementById("textfield"), "Credentials");
         var credentialsButton = axTextField.childAtIndex(1);
         debug("Credentials button role: " + credentialsButton.role);
         debug("Credentials button label: " + credentialsButton.description);

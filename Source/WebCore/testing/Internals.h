@@ -234,7 +234,7 @@ public:
     bool elementShouldAutoComplete(HTMLInputElement&);
     void setEditingValue(HTMLInputElement&, const String&);
     void setAutofilled(HTMLInputElement&, bool enabled);
-    enum class AutoFillButtonType { AutoFillButtonTypeNone, AutoFillButtonTypeContacts, AutoFillButtonTypeCredentials };
+    enum class AutoFillButtonType { None, Contacts, Credentials };
     void setShowAutoFillButton(HTMLInputElement&, AutoFillButtonType);
     ExceptionOr<void> scrollElementToRect(Element&, int x, int y, int w, int h);
 

@@ -18,12 +18,12 @@
     if (window.accessibilityController) {
         var axTextField = accessibilityController.accessibleElementById("textfield");
         var childrenCountExpected = accessibilityController.platformName == "atk" ? "2" : "3";
-        window.internals.setShowAutoFillButton(document.getElementById("textfield"), "AutoFillButtonTypeContacts");
+        window.internals.setShowAutoFillButton(document.getElementById("textfield"), "Contacts");
         shouldBe("accessibilityController.accessibleElementById('textfield').childrenCount", childrenCountExpected);
 
         // Don't crash!
         childrenCountExpected = accessibilityController.platformName == "atk" ? "0" : "1";
-        window.internals.setShowAutoFillButton(document.getElementById("textfield"), "AutoFillButtonTypeNone");
+        window.internals.setShowAutoFillButton(document.getElementById("textfield"), "None");
         shouldBe("accessibilityController.accessibleElementById('textfield').childrenCount", childrenCountExpected);
     }
 

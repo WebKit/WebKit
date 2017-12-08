@@ -1657,11 +1657,11 @@ void Internals::setAutofilled(HTMLInputElement& element, bool enabled)
 static AutoFillButtonType toAutoFillButtonType(Internals::AutoFillButtonType type)
 {
     switch (type) {
-    case Internals::AutoFillButtonType::AutoFillButtonTypeNone:
+    case Internals::AutoFillButtonType::None:
         return AutoFillButtonType::None;
-    case Internals::AutoFillButtonType::AutoFillButtonTypeCredentials:
+    case Internals::AutoFillButtonType::Credentials:
         return AutoFillButtonType::Credentials;
-    case Internals::AutoFillButtonType::AutoFillButtonTypeContacts:
+    case Internals::AutoFillButtonType::Contacts:
         return AutoFillButtonType::Contacts;
     }
     ASSERT_NOT_REACHED();

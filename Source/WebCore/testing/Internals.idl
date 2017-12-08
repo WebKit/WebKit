@@ -58,11 +58,10 @@ enum ResourceLoadPriority {
     "previous-track"
 };
 
-// FIXME: Strings in an enum should not have the name of the enum as a prefix.
 enum AutoFillButtonType {
-    "AutoFillButtonTypeNone",
-    "AutoFillButtonTypeContacts",
-    "AutoFillButtonTypeCredentials"
+    "None",
+    "Contacts",
+    "Credentials"
 };
 
 enum UserInterfaceLayoutDirection {

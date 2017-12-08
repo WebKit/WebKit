@@ -1,3 +1,23 @@
+2017-12-08  Daniel Bates  <dabates@apple.com>
+
+        Remove unnecessary prefix from AutoFillButtonType enumerators
+        https://bugs.webkit.org/show_bug.cgi?id=180512
+
+        Reviewed by Tim Horton.
+
+        * accessibility/auto-fill-crash.html:
+        * accessibility/auto-fill-types.html:
+        * fast/forms/auto-fill-button/hide-auto-fill-button-when-input-becomes-disabled.html:
+        * fast/forms/auto-fill-button/hide-auto-fill-button-when-input-becomes-readonly.html:
+        * fast/forms/auto-fill-button/input-auto-fill-button.html:
+        * fast/forms/auto-fill-button/input-contacts-auto-fill-button.html:
+        * fast/forms/auto-fill-button/input-disabled-auto-fill-button.html:
+        * fast/forms/auto-fill-button/input-readonly-auto-fill-button.html:
+        * fast/forms/auto-fill-button/input-readonly-non-empty-auto-fill-button.html:
+        * fast/forms/auto-fill-button/mouse-down-input-mouse-release-auto-fill-button.html:
+        * fast/forms/auto-fill-button/show-correct-auto-fill-button-when-auto-fill-button-type-changes-expected.html:
+        * fast/forms/auto-fill-button/show-correct-auto-fill-button-when-auto-fill-button-type-changes.html:
+
 2017-12-08  Dean Jackson  <dino@apple.com>
 
         Implement transferToImageBitmap for WebGL offscreen canvas objects
