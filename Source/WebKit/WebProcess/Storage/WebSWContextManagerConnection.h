@@ -72,7 +72,7 @@ private:
     // IPC messages.
     void serviceWorkerStartedWithMessage(std::optional<WebCore::ServiceWorkerJobDataIdentifier>, WebCore::ServiceWorkerIdentifier, const String& exceptionMessage) final;
     void installServiceWorker(const WebCore::ServiceWorkerContextData&);
-    void startFetch(WebCore::SWServerConnectionIdentifier, uint64_t fetchIdentifier, std::optional<WebCore::ServiceWorkerIdentifier>, WebCore::ResourceRequest&&, WebCore::FetchOptions&&, IPC::FormDataReference&&);
+    void startFetch(WebCore::SWServerConnectionIdentifier, uint64_t fetchIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::ResourceRequest&&, WebCore::FetchOptions&&, IPC::FormDataReference&&);
     void postMessageToServiceWorkerFromClient(WebCore::ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerClientIdentifier sourceIdentifier, WebCore::ServiceWorkerClientData&& sourceData);
     void postMessageToServiceWorkerFromServiceWorker(WebCore::ServiceWorkerIdentifier destination, const IPC::DataReference& message, WebCore::ServiceWorkerData&& sourceData);
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier);

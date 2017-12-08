@@ -133,9 +133,9 @@ void WebSWContextManagerConnection::serviceWorkerStartedWithMessage(std::optiona
         m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::ScriptContextFailedToStart(jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage), 0);
 }
 
-void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier, ResourceRequest&& request, FetchOptions&& options, IPC::FormDataReference&& formData)
+void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, ResourceRequest&& request, FetchOptions&& options, IPC::FormDataReference&& formData)
 {
-    auto* serviceWorkerThreadProxy = serviceWorkerIdentifier ? SWContextManager::singleton().serviceWorkerThreadProxy(*serviceWorkerIdentifier) : nullptr;
+    auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier);
     if (!serviceWorkerThreadProxy) {
         m_connectionToStorageProcess->send(Messages::StorageProcess::DidNotHandleFetch(serverConnectionIdentifier, fetchIdentifier), 0);
         return;

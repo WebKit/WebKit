@@ -81,7 +81,7 @@ private:
     void notifyClientsOfControllerChange(const HashSet<WebCore::DocumentIdentifier>& contextIdentifiers, const WebCore::ServiceWorkerData& newController);
     void registrationReady(uint64_t registrationReadyRequestIdentifier, WebCore::ServiceWorkerRegistrationData&&) final;
 
-    void startFetch(uint64_t fetchIdentifier, std::optional<WebCore::ServiceWorkerIdentifier>, WebCore::ResourceRequest&&, WebCore::FetchOptions&&, IPC::FormDataReference&&);
+    void startFetch(uint64_t fetchIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::ResourceRequest&&, WebCore::FetchOptions&&, IPC::FormDataReference&&);
 
     void postMessageToServiceWorkerFromClient(WebCore::ServiceWorkerIdentifier destination, IPC::DataReference&& message, WebCore::ServiceWorkerClientIdentifier sourceIdentifier, WebCore::ServiceWorkerClientData&& source);
     void postMessageToServiceWorkerFromServiceWorker(WebCore::ServiceWorkerIdentifier destination, IPC::DataReference&& message, WebCore::ServiceWorkerIdentifier source);

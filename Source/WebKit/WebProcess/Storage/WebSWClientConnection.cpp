@@ -186,7 +186,7 @@ void WebSWClientConnection::getRegistrations(const SecurityOrigin& topOrigin, co
 void WebSWClientConnection::startFetch(const ResourceLoader& loader, uint64_t identifier)
 {
     ASSERT(loader.options().serviceWorkersMode != ServiceWorkersMode::None && loader.options().serviceWorkerIdentifier);
-    send(Messages::WebSWServerConnection::StartFetch { identifier, loader.options().serviceWorkerIdentifier, loader.request(), loader.options(), IPC::FormDataReference { loader.request().httpBody() } });
+    send(Messages::WebSWServerConnection::StartFetch { identifier, loader.options().serviceWorkerIdentifier.value(), loader.request(), loader.options(), IPC::FormDataReference { loader.request().httpBody() } });
 }
 
 void WebSWClientConnection::postMessageToServiceWorkerClient(DocumentIdentifier destinationContextIdentifier, const IPC::DataReference& message, ServiceWorkerData&& source, const String& sourceOrigin)

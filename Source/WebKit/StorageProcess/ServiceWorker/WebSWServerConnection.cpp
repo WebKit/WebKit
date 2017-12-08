@@ -116,23 +116,15 @@ void WebSWServerConnection::updateWorkerStateInClient(ServiceWorkerIdentifier wo
     send(Messages::WebSWClientConnection::UpdateWorkerState(worker, state));
 }
 
-void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier, ResourceRequest&& request, FetchOptions&& options, IPC::FormDataReference&& formData)
+void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, ResourceRequest&& request, FetchOptions&& options, IPC::FormDataReference&& formData)
 {
     // It's possible this specific worker cannot be re-run (e.g. its registration has been removed)
-    if (serviceWorkerIdentifier) {
-        server().runServiceWorkerIfNecessary(*serviceWorkerIdentifier, [contentConnection = m_contentConnection.copyRef(), connectionIdentifier = identifier(), fetchIdentifier, serviceWorkerIdentifier = *serviceWorkerIdentifier, request = WTFMove(request), options = WTFMove(options), formData = WTFMove(formData)](bool success, auto& contextConnection) {
-            if (success)
-                sendToContextProcess(contextConnection, Messages::WebSWContextManagerConnection::StartFetch { connectionIdentifier, fetchIdentifier, serviceWorkerIdentifier, request, options, formData });
-            else
-                contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
-        });
-        return;
-    }
-
-    // FIXME: If we don't have a ServiceWorkerIdentifier here then we need to create and run the appropriate Service Worker,
-    // but it's unclear that we have enough information here to do that.
-
-    sendToContextProcess(Messages::WebSWContextManagerConnection::StartFetch { identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options, formData });
+    server().runServiceWorkerIfNecessary(serviceWorkerIdentifier, [contentConnection = m_contentConnection.copyRef(), connectionIdentifier = identifier(), fetchIdentifier, serviceWorkerIdentifier = serviceWorkerIdentifier, request = WTFMove(request), options = WTFMove(options), formData = WTFMove(formData)](bool success, auto& contextConnection) {
+        if (success)
+            sendToContextProcess(contextConnection, Messages::WebSWContextManagerConnection::StartFetch { connectionIdentifier, fetchIdentifier, serviceWorkerIdentifier, request, options, formData });
+        else
+            contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
+    });
 }
 
 void WebSWServerConnection::postMessageToServiceWorkerFromClient(ServiceWorkerIdentifier destinationIdentifier, IPC::DataReference&& message, ServiceWorkerClientIdentifier sourceIdentifier, ServiceWorkerClientData&& sourceData)

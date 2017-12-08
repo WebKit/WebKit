@@ -1,3 +1,27 @@
+2017-12-07  Youenn Fablet  <youenn@apple.com>
+
+        StartFetch should take a ServiceWorkerIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=180478
+
+        Reviewed by Brady Eidson.
+
+        Before the patch, StartFetch was taking an optional ServiceWorkerIdentifier.
+        Now that every navigation fetch is querying its matching registration, it can no longer be optional.
+
+        In the case there is a problem in running the service worker at start fetch time,
+        answer to the WebProcess to go to network so that the request does not get stalled.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::startFetch):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::startFetch):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::startFetch):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2017-12-07  Saam Barati  <sbarati@apple.com>
 
         We need to grab the JSLock in InjectedBundle::createWebDataFromUint8Array
