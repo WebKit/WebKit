@@ -10,7 +10,7 @@ def web_socket_do_extra_handshake(request):
     msg += 'Sec-WebSocket-Accept: XXXXthisiswrongXXXX\r\n' 
     msg += '\r\n'
     request.connection.write(msg)
-    print msg
+    print(msg)
     raise handshake.AbortedByUserException('Abort the connection') # Prevents pywebsocket from sending its own handshake message.
 
 

@@ -81,7 +81,7 @@ class IOSSimulatorTest(ios_testcase.IOSTest):
 
     def test_xcrun(self):
         def throwing_run_command(args):
-            print args
+            print(args)
             raise ScriptError("MOCK script error")
 
         port = self.make_port()

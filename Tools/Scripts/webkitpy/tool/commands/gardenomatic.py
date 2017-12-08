@@ -39,8 +39,8 @@ class GardenOMatic(AbstractRebaseliningCommand):
             ]))
 
     def execute(self, options, args, tool):
-        print "This command runs a local HTTP server that changes your working copy"
-        print "based on the actions you take in the web-based UI."
+        print("This command runs a local HTTP server that changes your working copy")
+        print("based on the actions you take in the web-based UI.")
 
         args = {}
         if options.platform:
@@ -55,5 +55,5 @@ class GardenOMatic(AbstractRebaseliningCommand):
         httpd = GardeningHTTPServer(httpd_port=8127, config={'tool': tool, 'options': options})
         self._tool.user.open_url(httpd.url(args))
 
-        print "Local HTTP server started."
+        print("Local HTTP server started.")
         httpd.serve_forever()

@@ -540,18 +540,18 @@ class Manager(object):
 
     def _print_expectation_line_for_test(self, format_string, test):
         line = self._expectations.model().get_expectation_line(test)
-        print format_string.format(test, line.expected_behavior, self._expectations.readable_filename_and_line_number(line), line.original_string or '')
+        print(format_string.format(test, line.expected_behavior, self._expectations.readable_filename_and_line_number(line), line.original_string or ''))
     
     def _print_expectations_for_subset(self, device_class, test_col_width, tests_to_run, tests_to_skip={}):
         format_string = '{{:{width}}} {{}} {{}} {{}}'.format(width=test_col_width)
         if tests_to_skip:
-            print ''
-            print 'Tests to skip ({})'.format(len(tests_to_skip))
+            print('')
+            print('Tests to skip ({})'.format(len(tests_to_skip)))
             for test in sorted(tests_to_skip):
                 self._print_expectation_line_for_test(format_string, test)
 
-        print ''
-        print 'Tests to run{} ({})'.format(' for ' + device_class if device_class else '', len(tests_to_run))
+        print('')
+        print('Tests to run{} ({})'.format(' for ' + device_class if device_class else '', len(tests_to_run)))
         for test in sorted(tests_to_run):
             self._print_expectation_line_for_test(format_string, test)
 

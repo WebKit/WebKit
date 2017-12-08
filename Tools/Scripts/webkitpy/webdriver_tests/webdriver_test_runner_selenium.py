@@ -73,7 +73,7 @@ class WebDriverTestRunnerSelenium(object):
         timeout = self._port.get_option('timeout')
         for test in tests:
             test_name = os.path.relpath(test, self._tests_dir())
-            print test_name
+            print(test_name)
             harness_result, test_results = executor.run(test, timeout)
             result = WebDriverTestResult(test_name, *harness_result)
             if harness_result[0] == 'OK':

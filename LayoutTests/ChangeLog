@@ -1,3 +1,23 @@
+2017-12-08  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [python] Replace print operator with print() function for python3 compatibility
+        https://bugs.webkit.org/show_bug.cgi?id=180592
+
+        Reviewed by Michael Catanzaro.
+
+        * html5lib/generate-test-wrappers.py:
+        (_remove_stale_tests):
+        * http/tests/websocket/tests/hybi/bad-handshake-crash_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-more-accept-header_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-connection-header_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-cr_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-upgrade-header_wsh.py:
+        (web_socket_do_extra_handshake):
+
 2017-12-08  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Rebaseline tables/mozilla/bugs/bug32205-5.html.

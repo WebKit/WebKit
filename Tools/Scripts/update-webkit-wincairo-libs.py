@@ -37,7 +37,7 @@ result = download.main([repo, file])
 
 # Only unzip if required
 if result == download.Status.DOWNLOADED:
-    print 'Extracting release to {}...'.format(output)
+    print('Extracting release to {}...'.format(output))
     zip = zipfile.ZipFile(file, 'r')
     zip.extractall(output)
     zip.close()

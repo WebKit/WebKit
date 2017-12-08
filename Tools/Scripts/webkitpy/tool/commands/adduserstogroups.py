@@ -44,22 +44,22 @@ class AddUsersToGroups(Command):
         # FIXME: We could lookup what groups the current user is able to grant from bugzilla.
         groups = tool.user.prompt_with_list(list_title, self.known_groups, can_choose_multiple=True)
         if not groups:
-            print "No groups specified."
+            print("No groups specified.")
             return
 
         login_userid_pairs = tool.bugs.queries.fetch_login_userid_pairs_matching_substring(search_string)
         if not login_userid_pairs:
-            print "No users found matching '%s'" % search_string
+            print("No users found matching '%s'" % search_string)
             return
 
-        print "Found %s users matching %s:" % (len(login_userid_pairs), search_string)
+        print("Found %s users matching %s:" % (len(login_userid_pairs), search_string))
         for (login, user_id) in login_userid_pairs:
-            print "%s (%s)" % (login, user_id)
+            print("%s (%s)" % (login, user_id))
 
         confirm_message = "Are you sure you want add %s users to groups %s?  (This action cannot be undone using webkit-patch.)" % (len(login_userid_pairs), groups)
         if not tool.user.confirm(confirm_message):
             return
 
         for (login, user_id) in login_userid_pairs:
-            print "Adding %s to %s" % (login, groups)
+            print("Adding %s to %s" % (login, groups))
             tool.bugs.add_user_to_groups(user_id, groups)

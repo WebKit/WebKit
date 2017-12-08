@@ -69,9 +69,9 @@ def run_benchmark_plan(args, plan):
 
 
 def list_benchmark_plans():
-    print "Available benchmark plans: "
+    print("Available benchmark plans: ")
     for plan in BenchmarkRunner.available_plans():
-        print "\t%s" % plan
+        print("\t%s" % plan)
 
 
 def start(args):

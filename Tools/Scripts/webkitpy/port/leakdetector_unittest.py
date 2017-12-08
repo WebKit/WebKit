@@ -127,7 +127,7 @@ Binary Images:
         detector = self._make_detector()
 
         def mock_run_script(name, args, include_configuration_arguments=False):
-            print "MOCK _run_script: %s %s" % (name, args)
+            print("MOCK _run_script: %s %s" % (name, args))
             return """1 calls for 16 bytes: -[NSURLRequest mutableCopyWithZone:] | +[NSObject(NSObject) allocWithZone:] | _internal_class_createInstanceFromZone | calloc | malloc_zone_calloc
 
 147 calls for 9,408 bytes: _CFRuntimeCreateInstance | _ZN3WTF24StringWrapperCFAllocatorL8allocateElmPv StringImplCF.cpp:67 | WTF::fastMalloc(unsigned long) FastMalloc.cpp:268 | malloc | malloc_zone_malloc 

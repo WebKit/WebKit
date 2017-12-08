@@ -39,4 +39,4 @@ class FindUsers(Command):
         search_string = args[0]
         users = CommitterList().contributors_by_search_string(search_string)
         for user in users:
-            print user
+            print(user)

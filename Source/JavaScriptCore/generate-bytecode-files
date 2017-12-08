@@ -91,7 +91,7 @@ def openOrExit(path, mode):
     try:
         return open(path, mode)
     except IOError as e:
-        print "I/O error opening {0}, ({1}): {2}".format(path, e.errno, e.strerror)
+        print("I/O error opening {0}, ({1}): {2}".format(path, e.errno, e.strerror))
         exit(1)
 
 def hashFile(file):
@@ -217,7 +217,7 @@ if __name__ == "__main__":
     try:
         bytecodeSections = json.load(bytecodeFile, encoding = "utf-8")
     except:
-        print "Unexpected error parsing {0}: {1}".format(bytecodeJSONFile, sys.exc_info())
+        print("Unexpected error parsing {0}: {1}".format(bytecodeJSONFile, sys.exc_info()))
 
     if bytecodeHFilename:
         bytecodeHFile.write(hFileHashString)

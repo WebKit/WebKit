@@ -529,7 +529,7 @@ class TestImporter(object):
         should_update = self.options.clean_destination_directory
         for full_path in self._slow_tests:
             w3c_test_path = self.filesystem.relpath(full_path, self.source_directory)
-            print w3c_test_path
+            print(w3c_test_path)
             # No need to mark tests as slow if they are in skipped directories
             if self._already_identified_as_resource_file(w3c_test_path):
                 continue

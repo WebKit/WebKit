@@ -68,24 +68,24 @@ def run_server(options, args, stdout, stderr):
         return EXCEPTIONAL_EXIT_STATUS
 
     if options.web_platform_test_server:
-        print "Starting web-platform-tests server on <%s> and <%s>" % (web_platform_test_server.base_http_url(port), web_platform_test_server.base_https_url(port))
-        print "WebKit http/wpt tests are accessible at <%s>" % (web_platform_test_server.base_http_url(port) + "WebKit/")
+        print("Starting web-platform-tests server on <%s> and <%s>" % (web_platform_test_server.base_http_url(port), web_platform_test_server.base_https_url(port)))
+        print("WebKit http/wpt tests are accessible at <%s>" % (web_platform_test_server.base_http_url(port) + "WebKit/"))
         port.start_web_platform_test_server()
 
     if options.httpd_server:
         # FIXME(154294): somehow retrieve the actual ports and interfaces bound by the httpd server
         http_port = options.http_port if options.http_port is not None else "8000"
         if options.http_all_interfaces is not None:
-            print "Starting httpd on port %s (all interfaces)" % http_port
+            print("Starting httpd on port %s (all interfaces)" % http_port)
         else:
-            print "Starting httpd on <http://127.0.0.1:%s>" % http_port
+            print("Starting httpd on <http://127.0.0.1:%s>" % http_port)
 
         additionalDirs = {additional_dir[0]: additional_dir[1] for additional_dir in options.additional_dirs}
         port.start_http_server(additionalDirs)
         port.start_websocket_server()
 
     if options.url:
-        print "Opening %s" % options.url
+        print("Opening %s" % options.url)
         subprocess.Popen(['open', options.url], stdout=subprocess.PIPE)
 
     try:

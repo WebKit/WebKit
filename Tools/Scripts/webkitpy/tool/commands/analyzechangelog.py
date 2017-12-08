@@ -60,30 +60,30 @@ class AnalyzeChangeLog(Command):
     @staticmethod
     def _generate_jsons(filesystem, jsons, output_dir):
         for filename in jsons:
-            print '    Generating', filename
+            print('    Generating', filename)
             filesystem.write_text_file(filesystem.join(output_dir, filename), json.dumps(jsons[filename], indent=2))
 
     def execute(self, options, args, tool):
         filesystem = self._tool.filesystem
         if len(args) < 1 or not filesystem.exists(args[0]):
-            print "Need the directory name to look for changelog as the first argument"
+            print("Need the directory name to look for changelog as the first argument")
             return
         changelog_dir = filesystem.abspath(args[0])
 
         if len(args) < 2 or not filesystem.exists(args[1]):
-            print "Need the output directory name as the second argument"
+            print("Need the output directory name as the second argument")
             return
         output_dir = args[1]
 
         startTime = time.time()
 
-        print 'Enumerating ChangeLog files...'
+        print('Enumerating ChangeLog files...')
         changelogs = AnalyzeChangeLog._enumerate_changelogs(filesystem, changelog_dir, options.changelog_count)
 
         analyzer = ChangeLogAnalyzer(tool, changelogs)
         analyzer.analyze()
 
-        print 'Generating json files...'
+        print('Generating json files...')
         json_files = {
             'summary.json': analyzer.summary(),
             'contributors.json': analyzer.contributors_statistics(),
@@ -91,11 +91,11 @@ class AnalyzeChangeLog(Command):
         }
         AnalyzeChangeLog._generate_jsons(filesystem, json_files, output_dir)
         commands_dir = filesystem.dirname(filesystem.path_to_module(self.__module__))
-        print commands_dir
+        print(commands_dir)
         filesystem.copyfile(filesystem.join(commands_dir, 'data/summary.html'), filesystem.join(output_dir, 'summary.html'))
 
         tick = time.time() - startTime
-        print 'Finished in %02dm:%02ds' % (int(tick / 60), int(tick % 60))
+        print('Finished in %02dm:%02ds' % (int(tick / 60), int(tick % 60)))
 
 
 class ChangeLogAnalyzer(object):
@@ -132,7 +132,7 @@ class ChangeLogAnalyzer(object):
 
     def _set_filename(self, filename):
         if self._filename:
-            print
+            print()
         self._filename = filename
 
     def analyze(self):
@@ -142,7 +142,7 @@ class ChangeLogAnalyzer(object):
                 self._print_status('Parsing entries...')
                 number_of_parsed_entries = self._analyze_entries(ChangeLog.parse_entries_from_file(changelog), path)
             self._print_status('Done (%d entries)' % number_of_parsed_entries)
-        print
+        print()
         self._summary['contributors'] = len(self._contributors_statistics)
         self._summary['contributors_with_reviews'] = sum([1 for contributor in self._contributors_statistics.values() if contributor['reviews']['total']])
         self._summary['contributors_without_reviews'] = self._summary['contributors'] - self._summary['contributors_with_reviews']

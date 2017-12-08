@@ -401,7 +401,7 @@ class MockBugzilla(object):
 
         attachment_dictionary = self.attachment_cache.get(attachment_id)
         if not attachment_dictionary:
-            print "MOCK: fetch_attachment: %s is not a known attachment id" % attachment_id
+            print("MOCK: fetch_attachment: %s is not a known attachment id" % attachment_id)
             return None
         bug = self.fetch_bug(attachment_dictionary["bug_id"])
         for attachment in bug.attachments(include_obsolete=True):

@@ -9,7 +9,7 @@ def web_socket_do_extra_handshake(request):
     msg += 'Sec-WebSocket-Accept: %s\r\n' % compute_accept(request.headers_in['Sec-WebSocket-Key'])[0]
     msg += '\r\n'
     request.connection.write(msg)
-    print msg
+    print(msg)
     raise handshake.AbortedByUserException('Abort the connection') # Prevents pywebsocket from sending its own handshake message.
 
 

@@ -46,11 +46,11 @@ def main():
     parser.add_option('-n', '--namespace', help='Namespace to use')
     (options, arguments) = parser.parse_args()
     if not options.namespace:
-        print 'Error: must provide a namespace'
+        print('Error: must provide a namespace')
         parser.print_usage()
         exit(-1)
     if len(arguments) < 3:
-        print 'Error: must provide at least 3 arguments'
+        print('Error: must provide at least 3 arguments')
         parser.print_usage()
         exit(-1)
 

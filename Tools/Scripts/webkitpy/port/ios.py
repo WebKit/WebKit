@@ -190,7 +190,7 @@ class IOSPort(DarwinPort):
         if len(exception_list) == 1:
             raise
         elif len(exception_list) > 1:
-            print '\n'
+            print('\n')
             for exception in exception_list:
                 _log.error('{} raised: {}'.format(exception[0].__class__.__name__, exception[0]))
                 _log.error(exception[1])

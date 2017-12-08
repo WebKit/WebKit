@@ -1,3 +1,12 @@
+2017-12-08  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [python] Replace print operator with print() function for python3 compatibility
+        https://bugs.webkit.org/show_bug.cgi?id=180592
+
+        Reviewed by Michael Catanzaro.
+
+        * JSBench/harness.py:
+
 2017-12-01  Filip Pizlo  <fpizlo@apple.com>
 
         GC constraint solving should be parallel

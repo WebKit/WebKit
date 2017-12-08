@@ -1,3 +1,19 @@
+2017-12-08  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [python] Replace print operator with print() function for python3 compatibility
+        https://bugs.webkit.org/show_bug.cgi?id=180592
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/generateYarrUnicodePropertyTables.py:
+        (openOrExit):
+        (verifyUCDFilesExist):
+        (Aliases.parsePropertyAliasesFile):
+        (Aliases.parsePropertyValueAliasesFile):
+        * Scripts/make-js-file-arrays.py:
+        (main):
+        * generate-bytecode-files:
+
 2017-12-08  Mark Lam  <mark.lam@apple.com>
 
         Need to unpoison native function pointers for CLoop.

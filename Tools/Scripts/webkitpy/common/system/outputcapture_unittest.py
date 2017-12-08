@@ -61,11 +61,11 @@ class OutputCaptureTest(unittest.TestCase):
     def test_output_capture_scope(self):
         scope = OutputCaptureScope()
         with scope:
-            print 'STRING 1'
+            print('STRING 1')
         self.assertEqual(('STRING 1\n', '', ''), scope.captured_output)
 
         with scope:
-            print 'STRING 2'
+            print('STRING 2')
         self.assertEqual(('STRING 2\n', '', ''), scope.captured_output)
 
     def test_output_capture_scope_from_output_capture(self):

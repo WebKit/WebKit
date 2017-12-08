@@ -69,7 +69,7 @@ class AddSvnMimetypeForPng(AbstractStep):
             elif detection == "svn":
                 for filename in png_files:
                     if self._detector.exists(filename) and self._detector.propget('svn:mime-type', filename) != 'image/png':
-                        print "Adding image/png mime-type to %s" % filename
+                        print("Adding image/png mime-type to %s" % filename)
                         self._detector.propset('svn:mime-type', 'image/png', filename)
 
     def _check_pngs(self, changed_files):

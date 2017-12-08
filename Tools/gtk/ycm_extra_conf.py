@@ -110,17 +110,17 @@ def FlagsForFile(filename, **kwargs):
 
     build_path = os.path.normpath(get_build_path())
     if not build_path:
-        print "Could not find WebKit build path."
+        print("Could not find WebKit build path.")
         return result
 
     database = ycm_core.CompilationDatabase(build_path)
     if not database:
-        print "Could not find compile_commands.json in %s, You might forget to add CMAKE_EXPORT_COMPILE_COMMANDS=ON to cmakeargs" % build_path
+        print("Could not find compile_commands.json in %s, You might forget to add CMAKE_EXPORT_COMPILE_COMMANDS=ON to cmakeargs" % build_path)
         return result
 
     compilation_info = database.GetCompilationInfoForFile(filename)
     if not compilation_info:
-        print "No compilation info."
+        print("No compilation info.")
         return result
 
     result['flags'] = transform_relative_paths_to_absolute_paths(list(compilation_info.compiler_flags_), compilation_info.compiler_working_dir_)
@@ -130,4 +130,4 @@ def FlagsForFile(filename, **kwargs):
 if __name__ == "__main__":
     import sys
     if len(sys.argv) >= 2:
-        print FlagsForFile(sys.argv[1])
+        print(FlagsForFile(sys.argv[1]))

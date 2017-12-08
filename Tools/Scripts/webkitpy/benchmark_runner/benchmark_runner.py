@@ -156,4 +156,4 @@ class BenchmarkRunner(object):
     @classmethod
     def show_results(cls, results, scale_unit=True):
         results = BenchmarkResults(results)
-        print results.format(scale_unit)
+        print(results.format(scale_unit))

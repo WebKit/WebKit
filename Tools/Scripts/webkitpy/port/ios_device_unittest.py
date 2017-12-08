@@ -50,7 +50,7 @@ class IOSDeviceTest(ios_testcase.IOSTest):
 
     def test_spindump(self):
         def logging_run_command(args):
-            print args
+            print(args)
 
         port = self.make_port()
         port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-spindump.txt'] = 'Spindump file'
@@ -64,7 +64,7 @@ class IOSDeviceTest(ios_testcase.IOSTest):
         def logging_run_command(args):
             if args[0] == '/usr/sbin/spindump':
                 return 1
-            print args
+            print(args)
             return 0
 
         port = self.make_port()

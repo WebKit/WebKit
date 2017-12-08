@@ -31,40 +31,40 @@ def getLatestSVNRevision(SVNServer):
     p = subprocess.Popen(["svn", "log", "--non-interactive", "--verbose", "--xml", "--limit=1", SVNServer], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     response = p.communicate()[0]
     if p.returncode != 0:
-        print "Can't connect to host: %s, return code %s " % (SVNServer, p.returncode)
-        print "OUTPUT:"
-        print response
+        print("Can't connect to host: %s, return code %s " % (SVNServer, p.returncode))
+        print("OUTPUT:")
+        print(response)
         return -1
     try:
         doc = xml.dom.minidom.parseString(response)
         el = doc.getElementsByTagName("logentry")[0]
         return el.getAttribute("revision")
     except xml.parsers.expat.ExpatError, e:
-        print "FAILED TO PARSE 'svn log' XML:"
-        print str(e)
-        print "----"
-        print "RECEIVED TEXT:"
-        print response
+        print("FAILED TO PARSE 'svn log' XML:")
+        print(str(e))
+        print("----")
+        print("RECEIVED TEXT:")
+        print(response)
         sys.exit(1)
 
 
 def waitForSVNRevision(SVNServer, revision):
     if not revision or not revision.isdigit():
         latestRevision = int(getLatestSVNRevision(SVNServer))
-        print "Latest SVN revision on %s is r%d. Don't wait, because revision argument isn't a valid SVN revision." % (SVNServer, latestRevision)
+        print("Latest SVN revision on %s is r%d. Don't wait, because revision argument isn't a valid SVN revision." % (SVNServer, latestRevision))
         return
 
     revision = int(revision)
     while True:
         latestRevision = int(getLatestSVNRevision(SVNServer))
         if latestRevision == -1:
-            print "%s SVN server is unreachable. Sleeping for 60 seconds." % (SVNServer)
+            print("%s SVN server is unreachable. Sleeping for 60 seconds." % (SVNServer))
             time.sleep(60)
         elif latestRevision < revision:
-            print "Latest SVN revision on %s is r%d, but we are waiting for r%d. Sleeping for 5 seconds." % (SVNServer, latestRevision, revision)
+            print("Latest SVN revision on %s is r%d, but we are waiting for r%d. Sleeping for 5 seconds." % (SVNServer, latestRevision, revision))
             time.sleep(5)
         else:
-            print "Latest SVN revision on %s is r%d, which is newer or equal than r%d." % (SVNServer, latestRevision, revision)
+            print("Latest SVN revision on %s is r%d, which is newer or equal than r%d." % (SVNServer, latestRevision, revision))
             break
 
 

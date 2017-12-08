@@ -43,22 +43,22 @@ def fileContains(relativePath, regexp):
     return False
 
 
-print "/* Identifying AVFoundation Support */"
+print("/* Identifying AVFoundation Support */")
 if lookFor("/include/AVFoundationCF/AVCFBase.h"):
-    print "#define HAVE_AVCF 1"
+    print("#define HAVE_AVCF 1")
 if lookFor("/include/AVFoundationCF/AVCFPlayerItemLegibleOutput.h"):
-    print "#define HAVE_AVCF_LEGIBLE_OUTPUT 1"
+    print("#define HAVE_AVCF_LEGIBLE_OUTPUT 1")
 if lookFor("/include/AVFoundationCF/AVCFAssetResourceLoader.h"):
-    print "#define HAVE_AVFOUNDATION_LOADER_DELEGATE 1"
+    print("#define HAVE_AVFOUNDATION_LOADER_DELEGATE 1")
 if lookFor("/include/AVFoundationCF/AVCFAsset.h"):
     regexp = re.compile("AVCFURLAssetIsPlayableExtendedMIMEType")
     if fileContains("/include/AVFoundationCF/AVCFAsset.h", regexp):
-        print "#define HAVE_AVCFURL_PLAYABLE_MIMETYPE 1"
+        print("#define HAVE_AVCFURL_PLAYABLE_MIMETYPE 1")
 if lookFor("/include/QuartzCore/CACFLayer.h"):
     regexp = re.compile("CACFLayerSetContentsScale")
     if fileContains("/include/QuartzCore/CACFLayer.h", regexp):
-        print "#define HAVE_CACFLAYER_SETCONTENTSSCALE 1"
+        print("#define HAVE_CACFLAYER_SETCONTENTSSCALE 1")
 if lookFor("/include/AVFoundationCF/AVCFPlayerItemLegibleOutput.h"):
     regexp = re.compile("kAVCFPlayerItemLegibleOutput_CallbacksVersion_2")
     if fileContains("/include/AVFoundationCF/AVCFPlayerItemLegibleOutput.h", regexp):
-        print "#define HAVE_AVCFPLAYERITEM_CALLBACK_VERSION_2 1"
+        print("#define HAVE_AVCFPLAYERITEM_CALLBACK_VERSION_2 1")

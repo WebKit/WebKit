@@ -130,7 +130,7 @@ def btjs(debugger, command, result, internal_dict):
         annotateJSFrames = False
 
     if not annotateJSFrames:
-        print "Warning: Can't find JSC::ExecState::describeFrame() in executable to annotate JavaScript frames"
+        print("Warning: Can't find JSC::ExecState::describeFrame() in executable to annotate JavaScript frames")
 
     backtraceDepth = thread.GetNumFrames()
 
@@ -141,7 +141,7 @@ def btjs(debugger, command, result, internal_dict):
             return
 
     threadFormat = '* thread #{num}: tid = {tid:#x}, {pcAddr:' + addressFormat + '}, queue = \'{queueName}, stop reason = {stopReason}'
-    print threadFormat.format(num=thread.GetIndexID(), tid=thread.GetThreadID(), pcAddr=thread.GetFrameAtIndex(0).GetPC(), queueName=thread.GetQueueName(), stopReason=thread.GetStopDescription(30))
+    print(threadFormat.format(num=thread.GetIndexID(), tid=thread.GetThreadID(), pcAddr=thread.GetFrameAtIndex(0).GetPC(), queueName=thread.GetQueueName(), stopReason=thread.GetStopDescription(30)))
 
     for frame in thread:
         if backtraceDepth < 1:
@@ -161,9 +161,9 @@ def btjs(debugger, command, result, internal_dict):
             if JSFrameDescription:
                 JSFrameDescription = string.strip(JSFrameDescription, '"')
                 frameFormat = '    frame #{num}: {addr:' + addressFormat + '} {desc}'
-                print frameFormat.format(num=frame.GetFrameID(), addr=frame.GetPC(), desc=JSFrameDescription)
+                print(frameFormat.format(num=frame.GetFrameID(), addr=frame.GetPC(), desc=JSFrameDescription))
                 continue
-        print '    %s' % frame
+        print('    %s' % frame)
 
 # FIXME: Provide support for the following types:
 # def WTFVector_SummaryProvider(valobj, dict):

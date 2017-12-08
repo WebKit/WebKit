@@ -63,7 +63,7 @@ def main(argv=None):
         fs = filesystem.FileSystem()
 
     c = config.Config(e, fs)
-    print c.default_configuration()
+    print(c.default_configuration())
 
 if __name__ == '__main__':
     main()

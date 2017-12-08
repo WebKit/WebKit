@@ -45,7 +45,7 @@ class ContributorsChecker(JSONChecker):
         diff = self._unidiff_output(actual, canonicalized)
         if diff:
             self._handle_style_error(0, 'json/syntax', 5, 'contributors.json differs from the canonical format. Use "validate-committer-lists --canonicalize" to reformat it.')
-            print diff
+            print(diff)
 
     def _unidiff_output(self, expected, actual):
         expected = expected.splitlines(1)

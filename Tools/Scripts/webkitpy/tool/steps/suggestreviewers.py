@@ -43,8 +43,8 @@ class SuggestReviewers(AbstractStep):
             return
 
         reviewers = self._tool.checkout().suggested_reviewers(self._options.git_commit, self._changed_files(state))[:5]
-        print "The following reviewers have recently modified files in your patch:"
-        print ", ".join([reviewer.full_name for reviewer in reviewers])
+        print("The following reviewers have recently modified files in your patch:")
+        print(", ".join([reviewer.full_name for reviewer in reviewers]))
 
         if not state.get('bug_id'):
             return

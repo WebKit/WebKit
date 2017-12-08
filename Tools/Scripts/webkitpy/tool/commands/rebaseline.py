@@ -194,7 +194,7 @@ class RebaselineTest(AbstractRebaseliningCommand):
 
     def execute(self, options, args, tool):
         self._rebaseline_test_and_update_expectations(options)
-        print json.dumps(self._scm_changes)
+        print(json.dumps(self._scm_changes))
 
 
 class AbstractParallelRebaselineCommand(AbstractRebaseliningCommand):

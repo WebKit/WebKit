@@ -30,7 +30,7 @@ try:
     import jsonresults
     from jsonresults import JsonResults
 except ImportError:
-    print "ERROR: Add the TestResultServer, google_appengine and yaml/lib directories to your PYTHONPATH"
+    print("ERROR: Add the TestResultServer, google_appengine and yaml/lib directories to your PYTHONPATH")
     raise
 
 from django.utils import simplejson

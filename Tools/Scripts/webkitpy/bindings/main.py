@@ -64,9 +64,9 @@ class BindingsTests:
         try:
             output = self.executive.run_command(cmd)
             if output:
-                print output
+                print(output)
         except ScriptError, e:
-            print e.output
+            print(e.output)
             exit_code = e.exit_code
         return exit_code
 
@@ -94,9 +94,9 @@ class BindingsTests:
         try:
             output = self.executive.run_command(cmd)
             if output:
-                print output
+                print(output)
         except ScriptError, e:
-            print e.output
+            print(e.output)
             exit_code = e.exit_code
         os.remove(idl_files_list[1])
         return exit_code
@@ -118,13 +118,13 @@ class BindingsTests:
                 exit_code = e.exit_code
 
             if exit_code or output:
-                print 'FAIL: (%s) %s' % (generator, output_file)
-                print output
+                print('FAIL: (%s) %s' % (generator, output_file))
+                print(output)
                 changes_found = True
                 if self.json_file_name:
                     self.failures.append("(%s) %s" % (generator, output_file))
             elif self.verbose:
-                print 'PASS: (%s) %s' % (generator, output_file)
+                print('PASS: (%s) %s' % (generator, output_file))
         return changes_found
 
     def test_matches_patterns(self, test):
@@ -159,7 +159,7 @@ class BindingsTests:
                 passed = False
 
             if self.reset_results:
-                print "Reset results: (%s) %s" % (generator, input_file)
+                print("Reset results: (%s) %s" % (generator, input_file))
                 continue
 
             # Detect changes
@@ -182,7 +182,7 @@ class BindingsTests:
         dedicatedworkerglobalscope_constructors_file = tempfile.mkstemp()[1]
         serviceworkerglobalscope_constructors_file = tempfile.mkstemp()[1]
         if self.generate_supplemental_dependency(input_directory, supplemental_dependency_file, window_constructors_file, workerglobalscope_constructors_file, dedicatedworkerglobalscope_constructors_file, serviceworkerglobalscope_constructors_file):
-            print 'Failed to generate a supplemental dependency file.'
+            print('Failed to generate a supplemental dependency file.')
             os.remove(supplemental_dependency_file)
             os.remove(window_constructors_file)
             os.remove(workerglobalscope_constructors_file)
@@ -210,10 +210,10 @@ class BindingsTests:
             with open(self.json_file_name, 'w') as json_file:
                 json.dump(json_data, json_file)
 
-        print ''
+        print('')
         if all_tests_passed:
-            print 'All tests PASS!'
+            print('All tests PASS!')
             return 0
         else:
-            print 'Some tests FAIL! (To update the reference files, execute "run-bindings-tests --reset-results")'
+            print('Some tests FAIL! (To update the reference files, execute "run-bindings-tests --reset-results")')
             return -1

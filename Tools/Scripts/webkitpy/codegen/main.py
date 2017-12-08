@@ -58,7 +58,7 @@ class BuiltinsGeneratorTests:
             if stderr_output:
                 self.write_error_file(framework_name + "JSBuiltins.h-error" if generate_wrappers else builtins_files[0], output_directory, stderr_output)
         except ScriptError, e:
-            print e.output
+            print(e.output)
             exit_code = e.exit_code
         return exit_code
 
@@ -85,17 +85,17 @@ class BuiltinsGeneratorTests:
                 exit_code = e.exit_code
 
             if exit_code or output:
-                print 'FAIL: %s' % output_file
-                print output
+                print('FAIL: %s' % output_file)
+                print(output)
                 changes_found = True
             else:
-                print 'PASS: %s' % output_file
+                print('PASS: %s' % output_file)
         return changes_found
 
     def single_builtin_test(self, test_name, test_files, work_directory):
         (framework_name, test_case, output_mode) = test_name.split('-')
         if not framework_name or not output_mode or not test_case:
-            print "Invalid test case name: should be Framework-TestCaseName-OutputMode.js"
+            print("Invalid test case name: should be Framework-TestCaseName-OutputMode.js")
             return False
 
         combined_outputs = output_mode == "Combined"
@@ -115,7 +115,7 @@ class BuiltinsGeneratorTests:
             passed = False
 
         if self.reset_results:
-            print "Reset results for test: %s" % (test_name)
+            print("Reset results for test: %s" % (test_name))
             return True
 
         # Detect changes
@@ -141,7 +141,7 @@ class BuiltinsGeneratorTests:
                 separately_generated_files.append(test_file)
 
             if self.reset_results:
-                print "Reset results for test: %s" % (input_file)
+                print("Reset results for test: %s" % (input_file))
                 continue
 
         if separately_generated_files:
@@ -161,10 +161,10 @@ class BuiltinsGeneratorTests:
         if not self.run_tests(input_directory, reference_directory):
             all_tests_passed = False
 
-        print ''
+        print('')
         if all_tests_passed:
-            print 'All tests PASS!'
+            print('All tests PASS!')
             return 0
         else:
-            print 'Some tests FAIL! (To update the reference files, execute "run-builtins-generator-tests --reset-results")'
+            print('Some tests FAIL! (To update the reference files, execute "run-builtins-generator-tests --reset-results")')
             return -1

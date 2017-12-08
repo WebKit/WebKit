@@ -64,16 +64,16 @@ def parse_args():
 def update_lkgr(args):
     lkgr_url = LKGR_URL % args.platform
     if not args.lkgr:
-        print 'Downloading: %s' % lkgr_url
+        print('Downloading: %s' % lkgr_url)
         args.lkgr = json.loads(urllib2.urlopen(lkgr_url).read())['build']
-    print 'lkgr: %s' % args.lkgr
+    print('lkgr: %s' % args.lkgr)
 
 
 def untar_torture(args):
     torture_file = TORTURE_FILE % args.lkgr
     torture_url = TORTURE_URL % (args.platform, args.lkgr, torture_file)
     if not os.path.exists(torture_file):
-        print 'Downloading: %s' % torture_url
+        print('Downloading: %s' % torture_url)
         torture_download = urllib2.urlopen(torture_url)
         with open(torture_file, 'wb') as f:
             f.write(torture_download.read())
@@ -81,14 +81,14 @@ def untar_torture(args):
         if os.path.isdir(TORTURE_DIR):
             shutil.rmtree(TORTURE_DIR)
         with tarfile.open(torture_file, 'r') as torture_tar:
-            print 'Extracting: %s -> %s' % (torture_file, TORTURE_DIR)
+            print('Extracting: %s -> %s' % (torture_file, TORTURE_DIR))
             torture_tar.extractall()
     assert os.path.isdir(TORTURE_DIR)
 
 
 def list_js_files(args):
     js_files = sorted([os.path.basename(f) for f in glob.glob(os.path.join(TORTURE_DIR, '*.js'))])
-    print 'Found %s JavaScript tests' % len(js_files)
+    print('Found %s JavaScript tests' % len(js_files))
     assert len(js_files) > 1200
     return js_files
 
@@ -102,7 +102,7 @@ def waterfall_known_failures(args):
         subprocess.check_call(['git', 'checkout', args.waterfall_hash], cwd=WATERFALL_DIR)
     else:
         args.waterfall_hash = subprocess.check_output(['git', 'log', '-n1', '--pretty=format:%H'], cwd=WATERFALL_DIR).strip()
-    print 'Waterfall at: %s' % args.waterfall_hash
+    print('Waterfall at: %s' % args.waterfall_hash)
     known_failures = []
     with open(os.path.join(WATERFALL_DIR, WATERFALL_KNOWN_FAILURES)) as failures_file:
         for line in failures_file:

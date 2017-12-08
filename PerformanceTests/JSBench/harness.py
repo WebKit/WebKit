@@ -45,7 +45,7 @@ keepruns = 20
 keepfrom = runcount - keepruns
 
 if len(sys.argv) != 2:
-    print "Use: python harness.py <JS executable>"
+    print("Use: python harness.py <JS executable>")
     exit(1)
 js = sys.argv[1]
 
@@ -169,35 +169,35 @@ totals["sm"] *= 100
 totals["semm"] *= 100
 totals["cim"] *= 100
 
-print "Final results:"
-print u"  %(mean)fms \u00b1 %(cim)f%% (lower is better)" % totals
-print "  Standard deviation = %(sm)f%% of mean" % totals
-print "  Standard error = %(semm)f%% of mean" % totals
-print "  %(runs)d runs" % {"runs": runcount}
-print ""
+print("Final results:")
+print(u"  %(mean)fms \u00b1 %(cim)f%% (lower is better)" % totals)
+print("  Standard deviation = %(sm)f%% of mean" % totals)
+print("  Standard error = %(semm)f%% of mean" % totals)
+print("  %(runs)d runs" % {"runs": runcount})
+print("")
 
-print "Result breakdown:"
+print("Result breakdown:")
 for benchmark in benchmarks:
-    print "  %(benchmark)s:" % {"benchmark": benchmark}
+    print("  %(benchmark)s:" % {"benchmark": benchmark})
     
     bmodes = modes["*"]
     if benchmark in modes:
         bmodes = modes[benchmark]
 
     for mode in bmodes:
-        print u"  %(mode)s: %(mean)fms \u00b1 %(cim)f%% (stddev=%(sm)f%%, stderr=%(semm)f%%)" % sresults[benchmark][mode]
-print ""
+        print(u"  %(mode)s: %(mean)fms \u00b1 %(cim)f%% (stddev=%(sm)f%%, stderr=%(semm)f%%)" % sresults[benchmark][mode])
+print("")
 
-print "Raw results:"
+print("Raw results:")
 for benchmark in benchmarks:
-    print "  %(benchmark)s:" % {"benchmark": benchmark}
+    print("  %(benchmark)s:" % {"benchmark": benchmark})
 
     bmodes = modes["*"]
     if benchmark in modes:
         bmodes = modes[benchmark]
 
     for mode in bmodes:
-        print "    %(mode)s: %(results)s" % {
+        print("    %(mode)s: %(results)s" % {
             "mode": mode,
             "results": results[benchmark][mode]
-        }
+        })

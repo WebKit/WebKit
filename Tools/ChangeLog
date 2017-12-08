@@ -1,3 +1,135 @@
+2017-12-08  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [python] Replace print operator with print() function for python3 compatibility
+        https://bugs.webkit.org/show_bug.cgi?id=180592
+
+        Reviewed by Michael Catanzaro.
+
+        * BuildSlaveSupport/wait-for-SVN-server.py:
+        (getLatestSVNRevision):
+        (waitForSVNRevision):
+        * Scripts/download-latest-github-release.py:
+        (find_latest_release):
+        (main):
+        * Scripts/update-wasm-gcc-torture.py:
+        (update_lkgr):
+        (untar_torture):
+        (list_js_files):
+        (waterfall_known_failures):
+        * Scripts/update-webkit-wincairo-libs.py:
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.show_results):
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        (SimpleHTTPServerDriver.fetch_result):
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py:
+        (list_benchmark_plans):
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.generate_from_idl):
+        (BindingsTests.generate_supplemental_dependency):
+        (BindingsTests.detect_changes):
+        (BindingsTests.run_tests):
+        (BindingsTests.main):
+        * Scripts/webkitpy/codegen/main.py:
+        (BuiltinsGeneratorTests.generate_from_js_builtins):
+        (BuiltinsGeneratorTests.detect_changes):
+        (BuiltinsGeneratorTests.single_builtin_test):
+        (BuiltinsGeneratorTests.run_test):
+        (BuiltinsGeneratorTests.run_tests):
+        (BuiltinsGeneratorTests.main):
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py:
+        (MockBugzilla.fetch_attachment):
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        (Builder._fetch_revision_to_build_map):
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        (CrashLogs._find_newest_log_win):
+        * Scripts/webkitpy/common/system/outputcapture_unittest.py:
+        (OutputCaptureTest.test_output_capture_scope):
+        * Scripts/webkitpy/common/system/profiler.py:
+        (GooglePProf.profile_after_exit):
+        (Perf.profile_after_exit):
+        * Scripts/webkitpy/common/system/user.py:
+        (User.prompt_with_multiple_lists):
+        (User.prompt_with_list):
+        (User._warn_if_application_is_xcode):
+        (User.edit_changelog):
+        * Scripts/webkitpy/inspector/main.py:
+        (InspectorGeneratorTests.generate_from_json):
+        (InspectorGeneratorTests.detect_changes):
+        (InspectorGeneratorTests.run_tests):
+        (InspectorGeneratorTests.main):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._print_expectation_line_for_test):
+        (Manager._print_expectations_for_subset):
+        (Manager._print_expectations_for_subset.if):
+        * Scripts/webkitpy/layout_tests/servers/run_webkit_httpd.py:
+        (run_server):
+        * Scripts/webkitpy/port/config_standalone.py:
+        (main):
+        * Scripts/webkitpy/port/darwin_testcase.py:
+        (DarwinTest.test_spindump.logging_run_command):
+        (DarwinTest.test_sample_process.logging_run_command):
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.clean_up_test_run):
+        * Scripts/webkitpy/port/ios_device_unittest.py:
+        (IOSDeviceTest.test_spindump.logging_run_command):
+        (IOSDeviceTest.test_sample_process.logging_run_command):
+        * Scripts/webkitpy/port/ios_simulator_unittest.py:
+        (IOSSimulatorTest.test_xcrun.throwing_run_command):
+        * Scripts/webkitpy/port/leakdetector_unittest.py:
+        (test_count_total_bytes_and_unique_leaks.mock_run_script):
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest.test_xcrun.throwing_run_command):
+        * Scripts/webkitpy/style/checkers/contributors.py:
+        (ContributorsChecker.check):
+        * Scripts/webkitpy/tool/commands/abstractlocalservercommand.py:
+        (AbstractLocalServerCommand.execute):
+        * Scripts/webkitpy/tool/commands/adduserstogroups.py:
+        (AddUsersToGroups.execute):
+        * Scripts/webkitpy/tool/commands/analyzechangelog.py:
+        (AnalyzeChangeLog._generate_jsons):
+        (AnalyzeChangeLog.execute):
+        (ChangeLogAnalyzer._set_filename):
+        (ChangeLogAnalyzer.analyze):
+        * Scripts/webkitpy/tool/commands/bugfortest.py:
+        (BugForTest.execute):
+        * Scripts/webkitpy/tool/commands/bugsearch.py:
+        (execute):
+        * Scripts/webkitpy/tool/commands/findusers.py:
+        (FindUsers.execute):
+        * Scripts/webkitpy/tool/commands/gardenomatic.py:
+        (GardenOMatic.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest.execute):
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+        (RebaselineServer._prepare_config):
+        * Scripts/webkitpy/tool/commands/setupgitclone.py:
+        (SetupGitClone.execute):
+        (SetupGitClone._get_username_and_email):
+        * Scripts/webkitpy/tool/commands/suggestnominations.py:
+        (SuggestNominations._print_nominations):
+        (SuggestNominations._print_counts):
+        * Scripts/webkitpy/tool/commands/upload.py:
+        (CommitMessageForCurrentDiff.execute):
+        (CreateBug.prompt_for_bug_title_and_comment):
+        * Scripts/webkitpy/tool/multicommandtool.py:
+        (HelpCommand.execute):
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        (TestGardeningHTTPRequestHandler._serve_text):
+        (TestGardeningHTTPRequestHandler._serve_json):
+        * Scripts/webkitpy/tool/steps/addsvnmimetypeforpng.py:
+        (AddSvnMimetypeForPng.run):
+        * Scripts/webkitpy/tool/steps/suggestreviewers.py:
+        (SuggestReviewers.run):
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.update_tests_options):
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_selenium.py:
+        (WebDriverTestRunnerSelenium.run):
+        * TestResultServer/model/jsonresults_unittest.py:
+        * gtk/ycm_extra_conf.py:
+        (FlagsForFile):
+        * lldb/lldb_webkit.py:
+        (btjs):
+
 2017-12-08  Eric Carlson  <eric.carlson@apple.com>
 
         Move Logger from PAL to WTF so it can be used outside of WebCore

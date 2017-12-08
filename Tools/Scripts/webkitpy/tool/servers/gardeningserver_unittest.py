@@ -73,14 +73,14 @@ class TestGardeningHTTPRequestHandler(GardeningHTTPRequestHandler):
         return self.body if self.body else ''
 
     def _serve_text(self, text):
-        print "== Begin Response =="
-        print text
-        print "== End Response =="
+        print("== Begin Response ==")
+        print(text)
+        print("== End Response ==")
 
     def _serve_json(self, json_object):
-        print "== Begin JSON Response =="
-        print json.dumps(json_object)
-        print "== End JSON Response =="
+        print("== Begin JSON Response ==")
+        print(json.dumps(json_object))
+        print("== End JSON Response ==")
 
 
 class GardeningServerTest(unittest.TestCase):

@@ -92,7 +92,7 @@ def openOrExit(path, mode):
     try:
         return open(path, mode)
     except IOError as e:
-        print "I/O error opening {0}, ({1}): {2}".format(path, e.errno, e.strerror)
+        print("I/O error opening {0}, ({1}): {2}".format(path, e.errno, e.strerror))
         exit(1)
 
 
@@ -111,7 +111,7 @@ def verifyUCDFilesExist():
     for file in RequiredUCDFiles:
         fullPath = os.path.join(UCDDirectoryPath, file)
         if not os.path.exists(fullPath):
-            print "Couldn't find UCD file {0} at {1}".format(file, fullPath)
+            print("Couldn't find UCD file {0} at {1}".format(file, fullPath))
             missingFileCount = missingFileCount + 1
     if missingFileCount:
         exit(1)
@@ -150,7 +150,7 @@ class Aliases:
                 aliases.append(otherAlias.strip())
 
             if fullName in self.globalNameToAliases:
-                print "Error, already an alias for {}".format(fullName)
+                print("Error, already an alias for {}".format(fullName))
             else:
                 self.globalNameToAliases[fullName] = aliases
 
@@ -183,7 +183,7 @@ class Aliases:
                 aliases.append(otherAlias.strip())
 
             if fullName in mapToModify:
-                print "Error, already an {} alias for {}".format(propertyType, fullName)
+                print("Error, already an {} alias for {}".format(propertyType, fullName))
             else:
                 mapToModify[fullName] = aliases
                 if reverseMapToModify != None:

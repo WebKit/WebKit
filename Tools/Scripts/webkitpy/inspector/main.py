@@ -54,7 +54,7 @@ class InspectorGeneratorTests:
             if stderr_output:
                 self.write_error_file(json_file, output_directory, stderr_output)
         except ScriptError, e:
-            print e.output
+            print(e.output)
             exit_code = e.exit_code
         return exit_code
 
@@ -81,11 +81,11 @@ class InspectorGeneratorTests:
                 exit_code = e.exit_code
 
             if exit_code or output:
-                print 'FAIL: %s' % output_file
-                print output
+                print('FAIL: %s' % output_file)
+                print(output)
                 changes_found = True
             else:
-                print 'PASS: %s' % output_file
+                print('PASS: %s' % output_file)
         return changes_found
 
     def run_tests(self, platform, input_directory, reference_directory):
@@ -105,7 +105,7 @@ class InspectorGeneratorTests:
                 passed = False
 
             if self.reset_results:
-                print "Reset results for test: %s" % (input_file)
+                print("Reset results for test: %s" % (input_file))
                 continue
 
             # Detect changes
@@ -138,10 +138,10 @@ class InspectorGeneratorTests:
 
             all_tests_passed = all_tests_passed and self.run_tests(platform_name, input_directory, reference_directory)
 
-        print ''
+        print('')
         if all_tests_passed:
-            print 'All tests PASS!'
+            print('All tests PASS!')
             return 0
         else:
-            print 'Some tests FAIL! (To update the reference files, execute "run-inspector-generator-tests --reset-results")'
+            print('Some tests FAIL! (To update the reference files, execute "run-inspector-generator-tests --reset-results")')
             return -1

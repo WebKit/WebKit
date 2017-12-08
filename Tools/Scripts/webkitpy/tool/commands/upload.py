@@ -61,7 +61,7 @@ class CommitMessageForCurrentDiff(Command):
     def execute(self, options, args, tool):
         # This command is a useful test to make sure commit_message_for_this_commit
         # always returns the right value regardless of the current working directory.
-        print "%s" % tool.checkout().commit_message_for_this_commit(options.git_commit).message()
+        print("%s" % tool.checkout().commit_message_for_this_commit(options.git_commit).message())
 
 
 class CleanPendingCommit(Command):
@@ -510,7 +510,7 @@ class CreateBug(Command):
     def prompt_for_bug_title_and_comment(self):
         bug_title = User.prompt("Bug title: ")
         # FIXME: User should provide a function for doing this multi-line prompt.
-        print "Bug comment (hit ^D on blank line to end):"
+        print("Bug comment (hit ^D on blank line to end):")
         lines = sys.stdin.readlines()
         try:
             sys.stdin.seek(0, os.SEEK_END)

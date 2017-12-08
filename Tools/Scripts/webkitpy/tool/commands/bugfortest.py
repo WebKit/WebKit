@@ -43,6 +43,6 @@ class BugForTest(Command):
         bug = reporter._lookup_bug_for_flaky_test(search_string)
         if bug:
             bug = reporter._follow_duplicate_chain(bug)
-            print "%5s %s" % (bug.id(), bug.title())
+            print("%5s %s" % (bug.id(), bug.title()))
         else:
-            print "No bugs found matching '%s'" % search_string
+            print("No bugs found matching '%s'" % search_string)

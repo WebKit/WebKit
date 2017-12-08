@@ -44,6 +44,6 @@ documentation on the query format."""
         search_string = args[0]
         bugs = tool.bugs.queries.fetch_bugs_matching_quicksearch(search_string)
         for bug in bugs:
-            print "%5s %s" % (bug.id(), bug.title())
+            print("%5s %s" % (bug.id(), bug.title()))
         if not bugs:
-            print "No bugs found matching '%s'" % search_string
+            print("No bugs found matching '%s'" % search_string)
