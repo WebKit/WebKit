@@ -132,21 +132,15 @@ using namespace WebCore;
     return YES;
 }
 
-- (NSURL *)URLWithCString:(const char *)URLCString
+- (NSURL *)URLWithCString:(const char *)cString
 {
-    if (!URLCString)
+    if (!cString)
         return nil;
     
-    CFStringRef string = CFStringCreateWithCString(kCFAllocatorDefault, URLCString, kCFStringEncodingISOLatin1);
-    ASSERT(string); // All strings should be representable in ISO Latin 1
-    
-    NSString *URLString = [(NSString *)string _web_stringByStrippingReturnCharacters];
-    NSURL *URL = [NSURL _web_URLWithDataAsString:URLString relativeToURL:_baseURL.get()];
-    CFRelease(string);
-    if (!URL)
-        return nil;
-    
-    return URL;
+    NSString *string = [NSString stringWithCString:cString encoding:NSISOLatin1StringEncoding];
+    string = [string stringByReplacingOccurrencesOfString:@"\r" withString:@""];
+    string = [string stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+    return [NSURL _web_URLWithDataAsString:string relativeToURL:_baseURL.get()];
 }
 
 - (NSMutableURLRequest *)requestWithURLCString:(const char *)URLCString

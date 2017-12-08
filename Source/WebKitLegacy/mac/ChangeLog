@@ -1,3 +1,50 @@
+2017-12-07  Darin Adler  <darin@apple.com>
+
+        Remove some unused code from WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=180567
+
+        Reviewed by Anders Carlsson.
+
+        * Misc/WebKitNSStringExtras.h: Researched which of these functions are used in
+        macOS (back a few versions) and iOS and removed unused
+        _web_drawAtPoint:font:textColor:allowingFontSmoothing:,
+        _web_drawDoubledAtPoint:withTopColor:bottomColor:font:,
+        _web_stringByStrippingReturnCharacters, _webkit_hasCaseInsensitiveSubstring:,
+        _webkit_stringByCollapsingNonPrintingCharacters,
+        _webkit_stringByCollapsingWhitespaceCharacters,
+        _web_stringWithData:textEncodingName:, and
+        _webkit_localStorageDirectoryWithBundleIdentifier:.
+
+        * Misc/WebKitNSStringExtras.mm: Made WebKitLocalCacheDefaultsKey private to
+        this source file.
+        (canUseFastRenderer): Made this faster by not calling u_charDirection for
+        Latin-1 characters, and also added special cases for U_DIR_NON_SPACING_MARK
+        and U_BOUNDARY_NEUTRAL, which should not prevent use of the fast renderer.
+        (-[NSString _web_drawAtPoint:font:textColor:allowingFontSmoothing:]): Deleted.
+        (-[NSString _web_drawAtPoint:font:textColor:]): Removed unneeded code to
+        handle font smoothing options.
+        (-[NSString _web_drawDoubledAtPoint:withTopColor:bottomColor:font:]): Deleted.
+        (-[NSString _web_stringByAbbreviatingWithTildeInPath]): Moved comment here
+        from header and made it a little clearer.
+        (-[NSString _web_stringByStrippingReturnCharacters]): Deleted.
+        (-[NSString _webkit_hasCaseInsensitiveSubstring:]): Deleted.
+        (-[NSString _webkit_stringByCollapsingNonPrintingCharacters]): Deleted.
+        (-[NSString _webkit_stringByCollapsingWhitespaceCharacters]): Deleted.
+        (+[NSString _web_stringWithData:textEncodingName:]): Deleted.
+        (+[NSString _webkit_localCacheDirectoryWithBundleIdentifier:]): Streamlined
+        implementation a bit and used whole words instead of abbreviations.
+        (+[NSString _webkit_localStorageDirectoryWithBundleIdentifier:]): Deleted.
+
+        * Misc/WebNSFileManagerExtras.mm:
+        (-[NSFileManager _webkit_pathWithUniqueFilenameForPath:]): Use the
+        filenameByFixingIllegalCharacters function from WebCore directly instead of
+        indirectly through the method _webkit_filenameByFixingIllegalCharacters.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView URLWithCString:]): Rewrote to use simple
+        string replacements instead of _web_stringByStrippingReturnCharacters
+        and to use NSString methods instead of CFString functions.
+
 2017-12-07  Jessie Berlin  <jberlin@webkit.org>
 
         Ignore deprecation warnings.
