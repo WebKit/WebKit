@@ -50,37 +50,12 @@
 #endif
 
 #if PLATFORM(IOS)
-#include <wtf/Noncopyable.h>
+#include <wtf/Lock.h>
+#include <wtf/RecursiveLockAdapter.h>
 
-// FIXME: We may be able to simplify this code using C++11 threading primitives, including std::call_once().
-static pthread_mutex_t fontLock;
+using RecursiveStaticLock = WTF::RecursiveLockAdapter<StaticLock>;
+static RecursiveStaticLock fontLock;
 
-static void initFontCacheLockOnce()
-{
-    pthread_mutexattr_t mutexAttribute;
-    pthread_mutexattr_init(&mutexAttribute);
-    pthread_mutexattr_settype(&mutexAttribute, PTHREAD_MUTEX_RECURSIVE);
-    pthread_mutex_init(&fontLock, &mutexAttribute);
-    pthread_mutexattr_destroy(&mutexAttribute);
-}
-
-static pthread_once_t initFontLockControl = PTHREAD_ONCE_INIT;
-
-class FontLocker {
-    WTF_MAKE_NONCOPYABLE(FontLocker);
-public:
-    FontLocker()
-    {
-        pthread_once(&initFontLockControl, initFontCacheLockOnce);
-        int lockcode = pthread_mutex_lock(&fontLock);
-        ASSERT_WITH_MESSAGE_UNUSED(lockcode, !lockcode, "fontLock lock failed with code:%d", lockcode);    
-    }
-    ~FontLocker()
-    {
-        int lockcode = pthread_mutex_unlock(&fontLock);
-        ASSERT_WITH_MESSAGE_UNUSED(lockcode, !lockcode, "fontLock unlock failed with code:%d", lockcode);
-    }
-};
 #endif // PLATFORM(IOS)
 
 
@@ -232,7 +207,7 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
     const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities, bool checkingAlternateName)
 {
 #if PLATFORM(IOS)
-    FontLocker fontLocker;
+    auto locker = holdLock(fontLock);
 #endif
     
 #if OS(WINDOWS) && ENABLE(OPENTYPE_VERTICAL)
@@ -360,7 +335,7 @@ RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, co
 Ref<Font> FontCache::fontForPlatformData(const FontPlatformData& platformData)
 {
 #if PLATFORM(IOS)
-    FontLocker fontLocker;
+    auto locker = holdLock(fontLock);
 #endif
     
     auto addResult = cachedFonts().add(platformData, nullptr);
@@ -393,7 +368,7 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
     pruneSystemFallbackFonts();
 
 #if PLATFORM(IOS)
-    FontLocker fontLocker;
+    auto locker = holdLock(fontLock);
 #endif
 
     while (purgeCount) {
@@ -437,7 +412,7 @@ size_t FontCache::fontCount()
 size_t FontCache::inactiveFontCount()
 {
 #if PLATFORM(IOS)
-    FontLocker fontLocker;
+    auto locker = holdLock(fontLock);
 #endif
     unsigned count = 0;
     for (auto& font : cachedFonts().values()) {
