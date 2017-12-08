@@ -1,5 +1,25 @@
 2017-12-08  Youenn Fablet  <youenn@apple.com>
 
+        Service Worker should use a correct SessionID
+        https://bugs.webkit.org/show_bug.cgi?id=180585
+
+        Reviewed by Alex Christensen.
+
+        Store SessionID in SWServer and send it as part of service worker instantiation.
+        Use it when creating service worker thread in service worker process.
+
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::installServiceWorkerContext):
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::swServerForSession):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
+2017-12-08  Youenn Fablet  <youenn@apple.com>
+
         FetchResponse should keep unfiltered ResourceResponse so that it can be used in Service Worker
         https://bugs.webkit.org/show_bug.cgi?id=179641
         <rdar://problem/35923570>

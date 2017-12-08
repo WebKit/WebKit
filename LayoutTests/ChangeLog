@@ -1,5 +1,17 @@
 2017-12-08  Youenn Fablet  <youenn@apple.com>
 
+        Service Worker should use a correct SessionID
+        https://bugs.webkit.org/show_bug.cgi?id=180585
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/workers/service/serviceworker-private-browsing-worker.js: Added.
+        (async):
+        * http/tests/workers/service/serviceworker-private-browsing.https-expected.txt: Added.
+        * http/tests/workers/service/serviceworker-private-browsing.https.html: Added.
+
+2017-12-08  Youenn Fablet  <youenn@apple.com>
+
         FetchResponse should keep unfiltered ResourceResponse so that it can be used in Service Worker
         https://bugs.webkit.org/show_bug.cgi?id=179641
         <rdar://problem/35923570>

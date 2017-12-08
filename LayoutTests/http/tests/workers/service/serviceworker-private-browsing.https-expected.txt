@@ -1,0 +1,4 @@
+
+PASS Setup cache in regular session and service worker in private browsing session 
+PASS Test private browsing service worker has not access to regular cache storage 
+

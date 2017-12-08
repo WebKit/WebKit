@@ -1,0 +1,53 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+var scope = "my private backyard";
+var activeWorker;
+
+promise_test(async (test) => {
+    // Opening a cache and check that private browsing service worker does not have access to it.
+    self.caches.open("test");
+
+    if (!window.testRunner)
+       return Promise.reject("test requires internals API");
+    testRunner.setPrivateBrowsingEnabled(true);
+
+    var registration = await navigator.serviceWorker.getRegistration(scope);
+    if (registration && registration.scope === scope)
+        await registration.unregister();
+
+    var registration = await navigator.serviceWorker.register("serviceworker-private-browsing-worker.js", { scope : scope });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup cache in regular session and service worker in private browsing session");
+
+promise_test(async (test) => {
+    var promise = new Promise((resolve, reject) => {
+        navigator.serviceWorker.addEventListener("message", test.step_func((event) => {
+            if (event.data === "PASS") {
+                resolve();
+                return;
+            }
+            reject(event.data);
+        }));
+    });
+
+    activeWorker.postMessage("TESTCACHE");
+    await promise;
+
+}, "Test private browsing service worker has not access to regular cache storage");
+</script>
+</body>
+</html>

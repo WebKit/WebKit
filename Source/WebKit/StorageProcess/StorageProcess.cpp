@@ -420,7 +420,7 @@ SWServer& StorageProcess::swServerForSession(PAL::SessionID sessionID)
     // If there's not, then where did this PAL::SessionID come from?
     ASSERT(sessionID.isEphemeral() || !path.isEmpty());
 
-    result.iterator->value = std::make_unique<SWServer>(makeUniqueRef<WebSWOriginStore>(), path);
+    result.iterator->value = std::make_unique<SWServer>(makeUniqueRef<WebSWOriginStore>(), WTFMove(path), sessionID);
     return *result.iterator->value;
 }
 

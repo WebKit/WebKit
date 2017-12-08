@@ -99,12 +99,9 @@ void WebSWContextManagerConnection::updatePreferences(const WebPreferencesStore&
     RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::fetchAPIEnabledKey()));
 }
 
-void WebSWContextManagerConnection::installServiceWorker(const ServiceWorkerContextData& data)
+void WebSWContextManagerConnection::installServiceWorker(const ServiceWorkerContextData& data, SessionID sessionID)
 {
     LOG(ServiceWorker, "WebSWContextManagerConnection::installServiceWorker for worker %s", data.serviceWorkerIdentifier.loggingString().utf8().data());
-
-    // FIXME: Provide a sensical session ID.
-    auto sessionID = PAL::SessionID::defaultSessionID();
 
     PageConfiguration pageConfiguration {
         createEmptyEditorClient(),

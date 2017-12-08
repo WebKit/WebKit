@@ -23,7 +23,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 messages -> WebSWContextManagerConnection {
-    InstallServiceWorker(struct WebCore::ServiceWorkerContextData contextData)
+    InstallServiceWorker(struct WebCore::ServiceWorkerContextData contextData, PAL::SessionID sessionID)
     StartFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::ResourceRequest request, struct WebCore::FetchOptions options, IPC::FormDataReference requestBody)
     PostMessageToServiceWorkerFromClient(WebCore::ServiceWorkerIdentifier destinationIdentifier, IPC::DataReference message, struct WebCore::ServiceWorkerClientIdentifier sourceIdentifier, struct WebCore::ServiceWorkerClientData sourceData)
     PostMessageToServiceWorkerFromServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, IPC::DataReference message, struct WebCore::ServiceWorkerData sourceData)

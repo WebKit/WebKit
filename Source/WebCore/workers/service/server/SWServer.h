@@ -114,7 +114,7 @@ public:
         Vector<RegistrationReadyRequest> m_registrationReadyRequests;
     };
 
-    WEBCORE_EXPORT explicit SWServer(UniqueRef<SWOriginStore>&&, const String& registrationDatabaseDirectory);
+    WEBCORE_EXPORT SWServer(UniqueRef<SWOriginStore>&&, String&& registrationDatabaseDirectory, PAL::SessionID);
     WEBCORE_EXPORT ~SWServer();
 
     WEBCORE_EXPORT void clearAll();
@@ -224,6 +224,7 @@ private:
     RegistrationStore m_registrationStore;
     Deque<ServiceWorkerContextData> m_pendingContextDatas;
     HashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>> m_serviceWorkerRunRequests;
+    PAL::SessionID m_sessionID;
 };
 
 } // namespace WebCore

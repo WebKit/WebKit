@@ -197,9 +197,10 @@ void SWServer::Connection::syncTerminateWorker(ServiceWorkerIdentifier identifie
         m_server.syncTerminateWorker(*worker);
 }
 
-SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, const String& registrationDatabaseDirectory)
+    SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, String&& registrationDatabaseDirectory, PAL::SessionID sessionID)
     : m_originStore(WTFMove(originStore))
-    , m_registrationStore(*this, registrationDatabaseDirectory)
+    , m_registrationStore(*this, WTFMove(registrationDatabaseDirectory))
+    , m_sessionID(sessionID)
 {
     UNUSED_PARAM(registrationDatabaseDirectory);
     allServers().add(this);
@@ -463,7 +464,7 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
     auto result = m_runningOrTerminatingWorkers.add(data.serviceWorkerIdentifier, WTFMove(worker));
     ASSERT_UNUSED(result, result.isNewEntry);
 
-    connection->installServiceWorkerContext(data);
+    connection->installServiceWorkerContext(data, m_sessionID);
 }
 
 void SWServer::runServiceWorkerIfNecessary(ServiceWorkerIdentifier identifier, RunServiceWorkerCallback&& callback)
@@ -505,7 +506,7 @@ bool SWServer::runServiceWorker(ServiceWorkerIdentifier identifier)
 
     auto* connection = SWServerToContextConnection::globalServerToContextConnection();
     ASSERT(connection);
-    connection->installServiceWorkerContext(worker->contextData());
+    connection->installServiceWorkerContext(worker->contextData(), m_sessionID);
 
     return true;
 }

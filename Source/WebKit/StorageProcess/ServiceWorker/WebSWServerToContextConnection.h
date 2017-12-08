@@ -55,7 +55,7 @@ private:
     uint64_t messageSenderDestinationID() final;
 
     // Messages to the SW host WebProcess
-    void installServiceWorkerContext(const WebCore::ServiceWorkerContextData&) final;
+    void installServiceWorkerContext(const WebCore::ServiceWorkerContextData&, PAL::SessionID) final;
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier) final;
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier) final;
     void terminateWorker(WebCore::ServiceWorkerIdentifier) final;
