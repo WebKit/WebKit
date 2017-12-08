@@ -32,6 +32,7 @@ class SVGRootInlineBox;
 struct SVGTextFragment;
 
 class SVGInlineTextBox final : public InlineTextBox {
+    WTF_MAKE_ISO_ALLOCATED(SVGInlineTextBox);
 public:
     explicit SVGInlineTextBox(RenderSVGInlineText&);
 

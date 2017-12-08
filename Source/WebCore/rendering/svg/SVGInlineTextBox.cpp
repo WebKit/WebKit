@@ -36,8 +36,11 @@
 #include "SVGResourcesCache.h"
 #include "SVGRootInlineBox.h"
 #include "TextPainter.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGInlineTextBox);
 
 struct ExpectedSVGInlineTextBoxSize : public InlineTextBox {
     float float1;

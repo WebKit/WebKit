@@ -39,6 +39,7 @@ const unsigned short cNoTruncation = USHRT_MAX;
 const unsigned short cFullTruncation = USHRT_MAX - 1;
 
 class InlineTextBox : public InlineBox {
+    WTF_MAKE_ISO_ALLOCATED(InlineTextBox);
 public:
     explicit InlineTextBox(RenderText& renderer)
         : InlineBox(renderer)

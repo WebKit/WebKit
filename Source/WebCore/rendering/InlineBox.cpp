@@ -27,6 +27,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderLineBreak.h"
 #include "RootInlineBox.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(TREE_DEBUGGING)
@@ -34,6 +35,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(InlineBox);
 
 struct SameSizeAsInlineBox {
     virtual ~SameSizeAsInlineBox() = default;

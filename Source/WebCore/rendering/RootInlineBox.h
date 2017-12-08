@@ -37,6 +37,7 @@ struct BidiStatus;
 struct GapRects;
 
 class RootInlineBox : public InlineFlowBox {
+    WTF_MAKE_ISO_ALLOCATED(RootInlineBox);
 public:
     explicit RootInlineBox(RenderBlockFlow&);
     virtual ~RootInlineBox();

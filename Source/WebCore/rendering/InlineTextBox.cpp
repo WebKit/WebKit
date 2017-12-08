@@ -50,10 +50,13 @@
 #include "TextPaintStyle.h"
 #include "TextPainter.h"
 #include <stdio.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(InlineTextBox);
 
 struct SameSizeAsInlineTextBox : public InlineBox {
     unsigned variables[1];

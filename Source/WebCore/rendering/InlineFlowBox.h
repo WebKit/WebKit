@@ -38,6 +38,7 @@ struct GlyphOverflow;
 typedef HashMap<const InlineTextBox*, std::pair<Vector<const Font*>, GlyphOverflow>> GlyphOverflowAndFallbackFontsMap;
 
 class InlineFlowBox : public InlineBox {
+    WTF_MAKE_ISO_ALLOCATED(InlineFlowBox);
 public:
     explicit InlineFlowBox(RenderBoxModelObject& renderer)
         : InlineBox(renderer)

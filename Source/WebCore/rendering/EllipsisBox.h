@@ -28,6 +28,7 @@ class HitTestRequest;
 class HitTestResult;
 
 class EllipsisBox final : public InlineElementBox {
+    WTF_MAKE_ISO_ALLOCATED(EllipsisBox);
 public:
     EllipsisBox(RenderBlockFlow&, const AtomicString& ellipsisStr, InlineFlowBox* parent, int width, int height, int y, bool firstLine, bool isHorizontal, InlineBox* markupBox);
     void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "TrailingFloatsRootInlineBox.h"
 
-#include "InlineBox.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
-class InlineElementBox : public InlineBox {
-    WTF_MAKE_ISO_ALLOCATED(InlineElementBox);
-public:
-    explicit InlineElementBox(RenderBoxModelObject& renderer)
-        : InlineBox(renderer)
-    {
-    }
-
-    InlineElementBox(RenderObject& renderer, FloatPoint topLeft, float logicalWidth, bool firstLine, bool constructed, bool dirty, bool extracted, bool isHorizontal, InlineBox* next, InlineBox* prev, InlineFlowBox* parent)
-        : InlineBox(renderer, topLeft, logicalWidth, firstLine, constructed, dirty, extracted, isHorizontal, next, prev, parent)
-    {
-    }
-
-    RenderBoxModelObject& renderer() const { return downcast<RenderBoxModelObject>(InlineBox::renderer()); }
-
-    void deleteLine() final;
-    void extractLine() final;
-    void attachLine() final;
-
-    void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
-    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
-
-private:
-    bool isInlineElementBox() const final { return true; }
-};
+WTF_MAKE_ISO_ALLOCATED_IMPL(TrailingFloatsRootInlineBox);
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_INLINE_BOX(InlineElementBox, isInlineElementBox())

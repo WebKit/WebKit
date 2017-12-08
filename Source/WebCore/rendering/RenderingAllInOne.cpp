@@ -144,3 +144,4 @@
 #include "TextDecorationPainter.cpp"
 #include "TextPaintStyle.cpp"
 #include "TextPainter.cpp"
+#include "TrailingFloatsRootInlineBox.cpp"

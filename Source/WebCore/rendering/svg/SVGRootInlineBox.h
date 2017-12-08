@@ -31,6 +31,7 @@ class RenderSVGText;
 class SVGInlineTextBox;
 
 class SVGRootInlineBox final : public RootInlineBox {
+    WTF_MAKE_ISO_ALLOCATED(SVGRootInlineBox);
 public:
     explicit SVGRootInlineBox(RenderSVGText&);
 

@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class TrailingFloatsRootInlineBox final : public RootInlineBox {
+    WTF_MAKE_ISO_ALLOCATED(TrailingFloatsRootInlineBox);
 public:
     explicit TrailingFloatsRootInlineBox(RenderBlockFlow& blockFlow)
         : RootInlineBox(blockFlow)
