@@ -27,6 +27,7 @@
 
 #include <d3d9.h>
 #include <wtf/Forward.h>
+#include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 
 struct IDirect3DDevice9;
@@ -99,7 +100,7 @@ private:
 
     void createShaderIfNeeded();
 
-    Mutex m_mutex;
+    Lock m_lock;
     CComPtr<IDirect3DDevice9> m_d3dDevice;
     CARenderOGLContext* m_renderOGLContext { nullptr };
     CComPtr<IDirect3DPixelShader9> m_pixelShader;

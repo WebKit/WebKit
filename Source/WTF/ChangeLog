@@ -1,3 +1,14 @@
+2017-12-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use StaticLock and Lock instead of Mutex in Windows WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=180572
+
+        Reviewed by Mark Lam.
+
+        Remove DEPRECATED_DEFINE_STATIC_LOCAL since it's no longer used.
+
+        * wtf/StdLibExtras.h:
+
 2017-12-07  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Win] [64-bit] Resolve Microsoft warning C4319 on BitVector.cpp

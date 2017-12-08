@@ -119,7 +119,7 @@ CAD3DRenderer::CAD3DRenderer()
 
 CComPtr<IDirect3DSwapChain9> CAD3DRenderer::swapChain(CWindow window, const CGSize& size)
 {
-    MutexLocker lock(m_mutex);
+    auto locker = holdLock(m_lock);
 
     bool useDefaultSwapChain = false;
 
@@ -388,7 +388,7 @@ CAD3DRenderer::RenderResult CAD3DRenderer::renderAndPresent(const CGRect& bounds
     ASSERT_ARG(swapChain, swapChain);
     ASSERT_ARG(context, context);
 
-    MutexLocker lock(m_mutex);
+    auto locker = holdLock(m_lock);
 
     CGRect unusedDirtyRect;
     RenderResult result = renderInternal(bounds, swapChain, postProcessingContext, context, unusedDirtyRect, nextRenderTime);
@@ -428,7 +428,7 @@ CAD3DRenderer::RenderResult CAD3DRenderer::renderToImage(const CGRect& bounds, I
     ASSERT_ARG(swapChain, swapChain);
     ASSERT_ARG(context, context);
 
-    MutexLocker lock(m_mutex);
+    auto locker = holdLock(m_lock);
 
     CGRect dirtyRect;
     RenderResult result = renderInternal(bounds, swapChain, postProcessingContext, context, dirtyRect, nextRenderTime);
@@ -471,7 +471,7 @@ CAD3DRenderer::RenderResult CAD3DRenderer::renderToImage(const CGRect& bounds, I
 
 void CAD3DRenderer::setDeviceIsLost(bool lost)
 {
-    ASSERT_WITH_MESSAGE(!m_mutex.tryLock(), "m_mutex must be held when calling this function");
+    ASSERT_WITH_MESSAGE(!m_lock.tryLock(), "m_lock must be held when calling this function");
 
     if (m_deviceIsLost == lost)
         return;
@@ -494,7 +494,7 @@ CAD3DRenderer::RenderResult CAD3DRenderer::renderInternal(const CGRect& bounds, 
     ASSERT_ARG(swapChain, swapChain);
     ASSERT_ARG(context, context);
 
-    ASSERT_WITH_MESSAGE(!m_mutex.tryLock(), "m_mutex must be held when calling this function");
+    ASSERT_WITH_MESSAGE(!m_lock.tryLock(), "m_lock must be held when calling this function");
     ASSERT(m_d3dDevice);
     ASSERT(m_renderOGLContext);
 

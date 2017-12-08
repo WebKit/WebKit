@@ -33,6 +33,7 @@
 #include <QuartzCore/CARenderOGL.h>
 #include <d3d9.h>
 #include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/win/GDIObject.h>
@@ -43,40 +44,44 @@ namespace WKQCA {
 
 class CAView::Handle : public ThreadSafeRefCounted<Handle> {
 public:
-    static RefPtr<Handle> create(CAView* view) { return adoptRef(new Handle(view)); }
+    static Ref<Handle> create(CAView* view) { return adoptRef(*new Handle(view)); }
     ~Handle() { ASSERT(!m_view); }
 
-    Mutex& mutex() { return m_mutex; }
-    CAView* view() const { ASSERT_WITH_MESSAGE(!const_cast<Mutex&>(m_mutex).tryLock(), "CAView::Handle's mutex must be held when calling this function"); return m_view; }
-    void clear() { ASSERT_WITH_MESSAGE(!m_mutex.tryLock(), "CAView::Handle's mutex must be held when calling this function"); m_view = 0; }
+    Lock& lock() { return m_lock; }
+    CAView* view() const
+    {
+        ASSERT_WITH_MESSAGE(!const_cast<Lock&>(m_lock).tryLock(), "CAView::Handle's lock must be held when calling this function");
+        return m_view;
+    }
+
+    void clear()
+    {
+        ASSERT_WITH_MESSAGE(!m_lock.tryLock(), "CAView::Handle's lock must be held when calling this function");
+        m_view = nullptr;
+    }
 
 private:
     Handle(CAView* view)
     : m_view(view) { }
 
-    Mutex m_mutex;
+    Lock m_lock;
     CAView* m_view;
 };
 
-static Mutex& globalStateMutex()
-{
-    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, mutex, ());
-    return mutex;
-}
-
+static StaticLock globalStateLock;
 static HWND messageWindow;
 static const wchar_t messageWindowClassName[] = L"CAViewMessageWindow";
 
-static HashSet<RefPtr<CAView::Handle> >& views()
+static HashSet<Ref<CAView::Handle>>& views()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<RefPtr<CAView::Handle> >, views, ());
-    return views;
+    static NeverDestroyed<HashSet<Ref<CAView::Handle>>> views;
+    return views.get();
 }
 
-static HashSet<RefPtr<CAView::Handle> >& viewsNeedingUpdate()
+static HashSet<Ref<CAView::Handle>>& viewsNeedingUpdate()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<RefPtr<CAView::Handle> >, views, ());
-    return views;
+    static NeverDestroyed<HashSet<Ref<CAView::Handle>>> views;
+    return views.get();
 }
 
 static void registerMessageWindowClass()
@@ -101,44 +106,41 @@ static HWND createMessageWindow()
 
 void CAView::releaseAllD3DResources()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    static StaticLock lock;
 
-    if (!mutex.tryLock()) {
+    if (!lock.tryLock()) {
         // Another thread is currently releasing 3D resources.
         // Since it will also release resources for the view calling this method, we can just return early.
         return;
     }
 
-    Vector<RefPtr<Handle>> viewsToRelease;
-
+    Vector<Ref<Handle>> viewsToRelease;
     {
-        MutexLocker lock(globalStateMutex());
-        viewsToRelease = copyToVector(views());
+        auto locker = holdLock(globalStateLock);
+        viewsToRelease = WTF::map(views(), [] (auto& handle) { return handle.copyRef(); });
     }
 
-    for (size_t i = 0; i < viewsToRelease.size(); ++i) {
-        const RefPtr<Handle>& handle = viewsToRelease[i];
-        MutexLocker lock(handle->mutex());
+    for (auto& handle : viewsToRelease) {
+        auto locker = holdLock(handle->lock());
         CAView* view = handle->view();
         if (!view)
             continue;
-        MutexLocker viewLock(view->m_mutex);
+        auto viewLocker = holdLock(view->m_lock);
         view->m_swapChain = nullptr;
         view->m_d3dPostProcessingContext = nullptr;
     }
 
-    mutex.unlock();
+    lock.unlock();
 }
 
 inline CAView::CAView(DrawingDestination destination)
     : m_destination(destination)
     , m_handle(Handle::create(this))
     , m_context(adoptCF(CACFContextCreate(0)))
-    , m_bounds(CGRectZero)
 {
     {
-        MutexLocker lock(globalStateMutex());
-        views().add(m_handle);
+        auto locker = holdLock(globalStateLock);
+        views().add(m_handle.copyRef());
     }
 
     CARenderNotificationAddObserver(kCARenderContextDidChange, CACFContextGetRenderContext(m_context.get()), contextDidChangeCallback, this);
@@ -151,17 +153,17 @@ CAView::~CAView()
     m_layer = nullptr;
 
     {
-        MutexLocker lock(m_mutex);
+        auto locker = holdLock(m_lock);
         m_context = nullptr;
     }
 
-    // Avoid stopping the display link while we hold either m_mutex or m_displayLinkMutex, as doing
+    // Avoid stopping the display link while we hold either m_lock or m_displayLinkLock, as doing
     // so will wait for displayLinkReachedCAMediaTime to return and that function can take those
     // same mutexes.
     RefPtr<CVDisplayLink> linkToStop;
 
     {
-        MutexLocker lock(m_displayLinkMutex);
+        auto locker = holdLock(m_displayLinkLock);
         linkToStop = WTFMove(m_displayLink);
     }
 
@@ -171,13 +173,13 @@ CAView::~CAView()
     update(nullptr, CGRectZero);
 
     {
-        MutexLocker lock(m_handle->mutex());
+        auto locker = holdLock(m_handle->lock());
         m_handle->clear();
     }
 
-    MutexLocker lock(globalStateMutex());
+    auto locker = holdLock(globalStateLock);
 
-    views().remove(m_handle);
+    views().remove(m_handle.copyRef());
     if (!views().isEmpty())
         return;
 
@@ -205,14 +207,14 @@ void CAView::setLayer(CACFLayerRef layer)
 
     CACFLayerSetFrame(m_layer.get(), m_bounds);
 
-    MutexLocker lock(m_mutex);
+    auto locker = holdLock(m_lock);
     CACFContextSetLayer(m_context.get(), m_layer.get());
 }
 
 void CAView::update(CWindow window, const CGRect& bounds)
 {
     {
-        MutexLocker lock(globalStateMutex());
+        auto locker = holdLock(globalStateLock);
 
         // Ensure our message window is created on the thread that called CAView::update.
         if (!messageWindow)
@@ -223,13 +225,13 @@ void CAView::update(CWindow window, const CGRect& bounds)
         ASSERT(::GetCurrentThreadId() == CWindow(messageWindow).GetWindowThreadID());
         ASSERT(!window || ::GetCurrentThreadId() == window.GetWindowThreadID());
 
-        viewsNeedingUpdate().remove(m_handle);
+        viewsNeedingUpdate().remove(m_handle.copyRef());
     }
 
     bool boundsChanged;
 
     {
-        MutexLocker lock(m_mutex);
+        auto locker = holdLock(m_lock);
 
         boundsChanged = !CGRectEqualToRect(m_bounds, bounds);
 
@@ -292,13 +294,13 @@ void CAView::invalidateRects(const CGRect* rects, size_t count)
 
 void CAView::drawToWindow()
 {
-    MutexLocker lock(m_mutex);
+    auto locker = holdLock(m_lock);
     drawToWindowInternal();
 }
 
 void CAView::drawToWindowInternal()
 {
-    ASSERT_WITH_MESSAGE(!m_mutex.tryLock(), "m_mutex must be held when calling this function");
+    ASSERT_WITH_MESSAGE(!m_lock.tryLock(), "m_lock must be held when calling this function");
     CFTimeInterval nextDrawTime;
     bool unusedWillUpdateSoon;
     if (willDraw(unusedWillUpdateSoon))
@@ -315,7 +317,7 @@ RefPtr<Image> CAView::drawToImage(CGPoint& imageOrigin, CFTimeInterval& nextDraw
     imageOrigin = CGPointZero;
     nextDrawTime = numeric_limits<CFTimeInterval>::infinity();
 
-    MutexLocker lock(m_mutex);
+    auto locker = holdLock(m_lock);
 
     RefPtr<Image> image;
     bool willUpdateSoon;
@@ -334,7 +336,7 @@ RefPtr<Image> CAView::drawToImage(CGPoint& imageOrigin, CFTimeInterval& nextDraw
 
 bool CAView::willDraw(bool& willUpdateSoon)
 {
-    ASSERT_WITH_MESSAGE(!m_mutex.tryLock(), "m_mutex must be held when calling this function");
+    ASSERT_WITH_MESSAGE(!m_lock.tryLock(), "m_lock must be held when calling this function");
 
     willUpdateSoon = false;
 
@@ -431,7 +433,7 @@ void CAView::drawIntoDC(HDC dc)
     }
 
     {
-        MutexLocker lock(m_mutex);
+        auto locker = holdLock(m_lock);
 
         CARenderContext* renderContext = static_cast<CARenderContext*>(CACFContextGetRenderContext(m_context.get()));
         CARenderContextLock(renderContext);
@@ -456,13 +458,13 @@ void CAView::drawIntoDC(HDC dc)
 
 void CAView::setShouldInvertColors(bool shouldInvertColors)
 {
-    MutexLocker lock(m_mutex);
+    auto locker = holdLock(m_lock);
     m_shouldInvertColors = shouldInvertColors;
 }
 
 void CAView::scheduleNextDraw(CFTimeInterval mediaTime)
 {
-    MutexLocker lock(m_displayLinkMutex);
+    auto locker = holdLock(m_displayLinkLock);
 
     if (!m_context)
         return;
@@ -491,7 +493,7 @@ void CAView::displayLinkReachedCAMediaTime(CVDisplayLink* displayLink, CFTimeInt
     ASSERT(m_destination == DrawingDestinationWindow);
 
     {
-        MutexLocker lock(m_displayLinkMutex);
+        auto locker = holdLock(m_displayLinkLock);
         if (!m_displayLink)
             return;
         ASSERT_UNUSED(displayLink, displayLink == m_displayLink);
@@ -500,7 +502,7 @@ void CAView::displayLinkReachedCAMediaTime(CVDisplayLink* displayLink, CFTimeInt
             return;
     }
 
-    MutexLocker lock(m_mutex);
+    auto locker = holdLock(m_lock);
     drawToWindowInternal();
 }
 
@@ -517,7 +519,7 @@ void CAView::contextDidChangeCallback(void* object, void* info, void*)
 void CAView::contextDidChange()
 {
     {
-        MutexLocker lock(m_mutex);
+        auto locker = holdLock(m_lock);
 
         // Our layer's rendered appearance once again matches our bounds, so it's safe to draw.
         m_drawingProhibited = false;
@@ -534,8 +536,8 @@ void CAView::contextDidChange()
 void CAView::updateSoon()
 {
     {
-        MutexLocker lock(globalStateMutex());
-        viewsNeedingUpdate().add(m_handle);
+        auto locker = holdLock(globalStateLock);
+        viewsNeedingUpdate().add(m_handle.copyRef());
     }
     // It doesn't matter what timer ID we pass here, as long as it's nonzero.
     ASSERT(messageWindow);
@@ -547,30 +549,27 @@ void CAView::updateViewsNow(HWND window, UINT, UINT_PTR timerID, DWORD)
     ASSERT_ARG(window, window == messageWindow);
     ::KillTimer(window, timerID);
 
-    Vector<RefPtr<Handle>> viewsToUpdate;
-
+    HashSet<Ref<CAView::Handle>> viewsToUpdate;
     {
-        MutexLocker lock(globalStateMutex());
-        viewsToUpdate = copyToVector(viewsNeedingUpdate());
-        viewsNeedingUpdate().clear();
+        auto locker = holdLock(globalStateLock);
+        viewsNeedingUpdate().swap(viewsToUpdate);
     }
 
-    for (size_t i = 0; i < viewsToUpdate.size(); ++i) {
-        const RefPtr<Handle>& handle = viewsToUpdate[i];
-        MutexLocker lock(handle->mutex());
+    for (auto& handle : viewsToUpdate) {
+        auto locker = holdLock(handle->lock());
         CAView* view = handle->view();
         if (!view)
             continue;
-        MutexLocker viewLock(view->m_mutex);
+        auto viewLocker = holdLock(view->m_lock);
         view->update(view->m_window, view->m_bounds);
     }
 }
 
 IDirect3DDevice9* CAView::d3dDevice9()
 {
-    // Hold the mutex while we return the shared d3d device. The caller is responsible for retaining
+    // Hold the lock while we return the shared d3d device. The caller is responsible for retaining
     // the device before returning to ensure that it is not released.
-    MutexLocker lock(m_mutex);
+    auto locker = holdLock(m_lock);
 
     return CAD3DRenderer::shared().d3dDevice9();
 }

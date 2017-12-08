@@ -1,3 +1,51 @@
+2017-12-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use StaticLock and Lock instead of Mutex in Windows WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=180572
+
+        Reviewed by Mark Lam.
+
+        Use StaticLock and drop DEPRECATED_DEFINE_STATIC_LOCAL.
+        Also we use Lock instead of Mutex.
+
+        * WebKitQuartzCoreAdditions/CAD3DRenderer.cpp:
+        (WKQCA::CAD3DRenderer::swapChain):
+        (WKQCA::CAD3DRenderer::renderAndPresent):
+        (WKQCA::CAD3DRenderer::renderToImage):
+        (WKQCA::CAD3DRenderer::setDeviceIsLost):
+        (WKQCA::CAD3DRenderer::renderInternal):
+        * WebKitQuartzCoreAdditions/CAD3DRenderer.h:
+        * WebKitQuartzCoreAdditions/CAView.cpp:
+        (WKQCA::CAView::Handle::create):
+        Return Ref<Handle> instead of RefPtr<>.
+
+        (WKQCA::CAView::Handle::lock):
+        (WKQCA::CAView::Handle::view const):
+        (WKQCA::CAView::Handle::clear):
+        (WKQCA::views):
+        (WKQCA::viewsNeedingUpdate):
+        (WKQCA::CAView::releaseAllD3DResources):
+        (WKQCA::CAView::CAView):
+        (WKQCA::CAView::~CAView):
+        (WKQCA::CAView::setLayer):
+        (WKQCA::CAView::update):
+        (WKQCA::CAView::drawToWindow):
+        (WKQCA::CAView::drawToWindowInternal):
+        (WKQCA::CAView::drawToImage):
+        (WKQCA::CAView::willDraw):
+        (WKQCA::CAView::drawIntoDC):
+        (WKQCA::CAView::setShouldInvertColors):
+        (WKQCA::CAView::scheduleNextDraw):
+        (WKQCA::CAView::displayLinkReachedCAMediaTime):
+        (WKQCA::CAView::contextDidChange):
+        (WKQCA::CAView::updateSoon):
+        (WKQCA::CAView::updateViewsNow):
+        (WKQCA::CAView::d3dDevice9):
+        (WKQCA::CAView::Handle::mutex): Deleted.
+        (WKQCA::globalStateMutex): Deleted.
+        (): Deleted.
+        * WebKitQuartzCoreAdditions/CAView.h:
+
 2017-12-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use StaticLock instead of NeverDestroyed<Lock>

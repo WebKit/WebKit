@@ -34,14 +34,6 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Compiler.h>
 
-// This was used to declare and define a static local variable (static T;) so that
-//  it was leaked so that its destructors were not called at exit.
-// Newly written code should use static NeverDestroyed<T> instead.
-#ifndef DEPRECATED_DEFINE_STATIC_LOCAL
-#define DEPRECATED_DEFINE_STATIC_LOCAL(type, name, arguments) \
-    static type& name = *new type arguments
-#endif
-
 // Use this macro to declare and define a debug-only global variable that may have a
 // non-trivial constructor and destructor. When building with clang, this will suppress
 // warnings about global constructors and exit-time destructors.

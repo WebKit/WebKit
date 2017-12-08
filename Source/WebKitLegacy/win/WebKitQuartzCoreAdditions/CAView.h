@@ -103,23 +103,23 @@ private:
     DrawingDestination m_destination;
 
     // Only set in the constructor, then protected by its own Mutex.
-    RefPtr<Handle> m_handle;
+    Ref<Handle> m_handle;
 
     // Only accessed in API calls, the synchronization of which is the responsibility of the caller.
     RetainPtr<CACFLayerRef> m_layer;
     ContextDidChangeCallback m_contextDidChangeCallback;
 
-    Mutex m_mutex;
-    // Accessed by the display link thread, protected by m_mutex. (m_context isn't directly
+    Lock m_lock;
+    // Accessed by the display link thread, protected by m_lock. (m_context isn't directly
     // accessed from the display link thread, but its CARenderContext is.)
     RetainPtr<CACFContextRef> m_context;
     CWindow m_window;
-    CGRect m_bounds;
+    CGRect m_bounds { CGRectZero };
     CComPtr<IDirect3DSwapChain9> m_swapChain;
     std::unique_ptr<D3DPostProcessingContext> m_d3dPostProcessingContext;
 
-    Mutex m_displayLinkMutex;
-    // Accessed by the display link thread, protected by m_displayLinkMutex.
+    Lock m_displayLinkLock;
+    // Accessed by the display link thread, protected by m_displayLinkLock.
     RefPtr<CVDisplayLink> m_displayLink;
     CFTimeInterval m_nextDrawTime { 0 };
 
