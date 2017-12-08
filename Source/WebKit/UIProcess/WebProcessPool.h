@@ -487,9 +487,9 @@ private:
     IPC::MessageReceiverMap m_messageReceiverMap;
 
     Vector<RefPtr<WebProcessProxy>> m_processes;
-    bool m_haveInitialEmptyProcess;
+    bool m_haveInitialEmptyProcess { false };
 
-    WebProcessProxy* m_processWithPageCache;
+    WebProcessProxy* m_processWithPageCache { nullptr };
 #if ENABLE(SERVICE_WORKER)
     ServiceWorkerProcessProxy* m_serviceWorkerProcess { nullptr };
     bool m_waitingForWorkerContextProcessConnection { false };
@@ -514,9 +514,9 @@ private:
     PluginInfoStore m_pluginInfoStore;
 #endif
     Ref<VisitedLinkStore> m_visitedLinkStore;
-    bool m_visitedLinksPopulated;
+    bool m_visitedLinksPopulated { false };
 
-    PlugInAutoStartProvider m_plugInAutoStartProvider;
+    PlugInAutoStartProvider m_plugInAutoStartProvider { this };
         
     HashSet<String> m_schemesToRegisterAsEmptyDocument;
     HashSet<String> m_schemesToRegisterAsSecure;
@@ -529,8 +529,8 @@ private:
     HashSet<String> m_schemesToRegisterAsAlwaysRevalidated;
     HashSet<String> m_schemesToRegisterAsCachePartitioned;
 
-    bool m_alwaysUsesComplexTextCodePath;
-    bool m_shouldUseFontSmoothing;
+    bool m_alwaysUsesComplexTextCodePath { false };
+    bool m_shouldUseFontSmoothing { true };
 
     Vector<String> m_fontWhitelist;
 
@@ -538,8 +538,8 @@ private:
     // The client should use initialization messages instead, so that a restarted process would get the same state.
     Vector<std::pair<String, RefPtr<API::Object>>> m_messagesToInjectedBundlePostedToEmptyContext;
 
-    bool m_memorySamplerEnabled;
-    double m_memorySamplerInterval;
+    bool m_memorySamplerEnabled { false };
+    double m_memorySamplerInterval { 1400.0 };
 
     RefPtr<API::WebsiteDataStore> m_websiteDataStore;
 
@@ -565,12 +565,12 @@ private:
 
     String m_overrideCookieStorageDirectory;
 
-    bool m_shouldUseTestingNetworkSession;
+    bool m_shouldUseTestingNetworkSession { false };
 
-    bool m_processTerminationEnabled;
+    bool m_processTerminationEnabled { true };
 
-    bool m_canHandleHTTPSServerTrustEvaluation;
-    bool m_didNetworkProcessCrash;
+    bool m_canHandleHTTPSServerTrustEvaluation { true };
+    bool m_didNetworkProcessCrash { false };
     RefPtr<NetworkProcessProxy> m_networkProcess;
     RefPtr<StorageProcessProxy> m_storageProcess;
 
@@ -581,7 +581,7 @@ private:
     bool m_ignoreTLSErrors { true };
 #endif
 
-    bool m_memoryCacheDisabled;
+    bool m_memoryCacheDisabled { false };
     bool m_resourceLoadStatisticsEnabled { false };
     bool m_javaScriptConfigurationFileEnabled { false };
     bool m_alwaysRunsAtBackgroundPriority;

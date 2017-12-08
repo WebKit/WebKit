@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIWebsiteDataStore_h
-#define APIWebsiteDataStore_h
+#pragma once
 
 #include "APIHTTPCookieStore.h"
 #include "WebsiteDataStore.h"
@@ -49,7 +48,7 @@ public:
     bool resourceLoadStatisticsEnabled() const;
     void setResourceLoadStatisticsEnabled(bool);
 
-    WebKit::WebsiteDataStore& websiteDataStore() { return *m_websiteDataStore; }
+    WebKit::WebsiteDataStore& websiteDataStore() { return m_websiteDataStore.get(); }
     HTTPCookieStore& httpCookieStore();
 
     static String defaultApplicationCacheDirectory();
@@ -77,10 +76,8 @@ private:
     static String cacheDirectoryFileSystemRepresentation(const String& directoryName);
     static String websiteDataDirectoryFileSystemRepresentation(const String& directoryName);
 
-    RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;
+    Ref<WebKit::WebsiteDataStore> m_websiteDataStore;
     RefPtr<HTTPCookieStore> m_apiHTTPCookieStore;
 };
 
 }
-
-#endif // APIWebsiteDataStore_h
