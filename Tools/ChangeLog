@@ -1,3 +1,11 @@
+2017-12-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE build fix after r225671.
+
+        * WebKitTestRunner/InjectedBundle/wpe/TestRunnerWPE.cpp:
+        Include the ActivateFonts.h header to have a usable
+        WTR::installFakeHelvetica() function declaration.
+
 2017-12-07  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ and WPE build fix.

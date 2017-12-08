@@ -26,6 +26,8 @@
 #include "config.h"
 #include "TestRunner.h"
 
+#include "ActivateFonts.h"
+
 namespace WTR {
 
 JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef)
