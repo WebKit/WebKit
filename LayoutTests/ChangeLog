@@ -1,3 +1,15 @@
+2017-12-08  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Rebaseline tables/mozilla/bugs/bug32205-5.html.
+        https://bugs.webkit.org/show_bug.cgi?id=169010
+
+        Unreviewed test gardening.
+
+        The numbers changed by a few pixels in r213149.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/tables/mozilla/bugs/bug32205-5-expected.txt:
+
 2017-12-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS: Many AMP pages hit a release assertion inside Document::updateStyleIfNeeded
