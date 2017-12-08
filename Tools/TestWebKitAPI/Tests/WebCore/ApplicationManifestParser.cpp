@@ -206,8 +206,7 @@ TEST_F(ApplicationManifestParserTest, Display)
     testDisplay("\"standalone\"", ApplicationManifest::Display::Standalone);
     testDisplay("\"minimal-ui\"", ApplicationManifest::Display::MinimalUI);
     testDisplay("\"fullscreen\"", ApplicationManifest::Display::Fullscreen);
-
-    testDisplay("[\"\\tMINIMAL-ui\\t\"]", ApplicationManifest::Display::MinimalUI);
+    testDisplay("\"\t\nMINIMAL-UI \"", ApplicationManifest::Display::MinimalUI);
 }
 
 TEST_F(ApplicationManifestParserTest, Name)
@@ -284,6 +283,13 @@ TEST_F(ApplicationManifestParserTest, Scope)
 
     // It's fine if the document URL or manifest URL aren't within the application scope - only the start URL needs to be.
     testScope("\"https://example.com/other\"", String("https://example.com/other/start-url"), "https://example.com/other");
+}
+
+TEST_F(ApplicationManifestParserTest, Whitespace)
+{
+    auto manifest = parseString(ASCIILiteral("  { \"name\": \"PASS\" }\n"));
+
+    EXPECT_STREQ("PASS", manifest.name.utf8().data());
 }
 
 #endif

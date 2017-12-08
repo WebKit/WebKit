@@ -635,6 +635,31 @@ TEST(JSONValue, ParseJSON)
         EXPECT_FALSE(JSON::Value::parseJSON("[{\"foo\":\"bar\"},{\"baz\":false},]", value));
         EXPECT_FALSE(JSON::Value::parseJSON("[{\"foo\":{\"baz\":false}]", value));
     }
+
+    {
+        RefPtr<JSON::Value> value;
+        EXPECT_TRUE(JSON::Value::parseJSON(" \"foo\" \n", value));
+        String stringValue;
+        EXPECT_TRUE(value->asString(stringValue));
+        EXPECT_EQ("foo", stringValue);
+    }
+
+    {
+        RefPtr<JSON::Value> value;
+        EXPECT_TRUE(JSON::Value::parseJSON(" 1", value));
+        EXPECT_TRUE(JSON::Value::parseJSON("\t1", value));
+        EXPECT_TRUE(JSON::Value::parseJSON("\n1", value));
+        EXPECT_TRUE(JSON::Value::parseJSON("1 ", value));
+        EXPECT_TRUE(JSON::Value::parseJSON("1\t", value));
+        EXPECT_TRUE(JSON::Value::parseJSON("1\n", value));
+        EXPECT_TRUE(JSON::Value::parseJSON(" 1 ", value));
+        EXPECT_TRUE(JSON::Value::parseJSON(" {} ", value));
+        EXPECT_TRUE(JSON::Value::parseJSON(" [] ", value));
+
+        EXPECT_FALSE(JSON::Value::parseJSON("1 1", value));
+        EXPECT_FALSE(JSON::Value::parseJSON("{} {}", value));
+        EXPECT_FALSE(JSON::Value::parseJSON("[] []", value));
+    }
 }
 
 TEST(JSONValue, MemoryCost)

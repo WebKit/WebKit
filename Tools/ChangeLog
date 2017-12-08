@@ -1,3 +1,23 @@
+2017-12-08  David Quesada  <david_quesada@apple.com>
+
+        ApplicationManifestParser should strip whitespace from the raw input
+        https://bugs.webkit.org/show_bug.cgi?id=180539
+        rdar://problem/35915075
+
+        Reviewed by Joseph Pecoraro.
+
+        Added an API test for parsing manifests with surrounding whitespace.
+
+        Also drive-by fix ApplicationManifestParserTest.Display. Earlier versions of the
+        manifest spec explicitly stated that the "display" value should be treated as if
+        it were run through String.prototype.trim(), which allowed for the really weird
+        edge case of an array containing one string. This behavior was lost when I changed
+        ApplicationManifestParser's JSON parsing from using JavaScriptCore to WTF's JSON
+        parsing. Update the unit test accordingly.
+
+        * TestWebKitAPI/Tests/WebCore/ApplicationManifestParser.cpp:
+        (TEST_F):
+
 2017-12-08  Konstantin Tokarev  <annulen@yandex.ru>
 
         [python] Replace print operator with print() function for python3 compatibility
