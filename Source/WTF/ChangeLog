@@ -1,3 +1,18 @@
+2017-12-07  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Win] [64-bit] Resolve Microsoft warning C4319 on BitVector.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=180490
+
+        Reviewed by Alex Christensen.
+
+        bitsInPointer() returns unsigned which is smaller than size_t.
+        "~"(negate) operator is applied before extending its size which result filled with zero.
+        This may be potentially a bug if numBits is greater than max value of unsigned long
+        (which is not practical).
+
+        * wtf/BitVector.cpp:
+        (WTF::BitVector::OutOfLineBits::create):
+
 2017-12-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use WTF Locking primitives in WebThread and drop pthread_xxx use

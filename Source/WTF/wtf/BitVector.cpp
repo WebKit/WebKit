@@ -74,7 +74,7 @@ void BitVector::clearAll()
 
 BitVector::OutOfLineBits* BitVector::OutOfLineBits::create(size_t numBits)
 {
-    numBits = (numBits + bitsInPointer() - 1) & ~(bitsInPointer() - 1);
+    numBits = (numBits + bitsInPointer() - 1) & ~(static_cast<size_t>(bitsInPointer()) - 1);
     size_t size = sizeof(OutOfLineBits) + sizeof(uintptr_t) * (numBits / bitsInPointer());
     OutOfLineBits* result = new (NotNull, fastMalloc(size)) OutOfLineBits(numBits);
     return result;
