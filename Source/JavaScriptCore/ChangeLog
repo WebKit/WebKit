@@ -1,3 +1,13 @@
+2017-12-07  Per Arne Vollan  <pvollan@apple.com>
+
+        Use fastAlignedFree to free aligned memory.
+        https://bugs.webkit.org/show_bug.cgi?id=180540
+
+        Reviewed by Saam Barati.
+
+        * heap/IsoAlignedMemoryAllocator.cpp:
+        (JSC::IsoAlignedMemoryAllocator::~IsoAlignedMemoryAllocator):
+
 2017-12-07  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r225634.

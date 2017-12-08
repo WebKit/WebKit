@@ -38,7 +38,7 @@ IsoAlignedMemoryAllocator::~IsoAlignedMemoryAllocator()
         void* block = m_blocks[i];
         if (!m_committed[i])
             OSAllocator::commit(block, MarkedBlock::blockSize, true, false);
-        fastFree(block);
+        fastAlignedFree(block);
     }
 }
 
