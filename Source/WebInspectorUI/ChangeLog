@@ -1,3 +1,18 @@
+2017-12-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Don't require perl(File::Copy::Recursive)
+        https://bugs.webkit.org/show_bug.cgi?id=180479
+
+        Reviewed by Konstantin Tokarev.
+
+        If File::Copy::Recursive is not installed, there is currently a Darwin
+        fallback to the ditto command. That doesn't exist on Linux, but we can
+        emulate it by running 'cp -R' on everything in the source directory.
+        This should probably work everywhere except Windows.
+
+        * Scripts/copy-user-interface-resources.pl:
+        (ditto):
+
 2017-12-07  Eric Carlson  <eric.carlson@apple.com>
 
         Simplify log channel configuration UI
