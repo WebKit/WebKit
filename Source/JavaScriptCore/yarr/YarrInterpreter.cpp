@@ -408,6 +408,9 @@ public:
 
     bool checkCharacterClass(CharacterClass* characterClass, bool invert, unsigned negativeInputOffset)
     {
+        if (characterClass->m_anyCharacter)
+            return !invert;
+
         bool match = testCharacterClass(characterClass, input.readChecked(negativeInputOffset));
         return invert ? !match : match;
     }

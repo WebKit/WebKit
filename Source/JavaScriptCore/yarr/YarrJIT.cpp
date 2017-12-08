@@ -1171,7 +1171,7 @@ class YarrGenerator : private MacroAssembler {
         readCharacter(m_checkedOffset - term->inputPosition, character);
         // If we are matching the "any character" builtin class we only need to read the
         // character and don't need to match as it will always succeed.
-        if (term->invert() || term->characterClass != m_pattern.anyCharacterClass()) {
+        if (term->invert() || !term->characterClass->m_anyCharacter) {
             matchCharacterClass(character, matchDest, term->characterClass);
 
             if (term->invert())
@@ -1220,7 +1220,7 @@ class YarrGenerator : private MacroAssembler {
         readCharacter(m_checkedOffset - term->inputPosition - term->quantityMaxCount, character, countRegister);
         // If we are matching the "any character" builtin class we only need to read the
         // character and don't need to match as it will always succeed.
-        if (term->invert() || term->characterClass != m_pattern.anyCharacterClass()) {
+        if (term->invert() || !term->characterClass->m_anyCharacter) {
             matchCharacterClass(character, matchDest, term->characterClass);
 
             if (term->invert())
@@ -1272,7 +1272,7 @@ class YarrGenerator : private MacroAssembler {
             readCharacter(m_checkedOffset - term->inputPosition, character);
             // If we are matching the "any character" builtin class we only need to read the
             // character and don't need to match as it will always succeed.
-            if (term->characterClass != m_pattern.anyCharacterClass()) {
+            if (!term->characterClass->m_anyCharacter) {
                 matchCharacterClass(character, matchDest, term->characterClass);
                 failures.append(jump());
             }
@@ -1378,7 +1378,7 @@ class YarrGenerator : private MacroAssembler {
         readCharacter(m_checkedOffset - term->inputPosition, character);
         // If we are matching the "any character" builtin class we only need to read the
         // character and don't need to match as it will always succeed.
-        if (term->invert() || term->characterClass != m_pattern.anyCharacterClass()) {
+        if (term->invert() || !term->characterClass->m_anyCharacter) {
             matchCharacterClass(character, matchDest, term->characterClass);
 
             if (term->invert())

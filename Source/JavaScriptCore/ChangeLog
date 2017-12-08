@@ -1,3 +1,42 @@
+2017-12-08  Michael Saboff  <msaboff@apple.com>
+
+        YARR: Coalesce constructed character classes
+        https://bugs.webkit.org/show_bug.cgi?id=180537
+
+        Reviewed by JF Bastien.
+
+        When adding characters or character ranges to a character class being constructed,
+        we now coalesce adjacent characters and character ranges.  When we create a
+        character class after construction is complete, we do a final coalescing pass
+        across the character list and ranges to catch any remaining coalescing
+        opportunities.
+
+        Added an optimization for character classes that will match any character.
+        This is somewhat common in code created before the /s (dotAll) flag was added
+        to the engine.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::checkCharacterClass):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generateCharacterClassOnce):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassFixed):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassNonGreedy):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::CharacterClassConstructor::CharacterClassConstructor):
+        (JSC::Yarr::CharacterClassConstructor::reset):
+        (JSC::Yarr::CharacterClassConstructor::charClass):
+        (JSC::Yarr::CharacterClassConstructor::addSorted):
+        (JSC::Yarr::CharacterClassConstructor::addSortedRange):
+        (JSC::Yarr::CharacterClassConstructor::mergeRangesFrom):
+        (JSC::Yarr::CharacterClassConstructor::coalesceTables):
+        (JSC::Yarr::CharacterClassConstructor::anyCharacter):
+        (JSC::Yarr::YarrPatternConstructor::atomCharacterClassEnd):
+        (JSC::Yarr::PatternTerm::dump):
+        (JSC::Yarr::anycharCreate):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::CharacterClass::CharacterClass):
+
 2017-12-07  Saam Barati  <sbarati@apple.com>
 
         Modify our dollar VM clflush intrinsic to aid in some perf testing
