@@ -27,8 +27,7 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include <pal/Logger.h>
-#include <pal/LoggerHelper.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -40,7 +39,7 @@ class SourceBuffer;
 class TrackBase
     : public RefCounted<TrackBase>
 #if !RELEASE_LOG_DISABLED
-    , private PAL::LoggerHelper
+    , private LoggerHelper
 #endif
 {
 public:
@@ -75,7 +74,7 @@ public:
     virtual bool enabled() const = 0;
 
 #if !RELEASE_LOG_DISABLED
-    const PAL::Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
+    const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 #endif
@@ -97,7 +96,7 @@ private:
     AtomicString m_language;
     AtomicString m_validBCP47Language;
 #if !RELEASE_LOG_DISABLED
-    RefPtr<const PAL::Logger> m_logger;
+    RefPtr<const Logger> m_logger;
     const void* m_logIdentifier;
 #endif
 };

@@ -35,7 +35,6 @@
 #import <AVFoundation/AVPlayerItem.h>
 #import <AVFoundation/AVPlayerItemTrack.h>
 #import <objc/runtime.h>
-#import <pal/Logger.h>
 #import <wtf/SoftLinking.h>
 
 @class AVMediaSelectionOption;

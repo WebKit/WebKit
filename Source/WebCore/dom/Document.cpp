@@ -213,7 +213,6 @@
 #include <ctime>
 #include <inspector/ConsoleMessage.h>
 #include <inspector/ScriptCallStack.h>
-#include <pal/Logger.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>

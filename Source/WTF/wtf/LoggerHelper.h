@@ -25,9 +25,9 @@
 
 #pragma once
 
-namespace PAL {
+#include <wtf/Logger.h>
 
-class Logger;
+namespace WTF {
 
 class LoggerHelper {
 public:
@@ -38,10 +38,9 @@ public:
     virtual WTFLogChannel& logChannel() const = 0;
     virtual const void* logIdentifier() const = 0;
 
-
 #if !RELEASE_LOG_DISABLED
 
-#define LOGIDENTIFIER PAL::Logger::LogSiteIdentifier(logClassName(), __func__, logIdentifier())
+#define LOGIDENTIFIER WTF::Logger::LogSiteIdentifier(logClassName(), __func__, logIdentifier())
 
 #define ALWAYS_LOG(...)     logger().logAlways(logChannel(), __VA_ARGS__)
 #define ERROR_LOG(...)      logger().error(logChannel(), __VA_ARGS__)
@@ -68,4 +67,7 @@ public:
     
 };
 
-} // namespace PAL
+} // namespace WTF
+
+using WTF::LoggerHelper;
+

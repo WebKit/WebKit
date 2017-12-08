@@ -1,3 +1,14 @@
+2017-12-08  Eric Carlson  <eric.carlson@apple.com>
+
+        Move Logger from PAL to WTF so it can be used outside of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=180561
+
+        Reviewed by Alex Christensen.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/Logger.h: Removed.
+        * pal/LoggerHelper.h: Removed.
+
 2017-12-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Add SPI to disallow user-installed fonts

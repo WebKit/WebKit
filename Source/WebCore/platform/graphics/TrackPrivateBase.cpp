@@ -33,7 +33,7 @@
 namespace WebCore {
 
 #if !RELEASE_LOG_DISABLED
-void TrackPrivateBase::setLogger(const PAL::Logger& logger, const void* logIdentifier)
+void TrackPrivateBase::setLogger(const Logger& logger, const void* logIdentifier)
 {
     m_logger = &logger;
     m_logIdentifier = logIdentifier;

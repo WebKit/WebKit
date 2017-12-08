@@ -50,7 +50,7 @@ WTF::String convertEnumerationToString(MediaPlayerEnums::NetworkState);
 } // namespace WebCore
 
 
-namespace PAL {
+namespace WTF {
 
 template<typename Type>
 struct LogArgument;
@@ -71,4 +71,4 @@ struct LogArgument<WebCore::MediaPlayerEnums::NetworkState> {
     }
 };
 
-}; // namespace PAL
+}; // namespace WTF

@@ -29,7 +29,6 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "InbandTextTrackPrivateClient.h"
-#include <pal/Logger.h>
 
 namespace WebCore {
 

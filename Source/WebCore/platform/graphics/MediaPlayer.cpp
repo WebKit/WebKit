@@ -92,9 +92,9 @@ namespace WebCore {
 const PlatformMedia NoPlatformMedia = { PlatformMedia::None, {0} };
 
 #if !RELEASE_LOG_DISABLED
-static RefPtr<PAL::Logger>& nullLogger()
+static RefPtr<Logger>& nullLogger()
 {
-    static NeverDestroyed<RefPtr<PAL::Logger>> logger;
+    static NeverDestroyed<RefPtr<Logger>> logger;
     return logger;
 }
 #endif
@@ -172,10 +172,10 @@ public:
 class NullMediaPlayerClient : public MediaPlayerClient {
 public:
 #if !RELEASE_LOG_DISABLED
-    const PAL::Logger& mediaPlayerLogger() final
+    const Logger& mediaPlayerLogger() final
     {
         if (!nullLogger().get()) {
-            nullLogger() = PAL::Logger::create(this);
+            nullLogger() = Logger::create(this);
             nullLogger()->setEnabled(this, false);
         }
 
@@ -1503,7 +1503,7 @@ bool MediaPlayer::shouldCheckHardwareSupport() const
 }
 
 #if !RELEASE_LOG_DISABLED
-const PAL::Logger& MediaPlayer::mediaPlayerLogger()
+const Logger& MediaPlayer::mediaPlayerLogger()
 {
     return client().mediaPlayerLogger();
 }

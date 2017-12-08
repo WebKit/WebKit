@@ -25,14 +25,12 @@
 
 #include "config.h"
 #include "WTFStringUtilities.h"
-#include <pal/Logger.h>
-#include <pal/LoggerHelper.h>
 #include <wtf/Assertions.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/MainThread.h>
 
 #define LOG_CHANNEL_PREFIX Test
 
-using namespace PAL;
 using namespace WTF;
 
 const char* logTestingSubsystem = "com.webkit.testing";

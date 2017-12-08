@@ -35,6 +35,7 @@
 #include "HTMLMediaElement.h"
 
 namespace WebCore {
+using namespace WTF;
 
 static int s_uniqueId = 0;
 
@@ -45,9 +46,9 @@ static const void* nextLogIdentifier()
     return reinterpret_cast<const void*>(++logIdentifier);
 }
 
-static RefPtr<PAL::Logger>& nullLogger()
+static RefPtr<Logger>& nullLogger()
 {
-    static NeverDestroyed<RefPtr<PAL::Logger>> logger;
+    static NeverDestroyed<RefPtr<Logger>> logger;
     return logger;
 }
 #endif
@@ -64,7 +65,7 @@ TrackBase::TrackBase(Type type, const AtomicString& id, const AtomicString& labe
 
 #if !RELEASE_LOG_DISABLED
     if (!nullLogger().get()) {
-        nullLogger() = PAL::Logger::create(this);
+        nullLogger() = Logger::create(this);
         nullLogger()->setEnabled(this, false);
     }
 

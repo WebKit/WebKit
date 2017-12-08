@@ -44,11 +44,11 @@
 #include "SecurityOriginHash.h"
 #include "Timer.h"
 #include "VideoTrackPrivate.h"
-#include <pal/Logger.h>
 #include <runtime/Uint8Array.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
+#include <wtf/Logger.h>
 #include <wtf/MediaTime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
@@ -303,7 +303,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     virtual const void* mediaPlayerLogIdentifier() { return nullptr; }
-    virtual const PAL::Logger& mediaPlayerLogger() = 0;
+    virtual const Logger& mediaPlayerLogger() = 0;
 #endif
 };
 
@@ -633,7 +633,7 @@ public:
     bool shouldCheckHardwareSupport() const;
 
 #if !RELEASE_LOG_DISABLED
-    const PAL::Logger& mediaPlayerLogger();
+    const Logger& mediaPlayerLogger();
     const void* mediaPlayerLogIdentifier() { return client().mediaPlayerLogIdentifier(); }
 #endif
 
@@ -689,14 +689,14 @@ public:
 
 } // namespace WebCore
 
-namespace PAL {
+namespace WTF {
 
 template<typename Type>
 struct LogArgument;
 
 template <>
-struct LogArgument<WTF::MediaTime> {
-    static String toString(const WTF::MediaTime& time)
+struct LogArgument<MediaTime> {
+    static String toString(const MediaTime& time)
     {
         return time.toString();
     }

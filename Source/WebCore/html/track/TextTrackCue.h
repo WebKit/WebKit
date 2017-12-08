@@ -121,7 +121,7 @@ private:
 
 } // namespace WebCore
 
-namespace PAL {
+namespace WTF {
 
 template<typename Type>
 struct LogArgument;
@@ -133,7 +133,6 @@ struct LogArgument<WebCore::TextTrackCue> {
         return cue.toString();
     }
 };
-
 
 }
 

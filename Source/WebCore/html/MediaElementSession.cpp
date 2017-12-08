@@ -845,7 +845,7 @@ bool MediaElementSession::willLog(WTFLogLevel level) const
 }
 
 #if !RELEASE_LOG_DISABLED
-const PAL::Logger& MediaElementSession::logger() const
+const Logger& MediaElementSession::logger() const
 {
     return m_element.logger();
 }

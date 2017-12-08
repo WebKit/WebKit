@@ -108,7 +108,7 @@ const DataCue* toDataCue(const TextTrackCue*);
 
 } // namespace WebCore
 
-namespace PAL {
+namespace WTF {
 
 template<typename Type>
 struct LogArgument;

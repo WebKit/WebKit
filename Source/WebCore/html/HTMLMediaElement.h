@@ -39,8 +39,8 @@
 #include "MediaPlayer.h"
 #include "MediaProducer.h"
 #include "VisibilityChangeClient.h"
-#include <pal/LoggerHelper.h>
 #include <wtf/Function.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/WeakPtr.h>
 
 #if ENABLE(VIDEO_TRACK)
@@ -66,7 +66,6 @@
 #endif
 
 namespace PAL {
-class Logger;
 class SleepDisabler;
 }
 
@@ -141,7 +140,7 @@ class HTMLMediaElement
     , private CDMClient
 #endif
 #if !RELEASE_LOG_DISABLED
-    , public PAL::LoggerHelper
+    , private LoggerHelper
 #endif
 {
 public:
@@ -540,7 +539,7 @@ public:
     bool supportsSeeking() const override;
 
 #if !RELEASE_LOG_DISABLED
-    const PAL::Logger& logger() const final { return *m_logger.get(); }
+    const Logger& logger() const final { return *m_logger.get(); }
     const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
     WTFLogChannel& logChannel() const final;
 #endif
@@ -906,7 +905,7 @@ private:
     const char* logClassName() const final { return "HTMLMediaElement"; }
 
     const void* mediaPlayerLogIdentifier() final { return logIdentifier(); }
-    const PAL::Logger& mediaPlayerLogger() final { return logger(); }
+    const Logger& mediaPlayerLogger() final { return logger(); }
 #endif
 
     WeakPtrFactory<HTMLMediaElement> m_weakFactory;
@@ -1127,7 +1126,7 @@ private:
     size_t m_reportedExtraMemoryCost { 0 };
 
 #if !RELEASE_LOG_DISABLED
-    RefPtr<PAL::Logger> m_logger;
+    RefPtr<Logger> m_logger;
     uint64_t m_logIdentifier;
 #endif
 

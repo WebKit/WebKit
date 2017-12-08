@@ -171,6 +171,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		077CD86A1FD9CFD200828587 /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
+		077CD86B1FD9CFD300828587 /* LoggerHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerHelper.h; sourceTree = "<group>"; };
 		0F0D85B317234CB100338210 /* NoLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NoLock.h; sourceTree = "<group>"; };
 		0F0F52691F421FF8004A452C /* StringMalloc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StringMalloc.cpp; sourceTree = "<group>"; };
 		0F0F526A1F421FF8004A452C /* StringMalloc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StringMalloc.h; sourceTree = "<group>"; };
@@ -908,6 +910,8 @@
 				0F60F32E1DFCBD1B00416D6C /* LockedPrintStream.h */,
 				A8A472C3151A825A004123FF /* Locker.h */,
 				5311BD551EA7E15A00525281 /* LocklessBag.h */,
+				077CD86A1FD9CFD200828587 /* Logger.h */,
+				077CD86B1FD9CFD300828587 /* LoggerHelper.h */,
 				513E170A1CD7D5BF00E3650B /* LoggingAccumulator.h */,
 				0F30BA8C1E78708E002CA847 /* LoggingHashID.h */,
 				0F30BA8D1E78708E002CA847 /* LoggingHashMap.h */,

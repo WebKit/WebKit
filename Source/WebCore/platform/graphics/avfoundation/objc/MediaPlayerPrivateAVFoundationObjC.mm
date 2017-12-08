@@ -3370,7 +3370,7 @@ NSArray* playerKVOProperties()
 
 #if !RELEASE_LOG_DISABLED
     if (m_callback->logger().willLog(m_callback->logChannel(), WTFLogLevelDebug) && !([keyPath isEqualToString:@"loadedTimeRanges"] || [keyPath isEqualToString:@"seekableTimeRanges"])) {
-        auto identifier = PAL::Logger::LogSiteIdentifier("MediaPlayerPrivateAVFoundation", "observeValueForKeyPath", m_callback->logIdentifier());
+        auto identifier = Logger::LogSiteIdentifier("MediaPlayerPrivateAVFoundation", "observeValueForKeyPath", m_callback->logIdentifier());
 
         if (shouldLogValue) {
             if ([keyPath isEqualToString:@"duration"])

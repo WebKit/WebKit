@@ -51,12 +51,12 @@
 #include "UserActionElementSet.h"
 #include "ViewportArguments.h"
 #include "VisibilityState.h"
-#include <pal/Logger.h>
 #include <pal/SessionID.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
+#include <wtf/Logger.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomicStringHash.h>
@@ -313,7 +313,7 @@ class Document
     , public FontSelectorClient
     , public FrameDestructionObserver
     , public Supplementable<Document>
-    , public PAL::Logger::Observer {
+    , public Logger::Observer {
 public:
     static Ref<Document> create(Frame* frame, const URL& url)
     {
@@ -1371,7 +1371,7 @@ public:
     TextAutoSizing& textAutoSizing();
 #endif
 
-    PAL::Logger& logger();
+    Logger& logger();
 
     void hasStorageAccess(Ref<DeferredPromise>&& passedPromise);
     void requestStorageAccess(Ref<DeferredPromise>&& passedPromise);
@@ -1855,7 +1855,7 @@ private:
 
     OrientationNotifier m_orientationNotifier;
     mutable PAL::SessionID m_sessionID;
-    mutable RefPtr<PAL::Logger> m_logger;
+    mutable RefPtr<Logger> m_logger;
     RefPtr<StringCallback> m_consoleMessageListener;
 
     static bool hasEverCreatedAnAXObjectCache;

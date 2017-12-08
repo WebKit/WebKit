@@ -1,3 +1,31 @@
+2017-12-08  Eric Carlson  <eric.carlson@apple.com>
+
+        Move Logger from PAL to WTF so it can be used outside of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=180561
+
+        Reviewed by Alex Christensen.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Logger.h: Copied from Source/WebCore/PAL/pal/Logger.h.
+        (PAL::LogArgument::toString): Deleted.
+        (PAL::Logger::create): Deleted.
+        (PAL::Logger::logAlways const): Deleted.
+        (PAL::Logger::error const): Deleted.
+        (PAL::Logger::warning const): Deleted.
+        (PAL::Logger::info const): Deleted.
+        (PAL::Logger::debug const): Deleted.
+        (PAL::Logger::willLog const): Deleted.
+        (PAL::Logger::enabled const): Deleted.
+        (PAL::Logger::setEnabled): Deleted.
+        (PAL::Logger::LogSiteIdentifier::LogSiteIdentifier): Deleted.
+        (PAL::Logger::addObserver): Deleted.
+        (PAL::Logger::removeObserver): Deleted.
+        (PAL::Logger::Logger): Deleted.
+        (PAL::Logger::log): Deleted.
+        (PAL::Logger::observers): Deleted.
+        (PAL::LogArgument<Logger::LogSiteIdentifier>::toString): Deleted.
+        * wtf/LoggerHelper.h: Copied from Source/WebCore/PAL/pal/LoggerHelper.h.
+
 2017-12-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove pthread_once in favor of dispatch_once

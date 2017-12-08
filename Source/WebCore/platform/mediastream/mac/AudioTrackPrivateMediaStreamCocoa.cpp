@@ -31,7 +31,6 @@
 #include "AudioSession.h"
 #include "CAAudioStreamDescription.h"
 #include "Logging.h"
-#include <pal/Logger.h>
 
 #include <pal/cf/CoreMediaSoftLink.h>
 

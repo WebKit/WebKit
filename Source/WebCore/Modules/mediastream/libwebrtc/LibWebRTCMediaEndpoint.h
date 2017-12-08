@@ -32,12 +32,11 @@
 #include "RealtimeOutgoingAudioSource.h"
 #include "RealtimeOutgoingVideoSource.h"
 #include <Timer.h>
-#include <pal/Logger.h>
-#include <pal/LoggerHelper.h>
 #include <webrtc/api/jsep.h>
 #include <webrtc/api/peerconnectioninterface.h>
 #include <webrtc/pc/peerconnectionfactory.h>
 #include <webrtc/pc/rtcstatscollector.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace webrtc {
@@ -62,7 +61,7 @@ class LibWebRTCMediaEndpoint
     , private webrtc::PeerConnectionObserver
     , private webrtc::RTCStatsCollectorCallback
 #if !RELEASE_LOG_DISABLED
-    , public PAL::LoggerHelper
+    , private LoggerHelper
 #endif
 {
 public:
@@ -134,7 +133,7 @@ private:
     bool shouldOfferAllowToReceiveVideo() const;
 
 #if !RELEASE_LOG_DISABLED
-    const PAL::Logger& logger() const final { return m_logger.get(); }
+    const Logger& logger() const final { return m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
     const char* logClassName() const final { return "LibWebRTCMediaEndpoint"; }
     WTFLogChannel& logChannel() const final;
@@ -213,14 +212,14 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     int64_t m_statsFirstDeliveredTimestamp { 0 };
-    Ref<const PAL::Logger> m_logger;
+    Ref<const Logger> m_logger;
     const void* m_logIdentifier;
 #endif
 };
 
 } // namespace WebCore
 
-namespace PAL {
+namespace WTF {
 
 template<typename Type>
 struct LogArgument;
@@ -233,6 +232,6 @@ struct LogArgument<webrtc::RTCStats> {
     }
 };
 
-}; // namespace PAL
+}; // namespace WTF
 
 #endif // USE(LIBWEBRTC)

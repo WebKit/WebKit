@@ -42,7 +42,7 @@ String convertEnumerationToString(RTCIceConnectionState); // in JSCRTCIceConnect
 
 }; // namespace WebCore
 
-namespace PAL {
+namespace WTF {
 
 template<typename Type>
 struct LogArgument;
@@ -55,6 +55,6 @@ struct LogArgument<WebCore::RTCIceConnectionState> {
     }
 };
 
-}; // namespace PAL
+}; // namespace WTF
 
 #endif

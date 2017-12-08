@@ -33,7 +33,7 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL {
+namespace WTF {
 
 template<typename T>
 struct LogArgument {
@@ -221,4 +221,6 @@ struct LogArgument<Logger::LogSiteIdentifier> {
     }
 };
 
-} // namespace PAL
+} // namespace WTF
+
+using WTF::Logger;

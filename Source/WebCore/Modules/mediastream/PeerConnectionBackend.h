@@ -37,8 +37,7 @@
 #include "RTCRtpParameters.h"
 #include "RTCSessionDescription.h"
 #include "RTCSignalingState.h"
-#include <pal/Logger.h>
-#include <pal/LoggerHelper.h>
+#include <wtf/LoggerHelper.h>
 
 namespace WebCore {
 
@@ -67,7 +66,7 @@ using CreatePeerConnectionBackend = std::unique_ptr<PeerConnectionBackend> (*)(R
 
 class PeerConnectionBackend
 #if !RELEASE_LOG_DISABLED
-    : public PAL::LoggerHelper
+    : private LoggerHelper
 #endif
 {
 public:
@@ -120,7 +119,7 @@ public:
     virtual void applyRotationForOutgoingVideoSources() { }
 
 #if !RELEASE_LOG_DISABLED
-    const PAL::Logger& logger() const final { return m_logger.get(); }
+    const Logger& logger() const final { return m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
     const char* logClassName() const override { return "PeerConnectionBackend"; }
     WTFLogChannel& logChannel() const final;
@@ -176,7 +175,7 @@ private:
     Vector<PendingICECandidate> m_pendingICECandidates;
 
 #if !RELEASE_LOG_DISABLED
-    Ref<const PAL::Logger> m_logger;
+    Ref<const Logger> m_logger;
     const void* m_logIdentifier;
 #endif
     bool m_negotiationNeeded { false };

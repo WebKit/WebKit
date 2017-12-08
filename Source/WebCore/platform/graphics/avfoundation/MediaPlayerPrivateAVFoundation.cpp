@@ -42,7 +42,6 @@
 #include "URL.h"
 #include <CoreMedia/CoreMedia.h>
 #include <heap/HeapInlines.h>
-#include <pal/Logger.h>
 #include <runtime/DataView.h>
 #include <runtime/TypedArrayInlines.h>
 #include <runtime/Uint16Array.h>

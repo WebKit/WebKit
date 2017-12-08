@@ -32,7 +32,7 @@
 #include "PlatformMediaSession.h"
 #include "SuccessOr.h"
 #include "Timer.h"
-#include <pal/LoggerHelper.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -54,9 +54,9 @@ class SourceBuffer;
 
 class MediaElementSession final : public PlatformMediaSession
 #if !RELEASE_LOG_DISABLED
-    , public PAL::LoggerHelper
+    , private LoggerHelper
 #endif
-    {
+{
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit MediaElementSession(HTMLMediaElement&);
@@ -149,7 +149,7 @@ public:
     }
 
 #if !RELEASE_LOG_DISABLED
-    const PAL::Logger& logger() const final;
+    const Logger& logger() const final;
     const void* logIdentifier() const final;
     const char* logClassName() const final { return "MediaElementSession"; }
     WTFLogChannel& logChannel() const final;

@@ -63,7 +63,7 @@ String convertEnumerationToString(HTMLMediaElementEnums::NetworkState);
 
 } // namespace WebCore
 
-namespace PAL {
+namespace WTF {
 
 template<typename Type>
 struct LogArgument;
@@ -84,5 +84,5 @@ struct LogArgument<WebCore::HTMLMediaElementEnums::NetworkState> {
     }
 };
 
-}; // namespace PAL
+}; // namespace WTF
 

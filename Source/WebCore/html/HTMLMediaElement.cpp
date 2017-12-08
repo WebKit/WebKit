@@ -88,7 +88,6 @@
 #include "UserContentController.h"
 #include "UserGestureIndicator.h"
 #include <limits>
-#include <pal/Logger.h>
 #include <pal/SessionID.h>
 #include <pal/system/SleepDisabler.h>
 #include <runtime/Uint8Array.h>
@@ -166,7 +165,7 @@
 #include "VideoFullscreenModel.h"
 #endif
 
-namespace PAL {
+namespace WTF {
 template <>
 struct LogArgument<WebCore::URL> {
     static String toString(const WebCore::URL& url)
