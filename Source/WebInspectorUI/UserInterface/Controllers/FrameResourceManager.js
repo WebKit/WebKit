@@ -43,7 +43,7 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
         }
 
         if (window.ServiceWorkerAgent)
-            ServiceWorkerAgent.getInitializationInfo(this._processServiceWorkerInitializationInfo.bind(this));
+            ServiceWorkerAgent.getInitializationInfo(this._processServiceWorkerConfiguration.bind(this));
 
         if (window.NetworkAgent)
             NetworkAgent.enable();
@@ -458,7 +458,7 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
         let elapsedTime = WI.timelineManager.computeElapsedTime(timestamp);
         resource.markAsFailed(canceled, elapsedTime, errorText);
 
-        if (resource === resource.parentFrame.provisionalMainResource)
+        if (resource.parentFrame && resource === resource.parentFrame.provisionalMainResource)
             resource.parentFrame.clearProvisionalLoad();
 
         this._resourceRequestIdentifierMap.delete(requestIdentifier);
@@ -534,6 +534,7 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
             }
         } else {
             // This is a new request for a new frame, which is always the main resource.
+            console.assert(WI.sharedApp.debuggableType !== WI.DebuggableType.ServiceWorker);
             console.assert(!targetId);
             resource = new WI.Resource(url, null, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, elapsedTime, walltime, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp);
             frame = new WI.Frame(frameIdentifier, frameName, frameSecurityOrigin, loaderIdentifier, resource);
@@ -628,7 +629,7 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
         return sourceCode.createSourceCodeLocation(lineNumber, columnNumber);
     }
 
-    _processServiceWorkerInitializationInfo(error, initializationPayload)
+    _processServiceWorkerConfiguration(error, initializationPayload)
     {
         console.assert(this._waitingForMainFrameResourceTreePayload);
         this._waitingForMainFrameResourceTreePayload = false;
@@ -642,6 +643,19 @@ WI.FrameResourceManager = class FrameResourceManager extends WI.Object
 
         WI.mainTarget.identifier = initializationPayload.targetId;
         WI.mainTarget.name = initializationPayload.url;
+
+        // Create a main resource with this content in case the content never shows up as a WI.Script.
+        const type = WI.Script.SourceType.Program;
+        let script = new WI.LocalScript(WI.mainTarget, initializationPayload.url, type, initializationPayload.content);
+        WI.mainTarget.mainResource = script;
+
+        InspectorBackend.runAfterPendingDispatches(() => {
+            if (WI.mainTarget.mainResource === script) {
+                // We've now received all the scripts, if we don't have a better main resource use this LocalScript.
+                WI.debuggerManager.dataForTarget(WI.mainTarget).addScript(script);
+                WI.debuggerManager.dispatchEventToListeners(WI.DebuggerManager.Event.ScriptAdded, {script});
+            }
+        });
     }
 
     _processMainFrameResourceTreePayload(error, mainFramePayload)

@@ -51,6 +51,14 @@ WI.TextRange = class TextRange
         }
     }
 
+    // Static
+
+    static fromText(text)
+    {
+        let lines = text.split("\n");
+        return new WI.TextRange(0, 0, lines.length - 1, lines.lastValue.length);
+    }
+
     // Public
 
     get startLine() { return this._startLine; }
@@ -152,5 +160,4 @@ WI.TextRange = class TextRange
 
         return this.cloneAndModify(-line, deltaStartColumn, -line, deltaEndColumn);
     }
-
 };

@@ -140,8 +140,10 @@ WI.SourceMapResource = class SourceMapResource extends WI.Resource
         if (this._sourceMap.originalSourceCode instanceof WI.Resource && this._sourceMap.originalSourceCode.parentFrame)
             frameIdentifier = this._sourceMap.originalSourceCode.parentFrame.id;
 
-        if (!frameIdentifier)
+        if (!frameIdentifier && WI.frameResourceManager.mainFrame)
             frameIdentifier = WI.frameResourceManager.mainFrame.id;
+        else
+            frameIdentifier = "";
 
         return NetworkAgent.loadResource(frameIdentifier, this.url).then(sourceMapResourceLoaded.bind(this)).catch(sourceMapResourceLoadError.bind(this));
     }

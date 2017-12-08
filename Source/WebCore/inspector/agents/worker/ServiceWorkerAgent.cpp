@@ -52,12 +52,13 @@ void ServiceWorkerAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReas
 {
 }
 
-void ServiceWorkerAgent::getInitializationInfo(ErrorString&, RefPtr<Inspector::Protocol::ServiceWorker::InitializationInfo>& info)
+void ServiceWorkerAgent::getInitializationInfo(ErrorString&, RefPtr<Inspector::Protocol::ServiceWorker::Configuration>& info)
 {
-    info = Inspector::Protocol::ServiceWorker::InitializationInfo::create()
+    info = Inspector::Protocol::ServiceWorker::Configuration::create()
         .setTargetId(m_serviceWorkerGlobalScope.identifier())
         .setSecurityOrigin(m_serviceWorkerGlobalScope.securityOrigin()->toRawString())
         .setUrl(m_serviceWorkerGlobalScope.thread().contextData().scriptURL)
+        .setContent(m_serviceWorkerGlobalScope.thread().contextData().script)
         .release();
 }
 

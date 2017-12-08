@@ -136,8 +136,10 @@ WI.SourceMapManager = class SourceMapManager extends WI.Object
         if (originalSourceCode instanceof WI.Resource && originalSourceCode.parentFrame)
             frameIdentifier = originalSourceCode.parentFrame.id;
 
-        if (!frameIdentifier)
+        if (!frameIdentifier && WI.frameResourceManager.mainFrame)
             frameIdentifier = WI.frameResourceManager.mainFrame.id;
+        else
+            frameIdentifier = "";
 
         NetworkAgent.loadResource(frameIdentifier, sourceMapURL, sourceMapLoaded.bind(this));
     }

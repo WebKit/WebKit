@@ -4,13 +4,14 @@
     "availability": ["service-worker"],
     "types": [
         {
-            "id": "InitializationInfo",
+            "id": "Configuration",
             "type": "object",
             "description": "ServiceWorker metadata and initial state.",
             "properties": [
                 { "name": "targetId", "type": "string" },
                 { "name": "securityOrigin", "type": "string" },
-                { "name": "url", "type": "string", "description": "ServiceWorker main script URL." }
+                { "name": "url", "type": "string", "description": "ServiceWorker main script URL." },
+                { "name": "content", "type": "string", "description": "ServiceWorker main script content." }
             ]
         }
     ],
@@ -19,7 +20,7 @@
             "name": "getInitializationInfo",
             "description": "Returns the initialization information for this target.",
             "returns": [
-                { "name": "info", "$ref": "InitializationInfo" }
+                { "name": "info", "$ref": "Configuration" }
             ]
         }
     ]

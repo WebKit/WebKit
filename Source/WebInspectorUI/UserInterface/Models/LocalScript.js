@@ -23,37 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+WI.LocalScript = class LocalScript extends WI.Script
+{
+    constructor(target, url, sourceType, text)
+    {
+        super(target, null, WI.TextRange.fromText(text), url, sourceType);
 
-#if ENABLE(SERVICE_WORKER)
+        this._text = text;
+    }
 
-#include "InspectorWebAgentBase.h"
-#include <inspector/InspectorBackendDispatchers.h>
+    // Public
 
-namespace WebCore {
-
-class ServiceWorkerGlobalScope;
-
-typedef String ErrorString;
-
-class ServiceWorkerAgent final : public InspectorAgentBase, public Inspector::ServiceWorkerBackendDispatcherHandler {
-    WTF_MAKE_NONCOPYABLE(ServiceWorkerAgent);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit ServiceWorkerAgent(WorkerAgentContext&);
-    virtual ~ServiceWorkerAgent() = default;
-
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) final;
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) final;
-
-    // ServiceWorkerBackendDispatcherHandler
-    void getInitializationInfo(ErrorString&, RefPtr<Inspector::Protocol::ServiceWorker::Configuration>&) final;
-
-private:
-    ServiceWorkerGlobalScope& m_serviceWorkerGlobalScope;
-    RefPtr<Inspector::ServiceWorkerBackendDispatcher> m_backendDispatcher;
+    requestContentFromBackend()
+    {
+        return Promise.resolve({scriptSource: this._text});
+    }
 };
-
-} // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

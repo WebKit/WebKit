@@ -1,3 +1,14 @@
+2017-12-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ServiceWorker Inspector: Various issues inspecting service worker on mobile.twitter.com
+        https://bugs.webkit.org/show_bug.cgi?id=180520
+        <rdar://problem/35900764>
+
+        Reviewed by Brian Burg.
+
+        * inspector/protocol/ServiceWorker.json:
+        Include content script content in the initialization info.
+
 2017-12-08  Konstantin Tokarev  <annulen@yandex.ru>
 
         [python] Replace print operator with print() function for python3 compatibility

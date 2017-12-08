@@ -710,11 +710,18 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         targetData.addScript(script);
 
-        if (!target.mainResource && (target !== WI.mainResource || WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker)) {
-            // FIXME: <https://webkit.org/b/164427> Web Inspector: WorkerTarget's mainResource should be a Resource not a Script
-            // We make the main resource of a WorkerTarget the Script instead of the Resource
-            // because the frontend may not be informed of the Resource. We should guarantee
-            // the frontend is informed of the Resource.
+        // FIXME: <https://webkit.org/b/164427> Web Inspector: WorkerTarget's mainResource should be a Resource not a Script
+        // We make the main resource of a WorkerTarget the Script instead of the Resource
+        // because the frontend may not be informed of the Resource. We should guarantee
+        // the frontend is informed of the Resource.
+        if (WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker) {
+            // A ServiceWorker starts with a LocalScript for the main resource but we can replace it during initialization.
+            if (target.mainResource instanceof WI.LocalScript) {
+                if (script.url === target.name)
+                    target.mainResource = script;
+            }
+        } else if (!target.mainResource && target !== WI.mainTarget) {
+            // A Worker starts without a main resource and we insert one.
             if (script.url === target.name) {
                 target.mainResource = script;
                 if (script.resource)
@@ -734,7 +741,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         this.dispatchEventToListeners(WI.DebuggerManager.Event.ScriptAdded, {script});
 
-        if (target !== WI.mainTarget && !script.isMainResource() && !script.resource)
+        if ((target !== WI.mainTarget || WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker) && !script.isMainResource() && !script.resource)
             target.addScript(script);
     }
 

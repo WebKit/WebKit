@@ -1174,7 +1174,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         if (this._sourceCode instanceof WI.Resource)
             return this._sourceCode.type === WI.Resource.Type.Document || this._sourceCode.type === WI.Resource.Type.Script;
         if (this._sourceCode instanceof WI.Script)
-            return true;
+            return !(this._sourceCode instanceof WI.LocalScript);
         return false;
     }
 

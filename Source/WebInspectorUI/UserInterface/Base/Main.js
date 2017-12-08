@@ -810,17 +810,20 @@ WI.openURL = function(url, frame, options = {})
         return;
     }
 
-    var searchChildFrames = false;
+    let searchChildFrames = false;
     if (!frame) {
         frame = this.frameResourceManager.mainFrame;
         searchChildFrames = true;
     }
 
-    console.assert(frame);
-
-    // WI.Frame.resourceForURL does not check the main resource, only sub-resources. So check both.
+    let resource;
     let simplifiedURL = removeURLFragment(url);
-    var resource = frame.url === simplifiedURL ? frame.mainResource : frame.resourceForURL(simplifiedURL, searchChildFrames);
+    if (frame) {
+        // WI.Frame.resourceForURL does not check the main resource, only sub-resources. So check both.
+        resource = frame.url === simplifiedURL ? frame.mainResource : frame.resourceForURL(simplifiedURL, searchChildFrames);
+    } else if (WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker)
+        resource = WI.mainTarget.resourceCollection.resourceForURL(removeURLFragment(url));
+
     if (resource) {
         let positionToReveal = new WI.SourceCodePosition(options.lineNumber, 0);
         this.showSourceCode(resource, Object.shallowMerge(options, {positionToReveal}));
