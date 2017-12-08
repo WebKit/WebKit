@@ -228,7 +228,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
         if (resourceLoader->options().serviceWorkersMode == ServiceWorkersMode::Only) {
             callOnMainThread([resourceLoader = WTFMove(resourceLoader)] {
                 auto error = internalError(resourceLoader->request().url());
-                error.setType(ResourceError::Type::AccessControl);
+                error.setType(ResourceError::Type::Cancellation);
                 resourceLoader->didFail(error);
             });
             return;

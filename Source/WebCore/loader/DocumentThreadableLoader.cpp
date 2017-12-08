@@ -405,7 +405,7 @@ void DocumentThreadableLoader::didFail(unsigned long, const ResourceError& error
 {
     ASSERT(m_client);
 #if ENABLE(SERVICE_WORKER)
-    if (m_bypassingPreflightForServiceWorkerRequest && error.isAccessControl()) {
+    if (m_bypassingPreflightForServiceWorkerRequest && error.isCancellation()) {
         clearResource();
 
         m_options.serviceWorkersMode = ServiceWorkersMode::None;
