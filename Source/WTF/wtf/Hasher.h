@@ -51,7 +51,7 @@ public:
     template<typename... Types> friend uint32_t computeHash(const Types&... values)
     {
         Hasher hasher;
-        add(hasher, std::forward_as_tuple(values...));
+        addArgs(hasher, values...);
         return hasher.m_underlyingHasher.hash();
     }
 
@@ -59,7 +59,7 @@ public:
     {
         Hasher hasher;
         add(hasher, list);
-        add(hasher, std::forward_as_tuple(otherLists...));
+        addArgs(hasher, otherLists...);
         return hasher.m_underlyingHasher.hash();
     }
 
@@ -113,9 +113,19 @@ template<typename Container> std::enable_if_t<HasBeginFunctionMember<Container>:
         add(hasher, value);
 }
 
+inline void addArgs(Hasher&)
+{
+}
+
+template<typename Arg, typename ...Args> void addArgs(Hasher& hasher, const Arg& arg, const Args&... args)
+{
+    add(hasher, arg);
+    addArgs(hasher, args...);
+}
+
 template<typename Tuple, std::size_t ...i> void addTupleHelper(Hasher& hasher, const Tuple& values, std::index_sequence<i...>)
 {
-    [] (...) { }((add(hasher, std::get<i>(values)), 0)...);
+    addArgs(hasher, std::get<i>(values)...);
 }
 
 template<typename... Types> void add(Hasher& hasher, const std::tuple<Types...>& tuple)
@@ -148,7 +158,7 @@ template<typename T1, typename T2, typename... OtherTypes> void add(Hasher& hash
 {
     add(hasher, value1);
     add(hasher, value2);
-    add(hasher, std::forward_as_tuple(otherValues...));
+    addArgs(hasher, otherValues...);
 }
 
 template<typename T> void add(Hasher& hasher, std::initializer_list<T> values)

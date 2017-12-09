@@ -169,6 +169,7 @@ TEST(WTF, Hasher_multiple)
     EXPECT_EQ(zero32BitHash, computeHash(Vector<int> { 0 }));
     EXPECT_EQ(zero32BitHash, computeHash(Vector<int, 1> { 0 }));
     EXPECT_EQ(zero32BitHash, computeHash(std::optional<int> { std::nullopt }));
+    EXPECT_EQ(zero32BitHash, computeHash(std::make_tuple(0)));
 
     EXPECT_EQ(one64BitHash, computeHash(1, 0));
     EXPECT_EQ(one64BitHash, computeHash(std::make_tuple(1, 0)));

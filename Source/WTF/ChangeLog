@@ -1,5 +1,35 @@
 2017-12-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Fix WTF::Hasher tuple expansion with variadic args
+        https://bugs.webkit.org/show_bug.cgi?id=180623
+
+        Reviewed by JF Bastien.
+
+        We expand a tuple with `...`, and use this in a function's argument list.
+        And in this argument list, we call `add()` for each value. This will be
+        expanded as follows.
+
+            [] (...) { }((add(hasher, std::get<i>(values)), 0)...);
+
+        will become,
+
+            [] (...) { }((add(hasher, std::get<0>(values)), 0), (add(hasher, std::get<1>(values)), 0), ...);
+
+        However, the evaluation order of the C++ argument is unspecified. Actually,
+        in GCC environment, this `add()` is not called in our expected order. As a
+        result, currently we have test failures in TestWTF.
+
+        This patch just uses variadic templates to expand tuples, and call add() in
+        our expected order. This patch fixes an existing failure of TestWTF in GCC environment.
+
+        * wtf/Hasher.h:
+        (WTF::Hasher::computeHash):
+        (WTF::addArgs):
+        (WTF::addTupleHelper):
+        (WTF::add):
+
+2017-12-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Use relaxed constexpr for StringHasher
         https://bugs.webkit.org/show_bug.cgi?id=180622
 
