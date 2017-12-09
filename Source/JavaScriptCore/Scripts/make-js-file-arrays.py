@@ -21,6 +21,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import print_function
 import io
 import os
 from optparse import OptionParser
@@ -60,11 +61,11 @@ def main():
     inputPaths = arguments[2:]
 
     headerFile = open(headerPath, 'w')
-    print >> headerFile, 'namespace {0:s} {{'.format(namespace)
+    print('namespace {0:s} {{'.format(namespace), file=headerFile)
 
     sourceFile = open(sourcePath, 'w')
-    print >> sourceFile, '#include "{0:s}"'.format(os.path.basename(headerPath))
-    print >> sourceFile, 'namespace {0:s} {{'.format(namespace)
+    print('#include "{0:s}"'.format(os.path.basename(headerPath)), file=sourceFile)
+    print('namespace {0:s} {{'.format(namespace), file=sourceFile)
 
     jsm = JavascriptMinify()
 
@@ -81,17 +82,17 @@ def main():
         size = len(characters)
         variableName = os.path.splitext(os.path.basename(inputFileName))[0]
 
-        print >> headerFile, 'extern const char {0:s}JavaScript[{1:d}];'.format(variableName, size)
-        print >> sourceFile, 'const char {0:s}JavaScript[{1:d}] = {{'.format(variableName, size)
+        print('extern const char {0:s}JavaScript[{1:d}];'.format(variableName, size), file=headerFile)
+        print('const char {0:s}JavaScript[{1:d}] = {{'.format(variableName, size), file=sourceFile)
 
         codepoints = map(ord, characters)
         for codepointChunk in chunk(codepoints, 16):
-            print >> sourceFile, '    {0:s},'.format(','.join(map(stringifyCodepoint, codepointChunk)))
+            print('    {0:s},'.format(','.join(map(stringifyCodepoint, codepointChunk))), file=sourceFile)
 
-        print >> sourceFile, '};'
+        print('};', file=sourceFile)
 
-    print >> headerFile, '}} // namespace {0:s}'.format(namespace)
-    print >> sourceFile, '}} // namespace {0:s}'.format(namespace)
+    print('}} // namespace {0:s}'.format(namespace), file=headerFile)
+    print('}} // namespace {0:s}'.format(namespace), file=sourceFile)
 
 if __name__ == '__main__':
     main()

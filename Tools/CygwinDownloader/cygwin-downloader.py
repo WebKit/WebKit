@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import os, random, sys, time, urllib
 
 #
@@ -21,14 +22,14 @@ def download_progress_hook(block_count, block_size, total_blocks):
 
 def download_url_to_file(url, file, message):
         if not quiet:
-                print message + " ",
+                print(message + " ", end=' ')
         if not dry_run:
                 dir = os.path.dirname(file)
                 if len(dir) and not os.path.exists(dir):
                     os.makedirs(dir)
                 urllib.urlretrieve(url, file, download_progress_hook)
         if not quiet:
-                print
+                print()
  
 # This is mostly just the list of North America http mirrors from http://cygwin.com/mirrors.html,
 # but a few have been removed that seemed unresponsive from Cupertino.
@@ -79,7 +80,7 @@ required_packages_versions = {"curl": "7.33.0-1",
 # Main
 #
 
-print "Using Cygwin mirror server " + package_mirror_url + " to download setup.ini..."
+print("Using Cygwin mirror server " + package_mirror_url + " to download setup.ini...")
 
 urllib.urlretrieve(package_mirror_url + "x86/setup.ini", "setup.ini.orig")
 
@@ -150,19 +151,19 @@ download_url_to_file("http://cygwin.com/setup-x86.exe", "setup.exe", "Downloadin
 
 seconds_to_sleep = 10
 
-print """
+print("""
 Finished downloading Cygwin. In %d seconds,
 I will run setup.exe. All the suitable options have
 been already selected for you.
-""" % (seconds_to_sleep)
+""" % (seconds_to_sleep))
 
 
 while seconds_to_sleep > 0:
-        print "%d..." % seconds_to_sleep,
+        print("%d..." % seconds_to_sleep, end=' ')
         sys.stdout.flush()
         time.sleep(1)
         seconds_to_sleep -= 1
-print
+print()
 
 if not dry_run:
         os.execv("setup.exe", list(("-L", "-l", os.getcwd(), "-P", ",".join(required_packages))))

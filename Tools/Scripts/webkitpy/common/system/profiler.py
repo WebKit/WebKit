@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import print_function
 import logging
 import re
 import itertools
@@ -169,7 +170,7 @@ class Perf(SingleFileOutputProfiler):
         # Return early if the process produced non-zero exit code or is still running (if it couldn't be killed).
         exit_code = self._wait_process.poll()
         if exit_code is not 0:
-            print "'perf record' failed, ",
+            print("'perf record' failed, ", end=' ')
             if exit_code:
                 print("exit code was %i." % exit_code)
             else:

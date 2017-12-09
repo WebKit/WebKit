@@ -29,6 +29,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import print_function
 import fnmatch
 import logging
 import re
@@ -74,7 +75,7 @@ class BugsToCommit(Command):
         # FIXME: This command is poorly named.  It's fetching the commit-queue list here.  The name implies it's fetching pending-commit (all r+'d patches).
         bug_ids = tool.bugs.queries.fetch_bug_ids_from_commit_queue()
         for bug_id in bug_ids:
-            print "%s" % bug_id
+            print("%s" % bug_id)
 
 
 class PatchesInCommitQueue(Command):
@@ -85,7 +86,7 @@ class PatchesInCommitQueue(Command):
         patches = tool.bugs.queries.fetch_patches_from_commit_queue()
         _log.info("Patches in commit queue:")
         for patch in patches:
-            print patch.url()
+            print(patch.url())
 
 
 class PatchesToCommitQueue(Command):
@@ -117,10 +118,10 @@ class PatchesToCommitQueue(Command):
             bugs_needing_cq = map(lambda patch: patch.bug_id(), patches_needing_cq)
             bugs_needing_cq = sorted(set(bugs_needing_cq))
             for bug_id in bugs_needing_cq:
-                print "%s" % tool.bugs.bug_url_for_bug_id(bug_id)
+                print("%s" % tool.bugs.bug_url_for_bug_id(bug_id))
         else:
             for patch in patches_needing_cq:
-                print "%s" % tool.bugs.attachment_url_for_id(patch.id(), action="edit")
+                print("%s" % tool.bugs.attachment_url_for_id(patch.id(), action="edit"))
 
 
 class PatchesToReview(Command):
@@ -140,15 +141,15 @@ class PatchesToReview(Command):
 
     def _print_report(self, report, cc_email, print_all):
         if print_all:
-            print "Bugs with attachments pending review:"
+            print("Bugs with attachments pending review:")
         else:
-            print "Bugs with attachments pending review that has %s in the CC list:" % cc_email
+            print("Bugs with attachments pending review that has %s in the CC list:" % cc_email)
 
-        print "http://webkit.org/b/bugid   Description (age in days)"
+        print("http://webkit.org/b/bugid   Description (age in days)")
         for row in report:
-            print "%s (%d)" % (row[1], row[0])
+            print("%s (%d)" % (row[1], row[0]))
 
-        print "Total: %d" % len(report)
+        print("Total: %d" % len(report))
 
     def _generate_report(self, bugs, include_cq_denied):
         report = []
@@ -182,7 +183,7 @@ class WhatBroke(Command):
     help_text = "Print failing buildbots (%s) and what revisions broke them" % config_urls.buildbot_url
 
     def _print_builder_line(self, builder_name, max_name_width, status_message):
-        print "%s : %s" % (builder_name.ljust(max_name_width), status_message)
+        print("%s : %s" % (builder_name.ljust(max_name_width), status_message))
 
     def _print_blame_information_for_builder(self, builder_status, name_width, avoid_flakey_tests=True):
         builder = self._tool.buildbot.builder_with_name(builder_status["name"])
@@ -203,9 +204,9 @@ class WhatBroke(Command):
         for revision in revisions:
             commit_info = self._tool.checkout().commit_info_for_revision(revision)
             if commit_info:
-                print commit_info.blame_string(self._tool.bugs)
+                print(commit_info.blame_string(self._tool.bugs))
             else:
-                print "FAILED to fetch CommitInfo for r%s, likely missing ChangeLog" % revision
+                print("FAILED to fetch CommitInfo for r%s, likely missing ChangeLog" % revision)
 
     def execute(self, options, args, tool):
         builder_statuses = tool.buildbot.builder_statuses()
@@ -218,9 +219,9 @@ class WhatBroke(Command):
             self._print_blame_information_for_builder(builder_status, name_width=longest_builder_name)
             failing_builders += 1
         if failing_builders:
-            print "%s of %s are failing" % (failing_builders, pluralize(len(builder_statuses), "builder"))
+            print("%s of %s are failing" % (failing_builders, pluralize(len(builder_statuses), "builder")))
         else:
-            print "All builders are passing!"
+            print("All builders are passing!")
 
 
 class ResultsFor(Command):
@@ -230,17 +231,17 @@ class ResultsFor(Command):
 
     def _print_layout_test_results(self, results):
         if not results:
-            print " No results."
+            print(" No results.")
             return
         for title, files in results.parsed_results().items():
-            print " %s" % title
+            print(" %s" % title)
             for filename in files:
-                print "  %s" % filename
+                print("  %s" % filename)
 
     def execute(self, options, args, tool):
         builders = self._tool.buildbot.builders()
         for builder in builders:
-            print "%s:" % builder.name()
+            print("%s:" % builder.name())
             build = builder.build_for_revision(args[0], allow_failed_lookups=True)
             self._print_layout_test_results(build.layout_test_results())
 
@@ -261,44 +262,44 @@ class FailureReason(Command):
 
     def _print_blame_information_for_transition(self, regression_window, failing_tests):
         red_build = regression_window.failing_build()
-        print "SUCCESS: Build %s (r%s) was the first to show failures: %s" % (red_build._number, red_build.revision(), failing_tests)
-        print "Suspect revisions:"
+        print("SUCCESS: Build %s (r%s) was the first to show failures: %s" % (red_build._number, red_build.revision(), failing_tests))
+        print("Suspect revisions:")
         for revision in regression_window.revisions():
-            print self._blame_line_for_revision(revision)
+            print(self._blame_line_for_revision(revision))
 
     def _explain_failures_for_builder(self, builder, start_revision):
-        print "Examining failures for \"%s\", starting at r%s" % (builder.name(), start_revision)
+        print("Examining failures for \"%s\", starting at r%s" % (builder.name(), start_revision))
         revision_to_test = start_revision
         build = builder.build_for_revision(revision_to_test, allow_failed_lookups=True)
         layout_test_results = build.layout_test_results()
         if not layout_test_results:
             # FIXME: This could be made more user friendly.
-            print "Failed to load layout test results from %s; can't continue. (start revision = r%s)" % (build.results_url(), start_revision)
+            print("Failed to load layout test results from %s; can't continue. (start revision = r%s)" % (build.results_url(), start_revision))
             return 1
 
         results_to_explain = set(layout_test_results.failing_tests())
         last_build_with_results = build
-        print "Starting at %s" % revision_to_test
+        print("Starting at %s" % revision_to_test)
         while results_to_explain and not self._done_explaining():
             revision_to_test -= 1
             new_build = builder.build_for_revision(revision_to_test, allow_failed_lookups=True)
             if not new_build:
-                print "No build for %s" % revision_to_test
+                print("No build for %s" % revision_to_test)
                 continue
             build = new_build
             latest_results = build.layout_test_results()
             if not latest_results:
-                print "No results build %s (r%s)" % (build._number, build.revision())
+                print("No results build %s (r%s)" % (build._number, build.revision()))
                 continue
             failures = set(latest_results.failing_tests())
             if len(failures) >= 500:
                 # FIXME: We may need to move this logic into the LayoutTestResults class.
                 # The buildbot stops runs after 500 failures so we don't have full results to work with here.
-                print "Too many failures in build %s (r%s), ignoring." % (build._number, build.revision())
+                print("Too many failures in build %s (r%s), ignoring." % (build._number, build.revision()))
                 continue
             fixed_results = results_to_explain - failures
             if not fixed_results:
-                print "No change in build %s (r%s), %s unexplained failures (%s in this build)" % (build._number, build.revision(), len(results_to_explain), len(failures))
+                print("No change in build %s (r%s), %s unexplained failures (%s in this build)" % (build._number, build.revision(), len(results_to_explain), len(failures)))
                 last_build_with_results = build
                 continue
             self.explained_failures.update(fixed_results)
@@ -307,15 +308,15 @@ class FailureReason(Command):
             last_build_with_results = build
             results_to_explain -= fixed_results
         if results_to_explain:
-            print "Failed to explain failures: %s" % results_to_explain
+            print("Failed to explain failures: %s" % results_to_explain)
             return 1
-        print "Explained all results for %s" % builder.name()
+        print("Explained all results for %s" % builder.name())
         return 0
 
     def _builder_to_explain(self):
         builder_statuses = self._tool.buildbot.builder_statuses()
         red_statuses = [status for status in builder_statuses if not status["is_green"]]
-        print "%s failing" % (pluralize(len(red_statuses), "builder"))
+        print("%s failing" % (pluralize(len(red_statuses), "builder")))
         builder_choices = [status["name"] for status in red_statuses]
         # We could offer an "All" choice here.
         chosen_name = self._tool.user.prompt_with_list("Which builder to diagnose:", builder_choices)
@@ -336,7 +337,7 @@ class FailureReason(Command):
         self.failures_to_explain = args
         self.explained_failures = set()
         if not start_revision:
-            print "Revision required."
+            print("Revision required.")
             return 1
         return self._explain_failures_for_builder(builder, start_revision=int(start_revision))
 
@@ -348,17 +349,17 @@ class FindFlakyTests(Command):
     def _find_failures(self, builder, revision):
         build = builder.build_for_revision(revision, allow_failed_lookups=True)
         if not build:
-            print "No build for %s" % revision
+            print("No build for %s" % revision)
             return (None, None)
         results = build.layout_test_results()
         if not results:
-            print "No results build %s (r%s)" % (build._number, build.revision())
+            print("No results build %s (r%s)" % (build._number, build.revision()))
             return (None, None)
         failures = set(results.failing_tests())
         if len(failures) >= 20:
             # FIXME: We may need to move this logic into the LayoutTestResults class.
             # The buildbot stops runs after 20 failures so we don't have full results to work with here.
-            print "Too many failures in build %s (r%s), ignoring." % (build._number, build.revision())
+            print("Too many failures in build %s (r%s), ignoring." % (build._number, build.revision()))
             return (None, None)
         return (build, failures)
 
@@ -368,10 +369,10 @@ class FindFlakyTests(Command):
             flaky_test_statistics[test] = count + 1
 
     def _print_statistics(self, statistics):
-        print "=== Results ==="
-        print "Occurrences Test name"
+        print("=== Results ===")
+        print("Occurrences Test name")
         for value, key in sorted([(value, key) for key, value in statistics.items()]):
-            print "%10d %s" % (value, key)
+            print("%10d %s" % (value, key))
 
     def _walk_backwards_from(self, builder, start_revision, limit):
         flaky_test_statistics = {}
@@ -380,16 +381,16 @@ class FindFlakyTests(Command):
         previous_build = None
         for i in range(limit):
             revision = start_revision - i
-            print "Analyzing %s ... " % revision,
+            print("Analyzing %s ... " % revision, end=' ')
             (build, failures) = self._find_failures(builder, revision)
             if failures == None:
                 # Notice that we don't loop on the empty set!
                 continue
-            print "has %s failures" % len(failures)
+            print("has %s failures" % len(failures))
             flaky_tests = one_time_previous_failures - failures
             if flaky_tests:
-                print "Flaky tests: %s %s" % (sorted(flaky_tests),
-                                              previous_build.results_url())
+                print("Flaky tests: %s %s" % (sorted(flaky_tests),
+                                              previous_build.results_url()))
             self._increment_statistics(flaky_tests, flaky_test_statistics)
             one_time_previous_failures = failures - all_previous_failures
             all_previous_failures = failures
@@ -419,7 +420,7 @@ and displayes the status of each builder."""
     def execute(self, options, args, tool):
         for builder in tool.buildbot.builder_statuses():
             status_string = "ok" if builder["is_green"] else "FAIL"
-            print "%s : %s" % (status_string.ljust(4), builder["name"])
+            print("%s : %s" % (status_string.ljust(4), builder["name"]))
 
 
 class CrashLog(Command):
@@ -435,7 +436,7 @@ and PID and prints it to stdout."""
         pid = None
         if len(args) > 1:
             pid = int(args[1])
-        print crash_logs.find_newest_log(args[0], pid)
+        print(crash_logs.find_newest_log(args[0], pid))
 
 
 class PrintExpectations(Command):
@@ -463,7 +464,7 @@ class PrintExpectations(Command):
 
     def execute(self, options, args, tool):
         if not options.paths and not args and not options.all:
-            print "You must either specify one or more test paths or --all."
+            print("You must either specify one or more test paths or --all.")
             return
 
         if options.platform:
@@ -473,7 +474,7 @@ class PrintExpectations(Command):
                 if default_port:
                     port_names = [default_port.name()]
                 else:
-                    print "No port names match '%s'" % options.platform
+                    print("No port names match '%s'" % options.platform)
                     return
             else:
                 default_port = tool.port_factory.get(port_names[0])
@@ -487,7 +488,7 @@ class PrintExpectations(Command):
             for file in files:
                 if file.startswith(layout_tests_dir):
                     file = file.replace(layout_tests_dir, 'LayoutTests')
-                print file
+                print(file)
             return
 
         tests = set(default_port.tests(args))
@@ -496,8 +497,8 @@ class PrintExpectations(Command):
             tests_to_print = self._filter_tests(options, model, tests)
             lines = [model.get_expectation_line(test) for test in sorted(tests_to_print)]
             if port_name != port_names[0]:
-                print
-            print '\n'.join(self._format_lines(options, port_name, lines))
+                print()
+            print('\n'.join(self._format_lines(options, port_name, lines)))
 
     def _filter_tests(self, options, model, tests):
         filtered_tests = set()
@@ -547,14 +548,14 @@ class PrintBaselines(Command):
 
     def execute(self, options, args, tool):
         if not args and not options.all:
-            print "You must either specify one or more test paths or --all."
+            print("You must either specify one or more test paths or --all.")
             return
 
         default_port = tool.port_factory.get()
         if options.platform:
             port_names = fnmatch.filter(tool.port_factory.all_port_names(), options.platform)
             if not port_names:
-                print "No port names match '%s'" % options.platform
+                print("No port names match '%s'" % options.platform)
         else:
             port_names = [default_port.name()]
 
@@ -563,9 +564,9 @@ class PrintBaselines(Command):
 
         for port_name in port_names:
             if port_name != port_names[0]:
-                print
+                print()
             if not options.csv:
-                print "// For %s" % port_name
+                print("// For %s" % port_name)
             port = tool.port_factory.get(port_name)
             for test_name in tests:
                 self._print_baselines(options, port_name, test_name, port.expected_baselines_by_extension(test_name))
@@ -575,10 +576,10 @@ class PrintBaselines(Command):
             baseline_location = baselines[extension]
             if baseline_location:
                 if options.csv:
-                    print "%s,%s,%s,%s,%s,%s" % (port_name, test_name, self._platform_for_path(test_name),
-                                                 extension[1:], baseline_location, self._platform_for_path(baseline_location))
+                    print("%s,%s,%s,%s,%s,%s" % (port_name, test_name, self._platform_for_path(test_name),
+                                                 extension[1:], baseline_location, self._platform_for_path(baseline_location)))
                 else:
-                    print baseline_location
+                    print(baseline_location)
 
     def _platform_for_path(self, relpath):
         platform_matchobj = self._platform_regexp.match(relpath)
@@ -595,7 +596,7 @@ class FindResolvedBugs(Command):
     def execute(self, options, args, tool):
         filename = args[0]
         if not tool.filesystem.isfile(filename):
-            print "The given path is not a file, please pass a valid path."
+            print("The given path is not a file, please pass a valid path.")
             return
 
         ids = set()
@@ -611,10 +612,10 @@ class FindResolvedBugs(Command):
         bugzilla = Bugzilla()
         for i, bugid in enumerate(ids, start=1):
             bug = bugzilla.fetch_bug(bugid)
-            print "Checking bug %s \t [%d/%d]" % (bugid, i, num_of_bugs)
+            print("Checking bug %s \t [%d/%d]" % (bugid, i, num_of_bugs))
             if not bug.is_open():
                 resolved_ids.add(bugid)
 
-        print "Resolved bugs in %s :" % (filename)
+        print("Resolved bugs in %s :" % (filename))
         for bugid in resolved_ids:
-            print "https://bugs.webkit.org/show_bug.cgi?id=%s" % (bugid)
+            print("https://bugs.webkit.org/show_bug.cgi?id=%s" % (bugid))

@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import print_function
 import json
 import re
 import time
@@ -125,9 +126,9 @@ class ChangeLogAnalyzer(object):
 
     def _print_status(self, status):
         if self._length_of_previous_output:
-            print "\r" + " " * self._length_of_previous_output,
+            print("\r" + " " * self._length_of_previous_output, end=' ')
         new_output = ('%' + str(self._longest_filename) + 's: %s') % (self._filename, status)
-        print "\r" + new_output,
+        print("\r" + new_output, end=' ')
         self._length_of_previous_output = len(new_output)
 
     def _set_filename(self, filename):

@@ -28,6 +28,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import print_function
 import optparse
 import subprocess
 import sys
@@ -64,7 +65,7 @@ def run_server(options, args, stdout, stderr):
     try:
         port = host.port_factory.get(options.platform, options)
     except NotImplementedError, e:
-        print >> stderr, str(e)
+        print(str(e), file=stderr)
         return EXCEPTIONAL_EXIT_STATUS
 
     if options.web_platform_test_server:

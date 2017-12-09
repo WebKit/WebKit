@@ -1,3 +1,54 @@
+2017-12-09  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [python] Replace print >> operator with print() function for python3 compatibility
+        https://bugs.webkit.org/show_bug.cgi?id=180611
+
+        Reviewed by Michael Catanzaro.
+
+        * CygwinDownloader/cygwin-downloader.py:
+        (download_url_to_file):
+        * Scripts/webkitpy/common/system/profiler.py:
+        (Perf.profile_after_exit):
+        * Scripts/webkitpy/common/version_check.py:
+        * Scripts/webkitpy/layout_tests/lint_test_expectations.py:
+        (main):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (main):
+        * Scripts/webkitpy/layout_tests/servers/run_webkit_httpd.py:
+        (run_server):
+        * Scripts/webkitpy/tool/commands/analyzechangelog.py:
+        (ChangeLogAnalyzer._print_status):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (BugsToCommit.execute):
+        (PatchesInCommitQueue.execute):
+        (PatchesToCommitQueue.execute):
+        (PatchesToReview._print_report):
+        (WhatBroke._print_builder_line):
+        (WhatBroke._print_blame_information_for_builder):
+        (WhatBroke.execute):
+        (ResultsFor._print_layout_test_results):
+        (ResultsFor.execute):
+        (FailureReason._print_blame_information_for_transition):
+        (FailureReason._explain_failures_for_builder):
+        (FailureReason._builder_to_explain):
+        (FailureReason.execute):
+        (FindFlakyTests._find_failures):
+        (FindFlakyTests._print_statistics):
+        (FindFlakyTests._walk_backwards_from):
+        (execute):
+        (PrintExpectations.execute):
+        (PrintBaselines.execute):
+        (PrintBaselines._print_baselines):
+        (FindResolvedBugs.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (AbstractParallelRebaselineCommand._run_webkit_patch):
+        (AbstractParallelRebaselineCommand._rebaseline):
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        (GardeningHTTPRequestHandler.rebaselineall):
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        (GardeningServerTest.disabled_test_rebaselineall.run_command):
+        (GardeningServerTest):
+
 2017-12-08  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Win] The way to detect Windows 10 is wrong
