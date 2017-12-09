@@ -1,3 +1,37 @@
+2017-12-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Wrong caret position for input field inside a fixed position parent on iOS 11
+        https://bugs.webkit.org/show_bug.cgi?id=176896
+        rdar://problem/33726145
+
+        Reviewed by Tim Horton.
+
+        In r219668 I added code to compute a layout viewport rect in the web process, so that
+        after programmatic scrolling, getBoundingClientRect() would return the correct values.
+        However, that computation sometimes used a different visual viewport than the UI process,
+        resulting in a different layout viewport being set. This would happen when the keyboard
+        was visible, and the combination of this and zooming when focusing an input would result
+        in a state where the scrolling tree contained notes computed with the bad layout viewport.
+        This could cause apparently offset fixed elements, and bad caret positioning if those fixed
+        elements contained the focused input.
+
+        Fix by passing to the web process the same visual viewport rect that the UI process is using,
+        namely "unobscuredContentRectRespectingInputViewBounds". This was already being set in
+        VisibleContentRectUpdateInfo but wasn't encoded/decoded, so fix that. Set it as an optional<>
+        on FrameView when different from the normal visual viewport, and return it from
+        visualViewportRect().
+
+        Some other minor logging changes.
+
+        * Shared/VisibleContentRectUpdateInfo.cpp:
+        (WebKit::VisibleContentRectUpdateInfo::encode const):
+        (WebKit::VisibleContentRectUpdateInfo::decode):
+        (WebKit::operator<<):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2017-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         When the iPhone keyboard is up, sometimes we never commit a stable update and re-show the caret

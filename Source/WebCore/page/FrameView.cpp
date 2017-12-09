@@ -1636,6 +1636,11 @@ void FrameView::setLayoutViewportOverrideRect(std::optional<LayoutRect> rect, Tr
         setViewportConstrainedObjectsNeedLayout();
 }
 
+void FrameView::setVisualViewportOverrideRect(std::optional<LayoutRect> rect)
+{
+    m_visualViewportOverrideRect = rect;
+}
+
 LayoutSize FrameView::baseLayoutViewportSize() const
 {
     return renderView() ? renderView()->size() : size();
@@ -1655,11 +1660,12 @@ void FrameView::updateLayoutViewport()
 
     LOG_WITH_STREAM(Scrolling, stream << "\nFrameView " << this << " updateLayoutViewport() totalContentSize " << totalContentsSize() << " unscaledDocumentRect " << (renderView() ? renderView()->unscaledDocumentRect() : IntRect()) << " header height " << headerHeight() << " footer height " << footerHeight() << " fixed behavior " << scrollBehaviorForFixedElements());
     LOG_WITH_STREAM(Scrolling, stream << "layoutViewport: " << layoutViewport);
-    LOG_WITH_STREAM(Scrolling, stream << "visualViewport: " << visualViewportRect());
+    LOG_WITH_STREAM(Scrolling, stream << "visualViewport: " << visualViewportRect() << " (is override " << (bool)m_visualViewportOverrideRect << ")");
     LOG_WITH_STREAM(Scrolling, stream << "stable origins: min: " << minStableLayoutViewportOrigin() << " max: "<< maxStableLayoutViewportOrigin());
     
     if (m_layoutViewportOverrideRect) {
         if (m_inProgrammaticScroll) {
+            LOG_WITH_STREAM(Scrolling, stream << "computing new override layout viewport because of programmatic scrolling");
             LayoutPoint newOrigin = computeLayoutViewportOrigin(visualViewportRect(), minStableLayoutViewportOrigin(), maxStableLayoutViewportOrigin(), layoutViewport, StickToDocumentBounds);
             setLayoutViewportOverrideRect(LayoutRect(newOrigin, m_layoutViewportOverrideRect.value().size()));
         }
@@ -1726,6 +1732,9 @@ LayoutRect FrameView::visibleDocumentRect(const FloatRect& visibleContentRect, f
 
 LayoutRect FrameView::visualViewportRect() const
 {
+    if (m_visualViewportOverrideRect)
+        return m_visualViewportOverrideRect.value();
+
     FloatRect visibleContentRect = this->visibleContentRect(LegacyIOSDocumentVisibleRect);
     return visibleDocumentRect(visibleContentRect, headerHeight(), footerHeight(), totalContentsSize(), frameScaleFactor());
 }

@@ -75,7 +75,7 @@ void ScrollingTreeFixedNode::updateLayersAfterAncestorChange(const ScrollingTree
     using namespace ScrollingTreeFixedNodeInternal;
     FloatPoint layerPosition = m_constraints.layerPositionForViewportRect(fixedPositionRect);
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFixedNode " << scrollingNodeID() << " updateLayersAfterAncestorChange: new viewport " << fixedPositionRect << " viewportRectAtLastLayout " << m_constraints.viewportRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " new offset from bottom " << (fixedPositionRect.maxY() - layerPosition.y()));
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFixedNode " << scrollingNodeID() << " updateLayersAfterAncestorChange: new viewport " << fixedPositionRect << " viewportRectAtLastLayout " << m_constraints.viewportRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " new offset from top " << (fixedPositionRect.y() - layerPosition.y()));
 
     layerPosition -= cumulativeDelta;
 

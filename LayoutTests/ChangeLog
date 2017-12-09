@@ -1,3 +1,18 @@
+2017-12-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Wrong caret position for input field inside a fixed position parent on iOS 11
+        https://bugs.webkit.org/show_bug.cgi?id=176896
+        rdar://problem/33726145
+
+        Reviewed by Tim Horton.
+        
+        Test that focuses an input inside position:fixed, then moves focus to the next
+        input. This was the most reliable way I could find of triggering the bug.
+        The test dumps the caret rect.
+
+        * fast/visual-viewport/ios/caret-after-focus-in-fixed-expected.txt: Added.
+        * fast/visual-viewport/ios/caret-after-focus-in-fixed.html: Added.
+
 2017-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         When the iPhone keyboard is up, sometimes we never commit a stable update and re-show the caret

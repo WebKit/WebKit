@@ -2844,6 +2844,12 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
 
     if (m_isInStableState) {
         if (frameView.frame().settings().visualViewportEnabled()) {
+            if (visibleContentRectUpdateInfo.unobscuredContentRect() != visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds())
+                frameView.setVisualViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds()));
+            else
+                frameView.setVisualViewportOverrideRect(std::nullopt);
+
+            LOG_WITH_STREAM(VisibleRects, stream << "WebPage::updateVisibleContentRects - setLayoutViewportOverrideRect " << visibleContentRectUpdateInfo.customFixedPositionRect());
             frameView.setLayoutViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.customFixedPositionRect()));
             if (selectionIsInsideFixedPositionContainer(frame)) {
                 // Ensure that the next layer tree commit contains up-to-date caret/selection rects.
