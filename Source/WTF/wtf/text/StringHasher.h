@@ -42,12 +42,7 @@ public:
     static constexpr const unsigned flagCount = 8; // Save 8 bits for StringImpl to use as flags.
     static constexpr const unsigned maskHash = (1U << (sizeof(unsigned) * 8 - flagCount)) - 1;
 
-    StringHasher()
-        : m_hash(stringHashingStartValue)
-        , m_hasPendingCharacter(false)
-        , m_pendingCharacter(0)
-    {
-    }
+    StringHasher() = default;
 
     // The hasher hashes two characters at a time, and thus an "aligned" hasher is one
     // where an even number of characters have been added. Callers that always add
@@ -55,9 +50,7 @@ public:
     void addCharactersAssumingAligned(UChar a, UChar b)
     {
         ASSERT(!m_hasPendingCharacter);
-        m_hash += a;
-        m_hash = (m_hash << 16) ^ ((b << 11) ^ m_hash);
-        m_hash += m_hash >> 11;
+        m_hash = calculateWithTwoCharacters(m_hash, a, b);
     }
 
     void addCharacter(UChar character)
@@ -170,52 +163,57 @@ public:
         return finalize(processPendingCharacter());
     }
 
-    template<typename T, UChar Converter(T)> static unsigned computeHashAndMaskTop8Bits(const T* data, unsigned length)
+    template<typename T, UChar Converter(T)> static constexpr unsigned computeHashAndMaskTop8Bits(const T* data, unsigned length)
     {
-        StringHasher hasher;
-        hasher.addCharactersAssumingAligned<T, Converter>(data, length);
-        return hasher.hashWithTop8BitsMasked();
+        return finalizeAndMaskTop8Bits(computeHashImpl<T, Converter>(data, length));
     }
 
-    template<typename T, UChar Converter(T)> static unsigned computeHashAndMaskTop8Bits(const T* data)
+    template<typename T, UChar Converter(T)> static constexpr unsigned computeHashAndMaskTop8Bits(const T* data)
     {
-        StringHasher hasher;
-        hasher.addCharactersAssumingAligned<T, Converter>(data);
-        return hasher.hashWithTop8BitsMasked();
+        return finalizeAndMaskTop8Bits(computeHashImpl<T, Converter>(data));
     }
 
-    template<typename T> static unsigned computeHashAndMaskTop8Bits(const T* data, unsigned length)
+    template<typename T> static constexpr unsigned computeHashAndMaskTop8Bits(const T* data, unsigned length)
     {
         return computeHashAndMaskTop8Bits<T, defaultConverter>(data, length);
     }
 
-    template<typename T> static unsigned computeHashAndMaskTop8Bits(const T* data)
+    template<typename T> static constexpr unsigned computeHashAndMaskTop8Bits(const T* data)
     {
         return computeHashAndMaskTop8Bits<T, defaultConverter>(data);
     }
 
-    template<typename T, UChar Converter(T)> static unsigned computeHash(const T* data, unsigned length)
+    template<typename T, UChar Converter(T)> static constexpr unsigned computeHash(const T* data, unsigned length)
     {
-        StringHasher hasher;
-        hasher.addCharactersAssumingAligned<T, Converter>(data, length);
-        return hasher.hash();
+        return finalize(computeHashImpl<T, Converter>(data, length));
     }
 
-    template<typename T, UChar Converter(T)> static unsigned computeHash(const T* data)
+    template<typename T, UChar Converter(T)> static constexpr unsigned computeHash(const T* data)
     {
-        StringHasher hasher;
-        hasher.addCharactersAssumingAligned<T, Converter>(data);
-        return hasher.hash();
+        return finalize(computeHashImpl<T, Converter>(data));
     }
 
-    template<typename T> static unsigned computeHash(const T* data, unsigned length)
+    template<typename T> static constexpr unsigned computeHash(const T* data, unsigned length)
     {
         return computeHash<T, defaultConverter>(data, length);
     }
 
-    template<typename T> static unsigned computeHash(const T* data)
+    template<typename T> static constexpr unsigned computeHash(const T* data)
     {
         return computeHash<T, defaultConverter>(data);
+    }
+
+
+    template<typename T, unsigned charactersCount>
+    static constexpr unsigned computeLiteralHash(const T (&characters)[charactersCount])
+    {
+        return computeHash<T, defaultConverter>(characters, charactersCount - 1);
+    }
+
+    template<typename T, unsigned charactersCount>
+    static constexpr unsigned computeLiteralHashAndMaskTop8Bits(const T (&characters)[charactersCount])
+    {
+        return computeHashAndMaskTop8Bits<T, defaultConverter>(characters, charactersCount - 1);
     }
 
     static unsigned hashMemory(const void* data, unsigned length)
@@ -235,6 +233,40 @@ public:
         return hashMemory(data, length);
     }
 
+private:
+    static constexpr UChar defaultConverter(UChar character)
+    {
+        return character;
+    }
+
+    static constexpr UChar defaultConverter(LChar character)
+    {
+        return character;
+    }
+
+    static constexpr UChar defaultConverter(char character)
+    {
+        return character;
+    }
+
+    static constexpr UChar defaultConverter(char16_t character)
+    {
+        return character;
+    }
+
+    ALWAYS_INLINE static constexpr unsigned avalancheBits(unsigned hash)
+    {
+        unsigned result = hash;
+
+        result ^= result << 3;
+        result += result >> 5;
+        result ^= result << 2;
+        result += result >> 15;
+        result ^= result << 10;
+
+        return result;
+    }
+
     static constexpr unsigned finalize(unsigned hash)
     {
         return avoidZero(avalancheBits(hash));
@@ -247,61 +279,67 @@ public:
         return avoidZero(avalancheBits(hash) & StringHasher::maskHash);
     }
 
-    template<typename T, unsigned characterCount>
-    static constexpr unsigned computeLiteralHash(const T (&characters)[characterCount])
-    {
-        return StringHasher::finalize(computeLiteralHashImpl(stringHashingStartValue, 0, characters, characterCount - 1));
-    }
-
-    template<typename T, unsigned characterCount>
-    static constexpr unsigned computeLiteralHashAndMaskTop8Bits(const T (&characters)[characterCount])
-    {
-        return StringHasher::finalizeAndMaskTop8Bits(computeLiteralHashImpl(stringHashingStartValue, 0, characters, characterCount - 1));
-    }
-
-private:
-    static UChar defaultConverter(UChar character)
-    {
-        return character;
-    }
-
-    static UChar defaultConverter(LChar character)
-    {
-        return character;
-    }
-
-    ALWAYS_INLINE static constexpr unsigned avalancheBits3(unsigned hash)
-    {
-        return hash ^ (hash << 10);
-    }
-
-    ALWAYS_INLINE static constexpr unsigned avalancheBits2(unsigned hash)
-    {
-        return avalancheBits3(hash + (hash >> 15));
-    }
-
-    ALWAYS_INLINE static constexpr unsigned avalancheBits1(unsigned hash)
-    {
-        return avalancheBits2(hash ^ (hash << 2));
-    }
-
-    ALWAYS_INLINE static constexpr unsigned avalancheBits0(unsigned hash)
-    {
-        return avalancheBits1(hash + (hash >> 5));
-    }
-
-    ALWAYS_INLINE static constexpr unsigned avalancheBits(unsigned hash)
-    {
-        return avalancheBits0(hash ^ (hash << 3));
-    }
-
     // This avoids ever returning a hash code of 0, since that is used to
     // signal "hash not computed yet". Setting the high bit maintains
     // reasonable fidelity to a hash code of 0 because it is likely to yield
     // exactly 0 when hash lookup masks out the high bits.
     ALWAYS_INLINE static constexpr unsigned avoidZero(unsigned hash)
     {
-        return hash ? hash : (0x80000000 >> StringHasher::flagCount);
+        if (hash)
+            return hash;
+        return 0x80000000 >> flagCount;
+    }
+
+    static constexpr unsigned calculateWithRemainingLastCharacter(unsigned hash, unsigned character)
+    {
+        unsigned result = hash;
+
+        result += character;
+        result ^= result << 11;
+        result += result >> 17;
+
+        return result;
+    }
+
+    ALWAYS_INLINE static constexpr unsigned calculateWithTwoCharacters(unsigned hash, unsigned firstCharacter, unsigned secondCharacter)
+    {
+        unsigned result = hash;
+
+        result += firstCharacter;
+        result = (result << 16) ^ ((secondCharacter << 11) ^ result);
+        result += result >> 11;
+
+        return result;
+    }
+
+    template<typename T, UChar Converter(T)>
+    static constexpr unsigned computeHashImpl(const T* characters, unsigned length)
+    {
+        unsigned result = stringHashingStartValue;
+        bool remainder = length & 1;
+        length >>= 1;
+
+        while (length--) {
+            result = calculateWithTwoCharacters(result, Converter(characters[0]), Converter(characters[1]));
+            characters += 2;
+        }
+
+        if (remainder)
+            return calculateWithRemainingLastCharacter(result, Converter(characters[0]));
+        return result;
+    }
+
+    template<typename T, UChar Converter(T)>
+    static constexpr unsigned computeHashImpl(const T* characters)
+    {
+        unsigned result = stringHashingStartValue;
+        while (T a = *characters++) {
+            T b = *characters++;
+            if (!b)
+                return calculateWithRemainingLastCharacter(result, Converter(a));
+            result = calculateWithTwoCharacters(result, Converter(a), Converter(b));
+        }
+        return result;
     }
 
     unsigned processPendingCharacter() const
@@ -309,58 +347,14 @@ private:
         unsigned result = m_hash;
 
         // Handle end case.
-        if (m_hasPendingCharacter) {
-            result += m_pendingCharacter;
-            result ^= result << 11;
-            result += result >> 17;
-        }
+        if (m_hasPendingCharacter)
+            return calculateWithRemainingLastCharacter(result, m_pendingCharacter);
         return result;
     }
 
-    // FIXME: This code limits itself to the older, more limited C++11 constexpr capabilities, using
-    // recursion instead of looping, for example. Would be nice to rewrite this in a simpler way
-    // once we no longer need to support compilers like GCC 4.9 that do not yet support it.
-    static constexpr unsigned calculateWithRemainingLastCharacter1(unsigned hash)
-    {
-        return hash + (hash >> 17);
-    }
-
-    static constexpr unsigned calculateWithRemainingLastCharacter0(unsigned hash)
-    {
-        return calculateWithRemainingLastCharacter1((hash << 11) ^ hash);
-    }
-
-    static constexpr unsigned calculateWithRemainingLastCharacter(unsigned hash, unsigned character)
-    {
-        return calculateWithRemainingLastCharacter0(hash + character);
-    }
-
-    static constexpr unsigned calculate1(unsigned hash)
-    {
-        return hash + (hash >> 11);
-    }
-
-    static constexpr unsigned calculate0(unsigned hash, unsigned secondCharacter)
-    {
-        return calculate1((hash << 16) ^ ((secondCharacter << 11) ^ hash));
-    }
-
-    static constexpr unsigned calculate(unsigned hash, unsigned firstCharacter, unsigned secondCharacter)
-    {
-        return calculate0(hash + firstCharacter, secondCharacter);
-    }
-
-    static constexpr unsigned computeLiteralHashImpl(unsigned hash, unsigned index, const char* characters, unsigned length)
-    {
-        return (index == length)
-            ? hash : ((index + 1) == length)
-            ? calculateWithRemainingLastCharacter(hash, characters[index])
-            : computeLiteralHashImpl(calculate(hash, characters[index], characters[index + 1]), index + 2, characters, length);
-    }
-
-    unsigned m_hash;
-    bool m_hasPendingCharacter;
-    UChar m_pendingCharacter;
+    unsigned m_hash { stringHashingStartValue };
+    UChar m_pendingCharacter { 0 };
+    bool m_hasPendingCharacter { false };
 };
 
 } // namespace WTF

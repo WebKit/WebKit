@@ -1,3 +1,40 @@
+2017-12-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use relaxed constexpr for StringHasher
+        https://bugs.webkit.org/show_bug.cgi?id=180622
+
+        Reviewed by JF Bastien.
+
+        Now VC++ is updated and all the WebKit compilers support C++14 relaxed constexpr.
+        This patch uses relaxed constexpr for StringHasher constexpr implementation
+
+        * wtf/text/StringHasher.h:
+        (WTF::StringHasher::addCharactersAssumingAligned):
+        (WTF::StringHasher::Converter):
+        (WTF::StringHasher::computeHashAndMaskTop8Bits):
+        (WTF::StringHasher::computeHash):
+        (WTF::StringHasher::computeLiteralHash):
+        (WTF::StringHasher::computeLiteralHashAndMaskTop8Bits):
+        (WTF::StringHasher::defaultConverter):
+        (WTF::StringHasher::avalancheBits):
+        (WTF::StringHasher::finalize):
+        (WTF::StringHasher::finalizeAndMaskTop8Bits):
+        (WTF::StringHasher::avoidZero):
+        (WTF::StringHasher::calculateWithRemainingLastCharacter):
+        (WTF::StringHasher::calculateWithTwoCharacters):
+        (WTF::StringHasher::processPendingCharacter const):
+        (WTF::StringHasher::StringHasher): Deleted.
+        (WTF::StringHasher::avalancheBits3): Deleted.
+        (WTF::StringHasher::avalancheBits2): Deleted.
+        (WTF::StringHasher::avalancheBits1): Deleted.
+        (WTF::StringHasher::avalancheBits0): Deleted.
+        (WTF::StringHasher::calculateWithRemainingLastCharacter1): Deleted.
+        (WTF::StringHasher::calculateWithRemainingLastCharacter0): Deleted.
+        (WTF::StringHasher::calculate1): Deleted.
+        (WTF::StringHasher::calculate0): Deleted.
+        (WTF::StringHasher::calculate): Deleted.
+        (WTF::StringHasher::computeLiteralHashImpl): Deleted.
+
 2017-12-08  Eric Carlson  <eric.carlson@apple.com>
 
         Move Logger from PAL to WTF so it can be used outside of WebCore
