@@ -64,8 +64,13 @@ Node::InsertedIntoAncestorResult HTMLMetaElement::insertedIntoAncestor(Insertion
 {
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument)
-        process();
+        return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
     return InsertedIntoAncestorResult::Done;
+}
+
+void HTMLMetaElement::didFinishInsertingNode()
+{
+    process();
 }
 
 void HTMLMetaElement::process()

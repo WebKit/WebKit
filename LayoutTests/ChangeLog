@@ -1,3 +1,16 @@
+2017-12-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS: Crash in Document::updateLayout() via Document::processViewport
+        https://bugs.webkit.org/show_bug.cgi?id=180619
+        <rdar://problem/35717575>
+
+        Reviewed by Zalan Bujtas.
+
+        Added a regression test for the crash.
+
+        * media/ios/viewport-change-with-video-expected.txt: Added.
+        * media/ios/viewport-change-with-video.html: Added.
+
 2017-12-08  Zalan Bujtas  <zalan@apple.com>
 
         Document::updateLayout() could destroy current frame.
