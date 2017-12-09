@@ -33,7 +33,7 @@ messages -> WebSWClientConnection {
     FireUpdateFoundEvent(WebCore::ServiceWorkerRegistrationIdentifier identifier)
     NotifyClientsOfControllerChange(HashSet<WebCore::DocumentIdentifier> contextIdentifiers, struct WebCore::ServiceWorkerData newController)
 
-    InitializeSWOriginTableAsEmpty()
+    SetSWOriginTableIsImported()
     SetSWOriginTableSharedMemory(WebKit::SharedMemory::Handle handle)
     PostMessageToServiceWorkerClient(WebCore::DocumentIdentifier destinationContextIdentifier, IPC::DataReference message, struct WebCore::ServiceWorkerData source, String sourceOrigin)
 

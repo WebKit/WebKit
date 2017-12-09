@@ -58,16 +58,22 @@ void WebSWOriginStore::clearStore()
     m_store.clear();
 }
 
+void WebSWOriginStore::importComplete()
+{
+    m_isImported = true;
+    for (auto* connection : m_webSWServerConnections)
+        connection->send(Messages::WebSWClientConnection::SetSWOriginTableIsImported());
+}
+
 void WebSWOriginStore::registerSWServerConnection(WebSWServerConnection& connection)
 {
     m_webSWServerConnections.add(&connection);
 
-    if (m_store.isEmpty()) {
-        connection.send(Messages::WebSWClientConnection::InitializeSWOriginTableAsEmpty());
-        return;
-    }
+    if (!m_store.isEmpty())
+        sendStoreHandle(connection);
 
-    sendStoreHandle(connection);
+    if (m_isImported)
+        connection.send(Messages::WebSWClientConnection::SetSWOriginTableIsImported());
 }
 
 void WebSWOriginStore::unregisterSWServerConnection(WebSWServerConnection& connection)

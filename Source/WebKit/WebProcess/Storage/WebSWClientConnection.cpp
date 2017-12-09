@@ -109,7 +109,7 @@ void WebSWClientConnection::didResolveRegistrationPromise(const ServiceWorkerReg
 
 bool WebSWClientConnection::mayHaveServiceWorkerRegisteredForOrigin(const SecurityOrigin& origin) const
 {
-    if (!m_swOriginTable->isInitialized())
+    if (!m_swOriginTable->isImported())
         return true;
 
     return m_swOriginTable->contains(origin);
@@ -120,9 +120,11 @@ void WebSWClientConnection::setSWOriginTableSharedMemory(const SharedMemory::Han
     m_swOriginTable->setSharedMemory(handle);
 }
 
-void WebSWClientConnection::initializeSWOriginTableAsEmpty()
+void WebSWClientConnection::setSWOriginTableIsImported()
 {
-    m_swOriginTable->initializeAsEmpty();
+    m_swOriginTable->setIsImported();
+    while (!m_tasksPendingOriginImport.isEmpty())
+        m_tasksPendingOriginImport.takeFirst()();
 }
 
 void WebSWClientConnection::didMatchRegistration(uint64_t matchingRequest, std::optional<ServiceWorkerRegistrationData>&& result)
@@ -150,9 +152,19 @@ void WebSWClientConnection::matchRegistration(const SecurityOrigin& topOrigin, c
         return;
     }
 
-    uint64_t callbackID = ++m_previousCallbackIdentifier;
-    m_ongoingMatchRegistrationTasks.add(callbackID, WTFMove(callback));
-    send(Messages::WebSWServerConnection::MatchRegistration(callbackID, SecurityOriginData::fromSecurityOrigin(topOrigin), clientURL));
+    runOrDelayTaskForImport([this, callback = WTFMove(callback), topOrigin = SecurityOriginData::fromSecurityOrigin(topOrigin), clientURL]() mutable {
+        uint64_t callbackID = ++m_previousCallbackIdentifier;
+        m_ongoingMatchRegistrationTasks.add(callbackID, WTFMove(callback));
+        send(Messages::WebSWServerConnection::MatchRegistration(callbackID, topOrigin, clientURL));
+    });
+}
+
+void WebSWClientConnection::runOrDelayTaskForImport(WTF::Function<void()>&& task)
+{
+    if (m_swOriginTable->isImported())
+        task();
+    else
+        m_tasksPendingOriginImport.append(WTFMove(task));
 }
 
 void WebSWClientConnection::whenRegistrationReady(const SecurityOrigin& topOrigin, const URL& clientURL, WhenRegistrationReadyCallback&& callback)
@@ -178,9 +190,11 @@ void WebSWClientConnection::getRegistrations(const SecurityOrigin& topOrigin, co
         return;
     }
 
-    uint64_t callbackID = ++m_previousCallbackIdentifier;
-    m_ongoingGetRegistrationsTasks.add(callbackID, WTFMove(callback));
-    send(Messages::WebSWServerConnection::GetRegistrations(callbackID, SecurityOriginData::fromSecurityOrigin(topOrigin), clientURL));
+    runOrDelayTaskForImport([this, callback = WTFMove(callback), topOrigin = SecurityOriginData::fromSecurityOrigin(topOrigin), clientURL]() mutable {
+        uint64_t callbackID = ++m_previousCallbackIdentifier;
+        m_ongoingGetRegistrationsTasks.add(callbackID, WTFMove(callback));
+        send(Messages::WebSWServerConnection::GetRegistrations(callbackID, topOrigin, clientURL));
+    });
 }
 
 void WebSWClientConnection::startFetch(const ResourceLoader& loader, uint64_t identifier)

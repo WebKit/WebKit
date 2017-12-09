@@ -100,12 +100,12 @@ void RegistrationStore::addRegistrationFromDatabase(ServiceWorkerContextData&& c
 
 void RegistrationStore::databaseFailedToOpen()
 {
-    // FIXME: Handle error in some appropriate manner.
+    m_server.registrationStoreImportComplete();
 }
 
 void RegistrationStore::databaseOpenedAndRecordsImported()
 {
-    // FIXME: Once we actually do the imports, conclude the importing phase here.
+    m_server.registrationStoreImportComplete();
 }
 
 } // namespace WebCore

@@ -45,6 +45,7 @@ public:
 
     void registerSWServerConnection(WebSWServerConnection&);
     void unregisterSWServerConnection(WebSWServerConnection&);
+    void importComplete() final;
 
 private:
     void sendStoreHandle(WebSWServerConnection&);
@@ -57,6 +58,7 @@ private:
     void didInvalidateSharedMemory() final;
 
     SharedStringHashStore m_store;
+    bool m_isImported { false };
     HashSet<WebSWServerConnection*> m_webSWServerConnections;
 };
 

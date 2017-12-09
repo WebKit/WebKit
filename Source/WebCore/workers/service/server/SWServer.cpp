@@ -98,8 +98,16 @@ SWServerRegistration* SWServer::getRegistration(const ServiceWorkerRegistrationK
     return m_registrations.get(registrationKey);
 }
 
+void SWServer::registrationStoreImportComplete()
+{
+    m_originStore->importComplete();
+}
+
 void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data)
 {
+    // Pages should not have been able to make a new registration to this key while the import was still taking place.
+    ASSERT(!m_registrations.contains(data.registration.key));
+
     addRegistration(std::make_unique<SWServerRegistration>(*this, data.registration.key, data.registration.updateViaCache, data.registration.scopeURL, data.scriptURL));
     tryInstallContextData(WTFMove(data));
 }

@@ -1,3 +1,37 @@
+2017-12-08  Brady Eidson  <beidson@apple.com>
+
+        Delay some service worker operations until after the database import completes.
+        https://bugs.webkit.org/show_bug.cgi?id=180573
+
+        Reviewed by Chris Dumez.
+
+        * StorageProcess/ServiceWorker/WebSWOriginStore.cpp:
+        (WebKit::WebSWOriginStore::importComplete): Tell the Origin Table on all connects that
+          the import is complete.
+        (WebKit::WebSWOriginStore::registerSWServerConnection):
+        * StorageProcess/ServiceWorker/WebSWOriginStore.h:
+
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::mayHaveServiceWorkerRegisteredForOrigin const):
+        (WebKit::WebSWClientConnection::setSWOriginTableIsImported): Run deferred tasks!
+        (WebKit::WebSWClientConnection::matchRegistration): If the import isn't complete yet, delay
+          the match registration task until later.
+        (WebKit::WebSWClientConnection::runOrDelayTask): Either send the message now or save off
+          the task to wait until the import is complete.
+        (WebKit::WebSWClientConnection::getRegistrations): If the import isn't complete yet, delay
+          the get registrations task until later.
+        (WebKit::WebSWClientConnection::initializeSWOriginTableAsEmpty): Deleted.
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+
+        * WebProcess/Storage/WebSWOriginTable.cpp:
+        (WebKit::WebSWOriginTable::setSharedMemory):
+        * WebProcess/Storage/WebSWOriginTable.h:
+        (WebKit::WebSWOriginTable::isImported const):
+        (WebKit::WebSWOriginTable::setIsImported):
+        (WebKit::WebSWOriginTable::isInitialized const): Deleted.
+        (WebKit::WebSWOriginTable::initializeAsEmpty): Deleted.
+
 2017-12-08  Youenn Fablet  <youenn@apple.com>
 
         Service Worker should use a correct user agent

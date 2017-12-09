@@ -45,6 +45,8 @@ public:
     void clear(const SecurityOrigin&);
     void clearAll();
 
+    virtual void importComplete() = 0;
+
 private:
     virtual void addToStore(const SecurityOrigin&) = 0;
     virtual void removeFromStore(const SecurityOrigin&) = 0;

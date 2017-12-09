@@ -169,6 +169,7 @@ public:
     void resolveRegistrationReadyRequests(SWServerRegistration&);
 
     void addRegistrationFromStore(ServiceWorkerContextData&&);
+    void registrationStoreImportComplete();
 
 private:
     void registerConnection(Connection&);
