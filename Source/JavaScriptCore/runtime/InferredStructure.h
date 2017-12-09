@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,21 +25,53 @@
 
 #pragma once
 
-#include "GCDeferralContext.h"
-#include "Heap.h"
+#include "InferredStructureWatchpoint.h"
+#include "JSCell.h"
+#include "VM.h"
 
 namespace JSC {
 
-ALWAYS_INLINE GCDeferralContext::GCDeferralContext(Heap& heap)
-    : m_heap(heap)
-{
-}
+class InferredType;
 
-ALWAYS_INLINE GCDeferralContext::~GCDeferralContext()
-{
-    if (UNLIKELY(m_shouldGC))
-        m_heap.collectIfNecessaryOrDefer();
-}
+class InferredStructure final : public JSCell {
+public:
+    typedef JSCell Base;
+    
+    template<typename CellType>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.inferredStructureSpace;
+    }
+    
+    static InferredStructure* create(VM&, GCDeferralContext&, InferredType* parent, Structure*);
+    
+    static const bool needsDestruction = true;
+    static void destroy(JSCell*);
+    
+    static const unsigned StructureFlags = StructureIsImmortal | Base::StructureFlags;
+
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
+    
+    static void visitChildren(JSCell*, SlotVisitor&);
+
+    DECLARE_INFO;
+    
+    InferredType* parent() const { return m_parent.get(); }
+    Structure* structure() const { return m_structure.get(); }
+    
+    void finalizeUnconditionally(VM&);
+
+private:
+    InferredStructure(VM&, InferredType* parent, Structure*);
+    
+    void finishCreation(VM&, Structure*);
+    
+    WriteBarrier<InferredType> m_parent;
+    WriteBarrier<Structure> m_structure;
+    
+    friend class InferredStructureWatchpoint;
+    InferredStructureWatchpoint m_watchpoint;
+};
 
 } // namespace JSC
 

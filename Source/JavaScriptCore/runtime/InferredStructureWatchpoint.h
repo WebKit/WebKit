@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,21 +25,14 @@
 
 #pragma once
 
-#include "GCDeferralContext.h"
-#include "Heap.h"
+#include "Watchpoint.h"
 
 namespace JSC {
 
-ALWAYS_INLINE GCDeferralContext::GCDeferralContext(Heap& heap)
-    : m_heap(heap)
-{
-}
-
-ALWAYS_INLINE GCDeferralContext::~GCDeferralContext()
-{
-    if (UNLIKELY(m_shouldGC))
-        m_heap.collectIfNecessaryOrDefer();
-}
+class InferredStructureWatchpoint : public Watchpoint {
+protected:
+    void fireInternal(const FireDetail&) override;
+};
 
 } // namespace JSC
 

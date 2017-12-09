@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ConcurrentJSLock.h"
+#include "InferredStructure.h"
 #include "JSCell.h"
 #include "PropertyName.h"
 #include "PutByIdFlags.h"
@@ -39,6 +40,12 @@ namespace JSC {
 class InferredType final : public JSCell {
 public:
     typedef JSCell Base;
+
+    template<typename CellType>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.inferredTypeSpace;
+    }
 
     static InferredType* create(VM&);
 
@@ -222,6 +229,8 @@ public:
     void addWatchpoint(Watchpoint*);
 
     void dump(PrintStream&) const;
+    
+    void finalizeUnconditionally();
 
 private:
     InferredType(VM&);
@@ -232,47 +241,18 @@ private:
 
     // Helper for willStoreValueSlow() and makeTopSlow(). This returns true if we should fire the
     // watchpoint set.
-    bool set(const ConcurrentJSLocker&, VM&, Descriptor);
+    bool set(GCDeferralContext&, const ConcurrentJSLocker&, VM&, Descriptor);
     
     void removeStructure();
+    
+    friend class InferredStructure;
+    friend class InferredStructureWatchpoint;
 
     mutable ConcurrentJSLock m_lock;
     
     Kind m_kind { Bottom };
 
-    class InferredStructureWatchpoint : public Watchpoint {
-    public:
-        InferredStructureWatchpoint() { }
-    protected:
-        void fireInternal(const FireDetail&) override;
-    };
-
-    class InferredStructureFinalizer : public UnconditionalFinalizer {
-    public:
-        InferredStructureFinalizer() { }
-    protected:
-        void finalizeUnconditionally() override;
-    };
-
-    class InferredStructure : public ThreadSafeRefCounted<InferredStructure> {
-    public:
-        InferredStructure(VM&, InferredType* parent, Structure*);
-
-        Structure* structure() const { return m_structure.get(); };
-
-    private:
-        friend class InferredType;
-        friend class InferredStructureWatchpoint;
-        friend class InferredStructureFinalizer;
-        
-        InferredType* m_parent;
-        WriteBarrier<Structure> m_structure;
-
-        InferredStructureWatchpoint m_watchpoint;
-        InferredStructureFinalizer m_finalizer;
-    };
-
-    RefPtr<InferredStructure> m_structure;
+    WriteBarrier<InferredStructure> m_structure;
 
     // NOTE: If this is being watched, we transform to Top because that implies that it wouldn't be
     // profitable to watch it again. Also, this set is initialized clear, and is never exposed to the DFG

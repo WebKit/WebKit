@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,10 @@
 #include "config.h"
 #include "InferredType.h"
 
+#include "GCDeferralContextInlines.h"
 #include "JSCInlines.h"
 
 namespace JSC {
-
-namespace {
 
 class InferredTypeFireDetail : public FireDetail {
 public:
@@ -64,8 +63,6 @@ private:
     JSValue m_offendingValue;
 };
 
-} // anonymous namespace
-
 const ClassInfo InferredType::s_info = { "InferredType", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(InferredType) };
 
 InferredType* InferredType::create(VM& vm)
@@ -89,15 +86,7 @@ Structure* InferredType::createStructure(VM& vm, JSGlobalObject* globalObject, J
 void InferredType::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     InferredType* inferredType = jsCast<InferredType*>(cell);
-    
-    ConcurrentJSLocker locker(inferredType->m_lock);
-
-    if (inferredType->m_structure) {
-        // The mutator may clear the structure before the GC runs finalizers, so we have to protect
-        // the finalizer from being destroyed.
-        inferredType->m_structure->ref();
-        visitor.addUnconditionalFinalizer(&inferredType->m_structure->m_finalizer);
-    }
+    visitor.append(inferredType->m_structure);
 }
 
 InferredType::Kind InferredType::kindForFlags(PutByIdFlags flags)
@@ -410,6 +399,7 @@ bool InferredType::willStoreValueSlow(VM& vm, PropertyName propertyName, JSValue
     Descriptor myType;
     bool result;
     {
+        GCDeferralContext deferralContext(vm.heap);
         ConcurrentJSLocker locker(m_lock);
         oldType = descriptor(locker);
         myType = Descriptor::forValue(value);
@@ -418,7 +408,7 @@ bool InferredType::willStoreValueSlow(VM& vm, PropertyName propertyName, JSValue
         
         ASSERT(oldType != myType); // The type must have changed if we're on the slow path.
 
-        bool setResult = set(locker, vm, myType);
+        bool setResult = set(deferralContext, locker, vm, myType);
         result = kind(locker) != Top;
         if (!setResult)
             return result;
@@ -433,9 +423,10 @@ void InferredType::makeTopSlow(VM& vm, PropertyName propertyName)
 {
     Descriptor oldType;
     {
+        GCDeferralContext deferralContext(vm.heap);
         ConcurrentJSLocker locker(m_lock);
         oldType = descriptor(locker);
-        if (!set(locker, vm, Top))
+        if (!set(deferralContext, locker, vm, Top))
             return;
     }
 
@@ -443,7 +434,7 @@ void InferredType::makeTopSlow(VM& vm, PropertyName propertyName)
     m_watchpointSet.fireAll(vm, detail);
 }
 
-bool InferredType::set(const ConcurrentJSLocker& locker, VM& vm, Descriptor newDescriptor)
+bool InferredType::set(GCDeferralContext& deferralContext, const ConcurrentJSLocker& locker, VM& vm, Descriptor newDescriptor)
 {
     // We will trigger write barriers while holding our lock. Currently, write barriers don't GC, but that
     // could change. If it does, we don't want to deadlock. Note that we could have used
@@ -480,7 +471,7 @@ bool InferredType::set(const ConcurrentJSLocker& locker, VM& vm, Descriptor newD
 
     // Remove the old InferredStructure object if we no longer need it.
     if (!newDescriptor.structure())
-        m_structure = nullptr;
+        m_structure.clear();
 
     // Add a new InferredStructure object if we need one now.
     if (newDescriptor.structure()) {
@@ -488,8 +479,8 @@ bool InferredType::set(const ConcurrentJSLocker& locker, VM& vm, Descriptor newD
             // We should agree on the structures if we get here.
             ASSERT(newDescriptor.structure() == m_structure->structure());
         } else {
-            m_structure = adoptRef(new InferredStructure(vm, this, newDescriptor.structure()));
-            newDescriptor.structure()->addTransitionWatchpoint(&m_structure->m_watchpoint);
+            auto* structure = InferredStructure::create(vm, deferralContext, this, newDescriptor.structure());
+            m_structure.set(vm, this, structure);
         }
     }
 
@@ -512,51 +503,18 @@ void InferredType::removeStructure()
     Descriptor oldDescriptor;
     Descriptor newDescriptor;
     {
+        GCDeferralContext deferralContext(vm.heap);
         ConcurrentJSLocker locker(m_lock);
         oldDescriptor = descriptor(locker);
         newDescriptor = oldDescriptor;
         newDescriptor.removeStructure();
         
-        if (!set(locker, vm, newDescriptor))
+        if (!set(deferralContext, locker, vm, newDescriptor))
             return;
     }
 
     InferredTypeFireDetail detail(this, nullptr, oldDescriptor, newDescriptor, JSValue());
     m_watchpointSet.fireAll(vm, detail);
-}
-
-void InferredType::InferredStructureWatchpoint::fireInternal(const FireDetail&)
-{
-    InferredStructure* inferredStructure =
-        bitwise_cast<InferredStructure*>(
-            bitwise_cast<char*>(this) - OBJECT_OFFSETOF(InferredStructure, m_watchpoint));
-
-    inferredStructure->m_parent->removeStructure();
-}
-
-void InferredType::InferredStructureFinalizer::finalizeUnconditionally()
-{
-    InferredStructure* inferredStructure =
-        bitwise_cast<InferredStructure*>(
-            bitwise_cast<char*>(this) - OBJECT_OFFSETOF(InferredStructure, m_finalizer));
-    
-    ASSERT(Heap::isMarked(inferredStructure->m_parent));
-    
-    // Monotonicity ensures that we shouldn't see a new structure that is different from us, but we
-    // could have been nulled. We only rely on it being the null case only in debug.
-    if (inferredStructure == inferredStructure->m_parent->m_structure.get()) {
-        if (!Heap::isMarked(inferredStructure->m_structure.get()))
-            inferredStructure->m_parent->removeStructure();
-    } else
-        ASSERT(!inferredStructure->m_parent->m_structure);
-    
-    inferredStructure->deref();
-}
-
-InferredType::InferredStructure::InferredStructure(VM& vm, InferredType* parent, Structure* structure)
-    : m_parent(parent)
-    , m_structure(vm, parent, structure)
-{
 }
 
 } // namespace JSC

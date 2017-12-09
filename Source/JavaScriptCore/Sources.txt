@@ -743,6 +743,8 @@ runtime/HashMapImpl.cpp
 runtime/Identifier.cpp
 runtime/IndexingType.cpp
 runtime/IndirectEvalExecutable.cpp
+runtime/InferredStructure.cpp
+runtime/InferredStructureWatchpoint.cpp
 runtime/InferredType.cpp
 runtime/InferredTypeTable.cpp
 runtime/InferredValue.cpp

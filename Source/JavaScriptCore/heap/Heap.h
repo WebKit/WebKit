@@ -495,7 +495,12 @@ private:
     void deleteSourceProviderCaches();
     void notifyIncrementalSweeper();
     void harvestWeakReferences();
+
+    template<typename CellType>
+    void finalizeUnconditionalFinalizers(Subspace&);
+    
     void finalizeUnconditionalFinalizers();
+    
     void clearUnmarkedExecutables();
     void deleteUnmarkedCompiledCode();
     JS_EXPORT_PRIVATE void addToRememberedSet(const JSCell*);

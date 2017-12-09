@@ -1,3 +1,47 @@
+2017-12-05  Filip Pizlo  <fpizlo@apple.com>
+
+        InferredType should not use UnconditionalFinalizer
+        https://bugs.webkit.org/show_bug.cgi?id=180456
+
+        Reviewed by Saam Barati.
+        
+        This turns InferredStructure into a cell so that we can unconditionally finalize them without
+        having to add things to the UnconditionalFinalizer list. I'm removing all uses of
+        UnconditionalFinalizers and WeakReferenceHarvesters because the data structures used to manage
+        them are a top cause of lock contention in the parallel GC. Also, we don't need those data
+        structures if we use IsoSubspaces, subspace iteration, and marking constraints.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        * heap/Heap.h:
+        * runtime/InferredStructure.cpp: Added.
+        (JSC::InferredStructure::create):
+        (JSC::InferredStructure::destroy):
+        (JSC::InferredStructure::createStructure):
+        (JSC::InferredStructure::visitChildren):
+        (JSC::InferredStructure::finalizeUnconditionally):
+        (JSC::InferredStructure::InferredStructure):
+        (JSC::InferredStructure::finishCreation):
+        * runtime/InferredStructure.h: Added.
+        * runtime/InferredStructureWatchpoint.cpp: Added.
+        (JSC::InferredStructureWatchpoint::fireInternal):
+        * runtime/InferredStructureWatchpoint.h: Added.
+        * runtime/InferredType.cpp:
+        (JSC::InferredType::visitChildren):
+        (JSC::InferredType::willStoreValueSlow):
+        (JSC::InferredType::makeTopSlow):
+        (JSC::InferredType::set):
+        (JSC::InferredType::removeStructure):
+        (JSC::InferredType::InferredStructureWatchpoint::fireInternal): Deleted.
+        (JSC::InferredType::InferredStructureFinalizer::finalizeUnconditionally): Deleted.
+        (JSC::InferredType::InferredStructure::InferredStructure): Deleted.
+        * runtime/InferredType.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2017-12-09  Konstantin Tokarev  <annulen@yandex.ru>
 
         [python] Replace print >> operator with print() function for python3 compatibility

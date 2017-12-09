@@ -29,6 +29,10 @@
 
 namespace JSC {
 
+class FunctionExecutable;
+class JSGlobalObject;
+class JSObject;
+
 class PrototypeKey {
 public:
     PrototypeKey() { }

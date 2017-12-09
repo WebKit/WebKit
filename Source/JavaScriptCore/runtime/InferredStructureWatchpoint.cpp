@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "InferredStructureWatchpoint.h"
 
-#include "GCDeferralContext.h"
-#include "Heap.h"
+#include "InferredType.h"
 
 namespace JSC {
 
-ALWAYS_INLINE GCDeferralContext::GCDeferralContext(Heap& heap)
-    : m_heap(heap)
+void InferredStructureWatchpoint::fireInternal(const FireDetail&)
 {
-}
+    InferredStructure* inferredStructure =
+        bitwise_cast<InferredStructure*>(
+            bitwise_cast<char*>(this) - OBJECT_OFFSETOF(InferredStructure, m_watchpoint));
 
-ALWAYS_INLINE GCDeferralContext::~GCDeferralContext()
-{
-    if (UNLIKELY(m_shouldGC))
-        m_heap.collectIfNecessaryOrDefer();
+    if (!inferredStructure->isLive())
+        return;
+    
+    inferredStructure->m_parent->removeStructure();
 }
 
 } // namespace JSC

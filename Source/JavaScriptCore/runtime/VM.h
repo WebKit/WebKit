@@ -337,11 +337,13 @@ public:
     CompleteSubspace webAssemblyCodeBlockSpace;
 #endif
     
-    IsoSubspace nativeExecutableSpace;
     IsoSubspace directEvalExecutableSpace;
-    IsoSubspace indirectEvalExecutableSpace;
     IsoSubspace functionExecutableSpace;
+    IsoSubspace indirectEvalExecutableSpace;
+    IsoSubspace inferredStructureSpace;
+    IsoSubspace inferredTypeSpace;
     IsoSubspace moduleProgramExecutableSpace;
+    IsoSubspace nativeExecutableSpace;
     IsoSubspace programExecutableSpace;
 
     VMType vmType;
@@ -390,9 +392,10 @@ public:
     Strong<Structure> unlinkedFunctionCodeBlockStructure;
     Strong<Structure> unlinkedModuleProgramCodeBlockStructure;
     Strong<Structure> propertyTableStructure;
-    Strong<Structure> inferredValueStructure;
+    Strong<Structure> inferredStructureStructure;
     Strong<Structure> inferredTypeStructure;
     Strong<Structure> inferredTypeTableStructure;
+    Strong<Structure> inferredValueStructure;
     Strong<Structure> functionRareDataStructure;
     Strong<Structure> exceptionStructure;
     Strong<Structure> promiseDeferredStructure;
