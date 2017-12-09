@@ -1,3 +1,14 @@
+2017-12-08  Zalan Bujtas  <zalan@apple.com>
+
+        Document::updateLayout() could destroy current frame.
+        https://bugs.webkit.org/show_bug.cgi?id=180525
+        <rdar://problem/35906836>
+
+        Reviewed by Simon Fraser.
+
+        * fast/frames/crash-when-iframe-is-remove-in-eventhandler-expected.txt: Added.
+        * fast/frames/crash-when-iframe-is-remove-in-eventhandler.html: Added.
+
 2017-12-08  Youenn Fablet  <youenn@apple.com>
 
         Service Worker should use a correct user agent
