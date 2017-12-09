@@ -57,7 +57,7 @@ class PlatformInfo(object):
         if self.os_name.startswith('mac'):
             version = Version.from_string(platform_module.mac_ver()[0])
         elif self.os_name.startswith('win'):
-            version = self._win_version(sys_module)
+            version = self._win_version()
         elif self.os_name == 'linux' or self.os_name == 'freebsd' or self.os_name == 'openbsd' or self.os_name == 'netbsd':
             version = None
         else:
@@ -176,14 +176,15 @@ class PlatformInfo(object):
             return 'haiku'
         raise AssertionError('unrecognized platform string "%s"' % sys_platform)
 
-    def _win_version(self, sys_module):
-        if hasattr(sys_module, 'getwindowsversion'):
-            return Version.from_iterable(sys_module.getwindowsversion()[0:3])
-        return Version.from_iterable(self._win_version_from_cmd())
+    def _win_version(self):
+        version = self._win_version_str()
+        match_object = re.search(r'(?P<major>\d+)\.(?P<minor>\d+)\.(?P<build>\d+)', version)
+        assert match_object, 'cmd returned an unexpected version string: ' + version
+        return Version.from_iterable(match_object.groups())
 
-    def _win_version_from_cmd(self):
+    def _win_version_str(self):
+        version = self._platform_module.win32_ver()[1]
+        if version:
+            return version
         # Note that this should only ever be called on windows, so this should always work.
-        ver_output = self._executive.run_command(['cmd', '/c', 'ver'], decode_output=False)
-        match_object = re.search(r'(?P<major>\d+)\.(?P<minor>\d+)\.(?P<build>\d+)', ver_output)
-        assert match_object, 'cmd returned an unexpected version string: ' + ver_output
-        return match_object.groups()
+        return self._executive.run_command(['cmd', '/c', 'ver'], decode_output=False)

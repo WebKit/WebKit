@@ -1,5 +1,29 @@
 2017-12-08  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
+        [Win] The way to detect Windows 10 is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=179344
+        <rdar://problem/35562264>
+
+        Reviewed by Alex Christensen.
+
+        Python2.7 doesn't return correct information on Windows 10.
+        Use platform.win32_ver() instead of sys.getwindowsversion().
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo._win_version):
+        (PlatformInfo._win_version_str):
+        * Scripts/webkitpy/common/system/platforminfo_unittest.py:
+        (fake_sys):
+        (fake_sys.FakeSysModule):
+        (fake_platform):
+        (fake_platform.FakePlatformModule.win32_ver):
+        (TestPlatformInfo.test_os_name_and_wrappers):
+        (TestPlatformInfo.test_os_version):
+        (TestPlatformInfo.test_display_name):
+        (TestPlatformInfo.test_total_bytes_memory):
+
+2017-12-08  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
         [WinCairo] Fix runtime error after r225229
         https://bugs.webkit.org/show_bug.cgi?id=180614
 
