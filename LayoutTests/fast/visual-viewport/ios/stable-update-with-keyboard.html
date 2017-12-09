@@ -1,0 +1,71 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        .spacer-above {
+            background-color: silver;
+            height: 600px;
+        }
+        .spacer-below {
+            background-color: silver;
+            height: 80px;
+        }
+        input {
+            display: block;
+            margin: 60px 30px;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        function getScrollDownUIScript()
+        {
+            return `(function() {
+                uiController.immediateScrollToOffset(0, 800);
+            })();`;
+        }
+        
+        function getFocusInputUIScript(x, y)
+        {
+            return `(function() {
+
+                uiController.didShowKeyboardCallback = function() {
+                    uiController.doAfterNextStablePresentationUpdate(function() {
+                        uiController.uiScriptComplete();
+                    });
+                };
+                uiController.singleTapAtPoint(${x}, ${y}, function() {});
+            })();`;
+        }
+
+        function runTest()
+        {
+            if (!window.testRunner || !testRunner.runUIScript)
+                return;
+            
+            testRunner.runUIScript(getScrollDownUIScript(), function() {
+                window.setTimeout(function() {
+                    var rect = document.getElementById('input').getBoundingClientRect();
+                    // singleTapAtPoint takes document coordinates, so add scrollTop to clientRect.top.
+                    testRunner.runUIScript(getFocusInputUIScript(rect.left, rect.top + document.scrollingElement.scrollTop), function() {
+                        debug('PASS: got stable update');
+                        finishJSTest();
+                    });
+                }, 0);
+            });
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+<p>This test will time out if no stable update is received.</p>
+<div class="spacer-above"></div>
+<input id="input" type="text"/>
+<div class="spacer-below"></div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

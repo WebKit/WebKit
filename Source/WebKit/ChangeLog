@@ -1,3 +1,24 @@
+2017-12-06  Simon Fraser  <simon.fraser@apple.com>
+
+        When the iPhone keyboard is up, sometimes we never commit a stable update and re-show the caret
+        https://bugs.webkit.org/show_bug.cgi?id=180498
+
+        Reviewed by Tim Horton.
+
+        When the keyboard is showing, we would think that the page was in a rubber-banding state
+        because contentOffsetBoundedInValidRange() would always clamp the content offset to a different
+        value.
+
+        This happened because scrollView.contentInset don't change when the keyboard is showing,
+        but UIKit actually consults scrollView.adjustedContentInset, which does. If we use
+        scrollView.adjustedContentInset in this computation, we'll get a correct answer.
+
+        Also rewrote the clamping logic to be more similar to what UIKit does internally when computing
+        min/max content offset.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (contentOffsetBoundedInValidRange):
+
 2017-12-08  Chris Dumez  <cdumez@apple.com>
 
         Clearing all Website Data should remove service worker registrations on disk

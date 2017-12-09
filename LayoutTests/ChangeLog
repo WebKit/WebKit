@@ -1,3 +1,15 @@
+2017-12-06  Simon Fraser  <simon.fraser@apple.com>
+
+        When the iPhone keyboard is up, sometimes we never commit a stable update and re-show the caret
+        https://bugs.webkit.org/show_bug.cgi?id=180498
+
+        Reviewed by Tim Horton.
+
+        Test that completes once a stable update is received after showing the keyboard.
+
+        * fast/visual-viewport/ios/stable-update-with-keyboard-expected.txt: Added.
+        * fast/visual-viewport/ios/stable-update-with-keyboard.html: Added.
+
 2017-12-08  Daniel Bates  <dabates@apple.com>
 
         Remove unnecessary prefix from AutoFillButtonType enumerators
