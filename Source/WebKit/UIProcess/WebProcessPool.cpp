@@ -600,7 +600,10 @@ void WebProcessPool::establishWorkerContextConnectionToStorageProcess(StoragePro
     m_serviceWorkerProcess = serviceWorkerProcessProxy.ptr();
     initializeNewWebProcess(serviceWorkerProcessProxy.get(), m_websiteDataStore->websiteDataStore());
     m_processes.append(WTFMove(serviceWorkerProcessProxy));
+
     m_serviceWorkerProcess->start(m_defaultPageGroup->preferences().store());
+    if (!m_serviceWorkerUserAgent.isNull())
+        m_serviceWorkerProcess->setUserAgent(m_serviceWorkerUserAgent);
 }
 #endif
 

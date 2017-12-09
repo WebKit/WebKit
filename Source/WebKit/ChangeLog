@@ -1,3 +1,18 @@
+2017-12-08  Youenn Fablet  <youenn@apple.com>
+
+        Service Worker should use a correct user agent
+        https://bugs.webkit.org/show_bug.cgi?id=180566
+        <rdar://problem/35926295>
+
+        Reviewed by Chris Dumez.
+
+        Addendum to landed patch.
+        This change was removed from the last version of the patch but proves to be needed by Safari.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToStorageProcess):
+        Added back setting the user agent at start of service worker in case a page is already created.
+
 2017-12-08  Brady Eidson  <beidson@apple.com>
 
         Delay some service worker operations until after the database import completes.
