@@ -26,6 +26,9 @@ from webkitpy.common.memoized import memoized
 from webkitpy.common.version import Version
 
 
+PUBLIC_TABLE = 'public'
+
+
 class VersionNameMap(object):
 
     # Allows apple_additions to define a custom mapping
@@ -41,7 +44,7 @@ class VersionNameMap(object):
         self.mapping = {}
 
         self.default_system_platform = platform.os_name
-        self.mapping['public'] = {
+        self.mapping[PUBLIC_TABLE] = {
             'mac': {
                 'Leopard': Version(10, 5),
                 'Snow Leopard': Version(10, 6),
@@ -73,12 +76,9 @@ class VersionNameMap(object):
             result['{} {}'.format(prefix, str(Version(minimum.major + i)))] = Version(minimum.major + i)
         return result
 
-    def to_name(self, version, platform=None, table='public'):
-        platform = self.default_system_platform if platform is None else platform
-        assert table in self.mapping
-        assert platform in self.mapping[table]
+    def to_name(self, version, platform=None, table=PUBLIC_TABLE):
         closest_match = (None, None)
-        for os_name, os_version in self.mapping[table][platform].iteritems():
+        for os_name, os_version in self.mapping_for_platform(platform, table).iteritems():
             if version == os_version:
                 return os_name
             elif version.contained_in(os_version):
@@ -121,3 +121,16 @@ class VersionNameMap(object):
                     if self.strip_name_formatting(version_name) == unformatted:
                         return (os_name, version)
         return (None, None)
+
+    def names(self, platform=None, table=PUBLIC_TABLE):
+        """return list of os_name for platform"""
+        mapping = self.mapping_for_platform(platform, table)
+        names = [os_name for os_name in mapping]
+        return sorted(names, key=lambda os_name: mapping[os_name])
+
+    def mapping_for_platform(self, platform=None, table=PUBLIC_TABLE):
+        """return proper os_name: os_version mapping for platform"""
+        platform = self.default_system_platform if platform is None else platform
+        assert table in self.mapping
+        assert platform in self.mapping[table]
+        return self.mapping[table][platform]

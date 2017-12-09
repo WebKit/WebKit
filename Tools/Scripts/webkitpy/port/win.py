@@ -39,6 +39,7 @@ from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.system.executive import ScriptError, Executive
 from webkitpy.common.system.path import abspath_to_uri, cygpath
+from webkitpy.common.version_name_map import VersionNameMap
 from webkitpy.port.apple import ApplePort
 from webkitpy.port.config import apple_additions
 
@@ -435,16 +436,16 @@ class WinPort(ApplePort):
 class WinCairoPort(WinPort):
     port_name = "wincairo"
 
-    VERSION_FALLBACK_ORDER = ["wincairo-xp", "wincairo-vista", "wincairo-7sp0", "wincairo-win10", "wincairo"]
+    VERSION_FALLBACK_ORDER = ["wincairo-" + os_name.lower() for os_name in VersionNameMap.map().names()]
 
     def default_baseline_search_path(self):
         name = self._name.replace('-wk2', '')
         if name.endswith(self.FUTURE_VERSION):
-            fallback_names = [self.port_name]
+            fallback_names = []
         else:
-            fallback_names = self.VERSION_FALLBACK_ORDER[self.VERSION_FALLBACK_ORDER.index(name):-1] + [self.port_name]
-        fallback_names.append('win')
-        fallback_names.append('mac')
+            assert name in self.VERSION_FALLBACK_ORDER
+            fallback_names = self.VERSION_FALLBACK_ORDER[self.VERSION_FALLBACK_ORDER.index(name):]
+        fallback_names.append(self.port_name)
         return map(self._webkit_baseline_path, fallback_names)
 
     def _future_port_name(self):

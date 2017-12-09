@@ -1,3 +1,24 @@
+2017-12-08  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo] Fix runtime error after r225229
+        https://bugs.webkit.org/show_bug.cgi?id=180614
+
+        Reviewed by Alex Christensen.
+
+        The list of fallback versions doesn't match with version name mapping introduced recently.
+        It should be safe by creating the list automatically from the name map for consistency.
+ 
+        * Scripts/webkitpy/common/version_name_map.py:
+        (VersionNameMap.__init__):
+        (VersionNameMap.to_name):
+        (VersionNameMap.from_name):
+        (VersionNameMap):
+        (VersionNameMap.names):
+        (VersionNameMap.mapping_for_platform):
+        * Scripts/webkitpy/port/win.py:
+        (WinCairoPort):
+        (WinCairoPort.default_baseline_search_path):
+
 2017-12-08  David Quesada  <david_quesada@apple.com>
 
         ApplicationManifestParser should strip whitespace from the raw input
