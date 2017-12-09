@@ -14,14 +14,14 @@ PASS ServiceWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of i
 PASS ServiceWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to its original value via __proto__ should not throw 
 PASS ServiceWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to its original value via Reflect.setPrototypeOf should return true 
 PASS ServiceWorkerGlobalScope interface: existence and properties of interface prototype object's "constructor" property 
-FAIL ServiceWorkerGlobalScope interface: attribute clients The ServiceWorkerGlobalScope.clients getter can only be used on instances of ServiceWorkerGlobalScope
-FAIL ServiceWorkerGlobalScope interface: attribute registration The ServiceWorkerGlobalScope.registration getter can only be used on instances of ServiceWorkerGlobalScope
+PASS ServiceWorkerGlobalScope interface: attribute clients 
+PASS ServiceWorkerGlobalScope interface: attribute registration 
 PASS ServiceWorkerGlobalScope interface: operation skipWaiting() 
-FAIL ServiceWorkerGlobalScope interface: attribute oninstall The ServiceWorkerGlobalScope.oninstall getter can only be used on instances of ServiceWorkerGlobalScope
-FAIL ServiceWorkerGlobalScope interface: attribute onactivate The ServiceWorkerGlobalScope.onactivate getter can only be used on instances of ServiceWorkerGlobalScope
-FAIL ServiceWorkerGlobalScope interface: attribute onfetch The ServiceWorkerGlobalScope.onfetch getter can only be used on instances of ServiceWorkerGlobalScope
-FAIL ServiceWorkerGlobalScope interface: attribute onmessage The ServiceWorkerGlobalScope.onmessage getter can only be used on instances of ServiceWorkerGlobalScope
-FAIL ServiceWorkerGlobalScope interface: attribute onmessageerror The ServiceWorkerGlobalScope.onmessageerror getter can only be used on instances of ServiceWorkerGlobalScope
+PASS ServiceWorkerGlobalScope interface: attribute oninstall 
+PASS ServiceWorkerGlobalScope interface: attribute onactivate 
+PASS ServiceWorkerGlobalScope interface: attribute onfetch 
+PASS ServiceWorkerGlobalScope interface: attribute onmessage 
+PASS ServiceWorkerGlobalScope interface: attribute onmessageerror 
 PASS ServiceWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via Object.setPrototypeOf should throw a TypeError 
 PASS ServiceWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via __proto__ should throw a TypeError 
 PASS ServiceWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via Reflect.setPrototypeOf should return false 

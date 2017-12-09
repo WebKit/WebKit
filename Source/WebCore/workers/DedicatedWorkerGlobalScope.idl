@@ -33,6 +33,7 @@
     Exposed=DedicatedWorker,
     Global=(Worker,DedicatedWorker),
     JSGenerateToNativeObject,
+    ImplicitThis,
     IsImmutablePrototypeExoticObject,
     IsImmutablePrototypeExoticObjectOnPrototype,
 ] interface DedicatedWorkerGlobalScope : WorkerGlobalScope {

@@ -46,7 +46,7 @@ PASS DedicatedWorkerGlobalScope interface: existence and properties of interface
 FAIL DedicatedWorkerGlobalScope interface: attribute name assert_own_property: The global object must have a property "name" expected property "name" missing
 PASS DedicatedWorkerGlobalScope interface: operation postMessage(any, [object Object]) 
 FAIL DedicatedWorkerGlobalScope interface: operation close() assert_own_property: global object missing non-static operation expected property "close" missing
-FAIL DedicatedWorkerGlobalScope interface: attribute onmessage The DedicatedWorkerGlobalScope.onmessage getter can only be used on instances of DedicatedWorkerGlobalScope
+PASS DedicatedWorkerGlobalScope interface: attribute onmessage 
 FAIL DedicatedWorkerGlobalScope interface: attribute onmessageerror assert_own_property: The global object must have a property "onmessageerror" expected property "onmessageerror" missing
 PASS DedicatedWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via Object.setPrototypeOf should throw a TypeError 
 PASS DedicatedWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via __proto__ should throw a TypeError 
