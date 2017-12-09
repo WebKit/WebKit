@@ -78,9 +78,9 @@ public:
     constexpr explicit unexpected(const E& e) : val(e) { }
     constexpr explicit unexpected(E&& e) : val(std::forward<E>(e)) { }
     constexpr const E& value() const & { return val; }
-    RELAXED_CONSTEXPR E& value() & { return val; }
-    RELAXED_CONSTEXPR E&& value() && { return WTFMove(val); }
-    RELAXED_CONSTEXPR const E&& value() const && { return WTFMove(val); }
+    constexpr E& value() & { return val; }
+    constexpr E&& value() && { return WTFMove(val); }
+    constexpr const E&& value() const && { return WTFMove(val); }
 
 private:
     E val;

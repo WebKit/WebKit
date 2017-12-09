@@ -1,5 +1,24 @@
 2017-12-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [WTF] Remove RELAXED_CONSTEXPR
+        https://bugs.webkit.org/show_bug.cgi?id=180624
+
+        Reviewed by JF Bastien.
+
+        All of our required compilers support relaxed constexpr in C++14.
+        We can drop RELAXED_CONSTEXPR macro in our tree.
+
+        * wtf/Compiler.h:
+        * wtf/Expected.h:
+        (std::experimental::fundamentals_v3::expected::operator*):
+        (std::experimental::fundamentals_v3::expected::value):
+        (std::experimental::fundamentals_v3::expected::error):
+        * wtf/Unexpected.h:
+        (std::experimental::fundamentals_v3::unexpected::value):
+        (std::experimental::fundamentals_v3::unexpected::value const):
+
+2017-12-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Fix WTF::Hasher tuple expansion with variadic args
         https://bugs.webkit.org/show_bug.cgi?id=180623
 

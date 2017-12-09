@@ -154,20 +154,6 @@
 #define WTF_COMPILER_SUPPORTS_NSDMI_FOR_AGGREGATES 1
 #endif
 
-/* RELAXED_CONSTEXPR */
-
-#if defined(__cpp_constexpr) && __cpp_constexpr >= 201304
-#define WTF_COMPILER_SUPPORTS_RELAXED_CONSTEXPR 1
-#endif
-
-#if !defined(RELAXED_CONSTEXPR)
-#if COMPILER_SUPPORTS(RELAXED_CONSTEXPR)
-#define RELAXED_CONSTEXPR constexpr
-#else
-#define RELAXED_CONSTEXPR
-#endif
-#endif
-
 #define ASAN_ENABLED COMPILER_HAS_CLANG_FEATURE(address_sanitizer)
 
 #if ASAN_ENABLED

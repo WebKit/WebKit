@@ -482,16 +482,16 @@ public:
     constexpr const value_type& operator*() const & { return base::s.val; }
     value_type& operator*() & { return base::s.val; }
     constexpr const value_type&& operator*() const && { return std::move(base::s.val); }
-    RELAXED_CONSTEXPR value_type&& operator*() && { return std::move(base::s.val); }
+    constexpr value_type&& operator*() && { return std::move(base::s.val); }
     constexpr explicit operator bool() const { return base::has; }
     constexpr bool has_value() const { return base::has; }
     constexpr const value_type& value() const & { return base::has ? base::s.val : (__EXPECTED_THROW(bad_expected_access<error_type>(base::s.err)), base::s.val); }
-    RELAXED_CONSTEXPR value_type& value() & { return base::has ? base::s.val : (__EXPECTED_THROW(bad_expected_access<error_type>(base::s.err)), base::s.val); }
+    constexpr value_type& value() & { return base::has ? base::s.val : (__EXPECTED_THROW(bad_expected_access<error_type>(base::s.err)), base::s.val); }
     constexpr const value_type&& value() const && { return std::move(base::has ? base::s.val : (__EXPECTED_THROW(bad_expected_access<error_type>(base::s.err)), base::s.val)); }
-    RELAXED_CONSTEXPR value_type&& value() && { return std::move(base::has ? base::s.val : (__EXPECTED_THROW(bad_expected_access<error_type>(base::s.err)), base::s.val)); }
+    constexpr value_type&& value() && { return std::move(base::has ? base::s.val : (__EXPECTED_THROW(bad_expected_access<error_type>(base::s.err)), base::s.val)); }
     constexpr const error_type& error() const & { return !base::has ? base::s.err : (__EXPECTED_THROW(bad_expected_access<void>()), base::s.err); }
     error_type& error() & { return !base::has ? base::s.err : (__EXPECTED_THROW(bad_expected_access<void>()), base::s.err); }
-    RELAXED_CONSTEXPR error_type&& error() && { return std::move(!base::has ? base::s.err : (__EXPECTED_THROW(bad_expected_access<void>()), base::s.err)); }
+    constexpr error_type&& error() && { return std::move(!base::has ? base::s.err : (__EXPECTED_THROW(bad_expected_access<void>()), base::s.err)); }
     constexpr const error_type&& error() const && { return std::move(!base::has ? base::s.err : (__EXPECTED_THROW(bad_expected_access<void>()), base::s.err)); }
     template<class U> constexpr value_type value_or(U&& u) const & { return base::has ? **this : static_cast<value_type>(std::forward<U>(u)); }
     template<class U> value_type value_or(U&& u) && { return base::has ? std::move(**this) : static_cast<value_type>(std::forward<U>(u)); }
@@ -551,7 +551,7 @@ public:
     void value() const { !base::has ? __EXPECTED_THROW(bad_expected_access<void>()) : void(); }
     constexpr const E& error() const & { return !base::has ? base::s.err : (__EXPECTED_THROW(bad_expected_access<void>()), base::s.err); }
     E& error() & { return !base::has ? base::s.err : (__EXPECTED_THROW(bad_expected_access<void>()), base::s.err); }
-    RELAXED_CONSTEXPR E&& error() && { return std::move(!base::has ? base::s.err : (__EXPECTED_THROW(bad_expected_access<void>()), base::s.err)); }
+    constexpr E&& error() && { return std::move(!base::has ? base::s.err : (__EXPECTED_THROW(bad_expected_access<void>()), base::s.err)); }
 };
 
 template<class T, class E> constexpr bool operator==(const expected<T, E>& x, const expected<T, E>& y) { return bool(x) == bool(y) && (x ? x.value() == y.value() : x.error() == y.error()); }
