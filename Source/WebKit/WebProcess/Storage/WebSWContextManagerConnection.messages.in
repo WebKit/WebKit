@@ -35,6 +35,7 @@ messages -> WebSWContextManagerConnection {
     MatchAllCompleted(uint64_t matchAllRequestIdentifier, Vector<WebCore::ServiceWorkerClientInformation> clientsData)
     ClaimCompleted(uint64_t claimRequestIdentifier)
     DidFinishSkipWaiting(uint64_t callbackID)
+    SetUserAgent(String userAgent)
 }
 
 #endif

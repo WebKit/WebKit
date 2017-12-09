@@ -1,3 +1,16 @@
+2017-12-08  Youenn Fablet  <youenn@apple.com>
+
+        Service Worker should use a correct user agent
+        https://bugs.webkit.org/show_bug.cgi?id=180566
+        <rdar://problem/35926295>
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/service-workers/useragent-worker.js: Added.
+        (async.doTest):
+        * http/wpt/service-workers/useragent.https-expected.txt: Added.
+        * http/wpt/service-workers/useragent.https.html: Added.
+
 2017-12-07  Simon Fraser  <simon.fraser@apple.com>
 
         Wrong caret position for input field inside a fixed position parent on iOS 11

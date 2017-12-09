@@ -46,14 +46,18 @@ struct ServiceWorkerContextData;
 
 namespace WebKit {
 
+class ServiceWorkerFrameLoaderClient;
 struct WebPreferencesStore;
 
 class WebSWContextManagerConnection final : public WebCore::SWContextManager::Connection, public IPC::MessageReceiver {
 public:
     WebSWContextManagerConnection(Ref<IPC::Connection>&&, uint64_t pageID, const WebPreferencesStore&);
+    ~WebSWContextManagerConnection();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) final;
+
+    void removeFrameLoaderClient(ServiceWorkerFrameLoaderClient&);
 
 private:
     void updatePreferences(const WebPreferencesStore&);
@@ -83,16 +87,19 @@ private:
     void matchAllCompleted(uint64_t matchAllRequestIdentifier, Vector<WebCore::ServiceWorkerClientInformation>&&);
     void claimCompleted(uint64_t claimRequestIdentifier);
     void didFinishSkipWaiting(uint64_t callbackID);
+    void setUserAgent(String&& userAgent);
 
     Ref<IPC::Connection> m_connectionToStorageProcess;
     uint64_t m_pageID { 0 };
     uint64_t m_previousServiceWorkerID { 0 };
 
+    HashSet<std::unique_ptr<ServiceWorkerFrameLoaderClient>> m_loaders;
     HashMap<uint64_t, FindClientByIdentifierCallback> m_findClientByIdentifierRequests;
     HashMap<uint64_t, WebCore::ServiceWorkerClientsMatchAllCallback> m_matchAllRequests;
     HashMap<uint64_t, WTF::CompletionHandler<void()>> m_claimRequests;
     HashMap<uint64_t, WTF::Function<void()>> m_skipWaitingRequests;
     uint64_t m_previousRequestIdentifier { 0 };
+    String m_userAgent;
 };
 
 } // namespace WebKit

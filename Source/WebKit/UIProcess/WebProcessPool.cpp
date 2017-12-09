@@ -1011,6 +1011,17 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     return process->createWebPage(pageClient, WTFMove(pageConfiguration));
 }
 
+#if ENABLE(SERVICE_WORKER)
+void WebProcessPool::updateServiceWorkerUserAgent(const String& userAgent)
+{
+    if (m_serviceWorkerUserAgent == userAgent)
+        return;
+    m_serviceWorkerUserAgent = userAgent;
+    if (m_serviceWorkerProcess)
+        m_serviceWorkerProcess->setUserAgent(m_serviceWorkerUserAgent);
+}
+#endif
+
 void WebProcessPool::pageAddedToProcess(WebPageProxy& page)
 {
     auto result = m_sessionToPagesMap.add(page.sessionID(), HashSet<WebPageProxy*>()).iterator->value.add(&page);

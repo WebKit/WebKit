@@ -2330,11 +2330,17 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
     m_process->send(Messages::WebPage::DidReceivePolicyDecision(frame.frameID(), listenerID, action, navigation ? navigation->navigationID() : 0, downloadID, websitePolicies), m_pageID);
 }
 
-void WebPageProxy::setUserAgent(const String& userAgent)
+void WebPageProxy::setUserAgent(String&& userAgent)
 {
     if (m_userAgent == userAgent)
         return;
-    m_userAgent = userAgent;
+    m_userAgent = WTFMove(userAgent);
+
+#if ENABLE(SERVICE_WORKER)
+    // We update the service worker there at the moment to be sure we use values used by actual web pages.
+    // FIXME: Refactor this when we have a better User-Agent story.
+    process().processPool().updateServiceWorkerUserAgent(m_userAgent);
+#endif
 
     if (!isValid())
         return;
@@ -2365,7 +2371,7 @@ void WebPageProxy::setCustomUserAgent(const String& customUserAgent)
         return;
     }
 
-    setUserAgent(m_customUserAgent);
+    setUserAgent(String { m_customUserAgent });
 }
 
 void WebPageProxy::resumeActiveDOMObjectsAndAnimations()

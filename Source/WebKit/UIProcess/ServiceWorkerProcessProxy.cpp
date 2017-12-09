@@ -31,6 +31,7 @@
 #include "WebPreferencesStore.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
+#include "WebSWContextManagerConnectionMessages.h"
 #include <WebCore/NotImplemented.h>
 
 namespace WebKit {
@@ -61,7 +62,12 @@ void ServiceWorkerProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions&
 
 void ServiceWorkerProcessProxy::start(const WebPreferencesStore& store)
 {
-    send(Messages::WebProcess::EstablishWorkerContextConnectionToStorageProcess(m_serviceWorkerPageID, store), 0);
+    send(Messages::WebProcess::EstablishWorkerContextConnectionToStorageProcess { m_serviceWorkerPageID, store }, 0);
+}
+
+void ServiceWorkerProcessProxy::setUserAgent(const String& userAgent)
+{
+    send(Messages::WebSWContextManagerConnection::SetUserAgent { userAgent }, 0);
 }
 
 void ServiceWorkerProcessProxy::didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, Ref<AuthenticationChallengeProxy>&& challenge)

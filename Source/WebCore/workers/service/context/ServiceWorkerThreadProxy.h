@@ -60,7 +60,7 @@ public:
     void setTerminatingOrTerminated(bool terminating) { m_isTerminatingOrTerminated = terminating; }
 
 private:
-    WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, const ServiceWorkerContextData&, PAL::SessionID, CacheStorageProvider&);
+    WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, const ServiceWorkerContextData&, PAL::SessionID, String&& userAgent, CacheStorageProvider&);
 
     // WorkerLoaderProxy
     bool postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;

@@ -1268,7 +1268,7 @@ private:
     void resetState(ResetStateReason);
     void resetStateAfterProcessExited();
 
-    void setUserAgent(const String&);
+    void setUserAgent(String&&);
 
     // IPC::MessageReceiver
     // Implemented in generated WebPageProxyMessageReceiver.cpp

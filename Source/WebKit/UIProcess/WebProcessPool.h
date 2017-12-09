@@ -328,6 +328,7 @@ public:
     ServiceWorkerProcessProxy* serviceWorkerProxy() const { return m_serviceWorkerProcess; }
     void setAllowsAnySSLCertificateForServiceWorker(bool allows) { m_allowsAnySSLCertificateForServiceWorker = allows; }
     bool allowsAnySSLCertificateForServiceWorker() const { return m_allowsAnySSLCertificateForServiceWorker; }
+    void updateServiceWorkerUserAgent(const String& userAgent);
 #endif
 
 #if PLATFORM(COCOA)
@@ -494,6 +495,7 @@ private:
     ServiceWorkerProcessProxy* m_serviceWorkerProcess { nullptr };
     bool m_waitingForWorkerContextProcessConnection { false };
     bool m_allowsAnySSLCertificateForServiceWorker { false };
+    String m_serviceWorkerUserAgent;
 #endif
 
     Ref<WebPageGroup> m_defaultPageGroup;

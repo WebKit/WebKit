@@ -50,6 +50,7 @@
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/ServiceWorkerClientData.h>
 #include <WebCore/ServiceWorkerClientIdentifier.h>
+#include <WebCore/UserAgent.h>
 #include <pal/SessionID.h>
 
 #if USE(QUICK_LOOK)
@@ -63,12 +64,16 @@ namespace WebKit {
 
 class ServiceWorkerFrameLoaderClient final : public EmptyFrameLoaderClient {
 public:
-    ServiceWorkerFrameLoaderClient(PAL::SessionID sessionID, uint64_t pageID, uint64_t frameID)
-        : m_sessionID(sessionID)
+    ServiceWorkerFrameLoaderClient(WebSWContextManagerConnection& connection, PAL::SessionID sessionID, uint64_t pageID, uint64_t frameID, const String& userAgent)
+        : m_connection(connection)
+        , m_sessionID(sessionID)
         , m_pageID(pageID)
         , m_frameID(frameID)
+        , m_userAgent(userAgent)
     {
     }
+
+    void setUserAgent(String&& userAgent) { m_userAgent = WTFMove(userAgent); }
 
 private:
     Ref<DocumentLoader> createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData) final
@@ -76,21 +81,29 @@ private:
         return WebDocumentLoader::create(request, substituteData);
     }
 
+    void frameLoaderDestroyed() final { m_connection.removeFrameLoaderClient(*this); }
+
     PAL::SessionID sessionID() const final { return m_sessionID; }
     uint64_t pageID() const final { return m_pageID; }
     uint64_t frameID() const final { return m_frameID; }
+    String userAgent(const URL&) final { return m_userAgent; }
 
+    WebSWContextManagerConnection& m_connection;
     PAL::SessionID m_sessionID;
     uint64_t m_pageID { 0 };
     uint64_t m_frameID { 0 };
+    String m_userAgent;
 };
 
 WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection>&& connection, uint64_t pageID, const WebPreferencesStore& store)
     : m_connectionToStorageProcess(WTFMove(connection))
     , m_pageID(pageID)
+    , m_userAgent(standardUserAgentWithApplicationName({ }))
 {
     updatePreferences(store);
 }
+
+WebSWContextManagerConnection::~WebSWContextManagerConnection() = default;
 
 void WebSWContextManagerConnection::updatePreferences(const WebPreferencesStore& store)
 {
@@ -113,13 +126,25 @@ void WebSWContextManagerConnection::installServiceWorker(const ServiceWorkerCont
 
     // FIXME: This method should be moved directly to WebCore::SWContextManager::Connection
     // If it weren't for ServiceWorkerFrameLoaderClient's dependence on WebDocumentLoader, this could already happen.
-    auto frameLoaderClient = std::make_unique<ServiceWorkerFrameLoaderClient>(sessionID, m_pageID, ++m_previousServiceWorkerID);
-    pageConfiguration.loaderClientForMainFrame = frameLoaderClient.release();
+    auto frameLoaderClient = std::make_unique<ServiceWorkerFrameLoaderClient>(*this, sessionID, m_pageID, ++m_previousServiceWorkerID, m_userAgent);
+    pageConfiguration.loaderClientForMainFrame = frameLoaderClient.get();
+    m_loaders.add(WTFMove(frameLoaderClient));
 
-    auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(pageConfiguration), data, sessionID, WebProcess::singleton().cacheStorageProvider());
+    auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(pageConfiguration), data, sessionID, String { m_userAgent }, WebProcess::singleton().cacheStorageProvider());
     SWContextManager::singleton().registerServiceWorkerThreadForInstall(WTFMove(serviceWorkerThreadProxy));
 
     LOG(ServiceWorker, "Context process PID: %i created worker thread\n", getpid());
+}
+
+void WebSWContextManagerConnection::setUserAgent(String&& userAgent)
+{
+    m_userAgent = WTFMove(userAgent);
+}
+
+void WebSWContextManagerConnection::removeFrameLoaderClient(ServiceWorkerFrameLoaderClient& client)
+{
+    auto result = m_loaders.remove(&client);
+    ASSERT_UNUSED(result, result);
 }
 
 void WebSWContextManagerConnection::serviceWorkerStartedWithMessage(std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const String& exceptionMessage)

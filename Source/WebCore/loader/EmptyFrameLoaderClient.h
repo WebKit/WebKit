@@ -30,7 +30,7 @@ namespace WebCore {
 class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
     Ref<DocumentLoader> createDocumentLoader(const ResourceRequest&, const SubstituteData&) override;
 
-    void frameLoaderDestroyed() final { }
+    void frameLoaderDestroyed() override { }
 
     uint64_t frameID() const override { return 0; }
     uint64_t pageID() const override { return 0; }
@@ -149,7 +149,7 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
     void updateCachedDocumentLoader(DocumentLoader&) final { }
     void setTitle(const StringWithDirection&, const URL&) final { }
 
-    String userAgent(const URL&) final { return emptyString(); }
+    String userAgent(const URL&) override { return emptyString(); }
 
     void savePlatformDataToCachedFrame(CachedFrame*) final { }
     void transitionToCommittedFromCachedFrame(CachedFrame*) final { }
