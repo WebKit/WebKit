@@ -1,3 +1,12 @@
+2017-12-10  Stephan Szabo  <stephan.szabo@sony.com>
+
+        APIClient.h uses things from <tuple> without including it explicitly
+        https://bugs.webkit.org/show_bug.cgi?id=180609
+
+        Reviewed by Darin Adler.
+
+        * Shared/API/APIClient.h:
+
 2017-12-08  Youenn Fablet  <youenn@apple.com>
 
         Service Worker should use a correct user agent

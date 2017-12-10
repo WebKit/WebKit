@@ -28,6 +28,7 @@
 
 #include <algorithm>
 #include <array>
+#include <tuple>
 
 namespace API {
 
