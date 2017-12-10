@@ -1,0 +1,24 @@
+Tests for leaks caused by reference cycles that pass through the DOM implementation
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS checkForNodeLeaks(emptyFunction) is "did not leak"
+PASS checkForNodeLeaks(createNode) is "did not leak"
+PASS checkForNodeLeaks(createEventListenerCycle) is "did not leak"
+PASS checkForNodeLeaks(createTreeWalkerNodeCycle) is "did not leak"
+PASS checkForNodeLeaks(createTreeWalkerFilterCycle) is "did not leak"
+PASS checkForNodeLeaks(createPromiseCycle) is "did not leak"
+FAIL checkForNodeLeaks(createCustomEventDetailsCycle) should be did not leak. Was leaked.
+FAIL checkForNodeLeaks(createErrorEventDataCycle) should be did not leak. Was leaked.
+---- Did not test ExtendableMessageEvent because it is not enabled.
+FAIL checkForNodeLeaks(createMessageEventDataCycle) should be did not leak. Was leaked.
+FAIL checkForNodeLeaks(createPopStateEventStateCycle) should be did not leak. Was leaked.
+FAIL checkForNodeLeaks(createPromiseRejectionEventPromiseCycle) should be did not leak. Was leaked.
+PASS checkForNodeLeaks(createPromiseRejectionEventPromiseFunctionCycle) is "did not leak"
+FAIL checkForNodeLeaks(createPromiseRejectionEventReasonCycle) should be did not leak. Was leaked.
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

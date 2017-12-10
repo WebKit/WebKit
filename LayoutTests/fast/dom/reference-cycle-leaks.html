@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('Tests for leaks caused by reference cycles that pass through the DOM implementation');
+
+function checkForNodeLeaks(testFunction, underlyingClass)
+{
+    // Bump this number as high as we need to, to get reproducible results.
+    const repetitions = 20;
+
+    gc();
+    const beforeCount = internals.numberOfLiveNodes();
+    for (var i = 0; i < repetitions; ++i)
+        testFunction();
+    gc();
+    const leaks = internals.numberOfLiveNodes() - beforeCount;
+
+    if (leaks == repetitions)
+        return "leaked";
+    if (leaks < repetitions / 10)
+        return "did not leak";
+    return "leaked an unexpected number of nodes: " + leaks + " leaks in " + repetitions + " runs";
+}
+
+function emptyFunction()
+{
+}
+
+function createNode()
+{
+    document.createTextNode("");
+}
+
+function createEventListenerCycle()
+{
+    const leakDetectionNode = document.createTextNode("");
+    leakDetectionNode.addEventListener("x", function () { return leakDetectionNode; });
+}
+
+function createPromiseCycle()
+{
+    const leakDetectionNode = document.createTextNode("");
+    const promise = new Promise(function (resolve, reject) { });
+    promise.cycle = promise;
+    promise.leakDetectionNode = leakDetectionNode;
+}
+
+function createTreeWalkerNodeCycle()
+{
+    const leakDetectionNode = document.createTextNode("");
+    leakDetectionNode.treeWalker = document.createTreeWalker(leakDetectionNode);
+}
+
+function createTreeWalkerFilterCycle()
+{
+    const leakDetectionNode = document.createTextNode("");
+    const filter = { leakDetectionNode: leakDetectionNode, acceptNode: function(node) { return leakDetectionNode; } };
+    leakDetectionNode.treeWalker = document.createTreeWalker(document, 0, filter);
+}
+
+function createCustomEventDetailsCycle()
+{
+    const leakDetectionNode = document.createTextNode("");
+    leakDetectionNode.event = new CustomEvent("x", { detail: leakDetectionNode });
+}
+
+function createErrorEventDataCycle()
+{
+    const leakDetectionNode = document.createTextNode("");
+    leakDetectionNode.event = new ErrorEvent("x", { error: leakDetectionNode });
+}
+
+function createExtendableMessageEventDataCycle()
+{
+    const leakDetectionNode = document.createTextNode("");
+    leakDetectionNode.event = new ExtendableMessageEvent("x", { data: leakDetectionNode });
+}
+
+function createMessageEventDataCycle()
+{
+    const leakDetectionNode = document.createTextNode("");
+    leakDetectionNode.event = new MessageEvent("x", { data: leakDetectionNode });
+}
+
+function createPromiseRejectionEventPromiseCycle()
+{
+    const leakDetectionNode = document.createTextNode("");
+    const promise = new Promise(function (resolve, reject) { });
+    promise.leakDetectionNode = leakDetectionNode;
+    leakDetectionNode.event = new PromiseRejectionEvent("x", { promise: promise });
+}
+
+function createPromiseRejectionEventPromiseFunctionCycle()
+{
+    const leakDetectionNode = document.createTextNode("");
+    const promise = new Promise(function (resolve, reject) { return leakDetectionNode; });
+    leakDetectionNode.event = new PromiseRejectionEvent("x", { promise: promise });
+}
+
+function createPromiseRejectionEventReasonCycle()
+{
+    const leakDetectionNode = document.createTextNode("");
+    const promise = new Promise(function (resolve, reject) { });
+    leakDetectionNode.event = new PromiseRejectionEvent("x", { promise: promise, reason: leakDetectionNode });
+}
+
+function createPopStateEventStateCycle()
+{
+    const leakDetectionNode = document.createTextNode("");
+    leakDetectionNode.event = new PopStateEvent("x", { state: leakDetectionNode });
+}
+
+function createIDBRequestResultCycle()
+{
+    // FIXME: Need to write this test and reorganize so it can be asynchronous.
+    // Get an IDBRequest with a result that is a structured clone (see IDBTransaction::didGetRecordOnServer).
+    // Add a property to the result object that references the request.
+    // Add another property to the result object that references a leak detection node.
+}
+
+function createPaymentResponseDetailsCycle()
+{
+    // FIXME: Need to write this test and reorganize so it can be asynchronous.
+    // Get a PaymentResponse, requires simulating a successful payment.
+    // Add a property to the details object that references the PaymentResponse.
+    // Add another property to the details object that references a leak detection node.
+}
+
+function createRTCStatsReportCycle()
+{
+    // FIXME: Need to write this test and reorganize so it can be asynchronous.
+    // Get an RTCStatsReport.
+    // Get one of the objects from the map.
+    // Add a property to that object that references the report.
+    // Add another property to that object that references a leak detection node.
+}
+
+function runLeakTest(testFunctionName, underlyingClassName)
+{
+    if (underlyingClassName && !(underlyingClassName in window))
+        debug('---- Did not test ' + underlyingClassName + ' because it is not enabled.');
+    else
+        shouldBeEqualToString('checkForNodeLeaks(' + testFunctionName + ')', 'did not leak');
+}
+
+function startTest()
+{
+    if (!window.internals || !internals.numberOfLiveNodes) {
+        testFailed('Test requires windows.internals, so must be run inside WebKitTestRunner');
+        return;
+    }
+
+    runLeakTest('emptyFunction');
+    runLeakTest('createNode');
+    runLeakTest('createEventListenerCycle');
+    runLeakTest('createTreeWalkerNodeCycle');
+    runLeakTest('createTreeWalkerFilterCycle');
+    runLeakTest('createPromiseCycle');
+
+    runLeakTest('createCustomEventDetailsCycle');
+    runLeakTest('createErrorEventDataCycle');
+    runLeakTest('createExtendableMessageEventDataCycle', 'ExtendableMessageEvent');
+    runLeakTest('createMessageEventDataCycle');
+    runLeakTest('createPopStateEventStateCycle');
+    runLeakTest('createPromiseRejectionEventPromiseCycle');
+    runLeakTest('createPromiseRejectionEventPromiseFunctionCycle');
+    runLeakTest('createPromiseRejectionEventReasonCycle');
+}
+
+startTest();
+
+</script>

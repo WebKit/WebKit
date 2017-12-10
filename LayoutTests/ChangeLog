@@ -1,3 +1,13 @@
+2017-12-09  Darin Adler  <darin@apple.com>
+
+        Add test demonstrating leaks that happen when we create reference cycles with DOM objects
+        https://bugs.webkit.org/show_bug.cgi?id=180323
+
+        Reviewed by Filip Pizlo.
+
+        * fast/dom/reference-cycle-leaks-expected.txt: Added.
+        * fast/dom/reference-cycle-leaks.html: Added.
+
 2017-12-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS: Crash in Document::updateLayout() via Document::processViewport
