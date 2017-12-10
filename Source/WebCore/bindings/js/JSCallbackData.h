@@ -51,9 +51,6 @@ public:
 protected:
     explicit JSCallbackData(JSDOMGlobalObject* globalObject)
         : m_globalObject(globalObject)
-#ifndef NDEBUG
-        , m_thread(Thread::current())
-#endif
     {
     }
     
@@ -69,7 +66,7 @@ protected:
 private:
     JSC::Weak<JSDOMGlobalObject> m_globalObject;
 #ifndef NDEBUG
-    Ref<Thread> m_thread;
+    Ref<Thread> m_thread { Thread::current() };
 #endif
 };
 
