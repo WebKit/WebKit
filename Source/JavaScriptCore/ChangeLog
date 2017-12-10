@@ -1,3 +1,12 @@
+2017-12-10  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [python] Modernize "except" usage for python3 compatibility
+        https://bugs.webkit.org/show_bug.cgi?id=180612
+
+        Reviewed by Michael Catanzaro.
+
+        * inspector/scripts/generate-inspector-protocol-bindings.py:
+
 2017-12-05  Filip Pizlo  <fpizlo@apple.com>
 
         InferredType should not use UnconditionalFinalizer

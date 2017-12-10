@@ -53,7 +53,7 @@ class InspectorGeneratorTests:
             stderr_output = self.executive.run_command(cmd)
             if stderr_output:
                 self.write_error_file(json_file, output_directory, stderr_output)
-        except ScriptError, e:
+        except ScriptError as e:
             print(e.output)
             exit_code = e.exit_code
         return exit_code
@@ -76,7 +76,7 @@ class InspectorGeneratorTests:
             exit_code = 0
             try:
                 output = self.executive.run_command(cmd)
-            except ScriptError, e:
+            except ScriptError as e:
                 output = e.output
                 exit_code = e.exit_code
 

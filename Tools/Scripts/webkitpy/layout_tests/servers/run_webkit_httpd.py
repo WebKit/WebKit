@@ -64,7 +64,7 @@ def run_server(options, args, stdout, stderr):
 
     try:
         port = host.port_factory.get(options.platform, options)
-    except NotImplementedError, e:
+    except NotImplementedError as e:
         print(str(e), file=stderr)
         return EXCEPTIONAL_EXIT_STATUS
 

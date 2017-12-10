@@ -88,7 +88,7 @@ class IRCBot(object):
         except TerminateQueue:
             raise
         # This will catch everything else. SystemExit and KeyboardInterrupt are not subclasses of Exception, so we won't catch those.
-        except Exception, e:
+        except Exception as e:
             self._tool.irc().post("Exception executing command: %s" % e)
 
     def process_pending_messages(self):

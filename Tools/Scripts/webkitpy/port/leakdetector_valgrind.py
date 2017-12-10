@@ -220,7 +220,7 @@ class LeakDetectorValgrind(object):
     def _parse_leaks_output(self, leaks_output):
         try:
             parsed_string = parseString(leaks_output)
-        except ExpatError, e:
+        except ExpatError as e:
             parse_failed = True
             _log.error("could not parse %s: %s" % (leaks_output, e))
             return

@@ -65,7 +65,7 @@ class BindingsTests:
             output = self.executive.run_command(cmd)
             if output:
                 print(output)
-        except ScriptError, e:
+        except ScriptError as e:
             print(e.output)
             exit_code = e.exit_code
         return exit_code
@@ -95,7 +95,7 @@ class BindingsTests:
             output = self.executive.run_command(cmd)
             if output:
                 print(output)
-        except ScriptError, e:
+        except ScriptError as e:
             print(e.output)
             exit_code = e.exit_code
         os.remove(idl_files_list[1])
@@ -113,7 +113,7 @@ class BindingsTests:
             exit_code = 0
             try:
                 output = self.executive.run_command(cmd)
-            except ScriptError, e:
+            except ScriptError as e:
                 output = e.output
                 exit_code = e.exit_code
 

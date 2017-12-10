@@ -85,7 +85,7 @@ class CreateBug(IRCCommand):
             bug_id = tool.bugs.create_bug(bug_title, bug_description, cc=requester_email, assignee=requester_email)
             bug_url = tool.bugs.bug_url_for_bug_id(bug_id)
             return "%s: Created bug: %s" % (nick, bug_url)
-        except Exception, e:
+        except Exception as e:
             return "%s: Failed to create bug:\n%s" % (nick, e)
 
 
@@ -241,7 +241,7 @@ class Rollout(IRCCommand):
             bug_id = sheriff.post_rollout_patch(svn_revision_list, complete_reason)
             bug_url = tool.bugs.bug_url_for_bug_id(bug_id)
             tool.irc().post("%s: Created rollout: %s" % (nicks_string, bug_url))
-        except ScriptError, e:
+        except ScriptError as e:
             tool.irc().post("%s: Failed to create rollout patch:" % nicks_string)
             diff_failure = self._check_diff_failure(e.output, tool)
             if diff_failure:

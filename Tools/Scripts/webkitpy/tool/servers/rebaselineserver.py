@@ -117,7 +117,7 @@ def _rebaseline_test(test_file, baseline_target, baseline_move_to, test_config, 
         try:
             scm.add(destination_path)
             log('    Updated %s' % destination_file)
-        except ScriptError, error:
+        except ScriptError as error:
             log('    Could not update %s in SCM, exit code %d' %
                 (destination_file, error.exit_code))
             return False
@@ -153,7 +153,7 @@ def _move_test_baselines(test_file, extensions_to_move, source_platform, destina
         try:
             test_config.scm.add(destination_path)
             log('    Moved %s' % file_name)
-        except ScriptError, error:
+        except ScriptError as error:
             log('    Could not update %s in SCM, exit code %d' %
                 (file_name, error.exit_code))
             return False

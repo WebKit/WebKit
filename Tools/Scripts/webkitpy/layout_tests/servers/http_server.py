@@ -193,7 +193,7 @@ class Lighttpd(http_server_base.HttpServerBase):
         for log_prefix in ('access.log-', 'error.log-'):
             try:
                 self._remove_log_files(self._output_dir, log_prefix)
-            except OSError, e:
+            except OSError as e:
                 _log.warning('Failed to remove old %s %s files' % (self._name, log_prefix))
 
     def _spawn_process(self):

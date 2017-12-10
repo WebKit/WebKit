@@ -139,7 +139,7 @@ class WinPort(ApplePort):
         supported_features_command = [self._path_to_driver(), '--print-supported-features']
         try:
             output = self._executive.run_command(supported_features_command, error_handler=Executive.ignore_error)
-        except OSError, e:
+        except OSError as e:
             _log.warn("Exception running driver: %s, %s.  Driver must be built before calling WebKitPort.test_expectations()." % (supported_features_command, e))
             return None
 

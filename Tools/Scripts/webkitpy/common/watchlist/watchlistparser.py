@@ -111,7 +111,7 @@ class WatchListParser(object):
 
                 try:
                     compiled_regex = re.compile(definition[pattern_type])
-                except Exception, e:
+                except Exception as e:
                     self._log_error('The regex "%s" is invalid due to "%s".' % (definition[pattern_type], str(e)))
                     continue
 

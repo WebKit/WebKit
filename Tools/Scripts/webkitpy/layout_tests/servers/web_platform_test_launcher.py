@@ -15,7 +15,7 @@ try:
     import tools.serve.serve as WebPlatformTestServer
     sys.path.insert(0, os.path.join(os.getcwd(), "tools", "wptserve", "wptserve"))
     import stash
-except ImportError, e:
+except ImportError as e:
     logger.critical("Import of wpt serve module failed.\n"
         "Please check that the file serve.py is present in the web-platform-tests folder.\n"
         "Please also check that __init__.py files in the web-platform-tests/tools folder and subfolders are also present.")

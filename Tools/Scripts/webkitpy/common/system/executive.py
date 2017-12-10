@@ -189,7 +189,7 @@ class Executive(AbstractExecutive):
                 # already exited, and forcefully kill it if SIGTERM wasn't enough.
                 os.kill(pid, signal.SIGTERM)
                 os.kill(pid, signal.SIGKILL)
-            except OSError, e:
+            except OSError as e:
                 if e.errno == errno.EAGAIN:
                     if retries_left <= 0:
                         _log.warn("Failed to kill pid %s.  Too many EAGAIN errors." % pid)
@@ -279,7 +279,7 @@ class Executive(AbstractExecutive):
                     if process_name_filter(process_name):
                         running_pids.append(int(pid))
                         self.pid_to_system_pid[int(pid)] = int(winpid)
-                except ValueError, e:
+                except ValueError as e:
                     pass
         else:
             ps_process = self.popen(['ps', '-eo', 'pid,comm'], stdout=self.PIPE, stderr=self.PIPE)
@@ -291,7 +291,7 @@ class Executive(AbstractExecutive):
                     pid, process_name = line.strip().split(' ', 1)
                     if process_name_filter(process_name):
                         running_pids.append(int(pid))
-                except ValueError, e:
+                except ValueError as e:
                     pass
 
         return sorted(running_pids)

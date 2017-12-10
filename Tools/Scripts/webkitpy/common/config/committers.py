@@ -194,7 +194,7 @@ class CommitterList(object):
         json_path = filesystem.join(filesystem.dirname(filesystem.path_to_module('webkitpy.common.config')), 'contributors.json')
         try:
             contributors = json.loads(filesystem.read_text_file(json_path))
-        except ValueError, e:
+        except ValueError as e:
             sys.exit('contributors.json is malformed: ' + str(e))
 
         self._contributors = []

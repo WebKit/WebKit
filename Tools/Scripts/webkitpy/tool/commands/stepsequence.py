@@ -71,13 +71,13 @@ class StepSequence(object):
             state = {}
         try:
             self._run(tool, options, state)
-        except CheckoutNeedsUpdate, e:
+        except CheckoutNeedsUpdate as e:
             _log.info("Commit failed because the checkout is out of date. Please update and try again.")
             if options.parent_command:
                 command = tool.command_by_name(options.parent_command)
                 command.handle_checkout_needs_update(tool, state, options, e)
             QueueEngine.exit_after_handled_error(e)
-        except ScriptError, e:
+        except ScriptError as e:
             if not options.quiet:
                 _log.error(e.message_with_output())
             if options.parent_command:

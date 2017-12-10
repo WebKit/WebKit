@@ -100,7 +100,7 @@ class PatchAnalysisTask(object):
             self._delegate.run_command(command)
             self._delegate.command_passed(success_message, patch=self._patch)
             return True
-        except ScriptError, e:
+        except ScriptError as e:
             self._script_error = e
             self.failure_status_id = self._delegate.command_failed(failure_message, script_error=self._script_error, patch=self._patch)
             return False

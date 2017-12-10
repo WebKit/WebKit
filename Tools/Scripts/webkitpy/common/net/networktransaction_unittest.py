@@ -49,7 +49,7 @@ class NetworkTransactionTest(LoggingTestCase):
         try:
             transaction.run(lambda: self._raise_exception())
             did_throw_exception = False
-        except Exception, e:
+        except Exception as e:
             did_process_exception = True
             self.assertEqual(e, self.exception)
         self.assertTrue(did_throw_exception)
@@ -88,7 +88,7 @@ class NetworkTransactionTest(LoggingTestCase):
         try:
             transaction.run(lambda: self._raise_500_error())
             did_throw_exception = False
-        except NetworkTimeout, e:
+        except NetworkTimeout as e:
             did_process_exception = True
         self.assertTrue(did_throw_exception)
         self.assertTrue(did_process_exception)

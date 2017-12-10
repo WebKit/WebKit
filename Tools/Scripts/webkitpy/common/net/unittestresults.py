@@ -46,6 +46,6 @@ class UnitTestResults(object):
                     classname = testcase.getAttribute('classname')
                     failures.append("%s.%s" % (classname, testname))
             return failures
-        except xml.parsers.expat.ExpatError, e:
+        except xml.parsers.expat.ExpatError as e:
             _log.error("XML error %s parsing unit test output" % str(e))
             return None

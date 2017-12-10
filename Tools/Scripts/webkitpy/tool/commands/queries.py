@@ -254,7 +254,7 @@ class FailureReason(Command):
     def _blame_line_for_revision(self, revision):
         try:
             commit_info = self._tool.checkout().commit_info_for_revision(revision)
-        except Exception, e:
+        except Exception as e:
             return "FAILED to fetch CommitInfo for r%s, exception: %s" % (revision, e)
         if not commit_info:
             return "FAILED to fetch CommitInfo for r%s, likely missing ChangeLog" % revision

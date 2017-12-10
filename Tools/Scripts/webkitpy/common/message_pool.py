@@ -263,9 +263,9 @@ class _Worker(multiprocessing.Process):
             _log.debug("%s exiting" % self.name)
         except Queue.Empty:
             assert False, '%s: ran out of messages in worker queue.' % self.name
-        except KeyboardInterrupt, e:
+        except KeyboardInterrupt as e:
             self._raise(sys.exc_info())
-        except Exception, e:
+        except Exception as e:
             self._raise(sys.exc_info())
         finally:
             try:

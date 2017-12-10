@@ -44,9 +44,9 @@ class CommitterAuth(buildbot.status.web.auth.AuthBase):
         try:
             with self.open_auth_json_file() as f:
                 return json.load(f)
-        except IOError, e:
+        except IOError as e:
             raise Error('Error opening auth.json file: {0}'.format(e.strerror))
-        except ValueError, e:
+        except ValueError as e:
             raise Error('Error parsing auth.json file: {0}'.format(e.message))
 
     def auth_json_filename(self):
@@ -55,7 +55,7 @@ class CommitterAuth(buildbot.status.web.auth.AuthBase):
     def authenticate(self, username, password):
         try:
             return self.is_webkit_committer(username) and self.is_webkit_trac_user(username, password)
-        except Error, e:
+        except Error as e:
             self.err = e.args[0]
             return False
 
@@ -67,14 +67,14 @@ class CommitterAuth(buildbot.status.web.auth.AuthBase):
             return True
         except ConfigParser.Error:
             raise Error('Error parsing WebKit committers file')
-        except IOError, e:
+        except IOError as e:
             raise Error('Error opening WebKit committers file: {0}'.format(e.strerror))
 
     def is_webkit_trac_user(self, username, password):
         try:
             with self.open_trac_credentials_file() as f:
                 htdigest = HTDigestParser(f)
-        except IOError, e:
+        except IOError as e:
             raise Error('Error opening Trac credentials file: {0}'.format(e.strerror))
 
         if not htdigest.entries():

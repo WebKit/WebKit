@@ -111,7 +111,7 @@ class Git(SCM, SVNRepository):
         try:
             executive = executive or Executive()
             return executive.run_command([cls.executable_name, 'rev-parse', '--is-inside-work-tree'], cwd=path, error_handler=Executive.ignore_error).rstrip() == "true"
-        except OSError, e:
+        except OSError as e:
             # The Windows bots seem to through a WindowsError when git isn't installed.
             return False
 
@@ -120,7 +120,7 @@ class Git(SCM, SVNRepository):
         try:
             executive = executive or Executive()
             return executive.run_command([cls.executable_name, 'clone', '-v', url, directory], error_handler=Executive.ignore_error)
-        except OSError, e:
+        except OSError as e:
             return False
 
     def find_checkout_root(self, path):
@@ -359,7 +359,7 @@ class Git(SCM, SVNRepository):
     def _string_to_int_or_none(self, string):
         try:
             return int(string)
-        except ValueError, e:
+        except ValueError as e:
             return None
 
     @memoized
@@ -472,7 +472,7 @@ class Git(SCM, SVNRepository):
 
             self._run_git(['commit', '-m', message])
             output = self.push_local_commits_to_server(username=username, password=password)
-        except Exception, e:
+        except Exception as e:
             _log.warning("COMMIT FAILED: " + str(e))
             output = "Commit failed."
             commit_succeeded = False

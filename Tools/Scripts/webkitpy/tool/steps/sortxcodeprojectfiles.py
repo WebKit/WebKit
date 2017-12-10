@@ -53,6 +53,6 @@ class SortXcodeProjectFiles(AbstractStep):
                 try:
                     output = self._tool.executive.run_and_throw_if_fail(args, self._options.quiet, cwd=self._tool.scm().checkout_root)
                     self.did_modify_checkout(state)
-                except ScriptError, e:
+                except ScriptError as e:
                     _log.error("Unable to sort modified xcode projects.")
                     sys.exit(1)

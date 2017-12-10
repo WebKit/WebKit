@@ -61,7 +61,7 @@ class WebDriverW3CWebServer(object):
             s = socket.socket()
             try:
                 s.connect((host, port))
-            except IOError, e:
+            except IOError as e:
                 if e.errno not in (errno.ECONNREFUSED, errno.ECONNRESET):
                     raise
                 return False

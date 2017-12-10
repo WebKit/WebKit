@@ -210,7 +210,7 @@ class HttpServerBase(object):
         try:
             s.connect(('localhost', port))
             _log.debug("Server running on %d" % port)
-        except IOError, e:
+        except IOError as e:
             if e.errno not in (errno.ECONNREFUSED, errno.ECONNRESET):
                 raise
             _log.debug("Server NOT running on %d: %s" % (port, e))
@@ -226,7 +226,7 @@ class HttpServerBase(object):
             port = mapping['port']
             try:
                 s.bind(('localhost', port))
-            except IOError, e:
+            except IOError as e:
                 if e.errno in (errno.EALREADY, errno.EADDRINUSE):
                     raise ServerError('Port %d is already in use.' % port)
                 elif sys.platform.startswith('win') and e.errno in (errno.WSAEACCES,):  # pylint: disable=E1101

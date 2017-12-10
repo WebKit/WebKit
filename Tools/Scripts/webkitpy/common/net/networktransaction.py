@@ -51,7 +51,7 @@ class NetworkTransaction(object):
         while True:
             try:
                 return request()
-            except urllib2.HTTPError, e:
+            except urllib2.HTTPError as e:
                 if self._convert_404_to_None and e.code == 404:
                     return None
                 self._check_for_timeout()

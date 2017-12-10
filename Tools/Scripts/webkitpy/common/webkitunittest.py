@@ -37,7 +37,7 @@ class TestCase(unittest.TestCase):
         try:
             callable(*args)
             self.assertTrue(False, 'No assert raised.')
-        except Exception, exception:
+        except Exception as exception:
             self.assertTrue(issubclass(exception.__class__, expected_exception),
                             'Exception type was unexpected.')
             self.assertTrue(re.match(regex_message, exception.__str__()),

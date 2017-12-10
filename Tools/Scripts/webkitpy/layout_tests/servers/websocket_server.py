@@ -112,7 +112,7 @@ class PyWebSocket(http_server.Lighttpd):
         s = socket.socket()
         try:
             s.connect(('localhost', self._port))
-        except IOError, e:
+        except IOError as e:
             if e.errno not in (errno.ECONNREFUSED, errno.ECONNRESET):
                 raise
             return False
@@ -172,7 +172,7 @@ class PyWebSocket(http_server.Lighttpd):
     def _remove_stale_logs(self):
         try:
             self._remove_log_files(self._output_dir, self._log_prefix)
-        except OSError, e:
+        except OSError as e:
             _log.warning('Failed to remove stale %s log files: %s' % (self._name, str(e)))
 
     def _spawn_process(self):

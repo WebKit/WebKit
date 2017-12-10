@@ -213,7 +213,7 @@ class SuggestNominations(AbstractCommitLogCommand):
         for commit_message in self._recent_commit_messages():
             try:
                 self._count_commit(self._parse_commit_message(commit_message), analysis)
-            except CommitLogError, exception:
+            except CommitLogError as exception:
                 continue
         return analysis['counters_by_email']
 

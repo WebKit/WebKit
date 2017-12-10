@@ -39,7 +39,7 @@ class PrettyPatchTest(unittest.TestCase):
         executive = Executive()
         try:
             result = executive.run_command(['ruby', '--version'])
-        except OSError, e:
+        except OSError as e:
             return False
         return True
 

@@ -86,10 +86,10 @@ class CrashLogs(object):
                     parsed_name, parsed_pid, log_contents = self._parse_darwin_crash_log(path)
                     if parsed_name == process_name and (pid is None or parsed_pid == pid):
                         return errors + log_contents
-            except IOError, e:
+            except IOError as e:
                 if include_errors:
                     errors += "ERROR: Failed to read '%s': %s\n" % (path, str(e))
-            except OSError, e:
+            except OSError as e:
                 if include_errors:
                     errors += "ERROR: Failed to read '%s': %s\n" % (path, str(e))
 
@@ -119,15 +119,15 @@ class CrashLogs(object):
                     # Note: This output comes from a program that shows PID in hex:
                     if int(match.group('pid'), 16) == pid:
                         return errors + log_file
-            except IOError, e:
+            except IOError as e:
                 print("IOError %s" % str(e))
                 if include_errors:
                     errors += u"ERROR: Failed to read '%s': %s\n" % (path, str(e))
-            except OSError, e:
+            except OSError as e:
                 print("OSError %s" % str(e))
                 if include_errors:
                     errors += u"ERROR: Failed to read '%s': %s\n" % (path, str(e))
-            except UnicodeDecodeError, e:
+            except UnicodeDecodeError as e:
                 print("UnicodeDecodeError %s" % str(e))
                 if include_errors:
                     errors += u"ERROR: Failed to decode '%s' as ascii: %s\n" % (path, str(e))
@@ -174,10 +174,10 @@ class CrashLogs(object):
                         unique_name = result_name + '-' + str(count)
                         count += 1
                     crash_logs[unique_name] = errors + log_contents
-            except IOError, e:
+            except IOError as e:
                 if include_errors:
                     errors += "ERROR: Failed to read '%s': %s\n" % (path, str(e))
-            except OSError, e:
+            except OSError as e:
                 if include_errors:
                     errors += "ERROR: Failed to read '%s': %s\n" % (path, str(e))
 

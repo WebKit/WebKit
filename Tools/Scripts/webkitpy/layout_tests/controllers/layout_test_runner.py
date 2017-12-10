@@ -121,14 +121,14 @@ class LayoutTestRunner(object):
         try:
             with message_pool.get(self, self._worker_factory, num_workers, self._port.worker_startup_delay_secs(), self._port.host) as pool:
                 pool.run(('test_list', shard.name, shard.test_inputs) for shard in all_shards)
-        except TestRunInterruptedException, e:
+        except TestRunInterruptedException as e:
             _log.warning(e.reason)
             run_results.interrupted = True
         except KeyboardInterrupt:
             self._printer.flush()
             self._printer.writeln('Interrupted, exiting ...')
             run_results.keyboard_interrupted = True
-        except Exception, e:
+        except Exception as e:
             _log.debug('%s("%s") raised, exiting' % (e.__class__.__name__, str(e)))
             raise
 

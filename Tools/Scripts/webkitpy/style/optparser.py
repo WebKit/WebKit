@@ -455,7 +455,7 @@ class ArgumentParser(object):
 
         try:
             validate_filter_rules(filter_rules, self._all_categories)
-        except ValueError, err:
+        except ValueError as err:
             self._parse_error(err)
 
         options = CommandOptionValues(filter_rules=filter_rules,

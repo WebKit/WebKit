@@ -102,14 +102,14 @@ class User(object):
                             indices += range(int(parts[0]) - 1, int(parts[1]))
                         else:
                             indices.append(int(value) - 1)
-                except ValueError, err:
+                except ValueError as err:
                     continue
 
                 return [list_items[i] for i in indices]
             else:
                 try:
                     result = int(cls.prompt("Enter a number: ", raw_input=raw_input)) - 1
-                except ValueError, err:
+                except ValueError as err:
                     continue
                 return list_items[result]
 
@@ -128,7 +128,7 @@ class User(object):
         # Note: Not thread safe: http://bugs.python.org/issue2320
         try:
             subprocess.call(args + files)
-        except OSError, e:
+        except OSError as e:
             _log.warn("There was a problem editing the ChangeLog using editor '%s': %s." % (editor, e))
 
     def _warn_if_application_is_xcode(self, edit_application):
@@ -153,7 +153,7 @@ class User(object):
             # Note: Not thread safe: http://bugs.python.org/issue2320
             child_process = subprocess.Popen([pager], stdin=subprocess.PIPE)
             child_process.communicate(input=message)
-        except IOError, e:
+        except IOError as e:
             pass
 
     def confirm(self, message=None, default=DEFAULT_YES, raw_input=raw_input):
@@ -169,7 +169,7 @@ class User(object):
         try:
             webbrowser.get()
             return True
-        except webbrowser.Error, e:
+        except webbrowser.Error as e:
             return False
 
     def open_url(self, url):

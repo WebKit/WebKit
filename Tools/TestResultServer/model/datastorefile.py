@@ -107,7 +107,7 @@ class DataStoreFile(db.Model):
             data_entry.data = db.Blob(data[start: start + MAX_ENTRY_LEN])
             try:
                 data_entry.put()
-            except Exception, err:
+            except Exception as err:
                 logging.error("Failed to save data store entry: %s", err)
                 if keys:
                     self.delete_data(keys)

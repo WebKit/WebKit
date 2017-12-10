@@ -58,9 +58,9 @@ class ConfirmDiff(AbstractStep):
             # We return the pretty_diff_file here because we need to keep the
             # file alive until the user has had a chance to confirm the diff.
             return pretty_diff_file
-        except ScriptError, e:
+        except ScriptError as e:
             _log.warning("PrettyPatch failed.  :(")
-        except OSError, e:
+        except OSError as e:
             _log.warning("PrettyPatch unavailable.")
 
     def run(self, state):

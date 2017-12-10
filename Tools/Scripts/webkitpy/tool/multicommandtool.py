@@ -304,7 +304,7 @@ class MultiCommandTool(object):
             try:
                 result = command.check_arguments_and_execute(options, args, self)
                 break
-            except TryAgain, e:
+            except TryAgain as e:
                 pass
 
         self.command_completed()

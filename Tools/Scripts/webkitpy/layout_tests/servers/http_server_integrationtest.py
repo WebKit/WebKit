@@ -54,7 +54,7 @@ class BaseTest(unittest.TestCase):
                 test_socket = socket.socket()
                 test_socket.connect((self.HOST, port))
                 self.fail()
-            except IOError, e:
+            except IOError as e:
                 self.assertTrue(e.errno in (errno.ECONNREFUSED, errno.ECONNRESET))
             finally:
                 test_socket.close()
@@ -65,7 +65,7 @@ class BaseTest(unittest.TestCase):
             try:
                 test_socket = socket.socket()
                 test_socket.connect((self.HOST, port))
-            except IOError, e:
+            except IOError as e:
                 self.fail('failed to connect to %s:%d' % (self.HOST, port))
             finally:
                 test_socket.close()
@@ -95,7 +95,7 @@ class BaseTest(unittest.TestCase):
             try:
                 try:
                     test_socket.bind((self.HOST, port_number))
-                except socket.error, e:
+                except socket.error as e:
                     if e.errno in (errno.EADDRINUSE, errno.EALREADY):
                         self.fail('could not bind to port %d: %s' % (port_number, str(e)))
                     raise
@@ -110,7 +110,7 @@ class BaseTest(unittest.TestCase):
     def maybe_make_dir(self, *comps):
         try:
             os.makedirs(os.path.join(*comps))
-        except OSError, e:
+        except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
 

@@ -129,7 +129,7 @@ class TextFileReader(object):
 
         try:
             lines = self._read_lines(file_path)
-        except IOError, err:
+        except IOError as err:
             message = ("Could not read file. Skipping: '%s'\n  %s" % (file_path, err))
             _log.warn(message)
             return

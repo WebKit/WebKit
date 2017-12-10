@@ -81,7 +81,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
     def _cc_watchers(self, bug_id):
         try:
             self._tool.bugs.add_cc_to_bug(bug_id, self.watchers)
-        except Exception, e:
+        except Exception as e:
             traceback.print_exc()
             _log.error("Failed to CC watchers.")
 
@@ -103,7 +103,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
             args_for_printing[0] = 'webkit-patch'  # Printing our path for each log is redundant.
             _log.info("Running: %s" % self._tool.executive.command_for_printing(args_for_printing))
             command_output = self._tool.executive.run_command(webkit_patch_args, cwd=self._tool.scm().checkout_root)
-        except ScriptError, e:
+        except ScriptError as e:
             # Make sure the whole output gets printed if the command failed.
             _log.error(e.message_with_output(output_limit=None))
             raise
@@ -347,7 +347,7 @@ class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTas
         except PatchIsNotValid as error:
             self._did_error(patch, "%s did not process patch. Reason: %s" % (self.name, error.failure_message))
             return False
-        except ScriptError, e:
+        except ScriptError as e:
             validator = CommitterValidator(self._tool)
             validator.reject_patch_from_commit_queue(patch.id(), self._error_message_for_bug(task, patch, e))
             results_archive = task.results_archive_from_patch_test_run(patch)
@@ -480,13 +480,13 @@ class StyleQueue(AbstractReviewQueue, StyleQueueTaskDelegate):
                 # Caller unlocks when review_patch returns True, so we only need to unlock on transient failure.
                 self._unlock_patch(patch)
             return style_check_succeeded
-        except UnableToApplyPatch, e:
+        except UnableToApplyPatch as e:
             self._did_error(patch, "%s unable to apply patch." % self.name)
             return False
         except PatchIsNotValid as error:
             self._did_error(patch, "%s did not process patch. Reason: %s" % (self.name, error.failure_message))
             return False
-        except ScriptError, e:
+        except ScriptError as e:
             output = re.sub(r'Failed to run .+ exit_code: 1', '', e.output)
             message = "Attachment %s did not pass %s:\n\n%s\n\nIf any of these errors are false positives, please file a bug against check-webkit-style." % (patch.id(), self.name, output)
             self._tool.bugs.post_comment_to_bug(patch.bug_id(), message, cc=self.watchers)

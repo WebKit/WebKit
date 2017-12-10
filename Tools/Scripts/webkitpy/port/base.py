@@ -1434,7 +1434,7 @@ class Port(object):
             self._run_script("build-dumprendertree", args=self._build_driver_flags(), env=env)
             if self.get_option('webkit_test_runner'):
                 self._run_script("build-webkittestrunner", args=self._build_driver_flags(), env=env)
-        except ScriptError, e:
+        except ScriptError as e:
             _log.error(e.message_with_output(output_limit=None))
             return False
         return True
@@ -1444,7 +1444,7 @@ class Port(object):
         env = environment.to_dictionary()
         try:
             self._run_script("build-imagediff", env=env)
-        except ScriptError, e:
+        except ScriptError as e:
             _log.error(e.message_with_output(output_limit=None))
             return False
         return True
@@ -1486,7 +1486,7 @@ class Port(object):
         for path_to_module in self._modules_to_search_for_symbols():
             try:
                 symbols += self._executive.run_command([self.nm_command(), path_to_module], error_handler=self._executive.ignore_error)
-            except OSError, e:
+            except OSError as e:
                 _log.warn("Failed to run nm: %s.  Can't determine supported features correctly." % e)
         return symbols
 

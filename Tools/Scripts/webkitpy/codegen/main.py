@@ -57,7 +57,7 @@ class BuiltinsGeneratorTests:
             stderr_output = self.executive.run_command(cmd)
             if stderr_output:
                 self.write_error_file(framework_name + "JSBuiltins.h-error" if generate_wrappers else builtins_files[0], output_directory, stderr_output)
-        except ScriptError, e:
+        except ScriptError as e:
             print(e.output)
             exit_code = e.exit_code
         return exit_code
@@ -80,7 +80,7 @@ class BuiltinsGeneratorTests:
             exit_code = 0
             try:
                 output = self.executive.run_command(cmd)
-            except ScriptError, e:
+            except ScriptError as e:
                 output = e.output
                 exit_code = e.exit_code
 

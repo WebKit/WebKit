@@ -128,7 +128,7 @@ class Builder(object):
         def predicate(form):
             try:
                 return form.find_control("username")
-            except Exception, e:
+            except Exception as e:
                 return False
 
         if not self._browser:
@@ -161,7 +161,7 @@ class Builder(object):
             print("Loading revision/build list from %s." % self.results_url())
             print("This may take a while...")
             result_files = self._buildbot._fetch_twisted_directory_listing(self.results_url())
-        except urllib2.HTTPError, error:
+        except urllib2.HTTPError as error:
             if error.code != 404:
                 raise
             _log.debug("Revision/build list failed to load.")
@@ -364,11 +364,11 @@ class BuildBot(object):
         json_url = "%s/json/builders/%s/builds/%s?filter=1" % (self.buildbot_url, urllib.quote(builder.name()), build_number)
         try:
             return json.load(urllib2.urlopen(json_url))
-        except urllib2.URLError, err:
+        except urllib2.URLError as err:
             build_url = Build.build_url(builder, build_number)
             _log.error("Error fetching data for %s build %s (%s, json: %s): %s" % (builder.name(), build_number, build_url, json_url, err))
             return None
-        except ValueError, err:
+        except ValueError as err:
             build_url = Build.build_url(builder, build_number)
             _log.error("Error decoding json data from %s: %s" % (build_url, err))
             return None

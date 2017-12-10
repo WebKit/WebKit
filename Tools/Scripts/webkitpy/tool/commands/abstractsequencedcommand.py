@@ -48,7 +48,7 @@ class AbstractSequencedCommand(Command):
     def execute(self, options, args, tool):
         try:
             state = self._prepare_state(options, args, tool)
-        except ScriptError, e:
+        except ScriptError as e:
             _log.error(e.message_with_output())
             self._exit(e.exit_code or 2)
 

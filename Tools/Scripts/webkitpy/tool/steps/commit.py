@@ -61,7 +61,7 @@ class Commit(AbstractStep):
         args.extend(test_expectations_files)
         try:
             self._tool.executive.run_and_throw_if_fail(self._tool.deprecated_port().check_webkit_style_command() + args, cwd=self._tool.scm().checkout_root)
-        except ScriptError, e:
+        except ScriptError as e:
             if self._options.non_interactive:
                 raise
             if not self._tool.user.confirm("Are you sure you want to continue?", default="n"):
@@ -90,13 +90,13 @@ class Commit(AbstractStep):
                 _log.info("Committed r%s: <%s>" % (svn_revision, urls.view_revision_url(svn_revision)))
                 self._state["commit_text"] = commit_text
                 break
-            except AmbiguousCommitError, e:
+            except AmbiguousCommitError as e:
                 if self._tool.user.confirm(self._commit_warning(e)):
                     force_squash = True
                 else:
                     # This will correctly interrupt the rest of the commit process.
                     raise ScriptError(message="Did not commit")
-            except AuthenticationError, e:
+            except AuthenticationError as e:
                 if self._options.non_interactive:
                     raise ScriptError(message="Authentication required")
                 username = self._tool.user.prompt("%s login: " % e.server_host, repeat=5)

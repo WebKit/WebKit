@@ -207,7 +207,7 @@ class AbstractParallelRebaselineCommand(AbstractRebaseliningCommand):
             stderr = self._tool.executive.run_command([self._tool.path()] + verbose_args + args, cwd=self._tool.scm().checkout_root, return_stderr=True)
             for line in stderr.splitlines():
                 print(line, file=sys.stderr)
-        except ScriptError, e:
+        except ScriptError as e:
             _log.error(e)
 
     def _builders_to_fetch_from(self, builders_to_check):

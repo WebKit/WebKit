@@ -121,7 +121,7 @@ class PrepareChangeLog(AbstractStep):
 
         try:
             output = self._tool.executive.run_and_throw_if_fail(args, self._options.quiet, cwd=self._tool.scm().checkout_root)
-        except ScriptError, e:
+        except ScriptError as e:
             _log.error("Unable to prepare ChangeLogs.")
             sys.exit(1)
 

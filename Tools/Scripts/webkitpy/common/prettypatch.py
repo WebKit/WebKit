@@ -81,7 +81,7 @@ class PrettyPatch(object):
         """Checks whether we can use the PrettyPatch ruby script."""
         try:
             _ = self._executive.run_command(['ruby', '--version'])
-        except OSError, e:
+        except OSError as e:
             if e.errno in [errno.ENOENT, errno.EACCES, errno.ECHILD]:
                 if logging:
                     _log.warning("Ruby is not installed; can't generate pretty patches.")
@@ -107,12 +107,12 @@ class PrettyPatch(object):
             # Diffs are treated as binary (we pass decode_output=False) as they
             # may contain multiple files of conflicting encodings.
             return self._executive.run_command(command, decode_output=False)
-        except OSError, e:
+        except OSError as e:
             # If the system is missing ruby log the error and stop trying.
             self.ppatch_available = False
             _log.error("Failed to run PrettyPatch (%s): %s" % (command, e))
             return self.pretty_patch_error_html
-        except ScriptError, e:
+        except ScriptError as e:
             # If ruby failed to run for some reason, log the command
             # output and stop trying.
             self.ppatch_available = False

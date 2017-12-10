@@ -168,7 +168,7 @@ class MiscTests(Base):
                 "Bug(rniwa) non-existent-test.html [ Failure ]\n"
                 "Bug(rniwa) disabled-test.html-disabled [ ImageOnlyFailure ]", is_lint_mode=True)
             self.assertFalse(True, "ParseError wasn't raised")
-        except ParseError, e:
+        except ParseError as e:
             warnings = ("expectations:1 Unrecognized modifier 'foo' failures/expected/text.html\n"
                         "expectations:2 Path does not exist. non-existent-test.html")
             self.assertEqual(str(e), warnings)
@@ -369,7 +369,7 @@ class SemanticTests(Base):
         try:
             self.parse_exp('BUG1234 failures/expected/text.html [ Failure ]', is_lint_mode=True)
             self.fail('should have raised an error about a bad bug identifier')
-        except ParseError, exp:
+        except ParseError as exp:
             self.assertEqual(len(exp.warnings), 1)
 
     def test_missing_bugid(self):

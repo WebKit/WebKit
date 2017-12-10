@@ -243,7 +243,7 @@ class SVN(SCM, SVNRepository):
         log_command = ['log', '--quiet', '--limit=%s' % limit, path]
         try:
             log_output = self._run_svn(log_command, cwd=self.checkout_root)
-        except ScriptError, e:
+        except ScriptError as e:
             return []
         for line in log_output.splitlines():
             match = re.search('^r(?P<revision>\d+) ', line)

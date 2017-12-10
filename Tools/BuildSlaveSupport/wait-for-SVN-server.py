@@ -39,7 +39,7 @@ def getLatestSVNRevision(SVNServer):
         doc = xml.dom.minidom.parseString(response)
         el = doc.getElementsByTagName("logentry")[0]
         return el.getAttribute("revision")
-    except xml.parsers.expat.ExpatError, e:
+    except xml.parsers.expat.ExpatError as e:
         print("FAILED TO PARSE 'svn log' XML:")
         print(str(e))
         print("----")

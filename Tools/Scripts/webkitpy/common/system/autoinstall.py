@@ -218,7 +218,7 @@ class AutoInstaller(object):
 
         try:
             tar_file = tarfile.open(path)
-        except tarfile.ReadError, err:
+        except tarfile.ReadError as err:
             # Append existing Error message to new Error.
             message = ("Could not open tar file: %s\n"
                        " The file probably does not have the correct format.\n"
@@ -268,7 +268,7 @@ class AutoInstaller(object):
 
         try:
             zip_file = zipfile.ZipFile(path, "r")
-        except zipfile.BadZipfile, err:
+        except zipfile.BadZipfile as err:
             message = ("Could not open zip file: %s\n"
                        " --> Inner message: %s"
                        % (path, err))
@@ -344,7 +344,7 @@ class AutoInstaller(object):
                 if regex.match(parsed_url[1]):
                     parsed_url[1] = addresses.next()
                     new_url = urlparse.urlunparse(parsed_url)
-        except StopIteration, e:
+        except StopIteration as e:
             _log.info('Ran out of mirrors.')
 
         return new_url
@@ -356,7 +356,7 @@ class AutoInstaller(object):
             try:
                 netstream = urllib2.urlopen(url, timeout=30)
                 break
-            except IOError, err:
+            except IOError as err:
                 # Try multiple times
                 if failures < 2:
                     _log.warning("Failed to download %s, %s retrying" % (
@@ -508,7 +508,7 @@ class AutoInstaller(object):
                           url=url,
                           url_subpath=url_subpath,
                           files_to_remove=files_to_remove)
-        except Exception, err:
+        except Exception as err:
             # Append existing Error message to new Error.
             message = ("Error auto-installing the %s package to:\n"
                        ' "%s"\n'

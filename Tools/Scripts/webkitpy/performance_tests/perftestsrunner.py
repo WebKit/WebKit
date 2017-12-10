@@ -327,7 +327,7 @@ class PerfTestsRunner(object):
             for key in slave_config:
                 contents['builder' + key.capitalize()] = slave_config[key]
             return contents
-        except Exception, error:
+        except Exception as error:
             _log.error("Failed to merge slave configuration JSON file %s: %s" % (slave_config_json_path, error))
         return None
 
@@ -337,7 +337,7 @@ class PerfTestsRunner(object):
         try:
             existing_outputs = json.loads(self._host.filesystem.read_text_file(output_json_path))
             return existing_outputs + [output]
-        except Exception, error:
+        except Exception as error:
             _log.error("Failed to merge output JSON file %s: %s" % (output_json_path, error))
         return None
 
@@ -349,7 +349,7 @@ class PerfTestsRunner(object):
         uploader = file_uploader(url, 120)
         try:
             response = uploader.upload_single_text_file(self._host.filesystem, 'application/json', json_path)
-        except Exception, error:
+        except Exception as error:
             _log.error("Failed to upload JSON file to %s in 120s: %s" % (url, error))
             return False
 

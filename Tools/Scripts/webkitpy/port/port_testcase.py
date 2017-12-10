@@ -144,7 +144,7 @@ class PortTestCase(unittest.TestCase):
                 test_socket = socket.socket()
                 test_socket.connect((host, port))
                 self.fail()
-            except IOError, e:
+            except IOError as e:
                 self.assertTrue(e.errno in (errno.ECONNREFUSED, errno.ECONNRESET))
             finally:
                 test_socket.close()
@@ -154,7 +154,7 @@ class PortTestCase(unittest.TestCase):
             try:
                 test_socket = socket.socket()
                 test_socket.connect((host, port))
-            except IOError, e:
+            except IOError as e:
                 self.fail('failed to connect to %s:%d' % (host, port))
             finally:
                 test_socket.close()
@@ -186,14 +186,14 @@ class PortTestCase(unittest.TestCase):
             try:
                 try:
                     test_socket.bind(('localhost', port_number))
-                except socket.error, e:
+                except socket.error as e:
                     if e.errno in (errno.EADDRINUSE, errno.EALREADY):
                         self.fail('could not bind to port %d' % port_number)
                     raise
                 try:
                     port.start_http_server()
                     self.fail('should not have been able to start the server while bound to %d' % port_number)
-                except http_server_base.ServerError, e:
+                except http_server_base.ServerError as e:
                     pass
             finally:
                 port.stop_http_server()
@@ -360,7 +360,7 @@ class PortTestCase(unittest.TestCase):
                 try:
                     port.start_websocket_server()
                     self.fail('should not have been able to start the server while bound to %d' % port_number)
-                except http_server_base.ServerError, e:
+                except http_server_base.ServerError as e:
                     pass
             finally:
                 port.stop_websocket_server()
