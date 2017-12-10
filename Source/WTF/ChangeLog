@@ -1,3 +1,13 @@
+2017-12-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, follow-up patch after r225726
+        https://bugs.webkit.org/show_bug.cgi?id=180622
+
+        Suggested by Darin. We should take care of signed-extension of `char`.
+
+        * wtf/text/StringHasher.h:
+        (WTF::StringHasher::defaultConverter):
+
 2017-12-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Remove RELAXED_CONSTEXPR

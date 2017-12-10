@@ -246,7 +246,7 @@ private:
 
     static constexpr UChar defaultConverter(char character)
     {
-        return character;
+        return static_cast<LChar>(character);
     }
 
     static constexpr UChar defaultConverter(char16_t character)
