@@ -78,6 +78,7 @@ namespace WebCore {
     macro(IDBRequest) \
     macro(IDBTransaction) \
     macro(IDBVersionChangeEvent) \
+    macro(ImageBitmap) \
     macro(InputEvent) \
     macro(IntersectionObserver) \
     macro(IntersectionObserverEntry) \
@@ -96,6 +97,7 @@ namespace WebCore {
     macro(NavigatorCredentials) \
     macro(NavigatorMediaDevices) \
     macro(NavigatorUserMedia) \
+    macro(OffscreenCanvas) \
     macro(PasswordCredential) \
     macro(PaymentAddress) \
     macro(PaymentRequest) \
@@ -196,6 +198,7 @@ namespace WebCore {
     macro(consumeChunk) \
     macro(controlledReadableStream) \
     macro(controller) \
+    macro(createImageBitmap) \
     macro(createReadableStream) \
     macro(customElements) \
     macro(disturbed) \

@@ -1077,6 +1077,14 @@ SpringTimingFunctionEnabled:
   humanReadableDescription: "CSS Spring Animation prototype"
   category: experimental
 
+ImageBitmapOffscreenCanvasEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "ImageBitmap and OffscreenCanvas"
+  humanReadableDescription: "Support for the ImageBitmap and OffscreenCanvas APIs"
+  category: experimental
+  webcoreBinding: RuntimeEnabledFeatures
+
 LinkPreloadEnabled:
   type: bool
   defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED

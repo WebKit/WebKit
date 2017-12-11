@@ -116,6 +116,9 @@ function testObjectRest() {
     return true;
 }
 
+function testImageBitmapOffscreenCanvas() {
+    return 'createImageBitmap' in window && 'OffscreenCanvas' in window;
+}
 window.addEventListener("load", function () {
     Array.from(document.querySelectorAll(".test")).forEach(element => {
         var enabled = false;
@@ -138,6 +141,7 @@ window.addEventListener("load", function () {
 
         <div class="test" id="SpringAnimation"><p>CSS Spring Animations</p></div>
         <div class="test" id="ES6Modules"><p>ES6 Modules in HTML</p></div>
+        <div class="test" id="ImageBitmapOffscreenCanvas"><p>ImageBitmap and OffscreenCanvas</p></div>
         <div class="test" id="LinkPreload"><p>Link Preload</p></div>
         <div class="test" id="SubtleCrypto"><p>SubtleCrypto</p></div>
         <div class="test" id="VariationFonts"><p>Variation Fonts</p></div>
