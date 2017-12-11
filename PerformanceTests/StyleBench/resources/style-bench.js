@@ -12,14 +12,26 @@ class Random
         return this.seed = this.seed * 16807 % 2147483647;
     }
 
+    underOne()
+    {
+        return (this.next % 1048576) / 1048576;
+    }
+
     chance(chance)
     {
-        return this.next % 1048576 < chance * 1048576;
+        return this.underOne() < chance;
     }
 
     number(under)
     {
         return this.next % under;
+    }
+
+    numberSquareWeightedToLow(under)
+    {
+        const random = this.underOne();
+        const random2 = random * random;
+        return Math.floor(random2 * under);
     }
 }
 
@@ -35,6 +47,7 @@ class StyleBench
         return {
             name: 'Default',
             elementTypeCount: 10,
+            idChance: 0.05,
             elementChance: 0.5,
             classCount: 200,
             classChance: 0.3,
@@ -85,6 +98,7 @@ class StyleBench
                 'first-of-type',
                 'last-of-type',
                 'only-of-type',
+                'empty',
             ],
         });
     }
@@ -110,6 +124,7 @@ class StyleBench
     constructor(configuration)
     {
         this.configuration = configuration;
+        this.idCount = 0;
 
         this.baseStyle = document.createElement("style");
         this.baseStyle.textContent = `
@@ -119,10 +134,8 @@ class StyleBench
             }
             #testroot * {
                 display: inline-block;
-            }
-            #testroot :empty {
-                width:10px;
                 height:10px;
+                min-width:10px;
             }
         `;
         document.head.appendChild(this.baseStyle);
@@ -137,19 +150,19 @@ class StyleBench
     randomElementName()
     {
         const elementTypeCount = this.configuration.elementTypeCount;
-        return `elem${ this.random.number(elementTypeCount) }`;
+        return `elem${ this.random.numberSquareWeightedToLow(elementTypeCount) }`;
     }
 
     randomClassName()
     {
         const classCount = this.configuration.classCount;
-        return `class${ this.random.number(classCount) }`;
+        return `class${ this.random.numberSquareWeightedToLow(classCount) }`;
     }
 
     randomClassNameFromRange(range)
     {
         const maximum = Math.round(range * this.configuration.classCount);
-        return `class${ this.random.number(maximum) }`;
+        return `class${ this.random.numberSquareWeightedToLow(maximum) }`;
     }
 
     randomCombinator()
@@ -158,28 +171,44 @@ class StyleBench
         return combinators[this.random.number(combinators.length)]
     }
 
-    randomPseudoClass()
+    randomPseudoClass(isLast)
     {
         const pseudoClasses = this.configuration.pseudoClasses;
-        return pseudoClasses[this.random.number(pseudoClasses.length)]
+        const pseudoClass = pseudoClasses[this.random.number(pseudoClasses.length)]
+        if (!isLast && pseudoClass == 'empty')
+            return this.randomPseudoClass(isLast);
+        return pseudoClass;
     }
 
-    makeSimpleSelector(index, length)
+    randomId()
     {
+        const idCount = this.configuration.idChance * this.configuration.elementCount ;
+        return `id${ this.random.number(idCount) }`;
+    }
+
+    makeCompoundSelector(index, length)
+    {
+        const isFirst = index == 0;
         const isLast = index == length - 1;
         const usePseudoClass = this.random.chance(this.configuration.pseudoClassChance) && this.configuration.pseudoClasses.length;
-        const useElement = usePseudoClass || this.random.chance(this.configuration.elementChance); // :nth-of-type etc only make sense with element
-        const useClass = !useElement || this.random.chance(this.configuration.classChance);
+        const useId = isFirst && this.random.chance(this.configuration.idChance);
+        const useElement = !useId && (usePseudoClass || this.random.chance(this.configuration.elementChance)); // :nth-of-type etc only make sense with element
+        const useClass = !useId && (!useElement || this.random.chance(this.configuration.classChance));
         const useBeforeOrAfter = isLast && this.random.chance(this.configuration.beforeAfterChance);
         let result = "";
         if (useElement)
             result += this.randomElementName();
+        if (useId)
+            result += "#" + this.randomId();
         if (useClass) {
-            // Use a smaller pool of class names on the left side of the selectors to create containers.
-            result += "." + this.randomClassNameFromRange((index + 1) / length);
+            const classCount = this.random.numberSquareWeightedToLow(2) + 1;
+            for (let i = 0; i < classCount; ++i) {
+                // Use a smaller pool of class names on the left side of the selectors to create containers.
+                result += "." + this.randomClassNameFromRange((index + 1) / length);
+            }
         }
         if (usePseudoClass)
-            result +=  ":" + this.randomPseudoClass();
+            result +=  ":" + this.randomPseudoClass(isLast);
         if (useBeforeOrAfter) {
             if (this.random.chance(0.5))
                 result +=  "::before";
@@ -192,12 +221,12 @@ class StyleBench
     makeSelector()
     {
         const length = this.random.number(this.configuration.maximumSelectorLength) + 1;
-        let result = this.makeSimpleSelector(0, length);
-        for (let i = 0; i < length; ++i) {
+        let result = this.makeCompoundSelector(0, length);
+        for (let i = 1; i < length; ++i) {
             const combinator = this.randomCombinator();
             if (combinator != ' ')
                 result += " " + combinator;
-            result += " " + this.makeSimpleSelector(i, length);
+            result += " " + this.makeCompoundSelector(i, length);
         }
         return result;
     }
@@ -212,7 +241,7 @@ class StyleBench
         let declaration = `background-color: rgb(${this.randomColorComponent}, ${this.randomColorComponent}, ${this.randomColorComponent});`;
 
         if (selector.endsWith('::before') || selector.endsWith('::after'))
-            declaration += " content: '\xa0';";
+            declaration += " content: ''; min-width:5px; display:inline-block;";
 
         return declaration;
     }
@@ -244,9 +273,14 @@ class StyleBench
         const element = document.createElement(this.randomElementName());
         const hasClasses = this.random.chance(0.5);
         if (hasClasses) {
-            const count = this.random.number(3) + 1;
+            const count = this.random.numberSquareWeightedToLow(3) + 1;
             for (let i = 0; i < count; ++i)
                 element.classList.add(this.randomClassName());
+        }
+        const hasId = this.random.chance(this.configuration.idChance);
+        if (hasId) {
+            element.id = `id${ this.idCount }`;
+            this.idCount++;
         }
         return element;
     }
