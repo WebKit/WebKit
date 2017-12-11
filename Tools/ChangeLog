@@ -1,3 +1,19 @@
+2017-12-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed webkitpy fix on Linux platforms after r225721.
+
+        Add an empty 'linux' entry to the PUBLIC_TABLE mapping in the
+        VersionNameMap class. This avoids asserting in this class's
+        mapping_for_platform() method when the code is evaluated on a Linux
+        system, which happens when the static VERSION_FALLBACK_ORDER member in
+        the WinCairoPort class is constructed. This can occur during a
+        test-webkitpy run or when trying to construct a WPEPort instance in
+        PortFactory, which isn't possible because again the WinCairoPort
+        instance is constructed first, leading to the same assert in both cases.
+
+        * Scripts/webkitpy/common/version_name_map.py:
+        (VersionNameMap.__init__):
+
 2017-12-10  Youenn Fablet  <youenn@apple.com>
 
         Add a script to automate W3c web-platform-tests pull request creations from WebKit commits
