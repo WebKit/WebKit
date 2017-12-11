@@ -29,6 +29,7 @@
 
 import datetime
 import logging
+import os
 import re
 
 from webkitpy.common.memoized import memoized
@@ -36,7 +37,7 @@ from webkitpy.common.system.executive import Executive, ScriptError
 
 from .commitmessage import CommitMessage
 from .scm import AuthenticationError, SCM, commit_error_handler
-from .svn import SVNRepository
+from .svn import SVN, SVNRepository
 
 _log = logging.getLogger(__name__)
 
@@ -506,11 +507,11 @@ class Git(SCM, SVNRepository):
     def deinit_submodules(self):
         return self._run_git(['submodule', 'deinit', '-f', '.'])
 
-    def branch_ref_exists(self, branch_ref):
-        return self._run_git(['show-ref', '--quiet', '--verify', 'refs/heads/' + branch_ref], return_exit_code=True) == 0
+    def _branch_ref_exists(self, branch_ref):
+        return self._run_git(['show-ref', '--quiet', '--verify', branch_ref], return_exit_code=True) == 0
 
     def delete_branch(self, branch_name):
-        if self.branch_ref_exists(branch_name):
+        if self._branch_ref_exists('refs/heads/' + branch_name):
             self._run_git(['branch', '-D', branch_name])
 
     def remote_merge_base(self):
@@ -521,7 +522,7 @@ class Git(SCM, SVNRepository):
         remote_branch_refs = self.read_git_config('svn-remote.svn.fetch', cwd=self.checkout_root, executive=self._executive)
         if not remote_branch_refs:
             remote_master_ref = 'refs/remotes/origin/master'
-            if not self.branch_ref_exists(remote_master_ref):
+            if not self._branch_ref_exists(remote_master_ref):
                 raise ScriptError(message="Can't find a branch to diff against. svn-remote.svn.fetch is not in the git config and %s does not exist" % remote_master_ref)
             return remote_master_ref
 
@@ -582,37 +583,6 @@ class Git(SCM, SVNRepository):
 
     def fetch(self, remote='origin'):
         return self._run_git(['fetch', remote])
-
-    # Reset current HEAD to the specified commit.
-    def reset_hard(self, commit):
-        return self._run_git(['reset', '--hard', commit])
-
-    def apply_mail_patch(self, options):
-        return self._run_git(['apply'] + options)
-
-    def commit(self, options):
-        return self._run_git(['commit'] + options)
-
-    def format_patch(self, options):
-        return self._run_git(['format-patch'] + options)
-
-    def request_pull(self, options):
-        return self._run_git(['request-pull'] + options)
-
-    def remote(self, options):
-        return self._run_git(['remote'] + options)
-
-    def push(self, options):
-        return self._run_git(['push'] + options)
-
-    def local_config(self, key):
-        return self._run_git(['config', '--get', '--local', key], error_handler=Executive.ignore_error)
-
-    def set_local_config(self, key, value):
-        return self._run_git(['config', '--add', '--local', key, value], error_handler=Executive.ignore_error)
-
-    def checkout_new_branch(self, branch_name):
-        return self._run_git(['checkout', '-b', branch_name])
 
     def checkout(self, revision, quiet=None):
         command = ['checkout', revision]

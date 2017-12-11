@@ -27,13 +27,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import StringIO
-import urllib2
+
 
 class MockWeb(object):
-    def __init__(self, urls=None, responses=[]):
+    def __init__(self, urls=None):
         self.urls = urls or {}
         self.urls_fetched = []
-        self.responses = responses
 
     def get_binary(self, url, convert_404_to_None=False):
         self.urls_fetched.append(url)
@@ -41,29 +40,6 @@ class MockWeb(object):
             return self.urls[url]
         return "MOCK Web result, convert 404 to None=%s" % convert_404_to_None
 
-    def request(self, method, url, data, headers=None):  # pylint: disable=unused-argument
-        return MockResponse(self.responses.pop(0))
-
-
-class MockResponse(object):
-    def __init__(self, values):
-        self.status_code = values['status_code']
-        self.url = ''
-        self.body = values.get('body', '')
-
-        if int(self.status_code) >= 400:
-            raise urllib2.HTTPError(
-                url=self.url,
-                code=self.status_code,
-                msg='Received error status code: {}'.format(self.status_code),
-                hdrs={},
-                fp=None)
-
-    def getcode(self):
-        return self.status_code
-
-    def read(self):
-        return self.body
 
 # FIXME: Classes which are using Browser probably want to use Web instead.
 class MockBrowser(object):
