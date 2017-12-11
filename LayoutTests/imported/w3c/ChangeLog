@@ -1,3 +1,13 @@
+2017-12-11  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        REGRESSION(r221931): Row stretch doesn't work for grid container with min-height
+        https://bugs.webkit.org/show_bug.cgi?id=180287
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/css-grid/grid-model/grid-box-sizing-001-expected.txt:
+        Update expectations as the test is now passing.
+
 2017-12-08  Chris Dumez  <cdumez@apple.com>
 
         ServiceWorkerGlobalScope is a global object and should be marked as [ImplicitThis] in the IDL

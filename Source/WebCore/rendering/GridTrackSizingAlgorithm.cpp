@@ -789,6 +789,7 @@ private:
     void maximizeTracks(Vector<GridTrack>&, std::optional<LayoutUnit>& freeSpace) override;
     double findUsedFlexFraction(Vector<unsigned>& flexibleSizedTracksIndex, GridTrackSizingDirection, std::optional<LayoutUnit> freeSpace) const override;
     bool recomputeUsedFlexFractionIfNeeded(double& flexFraction, LayoutUnit& totalGrowth) const override;
+    LayoutUnit freeSpaceForStretchAutoTracksStep() const override;
 };
 
 LayoutUnit IndefiniteSizeStrategy::minLogicalWidthForChild(RenderBox& child, Length childMinSize, LayoutUnit availableSize) const
@@ -886,7 +887,18 @@ private:
     void maximizeTracks(Vector<GridTrack>&, std::optional<LayoutUnit>& freeSpace) override;
     double findUsedFlexFraction(Vector<unsigned>& flexibleSizedTracksIndex, GridTrackSizingDirection, std::optional<LayoutUnit> freeSpace) const override;
     bool recomputeUsedFlexFractionIfNeeded(double& flexFraction, LayoutUnit& totalGrowth) const override;
+    LayoutUnit freeSpaceForStretchAutoTracksStep() const override;
 };
+
+LayoutUnit IndefiniteSizeStrategy::freeSpaceForStretchAutoTracksStep() const
+{
+    ASSERT(!m_algorithm.freeSpace(direction()));
+    if (direction() == ForColumns)
+        return LayoutUnit();
+
+    auto minSize = renderGrid()->computeContentLogicalHeight(MinSize, renderGrid()->style().logicalMinHeight(), std::nullopt);
+    return minSize.value() - computeTrackBasedSize();
+}
 
 LayoutUnit DefiniteSizeStrategy::minLogicalWidthForChild(RenderBox& child, Length childMinSize, LayoutUnit availableSize) const
 {
@@ -924,6 +936,11 @@ double DefiniteSizeStrategy::findUsedFlexFraction(Vector<unsigned>&, GridTrackSi
     GridSpan allTracksSpan = GridSpan::translatedDefiniteGridSpan(0, m_algorithm.tracks(direction).size());
     ASSERT(freeSpace);
     return findFrUnitSize(allTracksSpan, freeSpace.value());
+}
+
+LayoutUnit DefiniteSizeStrategy::freeSpaceForStretchAutoTracksStep() const
+{
+    return m_algorithm.freeSpace(direction()).value();
 }
 
 bool DefiniteSizeStrategy::recomputeUsedFlexFractionIfNeeded(double& flexFraction, LayoutUnit& totalGrowth) const
@@ -1040,16 +1057,14 @@ void GridTrackSizingAlgorithm::stretchFlexibleTracks(std::optional<LayoutUnit> f
 
 void GridTrackSizingAlgorithm::stretchAutoTracks()
 {
-    auto currentFreeSpace = freeSpace(m_direction);
-    if (m_autoSizedTracksForStretchIndex.isEmpty()
-        || !currentFreeSpace
-        || currentFreeSpace.value() <= 0
+    auto currentFreeSpace = m_strategy->freeSpaceForStretchAutoTracksStep();
+    if (m_autoSizedTracksForStretchIndex.isEmpty() || currentFreeSpace <= 0
         || (m_renderGrid->contentAlignment(m_direction).distribution() != ContentDistributionStretch))
         return;
 
     Vector<GridTrack>& allTracks = tracks(m_direction);
     unsigned numberOfAutoSizedTracks = m_autoSizedTracksForStretchIndex.size();
-    LayoutUnit sizeToIncrease = currentFreeSpace.value() / numberOfAutoSizedTracks;
+    LayoutUnit sizeToIncrease = currentFreeSpace / numberOfAutoSizedTracks;
     for (const auto& trackIndex : m_autoSizedTracksForStretchIndex) {
         auto& track = allTracks[trackIndex];
         track.setBaseSize(track.baseSize() + sizeToIncrease);
