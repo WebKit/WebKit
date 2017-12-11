@@ -1,3 +1,17 @@
+2017-12-11  Youenn Fablet  <youenn@apple.com>
+
+        RTCPacketOptions::packet_id should be encoded as 32 bits integer.
+        https://bugs.webkit.org/show_bug.cgi?id=180654
+
+        Reviewed by Eric Carlson.
+
+        packet_id is a 16 bit unsigned integer, but it can also take -1 if its value is not set.
+        Before the patch, it was IPC encoded as a 16 bit signed integer which is not large enough.
+
+        * Shared/RTCPacketOptions.cpp:
+        (WebKit::RTCPacketOptions::encode const):
+        (WebKit::RTCPacketOptions::decode):
+
 2017-12-11  Chris Dumez  <cdumez@apple.com>
 
         Layout Test http/tests/workers/service/postmessage-after-sw-process-crash.https.html is flaky
