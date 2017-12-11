@@ -26,6 +26,7 @@
 #pragma once
 
 #include "EventInit.h"
+#include "Optional.h"
 
 namespace WebCore {
 
