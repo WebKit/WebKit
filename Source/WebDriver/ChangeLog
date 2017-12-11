@@ -1,3 +1,17 @@
+2017-12-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: get active element should return no such element error when there isn't an active element
+        https://bugs.webkit.org/show_bug.cgi?id=180421
+
+        Reviewed by Brian Burg.
+
+        We currently return unknown error.
+
+        Fixes: imported/w3c/webdriver/tests/element_retrieval/get_active_element.py::test_missing_document_element
+
+        * Session.cpp:
+        (WebDriver::Session::getActiveElement):
+
 2017-12-04  Brian Burg  <bburg@apple.com>
 
         Web Automation: add flag to preserve legacy page screenshot behavior
