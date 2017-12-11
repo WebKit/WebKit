@@ -39,6 +39,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -67,6 +68,7 @@ enum class FrameFlattening;
 Pagination::Mode paginationModeForRenderStyle(const RenderStyle&);
 
 class FrameView final : public ScrollView {
+    WTF_MAKE_ISO_ALLOCATED(FrameView);
 public:
     friend class RenderView;
     friend class Internals;

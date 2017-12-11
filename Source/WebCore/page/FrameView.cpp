@@ -98,6 +98,7 @@
 #include <wtf/text/TextStream.h>
 
 #include <wtf/CurrentTime.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
@@ -119,6 +120,8 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(FrameView);
 
 double FrameView::sCurrentPaintTimeStamp = 0.0;
 
