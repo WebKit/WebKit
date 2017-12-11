@@ -378,7 +378,7 @@
 /* OS(MAC_OS_X) - Mac OS X (not including iOS) */
 #if OS(DARWIN) && ((defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED) \
     || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE)                 \
-    || (defined(TARGET_IPHONE_SIMULATOR) && TARGET_IPHONE_SIMULATOR))
+    || (defined(TARGET_OS_SIMULATOR) && TARGET_OS_SIMULATOR))
 #define WTF_OS_IOS 1
 #elif OS(DARWIN) && defined(TARGET_OS_MAC) && TARGET_OS_MAC
 #define WTF_OS_MAC_OS_X 1
@@ -474,7 +474,7 @@
 #define WTF_PLATFORM_MAC 1
 #elif OS(IOS)
 #define WTF_PLATFORM_IOS 1
-#if defined(TARGET_IPHONE_SIMULATOR) && TARGET_IPHONE_SIMULATOR
+#if defined(TARGET_OS_SIMULATOR) && TARGET_OS_SIMULATOR
 #define WTF_PLATFORM_IOS_SIMULATOR 1
 #endif
 #elif OS(WINDOWS)

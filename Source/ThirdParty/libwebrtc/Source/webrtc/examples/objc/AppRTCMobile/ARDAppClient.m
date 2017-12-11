@@ -709,7 +709,7 @@ static int const kKbpsMultiplier = 1000;
   // The iOS simulator doesn't provide any sort of camera capture
   // support or emulation (http://goo.gl/rHAnC1) so don't bother
   // trying to open a local stream.
-#if !TARGET_IPHONE_SIMULATOR
+#if !TARGET_OS_SIMULATOR
   if (![_settings currentAudioOnlySettingFromStore]) {
     RTCVideoSource *source = [_factory videoSource];
     RTCCameraVideoCapturer *capturer = [[RTCCameraVideoCapturer alloc] initWithDelegate:source];

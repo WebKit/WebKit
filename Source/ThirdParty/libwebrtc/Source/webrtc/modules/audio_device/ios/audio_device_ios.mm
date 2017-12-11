@@ -97,8 +97,8 @@ static void LogDeviceInfo() {
     && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_9_0
     LOG(LS_INFO) << " low power mode: " << ios::GetLowPowerModeEnabled();
 #endif
-#if TARGET_IPHONE_SIMULATOR
-    LOG(LS_INFO) << " TARGET_IPHONE_SIMULATOR is defined";
+#if TARGET_OS_SIMULATOR
+    LOG(LS_INFO) << " TARGET_OS_SIMULATOR is defined";
 #endif
     LOG(LS_INFO) << " DeviceIsSimulator: " << DeviceIsSimulator();
   }

@@ -230,7 +230,7 @@
 // Test to see that we get a local video connection
 // Note this will currently pass even when no camera is connected as a local
 // video track is created regardless (Perhaps there should be a test for that...)
-#if !TARGET_IPHONE_SIMULATOR // Expect to fail on simulator due to no camera support
+#if !TARGET_OS_SIMULATOR // Expect to fail on simulator due to no camera support
 - (void)testSessionShouldGetLocalVideoTrackCallback {
   ARDAppClient *caller = nil;
   NSString *roomId = @"testRoom";

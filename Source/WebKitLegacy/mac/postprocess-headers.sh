@@ -15,11 +15,11 @@ postProcessInDirectory()
     fi
 
     if [[ ${PLATFORM_NAME} == macosx ]]; then
-        unifdefOptions="-DTARGET_OS_IPHONE=0 -DTARGET_IPHONE_SIMULATOR=0";
+        unifdefOptions="-DTARGET_OS_IPHONE=0 -DTARGET_OS_SIMULATOR=0";
     elif [[ ${PLATFORM_NAME} == *simulator* ]]; then
-        unifdefOptions="-DTARGET_OS_IPHONE=1 -DTARGET_IPHONE_SIMULATOR=1 -DUSE_APPLE_INTERNAL_SDK=${USE_APPLE_INTERNAL_SDK}";
+        unifdefOptions="-DTARGET_OS_IPHONE=1 -DTARGET_OS_SIMULATOR=1 -DUSE_APPLE_INTERNAL_SDK=${USE_APPLE_INTERNAL_SDK}";
     else
-        unifdefOptions="-DTARGET_OS_IPHONE=1 -DTARGET_IPHONE_SIMULATOR=0 -DUSE_APPLE_INTERNAL_SDK=${USE_APPLE_INTERNAL_SDK}";
+        unifdefOptions="-DTARGET_OS_IPHONE=1 -DTARGET_OS_SIMULATOR=0 -DUSE_APPLE_INTERNAL_SDK=${USE_APPLE_INTERNAL_SDK}";
     fi
 
     # FIXME: We should consider making this logic general purpose so as to support keeping or removing
