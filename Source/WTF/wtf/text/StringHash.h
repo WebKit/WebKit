@@ -80,14 +80,17 @@ namespace WTF {
     };
 
     struct ASCIICaseInsensitiveHash {
-        template<typename T> static inline UChar foldCase(T character)
-        {
-            return toASCIILower(character);
-        }
+        template<typename T>
+        struct FoldCase {
+            static inline UChar convert(T character)
+            {
+                return toASCIILower(character);
+            }
+        };
 
         static unsigned hash(const UChar* data, unsigned length)
         {
-            return StringHasher::computeHashAndMaskTop8Bits<UChar, foldCase<UChar>>(data, length);
+            return StringHasher::computeHashAndMaskTop8Bits<UChar, FoldCase<UChar>>(data, length);
         }
 
         static unsigned hash(StringImpl& string)
@@ -104,7 +107,7 @@ namespace WTF {
 
         static unsigned hash(const LChar* data, unsigned length)
         {
-            return StringHasher::computeHashAndMaskTop8Bits<LChar, foldCase<LChar>>(data, length);
+            return StringHasher::computeHashAndMaskTop8Bits<LChar, FoldCase<LChar>>(data, length);
         }
 
         static inline unsigned hash(const char* data, unsigned length)

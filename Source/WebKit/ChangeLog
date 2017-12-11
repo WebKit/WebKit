@@ -1,3 +1,13 @@
+2017-12-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Add Converter traits to StringHasher instead of function pointer
+        https://bugs.webkit.org/show_bug.cgi?id=180656
+
+        Reviewed by JF Bastien.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::addCaseFoldedCharacters):
+
 2017-12-11  David Quesada  <david_quesada@apple.com>
 
         Turn on ENABLE_APPLICATION_MANIFEST

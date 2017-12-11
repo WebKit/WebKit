@@ -1,3 +1,32 @@
+2017-12-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Add Converter traits to StringHasher instead of function pointer
+        https://bugs.webkit.org/show_bug.cgi?id=180656
+
+        Reviewed by JF Bastien.
+
+        In the latest ICU, UChar is char16_t. So defining defaultConverter(UChar)
+        and defaultConverter(char16_t) causes duplicate definitions.
+        Instead of passing a funtion pointer, we pass a trait class DefaultConveter
+        which has `convert` static function. And we make this `convert` function
+        generic. This avoids defining convert function for UChar and char16_t.
+
+        * wtf/text/StringHash.h:
+        (WTF::ASCIICaseInsensitiveHash::FoldCase::convert):
+        (WTF::ASCIICaseInsensitiveHash::hash):
+        (WTF::ASCIICaseInsensitiveHash::foldCase): Deleted.
+        * wtf/text/StringHasher.h:
+        (WTF::StringHasher::DefaultConverter::convert):
+        (WTF::StringHasher::addCharactersAssumingAligned):
+        (WTF::StringHasher::addCharacters):
+        (WTF::StringHasher::computeHashAndMaskTop8Bits):
+        (WTF::StringHasher::computeHash):
+        (WTF::StringHasher::computeLiteralHash):
+        (WTF::StringHasher::computeLiteralHashAndMaskTop8Bits):
+        (WTF::StringHasher::computeHashImpl):
+        (WTF::StringHasher::Converter): Deleted.
+        (WTF::StringHasher::defaultConverter): Deleted.
+
 2017-12-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Reduce sizeof(Thread) by adjusting alignment

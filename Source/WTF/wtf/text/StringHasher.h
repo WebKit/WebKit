@@ -42,6 +42,14 @@ public:
     static constexpr const unsigned flagCount = 8; // Save 8 bits for StringImpl to use as flags.
     static constexpr const unsigned maskHash = (1U << (sizeof(unsigned) * 8 - flagCount)) - 1;
 
+    struct DefaultConverter {
+        template<typename CharType>
+        static constexpr UChar convert(CharType character)
+        {
+            return static_cast<std::make_unsigned_t<CharType>>((character));
+        }
+    };
+
     StringHasher() = default;
 
     // The hasher hashes two characters at a time, and thus an "aligned" hasher is one
@@ -82,7 +90,7 @@ public:
         addCharactersAssumingAligned(a, b);
     }
 
-    template<typename T, UChar Converter(T)> void addCharactersAssumingAligned(const T* data, unsigned length)
+    template<typename T, typename Converter> void addCharactersAssumingAligned(const T* data, unsigned length)
     {
         ASSERT(!m_hasPendingCharacter);
 
@@ -90,45 +98,45 @@ public:
         length >>= 1;
 
         while (length--) {
-            addCharactersAssumingAligned(Converter(data[0]), Converter(data[1]));
+            addCharactersAssumingAligned(Converter::convert(data[0]), Converter::convert(data[1]));
             data += 2;
         }
 
         if (remainder)
-            addCharacter(Converter(*data));
+            addCharacter(Converter::convert(*data));
     }
 
     template<typename T> void addCharactersAssumingAligned(const T* data, unsigned length)
     {
-        addCharactersAssumingAligned<T, defaultConverter>(data, length);
+        addCharactersAssumingAligned<T, DefaultConverter>(data, length);
     }
 
-    template<typename T, UChar Converter(T)> void addCharactersAssumingAligned(const T* data)
+    template<typename T, typename Converter> void addCharactersAssumingAligned(const T* data)
     {
         ASSERT(!m_hasPendingCharacter);
 
         while (T a = *data++) {
             T b = *data++;
             if (!b) {
-                addCharacter(Converter(a));
+                addCharacter(Converter::convert(a));
                 break;
             }
-            addCharactersAssumingAligned(Converter(a), Converter(b));
+            addCharactersAssumingAligned(Converter::convert(a), Converter::convert(b));
         }
     }
 
     template<typename T> void addCharactersAssumingAligned(const T* data)
     {
-        addCharactersAssumingAligned<T, defaultConverter>(data);
+        addCharactersAssumingAligned<T, DefaultConverter>(data);
     }
 
-    template<typename T, UChar Converter(T)> void addCharacters(const T* data, unsigned length)
+    template<typename T, typename Converter> void addCharacters(const T* data, unsigned length)
     {
         if (!length)
             return;
         if (m_hasPendingCharacter) {
             m_hasPendingCharacter = false;
-            addCharactersAssumingAligned(m_pendingCharacter, Converter(*data++));
+            addCharactersAssumingAligned(m_pendingCharacter, Converter::convert(*data++));
             --length;
         }
         addCharactersAssumingAligned<T, Converter>(data, length);
@@ -136,21 +144,21 @@ public:
 
     template<typename T> void addCharacters(const T* data, unsigned length)
     {
-        addCharacters<T, defaultConverter>(data, length);
+        addCharacters<T, DefaultConverter>(data, length);
     }
 
-    template<typename T, UChar Converter(T)> void addCharacters(const T* data)
+    template<typename T, typename Converter> void addCharacters(const T* data)
     {
         if (m_hasPendingCharacter && *data) {
             m_hasPendingCharacter = false;
-            addCharactersAssumingAligned(m_pendingCharacter, Converter(*data++));
+            addCharactersAssumingAligned(m_pendingCharacter, Converter::convert(*data++));
         }
         addCharactersAssumingAligned<T, Converter>(data);
     }
 
     template<typename T> void addCharacters(const T* data)
     {
-        addCharacters<T, defaultConverter>(data);
+        addCharacters<T, DefaultConverter>(data);
     }
 
     unsigned hashWithTop8BitsMasked() const
@@ -163,57 +171,57 @@ public:
         return finalize(processPendingCharacter());
     }
 
-    template<typename T, UChar Converter(T)> static constexpr unsigned computeHashAndMaskTop8Bits(const T* data, unsigned length)
+    template<typename T, typename Converter> static constexpr unsigned computeHashAndMaskTop8Bits(const T* data, unsigned length)
     {
         return finalizeAndMaskTop8Bits(computeHashImpl<T, Converter>(data, length));
     }
 
-    template<typename T, UChar Converter(T)> static constexpr unsigned computeHashAndMaskTop8Bits(const T* data)
+    template<typename T, typename Converter> static constexpr unsigned computeHashAndMaskTop8Bits(const T* data)
     {
         return finalizeAndMaskTop8Bits(computeHashImpl<T, Converter>(data));
     }
 
     template<typename T> static constexpr unsigned computeHashAndMaskTop8Bits(const T* data, unsigned length)
     {
-        return computeHashAndMaskTop8Bits<T, defaultConverter>(data, length);
+        return computeHashAndMaskTop8Bits<T, DefaultConverter>(data, length);
     }
 
     template<typename T> static constexpr unsigned computeHashAndMaskTop8Bits(const T* data)
     {
-        return computeHashAndMaskTop8Bits<T, defaultConverter>(data);
+        return computeHashAndMaskTop8Bits<T, DefaultConverter>(data);
     }
 
-    template<typename T, UChar Converter(T)> static constexpr unsigned computeHash(const T* data, unsigned length)
+    template<typename T, typename Converter> static constexpr unsigned computeHash(const T* data, unsigned length)
     {
         return finalize(computeHashImpl<T, Converter>(data, length));
     }
 
-    template<typename T, UChar Converter(T)> static constexpr unsigned computeHash(const T* data)
+    template<typename T, typename Converter> static constexpr unsigned computeHash(const T* data)
     {
         return finalize(computeHashImpl<T, Converter>(data));
     }
 
     template<typename T> static constexpr unsigned computeHash(const T* data, unsigned length)
     {
-        return computeHash<T, defaultConverter>(data, length);
+        return computeHash<T, DefaultConverter>(data, length);
     }
 
     template<typename T> static constexpr unsigned computeHash(const T* data)
     {
-        return computeHash<T, defaultConverter>(data);
+        return computeHash<T, DefaultConverter>(data);
     }
 
 
     template<typename T, unsigned charactersCount>
     static constexpr unsigned computeLiteralHash(const T (&characters)[charactersCount])
     {
-        return computeHash<T, defaultConverter>(characters, charactersCount - 1);
+        return computeHash<T, DefaultConverter>(characters, charactersCount - 1);
     }
 
     template<typename T, unsigned charactersCount>
     static constexpr unsigned computeLiteralHashAndMaskTop8Bits(const T (&characters)[charactersCount])
     {
-        return computeHashAndMaskTop8Bits<T, defaultConverter>(characters, charactersCount - 1);
+        return computeHashAndMaskTop8Bits<T, DefaultConverter>(characters, charactersCount - 1);
     }
 
     static unsigned hashMemory(const void* data, unsigned length)
@@ -234,26 +242,6 @@ public:
     }
 
 private:
-    static constexpr UChar defaultConverter(UChar character)
-    {
-        return character;
-    }
-
-    static constexpr UChar defaultConverter(LChar character)
-    {
-        return character;
-    }
-
-    static constexpr UChar defaultConverter(char character)
-    {
-        return static_cast<LChar>(character);
-    }
-
-    static constexpr UChar defaultConverter(char16_t character)
-    {
-        return character;
-    }
-
     ALWAYS_INLINE static constexpr unsigned avalancheBits(unsigned hash)
     {
         unsigned result = hash;
@@ -312,7 +300,7 @@ private:
         return result;
     }
 
-    template<typename T, UChar Converter(T)>
+    template<typename T, typename Converter>
     static constexpr unsigned computeHashImpl(const T* characters, unsigned length)
     {
         unsigned result = stringHashingStartValue;
@@ -320,24 +308,24 @@ private:
         length >>= 1;
 
         while (length--) {
-            result = calculateWithTwoCharacters(result, Converter(characters[0]), Converter(characters[1]));
+            result = calculateWithTwoCharacters(result, Converter::convert(characters[0]), Converter::convert(characters[1]));
             characters += 2;
         }
 
         if (remainder)
-            return calculateWithRemainingLastCharacter(result, Converter(characters[0]));
+            return calculateWithRemainingLastCharacter(result, Converter::convert(characters[0]));
         return result;
     }
 
-    template<typename T, UChar Converter(T)>
+    template<typename T, typename Converter>
     static constexpr unsigned computeHashImpl(const T* characters)
     {
         unsigned result = stringHashingStartValue;
         while (T a = *characters++) {
             T b = *characters++;
             if (!b)
-                return calculateWithRemainingLastCharacter(result, Converter(a));
-            result = calculateWithTwoCharacters(result, Converter(a), Converter(b));
+                return calculateWithRemainingLastCharacter(result, Converter::convert(a));
+            result = calculateWithTwoCharacters(result, Converter::convert(a), Converter::convert(b));
         }
         return result;
     }
