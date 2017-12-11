@@ -50,8 +50,8 @@ class WestonXvfbDriverDisplayTest():
 
 
 class WestonDriverTest(unittest.TestCase):
-    def make_driver(self, filesystem=None):
-        port = Port(MockSystemHost(log_executive=True, filesystem=filesystem), 'westondrivertestport', options=MockOptions(configuration='Release'))
+    def make_driver(self):
+        port = Port(MockSystemHost(log_executive=True), 'westondrivertestport', options=MockOptions(configuration='Release'))
         port._config.build_directory = lambda configuration: "/mock_build"
         port._server_process_constructor = MockServerProcess
 
@@ -85,13 +85,10 @@ class WestonDriverTest(unittest.TestCase):
             def terminate(self):
                 _log.info("MOCK FakeWestonProcess.terminate")
 
-        filesystem = MockFileSystem(dirs=['/tmp/weston-driver-directory'])
-        driver = self.make_driver(filesystem)
+        driver = self.make_driver()
         driver._weston_process = FakeWestonProcess()
-        driver._driver_directory = '/tmp/weston-driver-directory'
 
         expected_logs = "MOCK FakeWestonProcess.terminate\n"
         OutputCapture().assert_outputs(self, driver.stop, [], expected_logs=expected_logs)
 
         self.assertIsNone(driver._weston_process)
-        self.assertFalse(driver._port._filesystem.exists(driver._driver_directory))

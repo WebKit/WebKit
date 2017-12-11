@@ -1,3 +1,39 @@
+2017-12-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebDriver: run-webdriver-tests is leaking a DumpRenderTree directory in tmp
+        https://bugs.webkit.org/show_bug.cgi?id=180426
+
+        Reviewed by Michael Catanzaro.
+
+        This happens when running the tests with Xvfb driver, because _setup_environ_for_test() is called twice and the
+        DTR temp directory is created there every time. Only the last directory created is cleaned up by the driver
+        destructor. The DRT temp directory is only needed for layout tests, so we could even avoid its creation by
+        moving it to the start() method like other drivers do (included the base driver implementation). Since API and
+        WebDriver tests don't call start(), the directory is not even created, and the required env vars are not set
+        either in that case. Weston driver was behaving differently for some reason, it's now consistent with all other
+        drivers.
+
+        * Scripts/webkitpy/port/headlessdriver.py:
+        (HeadlessDriver._setup_environ_for_test): Do not set DUMPRENDERTREE_TEMP and XDG_CACHE_HOME if _driver_tempdir is None.
+        (HeadlessDriver._start): Use Port._driver_tempdir() to create the driver temp directory.
+        * Scripts/webkitpy/port/waylanddriver.py:
+        (WaylandDriver._setup_environ_for_test): Do not set DUMPRENDERTREE_TEMP and XDG_CACHE_HOME if _driver_tempdir is None.
+        (WaylandDriver._start): Use Port._driver_tempdir() to create the driver temp directory.
+        * Scripts/webkitpy/port/westondriver.py:
+        (WestonDriver._setup_environ_for_test): Do not set DUMPRENDERTREE_TEMP and XDG_CACHE_HOME if _driver_tempdir is None.
+        (WestonDriver._start): Use Port._driver_tempdir() to create the driver temp directory.
+        (WestonDriver.stop): Do not delete the temp directory, it's done by the parent class.
+        (WestonDriver._ensure_driver_tmpdir_subdirectory): Deleted.
+        * Scripts/webkitpy/port/westondriver_unittest.py:
+        (WestonDriverTest.make_driver):
+        (WestonDriverTest.test_stop):
+        * Scripts/webkitpy/port/xorgdriver.py:
+        (XorgDriver._setup_environ_for_test): Do not set DUMPRENDERTREE_TEMP and XDG_CACHE_HOME if _driver_tempdir is None.
+        (XorgDriver._start): Use Port._driver_tempdir() to create the driver temp directory.
+        * Scripts/webkitpy/port/xvfbdriver.py:
+        (XvfbDriver._setup_environ_for_test): Do not set DUMPRENDERTREE_TEMP and XDG_CACHE_HOME if _driver_tempdir is None.
+        (XvfbDriver._start): Use Port._driver_tempdir() to create the driver temp directory.
+
 2017-12-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed webkitpy fix on Linux platforms after r225721.

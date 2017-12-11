@@ -99,19 +99,19 @@ class XvfbDriver(Driver):
         # We must do this here because the DISPLAY number depends on _worker_number
         environment['DISPLAY'] = ":%d" % display_id
         environment['GDK_BACKEND'] = 'x11'
-        self._driver_tempdir = self._port.host.filesystem.mkdtemp(prefix='%s-' % self._server_name)
-        environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
         environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
-
-        # Currently on WebKit2, there is no API for setting the application
-        # cache directory. Each worker should have it's own and it should be
-        # cleaned afterwards, so we set it to inside the temporary folder by
-        # prepending XDG_CACHE_HOME with DUMPRENDERTREE_TEMP.
-        environment['XDG_CACHE_HOME'] = self._port.host.filesystem.join(str(self._driver_tempdir), 'appcache')
+        if self._driver_tempdir is not None:
+            environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
+            # Currently on WebKit2, there is no API for setting the application
+            # cache directory. Each worker should have it's own and it should be
+            # cleaned afterwards, so we set it to inside the temporary folder by
+            # prepending XDG_CACHE_HOME with DUMPRENDERTREE_TEMP.
+            environment['XDG_CACHE_HOME'] = self._port.host.filesystem.join(str(self._driver_tempdir), 'appcache')
         return environment
 
     def _start(self, pixel_tests, per_test_args):
         self.stop()
+        self._driver_tempdir = self._port._driver_tempdir(self._target_host)
         self._crashed_process_name = None
         self._crashed_pid = None
         self._server_process = self._port._server_process_constructor(self._port, self._server_name, self.cmd_line(pixel_tests, per_test_args), self._setup_environ_for_test())

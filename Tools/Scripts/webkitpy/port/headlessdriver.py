@@ -41,13 +41,14 @@ class HeadlessDriver(Driver):
         driver_environment = self._port.setup_environ_for_server(self._server_name)
         driver_environment['WPE_USE_HEADLESS_VIEW_BACKEND'] = "1"
         driver_environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
-        driver_environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
-        driver_environment['XDG_CACHE_HOME'] = self._port.host.filesystem.join(str(self._driver_tempdir), 'appcache')
+        if self._driver_tempdir is not None:
+            driver_environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
+            driver_environment['XDG_CACHE_HOME'] = self._port.host.filesystem.join(str(self._driver_tempdir), 'appcache')
         return driver_environment
 
     def _start(self, pixel_tests, per_test_args):
         super(HeadlessDriver, self).stop()
-        self._driver_tempdir = self._port.host.filesystem.mkdtemp(prefix='%s-' % self._server_name)
+        self._driver_tempdir = self._port._driver_tempdir(self._target_host)
         self._crashed_process_name = None
         self._crashed_pid = None
         self._server_process = self._port._server_process_constructor(self._port, self._server_name, self.cmd_line(pixel_tests, per_test_args), self._setup_environ_for_test())
