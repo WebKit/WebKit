@@ -169,13 +169,11 @@ static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClien
     case CachedResource::LinkSubresource:
     case CachedResource::LinkPrefetch:
 #endif
-        // None of these values is currently supported as an `as` value.
-        ASSERT_NOT_REACHED();
 #if ENABLE(APPLICATION_MANIFEST)
     case CachedResource::ApplicationManifest:
-        // FIXME: Support preloading the manifest.
-        ASSERT_NOT_REACHED();
 #endif
+        // None of these values is currently supported as an `as` value.
+        ASSERT_NOT_REACHED();
     }
     return nullptr;
 }

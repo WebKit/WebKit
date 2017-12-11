@@ -58,6 +58,10 @@ imported/w3c/web-platform-tests/payment-request/updateWith-method-pmi-handling-m
 imported/w3c/web-platform-tests/payment-request/user-abort-algorithm-manual.https.html [ Skip ]
 imported/w3c/web-platform-tests/payment-request/user-accepts-payment-request-algo-manual.https.html [ Skip ]
 
+http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Pass ]
+http/tests/security/contentSecurityPolicy/manifest-src-blocked.html [ Pass ]
+applicationmanifest/ [ Pass ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////

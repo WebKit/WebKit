@@ -61,6 +61,10 @@ imported/w3c/web-platform-tests/payment-request/user-accepts-payment-request-alg
 
 webkit.org/b/170713 imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-022.html [ ImageOnlyFailure ]
 
+http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Pass ]
+http/tests/security/contentSecurityPolicy/manifest-src-blocked.html [ Pass ]
+applicationmanifest/ [ Pass ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
