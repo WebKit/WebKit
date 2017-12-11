@@ -1,28 +1,46 @@
-var messageNumber = 1;
+let serviceWorkerHasReceivedState = false;
+let worker = null;
+let remainingAttempts = 1000; // We try for 10 seconds before timing out.
+
 navigator.serviceWorker.addEventListener("message", function(event) {
-    log("PASS: Client received message from service worker, origin: " + event.origin);
-    log(event.data);
-    if (messageNumber == 1) {
+    if (!serviceWorkerHasReceivedState) {
+        if (!event.data) {
+            log("FAIL: service worker did not receive the state");
+            finishSWTest();
+            return;
+        }
+        serviceWorkerHasReceivedState = true;
+
         log("* Simulating Service Worker process crash");
         testRunner.terminateServiceWorkerProcess();
-        setTimeout(function() {
-            log("* Sending 'Message 2' to Service Worker");
-            event.source.postMessage("Message 2");
-            messageNumber++;
-            handle = setTimeout(function() {
-                log("FAIL: Did not receive message from service worker process after the crash");
+
+        handle = setInterval(function() {
+            remainingAttempts--;
+            if (!remainingAttempts) {
+                log("FAIL: service worker did not respond after process termination");
+                clearInterval(handle);
                 finishSWTest();
-            }, 1000);
-        }, 0);
+                return;
+            }
+
+            worker.postMessage("HasState");
+        }, 10);
         return;
     }
-    if (messageNumber == 2) {
-        clearTimeout(handle);
-        finishSWTest();
-    }
+
+    // Worker still has the state, it was not terminated yet.
+    if (event.data === serviceWorkerHasReceivedState)
+        return;
+
+    log("PASS: service worker lost the state and responded the postMessage after process termination");
+    clearInterval(handle);
+    finishSWTest();
 });
 
-navigator.serviceWorker.register("resources/postmessage-echo-worker.js", { }).then(function(registration) {
-    log("* Sending 'Message 1' to Service Worker");
-    registration.installing.postMessage("Message 1");
+navigator.serviceWorker.register("resources/postmessage-after-sw-process-crash-worker.js", { }).then(function(registration) {
+    worker = registration.installing;
+    log("* Sending State to Service Worker");
+    worker.postMessage("SetState");
+    log("* Asking Service Worker if it received the state");
+    worker.postMessage("HasState");
 });

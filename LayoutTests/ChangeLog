@@ -1,3 +1,16 @@
+2017-12-11  Chris Dumez  <cdumez@apple.com>
+
+        Layout Test http/tests/workers/service/postmessage-after-sw-process-crash.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=180659
+
+        Reviewed by Youenn Fablet.
+
+        Rewrite test so that it is no longer flaky.
+
+        * http/tests/workers/service/postmessage-after-sw-process-crash.https-expected.txt:
+        * http/tests/workers/service/resources/postmessage-after-sw-process-crash-worker.js: Added.
+        * http/tests/workers/service/resources/postmessage-after-sw-process-crash.js:
+
 2017-12-11  David Quesada  <david_quesada@apple.com>
 
         Turn on ENABLE_APPLICATION_MANIFEST
