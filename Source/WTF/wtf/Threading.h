@@ -187,8 +187,6 @@ public:
         m_savedLastStackTop = lastStackTop;
     }
 
-    void* m_apiData { nullptr };
-
 #if OS(DARWIN)
     mach_port_t machThread() { return m_platformThread; }
 #endif
@@ -270,12 +268,13 @@ protected:
     // Thread from the threadMap, completing the cleanup.
     static void THREAD_SPECIFIC_CALL destructTLS(void* data);
 
-    // WordLock & Lock rely on ThreadSpecific. But Thread object can be destroyed even after ThreadSpecific things are destroyed.
-    std::mutex m_mutex;
     JoinableState m_joinableState { Joinable };
     bool m_isShuttingDown { false };
     bool m_didExit { false };
     bool m_isDestroyedOnce { false };
+
+    // WordLock & Lock rely on ThreadSpecific. But Thread object can be destroyed even after ThreadSpecific things are destroyed.
+    std::mutex m_mutex;
     StackBounds m_stack { StackBounds::emptyBounds() };
     Vector<std::weak_ptr<ThreadGroup>> m_threadGroups;
     PlatformThreadHandle m_handle;
@@ -296,6 +295,8 @@ protected:
 #endif
     void* m_savedStackPointerAtVMEntry { nullptr };
     void* m_savedLastStackTop;
+public:
+    void* m_apiData { nullptr };
 };
 
 inline Thread* Thread::currentMayBeNull()
