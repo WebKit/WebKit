@@ -1,3 +1,17 @@
+2017-12-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Don't import 'UIKit-apps.sb' to the WebContent process sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=180610
+        <rdar://problem/18899506>
+
+        Reviewed by Dean Jackson.
+
+        Stop including 'system.sb', and just include the portions of that sandbox that we
+        actually use in WebContent Process. This is the first step in some further sandbox
+        tightening.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2017-12-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Add Converter traits to StringHasher instead of function pointer
