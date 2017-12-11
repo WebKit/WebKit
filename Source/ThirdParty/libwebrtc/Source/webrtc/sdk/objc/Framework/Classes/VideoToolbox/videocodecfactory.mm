@@ -12,6 +12,7 @@
 #include "webrtc/base/logging.h"
 #include "webrtc/common_video/h264/profile_level_id.h"
 #include "webrtc/media/base/codec.h"
+#include "webrtc/sdk/objc/Framework/Classes/VideoProcessing/encoder_vcp.h"
 #include "webrtc/sdk/objc/Framework/Classes/VideoToolbox/decoder.h"
 #include "webrtc/sdk/objc/Framework/Classes/VideoToolbox/encoder.h"
 #include "webrtc/system_wrappers/include/field_trial.h"
@@ -28,7 +29,12 @@ bool IsHighProfileEnabled() {
 
 // VideoToolboxVideoEncoderFactory
 
-VideoToolboxVideoEncoderFactory::VideoToolboxVideoEncoderFactory() {}
+VideoToolboxVideoEncoderFactory::VideoToolboxVideoEncoderFactory()
+{
+#if ENABLE_VCP_ENCODER
+    VPModuleInitialize();
+#endif
+}
 
 VideoToolboxVideoEncoderFactory::~VideoToolboxVideoEncoderFactory() {}
 
@@ -43,7 +49,11 @@ VideoEncoder* VideoToolboxVideoEncoderFactory::CreateVideoEncoder(
 }
 
 VideoEncoder* VideoToolboxVideoEncoderFactory::CreateSupportedVideoEncoder(const cricket::VideoCodec& codec) {
-  return new H264VideoToolboxEncoder(codec);
+#if ENABLE_VCP_ENCODER
+  return new H264VideoToolboxEncoderVCP(codec);
+#else
+    return new H264VideoToolboxEncoder(codec);
+#endif
 }
 
 void VideoToolboxVideoEncoderFactory::DestroyVideoEncoder(VideoEncoder* encoder) {
