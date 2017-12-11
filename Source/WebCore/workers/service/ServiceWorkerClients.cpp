@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-static inline void didFinishGetRequest(ServiceWorkerGlobalScope& scope, DeferredPromise& promise, ServiceWorkerClientIdentifier identifier, ExceptionOr<std::optional<ServiceWorkerClientData>>&& clientData)
+static inline void didFinishGetRequest(ServiceWorkerGlobalScope& scope, DeferredPromise& promise, ExceptionOr<std::optional<ServiceWorkerClientData>>&& clientData)
 {
     if (clientData.hasException()) {
         promise.reject(clientData.releaseException());
@@ -46,7 +46,7 @@ static inline void didFinishGetRequest(ServiceWorkerGlobalScope& scope, Deferred
         return;
     }
 
-    promise.resolve<IDLInterface<ServiceWorkerClient>>(ServiceWorkerClient::getOrCreate(scope, identifier, WTFMove(data.value())));
+    promise.resolve<IDLInterface<ServiceWorkerClient>>(ServiceWorkerClient::getOrCreate(scope, WTFMove(data.value())));
 }
 
 void ServiceWorkerClients::get(ScriptExecutionContext& context, const String& id, Ref<DeferredPromise>&& promise)
@@ -65,20 +65,20 @@ void ServiceWorkerClients::get(ScriptExecutionContext& context, const String& id
 
     callOnMainThread([promisePointer, serviceWorkerIdentifier, clientIdentifier] () {
         auto connection = SWContextManager::singleton().connection();
-        connection->findClientByIdentifier(serviceWorkerIdentifier, clientIdentifier, [promisePointer, serviceWorkerIdentifier, clientIdentifier] (auto&& clientData) {
-            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promisePointer, clientIdentifier, data = crossThreadCopy(clientData)] (auto& context) mutable {
+        connection->findClientByIdentifier(serviceWorkerIdentifier, clientIdentifier, [promisePointer, serviceWorkerIdentifier] (auto&& clientData) {
+            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promisePointer, data = crossThreadCopy(clientData)] (auto& context) mutable {
                 if (auto promise = context.clients().m_pendingPromises.take(promisePointer))
-                    didFinishGetRequest(context, *promise, clientIdentifier, WTFMove(data));
+                    didFinishGetRequest(context, *promise, WTFMove(data));
             });
         });
     });
 }
 
 
-static inline void matchAllCompleted(ServiceWorkerGlobalScope& scope, DeferredPromise& promise, Vector<ServiceWorkerClientInformation>&& clientsData)
+static inline void matchAllCompleted(ServiceWorkerGlobalScope& scope, DeferredPromise& promise, Vector<ServiceWorkerClientData>&& clientsData)
 {
-    auto clients = WTF::map(clientsData, [&] (auto&& client) {
-        return ServiceWorkerClient::getOrCreate(scope, client.identifier, WTFMove(client.data));
+    auto clients = WTF::map(clientsData, [&] (auto&& clientData) {
+        return ServiceWorkerClient::getOrCreate(scope, WTFMove(clientData));
     });
     promise.resolve<IDLSequence<IDLInterface<ServiceWorkerClient>>>(WTFMove(clients));
 }

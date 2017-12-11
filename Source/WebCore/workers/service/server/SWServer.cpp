@@ -346,7 +346,7 @@ std::optional<ServiceWorkerClientData> SWServer::findClientByIdentifier(const Cl
         return clientIdentifier == client.identifier;
     });
 
-    return (position != notFound) ? std::make_optional(clients[position].data) : std::nullopt;
+    return (position != notFound) ? std::make_optional(clients[position]) : std::nullopt;
 }
 
 // https://w3c.github.io/ServiceWorker/#clients-getall
@@ -358,13 +358,13 @@ void SWServer::matchAll(SWServerWorker& worker, const ServiceWorkerClientQueryOp
     auto clients = m_clients.find(worker.origin())->value.clients;
 
     if (!options.includeUncontrolled) {
-        clients.removeAllMatching([&] (const auto& client) {
-            return worker.identifier() != m_clientToControllingWorker.get(client.identifier);
+        clients.removeAllMatching([&] (const auto& clientData) {
+            return worker.identifier() != m_clientToControllingWorker.get(clientData.identifier);
         });
     }
     if (options.type != ServiceWorkerClientType::All) {
-        clients.removeAllMatching([&] (const auto& client) {
-            return options.type != client.data.type;
+        clients.removeAllMatching([&] (const auto& clientData) {
+            return options.type != clientData.type;
         });
     }
     callback(WTFMove(clients));
@@ -378,20 +378,20 @@ void SWServer::claim(SWServerWorker& worker)
         return;
 
     auto& clients = iterator->value.clients;
-    for (auto& client : clients) {
-        auto* registration = doRegistrationMatching(origin.topOrigin, client.data.url);
+    for (auto& clientData : clients) {
+        auto* registration = doRegistrationMatching(origin.topOrigin, clientData.url);
         if (!(registration && registration->key() == worker.registrationKey()))
             continue;
 
-        auto result = m_clientToControllingWorker.add(client.identifier, worker.identifier());
+        auto result = m_clientToControllingWorker.add(clientData.identifier, worker.identifier());
         if (!result.isNewEntry) {
             if (result.iterator->value == worker.identifier())
                 continue;
             if (auto* controllingRegistration = registrationFromServiceWorkerIdentifier(result.iterator->value))
-                controllingRegistration->removeClientUsingRegistration(client.identifier);
+                controllingRegistration->removeClientUsingRegistration(clientData.identifier);
             result.iterator->value = worker.identifier();
         }
-        registration->controlClient(client.identifier);
+        registration->controlClient(clientData.identifier);
     }
 }
 
@@ -687,15 +687,15 @@ SWServerRegistration* SWServer::registrationFromServiceWorkerIdentifier(ServiceW
     return m_registrations.get(iterator->value->registrationKey());
 }
 
-void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceWorkerClientIdentifier clientIdentifier, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerIdentifier>& controllingServiceWorkerIdentifier)
+void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerIdentifier>& controllingServiceWorkerIdentifier)
 {
     auto& clientsData = m_clients.ensure(WTFMove(clientOrigin), [] {
         return Clients { };
     }).iterator->value;
 
-    clientsData.clients.append(ServiceWorkerClientInformation { clientIdentifier, WTFMove(data) });
-    if (clientsData.terminateServiceWorkersTimer)
-        clientsData.terminateServiceWorkersTimer = nullptr;
+    auto clientIdentifier = data.identifier;
+    clientsData.clients.append(WTFMove(data));
+    clientsData.terminateServiceWorkersTimer = nullptr;
 
     if (!controllingServiceWorkerIdentifier)
         return;

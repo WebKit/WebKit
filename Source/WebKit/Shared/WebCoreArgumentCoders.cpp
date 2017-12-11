@@ -65,6 +65,8 @@
 #include <WebCore/ScrollingConstraints.h>
 #include <WebCore/ScrollingCoordinator.h>
 #include <WebCore/SearchPopupMenu.h>
+#include <WebCore/ServiceWorkerClientData.h>
+#include <WebCore/ServiceWorkerData.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TimingFunction.h>
@@ -2679,6 +2681,41 @@ bool ArgumentCoder<IDBKeyPath>::decode(Decoder& decoder, IDBKeyPath& keyPath)
         if (!decoder.decode(vector))
             return false;
         keyPath = vector;
+    }
+    return true;
+}
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+void ArgumentCoder<ServiceWorkerOrClientData>::encode(Encoder& encoder, const ServiceWorkerOrClientData& data)
+{
+    bool isServiceWorkerData = WTF::holds_alternative<ServiceWorkerData>(data);
+    encoder << isServiceWorkerData;
+    if (isServiceWorkerData)
+        encoder << WTF::get<ServiceWorkerData>(data);
+    else
+        encoder << WTF::get<ServiceWorkerClientData>(data);
+}
+
+bool ArgumentCoder<ServiceWorkerOrClientData>::decode(Decoder& decoder, ServiceWorkerOrClientData& data)
+{
+    bool isServiceWorkerData;
+    if (!decoder.decode(isServiceWorkerData))
+        return false;
+    if (isServiceWorkerData) {
+        std::optional<ServiceWorkerData> workerData;
+        decoder >> workerData;
+        if (!workerData)
+            return false;
+
+        data = WTFMove(*workerData);
+    } else {
+        std::optional<ServiceWorkerClientData> clientData;
+        decoder >> clientData;
+        if (!clientData)
+            return false;
+
+        data = WTFMove(*clientData);
     }
     return true;
 }

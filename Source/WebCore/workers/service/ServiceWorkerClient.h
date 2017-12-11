@@ -48,7 +48,7 @@ public:
     using Type = ServiceWorkerClientType;
     using FrameType = ServiceWorkerClientFrameType;
 
-    static Ref<ServiceWorkerClient> getOrCreate(ServiceWorkerGlobalScope&, ServiceWorkerClientIdentifier, ServiceWorkerClientData&&);
+    static Ref<ServiceWorkerClient> getOrCreate(ServiceWorkerGlobalScope&, ServiceWorkerClientData&&);
 
     ~ServiceWorkerClient();
 
@@ -57,14 +57,13 @@ public:
     Type type() const;
     String id() const;
 
-    Identifier identifier() const { return m_identifier; }
+    Identifier identifier() const { return m_data.identifier; }
 
     ExceptionOr<void> postMessage(ScriptExecutionContext&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&& transfer);
 
 protected:
-    ServiceWorkerClient(ServiceWorkerGlobalScope&, ServiceWorkerClientIdentifier, ServiceWorkerClientData&&);
+    ServiceWorkerClient(ServiceWorkerGlobalScope&, ServiceWorkerClientData&&);
 
-    ServiceWorkerClientIdentifier m_identifier;
     ServiceWorkerClientData m_data;
 };
 

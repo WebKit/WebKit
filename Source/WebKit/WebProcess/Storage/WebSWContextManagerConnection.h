@@ -31,7 +31,7 @@
 #include "MessageReceiver.h"
 #include "WebSWContextManagerConnectionMessages.h"
 #include <WebCore/SWContextManager.h>
-#include <WebCore/ServiceWorkerClientInformation.h>
+#include <WebCore/ServiceWorkerClientData.h>
 #include <WebCore/ServiceWorkerTypes.h>
 
 namespace IPC {
@@ -77,14 +77,13 @@ private:
     void serviceWorkerStartedWithMessage(std::optional<WebCore::ServiceWorkerJobDataIdentifier>, WebCore::ServiceWorkerIdentifier, const String& exceptionMessage) final;
     void installServiceWorker(const WebCore::ServiceWorkerContextData&, PAL::SessionID);
     void startFetch(WebCore::SWServerConnectionIdentifier, uint64_t fetchIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::ResourceRequest&&, WebCore::FetchOptions&&, IPC::FormDataReference&&);
-    void postMessageToServiceWorkerFromClient(WebCore::ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerClientIdentifier sourceIdentifier, WebCore::ServiceWorkerClientData&& sourceData);
-    void postMessageToServiceWorkerFromServiceWorker(WebCore::ServiceWorkerIdentifier destination, const IPC::DataReference& message, WebCore::ServiceWorkerData&& sourceData);
+    void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerOrClientData&& sourceData);
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier);
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier);
     void terminateWorker(WebCore::ServiceWorkerIdentifier);
     void syncTerminateWorker(WebCore::ServiceWorkerIdentifier, Ref<Messages::WebSWContextManagerConnection::SyncTerminateWorker::DelayedReply>&&);
     void findClientByIdentifierCompleted(uint64_t requestIdentifier, std::optional<WebCore::ServiceWorkerClientData>&&, bool hasSecurityError);
-    void matchAllCompleted(uint64_t matchAllRequestIdentifier, Vector<WebCore::ServiceWorkerClientInformation>&&);
+    void matchAllCompleted(uint64_t matchAllRequestIdentifier, Vector<WebCore::ServiceWorkerClientData>&&);
     void claimCompleted(uint64_t claimRequestIdentifier);
     void didFinishSkipWaiting(uint64_t callbackID);
     void setUserAgent(String&& userAgent);

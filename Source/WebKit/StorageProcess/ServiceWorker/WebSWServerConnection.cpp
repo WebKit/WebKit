@@ -68,7 +68,7 @@ WebSWServerConnection::~WebSWServerConnection()
 {
     StorageProcess::singleton().unregisterSWServerConnection(*this);
     for (auto keyValue : m_clientOrigins)
-        server().unregisterServiceWorkerClient(keyValue.value, ServiceWorkerClientIdentifier { identifier(), keyValue.key });
+        server().unregisterServiceWorkerClient(keyValue.value, keyValue.key);
 }
 
 void WebSWServerConnection::disconnectedFromWebProcess()
@@ -127,12 +127,13 @@ void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, ServiceWorkerId
     });
 }
 
-void WebSWServerConnection::postMessageToServiceWorkerFromClient(ServiceWorkerIdentifier destinationIdentifier, IPC::DataReference&& message, ServiceWorkerClientIdentifier sourceIdentifier, ServiceWorkerClientData&& sourceData)
+// FIXME: We should be able to only pass in the ServiceWorkerClientIdentifier here and look up the clientData from the SWServer.
+void WebSWServerConnection::postMessageToServiceWorkerFromClient(ServiceWorkerIdentifier destinationIdentifier, IPC::DataReference&& message, ServiceWorkerClientIdentifier, ServiceWorkerClientData&& sourceData)
 {
     // It's possible this specific worker cannot be re-run (e.g. its registration has been removed)
-    server().runServiceWorkerIfNecessary(destinationIdentifier, [destinationIdentifier, message = message.vector(), sourceIdentifier, sourceData = WTFMove(sourceData)](bool success, auto& contextConnection) mutable {
+    server().runServiceWorkerIfNecessary(destinationIdentifier, [destinationIdentifier, message = message.vector(), sourceData = WTFMove(sourceData)](bool success, auto& contextConnection) mutable {
         if (success)
-            sendToContextProcess(contextConnection, Messages::WebSWContextManagerConnection::PostMessageToServiceWorkerFromClient { destinationIdentifier, message, sourceIdentifier, WTFMove(sourceData) });
+            sendToContextProcess(contextConnection, Messages::WebSWContextManagerConnection::PostMessageToServiceWorker { destinationIdentifier, message, WTFMove(sourceData) });
     });
 }
 
@@ -147,7 +148,7 @@ void WebSWServerConnection::postMessageToServiceWorkerFromServiceWorker(ServiceW
         if (!success)
             return;
 
-        sendToContextProcess(contextConnection, Messages::WebSWContextManagerConnection::PostMessageToServiceWorkerFromServiceWorker { destinationIdentifier, message, WTFMove(sourceData) });
+        sendToContextProcess(contextConnection, Messages::WebSWContextManagerConnection::PostMessageToServiceWorker { destinationIdentifier, message, WTFMove(sourceData) });
     });
 }
 
@@ -210,20 +211,20 @@ void WebSWServerConnection::getRegistrations(uint64_t registrationMatchRequestId
     send(Messages::WebSWClientConnection::DidGetRegistrations { registrationMatchRequestIdentifier, registrations });
 }
 
-void WebSWServerConnection::registerServiceWorkerClient(SecurityOriginData&& topOrigin, DocumentIdentifier contextIdentifier, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerIdentifier>& controllingServiceWorkerIdentifier)
+void WebSWServerConnection::registerServiceWorkerClient(SecurityOriginData&& topOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerIdentifier>& controllingServiceWorkerIdentifier)
 {
     auto clientOrigin = ClientOrigin { WTFMove(topOrigin), SecurityOriginData::fromSecurityOrigin(SecurityOrigin::create(data.url)) };
-    m_clientOrigins.add(contextIdentifier, clientOrigin);
-    server().registerServiceWorkerClient(WTFMove(clientOrigin), ServiceWorkerClientIdentifier { this->identifier(), contextIdentifier } , WTFMove(data), controllingServiceWorkerIdentifier);
+    m_clientOrigins.add(data.identifier, clientOrigin);
+    server().registerServiceWorkerClient(WTFMove(clientOrigin), WTFMove(data), controllingServiceWorkerIdentifier);
 }
 
-void WebSWServerConnection::unregisterServiceWorkerClient(DocumentIdentifier contextIdentifier)
+void WebSWServerConnection::unregisterServiceWorkerClient(const ServiceWorkerClientIdentifier& clientIdentifier)
 {
-    auto iterator = m_clientOrigins.find(contextIdentifier);
+    auto iterator = m_clientOrigins.find(clientIdentifier);
     if (iterator == m_clientOrigins.end())
         return;
 
-    server().unregisterServiceWorkerClient(iterator->value, ServiceWorkerClientIdentifier { this->identifier(), contextIdentifier });
+    server().unregisterServiceWorkerClient(iterator->value, clientIdentifier);
     m_clientOrigins.remove(iterator);
 }
 

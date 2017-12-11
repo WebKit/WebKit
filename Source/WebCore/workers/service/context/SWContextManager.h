@@ -28,7 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "ExceptionOr.h"
-#include "ServiceWorkerClientInformation.h"
+#include "ServiceWorkerClientData.h"
 #include "ServiceWorkerClientQueryOptions.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerThreadProxy.h"
@@ -67,8 +67,7 @@ public:
 
     WEBCORE_EXPORT void registerServiceWorkerThreadForInstall(Ref<ServiceWorkerThreadProxy>&&);
     WEBCORE_EXPORT ServiceWorkerThreadProxy* serviceWorkerThreadProxy(ServiceWorkerIdentifier) const;
-    WEBCORE_EXPORT void postMessageToServiceWorker(ServiceWorkerIdentifier destination, Ref<SerializedScriptValue>&& message, ServiceWorkerClientIdentifier sourceIdentifier, ServiceWorkerClientData&& sourceData);
-    WEBCORE_EXPORT void postMessageToServiceWorker(ServiceWorkerIdentifier destination, Ref<SerializedScriptValue>&& message, ServiceWorkerData&& sourceData);
+    WEBCORE_EXPORT void postMessageToServiceWorker(ServiceWorkerIdentifier destination, Ref<SerializedScriptValue>&& message, ServiceWorkerOrClientData&& sourceData);
     WEBCORE_EXPORT void fireInstallEvent(ServiceWorkerIdentifier);
     WEBCORE_EXPORT void fireActivateEvent(ServiceWorkerIdentifier);
     WEBCORE_EXPORT void terminateWorker(ServiceWorkerIdentifier, Function<void()>&&);

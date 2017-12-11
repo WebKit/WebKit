@@ -123,8 +123,9 @@ ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JS
         return { };
     }
 
-    auto sourceClientData = ServiceWorkerClientData::from(context);
     auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(context.sessionID());
+    // FIXME: We should be able to send only the client identifier and look up the clientData on server side.
+    auto sourceClientData = ServiceWorkerClientData::from(context, connection);
     ServiceWorkerClientIdentifier sourceClientIdentifier { connection.serverConnectionIdentifier(), downcast<Document>(context).identifier() };
     connection.postMessageToServiceWorker(identifier(), message.releaseReturnValue(), WTFMove(sourceClientIdentifier), WTFMove(sourceClientData));
 

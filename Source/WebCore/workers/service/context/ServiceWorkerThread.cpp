@@ -111,23 +111,22 @@ static void fireMessageEvent(ServiceWorkerGlobalScope& scope, Ref<SerializedScri
     scope.updateExtendedEventsSet(messageEvent.ptr());
 }
 
-void ServiceWorkerThread::postMessageToServiceWorker(Ref<SerializedScriptValue>&& message, std::unique_ptr<MessagePortChannelArray>&& channels, ServiceWorkerClientIdentifier sourceIdentifier, ServiceWorkerClientData&& sourceData)
+void ServiceWorkerThread::postMessageToServiceWorker(Ref<SerializedScriptValue>&& message, std::unique_ptr<MessagePortChannelArray>&& channels, ServiceWorkerOrClientData&& sourceData)
 {
-    runLoop().postTask([channels = WTFMove(channels), message = WTFMove(message), sourceIdentifier, sourceData = sourceData.isolatedCopy()] (auto& context) mutable {
+    runLoop().postTask([channels = WTFMove(channels), message = WTFMove(message), sourceData = WTFMove(sourceData)] (auto& context) mutable {
         auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
-        RefPtr<ServiceWorkerClient> source = ServiceWorkerClient::getOrCreate(serviceWorkerGlobalScope, sourceIdentifier, WTFMove(sourceData));
-        auto sourceOrigin = SecurityOrigin::create(source->url());
-        fireMessageEvent(serviceWorkerGlobalScope, WTFMove(message), WTFMove(channels), ExtendableMessageEventSource { source }, WTFMove(sourceOrigin));
-    });
-}
-
-void ServiceWorkerThread::postMessageToServiceWorker(Ref<SerializedScriptValue>&& message, std::unique_ptr<MessagePortChannelArray>&& channels, ServiceWorkerData&& sourceData)
-{
-    runLoop().postTask([channels = WTFMove(channels), message = WTFMove(message), sourceData = sourceData.isolatedCopy()] (auto& context) mutable {
-        auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
-        RefPtr<ServiceWorker> source = ServiceWorker::getOrCreate(serviceWorkerGlobalScope, WTFMove(sourceData));
-        auto sourceOrigin = SecurityOrigin::create(source->scriptURL());
-        fireMessageEvent(downcast<ServiceWorkerGlobalScope>(context), WTFMove(message), WTFMove(channels), ExtendableMessageEventSource { source }, WTFMove(sourceOrigin));
+        RefPtr<SecurityOrigin> sourceOrigin;
+        ExtendableMessageEventSource source;
+        if (WTF::holds_alternative<ServiceWorkerClientData>(sourceData)) {
+            RefPtr<ServiceWorkerClient> sourceClient = ServiceWorkerClient::getOrCreate(serviceWorkerGlobalScope, WTFMove(WTF::get<ServiceWorkerClientData>(sourceData)));
+            sourceOrigin = SecurityOrigin::create(sourceClient->url());
+            source = WTFMove(sourceClient);
+        } else {
+            RefPtr<ServiceWorker> sourceWorker = ServiceWorker::getOrCreate(serviceWorkerGlobalScope, WTFMove(WTF::get<ServiceWorkerData>(sourceData)));
+            sourceOrigin = SecurityOrigin::create(sourceWorker->scriptURL());
+            source = WTFMove(sourceWorker);
+        }
+        fireMessageEvent(serviceWorkerGlobalScope, WTFMove(message), WTFMove(channels), ExtendableMessageEventSource { source }, sourceOrigin.releaseNonNull());
     });
 }
 

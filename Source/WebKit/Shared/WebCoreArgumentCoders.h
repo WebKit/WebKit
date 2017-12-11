@@ -39,6 +39,7 @@
 #include <WebCore/PaymentHeaders.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
+#include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <WebCore/WorkerType.h>
 
@@ -663,6 +664,15 @@ template<> struct ArgumentCoder<WebCore::CaptureDevice> {
 template<> struct ArgumentCoder<WebCore::IDBKeyPath> {
     static void encode(Encoder&, const WebCore::IDBKeyPath&);
     static bool decode(Decoder&, WebCore::IDBKeyPath&);
+};
+
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+
+template<> struct ArgumentCoder<WebCore::ServiceWorkerOrClientData> {
+    static void encode(Encoder&, const WebCore::ServiceWorkerOrClientData&);
+    static bool decode(Decoder&, WebCore::ServiceWorkerOrClientData&);
 };
 
 #endif

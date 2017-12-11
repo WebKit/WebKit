@@ -89,8 +89,8 @@ private:
     void matchRegistration(uint64_t registrationMatchRequestIdentifier, const WebCore::SecurityOriginData& topOrigin, const WebCore::URL& clientURL);
     void getRegistrations(uint64_t registrationMatchRequestIdentifier, const WebCore::SecurityOriginData& topOrigin, const WebCore::URL& clientURL);
 
-    void registerServiceWorkerClient(WebCore::SecurityOriginData&& topOrigin, WebCore::DocumentIdentifier, WebCore::ServiceWorkerClientData&&, const std::optional<WebCore::ServiceWorkerIdentifier>&);
-    void unregisterServiceWorkerClient(WebCore::DocumentIdentifier);
+    void registerServiceWorkerClient(WebCore::SecurityOriginData&& topOrigin, WebCore::ServiceWorkerClientData&&, const std::optional<WebCore::ServiceWorkerIdentifier>&);
+    void unregisterServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier&);
 
     IPC::Connection* messageSenderConnection() final { return m_contentConnection.ptr(); }
     uint64_t messageSenderDestinationID() final { return identifier().toUInt64(); }
@@ -100,7 +100,7 @@ private:
 
     PAL::SessionID m_sessionID;
     Ref<IPC::Connection> m_contentConnection;
-    HashMap<WebCore::DocumentIdentifier, WebCore::ClientOrigin> m_clientOrigins;
+    HashMap<WebCore::ServiceWorkerClientIdentifier, WebCore::ClientOrigin> m_clientOrigins;
 };
 
 } // namespace WebKit

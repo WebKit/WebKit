@@ -172,12 +172,7 @@ void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serv
     serviceWorkerThreadProxy->thread().postFetchTask(WTFMove(client), WTFMove(clientId), WTFMove(request), WTFMove(options));
 }
 
-void WebSWContextManagerConnection::postMessageToServiceWorkerFromClient(ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, ServiceWorkerClientIdentifier sourceIdentifier, ServiceWorkerClientData&& sourceData)
-{
-    SWContextManager::singleton().postMessageToServiceWorker(destinationIdentifier, SerializedScriptValue::adopt(message.vector()), sourceIdentifier, WTFMove(sourceData));
-}
-
-void WebSWContextManagerConnection::postMessageToServiceWorkerFromServiceWorker(ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, ServiceWorkerData&& sourceData)
+void WebSWContextManagerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier destinationIdentifier, const IPC::DataReference& message, ServiceWorkerOrClientData&& sourceData)
 {
     SWContextManager::singleton().postMessageToServiceWorker(destinationIdentifier, SerializedScriptValue::adopt(message.vector()), WTFMove(sourceData));
 }
@@ -261,7 +256,7 @@ void WebSWContextManagerConnection::matchAll(WebCore::ServiceWorkerIdentifier se
     m_connectionToStorageProcess->send(Messages::WebSWServerToContextConnection::MatchAll { requestIdentifier, serviceWorkerIdentifier, options }, 0);
 }
 
-void WebSWContextManagerConnection::matchAllCompleted(uint64_t requestIdentifier, Vector<ServiceWorkerClientInformation>&& clientsData)
+void WebSWContextManagerConnection::matchAllCompleted(uint64_t requestIdentifier, Vector<ServiceWorkerClientData>&& clientsData)
 {
     if (auto callback = m_matchAllRequests.take(requestIdentifier))
         callback(WTFMove(clientsData));

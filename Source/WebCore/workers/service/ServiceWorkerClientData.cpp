@@ -56,14 +56,16 @@ static ServiceWorkerClientFrameType toServiceWorkerClientFrameType(ScriptExecuti
 
 ServiceWorkerClientData ServiceWorkerClientData::isolatedCopy() const
 {
-    return { type, frameType, url.isolatedCopy() };
+    return { identifier, type, frameType, url.isolatedCopy() };
 }
 
-ServiceWorkerClientData ServiceWorkerClientData::from(ScriptExecutionContext& context)
+ServiceWorkerClientData ServiceWorkerClientData::from(ScriptExecutionContext& context, SWClientConnection& connection)
 {
     bool isDocument = is<Document>(context);
+    RELEASE_ASSERT(isDocument); // We do not support dedicated workers as clients yet.
 
     return {
+        { connection.serverConnectionIdentifier(), downcast<Document>(context).identifier() },
         isDocument ? ServiceWorkerClientType::Window : ServiceWorkerClientType::Worker,
         toServiceWorkerClientFrameType(context),
         context.url()

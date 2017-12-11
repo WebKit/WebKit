@@ -159,7 +159,7 @@ public:
     
     WEBCORE_EXPORT static HashSet<SWServer*>& allServers();
 
-    WEBCORE_EXPORT void registerServiceWorkerClient(ClientOrigin&&, ServiceWorkerClientIdentifier, ServiceWorkerClientData&&, const std::optional<ServiceWorkerIdentifier>& controllingServiceWorkerIdentifier);
+    WEBCORE_EXPORT void registerServiceWorkerClient(ClientOrigin&&, ServiceWorkerClientData&&, const std::optional<ServiceWorkerIdentifier>& controllingServiceWorkerIdentifier);
     WEBCORE_EXPORT void unregisterServiceWorkerClient(const ClientOrigin&, ServiceWorkerClientIdentifier);
 
     using RunServiceWorkerCallback = WTF::Function<void(bool, SWServerToContextConnection&)>;
@@ -207,7 +207,7 @@ private:
     HashMap<ServiceWorkerIdentifier, Ref<SWServerWorker>> m_runningOrTerminatingWorkers;
 
     struct Clients {
-        Vector<ServiceWorkerClientInformation> clients;
+        Vector<ServiceWorkerClientData> clients;
         std::unique_ptr<Timer> terminateServiceWorkersTimer;
     };
     HashMap<ClientOrigin, Clients> m_clients;

@@ -41,7 +41,6 @@ namespace WebCore {
 class SWServer;
 struct ServiceWorkerClientData;
 struct ServiceWorkerClientIdentifier;
-struct ServiceWorkerClientInformation;
 struct ServiceWorkerContextData;
 struct ServiceWorkerJobDataIdentifier;
 
@@ -58,7 +57,7 @@ public:
     virtual void terminateWorker(ServiceWorkerIdentifier) = 0;
     virtual void syncTerminateWorker(ServiceWorkerIdentifier) = 0;
     virtual void findClientByIdentifierCompleted(uint64_t requestIdentifier, const std::optional<ServiceWorkerClientData>&, bool hasSecurityError) = 0;
-    virtual void matchAllCompleted(uint64_t requestIdentifier, const Vector<ServiceWorkerClientInformation>&) = 0;
+    virtual void matchAllCompleted(uint64_t requestIdentifier, const Vector<ServiceWorkerClientData>&) = 0;
     virtual void claimCompleted(uint64_t requestIdentifier) = 0;
     virtual void didFinishSkipWaiting(uint64_t callbackID) = 0;
 

@@ -34,16 +34,18 @@
 
 namespace WebCore {
 
+class SWClientConnection;
 class ScriptExecutionContext;
 
 struct ServiceWorkerClientData {
+    ServiceWorkerClientIdentifier identifier;
     ServiceWorkerClientType type;
     ServiceWorkerClientFrameType frameType;
     URL url;
 
     ServiceWorkerClientData isolatedCopy() const;
 
-    static ServiceWorkerClientData from(ScriptExecutionContext&);
+    static ServiceWorkerClientData from(ScriptExecutionContext&, SWClientConnection&);
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerClientData> decode(Decoder&);
@@ -52,12 +54,17 @@ struct ServiceWorkerClientData {
 template<class Encoder>
 void ServiceWorkerClientData::encode(Encoder& encoder) const
 {
-    encoder << type << frameType << url;
+    encoder << identifier << type << frameType << url;
 }
 
 template<class Decoder>
 std::optional<ServiceWorkerClientData> ServiceWorkerClientData::decode(Decoder& decoder)
 {
+    std::optional<ServiceWorkerClientIdentifier> identifier;
+    decoder >> identifier;
+    if (!identifier)
+        return std::nullopt;
+
     std::optional<ServiceWorkerClientType> type;
     decoder >> type;
     if (!type)
@@ -73,8 +80,10 @@ std::optional<ServiceWorkerClientData> ServiceWorkerClientData::decode(Decoder& 
     if (!url)
         return std::nullopt;
 
-    return { { WTFMove(*type), WTFMove(*frameType), WTFMove(*url) } };
+    return { { WTFMove(*identifier), WTFMove(*type), WTFMove(*frameType), WTFMove(*url) } };
 }
+
+using ServiceWorkerClientsMatchAllCallback = WTF::CompletionHandler<void(Vector<ServiceWorkerClientData>&&)>;
 
 } // namespace WebCore
 
