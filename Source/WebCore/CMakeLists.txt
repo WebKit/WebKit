@@ -424,6 +424,8 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/Animatable.idl
     animation/AnimationEffect.idl
     animation/AnimationEffectTiming.idl
+    animation/AnimationPlaybackEvent.idl
+    animation/AnimationPlaybackEventInit.idl
     animation/AnimationTimeline.idl
     animation/DocumentTimeline.idl
     animation/KeyframeEffect.idl

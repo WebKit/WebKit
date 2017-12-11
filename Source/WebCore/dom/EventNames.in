@@ -4,6 +4,7 @@ Event
 Events interfaceName=Event
 HTMLEvents interfaceName=Event
 AnimationEvent
+AnimationPlaybackEvent
 BeforeLoadEvent
 BeforeUnloadEvent
 ClipboardEvent

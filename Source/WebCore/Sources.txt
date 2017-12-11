@@ -322,6 +322,7 @@ accessibility/AccessibleNode.cpp
 
 animation/AnimationEffect.cpp
 animation/AnimationEffectTiming.cpp
+animation/AnimationPlaybackEvent.cpp
 animation/AnimationTimeline.cpp
 animation/DocumentTimeline.cpp
 animation/KeyframeEffect.cpp
@@ -2289,6 +2290,8 @@ JSAnalyserNode.cpp
 JSAnimationEvent.cpp
 JSAnimationEffect.cpp
 JSAnimationEffectTiming.cpp
+JSAnimationPlaybackEvent.cpp
+JSAnimationPlaybackEventInit.cpp
 JSAnimationTimeline.cpp
 JSAttr.cpp
 JSAudioBuffer.cpp

@@ -35,6 +35,7 @@ namespace WebCore {
     macro(Animation) \
     macro(AnimationEffect) \
     macro(AnimationEffectTiming) \
+    macro(AnimationPlaybackEvent) \
     macro(AnimationTimeline) \
     macro(ApplePaySession) \
     macro(AttachmentElement) \
