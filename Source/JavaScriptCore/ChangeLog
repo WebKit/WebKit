@@ -1,3 +1,16 @@
+2017-12-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Harden a few assertions in GC sweep
+        https://bugs.webkit.org/show_bug.cgi?id=180634
+
+        Reviewed by Saam Barati.
+        
+        This turns one dynamic check into a release assertion and upgrades another assertion to a release
+        assertion.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::sweep):
+
 2017-12-10  Konstantin Tokarev  <annulen@yandex.ru>
 
         [python] Modernize "except" usage for python3 compatibility

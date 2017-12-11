@@ -402,12 +402,8 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
     if (sweepMode == SweepOnly && !needsDestruction)
         return;
 
-    if (UNLIKELY(m_isFreeListed)) {
-        RELEASE_ASSERT(sweepMode == SweepToFreeList);
-        return;
-    }
-    
-    ASSERT(!m_allocator->isAllocated(NoLockingNecessary, this));
+    RELEASE_ASSERT(!m_isFreeListed);
+    RELEASE_ASSERT(!m_allocator->isAllocated(NoLockingNecessary, this));
     
     if (space()->isMarking())
         block().m_lock.lock();
