@@ -60,7 +60,9 @@ public:
     void resume();
 
     bool isSyncRequest() const { return m_isSyncRequest; }
-    bool isCompletedOrCancelled() const { return !m_curlHandle || m_cancelled; }
+    bool isCompleted() const { return !m_curlHandle; }
+    bool isCancelled() const { return m_cancelled; }
+    bool isCompletedOrCancelled() const { return isCompleted() || isCancelled(); }
 
 
     // Processing for DidReceiveResponse

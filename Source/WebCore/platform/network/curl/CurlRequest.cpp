@@ -536,7 +536,10 @@ void CurlRequest::completeDidReceiveResponse()
     ASSERT(m_didNotifyResponse);
     ASSERT(!m_didReturnFromNotify);
 
-    if (isCompletedOrCancelled())
+    if (isCancelled())
+        return;
+
+    if (m_actionAfterInvoke != Action::StartTransfer && isCompleted())
         return;
 
     m_didReturnFromNotify = true;
