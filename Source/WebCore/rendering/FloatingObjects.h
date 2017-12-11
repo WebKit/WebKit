@@ -47,7 +47,7 @@ public:
     FloatingObject(RenderBox&, Type, const LayoutRect&, const LayoutSize&, bool shouldPaint, bool isDescendant);
 
     Type type() const { return static_cast<Type>(m_type); }
-    RenderBox& renderer() const { return m_renderer; }
+    RenderBox& renderer() const { return *m_renderer; }
 
     bool isPlaced() const { return m_isPlaced; }
     void setIsPlaced(bool placed = true) { m_isPlaced = placed; }
@@ -96,7 +96,7 @@ public:
     LayoutSize translationOffsetToAncestor() const;
 
 private:
-    RenderBox& m_renderer;
+    WeakPtr<RenderBox> m_renderer;
     WeakPtr<RootInlineBox> m_originatingLine;
     LayoutRect m_frameRect;
     LayoutUnit m_paginationStrut;
@@ -161,6 +161,7 @@ public:
     LayoutUnit findNextFloatLogicalBottomBelowForBlock(LayoutUnit logicalHeight);
 
 private:
+    RenderBlockFlow& renderer() const { return *m_renderer; }
     void computePlacedFloatsTree();
     const FloatingObjectTree* placedFloatsTree();
     void increaseObjectsCount(FloatingObject::Type);
@@ -172,7 +173,7 @@ private:
     unsigned m_leftObjectsCount;
     unsigned m_rightObjectsCount;
     bool m_horizontalWritingMode;
-    const RenderBlockFlow& m_renderer;
+    WeakPtr<RenderBlockFlow> m_renderer;
 };
 
 } // namespace WebCore
