@@ -1,3 +1,26 @@
+2017-12-10  Minsheng Liu  <lambda@liu.ms>
+
+        Incorrect bounds inside <mover>/<munder> when a stretchy operator is present
+        https://bugs.webkit.org/show_bug.cgi?id=179682
+
+        Reviewed by Frédéric Wang.
+
+        Added test case: mathml/opentype/munderover-stretch-width.html
+
+        Updated test case: mathml/opentype/opentype-stretchy-horizontal
+        We update the test file to make sure the stretchy <mo> has zero lspace/rspace.
+        Expected results for macOS and iOS are included.
+
+        * mathml/opentype/munderover-stretch-width-expected.txt: Added.
+        * mathml/opentype/munderover-stretch-width.html: Added.
+        * mathml/opentype/opentype-stretchy-horizontal.html:
+        * platform/gtk/mathml/opentype/opentype-stretchy-horizontal-expected.txt: Removed.
+        * platform/ios/mathml/opentype/opentype-stretchy-horizontal-expected.png:
+        * platform/ios/mathml/opentype/opentype-stretchy-horizontal-expected.txt:
+        * platform/mac/mathml/opentype/opentype-stretchy-horizontal-expected.png:
+        * platform/mac/mathml/opentype/opentype-stretchy-horizontal-expected.txt:
+        * platform/win/mathml/opentype/opentype-stretchy-horizontal-expected.txt: Removed.
+
 2017-12-09  Darin Adler  <darin@apple.com>
 
         Add test demonstrating leaks that happen when we create reference cycles with DOM objects

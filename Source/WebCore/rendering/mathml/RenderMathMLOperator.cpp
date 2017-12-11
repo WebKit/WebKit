@@ -122,6 +122,7 @@ void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit 
 {
     ASSERT(isStretchy());
     ASSERT(isVertical());
+    ASSERT(!isStretchWidthLocked());
 
     if (!isVertical() || (heightAboveBaseline == m_stretchHeightAboveBaseline && depthBelowBaseline == m_stretchDepthBelowBaseline))
         return;
@@ -162,6 +163,7 @@ void RenderMathMLOperator::stretchTo(LayoutUnit width)
 {
     ASSERT(isStretchy());
     ASSERT(!isVertical());
+    ASSERT(!isStretchWidthLocked());
 
     if (isVertical() || m_stretchWidth == width)
         return;
@@ -169,11 +171,14 @@ void RenderMathMLOperator::stretchTo(LayoutUnit width)
     m_stretchWidth = width;
     m_mathOperator.stretchTo(style(), width);
 
+    setLogicalWidth(leadingSpace() + width + trailingSpace());
     setLogicalHeight(m_mathOperator.ascent() + m_mathOperator.descent());
 }
 
 void RenderMathMLOperator::resetStretchSize()
 {
+    ASSERT(!isStretchWidthLocked());
+    
     if (isVertical()) {
         m_stretchHeightAboveBaseline = 0;
         m_stretchDepthBelowBaseline = 0;
@@ -305,10 +310,6 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
 
     LayoutPoint operatorTopLeft = paintOffset + location();
     operatorTopLeft.move(style().isLeftToRightDirection() ? leadingSpace() : trailingSpace(), 0);
-
-    // Center horizontal operators.
-    if (!isVertical())
-        operatorTopLeft.move(-(m_mathOperator.width() - width()) / 2, 0);
 
     m_mathOperator.paint(style(), info, operatorTopLeft);
 }

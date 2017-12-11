@@ -1,0 +1,35 @@
+This test passes if you see the black thing has the same width as the red bar.
+
+↜
+This test passes if you see the black thing has the same width as the red bar.
+
+↜
+This test passes if you see the black thing has the same width as the red bar below and wider than the green bar above.
+
+↜
+This test passes if you see the black thing has the same width as the red bar below and narrower than the green bar above.
+
+↜
+This test passes if you see all three things have the same width.
+
+↜
+↜
+This test passes if you see the black thing has the same width as the red bar.
+
+↜
+This test passes if you see the black thing has the same width as the red bar.
+
+↜
+This test passes if you see the black thing has the same width as the red bar.
+
+↜
+
+PASS simple stretchy over 
+PASS simple stretchy under 
+PASS embellished op over with wide base 
+PASS embellished op over with narrow base 
+PASS unembellished op under with plain op over 
+PASS nested embellished op 
+PASS nested non-munderover embellished op 
+PASS simple stretchy under should equal over 
+

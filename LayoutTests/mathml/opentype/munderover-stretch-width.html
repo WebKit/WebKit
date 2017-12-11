@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+  <head>
+    <title>&lt;munderover&gt; stretch width</title>
+    <meta charset="utf-8"/>
+    <style type="text/css">
+      /* This font is taken from Mozilla's test suite. */
+      @font-face {
+      font-family: stretchy;
+        src: url("stretchy.woff");
+      }
+      math {
+        font-family: stretchy;
+      }
+    </style>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script>
+      setup({ "explicit_done": true });
+
+      function assertApproxEquals(description, widths) {
+        function checkWidths() {
+          let epsilon = 1;
+          for (let i = 1; i < widths.length; i ++)  
+            assert_approx_equals(widths[i - 1], widths[i], epsilon);
+        }
+        test(checkWidths, description);
+      }
+
+      function getWidths(caseNo, names) {
+        let widths = []
+        for (let name of names)
+          widths.push(document.getElementById(`${caseNo}-${name}`)
+                              .getBoundingClientRect()
+                              .width);
+        return widths;
+      }
+
+      function runCase(caseNo, description, ...names) {
+        let widths = getWidths(caseNo, names);
+        assertApproxEquals(description, widths);
+      }
+
+      function run() {
+        runCase(1, 'simple stretchy over', 'red', 'op');
+        runCase(2, 'simple stretchy under', 'red', 'op');
+        runCase(3, 'embellished op over with wide base', 'red', 'op');
+        runCase(4, 'embellished op over with narrow base', 'red', 'op');
+        runCase(5, 'unembellished op under with plain op over', 'red', 'op1', 'op2');
+        runCase(6, 'nested embellished op', 'red', 'op');
+        runCase(7, 'nested non-munderover embellished op', 'red', 'op');
+        runCase(8, 'simple stretchy under should equal over', 'red', 'op');
+        done();
+      }
+    </script>
+  </head>
+  <body onload="run()">
+    <p>This test passes if you see the black thing has the same width as the red bar.</p>
+    <math display="block">
+      <mover>
+        <mspace id="1-red" width="200px" height="10px" depth="10px" mathbackground="red"/>
+        <mo id="1-op" lspace="0px" rspace="0px" stretchy="true">&#x219C;</mo>
+      </mover>
+    </math>
+
+    <p>This test passes if you see the black thing has the same width as the red bar.</p>
+    <math display="block">
+      <munder>
+        <mspace id="2-red" width="200px" height="10px" depth="10px" mathbackground="red"/>
+        <mo id="2-op" lspace="0px" rspace="0px" stretchy="true">&#x219C;</mo>
+      </munder>
+    </math>
+
+    <p>This test passes if you see the black thing has the same width as the red bar below and wider than the green bar above.</p>
+    <math display="block">
+      <mover>
+        <mspace id="3-red" width="300px" height="10px" depth="10px" mathbackground="red"/>
+        <mover>
+          <mo id="3-op" lspace="0px" rspace="0px" stretchy="true">&#x219C;</mo>
+          <mspace id="3-green" width="200px" height="10px" depth="10px" mathbackground="green"/>
+        </mover>
+      </mover>
+    </math>
+
+    <p>This test passes if you see the black thing has the same width as the red bar below and narrower than the green bar above.</p>
+    <math display="block">
+      <mover>
+        <mspace id="4-red" width="200px" height="10px" depth="10px" mathbackground="red"/>
+        <mover>
+          <mo id="4-op" lspace="0px" rspace="0px" stretchy="true">&#x219C;</mo>
+          <mspace id="4-green" width="300px" height="10px" depth="10px" mathbackground="green"/>
+        </mover>
+      </mover>
+    </math>
+
+    <p>This test passes if you see all three things have the same width.</p>
+    <math display="block">
+      <mover>
+        <munder>
+          <mspace id="5-red" width="200px" height="10px" depth="10px" mathbackground="red"/>
+          <mo id="5-op1" lspace="0px" rspace="0px" stretchy="true">&#x219C;</mo>
+        </munder>
+        <mo id="5-op2" lspace="0px" rspace="0px" stretchy="true">&#x219C;</mo>
+      </mover>
+    </math>
+
+    <p>This test passes if you see the black thing has the same width as the red bar.</p>
+    <math display="block">
+      <munder>
+        <mspace id="6-red" width="200px" height="10px" depth="10px" mathbackground="red"/>
+        <munder>
+          <munder>
+            <mo id="6-op" lspace="0px" rspace="0px" stretchy="true">&#x219C;</mo>
+            <mspace id="6-green" width="150px" height="10px" depth="10px" mathbackground="green"/>
+          </munder>
+          <mspace id="6-blue" width="100px" height="10px" depth="10px" mathbackground="blue"/>
+        </munder>
+      </munder>
+    </math>
+
+    <p>This test passes if you see the black thing has the same width as the red bar.</p>
+    <math display="block">
+      <munder>
+        <mspace id="7-red" width="200px" height="10px" depth="10px" mathbackground="red"/>
+        <mfrac>
+          <mfrac>
+            <mo id="7-op" lspace="0px" rspace="0px" stretchy="true">&#x219C;</mo>
+            <mspace id="7-green" width="150px" height="10px" depth="10px" mathbackground="green"/>
+          </mfrac>
+          <mspace id="7-blue" width="100px" height="10px" depth="10px" mathbackground="blue"/>
+        </mfrac>
+      </munder>
+    </math>
+
+    <p>This test passes if you see the black thing has the same width as the red bar.</p>
+    <math display="block">
+      <munderover>
+        <mspace id="8-blue" width="100px" height="10px" depth="10px" mathbackground="blue"></mspace>
+        <mo id="8-op" lspace="0px" rspace="0px" stretchy="true">&#x219C;</mo>
+        <mspace id="8-red" width="200px" height="10px" depth="10px" mathbackground="red"></mspace>
+      </munderover>
+    </math>
+  </body>
+</html>

@@ -46,6 +46,8 @@ public:
     void stretchTo(LayoutUnit width);
     LayoutUnit stretchSize() const { return isVertical() ? m_stretchHeightAboveBaseline + m_stretchDepthBelowBaseline : m_stretchWidth; }
     void resetStretchSize();
+    void setStretchWidthLocked(bool stretchWidthLocked) { m_isStretchWidthLocked = stretchWidthLocked; }
+    bool isStretchWidthLocked() const { return m_isStretchWidthLocked; }
 
     virtual bool hasOperatorFlag(MathMLOperatorDictionary::Flag) const;
     bool isLargeOperatorInDisplayStyle() const { return !hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && hasOperatorFlag(MathMLOperatorDictionary::LargeOp) && mathMLStyle().displayStyle(); }
@@ -85,6 +87,7 @@ private:
     LayoutUnit m_stretchHeightAboveBaseline { 0 };
     LayoutUnit m_stretchDepthBelowBaseline { 0 };
     LayoutUnit m_stretchWidth;
+    bool m_isStretchWidthLocked { false };
 
     MathOperator m_mathOperator;
 };
