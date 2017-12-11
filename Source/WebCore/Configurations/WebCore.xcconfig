@@ -84,7 +84,7 @@ OTHER_LDFLAGS_PLATFORM[sdk=iphoneos*] = $(OTHER_LDFLAGS_BASE_ios) -framework IOS
 OTHER_LDFLAGS_PLATFORM[sdk=iphonesimulator*] = $(OTHER_LDFLAGS_BASE_ios) $(LIBWEBRTC_LDFLAGS);
 OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = $(OTHER_LDFLAGS_BASE) -sub_library libobjc -umbrella WebKit -framework ApplicationServices -framework AudioUnit -framework Carbon -framework Cocoa -framework DataDetectorsCore -framework IOSurface -framework OpenGL -framework SystemConfiguration $(LIBWEBRTC_LDFLAGS);
 
-WK_UNDEFINED_SYMBOLS_LDFLAGS = $(WK_UNDEFINED_SYMBOLS_LDFLAGS_$(TARGET_MAC_OS_X_VERSION_LESS_THAN_1013000));
+WK_UNDEFINED_SYMBOLS_LDFLAGS = $(WK_UNDEFINED_SYMBOLS_LDFLAGS_$(TARGET_MAC_OS_X_VERSION_LESS_THAN_101300));
 WK_UNDEFINED_SYMBOLS_LDFLAGS_YES = -Wl,-U,_CTFontCreatePhysicalFontForCharactersWithLanguage;
 WK_UNDEFINED_SYMBOLS_LDFLAGS_YES[sdk=macosx10.12*] =;
 
