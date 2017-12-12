@@ -367,7 +367,6 @@ void encode(Encoder& encoder, NSDictionary *dictionary)
         id key = [keys objectAtIndex:i];
         id value = [values objectAtIndex:i];
         ASSERT(key);
-        ASSERT([key isKindOfClass:[NSString class]]);
         ASSERT(value);
         ASSERT(isSerializableValue(value));
 
@@ -375,7 +374,7 @@ void encode(Encoder& encoder, NSDictionary *dictionary)
         if (typeFromObject(value) == NSType::Unknown)
             continue;
 
-        encode(encoder, (NSString *)key);
+        encode(encoder, key);
         encode(encoder, value);
     }
 }
@@ -389,7 +388,7 @@ bool decode(Decoder& decoder, RetainPtr<NSDictionary>& result)
     RetainPtr<NSMutableDictionary> dictionary = adoptNS([[NSMutableDictionary alloc] initWithCapacity:size]);
     for (uint64_t i = 0; i < size; ++i) {
         // Try to decode the key name.
-        RetainPtr<NSString> key;
+        RetainPtr<id> key;
         if (!decode(decoder, key))
             return false;
 
