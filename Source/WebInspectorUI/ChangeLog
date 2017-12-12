@@ -1,5 +1,22 @@
 2017-12-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Don't require perl(File::Copy::Recursive)
+        https://bugs.webkit.org/show_bug.cgi?id=180479
+        <rdar://problem/35944218>
+
+        Reviewed by Daniel Bates.
+
+        Fix the error handling. I added this at the last moment and failed to test. The logic is
+        inverted, causing an error to always be reported on success.
+
+        Add a missing 'mkdir -p' using File::Path::make_path. This has its own built-in error
+        reporting, so no need to add our own.
+
+        * Scripts/copy-user-interface-resources.pl:
+        (ditto):
+
+2017-12-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed, don't print empty error message when copying resource fails
 
         Unsurprisingly, when system() fails, there is not any useful error to be printed, so don't.
