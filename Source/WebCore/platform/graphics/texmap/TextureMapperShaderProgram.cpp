@@ -58,10 +58,12 @@ static const char* vertexTemplateLT320Vars =
 #if USE(OPENGL_ES_2)
     TEXTURE_SPACE_MATRIX_PRECISION_DIRECTIVE
 #endif
-    STRINGIFY(
 #if USE(OPENGL_ES_2)
+    STRINGIFY(
         precision TextureSpaceMatrixPrecision float;
+    )
 #endif
+    STRINGIFY(
         attribute vec4 a_vertex;
         varying vec2 v_texCoord;
         varying vec2 v_transformedTexCoord;
@@ -168,16 +170,21 @@ static const char* fragmentTemplateHeaderCommon =
 #if USE(OPENGL_ES_2)
     TEXTURE_SPACE_MATRIX_PRECISION_DIRECTIVE
 #endif
-    STRINGIFY(
 #if USE(OPENGL_ES_2)
+    STRINGIFY(
         precision TextureSpaceMatrixPrecision float;
+    )
 #endif
+    STRINGIFY(
         uniform mat4 u_textureSpaceMatrix;
         uniform mat4 u_textureColorSpaceMatrix;
+    )
 #if USE(OPENGL_ES_2)
+    STRINGIFY(
         precision mediump float;
+    )
 #endif
-    );
+    ;
 
 // Input/output variables definition for both GLES and OpenGL < 3.2.
 static const char* fragmentTemplateLT320Vars =
