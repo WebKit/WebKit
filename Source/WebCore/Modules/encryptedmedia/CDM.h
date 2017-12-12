@@ -75,6 +75,8 @@ public:
 
     std::optional<String> sanitizeSessionId(const String& sessionId);
 
+    String storageDirectory() const;
+
 private:
     CDM(Document&, const String& keySystem);
 

@@ -31,13 +31,17 @@
 #include "CDMFactory.h"
 #include "CDMPrivate.h"
 #include "Document.h"
+#include "FileSystem.h"
 #include "InitDataRegistry.h"
 #include "MediaKeysRequirement.h"
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
+#include "Page.h"
 #include "ParsedContentType.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "SecurityOriginData.h"
+#include "Settings.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -590,7 +594,9 @@ RefPtr<CDMInstance> CDM::createInstance()
 {
     if (!m_private)
         return nullptr;
-    return m_private->createInstance();
+    auto instance = m_private->createInstance();
+    instance->setStorageDirectory(storageDirectory());
+    return instance;
 }
 
 bool CDM::supportsServerCertificates() const
@@ -630,6 +636,23 @@ std::optional<String> CDM::sanitizeSessionId(const String& sessionId)
     if (!m_private)
         return std::nullopt;
     return m_private->sanitizeSessionId(sessionId);
+}
+
+String CDM::storageDirectory() const
+{
+    auto* document = downcast<Document>(scriptExecutionContext());
+    if (!document)
+        return emptyString();
+
+    auto* page = document->page();
+    if (!page || page->usesEphemeralSession())
+        return emptyString();
+
+    auto storageDirectory = document->settings().mediaKeysStorageDirectory();
+    if (storageDirectory.isEmpty())
+        return emptyString();
+
+    return FileSystem::pathByAppendingComponent(storageDirectory, SecurityOriginData::fromSecurityOrigin(document->securityOrigin()).databaseIdentifier());
 }
 
 }
