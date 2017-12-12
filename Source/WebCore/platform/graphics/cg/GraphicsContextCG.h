@@ -31,11 +31,10 @@ typedef struct CGColorSpace *CGColorSpaceRef;
 
 namespace WebCore {
 
-CGColorSpaceRef deviceRGBColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef sRGBColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef extendedSRGBColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef displayP3ColorSpaceRef();
-CGColorSpaceRef linearRGBColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef linearRGBColorSpaceRef();
 
 inline CGAffineTransform getUserToBaseCTM(CGContextRef context)
 {
@@ -45,8 +44,6 @@ inline CGAffineTransform getUserToBaseCTM(CGContextRef context)
 static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
 {
     switch (colorSpace) {
-    case ColorSpaceDeviceRGB:
-        return deviceRGBColorSpaceRef();
     case ColorSpaceSRGB:
         return sRGBColorSpaceRef();
     case ColorSpaceLinearRGB:
@@ -55,7 +52,7 @@ static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
         return displayP3ColorSpaceRef();
     }
     ASSERT_NOT_REACHED();
-    return deviceRGBColorSpaceRef();
+    return sRGBColorSpaceRef();
 }
 
 class CGContextStateSaver {

@@ -668,9 +668,6 @@ TextStream& operator<<(TextStream& ts, const Color& color)
 TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
 {
     switch (colorSpace) {
-    case ColorSpaceDeviceRGB:
-        ts << "DeviceRGB";
-        break;
     case ColorSpaceSRGB:
         ts << "sRGB";
         break;

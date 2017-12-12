@@ -53,7 +53,7 @@ RefPtr<BitmapImage> BitmapImage::create(HBITMAP hBitmap)
         return 0;
 
     RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreate(dibSection.dsBm.bmBits, dibSection.dsBm.bmWidth, dibSection.dsBm.bmHeight, 8,
-        dibSection.dsBm.bmWidthBytes, deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst));
+        dibSection.dsBm.bmWidthBytes, sRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst));
 
     // The BitmapImage takes ownership of this.
     RetainPtr<CGImageRef> cgImage = adoptCF(CGBitmapContextCreateImage(bitmapContext.get()));
@@ -72,7 +72,7 @@ bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
     int bufferSize = bmpInfo.bmWidthBytes * bmpInfo.bmHeight;
     
     CGContextRef cgContext = CGBitmapContextCreate(bmpInfo.bmBits, bmpInfo.bmWidth, bmpInfo.bmHeight,
-        8, bmpInfo.bmWidthBytes, deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+        8, bmpInfo.bmWidthBytes, sRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
   
     GraphicsContext gc(cgContext);
 

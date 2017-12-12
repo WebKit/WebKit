@@ -113,7 +113,7 @@ bool RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, C
     }
 
 #if !USE(CG)
-    maskerData->maskImage->transformColorSpace(ColorSpaceDeviceRGB, colorSpace);
+    maskerData->maskImage->transformColorSpace(ColorSpaceSRGB, colorSpace);
 #else
     UNUSED_PARAM(colorSpace);
 #endif

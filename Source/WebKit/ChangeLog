@@ -1,3 +1,14 @@
+2017-12-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove ColorSpaceDeviceRGB and most users of the obsolete deviceRGB colorspace
+        https://bugs.webkit.org/show_bug.cgi?id=180689
+
+        Reviewed by Tim Horton.
+
+        Remove encoding of ColorSpaceDeviceRGB.
+
+        * Shared/WebCoreArgumentCoders.h:
+
 2017-12-12  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r216941): Plugin Process can't access AppStore Plugin Service

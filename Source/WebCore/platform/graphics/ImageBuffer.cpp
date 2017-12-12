@@ -126,8 +126,8 @@ void ImageBuffer::transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstCo
         return;
 
     // only sRGB <-> linearRGB are supported at the moment
-    if ((srcColorSpace != ColorSpaceLinearRGB && srcColorSpace != ColorSpaceDeviceRGB)
-        || (dstColorSpace != ColorSpaceLinearRGB && dstColorSpace != ColorSpaceDeviceRGB))
+    if ((srcColorSpace != ColorSpaceLinearRGB && srcColorSpace != ColorSpaceSRGB)
+        || (dstColorSpace != ColorSpaceLinearRGB && dstColorSpace != ColorSpaceSRGB))
         return;
 
     if (dstColorSpace == ColorSpaceLinearRGB) {
@@ -143,7 +143,7 @@ void ImageBuffer::transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstCo
             return array;
         }();
         platformTransformColorSpace(linearRgbLUT);
-    } else if (dstColorSpace == ColorSpaceDeviceRGB) {
+    } else if (dstColorSpace == ColorSpaceSRGB) {
         static const std::array<uint8_t, 256> deviceRgbLUT= [] {
             std::array<uint8_t, 256> array;
             for (unsigned i = 0; i < 256; i++) {

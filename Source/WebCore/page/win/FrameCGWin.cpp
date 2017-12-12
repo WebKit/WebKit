@@ -69,7 +69,7 @@ GDIObject<HBITMAP> imageFromRect(const Frame* frame, IntRect& ir)
 
     HGDIOBJ hbmpOld = SelectObject(hdc.get(), hbmp.get());
     CGContextRef context = CGBitmapContextCreate(static_cast<void*>(bits), w, h,
-        8, w * sizeof(RGBQUAD), deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+        8, w * sizeof(RGBQUAD), sRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
     CGContextSaveGState(context);
 
     GraphicsContext gc(context);

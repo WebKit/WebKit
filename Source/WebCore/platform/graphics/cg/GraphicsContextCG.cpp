@@ -72,13 +72,6 @@ static void setCGStrokeColor(CGContextRef context, const Color& color)
     CGContextSetStrokeColorWithColor(context, cachedCGColor(color));
 }
 
-// FIXME: This should be removed soon.
-CGColorSpaceRef deviceRGBColorSpaceRef()
-{
-    static CGColorSpaceRef deviceSpace = CGColorSpaceCreateDeviceRGB();
-    return deviceSpace;
-}
-
 CGColorSpaceRef sRGBColorSpaceRef()
 {
     static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
@@ -87,11 +80,26 @@ CGColorSpaceRef sRGBColorSpaceRef()
     // causing a crash under those conditions. Since the default color space in Windows
     // is sRGB, this all works out nicely.
     if (!sRGBSpace)
-        sRGBSpace = deviceRGBColorSpaceRef();
+        sRGBSpace = CGColorSpaceCreateDeviceRGB();
 #endif // PLATFORM(WIN)
     return sRGBSpace;
 }
-    
+
+#if PLATFORM(WIN) || PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
+// See GraphicsContextCocoa for the pre-10.12 implementation.
+CGColorSpaceRef linearRGBColorSpaceRef()
+{
+#if PLATFORM(WIN)
+    // FIXME: Windows should be able to use linear sRGB, this is tracked by http://webkit.org/b/80000.
+    return CGColorSpaceCreateDeviceRGB();
+#else
+    static CGColorSpaceRef linearRGBSpace;
+    linearRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceLinearSRGB);
+    return linearRGBSpace;
+#endif
+}
+#endif
+
 CGColorSpaceRef extendedSRGBColorSpaceRef()
 {
     static CGColorSpaceRef extendedSRGBSpace;
@@ -100,27 +108,20 @@ CGColorSpaceRef extendedSRGBColorSpaceRef()
 #endif
     // If there is no support for exteneded sRGB, fall back to sRGB.
     if (!extendedSRGBSpace)
-        extendedSRGBSpace = sRGBColorSpaceRef();
+        extendedSRGBSpace = CGColorSpaceCreateDeviceRGB();
     return extendedSRGBSpace;
 }
 
 CGColorSpaceRef displayP3ColorSpaceRef()
 {
+    static CGColorSpaceRef displayP3Space;
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 101100)
-    static CGColorSpaceRef displayP3Space = CGColorSpaceCreateWithName(kCGColorSpaceDisplayP3);
+    displayP3Space = CGColorSpaceCreateWithName(kCGColorSpaceDisplayP3);
 #else
-    static CGColorSpaceRef displayP3Space = sRGBColorSpaceRef();
+    displayP3Space = sRGBColorSpaceRef();
 #endif
     return displayP3Space;
 }
-
-#if PLATFORM(WIN)
-CGColorSpaceRef linearRGBColorSpaceRef()
-{
-    // FIXME: Windows should be able to use linear sRGB, this is tracked by http://webkit.org/b/80000.
-    return deviceRGBColorSpaceRef();
-}
-#endif
 
 static InterpolationQuality convertInterpolationQuality(CGInterpolationQuality quality)
 {

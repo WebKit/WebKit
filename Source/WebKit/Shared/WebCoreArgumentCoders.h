@@ -703,7 +703,6 @@ namespace WTF {
 template<> struct EnumTraits<WebCore::ColorSpace> {
     using values = EnumValues<
     WebCore::ColorSpace,
-    WebCore::ColorSpace::ColorSpaceDeviceRGB,
     WebCore::ColorSpace::ColorSpaceSRGB,
     WebCore::ColorSpace::ColorSpaceLinearRGB,
     WebCore::ColorSpace::ColorSpaceDisplayP3

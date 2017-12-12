@@ -365,6 +365,7 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
 #endif
 }
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
 CGColorSpaceRef linearRGBColorSpaceRef()
 {
     static CGColorSpaceRef linearSRGBSpace = nullptr;
@@ -387,5 +388,6 @@ CGColorSpaceRef linearRGBColorSpaceRef()
 
     return linearSRGBSpace;
 }
+#endif
 
-}
+} // namespace WebCore
