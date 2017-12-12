@@ -1,3 +1,19 @@
+2017-12-12  John Wilander  <wilander@apple.com>
+
+        Dispatch resource load statistics telemetry on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=180602
+        <rdar://problem/35942205>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/WebResourceLoadStatisticsTelemetry.cpp:
+        (WebKit::WebResourceLoadStatisticsTelemetry::calculateAndSubmit):
+            Now switches to the main thread for the telemetry submission
+            through a webpage proxy. The reason is that the webpage we
+            use may go away while we're still using it. This kind of
+            telemetry isn't associated with a specific webpage but the
+            infrastructure requires a webpage proxy.
+
 2017-12-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         IPC code doesn't understand NSDictionaries with non-NSString keys

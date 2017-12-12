@@ -246,28 +246,31 @@ void WebResourceLoadStatisticsTelemetry::calculateAndSubmit(const WebResourceLoa
             sortedPrevalentResourcesWithoutUserInteraction.uncheckedAppend(prevalentResource);
     }
     
-    auto webPageProxy = nonEphemeralWebPageProxy();
-    if (!webPageProxy) {
-        if (notifyPagesWhenTelemetryWasCaptured)
-            notifyPages(0, 0, 0);
-        return;
-    }
-    
-    if (notifyPagesWhenTelemetryWasCaptured) {
-        notifyPages(sortedPrevalentResources, sortedPrevalentResourcesWithoutUserInteraction, prevalentResourcesDaysSinceUserInteraction.size());
-        // The notify pages function is for testing so we don't need to do an actual submission.
-        return;
-    }
-    
-    webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), ASCIILiteral("totalNumberOfPrevalentResources"), sortedPrevalentResources.size(), significantFiguresForLoggedValues, ShouldSample::No);
-    webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), ASCIILiteral("totalNumberOfPrevalentResourcesWithUserInteraction"), prevalentResourcesDaysSinceUserInteraction.size(), significantFiguresForLoggedValues, ShouldSample::No);
-    
-    if (prevalentResourcesDaysSinceUserInteraction.size() > 0)
-        webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), ASCIILiteral("topPrevalentResourceWithUserInteractionDaysSinceUserInteraction"), prevalentResourcesDaysSinceUserInteraction[0], significantFiguresForLoggedValues, ShouldSample::No);
-    if (prevalentResourcesDaysSinceUserInteraction.size() > 1)
-        webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), ASCIILiteral("medianPrevalentResourcesWithUserInteractionDaysSinceUserInteraction"), median(prevalentResourcesDaysSinceUserInteraction), significantFiguresForLoggedValues, ShouldSample::No);
-    
-    submitTopLists(sortedPrevalentResources, sortedPrevalentResourcesWithoutUserInteraction, *webPageProxy);
+    // Dispatch on the main thread to make sure the WebPageProxy we're using doesn't go away.
+    RunLoop::main().dispatch([sortedPrevalentResources = WTFMove(sortedPrevalentResources), sortedPrevalentResourcesWithoutUserInteraction = WTFMove(sortedPrevalentResourcesWithoutUserInteraction), prevalentResourcesDaysSinceUserInteraction = WTFMove(prevalentResourcesDaysSinceUserInteraction)] () {
+        auto webPageProxy = nonEphemeralWebPageProxy();
+        if (!webPageProxy) {
+            if (notifyPagesWhenTelemetryWasCaptured)
+                notifyPages(0, 0, 0);
+            return;
+        }
+        
+        if (notifyPagesWhenTelemetryWasCaptured) {
+            notifyPages(sortedPrevalentResources, sortedPrevalentResourcesWithoutUserInteraction, prevalentResourcesDaysSinceUserInteraction.size());
+            // The notify pages function is for testing so we don't need to do an actual submission.
+            return;
+        }
+        
+        webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), ASCIILiteral("totalNumberOfPrevalentResources"), sortedPrevalentResources.size(), significantFiguresForLoggedValues, ShouldSample::No);
+        webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), ASCIILiteral("totalNumberOfPrevalentResourcesWithUserInteraction"), prevalentResourcesDaysSinceUserInteraction.size(), significantFiguresForLoggedValues, ShouldSample::No);
+        
+        if (prevalentResourcesDaysSinceUserInteraction.size() > 0)
+            webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), ASCIILiteral("topPrevalentResourceWithUserInteractionDaysSinceUserInteraction"), prevalentResourcesDaysSinceUserInteraction[0], significantFiguresForLoggedValues, ShouldSample::No);
+        if (prevalentResourcesDaysSinceUserInteraction.size() > 1)
+            webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), ASCIILiteral("medianPrevalentResourcesWithUserInteractionDaysSinceUserInteraction"), median(prevalentResourcesDaysSinceUserInteraction), significantFiguresForLoggedValues, ShouldSample::No);
+        
+        submitTopLists(sortedPrevalentResources, sortedPrevalentResourcesWithoutUserInteraction, *webPageProxy);
+    });
 }
     
 void WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(bool always)
