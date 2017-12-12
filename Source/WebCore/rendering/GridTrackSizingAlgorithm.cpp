@@ -98,22 +98,12 @@ static bool shouldClearOverrideContainingBlockContentSizeForChild(const RenderBo
     return child.hasRelativeLogicalHeight() || child.style().logicalHeight().isIntrinsicOrAuto();
 }
 
-static bool hasOverrideContainingBlockContentSizeForChild(const RenderBox& child, GridTrackSizingDirection direction)
-{
-    return direction == ForColumns ? child.hasOverrideContainingBlockLogicalWidth() : child.hasOverrideContainingBlockLogicalHeight();
-}
-
 static void setOverrideContainingBlockContentSizeForChild(RenderBox& child, GridTrackSizingDirection direction, std::optional<LayoutUnit> size)
 {
     if (direction == ForColumns)
         child.setOverrideContainingBlockContentLogicalWidth(size);
     else
         child.setOverrideContainingBlockContentLogicalHeight(size);
-}
-
-static std::optional<LayoutUnit> overrideContainingBlockContentSizeForChild(const RenderBox& child, GridTrackSizingDirection direction)
-{
-    return direction == ForColumns ? child.overrideContainingBlockContentLogicalWidth() : child.overrideContainingBlockContentLogicalHeight();
 }
 
 // FIXME: we borrowed this from RenderBlock. We cannot call it from here because it's protected for RenderObjects.
@@ -787,7 +777,7 @@ bool GridTrackSizingAlgorithmStrategy::updateOverrideContainingBlockContentSizeF
 {
     if (!overrideSize)
         overrideSize = m_algorithm.gridAreaBreadthForChild(child, direction);
-    if (hasOverrideContainingBlockContentSizeForChild(child, direction) && overrideContainingBlockContentSizeForChild(child, direction) == overrideSize)
+    if (GridLayoutFunctions::hasOverrideContainingBlockContentSizeForChild(child, direction) && GridLayoutFunctions::overrideContainingBlockContentSizeForChild(child, direction) == overrideSize)
         return false;
 
     setOverrideContainingBlockContentSizeForChild(child, direction, overrideSize);

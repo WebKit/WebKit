@@ -84,6 +84,16 @@ GridTrackSizingDirection flowAwareDirectionForChild(const RenderGrid& grid, cons
     return !isOrthogonalChild(grid, child) ? direction : (direction == ForColumns ? ForRows : ForColumns);
 }
 
+bool hasOverrideContainingBlockContentSizeForChild(const RenderBox& child, GridTrackSizingDirection direction)
+{
+    return direction == ForColumns ? child.hasOverrideContainingBlockLogicalWidth() : child.hasOverrideContainingBlockLogicalHeight();
+}
+
+std::optional<LayoutUnit> overrideContainingBlockContentSizeForChild(const RenderBox& child, GridTrackSizingDirection direction)
+{
+    return direction == ForColumns ? child.overrideContainingBlockContentLogicalWidth() : child.overrideContainingBlockContentLogicalHeight();
+}
+
 } // namespace GridLayoutFunctions
 
 } // namespace WebCore

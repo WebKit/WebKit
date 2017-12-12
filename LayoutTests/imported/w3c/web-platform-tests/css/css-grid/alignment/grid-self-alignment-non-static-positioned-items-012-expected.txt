@@ -29,7 +29,7 @@ FAIL .grid 1 assert_equals:
   <div data-offset-x="14" data-offset-y="2" data-expected-width="76" data-expected-height="20" class="secondRowFirstColumn horizontal RTL">X XX X</div>
   <div data-offset-x="40" data-offset-y="102" data-expected-width="56" data-expected-height="70" class="secondRowSecondColumn verticalLR">XX X<br>X XXX<br>X<br>XX XXX</div>
 </div>
-offsetLeft expected 170 but got 95
+offsetLeft expected 170 but got 173
 FAIL .grid 2 assert_equals: 
 <div class="grid verticalLR">
   <div data-offset-x="8" data-offset-y="74" data-expected-width="76" data-expected-height="20" class="firstRowFirstColumn horizontal">X XX X</div>
@@ -45,7 +45,7 @@ FAIL .grid 3 assert_equals:
   <div data-offset-x="158" data-offset-y="188" data-expected-width="76" data-expected-height="20" class="secondRowFirstColumn LTR">X XX X</div>
   <div data-offset-x="8" data-offset-y="152" data-expected-width="56" data-expected-height="70" class="secondRowSecondColumn verticalRL RTL">XX X<br>X XXX<br>X<br>XX XXX</div>
 </div>
-offsetLeft expected 220 but got 161
+offsetLeft expected 220 but got 223
 FAIL .grid 4 assert_equals: 
 <div class="grid">
   <div data-offset-x="70" data-offset-y="2" data-expected-width="26" data-expected-height="70" class="firstRowFirstColumn verticalLR">X XX X</div>
@@ -53,5 +53,5 @@ FAIL .grid 4 assert_equals:
   <div data-offset-x="20" data-offset-y="188" data-expected-width="76" data-expected-height="20" class="secondRowFirstColumn RTL">X XX X</div>
   <div data-offset-x="108" data-offset-y="152" data-expected-width="56" data-expected-height="70" class="secondRowSecondColumn verticalLR RTL">XX X<br>X XXX<br>X<br>XX XXX</div>
 </div>
-offsetLeft expected 70 but got 11
+offsetLeft expected 70 but got 73
 

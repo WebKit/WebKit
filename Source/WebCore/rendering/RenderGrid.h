@@ -111,8 +111,8 @@ private:
 
     bool canPerformSimplifiedLayout() const final;
     void prepareChildForPositionedLayout(RenderBox&);
+    bool hasStaticPositionForChild(const RenderBox&, GridTrackSizingDirection) const;
     void layoutPositionedObject(RenderBox&, bool relayoutChildren, bool fixedPositionObjectsOnly) override;
-    void offsetAndBreadthForPositionedChild(const RenderBox&, GridTrackSizingDirection, LayoutUnit& offset, LayoutUnit& breadth);
 
     void computeTrackSizesForDefiniteSize(GridTrackSizingDirection, LayoutUnit availableSpace);
     void computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm&, GridTrackSizingDirection, Grid&, LayoutUnit& minIntrinsicSize, LayoutUnit& maxIntrinsicSize) const;
@@ -122,6 +122,15 @@ private:
 
     void layoutGridItems();
     void populateGridPositionsForDirection(GridTrackSizingDirection);
+
+    bool gridPositionIsAutoForOutOfFlow(GridPosition, GridTrackSizingDirection) const;
+    LayoutUnit resolveAutoStartGridPosition(GridTrackSizingDirection) const;
+    LayoutUnit resolveAutoEndGridPosition(GridTrackSizingDirection) const;
+    LayoutUnit gridAreaBreadthForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection);
+    LayoutUnit logicalOffsetForChild(const RenderBox&, GridTrackSizingDirection, LayoutUnit) const;
+    void gridAreaPositionForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection, LayoutUnit& start, LayoutUnit& end) const;
+    void gridAreaPositionForInFlowChild(const RenderBox&, GridTrackSizingDirection, LayoutUnit& start, LayoutUnit& end) const;
+    void gridAreaPositionForChild(const RenderBox&, GridTrackSizingDirection, LayoutUnit& start, LayoutUnit& end) const;
 
     GridAxisPosition columnAxisPositionForChild(const RenderBox&) const;
     GridAxisPosition rowAxisPositionForChild(const RenderBox&) const;
@@ -156,9 +165,11 @@ private:
 
     LayoutUnit gridGap(GridTrackSizingDirection) const;
     LayoutUnit gridGap(GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
+    LayoutUnit gridItemOffset(GridTrackSizingDirection) const;
 
     unsigned numTracks(GridTrackSizingDirection, const Grid&) const;
 
+    LayoutUnit translateOutOfFlowRTLCoordinate(const RenderBox&, LayoutUnit) const;
     LayoutUnit translateRTLCoordinate(LayoutUnit) const;
 
     Grid m_grid;
@@ -169,6 +180,10 @@ private:
     Vector<LayoutUnit> m_rowPositions;
     LayoutUnit m_offsetBetweenColumns;
     LayoutUnit m_offsetBetweenRows;
+
+    typedef HashMap<const RenderBox*, std::optional<size_t>> OutOfFlowPositionsMap;
+    OutOfFlowPositionsMap m_outOfFlowItemColumn;
+    OutOfFlowPositionsMap m_outOfFlowItemRow;
 
     std::optional<LayoutUnit> m_minContentHeight;
     std::optional<LayoutUnit> m_maxContentHeight;

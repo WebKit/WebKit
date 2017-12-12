@@ -1,3 +1,60 @@
+2017-12-12  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Implement alignment for absolute positioned grid items
+        https://bugs.webkit.org/show_bug.cgi?id=180632
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        These tests now pass and verify the alignment logic for positioned grid items.
+
+        * web-platform-tests/css/css-grid/alignment/grid-column-axis-alignment-positioned-items-002-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-column-axis-alignment-positioned-items-005-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-column-axis-alignment-positioned-items-007-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-column-axis-alignment-positioned-items-009-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-column-axis-alignment-positioned-items-011-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-column-axis-alignment-positioned-items-013-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-column-axis-alignment-positioned-items-014-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-column-axis-alignment-positioned-items-016-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-alignment-positioned-items-002-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-alignment-positioned-items-003-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-alignment-positioned-items-004-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-alignment-positioned-items-005-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-alignment-positioned-items-007-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-alignment-positioned-items-009-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-alignment-positioned-items-010-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-alignment-positioned-items-013-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-alignment-positioned-items-014-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-alignment-positioned-items-015-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-001-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-002-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-003-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-004-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-005-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-006-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-007-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-008-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-009-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-009.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-010-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-011-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-012-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-001-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-002-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-003-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-004-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-005-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-006-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-007-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-008-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-009-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-010-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-011-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-012-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-013-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-014-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-015-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-016-expected.txt:
+
 2017-12-12  Youenn Fablet  <youenn@apple.com>
 
         Navigation requests should use navigate fetch mode

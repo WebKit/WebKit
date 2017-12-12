@@ -47,16 +47,6 @@ static inline bool isStartSide(GridPositionSide side)
     return side == ColumnStartSide || side == RowStartSide;
 }
 
-static inline GridPositionSide initialPositionSide(GridTrackSizingDirection direction)
-{
-    return direction == ForColumns ? ColumnStartSide : RowStartSide;
-}
-
-static inline GridPositionSide finalPositionSide(GridTrackSizingDirection direction)
-{
-    return direction == ForColumns ? ColumnEndSide : RowEndSide;
-}
-
 static inline GridTrackSizingDirection directionFromSide(GridPositionSide side)
 {
     return side == ColumnStartSide || side == ColumnEndSide ? ForColumns : ForRows;
@@ -171,10 +161,10 @@ static void adjustGridPositionsFromStyle(const RenderStyle& gridContainerStyle, 
 
     if (gridItem.isOutOfFlowPositioned()) {
         // Early detect the case of non existing named grid lines for positioned items.
-        if (initialPosition.isNamedGridArea() && !NamedLineCollection::isValidNamedLineOrArea(initialPosition.namedGridLine(), gridContainerStyle, initialPositionSide(direction)))
+        if (initialPosition.isNamedGridArea() && !NamedLineCollection::isValidNamedLineOrArea(initialPosition.namedGridLine(), gridContainerStyle, GridPositionsResolver::initialPositionSide(direction)))
             initialPosition.setAutoPosition();
 
-        if (finalPosition.isNamedGridArea() && !NamedLineCollection::isValidNamedLineOrArea(finalPosition.namedGridLine(), gridContainerStyle, finalPositionSide(direction)))
+        if (finalPosition.isNamedGridArea() && !NamedLineCollection::isValidNamedLineOrArea(finalPosition.namedGridLine(), gridContainerStyle, GridPositionsResolver::finalPositionSide(direction)))
             finalPosition.setAutoPosition();
     }
 
@@ -300,6 +290,16 @@ static GridSpan resolveGridPositionAgainstOppositePosition(const RenderStyle& gr
         return GridSpan::untranslatedDefiniteGridSpan(oppositeLine - positionOffset, oppositeLine);
 
     return GridSpan::untranslatedDefiniteGridSpan(oppositeLine, oppositeLine + positionOffset);
+}
+
+GridPositionSide GridPositionsResolver::initialPositionSide(GridTrackSizingDirection direction)
+{
+    return direction == ForColumns ? ColumnStartSide : RowStartSide;
+}
+
+GridPositionSide GridPositionsResolver::finalPositionSide(GridTrackSizingDirection direction)
+{
+    return direction == ForColumns ? ColumnEndSide : RowEndSide;
 }
 
 unsigned GridPositionsResolver::spanSizeForAutoPlacedItem(const RenderStyle& gridContainerStyle, const RenderBox& gridItem, GridTrackSizingDirection direction)
