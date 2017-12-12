@@ -248,7 +248,7 @@ MemoryPressureMonitor::MemoryPressureMonitor()
     if (m_eventFD == -1)
         return;
 
-    RefPtr<Thread> thread = Thread::create("MemoryPressureMonitor", [this] {
+    Thread::create("MemoryPressureMonitor", [this] {
         double pollInterval = s_maxPollingIntervalInSeconds;
         while (true) {
             sleep(pollInterval);
@@ -270,8 +270,7 @@ MemoryPressureMonitor::MemoryPressureMonitor()
             pollInterval = pollIntervalForUsedMemoryPercentage(usedPercentage);
         }
         close(m_eventFD);
-    });
-    thread->detach();
+    })->detach();
 }
 
 IPC::Attachment MemoryPressureMonitor::createHandle() const

@@ -47,19 +47,18 @@ TEST(Signals, SignalsWorkOnExit)
     });
 
     Atomic<bool> receiverShouldKeepRunning(true);
-    RefPtr<Thread> receiverThread = (Thread::create("ThreadMessage receiver",
+    Ref<Thread> receiverThread = (Thread::create("ThreadMessage receiver",
         [&receiverShouldKeepRunning] () {
             while (receiverShouldKeepRunning.load()) { }
     }));
-    ASSERT_TRUE(receiverThread);
 
     bool signalFired;
     {
-        std::unique_lock<std::mutex> locker(static_cast<ReflectedThread*>(receiverThread.get())->m_mutex);
+        std::unique_lock<std::mutex> locker(static_cast<ReflectedThread&>(receiverThread.get()).m_mutex);
         receiverShouldKeepRunning.store(false);
-        EXPECT_FALSE(static_cast<ReflectedThread*>(receiverThread.get())->hasExited());
+        EXPECT_FALSE(static_cast<ReflectedThread&>(receiverThread.get()).hasExited());
         sleep(1);
-        signalFired = !pthread_kill(static_cast<ReflectedThread*>(receiverThread.get())->m_handle, std::get<0>(toSystemSignal(Signal::Usr)));
+        signalFired = !pthread_kill(static_cast<ReflectedThread&>(receiverThread.get()).m_handle, std::get<0>(toSystemSignal(Signal::Usr)));
     }
 
     receiverThread->waitForCompletion();

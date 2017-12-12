@@ -54,7 +54,7 @@ bool StorageThread::start()
 {
     ASSERT(isMainThread());
     if (!m_thread) {
-        m_thread = Thread::create("WebCore: LocalStorage", [this] {
+        m_thread = Thread::tryCreate("WebCore: LocalStorage", [this] {
             threadEntryPoint();
         });
     }

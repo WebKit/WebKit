@@ -129,7 +129,7 @@ void Thread::entryPoint(NewThreadContext* newThreadContext)
     function();
 }
 
-RefPtr<Thread> Thread::create(const char* name, Function<void()>&& entryPoint)
+RefPtr<Thread> Thread::tryCreate(const char* name, Function<void()>&& entryPoint)
 {
     WTF::initializeThreading();
     Ref<Thread> thread = adoptRef(*new Thread());

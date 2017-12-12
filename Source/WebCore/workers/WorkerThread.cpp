@@ -140,7 +140,7 @@ bool WorkerThread::start(WTF::Function<void(const String&)>&& evaluateCallback)
 
     m_evaluateCallback = WTFMove(evaluateCallback);
 
-    m_thread = Thread::create("WebCore: Worker", [this] {
+    m_thread = Thread::tryCreate("WebCore: Worker", [this] {
         workerThread();
     });
 

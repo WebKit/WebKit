@@ -1,3 +1,18 @@
+2017-12-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Thread::create should have Thread::tryCreate
+        https://bugs.webkit.org/show_bug.cgi?id=180333
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/Condition.cpp:
+        * TestWebKitAPI/Tests/WTF/ParkingLot.cpp:
+        * TestWebKitAPI/Tests/WTF/Signals.cpp:
+        (TEST):
+        * TestWebKitAPI/Tests/WTF/ThreadGroup.cpp:
+        (TestWebKitAPI::testThreadGroup):
+        (TestWebKitAPI::TEST):
+
 2017-12-11  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [WinCairo] Enable running sharded tests

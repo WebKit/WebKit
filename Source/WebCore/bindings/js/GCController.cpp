@@ -101,7 +101,7 @@ void GCController::garbageCollectNowIfNotDoneRecently()
 
 void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone)
 {
-    RefPtr<Thread> thread = Thread::create("WebCore: GCController", &collect);
+    auto thread = Thread::create("WebCore: GCController", &collect);
 
     if (waitUntilDone) {
         thread->waitForCompletion();

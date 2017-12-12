@@ -94,7 +94,7 @@ bool ParallelEnvironment::ThreadPrivate::tryLockFor(ParallelEnvironment* parent)
     }
 
     if (!m_thread) {
-        m_thread = Thread::create("Parallel worker", [this] {
+        m_thread = Thread::tryCreate("Parallel worker", [this] {
             LockHolder lock(m_mutex);
 
             while (m_thread) {

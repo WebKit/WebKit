@@ -1,3 +1,15 @@
+2017-12-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Thread::create should have Thread::tryCreate
+        https://bugs.webkit.org/show_bug.cgi?id=180333
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/glib/IconDatabase.cpp:
+        (WebKit::IconDatabase::open):
+        * UIProcess/linux/MemoryPressureMonitor.cpp:
+        (WebKit::MemoryPressureMonitor::MemoryPressureMonitor):
+
 2017-12-11  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Move UpdateAtlas, AreaAllocator into the platform layer

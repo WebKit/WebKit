@@ -61,9 +61,6 @@ ReverbConvolver::ReverbConvolver(AudioChannel* impulseResponse, size_t renderSli
     , m_minFFTSize(MinFFTSize) // First stage will have this size - successive stages will double in size each time
     , m_maxFFTSize(maxFFTSize) // until we hit m_maxFFTSize
     , m_useBackgroundThreads(useBackgroundThreads)
-    , m_backgroundThread(0)
-    , m_wantsToExit(false)
-    , m_moreInputBuffered(false)
 {
     // If we are using background threads then don't exceed this FFT size for the
     // stages which run in the real-time thread.  This avoids having only one or two

@@ -1,3 +1,13 @@
+2017-12-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Thread::create should have Thread::tryCreate
+        https://bugs.webkit.org/show_bug.cgi?id=180333
+
+        Reviewed by Darin Adler.
+
+        * WebKitQuartzCoreAdditions/CVDisplayLink.cpp:
+        (WKQCA::CVDisplayLink::start):
+
 2017-12-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use StaticLock and Lock instead of Mutex in Windows WebKitLegacy

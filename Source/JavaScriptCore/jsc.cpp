@@ -1560,7 +1560,7 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentStart(ExecState* exec)
     Condition didStartCondition;
     bool didStart = false;
     
-    RefPtr<Thread> thread = Thread::create(
+    Thread::create(
         "JSC Agent",
         [sourceCode, &didStartLock, &didStartCondition, &didStart] () {
             CommandLine commandLine(0, nullptr);
@@ -1586,8 +1586,7 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentStart(ExecState* exec)
                         exit(1);
                     return success;
                 });
-        });
-    thread->detach();
+        })->detach();
     
     {
         auto locker = holdLock(didStartLock);

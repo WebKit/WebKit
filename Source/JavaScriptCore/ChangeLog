@@ -1,3 +1,18 @@
+2017-12-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Thread::create should have Thread::tryCreate
+        https://bugs.webkit.org/show_bug.cgi?id=180333
+
+        Reviewed by Darin Adler.
+
+        * assembler/testmasm.cpp:
+        (JSC::run):
+        * b3/air/testair.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::run):
+        * jsc.cpp:
+        (functionDollarAgentStart):
+
 2017-12-11  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r225683): Chakra test failure in es6/regex-unicode.js for 32bit builds

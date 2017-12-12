@@ -808,7 +808,7 @@ void run(const char* filter)
 
     Lock lock;
 
-    Vector<RefPtr<Thread>> threads;
+    Vector<Ref<Thread>> threads;
     for (unsigned i = filter ? 1 : WTF::numberOfProcessorCores(); i--;) {
         threads.append(
             Thread::create(
@@ -828,7 +828,7 @@ void run(const char* filter)
                 }));
     }
 
-    for (RefPtr<Thread> thread : threads)
+    for (auto& thread : threads)
         thread->waitForCompletion();
     crashLock.lock();
     dataLog("Completed ", numberOfTests, " tests\n");

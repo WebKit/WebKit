@@ -64,7 +64,6 @@ void CVDisplayLink::start()
     m_ioThread = Thread::create("WKQCA: CVDisplayLink", [this] {
         runIOThread();
     });
-    ASSERT(m_ioThread);
 }
 
 void CVDisplayLink::stop()

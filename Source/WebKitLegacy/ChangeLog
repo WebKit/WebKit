@@ -1,3 +1,13 @@
+2017-12-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Thread::create should have Thread::tryCreate
+        https://bugs.webkit.org/show_bug.cgi?id=180333
+
+        Reviewed by Darin Adler.
+
+        * Storage/StorageThread.cpp:
+        (WebCore::StorageThread::start):
+
 2017-12-05  Stephan Szabo  <stephan.szabo@sony.com>
 
         Switch windows build to Visual Studio 2017
