@@ -98,7 +98,8 @@ Ref<FetchEvent> dispatchFetchEvent(Ref<Client>&& client, WorkerGlobalScope& glob
     auto httpReferrer = request.httpReferrer();
     // We are intercepting fetch calls after going through the HTTP layer, which adds some specific headers.
     // Let's clean them so that cross origin checks do not fail.
-    cleanRedirectedRequestForAccessControl(request);
+    if (options.mode == FetchOptions::Mode::Cors)
+        cleanRedirectedRequestForAccessControl(request);
 
     auto requestHeaders = FetchHeaders::create(FetchHeaders::Guard::Immutable, HTTPHeaderMap { request.httpHeaderFields() });
     auto fetchRequest = FetchRequest::create(globalScope, FetchBody::fromFormData(request.httpBody()), WTFMove(requestHeaders),  WTFMove(request), WTFMove(options), WTFMove(httpReferrer));
