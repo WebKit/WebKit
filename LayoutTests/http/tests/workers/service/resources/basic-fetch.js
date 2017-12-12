@@ -40,6 +40,13 @@ async function test()
             log("PASS: test5 fetch failed as expected");
         }
 
+        try {
+            response = await fetch("/");
+            log("FAIL: / fetch succeeded unexpectedly");
+            log("/ status code: " + response.status);
+        } catch (e) {
+            log("PASS: / fetch failed as expected");
+        }
     } catch(e) {
         log("Got exception: " + e);
     }

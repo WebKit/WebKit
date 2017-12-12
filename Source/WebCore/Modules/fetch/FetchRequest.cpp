@@ -69,6 +69,13 @@ static std::optional<Exception> buildOptions(FetchOptions& options, ResourceRequ
     if (!init.window.isUndefinedOrNull() && !init.window.isEmpty())
         return Exception { TypeError, ASCIILiteral("Window can only be null.") };
 
+    if (init.hasMembers()) {
+        if (options.mode == FetchOptions::Mode::Navigate)
+            options.mode = FetchOptions::Mode::SameOrigin;
+        referrer = ASCIILiteral("client");
+        options.referrerPolicy = { };
+    }
+
     if (!init.referrer.isNull()) {
         auto result = computeReferrer(context, init.referrer);
         if (result.hasException())
@@ -79,10 +86,11 @@ static std::optional<Exception> buildOptions(FetchOptions& options, ResourceRequ
     if (init.referrerPolicy)
         options.referrerPolicy = init.referrerPolicy.value();
 
-    if (init.mode)
+    if (init.mode) {
         options.mode = init.mode.value();
-    if (options.mode == FetchOptions::Mode::Navigate)
-        return Exception { TypeError, ASCIILiteral("Request constructor does not accept navigate fetch mode.") };
+        if (options.mode == FetchOptions::Mode::Navigate)
+            return Exception { TypeError, ASCIILiteral("Request constructor does not accept navigate fetch mode.") };
+    }
 
     if (init.credentials)
         options.credentials = init.credentials.value();

@@ -128,7 +128,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     if (request.url().protocolIsData())
         m_sameOriginRequest = options.sameOriginDataURLFlag == SameOriginDataURLFlag::Set;
 
-    if (m_sameOriginRequest || m_options.mode == FetchOptions::Mode::NoCors) {
+    if (m_sameOriginRequest || m_options.mode == FetchOptions::Mode::NoCors || m_options.mode == FetchOptions::Mode::Navigate) {
         loadRequest(WTFMove(request), DoSecurityCheck);
         return;
     }

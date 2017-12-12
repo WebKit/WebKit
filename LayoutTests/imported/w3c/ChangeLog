@@ -1,5 +1,20 @@
 2017-12-12  Youenn Fablet  <youenn@apple.com>
 
+        Navigation requests should use navigate fetch mode
+        https://bugs.webkit.org/show_bug.cgi?id=179808
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/service-workers/service-worker/fetch-request-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/register-same-scope-different-script-url.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/request-end-to-end.https-expected.txt:
+        This is a progression since test is failing at a later point. Test might need being updated to match latest fetch spec.
+        * web-platform-tests/service-workers/service-worker/resources/clients-get-worker.js:
+        (self.onfetch): Change upstreamed at https://github.com/w3c/web-platform-tests/pull/8289.
+
+2017-12-12  Youenn Fablet  <youenn@apple.com>
+
         Rebasing/unskipping some WPT service worker tests
         https://bugs.webkit.org/show_bug.cgi?id=180705
 

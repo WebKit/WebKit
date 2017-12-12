@@ -19,5 +19,9 @@ self.addEventListener("fetch", (event) => {
         return;
     }
 
+    if (event.request.mode !== "navigate") {
+        event.respondWith(Response.error());
+        return;
+    }
     event.respondWith(fetch(event.request.url));
 });

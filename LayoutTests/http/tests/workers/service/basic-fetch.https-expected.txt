@@ -9,4 +9,5 @@ test2 source: Service worker
 PASS: test3 fetch failed as expected
 test4 status code: 404
 PASS: test5 fetch failed as expected
+PASS: / fetch failed as expected
 

@@ -47,6 +47,8 @@ struct FetchRequestInit {
     String integrity;
     std::optional<bool> keepalive;
     JSC::JSValue window;
+
+    bool hasMembers() const { return !method.isEmpty() || headers || body || !referrer.isEmpty() || referrerPolicy || mode || credentials || cache || redirect || !integrity.isEmpty() || keepalive || !window.isUndefined(); }
 };
 
 }
