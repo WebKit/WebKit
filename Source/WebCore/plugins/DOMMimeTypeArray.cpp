@@ -80,8 +80,20 @@ RefPtr<DOMMimeType> DOMMimeTypeArray::namedItem(const AtomicString& propertyName
 
 Vector<AtomicString> DOMMimeTypeArray::supportedPropertyNames()
 {
-    // FIXME: Should be implemented.
-    return Vector<AtomicString>();
+    PluginData* data = getPluginData();
+    if (!data)
+        return { };
+
+    Vector<MimeClassInfo> mimes;
+    Vector<size_t> mimePluginIndices;
+    data->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
+
+    Vector<AtomicString> result;
+    result.reserveInitialCapacity(mimes.size());
+    for (auto& info : mimes)
+        result.uncheckedAppend(WTFMove(info.type));
+
+    return result;
 }
 
 PluginData* DOMMimeTypeArray::getPluginData() const

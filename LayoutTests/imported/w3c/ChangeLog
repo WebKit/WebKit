@@ -1,3 +1,15 @@
+2017-12-12  Ms2ger  <Ms2ger@igalia.com>
+
+        Implement {DOMMimeTypeArray, DOMPluginArray}::supportedPropertyNames().
+        https://bugs.webkit.org/show_bug.cgi?id=180471
+
+        Reviewed by Darin Adler.
+
+        Update test expectation. It will now work better if "WebKit built-in PDF"
+        is not present or not the only available plugin.
+
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray-expected.txt:
+
 2017-12-11  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Automatic minimum size is not clamped if min track sizing function is auto
