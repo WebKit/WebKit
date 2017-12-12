@@ -1,3 +1,24 @@
+2017-12-12  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add InspectorTest.expectException() and use it
+        https://bugs.webkit.org/show_bug.cgi?id=180719
+
+        Reviewed by Matt Baker.
+
+        This helps straighten out async test() functions that need
+        to test exceptional cases. Without this, every such method
+        needs try/catch boilerplate to leak the error outside the
+        scope of the catch-block and then assert that it exists.
+
+        * UserInterface/Test/TestHarness.js:
+        (TestHarness.prototype.expectException):
+        Added. This method takes a callback which is expected to raise
+        an exception either by throwing an Error instance or returning
+        a Promise that rejects with an Error instance. The method returns
+        a Promise that is either resolved with the expected exception
+        from one of the above sources, or is rejected with the non-exception
+        result that was returned or resolved by the callback.
+
 2017-12-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Don't require perl(File::Copy::Recursive)

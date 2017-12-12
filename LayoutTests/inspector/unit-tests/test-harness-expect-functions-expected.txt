@@ -1,7 +1,7 @@
 Testing TestHarness.expect* family of functions.
 
 
-== Running test suite: InspectorTestExpectFunctions
+== Running test suite: InspectorTest.ExpectFunctions.Sync
 -- Running test case: InspectorTest.expectThat
 Expected to PASS
 PASS: expectThat(true)

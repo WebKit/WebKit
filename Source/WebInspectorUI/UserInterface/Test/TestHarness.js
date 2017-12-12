@@ -184,6 +184,46 @@ TestHarness = class TestHarness extends WI.Object
         this.log("FAIL: " + stringifiedMessage);
     }
 
+    // Use this to expect an exception. To further examine the exception,
+    // chain onto the result with .then() and add your own test assertions.
+    // The returned promise is rejected if an exception was not thrown.
+    expectException(work)
+    {
+        if (typeof work !== "function")
+            throw new Error("Invalid argument to catchException: work must be a function.");
+
+        let expectAndDumpError = (e) => {
+            this.expectNotNull(e, "Should produce an exception.");
+            if (e)
+                this.log(e.toString());
+        }
+
+        let error = null;
+        let result = null;
+        try {
+            result = work();
+        } catch (caughtError) {
+            error = caughtError;
+        } finally {
+            // If 'work' returns a promise, it will settle (resolve or reject) by itself.
+            // Invert the promise's settled state to match the expectation of the caller.
+            if (result instanceof Promise) {
+                return result.then((resolvedValue) => {
+                    expectAndDumpError(null);
+                    return Promise.reject(resolvedValue);
+                }).catch((e) => {
+                    expectAndDumpError(e);
+                    return Promise.resolve(e);
+                });
+            }
+
+            // If a promise is not produced, turn the exception into a resolved promise, and a
+            // resolved value into a rejected value (since an exception was expected).
+            expectAndDumpError(error);
+            return error ? Promise.resolve(error) : Promise.reject(result);
+        }
+    }
+
     // Protected
 
     static messageAsString(message)

@@ -24,14 +24,14 @@ PASS: Should be one highlighted node.
 Highlighted Element Data: {"tagName":"div","idValue":"id-one","size":{"width":150,"height":250},"role":""}
 
 -- Running test case: MissingNodeAndObjectIdShouldError
-PASS: Should produce an error.
+PASS: Should produce an exception.
 Error: Either nodeId or objectId must be specified
 
 -- Running test case: BadNodeId
-PASS: Should produce an error.
+PASS: Should produce an exception.
 Error: Could not find node with given id
 
 -- Running test case: BadObjectId
-PASS: Should produce an error.
+PASS: Should produce an exception.
 Error: Node for given objectId not found
 

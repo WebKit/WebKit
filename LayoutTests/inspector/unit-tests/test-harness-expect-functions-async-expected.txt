@@ -1,0 +1,36 @@
+Testing asynchronous TestHarness.expect* functions.
+
+
+== Running test suite: InspectorTest.ExpectFunctions.Async
+-- Running test case: expectException.WorkIsNotAFunction
+PASS: Should produce an exception.
+Error: Invalid argument to catchException: work must be a function.
+
+-- Running test case: expectException.SyncWorkThatThrowsException
+PASS: Should produce an exception.
+Error: A fake exception
+PASS: Returned promise should be resolved with the expected exception.
+PASS: Exception should not be altered.
+
+-- Running test case: expectException.SyncWorkThatDoesNotThrowException
+The following assertion is expected to fail.
+FAIL: Should produce an exception.
+    Expected: not null
+    Actual: null
+PASS: Rejected value should be the returned value.
+
+-- Running test case: expectException.AsyncWorkThatRejects
+PASS: Should produce an exception.
+Error: A fake rejection
+PASS: Returned promise should be resolved with the expected exception.
+PASS: Exception should not be altered.
+
+-- Running test case: expectException.AsyncWorkThatResolves
+The following assertion is expected to fail.
+FAIL: Should produce an exception.
+    Expected: not null
+    Actual: null
+PASS: Should produce an exception.
+42
+FAIL: The returned promise should not resolve since an expected exception was not raised.
+

@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("InspectorTest.ExpectFunctions.Async");
+    suite.addTestCase({
+        name: "expectException.WorkIsNotAFunction",
+        async test() {
+            InspectorTest.expectException(async () => {
+                await InspectorTest.expectException(42);
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "expectException.SyncWorkThatThrowsException",
+        async test() {
+            let error;
+            await InspectorTest.expectException(() => {
+                error = new Error("A fake exception");
+                throw error;
+            }).then((e) => {
+                InspectorTest.expectNotNull(error, "Returned promise should be resolved with the expected exception.");
+                InspectorTest.expectEqual(error, e, "Exception should not be altered.");
+            }).catch(() => {
+                InspectorTest.fail("The returned promise should not reject since an expected exception was raised.");
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "expectException.SyncWorkThatDoesNotThrowException",
+        async test() {
+            InspectorTest.log("The following assertion is expected to fail.");
+
+            let returnValue = 42;
+            await InspectorTest.expectException(() => {
+                return returnValue;
+            }).then((e) => {
+                InspectorTest.fail("The returned promise should reject since an expected exception was not raised.");
+            }).catch((resolvedValue) => {
+                InspectorTest.expectEqual(resolvedValue, returnValue, "Rejected value should be the returned value.");
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "expectException.AsyncWorkThatRejects",
+        async test() {
+            let error;
+
+            await InspectorTest.expectException(() => {
+                error = new Error("A fake rejection");
+                return Promise.reject(error);
+            }).then((e) => {
+                InspectorTest.expectNotNull(error, "Returned promise should be resolved with the expected exception.");
+                InspectorTest.expectEqual(error, e, "Exception should not be altered.");
+            }).catch(() => {
+                InspectorTest.fail("The returned promise should not reject since an expected exception was raised.");
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "expectException.AsyncWorkThatResolves",
+        async test() {
+            InspectorTest.log("The following assertion is expected to fail.");
+
+            let returnValue = 42;
+            await InspectorTest.expectException(() => {
+                return Promise.resolve(returnValue);
+            }).then(() => {
+                InspectorTest.fail("The returned promise should not resolve since an expected exception was not raised.");
+            }).catch((resolvedValue) => {
+                InspectorTest.expectEqual(resolvedValue, returnValue, "Rejected value should be the returned value.");
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing asynchronous TestHarness.expect* functions.</p>
+</body>
+</html>

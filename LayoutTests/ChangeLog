@@ -1,3 +1,22 @@
+2017-12-12  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add InspectorTest.expectException() and use it
+        https://bugs.webkit.org/show_bug.cgi?id=180719
+
+        Reviewed by Matt Baker.
+
+        * inspector/dom/highlightNode-expected.txt:
+        * inspector/dom/highlightNode.html:
+        Adopt the new helper method.
+
+        * inspector/unit-tests/test-harness-expect-functions-async-expected.txt: Added.
+        * inspector/unit-tests/test-harness-expect-functions-async.html: Added.
+        Add a separate async test suite for async expect* functions.
+
+        * inspector/unit-tests/test-harness-expect-functions-expected.txt:
+        * inspector/unit-tests/test-harness-expect-functions.html:
+        Standardize the naming for these two suites.
+
 2017-12-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION (Safari 11): custom <font-face> tag crashes a page
