@@ -62,7 +62,6 @@
 #include "FrameLoaderClient.h"
 #include "FrameTree.h"
 #include "FrameView.h"
-#include "HTMLFrameOwnerElement.h"
 #include "History.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMWindowBase.h"
@@ -1260,6 +1259,10 @@ int DOMWindow::innerHeight() const
     if (!m_frame)
         return 0;
 
+    // Force enough layout in the parent document to ensure that the FrameView has been resized.
+    if (auto* frameElement = this->frameElement())
+        frameElement->document().updateLayoutIfDimensionsOutOfDate(*frameElement, HeightDimensionsCheck);
+
     FrameView* view = m_frame->view();
     if (!view)
         return 0;
@@ -1271,6 +1274,10 @@ int DOMWindow::innerWidth() const
 {
     if (!m_frame)
         return 0;
+
+    // Force enough layout in the parent document to ensure that the FrameView has been resized.
+    if (auto* frameElement = this->frameElement())
+        frameElement->document().updateLayoutIfDimensionsOutOfDate(*frameElement, WidthDimensionsCheck);
 
     FrameView* view = m_frame->view();
     if (!view)

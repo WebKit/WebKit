@@ -34,6 +34,7 @@
 #include "HTMLInputElement.h"
 #include "InputEvent.h"
 #include "KeyboardEvent.h"
+#include "Logging.h"
 #include "MainFrame.h"
 #include "MouseEvent.h"
 #include "NoEventDispatchAssertion.h"
@@ -130,6 +131,8 @@ static bool shouldSuppressEventDispatchInDOM(Node& node, Event& event)
 void EventDispatcher::dispatchEvent(Node& node, Event& event)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventDispatchAllowedInSubtree(node));
+    
+    LOG(Events, "EventDispatcher::dispatchEvent %s on node %s", event.type().string().utf8().data(), node.nodeName().utf8().data());
 
     auto protectedNode = makeRef(node);
     auto protectedView = makeRefPtr(node.document().view());

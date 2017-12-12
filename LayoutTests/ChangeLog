@@ -1,3 +1,18 @@
+2017-12-12  Simon Fraser  <simon.fraser@apple.com>
+
+        HTML-page with <object type="image/svg+xml" data="foo.svg"> often is blank
+        https://bugs.webkit.org/show_bug.cgi?id=180524
+        <rdar://problem/35920554>
+
+        Reviewed by Antti Koivisto.
+
+        Adjust a test where the new layout is triggering scrollbar creation.
+
+        * fast/dom/iframe-inner-size-scaling-expected.txt:
+        * fast/dom/iframe-inner-size-scaling.html:
+        * fast/dom/iframe-innerWidth-expected.txt: Added.
+        * fast/dom/iframe-innerWidth.html: Added.
+
 2017-12-11  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Enqueue and dispatch animation events
