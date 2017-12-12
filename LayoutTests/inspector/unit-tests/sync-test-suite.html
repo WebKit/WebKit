@@ -135,6 +135,36 @@ function test()
     } catch (e) {
         ProtocolTest.log("PASS: should not be able to specify non-Function `teardown` parameter.");
     }
+    try {
+        badArgsSuite.addTestCase({
+            name: "foo",
+            async test() {},
+        });
+        ProtocolTest.log("FAIL: should not be able to specify async `test` parameter.");
+    } catch (e) {
+        ProtocolTest.log("PASS: should not be able to specify async `test` parameter.");
+    }
+    try {
+        badArgsSuite.addTestCase({
+            name: "foo",
+            async setup() {},
+            test() {},
+        });
+        ProtocolTest.log("FAIL: should not be able to specify async `setup` parameter.");
+    } catch (e) {
+        ProtocolTest.log("PASS: should not be able to specify async `setup` parameter.");
+    }
+    try {
+        badArgsSuite.addTestCase({
+            name: "foo",
+            test() {},
+            async teardown() {},
+        });
+        ProtocolTest.log("FAIL: should not be able to specify async `teardown` parameter.");
+    } catch (e) {
+        ProtocolTest.log("PASS: should not be able to specify async `teardown` parameter.");
+    }
+
     let runEmptySuite = ProtocolTest.createSyncSuite("SyncTestSuite.RunEmptySuite");
     try {
         runEmptySuite.runTestCases();

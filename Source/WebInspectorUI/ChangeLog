@@ -1,5 +1,16 @@
 2017-12-12  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: SyncTestSuite should complain if passed an async setup/test/teardown function
+        https://bugs.webkit.org/show_bug.cgi?id=180717
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Test/TestSuite.js:
+        (SyncTestSuite.prototype.addTestCase):
+        Raise an exception if test/setup/teardown is an async function. It won't work.
+
+2017-12-12  Brian Burg  <bburg@apple.com>
+
         Web Inspector: add InspectorTest.expectException() and use it
         https://bugs.webkit.org/show_bug.cgi?id=180719
 

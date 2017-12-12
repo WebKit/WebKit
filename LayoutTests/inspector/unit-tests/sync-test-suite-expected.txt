@@ -13,6 +13,9 @@ PASS: should not be able to specify non-Function `setup` parameter.
 PASS: should not be able to specify non-Function `teardown` parameter.
 PASS: should not be able to specify non-Function `teardown` parameter.
 PASS: should not be able to specify non-Function `teardown` parameter.
+PASS: should not be able to specify async `test` parameter.
+PASS: should not be able to specify async `setup` parameter.
+PASS: should not be able to specify async `teardown` parameter.
 PASS: should not be able to run empty test suite.
 
 == Running test suite: SyncTestSuite.RunTwiceSuite

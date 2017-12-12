@@ -1,3 +1,15 @@
+2017-12-12  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: SyncTestSuite should complain if passed an async setup/test/teardown function
+        https://bugs.webkit.org/show_bug.cgi?id=180717
+
+        Reviewed by Devin Rousso.
+
+        Add new test cases for more strict requirements for test case arguments.
+
+        * inspector/unit-tests/sync-test-suite-expected.txt:
+        * inspector/unit-tests/sync-test-suite.html:
+
 2017-12-12  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Expose promises on Animation interface
