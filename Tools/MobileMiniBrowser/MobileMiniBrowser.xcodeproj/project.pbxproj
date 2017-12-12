@@ -125,11 +125,11 @@
 			isa = PBXGroup;
 			children = (
 				CD4DEEE11D78C6F400625986 /* Configurations */,
+				CD1DAFC01D70E12D00017CF0 /* Frameworks */,
 				CD1DAF941D709E3600017CF0 /* MobileMiniBrowser App */,
 				CD498B3C1D76348000681FA7 /* MobileMiniBrowser Framework */,
 				CD1DAFAE1D709E3600017CF0 /* MobileMiniBrowserUITests */,
 				CD1DAF931D709E3600017CF0 /* Products */,
-				CD1DAFC01D70E12D00017CF0 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -137,8 +137,8 @@
 			isa = PBXGroup;
 			children = (
 				CD1DAF921D709E3600017CF0 /* MobileMiniBrowser.app */,
-				CD1DAFAB1D709E3600017CF0 /* MobileMiniBrowserUITests.xctest */,
 				CD498B3B1D76348000681FA7 /* MobileMiniBrowser.framework */,
+				CD1DAFAB1D709E3600017CF0 /* MobileMiniBrowserUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -157,8 +157,8 @@
 		CD1DAFAE1D709E3600017CF0 /* MobileMiniBrowserUITests */ = {
 			isa = PBXGroup;
 			children = (
-				CD1DAFAF1D709E3600017CF0 /* MobileMiniBrowserUITests.m */,
 				CD1DAFB11D709E3600017CF0 /* Info.plist */,
+				CD1DAFAF1D709E3600017CF0 /* MobileMiniBrowserUITests.m */,
 			);
 			path = MobileMiniBrowserUITests;
 			sourceTree = "<group>";
@@ -203,11 +203,11 @@
 		CDA985121D76471700EBC399 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CDA985151D76477900EBC399 /* test.mp4 */,
-				3F0B439C1D908DE700D186B5 /* test2s.mp4 */,
 				CDA985131D76474100EBC399 /* index.html */,
 				CDA985171D7647CD00EBC399 /* looping.html */,
 				3F0B439A1D908D0C00D186B5 /* looping2s.html */,
+				CDA985151D76477900EBC399 /* test.mp4 */,
+				3F0B439C1D908DE700D186B5 /* test2s.mp4 */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -219,10 +219,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD498B4A1D763D4800681FA7 /* MobileMiniBrowser.h in Headers */,
-				CD498B4F1D763D7600681FA7 /* WebViewController.h in Headers */,
-				CD498B4E1D763D7600681FA7 /* TabViewController.h in Headers */,
 				CD498B501D763D7600681FA7 /* AppDelegate.h in Headers */,
+				CD498B4A1D763D4800681FA7 /* MobileMiniBrowser.h in Headers */,
+				CD498B4E1D763D7600681FA7 /* TabViewController.h in Headers */,
+				CD498B4F1D763D7600681FA7 /* WebViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -331,10 +331,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD1DAFA51D709E3600017CF0 /* LaunchScreen.storyboard in Resources */,
-				CD4DEEE61D78C6FF00625986 /* DebugRelease.xcconfig in Resources */,
-				CD4DEEE71D78C6FF00625986 /* MobileMiniBrowser.xcconfig in Resources */,
 				CD4DEEE51D78C6FF00625986 /* Base.xcconfig in Resources */,
+				CD4DEEE61D78C6FF00625986 /* DebugRelease.xcconfig in Resources */,
+				CD1DAFA51D709E3600017CF0 /* LaunchScreen.storyboard in Resources */,
+				CD4DEEE71D78C6FF00625986 /* MobileMiniBrowser.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -349,12 +349,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CDA9851A1D76483400EBC399 /* index.html in Resources */,
 				CD498B521D763D8800681FA7 /* Assets.xcassets in Resources */,
+				CDA9851A1D76483400EBC399 /* index.html in Resources */,
+				CD498B531D763D9300681FA7 /* Info.plist in Resources */,
+				CDA9851B1D76483400EBC399 /* looping.html in Resources */,
 				3F0B439B1D908D0C00D186B5 /* looping2s.html in Resources */,
 				CD498B511D763D7F00681FA7 /* Main.storyboard in Resources */,
-				CDA9851B1D76483400EBC399 /* looping.html in Resources */,
-				CD498B531D763D9300681FA7 /* Info.plist in Resources */,
 				CDA985191D76483400EBC399 /* test.mp4 in Resources */,
 				3F0B439D1D908DE700D186B5 /* test2s.mp4 in Resources */,
 			);
@@ -383,9 +383,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD498B4D1D763D7100681FA7 /* AppDelegate.m in Sources */,
 				CD498B4B1D763D7100681FA7 /* TabViewController.m in Sources */,
 				CD498B4C1D763D7100681FA7 /* WebViewController.m in Sources */,
-				CD498B4D1D763D7100681FA7 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -428,46 +428,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CD4DEEE31D78C6FF00625986 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -475,40 +435,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CD4DEEE31D78C6FF00625986 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
