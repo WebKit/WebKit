@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -97,11 +97,24 @@ private:
 
     static String familyNameFromPrimitive(const CSSPrimitiveValue&);
 
+    using FontSelectionKey = std::optional<FontSelectionRequest>;
+    struct FontSelectionKeyHash {
+        static unsigned hash(const FontSelectionKey& key) { return computeHash(key); }
+        static bool equal(const FontSelectionKey& a, const FontSelectionKey& b) { return a == b; }
+        static const bool safeToCompareToEmptyOrDeleted = true;
+    };
+    struct FontSelectionKeyHashTraits : SimpleClassHashTraits<FontSelectionKey> {
+        static const bool emptyValueIsZero = false;
+        static FontSelectionKey emptyValue() { return FontSelectionRequest { }; }
+        static void constructDeletedValue(FontSelectionKey& slot) { slot = std::nullopt; }
+        static bool isDeletedValue(const FontSelectionKey& value) { return !value; }
+    };
+    using FontSelectionHashMap = HashMap<FontSelectionKey, RefPtr<CSSSegmentedFontFace>, FontSelectionKeyHash, FontSelectionKeyHashTraits>;
+
     // m_faces should hold all the same fonts as the ones inside inside m_facesLookupTable.
     Vector<Ref<CSSFontFace>> m_faces; // We should investigate moving m_faces to FontFaceSet and making it reference FontFaces. This may clean up the font loading design.
     HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_facesLookupTable;
     HashMap<String, Vector<Ref<CSSFontFace>>, ASCIICaseInsensitiveHash> m_locallyInstalledFacesLookupTable;
-    typedef HashMap<FontSelectionRequestKey, RefPtr<CSSSegmentedFontFace>, FontSelectionRequestKeyHash, WTF::SimpleClassHashTraits<FontSelectionRequestKey>> FontSelectionHashMap;
     HashMap<String, FontSelectionHashMap, ASCIICaseInsensitiveHash> m_cache;
     HashMap<StyleRuleFontFace*, CSSFontFace*> m_constituentCSSConnections;
     size_t m_facesPartitionIndex { 0 }; // All entries in m_faces before this index are CSS-connected.
