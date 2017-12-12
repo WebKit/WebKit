@@ -11,6 +11,12 @@ find_package(PNG 1.6.34 REQUIRED)
 find_package(Sqlite 3.21.0 REQUIRED)
 find_package(ZLIB 1.2.11 REQUIRED)
 
+find_package(WebP 0.6.0)
+
+if (WEBP_FOUND)
+    SET_AND_EXPOSE_TO_BUILD(USE_WEBP ON)
+endif ()
+
 if (ENABLE_XSLT)
     find_package(LibXslt 1.1.32 REQUIRED)
 endif ()
