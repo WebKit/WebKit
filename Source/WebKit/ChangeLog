@@ -1,3 +1,21 @@
+2017-12-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Remove unused services from WebContent Process sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=180670
+
+        Reviewed by Eric Carlson.
+
+        Pare down the set of sandbox exceptions in the iOS WebContent process sandbox to just
+        those services actually in use:
+        1. Remove unused code.
+        2. Instead of defining a 'UIKit-app' function and calling it, just declare the individual sandbox
+        commands inline. This will allow them to be more easily consolidated with other parts of the
+        sandbox in a future step.
+
+        This update should not change behavior.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2017-12-11  Chris Dumez  <cdumez@apple.com>
 
         Merge ServiceWorkerClientIdentifier into ServiceWorkerClientData
