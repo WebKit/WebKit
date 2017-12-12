@@ -128,6 +128,7 @@
     (xpc-service-name "com.apple.ViewBridgeAuxiliary")
     (xpc-service-name "com.apple.accessibility.mediaaccessibilityd")
     (xpc-service-name "com.apple.appkit.xpc.openAndSavePanelService")
+    (xpc-service-name "com.apple.appstore.PluginXPCService") ; <rdar://problem/35940948>
     (xpc-service-name "com.apple.audio.SandboxHelper")
     (xpc-service-name "com.apple.coremedia.videodecoder")
     (xpc-service-name "com.apple.coremedia.videoencoder")

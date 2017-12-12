@@ -1,3 +1,15 @@
+2017-12-12  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r216941): Plugin Process can't access AppStore Plugin Service
+        https://bugs.webkit.org/show_bug.cgi?id=180701
+        <rdar://problem/35940948>
+
+        Reviewed by Daniel Bates.
+
+        The PluginProcess needs access to the AppStore Plugin XPC service.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+
 2017-12-12  Brady Eidson  <beidson@apple.com>
 
         Make ServiceWorkers follow the DEFAULT_EXPERIMENTAL_FEATURES_ENABLED flag on Mac.
