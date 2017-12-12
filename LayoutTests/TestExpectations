@@ -478,7 +478,6 @@ webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ ImageOnlyFa
 webkit.org/b/165062 fast/css-grid-layout/grid-baseline.html [ ImageOnlyFailure ]
 webkit.org/b/165062 fast/css-grid-layout/grid-baseline-margins.html [ ImageOnlyFailure ]
 webkit.org/b/169271 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-sizing-alignment-001.html [ ImageOnlyFailure ]
-webkit.org/b/180283 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-017.html [ ImageOnlyFailure ]
 webkit.org/b/180290 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-gutters-001.html [ ImageOnlyFailure ]
 webkit.org/b/180290 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-gutters-002.html [ ImageOnlyFailure ]
 webkit.org/b/180290 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-gutters-003.html [ ImageOnlyFailure ]

@@ -1,5 +1,18 @@
 2017-12-11  Manuel Rego Casasnovas  <rego@igalia.com>
 
+        [css-grid] Automatic minimum size is not clamped if min track sizing function is auto
+        https://bugs.webkit.org/show_bug.cgi?id=180283
+
+        Reviewed by Darin Adler.
+
+        Update expected result in the following WPT tests, as now everything
+        is passing there.
+
+        * web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-022-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-023-expected.txt:
+
+2017-12-11  Manuel Rego Casasnovas  <rego@igalia.com>
+
         REGRESSION(r221931): Row stretch doesn't work for grid container with min-height
         https://bugs.webkit.org/show_bug.cgi?id=180287
 

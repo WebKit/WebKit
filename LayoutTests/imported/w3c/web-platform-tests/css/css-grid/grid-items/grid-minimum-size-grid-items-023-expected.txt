@@ -9,18 +9,8 @@ PASS .grid 7
 PASS .grid 8 
 PASS .grid 9 
 PASS .grid 10 
-FAIL .grid 11 assert_equals: 
-<div class="grid" style="grid-template-rows: minmax(auto, 25px);">
-  <div class="verticalRL" data-expected-height="25">XXXXXXXXXX</div>
-  <div data-expected-height="25"></div>
-</div>
-height expected 25 but got 100
-FAIL .grid 12 assert_equals: 
-<div class="grid" style="grid-template-rows: minmax(auto, 0px);">
-  <div class="verticalRL" data-expected-height="0">XXXXXXXXXX</div>
-  <div data-expected-height="0"></div>
-</div>
-height expected 0 but got 100
+PASS .grid 11 
+PASS .grid 12 
 PASS .grid 13 
 PASS .grid 14 
 PASS .grid 15 
@@ -34,18 +24,8 @@ PASS .grid 22
 PASS .grid 23 
 PASS .grid 24 
 PASS .grid 25 
-FAIL .grid 26 assert_equals: 
-<div class="grid" style="grid-template-rows: minmax(auto, 25px);">
-  <div class="verticalLR" data-expected-height="25">XXXXXXXXXX</div>
-  <div data-expected-height="25"></div>
-</div>
-height expected 25 but got 100
-FAIL .grid 27 assert_equals: 
-<div class="grid" style="grid-template-rows: minmax(auto, 0px);">
-  <div class="verticalLR" data-expected-height="0">XXXXXXXXXX</div>
-  <div data-expected-height="0"></div>
-</div>
-height expected 0 but got 100
+PASS .grid 26 
+PASS .grid 27 
 PASS .grid 28 
 PASS .grid 29 
 PASS .grid 30 

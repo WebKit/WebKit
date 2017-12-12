@@ -53,6 +53,7 @@ public:
     void setBaseSize(LayoutUnit);
 
     const LayoutUnit& growthLimit() const;
+    bool growthLimitIsInfinite() const { return m_growthLimit == infinity; }
     void setGrowthLimit(LayoutUnit);
 
     bool infiniteGrowthPotential() const { return growthLimitIsInfinite() || m_infinitelyGrowable; }
@@ -72,7 +73,6 @@ public:
     std::optional<LayoutUnit> growthLimitCap() const { return m_growthLimitCap; }
 
 private:
-    bool growthLimitIsInfinite() const { return m_growthLimit == infinity; }
     bool isGrowthLimitBiggerThanBaseSize() const { return growthLimitIsInfinite() || m_growthLimit >= m_baseSize; }
 
     void ensureGrowthLimitIsBiggerThanBaseSize();
