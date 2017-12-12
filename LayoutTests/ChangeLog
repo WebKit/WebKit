@@ -1,3 +1,17 @@
+2017-12-11  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Enqueue and dispatch animation events
+        https://bugs.webkit.org/show_bug.cgi?id=180657
+        <rdar://problem/35970103>
+
+        Reviewed by Chris Dumez.
+
+        Rebase Web Platform Tests with some progressions based on the IDL changes. Progressions due
+        to dispatching events will become apparent when the next patch, where we dispatch actual
+        animation playback events, lands.
+
+        * http/wpt/web-animations/interfaces/Animation/idlharness-expected.txt:
+
 2017-12-12  Youenn Fablet  <youenn@apple.com>
 
         Allow AudioContext to start when getUserMedia is on

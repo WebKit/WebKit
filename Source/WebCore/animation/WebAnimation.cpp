@@ -27,6 +27,7 @@
 #include "WebAnimation.h"
 
 #include "AnimationEffect.h"
+#include "AnimationPlaybackEvent.h"
 #include "AnimationTimeline.h"
 #include "Document.h"
 #include "KeyframeEffect.h"
@@ -36,7 +37,7 @@ namespace WebCore {
 
 Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effect, AnimationTimeline* timeline)
 {
-    auto result = adoptRef(*new WebAnimation());
+    auto result = adoptRef(*new WebAnimation(document));
 
     result->setEffect(effect);
 
@@ -47,8 +48,10 @@ Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effe
     return result;
 }
 
-WebAnimation::WebAnimation()
+WebAnimation::WebAnimation(Document& document)
+    : ActiveDOMObject(&document)
 {
+    suspendIfNeeded();
 }
 
 WebAnimation::~WebAnimation()
@@ -214,6 +217,26 @@ void WebAnimation::setPlaybackRate(double newPlaybackRate)
         setCurrentTime(previousTime);
 }
 
+void WebAnimation::enqueueAnimationPlaybackEvent(const AtomicString& type, std::optional<Seconds> currentTime, std::optional<Seconds> timelineTime)
+{
+    auto event = AnimationPlaybackEvent::create(type, currentTime, timelineTime);
+    event->setTarget(this);
+
+    if (is<DocumentTimeline>(m_timeline)) {
+        // If animation has a document for timing, then append event to its document for timing's pending animation event queue along
+        // with its target, animation. If animation is associated with an active timeline that defines a procedure to convert timeline times
+        // to origin-relative time, let the scheduled event time be the result of applying that procedure to timeline time. Otherwise, the
+        // scheduled event time is an unresolved time value.
+        downcast<DocumentTimeline>(*m_timeline).enqueueAnimationPlaybackEvent(WTFMove(event));
+    } else {
+        // Otherwise, queue a task to dispatch event at animation. The task source for this task is the DOM manipulation task source.
+        callOnMainThread([this, pendingActivity = makePendingActivity(*this), event = WTFMove(event)]() {
+            if (!m_isStopped)
+                this->dispatchEvent(event);
+        });
+    }
+}
+
 Seconds WebAnimation::timeToNextRequiredTick(Seconds timelineTime) const
 {
     if (!m_timeline || !m_startTime || !m_effect || !m_playbackRate)
@@ -245,7 +268,7 @@ void WebAnimation::resolve(RenderStyle& targetStyle)
 
 void WebAnimation::acceleratedRunningStateDidChange()
 {
-    if (m_timeline && m_timeline->isDocumentTimeline())
+    if (is<DocumentTimeline>(m_timeline))
         downcast<DocumentTimeline>(*m_timeline).animationAcceleratedRunningStateDidChange(*this);
 }
 
@@ -258,6 +281,22 @@ void WebAnimation::startOrStopAccelerated()
 String WebAnimation::description()
 {
     return "Animation";
+}
+
+const char* WebAnimation::activeDOMObjectName() const
+{
+    return "Animation";
+}
+
+bool WebAnimation::canSuspendForDocumentSuspension() const
+{
+    return !hasPendingActivity();
+}
+
+void WebAnimation::stop()
+{
+    m_isStopped = true;
+    removeAllEventListeners();
 }
 
 } // namespace WebCore

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "ActiveDOMObject.h"
+#include "EventTarget.h"
 #include "ExceptionOr.h"
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
@@ -36,11 +38,12 @@
 namespace WebCore {
 
 class AnimationEffect;
+class AnimationPlaybackEvent;
 class AnimationTimeline;
 class Document;
 class RenderStyle;
 
-class WebAnimation final : public RefCounted<WebAnimation> {
+class WebAnimation final : public RefCounted<WebAnimation>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
     static Ref<WebAnimation> create(Document&, AnimationEffect*, AnimationTimeline*);
     ~WebAnimation();
@@ -70,13 +73,30 @@ public:
 
     String description();
 
-private:
-    WebAnimation();
+    using RefCounted::ref;
+    using RefCounted::deref;
 
+private:
+    explicit WebAnimation(Document&);
+
+    void enqueueAnimationPlaybackEvent(const AtomicString&, std::optional<Seconds>, std::optional<Seconds>);
+    
     RefPtr<AnimationEffect> m_effect;
     RefPtr<AnimationTimeline> m_timeline;
     std::optional<Seconds> m_startTime;
     double m_playbackRate { 1 };
+    bool m_isStopped { false };
+
+    // ActiveDOMObject.
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
+    void stop() final;
+
+    // EventTarget
+    EventTargetInterface eventTargetInterface() const final { return WebAnimationEventTargetInterfaceType; }
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
+    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 };
 
 } // namespace WebCore
