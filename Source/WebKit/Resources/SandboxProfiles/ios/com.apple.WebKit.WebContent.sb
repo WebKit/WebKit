@@ -318,7 +318,7 @@
 (allow-create-directory
     (home-literal "/Library/Caches/com.apple.DictionaryServices"))
 
-(allow-network-common))
+(allow-network-common)
 
 ; <rdar://problem/8548856> Sub-TLF: Sandbox change for apps for read-only access to the dictionary directory/data
 (allow file-read*

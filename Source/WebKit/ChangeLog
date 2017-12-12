@@ -1,3 +1,11 @@
+2017-12-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after r225763.
+
+        Remove dangling close-parentheses character.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2017-12-12  Zach Li  <zachli@apple.com>
 
         [WK2] Expose image via WKBundleHitTestResult API.
