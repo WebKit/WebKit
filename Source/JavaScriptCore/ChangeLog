@@ -1,3 +1,19 @@
+2017-12-11  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r225683): Chakra test failure in es6/regex-unicode.js for 32bit builds
+        https://bugs.webkit.org/show_bug.cgi?id=180685
+
+        Reviewed by Saam Barati.
+
+        The characterClass->m_anyCharacter check at the top of checkCharacterClass() caused
+        the character class check to return true without reading the character.  Given that
+        the character could be a surrogate pair, we need to read the character even if we
+        don't have the check it.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::testCharacterClass):
+        (JSC::Yarr::Interpreter::checkCharacterClass):
+
 2017-12-11  Saam Barati  <sbarati@apple.com>
 
         We need to disableCaching() in ErrorInstance when we materialize properties

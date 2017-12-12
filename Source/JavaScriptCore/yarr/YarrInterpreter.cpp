@@ -352,6 +352,9 @@ public:
             return false;
         };
 
+        if (characterClass->m_anyCharacter)
+            return true;
+
         const size_t thresholdForBinarySearch = 6;
 
         if (!isASCII(ch)) {
@@ -409,9 +412,6 @@ public:
 
     bool checkCharacterClass(CharacterClass* characterClass, bool invert, unsigned negativeInputOffset)
     {
-        if (characterClass->m_anyCharacter)
-            return !invert;
-
         bool match = testCharacterClass(characterClass, input.readChecked(negativeInputOffset));
         return invert ? !match : match;
     }
