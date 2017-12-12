@@ -1,7 +1,7 @@
 
 FAIL Animation can be constructed with null effect and null timeline assert_equals: Animation timeline should be null expected null but got object "[object DocumentTimeline]"
-FAIL Animation can be constructed with null effect and non-null timeline assert_equals: Animation.playState should be initially 'idle' expected (string) "idle" but got (undefined) undefined
-FAIL Animation can be constructed with null effect and no timeline parameter assert_equals: Animation.playState should be initially 'idle' expected (string) "idle" but got (undefined) undefined
+PASS Animation can be constructed with null effect and non-null timeline 
+PASS Animation can be constructed with null effect and no timeline parameter 
 FAIL Animation can be constructed with non-null effect and null timeline Can't find variable: KeyframeEffectReadOnly
 FAIL Animation can be constructed with non-null effect and non-null timeline Can't find variable: KeyframeEffectReadOnly
 FAIL Animation can be constructed with non-null effect and no timeline parameter Can't find variable: KeyframeEffectReadOnly

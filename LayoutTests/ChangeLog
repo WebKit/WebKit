@@ -1,3 +1,17 @@
+2017-12-12  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement the playState property on Animation
+        https://bugs.webkit.org/show_bug.cgi?id=180711
+        <rdar://problem/36000982>
+
+        Reviewed by Dean Jackson.
+
+        Rebase some WPT expectations with progressions due to exposing the "playState" and "pending" properties.
+
+        * http/wpt/web-animations/interfaces/Animation/constructor-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/idlharness-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/set-the-timeline-of-an-animation-expected.txt:
+
 2017-12-12  Youenn Fablet  <youenn@apple.com>
 
         Navigation requests should use navigate fetch mode

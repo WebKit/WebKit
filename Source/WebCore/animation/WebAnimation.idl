@@ -23,6 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+enum AnimationPlayState {
+    "idle",
+    "pending",
+    "running",
+    "paused",
+    "finished"
+};
+
 [
     ActiveDOMObject,
     EnabledAtRuntime=WebAnimations,
@@ -35,4 +43,6 @@
     [ImplementedAs=bindingsStartTime] attribute double? startTime;
     [MayThrowException, ImplementedAs=bindingsCurrentTime] attribute double? currentTime;
     attribute double playbackRate;
+    readonly attribute AnimationPlayState playState;
+    readonly attribute boolean pending;
 };

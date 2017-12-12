@@ -217,6 +217,39 @@ void WebAnimation::setPlaybackRate(double newPlaybackRate)
         setCurrentTime(previousTime);
 }
 
+auto WebAnimation::playState() const -> PlayState
+{
+    // Section 3.5.19. Play states
+
+    // Animation has a pending play task or a pending pause task → pending
+    if (pending())
+        return PlayState::Pending;
+
+    // The current time of animation is unresolved → idle
+    if (!currentTime())
+        return PlayState::Idle;
+
+    // The start time of animation is unresolved → paused
+    if (!startTime())
+        return PlayState::Paused;
+
+    // For animation, animation playback rate > 0 and current time ≥ target effect end; or
+    // animation playback rate < 0 and current time ≤ 0 → finished
+    if ((m_playbackRate > 0 && currentTime().value() >= effectEndTime()) || (m_playbackRate < 0 && currentTime().value() <= 0_s))
+        return PlayState::Finished;
+
+    // Otherwise → running
+    return PlayState::Running;
+}
+
+Seconds WebAnimation::effectEndTime() const
+{
+    // The target effect end of an animation is equal to the end time of the animation's target effect.
+    // If the animation has no target effect, the target effect end is zero.
+    // FIXME: Use the effect's computed end time once we support it (webkit.org/b/179170).
+    return m_effect ? m_effect->timing()->duration() : 0_s;
+}
+
 void WebAnimation::enqueueAnimationPlaybackEvent(const AtomicString& type, std::optional<Seconds> currentTime, std::optional<Seconds> timelineTime)
 {
     auto event = AnimationPlaybackEvent::create(type, currentTime, timelineTime);

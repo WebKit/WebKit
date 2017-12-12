@@ -66,6 +66,12 @@ public:
     double playbackRate() const { return m_playbackRate; }
     void setPlaybackRate(double);
 
+    enum class PlayState { Idle, Pending, Running, Paused, Finished };
+    PlayState playState() const;
+
+    // FIXME: return a live value once we support pending pause and play tasks.
+    bool pending() const { return false; }
+
     Seconds timeToNextRequiredTick(Seconds) const;
     void resolve(RenderStyle&);
     void acceleratedRunningStateDidChange();
@@ -80,6 +86,7 @@ private:
     explicit WebAnimation(Document&);
 
     void enqueueAnimationPlaybackEvent(const AtomicString&, std::optional<Seconds>, std::optional<Seconds>);
+    Seconds effectEndTime() const;
     
     RefPtr<AnimationEffect> m_effect;
     RefPtr<AnimationTimeline> m_timeline;
