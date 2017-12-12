@@ -71,4 +71,5 @@ PASS ReadableStreamBYOBReader can be constructed directly
 PASS ReadableStreamBYOBReader constructor requires a ReadableStream argument 
 PASS ReadableStreamBYOBReader constructor requires an unlocked ReadableStream 
 PASS ReadableStreamBYOBReader constructor requires a ReadableStream with type "bytes" 
+PASS ReadableStream constructor should not accept a strategy with a size defined if type is "bytes" 
 

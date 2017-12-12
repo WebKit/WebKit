@@ -57,6 +57,8 @@ function initializeReadableStream(underlyingSource, strategy)
 
         if (strategy.highWaterMark === @undefined)
             strategy.highWaterMark = 0;
+        if (strategy.size !== @undefined)
+            @throwRangeError("Strategy for a ReadableByteStreamController cannot have a size");
 
         let readableByteStreamControllerConstructor = @ReadableByteStreamController;
         this.@readableStreamController = new @ReadableByteStreamController(this, underlyingSource, strategy.highWaterMark);

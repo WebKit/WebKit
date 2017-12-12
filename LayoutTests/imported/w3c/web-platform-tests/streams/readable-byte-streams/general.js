@@ -1943,4 +1943,30 @@ test(() => {
   assert_throws(new TypeError(), () => new ReadableStreamBYOBReader(stream), 'constructor must throw');
 }, 'ReadableStreamBYOBReader constructor requires a ReadableStream with type "bytes"');
 
+test(() => {
+  assert_throws(new RangeError(), () => new ReadableStream({ type: 'bytes' }, {
+    size() {
+      return 1;
+    }
+  }), 'constructor should throw for size function');
+
+  assert_throws(new RangeError(), () => new ReadableStream({ type: 'bytes' }, { size: null }),
+                'constructor should throw for size defined');
+
+  assert_throws(new RangeError(),
+                () => new ReadableStream({ type: 'bytes' }, new CountQueuingStrategy({ highWaterMark: 1 })),
+                'constructor should throw when strategy is CountQueuingStrategy');
+
+  assert_throws(new RangeError(),
+                () => new ReadableStream({ type: 'bytes' }, new ByteLengthQueuingStrategy({ highWaterMark: 512 })),
+                'constructor should throw when strategy is ByteLengthQueuingStrategy');
+
+  class HasSizeMethod {
+    size() {}
+ }
+
+  assert_throws(new RangeError(), () => new ReadableStream({ type: 'bytes' }, new HasSizeMethod()),
+                'constructor should throw when size on the prototype chain');
+}, 'ReadableStream constructor should not accept a strategy with a size defined if type is "bytes"');
+
 done();

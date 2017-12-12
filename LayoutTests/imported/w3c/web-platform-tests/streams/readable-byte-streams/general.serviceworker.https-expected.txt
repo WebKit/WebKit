@@ -72,4 +72,9 @@ FAIL ReadableStreamBYOBReader can be constructed directly ReadableByteStreamCont
 FAIL ReadableStreamBYOBReader constructor requires a ReadableStream argument ReadableByteStreamController is not implemented
 FAIL ReadableStreamBYOBReader constructor requires an unlocked ReadableStream ReadableByteStreamController is not implemented
 FAIL ReadableStreamBYOBReader constructor requires a ReadableStream with type "bytes" ReadableByteStreamController is not implemented
+FAIL ReadableStream constructor should not accept a strategy with a size defined if type is "bytes" assert_throws: constructor should throw for size function function "() => new ReadableStream({ type: 'bytes' }, {
+    size() {
+      return 1;
+    }
+  })" threw object "TypeError: ReadableByteStreamController is not implemented" ("TypeError") expected object "RangeError" ("RangeError")
 
