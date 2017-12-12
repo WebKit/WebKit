@@ -204,26 +204,22 @@ Bug(WPE) imported/mozilla [ Skip ]
 Bug(WPE) imported/w3c/css [ Skip ]
 
 
-Bug(WPE) imported/w3c/web-platform-tests/2dcontext [ Skip ]
-Bug(WPE) imported/w3c/web-platform-tests/background-fetch [ Skip ]
-Bug(WPE) imported/w3c/web-platform-tests/beacon [ Skip ]
-Bug(WPE) imported/w3c/web-platform-tests/cors [ Skip ]
-Bug(WPE) imported/w3c/web-platform-tests/css-timing-1 [ Skip ]
-Bug(WPE) imported/w3c/web-platform-tests/custom-elements [ Skip ]
-Bug(WPE) imported/w3c/web-platform-tests/feature-policy [ Skip ]
 Bug(WPE) imported/w3c/web-platform-tests/fetch [ Skip ]
 Bug(WPE) imported/w3c/web-platform-tests/mediacapture-fromelement [ Skip ]
 Bug(WPE) imported/w3c/web-platform-tests/mediacapture-streams [ Skip ]
 Bug(WPE) imported/w3c/web-platform-tests/media-source [ Skip ]
 Bug(WPE) imported/w3c/web-platform-tests/notifications [ Skip ]
-Bug(WPE) imported/w3c/web-platform-tests/payment-request [ Skip ]
-Bug(WPE) imported/w3c/web-platform-tests/resources [ Skip ]
-Bug(WPE) imported/w3c/web-platform-tests/viewport [ Skip ]
 Bug(WPE) imported/w3c/web-platform-tests/webrtc [ Skip ]
 
 
 imported/w3c/web-platform-tests/dom [ Pass ]
 imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg [ Timeout ]
+
+
+# WPT: cors
+# =========
+
+webkit.org/b/180693 imported/w3c/web-platform-tests/cors/preflight-failure.htm [ Skip ]
 
 
 # WPT: css
