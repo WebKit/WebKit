@@ -47,7 +47,6 @@ class FloatRect;
 class FloatRoundedRect;
 class FloatSize;
 class GraphicsContext;
-class Image;
 class Path;
 class PlatformContextCairo;
 
@@ -123,7 +122,7 @@ void clipOut(PlatformContextCairo&, const FloatRect&);
 void clipOut(PlatformContextCairo&, const Path&);
 void clipPath(PlatformContextCairo&, const Path&, WindRule);
 
-void clipToImageBuffer(PlatformContextCairo&, Image&, const FloatRect&);
+void clipToImageBuffer(PlatformContextCairo&, cairo_surface_t*, const FloatRect&);
 
 } // namespace Cairo
 } // namespace WebCore

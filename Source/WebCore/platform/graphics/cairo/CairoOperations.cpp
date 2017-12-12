@@ -1004,11 +1004,9 @@ void clipPath(PlatformContextCairo& platformContext, const Path& path, WindRule 
         graphicsContextPrivate->clip(path);
 }
 
-void clipToImageBuffer(PlatformContextCairo& platformContext, Image& image, const FloatRect& destRect)
+void clipToImageBuffer(PlatformContextCairo& platformContext, cairo_surface_t* image, const FloatRect& destRect)
 {
-    RefPtr<cairo_surface_t> surface = image.nativeImageForCurrentFrame();
-    if (surface)
-        platformContext.pushImageMask(surface.get(), destRect);
+    platformContext.pushImageMask(image, destRect);
 }
 
 } // namespace Cairo
