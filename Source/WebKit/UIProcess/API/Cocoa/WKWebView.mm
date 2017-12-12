@@ -517,11 +517,16 @@ static void validate(WKWebViewConfiguration *configuration)
     if (NSString *overrideContentSecurityPolicy = configuration._overrideContentSecurityPolicy)
         pageConfiguration->setOverrideContentSecurityPolicy(overrideContentSecurityPolicy);
 
-    RefPtr<WebKit::WebPageGroup> pageGroup;
-    NSString *groupIdentifier = configuration._groupIdentifier;
-    if (groupIdentifier.length) {
-        pageGroup = WebKit::WebPageGroup::create(configuration._groupIdentifier);
-        pageConfiguration->setPageGroup(pageGroup.get());
+#if PLATFORM(MAC)
+    if (auto pageGroup = WebKit::toImpl([configuration _pageGroup])) {
+        pageConfiguration->setPageGroup(pageGroup);
+        pageConfiguration->setUserContentController(&pageGroup->userContentController());
+    } else
+#endif
+    {
+        NSString *groupIdentifier = configuration._groupIdentifier;
+        if (groupIdentifier.length)
+            pageConfiguration->setPageGroup(WebKit::WebPageGroup::create(configuration._groupIdentifier).ptr());
     }
 
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::suppressesIncrementalRenderingKey(), WebKit::WebPreferencesStore::Value(!![_configuration suppressesIncrementalRendering]));

@@ -32,6 +32,7 @@
 #import "VersionChecks.h"
 #import "WKPreferences.h"
 #import "WKProcessPool.h"
+#import "WKRetainPtr.h"
 #import "WKUserContentController.h"
 #import "WKWebView.h"
 #import "WKWebViewContentProviderRegistry.h"
@@ -136,6 +137,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     BOOL _mainContentUserGestureOverrideEnabled;
 
 #if PLATFORM(MAC)
+    WKRetainPtr<WKPageGroupRef> _pageGroup;
     double _cpuLimit;
     BOOL _showsURLsInToolTips;
     BOOL _serviceControlsEnabled;
@@ -347,6 +349,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_serviceControlsEnabled = self->_serviceControlsEnabled;
     configuration->_imageControlsEnabled = self->_imageControlsEnabled;
     configuration->_requiresUserActionForEditingControlsManager = self->_requiresUserActionForEditingControlsManager;
+    configuration->_pageGroup = self._pageGroup;
 #endif
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS)
     configuration->_dataDetectorTypes = self->_dataDetectorTypes;
@@ -808,6 +811,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setRequiresUserActionForEditingControlsManager:(BOOL)requiresUserAction
 {
     _requiresUserActionForEditingControlsManager = requiresUserAction;
+}
+
+- (WKPageGroupRef)_pageGroup
+{
+    return _pageGroup.get();
+}
+
+- (void)_setPageGroup:(WKPageGroupRef)pageGroup
+{
+    _pageGroup = pageGroup;
 }
 
 - (void)_setCPULimit:(double)cpuLimit

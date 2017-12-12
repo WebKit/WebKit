@@ -1,3 +1,27 @@
+2017-12-11  Alex Christensen  <achristensen@webkit.org>
+
+        Add a WKPageGroupRef setter in WKWebViewConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=180674
+        <rdar://problem/35920392>
+
+        Reviewed by Brady Eidson.
+
+        There is a Mac app trying to transition to WKWebView, and it uses WKPageGroupRef extensively.
+        To help it transition, we are temporarily giving it an ObjC way to use this organization for
+        its UserContentControllers to be united per PageGroup before it transitions away from SPIs like
+        WKBundleAddUserScript.  Make it Mac-only to indicate that this should be transitioned away from,
+        rather than adopted on iOS.
+        
+        No change in behavior for apps not using the new WKWebViewConfiguration._pageGroup SPI.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _pageGroup]):
+        (-[WKWebViewConfiguration _setPageGroup:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+
 2017-12-11  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Remove unused services from WebContent Process sandbox
