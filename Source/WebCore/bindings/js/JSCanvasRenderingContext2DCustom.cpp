@@ -20,31 +20,16 @@
 #include "config.h"
 #include "JSCanvasRenderingContext2D.h"
 
-#include "CanvasGradient.h"
-#include "CanvasPattern.h"
-#include "CanvasRenderingContext2D.h"
-#include "CanvasStyle.h"
-#include "HTMLCanvasElement.h"
-#include "HTMLImageElement.h"
-#include "ImageData.h"
-#include "JSCanvasGradient.h"
-#include "JSCanvasPattern.h"
-#include "JSHTMLCanvasElement.h"
-#include "JSHTMLImageElement.h"
-#include "JSImageData.h"
-
-
 namespace WebCore {
-using namespace JSC;
 
-bool JSCanvasRenderingContext2DOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+bool JSCanvasRenderingContext2DOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::SlotVisitor& visitor)
 {
     JSCanvasRenderingContext2D* jsCanvasRenderingContext = jsCast<JSCanvasRenderingContext2D*>(handle.slot()->asCell());
     void* root = WebCore::root(jsCanvasRenderingContext->wrapped().canvas());
     return visitor.containsOpaqueRoot(root);
 }
 
-void JSCanvasRenderingContext2D::visitAdditionalChildren(SlotVisitor& visitor)
+void JSCanvasRenderingContext2D::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
     visitor.addOpaqueRoot(root(wrapped().canvas()));
 }

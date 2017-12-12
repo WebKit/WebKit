@@ -98,6 +98,7 @@ namespace WebCore {
     macro(NavigatorMediaDevices) \
     macro(NavigatorUserMedia) \
     macro(OffscreenCanvas) \
+    macro(OffscreenCanvasRenderingContext2D) \
     macro(PasswordCredential) \
     macro(PaymentAddress) \
     macro(PaymentRequest) \

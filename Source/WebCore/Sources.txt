@@ -408,6 +408,7 @@ bindings/js/JSNavigatorCustom.cpp
 bindings/js/JSNodeCustom.cpp
 bindings/js/JSNodeIteratorCustom.cpp
 bindings/js/JSNodeListCustom.cpp
+bindings/js/JSOffscreenCanvasRenderingContext2DCustom.cpp
 bindings/js/JSPerformanceEntryCustom.cpp
 bindings/js/JSPluginElementFunctions.cpp
 bindings/js/JSPopStateEventCustom.cpp
@@ -1058,8 +1059,10 @@ html/canvas/CanvasPath.cpp
 html/canvas/CanvasPattern.cpp
 html/canvas/CanvasRenderingContext.cpp
 html/canvas/CanvasRenderingContext2D.cpp
+html/canvas/CanvasRenderingContext2DBase.cpp
 html/canvas/CanvasStyle.cpp
 html/canvas/ImageBitmapRenderingContext.cpp
+html/canvas/OffscreenCanvasRenderingContext2D.cpp
 html/canvas/Path2D.cpp
 html/canvas/PlaceholderRenderingContext.cpp
 html/canvas/WebGPUBuffer.cpp
@@ -2666,6 +2669,7 @@ JSNotificationPermissionCallback.cpp
 JSOfflineAudioCompletionEvent.cpp
 JSOfflineAudioContext.cpp
 JSOffscreenCanvas.cpp
+JSOffscreenCanvasRenderingContext2D.cpp
 JSOscillatorNode.cpp
 JSOverconstrainedError.cpp
 JSOverconstrainedErrorEvent.cpp

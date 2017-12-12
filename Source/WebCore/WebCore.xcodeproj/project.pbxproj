@@ -825,6 +825,9 @@
 		3135910B1E7DDC7300F30630 /* RTCSignalingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 313591051E7DDC6000F30630 /* RTCSignalingState.h */; };
 		3140379B124BEA7F00AF40E4 /* WebCoreMotionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 31403797124BEA7F00AF40E4 /* WebCoreMotionManager.h */; };
 		3140379D124BEA7F00AF40E4 /* DeviceOrientationClientIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 31403799124BEA7F00AF40E4 /* DeviceOrientationClientIOS.h */; };
+		3140C5201FDF151A00D2A873 /* OffscreenCanvasRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 3140C51E1FDF151A00D2A873 /* OffscreenCanvasRenderingContext2D.h */; };
+		3140C5241FDF318700D2A873 /* CanvasRenderingContext2DBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 3140C5221FDF318600D2A873 /* CanvasRenderingContext2DBase.h */; };
+		3140C5271FDF558200D2A873 /* JSOffscreenCanvasRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 3140C5251FDF557F00D2A873 /* JSOffscreenCanvasRenderingContext2D.h */; };
 		3146FE6E184420A8001A937C /* OESTextureFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 3146FE6618442087001A937C /* OESTextureFloatLinear.h */; };
 		3146FE6F184420AA001A937C /* OESTextureFloatLinear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3146FE6518442087001A937C /* OESTextureFloatLinear.cpp */; };
 		3146FE7518442370001A937C /* JSOESTextureFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 3146FE7118442367001A937C /* JSOESTextureFloatLinear.h */; };
@@ -6505,6 +6508,14 @@
 		31403798124BEA7F00AF40E4 /* WebCoreMotionManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreMotionManager.mm; sourceTree = "<group>"; };
 		31403799124BEA7F00AF40E4 /* DeviceOrientationClientIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientationClientIOS.h; sourceTree = "<group>"; };
 		3140379A124BEA7F00AF40E4 /* DeviceOrientationClientIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DeviceOrientationClientIOS.mm; sourceTree = "<group>"; };
+		3140C51B1FDF13D200D2A873 /* OffscreenCanvasRenderingContext2D.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = OffscreenCanvasRenderingContext2D.idl; sourceTree = "<group>"; };
+		3140C51D1FDF151A00D2A873 /* OffscreenCanvasRenderingContext2D.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OffscreenCanvasRenderingContext2D.cpp; sourceTree = "<group>"; };
+		3140C51E1FDF151A00D2A873 /* OffscreenCanvasRenderingContext2D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OffscreenCanvasRenderingContext2D.h; sourceTree = "<group>"; };
+		3140C5211FDF318400D2A873 /* CanvasRenderingContext2DBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasRenderingContext2DBase.cpp; sourceTree = "<group>"; };
+		3140C5221FDF318600D2A873 /* CanvasRenderingContext2DBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasRenderingContext2DBase.h; sourceTree = "<group>"; };
+		3140C5251FDF557F00D2A873 /* JSOffscreenCanvasRenderingContext2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOffscreenCanvasRenderingContext2D.h; sourceTree = "<group>"; };
+		3140C5261FDF558100D2A873 /* JSOffscreenCanvasRenderingContext2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOffscreenCanvasRenderingContext2D.cpp; sourceTree = "<group>"; };
+		3140C52B1FE06B4900D2A873 /* JSOffscreenCanvasRenderingContext2DCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSOffscreenCanvasRenderingContext2DCustom.cpp; sourceTree = "<group>"; };
 		3146FE6518442087001A937C /* OESTextureFloatLinear.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OESTextureFloatLinear.cpp; sourceTree = "<group>"; };
 		3146FE6618442087001A937C /* OESTextureFloatLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OESTextureFloatLinear.h; sourceTree = "<group>"; };
 		3146FE6718442087001A937C /* OESTextureFloatLinear.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OESTextureFloatLinear.idl; sourceTree = "<group>"; };
@@ -16602,6 +16613,8 @@
 				49484FBC102CF23C00187DD3 /* CanvasRenderingContext2D.cpp */,
 				49484FBD102CF23C00187DD3 /* CanvasRenderingContext2D.h */,
 				49484FBE102CF23C00187DD3 /* CanvasRenderingContext2D.idl */,
+				3140C5211FDF318400D2A873 /* CanvasRenderingContext2DBase.cpp */,
+				3140C5221FDF318600D2A873 /* CanvasRenderingContext2DBase.h */,
 				7C193BAD1F5E0EB30088F3E6 /* CanvasShadowStyles.idl */,
 				7C193BB21F5E0EB60088F3E6 /* CanvasState.idl */,
 				49484FBF102CF23C00187DD3 /* CanvasStyle.cpp */,
@@ -16658,6 +16671,9 @@
 				77A17A6E12F28182004E02F6 /* OESVertexArrayObject.cpp */,
 				77A17A6F12F28182004E02F6 /* OESVertexArrayObject.h */,
 				77A17A7012F28182004E02F6 /* OESVertexArrayObject.idl */,
+				3140C51D1FDF151A00D2A873 /* OffscreenCanvasRenderingContext2D.cpp */,
+				3140C51E1FDF151A00D2A873 /* OffscreenCanvasRenderingContext2D.h */,
+				3140C51B1FDF13D200D2A873 /* OffscreenCanvasRenderingContext2D.idl */,
 				7C193BA71F5E0EAF0088F3E6 /* Path2D.cpp */,
 				7C193BAB1F5E0EB10088F3E6 /* Path2D.h */,
 				7C193BB41F5E0EB70088F3E6 /* Path2D.idl */,
@@ -19016,6 +19032,7 @@
 				1A750DD30A90E729000FF215 /* JSNodeIteratorCustom.cpp */,
 				BCD9C2610C17AA67005C90A2 /* JSNodeListCustom.cpp */,
 				AD20B18C18E9D216005A8083 /* JSNodeListCustom.h */,
+				3140C52B1FE06B4900D2A873 /* JSOffscreenCanvasRenderingContext2DCustom.cpp */,
 				CB38FD551CD21D5B00592A3F /* JSPerformanceEntryCustom.cpp */,
 				83F572941FA1066F003837BE /* JSServiceWorkerClientCustom.cpp */,
 				460D19441FCE21DD00C3DB85 /* JSServiceWorkerGlobalScopeCustom.cpp */,
@@ -21052,6 +21069,8 @@
 				77A17AA312F28B2A004E02F6 /* JSOESVertexArrayObject.h */,
 				314877E51FAAB02400C05759 /* JSOffscreenCanvas.cpp */,
 				314877E41FAAB02200C05759 /* JSOffscreenCanvas.h */,
+				3140C5261FDF558100D2A873 /* JSOffscreenCanvasRenderingContext2D.cpp */,
+				3140C5251FDF557F00D2A873 /* JSOffscreenCanvasRenderingContext2D.h */,
 				7C193BFD1F5E10D60088F3E6 /* JSPath2D.cpp */,
 				7C193BFE1F5E10D70088F3E6 /* JSPath2D.h */,
 				B658FF9F1522EF3A00DD5595 /* JSRadioNodeList.cpp */,
@@ -26316,6 +26335,7 @@
 				49484FC5102CF23C00187DD3 /* CanvasPattern.h in Headers */,
 				49C7B9DD1042D32F0009D447 /* CanvasRenderingContext.h in Headers */,
 				49484FCB102CF23C00187DD3 /* CanvasRenderingContext2D.h in Headers */,
+				3140C5241FDF318700D2A873 /* CanvasRenderingContext2DBase.h in Headers */,
 				49484FCE102CF23C00187DD3 /* CanvasStyle.h in Headers */,
 				7C193BBF1F5E0EED0088F3E6 /* CanvasTextAlign.h in Headers */,
 				7C193BC01F5E0EED0088F3E6 /* CanvasTextBaseline.h in Headers */,
@@ -27799,6 +27819,7 @@
 				FDF6BAF9134A4C9800822920 /* JSOfflineAudioCompletionEvent.h in Headers */,
 				FDA9326716703BA9008982DC /* JSOfflineAudioContext.h in Headers */,
 				314877E61FAAB02500C05759 /* JSOffscreenCanvas.h in Headers */,
+				3140C5271FDF558200D2A873 /* JSOffscreenCanvasRenderingContext2D.h in Headers */,
 				57E233651DC7DB1F00F28D01 /* JsonWebKey.h in Headers */,
 				FDEA6243152102E200479DF0 /* JSOscillatorNode.h in Headers */,
 				0704A40C1D6DFC690086DCDB /* JSOverconstrainedError.h in Headers */,
@@ -28490,6 +28511,7 @@
 				FDA9325E16703B2A008982DC /* OfflineAudioContext.h in Headers */,
 				FDA3E95C134A49EF008D4B5A /* OfflineAudioDestinationNode.h in Headers */,
 				314877E31FAA8FE900C05759 /* OffscreenCanvas.h in Headers */,
+				3140C5201FDF151A00D2A873 /* OffscreenCanvasRenderingContext2D.h in Headers */,
 				B2D3DA650D006CD600EF6F3A /* OpenTypeCG.h in Headers */,
 				B2D3DA650D006CD600EF6F27 /* OpenTypeMathData.h in Headers */,
 				B2D3EA650D006CD600EF6F28 /* OpenTypeTypes.h in Headers */,

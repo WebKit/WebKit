@@ -659,6 +659,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/canvas/OESTextureHalfFloat.idl \
     $(WebCore)/html/canvas/OESTextureHalfFloatLinear.idl \
     $(WebCore)/html/canvas/OESVertexArrayObject.idl \
+    $(WebCore)/html/canvas/OffscreenCanvasRenderingContext2D.idl \
     $(WebCore)/html/canvas/Path2D.idl \
     $(WebCore)/html/canvas/WebGL2RenderingContext.idl \
     $(WebCore)/html/canvas/WebGLActiveInfo.idl \

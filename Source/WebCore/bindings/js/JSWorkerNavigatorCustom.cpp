@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-void JSWorkerNavigator::visitAdditionalChildren(SlotVisitor& visitor)
+void JSWorkerNavigator::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
 #if ENABLE(SERVICE_WORKER)
     visitor.addOpaqueRoot(&wrapped().serviceWorker());

@@ -729,6 +729,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/CanvasUserInterface.idl
     html/canvas/ImageBitmapRenderingContext.idl
     html/canvas/ImageSmoothingQuality.idl
+    html/canvas/OffscreenCanvasRenderingContext2D.idl
     html/canvas/Path2D.idl
     html/canvas/WebGPUBuffer.idl
     html/canvas/WebGPUCommandBuffer.idl
