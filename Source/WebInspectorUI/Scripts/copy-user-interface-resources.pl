@@ -51,7 +51,7 @@ sub ditto($$)
         opendir(my $dh, $source) or die "Can't open $source: $!";
         while (readdir $dh) {
             if ($_ ne '..' and $_ ne '.') {
-                system('cp', '-R', "${source}/$_", $destination) or die "Failed to copy ${source}/$_ to $destination: $!";
+                system('cp', '-R', "${source}/$_", $destination) or die "Failed to copy ${source}/$_ to $destination";
             }
         }
         closedir $dh;

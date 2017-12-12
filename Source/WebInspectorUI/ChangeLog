@@ -1,3 +1,12 @@
+2017-12-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, don't print empty error message when copying resource fails
+
+        Unsurprisingly, when system() fails, there is not any useful error to be printed, so don't.
+
+        * Scripts/copy-user-interface-resources.pl:
+        (ditto):
+
 2017-12-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         ServiceWorker Inspector: Various issues inspecting service worker on mobile.twitter.com
