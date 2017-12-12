@@ -984,7 +984,7 @@ void AudioContext::nodeWillBeginPlayback()
 bool AudioContext::willBeginPlayback()
 {
     if (userGestureRequiredForAudioStart()) {
-        if (!processingUserGestureForMedia())
+        if (!processingUserGestureForMedia() && !document()->isCapturing())
             return false;
         removeBehaviorRestriction(AudioContext::RequireUserGestureForAudioStartRestriction);
     }
