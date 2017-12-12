@@ -43,6 +43,7 @@
 #include "MIMETypeRegistry.h"
 #include "NoEventDispatchAssertion.h"
 #include "PendingScript.h"
+#include "RuntimeApplicationChecks.h"
 #include "SVGScriptElement.h"
 #include "ScriptController.h"
 #include "ScriptRunner.h"
@@ -361,7 +362,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
 
 void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
 {
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed() || !isInWebProcess());
     ASSERT(m_alreadyStarted);
 
     if (sourceCode.isEmpty())

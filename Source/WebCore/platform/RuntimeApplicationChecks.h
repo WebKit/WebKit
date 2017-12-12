@@ -32,7 +32,15 @@ namespace WebCore {
 WEBCORE_EXPORT void setPresentingApplicationPID(int);
 WEBCORE_EXPORT int presentingApplicationPID();
 
+#if PLATFORM(WIN)
+inline bool isInWebProcess() { return false; }
+#elif !PLATFORM(COCOA)
+inline bool isInWebProcess() { return true; }
+#endif
+
 #if PLATFORM(COCOA)
+
+bool isInWebProcess();
 
 WEBCORE_EXPORT void setApplicationBundleIdentifier(const String&);
 String applicationBundleIdentifier();

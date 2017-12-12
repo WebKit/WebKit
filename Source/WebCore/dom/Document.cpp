@@ -152,6 +152,7 @@
 #include "RenderWidget.h"
 #include "RequestAnimationFrameCallback.h"
 #include "ResourceLoadObserver.h"
+#include "RuntimeApplicationChecks.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElement.h"
@@ -1924,15 +1925,9 @@ bool Document::needsStyleRecalc() const
 
 inline bool static isSafeToUpdateStyleOrLayout(FrameView* frameView)
 {
-#if USE(WEB_THREAD)
-    // FIXME: Remove this code: <rdar://problem/35522719>
-    bool usingWebThread = WebThreadIsEnabled();
-#else
-    bool usingWebThread = false;
-#endif
     bool isSafeToExecuteScript = NoEventDispatchAssertion::InMainThread::isEventAllowed();
     bool isInFrameFlattening = frameView && frameView->isInChildFrameWithFrameFlattening();
-    return isSafeToExecuteScript || isInFrameFlattening || usingWebThread;
+    return isSafeToExecuteScript || isInFrameFlattening || !isInWebProcess();
 }
 
 bool Document::updateStyleIfNeeded()
