@@ -1112,7 +1112,7 @@ IsSecureContextAttributeEnabled:
 
 ServiceWorkersEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_SERVICE_WORKERS_ENABLED
   humanReadableName: "ServiceWorkers"
   humanReadableDescription: "Enable ServiceWorkers"
   category: experimental

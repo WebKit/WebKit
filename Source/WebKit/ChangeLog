@@ -1,3 +1,13 @@
+2017-12-12  Brady Eidson  <beidson@apple.com>
+
+        Make ServiceWorkers follow the DEFAULT_EXPERIMENTAL_FEATURES_ENABLED flag on Mac.
+        <rdar://problem/35978311> and https://bugs.webkit.org/show_bug.cgi?id=180697
+
+        Reviewed by Chris Dumez.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.h:
+
 2017-12-12  Chris Dumez  <cdumez@apple.com>
 
         Simplify IPC code between WebProcess and StorageProcess for serviceWorker.postMessage()
