@@ -112,7 +112,7 @@ void InspectorRuntimeAgent::parse(ErrorString&, const String& expression, Inspec
     }
 }
 
-void InspectorRuntimeAgent::evaluate(ErrorString& errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* const returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex)
+void InspectorRuntimeAgent::evaluate(ErrorString& errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* const returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* out_wasThrown, Inspector::Protocol::OptOutput<int>* out_savedResultIndex)
 {
     InjectedScript injectedScript = injectedScriptForEval(errorString, executionContextId);
     if (injectedScript.hasNoValue())
@@ -124,7 +124,15 @@ void InspectorRuntimeAgent::evaluate(ErrorString& errorString, const String& exp
     if (asBool(doNotPauseOnExceptionsAndMuteConsole))
         muteConsole();
 
-    injectedScript.evaluate(errorString, expression, objectGroup ? *objectGroup : String(), asBool(includeCommandLineAPI), asBool(returnByValue), asBool(generatePreview), asBool(saveResult), &result, wasThrown, savedResultIndex);
+    // FIXME: remove this bridging code when generated protocol commands no longer use OptOutput<T>.
+    // <https://www.webkit.org/b/180607>
+    bool wasThrown;
+    std::optional<int> savedResultIndex;
+    injectedScript.evaluate(errorString, expression, objectGroup ? *objectGroup : String(), asBool(includeCommandLineAPI), asBool(returnByValue), asBool(generatePreview), asBool(saveResult), result, wasThrown, savedResultIndex);
+    
+    *out_wasThrown = wasThrown;
+    if (savedResultIndex.has_value())
+        *out_savedResultIndex = savedResultIndex.value();
 
     if (asBool(doNotPauseOnExceptionsAndMuteConsole)) {
         unmuteConsole();
@@ -132,7 +140,7 @@ void InspectorRuntimeAgent::evaluate(ErrorString& errorString, const String& exp
     }
 }
 
-void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const String& objectId, const String& expression, const JSON::Array* optionalArguments, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown)
+void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const String& objectId, const String& expression, const JSON::Array* optionalArguments, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* out_wasThrown)
 {
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
@@ -150,7 +158,11 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const Strin
     if (asBool(doNotPauseOnExceptionsAndMuteConsole))
         muteConsole();
 
-    injectedScript.callFunctionOn(errorString, objectId, expression, arguments, asBool(returnByValue), asBool(generatePreview), &result, wasThrown);
+    bool wasThrown;
+
+    injectedScript.callFunctionOn(errorString, objectId, expression, arguments, asBool(returnByValue), asBool(generatePreview), result, wasThrown);
+
+    *out_wasThrown = wasThrown;
 
     if (asBool(doNotPauseOnExceptionsAndMuteConsole)) {
         unmuteConsole();
@@ -169,7 +181,7 @@ void InspectorRuntimeAgent::getPreview(ErrorString& errorString, const String& o
     ScriptDebugServer::PauseOnExceptionsState previousPauseOnExceptionsState = setPauseOnExceptionsState(m_scriptDebugServer, ScriptDebugServer::DontPauseOnExceptions);
     muteConsole();
 
-    injectedScript.getPreview(errorString, objectId, &preview);
+    injectedScript.getPreview(errorString, objectId, preview);
 
     unmuteConsole();
     setPauseOnExceptionsState(m_scriptDebugServer, previousPauseOnExceptionsState);
@@ -186,8 +198,8 @@ void InspectorRuntimeAgent::getProperties(ErrorString& errorString, const String
     ScriptDebugServer::PauseOnExceptionsState previousPauseOnExceptionsState = setPauseOnExceptionsState(m_scriptDebugServer, ScriptDebugServer::DontPauseOnExceptions);
     muteConsole();
 
-    injectedScript.getProperties(errorString, objectId, asBool(ownProperties), asBool(generatePreview), &result);
-    injectedScript.getInternalProperties(errorString, objectId, asBool(generatePreview), &internalProperties);
+    injectedScript.getProperties(errorString, objectId, asBool(ownProperties), asBool(generatePreview), result);
+    injectedScript.getInternalProperties(errorString, objectId, asBool(generatePreview), internalProperties);
 
     unmuteConsole();
     setPauseOnExceptionsState(m_scriptDebugServer, previousPauseOnExceptionsState);
@@ -204,8 +216,8 @@ void InspectorRuntimeAgent::getDisplayableProperties(ErrorString& errorString, c
     ScriptDebugServer::PauseOnExceptionsState previousPauseOnExceptionsState = setPauseOnExceptionsState(m_scriptDebugServer, ScriptDebugServer::DontPauseOnExceptions);
     muteConsole();
 
-    injectedScript.getDisplayableProperties(errorString, objectId, asBool(generatePreview), &result);
-    injectedScript.getInternalProperties(errorString, objectId, asBool(generatePreview), &internalProperties);
+    injectedScript.getDisplayableProperties(errorString, objectId, asBool(generatePreview), result);
+    injectedScript.getInternalProperties(errorString, objectId, asBool(generatePreview), internalProperties);
 
     unmuteConsole();
     setPauseOnExceptionsState(m_scriptDebugServer, previousPauseOnExceptionsState);
@@ -222,10 +234,10 @@ void InspectorRuntimeAgent::getCollectionEntries(ErrorString& errorString, const
     int start = startIndex && *startIndex >= 0 ? *startIndex : 0;
     int fetch = numberToFetch && *numberToFetch >= 0 ? *numberToFetch : 0;
 
-    injectedScript.getCollectionEntries(errorString, objectId, objectGroup ? *objectGroup : String(), start, fetch, &entries);
+    injectedScript.getCollectionEntries(errorString, objectId, objectGroup ? *objectGroup : String(), start, fetch, entries);
 }
 
-void InspectorRuntimeAgent::saveResult(ErrorString& errorString, const JSON::Object& callArgument, const int* executionContextId, Inspector::Protocol::OptOutput<int>* savedResultIndex)
+void InspectorRuntimeAgent::saveResult(ErrorString& errorString, const JSON::Object& callArgument, const int* executionContextId, Inspector::Protocol::OptOutput<int>* out_savedResultIndex)
 {
     InjectedScript injectedScript;
 
@@ -241,8 +253,15 @@ void InspectorRuntimeAgent::saveResult(ErrorString& errorString, const JSON::Obj
         if (injectedScript.hasNoValue())
             return;
     }
+    
+    // FIXME: remove this bridging code when generated protocol commands no longer use OptOutput<T>.
+    // <https://www.webkit.org/b/180607>
+    std::optional<int> savedResultIndex;
 
     injectedScript.saveResult(errorString, callArgument.toJSONString(), savedResultIndex);
+
+    if (savedResultIndex.has_value())
+        *out_savedResultIndex = savedResultIndex.value();
 }
 
 void InspectorRuntimeAgent::releaseObject(ErrorString&, const String& objectId)

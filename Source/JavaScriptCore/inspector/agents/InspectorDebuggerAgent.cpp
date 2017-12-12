@@ -692,7 +692,7 @@ void InspectorDebuggerAgent::getFunctionDetails(ErrorString& errorString, const 
         return;
     }
 
-    injectedScript.getFunctionDetails(errorString, functionId, &details);
+    injectedScript.getFunctionDetails(errorString, functionId, details);
 }
 
 void InspectorDebuggerAgent::schedulePauseOnNextStatement(DebuggerFrontendDispatcher::Reason breakReason, RefPtr<JSON::Object>&& data)
@@ -827,7 +827,7 @@ void InspectorDebuggerAgent::setPauseOnAssertions(ErrorString&, bool enabled)
     m_pauseOnAssertionFailures = enabled;
 }
 
-void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const String& callFrameId, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex)
+void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const String& callFrameId, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* out_wasThrown, Inspector::Protocol::OptOutput<int>* out_savedResultIndex)
 {
     if (m_currentCallStack.hasNoValue()) {
         errorString = ASCIILiteral("Not paused");
@@ -847,7 +847,15 @@ void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const
         muteConsole();
     }
 
-    injectedScript.evaluateOnCallFrame(errorString, m_currentCallStack, callFrameId, expression, objectGroup ? *objectGroup : "", includeCommandLineAPI ? *includeCommandLineAPI : false, returnByValue ? *returnByValue : false, generatePreview ? *generatePreview : false, saveResult ? *saveResult : false, &result, wasThrown, savedResultIndex);
+    // FIXME: remove this bridging code when generated protocol commands no longer use OptOutput<T>.
+    bool wasThrown;
+    std::optional<int> savedResultIndex;
+
+    injectedScript.evaluateOnCallFrame(errorString, m_currentCallStack, callFrameId, expression, objectGroup ? *objectGroup : "", includeCommandLineAPI ? *includeCommandLineAPI : false, returnByValue ? *returnByValue : false, generatePreview ? *generatePreview : false, saveResult ? *saveResult : false, result, wasThrown, savedResultIndex);
+
+    *out_wasThrown = wasThrown;
+    if (savedResultIndex.has_value())
+        *out_savedResultIndex = savedResultIndex.value();
 
     if (doNotPauseOnExceptionsAndMuteConsole ? *doNotPauseOnExceptionsAndMuteConsole : false) {
         unmuteConsole();

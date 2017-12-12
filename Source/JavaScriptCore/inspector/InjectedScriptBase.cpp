@@ -43,7 +43,6 @@ namespace Inspector {
 
 InjectedScriptBase::InjectedScriptBase(const String& name)
     : m_name(name)
-    , m_environment(nullptr)
 {
 }
 
@@ -75,29 +74,28 @@ JSC::JSValue InjectedScriptBase::callFunctionWithEvalEnabled(Deprecated::ScriptF
     return function.call(hadException);
 }
 
-void InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& function, RefPtr<JSON::Value>* result)
+Ref<JSON::Value> InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& function)
 {
-    if (hasNoValue() || !hasAccessToInspectedScriptState()) {
-        *result = JSON::Value::null();
-        return;
-    }
+    if (hasNoValue() || !hasAccessToInspectedScriptState())
+        return JSON::Value::null();
 
     bool hadException = false;
-    auto resultValue = callFunctionWithEvalEnabled(function, hadException);
+    auto resultJSValue = callFunctionWithEvalEnabled(function, hadException);
 
     ASSERT(!hadException);
-    if (!hadException) {
-        *result = toInspectorValue(*m_injectedScriptObject.scriptState(), resultValue);
-        if (!*result)
-            *result = JSON::Value::create(String::format("Object has too long reference chain (must not be longer than %d)", JSON::Value::maxDepth));
-    } else
-        *result = JSON::Value::create("Exception while making a call.");
+    if (hadException)
+        return JSON::Value::create("Exception while making a call.");
+
+    RefPtr<JSON::Value> resultJSONValue = toInspectorValue(*m_injectedScriptObject.scriptState(), resultJSValue);
+    if (!resultJSONValue)
+        return JSON::Value::create(String::format("Object has too long reference chain (must not be longer than %d)", JSON::Value::maxDepth));
+
+    return resultJSONValue.releaseNonNull();
 }
 
-void InjectedScriptBase::makeEvalCall(ErrorString& errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Protocol::Runtime::RemoteObject>* objectResult, Protocol::OptOutput<bool>* wasThrown, Protocol::OptOutput<int>* savedResultIndex)
+void InjectedScriptBase::makeEvalCall(ErrorString& errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Protocol::Runtime::RemoteObject>& out_resultObject, bool& out_wasThrown, std::optional<int>& out_savedResultIndex)
 {
-    RefPtr<JSON::Value> result;
-    makeCall(function, &result);
+    RefPtr<JSON::Value> result = makeCall(function);
     if (!result) {
         errorString = ASCIILiteral("Internal error: result value is empty");
         return;
@@ -121,20 +119,18 @@ void InjectedScriptBase::makeEvalCall(ErrorString& errorString, Deprecated::Scri
         return;
     }
 
-    bool wasThrownValue = false;
-    if (!resultTuple->getBoolean(ASCIILiteral("wasThrown"), wasThrownValue)) {
+    bool wasThrown = false;
+    if (!resultTuple->getBoolean(ASCIILiteral("wasThrown"), wasThrown)) {
         errorString = ASCIILiteral("Internal error: result is not a pair of value and wasThrown flag");
         return;
     }
 
-    *objectResult = BindingTraits<Protocol::Runtime::RemoteObject>::runtimeCast(resultObject);
-    *wasThrown = wasThrownValue;
+    out_resultObject = BindingTraits<Protocol::Runtime::RemoteObject>::runtimeCast(resultObject);
+    out_wasThrown = wasThrown;
 
-    if (savedResultIndex) {
-        int savedIndex = 0;
-        if (resultTuple->getInteger(ASCIILiteral("savedResultIndex"), savedIndex))
-            *savedResultIndex = savedIndex;
-    }
+    int savedResultIndex;
+    if (resultTuple->getInteger(ASCIILiteral("savedResultIndex"), savedResultIndex))
+        out_savedResultIndex = savedResultIndex;
 }
 
 } // namespace Inspector
