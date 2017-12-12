@@ -436,6 +436,8 @@ class WinPort(ApplePort):
 class WinCairoPort(WinPort):
     port_name = "wincairo"
 
+    TEST_PATH_SEPARATOR = os.sep
+
     VERSION_FALLBACK_ORDER = ["wincairo-" + os_name.lower() for os_name in VersionNameMap.map().names()]
 
     def default_baseline_search_path(self):

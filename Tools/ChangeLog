@@ -1,3 +1,18 @@
+2017-12-11  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo] Enable running sharded tests
+        https://bugs.webkit.org/show_bug.cgi?id=180660
+
+        Reviewed by Alex Christensen.
+
+        The sharder splits the test inputs into groups of test based on the directory, 
+        but separation of base name and directory name was wrong because of this bug.
+        Once sharded correctly, the execution of layout test on native Windows environment
+        is in parallel and much less time to run.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinCairoPort):
+
 2017-12-11  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] DLLLauncherMain should use SetDllDirectory
