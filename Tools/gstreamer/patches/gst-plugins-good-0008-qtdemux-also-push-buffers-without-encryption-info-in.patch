@@ -9,11 +9,11 @@ Subject: [PATCH] qtdemux: also push buffers without encryption info instead of
  1 file changed, 12 insertions(+), 14 deletions(-)
 
 diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
-index 6b0c820..7b71237 100644
+index f0f8320..3f2c016 100644
 --- a/gst/isomp4/qtdemux.c
 +++ b/gst/isomp4/qtdemux.c
-@@ -5421,20 +5421,18 @@ gst_qtdemux_decorate_and_push_buffer (GstQTDemux * qtdemux,
-         gst_pad_push_event (stream->pad, event);
+@@ -5541,26 +5541,25 @@ gst_qtdemux_decorate_and_push_buffer (GstQTDemux * qtdemux,
+       gst_pad_push_event (stream->pad, event);
      }
  
 -    if (info->crypto_info == NULL) {
@@ -22,29 +22,42 @@ index 6b0c820..7b71237 100644
 -      goto exit;
 -    }
 -
--    index = stream->sample_index - (stream->n_samples - info->crypto_info->len);
+-    /* The end of the crypto_info array matches our n_samples position,
+-     * so count backward from there */
+-    index = stream->sample_index - stream->n_samples + info->crypto_info->len;
 -    if (G_LIKELY (index >= 0 && index < info->crypto_info->len)) {
 -      /* steal structure from array */
 -      crypto_info = g_ptr_array_index (info->crypto_info, index);
 -      g_ptr_array_index (info->crypto_info, index) = NULL;
--      GST_LOG_OBJECT (qtdemux, "attaching cenc metadata [%u]", index);
+-      GST_LOG_OBJECT (qtdemux, "attaching cenc metadata [%u/%u]", index,
+-          info->crypto_info->len);
 -      if (!crypto_info || !gst_buffer_add_protection_meta (buf, crypto_info))
 -        GST_ERROR_OBJECT (qtdemux, "failed to attach cenc metadata to buffer");
+-    } else {
+-      GST_INFO_OBJECT (qtdemux, "No crypto info with index %d and sample %d",
+-          index, stream->sample_index);
++
 +    if (info->crypto_info == NULL)
 +      GST_DEBUG_OBJECT (qtdemux, "cenc metadata hasn't been parsed yet, pushing buffer as if it wasn't encrypted");
 +    else {
-+      index = stream->sample_index - (stream->n_samples - info->crypto_info->len);
++      /* The end of the crypto_info array matches our n_samples position,
++       * so count backward from there */
++      index = stream->sample_index - stream->n_samples + info->crypto_info->len;
 +      if (G_LIKELY (index >= 0 && index < info->crypto_info->len)) {
 +        /* steal structure from array */
 +        crypto_info = g_ptr_array_index (info->crypto_info, index);
 +        g_ptr_array_index (info->crypto_info, index) = NULL;
-+        GST_LOG_OBJECT (qtdemux, "attaching cenc metadata [%u]", index);
++        GST_LOG_OBJECT (qtdemux, "attaching cenc metadata [%u/%u]", index,
++            info->crypto_info->len);
 +        if (!crypto_info || !gst_buffer_add_protection_meta (buf, crypto_info))
 +          GST_ERROR_OBJECT (qtdemux, "failed to attach cenc metadata to buffer");
++      } else {
++        GST_INFO_OBJECT (qtdemux, "No crypto info with index %d and sample %d",
++            index, stream->sample_index);
 +      }
      }
    }
  
 -- 
-1.8.3.2
+2.11.0
 

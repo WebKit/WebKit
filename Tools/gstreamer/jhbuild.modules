@@ -22,10 +22,9 @@
       href="http://downloads.webmproject.org/releases/webm/"/>
 
   <autotools id="orc" autogenargs="--disable-gtk-doc" autogen-sh="configure">
-    <branch module="orc/orc-0.4.17.tar.gz" version="0.4.17"
+    <branch module="orc/orc-${version}.tar.xz" version="0.4.28"
             repo="gstreamer"
-            hash="sha256:4fc7cca48c59fff23afee78fb642cdbde001f56401c8f47b95a16578d1d5d7e8"
-            md5sum="af1bf3dab9e69f3c36f389285e2a12a1"/>
+            hash="sha256:bfcd7c6563b05672386c4eedfc4c0d4a0a12b4b4775b74ec6deb88fc2bcd83ce"/>
   </autotools>
 
   <autotools id="openh264" supports-non-srcdir-builds="no" autogen-sh="pseudo-configure">
@@ -47,9 +46,9 @@
     <dependencies>
       <dep package="orc"/>
     </dependencies>
-    <branch module="gstreamer/gstreamer-${version}.tar.xz" version="1.10.5"
+    <branch module="gstreamer/gstreamer-${version}.tar.xz" version="1.12.4"
             repo="gstreamer"
-            hash="sha256:bc06243600817f637029da29d089d5908d1d266542f68bf6626a10c5f05f1f1d">
+            hash="sha256:5a8704aa4c2eeb04da192c4a9942f94f860ac1a585de90d9f914bac26a970674">
       <patch file="gstreamer-0001-protection-added-function-to-filter-system-ids.patch" strip="1"/>
     </branch>
   </autotools>
@@ -63,9 +62,9 @@
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
-    <branch module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" version="1.10.5"
+    <branch module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" version="1.12.4"
             repo="gstreamer"
-            hash="sha256:1c401a79bd1e4521c6ef1b66579bddedd9136e164e54792aab4bfcf3485bf9a7"/>
+            hash="sha256:4c306b03df0212f1b8903784e29bb3493319ba19ebebf13b0c56a17870292282"/>
   </autotools>
 
   <autotools id="gst-plugins-good" autogen-sh="configure" autogenargs="--disable-examples --disable-gtk-doc --disable-introspection">
@@ -74,10 +73,9 @@
       <dep package="libvpx"/>
     </dependencies>
 
-    <branch module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" version="1.10.5"
+    <branch module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" version="1.12.4"
             repo="gstreamer"
-            hash="sha256:be053f6ed716eeb517cec148cec637cdce571c6e04d5c21409e2876fb76c7639">
-      <patch file="gst-plugins-good-0003-rtpbin-receive-bundle-support.patch" strip="1"/>
+            hash="sha256:649f49bec60892d47ee6731b92266974c723554da1c6649f21296097715eb957">
       <patch file="gst-plugins-good-0005-souphttpsrc-cookie-jar-and-context-query-support.patch" strip="1"/>
       <patch file="gst-plugins-good-0006-qtdemux-add-context-for-a-preferred-protection.patch" strip="1"/>
       <patch file="gst-plugins-good-0008-qtdemux-also-push-buffers-without-encryption-info-in.patch" strip="1"/>
@@ -91,18 +89,18 @@
       <dep package="gst-plugins-base"/>
       <dep package="openh264"/>
     </dependencies>
-    <branch module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" version="1.10.5"
+    <branch module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" version="1.12.4"
             repo="gstreamer"
-            hash="sha256:c5806040bb83b43be86ce592e6a19c5d83d7776f7d9f434eb4b911c4efff3573"/>
+            hash="sha256:0c7857be16686d5c1ba6e34bd338664d3d4599d32714a8eca5c8a41a101e2d08"/>
   </autotools>
 
   <autotools id="gst-libav" autogen-sh="configure" autogenargs="--with-libav-extra-configure='--disable-yasm' --disable-gtk-doc">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch module="gst-libav/gst-libav-${version}.tar.xz" version="1.10.5"
+    <branch module="gst-libav/gst-libav-${version}.tar.xz" version="1.12.4"
             repo="gstreamer"
-            hash="sha256:e4d2f315f478d47281fbfdfbd590a63d23704ca37911d7142d5992616f4b28d3"/>
+            hash="sha256:2a56aa5d2d8cd912f2bce17f174713d2c417ca298f1f9c28ee66d4aa1e1d9e62"/>
   </autotools>
 
 </moduleset>

@@ -1,7 +1,7 @@
-From 9d7201ca76e7875cddd106df06b4d7637c025465 Mon Sep 17 00:00:00 2001
+From e09ab95ad39264783bf0e57dfb89165ad9b83802 Mon Sep 17 00:00:00 2001
 From: Xabier Rodriguez Calvar <calvaris@igalia.com>
 Date: Wed, 21 Jun 2017 17:59:21 +0200
-Subject: [PATCH 2/3] qtdemux: add context for a preferred protection
+Subject: [PATCH] qtdemux: add context for a preferred protection
 
 qtdemux selected the first system corresponding to a working GStreamer
 decryptor. With this change, before selecting that decryptor, qtdemux
@@ -36,7 +36,7 @@ https://bugzilla.gnome.org/show_bug.cgi?id=770107
  2 files changed, 195 insertions(+), 6 deletions(-)
 
 diff --git a/gst/isomp4/qtdemux.c b/gst/isomp4/qtdemux.c
-index 0a41b26f2..ae57bdf9b 100644
+index f0f8320e2..f710d2685 100644
 --- a/gst/isomp4/qtdemux.c
 +++ b/gst/isomp4/qtdemux.c
 @@ -513,6 +513,8 @@ static GstIndex *gst_qtdemux_get_index (GstElement * element);
@@ -64,7 +64,7 @@ index 0a41b26f2..ae57bdf9b 100644
    g_queue_init (&qtdemux->protection_event_queue);
    gst_segment_init (&qtdemux->segment, GST_FORMAT_TIME);
    qtdemux->tag_list = gst_tag_list_new_empty ();
-@@ -2113,6 +2117,10 @@ gst_qtdemux_reset (GstQTDemux * qtdemux, gboolean hard)
+@@ -2114,6 +2118,10 @@ gst_qtdemux_reset (GstQTDemux * qtdemux, gboolean hard)
        g_ptr_array_free (qtdemux->protection_system_ids, TRUE);
        qtdemux->protection_system_ids = NULL;
      }
@@ -75,7 +75,7 @@ index 0a41b26f2..ae57bdf9b 100644
    } else if (qtdemux->mss_mode) {
      gst_flow_combiner_reset (qtdemux->flowcombiner);
      for (n = 0; n < qtdemux->n_streams; n++)
-@@ -2590,6 +2598,28 @@ gst_qtdemux_change_state (GstElement * element, GstStateChange transition)
+@@ -2600,6 +2608,28 @@ gst_qtdemux_change_state (GstElement * element, GstStateChange transition)
  }
  
  static void
@@ -104,7 +104,7 @@ index 0a41b26f2..ae57bdf9b 100644
  qtdemux_parse_ftyp (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
  {
    /* counts as header data */
-@@ -3819,6 +3849,8 @@ qtdemux_parse_pssh (GstQTDemux * qtdemux, GNode * node)
+@@ -3829,6 +3859,8 @@ qtdemux_parse_pssh (GstQTDemux * qtdemux, GNode * node)
    event = gst_event_new_protection (sysid_string, pssh,
        (parent_box_type == FOURCC_moov) ? "isobmff/moov" : "isobmff/moof");
    for (i = 0; i < qtdemux->n_streams; ++i) {
@@ -113,7 +113,7 @@ index 0a41b26f2..ae57bdf9b 100644
      g_queue_push_tail (&qtdemux->streams[i]->protection_scheme_event_queue,
          gst_event_ref (event));
    }
-@@ -5529,6 +5561,8 @@ gst_qtdemux_decorate_and_push_buffer (GstQTDemux * qtdemux,
+@@ -5538,6 +5570,8 @@ gst_qtdemux_decorate_and_push_buffer (GstQTDemux * qtdemux,
      GstEvent *event;
  
      while ((event = g_queue_pop_head (&stream->protection_scheme_event_queue))) {
@@ -122,7 +122,7 @@ index 0a41b26f2..ae57bdf9b 100644
        gst_pad_push_event (stream->pad, event);
      }
  
-@@ -7688,11 +7722,141 @@ qtdemux_do_allocation (GstQTDemux * qtdemux, QtDemuxStream * stream)
+@@ -7696,11 +7730,141 @@ qtdemux_do_allocation (GstQTDemux * qtdemux, QtDemuxStream * stream)
  }
  
  static gboolean
@@ -265,7 +265,7 @@ index 0a41b26f2..ae57bdf9b 100644
  
    g_return_val_if_fail (qtdemux != NULL, FALSE);
    g_return_val_if_fail (stream != NULL, FALSE);
-@@ -7708,17 +7872,41 @@ gst_qtdemux_configure_protected_caps (GstQTDemux * qtdemux,
+@@ -7716,17 +7880,41 @@ gst_qtdemux_configure_protected_caps (GstQTDemux * qtdemux,
          "cenc protection system information has been found");
      return FALSE;
    }
@@ -309,7 +309,7 @@ index 0a41b26f2..ae57bdf9b 100644
 +  GST_DEBUG_OBJECT (qtdemux, "selected protection system is %s",
 +      selected_system);
 +
-   s = gst_caps_get_structure (stream->caps, 0);
+   s = gst_caps_get_structure (CUR_STREAM (stream)->caps, 0);
    if (!gst_structure_has_name (s, "application/x-cenc")) {
      gst_structure_set (s,
 diff --git a/gst/isomp4/qtdemux.h b/gst/isomp4/qtdemux.h

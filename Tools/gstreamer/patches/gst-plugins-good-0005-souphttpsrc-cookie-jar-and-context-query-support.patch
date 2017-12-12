@@ -1,7 +1,7 @@
-From 8e03a63fd55f5ae447994579890e8630b27f4a1b Mon Sep 17 00:00:00 2001
+From 5495e154c5ba05c7e254865e2ff6d1068f2dc6ca Mon Sep 17 00:00:00 2001
 From: Philippe Normand <philn@igalia.com>
 Date: Wed, 28 Oct 2015 12:00:09 +0100
-Subject: [PATCH 2/3] souphttpsrc: cookie jar and context query support
+Subject: [PATCH] souphttpsrc: cookie jar and context query support
 
 Use a volatile Cookie jar to store cookies and handle the context
 query so that session data can be shared with other elements (like
@@ -14,10 +14,10 @@ https://bugzilla.gnome.org/show_bug.cgi?id=726314
  2 files changed, 40 insertions(+), 2 deletions(-)
 
 diff --git a/ext/soup/gstsouphttpsrc.c b/ext/soup/gstsouphttpsrc.c
-index fc7cba7..0d3e886 100644
+index 52c1b8182..ac41692a5 100644
 --- a/ext/soup/gstsouphttpsrc.c
 +++ b/ext/soup/gstsouphttpsrc.c
-@@ -482,6 +482,7 @@ gst_soup_http_src_init (GstSoupHTTPSrc * src)
+@@ -481,6 +481,7 @@ gst_soup_http_src_init (GstSoupHTTPSrc * src)
    src->cookies = NULL;
    src->iradio_mode = DEFAULT_IRADIO_MODE;
    src->session = NULL;
@@ -25,7 +25,7 @@ index fc7cba7..0d3e886 100644
    src->msg = NULL;
    src->timeout = DEFAULT_TIMEOUT;
    src->log_level = DEFAULT_SOUP_LOG_LEVEL;
-@@ -943,6 +944,9 @@ gst_soup_http_src_session_open (GstSoupHTTPSrc * src)
+@@ -942,6 +943,9 @@ gst_soup_http_src_session_open (GstSoupHTTPSrc * src)
      soup_session_remove_feature_by_type (src->session,
          SOUP_TYPE_CONTENT_DECODER);
  
@@ -35,7 +35,7 @@ index fc7cba7..0d3e886 100644
    return TRUE;
  }
  
-@@ -958,6 +962,11 @@ gst_soup_http_src_session_close (GstSoupHTTPSrc * src)
+@@ -957,6 +961,11 @@ gst_soup_http_src_session_close (GstSoupHTTPSrc * src)
      src->msg = NULL;
    }
  
@@ -47,7 +47,7 @@ index fc7cba7..0d3e886 100644
    if (src->session) {
      soup_session_abort (src->session);
      g_object_unref (src->session);
-@@ -1426,11 +1435,12 @@ gst_soup_http_src_build_message (GstSoupHTTPSrc * src, const gchar * method)
+@@ -1372,11 +1381,12 @@ gst_soup_http_src_build_message (GstSoupHTTPSrc * src, const gchar * method)
    }
    if (src->cookies) {
      gchar **cookie;
@@ -62,7 +62,7 @@ index fc7cba7..0d3e886 100644
    }
  
    soup_message_set_flags (src->msg, SOUP_MESSAGE_OVERWRITE_CHUNKS |
-@@ -1910,6 +1920,12 @@ gst_soup_http_src_query (GstBaseSrc * bsrc, GstQuery * query)
+@@ -1888,6 +1898,12 @@ gst_soup_http_src_query (GstBaseSrc * bsrc, GstQuery * query)
    gboolean ret;
    GstSchedulingFlags flags;
    gint minsize, maxsize, align;
@@ -75,7 +75,7 @@ index fc7cba7..0d3e886 100644
  
    switch (GST_QUERY_TYPE (query)) {
      case GST_QUERY_URI:
-@@ -1921,6 +1937,27 @@ gst_soup_http_src_query (GstBaseSrc * bsrc, GstQuery * query)
+@@ -1899,6 +1915,27 @@ gst_soup_http_src_query (GstBaseSrc * bsrc, GstQuery * query)
        }
        ret = TRUE;
        break;
@@ -104,7 +104,7 @@ index fc7cba7..0d3e886 100644
        ret = FALSE;
        break;
 diff --git a/ext/soup/gstsouphttpsrc.h b/ext/soup/gstsouphttpsrc.h
-index dd01656..9c6bb5c 100644
+index f140f80c5..52b32c768 100644
 --- a/ext/soup/gstsouphttpsrc.h
 +++ b/ext/soup/gstsouphttpsrc.h
 @@ -60,6 +60,7 @@ struct _GstSoupHTTPSrc {
@@ -113,8 +113,8 @@ index dd01656..9c6bb5c 100644
    SoupSession *session;        /* Async context. */
 +  SoupCookieJar *cookie_jar;   /* Volatile HTTP cookie storage */
    SoupMessage *msg;            /* Request message. */
-   GstFlowReturn ret;           /* Return code from callback. */
    gint retry_count;            /* Number of retries since we received data */
+   gint max_retries;            /* Maximum number of retries */
 -- 
-1.8.3.2
+2.11.0
 

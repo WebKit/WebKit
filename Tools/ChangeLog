@@ -1,3 +1,19 @@
+2017-12-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Bump GStreamer version to 1.12 in jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=171677
+
+        Reviewed by Carlos Garcia Campos.
+
+        Bump gstreamer related modules and rebase patches still needed and not merged
+
+        * gstreamer/jhbuild.modules:
+        * gstreamer/patches/gst-plugins-good-0003-rtpbin-receive-bundle-support.patch: Removed. This was needed for OpenWebRTC. Not longer supported.
+        * gstreamer/patches/gst-plugins-good-0005-souphttpsrc-cookie-jar-and-context-query-support.patch: Rebased.
+        * gstreamer/patches/gst-plugins-good-0006-qtdemux-add-context-for-a-preferred-protection.patch: Rebased.
+        * gstreamer/patches/gst-plugins-good-0008-qtdemux-also-push-buffers-without-encryption-info-in.patch: Rebased.
+        * gstreamer/patches/gst-plugins-good-0009-qtdemux-fix-assert-when-moof-contains-one-sample.patch: Added a note about merge commit not still in 1.12.4.
+
 2017-12-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Thread::create should have Thread::tryCreate

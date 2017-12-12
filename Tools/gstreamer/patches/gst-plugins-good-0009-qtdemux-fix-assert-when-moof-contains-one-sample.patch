@@ -5,6 +5,9 @@ Subject: [PATCH] qtdemux: fix assert when moof contains one sample
 
 Avoid computing frame rate when a stream contain moof with only one
 sample, to avoid an assert. The moof is considered as still picture.
+
+[ Merged in upstream commit 728a1629cf9fd7f4a728477bda1d13a1ecc219bb ]
+
 ---
  gst/isomp4/qtdemux.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
