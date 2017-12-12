@@ -91,6 +91,7 @@ public:
     bool isInitialValue() const { return m_classType == InitialClass; }
     bool isUnsetValue() const { return m_classType == UnsetClass; }
     bool isRevertValue() const { return m_classType == RevertClass; }
+    bool isGlobalKeyword() const { return isInheritedValue() || isInitialValue() || isUnsetValue() || isRevertValue(); }
     bool treatAsInitialValue(CSSPropertyID) const;
     bool treatAsInheritedValue(CSSPropertyID) const;
     bool isLinearGradientValue() const { return m_classType == LinearGradientClass; }

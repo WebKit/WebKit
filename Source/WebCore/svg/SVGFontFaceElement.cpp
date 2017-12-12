@@ -63,10 +63,22 @@ Ref<SVGFontFaceElement> SVGFontFaceElement::create(const QualifiedName& tagName,
 
 void SVGFontFaceElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {    
-    CSSPropertyID propId = cssPropertyIdForSVGAttributeName(name);
-    if (propId > 0) {
+    CSSPropertyID propertyId = cssPropertyIdForSVGAttributeName(name);
+    if (propertyId > 0) {
         // FIXME: Parse using the @font-face descriptor grammars, not the property grammars.
-        m_fontFaceRule->mutableProperties().setProperty(propId, value, false);
+        auto& properties = m_fontFaceRule->mutableProperties();
+        bool valueChanged = properties.setProperty(propertyId, value);
+
+        if (valueChanged) {
+            // The above parser is designed for the font-face properties, not descriptors, and the properties accept the global keywords, but descriptors don't.
+            // Rather than invasively modifying the parser for the properties to have a special mode, we can simply detect the error condition after-the-fact and
+            // avoid it explicitly.
+            if (auto parsedValue = properties.getPropertyCSSValue(propertyId)) {
+                if (parsedValue->isGlobalKeyword())
+                    properties.removeProperty(propertyId);
+            }
+        }
+
         rebuildFontFace();
         return;
     }

@@ -1,3 +1,13 @@
+2017-12-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION (Safari 11): custom <font-face> tag crashes a page
+        https://bugs.webkit.org/show_bug.cgi?id=177848
+
+        Reviewed by Darin Adler.
+
+        * svg/text/font-style-keyword-expected.txt: Added.
+        * svg/text/font-style-keyword.html: Added.
+
 2017-12-12  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Implement the playState property on Animation
