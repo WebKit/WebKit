@@ -1,3 +1,15 @@
+2017-12-12  Youenn Fablet  <youenn@apple.com>
+
+        Update ContentFiltering.LazilyLoadPlatformFrameworks test to account for libwebrtc using VideoProcessing framework
+        https://bugs.webkit.org/show_bug.cgi?id=180713
+
+        Reviewed by Andy Estes.
+
+        Temporarily disabling a subcheck until we make the test more robust and/or libwebrtc weak linking VideoProcessing framework.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentFiltering.mm:
+        (-[LazilyLoadPlatformFrameworksController expectParentalControlsLoaded:networkExtensionLoaded:]):
+
 2017-12-12  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement BigInt literals and JSBigInt

@@ -363,7 +363,10 @@ TEST(ContentFiltering, LoadAlternateAfterFinishedAddingDataWK2)
         EXPECT_EQ(static_cast<bool>(parentalControlsShouldBeLoaded), static_cast<bool>(parentalControlsLoaded));
 #endif
 #if HAVE(NETWORK_EXTENSION)
-        EXPECT_EQ(static_cast<bool>(networkExtensionShouldBeLoaded), static_cast<bool>(networkExtensionLoaded));
+        // FIXME: Libwebrtc is linking on some configurations to VideoProcessing framework which brings up NetworkExtension framework.
+        // https://bugs.webkit.org/show_bug.cgi?id=180713
+        // Disable this test until we find a more robust test or libwebrtc weak link VideoProcessing framework.
+        // EXPECT_EQ(static_cast<bool>(networkExtensionShouldBeLoaded), static_cast<bool>(networkExtensionLoaded));
 #endif
         isDone = true;
     }];
