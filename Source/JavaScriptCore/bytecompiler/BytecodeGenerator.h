@@ -34,6 +34,7 @@
 #include "Instruction.h"
 #include "Interpreter.h"
 #include "JSAsyncGeneratorFunction.h"
+#include "JSBigInt.h"
 #include "JSGeneratorFunction.h"
 #include "Label.h"
 #include "LabelScope.h"
@@ -46,6 +47,7 @@
 #include "UnlinkedCodeBlock.h"
 #include <functional>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/HashFunctions.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/SetForScope.h>
 #include <wtf/Vector.h>
@@ -1000,10 +1002,13 @@ namespace JSC {
         void allocateCalleeSaveSpace();
         void allocateAndEmitScope();
 
-        typedef HashMap<double, JSValue> NumberMap;
-        typedef HashMap<UniquedStringImpl*, JSString*, IdentifierRepHash> IdentifierStringMap;
-        typedef HashMap<Ref<TemplateRegistryKey>, RegisterID*> TemplateRegistryKeyMap;
-        
+        using BigIntMapEntry = std::pair<UniquedStringImpl*, uint8_t>;
+
+        using NumberMap = HashMap<double, JSValue>;
+        using IdentifierStringMap = HashMap<UniquedStringImpl*, JSString*, IdentifierRepHash>;
+        using IdentifierBigIntMap = HashMap<BigIntMapEntry, JSBigInt*>;
+        using TemplateRegistryKeyMap = HashMap<Ref<TemplateRegistryKey>, RegisterID*>;
+
         // Helper for emitCall() and emitConstruct(). This works because the set of
         // expected functions have identical behavior for both call and construct
         // (i.e. "Object()" is identical to "new Object()").
@@ -1086,6 +1091,7 @@ namespace JSC {
 
     public:
         JSString* addStringConstant(const Identifier&);
+        JSValue addBigIntConstant(const Identifier&, uint8_t radix);
         RegisterID* addTemplateRegistryKeyConstant(Ref<TemplateRegistryKey>&&);
 
         Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow>& instructions() { return m_instructions; }
@@ -1185,6 +1191,7 @@ namespace JSC {
         typedef HashMap<EncodedJSValueWithRepresentation, unsigned, EncodedJSValueWithRepresentationHash, EncodedJSValueWithRepresentationHashTraits> JSValueMap;
         JSValueMap m_jsValueMap;
         IdentifierStringMap m_stringMap;
+        IdentifierBigIntMap m_bigIntMap;
         TemplateRegistryKeyMap m_templateRegistryKeyMap;
 
         StaticPropertyAnalyzer m_staticPropertyAnalyzer { &m_instructions };

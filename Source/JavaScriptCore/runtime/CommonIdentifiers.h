@@ -30,6 +30,7 @@
     macro(ArrayBuffer) \
     macro(ArrayIterator) \
     macro(BYTES_PER_ELEMENT) \
+    macro(BigInt) \
     macro(Boolean) \
     macro(Collator) \
     macro(Credential) \

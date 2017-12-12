@@ -29,6 +29,7 @@
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
+#include "ParseInt.h"
 #include "Uint16WithFraction.h"
 #include <wtf/dtoa.h>
 #include <wtf/Assertions.h>
@@ -138,9 +139,6 @@ static ALWAYS_INLINE bool getIntegerArgumentInRange(ExecState* exec, int low, in
 // center of the buffer, and are guaranteed to have enough space in each direction
 // fo any number of digits an IEEE number may require to represent.
 typedef char RadixBuffer[2180];
-
-// Mapping from integers 0..35 to digit identifying this value, for radix 2..36.
-static const char radixDigits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 static inline char* int52ToStringWithRadix(char* startOfResultString, int64_t int52Value, unsigned radix)
 {

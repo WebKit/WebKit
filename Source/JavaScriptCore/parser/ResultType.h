@@ -31,18 +31,19 @@ namespace JSC {
     private:
         friend struct OperandTypes;
 
-        typedef uint8_t Type;
+        using Type = uint8_t;
         static const Type TypeInt32 = 1;
         static const Type TypeMaybeNumber = 0x02;
         static const Type TypeMaybeString = 0x04;
         static const Type TypeMaybeNull   = 0x08;
         static const Type TypeMaybeBool   = 0x10;
-        static const Type TypeMaybeOther  = 0x20;
+        static const Type TypeMaybeBigInt = 0x20;
+        static const Type TypeMaybeOther  = 0x40;
 
-        static const Type TypeBits = TypeMaybeNumber | TypeMaybeString | TypeMaybeNull | TypeMaybeBool | TypeMaybeOther;
+        static const Type TypeBits = TypeMaybeNumber | TypeMaybeString | TypeMaybeNull | TypeMaybeBool | TypeMaybeBigInt | TypeMaybeOther;
 
     public:
-        static const int numBitsNeeded = 6;
+        static const int numBitsNeeded = 7;
         static_assert((TypeBits & ((1 << numBitsNeeded) - 1)) == TypeBits, "This is necessary for correctness.");
 
         explicit ResultType(Type type)
@@ -70,6 +71,11 @@ namespace JSC {
             return (m_bits & TypeBits) == TypeMaybeBool;
         }
 
+        bool definitelyIsBigInt() const
+        {
+            return (m_bits & TypeBits) == TypeMaybeBigInt;
+        }
+
         bool mightBeNumber() const
         {
             return m_bits & TypeMaybeNumber;
@@ -78,6 +84,16 @@ namespace JSC {
         bool isNotNumber() const
         {
             return !mightBeNumber();
+        }
+        
+        bool mightBeBigInt() const
+        {
+            return m_bits & TypeMaybeBigInt;
+        }
+
+        bool isNotBigInt() const
+        {
+            return !mightBeBigInt();
         }
         
         static ResultType nullType()
@@ -105,9 +121,19 @@ namespace JSC {
             return ResultType(TypeMaybeNumber | TypeMaybeString);
         }
         
+        static ResultType addResultType()
+        {
+            return ResultType(TypeMaybeNumber | TypeMaybeString | TypeMaybeBigInt);
+        }
+        
         static ResultType stringType()
         {
             return ResultType(TypeMaybeString);
+        }
+        
+        static ResultType bigIntType()
+        {
+            return ResultType(TypeMaybeBigInt);
         }
         
         static ResultType unknownType()
@@ -121,7 +147,9 @@ namespace JSC {
                 return numberType();
             if (op1.definitelyIsString() || op2.definitelyIsString())
                 return stringType();
-            return stringOrNumberType();
+            if (op1.definitelyIsBigInt() && op2.definitelyIsBigInt())
+                return bigIntType();
+            return addResultType();
         }
 
         // Unlike in C, a logical op produces the value of the
@@ -134,6 +162,8 @@ namespace JSC {
                 return numberType();
             if (op1.definitelyIsString() && op2.definitelyIsString())
                 return stringType();
+            if (op1.definitelyIsBigInt() && op2.definitelyIsBigInt())
+                return bigIntType();
             return unknownType();
         }
 

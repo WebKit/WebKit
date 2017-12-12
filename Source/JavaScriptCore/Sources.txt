@@ -772,6 +772,7 @@ runtime/JSArrayBufferPrototype.cpp
 runtime/JSArrayBufferView.cpp
 runtime/JSAsyncFunction.cpp
 runtime/JSAsyncGeneratorFunction.cpp
+runtime/JSBigInt.cpp
 runtime/JSBoundFunction.cpp
 runtime/JSCJSValue.cpp
 runtime/JSCPoisonedPtr.cpp

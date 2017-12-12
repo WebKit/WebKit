@@ -222,6 +222,7 @@ public:
     bool isAnyInt() const;
     bool isNumber() const;
     bool isString() const;
+    bool isBigInt() const;
     bool isSymbol() const;
     bool isPrimitive() const;
     bool isGetterSetter() const;

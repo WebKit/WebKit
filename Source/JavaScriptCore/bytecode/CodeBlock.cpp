@@ -53,6 +53,7 @@
 #include "InterpreterInlines.h"
 #include "JIT.h"
 #include "JITMathIC.h"
+#include "JSBigInt.h"
 #include "JSCInlines.h"
 #include "JSCJSValue.h"
 #include "JSFunction.h"

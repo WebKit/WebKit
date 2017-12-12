@@ -66,6 +66,7 @@
 #include "JITWorklist.h"
 #include "JSAPIValueWrapper.h"
 #include "JSArray.h"
+#include "JSBigInt.h"
 #include "JSCInlines.h"
 #include "JSDestructibleObjectHeapCellType.h"
 #include "JSFixedArray.h"
@@ -308,6 +309,7 @@ VM::VM(VMType vmType, HeapType heapType)
     hashMapBucketMapStructure.set(*this, HashMapBucket<HashMapBucketDataKeyValue>::createStructure(*this, 0, jsNull()));
     setIteratorStructure.set(*this, JSSetIterator::createStructure(*this, 0, jsNull()));
     mapIteratorStructure.set(*this, JSMapIterator::createStructure(*this, 0, jsNull()));
+    bigIntStructure.set(*this, JSBigInt::createStructure(*this, 0, jsNull()));
 
     sentinelSetBucket.set(*this, JSSet::BucketType::createSentinel(*this));
     sentinelMapBucket.set(*this, JSMap::BucketType::createSentinel(*this));

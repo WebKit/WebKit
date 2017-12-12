@@ -167,7 +167,7 @@ void Data::performAssertions(VM& vm)
     ASSERT(StringImpl::s_hashFlag8BitBuffer == 8);
 
     {
-        uint32_t bits = 0x120000;
+        uint32_t bits = 0x480000;
         UNUSED_PARAM(bits);
         ArithProfile arithProfile;
         arithProfile.lhsSawInt32();
@@ -177,7 +177,7 @@ void Data::performAssertions(VM& vm)
         ASSERT(ArithProfile::fromInt(bits).rhsObservedType().isOnlyInt32());
     }
     {
-        uint32_t bits = 0x220000;
+        uint32_t bits = 0x880000;
         UNUSED_PARAM(bits);
         ArithProfile arithProfile;
         arithProfile.lhsSawNumber();
@@ -187,7 +187,7 @@ void Data::performAssertions(VM& vm)
         ASSERT(ArithProfile::fromInt(bits).rhsObservedType().isOnlyInt32());
     }
     {
-        uint32_t bits = 0x240000;
+        uint32_t bits = 0x900000;
         UNUSED_PARAM(bits);
         ArithProfile arithProfile;
         arithProfile.lhsSawNumber();
@@ -197,7 +197,7 @@ void Data::performAssertions(VM& vm)
         ASSERT(ArithProfile::fromInt(bits).rhsObservedType().isOnlyNumber());
     }
     {
-        uint32_t bits = 0x140000;
+        uint32_t bits = 0x500000;
         UNUSED_PARAM(bits);
         ArithProfile arithProfile;
         arithProfile.lhsSawInt32();

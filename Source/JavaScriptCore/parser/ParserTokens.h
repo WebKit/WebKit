@@ -110,6 +110,7 @@ enum JSTokenType {
     BACKQUOTE,
     INTEGER,
     DOUBLE,
+    BIGINT,
     IDENT,
     STRING,
     TEMPLATE,
@@ -216,6 +217,10 @@ union JSTokenData {
     struct {
         const Identifier* ident;
         bool escaped;
+    };
+    struct {
+        const Identifier* bigIntString;
+        uint8_t radix;
     };
     struct {
         const Identifier* cooked;

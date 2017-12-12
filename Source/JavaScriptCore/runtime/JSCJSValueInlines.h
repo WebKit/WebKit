@@ -29,6 +29,7 @@
 #include "ExceptionHelpers.h"
 #include "Identifier.h"
 #include "InternalFunction.h"
+#include "JSBigInt.h"
 #include "JSCJSValue.h"
 #include "JSCellInlines.h"
 #include "JSFunction.h"
@@ -578,6 +579,11 @@ inline bool JSValue::isString() const
     return isCell() && asCell()->isString();
 }
 
+inline bool JSValue::isBigInt() const
+{
+    return isCell() && asCell()->isBigInt();
+}
+
 inline bool JSValue::isSymbol() const
 {
     return isCell() && asCell()->isSymbol();
@@ -1020,6 +1026,8 @@ ALWAYS_INLINE bool JSValue::strictEqualSlowCaseInline(ExecState* exec, JSValue v
 
     if (v1.asCell()->isString() && v2.asCell()->isString())
         return asString(v1)->equal(exec, asString(v2));
+    if (v1.isBigInt() && v2.isBigInt())
+        return JSBigInt::equals(asBigInt(v1.asCell()), asBigInt(v2.asCell()));
     return v1 == v2;
 }
 

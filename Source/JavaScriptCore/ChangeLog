@@ -1,3 +1,156 @@
+2017-12-12  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement BigInt literals and JSBigInt
+        https://bugs.webkit.org/show_bug.cgi?id=179000
+
+        Reviewed by Darin Adler and Yusuke Suzuki.
+
+        This patch starts the implementation of BigInt primitive on
+        JavaScriptCore. We are introducing BigInt primitive and
+        implementing it on JSBigInt as a subclass of JSCell with [[BigIntData]]
+        field implemented contiguosly on memory as inline storage of JSBigInt to
+        take advantages on performance due to cache locality. The
+        implementation allows 64 or 32 bitwise arithmetic operations.
+        JSBigInt also has m_sign to store the sign of [[BigIntData]] and
+        m_length that keeps track of BigInt length.
+        The implementation is following the V8 one. [[BigIntData]] is manipulated
+        by JSBigInt::setDigit(index, value) and JSBigInt::digit(index) operations.
+        We also have some operations to support arithmetics over digits.
+
+        It is important to notice that on our representation,
+        JSBigInt::dataStorage()[0] represents the least significant digit and
+        JSBigInt::dataStorage()[m_length - 1] represents the most siginificant digit.
+
+        We are also introducing into this Patch the BigInt literals lexer and
+        syntax parsing support. The operation Strict Equals on BigInts is also being
+        implemented to enable tests.
+        These features are being implemented behind a runtime flage "--useBigInt" and
+        are disabled by default.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/CodeBlock.cpp:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEqualityOp):
+        (JSC::BytecodeGenerator::addBigIntConstant):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::BigIntEntryHash::hash):
+        (JSC::BytecodeGenerator::BigIntEntryHash::equal):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BigIntNode::jsValue const):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::isToThisAnIdentity):
+        * interpreter/Interpreter.cpp:
+        (JSC::sizeOfVarargs):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createBigInt):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::parseBinary):
+        (JSC::Lexer<T>::parseOctal):
+        (JSC::Lexer<T>::parseDecimal):
+        (JSC::Lexer<T>::lex):
+        (JSC::Lexer<T>::parseHex): Deleted.
+        * parser/Lexer.h:
+        * parser/NodeConstructors.h:
+        (JSC::BigIntNode::BigIntNode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isBigInt const):
+        (JSC::BigIntNode::value):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        * parser/ParserTokens.h:
+        * parser/ResultType.h:
+        (JSC::ResultType::definitelyIsBigInt const):
+        (JSC::ResultType::mightBeBigInt const):
+        (JSC::ResultType::isNotBigInt const):
+        (JSC::ResultType::addResultType):
+        (JSC::ResultType::bigIntType):
+        (JSC::ResultType::forAdd):
+        (JSC::ResultType::forLogicalOp):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createBigInt):
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSBigInt.cpp: Added.
+        (JSC::JSBigInt::visitChildren):
+        (JSC::JSBigInt::JSBigInt):
+        (JSC::JSBigInt::initialize):
+        (JSC::JSBigInt::createStructure):
+        (JSC::JSBigInt::createZero):
+        (JSC::JSBigInt::allocationSize):
+        (JSC::JSBigInt::createWithLength):
+        (JSC::JSBigInt::finishCreation):
+        (JSC::JSBigInt::toPrimitive const):
+        (JSC::JSBigInt::singleDigitValueForString):
+        (JSC::JSBigInt::parseInt):
+        (JSC::JSBigInt::toString):
+        (JSC::JSBigInt::isZero):
+        (JSC::JSBigInt::inplaceMultiplyAdd):
+        (JSC::JSBigInt::digitAdd):
+        (JSC::JSBigInt::digitSub):
+        (JSC::JSBigInt::digitMul):
+        (JSC::JSBigInt::digitPow):
+        (JSC::JSBigInt::digitDiv):
+        (JSC::JSBigInt::internalMultiplyAdd):
+        (JSC::JSBigInt::equalToBigInt):
+        (JSC::JSBigInt::absoluteDivSmall):
+        (JSC::JSBigInt::calculateMaximumCharactersRequired):
+        (JSC::JSBigInt::toStringGeneric):
+        (JSC::JSBigInt::rightTrim):
+        (JSC::JSBigInt::allocateFor):
+        (JSC::JSBigInt::estimatedSize):
+        (JSC::JSBigInt::toNumber const):
+        (JSC::JSBigInt::getPrimitiveNumber const):
+        * runtime/JSBigInt.h: Added.
+        (JSC::JSBigInt::setSign):
+        (JSC::JSBigInt::sign const):
+        (JSC::JSBigInt::setLength):
+        (JSC::JSBigInt::length const):
+        (JSC::JSBigInt::parseInt):
+        (JSC::JSBigInt::offsetOfData):
+        (JSC::JSBigInt::dataStorage):
+        (JSC::JSBigInt::digit):
+        (JSC::JSBigInt::setDigit):
+        (JSC::asBigInt):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::synthesizePrototype const):
+        (JSC::JSValue::toStringSlowCase const):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::isBigInt const):
+        (JSC::JSValue::strictEqualSlowCaseInline):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::put):
+        (JSC::JSCell::putByIndex):
+        (JSC::JSCell::toPrimitive const):
+        (JSC::JSCell::getPrimitiveNumber const):
+        (JSC::JSCell::toNumber const):
+        (JSC::JSCell::toObjectSlow const):
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::isBigInt const):
+        * runtime/JSType.h:
+        * runtime/MathCommon.h:
+        (JSC::clz64):
+        * runtime/NumberPrototype.cpp:
+        * runtime/Operations.cpp:
+        (JSC::jsTypeStringForValue):
+        (JSC::jsIsObjectTypeOrNull):
+        * runtime/Options.h:
+        * runtime/ParseInt.h:
+        * runtime/SmallStrings.h:
+        (JSC::SmallStrings::typeString const):
+        * runtime/StructureInlines.h:
+        (JSC::prototypeForLookupPrimitiveImpl):
+        * runtime/TypeofType.cpp:
+        (WTF::printInternal):
+        * runtime/TypeofType.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2017-12-12  Guillaume Emont  <guijemont@igalia.com>
 
         LLInt: reserve 16 bytes of stack on MIPS for native calls

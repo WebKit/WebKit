@@ -39,6 +39,7 @@
 #include "DefinePropertyAttributes.h"
 #include "Interpreter.h"
 #include "JSAsyncGeneratorFunction.h"
+#include "JSBigInt.h"
 #include "JSCInlines.h"
 #include "JSFixedArray.h"
 #include "JSFunction.h"
@@ -1784,6 +1785,14 @@ RegisterID* BytecodeGenerator::emitEqualityOp(OpcodeID opcodeID, RegisterID* dst
                 instructions().append(SymbolType);
                 return dst;
             }
+            if (Options::useBigInt() && value == "bigint") {
+                rewindUnaryOp();
+                emitOpcode(op_is_cell_with_type);
+                instructions().append(dst->index());
+                instructions().append(srcIndex);
+                instructions().append(BigIntType);
+                return dst;
+            }
             if (value == "object") {
                 rewindUnaryOp();
                 emitOpcode(op_is_object_or_null);
@@ -3119,6 +3128,19 @@ RegisterID* BytecodeGenerator::emitNewObject(RegisterID* dst)
     instructions().append(0);
     instructions().append(newObjectAllocationProfile());
     return dst;
+}
+
+JSValue BytecodeGenerator::addBigIntConstant(const Identifier& identifier, uint8_t radix)
+{
+    return m_bigIntMap.ensure(BigIntMapEntry(identifier.impl(), radix), [&] {
+        JSBigInt* bigIntInMap = JSBigInt::parseInt(nullptr, *vm(), identifier.string(), radix);
+        // FIXME: [ESNext] Enables a way to throw an error on ByteCodeGenerator step
+        // https://bugs.webkit.org/show_bug.cgi?id=180139
+        RELEASE_ASSERT(bigIntInMap);
+        addConstantValue(bigIntInMap);
+
+        return bigIntInMap;
+    }).iterator->value;
 }
 
 JSString* BytecodeGenerator::addStringConstant(const Identifier& identifier)

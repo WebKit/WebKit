@@ -253,12 +253,12 @@ const IsInvalidated = constexpr IsInvalidated
 const ShadowChickenTailMarker = constexpr ShadowChicken::Packet::tailMarkerValue
 
 # ArithProfile data
-const ArithProfileInt = 0x100000
-const ArithProfileIntInt = 0x120000
-const ArithProfileNumber = 0x200000
-const ArithProfileNumberInt = 0x220000
-const ArithProfileNumberNumber = 0x240000
-const ArithProfileIntNumber = 0x140000
+const ArithProfileInt = 0x400000
+const ArithProfileIntInt = 0x480000
+const ArithProfileNumber = 0x800000
+const ArithProfileNumberInt = 0x880000
+const ArithProfileNumberNumber = 0x900000
+const ArithProfileIntNumber = 0x500000
 
 # Some register conventions.
 if JSVALUE64

@@ -66,6 +66,25 @@ inline int clz32(uint32_t number)
 #endif
 }
 
+inline int clz64(uint64_t number)
+{
+#if COMPILER(GCC_OR_CLANG)
+    int zeroCount = 64;
+    if (number)
+        zeroCount = __builtin_clzll(number);
+    return zeroCount;
+#else
+    int zeroCount = 0;
+    for (int i = 63; i >= 0; i--) {
+        if (!(number >> i))
+            zeroCount++;
+        else
+            break;
+    }
+    return zeroCount;
+#endif
+}
+
 // This in the ToInt32 operation is defined in section 9.5 of the ECMA-262 spec.
 // Note that this operation is identical to ToUInt32 other than to interpretation
 // of the resulting bit-pattern (as such this method is also called to implement

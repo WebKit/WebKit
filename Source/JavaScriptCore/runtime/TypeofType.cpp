@@ -54,6 +54,9 @@ void printInternal(PrintStream& out, TypeofType type)
     case TypeofType::Function:
         out.print("function");
         return;
+    case TypeofType::BigInt:
+        out.print("bigint");
+        return;
     }
     
     RELEASE_ASSERT_NOT_REACHED();

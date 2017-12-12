@@ -4492,6 +4492,12 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
 
         return createResolveAndUseVariable(context, ident, *ident == m_vm->propertyNames->eval, start, location);
     }
+    case BIGINT: {
+        const Identifier* ident = m_token.m_data.bigIntString;
+        JSTokenLocation location(tokenLocation());
+        next();
+        return context.createBigInt(location, ident, m_token.m_data.radix);
+    }
     case STRING: {
         const Identifier* ident = m_token.m_data.ident;
         JSTokenLocation location(tokenLocation());

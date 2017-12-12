@@ -108,6 +108,7 @@ protected:
 public:
     // Querying the type.
     bool isString() const;
+    bool isBigInt() const;
     bool isSymbol() const;
     bool isObject() const;
     bool isGetterSetter() const;

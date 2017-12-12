@@ -162,6 +162,7 @@ namespace JSC {
 
         virtual bool isNumber() const { return false; }
         virtual bool isString() const { return false; }
+        virtual bool isBigInt() const { return false; }
         virtual bool isObjectLiteral() const { return false; }
         virtual bool isArrayLiteral() const { return false; }
         virtual bool isNull() const { return false; }
@@ -326,6 +327,19 @@ namespace JSC {
         JSValue jsValue(BytecodeGenerator&) const override;
 
         const Identifier& m_value;
+    };
+
+    class BigIntNode final : public ConstantNode {
+    public:
+        BigIntNode(const JSTokenLocation&, const Identifier&, uint8_t radix);
+        const Identifier& value() { return m_value; }
+
+    private:
+        bool isBigInt() const final { return true; }
+        JSValue jsValue(BytecodeGenerator&) const final;
+
+        const Identifier& m_value;
+        const uint8_t m_radix;
     };
 
     class ThrowableExpressionData {

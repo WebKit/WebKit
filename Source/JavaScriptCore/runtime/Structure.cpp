@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Structure.h"
 
+#include "BuiltinNames.h"
 #include "CodeBlock.h"
 #include "DumpContext.h"
 #include "JSCInlines.h"

@@ -202,6 +202,7 @@ unsigned sizeOfVarargs(CallFrame* callFrame, JSValue arguments, uint32_t firstVa
         break;
     case StringType:
     case SymbolType:
+    case BigIntType:
         throwException(callFrame, scope, createInvalidFunctionApplyParameterError(callFrame,  arguments));
         return 0;
         

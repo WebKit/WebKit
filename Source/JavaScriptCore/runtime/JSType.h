@@ -33,6 +33,7 @@ enum JSType : uint8_t {
     CellType,
     StringType,
     SymbolType,
+    BigIntType,
 
     CustomGetterSetterType,
     APIValueWrapperType,

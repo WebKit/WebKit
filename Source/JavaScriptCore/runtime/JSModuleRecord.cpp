@@ -26,10 +26,12 @@
 #include "config.h"
 #include "JSModuleRecord.h"
 
+#include "BuiltinNames.h"
 #include "Error.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"
 #include "JSModuleEnvironment.h"
+#include "JSModuleLoader.h"
 #include "JSModuleNamespaceObject.h"
 #include "UnlinkedModuleProgramCodeBlock.h"
 

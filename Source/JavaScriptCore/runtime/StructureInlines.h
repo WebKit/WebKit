@@ -203,7 +203,6 @@ ALWAYS_INLINE JSValue prototypeForLookupPrimitiveImpl(JSGlobalObject* globalObje
 
     ASSERT(structure->typeInfo().type() == SymbolType);
     return globalObject->symbolPrototype();
-
 }
 
 inline JSValue Structure::prototypeForLookup(JSGlobalObject* globalObject) const

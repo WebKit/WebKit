@@ -409,6 +409,7 @@ public:
     Strong<Structure> hashMapBucketMapStructure;
     Strong<Structure> setIteratorStructure;
     Strong<Structure> mapIteratorStructure;
+    Strong<Structure> bigIntStructure;
 
     Strong<JSCell> emptyPropertyNameEnumerator;
     Strong<JSCell> sentinelSetBucket;

@@ -226,4 +226,7 @@ static ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(StringView)
     return callback(viewWithString.view);
 }
 
+// Mapping from integers 0..35 to digit identifying this value, for radix 2..36.
+const char radixDigits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+
 } // namespace JSC

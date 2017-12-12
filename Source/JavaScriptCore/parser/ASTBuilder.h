@@ -232,6 +232,12 @@ public:
         incConstants();
         return new (m_parserArena) IntegerNode(location, d);
     }
+    
+    ExpressionNode* createBigInt(const JSTokenLocation& location, const Identifier* bigInt, uint8_t radix)
+    {
+        incConstants();
+        return new (m_parserArena) BigIntNode(location, *bigInt, radix);
+    }
 
     ExpressionNode* createString(const JSTokenLocation& location, const Identifier* string)
     {

@@ -122,6 +122,11 @@ JSValue StringNode::jsValue(BytecodeGenerator& generator) const
     return generator.addStringConstant(m_value);
 }
 
+JSValue BigIntNode::jsValue(BytecodeGenerator& generator) const
+{
+    return generator.addBigIntConstant(m_value, m_radix);
+}
+
 // ------------------------------ NumberNode ----------------------------------
 
 RegisterID* NumberNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)

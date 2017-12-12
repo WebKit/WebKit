@@ -192,6 +192,11 @@ inline bool JSCell::isString() const
     return m_type == StringType;
 }
 
+inline bool JSCell::isBigInt() const
+{
+    return m_type == BigIntType;
+}
+
 inline bool JSCell::isSymbol() const
 {
     return m_type == SymbolType;

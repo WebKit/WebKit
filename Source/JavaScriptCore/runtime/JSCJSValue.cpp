@@ -29,6 +29,7 @@
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
+#include "JSBigInt.h"
 #include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
@@ -129,6 +130,9 @@ JSObject* JSValue::synthesizePrototype(ExecState* exec) const
     if (isCell()) {
         if (isString())
             return exec->lexicalGlobalObject()->stringPrototype();
+        // FIXME: [ESNext][BigInt] Implement BigIntConstructor and BigIntPrototype
+        // https://bugs.webkit.org/show_bug.cgi?id=175359
+        RELEASE_ASSERT(!isBigInt());
         ASSERT(isSymbol());
         return exec->lexicalGlobalObject()->symbolPrototype();
     }
@@ -374,6 +378,12 @@ JSString* JSValue::toStringSlowCase(ExecState* exec, bool returnEmptyStringOnErr
     if (isSymbol()) {
         throwTypeError(exec, scope, ASCIILiteral("Cannot convert a symbol to a string"));
         return errorValue();
+    }
+    if (isBigInt()) {
+        JSBigInt* bigInt = asBigInt(*this);
+        if (auto digit = bigInt->singleDigitValueForString())
+            return vm.smallStrings.singleCharacterString(*digit + '0');
+        return jsNontrivialString(&vm, bigInt->toString(*exec, 10));
     }
 
     ASSERT(isCell());
