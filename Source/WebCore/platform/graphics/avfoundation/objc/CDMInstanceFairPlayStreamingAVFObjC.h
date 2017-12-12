@@ -81,6 +81,8 @@ private:
     WeakPtr<CDMInstanceFairPlayStreamingAVFObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
     bool isLicenseTypeSupported(LicenseType) const;
 
+    Vector<Ref<SharedBuffer>> keyIDs();
+
     WeakPtrFactory<CDMInstanceFairPlayStreamingAVFObjC> m_weakPtrFactory;
     RefPtr<SharedBuffer> m_serverCertificate;
     bool m_persistentStateAllowed { true };

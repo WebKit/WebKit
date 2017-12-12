@@ -225,7 +225,20 @@ bool CDMInstanceFairPlayStreamingAVFObjC::isLicenseTypeSupported(LicenseType lic
     }
 }
 
-void CDMInstanceFairPlayStreamingAVFObjC::requestLicense(LicenseType licenseType, const AtomicString&, Ref<SharedBuffer>&& initData, LicenseCallback callback)
+Vector<Ref<SharedBuffer>> CDMInstanceFairPlayStreamingAVFObjC::keyIDs()
+{
+    // FIXME(rdar://problem/35597141): use the future AVContentKeyRequest keyID property, rather than parsing it out of the init
+    // data, to get the keyID.
+    if ([m_request.get().identifier isKindOfClass:[NSString class]])
+        return Vector<Ref<SharedBuffer>>::from(SharedBuffer::create([(NSString *)m_request.get().identifier dataUsingEncoding:NSUTF8StringEncoding]));
+    if ([m_request.get().identifier isKindOfClass:[NSData class]])
+        return Vector<Ref<SharedBuffer>>::from(SharedBuffer::create((NSData *)m_request.get().identifier));
+    if (m_request.get().initializationData)
+        return CDMPrivateFairPlayStreaming::extractKeyIDsSinf(SharedBuffer::create(m_request.get().initializationData));
+    return { };
+}
+
+void CDMInstanceFairPlayStreamingAVFObjC::requestLicense(LicenseType licenseType, const AtomicString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback callback)
 {
     if (!isLicenseTypeSupported(licenseType)) {
         callback(SharedBuffer::create(), emptyString(), false, Failed);
@@ -237,9 +250,20 @@ void CDMInstanceFairPlayStreamingAVFObjC::requestLicense(LicenseType licenseType
         return;
     }
 
-    m_requestLicenseCallback = WTFMove(callback);
+    RetainPtr<NSString> identifier;
+    RetainPtr<NSData> initializationData;
 
-    [m_session processContentKeyRequestWithIdentifier:nil initializationData:initData->createNSData().get() options:nil];
+    if (initDataType == CDMPrivateFairPlayStreaming::sinfName())
+        initializationData = initData->createNSData();
+    else if (initDataType == CDMPrivateFairPlayStreaming::skdName())
+        identifier = adoptNS([[NSString alloc] initWithData:initData->createNSData().get() encoding:NSUTF8StringEncoding]);
+    else {
+        callback(SharedBuffer::create(), emptyString(), false, Failed);
+        return;
+    }
+
+    m_requestLicenseCallback = WTFMove(callback);
+    [m_session processContentKeyRequestWithIdentifier:identifier.get() initializationData:initializationData.get() options:nil];
 }
 
 static bool isEqual(const SharedBuffer& data, const String& value)
@@ -276,9 +300,7 @@ void CDMInstanceFairPlayStreamingAVFObjC::updateLicense(const String&, LicenseTy
         callback(false, std::nullopt, std::nullopt, std::nullopt, Failed);
         return;
     }
-    // FIXME(rdar://problem/35597141): use the future AVContentKeyRequest keyID property, rather than parsing it out of the init
-    // data, to get the keyID.
-    Vector<Ref<SharedBuffer>> keyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(SharedBuffer::create(m_request.get().initializationData));
+    Vector<Ref<SharedBuffer>> keyIDs = this->keyIDs();
     if (keyIDs.isEmpty()) {
         callback(false, std::nullopt, std::nullopt, std::nullopt, Failed);
         return;
@@ -400,7 +422,8 @@ void CDMInstanceFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyRequest 
         return;
 
     RetainPtr<NSData> appIdentifier = m_serverCertificate ? m_serverCertificate->createNSData() : nullptr;
-    Vector<Ref<SharedBuffer>> keyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(SharedBuffer::create(request.initializationData));
+    Vector<Ref<SharedBuffer>> keyIDs = this->keyIDs();
+
     if (keyIDs.isEmpty()) {
         m_requestLicenseCallback(SharedBuffer::create(), m_sessionId, false, Failed);
         m_requestLicenseCallback = nullptr;

@@ -63,6 +63,7 @@ namespace WebCore {
 
 class AudioSourceProviderAVFObjC;
 class AudioTrackPrivateAVFObjC;
+class CDMInstanceFairPlayStreamingAVFObjC;
 class CDMSessionAVFoundationObjC;
 class InbandMetadataTextTrackPrivateAVF;
 class InbandTextTrackPrivateAVFObjC;
@@ -151,6 +152,12 @@ public:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void removeSession(LegacyCDMSession&);
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    void cdmInstanceAttached(CDMInstance&) final;
+    void cdmInstanceDetached(CDMInstance&) final;
+    void attemptToDecryptWithInstance(CDMInstance&) final;
 #endif
 
     WeakPtr<MediaPlayerPrivateAVFoundationObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
@@ -396,6 +403,9 @@ private:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     WeakPtr<CDMSessionAVFoundationObjC> m_session;
+#endif
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    RefPtr<CDMInstanceFairPlayStreamingAVFObjC> m_cdmInstance;
 #endif
 
     mutable RetainPtr<NSArray> m_cachedSeekableRanges;

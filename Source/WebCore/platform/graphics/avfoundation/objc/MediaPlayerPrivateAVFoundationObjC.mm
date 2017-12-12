@@ -34,6 +34,7 @@
 #import "AudioSourceProviderAVFObjC.h"
 #import "AudioTrackPrivateAVFObjC.h"
 #import "AuthenticationChallenge.h"
+#import "CDMInstanceFairPlayStreamingAVFObjC.h"
 #import "CDMSessionAVFoundationObjC.h"
 #import "Cookie.h"
 #import "DeprecatedGlobalSettings.h"
@@ -54,6 +55,7 @@
 #import "PlatformTimeRanges.h"
 #import "SecurityOrigin.h"
 #import "SerializedPlatformRepresentationMac.h"
+#import "SharedBuffer.h"
 #import "TextEncoding.h"
 #import "TextTrackRepresentation.h"
 #import "TextureCacheCV.h"
@@ -1766,8 +1768,9 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
     String scheme = [[[avRequest request] URL] scheme];
     String keyURI = [[[avRequest request] URL] absoluteString];
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
     if (scheme == "skd") {
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
         // Create an initData with the following layout:
         // [4 bytes: keyURI size], [keyURI size bytes: keyURI]
         unsigned keyURISize = keyURI.length() * sizeof(UChar);
@@ -1782,11 +1785,20 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
         RefPtr<Uint8Array> initData = Uint8Array::create(WTFMove(initDataBuffer), 0, byteLength);
         if (!player()->keyNeeded(initData.get()))
             return false;
-
+#endif
         m_keyURIToRequestMap.set(keyURI, avRequest);
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+        if (m_cdmInstance)
+            return false;
+
+        RetainPtr<NSData> keyURIData = [keyURI dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
+        auto keyURIBuffer = SharedBuffer::create(keyURIData.get());
+        player()->initializationDataEncountered(ASCIILiteral("skd"), keyURIBuffer->tryCreateArrayBuffer());
+#endif
         return true;
     }
 
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     if (scheme == "clearkey") {
         String keyID = [[[avRequest request] URL] resourceSpecifier];
         auto encodedKeyId = UTF8Encoding().encode(keyID, UnencodableHandling::URLEncodedEntities);
@@ -1806,6 +1818,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
         m_keyURIToRequestMap.set(keyID, avRequest);
         return true;
     }
+#endif
 #endif
 
     RefPtr<WebCoreAVFResourceLoader> resourceLoader = WebCoreAVFResourceLoader::create(this, avRequest);
@@ -2475,6 +2488,46 @@ void MediaPlayerPrivateAVFoundationObjC::outputObscuredDueToInsufficientExternal
         m_session->playerDidReceiveError([NSError errorWithDomain:@"com.apple.WebKit" code:'HDCP' userInfo:nil]);
 }
 
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+void MediaPlayerPrivateAVFoundationObjC::cdmInstanceAttached(CDMInstance& instance)
+{
+#if HAVE(AVCONTENTKEYSESSION)
+    if (!is<CDMInstanceFairPlayStreamingAVFObjC>(instance))
+        return;
+
+    auto& fpsInstance = downcast<CDMInstanceFairPlayStreamingAVFObjC>(instance);
+    if (&fpsInstance == m_cdmInstance)
+        return;
+
+    if (m_cdmInstance)
+        cdmInstanceDetached(*m_cdmInstance);
+
+    m_cdmInstance = &fpsInstance;
+    [m_cdmInstance->contentKeySession() addContentKeyRecipient:m_avAsset.get()];
+#else
+    UNUSED_PARAM(instance);
+#endif
+}
+
+void MediaPlayerPrivateAVFoundationObjC::cdmInstanceDetached(CDMInstance& instance)
+{
+#if HAVE(AVCONTENTKEYSESSION)
+    ASSERT_UNUSED(instance, m_cdmInstance && m_cdmInstance == &instance);
+    [m_cdmInstance->contentKeySession() removeContentKeyRecipient:m_avAsset.get()];
+    m_cdmInstance = nullptr;
+#else
+    UNUSED_PARAM(instance);
+#endif
+}
+
+void MediaPlayerPrivateAVFoundationObjC::attemptToDecryptWithInstance(CDMInstance&)
+{
+    auto keyURIToRequestMap = WTFMove(m_keyURIToRequestMap);
+    for (auto& request : keyURIToRequestMap.values())
+        [request finishLoading];
+}
 #endif
 
 #if !HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)

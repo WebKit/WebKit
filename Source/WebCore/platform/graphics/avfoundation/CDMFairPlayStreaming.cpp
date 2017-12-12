@@ -62,10 +62,16 @@ static const Vector<FourCC>& validFairPlayStreamingSchemes()
     return validSchemes;
 }
 
-static const String& sinfName()
+const AtomicString& CDMPrivateFairPlayStreaming::sinfName()
 {
-    static NeverDestroyed<String> sinf { MAKE_STATIC_STRING_IMPL("sinf") };
+    static NeverDestroyed<AtomicString> sinf { MAKE_STATIC_STRING_IMPL("sinf") };
     return sinf;
+}
+
+const AtomicString& CDMPrivateFairPlayStreaming::skdName()
+{
+    static NeverDestroyed<AtomicString> skd { MAKE_STATIC_STRING_IMPL("skd") };
+    return skd;
 }
 
 static Vector<Ref<SharedBuffer>> extractSinfData(const SharedBuffer& buffer)
@@ -84,7 +90,7 @@ static Vector<Ref<SharedBuffer>> extractSinfData(const SharedBuffer& buffer)
         return { };
 
     RefPtr<JSON::Array> sinfArray;
-    if (!object->getArray(sinfName(), sinfArray))
+    if (!object->getArray(CDMPrivateFairPlayStreaming::sinfName(), sinfArray))
         return { };
 
     Vector<Ref<SharedBuffer>> sinfs;
@@ -174,12 +180,34 @@ RefPtr<SharedBuffer> CDMPrivateFairPlayStreaming::sanitizeSinf(const SharedBuffe
     return buffer.copy();
 }
 
+RefPtr<SharedBuffer> CDMPrivateFairPlayStreaming::sanitizeSkd(const SharedBuffer& buffer)
+{
+    UNUSED_PARAM(buffer);
+    notImplemented();
+    return buffer.copy();
+}
+
+Vector<Ref<SharedBuffer>> CDMPrivateFairPlayStreaming::extractKeyIDsSkd(const SharedBuffer& buffer)
+{
+    // In the 'skd' scheme, the init data is the key ID.
+    Vector<Ref<SharedBuffer>> keyIDs;
+    keyIDs.append(buffer.copy());
+    return keyIDs;
+}
+
+static const HashSet<AtomicString>& validInitDataTypes()
+{
+    static NeverDestroyed<HashSet<AtomicString>> validTypes = HashSet<AtomicString>({ CDMPrivateFairPlayStreaming::sinfName(), CDMPrivateFairPlayStreaming::skdName() });
+    return validTypes;
+}
+
 void CDMFactory::platformRegisterFactories(Vector<CDMFactory*>& factories)
 {
     factories.append(&CDMFactoryClearKey::singleton());
     factories.append(&CDMFactoryFairPlayStreaming::singleton());
 
-    InitDataRegistry::shared().registerInitDataType(sinfName(), { CDMPrivateFairPlayStreaming::sanitizeSinf, CDMPrivateFairPlayStreaming::extractKeyIDsSinf });
+    InitDataRegistry::shared().registerInitDataType(CDMPrivateFairPlayStreaming::sinfName(), { CDMPrivateFairPlayStreaming::sanitizeSinf, CDMPrivateFairPlayStreaming::extractKeyIDsSinf });
+    InitDataRegistry::shared().registerInitDataType(CDMPrivateFairPlayStreaming::skdName(), { CDMPrivateFairPlayStreaming::sanitizeSkd, CDMPrivateFairPlayStreaming::extractKeyIDsSkd });
 }
 
 CDMFactoryFairPlayStreaming& CDMFactoryFairPlayStreaming::singleton()
@@ -211,12 +239,12 @@ CDMPrivateFairPlayStreaming::~CDMPrivateFairPlayStreaming() = default;
 
 bool CDMPrivateFairPlayStreaming::supportsInitDataType(const AtomicString& initDataType) const
 {
-    return initDataType == sinfName();
+    return validInitDataTypes().contains(initDataType);
 }
 
 bool CDMPrivateFairPlayStreaming::supportsConfiguration(const CDMKeySystemConfiguration& configuration) const
 {
-    if (!configuration.initDataTypes.contains(sinfName()))
+    if (!WTF::anyOf(configuration.initDataTypes, [] (auto& initDataType) { return validInitDataTypes().contains(initDataType); }))
         return false;
 
 #if HAVE(AVCONTENTKEYSESSION)
@@ -331,9 +359,17 @@ bool CDMPrivateFairPlayStreaming::supportsInitData(const AtomicString& initDataT
     if (!supportsInitDataType(initDataType))
         return false;
 
-    return WTF::anyOf(extractSchemeAndKeyIdFromSinf(initData), [](auto& result) {
-        return validFairPlayStreamingSchemes().contains(result.first);
-    });
+    if (initDataType == sinfName()) {
+        return WTF::anyOf(extractSchemeAndKeyIdFromSinf(initData), [](auto& result) {
+            return validFairPlayStreamingSchemes().contains(result.first);
+        });
+    }
+
+    if (initDataType == skdName())
+        return true;
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 RefPtr<SharedBuffer> CDMPrivateFairPlayStreaming::sanitizeResponse(const SharedBuffer& response) const
