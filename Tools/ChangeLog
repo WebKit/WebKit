@@ -1,3 +1,17 @@
+2017-12-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] DLLLauncherMain should use SetDllDirectory
+        https://bugs.webkit.org/show_bug.cgi?id=180642
+
+        Reviewed by Alex Christensen.
+
+        Windows have icuuc.dll in the system directory. WebKit should find
+        one in WebKitLibraries directory, not one in the system directory.
+
+        * win/DLLLauncher/DLLLauncherMain.cpp:
+        (modifyPath): Use SetDllDirectory for WebKitLibraries directory instead of modifying path.
+        Do not add a path for GStreamer because nobody is using now.
+
 2017-12-11  David Quesada  <david_quesada@apple.com>
 
         Turn on ENABLE_APPLICATION_MANIFEST

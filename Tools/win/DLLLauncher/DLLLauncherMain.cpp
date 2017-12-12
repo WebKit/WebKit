@@ -121,16 +121,18 @@ static bool modifyPath(const wstring& programName)
 {
 #ifdef WIN_CAIRO
 
+    wstring pathWinCairo = copyEnvironmentVariable(L"WEBKIT_LIBRARIES");
+    if (!directoryExists(pathWinCairo))
+        return true;
 #if defined(_M_X64)
-    wstring pathGStreamer = copyEnvironmentVariable(L"GSTREAMER_1_0_ROOT_X86_64") + L"bin";
-    wstring pathWinCairo = copyEnvironmentVariable(L"WEBKIT_LIBRARIES") + L"\\bin64";
+    pathWinCairo += L"\\bin64";
 #else
-    wstring pathGStreamer = copyEnvironmentVariable(L"GSTREAMER_1_0_ROOT_X86") + L"bin";
-    wstring pathWinCairo = copyEnvironmentVariable(L"WEBKIT_LIBRARIES") + L"\\bin32";
+    pathWinCairo += L"\\bin32";
 #endif
-    prependPath(pathWinCairo);
-    if (directoryExists(pathGStreamer))
-        prependPath(pathGStreamer);
+    if (!SetDllDirectory(pathWinCairo.c_str())) {
+        fatalError(programName, L"Failed to SetDllDirectory");
+        return false;
+    }
     return true;
 
 #else
