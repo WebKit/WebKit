@@ -29,7 +29,6 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "UpdateAtlas.h"
 #include <WebCore/CoordinatedGraphicsLayer.h>
 #include <WebCore/CoordinatedGraphicsState.h>
 #include <WebCore/CoordinatedImageBacking.h>
@@ -38,6 +37,7 @@
 #include <WebCore/GraphicsLayerFactory.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/NicosiaBuffer.h>
+#include <WebCore/UpdateAtlas.h>
 
 namespace Nicosia {
 class PaintingEngine;
@@ -54,7 +54,7 @@ namespace WebKit {
 class CompositingCoordinator final : public WebCore::GraphicsLayerClient
     , public WebCore::CoordinatedGraphicsLayerClient
     , public WebCore::CoordinatedImageBacking::Client
-    , public UpdateAtlas::Client
+    , public WebCore::UpdateAtlas::Client
     , public WebCore::GraphicsLayerFactory {
     WTF_MAKE_NONCOPYABLE(CompositingCoordinator);
 public:
@@ -122,8 +122,8 @@ private:
     void syncLayerState(WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayerState&) override;
 
     // UpdateAtlas::Client
-    void createUpdateAtlas(UpdateAtlas::ID, Ref<Nicosia::Buffer>&&) override;
-    void removeUpdateAtlas(UpdateAtlas::ID) override;
+    void createUpdateAtlas(WebCore::UpdateAtlas::ID, Ref<Nicosia::Buffer>&&) override;
+    void removeUpdateAtlas(WebCore::UpdateAtlas::ID) override;
 
     // GraphicsLayerFactory
     std::unique_ptr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
@@ -153,7 +153,7 @@ private:
     HashMap<WebCore::CoordinatedImageBackingID, RefPtr<WebCore::CoordinatedImageBacking>> m_imageBackings;
 
     std::unique_ptr<Nicosia::PaintingEngine> m_paintingEngine;
-    Vector<std::unique_ptr<UpdateAtlas>> m_updateAtlases;
+    Vector<std::unique_ptr<WebCore::UpdateAtlas>> m_updateAtlases;
     Vector<uint32_t> m_atlasesToRemove;
 
     // We don't send the messages related to releasing resources to renderer during purging, because renderer already had removed all resources.

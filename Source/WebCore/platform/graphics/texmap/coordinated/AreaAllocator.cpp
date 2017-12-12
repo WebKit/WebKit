@@ -22,9 +22,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-using namespace WebCore;
-
-namespace WebKit {
+namespace WebCore {
 
 AreaAllocator::AreaAllocator(const IntSize& size)
     : m_size(size)

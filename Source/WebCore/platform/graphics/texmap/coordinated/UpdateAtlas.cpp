@@ -23,13 +23,10 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include <WebCore/CoordinatedGraphicsState.h>
-#include <WebCore/GraphicsContext.h>
-#include <WebCore/IntRect.h>
+#include "CoordinatedGraphicsState.h"
+#include "IntRect.h"
 
-using namespace WebCore;
-
-namespace WebKit {
+namespace WebCore {
 
 UpdateAtlas::UpdateAtlas(Client& client, const IntSize& size, Nicosia::Buffer::Flags flags)
     : m_client(client)
@@ -72,6 +69,6 @@ RefPtr<Nicosia::Buffer> UpdateAtlas::getCoordinatedBuffer(const IntSize& size, u
     return m_buffer.copyRef();
 }
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)

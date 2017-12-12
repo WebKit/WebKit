@@ -46,11 +46,9 @@ list(APPEND WebKit_SOURCES
     WebProcess/WebPage/AcceleratedSurface.cpp
     WebProcess/WebPage/DrawingAreaImpl.cpp
 
-    WebProcess/WebPage/CoordinatedGraphics/AreaAllocator.cpp
     WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp
     WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp
-    WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.cpp
 
     WebProcess/WebPage/win/WebInspectorUIWin.cpp
     WebProcess/WebPage/win/WebPageWin.cpp

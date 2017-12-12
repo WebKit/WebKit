@@ -21,17 +21,15 @@
 #pragma once
 
 #include "AreaAllocator.h"
-#include <WebCore/NicosiaBuffer.h>
+#include "NicosiaBuffer.h"
 #include <wtf/RefPtr.h>
 
 #if USE(COORDINATED_GRAPHICS)
 
 namespace WebCore {
+
 class IntRect;
 class IntSize;
-}
-
-namespace WebKit {
 
 class UpdateAtlas {
     WTF_MAKE_FAST_ALLOCATED;
@@ -45,12 +43,12 @@ public:
         virtual void removeUpdateAtlas(ID) = 0;
     };
 
-    UpdateAtlas(Client&, const WebCore::IntSize&, Nicosia::Buffer::Flags);
+    UpdateAtlas(Client&, const IntSize&, Nicosia::Buffer::Flags);
     ~UpdateAtlas();
 
-    const WebCore::IntSize& size() const { return m_buffer->size(); }
+    const IntSize& size() const { return m_buffer->size(); }
 
-    RefPtr<Nicosia::Buffer> getCoordinatedBuffer(const WebCore::IntSize&, uint32_t&, WebCore::IntRect&);
+    RefPtr<Nicosia::Buffer> getCoordinatedBuffer(const IntSize&, uint32_t&, IntRect&);
     void didSwapBuffers();
     bool supportsAlpha() const { return m_buffer->supportsAlpha(); }
 
@@ -76,6 +74,6 @@ private:
     double m_inactivityInSeconds { 0 };
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)

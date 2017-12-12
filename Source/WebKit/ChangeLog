@@ -1,3 +1,19 @@
+2017-12-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Move UpdateAtlas, AreaAllocator into the platform layer
+        https://bugs.webkit.org/show_bug.cgi?id=180641
+
+        Reviewed by Michael Catanzaro.
+
+        Move the UpdateAtlas and AreaAllocator classes into the platform layer,
+        moving over build targets and adjust UpdateAtlas class references in
+        CompositingCoordinator.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * PlatformWin.cmake:
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+
 2017-12-11  Alex Christensen  <achristensen@webkit.org>
 
         Add a WKPageGroupRef setter in WKWebViewConfiguration

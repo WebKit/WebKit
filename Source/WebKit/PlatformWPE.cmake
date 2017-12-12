@@ -260,11 +260,9 @@ list(APPEND WebKit_SOURCES
     WebProcess/WebPage/AcceleratedDrawingArea.cpp
     WebProcess/WebPage/AcceleratedSurface.cpp
 
-    WebProcess/WebPage/CoordinatedGraphics/AreaAllocator.cpp
     WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp
     WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp
-    WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.cpp
 
     WebProcess/WebPage/gstreamer/WebPageGStreamer.cpp
 
