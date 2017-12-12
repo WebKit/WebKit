@@ -83,8 +83,7 @@ private:
 
     void startFetch(uint64_t fetchIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::ResourceRequest&&, WebCore::FetchOptions&&, IPC::FormDataReference&&);
 
-    void postMessageToServiceWorkerFromClient(WebCore::ServiceWorkerIdentifier destination, IPC::DataReference&& message, WebCore::ServiceWorkerClientIdentifier sourceIdentifier, WebCore::ServiceWorkerClientData&& source);
-    void postMessageToServiceWorkerFromServiceWorker(WebCore::ServiceWorkerIdentifier destination, IPC::DataReference&& message, WebCore::ServiceWorkerIdentifier source);
+    void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, IPC::DataReference&& message, const WebCore::ServiceWorkerOrClientIdentifier& source);
 
     void matchRegistration(uint64_t registrationMatchRequestIdentifier, const WebCore::SecurityOriginData& topOrigin, const WebCore::URL& clientURL);
     void getRegistrations(uint64_t registrationMatchRequestIdentifier, const WebCore::SecurityOriginData& topOrigin, const WebCore::URL& clientURL);

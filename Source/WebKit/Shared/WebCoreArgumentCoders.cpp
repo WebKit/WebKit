@@ -66,6 +66,7 @@
 #include <WebCore/ScrollingCoordinator.h>
 #include <WebCore/SearchPopupMenu.h>
 #include <WebCore/ServiceWorkerClientData.h>
+#include <WebCore/ServiceWorkerClientIdentifier.h>
 #include <WebCore/ServiceWorkerData.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TextIndicator.h>
@@ -2716,6 +2717,39 @@ bool ArgumentCoder<ServiceWorkerOrClientData>::decode(Decoder& decoder, ServiceW
             return false;
 
         data = WTFMove(*clientData);
+    }
+    return true;
+}
+
+void ArgumentCoder<ServiceWorkerOrClientIdentifier>::encode(Encoder& encoder, const ServiceWorkerOrClientIdentifier& identifier)
+{
+    bool isServiceWorkerIdentifier = WTF::holds_alternative<ServiceWorkerIdentifier>(identifier);
+    encoder << isServiceWorkerIdentifier;
+    if (isServiceWorkerIdentifier)
+        encoder << WTF::get<ServiceWorkerIdentifier>(identifier);
+    else
+        encoder << WTF::get<ServiceWorkerClientIdentifier>(identifier);
+}
+
+bool ArgumentCoder<ServiceWorkerOrClientIdentifier>::decode(Decoder& decoder, ServiceWorkerOrClientIdentifier& identifier)
+{
+    bool isServiceWorkerIdentifier;
+    if (!decoder.decode(isServiceWorkerIdentifier))
+        return false;
+    if (isServiceWorkerIdentifier) {
+        std::optional<ServiceWorkerIdentifier> workerIdentifier;
+        decoder >> workerIdentifier;
+        if (!workerIdentifier)
+            return false;
+
+        identifier = WTFMove(*workerIdentifier);
+    } else {
+        std::optional<ServiceWorkerClientIdentifier> clientIdentifier;
+        decoder >> clientIdentifier;
+        if (!clientIdentifier)
+            return false;
+
+        identifier = WTFMove(*clientIdentifier);
     }
     return true;
 }

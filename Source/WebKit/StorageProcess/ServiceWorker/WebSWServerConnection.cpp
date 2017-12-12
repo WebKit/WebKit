@@ -127,28 +127,24 @@ void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, ServiceWorkerId
     });
 }
 
-// FIXME: We should be able to only pass in the ServiceWorkerClientIdentifier here and look up the clientData from the SWServer.
-void WebSWServerConnection::postMessageToServiceWorkerFromClient(ServiceWorkerIdentifier destinationIdentifier, IPC::DataReference&& message, ServiceWorkerClientIdentifier, ServiceWorkerClientData&& sourceData)
+void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier destinationIdentifier, IPC::DataReference&& message, const ServiceWorkerOrClientIdentifier& sourceIdentifier)
 {
-    // It's possible this specific worker cannot be re-run (e.g. its registration has been removed)
-    server().runServiceWorkerIfNecessary(destinationIdentifier, [destinationIdentifier, message = message.vector(), sourceData = WTFMove(sourceData)](bool success, auto& contextConnection) mutable {
-        if (success)
-            sendToContextProcess(contextConnection, Messages::WebSWContextManagerConnection::PostMessageToServiceWorker { destinationIdentifier, message, WTFMove(sourceData) });
+    std::optional<ServiceWorkerOrClientData> sourceData;
+    WTF::switchOn(sourceIdentifier, [&](ServiceWorkerIdentifier identifier) {
+        if (auto* sourceWorker = server().workerByID(identifier))
+            sourceData = ServiceWorkerOrClientData { sourceWorker->data() };
+    }, [&](ServiceWorkerClientIdentifier identifier) {
+        if (auto clientData = server().serviceWorkerClientByID(identifier))
+            sourceData = ServiceWorkerOrClientData { *clientData };
     });
-}
 
-void WebSWServerConnection::postMessageToServiceWorkerFromServiceWorker(ServiceWorkerIdentifier destinationIdentifier, IPC::DataReference&& message, ServiceWorkerIdentifier sourceIdentifier)
-{
-    auto* sourceWorker = server().workerByID(sourceIdentifier);
-    if (!sourceWorker)
+    if (!sourceData)
         return;
 
     // It's possible this specific worker cannot be re-run (e.g. its registration has been removed)
-    server().runServiceWorkerIfNecessary(destinationIdentifier, [destinationIdentifier, message = message.vector(), sourceData = sourceWorker->data()](bool success, auto& contextConnection) mutable {
-        if (!success)
-            return;
-
-        sendToContextProcess(contextConnection, Messages::WebSWContextManagerConnection::PostMessageToServiceWorker { destinationIdentifier, message, WTFMove(sourceData) });
+    server().runServiceWorkerIfNecessary(destinationIdentifier, [destinationIdentifier, message = message.vector(), sourceData = WTFMove(*sourceData)](bool success, auto& contextConnection) mutable {
+        if (success)
+            sendToContextProcess(contextConnection, Messages::WebSWContextManagerConnection::PostMessageToServiceWorker { destinationIdentifier, message, WTFMove(sourceData) });
     });
 }
 

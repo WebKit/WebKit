@@ -4965,6 +4965,11 @@ void Document::privateBrowsingStateDidChange()
 
     for (auto* element : m_privateBrowsingStateChangedElements)
         element->privateBrowsingStateDidChange();
+
+#if ENABLE(SERVICE_WORKER)
+    if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled())
+        setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID()));
+#endif
 }
 
 void Document::registerForPrivateBrowsingStateChangedCallbacks(Element* e)

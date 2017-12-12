@@ -73,8 +73,7 @@ private:
 
     void scheduleJobInServer(const WebCore::ServiceWorkerJobData&) final;
     void finishFetchingScriptInServer(const WebCore::ServiceWorkerFetchResult&) final;
-    void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, Ref<WebCore::SerializedScriptValue>&&, WebCore::ServiceWorkerClientIdentifier sourceIdentifier, WebCore::ServiceWorkerClientData&& source) final;
-    void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, Ref<WebCore::SerializedScriptValue>&&, WebCore::ServiceWorkerIdentifier sourceWorkerIdentifier) final;
+    void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, Ref<WebCore::SerializedScriptValue>&&, const WebCore::ServiceWorkerOrClientIdentifier& source) final;
     void registerServiceWorkerClient(const WebCore::SecurityOrigin& topOrigin, const WebCore::ServiceWorkerClientData&, const std::optional<WebCore::ServiceWorkerIdentifier>&) final;
     void unregisterServiceWorkerClient(WebCore::DocumentIdentifier) final;
 

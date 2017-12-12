@@ -114,21 +114,18 @@ ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JS
     if (channels && !channels->isEmpty())
         return Exception { NotSupportedError, ASCIILiteral("Passing MessagePort objects to postMessage is not yet supported") };
 
-    if (is<ServiceWorkerGlobalScope>(context)) {
-        auto sourceWorkerIdentifier = downcast<ServiceWorkerGlobalScope>(context).thread().identifier();
-        callOnMainThread([sessionID = context.sessionID(), destinationIdentifier = identifier(), sourceWorkerIdentifier, message = WTFMove(message)]() mutable {
-            auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
-            connection.postMessageToServiceWorker(destinationIdentifier, message.releaseReturnValue(), sourceWorkerIdentifier);
-        });
-        return { };
+    ServiceWorkerOrClientIdentifier sourceIdentifier;
+    if (is<ServiceWorkerGlobalScope>(context))
+        sourceIdentifier = downcast<ServiceWorkerGlobalScope>(context).thread().identifier();
+    else {
+        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(context.sessionID());
+        sourceIdentifier = ServiceWorkerClientIdentifier { connection.serverConnectionIdentifier(), downcast<Document>(context).identifier() };
     }
 
-    auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(context.sessionID());
-    // FIXME: We should be able to send only the client identifier and look up the clientData on server side.
-    auto sourceClientData = ServiceWorkerClientData::from(context, connection);
-    ServiceWorkerClientIdentifier sourceClientIdentifier { connection.serverConnectionIdentifier(), downcast<Document>(context).identifier() };
-    connection.postMessageToServiceWorker(identifier(), message.releaseReturnValue(), WTFMove(sourceClientIdentifier), WTFMove(sourceClientData));
-
+    callOnMainThread([sessionID = context.sessionID(), destinationIdentifier = identifier(), message = WTFMove(message), sourceIdentifier = WTFMove(sourceIdentifier)]() mutable {
+        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
+        connection.postMessageToServiceWorker(destinationIdentifier, message.releaseReturnValue(), sourceIdentifier);
+    });
     return { };
 }
 

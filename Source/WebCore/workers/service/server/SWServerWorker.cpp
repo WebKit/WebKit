@@ -107,9 +107,9 @@ void SWServerWorker::contextTerminated()
     m_server.workerContextTerminated(*this);
 }
 
-std::optional<ServiceWorkerClientData> SWServerWorker::findClientByIdentifier(ServiceWorkerClientIdentifier clientId)
+std::optional<ServiceWorkerClientData> SWServerWorker::findClientByIdentifier(const ServiceWorkerClientIdentifier& clientId) const
 {
-    return m_server.findClientByIdentifier(origin(), clientId);
+    return m_server.serviceWorkerClientByID(clientId);
 }
 
 void SWServerWorker::matchAll(const ServiceWorkerClientQueryOptions& options, ServiceWorkerClientsMatchAllCallback&& callback)

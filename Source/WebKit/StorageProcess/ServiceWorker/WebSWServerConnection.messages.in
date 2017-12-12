@@ -31,9 +31,7 @@ messages -> WebSWServerConnection {
 
     StartFetch(uint64_t identifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::ResourceRequest request, struct WebCore::FetchOptions options, IPC::FormDataReference requestBody)
 
-    # FIXME: We should be able to merge the 2 following messages and use a DocumentOrWorkerIdentifier as source identifier.
-    PostMessageToServiceWorkerFromClient(WebCore::ServiceWorkerIdentifier destinationServiceWorkerIdentifier, IPC::DataReference message, struct WebCore::ServiceWorkerClientIdentifier sourceIdentifier, struct WebCore::ServiceWorkerClientData sourceData)
-    PostMessageToServiceWorkerFromServiceWorker(WebCore::ServiceWorkerIdentifier destinationServiceWorkerIdentifier, IPC::DataReference message, struct WebCore::ServiceWorkerIdentifier sourceIdentifier)
+    PostMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, IPC::DataReference message, WebCore::ServiceWorkerOrClientIdentifier source)
 
     DidResolveRegistrationPromise(WebCore::ServiceWorkerRegistrationKey key)
 

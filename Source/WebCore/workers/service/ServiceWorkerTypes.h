@@ -37,6 +37,7 @@ namespace WebCore {
 
 struct ServiceWorkerData;
 struct ServiceWorkerClientData;
+struct ServiceWorkerClientIdentifier;
 
 enum class ServiceWorkerRegistrationState {
     Installing = 0,
@@ -76,6 +77,7 @@ using SWServerConnectionIdentifier = ObjectIdentifier<SWServerConnectionIdentifi
 using DocumentOrWorkerIdentifier = Variant<DocumentIdentifier, ServiceWorkerIdentifier>;
 
 using ServiceWorkerOrClientData = Variant<ServiceWorkerData, ServiceWorkerClientData>;
+using ServiceWorkerOrClientIdentifier = Variant<ServiceWorkerIdentifier, ServiceWorkerClientIdentifier>;
 
 } // namespace WebCore
 

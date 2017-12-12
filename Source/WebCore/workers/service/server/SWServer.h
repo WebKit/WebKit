@@ -139,7 +139,9 @@ public:
     void syncTerminateWorker(SWServerWorker&);
     void fireInstallEvent(SWServerWorker&);
     void fireActivateEvent(SWServerWorker&);
+
     WEBCORE_EXPORT SWServerWorker* workerByID(ServiceWorkerIdentifier) const;
+    WEBCORE_EXPORT std::optional<ServiceWorkerClientData> serviceWorkerClientByID(const ServiceWorkerClientIdentifier&) const;
 
     WEBCORE_EXPORT void markAllWorkersAsTerminated();
     
@@ -151,7 +153,6 @@ public:
     void didFinishInstall(const std::optional<ServiceWorkerJobDataIdentifier>&, SWServerWorker&, bool wasSuccessful);
     void didFinishActivation(SWServerWorker&);
     void workerContextTerminated(SWServerWorker&);
-    std::optional<ServiceWorkerClientData> findClientByIdentifier(const ClientOrigin&, ServiceWorkerClientIdentifier);
     void matchAll(SWServerWorker&, const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&);
     void claim(SWServerWorker&);
 
@@ -192,6 +193,7 @@ private:
     void installContextData(const ServiceWorkerContextData&);
 
     SWServerRegistration* registrationFromServiceWorkerIdentifier(ServiceWorkerIdentifier);
+    void forEachClientForOrigin(const ClientOrigin&, const WTF::Function<void(ServiceWorkerClientData&)>&);
 
     enum TerminationMode {
         Synchronous,
@@ -207,10 +209,11 @@ private:
     HashMap<ServiceWorkerIdentifier, Ref<SWServerWorker>> m_runningOrTerminatingWorkers;
 
     struct Clients {
-        Vector<ServiceWorkerClientData> clients;
+        Vector<ServiceWorkerClientIdentifier> identifiers;
         std::unique_ptr<Timer> terminateServiceWorkersTimer;
     };
-    HashMap<ClientOrigin, Clients> m_clients;
+    HashMap<ClientOrigin, Clients> m_clientIdentifiersPerOrigin;
+    HashMap<ServiceWorkerClientIdentifier, ServiceWorkerClientData> m_clientsById;
     HashMap<ServiceWorkerClientIdentifier, ServiceWorkerIdentifier> m_clientToControllingWorker;
 
     RefPtr<Thread> m_taskThread;

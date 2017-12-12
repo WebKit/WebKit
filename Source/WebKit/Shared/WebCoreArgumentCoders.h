@@ -675,6 +675,11 @@ template<> struct ArgumentCoder<WebCore::ServiceWorkerOrClientData> {
     static bool decode(Decoder&, WebCore::ServiceWorkerOrClientData&);
 };
 
+template<> struct ArgumentCoder<WebCore::ServiceWorkerOrClientIdentifier> {
+    static void encode(Encoder&, const WebCore::ServiceWorkerOrClientIdentifier&);
+    static bool decode(Decoder&, WebCore::ServiceWorkerOrClientIdentifier&);
+};
+
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)

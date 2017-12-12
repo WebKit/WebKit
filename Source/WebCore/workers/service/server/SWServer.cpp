@@ -93,6 +93,14 @@ SWServerWorker* SWServer::workerByID(ServiceWorkerIdentifier identifier) const
     return worker;
 }
 
+std::optional<ServiceWorkerClientData> SWServer::serviceWorkerClientByID(const ServiceWorkerClientIdentifier& clientIdentifier) const
+{
+    auto iterator = m_clientsById.find(clientIdentifier);
+    if (iterator == m_clientsById.end())
+        return std::nullopt;
+    return iterator->value;
+}
+
 SWServerRegistration* SWServer::getRegistration(const ServiceWorkerRegistrationKey& registrationKey)
 {
     return m_registrations.get(registrationKey);
@@ -332,67 +340,54 @@ void SWServer::didFinishActivation(SWServerWorker& worker)
         registration->didFinishActivation(worker.identifier());
 }
 
-// https://w3c.github.io/ServiceWorker/#clients-get
-std::optional<ServiceWorkerClientData> SWServer::findClientByIdentifier(const ClientOrigin& origin, ServiceWorkerClientIdentifier clientIdentifier)
-{
-    // FIXME: Support WindowClient additional properties.
-
-    auto iterator = m_clients.find(origin);
-    if (iterator == m_clients.end())
-        return std::nullopt;
-
-    auto& clients = iterator->value.clients;
-    auto position = clients.findMatching([&] (const auto& client) {
-        return clientIdentifier == client.identifier;
-    });
-
-    return (position != notFound) ? std::make_optional(clients[position]) : std::nullopt;
-}
-
 // https://w3c.github.io/ServiceWorker/#clients-getall
 void SWServer::matchAll(SWServerWorker& worker, const ServiceWorkerClientQueryOptions& options, ServiceWorkerClientsMatchAllCallback&& callback)
 {
     // FIXME: Support reserved client filtering.
     // FIXME: Support WindowClient additional properties.
 
-    auto clients = m_clients.find(worker.origin())->value.clients;
+    Vector<ServiceWorkerClientData> matchingClients;
+    forEachClientForOrigin(worker.origin(), [&](auto& clientData) {
+        if (!options.includeUncontrolled && worker.identifier() != m_clientToControllingWorker.get(clientData.identifier))
+            return;
+        if (options.type != ServiceWorkerClientType::All && options.type != clientData.type)
+            return;
+        matchingClients.append(clientData);
+    });
+    callback(WTFMove(matchingClients));
+}
 
-    if (!options.includeUncontrolled) {
-        clients.removeAllMatching([&] (const auto& clientData) {
-            return worker.identifier() != m_clientToControllingWorker.get(clientData.identifier);
-        });
+void SWServer::forEachClientForOrigin(const ClientOrigin& origin, const WTF::Function<void(ServiceWorkerClientData&)>& apply)
+{
+    auto iterator = m_clientIdentifiersPerOrigin.find(origin);
+    if (iterator == m_clientIdentifiersPerOrigin.end())
+        return;
+
+    for (auto& clientIdentifier : iterator->value.identifiers) {
+        auto clientIterator = m_clientsById.find(clientIdentifier);
+        ASSERT(clientIterator != m_clientsById.end());
+        apply(clientIterator->value);
     }
-    if (options.type != ServiceWorkerClientType::All) {
-        clients.removeAllMatching([&] (const auto& clientData) {
-            return options.type != clientData.type;
-        });
-    }
-    callback(WTFMove(clients));
 }
 
 void SWServer::claim(SWServerWorker& worker)
 {
     auto& origin = worker.origin();
-    auto iterator = m_clients.find(origin);
-    if (iterator == m_clients.end())
-        return;
-
-    auto& clients = iterator->value.clients;
-    for (auto& clientData : clients) {
+    forEachClientForOrigin(origin, [&](auto& clientData) {
         auto* registration = doRegistrationMatching(origin.topOrigin, clientData.url);
         if (!(registration && registration->key() == worker.registrationKey()))
-            continue;
+            return;
 
         auto result = m_clientToControllingWorker.add(clientData.identifier, worker.identifier());
         if (!result.isNewEntry) {
             if (result.iterator->value == worker.identifier())
-                continue;
+                return;
             if (auto* controllingRegistration = registrationFromServiceWorkerIdentifier(result.iterator->value))
                 controllingRegistration->removeClientUsingRegistration(clientData.identifier);
             result.iterator->value = worker.identifier();
         }
         registration->controlClient(clientData.identifier);
-    }
+    });
 }
 
 void SWServer::didResolveRegistrationPromise(Connection& connection, const ServiceWorkerRegistrationKey& registrationKey)
@@ -689,13 +684,15 @@ SWServerRegistration* SWServer::registrationFromServiceWorkerIdentifier(ServiceW
 
 void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerIdentifier>& controllingServiceWorkerIdentifier)
 {
-    auto& clientsData = m_clients.ensure(WTFMove(clientOrigin), [] {
+    auto clientIdentifier = data.identifier;
+    auto addResult = m_clientsById.add(clientIdentifier, WTFMove(data));
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+
+    auto& clientIdentifiersForOrigin = m_clientIdentifiersPerOrigin.ensure(WTFMove(clientOrigin), [] {
         return Clients { };
     }).iterator->value;
-
-    auto clientIdentifier = data.identifier;
-    clientsData.clients.append(WTFMove(data));
-    clientsData.terminateServiceWorkersTimer = nullptr;
+    clientIdentifiersForOrigin.identifiers.append(clientIdentifier);
+    clientIdentifiersForOrigin.terminateServiceWorkersTimer = nullptr;
 
     if (!controllingServiceWorkerIdentifier)
         return;
@@ -709,23 +706,26 @@ void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceW
 
 void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, ServiceWorkerClientIdentifier clientIdentifier)
 {
-    auto clientIterator = m_clients.find(clientOrigin);
-    ASSERT(clientIterator != m_clients.end());
+    bool wasRemoved = m_clientsById.remove(clientIdentifier);
+    ASSERT_UNUSED(wasRemoved, wasRemoved);
 
-    auto& clients = clientIterator->value.clients;
-    clients.removeFirstMatching([&] (const auto& client) {
-        return clientIdentifier == client.identifier;
+    auto iterator = m_clientIdentifiersPerOrigin.find(clientOrigin);
+    ASSERT(iterator != m_clientIdentifiersPerOrigin.end());
+
+    auto& clientIdentifiers = iterator->value.identifiers;
+    clientIdentifiers.removeFirstMatching([&] (const auto& identifier) {
+        return clientIdentifier == identifier;
     });
-    if (clients.isEmpty()) {
-        ASSERT(!clientIterator->value.terminateServiceWorkersTimer);
-        clientIterator->value.terminateServiceWorkersTimer = std::make_unique<Timer>([clientOrigin, this] {
+    if (clientIdentifiers.isEmpty()) {
+        ASSERT(!iterator->value.terminateServiceWorkersTimer);
+        iterator->value.terminateServiceWorkersTimer = std::make_unique<Timer>([clientOrigin, this] {
             for (auto& worker : m_runningOrTerminatingWorkers.values()) {
                 if (worker->origin() == clientOrigin)
                     terminateWorker(worker);
             }
-            m_clients.remove(clientOrigin);
+            m_clientIdentifiersPerOrigin.remove(clientOrigin);
         });
-        clientIterator->value.terminateServiceWorkersTimer->startOneShot(terminationDelay);
+        iterator->value.terminateServiceWorkersTimer->startOneShot(terminationDelay);
     }
 
     auto workerIterator = m_clientToControllingWorker.find(clientIdentifier);
