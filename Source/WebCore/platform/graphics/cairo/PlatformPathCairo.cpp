@@ -26,15 +26,11 @@
 
 namespace WebCore {
 
-static cairo_surface_t* pathSurface()
-{
-    static cairo_surface_t* s_pathSurface = cairo_image_surface_create(CAIRO_FORMAT_A8, 1, 1);
-    return s_pathSurface;
-}
-
 CairoPath::CairoPath()
-    : m_cr(adoptRef(cairo_create(pathSurface())))
 {
+    // cairo_t takes its own reference of the surface, meaning we don't have to keep one.
+    auto surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_A8, 1, 1));
+    m_context = adoptRef(cairo_create(surface.get()));
 }
 
 } // namespace WebCore
