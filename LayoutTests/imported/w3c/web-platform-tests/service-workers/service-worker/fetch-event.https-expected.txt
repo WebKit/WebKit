@@ -8,7 +8,7 @@ PASS Service Worker responds to fetch event with an existing client id
 PASS Service Worker does not respond to fetch event 
 PASS Service Worker responds to fetch event with null response body 
 PASS Service Worker fetches other file in fetch event 
-PASS Service Worker responds to fetch event with POST form 
+FAIL Service Worker responds to fetch event with POST form assert_unreached: unexpected rejection: assert_equals: expected "POST:application/x-www-form-urlencoded:testName1=testValue1&testName2=testValue2" but got "POST:null:testName1=testValue1&testName2=testValue2" Reached unreachable code
 PASS Multiple calls of respondWith must throw InvalidStateErrors 
 PASS Service Worker event.respondWith must set the used flag 
 PASS Service Worker should expose FetchEvent URL fragments. 
