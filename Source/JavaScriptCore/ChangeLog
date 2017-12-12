@@ -1,3 +1,15 @@
+2017-12-12  Guillaume Emont  <guijemont@igalia.com>
+
+        LLInt: reserve 16 bytes of stack on MIPS for native calls
+        https://bugs.webkit.org/show_bug.cgi?id=180653
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * llint/LowLevelInterpreter32_64.asm:
+        On MIPS, substract 24 from the stack pointer (16 for calling
+        convention + 8 to be 16-aligned) instead of the 8 on other platforms
+        (for alignment).
+
 2017-12-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Thread::create should have Thread::tryCreate

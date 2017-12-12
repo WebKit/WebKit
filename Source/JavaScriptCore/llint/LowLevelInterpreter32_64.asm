@@ -2082,7 +2082,14 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         loadp MarkedBlock::m_vm[t3], t3
         addp 8, sp
     elsif ARM or ARMv7 or ARMv7_TRADITIONAL or C_LOOP or MIPS
-        subp 8, sp # align stack pointer
+        if MIPS
+        # calling convention says to save stack space for 4 first registers in
+        # all cases. To match our 16-byte alignment, that means we need to
+        # take 24 bytes
+            subp 24, sp
+        else
+            subp 8, sp # align stack pointer
+        end
         # t1 already contains the Callee.
         andp MarkedBlockMask, t1
         loadp MarkedBlock::m_vm[t1], t1
@@ -2099,7 +2106,11 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         loadp Callee + PayloadOffset[cfr], t3
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_vm[t3], t3
-        addp 8, sp
+        if MIPS
+            addp 24, sp
+        else
+            addp 8, sp
+        end
     else
         error
     end
