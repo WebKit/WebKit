@@ -1,3 +1,27 @@
+2017-12-11  Saam Barati  <sbarati@apple.com>
+
+        We need to disableCaching() in ErrorInstance when we materialize properties
+        https://bugs.webkit.org/show_bug.cgi?id=180343
+        <rdar://problem/35833002>
+
+        Reviewed by Mark Lam.
+
+        This patch fixes a bug in ErrorInstance where we forgot to call PutPropertySlot::disableCaching
+        on puts() to a property that we lazily materialized. Forgetting to do this goes against the
+        PutPropertySlot's caching API. This lazy materialization caused the ErrorInstance to transition
+        from a Structure A to a Structure B. However, we were telling the IC that we were caching an
+        existing property only found on Structure B. This is obviously wrong as it would lead to an
+        OOB store if we didn't already crash when generating the IC.
+
+        * jit/Repatch.cpp:
+        (JSC::tryCachePutByID):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::materializeErrorInfoIfNeeded):
+        (JSC::ErrorInstance::put):
+        * runtime/ErrorInstance.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::didCachePropertyReplacement):
+
 2017-12-11  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] DLLLauncherMain should use SetDllDirectory

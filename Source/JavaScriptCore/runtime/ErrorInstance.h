@@ -69,8 +69,8 @@ public:
     
     Vector<StackFrame>* stackTrace() { return m_stackTrace.get(); }
 
-    void materializeErrorInfoIfNeeded(VM&);
-    void materializeErrorInfoIfNeeded(VM&, PropertyName);
+    bool materializeErrorInfoIfNeeded(VM&);
+    bool materializeErrorInfoIfNeeded(VM&, PropertyName);
 
 protected:
     explicit ErrorInstance(VM&, Structure*);

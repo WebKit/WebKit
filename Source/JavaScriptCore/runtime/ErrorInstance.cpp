@@ -202,10 +202,10 @@ String ErrorInstance::sanitizedToString(ExecState* exec)
     return builder.toString();
 }
 
-void ErrorInstance::materializeErrorInfoIfNeeded(VM& vm)
+bool ErrorInstance::materializeErrorInfoIfNeeded(VM& vm)
 {
     if (m_errorInfoMaterialized)
-        return;
+        return false;
     
     addErrorInfo(vm, m_stackTrace.get(), this);
     {
@@ -214,15 +214,17 @@ void ErrorInstance::materializeErrorInfoIfNeeded(VM& vm)
     }
     
     m_errorInfoMaterialized = true;
+    return true;
 }
 
-void ErrorInstance::materializeErrorInfoIfNeeded(VM& vm, PropertyName propertyName)
+bool ErrorInstance::materializeErrorInfoIfNeeded(VM& vm, PropertyName propertyName)
 {
     if (propertyName == vm.propertyNames->line
         || propertyName == vm.propertyNames->column
         || propertyName == vm.propertyNames->sourceURL
         || propertyName == vm.propertyNames->stack)
-        materializeErrorInfoIfNeeded(vm);
+        return materializeErrorInfoIfNeeded(vm);
+    return false;
 }
 
 void ErrorInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -276,7 +278,9 @@ bool ErrorInstance::put(JSCell* cell, ExecState* exec, PropertyName propertyName
 {
     VM& vm = exec->vm();
     ErrorInstance* thisObject = jsCast<ErrorInstance*>(cell);
-    thisObject->materializeErrorInfoIfNeeded(vm, propertyName);
+    bool materializedProperties = thisObject->materializeErrorInfoIfNeeded(vm, propertyName);
+    if (materializedProperties)
+        slot.disableCaching();
     return Base::put(thisObject, exec, propertyName, value, slot);
 }
 

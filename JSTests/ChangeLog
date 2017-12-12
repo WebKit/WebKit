@@ -1,3 +1,17 @@
+2017-12-11  Saam Barati  <sbarati@apple.com>
+
+        We need to disableCaching() in ErrorInstance when we materialize properties
+        https://bugs.webkit.org/show_bug.cgi?id=180343
+        <rdar://problem/35833002>
+
+        Reviewed by Mark Lam.
+
+        * stress/disable-caching-when-lazy-materializing-error-property-on-put.js: Added.
+        (assert):
+        (makeError):
+        (storeToStack):
+        (storeToStackAlreadyMaterialized):
+
 2017-12-05  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: don't eagerly checksum
