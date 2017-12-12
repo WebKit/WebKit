@@ -188,16 +188,16 @@ JSValue DataCue::valueOrNull() const
     return jsNull();
 }
 
-String DataCue::toString() const
+String DataCue::toJSONString() const
 {
-    StringBuilder builder;
+    auto object = JSON::Object::create();
 
-    builder.append(TextTrackCue::toString());
+    TextTrackCue::toJSON(object.get());
 
-    builder.appendLiteral(", type = ");
-    builder.append(m_type);
+    if (!m_type.isEmpty())
+        object->setString(ASCIILiteral("type"), m_type);
 
-    return builder.toString();
+    return object->toJSONString();
 }
 
 } // namespace WebCore

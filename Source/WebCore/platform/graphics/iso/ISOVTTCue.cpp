@@ -32,6 +32,7 @@
 #include <runtime/Int8Array.h>
 #include <runtime/JSCInlines.h>
 #include <runtime/TypedArrayInlines.h>
+#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -104,6 +105,23 @@ bool ISOWebVTTCue::parse(DataView& view, unsigned& offset)
             LOG(Media, "ISOWebVTTCue::ISOWebVTTCue - skipping box id = \"%s\", size = %zu", stringBox.boxType().toString().utf8().data(), (size_t)stringBox.size());
     }
     return true;
+}
+
+String ISOWebVTTCue::toJSONString() const
+{
+    auto object = JSON::Object::create();
+
+    object->setString(ASCIILiteral("sourceId"), m_sourceID);
+    object->setString(ASCIILiteral("id"), m_identifier);
+
+    object->setString(ASCIILiteral("originalStartTime"), m_originalStartTime);
+    object->setString(ASCIILiteral("settings"), m_settings);
+    object->setString(ASCIILiteral("cueText"), m_cueText);
+
+    object->setDouble(ASCIILiteral("presentationTime"), m_presentationTime.toDouble());
+    object->setDouble(ASCIILiteral("duration"), m_duration.toDouble());
+
+    return object->toJSONString();
 }
 
 } // namespace WebCore

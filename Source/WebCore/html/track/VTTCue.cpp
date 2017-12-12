@@ -1176,16 +1176,22 @@ const VTTCue* toVTTCue(const TextTrackCue* cue)
     return static_cast<const VTTCue*>(cue);
 }
 
-String VTTCue::toString() const
+String VTTCue::toJSONString() const
 {
-    StringBuilder builder;
+    auto object = JSON::Object::create();
 
-    builder.append(TextTrackCue::toString());
+    TextTrackCue::toJSON(object.get());
 
-    builder.appendLiteral(", content = ");
-    builder.append(text());
+    object->setString(ASCIILiteral("vertical"), vertical());
+    object->setBoolean(ASCIILiteral("snapToLines"), snapToLines());
+    object->setDouble(ASCIILiteral("line"), m_linePosition);
+    object->setDouble(ASCIILiteral("position"), position());
+    object->setInteger(ASCIILiteral("size"), m_cueSize);
+    object->setString(ASCIILiteral("align"), align());
+    object->setString(ASCIILiteral("text"), text());
+    object->setString(ASCIILiteral("regionId"), regionId());
 
-    return builder.toString();
+    return object->toJSONString();
 }
 
 } // namespace WebCore

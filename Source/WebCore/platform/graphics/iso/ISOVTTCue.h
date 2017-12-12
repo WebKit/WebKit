@@ -53,6 +53,8 @@ public:
     const String& settings() const { return m_settings; }
     const String& cueText() const { return m_cueText; }
 
+    String toJSONString() const;
+
 protected:
     bool parse(JSC::DataView&, unsigned& offset) override;
 
@@ -66,4 +68,19 @@ protected:
     String m_cueText;
 };
 
-}
+} // namespace WebCore
+
+namespace WTF {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::ISOWebVTTCue> {
+    static String toString(const WebCore::ISOWebVTTCue& cue)
+    {
+        return cue.toJSONString();
+    }
+};
+
+} // namespace WTF

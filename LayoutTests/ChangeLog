@@ -1,3 +1,15 @@
+2017-12-11  Eric Carlson  <eric.carlson@apple.com>
+
+        Web Inspector: Optionally log WebKit log parameters as JSON
+        https://bugs.webkit.org/show_bug.cgi?id=180529
+        <rdar://problem/35909462>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/canvas/recording-2d-expected.txt:
+        * inspector/canvas/recording-webgl-expected.txt:
+        * inspector/canvas/recording-webgl-snapshots-expected.txt:
+
 2017-12-11  Chris Dumez  <cdumez@apple.com>
 
         Layout Test http/tests/workers/service/postmessage-after-sw-process-crash.https.html is flaky

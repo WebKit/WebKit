@@ -29,6 +29,7 @@
 
 #include "Color.h"
 #include "TrackPrivateBase.h"
+#include <wtf/JSONValues.h>
 #include <wtf/MediaTime.h>
 
 #if ENABLE(DATACUE_VALUE)
@@ -93,7 +94,7 @@ public:
 
     bool doesExtendCueData(const GenericCueData&) const;
 
-    String toString() const;
+    String toJSONString() const;
 
 private:
     GenericCueData() = default;
@@ -115,15 +116,12 @@ private:
     Status m_status { Uninitialized };
 };
 
-inline String GenericCueData::toString() const
+inline String GenericCueData::toJSONString() const
 {
-    StringBuilder builder;
+    auto object = JSON::Object::create();
 
-    builder.appendLiteral("start = ");
-    builder.append(m_startTime.toString());
-
-    builder.appendLiteral(", end = ");
-    builder.append(m_endTime.toString());
+    object->setDouble(ASCIILiteral("start"), m_startTime.toDouble());
+    object->setDouble(ASCIILiteral("end"), m_endTime.toDouble());
 
     const char* status;
     switch (m_status) {
@@ -137,26 +135,19 @@ inline String GenericCueData::toString() const
         status = "Complete";
         break;
     }
-    builder.appendLiteral(", status = ");
-    builder.append(status);
+    object->setString("status", status);
 
-    builder.appendLiteral(", id = ");
-    builder.append(m_id);
+    if (!m_id.isEmpty())
+        object->setString("id", m_id);
 
-    if (m_line > 0) {
-        builder.appendLiteral(", line = ");
-        builder.appendNumber(m_line);
-    }
+    if (m_line > 0)
+        object->setDouble(ASCIILiteral("line"), m_line);
 
-    if (m_size > 0) {
-        builder.appendLiteral(", size = ");
-        builder.appendNumber(m_size);
-    }
+    if (m_size > 0)
+        object->setDouble(ASCIILiteral("size"), m_size);
 
-    if (m_position > 0) {
-        builder.appendLiteral(", position = ");
-        builder.appendNumber(m_position);
-    }
+    if (m_position > 0)
+        object->setDouble(ASCIILiteral("position"), m_position);
 
     if (m_align != None) {
         const char* align;
@@ -174,41 +165,28 @@ inline String GenericCueData::toString() const
             align = "None";
             break;
         }
-        builder.appendLiteral(", align = ");
-        builder.append(align);
+        object->setString(ASCIILiteral("align"), align);
     }
 
-    if (m_foregroundColor.isValid()) {
-        builder.appendLiteral(", foreground color = ");
-        builder.append(m_foregroundColor.serialized());
-    }
+    if (m_foregroundColor.isValid())
+        object->setString(ASCIILiteral("foregroundColor"), m_foregroundColor.serialized());
 
-    if (m_backgroundColor.isValid()) {
-        builder.appendLiteral(", background color = ");
-        builder.append(m_backgroundColor.serialized());
-    }
+    if (m_backgroundColor.isValid())
+        object->setString(ASCIILiteral("backgroundColor"), m_backgroundColor.serialized());
 
-    if (m_highlightColor.isValid()) {
-        builder.appendLiteral(", hilight color = ");
-        builder.append(m_highlightColor.serialized());
-    }
+    if (m_highlightColor.isValid())
+        object->setString(ASCIILiteral("highlightColor"), m_highlightColor.serialized());
 
-    if (m_baseFontSize) {
-        builder.appendLiteral(", base font size = ");
-        builder.appendNumber(m_baseFontSize);
-    }
+    if (m_baseFontSize)
+        object->setDouble(ASCIILiteral("baseFontSize"), m_baseFontSize);
 
-    if (m_relativeFontSize) {
-        builder.appendLiteral(", relative font size = ");
-        builder.appendNumber(m_relativeFontSize);
-    }
+    if (m_relativeFontSize)
+        object->setDouble(ASCIILiteral("relativeFontSize"), m_relativeFontSize);
 
-    if (!m_fontName.isEmpty()) {
-        builder.appendLiteral(", font = ");
-        builder.append(m_fontName);
-    }
+    if (!m_fontName.isEmpty())
+        object->setString(ASCIILiteral("font"), m_fontName);
 
-    return builder.toString();
+    return object->toJSONString();
 }
 
 inline bool GenericCueData::doesExtendCueData(const GenericCueData& other) const
@@ -273,7 +251,7 @@ template <>
 struct LogArgument<WebCore::GenericCueData> {
     static String toString(const WebCore::GenericCueData& cue)
     {
-        return cue.toString();
+        return cue.toJSONString();
     }
 };
 

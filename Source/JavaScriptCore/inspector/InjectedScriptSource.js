@@ -270,6 +270,15 @@ let InjectedScript = class InjectedScript
         return RemoteObject.create(object, groupName, false, generatePreview);
     }
 
+    wrapJSONString(jsonString, groupName, generatePreview)
+    {
+        try {
+            return this.wrapObject(JSON.parse(jsonString), groupName, true, generatePreview);
+        } catch {
+            return null;
+        }
+    }
+
     wrapTable(canAccessInspectedGlobalObject, table, columns)
     {
         if (!canAccessInspectedGlobalObject)

@@ -39,9 +39,9 @@ data:
   12: "evaluateWithScopeExtension"
   13: [12,1,0,0]
   14: "_evaluateOn"
-  15: [14,3,128,29]
+  15: [14,3,130,29]
   16: "_evaluateAndWrap"
-  17: [16,3,122,108]
+  17: [16,3,124,108]
 
 -- Running test case: Canvas.recordingWebGL.multipleFrames
 initialState:
@@ -1041,9 +1041,9 @@ data:
   12: "evaluateWithScopeExtension"
   13: [12,1,0,0]
   14: "_evaluateOn"
-  15: [14,3,128,29]
+  15: [14,3,130,29]
   16: "_evaluateAndWrap"
-  17: [16,3,122,108]
+  17: [16,3,124,108]
   18: "attachShader"
   19: [18,1,0,0]
   20: [3,4,76,33]
@@ -1496,9 +1496,9 @@ data:
   12: "evaluateWithScopeExtension"
   13: [12,1,0,0]
   14: "_evaluateOn"
-  15: [14,3,128,29]
+  15: [14,3,130,29]
   16: "_evaluateAndWrap"
-  17: [16,3,122,108]
+  17: [16,3,124,108]
 
 -- Running test case: Canvas.recordingWebGL.Console
 PASS: The recording should have the name "TEST".

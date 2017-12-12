@@ -51,6 +51,63 @@ struct LogArgument {
     template<size_t length> static String toString(const char (&argument)[length]) { return String(argument); }
 };
 
+struct JSONLogValue {
+    enum class Type { String, JSON };
+    Type type { Type::JSON };
+    String value;
+};
+
+template<class C>
+class HasToJSONString {
+    template <class T> static std::true_type testSignature(String (T::*)() const);
+
+    template <class T> static decltype(testSignature(&T::toJSONString)) test(std::nullptr_t);
+    template <class T> static std::false_type test(...);
+
+public:
+    static const bool value = decltype(test<C>(nullptr))::value;
+};
+
+template<typename Argument, bool hasJSON = HasToJSONString<Argument>::value>
+struct ConsoleLogValueImpl;
+
+template<typename Argument>
+struct ConsoleLogValueImpl<Argument, true> {
+    static JSONLogValue toValue(const Argument& value)
+    {
+        return JSONLogValue { JSONLogValue::Type::JSON, value.toJSONString() };
+    }
+};
+
+template<typename Argument>
+struct ConsoleLogValueImpl<Argument, false> {
+    static JSONLogValue toValue(const Argument& value)
+    {
+        return JSONLogValue { JSONLogValue::Type::String, LogArgument<Argument>::toString(value) };
+    }
+};
+
+template<typename Argument, bool hasJSON = std::is_class<Argument>::value>
+struct ConsoleLogValue;
+
+template<typename Argument>
+struct ConsoleLogValue<Argument, true> {
+    static JSONLogValue toValue(const Argument& value)
+    {
+        return ConsoleLogValueImpl<Argument>::toValue(value);
+    }
+};
+
+// Specialization for non-class types
+template<typename Argument>
+struct ConsoleLogValue<Argument, false> {
+    template<typename T>
+    static JSONLogValue toValue(T value)
+    {
+        return JSONLogValue { JSONLogValue::Type::String, LogArgument<T>::toString(value) };
+    }
+};
+
 class Logger : public RefCounted<Logger> {
     WTF_MAKE_NONCOPYABLE(Logger);
 public:
@@ -58,7 +115,7 @@ public:
     class Observer {
     public:
         virtual ~Observer() = default;
-        virtual void didLogMessage(const WTFLogChannel&, WTFLogLevel, const String&) = 0;
+        virtual void didLogMessage(const WTFLogChannel&, WTFLogLevel, Vector<JSONLogValue>&&) = 0;
     };
 
     static Ref<Logger> create(const void* owner)
@@ -190,7 +247,7 @@ private:
             return;
 
         for (Observer& observer : observers())
-            observer.didLogMessage(channel, level, logMessage);
+            observer.didLogMessage(channel, level, { ConsoleLogValue<Argument>::toValue(arguments)... });
     }
 
     static Vector<std::reference_wrapper<Observer>>& observers()
@@ -214,7 +271,7 @@ struct LogArgument<Logger::LogSiteIdentifier> {
             builder.appendLiteral("::");
         }
         builder.append(value.methodName);
-        builder.appendLiteral("(");
+        builder.append('(');
         appendUnsigned64AsHex(value.objectPtr, builder);
         builder.appendLiteral(") ");
         return builder.toString();
@@ -224,3 +281,4 @@ struct LogArgument<Logger::LogSiteIdentifier> {
 } // namespace WTF
 
 using WTF::Logger;
+using WTF::JSONLogValue;

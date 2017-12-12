@@ -1691,7 +1691,7 @@ private:
 
     void notifyMediaCaptureOfVisibilityChanged();
 
-    void didLogMessage(const WTFLogChannel&, WTFLogLevel, const String&) final;
+    void didLogMessage(const WTFLogChannel&, WTFLogLevel, Vector<JSONLogValue>&&) final;
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)
     std::unique_ptr<DeviceMotionClient> m_deviceMotionClient;

@@ -216,16 +216,8 @@ bool TextTrackCue::doesExtendCue(const TextTrackCue& cue) const
     return true;
 }
 
-String TextTrackCue::toString() const
+void TextTrackCue::toJSON(JSON::Object& value) const
 {
-    StringBuilder builder;
-
-    builder.appendLiteral("start = ");
-    builder.append(m_startTime.toString());
-
-    builder.appendLiteral(", end = ");
-    builder.append(m_endTime.toString());
-
     const char* type = "Generic";
     switch (cueType()) {
     case TextTrackCue::Generic:
@@ -239,10 +231,18 @@ String TextTrackCue::toString() const
         break;
     }
 
-    builder.appendLiteral(", type = ");
-    builder.append(type);
+    value.setString(ASCIILiteral("type"), ASCIILiteral(type));
+    value.setDouble(ASCIILiteral("startTime"), startTime());
+    value.setDouble(ASCIILiteral("endTime"), endTime());
+}
 
-    return builder.toString();
+String TextTrackCue::toJSONString() const
+{
+    auto object = JSON::Object::create();
+
+    toJSON(object.get());
+
+    return object->toJSONString();
 }
 
 } // namespace WebCore

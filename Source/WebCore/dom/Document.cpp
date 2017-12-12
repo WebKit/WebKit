@@ -167,6 +167,7 @@
 #include "ScriptModuleLoader.h"
 #include "ScriptRunner.h"
 #include "ScriptSourceCode.h"
+#include "ScriptState.h"
 #include "ScriptedAnimationController.h"
 #include "ScrollingCoordinator.h"
 #include "SecurityOrigin.h"
@@ -7601,26 +7602,18 @@ static MessageLevel messageLevelFromWTFLogLevel(WTFLogLevel level)
     return MessageLevel::Log;
 }
 
-void Document::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, const String& logMessage)
+void Document::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Vector<JSONLogValue>&& logMessages)
 {
-    if (!this->page())
+    if (!page())
         return;
 
     ASSERT(sessionID().isAlwaysOnLoggingAllowed());
 
     auto messageSource = messageSourceForWTFLogChannel(channel);
     auto messageLevel = messageLevelFromWTFLogLevel(level);
+    auto message = std::make_unique<Inspector::ConsoleMessage>(messageSource, MessageType::Log, messageLevel, WTFMove(logMessages), mainWorldExecState(frame()));
 
-    callOnMainThread([documentReference = m_weakFactory.createWeakPtr(*this), messageSource, messageLevel, logMessage]() mutable {
-        ASSERT(isMainThread());
-
-        Document* document = documentReference.get();
-        if (!document)
-            return;
-
-        auto message = std::make_unique<Inspector::ConsoleMessage>(messageSource, MessageType::Log, messageLevel, logMessage);
-        document->addConsoleMessage(WTFMove(message));
-    });
+    addConsoleMessage(WTFMove(message));
 }
 
 #if ENABLE(SERVICE_WORKER)

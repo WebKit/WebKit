@@ -67,7 +67,7 @@ public:
 
     void setFontSize(int, const IntSize&, bool important) final;
 
-    String toString() const final;
+    String toJSONString() const;
 
 private:
     TextTrackCueGeneric(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const String&);
@@ -103,7 +103,7 @@ template <>
 struct LogArgument<WebCore::TextTrackCueGeneric> {
     static String toString(const WebCore::TextTrackCueGeneric& cue)
     {
-        return cue.toString();
+        return cue.toJSONString();
     }
 };
 

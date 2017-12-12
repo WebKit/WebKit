@@ -1,3 +1,24 @@
+2017-12-11  Eric Carlson  <eric.carlson@apple.com>
+
+        Web Inspector: Optionally log WebKit log parameters as JSON
+        https://bugs.webkit.org/show_bug.cgi?id=180529
+        <rdar://problem/35909462>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::ConsoleMessage): New constructor that takes a vector of JSON log
+        values. Concatenate all adjacent strings to make logging cleaner.
+        (Inspector::ConsoleMessage::addToFrontend): Process WebKit logging arguments.
+        (Inspector::ConsoleMessage::scriptState const):
+        * inspector/ConsoleMessage.h:
+
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::wrapJSONString const): Wrap JSON string log arguments.
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptSource.js:
+        (let.InjectedScript.prototype.wrapJSONString):
+
 2017-12-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unused builtin names

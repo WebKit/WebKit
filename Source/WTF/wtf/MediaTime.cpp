@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/JSONValues.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
 #include <wtf/text/StringBuilder.h>
@@ -566,6 +567,30 @@ String MediaTime::toString() const
     builder.appendNumber(toDouble());
     builder.append('}');
     return builder.toString();
+}
+
+String MediaTime::toJSONString() const
+{
+    auto object = JSON::Object::create();
+
+    if (hasDoubleValue())
+        object->setDouble(ASCIILiteral("value"), toDouble());
+    else {
+        if (isInvalid() || isIndefinite())
+            object->setString(ASCIILiteral("value"), ASCIILiteral("NaN"));
+        else if (isPositiveInfinite())
+            object->setString(ASCIILiteral("value"), ASCIILiteral("POSITIVE_INFINITY"));
+        else if (isNegativeInfinite())
+            object->setString(ASCIILiteral("value"), ASCIILiteral("NEGATIVE_INFINITY"));
+        else
+            object->setDouble(ASCIILiteral("value"), toDouble());
+
+        object->setInteger(ASCIILiteral("numerator"), static_cast<int>(m_timeValue));
+        object->setInteger(ASCIILiteral("denominator"), m_timeScale);
+        object->setInteger(ASCIILiteral("flags"), m_timeFlags);
+    }
+
+    return object->toJSONString();
 }
 
 MediaTime abs(const MediaTime& rhs)

@@ -359,7 +359,7 @@ void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedSt
                     if (!arrivingCue->doesExtendCueData(*cueData))
                         nonExtensionCues.append(WTFMove(arrivingCue));
                     else
-                        DEBUG_LOG(LOGIDENTIFIER, "found an extension cue: ", *cueData);
+                        DEBUG_LOG(LOGIDENTIFIER, "found an extension cue ", *cueData);
                 }
 
                 bool currentCueIsExtended = (arrivingCues.size() != nonExtensionCues.size());
@@ -373,17 +373,17 @@ void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedSt
                     cueData->setEndTime(m_currentCueEndTime);
                     cueData->setStatus(GenericCueData::Complete);
 
-                    DEBUG_LOG(LOGIDENTIFIER, "updating cue start = ", cueData->startTime(), ", end = ", cueData->endTime(), ", content = ", cueData->content());
+                    DEBUG_LOG(LOGIDENTIFIER, "updating cue ", *cueData);
 
                     client()->updateGenericCue(*cueData);
                 } else {
                     // We have to assume that the implicit duration is invalid for cues delivered during a seek because the AVF decode pipeline may not
                     // see every cue, so DO NOT update cue duration while seeking.
-                    DEBUG_LOG(LOGIDENTIFIER, "ignoring cue delivered during seek: ", *cueData);
+                    DEBUG_LOG(LOGIDENTIFIER, "ignoring cue delivered during seek ", *cueData);
                 }
             }
         } else
-            ERROR_LOG(LOGIDENTIFIER, "negative length cue(s): start = ", m_currentCueStartTime, ", end = ", m_currentCueEndTime);
+            ERROR_LOG(LOGIDENTIFIER, "negative length cue(s): start ", m_currentCueStartTime, ", end ", m_currentCueEndTime);
 
         removeCompletedCues();
     }
@@ -395,7 +395,7 @@ void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedSt
 
     for (auto& cueData : arrivingCues) {
         m_cues.append(cueData.ptr());
-        DEBUG_LOG(LOGIDENTIFIER, "adding cue: ", cueData.get());
+        DEBUG_LOG(LOGIDENTIFIER, "adding cue ", cueData.get());
         client()->addGenericCue(cueData);
     }
 
@@ -426,7 +426,7 @@ void InbandTextTrackPrivateAVF::removeCompletedCues()
             if (cue->status() != GenericCueData::Complete)
                 continue;
 
-            DEBUG_LOG(LOGIDENTIFIER, "removing cue: ", *cue);
+            DEBUG_LOG(LOGIDENTIFIER, "removing cue ", *cue);
 
             m_cues.remove(currentCue);
         }
@@ -529,7 +529,7 @@ void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, c
             header.append(reinterpret_cast<const unsigned char*>(CFDataGetBytePtr(webvttHeaderData)), length);
             header.append("\n\n");
 
-            DEBUG_LOG(LOGIDENTIFIER, "VTT header = ", &header);
+            DEBUG_LOG(LOGIDENTIFIER, "VTT header ", &header);
             client()->parseWebVTTFileHeader(header.toString());
             m_haveReportedVTTHeader = true;
         } while (0);
@@ -537,7 +537,7 @@ void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, c
         if (type == ISOWebVTTCue::boxTypeName()) {
             ISOWebVTTCue cueData = ISOWebVTTCue(presentationTime, duration);
             cueData.read(view);
-            DEBUG_LOG(LOGIDENTIFIER, "sample presentation time = ", cueData.presentationTime(), ", duration = ", cueData.duration(), ", id = '", cueData.id(), "', settings = ", cueData.settings(), ", cue text = ", cueData.cueText(), ", sourceID = ", cueData.sourceID(), ", originalStartTime = ", cueData.originalStartTime());
+            DEBUG_LOG(LOGIDENTIFIER, "VTT cue data ", cueData);
             client()->parseWebVTTCueData(cueData);
         }
 
@@ -567,7 +567,7 @@ bool InbandTextTrackPrivateAVF::readNativeSampleBuffer(CFArrayRef nativeSamples,
     CMBlockBufferRef blockBuffer = CMSampleBufferGetDataBuffer(sampleBuffer);
     size_t bufferLength = CMBlockBufferGetDataLength(blockBuffer);
     if (bufferLength < ISOBox::minimumBoxSize()) {
-        ERROR_LOG(LOGIDENTIFIER, "CMSampleBuffer size length unexpectedly small: ", bufferLength);
+        ERROR_LOG(LOGIDENTIFIER, "CMSampleBuffer size length unexpectedly small ", bufferLength);
         return false;
     }
 

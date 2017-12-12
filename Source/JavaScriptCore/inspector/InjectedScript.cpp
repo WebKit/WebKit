@@ -263,6 +263,29 @@ RefPtr<Inspector::Protocol::Runtime::RemoteObject> InjectedScript::wrapObject(JS
     return BindingTraits<Inspector::Protocol::Runtime::RemoteObject>::runtimeCast(resultObject);
 }
 
+RefPtr<Protocol::Runtime::RemoteObject> InjectedScript::wrapJSONString(const String& json, const String& groupName, bool generatePreview) const
+{
+    ASSERT(!hasNoValue());
+    Deprecated::ScriptFunctionCall wrapFunction(injectedScriptObject(), ASCIILiteral("wrapJSONString"), inspectorEnvironment()->functionCallHandler());
+    wrapFunction.appendArgument(json);
+    wrapFunction.appendArgument(groupName);
+    wrapFunction.appendArgument(generatePreview);
+
+    bool hadException = false;
+    auto evalResult = callFunctionWithEvalEnabled(wrapFunction, hadException);
+    if (hadException)
+        return nullptr;
+
+    if (evalResult.isNull())
+        return nullptr;
+
+    RefPtr<JSON::Object> resultObject;
+    bool castSucceeded = toInspectorValue(*scriptState(), evalResult)->asObject(resultObject);
+    ASSERT_UNUSED(castSucceeded, castSucceeded);
+
+    return BindingTraits<Inspector::Protocol::Runtime::RemoteObject>::runtimeCast(resultObject);
+}
+
 RefPtr<Inspector::Protocol::Runtime::RemoteObject> InjectedScript::wrapTable(JSC::JSValue table, JSC::JSValue columns) const
 {
     ASSERT(!hasNoValue());

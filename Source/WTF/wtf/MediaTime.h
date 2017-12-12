@@ -110,6 +110,7 @@ public:
 
     void dump(PrintStream& out) const;
     String toString() const;
+    String toJSONString() const;
 
     // Make the following casts errors:
     operator double() const = delete;

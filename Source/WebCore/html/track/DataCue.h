@@ -87,7 +87,7 @@ public:
     bool cueContentsMatch(const TextTrackCue&) const override;
     bool doesExtendCue(const TextTrackCue&) const override;
 
-    String toString() const override;
+    String toJSONString() const;
 
 private:
     DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, ArrayBuffer&, const String&);
@@ -117,7 +117,7 @@ template <>
 struct LogArgument<WebCore::DataCue> {
     static String toString(const WebCore::DataCue& cue)
     {
-        return cue.toString();
+        return cue.toJSONString();
     }
 };
 
