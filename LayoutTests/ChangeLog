@@ -1,5 +1,28 @@
 2017-12-12  Ms2ger  <Ms2ger@igalia.com>
 
+        [GTK] Update some test expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=180655
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+          - Add bug numbers.
+          - Remove failure expectations in favour of accurate baselines.
+        * platform/gtk/imported/w3c/web-platform-tests/XMLHttpRequest/send-network-error-sync-events.sub-expected.txt:
+          Added to account for the fact that libsoup is more lenient about data URLs.
+        * platform/gtk/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video-expected.txt:
+          Added to account for video codec support depending on the platform.
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-autocomplete-expected.txt:
+          Added to account for whitespace differences in the dumped output.
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-filter-expected.txt:
+          Added to account for whitespace differences in the dumped output.
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/telephone-expected.txt:
+          Added to account for whitespace differences in the dumped output.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/XMLHttpRequest/send-network-error-sync-events.sub-expected.txt:
+          Removed; the platform-neutral expectation now matches.
+
+2017-12-12  Ms2ger  <Ms2ger@igalia.com>
+
         Implement {DOMMimeTypeArray, DOMPluginArray}::supportedPropertyNames().
         https://bugs.webkit.org/show_bug.cgi?id=180471
 

@@ -2484,7 +2484,7 @@ webkit.org/b/98382 accessibility/visible-elements.html [ Failure ]
 Bug(GTK) fast/events/frame-tab-focus.html [ Failure ]
 
 # Looks like a bug in the testRunner global history support due to missing API.
-Bug(GTK) fast/history/window-open.html [ Failure ]
+webkit.org/b/100238 fast/history/window-open.html [ Failure ]
 
 # These failures appear to be bugs in the EventSender
 webkit.org/b/53964 fast/forms/listbox-onchange.html [ Failure ]
@@ -2691,7 +2691,23 @@ webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailu
 
 webkit.org/b/121905 fast/images/exif-orientation.html [ Failure ]
 
-webkit.org/b/124504 fast/text/break-word-pre-wrap.html [ ImageOnlyFailure ]
+webkit.org/b/180581 fast/text/break-word-pre-wrap.html [ ImageOnlyFailure ]
+webkit.org/b/180581 css3/shapes/shape-outside/values/shape-margin-001.html [ Failure ]
+webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-circle-004.html [ Failure ]
+webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-circle-005.html [ Failure ]
+webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-ellipse-004.html [ Failure ]
+webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-ellipse-005.html [ Failure ]
+webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-inset-003.html [ Failure ]
+webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
+webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-shape-arguments-000.html [ Failure ]
+webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-001.html [ Failure ]
+webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-004.html [ Failure ]
+webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-005.html [ Failure ]
+webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-004.html [ Failure ]
+webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-005.html [ Failure ]
+webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-003.html [ Failure ]
+webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
+webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-arguments-000.html [ Failure ]
 
 webkit.org/b/124507 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html [ ImageOnlyFailure ]
 webkit.org/b/139486 fast/css3-text/css3-text-decoration/text-decoration-skip/decoration-skip-crash-fallback-svg.html [ ImageOnlyFailure ]
@@ -2807,24 +2823,7 @@ webkit.org/b/135530 accessibility/parent-delete.html [ Failure ]
 webkit.org/b/135533 editing/pasteboard/img-srcset-copy-paste-canonicalization.html [ Failure ]
 
 # Various failures from the W3C CSS Shapes test suite import
-webkit.org/b/136065 css3/shapes/shape-outside/values/shape-margin-001.html [ Failure ]
-webkit.org/b/136065 css3/shapes/shape-outside/values/shape-outside-circle-004.html [ Failure ]
-webkit.org/b/136065 css3/shapes/shape-outside/values/shape-outside-circle-005.html [ Failure ]
-webkit.org/b/136065 css3/shapes/shape-outside/values/shape-outside-ellipse-004.html [ Failure ]
-webkit.org/b/136065 css3/shapes/shape-outside/values/shape-outside-ellipse-005.html [ Failure ]
-webkit.org/b/136065 css3/shapes/shape-outside/values/shape-outside-inset-003.html [ Failure ]
-webkit.org/b/136065 css3/shapes/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
-webkit.org/b/136065 css3/shapes/shape-outside/values/shape-outside-shape-arguments-000.html [ Failure ]
 webkit.org/b/136065 css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-027.html [ ImageOnlyFailure ]
-
-webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-001.html [ Failure ]
-webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-004.html [ Failure ]
-webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-005.html [ Failure ]
-webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-004.html [ Failure ]
-webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-005.html [ Failure ]
-webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-003.html [ Failure ]
-webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
-webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-arguments-000.html [ Failure ]
 webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-027.html [ ImageOnlyFailure ]
 
 # The backing store is cleared when page cached in GTK
@@ -2918,9 +2917,6 @@ webkit.org/b/148935 accessibility/scroll-to-make-visible-nested.html [ Failure ]
 webkit.org/b/148935 accessibility/scroll-to-make-visible-with-subfocus.html [ Failure ]
 
 webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType.html [ Failure ]
-webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange.html [ Failure ]
-webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-autocomplete.html [ Failure ]
-webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/telephone.html [ Failure ]
 
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 
@@ -3259,8 +3255,6 @@ webkit.org/b/175422 http/tests/blink/sendbeacon/beacon-same-origin.html [ Failur
 
 webkit.org/b/175582 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes.worker.html [ Failure ]
 
-webkit.org/b/175586 imported/w3c/web-platform-tests/XMLHttpRequest/send-network-error-sync-events.sub.htm [ Failure ]
-
 webkit.org/b/175931 fast/canvas/webgl/no-info-log-for-simple-shaders.html [ Failure ]
 
 webkit.org/b/175932 http/tests/media/hls/video-cookie.html [ Failure ]
@@ -3283,8 +3277,6 @@ webkit.org/b/176649 fast/text/international/synthesized-italic-vertical.html [ I
 
 webkit.org/b/177294 platform/gtk/fonts/fontconfig-aliasing-settings.html [ Failure ]
 webkit.org/b/177294 fast/text/fitzpatrick-combination.html [ ImageOnlyFailure ]
-
-webkit.org/b/177319 imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-filter.html [ Failure ]
 
 webkit.org/b/175661 inspector/worker/resources-in-worker.html [ Failure ]
 

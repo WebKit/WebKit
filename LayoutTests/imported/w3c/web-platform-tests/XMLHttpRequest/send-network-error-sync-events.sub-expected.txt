@@ -1,4 +1,5 @@
-Blocked access to external URL http://nonexistent-origin.localhost}:8800/
+Blocked access to external URL http://nonexistent-origin.localhost:8800/
 
-PASS XMLHttpRequest: The send() method: Throw a "throw an "NetworkError" exception when Network error happens (synchronous flag is set) 
+PASS http URL 
+PASS data URL 
 

@@ -1,5 +1,21 @@
 2017-12-12  Ms2ger  <Ms2ger@igalia.com>
 
+        [GTK] Update some test expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=180655
+
+        Unreviewed test gardening.
+
+        Update tests from upstream, and update test expectations.
+
+        * web-platform-tests/XMLHttpRequest/send-network-error-sync-events.sub-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-network-error-sync-events.sub.htm:
+        * web-platform-tests/common/media.js:
+        * web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video.html:
+        * web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange.html:
+
+2017-12-12  Ms2ger  <Ms2ger@igalia.com>
+
         Implement {DOMMimeTypeArray, DOMPluginArray}::supportedPropertyNames().
         https://bugs.webkit.org/show_bug.cgi?id=180471
 
