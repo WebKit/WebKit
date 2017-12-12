@@ -1,3 +1,22 @@
+2017-12-12  Zach Li  <zachli@apple.com>
+
+        [WK2] Expose image via WKBundleHitTestResult API.
+        https://bugs.webkit.org/show_bug.cgi?id=180552.
+        rdar://problem/23951521
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp:
+        (WKBundleHitTestResultGetImage):
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h:
+
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+        (WebKit::InjectedBundleHitTestResult::image const):
+        Convert from WebCore::Image to WebImage by creating a WebImage
+        and paint the WebCore::Image into its graphics context. For now,
+        only handle bitmap images.
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.h:
+
 2017-12-12  Simon Fraser  <simon.fraser@apple.com>
 
         Remove ColorSpaceDeviceRGB and most users of the obsolete deviceRGB colorspace

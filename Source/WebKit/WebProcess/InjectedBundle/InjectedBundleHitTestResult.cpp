@@ -29,11 +29,14 @@
 #include "InjectedBundleNodeHandle.h"
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
+#include "WebImage.h"
+#include <WebCore/BitmapImage.h>
 #include <WebCore/Document.h>
 #include <WebCore/Element.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/URL.h>
 #include <wtf/text/WTFString.h>
 
@@ -165,6 +168,24 @@ IntRect InjectedBundleHitTestResult::imageRect() const
         return imageRect;
     
     return view->contentsToRootView(imageRect);
+}
+
+RefPtr<WebImage> InjectedBundleHitTestResult::image() const
+{
+    Image* image = m_hitTestResult.image();
+    // For now, we only handle bitmap images.
+    if (!is<BitmapImage>(image))
+        return nullptr;
+
+    BitmapImage& bitmapImage = downcast<BitmapImage>(*image);
+    IntSize size(bitmapImage.size());
+    auto webImage = WebImage::create(size, static_cast<ImageOptions>(0));
+
+    // FIXME: need to handle EXIF rotation.
+    auto graphicsContext = webImage->bitmap().createGraphicsContext();
+    graphicsContext->drawImage(bitmapImage, {{ }, size});
+
+    return webImage;
 }
 
 bool InjectedBundleHitTestResult::isSelected() const

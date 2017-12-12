@@ -95,7 +95,7 @@ public:
     std::optional<IntPoint> hotSpot();
 
     // Image metadata which is calculated from the first ImageFrame.
-    IntSize size();
+    WEBCORE_EXPORT IntSize size();
     IntSize sizeRespectingOrientation();
     Color singlePixelSolidColor();
     SubsamplingLevel maximumSubsamplingLevel();

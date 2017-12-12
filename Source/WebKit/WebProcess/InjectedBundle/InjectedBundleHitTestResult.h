@@ -37,6 +37,7 @@ namespace WebKit {
 
 class InjectedBundleNodeHandle;
 class WebFrame;
+class WebImage;
 
 class InjectedBundleHitTestResult : public API::ObjectImpl<API::Object::Type::BundleHitTestResult> {
 public:
@@ -63,6 +64,7 @@ public:
     String linkSuggestedFilename() const;
     
     WebCore::IntRect imageRect() const;
+    RefPtr<WebImage> image() const;
     
     bool isSelected() const;
 

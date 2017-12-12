@@ -31,6 +31,7 @@
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebFrame.h"
+#include "WebImage.h"
 
 using namespace WebKit;
 
@@ -104,6 +105,12 @@ WKBundleHitTestResultMediaType WKBundleHitTestResultGetMediaType(WKBundleHitTest
 WKRect WKBundleHitTestResultGetImageRect(WKBundleHitTestResultRef hitTestResultRef)
 {
     return toAPI(toImpl(hitTestResultRef)->imageRect());
+}
+
+WKImageRef WKBundleHitTestResultCopyImage(WKBundleHitTestResultRef hitTestResultRef)
+{
+    RefPtr<WebImage> webImage = toImpl(hitTestResultRef)->image();
+    return toAPI(webImage.leakRef());
 }
 
 bool WKBundleHitTestResultGetIsSelected(WKBundleHitTestResultRef hitTestResultRef)

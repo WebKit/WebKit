@@ -58,6 +58,7 @@ WK_EXPORT bool WKBundleHitTestResultIsDownloadableMedia(WKBundleHitTestResultRef
 WK_EXPORT WKBundleHitTestResultMediaType WKBundleHitTestResultGetMediaType(WKBundleHitTestResultRef hitTestResult);
 
 WK_EXPORT WKRect WKBundleHitTestResultGetImageRect(WKBundleHitTestResultRef hitTestResult);
+WK_EXPORT WKImageRef WKBundleHitTestResultCopyImage(WKBundleHitTestResultRef hitTestResult);
 WK_EXPORT bool WKBundleHitTestResultGetIsSelected(WKBundleHitTestResultRef hitTestResult);
 
 WK_EXPORT WKStringRef WKBundleHitTestResultCopyLinkLabel(WKBundleHitTestResultRef hitTestResult);
