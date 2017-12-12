@@ -146,6 +146,12 @@ typedef NS_ENUM(NSUInteger, AVStreamDataParserStreamDataFlags) {
 
 NS_ASSUME_NONNULL_END
 
+#if HAVE(AVCONTENTKEYSESSION)
+#import <AVFoundation/AVContentKeySession.h>
+@interface AVStreamDataParser () <AVContentKeyRecipient>
+@end
+#endif
+
 #endif // !PLATFORM(IOS)
 #endif // USE(APPLE_INTERNAL_SDK)
 
