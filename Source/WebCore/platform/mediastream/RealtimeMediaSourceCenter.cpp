@@ -65,8 +65,8 @@ RealtimeMediaSourceCenter& RealtimeMediaSourceCenter::singleton()
     if (override)
         return *override;
 #if PLATFORM(GTK)
-    WTFLogAlways("WebKitGTK LIBWEBRTC RealtimeMediaSourceCenter NOT IMPLEMENTED. Returning MockRealtimeMediaSourceCenter instead to avoid crash!\n");
     ASSERT(isMainThread());
+    notImplemented(); // Return MockRealtimeMediaSourceCenter to avoid crash.
     static NeverDestroyed<MockRealtimeMediaSourceCenter> center;
     return center;
 #else
