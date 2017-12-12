@@ -1,7 +1,9 @@
 
+Harness Error (TIMEOUT), message = null
+
 FAIL The current time returns the hold time when set animation.play is not a function. (In 'animation.play()', 'animation.play' is undefined)
-FAIL The current time is unresolved when there is no associated timeline (and no hold time is set) undefined is not an object (evaluating 'animation.ready.then')
+TIMEOUT The current time is unresolved when there is no associated timeline (and no hold time is set) Test timed out
 PASS The current time is unresolved when the start time is unresolved (and no hold time is set) 
 PASS The current time is calculated from the timeline time, start time and playback rate 
-FAIL The current time does not progress if playback rate is 0 createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, 100 * MS_PER_SEC)', 'createDiv(t).animate' is undefined)
+NOTRUN The current time does not progress if playback rate is 0 
 

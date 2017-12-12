@@ -45,4 +45,6 @@ enum AnimationPlayState {
     attribute double playbackRate;
     readonly attribute AnimationPlayState playState;
     readonly attribute boolean pending;
+    readonly attribute Promise<WebAnimation> ready;
+    readonly attribute Promise<WebAnimation> finished;
 };

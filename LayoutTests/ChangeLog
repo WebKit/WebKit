@@ -1,3 +1,16 @@
+2017-12-12  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Expose promises on Animation interface
+        https://bugs.webkit.org/show_bug.cgi?id=180710
+        <rdar://problem/36000604>
+
+        Reviewed by Dean Jackson.
+
+        Rebase some WPT expectations with progressions due to exposing the "ready" and "finished" promises.
+
+        * http/wpt/web-animations/interfaces/Animation/idlharness-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/current-time-expected.txt:
+
 2017-12-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         IPC code doesn't understand NSDictionaries with non-NSString keys

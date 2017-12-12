@@ -30,6 +30,7 @@
 #include "AnimationPlaybackEvent.h"
 #include "AnimationTimeline.h"
 #include "Document.h"
+#include "JSWebAnimation.h"
 #include "KeyframeEffect.h"
 #include <wtf/text/WTFString.h>
 
@@ -50,6 +51,8 @@ Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effe
 
 WebAnimation::WebAnimation(Document& document)
     : ActiveDOMObject(&document)
+    , m_readyPromise(*this, &WebAnimation::readyPromiseResolve)
+    , m_finishedPromise(*this, &WebAnimation::finishedPromiseResolve)
 {
     suspendIfNeeded();
 }
@@ -309,6 +312,16 @@ void WebAnimation::startOrStopAccelerated()
 {
     if (m_effect && m_effect->isKeyframeEffect())
         downcast<KeyframeEffect>(*m_effect).startOrStopAccelerated();
+}
+
+WebAnimation& WebAnimation::readyPromiseResolve()
+{
+    return *this;
+}
+
+WebAnimation& WebAnimation::finishedPromiseResolve()
+{
+    return *this;
 }
 
 String WebAnimation::description()

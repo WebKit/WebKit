@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
+#include "DOMPromiseProxy.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include <wtf/Forward.h>
@@ -72,6 +73,12 @@ public:
     // FIXME: return a live value once we support pending pause and play tasks.
     bool pending() const { return false; }
 
+    using ReadyPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<WebAnimation>>;
+    ReadyPromise& ready() { return m_readyPromise; }
+
+    using FinishedPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<WebAnimation>>;
+    FinishedPromise& finished() { return m_finishedPromise; }
+
     Seconds timeToNextRequiredTick(Seconds) const;
     void resolve(RenderStyle&);
     void acceleratedRunningStateDidChange();
@@ -87,12 +94,16 @@ private:
 
     void enqueueAnimationPlaybackEvent(const AtomicString&, std::optional<Seconds>, std::optional<Seconds>);
     Seconds effectEndTime() const;
+    WebAnimation& readyPromiseResolve();
+    WebAnimation& finishedPromiseResolve();
     
     RefPtr<AnimationEffect> m_effect;
     RefPtr<AnimationTimeline> m_timeline;
     std::optional<Seconds> m_startTime;
     double m_playbackRate { 1 };
     bool m_isStopped { false };
+    ReadyPromise m_readyPromise;
+    FinishedPromise m_finishedPromise;
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
