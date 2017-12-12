@@ -1,3 +1,15 @@
+2017-12-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Symbol not found: __ZN3WTF8LockBase10unlockSlowEv
+        https://bugs.webkit.org/show_bug.cgi?id=180691
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/mac/DeprecatedSymbolsUsedBySafari.mm:
+        (WTF::LockBase::lockSlow):
+        (WTF::LockBase::unlockSlow):
+        Add back LockBase Symbols used by System Safari on 10.13.
+
 2017-12-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Thread::create should have Thread::tryCreate

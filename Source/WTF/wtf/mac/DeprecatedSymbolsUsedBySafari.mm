@@ -129,4 +129,23 @@ void cancelCallOnMainThread(void (*function)(void*), void* context)
 }
 #endif
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
+struct LockBase {
+private:
+    WTF_EXPORT_PRIVATE void lockSlow();
+    WTF_EXPORT_PRIVATE void unlockSlow();
+    Atomic<uint8_t> m_byte;
+};
+
+void LockBase::lockSlow()
+{
+    DefaultLockAlgorithm::lockSlow(m_byte);
+}
+
+void LockBase::unlockSlow()
+{
+    DefaultLockAlgorithm::unlockSlow(m_byte, DefaultLockAlgorithm::Unfair);
+}
+#endif
+
 } // namespace WTF
