@@ -30,6 +30,7 @@
 
 #import "AVAssetTrackUtilities.h"
 #import "AVFoundationMIMETypeCache.h"
+#import "CDMInstance.h"
 #import "CDMSessionAVStreamSession.h"
 #import "CDMSessionMediaSourceAVFObjC.h"
 #import "FileSystem.h"
@@ -958,6 +959,27 @@ void MediaPlayerPrivateMediaSourceAVFObjC::keyNeeded(Uint8Array* initData)
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
+void MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceAttached(CDMInstance& instance)
+{
+    ASSERT(!m_cdmInstance);
+    m_cdmInstance = &instance;
+    for (auto& sourceBuffer : m_mediaSourcePrivate->sourceBuffers())
+        sourceBuffer->setCDMInstance(&instance);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceDetached(CDMInstance& instance)
+{
+    ASSERT_UNUSED(instance, m_cdmInstance && m_cdmInstance == &instance);
+    for (auto& sourceBuffer : m_mediaSourcePrivate->sourceBuffers())
+        sourceBuffer->setCDMInstance(nullptr);
+
+    m_cdmInstance = nullptr;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::attemptToDecryptWithInstance(CDMInstance&)
+{
+}
+
 void MediaPlayerPrivateMediaSourceAVFObjC::initializationDataEncountered(const String& initDataType, RefPtr<ArrayBuffer>&& initData)
 {
     m_player->initializationDataEncountered(initDataType, WTFMove(initData));

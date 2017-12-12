@@ -30,6 +30,7 @@
 
 #import "AVAssetTrackUtilities.h"
 #import "AudioTrackPrivateMediaSourceAVFObjC.h"
+#import "CDMInstanceFairPlayStreamingAVFObjC.h"
 #import "CDMSessionAVContentKeySession.h"
 #import "CDMSessionMediaSourceAVFObjC.h"
 #import "InbandTextTrackPrivateAVFObjC.h"
@@ -675,18 +676,16 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     }
 #endif
 
-#if ENABLE(ENCRYPTED_MEDIA)
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     if (m_mediaSource) {
         auto initDataBuffer = SharedBuffer::create(initData);
         m_mediaSource->player()->initializationDataEncountered("sinf", initDataBuffer->tryCreateArrayBuffer());
     }
 #endif
 
-#if !ENABLE(ENCRYPTED_MEDIA) && !ENABLE(LEGACY_ENCRYPTED_MEDIA)
     UNUSED_PARAM(initData);
     UNUSED_PARAM(trackID);
     UNUSED_PARAM(hasSessionSemaphore);
-#endif
 }
 
 void SourceBufferPrivateAVFObjC::setClient(SourceBufferPrivateClient* client)
@@ -765,6 +764,10 @@ void SourceBufferPrivateAVFObjC::destroyParser()
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     if (m_mediaSource && m_mediaSource->player()->hasStreamSession())
         [m_mediaSource->player()->streamSession() removeStreamDataParser:m_parser.get()];
+#endif
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    if (m_cdmInstance)
+        [m_cdmInstance->contentKeySession() removeContentKeyRecipient:m_parser.get()];
 #endif
 
     [m_delegate invalidate];
@@ -915,6 +918,30 @@ void SourceBufferPrivateAVFObjC::setCDMSession(CDMSessionMediaSourceAVFObjC* ses
     }
 #else
     UNUSED_PARAM(session);
+#endif
+}
+
+void SourceBufferPrivateAVFObjC::setCDMInstance(CDMInstance* instance)
+{
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    auto* fpsInstance = downcast<CDMInstanceFairPlayStreamingAVFObjC>(instance);
+    if (!fpsInstance || fpsInstance == m_cdmInstance)
+        return;
+
+    if (m_cdmInstance)
+        [m_cdmInstance->contentKeySession() removeContentKeyRecipient:m_parser.get()];
+
+    m_cdmInstance = fpsInstance;
+
+    if (m_cdmInstance) {
+        [m_cdmInstance->contentKeySession() addContentKeyRecipient:m_parser.get()];
+        if (m_hasSessionSemaphore) {
+            dispatch_semaphore_signal(m_hasSessionSemaphore.get());
+            m_hasSessionSemaphore = nullptr;
+        }
+    }
+#else
+    UNUSED_PARAM(instance);
 #endif
 }
 

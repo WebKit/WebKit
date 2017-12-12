@@ -39,6 +39,7 @@
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVContentKeySession);
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVContentKeyResponse);
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVURLAsset);
 SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVContentKeySystemFairPlayStreaming, NSString*)
 
@@ -238,9 +239,27 @@ void CDMInstanceFairPlayStreamingAVFObjC::requestLicense(LicenseType licenseType
     [m_session processContentKeyRequestWithIdentifier:nil initializationData:initData->createNSData().get() options:nil];
 }
 
-void CDMInstanceFairPlayStreamingAVFObjC::updateLicense(const String&, LicenseType, const SharedBuffer&, LicenseUpdateCallback)
+void CDMInstanceFairPlayStreamingAVFObjC::updateLicense(const String&, LicenseType, const SharedBuffer& responseData, LicenseUpdateCallback callback)
 {
-    notImplemented();
+    if (!m_request) {
+        callback(false, std::nullopt, std::nullopt, std::nullopt, Failed);
+        return;
+    }
+    // FIXME(rdar://problem/35597141): use the future AVContentKeyRequest keyID property, rather than parsing it out of the init
+    // data, to get the keyID.
+    Vector<Ref<SharedBuffer>> keyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(SharedBuffer::create(m_request.get().initializationData));
+    if (keyIDs.isEmpty()) {
+        callback(false, std::nullopt, std::nullopt, std::nullopt, Failed);
+        return;
+    }
+
+    [m_request processContentKeyResponse:[getAVContentKeyResponseClass() contentKeyResponseWithFairPlayStreamingKeyResponseData:responseData.createNSData().get()]];
+
+    // FIXME(rdar://problem/35592277): stash the callback and call it once AVContentKeyResponse supports a success callback.
+    KeyStatusVector keyStatuses;
+    keyStatuses.reserveInitialCapacity(1);
+    keyStatuses.uncheckedAppend(std::make_pair(WTFMove(keyIDs.first()), KeyStatus::Usable));
+    callback(false, std::make_optional(WTFMove(keyStatuses)), std::nullopt, std::nullopt, Succeeded);
 }
 
 void CDMInstanceFairPlayStreamingAVFObjC::loadSession(LicenseType, const String&, const String&, LoadSessionCallback)
@@ -279,6 +298,7 @@ void CDMInstanceFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyRequest 
     Vector<Ref<SharedBuffer>> keyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(SharedBuffer::create(request.initializationData));
     if (keyIDs.isEmpty()) {
         m_requestLicenseCallback(SharedBuffer::create(), m_sessionId, false, Failed);
+        m_requestLicenseCallback = nullptr;
         return;
     }
 
@@ -292,6 +312,7 @@ void CDMInstanceFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyRequest 
                 m_requestLicenseCallback(SharedBuffer::create(), m_sessionId, false, Failed);
             else
                 m_requestLicenseCallback(SharedBuffer::create(contentKeyRequestData.get()), m_sessionId, false, Succeeded);
+            m_requestLicenseCallback = nullptr;
         });
     }];
 }
@@ -310,7 +331,8 @@ void CDMInstanceFairPlayStreamingAVFObjC::didFailToProvideRequest(AVContentKeyRe
 {
     UNUSED_PARAM(request);
     UNUSED_PARAM(error);
-    m_requestLicenseCallback(SharedBuffer::create(), m_sessionId, false, Failed);
+    if (m_requestLicenseCallback)
+        m_requestLicenseCallback(SharedBuffer::create(), m_sessionId, false, Failed);
 }
 
 bool CDMInstanceFairPlayStreamingAVFObjC::shouldRetryRequestForReason(AVContentKeyRequest *request, NSString *reason)

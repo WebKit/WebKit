@@ -56,6 +56,7 @@ static const Vector<FourCC>& validFairPlayStreamingSchemes()
         "cbcs",
         "cbc2",
         "cbc1",
+        "cenc",
     });
 
     return validSchemes;
@@ -95,7 +96,7 @@ static Vector<Ref<SharedBuffer>> extractSinfData(const SharedBuffer& buffer)
             continue;
 
         Vector<char> sinfData;
-        if (!WTF::base64URLDecode(keyID, { sinfData }))
+        if (!WTF::base64Decode(keyID, { sinfData }, WTF::Base64IgnoreSpacesAndNewLines))
             continue;
 
         sinfs.uncheckedAppend(SharedBuffer::create(WTFMove(sinfData)));

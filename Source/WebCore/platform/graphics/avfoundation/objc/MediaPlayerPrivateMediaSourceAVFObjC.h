@@ -124,6 +124,16 @@ public:
     AVStreamSession *streamSession();
     void setCDMSession(LegacyCDMSession*) override;
     CDMSessionMediaSourceAVFObjC* cdmSession() const { return m_session; }
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    void cdmInstanceAttached(CDMInstance&) final;
+    void cdmInstanceDetached(CDMInstance&) final;
+    void attemptToDecryptWithInstance(CDMInstance&) final;
+    CDMInstance* cdmInstance() const { return m_cdmInstance.get(); }
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
     void keyNeeded(Uint8Array*);
 #endif
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -304,6 +314,9 @@ private:
 #endif
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     std::unique_ptr<VideoFullscreenLayerManager> m_videoFullscreenLayerManager;
+#endif
+#if ENABLE(ENCRYPTED_MEDIA)
+    RefPtr<CDMInstance> m_cdmInstance;
 #endif
 };
 

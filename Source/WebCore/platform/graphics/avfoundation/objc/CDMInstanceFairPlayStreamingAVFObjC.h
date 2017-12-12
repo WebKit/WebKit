@@ -75,6 +75,8 @@ public:
     bool shouldRetryRequestForReason(AVContentKeyRequest *, NSString *);
     void sessionIdentifierChanged(NSData *);
 
+    AVContentKeySession *contentKeySession() { return m_session.get(); }
+
 private:
     WeakPtr<CDMInstanceFairPlayStreamingAVFObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
     bool isLicenseTypeSupported(LicenseType) const;
@@ -94,5 +96,7 @@ private:
     RemoveSessionDataCallback m_removeSessionDataCallback;
 };
 }
+
+SPECIALIZE_TYPE_TRAITS_CDM_INSTANCE(WebCore::CDMInstanceFairPlayStreamingAVFObjC, WebCore::CDMInstance::ImplementationType::FairPlayStreaming)
 
 #endif // HAVE(AVCONTENTKEYSESSION)
