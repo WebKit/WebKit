@@ -1,5 +1,25 @@
 2017-12-13  Saam Barati  <sbarati@apple.com>
 
+        Fix how JSFunction handles "caller" and "arguments" for functions that don't have those properties
+        https://bugs.webkit.org/show_bug.cgi?id=163579
+        <rdar://problem/35455798>
+
+        Reviewed by Mark Lam.
+
+        Some functions in JavaScript do not have the "caller" and "arguments" properties.
+        For example, strict functions do not. When reading our code that dealt with these
+        types of functions, it was simply all wrong. We were doing weird things depending
+        on the method table hook. This patch fixes this by doing what we should've been
+        doing all along: when the JSFunction does not own the "caller"/"arguments" property,
+        it should defer to its base class implementation for the various method table hooks.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::deleteProperty):
+        (JSC::JSFunction::defineOwnProperty):
+
+2017-12-13  Saam Barati  <sbarati@apple.com>
+
         TypeCheckHoistingPhase needs to emit a CheckStructureOrEmpty if it's doing it for |this|
         https://bugs.webkit.org/show_bug.cgi?id=180734
         <rdar://problem/35640547>

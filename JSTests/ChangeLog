@@ -1,5 +1,22 @@
 2017-12-13  Saam Barati  <sbarati@apple.com>
 
+        Fix how JSFunction handles "caller" and "arguments" for functions that don't have those properties
+        https://bugs.webkit.org/show_bug.cgi?id=163579
+        <rdar://problem/35455798>
+
+        Reviewed by Mark Lam.
+
+        * stress/caller-and-arguments-properties-for-functions-that-dont-have-them.js: Added.
+        (assert):
+        (test1):
+        (i.test1):
+        (i.test1.C):
+        (i.test1.async.foo):
+        (i.test1.foo):
+        (test2):
+
+2017-12-13  Saam Barati  <sbarati@apple.com>
+
         TypeCheckHoistingPhase needs to emit a CheckStructureOrEmpty if it's doing it for |this|
         https://bugs.webkit.org/show_bug.cgi?id=180734
         <rdar://problem/35640547>

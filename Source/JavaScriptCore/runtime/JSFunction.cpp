@@ -471,17 +471,11 @@ bool JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
     }
 
     if (propertyName == vm.propertyNames->arguments || propertyName == vm.propertyNames->caller) {
-        slot.disableCaching();
         if (!thisObject->jsExecutable()->hasCallerAndArgumentsProperties()) {
-            // This will trigger the property to be reified, if this is not already the case!
-            // FIXME: Investigate if the `hasProperty()` call is even needed, as in the `!hasCallerAndArgumentsProperties()` case,
-            // these properties are not lazy and should not need to be reified. (https://bugs.webkit.org/show_bug.cgi?id=163579)
-            bool okay = thisObject->hasProperty(exec, propertyName);
-            RETURN_IF_EXCEPTION(scope, false);
-            ASSERT_UNUSED(okay, okay);
             scope.release();
             return Base::put(thisObject, exec, propertyName, value, slot);
         }
+        slot.disableCaching();
         return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
     }
     PropertyStatus propertyType = thisObject->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
@@ -501,8 +495,8 @@ bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prop
         // For non-host functions, don't let these properties by deleted - except by DefineOwnProperty.
         FunctionExecutable* executable = thisObject->jsExecutable();
         
-        if (propertyName == vm.propertyNames->caller || propertyName == vm.propertyNames->arguments)
-            return !executable->hasCallerAndArgumentsProperties();
+        if ((propertyName == vm.propertyNames->caller || propertyName == vm.propertyNames->arguments) && executable->hasCallerAndArgumentsProperties())
+            return false;
 
         if (propertyName == vm.propertyNames->prototype && !executable->isArrowFunction())
             return false;
@@ -539,28 +533,12 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
     bool valueCheck;
     if (propertyName == vm.propertyNames->arguments) {
         if (!thisObject->jsExecutable()->hasCallerAndArgumentsProperties()) {
-            if (thisObject->jsExecutable()->isClass()) {
-                thisObject->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
-                scope.release();
-                return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
-            }
-            PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
-            if (!Base::getOwnPropertySlot(thisObject, exec, propertyName, slot))
-                thisObject->putDirectAccessor(exec, propertyName, thisObject->globalObject(vm)->throwTypeErrorArgumentsCalleeAndCallerGetterSetter(), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
             scope.release();
             return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
         }
         valueCheck = !descriptor.value() || sameValue(exec, descriptor.value(), retrieveArguments(exec, thisObject));
     } else if (propertyName == vm.propertyNames->caller) {
         if (!thisObject->jsExecutable()->hasCallerAndArgumentsProperties()) {
-            if (thisObject->jsExecutable()->isClass()) {
-                thisObject->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
-                scope.release();
-                return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
-            }
-            PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
-            if (!Base::getOwnPropertySlot(thisObject, exec, propertyName, slot))
-                thisObject->putDirectAccessor(exec, propertyName, thisObject->globalObject(vm)->throwTypeErrorArgumentsCalleeAndCallerGetterSetter(), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
             scope.release();
             return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
         }
