@@ -1,3 +1,19 @@
+2017-12-13  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION(225597): Can't select a text box or web view on a page when VO is on.
+        https://bugs.webkit.org/show_bug.cgi?id=180756
+        <rdar://problem/35996158>
+
+        Reviewed by Brent Fulgham.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::AccessibilityProcessSuspendedNotification):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::shouldLeakBoost):
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX.plist:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeProcess):
+
 2017-12-13  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Further Trim WebContent Process sandbox
