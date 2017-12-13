@@ -1,3 +1,14 @@
+2017-12-13  Zalan Bujtas  <zalan@apple.com>
+
+        RenderImage can be destroyed even before setting the style on it.
+        https://bugs.webkit.org/show_bug.cgi?id=180767
+        <rdar://problem/33965995>
+
+        Reviewed by Simon Fraser.
+
+        * fast/images/crash-when-image-renderer-is-destroyed-before-calling-initializeStyle-expected.txt: Added.
+        * fast/images/crash-when-image-renderer-is-destroyed-before-calling-initializeStyle.html: Added.
+
 2017-12-13  Matt Lewis  <jlewis3@apple.com>
 
         Marked accessibility/mac/html5-input-number.html as flaky on macOS.

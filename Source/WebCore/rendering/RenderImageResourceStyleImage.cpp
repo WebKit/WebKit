@@ -50,9 +50,9 @@ void RenderImageResourceStyleImage::initialize(RenderElement& renderer)
 
 void RenderImageResourceStyleImage::shutdown()
 {
-    ASSERT(renderer());
     RenderImageResource::shutdown();
-    m_styleImage->removeClient(renderer());
+    if (renderer())
+        m_styleImage->removeClient(renderer());
 }
 
 RefPtr<Image> RenderImageResourceStyleImage::image(const IntSize& size) const
