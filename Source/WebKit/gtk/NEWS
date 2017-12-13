@@ -1,4 +1,15 @@
 =================
+WebKitGTK+ 2.19.3
+=================
+
+What's new in WebKitGTK+ 2.19.3?
+
+  - Fix web process crash at startup in bmalloc.
+  - Fix several memory leaks in GStreamer media backend.
+  - WebKitWebDriver process no longer links to libjavascriptcoregtk.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.19.2
 =================
 

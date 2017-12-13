@@ -1,3 +1,9 @@
+2017-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.19.3 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2017-12-12  Don Olmstead  <don.olmstead@sony.com>
 
         [WinCairo] Enable WebP support
