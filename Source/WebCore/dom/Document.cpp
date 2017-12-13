@@ -1234,7 +1234,7 @@ void Document::setVisualUpdatesAllowed(ReadyState readyState)
         if (m_visualUpdatesSuppressionTimer.isActive()) {
             ASSERT(!m_visualUpdatesAllowed);
 
-            if (!view()->visualUpdatesAllowedByClient())
+            if (view() && !view()->visualUpdatesAllowedByClient())
                 return;
 
             setVisualUpdatesAllowed(true);
@@ -1272,8 +1272,8 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
         }
     }
 
-    if (view())
-        view()->updateCompositingLayersAfterLayout();
+    if (frameView)
+        frameView->updateCompositingLayersAfterLayout();
 
     if (RenderView* renderView = this->renderView())
         renderView->repaintViewAndCompositedLayers();
@@ -1288,7 +1288,7 @@ void Document::visualUpdatesSuppressionTimerFired()
 
     // If the client is extending the visual update suppression period explicitly, the
     // watchdog should not re-enable visual updates itself, but should wait for the client.
-    if (!view()->visualUpdatesAllowedByClient())
+    if (view() && !view()->visualUpdatesAllowedByClient())
         return;
 
     setVisualUpdatesAllowed(true);
