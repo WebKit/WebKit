@@ -1,3 +1,13 @@
+2017-12-12  Alex Christensen  <achristensen@webkit.org>
+
+        Fix possible out-of-bounds read in protocolIsInHTTPFamily
+        https://bugs.webkit.org/show_bug.cgi?id=180688
+
+        Reviewed by Daniel Bates.
+
+        * TestWebKitAPI/Tests/WebCore/URL.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2017-12-12  JF Bastien  <jfbastien@apple.com>
 
         makeString: support more integral types

@@ -873,12 +873,14 @@ bool protocolIsJavaScript(StringView url)
 
 bool protocolIsInHTTPFamily(const String& url)
 {
+    auto length = url.length();
     // Do the comparison without making a new string object.
-    return isASCIIAlphaCaselessEqual(url[0], 'h')
+    return length >= 5
+        && isASCIIAlphaCaselessEqual(url[0], 'h')
         && isASCIIAlphaCaselessEqual(url[1], 't')
         && isASCIIAlphaCaselessEqual(url[2], 't')
         && isASCIIAlphaCaselessEqual(url[3], 'p')
-        && (url[4] == ':' || (isASCIIAlphaCaselessEqual(url[4], 's') && url[5] == ':'));
+        && (url[4] == ':' || (isASCIIAlphaCaselessEqual(url[4], 's') && length >= 6 && url[5] == ':'));
 }
 
 const URL& blankURL()

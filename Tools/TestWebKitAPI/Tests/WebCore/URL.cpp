@@ -213,4 +213,22 @@ TEST_F(URLTest, URLRemoveQueryAndFragmentIdentifier)
     EXPECT_EQ(url.string(), url5.string());
 }
 
+TEST_F(URLTest, ProtocolIsInHTTPFamily)
+{
+    EXPECT_FALSE(protocolIsInHTTPFamily({}));
+    EXPECT_FALSE(protocolIsInHTTPFamily(""));
+    EXPECT_FALSE(protocolIsInHTTPFamily("a"));
+    EXPECT_FALSE(protocolIsInHTTPFamily("ab"));
+    EXPECT_FALSE(protocolIsInHTTPFamily("abc"));
+    EXPECT_FALSE(protocolIsInHTTPFamily("abcd"));
+    EXPECT_FALSE(protocolIsInHTTPFamily("abcde"));
+    EXPECT_FALSE(protocolIsInHTTPFamily("abcdef"));
+    EXPECT_FALSE(protocolIsInHTTPFamily("abcdefg"));
+    EXPECT_TRUE(protocolIsInHTTPFamily("http:"));
+    EXPECT_FALSE(protocolIsInHTTPFamily("http"));
+    EXPECT_TRUE(protocolIsInHTTPFamily("https:"));
+    EXPECT_FALSE(protocolIsInHTTPFamily("https"));
+    EXPECT_TRUE(protocolIsInHTTPFamily("https://!@#$%^&*()"));
+}
+
 } // namespace TestWebKitAPI
