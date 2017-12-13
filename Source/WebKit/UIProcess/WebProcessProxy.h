@@ -77,6 +77,15 @@ struct WebNavigationDataStore;
 struct WebPageCreationParameters;
 struct WebsiteData;
 
+#if PLATFORM(IOS)
+enum ForegroundWebProcessCounterType { };
+typedef RefCounter<ForegroundWebProcessCounterType> ForegroundWebProcessCounter;
+typedef ForegroundWebProcessCounter::Token ForegroundWebProcessToken;
+enum BackgroundWebProcessCounterType { };
+typedef RefCounter<BackgroundWebProcessCounterType> BackgroundWebProcessCounter;
+typedef BackgroundWebProcessCounter::Token BackgroundWebProcessToken;
+#endif
+
 class WebProcessProxy : public ChildProcessProxy, public ResponsivenessTimer::Client, private ProcessThrottlerClient {
 public:
     typedef HashMap<uint64_t, RefPtr<WebBackForwardListItem>> WebBackForwardListItemMap;
@@ -173,8 +182,6 @@ public:
     void setIsHoldingLockedFiles(bool);
 
     ProcessThrottler& throttler() { return m_throttler; }
-
-    void reinstateNetworkProcessAssertionState(NetworkProcessProxy&);
 
     void isResponsive(WTF::Function<void(bool isWebProcessResponsive)>&&);
     void didReceiveMainThreadPing();
@@ -280,8 +287,8 @@ private:
     ProcessThrottler m_throttler;
     ProcessThrottler::BackgroundActivityToken m_tokenForHoldingLockedFiles;
 #if PLATFORM(IOS)
-    ProcessThrottler::ForegroundActivityToken m_foregroundTokenForNetworkProcess;
-    ProcessThrottler::BackgroundActivityToken m_backgroundTokenForNetworkProcess;
+    ForegroundWebProcessToken m_foregroundToken;
+    BackgroundWebProcessToken m_backgroundToken;
 #endif
 
     HashMap<String, uint64_t> m_pageURLRetainCountMap;

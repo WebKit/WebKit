@@ -1057,51 +1057,39 @@ void WebProcessProxy::didCancelProcessSuspension()
     m_throttler.didCancelProcessSuspension();
 }
 
-void WebProcessProxy::reinstateNetworkProcessAssertionState(NetworkProcessProxy& newNetworkProcessProxy)
-{
-#if PLATFORM(IOS)
-    ASSERT(!m_backgroundTokenForNetworkProcess || !m_foregroundTokenForNetworkProcess);
-
-    // The network process crashed; take new tokens for the new network process.
-    if (m_backgroundTokenForNetworkProcess)
-        m_backgroundTokenForNetworkProcess = newNetworkProcessProxy.throttler().backgroundActivityToken();
-    else if (m_foregroundTokenForNetworkProcess)
-        m_foregroundTokenForNetworkProcess = newNetworkProcessProxy.throttler().foregroundActivityToken();
-#else
-    UNUSED_PARAM(newNetworkProcessProxy);
-#endif
-}
-
 void WebProcessProxy::didSetAssertionState(AssertionState state)
 {
 #if PLATFORM(IOS)
-    ASSERT(!m_backgroundTokenForNetworkProcess || !m_foregroundTokenForNetworkProcess);
+    if (isServiceWorkerProcess())
+        return;
+
+    ASSERT(!m_backgroundToken || !m_foregroundToken);
 
     switch (state) {
     case AssertionState::Suspended:
         RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::didSetAssertionState(Suspended) release all assertions for network process", this);
-        m_foregroundTokenForNetworkProcess = nullptr;
-        m_backgroundTokenForNetworkProcess = nullptr;
+        m_foregroundToken = nullptr;
+        m_backgroundToken = nullptr;
         for (auto& page : m_pageMap.values())
             page->processWillBecomeSuspended();
         break;
 
     case AssertionState::Background:
         RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::didSetAssertionState(Background) taking background assertion for network process", this);
-        m_backgroundTokenForNetworkProcess = processPool().ensureNetworkProcess().throttler().backgroundActivityToken();
-        m_foregroundTokenForNetworkProcess = nullptr;
+        m_backgroundToken = processPool().backgroundWebProcessToken();
+        m_foregroundToken = nullptr;
         break;
     
     case AssertionState::Foreground:
         RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::didSetAssertionState(Foreground) taking foreground assertion for network process", this);
-        m_foregroundTokenForNetworkProcess = processPool().ensureNetworkProcess().throttler().foregroundActivityToken();
-        m_backgroundTokenForNetworkProcess = nullptr;
+        m_foregroundToken = processPool().foregroundWebProcessToken();
+        m_backgroundToken = nullptr;
         for (auto& page : m_pageMap.values())
             page->processWillBecomeForeground();
         break;
     }
 
-    ASSERT(!m_backgroundTokenForNetworkProcess || !m_foregroundTokenForNetworkProcess);
+    ASSERT(!m_backgroundToken || !m_foregroundToken);
 #else
     UNUSED_PARAM(state);
 #endif

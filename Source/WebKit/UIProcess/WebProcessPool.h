@@ -425,6 +425,11 @@ public:
     static uint64_t registerProcessPoolCreationListener(Function<void(WebProcessPool&)>&&);
     static void unregisterProcessPoolCreationListener(uint64_t identifier);
 
+#if PLATFORM(IOS)
+    ForegroundWebProcessToken foregroundWebProcessToken() const { return ForegroundWebProcessToken(m_foregroundWebProcessCounter.count()); }
+    BackgroundWebProcessToken backgroundWebProcessToken() const { return BackgroundWebProcessToken(m_backgroundWebProcessCounter.count()); }
+#endif
+
 private:
     void platformInitialize();
 
@@ -450,6 +455,9 @@ private:
 
     void processStoppedUsingGamepads(WebProcessProxy&);
 #endif
+
+    void reinstateNetworkProcessAssertionState(NetworkProcessProxy&);
+    void updateProcessAssertions();
 
     // IPC::MessageReceiver.
     // Implemented in generated WebProcessPoolMessageReceiver.cpp
@@ -637,6 +645,17 @@ private:
 
     HashMap<PAL::SessionID, HashSet<WebPageProxy*>> m_sessionToPagesMap;
     RunLoop::Timer<WebProcessPool> m_serviceWorkerProcessTerminationTimer;
+
+#if PLATFORM(IOS)
+    ForegroundWebProcessCounter m_foregroundWebProcessCounter;
+    BackgroundWebProcessCounter m_backgroundWebProcessCounter;
+    ProcessThrottler::ForegroundActivityToken m_foregroundTokenForNetworkProcess;
+    ProcessThrottler::BackgroundActivityToken m_backgroundTokenForNetworkProcess;
+#if ENABLE(SERVICE_WORKER)
+    ProcessThrottler::ForegroundActivityToken m_foregroundTokenForServiceWorkerProcess;
+    ProcessThrottler::BackgroundActivityToken m_backgroundTokenForServiceWorkerProcess;
+#endif
+#endif
 };
 
 template<typename T>

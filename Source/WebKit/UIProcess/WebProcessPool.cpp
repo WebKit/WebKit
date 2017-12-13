@@ -234,6 +234,10 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_hiddenPageThrottlingAutoIncreasesCounter([this](RefCounterEvent) { m_hiddenPageThrottlingTimer.startOneShot(0_s); })
     , m_hiddenPageThrottlingTimer(RunLoop::main(), this, &WebProcessPool::updateHiddenPageThrottlingAutoIncreaseLimit)
     , m_serviceWorkerProcessTerminationTimer(RunLoop::main(), this, &WebProcessPool::terminateServiceWorkerProcess)
+#if PLATFORM(IOS)
+    , m_foregroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
+    , m_backgroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
+#endif
 {
     if (m_configuration->shouldHaveLegacyDataStore())
         m_websiteDataStore = API::WebsiteDataStore::createLegacy(legacyWebsiteDataStoreConfiguration(m_configuration));
@@ -486,8 +490,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 
     if (m_didNetworkProcessCrash) {
         m_didNetworkProcessCrash = false;
-        for (auto& process : m_processes)
-            process->reinstateNetworkProcessAssertionState(*m_networkProcess);
+        reinstateNetworkProcessAssertionState(*m_networkProcess);
         if (m_websiteDataStore)
             m_websiteDataStore->websiteDataStore().networkProcessDidCrash();
     }
@@ -598,6 +601,7 @@ void WebProcessPool::establishWorkerContextConnectionToStorageProcess(StoragePro
 
     auto serviceWorkerProcessProxy = ServiceWorkerProcessProxy::create(*this, m_websiteDataStore->websiteDataStore());
     m_serviceWorkerProcess = serviceWorkerProcessProxy.ptr();
+    updateProcessAssertions();
     initializeNewWebProcess(serviceWorkerProcessProxy.get(), m_websiteDataStore->websiteDataStore());
     m_processes.append(WTFMove(serviceWorkerProcessProxy));
 
@@ -923,8 +927,10 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
     if (m_processWithPageCache == process)
         m_processWithPageCache = nullptr;
 #if ENABLE(SERVICE_WORKER)
-    if (m_serviceWorkerProcess == process)
+    if (m_serviceWorkerProcess == process) {
         m_serviceWorkerProcess = nullptr;
+        updateProcessAssertions();
+    }
 #endif
 
     static_cast<WebContextSupplement*>(supplement<WebGeolocationManagerProxy>())->processDidClose(process);
@@ -1742,6 +1748,62 @@ void WebProcessPool::reportWebContentCPUTime(Seconds cpuTime, uint64_t activityS
 #else
     UNUSED_PARAM(cpuTime);
     UNUSED_PARAM(activityState);
+#endif
+}
+
+void WebProcessPool::updateProcessAssertions()
+{
+#if PLATFORM(IOS)
+#if ENABLE(SERVICE_WORKER)
+    auto updateServiceWorkerProcessAssertion = [&] {
+        if (m_serviceWorkerProcess && m_foregroundWebProcessCounter.value()) {
+            if (!m_foregroundTokenForServiceWorkerProcess)
+                m_foregroundTokenForServiceWorkerProcess = m_serviceWorkerProcess->throttler().foregroundActivityToken();
+            m_backgroundTokenForServiceWorkerProcess = nullptr;
+            return;
+        }
+        if (m_serviceWorkerProcess && m_backgroundWebProcessCounter.value()) {
+            if (!m_backgroundTokenForServiceWorkerProcess)
+                m_backgroundTokenForServiceWorkerProcess = m_serviceWorkerProcess->throttler().backgroundActivityToken();
+            m_foregroundTokenForServiceWorkerProcess = nullptr;
+            return;
+        }
+        m_foregroundTokenForServiceWorkerProcess = nullptr;
+        m_backgroundTokenForServiceWorkerProcess = nullptr;
+    };
+    updateServiceWorkerProcessAssertion();
+#endif
+
+    auto updateNetworkProcessAssertion = [&] {
+        if (m_foregroundWebProcessCounter.value()) {
+            if (!m_foregroundTokenForNetworkProcess)
+                m_foregroundTokenForNetworkProcess = ensureNetworkProcess().throttler().foregroundActivityToken();
+            m_backgroundTokenForNetworkProcess = nullptr;
+            return;
+        }
+        if (m_backgroundWebProcessCounter.value()) {
+            if (!m_backgroundTokenForNetworkProcess)
+                m_backgroundTokenForNetworkProcess = ensureNetworkProcess().throttler().backgroundActivityToken();
+            m_foregroundTokenForNetworkProcess = nullptr;
+            return;
+        }
+        m_foregroundTokenForNetworkProcess = nullptr;
+        m_backgroundTokenForNetworkProcess = nullptr;
+    };
+    updateNetworkProcessAssertion();
+#endif
+}
+
+void WebProcessPool::reinstateNetworkProcessAssertionState(NetworkProcessProxy& newNetworkProcessProxy)
+{
+#if PLATFORM(IOS)
+    // The network process crashed; take new tokens for the new network process.
+    if (m_backgroundTokenForNetworkProcess)
+        m_backgroundTokenForNetworkProcess = newNetworkProcessProxy.throttler().backgroundActivityToken();
+    else if (m_foregroundTokenForNetworkProcess)
+        m_foregroundTokenForNetworkProcess = newNetworkProcessProxy.throttler().foregroundActivityToken();
+#else
+    UNUSED_PARAM(newNetworkProcessProxy);
 #endif
 }
 

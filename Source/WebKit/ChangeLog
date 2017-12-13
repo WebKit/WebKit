@@ -1,3 +1,32 @@
+2017-12-13  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Take process assertion to prevent the service worker process from getting suspended
+        https://bugs.webkit.org/show_bug.cgi?id=180735
+
+        Reviewed by Brady Eidson.
+
+        Take process assertion to prevent the service worker process from getting suspended while
+        it is still needed. We use the same policy as for the network process, meaning that
+        unsuspended WebContent processes prevent the service worker process from getting suspended.
+
+        This patch still does not enable service workers on iOS. The demo at https://mdn.github.io/sw-test/
+        appears to work. However, things are not working as expected for mobile.twitter.com where I
+        see the fetches intercepted by the service worker fail when offline for some reason (unrelated
+        to process suspension).
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::m_foregroundWebProcessCounter):
+        (WebKit::m_backgroundWebProcessCounter):
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToStorageProcess):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::updateProcessAssertions):
+        (WebKit::WebProcessPool::reinstateNetworkProcessAssertionState):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didSetAssertionState):
+        * UIProcess/WebProcessProxy.h:
+
 2017-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.19.3 release.
