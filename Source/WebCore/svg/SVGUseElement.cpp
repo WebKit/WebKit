@@ -108,6 +108,8 @@ Node::InsertedIntoAncestorResult SVGUseElement::insertedIntoAncestor(InsertionTy
 {
     SVGGraphicsElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument) {
+        if (m_shadowTreeNeedsUpdate)
+            document().addSVGUseElement(*this);
         SVGExternalResourcesRequired::insertedIntoDocument(this);
         invalidateShadowTree();
         updateExternalDocument();
@@ -117,9 +119,17 @@ Node::InsertedIntoAncestorResult SVGUseElement::insertedIntoAncestor(InsertionTy
 
 void SVGUseElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
+    // Check m_shadowTreeNeedsUpdate before calling SVGElement::removedFromAncestor which calls SVGElement::invalidateInstances
+    // and SVGUseElement::updateExternalDocument which calls invalidateShadowTree().
+    if (removalType.disconnectedFromDocument) {
+        if (m_shadowTreeNeedsUpdate)
+            document().removeSVGUseElement(*this);
+    }
     SVGGraphicsElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
-    clearShadowTree();
-    updateExternalDocument();
+    if (removalType.disconnectedFromDocument) {
+        clearShadowTree();
+        updateExternalDocument();
+    }
 }
 
 inline Document* SVGUseElement::externalDocument() const
@@ -181,14 +191,6 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGGraphicsElement::svgAttributeChanged(attrName);
 }
 
-void SVGUseElement::willRecalcStyle(Style::Change change)
-{
-    // FIXME: Shadow tree should be updated before style recalc.
-    if (m_shadowTreeNeedsUpdate)
-        updateShadowTree();
-    SVGGraphicsElement::willRecalcStyle(change);
-}
-
 static HashSet<AtomicString> createAllowedElementSet()
 {
     // Spec: "Any 'svg', 'symbol', 'g', graphics element or other 'use' is potentially a template object that can be re-used
@@ -234,7 +236,12 @@ void SVGUseElement::updateShadowTree()
     // FIXME: It's expensive to re-clone the entire tree every time. We should find a more efficient way to handle this.
     clearShadowTree();
 
-    if (isInShadowTree() || !isConnected())
+    if (!isConnected())
+        return;
+    document().removeSVGUseElement(*this);
+
+    // FIXME: Enable SVG use elements in shadow trees.
+    if (isInShadowTree())
         return;
 
     String targetID;
@@ -245,9 +252,7 @@ void SVGUseElement::updateShadowTree()
     }
 
     {
-        // Safe because the cloned shadow tree has never been exposed to author scripts.
         auto& shadowRoot = ensureUserAgentShadowRoot();
-        NoEventDispatchAssertion::EventAllowedScope scope(shadowRoot);
         cloneTarget(shadowRoot, *target);
         expandUseElementsInShadowTree();
         expandSymbolElementsInShadowTree();
@@ -436,8 +441,6 @@ SVGElement* SVGUseElement::findTarget(String* targetID) const
 void SVGUseElement::cloneTarget(ContainerNode& container, SVGElement& target) const
 {
     Ref<SVGElement> targetClone = static_cast<SVGElement&>(target.cloneElementWithChildren(document()).get());
-    // Safe because the newy cloned nodes in the shadow tree has not been exposed to author scripts yet.
-    NoEventDispatchAssertion::EventAllowedScope scope(targetClone);
     associateClonesWithOriginals(targetClone.get(), target);
     removeDisallowedElementsFromSubtree(targetClone.get());
     removeSymbolElementsFromSubtree(targetClone.get());
@@ -470,8 +473,6 @@ void SVGUseElement::expandUseElementsInShadowTree() const
         // 'use' element except for x, y, width, height and xlink:href are transferred to the generated 'g' element.
 
         auto replacementClone = SVGGElement::create(document());
-        // Safe because the use element's shadow tree is not exposed to author scripts, and we don't fire synchronous events during layout & DOM layout.
-        NoEventDispatchAssertion::EventAllowedScope scope(replacementClone);
 
         cloneDataAndChildren(replacementClone.get(), originalClone);
 
@@ -506,8 +507,6 @@ void SVGUseElement::expandSymbolElementsInShadowTree() const
         // 'svg' element will use values of 100% for these attributes.
 
         auto replacementClone = SVGSVGElement::create(document());
-        // Safe because the newly created SVG element and the newly created shadow tree has not been exposed to author scripts yet.
-        NoEventDispatchAssertion::EventAllowedScope scope(replacementClone);
         cloneDataAndChildren(replacementClone.get(), originalClone);
 
         originalClone.parentNode()->replaceChild(replacementClone, originalClone);
@@ -533,6 +532,8 @@ void SVGUseElement::invalidateShadowTree()
     m_shadowTreeNeedsUpdate = true;
     invalidateStyleAndRenderersForSubtree();
     invalidateDependentShadowTrees();
+    if (isConnected())
+        document().addSVGUseElement(*this);
 }
 
 void SVGUseElement::invalidateDependentShadowTrees()

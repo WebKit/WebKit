@@ -50,6 +50,8 @@ public:
     virtual ~SVGUseElement();
 
     void invalidateShadowTree();
+    bool shadowTreeNeedsUpdate() const { return m_shadowTreeNeedsUpdate; }
+    void updateShadowTree();
 
     RenderElement* rendererClipChild() const;
 
@@ -62,7 +64,6 @@ private:
     void buildPendingResource() override;
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
-    void willRecalcStyle(Style::Change) override;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     Path toClipPath() override;
     bool haveLoadedRequiredResources() override;
@@ -81,7 +82,6 @@ private:
     void cloneTarget(ContainerNode&, SVGElement& target) const;
     RefPtr<SVGElement> targetClone() const;
 
-    void updateShadowTree();
     void expandUseElementsInShadowTree() const;
     void expandSymbolElementsInShadowTree() const;
     void transferEventListenersToShadowTree() const;

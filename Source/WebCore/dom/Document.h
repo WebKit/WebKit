@@ -154,6 +154,7 @@ class RenderView;
 class RequestAnimationFrameCallback;
 class SVGDocumentExtensions;
 class SVGSVGElement;
+class SVGUseElement;
 class SWClientConnection;
 class ScriptElementData;
 class ScriptModuleLoader;
@@ -1077,6 +1078,10 @@ public:
     WEBCORE_EXPORT const SVGDocumentExtensions* svgExtensions();
     WEBCORE_EXPORT SVGDocumentExtensions& accessSVGExtensions();
 
+    void addSVGUseElement(SVGUseElement&);
+    void removeSVGUseElement(SVGUseElement&);
+    HashSet<SVGUseElement*> const svgUseElements() const { return m_svgUseElements; }
+
     void initSecurityContext();
     void initContentSecurityPolicy();
 
@@ -1612,6 +1617,7 @@ private:
     RefPtr<XPathEvaluator> m_xpathEvaluator;
 
     std::unique_ptr<SVGDocumentExtensions> m_svgExtensions;
+    HashSet<SVGUseElement*> m_svgUseElements;
 
 #if ENABLE(DASHBOARD_SUPPORT)
     Vector<AnnotatedRegionValue> m_annotatedRegions;
