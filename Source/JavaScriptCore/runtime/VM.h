@@ -345,6 +345,9 @@ public:
     IsoSubspace moduleProgramExecutableSpace;
     IsoSubspace nativeExecutableSpace;
     IsoSubspace programExecutableSpace;
+    IsoSubspace propertyTableSpace;
+    IsoSubspace structureRareDataSpace;
+    IsoSubspace structureSpace;
     
     IsoCellSet inferredTypesWithFinalizers;
 

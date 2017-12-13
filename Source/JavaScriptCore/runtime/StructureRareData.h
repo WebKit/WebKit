@@ -43,6 +43,12 @@ public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
+    template<typename CellType>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.structureRareDataSpace;
+    }
+
     static StructureRareData* create(VM&, Structure*);
 
     static const bool needsDestruction = true;

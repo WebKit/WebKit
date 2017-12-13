@@ -1,3 +1,21 @@
+2017-12-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Structure, StructureRareData, and PropertyTable should be in IsoSubspaces
+        https://bugs.webkit.org/show_bug.cgi?id=180732
+
+        Rubber stamped by Mark Lam.
+        
+        We should eventually move all fixed-size cells into IsoSubspaces. I don't know if they are
+        scalable enough to support that, so we should do it carefully.
+
+        * heap/MarkedSpace.cpp:
+        * runtime/PropertyMapHashTable.h:
+        * runtime/Structure.h:
+        * runtime/StructureRareData.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2017-12-12  Saam Barati  <sbarati@apple.com>
 
         We need to model effects of Spread(@PhantomCreateRest) in Clobberize/PreciseLocalClobberize
