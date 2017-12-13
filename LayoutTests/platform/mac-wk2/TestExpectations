@@ -639,7 +639,7 @@ webkit.org/b/161745 http/tests/security/anchor-download-allow-data.html [ Pass F
 
 webkit.org/b/161926 storage/indexeddb/index-cursor.html [ Pass Timeout ]
 
-webkit.org/b/162685 [ Debug ] http/tests/cache/disk-cache/disk-cache-204-status-code.html [ Pass Failure ]
+webkit.org/b/162685  http/tests/cache/disk-cache/disk-cache-204-status-code.html [ Pass Failure ]
 
 webkit.org/b/161649 [ Debug ] http/tests/cache/disk-cache/resource-becomes-uncacheable.html [ Pass Failure ]
 
