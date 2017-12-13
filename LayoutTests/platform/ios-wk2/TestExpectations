@@ -1202,7 +1202,7 @@ webkit.org/b/162524 [ Release ] http/tests/cache/disk-cache/disk-cache-redirect.
 
 webkit.org/b/127116 [ Debug ] svg/custom/animate-initial-pause-unpause.html [ Pass Failure ]
 
-webkit.org/b/163362 [ Debug ] platform/ios/ios/plugin/youtube-flash-plugin-iframe.html [ Pass Failure ]
+webkit.org/b/163362 platform/ios/ios/plugin/youtube-flash-plugin-iframe.html [ Pass Failure ]
 
 webkit.org/b/164960 http/tests/security/module-correct-mime-types.html [ Slow ]
 
