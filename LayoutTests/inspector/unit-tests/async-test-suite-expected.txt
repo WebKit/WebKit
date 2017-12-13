@@ -105,3 +105,48 @@ PASS: Promise from asyncFunctionRuntimeFailureTestSuite.runTestCases() should re
 PASS: Promise did evaluate the async test function.
 PASS: Rejected value should be a runtime exception.
 
+== Running test suite: AsyncTestSuite.AsyncSetupAndAsyncTeardown
+-- Running test setup.
+-- Running test case: TestWithSetupAndTeardown
+PASS: Test should see side effects of running setup() action.
+-- Running test teardown.
+PASS: Teardown should see side effects of running setup() action.
+
+-- Running test case: TestRunningAfterTeardown
+PASS: Test should see side effects of previous test's teardown() action.
+PASS: Promise from asyncSetupAndAsyncTeardownTestSuite.runTestCases() should resolve.
+
+== Running test suite: AsyncTestSuite.AsyncSetupExplicitFailure
+-- Running test case: AsyncFunctionFailure
+!! EXCEPTION: AsyncFunctionFailure Exception Message
+Stack Trace: (suppressed)
+PASS: Promise from asyncSetupExplicitFailureTestSuite.runTestCases() should reject.
+PASS: Promise did evaluate the async setup function.
+PASS: Rejected value should be thrown exception.
+
+== Running test suite: AsyncTestSuite.AsyncSetupRuntimeFailure
+-- Running test setup.
+!! EXCEPTION: undefined is not an object (evaluating '({}).x.x')
+Stack Trace: (suppressed)
+PASS: Promise from asyncSetupRuntimeFailureTestSuite.runTestCases() should reject.
+PASS: Promise did evaluate the async setup function.
+PASS: Rejected value should be a runtime exception.
+
+== Running test suite: AsyncTestSuite.AsyncTeardownExplicitFailure
+-- Running test case: AsyncFunctionFailure
+-- Running test teardown.
+!! EXCEPTION: AsyncFunctionFailure Exception Message
+Stack Trace: (suppressed)
+PASS: Promise from asyncTeardownExplicitFailureTestSuite.runTestCases() should reject.
+PASS: Promise did evaluate the async teardown function.
+PASS: Rejected value should be thrown exception.
+
+== Running test suite: AsyncTestSuite.AsyncTeardownRuntimeFailure
+-- Running test case: AsyncFunctionFailure
+-- Running test teardown.
+!! EXCEPTION: undefined is not an object (evaluating '({}).x.x')
+Stack Trace: (suppressed)
+PASS: Promise from asyncTeardownRuntimeFailureTestSuite.runTestCases() should reject.
+PASS: Promise did evaluate the async teardown function.
+PASS: Rejected value should be a runtime exception.
+

@@ -1,5 +1,18 @@
 2017-12-12  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: support async setup() and async teardown() in AsyncTestSuite
+        https://bugs.webkit.org/show_bug.cgi?id=180626
+
+        Reviewed by Timothy Hatcher.
+
+        Update tests to cover async setup() and async teardown() in the case
+        of success, runtime failure, and explicit failure.
+
+        * inspector/unit-tests/async-test-suite-expected.txt:
+        * inspector/unit-tests/async-test-suite.html:
+
+2017-12-12  Brian Burg  <bburg@apple.com>
+
         Web Inspector: SyncTestSuite should complain if passed an async setup/test/teardown function
         https://bugs.webkit.org/show_bug.cgi?id=180717
 

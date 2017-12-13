@@ -139,6 +139,8 @@ AsyncTestSuite = class AsyncTestSuite extends TestSuite
             if (testcase.setup) {
                 chain = chain.then(() => {
                     this._harness.log("-- Running test setup.");
+                    if (testcase.setup[Symbol.toStringTag] === "AsyncFunction")
+                        return testcase.setup();
                     return new Promise(testcase.setup);
                 });
             }
@@ -158,6 +160,8 @@ AsyncTestSuite = class AsyncTestSuite extends TestSuite
             if (testcase.teardown) {
                 chain = chain.then(() => {
                     this._harness.log("-- Running test teardown.");
+                    if (testcase.teardown[Symbol.toStringTag] === "AsyncFunction")
+                        return testcase.teardown();
                     return new Promise(testcase.teardown);
                 });
             }

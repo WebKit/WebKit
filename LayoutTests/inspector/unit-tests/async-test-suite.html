@@ -290,7 +290,7 @@ function test()
         },
         teardown: (resolve, reject) => {
             ProtocolTest.assert(false, "Teardown action should not execute if its setup action threw an exception.");
-            reject();           
+            reject();
         }
     });
 
@@ -389,7 +389,7 @@ function test()
         return Promise.resolve(); // Continue this test.
     });
 
-
+    // Async test functions.
     let asyncFunctionSuccessTestSuiteDidEvaluate = false;
     let asyncFunctionSuccessTestSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.AsyncFunctionSuccess");
     asyncFunctionSuccessTestSuite.addTestCase({
@@ -412,7 +412,6 @@ function test()
         ProtocolTest.fail("Promise from asyncFunctionSuccessTestSuite.runTestCases() should succeed.");
         return Promise.resolve(); // Continue this test.
     });
-
 
     let asyncFunctionExplicitFailureTestSuiteDidEvaluate = false;
     let asyncFunctionExplicitFailureTestSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.AsyncFunctionExplicitFailure");
@@ -437,7 +436,6 @@ function test()
         return Promise.resolve(); // Continue this test.
     });
 
-
     let asyncFunctionRuntimeFailureTestSuiteDidEvaluate = false;
     let asyncFunctionRuntimeFailureTestSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.AsyncFunctionRuntimeFailure");
     asyncFunctionRuntimeFailureTestSuite.addTestCase({
@@ -457,6 +455,142 @@ function test()
     }, function rejected(e) {
         ProtocolTest.pass("Promise from asyncFunctionRuntimeFailureTestSuite.runTestCases() should reject.");
         ProtocolTest.expectThat(asyncFunctionRuntimeFailureTestSuiteDidEvaluate, "Promise did evaluate the async test function.");
+        ProtocolTest.expectThat(e instanceof TypeError, "Rejected value should be a runtime exception.");
+        return Promise.resolve(); // Continue this test.
+    });
+
+    // Async setup() and teardown() success test cases.
+    const asyncSetupAndTeardownSymbol = Symbol("async-suite-async-setup-and-teardown-token");
+    window[asyncSetupAndTeardownSymbol] = 0;
+
+    let asyncSetupAndAsyncTeardownTestSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.AsyncSetupAndAsyncTeardown");
+    asyncSetupAndAsyncTeardownTestSuite.addTestCase({
+        name: "TestWithSetupAndTeardown",
+        description: "Check execution order for setup and teardown actions.",
+        async setup() {
+            window[asyncSetupAndTeardownSymbol] = 1;
+        },
+        async test() {
+            ProtocolTest.expectThat(window[asyncSetupAndTeardownSymbol] === 1, "Test should see side effects of running setup() action.");
+            window[asyncSetupAndTeardownSymbol] = 2;
+        },
+        async teardown() {
+            ProtocolTest.expectThat(window[asyncSetupAndTeardownSymbol] === 2, "Teardown should see side effects of running setup() action.");
+            window[asyncSetupAndTeardownSymbol] = 3;
+        }
+    });
+    asyncSetupAndAsyncTeardownTestSuite.addTestCase({
+        name: "TestRunningAfterTeardown",
+        description: "Check execution order for test after a teardown action.",
+        test(resolve, reject) {
+            ProtocolTest.expectThat(window[asyncSetupAndTeardownSymbol] === 3, "Test should see side effects of previous test's teardown() action.");
+            resolve();
+        },
+    });
+
+    result = result.then(() => {
+        return asyncSetupAndAsyncTeardownTestSuite.runTestCases();
+    }).then(function resolved() {
+        ProtocolTest.pass("Promise from asyncSetupAndAsyncTeardownTestSuite.runTestCases() should resolve.");
+        return Promise.resolve(); // Continue this test.
+    }, function rejected(e) {
+        ProtocolTest.fail("Promise from asyncSetupAndAsyncTeardownTestSuite.runTestCases() should resolve.");
+        return Promise.resolve(); // Continue this test.
+    });
+
+    // Async setup() failure test cases.
+    let asyncSetupExplicitFailureTestSuiteDidEvaluate = false;
+    let asyncSetupExplicitFailureTestSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.AsyncSetupExplicitFailure");
+    asyncSetupExplicitFailureTestSuite.addTestCase({
+        name: "AsyncFunctionFailure",
+        description: "Check that an async suite with async test functions that throws will reject",
+        async test() {
+            asyncSetupExplicitFailureTestSuiteDidEvaluate = true;
+            throw "AsyncFunctionFailure Exception Message";
+        }
+    });
+
+    result = result.then(() => {
+        return asyncSetupExplicitFailureTestSuite.runTestCases();
+    }).then(function resolve() {
+        ProtocolTest.fail("Promise from asyncSetupExplicitFailureTestSuite.runTestCases() should reject.");
+        return Promise.resolve(); // Continue this test.
+    }, function rejected(e) {
+        ProtocolTest.pass("Promise from asyncSetupExplicitFailureTestSuite.runTestCases() should reject.");
+        ProtocolTest.expectThat(asyncSetupExplicitFailureTestSuiteDidEvaluate, "Promise did evaluate the async setup function.");
+        ProtocolTest.expectEqual(e, "AsyncFunctionFailure Exception Message", "Rejected value should be thrown exception.");
+        return Promise.resolve(); // Continue this test.
+    });
+
+    let asyncSetupRuntimeFailureTestSuiteDidEvaluate = false;
+    let asyncSetupRuntimeFailureTestSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.AsyncSetupRuntimeFailure");
+    asyncSetupRuntimeFailureTestSuite.addTestCase({
+        name: "AsyncFunctionFailure",
+        description: "Check that an async suite with an async setup function that throws with a runtime error will reject",
+        async setup() {
+            asyncSetupRuntimeFailureTestSuiteDidEvaluate = true;
+            ({}).x.x.x;
+        },
+        async test() { return true; },
+    });
+
+    result = result.then(() => {
+        return asyncSetupRuntimeFailureTestSuite.runTestCases();
+    }).then(function resolve() {
+        ProtocolTest.fail("Promise from asyncSetupRuntimeFailureTestSuite.runTestCases() should reject.");
+        return Promise.resolve(); // Continue this test.
+    }, function rejected(e) {
+        ProtocolTest.pass("Promise from asyncSetupRuntimeFailureTestSuite.runTestCases() should reject.");
+        ProtocolTest.expectThat(asyncSetupRuntimeFailureTestSuiteDidEvaluate, "Promise did evaluate the async setup function.");
+        ProtocolTest.expectThat(e instanceof TypeError, "Rejected value should be a runtime exception.");
+        return Promise.resolve(); // Continue this test.
+    });
+
+    // Async teardown() failure test cases.
+    let asyncTeardownExplicitFailureTestSuiteDidEvaluate = false;
+    let asyncTeardownExplicitFailureTestSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.AsyncTeardownExplicitFailure");
+    asyncTeardownExplicitFailureTestSuite.addTestCase({
+        name: "AsyncFunctionFailure",
+        description: "Check that an async suite with async test functions that throws will reject",
+        async test() { return true; },
+        async teardown() {
+            asyncTeardownExplicitFailureTestSuiteDidEvaluate = true;
+            throw "AsyncFunctionFailure Exception Message";
+        },
+    });
+
+    result = result.then(() => {
+        return asyncTeardownExplicitFailureTestSuite.runTestCases();
+    }).then(function resolve() {
+        ProtocolTest.fail("Promise from asyncTeardownExplicitFailureTestSuite.runTestCases() should reject.");
+        return Promise.resolve(); // Continue this test.
+    }, function rejected(e) {
+        ProtocolTest.pass("Promise from asyncTeardownExplicitFailureTestSuite.runTestCases() should reject.");
+        ProtocolTest.expectThat(asyncTeardownExplicitFailureTestSuiteDidEvaluate, "Promise did evaluate the async teardown function.");
+        ProtocolTest.expectEqual(e, "AsyncFunctionFailure Exception Message", "Rejected value should be thrown exception.");
+        return Promise.resolve(); // Continue this test.
+    });
+
+    let asyncTeardownRuntimeFailureTestSuiteDidEvaluate = false;
+    let asyncTeardownRuntimeFailureTestSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.AsyncTeardownRuntimeFailure");
+    asyncTeardownRuntimeFailureTestSuite.addTestCase({
+        name: "AsyncFunctionFailure",
+        description: "Check that an async suite with an async teardown function that throws with a runtime error will reject",
+        async test() { return true; },
+        async teardown() {
+            asyncTeardownRuntimeFailureTestSuiteDidEvaluate = true;
+            ({}).x.x.x;
+        },
+    });
+
+    result = result.then(() => {
+        return asyncTeardownRuntimeFailureTestSuite.runTestCases();
+    }).then(function resolve() {
+        ProtocolTest.fail("Promise from asyncTeardownRuntimeFailureTestSuite.runTestCases() should reject.");
+        return Promise.resolve(); // Continue this test.
+    }, function rejected(e) {
+        ProtocolTest.pass("Promise from asyncTeardownRuntimeFailureTestSuite.runTestCases() should reject.");
+        ProtocolTest.expectThat(asyncTeardownRuntimeFailureTestSuiteDidEvaluate, "Promise did evaluate the async teardown function.");
         ProtocolTest.expectThat(e instanceof TypeError, "Rejected value should be a runtime exception.");
         return Promise.resolve(); // Continue this test.
     });
