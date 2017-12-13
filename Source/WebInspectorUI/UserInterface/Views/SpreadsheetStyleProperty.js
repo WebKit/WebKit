@@ -231,15 +231,10 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         let propertyName = this._nameTextField.value.trim();
         let propertyValue = this._valueTextField.value.trim();
         let willRemoveProperty = false;
-        let newlyAdded = this._valueTextField.valueBeforeEditing === "";
-
-        // Remove a property with an empty name or value. However, a newly added property
-        // has an empty name and value at first. Don't remove it when moving focus from
-        // the name to the value for the first time.
-        if (!propertyName || (!newlyAdded && !propertyValue))
-            willRemoveProperty = true;
-
         let isEditingName = textField === this._nameTextField;
+
+        if (!propertyName || (!propertyValue && !isEditingName && direction === "forward"))
+            willRemoveProperty = true;
 
         if (!isEditingName && !willRemoveProperty)
             this._renderValue(propertyValue);
@@ -267,11 +262,15 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._remove();
     }
 
-    spreadsheetTextFieldDidBlur(textField)
+    spreadsheetTextFieldDidBlur(textField, event)
     {
-        if (textField.value.trim() === "")
+        let focusedOutsideThisProperty = event.relatedTarget !== this._nameElement && event.relatedTarget !== this._valueElement;
+        if (focusedOutsideThisProperty && (!this._nameTextField.value.trim() || !this._valueTextField.value.trim())) {
             this._remove();
-        else if (textField === this._valueTextField)
+            return;
+        }
+
+        if (textField === this._valueTextField)
             this._renderValue(this._valueElement.textContent);
     }
 

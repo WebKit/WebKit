@@ -1,3 +1,30 @@
+2017-12-12  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: navigating away from empty value should remove CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=180508
+
+        Reviewed by Devin Rousso.
+
+        Remove a property when navigating away from it (e.g. to the next/previous property,
+        or outside of the styles panel entirely) and either its name or value is empty:
+
+            color: [ ]->
+            <-[ ]: red
+            <-[color]:
+
+        Don't remove a property when navigating from an empty value to a non-empty name:
+
+            color: <-[ ]
+
+        Always remove a property when both name and value are empty.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidCommit):
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidBlur):
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField.prototype._handleBlur):
+        (WI.SpreadsheetTextField.prototype.get valueBeforeEditing): Deleted.
+
 2017-12-12  Brian Burg  <bburg@apple.com>
 
         Web Inspector: support async setup() and async teardown() in AsyncTestSuite
