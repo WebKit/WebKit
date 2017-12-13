@@ -1945,7 +1945,12 @@ private:
         }
 
         case WeakMapGet: {
-            fixEdge<WeakMapObjectUse>(node->child1());
+            if (node->child1().useKind() == WeakMapObjectUse)
+                fixEdge<WeakMapObjectUse>(node->child1());
+            else if (node->child1().useKind() == WeakSetObjectUse)
+                fixEdge<WeakSetObjectUse>(node->child1());
+            else
+                RELEASE_ASSERT_NOT_REACHED();
             fixEdge<ObjectUse>(node->child2());
             fixEdge<Int32Use>(node->child3());
             break;
@@ -2148,6 +2153,7 @@ private:
         case CompareEqPtr:
         case NumberToStringWithValidRadixConstant:
         case GetGlobalThis:
+        case ExtractValueFromWeakMapGet:
         case CPUIntrinsic:
             break;
 #else

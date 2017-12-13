@@ -423,6 +423,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case GetMapBucketNext:
     case LoadKeyFromMapBucket:
     case LoadValueFromMapBucket:
+    case ExtractValueFromWeakMapGet:
     case WeakMapGet:
     case AtomicsAdd:
     case AtomicsAnd:

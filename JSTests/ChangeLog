@@ -1,3 +1,40 @@
+2017-12-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Implement optimized WeakMap and WeakSet
+        https://bugs.webkit.org/show_bug.cgi?id=179929
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/weak-map-key.js:
+        * microbenchmarks/weak-set-key.js: Copied from JSTests/microbenchmarks/weak-map-key.js.
+        (assert):
+        (objectKey):
+        (let.start.Date.now):
+        * stress/basic-weakmap.js: Added.
+        (shouldBe):
+        (test):
+        * stress/basic-weakset.js: Added.
+        (shouldBe):
+        (test.set new):
+        * stress/weakmap-cse-set-break.js: Added.
+        (shouldBe):
+        (test):
+        * stress/weakmap-cse.js: Added.
+        (shouldBe):
+        (test):
+        * stress/weakmap-gc.js: Added.
+        (test):
+        * stress/weakset-cse-add-break.js: Added.
+        (shouldBe):
+        (test.set new):
+        * stress/weakset-cse.js: Added.
+        (shouldBe):
+        (test.set new):
+        * stress/weakset-gc.js: Added.
+        (test.set add):
+        (test.set new):
+        (test):
+
 2017-12-12  Saam Barati  <sbarati@apple.com>
 
         ConstantFoldingPhase rule for GetMyArgumentByVal must check for negative indices

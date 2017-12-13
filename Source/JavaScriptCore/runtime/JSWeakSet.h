@@ -26,13 +26,13 @@
 #pragma once
 
 #include "JSObject.h"
-#include "WeakMapBase.h"
+#include "WeakMapImpl.h"
 
 namespace JSC {
 
-class JSWeakSet final : public WeakMapBase {
+class JSWeakSet final : public WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>> {
 public:
-    using Base = WeakMapBase;
+    using Base = WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>;
 
     DECLARE_EXPORT_INFO;
 
@@ -46,11 +46,6 @@ public:
         JSWeakSet* instance = new (NotNull, allocateCell<JSWeakSet>(vm.heap)) JSWeakSet(vm, structure);
         instance->finishCreation(vm);
         return instance;
-    }
-
-    static JSWeakSet* create(ExecState* exec, Structure* structure)
-    {
-        return create(exec->vm(), structure);
     }
 
 private:

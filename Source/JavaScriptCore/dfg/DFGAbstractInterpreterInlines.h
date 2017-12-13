@@ -1130,6 +1130,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case LoadKeyFromMapBucket:
     case LoadValueFromMapBucket:
+    case ExtractValueFromWeakMapGet:
         forNode(node).makeHeapTop();
         break;
 
@@ -1157,7 +1158,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case WeakMapGet:
-        forNode(node).makeHeapTop();
+        forNode(node).makeBytecodeTop();
         break;
 
     case IsEmpty:

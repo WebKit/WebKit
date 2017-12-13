@@ -56,7 +56,6 @@
 #include "JSLexicalEnvironment.h"
 #include "JSMap.h"
 #include "JSSet.h"
-#include "JSWeakMap.h"
 #include "ObjectConstructor.h"
 #include "Operations.h"
 #include "ParseInt.h"
@@ -1021,13 +1020,6 @@ EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState* exec, JSGloba
         return JSValue::encode(jsUndefined());
     scope.release();
     return JSValue::encode(asRegExpObject(base)->exec(exec, globalObject, input));
-}
-
-EncodedJSValue JIT_OPERATION operationWeakMapGet(ExecState* exec, JSCell* weakMap, JSCell* object, int32_t hash)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    return JSValue::encode(jsCast<JSWeakMap*>(weakMap)->inlineGet(asObject(object), hash));
 }
 
 EncodedJSValue JIT_OPERATION operationParseIntNoRadixGeneric(ExecState* exec, EncodedJSValue value)

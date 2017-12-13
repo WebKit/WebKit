@@ -207,6 +207,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetMapBucketNext:
     case LoadKeyFromMapBucket:
     case LoadValueFromMapBucket:
+    case ExtractValueFromWeakMapGet:
     case SetAdd:
     case MapSet:
     case WeakMapGet:

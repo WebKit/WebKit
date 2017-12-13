@@ -68,7 +68,7 @@ static EncodedJSValue JSC_HOST_CALL constructWeakSet(ExecState* exec)
     JSGlobalObject* globalObject = asInternalFunction(exec->jsCallee())->globalObject();
     Structure* weakSetStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), globalObject->weakSetStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    JSWeakSet* weakSet = JSWeakSet::create(exec, weakSetStructure);
+    JSWeakSet* weakSet = JSWeakSet::create(vm, weakSetStructure);
     JSValue iterable = exec->argument(0);
     if (iterable.isUndefinedOrNull())
         return JSValue::encode(weakSet);

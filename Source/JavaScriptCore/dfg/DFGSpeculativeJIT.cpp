@@ -60,6 +60,7 @@
 #include "ScopedArguments.h"
 #include "ScratchRegisterAllocator.h"
 #include "SuperSampler.h"
+#include "WeakMapImpl.h"
 #include <wtf/BitVector.h>
 #include <wtf/Box.h>
 #include <wtf/MathExtras.h>
@@ -10876,6 +10877,33 @@ void SpeculativeJIT::compileLoadValueFromMapBucket(Node* node)
     jsValueResult(resultRegs, node);
 }
 
+void SpeculativeJIT::compileExtractValueFromWeakMapGet(Node* node)
+{
+    JSValueOperand value(this, node->child1());
+    JSValueRegsTemporary result(this, Reuse, value);
+
+    JSValueRegs valueRegs = value.jsValueRegs();
+    JSValueRegs resultRegs = result.regs();
+
+#if USE(JSVALUE64)
+    m_jit.moveValueRegs(valueRegs, resultRegs);
+    auto done = m_jit.branchTestPtr(CCallHelpers::NonZero, resultRegs.payloadGPR());
+    m_jit.moveValue(jsUndefined(), resultRegs);
+    done.link(&m_jit);
+#else
+    auto isEmpty = m_jit.branch32(JITCompiler::Equal, valueRegs.tagGPR(), TrustedImm32(JSValue::EmptyValueTag));
+    m_jit.moveValueRegs(valueRegs, resultRegs);
+    auto done = m_jit.jump();
+
+    isEmpty.link(&m_jit);
+    m_jit.moveValue(jsUndefined(), resultRegs);
+
+    done.link(&m_jit);
+#endif
+
+    jsValueResult(resultRegs, node, DataFormatJS);
+}
+
 void SpeculativeJIT::compileThrow(Node* node)
 {
     JSValueOperand value(this, node->child1());
@@ -10940,21 +10968,75 @@ void SpeculativeJIT::compileMapSet(Node* node)
 void SpeculativeJIT::compileWeakMapGet(Node* node)
 {
     SpeculateCellOperand weakMap(this, node->child1());
-    SpeculateCellOperand object(this, node->child2());
+    SpeculateCellOperand key(this, node->child2());
     SpeculateInt32Operand hash(this, node->child3());
     JSValueRegsTemporary result(this);
 
+    GPRTemporary mask(this);
+    GPRTemporary index(this);
+    GPRTemporary buffer(this);
+    GPRTemporary bucket(this);
+
     GPRReg weakMapGPR = weakMap.gpr();
-    GPRReg objectGPR = object.gpr();
+    GPRReg keyGPR = key.gpr();
     GPRReg hashGPR = hash.gpr();
+
+    GPRReg maskGPR = mask.gpr();
+    GPRReg indexGPR = index.gpr();
+    GPRReg bufferGPR = buffer.gpr();
+    GPRReg bucketGPR = bucket.gpr();
     JSValueRegs resultRegs = result.regs();
 
-    speculateWeakMapObject(node->child1(), weakMapGPR);
-    speculateObject(node->child2(), objectGPR);
+    if (node->child1().useKind() == WeakMapObjectUse)
+        speculateWeakMapObject(node->child1(), weakMapGPR);
+    else
+        speculateWeakSetObject(node->child1(), weakMapGPR);
+    speculateObject(node->child2(), keyGPR);
 
-    flushRegisters();
-    callOperation(operationWeakMapGet, resultRegs, weakMapGPR, objectGPR, hashGPR);
-    // No exception check here since operationWeakMapGet never throws an exception.
+    ASSERT(WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfCapacity() == WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::offsetOfCapacity());
+    ASSERT(WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfBuffer() == WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::offsetOfBuffer());
+    m_jit.load32(MacroAssembler::Address(weakMapGPR, WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfCapacity()), maskGPR);
+    m_jit.loadPtr(MacroAssembler::Address(weakMapGPR, WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfBuffer()), bufferGPR);
+    m_jit.sub32(TrustedImm32(1), maskGPR);
+    m_jit.move(hashGPR, indexGPR);
+
+    MacroAssembler::Label loop = m_jit.label();
+
+    m_jit.and32(maskGPR, indexGPR);
+    if (node->child1().useKind() == WeakSetObjectUse) {
+        static_assert(sizeof(WeakMapBucket<WeakMapBucketDataKey>) == sizeof(void*), "");
+        m_jit.zeroExtend32ToPtr(indexGPR, bucketGPR);
+        m_jit.lshiftPtr(MacroAssembler::Imm32(sizeof(void*) == 4 ? 2 : 3), bucketGPR);
+        m_jit.addPtr(bufferGPR, bucketGPR);
+    } else {
+        ASSERT(node->child1().useKind() == WeakMapObjectUse);
+        static_assert(sizeof(WeakMapBucket<WeakMapBucketDataKeyValue>) == 16, "");
+        m_jit.zeroExtend32ToPtr(indexGPR, bucketGPR);
+        m_jit.lshiftPtr(MacroAssembler::Imm32(4), bucketGPR);
+        m_jit.addPtr(bufferGPR, bucketGPR);
+    }
+
+    m_jit.loadPtr(MacroAssembler::Address(bucketGPR, WeakMapBucket<WeakMapBucketDataKeyValue>::offsetOfKey()), resultRegs.payloadGPR());
+
+    // They're definitely the same value, we found the bucket we were looking for!
+    // The deleted key comparison is also done with this.
+    auto found = m_jit.branchPtr(MacroAssembler::Equal, resultRegs.payloadGPR(), keyGPR);
+
+    auto notPresentInTable = m_jit.branchTestPtr(MacroAssembler::Zero, resultRegs.payloadGPR());
+
+    m_jit.add32(TrustedImm32(1), indexGPR);
+    m_jit.jump().linkTo(loop, &m_jit);
+
+    notPresentInTable.link(&m_jit);
+    found.link(&m_jit);
+
+    // Empty bucket has JSEmpty value. Empty key is JSEmpty. If empty bucket is found, we can use the same path used for the case of finding a bucket.
+    if (node->child1().useKind() == WeakSetObjectUse) {
+#if USE(JSVALUE32_64)
+        m_jit.move(TrustedImm32(JSValue::CellTag), resultRegs.tagGPR());
+#endif
+    } else
+        m_jit.loadValue(MacroAssembler::Address(bucketGPR, WeakMapBucket<WeakMapBucketDataKeyValue>::offsetOfValue()), resultRegs);
 
     jsValueResult(resultRegs, node);
 }

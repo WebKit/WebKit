@@ -1060,6 +1060,9 @@ private:
         case LoadValueFromMapBucket:
             compileLoadValueFromMapBucket();
             break;
+        case ExtractValueFromWeakMapGet:
+            compileExtractValueFromWeakMapGet();
+            break;
         case SetAdd:
             compileSetAdd();
             break;
@@ -8877,6 +8880,14 @@ private:
         setJSValue(m_out.load64(mapBucket, m_heaps.HashMapBucket_value));
     }
 
+    void compileExtractValueFromWeakMapGet()
+    {
+        LValue value = lowJSValue(m_node->child1());
+        setJSValue(m_out.select(m_out.isZero64(value),
+            m_out.constInt64(JSValue::encode(jsUndefined())),
+            value));
+    }
+
     void compileLoadKeyFromMapBucket()
     {
         LValue mapBucket = lowCell(m_node->child1());
@@ -8904,11 +8915,59 @@ private:
 
     void compileWeakMapGet()
     {
-        LValue weakMap = lowWeakMapObject(m_node->child1());
-        LValue object = lowObject(m_node->child2());
+        LBasicBlock loopStart = m_out.newBlock();
+        LBasicBlock loopAround = m_out.newBlock();
+        LBasicBlock notEqualValue = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(loopStart);
+
+        LValue weakMap;
+        if (m_node->child1().useKind() == WeakMapObjectUse)
+            weakMap = lowWeakMapObject(m_node->child1());
+        else if (m_node->child1().useKind() == WeakSetObjectUse)
+            weakMap = lowWeakSetObject(m_node->child1());
+        else
+            RELEASE_ASSERT_NOT_REACHED();
+        LValue key = lowObject(m_node->child2());
         LValue hash = lowInt32(m_node->child3());
 
-        setJSValue(vmCall(Int64, m_out.operation(operationWeakMapGet), m_callFrame, weakMap, object, hash));
+        LValue buffer = m_out.loadPtr(weakMap, m_heaps.WeakMapImpl_buffer);
+        LValue mask = m_out.sub(m_out.load32(weakMap, m_heaps.WeakMapImpl_capacity), m_out.int32One);
+
+        ValueFromBlock indexStart = m_out.anchor(hash);
+        m_out.jump(loopStart);
+
+        m_out.appendTo(loopStart, notEqualValue);
+        LValue unmaskedIndex = m_out.phi(Int32, indexStart);
+        LValue index = m_out.bitAnd(mask, unmaskedIndex);
+
+        LValue bucket;
+        if (m_node->child1().useKind() == WeakMapObjectUse) {
+            static_assert(sizeof(WeakMapBucket<WeakMapBucketDataKeyValue>) == 16, "");
+            bucket = m_out.add(buffer, m_out.shl(m_out.zeroExt(index, Int64), m_out.constInt32(4)));
+        } else {
+            static_assert(sizeof(WeakMapBucket<WeakMapBucketDataKey>) == 8, "");
+            bucket = m_out.add(buffer, m_out.shl(m_out.zeroExt(index, Int64), m_out.constInt32(3)));
+        }
+
+        LValue bucketKey = m_out.load64(bucket, m_heaps.WeakMapBucket_key);
+        m_out.branch(m_out.equal(key, bucketKey), unsure(continuation), unsure(notEqualValue));
+
+        m_out.appendTo(notEqualValue, loopAround);
+        m_out.branch(m_out.isNull(bucketKey), unsure(continuation), unsure(loopAround));
+
+        m_out.appendTo(loopAround, continuation);
+        m_out.addIncomingToPhi(unmaskedIndex, m_out.anchor(m_out.add(index, m_out.int32One)));
+        m_out.jump(loopStart);
+
+        m_out.appendTo(continuation, lastNext);
+        LValue result;
+        if (m_node->child1().useKind() == WeakMapObjectUse)
+            result = m_out.load64(bucket, m_heaps.WeakMapBucket_value);
+        else
+            result = bucketKey;
+        setJSValue(result);
     }
 
     void compileIsObjectOrNull()

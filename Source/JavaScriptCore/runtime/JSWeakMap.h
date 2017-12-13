@@ -26,13 +26,13 @@
 #pragma once
 
 #include "JSObject.h"
-#include "WeakMapBase.h"
+#include "WeakMapImpl.h"
 
 namespace JSC {
 
-class JSWeakMap final : public WeakMapBase {
+class JSWeakMap final : public WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>> {
 public:
-    using Base = WeakMapBase;
+    using Base = WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>;
 
     DECLARE_EXPORT_INFO;
 
@@ -48,9 +48,9 @@ public:
         return instance;
     }
 
-    static JSWeakMap* create(ExecState* exec, Structure* structure)
+    ALWAYS_INLINE void set(VM& vm, JSObject* key, JSValue value)
     {
-        return create(exec->vm(), structure);
+        add(vm, key, value);
     }
 
 private:

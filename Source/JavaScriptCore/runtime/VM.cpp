@@ -86,6 +86,7 @@
 #include "JSSourceCode.h"
 #include "JSStringHeapCellType.h"
 #include "JSTemplateRegistryKey.h"
+#include "JSWeakMap.h"
 #include "JSWebAssembly.h"
 #include "JSWebAssemblyCodeBlockHeapCellType.h"
 #include "JSWithScope.h"

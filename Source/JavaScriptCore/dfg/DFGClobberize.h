@@ -1635,8 +1635,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case WeakMapGet: {
         Edge& mapEdge = node->child1();
         Edge& keyEdge = node->child2();
-        read(JSWeakMapFields);
-        def(HeapLocation(WeakMapGetLoc, JSWeakMapFields, mapEdge, keyEdge), LazyNode(node));
+        AbstractHeapKind heap = (mapEdge.useKind() == WeakMapObjectUse) ? JSWeakMapFields : JSWeakSetFields;
+        read(heap);
+        def(HeapLocation(WeakMapGetLoc, heap, mapEdge, keyEdge), LazyNode(node));
         return;
     }
 
@@ -1653,6 +1654,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(JSMapFields);
         return;
     }
+
+    case ExtractValueFromWeakMapGet:
+        def(PureValue(node));
+        return;
 
     case StringSlice:
         def(PureValue(node));

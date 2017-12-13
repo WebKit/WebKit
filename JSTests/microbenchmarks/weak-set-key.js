@@ -4,10 +4,10 @@ function assert(b) {
 }
 noInline(assert);
 
-let weakMap = new WeakMap;
+let weakSet = new WeakSet;
 
 function objectKey(o) {
-    return weakMap.get(o);
+    return weakSet.has(o);
 }
 noInline(objectKey);
 
@@ -19,13 +19,13 @@ let start = Date.now();
     var array = [];
     for (var i = 0; i < 10; i++) {
         let newObject = { f: i };
-        weakMap.set(newObject, i);
+        weakSet.add(newObject);
         array[i] = newObject;
     }
 
     for (var j = 0; j < iters; ++j) {
         for (let i = 0; i < 10; i++)
-            assert(objectKey(array[i]) === i);
+            assert(objectKey(array[i]) === true);
     }
 }
 

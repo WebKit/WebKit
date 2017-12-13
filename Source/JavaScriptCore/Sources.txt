@@ -926,8 +926,8 @@ runtime/VMEntryScope.cpp
 runtime/VMTraps.cpp
 runtime/VarOffset.cpp
 runtime/Watchdog.cpp
-runtime/WeakMapBase.cpp
 runtime/WeakMapConstructor.cpp
+runtime/WeakMapImpl.cpp
 runtime/WeakMapPrototype.cpp
 runtime/WeakSetConstructor.cpp
 runtime/WeakSetPrototype.cpp

@@ -270,15 +270,6 @@ static ALWAYS_INLINE uint32_t wangsInt64Hash(uint64_t key)
     return static_cast<unsigned>(key);
 }
 
-struct WeakMapHash {
-    static unsigned hash(JSObject* key)
-    {
-        return wangsInt64Hash(JSValue::encode(key));
-    }
-    static bool equal(JSObject* a, JSObject* b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = true;
-};
-
 ALWAYS_INLINE uint32_t jsMapHash(ExecState* exec, VM& vm, JSValue value)
 {
     ASSERT_WITH_MESSAGE(normalizeMapKey(value) == value, "We expect normalized values flowing into this function.");
@@ -308,6 +299,41 @@ ALWAYS_INLINE std::optional<uint32_t> concurrentJSMapHash(JSValue key)
 
     uint64_t rawValue = JSValue::encode(key);
     return wangsInt64Hash(rawValue);
+}
+
+ALWAYS_INLINE uint32_t shouldShrink(uint32_t capacity, uint32_t keyCount)
+{
+    return 8 * keyCount <= capacity && capacity > 4;
+}
+
+ALWAYS_INLINE uint32_t shouldRehashAfterAdd(uint32_t capacity, uint32_t keyCount, uint32_t deleteCount)
+{
+    return 2 * (keyCount + deleteCount) >= capacity;
+}
+
+ALWAYS_INLINE uint32_t nextCapacity(uint32_t capacity, uint32_t keyCount)
+{
+    if (shouldShrink(capacity, keyCount)) {
+        ASSERT((capacity / 2) >= 4);
+        return capacity / 2;
+    }
+
+    if (3 * keyCount <= capacity && capacity > 64) {
+        // We stay at the same size if rehashing would cause us to be no more than
+        // 1/3rd full. This comes up for programs like this:
+        // Say the hash table grew to a key count of 64, causing it to grow to a capacity of 256.
+        // Then, the table added 63 items. The load is now 127. Then, 63 items are deleted.
+        // The load is still 127. Then, another item is added. The load is now 128, and we
+        // decide that we need to rehash. The key count is 65, almost exactly what it was
+        // when we grew to a capacity of 256. We don't really need to grow to a capacity
+        // of 512 in this situation. Instead, we choose to rehash at the same size. This
+        // will bring the load down to 65. We rehash into the same size when we determine
+        // that the new load ratio will be under 1/3rd. (We also pick a minumum capacity
+        // at which this rule kicks in because otherwise we will be too sensitive to rehashing
+        // at the same capacity).
+        return capacity;
+    }
+    return (Checked<uint32_t>(capacity) * 2).unsafeGet();
 }
 
 template <typename HashMapBucketType>
@@ -541,12 +567,12 @@ public:
 private:
     ALWAYS_INLINE uint32_t shouldRehashAfterAdd() const
     {
-        return 2 * (m_keyCount + m_deleteCount) >= m_capacity;
+        return JSC::shouldRehashAfterAdd(m_capacity, m_keyCount, m_deleteCount);
     }
 
     ALWAYS_INLINE uint32_t shouldShrink() const
     {
-        return 8 * m_keyCount <= m_capacity && m_capacity > 4;
+        return JSC::shouldShrink(m_capacity, m_keyCount);
     }
 
     ALWAYS_INLINE void setUpHeadAndTail(ExecState*, VM& vm)
@@ -633,24 +659,7 @@ private:
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         uint32_t oldCapacity = m_capacity;
-        if (shouldShrink()) {
-            m_capacity = m_capacity / 2;
-            ASSERT(m_capacity >= 4);
-        } else if (3 * m_keyCount <= m_capacity && m_capacity > 64) {
-            // We stay at the same size if rehashing would cause us to be no more than
-            // 1/3rd full. This comes up for programs like this:
-            // Say the hash table grew to a key count of 64, causing it to grow to a capacity of 256.
-            // Then, the table added 63 items. The load is now 127. Then, 63 items are deleted.
-            // The load is still 127. Then, another item is added. The load is now 128, and we
-            // decide that we need to rehash. The key count is 65, almost exactly what it was
-            // when we grew to a capacity of 256. We don't really need to grow to a capacity
-            // of 512 in this situation. Instead, we choose to rehash at the same size. This
-            // will bring the load down to 65. We rehash into the same size when we determine
-            // that the new load ratio will be under 1/3rd. (We also pick a minumum capacity
-            // at which this rule kicks in because otherwise we will be too sensitive to rehashing
-            // at the same capacity).
-        } else
-            m_capacity = (Checked<uint32_t>(m_capacity) * 2).unsafeGet();
+        m_capacity = nextCapacity(m_capacity, m_keyCount);
 
         if (m_capacity != oldCapacity) {
             makeAndSetNewBuffer(exec, vm);

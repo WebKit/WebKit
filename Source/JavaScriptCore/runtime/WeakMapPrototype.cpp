@@ -28,7 +28,6 @@
 
 #include "JSCInlines.h"
 #include "JSWeakMap.h"
-#include "WeakMapBase.h"
 
 namespace JSC {
 
@@ -47,7 +46,7 @@ void WeakMapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->deleteKeyword, protoFuncWeakMapDelete, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->get, protoFuncWeakMapGet, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, JSWeakMapGetIntrinsic);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->has, protoFuncWeakMapHas, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->has, protoFuncWeakMapHas, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, JSWeakMapHasIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->set, protoFuncWeakMapSet, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
 
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "WeakMap"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
@@ -87,7 +86,7 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakMapGet(CallFrame* callFrame)
     JSValue key = callFrame->argument(0);
     if (!key.isObject())
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(map->inlineGet(asObject(key)));
+    return JSValue::encode(map->get(asObject(key)));
 }
 
 EncodedJSValue JSC_HOST_CALL protoFuncWeakMapHas(CallFrame* callFrame)
@@ -96,7 +95,7 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakMapHas(CallFrame* callFrame)
     if (!map)
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
-    return JSValue::encode(jsBoolean(key.isObject() && map->contains(asObject(key))));
+    return JSValue::encode(jsBoolean(key.isObject() && map->has(asObject(key))));
 }
 
 EncodedJSValue JSC_HOST_CALL protoFuncWeakMapSet(CallFrame* callFrame)

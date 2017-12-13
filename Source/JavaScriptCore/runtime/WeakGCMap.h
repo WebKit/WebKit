@@ -89,15 +89,6 @@ public:
 
     inline const_iterator find(const KeyType& key) const;
 
-    template<typename Functor>
-    void forEach(Functor functor)
-    {
-        for (auto& pair : m_map) {
-            if (pair.value)
-                functor(pair.key, pair.value.get());
-        }
-    }
-
     inline bool contains(const KeyType& key) const;
 
     void pruneStaleEntries() override;

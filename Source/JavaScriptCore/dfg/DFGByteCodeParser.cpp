@@ -2926,9 +2926,51 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         insertChecks();
         Node* map = get(virtualRegisterForArgument(0, registerOffset));
         Node* key = get(virtualRegisterForArgument(1, registerOffset));
-        Node* normalizedKey = addToGraph(NormalizeMapKey, key);
-        Node* hash = addToGraph(MapHash, normalizedKey);
-        Node* result = addToGraph(WeakMapGet, OpInfo(), OpInfo(prediction), map, normalizedKey, hash);
+        addToGraph(Check, Edge(key, ObjectUse));
+        Node* hash = addToGraph(MapHash, key);
+        Node* holder = addToGraph(WeakMapGet, Edge(map, WeakMapObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
+        Node* result = addToGraph(ExtractValueFromWeakMapGet, OpInfo(), OpInfo(prediction), holder);
+
+        set(VirtualRegister(resultOperand), result);
+        return true;
+    }
+
+    case JSWeakMapHasIntrinsic: {
+        if (argumentCountIncludingThis != 2)
+            return false;
+
+        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+            return false;
+
+        insertChecks();
+        Node* map = get(virtualRegisterForArgument(0, registerOffset));
+        Node* key = get(virtualRegisterForArgument(1, registerOffset));
+        addToGraph(Check, Edge(key, ObjectUse));
+        Node* hash = addToGraph(MapHash, key);
+        Node* holder = addToGraph(WeakMapGet, Edge(map, WeakMapObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
+        Node* invertedResult = addToGraph(IsEmpty, holder);
+        Node* result = addToGraph(LogicalNot, invertedResult);
+
+        set(VirtualRegister(resultOperand), result);
+        return true;
+    }
+
+    case JSWeakSetHasIntrinsic: {
+        if (argumentCountIncludingThis != 2)
+            return false;
+
+        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+            return false;
+
+        insertChecks();
+        Node* map = get(virtualRegisterForArgument(0, registerOffset));
+        Node* key = get(virtualRegisterForArgument(1, registerOffset));
+        addToGraph(Check, Edge(key, ObjectUse));
+        Node* hash = addToGraph(MapHash, key);
+        Node* holder = addToGraph(WeakMapGet, Edge(map, WeakSetObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
+        Node* invertedResult = addToGraph(IsEmpty, holder);
+        Node* result = addToGraph(LogicalNot, invertedResult);
+
         set(VirtualRegister(resultOperand), result);
         return true;
     }

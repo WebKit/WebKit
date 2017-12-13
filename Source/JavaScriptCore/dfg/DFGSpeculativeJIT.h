@@ -2898,6 +2898,7 @@ public:
     void compileWeakMapGet(Node*);
     void compileLoadKeyFromMapBucket(Node*);
     void compileLoadValueFromMapBucket(Node*);
+    void compileExtractValueFromWeakMapGet(Node*);
     void compileGetPrototypeOf(Node*);
     
 #if USE(JSVALUE32_64)

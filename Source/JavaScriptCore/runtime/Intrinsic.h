@@ -95,6 +95,8 @@ enum Intrinsic {
     JSSetBucketNextIntrinsic,
     JSSetBucketKeyIntrinsic,
     JSWeakMapGetIntrinsic,
+    JSWeakMapHasIntrinsic,
+    JSWeakSetHasIntrinsic,
     HasOwnPropertyIntrinsic,
     AtomicsAddIntrinsic,
     AtomicsAndIntrinsic,

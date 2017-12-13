@@ -28,7 +28,6 @@
 
 #include "JSCInlines.h"
 #include "JSWeakSet.h"
-#include "WeakMapBase.h"
 
 namespace JSC {
 
@@ -45,7 +44,7 @@ void WeakSetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     didBecomePrototype();
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->deleteKeyword, protoFuncWeakSetDelete, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->has, protoFuncWeakSetHas, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->has, protoFuncWeakSetHas, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, JSWeakSetHasIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->add, protoFuncWeakSetAdd, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
 
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "WeakSet"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
@@ -83,7 +82,7 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakSetHas(CallFrame* callFrame)
     if (!set)
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
-    return JSValue::encode(jsBoolean(key.isObject() && set->contains(asObject(key))));
+    return JSValue::encode(jsBoolean(key.isObject() && set->has(asObject(key))));
 }
 
 EncodedJSValue JSC_HOST_CALL protoFuncWeakSetAdd(CallFrame* callFrame)
@@ -98,7 +97,7 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakSetAdd(CallFrame* callFrame)
     JSValue key = callFrame->argument(0);
     if (!key.isObject())
         return JSValue::encode(throwTypeError(callFrame, scope, WTF::ASCIILiteral("Attempted to add a non-object key to a WeakSet")));
-    set->set(vm, asObject(key), jsUndefined());
+    set->add(vm, asObject(key));
     return JSValue::encode(callFrame->thisValue());
 }
 

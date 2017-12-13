@@ -1,3 +1,170 @@
+2017-12-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Implement optimized WeakMap and WeakSet
+        https://bugs.webkit.org/show_bug.cgi?id=179929
+
+        Reviewed by Saam Barati.
+
+        This patch introduces WeakMapImpl to optimize WeakMap and WeakSet.
+        This is similar to HashMapImpl. But,
+
+        1. WeakMapImpl's bucket is not allocated in GC heap since WeakMap
+        do not need to have iterators.
+
+        2. WeakMapImpl's buffer is allocated in JSValue Gigacage instead
+        of auxiliary buffer. This is because we would like to allocate buffer
+        when finalizing GC. At that time, WeakMapImpl prunes dead entries and
+        shrink it if necessary. However, allocating from the GC heap during
+        finalization is not allowed.
+
+        In particular, (2) is important since it ensures any WeakMap operations
+        do not cause GC. Since GC may collect dead keys in WeakMap, rehash WeakMap,
+        and reallocate/change WeakMap's buffer, ensuring that any WeakMap operations
+        do not cause GC makes our implementation simple. To ensure this, we place
+        DisallowGC for each WeakMap's interface.
+
+        In DFG, we introduce WeakMapGet and ExtractValueFromWeakMapGet nodes.
+        WeakMapGet looks up entry in WeakMapImpl and returns value. If it is
+        WeakMap, it returns value. And it returns key if it is WeakSet. If it
+        does not find a corresponding entry, it returns JSEmpty.
+        ExtractValueFromWeakMapGet converts JSEmpty to JSUndefined.
+
+        This patch improves WeakMap and WeakSet operations.
+
+                                     baseline                  patched
+
+            weak-set-key        240.6932+-10.4923    ^    148.7606+-6.1784        ^ definitely 1.6180x faster
+            weak-map-key        174.3176+-8.2680     ^    151.7053+-6.8723        ^ definitely 1.1491x faster
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileExtractValueFromWeakMapGet):
+        (JSC::DFG::SpeculativeJIT::compileWeakMapGet):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileExtractValueFromWeakMapGet):
+        (JSC::FTL::DFG::LowerDFGToB3::compileWeakMapGet):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::weakMapEntries):
+        (Inspector::JSInjectedScriptHost::weakSetEntries):
+        Existing code is incorrect. They can run GC and break WeakMap's iterator.
+        We introduce takeSnapshot function to WeakMapImpl, which retrieves live
+        entries without causing any GC.
+
+        * runtime/HashMapImpl.h:
+        (JSC::shouldShrink):
+        (JSC::shouldRehashAfterAdd):
+        (JSC::nextCapacity):
+        (JSC::HashMapImpl::shouldRehashAfterAdd const):
+        (JSC::HashMapImpl::shouldShrink const):
+        (JSC::HashMapImpl::rehash):
+        (JSC::WeakMapHash::hash): Deleted.
+        (JSC::WeakMapHash::equal): Deleted.
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/JSWeakMap.cpp:
+        * runtime/JSWeakMap.h:
+        * runtime/JSWeakSet.cpp:
+        * runtime/JSWeakSet.h:
+        * runtime/VM.cpp:
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::forEach): Deleted.
+        * runtime/WeakMapBase.cpp: Removed.
+        * runtime/WeakMapBase.h: Removed.
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::constructWeakMap):
+        * runtime/WeakMapImpl.cpp: Added.
+        (JSC::WeakMapImpl<WeakMapBucket>::destroy):
+        (JSC::WeakMapImpl<WeakMapBucket>::visitChildren):
+        (JSC::WeakMapImpl<WeakMapBucket>::estimatedSize):
+        (JSC::WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::visitWeakReferences):
+        (JSC::WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::visitWeakReferences):
+        (JSC::WeakMapImpl<WeakMapBucket>::finalizeUnconditionally):
+        (JSC::WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::takeSnapshot):
+        (JSC::WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::takeSnapshot):
+        * runtime/WeakMapImpl.h: Added.
+        (JSC::jsWeakMapHash):
+        (JSC::nextCapacityAfterRemoveBatching):
+        (JSC::WeakMapBucket::setKey):
+        (JSC::WeakMapBucket::setValue):
+        (JSC::WeakMapBucket::key const):
+        (JSC::WeakMapBucket::value const):
+        (JSC::WeakMapBucket::copyFrom):
+        (JSC::WeakMapBucket::offsetOfKey):
+        (JSC::WeakMapBucket::offsetOfValue):
+        (JSC::WeakMapBucket::extractValue):
+        (JSC::WeakMapBucket::isEmpty):
+        (JSC::WeakMapBucket::deletedKey):
+        (JSC::WeakMapBucket::isDeleted):
+        (JSC::WeakMapBucket::makeDeleted):
+        (JSC::WeakMapBucket::visitAggregate):
+        (JSC::WeakMapBucket::clearValue):
+        (JSC::WeakMapBuffer::allocationSize):
+        (JSC::WeakMapBuffer::buffer const):
+        (JSC::WeakMapBuffer::create):
+        (JSC::WeakMapBuffer::reset):
+        (JSC::WeakMapImpl::WeakMapImpl):
+        (JSC::WeakMapImpl::finishCreation):
+        (JSC::WeakMapImpl::get):
+        (JSC::WeakMapImpl::has):
+        (JSC::WeakMapImpl::add):
+        (JSC::WeakMapImpl::remove):
+        (JSC::WeakMapImpl::size const):
+        (JSC::WeakMapImpl::offsetOfBuffer):
+        (JSC::WeakMapImpl::offsetOfCapacity):
+        (JSC::WeakMapImpl::findBucket):
+        (JSC::WeakMapImpl::buffer const):
+        (JSC::WeakMapImpl::forEach):
+        (JSC::WeakMapImpl::shouldRehashAfterAdd const):
+        (JSC::WeakMapImpl::shouldShrink const):
+        (JSC::WeakMapImpl::canUseBucket):
+        (JSC::WeakMapImpl::addInternal):
+        (JSC::WeakMapImpl::findBucketAlreadyHashed):
+        (JSC::WeakMapImpl::rehash):
+        (JSC::WeakMapImpl::checkConsistency const):
+        (JSC::WeakMapImpl::makeAndSetNewBuffer):
+        (JSC::WeakMapImpl::assertBufferIsEmpty const):
+        (JSC::WeakMapImpl::DeadKeyCleaner::target):
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::WeakMapPrototype::finishCreation):
+        (JSC::protoFuncWeakMapGet):
+        (JSC::protoFuncWeakMapHas):
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::constructWeakSet):
+        * runtime/WeakSetPrototype.cpp:
+        (JSC::WeakSetPrototype::finishCreation):
+        (JSC::protoFuncWeakSetHas):
+        (JSC::protoFuncWeakSetAdd):
+
 2017-12-11  Filip Pizlo  <fpizlo@apple.com>
 
         It should be possible to flag a cell for unconditional finalization

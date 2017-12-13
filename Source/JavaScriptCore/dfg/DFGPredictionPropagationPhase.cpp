@@ -732,12 +732,13 @@ private:
         case GetArgument:
         case CallDOMGetter:
         case GetDynamicVar:
-        case WeakMapGet:
-        case GetPrototypeOf: {
+        case GetPrototypeOf:
+        case ExtractValueFromWeakMapGet: {
             setPrediction(m_currentNode->getHeapPrediction());
             break;
         }
 
+        case WeakMapGet:
         case ResolveScopeForHoistingFuncDeclInEval: {
             setPrediction(SpecBytecodeTop);
             break;

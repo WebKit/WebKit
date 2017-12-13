@@ -1591,7 +1591,7 @@ public:
         case AtomicsSub:
         case AtomicsXor:
         case GetDynamicVar:
-        case WeakMapGet:
+        case ExtractValueFromWeakMapGet:
             return true;
         default:
             return false;

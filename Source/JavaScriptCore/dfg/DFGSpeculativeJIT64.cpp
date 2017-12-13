@@ -5240,6 +5240,10 @@ void SpeculativeJIT::compile(Node* node)
         compileLoadValueFromMapBucket(node);
         break;
 
+    case ExtractValueFromWeakMapGet:
+        compileExtractValueFromWeakMapGet(node);
+        break;
+
     case SetAdd:
         compileSetAdd(node);
         break;

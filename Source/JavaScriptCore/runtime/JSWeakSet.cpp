@@ -27,7 +27,6 @@
 #include "JSWeakSet.h"
 
 #include "JSCInlines.h"
-#include "WeakMapBase.h"
 
 namespace JSC {
 

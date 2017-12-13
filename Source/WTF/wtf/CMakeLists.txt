@@ -245,6 +245,7 @@ set(WTF_SOURCES
     GregorianDateTime.cpp
     HashTable.cpp
     JSONValues.cpp
+    JSValueMalloc.cpp
     Language.cpp
     Lock.cpp
     LockedPrintStream.cpp
