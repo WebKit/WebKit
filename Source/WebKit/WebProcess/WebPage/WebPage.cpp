@@ -4857,7 +4857,7 @@ void WebPage::elementDidFocus(WebCore::Node* node)
         getAssistedNodeInformation(information);
         RefPtr<API::Object> userData;
 
-        m_formClient->willBeginInputSession(this, downcast<Element>(node), WebFrame::fromCoreFrame(*node->document().frame()), userData, m_userIsInteracting);
+        m_formClient->willBeginInputSession(this, downcast<Element>(node), WebFrame::fromCoreFrame(*node->document().frame()), m_userIsInteracting, userData);
 
         send(Messages::WebPageProxy::StartAssistingNode(information, m_userIsInteracting, m_hasPendingBlurNotification, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 #elif PLATFORM(MAC)

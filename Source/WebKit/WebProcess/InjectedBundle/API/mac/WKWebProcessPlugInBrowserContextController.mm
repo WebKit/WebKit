@@ -528,7 +528,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
                 [formDelegate _webProcessPlugInBrowserContextController:m_controller textDidChangeInTextField:wrapper(*WebKit::InjectedBundleNodeHandle::getOrCreate(inputElement)) inFrame:wrapper(*frame) initiatedByUserTyping:initiatedByUserTyping];
         }
 
-        void willBeginInputSession(WebPage*, Element* element, WebFrame* frame, RefPtr<API::Object>& userData, bool userIsInteracting) override
+        void willBeginInputSession(WebPage*, Element* element, WebFrame* frame, bool userIsInteracting, RefPtr<API::Object>& userData) override
         {
             auto formDelegate = m_controller->_formDelegate.get();
 
