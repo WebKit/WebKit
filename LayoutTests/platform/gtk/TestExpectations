@@ -3347,6 +3347,8 @@ webkit.org/b/180371 fast/attachment/attachment-without-appearance.html [ ImageOn
 
 webkit.org/b/180062 fast/text/user-installed-fonts [ ImageOnlyFailure ]
 
+webkit.org/b/180749 http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
