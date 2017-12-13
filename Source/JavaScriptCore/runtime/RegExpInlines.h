@@ -110,25 +110,11 @@ ALWAYS_INLINE int RegExp::matchInline(VM& vm, const String& s, unsigned startOff
 
     int result;
 #if ENABLE(YARR_JIT)
-#ifdef JIT_ALL_PARENS_EXPRESSIONS
-    char patternContextBuffer[patternContextBufferSize];
-#define EXTRA_JIT_PARAMS  , patternContextBuffer, patternContextBufferSize
-#else
-#define EXTRA_JIT_PARAMS
-#endif
-
     if (m_state == JITCode) {
         if (s.is8Bit())
-            result = m_regExpJITCode.execute(s.characters8(), startOffset, s.length(), offsetVector EXTRA_JIT_PARAMS).start;
+            result = m_regExpJITCode.execute(s.characters8(), startOffset, s.length(), offsetVector).start;
         else
-            result = m_regExpJITCode.execute(s.characters16(), startOffset, s.length(), offsetVector EXTRA_JIT_PARAMS).start;
-
-        if (result == Yarr::JSRegExpJITCodeFailure) {
-            // JIT'ed code couldn't handle expression, so punt back to the interpreter.
-            byteCodeCompileIfNecessary(&vm);
-            result = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, reinterpret_cast<unsigned*>(offsetVector));
-        }
-
+            result = m_regExpJITCode.execute(s.characters16(), startOffset, s.length(), offsetVector).start;
 #if ENABLE(YARR_JIT_DEBUG)
         matchCompareWithInterpreter(s, startOffset, offsetVector, result);
 #endif
@@ -213,30 +199,15 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(VM& vm, const String& s, unsigned 
     compileIfNecessaryMatchOnly(vm, s.is8Bit() ? Yarr::Char8 : Yarr::Char16);
 
 #if ENABLE(YARR_JIT)
-#ifdef JIT_ALL_PARENS_EXPRESSIONS
-    char patternContextBuffer[patternContextBufferSize];
-#define EXTRA_JIT_PARAMS  , patternContextBuffer, patternContextBufferSize
-#else
-#define EXTRA_JIT_PARAMS
-#endif
-
-    MatchResult result;
-
     if (m_state == JITCode) {
-        if (s.is8Bit())
-            result = m_regExpJITCode.execute(s.characters8(), startOffset, s.length() EXTRA_JIT_PARAMS);
-        else
-            result = m_regExpJITCode.execute(s.characters16(), startOffset, s.length() EXTRA_JIT_PARAMS);
-
+        MatchResult result = s.is8Bit() ?
+            m_regExpJITCode.execute(s.characters8(), startOffset, s.length()) :
+            m_regExpJITCode.execute(s.characters16(), startOffset, s.length());
 #if ENABLE(REGEXP_TRACING)
         if (!result)
             m_rtMatchOnlyFoundCount++;
 #endif
-        if (result.start != static_cast<size_t>(Yarr::JSRegExpJITCodeFailure))
-            return result;
-
-        // JIT'ed code couldn't handle expression, so punt back to the interpreter.
-        byteCodeCompileIfNecessary(&vm);
+        return result;
     }
 #endif
 

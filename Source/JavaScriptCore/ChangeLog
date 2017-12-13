@@ -1,3 +1,68 @@
+2017-12-13  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed rollout of r225695. Caused a crash on yahoo login page.
+
+        That bug tracked in https://bugs.webkit.org/show_bug.cgi?id=180761.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+        (JSC::byteCodeCompilePattern): Deleted.
+        (JSC::RegExp::byteCodeCompileIfNecessary): Deleted.
+        * runtime/RegExp.h:
+        * runtime/RegExpInlines.h:
+        (JSC::RegExp::matchInline):
+        * testRegExp.cpp:
+        (parseRegExpLine):
+        (runFromFiles):
+        * yarr/Yarr.h:
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::compile):
+        (JSC::Yarr::ByteCompiler::dumpDisjunction):
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::tryReadUnicodeCharImpl):
+        (JSC::Yarr::YarrGenerator::generate):
+        (JSC::Yarr::YarrGenerator::backtrack):
+        (JSC::Yarr::YarrGenerator::opCompileParenthesesSubpattern):
+        (JSC::Yarr::YarrGenerator::generateEnter):
+        (JSC::Yarr::YarrGenerator::generateReturn):
+        (JSC::Yarr::YarrGenerator::YarrGenerator):
+        (JSC::Yarr::YarrGenerator::compile):
+        (JSC::Yarr::YarrGenerator::ParenContextSizes::ParenContextSizes): Deleted.
+        (JSC::Yarr::YarrGenerator::ParenContextSizes::numSubpatterns): Deleted.
+        (JSC::Yarr::YarrGenerator::ParenContextSizes::frameSlots): Deleted.
+        (JSC::Yarr::YarrGenerator::ParenContext::sizeFor): Deleted.
+        (JSC::Yarr::YarrGenerator::ParenContext::nextOffset): Deleted.
+        (JSC::Yarr::YarrGenerator::ParenContext::beginOffset): Deleted.
+        (JSC::Yarr::YarrGenerator::ParenContext::matchAmountOffset): Deleted.
+        (JSC::Yarr::YarrGenerator::ParenContext::subpatternOffset): Deleted.
+        (JSC::Yarr::YarrGenerator::ParenContext::savedFrameOffset): Deleted.
+        (JSC::Yarr::YarrGenerator::initParenContextFreeList): Deleted.
+        (JSC::Yarr::YarrGenerator::allocatePatternContext): Deleted.
+        (JSC::Yarr::YarrGenerator::freePatternContext): Deleted.
+        (JSC::Yarr::YarrGenerator::savePatternContext): Deleted.
+        (JSC::Yarr::YarrGenerator::restorePatternContext): Deleted.
+        (JSC::Yarr::YarrGenerator::generateJITFailReturn): Deleted.
+        (JSC::Yarr::YarrGenerator::clearMatches): Deleted.
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::YarrCodeBlock::execute):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::indentForNestingLevel):
+        (JSC::Yarr::dumpUChar32):
+        (JSC::Yarr::PatternTerm::dump):
+        (JSC::Yarr::YarrPattern::dumpPattern):
+        (JSC::Yarr::dumpCharacterClass): Deleted.
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::BackTrackInfoAlternative::offsetIndex):
+        (JSC::Yarr::BackTrackInfoParenthesesOnce::beginIndex):
+        (JSC::Yarr::PatternTerm::containsAnyCaptures): Deleted.
+        (JSC::Yarr::BackTrackInfoParenthesesOnce::returnAddressIndex): Deleted.
+        (JSC::Yarr::BackTrackInfoParentheses::beginIndex): Deleted.
+        (JSC::Yarr::BackTrackInfoParentheses::returnAddressIndex): Deleted.
+        (JSC::Yarr::BackTrackInfoParentheses::matchAmountIndex): Deleted.
+        (JSC::Yarr::BackTrackInfoParentheses::patternContextHeadIndex): Deleted.
+
 2017-12-13  Mark Lam  <mark.lam@apple.com>
 
         Fill out some Poisoned APIs, fix some bugs, and add some tests.

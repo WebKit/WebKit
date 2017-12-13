@@ -828,7 +828,8 @@ public:
                 // Note: for fixed once parentheses we will ensure at least the minimum is available; others are on their own.
                 term.frameLocation = currentCallFrameSize;
                 if (term.quantityMaxCount == 1 && !term.parentheses.isCopy) {
-                    currentCallFrameSize += YarrStackSpaceForBackTrackInfoParenthesesOnce;
+                    if (term.quantityType != QuantifierFixedCount)
+                        currentCallFrameSize += YarrStackSpaceForBackTrackInfoParenthesesOnce;
                     error = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition.unsafeGet(), currentCallFrameSize);
                     if (error)
                         return error;
@@ -844,10 +845,11 @@ public:
                     term.inputPosition = currentInputPosition.unsafeGet();
                 } else {
                     term.inputPosition = currentInputPosition.unsafeGet();
-                    currentCallFrameSize += YarrStackSpaceForBackTrackInfoParentheses;
-                    error = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition.unsafeGet(), currentCallFrameSize);
+                    unsigned ignoredCallFrameSize;
+                    error = setupDisjunctionOffsets(term.parentheses.disjunction, 0, currentInputPosition.unsafeGet(), ignoredCallFrameSize);
                     if (error)
                         return error;
+                    currentCallFrameSize += YarrStackSpaceForBackTrackInfoParentheses;
                 }
                 // Fixed count of 1 could be accepted, if they have a fixed size *AND* if all alternatives are of the same length.
                 alternative->m_hasFixedSize = false;
@@ -1183,92 +1185,19 @@ YarrPattern::YarrPattern(const String& pattern, RegExpFlags flags, const char** 
     *error = compile(pattern, stackLimit);
 }
 
-void indentForNestingLevel(PrintStream& out, unsigned nestingDepth)
+static void indentForNestingLevel(PrintStream& out, unsigned nestingDepth)
 {
     out.print("    ");
     for (; nestingDepth; --nestingDepth)
         out.print("  ");
 }
 
-void dumpUChar32(PrintStream& out, UChar32 c)
+static void dumpUChar32(PrintStream& out, UChar32 c)
 {
     if (c >= ' '&& c <= 0xff)
         out.printf("'%c'", static_cast<char>(c));
     else
         out.printf("0x%04x", c);
-}
-
-void dumpCharacterClass(PrintStream& out, YarrPattern* pattern, CharacterClass* characterClass)
-{
-    if (characterClass == pattern->anyCharacterClass())
-        out.print("<any character>");
-    else if (characterClass == pattern->newlineCharacterClass())
-        out.print("<newline>");
-    else if (characterClass == pattern->digitsCharacterClass())
-        out.print("<digits>");
-    else if (characterClass == pattern->spacesCharacterClass())
-        out.print("<whitespace>");
-    else if (characterClass == pattern->wordcharCharacterClass())
-        out.print("<word>");
-    else if (characterClass == pattern->wordUnicodeIgnoreCaseCharCharacterClass())
-        out.print("<unicode ignore case>");
-    else if (characterClass == pattern->nondigitsCharacterClass())
-        out.print("<non-digits>");
-    else if (characterClass == pattern->nonspacesCharacterClass())
-        out.print("<non-whitespace>");
-    else if (characterClass == pattern->nonwordcharCharacterClass())
-        out.print("<non-word>");
-    else if (characterClass == pattern->nonwordUnicodeIgnoreCaseCharCharacterClass())
-        out.print("<unicode non-ignore case>");
-    else {
-        bool needMatchesRangesSeperator = false;
-
-        auto dumpMatches = [&] (const char* prefix, Vector<UChar32> matches) {
-            size_t matchesSize = matches.size();
-            if (matchesSize) {
-                if (needMatchesRangesSeperator)
-                    out.print(",");
-                needMatchesRangesSeperator = true;
-
-                out.print(prefix, ":(");
-                for (size_t i = 0; i < matchesSize; ++i) {
-                    if (i)
-                        out.print(",");
-                    dumpUChar32(out, matches[i]);
-                }
-                out.print(")");
-            }
-        };
-
-        auto dumpRanges = [&] (const char* prefix, Vector<CharacterRange> ranges) {
-            size_t rangeSize = ranges.size();
-            if (rangeSize) {
-                if (needMatchesRangesSeperator)
-                    out.print(",");
-                needMatchesRangesSeperator = true;
-
-                out.print(prefix, " ranges:(");
-                for (size_t i = 0; i < rangeSize; ++i) {
-                    if (i)
-                        out.print(",");
-                    CharacterRange range = ranges[i];
-                    out.print("(");
-                    dumpUChar32(out, range.begin);
-                    out.print("..");
-                    dumpUChar32(out, range.end);
-                    out.print(")");
-                }
-                out.print(")");
-            }
-        };
-
-        out.print("[");
-        dumpMatches("ASCII", characterClass->m_matches);
-        dumpRanges("ASCII", characterClass->m_ranges);
-        dumpMatches("Unicode", characterClass->m_matchesUnicode);
-        dumpRanges("Unicode", characterClass->m_rangesUnicode);
-        out.print("]");
-    }
 }
 
 void PatternAlternative::dump(PrintStream& out, YarrPattern* thisPattern, unsigned nestingDepth)
@@ -1310,10 +1239,8 @@ void PatternTerm::dump(PrintStream& out, YarrPattern* thisPattern, unsigned nest
 {
     indentForNestingLevel(out, nestingDepth);
 
-    if (type != TypeParenthesesSubpattern && type != TypeParentheticalAssertion) {
-        if (invert())
-            out.print("not ");
-    }
+    if (invert() && (type != TypeParenthesesSubpattern && type != TypeParentheticalAssertion))
+        out.print("not ");
 
     switch (type) {
     case TypeAssertionBOL:
@@ -1327,7 +1254,6 @@ void PatternTerm::dump(PrintStream& out, YarrPattern* thisPattern, unsigned nest
         break;
     case TypePatternCharacter:
         out.printf("character ");
-        out.printf("inputPosition %u ", inputPosition);
         if (thisPattern->ignoreCase() && isASCIIAlpha(patternCharacter)) {
             dumpUChar32(out, toASCIIUpper(patternCharacter));
             out.print("/");
@@ -1449,17 +1375,16 @@ void PatternTerm::dump(PrintStream& out, YarrPattern* thisPattern, unsigned nest
         if (parentheses.isTerminal)
             out.print(",terminal");
 
-        out.println(",frame location ", frameLocation);
+        if (quantityMaxCount != 1 || parentheses.isCopy || quantityType != QuantifierFixedCount)
+            out.println(",frame location ", frameLocation);
+        else
+            out.println();
 
         if (parentheses.disjunction->m_alternatives.size() > 1) {
             indentForNestingLevel(out, nestingDepth + 1);
             unsigned alternativeFrameLocation = frameLocation;
-            if (quantityMaxCount == 1 && !parentheses.isCopy)
+            if (quantityType != QuantifierFixedCount)
                 alternativeFrameLocation += YarrStackSpaceForBackTrackInfoParenthesesOnce;
-            else if (parentheses.isTerminal)
-                alternativeFrameLocation += YarrStackSpaceForBackTrackInfoParenthesesTerminal;
-            else
-                alternativeFrameLocation += YarrStackSpaceForBackTrackInfoParentheses;
             out.println("alternative list,frame location ", alternativeFrameLocation);
         }
 
@@ -1536,8 +1461,6 @@ void YarrPattern::dumpPattern(PrintStream& out, const String& patternString)
         out.print(")");
     }
     out.print(":\n");
-    if (m_body->m_callFrameSize)
-        out.print("    callframe size: ", m_body->m_callFrameSize, "\n");
     m_body->dump(out, this);
 }
 
