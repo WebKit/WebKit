@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWebProcessPlugInNodeHandlePrivate.h"
+#import "WKWebProcessPlugInNodeHandle.h"
 
 #if WK_API_ENABLED
 
-#import "InjectedBundleNodeHandle.h"
-#import "WKObject.h"
+typedef NS_ENUM(NSInteger, _WKAutoFillButtonType) {
+    _WKAutoFillButtonTypeNone,
+    _WKAutoFillButtonTypeCredentials,
+    _WKAutoFillButtonTypeContacts,
+} WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-namespace WebKit {
+@interface WKWebProcessPlugInNodeHandle (WKPrivate)
 
-inline WKWebProcessPlugInNodeHandle *wrapper(InjectedBundleNodeHandle& nodeHandle)
-{
-    ASSERT([nodeHandle.wrapper() isKindOfClass:[WKWebProcessPlugInNodeHandle class]]);
-    return (WKWebProcessPlugInNodeHandle *)nodeHandle.wrapper();
-}
-
-}
-
-@interface WKWebProcessPlugInNodeHandle () <WKObject>
-
-@property (readonly) WebKit::InjectedBundleNodeHandle& _nodeHandle;
+- (BOOL)isHTMLInputElementAutoFillButtonEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)setHTMLInputElementAutoFillButtonEnabledWithButtonType:(_WKAutoFillButtonType)autoFillButtonType WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

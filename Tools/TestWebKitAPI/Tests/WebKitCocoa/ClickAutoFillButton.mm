@@ -27,7 +27,6 @@
 
 #if WK_API_ENABLED
 
-#import <WebKit/WKBundleNodeHandlePrivate.h>
 #import <WebKit/WKBundlePage.h>
 #import <WebKit/WKBundlePageUIClient.h>
 #import <WebKit/WKDOMDocument.h>
@@ -38,6 +37,7 @@
 #import <WebKit/WKWebProcessPlugIn.h>
 #import <WebKit/WKWebProcessPlugInBrowserContextControllerPrivate.h>
 #import <WebKit/WKWebProcessPlugInFrame.h>
+#import <WebKit/WKWebProcessPlugInNodeHandlePrivate.h>
 #import <WebKit/WKWebProcessPlugInScriptWorld.h>
 
 void didClickAutoFillButton(WKBundlePageRef, WKBundleNodeHandleRef, WKTypeRef* userData, const void *)
@@ -61,9 +61,12 @@ void didClickAutoFillButton(WKBundlePageRef, WKBundleNodeHandleRef, WKTypeRef* u
     WKDOMDocument *document = [browserContextController mainFrameDocument];
     WKDOMElement *inputElement = [document createElement:@"input"];
     [[document body] appendChild:inputElement];
-    WKBundleNodeHandleRef node = [inputElement _copyBundleNodeHandleRef];
-    WKBundleNodeHandleSetHTMLInputElementAutofilled(node, true);
-    WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabledWithButtonType(node, kWKAutoFillButtonTypeContacts);
+
+    auto *jsContext = [[browserContextController mainFrame] jsContextForWorld:[WKWebProcessPlugInScriptWorld normalWorld]];
+    auto *jsValue = [jsContext evaluateScript:@"document.querySelector('input')"];
+    auto* nodeHandle = [WKWebProcessPlugInNodeHandle nodeHandleWithJSValue:jsValue inContext:jsContext];
+    [nodeHandle setHTMLInputElementIsAutoFilled:YES];
+    [nodeHandle setHTMLInputElementAutoFillButtonEnabledWithButtonType:_WKAutoFillButtonTypeContacts];
     [[[browserContextController mainFrame] jsContextForWorld:[WKWebProcessPlugInScriptWorld normalWorld]] evaluateScript:@"alert('ready for click!')"];
 }
 

@@ -1,3 +1,18 @@
+2017-12-12  Daniel Bates  <dabates@apple.com>
+
+        [WK] Add modern WebKit SPI to set auto fill button type and query if the auto fill button is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=180686
+
+        Reviewed by Alex Christensen.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        (-[WKWebProcessPlugInNodeHandle isHTMLInputElementAutoFillButtonEnabled]):
+        (toAutoFillButtonType):
+        (-[WKWebProcessPlugInNodeHandle setHTMLInputElementAutoFillButtonEnabledWithButtonType:]):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandleInternal.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandlePrivate.h:
+
 2017-12-12  John Wilander  <wilander@apple.com>
 
         Storage Access API: Implement frame-specific access in the network storage session layer

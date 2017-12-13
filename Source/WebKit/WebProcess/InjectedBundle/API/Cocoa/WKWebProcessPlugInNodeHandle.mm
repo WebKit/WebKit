@@ -28,6 +28,7 @@
 
 #import "WKSharedAPICast.h"
 #import "WKWebProcessPlugInFrameInternal.h"
+#import <WebCore/HTMLTextFormControlElement.h>
 #import <WebCore/IntRect.h>
 #import <WebKit/WebImage.h>
 
@@ -118,6 +119,30 @@ using namespace WebKit;
 - (void)setHTMLInputElementIsAutoFilled:(BOOL)isAutoFilled
 {
     _nodeHandle->setHTMLInputElementAutoFilled(isAutoFilled);
+}
+
+- (BOOL)isHTMLInputElementAutoFillButtonEnabled
+{
+    return _nodeHandle->isHTMLInputElementAutoFillButtonEnabled();
+}
+
+static WebCore::AutoFillButtonType toAutoFillButtonType(_WKAutoFillButtonType autoFillButtonType)
+{
+    switch (autoFillButtonType) {
+    case _WKAutoFillButtonTypeNone:
+        return WebCore::AutoFillButtonType::None;
+    case _WKAutoFillButtonTypeContacts:
+        return WebCore::AutoFillButtonType::Contacts;
+    case _WKAutoFillButtonTypeCredentials:
+        return WebCore::AutoFillButtonType::Credentials;
+    }
+    ASSERT_NOT_REACHED();
+    return WebCore::AutoFillButtonType::None;
+}
+
+- (void)setHTMLInputElementAutoFillButtonEnabledWithButtonType:(_WKAutoFillButtonType)autoFillButtonType
+{
+    _nodeHandle->setHTMLInputElementAutoFillButtonEnabled(toAutoFillButtonType(autoFillButtonType));
 }
 
 - (BOOL)HTMLInputElementIsUserEdited
