@@ -576,7 +576,7 @@ void HTMLTextFormControlElement::setInnerTextValue(const String& value)
 #if HAVE(ACCESSIBILITY) && PLATFORM(COCOA)
         if (textIsChanged && renderer()) {
             if (AXObjectCache* cache = document().existingAXObjectCache())
-                cache->postTextReplacementNotificationForTextControl(*this, previousValue, value);
+                cache->deferTextReplacementNotificationForTextControl(*this, previousValue);
         }
 #endif
     }

@@ -337,7 +337,8 @@ public:
     void deferTextChangedIfNeeded(Node*);
     void deferSelectedChildrenChangedIfNeeded(Element&);
     void performDeferredCacheUpdate();
-    
+    void deferTextReplacementNotificationForTextControl(HTMLTextFormControlElement&, const String& previousValue);
+
     RefPtr<Range> rangeMatchesTextNearRange(RefPtr<Range>, const String&);
     
 
@@ -444,6 +445,7 @@ private:
     ListHashSet<Element*> m_deferredRecomputeIsIgnoredList;
     ListHashSet<Node*> m_deferredTextChangedList;
     ListHashSet<Element*> m_deferredSelectedChildredChangedList;
+    HashMap<Element*, String> m_deferredTextFormControlValue;
     bool m_isSynchronizingSelection { false };
     bool m_performingDeferredCacheUpdate { false };
 };
@@ -496,6 +498,7 @@ inline void AXObjectCache::deferRecomputeIsIgnoredIfNeeded(Element*) { }
 inline void AXObjectCache::deferRecomputeIsIgnored(Element*) { }
 inline void AXObjectCache::deferTextChangedIfNeeded(Node*) { }
 inline void AXObjectCache::deferSelectedChildrenChangedIfNeeded(Element&) { }
+inline void AXObjectCache::deferTextReplacementNotificationForTextControl(HTMLTextFormControlElement&, const String&) { }
 inline void AXObjectCache::detachWrapper(AccessibilityObject*, AccessibilityDetachmentType) { }
 inline void AXObjectCache::focusModalNodeTimerFired() { }
 inline void AXObjectCache::frameLoadingEventNotification(Frame*, AXLoadingEvent) { }

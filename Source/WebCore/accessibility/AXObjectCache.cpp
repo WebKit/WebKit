@@ -721,6 +721,7 @@ void AXObjectCache::remove(Node& node)
     if (is<Element>(node)) {
         m_deferredRecomputeIsIgnoredList.remove(downcast<Element>(&node));
         m_deferredSelectedChildredChangedList.remove(downcast<Element>(&node));
+        m_deferredTextFormControlValue.remove(downcast<Element>(&node));
     }
     m_deferredTextChangedList.remove(&node);
     removeNodeForUse(node);
@@ -2725,8 +2726,19 @@ const Element* AXObjectCache::rootAXEditableElement(const Node* node)
     return result;
 }
 
+template<typename T, typename U>
+static void filterMapForRemoval(const HashMap<T, U>& list, const Document& document, HashSet<Node*>& nodesToRemove)
+{
+    for (auto& entry : list) {
+        auto* node = entry.key;
+        if (node->isConnected() && &node->document() != &document)
+            continue;
+        nodesToRemove.add(node);
+    }
+}
+
 template<typename T>
-static void filterForRemoval(const ListHashSet<T>& list, const Document& document, HashSet<Node*>& nodesToRemove)
+static void filterListForRemoval(const ListHashSet<T>& list, const Document& document, HashSet<Node*>& nodesToRemove)
 {
     for (auto* node : list) {
         if (node->isConnected() && &node->document() != &document)
@@ -2738,11 +2750,12 @@ static void filterForRemoval(const ListHashSet<T>& list, const Document& documen
 void AXObjectCache::prepareForDocumentDestruction(const Document& document)
 {
     HashSet<Node*> nodesToRemove;
-    filterForRemoval(m_textMarkerNodes, document, nodesToRemove);
-    filterForRemoval(m_modalNodesSet, document, nodesToRemove);
-    filterForRemoval(m_deferredRecomputeIsIgnoredList, document, nodesToRemove);
-    filterForRemoval(m_deferredTextChangedList, document, nodesToRemove);
-    filterForRemoval(m_deferredSelectedChildredChangedList, document, nodesToRemove);
+    filterListForRemoval(m_textMarkerNodes, document, nodesToRemove);
+    filterListForRemoval(m_modalNodesSet, document, nodesToRemove);
+    filterListForRemoval(m_deferredRecomputeIsIgnoredList, document, nodesToRemove);
+    filterListForRemoval(m_deferredTextChangedList, document, nodesToRemove);
+    filterListForRemoval(m_deferredSelectedChildredChangedList, document, nodesToRemove);
+    filterMapForRemoval(m_deferredTextFormControlValue, document, nodesToRemove);
 
     for (auto* node : nodesToRemove)
         remove(*node);
@@ -2776,6 +2789,12 @@ void AXObjectCache::performDeferredCacheUpdate()
     for (auto* selectElement : m_deferredSelectedChildredChangedList)
         selectedChildrenChanged(selectElement);
     m_deferredSelectedChildredChangedList.clear();
+
+    for (auto& deferredFormControlContext : m_deferredTextFormControlValue) {
+        auto& textFormControlElement = downcast<HTMLTextFormControlElement>(*deferredFormControlContext.key);
+        postTextReplacementNotificationForTextControl(textFormControlElement, deferredFormControlContext.value, textFormControlElement.innerTextValue());
+    }
+    m_deferredTextFormControlValue.clear();
 }
 
 static bool rendererNeedsDeferredUpdate(RenderObject& renderer)
@@ -2839,6 +2858,14 @@ void AXObjectCache::deferSelectedChildrenChangedIfNeeded(Element& selectElement)
         return;
     }
     selectedChildrenChanged(&selectElement);
+}
+
+void AXObjectCache::deferTextReplacementNotificationForTextControl(HTMLTextFormControlElement& formControlElement, const String& previousValue)
+{
+    auto* renderer = formControlElement.renderer();
+    if (!renderer)
+        return;
+    m_deferredTextFormControlValue.add(&formControlElement, previousValue);
 }
 
 bool isNodeAriaVisible(Node* node)
