@@ -52,8 +52,11 @@
 		00B9318813BA8DBA0035A948 /* XMLDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9318213BA867F0035A948 /* XMLDocumentParser.h */; };
 		00B9318C13BA8DCC0035A948 /* XMLDocumentParserScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9318613BA867F0035A948 /* XMLDocumentParserScope.h */; };
 		00C60E3F13D76D7E0092A275 /* MarkupTokenizerInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 00C60E3E13D76D7E0092A275 /* MarkupTokenizerInlines.h */; };
+		01D3CF8214BD0A3000FE9970 /* WebGLContextGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 01D3CF7C14BD0A3000FE9970 /* WebGLContextGroup.cpp */; };
 		01D3CF8314BD0A3000FE9970 /* WebGLContextGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 01D3CF7D14BD0A3000FE9970 /* WebGLContextGroup.h */; };
+		01D3CF8414BD0A3000FE9970 /* WebGLContextObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 01D3CF7E14BD0A3000FE9970 /* WebGLContextObject.cpp */; };
 		01D3CF8514BD0A3000FE9970 /* WebGLContextObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 01D3CF7F14BD0A3000FE9970 /* WebGLContextObject.h */; };
+		01D3CF8614BD0A3000FE9970 /* WebGLSharedObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 01D3CF8014BD0A3000FE9970 /* WebGLSharedObject.cpp */; };
 		01D3CF8714BD0A3000FE9970 /* WebGLSharedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 01D3CF8114BD0A3000FE9970 /* WebGLSharedObject.h */; };
 		01E6C2E41194B2820050821C /* SpellingDot@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 01E6C2E31194B2820050821C /* SpellingDot@2x.png */; };
 		0562F9611573F88F0031CA16 /* PlatformLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0562F9601573F88F0031CA16 /* PlatformLayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -296,6 +299,7 @@
 		0B9056F90F2685F30095FF6A /* WorkerThreadableLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B9056F70F2685F30095FF6A /* WorkerThreadableLoader.h */; settings = {ATTRIBUTES = (); }; };
 		0BCF83F71059C1EB00D999DD /* MathMLFractionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BCF83F01059C1EB00D999DD /* MathMLFractionElement.h */; };
 		0BE030A20F3112FB003C1A46 /* RenderLineBoxList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BE030A10F3112FB003C1A46 /* RenderLineBoxList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0C3F1F5A10C8871200D72CE1 /* WebGLUniformLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C3F1F5710C8871200D72CE1 /* WebGLUniformLocation.cpp */; };
 		0C3F1F5B10C8871200D72CE1 /* WebGLUniformLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C3F1F5810C8871200D72CE1 /* WebGLUniformLocation.h */; };
 		0C45342810CDBBFA00869157 /* JSWebGLUniformLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C45342610CDBBFA00869157 /* JSWebGLUniformLocation.h */; };
 		0E7058F41BC5CEDA0045A507 /* SearchPopupMenuCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E7058F31BC5CCD70045A507 /* SearchPopupMenuCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -798,6 +802,7 @@
 		2EF1BFF9121CB0CE00C27627 /* FileStreamClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EF1BFF8121CB0CE00C27627 /* FileStreamClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2F31E0751FA3B62B00E059BA /* HTMLMenuItemElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F31E0711FA3B33B00E059BA /* HTMLMenuItemElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3103B7DF1DB01567008BB890 /* ColorHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 3103B7DE1DB01556008BB890 /* ColorHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		31078CC71880AAB5008099DC /* OESTextureHalfFloatLinear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31078CC21880A6A6008099DC /* OESTextureHalfFloatLinear.cpp */; };
 		31078CC81880AABB008099DC /* OESTextureHalfFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 31078CC31880A6A6008099DC /* OESTextureHalfFloatLinear.h */; };
 		31078CCA1880AACE008099DC /* JSOESTextureHalfFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 31078CC61880AAAA008099DC /* JSOESTextureHalfFloatLinear.h */; };
 		310D71961B335C9E009C7B73 /* ThemeCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 310D71941B335C9D009C7B73 /* ThemeCocoa.h */; };
@@ -824,6 +829,7 @@
 		3140C5241FDF318700D2A873 /* CanvasRenderingContext2DBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 3140C5221FDF318600D2A873 /* CanvasRenderingContext2DBase.h */; };
 		3140C5271FDF558200D2A873 /* JSOffscreenCanvasRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 3140C5251FDF557F00D2A873 /* JSOffscreenCanvasRenderingContext2D.h */; };
 		3146FE6E184420A8001A937C /* OESTextureFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 3146FE6618442087001A937C /* OESTextureFloatLinear.h */; };
+		3146FE6F184420AA001A937C /* OESTextureFloatLinear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3146FE6518442087001A937C /* OESTextureFloatLinear.cpp */; };
 		3146FE7518442370001A937C /* JSOESTextureFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 3146FE7118442367001A937C /* JSOESTextureFloatLinear.h */; };
 		314877E31FAA8FE900C05759 /* OffscreenCanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = 314877E11FAA8FE900C05759 /* OffscreenCanvas.h */; };
 		314877E61FAAB02500C05759 /* JSOffscreenCanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = 314877E41FAAB02200C05759 /* JSOffscreenCanvas.h */; };
@@ -893,6 +899,7 @@
 		31A089891E738D5A003B6609 /* JSWebGPUTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A089501E738D59003B6609 /* JSWebGPUTexture.h */; };
 		31A0898C1E738D5A003B6609 /* JSWebGPUTextureDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A089531E738D59003B6609 /* JSWebGPUTextureDescriptor.h */; };
 		31A795C71888BCB200382F90 /* ANGLEInstancedArrays.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A795C21888B72400382F90 /* ANGLEInstancedArrays.h */; };
+		31A795C81888BCB500382F90 /* ANGLEInstancedArrays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31A795C11888B72400382F90 /* ANGLEInstancedArrays.cpp */; };
 		31AB5000122878A2001A7DB0 /* GraphicsContext3DIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 31AB4FFF122878A2001A7DB0 /* GraphicsContext3DIOS.h */; };
 		31BC742D1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31BC742B1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.cpp */; };
 		31BC742E1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 31BC742C1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.h */; };
@@ -1155,6 +1162,7 @@
 		46EF142D1F97B7D800C2A524 /* ServiceWorkerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EF14241F97B7BA00C2A524 /* ServiceWorkerClient.h */; };
 		46EFAF121E5FB9F100E7F34B /* LowPowerModeNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EFAF101E5FB9E100E7F34B /* LowPowerModeNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46FCB6181A70820E00C5A21E /* DiagnosticLoggingKeys.h in Headers */ = {isa = PBXBuildFile; fileRef = CD37B37515C1A7E1006DC898 /* DiagnosticLoggingKeys.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */; };
 		490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */; };
 		49291E4B134172C800E753DE /* ImageRenderingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 49291E4A134172C800E753DE /* ImageRenderingMode.h */; };
 		493E5E0912D6420500020081 /* PlatformCALayerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 493E5E0812D6420500020081 /* PlatformCALayerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1185,14 +1193,22 @@
 		49C7B99E1042D2D30009D447 /* JSWebGLRenderbuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B98B1042D2D30009D447 /* JSWebGLRenderbuffer.h */; };
 		49C7B9A31042D2D30009D447 /* JSWebGLShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9901042D2D30009D447 /* JSWebGLShader.h */; };
 		49C7B9A51042D2D30009D447 /* JSWebGLTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9921042D2D30009D447 /* JSWebGLTexture.h */; };
+		49C7B9C81042D32F0009D447 /* WebGLBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9A81042D32E0009D447 /* WebGLBuffer.cpp */; };
 		49C7B9C91042D32F0009D447 /* WebGLBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9A91042D32E0009D447 /* WebGLBuffer.h */; };
+		49C7B9CE1042D32F0009D447 /* WebGLFramebuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9AE1042D32E0009D447 /* WebGLFramebuffer.cpp */; };
 		49C7B9CF1042D32F0009D447 /* WebGLFramebuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9AF1042D32E0009D447 /* WebGLFramebuffer.h */; };
+		49C7B9D41042D32F0009D447 /* WebGLObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9B41042D32F0009D447 /* WebGLObject.cpp */; };
 		49C7B9D51042D32F0009D447 /* WebGLObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9B51042D32F0009D447 /* WebGLObject.h */; };
+		49C7B9D61042D32F0009D447 /* WebGLProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9B61042D32F0009D447 /* WebGLProgram.cpp */; };
 		49C7B9D71042D32F0009D447 /* WebGLProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9B71042D32F0009D447 /* WebGLProgram.h */; };
+		49C7B9D91042D32F0009D447 /* WebGLRenderbuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9B91042D32F0009D447 /* WebGLRenderbuffer.cpp */; };
 		49C7B9DA1042D32F0009D447 /* WebGLRenderbuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9BA1042D32F0009D447 /* WebGLRenderbuffer.h */; };
 		49C7B9DD1042D32F0009D447 /* CanvasRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9BD1042D32F0009D447 /* CanvasRenderingContext.h */; };
+		49C7B9DF1042D32F0009D447 /* WebGLRenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9BF1042D32F0009D447 /* WebGLRenderingContext.cpp */; };
 		49C7B9E01042D32F0009D447 /* WebGLRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9C01042D32F0009D447 /* WebGLRenderingContext.h */; };
+		49C7B9E21042D32F0009D447 /* WebGLShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9C21042D32F0009D447 /* WebGLShader.cpp */; };
 		49C7B9E31042D32F0009D447 /* WebGLShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9C31042D32F0009D447 /* WebGLShader.h */; };
+		49C7B9E51042D32F0009D447 /* WebGLTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9C51042D32F0009D447 /* WebGLTexture.cpp */; };
 		49C7B9E61042D32F0009D447 /* WebGLTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9C61042D32F0009D447 /* WebGLTexture.h */; };
 		49C7B9FC1042D3650009D447 /* GraphicsContext3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9FB1042D3650009D447 /* GraphicsContext3D.h */; };
 		49D5DC2C0F423A73008F20FD /* Matrix3DTransformOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D5DC280F423A73008F20FD /* Matrix3DTransformOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1688,6 +1704,7 @@
 		59C28046138DC2410079B7E2 /* XMLErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 59C28044138DC2410079B7E2 /* XMLErrors.h */; };
 		5A574F25131DB93900471B88 /* RenderQuote.h in Headers */ = {isa = PBXBuildFile; fileRef = 5A574F23131DB93900471B88 /* RenderQuote.h */; };
 		5A574F29131DB96D00471B88 /* QuotesData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5A574F27131DB96D00471B88 /* QuotesData.h */; };
+		5B30695D18B3D3450099D5E8 /* WebGLDrawBuffers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B30695A18B3D3450099D5E8 /* WebGLDrawBuffers.cpp */; };
 		5B30695E18B3D3450099D5E8 /* WebGLDrawBuffers.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B30695B18B3D3450099D5E8 /* WebGLDrawBuffers.h */; };
 		5C4304B0191AC908000E2BC0 /* EXTShaderTextureLOD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C4304AD191AC908000E2BC0 /* EXTShaderTextureLOD.cpp */; };
 		5C4304B1191AC908000E2BC0 /* EXTShaderTextureLOD.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4304AE191AC908000E2BC0 /* EXTShaderTextureLOD.h */; };
@@ -1804,6 +1821,8 @@
 		6E3FAD3914733F4000E42307 /* JSWebGLDepthTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E3FAD3714733F4000E42307 /* JSWebGLDepthTexture.h */; };
 		6E3FAD3914733F4011E42307 /* JSWebGLDebugRendererInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E3FAD3714733F4011E42307 /* JSWebGLDebugRendererInfo.h */; };
 		6E3FAD3914733F4022E42307 /* JSWebGLDebugShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E3FAD3714733F4022E42307 /* JSWebGLDebugShaders.h */; };
+		6E3FAE8E14733FDB00E42306 /* WebGLCompressedTextureS3TC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E3FAE8C14733FDB00E42306 /* WebGLCompressedTextureS3TC.cpp */; };
+		6E3FAE8E14733FDB00E42307 /* WebGLDepthTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E3FAE8C14733FDB00E42307 /* WebGLDepthTexture.cpp */; };
 		6E3FAE8F14733FDB00E42306 /* WebGLCompressedTextureS3TC.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E3FAE8D14733FDB00E42306 /* WebGLCompressedTextureS3TC.h */; };
 		6E3FAE8F14733FDB00E42307 /* WebGLDepthTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E3FAE8D14733FDB00E42307 /* WebGLDepthTexture.h */; };
 		6E47E66110B7944B00B186C8 /* WebGLAny.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E47E65F10B7944B00B186C8 /* WebGLAny.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1812,7 +1831,9 @@
 		6E67D2A71280E8A4008758F7 /* Extensions3DOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E67D2A51280E8A4008758F7 /* Extensions3DOpenGL.h */; };
 		6E67D2A91280E8BD008758F7 /* Extensions3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E67D2A81280E8BD008758F7 /* Extensions3D.h */; };
 		6E84E9E117668BF100815B68 /* RasterShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E84E9DF17668BAD00815B68 /* RasterShape.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6EBF0E4812A8926100DB1709 /* OESTextureFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EBF0E4512A8926100DB1709 /* OESTextureFloat.cpp */; };
 		6EBF0E4912A8926100DB1709 /* OESTextureFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBF0E4612A8926100DB1709 /* OESTextureFloat.h */; };
+		6EBF0E5412A8929800DB1709 /* WebGLExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EBF0E5212A8929800DB1709 /* WebGLExtension.cpp */; };
 		6EBF0E5512A8929800DB1709 /* WebGLExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBF0E5312A8929800DB1709 /* WebGLExtension.h */; };
 		6EBF0E7712A9868800DB1709 /* JSOESTextureFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBF0E7512A9868800DB1709 /* JSOESTextureFloat.h */; };
 		6EBF0E7712A9868800DB170A /* JSWebGLDrawBuffers.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBF0E7512A9868800DB170A /* JSWebGLDrawBuffers.h */; };
@@ -1820,10 +1841,16 @@
 		6ED878C5147493F4004C3597 /* RenderTableCaption.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED878C3147493F4004C3597 /* RenderTableCaption.h */; };
 		6ED8C37A183BFF8C009E53BD /* BoxShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED8C378183BFF8C009E53BD /* BoxShape.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */; };
+		6F222B761AB52D8A0094651A /* WebGLVertexArrayObjectBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F222B751AB52D8A0094651A /* WebGLVertexArrayObjectBase.cpp */; };
+		6F995A151A70756200A735F4 /* WebGLSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A131A70756200A735F4 /* WebGLSync.cpp */; };
 		6F995A161A70756200A735F4 /* WebGLSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A141A70756200A735F4 /* WebGLSync.h */; };
+		6F995A1F1A7078B100A735F4 /* WebGLQuery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A171A7078B100A735F4 /* WebGLQuery.cpp */; };
 		6F995A201A7078B100A735F4 /* WebGLQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A181A7078B100A735F4 /* WebGLQuery.h */; };
+		6F995A211A7078B100A735F4 /* WebGLSampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A191A7078B100A735F4 /* WebGLSampler.cpp */; };
 		6F995A221A7078B100A735F4 /* WebGLSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A1A1A7078B100A735F4 /* WebGLSampler.h */; };
+		6F995A231A7078B100A735F4 /* WebGLTransformFeedback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A1B1A7078B100A735F4 /* WebGLTransformFeedback.cpp */; };
 		6F995A241A7078B100A735F4 /* WebGLTransformFeedback.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A1C1A7078B100A735F4 /* WebGLTransformFeedback.h */; };
+		6F995A251A7078B100A735F4 /* WebGLVertexArrayObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A1D1A7078B100A735F4 /* WebGLVertexArrayObject.cpp */; };
 		6F995A261A7078B100A735F4 /* WebGLVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A1E1A7078B100A735F4 /* WebGLVertexArrayObject.h */; };
 		6F995A321A70833700A735F4 /* JSWebGLQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A281A70833700A735F4 /* JSWebGLQuery.h */; };
 		6F995A341A70833700A735F4 /* JSWebGLSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A2A1A70833700A735F4 /* JSWebGLSampler.h */; };
@@ -1880,7 +1907,9 @@
 		7728694F14F8882500F484DC /* EXTTextureFilterAnisotropic.h in Headers */ = {isa = PBXBuildFile; fileRef = 7728694C14F8882500F484DC /* EXTTextureFilterAnisotropic.h */; };
 		7728698414FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.h in Headers */ = {isa = PBXBuildFile; fileRef = 7728698214FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.h */; };
 		7779BD961F32246A00C21417 /* JSVisualViewport.h in Headers */ = {isa = PBXBuildFile; fileRef = 7779BD921F2FDBF700C21417 /* JSVisualViewport.h */; };
+		77A17A7112F28182004E02F6 /* OESVertexArrayObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77A17A6E12F28182004E02F6 /* OESVertexArrayObject.cpp */; };
 		77A17A7212F28182004E02F6 /* OESVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17A6F12F28182004E02F6 /* OESVertexArrayObject.h */; };
+		77A17A7712F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77A17A7412F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp */; };
 		77A17A7812F28642004E02F6 /* WebGLVertexArrayObjectOES.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17A7512F28642004E02F6 /* WebGLVertexArrayObjectOES.h */; };
 		77A17A7B12F2890B004E02F6 /* GraphicsTypes3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17A7A12F2890B004E02F6 /* GraphicsTypes3D.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		77A17AA712F28B2A004E02F6 /* JSOESVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17AA312F28B2A004E02F6 /* JSOESVertexArrayObject.h */; };
@@ -2114,7 +2143,10 @@
 		7E4C96DD1AD4483500365A51 /* JSReadableStreamSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E4C96D91AD4483500365A51 /* JSReadableStreamSource.h */; };
 		7E4C96DD1AD4483500365A52 /* JSFetchEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E4C96D91AD4483500365A52 /* JSFetchEvent.h */; };
 		7E4C96DD1AD4483500365A53 /* JSExtendableEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E4C96D91AD4483500365A53 /* JSExtendableEvent.h */; };
+		7E5D7A76161D3F8F00896C34 /* OESElementIndexUint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E5D7A73161D3F8F00896C34 /* OESElementIndexUint.cpp */; };
 		7E5D7A77161D3F8F00896C34 /* OESElementIndexUint.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E5D7A74161D3F8F00896C34 /* OESElementIndexUint.h */; };
+		7E66E23316D6EB6C00F7E7FF /* WebGLCompressedTextureATC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E66E23116D6EB6C00F7E7FF /* WebGLCompressedTextureATC.cpp */; };
+		7E66E23317E6EB6C00F7E7FF /* WebGLCompressedTexturePVRTC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E66E23117E6EB6C00F7E7FF /* WebGLCompressedTexturePVRTC.cpp */; };
 		7E66E23416D6EB6C00F7E7FF /* WebGLCompressedTextureATC.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E66E23216D6EB6C00F7E7FF /* WebGLCompressedTextureATC.h */; };
 		7E66E23417E6EB6C00F7E7FF /* WebGLCompressedTexturePVRTC.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E66E23217E6EB6C00F7E7FF /* WebGLCompressedTexturePVRTC.h */; };
 		7E99AF530B13846468FB01A5 /* WindowFocusAllowedIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E99AF540B13846468FB01A5 /* WindowFocusAllowedIndicator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2321,6 +2353,7 @@
 		8AF4E55C11DC5A63000ED3DE /* PerformanceTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF4E55911DC5A63000ED3DE /* PerformanceTiming.h */; };
 		8E4C96DD1AD4483500365A50 /* JSFetchResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E4C96D91AD4483500365A50 /* JSFetchResponse.h */; };
 		8F67561B1288B17B0047ACA3 /* EventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F6756191288B17B0047ACA3 /* EventQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9001774012E0347800648462 /* OESStandardDerivatives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9001773D12E0347800648462 /* OESStandardDerivatives.cpp */; };
 		9001774112E0347800648462 /* OESStandardDerivatives.h in Headers */ = {isa = PBXBuildFile; fileRef = 9001773E12E0347800648462 /* OESStandardDerivatives.h */; };
 		9001788112E0370700648462 /* JSOESStandardDerivatives.h in Headers */ = {isa = PBXBuildFile; fileRef = 9001787F12E0370700648462 /* JSOESStandardDerivatives.h */; };
 		91B952241F58A58F00931DC2 /* RecordingSwizzleTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 91B952221F58A58000931DC2 /* RecordingSwizzleTypes.h */; };
@@ -2459,8 +2492,10 @@
 		93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */ = {isa = PBXBuildFile; fileRef = BE8560510701F91100239769 /* WebCoreView.m */; };
 		93F19B1608245E59001E9ABC /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8216299029F4FB501000131 /* JavaScriptCore.framework */; };
 		93F19B1708245E59001E9ABC /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F1D31A0558CC5C00821BC0 /* libicucore.dylib */; };
+		93F1D5BA12D532C400832BEC /* WebGLLoseContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1D5B712D532C400832BEC /* WebGLLoseContext.cpp */; };
 		93F1D5BB12D532C400832BEC /* WebGLLoseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F1D5B812D532C400832BEC /* WebGLLoseContext.h */; };
 		93F1D5C112D5335600832BEC /* JSWebGLLoseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F1D5BF12D5335600832BEC /* JSWebGLLoseContext.h */; };
+		93F6F1ED127F70B10055CB06 /* WebGLContextEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F6F1EA127F70B10055CB06 /* WebGLContextEvent.cpp */; };
 		93F6F1EE127F70B10055CB06 /* WebGLContextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F6F1EB127F70B10055CB06 /* WebGLContextEvent.h */; };
 		93F925430F7EF5B8007E37C9 /* RadioButtonGroups.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F925410F7EF5B8007E37C9 /* RadioButtonGroups.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F9B6E10BA0FB7200854064 /* JSComment.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F9B6DF0BA0FB7200854064 /* JSComment.h */; };
@@ -2654,7 +2689,10 @@
 		9DAC7C571AF2CB6400437C44 /* StyleContentAlignmentData.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DAC7C561AF2CB6400437C44 /* StyleContentAlignmentData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A07D3356152B630E001B6393 /* JSWebGLShaderPrecisionFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = A07D3354152B630E001B6393 /* JSWebGLShaderPrecisionFormat.h */; };
 		A07D3358152B632D001B6393 /* WebGLShaderPrecisionFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = A07D3357152B632D001B6393 /* WebGLShaderPrecisionFormat.h */; };
+		A08CF154152B77B3009C5775 /* WebGLShaderPrecisionFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A08CF153152B77B3009C5775 /* WebGLShaderPrecisionFormat.cpp */; };
+		A0EE0DF5144F825500F80B0D /* WebGLDebugRendererInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0EE0DF1144F825500F80B0D /* WebGLDebugRendererInfo.cpp */; };
 		A0EE0DF6144F825500F80B0D /* WebGLDebugRendererInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A0EE0DF2144F825500F80B0D /* WebGLDebugRendererInfo.h */; };
+		A0EE0DF7144F825500F80B0D /* WebGLDebugShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0EE0DF3144F825500F80B0D /* WebGLDebugShaders.cpp */; };
 		A0EE0DF8144F825500F80B0D /* WebGLDebugShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = A0EE0DF4144F825500F80B0D /* WebGLDebugShaders.h */; };
 		A104F24414C71F7A009E2C23 /* CachedSVGDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = A104F24214C71F7A009E2C23 /* CachedSVGDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10BB5851484E3A700B2E87A /* RenderSVGRect.h in Headers */ = {isa = PBXBuildFile; fileRef = A10BB5831484E3A700B2E87A /* RenderSVGRect.h */; };
@@ -2786,6 +2824,7 @@
 		A1F9296F1F8D9F5B00523AF3 /* JSApplePayMerchantValidationEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1F9296D1F8D9F5A00523AF3 /* JSApplePayMerchantValidationEvent.cpp */; };
 		A1F929701F8D9F5B00523AF3 /* JSApplePayMerchantValidationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F9296E1F8D9F5B00523AF3 /* JSApplePayMerchantValidationEvent.h */; };
 		A2B9217316C5CC420041DCD9 /* IntRectExtent.h in Headers */ = {isa = PBXBuildFile; fileRef = A2B9217216C5CC420041DCD9 /* IntRectExtent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A31C4E4D16E02AA6002F7957 /* OESTextureHalfFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A31C4E4C16E02AA6002F7957 /* OESTextureHalfFloat.cpp */; };
 		A31C4E4F16E02AB4002F7957 /* OESTextureHalfFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = A31C4E4E16E02AB4002F7957 /* OESTextureHalfFloat.h */; };
 		A31C4E5416E02B40002F7957 /* JSOESTextureHalfFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = A31C4E5316E02B40002F7957 /* JSOESTextureHalfFloat.h */; };
 		A3BB59F41457A40D00AC56FE /* DocumentEventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = A3BB59F21457A40D00AC56FE /* DocumentEventQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3942,7 +3981,9 @@
 		D3AA10F4123A98AA0092152B /* MediaQueryMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = D3AA10F2123A98AA0092152B /* MediaQueryMatcher.h */; };
 		D3D4E973130C7CFE007BA540 /* HTMLSummaryElement.h in Headers */ = {isa = PBXBuildFile; fileRef = D3D4E971130C7CFE007BA540 /* HTMLSummaryElement.h */; };
 		D3F3D3641A69B1900059FC2B /* JSWebGL2RenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = D3F3D3621A69B1900059FC2B /* JSWebGL2RenderingContext.h */; };
+		D3F3D3691A69B7B00059FC2B /* WebGLRenderingContextBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3F3D35E1A69A5060059FC2B /* WebGLRenderingContextBase.cpp */; };
 		D3F3D36A1A69B7B90059FC2B /* WebGLRenderingContextBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D3F3D35F1A69A5060059FC2B /* WebGLRenderingContextBase.h */; };
+		D3F3D36D1A69B7DC0059FC2B /* WebGL2RenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3F3D35B1A69A5060059FC2B /* WebGL2RenderingContext.cpp */; };
 		D3F3D36E1A69B7E00059FC2B /* WebGL2RenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = D3F3D35C1A69A5060059FC2B /* WebGL2RenderingContext.h */; };
 		D619A308144E00BE004BC302 /* ChildListMutationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = D619A306144E00BE004BC302 /* ChildListMutationScope.h */; };
 		D6489D26166FFCF1007C031B /* JSHTMLTemplateElement.h in Headers */ = {isa = PBXBuildFile; fileRef = D6489D24166FFCF1007C031B /* JSHTMLTemplateElement.h */; };
@@ -30298,6 +30339,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A9787CB41F5F5C6600C551C6 /* AccessibilityMediaObject.cpp in Sources */,
+				31A795C81888BCB500382F90 /* ANGLEInstancedArrays.cpp in Sources */,
+				490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */,
 				A1F9296A1F8D9CDB00523AF3 /* ApplePayMerchantValidationEvent.cpp in Sources */,
 				CD0EEE0E14743F39003EAFA2 /* AudioDestinationIOS.cpp in Sources */,
 				CD5596911475B678001D0BD0 /* AudioFileReaderIOS.cpp in Sources */,
@@ -30409,6 +30452,13 @@
 				1A569D180D7E2B82007C3983 /* objc_runtime.mm in Sources */,
 				1A569D1A0D7E2B82007C3983 /* objc_utility.mm in Sources */,
 				E16982601134636A00894115 /* ObjCRuntimeObject.mm in Sources */,
+				7E5D7A76161D3F8F00896C34 /* OESElementIndexUint.cpp in Sources */,
+				9001774012E0347800648462 /* OESStandardDerivatives.cpp in Sources */,
+				6EBF0E4812A8926100DB1709 /* OESTextureFloat.cpp in Sources */,
+				3146FE6F184420AA001A937C /* OESTextureFloatLinear.cpp in Sources */,
+				A31C4E4D16E02AA6002F7957 /* OESTextureHalfFloat.cpp in Sources */,
+				31078CC71880AAB5008099DC /* OESTextureHalfFloatLinear.cpp in Sources */,
+				77A17A7112F28182004E02F6 /* OESVertexArrayObject.cpp in Sources */,
 				A1CFE0321F9E71290065C345 /* PaymentAddress.cpp in Sources */,
 				DE5F86101FA238D9006DB63A /* PaymentMerchantSessionCocoa.mm in Sources */,
 				A1C2C5761FA2851600BA46FA /* PaymentSession.cpp in Sources */,
@@ -31005,6 +31055,38 @@
 				CD7E05221651C28200C1201F /* WebCoreAVFResourceLoader.mm in Sources */,
 				CD225C0B1C46FBF400140761 /* WebCoreNSURLSession.mm in Sources */,
 				93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */,
+				D3F3D36D1A69B7DC0059FC2B /* WebGL2RenderingContext.cpp in Sources */,
+				49C7B9C81042D32F0009D447 /* WebGLBuffer.cpp in Sources */,
+				7E66E23316D6EB6C00F7E7FF /* WebGLCompressedTextureATC.cpp in Sources */,
+				7E66E23317E6EB6C00F7E7FF /* WebGLCompressedTexturePVRTC.cpp in Sources */,
+				6E3FAE8E14733FDB00E42306 /* WebGLCompressedTextureS3TC.cpp in Sources */,
+				93F6F1ED127F70B10055CB06 /* WebGLContextEvent.cpp in Sources */,
+				01D3CF8214BD0A3000FE9970 /* WebGLContextGroup.cpp in Sources */,
+				01D3CF8414BD0A3000FE9970 /* WebGLContextObject.cpp in Sources */,
+				A0EE0DF5144F825500F80B0D /* WebGLDebugRendererInfo.cpp in Sources */,
+				A0EE0DF7144F825500F80B0D /* WebGLDebugShaders.cpp in Sources */,
+				6E3FAE8E14733FDB00E42307 /* WebGLDepthTexture.cpp in Sources */,
+				5B30695D18B3D3450099D5E8 /* WebGLDrawBuffers.cpp in Sources */,
+				6EBF0E5412A8929800DB1709 /* WebGLExtension.cpp in Sources */,
+				49C7B9CE1042D32F0009D447 /* WebGLFramebuffer.cpp in Sources */,
+				93F1D5BA12D532C400832BEC /* WebGLLoseContext.cpp in Sources */,
+				49C7B9D41042D32F0009D447 /* WebGLObject.cpp in Sources */,
+				49C7B9D61042D32F0009D447 /* WebGLProgram.cpp in Sources */,
+				6F995A1F1A7078B100A735F4 /* WebGLQuery.cpp in Sources */,
+				49C7B9D91042D32F0009D447 /* WebGLRenderbuffer.cpp in Sources */,
+				49C7B9DF1042D32F0009D447 /* WebGLRenderingContext.cpp in Sources */,
+				D3F3D3691A69B7B00059FC2B /* WebGLRenderingContextBase.cpp in Sources */,
+				6F995A211A7078B100A735F4 /* WebGLSampler.cpp in Sources */,
+				49C7B9E21042D32F0009D447 /* WebGLShader.cpp in Sources */,
+				A08CF154152B77B3009C5775 /* WebGLShaderPrecisionFormat.cpp in Sources */,
+				01D3CF8614BD0A3000FE9970 /* WebGLSharedObject.cpp in Sources */,
+				6F995A151A70756200A735F4 /* WebGLSync.cpp in Sources */,
+				49C7B9E51042D32F0009D447 /* WebGLTexture.cpp in Sources */,
+				6F995A231A7078B100A735F4 /* WebGLTransformFeedback.cpp in Sources */,
+				0C3F1F5A10C8871200D72CE1 /* WebGLUniformLocation.cpp in Sources */,
+				6F995A251A7078B100A735F4 /* WebGLVertexArrayObject.cpp in Sources */,
+				6F222B761AB52D8A0094651A /* WebGLVertexArrayObjectBase.cpp in Sources */,
+				77A17A7712F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp in Sources */,
 				F48223101E3869B80066FC79 /* WebItemProviderPasteboard.mm in Sources */,
 				1A1414B513A0F0500019996C /* WebKitFontFamilyNames.cpp in Sources */,
 				2D0621441DA639B600A7FB26 /* WebKitMediaKeyMessageEvent.cpp in Sources */,
