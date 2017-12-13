@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "InferredStructureWatchpoint.h"
+#pragma once
 
 #include "InferredType.h"
 
 namespace JSC {
 
-void InferredStructureWatchpoint::fireInternal(const FireDetail&)
+inline void InferredType::finalizeUnconditionally(VM& vm)
 {
-    InferredStructure* inferredStructure =
-        bitwise_cast<InferredStructure*>(
-            bitwise_cast<char*>(this) - OBJECT_OFFSETOF(InferredStructure, watchpoint));
-
-    InferredType* inferredType = inferredStructure->parent;
+    ASSERT(Heap::isMarked(this));
     
-    if (!inferredType->isLive())
-        return;
+    if (m_structure) {
+        if (Heap::isMarked(m_structure->structure.get()))
+            return;
+        
+        removeStructure();
+    }
     
-    inferredType->removeStructure();
+    vm.inferredTypesWithFinalizers.remove(this);
 }
 
 } // namespace JSC

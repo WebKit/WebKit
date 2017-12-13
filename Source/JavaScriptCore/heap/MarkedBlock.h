@@ -162,6 +162,8 @@ public:
         size_t markCount();
         size_t size();
         
+        bool isAllocated();
+        
         bool isLive(HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, bool isMarking, const HeapCell*);
         inline bool isLiveCell(HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, bool isMarking, const void*);
 
@@ -173,6 +175,7 @@ public:
         bool isNewlyAllocated(const void*);
         void setNewlyAllocated(const void*);
         void clearNewlyAllocated(const void*);
+        const Bitmap<atomsPerBlock>& newlyAllocated() const;
         
         HeapVersion newlyAllocatedVersion() const { return m_newlyAllocatedVersion; }
         
@@ -227,7 +230,7 @@ public:
         size_t m_atomsPerCell { std::numeric_limits<size_t>::max() };
         size_t m_endAtom { std::numeric_limits<size_t>::max() }; // This is a fuzzy end. Always test for < m_endAtom.
             
-        WTF::Bitmap<atomsPerBlock> m_newlyAllocated;
+        Bitmap<atomsPerBlock> m_newlyAllocated;
             
         AllocatorAttributes m_attributes;
         bool m_isFreeListed { false };
@@ -294,6 +297,8 @@ public:
     bool isMarkedRaw(const void* p);
     HeapVersion markingVersion() const { return m_markingVersion; }
     
+    const Bitmap<atomsPerBlock>& marks() const;
+    
     CountingLock& lock() { return m_lock; }
 
 private:
@@ -346,7 +351,7 @@ private:
 
     HeapVersion m_markingVersion;
 
-    WTF::Bitmap<atomsPerBlock> m_marks;
+    Bitmap<atomsPerBlock> m_marks;
 };
 
 inline MarkedBlock::Handle& MarkedBlock::handle()
@@ -532,6 +537,11 @@ inline bool MarkedBlock::testAndSetMarked(const void* p, Dependency dependency)
     return m_marks.concurrentTestAndSet(atomNumber(p), dependency);
 }
 
+inline const Bitmap<MarkedBlock::atomsPerBlock>& MarkedBlock::marks() const
+{
+    return m_marks;
+}
+
 inline bool MarkedBlock::Handle::isNewlyAllocated(const void* p)
 {
     return m_newlyAllocated.get(m_block->atomNumber(p));
@@ -545,6 +555,11 @@ inline void MarkedBlock::Handle::setNewlyAllocated(const void* p)
 inline void MarkedBlock::Handle::clearNewlyAllocated(const void* p)
 {
     m_newlyAllocated.clear(m_block->atomNumber(p));
+}
+
+inline const Bitmap<MarkedBlock::atomsPerBlock>& MarkedBlock::Handle::newlyAllocated() const
+{
+    return m_newlyAllocated;
 }
 
 inline bool MarkedBlock::isAtom(const void* p)

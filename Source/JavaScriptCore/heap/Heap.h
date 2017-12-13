@@ -496,8 +496,8 @@ private:
     void notifyIncrementalSweeper();
     void harvestWeakReferences();
 
-    template<typename CellType>
-    void finalizeUnconditionalFinalizers(Subspace&);
+    template<typename CellType, typename CellSet>
+    void finalizeUnconditionalFinalizers(CellSet&);
     
     void finalizeUnconditionalFinalizers();
     

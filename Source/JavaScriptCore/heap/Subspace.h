@@ -93,6 +93,10 @@ public:
     
     Subspace* nextSubspaceInAlignedMemoryAllocator() const { return m_nextSubspaceInAlignedMemoryAllocator; }
     void setNextSubspaceInAlignedMemoryAllocator(Subspace* subspace) { m_nextSubspaceInAlignedMemoryAllocator = subspace; }
+    
+    virtual void didResizeBits(size_t newSize);
+    virtual void didRemoveBlock(size_t blockIndex);
+    virtual void didBeginSweepingToFreeList(MarkedBlock::Handle*);
 
 protected:
     void initialize(HeapCellType*, AlignedMemoryAllocator*);

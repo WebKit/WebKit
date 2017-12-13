@@ -27,6 +27,7 @@
 
 #include "ConcurrentJSLock.h"
 #include "InferredStructure.h"
+#include "IsoCellSet.h"
 #include "JSCell.h"
 #include "PropertyName.h"
 #include "PutByIdFlags.h"
@@ -185,7 +186,7 @@ public:
 
     Descriptor descriptorMainThread() const
     {
-        return Descriptor(m_kind, m_structure ? m_structure->structure() : nullptr);
+        return Descriptor(m_kind, m_structure ? m_structure->structure.get() : nullptr);
     }
     
     Descriptor descriptor(const ConcurrentJSLocker&) const
@@ -230,7 +231,7 @@ public:
 
     void dump(PrintStream&) const;
     
-    void finalizeUnconditionally();
+    void finalizeUnconditionally(VM&);
 
 private:
     InferredType(VM&);
@@ -241,7 +242,7 @@ private:
 
     // Helper for willStoreValueSlow() and makeTopSlow(). This returns true if we should fire the
     // watchpoint set.
-    bool set(GCDeferralContext&, const ConcurrentJSLocker&, VM&, Descriptor);
+    bool set(const ConcurrentJSLocker&, VM&, Descriptor);
     
     void removeStructure();
     
@@ -252,7 +253,9 @@ private:
     
     Kind m_kind { Bottom };
 
-    WriteBarrier<InferredStructure> m_structure;
+    // FIXME: This should be Poisoned.
+    // https://bugs.webkit.org/show_bug.cgi?id=180715
+    std::unique_ptr<InferredStructure> m_structure;
 
     // NOTE: If this is being watched, we transform to Top because that implies that it wouldn't be
     // profitable to watch it again. Also, this set is initialized clear, and is never exposed to the DFG

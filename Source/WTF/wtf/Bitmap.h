@@ -58,6 +58,8 @@ public:
     void merge(const Bitmap&);
     void filter(const Bitmap&);
     void exclude(const Bitmap&);
+
+    void concurrentFilter(const Bitmap&);
     
     bool subsumes(const Bitmap&) const;
     
@@ -298,6 +300,26 @@ inline void Bitmap<bitmapSize, WordType>::exclude(const Bitmap& other)
 {
     for (size_t i = 0; i < words; ++i)
         bits[i] &= ~other.bits[i];
+}
+
+template<size_t bitmapSize, typename WordType>
+inline void Bitmap<bitmapSize, WordType>::concurrentFilter(const Bitmap& other)
+{
+    for (size_t i = 0; i < words; ++i) {
+        for (;;) {
+            WordType otherBits = other.bits[i];
+            if (!otherBits) {
+                bits[i] = 0;
+                break;
+            }
+            WordType oldBits = bits[i];
+            WordType filteredBits = oldBits & otherBits;
+            if (oldBits == filteredBits)
+                break;
+            if (atomicCompareExchangeWeakRelaxed(&bits[i], oldBits, filteredBits))
+                break;
+        }
+    }
 }
 
 template<size_t bitmapSize, typename WordType>

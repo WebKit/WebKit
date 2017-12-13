@@ -38,6 +38,7 @@ namespace JSC {
 
 class GCDeferralContext;
 class Heap;
+class IsoCellSet;
 class MarkedSpace;
 class LLIntOffsetsExtractor;
 
@@ -162,6 +163,7 @@ public:
     void dumpBits(PrintStream& = WTF::dataFile());
     
 private:
+    friend class IsoCellSet;
     friend class MarkedBlock;
     
     JS_EXPORT_PRIVATE void* allocateSlowCase(GCDeferralContext*, AllocationFailureMode failureMode);

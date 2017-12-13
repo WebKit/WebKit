@@ -126,5 +126,17 @@ RefPtr<SharedTask<MarkedBlock::Handle*()>> Subspace::parallelNotEmptyMarkedBlock
         });
 }
 
+void Subspace::didResizeBits(size_t)
+{
+}
+
+void Subspace::didRemoveBlock(size_t)
+{
+}
+
+void Subspace::didBeginSweepingToFreeList(MarkedBlock::Handle*)
+{
+}
+
 } // namespace JSC
 

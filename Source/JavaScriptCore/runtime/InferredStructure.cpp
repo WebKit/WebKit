@@ -27,64 +27,17 @@
 #include "InferredStructure.h"
 
 #include "JSCInlines.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace JSC {
 
-const ClassInfo InferredStructure::s_info = { "InferredStructure", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(InferredStructure) };
-
-InferredStructure* InferredStructure::create(VM& vm, GCDeferralContext& deferralContext, InferredType* parent, Structure* structure)
-{
-    InferredStructure* result = new (NotNull, allocateCell<InferredStructure>(vm.heap, &deferralContext)) InferredStructure(vm, parent, structure);
-    result->finishCreation(vm, structure);
-    return result;
-}
-
-void InferredStructure::destroy(JSCell* cell)
-{
-    InferredStructure* inferredStructure = static_cast<InferredStructure*>(cell);
-    inferredStructure->InferredStructure::~InferredStructure();
-}
-
-Structure* InferredStructure::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-{
-    return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
-}
-
-void InferredStructure::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    InferredStructure* inferredStructure = jsCast<InferredStructure*>(cell);
-    
-    visitor.append(inferredStructure->m_parent);
-}
-
-void InferredStructure::finalizeUnconditionally(VM&)
-{
-    ASSERT(Heap::isMarked(m_parent.get()));
-    
-    // Monotonicity ensures that we shouldn't see a new structure that is different from us, but we
-    // could have been nulled. We only rely on it being the null case only in debug.
-    if (this == m_parent->m_structure.get()) {
-        if (!Heap::isMarked(m_structure.get()))
-            m_parent->removeStructure();
-    } else
-        ASSERT(!m_parent->m_structure);
-    
-    // We'll get deleted on the next GC. That's a little weird, but not harmful, since it only happens
-    // when the InferredType that we were paired to would have survived. It just means a tiny missed
-    // opportunity for heap size reduction.
-}
+WTF_MAKE_ISO_ALLOCATED_IMPL(InferredStructure);
 
 InferredStructure::InferredStructure(VM& vm, InferredType* parent, Structure* structure)
-    : Base(vm, vm.inferredStructureStructure.get())
-    , m_parent(vm, this, parent)
-    , m_structure(vm, this, structure)
+    : parent(parent)
+    , structure(vm, parent, structure)
 {
-}
-
-void InferredStructure::finishCreation(VM& vm, Structure* structure)
-{
-    Base::finishCreation(vm);
-    structure->addTransitionWatchpoint(&m_watchpoint);
+    structure->addTransitionWatchpoint(&watchpoint);
 }
 
 } // namespace JSC

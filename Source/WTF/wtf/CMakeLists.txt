@@ -18,7 +18,9 @@ set(WTF_HEADERS
     ClockType.h
     CompilationThread.h
     Compiler.h
+    ConcurrentBuffer.h
     ConcurrentPtrHashSet.h
+    ConcurrentVector.h
     Condition.h
     CountingLock.h
     CrossThreadCopier.h

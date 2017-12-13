@@ -26,51 +26,23 @@
 #pragma once
 
 #include "InferredStructureWatchpoint.h"
-#include "JSCell.h"
-#include "VM.h"
+#include "WriteBarrier.h"
+#include <wtf/IsoMalloc.h>
 
 namespace JSC {
 
 class InferredType;
+class Structure;
 
-class InferredStructure final : public JSCell {
+class InferredStructure final {
+    WTF_MAKE_ISO_ALLOCATED(InferredStructure);
 public:
-    typedef JSCell Base;
-    
-    template<typename CellType>
-    static IsoSubspace* subspaceFor(VM& vm)
-    {
-        return &vm.inferredStructureSpace;
-    }
-    
-    static InferredStructure* create(VM&, GCDeferralContext&, InferredType* parent, Structure*);
-    
-    static const bool needsDestruction = true;
-    static void destroy(JSCell*);
-    
-    static const unsigned StructureFlags = StructureIsImmortal | Base::StructureFlags;
-
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
-    
-    static void visitChildren(JSCell*, SlotVisitor&);
-
-    DECLARE_INFO;
-    
-    InferredType* parent() const { return m_parent.get(); }
-    Structure* structure() const { return m_structure.get(); }
-    
-    void finalizeUnconditionally(VM&);
-
-private:
     InferredStructure(VM&, InferredType* parent, Structure*);
+
+    InferredType* parent;
+    WriteBarrier<Structure> structure;
     
-    void finishCreation(VM&, Structure*);
-    
-    WriteBarrier<InferredType> m_parent;
-    WriteBarrier<Structure> m_structure;
-    
-    friend class InferredStructureWatchpoint;
-    InferredStructureWatchpoint m_watchpoint;
+    InferredStructureWatchpoint watchpoint;
 };
 
 } // namespace JSC

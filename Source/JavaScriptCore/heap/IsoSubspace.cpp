@@ -67,5 +67,29 @@ void* IsoSubspace::allocateNonVirtual(size_t size, GCDeferralContext* deferralCo
     return result;
 }
 
+void IsoSubspace::didResizeBits(size_t blockIndex)
+{
+    m_cellSets.forEach(
+        [&] (IsoCellSet* set) {
+            set->didResizeBits(blockIndex);
+        });
+}
+
+void IsoSubspace::didRemoveBlock(size_t blockIndex)
+{
+    m_cellSets.forEach(
+        [&] (IsoCellSet* set) {
+            set->didRemoveBlock(blockIndex);
+        });
+}
+
+void IsoSubspace::didBeginSweepingToFreeList(MarkedBlock::Handle* block)
+{
+    m_cellSets.forEach(
+        [&] (IsoCellSet* set) {
+            set->sweepToFreeList(block);
+        });
+}
+
 } // namespace JSC
 

@@ -40,6 +40,7 @@
 #include "FunctionHasExecutedCache.h"
 #include "Heap.h"
 #include "Intrinsic.h"
+#include "IsoCellSet.h"
 #include "IsoSubspace.h"
 #include "JITThunks.h"
 #include "JSCJSValue.h"
@@ -340,11 +341,12 @@ public:
     IsoSubspace directEvalExecutableSpace;
     IsoSubspace functionExecutableSpace;
     IsoSubspace indirectEvalExecutableSpace;
-    IsoSubspace inferredStructureSpace;
     IsoSubspace inferredTypeSpace;
     IsoSubspace moduleProgramExecutableSpace;
     IsoSubspace nativeExecutableSpace;
     IsoSubspace programExecutableSpace;
+    
+    IsoCellSet inferredTypesWithFinalizers;
 
     VMType vmType;
     ClientData* clientData;
@@ -392,7 +394,6 @@ public:
     Strong<Structure> unlinkedFunctionCodeBlockStructure;
     Strong<Structure> unlinkedModuleProgramCodeBlockStructure;
     Strong<Structure> propertyTableStructure;
-    Strong<Structure> inferredStructureStructure;
     Strong<Structure> inferredTypeStructure;
     Strong<Structure> inferredTypeTableStructure;
     Strong<Structure> inferredValueStructure;

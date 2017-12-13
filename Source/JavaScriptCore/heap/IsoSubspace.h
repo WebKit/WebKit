@@ -27,10 +27,12 @@
 
 #include "MarkedAllocator.h"
 #include "Subspace.h"
+#include <wtf/SinglyLinkedListWithTail.h>
 
 namespace JSC {
 
 class IsoAlignedMemoryAllocator;
+class IsoCellSet;
 
 class IsoSubspace : public Subspace {
 public:
@@ -46,9 +48,16 @@ public:
     JS_EXPORT_PRIVATE void* allocateNonVirtual(size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode);
 
 private:
+    friend class IsoCellSet;
+    
+    void didResizeBits(size_t newSize) override;
+    void didRemoveBlock(size_t blockIndex) override;
+    void didBeginSweepingToFreeList(MarkedBlock::Handle*) override;
+    
     size_t m_size;
     MarkedAllocator m_allocator;
     std::unique_ptr<IsoAlignedMemoryAllocator> m_isoAlignedMemoryAllocator;
+    SentinelLinkedList<IsoCellSet, BasicRawSentinelNode<IsoCellSet>> m_cellSets;
 };
 
 inline MarkedAllocator* IsoSubspace::allocatorForNonVirtual(size_t size, AllocatorForMode)

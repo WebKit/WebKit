@@ -261,6 +261,7 @@ void MarkedAllocator::addBlock(MarkedBlock::Handle* block)
             ASSERT(m_blocks.capacity() > oldCapacity);
             
             LockHolder locker(m_bitvectorLock);
+            subspace()->didResizeBits(m_blocks.capacity());
             forEachBitVector(
                 locker,
                 [&] (FastBitVector& vector) {
@@ -290,7 +291,9 @@ void MarkedAllocator::removeBlock(MarkedBlock::Handle* block)
 {
     ASSERT(block->allocator() == this);
     ASSERT(m_blocks[block->index()] == block);
-
+    
+    subspace()->didRemoveBlock(block->index());
+    
     m_blocks[block->index()] = nullptr;
     m_freeBlockIndices.append(block->index());
     

@@ -23,26 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "InferredStructureWatchpoint.h"
+#pragma once
 
-#include "InferredType.h"
+#include "MarkedBlock.h"
 
 namespace JSC {
 
-void InferredStructureWatchpoint::fireInternal(const FireDetail&)
-{
-    InferredStructure* inferredStructure =
-        bitwise_cast<InferredStructure*>(
-            bitwise_cast<char*>(this) - OBJECT_OFFSETOF(InferredStructure, watchpoint));
-
-    InferredType* inferredType = inferredStructure->parent;
+struct AtomIndices {
+    AtomIndices() { }
     
-    if (!inferredType->isLive())
-        return;
+    AtomIndices(HeapCell* cell)
+        : block(MarkedBlock::blockFor(cell))
+        , blockIndex(block->handle().index())
+        , atomNumber(block->atomNumber(cell))
+    {
+    }
     
-    inferredType->removeStructure();
-}
+    MarkedBlock* block;
+    size_t blockIndex;
+    size_t atomNumber;
+};
 
 } // namespace JSC
 

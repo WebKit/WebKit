@@ -27,6 +27,7 @@
 
 #include "FreeListInlines.h"
 #include "MarkedAllocator.h"
+#include "VM.h"
 
 namespace JSC {
 

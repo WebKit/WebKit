@@ -71,7 +71,7 @@ void Subspace::forEachMarkedCell(const Func& func)
     forEachNotEmptyMarkedBlock(
         [&] (MarkedBlock::Handle* handle) {
             handle->forEachMarkedCell(
-                [&] (HeapCell* cell, HeapCell::Kind kind) -> IterationStatus { 
+                [&] (size_t, HeapCell* cell, HeapCell::Kind kind) -> IterationStatus {
                     func(cell, kind);
                     return IterationStatus::Continue;
                 });
@@ -99,7 +99,7 @@ RefPtr<SharedTask<void(SlotVisitor&)>> Subspace::forEachMarkedCellInParallel(con
         {
             while (MarkedBlock::Handle* handle = m_blockSource->run()) {
                 handle->forEachMarkedCell(
-                    [&] (HeapCell* cell, HeapCell::Kind kind) -> IterationStatus {
+                    [&] (size_t, HeapCell* cell, HeapCell::Kind kind) -> IterationStatus {
                         m_func(visitor, cell, kind);
                         return IterationStatus::Continue;
                     });

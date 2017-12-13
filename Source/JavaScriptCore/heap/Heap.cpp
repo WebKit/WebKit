@@ -40,8 +40,9 @@
 #include "HeapSnapshot.h"
 #include "HeapVerifier.h"
 #include "IncrementalSweeper.h"
-#include "InferredStructure.h"
+#include "InferredTypeInlines.h"
 #include "Interpreter.h"
+#include "IsoCellSetInlines.h"
 #include "JITStubRoutineSet.h"
 #include "JITWorklist.h"
 #include "JSCInlines.h"
@@ -552,10 +553,10 @@ void Heap::addReference(JSCell* cell, ArrayBuffer* buffer)
     }
 }
 
-template<typename CellType>
-void Heap::finalizeUnconditionalFinalizers(Subspace& subspace)
+template<typename CellType, typename CellSet>
+void Heap::finalizeUnconditionalFinalizers(CellSet& cellSet)
 {
-    subspace.forEachMarkedCell(
+    cellSet.forEachMarkedCell(
         [&] (HeapCell* cell, HeapCell::Kind) {
             static_cast<CellType*>(cell)->finalizeUnconditionally(*vm());
         });
@@ -563,7 +564,7 @@ void Heap::finalizeUnconditionalFinalizers(Subspace& subspace)
 
 void Heap::finalizeUnconditionalFinalizers()
 {
-    finalizeUnconditionalFinalizers<InferredStructure>(vm()->inferredStructureSpace);
+    finalizeUnconditionalFinalizers<InferredType>(vm()->inferredTypesWithFinalizers);
     
     while (m_unconditionalFinalizers.hasNext()) {
         UnconditionalFinalizer* finalizer = m_unconditionalFinalizers.removeNext();

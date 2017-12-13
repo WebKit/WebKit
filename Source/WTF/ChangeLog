@@ -1,3 +1,67 @@
+2017-12-11  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be possible to flag a cell for unconditional finalization
+        https://bugs.webkit.org/show_bug.cgi?id=180636
+
+        Reviewed by Saam Barati.
+        
+        This adds ConcurrentVector, which is like SegmentedVector, but wastes some space to allow
+        resizing to proceed concurrently to access. It's not possible to resize concurrently to
+        resizing, concurrent read/writes aren't protected from racing if they access the same element,
+        and who knows what you'll get if you iterate up to size() while someone else append()s. The
+        key insight is to stash all prior copies of the spine, so that nobody crashes trying to access
+        a stale spine.
+        
+        I'm going to want to do the same thing for FastBitVector, by creating a segmented WordOwner
+        class. That would require repeating the dance of having a spine that can resize while stashing
+        old versions. So, the spine resizing logic is abstracted behind ConcurrentBuffer. You could
+        use that as a kind of "concurrent vector" for immutable data. That's how ConcurrentVector uses
+        it: it's an immutable array of segment pointers.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/ConcurrentBuffer.h: Added.
+        (WTF::ConcurrentBuffer::ConcurrentBuffer):
+        (WTF::ConcurrentBuffer::~ConcurrentBuffer):
+        (WTF::ConcurrentBuffer::growExact):
+        (WTF::ConcurrentBuffer::grow):
+        (WTF::ConcurrentBuffer::array const):
+        (WTF::ConcurrentBuffer::operator[]):
+        (WTF::ConcurrentBuffer::operator[] const):
+        (WTF::ConcurrentBuffer::createArray):
+        * wtf/ConcurrentVector.h: Added.
+        (WTF::ConcurrentVectorIterator::~ConcurrentVectorIterator):
+        (WTF::ConcurrentVectorIterator::operator* const):
+        (WTF::ConcurrentVectorIterator::operator-> const):
+        (WTF::ConcurrentVectorIterator::operator++):
+        (WTF::ConcurrentVectorIterator::operator== const):
+        (WTF::ConcurrentVectorIterator::operator!= const):
+        (WTF::ConcurrentVectorIterator::operator=):
+        (WTF::ConcurrentVectorIterator::ConcurrentVectorIterator):
+        (WTF::ConcurrentVector::~ConcurrentVector):
+        (WTF::ConcurrentVector::size const):
+        (WTF::ConcurrentVector::isEmpty const):
+        (WTF::ConcurrentVector::at):
+        (WTF::ConcurrentVector::at const):
+        (WTF::ConcurrentVector::operator[]):
+        (WTF::ConcurrentVector::operator[] const):
+        (WTF::ConcurrentVector::first):
+        (WTF::ConcurrentVector::first const):
+        (WTF::ConcurrentVector::last):
+        (WTF::ConcurrentVector::last const):
+        (WTF::ConcurrentVector::takeLast):
+        (WTF::ConcurrentVector::append):
+        (WTF::ConcurrentVector::alloc):
+        (WTF::ConcurrentVector::removeLast):
+        (WTF::ConcurrentVector::grow):
+        (WTF::ConcurrentVector::begin):
+        (WTF::ConcurrentVector::end):
+        (WTF::ConcurrentVector::segmentExistsFor):
+        (WTF::ConcurrentVector::segmentFor):
+        (WTF::ConcurrentVector::subscriptFor):
+        (WTF::ConcurrentVector::ensureSegmentsFor):
+        (WTF::ConcurrentVector::ensureSegment):
+        (WTF::ConcurrentVector::allocateSegment):
+
 2017-12-12  JF Bastien  <jfbastien@apple.com>
 
         makeString: support more integral types

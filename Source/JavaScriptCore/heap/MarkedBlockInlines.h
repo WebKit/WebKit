@@ -91,6 +91,11 @@ inline bool MarkedBlock::marksConveyLivenessDuringMarking(HeapVersion myMarkingV
         || MarkedSpace::nextVersion(myMarkingVersion) == markingVersion;
 }
 
+inline bool MarkedBlock::Handle::isAllocated()
+{
+    return m_allocator->isAllocated(NoLockingNecessary, this);
+}
+
 ALWAYS_INLINE bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, bool isMarking, const HeapCell* cell)
 {
     if (allocator()->isAllocated(NoLockingNecessary, this))
@@ -434,6 +439,11 @@ inline MarkedBlock::Handle::SweepDestructionMode MarkedBlock::Handle::sweepDestr
     return BlockHasNoDestructors;
 }
 
+inline bool MarkedBlock::Handle::isEmpty()
+{
+    return m_allocator->isEmpty(NoLockingNecessary, this);
+}
+
 inline MarkedBlock::Handle::EmptyMode MarkedBlock::Handle::emptyMode()
 {
     // It's not obvious, but this is the only way to know if the block is empty. It's the only
@@ -441,7 +451,7 @@ inline MarkedBlock::Handle::EmptyMode MarkedBlock::Handle::emptyMode()
     // - It's true when the block is freshly allocated.
     // - It's true if the block had been swept in the past, all destructors were called, and that
     //   sweep proved that the block is empty.
-    return m_allocator->isEmpty(NoLockingNecessary, this) ? IsEmpty : NotEmpty;
+    return isEmpty() ? IsEmpty : NotEmpty;
 }
 
 inline MarkedBlock::Handle::ScribbleMode MarkedBlock::Handle::scribbleMode()
@@ -512,11 +522,12 @@ inline IterationStatus MarkedBlock::Handle::forEachMarkedCell(const Functor& fun
     if (areMarksStale)
         return IterationStatus::Continue;
     for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
-        HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&m_block->atoms()[i]);
-        if (!block.isMarkedRaw(cell))
+        if (!block.m_marks.get(i))
             continue;
 
-        if (functor(cell, kind) == IterationStatus::Done)
+        HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&m_block->atoms()[i]);
+
+        if (functor(i, cell, kind) == IterationStatus::Done)
             return IterationStatus::Done;
     }
     return IterationStatus::Continue;

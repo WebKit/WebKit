@@ -26,7 +26,7 @@
 #include "config.h"
 #include "InferredType.h"
 
-#include "GCDeferralContextInlines.h"
+#include "IsoCellSetInlines.h"
 #include "JSCInlines.h"
 
 namespace JSC {
@@ -86,7 +86,8 @@ Structure* InferredType::createStructure(VM& vm, JSGlobalObject* globalObject, J
 void InferredType::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     InferredType* inferredType = jsCast<InferredType*>(cell);
-    visitor.append(inferredType->m_structure);
+    if (inferredType->m_structure)
+        visitor.vm().inferredTypesWithFinalizers.add(inferredType);
 }
 
 InferredType::Kind InferredType::kindForFlags(PutByIdFlags flags)
@@ -399,7 +400,6 @@ bool InferredType::willStoreValueSlow(VM& vm, PropertyName propertyName, JSValue
     Descriptor myType;
     bool result;
     {
-        GCDeferralContext deferralContext(vm.heap);
         ConcurrentJSLocker locker(m_lock);
         oldType = descriptor(locker);
         myType = Descriptor::forValue(value);
@@ -408,7 +408,7 @@ bool InferredType::willStoreValueSlow(VM& vm, PropertyName propertyName, JSValue
         
         ASSERT(oldType != myType); // The type must have changed if we're on the slow path.
 
-        bool setResult = set(deferralContext, locker, vm, myType);
+        bool setResult = set(locker, vm, myType);
         result = kind(locker) != Top;
         if (!setResult)
             return result;
@@ -423,10 +423,9 @@ void InferredType::makeTopSlow(VM& vm, PropertyName propertyName)
 {
     Descriptor oldType;
     {
-        GCDeferralContext deferralContext(vm.heap);
         ConcurrentJSLocker locker(m_lock);
         oldType = descriptor(locker);
-        if (!set(deferralContext, locker, vm, Top))
+        if (!set(locker, vm, Top))
             return;
     }
 
@@ -434,14 +433,8 @@ void InferredType::makeTopSlow(VM& vm, PropertyName propertyName)
     m_watchpointSet.fireAll(vm, detail);
 }
 
-bool InferredType::set(GCDeferralContext& deferralContext, const ConcurrentJSLocker& locker, VM& vm, Descriptor newDescriptor)
+bool InferredType::set(const ConcurrentJSLocker& locker, VM& vm, Descriptor newDescriptor)
 {
-    // We will trigger write barriers while holding our lock. Currently, write barriers don't GC, but that
-    // could change. If it does, we don't want to deadlock. Note that we could have used
-    // GCSafeConcurrentJSLocker in the caller, but the caller is on a fast path so maybe that wouldn't be
-    // a good idea.
-    DeferGCForAWhile deferGC(vm.heap);
-    
     // Be defensive: if we're not really changing the type, then we don't have to do anything.
     if (descriptor(locker) == newDescriptor)
         return false;
@@ -469,19 +462,13 @@ bool InferredType::set(GCDeferralContext& deferralContext, const ConcurrentJSLoc
         shouldFireWatchpointSet = true;
     }
 
-    // Remove the old InferredStructure object if we no longer need it.
     if (!newDescriptor.structure())
-        m_structure.clear();
-
-    // Add a new InferredStructure object if we need one now.
-    if (newDescriptor.structure()) {
-        if (m_structure) {
-            // We should agree on the structures if we get here.
-            ASSERT(newDescriptor.structure() == m_structure->structure());
-        } else {
-            auto* structure = InferredStructure::create(vm, deferralContext, this, newDescriptor.structure());
-            m_structure.set(vm, this, structure);
-        }
+        m_structure = nullptr;
+    else {
+        if (m_structure)
+            ASSERT(newDescriptor.structure() == m_structure->structure.get());
+        else
+            m_structure = std::make_unique<InferredStructure>(vm, this, newDescriptor.structure());
     }
 
     // Finally, set the descriptor kind.
@@ -503,13 +490,12 @@ void InferredType::removeStructure()
     Descriptor oldDescriptor;
     Descriptor newDescriptor;
     {
-        GCDeferralContext deferralContext(vm.heap);
         ConcurrentJSLocker locker(m_lock);
         oldDescriptor = descriptor(locker);
         newDescriptor = oldDescriptor;
         newDescriptor.removeStructure();
         
-        if (!set(deferralContext, locker, vm, newDescriptor))
+        if (!set(locker, vm, newDescriptor))
             return;
     }
 

@@ -1,3 +1,134 @@
+2017-12-11  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be possible to flag a cell for unconditional finalization
+        https://bugs.webkit.org/show_bug.cgi?id=180636
+
+        Reviewed by Saam Barati.
+        
+        UnconditionalFinalizers were annoying - you had to allocate them and you had to manage a
+        global linked list - but they had some nice properties:
+        
+        - You only did the hardest work (creating the UnconditionalFinalizer) on first GC where you
+          survived and needed it.
+            -> Just needing it wasn't enough.
+            -> Just surviving wasn't enough.
+        
+        The new API based on IsoSubspaces meant that just surviving was enough to cause unconditional
+        finalizer logic to be invoked. I think that's not great. InferredType got around this by
+        making InferredStructure a cell, but this was a gross hack. For one, it meant that
+        InferredStructure would survive during the GC in which its finalizer obviated the need for its
+        existence. It's not really an idiom I want us to repeat because it sounds like the sort of
+        thing that turns out to be subtly broken.
+        
+        We really need to have a way of indicating when you have entered into the state that requires
+        your unconditional finalizer to be invoked. Basically, we want to be able to track the set of
+        objects that need unconditional finalizers. Only the subset of that set that overlaps with the
+        set of marked objects needs to be accurate. The easiest way to do this is a hierarchy of
+        bitvectors: one to say which MarkedBlocks have objects that have unconditional finalizers, and
+        another level to say which atoms within a MarkedBlock have unconditional finalizers.
+        
+        This change introduces IsoCellSet, which couples itself to the MarkedAllocator of some
+        IsoSubspace to allow maintaining a set of objects (well, cells - you could do this with
+        auxiliaries) that belong to that IsoSubspace. It'll have undefined behavior if you try to
+        add/remove/contains an object that isn't in that IsoSubspace. For objects in that subspace,
+        you can add/remove/contains and forEachMarkedCell. The cost of each IsoCellSet is at worst
+        about 0.8% increase in size to every object in the subspace that the set is attached to. So,
+        it makes sense to have a handful per subspace max. This change only needs one per subspace,
+        but you could imagine more if we do this for WeakReferenceHarvester.
+        
+        To absolutely minimize the possibility that this incurs costs, the add/remove/contains
+        functions can be used from any thread so long as forEachMarkedCell isn't running. This means
+        that InferredType only needs to add itself to the set during visitChildren. Thus, it needs to
+        both survive and need it for the hardest work to take place. The work of adding does involve
+        a gnarly load chain that ends in a CAS: load block handle from block, load index, load
+        segment, load bitvector, load bit -> if not set, then CAS. That's five dependent loads!
+        However, it's perfect for running in parallel since the only write operations are to widely
+        dispersed cache lines that contain the bits underlying the set.
+        
+        The best part is how forEachMarkedCell works. That skips blocks that don't have any objects
+        that need unconditional finalizers, and only touches the memory of marked objects that have
+        the unconditional finalizer bit set. It will walk those objects in roughly address order. I
+        previously found that this speeds up walking over a lot of objects when I made similar changes
+        for DOM GC (calling visitAdditionalChildren via forEachMarkedCell rather than by walking a
+        HashSet).
+        
+        This change makes InferredStructure be a malloc object again, but now it's in an IsoHeap.
+        
+        My expectation for this change is that it's perf-neutral. Long-term, it gives us a path
+        forward for eliminating UnconditionalFinalizer and WeakReferenceHarvester while using
+        IsoSubspace in more places.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * heap/AtomIndices.h: Added.
+        (JSC::AtomIndices::AtomIndices):
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        * heap/Heap.h:
+        * heap/IsoCellSet.cpp: Added.
+        (JSC::IsoCellSet::IsoCellSet):
+        (JSC::IsoCellSet::~IsoCellSet):
+        (JSC::IsoCellSet::addSlow):
+        (JSC::IsoCellSet::didResizeBits):
+        (JSC::IsoCellSet::didRemoveBlock):
+        (JSC::IsoCellSet::sweepToFreeList):
+        * heap/IsoCellSet.h: Added.
+        * heap/IsoCellSetInlines.h: Added.
+        (JSC::IsoCellSet::add):
+        (JSC::IsoCellSet::remove):
+        (JSC::IsoCellSet::contains const):
+        (JSC::IsoCellSet::forEachMarkedCell):
+        * heap/IsoSubspace.cpp:
+        (JSC::IsoSubspace::didResizeBits):
+        (JSC::IsoSubspace::didRemoveBlock):
+        (JSC::IsoSubspace::didBeginSweepingToFreeList):
+        * heap/IsoSubspace.h:
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::addBlock):
+        (JSC::MarkedAllocator::removeBlock):
+        * heap/MarkedAllocator.h:
+        * heap/MarkedAllocatorInlines.h:
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::sweep):
+        (JSC::MarkedBlock::Handle::isEmpty): Deleted.
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::marks const):
+        (JSC::MarkedBlock::Handle::newlyAllocated const):
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::Handle::isAllocated):
+        (JSC::MarkedBlock::Handle::isEmpty):
+        (JSC::MarkedBlock::Handle::emptyMode):
+        (JSC::MarkedBlock::Handle::forEachMarkedCell):
+        * heap/Subspace.cpp:
+        (JSC::Subspace::didResizeBits):
+        (JSC::Subspace::didRemoveBlock):
+        (JSC::Subspace::didBeginSweepingToFreeList):
+        * heap/Subspace.h:
+        * heap/SubspaceInlines.h:
+        (JSC::Subspace::forEachMarkedCell):
+        * runtime/InferredStructure.cpp:
+        (JSC::InferredStructure::InferredStructure):
+        (JSC::InferredStructure::create): Deleted.
+        (JSC::InferredStructure::destroy): Deleted.
+        (JSC::InferredStructure::createStructure): Deleted.
+        (JSC::InferredStructure::visitChildren): Deleted.
+        (JSC::InferredStructure::finalizeUnconditionally): Deleted.
+        (JSC::InferredStructure::finishCreation): Deleted.
+        * runtime/InferredStructure.h:
+        * runtime/InferredStructureWatchpoint.cpp:
+        (JSC::InferredStructureWatchpoint::fireInternal):
+        * runtime/InferredType.cpp:
+        (JSC::InferredType::visitChildren):
+        (JSC::InferredType::willStoreValueSlow):
+        (JSC::InferredType::makeTopSlow):
+        (JSC::InferredType::set):
+        (JSC::InferredType::removeStructure):
+        (JSC::InferredType::finalizeUnconditionally):
+        * runtime/InferredType.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2017-12-12  Saam Barati  <sbarati@apple.com>
 
         ConstantFoldingPhase rule for GetMyArgumentByVal must check for negative indices

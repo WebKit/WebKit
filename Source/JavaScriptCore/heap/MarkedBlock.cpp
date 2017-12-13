@@ -301,11 +301,6 @@ size_t MarkedBlock::markCount()
     return areMarksStale() ? 0 : m_marks.count();
 }
 
-bool MarkedBlock::Handle::isEmpty()
-{
-    return m_allocator->isEmpty(NoLockingNecessary, this);
-}
-
 void MarkedBlock::clearHasAnyMarked()
 {
     m_biasedMarkCount = m_markCountBias;
@@ -403,10 +398,12 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
         return;
 
     RELEASE_ASSERT(!m_isFreeListed);
-    RELEASE_ASSERT(!m_allocator->isAllocated(NoLockingNecessary, this));
+    RELEASE_ASSERT(!isAllocated());
     
     if (space()->isMarking())
         block().m_lock.lock();
+    
+    subspace()->didBeginSweepingToFreeList(this);
     
     if (needsDestruction) {
         subspace()->finishSweep(*this, freeList);
