@@ -111,7 +111,7 @@ void StorageProcess::connectionToContextProcessWasClosed()
         swServer->markAllWorkersAsTerminated();
 
     if (shouldRelaunch)
-        createServerToContextConnection();
+        createServerToContextConnection(std::nullopt);
 }
 
 // The rule is that we need a context process (and a connection to it) as long as we have SWServerConnections to regular WebProcesses.
@@ -427,13 +427,16 @@ WebSWServerToContextConnection* StorageProcess::globalServerToContextConnection(
     return m_serverToContextConnection.get();
 }
 
-void StorageProcess::createServerToContextConnection()
+void StorageProcess::createServerToContextConnection(std::optional<PAL::SessionID> sessionID)
 {
     if (m_waitingForServerToContextProcessConnection)
         return;
     
     m_waitingForServerToContextProcessConnection = true;
-    parentProcessConnection()->send(Messages::StorageProcessProxy::EstablishWorkerContextConnectionToStorageProcess(), 0);
+    if (sessionID)
+        parentProcessConnection()->send(Messages::StorageProcessProxy::EstablishWorkerContextConnectionToStorageProcessForExplicitSession(*sessionID), 0);
+    else
+        parentProcessConnection()->send(Messages::StorageProcessProxy::EstablishWorkerContextConnectionToStorageProcess(), 0);
 }
 
 void StorageProcess::didFailFetch(SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier)

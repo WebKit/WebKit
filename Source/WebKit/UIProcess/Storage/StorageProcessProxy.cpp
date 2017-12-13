@@ -223,7 +223,12 @@ void StorageProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
 #if ENABLE(SERVICE_WORKER)
 void StorageProcessProxy::establishWorkerContextConnectionToStorageProcess()
 {
-    m_processPool.establishWorkerContextConnectionToStorageProcess(*this);
+    m_processPool.establishWorkerContextConnectionToStorageProcess(*this, std::nullopt);
+}
+
+void StorageProcessProxy::establishWorkerContextConnectionToStorageProcessForExplicitSession(PAL::SessionID sessionID)
+{
+    m_processPool.establishWorkerContextConnectionToStorageProcess(*this, sessionID);
 }
 #endif
 

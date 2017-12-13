@@ -1,3 +1,44 @@
+2017-12-13  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (r225789): API tests WKProcessPool.InitialWarmedProcessUsed and WebKit.WebsiteDataStoreCustomPaths are failing.
+        https://bugs.webkit.org/show_bug.cgi?id=180722
+
+        Reviewed by Chris Dumez.
+
+        - Add a test-only accessor to get the number of WebProcesses hosting WebPages
+        - Have WebsiteDataStore keep track of all instances so they can be looked up by SessionID
+        - When the StorageProcess needs to establish a SW context connection on behalf of a specific SessionID,
+          the UI process will now prefer using the WebsiteDataStore associated with that SessionID. This allows
+          us to continue deferring creation of the default data store if it's not needed.
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::connectionToContextProcessWasClosed):
+        (WebKit::StorageProcess::createServerToContextConnection):
+        * StorageProcess/StorageProcess.h:
+
+        * StorageProcess/StorageToWebProcessConnection.cpp:
+        (WebKit::StorageToWebProcessConnection::establishSWServerConnection):
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _webPageContentProcessCount]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+
+        * UIProcess/Storage/StorageProcessProxy.cpp:
+        (WebKit::StorageProcessProxy::establishWorkerContextConnectionToStorageProcess):
+        (WebKit::StorageProcessProxy::establishWorkerContextConnectionToStorageProcessForExplicitSession):
+        * UIProcess/Storage/StorageProcessProxy.h:
+        * UIProcess/Storage/StorageProcessProxy.messages.in:
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToStorageProcess):
+        * UIProcess/WebProcessPool.h:
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        (WebKit::WebsiteDataStore::~WebsiteDataStore):
+        (WebKit::WebsiteDataStore::existingDataStoreForSessionID):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2017-12-13  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION(225597): Can't select a text box or web view on a page when VO is on.

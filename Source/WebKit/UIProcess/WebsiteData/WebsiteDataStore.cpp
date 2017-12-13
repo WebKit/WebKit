@@ -55,6 +55,13 @@
 
 namespace WebKit {
 
+static HashMap<PAL::SessionID, WebsiteDataStore*>& allDataStores()
+{
+    RELEASE_ASSERT(isMainThread());
+    static NeverDestroyed<HashMap<PAL::SessionID, WebsiteDataStore*>> map;
+    return map;
+}
+
 Ref<WebsiteDataStore> WebsiteDataStore::createNonPersistent()
 {
     return adoptRef(*new WebsiteDataStore(PAL::SessionID::generateEphemeralSessionID()));
@@ -71,6 +78,9 @@ WebsiteDataStore::WebsiteDataStore(Configuration configuration, PAL::SessionID s
     , m_storageManager(StorageManager::create(m_configuration.localStorageDirectory))
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
 {
+    auto result = allDataStores().add(sessionID, this);
+    ASSERT_UNUSED(result, result.isNewEntry);
+
     platformInitialize();
 }
 
@@ -79,17 +89,28 @@ WebsiteDataStore::WebsiteDataStore(PAL::SessionID sessionID)
     , m_configuration()
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
 {
+    auto result = allDataStores().add(sessionID, this);
+    ASSERT_UNUSED(result, result.isNewEntry);
+
     platformInitialize();
 }
 
 WebsiteDataStore::~WebsiteDataStore()
 {
+    ASSERT(allDataStores().get(m_sessionID) == this);
+    allDataStores().remove(m_sessionID);
+
     platformDestroy();
 
     if (m_sessionID.isValid() && m_sessionID != PAL::SessionID::defaultSessionID()) {
         for (auto& processPool : WebProcessPool::allProcessPools())
             processPool->sendToNetworkingProcess(Messages::NetworkProcess::DestroySession(m_sessionID));
     }
+}
+
+WebsiteDataStore* WebsiteDataStore::existingDataStoreForSessionID(PAL::SessionID sessionID)
+{
+    return allDataStores().get(sessionID);
 }
 
 WebProcessPool* WebsiteDataStore::processPoolForCookieStorageOperations()

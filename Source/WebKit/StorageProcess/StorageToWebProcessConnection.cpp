@@ -171,7 +171,7 @@ void StorageToWebProcessConnection::establishSWServerConnection(SessionID sessio
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
     if (!StorageProcess::singleton().globalServerToContextConnection())
-        StorageProcess::singleton().createServerToContextConnection();
+        StorageProcess::singleton().createServerToContextConnection(sessionID);
 }
 
 void StorageToWebProcessConnection::removeSWServerConnection(WebCore::SWServer::Connection::Identifier serverConnectionIdentifier)
