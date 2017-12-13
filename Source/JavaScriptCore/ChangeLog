@@ -1,3 +1,18 @@
+2017-12-13  Saam Barati  <sbarati@apple.com>
+
+        TypeCheckHoistingPhase needs to emit a CheckStructureOrEmpty if it's doing it for |this|
+        https://bugs.webkit.org/show_bug.cgi?id=180734
+        <rdar://problem/35640547>
+
+        Reviewed by Yusuke Suzuki.
+
+        The |this| value may be TDZ. If type check hoisting phase
+        hoists a CheckStructure to it, it will crash. This patch
+        makes it so we emit CheckStructureOrEmpty for |this|.
+
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::run):
+
 2017-12-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Optimize Object.assign by single transition acceleration

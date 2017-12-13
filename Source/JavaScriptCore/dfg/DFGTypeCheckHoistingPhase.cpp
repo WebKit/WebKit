@@ -144,8 +144,17 @@ public:
                         indexInBlock + 1, variable->prediction(), GetLocal, origin,
                         OpInfo(variable), Edge(node));
                     if (iter->value.m_structure) {
+                        auto checkOp = CheckStructure;
+                        VirtualRegister local = node->variableAccessData()->local();
+                        auto* inlineCallFrame = node->origin.semantic.inlineCallFrame;
+                        if ((local - (inlineCallFrame ? inlineCallFrame->stackOffset : 0)) == virtualRegisterForArgument(0)) {
+                            // |this| can be the TDZ value. The call entrypoint won't have |this| as TDZ,
+                            // but a catch or a loop OSR entry may have |this| be TDZ.
+                            checkOp = CheckStructureOrEmpty;
+                        }
+
                         insertionSet.insertNode(
-                            indexInBlock + 1, SpecNone, CheckStructure, origin,
+                            indexInBlock + 1, SpecNone, checkOp, origin,
                             OpInfo(m_graph.addStructureSet(iter->value.m_structure)),
                             Edge(getLocal, CellUse));
                     } else if (iter->value.m_arrayModeIsValid) {

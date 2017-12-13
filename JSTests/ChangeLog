@@ -1,3 +1,21 @@
+2017-12-13  Saam Barati  <sbarati@apple.com>
+
+        TypeCheckHoistingPhase needs to emit a CheckStructureOrEmpty if it's doing it for |this|
+        https://bugs.webkit.org/show_bug.cgi?id=180734
+        <rdar://problem/35640547>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/type-check-hoisting-phase-hoist-check-structure-on-tdz-this-value.js: Added.
+        (__isPropertyOfType):
+        (__getProperties):
+        (__getObjects):
+        (__getRandomObject):
+        (theClass.):
+        (theClass):
+        (childClass):
+        (counter.catch):
+
 2017-12-12  Saam Barati  <sbarati@apple.com>
 
         We need to model effects of Spread(@PhantomCreateRest) in Clobberize/PreciseLocalClobberize
