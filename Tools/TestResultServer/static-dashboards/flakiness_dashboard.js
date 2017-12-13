@@ -75,12 +75,7 @@ var PLATFORMS = {
     'GTK': {
         expectationsDirectory: 'gtk',
         subPlatforms: {
-            'LINUX': {
-                subPlatforms: {
-                    'WK1': { fallbackPlatforms: ['GTK'] },
-                    'WK2': { fallbackPlatforms: ['GTK', 'WK2'], expectationsDirectory: 'gtk-wk2' }
-                }
-            }
+            'LINUX': { fallbackPlatforms: ['GTK', 'WK2'] }
         }
     },
     'WK2': {
@@ -90,7 +85,7 @@ var PLATFORMS = {
     'WPE': {
         expectationsDirectory: 'wpe',
         subPlatforms: {
-            'LINUX': { fallbackPlatforms: ['WPE'] }
+            'LINUX': { fallbackPlatforms: ['WPE', 'WK2'] }
         }
     }
 };
@@ -350,6 +345,11 @@ function determineBuilderPlatform(builderNameUpperCase)
     if (string.contains(builderNameUpperCase, 'WIN XP'))
         return 'APPLE_WIN_XP';
 
+    if (string.contains(builderNameUpperCase, 'GTK LINUX'))
+        return 'GTK_LINUX';
+    if (string.contains(builderNameUpperCase, 'WPE LINUX'))
+        return 'WPE_LINUX';
+
     if (string.contains(builderNameUpperCase, 'HIGHSIERRA'))
         return determineWKPlatform(builderNameUpperCase, 'APPLE_MAC_HIGHSIERRA');
     if (string.contains(builderNameUpperCase, 'SIERRA'))
@@ -362,10 +362,6 @@ function determineBuilderPlatform(builderNameUpperCase)
         return determineWKPlatform(builderNameUpperCase, 'APPLE_MAC_LION');
     if (string.contains(builderNameUpperCase, ' IOS ') && string.contains(builderNameUpperCase, 'SIMULATOR'))
         return determineWKPlatform(builderNameUpperCase, 'APPLE_IOS_SIMULATOR');
-    if (string.contains(builderNameUpperCase, 'GTK LINUX'))
-        return determineWKPlatform(builderNameUpperCase, 'GTK_LINUX');
-    if (string.contains(builderNameUpperCase, 'WPE LINUX'))
-        return determineWKPlatform(builderNameUpperCase, 'WPE_LINUX');
 }
 
 function platformAndBuildType(builderName)
