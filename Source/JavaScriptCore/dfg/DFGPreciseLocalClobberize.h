@@ -120,8 +120,8 @@ private:
                 m_read(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount));
         };
 
-        auto readPhantomSpreadNode = [&] (Node* spread) {
-            ASSERT(spread->op() == PhantomSpread);
+        auto readSpreadOfPhantomCreateRest = [&] (Node* spread) {
+            ASSERT(spread->op() == Spread || spread->op() == PhantomSpread);
             ASSERT(spread->child1()->op() == PhantomCreateRest);
             InlineCallFrame* inlineCallFrame = spread->child1()->origin.semantic.inlineCallFrame;
             unsigned numberOfArgumentsToSkip = spread->child1()->numberOfArgumentsToSkip();
@@ -135,7 +135,7 @@ private:
                 if (bitVector->get(i)) {
                     Node* child = m_graph.varArgChild(arrayWithSpread, i).node();
                     if (child->op() == PhantomSpread)
-                        readPhantomSpreadNode(child);
+                        readSpreadOfPhantomCreateRest(child);
                 }
             }
         };
@@ -181,7 +181,7 @@ private:
                 if (m_node->argumentsChild()->op() == PhantomNewArrayWithSpread)
                     readNewArrayWithSpreadNode(m_node->argumentsChild().node());
                 else
-                    readPhantomSpreadNode(m_node->argumentsChild().node());
+                    readSpreadOfPhantomCreateRest(m_node->argumentsChild().node());
             } else {
                 InlineCallFrame* inlineCallFrame;
                 if (m_node->hasArgumentsChild() && m_node->argumentsChild())
@@ -202,6 +202,11 @@ private:
 
             break;
         }
+        
+        case Spread:
+            if (m_node->child1()->op() == PhantomCreateRest)
+                readSpreadOfPhantomCreateRest(m_node);
+            break;
         
         case NewArrayWithSpread: {
             readNewArrayWithSpreadNode(m_node);
