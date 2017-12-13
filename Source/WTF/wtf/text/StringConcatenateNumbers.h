@@ -31,10 +31,10 @@
 
 namespace WTF {
 
-template<>
-class StringTypeAdapter<int> {
+template<typename SignedInt>
+class StringTypeAdapter<SignedInt, typename std::enable_if_t<std::is_integral<SignedInt>::value && std::is_signed<SignedInt>::value>> {
 public:
-    StringTypeAdapter<int>(int number)
+    StringTypeAdapter(SignedInt number)
         : m_number(number)
     {
     }
@@ -48,13 +48,13 @@ public:
     String toString() const { return String::number(m_number); }
 
 private:
-    int m_number;
+    SignedInt m_number;
 };
 
-template<>
-class StringTypeAdapter<unsigned> {
+template<typename UnsignedInt>
+class StringTypeAdapter<UnsignedInt, typename std::enable_if_t<std::is_integral<UnsignedInt>::value && !std::is_signed<UnsignedInt>::value>> {
 public:
-    StringTypeAdapter<unsigned>(unsigned number)
+    StringTypeAdapter(UnsignedInt number)
         : m_number(number)
     {
     }
@@ -68,13 +68,13 @@ public:
     String toString() const { return String::number(m_number); }
 
 private:
-    unsigned m_number;
+    UnsignedInt m_number;
 };
 
-template<>
-class StringTypeAdapter<double> {
+template<typename FloatingPoint>
+class StringTypeAdapter<FloatingPoint, typename std::enable_if_t<std::is_floating_point<FloatingPoint>::value>> {
 public:
-    StringTypeAdapter<double>(double number)
+    StringTypeAdapter(FloatingPoint number)
     {
         numberToString(number, m_buffer);
         m_length = strlen(m_buffer);
@@ -100,15 +100,6 @@ public:
 private:
     NumberToStringBuffer m_buffer;
     unsigned m_length;
-};
-
-template<>
-class StringTypeAdapter<float> : public StringTypeAdapter<double> {
-public:
-    StringTypeAdapter<float>(float number)
-        : StringTypeAdapter<double>(number)
-    {
-    }
 };
 
 class FormattedNumber {
@@ -140,7 +131,7 @@ private:
 template<>
 class StringTypeAdapter<FormattedNumber> {
 public:
-    StringTypeAdapter<FormattedNumber>(const FormattedNumber& numberFormatter)
+    StringTypeAdapter(const FormattedNumber& numberFormatter)
         : m_numberFormatter(numberFormatter)
     {
     }

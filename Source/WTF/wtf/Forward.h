@@ -55,6 +55,7 @@ template<typename> class OptionSet;
 template<typename> class Ref;
 template<typename> class RefPtr;
 template<typename> class StringBuffer;
+template<typename, typename = void> class StringTypeAdapter;
 
 template<typename> struct DefaultHash { using Hash = void; };
 template<typename> struct HashTraits;

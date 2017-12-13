@@ -1,3 +1,76 @@
+2017-12-12  JF Bastien  <jfbastien@apple.com>
+
+        makeString: support more integral types
+        https://bugs.webkit.org/show_bug.cgi?id=180720
+
+        Reviewed by Sam Weinig.
+
+        Only some integral types worked. Add more types by using template
+        magic. While we're here, also use the same magic for
+        floating-point types in the theoretical future where short float
+        or long double matter.
+
+        The core of the magic is a second, defaulted, template
+        parameter. It's declared in Forward.h (as void), and then in
+        classes where we want to enable_if we use it (in C++ speak we
+        create a partial class template specialization), otherwise we
+        leave it as void.
+
+        Also clean up some constructors which were being way too verbose
+        in stating that they were declarations for this template
+        specialization right here, when really we already knew that.
+
+        * wtf/Forward.h:
+        * wtf/text/StringConcatenate.h:
+        (WTF::StringTypeAdapter<char>::StringTypeAdapter<char>): Deleted.
+        (WTF::StringTypeAdapter<char>::length): Deleted.
+        (WTF::StringTypeAdapter<char>::is8Bit): Deleted.
+        (WTF::StringTypeAdapter<char>::writeTo const): Deleted.
+        (WTF::StringTypeAdapter<char>::toString const): Deleted.
+        (WTF::StringTypeAdapter<UChar>::StringTypeAdapter<UChar>): Deleted.
+        (WTF::StringTypeAdapter<UChar>::length const): Deleted.
+        (WTF::StringTypeAdapter<UChar>::is8Bit const): Deleted.
+        (WTF::StringTypeAdapter<UChar>::writeTo const): Deleted.
+        (WTF::StringTypeAdapter<UChar>::toString const): Deleted.
+        (WTF::StringTypeAdapter<char::StringTypeAdapter): Deleted.
+        (WTF::StringTypeAdapter<ASCIILiteral>::StringTypeAdapter): Deleted.
+        (WTF::StringTypeAdapter<Vector<char>>::StringTypeAdapter): Deleted.
+        (WTF::StringTypeAdapter<Vector<char>>::length const): Deleted.
+        (WTF::StringTypeAdapter<Vector<char>>::is8Bit const): Deleted.
+        (WTF::StringTypeAdapter<Vector<char>>::writeTo const): Deleted.
+        (WTF::StringTypeAdapter<Vector<char>>::toString const): Deleted.
+        (WTF::StringTypeAdapter<String>::StringTypeAdapter<String>): Deleted.
+        (WTF::StringTypeAdapter<String>::length const): Deleted.
+        (WTF::StringTypeAdapter<String>::is8Bit const): Deleted.
+        (WTF::StringTypeAdapter<String>::writeTo const): Deleted.
+        (WTF::StringTypeAdapter<String>::toString const): Deleted.
+        (WTF::StringTypeAdapter<AtomicString>::StringTypeAdapter): Deleted.
+        * wtf/text/StringConcatenateNumbers.h:
+        (WTF::StringTypeAdapter<FormattedNumber>::StringTypeAdapter):
+        (WTF::StringTypeAdapter<int>::StringTypeAdapter<int>): Deleted.
+        (WTF::StringTypeAdapter<int>::length const): Deleted.
+        (WTF::StringTypeAdapter<int>::is8Bit const): Deleted.
+        (WTF::StringTypeAdapter<int>::writeTo const): Deleted.
+        (WTF::StringTypeAdapter<int>::toString const): Deleted.
+        (WTF::StringTypeAdapter<unsigned>::StringTypeAdapter<unsigned>): Deleted.
+        (WTF::StringTypeAdapter<unsigned>::length const): Deleted.
+        (WTF::StringTypeAdapter<unsigned>::is8Bit const): Deleted.
+        (WTF::StringTypeAdapter<unsigned>::writeTo const): Deleted.
+        (WTF::StringTypeAdapter<unsigned>::toString const): Deleted.
+        (WTF::StringTypeAdapter<double>::StringTypeAdapter<double>): Deleted.
+        (WTF::StringTypeAdapter<double>::length const): Deleted.
+        (WTF::StringTypeAdapter<double>::is8Bit const): Deleted.
+        (WTF::StringTypeAdapter<double>::writeTo const): Deleted.
+        (WTF::StringTypeAdapter<double>::toString const): Deleted.
+        (WTF::StringTypeAdapter<float>::StringTypeAdapter<float>): Deleted.
+        (WTF::StringTypeAdapter<FormattedNumber>::StringTypeAdapter<FormattedNumber>): Deleted.
+        * wtf/text/StringView.h:
+        (WTF::StringTypeAdapter<StringView>::StringTypeAdapter<StringView>): Deleted.
+        (WTF::StringTypeAdapter<StringView>::length): Deleted.
+        (WTF::StringTypeAdapter<StringView>::is8Bit): Deleted.
+        (WTF::StringTypeAdapter<StringView>::writeTo): Deleted.
+        (WTF::StringTypeAdapter<StringView>::toString const): Deleted.
+
 2017-12-12  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement BigInt literals and JSBigInt

@@ -28,8 +28,16 @@
 #include "WTFStringUtilities.h"
 #include <wtf/text/StringConcatenate.h>
 #include <wtf/text/StringConcatenateNumbers.h>
+#include <cstddef>
+#include <cstdint>
 
 namespace TestWebKitAPI {
+
+static int arr[2];
+struct S {
+    char c;
+    int i;
+};
 
 TEST(WTF, StringConcatenate)
 {
@@ -40,21 +48,43 @@ TEST(WTF, StringConcatenate_Int)
 {
     EXPECT_EQ(5u, WTF::lengthOfNumberAsStringSigned(17890));
     EXPECT_EQ("hello 17890 world", makeString("hello ", 17890 , " world"));
+    EXPECT_EQ("hello 17890 world", makeString("hello ", 17890l , " world"));
+    EXPECT_EQ("hello 17890 world", makeString("hello ", 17890ll , " world"));
+    EXPECT_EQ("hello 17890 world", makeString("hello ", static_cast<int64_t>(17890) , " world"));
+    EXPECT_EQ("hello 17890 world", makeString("hello ", static_cast<int64_t>(17890) , " world"));
 
     EXPECT_EQ(6u, WTF::lengthOfNumberAsStringSigned(-17890));
     EXPECT_EQ("hello -17890 world", makeString("hello ", -17890 , " world"));
+    EXPECT_EQ("hello -17890 world", makeString("hello ", -17890l , " world"));
+    EXPECT_EQ("hello -17890 world", makeString("hello ", -17890ll , " world"));
+    EXPECT_EQ("hello -17890 world", makeString("hello ", static_cast<int64_t>(-17890) , " world"));
+    EXPECT_EQ("hello -17890 world", makeString("hello ", static_cast<int64_t>(-17890) , " world"));
 
     EXPECT_EQ(1u, WTF::lengthOfNumberAsStringSigned(0));
     EXPECT_EQ("hello 0 world", makeString("hello ", 0 , " world"));
+
+    EXPECT_EQ("hello 42 world", makeString("hello ", static_cast<signed char>(42) , " world"));
+    EXPECT_EQ("hello 42 world", makeString("hello ", static_cast<short>(42) , " world"));
+    EXPECT_EQ("hello 1 world", makeString("hello ", &arr[1] - &arr[0] , " world"));
 }
 
 TEST(WTF, StringConcatenate_Unsigned)
 {
     EXPECT_EQ(5u, WTF::lengthOfNumberAsStringUnsigned(17890u));
     EXPECT_EQ("hello 17890 world", makeString("hello ", 17890u , " world"));
+    EXPECT_EQ("hello 17890 world", makeString("hello ", 17890ul , " world"));
+    EXPECT_EQ("hello 17890 world", makeString("hello ", 17890ull , " world"));
+    EXPECT_EQ("hello 17890 world", makeString("hello ", static_cast<uint64_t>(17890) , " world"));
+    EXPECT_EQ("hello 17890 world", makeString("hello ", static_cast<uint64_t>(17890) , " world"));
 
     EXPECT_EQ(1u, WTF::lengthOfNumberAsStringSigned(0u));
     EXPECT_EQ("hello 0 world", makeString("hello ", 0u , " world"));
+
+    EXPECT_EQ("hello 42 world", makeString("hello ", static_cast<unsigned char>(42) , " world"));
+    EXPECT_EQ("hello * world", makeString("hello ", static_cast<unsigned short>(42) , " world")); // Treated as a character.
+    EXPECT_EQ("hello 4 world", makeString("hello ", sizeof(int) , " world")); // size_t
+    EXPECT_EQ("hello 4 world", makeString("hello ", offsetof(S, i) , " world")); // size_t
+    EXPECT_EQ("hello 3235839742 world", makeString("hello ", static_cast<size_t>(0xc0defefe), " world"));
 }
 
 TEST(WTF, StringConcatenate_Float)

@@ -566,11 +566,11 @@ inline void StringView::invalidate(const StringImpl&)
 }
 #endif
 
-template<typename StringType> class StringTypeAdapter;
+template<typename StringType, typename> class StringTypeAdapter;
 
-template<> class StringTypeAdapter<StringView> {
+template<> class StringTypeAdapter<StringView, void> {
 public:
-    StringTypeAdapter<StringView>(StringView string)
+    StringTypeAdapter(StringView string)
         : m_string(string)
     {
     }
