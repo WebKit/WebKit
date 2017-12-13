@@ -6613,6 +6613,12 @@ void HTMLMediaElement::updateSleepDisabling()
         m_player->setShouldDisableSleep(shouldDisableSleep == SleepType::Display);
 }
 
+static inline bool isRemoteMediaStreamVideoTrack(RefPtr<MediaStreamTrack>& item)
+{
+    auto* track = item.get();
+    return track->privateTrack().type() == RealtimeMediaSource::Type::Video && !track->isCaptureTrack() && !track->isCanvas();
+}
+
 HTMLMediaElement::SleepType HTMLMediaElement::shouldDisableSleep() const
 {
     // See https://bugs.webkit.org/show_bug.cgi?id=180197 before removing this guard.
@@ -6628,15 +6634,14 @@ HTMLMediaElement::SleepType HTMLMediaElement::shouldDisableSleep() const
         return SleepType::System;
 #endif
 
+    bool shouldBeAbleToSleep = !hasVideo() || !hasAudio();
 #if ENABLE(MEDIA_STREAM)
-    if (m_mediaStreamSrcObject) {
-        // Do not block system from sleeping if element is only rendering local (capture) sources.
-        if (WTF::allOf(m_mediaStreamSrcObject->getTracks(), [] (RefPtr<MediaStreamTrack>& track) { return track && track->isCaptureTrack(); }))
-            return SleepType::None;
-    }
+    // Remote media stream video tracks may have their corresponding audio tracks being played outside of the media element. Let's ensure to not IDLE the screen in that case.
+    // FIXME: We should check that audio is being/to be played. Ideally, we would come up with a media stream agnostic heuristisc.
+    shouldBeAbleToSleep = shouldBeAbleToSleep && !(m_mediaStreamSrcObject && WTF::anyOf(m_mediaStreamSrcObject->getTracks(), isRemoteMediaStreamVideoTrack));
 #endif
 
-    if (!hasVideo() || !hasAudio())
+    if (shouldBeAbleToSleep)
         return SleepType::None;
 
     if (m_elementIsHidden)
