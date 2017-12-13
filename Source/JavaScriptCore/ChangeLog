@@ -1,3 +1,13 @@
+2017-12-13  Saam Barati  <sbarati@apple.com>
+
+        REGRESSION(r225844): Around 850 new JSC failures on 32-bit
+        https://bugs.webkit.org/show_bug.cgi?id=180764
+
+        Unreviewed. We should only emit CheckStructureOrEmpty on 64 bit platforms.
+
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::run):
+
 2017-12-13  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed rollout of r225695. Caused a crash on yahoo login page.
