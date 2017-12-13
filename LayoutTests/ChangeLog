@@ -1,3 +1,14 @@
+2017-12-12  Youenn Fablet  <youenn@apple.com>
+
+        getUserMedia is resolving before the document knows it is capturing
+        https://bugs.webkit.org/show_bug.cgi?id=180699
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video.html: Adding a check that document is capturing within getUserMedia promise resolution callback.
+        Adding this check without the changes to WebCore makes the test flaky, sometimes the promise resolution happens
+        after document state is updated.
+
 2017-12-12  John Wilander  <wilander@apple.com>
 
         Storage Access API: Implement frame-specific access in the network storage session layer

@@ -38,6 +38,7 @@
 #include "CaptureDevice.h"
 #include "JSDOMPromiseDeferred.h"
 #include "MediaConstraints.h"
+#include "MediaStreamPrivate.h"
 
 namespace WebCore {
 
@@ -73,7 +74,26 @@ private:
     UserMediaRequest(Document&, UserMediaController&, MediaConstraints&& audioConstraints, MediaConstraints&& videoConstraints, DOMPromiseDeferred<IDLInterface<MediaStream>>&&);
 
     void contextDestroyed() final;
-    
+
+    void mediaStreamIsReady(Ref<MediaStream>&&);
+
+    class PendingActivationMediaStream : public RefCounted<PendingActivationMediaStream>, private MediaStreamPrivate::Observer {
+    public:
+        static Ref<PendingActivationMediaStream> create(Ref<UserMediaRequest>&& request, Ref<MediaStream>&& stream)
+        {
+            return adoptRef(*new PendingActivationMediaStream { WTFMove(request), WTFMove(stream) });
+        }
+        ~PendingActivationMediaStream();
+
+    private:
+        PendingActivationMediaStream(Ref<UserMediaRequest>&&, Ref<MediaStream>&&);
+
+        void characteristicsChanged() final;
+
+        Ref<UserMediaRequest> m_request;
+        Ref<MediaStream> m_mediaStream;
+    };
+
     MediaConstraints m_audioConstraints;
     MediaConstraints m_videoConstraints;
 
@@ -86,6 +106,7 @@ private:
     UserMediaController* m_controller;
     DOMPromiseDeferred<IDLInterface<MediaStream>> m_promise;
     RefPtr<UserMediaRequest> m_protector;
+    RefPtr<PendingActivationMediaStream> m_pendingActivationMediaStream;
 };
 
 } // namespace WebCore

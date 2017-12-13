@@ -334,8 +334,10 @@ void MediaStream::statusDidChange()
     m_mediaSession->canProduceAudioChanged();
 
     if (Document* document = this->document()) {
-        if (m_isActive)
-            document->setHasActiveMediaStreamTrack();
+        if (!m_isActive)
+            return;
+        document->setHasActiveMediaStreamTrack();
+        document->updateIsPlayingMedia();
     }
 }
 

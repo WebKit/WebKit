@@ -161,8 +161,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
     m_allowedAudioDevice = audioDevice;
     m_allowedVideoDevice = videoDevice;
 
-    RefPtr<UserMediaRequest> protectedThis = this;
-    RealtimeMediaSourceCenter::NewMediaStreamHandler callback = [this, protectedThis = WTFMove(protectedThis)](RefPtr<MediaStreamPrivate>&& privateStream) mutable {
+    auto callback = [this, protectedThis = makeRef(*this)](RefPtr<MediaStreamPrivate>&& privateStream) mutable {
         if (!m_scriptExecutionContext)
             return;
 
@@ -178,9 +177,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
             return;
         }
 
-        stream->startProducingData();
-        
-        m_promise.resolve(stream);
+        m_pendingActivationMediaStream = PendingActivationMediaStream::create(WTFMove(protectedThis), WTFMove(stream));
     };
 
     m_audioConstraints.deviceIDHashSalt = deviceIdentifierHashSalt;
@@ -243,11 +240,38 @@ void UserMediaRequest::contextDestroyed()
         m_controller->cancelUserMediaAccessRequest(*this);
         m_controller = nullptr;
     }
+    m_pendingActivationMediaStream = nullptr;
 }
 
 Document* UserMediaRequest::document() const
 {
     return downcast<Document>(m_scriptExecutionContext);
+}
+
+UserMediaRequest::PendingActivationMediaStream::PendingActivationMediaStream(Ref<UserMediaRequest>&& request, Ref<MediaStream>&& stream)
+    : m_request(WTFMove(request))
+    , m_mediaStream(WTFMove(stream))
+{
+    m_mediaStream->privateStream().addObserver(*this);
+    m_mediaStream->startProducingData();
+}
+
+UserMediaRequest::PendingActivationMediaStream::~PendingActivationMediaStream()
+{
+    m_mediaStream->privateStream().removeObserver(*this);
+}
+
+void UserMediaRequest::PendingActivationMediaStream::characteristicsChanged()
+{
+    if (m_mediaStream->privateStream().hasVideo() || m_mediaStream->privateStream().hasAudio())
+        m_request->mediaStreamIsReady(m_mediaStream.copyRef());
+}
+
+void UserMediaRequest::mediaStreamIsReady(Ref<MediaStream>&& stream)
+{
+    m_promise.resolve(WTFMove(stream));
+    // We are in an observer iterator loop, we do not want to change the observers within this loop.
+    callOnMainThread([stream = WTFMove(m_pendingActivationMediaStream)] { });
 }
 
 } // namespace WebCore

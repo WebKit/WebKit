@@ -62,7 +62,7 @@ public:
     using InvalidConstraintsHandler = WTF::Function<void(const String& invalidConstraint)>;
     virtual void validateRequestConstraints(ValidConstraintsHandler&&, InvalidConstraintsHandler&&, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints, String&&);
 
-    using NewMediaStreamHandler = std::function<void(RefPtr<MediaStreamPrivate>&&)>;
+    using NewMediaStreamHandler = WTF::Function<void(RefPtr<MediaStreamPrivate>&&)>;
     virtual void createMediaStream(NewMediaStreamHandler&&, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints);
 
     WEBCORE_EXPORT virtual Vector<CaptureDevice> getMediaStreamDevices();

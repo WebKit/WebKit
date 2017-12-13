@@ -44,6 +44,8 @@ promise_test((test) => {
         testRunner.setUserMediaPermission(true);
 
     return navigator.mediaDevices.getUserMedia({video: {advanced: [{width:{min:1280}}, {height:{min:720} } ]}}).then((stream) => {
+        if (window.internals)
+            assert_true(internals.pageMediaState().includes('HasActiveVideoCaptureDevice'), "Unexpected HasActiveVideoCaptureDevice");
         return new Promise((resolve, reject) => {
             createConnections((firstConnection) => {
                 var track = stream.getVideoTracks()[0];
