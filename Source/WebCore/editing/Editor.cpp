@@ -243,7 +243,7 @@ VisibleSelection Editor::selectionForCommand(Event* event)
         return selection;
     // If the target is a text control, and the current selection is outside of its shadow tree,
     // then use the saved selection for that text control.
-    if (is<HTMLTextFormControlElement>(event->target())) {
+    if (is<Element>(event->target()) && downcast<Element>(*event->target()).isTextField()) {
         auto& target = downcast<HTMLTextFormControlElement>(*event->target());
         auto start = selection.start();
         if (start.isNull() || &target != enclosingTextFormControl(start)) {
@@ -1721,7 +1721,7 @@ void Editor::setBaseWritingDirection(WritingDirection direction)
 #endif
         
     Element* focusedElement = document().focusedElement();
-    if (is<HTMLTextFormControlElement>(focusedElement)) {
+    if (focusedElement && focusedElement->isTextField()) {
         if (direction == NaturalWritingDirection)
             return;
 
@@ -3626,7 +3626,7 @@ static Node* findFirstMarkable(Node* node)
             return nullptr;
         if (node->renderer()->isTextOrLineBreak())
             return node;
-        if (is<HTMLTextFormControlElement>(*node))
+        if (is<Element>(*node) && downcast<Element>(*node).isTextField())
             node = downcast<HTMLTextFormControlElement>(*node).visiblePositionForIndex(1).deepEquivalent().deprecatedNode();
         else if (node->firstChild())
             node = node->firstChild();

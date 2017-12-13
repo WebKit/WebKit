@@ -345,7 +345,7 @@ unsigned FormController::formElementsCharacterCount() const
 {
     unsigned count = 0;
     for (auto& element : m_formElementsWithState) {
-        if (element->isTextFormControl())
+        if (element->isTextField())
             count += element->saveFormControlState()[0].length();
     }
     return count;

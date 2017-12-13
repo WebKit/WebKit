@@ -97,7 +97,7 @@ public:
     bool isTextButton() const;
 
     bool isRadioButton() const;
-    WEBCORE_EXPORT bool isTextField() const;
+    WEBCORE_EXPORT bool isTextField() const final;
     WEBCORE_EXPORT bool isSearchField() const;
     bool isInputTypeHidden() const;
     WEBCORE_EXPORT bool isPasswordField() const;
@@ -370,8 +370,6 @@ private:
     bool supportLabels() const final;
     void updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode) final;
     bool shouldUseInputMethod() final;
-
-    bool isTextFormControl() const final { return isTextField(); }
 
     bool canTriggerImplicitSubmission() const final { return isTextField(); }
 

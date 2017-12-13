@@ -828,7 +828,7 @@ String AccessibilityObject::selectText(AccessibilitySelectTextCriteria* criteria
     // Determine which candidate is closest to the selection and perform the activity.
     if (RefPtr<Range> closestStringRange = rangeClosestToRange(selectedStringRange.get(), WTFMove(closestAfterStringRange), WTFMove(closestBeforeStringRange))) {
         // If the search started within a text control, ensure that the result is inside that element.
-        if (element() && element()->isTextFormControl()) {
+        if (element() && element()->isTextField()) {
             if (!closestStringRange->startContainer().isDescendantOrShadowDescendantOf(element()) || !closestStringRange->endContainer().isDescendantOrShadowDescendantOf(element()))
                 return String();
         }

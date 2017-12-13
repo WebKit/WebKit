@@ -436,7 +436,8 @@ public:
 
     virtual bool isFormControlElement() const { return false; }
     virtual bool isSpinButtonElement() const { return false; }
-    virtual bool isTextFormControl() const { return false; }
+    virtual bool isTextFormControlElement() const { return false; }
+    virtual bool isTextField() const { return false; }
     virtual bool isOptionalFormControl() const { return false; }
     virtual bool isRequiredFormControl() const { return false; }
     virtual bool isInRange() const { return false; }

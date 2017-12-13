@@ -102,7 +102,7 @@ private:
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;
 
-    bool isTextFormControl() const final { return true; }
+    bool isTextField() const final { return true; }
 
     void childrenChanged(const ChildChange&) final;
     void parseAttribute(const QualifiedName&, const AtomicString&) final;

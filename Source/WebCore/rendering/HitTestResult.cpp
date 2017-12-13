@@ -572,7 +572,7 @@ bool HitTestResult::isOverTextInsideFormControlElement() const
     if (!node)
         return false;
 
-    if (!is<HTMLTextFormControlElement>(*node))
+    if (!is<Element>(*node) || !downcast<Element>(*node).isTextField())
         return false;
 
     Frame* frame = node->document().frame();

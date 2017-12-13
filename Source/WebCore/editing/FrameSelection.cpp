@@ -1922,7 +1922,7 @@ void FrameSelection::selectAll()
             selectStartTarget = root.get();
     } else {
         if (m_selection.isNone() && focusedElement) {
-            if (is<HTMLTextFormControlElement>(*focusedElement)) {
+            if (focusedElement->isTextField()) {
                 downcast<HTMLTextFormControlElement>(*focusedElement).select();
                 return;
             }

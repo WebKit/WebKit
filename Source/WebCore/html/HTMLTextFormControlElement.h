@@ -132,6 +132,8 @@ protected:
 private:
     TextFieldSelectionDirection cachedSelectionDirection() const { return static_cast<TextFieldSelectionDirection>(m_cachedSelectionDirection); }
 
+    bool isTextFormControlElement() const final { return true; }
+
     int computeSelectionStart() const;
     int computeSelectionEnd() const;
     TextFieldSelectionDirection computeSelectionDirection() const;
@@ -169,7 +171,7 @@ HTMLTextFormControlElement* enclosingTextFormControl(const Position&);
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLTextFormControlElement)
-    static bool isType(const WebCore::Element& element) { return element.isTextFormControl(); }
+    static bool isType(const WebCore::Element& element) { return element.isTextFormControlElement(); }
     static bool isType(const WebCore::Node& node) { return is<WebCore::Element>(node) && isType(downcast<WebCore::Element>(node)); }
     static bool isType(const WebCore::EventTarget& target) { return is<WebCore::Node>(target) && isType(downcast<WebCore::Node>(target)); }
 SPECIALIZE_TYPE_TRAITS_END()

@@ -793,7 +793,7 @@ TextDirection HTMLElement::directionalityIfhasDirAutoAttribute(bool& isAuto) con
 
 TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) const
 {
-    if (is<HTMLTextFormControlElement>(*this)) {
+    if (isTextField()) {
         HTMLTextFormControlElement& textElement = downcast<HTMLTextFormControlElement>(const_cast<HTMLElement&>(*this));
         bool hasStrongDirectionality;
         UCharDirection textDirection = textElement.value().defaultWritingDirection(&hasStrongDirectionality);
@@ -806,7 +806,7 @@ TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) c
     while (node) {
         // Skip bdi, script, style and text form controls.
         if (equalLettersIgnoringASCIICase(node->nodeName(), "bdi") || node->hasTagName(scriptTag) || node->hasTagName(styleTag)
-            || (is<Element>(*node) && downcast<Element>(*node).isTextFormControl())) {
+            || (is<Element>(*node) && downcast<Element>(*node).isTextField())) {
             node = NodeTraversal::nextSkippingChildren(*node, this);
             continue;
         }

@@ -107,7 +107,7 @@ void HTMLTextFormControlElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedE
 
 void HTMLTextFormControlElement::didEditInnerTextValue()
 {
-    if (!isTextFormControl())
+    if (!isTextField())
         return;
 
     LOG(Editing, "HTMLTextFormControlElement %p didEditInnerTextValue", this);
@@ -198,7 +198,7 @@ void HTMLTextFormControlElement::select(const AXTextStateChangeIntent& intent)
 
 String HTMLTextFormControlElement::selectedText() const
 {
-    if (!isTextFormControl())
+    if (!isTextField())
         return String();
     return value().substring(selectionStart(), selectionEnd() - selectionStart());
 }
@@ -284,7 +284,7 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, const Str
 
 void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextFieldSelectionDirection direction, const AXTextStateChangeIntent& intent)
 {
-    if (!isTextFormControl())
+    if (!isTextField())
         return;
 
     end = std::max(end, 0);
@@ -343,7 +343,7 @@ VisiblePosition HTMLTextFormControlElement::visiblePositionForIndex(int index) c
 
 int HTMLTextFormControlElement::selectionStart() const
 {
-    if (!isTextFormControl())
+    if (!isTextField())
         return 0;
     if (document().focusedElement() != this && hasCachedSelection())
         return m_cachedSelectionStart;
@@ -353,7 +353,7 @@ int HTMLTextFormControlElement::selectionStart() const
 
 int HTMLTextFormControlElement::computeSelectionStart() const
 {
-    ASSERT(isTextFormControl());
+    ASSERT(isTextField());
     RefPtr<Frame> frame = document().frame();
     if (!frame)
         return 0;
@@ -363,7 +363,7 @@ int HTMLTextFormControlElement::computeSelectionStart() const
 
 int HTMLTextFormControlElement::selectionEnd() const
 {
-    if (!isTextFormControl())
+    if (!isTextField())
         return 0;
     if (document().focusedElement() != this && hasCachedSelection())
         return m_cachedSelectionEnd;
@@ -372,7 +372,7 @@ int HTMLTextFormControlElement::selectionEnd() const
 
 int HTMLTextFormControlElement::computeSelectionEnd() const
 {
-    ASSERT(isTextFormControl());
+    ASSERT(isTextField());
     RefPtr<Frame> frame = document().frame();
     if (!frame)
         return 0;
@@ -401,7 +401,7 @@ static const AtomicString& directionString(TextFieldSelectionDirection direction
 
 const AtomicString& HTMLTextFormControlElement::selectionDirection() const
 {
-    if (!isTextFormControl())
+    if (!isTextField())
         return directionString(SelectionHasNoDirection);
     if (document().focusedElement() != this && hasCachedSelection())
         return directionString(cachedSelectionDirection());
@@ -411,7 +411,7 @@ const AtomicString& HTMLTextFormControlElement::selectionDirection() const
 
 TextFieldSelectionDirection HTMLTextFormControlElement::computeSelectionDirection() const
 {
-    ASSERT(isTextFormControl());
+    ASSERT(isTextField());
     RefPtr<Frame> frame = document().frame();
     if (!frame)
         return SelectionHasNoDirection;
@@ -433,7 +433,7 @@ static inline void setContainerAndOffsetForRange(Node* node, int offset, Node*& 
 
 RefPtr<Range> HTMLTextFormControlElement::selection() const
 {
-    if (!renderer() || !isTextFormControl() || !hasCachedSelection())
+    if (!renderer() || !isTextField() || !hasCachedSelection())
         return nullptr;
 
     int start = m_cachedSelectionStart;
@@ -479,7 +479,7 @@ void HTMLTextFormControlElement::restoreCachedSelection(const AXTextStateChangeI
 
 void HTMLTextFormControlElement::selectionChanged(bool shouldFireSelectEvent)
 {
-    if (!isTextFormControl())
+    if (!isTextField())
         return;
 
     // FIXME: Don't re-compute selection start and end if this function was called inside setSelectionRange.
@@ -519,7 +519,7 @@ void HTMLTextFormControlElement::updateInnerTextElementEditability()
 
 bool HTMLTextFormControlElement::lastChangeWasUserEdit() const
 {
-    if (!isTextFormControl())
+    if (!isTextField())
         return false;
     return m_lastChangeWasUserEdit;
 }
@@ -552,7 +552,7 @@ void HTMLTextFormControlElement::setInnerTextValue(const String& value)
     if (!innerText)
         return;
 
-    ASSERT(isTextFormControl());
+    ASSERT(isTextField());
     String previousValue = innerTextValueFrom(*innerText);
     bool textIsChanged = value != previousValue;
     if (textIsChanged || !innerText->hasChildNodes()) {
@@ -685,7 +685,7 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
 {
     // FIXME: It's not acceptable to ignore the HardWrap setting when there is no renderer.
     // While we have no evidence this has ever been a practical problem, it would be best to fix it some day.
-    if (!isTextFormControl())
+    if (!isTextField())
         return value();
 
     auto innerText = innerTextElement();
@@ -739,7 +739,7 @@ HTMLTextFormControlElement* enclosingTextFormControl(const Position& position)
     if (!container)
         return nullptr;
     RefPtr<Element> ancestor = container->shadowHost();
-    return ancestor && is<HTMLTextFormControlElement>(*ancestor) ? downcast<HTMLTextFormControlElement>(ancestor.get()) : nullptr;
+    return ancestor && ancestor->isTextField() ? downcast<HTMLTextFormControlElement>(ancestor.get()) : nullptr;
 }
 
 static const Element* parentHTMLElement(const Element* element)
