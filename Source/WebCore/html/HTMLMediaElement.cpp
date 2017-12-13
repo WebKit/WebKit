@@ -6613,11 +6613,13 @@ void HTMLMediaElement::updateSleepDisabling()
         m_player->setShouldDisableSleep(shouldDisableSleep == SleepType::Display);
 }
 
+#if ENABLE(MEDIA_STREAM)
 static inline bool isRemoteMediaStreamVideoTrack(RefPtr<MediaStreamTrack>& item)
 {
     auto* track = item.get();
     return track->privateTrack().type() == RealtimeMediaSource::Type::Video && !track->isCaptureTrack() && !track->isCanvas();
 }
+#endif
 
 HTMLMediaElement::SleepType HTMLMediaElement::shouldDisableSleep() const
 {
