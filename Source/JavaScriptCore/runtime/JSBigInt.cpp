@@ -47,6 +47,7 @@
 #include "config.h"
 #include "JSBigInt.h"
 
+#include "CatchScope.h"
 #include "JSCInlines.h"
 #include "MathCommon.h"
 #include "ParseInt.h"
@@ -578,8 +579,6 @@ JSBigInt* JSBigInt::allocateFor(ExecState* state, VM& vm, int radix, int charcou
     ASSERT(2 <= radix && radix <= 36);
     ASSERT(charcount >= 0);
 
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     size_t bitsPerChar = maxBitsPerCharTable[radix];
     size_t chars = charcount;
     const int roundup = bitsPerCharTableMultiplier - 1;
@@ -598,8 +597,10 @@ JSBigInt* JSBigInt::allocateFor(ExecState* state, VM& vm, int radix, int charcou
         }
     }
 
-    if (state)
+    if (state) {
+        auto scope = DECLARE_THROW_SCOPE(vm);
         throwOutOfMemoryError(state, scope);
+    }
     return nullptr;
 }
 
@@ -655,9 +656,9 @@ JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, CharType* data, int lengt
     int limita = 'a' + (radix - 10);
     int limitA = 'A' + (radix - 10);
 
+    auto scope = DECLARE_CATCH_SCOPE(vm);
     JSBigInt* result = allocateFor(state, vm, radix, length - p);
-    if (!result)
-        return nullptr;
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     result->initialize(InitializationType::WithZero);
 

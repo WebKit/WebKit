@@ -1,3 +1,20 @@
+2017-12-13  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Breking tests on Debug build and 32-bits due to missing Exception check
+        https://bugs.webkit.org/show_bug.cgi?id=180746
+
+        Reviewed by Saam Barati.
+
+        We have some uncatched exceptions that could happen due to OOM into
+        JSBigInt::allocateFor and JSBigInt::toStringGeneric. This patching is
+        catching such exceptions properly.
+
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::allocateFor):
+        (JSC::JSBigInt::parseInt):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toStringSlowCase const):
+
 2017-12-13  Saam Barati  <sbarati@apple.com>
 
         Fix how JSFunction handles "caller" and "arguments" for functions that don't have those properties
