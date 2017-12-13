@@ -81,7 +81,6 @@ private:
 #endif
 #if ENABLE(SERVICE_WORKER)
     void establishWorkerContextConnectionToStorageProcess();
-    void establishWorkerContextConnectionToStorageProcessForExplicitSession(PAL::SessionID);
 #endif
 
     // ProcessLauncher::Client

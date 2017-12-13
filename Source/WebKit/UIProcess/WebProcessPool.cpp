@@ -589,29 +589,20 @@ void WebProcessPool::storageProcessCrashed(StorageProcessProxy* storageProcessPr
 }
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcessPool::establishWorkerContextConnectionToStorageProcess(StorageProcessProxy& proxy, std::optional<PAL::SessionID> sessionID)
+void WebProcessPool::establishWorkerContextConnectionToStorageProcess(StorageProcessProxy& proxy)
 {
     ASSERT_UNUSED(proxy, &proxy == m_storageProcess);
 
     if (m_serviceWorkerProcess)
         return;
 
-    WebsiteDataStore* websiteDataStore = nullptr;
-    if (sessionID)
-        websiteDataStore = WebsiteDataStore::existingDataStoreForSessionID(*sessionID);
+    if (!m_websiteDataStore)
+        m_websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
 
-    if (!websiteDataStore) {
-        if (!m_websiteDataStore)
-            m_websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
-        websiteDataStore = &m_websiteDataStore->websiteDataStore();
-    }
-
-    auto serviceWorkerProcessProxy = ServiceWorkerProcessProxy::create(*this, *websiteDataStore);
+    auto serviceWorkerProcessProxy = ServiceWorkerProcessProxy::create(*this, m_websiteDataStore->websiteDataStore());
     m_serviceWorkerProcess = serviceWorkerProcessProxy.ptr();
-
     updateProcessAssertions();
-    initializeNewWebProcess(serviceWorkerProcessProxy.get(), *websiteDataStore);
-
+    initializeNewWebProcess(serviceWorkerProcessProxy.get(), m_websiteDataStore->websiteDataStore());
     m_processes.append(WTFMove(serviceWorkerProcessProxy));
 
     m_serviceWorkerProcess->start(m_defaultPageGroup->preferences().store());

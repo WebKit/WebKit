@@ -323,7 +323,7 @@ public:
     void getStorageProcessConnection(bool isServiceWorkerProcess, Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&&);
     void storageProcessCrashed(StorageProcessProxy*);
 #if ENABLE(SERVICE_WORKER)
-    void establishWorkerContextConnectionToStorageProcess(StorageProcessProxy&, std::optional<PAL::SessionID>);
+    void establishWorkerContextConnectionToStorageProcess(StorageProcessProxy&);
     bool isServiceWorker(uint64_t pageID) const { return m_serviceWorkerProcess && m_serviceWorkerProcess->pageID() == pageID; }
     ServiceWorkerProcessProxy* serviceWorkerProxy() const { return m_serviceWorkerProcess; }
     void setAllowsAnySSLCertificateForServiceWorker(bool allows) { m_allowsAnySSLCertificateForServiceWorker = allows; }

@@ -89,7 +89,7 @@ public:
     // For now we just have one global connection to service worker context processes.
     // This will change in the future.
     WebSWServerToContextConnection* globalServerToContextConnection();
-    void createServerToContextConnection(std::optional<PAL::SessionID>);
+    void createServerToContextConnection();
 
     WebCore::SWServer& swServerForSession(PAL::SessionID);
     void registerSWServerConnection(WebSWServerConnection&);
