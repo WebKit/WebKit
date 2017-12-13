@@ -151,8 +151,13 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 {
     if (!decoder.decode(parameters.injectedBundlePath))
         return false;
-    if (!decoder.decode(parameters.injectedBundlePathExtensionHandle))
+    
+    std::optional<SandboxExtension::Handle> injectedBundlePathExtensionHandle;
+    decoder >> injectedBundlePathExtensionHandle;
+    if (!injectedBundlePathExtensionHandle)
         return false;
+    parameters.injectedBundlePathExtensionHandle = WTFMove(*injectedBundlePathExtensionHandle);
+
     if (!decoder.decode(parameters.additionalSandboxExtensionHandles))
         return false;
     if (!decoder.decode(parameters.initializationUserData))
@@ -161,31 +166,64 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     if (!decoder.decode(parameters.applicationCacheFlatFileSubdirectoryName))
         return false;
-    if (!decoder.decode(parameters.applicationCacheDirectoryExtensionHandle))
+    
+    std::optional<SandboxExtension::Handle> applicationCacheDirectoryExtensionHandle;
+    decoder >> applicationCacheDirectoryExtensionHandle;
+    if (!applicationCacheDirectoryExtensionHandle)
         return false;
+    parameters.applicationCacheDirectoryExtensionHandle = WTFMove(*applicationCacheDirectoryExtensionHandle);
+
     if (!decoder.decode(parameters.webSQLDatabaseDirectory))
         return false;
-    if (!decoder.decode(parameters.webSQLDatabaseDirectoryExtensionHandle))
+
+    std::optional<SandboxExtension::Handle> webSQLDatabaseDirectoryExtensionHandle;
+    decoder >> webSQLDatabaseDirectoryExtensionHandle;
+    if (!webSQLDatabaseDirectoryExtensionHandle)
         return false;
+    parameters.webSQLDatabaseDirectoryExtensionHandle = WTFMove(*webSQLDatabaseDirectoryExtensionHandle);
+
     if (!decoder.decode(parameters.mediaCacheDirectory))
         return false;
-    if (!decoder.decode(parameters.mediaCacheDirectoryExtensionHandle))
+    
+    std::optional<SandboxExtension::Handle> mediaCacheDirectoryExtensionHandle;
+    decoder >> mediaCacheDirectoryExtensionHandle;
+    if (!mediaCacheDirectoryExtensionHandle)
         return false;
+    parameters.mediaCacheDirectoryExtensionHandle = WTFMove(*mediaCacheDirectoryExtensionHandle);
+
     if (!decoder.decode(parameters.javaScriptConfigurationDirectory))
         return false;
-    if (!decoder.decode(parameters.javaScriptConfigurationDirectoryExtensionHandle))
+    
+    std::optional<SandboxExtension::Handle> javaScriptConfigurationDirectoryExtensionHandle;
+    decoder >> javaScriptConfigurationDirectoryExtensionHandle;
+    if (!javaScriptConfigurationDirectoryExtensionHandle)
         return false;
+    parameters.javaScriptConfigurationDirectoryExtensionHandle = WTFMove(*javaScriptConfigurationDirectoryExtensionHandle);
+
 #if PLATFORM(MAC)
     if (!decoder.decode(parameters.uiProcessCookieStorageIdentifier))
         return false;
 #endif
 #if PLATFORM(IOS)
-    if (!decoder.decode(parameters.cookieStorageDirectoryExtensionHandle))
+    
+    std::optional<SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;
+    decoder >> cookieStorageDirectoryExtensionHandle;
+    if (!cookieStorageDirectoryExtensionHandle)
         return false;
-    if (!decoder.decode(parameters.containerCachesDirectoryExtensionHandle))
+    parameters.cookieStorageDirectoryExtensionHandle = WTFMove(*cookieStorageDirectoryExtensionHandle);
+
+    std::optional<SandboxExtension::Handle> containerCachesDirectoryExtensionHandle;
+    decoder >> containerCachesDirectoryExtensionHandle;
+    if (!containerCachesDirectoryExtensionHandle)
         return false;
-    if (!decoder.decode(parameters.containerTemporaryDirectoryExtensionHandle))
+    parameters.containerCachesDirectoryExtensionHandle = WTFMove(*containerCachesDirectoryExtensionHandle);
+
+    std::optional<SandboxExtension::Handle> containerTemporaryDirectoryExtensionHandle;
+    decoder >> containerTemporaryDirectoryExtensionHandle;
+    if (!containerTemporaryDirectoryExtensionHandle)
         return false;
+    parameters.containerTemporaryDirectoryExtensionHandle = WTFMove(*containerTemporaryDirectoryExtensionHandle);
+
 #endif
     if (!decoder.decode(parameters.mediaKeyStorageDirectory))
         return false;
@@ -193,11 +231,21 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     if (!decoder.decode(parameters.webKitLoggingChannels))
         return false;
-    if (!decoder.decode(parameters.mediaKeyStorageDirectoryExtensionHandle))
+    
+    std::optional<SandboxExtension::Handle> mediaKeyStorageDirectoryExtensionHandle;
+    decoder >> mediaKeyStorageDirectoryExtensionHandle;
+    if (!mediaKeyStorageDirectoryExtensionHandle)
         return false;
+    parameters.mediaKeyStorageDirectoryExtensionHandle = WTFMove(*mediaKeyStorageDirectoryExtensionHandle);
+
 #if ENABLE(MEDIA_STREAM)
-    if (!decoder.decode(parameters.audioCaptureExtensionHandle))
+
+    std::optional<SandboxExtension::Handle> audioCaptureExtensionHandle;
+    decoder >> audioCaptureExtensionHandle;
+    if (!audioCaptureExtensionHandle)
         return false;
+    parameters.audioCaptureExtensionHandle = WTFMove(*audioCaptureExtensionHandle);
+
     if (!decoder.decode(parameters.shouldCaptureAudioInUIProcess))
         return false;
 #endif
@@ -260,8 +308,13 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     if (!decoder.decode(parameters.uiProcessBundleResourcePath))
         return false;
-    if (!decoder.decode(parameters.uiProcessBundleResourcePathExtensionHandle))
+    
+    std::optional<SandboxExtension::Handle> uiProcessBundleResourcePathExtensionHandle;
+    decoder >> uiProcessBundleResourcePathExtensionHandle;
+    if (!uiProcessBundleResourcePathExtensionHandle)
         return false;
+    parameters.uiProcessBundleResourcePathExtensionHandle = WTFMove(*uiProcessBundleResourcePathExtensionHandle);
+
     if (!decoder.decode(parameters.shouldEnableJIT))
         return false;
     if (!decoder.decode(parameters.shouldEnableFTLJIT))

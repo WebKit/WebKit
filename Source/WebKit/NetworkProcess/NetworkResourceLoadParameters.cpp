@@ -134,10 +134,11 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
     }
 
     if (result.request.url().isLocalFile()) {
-        SandboxExtension::Handle resourceSandboxExtensionHandle;
-        if (!decoder.decode(resourceSandboxExtensionHandle))
+        std::optional<SandboxExtension::Handle> resourceSandboxExtensionHandle;
+        decoder >> resourceSandboxExtensionHandle;
+        if (!resourceSandboxExtensionHandle)
             return false;
-        result.resourceSandboxExtension = SandboxExtension::create(resourceSandboxExtensionHandle);
+        result.resourceSandboxExtension = SandboxExtension::create(WTFMove(*resourceSandboxExtensionHandle));
     }
 
     if (!decoder.decodeEnum(result.contentSniffingPolicy))

@@ -42,11 +42,12 @@ namespace WebKit {
 struct WebsiteDataStoreParameters {
     WebsiteDataStoreParameters() = default;
     WebsiteDataStoreParameters(WebsiteDataStoreParameters&&) = default;
+    WebsiteDataStoreParameters& operator=(WebsiteDataStoreParameters&&) = default;
     ~WebsiteDataStoreParameters();
     static WebsiteDataStoreParameters legacyPrivateSessionParameters();
     
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebsiteDataStoreParameters&);
+    static std::optional<WebsiteDataStoreParameters> decode(IPC::Decoder&);
 
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
     SandboxExtension::Handle cookieStoragePathExtensionHandle;

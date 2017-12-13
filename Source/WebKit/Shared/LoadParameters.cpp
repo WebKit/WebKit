@@ -72,8 +72,11 @@ bool LoadParameters::decode(IPC::Decoder& decoder, LoadParameters& data)
         data.request.setHTTPBody(WTFMove(formData));
     }
 
-    if (!decoder.decode(data.sandboxExtensionHandle))
+    std::optional<SandboxExtension::Handle> sandboxExtensionHandle;
+    decoder >> sandboxExtensionHandle;
+    if (!sandboxExtensionHandle)
         return false;
+    data.sandboxExtensionHandle = WTFMove(*sandboxExtensionHandle);
 
     if (!decoder.decode(data.data))
         return false;

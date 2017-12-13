@@ -46,36 +46,44 @@ void WebsiteDataStoreParameters::encode(IPC::Encoder& encoder) const
     encoder << cacheStorageDirectoryExtensionHandle;
 }
 
-bool WebsiteDataStoreParameters::decode(IPC::Decoder& decoder, WebsiteDataStoreParameters& parameters)
+std::optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC::Decoder& decoder)
 {
     std::optional<NetworkSessionCreationParameters> networkSessionParameters;
     decoder >> networkSessionParameters;
     if (!networkSessionParameters)
-        return false;
-    parameters.networkSessionParameters = WTFMove(*networkSessionParameters);
+        return std::nullopt;
 
-    if (!decoder.decode(parameters.uiProcessCookieStorageIdentifier))
-        return false;
+    std::optional<Vector<uint8_t>> uiProcessCookieStorageIdentifier;
+    decoder >> uiProcessCookieStorageIdentifier;
+    if (!uiProcessCookieStorageIdentifier)
+        return std::nullopt;
 
-    if (!decoder.decode(parameters.cookieStoragePathExtensionHandle))
-        return false;
+    std::optional<SandboxExtension::Handle> cookieStoragePathExtensionHandle;
+    decoder >> cookieStoragePathExtensionHandle;
+    if (!cookieStoragePathExtensionHandle)
+        return std::nullopt;
 
     std::optional<Vector<WebCore::Cookie>> pendingCookies;
     decoder >> pendingCookies;
     if (!pendingCookies)
-        return false;
-    parameters.pendingCookies = WTFMove(*pendingCookies);
+        return std::nullopt;
 
-    if (!decoder.decode(parameters.cacheStorageDirectory))
-        return false;
+    std::optional<String> cacheStorageDirectory;
+    decoder >> cacheStorageDirectory;
+    if (!cacheStorageDirectory)
+        return std::nullopt;
 
-    if (!decoder.decode(parameters.cacheStoragePerOriginQuota))
-        return false;
+    std::optional<uint64_t> cacheStoragePerOriginQuota;
+    decoder >> cacheStoragePerOriginQuota;
+    if (!cacheStoragePerOriginQuota)
+        return std::nullopt;
 
-    if (!decoder.decode(parameters.cacheStorageDirectoryExtensionHandle))
-        return false;
-
-    return true;
+    std::optional<SandboxExtension::Handle> cacheStorageDirectoryExtensionHandle;
+    decoder >> cacheStorageDirectoryExtensionHandle;
+    if (!cacheStorageDirectoryExtensionHandle)
+        return std::nullopt;
+    
+    return {{ WTFMove(*uiProcessCookieStorageIdentifier), WTFMove(*cookieStoragePathExtensionHandle), WTFMove(*pendingCookies), WTFMove(*cacheStorageDirectory), WTFMove(*cacheStoragePerOriginQuota), WTFMove(*cacheStorageDirectoryExtensionHandle), WTFMove(*networkSessionParameters)}};
 }
 
 WebsiteDataStoreParameters WebsiteDataStoreParameters::legacyPrivateSessionParameters()

@@ -124,12 +124,22 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
     if (!decoder.decode(result.cacheStoragePerOriginQuota))
         return false;
-    if (!decoder.decode(result.cacheStorageDirectoryExtensionHandle))
+    
+    std::optional<SandboxExtension::Handle> cacheStorageDirectoryExtensionHandle;
+    decoder >> cacheStorageDirectoryExtensionHandle;
+    if (!cacheStorageDirectoryExtensionHandle)
         return false;
+    result.cacheStorageDirectoryExtensionHandle = WTFMove(*cacheStorageDirectoryExtensionHandle);
+
     if (!decoder.decode(result.diskCacheDirectory))
         return false;
-    if (!decoder.decode(result.diskCacheDirectoryExtensionHandle))
+    
+    std::optional<SandboxExtension::Handle> diskCacheDirectoryExtensionHandle;
+    decoder >> diskCacheDirectoryExtensionHandle;
+    if (!diskCacheDirectoryExtensionHandle)
         return false;
+    result.diskCacheDirectoryExtensionHandle = WTFMove(*diskCacheDirectoryExtensionHandle);
+
     if (!decoder.decode(result.shouldEnableNetworkCache))
         return false;
     if (!decoder.decode(result.shouldEnableNetworkCacheEfficacyLogging))
@@ -143,12 +153,23 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
 #endif
 #if PLATFORM(IOS)
-    if (!decoder.decode(result.cookieStorageDirectoryExtensionHandle))
+    std::optional<SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;
+    decoder >> cookieStorageDirectoryExtensionHandle;
+    if (!cookieStorageDirectoryExtensionHandle)
         return false;
-    if (!decoder.decode(result.containerCachesDirectoryExtensionHandle))
+    result.cookieStorageDirectoryExtensionHandle = WTFMove(*cookieStorageDirectoryExtensionHandle);
+
+    std::optional<SandboxExtension::Handle> containerCachesDirectoryExtensionHandle;
+    decoder >> containerCachesDirectoryExtensionHandle;
+    if (!containerCachesDirectoryExtensionHandle)
         return false;
-    if (!decoder.decode(result.parentBundleDirectoryExtensionHandle))
+    result.containerCachesDirectoryExtensionHandle = WTFMove(*containerCachesDirectoryExtensionHandle);
+
+    std::optional<SandboxExtension::Handle> parentBundleDirectoryExtensionHandle;
+    decoder >> parentBundleDirectoryExtensionHandle;
+    if (!parentBundleDirectoryExtensionHandle)
         return false;
+    result.parentBundleDirectoryExtensionHandle = WTFMove(*parentBundleDirectoryExtensionHandle);
 #endif
     if (!decoder.decode(result.shouldSuppressMemoryPressureHandler))
         return false;

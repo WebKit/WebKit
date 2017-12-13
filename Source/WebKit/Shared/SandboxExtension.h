@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SandboxExtension_h
-#define SandboxExtension_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -55,13 +54,15 @@ public:
         Handle();
 #if ENABLE(SANDBOX_EXTENSIONS)
         Handle(Handle&&);
+        Handle& operator=(Handle&&);
 #else
         Handle(Handle&&) = default;
+        Handle& operator=(Handle&&) = default;
 #endif
         ~Handle();
 
         void encode(IPC::Encoder&) const;
-        static bool decode(IPC::Decoder&, Handle&);
+        static std::optional<Handle> decode(IPC::Decoder&);
 
     private:
         friend class SandboxExtension;
@@ -86,7 +87,7 @@ public:
     private:
 #if ENABLE(SANDBOX_EXTENSIONS)
         std::unique_ptr<Handle[]> m_data;
-        size_t m_size;
+        size_t m_size { 0 };
 #else
         Handle m_emptyHandle;
 #endif
@@ -111,7 +112,7 @@ private:
                      
 #if ENABLE(SANDBOX_EXTENSIONS)
     mutable std::unique_ptr<SandboxExtensionImpl> m_sandboxExtension;
-    size_t m_useCount;
+    size_t m_useCount { 0 };
 #endif
 };
 
@@ -119,7 +120,7 @@ private:
 inline SandboxExtension::Handle::Handle() { }
 inline SandboxExtension::Handle::~Handle() { }
 inline void SandboxExtension::Handle::encode(IPC::Encoder&) const { }
-inline bool SandboxExtension::Handle::decode(IPC::Decoder&, Handle&) { return true; }
+inline std::optional<SandboxExtension::Handle> SandboxExtension::Handle::decode(IPC::Decoder&) { return {{ }}; }
 inline SandboxExtension::HandleArray::HandleArray() { }
 inline SandboxExtension::HandleArray::~HandleArray() { }
 inline void SandboxExtension::HandleArray::allocate(size_t) { }
@@ -149,6 +150,3 @@ String resolveAndCreateReadWriteDirectoryForSandboxExtension(const String& path)
 #endif
 
 } // namespace WebKit
-
-
-#endif // SandboxExtension_h

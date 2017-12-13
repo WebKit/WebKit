@@ -52,14 +52,22 @@ bool StorageProcessCreationParameters::decode(IPC::Decoder& decoder, StorageProc
 #if ENABLE(INDEXED_DATABASE)
     if (!decoder.decode(result.indexedDatabaseDirectory))
         return false;
-    if (!decoder.decode(result.indexedDatabaseDirectoryExtensionHandle))
+
+    std::optional<SandboxExtension::Handle> indexedDatabaseDirectoryExtensionHandle;
+    decoder >> indexedDatabaseDirectoryExtensionHandle;
+    if (!indexedDatabaseDirectoryExtensionHandle)
         return false;
+    result.indexedDatabaseDirectoryExtensionHandle = WTFMove(*indexedDatabaseDirectoryExtensionHandle);
 #endif
 #if ENABLE(SERVICE_WORKER)
     if (!decoder.decode(result.serviceWorkerRegistrationDirectory))
         return false;
-    if (!decoder.decode(result.serviceWorkerRegistrationDirectoryExtensionHandle))
+    
+    std::optional<SandboxExtension::Handle> serviceWorkerRegistrationDirectoryExtensionHandle;
+    decoder >> serviceWorkerRegistrationDirectoryExtensionHandle;
+    if (!serviceWorkerRegistrationDirectoryExtensionHandle)
         return false;
+    result.serviceWorkerRegistrationDirectoryExtensionHandle = WTFMove(*serviceWorkerRegistrationDirectoryExtensionHandle);
 #endif
 
     return true;

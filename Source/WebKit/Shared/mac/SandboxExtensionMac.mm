@@ -111,6 +111,7 @@ SandboxExtension::Handle::Handle()
 }
 
 SandboxExtension::Handle::Handle(Handle&&) = default;
+SandboxExtension::Handle& SandboxExtension::Handle::operator=(Handle&&) = default;
 
 SandboxExtension::Handle::~Handle()
 {
@@ -135,23 +136,21 @@ void SandboxExtension::Handle::encode(IPC::Encoder& encoder) const
     m_sandboxExtension = 0;
 }
 
-bool SandboxExtension::Handle::decode(IPC::Decoder& decoder, Handle& result)
+auto SandboxExtension::Handle::decode(IPC::Decoder& decoder) -> std::optional<Handle>
 {
-    ASSERT(!result.m_sandboxExtension);
-
     IPC::DataReference dataReference;
     if (!decoder.decode(dataReference))
-        return false;
+        return std::nullopt;
 
     if (dataReference.isEmpty())
-        return true;
+        return {{ }};
 
-    result.m_sandboxExtension = std::make_unique<SandboxExtensionImpl>(reinterpret_cast<const char*>(dataReference.data()), dataReference.size());
-    return true;
+    Handle handle;
+    handle.m_sandboxExtension = std::make_unique<SandboxExtensionImpl>(reinterpret_cast<const char*>(dataReference.data()), dataReference.size());
+    return WTFMove(handle);
 }
 
 SandboxExtension::HandleArray::HandleArray()
-    : m_size(0)
 {
 }
 
@@ -192,7 +191,6 @@ void SandboxExtension::HandleArray::encode(IPC::Encoder& encoder) const
     encoder << static_cast<uint64_t>(size());
     for (size_t i = 0; i < m_size; ++i)
         encoder << m_data[i];
-    
 }
 
 bool SandboxExtension::HandleArray::decode(IPC::Decoder& decoder, SandboxExtension::HandleArray& handles)
@@ -202,8 +200,11 @@ bool SandboxExtension::HandleArray::decode(IPC::Decoder& decoder, SandboxExtensi
         return false;
     handles.allocate(size);
     for (size_t i = 0; i < size; i++) {
-        if (!decoder.decode(handles[i]))
+        std::optional<SandboxExtension::Handle> handle;
+        decoder >> handle;
+        if (!handle)
             return false;
+        handles[i] = WTFMove(*handle);
     }
     return true;
 }
@@ -362,7 +363,6 @@ bool SandboxExtension::createHandleForGenericExtension(const String& extensionCl
 
 SandboxExtension::SandboxExtension(const Handle& handle)
     : m_sandboxExtension(WTFMove(handle.m_sandboxExtension))
-    , m_useCount(0)
 {
 }
 
