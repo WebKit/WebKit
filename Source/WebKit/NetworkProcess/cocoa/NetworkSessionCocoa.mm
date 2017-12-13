@@ -215,7 +215,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
 
         bool shouldIgnoreHSTS = false;
 #if USE(CFNETWORK_IGNORE_HSTS)
-        shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request) && !(WebCore::NetworkStorageSession::storageSession(_session->sessionID())->cookieStoragePartition(request)).isEmpty();
+        shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request) && !(WebCore::NetworkStorageSession::storageSession(_session->sessionID())->cookieStoragePartition(request, networkDataTask->frameID(), networkDataTask->pageID())).isEmpty();
         if (shouldIgnoreHSTS) {
             request = downgradeRequest(request);
             ASSERT([request.URL.scheme isEqualToString:@"http"]);
@@ -245,17 +245,17 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
     auto taskIdentifier = task.taskIdentifier;
     LOG(NetworkSession, "%llu _schemeUpgraded %s", taskIdentifier, request.URL.absoluteString.UTF8String);
 
-    bool shouldIgnoreHSTS = false;
+    if (auto* networkDataTask = [self existingTask:task]) {
+        bool shouldIgnoreHSTS = false;
 #if USE(CFNETWORK_IGNORE_HSTS)
-    shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request) && !(WebCore::NetworkStorageSession::storageSession(_session->sessionID())->cookieStoragePartition(request)).isEmpty();
-    if (shouldIgnoreHSTS) {
-        request = downgradeRequest(request);
-        ASSERT([request.URL.scheme isEqualToString:@"http"]);
-        LOG(NetworkSession, "%llu Downgraded %s from https to http", taskIdentifier, request.URL.absoluteString.UTF8String);
-    }
+        shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request) && !(WebCore::NetworkStorageSession::storageSession(_session->sessionID())->cookieStoragePartition(request, networkDataTask->frameID(), networkDataTask->pageID())).isEmpty();
+        if (shouldIgnoreHSTS) {
+            request = downgradeRequest(request);
+            ASSERT([request.URL.scheme isEqualToString:@"http"]);
+            LOG(NetworkSession, "%llu Downgraded %s from https to http", taskIdentifier, request.URL.absoluteString.UTF8String);
+        }
 #endif
 
-    if (auto* networkDataTask = [self existingTask:task]) {
         auto completionHandlerCopy = Block_copy(completionHandler);
         networkDataTask->willPerformHTTPRedirection(WebCore::synthesizeRedirectResponseIfNecessary([task currentRequest], request, nil), request, [completionHandlerCopy, taskIdentifier, shouldIgnoreHSTS](auto&& request) {
 #if !LOG_DISABLED

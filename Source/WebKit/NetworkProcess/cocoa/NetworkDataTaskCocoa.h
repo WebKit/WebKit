@@ -41,9 +41,9 @@ class NetworkSessionCocoa;
 class NetworkDataTaskCocoa final : public NetworkDataTask {
     friend class NetworkSessionCocoa;
 public:
-    static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy shouldContentEncodingSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly)
+    static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, uint64_t frameID, uint64_t pageID, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy shouldContentEncodingSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly)
     {
-        return adoptRef(*new NetworkDataTaskCocoa(session, client, request, storedCredentialsPolicy, shouldContentSniff, shouldContentEncodingSniff, shouldClearReferrerOnHTTPSToHTTPRedirect, shouldPreconnectOnly));
+        return adoptRef(*new NetworkDataTaskCocoa(session, client, request, frameID, pageID, storedCredentialsPolicy, shouldContentSniff, shouldContentEncodingSniff, shouldClearReferrerOnHTTPSToHTTPRedirect, shouldPreconnectOnly));
     }
 
     ~NetworkDataTaskCocoa();
@@ -69,8 +69,11 @@ public:
 
     WebCore::NetworkLoadMetrics& networkLoadMetrics() { return m_networkLoadMetrics; }
 
+    uint64_t frameID() const { return m_frameID; };
+    uint64_t pageID() const { return m_pageID; };
+
 private:
-    NetworkDataTaskCocoa(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, WebCore::ContentSniffingPolicy, WebCore::ContentEncodingSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly);
+    NetworkDataTaskCocoa(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, uint64_t frameID, uint64_t pageID, WebCore::StoredCredentialsPolicy, WebCore::ContentSniffingPolicy, WebCore::ContentEncodingSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly);
 
     bool tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&);
     void applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(NSURLRequest*&, bool shouldContentSniff, bool shouldContentEncodingSniff);
@@ -78,6 +81,8 @@ private:
     RefPtr<SandboxExtension> m_sandboxExtension;
     RetainPtr<NSURLSessionDataTask> m_task;
     WebCore::NetworkLoadMetrics m_networkLoadMetrics;
+    uint64_t m_frameID;
+    uint64_t m_pageID;
 };
 
 WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge&);

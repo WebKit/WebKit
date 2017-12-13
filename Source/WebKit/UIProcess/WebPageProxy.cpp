@@ -7174,9 +7174,10 @@ void WebPageProxy::hasStorageAccess(String&& subFrameHost, String&& topFrameHost
     });
 }
 
-void WebPageProxy::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t webProcessContextId)
+void WebPageProxy::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, uint64_t webProcessContextId)
 {
-    m_websiteDataStore->requestStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), [this, webProcessContextId] (bool wasGranted) {
+    ASSERT(pageID == m_pageID);
+    m_websiteDataStore->requestStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, [this, webProcessContextId] (bool wasGranted) {
         m_process->send(Messages::WebPage::StorageAccessResponse(wasGranted, webProcessContextId), m_pageID);
     });
 }

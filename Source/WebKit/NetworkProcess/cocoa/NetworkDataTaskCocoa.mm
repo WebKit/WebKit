@@ -101,8 +101,10 @@ void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeede
     nsRequest = mutableRequest.autorelease();
 }
 
-NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy shouldContentEncodingSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly)
+NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, uint64_t frameID, uint64_t pageID, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy shouldContentEncodingSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly)
     : NetworkDataTask(session, client, requestWithCredentials, storedCredentialsPolicy, shouldClearReferrerOnHTTPSToHTTPRedirect)
+    , m_frameID(frameID)
+    , m_pageID(pageID)
 {
     if (m_scheduledFailureType != NoFailure)
         return;
@@ -161,7 +163,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     if (storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use) {
-        String storagePartition = session.networkStorageSession().cookieStoragePartition(request);
+        String storagePartition = session.networkStorageSession().cookieStoragePartition(request, m_frameID, m_pageID);
         if (!storagePartition.isEmpty()) {
             LOG(NetworkSession, "%llu Partitioning cookies for URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
             m_task.get()._storagePartitionIdentifier = storagePartition;
@@ -275,7 +277,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
     
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     if (m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use) {
-        String requiredStoragePartition = m_session->networkStorageSession().cookieStoragePartition(request);
+        String requiredStoragePartition = m_session->networkStorageSession().cookieStoragePartition(request, m_frameID, m_pageID);
         if (shouldChangePartition(requiredStoragePartition, m_task.get()._storagePartitionIdentifier)) {
             LOG(NetworkSession, "%llu %s cookies for redirected URL %s", [m_task taskIdentifier], (requiredStoragePartition.isEmpty() ? "Not partitioning" : "Partitioning"), request.url().string().utf8().data());
             m_task.get()._storagePartitionIdentifier = requiredStoragePartition;

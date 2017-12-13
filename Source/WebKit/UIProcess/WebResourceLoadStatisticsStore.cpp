@@ -268,19 +268,13 @@ void WebResourceLoadStatisticsStore::hasStorageAccess(String&& subFrameHost, Str
     });
 }
 
-void WebResourceLoadStatisticsStore::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::CompletionHandler<void (bool)>&& callback)
+void WebResourceLoadStatisticsStore::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback)
 {
     ASSERT(subFrameHost != topFrameHost);
     ASSERT(RunLoop::isMain());
 
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), subFramePrimaryDomain = isolatedPrimaryDomain(subFrameHost), topFramePrimaryDomain = isolatedPrimaryDomain(topFrameHost), callback = WTFMove(callback)] () mutable {
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), subFramePrimaryDomain = isolatedPrimaryDomain(subFrameHost), topFramePrimaryDomain = isolatedPrimaryDomain(topFrameHost), frameID, pageID, callback = WTFMove(callback)] () mutable {
 
-        auto& topFrameStatistic = ensureResourceStatisticsForPrimaryDomain(topFramePrimaryDomain);
-        if (topFrameStatistic.storageAccessUnderTopFrameOrigins.contains(subFramePrimaryDomain)) {
-            callback(true);
-            return;
-        }
-        
         auto& subFrameStatistic = ensureResourceStatisticsForPrimaryDomain(subFramePrimaryDomain);
         if (shouldBlockCookies(subFrameStatistic)) {
             callback(false);
@@ -292,8 +286,7 @@ void WebResourceLoadStatisticsStore::requestStorageAccess(String&& subFrameHost,
             return;
         }
         
-        m_updateStorageAccessForPrevalentDomainsHandler(subFramePrimaryDomain, topFramePrimaryDomain, true, WTFMove(callback));
-        topFrameStatistic.storageAccessUnderTopFrameOrigins.add(subFramePrimaryDomain);
+        m_updateStorageAccessForPrevalentDomainsHandler(subFramePrimaryDomain, topFramePrimaryDomain, frameID, pageID, true, WTFMove(callback));
     });
 }
     

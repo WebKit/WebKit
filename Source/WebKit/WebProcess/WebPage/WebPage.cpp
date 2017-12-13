@@ -5821,13 +5821,13 @@ void WebPage::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF
         callback(false);
 }
     
-void WebPage::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::CompletionHandler<void (bool)>&& callback)
+void WebPage::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback)
 {
     auto contextId = nextRequestStorageAccessContextId();
     auto addResult = m_storageAccessResponseCallbackMap.add(contextId, WTFMove(callback));
     ASSERT(addResult.isNewEntry);
     if (addResult.iterator->value)
-        send(Messages::WebPageProxy::RequestStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), contextId));
+        send(Messages::WebPageProxy::RequestStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, contextId));
     else
         callback(false);
 }

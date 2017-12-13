@@ -124,7 +124,7 @@ static bool cookiesAreBlockedForURL(const NetworkStorageSession& session, const 
 
 static NSArray *cookiesInPartitionForURL(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
-    String partition = session.cookieStoragePartition(firstParty, url);
+    String partition = session.cookieStoragePartition(firstParty, url, std::nullopt, std::nullopt);
     if (partition.isEmpty())
         return nil;
 
@@ -260,7 +260,7 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstPar
     ASSERT([filteredCookies.get() count] <= 1);
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    String partition = session.cookieStoragePartition(firstParty, url);
+    String partition = session.cookieStoragePartition(firstParty, url, std::nullopt, std::nullopt);
     if (!partition.isEmpty())
         filteredCookies = applyPartitionToCookies(partition, filteredCookies.get());
 #endif

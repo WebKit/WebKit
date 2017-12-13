@@ -61,9 +61,9 @@ enum class ShouldClearFirst;
 class WebResourceLoadStatisticsStore final : public IPC::Connection::WorkQueueMessageReceiver {
 public:
     using UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler = WTF::Function<void(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst)>;
-    using UpdateStorageAccessForPrevalentDomainsHandler = WTF::Function<void(const String& resourceDomain, const String& firstPartyDomain, bool value, WTF::Function<void(bool wasGranted)>&& callback)>;
+    using UpdateStorageAccessForPrevalentDomainsHandler = WTF::Function<void(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, bool value, WTF::Function<void(bool wasGranted)>&& callback)>;
     using RemovePrevalentDomainsHandler = WTF::Function<void (const Vector<String>&)>;
-    static Ref<WebResourceLoadStatisticsStore> create(const String& resourceLoadStatisticsDirectory, Function<void (const String&)>&& testingCallback, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler = [](const Vector<String>&, const Vector<String>&, const Vector<String>&, ShouldClearFirst) { }, UpdateStorageAccessForPrevalentDomainsHandler&& updateStorageAccessForPrevalentDomainsHandler = [](const String&, const String&, bool, WTF::Function<void(bool)>&&) { }, RemovePrevalentDomainsHandler&& removeDomainsHandler = [] (const Vector<String>&) { })
+    static Ref<WebResourceLoadStatisticsStore> create(const String& resourceLoadStatisticsDirectory, Function<void (const String&)>&& testingCallback, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler = [](const Vector<String>&, const Vector<String>&, const Vector<String>&, ShouldClearFirst) { }, UpdateStorageAccessForPrevalentDomainsHandler&& updateStorageAccessForPrevalentDomainsHandler = [](const String&, const String&, uint64_t, uint64_t, bool, WTF::Function<void(bool)>&&) { }, RemovePrevalentDomainsHandler&& removeDomainsHandler = [] (const Vector<String>&) { })
     {
         return adoptRef(*new WebResourceLoadStatisticsStore(resourceLoadStatisticsDirectory, WTFMove(testingCallback), WTFMove(updatePrevalentDomainsToPartitionOrBlockCookiesHandler), WTFMove(updateStorageAccessForPrevalentDomainsHandler), WTFMove(removeDomainsHandler)));
     }
@@ -82,7 +82,7 @@ public:
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&& origins);
 
     void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::CompletionHandler<void (bool)>&& callback);
-    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::CompletionHandler<void (bool)>&& callback);
+    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback);
     void requestStorageAccessCallback(bool wasGranted, uint64_t contextId);
 
     void processWillOpenConnection(WebProcessProxy&, IPC::Connection&);

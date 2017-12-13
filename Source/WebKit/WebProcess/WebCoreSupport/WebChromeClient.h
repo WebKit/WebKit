@@ -350,7 +350,7 @@ private:
     void didInvalidateDocumentMarkerRects() final;
 
     void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::CompletionHandler<void (bool)>&&) final;
-    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::CompletionHandler<void (bool)>&&) final;
+    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&&) final;
 
     String m_cachedToolTip;
     mutable RefPtr<WebFrame> m_cachedFrameSetLargestFrame;

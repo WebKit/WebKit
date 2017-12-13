@@ -1860,6 +1860,7 @@ private:
 
     static bool hasEverCreatedAnAXObjectCache;
 
+    bool m_hasFrameSpecificStorageAccess { false };
     bool m_grantStorageAccessOverride { false };
 
     RefPtr<DocumentTimeline> m_timeline;

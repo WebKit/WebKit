@@ -1,3 +1,56 @@
+2017-12-12  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Implement frame-specific access in the network storage session layer
+        https://bugs.webkit.org/show_bug.cgi?id=180679
+        <rdar://problem/35982116>
+
+        Reviewed by Alex Christensen.
+
+        This changes adds frameID and pageID to what is communicated for
+        storage access and also stored in the network process' table of
+        partitioning exceptions.
+
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::create):
+            Now stores frameID and pageID for the task for easy retrieval
+            in the HSTS checks.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::updateStorageAccessForPrevalentDomains):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+            These two methods now submit frameID and pageID to the
+            partitioning query call.
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:_schemeUpgraded:completionHandler:]):
+            These two methods now submit frameID and pageID to the
+            partitioning query call.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::updateStorageAccessForPrevalentDomains):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestStorageAccess):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::updateStorageAccessForPrevalentDomainsHandler):
+        (WebKit::WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback):
+        (WebKit::WebsiteDataStore::requestStorageAccess):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::requestStorageAccess):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestStorageAccess):
+        * WebProcess/WebPage/WebPage.h:
+
 2017-12-12  Alex Christensen  <achristensen@webkit.org>
 
         Modernize WebsiteDataStoreParameters and SandboxExtension::Handle decoding

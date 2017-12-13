@@ -335,12 +335,12 @@ void NetworkProcess::updatePrevalentDomainsToPartitionOrBlockCookies(PAL::Sessio
         networkStorageSession->setPrevalentDomainsToPartitionOrBlockCookies(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst);
 }
 
-void NetworkProcess::updateStorageAccessForPrevalentDomains(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, bool shouldGrantStorage, uint64_t contextId)
+void NetworkProcess::updateStorageAccessForPrevalentDomains(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, bool shouldGrantStorage, uint64_t contextId)
 {
     bool isStorageGranted = false;
     if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID)) {
-        networkStorageSession->setStorageAccessGranted(resourceDomain, firstPartyDomain, shouldGrantStorage);
-        ASSERT(networkStorageSession->isStorageAccessGranted(resourceDomain, firstPartyDomain) == shouldGrantStorage);
+        networkStorageSession->setStorageAccessGranted(resourceDomain, firstPartyDomain, frameID, pageID, shouldGrantStorage);
+        ASSERT(networkStorageSession->isStorageAccessGranted(resourceDomain, firstPartyDomain, frameID, pageID) == shouldGrantStorage);
         isStorageGranted = shouldGrantStorage;
     } else
         ASSERT_NOT_REACHED();

@@ -1,3 +1,25 @@
+2017-12-12  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Implement frame-specific access in the network storage session layer
+        https://bugs.webkit.org/show_bug.cgi?id=180679
+        <rdar://problem/35982116>
+
+        Reviewed by Alex Christensen.
+
+        Note that the expected results for
+        request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-and-try-access-from-right-frame.html
+        accepts the missing part where document.cookie is still partitioned
+        after storage access has been granted. Follow-up work tracked in
+        https://bugs.webkit.org/show_bug.cgi?id=180682.
+
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-and-try-access-from-right-frame-expected.txt: Added.
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-and-try-access-from-right-frame.html: Added.
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-but-try-access-from-wrong-frame-expected.txt: Copied from LayoutTests/http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-expected.txt.
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-but-try-access-from-wrong-frame.html: Copied from LayoutTests/http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction.html.
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-expected.txt: Removed.
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction.html: Removed.
+        * platform/mac-wk2/TestExpectations:
+
 2017-12-12  Brian Burg  <bburg@apple.com>
 
         Web Inspector: support async setup() and async teardown() in AsyncTestSuite

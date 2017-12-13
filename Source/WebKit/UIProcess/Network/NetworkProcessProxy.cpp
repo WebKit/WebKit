@@ -408,12 +408,12 @@ static uint64_t nextRequestStorageAccessContextId()
     return ++nextContextId;
 }
 
-void NetworkProcessProxy::updateStorageAccessForPrevalentDomains(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, bool value, WTF::CompletionHandler<void(bool)>&& callback)
+void NetworkProcessProxy::updateStorageAccessForPrevalentDomains(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, bool value, WTF::CompletionHandler<void(bool)>&& callback)
 {
     auto contextId = nextRequestStorageAccessContextId();
     auto addResult = m_storageAccessResponseCallbackMap.add(contextId, WTFMove(callback));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    send(Messages::NetworkProcess::UpdateStorageAccessForPrevalentDomains(sessionID, resourceDomain, firstPartyDomain, value, contextId), 0);
+    send(Messages::NetworkProcess::UpdateStorageAccessForPrevalentDomains(sessionID, resourceDomain, firstPartyDomain, frameID, pageID, value, contextId), 0);
 }
 
 void NetworkProcessProxy::storageAccessRequestResult(bool wasGranted, uint64_t contextId)

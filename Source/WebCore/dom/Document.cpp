@@ -7406,6 +7406,9 @@ void Document::hasStorageAccess(Ref<DeferredPromise>&& passedPromise)
 
     RefPtr<DeferredPromise> promise(WTFMove(passedPromise));
 
+    if (m_hasFrameSpecificStorageAccess)
+        promise->resolve<IDLBoolean>(true);
+    
     if (!m_frame || securityOrigin().isUnique()) {
         promise->resolve<IDLBoolean>(false);
         return;
@@ -7444,6 +7447,9 @@ void Document::requestStorageAccess(Ref<DeferredPromise>&& passedPromise)
     ASSERT(settings().storageAccessAPIEnabled());
     
     RefPtr<DeferredPromise> promise(WTFMove(passedPromise));
+    
+    if (m_hasFrameSpecificStorageAccess)
+        promise->resolve();
     
     if (!m_frame || securityOrigin().isUnique()) {
         promise->reject();
@@ -7489,16 +7495,22 @@ void Document::requestStorageAccess(Ref<DeferredPromise>&& passedPromise)
     builder.append(topHost);
     builder.appendLiteral("?");
     Page* page = this->page();
+
+    ASSERT(m_frame);
+    auto frameID = m_frame->loader().client().frameID();
+    auto pageID = m_frame->loader().client().pageID();
+
     // FIXME: Don't use runJavaScriptConfirm because it responds synchronously.
     if ((page && page->chrome().runJavaScriptConfirm(*m_frame, builder.toString())) || m_grantStorageAccessOverride) {
-        page->chrome().client().requestStorageAccess(WTFMove(iframeHost), WTFMove(topHost), [documentReference = m_weakFactory.createWeakPtr(*this), promise] (bool wasGranted) {
+        page->chrome().client().requestStorageAccess(WTFMove(iframeHost), WTFMove(topHost), frameID, pageID, [documentReference = m_weakFactory.createWeakPtr(*this), promise] (bool wasGranted) {
             Document* document = documentReference.get();
             if (!document)
                 return;
 
-            if (wasGranted)
+            if (wasGranted) {
+                document->m_hasFrameSpecificStorageAccess = true;
                 promise->resolve();
-            else
+            } else
                 promise->reject();
         });
         return;
