@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-enum class ApplePayPaymentMethodType { Debit, Credit, Prepaid, Store };
+enum class ApplePayPaymentMethodType;
 
 struct ApplePayPaymentMethod {    
     using Type = ApplePayPaymentMethodType;

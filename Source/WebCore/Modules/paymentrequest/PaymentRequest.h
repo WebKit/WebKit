@@ -75,6 +75,7 @@ public:
 
     const PaymentOptions& paymentOptions() const { return m_options; }
     const PaymentDetailsInit& paymentDetails() const { return m_details; }
+    const Vector<String>& serializedModifierData() const { return m_serializedModifierData; }
 
     void shippingAddressChanged(Ref<PaymentAddress>&&);
     void shippingOptionChanged(const String& shippingOption);

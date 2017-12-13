@@ -97,6 +97,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/applepay/ApplePayPaymentContact.idl \
     $(WebCore)/Modules/applepay/ApplePayPaymentMethod.idl \
     $(WebCore)/Modules/applepay/ApplePayPaymentMethodSelectedEvent.idl \
+    $(WebCore)/Modules/applepay/ApplePayPaymentMethodType.idl \
 	$(WebCore)/Modules/applepay/ApplePayPaymentMethodUpdate.idl \
     $(WebCore)/Modules/applepay/ApplePayPaymentPass.idl \
     $(WebCore)/Modules/applepay/ApplePayPaymentRequest.idl \
@@ -109,7 +110,7 @@ JS_BINDING_IDLS = \
 	$(WebCore)/Modules/applepay/ApplePayShippingMethodUpdate.idl \
     $(WebCore)/Modules/applepay/ApplePayValidateMerchantEvent.idl \
     $(WebCore)/Modules/applepay/paymentrequest/ApplePayMerchantValidationEvent.idl \
-    $(WebCore)/Modules/applepay/paymentrequest/ApplePayPaymentMethodUpdateEvent.idl \
+    $(WebCore)/Modules/applepay/paymentrequest/ApplePayModifier.idl \
     $(WebCore)/Modules/applepay/paymentrequest/ApplePayRequest.idl \
     $(WebCore)/Modules/beacon/NavigatorBeacon.idl \
     $(WebCore)/Modules/cache/DOMWindowCaches.idl \

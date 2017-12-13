@@ -29,6 +29,7 @@
 #if ENABLE(APPLE_PAY)
 
 #import "ApplePayPaymentMethod.h"
+#import "ApplePayPaymentMethodType.h"
 #import <pal/spi/cocoa/PassKitSPI.h>
 
 namespace WebCore {

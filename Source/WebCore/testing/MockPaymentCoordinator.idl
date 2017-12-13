@@ -32,4 +32,7 @@
     void changePaymentMethod(ApplePayPaymentMethod paymentMethod);
     void acceptPayment();
     void cancelPayment();
+
+    readonly attribute ApplePayLineItem total;
+    readonly attribute sequence<ApplePayLineItem> lineItems;
 };
