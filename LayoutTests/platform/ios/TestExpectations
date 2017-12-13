@@ -3314,3 +3314,4 @@ webkit.org/b/180062 fast/text/user-installed-fonts/disable.html [ ImageOnlyFailu
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow-family.html [ ImageOnlyFailure ]
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow-postscript.html [ ImageOnlyFailure ]
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow.html [ ImageOnlyFailure ]
+webkit.org/b/180062 fast/text/user-installed-fonts/shadow-postscript-family.html [ ImageOnlyFailure ]
