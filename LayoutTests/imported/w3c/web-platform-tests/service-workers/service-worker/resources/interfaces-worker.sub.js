@@ -55,7 +55,7 @@ test(function() {
       false, 'Default FetchEvent.bubbles should be false');
     assert_equals(
       new FetchEvent('FetchEvent', {request: req}).clientId,
-      null, 'Default FetchEvent.clientId should be null');
+      '', 'Default FetchEvent.clientId should be the empty string');
     assert_equals(
       new FetchEvent('FetchEvent', {request: req}).isReload,
       false, 'Default FetchEvent.isReload should be false');
