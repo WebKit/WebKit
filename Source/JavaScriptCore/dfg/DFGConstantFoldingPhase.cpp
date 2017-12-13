@@ -342,11 +342,15 @@ private:
             case GetMyArgumentByVal:
             case GetMyArgumentByValOutOfBounds: {
                 JSValue indexValue = m_state.forNode(node->child2()).value();
-                if (!indexValue || !indexValue.isInt32())
+                if (!indexValue || !indexValue.isUInt32())
                     break;
 
-                unsigned index = indexValue.asUInt32() + node->numberOfArgumentsToSkip();
+                Checked<unsigned, RecordOverflow> checkedIndex = indexValue.asUInt32();
+                checkedIndex += node->numberOfArgumentsToSkip();
+                if (checkedIndex.hasOverflowed())
+                    break;
                 
+                unsigned index = checkedIndex.unsafeGet();
                 Node* arguments = node->child1().node();
                 InlineCallFrame* inlineCallFrame = arguments->origin.semantic.inlineCallFrame;
                 

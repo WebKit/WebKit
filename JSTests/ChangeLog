@@ -1,3 +1,15 @@
+2017-12-12  Saam Barati  <sbarati@apple.com>
+
+        ConstantFoldingPhase rule for GetMyArgumentByVal must check for negative indices
+        https://bugs.webkit.org/show_bug.cgi?id=180723
+        <rdar://problem/35859726>
+
+        Reviewed by JF Bastien.
+
+        * stress/get-my-argument-by-val-constant-folding.js: Added.
+        (test):
+        (catch):
+
 2017-12-12  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement BigInt literals and JSBigInt
