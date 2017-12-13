@@ -1,3 +1,16 @@
+2017-12-13  Youenn Fablet  <youenn@apple.com>
+
+        Update ContentFiltering.LazilyLoadPlatformFrameworks test to account for libwebrtc using VideoProcessing framework
+        https://bugs.webkit.org/show_bug.cgi?id=180713
+        <rdar://problem/36003031>
+
+        Reviewed by Andy Estes.
+
+        Reenable the check for non High Sierra builds.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentFiltering.mm:
+        (-[LazilyLoadPlatformFrameworksController expectParentalControlsLoaded:networkExtensionLoaded:]):
+
 2017-12-13  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (r225789): API tests WKProcessPool.InitialWarmedProcessUsed and WebKit.WebsiteDataStoreCustomPaths are failing.

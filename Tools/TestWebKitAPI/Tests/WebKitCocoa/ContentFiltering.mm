@@ -364,10 +364,12 @@ TEST(ContentFiltering, LoadAlternateAfterFinishedAddingDataWK2)
 #endif
 #if HAVE(NETWORK_EXTENSION)
         // FIXME: Libwebrtc is linking on some configurations to VideoProcessing framework which brings up NetworkExtension framework.
-        // https://bugs.webkit.org/show_bug.cgi?id=180713
         // Disable this test until we find a more robust test or libwebrtc weak link VideoProcessing framework.
-        // EXPECT_EQ(static_cast<bool>(networkExtensionShouldBeLoaded), static_cast<bool>(networkExtensionLoaded));
+        // https://bugs.webkit.org/show_bug.cgi?id=180713
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101300
+        EXPECT_EQ(static_cast<bool>(networkExtensionShouldBeLoaded), static_cast<bool>(networkExtensionLoaded));
 #endif
+#endif // HAVE(NETWORK_EXTENSION)
         isDone = true;
     }];
     TestWebKitAPI::Util::run(&isDone);
