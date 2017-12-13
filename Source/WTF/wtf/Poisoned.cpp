@@ -33,7 +33,7 @@ namespace WTF {
 uintptr_t makePoison()
 {
     uintptr_t key = cryptographicallyRandomNumber();
-#if USE(JSVALUE64) && !OS(WINDOWS)
+#if ENABLE(POISON)
     key = (key << 32) ^ (static_cast<uintptr_t>(cryptographicallyRandomNumber()) << 3);
     // Ensure that the poisoned bits (pointer ^ key) do not make a valid pointer and
     // cannot be 0. We ensure that it is zero so that the poisoned bits can also be
@@ -51,4 +51,3 @@ uintptr_t makePoison()
 }
 
 } // namespace WTF
-

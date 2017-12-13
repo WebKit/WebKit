@@ -1,3 +1,13 @@
+2017-12-13  Mark Lam  <mark.lam@apple.com>
+
+        Fill out some Poisoned APIs, fix some bugs, and add some tests.
+        https://bugs.webkit.org/show_bug.cgi?id=180724
+        <rdar://problem/36006884>
+
+        Reviewed by JF Bastien.
+
+        * runtime/StructureTransitionTable.h:
+
 2017-12-13  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Breking tests on Debug build and 32-bits due to missing Exception check
