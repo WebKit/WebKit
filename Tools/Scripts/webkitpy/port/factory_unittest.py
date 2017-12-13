@@ -31,11 +31,11 @@ import unittest
 
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.systemhost_mock import MockSystemHost
+from webkitpy.common.version import Version
 
 from webkitpy.port import factory
 from webkitpy.port import gtk
 from webkitpy.port import mac
-from webkitpy.port import test
 from webkitpy.port import win
 
 
@@ -55,15 +55,15 @@ class FactoryTest(unittest.TestCase):
     def test_mac(self):
         self.assert_port(port_name='mac-lion', cls=mac.MacPort)
         self.assert_port(port_name='mac-lion-wk2', cls=mac.MacPort)
-        self.assert_port(port_name='mac', os_name='mac', os_version='lion', cls=mac.MacPort)
-        self.assert_port(port_name=None,  os_name='mac', os_version='lion', cls=mac.MacPort)
+        self.assert_port(port_name='mac', os_name='mac', os_version=Version.from_name('Lion'), cls=mac.MacPort)
+        self.assert_port(port_name=None,  os_name='mac', os_version=Version.from_name('Lion'), cls=mac.MacPort)
 
     def test_win(self):
         self.assert_port(port_name='win-xp', cls=win.WinPort)
         self.assert_port(port_name='win-xp-wk2', cls=win.WinPort)
-        self.assert_port(port_name='win', os_name='win', os_version='xp', cls=win.WinPort)
-        self.assert_port(port_name=None, os_name='win', os_version='xp', cls=win.WinPort)
-        self.assert_port(port_name=None, os_name='win', os_version='xp', options=self.webkit_options, cls=win.WinPort)
+        self.assert_port(port_name='win', os_name='win', os_version=Version.from_name('XP'), cls=win.WinPort)
+        self.assert_port(port_name=None, os_name='win', os_version=Version.from_name('XP'), cls=win.WinPort)
+        self.assert_port(port_name=None, os_name='win', os_version=Version.from_name('XP'), options=self.webkit_options, cls=win.WinPort)
 
     def test_gtk(self):
         self.assert_port(port_name='gtk', cls=gtk.GtkPort)

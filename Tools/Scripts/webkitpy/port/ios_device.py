@@ -109,9 +109,7 @@ class IOSDevicePort(IOSPort):
             else:
                 if device.platform.os_version != version:
                     raise RuntimeError('Multiple connected devices have different iOS versions')
-        if version:
-            return VersionNameMap.map(self.host.platform).from_name(version)[1]
-        return None
+        return version
 
     # FIXME: These need device implementations <rdar://problem/30497991>.
     def check_for_leaks(self, process_name, process_pid):

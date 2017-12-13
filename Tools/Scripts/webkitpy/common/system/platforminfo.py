@@ -31,7 +31,7 @@ import re
 import sys
 
 from webkitpy.common.version import Version
-from webkitpy.common.version_name_map import VersionNameMap
+from webkitpy.common.version_name_map import PUBLIC_TABLE, VersionNameMap
 from webkitpy.common.system.executive import Executive
 
 
@@ -54,24 +54,17 @@ class PlatformInfo(object):
         self.os_name = self._determine_os_name(sys_module.platform)
         self.os_version = None
 
-        if self.os_name.startswith('mac'):
-            version = Version.from_string(platform_module.mac_ver()[0])
-        elif self.os_name.startswith('win'):
-            version = self._win_version()
-        elif self.os_name == 'linux' or self.os_name == 'freebsd' or self.os_name == 'openbsd' or self.os_name == 'netbsd':
-            version = None
-        else:
-            # Most other platforms (namely iOS) return conforming version strings.
-            version = Version.from_string(platform_module.release())
-
         self._is_cygwin = sys_module.platform == 'cygwin'
 
-        if version is None:
+        if self.os_name.startswith('mac'):
+            self.os_version = Version.from_string(platform_module.mac_ver()[0])
+        elif self.os_name.startswith('win'):
+            self.os_version = self._win_version()
+        elif self.os_name == 'linux' or self.os_name == 'freebsd' or self.os_name == 'openbsd' or self.os_name == 'netbsd':
             return
-
-        self.os_version = VersionNameMap.map(self).to_name(version, table='public')
-        assert self.os_version is not None
-        self.os_version = self.os_version.lower().replace(' ', '')
+        else:
+            # Most other platforms (namely iOS) return conforming version strings.
+            self.os_version = Version.from_string(platform_module.release())
 
     def is_mac(self):
         return self.os_name == 'mac'
@@ -109,6 +102,11 @@ class PlatformInfo(object):
         # Linux-2.6.18-194.3.1.el5-i686-with-redhat-5.5-Final
         # Windows-2008ServerR2-6.1.7600
         return self._platform_module.platform()
+
+    def os_version_name(self, table=PUBLIC_TABLE):
+        if not self.os_version:
+            return None
+        return VersionNameMap.map(self).to_name(self.os_version, table=table)
 
     def total_bytes_memory(self):
         if self.is_mac():

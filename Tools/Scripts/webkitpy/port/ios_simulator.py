@@ -246,7 +246,7 @@ class IOSSimulatorPort(IOSPort):
             else:
                 self._executive.run_command(['xcrun', 'simctl', 'boot', device_udid])
 
-            if mac_os_version in ['elcapitan', 'yosemite', 'mavericks']:
+            if mac_os_version < Version.from_name('Sierra'):
                 time.sleep(2.5)
 
         if not self.use_multiple_simulator_apps():

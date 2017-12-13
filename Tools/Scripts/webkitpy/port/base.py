@@ -49,6 +49,7 @@ from webkitpy.common.memoized import memoized
 from webkitpy.common.prettypatch import PrettyPatch
 from webkitpy.common.system import path
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.version_name_map import PUBLIC_TABLE, VersionNameMap
 from webkitpy.common.wavediff import WaveDiff
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
@@ -99,7 +100,7 @@ class Port(object):
         self._name = port_name
 
         # These are default values that should be overridden in a subclasses.
-        self._version = ''
+        self._os_version = None
 
         # FIXME: This can be removed once default architectures for GTK and EFL EWS bots are set.
         self.did_override_architecture = False
@@ -764,13 +765,16 @@ class Port(object):
         # Subclasses should override this default implementation.
         return 'mac'
 
-    def version(self):
+    @memoized
+    def version_name(self):
         """Returns a string indicating the version of a given platform, e.g.
         'leopard' or 'xp'.
 
         This is used to help identify the exact port when parsing test
         expectations, determining search paths, and logging information."""
-        return self._version
+        if self._os_version is None:
+            return None
+        return VersionNameMap.map(self.host.platform).to_name(self._os_version, table=PUBLIC_TABLE)
 
     def get_option(self, name, default_value=None):
         return getattr(self._options, name, default_value)
@@ -1072,7 +1076,7 @@ class Port(object):
     def test_configuration(self):
         """Returns the current TestConfiguration for the port."""
         if not self._test_configuration:
-            self._test_configuration = TestConfiguration(self._version, self.architecture(), self._options.configuration.lower())
+            self._test_configuration = TestConfiguration(self.version_name(), self.architecture(), self._options.configuration.lower())
         return self._test_configuration
 
     # FIXME: Belongs on a Platform object.

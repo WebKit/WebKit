@@ -27,10 +27,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import os
 
-from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.memoized import memoized
+from webkitpy.common.version_name_map import VersionNameMap
 from webkitpy.port.base import Port
+from webkitpy.port.config import apple_additions
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 
 
@@ -40,19 +41,9 @@ _log = logging.getLogger(__name__)
 class ApplePort(Port):
     """Shared logic between all of Apple's ports."""
 
-    # This is used to represent the version of an operating system
-    # corresponding to the "mac" or "win" base LayoutTests/platform
-    # directory.  I'm not sure this concept is very useful,
-    # but it gives us a way to refer to fallback paths *only* including
-    # the base directory.
-    # This is mostly done because TestConfiguration assumes that self.version()
-    # will never return None. (None would be another way to represent this concept.)
-    # Apple supposedly has explicit "future" results which are kept in an internal repository.
-    # It's possible that Apple would want to fix this code to work better with those results.
-    FUTURE_VERSION = 'future'  # FIXME: This whole 'future' thing feels like a hack.
-
     # overridden in subclasses
-    VERSION_FALLBACK_ORDER = []
+    VERSION_MIN = None
+    VERSION_MAX = None
     ARCHITECTURES = []
     _crash_logs_to_skip_for_host = {}
 
@@ -71,9 +62,9 @@ class ApplePort(Port):
             # being run, so this won't work if you're not on mac or win (respectively).
             # If you're not on the o/s in question, you must specify a full version or -future (cf. above).
             if port_name == cls.port_name and not getattr(options, 'webkit_test_runner', False):
-                port_name = cls.port_name + '-' + host.platform.os_version
+                port_name = cls.port_name + '-' + host.platform.os_version_name().lower().replace(' ', '')
             else:
-                port_name = cls.port_name + '-' + host.platform.os_version + '-wk2'
+                port_name = cls.port_name + '-' + host.platform.os_version_name().lower().replace(' ', '') + '-wk2'
         elif getattr(options, 'webkit_test_runner', False) and  '-wk2' not in port_name:
             port_name += '-wk2'
 
@@ -103,30 +94,29 @@ class ApplePort(Port):
     def should_retry_crashes(self):
         return True
 
-    def _skipped_file_search_paths(self):
-        # We don't have a dedicated Skipped file for the most recent version of the port;
-        # we just use the one in platform/{mac,win}
-        most_recent_name = self.VERSION_FALLBACK_ORDER[-1]
-        return set(filter(lambda name: name != most_recent_name, super(ApplePort, self)._skipped_file_search_paths()))
-
     # FIXME: A more sophisticated version of this function should move to WebKitPort and replace all calls to name().
     # This is also a misleading name, since 'mac-future' gets remapped to 'mac'.
     def _port_name_with_version(self):
         return self.name().replace('-future', '').replace('-wk2', '')
 
-    def _allowed_port_names(self):
-        return self.VERSION_FALLBACK_ORDER + [self._future_port_name()]
-
-    def _future_port_name(self):
-        return self.operating_system() + "-" + self.FUTURE_VERSION
+    @memoized
+    def _allowed_versions(self):
+        if self.VERSION_MIN is None or self.VERSION_MAX is None:
+            return []
+        sorted_versions = sorted(VersionNameMap.map(self.host.platform).mapping_for_platform(platform=self.port_name.split('-')[0]).values())
+        return sorted_versions[sorted_versions.index(self.VERSION_MIN):sorted_versions.index(self.VERSION_MAX) + 1]
 
     def _generate_all_test_configurations(self):
         configurations = []
-        for port_name in self._allowed_port_names():
+        for version in self._allowed_versions():
             for build_type in self.ALL_BUILD_TYPES:
                 for architecture in self.ARCHITECTURES:
-                    configurations.append(TestConfiguration(version=self._strip_port_name_prefix(port_name), architecture=architecture, build_type=build_type))
+                    version_name = VersionNameMap.map(self.host.platform).to_name(version, platform=self.port_name.split('-')[0])
+                    configurations.append(TestConfiguration(version=version_name, architecture=architecture, build_type=build_type))
         return configurations
+
+    def _apple_baseline_path(self, platform):
+        return self._filesystem.join(apple_additions().layout_tests_path(), platform)
 
     def _path_to_helper(self):
         binary_name = 'LayoutTestHelper'

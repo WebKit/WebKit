@@ -27,25 +27,24 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import time
-
 from webkitpy.port.mac import MacPort
 from webkitpy.port import darwin_testcase
 from webkitpy.port import port_testcase
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2, ScriptError
+from webkitpy.common.version import Version
 
 
 class MacTest(darwin_testcase.DarwinTest):
     os_name = 'mac'
-    os_version = 'lion'
+    os_version = Version.from_name('Lion')
     port_name = 'mac-lion'
     port_maker = MacPort
 
     def test_version(self):
         port = self.make_port()
-        self.assertTrue(port.version())
+        self.assertIsNotNone(port.version_name())
 
     def test_versions(self):
         # Note: these tests don't need to be exhaustive as long as we get path coverage.

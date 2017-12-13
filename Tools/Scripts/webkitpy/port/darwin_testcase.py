@@ -28,6 +28,7 @@ from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2, MockProcess, ScriptError
 from webkitpy.common.system.systemhost_mock import MockSystemHost
+from webkitpy.common.version_name_map import VersionNameMap
 
 
 class DarwinTest(port_testcase.PortTestCase):
@@ -41,7 +42,7 @@ class DarwinTest(port_testcase.PortTestCase):
         self.assertEqual(self.make_port(options=MockOptions(guard_malloc=True)).default_timeout_ms(), 350000)
 
     def assert_name(self, port_name, os_version_string, expected):
-        host = MockSystemHost(os_name=self.os_name, os_version=os_version_string)
+        host = MockSystemHost(os_name=self.os_name, os_version=VersionNameMap.map().from_name(os_version_string)[1])
         port = self.make_port(host=host, port_name=port_name)
         self.assertEqual(expected, port.name())
 

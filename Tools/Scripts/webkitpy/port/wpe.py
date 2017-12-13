@@ -82,7 +82,7 @@ class WPEPort(Port):
     def _generate_all_test_configurations(self):
         configurations = []
         for build_type in self.ALL_BUILD_TYPES:
-            configurations.append(TestConfiguration(version=self._version, architecture='x86', build_type=build_type))
+            configurations.append(TestConfiguration(version=self.version_name(), architecture='x86', build_type=build_type))
         return configurations
 
     def _path_to_driver(self):

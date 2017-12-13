@@ -28,10 +28,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.common.version import Version
+from webkitpy.common.version_name_map import PUBLIC_TABLE, VersionNameMap
 
 
 class MockPlatformInfo(object):
-    def __init__(self, os_name='mac', os_version='snowleopard'):
+    def __init__(self, os_name='mac', os_version=Version.from_name('Snow Leopard')):
+        assert isinstance(os_version, Version)
         self.os_name = os_name
         self.os_version = os_version
         self.expected_xcode_simctl_list = None
@@ -59,6 +61,11 @@ class MockPlatformInfo(object):
 
     def display_name(self):
         return "MockPlatform 1.0"
+
+    def os_version_name(self, table=PUBLIC_TABLE):
+        if not self.os_version:
+            return None
+        return VersionNameMap.map(self).to_name(self.os_version, table=table)
 
     def total_bytes_memory(self):
         return 3 * 1024 * 1024 * 1024  # 3GB is a reasonable amount of ram to mock.

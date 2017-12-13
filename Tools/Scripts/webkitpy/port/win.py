@@ -37,8 +37,9 @@ import time
 
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.systemhost import SystemHost
-from webkitpy.common.system.executive import ScriptError, Executive
+from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.path import abspath_to_uri, cygpath
+from webkitpy.common.version import Version
 from webkitpy.common.version_name_map import VersionNameMap
 from webkitpy.port.apple import ApplePort
 from webkitpy.port.config import apple_additions
@@ -56,7 +57,8 @@ except ImportError:
 class WinPort(ApplePort):
     port_name = "win"
 
-    VERSION_FALLBACK_ORDER = ["win-xp", "win-vista", "win-7sp0", "win-win10", "win"]
+    VERSION_MIN = Version(5, 1)
+    VERSION_MAX = Version(10)
 
     ARCHITECTURES = ['x86', 'x86_64']
 
@@ -87,6 +89,13 @@ class WinPort(ApplePort):
     previous_error_reporting_values = {}
     previous_wow64_error_reporting_values = {}
 
+    def __init__(self, host, port_name, **kwargs):
+        ApplePort.__init__(self, host, port_name, **kwargs)
+        if port_name.split('-') > 1:
+            self._os_version = VersionNameMap.map(host.platform).from_name(port_name.split('-')[1])[1]
+        else:
+            self._os_version = self.host.platform.os_version
+
     def do_text_results_differ(self, expected_text, actual_text):
         # Sanity was restored in WK2, so we don't need this hack there.
         if self.get_option('webkit_test_runner'):
@@ -102,11 +111,15 @@ class WinPort(ApplePort):
         return expected_text != actual_text
 
     def default_baseline_search_path(self):
-        name = self._name.replace('-wk2', '')
-        if name.endswith(self.FUTURE_VERSION):
-            fallback_names = [self.port_name]
+        version_name_map = VersionNameMap.map(self.host.platform)
+        if self._os_version < self.VERSION_MIN or self._os_version > self.VERSION_MAX:
+            fallback_versions = [self._os_version]
         else:
-            fallback_names = self.VERSION_FALLBACK_ORDER[self.VERSION_FALLBACK_ORDER.index(name):-1] + [self.port_name]
+            sorted_versions = sorted(version_name_map.mapping_for_platform(platform=self.port_name).values())
+            fallback_versions = sorted_versions[sorted_versions.index(self._os_version):]
+        fallback_names = ['win-' + version_name_map.to_name(version, platform=self.port_name).lower().replace(' ', '') for version in fallback_versions]
+        fallback_names.append('win')
+
         # FIXME: The AppleWin port falls back to AppleMac for some results.  Eventually we'll have a shared 'apple' port.
         if self.get_option('webkit_test_runner'):
             fallback_names.insert(0, 'win-wk2')
@@ -438,17 +451,13 @@ class WinCairoPort(WinPort):
 
     TEST_PATH_SEPARATOR = os.sep
 
-    VERSION_FALLBACK_ORDER = ["wincairo-" + os_name.lower() for os_name in VersionNameMap.map().names()]
-
     def default_baseline_search_path(self):
-        name = self._name.replace('-wk2', '')
-        if name.endswith(self.FUTURE_VERSION):
-            fallback_names = []
+        version_name_map = VersionNameMap.map(self.host.platform)
+        if self._os_version < self.VERSION_MIN or self._os_version > self.VERSION_MAX:
+            fallback_versions = [self._os_version]
         else:
-            assert name in self.VERSION_FALLBACK_ORDER
-            fallback_names = self.VERSION_FALLBACK_ORDER[self.VERSION_FALLBACK_ORDER.index(name):]
-        fallback_names.append(self.port_name)
+            sorted_versions = sorted(version_name_map.mapping_for_platform(platform=self.port_name).values())
+            fallback_versions = sorted_versions[sorted_versions.index(self._os_version):]
+        fallback_names = ['wincairo-' + version_name_map.to_name(version, platform=self.port_name).lower().replace(' ', '') for version in fallback_versions]
+        fallback_names.append('wincairo')
         return map(self._webkit_baseline_path, fallback_names)
-
-    def _future_port_name(self):
-        return self.port_name + "-" + self.FUTURE_VERSION

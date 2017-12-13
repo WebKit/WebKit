@@ -26,13 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
 import time
 
 from webkitpy.port import Port, Driver, DriverOutput
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
-from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.crashlogs import CrashLogs
+from webkitpy.common.version_name_map import PUBLIC_TABLE, VersionNameMap
 
 
 # This sets basic expectations for a test. Each individual expectation
@@ -243,7 +242,7 @@ layer at (0,0) size 800x34
 
     # For testing test are properly included from platform directories.
     tests.add('platform/test-mac-leopard/http/test.html')
-    tests.add('platform/test-win-win7/http/test.html')
+    tests.add('platform/test-win-7sp0/http/test.html')
 
     # For --no-http tests, test that platform specific HTTP tests are properly skipped.
     tests.add('platform/test-snow-leopard/http/test.html')
@@ -357,7 +356,7 @@ class TestPort(Port):
     ALL_BASELINE_VARIANTS = (
         'test-linux-x86_64',
         'test-mac-snowleopard', 'test-mac-leopard',
-        'test-win-vista', 'test-win-win7', 'test-win-xp',
+        'test-win-vista', 'test-win-7sp0', 'test-win-xp',
     )
 
     @classmethod
@@ -373,21 +372,16 @@ class TestPort(Port):
         self._expectations_path = LAYOUT_TEST_DIR + '/platform/test/TestExpectations'
         self._results_directory = None
 
-        self._operating_system = 'mac'
-        if self._name.startswith('test-win'):
-            self._operating_system = 'win'
-        elif self._name.startswith('test-linux'):
-            self._operating_system = 'linux'
+        self._operating_system = self._name.split('-')[1]
+        if self._operating_system == 'linux':
+            self._os_version = None
+        else:
+            self._os_version = VersionNameMap.map(self.host.platform).from_name(self._name.split('-')[2])[1]
 
-        version_map = {
-            'test-win-xp': 'xp',
-            'test-win-win7': 'win7',
-            'test-win-vista': 'vista',
-            'test-mac-leopard': 'leopard',
-            'test-mac-snowleopard': 'snowleopard',
-            'test-linux-x86_64': 'lucid',
-        }
-        self._version = version_map[self._name]
+    def version_name(self):
+        if self._os_version is None:
+            return None
+        return VersionNameMap.map(self.host.platform).to_name(self._os_version, platform=self._operating_system, table=PUBLIC_TABLE)
 
     def default_pixel_tests(self):
         return True
@@ -401,10 +395,10 @@ class TestPort(Port):
         search_paths = {
             'test-mac-snowleopard': ['test-mac-snowleopard'],
             'test-mac-leopard': ['test-mac-leopard', 'test-mac-snowleopard'],
-            'test-win-win7': ['test-win-win7'],
-            'test-win-vista': ['test-win-vista', 'test-win-win7'],
-            'test-win-xp': ['test-win-xp', 'test-win-vista', 'test-win-win7'],
-            'test-linux-x86_64': ['test-linux', 'test-win-win7'],
+            'test-win-7sp0': ['test-win-7sp0'],
+            'test-win-vista': ['test-win-vista', 'test-win-7sp0'],
+            'test-win-xp': ['test-win-xp', 'test-win-vista', 'test-win-7sp0'],
+            'test-linux-x86_64': ['test-linux'],
         }
         return [self._webkit_baseline_path(d) for d in search_paths[self.name()]]
 
@@ -514,7 +508,7 @@ class TestPort(Port):
                 ('snowleopard', 'x86'),
                 ('xp', 'x86'),
                 ('vista', 'x86'),
-                ('win7', 'x86'),
+                ('7sp0', 'x86'),
                 ('lucid', 'x86'),
                 ('lucid', 'x86_64'))
 
@@ -523,7 +517,7 @@ class TestPort(Port):
 
     def configuration_specifier_macros(self):
         """To avoid surprises when introducing new macros, these are intentionally fixed in time."""
-        return {'mac': ['leopard', 'snowleopard'], 'win': ['xp', 'vista', 'win7'], 'linux': ['lucid']}
+        return {'mac': ['leopard', 'snowleopard'], 'win': ['xp', 'vista', '7sp0'], 'linux': ['lucid']}
 
     def all_baseline_variants(self):
         return self.ALL_BASELINE_VARIANTS

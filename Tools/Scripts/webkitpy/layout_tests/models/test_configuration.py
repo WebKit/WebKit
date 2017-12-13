@@ -31,7 +31,7 @@ import itertools
 
 class TestConfiguration(object):
     def __init__(self, version, architecture, build_type):
-        self.version = version
+        self.version = version.lower().replace(' ', '') if version is not None else ''
         self.architecture = architecture
         self.build_type = build_type
 

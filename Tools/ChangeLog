@@ -1,3 +1,123 @@
+2017-12-13  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Better name-version mapping (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=179621
+        <rdar://problem/35589585>
+
+        Reviewed by David Kilzer.
+
+        Now that we have a central mapping of version numbers to version names, this
+        mapping should be used to compute version names. This patch treats passes versions
+        as objects, only mapping them to names when strings are needed.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.__init__): Store os_version as a version object instead of a string.
+        (PlatformInfo.os_version_name): Convert os_version to a string through the VersionNameMap.
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (MockPlatformInfo.__init__): Store os_version as a version object.
+        (MockPlatformInfo.os_version_name): Mirror PlatformInfo.
+        * Scripts/webkitpy/common/system/platforminfo_unittest.py:
+        (TestPlatformInfo.test_real_code): Only Mac and Windows have defined version objects.
+        (TestPlatformInfo.test_os_version): Deleted, this behavior is now managed by VersionNameMap.
+        * Scripts/webkitpy/common/version.py:
+        (Version.__cmp__): Allow a version object to be compared with 'None'.
+        * Scripts/webkitpy/common/version_name_map.py:
+        (VersionNameMap.map): Check for the apple_additions VersionNameMap.
+        (VersionNameMap.__init__): Add a wincairo mapping, the same as the win mapping.
+        * Scripts/webkitpy/common/version_unittest.py:
+        (VersionTestCase.test_compare_versions): Test comparing a version object to 'None'.
+        * Scripts/webkitpy/layout_tests/models/test_configuration.py:
+        (TestConfiguration.__init__): Strip formatting from version name. Note that this object still
+        accepts a string because the version string implicitly contains the platform as well.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Win7 should be 7SP0 as
+        it is in the VersionNameMap.
+        * Scripts/webkitpy/port/apple.py:
+        (ApplePort): Replace VERSION_FALLBACK_ORDER with a minimum and maximum version. This is required
+        because it may be the case that scripts are aware of more versions than the port actually supports.
+        (ApplePort.determine_full_port_name): Use the host operating system to compute the full port name.
+        (ApplePort._allowed_versions): Return a list of valid port versions by iterating through the
+        VersionNameMap.
+        (ApplePort._generate_all_test_configurations): Compute a list of configurations by iterating through
+        _allowed_versions and converting each version to a string.
+        (ApplePort._apple_baseline_path): Return a layout test expectation directory inside apple_additions.
+        (ApplePort._skipped_file_search_paths): Deleted.
+        (ApplePort._allowed_port_names): Deleted.
+        (ApplePort._future_port_name): Deleted.
+        * Scripts/webkitpy/port/base.py:
+        (Port.__init__): Replace _version string with _os_version object.
+        (Port.version_name): Convert version object to string.
+        (Port.test_configuration): Pass version string to TestConfiguration.
+        (Port.version): Deleted.
+        * Scripts/webkitpy/port/darwin_testcase.py:
+        (DarwinTest.assert_name): Convert an os_version_string to a version object and construct a port.
+        * Scripts/webkitpy/port/factory_unittest.py:
+        (FactoryTest.test_mac): Replace version strings with version objects.
+        (FactoryTest.test_win): Ditto.
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort._generate_all_test_configurations): Replace _version with version_name().
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.version_name): Both Simulator and device share the same version-name convention.
+        (IOSPort._generate_all_test_configurations): Replace _version with version_name().
+        (IOSPort.default_baseline_search_path): Use the internal mapping of version names to construct
+        apple_additions expectations.
+        (IOSPort._apple_additions_path): Deleted.
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort.ios_version): Return None if no version is defined.
+        * Scripts/webkitpy/port/ios_device_unittest.py:
+        (IOSDeviceTest):
+        (IOSDeviceTest.test_layout_test_searchpath_with_apple_additions): Conform with the new mock
+        apple_additions.
+        (IOSDeviceTest.make_port): Deleted.
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort._create_devices): Use Version object over list of version strings.
+        * Scripts/webkitpy/port/ios_simulator_unittest.py:
+        (IOSSimulatorTest):
+        (IOSSimulatorTest.make_port): Use iOS 11 as the default version for testing.
+        (IOSSimulatorTest.test_layout_test_searchpath_with_apple_additions): Conform with the new
+        mock apple_additions.
+        * Scripts/webkitpy/port/ios_testcase.py:
+        (IOSTest.make_port): Use iOS 11 as the default version for testing.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort):
+        (MacPort.__init__): Use Version object for _os_version.
+        (MacPort.default_baseline_search_path): Use the internal mapping of version names to construct
+        apple_additions expectations.
+        (MacPort.configuration_specifier_macros): Automatically construct macros based on VersionNameMap.
+        (MacPort._apple_additions_path): Deleted.
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest): Use Version object instead of version string.
+        (MacTest.test_version):
+        * Scripts/webkitpy/port/port_testcase.py:
+        (bind_mock_apple_additions): Add a mock VersionNameMap to mock apple_additions.
+        (bind_mock_apple_additions.MockAppleAdditions):
+        (bind_mock_apple_additions.MockAppleAdditions.version_name_mapping):
+        * Scripts/webkitpy/port/test.py:
+        (TestPort):
+        (TestPort.__init__): Use VersionNameMap to compute the correct Version from a port name.
+        (TestPort.version_name): Mirror Port object.
+        (TestPort.baseline_search_path): Replace win7 with 7sp0.
+        (TestPort._all_systems): Ditto.
+        (TestPort.configuration_specifier_macros): Ditto.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort):
+        (WinPort.__init__): Construct Version object from port name.
+        (WinPort.default_baseline_search_path): Use the internal mapping of version names to construct
+        apple_additions expectations.
+        (WinCairoPort):
+        (WinCairoPort.default_baseline_search_path): Use MIN/MAX instead of the VERSION_FALLBACK_ORDER.
+        (WinCairoPort._future_port_name): Deleted.
+        * Scripts/webkitpy/port/win_unittest.py:
+        (WinPortTest.test_baseline_search_path): Add new Windows versions not previously included.
+        (WinPortTest._assert_version): Handle expected_version as a Version object.
+        (WinPortTest.test_versions): Pass Version objects instead of version strings.
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort._generate_all_test_configurations): Replace _version with version_name().
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        (PrintExpectationsTest.test_multiple): Replace win7 with 7sp0.
+        (PrintBaselinesTest.test_multiple): Ditto.
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (PatchProcessingQueue._new_port_name_from_old): Use os_version_name() instead of Version object.
+
 2017-12-12  Daniel Bates  <dabates@apple.com>
 
         [WK] Add modern WebKit SPI to set auto fill button type and query if the auto fill button is enabled

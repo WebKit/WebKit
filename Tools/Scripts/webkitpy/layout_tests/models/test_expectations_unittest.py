@@ -474,7 +474,7 @@ Bug(y) [ Win Mac Debug ] failures/expected/foo.html [ Crash ]
 
         actual_expectations = expectations.remove_configuration_from_test('failures/expected/foo.html', test_config)
 
-        self.assertEqual("""Bug(x) [ Linux Vista Win7 Release ] failures/expected/foo.html [ Failure ]
+        self.assertEqual("""Bug(x) [ 7SP0 Linux Vista Release ] failures/expected/foo.html [ Failure ]
 Bug(y) [ Win Mac Debug ] failures/expected/foo.html [ Crash ]
 """, actual_expectations)
 
@@ -493,7 +493,7 @@ Bug(y) [ Win Debug ] failures/expected/foo.html [ Crash ]
 
         actual_expectations = expectations.remove_configuration_from_test('failures/expected/foo.html', test_config)
         actual_expectations = expectations.remove_configuration_from_test('failures/expected/foo.html', host.port_factory.get('test-win-vista', None).test_configuration())
-        actual_expectations = expectations.remove_configuration_from_test('failures/expected/foo.html', host.port_factory.get('test-win-win7', None).test_configuration())
+        actual_expectations = expectations.remove_configuration_from_test('failures/expected/foo.html', host.port_factory.get('test-win-7sp0', None).test_configuration())
 
         self.assertEqual("""Bug(y) [ Win Debug ] failures/expected/foo.html [ Crash ]
 """, actual_expectations)

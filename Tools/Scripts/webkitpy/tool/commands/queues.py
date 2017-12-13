@@ -35,14 +35,12 @@ import sys
 import time
 import traceback
 
-from datetime import datetime
 from optparse import make_option
 from StringIO import StringIO
 
 from webkitpy.common.config.committervalidator import CommitterValidator
 from webkitpy.common.config.ports import DeprecatedPort
 from webkitpy.common.net.bugzilla import Attachment
-from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.botinfo import BotInfo
 from webkitpy.tool.bot.commitqueuetask import CommitQueueTask, CommitQueueTaskDelegate
@@ -272,7 +270,7 @@ class PatchProcessingQueue(AbstractPatchQueue):
     def _new_port_name_from_old(self, port_name, platform):
         # ApplePort.determine_full_port_name asserts if the name doesn't include version.
         if port_name == 'mac':
-            return 'mac-' + platform.os_version
+            return 'mac-' + platform.os_version_name().lower().replace(' ', '')
         if port_name == 'win':
             return 'win-future'
         return port_name

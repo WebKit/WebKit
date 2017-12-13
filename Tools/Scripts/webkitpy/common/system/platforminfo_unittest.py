@@ -77,7 +77,8 @@ class TestPlatformInfo(unittest.TestCase):
         # This test makes sure the real (unmocked) code actually works.
         info = PlatformInfo(sys, platform, Executive())
         self.assertNotEquals(info.os_name, '')
-        self.assertNotEquals(info.os_version, '')
+        if info.is_mac() or info.is_win():
+            self.assertIsNotNone(info.os_version)
         self.assertNotEquals(info.display_name(), '')
         self.assertTrue(info.is_mac() or info.is_win() or info.is_linux() or info.is_freebsd())
         self.assertIsNotNone(info.terminal_width())
@@ -131,37 +132,6 @@ class TestPlatformInfo(unittest.TestCase):
         self.assertTrue(info.is_freebsd())
 
         self.assertRaises(AssertionError, self.make_info, fake_sys('vms'))
-
-    def test_os_version(self):
-        self.assertRaises(AssertionError, self.make_info, fake_sys('darwin'), fake_platform('10.4.3'))
-        self.assertEqual(self.make_info(fake_sys('darwin'), fake_platform('10.5.1')).os_version, 'leopard')
-        self.assertEqual(self.make_info(fake_sys('darwin'), fake_platform('10.6.1')).os_version, 'snowleopard')
-        self.assertEqual(self.make_info(fake_sys('darwin'), fake_platform('10.7.1')).os_version, 'lion')
-        self.assertEqual(self.make_info(fake_sys('darwin'), fake_platform('10.8.1')).os_version, 'mountainlion')
-        self.assertEqual(self.make_info(fake_sys('darwin'), fake_platform('10.9.0')).os_version, 'mavericks')
-        self.assertEqual(self.make_info(fake_sys('darwin'), fake_platform('10.10.0')).os_version, 'yosemite')
-        self.assertEqual(self.make_info(fake_sys('darwin'), fake_platform('10.11.0')).os_version, 'elcapitan')
-        self.assertEqual(self.make_info(fake_sys('darwin'), fake_platform('10.12.0')).os_version, 'sierra')
-        self.assertEqual(self.make_info(fake_sys('darwin'), fake_platform('10.13.0')).os_version, 'highsierra')
-        self.assertEqual(self.make_info(fake_sys('darwin'), fake_platform('10.14.0')).os_version, 'future')
-
-        self.assertEqual(self.make_info(fake_sys('linux2'), fake_platform('', '10.4')).os_version, None)
-
-        self.assertEqual(self.make_info(fake_sys('freebsd8'), fake_platform('', '8.3-PRERELEASE')).os_version, None)
-        self.assertEqual(self.make_info(fake_sys('freebsd9'), fake_platform('', '9.0-RELEASE')).os_version, None)
-
-        self.assertRaises(AssertionError, self.make_info, fake_sys('win32'), fake_platform(win_version_string='5.0.1234'))
-        self.assertEqual(self.make_info(fake_sys('win32'), fake_platform(win_version_string='10.0.14393')).os_version, 'win10')
-        self.assertEqual(self.make_info(fake_sys('win32'), fake_platform(win_version_string='6.2.1234')).os_version, '8')
-        self.assertEqual(self.make_info(fake_sys('win32'), fake_platform(win_version_string='6.1.7600')).os_version, '7sp0')
-        self.assertEqual(self.make_info(fake_sys('win32'), fake_platform(win_version_string='6.0.1234')).os_version, 'vista')
-        self.assertEqual(self.make_info(fake_sys('win32'), fake_platform(win_version_string='5.1.1234')).os_version, 'xp')
-
-        self.assertRaises(AssertionError, self.make_info, fake_sys('win32'), executive=fake_executive('5.0.1234'))
-        self.assertEqual(self.make_info(fake_sys('cygwin'), executive=fake_executive('6.2.1234')).os_version, '8')
-        self.assertEqual(self.make_info(fake_sys('cygwin'), executive=fake_executive('6.1.7600')).os_version, '7sp0')
-        self.assertEqual(self.make_info(fake_sys('cygwin'), executive=fake_executive('6.0.1234')).os_version, 'vista')
-        self.assertEqual(self.make_info(fake_sys('cygwin'), executive=fake_executive('5.1.1234')).os_version, 'xp')
 
     def test_display_name(self):
         info = self.make_info(fake_sys('darwin'))

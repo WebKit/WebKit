@@ -130,3 +130,4 @@ class VersionTestCase(unittest.TestCase):
         self.assertGreater(Version(1, 2, 4), Version(1, 2, 3))
         self.assertGreater(Version(1, 3, 2), Version(1, 2, 3))
         self.assertGreater(Version(2, 1, 1), Version(1, 2, 3))
+        self.assertNotEqual(Version(1, 2, 3), None)

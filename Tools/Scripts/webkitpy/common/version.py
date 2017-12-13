@@ -37,6 +37,11 @@ class Version(object):
             result[i] = int(val[i])
         return result
 
+    @staticmethod
+    def from_name(name):
+        from version_name_map import VersionNameMap
+        return VersionNameMap.map().from_name(name)[1]
+
     def __init__(self, major=0, minor=0, tiny=0, micro=0, nano=0):
         self.major = int(major)
         self.minor = int(minor)
@@ -111,6 +116,8 @@ class Version(object):
         return result
 
     def __cmp__(self, other):
+        if other is None:
+            return 1
         for i in xrange(len(self)):
             if cmp(self[i], other[i]):
                 return cmp(self[i], other[i])

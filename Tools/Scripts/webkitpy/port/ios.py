@@ -25,6 +25,7 @@ import traceback
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.version import Version
+from webkitpy.common.version_name_map import VersionNameMap
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.config import apple_additions
 from webkitpy.port.darwin import DarwinPort
@@ -36,6 +37,9 @@ _log = logging.getLogger(__name__)
 class IOSPort(DarwinPort):
     port_name = "ios"
 
+    VERSION_MIN = Version(11)
+    VERSION_MAX = Version(12)
+
     def __init__(self, host, port_name, **kwargs):
         super(IOSPort, self).__init__(host, port_name, **kwargs)
         self._test_runner_process_constructor = SimulatorProcess
@@ -44,6 +48,11 @@ class IOSPort(DarwinPort):
 
     def _device_for_worker_number_map(self):
         raise NotImplementedError
+
+    def version_name(self):
+        if self._os_version is None:
+            return None
+        return VersionNameMap.map(self.host.platform).to_name(self._os_version, platform=IOSPort.port_name)
 
     def driver_cmd_line_for_logging(self):
         # Avoid creating/connecting to devices just for logging the commandline.
@@ -63,7 +72,7 @@ class IOSPort(DarwinPort):
         configurations = []
         for build_type in self.ALL_BUILD_TYPES:
             for architecture in self.ARCHITECTURES:
-                configurations.append(TestConfiguration(version=self._version, architecture=architecture, build_type=build_type))
+                configurations.append(TestConfiguration(version=self.version_name(), architecture=architecture, build_type=build_type))
         return configurations
 
     @memoized
@@ -88,22 +97,6 @@ class IOSPort(DarwinPort):
             return self._testing_device(worker_number)
         return self._current_device
 
-    def _apple_additions_path(self, name):
-        if name == 'wk2':
-            return None
-        split_name = name.split('-')
-        os_index = -1
-        for i in xrange(2):
-            if split_name[os_index] == 'wk1' or split_name[os_index] == 'wk2' or split_name[os_index] == 'simulator' or split_name[os_index] == 'device':
-                os_index -= 1
-        if split_name[os_index] != split_name[0]:
-            os_name = apple_additions().ios_os_name(split_name[os_index])
-            if not os_name:
-                return None
-            split_name[os_index] = os_name
-        name = '-'.join(split_name)
-        return self._filesystem.join(apple_additions().layout_tests_path(), name)
-
     @memoized
     def default_baseline_search_path(self):
         wk_string = 'wk1'
@@ -111,30 +104,42 @@ class IOSPort(DarwinPort):
             wk_string = 'wk2'
         # If we don't have a specified version, that means we using the port without an SDK.
         # This usually means we're doing some type of testing.In this case, don't add version fallbacks
-        fallback_names = []
+        expectations = []
+        if apple_additions() and self.ios_version():
+            apple_name = VersionNameMap.map(self.host.platform).to_name(self.ios_version(), platform=IOSPort.port_name, table='internal').lower().replace(' ', '')
+        else:
+            apple_name = None
         if self.ios_version():
-            fallback_names.append('{}-{}-{}'.format(self.port_name, self.ios_version().major, wk_string))
-            fallback_names.append('{}-{}'.format(self.port_name, self.ios_version().major))
-        fallback_names.append('{}-{}'.format(self.port_name, wk_string))
-        fallback_names.append(self.port_name)
+            if apple_name:
+                expectations.append(self._apple_baseline_path('{}-{}-{}'.format(self.port_name, apple_name, wk_string)))
+            expectations.append(self._webkit_baseline_path('{}-{}-{}'.format(self.port_name, self.ios_version().major, wk_string)))
+            if apple_name:
+                expectations.append(self._apple_baseline_path('{}-{}'.format(self.port_name, apple_name)))
+            expectations.append(self._webkit_baseline_path('{}-{}'.format(self.port_name, self.ios_version().major)))
+
+        if apple_additions():
+            expectations.append(self._apple_baseline_path('{}-{}'.format(self.port_name, wk_string)))
+        expectations.append(self._webkit_baseline_path('{}-{}'.format(self.port_name, wk_string)))
+        if apple_additions():
+            expectations.append(self._apple_baseline_path(self.port_name))
+        expectations.append(self._webkit_baseline_path(self.port_name))
+
         if self.ios_version():
-            fallback_names.append('{}-{}'.format(IOSPort.port_name, self.ios_version().major))
-        fallback_names.append('{}-{}'.format(IOSPort.port_name, wk_string))
-        fallback_names.append(IOSPort.port_name)
+            if apple_name:
+                expectations.append(self._apple_baseline_path('{}-{}'.format(IOSPort.port_name, apple_name)))
+            expectations.append(self._webkit_baseline_path('{}-{}'.format(IOSPort.port_name, self.ios_version().major)))
+
+        if apple_additions():
+            expectations.append(self._apple_baseline_path('{}-{}'.format(IOSPort.port_name, wk_string)))
+        expectations.append(self._webkit_baseline_path('{}-{}'.format(IOSPort.port_name, wk_string)))
+        if apple_additions():
+            expectations.append(self._apple_baseline_path(IOSPort.port_name))
+        expectations.append(self._webkit_baseline_path(IOSPort.port_name))
 
         if self.get_option('webkit_test_runner'):
-            fallback_names.append('wk2')
+            expectations.append(self._webkit_baseline_path('wk2'))
 
-        webkit_expectations = map(self._webkit_baseline_path, fallback_names)
-        if apple_additions() and getattr(apple_additions(), "layout_tests_path", None):
-            apple_expectations = map(self._apple_additions_path, fallback_names)
-            result = []
-            for i in xrange(len(webkit_expectations)):
-                if apple_expectations[i]:
-                    result.append(apple_expectations[i])
-                result.append(webkit_expectations[i])
-            return result
-        return webkit_expectations
+        return expectations
 
     def test_expectations_file_position(self):
         return 4

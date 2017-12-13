@@ -78,6 +78,7 @@ class TestWebKitPort(Port):
 
 @contextmanager
 def bind_mock_apple_additions():
+    from webkitpy.common.version_name_map import PUBLIC_TABLE, VersionNameMap
 
     class MockAppleAdditions(object):
 
@@ -93,11 +94,23 @@ def bind_mock_apple_additions():
         def mac_os_name(name):
             return 'add-{}'.format(name)
 
+        @staticmethod
+        def version_name_mapping(platform=None):
+            result = VersionNameMap(platform)
+            result.mapping['internal'] = {}
+            for platform in result.mapping[PUBLIC_TABLE]:
+                result.mapping['internal'][platform] = {}
+                for name, version in result.mapping[PUBLIC_TABLE][platform].iteritems():
+                    result.mapping['internal'][platform]['add-' + name] = version
+            return result
+
     # apple_additions is a memoized function. Take advantage of this fact and manipulate the cache
     # to temporarily return a mocked result
     apple_additions._results_cache[()] = MockAppleAdditions
+    VersionNameMap.map._results_cache = {}
     yield
     apple_additions._results_cache[()] = None
+    VersionNameMap.map._results_cache = {}
 
 
 class PortTestCase(unittest.TestCase):

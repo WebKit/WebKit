@@ -29,6 +29,8 @@
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.systemhost_mock import MockSystemHost
+from webkitpy.common.version import Version
+from webkitpy.common.version_name_map import PUBLIC_TABLE, VersionNameMap
 from webkitpy.port import port_testcase
 from webkitpy.port.win import WinPort
 from webkitpy.tool.mocktool import MockOptions
@@ -36,7 +38,7 @@ from webkitpy.tool.mocktool import MockOptions
 
 class WinPortTest(port_testcase.PortTestCase):
     os_name = 'win'
-    os_version = 'xp'
+    os_version = Version.from_name('XP')
     port_name = 'win-xp'
     port_maker = WinPort
 
@@ -58,24 +60,24 @@ class WinPortTest(port_testcase.PortTestCase):
         self.assertEqual(port.baseline_search_path(), absolute_search_paths)
 
     def test_baseline_search_path(self):
-        self._assert_search_path(['win-xp', 'win-vista', 'win-7sp0', 'win-win10', 'win', 'mac'], 'xp')
-        self._assert_search_path(['win-vista', 'win-7sp0', 'win-win10', 'win', 'mac'], 'vista')
-        self._assert_search_path(['win-7sp0', 'win-win10', 'win', 'mac'], '7sp0')
+        self._assert_search_path(['win-xp', 'win-vista', 'win-7sp0', 'win-8', 'win-8.1', 'win-win10', 'win', 'mac'], Version.from_name('XP'))
+        self._assert_search_path(['win-vista', 'win-7sp0', 'win-8', 'win-8.1', 'win-win10', 'win', 'mac'], Version.from_name('Vista'))
+        self._assert_search_path(['win-7sp0', 'win-8', 'win-8.1', 'win-win10', 'win', 'mac'], Version.from_name('7sp0'))
 
-        self._assert_search_path(['win-wk2', 'win-xp', 'win-vista', 'win-7sp0', 'win-win10', 'win', 'mac-wk2', 'mac'], 'xp', use_webkit2=True)
-        self._assert_search_path(['win-wk2', 'win-vista', 'win-7sp0', 'win-win10', 'win', 'mac-wk2', 'mac'], 'vista', use_webkit2=True)
-        self._assert_search_path(['win-wk2', 'win-7sp0', 'win-win10', 'win', 'mac-wk2', 'mac'], '7sp0', use_webkit2=True)
+        self._assert_search_path(['win-wk2', 'win-xp', 'win-vista', 'win-7sp0', 'win-8', 'win-8.1', 'win-win10', 'win', 'mac-wk2', 'mac'], Version.from_name('XP'), use_webkit2=True)
+        self._assert_search_path(['win-wk2', 'win-vista', 'win-7sp0', 'win-8', 'win-8.1', 'win-win10', 'win', 'mac-wk2', 'mac'], Version.from_name('Vista'), use_webkit2=True)
+        self._assert_search_path(['win-wk2', 'win-7sp0', 'win-8', 'win-8.1', 'win-win10', 'win', 'mac-wk2', 'mac'], Version.from_name('7sp0'), use_webkit2=True)
 
     def _assert_version(self, port_name, expected_version):
         host = MockSystemHost(os_name='win', os_version=expected_version)
         port = WinPort(host, port_name=port_name)
-        self.assertEqual(port.version(), expected_version)
+        self.assertEqual(port.version_name(), VersionNameMap.map().to_name(expected_version, platform='win', table=PUBLIC_TABLE))
 
     def test_versions(self):
-        self._assert_version('win-xp', 'xp')
-        self._assert_version('win-vista', 'vista')
-        self._assert_version('win-7sp0', '7sp0')
-        self.assertRaises(AssertionError, self._assert_version, 'win-me', 'xp')
+        self._assert_version('win-xp', Version.from_name('XP'))
+        self._assert_version('win-vista', Version.from_name('Vista'))
+        self._assert_version('win-7sp0', Version.from_name('7sp0'))
+        self.assertRaises(AssertionError, self._assert_version, 'win-me', Version.from_name('Vista'))
 
     def test_compare_text(self):
         expected = "EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification\nfoo\nEDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification\n"
