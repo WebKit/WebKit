@@ -60,15 +60,6 @@
     (global-name "com.apple.UIKit.KeyboardManagement")
     (global-name "com.apple.UIKit.KeyboardManagement.hosted"))
 
-;; For <rdar://problem/23469318> Allow UIKit-based apps to access com.apple.remote-text-editing mach service
-;; and <rdar://problem/23579008> REM: Allow UIKit-based apps to access com.apple.remote-input-limiting mach service
-(when tv?
-    (allow mach-lookup
-        (global-name "com.apple.remote-input-limiting")
-        (global-name "com.apple.remote-text-editing")
-        (global-name "com.apple.remote-text-editing-legacy")
-        (global-name "com.apple.sharing.remote-text-editing")))
-
 ;; TextInput framework
 (allow mach-lookup
     (global-name "com.apple.TextInput")
@@ -135,10 +126,6 @@
 (allow-well-known-system-group-container-literal-read
     "/systemgroup.com.apple.nsurlstoragedresources/Library/dafsaData.bin")
 
-;; AirPlay
-(allow mach-lookup
-    (global-name "com.apple.airplaydiagnostics.server"))
-
 ;; Access the keyboards
 (allow file-read*
     (home-subpath "/Library/Caches/com.apple.keyboards"))
@@ -152,50 +139,18 @@
 ;; <rdar://problem/31252371>
 (allow mach-lookup (xpc-service-name-regex #"\.viewservice$"))
 
-;; DataDetectors -> CallKit so user can place calls by tapping on phone numbers.
-(allow mach-lookup
-    (global-name "com.apple.callkit.callcontrollerhost"))
-
-;; DataDetectors; update CoreRecents with recently-detected addresses, etc.
-(allow mach-lookup
-    (xpc-service-name "com.apple.datadetectors.AddToRecentsService"))
-
-;; <rdar://problem/19460486>
-(nano-preferences-read ".GlobalPreferences")
-
 (mobile-preferences-read
-    ; To determine whether the dictation opt-in alert should be suppressed.
-    "com.apple.assistant.backedup"
-    ; Keyboard Dictation reads the list of supported languages from com.apple.assistant.support.plist.
-    ; And Dictation checks whether Assistant is enabled by reading the same plist.
-    ; <rdar://problem/9883999> com.apple.assistant.support preference domain needs to be unsandboxed
-    "com.apple.assistant.support"
     "com.apple.EmojiPreferences"
-    ; For CarPlay screen aspect ratio (rdar://problem/20062770).
-    "com.apple.iapd"
     ; <rdar://problem/8477596> com.apple.InputModePreferences
     "com.apple.InputModePreferences"
     ; <rdar://problem/8206632> Weather(1038) deny file-read-data ~/Library/Preferences/com.apple.keyboard.plist
     "com.apple.keyboard"
-    ; <rdar://problem/25130834> Spotlight suggestions in Lookup preference should be readable by any process
-    "com.apple.lookup.shared"
     ; <rdar://problem/9384085>
     "com.apple.Preferences")
 
 ;; <rdar://problem/12985925> Need read access to /var/mobile/Library/Fonts to all apps
 (allow file-read*
     (home-subpath "/Library/Fonts"))
-
-;; <rdar://problem/23803332>, <rdar://problem/9457549>, <rdar://problem/13237899>
-(allow mach-lookup
-    (global-name "com.apple.assistant.analytics")
-    (global-name "com.apple.assistant.dictation")
-    (global-name "com.apple.dictationd.recognition"))
-
-;; For copy-and-paste.
-(allow mach-lookup
-    (global-name "com.apple.UIKit.pasteboardd")
-    (global-name "com.apple.pasteboard.pasted"))
 
 ;; <rdar://problem/7344719&26323449> LaunchServices app icons
 (allow file-read*
@@ -207,12 +162,9 @@
 (allow mach-lookup
     (global-name "com.apple.CARenderServer")
     (global-name "com.apple.KeyboardServices.TextReplacementService")
-    (global-name "com.apple.UIKit.statusbarserver")
-    (global-name "com.apple.uikit.GestureServer")
     (global-name "com.apple.assertiond.applicationstateconnection")
     (global-name "com.apple.assertiond.expiration")
     (global-name "com.apple.assertiond.processinfoservice")
-    (global-name "com.apple.audio.hapticd")
     (global-name "com.apple.audio.SystemSoundServer-iOS")
     (global-name "com.apple.backboard.TouchDeliveryPolicyServer")
     (global-name "com.apple.backboard.animation-fence-arbiter")
@@ -222,45 +174,9 @@
     (global-name "com.apple.iohideventsystem")
     (global-name "com.apple.iphone.axserver-systemwide")
     (global-name "com.apple.frontboard.workspace")
-    (global-name "com.apple.frontboard.systemappservices")
-    (global-name "com.apple.progressd"))
+    (global-name "com.apple.frontboard.systemappservices"))
 
-(pasteboard-client)
-(springboard-services)
-
-(when gizmo?
-    (mobile-preferences-read "com.apple.nano")
-    (allow mach-lookup
-        (global-name "com.apple.appaudiod")
-        (global-name "com.apple.Carousel.ButtonTapAssertion")
-        (global-name "com.apple.Carousel.CSLSBackgroundTaskRequestService")
-        (global-name "com.apple.Carousel.CSLSDockStatusService")
-        (global-name "com.apple.Carousel.activatingUIAssertion")
-        (global-name "com.apple.Carousel.alertSuppression")
-        (global-name "com.apple.Carousel.appOnWake")
-        (global-name "com.apple.Carousel.suspendSystemGestureAssertion")
-        (global-name "com.apple.carousel.backlightxpc")
-        (global-name "com.apple.carousel.brightnesscalculator")
-        (global-name "com.apple.carousel.connectionstatusservice")
-        (global-name "com.apple.Carousel.contextuallock")
-        (global-name "com.apple.carousel.fetchschedulingservice")
-        (global-name "com.apple.carousel.snapshotservice")
-        (global-name "com.apple.carousel.uiscalingservice")
-        (global-name "com.apple.carousel.unblankingsynchronization")
-        (global-name "com.apple.pepperuicore.statusbaritemserver")))
-
-;; AirDrop from the activity sheet.
-;; <rdar://problem/12715391>, <rdar://problem/12847034>, <rdar://problem/16400661>
-(allow mach-lookup
-    (global-name "com.apple.sharingd")
-    (global-name "com.apple.sharingd.nsxpc")
-    (with report)
-    (with message "This rule is being removed in rdar://15713112 -- please report this violation to Sandbox_profiles | all"))
 (allow-preferences-common)
-(allow user-preference-read
-    (preference-domain "com.apple.Sharing")
-    (with report)
-    (with message "This rule is being removed in rdar://15713112 -- please report this violation to Sandbox_profiles | all"))
 
 ;; CoreMotion
 (mobile-preferences-read "com.apple.CoreMotion")
@@ -272,15 +188,16 @@
         (iokit-registry-entry-class "AppleSPUHIDInterface"))
     (allow iokit-get-properties
         (iokit-property "gyro-interrupt-calibration")))
-(with-filter (iokit-registry-entry-class "IOHIDEventServiceFastPathUserClient")
-(allow iokit-open)
-(allow iokit-get-properties iokit-set-properties
-    (iokit-property "interval"
-                    "mode"
-                    "QueueSize"
-                    "useMag"))
-(allow iokit-get-properties
-(iokit-property "client")))
+(with-filter
+    (iokit-registry-entry-class "IOHIDEventServiceFastPathUserClient")
+    (allow iokit-open)
+    (allow iokit-get-properties iokit-set-properties
+        (iokit-property "interval"
+                        "mode"
+                        "QueueSize"
+                        "useMag"))
+    (allow iokit-get-properties
+        (iokit-property "client")))
 
 ;; Common preferences read by UIKit.
 (mobile-preferences-read "com.apple.Accessibility"
@@ -290,8 +207,7 @@
     "com.apple.avkit"
     "com.apple.coreanimation"
     "com.apple.mt"
-    "com.apple.preferences.sounds"
-    "com.apple.telephonyutilities.dialassist")
+    "com.apple.preferences.sounds")
 
 ;; Silence sandbox violations from apps trying to create the empty plist if it doesn't exist.
 ;; <rdar://problem/13796537>
@@ -363,20 +279,6 @@
 (deny file-write*
     (home-prefix "/Library/Preferences/com.apple.springboard.plist")
     (with no-log))
-
-;; For <rdar://problem/29428318> Allow DragUI mach service lookups for all UIKit apps
-(allow mach-lookup
-    (global-name "com.apple.DragUI.druid.destination")
-    (global-name "com.apple.DragUI.druid.source"))
-
-;; <rdar://problem/30544378> Allow global lookup of com.apple.contactsd
-(allow mach-lookup
-    (global-name "com.apple.contactsd"))
-
-;; <rdar://problem/31571441> need AX Drag-and-drop mach services added to default sandbox profile
-(allow mach-lookup
-    (global-name "com.apple.VoiceOverTouch.drag.xpc")
-    (global-name "com.apple.assistivetouchd.drag.xpc"))
 
 ;; <rdar://problem/34092690>
 (allow mach-lookup
