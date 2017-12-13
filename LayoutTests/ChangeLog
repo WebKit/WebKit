@@ -1,3 +1,12 @@
+2017-12-13  Matt Lewis  <jlewis3@apple.com>
+
+        Updated expectations for contentextension tests to be flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=162942
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-12-13  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Implement the "updating the finished state" procedure

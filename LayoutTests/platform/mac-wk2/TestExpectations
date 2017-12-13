@@ -527,8 +527,8 @@ webkit.org/b/141085 http/tests/media/video-query-url.html [ Pass Timeout ]
 ########################################
 
 # Content Extensions tests must be enabled explicitly on mac-wk2.
-http/tests/contentextensions [ Pass ]
-http/tests/websocket/tests/hybi/contentextensions [ Pass ]
+http/tests/contentextensions [ Pass Failure  ]
+http/tests/websocket/tests/hybi/contentextensions [ Pass Failure ]
 webkit.org/b/179557 http/tests/websocket/tests/hybi/contentextensions/upgrade-worker.html [ Pass Failure ]
 webkit.org/b/179256 [ Sierra+ ] http/wpt/beacon/contentextensions [ Pass Failure ]
 webkit.org/b/168081 http/tests/contentextensions/async-xhr-onerror.html [ Pass Timeout ]
