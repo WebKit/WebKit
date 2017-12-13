@@ -116,6 +116,7 @@ namespace WebCore {
     macro(error) \
     macro(exit) \
     macro(fetch) \
+    macro(finish) \
     macro(focus) \
     macro(focusin) \
     macro(focusout) \

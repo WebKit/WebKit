@@ -1,3 +1,15 @@
+2017-12-13  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement the "updating the finished state" procedure
+        https://bugs.webkit.org/show_bug.cgi?id=180743
+        <rdar://problem/36017232>
+
+        Reviewed by Simon Fraser.
+
+        Rebase some WPT expectations with minor progressions due to exposing the "onfinish" property.
+
+        * http/wpt/web-animations/interfaces/Animation/idlharness-expected.txt:
+
 2017-12-13  Matt Lewis  <jlewis3@apple.com>
 
         Updated Expectations for http/tests/cache/disk-cache/disk-cache-204-status-code.html

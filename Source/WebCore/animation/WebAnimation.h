@@ -84,6 +84,10 @@ public:
     void acceleratedRunningStateDidChange();
     void startOrStopAccelerated();
 
+    enum class DidSeek { Yes, No };
+    enum class SynchronouslyNotify { Yes, No };
+    void updateFinishedState(DidSeek, SynchronouslyNotify);
+
     String description();
 
     using RefCounted::ref;
@@ -92,16 +96,26 @@ public:
 private:
     explicit WebAnimation(Document&);
 
+    enum class RespectHoldTime { Yes, No };
+
     void enqueueAnimationPlaybackEvent(const AtomicString&, std::optional<Seconds>, std::optional<Seconds>);
     Seconds effectEndTime() const;
     WebAnimation& readyPromiseResolve();
     WebAnimation& finishedPromiseResolve();
+    std::optional<Seconds> currentTime(RespectHoldTime) const;
+    void finishNotificationSteps();
+    void scheduleMicrotaskIfNeeded();
+    void performMicrotask();
     
     RefPtr<AnimationEffect> m_effect;
     RefPtr<AnimationTimeline> m_timeline;
+    std::optional<Seconds> m_previousCurrentTime;
     std::optional<Seconds> m_startTime;
+    std::optional<Seconds> m_holdTime;
     double m_playbackRate { 1 };
     bool m_isStopped { false };
+    bool m_finishNotificationStepsMicrotaskPending;
+    bool m_scheduledMicrotask;
     ReadyPromise m_readyPromise;
     FinishedPromise m_finishedPromise;
 

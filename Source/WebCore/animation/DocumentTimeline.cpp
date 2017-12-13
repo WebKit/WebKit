@@ -172,6 +172,9 @@ void DocumentTimeline::updateAnimations()
         animation->startOrStopAccelerated();
     m_acceleratedAnimationsPendingRunningStateChange.clear();
 
+    for (const auto& animation : animations())
+        animation->updateFinishedState(WebAnimation::DidSeek::No, WebAnimation::SynchronouslyNotify::No);
+
     // Time has advanced, the timing model requires invalidation now.
     animationTimingModelDidChange();
 }
