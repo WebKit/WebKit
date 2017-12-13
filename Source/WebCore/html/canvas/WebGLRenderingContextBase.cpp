@@ -110,11 +110,6 @@ static const Seconds checkContextLossHandlingDelay { 3_s };
 
 namespace {
     
-    Platform3DObject objectOrZero(WebGLObject* object)
-    {
-        return object ? object->object() : 0;
-    }
-
     GC3Dint clamp(GC3Dint value, GC3Dint min, GC3Dint max)
     {
         if (value < min)
