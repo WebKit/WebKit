@@ -1,3 +1,13 @@
+2017-12-13  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Unreviewed, rolling out r179000.
+
+        There are tests failing in 32-bits and Debug builds
+
+        Reverted changeset:
+
+        https://trac.webkit.org/changeset/179000
+
 2017-12-12  Youenn Fablet  <youenn@apple.com>
 
         getUserMedia is resolving before the document knows it is capturing
