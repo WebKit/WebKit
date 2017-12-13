@@ -1,3 +1,23 @@
+2017-12-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Optimize Object.assign by single transition acceleration
+        https://bugs.webkit.org/show_bug.cgi?id=180644
+
+        Reviewed by Saam Barati.
+
+        Handling single transition is critical. Since this get() function is only used
+        in Structure.cpp's 2 functions and it is quite small, we can annotate `inline`
+        to accelerate it.
+
+        This improves SixSpeed/object-assign.es6 by 2.8%.
+
+                                    baseline                  patched
+
+        object-assign.es6      382.3548+-8.0461          371.6496+-5.7439          might be 1.0288x faster
+
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::get const):
+
 2017-12-12  Filip Pizlo  <fpizlo@apple.com>
 
         Structure, StructureRareData, and PropertyTable should be in IsoSubspaces
