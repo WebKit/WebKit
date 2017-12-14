@@ -18,6 +18,7 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
 
     # TODO Enforce version requirement for perl
     find_package(Perl 5.10.0 REQUIRED)
+    find_package(PerlModules COMPONENTS JSON::PP REQUIRED)
 
     find_package(PythonInterp 2.7.0 REQUIRED)
     if (PYTHON_VERSION_MAJOR GREATER 2)

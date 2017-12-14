@@ -1,3 +1,19 @@
+2017-12-14  Tomas Popela  <tpopela@redhat.com>
+
+        Build should fail early is needed Perl modules are not installed
+        https://bugs.webkit.org/show_bug.cgi?id=180137
+
+        Reviewed by Michael Catanzaro.
+
+        Don't finish the configure successfully if the required Perl modules
+        are not installed. Start to require modules that are needed for
+        WPE/GTK+ ports.
+
+        * Source/cmake/FindPerlModules.cmake: Copied from
+        https://github.com/KDE/kdelibs4support/blob/master/cmake/FindPerlModules.cmake
+        and made it WebKit style compliant.
+        * Source/cmake/WebKitCommon.cmake:
+
 2017-12-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE] WebCrypto should be a public option.
