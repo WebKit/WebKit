@@ -1,5 +1,26 @@
 2017-12-14  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Network Tab - URL filter should be case-insensitive like filter bars in other tabs
+        https://bugs.webkit.org/show_bug.cgi?id=180824
+        <rdar://problem/35910750>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype._resetFilters):
+        (WI.NetworkTableContentView.prototype._urlFilterDidChange):
+        Use a case-insensitive regex created from the search query
+        and use that when filtering resources.
+
+        (WI.NetworkTableContentView.prototype._checkURLFilterAgainstFinishedResource): Deleted.
+        (WI.NetworkTableContentView.prototype._checkURLFilterAgainstResource):
+        (WI.NetworkTableContentView.prototype._resourceLoadingDidFinish):
+        (WI.NetworkTableContentView.prototype._resourceLoadingDidFail):
+        Rename the helper for checking the URL filter.
+
+2017-12-14  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: UncaughtExceptionReporter fails on early errors
         https://bugs.webkit.org/show_bug.cgi?id=180776
 
