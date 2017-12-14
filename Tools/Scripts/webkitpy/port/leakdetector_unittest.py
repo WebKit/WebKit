@@ -50,8 +50,8 @@ class LeakDetectorTest(unittest.TestCase):
         detector = self._make_detector()
         detector._callstacks_to_exclude_from_leaks = lambda: ['foo bar', 'BAZ']
         detector._types_to_exclude_from_leaks = lambda: ['abcdefg', 'hi jklmno']
-        expected_args = ['--exclude-callstack=foo bar', '--exclude-callstack=BAZ', '--exclude-type=abcdefg', '--exclude-type=hi jklmno', 1234]
-        self.assertEqual(detector._leaks_args(1234), expected_args)
+        expected_args = ['--exclude-callstack=foo bar', '--exclude-callstack=BAZ', '--exclude-type=abcdefg', '--exclude-type=hi jklmno', '--output-file=leaks.txt', 1234]
+        self.assertEqual(detector._leaks_args(1234, 'leaks.txt'), expected_args)
 
     example_leaks_output = """Process 5122: 663744 nodes malloced for 78683 KB
 Process 5122: 337301 leaks for 6525216 total leaked bytes.

@@ -1,3 +1,30 @@
+2017-12-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Improve leaks detector output
+        https://bugs.webkit.org/show_bug.cgi?id=180828
+
+        Reviewed by Joseph Pecoraro.
+
+        Fixing two issues:
+        1. run-leaks omits many lines from leaks tool output, making it incompatible with
+        other tools. Notably, symbolication cannot be performed.
+        2. run-leaks output goes to "run-webkit-tests --debug-rwt-logging" output. This
+        makes it much longer than needed, sometimes even overloading buildbot. We don't
+        need full output in test log, as separate files are created for each of these.
+
+        * Scripts/run-leaks: Represent each line in leaks output when parsing, and print
+        everything except for explicitly excluded leaks. From my testing and reading
+        the code, it looks like none of our tools should be broken by this change.
+
+        * Scripts/webkitpy/port/leakdetector.py: I couldn't find a way to run a helper tool
+        without dumping all of its output to debug log, so switched to using a file for leaks.
+
+        * Scripts/webkitperl/run-leaks_unittest/run-leaks-report-v1.0.pl:
+        * Scripts/webkitperl/run-leaks_unittest/run-leaks-report-v2.0-new.pl:
+        * Scripts/webkitperl/run-leaks_unittest/run-leaks-report-v2.0-old.pl:
+        * Scripts/webkitpy/port/leakdetector_unittest.py:
+        Updated tests for new behavior.
+
 2017-12-14  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (r225789): API tests WKProcessPool.InitialWarmedProcessUsed and WebKit.WebsiteDataStoreCustomPaths are failing.

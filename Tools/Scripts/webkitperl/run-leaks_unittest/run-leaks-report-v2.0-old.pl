@@ -58,6 +58,54 @@ EOF
 my $expectedOutput =
 [
   {
+    'leaksOutput' => 'leaks Report Version:  2.0'
+  },
+  {
+    'leaksOutput' => 'Process:         Safari [53606]'
+  },
+  {
+    'leaksOutput' => 'Path:            /Applications/Safari.app/Contents/MacOS/Safari'
+  },
+  {
+    'leaksOutput' => 'Load Address:    0x100000000'
+  },
+  {
+    'leaksOutput' => 'Identifier:      com.apple.Safari'
+  },
+  {
+    'leaksOutput' => 'Version:         5.0 (6533.9)'
+  },
+  {
+    'leaksOutput' => 'Build Info:      WebBrowser-75330900~1'
+  },
+  {
+    'leaksOutput' => 'Code Type:       X86-64 (Native)'
+  },
+  {
+    'leaksOutput' => 'Parent Process:  perl5.10.0 [53599]'
+  },
+  {
+    'leaksOutput' => ''
+  },
+  {
+    'leaksOutput' => 'Date/Time:       2010-05-27 11:42:27.356 -0700'
+  },
+  {
+    'leaksOutput' => 'OS Version:      Mac OS X 10.6.3 (10D571)'
+  },
+  {
+    'leaksOutput' => 'Report Version:  6'
+  },
+  {
+    'leaksOutput' => ''
+  },
+  {
+    'leaksOutput' => 'Process 53606: 112295 nodes malloced for 22367 KB'
+  },
+  {
+    'leaksOutput' => 'Process 53606: 1 leak for 32 total leaked bytes.'
+  },
+  {
     'leaksOutput' => join('', split(/\n/, <<EOF)),
 Leak: 0x1118c0e60  size=32  zone: DefaultMallocZone_0x105a92000	string 'com.apple.quarantine'
 	Call stack: [thread 0x7fff70126be0]: | 0x100001e84 | NSApplicationMain | +[NSBundle(NSNibLoading) loadNibNamed:owner:] | +[NSBundle(NSNibLoading) _loadNibFile:nameTable:withZone:ownerBundle:] | loadNib | -[NSIBObjectData nibInstantiateWithOwner:topLevelObjects:] | -[NSSet makeObjectsPerformSelector:] | 0x100003494 | 0x1001013ff | 0x10014dbb9 | 0x10014d923 | 0x10014d7d7 | 0x10014ccd9 | 0x100149c8e | 0x100149bd8 | xar_open | xar_file_unserialize | xar_prop_unserialize | xar_prop_unserialize | strdup | malloc | malloc_zone_malloc 

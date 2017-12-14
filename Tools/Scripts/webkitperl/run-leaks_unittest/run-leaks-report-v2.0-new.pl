@@ -78,6 +78,54 @@ EOF
 my $expectedOutput =
 [
   {
+    'leaksOutput' => 'Process:         DumpRenderTree [29903]'
+  },
+  {
+    'leaksOutput' => 'Path:            /Volumes/Data/Build/Debug/DumpRenderTree'
+  },
+  {
+    'leaksOutput' => 'Load Address:    0x102116000'
+  },
+  {
+    'leaksOutput' => 'Identifier:      DumpRenderTree'
+  },
+  {
+    'leaksOutput' => 'Version:         ??? (???)'
+  },
+  {
+    'leaksOutput' => 'Code Type:       X86-64 (Native)'
+  },
+  {
+    'leaksOutput' => 'Parent Process:  Python [29892]'
+  },
+  {
+    'leaksOutput' => ''
+  },
+  {
+    'leaksOutput' => 'Date/Time:       2011-11-14 11:12:45.706 -0800'
+  },
+  {
+    'leaksOutput' => 'OS Version:      Mac OS X 10.7.2 (11C74)'
+  },
+  {
+    'leaksOutput' => 'Report Version:  7'
+  },
+  {
+    'leaksOutput' => ''
+  },
+  {
+    'leaksOutput' => 'leaks Report Version:  2.0'
+  },
+  {
+    'leaksOutput' => 'leaks(12871,0xacdfa2c0) malloc: process 89617 no longer exists, stack logs deleted from /tmp/stack-logs.89617.DumpRenderTree.A2giy6.index'
+  },
+  {
+    'leaksOutput' => 'Process 29903: 60015 nodes malloced for 7290 KB'
+  },
+  {
+    'leaksOutput' => 'Process 29903: 2 leaks for 1008 total leaked bytes.'
+  },
+  {
     'leaksOutput' => join('', split(/\n/, <<EOF)),
 Leak: 0x7f9a3a612810  size=576  zone: DefaultMallocZone_0x10227b000   URLConnectionLoader::LoaderConnectionEventQueue  C++  CFNetwork
 	0x7f3af460 0x00007fff 0x7edf2f40 0x00007fff 	`.:.....@/.~....

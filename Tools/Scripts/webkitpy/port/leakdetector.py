@@ -62,12 +62,13 @@ class LeakDetector(object):
         ]
         return callstacks
 
-    def _leaks_args(self, pid):
+    def _leaks_args(self, pid, leaks_output_path):
         leaks_args = []
         for callstack in self._callstacks_to_exclude_from_leaks():
             leaks_args += ['--exclude-callstack=%s' % callstack]
         for excluded_type in self._types_to_exclude_from_leaks():
             leaks_args += ['--exclude-type=%s' % excluded_type]
+        leaks_args += ['--output-file=%s' % leaks_output_path]
         leaks_args.append(pid)
         return leaks_args
 
@@ -113,11 +114,14 @@ class LeakDetector(object):
 
     def check_for_leaks(self, process_name, process_pid):
         _log.debug("Checking for leaks in %s" % process_name)
+        leaks_filename = self.leaks_file_name(process_name, process_pid)
+        leaks_output_path = self._filesystem.join(self._port.results_directory(), leaks_filename)
         try:
             # Oddly enough, run-leaks (or the underlying leaks tool) does not seem to always output utf-8,
             # thus we pass decode_output=False.  Without this code we've seen errors like:
             # "UnicodeDecodeError: 'utf8' codec can't decode byte 0x88 in position 779874: unexpected code byte"
-            leaks_output = self._port._run_script("run-leaks", self._leaks_args(process_pid), include_configuration_arguments=False, decode_output=False)
+            self._port._run_script("run-leaks", self._leaks_args(process_pid, leaks_output_path), include_configuration_arguments=False, decode_output=False)
+            leaks_output = self._filesystem.read_binary_file(leaks_output_path)
         except ScriptError as e:
             _log.warn("Failed to run leaks tool: %s" % e.message_with_output())
             return
@@ -126,11 +130,8 @@ class LeakDetector(object):
         count, excluded, bytes = self._parse_leaks_output(leaks_output)
         adjusted_count = count - excluded
         if not adjusted_count:
+            self._filesystem.remove(leaks_output_path)
             return
-
-        leaks_filename = self.leaks_file_name(process_name, process_pid)
-        leaks_output_path = self._filesystem.join(self._port.results_directory(), leaks_filename)
-        self._filesystem.write_binary_file(leaks_output_path, leaks_output)
 
         # FIXME: Ideally we would not be logging from the worker process, but rather pass the leak
         # information back to the manager and have it log.
