@@ -22,14 +22,13 @@
 
 import logging
 import os
+import json
 import sys
 
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
 import webkitpy.thirdparty.autoinstalled.mozlog
 import webkitpy.thirdparty.autoinstalled.mozprocess
-import webkitpy.thirdparty.autoinstalled.pytest
-import webkitpy.thirdparty.autoinstalled.pytest_timeout
 from mozlog import structuredlog
 
 w3c_tools_dir = WebKitFinder(FileSystem()).path_from_webkit_base('WebDriverTests', 'imported', 'w3c', 'tools')
@@ -43,6 +42,14 @@ _ensure_directory_in_path(os.path.join(w3c_tools_dir, 'wptrunner'))
 
 from wptrunner.executors.base import WdspecExecutor, WebDriverProtocol
 from wptrunner.webdriver_server import WebDriverServer
+
+pytest_runner = None
+
+
+def do_delayed_imports():
+    global pytest_runner
+    import webkitpy.webdriver_tests.pytest_runner as pytest_runner
+
 
 _log = logging.getLogger(__name__)
 
@@ -128,6 +135,9 @@ class WebDriverW3CExecutor(WdspecExecutor):
         server_config = {'host': server.host(), 'ports': {'http': [str(server.port())]}}
         WdspecExecutor.__init__(self, driver.browser_name(), server_config, driver.binary_path(), None, capabilities=driver.capabilities())
 
+        if pytest_runner is None:
+            do_delayed_imports()
+
     def setup(self):
         self.runner = TestRunner()
         self.protocol.setup(self.runner)
@@ -135,6 +145,10 @@ class WebDriverW3CExecutor(WdspecExecutor):
     def teardown(self):
         self.protocol.teardown()
 
-    def run(self, path):
-        # Timeout here doesn't really matter because it's ignored, so we pass 0.
-        return self.do_wdspec(self.protocol.session_config, path, 0)
+    def run(self, test, timeout):
+        env = {'WD_HOST': self.protocol.session_config['host'],
+               'WD_PORT': str(self.protocol.session_config['port']),
+               'WD_CAPABILITIES': json.dumps(self.protocol.session_config['capabilities']),
+               'WD_SERVER_CONFIG': json.dumps(self.server_config)}
+        args = ['--strict', '-p', 'no:mozlog']
+        return pytest_runner.run(test, args, timeout, env)

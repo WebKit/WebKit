@@ -1,3 +1,56 @@
+2017-12-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: add a common way to run tests with pytest
+        https://bugs.webkit.org/show_bug.cgi?id=180800
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        We currently use pytestrunner from wpt for w3c tests and our own code for selenium tests. Using the same code
+        for both would simplify everything, but also allows us to have a custom results recorder to support other test
+        expectations like TIMEOUT. The code to run selenium tests with pytest has been moved to a new file
+        pytest_runner.py and made generic to be used also for w3c tests.
+
+        * Scripts/webkitpy/webdriver_tests/pytest_runner.py: Added.
+        (TemporaryDirectory):
+        (TemporaryDirectory.__enter__):
+        (TemporaryDirectory.__exit__):
+        (CollectRecorder):
+        (CollectRecorder.__init__):
+        (CollectRecorder.pytest_collectreport):
+        (HarnessResultRecorder):
+        (HarnessResultRecorder.__init__):
+        (HarnessResultRecorder.pytest_collectreport):
+        (SubtestResultRecorder):
+        (SubtestResultRecorder.__init__):
+        (SubtestResultRecorder.pytest_runtest_logreport):
+        (SubtestResultRecorder._was_timeout):
+        (SubtestResultRecorder.record_pass):
+        (SubtestResultRecorder.record_fail):
+        (SubtestResultRecorder.record_error):
+        (SubtestResultRecorder.record_skip):
+        (SubtestResultRecorder.record):
+        (collect):
+        (run):
+        * Scripts/webkitpy/webdriver_tests/webdriver_selenium_executor.py:
+        (do_delayed_imports): Import pytest_runner here to avoid cycles.
+        (WebDriverSeleniumExecutor.__init__): Save the driver parameter as args member and call do_delayed_imports() if
+        needed.
+        (WebDriverSeleniumExecutor.collect): Use pytest_runner.
+        (WebDriverSeleniumExecutor.run): Ditto.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner.py:
+        (WebDriverTestRunner.print_results): Handle all possible tests results.
+        (WebDriverTestRunner.print_results.report): Helper to dump test results.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_selenium.py:
+        (WebDriverTestRunnerSelenium.run):
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_w3c.py:
+        (WebDriverTestRunnerW3C.__init__): Do not set PYTEST_TIMEOUT env var.
+        (WebDriverTestRunnerW3C._is_test): Fix check for support files.
+        (WebDriverTestRunnerW3C.run): Pass the timeout as parameter to WebDriverW3CExecutor.run().
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_executor.py:
+        (do_delayed_imports): Import pytest_runner here to avoid cycles.
+        (WebDriverW3CExecutor.__init__): Call do_delayed_imports() if needed.
+        (WebDriverW3CExecutor.run): Use pytest_runner.
+
 2017-12-13  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r225864.

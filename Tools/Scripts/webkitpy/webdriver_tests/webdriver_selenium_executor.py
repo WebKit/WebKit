@@ -26,33 +26,16 @@ import sys
 
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
-import webkitpy.thirdparty.autoinstalled.mozlog
-import webkitpy.thirdparty.autoinstalled.pytest
-import webkitpy.thirdparty.autoinstalled.pytest_timeout
-import pytest
 
-# Since W3C tests also use pytest, we use pytest and some other tools for selenium too.
-w3c_tools_dir = WebKitFinder(FileSystem()).path_from_webkit_base('WebDriverTests', 'imported', 'w3c', 'tools')
+pytest_runner = None
 
 
-def _ensure_directory_in_path(directory):
-    if not directory in sys.path:
-        sys.path.insert(0, directory)
-_ensure_directory_in_path(os.path.join(w3c_tools_dir, 'wptrunner'))
+def do_delayed_imports():
+    global pytest_runner
+    import webkitpy.webdriver_tests.pytest_runner as pytest_runner
 
-from wptrunner.executors.pytestrunner.runner import HarnessResultRecorder, SubtestResultRecorder, TemporaryDirectory
 
 _log = logging.getLogger(__name__)
-
-
-class CollectRecorder(object):
-
-    def __init__(self):
-        self.tests = []
-
-    def pytest_collectreport(self, report):
-        if report.nodeid:
-            self.tests.append(report.nodeid)
 
 
 class WebDriverSeleniumExecutor(object):
@@ -69,43 +52,13 @@ class WebDriverSeleniumExecutor(object):
         self._env.update(display_driver._setup_environ_for_test())
         self._env.update(driver.browser_env())
 
-        self._name = driver.selenium_name()
+        self._args = ['--driver=%s' % driver.selenium_name()]
+
+        if pytest_runner is None:
+            do_delayed_imports()
 
     def collect(self, directory):
-        collect_recorder = CollectRecorder()
-        stdout = sys.stdout
-        with open(os.devnull, 'wb') as devnull:
-            sys.stdout = devnull
-            with TemporaryDirectory() as cache_directory:
-                pytest.main(['--driver=%s' % self._name,
-                             '--collect-only',
-                             '--basetemp', cache_directory,
-                             directory], plugins=[collect_recorder])
-        sys.stdout = stdout
-        return collect_recorder.tests
+        return pytest_runner.collect(directory, self._args)
 
-    def run(self, test, timeout=0):
-        harness_recorder = HarnessResultRecorder()
-        subtests_recorder = SubtestResultRecorder()
-        _environ = dict(os.environ)
-        os.environ.clear()
-        os.environ.update(self._env)
-
-        with TemporaryDirectory() as cache_directory:
-            try:
-                pytest.main(['--driver=%s' % self._name,
-                             '--verbose',
-                             '--capture=no',
-                             '--basetemp', cache_directory,
-                             '--showlocals',
-                             '--timeout=%s' % timeout,
-                             '-p', 'no:cacheprovider',
-                             '-p', 'pytest_timeout',
-                             test], plugins=[harness_recorder, subtests_recorder])
-            except Exception as e:
-                harness_recorder.outcome = ("ERROR", str(e))
-
-        os.environ.clear()
-        os.environ.update(_environ)
-
-        return harness_recorder.outcome, subtests_recorder.results
+    def run(self, test, timeout):
+        return pytest_runner.run(test, self._args, timeout, self._env)
