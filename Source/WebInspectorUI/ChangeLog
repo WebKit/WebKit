@@ -1,3 +1,23 @@
+2017-12-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: UncaughtExceptionReporter fails on early errors
+        https://bugs.webkit.org/show_bug.cgi?id=180776
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+        (urlLastPathComponent):
+        (handleError):
+        (handleUncaughtException):
+        URLUtilities parseURL might not be available, so have a small
+        helper for getting a good name from a URL / filename.
+
+        (handleUncaughtExceptionRecord):
+        (dismissErrorSheet):
+        Wrap `WI` namespace accesses in a try/catch since `WI` might not be available.
+        Safely check global variables there were `Foo` as `window.Foo` to avoid errors
+        if they are not actually available.
+
 2017-12-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Network Tab - Make text filter just a URL filter and update incrementally
