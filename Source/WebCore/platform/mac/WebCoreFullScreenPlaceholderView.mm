@@ -57,6 +57,7 @@ using WebCore::clickToExitFullScreenText;
     _effectView.get().hidden = YES;
     _effectView.get().material = NSVisualEffectMaterialLight;
     _effectView.get().state = NSVisualEffectStateActive;
+    _effectView.get().appearance = [NSAppearance appearanceNamed:NSAppearanceNameVibrantLight];
     [self addSubview:_effectView.get()];
 
     _exitWarning = adoptNS([[NSTextField alloc] initWithFrame:NSZeroRect]);
