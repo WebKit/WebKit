@@ -70,7 +70,7 @@ void WebMemorySampler::start(const double interval)
     initializeTimers(interval);
 }
 
-void WebMemorySampler::start(const SandboxExtension::Handle& sampleLogFileHandle, const String& sampleLogFilePath, const double interval) 
+void WebMemorySampler::start(SandboxExtension::Handle&& sampleLogFileHandle, const String& sampleLogFilePath, const double interval)
 {
     if (m_isRunning) 
         return;
@@ -81,7 +81,7 @@ void WebMemorySampler::start(const SandboxExtension::Handle& sampleLogFileHandle
         return;
     }
         
-    initializeSandboxedLogFile(sampleLogFileHandle, sampleLogFilePath);
+    initializeSandboxedLogFile(WTFMove(sampleLogFileHandle), sampleLogFilePath);
     initializeTimers(interval);
    
 }
@@ -131,9 +131,9 @@ void WebMemorySampler::initializeTempLogFile()
     writeHeaders();
 }
 
-void WebMemorySampler::initializeSandboxedLogFile(const SandboxExtension::Handle& sampleLogSandboxHandle, const String& sampleLogFilePath)
+void WebMemorySampler::initializeSandboxedLogFile(SandboxExtension::Handle&& sampleLogSandboxHandle, const String& sampleLogFilePath)
 {
-    m_sampleLogSandboxExtension = SandboxExtension::create(sampleLogSandboxHandle);
+    m_sampleLogSandboxExtension = SandboxExtension::create(WTFMove(sampleLogSandboxHandle));
     if (m_sampleLogSandboxExtension)
         m_sampleLogSandboxExtension->consume();
     m_sampleLogFilePath = sampleLogFilePath;

@@ -122,7 +122,7 @@ void DownloadManager::convertNetworkLoadToDownload(DownloadID downloadID, std::u
 #endif
 }
 
-void DownloadManager::continueDecidePendingDownloadDestination(DownloadID downloadID, String destination, const SandboxExtension::Handle& sandboxExtensionHandle, bool allowOverwrite)
+void DownloadManager::continueDecidePendingDownloadDestination(DownloadID downloadID, String destination, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
 {
 #if USE(NETWORK_SESSION)
     if (m_downloadsWaitingForDestination.contains(downloadID)) {
@@ -133,7 +133,7 @@ void DownloadManager::continueDecidePendingDownloadDestination(DownloadID downlo
         ASSERT(completionHandler);
         ASSERT(m_pendingDownloads.contains(downloadID));
 
-        networkDataTask->setPendingDownloadLocation(destination, sandboxExtensionHandle, allowOverwrite);
+        networkDataTask->setPendingDownloadLocation(destination, WTFMove(sandboxExtensionHandle), allowOverwrite);
         completionHandler(PolicyAction::Download);
         if (networkDataTask->state() == NetworkDataTask::State::Canceling || networkDataTask->state() == NetworkDataTask::State::Completed)
             return;
@@ -148,11 +148,11 @@ void DownloadManager::continueDecidePendingDownloadDestination(DownloadID downlo
     }
 #else
     if (auto* waitingDownload = download(downloadID))
-        waitingDownload->didDecideDownloadDestination(destination, sandboxExtensionHandle, allowOverwrite);
+        waitingDownload->didDecideDownloadDestination(destination, WTFMove(sandboxExtensionHandle), allowOverwrite);
 #endif
 }
 
-void DownloadManager::resumeDownload(PAL::SessionID sessionID, DownloadID downloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle& sandboxExtensionHandle)
+void DownloadManager::resumeDownload(PAL::SessionID sessionID, DownloadID downloadID, const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&& sandboxExtensionHandle)
 {
 #if USE(NETWORK_SESSION) && !PLATFORM(COCOA)
     notImplemented();
@@ -164,7 +164,7 @@ void DownloadManager::resumeDownload(PAL::SessionID sessionID, DownloadID downlo
     auto download = std::make_unique<Download>(*this, downloadID, ResourceRequest());
 #endif
 
-    download->resume(resumeData, path, sandboxExtensionHandle);
+    download->resume(resumeData, path, WTFMove(sandboxExtensionHandle));
     ASSERT(!m_downloads.contains(downloadID));
     m_downloads.add(downloadID, WTFMove(download));
 #endif

@@ -43,7 +43,6 @@ public:
     MediaDeviceSandboxExtensions(Vector<String> ids, SandboxExtension::HandleArray&& handles);
 
     std::pair<String, RefPtr<SandboxExtension>> operator[](size_t i);
-    const std::pair<String, RefPtr<SandboxExtension>> operator[](size_t i) const;
     size_t size() const;
 
     void encode(IPC::Encoder&) const;

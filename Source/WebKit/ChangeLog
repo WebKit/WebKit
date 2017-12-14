@@ -1,5 +1,92 @@
 2017-12-14  Alex Christensen  <achristensen@webkit.org>
 
+        Use move semantics for SandboxExtension::Handle
+        https://bugs.webkit.org/show_bug.cgi?id=180792
+
+        Reviewed by Andy Estes.
+        
+        Passing them around as const SandboxExtension::Handle& is wrong because ownership is transferred and they are consumed.
+        It only works now because their contents are mutable, which isn't a good use of mutable.
+
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::decideDestinationWithSuggestedFilename):
+        (WebKit::Download::didDecideDownloadDestination):
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::continueDecidePendingDownloadDestination):
+        (WebKit::DownloadManager::resumeDownload):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::resume):
+        * NetworkProcess/Downloads/ios/DownloadIOS.mm:
+        (WebKit::Download::resume):
+        * NetworkProcess/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::resume):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::registerFileBlobURL):
+        (WebKit::NetworkConnectionToWebProcess::preregisterSandboxExtensionsForOptionallyFileBackedBlob):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkDataTask.h:
+        (WebKit::NetworkDataTask::setPendingDownloadLocation):
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        (WebKit::NetworkDataTaskBlob::setPendingDownloadLocation):
+        * NetworkProcess/NetworkDataTaskBlob.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::resumeDownload):
+        (WebKit::NetworkProcess::continueDecidePendingDownloadDestination):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::setPendingDownloadLocation):
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::create):
+        * Shared/WebMemorySampler.cpp:
+        (WebKit::WebMemorySampler::start):
+        (WebKit::WebMemorySampler::initializeSandboxedLogFile):
+        * Shared/WebMemorySampler.h:
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::create):
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::grantSandboxExtensionsForBlobs):
+        * StorageProcess/StorageProcess.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::performDragOperation):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dragEntered):
+        (WebKit::WebPageProxy::dragUpdated):
+        (WebKit::WebPageProxy::dragExited):
+        (WebKit::WebPageProxy::performDragOperation):
+        (WebKit::WebPageProxy::performDragControllerAction):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::create):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/MediaStream/MediaDeviceSandboxExtensions.cpp:
+        (WebKit::MediaDeviceSandboxExtensions::operator[]):
+        (WebKit::MediaDeviceSandboxExtensions::operator[] const): Deleted.
+        * WebProcess/MediaStream/MediaDeviceSandboxExtensions.h:
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::grantUserMediaDeviceSandboxExtensions):
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::getPathnamesForType):
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::goToItem):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadRequest):
+        (WebKit::WebPage::reload):
+        (WebKit::WebPage::performDragControllerAction):
+        (WebKit::WebPage::grantUserMediaDeviceSandboxExtensions):
+        (WebKit::WebPage::SandboxExtensionTracker::beginLoad):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::startMemorySampler):
+        * WebProcess/WebProcess.h:
+
+2017-12-14  Alex Christensen  <achristensen@webkit.org>
+
         Make WebsitePolicies a proper class with getters and setters
         https://bugs.webkit.org/show_bug.cgi?id=180788
 

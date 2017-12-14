@@ -127,7 +127,7 @@ void Download::startNetworkLoad()
     notImplemented();
 }
 
-void Download::resume(const IPC::DataReference&, const String&, const SandboxExtension::Handle&)
+void Download::resume(const IPC::DataReference&, const String&, SandboxExtension::Handle&&)
 {
     notImplemented();
 }

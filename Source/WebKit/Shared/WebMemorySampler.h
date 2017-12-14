@@ -73,7 +73,7 @@ class WebMemorySampler {
 public:
     static WebMemorySampler* singleton();
     void start(const double interval = 0);
-    void start(const SandboxExtension::Handle&, const String&, const double interval = 0);
+    void start(SandboxExtension::Handle&&, const String&, const double interval = 0);
     void stop();
     bool isRunning() const;
     
@@ -82,7 +82,7 @@ private:
     ~WebMemorySampler();
     
     void initializeTempLogFile();
-    void initializeSandboxedLogFile(const SandboxExtension::Handle&, const String&);
+    void initializeSandboxedLogFile(SandboxExtension::Handle&&, const String&);
     void writeHeaders();
     void initializeTimers(double);
     void sampleTimerFired();

@@ -52,7 +52,7 @@ public:
     void cancelMediaDevicesEnumeration(WebCore::MediaDevicesEnumerationRequest&);
     void didCompleteMediaDeviceEnumeration(uint64_t, const Vector<WebCore::CaptureDevice>& deviceList, String&& deviceIdentifierHashSalt, bool originHasPersistentAccess);
 
-    void grantUserMediaDeviceSandboxExtensions(const MediaDeviceSandboxExtensions&);
+    void grantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions&&);
     void revokeUserMediaDeviceSandboxExtensions(const Vector<String>&);
 
 private:

@@ -60,14 +60,7 @@ std::pair<String, RefPtr<SandboxExtension>> MediaDeviceSandboxExtensions::operat
 {
     ASSERT_WITH_SECURITY_IMPLICATION(m_ids.size() == m_handles.size());
     ASSERT_WITH_SECURITY_IMPLICATION(i < m_ids.size());
-    return { m_ids[i], SandboxExtension::create(m_handles[i]) };
-}
-
-const std::pair<String, RefPtr<SandboxExtension>> MediaDeviceSandboxExtensions::operator[](size_t i) const
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(m_ids.size() == m_handles.size());
-    ASSERT_WITH_SECURITY_IMPLICATION(i < m_ids.size());
-    return { m_ids[i], SandboxExtension::create(m_handles[i]) };
+    return { m_ids[i], SandboxExtension::create(WTFMove(m_handles[i])) };
 }
 
 size_t MediaDeviceSandboxExtensions::size() const

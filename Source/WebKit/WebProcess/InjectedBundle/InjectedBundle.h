@@ -74,7 +74,7 @@ struct WebProcessCreationParameters;
 
 class InjectedBundle : public API::ObjectImpl<API::Object::Type::Bundle> {
 public:
-    static RefPtr<InjectedBundle> create(const WebProcessCreationParameters&, API::Object* initializationUserData);
+    static RefPtr<InjectedBundle> create(WebProcessCreationParameters&, API::Object* initializationUserData);
 
     ~InjectedBundle();
 

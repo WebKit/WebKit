@@ -90,7 +90,7 @@ public:
     void start();
     void startWithHandle(WebCore::ResourceHandle*, const WebCore::ResourceResponse&);
 #endif
-    void resume(const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle&);
+    void resume(const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&&);
     void cancel();
 
     DownloadID downloadID() const { return m_downloadID; }
@@ -108,7 +108,7 @@ public:
     bool shouldDecodeSourceDataOfMIMEType(const String& mimeType);
     String decideDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite);
     void decideDestinationWithSuggestedFilenameAsync(const String&);
-    void didDecideDownloadDestination(const String& destinationPath, const SandboxExtension::Handle&, bool allowOverwrite);
+    void didDecideDownloadDestination(const String& destinationPath, SandboxExtension::Handle&&, bool allowOverwrite);
     void continueDidReceiveResponse();
     void platformDidFinish();
 #endif

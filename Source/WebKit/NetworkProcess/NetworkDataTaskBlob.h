@@ -64,7 +64,7 @@ private:
     void invalidateAndCancel() override;
     NetworkDataTask::State state() const override { return m_state; }
 
-    void setPendingDownloadLocation(const String&, const SandboxExtension::Handle&, bool /*allowOverwrite*/) override;
+    void setPendingDownloadLocation(const String&, SandboxExtension::Handle&&, bool /*allowOverwrite*/) override;
     String suggestedFilename() const override;
 
     // FileStreamClient methods.

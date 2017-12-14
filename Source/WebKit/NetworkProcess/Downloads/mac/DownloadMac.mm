@@ -83,12 +83,12 @@ void Download::startNetworkLoadWithHandle(ResourceHandle* handle, const Resource
     [m_nsURLDownload setDeletesFileUponFailure:NO];
 }
 
-void Download::resume(const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle& sandboxExtensionHandle)
+void Download::resume(const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&& sandboxExtensionHandle)
 {
     ASSERT(!m_nsURLDownload);
     ASSERT(!m_delegate);
 
-    m_sandboxExtension = SandboxExtension::create(sandboxExtensionHandle);
+    m_sandboxExtension = SandboxExtension::create(WTFMove(sandboxExtensionHandle));
     if (m_sandboxExtension)
         m_sandboxExtension->consume();
 

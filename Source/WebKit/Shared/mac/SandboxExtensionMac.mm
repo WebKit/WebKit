@@ -209,7 +209,7 @@ bool SandboxExtension::HandleArray::decode(IPC::Decoder& decoder, SandboxExtensi
     return true;
 }
 
-RefPtr<SandboxExtension> SandboxExtension::create(const Handle& handle)
+RefPtr<SandboxExtension> SandboxExtension::create(Handle&& handle)
 {
     if (!handle.m_sandboxExtension)
         return nullptr;

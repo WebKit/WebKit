@@ -282,7 +282,7 @@ private:
 
     void setEnhancedAccessibility(bool);
     
-    void startMemorySampler(const SandboxExtension::Handle&, const String&, const double);
+    void startMemorySampler(SandboxExtension::Handle&&, const String&, const double);
     void stopMemorySampler();
     
     void getWebCoreStatistics(uint64_t callbackID);

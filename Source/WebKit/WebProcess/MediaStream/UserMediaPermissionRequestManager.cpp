@@ -207,10 +207,10 @@ void UserMediaPermissionRequestManager::didCompleteMediaDeviceEnumeration(uint64
     request->setDeviceInfo(deviceList, WTFMove(mediaDeviceIdentifierHashSalt), hasPersistentAccess);
 }
 
-void UserMediaPermissionRequestManager::grantUserMediaDeviceSandboxExtensions(const MediaDeviceSandboxExtensions& extensions)
+void UserMediaPermissionRequestManager::grantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions&& extensions)
 {
     for (size_t i = 0; i < extensions.size(); i++) {
-        auto& extension = extensions[i];
+        const auto& extension = extensions[i];
         extension.second->consume();
         m_userMediaDeviceSandboxExtensions.add(extension.first, extension.second.copyRef());
     }
