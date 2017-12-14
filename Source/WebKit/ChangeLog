@@ -1,5 +1,20 @@
 2017-12-14  Chris Dumez  <cdumez@apple.com>
 
+        Enable Service Workers on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=180836
+
+        Reviewed by Alex Christensen.
+
+        * Shared/WebPreferencesDefaultValues.h:
+        * UIProcess/WebProcessPool.cpp:
+        Enable Service Workers on iOS.
+
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        Fall back to defaultCacheStorageDirectory() instead of the empty string
+        for the cache storage directory, when we do not have a store.
+
+2017-12-14  Chris Dumez  <cdumez@apple.com>
+
         Service worker script fetching currently always uses the network cache
         https://bugs.webkit.org/show_bug.cgi?id=180816
 
