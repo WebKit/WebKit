@@ -24,6 +24,7 @@
           (contentsScale 2.00)
           (children 1
             (GraphicsLayer
+              (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
               (bounds 200.00 200.00)
               (visible rect 0.00, 0.00 200.00 x 200.00)
@@ -32,6 +33,7 @@
               (contentsScale 2.00)
               (children 9
                 (GraphicsLayer
+                  (offsetFromRenderer width=-14 height=-14)
                   (position -264.00 22.00)
                   (bounds 128.00 128.00)
                   (drawsContent 1)
@@ -41,6 +43,7 @@
                   (contentsScale 2.00)
                 )
                 (GraphicsLayer
+                  (offsetFromRenderer width=-14 height=-14)
                   (position -140.00 22.00)
                   (bounds 128.00 128.00)
                   (drawsContent 1)
@@ -50,6 +53,7 @@
                   (contentsScale 2.00)
                 )
                 (GraphicsLayer
+                  (offsetFromRenderer width=-14 height=-14)
                   (position -16.00 22.00)
                   (bounds 128.00 128.00)
                   (drawsContent 1)
@@ -59,6 +63,7 @@
                   (contentsScale 2.00)
                 )
                 (GraphicsLayer
+                  (offsetFromRenderer width=-14 height=-14)
                   (position 108.00 22.00)
                   (bounds 128.00 128.00)
                   (drawsContent 1)
@@ -68,6 +73,7 @@
                   (contentsScale 2.00)
                 )
                 (GraphicsLayer
+                  (offsetFromRenderer width=-14 height=-14)
                   (position 232.00 22.00)
                   (bounds 128.00 128.00)
                   (drawsContent 1)
@@ -77,6 +83,7 @@
                   (contentsScale 2.00)
                 )
                 (GraphicsLayer
+                  (offsetFromRenderer width=-14 height=-14)
                   (position 356.00 22.00)
                   (bounds 128.00 128.00)
                   (drawsContent 1)
@@ -86,6 +93,7 @@
                   (contentsScale 2.00)
                 )
                 (GraphicsLayer
+                  (offsetFromRenderer width=-14 height=-14)
                   (position 480.00 22.00)
                   (bounds 128.00 128.00)
                   (drawsContent 1)
@@ -95,6 +103,7 @@
                   (contentsScale 2.00)
                 )
                 (GraphicsLayer
+                  (offsetFromRenderer width=-14 height=-14)
                   (position 604.00 22.00)
                   (bounds 128.00 128.00)
                   (drawsContent 1)
@@ -104,6 +113,7 @@
                   (contentsScale 2.00)
                 )
                 (GraphicsLayer
+                  (offsetFromRenderer width=-14 height=-14)
                   (position -264.00 167.00)
                   (bounds 128.00 128.00)
                   (drawsContent 1)

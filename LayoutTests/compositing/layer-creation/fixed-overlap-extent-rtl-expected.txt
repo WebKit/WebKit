@@ -5,10 +5,12 @@ Fixed layer.
   (bounds 1108.00 1021.00)
   (children 1
     (GraphicsLayer
+      (offsetFromRenderer width=-323 height=0)
       (bounds 1108.00 1021.00)
       (contentsOpaque 1)
       (children 869
         (GraphicsLayer
+          (offsetFromRenderer width=-14 height=-14)
           (position 369.00 106.00)
           (bounds 228.00 178.00)
           (drawsContent 1)

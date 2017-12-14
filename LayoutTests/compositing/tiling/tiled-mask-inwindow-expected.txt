@@ -16,6 +16,7 @@
           (drawsContent 1)
           (children 1
             (GraphicsLayer
+              (offsetFromRenderer width=2 height=2)
               (position 2.00 2.00)
               (bounds 400.00 300.00)
               (children 1
@@ -49,10 +50,10 @@
 )
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 785.00 1101.00)
+  (bounds 785.00 1116.00)
   (children 1
     (GraphicsLayer
-      (bounds 785.00 1101.00)
+      (bounds 785.00 1116.00)
       (contentsOpaque 1)
       (tile cache coverage 0, 0 785 x 600)
       (tile size 800 x 600)
@@ -65,6 +66,7 @@
           (drawsContent 1)
           (children 1
             (GraphicsLayer
+              (offsetFromRenderer width=2 height=2)
               (position 2.00 2.00)
               (bounds 400.00 300.00)
               (children 1

@@ -24,6 +24,7 @@
                           (bounds 1000.00 1000.00)
                           (children 1
                             (GraphicsLayer
+                              (offsetFromRenderer width=-600 height=0)
                               (bounds 1000.00 1000.00)
                               (drawsContent 1)
                               (children 1

@@ -4,6 +4,7 @@
   (bounds 1600.00 600.00)
   (children 1
     (GraphicsLayer
+      (offsetFromRenderer width=-800 height=0)
       (bounds 1600.00 600.00)
       (contentsOpaque 1)
       (children 1

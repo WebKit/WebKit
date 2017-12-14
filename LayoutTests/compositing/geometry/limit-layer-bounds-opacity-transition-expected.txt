@@ -14,6 +14,7 @@ Fader
           (bounds 1.00 1.00)
         )
         (GraphicsLayer
+          (offsetFromRenderer width=-8 height=1)
           (bounds 108.00 99.00)
           (drawsContent 1)
         )

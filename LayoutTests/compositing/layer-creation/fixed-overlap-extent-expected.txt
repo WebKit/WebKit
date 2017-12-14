@@ -8,6 +8,7 @@ Fixed layer.
       (contentsOpaque 1)
       (children 869
         (GraphicsLayer
+          (offsetFromRenderer width=-14 height=-14)
           (position 46.00 106.00)
           (bounds 228.00 178.00)
           (drawsContent 1)

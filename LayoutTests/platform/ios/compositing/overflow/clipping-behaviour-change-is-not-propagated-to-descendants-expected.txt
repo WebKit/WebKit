@@ -75,6 +75,7 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
           (contentsScale 2.00)
         )
         (GraphicsLayer
+          (offsetFromRenderer width=-9 height=0)
           (position 0.00 135.00)
           (bounds 807.00 20.00)
           (drawsContent 1)

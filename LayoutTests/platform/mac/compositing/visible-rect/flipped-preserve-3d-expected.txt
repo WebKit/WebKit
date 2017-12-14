@@ -73,6 +73,7 @@ Some text here.
                               (contentsScale 1.00)
                               (children 3
                                 (GraphicsLayer
+                                  (offsetFromRenderer width=-3000 height=0)
                                   (position -3000.00 0.00)
                                   (anchor 0.94 0.50)
                                   (bounds 3418.00 120.00)
@@ -84,6 +85,7 @@ Some text here.
                                   (contentsScale 1.00)
                                 )
                                 (GraphicsLayer
+                                  (offsetFromRenderer width=-3000 height=0)
                                   (position -3000.00 120.00)
                                   (anchor 0.94 0.50)
                                   (bounds 3418.00 120.00)
@@ -95,6 +97,7 @@ Some text here.
                                   (contentsScale 1.00)
                                 )
                                 (GraphicsLayer
+                                  (offsetFromRenderer width=-3000 height=0)
                                   (position -3000.00 240.00)
                                   (anchor 0.94 0.50)
                                   (bounds 3418.00 120.00)

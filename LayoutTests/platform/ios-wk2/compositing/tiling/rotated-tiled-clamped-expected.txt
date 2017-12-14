@@ -27,6 +27,7 @@
           (contentsScale 2.00)
           (children 1
             (GraphicsLayer
+              (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
               (bounds 500.00 300.00)
               (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 -0.00] [0.00 0.00 0.00 1.00])

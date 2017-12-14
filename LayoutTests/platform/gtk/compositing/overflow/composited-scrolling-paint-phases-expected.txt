@@ -24,6 +24,7 @@
             )
           (children 4
             (GraphicsLayer
+              (offsetFromRenderer width=-1 height=-1)
               (position 1.00 1.00)
               (bounds 185.00 185.00)
               (paintingPhases
@@ -32,6 +33,7 @@
                 )
               (children 1
                 (GraphicsLayer
+                  (offsetFromRenderer width=1 height=1)
                   (bounds 185.00 715.00)
                   (drawsContent 1)
                   (paintingPhases
@@ -49,6 +51,7 @@
                         )
                     )
                     (GraphicsLayer
+                      (offsetFromRenderer width=1 height=1)
                       (bounds 185.00 715.00)
                       (drawsContent 1)
                       (paintingPhases

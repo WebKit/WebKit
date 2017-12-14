@@ -23,6 +23,7 @@
           (contentsScale 1.00)
           (children 1
             (GraphicsLayer
+              (offsetFromRenderer width=2 height=2)
               (position 2.00 2.00)
               (bounds 300.00 300.00)
               (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.26 0.26 1.00 -0.00] [0.00 0.00 0.00 1.00])
@@ -75,6 +76,7 @@
           (contentsScale 1.00)
           (children 1
             (GraphicsLayer
+              (offsetFromRenderer width=2 height=2)
               (position 2.00 2.00)
               (bounds 300.00 300.00)
               (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.26 0.26 1.00 -0.00] [0.00 0.00 0.00 1.00])

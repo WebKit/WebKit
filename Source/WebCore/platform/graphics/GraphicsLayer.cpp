@@ -718,6 +718,9 @@ static void dumpChildren(TextStream& ts, const Vector<GraphicsLayer*>& children,
 void GraphicsLayer::dumpProperties(TextStream& ts, LayerTreeAsTextBehavior behavior) const
 {
     TextStream::IndentScope indentScope(ts);
+    if (!m_offsetFromRenderer.isZero())
+        ts << indent << "(offsetFromRenderer " << m_offsetFromRenderer << ")\n";
+
     if (m_position != FloatPoint())
         ts << indent << "(position " << m_position.x() << " " << m_position.y() << ")\n";
 

@@ -14,16 +14,19 @@ background, clip-path, position, z-index, -webkit-mask
       (contentsOpaque 1)
       (children 6
         (GraphicsLayer
+          (offsetFromRenderer width=96 height=0)
           (position 104.00 8.00)
           (bounds 52.00 18.00)
           (drawsContent 1)
         )
         (GraphicsLayer
+          (offsetFromRenderer width=337 height=0)
           (position 345.00 8.00)
           (bounds 122.00 18.00)
           (drawsContent 1)
         )
         (GraphicsLayer
+          (offsetFromRenderer width=478 height=0)
           (position 486.00 8.00)
           (bounds 85.00 18.00)
           (drawsContent 1)

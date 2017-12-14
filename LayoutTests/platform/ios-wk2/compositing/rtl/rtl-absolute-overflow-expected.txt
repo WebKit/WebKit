@@ -4,6 +4,7 @@
   (bounds 1000.00 1000.00)
   (children 1
     (GraphicsLayer
+      (offsetFromRenderer width=-200 height=0)
       (bounds 1000.00 1000.00)
       (contentsOpaque 1)
       (backgroundColor #FF0000)

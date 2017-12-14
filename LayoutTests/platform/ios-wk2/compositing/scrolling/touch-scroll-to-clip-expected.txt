@@ -11,6 +11,7 @@
           (bounds 320.00 440.00)
           (children 1
             (GraphicsLayer
+              (offsetFromRenderer width=20 height=20)
               (position 20.00 20.00)
               (bounds 280.00 400.00)
               (children 1

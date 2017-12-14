@@ -17,6 +17,7 @@ Text here
           (contentsOpaque 1)
         )
         (GraphicsLayer
+          (offsetFromRenderer width=-8 height=0)
           (position 0.00 8.00)
           (bounds 150.00 142.00)
           (drawsContent 1)

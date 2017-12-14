@@ -22,10 +22,12 @@ middlebottom
           (drawsContent 1)
         )
         (GraphicsLayer
+          (offsetFromRenderer width=0 height=100)
           (position 28.00 20.00)
           (bounds 200.00 200.00)
           (children 1
             (GraphicsLayer
+              (offsetFromRenderer width=0 height=100)
               (bounds 110.00 200.00)
               (contentsOpaque 1)
               (drawsContent 1)
@@ -33,10 +35,12 @@ middlebottom
           )
         )
         (GraphicsLayer
+          (offsetFromRenderer width=-5 height=-145)
           (position 28.00 20.00)
           (bounds 200.00 200.00)
           (children 1
             (GraphicsLayer
+              (offsetFromRenderer width=0 height=-1)
               (position 5.00 144.00)
               (bounds 144.00 25.00)
               (drawsContent 1)
@@ -44,10 +48,12 @@ middlebottom
           )
         )
         (GraphicsLayer
+          (offsetFromRenderer width=0 height=100)
           (position 28.00 250.00)
           (bounds 185.00 200.00)
           (children 1
             (GraphicsLayer
+              (offsetFromRenderer width=0 height=100)
               (bounds 110.00 200.00)
               (contentsOpaque 1)
               (drawsContent 1)
@@ -55,10 +61,12 @@ middlebottom
           )
         )
         (GraphicsLayer
+          (offsetFromRenderer width=-5 height=-145)
           (position 28.00 250.00)
           (bounds 185.00 200.00)
           (children 1
             (GraphicsLayer
+              (offsetFromRenderer width=0 height=-1)
               (position 5.00 144.00)
               (bounds 144.00 25.00)
               (drawsContent 1)

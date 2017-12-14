@@ -20,6 +20,7 @@
       (in window 1)
       (children 1
         (GraphicsLayer
+          (offsetFromRenderer width=-7 height=-7)
           (position 1.00 1.00)
           (bounds 857.00 464.00)
           (drawsContent 1)

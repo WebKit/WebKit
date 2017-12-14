@@ -9,12 +9,14 @@
       (backingStoreAttached 1)
       (children 1
         (GraphicsLayer
+          (offsetFromRenderer width=-14 height=-14)
           (position 94.00 86.00)
           (bounds 148.00 128.00)
           (drawsContent 1)
           (backingStoreAttached 1)
           (children 1
             (GraphicsLayer
+              (offsetFromRenderer width=-14 height=-14)
               (bounds 48.00 48.00)
               (drawsContent 1)
               (backingStoreAttached 1)

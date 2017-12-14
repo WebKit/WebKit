@@ -23,6 +23,7 @@
           (contentsScale 2.00)
           (children 1
             (GraphicsLayer
+              (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
               (bounds 500.00 200.00)
               (visible rect 0.00, 0.00 500.00 x 200.00)

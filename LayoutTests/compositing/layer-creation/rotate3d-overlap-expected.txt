@@ -9,28 +9,33 @@
       (contentsOpaque 1)
       (children 5
         (GraphicsLayer
+          (offsetFromRenderer width=-5 height=-5)
           (position 23.00 23.00)
           (bounds 110.00 110.00)
           (drawsContent 1)
         )
         (GraphicsLayer
+          (offsetFromRenderer width=-5 height=-5)
           (position 167.00 23.00)
           (bounds 110.00 110.00)
           (drawsContent 1)
           (transform [0.97 0.26 0.00 0.00] [-0.26 0.97 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
         )
         (GraphicsLayer
+          (offsetFromRenderer width=-5 height=-5)
           (position 167.00 143.00)
           (bounds 110.00 110.00)
           (drawsContent 1)
         )
         (GraphicsLayer
+          (offsetFromRenderer width=-5 height=-5)
           (position 311.00 23.00)
           (bounds 110.00 110.00)
           (drawsContent 1)
           (transform [0.71 0.71 0.00 0.00] [-0.71 0.71 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
         )
         (GraphicsLayer
+          (offsetFromRenderer width=-5 height=-5)
           (position 311.00 143.00)
           (bounds 110.00 110.00)
           (drawsContent 1)

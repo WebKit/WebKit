@@ -9,12 +9,14 @@ Test CSS clip with composited layers. Left and right sides should look the same.
       (contentsOpaque 1)
       (children 2
         (GraphicsLayer
+          (offsetFromRenderer width=-5 height=-5)
           (position 15.00 15.00)
           (bounds 110.00 110.00)
           (drawsContent 1)
           (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
         )
         (GraphicsLayer
+          (offsetFromRenderer width=5 height=5)
           (position 215.00 15.00)
           (bounds 110.00 110.00)
           (children 1

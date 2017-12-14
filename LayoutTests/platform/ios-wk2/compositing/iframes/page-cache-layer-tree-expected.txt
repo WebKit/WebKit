@@ -14,6 +14,7 @@ This tests that layers are rebuilt properly after the page is restored from the 
       (contentsOpaque 1)
       (children 4
         (GraphicsLayer
+          (offsetFromRenderer width=-28 height=-28)
           (position 0.00 44.00)
           (bounds 386.00 236.00)
           (drawsContent 1)
@@ -63,6 +64,7 @@ This tests that layers are rebuilt properly after the page is restored from the 
           (bounds 784.00 225.00)
           (children 1
             (GraphicsLayer
+              (offsetFromRenderer width=-28 height=-28)
               (position -8.00 -8.00)
               (bounds 386.00 236.00)
               (drawsContent 1)

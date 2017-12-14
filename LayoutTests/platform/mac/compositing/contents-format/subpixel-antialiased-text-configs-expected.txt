@@ -21,34 +21,40 @@ Text here.
       (contentsOpaque 1)
       (children 11
         (GraphicsLayer
+          (offsetFromRenderer width=-6 height=-6)
           (position 12.00 17.00)
           (bounds 162.00 162.00)
           (drawsContent 1)
         )
         (GraphicsLayer
+          (offsetFromRenderer width=-6 height=-6)
           (position 182.00 17.00)
           (bounds 162.00 162.00)
           (drawsContent 1)
         )
         (GraphicsLayer
+          (offsetFromRenderer width=-6 height=-6)
           (position 352.00 17.00)
           (bounds 162.00 162.00)
           (supports subpixel antialiased text 1)
           (drawsContent 1)
         )
         (GraphicsLayer
+          (offsetFromRenderer width=-6 height=-6)
           (position 522.00 17.00)
           (bounds 162.00 162.00)
           (supports subpixel antialiased text 1)
           (drawsContent 1)
         )
         (GraphicsLayer
+          (offsetFromRenderer width=-6 height=-6)
           (position 12.00 187.00)
           (bounds 162.00 162.00)
           (supports subpixel antialiased text 1)
           (drawsContent 1)
         )
         (GraphicsLayer
+          (offsetFromRenderer width=-6 height=-6)
           (position 182.00 187.00)
           (bounds 162.00 162.00)
           (supports subpixel antialiased text 1)
@@ -63,12 +69,14 @@ Text here.
           )
         )
         (GraphicsLayer
+          (offsetFromRenderer width=-6 height=-6)
           (position 352.00 187.00)
           (bounds 162.00 162.00)
           (supports subpixel antialiased text 1)
           (drawsContent 1)
         )
         (GraphicsLayer
+          (offsetFromRenderer width=-6 height=-6)
           (position 522.00 187.00)
           (bounds 162.00 162.00)
           (drawsContent 1)
@@ -82,6 +90,7 @@ Text here.
           )
         )
         (GraphicsLayer
+          (offsetFromRenderer width=-6 height=-6)
           (position 12.00 357.00)
           (bounds 162.00 162.00)
           (supports subpixel antialiased text 1)
@@ -96,12 +105,14 @@ Text here.
           )
         )
         (GraphicsLayer
+          (offsetFromRenderer width=-6 height=-6)
           (position 182.00 357.00)
           (bounds 162.00 162.00)
           (supports subpixel antialiased text 1)
           (drawsContent 1)
         )
         (GraphicsLayer
+          (offsetFromRenderer width=-6 height=-6)
           (position 352.00 357.00)
           (bounds 162.00 162.00)
           (supports subpixel antialiased text 1)

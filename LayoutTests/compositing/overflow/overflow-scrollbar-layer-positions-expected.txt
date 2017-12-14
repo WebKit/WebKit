@@ -8,6 +8,7 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
+          (offsetFromRenderer width=-21 height=-21)
           (position 2.00 -6.00)
           (bounds 244.00 244.00)
           (drawsContent 1)
