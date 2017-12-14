@@ -44,6 +44,7 @@ class ManifestGenerator {
             'dashboards' => (object)config('dashboards'),
             'summaryPages' => config('summaryPages'),
             'fileUploadSizeLimit' => config('uploadFileLimitInMB', 0) * 1024 * 1024,
+            'testAgeToleranceInHours' => config('testAgeToleranceInHours'),
         );
 
         $this->manifest['elapsedTime'] = (microtime(true) - $start_time) * 1000;

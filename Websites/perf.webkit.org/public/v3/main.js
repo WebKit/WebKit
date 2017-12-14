@@ -47,8 +47,10 @@ function main() {
         var buildRequestQueuePage = new BuildRequestQueuePage();
         buildRequestQueuePage.setParentPage(analysisCategoryPage);
 
+        const testHealthPage = new TestFreshnessPage(manifest.summaryPages, manifest.testAgeToleranceInHours);
+
         var heading = new Heading(manifest.siteTitle);
-        heading.addPageGroup(summaryPages.concat([chartsPage, analysisCategoryPage]));
+        heading.addPageGroup(summaryPages.concat([chartsPage, analysisCategoryPage, testHealthPage]));
 
         heading.setTitle(manifest.siteTitle);
         heading.addPageGroup(dashboardPages);
@@ -61,6 +63,7 @@ function main() {
         router.addPage(analysisTaskPage);
         router.addPage(buildRequestQueuePage);
         router.addPage(analysisCategoryPage);
+        router.addPage(testHealthPage);
         for (var page of dashboardPages)
             router.addPage(page);
 

@@ -1,3 +1,49 @@
+2017-12-13  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Add a test freshness page.
+        https://bugs.webkit.org/show_bug.cgi?id=180126
+
+        Reviewed by Ryosuke Niwa.
+
+        Added a page to show freshness of a test.
+        The test freshness page reports on the same set of tests as the one shown in the summary page.
+        Use a logistic function to evaluate the freshness of the data points.
+        This function has the desired property which increase dramatically when it close to the center of the graph.
+        'acceptableLastDataPointDurationInHour' configs the center of the graph.
+
+        * public/include/manifest-generator.php:
+        * public/v3/components/freshness-indicator.js: Added.
+        (FreshnessIndicator): A cell of the test freshness table, color will transit from green to red.
+        (FreshnessIndicator.prototype.update): Update the the data point information and triggers
+        the cell to re-render if anything changes.
+        (FreshnessIndicator.prototype._renderIndicator): Re-render the indicator.
+        (FreshnessIndicator.prototype.render): Render the box color base on a logistic function.
+        (FreshnessIndicator.prototype._createIndicator):
+        (FreshnessIndicator.htmlTemplate):
+        (FreshnessIndicator.cssTemplate):
+        * public/v3/index.html:
+        * public/v3/main.js: Added test freshness page.
+        (main):
+        * public/v3/models/build-request.js: Refactored waitingTime function to make it reusable.
+        (BuildRequest.formatTimeInterval): Format time interval in million seconds to more user friendly text.
+        (BuildRequest.prototype.waitingTime):
+        * public/v3/pages/test-freshness-page.js: Added.
+        (TestFreshnessPage):
+        (TestFreshnessPage.prototype.name):
+        (TestFreshnessPage.prototype._loadConfig): Load config from summary page configurations.
+        (TestFreshnessPage.prototype.open):
+        (TestFreshnessPage.prototype._fetchTestResults):
+        (TestFreshnessPage.prototype.render):
+        (TestFreshnessPage.prototype._renderTable):
+        (TestFreshnessPage.prototype._isValidPlatformMetricCombination): Return whether a platform
+        and metric combination is valid.
+        (TestFreshnessPage.prototype._constructTableCell):
+        (TestFreshnessPage.cssTemplate):
+        (TestFreshnessPage.prototype.routeName):
+        * server-tests/api-manifest-tests.js: Added 'warningHourBaseline' so that we can config the
+        parameter of logistic funciton.
+        * unit-tests/build-request-tests.js: Added unit tests for formatTimeInterval.
+
 2017-11-02  Dewei Zhu  <dewei_zhu@apple.com>
 
         Add platform argument for syncing script.

@@ -84,41 +84,45 @@ class BuildRequest extends DataModelObject {
     buildId() { return this._buildId; }
     createdAt() { return this._createdAt; }
 
-    waitingTime(referenceTime)
-    {
-        var units = [
+    static formatTimeInterval(intervalInMillionSeconds) {
+        let intervalInSeconds = intervalInMillionSeconds / 1000;
+        const units = [
             {unit: 'week', length: 7 * 24 * 3600},
             {unit: 'day', length: 24 * 3600},
             {unit: 'hour', length: 3600},
             {unit: 'minute', length: 60},
         ];
 
-        var diff = (referenceTime - this.createdAt()) / 1000;
 
-        var indexOfFirstSmallEnoughUnit = units.length - 1;
-        for (var i = 0; i < units.length; i++) {
-            if (diff > 1.5 * units[i].length) {
+        let indexOfFirstSmallEnoughUnit = units.length - 1;
+        for (let i = 0; i < units.length; i++) {
+            if (intervalInSeconds > 1.5 * units[i].length) {
                 indexOfFirstSmallEnoughUnit = i;
                 break;
             }
         }
 
-        var label = '';
-        var lastUnit = false;
-        for (var i = indexOfFirstSmallEnoughUnit; !lastUnit; i++) {
+        let label = '';
+        let lastUnit = false;
+        for (let i = indexOfFirstSmallEnoughUnit; !lastUnit; i++) {
             lastUnit = i == indexOfFirstSmallEnoughUnit + 1 || i == units.length - 1;
-            var length = units[i].length;
-            var valueForUnit = lastUnit ? Math.round(diff / length) : Math.floor(diff / length);
+            const length = units[i].length;
+            const valueForUnit = lastUnit ? Math.round(intervalInSeconds / length) : Math.floor(intervalInSeconds / length);
 
-            var unit = units[i].unit + (valueForUnit == 1 ? '' : 's');
+            const unit = units[i].unit + (valueForUnit == 1 ? '' : 's');
             if (label)
                 label += ' ';
             label += `${valueForUnit} ${unit}`;
 
-            diff = diff - valueForUnit * length;
+            intervalInSeconds = intervalInSeconds - valueForUnit * length;
         }
 
         return label;
+    }
+
+    waitingTime(referenceTime)
+    {
+        return BuildRequest.formatTimeInterval(referenceTime - this.createdAt());
     }
 
     static fetchForTriggerable(triggerable)
