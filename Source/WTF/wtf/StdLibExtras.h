@@ -445,6 +445,14 @@ IteratorTypeDst mergeDeduplicatedSorted(IteratorTypeLeft leftBegin, IteratorType
     return dstIter;
 }
 
+// libstdc++5 does not have constexpr std::tie. Since we cannot redefine std::tie with constexpr, we define WTF::tie instead.
+// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65978
+template <class ...Args>
+inline constexpr std::tuple<Args&...> tie(Args&... values) noexcept
+{
+    return std::tuple<Args&...>(values...);
+}
+
 } // namespace WTF
 
 // This version of placement new omits a 0 check.

@@ -1,3 +1,19 @@
+2017-12-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION(r225769): Build errors with constexpr std::tie on older gcc
+        https://bugs.webkit.org/show_bug.cgi?id=180692
+
+        Reviewed by Carlos Garcia Campos.
+
+        Due to libstdc++'s bug[1], std::tie is not annotated with constexpr in libstdc++ 5.
+        This patch adds WTF::tie for a work around. Since we do not want to
+        include <tuple> in StdLibExtras.h, we define this function for all
+        the compilers.
+
+        [1]: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65978
+
+        * wtf/StdLibExtras.h:
+
 2017-12-13  Mark Lam  <mark.lam@apple.com>
 
         Fill out some Poisoned APIs, fix some bugs, and add some tests.

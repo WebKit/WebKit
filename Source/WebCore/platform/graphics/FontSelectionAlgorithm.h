@@ -283,7 +283,7 @@ struct FontSelectionRange {
 
     constexpr bool operator==(const FontSelectionRange& other) const
     {
-        return std::tie(minimum, maximum) == std::tie(other.minimum, other.maximum);
+        return WTF::tie(minimum, maximum) == WTF::tie(other.minimum, other.maximum);
     }
 
     constexpr bool isValid() const
@@ -334,7 +334,7 @@ struct FontSelectionRequest {
 
     constexpr std::tuple<Value, Value, Value> tied() const
     {
-        return std::tie(weight, width, slope);
+        return WTF::tie(weight, width, slope);
     }
 
 #if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
@@ -371,7 +371,7 @@ struct FontSelectionCapabilities {
 
     constexpr std::tuple<Range, Range, Range> tied() const
     {
-        return std::tie(weight, width, slope);
+        return WTF::tie(weight, width, slope);
     }
 
     void expand(const FontSelectionCapabilities& capabilities)
@@ -419,12 +419,12 @@ struct FontSelectionSpecifiedCapabilities {
 
     constexpr std::tuple<OptionalRange&, OptionalRange&, OptionalRange&> tied()
     {
-        return std::tie(weight, width, slope);
+        return WTF::tie(weight, width, slope);
     }
 
     constexpr std::tuple<const OptionalRange&, const OptionalRange&, const OptionalRange&> tied() const
     {
-        return std::tie(weight, width, slope);
+        return WTF::tie(weight, width, slope);
     }
 
     FontSelectionSpecifiedCapabilities& operator=(const Capabilities& other)
