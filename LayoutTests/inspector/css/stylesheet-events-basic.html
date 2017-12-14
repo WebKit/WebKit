@@ -44,10 +44,6 @@ function enableStyleSheet() {
 
 function test()
 {
-    function sanitizeURL(url) {
-        return url.replace(/^.*?LayoutTests\//, "");
-    }
-
     let suite = InspectorTest.createAsyncSuite("CSS.StyleSheetEvents.Basic");
 
     suite.addTestCase({

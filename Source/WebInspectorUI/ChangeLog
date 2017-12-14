@@ -1,3 +1,17 @@
+2017-12-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION: Web Inspector: Opening inspector crashes page if there are empty resources
+        https://bugs.webkit.org/show_bug.cgi?id=180787
+        <rdar://problem/35934838>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Test/TestUtilities.js:
+        Add a generic sanitizeURL used by many tests.
+
+        * UserInterface/TestStub.html:
+        Include TestUtilities.
+
 2017-12-13  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: add instrumentation for ImageBitmapRenderingContext

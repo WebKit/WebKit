@@ -39,10 +39,6 @@ function test()
     let workerTarget = null;
     let mainTarget = WI.mainTarget;
 
-    function sanitizeURL(url) {
-        return url.replace(/^.*?LayoutTests\//, "");
-    }
-
     function dumpWorkerResources() {
         InspectorTest.log("RESOURCES:");
         for (let resource of workerTarget.resourceCollection.items)

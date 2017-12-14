@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<link rel="stylesheet" href="resources/empty.css">
+<link rel="stylesheet" href="resources/missing.css">
+<script src="empty.js"></script>
+<script src="missing.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Page.getResourceTree.EmptyResources");
+
+    suite.addTestCase({
+        name: "Page.getResourceTree.EmptyResources",
+        description: "Should not crash if there are empty or missing resources.",
+        async test(resolve, reject) {
+            let resources = [...WI.frameResourceManager.mainFrame.resourceCollection.items];
+            let resourceURLs = resources.map(x => x.url).filter(x => /(empty|missing)/.test(x)).sort();
+            for (let url of resourceURLs)
+                InspectorTest.log(sanitizeURL(url));
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that Page.getResourceTree does not crash with empty or missing resources.</p>
+</body>
+</html>

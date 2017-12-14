@@ -1,3 +1,16 @@
+2017-12-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION: Web Inspector: Opening inspector crashes page if there are empty resources
+        https://bugs.webkit.org/show_bug.cgi?id=180787
+        <rdar://problem/35934838>
+
+        Reviewed by Brian Burg.
+
+        * inspector/ContentSearchUtilities.cpp:
+        (Inspector::ContentSearchUtilities::findMagicComment):
+        For empty / null strings just return. There is no use
+        trying to search them for a long common syntax.
+
 2017-12-13  Saam Barati  <sbarati@apple.com>
 
         Arrow functions need their own structure because they have different properties than sloppy functions

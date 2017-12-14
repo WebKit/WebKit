@@ -8,10 +8,6 @@ let worker = new Worker("resources/worker-1.js");
 
 function test()
 {
-    function sanitizeURL(url) {
-        return url.replace(/^.*?LayoutTests\//, "");
-    }
-
     let mainTarget = WI.mainTarget;
     let workerTarget = Array.from(WI.targets).find((target) => target.type === WI.Target.Type.Worker);
     if (!workerTarget) {

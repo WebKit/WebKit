@@ -1,8 +1,4 @@
 TestPage.registerInitializer(() => {
-    function sanitizeURL(url) {
-        return url.replace(/^.*?LayoutTests\//, "");
-    }
-
     function log(object, indent) {
         for (let key of Object.keys(object)) {
             let value = object[key];

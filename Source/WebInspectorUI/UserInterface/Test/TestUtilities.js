@@ -52,3 +52,7 @@ function promisify(func) {
         }
     });
 }
+
+function sanitizeURL(url) {
+    return url.replace(/^.*?LayoutTests\//, "");
+}

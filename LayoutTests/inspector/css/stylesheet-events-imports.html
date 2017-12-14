@@ -21,10 +21,6 @@ function removeImport() {
 
 function test()
 {
-    function sanitizeURL(url) {
-        return url.replace(/^.*?LayoutTests\//, "");
-    }
-
     function collectEvents(n, then) {
         let remaining = n;
         let collection = [];

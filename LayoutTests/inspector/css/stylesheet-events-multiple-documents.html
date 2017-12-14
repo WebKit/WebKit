@@ -17,10 +17,6 @@ function removeSubframe() {
 
 function test()
 {
-    function sanitizeURL(url) {
-        return url.replace(/^.*?LayoutTests\//, "");
-    }
-
     function logStyleSheets() {
         WI.cssStyleManager.styleSheets.sort((a, b) => a.url.localeCompare(b.url)).forEach((styleSheet) => {
             let frameString = styleSheet.parentFrame.id === WI.frameResourceManager.mainFrame.id ? "<mainframe>" : "<childframe>";

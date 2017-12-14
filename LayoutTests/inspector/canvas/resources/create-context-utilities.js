@@ -30,10 +30,6 @@ function destroyCanvases() {
 TestPage.registerInitializer(() => {
     let suite = null;
 
-    function sanitizeURL(url) {
-        return url.replace(/^.*?LayoutTests\//, "");
-    }
-
     function awaitCanvasAdded(contextType) {
         return WI.canvasManager.awaitEvent(WI.CanvasManager.Event.CanvasAdded)
         .then((event) => {

@@ -88,10 +88,6 @@ function performActions() {
 function test() {
     let suite = InspectorTest.createAsyncSuite("Canvas.recordingWebGL");
 
-    function sanitizeURL(url) {
-        return url.replace(/^.*?LayoutTests\//, "");
-    }
-
     suite.addTestCase({
         name: "Canvas.recordingWebGL.snapshots",
         description: "Check that the snapshot taken after each visual action is different.",

@@ -11,10 +11,6 @@ function triggerConsoleMethodInWorker(msg) {
 
 function test()
 {
-    function sanitizeURL(url) {
-        return url.replace(/^.*?LayoutTests\//, "");
-    }
-
     function consoleMessageJSONFilter(key, value) {
         if (key === "_target" || key === "_hasChildren" || key === "_listeners")
             return undefined;

@@ -1,3 +1,32 @@
+2017-12-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION: Web Inspector: Opening inspector crashes page if there are empty resources
+        https://bugs.webkit.org/show_bug.cgi?id=180787
+        <rdar://problem/35934838>
+
+        Reviewed by Brian Burg.
+
+        * inspector/page/resources/empty.css: Added.
+        * inspector/page/resources/empty.js: Added.
+        * inspector/page/empty-or-missing-resources-expected.txt: Added.
+        * inspector/page/empty-or-missing-resources.html: Added.
+        Test no crashes inspecting a page with empty/missing resources.
+        Previously the test would crash.
+
+        * inspector/canvas/recording-webgl-snapshots.html:
+        * inspector/canvas/resources/create-context-utilities.js:
+        * inspector/canvas/resources/recording-utilities.js:
+        * inspector/css/getAllStyleSheets.html:
+        * inspector/css/stylesheet-events-basic.html:
+        * inspector/css/stylesheet-events-imports.html:
+        * inspector/css/stylesheet-events-multiple-documents.html:
+        * inspector/worker/console-basic.html:
+        * inspector/worker/debugger-scripts.html:
+        * inspector/worker/resources-in-worker.html:
+        * inspector/worker/runtime-basic.html:
+        * inspector/worker/worker-create-and-terminate.html:
+        Promote sanitizeURL to a TestUtility function since it is common.
+
 2017-12-13  Daniel Bates  <dabates@apple.com>
 
         Add more auto fill button types

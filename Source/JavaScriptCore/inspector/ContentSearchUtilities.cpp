@@ -174,7 +174,9 @@ static String stylesheetCommentPattern(const String& name)
 
 static String findMagicComment(const String& content, const String& patternString)
 {
-    ASSERT(!content.isNull());
+    if (content.isEmpty())
+        return String();
+
     const char* error = nullptr;
     YarrPattern pattern(patternString, JSC::RegExpFlags::FlagMultiline, &error);
     ASSERT(!error);
