@@ -38,6 +38,11 @@
 #define YARR_CALL
 #endif
 
+#if CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))
+#define JIT_ALL_PARENS_EXPRESSIONS
+constexpr size_t patternContextBufferSize = 8192; // Space caller allocates to save nested parenthesis context
+#endif
+
 namespace JSC {
 
 class VM;
@@ -47,10 +52,17 @@ namespace Yarr {
 
 class YarrCodeBlock {
 #if CPU(X86_64) || CPU(ARM64)
+#ifdef JIT_ALL_PARENS_EXPRESSIONS
+    typedef MatchResult (*YarrJITCode8)(const LChar* input, unsigned start, unsigned length, int* output, void* freeParenContext, unsigned parenContextSize) YARR_CALL;
+    typedef MatchResult (*YarrJITCode16)(const UChar* input, unsigned start, unsigned length, int* output, void* freeParenContext, unsigned parenContextSize) YARR_CALL;
+    typedef MatchResult (*YarrJITCodeMatchOnly8)(const LChar* input, unsigned start, unsigned length, void*, void* freeParenContext, unsigned parenContextSize) YARR_CALL;
+    typedef MatchResult (*YarrJITCodeMatchOnly16)(const UChar* input, unsigned start, unsigned length, void*, void* freeParenContext, unsigned parenContextSize) YARR_CALL;
+#else
     typedef MatchResult (*YarrJITCode8)(const LChar* input, unsigned start, unsigned length, int* output) YARR_CALL;
     typedef MatchResult (*YarrJITCode16)(const UChar* input, unsigned start, unsigned length, int* output) YARR_CALL;
     typedef MatchResult (*YarrJITCodeMatchOnly8)(const LChar* input, unsigned start, unsigned length) YARR_CALL;
     typedef MatchResult (*YarrJITCodeMatchOnly16)(const UChar* input, unsigned start, unsigned length) YARR_CALL;
+#endif
 #else
     typedef EncodedMatchResult (*YarrJITCode8)(const LChar* input, unsigned start, unsigned length, int* output) YARR_CALL;
     typedef EncodedMatchResult (*YarrJITCode16)(const UChar* input, unsigned start, unsigned length, int* output) YARR_CALL;
@@ -81,6 +93,31 @@ public:
     void set8BitCodeMatchOnly(MacroAssemblerCodeRef matchOnly) { m_matchOnly8 = matchOnly; }
     void set16BitCodeMatchOnly(MacroAssemblerCodeRef matchOnly) { m_matchOnly16 = matchOnly; }
 
+#ifdef JIT_ALL_PARENS_EXPRESSIONS
+    MatchResult execute(const LChar* input, unsigned start, unsigned length, int* output, void* freeParenContext, unsigned parenContextSize)
+    {
+        ASSERT(has8BitCode());
+        return MatchResult(reinterpret_cast<YarrJITCode8>(m_ref8.code().executableAddress())(input, start, length, output, freeParenContext, parenContextSize));
+    }
+
+    MatchResult execute(const UChar* input, unsigned start, unsigned length, int* output, void* freeParenContext, unsigned parenContextSize)
+    {
+        ASSERT(has16BitCode());
+        return MatchResult(reinterpret_cast<YarrJITCode16>(m_ref16.code().executableAddress())(input, start, length, output, freeParenContext, parenContextSize));
+    }
+
+    MatchResult execute(const LChar* input, unsigned start, unsigned length, void* freeParenContext, unsigned parenContextSize)
+    {
+        ASSERT(has8BitCodeMatchOnly());
+        return MatchResult(reinterpret_cast<YarrJITCodeMatchOnly8>(m_matchOnly8.code().executableAddress())(input, start, length, 0, freeParenContext, parenContextSize));
+    }
+
+    MatchResult execute(const UChar* input, unsigned start, unsigned length, void* freeParenContext, unsigned parenContextSize)
+    {
+        ASSERT(has16BitCodeMatchOnly());
+        return MatchResult(reinterpret_cast<YarrJITCodeMatchOnly16>(m_matchOnly16.code().executableAddress())(input, start, length, 0, freeParenContext, parenContextSize));
+    }
+#else
     MatchResult execute(const LChar* input, unsigned start, unsigned length, int* output)
     {
         ASSERT(has8BitCode());
@@ -104,6 +141,7 @@ public:
         ASSERT(has16BitCodeMatchOnly());
         return MatchResult(reinterpret_cast<YarrJITCodeMatchOnly16>(m_matchOnly16.code().executableAddress())(input, start, length));
     }
+#endif
 
 #if ENABLE(REGEXP_TRACING)
     void *get8BitMatchOnlyAddr()

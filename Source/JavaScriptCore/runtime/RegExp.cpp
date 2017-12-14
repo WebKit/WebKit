@@ -271,6 +271,30 @@ RegExp* RegExp::create(VM& vm, const String& patternString, RegExpFlags flags)
     return vm.regExpCache()->lookupOrCreate(patternString, flags);
 }
 
+
+static std::unique_ptr<Yarr::BytecodePattern> byteCodeCompilePattern(VM* vm, Yarr::YarrPattern& pattern)
+{
+    return Yarr::byteCompile(pattern, &vm->m_regExpAllocator, &vm->m_regExpAllocatorLock);
+}
+
+void RegExp::byteCodeCompileIfNecessary(VM* vm)
+{
+    if (m_regExpBytecode)
+        return;
+
+    Yarr::YarrPattern pattern(m_patternString, m_flags, &m_constructionError, vm->stackLimit());
+    if (m_constructionError) {
+        RELEASE_ASSERT_NOT_REACHED();
+#if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)
+        m_state = ParseError;
+        return;
+#endif
+    }
+    ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
+
+    m_regExpBytecode = byteCodeCompilePattern(vm, pattern);
+}
+
 void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
 {
     ConcurrentJSLocker locker(m_lock);
@@ -303,8 +327,11 @@ void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
     UNUSED_PARAM(charSize);
 #endif
 
+    if (Options::dumpCompiledRegExpPatterns())
+        dataLog("Can't JIT this regular expression: \"", m_patternString, "\"\n");
+
     m_state = ByteCode;
-    m_regExpBytecode = Yarr::byteCompile(pattern, &vm->m_regExpAllocator, &vm->m_regExpAllocatorLock);
+    m_regExpBytecode = byteCodeCompilePattern(vm, pattern);
 }
 
 int RegExp::match(VM& vm, const String& s, unsigned startOffset, Vector<int>& ovector)
@@ -356,8 +383,11 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
     UNUSED_PARAM(charSize);
 #endif
 
+    if (Options::dumpCompiledRegExpPatterns())
+        dataLog("Can't JIT this regular expression: \"", m_patternString, "\"\n");
+
     m_state = ByteCode;
-    m_regExpBytecode = Yarr::byteCompile(pattern, &vm->m_regExpAllocator, &vm->m_regExpAllocatorLock);
+    m_regExpBytecode = byteCodeCompilePattern(vm, pattern);
 }
 
 MatchResult RegExp::match(VM& vm, const String& s, unsigned startOffset)
