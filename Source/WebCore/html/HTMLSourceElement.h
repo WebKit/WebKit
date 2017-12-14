@@ -46,6 +46,7 @@ private:
     HTMLSourceElement(const QualifiedName&, Document&);
     
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
+    void didFinishInsertingNode() final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;
     bool isURLAttribute(const Attribute&) const final;
 

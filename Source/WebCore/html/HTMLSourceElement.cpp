@@ -74,9 +74,17 @@ Node::InsertedIntoAncestorResult HTMLSourceElement::insertedIntoAncestor(Inserti
         else
 #endif
         if (is<HTMLPictureElement>(*parent))
-            downcast<HTMLPictureElement>(*parent).sourcesChanged();
+            return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
+
     }
     return InsertedIntoAncestorResult::Done;
+}
+
+void HTMLSourceElement::didFinishInsertingNode()
+{
+    auto* parent = parentElement();
+    if (is<HTMLPictureElement>(*parent))
+        downcast<HTMLPictureElement>(*parent).sourcesChanged();
 }
 
 void HTMLSourceElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)

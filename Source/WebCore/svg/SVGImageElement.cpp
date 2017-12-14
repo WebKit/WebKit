@@ -189,12 +189,14 @@ void SVGImageElement::didAttachRenderers()
 Node::InsertedIntoAncestorResult SVGImageElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     SVGGraphicsElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-    if (!insertionType.connectedToDocument)
-        return InsertedIntoAncestorResult::Done;
-    // Update image loader, as soon as we're living in the tree.
-    // We can only resolve base URIs properly, after that!
-    m_imageLoader.updateFromElement();
+    if (insertionType.connectedToDocument)
+        return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
     return InsertedIntoAncestorResult::Done;
+}
+
+void SVGImageElement::didFinishInsertingNode()
+{
+    m_imageLoader.updateFromElement();
 }
 
 const AtomicString& SVGImageElement::imageSourceURL() const

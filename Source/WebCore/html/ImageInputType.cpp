@@ -126,10 +126,13 @@ void ImageInputType::srcAttributeChanged()
     element().ensureImageLoader().updateFromElementIgnoringPreviousError();
 }
 
-void ImageInputType::attach()
+bool ImageInputType::needsPostStyleResolutionCallback()
 {
-    BaseButtonInputType::attach();
+    return true;
+}
 
+void ImageInputType::updateAfterStyleResolution()
+{
     HTMLImageLoader& imageLoader = element().ensureImageLoader();
     imageLoader.updateFromElement();
 

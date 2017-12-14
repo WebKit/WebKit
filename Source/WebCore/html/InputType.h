@@ -235,7 +235,8 @@ public:
     virtual bool rendererIsNeeded();
     virtual RenderPtr<RenderElement> createInputRenderer(RenderStyle&&);
     virtual void addSearchResult();
-    virtual void attach();
+    virtual bool needsPostStyleResolutionCallback();
+    virtual void updateAfterStyleResolution();
     virtual void detach();
     virtual void minOrMaxAttributeChanged();
     virtual void stepAttributeChanged();
