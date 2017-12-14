@@ -1,3 +1,169 @@
+2017-12-13  Keith Miller  <keith_miller@apple.com>
+
+        JSObjects should have a mask for loading indexed properties
+        https://bugs.webkit.org/show_bug.cgi?id=180768
+
+        Reviewed by Mark Lam.
+
+        This patch adds a new member to JSObject that holds an indexing
+        mask.  The indexing mask is bitwise anded with the index used to
+        load a property.  If for whatever reason an attacker is able to
+        clobber the vectorLength of our butterfly they still won't be able
+        to read substantially past the end of the buttefly. For
+        performance reasons we don't use the indexing masking for
+        TypedArrays. Since TypedArrays are already gigacaged the risk of
+        wild reads is still restricted.
+
+        This patch is a <1% regression on Speedometer and ~3% regression
+        on JetStream in my testing.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::urshiftPtr):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        (JSC::DFG::SpeculativeJIT::compileDoublePutByVal):
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionCommon):
+        (JSC::DFG::SpeculativeJIT::compileCreateActivation):
+        (JSC::DFG::SpeculativeJIT::compileCreateDirectArguments):
+        (JSC::DFG::SpeculativeJIT::compileArraySlice):
+        (JSC::DFG::SpeculativeJIT::compileNukeStructureAndSetButterfly):
+        (JSC::DFG::SpeculativeJIT::compileNewStringObject):
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArray):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSObject):
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSObjectWithKnownSize):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+        * ftl/FTLAbstractHeap.cpp:
+        (JSC::FTL::IndexedAbstractHeap::baseIndex):
+        * ftl/FTLAbstractHeap.h:
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileAtomicsReadModifyWrite):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateDirectArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewStringObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToB3::maskedIndex):
+        (JSC::FTL::DFG::LowerDFGToB3::computeButterflyIndexingMask):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateVariableSizedObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateJSArray):
+        (JSC::FTL::DFG::LowerDFGToB3::pointerIntoTypedArray):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::baseIndex):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitComputeButterflyIndexingMask):
+        (JSC::AssemblyHelpers::nukeStructureAndStoreButterfly):
+        (JSC::AssemblyHelpers::emitAllocateJSObject):
+        (JSC::AssemblyHelpers::emitAllocateJSObjectWithKnownSize):
+        (JSC::AssemblyHelpers::emitAllocateVariableSizedJSObject):
+        (JSC::AssemblyHelpers::emitAllocateDestructibleObject):
+        (JSC::AssemblyHelpers::storeButterfly): Deleted.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emit_op_create_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emit_op_create_this):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitDoubleLoad):
+        (JSC::JIT::emitContiguousLoad):
+        (JSC::JIT::emitArrayStorageLoad):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ArrayStorage.h:
+        (JSC::ArrayStorage::availableVectorLength):
+        * runtime/Butterfly.h:
+        (JSC::ContiguousData::ContiguousData):
+        (JSC::ContiguousData::at const):
+        (JSC::ContiguousData::at):
+        (JSC::Butterfly::publicLength const):
+        (JSC::Butterfly::vectorLength const):
+        (JSC::Butterfly::computeIndexingMaskForVectorLength):
+        (JSC::Butterfly::computeIndexingMask):
+        (JSC::Butterfly::contiguousInt32):
+        (JSC::ContiguousData::operator[] const): Deleted.
+        (JSC::ContiguousData::operator[]): Deleted.
+        (JSC::Butterfly::publicLength): Deleted.
+        (JSC::Butterfly::vectorLength): Deleted.
+        * runtime/ButterflyInlines.h:
+        (JSC::ContiguousData<T>::at const):
+        (JSC::ContiguousData<T>::at):
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createEmpty):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryCreateUninitializedRestricted):
+        (JSC::JSArray::appendMemcpy):
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::fastSlice):
+        (JSC::JSArray::shiftCountWithArrayStorage):
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        (JSC::JSArray::unshiftCountWithAnyIndexingType):
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToArguments):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::JSArrayBufferView):
+        * runtime/JSArrayInlines.h:
+        (JSC::JSArray::pushInline):
+        * runtime/JSFixedArray.h:
+        (JSC::JSFixedArray::createFromArray):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::createInitialInt32):
+        (JSC::JSObject::createInitialDouble):
+        (JSC::JSObject::createInitialContiguous):
+        (JSC::JSObject::convertUndecidedToInt32):
+        (JSC::JSObject::convertUndecidedToDouble):
+        (JSC::JSObject::convertUndecidedToContiguous):
+        (JSC::JSObject::convertInt32ToDouble):
+        (JSC::JSObject::convertInt32ToArrayStorage):
+        (JSC::JSObject::convertDoubleToContiguous):
+        (JSC::JSObject::convertDoubleToArrayStorage):
+        (JSC::JSObject::convertContiguousToArrayStorage):
+        (JSC::JSObject::createInitialForValueAndSet):
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithoutAttributes):
+        (JSC::JSObject::countElements):
+        (JSC::JSObject::ensureLengthSlow):
+        (JSC::JSObject::reallocateAndShrinkButterfly):
+        (JSC::JSObject::getEnumerableLength):
+        * runtime/JSObject.h:
+        (JSC::JSObject::canGetIndexQuickly):
+        (JSC::JSObject::getIndexQuickly):
+        (JSC::JSObject::tryGetIndexQuickly const):
+        (JSC::JSObject::setIndexQuickly):
+        (JSC::JSObject::initializeIndex):
+        (JSC::JSObject::initializeIndexWithoutBarrier):
+        (JSC::JSObject::butterflyIndexingMaskOffset):
+        (JSC::JSObject::butterflyIndexingMask const):
+        (JSC::JSObject::setButterflyWithIndexingMask):
+        (JSC::JSObject::setButterfly):
+        (JSC::JSObject::nukeStructureAndSetButterfly):
+        (JSC::JSObject::JSObject):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::tryCreateUninitializedRegExpMatchesArray):
+        * runtime/Structure.cpp:
+        (JSC::Structure::flattenDictionaryStructure):
+
 2017-12-14  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r225799/r225887): Remove duplicate entries for JSCPoisonedPtr.h in Xcode project

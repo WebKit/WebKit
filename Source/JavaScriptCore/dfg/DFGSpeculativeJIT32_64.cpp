@@ -4086,7 +4086,9 @@ void SpeculativeJIT::compile(Node* node)
         m_jit.loadPtr(JITCompiler::Address(rareDataGPR, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfAllocator()), allocatorGPR);
         m_jit.loadPtr(JITCompiler::Address(rareDataGPR, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfStructure()), structureGPR);
         slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, allocatorGPR));
-        emitAllocateJSObject(resultGPR, nullptr, allocatorGPR, structureGPR, TrustedImmPtr(0), scratchGPR, slowPath);
+        auto butterfly = TrustedImmPtr(nullptr);
+        auto mask = TrustedImm32(0);
+        emitAllocateJSObject(resultGPR, nullptr, allocatorGPR, structureGPR, butterfly, mask, scratchGPR, slowPath);
 
         m_jit.loadPtr(JITCompiler::Address(calleeGPR, JSFunction::offsetOfRareData()), rareDataGPR);
         m_jit.load32(JITCompiler::Address(rareDataGPR, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfInlineCapacity()), inlineCapacityGPR);
@@ -4114,7 +4116,9 @@ void SpeculativeJIT::compile(Node* node)
         MarkedAllocator* allocatorPtr = subspaceFor<JSFinalObject>(*m_jit.vm())->allocatorForNonVirtual(allocationSize, AllocatorForMode::AllocatorIfExists);
 
         m_jit.move(TrustedImmPtr(allocatorPtr), allocatorGPR);
-        emitAllocateJSObject(resultGPR, allocatorPtr, allocatorGPR, TrustedImmPtr(structure), TrustedImmPtr(0), scratchGPR, slowPath);
+        auto butterfly = TrustedImmPtr(nullptr);
+        auto mask = TrustedImm32(0);
+        emitAllocateJSObject(resultGPR, allocatorPtr, allocatorGPR, TrustedImmPtr(structure), butterfly, mask, scratchGPR, slowPath);
         m_jit.emitInitializeInlineStorage(resultGPR, structure->inlineCapacity());
 
         addSlowPathGenerator(slowPathCall(slowPath, this, operationNewObject, resultGPR, structure));
@@ -5749,8 +5753,13 @@ void SpeculativeJIT::compileAllocateNewArrayWithSize(JSGlobalObject* globalObjec
     emitInitializeButterfly(storageGPR, sizeGPR, emptyValueRegs, resultGPR);
             
     RegisteredStructure structure = m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType));
-    emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), storageGPR, scratchGPR, scratch2GPR, slowCases);
-            
+
+    // X86 doesn't have enough registers to support compute the indexing mask before creating the object. So we do this hack...
+    auto mask = TrustedImm32(0);
+    emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), storageGPR, mask, scratchGPR, scratch2GPR, slowCases);
+    m_jit.emitComputeButterflyIndexingMask(sizeGPR, scratchGPR, scratch2GPR);
+    m_jit.store32(scratch2GPR, MacroAssembler::Address(resultGPR, JSObject::butterflyIndexingMaskOffset()));
+
     addSlowPathGenerator(std::make_unique<CallArrayAllocatorWithVariableSizeSlowPathGenerator>(
         slowCases, this, operationNewArrayWithSize, resultGPR,
         structure,

@@ -81,60 +81,52 @@ public:
 
     ContiguousJSValues vector() { return ContiguousJSValues(m_vector, vectorLength()); }
 
-    WriteBarrier<SparseArrayValueMap> m_sparseMap;
-    unsigned m_indexBias;
-    unsigned m_numValuesInVector;
-#if USE(JSVALUE32_64)
-    uintptr_t m_padding;
-#endif
-    WriteBarrier<Unknown> m_vector[1];
-    
     static ptrdiff_t lengthOffset() { return Butterfly::offsetOfPublicLength(); }
     static ptrdiff_t vectorLengthOffset() { return Butterfly::offsetOfVectorLength(); }
     static ptrdiff_t numValuesInVectorOffset() { return OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector); }
     static ptrdiff_t vectorOffset() { return OBJECT_OFFSETOF(ArrayStorage, m_vector); }
     static ptrdiff_t indexBiasOffset() { return OBJECT_OFFSETOF(ArrayStorage, m_indexBias); }
     static ptrdiff_t sparseMapOffset() { return OBJECT_OFFSETOF(ArrayStorage, m_sparseMap); }
-    
+
     static size_t sizeFor(unsigned vectorLength)
     {
         return ArrayStorage::vectorOffset() + vectorLength * sizeof(WriteBarrier<Unknown>);
     }
-    
+
     static size_t totalSizeFor(unsigned indexBias, size_t propertyCapacity, unsigned vectorLength)
     {
         return Butterfly::totalSize(indexBias, propertyCapacity, true, sizeFor(vectorLength));
     }
-    
+
     size_t totalSize(size_t propertyCapacity) const
     {
         return totalSizeFor(m_indexBias, propertyCapacity, vectorLength());
     }
-    
+
     size_t totalSize(Structure* structure) const
     {
         return totalSize(structure->outOfLineCapacity());
     }
-    
+
     static unsigned availableVectorLength(unsigned indexBias, size_t propertyCapacity, unsigned vectorLength)
     {
         size_t cellSize = MarkedSpace::optimalSizeFor(totalSizeFor(indexBias, propertyCapacity, vectorLength));
-        
+
         vectorLength = (cellSize - totalSizeFor(indexBias, propertyCapacity, 0)) / sizeof(WriteBarrier<Unknown>);
 
         return vectorLength;
     }
-    
+
     static unsigned availableVectorLength(unsigned indexBias, Structure* structure, unsigned vectorLength)
     {
         return availableVectorLength(indexBias, structure->outOfLineCapacity(), vectorLength);
     }
-    
+
     unsigned availableVectorLength(size_t propertyCapacity, unsigned vectorLength)
     {
         return availableVectorLength(m_indexBias, propertyCapacity, vectorLength);
     }
-    
+
     unsigned availableVectorLength(Structure* structure, unsigned vectorLength)
     {
         return availableVectorLength(structure->outOfLineCapacity(), vectorLength);
@@ -145,21 +137,29 @@ public:
         vectorLength = std::max(BASE_ARRAY_STORAGE_VECTOR_LEN, vectorLength);
         return availableVectorLength(indexBias, propertyCapacity, vectorLength);
     }
-    
+
     static unsigned optimalVectorLength(unsigned indexBias, Structure* structure, unsigned vectorLength)
     {
         return optimalVectorLength(indexBias, structure->outOfLineCapacity(), vectorLength);
     }
-    
+
     unsigned optimalVectorLength(size_t propertyCapacity, unsigned vectorLength)
     {
         return optimalVectorLength(m_indexBias, propertyCapacity, vectorLength);
     }
-    
+
     unsigned optimalVectorLength(Structure* structure, unsigned vectorLength)
     {
         return optimalVectorLength(structure->outOfLineCapacity(), vectorLength);
     }
+
+    WriteBarrier<SparseArrayValueMap> m_sparseMap;
+    unsigned m_indexBias;
+    unsigned m_numValuesInVector;
+#if USE(JSVALUE32_64)
+    uintptr_t m_padding;
+#endif
+    WriteBarrier<Unknown> m_vector[1];
 };
 
 } // namespace JSC

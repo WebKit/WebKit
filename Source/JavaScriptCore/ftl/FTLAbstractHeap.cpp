@@ -140,11 +140,13 @@ IndexedAbstractHeap::~IndexedAbstractHeap()
 {
 }
 
-TypedPointer IndexedAbstractHeap::baseIndex(Output& out, LValue base, LValue index, JSValue indexAsConstant, ptrdiff_t offset)
+TypedPointer IndexedAbstractHeap::baseIndex(Output& out, LValue base, LValue index, JSValue indexAsConstant, ptrdiff_t offset, LValue mask)
 {
     if (indexAsConstant.isInt32())
         return out.address(base, at(indexAsConstant.asInt32()), offset);
 
+    if (mask)
+        index = out.bitAnd(mask, index);
     LValue result = out.add(base, out.mul(index, out.constIntPtr(m_elementSize)));
     
     return TypedPointer(atAnyIndex(), out.addPtr(result, m_offset + offset));

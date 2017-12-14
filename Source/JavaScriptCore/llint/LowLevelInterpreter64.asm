@@ -1500,9 +1500,10 @@ _llint_op_get_by_val:
     andi IndexingShapeMask, t2
     bieq t2, Int32Shape, .opGetByValIsContiguous
     bineq t2, ContiguousShape, .opGetByValNotContiguous
-.opGetByValIsContiguous:
 
+.opGetByValIsContiguous:
     biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t3], .opGetByValOutOfBounds
+    andi JSObject::m_butterflyIndexingMask[t0], t1
     loadisFromInstruction(1, t0)
     loadq [t3, t1, 8], t2
     btqz t2, .opGetByValOutOfBounds
@@ -1511,7 +1512,8 @@ _llint_op_get_by_val:
 .opGetByValNotContiguous:
     bineq t2, DoubleShape, .opGetByValNotDouble
     biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t3], .opGetByValOutOfBounds
-    loadis 8[PB, PC, 8], t0
+    andi JSObject::m_butterflyIndexingMask[t0], t1
+    loadisFromInstruction(1 ,t0)
     loadd [t3, t1, 8], ft0
     bdnequn ft0, ft0, .opGetByValOutOfBounds
     fd2q ft0, t2
@@ -1522,6 +1524,7 @@ _llint_op_get_by_val:
     subi ArrayStorageShape, t2
     bia t2, SlowPutArrayStorageShape - ArrayStorageShape, .opGetByValNotIndexedStorage
     biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t3], .opGetByValOutOfBounds
+    andi JSObject::m_butterflyIndexingMask[t0], t1
     loadisFromInstruction(1, t0)
     loadq ArrayStorage::m_vector[t3, t1, 8], t2
     btqz t2, .opGetByValOutOfBounds

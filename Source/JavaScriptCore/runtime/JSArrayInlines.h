@@ -114,7 +114,7 @@ ALWAYS_INLINE void JSArray::pushInline(ExecState* exec, JSValue value)
         unsigned length = butterfly->publicLength();
         ASSERT(length <= butterfly->vectorLength());
         if (length < butterfly->vectorLength()) {
-            butterfly->contiguousInt32()[length].setWithoutWriteBarrier(value);
+            butterfly->contiguousInt32().at(this, length).setWithoutWriteBarrier(value);
             butterfly->setPublicLength(length + 1);
             return;
         }
@@ -135,7 +135,7 @@ ALWAYS_INLINE void JSArray::pushInline(ExecState* exec, JSValue value)
         unsigned length = butterfly->publicLength();
         ASSERT(length <= butterfly->vectorLength());
         if (length < butterfly->vectorLength()) {
-            butterfly->contiguous()[length].set(vm, this, value);
+            butterfly->contiguous().at(this, length).set(vm, this, value);
             butterfly->setPublicLength(length + 1);
             return;
         }
@@ -170,7 +170,7 @@ ALWAYS_INLINE void JSArray::pushInline(ExecState* exec, JSValue value)
         unsigned length = butterfly->publicLength();
         ASSERT(length <= butterfly->vectorLength());
         if (length < butterfly->vectorLength()) {
-            butterfly->contiguousDouble()[length] = valueAsDouble;
+            butterfly->contiguousDouble().at(this, length) = valueAsDouble;
             butterfly->setPublicLength(length + 1);
             return;
         }

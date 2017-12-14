@@ -561,6 +561,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(JSCell_indexingType);
         read(JSCell_structureID);
         read(JSObject_butterfly);
+        read(JSObject_butterflyMask);
         read(Butterfly_publicLength);
         read(IndexedDoubleProperties);
         read(IndexedInt32Properties);
@@ -576,6 +577,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(JSCell_indexingType);
         read(JSCell_structureID);
         read(JSObject_butterfly);
+        read(JSObject_butterflyMask);
         read(Butterfly_publicLength);
         switch (node->arrayMode().type()) {
         case Array::Double:
@@ -1109,6 +1111,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(JSCell_structureID);
         write(JSCell_indexingType);
         write(JSObject_butterfly);
+        write(JSObject_butterflyMask);
         write(Watchpoint_fire);
         return;
         
@@ -1160,6 +1163,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case MultiGetByOffset: {
         read(JSCell_structureID);
         read(JSObject_butterfly);
+        read(JSObject_butterflyMask);
         AbstractHeap heap(NamedProperties, node->multiGetByOffsetData().identifierNumber);
         read(heap);
         // FIXME: We cannot def() for MultiGetByOffset because CSE is not smart enough to decay it

@@ -1,3 +1,19 @@
+2017-12-13  Keith Miller  <keith_miller@apple.com>
+
+        JSObjects should have a mask for loading indexed properties
+        https://bugs.webkit.org/show_bug.cgi?id=180768
+
+        Reviewed by Mark Lam.
+
+        Add a clz that wraps the builtin clz intrinisics provided by
+        various compilers. The clz function by default assumes that
+        the input may be zero. On X86 this makes a difference because not
+        all CPUs have LZCNT and BSR has undefined behavior on zero. On ARM,
+        the zero check gets optimized away, regardless.
+
+        * wtf/StdLibExtras.h:
+        (std::clz):
+
 2017-12-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION(r225769): Build errors with constexpr std::tie on older gcc

@@ -548,6 +548,23 @@ template <size_t I>
 __IN_PLACE_INLINE_VARIABLE constexpr in_place_index_t<I> in_place_index { };
 #endif // __cplusplus < 201703L
 
+enum class ZeroStatus {
+    MayBeZero,
+    NonZero
+};
+
+constexpr size_t clz(uint32_t value, ZeroStatus mightBeZero = ZeroStatus::MayBeZero)
+{
+    if (mightBeZero == ZeroStatus::MayBeZero && value) {
+#if COMPILER(MSVC)
+        return __lzcnt(value);
+#else
+        return __builtin_clz(value);
+#endif
+    }
+    return 32;
+}
+
 } // namespace std
 
 #define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)

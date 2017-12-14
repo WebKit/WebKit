@@ -1008,6 +1008,7 @@
 		536B319C1F735E7D0037FC33 /* UnifiedSource134.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536B31971F735E5B0037FC33 /* UnifiedSource134.cpp */; };
 		536B319D1F735E7D0037FC33 /* UnifiedSource135.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536B31991F735E5D0037FC33 /* UnifiedSource135.cpp */; };
 		536B319E1F735F160037FC33 /* LowLevelInterpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F4680C714BBB16900BFE272 /* LowLevelInterpreter.cpp */; };
+		5370806B1FE232DF00299E44 /* JSArrayBufferView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66BB17B6B5AB00A7AE3F /* JSArrayBufferView.h */; };
 		5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */; };
 		5381B9391E60E97D0090F794 /* WasmFaultSignalHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5381B9381E60E97D0090F794 /* WasmFaultSignalHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53917E7B1B7906FA000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53917E7A1B7906E4000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h */; };
@@ -7993,6 +7994,7 @@
 			files = (
 				A72701B90DADE94900E548D7 /* ExceptionHelpers.h in Headers */,
 				144005CB0A5338D10005F061 /* JSNode.h in Headers */,
+				5370806B1FE232DF00299E44 /* JSArrayBufferView.h in Headers */,
 				144007570A5370D20005F061 /* JSNodeList.h in Headers */,
 				144005CC0A5338F80005F061 /* Node.h in Headers */,
 				1440074A0A536CC20005F061 /* NodeList.h in Headers */,
@@ -8867,7 +8869,7 @@
 				148CD1D8108CF902008163C6 /* JSContextRefPrivate.h in Headers */,
 				FE2B0B731FD9EF700075DA5F /* JSCPoison.h in Headers */,
 				FE2B0B691FD227E00075DA5F /* JSCPoisonedPtr.h in Headers */,
-				A72028B81797601E0098028C /* JSCTestRunnerUtils.h in Headers */,
+                                A72028B81797601E0098028C /* JSCTestRunnerUtils.h in Headers */,
 				72AAF7CE1D0D31B3005E60BE /* JSCustomGetterSetterFunction.h in Headers */,
 				0F2B66EC17B6B5AB00A7AE3F /* JSDataView.h in Headers */,
 				0F2B66EE17B6B5AB00A7AE3F /* JSDataViewPrototype.h in Headers */,

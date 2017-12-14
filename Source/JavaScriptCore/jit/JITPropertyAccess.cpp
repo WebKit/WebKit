@@ -174,6 +174,7 @@ JIT::JumpList JIT::emitDoubleLoad(Instruction*, PatchableJump& badType)
     badType = patchableBranch32(NotEqual, regT2, TrustedImm32(DoubleShape));
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, Butterfly::offsetOfPublicLength())));
+    and32(Address(regT0, JSObject::butterflyIndexingMaskOffset()), regT1);
     loadDouble(BaseIndex(regT2, regT1, TimesEight), fpRegT0);
     slowCases.append(branchDouble(DoubleNotEqualOrUnordered, fpRegT0, fpRegT0));
     
@@ -187,6 +188,7 @@ JIT::JumpList JIT::emitContiguousLoad(Instruction*, PatchableJump& badType, Inde
     badType = patchableBranch32(NotEqual, regT2, TrustedImm32(expectedShape));
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, Butterfly::offsetOfPublicLength())));
+    and32(Address(regT0, JSObject::butterflyIndexingMaskOffset()), regT1);
     load64(BaseIndex(regT2, regT1, TimesEight), regT0);
     slowCases.append(branchTest64(Zero, regT0));
     
@@ -203,6 +205,7 @@ JIT::JumpList JIT::emitArrayStorageLoad(Instruction*, PatchableJump& badType)
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, ArrayStorage::vectorLengthOffset())));
 
+    and32(Address(regT0, JSObject::butterflyIndexingMaskOffset()), regT1);
     load64(BaseIndex(regT2, regT1, TimesEight, ArrayStorage::vectorOffset()), regT0);
     slowCases.append(branchTest64(Zero, regT0));
     

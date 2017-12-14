@@ -559,12 +559,11 @@ ArrayBuffer* JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBuf
     VM& vm = *heap->vm();
     DeferGCForAWhile deferGC(*heap);
     
-    ASSERT(!thisObject->hasIndexingHeader());
-    
     RELEASE_ASSERT(!thisObject->hasIndexingHeader());
-    thisObject->m_butterfly.set(vm, thisObject, Butterfly::createOrGrowArrayRight(
+    ASSERT(!thisObject->butterflyIndexingMask());
+    thisObject->setButterflyWithIndexingMask(vm, Butterfly::createOrGrowArrayRight(
         thisObject->butterfly(), vm, thisObject, thisObject->structure(),
-        thisObject->structure()->outOfLineCapacity(), false, 0, 0));
+        thisObject->structure()->outOfLineCapacity(), false, 0, 0), 0);
 
     RefPtr<ArrayBuffer> buffer;
     

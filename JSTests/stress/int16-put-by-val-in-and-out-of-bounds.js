@@ -9,7 +9,7 @@ function test(length, expected) {
     foo(a);
     var result = a[42];
     if (result != expected)
-        throw "Error: bad value at a[42]: " + result;
+        throw new Error("bad value at a[42]: " + result);
 }
 
 for (var i = 0; i < 100000; ++i) {

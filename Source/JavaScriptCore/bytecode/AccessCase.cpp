@@ -1062,6 +1062,8 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         }
         
         if (allocatingInline) {
+            // If we were to have any indexed properties, then we would need to update the indexing mask on the base object.
+            RELEASE_ASSERT(!newStructure()->couldHaveIndexingHeader());
             // We set the new butterfly and the structure last. Doing it this way ensures that
             // whatever we had done up to this point is forgotten if we choose to branch to slow
             // path.

@@ -36,14 +36,9 @@ class VM;
 class CopyVisitor;
 struct ArrayStorage;
 
-template <typename T> struct ContiguousData {
-    ContiguousData()
-        : m_data(0)
-#if !ASSERT_DISABLED
-        , m_length(0)
-#endif
-    {
-    }
+template <typename T>
+struct ContiguousData {
+    ContiguousData() = default;
     ContiguousData(T* data, size_t length)
         : m_data(data)
 #if !ASSERT_DISABLED
@@ -53,8 +48,11 @@ template <typename T> struct ContiguousData {
         UNUSED_PARAM(length);
     }
 
-    const T& operator[](size_t index) const { ASSERT(index < m_length); return m_data[index]; }
-    T& operator[](size_t index) { ASSERT(index < m_length); return m_data[index]; }
+    const T& at(const uint32_t mask, size_t index) const { ASSERT(index < m_length); return m_data[index & mask]; }
+    T& at(const uint32_t mask, size_t index) { ASSERT(index < m_length);  return m_data[index & mask]; }
+
+    const T& at(const JSObject* base, size_t index) const;
+    T& at(const JSObject* base, size_t index);
 
     T* data() const { return m_data; }
 #if !ASSERT_DISABLED
@@ -62,9 +60,9 @@ template <typename T> struct ContiguousData {
 #endif
 
 private:
-    T* m_data;
+    T* m_data { nullptr };
 #if !ASSERT_DISABLED
-    size_t m_length;
+    size_t m_length { 0 };
 #endif
 };
 
@@ -120,16 +118,18 @@ public:
     PropertyStorage propertyStorage() { return indexingHeader()->propertyStorage(); }
     ConstPropertyStorage propertyStorage() const { return indexingHeader()->propertyStorage(); }
     
-    uint32_t publicLength() { return indexingHeader()->publicLength(); }
-    uint32_t vectorLength() { return indexingHeader()->vectorLength(); }
+    uint32_t publicLength() const { return indexingHeader()->publicLength(); }
+    uint32_t vectorLength() const { return indexingHeader()->vectorLength(); }
     void setPublicLength(uint32_t value) { indexingHeader()->setPublicLength(value); }
     void setVectorLength(uint32_t value) { indexingHeader()->setVectorLength(value); }
-    
+
+    static uint32_t computeIndexingMaskForVectorLength(uint32_t vectorLength) { return static_cast<uint64_t>(static_cast<uint32_t>(-1)) >> std::clz(vectorLength); }
+    uint32_t computeIndexingMask() const { return computeIndexingMaskForVectorLength(vectorLength()); }
+
     template<typename T>
     T* indexingPayload() { return reinterpret_cast_ptr<T*>(this); }
     ArrayStorage* arrayStorage() { return indexingPayload<ArrayStorage>(); }
     ContiguousJSValues contiguousInt32() { return ContiguousJSValues(indexingPayload<WriteBarrier<Unknown>>(), vectorLength()); }
-
     ContiguousDoubles contiguousDouble() { return ContiguousDoubles(indexingPayload<double>(), vectorLength()); }
     ContiguousJSValues contiguous() { return ContiguousJSValues(indexingPayload<WriteBarrier<Unknown>>(), vectorLength()); }
     

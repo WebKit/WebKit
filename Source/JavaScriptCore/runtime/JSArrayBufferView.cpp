@@ -127,10 +127,13 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
 }
 
 JSArrayBufferView::JSArrayBufferView(VM& vm, ConstructionContext& context)
-    : Base(vm, context.structure(), context.butterfly())
+    : Base(vm, context.structure(), nullptr)
     , m_length(context.length())
     , m_mode(context.mode())
 {
+    // Typed Arrays don't participate in indexing masks due to performance concerns. This isn't too big of a deal because
+    // they are gigacaged.
+    setButterflyWithIndexingMask(vm, context.butterfly(), 0);
     m_vector.setWithoutBarrier(context.vector());
 }
 

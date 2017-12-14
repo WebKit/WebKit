@@ -89,7 +89,9 @@ void JIT::emit_op_new_object(Instruction* currentInstruction)
     if (allocator)
         addSlowCase(Jump());
     JumpList slowCases;
-    emitAllocateJSObject(resultReg, allocator, allocatorReg, TrustedImmPtr(structure), TrustedImmPtr(0), scratchReg, slowCases);
+    auto butterfly = TrustedImmPtr(nullptr);
+    auto mask = TrustedImm32(0);
+    emitAllocateJSObject(resultReg, allocator, allocatorReg, TrustedImmPtr(structure), butterfly, mask, scratchReg, slowCases);
     emitInitializeInlineStorage(resultReg, structure->inlineCapacity());
     addSlowCase(slowCases);
     emitStoreCell(currentInstruction[1].u.operand, resultReg);
@@ -864,7 +866,9 @@ void JIT::emit_op_create_this(Instruction* currentInstruction)
     hasSeenMultipleCallees.link(this);
 
     JumpList slowCases;
-    emitAllocateJSObject(resultReg, nullptr, allocatorReg, structureReg, TrustedImmPtr(0), scratchReg, slowCases);
+    auto butterfly = TrustedImmPtr(nullptr);
+    auto mask = TrustedImm32(0);
+    emitAllocateJSObject(resultReg, nullptr, allocatorReg, structureReg, butterfly, mask, scratchReg, slowCases);
     addSlowCase(slowCases);
     emitStoreCell(currentInstruction[1].u.operand, resultReg);
 }

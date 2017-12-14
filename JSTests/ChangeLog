@@ -1,3 +1,13 @@
+2017-12-13  Keith Miller  <keith_miller@apple.com>
+
+        JSObjects should have a mask for loading indexed properties
+        https://bugs.webkit.org/show_bug.cgi?id=180768
+
+        Reviewed by Mark Lam.
+
+        * stress/int16-put-by-val-in-and-out-of-bounds.js:
+        (test):
+
 2017-12-13  Saam Barati  <sbarati@apple.com>
 
         Arrow functions need their own structure because they have different properties than sloppy functions

@@ -592,6 +592,11 @@ public:
         urshift32(trustedImm32ForShift(imm), srcDest);
     }
 
+    void urshiftPtr(RegisterID shiftAmmount, RegisterID srcDest)
+    {
+        urshift32(shiftAmmount, srcDest);
+    }
+
     void negPtr(RegisterID dest)
     {
         neg32(dest);
@@ -904,6 +909,11 @@ public:
     void urshiftPtr(Imm32 imm, RegisterID srcDest)
     {
         urshift64(trustedImm32ForShift(imm), srcDest);
+    }
+
+    void urshiftPtr(RegisterID shiftAmmount, RegisterID srcDest)
+    {
+        urshift64(shiftAmmount, srcDest);
     }
 
     void negPtr(RegisterID dest)
