@@ -845,3 +845,5 @@ webkit.org/b/176078 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-onn
 
 webkit.org/b/179351 imported/w3c/web-platform-tests/service-workers/service-worker/worker-interception.https.html [ Pass Failure ]
 
+webkit.org/b/173742 security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html [ Pass Failure ]
+

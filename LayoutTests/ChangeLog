@@ -1,3 +1,12 @@
+2017-12-13  Matt Lewis  <jlewis3@apple.com>
+
+        Marked security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=173742
+
+        Unreviewed test gardening
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-12-13  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: add instrumentation for ImageBitmapRenderingContext
