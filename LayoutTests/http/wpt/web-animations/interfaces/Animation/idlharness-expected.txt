@@ -15,8 +15,8 @@ PASS Animation interface: attribute playState
 PASS Animation interface: attribute ready 
 PASS Animation interface: attribute finished 
 PASS Animation interface: attribute onfinish 
-FAIL Animation interface: attribute oncancel assert_true: The prototype object must have a property "oncancel" expected true got false
-FAIL Animation interface: operation cancel() assert_own_property: interface prototype object missing non-static operation expected property "cancel" missing
+PASS Animation interface: attribute oncancel 
+PASS Animation interface: operation cancel() 
 PASS Animation interface: operation finish() 
 PASS Animation interface: operation play() 
 PASS Animation interface: operation pause() 
@@ -33,8 +33,8 @@ PASS Animation interface: new Animation() must inherit property "playState" with
 PASS Animation interface: new Animation() must inherit property "ready" with the proper type 
 PASS Animation interface: new Animation() must inherit property "finished" with the proper type 
 PASS Animation interface: new Animation() must inherit property "onfinish" with the proper type 
-FAIL Animation interface: new Animation() must inherit property "oncancel" with the proper type assert_inherits: property "oncancel" not found in prototype chain
-FAIL Animation interface: new Animation() must inherit property "cancel()" with the proper type assert_inherits: property "cancel" not found in prototype chain
+PASS Animation interface: new Animation() must inherit property "oncancel" with the proper type 
+PASS Animation interface: new Animation() must inherit property "cancel()" with the proper type 
 PASS Animation interface: new Animation() must inherit property "finish()" with the proper type 
 PASS Animation interface: new Animation() must inherit property "play()" with the proper type 
 PASS Animation interface: new Animation() must inherit property "pause()" with the proper type 

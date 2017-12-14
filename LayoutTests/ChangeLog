@@ -1,5 +1,17 @@
 2017-12-14  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Implement the cancel() method on Animation
+        https://bugs.webkit.org/show_bug.cgi?id=180830
+        <rdar://problem/36055816>
+
+        Reviewed by Dean Jackson.
+
+        Rebase some WPT expectations with progressions due to exposing the cancel() method.
+
+        * http/wpt/web-animations/interfaces/Animation/idlharness-expected.txt:
+
+2017-12-14  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Implement the finish() method on Animation
         https://bugs.webkit.org/show_bug.cgi?id=180822
         <rdar://problem/36053282>

@@ -78,6 +78,7 @@ public:
     using FinishedPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<WebAnimation>>;
     FinishedPromise& finished() { return m_finishedPromise; }
 
+    void cancel();
     ExceptionOr<void> finish();
     ExceptionOr<void> play();
     ExceptionOr<void> pause();
@@ -120,6 +121,7 @@ private:
     ExceptionOr<void> play(AutoRewind);
     void runPendingPauseTask();
     void runPendingPlayTask();
+    void resetPendingTasks();
     
     RefPtr<AnimationEffect> m_effect;
     RefPtr<AnimationTimeline> m_timeline;

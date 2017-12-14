@@ -67,8 +67,16 @@ WebAnimation::~WebAnimation()
 
 void WebAnimation::setEffect(RefPtr<AnimationEffect>&& effect)
 {
+    // 3.4.3. Setting the target effect of an animation
+    // https://drafts.csswg.org/web-animations-1/#setting-the-target-effect
+
+    // 2. If new effect is the same object as old effect, abort this procedure.
     if (effect == m_effect)
         return;
+
+    // 3. If new effect is null and old effect is not null, run the procedure to reset an animation's pending tasks on animation.
+    if (!effect && m_effect)
+        resetPendingTasks();
 
     if (m_effect) {
         m_effect->setAnimation(nullptr);
@@ -316,6 +324,47 @@ Seconds WebAnimation::effectEndTime() const
     return m_effect ? m_effect->timing()->duration() : 0_s;
 }
 
+void WebAnimation::cancel()
+{
+    // 3.4.16. Canceling an animation
+    // https://drafts.csswg.org/web-animations-1/#canceling-an-animation-section
+    //
+    // An animation can be canceled which causes the current time to become unresolved hence removing any effects caused by the target effect.
+    //
+    // The procedure to cancel an animation for animation is as follows:
+    //
+    // 1. If animation's play state is not idle, perform the following steps:
+    if (playState() != PlayState::Idle) {
+        // 1. Run the procedure to reset an animation's pending tasks on animation.
+        resetPendingTasks();
+
+        // 2. Reject the current finished promise with a DOMException named "AbortError".
+        m_finishedPromise.reject(Exception { AbortError });
+
+        // 3. Let current finished promise be a new (pending) Promise object.
+        m_finishedPromise.clear();
+
+        // 4. Create an AnimationPlaybackEvent, cancelEvent.
+        // 5. Set cancelEvent's type attribute to cancel.
+        // 6. Set cancelEvent's currentTime to null.
+        // 7. Let timeline time be the current time of the timeline with which animation is associated. If animation is not associated with an
+        //    active timeline, let timeline time be n unresolved time value.
+        // 8. Set cancelEvent's timelineTime to timeline time. If timeline time is unresolved, set it to null.
+        // 9. If animation has a document for timing, then append cancelEvent to its document for timing's pending animation event queue along
+        //    with its target, animation. If animation is associated with an active timeline that defines a procedure to convert timeline times
+        //    to origin-relative time, let the scheduled event time be the result of applying that procedure to timeline time. Otherwise, the
+        //    scheduled event time is an unresolved time value.
+        // Otherwise, queue a task to dispatch cancelEvent at animation. The task source for this task is the DOM manipulation task source.
+        enqueueAnimationPlaybackEvent(eventNames().cancelEvent, std::nullopt, m_timeline ? m_timeline->currentTime() : std::nullopt);
+    }
+
+    // 2. Make animation's hold time unresolved.
+    m_holdTime = std::nullopt;
+
+    // 3. Make animation's start time unresolved.
+    setStartTime(std::nullopt);
+}
+
 void WebAnimation::enqueueAnimationPlaybackEvent(const AtomicString& type, std::optional<Seconds> currentTime, std::optional<Seconds> timelineTime)
 {
     auto event = AnimationPlaybackEvent::create(type, currentTime, timelineTime);
@@ -334,6 +383,31 @@ void WebAnimation::enqueueAnimationPlaybackEvent(const AtomicString& type, std::
                 this->dispatchEvent(event);
         });
     }
+}
+
+void WebAnimation::resetPendingTasks()
+{
+    // The procedure to reset an animation's pending tasks for animation is as follows:
+    // https://drafts.csswg.org/web-animations-1/#reset-an-animations-pending-tasks
+    //
+    // 1. If animation does not have a pending play task or a pending pause task, abort this procedure.
+    if (!pending())
+        return;
+
+    // 2. If animation has a pending play task, cancel that task.
+    if (hasPendingPlayTask())
+        setTimeToRunPendingPlayTask(TimeToRunPendingTask::NotScheduled);
+
+    // 3. If animation has a pending pause task, cancel that task.
+    if (hasPendingPauseTask())
+        setTimeToRunPendingPauseTask(TimeToRunPendingTask::NotScheduled);
+
+    // 4. Reject animation's current ready promise with a DOMException named "AbortError".
+    m_readyPromise.reject(Exception { AbortError });
+
+    // 5. Let animation's current ready promise be the result of creating a new resolved Promise object.
+    m_readyPromise.clear();
+    m_readyPromise.resolve(*this);
 }
 
 ExceptionOr<void> WebAnimation::finish()
