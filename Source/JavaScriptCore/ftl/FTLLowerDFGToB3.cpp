@@ -4736,22 +4736,19 @@ private:
             setJSValue(callResult);
             return;
         }
-        
 
         RegisteredStructure structure = m_graph.registerStructure(
             [&] () {
+                JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
                 switch (m_node->op()) {
                 case NewGeneratorFunction:
-                    return m_graph.globalObjectFor(m_node->origin.semantic)->generatorFunctionStructure();
+                    return globalObject->generatorFunctionStructure();
                 case NewAsyncFunction:
-                    return m_graph.globalObjectFor(m_node->origin.semantic)->asyncFunctionStructure();
+                    return globalObject->asyncFunctionStructure();
                 case NewAsyncGeneratorFunction:
-                    return m_graph.globalObjectFor(m_node->origin.semantic)->asyncGeneratorFunctionStructure();
+                    return globalObject->asyncGeneratorFunctionStructure();
                 case NewFunction:
-                    if (m_node->castOperand<FunctionExecutable*>()->isStrictMode())
-                        return m_graph.globalObjectFor(m_node->origin.semantic)->strictFunctionStructure();
-                    return m_graph.globalObjectFor(m_node->origin.semantic)->sloppyFunctionStructure();
-                    break;
+                    return JSFunction::selectStructureForNewFuncExp(globalObject, m_node->castOperand<FunctionExecutable*>());
                 default:
                     RELEASE_ASSERT_NOT_REACHED();
                 }

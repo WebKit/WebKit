@@ -65,10 +65,18 @@ bool JSFunction::isHostFunctionNonInline() const
     return isHostFunction();
 }
 
+Structure* JSFunction::selectStructureForNewFuncExp(JSGlobalObject* globalObject, FunctionExecutable* executable)
+{
+    if (executable->isArrowFunction())
+        return globalObject->arrowFunctionStructure();
+    if (executable->isStrictMode())
+        return globalObject->strictFunctionStructure();
+    return globalObject->sloppyFunctionStructure();
+}
+
 JSFunction* JSFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope)
 {
-    Structure* structure = executable->isStrictMode() ? scope->globalObject(vm)->strictFunctionStructure() : scope->globalObject(vm)->sloppyFunctionStructure();
-    return create(vm, executable, scope, structure);
+    return create(vm, executable, scope, selectStructureForNewFuncExp(scope->globalObject(vm), executable));
 }
 
 JSFunction* JSFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)

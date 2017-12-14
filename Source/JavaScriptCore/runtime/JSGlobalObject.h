@@ -322,6 +322,7 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_nullPrototypeObjectStructure;
     WriteBarrier<Structure> m_calleeStructure;
     WriteBarrier<Structure> m_strictFunctionStructure;
+    WriteBarrier<Structure> m_arrowFunctionStructure;
     WriteBarrier<Structure> m_sloppyFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_boundFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_customGetterSetterFunctionStructure;
@@ -631,6 +632,7 @@ public:
     Structure* calleeStructure() const { return m_calleeStructure.get(); }
     Structure* strictFunctionStructure() const { return m_strictFunctionStructure.get(); }
     Structure* sloppyFunctionStructure() const { return m_sloppyFunctionStructure.get(); }
+    Structure* arrowFunctionStructure() const { return m_arrowFunctionStructure.get(); }
     Structure* boundFunctionStructure() const { return m_boundFunctionStructure.get(this); }
     Structure* customGetterSetterFunctionStructure() const { return m_customGetterSetterFunctionStructure.get(this); }
     Structure* getterSetterStructure() const { return m_getterSetterStructure.get(); }

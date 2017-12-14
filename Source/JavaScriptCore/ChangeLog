@@ -1,3 +1,36 @@
+2017-12-13  Saam Barati  <sbarati@apple.com>
+
+        Arrow functions need their own structure because they have different properties than sloppy functions
+        https://bugs.webkit.org/show_bug.cgi?id=180779
+        <rdar://problem/35814591>
+
+        Reviewed by Mark Lam.
+
+        We were using the same structure for sloppy functions and
+        arrow functions. This broke our IC caching machinery because
+        these two types of functions actually have different properties.
+        This patch gives them different structures.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunction):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::selectStructureForNewFuncExp):
+        (JSC::JSFunction::create):
+        * runtime/JSFunction.h:
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::createWithInvalidatedReallocationWatchpoint):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::arrowFunctionStructure const):
+
 2017-12-12  Filip Pizlo  <fpizlo@apple.com>
 
         InferredValue should use IsoSubspace

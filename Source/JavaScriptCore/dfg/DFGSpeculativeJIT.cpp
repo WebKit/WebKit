@@ -6782,17 +6782,16 @@ void SpeculativeJIT::compileNewFunction(Node* node)
 
     RegisteredStructure structure = m_jit.graph().registerStructure(
         [&] () {
+            JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
             switch (nodeType) {
             case NewGeneratorFunction:
-                return m_jit.graph().globalObjectFor(node->origin.semantic)->generatorFunctionStructure();
+                return globalObject->generatorFunctionStructure();
             case NewAsyncFunction:
-                return m_jit.graph().globalObjectFor(node->origin.semantic)->asyncFunctionStructure();
+                return globalObject->asyncFunctionStructure();
             case NewAsyncGeneratorFunction:
-                return m_jit.graph().globalObjectFor(node->origin.semantic)->asyncGeneratorFunctionStructure();
+                return globalObject->asyncGeneratorFunctionStructure();
             case NewFunction:
-                if (node->castOperand<FunctionExecutable*>()->isStrictMode())
-                    return m_jit.graph().globalObjectFor(node->origin.semantic)->strictFunctionStructure();
-                return m_jit.graph().globalObjectFor(node->origin.semantic)->sloppyFunctionStructure();
+                return JSFunction::selectStructureForNewFuncExp(globalObject, node->castOperand<FunctionExecutable*>());
             default:
                 RELEASE_ASSERT_NOT_REACHED();
             }

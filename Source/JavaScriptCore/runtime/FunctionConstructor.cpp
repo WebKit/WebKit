@@ -175,10 +175,7 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
     Structure* structure = nullptr;
     switch (functionConstructionMode) {
     case FunctionConstructionMode::Function:
-        if (function->isStrictMode())
-            structure = globalObject->strictFunctionStructure();
-        else
-            structure = globalObject->sloppyFunctionStructure();
+        structure = JSFunction::selectStructureForNewFuncExp(globalObject, function);
         break;
     case FunctionConstructionMode::Generator:
         structure = globalObject->generatorFunctionStructure();

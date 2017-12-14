@@ -1,5 +1,19 @@
 2017-12-13  Saam Barati  <sbarati@apple.com>
 
+        Arrow functions need their own structure because they have different properties than sloppy functions
+        https://bugs.webkit.org/show_bug.cgi?id=180779
+        <rdar://problem/35814591>
+
+        Reviewed by Mark Lam.
+
+        * stress/arrow-function-needs-its-own-structure.js: Added.
+        (assert):
+        (readPrototype):
+        (noInline.let.f1):
+        (noInline):
+
+2017-12-13  Saam Barati  <sbarati@apple.com>
+
         Fix how JSFunction handles "caller" and "arguments" for functions that don't have those properties
         https://bugs.webkit.org/show_bug.cgi?id=163579
         <rdar://problem/35455798>
