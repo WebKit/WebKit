@@ -82,7 +82,7 @@ void WebAnimation::setEffect(RefPtr<AnimationEffect>&& effect)
         m_effect->setAnimation(nullptr);
 
         // Update the Element to Animation map.
-        if (m_timeline && m_effect->isKeyframeEffect()) {
+        if (m_timeline && is<KeyframeEffect>(m_effect)) {
             auto* keyframeEffect = downcast<KeyframeEffect>(m_effect.get());
             auto* target = keyframeEffect->target();
             if (target)
@@ -97,7 +97,7 @@ void WebAnimation::setEffect(RefPtr<AnimationEffect>&& effect)
 
         effect->setAnimation(this);
 
-        if (m_timeline && effect->isKeyframeEffect()) {
+        if (m_timeline && is<KeyframeEffect>(effect)) {
             auto* keyframeEffect = downcast<KeyframeEffect>(effect.get());
             auto* target = keyframeEffect->target();
             if (target)
@@ -127,7 +127,7 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
     if (timeline)
         timeline->addAnimation(*this);
 
-    if (m_effect && m_effect->isKeyframeEffect()) {
+    if (is<KeyframeEffect>(m_effect)) {
         auto* keyframeEffect = downcast<KeyframeEffect>(m_effect.get());
         auto* target = keyframeEffect->target();
         if (target) {
@@ -828,7 +828,7 @@ void WebAnimation::acceleratedRunningStateDidChange()
 
 void WebAnimation::startOrStopAccelerated()
 {
-    if (m_effect && m_effect->isKeyframeEffect())
+    if (is<KeyframeEffect>(m_effect))
         downcast<KeyframeEffect>(*m_effect).startOrStopAccelerated();
 }
 
