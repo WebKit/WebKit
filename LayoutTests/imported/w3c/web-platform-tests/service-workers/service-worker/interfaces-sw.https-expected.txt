@@ -1,7 +1,7 @@
 
 PASS Interfaces and attributes in ServiceWorkerGlobalScope 
 PASS test setup (cache creation) 
-FAIL Event constructors assert_equals: Default FetchEvent.isReload should be false expected (boolean) false but got (undefined) undefined
+PASS Event constructors 
 PASS xhr is not exposed 
 PASS ServiceWorkerGlobalScope interface: existence and properties of interface object 
 PASS ServiceWorkerGlobalScope interface object length 

@@ -1,3 +1,16 @@
+2017-12-14  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync service-workers/service-worker/interfaces-sw.https.html from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=180814
+
+        Reviewed by Youenn Fablet.
+
+        Re-sync service-workers/service-worker/interfaces-sw.https.html WPT from upstream after
+        https://github.com/w3c/web-platform-tests/pull/8669.
+
+        * web-platform-tests/service-workers/service-worker/interfaces-sw.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/resources/interfaces-worker.sub.js:
+
 2017-12-12  Chris Dumez  <cdumez@apple.com>
 
         Re-sync imported/w3c/web-platform-tests/service-workers/service-worker/interfaces-sw.https.html

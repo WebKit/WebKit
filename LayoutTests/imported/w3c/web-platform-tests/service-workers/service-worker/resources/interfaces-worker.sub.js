@@ -57,21 +57,20 @@ test(function() {
       new FetchEvent('FetchEvent', {request: req}).clientId,
       '', 'Default FetchEvent.clientId should be the empty string');
     assert_equals(
-      new FetchEvent('FetchEvent', {request: req}).isReload,
-      false, 'Default FetchEvent.isReload should be false');
-    assert_equals(
       new FetchEvent('FetchEvent', {request: req, cancelable: false}).cancelable,
       false, 'FetchEvent.cancelable should be false');
     assert_equals(
       new FetchEvent('FetchEvent', {request: req, clientId : 'test-client-id'}).clientId, 'test-client-id',
       'FetchEvent.clientId with option {clientId : "test-client-id"} should be "test-client-id"');
     assert_equals(
-      new FetchEvent('FetchEvent', {request: req, isReload : true}).isReload, true,
-      'FetchEvent.isReload with option {isReload : true} should be true');
-    assert_equals(
-      new FetchEvent('FetchEvent', {request : req, isReload : true}).request.url,
+      new FetchEvent('FetchEvent', {request : req}).request.url,
       'http://{{host}}/',
       'FetchEvent.request.url should return the value it was initialized to');
+    assert_equals(
+      new FetchEvent('FetchEvent', {request : req}).isReload,
+      undefined,
+      'FetchEvent.isReload should not exist');
+
   }, 'Event constructors');
 
 test(() => {
