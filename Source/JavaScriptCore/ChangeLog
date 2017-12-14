@@ -1,3 +1,55 @@
+2017-12-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Octane/richards regressed by a whopping 20% because eliminateCommonSubexpressions has a weird fixpoint requirement
+        https://bugs.webkit.org/show_bug.cgi?id=180783
+
+        Reviewed by Saam Barati.
+        
+        This fixes the regression by fixpointing CSE. We need to fixpoint CSE because of this case:
+        
+            BB#1:
+                a: Load(@x)
+                b: Load(@x)
+                c: Load(@b)
+            BB#2:
+                d: Load(@b)
+            BB#3:
+                e: Load(@b)
+        
+        Lets assume that #3 loops around to #2, so to eliminate @d, we need to prove that it's redundant
+        with both @c and @e. The problem is that by the time we get to @d, the CSE state will look like
+        this:
+
+            BB#1:
+                a: Load(@x)
+                b: Load(@x)
+                c: Load(@a)
+                memoryAtTail: {@x=>@a, @a=>@c}
+            BB#2:
+                d: Load(@a) [sic]
+                memoryAtTail: {@b=>@d}
+            BB#3:
+                e: Load(@b)
+                memoryAtTail: {@b=>@e} [sic]
+        
+        Note that #3's atTail map is keyed on @b, which was the old (no longer canonical) version of @a.
+        But @d's children were already substituted, so it refers to @a. Since @a is not in #3's atTail
+        map, we don't find it and leave the redundancy.
+        
+        I think that the cleanest solution is to fixpoint. CSE is pretty cheap, so hopefully we can afford
+        this. It fixes the richards regression, since richards is super dependent on B3 CSE.
+
+        * b3/B3EliminateCommonSubexpressions.cpp: Logging.
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir): Fix the bug.
+        * b3/air/AirReportUsedRegisters.cpp:
+        (JSC::B3::Air::reportUsedRegisters): Logging.
+        * dfg/DFGByteCodeParser.cpp:
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run): Don't generate EntrySwitch if we don't need it (makes IR easier to read).
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower): Don't generate EntrySwitch if we don't need it (makes IR easier to read).
+
 2017-12-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION: Web Inspector: Opening inspector crashes page if there are empty resources

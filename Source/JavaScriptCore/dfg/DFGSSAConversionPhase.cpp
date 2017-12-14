@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,14 @@
 #include "DFGVariableAccessDataDump.h"
 #include "JSCInlines.h"
 
+#undef RELEASE_ASSERT
+#define RELEASE_ASSERT(assertion) do { \
+    if (!(assertion)) { \
+        WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
+        CRASH(); \
+    } \
+} while (0)
+
 namespace JSC { namespace DFG {
 
 class SSAConversionPhase : public Phase {
@@ -60,16 +68,28 @@ public:
 
         HashMap<unsigned, BasicBlock*, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> entrypointIndexToArgumentsBlock;
 
-        {
-            m_graph.m_numberOfEntrypoints = m_graph.m_roots.size();
+        m_graph.m_numberOfEntrypoints = m_graph.m_roots.size();
+        m_graph.m_argumentFormats.resize(m_graph.m_numberOfEntrypoints);
 
+        for (unsigned entrypointIndex = 0; entrypointIndex < m_graph.m_numberOfEntrypoints; ++entrypointIndex) {
+            BasicBlock* oldRoot = m_graph.m_roots[entrypointIndex];
+            entrypointIndexToArgumentsBlock.add(entrypointIndex, oldRoot);
+            
+            NodeOrigin origin = oldRoot->at(0)->origin;
+            m_insertionSet.insertNode(
+                0, SpecNone, InitializeEntrypointArguments, origin, OpInfo(entrypointIndex));
+            m_insertionSet.insertNode(
+                0, SpecNone, ExitOK, origin);
+            m_insertionSet.execute(oldRoot);
+        }
+
+        if (m_graph.m_numberOfEntrypoints > 1) {
             BlockInsertionSet blockInsertionSet(m_graph);
             BasicBlock* newRoot = blockInsertionSet.insert(0, 1.0f);
 
             EntrySwitchData* entrySwitchData = m_graph.m_entrySwitchData.add();
             for (unsigned entrypointIndex = 0; entrypointIndex < m_graph.m_numberOfEntrypoints; ++entrypointIndex) {
                 BasicBlock* oldRoot = m_graph.m_roots[entrypointIndex];
-                entrypointIndexToArgumentsBlock.add(entrypointIndex, oldRoot);
                 entrySwitchData->cases.append(oldRoot);
 
                 ASSERT(oldRoot->predecessors.isEmpty());
@@ -79,18 +99,9 @@ public:
                     ASSERT(!!entrypointIndex);
                     m_graph.m_entrypointIndexToCatchBytecodeOffset.add(entrypointIndex, oldRoot->bytecodeBegin);
                 }
-
-                NodeOrigin origin = oldRoot->at(0)->origin;
-                m_insertionSet.insertNode(
-                    0, SpecNone, InitializeEntrypointArguments, origin, OpInfo(entrypointIndex));
-                m_insertionSet.insertNode(
-                    0, SpecNone, ExitOK, origin);
-                m_insertionSet.execute(oldRoot);
             }
 
             RELEASE_ASSERT(entrySwitchData->cases[0] == m_graph.block(0)); // We strongly assume the normal call entrypoint is the first item in the list.
-
-            m_graph.m_argumentFormats.resize(m_graph.m_numberOfEntrypoints);
 
             const bool exitOK = false;
             NodeOrigin origin { CodeOrigin(0), CodeOrigin(0), exitOK };
@@ -102,7 +113,7 @@ public:
 
             blockInsertionSet.execute();
         }
-
+        
         SSACalculator calculator(m_graph);
 
         m_graph.ensureSSADominators();

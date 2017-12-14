@@ -106,8 +106,14 @@ public:
     template<typename Functor>
     MemoryValue* find(Value* ptr, const Functor& functor)
     {
+        if (B3EliminateCommonSubexpressionsInternal::verbose)
+            dataLog("        Looking for ", pointerDump(ptr), " in ", *this, "\n");
         if (Matches* matches = find(ptr)) {
+            if (B3EliminateCommonSubexpressionsInternal::verbose)
+                dataLog("        Matches: ", pointerListDump(*matches), "\n");
             for (Value* candidateValue : *matches) {
+                if (B3EliminateCommonSubexpressionsInternal::verbose)
+                    dataLog("        Having candidate: ", pointerDump(candidateValue), "\n");
                 if (MemoryValue* candidateMemory = candidateValue->as<MemoryValue>()) {
                     if (functor(candidateMemory))
                         return candidateMemory;
@@ -405,14 +411,25 @@ private:
             handleMemoryValue(
                 ptr, range,
                 [&] (MemoryValue* candidate) -> bool {
+                    if (B3EliminateCommonSubexpressionsInternal::verbose)
+                        dataLog("        Consdering ", pointerDump(candidate), "\n");
                     if (candidate->offset() != offset)
                         return false;
-
+                    
+                    if (B3EliminateCommonSubexpressionsInternal::verbose)
+                        dataLog("            offset ok.\n");
+                    
                     if (candidate->opcode() == Load && candidate->type() == type)
                         return true;
 
+                    if (B3EliminateCommonSubexpressionsInternal::verbose)
+                        dataLog("            not a load with ok type.\n");
+                    
                     if (candidate->opcode() == Store && candidate->child(0)->type() == type)
                         return true;
+
+                    if (B3EliminateCommonSubexpressionsInternal::verbose)
+                        dataLog("            not a store with ok type.\n");
 
                     return false;
                 });
@@ -617,8 +634,10 @@ private:
     template<typename Filter>
     MemoryMatches findMemoryValue(Value* ptr, HeapRange range, const Filter& filter)
     {
-        if (B3EliminateCommonSubexpressionsInternal::verbose)
+        if (B3EliminateCommonSubexpressionsInternal::verbose) {
             dataLog(*m_value, ": looking backward for ", *ptr, "...\n");
+            dataLog("    Full value: ", deepDump(m_value), "\n");
+        }
         
         if (m_value->as<MemoryValue>()->hasFence()) {
             if (B3EliminateCommonSubexpressionsInternal::verbose)
@@ -650,6 +669,8 @@ private:
             ImpureBlockData& data = m_impureBlockData[block];
 
             MemoryValue* match = data.memoryValuesAtTail.find(ptr, filter);
+            if (B3EliminateCommonSubexpressionsInternal::verbose)
+                dataLog("    Consdering match: ", pointerDump(match), "\n");
             if (match && match != m_value) {
                 if (B3EliminateCommonSubexpressionsInternal::verbose)
                     dataLog("    Found match: ", *match, "\n");

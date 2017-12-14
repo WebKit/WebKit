@@ -39,14 +39,25 @@ namespace JSC { namespace B3 { namespace Air {
 void reportUsedRegisters(Code& code)
 {
     PhaseScope phaseScope(code, "reportUsedRegisters");
+    
+    static constexpr bool verbose = false;
+    
+    if (verbose)
+        dataLog("Doing reportUsedRegisters on:\n", code);
 
     RegLiveness liveness(code);
 
     for (BasicBlock* block : code) {
+        if (verbose)
+            dataLog("Looking at: ", *block, "\n");
+        
         RegLiveness::LocalCalc localCalc(liveness, block);
 
         for (unsigned instIndex = block->size(); instIndex--;) {
             Inst& inst = block->at(instIndex);
+            
+            if (verbose)
+                dataLog("   Looking at: ", inst, "\n");
 
             // Kill dead assignments to registers. For simplicity we say that a store is killable if
             // it has only late defs and those late defs are to registers that are dead right now.
@@ -55,16 +66,22 @@ void reportUsedRegisters(Code& code)
                 inst.forEachArg(
                     [&] (Arg& arg, Arg::Role role, Bank, Width) {
                         if (Arg::isEarlyDef(role)) {
+                            if (verbose)
+                                dataLog("        Cannot delete because of ", arg, "\n");
                             canDelete = false;
                             return;
                         }
                         if (!Arg::isLateDef(role))
                             return;
                         if (!arg.isReg()) {
+                            if (verbose)
+                                dataLog("        Cannot delete because arg is not reg: ", arg, "\n");
                             canDelete = false;
                             return;
                         }
                         if (localCalc.isLive(arg.reg())) {
+                            if (verbose)
+                                dataLog("        Cannot delete because arg is live: ", arg, "\n");
                             canDelete = false;
                             return;
                         }
@@ -87,6 +104,9 @@ void reportUsedRegisters(Code& code)
                 return !inst;
             });
     }
+
+    if (verbose)
+        dataLog("After reportUsedRegisters:\n", code);
 }
 
 } } } // namespace JSC::B3::Air

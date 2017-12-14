@@ -85,7 +85,8 @@ void generateToAir(Procedure& procedure)
         reduceDoubleToFloat(procedure);
         reduceStrength(procedure);
         hoistLoopInvariantValues(procedure);
-        eliminateCommonSubexpressions(procedure);
+        if (eliminateCommonSubexpressions(procedure))
+            eliminateCommonSubexpressions(procedure);
         inferSwitches(procedure);
         duplicateTails(procedure);
         fixSSA(procedure);

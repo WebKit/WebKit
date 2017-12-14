@@ -93,6 +93,14 @@
 #include <wtf/Box.h>
 #include <wtf/Gigacage.h>
 
+#undef RELEASE_ASSERT
+#define RELEASE_ASSERT(assertion) do { \
+    if (!(assertion)) { \
+        WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
+        CRASH(); \
+    } \
+} while (0)
+
 namespace JSC { namespace FTL {
 
 using namespace B3;
@@ -187,8 +195,10 @@ public:
         // We use prologue frequency for all of the initialization code.
         m_out.setFrequency(1);
         
+        bool hasMultipleEntrypoints = m_graph.m_numberOfEntrypoints > 1;
+    
         LBasicBlock prologue = m_out.newBlock();
-        LBasicBlock callEntrypointArgumentSpeculations = m_out.newBlock();
+        LBasicBlock callEntrypointArgumentSpeculations = hasMultipleEntrypoints ? m_out.newBlock() : nullptr;
         m_handleExceptions = m_out.newBlock();
 
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
@@ -202,7 +212,7 @@ public:
         // Back to prologue frequency for any bocks that get sneakily created in the initialization code.
         m_out.setFrequency(1);
         
-        m_out.appendTo(prologue, callEntrypointArgumentSpeculations);
+        m_out.appendTo(prologue, hasMultipleEntrypoints ? callEntrypointArgumentSpeculations : m_handleExceptions);
         m_out.initializeConstants(m_proc, prologue);
         createPhiVariables();
 
@@ -287,18 +297,20 @@ public:
         LBasicBlock firstDFGBasicBlock = lowBlock(m_graph.block(0));
 
         {
-            Vector<LBasicBlock> successors(m_graph.m_numberOfEntrypoints);
-            successors[0] = callEntrypointArgumentSpeculations;
-            for (unsigned i = 1; i < m_graph.m_numberOfEntrypoints; ++i) {
-                // Currently, the only other entrypoint is an op_catch entrypoint.
-                // We do OSR entry at op_catch, and we prove argument formats before
-                // jumping to FTL code, so we don't need to check argument types here
-                // for these entrypoints.
-                successors[i] = firstDFGBasicBlock;
+            if (hasMultipleEntrypoints) {
+                Vector<LBasicBlock> successors(m_graph.m_numberOfEntrypoints);
+                successors[0] = callEntrypointArgumentSpeculations;
+                for (unsigned i = 1; i < m_graph.m_numberOfEntrypoints; ++i) {
+                    // Currently, the only other entrypoint is an op_catch entrypoint.
+                    // We do OSR entry at op_catch, and we prove argument formats before
+                    // jumping to FTL code, so we don't need to check argument types here
+                    // for these entrypoints.
+                    successors[i] = firstDFGBasicBlock;
+                }
+                
+                m_out.entrySwitch(successors);
+                m_out.appendTo(callEntrypointArgumentSpeculations, m_handleExceptions);
             }
-
-            m_out.entrySwitch(successors);
-            m_out.appendTo(callEntrypointArgumentSpeculations, m_handleExceptions);
 
             m_node = nullptr;
             m_origin = NodeOrigin(CodeOrigin(0), CodeOrigin(0), true);
