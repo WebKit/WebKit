@@ -28,11 +28,11 @@ class URL;
 
 class CookieJarCurl {
 public:
-    virtual std::pair<String, bool> cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, IncludeSecureCookies) = 0;
-    virtual void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, const String&) = 0;
+    virtual std::pair<String, bool> cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies) = 0;
+    virtual void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String&) = 0;
     virtual bool cookiesEnabled(const NetworkStorageSession&) = 0;
-    virtual std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&, IncludeSecureCookies) = 0;
-    virtual bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, Vector<Cookie>&) = 0;
+    virtual std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies) = 0;
+    virtual bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<Cookie>&) = 0;
     virtual void deleteCookie(const NetworkStorageSession&, const URL&, const String&) = 0;
     virtual void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames) = 0;
     virtual void deleteCookiesForHostnames(const NetworkStorageSession&, const Vector<String>& cookieHostNames) = 0;
@@ -41,11 +41,11 @@ public:
 };
 
 class CookieJarCurlFileSystem : public CookieJarCurl {
-    std::pair<String, bool> cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, IncludeSecureCookies) override;
-    void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, const String&) override;
+    std::pair<String, bool> cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies) override;
+    void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String&) override;
     bool cookiesEnabled(const NetworkStorageSession&) override;
-    std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&, IncludeSecureCookies) override;
-    bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, Vector<Cookie>&) override;
+    std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies) override;
+    bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<Cookie>&) override;
     void deleteCookie(const NetworkStorageSession&, const URL&, const String&) override;
     void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames) override;
     void deleteCookiesForHostnames(const NetworkStorageSession&, const Vector<String>& cookieHostNames) override;

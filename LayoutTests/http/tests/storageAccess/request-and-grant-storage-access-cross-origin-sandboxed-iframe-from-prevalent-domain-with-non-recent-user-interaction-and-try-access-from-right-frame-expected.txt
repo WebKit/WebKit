@@ -16,7 +16,7 @@ Frame: 'TheIframeThatRequestsStorageAccess'
 After access granted, should receive first-party cookie.
 Received cookie named 'firstPartyCookie'.
 Did not receive cookie named 'partitionedCookie'.
-Client-side document.cookie: partitionedCookie=value
+Client-side document.cookie: firstPartyCookie=value
 
 --------
 Frame: '<!--framePath //<!--frame1-->-->'

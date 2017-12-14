@@ -41,11 +41,11 @@ enum class IncludeSecureCookies;
 
 // FIXME: These should probably be NetworkStorageSession member functions.
 
-WEBCORE_EXPORT std::pair<String, bool> cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, IncludeSecureCookies);
-WEBCORE_EXPORT void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, const String&);
+WEBCORE_EXPORT std::pair<String, bool> cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies);
+WEBCORE_EXPORT void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String&);
 WEBCORE_EXPORT bool cookiesEnabled(const NetworkStorageSession&);
-WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&, IncludeSecureCookies);
-WEBCORE_EXPORT bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, Vector<Cookie>&);
+WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies);
+WEBCORE_EXPORT bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<Cookie>&);
 WEBCORE_EXPORT void deleteCookie(const NetworkStorageSession&, const URL&, const String&);
 WEBCORE_EXPORT void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames);
 WEBCORE_EXPORT void deleteCookiesForHostnames(const NetworkStorageSession&, const Vector<String>& cookieHostNames);

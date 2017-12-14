@@ -50,8 +50,10 @@ static inline bool httpOnlyCookieExists(const GSList* cookies, const gchar* name
     return false;
 }
 
-void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& value)
+void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String& value)
 {
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(pageID);
     SoupCookieJar* jar = session.cookieStorage();
 
     GUniquePtr<SoupURI> origin = url.createSoupURI();
@@ -116,13 +118,17 @@ static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& se
     return { String::fromUTF8(cookieHeader.get()), didAccessSecureCookies };
 }
 
-std::pair<String, bool> cookiesForDOM(const NetworkStorageSession& session, const URL&, const URL& url, IncludeSecureCookies includeSecureCookies)
+std::pair<String, bool> cookiesForDOM(const NetworkStorageSession& session, const URL&, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies)
 {
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(pageID);
     return cookiesForSession(session, url, false, includeSecureCookies);
 }
 
-std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& url, IncludeSecureCookies includeSecureCookies)
+std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies)
 {
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(pageID);
     // Secure cookies will still only be included if url's protocol is https.
     return cookiesForSession(session, url, true, includeSecureCookies);
 }
@@ -133,8 +139,10 @@ bool cookiesEnabled(const NetworkStorageSession& session)
     return policy == SOUP_COOKIE_JAR_ACCEPT_ALWAYS || policy == SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
 }
 
-bool getRawCookies(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& url, Vector<Cookie>& rawCookies)
+bool getRawCookies(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<Cookie>& rawCookies)
 {
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(pageID);
     rawCookies.clear();
     GUniquePtr<SoupURI> uri = url.createSoupURI();
     GUniquePtr<GSList> cookies(soup_cookie_jar_get_cookie_list(session.cookieStorage(), uri.get(), TRUE));

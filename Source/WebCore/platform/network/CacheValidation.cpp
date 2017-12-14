@@ -348,9 +348,9 @@ static String headerValueForVary(const ResourceRequest& request, const String& h
         auto* cookieStrategy = platformStrategies() ? platformStrategies()->cookiesStrategy() : nullptr;
         if (!cookieStrategy) {
             ASSERT(sessionID == PAL::SessionID::defaultSessionID());
-            return cookieRequestHeaderFieldValue(NetworkStorageSession::defaultStorageSession(), request.firstPartyForCookies(), request.url(), includeSecureCookies).first;
+            return cookieRequestHeaderFieldValue(NetworkStorageSession::defaultStorageSession(), request.firstPartyForCookies(), request.url(), std::nullopt, std::nullopt, includeSecureCookies).first;
         }
-        return cookieStrategy->cookieRequestHeaderFieldValue(sessionID, request.firstPartyForCookies(), request.url(), includeSecureCookies).first;
+        return cookieStrategy->cookieRequestHeaderFieldValue(sessionID, request.firstPartyForCookies(), request.url(), std::nullopt, std::nullopt, includeSecureCookies).first;
     }
     return request.httpHeaderField(headerName);
 }

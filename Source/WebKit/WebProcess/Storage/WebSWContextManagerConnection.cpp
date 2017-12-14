@@ -84,8 +84,8 @@ private:
     void frameLoaderDestroyed() final { m_connection.removeFrameLoaderClient(*this); }
 
     PAL::SessionID sessionID() const final { return m_sessionID; }
-    uint64_t pageID() const final { return m_pageID; }
-    uint64_t frameID() const final { return m_frameID; }
+    std::optional<uint64_t> pageID() const final { return m_pageID; }
+    std::optional<uint64_t> frameID() const final { return m_frameID; }
     String userAgent(const URL&) final { return m_userAgent; }
 
     WebSWContextManagerConnection& m_connection;

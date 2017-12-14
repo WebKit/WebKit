@@ -239,8 +239,10 @@ static String getNetscapeCookieFormat(const URL& url, const String& value)
     return cookieStr.toString();
 }
 
-void CookieJarCurlFileSystem::setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL& url, const String& value)
+void CookieJarCurlFileSystem::setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String& value)
 {
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(pageID);
     CurlHandle curlHandle;
 
     curlHandle.enableShareHandle();
@@ -287,14 +289,18 @@ static String cookiesForSession(const NetworkStorageSession&, const URL&, const 
     return cookies;
 }
 
-std::pair<String, bool> CookieJarCurlFileSystem::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeSecureCookies)
+std::pair<String, bool> CookieJarCurlFileSystem::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies)
 {
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(pageID);
     // FIXME: This should filter secure cookies out if the caller requests it.
     return { cookiesForSession(session, firstParty, url, false), false };
 }
 
-std::pair<String, bool> CookieJarCurlFileSystem::cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeSecureCookies)
+std::pair<String, bool> CookieJarCurlFileSystem::cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies)
 {
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(pageID);
     // FIXME: This should filter secure cookies out if the caller requests it.
     return { cookiesForSession(session, firstParty, url, true), false };
 }
@@ -304,8 +310,10 @@ bool CookieJarCurlFileSystem::cookiesEnabled(const NetworkStorageSession&)
     return true;
 }
 
-bool CookieJarCurlFileSystem::getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, Vector<Cookie>& rawCookies)
+bool CookieJarCurlFileSystem::getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<Cookie>& rawCookies)
 {
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(pageID);
     // FIXME: Not yet implemented
     rawCookies.clear();
     return false; // return true when implemented
@@ -338,19 +346,19 @@ void CookieJarCurlFileSystem::deleteAllCookiesModifiedSince(const NetworkStorage
 
 // dispatcher functions
 
-std::pair<String, bool> cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeSecureCookies includeSecureCookies)
+std::pair<String, bool> cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies)
 {
-    return CurlContext::singleton().cookieJar().cookiesForDOM(session, firstParty, url, includeSecureCookies);
+    return CurlContext::singleton().cookieJar().cookiesForDOM(session, firstParty, url, frameID, pageID, includeSecureCookies);
 }
 
-void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& value)
+void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String& value)
 {
-    CurlContext::singleton().cookieJar().setCookiesFromDOM(session, firstParty, url, value);
+    CurlContext::singleton().cookieJar().setCookiesFromDOM(session, firstParty, url, frameID, pageID, value);
 }
 
-std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeSecureCookies includeSecureCookies)
+std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies)
 {
-    return CurlContext::singleton().cookieJar().cookieRequestHeaderFieldValue(session, firstParty, url, includeSecureCookies);
+    return CurlContext::singleton().cookieJar().cookieRequestHeaderFieldValue(session, firstParty, url, frameID, pageID, includeSecureCookies);
 }
 
 bool cookiesEnabled(const NetworkStorageSession& session)
@@ -358,9 +366,9 @@ bool cookiesEnabled(const NetworkStorageSession& session)
     return CurlContext::singleton().cookieJar().cookiesEnabled(session);
 }
 
-bool getRawCookies(const NetworkStorageSession& session, const URL& firstParty, const URL& url, Vector<Cookie>& rawCookies)
+bool getRawCookies(const NetworkStorageSession& session, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<Cookie>& rawCookies)
 {
-    return CurlContext::singleton().cookieJar().getRawCookies(session, firstParty, url, rawCookies);
+    return CurlContext::singleton().cookieJar().getRawCookies(session, firstParty, url, frameID, pageID, rawCookies);
 }
 
 void deleteCookie(const NetworkStorageSession& session, const URL& url, const String& cookie)

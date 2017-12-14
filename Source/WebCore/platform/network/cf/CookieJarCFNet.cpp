@@ -138,8 +138,10 @@ static CFArrayRef createCookies(CFDictionaryRef headerFields, CFURLRef url)
     return parsedCookies;
 }
 
-void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& value)
+void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String& value)
 {
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(pageID);
     // <rdar://problem/5632883> CFHTTPCookieStorage stores an empty cookie, which would be sent as "Cookie: =".
     if (value.isEmpty())
         return;
@@ -172,8 +174,10 @@ static bool containsSecureCookies(CFArrayRef cookies)
     return false;
 }
 
-std::pair<String, bool> cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeSecureCookies includeSecureCookies)
+std::pair<String, bool> cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies)
 {
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(pageID);
     RetainPtr<CFArrayRef> cookiesCF = copyCookiesForURLWithFirstPartyURL(session, firstParty, url, includeSecureCookies);
 
     auto filteredCookies = filterCookies(cookiesCF.get());
@@ -185,8 +189,10 @@ std::pair<String, bool> cookiesForDOM(const NetworkStorageSession& session, cons
     return { cookieString, didAccessSecureCookies };
 }
 
-std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeSecureCookies includeSecureCookies)
+std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies)
 {
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(pageID);
     RetainPtr<CFArrayRef> cookiesCF = copyCookiesForURLWithFirstPartyURL(session, firstParty, url, includeSecureCookies);
 
     bool didAccessSecureCookies = containsSecureCookies(cookiesCF.get());
@@ -202,8 +208,10 @@ bool cookiesEnabled(const NetworkStorageSession& session)
     return policy == CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain || policy == CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain || policy == CFHTTPCookieStorageAcceptPolicyAlways;
 }
 
-bool getRawCookies(const NetworkStorageSession& session, const URL& firstParty, const URL& url, Vector<Cookie>& rawCookies)
+bool getRawCookies(const NetworkStorageSession& session, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<Cookie>& rawCookies)
 {
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(pageID);
     rawCookies.clear();
 
     auto includeSecureCookies = url.protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;

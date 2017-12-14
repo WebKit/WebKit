@@ -7522,10 +7522,14 @@ void Document::requestStorageAccess(Ref<DeferredPromise>&& passedPromise)
     ASSERT(m_frame);
     auto frameID = m_frame->loader().client().frameID();
     auto pageID = m_frame->loader().client().pageID();
+    if (!frameID || !pageID) {
+        promise->reject();
+        return;
+    }
 
     // FIXME: Don't use runJavaScriptConfirm because it responds synchronously.
     if ((page && page->chrome().runJavaScriptConfirm(*m_frame, builder.toString())) || m_grantStorageAccessOverride) {
-        page->chrome().client().requestStorageAccess(WTFMove(iframeHost), WTFMove(topHost), frameID, pageID, [documentReference = m_weakFactory.createWeakPtr(*this), promise] (bool wasGranted) {
+        page->chrome().client().requestStorageAccess(WTFMove(iframeHost), WTFMove(topHost), frameID.value(), pageID.value(), [documentReference = m_weakFactory.createWeakPtr(*this), promise] (bool wasGranted) {
             Document* document = documentReference.get();
             if (!document)
                 return;

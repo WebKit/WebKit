@@ -106,14 +106,20 @@ WebFrameLoaderClient::~WebFrameLoaderClient()
 {
 }
 
-uint64_t WebFrameLoaderClient::pageID() const
+std::optional<uint64_t> WebFrameLoaderClient::pageID() const
 {
-    return m_frame && m_frame->page() ? m_frame->page()->pageID() : 0;
+    if (m_frame && m_frame->page())
+        return m_frame->page()->pageID();
+
+    return std::nullopt;
 }
 
-uint64_t WebFrameLoaderClient::frameID() const
+std::optional<uint64_t> WebFrameLoaderClient::frameID() const
 {
-    return m_frame ? m_frame->frameID() : 0;
+    if (m_frame)
+        return m_frame->frameID();
+
+    return std::nullopt;
 }
 
 PAL::SessionID WebFrameLoaderClient::sessionID() const

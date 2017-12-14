@@ -158,8 +158,8 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     auto& frameLoaderClient = resourceLoader.frameLoader()->client();
 
     WebResourceLoader::TrackingParameters trackingParameters;
-    trackingParameters.pageID = frameLoaderClient.pageID();
-    trackingParameters.frameID = frameLoaderClient.frameID();
+    trackingParameters.pageID = frameLoaderClient.pageID().value();
+    trackingParameters.frameID = frameLoaderClient.frameID().value();
     trackingParameters.resourceID = identifier;
     auto sessionID = frameLoaderClient.sessionID();
 

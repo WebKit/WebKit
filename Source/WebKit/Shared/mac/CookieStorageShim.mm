@@ -61,7 +61,7 @@ static CFDictionaryRef webKitCookieStorageCopyRequestHeaderFieldsForURL(CFHTTPCo
     String cookies;
     bool secureCookiesAccessed = false;
     URL firstPartyForCookiesURL;
-    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(PAL::SessionID::defaultSessionID(), firstPartyForCookiesURL, inRequestURL, includeSecureCookies), Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue::Reply(cookies, secureCookiesAccessed), 0))
+    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(PAL::SessionID::defaultSessionID(), firstPartyForCookiesURL, inRequestURL, std::nullopt, std::nullopt, includeSecureCookies), Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue::Reply(cookies, secureCookiesAccessed), 0))
         return 0;
 
     if (cookies.isNull())

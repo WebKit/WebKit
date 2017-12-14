@@ -101,11 +101,11 @@ private:
     void startDownload(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, const String& suggestedName = { });
     void convertMainResourceLoadToDownload(PAL::SessionID, uint64_t mainResourceLoadIdentifier, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
-    void cookiesForDOM(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, WebCore::IncludeSecureCookies, String& cookieString, bool& secureCookiesAccessed);
-    void setCookiesFromDOM(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, const String&);
+    void cookiesForDOM(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, WebCore::IncludeSecureCookies, String& cookieString, bool& secureCookiesAccessed);
+    void setCookiesFromDOM(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String&);
     void cookiesEnabled(PAL::SessionID, bool& result);
-    void cookieRequestHeaderFieldValue(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, WebCore::IncludeSecureCookies, String& cookieString, bool& secureCookiesAccessed);
-    void getRawCookies(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, Vector<WebCore::Cookie>&);
+    void cookieRequestHeaderFieldValue(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, WebCore::IncludeSecureCookies, String& cookieString, bool& secureCookiesAccessed);
+    void getRawCookies(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<WebCore::Cookie>&);
     void deleteCookie(PAL::SessionID, const WebCore::URL&, const String& cookieName);
 
     void registerFileBlobURL(const WebCore::URL&, const String& path, SandboxExtension::Handle&&, const String& contentType);

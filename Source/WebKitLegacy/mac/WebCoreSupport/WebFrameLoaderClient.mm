@@ -201,16 +201,14 @@ WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
 {
 }
 
-uint64_t WebFrameLoaderClient::pageID() const
+std::optional<uint64_t> WebFrameLoaderClient::pageID() const
 {
-    RELEASE_ASSERT_NOT_REACHED();
-    return 0;
+    return std::nullopt;
 }
 
-uint64_t WebFrameLoaderClient::frameID() const
+std::optional<uint64_t> WebFrameLoaderClient::frameID() const
 {
-    RELEASE_ASSERT_NOT_REACHED();
-    return 0;
+    return std::nullopt;
 }
 
 PAL::SessionID WebFrameLoaderClient::sessionID() const

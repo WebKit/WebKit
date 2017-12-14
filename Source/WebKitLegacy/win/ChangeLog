@@ -1,3 +1,33 @@
+2017-12-14  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Implement frame-specific access in the document.cookie layer
+        https://bugs.webkit.org/show_bug.cgi?id=180682
+        <rdar://problem/35982257>
+
+        Reviewed by Alex Christensen.
+
+        CookiesStrategy::cookiesForDOM(), CookiesStrategy::setCookiesFromDOM(),
+        CookiesStrategy::cookieRequestHeaderFieldValue(), and
+        CookiesStrategy::getRawCookies() now take optional parameters for
+        frameID and pageID to allow frame-specific scoping of cookies.
+
+        This change makes the return values of FrameLoaderClient::frameID()
+        and FrameLoaderClient::pageID() std::optional<uint64_t> so that
+        WebCore can call those getters and get the right return values in
+        WebKit and std:nullopt in WebKitLegacy.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::pageID const):
+        (WebFrameLoaderClient::frameID const):
+            Now return an optional.
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::cookiesForDOM):
+        (WebPlatformStrategies::setCookiesFromDOM):
+        (WebPlatformStrategies::cookieRequestHeaderFieldValue):
+        (WebPlatformStrategies::getRawCookies):
+        * WebCoreSupport/WebPlatformStrategies.h:
+
 2017-12-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Thread::create should have Thread::tryCreate

@@ -32,8 +32,8 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
 
     void frameLoaderDestroyed() override { }
 
-    uint64_t frameID() const override { return 0; }
-    uint64_t pageID() const override { return 0; }
+    std::optional<uint64_t> frameID() const override { return std::nullopt; }
+    std::optional<uint64_t> pageID() const override { return std::nullopt; }
     PAL::SessionID sessionID() const override;
 
     bool hasWebView() const final { return true; } // mainly for assertions

@@ -62,8 +62,8 @@ private:
     void frameLoaderDestroyed() final;
     bool hasWebView() const final; // mainly for assertions
 
-    uint64_t pageID() const final;
-    uint64_t frameID() const final;
+    std::optional<uint64_t> pageID() const final;
+    std::optional<uint64_t> frameID() const final;
     PAL::SessionID sessionID() const final;
 
     void makeRepresentation(WebCore::DocumentLoader*) final;
