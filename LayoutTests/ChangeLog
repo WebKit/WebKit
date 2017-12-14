@@ -1,3 +1,22 @@
+2017-12-13  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement the play() and pause() methods on Animation
+        https://bugs.webkit.org/show_bug.cgi?id=178932
+        <rdar://problem/35271069>
+
+        Reviewed by Eric Carlson.
+
+        Rebase some WPT expectations with progressions due to exposing the play() and pause() methods.
+
+        * TestExpectations: Temporarily mark a test as flaky as it logs an unexpected current time which
+        may change between runs.
+        * http/wpt/web-animations/interfaces/Animation/idlharness-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/startTime-expected.txt:
+        * http/wpt/web-animations/interfaces/KeyframeEffect/setTarget-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/current-time-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/set-the-target-effect-of-an-animation-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/set-the-timeline-of-an-animation-expected.txt:
+
 2017-12-14  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Remove properties tests covered by WPT

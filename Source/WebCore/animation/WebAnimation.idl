@@ -48,4 +48,6 @@ enum AnimationPlayState {
     attribute EventHandler onfinish;
     readonly attribute Promise<WebAnimation> ready;
     readonly attribute Promise<WebAnimation> finished;
+    [MayThrowException] void play();
+    [MayThrowException] void pause();
 };

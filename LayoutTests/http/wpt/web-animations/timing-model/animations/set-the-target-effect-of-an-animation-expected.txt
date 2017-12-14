@@ -1,8 +1,8 @@
 
 FAIL If new effect is null and old effect is not null, we reset the pending tasks and ready promise is rejected createDiv(t).animate is not a function. (In 'createDiv(t).animate({ marginLeft: [ '0px', '100px' ] },
                                   100 * MS_PER_SEC)', 'createDiv(t).animate' is undefined)
-FAIL If animation has a pending pause task, reschedule that task to run as soon as animation is ready. anim.pause is not a function. (In 'anim.pause()', 'anim.pause' is undefined)
-FAIL If animation has a pending play task, reschedule that task to run as soon as animation is ready to play new effect. anim.play is not a function. (In 'anim.play()', 'anim.play' is undefined)
+FAIL If animation has a pending pause task, reschedule that task to run as soon as animation is ready. assert_equals: expected "pending" but got "paused"
+FAIL If animation has a pending play task, reschedule that task to run as soon as animation is ready to play new effect. assert_equals: expected "pending" but got "finished"
 FAIL When setting the effect of an animation to the effect of an existing animation, the existing animation's target effect should be set to null. createDiv(t).animate is not a function. (In 'createDiv(t).animate({ marginLeft: [ '0px', '100px' ] },
                                    100 * MS_PER_SEC)', 'createDiv(t).animate' is undefined)
 FAIL After setting the target effect of animation to the target effect of an existing animation, the target effect's timing is updated to reflect the current time of the new animation. createDiv(t).animate is not a function. (In 'createDiv(t).animate({ marginLeft: [ '0px', '100px' ] },

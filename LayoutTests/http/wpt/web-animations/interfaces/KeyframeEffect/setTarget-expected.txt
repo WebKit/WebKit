@@ -1,6 +1,6 @@
 
 FAIL Test setting target before constructing the associated animation Attempted to assign to readonly property.
-FAIL Test setting target from null to a valid target anim.play is not a function. (In 'anim.play()', 'anim.play' is undefined)
+FAIL Test setting target from null to a valid target Attempted to assign to readonly property.
 FAIL Test setting target from a valid target to null div.animate is not a function. (In 'div.animate(gKeyFrames, 100 * MS_PER_SEC)', 'div.animate' is undefined)
 FAIL Test setting target from a valid target to another target a.animate is not a function. (In 'a.animate(gKeyFrames, 100 * MS_PER_SEC)', 'a.animate' is undefined)
 

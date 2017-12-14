@@ -18,8 +18,8 @@ PASS Animation interface: attribute onfinish
 FAIL Animation interface: attribute oncancel assert_true: The prototype object must have a property "oncancel" expected true got false
 FAIL Animation interface: operation cancel() assert_own_property: interface prototype object missing non-static operation expected property "cancel" missing
 FAIL Animation interface: operation finish() assert_own_property: interface prototype object missing non-static operation expected property "finish" missing
-FAIL Animation interface: operation play() assert_own_property: interface prototype object missing non-static operation expected property "play" missing
-FAIL Animation interface: operation pause() assert_own_property: interface prototype object missing non-static operation expected property "pause" missing
+PASS Animation interface: operation play() 
+PASS Animation interface: operation pause() 
 FAIL Animation interface: operation reverse() assert_own_property: interface prototype object missing non-static operation expected property "reverse" missing
 PASS Animation must be primary interface of new Animation() 
 PASS Stringification of new Animation() 
@@ -36,7 +36,7 @@ PASS Animation interface: new Animation() must inherit property "onfinish" with 
 FAIL Animation interface: new Animation() must inherit property "oncancel" with the proper type assert_inherits: property "oncancel" not found in prototype chain
 FAIL Animation interface: new Animation() must inherit property "cancel()" with the proper type assert_inherits: property "cancel" not found in prototype chain
 FAIL Animation interface: new Animation() must inherit property "finish()" with the proper type assert_inherits: property "finish" not found in prototype chain
-FAIL Animation interface: new Animation() must inherit property "play()" with the proper type assert_inherits: property "play" not found in prototype chain
-FAIL Animation interface: new Animation() must inherit property "pause()" with the proper type assert_inherits: property "pause" not found in prototype chain
+PASS Animation interface: new Animation() must inherit property "play()" with the proper type 
+PASS Animation interface: new Animation() must inherit property "pause()" with the proper type 
 FAIL Animation interface: new Animation() must inherit property "reverse()" with the proper type assert_inherits: property "reverse" not found in prototype chain
 

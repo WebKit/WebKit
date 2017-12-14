@@ -70,14 +70,16 @@ public:
     enum class PlayState { Idle, Pending, Running, Paused, Finished };
     PlayState playState() const;
 
-    // FIXME: return a live value once we support pending pause and play tasks.
-    bool pending() const { return false; }
+    bool pending() const { return hasPendingPauseTask() || hasPendingPlayTask(); }
 
     using ReadyPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<WebAnimation>>;
     ReadyPromise& ready() { return m_readyPromise; }
 
     using FinishedPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<WebAnimation>>;
     FinishedPromise& finished() { return m_finishedPromise; }
+
+    ExceptionOr<void> play();
+    ExceptionOr<void> pause();
 
     Seconds timeToNextRequiredTick(Seconds) const;
     void resolve(RenderStyle&);
@@ -97,6 +99,8 @@ private:
     explicit WebAnimation(Document&);
 
     enum class RespectHoldTime { Yes, No };
+    enum class AutoRewind { Yes, No };
+    enum class TimeToRunPendingTask { NotScheduled, ASAP, WhenReady };
 
     void enqueueAnimationPlaybackEvent(const AtomicString&, std::optional<Seconds>, std::optional<Seconds>);
     Seconds effectEndTime() const;
@@ -106,6 +110,14 @@ private:
     void finishNotificationSteps();
     void scheduleMicrotaskIfNeeded();
     void performMicrotask();
+    void setTimeToRunPendingPauseTask(TimeToRunPendingTask);
+    void setTimeToRunPendingPlayTask(TimeToRunPendingTask);
+    bool hasPendingPauseTask() const { return m_timeToRunPendingPauseTask != TimeToRunPendingTask::NotScheduled; }
+    bool hasPendingPlayTask() const { return m_timeToRunPendingPlayTask != TimeToRunPendingTask::NotScheduled; }
+    void updatePendingTasks();
+    ExceptionOr<void> play(AutoRewind);
+    void runPendingPauseTask();
+    void runPendingPlayTask();
     
     RefPtr<AnimationEffect> m_effect;
     RefPtr<AnimationTimeline> m_timeline;
@@ -118,6 +130,8 @@ private:
     bool m_scheduledMicrotask;
     ReadyPromise m_readyPromise;
     FinishedPromise m_finishedPromise;
+    TimeToRunPendingTask m_timeToRunPendingPlayTask { TimeToRunPendingTask::NotScheduled };
+    TimeToRunPendingTask m_timeToRunPendingPauseTask { TimeToRunPendingTask::NotScheduled };
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;

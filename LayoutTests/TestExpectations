@@ -1640,6 +1640,7 @@ webkit.org/b/179069 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 webkit.org/b/179287 http/wpt/web-animations/interfaces/AnimationTimeline/document-timeline.html [ Pass Failure ]
 webkit.org/b/179287 http/wpt/web-animations/timing-model/animations/set-the-animation-start-time.html [ Pass Failure ]
+webkit.org/b/179287 http/wpt/web-animations/interfaces/Animation/startTime.html [ Pass Failure ]
 
 webkit.org/b/177440 imported/w3c/web-platform-tests/html/browsers/origin/relaxing-the-same-origin-restriction/document_domain_setter_null.tentative.html [ Pass Failure ]
 
