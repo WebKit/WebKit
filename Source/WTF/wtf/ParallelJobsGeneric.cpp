@@ -94,14 +94,14 @@ bool ParallelEnvironment::ThreadPrivate::tryLockFor(ParallelEnvironment* parent)
     }
 
     if (!m_thread) {
-        m_thread = Thread::tryCreate("Parallel worker", [this] {
+        m_thread = Thread::create("Parallel worker", [this] {
             LockHolder lock(m_mutex);
 
-            while (m_thread) {
+            while (true) {
                 if (m_running) {
                     (*m_threadFunction)(m_parameters);
                     m_running = false;
-                    m_parent = 0;
+                    m_parent = nullptr;
                     m_threadCondition.notifyOne();
                 }
 
@@ -109,12 +109,10 @@ bool ParallelEnvironment::ThreadPrivate::tryLockFor(ParallelEnvironment* parent)
             }
         });
     }
-
-    if (m_thread)
-        m_parent = parent;
+    m_parent = parent;
 
     m_mutex.unlock();
-    return m_thread;
+    return true;
 }
 
 void ParallelEnvironment::ThreadPrivate::execute(ThreadFunction threadFunction, void* parameters)

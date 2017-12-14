@@ -41,7 +41,7 @@ public:
     StorageThread();
     ~StorageThread();
 
-    bool start();
+    void start();
     void terminate();
 
     void dispatch(Function<void ()>&&);

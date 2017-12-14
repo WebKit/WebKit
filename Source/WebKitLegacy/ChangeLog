@@ -1,3 +1,14 @@
+2017-12-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Drop Thread::tryCreate
+        https://bugs.webkit.org/show_bug.cgi?id=180808
+
+        Reviewed by Darin Adler.
+
+        * Storage/StorageThread.cpp:
+        (WebCore::StorageThread::start):
+        * Storage/StorageThread.h:
+
 2017-12-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Thread::create should have Thread::tryCreate

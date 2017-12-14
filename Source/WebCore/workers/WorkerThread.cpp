@@ -130,21 +130,19 @@ WorkerThread::~WorkerThread()
     workerThreads().remove(this);
 }
 
-bool WorkerThread::start(WTF::Function<void(const String&)>&& evaluateCallback)
+void WorkerThread::start(WTF::Function<void(const String&)>&& evaluateCallback)
 {
     // Mutex protection is necessary to ensure that m_thread is initialized when the thread starts.
     LockHolder lock(m_threadCreationAndWorkerGlobalScopeMutex);
 
     if (m_thread)
-        return true;
+        return;
 
     m_evaluateCallback = WTFMove(evaluateCallback);
 
-    m_thread = Thread::tryCreate("WebCore: Worker", [this] {
+    m_thread = Thread::create("WebCore: Worker", [this] {
         workerThread();
     });
-
-    return m_thread;
 }
 
 void WorkerThread::workerThread()

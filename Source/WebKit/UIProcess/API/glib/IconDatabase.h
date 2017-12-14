@@ -285,7 +285,7 @@ private:
     Ref<IconRecord> getOrCreateIconRecord(const String& iconURL);
     PageURLRecord* getOrCreatePageURLRecord(const String& pageURL);
 
-    bool m_isEnabled {false };
+    bool m_isEnabled { false };
     bool m_privateBrowsingEnabled { false };
 
     mutable Lock m_syncLock;

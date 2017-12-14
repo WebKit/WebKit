@@ -129,7 +129,7 @@ void Thread::entryPoint(NewThreadContext* newThreadContext)
     function();
 }
 
-RefPtr<Thread> Thread::tryCreate(const char* name, Function<void()>&& entryPoint)
+Ref<Thread> Thread::create(const char* name, Function<void()>&& entryPoint)
 {
     WTF::initializeThreading();
     Ref<Thread> thread = adoptRef(*new Thread());
@@ -142,10 +142,8 @@ RefPtr<Thread> Thread::tryCreate(const char* name, Function<void()>&& entryPoint
     context->ref();
     {
         MutexLocker locker(context->mutex);
-        if (!thread->establishHandle(context.ptr())) {
-            context->deref();
-            return nullptr;
-        }
+        bool success = thread->establishHandle(context.ptr());
+        RELEASE_ASSERT(success);
         context->stage = NewThreadContext::Stage::EstablishedHandle;
 
 #if HAVE(STACK_BOUNDS_FOR_NEW_THREAD)
@@ -160,7 +158,7 @@ RefPtr<Thread> Thread::tryCreate(const char* name, Function<void()>&& entryPoint
     }
 
     ASSERT(!thread->stack().isEmpty());
-    return WTFMove(thread);
+    return thread;
 }
 
 static bool shouldRemoveThreadFromThreadGroup()

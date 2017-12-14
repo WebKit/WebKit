@@ -63,7 +63,7 @@ class WorkerThread : public ThreadSafeRefCounted<WorkerThread> {
 public:
     virtual ~WorkerThread();
 
-    WEBCORE_EXPORT bool start(WTF::Function<void(const String&)>&& evaluateCallback);
+    WEBCORE_EXPORT void start(WTF::Function<void(const String&)>&& evaluateCallback);
     void stop(WTF::Function<void()>&& terminatedCallback);
 
     Thread* thread() const { return m_thread.get(); }

@@ -1,3 +1,26 @@
+2017-12-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Drop Thread::tryCreate
+        https://bugs.webkit.org/show_bug.cgi?id=180808
+
+        Reviewed by Darin Adler.
+
+        We remove Thread::tryCreate. When thread creation fails, we have no way to keep WebKit working.
+        Compared to tryMalloc, Thread::create always consumes fixed size of resource. If it fails,
+        this is not due to arbitrary large user request. It is not reasonable that some thread creations
+        are handled gracefully while the other thread creations are not.
+
+        If we would like to have the limit of number of users' thread creation (like, calling `new Worker`
+        so many times), we should have a soft limit instead of relying on system's hard limit.
+
+        * wtf/ParallelJobsGeneric.cpp:
+        (WTF::ParallelEnvironment::ThreadPrivate::tryLockFor):
+        * wtf/Threading.cpp:
+        (WTF::Thread::create):
+        (WTF::Thread::tryCreate): Deleted.
+        * wtf/Threading.h:
+        (WTF::Thread::create): Deleted.
+
 2017-12-13  Keith Miller  <keith_miller@apple.com>
 
         JSObjects should have a mask for loading indexed properties
