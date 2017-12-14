@@ -89,7 +89,7 @@ protected:
     WEBCORE_EXPORT void jobRejectedInServer(const ServiceWorkerJobDataIdentifier&, const ExceptionData&);
     WEBCORE_EXPORT void registrationJobResolvedInServer(const ServiceWorkerJobDataIdentifier&, ServiceWorkerRegistrationData&&, ShouldNotifyWhenResolved);
     WEBCORE_EXPORT void unregistrationJobResolvedInServer(const ServiceWorkerJobDataIdentifier&, bool unregistrationResult);
-    WEBCORE_EXPORT void startScriptFetchForServer(const ServiceWorkerJobDataIdentifier&);
+    WEBCORE_EXPORT void startScriptFetchForServer(const ServiceWorkerJobDataIdentifier&, FetchOptions::Cache);
     WEBCORE_EXPORT void postMessageToServiceWorkerClient(DocumentIdentifier destinationContextIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerData&& source, const String& sourceOrigin);
     WEBCORE_EXPORT void updateRegistrationState(ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerData>&);
     WEBCORE_EXPORT void updateWorkerState(ServiceWorkerIdentifier, ServiceWorkerState);

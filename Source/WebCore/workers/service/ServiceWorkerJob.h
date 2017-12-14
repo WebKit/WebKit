@@ -58,7 +58,7 @@ public:
     void failedWithException(const Exception&);
     void resolvedWithRegistration(ServiceWorkerRegistrationData&&, ShouldNotifyWhenResolved);
     void resolvedWithUnregistrationResult(bool);
-    void startScriptFetch();
+    void startScriptFetch(FetchOptions::Cache);
 
     using Identifier = ServiceWorkerJobIdentifier;
     Identifier identifier() const { return m_jobData.identifier().jobIdentifier; }
@@ -66,7 +66,7 @@ public:
     ServiceWorkerJobData data() const { return m_jobData; }
     DeferredPromise& promise() { return m_promise.get(); }
 
-    void fetchScriptWithContext(ScriptExecutionContext&);
+    void fetchScriptWithContext(ScriptExecutionContext&, FetchOptions::Cache);
 
     const DocumentOrWorkerIdentifier& contextIdentifier() { return m_contextIdentifier; }
 

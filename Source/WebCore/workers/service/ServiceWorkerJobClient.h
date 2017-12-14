@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "FetchOptions.h"
 #include "ServiceWorkerTypes.h"
 
 namespace WebCore {
@@ -46,7 +47,7 @@ public:
     virtual void jobFailedWithException(ServiceWorkerJob&, const Exception&) = 0;
     virtual void jobResolvedWithRegistration(ServiceWorkerJob&, ServiceWorkerRegistrationData&&, ShouldNotifyWhenResolved) = 0;
     virtual void jobResolvedWithUnregistrationResult(ServiceWorkerJob&, bool unregistrationResult) = 0;
-    virtual void startScriptFetchForJob(ServiceWorkerJob&) = 0;
+    virtual void startScriptFetchForJob(ServiceWorkerJob&, FetchOptions::Cache) = 0;
     virtual void jobFinishedLoadingScript(ServiceWorkerJob&, const String&) = 0;
     virtual void jobFailedLoadingScript(ServiceWorkerJob&, const ResourceError&, std::optional<Exception>&&) = 0;
 

@@ -101,7 +101,7 @@ public:
         virtual void rejectJobInClient(const ServiceWorkerJobDataIdentifier&, const ExceptionData&) = 0;
         virtual void resolveRegistrationJobInClient(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationData&, ShouldNotifyWhenResolved) = 0;
         virtual void resolveUnregistrationJobInClient(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, bool registrationResult) = 0;
-        virtual void startScriptFetchInClient(const ServiceWorkerJobDataIdentifier&) = 0;
+        virtual void startScriptFetchInClient(const ServiceWorkerJobDataIdentifier&, FetchOptions::Cache) = 0;
 
         struct RegistrationReadyRequest {
             SecurityOriginData topOrigin;
@@ -129,7 +129,7 @@ public:
     void rejectJob(const ServiceWorkerJobData&, const ExceptionData&);
     void resolveRegistrationJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationData&, ShouldNotifyWhenResolved);
     void resolveUnregistrationJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationKey&, bool unregistrationResult);
-    void startScriptFetch(const ServiceWorkerJobData&);
+    void startScriptFetch(const ServiceWorkerJobData&, FetchOptions::Cache);
 
     void postTask(CrossThreadTask&&);
     void postTaskReply(CrossThreadTask&&);

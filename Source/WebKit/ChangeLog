@@ -1,5 +1,17 @@
 2017-12-14  Chris Dumez  <cdumez@apple.com>
 
+        Service worker script fetching currently always uses the network cache
+        https://bugs.webkit.org/show_bug.cgi?id=180816
+
+        Reviewed by Alex Christensen.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::startScriptFetchInClient):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+
+2017-12-14  Chris Dumez  <cdumez@apple.com>
+
         StorageProcess::deleteWebsiteData() should ensure there is a SWServer for the given sessionID
         https://bugs.webkit.org/show_bug.cgi?id=180784
 

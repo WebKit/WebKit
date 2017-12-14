@@ -431,7 +431,7 @@ void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJo
     });
 }
 
-void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job)
+void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job, FetchOptions::Cache cachePolicy)
 {
 #ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());
@@ -449,7 +449,7 @@ void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job)
         return;
     }
 
-    job.fetchScriptWithContext(*context);
+    job.fetchScriptWithContext(*context, cachePolicy);
 }
 
 void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, const String& script)

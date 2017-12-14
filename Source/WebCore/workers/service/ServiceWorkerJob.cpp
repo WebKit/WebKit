@@ -77,22 +77,22 @@ void ServiceWorkerJob::resolvedWithUnregistrationResult(bool unregistrationResul
     m_client->jobResolvedWithUnregistrationResult(*this, unregistrationResult);
 }
 
-void ServiceWorkerJob::startScriptFetch()
+void ServiceWorkerJob::startScriptFetch(FetchOptions::Cache cachePolicy)
 {
     ASSERT(m_creationThread.ptr() == &Thread::current());
     ASSERT(!m_completed);
 
-    m_client->startScriptFetchForJob(*this);
+    m_client->startScriptFetchForJob(*this, cachePolicy);
 }
 
-void ServiceWorkerJob::fetchScriptWithContext(ScriptExecutionContext& context)
+void ServiceWorkerJob::fetchScriptWithContext(ScriptExecutionContext& context, FetchOptions::Cache cachePolicy)
 {
     ASSERT(m_creationThread.ptr() == &Thread::current());
     ASSERT(!m_completed);
 
     // FIXME: WorkerScriptLoader is the wrong loader class to use here, but there's nothing else better right now.
     m_scriptLoader = WorkerScriptLoader::create();
-    m_scriptLoader->loadAsynchronously(&context, m_jobData.scriptURL, FetchOptions::Mode::SameOrigin, ContentSecurityPolicyEnforcement::DoNotEnforce, "serviceWorkerScriptLoad:", this);
+    m_scriptLoader->loadAsynchronously(&context, m_jobData.scriptURL, FetchOptions::Mode::SameOrigin, cachePolicy, ContentSecurityPolicyEnforcement::DoNotEnforce, "serviceWorkerScriptLoad:", this);
 }
 
 void ServiceWorkerJob::didReceiveResponse(unsigned long, const ResourceResponse& response)

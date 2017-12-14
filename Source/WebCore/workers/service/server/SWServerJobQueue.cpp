@@ -307,7 +307,17 @@ void SWServerJobQueue::runUpdateJob(const ServiceWorkerJobData& job)
     if (job.type == ServiceWorkerJobType::Update && newestWorker && !equalIgnoringFragmentIdentifier(job.scriptURL, newestWorker->scriptURL()))
         return rejectCurrentJob(ExceptionData { TypeError, ASCIILiteral("Cannot update a service worker with a requested script URL whose newest worker has a different script URL") });
 
-    m_server.startScriptFetch(job);
+    FetchOptions::Cache cachePolicy = FetchOptions::Cache::Default;
+    // Set request's cache mode to "no-cache" if any of the following are true:
+    // - registration's update via cache mode is not "all".
+    // - job's force bypass cache flag is set.
+    // - newestWorker is not null, and registration's last update check time is not null and the time difference in seconds calculated by the
+    //   current time minus registration's last update check time is greater than 86400.
+    if (registration->updateViaCache() != ServiceWorkerUpdateViaCache::All
+        || (newestWorker && registration->lastUpdateTime() && (WallTime::now() - registration->lastUpdateTime()) > 86400_s)) {
+        cachePolicy = FetchOptions::Cache::NoCache;
+    }
+    m_server.startScriptFetch(job, cachePolicy);
 }
 
 void SWServerJobQueue::rejectCurrentJob(const ExceptionData& exceptionData)

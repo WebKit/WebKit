@@ -1,0 +1,2 @@
+PASS: The worker script came from the network cache
+

@@ -116,7 +116,7 @@ void SWClientConnection::unregistrationJobResolvedInServer(const ServiceWorkerJo
     });
 }
 
-void SWClientConnection::startScriptFetchForServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier)
+void SWClientConnection::startScriptFetchForServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, FetchOptions::Cache cachePolicy)
 {
     ASSERT(isMainThread());
 
@@ -131,8 +131,8 @@ void SWClientConnection::startScriptFetchForServer(const ServiceWorkerJobDataIde
         return;
     }
 
-    ScriptExecutionContext::postTaskTo(job->contextIdentifier(), [job](ScriptExecutionContext&) {
-        job->startScriptFetch();
+    ScriptExecutionContext::postTaskTo(job->contextIdentifier(), [job, cachePolicy](ScriptExecutionContext&) {
+        job->startScriptFetch(cachePolicy);
     });
 }
 

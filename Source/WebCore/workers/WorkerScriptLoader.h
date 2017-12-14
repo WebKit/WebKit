@@ -53,7 +53,7 @@ public:
     }
 
     void loadSynchronously(ScriptExecutionContext*, const URL&, FetchOptions::Mode, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier);
-    void loadAsynchronously(ScriptExecutionContext*, const URL&, FetchOptions::Mode, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier, WorkerScriptLoaderClient*);
+    void loadAsynchronously(ScriptExecutionContext*, const URL&, FetchOptions::Mode, FetchOptions::Cache, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier, WorkerScriptLoaderClient*);
 
     void notifyError();
 
