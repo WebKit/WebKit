@@ -101,6 +101,8 @@ WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfig
     configuration.applicationCacheDirectory = defaultApplicationCacheDirectory();
     configuration.networkCacheDirectory = defaultNetworkCacheDirectory();
 
+    configuration.indexedDBDatabaseDirectory = defaultIndexedDBDatabaseDirectory();
+    configuration.serviceWorkerRegistrationDirectory = defaultServiceWorkerRegistrationDirectory();
     configuration.webSQLDatabaseDirectory = defaultWebSQLDatabaseDirectory();
     configuration.localStorageDirectory = defaultLocalStorageDirectory();
     configuration.mediaKeysStorageDirectory = defaultMediaKeysStorageDirectory();
