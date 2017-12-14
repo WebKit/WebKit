@@ -1,3 +1,41 @@
+2017-12-14  Alex Christensen  <achristensen@webkit.org>
+
+        Make WebsitePolicies a proper class with getters and setters
+        https://bugs.webkit.org/show_bug.cgi?id=180788
+
+        Reviewed by Andy Estes.
+
+        Also introduce WebsitePolicies::applyToDocumentLoader to reduce duplicate code.
+        This has a side-effect of now applying custom http header fields and content blocking enabled status
+        when updating WebsitePolicies.  This will result in these being applied when a user updates
+        the per-site settings, and they weren't before.
+
+        * CMakeLists.txt:
+        * Shared/WebsitePolicies.cpp: Added.
+        (WebKit::WebsitePolicies::WebsitePolicies):
+        (WebKit::WebsitePolicies::encode const):
+        (WebKit::WebsitePolicies::decode):
+        (WebKit::WebsitePolicies::applyToDocumentLoader):
+        * Shared/WebsitePolicies.h:
+        (WebKit::WebsitePolicies::contentBlockersEnabled const):
+        (WebKit::WebsitePolicies::setContentBlockersEnabled):
+        (WebKit::WebsitePolicies::allowedAutoplayQuirks const):
+        (WebKit::WebsitePolicies::setAllowedAutoplayQuirks):
+        (WebKit::WebsitePolicies::autoplayPolicy const):
+        (WebKit::WebsitePolicies::setAutoplayPolicy):
+        (WebKit::WebsitePolicies::customHeaderFields):
+        (WebKit::WebsitePolicies::takeCustomHeaderFields):
+        (WebKit::WebsitePolicies::setCustomHeaderFields):
+        (WebKit::WebsitePolicies::encode const): Deleted.
+        (WebKit::WebsitePolicies::decode): Deleted.
+        * UIProcess/API/APIWebsitePolicies.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::applyToDocumentLoader):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateWebsitePolicies):
+        * WebProcess/WebPage/WebPage.h:
+
 2017-12-14  Chris Dumez  <cdumez@apple.com>
 
         Enable Service Workers on iOS

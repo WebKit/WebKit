@@ -37,17 +37,17 @@ public:
     explicit WebsitePolicies();
     virtual ~WebsitePolicies();
 
-    bool contentBlockersEnabled() const { return m_websitePolicies.contentBlockersEnabled; }
-    void setContentBlockersEnabled(bool enabled) { m_websitePolicies.contentBlockersEnabled = enabled; }
+    bool contentBlockersEnabled() const { return m_websitePolicies.contentBlockersEnabled(); }
+    void setContentBlockersEnabled(bool enabled) { m_websitePolicies.setContentBlockersEnabled(enabled); }
 
-    OptionSet<WebKit::WebsiteAutoplayQuirk> allowedAutoplayQuirks() const { return m_websitePolicies.allowedAutoplayQuirks; }
-    void setAllowedAutoplayQuirks(OptionSet<WebKit::WebsiteAutoplayQuirk> allowedQuirks) { m_websitePolicies.allowedAutoplayQuirks = allowedQuirks; }
+    OptionSet<WebKit::WebsiteAutoplayQuirk> allowedAutoplayQuirks() const { return m_websitePolicies.allowedAutoplayQuirks(); }
+    void setAllowedAutoplayQuirks(OptionSet<WebKit::WebsiteAutoplayQuirk> allowedQuirks) { m_websitePolicies.setAllowedAutoplayQuirks(allowedQuirks); }
 
-    WebKit::WebsiteAutoplayPolicy autoplayPolicy() const { return m_websitePolicies.autoplayPolicy; }
-    void setAutoplayPolicy(WebKit::WebsiteAutoplayPolicy policy) { m_websitePolicies.autoplayPolicy = policy; }
+    WebKit::WebsiteAutoplayPolicy autoplayPolicy() const { return m_websitePolicies.autoplayPolicy(); }
+    void setAutoplayPolicy(WebKit::WebsiteAutoplayPolicy policy) { m_websitePolicies.setAutoplayPolicy(policy); }
 
-    void setCustomHeaderFields(Vector<WebCore::HTTPHeaderField>&& customHeaderFields) { m_websitePolicies.customHeaderFields = WTFMove(customHeaderFields); };
-    const Vector<WebCore::HTTPHeaderField> customHeaderFields() { return m_websitePolicies.customHeaderFields; }
+    void setCustomHeaderFields(Vector<WebCore::HTTPHeaderField>&& customHeaderFields) { m_websitePolicies.setCustomHeaderFields(WTFMove(customHeaderFields)); };
+    const Vector<WebCore::HTTPHeaderField> customHeaderFields() { return m_websitePolicies.customHeaderFields(); }
 
     const WebKit::WebsitePolicies& websitePolicies() { return m_websitePolicies; }
     

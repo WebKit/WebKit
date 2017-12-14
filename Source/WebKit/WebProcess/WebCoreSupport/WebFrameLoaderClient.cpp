@@ -785,40 +785,7 @@ void WebFrameLoaderClient::applyToDocumentLoader(WebsitePolicies&& websitePolici
     if (!documentLoader)
         return;
 
-    documentLoader->setCustomHeaderFields(WTFMove(websitePolicies.customHeaderFields));
-
-    // Only setUserContentExtensionsEnabled if it hasn't already been disabled by reloading without content blockers.
-    if (documentLoader->userContentExtensionsEnabled())
-        documentLoader->setUserContentExtensionsEnabled(websitePolicies.contentBlockersEnabled);
-
-    OptionSet<AutoplayQuirk> quirks;
-    auto allowedQuirks = websitePolicies.allowedAutoplayQuirks;
-
-    if (allowedQuirks.contains(WebsiteAutoplayQuirk::InheritedUserGestures))
-        quirks |= AutoplayQuirk::InheritedUserGestures;
-
-    if (allowedQuirks.contains(WebsiteAutoplayQuirk::SynthesizedPauseEvents))
-        quirks |= AutoplayQuirk::SynthesizedPauseEvents;
-
-    if (allowedQuirks.contains(WebsiteAutoplayQuirk::ArbitraryUserGestures))
-        quirks |= AutoplayQuirk::ArbitraryUserGestures;
-
-    documentLoader->setAllowedAutoplayQuirks(quirks);
-
-    switch (websitePolicies.autoplayPolicy) {
-    case WebsiteAutoplayPolicy::Default:
-        documentLoader->setAutoplayPolicy(AutoplayPolicy::Default);
-        break;
-    case WebsiteAutoplayPolicy::Allow:
-        documentLoader->setAutoplayPolicy(AutoplayPolicy::Allow);
-        break;
-    case WebsiteAutoplayPolicy::AllowWithoutSound:
-        documentLoader->setAutoplayPolicy(AutoplayPolicy::AllowWithoutSound);
-        break;
-    case WebsiteAutoplayPolicy::Deny:
-        documentLoader->setAutoplayPolicy(AutoplayPolicy::Deny);
-        break;
-    }
+    WebsitePolicies::applyToDocumentLoader(WTFMove(websitePolicies), *documentLoader);
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, bool didReceiveRedirectResponse, FormState* formState, FramePolicyFunction&& function)

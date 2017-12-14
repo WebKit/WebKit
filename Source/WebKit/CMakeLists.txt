@@ -216,6 +216,7 @@ set(WebKit_SOURCES
     Shared/WebUserContentControllerDataTypes.cpp
     Shared/WebWheelEvent.cpp
     Shared/WebsiteDataStoreParameters.cpp
+    Shared/WebsitePolicies.cpp
 
     Shared/API/APIArray.cpp
     Shared/API/APIData.cpp

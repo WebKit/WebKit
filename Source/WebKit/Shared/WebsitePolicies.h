@@ -31,6 +31,15 @@
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
+namespace IPC {
+class Decoder;
+class Encoder;
+}
+
+namespace WebCore {
+class DocumentLoader;
+}
+
 namespace WebKit {
 
 enum class WebsiteAutoplayPolicy {
@@ -48,14 +57,33 @@ enum class WebsiteAutoplayQuirk {
 
 class WebsitePolicies {
 public:
+    WebsitePolicies() = default;
 
-    bool contentBlockersEnabled { true };
-    OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks;
-    WebsiteAutoplayPolicy autoplayPolicy { WebsiteAutoplayPolicy::Default };
-    Vector<WebCore::HTTPHeaderField> customHeaderFields;
+    bool contentBlockersEnabled() const { return m_contentBlockersEnabled; }
+    void setContentBlockersEnabled(bool enabled) { m_contentBlockersEnabled = enabled; }
+    
+    OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks() const { return m_allowedAutoplayQuirks; }
+    void setAllowedAutoplayQuirks(OptionSet<WebsiteAutoplayQuirk> quirks) { m_allowedAutoplayQuirks = quirks; }
+    
+    WebsiteAutoplayPolicy autoplayPolicy() const { return m_autoplayPolicy; }
+    void setAutoplayPolicy(WebsiteAutoplayPolicy policy) { m_autoplayPolicy = policy; }
+    
+    const Vector<WebCore::HTTPHeaderField>& customHeaderFields() { return m_customHeaderFields; }
+    Vector<WebCore::HTTPHeaderField>&& takeCustomHeaderFields() { return WTFMove(m_customHeaderFields); }
+    void setCustomHeaderFields(Vector<WebCore::HTTPHeaderField>&& fields) { m_customHeaderFields = WTFMove(fields); }
+    
+    static void applyToDocumentLoader(WebsitePolicies&&, WebCore::DocumentLoader&);
+    
+    void encode(IPC::Encoder&) const;
+    static std::optional<WebsitePolicies> decode(IPC::Decoder&);
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<WebsitePolicies> decode(Decoder&);
+private:
+    WebsitePolicies(bool, OptionSet<WebsiteAutoplayQuirk>, WebsiteAutoplayPolicy, Vector<WebCore::HTTPHeaderField>&&);
+
+    bool m_contentBlockersEnabled { true };
+    OptionSet<WebsiteAutoplayQuirk> m_allowedAutoplayQuirks;
+    WebsiteAutoplayPolicy m_autoplayPolicy { WebsiteAutoplayPolicy::Default };
+    Vector<WebCore::HTTPHeaderField> m_customHeaderFields;
 };
 
 } // namespace WebKit
@@ -73,45 +101,3 @@ template<> struct EnumTraits<WebKit::WebsiteAutoplayPolicy> {
 };
 
 } // namespace WTF
-
-namespace WebKit {
-
-template<class Encoder> void WebsitePolicies::encode(Encoder& encoder) const
-{
-    encoder << contentBlockersEnabled;
-    encoder << autoplayPolicy;
-    encoder << allowedAutoplayQuirks;
-    encoder << customHeaderFields;
-}
-
-template<class Decoder> std::optional<WebsitePolicies> WebsitePolicies::decode(Decoder& decoder)
-{
-    std::optional<bool> contentBlockersEnabled;
-    decoder >> contentBlockersEnabled;
-    if (!contentBlockersEnabled)
-        return std::nullopt;
-    
-    std::optional<WebsiteAutoplayPolicy> autoplayPolicy;
-    decoder >> autoplayPolicy;
-    if (!autoplayPolicy)
-        return std::nullopt;
-
-    std::optional<OptionSet<WebsiteAutoplayQuirk>> allowedAutoplayQuirks;
-    decoder >> allowedAutoplayQuirks;
-    if (!allowedAutoplayQuirks)
-        return std::nullopt;
-    
-    std::optional<Vector<WebCore::HTTPHeaderField>> customHeaderFields;
-    decoder >> customHeaderFields;
-    if (!customHeaderFields)
-        return std::nullopt;
-
-    return { {
-        WTFMove(*contentBlockersEnabled),
-        WTFMove(*allowedAutoplayQuirks),
-        WTFMove(*autoplayPolicy),
-        WTFMove(*customHeaderFields),
-    } };
-}
-
-} // namespace WebKit

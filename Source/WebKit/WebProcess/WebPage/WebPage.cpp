@@ -5438,7 +5438,7 @@ void WebPage::flushPendingEditorStateUpdate()
     sendEditorStateUpdate();
 }
 
-void WebPage::updateWebsitePolicies(const WebsitePolicies& websitePolicies)
+void WebPage::updateWebsitePolicies(WebsitePolicies&& websitePolicies)
 {
     if (!m_page)
         return;
@@ -5447,39 +5447,7 @@ void WebPage::updateWebsitePolicies(const WebsitePolicies& websitePolicies)
     if (!documentLoader)
         return;
 
-    OptionSet<AutoplayQuirk> quirks;
-    auto allowedQuirks = websitePolicies.allowedAutoplayQuirks;
-
-    if (allowedQuirks.contains(WebsiteAutoplayQuirk::InheritedUserGestures))
-        quirks |= AutoplayQuirk::InheritedUserGestures;
-
-    if (allowedQuirks.contains(WebsiteAutoplayQuirk::SynthesizedPauseEvents))
-        quirks |= AutoplayQuirk::SynthesizedPauseEvents;
-
-    if (allowedQuirks.contains(WebsiteAutoplayQuirk::ArbitraryUserGestures))
-        quirks |= AutoplayQuirk::ArbitraryUserGestures;
-
-    documentLoader->setAllowedAutoplayQuirks(quirks);
-
-    AutoplayPolicy autoplayPolicy = AutoplayPolicy::Default;
-    switch (websitePolicies.autoplayPolicy) {
-    case WebsiteAutoplayPolicy::Default:
-        break;
-    case WebsiteAutoplayPolicy::Allow:
-        autoplayPolicy = AutoplayPolicy::Allow;
-        break;
-    case WebsiteAutoplayPolicy::AllowWithoutSound:
-        autoplayPolicy = AutoplayPolicy::AllowWithoutSound;
-        break;
-    case WebsiteAutoplayPolicy::Deny:
-        autoplayPolicy = AutoplayPolicy::Deny;
-        break;
-    }
-
-    if (documentLoader->autoplayPolicy() == autoplayPolicy)
-        return;
-
-    documentLoader->setAutoplayPolicy(autoplayPolicy);
+    WebsitePolicies::applyToDocumentLoader(WTFMove(websitePolicies), *documentLoader);
     
 #if ENABLE(VIDEO)
     m_page->updateMediaElementRateChangeRestrictions();
