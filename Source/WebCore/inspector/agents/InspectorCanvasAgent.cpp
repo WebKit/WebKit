@@ -31,9 +31,11 @@
 #include "Document.h"
 #include "Element.h"
 #include "Frame.h"
+#include "ImageBitmapRenderingContext.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSCanvasRenderingContext2D.h"
+#include "JSImageBitmapRenderingContext.h"
 #include "JSMainThreadExecState.h"
 #include "MainFrame.h"
 #include "OffscreenCanvas.h"
@@ -163,7 +165,7 @@ void InspectorCanvasAgent::requestContent(ErrorString& errorString, const String
         return;
 
     CanvasRenderingContext* context = inspectorCanvas->canvas().renderingContext();
-    if (is<CanvasRenderingContext2D>(context)) {
+    if (is<CanvasRenderingContext2D>(context) || is<ImageBitmapRenderingContext>(context)) {
         auto result = inspectorCanvas->canvas().toDataURL(ASCIILiteral("image/png"));
         if (result.hasException()) {
             errorString = result.releaseException().releaseMessage();
@@ -222,6 +224,8 @@ static JSC::JSValue contextAsScriptValue(JSC::ExecState& state, CanvasRenderingC
     if (is<WebGPURenderingContext>(context))
         return toJS(&state, deprecatedGlobalObjectForPrototype(&state), downcast<WebGPURenderingContext>(context));
 #endif
+    if (is<ImageBitmapRenderingContext>(context))
+        return toJS(&state, deprecatedGlobalObjectForPrototype(&state), downcast<ImageBitmapRenderingContext>(context));
 
     return { };
 }

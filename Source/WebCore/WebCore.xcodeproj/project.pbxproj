@@ -2037,6 +2037,7 @@
 		7C73FB0D191EF5A8007DE061 /* JSUserMessageHandlersNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C73FB0B191EF5A8007DE061 /* JSUserMessageHandlersNamespace.h */; };
 		7C73FB12191EF6F4007DE061 /* JSUserMessageHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C73FB10191EF6F4007DE061 /* JSUserMessageHandler.h */; };
 		7C7761AA1F878AA500F869FC /* JSImageBitmapRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C7903B81F86FDE600463A70 /* JSImageBitmapRenderingContext.h */; };
+		7C7761AA1F878AA500F869FD /* JSImageBitmapRenderingContextSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C7903B61F86FDE600463A70 /* JSImageBitmapRenderingContextSettings.h */; };
 		7C77C3D11DEE472400A50BFA /* BlobPropertyBag.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C77C3D01DEE472400A50BFA /* BlobPropertyBag.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C77C3D51DEF178E00A50BFA /* JSBlobPropertyBag.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C77C3D31DEF178E00A50BFA /* JSBlobPropertyBag.h */; };
 		7C77C3D71DEF850A00A50BFA /* BlobLineEndings.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C77C3D61DEF850A00A50BFA /* BlobLineEndings.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9177,6 +9178,8 @@
 		7C7903B21F86F95C00463A70 /* ImageBitmapRenderingContext.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ImageBitmapRenderingContext.idl; sourceTree = "<group>"; };
 		7C7903B71F86FDE400463A70 /* JSImageBitmapRenderingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageBitmapRenderingContext.cpp; sourceTree = "<group>"; };
 		7C7903B81F86FDE600463A70 /* JSImageBitmapRenderingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSImageBitmapRenderingContext.h; sourceTree = "<group>"; };
+		7C7903B51F86FDE400463A70 /* JSImageBitmapRenderingContextSettings.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageBitmapRenderingContextSettings.cpp; sourceTree = "<group>"; };
+		7C7903B61F86FDE600463A70 /* JSImageBitmapRenderingContextSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSImageBitmapRenderingContextSettings.h; sourceTree = "<group>"; };
 		7C7903BA1F86FF3300463A70 /* PlaceholderRenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlaceholderRenderingContext.cpp; sourceTree = "<group>"; };
 		7C7903BC1F86FF3400463A70 /* PlaceholderRenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceholderRenderingContext.h; sourceTree = "<group>"; };
 		7C7941E21C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsCoreSoftLink.mm; sourceTree = "<group>"; };
@@ -21047,6 +21050,8 @@
 				31D26BC51F86D268008FF255 /* JSImageBitmapOptions.h */,
 				7C7903B71F86FDE400463A70 /* JSImageBitmapRenderingContext.cpp */,
 				7C7903B81F86FDE600463A70 /* JSImageBitmapRenderingContext.h */,
+				7C7903B51F86FDE400463A70 /* JSImageBitmapRenderingContextSettings.cpp */,
+				7C7903B61F86FDE600463A70 /* JSImageBitmapRenderingContextSettings.h */,
 				A77979240D6B9E64003851B9 /* JSImageData.cpp */,
 				A77979250D6B9E64003851B9 /* JSImageData.h */,
 				7C193BFB1F5E10C40088F3E6 /* JSImageSmoothingQuality.cpp */,
@@ -27756,6 +27761,7 @@
 				838EF53C1DC14A7C008F0C39 /* JSIDBTransactionMode.h in Headers */,
 				269239961505E1AA009E57FC /* JSIDBVersionChangeEvent.h in Headers */,
 				7C7761AA1F878AA500F869FC /* JSImageBitmapRenderingContext.h in Headers */,
+				7C7761AA1F878AA500F869FD /* JSImageBitmapRenderingContextSettings.h in Headers */,
 				A77979290D6B9E64003851B9 /* JSImageData.h in Headers */,
 				7C193C011F5E11050088F3E6 /* JSImageSmoothingQuality.h in Headers */,
 				A86629D309DA2B48009633A6 /* JSInputEvent.h in Headers */,

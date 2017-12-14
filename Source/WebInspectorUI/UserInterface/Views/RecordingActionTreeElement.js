@@ -70,6 +70,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
 
             case WI.Recording.Swizzle.TypedArray:
             case WI.Recording.Swizzle.Image:
+            case WI.Recording.Swizzle.ImageBitmap:
             case WI.Recording.Swizzle.ImageData:
             case WI.Recording.Swizzle.DOMMatrix:
             case WI.Recording.Swizzle.Path2D:
@@ -145,13 +146,16 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
 
         let imageParameters = recordingAction.getImageParameters();
         let isImage = imageParameters[0] instanceof HTMLImageElement;
+        let isImageBitmap = imageParameters[0] instanceof ImageBitmap;
         let isImageData = imageParameters[0] instanceof ImageData;
         let isCanvasGradient = imageParameters[0] instanceof CanvasGradient;
         let isCanvasPattern = imageParameters[0] instanceof CanvasPattern;
-        if (imageParameters.length && (isImage || isImageData || isCanvasGradient || isCanvasPattern)) {
+        if (imageParameters.length && (isImage || isImageBitmap || isImageData || isCanvasGradient || isCanvasPattern)) {
             let image = imageParameters[0];
 
-            if (isImageData)
+            if (isImageBitmap)
+                image = WI.ImageUtilities.imageFromImageBitmap(image);
+            else if (isImageData)
                 image = WI.ImageUtilities.imageFromImageData(image);
             else if (isCanvasGradient)
                 image = WI.ImageUtilities.imageFromCanvasGradient(image, 100, 100);

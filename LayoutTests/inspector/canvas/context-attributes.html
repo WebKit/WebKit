@@ -34,7 +34,13 @@ function test() {
                 })
                 .then(resolve, reject);
 
-                let type = contextType === WI.Canvas.ContextType.Canvas2D ? "2d" : "webgl";
+                let type = "";
+                if (contextType === WI.Canvas.ContextType.Canvas2D)
+                    type = "2d";
+                else if (contextType === WI.Canvas.ContextType.BitmapRenderer)
+                    type = "bitmaprenderer";
+                else if (contextType === WI.Canvas.ContextType.WebGL)
+                    type = "webgl";
                 let attributes = JSON.stringify(contextAttributes);
                 InspectorTest.evaluateInPage(`createCanvas("${type}", ${attributes})`);
             }
@@ -47,6 +53,15 @@ function test() {
             contextType: WI.Canvas.ContextType.Canvas2D,
         },
         {
+            name: "CreateBitmapRendererCanvasContext",
+            contextType: WI.Canvas.ContextType.BitmapRenderer,
+        },
+        {
+            name: "CreateBitmapRendererCanvasContextWithAttributes",
+            contextType: WI.Canvas.ContextType.BitmapRenderer,
+            contextAttributes: {alpha: false},
+        },
+        {
             name: "CreateWebGLCanvasContext",
             contextType: WI.Canvas.ContextType.WebGL,
         },
@@ -54,7 +69,7 @@ function test() {
             name: "CreateWebGLCanvasContextWithAttributes",
             contextType: WI.Canvas.ContextType.WebGL,
             contextAttributes: {alpha: false},
-        }
+        },
     ];
 
     testCases.forEach(addTestCase);

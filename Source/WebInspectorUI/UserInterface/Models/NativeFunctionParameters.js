@@ -1050,6 +1050,11 @@ WI.NativePrototypeFunctionParameters = {
         __proto__: null,
     },
 
+    ImageBitmapRenderingContext: {
+        transferFromImageBitmap: "[bitmap]",
+        __proto__: null,
+    },
+
     KeyboardEvent: {
         initKeyboardEvent: "[type], [canBubble], [cancelable], [view], [keyIdentifier], [location], [ctrlKey], [altKey], [shiftKey], [metaKey], [altGraphKey]",
         __proto__: null,

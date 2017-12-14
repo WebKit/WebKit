@@ -7,6 +7,21 @@ Added canvas.
 PASS: Canvas context should be "2D".
 {}
 
+-- Running test case: CreateBitmapRendererCanvasContext
+Added canvas.
+PASS: Canvas context should be "Bitmap Renderer".
+{
+  "alpha": true
+}
+
+-- Running test case: CreateBitmapRendererCanvasContextWithAttributes
+Added canvas.
+PASS: Canvas context should be "Bitmap Renderer".
+{
+  "alpha": false
+}
+PASS: Canvas context should have attribute "alpha" with value "false".
+
 -- Running test case: CreateWebGLCanvasContext
 Added canvas.
 PASS: Canvas context should be "WebGL".

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function load() {
+    window.contextBitmapRenderer = document.body.appendChild(document.createElement("canvas")).getContext("bitmaprenderer");
+
+    runTest();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Canvas.resolveCanvasContextBitmapRenderer");
+
+    suite.addTestCase({
+        name: `Canvas.resolveCanvasContextBitmapRenderer.validIdentifier`,
+        description: "Should return a valid object for the given canvas identifier.",
+        test(resolve, reject) {
+            let canvas = WI.canvasManager.canvases.find((canvas) => canvas.contextType === WI.Canvas.ContextType.BitmapRenderer);
+            if (!canvas) {
+                reject(`Missing Canvas.`);
+                return;
+            }
+
+            const objectGroup = "test";
+            CanvasAgent.resolveCanvasContext(canvas.identifier, objectGroup)
+            .then(({object}) => {
+                InspectorTest.expectEqual(object.type, "object", `Payload should have type "object".`);
+                InspectorTest.expectEqual(object.className, "ImageBitmapRenderingContext", `Payload should have className "ImageBitmapRenderingContext".`);
+            })
+            .then(resolve, reject);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Tests for the Canvas.resolveCanvasContext command for BitmapRenderer contexts.</p>
+</body>
+</html>

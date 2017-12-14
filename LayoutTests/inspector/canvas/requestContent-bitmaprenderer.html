@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let image = document.createElement("img");
+image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=";
+
+async function load() {
+    let bitmap = await createImageBitmap(image);
+
+    window.contextBitmapRenderer = document.createElement("canvas").getContext("bitmaprenderer");
+    window.contextBitmapRenderer.transferFromImageBitmap(bitmap);
+
+    runTest();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.requestContentBitmapRenderer");
+
+    suite.addTestCase({
+        name: "Canvas.requestContentBitmapRenderer.validCanvasId",
+        description: "Get the base64 encoded data for the BitmapRenderer canvas on the page.",
+        test(resolve, reject) {
+            let canvas = WI.canvasManager.canvases.find((canvas) => canvas.contextType === WI.Canvas.ContextType.BitmapRenderer);
+            if (!canvas) {
+                reject(`Missing Canvas.`);
+                return;
+            }
+
+            CanvasAgent.requestContent(canvas.identifier)
+            .then(({content}) => InspectorTest.log(content))
+            .then(resolve, reject);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Test that CanvasAgent.requestContent can retrieve a dataURL with the current content of the BitmapRenderer canvas.</p>
+</body>
+</html>

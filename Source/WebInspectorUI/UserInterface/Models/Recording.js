@@ -151,6 +151,8 @@ WI.Recording = class Recording
             return WI.unlocalizedString("WebGLProgram");
         case WI.Recording.Swizzle.WebGLUniformLocation:
             return WI.unlocalizedString("WebGLUniformLocation");
+        case WI.Recording.Swizzle.ImageBitmap:
+            return WI.unlocalizedString("ImageBitmap");
         default:
             console.error("Unknown swizzle type", swizzleType);
             return null;
@@ -251,13 +253,7 @@ WI.Recording = class Recording
                     break;
 
                 case WI.Recording.Swizzle.Image:
-                    this._swizzle[index][type] = await new Promise((resolve, reject) => {
-                        let image = new Image;
-                        let resolveWithImage = () => { resolve(image); };
-                        image.addEventListener("load", resolveWithImage);
-                        image.addEventListener("error", resolveWithImage);
-                        image.src = data;
-                    });
+                    this._swizzle[index][type] = await WI.ImageUtilities.promisifyLoad(data);
                     break;
 
                 case WI.Recording.Swizzle.ImageData:
@@ -291,6 +287,11 @@ WI.Recording = class Recording
                         this._swizzle[index][type] = context.createPattern(image, repeat);
                         this._swizzle[index][type].__image = image;
                     });
+                    break;
+
+                case WI.Recording.Swizzle.ImageBitmap:
+                    var image = await this.swizzle(index, WI.Recording.Swizzle.Image);
+                    this._swizzle[index][type] = await createImageBitmap(image);
                     break;
                 }
             } catch { }
@@ -349,4 +350,5 @@ WI.Recording.Swizzle = {
     WebGLShader: 16,
     WebGLProgram: 17,
     WebGLUniformLocation: 18,
+    ImageBitmap: 19,
 };

@@ -61,6 +61,9 @@ WI.Canvas = class Canvas extends WI.Object
         case CanvasAgent.ContextType.Canvas2D:
             contextType = WI.Canvas.ContextType.Canvas2D;
             break;
+        case CanvasAgent.ContextType.BitmapRenderer:
+            contextType = WI.Canvas.ContextType.BitmapRenderer;
+            break;
         case CanvasAgent.ContextType.WebGL:
             contextType = WI.Canvas.ContextType.WebGL;
             break;
@@ -89,6 +92,8 @@ WI.Canvas = class Canvas extends WI.Object
         switch (contextType) {
         case WI.Canvas.ContextType.Canvas2D:
             return WI.UIString("2D");
+        case WI.Canvas.ContextType.BitmapRenderer:
+            return WI.unlocalizedString("Bitmap Renderer");
         case WI.Canvas.ContextType.WebGL:
             return WI.unlocalizedString("WebGL");
         case WI.Canvas.ContextType.WebGL2:
@@ -303,6 +308,7 @@ WI.Canvas.CSSCanvasNameCookieKey = "canvas-css-canvas-name";
 
 WI.Canvas.ContextType = {
     Canvas2D: "canvas-2d",
+    BitmapRenderer: "bitmaprenderer",
     WebGL: "webgl",
     WebGL2: "webgl2",
     WebGPU: "webgpu",

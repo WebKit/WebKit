@@ -67,6 +67,7 @@ typedef Variant<
     DOMMatrix2DInit,
     Element*,
     HTMLImageElement*,
+    ImageBitmap*,
     ImageData*,
     ImageSmoothingQuality,
     Path2D*,

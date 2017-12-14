@@ -1,3 +1,21 @@
+2017-12-13  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: add instrumentation for ImageBitmapRenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=180736
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/canvas/context-attributes-expected.txt:
+        * inspector/canvas/context-attributes.html:
+        * inspector/canvas/create-context-bitmaprenderer-expected.txt: Added.
+        * inspector/canvas/create-context-bitmaprenderer.html: Added.
+        * inspector/canvas/recording-2d-expected.txt:
+        * inspector/canvas/recording-2d.html:
+        * inspector/canvas/requestContent-bitmaprenderer-expected.txt: Added.
+        * inspector/canvas/requestContent-bitmaprenderer.html: Added.
+        * inspector/canvas/resolveCanvasContext-bitmaprenderer-expected.txt: Added.
+        * inspector/canvas/resolveCanvasContext-bitmaprenderer.html: Added.
+
 2017-12-13  Daniel Bates  <dabates@apple.com>
 
         Add more auto fill button types

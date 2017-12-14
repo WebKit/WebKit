@@ -1,3 +1,28 @@
+2017-12-13  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: add instrumentation for ImageBitmapRenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=180736
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/ImageUtilities.js:
+        (WI.ImageUtilities.promisifyLoad):
+        (WI.ImageUtilities.imageFromImageBitmap):
+
+        * UserInterface/Models/Canvas.js:
+        (WI.Canvas.fromPayload):
+        (WI.Canvas.displayNameForContextType):
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording.displayNameForSwizzleType):
+        (WI.Recording.prototype.async swizzle):
+
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement._generateDOM):
+        (WI.RecordingActionTreeElement._generateDOM.createParameterElement):
+
 2017-12-12  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: navigating away from empty value should remove CSS property

@@ -1,3 +1,13 @@
+2017-12-13  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: add instrumentation for ImageBitmapRenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=180736
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/Canvas.json:
+        * inspector/scripts/codegen/generator.py:
+
 2017-12-13  Saam Barati  <sbarati@apple.com>
 
         Take a value driven approach to how we emit structure checks in TypeCheckHoistingPhase to obviate the need for static_assert guards

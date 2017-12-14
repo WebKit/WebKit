@@ -107,7 +107,6 @@ private:
     RefPtr<JSON::ArrayOf<JSON::Value>> buildArrayForCanvasGradient(const CanvasGradient&);
     RefPtr<JSON::ArrayOf<JSON::Value>> buildArrayForCanvasPattern(const CanvasPattern&);
     RefPtr<JSON::ArrayOf<JSON::Value>> buildArrayForImageData(const ImageData&);
-    RefPtr<JSON::ArrayOf<JSON::Value>> buildArrayForImageBitmap(const ImageBitmap&);
 
     String m_identifier;
     HTMLCanvasElement& m_canvas;

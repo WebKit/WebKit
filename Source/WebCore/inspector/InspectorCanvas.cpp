@@ -40,6 +40,7 @@
 #include "HTMLVideoElement.h"
 #include "Image.h"
 #include "ImageBitmap.h"
+#include "ImageBitmapRenderingContext.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "InspectorDOMAgent.h"
@@ -218,6 +219,8 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(I
     Inspector::Protocol::Canvas::ContextType contextType;
     if (is<CanvasRenderingContext2D>(context))
         contextType = Inspector::Protocol::Canvas::ContextType::Canvas2D;
+    else if (is<ImageBitmapRenderingContext>(context))
+        contextType = Inspector::Protocol::Canvas::ContextType::BitmapRenderer;
 #if ENABLE(WEBGL)
     else if (is<WebGLRenderingContext>(context))
         contextType = Inspector::Protocol::Canvas::ContextType::WebGL;
@@ -257,18 +260,25 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(I
             canvas->setNodeId(nodeId);
     }
 
+    if (is<ImageBitmapRenderingContext>(context)) {
+        auto contextAttributes = Inspector::Protocol::Canvas::ContextAttributes::create()
+            .release();
+        contextAttributes->setAlpha(downcast<ImageBitmapRenderingContext>(context)->hasAlpha());
+        canvas->setContextAttributes(WTFMove(contextAttributes));
+    }
 #if ENABLE(WEBGL)
-    if (is<WebGLRenderingContextBase>(context)) {
+    else if (is<WebGLRenderingContextBase>(context)) {
         if (std::optional<WebGLContextAttributes> attributes = downcast<WebGLRenderingContextBase>(context)->getContextAttributes()) {
-            canvas->setContextAttributes(Inspector::Protocol::Canvas::ContextAttributes::create()
-                .setAlpha(attributes->alpha)
-                .setDepth(attributes->depth)
-                .setStencil(attributes->stencil)
-                .setAntialias(attributes->antialias)
-                .setPremultipliedAlpha(attributes->premultipliedAlpha)
-                .setPreserveDrawingBuffer(attributes->preserveDrawingBuffer)
-                .setFailIfMajorPerformanceCaveat(attributes->failIfMajorPerformanceCaveat)
-                .release());
+            auto contextAttributes = Inspector::Protocol::Canvas::ContextAttributes::create()
+                .release();
+            contextAttributes->setAlpha(attributes->alpha);
+            contextAttributes->setDepth(attributes->depth);
+            contextAttributes->setStencil(attributes->stencil);
+            contextAttributes->setAntialias(attributes->antialias);
+            contextAttributes->setPremultipliedAlpha(attributes->premultipliedAlpha);
+            contextAttributes->setPreserveDrawingBuffer(attributes->preserveDrawingBuffer);
+            contextAttributes->setFailIfMajorPerformanceCaveat(attributes->failIfMajorPerformanceCaveat);
+            canvas->setContextAttributes(WTFMove(contextAttributes));
         }
     }
 #endif
@@ -339,7 +349,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
                 }
             }
 
-            item = JSON::Value::create(dataURL);
+            index = indexForData(dataURL);
         },
 #if ENABLE(VIDEO)
         [&] (HTMLVideoElement* videoElement) {
@@ -353,7 +363,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
                 dataURL = imageBuffer->toDataURL("image/png");
             }
 
-            item = JSON::Value::create(dataURL);
+            index = indexForData(dataURL);
         },
 #endif
         [&] (HTMLCanvasElement* canvasElement) {
@@ -363,12 +373,14 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
             if (!result.hasException())
                 dataURL = result.releaseReturnValue().string;
 
-            item = JSON::Value::create(dataURL);
+            index = indexForData(dataURL);
         },
         [&] (const CanvasGradient* canvasGradient) { item = buildArrayForCanvasGradient(*canvasGradient); },
         [&] (const CanvasPattern* canvasPattern) { item = buildArrayForCanvasPattern(*canvasPattern); },
         [&] (const ImageData* imageData) { item = buildArrayForImageData(*imageData); },
-        [&] (const ImageBitmap* imageBitmap) { item = buildArrayForImageBitmap(*imageBitmap); },
+        [&] (ImageBitmap* imageBitmap) {
+            index = indexForData(imageBitmap->buffer()->toDataURL("image/png"));
+        },
         [&] (const ScriptCallFrame& scriptCallFrame) {
             auto array = JSON::ArrayOf<double>::create();
             array->addItem(indexForData(scriptCallFrame.functionName()));
@@ -380,11 +392,13 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
         [&] (const String& value) { item = JSON::Value::create(value); }
     );
 
-    m_bufferUsed += item->memoryCost();
-    m_serializedDuplicateData->addItem(WTFMove(item));
+    if (item) {
+        m_bufferUsed += item->memoryCost();
+        m_serializedDuplicateData->addItem(WTFMove(item));
 
-    m_indexedDuplicateData.append(data);
-    index = m_indexedDuplicateData.size() - 1;
+        m_indexedDuplicateData.append(data);
+        index = m_indexedDuplicateData.size() - 1;
+    }
 
     ASSERT(index < std::numeric_limits<int>::max());
     return static_cast<int>(index);
@@ -540,6 +554,7 @@ RefPtr<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildAction(const String& na
                 addParameter(indexForData("Element"), RecordingSwizzleTypes::None);
             },
             [&] (HTMLImageElement* value) { addParameter(indexForData(value), RecordingSwizzleTypes::Image); },
+            [&] (ImageBitmap* value) { addParameter(indexForData(value), RecordingSwizzleTypes::ImageBitmap); },
             [&] (ImageData* value) { addParameter(indexForData(value), RecordingSwizzleTypes::ImageData); },
             [&] (ImageSmoothingQuality value) { addParameter(indexForData(convertEnumerationToString(value)), RecordingSwizzleTypes::String); },
             [&] (const Path2D* value) { addParameter(indexForData(buildStringFromPath(value->path())), RecordingSwizzleTypes::Path2D); },
@@ -664,15 +679,6 @@ RefPtr<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildArrayForImageData(const
     array->addItem(WTFMove(data));
     array->addItem(imageData.width());
     array->addItem(imageData.height());
-    return array;
-}
-
-RefPtr<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildArrayForImageBitmap(const ImageBitmap& imageBitmap)
-{
-    // FIXME: Needs to include the data somehow.
-    RefPtr<JSON::ArrayOf<JSON::Value>> array = JSON::ArrayOf<JSON::Value>::create();
-    array->addItem(static_cast<int>(imageBitmap.width()));
-    array->addItem(static_cast<int>(imageBitmap.height()));
     return array;
 }
 

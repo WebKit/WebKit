@@ -2602,6 +2602,7 @@ JSIDBVersionChangeEvent.cpp
 JSImageBitmap.cpp
 JSImageBitmapOptions.cpp
 JSImageBitmapRenderingContext.cpp
+JSImageBitmapRenderingContextSettings.cpp
 JSImageData.cpp
 JSImageSmoothingQuality.cpp
 JSInputEvent.cpp

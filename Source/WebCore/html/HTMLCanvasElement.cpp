@@ -282,7 +282,11 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
     }
 
     if (isBitmapRendererType(contextId)) {
-        auto context = createContextBitmapRenderer(contextId);
+        auto scope = DECLARE_THROW_SCOPE(state.vm());
+        auto attributes = convert<IDLDictionary<ImageBitmapRenderingContextSettings>>(state, !arguments.isEmpty() ? arguments[0].get() : JSC::jsUndefined());
+        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+
+        auto context = createContextBitmapRenderer(contextId, WTFMove(attributes));
         if (!context)
             return std::optional<RenderingContext> { std::nullopt };
         return std::optional<RenderingContext> { RefPtr<ImageBitmapRenderingContext> { context } };
@@ -514,6 +518,8 @@ ImageBitmapRenderingContext* HTMLCanvasElement::createContextBitmapRenderer(cons
     ASSERT(!m_context);
 
     m_context = std::make_unique<ImageBitmapRenderingContext>(*this, WTFMove(settings));
+
+    InspectorInstrumentation::didCreateCanvasRenderingContext(*this);
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
     // Need to make sure a RenderLayer and compositing layer get created for the Canvas.

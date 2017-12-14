@@ -54,6 +54,17 @@ WI.ImageUtilities = class ImageUtilities {
         return wrapper;
     }
 
+    static promisifyLoad(src)
+    {
+        return new Promise((resolve, reject) => {
+            let image = new Image;
+            let resolveWithImage = () => { resolve(image); };
+            image.addEventListener("load", resolveWithImage);
+            image.addEventListener("error", resolveWithImage);
+            image.src = src;
+        });
+    }
+
     static scratchCanvasContext2D(callback)
     {
         if (!WI.ImageUtilities._scratchContext2D)
@@ -65,6 +76,22 @@ WI.ImageUtilities = class ImageUtilities {
         context.save();
         callback(context);
         context.restore();
+    }
+
+    static imageFromImageBitmap(data)
+    {
+        console.assert(data instanceof ImageBitmap);
+
+        let image = null;
+        WI.ImageUtilities.scratchCanvasContext2D((context) => {
+            context.canvas.width = data.width;
+            context.canvas.height = data.height;
+            context.drawImage(data, 0, 0);
+
+            image = new Image;
+            image.src = context.canvas.toDataURL();
+        });
+        return image;
     }
 
     static imageFromImageData(data)

@@ -16,7 +16,7 @@
         {
             "id": "ContextType",
             "type": "string",
-            "enum": ["canvas-2d", "webgl", "webgl2", "webgpu"],
+            "enum": ["canvas-2d", "bitmaprenderer", "webgl", "webgl2", "webgpu"],
             "description": "The type of rendering context backing the canvas element."
         },
         {
@@ -28,15 +28,15 @@
         {
             "id": "ContextAttributes",
             "type": "object",
-            "description": "WebGL drawing surface attributes.",
+            "description": "Drawing surface attributes.",
             "properties": [
-                { "name": "alpha", "type": "boolean" },
-                { "name": "depth", "type": "boolean" },
-                { "name": "stencil", "type": "boolean" },
-                { "name": "antialias", "type": "boolean" },
-                { "name": "premultipliedAlpha", "type": "boolean" },
-                { "name": "preserveDrawingBuffer", "type": "boolean" },
-                { "name": "failIfMajorPerformanceCaveat", "type": "boolean" }
+                { "name": "alpha", "type": "boolean", "optional": true },
+                { "name": "depth", "type": "boolean", "optional": true },
+                { "name": "stencil", "type": "boolean", "optional": true },
+                { "name": "antialias", "type": "boolean", "optional": true },
+                { "name": "premultipliedAlpha", "type": "boolean", "optional": true },
+                { "name": "preserveDrawingBuffer", "type": "boolean", "optional": true },
+                { "name": "failIfMajorPerformanceCaveat", "type": "boolean", "optional": true }
             ]
         },
         {
@@ -49,7 +49,7 @@
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Parent frame identifier." },
                 { "name": "nodeId", "$ref": "DOM.NodeId", "optional": true, "description": "The corresponding DOM node id." },
                 { "name": "cssCanvasName", "type": "string", "optional": true, "description": "The CSS canvas identifier, for canvases created with <code>document.getCSSCanvasContext</code>." },
-                { "name": "contextAttributes", "$ref": "ContextAttributes", "optional": true, "description": "Context attributes for WebGL rendering contexts." },
+                { "name": "contextAttributes", "$ref": "ContextAttributes", "optional": true, "description": "Context attributes for rendering contexts." },
                 { "name": "memoryCost", "type": "number", "optional": true, "description": "Memory usage of the canvas in bytes." },
                 { "name": "backtrace", "type": "array", "items": { "$ref": "Console.CallFrame" }, "optional": true, "description": "Backtrace that was captured when this canvas context was created." }
             ]
