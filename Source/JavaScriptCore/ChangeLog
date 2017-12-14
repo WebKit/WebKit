@@ -1,5 +1,15 @@
 2017-12-13  Saam Barati  <sbarati@apple.com>
 
+        Take a value driven approach to how we emit structure checks in TypeCheckHoistingPhase to obviate the need for static_assert guards
+        https://bugs.webkit.org/show_bug.cgi?id=180771
+
+        Reviewed by JF Bastien.
+
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::run):
+
+2017-12-13  Saam Barati  <sbarati@apple.com>
+
         REGRESSION(r225844): Around 850 new JSC failures on 32-bit
         https://bugs.webkit.org/show_bug.cgi?id=180764
 
