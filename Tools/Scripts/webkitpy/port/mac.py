@@ -55,10 +55,14 @@ class MacPort(DarwinPort):
 
     def __init__(self, host, port_name, **kwargs):
         DarwinPort.__init__(self, host, port_name, **kwargs)
+        version_name_map = VersionNameMap.map(host.platform)
         if port_name.split('-') > 1:
-            self._os_version = VersionNameMap.map(host.platform).from_name(port_name.split('-')[1])[1]
-        else:
+            self._os_version = version_name_map.from_name(port_name.split('-')[1])[1]
+        elif self.host.platform.is_mac():
             self._os_version = self.host.platform.os_version
+        else:
+            sorted_versions = sorted(version_name_map.mapping_for_platform(platform=self.port_name).values())
+            self._os_version = sorted_versions[sorted_versions.index(self.VERSION_MAX) - 1]
 
     def _build_driver_flags(self):
         return ['ARCHS=i386'] if self.architecture() == 'x86' else []
@@ -69,7 +73,7 @@ class MacPort(DarwinPort):
         if self._os_version < self.VERSION_MIN or self._os_version > self.VERSION_MAX:
             version_fallback = [self._os_version]
         else:
-            sorted_versions = sorted(version_name_map.mapping_for_platform().values())
+            sorted_versions = sorted(version_name_map.mapping_for_platform(platform=self.port_name).values())
             version_fallback = sorted_versions[sorted_versions.index(self._os_version):-1]
         wk_string = 'wk1'
         if self.get_option('webkit_test_runner'):
@@ -77,9 +81,9 @@ class MacPort(DarwinPort):
 
         expectations = []
         for version in version_fallback:
-            version_name = version_name_map.to_name(version).lower().replace(' ', '')
+            version_name = version_name_map.to_name(version, platform=self.port_name).lower().replace(' ', '')
             if apple_additions():
-                apple_name = version_name_map.to_name(version, table='internal')
+                apple_name = version_name_map.to_name(version, platform=self.port_name, table='internal')
             else:
                 apple_name = None
             if apple_name:
@@ -104,7 +108,7 @@ class MacPort(DarwinPort):
     def configuration_specifier_macros(self):
         map = {}
         version_name_map = VersionNameMap.map(self.host.platform)
-        sorted_versions = sorted(version_name_map.mapping_for_platform().values())
+        sorted_versions = sorted(version_name_map.mapping_for_platform(platform=self.port_name).values())
         for version in sorted_versions:
             list = []
             for newer in sorted_versions[sorted_versions.index(version):]:

@@ -1,3 +1,18 @@
+2017-12-14  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Better name-version mapping (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=179621
+        <rdar://problem/35589585>
+
+        Unreviewed infrastructure fix.
+
+        r225856 caused some undesired logging on Linux and Windows.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.__init__): Use most recent OS release if not on a Mac.
+        (MacPort.default_baseline_search_path): Make platform explicit.
+        (MacPort.configuration_specifier_macros): Ditto.
+
 2017-12-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: add a common way to run tests with pytest
