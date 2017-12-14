@@ -110,11 +110,16 @@ void WebAnimation::setEffect(RefPtr<AnimationEffect>&& effect)
 
 void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
 {
+    // 3.4.1. Setting the timeline of an animation
+    // https://drafts.csswg.org/web-animations-1/#setting-the-timeline
+
+    // 2. If new timeline is the same object as old timeline, abort this procedure.
     if (timeline == m_timeline)
         return;
 
-    // FIXME: If the animation start time of animation is resolved, make animation’s
-    // hold time unresolved (webkit.org/b/178932).
+    // 4. If the animation start time of animation is resolved, make animation’s hold time unresolved.
+    if (startTime())
+        m_holdTime = std::nullopt;
 
     if (m_timeline)
         m_timeline->removeAnimation(*this);
@@ -134,18 +139,24 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
     }
 
     m_timeline = WTFMove(timeline);
+
+    updatePendingTasks();
+
+    // 5. Run the procedure to update an animation’s finished state for animation with the did seek flag set to false,
+    // and the synchronously notify flag set to false.
+    updateFinishedState(DidSeek::No, SynchronouslyNotify::No);
 }
     
 std::optional<double> WebAnimation::bindingsStartTime() const
 {
-    if (m_startTime)
-        return m_startTime->milliseconds();
-    return std::nullopt;
+    if (!m_startTime)
+        return std::nullopt;
+    return m_startTime->milliseconds();
 }
 
 void WebAnimation::setBindingsStartTime(std::optional<double> startTime)
 {
-    if (startTime == std::nullopt)
+    if (!startTime)
         setStartTime(std::nullopt);
     else
         setStartTime(Seconds::fromMilliseconds(startTime.value()));
@@ -178,9 +189,8 @@ std::optional<double> WebAnimation::bindingsCurrentTime() const
 ExceptionOr<void> WebAnimation::setBindingsCurrentTime(std::optional<double> currentTime)
 {
     if (!currentTime)
-        return Exception { TypeError };
-    setCurrentTime(Seconds::fromMilliseconds(currentTime.value()));
-    return { };
+        return setCurrentTime(std::nullopt);
+    return setCurrentTime(Seconds::fromMilliseconds(currentTime.value()));
 }
 
 std::optional<Seconds> WebAnimation::currentTime() const

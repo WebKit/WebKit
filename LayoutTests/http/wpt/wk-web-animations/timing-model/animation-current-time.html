@@ -36,10 +36,5 @@ test(t => {
     assert_equals(animation.startTime, 2000);
 }, "Setting the current time should adjust the start time.");
 
-test(t => {
-    const animation = new Animation;
-    assert_throws(new TypeError, () => animation.currentTime = null);
-}, "Setting the current time to null should throw a TypeError.");
-
 </script>
 </body>
