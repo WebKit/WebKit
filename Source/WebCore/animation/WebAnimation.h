@@ -62,7 +62,7 @@ public:
     std::optional<double> bindingsCurrentTime() const;
     ExceptionOr<void> setBindingsCurrentTime(std::optional<double>);
     std::optional<Seconds> currentTime() const;
-    void setCurrentTime(std::optional<Seconds>);
+    ExceptionOr<void> setCurrentTime(std::optional<Seconds>);
 
     double playbackRate() const { return m_playbackRate; }
     void setPlaybackRate(double);
@@ -78,6 +78,7 @@ public:
     using FinishedPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<WebAnimation>>;
     FinishedPromise& finished() { return m_finishedPromise; }
 
+    ExceptionOr<void> finish();
     ExceptionOr<void> play();
     ExceptionOr<void> pause();
 
@@ -107,6 +108,7 @@ private:
     WebAnimation& readyPromiseResolve();
     WebAnimation& finishedPromiseResolve();
     std::optional<Seconds> currentTime(RespectHoldTime) const;
+    ExceptionOr<void> silentlySetCurrentTime(std::optional<Seconds>);
     void finishNotificationSteps();
     void scheduleMicrotaskIfNeeded();
     void performMicrotask();
