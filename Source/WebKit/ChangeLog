@@ -1,3 +1,15 @@
+2017-12-14  Chris Dumez  <cdumez@apple.com>
+
+        self.importScripts() should obey updateViaCache inside service workers
+        https://bugs.webkit.org/show_bug.cgi?id=180826
+
+        Reviewed by Youenn Fablet.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::setRegistrationLastUpdateTime):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+
 2017-12-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Drop Thread::tryCreate

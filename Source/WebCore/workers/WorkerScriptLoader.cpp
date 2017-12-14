@@ -43,7 +43,7 @@ WorkerScriptLoader::WorkerScriptLoader() = default;
 
 WorkerScriptLoader::~WorkerScriptLoader() = default;
 
-void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, FetchOptions::Mode mode, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, const String& initiatorIdentifier)
+void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, FetchOptions::Mode mode, FetchOptions::Cache cachePolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, const String& initiatorIdentifier)
 {
     ASSERT(scriptExecutionContext);
     auto& workerGlobalScope = downcast<WorkerGlobalScope>(*scriptExecutionContext);
@@ -62,6 +62,7 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
     ThreadableLoaderOptions options;
     options.credentials = FetchOptions::Credentials::Include;
     options.mode = mode;
+    options.cache = cachePolicy;
     options.sendLoadCallbacks = SendCallbacks;
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
 #if ENABLE(SERVICE_WORKER)

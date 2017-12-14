@@ -106,6 +106,11 @@ void WebSWServerConnection::fireUpdateFoundEvent(ServiceWorkerRegistrationIdenti
     send(Messages::WebSWClientConnection::FireUpdateFoundEvent(identifier));
 }
 
+void WebSWServerConnection::setRegistrationLastUpdateTime(ServiceWorkerRegistrationIdentifier identifier, WallTime lastUpdateTime)
+{
+    send(Messages::WebSWClientConnection::SetRegistrationLastUpdateTime(identifier, lastUpdateTime));
+}
+
 void WebSWServerConnection::notifyClientsOfControllerChange(const HashSet<DocumentIdentifier>& contextIdentifiers, const ServiceWorkerData& newController)
 {
     send(Messages::WebSWClientConnection::NotifyClientsOfControllerChange(contextIdentifiers, newController));

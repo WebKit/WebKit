@@ -112,6 +112,16 @@ ServiceWorkerUpdateViaCache ServiceWorkerRegistration::updateViaCache() const
     return m_registrationData.updateViaCache;
 }
 
+WallTime ServiceWorkerRegistration::lastUpdateTime() const
+{
+    return m_registrationData.lastUpdateTime;
+}
+
+void ServiceWorkerRegistration::setLastUpdateTime(WallTime lastUpdateTime)
+{
+    m_registrationData.lastUpdateTime = lastUpdateTime;
+}
+
 void ServiceWorkerRegistration::update(Ref<DeferredPromise>&& promise)
 {
     if (m_isStopped) {

@@ -1,3 +1,20 @@
+2017-12-14  Chris Dumez  <cdumez@apple.com>
+
+        self.importScripts() should obey updateViaCache inside service workers
+        https://bugs.webkit.org/show_bug.cgi?id=180826
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * http/tests/workers/service/registration-updateViaCache-all-importScripts-expected.txt: Added.
+        * http/tests/workers/service/registration-updateViaCache-all-importScripts.html: Added.
+        * http/tests/workers/service/registration-updateViaCache-imports-importScripts-expected.txt: Added.
+        * http/tests/workers/service/registration-updateViaCache-imports-importScripts.html: Added.
+        * http/tests/workers/service/registration-updateViaCache-none-importScripts-expected.txt: Added.
+        * http/tests/workers/service/registration-updateViaCache-none-importScripts.html: Added.
+        * http/tests/workers/service/resources/import-cacheable-script-worker.js: Added.
+
 2017-12-14  John Wilander  <wilander@apple.com>
 
         Storage Access API: Implement frame-specific access in the document.cookie layer

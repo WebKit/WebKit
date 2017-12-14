@@ -31,6 +31,7 @@ messages -> WebSWClientConnection {
     UpdateRegistrationState(WebCore::ServiceWorkerRegistrationIdentifier identifier, enum WebCore::ServiceWorkerRegistrationState state, std::optional<WebCore::ServiceWorkerData> serviceWorkerIdentifier)
     UpdateWorkerState(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, enum WebCore::ServiceWorkerState state)
     FireUpdateFoundEvent(WebCore::ServiceWorkerRegistrationIdentifier identifier)
+    SetRegistrationLastUpdateTime(WebCore::ServiceWorkerRegistrationIdentifier identifier, WallTime lastUpdateTime)
     NotifyClientsOfControllerChange(HashSet<WebCore::DocumentIdentifier> contextIdentifiers, struct WebCore::ServiceWorkerData newController)
 
     SetSWOriginTableIsImported()

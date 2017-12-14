@@ -116,7 +116,9 @@ void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data)
     // Pages should not have been able to make a new registration to this key while the import was still taking place.
     ASSERT(!m_registrations.contains(data.registration.key));
 
-    addRegistration(std::make_unique<SWServerRegistration>(*this, data.registration.key, data.registration.updateViaCache, data.registration.scopeURL, data.scriptURL));
+    auto registration = std::make_unique<SWServerRegistration>(*this, data.registration.key, data.registration.updateViaCache, data.registration.scopeURL, data.scriptURL);
+    registration->setLastUpdateTime(data.registration.lastUpdateTime);
+    addRegistration(WTFMove(registration));
     tryInstallContextData(WTFMove(data));
 }
 

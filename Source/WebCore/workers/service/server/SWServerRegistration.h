@@ -60,7 +60,7 @@ public:
     bool isUninstalling() const { return m_uninstalling; }
     void setIsUninstalling(bool);
 
-    void setLastUpdateTime(WallTime time) { m_lastUpdateTime = time; }
+    void setLastUpdateTime(WallTime);
     WallTime lastUpdateTime() const { return m_lastUpdateTime; }
 
     ServiceWorkerUpdateViaCache updateViaCache() const { return m_updateViaCache; }

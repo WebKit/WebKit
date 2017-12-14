@@ -102,6 +102,14 @@ void SWServerRegistration::updateWorkerState(SWServerWorker& worker, ServiceWork
     });
 }
 
+void SWServerRegistration::setLastUpdateTime(WallTime time)
+{
+    m_lastUpdateTime = time;
+    forEachConnection([&](auto& connection) {
+        connection.setRegistrationLastUpdateTime(identifier(), time);
+    });
+}
+
 void SWServerRegistration::fireUpdateFoundEvent()
 {
     forEachConnection([&](auto& connection) {

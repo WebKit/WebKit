@@ -56,6 +56,9 @@ public:
     const String& scope() const;
     ServiceWorkerUpdateViaCache updateViaCache() const;
 
+    WallTime lastUpdateTime() const;
+    void setLastUpdateTime(WallTime);
+
     void update(Ref<DeferredPromise>&&);
     void unregister(Ref<DeferredPromise>&&);
 

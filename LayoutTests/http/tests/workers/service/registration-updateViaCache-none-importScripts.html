@@ -1,0 +1,43 @@
+<html>
+<head>
+<script src="resources/sw-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+function getRandomIdFromWorker(worker)
+{
+    worker.postMessage("getRandomId");
+    return new Promise(function(resolve) {
+      navigator.serviceWorker.addEventListener('message', function(e) {
+            resolve(e.data);
+        });
+    });
+}
+
+async function test()
+{
+    try {
+        let registration = await navigator.serviceWorker.register("resources/import-cacheable-script-worker.js", { updateViaCache: "none" });
+        let worker1 = registration.installing;
+        await waitForState(worker1, "activated");
+        let randomId1 = await getRandomIdFromWorker(worker1);
+
+        await registration.update();
+        let worker2 = registration.installing;
+        await waitForState(worker2, "activated");
+        let randomId2 = await getRandomIdFromWorker(worker2);
+
+        if (randomId1 === randomId2)
+            log("FAIL: importScripts() loaded the script came from the network cache");
+        else
+            log("PASS: importScripts() did not load the script from the network cache");
+    } catch(e) {
+        log("Got exception: " + e);
+    }
+    finishSWTest();
+}
+test();
+</script>
+</body>
+</html>

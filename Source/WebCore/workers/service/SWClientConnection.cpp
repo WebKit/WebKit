@@ -207,6 +207,27 @@ void SWClientConnection::fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifie
     }
 }
 
+void SWClientConnection::setRegistrationLastUpdateTime(ServiceWorkerRegistrationIdentifier identifier, WallTime lastUpdateTime)
+{
+    ASSERT(isMainThread());
+
+    SWContextManager::singleton().forEachServiceWorkerThread([identifier, lastUpdateTime] (auto& workerThread) {
+        workerThread.thread().runLoop().postTask([identifier, lastUpdateTime](ScriptExecutionContext& context) {
+            if (auto* container = context.serviceWorkerContainer()) {
+                if (auto* registration = container->registration(identifier))
+                    registration->setLastUpdateTime(lastUpdateTime);
+            }
+        });
+    });
+
+    for (auto* document : Document::allDocuments()) {
+        if (auto* container = document->serviceWorkerContainer()) {
+            if (auto* registration = container->registration(identifier))
+                registration->setLastUpdateTime(lastUpdateTime);
+        }
+    }
+}
+
 void SWClientConnection::notifyClientsOfControllerChange(const HashSet<DocumentIdentifier>& contextIdentifiers, ServiceWorkerData&& newController)
 {
     ASSERT(isMainThread());
