@@ -1,3 +1,22 @@
+2017-12-13  Daniel Bates  <dabates@apple.com>
+
+        Add more auto fill button types
+        https://bugs.webkit.org/show_bug.cgi?id=180651
+        <rdar://problem/35891125>
+        And
+        <rdar://problem/35977943>
+
+        Update expected results. I included results from the GTK bot as a baseline. The results are incorrect as they
+        render the password field text using bullets instead of plain text. This likely indicates that the bots did not
+        regenerate the user-agent style sheet.
+
+        * platform/gtk/fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button-expected.txt: Added.
+        * platform/gtk/fast/forms/auto-fill-button/input-strong-password-auto-fill-button-expected.txt: Added.
+        * platform/ios/fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button-expected.txt:
+        * platform/ios/fast/forms/auto-fill-button/input-strong-password-auto-fill-button-expected.txt:
+        * platform/mac/fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button-expected.txt:
+        * platform/mac/fast/forms/auto-fill-button/input-strong-password-auto-fill-button-expected.txt:
+
 2017-12-13  Matt Lewis  <jlewis3@apple.com>
 
         Marked security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html as flaky.
