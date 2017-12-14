@@ -1405,6 +1405,9 @@ webkit.org/b/104809 media/encrypted-media/encrypted-media-not-loaded.html [ Fail
 webkit.org/b/104809 media/encrypted-media/encrypted-media-syntax.html [ Failure Timeout ]
 webkit.org/b/104809 media/track/track-cues-pause-on-exit.html [ Timeout Pass ]
 
+webkit.org/b/180071 media/encrypted-media/clearKey/clearKey-encrypted-cenc-event.html [ Failure ]
+webkit.org/b/180071 media/encrypted-media/clearKey/clearKey-encrypted-cenc-event-mse.html [ Failure ]
+
 # This test also crashes after the FTL merge
 webkit.org/b/106415 webkit.org/b/119255 fast/workers/worker-close-more.html [ Timeout Crash Pass ]
 

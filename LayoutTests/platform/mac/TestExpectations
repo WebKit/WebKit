@@ -1357,6 +1357,8 @@ media/encrypted-media/mock-MediaKeySession-load.html [ Skip ]
 media/encrypted-media/mock-MediaKeySession-remove.html [ Skip ]
 media/encrypted-media/mock-MediaKeySession-update.html [ Skip ]
 
+media/encrypted-media/clearKey/clearKey-encrypted-cenc-event.html [ Skip ]
+
 webkit.org/b/162507 http/tests/media/hls/hls-video-resize.html [ Pass Failure ]
 
 webkit.org/b/167642 imported/w3c/web-platform-tests/shadow-dom/slotchange.html [ Pass Failure ]

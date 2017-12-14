@@ -1,3 +1,44 @@
+2017-12-14  Yacine Bandou  <yacine.bandou_ext@softathome.com>
+
+        [EME] Add layout test for InitData and InitDataType in CENC encrypted event
+        https://bugs.webkit.org/show_bug.cgi?id=180430
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This commit adds new layout tests in order to test the reception of the encrypted CENC
+        event with an expected initData and initDataType fields.
+
+        * media/content/encrypted/VideoClearKeyCenc.mp4: Added.
+            This is a simple encrypted video file used for regular playback.
+            It has been encrypted with BENTO4. https://www.bento4.com/
+
+        * media/content/encrypted/segments/VideoClearKeyCenc-seg-0.mp4: Added.
+            This is a simple encrypted video fragment used in MSE playback.
+            It has been fragmented and encrypted with BENTO4. https://www.bento4.com/
+
+        * media/encrypted-media/clearKey/clearKey-encrypted-cenc-event-expected.txt: Added.
+        * media/encrypted-media/clearKey/clearKey-encrypted-cenc-event-mse-expected.txt: Added.
+        * media/encrypted-media/clearKey/clearKey-encrypted-cenc-event-mse.html: Added.
+            This is a test with MSE.
+
+        * media/encrypted-media/clearKey/clearKey-encrypted-cenc-event.html: Added.
+            This is a test with a regular playback.
+
+        * media/encrypted-media/medias-enc.js: Added.
+            This JavaScrit file lists the encrypted media wich will be used in encrypted-media tests.
+            It gives all necessary informations about the encrypted media: path of the file or
+            the path of the segments in MSE case, mimeType, initDataType and the encryption keys.
+
+        * media/media-source/media-source-loader-simple.js: Added.
+            This JavaScript file provides a simple MSE implementation, reads the segments of the media and appends them
+            in the appropriate SourceBuffer.
+
+        * platform/gtk/TestExpectations:
+        * platform/mac-elcapitan/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2017-12-14  Frederic Wang  <fwang@igalia.com>
 
         Make GraphicsLayer::dumpProperties dump m_offsetFromRenderer
