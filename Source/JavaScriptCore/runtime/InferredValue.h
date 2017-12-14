@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include "IsoSubspace.h"
 #include "JSCell.h"
+#include "VM.h"
 #include "Watchpoint.h"
 #include "WriteBarrier.h"
 
