@@ -8867,7 +8867,6 @@
 				148CD1D8108CF902008163C6 /* JSContextRefPrivate.h in Headers */,
 				FE2B0B731FD9EF700075DA5F /* JSCPoison.h in Headers */,
 				FE2B0B691FD227E00075DA5F /* JSCPoisonedPtr.h in Headers */,
-				FE2B0B691FD227E00075DA5F /* JSCPoisonedPtr.h in Headers */,
 				A72028B81797601E0098028C /* JSCTestRunnerUtils.h in Headers */,
 				72AAF7CE1D0D31B3005E60BE /* JSCustomGetterSetterFunction.h in Headers */,
 				0F2B66EC17B6B5AB00A7AE3F /* JSDataView.h in Headers */,
