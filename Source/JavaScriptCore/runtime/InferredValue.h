@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,12 @@ class InferredValue : public JSCell {
 public:
     typedef JSCell Base;
     
+    template<typename CellType>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.inferredValueSpace;
+    }
+
     static InferredValue* create(VM&);
     
     static const bool needsDestruction = true;
@@ -95,23 +101,7 @@ public:
     
     static const unsigned StructureFlags = StructureIsImmortal | Base::StructureFlags;
     
-    // We could have used Weak<>. But we want arbitrary JSValues, not just cells. It's also somewhat
-    // convenient to have eager notification of death.
-    //
-    // Also note that this should be a private class, but it isn't because Windows.
-    class ValueCleanup : public UnconditionalFinalizer {
-        WTF_MAKE_FAST_ALLOCATED;
-        
-    public:
-        ValueCleanup(InferredValue*);
-        virtual ~ValueCleanup();
-        
-    protected:
-        void finalizeUnconditionally() override;
-        
-    private:
-        InferredValue* m_owner;
-    };
+    void finalizeUnconditionally(VM&);
     
 private:
     InferredValue(VM&);
@@ -120,11 +110,8 @@ private:
     JS_EXPORT_PRIVATE void notifyWriteSlow(VM&, JSValue, const FireDetail&);
     JS_EXPORT_PRIVATE void notifyWriteSlow(VM&, JSValue, const char* reason);
     
-    friend class ValueCleanup;
-    
     InlineWatchpointSet m_set;
     WriteBarrier<Unknown> m_value;
-    std::unique_ptr<ValueCleanup> m_cleanup;
 };
 
 // FIXME: We could have an InlineInferredValue, which only allocates the InferredValue object when

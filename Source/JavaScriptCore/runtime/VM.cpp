@@ -61,6 +61,7 @@
 #include "IncrementalSweeper.h"
 #include "IndirectEvalExecutable.h"
 #include "InferredTypeTable.h"
+#include "InferredValue.h"
 #include "Interpreter.h"
 #include "JITCode.h"
 #include "JITWorklist.h"
@@ -208,6 +209,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , functionExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), FunctionExecutable)
     , indirectEvalExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), IndirectEvalExecutable)
     , inferredTypeSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), InferredType)
+    , inferredValueSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), InferredValue)
     , moduleProgramExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), ModuleProgramExecutable)
     , nativeExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), NativeExecutable)
     , programExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), ProgramExecutable)
@@ -215,6 +217,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , structureRareDataSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), StructureRareData)
     , structureSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), Structure)
     , inferredTypesWithFinalizers(inferredTypeSpace)
+    , inferredValuesWithFinalizers(inferredValueSpace)
     , vmType(vmType)
     , clientData(0)
     , topEntryFrame(nullptr)

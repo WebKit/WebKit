@@ -41,6 +41,7 @@
 #include "HeapVerifier.h"
 #include "IncrementalSweeper.h"
 #include "InferredTypeInlines.h"
+#include "InferredValueInlines.h"
 #include "Interpreter.h"
 #include "IsoCellSetInlines.h"
 #include "JITStubRoutineSet.h"
@@ -565,6 +566,7 @@ void Heap::finalizeUnconditionalFinalizers(CellSet& cellSet)
 void Heap::finalizeUnconditionalFinalizers()
 {
     finalizeUnconditionalFinalizers<InferredType>(vm()->inferredTypesWithFinalizers);
+    finalizeUnconditionalFinalizers<InferredValue>(vm()->inferredValuesWithFinalizers);
     
     while (m_unconditionalFinalizers.hasNext()) {
         UnconditionalFinalizer* finalizer = m_unconditionalFinalizers.removeNext();

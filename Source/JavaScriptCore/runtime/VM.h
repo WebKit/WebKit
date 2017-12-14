@@ -342,6 +342,7 @@ public:
     IsoSubspace functionExecutableSpace;
     IsoSubspace indirectEvalExecutableSpace;
     IsoSubspace inferredTypeSpace;
+    IsoSubspace inferredValueSpace;
     IsoSubspace moduleProgramExecutableSpace;
     IsoSubspace nativeExecutableSpace;
     IsoSubspace programExecutableSpace;
@@ -350,6 +351,7 @@ public:
     IsoSubspace structureSpace;
     
     IsoCellSet inferredTypesWithFinalizers;
+    IsoCellSet inferredValuesWithFinalizers;
 
     VMType vmType;
     ClientData* clientData;

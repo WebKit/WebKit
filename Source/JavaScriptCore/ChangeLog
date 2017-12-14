@@ -1,3 +1,29 @@
+2017-12-12  Filip Pizlo  <fpizlo@apple.com>
+
+        InferredValue should use IsoSubspace
+        https://bugs.webkit.org/show_bug.cgi?id=180738
+
+        Reviewed by Keith Miller.
+        
+        This moves InferredValue into an IsoSubspace and then takes advantage of this to get rid of
+        its UnconditionalFinalizer.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        * runtime/InferredValue.cpp:
+        (JSC::InferredValue::visitChildren):
+        (JSC::InferredValue::ValueCleanup::ValueCleanup): Deleted.
+        (JSC::InferredValue::ValueCleanup::~ValueCleanup): Deleted.
+        (JSC::InferredValue::ValueCleanup::finalizeUnconditionally): Deleted.
+        * runtime/InferredValue.h:
+        (JSC::InferredValue::subspaceFor):
+        * runtime/InferredValueInlines.h: Added.
+        (JSC::InferredValue::finalizeUnconditionally):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2017-12-13  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: add instrumentation for ImageBitmapRenderingContext

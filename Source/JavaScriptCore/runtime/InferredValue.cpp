@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InferredValue.h"
 
+#include "IsoCellSetInlines.h"
 #include "JSCInlines.h"
 
 namespace JSC {
@@ -54,23 +55,13 @@ void InferredValue::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     InferredValue* inferredValue = jsCast<InferredValue*>(cell);
     
-    auto locker = holdLock(*inferredValue);
-    
-    if (inferredValue->m_set.hasBeenInvalidated()) {
-        if (inferredValue->m_cleanup && !inferredValue->m_cleanup->isOnList())
-            inferredValue->m_cleanup = nullptr;
-        return;
-    }
-    
     JSValue value = inferredValue->m_value.get();
     if (!value)
         return;
     if (!value.isCell())
         return;
     
-    if (!inferredValue->m_cleanup)
-        inferredValue->m_cleanup = std::make_unique<ValueCleanup>(inferredValue);
-    visitor.addUnconditionalFinalizer(inferredValue->m_cleanup.get());
+    visitor.vm().inferredValuesWithFinalizers.add(inferredValue);
 }
 
 InferredValue::InferredValue(VM& vm)
@@ -110,29 +101,6 @@ void InferredValue::notifyWriteSlow(VM& vm, JSValue value, const FireDetail& det
 void InferredValue::notifyWriteSlow(VM& vm, JSValue value, const char* reason)
 {
     notifyWriteSlow(vm, value, StringFireDetail(reason));
-}
-
-InferredValue::ValueCleanup::ValueCleanup(InferredValue* owner)
-    : m_owner(owner)
-{
-}
-
-InferredValue::ValueCleanup::~ValueCleanup()
-{
-}
-
-void InferredValue::ValueCleanup::finalizeUnconditionally()
-{
-    JSValue value = m_owner->m_value.get();
-    
-    // Concurrent GC means that this could have changed since we installed the finalizer.
-    if (!value || !value.isCell())
-        return;
-    
-    if (Heap::isMarked(value.asCell()))
-        return;
-    
-    m_owner->invalidate(*m_owner->vm(), StringFireDetail("InferredValue clean-up during GC"));
 }
 
 } // namespace JSC
