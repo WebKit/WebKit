@@ -1,3 +1,37 @@
+2017-12-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Cmd-Option-R in docked inspector causes the inspector to reload instead of the inspected page
+        https://bugs.webkit.org/show_bug.cgi?id=180775
+        <rdar://problem/35964592>
+
+        Reviewed by Brian Burg.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Remove old files add new files.
+
+        * PlatformMac.cmake:
+        * UIProcess/mac/WKWebInspectorWKWebView.h: Removed.
+        * UIProcess/mac/WKWebInspectorWKWebView.mm: Removed.
+        Remove unused WKWebInspectorWKWebView.
+
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm:
+        * UIProcess/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController dealloc]):
+        (-[WKInspectorViewController webView]):
+        (-[WKInspectorViewController inspectorWKWebViewReload:]):
+        (-[WKInspectorViewController inspectorWKWebViewReloadFromOrigin:]):
+        Handle WKWebView IBActions sent to the inspector frontend WKWebView.
+
+        * UIProcess/mac/WKInspectorWKWebView.h:
+        * UIProcess/mac/WKInspectorWKWebView.mm:
+        (-[WKInspectorWKWebView tag]):
+        (-[WKInspectorWKWebView inspectorWKWebViewDelegate]):
+        (-[WKInspectorWKWebView setInspectorWKWebViewDelegate:]):
+        (-[WKInspectorWKWebView reload:]):
+        (-[WKInspectorWKWebView reloadFromOrigin:]):
+        Move WKInspectorWKWebView into its own file. Include a delegate
+        to handle reload IBActions that will want to override.
+
 2017-12-13  Chris Dumez  <cdumez@apple.com>
 
         Fix copy/paste error in ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration()

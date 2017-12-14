@@ -1542,6 +1542,8 @@
 		A1FB68241F6E518200C43F9F /* WKCrashReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1FB68221F6E518200C43F9F /* WKCrashReporter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1FB68251F6E518200C43F9F /* WKCrashReporter.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1FB68231F6E518200C43F9F /* WKCrashReporter.mm */; };
 		A1FB68271F6E51C100C43F9F /* CrashReporterClientSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1FB68261F6E51C100C43F9F /* CrashReporterClientSPI.h */; };
+		A518B5D21FE1D55B00F9FA28 /* WKInspectorWKWebView.h in Headers */ = {isa = PBXBuildFile; fileRef = A518B5D01FE1D55B00F9FA28 /* WKInspectorWKWebView.h */; };
+		A518B5D31FE1D55B00F9FA28 /* WKInspectorWKWebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = A518B5D11FE1D55B00F9FA28 /* WKInspectorWKWebView.mm */; };
 		A54293A4195A43DA002782C7 /* WKInspectorNodeSearchGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = A54293A2195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.h */; };
 		A54293A5195A43DD002782C7 /* WKInspectorNodeSearchGestureRecognizer.mm in Sources */ = {isa = PBXBuildFile; fileRef = A54293A3195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.mm */; };
 		A55BA8101BA1317E007CD33D /* _WKRemoteWebInspectorViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = A55BA80C1BA12BE1007CD33D /* _WKRemoteWebInspectorViewController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1558,8 +1560,6 @@
 		A55BA8361BA3E70D007CD33D /* WebInspectorFrontendAPIDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A55BA8321BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.cpp */; };
 		A58B6F0818FCA733008CBA53 /* WKFileUploadPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = A58B6F0618FCA733008CBA53 /* WKFileUploadPanel.h */; };
 		A58B6F0918FCA733008CBA53 /* WKFileUploadPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = A58B6F0718FCA733008CBA53 /* WKFileUploadPanel.mm */; };
-		A5D3504B1D752116005124A9 /* WKWebInspectorWKWebView.h in Headers */ = {isa = PBXBuildFile; fileRef = A5D350491D752116005124A9 /* WKWebInspectorWKWebView.h */; };
-		A5D3504C1D752116005124A9 /* WKWebInspectorWKWebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5D3504A1D752116005124A9 /* WKWebInspectorWKWebView.mm */; };
 		A5D3504E1D78F5B3005124A9 /* RemoteWebInspectorProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5D3504D1D78F0D2005124A9 /* RemoteWebInspectorProxyMac.mm */; };
 		A5EFD38C16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A78CCDDA193AC9F4005ECC25 /* com.apple.WebKit.Databases.sb in CopyFiles */ = {isa = PBXBuildFile; fileRef = A78CCDD7193AC9E3005ECC25 /* com.apple.WebKit.Databases.sb */; };
@@ -3963,6 +3963,8 @@
 		A1FB68221F6E518200C43F9F /* WKCrashReporter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKCrashReporter.h; sourceTree = "<group>"; };
 		A1FB68231F6E518200C43F9F /* WKCrashReporter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKCrashReporter.mm; sourceTree = "<group>"; };
 		A1FB68261F6E51C100C43F9F /* CrashReporterClientSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CrashReporterClientSPI.h; sourceTree = "<group>"; };
+		A518B5D01FE1D55B00F9FA28 /* WKInspectorWKWebView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKInspectorWKWebView.h; sourceTree = "<group>"; };
+		A518B5D11FE1D55B00F9FA28 /* WKInspectorWKWebView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorWKWebView.mm; sourceTree = "<group>"; };
 		A54293A2195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKInspectorNodeSearchGestureRecognizer.h; path = ios/WKInspectorNodeSearchGestureRecognizer.h; sourceTree = "<group>"; };
 		A54293A3195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKInspectorNodeSearchGestureRecognizer.mm; path = ios/WKInspectorNodeSearchGestureRecognizer.mm; sourceTree = "<group>"; };
 		A55BA80C1BA12BE1007CD33D /* _WKRemoteWebInspectorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKRemoteWebInspectorViewController.h; sourceTree = "<group>"; };
@@ -3981,8 +3983,6 @@
 		A55BA8331BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorFrontendAPIDispatcher.h; sourceTree = "<group>"; };
 		A58B6F0618FCA733008CBA53 /* WKFileUploadPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFileUploadPanel.h; path = ios/forms/WKFileUploadPanel.h; sourceTree = "<group>"; };
 		A58B6F0718FCA733008CBA53 /* WKFileUploadPanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFileUploadPanel.mm; path = ios/forms/WKFileUploadPanel.mm; sourceTree = "<group>"; };
-		A5D350491D752116005124A9 /* WKWebInspectorWKWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebInspectorWKWebView.h; sourceTree = "<group>"; };
-		A5D3504A1D752116005124A9 /* WKWebInspectorWKWebView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebInspectorWKWebView.mm; sourceTree = "<group>"; };
 		A5D3504D1D78F0D2005124A9 /* RemoteWebInspectorProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteWebInspectorProxyMac.mm; sourceTree = "<group>"; };
 		A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageVisibilityTypes.h; sourceTree = "<group>"; };
 		A72D5D7F1236CBA800A88B15 /* APISerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APISerializedScriptValue.h; sourceTree = "<group>"; };
@@ -7921,6 +7921,8 @@
 				9321D5871A38EE74008052BE /* WKImmediateActionController.mm */,
 				994BADF11F7D77EA00B571E7 /* WKInspectorViewController.h */,
 				994BADF21F7D77EB00B571E7 /* WKInspectorViewController.mm */,
+				A518B5D01FE1D55B00F9FA28 /* WKInspectorWKWebView.h */,
+				A518B5D11FE1D55B00F9FA28 /* WKInspectorWKWebView.mm */,
 				0FCB4E5C18BBE3D9000FCFC9 /* WKPrintingView.h */,
 				0FCB4E5D18BBE3D9000FCFC9 /* WKPrintingView.mm */,
 				513E462B1AD837560016234A /* WKSharingServicePickerDelegate.h */,
@@ -7931,8 +7933,6 @@
 				0FCB4E5F18BBE3D9000FCFC9 /* WKTextInputWindowController.mm */,
 				2D28A4951AF965A100F190C9 /* WKViewLayoutStrategy.h */,
 				2D28A4961AF965A100F190C9 /* WKViewLayoutStrategy.mm */,
-				A5D350491D752116005124A9 /* WKWebInspectorWKWebView.h */,
-				A5D3504A1D752116005124A9 /* WKWebInspectorWKWebView.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -9343,6 +9343,7 @@
 				A54293A4195A43DA002782C7 /* WKInspectorNodeSearchGestureRecognizer.h in Headers */,
 				6EE849C81368D9390038D481 /* WKInspectorPrivateMac.h in Headers */,
 				994BADF41F7D781400B571E7 /* WKInspectorViewController.h in Headers */,
+				A518B5D21FE1D55B00F9FA28 /* WKInspectorWKWebView.h in Headers */,
 				51A9E10B1315CD18009E7031 /* WKKeyValueStorageManager.h in Headers */,
 				2D790A9F1AD7164900AB90B3 /* WKLayoutMode.h in Headers */,
 				C98C48AA1B6FD5B500145103 /* WKMediaSessionFocusManager.h in Headers */,
@@ -9495,7 +9496,6 @@
 				BFA6179F12F0B99D0033E0CA /* WKViewPrivate.h in Headers */,
 				C5E1AFE916B20B75006CC1F2 /* WKWebArchive.h in Headers */,
 				C5E1AFEB16B20B7E006CC1F2 /* WKWebArchiveResource.h in Headers */,
-				A5D3504B1D752116005124A9 /* WKWebInspectorWKWebView.h in Headers */,
 				1AA2E56718D77508003814BD /* WKWebProcessBundleParameters.h in Headers */,
 				BC989D82161A7E5D000D46D3 /* WKWebProcessPlugIn.h in Headers */,
 				BC8F2F2B16273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.h in Headers */,
@@ -10964,6 +10964,7 @@
 				0F3C725C196F605200AEDD0C /* WKInspectorHighlightView.mm in Sources */,
 				A54293A5195A43DD002782C7 /* WKInspectorNodeSearchGestureRecognizer.mm in Sources */,
 				994BADF31F7D781100B571E7 /* WKInspectorViewController.mm in Sources */,
+				A518B5D31FE1D55B00F9FA28 /* WKInspectorWKWebView.mm in Sources */,
 				51A9E10A1315CD18009E7031 /* WKKeyValueStorageManager.cpp in Sources */,
 				C98C48A91B6FD5B500145103 /* WKMediaSessionFocusManager.cpp in Sources */,
 				C9CD439E1B4B025300239E33 /* WKMediaSessionMetadata.cpp in Sources */,
@@ -11057,7 +11058,6 @@
 				2D28A4981AF965A200F190C9 /* WKViewLayoutStrategy.mm in Sources */,
 				C5E1AFE816B20B67006CC1F2 /* WKWebArchive.cpp in Sources */,
 				C5E1AFEA16B20B7B006CC1F2 /* WKWebArchiveResource.cpp in Sources */,
-				A5D3504C1D752116005124A9 /* WKWebInspectorWKWebView.mm in Sources */,
 				1AA2E56618D77508003814BD /* WKWebProcessBundleParameters.mm in Sources */,
 				BC989D81161A7E5D000D46D3 /* WKWebProcessPlugIn.mm in Sources */,
 				BC8F2F2A16273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.mm in Sources */,

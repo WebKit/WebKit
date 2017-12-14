@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,10 +29,16 @@
 
 #if PLATFORM(MAC) && WK_API_ENABLED
 
-@interface WKWebInspectorWKWebView : WKWebView
+@protocol WKInspectorWKWebViewDelegate;
 
-- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration;
-
+@interface WKInspectorWKWebView : WKWebView
+@property (nonatomic, weak) id <WKInspectorWKWebViewDelegate> inspectorWKWebViewDelegate;
 @end
 
-#endif
+@protocol WKInspectorWKWebViewDelegate
+@required
+- (void)inspectorWKWebViewReload:(WKInspectorWKWebView *)webView;
+- (void)inspectorWKWebViewReloadFromOrigin:(WKInspectorWKWebView *)webView;
+@end
+
+#endif // PLATFORM(MAC) && WK_API_ENABLED

@@ -313,7 +313,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/mac/WKTextFinderClient.mm
     UIProcess/mac/WKTextInputWindowController.mm
     UIProcess/mac/WKViewLayoutStrategy.mm
-    UIProcess/mac/WKWebInspectorWKWebView.mm
     UIProcess/mac/WebColorPickerMac.mm
     UIProcess/mac/WebContextMenuProxyMac.mm
     UIProcess/mac/WebCookieManagerProxyMac.mm

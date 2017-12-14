@@ -28,7 +28,9 @@
 
 #if PLATFORM(MAC) && WK_API_ENABLED
 
+#import "VersionChecks.h"
 #import "WKFrameInfo.h"
+#import "WKInspectorWKWebView.h"
 #import "WKNavigationAction.h"
 #import "WKNavigationDelegate.h"
 #import "WKOpenPanelParameters.h"
@@ -42,23 +44,9 @@
 #import "WebInspectorUtilities.h"
 #import "WebPageProxy.h"
 
-// FIXME: this should be declared in the ObjC API; currently it's in the C SPI.
-const NSInteger WKInspectorViewTag = 1000;
-
 using namespace WebKit;
 
-// Clients need to be able to tell whether a subview is a docked inspector view, so override the tag.
-@interface WKInspectorWKWebView : WKWebView
-@end
-
-@implementation WKInspectorWKWebView
-- (NSInteger)tag
-{
-    return WKInspectorViewTag;
-}
-@end
-
-@interface WKInspectorViewController () <WKUIDelegate, WKNavigationDelegate>
+@interface WKInspectorViewController () <WKUIDelegate, WKNavigationDelegate, WKInspectorWKWebViewDelegate>
 @end
 
 @implementation WKInspectorViewController {
@@ -83,6 +71,7 @@ using namespace WebKit;
     if (_webView) {
         [_webView setUIDelegate:nil];
         [_webView setNavigationDelegate:nil];
+        [_webView setInspectorWKWebViewDelegate:nil];
         _webView = nil;
     }
 
@@ -102,6 +91,7 @@ using namespace WebKit;
         _webView = adoptNS([[WKInspectorWKWebView alloc] initWithFrame:initialFrame configuration:[self configuration]]);
         [_webView setUIDelegate:self];
         [_webView setNavigationDelegate:self];
+        [_webView setInspectorWKWebViewDelegate:self];
         [_webView _setAutomaticallyAdjustsContentInsets:NO];
         [_webView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     }
@@ -234,6 +224,28 @@ using namespace WebKit;
 
     // Prevent everything else.
     decisionHandler(WKNavigationActionPolicyCancel);
+}
+
+// MARK: WKInspectorWKWebViewDelegate methods
+
+- (void)inspectorWKWebViewReload:(WKInspectorWKWebView *)webView
+{
+    if (!_inspectedPage)
+        return;
+
+    OptionSet<WebCore::ReloadOption> reloadOptions;
+    if (linkedOnOrAfter(WebKit::SDKVersion::FirstWithExpiredOnlyReloadBehavior))
+        reloadOptions |= WebCore::ReloadOption::ExpiredOnly;
+
+    _inspectedPage->reload(reloadOptions);
+}
+
+- (void)inspectorWKWebViewReloadFromOrigin:(WKInspectorWKWebView *)webView
+{
+    if (!_inspectedPage)
+        return;
+
+    _inspectedPage->reload(WebCore::ReloadOption::FromOrigin);
 }
 
 @end

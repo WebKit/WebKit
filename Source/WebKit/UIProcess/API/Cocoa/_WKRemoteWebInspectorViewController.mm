@@ -29,7 +29,6 @@
 #if PLATFORM(MAC) && WK_API_ENABLED
 
 #import "RemoteWebInspectorProxy.h"
-#import "WKWebInspectorWKWebView.h"
 
 using namespace WebKit;
 
