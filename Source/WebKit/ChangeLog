@@ -1,5 +1,22 @@
 2017-12-14  Alex Christensen  <achristensen@webkit.org>
 
+        Fix Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=180835
+
+        Reviewed by Andy Estes.
+
+        * PlatformMac.cmake:
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::ephemeralParametersWithSessionID):
+        * Shared/WebsiteDataStoreParameters.h:
+        * UIProcess/API/APIAttachment.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setPrivateBrowsingEnabled):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setSessionID):
+
+2017-12-14  Alex Christensen  <achristensen@webkit.org>
+
         Use move semantics for SandboxExtension::Handle
         https://bugs.webkit.org/show_bug.cgi?id=180792
 
