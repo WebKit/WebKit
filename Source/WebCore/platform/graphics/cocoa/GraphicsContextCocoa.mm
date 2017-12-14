@@ -368,25 +368,22 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
 CGColorSpaceRef linearRGBColorSpaceRef()
 {
-    static CGColorSpaceRef linearSRGBSpace = nullptr;
-
-    if (linearSRGBSpace)
-        return linearSRGBSpace;
-
-    RetainPtr<NSString> iccProfilePath = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"linearSRGB" ofType:@"icc"];
-    RetainPtr<NSData> iccProfileData = adoptNS([[NSData alloc] initWithContentsOfFile:iccProfilePath.get()]);
-
-    if (iccProfileData)
+    static CGColorSpaceRef linearSRGBColorSpace;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        RetainPtr<NSString> iccProfilePath = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"linearSRGB" ofType:@"icc"];
+        RetainPtr<NSData> iccProfileData = adoptNS([[NSData alloc] initWithContentsOfFile:iccProfilePath.get()]);
+        if (iccProfileData)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        linearSRGBSpace = CGColorSpaceCreateWithICCProfile((CFDataRef)iccProfileData.get());
+            linearSRGBColorSpace = CGColorSpaceCreateWithICCProfile((CFDataRef)iccProfileData.get());
 #pragma clang diagnostic pop
 
-    // If we fail to load the linearized sRGB ICC profile, fall back to sRGB.
-    if (!linearSRGBSpace)
-        return sRGBColorSpaceRef();
-
-    return linearSRGBSpace;
+        // If we fail to load the linearized sRGB ICC profile, fall back to sRGB.
+        if (!linearSRGBColorSpace)
+            linearSRGBColorSpace = sRGBColorSpaceRef();
+    });
+    return linearSRGBColorSpace;
 }
 #endif
 

@@ -74,53 +74,68 @@ static void setCGStrokeColor(CGContextRef context, const Color& color)
 
 CGColorSpaceRef sRGBColorSpaceRef()
 {
-    static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+    static CGColorSpaceRef sRGBColorSpace;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
 #if PLATFORM(WIN)
-    // Out-of-date CG installations will not honor kCGColorSpaceSRGB. This logic avoids
-    // causing a crash under those conditions. Since the default color space in Windows
-    // is sRGB, this all works out nicely.
-    if (!sRGBSpace)
-        sRGBSpace = CGColorSpaceCreateDeviceRGB();
+        // Out-of-date CG installations will not honor kCGColorSpaceSRGB. This logic avoids
+        // causing a crash under those conditions. Since the default color space in Windows
+        // is sRGB, this all works out nicely.
+        // FIXME: Is this still needed? rdar://problem/15213515 was fixed.
+        if (!sRGBColorSpace)
+            sRGBColorSpace = CGColorSpaceCreateDeviceRGB();
 #endif // PLATFORM(WIN)
-    return sRGBSpace;
+    });
+    return sRGBColorSpace;
 }
 
 #if PLATFORM(WIN) || PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
 // See GraphicsContextCocoa for the pre-10.12 implementation.
 CGColorSpaceRef linearRGBColorSpaceRef()
 {
+    static CGColorSpaceRef linearRGBColorSpace;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
 #if PLATFORM(WIN)
-    // FIXME: Windows should be able to use linear sRGB, this is tracked by http://webkit.org/b/80000.
-    return CGColorSpaceCreateDeviceRGB();
+        // FIXME: Windows should be able to use linear sRGB, this is tracked by http://webkit.org/b/80000.
+        linearRGBColorSpace = sRGBColorSpaceRef();
 #else
-    static CGColorSpaceRef linearRGBSpace;
-    linearRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceLinearSRGB);
-    return linearRGBSpace;
+        linearRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceLinearSRGB);
 #endif
+    });
+
+    return linearRGBColorSpace;
 }
 #endif
 
 CGColorSpaceRef extendedSRGBColorSpaceRef()
 {
-    static CGColorSpaceRef extendedSRGBSpace;
+    static CGColorSpaceRef extendedSRGBColorSpace;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
-    extendedSRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceExtendedSRGB);
+        extendedSRGBColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceExtendedSRGB);
 #endif
-    // If there is no support for exteneded sRGB, fall back to sRGB.
-    if (!extendedSRGBSpace)
-        extendedSRGBSpace = CGColorSpaceCreateDeviceRGB();
-    return extendedSRGBSpace;
+        // If there is no support for extended sRGB, fall back to sRGB.
+        if (!extendedSRGBColorSpace)
+            extendedSRGBColorSpace = sRGBColorSpaceRef();
+    });
+    return extendedSRGBColorSpace;
 }
 
 CGColorSpaceRef displayP3ColorSpaceRef()
 {
-    static CGColorSpaceRef displayP3Space;
+    static CGColorSpaceRef displayP3ColorSpace;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 101100)
-    displayP3Space = CGColorSpaceCreateWithName(kCGColorSpaceDisplayP3);
+        displayP3ColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceDisplayP3);
 #else
-    displayP3Space = sRGBColorSpaceRef();
+        displayP3ColorSpace = sRGBColorSpaceRef();
 #endif
-    return displayP3Space;
+    });
+    return displayP3ColorSpace;
 }
 
 static InterpolationQuality convertInterpolationQuality(CGInterpolationQuality quality)
