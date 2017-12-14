@@ -414,6 +414,8 @@ static String autoFillButtonTypeToAccessibilityLabel(AutoFillButtonType autoFill
         ASSERT_NOT_REACHED();
         return { };
     }
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 static String autoFillButtonTypeToAutoFillButtonText(AutoFillButtonType autoFillButtonType)
@@ -429,6 +431,8 @@ static String autoFillButtonTypeToAutoFillButtonText(AutoFillButtonType autoFill
         ASSERT_NOT_REACHED();
         return { };
     }
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 static AtomicString autoFillButtonTypeToAutoFillButtonPseudoClassName(AutoFillButtonType autoFillButtonType)
@@ -446,6 +450,8 @@ static AtomicString autoFillButtonTypeToAutoFillButtonPseudoClassName(AutoFillBu
         ASSERT_NOT_REACHED();
         return emptyAtom();
     }
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 static bool isAutoFillButtonTypeChanged(const AtomicString& attribute, AutoFillButtonType autoFillButtonType)
