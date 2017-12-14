@@ -301,10 +301,8 @@ void StorageProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
     });
 
 #if ENABLE(SERVICE_WORKER)
-    if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations)) {
-        if (auto* server = m_swServers.get(sessionID))
-            server->clearAll([callbackAggregator = callbackAggregator.copyRef()] { });
-    }
+    if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations))
+        swServerForSession(sessionID).clearAll([callbackAggregator = callbackAggregator.copyRef()] { });
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
@@ -321,10 +319,9 @@ void StorageProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
 
 #if ENABLE(SERVICE_WORKER)
     if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations)) {
-        if (auto* server = m_swServers.get(sessionID)) {
-            for (auto& originData : securityOriginDatas)
-                server->clear(originData.securityOrigin(), [callbackAggregator = callbackAggregator.copyRef()] { });
-        }
+        auto& server = swServerForSession(sessionID);
+        for (auto& originData : securityOriginDatas)
+            server.clear(originData.securityOrigin(), [callbackAggregator = callbackAggregator.copyRef()] { });
     }
 #endif
 

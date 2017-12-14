@@ -1,5 +1,23 @@
 2017-12-14  Chris Dumez  <cdumez@apple.com>
 
+        StorageProcess::deleteWebsiteData() should ensure there is a SWServer for the given sessionID
+        https://bugs.webkit.org/show_bug.cgi?id=180784
+
+        Reviewed by Youenn Fablet.
+
+        StorageProcess::deleteWebsiteData() should ensure there is a SWServer for the given sessionID
+        instead of not clearing anything when no such SWServer exists.
+
+        This will be useful on iOS once <rdar://problem/36034667> is fully fixed.
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::deleteWebsiteData):
+        (WebKit::StorageProcess::deleteWebsiteDataForOrigins):
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration):
+
+2017-12-14  Chris Dumez  <cdumez@apple.com>
+
         WebsiteDataStore::defaultDataStoreConfiguration() fails to set default value for serviceWorkerRegistrationDirectory
         https://bugs.webkit.org/show_bug.cgi?id=180794
         <rdar://problem/36034667>
