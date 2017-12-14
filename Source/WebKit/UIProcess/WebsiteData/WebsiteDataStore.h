@@ -91,6 +91,8 @@ public:
     static Ref<WebsiteDataStore> create(Configuration, PAL::SessionID);
     virtual ~WebsiteDataStore();
 
+    static WebsiteDataStore* existingNonDefaultDataStoreForSessionID(PAL::SessionID);
+
     bool isPersistent() const { return !m_sessionID.isEphemeral(); }
     PAL::SessionID sessionID() const { return m_sessionID; }
 

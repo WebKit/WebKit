@@ -1,3 +1,13 @@
+2017-12-14  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (r225789): API tests WKProcessPool.InitialWarmedProcessUsed and WebKit.WebsiteDataStoreCustomPaths are failing.
+        https://bugs.webkit.org/show_bug.cgi?id=180722
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InitialWarmedProcessUsed.mm:
+        (TEST):
+
 2017-12-14  Alex Christensen  <achristensen@webkit.org>
 
         Fix Mac CMake build

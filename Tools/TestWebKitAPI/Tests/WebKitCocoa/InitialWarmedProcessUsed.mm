@@ -48,7 +48,7 @@ TEST(WKProcessPool, InitialWarmedProcessUsed)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL]]];
     [webView _test_waitForDidFinishNavigation];
 
-    EXPECT_EQ([pool _webProcessCount], static_cast<size_t>(1));
+    EXPECT_EQ([pool _webPageContentProcessCount], static_cast<size_t>(1));
 }
 
 #endif
