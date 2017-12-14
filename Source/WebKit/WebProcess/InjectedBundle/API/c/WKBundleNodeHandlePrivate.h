@@ -38,7 +38,9 @@ extern "C" {
 enum {
     kWKAutoFillButtonTypeNone,
     kWKAutoFillButtonTypeCredentials,
-    kWKAutoFillButtonTypeContacts
+    kWKAutoFillButtonTypeContacts,
+    kWKAutoFillButtonTypeStrongPassword,
+    kWKAutoFillButtonTypeStrongConfirmationPassword,
 };
 typedef uint8_t WKAutoFillButtonType;
 

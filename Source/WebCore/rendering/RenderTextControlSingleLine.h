@@ -95,7 +95,13 @@ public:
 private:
     bool hasLineIfEmpty() const override { return true; }
     bool isTextControlInnerBlock() const override { return true; }
-    bool canBeProgramaticallyScrolled() const override { return true; }
+    bool canBeProgramaticallyScrolled() const override
+    {
+        auto* shadowHost = element()->shadowHost();
+        if (is<HTMLInputElement>(shadowHost))
+            return !downcast<HTMLInputElement>(*shadowHost).hasAutoFillStrongPasswordButton();
+        return true;
+    }
 };
 
 } // namespace WebCore

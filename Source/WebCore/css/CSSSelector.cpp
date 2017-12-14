@@ -434,6 +434,9 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassAutofill:
                 str.appendLiteral(":-webkit-autofill");
                 break;
+            case CSSSelector::PseudoClassAutofillStrongPassword:
+                str.appendLiteral(":-webkit-autofill-strong-password");
+                break;
             case CSSSelector::PseudoClassDrag:
                 str.appendLiteral(":-webkit-drag");
                 break;

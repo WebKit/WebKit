@@ -135,6 +135,10 @@ static WebCore::AutoFillButtonType toAutoFillButtonType(_WKAutoFillButtonType au
         return WebCore::AutoFillButtonType::Contacts;
     case _WKAutoFillButtonTypeCredentials:
         return WebCore::AutoFillButtonType::Credentials;
+    case _WKAutoFillButtonTypeStrongConfirmationPassword:
+        return WebCore::AutoFillButtonType::StrongConfirmationPassword;
+    case _WKAutoFillButtonTypeStrongPassword:
+        return WebCore::AutoFillButtonType::StrongPassword;
     }
     ASSERT_NOT_REACHED();
     return WebCore::AutoFillButtonType::None;

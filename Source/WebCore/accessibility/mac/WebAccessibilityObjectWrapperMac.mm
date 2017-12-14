@@ -3084,6 +3084,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return @"credentials";
         case AutoFillButtonType::Contacts:
             return @"contacts";
+        case AutoFillButtonType::StrongConfirmationPassword:
+            return @"strong confirmation password";
+        case AutoFillButtonType::StrongPassword:
+            return @"strong password";
         }
     }
     

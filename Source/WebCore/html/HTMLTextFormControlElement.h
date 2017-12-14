@@ -33,7 +33,7 @@ class RenderTextControl;
 class TextControlInnerTextElement;
 class VisiblePosition;
 
-enum class AutoFillButtonType : uint8_t { None, Credentials, Contacts };
+enum class AutoFillButtonType : uint8_t { None, Credentials, Contacts, StrongConfirmationPassword, StrongPassword };
 enum TextFieldSelectionDirection { SelectionHasNoDirection, SelectionHasForwardDirection, SelectionHasBackwardDirection };
 enum TextFieldEventBehavior { DispatchNoEvent, DispatchChangeEvent, DispatchInputAndChangeEvent };
 
@@ -82,7 +82,7 @@ public:
     virtual String value() const = 0;
 
     virtual RefPtr<TextControlInnerTextElement> innerTextElement() const = 0;
-    virtual RenderStyle createInnerTextStyle(const RenderStyle&) const = 0;
+    virtual RenderStyle createInnerTextStyle(const RenderStyle&) = 0;
 
     void selectionChanged(bool shouldFireSelectEvent);
     WEBCORE_EXPORT bool lastChangeWasUserEdit() const;
@@ -106,6 +106,7 @@ protected:
 
     void disabledStateChanged() override;
     void readOnlyAttributeChanged() override;
+    virtual bool isInnerTextElementEditable() const;
     void updateInnerTextElementEditability();
 
     void cacheSelection(int start, int end, TextFieldSelectionDirection direction)

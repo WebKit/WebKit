@@ -31,7 +31,9 @@
 
 #include "AXObjectCache.h"
 #include "BeforeTextInsertedEvent.h"
+#include "CSSGradientValue.h"
 #include "CSSPropertyNames.h"
+#include "CSSValuePool.h"
 #include "DateTimeChooser.h"
 #include "Document.h"
 #include "Editor.h"
@@ -917,6 +919,7 @@ void HTMLInputElement::reset()
         setValue(String());
 
     setAutoFilled(false);
+    setShowAutoFillButton(AutoFillButtonType::None);
     setChecked(hasAttributeWithoutSynchronization(checkedAttr));
     m_reflectsCheckedAttribute = true;
 }
@@ -1375,6 +1378,8 @@ void HTMLInputElement::setShowAutoFillButton(AutoFillButtonType autoFillButtonTy
 
     m_autoFillButtonType = static_cast<uint8_t>(autoFillButtonType);
     m_inputType->updateAutoFillButton();
+    updateInnerTextElementEditability();
+    invalidateStyleForSubtree();
 }
 
 FileList* HTMLInputElement::files()
@@ -2039,7 +2044,24 @@ ExceptionOr<void> HTMLInputElement::setSelectionRangeForBindings(int start, int 
     return { };
 }
 
-RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style) const
+static Ref<CSSLinearGradientValue> autoFillStrongPasswordMaskImage()
+{
+    CSSGradientColorStop firstStop;
+    firstStop.m_color = CSSValuePool::singleton().createColorValue(Color::black);
+    firstStop.m_position = CSSValuePool::singleton().createValue(3, CSSPrimitiveValue::UnitType::CSS_EMS);
+
+    CSSGradientColorStop secondStop;
+    secondStop.m_color = CSSValuePool::singleton().createColorValue(Color::transparent);
+    secondStop.m_position = CSSValuePool::singleton().createValue(7, CSSPrimitiveValue::UnitType::CSS_EMS);
+
+    auto gradient = CSSLinearGradientValue::create(CSSGradientRepeat::NonRepeating, CSSGradientType::CSSLinearGradient);
+    gradient->setAngle(CSSValuePool::singleton().createValue(90, CSSPrimitiveValue::UnitType::CSS_DEG));
+    gradient->addStop(firstStop);
+    gradient->addStop(secondStop);
+    return gradient;
+}
+
+RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
 {
     auto textBlockStyle = RenderStyle::create();
     textBlockStyle.inheritFrom(style);
@@ -2051,11 +2073,20 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style) con
     textBlockStyle.setOverflowY(OHIDDEN);
     textBlockStyle.setTextOverflow(shouldTruncateText(style) ? TextOverflowEllipsis : TextOverflowClip);
 
+    textBlockStyle.setDisplay(BLOCK);
+
+    if (hasAutoFillStrongPasswordButton()) {
+        textBlockStyle.setColor({ 0.0f, 0.0f, 0.0f, 0.6f });
+        textBlockStyle.setTextOverflow(TextOverflowClip);
+        textBlockStyle.setMaskImage(styleResolver().styleImage(autoFillStrongPasswordMaskImage()));
+        // A stacking context is needed for the mask.
+        if (textBlockStyle.hasAutoZIndex())
+            textBlockStyle.setZIndex(0);
+    }
+
     // Do not allow line-height to be smaller than our default.
     if (textBlockStyle.fontMetrics().lineSpacing() > style.computedLineHeight())
         textBlockStyle.setLineHeight(RenderStyle::initialLineHeight());
-
-    textBlockStyle.setDisplay(BLOCK);
 
     return textBlockStyle;
 }

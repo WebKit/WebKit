@@ -546,7 +546,7 @@ bool HTMLTextAreaElement::willRespondToMouseClickEvents()
     return !isDisabledFormControl();
 }
 
-RenderStyle HTMLTextAreaElement::createInnerTextStyle(const RenderStyle& style) const
+RenderStyle HTMLTextAreaElement::createInnerTextStyle(const RenderStyle& style)
 {
     auto textBlockStyle = RenderStyle::create();
     textBlockStyle.inheritFrom(style);

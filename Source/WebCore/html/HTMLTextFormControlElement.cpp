@@ -511,10 +511,17 @@ void HTMLTextFormControlElement::readOnlyAttributeChanged()
     updateInnerTextElementEditability();
 }
 
+bool HTMLTextFormControlElement::isInnerTextElementEditable() const
+{
+    return !isDisabledOrReadOnly();
+}
+
 void HTMLTextFormControlElement::updateInnerTextElementEditability()
 {
-    if (auto innerText = innerTextElement())
-        innerText->setAttributeWithoutSynchronization(contenteditableAttr, isDisabledOrReadOnly() ? "false" : "plaintext-only");
+    if (auto innerText = innerTextElement()) {
+        auto value = isInnerTextElementEditable() ? AtomicString { "plaintext-only", AtomicString::ConstructFromLiteral } : AtomicString { "false", AtomicString::ConstructFromLiteral };
+        innerText->setAttributeWithoutSynchronization(contenteditableAttr, value);
+    }
 }
 
 bool HTMLTextFormControlElement::lastChangeWasUserEdit() const

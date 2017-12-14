@@ -54,7 +54,7 @@ public:
     bool isValidValue(const String&) const;
     
     RefPtr<TextControlInnerTextElement> innerTextElement() const final;
-    RenderStyle createInnerTextStyle(const RenderStyle&) const final;
+    RenderStyle createInnerTextStyle(const RenderStyle&) final;
     void copyNonAttributePropertiesFromElement(const Element&) final;
 
     void rendererWillBeDestroyed();

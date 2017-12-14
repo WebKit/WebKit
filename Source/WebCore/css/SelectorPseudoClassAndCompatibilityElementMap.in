@@ -2,6 +2,7 @@
 -webkit-any
 -webkit-any-link, PseudoClassAnyLinkDeprecated, PseudoElementUnknown
 -webkit-autofill
+-webkit-autofill-strong-password
 -webkit-drag
 -webkit-full-page-media
 active

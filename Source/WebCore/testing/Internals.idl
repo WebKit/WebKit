@@ -61,7 +61,9 @@ enum ResourceLoadPriority {
 enum AutoFillButtonType {
     "None",
     "Contacts",
-    "Credentials"
+    "Credentials",
+    "StrongPassword",
+    "StrongConfirmationPassword"
 };
 
 enum UserInterfaceLayoutDirection {

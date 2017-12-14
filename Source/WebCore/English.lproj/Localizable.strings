@@ -1254,3 +1254,12 @@
 
 /* Alternative presentation button subtitle. */
 "alternative presentation button subtitle" = "alternative presentation button subtitle";
+
+/* Label for strong password. */
+"strong password" = "strong password";
+
+/* Label for the auto fill strong password button inside a text field. */
+"strong password auto fill" = "strong password auto fill";
+
+/* Label for the auto fill strong confirmation password button inside a text field. */
+"strong confirmation password auto fill" = "strong confirmation password auto fill";

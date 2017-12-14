@@ -406,39 +406,58 @@ static String autoFillButtonTypeToAccessibilityLabel(AutoFillButtonType autoFill
         return AXAutoFillContactsLabel();
     case AutoFillButtonType::Credentials:
         return AXAutoFillCredentialsLabel();
-    default:
+    case AutoFillButtonType::StrongConfirmationPassword:
+        return AXAutoFillStrongConfirmationPasswordLabel();
+    case AutoFillButtonType::StrongPassword:
+        return AXAutoFillStrongPasswordLabel();
     case AutoFillButtonType::None:
         ASSERT_NOT_REACHED();
-        return String();
+        return { };
     }
 }
-    
-static AtomicString autoFillButtonTypeToAutoFillButtonPseudoClassName(AutoFillButtonType autoFillButtonType)
+
+static String autoFillButtonTypeToAutoFillButtonText(AutoFillButtonType autoFillButtonType)
 {
-    AtomicString pseudoClassName;
     switch (autoFillButtonType) {
     case AutoFillButtonType::Contacts:
-        pseudoClassName = AtomicString("-webkit-contacts-auto-fill-button", AtomicString::ConstructFromLiteral);
-        break;
     case AutoFillButtonType::Credentials:
-        pseudoClassName = AtomicString("-webkit-credentials-auto-fill-button", AtomicString::ConstructFromLiteral);
-        break;
+    case AutoFillButtonType::StrongConfirmationPassword:
+        return emptyString();
+    case AutoFillButtonType::StrongPassword:
+        return autoFillStrongPasswordLabel();
     case AutoFillButtonType::None:
         ASSERT_NOT_REACHED();
-        break;
+        return { };
     }
+}
 
-    return pseudoClassName;
+static AtomicString autoFillButtonTypeToAutoFillButtonPseudoClassName(AutoFillButtonType autoFillButtonType)
+{
+    switch (autoFillButtonType) {
+    case AutoFillButtonType::Contacts:
+        return { "-webkit-contacts-auto-fill-button", AtomicString::ConstructFromLiteral };
+    case AutoFillButtonType::Credentials:
+        return { "-webkit-credentials-auto-fill-button", AtomicString::ConstructFromLiteral };
+    case AutoFillButtonType::StrongConfirmationPassword:
+        return { "-webkit-strong-confirmation-password-auto-fill-button", AtomicString::ConstructFromLiteral };
+    case AutoFillButtonType::StrongPassword:
+        return { "-webkit-strong-password-auto-fill-button", AtomicString::ConstructFromLiteral };
+    case AutoFillButtonType::None:
+        ASSERT_NOT_REACHED();
+        return emptyAtom();
+    }
 }
 
 static bool isAutoFillButtonTypeChanged(const AtomicString& attribute, AutoFillButtonType autoFillButtonType)
 {
     if (attribute == "-webkit-contacts-auto-fill-button" && autoFillButtonType != AutoFillButtonType::Contacts)
         return true;
-
     if (attribute == "-webkit-credentials-auto-fill-button" && autoFillButtonType != AutoFillButtonType::Credentials)
         return true;
-
+    if (attribute == "-webkit-strong-confirmation-password-auto-fill-button" && autoFillButtonType != AutoFillButtonType::StrongConfirmationPassword)
+        return true;
+    if (attribute == "-webkit-strong-password-auto-fill-button" && autoFillButtonType != AutoFillButtonType::StrongPassword)
+        return true;
     return false;
 }
 
@@ -663,6 +682,7 @@ void TextFieldInputType::createAutoFillButton(AutoFillButtonType autoFillButtonT
     m_autoFillButton->setPseudo(autoFillButtonTypeToAutoFillButtonPseudoClassName(autoFillButtonType));
     m_autoFillButton->setAttributeWithoutSynchronization(roleAttr, AtomicString("button", AtomicString::ConstructFromLiteral));
     m_autoFillButton->setAttributeWithoutSynchronization(aria_labelAttr, autoFillButtonTypeToAccessibilityLabel(autoFillButtonType));
+    m_autoFillButton->setTextContent(autoFillButtonTypeToAutoFillButtonText(autoFillButtonType));
     m_container->appendChild(*m_autoFillButton);
 }
 
@@ -672,14 +692,16 @@ void TextFieldInputType::updateAutoFillButton()
         if (!m_container)
             createContainer();
 
+        AutoFillButtonType autoFillButtonType = element().autoFillButtonType();
         if (!m_autoFillButton)
-            createAutoFillButton(element().autoFillButtonType());
+            createAutoFillButton(autoFillButtonType);
 
         const AtomicString& attribute = m_autoFillButton->attributeWithoutSynchronization(pseudoAttr);
-        bool shouldUpdateAutoFillButtonType = isAutoFillButtonTypeChanged(attribute, element().autoFillButtonType());
+        bool shouldUpdateAutoFillButtonType = isAutoFillButtonTypeChanged(attribute, autoFillButtonType);
         if (shouldUpdateAutoFillButtonType) {
-            m_autoFillButton->setPseudo(autoFillButtonTypeToAutoFillButtonPseudoClassName(element().autoFillButtonType()));
-            m_autoFillButton->setAttributeWithoutSynchronization(aria_labelAttr, autoFillButtonTypeToAccessibilityLabel(element().autoFillButtonType()));
+            m_autoFillButton->setPseudo(autoFillButtonTypeToAutoFillButtonPseudoClassName(autoFillButtonType));
+            m_autoFillButton->setAttributeWithoutSynchronization(aria_labelAttr, autoFillButtonTypeToAccessibilityLabel(autoFillButtonType));
+            m_autoFillButton->setTextContent(autoFillButtonTypeToAutoFillButtonText(autoFillButtonType));
         }
         m_autoFillButton->setInlineStyleProperty(CSSPropertyDisplay, CSSValueBlock, true);
         return;

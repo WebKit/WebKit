@@ -1663,6 +1663,10 @@ static AutoFillButtonType toAutoFillButtonType(Internals::AutoFillButtonType typ
         return AutoFillButtonType::Credentials;
     case Internals::AutoFillButtonType::Contacts:
         return AutoFillButtonType::Contacts;
+    case Internals::AutoFillButtonType::StrongPassword:
+        return AutoFillButtonType::StrongPassword;
+    case Internals::AutoFillButtonType::StrongConfirmationPassword:
+        return AutoFillButtonType::StrongConfirmationPassword;
     }
     ASSERT_NOT_REACHED();
     return AutoFillButtonType::None;

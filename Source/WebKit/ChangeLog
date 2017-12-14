@@ -1,3 +1,22 @@
+2017-12-13  Daniel Bates  <dabates@apple.com>
+
+        Add more auto fill button types
+        https://bugs.webkit.org/show_bug.cgi?id=180651
+        <rdar://problem/35891125>
+        And
+        <rdar://problem/35977943>
+
+        Reviewed by Brent Fulgham.
+
+        Adds enumerators for the new auto fill button types.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        (toAutoFillButtonType):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandlePrivate.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (toAutoFillButtonType):
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h:
+
 2017-12-13  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r225864.

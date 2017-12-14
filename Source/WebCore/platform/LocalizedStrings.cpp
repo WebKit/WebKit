@@ -640,6 +640,21 @@ String alternativePresentationButtonSubtitle()
     return WEB_UI_STRING("alternative presentation button subtitle", "Subtitle text for alternative presentation button");
 }
 
+String AXAutoFillStrongPasswordLabel()
+{
+    return WEB_UI_STRING("strong password auto fill", "Label for the strong password auto fill button inside a text field.");
+}
+
+String AXAutoFillStrongConfirmationPasswordLabel()
+{
+    return WEB_UI_STRING("strong confirmation password auto fill", "Label for the strong confirmation password auto fill button inside a text field.");
+}
+
+String autoFillStrongPasswordLabel()
+{
+    return WEB_UI_STRING("strong password", "Label for strong password.");
+}
+
 String missingPluginText()
 {
     return WEB_UI_STRING("Missing Plug-in", "Label text to be used when a plugin is missing");
