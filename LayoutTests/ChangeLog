@@ -1,3 +1,19 @@
+2017-12-13  Daniel Bates  <dabates@apple.com>
+
+        Add more auto fill button types
+        https://bugs.webkit.org/show_bug.cgi?id=180651
+        <rdar://problem/35891125>
+        And
+        <rdar://problem/35977943>
+
+        Add macOS El Capitan-specific and Windows expected results. I included results from the Apple Windows bot
+        as a baseline. The results are incorrect as they render the password field text using bullets instead of
+        plain text. Further investigation required.
+
+        * platform/mac-elcapitan/fast/forms/auto-fill-button/input-strong-password-auto-fill-button-expected.txt: Added.
+        * platform/win/fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button-expected.txt: Added.
+        * platform/win/fast/forms/auto-fill-button/input-strong-password-auto-fill-button-expected.txt: Added.
+
 2017-12-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION: Web Inspector: Opening inspector crashes page if there are empty resources
