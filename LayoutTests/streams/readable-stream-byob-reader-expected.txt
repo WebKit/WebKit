@@ -1,6 +1,5 @@
 
 PASS Getting a ReadableStreamBYOBReader should succeed 
-PASS ReadableStreamBYOBReader instances should have the correct list of properties 
 PASS Calling getReader() with a this object different from ReadableStream should throw a TypeError 
 PASS Calling getReader({ mode: 'byob' }) with a ReadableStream whose controller is a ReadableStreamDefaultController should throw a TypeError 
 PASS Calling ReadableStreamBYOBReader.cancel() with a this object different from ReadableStreamBYOBReader should be rejected 
@@ -15,7 +14,6 @@ PASS Calling ReadableStreamBYOBReader.releaseLock() on a stream that is readable
 PASS Calling ReadableStreamBYOBReader.releaseLock() on a stream that is not readable should result in ReadableStreamBYOBReader.closed promise to be rejected with a TypeError 
 PASS Calling ReadableStreamBYOBReader.read() with a this object different from ReadableStreamBYOBReader should be rejected 
 PASS Getting a ReadableStreamBYOBReader should succeed 
-PASS ReadableStreamBYOBReader instances should have the correct list of properties 
 PASS Calling getReader() with a this object different from ReadableStream should throw a TypeError 
 PASS Calling getReader({ mode: 'byob' }) with a ReadableStream whose controller is a ReadableStreamDefaultController should throw a TypeError 
 PASS Calling ReadableStreamBYOBReader.cancel() with a this object different from ReadableStreamBYOBReader should be rejected 

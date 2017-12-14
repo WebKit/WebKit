@@ -1,3 +1,21 @@
+2017-12-14  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Remove properties tests covered by WPT
+        https://bugs.webkit.org/show_bug.cgi?id=180809
+
+        Reviewed by Youenn Fablet.
+
+        Removed WebKit properties/methods tests for ReadableByteStreamController,
+        ReadableStreamBYOBReader and ReadableStreamBYOBRequest. Indeed, these
+        tests are also present in WPT streams/readable-byte-streams/properties.js.
+
+        * streams/readable-byte-stream-controller-expected.txt: Updated expectations.
+        * streams/readable-byte-stream-controller.js: Remove ReadableByteStreamController properties test.
+        * streams/readable-stream-byob-reader-expected.txt: Updated expectations.
+        * streams/readable-stream-byob-reader.js: Remove ReadableStreamBYOBReader properties test.
+        * streams/readable-stream-byob-request-expected.txt: Updated expectations.
+        * streams/readable-stream-byob-request.js: Remove ReadableStreamBYOBRequest properties test.
+
 2017-12-14  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] Gardening bug after r225898

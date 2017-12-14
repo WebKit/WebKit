@@ -1,5 +1,4 @@
 
-PASS ReadableStreamBYOBRequest instances should have the correct list of properties 
 PASS By default, byobRequest should be undefined 
 PASS byobRequest.view length should be equal to autoAllocateChunkSize 
 PASS Calling respond() with a this object different from ReadableStreamBYOBRequest should throw a TypeError 
@@ -16,7 +15,6 @@ PASS Calling respondWithNewView() with an argument that is not an ArrayBufferVie
 PASS When using autoAllocateChunkSize, calling respondWithNewView() should succeed if view.byteLength is equal to autoAllocateChunkSize 
 PASS When using autoAllocateChunkSize, calling respondWithNewView() should throw a RangeError if view.byteOffset is different from 0 
 PASS When using autoAllocateChunkSize, calling respondWithNewView() should throw a RangeError if view.byteLength is different from autoAllocateChunkSize 
-PASS ReadableStreamBYOBRequest instances should have the correct list of properties 
 PASS By default, byobRequest should be undefined 
 PASS byobRequest.view length should be equal to autoAllocateChunkSize 
 PASS Calling respond() with a this object different from ReadableStreamBYOBRequest should throw a TypeError 

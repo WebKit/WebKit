@@ -1,6 +1,5 @@
 
 PASS Creating a ReadableStream with an underlyingSource with type property set to 'bytes' should succeed 
-PASS ReadableByteStreamController instances should have the correct list of properties 
 PASS Calling error() with a this object different from ReadableByteStreamController should throw a TypeError 
 PASS Calling close() with a this object different from ReadableByteStreamController should throw a TypeError 
 PASS Calling enqueue() with a this object different from ReadableByteStreamController should throw a TypeError 
@@ -26,7 +25,6 @@ PASS Test that pull is called once when a new ReadableStream is created with a h
 PASS For a ReadableStream created with a highWaterMark of 1 and a ReadableByteStreamController, calling cancel after pull has thrown an error should result in a promise rejected with the same error 
 PASS Calling cancel after creating a ReadableStream with an underlyingByteStream's start function returning a rejected promise should result in a promise rejected with the same error 
 PASS Creating a ReadableStream with an underlyingSource with type property set to 'bytes' should succeed 
-PASS ReadableByteStreamController instances should have the correct list of properties 
 PASS Calling error() with a this object different from ReadableByteStreamController should throw a TypeError 
 PASS Calling close() with a this object different from ReadableByteStreamController should throw a TypeError 
 PASS Calling enqueue() with a this object different from ReadableByteStreamController should throw a TypeError 

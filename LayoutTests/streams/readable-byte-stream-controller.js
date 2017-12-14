@@ -10,50 +10,6 @@ test(function() {
     });
 }, "Creating a ReadableStream with an underlyingSource with type property set to 'bytes' should succeed");
 
-test(() => {
-    const methods = ['close', 'constructor', 'enqueue', 'error'];
-    const properties = methods.concat(['byobRequest', 'desiredSize']).sort();
-
-    let controller;
-
-    const rs = new ReadableStream({
-        start: function(c) {
-            controller = c;
-        },
-        type: "bytes"
-    });
-
-    const proto = Object.getPrototypeOf(controller);
-
-    assert_array_equals(Object.getOwnPropertyNames(proto).sort(), properties);
-
-    for (const m of methods) {
-        const propDesc = Object.getOwnPropertyDescriptor(proto, m);
-        assert_equals(propDesc.enumerable, false, 'method should be non-enumerable');
-        assert_equals(propDesc.configurable, true, 'method should be configurable');
-        assert_equals(propDesc.writable, true, 'method should be writable');
-        assert_equals(typeof controller[m], 'function', 'should have be a method');
-    }
-
-    const byobRequestPropDesc = Object.getOwnPropertyDescriptor(proto, 'byobRequest');
-    assert_equals(byobRequestPropDesc.enumerable, false, 'byobRequest should be non-enumerable');
-    assert_equals(byobRequestPropDesc.configurable, true, 'byobRequest should be configurable');
-    assert_not_equals(byobRequestPropDesc.get, undefined, 'byobRequest should have a getter');
-    assert_equals(byobRequestPropDesc.set, undefined, 'byobRequest should not have a setter');
-
-    const desiredSizePropDesc = Object.getOwnPropertyDescriptor(proto, 'desiredSize');
-    assert_equals(desiredSizePropDesc.enumerable, false, 'desiredSize should be non-enumerable');
-    assert_equals(desiredSizePropDesc.configurable, true, 'desiredSize should be configurable');
-    assert_not_equals(desiredSizePropDesc.get, undefined, 'desiredSize should have a getter');
-    assert_equals(desiredSizePropDesc.set, undefined, 'desiredSize should not have a setter');
-
-    assert_equals(controller.close.length, 0, 'close has 0 parameter');
-    assert_equals(controller.constructor.length, 3, 'constructor has 3 parameters');
-    assert_equals(controller.enqueue.length, 1, 'enqueue has 1 parameter');
-    assert_equals(controller.error.length, 1, 'error has 1 parameter');
-
-}, 'ReadableByteStreamController instances should have the correct list of properties');
-
 test(function() {
     let controller;
 
