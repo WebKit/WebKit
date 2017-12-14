@@ -67,7 +67,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithWebsiteDataSto
     configuration->m_diskCacheDirectory = legacyConfiguration.networkCacheDirectory;
     configuration->m_mediaCacheDirectory = legacyConfiguration.mediaCacheDirectory;
     configuration->m_indexedDBDatabaseDirectory = WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory();
-    configuration->m_serviceWorkerRegistrationDirectory = WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory();
+    configuration->m_serviceWorkerRegistrationDirectory = WebKit::WebProcessPool::legacyPlatformDefaultServiceWorkerRegistrationDirectory();
     configuration->m_localStorageDirectory = legacyConfiguration.localStorageDirectory;
     configuration->m_mediaKeysStorageDirectory = legacyConfiguration.mediaKeysStorageDirectory;
     configuration->m_resourceLoadStatisticsDirectory = legacyConfiguration.resourceLoadStatisticsDirectory;

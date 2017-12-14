@@ -1,3 +1,13 @@
+2017-12-13  Chris Dumez  <cdumez@apple.com>
+
+        Fix copy/paste error in ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration()
+        https://bugs.webkit.org/show_bug.cgi?id=180782
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration):
+
 2017-12-13  Daniel Bates  <dabates@apple.com>
 
         Add more auto fill button types
