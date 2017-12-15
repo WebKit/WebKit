@@ -1,3 +1,13 @@
+2017-12-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, 32bit JSEmpty is not nullptr + CellTag
+        https://bugs.webkit.org/show_bug.cgi?id=180804
+
+        Add 32bit path for WeakMapGet.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileWeakMapGet):
+
 2017-12-14  Saam Barati  <sbarati@apple.com>
 
         The CleanUp after LICM is erroneously removing a Check

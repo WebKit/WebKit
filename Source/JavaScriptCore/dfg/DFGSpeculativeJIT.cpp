@@ -11054,16 +11054,27 @@ void SpeculativeJIT::compileWeakMapGet(Node* node)
     m_jit.add32(TrustedImm32(1), indexGPR);
     m_jit.jump().linkTo(loop, &m_jit);
 
+#if USE(JSVALUE32_64)
+    notPresentInTable.link(&m_jit);
+    m_jit.moveValue(JSValue(), resultRegs);
+    auto notPresentInTableDone = m_jit.jump();
+
+    found.link(&m_jit);
+    if (node->child1().useKind() == WeakSetObjectUse)
+        m_jit.move(TrustedImm32(JSValue::CellTag), resultRegs.tagGPR());
+    else
+        m_jit.loadValue(MacroAssembler::Address(bucketGPR, WeakMapBucket<WeakMapBucketDataKeyValue>::offsetOfValue()), resultRegs);
+
+    notPresentInTableDone.link(&m_jit);
+#else
     notPresentInTable.link(&m_jit);
     found.link(&m_jit);
 
-    // Empty bucket has JSEmpty value. Empty key is JSEmpty. If empty bucket is found, we can use the same path used for the case of finding a bucket.
-    if (node->child1().useKind() == WeakSetObjectUse) {
-#if USE(JSVALUE32_64)
-        m_jit.move(TrustedImm32(JSValue::CellTag), resultRegs.tagGPR());
-#endif
-    } else
+    // In 64bit environment, Empty bucket has JSEmpty value. Empty key is JSEmpty.
+    // If empty bucket is found, we can use the same path used for the case of finding a bucket.
+    if (node->child1().useKind() == WeakMapObjectUse)
         m_jit.loadValue(MacroAssembler::Address(bucketGPR, WeakMapBucket<WeakMapBucketDataKeyValue>::offsetOfValue()), resultRegs);
+#endif
 
     jsValueResult(resultRegs, node);
 }
