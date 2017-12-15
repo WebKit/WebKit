@@ -1,3 +1,24 @@
+2017-12-14  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Replace Version.contained_in with Version.__contains__
+        https://bugs.webkit.org/show_bug.cgi?id=180772
+        <rdar://problem/36033555>
+
+        Reviewed by David Kilzer.
+
+        Using __contains__ instead of contained_in allows for the more
+        Pythonic 'in' operator to be used.
+
+        * Scripts/webkitpy/common/version.py:
+        (Version):
+        (Version.__contains__): Replace contained_in. Note that self is now
+        the container.
+        (Version.contained_in): Deleted.
+        * Scripts/webkitpy/common/version_name_map.py:
+        (VersionNameMap.to_name):
+        * Scripts/webkitpy/common/version_unittest.py:
+        (VersionTestCase.test_contained_in):
+
 2017-12-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r225931.

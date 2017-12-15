@@ -91,8 +91,8 @@ class VersionNameMap(object):
         for os_name, os_version in self.mapping_for_platform(platform, table).iteritems():
             if version == os_version:
                 return os_name
-            elif version.contained_in(os_version):
-                if closest_match[1] and closest_match[1].contained_in(os_version):
+            elif version in os_version:
+                if closest_match[1] and closest_match[1] in os_version:
                     continue
                 closest_match = (os_name, os_version)
         return closest_match[0]
