@@ -193,9 +193,7 @@ TimerBase::~TimerBase()
 {
     stop();
     ASSERT(!inHeap());
-#ifndef NDEBUG
     m_wasDeleted = true;
-#endif
 }
 
 void TimerBase::start(Seconds nextFireInterval, Seconds repeatInterval)
@@ -360,7 +358,7 @@ void TimerBase::updateHeapIfNeeded(MonotonicTime oldTime)
 void TimerBase::setNextFireTime(MonotonicTime newTime)
 {
     ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
-    ASSERT(!m_wasDeleted);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_wasDeleted);
 
     if (m_unalignedNextFireTime != newTime)
         m_unalignedNextFireTime = newTime;

@@ -100,11 +100,11 @@ private:
     Seconds m_repeatInterval; // 0 if not repeating
     int m_heapIndex { -1 }; // -1 if not in heap
     unsigned m_heapInsertionOrder; // Used to keep order among equal-fire-time timers
+    bool m_wasDeleted { false };
     Vector<TimerBase*>* m_cachedThreadGlobalTimerHeap { nullptr };
 
 #ifndef NDEBUG
     Ref<Thread> m_thread { Thread::current() };
-    bool m_wasDeleted { false };
 #endif
 
     friend class ThreadTimers;
