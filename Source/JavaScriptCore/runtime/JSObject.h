@@ -1265,9 +1265,11 @@ inline void JSObject::setButterflyWithIndexingMask(VM& vm, Butterfly* butterfly,
 
 inline void JSObject::setButterfly(VM& vm, Butterfly* butterfly)
 {
-    if (LIKELY(!structure(vm)->hijacksIndexingHeader()))
+    if (LIKELY(!structure(vm)->hijacksIndexingHeader())) {
         m_butterflyIndexingMask = butterfly->computeIndexingMask();
-    ASSERT(m_butterflyIndexingMask >= butterfly->vectorLength());
+        ASSERT(m_butterflyIndexingMask >= butterfly->vectorLength());
+    }
+
     if (isX86() || vm.heap.mutatorShouldBeFenced()) {
         WTF::storeStoreFence();
         m_butterfly.set(vm, this, butterfly);
@@ -1280,9 +1282,11 @@ inline void JSObject::setButterfly(VM& vm, Butterfly* butterfly)
 
 inline void JSObject::nukeStructureAndSetButterfly(VM& vm, StructureID oldStructureID, Butterfly* butterfly)
 {
-    if (LIKELY(!vm.getStructure(oldStructureID)->hijacksIndexingHeader()))
+    if (LIKELY(!vm.getStructure(oldStructureID)->hijacksIndexingHeader())) {
         m_butterflyIndexingMask = butterfly->computeIndexingMask();
-    ASSERT(m_butterflyIndexingMask >= butterfly->vectorLength());
+        ASSERT(m_butterflyIndexingMask >= butterfly->vectorLength());
+    }
+
     if (isX86() || vm.heap.mutatorShouldBeFenced()) {
         setStructureIDDirectly(nuke(oldStructureID));
         WTF::storeStoreFence();

@@ -1,3 +1,11 @@
+2017-12-14  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, forgot to add { }
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::setButterfly):
+        (JSC::JSObject::nukeStructureAndSetButterfly):
+
 2017-12-14  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: replace HTMLCanvasElement with CanvasRenderingContext for instrumentation logic
