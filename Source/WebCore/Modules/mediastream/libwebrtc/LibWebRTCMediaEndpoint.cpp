@@ -1082,19 +1082,19 @@ void LibWebRTCMediaEndpoint::OnStatsDelivered(const rtc::scoped_refptr<const web
     if (!m_statsFirstDeliveredTimestamp)
         m_statsFirstDeliveredTimestamp = timestamp;
 
-    if (m_statsLogTimer.repeatInterval() != statsLogInterval(timestamp)) {
-        callOnMainThread([protectedThis = makeRef(*this), this, timestamp] {
+    callOnMainThread([protectedThis = makeRef(*this), this, timestamp, report] {
+        if (m_statsLogTimer.repeatInterval() != statsLogInterval(timestamp)) {
             m_statsLogTimer.stop();
             m_statsLogTimer.startRepeating(statsLogInterval(timestamp));
-        });
-    }
+        }
 
-    for (auto iterator = report->begin(); iterator != report->end(); ++iterator) {
-        if (iterator->type() == webrtc::RTCCodecStats::kType)
-            continue;
+        for (auto iterator = report->begin(); iterator != report->end(); ++iterator) {
+            if (iterator->type() == webrtc::RTCCodecStats::kType)
+                continue;
 
-        ALWAYS_LOG(LOGIDENTIFIER, "WebRTC stats for :", *iterator);
-    }
+            ALWAYS_LOG(LOGIDENTIFIER, "WebRTC stats for :", *iterator);
+        }
+    });
 #else
     UNUSED_PARAM(report);
 #endif
