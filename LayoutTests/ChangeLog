@@ -1,3 +1,14 @@
+2017-12-14  Zalan Bujtas  <zalan@apple.com>
+
+        Inconsistent section grid could lead to CrashOnOverflow
+        https://bugs.webkit.org/show_bug.cgi?id=180850
+        <rdar://problem/34064811>
+
+        Reviewed by Simon Fraser.
+
+        * fast/table/table-row-oveflow-crash-expected.txt: Added.
+        * fast/table/table-row-oveflow-crash.html: Added.
+
 2017-12-14  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Many serviceworker tests are flaky timeouts on iOS bots

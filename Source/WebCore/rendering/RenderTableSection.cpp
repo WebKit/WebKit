@@ -1385,6 +1385,16 @@ void RenderTableSection::recalcCells()
     setNeedsLayout();
 }
 
+void RenderTableSection::removeRedundantColumns()
+{
+    auto maximumNumberOfColumns = table()->numEffCols();
+    for (auto& rowItem : m_grid) {
+        if (rowItem.row.size() <= maximumNumberOfColumns)
+            continue;
+        rowItem.row.resize(maximumNumberOfColumns);
+    }
+}
+
 // FIXME: This function could be made O(1) in certain cases (like for the non-most-constrainive cells' case).
 void RenderTableSection::rowLogicalHeightChanged(unsigned rowIndex)
 {

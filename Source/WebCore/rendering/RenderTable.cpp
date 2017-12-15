@@ -1111,6 +1111,10 @@ void RenderTable::recalcSections() const
     m_columns.resize(maxCols);
     m_columnPos.resize(maxCols + 1);
 
+    // Now that we know the number of maximum number of columns, let's shrink the sections grids if needed.
+    for (auto& section : childrenOfType<RenderTableSection>(const_cast<RenderTable&>(*this)))
+        section.removeRedundantColumns();
+
     ASSERT(selfNeedsLayout());
 
     m_needsSectionRecalc = false;

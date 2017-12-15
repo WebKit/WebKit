@@ -127,6 +127,7 @@ public:
     unsigned numColumns() const;
     void recalcCells();
     void recalcCellsIfNeeded();
+    void removeRedundantColumns();
 
     bool needsCellRecalc() const { return m_needsCellRecalc; }
     void setNeedsCellRecalc();
