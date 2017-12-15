@@ -37,6 +37,7 @@
 #define MINI_BROWSER_ERROR (miniBrowserErrorQuark())
 
 static const gchar **uriArguments = NULL;
+static const gchar **ignoreHosts = NULL;
 static GdkRGBA *backgroundColor;
 static gboolean editorMode;
 static const char *sessionFile;
@@ -45,6 +46,7 @@ static gboolean privateMode;
 static gboolean automationMode;
 static gboolean fullScreen;
 static gboolean enableIntelligentTrackingPrevention;
+static const char *proxy;
 
 typedef enum {
     MINI_BROWSER_ERROR_INVALID_ABOUT_PATH
@@ -102,6 +104,8 @@ static const GOptionEntry commandLineOptions[] =
     { "private", 'p', 0, G_OPTION_ARG_NONE, &privateMode, "Run in private browsing mode", NULL },
     { "automation", 0, 0, G_OPTION_ARG_NONE, &automationMode, "Run in automation mode", NULL },
     { "enable-itp", 0, 0, G_OPTION_ARG_NONE, &enableIntelligentTrackingPrevention, "Enable intelligent tracking prevention", NULL },
+    { "proxy", 0, 0, G_OPTION_ARG_STRING, &proxy, "Set proxy", "PROXY" },
+    { "ignore-host", 0, 0, G_OPTION_ARG_STRING_ARRAY, &ignoreHosts, "Set proxy ignore hosts", "HOSTS" },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL…]" },
     { 0, 0, 0, 0, 0, 0, 0 }
 };
@@ -499,6 +503,12 @@ int main(int argc, char *argv[])
     g_option_context_free (context);
 
     WebKitWebContext *webContext = (privateMode || automationMode) ? webkit_web_context_new_ephemeral() : webkit_web_context_get_default();
+
+    if (proxy) {
+        WebKitNetworkProxySettings *webkitProxySettings = webkit_network_proxy_settings_new(proxy, ignoreHosts);
+        webkit_web_context_set_network_proxy_settings(webContext, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, webkitProxySettings);
+        webkit_network_proxy_settings_free(webkitProxySettings);
+    }
 
     const gchar *singleprocess = g_getenv("MINIBROWSER_SINGLEPROCESS");
     webkit_web_context_set_process_model(webContext, (singleprocess && *singleprocess) ?

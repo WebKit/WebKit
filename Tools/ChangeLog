@@ -1,3 +1,15 @@
+2017-12-15  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        [GTK] Add proxy option to Minibrowser
+        https://bugs.webkit.org/show_bug.cgi?id=180750
+
+        Reviewed by Michael Catanzaro.
+
+        Add command line option to set proxy settings in GTK minibrowser.
+
+        * MiniBrowser/gtk/main.c:
+        (main):
+
 2017-12-14  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [webkitpy, Windows] Remove unnecessary debug message
