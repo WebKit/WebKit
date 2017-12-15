@@ -1,6 +1,6 @@
 
 
 PASS register method should use the "relevant global object" to parse its scriptURL and scope - normal case 
-FAIL register method should use the "relevant global object" to parse its scriptURL and scope - error case assert_unreached: unexpected rejection: assert_unreached: register() should reject Reached unreachable code Reached unreachable code
+PASS register method should use the "relevant global object" to parse its scriptURL and scope - error case 
 FAIL A scope url should start with the given script url assert_unreached: unexpected rejection: assert_unreached: register() should reject Reached unreachable code Reached unreachable code
 

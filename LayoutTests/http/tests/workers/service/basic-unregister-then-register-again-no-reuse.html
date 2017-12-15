@@ -8,7 +8,7 @@
 async function test()
 {
     try {
-         let registration1 = await navigator.serviceWorker.register("resources/empty.js", { });
+         let registration1 = await navigator.serviceWorker.register("resources/empty-worker.js", { });
          await waitForState(registration1.installing, "activated");
          if (registration1.installing)
              log("FAIL: registration1 should not have an installing worker");
@@ -27,7 +27,7 @@ async function test()
 
          await registration1.unregister();
 
-         let registration2 = await navigator.serviceWorker.register("resources/empty.js", { });
+         let registration2 = await navigator.serviceWorker.register("resources/empty-worker.js", { });
          if (registration2.installing)
              log("PASS: registration2 should have an installing worker");
          else

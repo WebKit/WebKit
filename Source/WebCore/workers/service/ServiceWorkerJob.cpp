@@ -120,8 +120,11 @@ void ServiceWorkerJob::notifyFinished()
     
     if (!m_scriptLoader->failed())
         m_client->jobFinishedLoadingScript(*this, m_scriptLoader->script());
-    else
-        m_client->jobFailedLoadingScript(*this, m_scriptLoader->error(), std::nullopt);
+    else {
+        auto& error =  m_scriptLoader->error();
+        ASSERT(!error.isNull());
+        m_client->jobFailedLoadingScript(*this, error, std::nullopt);
+    }
 
     m_scriptLoader = nullptr;
 }

@@ -13,7 +13,7 @@ function getNewestWorker(registration)
     return registration.active;
 }
 
-navigator.serviceWorker.register("resources/empty.js", { }).then(function(_registration) {
+navigator.serviceWorker.register("resources/empty-worker.js", { }).then(function(_registration) {
     registration = _registration;
     registration.installing.addEventListener("statechange", function() {
         gc();

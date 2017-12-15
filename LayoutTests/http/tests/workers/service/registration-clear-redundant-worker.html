@@ -4,7 +4,7 @@
 </head>
 <body>
 <script>
-navigator.serviceWorker.register("resources/resources/empty-worker.js", { }).then(function(registration) {
+navigator.serviceWorker.register("resources/empty-worker.js", { }).then(function(registration) {
     waitForState(registration.installing, "activated").then(function() {
         let worker = registration.active;
         registration.unregister().then(function (success) {

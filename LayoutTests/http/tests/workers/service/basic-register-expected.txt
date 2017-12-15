@@ -5,5 +5,5 @@ PASS: registration object's scope is valid
 PASS: registration object's updateViaCache is valid
 PASS: A service worker is now registered for this origin
 PASS: No service worker is registered for this origin in private session
-Registered!
+PASS: registering a script which does not exist rejected the promise
 

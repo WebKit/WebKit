@@ -45,12 +45,16 @@ async function test()
             log("FAIL: A service worker is registered for this origin in private session");
 
         testRunner.setPrivateBrowsingEnabled(false);
-
-        r = await navigator.serviceWorker.register("resources/empty-worker-doesnt-exist.js", { })
-        log("Registered!");
     } catch (e) {
         log("Exception registering: " + e);
     }
+    try {
+        r = await navigator.serviceWorker.register("resources/empty-worker-doesnt-exist.js", { })
+        log("FAIL: registering a script should have rejected the promise");
+    } catch(e) {
+        log("PASS: registering a script which does not exist rejected the promise");
+    }
+
     done();
 }
 
