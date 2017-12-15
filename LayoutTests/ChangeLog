@@ -1,3 +1,15 @@
+2017-12-14  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Many serviceworker tests are flaky timeouts on iOS bots
+        https://bugs.webkit.org/show_bug.cgi?id=179454
+        <rdar://problem/35429369>
+
+        Unreviewed attempt to unmark service worker tests as flaky on iOS.
+        We have now fixed all the iOS-specific bugs we are aware of so we
+        should give this a try.
+
+        * platform/ios/TestExpectations:
+
 2017-12-14  Brian Burg  <bburg@apple.com>
 
         Web Inspector: InspectorTest.evaluateInPage should unwrap primitive values by default
