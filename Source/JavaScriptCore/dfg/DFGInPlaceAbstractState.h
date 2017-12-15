@@ -126,6 +126,11 @@ public:
     // So, we should probably keep this method.
     void setFoundConstants(bool foundConstants) { m_foundConstants = foundConstants; }
 
+    void setProofStatus(Edge& edge, ProofStatus status)
+    {
+        edge.setProofStatus(status);
+    }
+
 private:
     void mergeStateAtTail(AbstractValue& destination, AbstractValue& inVariable, Node*);
 

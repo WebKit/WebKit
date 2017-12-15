@@ -65,10 +65,19 @@ public:
     void setBranchDirection(BranchDirection) { }
     void setFoundConstants(bool) { }
 
+    void trustEdgeProofs() { m_trustEdgeProofs = true; }
+    void dontTrustEdgeProofs() { m_trustEdgeProofs = false; }
+    void setProofStatus(Edge& edge, ProofStatus status)
+    {
+        if (m_trustEdgeProofs)
+            edge.setProofStatus(status);
+    }
+
 private:
     Graph& m_graph;
     BlockMap<HashMap<NodeFlowProjection, AbstractValue>> m_valuesAtTailMap;
     BasicBlock* m_block { nullptr };
+    bool m_trustEdgeProofs { false };
 };
 
 } } // namespace JSC::DFG

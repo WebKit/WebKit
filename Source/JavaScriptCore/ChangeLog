@@ -1,3 +1,33 @@
+2017-12-14  Saam Barati  <sbarati@apple.com>
+
+        The CleanUp after LICM is erroneously removing a Check
+        https://bugs.webkit.org/show_bug.cgi?id=180852
+        <rdar://problem/36063494>
+
+        Reviewed by Filip Pizlo.
+
+        There was a bug where CleanUp phase relied on isProved() bits and LICM
+        changed them in an invalid way. The bug is as follows:
+        
+        We have two loops, L1 and L2, and two preheaders, P1 and P2. L2 is nested
+        inside of L1. We have a Check inside a node inside L1, say in basic block BB,
+        and that Check dominates all of L2. This is also a hoisting candidate, so we
+        hoist it outside of L1 and put it inside P1. Then, when we run AI, we look at
+        the preheader for each loop inside L1, so P1 and P2. When considering P2,
+        we execute the Check. Inside P2, before any hoisting is done, this Check
+        is dead code, because BB dominates P2. When we use AI to "execute" the
+        Check, it'll set its proof status to proved. This is because inside P2,
+        in the program before LICM runs, the Check is indeed proven at P2. But
+        it is not proven inside P1. This "execute" call will set our proof status
+        for the node inside *P1*, hence, we crash.
+        
+        The fix here is to make LICM precise when updating the ProofStatus of an edge.
+        It can trust the AI state at the preheader it hoists the node to, but it can't
+        trust the state when executing effects inside inner loops's preheaders.
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+
 2017-12-14  David Kilzer  <ddkilzer@apple.com>
 
         Enable -Wstrict-prototypes for WebKit

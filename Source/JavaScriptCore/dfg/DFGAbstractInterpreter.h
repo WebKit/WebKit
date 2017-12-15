@@ -182,11 +182,7 @@ private:
     ALWAYS_INLINE void filterByType(Edge& edge, SpeculatedType type)
     {
         AbstractValue& value = forNode(edge);
-        if (!value.isType(type))
-            edge.setProofStatus(NeedsCheck);
-        else
-            edge.setProofStatus(IsProved);
-        
+        m_state.setProofStatus(edge, value.isType(type) ? IsProved : NeedsCheck);
         filter(value, type);
     }
     
