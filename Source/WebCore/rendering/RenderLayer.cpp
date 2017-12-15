@@ -5821,10 +5821,10 @@ LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer, const Layo
     return result;
 }
 
-bool RenderLayer::getOverlapBoundsIncludingChildrenAccountingForTransformAnimations(LayoutRect& bounds) const
+bool RenderLayer::getOverlapBoundsIncludingChildrenAccountingForTransformAnimations(LayoutRect& bounds, CalculateLayerBoundsFlags additionalFlags) const
 {
     // The animation will override the display transform, so don't include it.
-    CalculateLayerBoundsFlags boundsFlags = DefaultCalculateLayerBoundsFlags & ~IncludeSelfTransform;
+    CalculateLayerBoundsFlags boundsFlags = additionalFlags | (DefaultCalculateLayerBoundsFlags & ~IncludeSelfTransform);
     
     bounds = calculateLayerBounds(this, LayoutSize(), boundsFlags);
     

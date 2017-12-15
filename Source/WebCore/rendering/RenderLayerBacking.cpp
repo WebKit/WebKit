@@ -985,7 +985,7 @@ void RenderLayerBacking::updateGeometry()
 
     auto computeAnimationExtent = [&] () -> std::optional<FloatRect> {
         LayoutRect animatedBounds;
-        if (isRunningAcceleratedTransformAnimation && m_owningLayer.getOverlapBoundsIncludingChildrenAccountingForTransformAnimations(animatedBounds))
+        if (isRunningAcceleratedTransformAnimation && m_owningLayer.getOverlapBoundsIncludingChildrenAccountingForTransformAnimations(animatedBounds, RenderLayer::IncludeCompositedDescendants))
             return FloatRect(animatedBounds);
         return { };
     };
