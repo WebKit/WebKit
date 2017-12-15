@@ -1,3 +1,19 @@
+2017-12-14  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: InspectorTest.evaluateInPage should unwrap primitive values by default
+        https://bugs.webkit.org/show_bug.cgi?id=180831
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Test/FrontendTestHarness.js:
+        (FrontendTestHarness.prototype.evaluateInPage.resultObjectToReturn):
+        (FrontendTestHarness.prototype.evaluateInPage):
+        Unwrap the resulting RemoteObject's value if it is a primitive.
+        Add an `options` dictionary so this behavior can be opted out.
+
+        * UserInterface/Test/TestHarness.js:
+        Add documentation of how evaluateInPage works.
+
 2017-12-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: selecting text should not add new properties

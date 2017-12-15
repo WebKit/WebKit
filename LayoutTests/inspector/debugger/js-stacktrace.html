@@ -106,7 +106,7 @@ function test()
                 InspectorTest.evaluateInPage(expression, (error, result) => {
                     InspectorTest.assert(!error, error);
                     InspectorTest.log("\nError object:");
-                    let stackTrace = stripFilePaths(stripPayloadAfterGlobalCode(WI.StackTrace._parseStackTrace(result.value)));
+                    let stackTrace = stripFilePaths(stripPayloadAfterGlobalCode(WI.StackTrace._parseStackTrace(result)));
                     InspectorTest.log(JSON.stringify(stackTrace, null, 4));
                     resolve();
                 });

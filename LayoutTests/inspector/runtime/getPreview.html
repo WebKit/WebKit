@@ -74,8 +74,7 @@ function test()
         name: "RemoteObject.updatePreview.Symbol",
         description: "Non-object RemoteObjects should not request a preview.",
         test(resolve, reject) {
-            InspectorTest.evaluateInPage(`Symbol.iterator`, (error, remoteObjectPayload) => {
-                let remoteObject = WI.RemoteObject.fromPayload(remoteObjectPayload);
+            InspectorTest.evaluateInPage(`Symbol.iterator`, (error, remoteObject) => {
                 InspectorTest.expectThat(!remoteObject.canLoadPreview(), `Should not be able to load a preview for a ${remoteObject.type} RemoteObject.`);
                 remoteObject.updatePreview((preview) => {
                     InspectorTest.expectNull(preview, `RemoteObject.updatePreview should return null for a ${remoteObject.type} RemoteObject.`);
@@ -89,8 +88,7 @@ function test()
         name: "RemoteObject.updatePreview.Function",
         description: "Non-object RemoteObjects should not request a preview.",
         test(resolve, reject) {
-            InspectorTest.evaluateInPage(`function f() {}; f`, (error, remoteObjectPayload) => {
-                let remoteObject = WI.RemoteObject.fromPayload(remoteObjectPayload);
+            InspectorTest.evaluateInPage(`function f() {}; f`, (error, remoteObject) => {
                 InspectorTest.expectThat(!remoteObject.canLoadPreview(), `Should not be able to load a preview for a ${remoteObject.type} RemoteObject.`);
                 remoteObject.updatePreview((preview) => {
                     InspectorTest.expectNull(preview, `RemoteObject.updatePreview should return null for a ${remoteObject.type} RemoteObject.`);
@@ -104,14 +102,13 @@ function test()
         name: "RemoteObject.updatePreview.Null",
         description: "Non-object RemoteObjects should not request a preview.",
         test(resolve, reject) {
-            InspectorTest.evaluateInPage(`null`, (error, remoteObjectPayload) => {
-                let remoteObject = WI.RemoteObject.fromPayload(remoteObjectPayload);
+            InspectorTest.evaluateInPage(`null`, (error, remoteObject) => {
                 InspectorTest.expectThat(!remoteObject.canLoadPreview(), `Should not be able to load a preview for a ${remoteObject.subtype} RemoteObject.`);
                 remoteObject.updatePreview((preview) => {
                     InspectorTest.expectNull(preview, `RemoteObject.updatePreview should return null for a ${remoteObject.subtype} RemoteObject.`);
                     resolve();
                 });
-            });
+            }, {remoteObjectOnly: true});
         }
     });
 
@@ -121,8 +118,7 @@ function test()
         name: "Runtime.getPreview.Symbol",
         description: "Runtime.getPreview should return an empty preview for non-objects.",
         test(resolve, reject) {
-            InspectorTest.evaluateInPage(`Symbol.iterator`, (error, remoteObjectPayload) => {
-                let remoteObject = WI.RemoteObject.fromPayload(remoteObjectPayload);
+            InspectorTest.evaluateInPage(`Symbol.iterator`, (error, remoteObject) => {
                 RuntimeAgent.getPreview(remoteObject.objectId, (error, result) => {
                     InspectorTest.log(JSON.stringify(result));
                     resolve();
@@ -135,8 +131,7 @@ function test()
         name: "Runtime.getPreview.Function",
         description: "Runtime.getPreview should return an empty preview for non-objects.",
         test(resolve, reject) {
-            InspectorTest.evaluateInPage(`function f() {}; f`, (error, remoteObjectPayload) => {
-                let remoteObject = WI.RemoteObject.fromPayload(remoteObjectPayload);
+            InspectorTest.evaluateInPage(`function f() {}; f`, (error, remoteObject) => {
                 RuntimeAgent.getPreview(remoteObject.objectId, (error, result) => {
                     InspectorTest.log(JSON.stringify(result));
                     resolve();

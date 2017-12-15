@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,7 +55,14 @@ TestHarness = class TestHarness extends WI.Object
         throw new Error("Must be implemented by subclasses.");
     }
 
-    evaluateInPage(string, callback)
+    // If 'callback' is a function, it will be with the arguments
+    // callback(error, result, wasThrown). Otherwise, a promise is
+    // returned that resolves with 'result' or rejects with 'error'.
+
+    // The options object accepts the following keys and values:
+    // 'remoteObjectOnly': if true, do not unwrap the result payload to a
+    // primitive value even if possible. Useful if testing WI.RemoteObject directly.
+    evaluateInPage(string, callback, options={})
     {
         throw new Error("Must be implemented by subclasses.");
     }

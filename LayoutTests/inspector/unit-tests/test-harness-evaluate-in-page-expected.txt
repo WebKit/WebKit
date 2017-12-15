@@ -1,0 +1,150 @@
+Testing the InspectorTest.evaluateInPage function.
+
+
+== Running test suite: InspectorTest.evaluateInPage
+-- Running test case: evaluateInPage.Primitives
+Checking result of evaluating string: -42
+PASS: Expected and actual evaluation result should be equal.
+PASS: Should not be returned as a WI.RemoteObject.
+
+Checking result of evaluating string: 42
+PASS: Expected and actual evaluation result should be equal.
+PASS: Should not be returned as a WI.RemoteObject.
+
+Checking result of evaluating string: 0
+PASS: Expected and actual evaluation result should be equal.
+PASS: Should not be returned as a WI.RemoteObject.
+
+Checking result of evaluating string: "String"
+PASS: Expected and actual evaluation result should be equal.
+PASS: Should not be returned as a WI.RemoteObject.
+
+Checking result of evaluating string: false
+PASS: Expected and actual evaluation result should be equal.
+PASS: Should not be returned as a WI.RemoteObject.
+
+Checking result of evaluating string: true
+PASS: Expected and actual evaluation result should be equal.
+PASS: Should not be returned as a WI.RemoteObject.
+
+Checking result of evaluating string: null
+PASS: Expected and actual evaluation result should be equal.
+PASS: Should not be returned as a WI.RemoteObject.
+
+
+-- Running test case: evaluateInPage.PrimitivesWithoutUnwrapping
+Checking result of evaluating string without unwrapping: -42
+PASS: Should be returned as a WI.RemoteObject.
+PASS: Type of evaluation result should be 'number'.
+
+Checking result of evaluating string without unwrapping: 42
+PASS: Should be returned as a WI.RemoteObject.
+PASS: Type of evaluation result should be 'number'.
+
+Checking result of evaluating string without unwrapping: 0
+PASS: Should be returned as a WI.RemoteObject.
+PASS: Type of evaluation result should be 'number'.
+
+Checking result of evaluating string without unwrapping: "String"
+PASS: Should be returned as a WI.RemoteObject.
+PASS: Type of evaluation result should be 'string'.
+
+Checking result of evaluating string without unwrapping: false
+PASS: Should be returned as a WI.RemoteObject.
+PASS: Type of evaluation result should be 'boolean'.
+
+Checking result of evaluating string without unwrapping: true
+PASS: Should be returned as a WI.RemoteObject.
+PASS: Type of evaluation result should be 'boolean'.
+
+Checking result of evaluating string without unwrapping: null
+PASS: Should be returned as a WI.RemoteObject.
+PASS: Type of evaluation result should be 'object'.
+
+
+-- Running test case: evaluateInPage.RemoteObjects
+Checking result of evaluating string: ({a:42})
+PASS: Returned result should be a WI.RemoteObject.
+PASS: Non-primitive evaluation results should not have a marshalled value.
+PASS: Type of evaluation result should be 'object'.
+PASS: Subtype of evaluation result should be 'undefined'.
+
+Checking result of evaluating string: [42, 43, 44]
+PASS: Returned result should be a WI.RemoteObject.
+PASS: Non-primitive evaluation results should not have a marshalled value.
+PASS: Type of evaluation result should be 'object'.
+PASS: Subtype of evaluation result should be 'array'.
+
+Checking result of evaluating string: new Number(42)
+PASS: Returned result should be a WI.RemoteObject.
+PASS: Non-primitive evaluation results should not have a marshalled value.
+PASS: Type of evaluation result should be 'object'.
+PASS: Subtype of evaluation result should be 'undefined'.
+
+Checking result of evaluating string: function foo() { return 42; }; foo
+PASS: Returned result should be a WI.RemoteObject.
+PASS: Non-primitive evaluation results should not have a marshalled value.
+PASS: Type of evaluation result should be 'function'.
+PASS: Subtype of evaluation result should be 'undefined'.
+
+Checking result of evaluating string: Array.prototype.splice
+PASS: Returned result should be a WI.RemoteObject.
+PASS: Non-primitive evaluation results should not have a marshalled value.
+PASS: Type of evaluation result should be 'function'.
+PASS: Subtype of evaluation result should be 'undefined'.
+
+Checking result of evaluating string: async function foo() { return 42; } foo
+PASS: Returned result should be a WI.RemoteObject.
+PASS: Non-primitive evaluation results should not have a marshalled value.
+PASS: Type of evaluation result should be 'function'.
+PASS: Subtype of evaluation result should be 'undefined'.
+
+Checking result of evaluating string: () => { return 42; }
+PASS: Returned result should be a WI.RemoteObject.
+PASS: Non-primitive evaluation results should not have a marshalled value.
+PASS: Type of evaluation result should be 'function'.
+PASS: Subtype of evaluation result should be 'undefined'.
+
+Checking result of evaluating string: async () => { return 42; }
+PASS: Returned result should be a WI.RemoteObject.
+PASS: Non-primitive evaluation results should not have a marshalled value.
+PASS: Type of evaluation result should be 'function'.
+PASS: Subtype of evaluation result should be 'undefined'.
+
+Checking result of evaluating string: window.document
+PASS: Returned result should be a WI.RemoteObject.
+PASS: Non-primitive evaluation results should not have a marshalled value.
+PASS: Type of evaluation result should be 'object'.
+PASS: Subtype of evaluation result should be 'node'.
+
+Checking result of evaluating string: Symbol.iterator
+PASS: Returned result should be a WI.RemoteObject.
+PASS: Non-primitive evaluation results should not have a marshalled value.
+PASS: Type of evaluation result should be 'symbol'.
+PASS: Subtype of evaluation result should be 'undefined'.
+
+Checking result of evaluating string: [].entries()
+PASS: Returned result should be a WI.RemoteObject.
+PASS: Non-primitive evaluation results should not have a marshalled value.
+PASS: Type of evaluation result should be 'object'.
+PASS: Subtype of evaluation result should be 'iterator'.
+
+Checking result of evaluating string: Promise.resolve()
+PASS: Returned result should be a WI.RemoteObject.
+PASS: Non-primitive evaluation results should not have a marshalled value.
+PASS: Type of evaluation result should be 'object'.
+PASS: Subtype of evaluation result should be 'undefined'.
+
+Checking result of evaluating string: new Error(42)
+PASS: Returned result should be a WI.RemoteObject.
+PASS: Non-primitive evaluation results should not have a marshalled value.
+PASS: Type of evaluation result should be 'object'.
+PASS: Subtype of evaluation result should be 'error'.
+
+Checking result of evaluating string: throw new Error(42)
+PASS: Returned result should be a WI.RemoteObject.
+PASS: Non-primitive evaluation results should not have a marshalled value.
+PASS: Type of evaluation result should be 'object'.
+PASS: Subtype of evaluation result should be 'error'.
+
+

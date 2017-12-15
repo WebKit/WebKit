@@ -46,8 +46,8 @@ function test()
     suite.addTestCase({
         name: "notStacktrace",
         test(resolve, reject) {
-            var result = WI.StackTrace.isLikelyStackTrace("Messages:42\nUnread:16");
-            InspectorTest.assert(result, "Should NOT be a stacktrace.");
+            let result = WI.StackTrace.isLikelyStackTrace("Messages:42\nUnread:16");
+            InspectorTest.expectFalse(result, "Should NOT be a stacktrace.");
             resolve();
         }
     });
@@ -59,7 +59,7 @@ function test()
                 if (error)
                     reject(error);
 
-                InspectorTest.assert(WI.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
+                InspectorTest.expectThat(WI.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
 
                 resolve();
             });
@@ -73,7 +73,8 @@ function test()
                 if (error)
                     reject(error);
 
-                InspectorTest.assert(WI.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
+                // FIXME: this test case fails. <https://bugs.webkit.org/show_bug.cgi?id=180664>
+                InspectorTest.expectThat(WI.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
 
                 resolve();
             });
@@ -87,7 +88,7 @@ function test()
                 if (error)
                     reject(error);
 
-                InspectorTest.assert(WI.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
+                InspectorTest.expectThat(WI.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
 
                 resolve();
             });

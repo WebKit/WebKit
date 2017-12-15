@@ -23,10 +23,10 @@ function test()
         description: "Initial media type should match screen.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("mediaQueryList.matches", (error, result) => {
-                InspectorTest.expectEqual(result.value, false, "Page should not match print media.");
+                InspectorTest.expectEqual(result, false, "Page should not match print media.");
             });
             InspectorTest.evaluateInPage("getComputedStyle(document.body).color", (error, result) => {
-                InspectorTest.expectEqual(result.value, "rgb(0, 0, 255)", "Body color should be blue.");
+                InspectorTest.expectEqual(result, "rgb(0, 0, 255)", "Body color should be blue.");
                 resolve();
             });
         }
@@ -38,10 +38,10 @@ function test()
         test(resolve, reject) {
             PageAgent.setEmulatedMedia("print", (error) => {
                 InspectorTest.evaluateInPage("mediaQueryList.matches", (error, result) => {
-                    InspectorTest.expectEqual(result.value, true, "Page should now match print media.");
+                    InspectorTest.expectEqual(result, true, "Page should now match print media.");
                 });
                 InspectorTest.evaluateInPage("getComputedStyle(document.body).color", (error, result) => {
-                    InspectorTest.expectEqual(result.value, "rgb(0, 128, 0)", "Body color should be green.");
+                    InspectorTest.expectEqual(result, "rgb(0, 128, 0)", "Body color should be green.");
                     resolve();
                 });
             });
@@ -54,10 +54,10 @@ function test()
         test(resolve, reject) {
             PageAgent.setEmulatedMedia("", (error) => {
                 InspectorTest.evaluateInPage("mediaQueryList.matches", (error, result) => {
-                    InspectorTest.expectEqual(result.value, false, "Page should now not match print media.");
+                    InspectorTest.expectEqual(result, false, "Page should now not match print media.");
                 });
                 InspectorTest.evaluateInPage("getComputedStyle(document.body).color", (error, result) => {
-                    InspectorTest.expectEqual(result.value, "rgb(0, 0, 255)", "Page should now match print media.");
+                    InspectorTest.expectEqual(result, "rgb(0, 0, 255)", "Page should now match print media.");
                     resolve();
                 });
             });

@@ -41,7 +41,7 @@ function test()
         description: "Array iteration in Injected Script should not be observable",
         test(resolve, reject) {
             InspectorTest.evaluateInPage(`triggerIteration()`, (error, result) => {
-                InspectorTest.expectThat(result.value, 1, "Array.prototype[Symbol.iterator] call count should be 1.");
+                InspectorTest.expectEqual(result, 1, "Array.prototype[Symbol.iterator] call count should be 1.");
                 resolve();
             });
 

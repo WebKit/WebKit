@@ -133,11 +133,10 @@ function test()
         suite.addTestCase({
             name, description,
             async test() {
-                let [result] = await Promise.all([
-                    InspectorTest.evaluateInPage(expression),
+                let [remoteObject, _] = await Promise.all([
+                    InspectorTest.evaluateInPage(expression, null, {remoteObjectOnly: true}),
                     InspectorTest.awaitEvent("Continue"),
                 ]);
-                let remoteObject = WI.RemoteObject.fromPayload(result.result);
                 let [propertyDescriptors] = await promisify((cb) => { remoteObject.getAllPropertyDescriptors(cb); });
                 for (let propertyDescriptor of propertyDescriptors.reverse()) {
                     if (propertyDescriptor.isInternalProperty) {

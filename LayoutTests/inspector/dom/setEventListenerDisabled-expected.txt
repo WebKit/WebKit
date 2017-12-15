@@ -5,15 +5,15 @@ Testing DOMAgent.setEventListenerDisabled.
 -- Running test case: DOM.setEventListenerDisabled.DisabledClickEvent
 Click event listener is enabled.
 Disabling event listener...
-<body> clicked.
 PASS: Click event listener did not fire.
+<body> clicked.
 Click event listener is disabled.
 
 -- Running test case: DOM.setEventListenerDisabled.ReenabledClickEvent
 Click event listener is disabled.
 Enabling event listener...
-<body> clicked.
 PASS: Click event listener fired.
+<body> clicked.
 Click event listener is enabled.
 
 -- Running test case: DOM.setEventListenerDisabled.Invalid

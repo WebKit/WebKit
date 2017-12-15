@@ -6,5 +6,5 @@ Test that certain InjectedScriptSource operations are not observable by user cod
 -- Running test case: InjectedScript.Observable:Array.prototype[Symbol.iterator]
 PASS: Paused.
 PASS: Resumed.
-PASS: 1
+PASS: Array.prototype[Symbol.iterator] call count should be 1.
 

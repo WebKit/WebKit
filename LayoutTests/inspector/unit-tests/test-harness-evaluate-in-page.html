@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let primitiveCases = [
+        {
+            input: `-42`,
+            type: "number",
+            value: -42,
+        },
+        {
+            input: `42`,
+            type: "number",
+            value: 42,
+        },
+        {
+            input: `0`,
+            type: "number",
+            value: 0,
+        },
+        {
+            input: `"String"`,
+            type: "string",
+            value: "String",
+        },
+        {
+            input: `false`,
+            type: "boolean",
+            value: false,
+        },
+        {
+            input: `true`,
+            type: "boolean",
+            value: true,
+        },
+        {
+            input: `null`,
+            type: "object",
+            value: null,
+        },
+    ];
+
+    let complexCases = [
+        { // Plain object.
+            input: `({a:42})`,
+            type: "object",
+        },
+        { // Plain array.
+            input: `[42, 43, 44]`,
+            type: "object",
+            subtype: "array",
+        },
+        { // JS builtin object.
+            input: `new Number(42)`,
+            type: "object",
+        },
+        { // JS function.
+            input: `function foo() { return 42; }; foo`,
+            type: "function",
+        },
+        { // Native function.
+            input: `Array.prototype.splice`,
+            type: "function",
+        },
+        { // Async function.
+            input: `async function foo() { return 42; } foo`,
+            type: "function",
+        },
+        { // Arrow function.
+            input: `() => { return 42; }`,
+            type: "function",
+        },
+        { // Async arrow function.
+            input: `async () => { return 42; }`,
+            type: "function",
+        },
+        { // DOM object.
+            input: `window.document`,
+            type: "object",
+            subtype: "node",
+        },
+        { // Symbol.
+            input: `Symbol.iterator`,
+            type: "symbol",
+        },
+        { // Iterator.
+            input: `[].entries()`,
+            type: "object",
+            subtype: "iterator",
+        },
+        { // Promise.
+            input: `Promise.resolve()`,
+            type: "object",
+        },
+        { // Error (returned).
+            input: `new Error(42)`,
+            type: "object",
+            subtype: "error",
+        },
+        { // Error (thrown).
+            input: `throw new Error(42)`,
+            type: "object",
+            subtype: "error",
+        },
+    ];
+
+    let suite = InspectorTest.createAsyncSuite("InspectorTest.evaluateInPage");
+
+    suite.addTestCase({
+        name: "evaluateInPage.Primitives",
+        async test() {
+            for (let {input, value} of primitiveCases) {
+                let result = await InspectorTest.evaluateInPage(input);
+                InspectorTest.log(`Checking result of evaluating string: ${input}`);
+                InspectorTest.expectEqual(result, value, "Expected and actual evaluation result should be equal.");
+                InspectorTest.expectFalse(result instanceof WI.RemoteObject, "Should not be returned as a WI.RemoteObject.");
+                InspectorTest.log("");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "evaluateInPage.PrimitivesWithoutUnwrapping",
+        async test() {
+            for (let {input, type, value} of primitiveCases) {
+                let result = await InspectorTest.evaluateInPage(input, null, {remoteObjectOnly: true});
+                InspectorTest.log(`Checking result of evaluating string without unwrapping: ${input}`);
+                InspectorTest.expectThat(result instanceof WI.RemoteObject, "Should be returned as a WI.RemoteObject.");
+                InspectorTest.expectEqual(result.type, type, `Type of evaluation result should be '${type}'.`);
+                InspectorTest.log("");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "evaluateInPage.RemoteObjects",
+        async test() {
+            for (let {input, type, subtype, thrown} of complexCases) {
+                let result = await InspectorTest.evaluateInPage(input);
+                InspectorTest.log(`Checking result of evaluating string: ${input}`);
+                InspectorTest.expectThat(result instanceof WI.RemoteObject, "Returned result should be a WI.RemoteObject.");
+                InspectorTest.expectFalse(result.hasValue(), "Non-primitive evaluation results should not have a marshalled value.");
+                InspectorTest.expectEqual(result.type, type, `Type of evaluation result should be '${type}'.`);
+                InspectorTest.expectEqual(result.subtype, subtype, `Subtype of evaluation result should be '${subtype}'.`);
+                InspectorTest.log("");
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing the InspectorTest.evaluateInPage function.</p>
+</body>
+</html>

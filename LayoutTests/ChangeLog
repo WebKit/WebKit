@@ -1,3 +1,47 @@
+2017-12-14  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: InspectorTest.evaluateInPage should unwrap primitive values by default
+        https://bugs.webkit.org/show_bug.cgi?id=180831
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/unit-tests/test-harness-evaluate-in-page-expected.txt: Added.
+        * inspector/unit-tests/test-harness-evaluate-in-page.html: Added.
+
+        Add test coverage for InspectorTest.evaluateInPage. Only the promise-returning
+        variant is tested here, because the callback variant is well-used in existing
+        tests and I plan to remove the callback variant entirely in later patches.
+
+        * inspector/console/js-isLikelyStackTrace-expected.txt:
+        * inspector/console/js-isLikelyStackTrace.html:
+        Fix some bad tests and rebaseline. A bug was filed for the remaining failing assertion.
+
+        * http/tests/inspector/dom/shapes-test.js:
+        (TestPage.registerInitializer.InspectorTest.Shapes.receivedHighlightObject):
+        (TestPage.registerInitializer.InspectorTest.Shapes.getShapeOutsideInfoForSelector):
+        * http/tests/inspector/paymentrequest/payment-request-internal-properties.https.html:
+        * inspector/console/command-line-api-copy.html:
+        * inspector/console/console-log-proxy.html:
+        * inspector/debugger/js-stacktrace.html:
+        * inspector/dom/hideHighlight.html:
+        * inspector/dom/highlightFrame.html:
+        * inspector/dom/highlightNode.html:
+        * inspector/dom/highlightNodeList.html:
+        * inspector/dom/highlightQuad.html:
+        * inspector/dom/highlightRect.html:
+        * inspector/dom/highlightSelector.html:
+        * inspector/page/setEmulatedMedia.html:
+        * inspector/runtime/getPreview.html:
+        Fix existing tests to opt out of unwrapping or use the unwrapped value directly.
+
+        * inspector/dom/setEventListenerDisabled-expected.txt:
+        Rebaseline results. This is caused by an extra promise tick in evaluateInPage.
+
+        * inspector/injected-script/observable-expected.txt:
+        * inspector/injected-script/observable.html:
+        Fix a typo and rebaseline.
+
+
 2017-12-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rebaseline compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html after r225897.

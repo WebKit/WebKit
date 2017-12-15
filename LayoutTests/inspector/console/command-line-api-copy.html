@@ -24,10 +24,9 @@ function test()
     function commandLineAPICopyAndPaste(expression, callback) {
         InspectorTest.assert(typeof expression === "string", "Test requires string expression to evaluate on the page.");
         WI.runtimeManager.evaluateInInspectedWindow(`copy(${expression})`, {objectGroup: "test", includeCommandLineAPI: true}, () => {
-            InspectorTest.evaluateInPage("pasteAndReturnString()", (error, remoteObjectPayload) => {
-                let remoteObject = WI.RemoteObject.fromPayload(remoteObjectPayload);
-                InspectorTest.assert(remoteObject.type === "string", "RemoteObject from pasteAndReturnString should return a string.");
-                callback(remoteObject.value);
+            InspectorTest.evaluateInPage(`pasteAndReturnString()`, (error, result) => {
+                InspectorTest.assert(typeof result === "string", "Result from pasteAndReturnString should be a string.")
+                callback(result);
             });
         });
     }

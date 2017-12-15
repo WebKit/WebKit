@@ -11,10 +11,10 @@ function test()
     const usePageCoordinates = true;
 
     function getHighlightRects(callback) {
-        InspectorTest.evaluateInPage("JSON.stringify(Array.from(window.internals.inspectorHighlightRects()))", (error, payload, wasThrown) => {
+        InspectorTest.evaluateInPage("JSON.stringify(Array.from(window.internals.inspectorHighlightRects()))", (error, value, wasThrown) => {
             InspectorTest.assert(!error, "Unexpected error dumping highlight: " + error);
             InspectorTest.assert(!wasThrown, "Unexpected exception when dumping highlight.");
-            callback(JSON.parse(payload.value));
+            callback(JSON.parse(value));
         });
     }
 
