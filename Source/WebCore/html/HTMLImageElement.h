@@ -90,9 +90,9 @@ public:
 
     bool hasPendingActivity() const { return m_imageLoader.hasPendingActivity(); }
 
-    bool canContainRangeEndPoint() const final { return false; }
+    bool canContainRangeEndPoint() const override { return false; }
 
-    const AtomicString& imageSourceURL() const final;
+    const AtomicString& imageSourceURL() const override;
 
     bool hasShadowControls() const { return m_experimentalImageMenuEnabled; }
     
@@ -105,27 +105,26 @@ protected:
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
 private:
-    void parseAttribute(const QualifiedName&, const AtomicString&) final;
-    bool isPresentationAttribute(const QualifiedName&) const final;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
+    void parseAttribute(const QualifiedName&, const AtomicString&) override;
+    bool isPresentationAttribute(const QualifiedName&) const override;
+    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) override;
 
-    void didAttachRenderers() final;
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    void didAttachRenderers() override;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     void setBestFitURLAndDPRFromImageCandidate(const ImageCandidate&);
 
-    bool canStartSelection() const final;
+    bool canStartSelection() const override;
 
-    bool isURLAttribute(const Attribute&) const final;
-    bool attributeContainsURL(const Attribute&) const final;
-    String completeURLsInAttributeValue(const URL& base, const Attribute&) const final;
+    bool isURLAttribute(const Attribute&) const override;
+    bool attributeContainsURL(const Attribute&) const override;
+    String completeURLsInAttributeValue(const URL& base, const Attribute&) const override;
 
-    bool draggable() const final;
+    bool draggable() const override;
 
-    void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
+    void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
-    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
-    void didFinishInsertingNode() final;
-    void removedFromAncestor(RemovalType, ContainerNode&) final;
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
+    void removedFromAncestor(RemovalType, ContainerNode&) override;
 
     bool isFormAssociatedElement() const final { return false; }
     FormNamedItem* asFormNamedItem() final { return this; }
@@ -153,7 +152,7 @@ private:
     void tryCreateImageControls();
     void destroyImageControls();
     bool hasImageControls() const;
-    bool childShouldCreateRenderer(const Node&) const final;
+    bool childShouldCreateRenderer(const Node&) const override;
 #endif
 
     friend class HTMLPictureElement;

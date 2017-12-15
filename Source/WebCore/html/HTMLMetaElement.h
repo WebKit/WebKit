@@ -40,7 +40,7 @@ private:
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
-    void didFinishInsertingNode() final;
+    void didFinishInsertingNode();
 
     void process();
 };

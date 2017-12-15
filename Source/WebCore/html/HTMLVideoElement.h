@@ -96,7 +96,6 @@ private:
     void scheduleResizeEventIfSizeChanged() final;
     bool rendererIsNeeded(const RenderStyle&) final;
     void didAttachRenderers() final;
-    void updateAfterStyleResolution();
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     bool isPresentationAttribute(const QualifiedName&) const final;
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;

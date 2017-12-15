@@ -587,12 +587,7 @@ void InputType::addSearchResult()
 {
 }
 
-bool InputType::needsPostStyleResolutionCallback()
-{
-    return false;
-}
-
-void InputType::updateAfterStyleResolution()
+void InputType::attach()
 {
 }
 

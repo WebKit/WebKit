@@ -50,8 +50,7 @@ private:
     void handleDOMActivateEvent(Event&) override;
     void altAttributeChanged() override;
     void srcAttributeChanged() override;
-    bool needsPostStyleResolutionCallback() override;
-    void updateAfterStyleResolution() override;
+    void attach() override;
     bool shouldRespectAlignAttribute() override;
     bool canBeSuccessfulSubmitButton() override;
     bool isImageButton() const override;

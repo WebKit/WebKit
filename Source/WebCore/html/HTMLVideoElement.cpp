@@ -43,7 +43,6 @@
 #include "RenderVideo.h"
 #include "ScriptController.h"
 #include "Settings.h"
-#include "StyleTreeResolver.h"
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
@@ -91,19 +90,12 @@ void HTMLVideoElement::didAttachRenderers()
 
     updateDisplayState();
     if (shouldDisplayPosterImage()) {
-        Style::queuePostResolutionCallback([protectedThis = makeRef(*this)] {
-            protectedThis->updateAfterStyleResolution();
-        });
+        if (!m_imageLoader)
+            m_imageLoader = std::make_unique<HTMLImageLoader>(*this);
+        m_imageLoader->updateFromElement();
+        if (auto* renderer = this->renderer())
+            renderer->imageResource().setCachedImage(m_imageLoader->image());
     }
-}
-
-void HTMLVideoElement::updateAfterStyleResolution()
-{
-    if (!m_imageLoader)
-        m_imageLoader = std::make_unique<HTMLImageLoader>(*this);
-    m_imageLoader->updateFromElement();
-    if (auto* renderer = this->renderer())
-        renderer->imageResource().setCachedImage(m_imageLoader->image());
 }
 
 void HTMLVideoElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)

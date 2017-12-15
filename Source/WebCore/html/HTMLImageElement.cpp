@@ -295,8 +295,6 @@ void HTMLImageElement::didAttachRenderers()
 
 Node::InsertedIntoAncestorResult HTMLImageElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-
     if (m_formSetByParser) {
         m_form = m_formSetByParser;
         m_formSetByParser = nullptr;
@@ -313,29 +311,24 @@ Node::InsertedIntoAncestorResult HTMLImageElement::insertedIntoAncestor(Insertio
         if (m_form)
             m_form->registerImgElement(this);
     }
+    // Insert needs to complete first, before we start updating the loader. Loader dispatches events which could result
+    // in callbacks back to this node.
+    Node::InsertedIntoAncestorResult insertNotificationRequest = HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 
     if (insertionType.connectedToDocument && !m_parsedUsemap.isNull())
         document().addImageElementByUsemap(*m_parsedUsemap.impl(), *this);
 
     if (is<HTMLPictureElement>(parentNode())) {
         setPictureElement(&downcast<HTMLPictureElement>(*parentNode()));
-        return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
+        selectImageSource();
     }
 
     // If we have been inserted from a renderer-less document,
     // our loader may have not fetched the image, so do it now.
     if (insertionType.connectedToDocument && !m_imageLoader.image())
-        return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
-
-    return InsertedIntoAncestorResult::Done;
-}
-
-void HTMLImageElement::didFinishInsertingNode()
-{
-    if (pictureElement())
-        selectImageSource();
-    else if (isConnected())
         m_imageLoader.updateFromElement();
+
+    return insertNotificationRequest;
 }
 
 void HTMLImageElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)

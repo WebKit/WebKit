@@ -56,11 +56,8 @@ Ref<HTMLPictureElement> HTMLPictureElement::create(const QualifiedName& tagName,
 
 void HTMLPictureElement::sourcesChanged()
 {
-    Vector<Ref<HTMLImageElement>, 4> imageElements;
     for (auto& element : childrenOfType<HTMLImageElement>(*this))
-        imageElements.append(element);
-    for (auto& element : imageElements)
-        element->selectImageSource();
+        element.selectImageSource();
 }
 
 bool HTMLPictureElement::viewportChangeAffectedPicture() const

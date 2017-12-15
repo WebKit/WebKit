@@ -60,7 +60,6 @@
 #include "SearchInputType.h"
 #include "Settings.h"
 #include "StyleResolver.h"
-#include "StyleTreeResolver.h"
 #include "TextControlInnerElements.h"
 #include <wtf/Language.h>
 #include <wtf/MathExtras.h>
@@ -848,11 +847,7 @@ void HTMLInputElement::didAttachRenderers()
 {
     HTMLTextFormControlElement::didAttachRenderers();
 
-    if (m_inputType->needsPostStyleResolutionCallback()) {
-        Style::queuePostResolutionCallback([protectedElement = makeRef(*this)] {
-            protectedElement->m_inputType->updateAfterStyleResolution();
-        });
-    }
+    m_inputType->attach();
 
     if (document().focusedElement() == this) {
         document().view()->queuePostLayoutCallback([protectedThis = makeRef(*this)] {
