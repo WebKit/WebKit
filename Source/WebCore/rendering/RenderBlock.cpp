@@ -61,6 +61,7 @@
 #include "RenderTableCell.h"
 #include "RenderTextFragment.h"
 #include "RenderTheme.h"
+#include "RenderTreeBuilder.h"
 #include "RenderTreePosition.h"
 #include "RenderView.h"
 #include "Settings.h"
@@ -468,7 +469,7 @@ RenderBlock* RenderBlock::continuationBefore(RenderObject* beforeChild)
     return last;
 }
 
-void RenderBlock::addChildToContinuation(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
+void RenderBlock::addChildToContinuation(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
     RenderBlock* flow = continuationBefore(beforeChild);
     ASSERT(!beforeChild || is<RenderBlock>(*beforeChild->parent()));
@@ -484,7 +485,7 @@ void RenderBlock::addChildToContinuation(RenderPtr<RenderObject> newChild, Rende
     }
 
     if (newChild->isFloatingOrOutOfFlowPositioned()) {
-        beforeChildParent->addChildIgnoringContinuation(WTFMove(newChild), beforeChild);
+        beforeChildParent->addChildIgnoringContinuation(builder, WTFMove(newChild), beforeChild);
         return;
     }
 
@@ -493,21 +494,21 @@ void RenderBlock::addChildToContinuation(RenderPtr<RenderObject> newChild, Rende
     bool flowIsNormal = flow->isInline() || !flow->style().columnSpan();
 
     if (flow == beforeChildParent) {
-        flow->addChildIgnoringContinuation(WTFMove(newChild), beforeChild);
+        flow->addChildIgnoringContinuation(builder, WTFMove(newChild), beforeChild);
         return;
     }
     
     // The goal here is to match up if we can, so that we can coalesce and create the
     // minimal # of continuations needed for the inline.
     if (childIsNormal == bcpIsNormal) {
-        beforeChildParent->addChildIgnoringContinuation(WTFMove(newChild), beforeChild);
+        beforeChildParent->addChildIgnoringContinuation(builder, WTFMove(newChild), beforeChild);
         return;
     }
     if (flowIsNormal == childIsNormal) {
-        flow->addChildIgnoringContinuation(WTFMove(newChild), 0); // Just treat like an append.
+        flow->addChildIgnoringContinuation(builder, WTFMove(newChild), 0); // Just treat like an append.
         return;
     }
-    beforeChildParent->addChildIgnoringContinuation(WTFMove(newChild), beforeChild);
+    beforeChildParent->addChildIgnoringContinuation(builder, WTFMove(newChild), beforeChild);
 }
 
 RenderPtr<RenderBlock> RenderBlock::clone() const
@@ -530,15 +531,15 @@ RenderPtr<RenderBlock> RenderBlock::clone() const
     return cloneBlock;
 }
 
-void RenderBlock::addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
+void RenderBlock::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
     if (continuation() && !isAnonymousBlock())
-        addChildToContinuation(WTFMove(newChild), beforeChild);
+        addChildToContinuation(builder, WTFMove(newChild), beforeChild);
     else
-        addChildIgnoringContinuation(WTFMove(newChild), beforeChild);
+        addChildIgnoringContinuation(builder, WTFMove(newChild), beforeChild);
 }
 
-void RenderBlock::addChildIgnoringContinuation(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
+void RenderBlock::addChildIgnoringContinuation(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
     if (beforeChild && beforeChild->parent() != this) {
         RenderElement* beforeChildContainer = beforeChild->parent();
@@ -561,9 +562,9 @@ void RenderBlock::addChildIgnoringContinuation(RenderPtr<RenderObject> newChild,
                 ) {
                 // Insert the child into the anonymous block box instead of here.
                 if (newChild->isInline() || beforeChild->parent()->firstChild() != beforeChild)
-                    beforeChild->parent()->addChild(WTFMove(newChild), beforeChild);
+                    beforeChild->parent()->addChild(builder, WTFMove(newChild), beforeChild);
                 else
-                    addChild(WTFMove(newChild), beforeChild->parent());
+                    addChild(builder, WTFMove(newChild), beforeChild->parent());
                 return;
             }
 
@@ -571,7 +572,7 @@ void RenderBlock::addChildIgnoringContinuation(RenderPtr<RenderObject> newChild,
 
             if (newChild->isTablePart()) {
                 // Insert into the anonymous table.
-                beforeChildAnonymousContainer->addChild(WTFMove(newChild), beforeChild);
+                beforeChildAnonymousContainer->addChild(builder, WTFMove(newChild), beforeChild);
                 return;
             }
 
@@ -603,7 +604,7 @@ void RenderBlock::addChildIgnoringContinuation(RenderPtr<RenderObject> newChild,
         RenderObject* afterChild = beforeChild ? beforeChild->previousSibling() : lastChild();
 
         if (afterChild && afterChild->isAnonymousBlock()) {
-            downcast<RenderBlock>(*afterChild).addChild(WTFMove(newChild));
+            builder.insertChild(downcast<RenderBlock>(*afterChild), WTFMove(newChild));
             return;
         }
 
@@ -611,15 +612,15 @@ void RenderBlock::addChildIgnoringContinuation(RenderPtr<RenderObject> newChild,
             // No suitable existing anonymous box - create a new one.
             auto newBox = createAnonymousBlock();
             auto& box = *newBox;
-            RenderBox::addChild(WTFMove(newBox), beforeChild);
-            box.addChild(WTFMove(newChild));
+            RenderBox::addChild(builder, WTFMove(newBox), beforeChild);
+            builder.insertChild(box, WTFMove(newChild));
             return;
         }
     }
 
     invalidateLineLayoutPath();
 
-    RenderBox::addChild(WTFMove(newChild), beforeChild);
+    RenderBox::addChild(builder, WTFMove(newChild), beforeChild);
  
     if (madeBoxesNonInline && is<RenderBlock>(parent()) && isAnonymousBlock())
         downcast<RenderBlock>(*parent()).removeLeftoverAnonymousBlock(this);

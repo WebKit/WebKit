@@ -35,6 +35,7 @@
 #include "RenderIterator.h"
 #include "RenderRubyRun.h"
 #include "RenderStyle.h"
+#include "RenderTreeBuilder.h"
 #include "StyleInheritedData.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/RefPtr.h>
@@ -139,45 +140,45 @@ void RenderRubyAsInline::styleDidChange(StyleDifference diff, const RenderStyle*
     propagateStyleToAnonymousChildren(PropagateToAllChildren);
 }
 
-void RenderRubyAsInline::addChild(RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderRubyAsInline::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     // Insert :before and :after content before/after the RenderRubyRun(s)
     if (child->isBeforeContent()) {
         if (child->isInline()) {
             // Add generated inline content normally
-            RenderInline::addChild(WTFMove(child), firstChild());
+            RenderInline::addChild(builder, WTFMove(child), firstChild());
         } else {
             // Wrap non-inline content with an anonymous inline-block.
             RenderBlock* beforeBlock = rubyBeforeBlock(this);
             if (!beforeBlock) {
                 auto newBlock = createAnonymousRubyInlineBlock(*this);
                 beforeBlock = newBlock.get();
-                RenderInline::addChild(WTFMove(newBlock), firstChild());
+                RenderInline::addChild(builder, WTFMove(newBlock), firstChild());
             }
-            beforeBlock->addChild(WTFMove(child));
+            builder.insertChild(*beforeBlock, WTFMove(child));
         }
         return;
     }
     if (child->isAfterContent()) {
         if (child->isInline()) {
             // Add generated inline content normally
-            RenderInline::addChild(WTFMove(child));
+            RenderInline::addChild(builder, WTFMove(child));
         } else {
             // Wrap non-inline content with an anonymous inline-block.
             RenderBlock* afterBlock = rubyAfterBlock(this);
             if (!afterBlock) {
                 auto newBlock = createAnonymousRubyInlineBlock(*this);
                 afterBlock = newBlock.get();
-                RenderInline::addChild(WTFMove(newBlock));
+                RenderInline::addChild(builder, WTFMove(newBlock));
             }
-            afterBlock->addChild(WTFMove(child));
+            builder.insertChild(*afterBlock, WTFMove(child));
         }
         return;
     }
 
     // If the child is a ruby run, just add it normally.
     if (child->isRubyRun()) {
-        RenderInline::addChild(WTFMove(child), beforeChild);
+        RenderInline::addChild(builder, WTFMove(child), beforeChild);
         return;
     }
 
@@ -188,7 +189,7 @@ void RenderRubyAsInline::addChild(RenderPtr<RenderObject> child, RenderObject* b
         while (run && !run->isRubyRun())
             run = run->parent();
         if (run) {
-            run->addChild(WTFMove(child), beforeChild);
+            builder.insertChild(*run, WTFMove(child), beforeChild);
             return;
         }
         ASSERT_NOT_REACHED(); // beforeChild should always have a run as parent!
@@ -202,9 +203,9 @@ void RenderRubyAsInline::addChild(RenderPtr<RenderObject> child, RenderObject* b
     if (!lastRun || lastRun->hasRubyText()) {
         auto newRun = RenderRubyRun::staticCreateRubyRun(this);
         lastRun = newRun.get();
-        RenderInline::addChild(WTFMove(newRun), beforeChild);
+        RenderInline::addChild(builder, WTFMove(newRun), beforeChild);
     }
-    lastRun->addChild(WTFMove(child));
+    builder.insertChild(*lastRun, WTFMove(child));
 }
 
 RenderPtr<RenderObject> RenderRubyAsInline::takeChild(RenderObject& child)
@@ -246,45 +247,45 @@ void RenderRubyAsBlock::styleDidChange(StyleDifference diff, const RenderStyle* 
     propagateStyleToAnonymousChildren(PropagateToAllChildren);
 }
 
-void RenderRubyAsBlock::addChild(RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderRubyAsBlock::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     // Insert :before and :after content before/after the RenderRubyRun(s)
     if (child->isBeforeContent()) {
         if (child->isInline()) {
             // Add generated inline content normally
-            RenderBlockFlow::addChild(WTFMove(child), firstChild());
+            RenderBlockFlow::addChild(builder, WTFMove(child), firstChild());
         } else {
             // Wrap non-inline content with an anonymous inline-block.
             RenderBlock* beforeBlock = rubyBeforeBlock(this);
             if (!beforeBlock) {
                 auto newBlock = createAnonymousRubyInlineBlock(*this);
                 beforeBlock = newBlock.get();
-                RenderBlockFlow::addChild(WTFMove(newBlock), firstChild());
+                RenderBlockFlow::addChild(builder, WTFMove(newBlock), firstChild());
             }
-            beforeBlock->addChild(WTFMove(child));
+            builder.insertChild(*beforeBlock, WTFMove(child));
         }
         return;
     }
     if (child->isAfterContent()) {
         if (child->isInline()) {
             // Add generated inline content normally
-            RenderBlockFlow::addChild(WTFMove(child));
+            RenderBlockFlow::addChild(builder, WTFMove(child));
         } else {
             // Wrap non-inline content with an anonymous inline-block.
             RenderBlock* afterBlock = rubyAfterBlock(this);
             if (!afterBlock) {
                 auto newBlock = createAnonymousRubyInlineBlock(*this);
                 afterBlock = newBlock.get();
-                RenderBlockFlow::addChild(WTFMove(newBlock));
+                RenderBlockFlow::addChild(builder, WTFMove(newBlock));
             }
-            afterBlock->addChild(WTFMove(child));
+            builder.insertChild(*afterBlock, WTFMove(child));
         }
         return;
     }
 
     // If the child is a ruby run, just add it normally.
     if (child->isRubyRun()) {
-        RenderBlockFlow::addChild(WTFMove(child), beforeChild);
+        RenderBlockFlow::addChild(builder, WTFMove(child), beforeChild);
         return;
     }
 
@@ -295,7 +296,7 @@ void RenderRubyAsBlock::addChild(RenderPtr<RenderObject> child, RenderObject* be
         while (run && !run->isRubyRun())
             run = run->parent();
         if (run) {
-            run->addChild(WTFMove(child), beforeChild);
+            builder.insertChild(*run, WTFMove(child), beforeChild);
             return;
         }
         ASSERT_NOT_REACHED(); // beforeChild should always have a run as parent!
@@ -309,9 +310,9 @@ void RenderRubyAsBlock::addChild(RenderPtr<RenderObject> child, RenderObject* be
     if (!lastRun || lastRun->hasRubyText()) {
         auto newRun = RenderRubyRun::staticCreateRubyRun(this);
         lastRun = newRun.get();
-        RenderBlockFlow::addChild(WTFMove(newRun), beforeChild);
+        RenderBlockFlow::addChild(builder, WTFMove(newRun), beforeChild);
     }
-    lastRun->addChild(WTFMove(child));
+    builder.insertChild(*lastRun, WTFMove(child));
 }
 
 RenderPtr<RenderObject> RenderRubyAsBlock::takeChild(RenderObject& child)

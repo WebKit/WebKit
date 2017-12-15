@@ -89,10 +89,10 @@ void RenderSVGContainer::layout()
     clearNeedsLayout();
 }
 
-void RenderSVGContainer::addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
+void RenderSVGContainer::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
     auto& child = *newChild;
-    RenderSVGModelObject::addChild(WTFMove(newChild), beforeChild);
+    RenderSVGModelObject::addChild(builder, WTFMove(newChild), beforeChild);
     SVGResourcesCache::clientWasAddedToTree(child);
 }
 

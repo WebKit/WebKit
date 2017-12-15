@@ -520,10 +520,10 @@ FloatRect RenderSVGText::repaintRectInLocalCoordinates() const
     return repaintRect;
 }
 
-void RenderSVGText::addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
+void RenderSVGText::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
     auto& child = *newChild;
-    RenderSVGBlock::addChild(WTFMove(newChild), beforeChild);
+    RenderSVGBlock::addChild(builder, WTFMove(newChild), beforeChild);
 
     SVGResourcesCache::clientWasAddedToTree(child);
     subtreeChildWasAdded(&child);

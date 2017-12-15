@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "RenderTreeBuilder.h"
 #include "RenderTreePosition.h"
 #include "StyleChange.h"
 #include "StyleUpdate.h"
@@ -59,6 +60,7 @@ private:
 
     void updateRenderTree(ContainerNode& root);
     void updateTextRenderer(Text&, const Style::TextUpdate*);
+    void createTextRenderer(Text&, const Style::TextUpdate*);
     void updateElementRenderer(Element&, const Style::ElementUpdate&);
     void createRenderer(Element&, RenderStyle&&);
     void updateBeforeDescendants(Element&, const Style::ElementUpdates*);
@@ -89,6 +91,7 @@ private:
 
     enum class TeardownType { Full, RendererUpdate, RendererUpdateCancelingAnimations };
     static void tearDownRenderers(Element&, TeardownType);
+    static void tearDownTextRenderer(Text&);
 
     RenderView& renderView();
 
@@ -98,6 +101,8 @@ private:
     Vector<Parent> m_parentStack;
 
     std::unique_ptr<GeneratedContent> m_generatedContent;
+
+    RenderTreeBuilder m_builder;
 };
 
 } // namespace WebCore

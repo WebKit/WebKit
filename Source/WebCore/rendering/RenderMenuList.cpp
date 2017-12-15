@@ -42,6 +42,7 @@
 #include "RenderScrollbar.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
+#include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "StyleResolver.h"
 #include "TextRun.h"
@@ -112,7 +113,7 @@ void RenderMenuList::createInnerBlock()
     auto newInnerBlock = createAnonymousBlock();
     m_innerBlock = makeWeakPtr(*newInnerBlock.get());
     adjustInnerStyle();
-    RenderFlexibleBox::addChild(WTFMove(newInnerBlock));
+    RenderFlexibleBox::addChild(*RenderTreeBuilder::current(), WTFMove(newInnerBlock));
 }
 
 void RenderMenuList::adjustInnerStyle()
@@ -174,11 +175,11 @@ HTMLSelectElement& RenderMenuList::selectElement() const
     return downcast<HTMLSelectElement>(nodeForNonAnonymous());
 }
 
-void RenderMenuList::addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
+void RenderMenuList::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
     createInnerBlock();
     auto& child = *newChild;
-    m_innerBlock->addChild(WTFMove(newChild), beforeChild);
+    builder.insertChild(*m_innerBlock, WTFMove(newChild), beforeChild);
     ASSERT(m_innerBlock == firstChild());
 
     if (AXObjectCache* cache = document().existingAXObjectCache())
@@ -298,7 +299,7 @@ void RenderMenuList::setText(const String& s)
     else {
         auto newButtonText = createRenderer<RenderText>(document(), textToUse);
         m_buttonText = makeWeakPtr(*newButtonText);
-        addChild(WTFMove(newButtonText));
+        RenderTreeBuilder::current()->insertChild(*this, WTFMove(newButtonText));
     }
 
     adjustInnerStyle();

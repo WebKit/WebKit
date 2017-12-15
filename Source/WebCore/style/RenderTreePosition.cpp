@@ -34,17 +34,6 @@
 
 namespace WebCore {
 
-void RenderTreePosition::insert(RenderPtr<RenderObject> renderer)
-{
-    ASSERT(m_hasValidNextSibling);
-    auto* insertBefore = m_nextSibling;
-    if (is<RenderText>(insertBefore)) {
-        if (auto* wrapperInline = downcast<RenderText>(*insertBefore).inlineWrapperForDisplayContents())
-            insertBefore = wrapperInline;
-    }
-    m_parent.addChild(WTFMove(renderer), insertBefore);
-}
-
 void RenderTreePosition::computeNextSibling(const Node& node)
 {
     ASSERT(!node.renderer());

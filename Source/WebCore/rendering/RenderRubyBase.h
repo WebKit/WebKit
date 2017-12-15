@@ -59,6 +59,8 @@ public:
     
     void cachePriorCharactersIfNeeded(const LazyLineBreakIterator&) override;
 
+    void moveChildren(RenderRubyBase* toBase, RenderObject* beforeChild = 0);
+
 private:
     bool isRubyBase() const override { return true; }
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
@@ -66,7 +68,6 @@ private:
     void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const override;
     void mergeChildrenWithBase(RenderRubyBase& toBlock);
 
-    void moveChildren(RenderRubyBase* toBase, RenderObject* beforeChild = 0);
     void moveInlineChildren(RenderRubyBase* toBase, RenderObject* beforeChild = 0);
     void moveBlockChildren(RenderRubyBase* toBase, RenderObject* beforeChild = 0);
 
