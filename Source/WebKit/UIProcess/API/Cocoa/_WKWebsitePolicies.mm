@@ -146,6 +146,17 @@
     _websitePolicies->setCustomHeaderFields(WTFMove(parsedFields));
 }
 
+- (WKWebsiteDataStore *)websiteDataStore
+{
+    auto* store = _websitePolicies->websiteDataStore();
+    return store ? WebKit::wrapper(*store) : nil;
+}
+
+- (void)setWebsiteDataStore:(WKWebsiteDataStore *)websiteDataStore
+{
+    _websitePolicies->setWebsiteDataStore(websiteDataStore->_websiteDataStore.get());
+}
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@: %p; contentBlockersEnabled = %d>", NSStringFromClass(self.class), self, self.contentBlockersEnabled];

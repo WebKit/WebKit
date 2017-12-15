@@ -1,3 +1,17 @@
+2017-12-15  Alex Christensen  <achristensen@webkit.org>
+
+        Introduce SPI _WKWebsitePolicies.websiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=180880
+        <rdar://problem/35535328>
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[WebsitePoliciesWebsiteDataStoreDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[WebsitePoliciesWebsiteDataStoreDelegate webView:startURLSchemeTask:]):
+        (-[WebsitePoliciesWebsiteDataStoreDelegate webView:stopURLSchemeTask:]):
+        (TEST):
+
 2017-12-15  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         [GTK] Add proxy option to Minibrowser

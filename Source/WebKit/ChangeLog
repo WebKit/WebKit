@@ -1,5 +1,41 @@
 2017-12-15  Alex Christensen  <achristensen@webkit.org>
 
+        Introduce SPI _WKWebsitePolicies.websiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=180880
+        <rdar://problem/35535328>
+
+        Reviewed by Andy Estes.
+
+        The SPI doesn't do anything yet, but it already has some restrictions and tests!
+        WKWebView._updateWebsitePolicies can't be used to update a WKWebsiteDataStore.  Only during navigation.
+        Even during navigation, we are only supporting the default and ephemeral data stores right now.
+        This functionality won't be supported in the C API.  This is enforced with RELEASE_ASSERTs.
+        If we change our minds, we can change them and add restrictions similar to the ObjC restrictions.
+
+        * Shared/WebsitePoliciesData.cpp:
+        (WebKit::WebsitePoliciesData::encode const):
+        (WebKit::WebsitePoliciesData::decode):
+        * Shared/WebsitePoliciesData.h:
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::WebsitePolicies):
+        (API::WebsitePolicies::setWebsiteDataStore):
+        (API::WebsitePolicies::data):
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/API/C/WKFramePolicyListener.cpp:
+        (WKFramePolicyListenerUseWithPolicies):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageUpdateWebsitePolicies):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateWebsitePolicies:]):
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        (-[_WKWebsitePolicies websiteDataStore]):
+        (-[_WKWebsitePolicies setWebsiteDataStore:]):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+
+2017-12-15  Alex Christensen  <achristensen@webkit.org>
+
         Fix GTK build.
 
         * UIProcess/API/glib/WebKitPolicyDecision.cpp:

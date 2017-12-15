@@ -40,10 +40,12 @@ struct WebsitePoliciesData;
 
 namespace API {
 
+class WebsiteDataStore;
+
 class WebsitePolicies final : public API::ObjectImpl<API::Object::Type::WebsitePolicies> {
 public:
     static Ref<WebsitePolicies> create() { return adoptRef(*new WebsitePolicies); }
-    WebsitePolicies() = default;
+    WebsitePolicies();
     ~WebsitePolicies();
 
     bool contentBlockersEnabled() const { return m_contentBlockersEnabled; }
@@ -58,21 +60,20 @@ public:
     const Vector<WebCore::HTTPHeaderField>& customHeaderFields() const { return m_customHeaderFields; }
     Vector<WebCore::HTTPHeaderField>&& takeCustomHeaderFields() { return WTFMove(m_customHeaderFields); }
     void setCustomHeaderFields(Vector<WebCore::HTTPHeaderField>&& fields) { m_customHeaderFields = WTFMove(fields); }
+    
+    WebsiteDataStore* websiteDataStore() const { return m_websiteDataStore.get(); }
+    void setWebsiteDataStore(RefPtr<WebsiteDataStore>&&);
 
     WebKit::WebsitePoliciesData data();
 
 private:
-    WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk> allowedAutoplayQuirks, WebKit::WebsiteAutoplayPolicy autoplayPolicy, Vector<WebCore::HTTPHeaderField>&& customHeaderFields)
-        : m_contentBlockersEnabled(contentBlockersEnabled)
-        , m_allowedAutoplayQuirks(allowedAutoplayQuirks)
-        , m_autoplayPolicy(autoplayPolicy)
-        , m_customHeaderFields(WTFMove(customHeaderFields))
-    { }
+    WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk>, WebKit::WebsiteAutoplayPolicy, Vector<WebCore::HTTPHeaderField>&&, RefPtr<WebsiteDataStore>&&);
 
     bool m_contentBlockersEnabled { true };
     OptionSet<WebKit::WebsiteAutoplayQuirk> m_allowedAutoplayQuirks;
     WebKit::WebsiteAutoplayPolicy m_autoplayPolicy { WebKit::WebsiteAutoplayPolicy::Default };
     Vector<WebCore::HTTPHeaderField> m_customHeaderFields;
+    RefPtr<WebsiteDataStore> m_websiteDataStore;
 };
 
 } // namespace API

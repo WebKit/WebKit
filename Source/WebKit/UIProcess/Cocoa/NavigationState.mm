@@ -466,8 +466,14 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
         checker->didCallCompletionHandler();
 
         std::optional<WebsitePoliciesData> data;
-        if (websitePolicies)
+        if (websitePolicies) {
             data = websitePolicies->_websitePolicies->data();
+            if (data->websiteDataStoreParameters) {
+                auto& sessionID = data->websiteDataStoreParameters->networkSessionParameters.sessionID;
+                if (!sessionID.isEphemeral() && sessionID != PAL::SessionID::defaultSessionID())
+                    [NSException raise:NSInvalidArgumentException format:@"_WKWebsitePolicies.websiteDataStore must be nil, default, or non-persistent."];
+            }
+        }
 
         switch (actionPolicy) {
         case WKNavigationActionPolicyAllow:

@@ -26,17 +26,36 @@
 #include "config.h"
 #include "APIWebsitePolicies.h"
 
+#include "APIWebsiteDataStore.h"
 #include "WebsitePoliciesData.h"
 
 namespace API {
+
+WebsitePolicies::WebsitePolicies() = default;
+
+WebsitePolicies::WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk> allowedAutoplayQuirks, WebKit::WebsiteAutoplayPolicy autoplayPolicy, Vector<WebCore::HTTPHeaderField>&& customHeaderFields, RefPtr<WebsiteDataStore>&& websiteDataStore)
+    : m_contentBlockersEnabled(contentBlockersEnabled)
+    , m_allowedAutoplayQuirks(allowedAutoplayQuirks)
+    , m_autoplayPolicy(autoplayPolicy)
+    , m_customHeaderFields(WTFMove(customHeaderFields))
+    , m_websiteDataStore(WTFMove(websiteDataStore))
+{ }
 
 WebsitePolicies::~WebsitePolicies()
 {
 }
 
+void WebsitePolicies::setWebsiteDataStore(RefPtr<WebsiteDataStore>&& websiteDataStore)
+{
+    m_websiteDataStore = WTFMove(websiteDataStore);
+}
+
 WebKit::WebsitePoliciesData WebsitePolicies::data()
 {
-    return { contentBlockersEnabled(), allowedAutoplayQuirks(), autoplayPolicy(), customHeaderFields() };
+    std::optional<WebKit::WebsiteDataStoreParameters> parameters;
+    if (m_websiteDataStore)
+        parameters = m_websiteDataStore->websiteDataStore().parameters();
+    return { contentBlockersEnabled(), allowedAutoplayQuirks(), autoplayPolicy(), customHeaderFields(), WTFMove(parameters) };
 }
 
 }

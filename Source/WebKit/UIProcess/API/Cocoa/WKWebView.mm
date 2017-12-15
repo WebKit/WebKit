@@ -4238,7 +4238,10 @@ static int32_t activeOrientation(WKWebView *webView)
 
 - (void)_updateWebsitePolicies:(_WKWebsitePolicies *)websitePolicies
 {
-    _page->updateWebsitePolicies(websitePolicies->_websitePolicies->data());
+    auto data = websitePolicies->_websitePolicies->data();
+    if (data.websiteDataStoreParameters)
+        [NSException raise:NSInvalidArgumentException format:@"Updating WKWebsiteDataStore is only supported during decidePolicyForNavigationAction."];
+    _page->updateWebsitePolicies(WTFMove(data));
 }
 
 - (BOOL)_allowsRemoteInspection

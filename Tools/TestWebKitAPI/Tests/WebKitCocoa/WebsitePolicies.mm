@@ -34,7 +34,9 @@
 #import <WebKit/WKURLSchemeTaskPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKUserContentExtensionStorePrivate.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsitePolicies.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
@@ -785,5 +787,63 @@ TEST(WebKit, CustomHeaderFields)
     TestWebKitAPI::Util::run(&fourthTestDone);
 }
 
+static bool done;
+
+@interface WebsitePoliciesWebsiteDataStoreDelegate : NSObject <WKNavigationDelegatePrivate, WKURLSchemeHandler>
+@end
+
+@implementation WebsitePoliciesWebsiteDataStoreDelegate
+
+- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
+{
+    if ([navigationAction.request.URL.path isEqualToString:@"/invalid"]) {
+        _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
+        websitePolicies.websiteDataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:[[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease]] autorelease];
+
+        bool sawException = false;
+        @try {
+            decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
+        } @catch (NSException *exception) {
+            sawException = true;
+        }
+        EXPECT_TRUE(sawException);
+
+        done = true;
+    }
+}
+
+- (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
+{
+}
+
+- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
+{
+}
+
+@end
+
+TEST(WebKit, UpdateWebsitePoliciesInvalid)
+{
+    auto delegate = adoptNS([[WebsitePoliciesWebsiteDataStoreDelegate alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setURLSchemeHandler:delegate.get() forURLScheme:@"test"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    auto policies = adoptNS([[_WKWebsitePolicies alloc] init]);
+    [policies setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
+    bool sawException = false;
+    @try {
+        [webView _updateWebsitePolicies:policies.get()];
+    } @catch (NSException *exception) {
+        sawException = true;
+    }
+    EXPECT_TRUE(sawException);
+    
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///invalid"]]];
+    TestWebKitAPI::Util::run(&done);
+}
+
+// FIXME: Use _WKWebsitePolicies.websiteDataStore and test that it is used.
 
 #endif // WK_API_ENABLED

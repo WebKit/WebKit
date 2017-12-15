@@ -325,7 +325,9 @@ bool WKPageWillHandleHorizontalScrollEvents(WKPageRef pageRef)
 
 void WKPageUpdateWebsitePolicies(WKPageRef pageRef, WKWebsitePoliciesRef websitePoliciesRef)
 {
-    toImpl(pageRef)->updateWebsitePolicies(toImpl(websitePoliciesRef)->data());
+    auto data = toImpl(websitePoliciesRef)->data();
+    RELEASE_ASSERT_WITH_MESSAGE(!data.websiteDataStoreParameters, "Setting WebsitePolicies.WebsiteDataStore is not supported in the C API.");
+    toImpl(pageRef)->updateWebsitePolicies(WTFMove(data));
 }
 
 WKStringRef WKPageCopyTitle(WKPageRef pageRef)

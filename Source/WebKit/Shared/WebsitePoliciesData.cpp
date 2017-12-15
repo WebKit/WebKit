@@ -37,6 +37,7 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
     encoder << autoplayPolicy;
     encoder << allowedAutoplayQuirks;
     encoder << customHeaderFields;
+    encoder << websiteDataStoreParameters;
 }
 
 std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
@@ -61,11 +62,17 @@ std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& dec
     if (!customHeaderFields)
         return std::nullopt;
     
+    std::optional<std::optional<WebsiteDataStoreParameters>> websiteDataStoreParameters;
+    decoder >> websiteDataStoreParameters;
+    if (!websiteDataStoreParameters)
+        return std::nullopt;
+    
     return { {
         WTFMove(*contentBlockersEnabled),
         WTFMove(*allowedAutoplayQuirks),
         WTFMove(*autoplayPolicy),
         WTFMove(*customHeaderFields),
+        WTFMove(*websiteDataStoreParameters),
     } };
 }
 

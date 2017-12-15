@@ -46,7 +46,9 @@ void WKFramePolicyListenerUse(WKFramePolicyListenerRef policyListenerRef)
 
 void WKFramePolicyListenerUseWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies)
 {
-    toImpl(policyListenerRef)->use(toImpl(websitePolicies)->data());
+    auto data = toImpl(websitePolicies)->data();
+    RELEASE_ASSERT_WITH_MESSAGE(!data.websiteDataStoreParameters, "Setting WebsitePolicies.WebsiteDataStore is not supported in the C API.");
+    toImpl(policyListenerRef)->use(WTFMove(data));
 }
 
 void WKFramePolicyListenerDownload(WKFramePolicyListenerRef policyListenerRef)
