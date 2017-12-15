@@ -1165,12 +1165,12 @@ void WebProcess::webToStorageProcessConnectionClosed(WebToStorageProcessConnecti
     m_webToStorageProcessConnection = nullptr;
 }
 
-WebToStorageProcessConnection& WebProcess::ensureWebToStorageProcessConnection()
+WebToStorageProcessConnection& WebProcess::ensureWebToStorageProcessConnection(PAL::SessionID initialSessionID)
 {
     if (!m_webToStorageProcessConnection) {
         IPC::Attachment encodedConnectionIdentifier;
 
-        if (!parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetStorageProcessConnection(), Messages::WebProcessProxy::GetStorageProcessConnection::Reply(encodedConnectionIdentifier), 0))
+        if (!parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetStorageProcessConnection(initialSessionID), Messages::WebProcessProxy::GetStorageProcessConnection::Reply(encodedConnectionIdentifier), 0))
             CRASH();
 
 #if USE(UNIX_DOMAIN_SOCKETS)
@@ -1630,12 +1630,12 @@ LibWebRTCNetwork& WebProcess::libWebRTCNetwork()
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcess::establishWorkerContextConnectionToStorageProcess(uint64_t pageID, const WebPreferencesStore& store)
+void WebProcess::establishWorkerContextConnectionToStorageProcess(uint64_t pageID, const WebPreferencesStore& store, PAL::SessionID initialSessionID)
 {
     // We are in the Service Worker context process and the call below establishes our connection to the Storage Process
     // by calling webToStorageProcessConnection. SWContextManager needs to use the same underlying IPC::Connection as the
     // WebToStorageProcessConnection for synchronization purposes.
-    auto& ipcConnection = ensureWebToStorageProcessConnection().connection();
+    auto& ipcConnection = ensureWebToStorageProcessConnection(initialSessionID).connection();
     SWContextManager::singleton().setConnection(std::make_unique<WebSWContextManagerConnection>(ipcConnection, pageID, store));
 }
 #endif

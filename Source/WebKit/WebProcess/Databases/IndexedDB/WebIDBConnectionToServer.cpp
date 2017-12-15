@@ -79,7 +79,7 @@ WebIDBConnectionToServer::~WebIDBConnectionToServer()
 
 IPC::Connection* WebIDBConnectionToServer::messageSenderConnection()
 {
-    return &WebProcess::singleton().ensureWebToStorageProcessConnection().connection();
+    return &WebProcess::singleton().ensureWebToStorageProcessConnection(m_sessionID).connection();
 }
 
 IDBClient::IDBConnectionToServer& WebIDBConnectionToServer::coreConnectionToServer()

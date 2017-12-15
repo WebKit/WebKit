@@ -38,7 +38,7 @@ public:
 
     void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, Ref<AuthenticationChallengeProxy>&&);
 
-    void start(const WebPreferencesStore&);
+    void start(const WebPreferencesStore&, std::optional<PAL::SessionID> initialSessionID);
     void setUserAgent(const String&);
 
     uint64_t pageID() const { return m_serviceWorkerPageID; }

@@ -1,3 +1,43 @@
+2017-12-15  Brady Eidson  <beidson@apple.com>
+
+        API test WebKit.WebsiteDataStoreCustomPaths is failing
+        https://bugs.webkit.org/show_bug.cgi?id=180870
+
+        Reviewed by Chris Dumez.
+
+        To avoid unintentionally creating the default WebsiteDataStore we need to pass around the
+        relevant SessionID to more places.
+
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        (WebKit::ServiceWorkerProcessProxy::start):
+        * UIProcess/ServiceWorkerProcessProxy.h:
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::getStorageProcessConnection):
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToStorageProcess):
+        * UIProcess/WebProcessPool.h:
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getStorageProcessConnection):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::messageSenderConnection):
+
+        * WebProcess/Databases/WebDatabaseProvider.cpp:
+        (WebKit::WebDatabaseProvider::idbConnectionToServerForSession):
+
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::WebServiceWorkerProvider::serviceWorkerConnectionForSession):
+        (WebKit::WebServiceWorkerProvider::handleFetch):
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureWebToStorageProcessConnection):
+        (WebKit::WebProcess::establishWorkerContextConnectionToStorageProcess):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2017-12-15  Alex Christensen  <achristensen@webkit.org>
 
         Move WebKit::WebsitePolicies to API::WebsitePolicies

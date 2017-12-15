@@ -60,9 +60,9 @@ void ServiceWorkerProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions&
     launchOptions.extraInitializationData.add(ASCIILiteral("service-worker-process"), ASCIILiteral("1"));
 }
 
-void ServiceWorkerProcessProxy::start(const WebPreferencesStore& store)
+void ServiceWorkerProcessProxy::start(const WebPreferencesStore& store, std::optional<PAL::SessionID> initialSessionID)
 {
-    send(Messages::WebProcess::EstablishWorkerContextConnectionToStorageProcess { m_serviceWorkerPageID, store }, 0);
+    send(Messages::WebProcess::EstablishWorkerContextConnectionToStorageProcess { m_serviceWorkerPageID, store, initialSessionID.value_or(PAL::SessionID::defaultSessionID()) }, 0);
 }
 
 void ServiceWorkerProcessProxy::setUserAgent(const String& userAgent)

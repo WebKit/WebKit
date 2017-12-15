@@ -320,7 +320,7 @@ public:
 
     void ensureStorageProcessAndWebsiteDataStore(WebsiteDataStore* relevantDataStore);
     StorageProcessProxy* storageProcess() { return m_storageProcess.get(); }
-    void getStorageProcessConnection(bool isServiceWorkerProcess, Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&&);
+    void getStorageProcessConnection(bool isServiceWorkerProcess, PAL::SessionID initialSessionID, Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&&);
     void storageProcessCrashed(StorageProcessProxy*);
 #if ENABLE(SERVICE_WORKER)
     void establishWorkerContextConnectionToStorageProcess(StorageProcessProxy&, std::optional<PAL::SessionID>);

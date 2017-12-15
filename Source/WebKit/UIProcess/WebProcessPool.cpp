@@ -569,9 +569,9 @@ void WebProcessPool::ensureStorageProcessAndWebsiteDataStore(WebsiteDataStore* r
     m_storageProcess->send(Messages::StorageProcess::InitializeWebsiteDataStore(relevantDataStore->storageProcessParameters()), 0);
 }
 
-void WebProcessPool::getStorageProcessConnection(bool isServiceWorkerProcess, Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&& reply)
+void WebProcessPool::getStorageProcessConnection(bool isServiceWorkerProcess, PAL::SessionID initialSessionID, Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&& reply)
 {
-    ensureStorageProcessAndWebsiteDataStore(nullptr);
+    ensureStorageProcessAndWebsiteDataStore(WebsiteDataStore::existingNonDefaultDataStoreForSessionID(initialSessionID));
 
     m_storageProcess->getStorageProcessConnection(isServiceWorkerProcess, WTFMove(reply));
 }
@@ -614,7 +614,7 @@ void WebProcessPool::establishWorkerContextConnectionToStorageProcess(StoragePro
 
     m_processes.append(WTFMove(serviceWorkerProcessProxy));
 
-    m_serviceWorkerProcess->start(m_defaultPageGroup->preferences().store());
+    m_serviceWorkerProcess->start(m_defaultPageGroup->preferences().store(), sessionID);
     if (!m_serviceWorkerUserAgent.isNull())
         m_serviceWorkerProcess->setUserAgent(m_serviceWorkerUserAgent);
 }
