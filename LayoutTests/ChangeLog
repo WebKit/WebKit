@@ -1,3 +1,9 @@
+2017-12-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rebaseline compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html after r225897.
+
+        * platform/mac-wk1/compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint-expected.txt:
+
 2017-12-14  Matt Lewis  <jlewis3@apple.com>
 
         Skipped media/encrypted-media/clearKey/clearKey-encrypted-cenc-event-mse.html on macOS.
