@@ -1,8 +1,8 @@
 
-FAIL register-with-updateViaCache-undefined assert_not_equals: Main script should have updated got disallowed value 1512338030.075291
-FAIL register-with-updateViaCache-imports assert_not_equals: Main script should have updated got disallowed value 1512338030.414841
+PASS register-with-updateViaCache-undefined 
+PASS register-with-updateViaCache-imports 
 FAIL register-with-updateViaCache-all assert_equals: No new service worker expected null but got object "[object ServiceWorker]"
-FAIL register-with-updateViaCache-none assert_not_equals: Main script should have updated got disallowed value 1512338030.773353
+PASS register-with-updateViaCache-none 
 PASS register-with-updateViaCache-undefined-then-undefined 
 PASS register-with-updateViaCache-undefined-then-imports 
 FAIL register-with-updateViaCache-undefined-then-all assert_equals: reg.updateViaCache updated expected "all" but got "imports"

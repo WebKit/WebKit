@@ -1,5 +1,11 @@
 2017-12-15  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rebaseline Service Workers flaky tests.
+
+        * TestExpectations:
+
+2017-12-15  Chris Dumez  <cdumez@apple.com>
+
         Service Worker Registration promise is sometimes not rejected when the script load fails
         https://bugs.webkit.org/show_bug.cgi?id=180849
 
