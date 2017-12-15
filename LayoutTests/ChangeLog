@@ -1,3 +1,14 @@
+2017-12-14  Matt Lewis  <jlewis3@apple.com>
+
+        Skipped media/encrypted-media/clearKey/clearKey-encrypted-cenc-event-mse.html on macOS.
+        https://bugs.webkit.org/show_bug.cgi?id=180430
+
+        Unreviewed test gardening.
+
+        * platform/mac-elcapitan/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-12-14  Chris Dumez  <cdumez@apple.com>
 
         self.importScripts() should obey updateViaCache inside service workers

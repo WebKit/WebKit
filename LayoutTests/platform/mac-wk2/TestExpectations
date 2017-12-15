@@ -517,8 +517,6 @@ webkit.org/b/138736 http/tests/appcache/auth.html [ Skip ]
 
 media/video-background-tab-playback.html [ Pass Failure ]
 
-media/encrypted-media/clearKey/clearKey-encrypted-cenc-event-mse.html [ Failure ]
-
 webkit.org/b/140607 http/tests/navigation/navigation-interrupted-by-fragment.html [ Pass Timeout ]
 
 webkit.org/b/141322 [ Debug ] fast/images/destroyed-image-load-event.html [ Pass Timeout ]
