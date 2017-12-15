@@ -387,6 +387,9 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         if (this._wasFocused)
             return;
 
+        if (window.getSelection().type === "Range")
+            return;
+
         event.stop();
 
         if (event.target.classList.contains(WI.SpreadsheetStyleProperty.StyleClassName)) {
