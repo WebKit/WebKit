@@ -4233,7 +4233,7 @@ static int32_t activeOrientation(WKWebView *webView)
 
 - (void)_updateWebsitePolicies:(_WKWebsitePolicies *)websitePolicies
 {
-    _page->updateWebsitePolicies(websitePolicies->_websitePolicies->websitePolicies());
+    _page->updateWebsitePolicies(WebKit::WebsitePoliciesData::fromWebsitePolicies(*websitePolicies->_websitePolicies));
 }
 
 - (BOOL)_allowsRemoteInspection

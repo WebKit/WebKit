@@ -27,12 +27,12 @@
 
 #if WK_API_ENABLED
 
-#import "APIWebsitePolicies.h"
 #import "WKObject.h"
+#import "WebsitePolicies.h"
 
 namespace WebKit {
 
-inline _WKWebsitePolicies *wrapper(API::WebsitePolicies& websitePolicies)
+inline _WKWebsitePolicies *wrapper(WebsitePolicies& websitePolicies)
 {
     ASSERT([websitePolicies.wrapper() isKindOfClass:[_WKWebsitePolicies class]]);
     return (_WKWebsitePolicies *)websitePolicies.wrapper();
@@ -42,7 +42,7 @@ inline _WKWebsitePolicies *wrapper(API::WebsitePolicies& websitePolicies)
 
 @interface _WKWebsitePolicies () <WKObject> {
 @package
-    API::ObjectStorage<API::WebsitePolicies> _websitePolicies;
+    API::ObjectStorage<WebKit::WebsitePolicies> _websitePolicies;
 }
 @end
 

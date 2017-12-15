@@ -24,30 +24,27 @@
  */
 
 #include "config.h"
-#include "WebsitePolicies.h"
+#include "WebsitePoliciesData.h"
 
 #include "ArgumentCoders.h"
 #include <WebCore/DocumentLoader.h>
 
 namespace WebKit {
 
-WebsitePolicies::WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks, WebsiteAutoplayPolicy autoplayPolicy, Vector<WebCore::HTTPHeaderField>&& customHeaderFields)
-    : m_contentBlockersEnabled(contentBlockersEnabled)
-    , m_allowedAutoplayQuirks(allowedAutoplayQuirks)
-    , m_autoplayPolicy(autoplayPolicy)
-    , m_customHeaderFields(WTFMove(customHeaderFields))
+WebsitePoliciesData WebsitePoliciesData::fromWebsitePolicies(const WebsitePolicies& policies)
 {
+    return { policies.contentBlockersEnabled(), policies.allowedAutoplayQuirks(), policies.autoplayPolicy(), policies.customHeaderFields() };
 }
 
-void WebsitePolicies::encode(IPC::Encoder& encoder) const
+void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
 {
-    encoder << m_contentBlockersEnabled;
-    encoder << m_autoplayPolicy;
-    encoder << m_allowedAutoplayQuirks;
-    encoder << m_customHeaderFields;
+    encoder << contentBlockersEnabled;
+    encoder << autoplayPolicy;
+    encoder << allowedAutoplayQuirks;
+    encoder << customHeaderFields;
 }
 
-std::optional<WebsitePolicies> WebsitePolicies::decode(IPC::Decoder& decoder)
+std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
 {
     std::optional<bool> contentBlockersEnabled;
     decoder >> contentBlockersEnabled;
@@ -77,16 +74,16 @@ std::optional<WebsitePolicies> WebsitePolicies::decode(IPC::Decoder& decoder)
     } };
 }
 
-void WebsitePolicies::applyToDocumentLoader(WebsitePolicies&& websitePolicies, WebCore::DocumentLoader& documentLoader)
+void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePolicies, WebCore::DocumentLoader& documentLoader)
 {
-    documentLoader.setCustomHeaderFields(websitePolicies.takeCustomHeaderFields());
+    documentLoader.setCustomHeaderFields(WTFMove(websitePolicies.customHeaderFields));
     
     // Only setUserContentExtensionsEnabled if it hasn't already been disabled by reloading without content blockers.
     if (documentLoader.userContentExtensionsEnabled())
-        documentLoader.setUserContentExtensionsEnabled(websitePolicies.contentBlockersEnabled());
+        documentLoader.setUserContentExtensionsEnabled(websitePolicies.contentBlockersEnabled);
 
     OptionSet<WebCore::AutoplayQuirk> quirks;
-    auto allowedQuirks = websitePolicies.allowedAutoplayQuirks();
+    const auto& allowedQuirks = websitePolicies.allowedAutoplayQuirks;
     
     if (allowedQuirks.contains(WebsiteAutoplayQuirk::InheritedUserGestures))
         quirks |= WebCore::AutoplayQuirk::InheritedUserGestures;
@@ -99,7 +96,7 @@ void WebsitePolicies::applyToDocumentLoader(WebsitePolicies&& websitePolicies, W
 
     documentLoader.setAllowedAutoplayQuirks(quirks);
 
-    switch (websitePolicies.autoplayPolicy()) {
+    switch (websitePolicies.autoplayPolicy) {
     case WebsiteAutoplayPolicy::Default:
         documentLoader.setAutoplayPolicy(WebCore::AutoplayPolicy::Default);
         break;

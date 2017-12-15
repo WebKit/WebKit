@@ -1,3 +1,98 @@
+2017-12-14  Alex Christensen  <achristensen@webkit.org>
+
+        Serialize WebsitePoliciesData instead of WebsitePolicies
+        https://bugs.webkit.org/show_bug.cgi?id=180847
+
+        Reviewed by Joseph Pecoraro.
+
+        No change in behavior.  This will allow me to add things to WebsitePolicies that have 
+        a different form when serialized to another process.
+        
+        Also, remove API::WebsitePolicies because the wrapper isn't necessary.
+        WebsitePolicies is now the API type that only exists in the UIProcess.
+
+        * Shared/WebsitePolicies.cpp: Removed.
+        * Shared/WebsitePolicies.h:
+        (WebKit::WebsitePolicies::contentBlockersEnabled const): Deleted.
+        (WebKit::WebsitePolicies::setContentBlockersEnabled): Deleted.
+        (WebKit::WebsitePolicies::allowedAutoplayQuirks const): Deleted.
+        (WebKit::WebsitePolicies::setAllowedAutoplayQuirks): Deleted.
+        (WebKit::WebsitePolicies::autoplayPolicy const): Deleted.
+        (WebKit::WebsitePolicies::setAutoplayPolicy): Deleted.
+        (WebKit::WebsitePolicies::customHeaderFields): Deleted.
+        (WebKit::WebsitePolicies::takeCustomHeaderFields): Deleted.
+        (WebKit::WebsitePolicies::setCustomHeaderFields): Deleted.
+        * Shared/WebsitePoliciesData.cpp: Copied from Source/WebKit/Shared/WebsitePolicies.cpp.
+        (WebKit::WebsitePoliciesData::fromWebsitePolicies):
+        (WebKit::WebsitePoliciesData::encode const):
+        (WebKit::WebsitePoliciesData::decode):
+        (WebKit::WebsitePoliciesData::applyToDocumentLoader):
+        (WebKit::WebsitePolicies::WebsitePolicies): Deleted.
+        (WebKit::WebsitePolicies::encode const): Deleted.
+        (WebKit::WebsitePolicies::decode): Deleted.
+        (WebKit::WebsitePolicies::applyToDocumentLoader): Deleted.
+        * Shared/WebsitePoliciesData.h: Added.
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::decidePolicyForNavigationAction):
+        (API::NavigationClient::decidePolicyForNavigationResponse):
+        * UIProcess/API/APIPolicyClient.h:
+        (API::PolicyClient::decidePolicyForNavigationAction):
+        (API::PolicyClient::decidePolicyForNewWindowAction):
+        (API::PolicyClient::decidePolicyForResponse):
+        * UIProcess/API/APIWebsitePolicies.cpp: Removed.
+        * UIProcess/API/APIWebsitePolicies.h: Removed.
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKFramePolicyListener.cpp:
+        (WKFramePolicyListenerUse):
+        (WKFramePolicyListenerUseWithPolicies):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageUpdateWebsitePolicies):
+        (WKPageSetPagePolicyClient):
+        (WKPageSetPageNavigationClient):
+        * UIProcess/API/C/WKWebsitePolicies.cpp:
+        (WKWebsitePoliciesGetTypeID):
+        (WKWebsitePoliciesCreate):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateWebsitePolicies:]):
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        (-[_WKWebsitePolicies dealloc]):
+        (-[_WKWebsitePolicies init]):
+        * UIProcess/API/Cocoa/_WKWebsitePoliciesInternal.h:
+        (WebKit::wrapper):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationResponse):
+        * UIProcess/WebFrameListenerProxy.cpp:
+        (WebKit::WebFrameListenerProxy::receivedPolicyDecision):
+        * UIProcess/WebFrameListenerProxy.h:
+        * UIProcess/WebFramePolicyListenerProxy.cpp:
+        (WebKit::WebFramePolicyListenerProxy::use):
+        (WebKit::WebFramePolicyListenerProxy::download):
+        (WebKit::WebFramePolicyListenerProxy::ignore):
+        * UIProcess/WebFramePolicyListenerProxy.h:
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::receivedPolicyDecision):
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::updateWebsitePolicies):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::applyToDocumentLoader):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::didReceivePolicyDecision):
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceivePolicyDecision):
+        (WebKit::WebPage::updateWebsitePolicies):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2017-12-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r225931.

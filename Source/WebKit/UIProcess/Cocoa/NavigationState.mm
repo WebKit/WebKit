@@ -427,7 +427,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             }
 
             if (!navigationAction->targetFrame()) {
-                listener->use({ });
+                listener->use(std::nullopt);
                 return;
             }
 
@@ -436,7 +436,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
                 if (navigationAction->shouldPerformDownload())
                     listener->download();
                 else
-                    listener->use({ });
+                    listener->use(std::nullopt);
                 return;
             }
 
@@ -465,19 +465,19 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             return;
         checker->didCallCompletionHandler();
 
-        std::optional<WebsitePolicies> policies;
+        std::optional<WebsitePoliciesData> data;
         if (websitePolicies)
-            policies = websitePolicies->_websitePolicies->websitePolicies();
+            data = WebsitePoliciesData::fromWebsitePolicies(*websitePolicies->_websitePolicies);
 
         switch (actionPolicy) {
         case WKNavigationActionPolicyAllow:
-            tryAppLink(WTFMove(navigationAction), mainFrameURLString, [localListener = WTFMove(localListener), policies = WTFMove(policies)](bool followedLinkToApp) mutable {
+            tryAppLink(WTFMove(navigationAction), mainFrameURLString, [localListener = WTFMove(localListener), data = WTFMove(data)](bool followedLinkToApp) mutable {
                 if (followedLinkToApp) {
                     localListener->ignore();
                     return;
                 }
 
-                localListener->use(WTFMove(policies));
+                localListener->use(WTFMove(data));
             });
         
             break;
@@ -494,7 +494,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             break;
         case _WKNavigationActionPolicyAllowWithoutTryingAppLink:
 #pragma clang diagnostic pop
-            localListener->use(WTFMove(policies));
+            localListener->use(WTFMove(data));
             break;
         }
     };
@@ -544,14 +544,14 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
             BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:url.path isDirectory:&isDirectory];
 
             if (exists && !isDirectory && navigationResponse->canShowMIMEType())
-                listener->use({ });
+                listener->use(std::nullopt);
             else
                 listener->ignore();
             return;
         }
 
         if (navigationResponse->canShowMIMEType())
-            listener->use({ });
+            listener->use(std::nullopt);
         else
             listener->ignore();
         return;
@@ -570,7 +570,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
 
         switch (responsePolicy) {
         case WKNavigationResponsePolicyAllow:
-            localListener->use({ });
+            localListener->use(std::nullopt);
             break;
 
         case WKNavigationResponsePolicyCancel:

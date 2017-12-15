@@ -1184,6 +1184,7 @@
 		5C0B17791E7C882100E9123C /* WebSocketStreamMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C0B17761E7C879C00E9123C /* WebSocketStreamMessageReceiver.cpp */; };
 		5C0B177C1E7C885400E9123C /* WebSocketStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C0B177A1E7C884F00E9123C /* WebSocketStream.cpp */; };
 		5C0B17811E7C8C2600E9123C /* NetworkSocketStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C0B177D1E7C886700E9123C /* NetworkSocketStream.cpp */; };
+		5C13024C1FE35154000D9B31 /* WebsitePolicies.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C13024B1FE35142000D9B31 /* WebsitePolicies.h */; };
 		5C1426EC1C23F80900D41183 /* NetworkProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1426E21C23F80500D41183 /* NetworkProcessCreationParameters.cpp */; };
 		5C1426ED1C23F80900D41183 /* NetworkProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */; };
 		5C1426EE1C23F80900D41183 /* NetworkProcessSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E41C23F80500D41183 /* NetworkProcessSupplement.h */; };
@@ -1204,7 +1205,7 @@
 		5C20CB9D1BB0DCFA00895BB1 /* NetworkSessionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */; };
 		5C20CBA01BB1ECD800895BB1 /* NetworkSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */; };
 		5C298DA01C3DF02100470AFE /* PendingDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C298D9E1C3DEF2900470AFE /* PendingDownload.h */; };
-		5C3AEA8F1FE1F21F002318D3 /* WebsitePolicies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C3AEA8E1FE1F1DF002318D3 /* WebsitePolicies.cpp */; };
+		5C3AEA8F1FE1F21F002318D3 /* WebsitePoliciesData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C3AEA8E1FE1F1DF002318D3 /* WebsitePoliciesData.cpp */; };
 		5C62FDF91EFC271C00CE072E /* WKURLSchemeTaskPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C62FDF81EFC263C00CE072E /* WKURLSchemeTaskPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C6CE6D11F59BC7A0007C6CB /* PageClientImplCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C6CE6D01F59BC460007C6CB /* PageClientImplCocoa.mm */; };
 		5C7706741D1138380012700F /* WebSocketProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C7706731D111D8B0012700F /* WebSocketProvider.cpp */; };
@@ -1214,8 +1215,6 @@
 		5CB2378B1DF0DE5300117AA3 /* _WKWebsitePolicies.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CB2378A1DF0DD4300117AA3 /* _WKWebsitePolicies.mm */; };
 		5CB2378C1DF0DE6E00117AA3 /* _WKWebsitePolicies.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB237891DF0DD4300117AA3 /* _WKWebsitePolicies.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CB2378E1DF0E0D300117AA3 /* _WKWebsitePoliciesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB2378D1DF0E0C200117AA3 /* _WKWebsitePoliciesInternal.h */; };
-		5CB237911DF0E2E600117AA3 /* APIWebsitePolicies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB237901DF0E1DD00117AA3 /* APIWebsitePolicies.cpp */; };
-		5CB237921DF0E2EE00117AA3 /* APIWebsitePolicies.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB2378F1DF0E1B800117AA3 /* APIWebsitePolicies.h */; };
 		5CBC9B8D1C65279C00A8FDCF /* NetworkDataTaskCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */; };
 		5CBC9B8E1C652CA000A8FDCF /* NetworkDataTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CBC9B891C6524A500A8FDCF /* NetworkDataTask.h */; };
 		5CD286511E7235990094FDC8 /* WKContentRuleListStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD2864D1E722F440094FDC8 /* WKContentRuleListStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3573,6 +3572,8 @@
 		5C0B177E1E7C886700E9123C /* NetworkSocketStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkSocketStream.h; path = NetworkProcess/NetworkSocketStream.h; sourceTree = "<group>"; };
 		5C0B177F1E7C886700E9123C /* NetworkSocketStream.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NetworkSocketStream.messages.in; path = NetworkProcess/NetworkSocketStream.messages.in; sourceTree = "<group>"; };
 		5C0B17801E7C888000E9123C /* WebSocketStream.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebSocketStream.messages.in; path = Network/WebSocketStream.messages.in; sourceTree = "<group>"; };
+		5C13024A1FE341A7000D9B31 /* WebsitePoliciesData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsitePoliciesData.h; sourceTree = "<group>"; };
+		5C13024B1FE35142000D9B31 /* WebsitePolicies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsitePolicies.h; sourceTree = "<group>"; };
 		5C1426E21C23F80500D41183 /* NetworkProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcessCreationParameters.cpp; path = NetworkProcess/NetworkProcessCreationParameters.cpp; sourceTree = "<group>"; };
 		5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessCreationParameters.h; path = NetworkProcess/NetworkProcessCreationParameters.h; sourceTree = "<group>"; };
 		5C1426E41C23F80500D41183 /* NetworkProcessSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessSupplement.h; path = NetworkProcess/NetworkProcessSupplement.h; sourceTree = "<group>"; };
@@ -3594,7 +3595,7 @@
 		5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkSessionCocoa.mm; path = NetworkProcess/cocoa/NetworkSessionCocoa.mm; sourceTree = "<group>"; };
 		5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkSession.h; path = NetworkProcess/NetworkSession.h; sourceTree = "<group>"; };
 		5C298D9E1C3DEF2900470AFE /* PendingDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PendingDownload.h; path = NetworkProcess/Downloads/PendingDownload.h; sourceTree = "<group>"; };
-		5C3AEA8E1FE1F1DF002318D3 /* WebsitePolicies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebsitePolicies.cpp; sourceTree = "<group>"; };
+		5C3AEA8E1FE1F1DF002318D3 /* WebsitePoliciesData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebsitePoliciesData.cpp; sourceTree = "<group>"; };
 		5C62FDF81EFC263C00CE072E /* WKURLSchemeTaskPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKURLSchemeTaskPrivate.h; sourceTree = "<group>"; };
 		5C6CE6D01F59BC460007C6CB /* PageClientImplCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageClientImplCocoa.mm; sourceTree = "<group>"; };
 		5C6CE6D31F59EA350007C6CB /* PageClientImplCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageClientImplCocoa.h; sourceTree = "<group>"; };
@@ -3602,14 +3603,11 @@
 		5C7C88DC1D0F41A0009D2F6D /* WebSocketProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketProvider.h; path = Network/WebSocketProvider.h; sourceTree = "<group>"; };
 		5C84CF901F96AC4E00B6705A /* NetworkSessionCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkSessionCreationParameters.h; path = NetworkProcess/NetworkSessionCreationParameters.h; sourceTree = "<group>"; };
 		5C85C7861C3F23C50061A4FA /* PendingDownload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PendingDownload.cpp; path = NetworkProcess/Downloads/PendingDownload.cpp; sourceTree = "<group>"; };
-		5C9E567F1DF7930900C9EE33 /* WebsitePolicies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsitePolicies.h; sourceTree = "<group>"; };
 		5C9E56801DF7F05500C9EE33 /* WKWebsitePolicies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKWebsitePolicies.cpp; sourceTree = "<group>"; };
 		5C9E56811DF7F05500C9EE33 /* WKWebsitePolicies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebsitePolicies.h; sourceTree = "<group>"; };
 		5CB237891DF0DD4300117AA3 /* _WKWebsitePolicies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebsitePolicies.h; sourceTree = "<group>"; };
 		5CB2378A1DF0DD4300117AA3 /* _WKWebsitePolicies.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebsitePolicies.mm; sourceTree = "<group>"; };
 		5CB2378D1DF0E0C200117AA3 /* _WKWebsitePoliciesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebsitePoliciesInternal.h; sourceTree = "<group>"; };
-		5CB2378F1DF0E1B800117AA3 /* APIWebsitePolicies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIWebsitePolicies.h; sourceTree = "<group>"; };
-		5CB237901DF0E1DD00117AA3 /* APIWebsitePolicies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIWebsitePolicies.cpp; sourceTree = "<group>"; };
 		5CBC9B891C6524A500A8FDCF /* NetworkDataTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkDataTask.h; path = NetworkProcess/NetworkDataTask.h; sourceTree = "<group>"; };
 		5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkDataTaskCocoa.mm; path = NetworkProcess/cocoa/NetworkDataTaskCocoa.mm; sourceTree = "<group>"; };
 		5CD286491E722F440094FDC8 /* _WKUserContentFilterPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKUserContentFilterPrivate.h; sourceTree = "<group>"; };
@@ -5216,8 +5214,8 @@
 				3760881D150413E900FC82C7 /* WebRenderObject.h */,
 				511F7D3F1EB1BCEE00E47B83 /* WebsiteDataStoreParameters.cpp */,
 				511F7D401EB1BCEE00E47B83 /* WebsiteDataStoreParameters.h */,
-				5C3AEA8E1FE1F1DF002318D3 /* WebsitePolicies.cpp */,
-				5C9E567F1DF7930900C9EE33 /* WebsitePolicies.h */,
+				5C3AEA8E1FE1F1DF002318D3 /* WebsitePoliciesData.cpp */,
+				5C13024A1FE341A7000D9B31 /* WebsitePoliciesData.h */,
 				8360349D1ACB34D600626549 /* WebSQLiteDatabaseTracker.cpp */,
 				8360349E1ACB34D600626549 /* WebSQLiteDatabaseTracker.h */,
 				C0337DD7127A51B6008FF4F4 /* WebTouchEvent.cpp */,
@@ -7195,6 +7193,7 @@
 				7A9CD8C21C779AD600D9F6C7 /* WebResourceLoadStatisticsStore.messages.in */,
 				6B821DDB1EEF05DD00D7AF4A /* WebResourceLoadStatisticsTelemetry.cpp */,
 				6B821DDA1EEF05DD00D7AF4A /* WebResourceLoadStatisticsTelemetry.h */,
+				5C13024B1FE35142000D9B31 /* WebsitePolicies.h */,
 				51D124241E6D3CC3002B2820 /* WebURLSchemeHandler.cpp */,
 				51D124251E6D3CC3002B2820 /* WebURLSchemeHandler.h */,
 				51E8B68D1E712873001B7132 /* WebURLSchemeTask.cpp */,
@@ -7275,8 +7274,6 @@
 				1AE286821C7F93860069AC4F /* APIWebsiteDataRecord.h */,
 				1A3635A71A3144A300ED6197 /* APIWebsiteDataStore.cpp */,
 				1A3635A81A3144A300ED6197 /* APIWebsiteDataStore.h */,
-				5CB237901DF0E1DD00117AA3 /* APIWebsitePolicies.cpp */,
-				5CB2378F1DF0E1B800117AA3 /* APIWebsitePolicies.h */,
 				1A6563E21B7A8C50009CF787 /* APIWindowFeatures.cpp */,
 				1A6563E31B7A8C50009CF787 /* APIWindowFeatures.h */,
 			);
@@ -8620,7 +8617,6 @@
 				C5E1AFEF16B21029006CC1F2 /* APIWebArchiveResource.h in Headers */,
 				1AE286841C7F93860069AC4F /* APIWebsiteDataRecord.h in Headers */,
 				1A3635AA1A3144A300ED6197 /* APIWebsiteDataStore.h in Headers */,
-				5CB237921DF0E2EE00117AA3 /* APIWebsitePolicies.h in Headers */,
 				1A6563E51B7A8C50009CF787 /* APIWindowFeatures.h in Headers */,
 				1AD4C1931B39F33200ABC28E /* ApplicationStateTracker.h in Headers */,
 				1AEFD27911D16C81008219D3 /* ArgumentCoder.h in Headers */,
@@ -9167,6 +9163,7 @@
 				1A4832D11A9BDC2F008B4DFE /* WebsiteDataRecord.h in Headers */,
 				1A53C2AA1A325730004E8C70 /* WebsiteDataStore.h in Headers */,
 				511F7D411EB1BCF500E47B83 /* WebsiteDataStoreParameters.h in Headers */,
+				5C13024C1FE35154000D9B31 /* WebsitePolicies.h in Headers */,
 				836034A01ACB34D600626549 /* WebSQLiteDatabaseTracker.h in Headers */,
 				1A52C0F81A38CDC70016160A /* WebStorageNamespaceProvider.h in Headers */,
 				517A53051F4793C600DCDC0A /* WebSWClientConnection.h in Headers */,
@@ -10202,7 +10199,6 @@
 				1AE286831C7F93860069AC4F /* APIWebsiteDataRecord.cpp in Sources */,
 				1A3635A91A3144A300ED6197 /* APIWebsiteDataStore.cpp in Sources */,
 				1A3635AD1A3145E500ED6197 /* APIWebsiteDataStoreCocoa.mm in Sources */,
-				5CB237911DF0E2E600117AA3 /* APIWebsitePolicies.cpp in Sources */,
 				1A6563E41B7A8C50009CF787 /* APIWindowFeatures.cpp in Sources */,
 				1AD4C1921B39F33200ABC28E /* ApplicationStateTracker.mm in Sources */,
 				1A3D610513A7F03A00F95D4E /* ArgumentCoders.cpp in Sources */,
@@ -10835,7 +10831,7 @@
 				1A53C2A91A32572B004E8C70 /* WebsiteDataStore.cpp in Sources */,
 				1A4832C31A965A3C008B4DFE /* WebsiteDataStoreCocoa.mm in Sources */,
 				511F7D421EB1BCF800E47B83 /* WebsiteDataStoreParameters.cpp in Sources */,
-				5C3AEA8F1FE1F21F002318D3 /* WebsitePolicies.cpp in Sources */,
+				5C3AEA8F1FE1F21F002318D3 /* WebsitePoliciesData.cpp in Sources */,
 				5C7706741D1138380012700F /* WebSocketProvider.cpp in Sources */,
 				5C0B177C1E7C885400E9123C /* WebSocketStream.cpp in Sources */,
 				5C0B17791E7C882100E9123C /* WebSocketStreamMessageReceiver.cpp in Sources */,

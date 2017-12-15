@@ -35,7 +35,7 @@ namespace WebKit {
 
 class PluginView;
 class WebFrame;
-class WebsitePolicies;
+struct WebsitePoliciesData;
     
 class WebFrameLoaderClient final : public WebCore::FrameLoaderClient {
 public:
@@ -49,7 +49,7 @@ public:
 
     void setUseIconLoadingClient(bool useIconLoadingClient) { m_useIconLoadingClient = useIconLoadingClient; }
 
-    void applyToDocumentLoader(WebsitePolicies&&);
+    void applyToDocumentLoader(WebsitePoliciesData&&);
 
     std::optional<uint64_t> pageID() const final;
     std::optional<uint64_t> frameID() const final;

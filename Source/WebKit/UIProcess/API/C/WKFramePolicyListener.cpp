@@ -26,11 +26,10 @@
 #include "config.h"
 #include "WKFramePolicyListener.h"
 
-#include "APIWebsitePolicies.h"
 #include "WKAPICast.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFrameProxy.h"
-#include "WebsitePolicies.h"
+#include "WebsitePoliciesData.h"
 
 using namespace WebKit;
 
@@ -41,12 +40,12 @@ WKTypeID WKFramePolicyListenerGetTypeID()
 
 void WKFramePolicyListenerUse(WKFramePolicyListenerRef policyListenerRef)
 {
-    toImpl(policyListenerRef)->use({ });
+    toImpl(policyListenerRef)->use(std::nullopt);
 }
 
 void WKFramePolicyListenerUseWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies)
 {
-    toImpl(policyListenerRef)->use(toImpl(websitePolicies)->websitePolicies());
+    toImpl(policyListenerRef)->use(WebsitePoliciesData::fromWebsitePolicies(*toImpl(websitePolicies)));
 }
 
 void WKFramePolicyListenerDownload(WKFramePolicyListenerRef policyListenerRef)

@@ -216,7 +216,7 @@ set(WebKit_SOURCES
     Shared/WebUserContentControllerDataTypes.cpp
     Shared/WebWheelEvent.cpp
     Shared/WebsiteDataStoreParameters.cpp
-    Shared/WebsitePolicies.cpp
+    Shared/WebsitePoliciesData.cpp
 
     Shared/API/APIArray.cpp
     Shared/API/APIData.cpp
@@ -358,7 +358,6 @@ set(WebKit_SOURCES
     UIProcess/API/APIUserScript.cpp
     UIProcess/API/APIUserStyleSheet.cpp
     UIProcess/API/APIWebsiteDataStore.cpp
-    UIProcess/API/APIWebsitePolicies.cpp
     UIProcess/API/APIWindowFeatures.cpp
 
     UIProcess/API/C/WKApplicationCacheManager.cpp

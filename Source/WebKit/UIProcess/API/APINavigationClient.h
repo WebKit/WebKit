@@ -31,7 +31,7 @@
 #include "SameDocumentNavigationType.h"
 #include "WebEvent.h"
 #include "WebFramePolicyListenerProxy.h"
-#include "WebsitePolicies.h"
+#include "WebsitePoliciesData.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/LayoutMilestones.h>
 #include <wtf/Forward.h>
@@ -101,12 +101,12 @@ public:
 
     virtual void decidePolicyForNavigationAction(WebKit::WebPageProxy&, Ref<NavigationAction>&&, Ref<WebKit::WebFramePolicyListenerProxy>&& listener, Object*)
     {
-        listener->use({ });
+        listener->use(std::nullopt);
     }
 
     virtual void decidePolicyForNavigationResponse(WebKit::WebPageProxy&, Ref<NavigationResponse>&&, Ref<WebKit::WebFramePolicyListenerProxy>&& listener, Object*)
     {
-        listener->use({ });
+        listener->use(std::nullopt);
     }
     
     virtual void contentRuleListNotification(WebKit::WebPageProxy&, WebCore::URL&&, Vector<WTF::String>&&, Vector<WTF::String>&&) { };

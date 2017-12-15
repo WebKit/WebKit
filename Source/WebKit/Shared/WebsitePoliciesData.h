@@ -25,34 +25,21 @@
 
 #pragma once
 
-#include "APIObject.h"
 #include "WebsitePolicies.h"
-#include <wtf/OptionSet.h>
 
-namespace API {
+namespace WebKit {
 
-class WebsitePolicies final : public ObjectImpl<Object::Type::WebsitePolicies> {
-public:
-    static Ref<WebsitePolicies> create();
-    explicit WebsitePolicies();
-    virtual ~WebsitePolicies();
+struct WebsitePoliciesData {
+    static WebsitePoliciesData fromWebsitePolicies(const WebsitePolicies&);
+    static void applyToDocumentLoader(WebsitePoliciesData&&, WebCore::DocumentLoader&);
 
-    bool contentBlockersEnabled() const { return m_websitePolicies.contentBlockersEnabled(); }
-    void setContentBlockersEnabled(bool enabled) { m_websitePolicies.setContentBlockersEnabled(enabled); }
-
-    OptionSet<WebKit::WebsiteAutoplayQuirk> allowedAutoplayQuirks() const { return m_websitePolicies.allowedAutoplayQuirks(); }
-    void setAllowedAutoplayQuirks(OptionSet<WebKit::WebsiteAutoplayQuirk> allowedQuirks) { m_websitePolicies.setAllowedAutoplayQuirks(allowedQuirks); }
-
-    WebKit::WebsiteAutoplayPolicy autoplayPolicy() const { return m_websitePolicies.autoplayPolicy(); }
-    void setAutoplayPolicy(WebKit::WebsiteAutoplayPolicy policy) { m_websitePolicies.setAutoplayPolicy(policy); }
-
-    void setCustomHeaderFields(Vector<WebCore::HTTPHeaderField>&& customHeaderFields) { m_websitePolicies.setCustomHeaderFields(WTFMove(customHeaderFields)); };
-    const Vector<WebCore::HTTPHeaderField> customHeaderFields() { return m_websitePolicies.customHeaderFields(); }
-
-    const WebKit::WebsitePolicies& websitePolicies() { return m_websitePolicies; }
+    bool contentBlockersEnabled { true };
+    OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks;
+    WebsiteAutoplayPolicy autoplayPolicy { WebsiteAutoplayPolicy::Default };
+    Vector<WebCore::HTTPHeaderField> customHeaderFields;
     
-private:
-    WebKit::WebsitePolicies m_websitePolicies;
+    void encode(IPC::Encoder&) const;
+    static std::optional<WebsitePoliciesData> decode(IPC::Decoder&);
 };
 
-}
+} // namespace WebKit

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "APIObject.h"
 #include <WebCore/HTTPHeaderField.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
@@ -55,8 +56,9 @@ enum class WebsiteAutoplayQuirk {
     ArbitraryUserGestures = 1 << 2,
 };
 
-class WebsitePolicies {
+class WebsitePolicies final : public API::ObjectImpl<API::Object::Type::WebsitePolicies> {
 public:
+    static Ref<WebsitePolicies> create() { return adoptRef(*new WebsitePolicies); }
     WebsitePolicies() = default;
 
     bool contentBlockersEnabled() const { return m_contentBlockersEnabled; }
@@ -68,17 +70,17 @@ public:
     WebsiteAutoplayPolicy autoplayPolicy() const { return m_autoplayPolicy; }
     void setAutoplayPolicy(WebsiteAutoplayPolicy policy) { m_autoplayPolicy = policy; }
     
-    const Vector<WebCore::HTTPHeaderField>& customHeaderFields() { return m_customHeaderFields; }
+    const Vector<WebCore::HTTPHeaderField>& customHeaderFields() const { return m_customHeaderFields; }
     Vector<WebCore::HTTPHeaderField>&& takeCustomHeaderFields() { return WTFMove(m_customHeaderFields); }
     void setCustomHeaderFields(Vector<WebCore::HTTPHeaderField>&& fields) { m_customHeaderFields = WTFMove(fields); }
-    
-    static void applyToDocumentLoader(WebsitePolicies&&, WebCore::DocumentLoader&);
-    
-    void encode(IPC::Encoder&) const;
-    static std::optional<WebsitePolicies> decode(IPC::Decoder&);
 
 private:
-    WebsitePolicies(bool, OptionSet<WebsiteAutoplayQuirk>, WebsiteAutoplayPolicy, Vector<WebCore::HTTPHeaderField>&&);
+    WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks, WebsiteAutoplayPolicy autoplayPolicy, Vector<WebCore::HTTPHeaderField>&& customHeaderFields)
+        : m_contentBlockersEnabled(contentBlockersEnabled)
+        , m_allowedAutoplayQuirks(allowedAutoplayQuirks)
+        , m_autoplayPolicy(autoplayPolicy)
+        , m_customHeaderFields(WTFMove(customHeaderFields))
+    { }
 
     bool m_contentBlockersEnabled { true };
     OptionSet<WebsiteAutoplayQuirk> m_allowedAutoplayQuirks;

@@ -32,7 +32,7 @@
 
 - (void)dealloc
 {
-    _websitePolicies->API::WebsitePolicies::~WebsitePolicies();
+    _websitePolicies->WebKit::WebsitePolicies::~WebsitePolicies();
     
     [super dealloc];
 }
@@ -42,7 +42,7 @@
     if (!(self = [super init]))
         return nil;
     
-    API::Object::constructInWrapper<API::WebsitePolicies>(self);
+    API::Object::constructInWrapper<WebKit::WebsitePolicies>(self);
     
     return self;
 }

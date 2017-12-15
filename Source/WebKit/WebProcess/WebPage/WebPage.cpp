@@ -30,7 +30,6 @@
 
 #include "APIArray.h"
 #include "APIGeometry.h"
-#include "APIWebsitePolicies.h"
 #include "AssistedNodeInformation.h"
 #include "DataReference.h"
 #include "DragControllerAction.h"
@@ -122,6 +121,7 @@
 #include "WebUserMediaClient.h"
 #include "WebValidationMessageClient.h"
 #include "WebsiteDataStoreParameters.h"
+#include "WebsitePolicies.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/ArchiveResource.h>
@@ -2746,7 +2746,7 @@ void WebPage::setSessionID(PAL::SessionID sessionID)
     m_page->setSessionID(sessionID);
 }
 
-void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, PolicyAction policyAction, uint64_t navigationID, const DownloadID& downloadID, std::optional<WebsitePolicies>&& websitePolicies)
+void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, PolicyAction policyAction, uint64_t navigationID, const DownloadID& downloadID, std::optional<WebsitePoliciesData>&& websitePolicies)
 {
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
@@ -5438,7 +5438,7 @@ void WebPage::flushPendingEditorStateUpdate()
     sendEditorStateUpdate();
 }
 
-void WebPage::updateWebsitePolicies(WebsitePolicies&& websitePolicies)
+void WebPage::updateWebsitePolicies(WebsitePoliciesData&& websitePolicies)
 {
     if (!m_page)
         return;
@@ -5447,7 +5447,7 @@ void WebPage::updateWebsitePolicies(WebsitePolicies&& websitePolicies)
     if (!documentLoader)
         return;
 
-    WebsitePolicies::applyToDocumentLoader(WTFMove(websitePolicies), *documentLoader);
+    WebsitePoliciesData::applyToDocumentLoader(WTFMove(websitePolicies), *documentLoader);
     
 #if ENABLE(VIDEO)
     m_page->updateMediaElementRateChangeRestrictions();
