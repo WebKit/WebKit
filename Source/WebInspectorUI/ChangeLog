@@ -1,3 +1,24 @@
+2017-12-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: clicking above selector should prepend new property
+        https://bugs.webkit.org/show_bug.cgi?id=180628
+        <rdar://problem/35954570>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .property):
+        (.spreadsheet-style-declaration-editor .property-toggle):
+        (.spreadsheet-style-declaration-editor .property.has-warning .warning):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.css:
+        (.spreadsheet-css-declaration):
+        (.spreadsheet-css-declaration :matches(.header, .header-media)):
+        (.spreadsheet-css-declaration :matches(.header, .header-media):first-child):
+        When header-media element is present, header element should have padding-top set to 0.
+
+        (.spreadsheet-css-declaration .header.editing-selector .origin):
+        (.spreadsheet-css-declaration .close-brace):
+
 2017-12-14  David Kilzer  <ddkilzer@apple.com>
 
         Enable -Wstrict-prototypes for WebKit

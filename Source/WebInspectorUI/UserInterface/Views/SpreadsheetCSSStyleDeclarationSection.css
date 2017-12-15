@@ -25,23 +25,28 @@
 
 .spreadsheet-css-declaration {
     margin: 0;
-    padding: 4px 0;
+    padding: 0 0 var(--css-declaration-vertical-padding);
     font-family: Menlo, monospace;
     color: hsl(0, 0%, 70%);
     background: white;
     border-bottom: 0.5px solid hsla(0, 0%, 0%, 0.2);
     -webkit-user-select: text;
 
-    --css-declaration-side-padding: 6px;
+    --css-declaration-vertical-padding: 4px;
+    --css-declaration-horizontal-padding: 6px;
 }
 
 .spreadsheet-css-declaration :matches(.header, .header-media) {
-    padding: 0 var(--css-declaration-side-padding);
+    padding: 0 var(--css-declaration-horizontal-padding);
+}
+
+.spreadsheet-css-declaration :matches(.header, .header-media):first-child {
+    padding-top: var(--css-declaration-vertical-padding);
 }
 
 .spreadsheet-css-declaration .header.editing-selector .origin {
     position: absolute;
-    right: var(--css-declaration-side-padding);
+    right: var(--css-declaration-horizontal-padding);
 }
 
 .spreadsheet-css-declaration .media-label {
@@ -122,5 +127,5 @@
 
 .spreadsheet-css-declaration .close-brace {
     display: inline-block;
-    padding-left: var(--css-declaration-side-padding);
+    padding-left: var(--css-declaration-horizontal-padding);
 }
