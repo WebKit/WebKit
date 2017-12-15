@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,7 @@ namespace WebKit {
 class PluginInfoStore;
 class PluginProcessProxy;
 class WebProcessProxy;
+enum class WebsiteDataFetchOption;
 
 class PluginProcessManager {
     WTF_MAKE_NONCOPYABLE(PluginProcessManager);
@@ -59,7 +60,7 @@ public:
     void getPluginProcessConnection(uint64_t pluginProcessToken, Ref<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>&&);
     void removePluginProcessProxy(PluginProcessProxy*);
 
-    void fetchWebsiteData(const PluginModuleInfo&, WTF::Function<void (Vector<String>)>&& completionHandler);
+    void fetchWebsiteData(const PluginModuleInfo&, OptionSet<WebsiteDataFetchOption>, WTF::Function<void (Vector<String>)>&& completionHandler);
     void deleteWebsiteData(const PluginModuleInfo&, std::chrono::system_clock::time_point modifiedSince, WTF::Function<void ()>&& completionHandler);
     void deleteWebsiteDataForHostNames(const PluginModuleInfo&, const Vector<String>& hostNames, WTF::Function<void ()>&& completionHandler);
 
@@ -74,6 +75,7 @@ public:
 private:
     PluginProcessManager();
 
+    PluginProcessProxy* getPluginProcess(uint64_t pluginProcessToken);
     PluginProcessProxy* getOrCreatePluginProcess(uint64_t pluginProcessToken);
 
     Vector<std::pair<PluginProcessAttributes, uint64_t>> m_pluginProcessTokens;

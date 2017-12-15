@@ -27,6 +27,8 @@
 #include "WebResourceLoadStatisticsStore.h"
 
 #include "Logging.h"
+#include "PluginProcessManager.h"
+#include "PluginProcessProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 #include "WebResourceLoadStatisticsStoreMessages.h"
@@ -184,6 +186,12 @@ void WebResourceLoadStatisticsStore::removeDataRecords()
     
     if (!shouldRemoveDataRecords())
         return;
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    m_activePluginTokens.clear();
+    for (auto plugin : PluginProcessManager::singleton().pluginProcesses())
+        m_activePluginTokens.add(plugin->pluginProcessToken());
+#endif
 
     auto prevalentResourceDomains = topPrivatelyControlledDomainsToRemoveWebsiteDataFor();
     if (prevalentResourceDomains.isEmpty())
@@ -626,6 +634,13 @@ bool WebResourceLoadStatisticsStore::shouldRemoveDataRecords() const
     ASSERT(!RunLoop::isMain());
     if (m_dataRecordsBeingRemoved)
         return false;
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    for (auto plugin : PluginProcessManager::singleton().pluginProcesses()) {
+        if (!m_activePluginTokens.contains(plugin->pluginProcessToken()))
+            return true;
+    }
+#endif
 
     return !m_lastTimeDataRecordsWereRemoved || MonotonicTime::now() >= (m_lastTimeDataRecordsWereRemoved + m_parameters.minimumTimeBetweenDataRecordsRemoval);
 }

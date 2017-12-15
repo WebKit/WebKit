@@ -524,7 +524,7 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
                 }
 
                 auto plugin = m_plugins.takeLast();
-                PluginProcessManager::singleton().fetchWebsiteData(plugin, [this](Vector<String> hostNames) {
+                PluginProcessManager::singleton().fetchWebsiteData(plugin, m_callbackAggregator->fetchOptions, [this](Vector<String> hostNames) {
                     for (auto& hostName : hostNames)
                         m_hostNames.add(WTFMove(hostName));
                     fetchWebsiteDataForNextPlugin();

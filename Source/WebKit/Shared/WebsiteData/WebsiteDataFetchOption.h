@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebsiteDataFetchOption_h
-#define WebsiteDataFetchOption_h
+#pragma once
 
 namespace WebKit {
 
 enum class WebsiteDataFetchOption {
     ComputeSizes = 1 << 0,
+    DoNotCreateProcesses = 1 << 1,
 };
 
 }
 
-
-#endif // WebsiteDataFetchOption_h

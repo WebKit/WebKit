@@ -1,3 +1,48 @@
+2017-12-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Avoid waking plugin process up unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=180819
+        <rdar://problem/36051548>
+
+        Reviewed by Geoffrey Garen.
+
+        WebKit purges data from origins marked as prevalent on an hourly interval. This includes waking up plugins
+        and removing relevant data stored in those plugins. This causes multiple plugin processes to be spawned,
+        even though the user is not interacting with any plugins.
+
+        Instead, we should delay removing data from plugins until they are loaded due to the user interacting with
+        a website using a plugin.
+
+        Make the following changes:
+        1. When looking for plugin data related to prevalent sites, only examine plugin data if the relevant plugin
+           is already running.
+        2. When the state of the active plugins changes, trigger a data removal check.
+
+        * Shared/WebsiteData/WebsiteDataFetchOption.h: Add a new option 'DoNotCreateProcesses'
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::getPluginProcessConnection): Pass new argument 'Launch', since we always
+        want to launch processes in this case.
+        (WebKit::PluginProcessManager::fetchWebsiteData): Pass a new parameter 'processAccessType' so that the
+        caller can specify if they only want to examine already-active plugins, or if they want to spawn new
+        processes. Call the completion handler if we need to exit early when no process exists.
+        (WebKit::PluginProcessManager::deleteWebsiteData): Always launch new processes.
+        (WebKit::PluginProcessManager::deleteWebsiteDataForHostNames): Ditto.
+        (WebKit::PluginProcessManager::getOrCreatePluginProcess): Accept new parameter indicating if new processes
+        shoudl be launched. Also switch to C++ style loops.
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores): Use the
+        new 'DoNotCreatePrcesses' access type.
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::removeDataRecords): Update the active plugin count when we
+        remove data.
+        (WebKit::WebResourceLoadStatisticsStore::shouldRemoveDataRecords const): Return true if the active plugin
+        process count changed since the last time data was removed.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply): Check fetch option for new 'DoNotCreateProcesses' flag,
+        and tell the PluginProcessManager which mode we are using.
+
 2017-12-15  Brady Eidson  <beidson@apple.com>
 
         Make sure only WebsiteDataStores with valid SessionIDs register themselves.

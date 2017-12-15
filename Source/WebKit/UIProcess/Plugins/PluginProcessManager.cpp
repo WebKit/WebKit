@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "PluginProcessProxy.h"
+#include "WebsiteDataFetchOption.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
@@ -96,9 +97,14 @@ void PluginProcessManager::removePluginProcessProxy(PluginProcessProxy* pluginPr
     m_pluginProcesses.remove(vectorIndex);
 }
 
-void PluginProcessManager::fetchWebsiteData(const PluginModuleInfo& plugin, WTF::Function<void (Vector<String>)>&& completionHandler)
+void PluginProcessManager::fetchWebsiteData(const PluginModuleInfo& plugin, OptionSet<WebsiteDataFetchOption> fetchOptions, WTF::Function<void (Vector<String>)>&& completionHandler)
 {
-    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(pluginProcessToken(plugin, PluginProcessTypeNormal, PluginProcessSandboxPolicyNormal));
+    auto token = pluginProcessToken(plugin, PluginProcessTypeNormal, PluginProcessSandboxPolicyNormal);
+    auto pluginProcess = fetchOptions.contains(WebsiteDataFetchOption::DoNotCreateProcesses) ? getPluginProcess(token) : getOrCreatePluginProcess(token);
+    if (!pluginProcess) {
+        completionHandler({ });
+        return;
+    }
 
     pluginProcess->fetchWebsiteData(WTFMove(completionHandler));
 }
@@ -106,7 +112,6 @@ void PluginProcessManager::fetchWebsiteData(const PluginModuleInfo& plugin, WTF:
 void PluginProcessManager::deleteWebsiteData(const PluginModuleInfo& plugin, std::chrono::system_clock::time_point modifiedSince, WTF::Function<void ()>&& completionHandler)
 {
     PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(pluginProcessToken(plugin, PluginProcessTypeNormal, PluginProcessSandboxPolicyNormal));
-
     pluginProcess->deleteWebsiteData(modifiedSince, WTFMove(completionHandler));
 }
 
@@ -116,19 +121,25 @@ void PluginProcessManager::deleteWebsiteDataForHostNames(const PluginModuleInfo&
     pluginProcess->deleteWebsiteDataForHostNames(hostNames, WTFMove(completionHandler));
 }
 
-PluginProcessProxy* PluginProcessManager::getOrCreatePluginProcess(uint64_t pluginProcessToken)
+PluginProcessProxy* PluginProcessManager::getPluginProcess(uint64_t pluginProcessToken)
 {
-    for (size_t i = 0; i < m_pluginProcesses.size(); ++i) {
-        if (m_pluginProcesses[i]->pluginProcessToken() == pluginProcessToken)
-            return m_pluginProcesses[i].get();
+    for (auto pluginProcess : m_pluginProcesses) {
+        if (pluginProcess->pluginProcessToken() == pluginProcessToken)
+            return pluginProcess.get();
     }
 
-    for (size_t i = 0; i < m_pluginProcessTokens.size(); ++i) {
-        auto& attributesAndToken = m_pluginProcessTokens[i];
+    return nullptr;
+}
+
+PluginProcessProxy* PluginProcessManager::getOrCreatePluginProcess(uint64_t pluginProcessToken)
+{
+    if (auto existingProcess = getPluginProcess(pluginProcessToken))
+        return existingProcess;
+
+    for (auto& attributesAndToken : m_pluginProcessTokens) {
         if (attributesAndToken.second == pluginProcessToken) {
             auto pluginProcess = PluginProcessProxy::create(this, attributesAndToken.first, attributesAndToken.second);
             PluginProcessProxy* pluginProcessPtr = pluginProcess.ptr();
-
             m_pluginProcesses.append(WTFMove(pluginProcess));
             return pluginProcessPtr;
         }

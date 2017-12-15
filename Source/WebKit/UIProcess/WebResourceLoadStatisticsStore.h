@@ -30,6 +30,7 @@
 #include "ResourceLoadStatisticsPersistentStorage.h"
 #include "WebsiteDataType.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
@@ -203,6 +204,9 @@ private:
 
     Parameters m_parameters;
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    HashSet<uint64_t> m_activePluginTokens;
+#endif
     bool m_dataRecordsBeingRemoved { false };
 
     Function<void (const String&)> m_statisticsTestingCallback;

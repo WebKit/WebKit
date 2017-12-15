@@ -49,6 +49,7 @@
 #include "WebProcessProxyMessages.h"
 #include "WebUserContentControllerProxy.h"
 #include "WebsiteData.h"
+#include "WebsiteDataFetchOption.h"
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/SuddenTermination.h>
@@ -244,6 +245,7 @@ void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPers
     };
     
     RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTFMove(completionHandler)));
+    OptionSet<WebsiteDataFetchOption> fetchOptions = WebsiteDataFetchOption::DoNotCreateProcesses;
 
     HashSet<PAL::SessionID> visitedSessionIDs;
     for (auto& page : globalPageMap()) {
@@ -252,7 +254,7 @@ void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPers
             continue;
         visitedSessionIDs.add(dataStore.sessionID());
         callbackAggregator->addPendingCallback();
-        dataStore.removeDataForTopPrivatelyControlledDomains(dataTypes, { }, topPrivatelyControlledDomains, [callbackAggregator, shouldNotifyPage, page](HashSet<String>&& domainsWithDeletedWebsiteData) {
+        dataStore.removeDataForTopPrivatelyControlledDomains(dataTypes, fetchOptions, topPrivatelyControlledDomains, [callbackAggregator, shouldNotifyPage, page](HashSet<String>&& domainsWithDeletedWebsiteData) {
             // When completing the task, we should be getting called on the main thread.
             ASSERT(RunLoop::isMain());
             
