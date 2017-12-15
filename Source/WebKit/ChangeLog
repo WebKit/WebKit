@@ -1,3 +1,22 @@
+2017-12-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Rotating when zoomed in with fingers down can result in a broken tab
+        https://bugs.webkit.org/show_bug.cgi?id=180859
+        rdar://problem/34532817
+
+        Reviewed by Tim Horton.
+
+        If you zoom in fully, then, with two fingers down, rotate the iPhone and rotate back,
+        then the tab can get into a broken state where the WKContentView has a non-zero position
+        which may push it entirely off-screen. The tab never recovers.
+
+        This is caused by a bug in UIKit (rdar://problem/36065495) so work around it by always
+        re-setting the position of the content view after zooming. We initialize contentView.frame
+        from self.bounds, so setting the position (via "center") to the bounds origin should always be safe.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView scrollViewDidEndZooming:withView:atScale:]):
+
 2017-12-15  Brady Eidson  <beidson@apple.com>
 
         API test WebKit.WebsiteDataStoreCustomPaths is failing
