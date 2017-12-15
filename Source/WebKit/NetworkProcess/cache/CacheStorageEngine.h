@@ -57,8 +57,6 @@ public:
 
     static Engine& from(PAL::SessionID);
     static void destroyEngine(PAL::SessionID);
-    static void clearAllEngines(WTF::Function<void()>&&);
-    static void clearEnginesForOrigins(const Vector<String>& origins, WTF::Function<void()>&&);
     static void fetchEntries(PAL::SessionID, bool shouldComputeSize, WTF::CompletionHandler<void(Vector<WebsiteData::Entry>)>&&);
 
     static Ref<Engine> create(String&& rootPath) { return adoptRef(*new Engine(WTFMove(rootPath))); }
@@ -89,6 +87,9 @@ public:
     void clearMemoryRepresentation(const String& origin, WebCore::DOMCacheEngine::CompletionCallback&&);
     String representation();
 
+    void clearAllCaches(WTF::CallbackAggregator&);
+    void clearCachesForOrigin(const String& origin, WTF::CallbackAggregator&);
+
 private:
     static Engine& defaultEngine();
     explicit Engine(String&& rootPath);
@@ -98,8 +99,6 @@ private:
     void fetchEntries(bool /* shouldComputeSize */, WTF::CompletionHandler<void(Vector<WebsiteData::Entry>)>&&);
 
     void initialize(WTF::Function<void(std::optional<WebCore::DOMCacheEngine::Error>&&)>&&);
-    void clearAllCaches(WTF::CallbackAggregator&);
-    void clearCachesForOrigin(const String& origin, WTF::CallbackAggregator&);
 
     using CachesOrError = Expected<std::reference_wrapper<Caches>, WebCore::DOMCacheEngine::Error>;
     using CachesCallback = WTF::Function<void(CachesOrError&&)>;

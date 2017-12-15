@@ -1,5 +1,20 @@
 2017-12-14  Chris Dumez  <cdumez@apple.com>
 
+        Clearing WebSite data on iOS does not clear the Fetch Cache
+        https://bugs.webkit.org/show_bug.cgi?id=180846
+        <rdar://problem/36060129>
+
+        Reviewed by Youenn Fablet.
+
+        When clearing WebSite data, construct the engine for the given sessionID
+        if missing, instead of not clearing anything when the engine is missing.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+
+2017-12-14  Chris Dumez  <cdumez@apple.com>
+
         self.importScripts() should obey updateViaCache inside service workers
         https://bugs.webkit.org/show_bug.cgi?id=180826
 

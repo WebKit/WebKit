@@ -86,22 +86,6 @@ void Engine::fetchEntries(PAL::SessionID sessionID, bool shouldComputeSize, WTF:
     from(sessionID).fetchEntries(shouldComputeSize, WTFMove(completionHandler));
 }
 
-void Engine::clearAllEngines(WTF::Function<void()>&& completionHandler)
-{
-    auto clearTaskHandler = CallbackAggregator::create(WTFMove(completionHandler));
-    for (auto& engine : globalEngineMap().values())
-        engine->clearAllCaches(clearTaskHandler.get());
-}
-
-void Engine::clearEnginesForOrigins(const Vector<String>& origins, WTF::Function<void()>&& completionHandler)
-{
-    auto clearTaskHandler = CallbackAggregator::create(WTFMove(completionHandler));
-    for (auto& engine : globalEngineMap().values()) {
-        for (auto& origin : origins)
-            engine->clearCachesForOrigin(origin, clearTaskHandler.get());
-    }
-}
-
 Engine& Engine::defaultEngine()
 {
     auto sessionID = PAL::SessionID::defaultSessionID();

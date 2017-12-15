@@ -460,7 +460,7 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
     });
 
     if (websiteDataTypes.contains(WebsiteDataType::DOMCache))
-        CacheStorage::Engine::clearAllEngines([clearTasksHandler = clearTasksHandler.copyRef()] { });
+        CacheStorage::Engine::from(sessionID).clearAllCaches(clearTasksHandler);
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
         clearDiskCache(modifiedSince, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
@@ -503,10 +503,10 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     });
 
     if (websiteDataTypes.contains(WebsiteDataType::DOMCache)) {
-        auto origins = WTF::map(originDatas, [] (auto& originData) {
-            return originData.securityOrigin()->toString();
-        });
-        CacheStorage::Engine::clearEnginesForOrigins(origins, [clearTasksHandler = clearTasksHandler.copyRef()] { });
+        for (auto& originData : originDatas) {
+            auto origin = originData.securityOrigin()->toString();
+            CacheStorage::Engine::from(sessionID).clearCachesForOrigin(origin, clearTasksHandler);
+        }
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
