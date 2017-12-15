@@ -370,12 +370,10 @@ CanvasRenderingContext2D* HTMLCanvasElement::createContext2d(const String& type)
         return nullptr;
     }
 
-    m_context = std::make_unique<CanvasRenderingContext2D>(*this, document().inQuirksMode(), usesDashboardCompatibilityMode);
+    m_context = CanvasRenderingContext2D::create(*this, document().inQuirksMode(), usesDashboardCompatibilityMode);
 
     downcast<CanvasRenderingContext2D>(*m_context).setUsesDisplayListDrawing(m_usesDisplayListDrawing);
     downcast<CanvasRenderingContext2D>(*m_context).setTracksDisplayListReplay(m_tracksDisplayListReplay);
-
-    InspectorInstrumentation::didCreateCanvasRenderingContext(*this);
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
     // Need to make sure a RenderLayer and compositing layer get created for the Canvas.
@@ -441,8 +439,6 @@ WebGLRenderingContextBase* HTMLCanvasElement::createContextWebGL(const String& t
     if (m_context) {
         // Need to make sure a RenderLayer and compositing layer get created for the Canvas.
         invalidateStyleAndLayerComposition();
-
-        InspectorInstrumentation::didCreateCanvasRenderingContext(*this);
     }
 
     return downcast<WebGLRenderingContextBase>(m_context.get());
@@ -484,8 +480,6 @@ WebGPURenderingContext* HTMLCanvasElement::createContextWebGPU(const String& typ
     if (m_context) {
         // Need to make sure a RenderLayer and compositing layer get created for the Canvas.
         invalidateStyleAndLayerComposition();
-
-        InspectorInstrumentation::didCreateCanvasRenderingContext(*this);
     }
 
     return static_cast<WebGPURenderingContext*>(m_context.get());
@@ -517,9 +511,7 @@ ImageBitmapRenderingContext* HTMLCanvasElement::createContextBitmapRenderer(cons
     ASSERT_UNUSED(type, HTMLCanvasElement::isBitmapRendererType(type));
     ASSERT(!m_context);
 
-    m_context = std::make_unique<ImageBitmapRenderingContext>(*this, WTFMove(settings));
-
-    InspectorInstrumentation::didCreateCanvasRenderingContext(*this);
+    m_context = ImageBitmapRenderingContext::create(*this, WTFMove(settings));
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
     // Need to make sure a RenderLayer and compositing layer get created for the Canvas.
@@ -634,7 +626,7 @@ bool HTMLCanvasElement::paintsIntoCanvasBuffer() const
 void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
 {
     if (UNLIKELY(m_context && m_context->callTracingActive()))
-        InspectorInstrumentation::didFinishRecordingCanvasFrame(*this);
+        InspectorInstrumentation::didFinishRecordingCanvasFrame(*m_context);
 
     // Clear the dirty rect
     m_dirtyRect = FloatRect();
@@ -989,8 +981,8 @@ void HTMLCanvasElement::setImageBuffer(std::unique_ptr<ImageBuffer>&& buffer) co
     size_t currentMemoryCost = memoryCost();
     activePixelMemory += currentMemoryCost;
 
-    if (m_imageBuffer && previousMemoryCost != currentMemoryCost)
-        InspectorInstrumentation::didChangeCanvasMemory(const_cast<HTMLCanvasElement&>(*this));
+    if (m_context && m_imageBuffer && previousMemoryCost != currentMemoryCost)
+        InspectorInstrumentation::didChangeCanvasMemory(*m_context);
 }
 
 void HTMLCanvasElement::setImageBufferAndMarkDirty(std::unique_ptr<ImageBuffer>&& buffer)

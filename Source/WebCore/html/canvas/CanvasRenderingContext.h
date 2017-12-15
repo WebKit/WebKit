@@ -44,7 +44,7 @@ class WebGLObject;
 class CanvasRenderingContext : public ScriptWrappable {
     WTF_MAKE_NONCOPYABLE(CanvasRenderingContext); WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~CanvasRenderingContext() = default;
+    virtual ~CanvasRenderingContext();
 
     void ref();
     void deref();

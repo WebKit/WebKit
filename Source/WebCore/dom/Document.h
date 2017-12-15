@@ -988,6 +988,7 @@ public:
     // Extension for manipulating canvas drawing contexts for use in CSS
     std::optional<RenderingContext> getCSSCanvasContext(const String& type, const String& name, int width, int height);
     HTMLCanvasElement* getCSSCanvasElement(const String& name);
+    String nameForCSSCanvasElement(const HTMLCanvasElement&) const;
 
     bool isDNSPrefetchEnabled() const { return m_isDNSPrefetchEnabled; }
     void parseDNSPrefetchControlHeader(const String&);

@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "FrameView.h"
 #include "GPUDevice.h"
+#include "InspectorInstrumentation.h"
 #include "WebGPUBuffer.h"
 #include "WebGPUCommandQueue.h"
 #include "WebGPUComputePipelineState.h"
@@ -80,9 +81,10 @@ std::unique_ptr<WebGPURenderingContext> WebGPURenderingContext::create(CanvasBas
         return nullptr;
     }
 
-    std::unique_ptr<WebGPURenderingContext> renderingContext = nullptr;
-    renderingContext = std::unique_ptr<WebGPURenderingContext>(new WebGPURenderingContext(canvas, device.releaseNonNull()));
+    auto renderingContext = std::unique_ptr<WebGPURenderingContext>(new WebGPURenderingContext(canvas, device.releaseNonNull()));
     renderingContext->suspendIfNeeded();
+
+    InspectorInstrumentation::didCreateCanvasRenderingContext(*renderingContext);
 
     return renderingContext;
 }

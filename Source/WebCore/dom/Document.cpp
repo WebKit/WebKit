@@ -5699,11 +5699,18 @@ std::optional<RenderingContext> Document::getCSSCanvasContext(const String& type
 HTMLCanvasElement* Document::getCSSCanvasElement(const String& name)
 {
     RefPtr<HTMLCanvasElement>& element = m_cssCanvasElements.add(name, nullptr).iterator->value;
-    if (!element) {
+    if (!element)
         element = HTMLCanvasElement::create(*this);
-        InspectorInstrumentation::didCreateCSSCanvas(*element, name);
-    }
     return element.get();
+}
+
+String Document::nameForCSSCanvasElement(const HTMLCanvasElement& canvasElement) const
+{
+    for (const auto& entry : m_cssCanvasElements) {
+        if (entry.value.get() == &canvasElement)
+            return entry.key;
+    }
+    return String();
 }
 
 #if ENABLE(TEXT_AUTOSIZING)

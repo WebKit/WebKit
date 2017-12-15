@@ -1,3 +1,12 @@
+2017-12-14  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: replace HTMLCanvasElement with CanvasRenderingContext for instrumentation logic
+        https://bugs.webkit.org/show_bug.cgi?id=180770
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/Canvas.json:
+
 2017-12-14  Keith Miller  <keith_miller@apple.com>
 
         Fix assertion in JSObject's structure setting methods

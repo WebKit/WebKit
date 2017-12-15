@@ -231,16 +231,14 @@ void PageConsoleClient::record(JSC::ExecState* exec, Ref<ScriptArguments>&& argu
     if (arguments->argumentCount() >= 2)
         options = arguments->argumentAt(1).jsValue().getObject();
 
-    if (HTMLCanvasElement* canvasElement = JSHTMLCanvasElement::toWrapped(*target->vm(), target))
-        InspectorInstrumentation::consoleStartRecordingCanvas(*canvasElement, *exec, options);
-    else if (CanvasRenderingContext2D* context2d = JSCanvasRenderingContext2D::toWrapped(*target->vm(), target))
-        InspectorInstrumentation::consoleStartRecordingCanvas(context2d->canvas(), *exec, options);
+    if (HTMLCanvasElement* canvasElement = JSHTMLCanvasElement::toWrapped(*target->vm(), target)) {
+        if (CanvasRenderingContext* context = canvasElement->renderingContext())
+            InspectorInstrumentation::consoleStartRecordingCanvas(*context, *exec, options);
+    } else if (CanvasRenderingContext2D* context2d = JSCanvasRenderingContext2D::toWrapped(*target->vm(), target))
+        InspectorInstrumentation::consoleStartRecordingCanvas(*context2d, *exec, options);
 #if ENABLE(WEBGL)
-    else if (WebGLRenderingContext* contextWebGL = JSWebGLRenderingContext::toWrapped(*target->vm(), target)) {
-        auto canvas = contextWebGL->canvas();
-        if (WTF::holds_alternative<RefPtr<HTMLCanvasElement>>(canvas))
-            InspectorInstrumentation::consoleStartRecordingCanvas(*WTF::get<RefPtr<HTMLCanvasElement>>(canvas), *exec, options);
-    }
+    else if (WebGLRenderingContext* contextWebGL = JSWebGLRenderingContext::toWrapped(*target->vm(), target))
+        InspectorInstrumentation::consoleStartRecordingCanvas(*contextWebGL, *exec, options);
 #endif
 }
 
@@ -253,16 +251,14 @@ void PageConsoleClient::recordEnd(JSC::ExecState*, Ref<ScriptArguments>&& argume
     if (!target)
         return;
 
-    if (HTMLCanvasElement* canvasElement = JSHTMLCanvasElement::toWrapped(*target->vm(), target))
-        InspectorInstrumentation::didFinishRecordingCanvasFrame(*canvasElement, true);
-    else if (CanvasRenderingContext2D* context2d = JSCanvasRenderingContext2D::toWrapped(*target->vm(), target))
-        InspectorInstrumentation::didFinishRecordingCanvasFrame(context2d->canvas(), true);
+    if (HTMLCanvasElement* canvasElement = JSHTMLCanvasElement::toWrapped(*target->vm(), target)) {
+        if (CanvasRenderingContext* context = canvasElement->renderingContext())
+            InspectorInstrumentation::didFinishRecordingCanvasFrame(*context, true);
+    } else if (CanvasRenderingContext2D* context2d = JSCanvasRenderingContext2D::toWrapped(*target->vm(), target))
+        InspectorInstrumentation::didFinishRecordingCanvasFrame(*context2d, true);
 #if ENABLE(WEBGL)
-    else if (WebGLRenderingContext* contextWebGL = JSWebGLRenderingContext::toWrapped(*target->vm(), target)) {
-        auto canvas = contextWebGL->canvas();
-        if (WTF::holds_alternative<RefPtr<HTMLCanvasElement>>(canvas))
-            InspectorInstrumentation::didFinishRecordingCanvasFrame(*WTF::get<RefPtr<HTMLCanvasElement>>(canvas), true);
-    }
+    else if (WebGLRenderingContext* contextWebGL = JSWebGLRenderingContext::toWrapped(*target->vm(), target))
+        InspectorInstrumentation::didFinishRecordingCanvasFrame(*contextWebGL, true);
 #endif
 }
 

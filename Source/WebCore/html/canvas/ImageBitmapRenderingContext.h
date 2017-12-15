@@ -30,6 +30,7 @@
 #include "ExceptionOr.h"
 #include "ImageBitmapRenderingContextSettings.h"
 #include "ImageBufferData.h"
+#include <memory>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -39,13 +40,13 @@ class ImageBuffer;
 
 class ImageBitmapRenderingContext final : public CanvasRenderingContext {
 public:
+    static std::unique_ptr<ImageBitmapRenderingContext> create(CanvasBase&, ImageBitmapRenderingContextSettings&&);
 
     enum class BitmapMode {
         Valid,
         Blank
     };
 
-    ImageBitmapRenderingContext(CanvasBase&, ImageBitmapRenderingContextSettings&&);
     ~ImageBitmapRenderingContext();
 
     HTMLCanvasElement* canvas() const;
@@ -56,6 +57,8 @@ public:
     bool hasAlpha() { return m_settings.alpha; }
 
 private:
+    ImageBitmapRenderingContext(CanvasBase&, ImageBitmapRenderingContextSettings&&);
+
     bool isBitmapRenderer() const final { return true; }
     bool isAccelerated() const override;
 
