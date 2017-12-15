@@ -114,8 +114,9 @@ CGColorSpaceRef linearRGBColorSpaceRef()
 CGColorSpaceRef extendedSRGBColorSpaceRef()
 {
     auto createColorSpace = []() {
+        CGColorSpaceRef colorSpace = NULL;
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
-        CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceExtendedSRGB);
+        colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceExtendedSRGB);
 #endif
         // If there is no support for extended sRGB, fall back to sRGB.
         if (!colorSpace)
