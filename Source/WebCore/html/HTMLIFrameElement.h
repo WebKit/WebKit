@@ -37,6 +37,7 @@ public:
     DOMTokenList& sandbox();
 
     RenderIFrame* renderer() const;
+    const String& allow() const { return m_allow; }
 
 private:
     HTMLIFrameElement(const QualifiedName&, Document&);
@@ -53,6 +54,7 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
     std::unique_ptr<DOMTokenList> m_sandbox;
+    String m_allow;
 };
 
 } // namespace WebCore

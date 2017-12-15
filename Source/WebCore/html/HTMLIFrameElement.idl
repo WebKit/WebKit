@@ -29,6 +29,7 @@ interface HTMLIFrameElement : HTMLElement {
 
     [PutForwards=value] readonly attribute DOMTokenList sandbox;
     [Reflect] attribute boolean allowFullscreen;
+    [CEReactions, Reflect] attribute DOMString allow;
 
     [Reflect] attribute DOMString scrolling;
     [Reflect, URL] attribute USVString src;

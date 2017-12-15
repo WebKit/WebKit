@@ -41,6 +41,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-end-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-getSettings.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-id.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-idl.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-init.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrackEvent-constructor.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/OWNERS

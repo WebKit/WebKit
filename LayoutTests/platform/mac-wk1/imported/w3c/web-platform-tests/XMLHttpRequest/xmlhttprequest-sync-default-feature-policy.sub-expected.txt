@@ -1,4 +1,5 @@
 Blocked access to external URL http://www.localhost:8800/XMLHttpRequest/xmlhttprequest-sync-default-feature-policy.sub.html#iframe%23sync-xhr
+Blocked access to external URL http://www.localhost:8800/XMLHttpRequest/xmlhttprequest-sync-default-feature-policy.sub.html#iframe%23sync-xhr
 
 
 Harness Error (TIMEOUT), message = null
@@ -6,5 +7,5 @@ Harness Error (TIMEOUT), message = null
 PASS Default "sync-xhr" feature policy ["*"] allows the top-level document. 
 PASS Default "sync-xhr" feature policy ["*"] allows same-origin iframes. 
 TIMEOUT Default "sync-xhr" feature policy ["*"] allows cross-origin iframes. Test timed out
-FAIL Feature policy "sync-xhr" can be disabled in cross-origin iframes using "allow" attribute. undefined is not an object (evaluating 'frame.allow.concat')
+TIMEOUT Feature policy "sync-xhr" can be disabled in cross-origin iframes using "allow" attribute. Test timed out
 

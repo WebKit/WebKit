@@ -14,8 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/autoplay.js
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-autoplay.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-generic-sensor.html
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-payment.html
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-usb.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-wakelock.html
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-webvr.html
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/featurepolicy.js
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/redirect-on-load.html

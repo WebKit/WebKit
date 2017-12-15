@@ -134,6 +134,7 @@
     "web-platform-tests/ext-xhtml-pubid": "skip", 
     "web-platform-tests/feature-policy": "skip", 
     "web-platform-tests/feature-policy/resources": "import", 
+    "web-platform-tests/feature-policy/resources/": "import", 
     "web-platform-tests/fetch": "import", 
     "web-platform-tests/fullscreen": "skip", 
     "web-platform-tests/gamepad": "skip", 

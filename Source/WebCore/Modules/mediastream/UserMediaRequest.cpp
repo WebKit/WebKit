@@ -40,6 +40,8 @@
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "HTMLIFrameElement.h"
+#include "HTMLParserIdioms.h"
 #include "JSMediaStream.h"
 #include "JSOverconstrainedError.h"
 #include "Logging.h"
@@ -95,37 +97,65 @@ SecurityOrigin* UserMediaRequest::topLevelDocumentOrigin() const
 static bool isSecure(DocumentLoader& documentLoader)
 {
     auto& response = documentLoader.response();
+    if (SecurityOrigin::isLocalHostOrLoopbackIPAddress(documentLoader.response().url()))
+        return true;
     return SchemeRegistry::shouldTreatURLSchemeAsSecure(response.url().protocol().toStringWithoutCopying())
         && response.certificateInfo()
         && !response.certificateInfo()->containsNonRootSHA1SignedCertificate();
 }
 
-static bool canCallGetUserMedia(Document& document, String& errorMessage)
+static bool isAllowedToUse(Document& document, Document& topDocument, bool requiresAudio, bool requiresVideo)
+{
+    if (&document == &topDocument)
+        return true;
+
+    auto* parentDocument = document.parentDocument();
+    if (!parentDocument)
+        return false;
+
+    if (document.securityOrigin().isSameSchemeHostPort(parentDocument->securityOrigin()))
+        return true;
+
+    auto* element = document.ownerElement();
+    ASSERT(element);
+    if (!element)
+        return false;
+
+    if (!is<HTMLIFrameElement>(*element))
+        return false;
+    auto& allow = downcast<HTMLIFrameElement>(*element).allow();
+
+    bool allowCameraAccess = false;
+    bool allowMicrophoneAccess = false;
+    for (auto allowItem : StringView { allow }.split(';')) {
+        auto item = allowItem.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
+        if (!allowCameraAccess && item == "camera")
+            allowCameraAccess = true;
+        else if (!allowMicrophoneAccess && item == "microphone")
+            allowMicrophoneAccess = true;
+    }
+    return (allowCameraAccess || !requiresVideo) && (allowMicrophoneAccess || !requiresAudio);
+}
+
+static bool canCallGetUserMedia(Document& document, bool wantsAudio, bool wantsVideo, String& errorMessage)
 {
     bool requiresSecureConnection = DeprecatedGlobalSettings::mediaCaptureRequiresSecureConnection();
     auto& documentLoader = *document.loader();
-    if (requiresSecureConnection && !isSecure(documentLoader) && !SecurityOrigin::isLocalHostOrLoopbackIPAddress(documentLoader.response().url())) {
+    if (requiresSecureConnection && !isSecure(documentLoader)) {
         errorMessage = "Trying to call getUserMedia from an insecure document.";
         return false;
     }
 
     auto& topDocument = document.topDocument();
     if (&document != &topDocument) {
-        auto& topOrigin = topDocument.topOrigin();
-
-        if (!document.securityOrigin().isSameSchemeHostPort(topOrigin)) {
-            errorMessage = "Trying to call getUserMedia from a document with a different security origin than its top-level frame.";
-            return false;
-        }
-
-        for (auto* ancestorDocument = document.parentDocument(); ancestorDocument != &topDocument; ancestorDocument = ancestorDocument->parentDocument()) {
+        for (auto* ancestorDocument = &document; ancestorDocument != &topDocument; ancestorDocument = ancestorDocument->parentDocument()) {
             if (requiresSecureConnection && !isSecure(*ancestorDocument->loader())) {
                 errorMessage = "Trying to call getUserMedia from a document with an insecure parent frame.";
                 return false;
             }
 
-            if (!ancestorDocument->securityOrigin().isSameSchemeHostPort(topOrigin)) {
-                errorMessage = "Trying to call getUserMedia from a document with a different security origin than its top-level frame.";
+            if (!isAllowedToUse(*ancestorDocument, topDocument, wantsAudio, wantsVideo)) {
+                errorMessage = "The top-level frame has prevented a document with a different security origin to call getUserMedia.";
                 return false;
             }
         }
@@ -146,7 +176,7 @@ void UserMediaRequest::start()
     // 10.2 - 6.3 Optionally, e.g., based on a previously-established user preference, for security reasons,
     // or due to platform limitations, jump to the step labeled Permission Failure below.
     String errorMessage;
-    if (!canCallGetUserMedia(document, errorMessage)) {
+    if (!canCallGetUserMedia(document, m_audioConstraints.isValid, m_videoConstraints.isValid, errorMessage)) {
         deny(MediaAccessDenialReason::PermissionDenied, emptyString());
         document.domWindow()->printErrorMessage(errorMessage);
         return;

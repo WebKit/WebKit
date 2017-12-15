@@ -222,6 +222,7 @@ http/tests/inspector/paymentrequest [ Skip ]
 imported/w3c/web-platform-tests/payment-request [ Skip ]
 
 imported/w3c/web-platform-tests/2dcontext/transformations/canvas_transformations_reset_001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-default-feature-policy.sub.html [ Skip ]
 webkit.org/b/179607 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-and-redirects-async.htm [ Pass Failure ]
 webkit.org/b/179607 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-and-redirects-async-same-origin.htm [ Pass Failure ]
 webkit.org/b/179608 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-preflight-async-header-denied.htm [ Failure ]
