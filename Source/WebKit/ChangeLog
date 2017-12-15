@@ -1,3 +1,11 @@
+2017-12-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ build fix after r225954.
+
+        * UIProcess/API/glib/WebKitPolicyDecision.cpp:
+        Explicitly include the WebsitePoliciesData.h header, avoiding build
+        failures due to incomplete WebsitePoliciesData type.
+
 2017-12-14  David Kilzer  <ddkilzer@apple.com>
 
         Enable -Wstrict-prototypes for WebKit
