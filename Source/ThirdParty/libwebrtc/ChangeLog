@@ -1,3 +1,13 @@
+2017-12-15  Dan Bernstein  <mitz@apple.com>
+
+        libwebrtc installs an extra copy of encoder_vcp.h under /usr/local/include
+        https://bugs.webkit.org/show_bug.cgi?id=180858
+
+        Reviewed by Anders Carlsson.
+
+        * libwebrtc.xcodeproj/project.pbxproj: Demoted the header from Private to Project. A script build phase
+          copies it to the correct location under /usr/local/include/webrtc.
+
 2017-12-14  David Kilzer  <ddkilzer@apple.com>
 
         Enable -Wstrict-prototypes for WebKit
