@@ -124,6 +124,8 @@ private:
 
     void handleUserPrompts(Function<void (CommandResult&&)>&&);
     void handleUnexpectedAlertOpen(Function<void (CommandResult&&)>&&);
+    void dismissAndNotifyAlert(Function<void (CommandResult&&)>&&);
+    void acceptAndNotifyAlert(Function<void (CommandResult&&)>&&);
     void reportUnexpectedAlertOpen(Function<void (CommandResult&&)>&&);
 
     RefPtr<JSON::Object> createElement(RefPtr<JSON::Value>&&);

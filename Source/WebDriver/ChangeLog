@@ -1,3 +1,26 @@
+2017-12-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: add support for accept/dismiss and notify unhandled prompt behavior
+        https://bugs.webkit.org/show_bug.cgi?id=179999
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        They work as accept and dismiss, but unexpected alert open is still reported.
+
+        18. User Prompts
+        https://w3c.github.io/webdriver/webdriver-spec.html#dfn-known-prompt-handling-approaches-table
+
+        * Capabilities.h: Add DismissAndNotify and AcceptAndNotify to UnhandledPromptBehavior enum.
+        * Session.cpp:
+        (WebDriver::Session::handleUnexpectedAlertOpen): Move default implementation to dismissAndNotifyAlert and
+        acceptAndNotifyAlert and use dismissAndNotifyAlert by default.
+        (WebDriver::Session::dismissAndNotifyAlert):
+        (WebDriver::Session::acceptAndNotifyAlert):
+        * Session.h:
+        * WebDriverService.cpp:
+        (WebDriver::deserializeUnhandledPromptBehavior): Handle accept/dismiss and notify.
+        (WebDriver::WebDriverService::newSession): Ditto.
+
 2017-12-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: get active element should return no such element error when there isn't an active element

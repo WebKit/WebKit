@@ -47,6 +47,8 @@ enum class PageLoadStrategy {
 enum class UnhandledPromptBehavior {
     Dismiss,
     Accept,
+    DismissAndNotify,
+    AcceptAndNotify,
     Ignore
 };
 
