@@ -518,7 +518,7 @@ bool SWServer::runServiceWorker(ServiceWorkerIdentifier identifier)
         return false;
 
     auto addResult = m_runningOrTerminatingWorkers.add(identifier, *worker);
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry || worker->isTerminating());
 
     worker->setState(SWServerWorker::State::Running);
 
