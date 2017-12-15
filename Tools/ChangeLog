@@ -1,3 +1,14 @@
+2017-12-14  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style: Stop warning about underscores in webrtc source
+        <https://webkit.org/b/180848>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/webkitpy/style/checker.py:
+        (_PATH_RULES_SPECIFIER): Suppress readability/naming/underscores
+        warnings under Source/ThirdParty/libwebrtc/Source/webrtc.
+
 2017-12-14  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Replace Version.contained_in with Version.__contains__
