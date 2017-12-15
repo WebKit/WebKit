@@ -1,3 +1,31 @@
+2017-12-14  David Kilzer  <ddkilzer@apple.com>
+
+        Enable -Wstrict-prototypes for WebKit
+        <https://webkit.org/b/180757>
+        <rdar://problem/36024132>
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * Configurations/Base.xcconfig:
+        (CLANG_WARN_STRICT_PROTOTYPES): Add. Set to YES.
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/user_socket.c:
+        (wakeup_one): Modernize function argument declarations.
+        (getsockaddr): Ditto.
+        * Source/webrtc/common_audio/signal_processing/include/signal_processing_library.h:
+        (WebRtcSpl_Init): Add 'void' to C function declaration.
+        * Source/webrtc/common_audio/vad/include/webrtc_vad.h:
+        (WebRtcVad_Create): Ditto.
+        * Source/webrtc/modules/audio_coding/codecs/isac/fix/source/codec.h:
+        (WebRtcIsacfix_InitTransform): Ditto.
+        * Source/webrtc/modules/audio_processing/agc/legacy/gain_control.h:
+        (WebRtcAgc_Create): Ditto.
+        * Source/webrtc/modules/audio_processing/ns/noise_suppression.h:
+        (WebRtcNs_Create): Ditto.
+        (WebRtcNs_num_freq): Ditto.
+        * Source/webrtc/modules/audio_processing/ns/noise_suppression_x.h:
+        (WebRtcNsx_Create): Ditto.
+        (WebRtcNsx_num_freq): Ditto.
+
 2017-12-11  Youenn Fablet  <youenn@apple.com>
 
         Use VCP H264 encoder for platforms supporting it

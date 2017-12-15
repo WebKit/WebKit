@@ -1,3 +1,29 @@
+2017-12-14  David Kilzer  <ddkilzer@apple.com>
+
+        Enable -Wstrict-prototypes for WebKit
+        <https://webkit.org/b/180757>
+        <rdar://problem/36024132>
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * API/tests/CompareAndSwapTest.h:
+        (testCompareAndSwap): Add 'void' to C function declaration.
+        * API/tests/ExecutionTimeLimitTest.h:
+        (testExecutionTimeLimit): Ditto.
+        * API/tests/FunctionOverridesTest.h:
+        (testFunctionOverrides): Ditto.
+        * API/tests/GlobalContextWithFinalizerTest.h:
+        (testGlobalContextWithFinalizer): Ditto.
+        * API/tests/JSONParseTest.h:
+        (testJSONParse): Ditto.
+        * API/tests/MultithreadedMultiVMExecutionTest.h:
+        (startMultithreadedMultiVMExecutionTest): Ditto.
+        (finalizeMultithreadedMultiVMExecutionTest): Ditto.
+        * API/tests/PingPongStackOverflowTest.h:
+        (testPingPongStackOverflow): Ditto.
+        * Configurations/Base.xcconfig:
+        (CLANG_WARN_STRICT_PROTOTYPES): Add. Set to YES.
+
 2017-12-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Reduce register pressure of WeakMapGet to be used for 32bit

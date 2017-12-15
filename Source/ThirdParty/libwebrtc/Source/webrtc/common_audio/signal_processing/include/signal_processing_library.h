@@ -110,7 +110,7 @@ extern "C" {
 // C code will be assigned.
 // Note that this function MUST be called in any application that uses SPL
 // functions.
-void WebRtcSpl_Init();
+void WebRtcSpl_Init(void);
 
 int16_t WebRtcSpl_GetScalingSquare(int16_t* in_vector,
                                    size_t in_vector_length,

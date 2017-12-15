@@ -67,7 +67,7 @@ void WebRtcIsacfix_InitPlc(PLCstr* State);
 
 /* transform functions */
 
-void WebRtcIsacfix_InitTransform();
+void WebRtcIsacfix_InitTransform(void);
 
 typedef void (*Time2Spec)(int16_t* inre1Q9,
                           int16_t* inre2Q9,

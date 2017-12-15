@@ -29,7 +29,7 @@
 extern "C" {
 #endif
     
-int testJSONParse();
+int testJSONParse(void);
     
 #ifdef __cplusplus
 } /* extern "C" */

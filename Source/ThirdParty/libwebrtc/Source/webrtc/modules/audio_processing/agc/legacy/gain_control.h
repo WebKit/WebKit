@@ -208,7 +208,7 @@ int WebRtcAgc_get_config(void* agcInst, WebRtcAgcConfig* config);
  * This function creates and returns an AGC instance, which will contain the
  * state information for one (duplex) channel.
  */
-void* WebRtcAgc_Create();
+void* WebRtcAgc_Create(void);
 
 /*
  * This function frees the AGC instance created at the beginning.

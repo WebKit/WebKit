@@ -1,3 +1,17 @@
+2017-12-14  David Kilzer  <ddkilzer@apple.com>
+
+        Enable -Wstrict-prototypes for WebKit
+        <https://webkit.org/b/180757>
+        <rdar://problem/36024132>
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * Configurations/Base.xcconfig:
+        (CLANG_WARN_STRICT_PROTOTYPES): Add. Set to YES.
+        * Platform/spi/ios/UIKitSPI.h:
+        (_UIDragInteractionDefaultLiftDelay): Add 'void' to C function declaration.
+        (UIKeyboardEnabledInputModesAllowOneToManyShortcuts): Ditto.
+
 2017-12-14  Alex Christensen  <achristensen@webkit.org>
 
         Serialize WebsitePoliciesData instead of WebsitePolicies

@@ -396,8 +396,7 @@ wakeup(ident, so)
  * swapped out.
  */
 void
-wakeup_one(ident)
-	void *ident;
+wakeup_one(void *ident)
 {
 	/* __Userspace__ Check: We are using accept_cond for wakeup_one.
 	  It seems that wakeup_one is only called within
@@ -683,10 +682,7 @@ out:
 
 /* Source: src/sys/kern/uipc_syscalls.c */
 int
-getsockaddr(namp, uaddr, len)
-	struct sockaddr **namp;
-	caddr_t uaddr;
-	size_t len;
+getsockaddr(struct sockaddr **namp, caddr_t uaddr, size_t len)
 {
 	struct sockaddr *sa;
 	int error;

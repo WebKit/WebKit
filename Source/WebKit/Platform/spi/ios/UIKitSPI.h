@@ -874,7 +874,7 @@ typedef enum {
 
 WTF_EXTERN_C_BEGIN
 
-NSTimeInterval _UIDragInteractionDefaultLiftDelay();
+NSTimeInterval _UIDragInteractionDefaultLiftDelay(void);
 CGFloat UIRoundToScreenScale(CGFloat value, UIScreen *);
 
 WTF_EXTERN_C_END
@@ -976,7 +976,7 @@ typedef NS_OPTIONS(NSUInteger, UIDragOperation)
 
 WTF_EXTERN_C_BEGIN
 
-BOOL UIKeyboardEnabledInputModesAllowOneToManyShortcuts();
+BOOL UIKeyboardEnabledInputModesAllowOneToManyShortcuts(void);
 BOOL UIKeyboardEnabledInputModesAllowChineseTransliterationForText(NSString *);
 BOOL UIKeyboardCurrentInputModeAllowsChineseOrJapaneseReanalysisForText(NSString *);
 
