@@ -358,6 +358,7 @@ set(WebKit_SOURCES
     UIProcess/API/APIUserScript.cpp
     UIProcess/API/APIUserStyleSheet.cpp
     UIProcess/API/APIWebsiteDataStore.cpp
+    UIProcess/API/APIWebsitePolicies.cpp
     UIProcess/API/APIWindowFeatures.cpp
 
     UIProcess/API/C/WKApplicationCacheManager.cpp

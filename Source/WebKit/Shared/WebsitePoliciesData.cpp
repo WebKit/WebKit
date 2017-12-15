@@ -31,11 +31,6 @@
 
 namespace WebKit {
 
-WebsitePoliciesData WebsitePoliciesData::fromWebsitePolicies(const WebsitePolicies& policies)
-{
-    return { policies.contentBlockersEnabled(), policies.allowedAutoplayQuirks(), policies.autoplayPolicy(), policies.customHeaderFields() };
-}
-
 void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
 {
     encoder << contentBlockersEnabled;

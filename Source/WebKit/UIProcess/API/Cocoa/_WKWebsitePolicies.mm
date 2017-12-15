@@ -28,11 +28,13 @@
 
 #if WK_API_ENABLED
 
+#import "WKWebsiteDataStoreInternal.h"
+
 @implementation _WKWebsitePolicies
 
 - (void)dealloc
 {
-    _websitePolicies->WebKit::WebsitePolicies::~WebsitePolicies();
+    _websitePolicies->API::WebsitePolicies::~WebsitePolicies();
     
     [super dealloc];
 }
@@ -42,7 +44,7 @@
     if (!(self = [super init]))
         return nil;
     
-    API::Object::constructInWrapper<WebKit::WebsitePolicies>(self);
+    API::Object::constructInWrapper<API::WebsitePolicies>(self);
     
     return self;
 }

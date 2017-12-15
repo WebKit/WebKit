@@ -467,7 +467,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
 
         std::optional<WebsitePoliciesData> data;
         if (websitePolicies)
-            data = WebsitePoliciesData::fromWebsitePolicies(*websitePolicies->_websitePolicies);
+            data = websitePolicies->_websitePolicies->data();
 
         switch (actionPolicy) {
         case WKNavigationActionPolicyAllow:

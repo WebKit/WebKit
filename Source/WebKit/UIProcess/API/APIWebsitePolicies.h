@@ -26,56 +26,43 @@
 #pragma once
 
 #include "APIObject.h"
+#include "WebsiteAutoplayPolicy.h"
+#include "WebsiteAutoplayQuirk.h"
 #include <WebCore/HTTPHeaderField.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
-namespace WebCore {
-class DocumentLoader;
-}
-
 namespace WebKit {
+struct WebsitePoliciesData;
+}
 
-enum class WebsiteAutoplayPolicy {
-    Default,
-    Allow,
-    AllowWithoutSound,
-    Deny
-};
-
-enum class WebsiteAutoplayQuirk {
-    SynthesizedPauseEvents = 1 << 0,
-    InheritedUserGestures = 1 << 1,
-    ArbitraryUserGestures = 1 << 2,
-};
+namespace API {
 
 class WebsitePolicies final : public API::ObjectImpl<API::Object::Type::WebsitePolicies> {
 public:
     static Ref<WebsitePolicies> create() { return adoptRef(*new WebsitePolicies); }
     WebsitePolicies() = default;
+    ~WebsitePolicies();
 
     bool contentBlockersEnabled() const { return m_contentBlockersEnabled; }
     void setContentBlockersEnabled(bool enabled) { m_contentBlockersEnabled = enabled; }
     
-    OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks() const { return m_allowedAutoplayQuirks; }
-    void setAllowedAutoplayQuirks(OptionSet<WebsiteAutoplayQuirk> quirks) { m_allowedAutoplayQuirks = quirks; }
+    OptionSet<WebKit::WebsiteAutoplayQuirk> allowedAutoplayQuirks() const { return m_allowedAutoplayQuirks; }
+    void setAllowedAutoplayQuirks(OptionSet<WebKit::WebsiteAutoplayQuirk> quirks) { m_allowedAutoplayQuirks = quirks; }
     
-    WebsiteAutoplayPolicy autoplayPolicy() const { return m_autoplayPolicy; }
-    void setAutoplayPolicy(WebsiteAutoplayPolicy policy) { m_autoplayPolicy = policy; }
+    WebKit::WebsiteAutoplayPolicy autoplayPolicy() const { return m_autoplayPolicy; }
+    void setAutoplayPolicy(WebKit::WebsiteAutoplayPolicy policy) { m_autoplayPolicy = policy; }
     
     const Vector<WebCore::HTTPHeaderField>& customHeaderFields() const { return m_customHeaderFields; }
     Vector<WebCore::HTTPHeaderField>&& takeCustomHeaderFields() { return WTFMove(m_customHeaderFields); }
     void setCustomHeaderFields(Vector<WebCore::HTTPHeaderField>&& fields) { m_customHeaderFields = WTFMove(fields); }
 
+    WebKit::WebsitePoliciesData data();
+
 private:
-    WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks, WebsiteAutoplayPolicy autoplayPolicy, Vector<WebCore::HTTPHeaderField>&& customHeaderFields)
+    WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk> allowedAutoplayQuirks, WebKit::WebsiteAutoplayPolicy autoplayPolicy, Vector<WebCore::HTTPHeaderField>&& customHeaderFields)
         : m_contentBlockersEnabled(contentBlockersEnabled)
         , m_allowedAutoplayQuirks(allowedAutoplayQuirks)
         , m_autoplayPolicy(autoplayPolicy)
@@ -83,23 +70,9 @@ private:
     { }
 
     bool m_contentBlockersEnabled { true };
-    OptionSet<WebsiteAutoplayQuirk> m_allowedAutoplayQuirks;
-    WebsiteAutoplayPolicy m_autoplayPolicy { WebsiteAutoplayPolicy::Default };
+    OptionSet<WebKit::WebsiteAutoplayQuirk> m_allowedAutoplayQuirks;
+    WebKit::WebsiteAutoplayPolicy m_autoplayPolicy { WebKit::WebsiteAutoplayPolicy::Default };
     Vector<WebCore::HTTPHeaderField> m_customHeaderFields;
 };
 
-} // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::WebsiteAutoplayPolicy> {
-    using values = EnumValues<
-        WebKit::WebsiteAutoplayPolicy,
-        WebKit::WebsiteAutoplayPolicy::Default,
-        WebKit::WebsiteAutoplayPolicy::Allow,
-        WebKit::WebsiteAutoplayPolicy::AllowWithoutSound,
-        WebKit::WebsiteAutoplayPolicy::Deny
-    >;
-};
-
-} // namespace WTF
+} // namespace API

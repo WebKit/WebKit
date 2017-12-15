@@ -121,7 +121,6 @@
 #include "WebUserMediaClient.h"
 #include "WebValidationMessageClient.h"
 #include "WebsiteDataStoreParameters.h"
-#include "WebsitePolicies.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/ArchiveResource.h>

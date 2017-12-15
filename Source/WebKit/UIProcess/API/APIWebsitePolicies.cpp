@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "APIWebsitePolicies.h"
 
-#include "WebsiteAutoplayPolicy.h"
-#include "WebsiteAutoplayQuirk.h"
-#include <WebCore/HTTPHeaderField.h>
-#include <wtf/OptionSet.h>
+#include "WebsitePoliciesData.h"
 
-namespace IPC {
-class Decoder;
-class Encoder;
+namespace API {
+
+WebsitePolicies::~WebsitePolicies()
+{
 }
 
-namespace WebCore {
-class DocumentLoader;
+WebKit::WebsitePoliciesData WebsitePolicies::data()
+{
+    return { contentBlockersEnabled(), allowedAutoplayQuirks(), autoplayPolicy(), customHeaderFields() };
 }
 
-namespace WebKit {
+}
 
-struct WebsitePoliciesData {
-    static void applyToDocumentLoader(WebsitePoliciesData&&, WebCore::DocumentLoader&);
-
-    bool contentBlockersEnabled { true };
-    OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks;
-    WebsiteAutoplayPolicy autoplayPolicy { WebsiteAutoplayPolicy::Default };
-    Vector<WebCore::HTTPHeaderField> customHeaderFields;
-    
-    void encode(IPC::Encoder&) const;
-    static std::optional<WebsitePoliciesData> decode(IPC::Decoder&);
-};
-
-} // namespace WebKit

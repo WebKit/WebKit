@@ -46,6 +46,7 @@
 #include "APIPolicyClient.h"
 #include "APISessionState.h"
 #include "APIUIClient.h"
+#include "APIWebsitePolicies.h"
 #include "APIWindowFeatures.h"
 #include "AuthenticationChallengeProxy.h"
 #include "LegacySessionStateCoding.h"
@@ -70,7 +71,6 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include "WebProtectionSpace.h"
-#include "WebsitePolicies.h"
 #include <WebCore/Page.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SerializedCryptoKeyWrap.h>
@@ -325,7 +325,7 @@ bool WKPageWillHandleHorizontalScrollEvents(WKPageRef pageRef)
 
 void WKPageUpdateWebsitePolicies(WKPageRef pageRef, WKWebsitePoliciesRef websitePoliciesRef)
 {
-    toImpl(pageRef)->updateWebsitePolicies(WebsitePoliciesData::fromWebsitePolicies(*toImpl(websitePoliciesRef)));
+    toImpl(pageRef)->updateWebsitePolicies(toImpl(websitePoliciesRef)->data());
 }
 
 WKStringRef WKPageCopyTitle(WKPageRef pageRef)

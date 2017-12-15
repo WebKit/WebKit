@@ -1,3 +1,46 @@
+2017-12-15  Alex Christensen  <achristensen@webkit.org>
+
+        Move WebKit::WebsitePolicies to API::WebsitePolicies
+        https://bugs.webkit.org/show_bug.cgi?id=180873
+
+        Reviewed by Joseph Pecoraro.
+
+        It's just an API data object now.  I need it to be in the API namespace so we can
+        give it references to other API namespace objects without weird layering violations.
+
+        * CMakeLists.txt:
+        * Shared/WebsiteAutoplayPolicy.h: Added.
+        * Shared/WebsiteAutoplayQuirk.h: Added.
+        * Shared/WebsitePoliciesData.cpp:
+        (WebKit::WebsitePoliciesData::fromWebsitePolicies): Deleted.
+        * Shared/WebsitePoliciesData.h:
+        * UIProcess/API/APIWebsitePolicies.cpp: Added.
+        (API::WebsitePolicies::~WebsitePolicies):
+        (API::WebsitePolicies::data):
+        * UIProcess/API/APIWebsitePolicies.h: Copied from Source/WebKit/UIProcess/WebsitePolicies.h.
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKFramePolicyListener.cpp:
+        (WKFramePolicyListenerUseWithPolicies):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageUpdateWebsitePolicies):
+        * UIProcess/API/C/WKWebsitePolicies.cpp:
+        (WKWebsitePoliciesGetTypeID):
+        (WKWebsitePoliciesCreate):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateWebsitePolicies:]):
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        (-[_WKWebsitePolicies dealloc]):
+        (-[_WKWebsitePolicies init]):
+        * UIProcess/API/Cocoa/_WKWebsitePoliciesInternal.h:
+        (WebKit::wrapper): Deleted.
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        * UIProcess/WebFormSubmissionListenerProxy.cpp:
+        * UIProcess/WebsitePolicies.h: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+
 2017-12-14  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ build fix after r225954.

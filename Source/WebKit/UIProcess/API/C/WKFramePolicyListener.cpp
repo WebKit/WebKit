@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKFramePolicyListener.h"
 
+#include "APIWebsitePolicies.h"
 #include "WKAPICast.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFrameProxy.h"
@@ -45,7 +46,7 @@ void WKFramePolicyListenerUse(WKFramePolicyListenerRef policyListenerRef)
 
 void WKFramePolicyListenerUseWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies)
 {
-    toImpl(policyListenerRef)->use(WebsitePoliciesData::fromWebsitePolicies(*toImpl(websitePolicies)));
+    toImpl(policyListenerRef)->use(toImpl(websitePolicies)->data());
 }
 
 void WKFramePolicyListenerDownload(WKFramePolicyListenerRef policyListenerRef)

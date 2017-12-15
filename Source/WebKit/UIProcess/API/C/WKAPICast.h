@@ -68,6 +68,7 @@ class ProcessPoolConfiguration;
 class SessionState;
 class UserScript;
 class WebsiteDataStore;
+class WebsitePolicies;
 class WindowFeatures;
 }
 
@@ -110,7 +111,6 @@ class WebResourceLoadStatisticsManager;
 class WebTextChecker;
 class WebUserContentControllerProxy;
 class WebViewportAttributes;
-class WebsitePolicies;
 
 WK_ADD_API_MAPPING(WKAuthenticationChallengeRef, AuthenticationChallengeProxy)
 WK_ADD_API_MAPPING(WKAuthenticationDecisionListenerRef, AuthenticationDecisionListener)
@@ -165,7 +165,7 @@ WK_ADD_API_MAPPING(WKUserMediaPermissionRequestRef, UserMediaPermissionRequestPr
 WK_ADD_API_MAPPING(WKUserScriptRef, API::UserScript)
 WK_ADD_API_MAPPING(WKViewportAttributesRef, WebViewportAttributes)
 WK_ADD_API_MAPPING(WKWebsiteDataStoreRef, API::WebsiteDataStore)
-WK_ADD_API_MAPPING(WKWebsitePoliciesRef, WebsitePolicies)
+WK_ADD_API_MAPPING(WKWebsitePoliciesRef, API::WebsitePolicies)
 WK_ADD_API_MAPPING(WKWindowFeaturesRef, API::WindowFeatures)
 
 /* Enum conversions */

@@ -27,10 +27,10 @@
 
 #if WK_API_ENABLED
 
+#import "APIWebsitePolicies.h"
 #import "WKObject.h"
-#import "WebsitePolicies.h"
 
-namespace WebKit {
+namespace API {
 
 inline _WKWebsitePolicies *wrapper(WebsitePolicies& websitePolicies)
 {
@@ -42,7 +42,7 @@ inline _WKWebsitePolicies *wrapper(WebsitePolicies& websitePolicies)
 
 @interface _WKWebsitePolicies () <WKObject> {
 @package
-    API::ObjectStorage<WebKit::WebsitePolicies> _websitePolicies;
+    API::ObjectStorage<API::WebsitePolicies> _websitePolicies;
 }
 @end
 

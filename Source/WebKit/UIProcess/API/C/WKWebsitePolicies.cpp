@@ -27,22 +27,22 @@
 #include "WKWebsitePolicies.h"
 
 #include "APIDictionary.h"
+#include "APIWebsitePolicies.h"
 #include "WKAPICast.h"
 #include "WKArray.h"
 #include "WKDictionary.h"
 #include "WKRetainPtr.h"
-#include "WebsitePolicies.h"
 
 using namespace WebKit;
 
 WKTypeID WKWebsitePoliciesGetTypeID()
 {
-    return toAPI(WebsitePolicies::APIType);
+    return toAPI(API::WebsitePolicies::APIType);
 }
 
 WKWebsitePoliciesRef WKWebsitePoliciesCreate()
 {
-    return toAPI(&WebsitePolicies::create().leakRef());
+    return toAPI(&API::WebsitePolicies::create().leakRef());
 }
 
 void WKWebsitePoliciesSetContentBlockersEnabled(WKWebsitePoliciesRef websitePolicies, bool enabled)

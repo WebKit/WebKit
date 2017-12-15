@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebFormSubmissionListenerProxy.h"
 
-#include "WebsitePolicies.h"
-
 namespace WebKit {
 
 void WebFormSubmissionListenerProxy::continueSubmission()
