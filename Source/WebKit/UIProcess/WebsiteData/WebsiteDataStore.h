@@ -183,6 +183,8 @@ private:
     static void removeMediaKeys(const String& mediaKeysStorageDirectory, std::chrono::system_clock::time_point modifiedSince);
     static void removeMediaKeys(const String& mediaKeysStorageDirectory, const HashSet<WebCore::SecurityOriginData>&);
 
+    void maybeRegisterWithSessionIDMap();
+
     const PAL::SessionID m_sessionID;
 
     const Configuration m_configuration;

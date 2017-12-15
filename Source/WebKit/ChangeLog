@@ -1,3 +1,22 @@
+2017-12-15  Brady Eidson  <beidson@apple.com>
+
+        Make sure only WebsiteDataStores with valid SessionIDs register themselves.
+        https://bugs.webkit.org/show_bug.cgi?id=180869
+
+        Reviewed by Chris Dumez.
+
+        Some code in WebsiteDataStore assumes an invalid SessionID is a possibility,
+        but we didn't account for that in the map added in r225935.
+
+        Seems prudent to make sure we're not doing hash table operations with invalid keys.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        (WebKit::WebsiteDataStore::~WebsiteDataStore):
+        (WebKit::WebsiteDataStore::maybeRegisterWithSessionIDMap):
+        (WebKit::WebsiteDataStore::existingNonDefaultDataStoreForSessionID):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2017-12-14  Simon Fraser  <simon.fraser@apple.com>
 
         Rotating when zoomed in with fingers down can result in a broken tab

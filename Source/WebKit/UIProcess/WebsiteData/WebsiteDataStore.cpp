@@ -78,11 +78,7 @@ WebsiteDataStore::WebsiteDataStore(Configuration configuration, PAL::SessionID s
     , m_storageManager(StorageManager::create(m_configuration.localStorageDirectory))
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
 {
-    if (m_sessionID != PAL::SessionID::defaultSessionID()) {
-        auto result = nonDefaultDataStores().add(sessionID, this);
-        ASSERT_UNUSED(result, result.isNewEntry);
-    }
-
+    maybeRegisterWithSessionIDMap();
     platformInitialize();
 }
 
@@ -91,32 +87,33 @@ WebsiteDataStore::WebsiteDataStore(PAL::SessionID sessionID)
     , m_configuration()
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
 {
-    if (m_sessionID != PAL::SessionID::defaultSessionID()) {
-        auto result = nonDefaultDataStores().add(sessionID, this);
-        ASSERT_UNUSED(result, result.isNewEntry);
-    }
-    
+    maybeRegisterWithSessionIDMap();
     platformInitialize();
 }
 
 WebsiteDataStore::~WebsiteDataStore()
 {
-    if (m_sessionID != PAL::SessionID::defaultSessionID()) {
-        ASSERT(nonDefaultDataStores().get(m_sessionID) == this);
-        nonDefaultDataStores().remove(m_sessionID);
-    }
-
     platformDestroy();
 
     if (m_sessionID.isValid() && m_sessionID != PAL::SessionID::defaultSessionID()) {
+        ASSERT(nonDefaultDataStores().get(m_sessionID) == this);
+        nonDefaultDataStores().remove(m_sessionID);
         for (auto& processPool : WebProcessPool::allProcessPools())
             processPool->sendToNetworkingProcess(Messages::NetworkProcess::DestroySession(m_sessionID));
     }
 }
 
+void WebsiteDataStore::maybeRegisterWithSessionIDMap()
+{
+    if (m_sessionID.isValid() && m_sessionID != PAL::SessionID::defaultSessionID()) {
+        auto result = nonDefaultDataStores().add(m_sessionID, this);
+        ASSERT_UNUSED(result, result.isNewEntry);
+    }
+}
+
 WebsiteDataStore* WebsiteDataStore::existingNonDefaultDataStoreForSessionID(PAL::SessionID sessionID)
 {
-    return nonDefaultDataStores().get(sessionID);
+    return sessionID.isValid() && sessionID != PAL::SessionID::defaultSessionID() ? nonDefaultDataStores().get(sessionID) : nullptr;
 }
 
 WebProcessPool* WebsiteDataStore::processPoolForCookieStorageOperations()
