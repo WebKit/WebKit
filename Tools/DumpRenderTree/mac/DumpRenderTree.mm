@@ -78,6 +78,7 @@
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryItemPrivate.h>
+#import <WebKit/WebInspector.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPreferenceKeysPrivate.h>
@@ -86,7 +87,6 @@
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebStorageManagerPrivate.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKitLegacy/WebInspector.h>
 #import <getopt.h>
 #import <wtf/Assertions.h>
 #import <wtf/FastMalloc.h>

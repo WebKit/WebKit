@@ -27,13 +27,13 @@
 
 #import "AppDelegate.h"
 #import "SettingsController.h"
+#import <WebKit/WebInspector.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebPreferenceKeysPrivate.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKitLegacy/WebInspector.h>
 
 @interface WK1BrowserWindowController () <WebFrameLoadDelegate, WebPolicyDelegate, WebResourceLoadDelegate, WebUIDelegate>
 @end

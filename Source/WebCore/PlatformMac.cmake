@@ -499,7 +499,6 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     svg
     workers
 
-    Modules/applicationmanifest
     Modules/applepay
     Modules/cache
     Modules/geolocation
@@ -592,7 +591,6 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     workers/service
 
-    workers/service/context
     workers/service/server
 
     xml

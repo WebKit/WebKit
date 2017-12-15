@@ -44,9 +44,7 @@ struct WebsiteDataStoreParameters {
     WebsiteDataStoreParameters(WebsiteDataStoreParameters&&) = default;
     WebsiteDataStoreParameters& operator=(WebsiteDataStoreParameters&&) = default;
     ~WebsiteDataStoreParameters();
-
     static WebsiteDataStoreParameters legacyPrivateSessionParameters();
-    static WebsiteDataStoreParameters ephemeralParametersWithSessionID(PAL::SessionID);
     
     void encode(IPC::Encoder&) const;
     static std::optional<WebsiteDataStoreParameters> decode(IPC::Decoder&);

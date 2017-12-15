@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(AVCONTENTKEYSESSION) && ENABLE(ENCRYPTED_MEDIA)
+#if HAVE(AVCONTENTKEYSESSION)
 
 #include "CDMInstance.h"
 #include <wtf/Function.h>

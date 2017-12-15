@@ -91,10 +91,4 @@ WebsiteDataStoreParameters WebsiteDataStoreParameters::legacyPrivateSessionParam
     return { { }, { }, { }, { }, WebsiteDataStore::defaultCacheStoragePerOriginQuota, { }, { PAL::SessionID::legacyPrivateSessionID(), { }, { }, { }}};
 }
 
-WebsiteDataStoreParameters WebsiteDataStoreParameters::ephemeralParametersWithSessionID(PAL::SessionID sessionID)
-{
-    ASSERT(sessionID.isEphemeral());
-    return {{ }, { }, { }, { }, { }, { }, { sessionID, { }, { }, { }}};
-}
-
 } // namespace WebKit
