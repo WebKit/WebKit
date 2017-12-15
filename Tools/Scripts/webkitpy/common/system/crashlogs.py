@@ -120,15 +120,12 @@ class CrashLogs(object):
                     if int(match.group('pid'), 16) == pid:
                         return errors + log_file
             except IOError as e:
-                print("IOError %s" % str(e))
                 if include_errors:
                     errors += u"ERROR: Failed to read '%s': %s\n" % (path, str(e))
             except OSError as e:
-                print("OSError %s" % str(e))
                 if include_errors:
                     errors += u"ERROR: Failed to read '%s': %s\n" % (path, str(e))
             except UnicodeDecodeError as e:
-                print("UnicodeDecodeError %s" % str(e))
                 if include_errors:
                     errors += u"ERROR: Failed to decode '%s' as ascii: %s\n" % (path, str(e))
 

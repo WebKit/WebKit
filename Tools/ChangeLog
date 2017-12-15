@@ -1,3 +1,13 @@
+2017-12-14  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [webkitpy, Windows] Remove unnecessary debug message
+        https://bugs.webkit.org/show_bug.cgi?id=180844
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        (CrashLogs._find_newest_log_win): Delete debug print
+
 2017-12-14  David Kilzer  <ddkilzer@apple.com>
 
         check-webkit-style: Stop warning about underscores in webrtc source
