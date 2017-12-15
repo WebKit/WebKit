@@ -1,3 +1,10 @@
+2017-12-15  Alex Christensen  <achristensen@webkit.org>
+
+        Fix GTK build.
+
+        * UIProcess/API/glib/WebKitPolicyDecision.cpp:
+        (webkit_policy_decision_use):
+
 2017-12-15  Brent Fulgham  <bfulgham@apple.com>
 
         Avoid waking plugin process up unnecessarily

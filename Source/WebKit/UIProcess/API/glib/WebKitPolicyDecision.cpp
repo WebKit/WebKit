@@ -22,7 +22,6 @@
 
 #include "WebFramePolicyListenerProxy.h"
 #include "WebKitPolicyDecisionPrivate.h"
-#include "WebsitePolicies.h"
 #include "WebsitePoliciesData.h"
 #include <wtf/glib/WTFGType.h>
 
@@ -82,7 +81,7 @@ void webkit_policy_decision_use(WebKitPolicyDecision* decision)
         return;
 
     auto listener = std::exchange(decision->priv->listener, nullptr);
-    listener->use({ });
+    listener->use(std::nullopt);
 }
 
 /**
