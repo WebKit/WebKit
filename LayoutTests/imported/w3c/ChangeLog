@@ -1,5 +1,13 @@
 2017-12-14  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, commit missing empty.js file in service workers WPT tests
+
+        * web-platform-tests/service-workers/service-worker/resources/empty.js: Added.
+        * web-platform-tests/service-workers/service-worker/service-worker-csp-default.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/service-worker-csp-script.https-expected.txt:
+
+2017-12-14  Chris Dumez  <cdumez@apple.com>
+
         Re-sync service-workers/service-worker/interfaces-sw.https.html from upstream
         https://bugs.webkit.org/show_bug.cgi?id=180814
 

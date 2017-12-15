@@ -1,6 +1,6 @@
 
 PASS CSP test for script-src in ServiceWorkerGlobalScope 
-PASS importScripts test for script-src 
+FAIL importScripts test for script-src assert_true: Importing the other origins script should fail. expected true got false
 PASS Fetch test for script-src 
 PASS Redirected fetch test for script-src 
 
