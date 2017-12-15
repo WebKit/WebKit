@@ -336,7 +336,13 @@ static String filterICECandidate(String&& sdp)
             skipNextItem = false;
             return;
         }
-        if (item == "raddr" || item == "rport") {
+        if (item == "raddr") {
+            filteredSDP.append(" raddr 0.0.0.0");
+            skipNextItem = true;
+            return;
+        }
+        if (item == "rport") {
+            filteredSDP.append(" rport 0");
             skipNextItem = true;
             return;
         }
