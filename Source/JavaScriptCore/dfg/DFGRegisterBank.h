@@ -139,6 +139,16 @@ public:
         return allocateInternal(currentLowest, spillMe);
     }
 
+    uint32_t lockedCount() const
+    {
+        uint32_t count = 0;
+        for (uint32_t i = 0 ; i < NUM_REGS; ++i) {
+            if (m_data[i].lockCount)
+                ++count;
+        }
+        return count;
+    }
+
     // Allocates the given register, even if this will force a spill.
     VirtualRegister allocateSpecific(RegID reg)
     {

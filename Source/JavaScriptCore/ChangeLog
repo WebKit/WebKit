@@ -1,3 +1,17 @@
+2017-12-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Reduce register pressure of WeakMapGet to be used for 32bit
+        https://bugs.webkit.org/show_bug.cgi?id=180804
+
+        Reviewed by Saam Barati.
+
+        This fixes 32bit failures of JSC by reducing register pressure of WeakMapGet.
+
+        * dfg/DFGRegisterBank.h:
+        (JSC::DFG::RegisterBank::lockedCount const):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileWeakMapGet):
+
 2017-12-14  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, forgot to add { }

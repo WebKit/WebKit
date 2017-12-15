@@ -10983,41 +10983,52 @@ void SpeculativeJIT::compileMapSet(Node* node)
 
 void SpeculativeJIT::compileWeakMapGet(Node* node)
 {
-    SpeculateCellOperand weakMap(this, node->child1());
-    SpeculateCellOperand key(this, node->child2());
-    SpeculateInt32Operand hash(this, node->child3());
+    GPRTemporary mask(this);
+    GPRTemporary buffer(this);
     JSValueRegsTemporary result(this);
 
-    GPRTemporary mask(this);
-    GPRTemporary index(this);
-    GPRTemporary buffer(this);
-    GPRTemporary bucket(this);
-
-    GPRReg weakMapGPR = weakMap.gpr();
-    GPRReg keyGPR = key.gpr();
-    GPRReg hashGPR = hash.gpr();
-
     GPRReg maskGPR = mask.gpr();
-    GPRReg indexGPR = index.gpr();
     GPRReg bufferGPR = buffer.gpr();
-    GPRReg bucketGPR = bucket.gpr();
     JSValueRegs resultRegs = result.regs();
 
-    if (node->child1().useKind() == WeakMapObjectUse)
-        speculateWeakMapObject(node->child1(), weakMapGPR);
-    else
-        speculateWeakSetObject(node->child1(), weakMapGPR);
+    GPRTemporary index;
+    GPRReg indexGPR { InvalidGPRReg };
+    {
+        SpeculateInt32Operand hash(this, node->child3());
+        GPRReg hashGPR = hash.gpr();
+        index = GPRTemporary(this, Reuse, hash);
+        indexGPR = index.gpr();
+        m_jit.move(hashGPR, indexGPR);
+    }
+
+    {
+        SpeculateCellOperand weakMap(this, node->child1());
+        GPRReg weakMapGPR = weakMap.gpr();
+        if (node->child1().useKind() == WeakMapObjectUse)
+            speculateWeakMapObject(node->child1(), weakMapGPR);
+        else
+            speculateWeakSetObject(node->child1(), weakMapGPR);
+
+        ASSERT(WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfCapacity() == WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::offsetOfCapacity());
+        ASSERT(WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfBuffer() == WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::offsetOfBuffer());
+        m_jit.load32(MacroAssembler::Address(weakMapGPR, WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfCapacity()), maskGPR);
+        m_jit.loadPtr(MacroAssembler::Address(weakMapGPR, WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfBuffer()), bufferGPR);
+    }
+
+    SpeculateCellOperand key(this, node->child2());
+    GPRReg keyGPR = key.gpr();
     speculateObject(node->child2(), keyGPR);
 
-    ASSERT(WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfCapacity() == WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::offsetOfCapacity());
-    ASSERT(WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfBuffer() == WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::offsetOfBuffer());
-    m_jit.load32(MacroAssembler::Address(weakMapGPR, WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfCapacity()), maskGPR);
-    m_jit.loadPtr(MacroAssembler::Address(weakMapGPR, WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::offsetOfBuffer()), bufferGPR);
+#if USE(JSVALUE32_64)
+    GPRReg bucketGPR = resultRegs.tagGPR();
+#else
+    GPRTemporary bucket(this);
+    GPRReg bucketGPR = bucket.gpr();
+#endif
+
     m_jit.sub32(TrustedImm32(1), maskGPR);
-    m_jit.move(hashGPR, indexGPR);
 
     MacroAssembler::Label loop = m_jit.label();
-
     m_jit.and32(maskGPR, indexGPR);
     if (node->child1().useKind() == WeakSetObjectUse) {
         static_assert(sizeof(WeakMapBucket<WeakMapBucketDataKey>) == sizeof(void*), "");
