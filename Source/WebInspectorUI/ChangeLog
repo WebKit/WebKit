@@ -1,3 +1,14 @@
+2017-12-15  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas Tab should be turned on by default
+        https://bugs.webkit.org/show_bug.cgi?id=180594
+        <rdar://problem/35938917>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+
 2017-12-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: clicking above selector should prepend new property
