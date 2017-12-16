@@ -54,7 +54,9 @@ public:
     ServiceWorker* getNewestWorker();
 
     const String& scope() const;
+
     ServiceWorkerUpdateViaCache updateViaCache() const;
+    void setUpdateViaCache(ServiceWorkerUpdateViaCache);
 
     WallTime lastUpdateTime() const;
     void setLastUpdateTime(WallTime);

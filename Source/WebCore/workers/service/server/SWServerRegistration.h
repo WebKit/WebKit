@@ -63,6 +63,7 @@ public:
     void setLastUpdateTime(WallTime);
     WallTime lastUpdateTime() const { return m_lastUpdateTime; }
 
+    void setUpdateViaCache(ServiceWorkerUpdateViaCache);
     ServiceWorkerUpdateViaCache updateViaCache() const { return m_updateViaCache; }
 
     void updateRegistrationState(ServiceWorkerRegistrationState, SWServerWorker*);

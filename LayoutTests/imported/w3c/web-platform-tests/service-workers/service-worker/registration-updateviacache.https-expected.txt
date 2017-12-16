@@ -5,18 +5,18 @@ FAIL register-with-updateViaCache-all assert_equals: No new service worker expec
 PASS register-with-updateViaCache-none 
 PASS register-with-updateViaCache-undefined-then-undefined 
 PASS register-with-updateViaCache-undefined-then-imports 
-FAIL register-with-updateViaCache-undefined-then-all assert_equals: reg.updateViaCache updated expected "all" but got "imports"
-FAIL register-with-updateViaCache-undefined-then-none assert_equals: reg.updateViaCache updated expected "none" but got "imports"
+FAIL register-with-updateViaCache-undefined-then-all assert_equals: No new service worker expected null but got object "[object ServiceWorker]"
+PASS register-with-updateViaCache-undefined-then-none 
 PASS register-with-updateViaCache-imports-then-undefined 
 PASS register-with-updateViaCache-imports-then-imports 
-FAIL register-with-updateViaCache-imports-then-all assert_equals: reg.updateViaCache updated expected "all" but got "imports"
-FAIL register-with-updateViaCache-imports-then-none assert_equals: reg.updateViaCache updated expected "none" but got "imports"
-FAIL register-with-updateViaCache-all-then-undefined assert_equals: reg.updateViaCache updated expected "imports" but got "all"
-FAIL register-with-updateViaCache-all-then-imports assert_equals: reg.updateViaCache updated expected "imports" but got "all"
+FAIL register-with-updateViaCache-imports-then-all assert_equals: No new service worker expected null but got object "[object ServiceWorker]"
+PASS register-with-updateViaCache-imports-then-none 
+PASS register-with-updateViaCache-all-then-undefined 
+PASS register-with-updateViaCache-all-then-imports 
 PASS register-with-updateViaCache-all-then-all 
-FAIL register-with-updateViaCache-all-then-none assert_equals: reg.updateViaCache updated expected "none" but got "all"
-FAIL register-with-updateViaCache-none-then-undefined assert_equals: reg.updateViaCache updated expected "imports" but got "none"
-FAIL register-with-updateViaCache-none-then-imports assert_equals: reg.updateViaCache updated expected "imports" but got "none"
-FAIL register-with-updateViaCache-none-then-all assert_equals: reg.updateViaCache updated expected "all" but got "none"
+PASS register-with-updateViaCache-all-then-none 
+PASS register-with-updateViaCache-none-then-undefined 
+PASS register-with-updateViaCache-none-then-imports 
+FAIL register-with-updateViaCache-none-then-all assert_equals: No new service worker expected null but got object "[object ServiceWorker]"
 PASS register-with-updateViaCache-none-then-none 
 

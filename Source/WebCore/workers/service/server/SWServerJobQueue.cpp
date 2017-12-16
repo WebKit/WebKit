@@ -251,6 +251,9 @@ void SWServerJobQueue::runRegisterJob(const ServiceWorkerJobData& job)
             finishCurrentJob();
             return;
         }
+        // This is not specified yet (https://github.com/w3c/ServiceWorker/issues/1189).
+        if (registration->updateViaCache() != job.registrationOptions.updateViaCache)
+            registration->setUpdateViaCache(job.registrationOptions.updateViaCache);
     } else {
         auto newRegistration = std::make_unique<SWServerRegistration>(m_server, m_registrationKey, job.registrationOptions.updateViaCache, job.scopeURL, job.scriptURL);
         m_server.addRegistration(WTFMove(newRegistration));

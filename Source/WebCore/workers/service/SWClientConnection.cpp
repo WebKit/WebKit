@@ -228,6 +228,27 @@ void SWClientConnection::setRegistrationLastUpdateTime(ServiceWorkerRegistration
     }
 }
 
+void SWClientConnection::setRegistrationUpdateViaCache(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerUpdateViaCache updateViaCache)
+{
+    ASSERT(isMainThread());
+
+    SWContextManager::singleton().forEachServiceWorkerThread([identifier, updateViaCache] (auto& workerThread) {
+        workerThread.thread().runLoop().postTask([identifier, updateViaCache](ScriptExecutionContext& context) {
+            if (auto* container = context.serviceWorkerContainer()) {
+                if (auto* registration = container->registration(identifier))
+                    registration->setUpdateViaCache(updateViaCache);
+            }
+        });
+    });
+
+    for (auto* document : Document::allDocuments()) {
+        if (auto* container = document->serviceWorkerContainer()) {
+            if (auto* registration = container->registration(identifier))
+                registration->setUpdateViaCache(updateViaCache);
+        }
+    }
+}
+
 void SWClientConnection::notifyClientsOfControllerChange(const HashSet<DocumentIdentifier>& contextIdentifiers, ServiceWorkerData&& newController)
 {
     ASSERT(isMainThread());

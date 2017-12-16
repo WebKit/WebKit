@@ -1,3 +1,15 @@
+2017-12-15  Chris Dumez  <cdumez@apple.com>
+
+        Support updating a service worker registration's updateViaCache flag
+        https://bugs.webkit.org/show_bug.cgi?id=180888
+
+        Reviewed by Brady Eidson.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::setRegistrationUpdateViaCache):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+
 2017-12-15  Alex Christensen  <achristensen@webkit.org>
 
         Introduce SPI _WKWebsitePolicies.websiteDataStore
