@@ -1130,8 +1130,6 @@ webkit.org/b/175419 http/tests/workers/service [ Skip ]
 webkit.org/b/175419 http/wpt/service-workers [ Failure ]
 webkit.org/b/175419 http/tests/inspector/network/resource-response-service-worker.html [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers [ Skip ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/stub-4.6.2-cache.html [ Pass ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/stub-4.6.3-cache-storage.html [ Pass ]
 
 webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces-worker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces.html [ Failure ]

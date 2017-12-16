@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: line 59: TypeError: null is not an object (evaluating 'document.getElementById("untested_idls").textContent')
-
-FAIL Service Workers: Request Objects TypeError: null is not an object (evaluating 'document.getElementById("untested_idls").textContent')
-
