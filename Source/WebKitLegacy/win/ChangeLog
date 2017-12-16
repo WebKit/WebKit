@@ -1,3 +1,15 @@
+2017-12-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove unnecessary boolean result of start() functions
+        https://bugs.webkit.org/show_bug.cgi?id=180856
+
+        Reviewed by Darin Adler.
+
+        It always returns true.
+
+        * WebDownloadCurl.cpp:
+        (WebDownload::start):
+
 2017-12-14  John Wilander  <wilander@apple.com>
 
         Storage Access API: Implement frame-specific access in the document.cookie layer

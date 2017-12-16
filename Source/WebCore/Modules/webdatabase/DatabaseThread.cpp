@@ -56,18 +56,16 @@ DatabaseThread::~DatabaseThread()
     ASSERT(terminationRequested());
 }
 
-bool DatabaseThread::start()
+void DatabaseThread::start()
 {
     LockHolder lock(m_threadCreationMutex);
 
     if (m_thread)
-        return true;
+        return;
 
     m_thread = Thread::create("WebCore: Database", [this] {
         databaseThread();
     });
-
-    return m_thread;
 }
 
 void DatabaseThread::requestTermination(DatabaseTaskSynchronizer* cleanupSync)

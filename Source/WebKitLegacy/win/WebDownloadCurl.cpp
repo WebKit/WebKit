@@ -120,8 +120,7 @@ HRESULT WebDownload::start()
     if (!m_download)
         return E_FAIL;
 
-    if (!m_download->start())
-        return E_FAIL;
+    m_download->start();
 
     if (m_delegate)
         m_delegate->didBegin(this);

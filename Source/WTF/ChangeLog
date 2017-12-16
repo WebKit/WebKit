@@ -1,3 +1,19 @@
+2017-12-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove unnecessary boolean result of start() functions
+        https://bugs.webkit.org/show_bug.cgi?id=180856
+
+        Reviewed by Darin Adler.
+
+        CrossThreadTaskHandler's Thread is just released without calling
+        either `waitForCompletion` or `detach`. It means that this resource
+        of the thread is not released.
+
+        * benchmarks/ConditionSpeedTest.cpp:
+        * wtf/CrossThreadTaskHandler.cpp:
+        (WTF::CrossThreadTaskHandler::CrossThreadTaskHandler):
+        * wtf/CrossThreadTaskHandler.h:
+
 2017-12-14  David Kilzer  <ddkilzer@apple.com>
 
         Enable -Wstrict-prototypes for WebKit

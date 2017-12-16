@@ -75,7 +75,7 @@ void ResourceHandleCurlDelegate::releaseHandle()
     m_handle = nullptr;
 }
 
-bool ResourceHandleCurlDelegate::start()
+void ResourceHandleCurlDelegate::start()
 {
     ASSERT(isMainThread());
 
@@ -84,8 +84,6 @@ bool ResourceHandleCurlDelegate::start()
     m_curlRequest = createCurlRequest(m_currentRequest);
     m_curlRequest->setUserPass(credential.first, credential.second);
     m_curlRequest->start();
-
-    return true;
 }
 
 void ResourceHandleCurlDelegate::cancel()

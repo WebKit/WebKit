@@ -49,7 +49,6 @@ private:
     void handleTaskRepliesOnMainThread();
     void taskRunLoop();
 
-    RefPtr<Thread> m_thread { nullptr };
     Lock m_taskThreadCreationLock;
     Lock m_mainThreadReplyLock;
     bool m_mainThreadReplyScheduled { false };

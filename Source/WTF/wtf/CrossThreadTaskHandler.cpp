@@ -32,9 +32,9 @@ CrossThreadTaskHandler::CrossThreadTaskHandler(const char* threadName)
 {
     ASSERT(isMainThread());
     Locker<Lock> locker(m_taskThreadCreationLock);
-    m_thread = Thread::create(threadName, [this] {
+    Thread::create(threadName, [this] {
         taskRunLoop();
-    });
+    })->detach();
 }
 
 CrossThreadTaskHandler::~CrossThreadTaskHandler()

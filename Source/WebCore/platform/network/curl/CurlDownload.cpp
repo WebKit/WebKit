@@ -55,15 +55,13 @@ void CurlDownload::init(CurlDownloadListener& listener, ResourceHandle*, const R
     m_request = request.isolatedCopy();
 }
 
-bool CurlDownload::start()
+void CurlDownload::start()
 {
     ASSERT(isMainThread());
 
     m_curlRequest = createCurlRequest(m_request);
     m_curlRequest->enableDownloadToFile();
     m_curlRequest->start();
-
-    return true;
 }
 
 bool CurlDownload::cancel()

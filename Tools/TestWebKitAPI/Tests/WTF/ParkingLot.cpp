@@ -68,11 +68,11 @@ struct SingleLatchTest {
         unsigned numWaitingOnAddress = 0;
         Vector<RefPtr<Thread>, 8> queue;
         ParkingLot::forEach(
-            [&] (Thread& threadIdentifier, const void* address) {
+            [&] (Thread& thread, const void* address) {
                 if (address != &semaphore)
                     return;
 
-                queue.append(&threadIdentifier);
+                queue.append(&thread);
 
                 numWaitingOnAddress++;
             });

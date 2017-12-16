@@ -47,7 +47,7 @@ public:
     bool hasHandle() const;
     void releaseHandle();
 
-    bool start();
+    void start();
     void cancel();
 
     void setDefersLoading(bool);

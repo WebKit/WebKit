@@ -57,7 +57,7 @@ public:
 
     void setListener(CurlDownloadListener* listener) { m_listener = listener; }
 
-    bool start();
+    void start();
     bool cancel();
 
     bool deletesFileUponFailure() const { return m_deletesFileUponFailure; }

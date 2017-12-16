@@ -50,7 +50,6 @@ AsyncAudioDecoder::~AsyncAudioDecoder()
     
     // Stop thread.
     m_thread->waitForCompletion();
-    m_thread = nullptr;
 }
 
 void AsyncAudioDecoder::decodeAsync(Ref<ArrayBuffer>&& audioData, float sampleRate, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback)

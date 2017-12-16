@@ -89,14 +89,14 @@ void runTest(
     ConditionType emptyCondition;
     ConditionType fullCondition;
 
-    Vector<RefPtr<Thread>> consumerThreads;
-    Vector<RefPtr<Thread>> producerThreads;
+    Vector<Ref<Thread>> consumerThreads;
+    Vector<Ref<Thread>> producerThreads;
 
     Vector<unsigned> received;
     LockType receivedLock;
     
     for (unsigned i = numConsumers; i--;) {
-        RefPtr<Thread> thread = Thread::create(
+        consumerThreads.append(Thread::create(
             "Consumer thread",
             [&] () {
                 for (;;) {
@@ -123,12 +123,11 @@ void runTest(
                         received.append(result);
                     }
                 }
-            });
-        consumerThreads.append(thread);
+            }));
     }
 
     for (unsigned i = numProducers; i--;) {
-        RefPtr<Thread> thread = Thread::create(
+        producerThreads.append(Thread::create(
             "Producer Thread",
             [&] () {
                 for (unsigned i = 0; i < numMessagesPerProducer; ++i) {
@@ -147,11 +146,10 @@ void runTest(
                     }
                     notify(emptyCondition, mustNotify);
                 }
-            });
-        producerThreads.append(thread);
+            }));
     }
 
-    for (RefPtr<Thread>& thread : producerThreads)
+    for (auto& thread : producerThreads)
         thread->waitForCompletion();
 
     {
@@ -160,8 +158,8 @@ void runTest(
     }
     notifyAll(emptyCondition);
 
-    for (auto& threadIdentifier : consumerThreads)
-        threadIdentifier->waitForCompletion();
+    for (auto& thread : consumerThreads)
+        thread->waitForCompletion();
 
     RELEASE_ASSERT(numProducers * numMessagesPerProducer == received.size());
     std::sort(received.begin(), received.end());

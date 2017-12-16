@@ -71,7 +71,8 @@ bool ResourceHandle::start()
     }
 
     d->m_delegate = adoptRef(new ResourceHandleCurlDelegate(this));
-    return d->m_delegate->start();
+    d->m_delegate->start();
+    return true;
 }
 
 void ResourceHandle::cancel()
