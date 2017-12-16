@@ -80,11 +80,19 @@ void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, con
         return;
     }
 
-    // FIXME: If newestWorker is not null, newestWorker's script url equals job's script url with the exclude fragments
+    // If newestWorker is not null, newestWorker's script url equals job's script url with the exclude fragments
     // flag set, and script's source text is a byte-for-byte match with newestWorker's script resource's source
     // text, then:
-    // - Invoke Resolve Job Promise with job and registration.
-    // - Invoke Finish Job with job and abort these steps.
+    if (newestWorker && equalIgnoringFragmentIdentifier(newestWorker->scriptURL(), job.scriptURL) && result.script == newestWorker->script()) {
+        // FIXME: for non classic scripts, check the script’s module record's [[ECMAScriptCode]].
+
+        // Invoke Resolve Job Promise with job and registration.
+        m_server.resolveRegistrationJob(job, registration->data(), ShouldNotifyWhenResolved::No);
+
+        // Invoke Finish Job with job and abort these steps.
+        finishCurrentJob();
+        return;
+    }
 
     // FIXME: Support the proper worker type (classic vs module)
     m_server.updateWorker(connection, job.identifier(), *registration, job.scriptURL, result.script, WorkerType::Classic);

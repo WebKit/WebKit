@@ -7,7 +7,7 @@
 <script>
 let updatefoundCount = 0;
 
-navigator.serviceWorker.register("resources/empty-worker.js", { }).then(function(registration) {
+navigator.serviceWorker.register("resources/updating-worker.php", { }).then(function(registration) {
     registration.addEventListener("updatefound", function() {
         gc();
         log("updatefound event fired");

@@ -1,7 +1,5 @@
 var status = "no status";
 
-self.skipWaiting();
-
 self.addEventListener("fetch", (event) => {
     if (event.request.url.indexOf("status") !== -1) {
         event.respondWith(new Response(null, {status: 200, statusText: status}));

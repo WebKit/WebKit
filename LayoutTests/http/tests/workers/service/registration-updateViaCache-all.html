@@ -24,8 +24,12 @@ async function test()
         let randomId1 = await getRandomIdFromWorker(worker1);
 
         await registration.update();
-        let worker2 = registration.installing;
-        await waitForState(worker2, "activated");
+        if (registration.installing) {
+            log("FAIL: The new script should have come from the cache and thus be identical, in which case it would not have be reinstalled");
+            finishSWTest();
+        }
+ 
+        let worker2 = registration.active;
         let randomId2 = await getRandomIdFromWorker(worker2);
 
         if (randomId1 === randomId2)

@@ -1,3 +1,29 @@
+2017-12-16  Chris Dumez  <cdumez@apple.com>
+
+        Add optimization when updating a SW registration results in the exact same script
+        https://bugs.webkit.org/show_bug.cgi?id=180891
+
+        Reviewed by Geoffrey Garen.
+
+        * TestExpectations:
+        Skip bad WPT test that is timing out for us and Firefox. I'll file an upstream PR
+        to fix it.
+
+        * http/tests/workers/service/controller-change.html:
+        * http/tests/workers/service/registration-updateViaCache-all-importScripts.html:
+        * http/tests/workers/service/registration-updateViaCache-all.html:
+        * http/tests/workers/service/registration-updateViaCache-imports-importScripts.html:
+        * http/tests/workers/service/registration-updateViaCache-none-importScripts.html:
+        * http/tests/workers/service/registration-updateViaCache-none.html:
+        * http/tests/workers/service/resources/self_registration_update-worker.js: Removed.
+        * http/tests/workers/service/resources/self_registration_update-worker.php: Added.
+        * http/tests/workers/service/resources/service-worker-fetch-worker.js:
+        * http/tests/workers/service/resources/updating-fetch-worker.php: Added.
+        * http/tests/workers/service/resources/updating-worker.php: Added.
+        * http/tests/workers/service/self_registration_update.html:
+        * http/tests/workers/service/service-worker-registration-gc-event.html:
+        Undate WebKit-specific tests to reflect behavior change.
+
 2017-12-16  Youenn Fablet  <youenn@apple.com>
 
         Service worker script fetch request should set the Service-Worker header

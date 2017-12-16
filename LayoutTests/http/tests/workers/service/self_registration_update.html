@@ -6,7 +6,7 @@
 log("* Add basic testing for ServiceWorkerGlobalScope.registration.update()");
 log("");
 
-navigator.serviceWorker.register("resources/self_registration_update-worker.js", { }).then(function(_registration) {
+navigator.serviceWorker.register("resources/self_registration_update-worker.php", { }).then(function(_registration) {
     registration = _registration;
     worker = registration.installing;
 

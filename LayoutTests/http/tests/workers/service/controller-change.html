@@ -23,7 +23,7 @@ function listenForControllerChange(frame)
 
 async function test() {
     let scopeURL = "/";
-    let registration = await registerAndWaitForActive("resources/service-worker-fetch-worker.js", scopeURL);
+    let registration = await registerAndWaitForActive("resources/updating-fetch-worker.php", scopeURL);
     let frame = await withFrame(scopeURL);
     initialController = frame.contentWindow.navigator.serviceWorker.controller;
     if (initialController === null) {

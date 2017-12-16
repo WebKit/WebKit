@@ -1,15 +1,15 @@
 
 PASS register-with-updateViaCache-undefined 
 PASS register-with-updateViaCache-imports 
-FAIL register-with-updateViaCache-all assert_equals: No new service worker expected null but got object "[object ServiceWorker]"
+PASS register-with-updateViaCache-all 
 PASS register-with-updateViaCache-none 
 PASS register-with-updateViaCache-undefined-then-undefined 
 PASS register-with-updateViaCache-undefined-then-imports 
-FAIL register-with-updateViaCache-undefined-then-all assert_equals: No new service worker expected null but got object "[object ServiceWorker]"
+PASS register-with-updateViaCache-undefined-then-all 
 PASS register-with-updateViaCache-undefined-then-none 
 PASS register-with-updateViaCache-imports-then-undefined 
 PASS register-with-updateViaCache-imports-then-imports 
-FAIL register-with-updateViaCache-imports-then-all assert_equals: No new service worker expected null but got object "[object ServiceWorker]"
+PASS register-with-updateViaCache-imports-then-all 
 PASS register-with-updateViaCache-imports-then-none 
 PASS register-with-updateViaCache-all-then-undefined 
 PASS register-with-updateViaCache-all-then-imports 
@@ -17,6 +17,6 @@ PASS register-with-updateViaCache-all-then-all
 PASS register-with-updateViaCache-all-then-none 
 PASS register-with-updateViaCache-none-then-undefined 
 PASS register-with-updateViaCache-none-then-imports 
-FAIL register-with-updateViaCache-none-then-all assert_equals: No new service worker expected null but got object "[object ServiceWorker]"
+PASS register-with-updateViaCache-none-then-all 
 PASS register-with-updateViaCache-none-then-none 
 
