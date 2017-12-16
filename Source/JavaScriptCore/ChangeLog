@@ -1,3 +1,32 @@
+2017-12-16  Keith Miller  <keith_miller@apple.com>
+
+        Indexing should only be computed when the new structure has an indexing header.
+        https://bugs.webkit.org/show_bug.cgi?id=180895
+
+        Reviewed by Saam Barati.
+
+        If we don't have an indexing header then we point the butterfly
+        sizeof(IndexingHeader) past the end of the butterfly. This makes
+        the computation of the offset simpler since it doesn't depend on
+        the indexing headeriness of the butterfly.
+
+        * jit/JITOperations.cpp:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::createInitialUndecided):
+        (JSC::JSObject::createInitialInt32):
+        (JSC::JSObject::createInitialDouble):
+        (JSC::JSObject::createInitialContiguous):
+        (JSC::JSObject::createArrayStorage):
+        (JSC::JSObject::convertUndecidedToArrayStorage):
+        (JSC::JSObject::convertInt32ToArrayStorage):
+        (JSC::JSObject::convertDoubleToArrayStorage):
+        * runtime/JSObject.h:
+        (JSC::JSObject::setButterfly):
+        (JSC::JSObject::nukeStructureAndSetButterfly):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::prepareToPutDirectWithoutTransition):
+        (JSC::JSObject::putDirectInternal):
+
 2017-12-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r225941.

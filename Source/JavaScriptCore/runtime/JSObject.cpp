@@ -1040,7 +1040,7 @@ Butterfly* JSObject::createInitialUndecided(VM& vm, unsigned length)
     StructureID oldStructureID = this->structureID();
     Structure* oldStructure = vm.getStructure(oldStructureID);
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, NonPropertyTransition::AllocateUndecided);
-    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
+    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly, newStructure->indexingType());
     setStructure(vm, newStructure);
     return newButterfly;
 }
@@ -1055,7 +1055,7 @@ ContiguousJSValues JSObject::createInitialInt32(VM& vm, unsigned length)
     StructureID oldStructureID = this->structureID();
     Structure* oldStructure = vm.getStructure(oldStructureID);
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, NonPropertyTransition::AllocateInt32);
-    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
+    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly, newStructure->indexingType());
     setStructure(vm, newStructure);
     return newButterfly->contiguousInt32();
 }
@@ -1070,7 +1070,7 @@ ContiguousDoubles JSObject::createInitialDouble(VM& vm, unsigned length)
     StructureID oldStructureID = this->structureID();
     Structure* oldStructure = vm.getStructure(oldStructureID);
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, NonPropertyTransition::AllocateDouble);
-    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
+    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly, newStructure->indexingType());
     setStructure(vm, newStructure);
     return newButterfly->contiguousDouble();
 }
@@ -1085,7 +1085,7 @@ ContiguousJSValues JSObject::createInitialContiguous(VM& vm, unsigned length)
     StructureID oldStructureID = this->structureID();
     Structure* oldStructure = vm.getStructure(oldStructureID);
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, NonPropertyTransition::AllocateContiguous);
-    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
+    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly, newStructure->indexingType());
     setStructure(vm, newStructure);
     return newButterfly->contiguous();
 }
@@ -1120,7 +1120,7 @@ ArrayStorage* JSObject::createArrayStorage(VM& vm, unsigned length, unsigned vec
     Butterfly* newButterfly = createArrayStorageButterfly(vm, this, oldStructure, length, vectorLength, butterfly());
     ArrayStorage* result = newButterfly->arrayStorage();
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, suggestedArrayStorageTransition());
-    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
+    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly, newStructure->indexingType());
     setStructure(vm, newStructure);
     return result;
 }
@@ -1207,7 +1207,7 @@ ArrayStorage* JSObject::convertUndecidedToArrayStorage(VM& vm, NonPropertyTransi
     StructureID oldStructureID = this->structureID();
     Structure* oldStructure = vm.getStructure(oldStructureID);
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition);
-    nukeStructureAndSetButterfly(vm, oldStructureID, storage->butterfly());
+    nukeStructureAndSetButterfly(vm, oldStructureID, storage->butterfly(), newStructure->indexingType());
     setStructure(vm, newStructure);
     return storage;
 }
@@ -1265,7 +1265,7 @@ ArrayStorage* JSObject::convertInt32ToArrayStorage(VM& vm, NonPropertyTransition
     StructureID oldStructureID = this->structureID();
     Structure* oldStructure = vm.getStructure(oldStructureID);
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition);
-    nukeStructureAndSetButterfly(vm, oldStructureID, newStorage->butterfly());
+    nukeStructureAndSetButterfly(vm, oldStructureID, newStorage->butterfly(), newStructure->indexingType());
     setStructure(vm, newStructure);
     return newStorage;
 }
@@ -1318,7 +1318,7 @@ ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm, NonPropertyTransitio
     StructureID oldStructureID = this->structureID();
     Structure* oldStructure = vm.getStructure(oldStructureID);
     Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition);
-    nukeStructureAndSetButterfly(vm, oldStructureID, newStorage->butterfly());
+    nukeStructureAndSetButterfly(vm, oldStructureID, newStorage->butterfly(), newStructure->indexingType());
     setStructure(vm, newStructure);
     return newStorage;
 }

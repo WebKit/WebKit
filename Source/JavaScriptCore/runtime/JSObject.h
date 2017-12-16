@@ -769,7 +769,7 @@ public:
     
     // Call this if you do need to change the structure, or if you changed something about a structure
     // in-place.
-    void nukeStructureAndSetButterfly(VM&, StructureID, Butterfly*);
+    void nukeStructureAndSetButterfly(VM&, StructureID oldStructureID, Butterfly*, IndexingType newIndexingType);
 
     // Call this only if you are a JSGenericTypedArrayView or are clearing the butterfly.
     void setButterflyWithIndexingMask(VM&, Butterfly*, uint32_t indexingMask);
@@ -1265,7 +1265,7 @@ inline void JSObject::setButterflyWithIndexingMask(VM& vm, Butterfly* butterfly,
 
 inline void JSObject::setButterfly(VM& vm, Butterfly* butterfly)
 {
-    if (LIKELY(!structure(vm)->hijacksIndexingHeader())) {
+    if (hasIndexedProperties(indexingType())) {
         m_butterflyIndexingMask = butterfly->computeIndexingMask();
         ASSERT(m_butterflyIndexingMask >= butterfly->vectorLength());
     }
@@ -1280,9 +1280,9 @@ inline void JSObject::setButterfly(VM& vm, Butterfly* butterfly)
     m_butterfly.set(vm, this, butterfly);
 }
 
-inline void JSObject::nukeStructureAndSetButterfly(VM& vm, StructureID oldStructureID, Butterfly* butterfly)
+inline void JSObject::nukeStructureAndSetButterfly(VM& vm, StructureID oldStructureID, Butterfly* butterfly, IndexingType newIndexingType)
 {
-    if (LIKELY(!vm.getStructure(oldStructureID)->hijacksIndexingHeader())) {
+    if (hasIndexedProperties(newIndexingType)) {
         m_butterflyIndexingMask = butterfly->computeIndexingMask();
         ASSERT(m_butterflyIndexingMask >= butterfly->vectorLength());
     }
