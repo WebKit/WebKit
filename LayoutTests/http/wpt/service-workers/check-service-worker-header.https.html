@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<title>Service Worker Fetch Event</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+promise_test(async (test) => {
+    return navigator.serviceWorker.register("check-service-worker-header.py", { scope: "/" })
+}, "Testing loading service worker script with the correct Service-Worker header");
+</script>

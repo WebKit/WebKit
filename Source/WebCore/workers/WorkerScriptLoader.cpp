@@ -73,15 +73,14 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
     WorkerThreadableLoader::loadResourceSynchronously(workerGlobalScope, WTFMove(*request), *this, options);
 }
 
-void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, FetchOptions::Mode mode, FetchOptions::Cache cachePolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, const String& initiatorIdentifier, WorkerScriptLoaderClient* client)
+void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecutionContext, ResourceRequest&& scriptRequest, FetchOptions::Mode mode, FetchOptions::Cache cachePolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, WorkerScriptLoaderClient& client)
 {
-    ASSERT(client);
-    ASSERT(scriptExecutionContext);
+    m_client = &client;
+    m_url = scriptRequest.url();
 
-    m_client = client;
-    m_url = url;
+    ASSERT(scriptRequest.httpMethod() == "GET");
 
-    std::unique_ptr<ResourceRequest> request(createResourceRequest(initiatorIdentifier));
+    auto request = std::make_unique<ResourceRequest>(WTFMove(scriptRequest));
     if (!request)
         return;
 
@@ -97,12 +96,12 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecut
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
 #if ENABLE(SERVICE_WORKER)
     options.serviceWorkersMode = m_client->isServiceWorkerClient() ? ServiceWorkersMode::None : ServiceWorkersMode::All;
-    if (auto* activeServiceWorker = scriptExecutionContext->activeServiceWorker())
+    if (auto* activeServiceWorker = scriptExecutionContext.activeServiceWorker())
         options.serviceWorkerIdentifier = activeServiceWorker->identifier();
 #endif
     // During create, callbacks may happen which remove the last reference to this object.
     Ref<WorkerScriptLoader> protectedThis(*this);
-    m_threadableLoader = ThreadableLoader::create(*scriptExecutionContext, *this, WTFMove(*request), options);
+    m_threadableLoader = ThreadableLoader::create(scriptExecutionContext, *this, WTFMove(*request), options);
 }
 
 const URL& WorkerScriptLoader::responseURL() const

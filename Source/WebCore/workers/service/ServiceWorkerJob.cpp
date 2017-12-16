@@ -92,7 +92,12 @@ void ServiceWorkerJob::fetchScriptWithContext(ScriptExecutionContext& context, F
 
     // FIXME: WorkerScriptLoader is the wrong loader class to use here, but there's nothing else better right now.
     m_scriptLoader = WorkerScriptLoader::create();
-    m_scriptLoader->loadAsynchronously(&context, m_jobData.scriptURL, FetchOptions::Mode::SameOrigin, cachePolicy, ContentSecurityPolicyEnforcement::DoNotEnforce, "serviceWorkerScriptLoad:", this);
+
+    ResourceRequest request { m_jobData.scriptURL };
+    request.setInitiatorIdentifier("serviceWorkerScriptLoad:");
+    request.addHTTPHeaderField(ASCIILiteral("Service-Worker"), ASCIILiteral("script"));
+
+    m_scriptLoader->loadAsynchronously(context, WTFMove(request), FetchOptions::Mode::SameOrigin, cachePolicy, ContentSecurityPolicyEnforcement::DoNotEnforce, *this);
 }
 
 void ServiceWorkerJob::didReceiveResponse(unsigned long, const ResourceResponse& response)
