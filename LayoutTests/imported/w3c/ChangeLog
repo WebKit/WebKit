@@ -1,3 +1,18 @@
+2017-12-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [CredentialManagement] Import Credential Management Web Platform Tests
+        https://bugs.webkit.org/show_bug.cgi?id=172015
+        <rdar://problem/36083577>
+
+        Reviewed by Youenn Fablet.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/credential-management/credentialscontainer-create-basics.https-expected.txt: Added.
+        * web-platform-tests/credential-management/credentialscontainer-create-basics.https.html: Added.
+        * web-platform-tests/credential-management/idl.https-expected.txt: Added.
+        * web-platform-tests/credential-management/idl.https.html: Added.
+        * web-platform-tests/credential-management/w3c-import.log: Added.
+
 2017-12-16  Chris Dumez  <cdumez@apple.com>
 
         Add optimization when updating a SW registration results in the exact same script

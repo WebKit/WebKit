@@ -45,7 +45,7 @@
     "web-platform-tests/cookies": "skip", 
     "web-platform-tests/core-aam": "skip", 
     "web-platform-tests/cors": "import", 
-    "web-platform-tests/credential-management": "skip", 
+    "web-platform-tests/credential-management": "import", 
     "web-platform-tests/css": "skip", 
     "web-platform-tests/css-backgrounds": "skip", 
     "web-platform-tests/css-cascade": "skip", 
