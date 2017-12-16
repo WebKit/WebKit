@@ -503,15 +503,10 @@ function readableByteStreamControllerFillDescriptorFromQueue(controller, pullInt
         // Copy appropriate part of pullIntoDescriptor.buffer to headOfQueue.buffer.
         // Remark: this implementation is not completely aligned on the definition of CopyDataBlockBytes
         // operation of ECMAScript (the case of Shared Data Block is not considered here, but it doesn't seem to be an issue).
-        let fromIndex = pullIntoDescriptor.byteOffset + pullIntoDescriptor.bytesFilled;
-        let count = bytesToCopy;
-        let toIndex = headOfQueue.byteOffset;
-        while (count > 0) {
-            headOfQueue.buffer[toIndex] = pullIntoDescriptor.buffer[fromIndex];
-            toIndex++;
-            fromIndex++;
-            count--;
-        }
+        const destStart = pullIntoDescriptor.byteOffset + pullIntoDescriptor.bytesFilled;
+        // FIXME: As indicated in comments of bug 172717, access to set is not safe. However, using prototype.@set.@call does
+        // not work (@set is undefined). A safe way to do that is needed.
+        new @Uint8Array(pullIntoDescriptor.buffer).set(new @Uint8Array(headOfQueue.buffer, headOfQueue.byteOffset, bytesToCopy), destStart);
 
         if (headOfQueue.byteLength === bytesToCopy)
             controller.@queue.content.@shift();
