@@ -1125,7 +1125,8 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
             Vector<String> m_hostNames;
         };
 
-        State::deleteData(*callbackAggregator, plugins(), WTFMove(hostNames));
+        if (!hostNames.isEmpty())
+            State::deleteData(*callbackAggregator, plugins(), WTFMove(hostNames));
     }
 #endif
 

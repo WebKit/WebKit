@@ -29,6 +29,7 @@
 #import "TestNavigationDelegate.h"
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKHTTPCookieStore.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
@@ -70,6 +71,10 @@ static void runTestWithWebsiteDataStore(WKWebsiteDataStore* dataStore)
 
     TestWebKitAPI::Util::run(&gotFlag);
     gotFlag = false;
+
+    // Triggering removeData when we don't have plugin data to remove should not trigger the plugin process to launch.
+    id pool = [WKProcessPool _sharedProcessPool];
+    EXPECT_EQ([pool _pluginProcessCount], static_cast<size_t>(0));
 
     globalCookieStore = dataStore.httpCookieStore;
     RetainPtr<CookieObserver> observer1 = adoptNS([[CookieObserver alloc] init]);

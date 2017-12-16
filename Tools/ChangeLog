@@ -1,3 +1,15 @@
+2017-12-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Plugin processes are repeatedly spun up to do nothing
+        https://bugs.webkit.org/show_bug.cgi?id=180885
+        <rdar://problem/36082564>
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        (runTestWithWebsiteDataStore): Check that deleting website data did not
+        trigger any plugin processes to start up.
+
 2017-12-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove unnecessary boolean result of start() functions
