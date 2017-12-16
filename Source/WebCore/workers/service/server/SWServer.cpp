@@ -108,7 +108,10 @@ SWServerRegistration* SWServer::getRegistration(const ServiceWorkerRegistrationK
 
 void SWServer::registrationStoreImportComplete()
 {
+    ASSERT(!m_importCompleted);
+    m_importCompleted = true;
     m_originStore->importComplete();
+    performGetOriginsWithRegistrationsCallbacks();
 }
 
 void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data)
@@ -228,7 +231,7 @@ void SWServer::Connection::syncTerminateWorker(ServiceWorkerIdentifier identifie
         m_server.syncTerminateWorker(*worker);
 }
 
-    SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, String&& registrationDatabaseDirectory, PAL::SessionID sessionID)
+SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, String&& registrationDatabaseDirectory, PAL::SessionID sessionID)
     : m_originStore(WTFMove(originStore))
     , m_registrationStore(*this, WTFMove(registrationDatabaseDirectory))
     , m_sessionID(sessionID)
@@ -766,6 +769,33 @@ void SWServer::Connection::resolveRegistrationReadyRequests(SWServerRegistration
         registrationReady(request.identifier, registration.data());
         return true;
     });
+}
+
+void SWServer::getOriginsWithRegistrations(WTF::Function<void(const HashSet<SecurityOriginData>&)> callback)
+{
+    m_getOriginsWithRegistrationsCallbacks.append(WTFMove(callback));
+
+    if (m_importCompleted)
+        performGetOriginsWithRegistrationsCallbacks();
+}
+
+void SWServer::performGetOriginsWithRegistrationsCallbacks()
+{
+    ASSERT(isMainThread());
+    ASSERT(m_importCompleted);
+
+    if (m_getOriginsWithRegistrationsCallbacks.isEmpty())
+        return;
+
+    HashSet<SecurityOriginData> originsWithRegistrations;
+    for (auto& key : m_registrations.keys()) {
+        originsWithRegistrations.add(key.topOrigin());
+        originsWithRegistrations.add(SecurityOriginData { key.scope().protocol().toString(), key.scope().host(), key.scope().port() });
+    }
+
+    auto callbacks = WTFMove(m_getOriginsWithRegistrationsCallbacks);
+    for (auto& callback : callbacks)
+        callback(originsWithRegistrations);
 }
 
 } // namespace WebCore

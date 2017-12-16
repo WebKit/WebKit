@@ -174,6 +174,8 @@ public:
     void addRegistrationFromStore(ServiceWorkerContextData&&);
     void registrationStoreImportComplete();
 
+    WEBCORE_EXPORT void getOriginsWithRegistrations(WTF::Function<void(const HashSet<SecurityOriginData>&)>);
+
 private:
     void registerConnection(Connection&);
     void unregisterConnection(Connection&);
@@ -196,6 +198,8 @@ private:
 
     SWServerRegistration* registrationFromServiceWorkerIdentifier(ServiceWorkerIdentifier);
     void forEachClientForOrigin(const ClientOrigin&, const WTF::Function<void(ServiceWorkerClientData&)>&);
+
+    void performGetOriginsWithRegistrationsCallbacks();
 
     enum TerminationMode {
         Synchronous,
@@ -231,6 +235,8 @@ private:
     Deque<ServiceWorkerContextData> m_pendingContextDatas;
     HashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>> m_serviceWorkerRunRequests;
     PAL::SessionID m_sessionID;
+    bool m_importCompleted { false };
+    Vector<WTF::Function<void(const HashSet<SecurityOriginData>&)>> m_getOriginsWithRegistrationsCallbacks;
 };
 
 } // namespace WebCore

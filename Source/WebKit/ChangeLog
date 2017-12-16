@@ -1,3 +1,13 @@
+2017-12-16  Brady Eidson  <beidson@apple.com>
+
+        Implement getting ServiceWorker registrations for the WKWebsiteDataStore API
+        https://bugs.webkit.org/show_bug.cgi?id=180886
+
+        Reviewed by Chris Dumez.
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::fetchWebsiteData):
+
 2017-12-16  Brent Fulgham  <bfulgham@apple.com>
 
         Plugin processes are repeatedly spun up to do nothing

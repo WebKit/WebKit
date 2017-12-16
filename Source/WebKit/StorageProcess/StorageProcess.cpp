@@ -265,33 +265,35 @@ void StorageProcess::createStorageToWebProcessConnection(bool isServiceWorkerPro
 
 void StorageProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, uint64_t callbackID)
 {
-    auto completionHandler = [this, callbackID](const WebsiteData& websiteData) {
-        parentProcessConnection()->send(Messages::StorageProcessProxy::DidFetchWebsiteData(callbackID, websiteData), 0);
-    };
+    auto websiteData = std::make_unique<WebsiteData>();
+    WebsiteData* rawWebsiteData = websiteData.get();
+    auto callbackAggregator = CallbackAggregator::create([this, websiteData = WTFMove(websiteData), callbackID]() {
+        parentProcessConnection()->send(Messages::StorageProcessProxy::DidFetchWebsiteData(callbackID, *websiteData), 0);
+    });
 
+    String path;
 #if ENABLE(SERVICE_WORKER)
-    if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations))
-        notImplemented();
-#endif
-
-#if ENABLE(INDEXED_DATABASE)
-    String path = m_idbDatabasePaths.get(sessionID);
-    if (!path.isEmpty() && websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
-        // FIXME: Pick the right database store based on the session ID.
-        postStorageTask(CrossThreadTask([this, completionHandler = WTFMove(completionHandler), path = WTFMove(path)]() mutable {
-            RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), securityOrigins = indexedDatabaseOrigins(path)] {
-                WebsiteData websiteData;
-                for (const auto& securityOrigin : securityOrigins)
-                    websiteData.entries.append({ securityOrigin, WebsiteDataType::IndexedDBDatabases, 0 });
-
-                completionHandler(websiteData);
-            });
-        }));
-        return;
+    path = m_swDatabasePaths.get(sessionID);
+    if (!path.isEmpty() && websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations)) {
+        swServerForSession(sessionID).getOriginsWithRegistrations([rawWebsiteData, callbackAggregator = callbackAggregator.copyRef()](const HashSet<SecurityOriginData>& origins) mutable {
+            for (auto& origin : origins)
+                rawWebsiteData->entries.append({ origin, WebsiteDataType::ServiceWorkerRegistrations, 0 });
+        });
     }
 #endif
 
-    completionHandler({ });
+#if ENABLE(INDEXED_DATABASE)
+    path = m_idbDatabasePaths.get(sessionID);
+    if (!path.isEmpty() && websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
+        // FIXME: Pick the right database store based on the session ID.
+        postStorageTask(CrossThreadTask([this, callbackAggregator = callbackAggregator.copyRef(), path = WTFMove(path), rawWebsiteData]() mutable {
+            RunLoop::main().dispatch([callbackAggregator = WTFMove(callbackAggregator), rawWebsiteData, securityOrigins = indexedDatabaseOrigins(path)] {
+                for (const auto& securityOrigin : securityOrigins)
+                    rawWebsiteData->entries.append({ securityOrigin, WebsiteDataType::IndexedDBDatabases, 0 });
+            });
+        }));
+    }
+#endif
 }
 
 void StorageProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
