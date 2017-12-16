@@ -30,7 +30,6 @@
 #include "CanvasTextBaseline.h"
 #include "FontCascade.h"
 #include "FontSelectorClient.h"
-#include <memory>
 
 namespace WebCore {
 
@@ -38,8 +37,7 @@ class TextMetrics;
 
 class CanvasRenderingContext2D final : public CanvasRenderingContext2DBase {
 public:
-    static std::unique_ptr<CanvasRenderingContext2D> create(CanvasBase&, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
-
+    CanvasRenderingContext2D(CanvasBase&, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
     virtual ~CanvasRenderingContext2D();
 
     HTMLCanvasElement& canvas() const { return downcast<HTMLCanvasElement>(canvasBase()); }
@@ -68,8 +66,6 @@ public:
     bool is2d() const override { return true; }
 
 private:
-    CanvasRenderingContext2D(CanvasBase&, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
-
     // The relationship between FontCascade and CanvasRenderingContext2D::FontProxy must hold certain invariants.
     // Therefore, all font operations must pass through the State.
     const FontProxy& fontProxy();

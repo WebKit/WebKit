@@ -25,15 +25,17 @@
 
 WI.Canvas = class Canvas extends WI.Object
 {
-    constructor(identifier, contextType, {domNode, cssCanvasName, contextAttributes, memoryCost, backtrace} = {})
+    constructor(identifier, contextType, frame, {domNode, cssCanvasName, contextAttributes, memoryCost, backtrace} = {})
     {
         super();
 
         console.assert(identifier);
         console.assert(contextType);
+        console.assert(frame instanceof WI.Frame);
 
         this._identifier = identifier;
         this._contextType = contextType;
+        this._frame = frame;
         this._domNode = domNode || null;
         this._cssCanvasName = cssCanvasName || "";
         this._contextAttributes = contextAttributes || {};
@@ -75,7 +77,8 @@ WI.Canvas = class Canvas extends WI.Object
             console.error("Invalid canvas context type", payload.contextType);
         }
 
-        return new WI.Canvas(payload.canvasId, contextType, {
+        let frame = WI.frameResourceManager.frameForIdentifier(payload.frameId);
+        return new WI.Canvas(payload.canvasId, contextType, frame, {
             domNode: payload.nodeId ? WI.domTreeManager.nodeForId(payload.nodeId) : null,
             cssCanvasName: payload.cssCanvasName,
             contextAttributes: payload.contextAttributes,
@@ -111,6 +114,7 @@ WI.Canvas = class Canvas extends WI.Object
 
     get identifier() { return this._identifier; }
     get contextType() { return this._contextType; }
+    get frame() { return this._frame; }
     get cssCanvasName() { return this._cssCanvasName; }
     get contextAttributes() { return this._contextAttributes; }
     get extensions() { return this._extensions; }
@@ -259,6 +263,8 @@ WI.Canvas = class Canvas extends WI.Object
 
     saveIdentityToCookie(cookie)
     {
+        cookie[WI.Canvas.FrameURLCookieKey] = this._frame.url.hash;
+
         if (this._cssCanvasName)
             cookie[WI.Canvas.CSSCanvasNameCookieKey] = this._cssCanvasName;
         else if (this._domNode)

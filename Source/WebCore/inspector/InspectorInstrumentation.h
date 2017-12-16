@@ -225,7 +225,7 @@ public:
     static void consoleTimeStamp(Frame&, Ref<Inspector::ScriptArguments>&&);
     static void startProfiling(Page&, JSC::ExecState*, const String& title);
     static void stopProfiling(Page&, JSC::ExecState*, const String& title);
-    static void consoleStartRecordingCanvas(CanvasRenderingContext&, JSC::ExecState&, JSC::JSObject* options);
+    static void consoleStartRecordingCanvas(HTMLCanvasElement&, JSC::ExecState&, JSC::JSObject* options);
 
     static void didRequestAnimationFrame(Document&, int callbackId);
     static void didCancelAnimationFrame(Document&, int callbackId);
@@ -252,12 +252,12 @@ public:
     static void didHandleMemoryPressure(Page&, Critical);
 #endif
 
+    static void didCreateCSSCanvas(HTMLCanvasElement&, const String&);
     static void didChangeCSSCanvasClientNodes(HTMLCanvasElement&);
-    static void didCreateCanvasRenderingContext(CanvasRenderingContext&);
-    static void willDestroyCanvasRenderingContext(CanvasRenderingContext&);
-    static void didChangeCanvasMemory(CanvasRenderingContext&);
+    static void didCreateCanvasRenderingContext(HTMLCanvasElement&);
+    static void didChangeCanvasMemory(HTMLCanvasElement&);
     static void recordCanvasAction(CanvasRenderingContext&, const String&, Vector<RecordCanvasActionVariant>&& = { });
-    static void didFinishRecordingCanvasFrame(CanvasRenderingContext&, bool forceDispatch = false);
+    static void didFinishRecordingCanvasFrame(HTMLCanvasElement&, bool forceDispatch = false);
 #if ENABLE(WEBGL)
     static void didEnableExtension(WebGLRenderingContextBase&, const String&);
     static void didCreateProgram(WebGLRenderingContextBase&, WebGLProgram&);
@@ -393,7 +393,7 @@ private:
     static void consoleTimeStampImpl(InstrumentingAgents&, Frame&, Ref<Inspector::ScriptArguments>&&);
     static void startProfilingImpl(InstrumentingAgents&, JSC::ExecState*, const String& title);
     static void stopProfilingImpl(InstrumentingAgents&, JSC::ExecState*, const String& title);
-    static void consoleStartRecordingCanvasImpl(InstrumentingAgents&, CanvasRenderingContext&, JSC::ExecState&, JSC::JSObject* options);
+    static void consoleStartRecordingCanvasImpl(InstrumentingAgents&, HTMLCanvasElement&, JSC::ExecState&, JSC::JSObject* options);
 
     static void didRequestAnimationFrameImpl(InstrumentingAgents&, int callbackId, Document&);
     static void didCancelAnimationFrameImpl(InstrumentingAgents&, int callbackId, Document&);
@@ -423,12 +423,12 @@ private:
     static void networkStateChangedImpl(InstrumentingAgents&);
     static void updateApplicationCacheStatusImpl(InstrumentingAgents&, Frame&);
 
+    static void didCreateCSSCanvasImpl(InstrumentingAgents&, HTMLCanvasElement&, const String&);
     static void didChangeCSSCanvasClientNodesImpl(InstrumentingAgents&, HTMLCanvasElement&);
-    static void didCreateCanvasRenderingContextImpl(InstrumentingAgents&, CanvasRenderingContext&);
-    static void willDestroyCanvasRenderingContextImpl(InstrumentingAgents&, CanvasRenderingContext&);
-    static void didChangeCanvasMemoryImpl(InstrumentingAgents&, CanvasRenderingContext&);
+    static void didCreateCanvasRenderingContextImpl(InstrumentingAgents&, HTMLCanvasElement&);
+    static void didChangeCanvasMemoryImpl(InstrumentingAgents&, HTMLCanvasElement&);
     static void recordCanvasActionImpl(InstrumentingAgents&, CanvasRenderingContext&, const String&, Vector<RecordCanvasActionVariant>&& = { });
-    static void didFinishRecordingCanvasFrameImpl(InstrumentingAgents&, CanvasRenderingContext&, bool forceDispatch = false);
+    static void didFinishRecordingCanvasFrameImpl(InstrumentingAgents&, HTMLCanvasElement&, bool forceDispatch = false);
 #if ENABLE(WEBGL)
     static void didEnableExtensionImpl(InstrumentingAgents&, WebGLRenderingContextBase&, const String&);
     static void didCreateProgramImpl(InstrumentingAgents&, WebGLRenderingContextBase&, WebGLProgram&);
@@ -1201,6 +1201,12 @@ inline void InspectorInstrumentation::didHandleMemoryPressure(Page& page, Critic
 }
 #endif
 
+inline void InspectorInstrumentation::didCreateCSSCanvas(HTMLCanvasElement& canvasElement, const String& name)
+{
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasElement.document()))
+        didCreateCSSCanvasImpl(*instrumentingAgents, canvasElement, name);
+}
+
 inline void InspectorInstrumentation::didChangeCSSCanvasClientNodes(HTMLCanvasElement& canvasElement)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
@@ -1208,65 +1214,92 @@ inline void InspectorInstrumentation::didChangeCSSCanvasClientNodes(HTMLCanvasEl
         didChangeCSSCanvasClientNodesImpl(*instrumentingAgents, canvasElement);
 }
 
-inline void InspectorInstrumentation::didCreateCanvasRenderingContext(CanvasRenderingContext& context)
+inline void InspectorInstrumentation::didCreateCanvasRenderingContext(HTMLCanvasElement& canvasElement)
 {
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context.canvasBase().scriptExecutionContext()))
-        didCreateCanvasRenderingContextImpl(*instrumentingAgents, context);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasElement.document()))
+        didCreateCanvasRenderingContextImpl(*instrumentingAgents, canvasElement);
 }
 
-inline void InspectorInstrumentation::willDestroyCanvasRenderingContext(CanvasRenderingContext& context)
-{
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context.canvasBase().scriptExecutionContext()))
-        willDestroyCanvasRenderingContextImpl(*instrumentingAgents, context);
-}
-
-inline void InspectorInstrumentation::didChangeCanvasMemory(CanvasRenderingContext& context)
+inline void InspectorInstrumentation::didChangeCanvasMemory(HTMLCanvasElement& canvasElement)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context.canvasBase().scriptExecutionContext()))
-        didChangeCanvasMemoryImpl(*instrumentingAgents, context);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasElement.document()))
+        didChangeCanvasMemoryImpl(*instrumentingAgents, canvasElement);
 }
 
-inline void InspectorInstrumentation::recordCanvasAction(CanvasRenderingContext& context, const String& name, Vector<RecordCanvasActionVariant>&& parameters)
+inline void InspectorInstrumentation::recordCanvasAction(CanvasRenderingContext& canvasRenderingContext, const String& name, Vector<RecordCanvasActionVariant>&& parameters)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context.canvasBase().scriptExecutionContext()))
-        recordCanvasActionImpl(*instrumentingAgents, context, name, WTFMove(parameters));
+    auto& canvasBase = canvasRenderingContext.canvasBase();
+    auto* canvasElement = is<HTMLCanvasElement>(canvasBase) ? &downcast<HTMLCanvasElement>(canvasBase) : nullptr;
+    if (canvasElement) {
+        if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasElement->document()))
+            recordCanvasActionImpl(*instrumentingAgents, canvasRenderingContext, name, WTFMove(parameters));
+    }
 }
 
-inline void InspectorInstrumentation::didFinishRecordingCanvasFrame(CanvasRenderingContext& context, bool forceDispatch)
+inline void InspectorInstrumentation::didFinishRecordingCanvasFrame(HTMLCanvasElement& canvasElement, bool forceDispatch)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context.canvasBase().scriptExecutionContext()))
-        didFinishRecordingCanvasFrameImpl(*instrumentingAgents, context, forceDispatch);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasElement.document()))
+        didFinishRecordingCanvasFrameImpl(*instrumentingAgents, canvasElement, forceDispatch);
 }
 
 #if ENABLE(WEBGL)
-inline void InspectorInstrumentation::didEnableExtension(WebGLRenderingContextBase& contextWebGLBase, const String& extension)
+inline void InspectorInstrumentation::didEnableExtension(WebGLRenderingContextBase& context, const String& extension)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(contextWebGLBase.canvasBase().scriptExecutionContext()))
-        didEnableExtensionImpl(*instrumentingAgents, contextWebGLBase, extension);
+    auto canvas = context.canvas();
+    WTF::switchOn(canvas,
+        [&] (const RefPtr<HTMLCanvasElement>& htmlCanvasElement) {
+            if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(htmlCanvasElement->document()))
+                didEnableExtensionImpl(*instrumentingAgents, context, extension);
+        },
+        [&] (const RefPtr<OffscreenCanvas>&) {
+        }
+    );
 }
 
-inline void InspectorInstrumentation::didCreateProgram(WebGLRenderingContextBase& contextWebGLBase, WebGLProgram& program)
+inline void InspectorInstrumentation::didCreateProgram(WebGLRenderingContextBase& context, WebGLProgram& program)
 {
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(contextWebGLBase.canvasBase().scriptExecutionContext()))
-        didCreateProgramImpl(*instrumentingAgents, contextWebGLBase, program);
+    auto canvas = context.canvas();
+    WTF::switchOn(canvas,
+        [&] (const RefPtr<HTMLCanvasElement>& htmlCanvasElement) {
+            if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(htmlCanvasElement->document()))
+                didCreateProgramImpl(*instrumentingAgents, context, program);
+        },
+        [&] (const RefPtr<OffscreenCanvas>&) {
+        }
+    );
 }
 
-inline void InspectorInstrumentation::willDeleteProgram(WebGLRenderingContextBase& contextWebGLBase, WebGLProgram& program)
+inline void InspectorInstrumentation::willDeleteProgram(WebGLRenderingContextBase& context, WebGLProgram& program)
 {
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(contextWebGLBase.canvasBase().scriptExecutionContext()))
-        willDeleteProgramImpl(*instrumentingAgents, program);
+    auto canvas = context.canvas();
+    WTF::switchOn(canvas,
+        [&] (const RefPtr<HTMLCanvasElement>& htmlCanvasElement) {
+            if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(htmlCanvasElement->document()))
+                willDeleteProgramImpl(*instrumentingAgents, program);
+        },
+        [&] (const RefPtr<OffscreenCanvas>&) {
+        }
+    );
 }
 
-inline bool InspectorInstrumentation::isShaderProgramDisabled(WebGLRenderingContextBase& contextWebGLBase, WebGLProgram& program)
+inline bool InspectorInstrumentation::isShaderProgramDisabled(WebGLRenderingContextBase& context, WebGLProgram& program)
 {
     FAST_RETURN_IF_NO_FRONTENDS(false);
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(contextWebGLBase.canvasBase().scriptExecutionContext()))
-        return isShaderProgramDisabledImpl(*instrumentingAgents, program);
-    return false;
+    auto canvas = context.canvas();
+    return WTF::switchOn(canvas,
+        [&] (const RefPtr<HTMLCanvasElement>& htmlCanvasElement) {
+            if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(htmlCanvasElement->document()))
+                return isShaderProgramDisabledImpl(*instrumentingAgents, program);
+            return false;
+        },
+        [&] (const RefPtr<OffscreenCanvas>&) {
+            return false;
+        }
+    );
 }
 #endif
 
@@ -1349,11 +1382,11 @@ inline void InspectorInstrumentation::stopProfiling(Page& page, JSC::ExecState* 
     stopProfilingImpl(instrumentingAgentsForPage(page), exec, title);
 }
 
-inline void InspectorInstrumentation::consoleStartRecordingCanvas(CanvasRenderingContext& context, JSC::ExecState& exec, JSC::JSObject* options)
+inline void InspectorInstrumentation::consoleStartRecordingCanvas(HTMLCanvasElement& canvasElement, JSC::ExecState& exec, JSC::JSObject* options)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context.canvasBase().scriptExecutionContext()))
-        consoleStartRecordingCanvasImpl(*instrumentingAgents, context, exec, options);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasElement.document()))
+        consoleStartRecordingCanvasImpl(*instrumentingAgents, canvasElement, exec, options);
 }
 
 inline void InspectorInstrumentation::didRequestAnimationFrame(Document& document, int callbackId)

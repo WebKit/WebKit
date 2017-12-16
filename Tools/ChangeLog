@@ -1,3 +1,17 @@
+2017-12-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r225941.
+
+        This change introduced LayoutTest crashes and assertion
+        failures.
+
+        Reverted changeset:
+
+        "Web Inspector: replace HTMLCanvasElement with
+        CanvasRenderingContext for instrumentation logic"
+        https://bugs.webkit.org/show_bug.cgi?id=180770
+        https://trac.webkit.org/changeset/225941
+
 2017-12-15  Alex Christensen  <achristensen@webkit.org>
 
         Introduce SPI _WKWebsitePolicies.websiteDataStore

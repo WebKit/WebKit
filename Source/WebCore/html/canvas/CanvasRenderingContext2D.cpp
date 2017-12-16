@@ -42,7 +42,6 @@
 #include "ImageBitmap.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
-#include "InspectorInstrumentation.h"
 #include "Path2D.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
@@ -67,15 +66,6 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-
-std::unique_ptr<CanvasRenderingContext2D> CanvasRenderingContext2D::create(CanvasBase& canvas, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode)
-{
-    auto renderingContext = std::unique_ptr<CanvasRenderingContext2D>(new CanvasRenderingContext2D(canvas, usesCSSCompatibilityParseMode, usesDashboardCompatibilityMode));
-
-    InspectorInstrumentation::didCreateCanvasRenderingContext(*renderingContext);
-
-    return renderingContext;
-}
 
 CanvasRenderingContext2D::CanvasRenderingContext2D(CanvasBase& canvas, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode)
     : CanvasRenderingContext2DBase(canvas, usesCSSCompatibilityParseMode, usesDashboardCompatibilityMode)

@@ -39,7 +39,6 @@ namespace WebCore {
 
 class CanvasGradient;
 class CanvasPattern;
-class CanvasRenderingContext;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
@@ -51,12 +50,11 @@ typedef String ErrorString;
 
 class InspectorCanvas final : public RefCounted<InspectorCanvas> {
 public:
-    static Ref<InspectorCanvas> create(CanvasRenderingContext&);
+    static Ref<InspectorCanvas> create(HTMLCanvasElement&, const String& cssCanvasName);
 
     const String& identifier() { return m_identifier; }
-    CanvasRenderingContext& context() { return m_context; }
-
-    HTMLCanvasElement* canvasElement();
+    HTMLCanvasElement& canvas() { return m_canvas; }
+    const String& cssCanvasName() { return m_cssCanvasName; }
 
     void resetRecordingData();
     bool hasRecordingData() const;
@@ -85,7 +83,7 @@ public:
     ~InspectorCanvas();
 
 private:
-    InspectorCanvas(CanvasRenderingContext&);
+    InspectorCanvas(HTMLCanvasElement&, const String& cssCanvasName);
     void appendActionSnapshotIfNeeded();
     String getCanvasContentAsDataURL();
 
@@ -111,7 +109,8 @@ private:
     RefPtr<JSON::ArrayOf<JSON::Value>> buildArrayForImageData(const ImageData&);
 
     String m_identifier;
-    CanvasRenderingContext& m_context;
+    HTMLCanvasElement& m_canvas;
+    String m_cssCanvasName;
 
     RefPtr<Inspector::Protocol::Recording::InitialState> m_initialState;
     RefPtr<JSON::ArrayOf<Inspector::Protocol::Recording::Frame>> m_frames;

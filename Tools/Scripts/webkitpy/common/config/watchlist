@@ -190,7 +190,9 @@
                         r"|Source/WebInspectorUI/UserInterface/\w*/Recording.*\.js"
                         # Canvas
                         r"|Source/WebCore/inspector/InspectorCanvas.*"
-                        r"|Source/WebCore/html/canvas/Canvas.*",
+                        r"|Source/WebCore/html/canvas/Canvas.*\.idl"
+                        r"|Source/WebCore/html/canvas/WebGLRenderingContext\.idl"
+                        r"|Source/WebCore/html/canvas/WebGLRenderingContextBase\.idl",
         },
         "WebInspectorUIImages": {
             "filename": r"Source/WebInspectorUI/UserInterface/Images",

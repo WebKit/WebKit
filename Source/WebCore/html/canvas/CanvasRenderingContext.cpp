@@ -32,7 +32,6 @@
 #include "HTMLVideoElement.h"
 #include "Image.h"
 #include "ImageBitmap.h"
-#include "InspectorInstrumentation.h"
 #include "OffscreenCanvas.h"
 #include "URL.h"
 #include "SecurityOrigin.h"
@@ -42,11 +41,6 @@ namespace WebCore {
 CanvasRenderingContext::CanvasRenderingContext(CanvasBase& canvas)
     : m_canvas(canvas)
 {
-}
-
-CanvasRenderingContext::~CanvasRenderingContext()
-{
-    InspectorInstrumentation::willDestroyCanvasRenderingContext(*this);
 }
 
 void CanvasRenderingContext::ref()

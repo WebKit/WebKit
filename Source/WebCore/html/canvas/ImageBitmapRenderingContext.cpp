@@ -28,7 +28,6 @@
 
 #include "ImageBitmap.h"
 #include "ImageBuffer.h"
-#include "InspectorInstrumentation.h"
 
 namespace WebCore {
 
@@ -37,15 +36,6 @@ static RenderingMode bufferRenderingMode = Accelerated;
 #else
 static RenderingMode bufferRenderingMode = Unaccelerated;
 #endif
-
-std::unique_ptr<ImageBitmapRenderingContext> ImageBitmapRenderingContext::create(CanvasBase& canvas, ImageBitmapRenderingContextSettings&& settings)
-{
-    auto renderingContext = std::unique_ptr<ImageBitmapRenderingContext>(new ImageBitmapRenderingContext(canvas, WTFMove(settings)));
-
-    InspectorInstrumentation::didCreateCanvasRenderingContext(*renderingContext);
-
-    return renderingContext;
-}
 
 ImageBitmapRenderingContext::ImageBitmapRenderingContext(CanvasBase& canvas, ImageBitmapRenderingContextSettings&& settings)
     : CanvasRenderingContext(canvas)

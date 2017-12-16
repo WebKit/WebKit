@@ -30,10 +30,10 @@
 #include "CachedImage.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
-#include "CanvasRenderingContext.h"
 #include "CanvasRenderingContext2D.h"
 #include "Document.h"
 #include "FloatPoint.h"
+#include "Frame.h"
 #include "Gradient.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
@@ -44,6 +44,7 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "InspectorDOMAgent.h"
+#include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSCanvasDirection.h"
 #include "JSCanvasFillRule.h"
@@ -77,27 +78,21 @@ namespace WebCore {
 
 using namespace Inspector;
 
-Ref<InspectorCanvas> InspectorCanvas::create(CanvasRenderingContext& context)
+Ref<InspectorCanvas> InspectorCanvas::create(HTMLCanvasElement& canvas, const String& cssCanvasName)
 {
-    return adoptRef(*new InspectorCanvas(context));
+    return adoptRef(*new InspectorCanvas(canvas, cssCanvasName));
 }
 
-InspectorCanvas::InspectorCanvas(CanvasRenderingContext& context)
+InspectorCanvas::InspectorCanvas(HTMLCanvasElement& canvas, const String& cssCanvasName)
     : m_identifier("canvas:" + IdentifiersFactory::createIdentifier())
-    , m_context(context)
+    , m_canvas(canvas)
+    , m_cssCanvasName(cssCanvasName)
 {
 }
 
 InspectorCanvas::~InspectorCanvas()
 {
     resetRecordingData();
-}
-
-HTMLCanvasElement* InspectorCanvas::canvasElement()
-{
-    if (is<HTMLCanvasElement>(m_context.canvasBase()))
-        return downcast<HTMLCanvasElement>(&m_context.canvasBase());
-    return nullptr;
 }
 
 void InspectorCanvas::resetRecordingData()
@@ -113,7 +108,7 @@ void InspectorCanvas::resetRecordingData()
     m_bufferUsed = 0;
     m_singleFrame = true;
 
-    m_context.setCallTracingActive(false);
+    m_canvas.renderingContext()->setCallTracingActive(false);
 }
 
 bool InspectorCanvas::hasRecordingData() const
@@ -162,7 +157,7 @@ void InspectorCanvas::recordAction(const String& name, Vector<RecordCanvasAction
     m_currentActions->addItem(action);
 
 #if ENABLE(WEBGL)
-    if (is<WebGLRenderingContext>(m_context) && shouldSnapshotWebGLAction(name))
+    if (is<WebGLRenderingContext>(m_canvas.renderingContext()) && shouldSnapshotWebGLAction(name))
         m_actionNeedingSnapshot = action;
 #endif
 }
@@ -217,21 +212,25 @@ bool InspectorCanvas::hasBufferSpace() const
 
 Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(InstrumentingAgents& instrumentingAgents, bool captureBacktrace)
 {
+    Document& document = m_canvas.document();
+    Frame* frame = document.frame();
+    CanvasRenderingContext* context = m_canvas.renderingContext();
+
     Inspector::Protocol::Canvas::ContextType contextType;
-    if (is<CanvasRenderingContext2D>(m_context))
+    if (is<CanvasRenderingContext2D>(context))
         contextType = Inspector::Protocol::Canvas::ContextType::Canvas2D;
-    else if (is<ImageBitmapRenderingContext>(m_context))
+    else if (is<ImageBitmapRenderingContext>(context))
         contextType = Inspector::Protocol::Canvas::ContextType::BitmapRenderer;
 #if ENABLE(WEBGL)
-    else if (is<WebGLRenderingContext>(m_context))
+    else if (is<WebGLRenderingContext>(context))
         contextType = Inspector::Protocol::Canvas::ContextType::WebGL;
 #endif
 #if ENABLE(WEBGL2)
-    else if (is<WebGL2RenderingContext>(m_context))
+    else if (is<WebGL2RenderingContext>(context))
         contextType = Inspector::Protocol::Canvas::ContextType::WebGL2;
 #endif
 #if ENABLE(WEBGPU)
-    else if (is<WebGPURenderingContext>(m_context))
+    else if (is<WebGPURenderingContext>(context))
         contextType = Inspector::Protocol::Canvas::ContextType::WebGPU;
 #endif
     else {
@@ -241,37 +240,35 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(I
 
     auto canvas = Inspector::Protocol::Canvas::Canvas::create()
         .setCanvasId(m_identifier)
+        .setFrameId(instrumentingAgents.inspectorPageAgent()->frameId(frame))
         .setContextType(contextType)
         .release();
 
-    if (auto* node = canvasElement()) {
-        String cssCanvasName = node->document().nameForCSSCanvasElement(*node);
-        if (!cssCanvasName.isEmpty())
-            canvas->setCssCanvasName(cssCanvasName);
-        else {
-            InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent();
-            int nodeId = domAgent->boundNodeId(node);
-            if (!nodeId) {
-                if (int documentNodeId = domAgent->boundNodeId(&node->document())) {
-                    ErrorString ignored;
-                    nodeId = domAgent->pushNodeToFrontend(ignored, documentNodeId, node);
-                }
+    if (!m_cssCanvasName.isEmpty())
+        canvas->setCssCanvasName(m_cssCanvasName);
+    else {
+        InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent();
+        int nodeId = domAgent->boundNodeId(&m_canvas);
+        if (!nodeId) {
+            if (int documentNodeId = domAgent->boundNodeId(&m_canvas.document())) {
+                ErrorString ignored;
+                nodeId = domAgent->pushNodeToFrontend(ignored, documentNodeId, &m_canvas);
             }
-
-            if (nodeId)
-                canvas->setNodeId(nodeId);
         }
+
+        if (nodeId)
+            canvas->setNodeId(nodeId);
     }
 
-    if (is<ImageBitmapRenderingContext>(m_context)) {
+    if (is<ImageBitmapRenderingContext>(context)) {
         auto contextAttributes = Inspector::Protocol::Canvas::ContextAttributes::create()
             .release();
-        contextAttributes->setAlpha(downcast<ImageBitmapRenderingContext>(m_context).hasAlpha());
+        contextAttributes->setAlpha(downcast<ImageBitmapRenderingContext>(context)->hasAlpha());
         canvas->setContextAttributes(WTFMove(contextAttributes));
     }
 #if ENABLE(WEBGL)
-    else if (is<WebGLRenderingContextBase>(m_context)) {
-        if (std::optional<WebGLContextAttributes> attributes = downcast<WebGLRenderingContextBase>(m_context).getContextAttributes()) {
+    else if (is<WebGLRenderingContextBase>(context)) {
+        if (std::optional<WebGLContextAttributes> attributes = downcast<WebGLRenderingContextBase>(context)->getContextAttributes()) {
             auto contextAttributes = Inspector::Protocol::Canvas::ContextAttributes::create()
                 .release();
             contextAttributes->setAlpha(attributes->alpha);
@@ -286,12 +283,8 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(I
     }
 #endif
 
-    // FIXME: <https://webkit.org/b/180833> Web Inspector: support OffscreenCanvas for Canvas related operations
-
-    if (auto* node = canvasElement()) {
-        if (size_t memoryCost = node->memoryCost())
-            canvas->setMemoryCost(memoryCost);
-    }
+    if (size_t memoryCost = m_canvas.memoryCost())
+        canvas->setMemoryCost(memoryCost);
 
     if (captureBacktrace) {
         auto stackTrace = Inspector::createScriptCallStack(JSMainThreadExecState::currentState(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
@@ -312,22 +305,17 @@ void InspectorCanvas::appendActionSnapshotIfNeeded()
 
 String InspectorCanvas::getCanvasContentAsDataURL()
 {
-    // FIXME: <https://webkit.org/b/180833> Web Inspector: support OffscreenCanvas for Canvas related operations
-
-    auto* node = canvasElement();
-    if (!node)
-        return String();
-
 #if ENABLE(WEBGL)
-    if (is<WebGLRenderingContextBase>(m_context))
-        downcast<WebGLRenderingContextBase>(m_context).setPreventBufferClearForInspector(true);
+    CanvasRenderingContext* canvasRenderingContext = m_canvas.renderingContext();
+    if (is<WebGLRenderingContextBase>(canvasRenderingContext))
+        downcast<WebGLRenderingContextBase>(canvasRenderingContext)->setPreventBufferClearForInspector(true);
 #endif
 
-    ExceptionOr<UncachedString> result = node->toDataURL(ASCIILiteral("image/png"));
+    ExceptionOr<UncachedString> result = m_canvas.toDataURL(ASCIILiteral("image/png"));
 
 #if ENABLE(WEBGL)
-    if (is<WebGLRenderingContextBase>(m_context))
-        downcast<WebGLRenderingContextBase>(m_context).setPreventBufferClearForInspector(false);
+    if (is<WebGLRenderingContextBase>(canvasRenderingContext))
+        downcast<WebGLRenderingContextBase>(canvasRenderingContext)->setPreventBufferClearForInspector(false);
 #endif
 
     if (result.hasException())
@@ -443,26 +431,27 @@ RefPtr<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildIniti
         .release();
 
     auto attributes = JSON::Object::create();
-    attributes->setInteger(ASCIILiteral("width"), m_context.canvasBase().width());
-    attributes->setInteger(ASCIILiteral("height"), m_context.canvasBase().height());
+    attributes->setInteger(ASCIILiteral("width"), canvas().width());
+    attributes->setInteger(ASCIILiteral("height"), canvas().height());
 
     auto parameters = JSON::ArrayOf<JSON::Value>::create();
 
-    if (is<CanvasRenderingContext2D>(m_context)) {
-        const CanvasRenderingContext2D& context2d = downcast<CanvasRenderingContext2D>(m_context);
-        const CanvasRenderingContext2D::State& state = context2d.state();
+    CanvasRenderingContext* canvasRenderingContext = canvas().renderingContext();
+    if (is<CanvasRenderingContext2D>(canvasRenderingContext)) {
+        const CanvasRenderingContext2D* context2d = downcast<CanvasRenderingContext2D>(canvasRenderingContext);
+        const CanvasRenderingContext2D::State& state = context2d->state();
 
         attributes->setArray(ASCIILiteral("setTransform"), buildArrayForAffineTransform(state.transform));
-        attributes->setDouble(ASCIILiteral("globalAlpha"), context2d.globalAlpha());
-        attributes->setInteger(ASCIILiteral("globalCompositeOperation"), indexForData(context2d.globalCompositeOperation()));
-        attributes->setDouble(ASCIILiteral("lineWidth"), context2d.lineWidth());
-        attributes->setInteger(ASCIILiteral("lineCap"), indexForData(convertEnumerationToString(context2d.lineCap())));
-        attributes->setInteger(ASCIILiteral("lineJoin"), indexForData(convertEnumerationToString(context2d.lineJoin())));
-        attributes->setDouble(ASCIILiteral("miterLimit"), context2d.miterLimit());
-        attributes->setDouble(ASCIILiteral("shadowOffsetX"), context2d.shadowOffsetX());
-        attributes->setDouble(ASCIILiteral("shadowOffsetY"), context2d.shadowOffsetY());
-        attributes->setDouble(ASCIILiteral("shadowBlur"), context2d.shadowBlur());
-        attributes->setInteger(ASCIILiteral("shadowColor"), indexForData(context2d.shadowColor()));
+        attributes->setDouble(ASCIILiteral("globalAlpha"), context2d->globalAlpha());
+        attributes->setInteger(ASCIILiteral("globalCompositeOperation"), indexForData(context2d->globalCompositeOperation()));
+        attributes->setDouble(ASCIILiteral("lineWidth"), context2d->lineWidth());
+        attributes->setInteger(ASCIILiteral("lineCap"), indexForData(convertEnumerationToString(context2d->lineCap())));
+        attributes->setInteger(ASCIILiteral("lineJoin"), indexForData(convertEnumerationToString(context2d->lineJoin())));
+        attributes->setDouble(ASCIILiteral("miterLimit"), context2d->miterLimit());
+        attributes->setDouble(ASCIILiteral("shadowOffsetX"), context2d->shadowOffsetX());
+        attributes->setDouble(ASCIILiteral("shadowOffsetY"), context2d->shadowOffsetY());
+        attributes->setDouble(ASCIILiteral("shadowBlur"), context2d->shadowBlur());
+        attributes->setInteger(ASCIILiteral("shadowColor"), indexForData(context2d->shadowColor()));
 
         // The parameter to `setLineDash` is itself an array, so we need to wrap the parameters
         // list in an array to allow spreading.
@@ -470,11 +459,11 @@ RefPtr<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildIniti
         setLineDash->addItem(buildArrayForVector(state.lineDash));
         attributes->setArray(ASCIILiteral("setLineDash"), WTFMove(setLineDash));
 
-        attributes->setDouble(ASCIILiteral("lineDashOffset"), context2d.lineDashOffset());
-        attributes->setInteger(ASCIILiteral("font"), indexForData(context2d.font()));
-        attributes->setInteger(ASCIILiteral("textAlign"), indexForData(convertEnumerationToString(context2d.textAlign())));
-        attributes->setInteger(ASCIILiteral("textBaseline"), indexForData(convertEnumerationToString(context2d.textBaseline())));
-        attributes->setInteger(ASCIILiteral("direction"), indexForData(convertEnumerationToString(context2d.direction())));
+        attributes->setDouble(ASCIILiteral("lineDashOffset"), context2d->lineDashOffset());
+        attributes->setInteger(ASCIILiteral("font"), indexForData(context2d->font()));
+        attributes->setInteger(ASCIILiteral("textAlign"), indexForData(convertEnumerationToString(context2d->textAlign())));
+        attributes->setInteger(ASCIILiteral("textBaseline"), indexForData(convertEnumerationToString(context2d->textBaseline())));
+        attributes->setInteger(ASCIILiteral("direction"), indexForData(convertEnumerationToString(context2d->direction())));
 
         int strokeStyleIndex;
         if (auto canvasGradient = state.strokeStyle.canvasGradient())
@@ -494,17 +483,17 @@ RefPtr<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildIniti
             fillStyleIndex = indexForData(state.fillStyle.color());
         attributes->setInteger(ASCIILiteral("fillStyle"), fillStyleIndex);
 
-        attributes->setBoolean(ASCIILiteral("imageSmoothingEnabled"), context2d.imageSmoothingEnabled());
-        attributes->setInteger(ASCIILiteral("imageSmoothingQuality"), indexForData(convertEnumerationToString(context2d.imageSmoothingQuality())));
+        attributes->setBoolean(ASCIILiteral("imageSmoothingEnabled"), context2d->imageSmoothingEnabled());
+        attributes->setInteger(ASCIILiteral("imageSmoothingQuality"), indexForData(convertEnumerationToString(context2d->imageSmoothingQuality())));
 
         auto setPath = JSON::ArrayOf<JSON::Value>::create();
-        setPath->addItem(indexForData(buildStringFromPath(context2d.getPath()->path())));
+        setPath->addItem(indexForData(buildStringFromPath(context2d->getPath()->path())));
         attributes->setArray(ASCIILiteral("setPath"), WTFMove(setPath));
     }
 #if ENABLE(WEBGL)
-    else if (is<WebGLRenderingContextBase>(m_context)) {
-        WebGLRenderingContextBase& contextWebGLBase = downcast<WebGLRenderingContextBase>(m_context);
-        if (std::optional<WebGLContextAttributes> attributes = contextWebGLBase.getContextAttributes()) {
+    else if (is<WebGLRenderingContextBase>(canvasRenderingContext)) {
+        WebGLRenderingContextBase* contextWebGLBase = downcast<WebGLRenderingContextBase>(canvasRenderingContext);
+        if (std::optional<WebGLContextAttributes> attributes = contextWebGLBase->getContextAttributes()) {
             RefPtr<JSON::Object> contextAttributes = JSON::Object::create();
             contextAttributes->setBoolean(ASCIILiteral("alpha"), attributes->alpha);
             contextAttributes->setBoolean(ASCIILiteral("depth"), attributes->depth);
