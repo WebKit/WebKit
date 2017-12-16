@@ -57,7 +57,6 @@ public:
     void layoutBlock(bool relayoutChildren, LayoutUnit pageHeight = 0) override;
 
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
-    void addChild(RenderPtr<RenderObject> child, RenderObject* beforeChild = 0) override;
     RenderPtr<RenderObject> takeChild(RenderObject&) override;
 
     RenderBlock* firstLineBlock() const override;

@@ -27,6 +27,7 @@
 #include "HTMLNames.h"
 #include "RenderTextFragment.h"
 #include "RenderTheme.h"
+#include "RenderTreeBuilder.h"
 #include "StyleInheritedData.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -62,7 +63,7 @@ bool RenderButton::hasLineIfEmpty() const
     return is<HTMLInputElement>(formControlElement());
 }
 
-void RenderButton::addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
+void RenderButton::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
     if (!m_inner) {
         // Create an anonymous block.
@@ -70,9 +71,9 @@ void RenderButton::addChild(RenderPtr<RenderObject> newChild, RenderObject* befo
         auto newInner = createAnonymousBlock(style().display());
         updateAnonymousChildStyle(*newInner, newInner->mutableStyle());
         m_inner = makeWeakPtr(*newInner);
-        RenderFlexibleBox::addChild(WTFMove(newInner));
+        RenderFlexibleBox::addChild(builder, WTFMove(newInner));
     }    
-    m_inner->addChild(WTFMove(newChild), beforeChild);
+    builder.insertChild(*m_inner, WTFMove(newChild), beforeChild);
 }
 
 RenderPtr<RenderObject> RenderButton::takeChild(RenderObject& oldChild)
@@ -122,7 +123,7 @@ void RenderButton::setText(const String& str)
     if (!m_buttonText) {
         auto newButtonText = createRenderer<RenderTextFragment>(document(), str);
         m_buttonText = makeWeakPtr(*newButtonText);
-        addChild(WTFMove(newButtonText));
+        RenderTreeBuilder::current()->insertChild(*this, WTFMove(newButtonText));
         return;
     }
 

@@ -36,6 +36,7 @@
 #include "RenderListMarker.h"
 #include "RenderText.h"
 #include "RenderTextFragment.h"
+#include "RenderTreeBuilder.h"
 #include "RenderTreeUpdaterFirstLetter.h"
 #include "RenderTreeUpdaterListItem.h"
 #include "StyleResolver.h"
@@ -98,6 +99,9 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
 
     float averageSize = std::round(cumulativeSize / m_autoSizedNodes.size());
 
+    // FIXME: Figure out how to make this code use RenderTreeUpdater/Builder properly.
+    RenderTreeBuilder builder((*m_autoSizedNodes.begin())->renderer()->view());
+
     // Adjust sizes.
     bool firstPass = true;
     for (auto& node : m_autoSizedNodes) {
@@ -159,7 +163,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
         parentRenderer->setStyle(WTFMove(newParentStyle));
 
         if (is<RenderListItem>(*parentRenderer))
-            RenderTreeUpdater::ListItem::updateMarker(downcast<RenderListItem>(*parentRenderer));
+            RenderTreeUpdater::ListItem::updateMarker(builder, downcast<RenderListItem>(*parentRenderer));
     }
 
     for (auto& node : m_autoSizedNodes) {

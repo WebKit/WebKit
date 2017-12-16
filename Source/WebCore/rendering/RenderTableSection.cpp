@@ -35,6 +35,7 @@
 #include "RenderTableCol.h"
 #include "RenderTableRow.h"
 #include "RenderTextControl.h"
+#include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
 #include <limits>
@@ -120,7 +121,7 @@ void RenderTableSection::willBeRemovedFromTree()
     setNeedsCellRecalc();
 }
 
-void RenderTableSection::addChild(RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTableSection::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     if (!is<RenderTableRow>(*child)) {
         RenderObject* last = beforeChild;
@@ -130,14 +131,14 @@ void RenderTableSection::addChild(RenderPtr<RenderObject> child, RenderObject* b
             RenderTableRow& row = downcast<RenderTableRow>(*last);
             if (beforeChild == &row)
                 beforeChild = row.firstCell();
-            row.addChild(WTFMove(child), beforeChild);
+            builder.insertChild(row, WTFMove(child), beforeChild);
             return;
         }
 
         if (beforeChild && !beforeChild->isAnonymous() && beforeChild->parent() == this) {
             RenderObject* row = beforeChild->previousSibling();
             if (is<RenderTableRow>(row) && row->isAnonymous()) {
-                downcast<RenderTableRow>(*row).addChild(WTFMove(child));
+                builder.insertChild(downcast<RenderTableRow>(*row), WTFMove(child));
                 return;
             }
         }
@@ -148,14 +149,14 @@ void RenderTableSection::addChild(RenderPtr<RenderObject> child, RenderObject* b
         while (lastBox && lastBox->parent()->isAnonymous() && !is<RenderTableRow>(*lastBox))
             lastBox = lastBox->parent();
         if (is<RenderTableRow>(lastBox) && lastBox->isAnonymous() && !lastBox->isBeforeOrAfterContent()) {
-            downcast<RenderTableRow>(*lastBox).addChild(WTFMove(child), beforeChild);
+            builder.insertChild(downcast<RenderTableRow>(*lastBox), WTFMove(child), beforeChild);
             return;
         }
 
         auto newRow = RenderTableRow::createAnonymousWithParentRenderer(*this);
         auto& row = *newRow;
-        addChild(WTFMove(newRow), beforeChild);
-        row.addChild(WTFMove(child));
+        builder.insertChild(*this, WTFMove(newRow), beforeChild);
+        builder.insertChild(row, WTFMove(child));
         return;
     }
 
@@ -179,7 +180,7 @@ void RenderTableSection::addChild(RenderPtr<RenderObject> child, RenderObject* b
         beforeChild = splitAnonymousBoxesAroundChild(beforeChild);
 
     ASSERT(!beforeChild || is<RenderTableRow>(*beforeChild));
-    RenderBox::addChild(WTFMove(child), beforeChild);
+    RenderBox::addChild(builder, WTFMove(child), beforeChild);
 }
 
 void RenderTableSection::ensureRows(unsigned numRows)

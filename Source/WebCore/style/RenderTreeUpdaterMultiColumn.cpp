@@ -29,6 +29,7 @@
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
+#include "RenderTreeBuilder.h"
 
 namespace WebCore {
 
@@ -73,14 +74,14 @@ void RenderTreeUpdater::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
             auto& spannerOriginalParent = *placeholder->parent();
             // Detaching the spanner takes care of removing the placeholder (and merges the RenderMultiColumnSets).
             auto spannerToReInsert = spanner->parent()->takeChild(*spanner);
-            spannerOriginalParent.addChild(WTFMove(spannerToReInsert));
+            RenderTreeBuilder::current()->insertChild(spannerOriginalParent, WTFMove(spannerToReInsert));
         }
     }
 
     auto newFragmentedFlow = WebCore::createRenderer<RenderMultiColumnFlow>(flow.document(), RenderStyle::createAnonymousStyleWithDisplay(flow.style(), BLOCK));
     newFragmentedFlow->initializeStyle();
     auto& fragmentedFlow = *newFragmentedFlow;
-    flow.RenderBlock::addChild(WTFMove(newFragmentedFlow));
+    flow.RenderBlock::addChild(*RenderTreeBuilder::current(), WTFMove(newFragmentedFlow));
 
     // Reparent children preceding the fragmented flow into the fragmented flow.
     flow.moveChildrenTo(&fragmentedFlow, flow.firstChild(), &fragmentedFlow, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
@@ -121,7 +122,7 @@ void RenderTreeUpdater::MultiColumn::destroyFragmentedFlow(RenderBlockFlow& flow
     multiColumnFlow.moveAllChildrenTo(&flow, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
     multiColumnFlow.removeFromParentAndDestroy();
     for (auto& parentAndSpanner : parentAndSpannerList)
-        parentAndSpanner.first->addChild(WTFMove(parentAndSpanner.second));
+        RenderTreeBuilder::current()->insertChild(*parentAndSpanner.first, WTFMove(parentAndSpanner.second));
 }
 
 }

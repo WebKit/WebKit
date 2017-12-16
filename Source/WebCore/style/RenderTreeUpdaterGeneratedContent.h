@@ -40,6 +40,9 @@ public:
     void updatePseudoElement(Element&, const std::optional<Style::ElementUpdate>&, PseudoId);
     void updateRemainingQuotes();
 
+    static void removeBeforePseudoElement(Element&);
+    static void removeAfterPseudoElement(Element&);
+
 private:
     void updateQuotesUpTo(RenderQuote*);
     

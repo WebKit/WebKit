@@ -93,7 +93,7 @@ RenderRubyBase* RenderRubyRun::rubyBaseSafe()
     if (!base) {
         auto newBase = createRubyBase();
         base = newBase.get();
-        RenderBlockFlow::addChild(WTFMove(newBase));
+        RenderBlockFlow::addChild(*RenderTreeBuilder::current(), WTFMove(newBase));
     }
     return base;
 }
@@ -106,51 +106,6 @@ RenderBlock* RenderRubyRun::firstLineBlock() const
 bool RenderRubyRun::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
     return child.isInline() || child.isRubyText();
-}
-
-void RenderRubyRun::addChild(RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    ASSERT(child);
-
-    if (child->isRubyText()) {
-        if (!beforeChild) {
-            // RenderRuby has already ascertained that we can add the child here.
-            ASSERT(!hasRubyText());
-            // prepend ruby texts as first child
-            RenderBlockFlow::addChild(WTFMove(child), firstChild());
-        }  else if (beforeChild->isRubyText()) {
-            // New text is inserted just before another.
-            // In this case the new text takes the place of the old one, and
-            // the old text goes into a new run that is inserted as next sibling.
-            ASSERT(beforeChild->parent() == this);
-            RenderElement* ruby = parent();
-            ASSERT(isRuby(ruby));
-            auto newRun = staticCreateRubyRun(ruby);
-            ruby->addChild(WTFMove(newRun), nextSibling());
-            // Add the new ruby text and move the old one to the new run
-            // Note: Doing it in this order and not using RenderRubyRun's methods,
-            // in order to avoid automatic removal of the ruby run in case there is no
-            // other child besides the old ruby text.
-            RenderBlockFlow::addChild(WTFMove(child), beforeChild);
-            auto takenBeforeChild = RenderBlockFlow::takeChild(*beforeChild);
-            newRun->addChild(WTFMove(takenBeforeChild));
-        } else if (hasRubyBase()) {
-            // Insertion before a ruby base object.
-            // In this case we need insert a new run before the current one and split the base.
-            RenderElement* ruby = parent();
-            auto newRun = staticCreateRubyRun(ruby);
-            auto& run = *newRun;
-            ruby->addChild(WTFMove(newRun), this);
-            run.addChild(WTFMove(child));
-            rubyBaseSafe()->moveChildren(run.rubyBaseSafe(), beforeChild);
-        }
-    } else {
-        // child is not a text -> insert it into the base
-        // (append it instead if beforeChild is the ruby text)
-        if (beforeChild && beforeChild->isRubyText())
-            beforeChild = 0;
-        rubyBaseSafe()->addChild(WTFMove(child), beforeChild);
-    }
 }
 
 RenderPtr<RenderObject> RenderRubyRun::takeChild(RenderObject& child)

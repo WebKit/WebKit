@@ -515,7 +515,6 @@ public:
     void clearAfterPseudoElement();
     void resetComputedStyle();
     void resetStyleRelations();
-    void clearStyleDerivedDataBeforeDetachingRenderer();
     void clearHoverAndActiveStatusBeforeDetachingRenderer();
 
     WEBCORE_EXPORT URL absoluteLinkURL() const;

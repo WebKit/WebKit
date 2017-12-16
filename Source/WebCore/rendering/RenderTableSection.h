@@ -62,7 +62,7 @@ public:
     RenderTableRow* firstRow() const;
     RenderTableRow* lastRow() const;
 
-    void addChild(RenderPtr<RenderObject> child, RenderObject* beforeChild = 0) override;
+    void addChild(RenderTreeBuilder&, RenderPtr<RenderObject> child, RenderObject* beforeChild = 0) override;
 
     std::optional<int> firstLineBaseline() const override;
 

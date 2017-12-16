@@ -48,6 +48,7 @@
 #include "RenderMultiColumnSet.h"
 #include "RenderTableCell.h"
 #include "RenderText.h"
+#include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include "SimpleLineLayoutFunctions.h"
@@ -3828,14 +3829,14 @@ void RenderBlockFlow::layoutExcludedChildren(bool relayoutChildren)
     determineLogicalLeftPositionForChild(*fragmentedFlow);
 }
 
-void RenderBlockFlow::addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
+void RenderBlockFlow::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
     if (multiColumnFlow() && (!isFieldset() || !newChild->isLegend()))
-        return multiColumnFlow()->addChild(WTFMove(newChild), beforeChild);
+        return builder.insertChild(*multiColumnFlow(), WTFMove(newChild), beforeChild);
     auto* beforeChildOrPlaceholder = beforeChild;
     if (auto* containingFragmentedFlow = enclosingFragmentedFlow())
         beforeChildOrPlaceholder = containingFragmentedFlow->resolveMovedChild(beforeChild);
-    RenderBlock::addChild(WTFMove(newChild), beforeChildOrPlaceholder);
+    RenderBlock::addChild(builder, WTFMove(newChild), beforeChildOrPlaceholder);
 }
 
 RenderPtr<RenderObject> RenderBlockFlow::takeChild(RenderObject& oldChild)

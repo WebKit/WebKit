@@ -4615,6 +4615,7 @@
 		E4E9B1191810916F003ACCDF /* SimpleLineLayoutResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E9B1181810916F003ACCDF /* SimpleLineLayoutResolver.h */; };
 		E4E9B11D1814569C003ACCDF /* SimpleLineLayoutFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E9B11C1814569C003ACCDF /* SimpleLineLayoutFunctions.h */; };
 		E4F9EEF3156DA00700D23E7E /* StyleSheetContents.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F9EEF1156D84C400D23E7E /* StyleSheetContents.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E4FC009B1FE00B90006A073E /* RenderTreeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = E4FC009A1FE00B8F006A073E /* RenderTreeBuilder.h */; };
 		E5BA7D63151437CA00FE1E3F /* LengthFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EBF5121C1696496C0056BD25 /* JSTypeConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBF5121A1696496C0056BD25 /* JSTypeConversions.cpp */; };
 		EBF5121D1696496C0056BD25 /* JSTypeConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = EBF5121B1696496C0056BD25 /* JSTypeConversions.h */; };
@@ -9176,10 +9177,10 @@
 		7C7903B01F86F95C00463A70 /* ImageBitmapRenderingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBitmapRenderingContext.h; sourceTree = "<group>"; };
 		7C7903B11F86F95C00463A70 /* ImageBitmapRenderingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBitmapRenderingContext.cpp; sourceTree = "<group>"; };
 		7C7903B21F86F95C00463A70 /* ImageBitmapRenderingContext.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ImageBitmapRenderingContext.idl; sourceTree = "<group>"; };
-		7C7903B71F86FDE400463A70 /* JSImageBitmapRenderingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageBitmapRenderingContext.cpp; sourceTree = "<group>"; };
-		7C7903B81F86FDE600463A70 /* JSImageBitmapRenderingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSImageBitmapRenderingContext.h; sourceTree = "<group>"; };
 		7C7903B51F86FDE400463A70 /* JSImageBitmapRenderingContextSettings.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageBitmapRenderingContextSettings.cpp; sourceTree = "<group>"; };
 		7C7903B61F86FDE600463A70 /* JSImageBitmapRenderingContextSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSImageBitmapRenderingContextSettings.h; sourceTree = "<group>"; };
+		7C7903B71F86FDE400463A70 /* JSImageBitmapRenderingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageBitmapRenderingContext.cpp; sourceTree = "<group>"; };
+		7C7903B81F86FDE600463A70 /* JSImageBitmapRenderingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSImageBitmapRenderingContext.h; sourceTree = "<group>"; };
 		7C7903BA1F86FF3300463A70 /* PlaceholderRenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlaceholderRenderingContext.cpp; sourceTree = "<group>"; };
 		7C7903BC1F86FF3400463A70 /* PlaceholderRenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceholderRenderingContext.h; sourceTree = "<group>"; };
 		7C7941E21C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsCoreSoftLink.mm; sourceTree = "<group>"; };
@@ -13993,6 +13994,8 @@
 		E4E9B11C1814569C003ACCDF /* SimpleLineLayoutFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutFunctions.h; sourceTree = "<group>"; };
 		E4F9EEF0156D84C400D23E7E /* StyleSheetContents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleSheetContents.cpp; sourceTree = "<group>"; };
 		E4F9EEF1156D84C400D23E7E /* StyleSheetContents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleSheetContents.h; sourceTree = "<group>"; };
+		E4FC00971FE00B83006A073E /* RenderTreeBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilder.cpp; sourceTree = "<group>"; };
+		E4FC009A1FE00B8F006A073E /* RenderTreeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilder.h; sourceTree = "<group>"; };
 		E51A81DE17298D7700BFCA61 /* JSPerformance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformance.cpp; sourceTree = "<group>"; };
 		E526AF3E1727F8F200E41781 /* Performance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Performance.cpp; sourceTree = "<group>"; };
 		E55F4979151B888000BB67DB /* LengthFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LengthFunctions.cpp; sourceTree = "<group>"; };
@@ -25096,6 +25099,8 @@
 				BCEA4849097D93020094C9E4 /* RenderThemeMac.mm */,
 				93955A4203D72932008635CE /* RenderTreeAsText.cpp */,
 				93955A4103D72932008635CE /* RenderTreeAsText.h */,
+				E4FC00971FE00B83006A073E /* RenderTreeBuilder.cpp */,
+				E4FC009A1FE00B8F006A073E /* RenderTreeBuilder.h */,
 				E4B41E330CBFB60900AF2ECE /* RenderVideo.cpp */,
 				E4B41E340CBFB60900AF2ECE /* RenderVideo.h */,
 				BCEA4828097D93020094C9E4 /* RenderView.cpp */,
@@ -28739,6 +28744,7 @@
 				416E6FE81BBD12DF000A6043 /* ReadableByteStreamInternalsBuiltins.h in Headers */,
 				416E6FE91BBD12E5000A6043 /* ReadableStreamBuiltins.h in Headers */,
 				4129C9A91F59C56B009D7403 /* ReadableStreamDefaultController.h in Headers */,
+				E4FC009B1FE00B90006A073E /* RenderTreeBuilder.h in Headers */,
 				416E6FE81BBD12DF000A3F64 /* ReadableStreamInternalsBuiltins.h in Headers */,
 				4129C9AF1F59CF5B009D7403 /* ReadableStreamSink.h in Headers */,
 				4129C9AB1F59C573009D7403 /* ReadableStreamSource.h in Headers */,

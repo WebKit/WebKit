@@ -69,10 +69,10 @@ RenderGrid::RenderGrid(Element& element, RenderStyle&& style)
 
 RenderGrid::~RenderGrid() = default;
 
-void RenderGrid::addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
+void RenderGrid::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
     auto& child = *newChild;
-    RenderBlock::addChild(WTFMove(newChild), beforeChild);
+    RenderBlock::addChild(builder, WTFMove(newChild), beforeChild);
 
     // Positioned grid items do not take up space or otherwise participate in the layout of the grid,
     // for that reason we don't need to mark the grid as dirty when they are added.

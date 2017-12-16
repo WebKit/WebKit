@@ -37,7 +37,7 @@ public:
     RenderInline(Element&, RenderStyle&&);
     RenderInline(Document&, RenderStyle&&);
 
-    void addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild = 0) override;
+    void addChild(RenderTreeBuilder&, RenderPtr<RenderObject> newChild, RenderObject* beforeChild = 0) override;
 
     LayoutUnit marginLeft() const final;
     LayoutUnit marginRight() const final;
@@ -116,11 +116,11 @@ private:
     template<typename GeneratorContext>
     void generateCulledLineBoxRects(GeneratorContext& yield, const RenderInline* container) const;
 
-    void addChildToContinuation(RenderPtr<RenderObject> newChild, RenderObject* beforeChild);
-    void addChildIgnoringContinuation(RenderPtr<RenderObject> newChild, RenderObject* beforeChild = nullptr) final;
+    void addChildToContinuation(RenderTreeBuilder&, RenderPtr<RenderObject> newChild, RenderObject* beforeChild);
+    void addChildIgnoringContinuation(RenderTreeBuilder&, RenderPtr<RenderObject> newChild, RenderObject* beforeChild = nullptr) final;
 
-    void splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock, RenderBlock* middleBlock, RenderObject* beforeChild, RenderBoxModelObject* oldCont);
-    void splitFlow(RenderObject* beforeChild, RenderPtr<RenderBlock> newBlockBox, RenderPtr<RenderObject> newChild, RenderBoxModelObject* oldCont);
+    void splitInlines(RenderTreeBuilder&, RenderBlock* fromBlock, RenderBlock* toBlock, RenderBlock* middleBlock, RenderObject* beforeChild, RenderBoxModelObject* oldCont);
+    void splitFlow(RenderTreeBuilder&, RenderObject* beforeChild, RenderPtr<RenderBlock> newBlockBox, RenderPtr<RenderObject> newChild, RenderBoxModelObject* oldCont);
 
     void layout() final { ASSERT_NOT_REACHED(); } // Do nothing for layout()
 

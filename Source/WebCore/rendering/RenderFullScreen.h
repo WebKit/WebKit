@@ -40,7 +40,7 @@ public:
     RenderBlock* placeholder() { return m_placeholder.get(); }
     void createPlaceholder(std::unique_ptr<RenderStyle>, const LayoutRect& frameRect);
 
-    static RenderPtr<RenderFullScreen> wrapNewRenderer(RenderPtr<RenderElement>, RenderElement& parent, Document&);
+    static RenderPtr<RenderFullScreen> wrapNewRenderer(RenderTreeBuilder&, RenderPtr<RenderElement>, RenderElement& parent, Document&);
     static void wrapExistingRenderer(RenderElement&, Document&);
     void unwrapRenderer(bool& requiresRenderTreeRebuild);
 

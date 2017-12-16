@@ -32,7 +32,7 @@ public:
     RenderQuote(Document&, RenderStyle&&, QuoteType);
     virtual ~RenderQuote();
 
-    void updateRenderer(RenderQuote* previousQuote);
+    void updateRenderer(RenderTreeBuilder&, RenderQuote* previousQuote);
 
 private:
     const char* renderName() const override { return "RenderQuote"; }
@@ -43,7 +43,7 @@ private:
     void willBeRemovedFromTree() override;
 
     String computeText() const;
-    void updateTextRenderer();
+    void updateTextRenderer(RenderTreeBuilder&);
 
     const QuoteType m_type;
     int m_depth { -1 };
