@@ -1,3 +1,18 @@
+2017-12-16  Ms2ger  <Ms2ger@igalia.com>
+
+        Enable wpt fetch tests on WPE.
+        https://bugs.webkit.org/show_bug.cgi?id=180905
+
+        Unreviewed test gardening.
+
+        New expectations are copied from GTK.
+
+        * TestExpectations: mark test as flaky on all platforms.
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/http-cache/cc-request-expected.txt: Added.
+
 2017-12-16  Youenn Fablet  <youenn@apple.com>
 
         Skip SharedWorker and NavigationPreload service worker tests

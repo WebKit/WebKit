@@ -1647,6 +1647,8 @@ webkit.org/b/179287 http/wpt/web-animations/interfaces/Animation/startTime.html 
 
 webkit.org/b/177440 imported/w3c/web-platform-tests/html/browsers/origin/relaxing-the-same-origin-restriction/document_domain_setter_null.tentative.html [ Pass Failure ]
 
+webkit.org/b/157068 [ Debug ] imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html [ Pass Crash ]
+
 # Application Manifest tests
 webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Skip ]
 webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-blocked.html [ Skip ]
