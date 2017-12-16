@@ -43,6 +43,8 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << underlayColor;
     encoder << useFixedLayout;
     encoder << fixedLayoutSize;
+    encoder << alwaysShowsHorizontalScroller;
+    encoder << alwaysShowsVerticalScroller;
     encoder.encodeEnum(paginationMode);
     encoder << paginationBehavesLikeColumns;
     encoder << pageLength;
@@ -135,6 +137,10 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.useFixedLayout))
         return std::nullopt;
     if (!decoder.decode(parameters.fixedLayoutSize))
+        return std::nullopt;
+    if (!decoder.decode(parameters.alwaysShowsHorizontalScroller))
+        return std::nullopt;
+    if (!decoder.decode(parameters.alwaysShowsVerticalScroller))
         return std::nullopt;
     if (!decoder.decodeEnum(parameters.paginationMode))
         return std::nullopt;

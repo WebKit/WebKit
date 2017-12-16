@@ -913,6 +913,12 @@ public:
 
     bool mainFrameIsScrollable() const { return m_mainFrameIsScrollable; }
 
+    void setAlwaysShowsHorizontalScroller(bool);
+    void setAlwaysShowsVerticalScroller(bool);
+
+    bool alwaysShowsHorizontalScroller() const { return m_alwaysShowsHorizontalScroller; };
+    bool alwaysShowsVerticalScroller() const { return m_alwaysShowsVerticalScroller; };
+
     void setMinimumLayoutSize(const WebCore::IntSize&);
     WebCore::IntSize minimumLayoutSize() const { return m_minimumLayoutSize; }
 
@@ -1395,6 +1401,9 @@ private:
     bool m_artificialPluginInitializationDelayEnabled { false };
     bool m_scrollingPerformanceLoggingEnabled { false };
     bool m_mainFrameIsScrollable { true };
+
+    bool m_alwaysShowsHorizontalScroller { false };
+    bool m_alwaysShowsVerticalScroller { false };
 
 #if PLATFORM(IOS)
     bool m_ignoreViewportScalingConstraints { false };

@@ -81,6 +81,9 @@ struct WebPageCreationParameters {
     bool useFixedLayout;
     WebCore::IntSize fixedLayoutSize;
 
+    bool alwaysShowsHorizontalScroller;
+    bool alwaysShowsVerticalScroller;
+
     bool suppressScrollbarAnimations;
 
     WebCore::Pagination::Mode paginationMode;

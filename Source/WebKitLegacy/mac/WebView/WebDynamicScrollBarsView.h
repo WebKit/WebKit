@@ -32,9 +32,6 @@
 
 #import <AppKit/NSScrollView.h>
 
-// FIXME: <rdar://problem/5898985> Mail currently expects this header to define WebCoreScrollbarAlwaysOn.
-extern const int WebCoreScrollbarAlwaysOn;
-
 struct WebDynamicScrollBarsViewPrivate;
 @interface WebDynamicScrollBarsView : NSScrollView {
 @private

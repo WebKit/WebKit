@@ -36,9 +36,6 @@
 
 using namespace WebCore;
 
-// FIXME: <rdar://problem/5898985> Mail expects a constant of this name to exist.
-const int WebCoreScrollbarAlwaysOn = ScrollbarAlwaysOn;
-
 #ifndef __OBJC2__
 // In <rdar://problem/7814899> we saw crashes because WebDynamicScrollBarsView increased in size, breaking ABI compatiblity.
 COMPILE_ASSERT(sizeof(WebDynamicScrollBarsView) == 0x8c, WebDynamicScrollBarsView_is_expected_size);

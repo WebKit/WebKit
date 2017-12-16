@@ -323,6 +323,8 @@ Ref<WebPage> WebPage::create(uint64_t pageID, WebPageCreationParameters&& parame
 WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     : m_pageID(pageID)
     , m_viewSize(parameters.viewSize)
+    , m_alwaysShowsHorizontalScroller { parameters.alwaysShowsHorizontalScroller }
+    , m_alwaysShowsVerticalScroller { parameters.alwaysShowsVerticalScroller }
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     , m_determinePrimarySnapshottedPlugInTimer(RunLoop::main(), this, &WebPage::determinePrimarySnapshottedPlugInTimerFired)
 #endif
@@ -4912,6 +4914,30 @@ void WebPage::canceledComposition()
 {
     send(Messages::WebPageProxy::CompositionWasCanceled());
     sendEditorStateUpdate();
+}
+
+void WebPage::setAlwaysShowsHorizontalScroller(bool alwaysShowsHorizontalScroller)
+{
+    if (alwaysShowsHorizontalScroller == m_alwaysShowsHorizontalScroller)
+        return;
+
+    m_alwaysShowsHorizontalScroller = alwaysShowsHorizontalScroller;
+    auto view = corePage()->mainFrame().view();
+    if (!alwaysShowsHorizontalScroller)
+        view->setHorizontalScrollbarLock(false);
+    view->setHorizontalScrollbarMode(alwaysShowsHorizontalScroller ? ScrollbarAlwaysOn : m_mainFrameIsScrollable ? ScrollbarAuto : ScrollbarAlwaysOff, alwaysShowsHorizontalScroller || !m_mainFrameIsScrollable);
+}
+
+void WebPage::setAlwaysShowsVerticalScroller(bool alwaysShowsVerticalScroller)
+{
+    if (alwaysShowsVerticalScroller == m_alwaysShowsVerticalScroller)
+        return;
+
+    m_alwaysShowsVerticalScroller = alwaysShowsVerticalScroller;
+    auto view = corePage()->mainFrame().view();
+    if (!alwaysShowsVerticalScroller)
+        view->setVerticalScrollbarLock(false);
+    view->setVerticalScrollbarMode(alwaysShowsVerticalScroller ? ScrollbarAlwaysOn : m_mainFrameIsScrollable ? ScrollbarAuto : ScrollbarAlwaysOff, alwaysShowsVerticalScroller || !m_mainFrameIsScrollable);
 }
 
 void WebPage::setMinimumLayoutSize(const IntSize& minimumLayoutSize)

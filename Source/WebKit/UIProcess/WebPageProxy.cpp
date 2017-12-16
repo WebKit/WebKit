@@ -2652,6 +2652,30 @@ void WebPageProxy::setFixedLayoutSize(const IntSize& size)
     m_process->send(Messages::WebPage::SetFixedLayoutSize(size), m_pageID);
 }
 
+void WebPageProxy::setAlwaysShowsHorizontalScroller(bool alwaysShowsHorizontalScroller)
+{
+    if (!isValid())
+        return;
+
+    if (alwaysShowsHorizontalScroller == m_alwaysShowsHorizontalScroller)
+        return;
+
+    m_alwaysShowsHorizontalScroller = alwaysShowsHorizontalScroller;
+    m_process->send(Messages::WebPage::SetAlwaysShowsHorizontalScroller(alwaysShowsHorizontalScroller), m_pageID);
+}
+
+void WebPageProxy::setAlwaysShowsVerticalScroller(bool alwaysShowsVerticalScroller)
+{
+    if (!isValid())
+        return;
+
+    if (alwaysShowsVerticalScroller == m_alwaysShowsVerticalScroller)
+        return;
+
+    m_alwaysShowsVerticalScroller = alwaysShowsVerticalScroller;
+    m_process->send(Messages::WebPage::SetAlwaysShowsVerticalScroller(alwaysShowsVerticalScroller), m_pageID);
+}
+
 void WebPageProxy::listenForLayoutMilestones(WebCore::LayoutMilestones milestones)
 {
     if (!isValid())
@@ -5745,6 +5769,8 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.underlayColor = m_underlayColor;
     parameters.useFixedLayout = m_useFixedLayout;
     parameters.fixedLayoutSize = m_fixedLayoutSize;
+    parameters.alwaysShowsHorizontalScroller = m_alwaysShowsHorizontalScroller;
+    parameters.alwaysShowsVerticalScroller = m_alwaysShowsVerticalScroller;
     parameters.suppressScrollbarAnimations = m_suppressScrollbarAnimations;
     parameters.paginationMode = m_paginationMode;
     parameters.paginationBehavesLikeColumns = m_paginationBehavesLikeColumns;

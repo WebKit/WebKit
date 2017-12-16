@@ -399,6 +399,9 @@ messages -> WebPage LegacyReceiver {
     FontAtSelection(WebKit::CallbackID callbackID);
 #endif
 
+    SetAlwaysShowsHorizontalScroller(bool alwaysShowsHorizontalScroller)
+    SetAlwaysShowsVerticalScroller(bool alwaysShowsVerticalScroller)
+
     SetMinimumLayoutSize(WebCore::IntSize minimumLayoutSize)
     SetAutoSizingShouldExpandToViewHeight(bool shouldExpand)
 

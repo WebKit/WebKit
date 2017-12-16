@@ -1,3 +1,30 @@
+2017-12-16  Dan Bernstein  <mitz@apple.com>
+
+        WKWebView has no equivalent of -[WebView setAlwaysShowVerticalScroller:]
+        https://bugs.webkit.org/show_bug.cgi?id=180613
+        <rdar://problem/35946124>
+
+        Reviewed by Geoff Garen.
+
+        * MiniBrowser/mac/MainMenu.xib: Added Always Show {Horizontal,Vertical} Scroller menu items
+          to the View menu.
+
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController validateMenuItem:]): Set the state of the new menu items based
+          on -alwaysShow{Horizontal,Vertical}Scroller.
+        (-[WK1BrowserWindowController toggleAlwaysShowsHorizontalScroller:]): Toggle the value.
+        (-[WK1BrowserWindowController toggleAlwaysShowsVerticalScroller:]): Ditto.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController validateMenuItem:]): Set the state of the new menu items based
+          on the new property.
+        (-[WK2BrowserWindowController toggleAlwaysShowsHorizontalScroller:]): Toggle the property.
+        (-[WK2BrowserWindowController toggleAlwaysShowsVerticalScroller:]): Ditto.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewAlwaysShowsScroller.mm: Added.
+        (TEST):
+
 2017-12-16  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [WinCairo] Move the destination of WinCairoRequirements.zip into WebKitLibraries and register it and related files as git ignore files.

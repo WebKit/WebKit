@@ -732,6 +732,11 @@ public:
     bool useFixedLayout() const { return m_useFixedLayout; };
     const WebCore::IntSize& fixedLayoutSize() const { return m_fixedLayoutSize; };
 
+    void setAlwaysShowsHorizontalScroller(bool);
+    void setAlwaysShowsVerticalScroller(bool);
+    bool alwaysShowsHorizontalScroller() const { return m_alwaysShowsHorizontalScroller; }
+    bool alwaysShowsVerticalScroller() const { return m_alwaysShowsVerticalScroller; }
+
     void listenForLayoutMilestones(WebCore::LayoutMilestones);
 
     bool hasHorizontalScrollbar() const { return m_mainFrameHasHorizontalScrollbar; }
@@ -1833,6 +1838,9 @@ private:
 
     bool m_useFixedLayout { false };
     WebCore::IntSize m_fixedLayoutSize;
+
+    bool m_alwaysShowsHorizontalScroller { false };
+    bool m_alwaysShowsVerticalScroller { false };
 
     WebCore::LayoutMilestones m_observedLayoutMilestones { 0 };
 

@@ -1,3 +1,61 @@
+2017-12-16  Dan Bernstein  <mitz@apple.com>
+
+        WKWebView has no equivalent of -[WebView setAlwaysShowVerticalScroller:]
+        https://bugs.webkit.org/show_bug.cgi?id=180613
+        <rdar://problem/35946124>
+
+        Reviewed by Geoff Garen.
+
+        Added _alwaysShowsHorizontalScroller and _alwaysShowsVerticalScroller properties to
+        WKWebView.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const): Encode new alwaysShowsHorizontalScroller
+          and alwaysShowsVerticalScroller parameters.
+        (WebKit::WebPageCreationParameters::decode): Decode new parameters.
+
+        * Shared/WebPageCreationParameters.h: Added new alwaysShowsHorizontalScroller and
+          alwaysShowsVerticalScroller boolean parameters.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _alwaysShowsHorizontalScroller]): New accessor that calls through to the
+          WebPageProxy.
+        (-[WKWebView _setAlwaysShowsHorizontalScroller:]): Ditto.
+        (-[WKWebView _alwaysShowsVerticalScroller]): Ditto.
+        (-[WKWebView _setAlwaysShowsVerticalScroller:]): Ditto.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Declare new properties.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setAlwaysShowsHorizontalScroller): Update member variable and send
+          a message to the page.
+        (WebKit::WebPageProxy::setAlwaysShowsVerticalScroller): Ditto.
+        (WebKit::WebPageProxy::creationParameters): Initialize new parameters from the new member
+          variables.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::alwaysShowsHorizontalScroller const): New getter.
+        (WebKit::WebPageProxy::alwaysShowsVerticalScroller const): Ditto.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage): Factor
+          alwaysShowsHorizontalScroller and alwaysShowsVerticalScroller into the initial scroller
+          modes and scroller locks when creating the FrameView.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Initialize new m_alwaysShowsHorizontalScroller and
+          m_alwaysShowsVerticalScroller member variables from the corresponding new creation
+          parameters.
+        (WebKit::WebPage::setAlwaysShowsHorizontalScroller): Update the member variable and set
+          new scrollbar mode on the frame view if needed.
+        (WebKit::WebPage::setAlwaysShowsVerticalScroller): Ditto.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::alwaysShowsHorizontalScroller const): New getter.
+        (WebKit::WebPage::alwaysShowsVerticalScroller const): Ditto.
+
+        * WebProcess/WebPage/WebPage.messages.in: Added new messages.
+
 2017-12-16  Brady Eidson  <beidson@apple.com>
 
         Implement getting ServiceWorker registrations for the WKWebsiteDataStore API

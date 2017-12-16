@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13168.4" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13168.4"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -734,6 +734,18 @@
                                         </menuItem>
                                     </items>
                                 </menu>
+                            </menuItem>
+                            <menuItem title="Always Show Horizontal Scroller" id="vTs-1N-5Cb">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleAlwaysShowsHorizontalScroller:" target="-1" id="WAH-WK-kRY"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Always Show Vertical Scroller" id="dad-Bl-adD">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleAlwaysShowsVerticalScroller:" target="-1" id="zGl-OI-HH6"/>
+                                </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="581"/>
                             <menuItem title="Reload Page" keyEquivalent="r" id="579">

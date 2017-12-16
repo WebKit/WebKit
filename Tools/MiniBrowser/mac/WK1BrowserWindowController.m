@@ -151,6 +151,10 @@ static BOOL areEssentiallyEqual(double a, double b)
         [menuItem setState:self.isEditable ? NSOnState : NSOffState];
     else if (action == @selector(showHideWebInspector:))
         [menuItem setTitle:_webView.inspector.isOpen ? @"Close Web Inspector" : @"Show Web Inspector"];
+    else if (action == @selector(toggleAlwaysShowsHorizontalScroller:))
+        menuItem.state = _webView.alwaysShowHorizontalScroller ? NSOnState : NSOffState;
+    else if (action == @selector(toggleAlwaysShowsVerticalScroller:))
+        menuItem.state = _webView.alwaysShowVerticalScroller ? NSOnState : NSOffState;
 
     if (action == @selector(setPageScale:))
         [menuItem setState:areEssentiallyEqual([_webView _viewScaleFactor], [self pageScaleForMenuItemTag:[menuItem tag]])];
@@ -262,6 +266,16 @@ static BOOL areEssentiallyEqual(double a, double b)
         [inspector close:sender];
     else
         [inspector show:sender];
+}
+
+- (IBAction)toggleAlwaysShowsHorizontalScroller:(id)sender
+{
+    _webView.alwaysShowHorizontalScroller = !_webView.alwaysShowHorizontalScroller;
+}
+
+- (IBAction)toggleAlwaysShowsVerticalScroller:(id)sender
+{
+    _webView.alwaysShowVerticalScroller = !_webView.alwaysShowVerticalScroller;
 }
 
 - (NSURL *)currentURL

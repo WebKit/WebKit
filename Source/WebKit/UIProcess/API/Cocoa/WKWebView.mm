@@ -5518,6 +5518,26 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     return _impl->setShouldExpandToViewHeightForAutoLayout(shouldExpand);
 }
 
+- (BOOL)_alwaysShowsHorizontalScroller
+{
+    return _page->alwaysShowsHorizontalScroller();
+}
+
+- (void)_setAlwaysShowsHorizontalScroller:(BOOL)alwaysShowsHorizontalScroller
+{
+    _page->setAlwaysShowsHorizontalScroller(alwaysShowsHorizontalScroller);
+}
+
+- (BOOL)_alwaysShowsVerticalScroller
+{
+    return _page->alwaysShowsVerticalScroller();
+}
+
+- (void)_setAlwaysShowsVerticalScroller:(BOOL)alwaysShowsVerticalScroller
+{
+    _page->setAlwaysShowsVerticalScroller(alwaysShowsVerticalScroller);
+}
+
 - (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo
 {
     if (auto webFrameProxy = _page->mainFrame())
