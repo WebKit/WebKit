@@ -1,9 +1,0 @@
-
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Navigation Preload redirect response. Test timed out
-NOTRUN Navigation Preload no-location redirect response. 
-NOTRUN Navigation Preload no-location redirect response with body. 
-NOTRUN Navigation Preload redirect to the same scope. 
-

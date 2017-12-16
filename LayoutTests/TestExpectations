@@ -152,11 +152,6 @@ imported/w3c/web-platform-tests/fetch/api/abort/general-serviceworker.https.html
 imported/w3c/web-platform-tests/service-workers/service-worker/extendable-event-waituntil.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-partial-stream.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/http-to-https-redirect-and-register.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/broken-chunked-encoding.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/chunked-encoding.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/get-state.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/redirect.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/request-headers.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/postmessage.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/postmessage-msgport-to-client.https.html [ Skip ]
@@ -166,6 +161,10 @@ imported/w3c/web-platform-tests/service-workers/service-worker/update-after-navi
 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-oneday.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-recovery.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/client-navigate.https.html [ Skip ]
+
+# Unsupported features: SharedWorker, NavigationPreload
+imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/shared-worker-controlled.https.html [ Skip ]
 
 webkit.org/b/179342 http/tests/workers/service/registration-task-queue-scheduling-1.html [ Pass Failure ]
 http/tests/workers/service/service-worker-cache-api.https.html [ Pass Failure ]

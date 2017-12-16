@@ -1,3 +1,19 @@
+2017-12-16  Youenn Fablet  <youenn@apple.com>
+
+        Skip SharedWorker and NavigationPreload service worker tests
+        https://bugs.webkit.org/show_bug.cgi?id=180902
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/service-workers/service-worker/navigation-preload/broken-chunked-encoding.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-preload/chunked-encoding.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-preload/empty-preload-response-body.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-preload/get-state.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-preload/redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-preload/request-headers.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-preload/resource-timing.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/shared-worker-controlled.https-expected.txt:
+
 2017-12-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         [CredentialManagement] Import Credential Management Web Platform Tests
