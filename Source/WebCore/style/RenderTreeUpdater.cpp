@@ -274,7 +274,7 @@ void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::El
     if (is<RenderBlock>(*renderer))
         FirstLetter::update(downcast<RenderBlock>(*renderer));
     if (is<RenderListItem>(*renderer))
-        ListItem::updateMarker(m_builder, downcast<RenderListItem>(*renderer));
+        ListItem::updateMarker(downcast<RenderListItem>(*renderer));
     if (is<RenderBlockFlow>(*renderer))
         MultiColumn::update(downcast<RenderBlockFlow>(*renderer));
 
@@ -376,8 +376,7 @@ void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
     auto newRenderer = element.createElementRenderer(WTFMove(style), insertionPosition);
     if (!newRenderer)
         return;
-
-    if (!insertionPosition.parent().isChildAllowed(*newRenderer, newRenderer->style()))
+    if (!insertionPosition.canInsert(*newRenderer))
         return;
 
     element.setRenderer(newRenderer.get());
@@ -386,13 +385,13 @@ void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
 
 #if ENABLE(FULLSCREEN_API)
     if (m_document.webkitIsFullScreen() && m_document.webkitCurrentFullScreenElement() == &element) {
-        newRenderer = RenderFullScreen::wrapNewRenderer(m_builder, WTFMove(newRenderer), insertionPosition.parent(), m_document);
+        newRenderer = RenderFullScreen::wrapNewRenderer(WTFMove(newRenderer), insertionPosition.parent(), m_document);
         if (!newRenderer)
             return;
     }
 #endif
 
-    m_builder.insertChild(insertionPosition, WTFMove(newRenderer));
+    insertionPosition.insert(WTFMove(newRenderer));
 
     if (AXObjectCache* cache = m_document.axObjectCache())
         cache->updateCacheAfterNodeIsAttached(&element);
@@ -446,16 +445,15 @@ bool RenderTreeUpdater::textRendererIsNeeded(const Text& textNode)
     return true;
 }
 
-void RenderTreeUpdater::createTextRenderer(Text& textNode, const Style::TextUpdate* textUpdate)
+static void createTextRenderer(Text& textNode, RenderTreePosition& renderTreePosition, const Style::TextUpdate* textUpdate)
 {
     ASSERT(!textNode.renderer());
 
-    auto& renderTreePosition = this->renderTreePosition();
     auto textRenderer = textNode.createTextRenderer(renderTreePosition.parent().style());
 
     renderTreePosition.computeNextSibling(textNode);
 
-    if (!renderTreePosition.parent().isChildAllowed(*textRenderer, renderTreePosition.parent().style()))
+    if (!renderTreePosition.canInsert(*textRenderer))
         return;
 
     textNode.setRenderer(textRenderer.get());
@@ -463,17 +461,17 @@ void RenderTreeUpdater::createTextRenderer(Text& textNode, const Style::TextUpda
     if (textUpdate && textUpdate->inheritedDisplayContentsStyle && *textUpdate->inheritedDisplayContentsStyle) {
         // Wrap text renderer into anonymous inline so we can give it a style.
         // This is to support "<div style='display:contents;color:green'>text</div>" type cases
-        auto newDisplayContentsAnonymousWrapper = WebCore::createRenderer<RenderInline>(textNode.document(), RenderStyle::clone(**textUpdate->inheritedDisplayContentsStyle));
+        auto newDisplayContentsAnonymousWrapper = createRenderer<RenderInline>(textNode.document(), RenderStyle::clone(**textUpdate->inheritedDisplayContentsStyle));
         newDisplayContentsAnonymousWrapper->initializeStyle();
         auto& displayContentsAnonymousWrapper = *newDisplayContentsAnonymousWrapper;
-        m_builder.insertChild(renderTreePosition, WTFMove(newDisplayContentsAnonymousWrapper));
+        renderTreePosition.insert(WTFMove(newDisplayContentsAnonymousWrapper));
 
         textRenderer->setInlineWrapperForDisplayContents(&displayContentsAnonymousWrapper);
-        m_builder.insertChild(displayContentsAnonymousWrapper, WTFMove(textRenderer));
+        displayContentsAnonymousWrapper.addChild(WTFMove(textRenderer));
         return;
     }
 
-    m_builder.insertChild(renderTreePosition, WTFMove(textRenderer));
+    renderTreePosition.insert(WTFMove(textRenderer));
 }
 
 void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* textUpdate)
@@ -484,7 +482,7 @@ void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* 
     if (existingRenderer && textUpdate && textUpdate->inheritedDisplayContentsStyle) {
         if (existingRenderer->inlineWrapperForDisplayContents() || *textUpdate->inheritedDisplayContentsStyle) {
             // FIXME: We could update without teardown.
-            tearDownTextRenderer(text);
+            tearDownRenderer(text);
             existingRenderer = nullptr;
         }
     }
@@ -495,13 +493,13 @@ void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* 
                 existingRenderer->setTextWithOffset(text.data(), textUpdate->offset, textUpdate->length);
             return;
         }
-        tearDownTextRenderer(text);
+        tearDownRenderer(text);
         renderingParent().didCreateOrDestroyChildRenderer = true;
         return;
     }
     if (!needsRenderer)
         return;
-    createTextRenderer(text, textUpdate);
+    createTextRenderer(text, renderTreePosition(), textUpdate);
     renderingParent().didCreateOrDestroyChildRenderer = true;
 }
 
@@ -516,14 +514,7 @@ void RenderTreeUpdater::storePreviousRenderer(Node& node)
 
 void RenderTreeUpdater::tearDownRenderers(Element& root)
 {
-    RenderTreeBuilder builder;
     tearDownRenderers(root, TeardownType::Full);
-}
-
-void RenderTreeUpdater::tearDownRenderer(Text& text)
-{
-    RenderTreeBuilder builder;
-    tearDownTextRenderer(text);
 }
 
 void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownType)
@@ -550,8 +541,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
             if (teardownType == TeardownType::Full)
                 element.clearHoverAndActiveStatusBeforeDetachingRenderer();
 
-            GeneratedContent::removeBeforePseudoElement(element);
-            GeneratedContent::removeAfterPseudoElement(element);
+            element.clearStyleDerivedDataBeforeDetachingRenderer();
 
             if (auto* renderer = element.renderer()) {
                 renderer->removeFromParentAndDestroyCleaningUpAnonymousWrappers();
@@ -569,7 +559,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
         pop(it.depth());
 
         if (is<Text>(*it)) {
-            tearDownTextRenderer(downcast<Text>(*it));
+            tearDownRenderer(downcast<Text>(*it));
             continue;
         }
 
@@ -579,7 +569,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
     pop(0);
 }
 
-void RenderTreeUpdater::tearDownTextRenderer(Text& text)
+void RenderTreeUpdater::tearDownRenderer(Text& text)
 {
     auto* renderer = text.renderer();
     if (!renderer)

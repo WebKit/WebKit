@@ -69,7 +69,7 @@ static RenderObject* firstNonMarkerChild(RenderBlock& parent)
     return child;
 }
 
-void RenderTreeUpdater::ListItem::updateMarker(RenderTreeBuilder& builder, RenderListItem& listItemRenderer)
+void RenderTreeUpdater::ListItem::updateMarker(RenderListItem& listItemRenderer)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!listItemRenderer.view().frameView().layoutContext().layoutState());
 
@@ -110,9 +110,9 @@ void RenderTreeUpdater::ListItem::updateMarker(RenderTreeBuilder& builder, Rende
 
     if (newParent != currentParent) {
         if (currentParent)
-            builder.insertChild(*newParent, currentParent->takeChild(*markerRenderer), firstNonMarkerChild(*newParent));
+            newParent->addChild(currentParent->takeChild(*markerRenderer), firstNonMarkerChild(*newParent));
         else
-            builder.insertChild(*newParent, WTFMove(newMarkerRenderer), firstNonMarkerChild(*newParent));
+            newParent->addChild(WTFMove(newMarkerRenderer), firstNonMarkerChild(*newParent));
 
         // If current parent is an anonymous block that has lost all its children, destroy it.
         if (currentParent && currentParent->isAnonymousBlock() && !currentParent->firstChild() && !downcast<RenderBlock>(*currentParent).continuation())

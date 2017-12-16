@@ -66,7 +66,6 @@
 #include "RenderTableRow.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
-#include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "SVGRenderSupport.h"
 #include "Settings.h"
@@ -476,7 +475,7 @@ bool RenderElement::childRequiresTable(const RenderObject& child) const
     return false;
 }
 
-void RenderElement::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
+void RenderElement::addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
     auto& child = *newChild;
     if (childRequiresTable(child)) {
@@ -485,12 +484,12 @@ void RenderElement::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject>
         if (afterChild && afterChild->isAnonymous() && is<RenderTable>(*afterChild) && !afterChild->isBeforeContent())
             table = downcast<RenderTable>(afterChild);
         else {
-            auto newTable = RenderTable::createAnonymousWithParentRenderer(*this);
+            auto newTable =  RenderTable::createAnonymousWithParentRenderer(*this);
             table = newTable.get();
-            builder.insertChild(*this, WTFMove(newTable), beforeChild);
+            addChild(WTFMove(newTable), beforeChild);
         }
 
-        builder.insertChild(*table, WTFMove(newChild));
+        table->addChild(WTFMove(newChild));
     } else
         insertChildInternal(WTFMove(newChild), beforeChild);
 

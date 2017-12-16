@@ -56,7 +56,7 @@ public:
     RenderRubyAsInline(Element&, RenderStyle&&);
     virtual ~RenderRubyAsInline();
 
-    void addChild(RenderTreeBuilder&, RenderPtr<RenderObject> child, RenderObject* beforeChild = 0) override;
+    void addChild(RenderPtr<RenderObject> child, RenderObject* beforeChild = 0) override;
     RenderPtr<RenderObject> takeChild(RenderObject& child) override;
 
 protected:
@@ -77,7 +77,7 @@ public:
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
-    void addChild(RenderTreeBuilder&, RenderPtr<RenderObject> child, RenderObject* beforeChild = 0) override;
+    void addChild(RenderPtr<RenderObject> child, RenderObject* beforeChild = 0) override;
     RenderPtr<RenderObject> takeChild(RenderObject& child) override;
 
 protected:

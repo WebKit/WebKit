@@ -61,7 +61,7 @@ void RenderTreeUpdater::GeneratedContent::updateQuotesUpTo(RenderQuote* lastQuot
     for (; it != end; ++it) {
         auto& quote = *it;
         // Quote character depends on quote depth so we chain the updates.
-        quote.updateRenderer(m_updater.m_builder, m_previousUpdatedQuote);
+        quote.updateRenderer(m_previousUpdatedQuote);
         m_previousUpdatedQuote = &quote;
         if (&quote == lastQuote)
             return;
@@ -69,14 +69,14 @@ void RenderTreeUpdater::GeneratedContent::updateQuotesUpTo(RenderQuote* lastQuot
     ASSERT(!lastQuote);
 }
 
-static void createContentRenderers(RenderTreeBuilder& builder, RenderElement& pseudoRenderer, const RenderStyle& style)
+static void createContentRenderers(RenderElement& pseudoRenderer, const RenderStyle& style)
 {
     ASSERT(style.contentData());
 
     for (const ContentData* content = style.contentData(); content; content = content->next()) {
         auto child = content->createContentRenderer(pseudoRenderer.document(), style);
         if (pseudoRenderer.isChildAllowed(*child, style))
-            builder.insertChild(pseudoRenderer, WTFMove(child));
+            pseudoRenderer.addChild(WTFMove(child));
     }
 }
 
@@ -100,9 +100,9 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
     if (!needsPseudoElement(update)) {
         if (pseudoElement) {
             if (pseudoId == BEFORE)
-                removeBeforePseudoElement(current);
+                current.clearBeforePseudoElement();
             else
-                removeAfterPseudoElement(current);
+                current.clearAfterPseudoElement();
         }
         return;
     }
@@ -144,7 +144,7 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
         return;
 
     if (update->change == Style::Detach)
-        createContentRenderers(m_updater.m_builder, *pseudoElementRenderer, *update->style);
+        createContentRenderers(*pseudoElementRenderer, *update->style);
     else
         updateStyleForContentRenderers(*pseudoElementRenderer, *update->style);
 
@@ -153,7 +153,7 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
             updateQuotesUpTo(&child);
     }
     if (is<RenderListItem>(*pseudoElementRenderer))
-        ListItem::updateMarker(m_updater.m_builder, downcast<RenderListItem>(*pseudoElementRenderer));
+        ListItem::updateMarker(downcast<RenderListItem>(*pseudoElementRenderer));
 }
 
 bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(const std::optional<Style::ElementUpdate>& update)
@@ -165,24 +165,6 @@ bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(const std::optional
     if (!pseudoElementRendererIsNeeded(update->style.get()))
         return false;
     return true;
-}
-
-void RenderTreeUpdater::GeneratedContent::removeBeforePseudoElement(Element& element)
-{
-    auto* pseudoElement = element.beforePseudoElement();
-    if (!pseudoElement)
-        return;
-    tearDownRenderers(*pseudoElement, TeardownType::Full);
-    element.clearBeforePseudoElement();
-}
-
-void RenderTreeUpdater::GeneratedContent::removeAfterPseudoElement(Element& element)
-{
-    auto* pseudoElement = element.afterPseudoElement();
-    if (!pseudoElement)
-        return;
-    tearDownRenderers(*pseudoElement, TeardownType::Full);
-    element.clearAfterPseudoElement();
 }
 
 }

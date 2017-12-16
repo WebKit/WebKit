@@ -33,7 +33,6 @@
 #include "RenderStyle.h"
 #include "RenderTable.h"
 #include "RenderTextFragment.h"
-#include "RenderTreeBuilder.h"
 
 namespace WebCore {
 
@@ -125,7 +124,7 @@ static void updateFirstLetterStyle(RenderBlock& firstLetterBlock, RenderObject& 
             if (is<RenderText>(*child))
                 downcast<RenderText>(*child).removeAndDestroyTextBoxes();
             auto toMove = firstLetter->takeChild(*child);
-            RenderTreeBuilder::current()->insertChild(*newFirstLetter, WTFMove(toMove));
+            newFirstLetter->addChild(WTFMove(toMove));
         }
 
         RenderObject* nextSibling = firstLetter->nextSibling();
@@ -136,7 +135,7 @@ static void updateFirstLetterStyle(RenderBlock& firstLetterBlock, RenderObject& 
             newFirstLetter->setFirstLetterRemainingText(*remainingText);
         }
         firstLetterContainer->removeAndDestroyChild(*firstLetter);
-        RenderTreeBuilder::current()->insertChild(*firstLetterContainer, WTFMove(newFirstLetter), nextSibling);
+        firstLetterContainer->addChild(WTFMove(newFirstLetter), nextSibling);
     } else
         firstLetter->setStyle(WTFMove(pseudoStyle));
 }
@@ -154,7 +153,7 @@ static void createFirstLetterRenderer(RenderBlock& firstLetterBlock, RenderText&
     newFirstLetter->setIsFirstLetter();
 
     auto& firstLetter = *newFirstLetter;
-    RenderTreeBuilder::current()->insertChild(*firstLetterContainer, WTFMove(newFirstLetter), &currentTextChild);
+    firstLetterContainer->addChild(WTFMove(newFirstLetter), &currentTextChild);
 
     // The original string is going to be either a generated content string or a DOM node's
     // string. We want the original string before it got transformed in case first-letter has
@@ -198,14 +197,14 @@ static void createFirstLetterRenderer(RenderBlock& firstLetterBlock, RenderText&
             newRemainingText = createRenderer<RenderTextFragment>(firstLetterBlock.document(), oldText, length, oldText.length() - length);
 
         RenderTextFragment& remainingText = *newRemainingText;
-        RenderTreeBuilder::current()->insertChild(*firstLetterContainer, WTFMove(newRemainingText), beforeChild);
+        firstLetterContainer->addChild(WTFMove(newRemainingText), beforeChild);
         remainingText.setFirstLetter(firstLetter);
         firstLetter.setFirstLetterRemainingText(remainingText);
 
         // construct text fragment for the first letter
         auto letter = createRenderer<RenderTextFragment>(firstLetterBlock.document(), oldText, 0, length);
 
-        RenderTreeBuilder::current()->insertChild(firstLetter, WTFMove(letter));
+        firstLetter.addChild(WTFMove(letter));
     }
 }
 

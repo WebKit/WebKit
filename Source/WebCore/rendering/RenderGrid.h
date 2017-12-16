@@ -79,7 +79,7 @@ private:
     bool isRenderGrid() const override { return true; }
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
 
-    void addChild(RenderTreeBuilder&, RenderPtr<RenderObject> newChild, RenderObject* beforeChild) final;
+    void addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild) final;
     RenderPtr<RenderObject> takeChild(RenderObject&) final;
 
     StyleSelfAlignmentData selfAlignmentForChild(GridAxis, const RenderBox&, const RenderStyle* = nullptr) const;

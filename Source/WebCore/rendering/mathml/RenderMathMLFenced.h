@@ -42,11 +42,11 @@ public:
 private:
     bool isRenderMathMLFenced() const final { return true; }
     const char* renderName() const final { return "RenderMathMLFenced"; }
-    void addChild(RenderTreeBuilder&, RenderPtr<RenderObject> child, RenderObject* beforeChild) final;
-    void updateFromElement();
+    void addChild(RenderPtr<RenderObject> child, RenderObject* beforeChild) final;
+    void updateFromElement() final;
 
     RenderPtr<RenderMathMLFencedOperator> createMathMLOperator(const String& operatorString, MathMLOperatorDictionary::Form, MathMLOperatorDictionary::Flag);
-    void makeFences(RenderTreeBuilder&);
+    void makeFences();
 
     String m_open;
     String m_close;

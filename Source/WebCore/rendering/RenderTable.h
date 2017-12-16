@@ -127,7 +127,7 @@ public:
     LayoutUnit calcBorderEnd() const;
     void recalcBordersInRowDirection();
 
-    void addChild(RenderTreeBuilder&, RenderPtr<RenderObject> child, RenderObject* beforeChild = 0) final;
+    void addChild(RenderPtr<RenderObject> child, RenderObject* beforeChild = 0) final;
 
     struct ColumnStruct {
         explicit ColumnStruct(unsigned initialSpan = 1)

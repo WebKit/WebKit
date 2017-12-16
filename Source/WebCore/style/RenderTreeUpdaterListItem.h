@@ -32,7 +32,7 @@ namespace WebCore {
 
 class RenderTreeUpdater::ListItem {
 public:
-    static void updateMarker(RenderTreeBuilder&, RenderListItem&);
+    static void updateMarker(RenderListItem&);
 };
 
 }

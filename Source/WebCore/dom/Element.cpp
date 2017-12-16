@@ -2916,7 +2916,8 @@ static void disconnectPseudoElement(PseudoElement* pseudoElement)
 {
     if (!pseudoElement)
         return;
-    ASSERT(!pseudoElement->renderer());
+    if (pseudoElement->renderer())
+        RenderTreeUpdater::tearDownRenderers(*pseudoElement);
     ASSERT(pseudoElement->hostElement());
     pseudoElement->clearHostElement();
 }
@@ -3392,6 +3393,12 @@ void Element::resetStyleRelations()
     if (!hasRareData())
         return;
     elementRareData()->resetStyleRelations();
+}
+
+void Element::clearStyleDerivedDataBeforeDetachingRenderer()
+{
+    clearBeforePseudoElement();
+    clearAfterPseudoElement();
 }
 
 void Element::clearHoverAndActiveStatusBeforeDetachingRenderer()

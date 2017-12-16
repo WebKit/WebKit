@@ -38,15 +38,11 @@ public:
         : m_parent(parent)
     {
     }
-    RenderTreePosition(RenderElement& parent, RenderObject* nextSibling)
-        : m_parent(parent)
-        , m_nextSibling(nextSibling)
-        , m_hasValidNextSibling(true)
-    {
-    }
 
     RenderElement& parent() const { return m_parent; }
-    RenderObject* nextSibling() const { ASSERT(m_hasValidNextSibling); return m_nextSibling; }
+    void insert(RenderPtr<RenderObject>);
+    bool canInsert(RenderElement&) const;
+    bool canInsert(RenderText&) const;
 
     void computeNextSibling(const Node&);
     void moveToLastChild();
@@ -68,6 +64,18 @@ inline void RenderTreePosition::moveToLastChild()
 {
     m_nextSibling = nullptr;
     m_hasValidNextSibling = true;
+}
+
+inline bool RenderTreePosition::canInsert(RenderElement& renderer) const
+{
+    ASSERT(!renderer.parent());
+    return m_parent.isChildAllowed(renderer, renderer.style());
+}
+
+inline bool RenderTreePosition::canInsert(RenderText& renderer) const
+{
+    ASSERT(!renderer.parent());
+    return m_parent.isChildAllowed(renderer, m_parent.style());
 }
 
 } // namespace WebCore
