@@ -33,7 +33,7 @@ repo = 'WebKitForWindows/WinCairoRequirements'
 file = 'WinCairoRequirements.zip'
 output = 'WebKitLibraries/win'
 
-result = download.main([repo, file])
+result = download.main(['-o', output, repo, file])
 
 # Only unzip if required
 if result == download.Status.DOWNLOADED:

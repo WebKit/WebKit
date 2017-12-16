@@ -1,3 +1,13 @@
+2017-12-16  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo] Move the destination of WinCairoRequirements.zip into WebKitLibraries and register it and related files as git ignore files.
+        https://bugs.webkit.org/show_bug.cgi?id=180875
+
+        Reviewed by Alex Christensen.
+
+        Add files extracted from WinCairoRequirements.zip
+        * .gitignore:
+
 2017-12-14  Tomas Popela  <tpopela@redhat.com>
 
         Build should fail early is needed Perl modules are not installed

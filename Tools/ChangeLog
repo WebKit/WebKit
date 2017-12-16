@@ -1,3 +1,14 @@
+2017-12-16  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo] Move the destination of WinCairoRequirements.zip into WebKitLibraries and register it and related files as git ignore files.
+        https://bugs.webkit.org/show_bug.cgi?id=180875
+
+        Reviewed by Alex Christensen.
+
+        Bug fix. Specify the download destination correctly.
+
+        * Scripts/update-webkit-wincairo-libs.py:
+
 2017-12-16  Brent Fulgham  <bfulgham@apple.com>
 
         Plugin processes are repeatedly spun up to do nothing
