@@ -228,6 +228,18 @@ using Poisoned = PoisonedImpl<uintptr_t&, key, T>;
 template<uint32_t key, typename T>
 using ConstExprPoisoned = PoisonedImpl<uintptr_t, makePoison(key), T>;
 
+template<uint32_t key, typename T>
+struct ConstExprPoisonedPtrTraits {
+    using StorageType = ConstExprPoisoned<key, T*>;
+
+    template<class U> static ALWAYS_INLINE T* exchange(StorageType& ptr, U&& newValue) { return ptr.exchange(newValue); }
+
+    template<typename K1, K1 k1, typename T1, typename K2, K2 k2, typename T2>
+    static ALWAYS_INLINE void swap(PoisonedImpl<K1, k1, T1>& a, PoisonedImpl<K2, k2, T2>& b) { a.swap(b); }
+
+    static ALWAYS_INLINE T* unwrap(const StorageType& ptr) { return ptr.unpoisoned(); }
+};
+
 } // namespace WTF
 
 using WTF::ConstExprPoisoned;

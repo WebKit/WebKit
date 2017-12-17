@@ -1,3 +1,64 @@
+2017-12-17  Mark Lam  <mark.lam@apple.com>
+
+        Enhance Ref and RefPtr to be able to work with smart pointers.
+        https://bugs.webkit.org/show_bug.cgi?id=180762
+        <rdar://problem/36027122>
+
+        Reviewed by JF Bastien and Darin Adler.
+
+        This is so we can use them with ConstExprPoisoned pointers to make PoisonedRef
+        and PoisonedRefPtr.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/DumbPtrTraits.h: Added.
+        (WTF::DumbPtrTraits::exchange):
+        (WTF::DumbPtrTraits::swap):
+        (WTF::DumbPtrTraits::unwrap):
+        * wtf/Forward.h:
+        * wtf/Poisoned.h:
+        (WTF::ConstExprPoisonedPtrTraits::exchange):
+        (WTF::ConstExprPoisonedPtrTraits::swap):
+        (WTF::ConstExprPoisonedPtrTraits::unwrap):
+        * wtf/Ref.h:
+        (WTF::Ref::~Ref):
+        (WTF::Ref::Ref):
+        (WTF::Ref::ptrAllowingHashTableEmptyValue const):
+        (WTF::Ref::ptrAllowingHashTableEmptyValue):
+        (WTF::Ref::operator-> const):
+        (WTF::Ref::get const):
+        (WTF::Ref::operator T& const):
+        (WTF::=):
+        (WTF::U>::swap):
+        (WTF::swap):
+        (WTF::U>::replace):
+        (WTF::static_reference_cast):
+        (WTF::adoptRef):
+        (WTF::is):
+        (WTF::Ref<T>::swap): Deleted.
+        (WTF::Ref<T>::replace): Deleted.
+        (WTF::GetPtrHelper<Ref<T>>::getPtr): Deleted.
+        * wtf/RefPtr.cpp: Added.
+        * wtf/RefPtr.h:
+        (WTF::RefPtr::RefPtr):
+        (WTF::RefPtr::~RefPtr):
+        (WTF::RefPtr::get const):
+        (WTF::RefPtr::operator* const):
+        (WTF::RefPtr::operator-> const):
+        (WTF::U>::RefPtr):
+        (WTF::U>::leakRef):
+        (WTF::=):
+        (WTF::U>::swap):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::static_pointer_cast):
+        (WTF::adoptRef):
+        (WTF::is):
+        (WTF::RefPtr<T>::RefPtr): Deleted.
+        (WTF::RefPtr<T>::leakRef): Deleted.
+        (WTF::RefPtr<T>::swap): Deleted.
+
 2017-12-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove unnecessary boolean result of start() functions

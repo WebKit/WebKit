@@ -49,6 +49,15 @@ TEST(WTF_ConstExprPoisoned, Basic)
         ASSERT_EQ(&a, ptr.unpoisoned());
         ASSERT_EQ(&a, &*ptr);
         ASSERT_EQ(&a.name, &ptr->name);
+
+#if ENABLE(POISON)
+        uintptr_t ptrBits;
+        std::memcpy(&ptrBits, &ptr, sizeof(ptrBits));
+        ASSERT_TRUE(ptrBits != bitwise_cast<uintptr_t>(&a));
+#if ENABLE(POISON_ASSERTS)
+        ASSERT_TRUE((ConstExprPoisoned<PoisonA, RefLogger*>::isPoisoned(ptrBits)));
+#endif
+#endif // ENABLE(POISON)
     }
 
     {

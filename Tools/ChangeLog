@@ -1,3 +1,35 @@
+2017-12-17  Mark Lam  <mark.lam@apple.com>
+
+        Enhance Ref and RefPtr to be able to work with smart pointers.
+        https://bugs.webkit.org/show_bug.cgi?id=180762
+        <rdar://problem/36027122>
+
+        Reviewed by JF Bastien and Darin Adler.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/ConstExprPoisoned.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/Poisoned.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/PoisonedRef.cpp: Added.
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::passWithRef):
+        (TestWebKitAPI::PoisonedRefCheckingRefLogger::PoisonedRefCheckingRefLogger):
+        (TestWebKitAPI::PoisonedRefCheckingRefLogger::ref):
+        (TestWebKitAPI::PoisonedRefCheckingRefLogger::deref):
+        (TestWebKitAPI::DerivedPoisonedRefCheckingRefLogger::DerivedPoisonedRefCheckingRefLogger):
+        * TestWebKitAPI/Tests/WTF/PoisonedRefPtr.cpp: Added.
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::f1):
+        (TestWebKitAPI::ConstRefCounted::create):
+        (TestWebKitAPI::returnConstRefCountedRef):
+        (TestWebKitAPI::returnRefCountedRef):
+        (TestWebKitAPI::PoisonedRefPtrCheckingRefLogger::PoisonedRefPtrCheckingRefLogger):
+        (TestWebKitAPI::loggerName):
+        (TestWebKitAPI::PoisonedRefPtrCheckingRefLogger::ref):
+        (TestWebKitAPI::PoisonedRefPtrCheckingRefLogger::deref):
+
 2017-12-16  Youenn Fablet  <youenn@apple.com>
 
         Add a script to automate W3c web-platform-tests pull request creations from WebKit commits

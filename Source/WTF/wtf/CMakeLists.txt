@@ -37,6 +37,7 @@ set(WTF_HEADERS
     Deque.h
     DisallowCType.h
     DoublyLinkedList.h
+    DumbPtrTraits.h
     FastMalloc.h
     FastTLS.h
     FeatureDefines.h
@@ -268,6 +269,7 @@ set(WTF_SOURCES
     RandomNumber.cpp
     ReadWriteLock.cpp
     RefCountedLeakCounter.cpp
+    RefPtr.cpp
     RunLoop.cpp
     SHA1.cpp
     Seconds.cpp

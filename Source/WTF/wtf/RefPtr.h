@@ -30,8 +30,8 @@
 
 namespace WTF {
 
-template<typename T> class RefPtr;
-template<typename T> RefPtr<T> adoptRef(T*);
+template<typename T, typename PtrTraits> class RefPtr;
+template<typename T, typename PtrTraits = DumbPtrTraits<T>> RefPtr<T, PtrTraits> adoptRef(T*);
 
 template<typename T> ALWAYS_INLINE void refIfNotNull(T* ptr)
 {
@@ -45,7 +45,8 @@ template<typename T> ALWAYS_INLINE void derefIfNotNull(T* ptr)
         ptr->deref();
 }
 
-template<typename T> class RefPtr {
+template<typename T, typename PtrTraits>
+class RefPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef T ValueType;
@@ -55,28 +56,28 @@ public:
 
     ALWAYS_INLINE constexpr RefPtr() : m_ptr(nullptr) { }
     ALWAYS_INLINE RefPtr(T* ptr) : m_ptr(ptr) { refIfNotNull(ptr); }
-    ALWAYS_INLINE RefPtr(const RefPtr& o) : m_ptr(o.m_ptr) { refIfNotNull(m_ptr); }
-    template<typename U> RefPtr(const RefPtr<U>& o) : m_ptr(o.get()) { refIfNotNull(m_ptr); }
+    ALWAYS_INLINE RefPtr(const RefPtr& o) : m_ptr(o.m_ptr) { refIfNotNull(PtrTraits::unwrap(m_ptr)); }
+    template<typename X, typename Y> RefPtr(const RefPtr<X, Y>& o) : m_ptr(o.get()) { refIfNotNull(PtrTraits::unwrap(m_ptr)); }
 
     ALWAYS_INLINE RefPtr(RefPtr&& o) : m_ptr(o.leakRef()) { }
-    template<typename U> RefPtr(RefPtr<U>&& o) : m_ptr(o.leakRef()) { }
-    template<typename U> RefPtr(Ref<U>&&);
+    template<typename X, typename Y> RefPtr(RefPtr<X, Y>&& o) : m_ptr(o.leakRef()) { }
+    template<typename X, typename Y> RefPtr(Ref<X, Y>&&);
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     RefPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
     bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
 
-    ALWAYS_INLINE ~RefPtr() { derefIfNotNull(std::exchange(m_ptr, nullptr)); }
+    ALWAYS_INLINE ~RefPtr() { derefIfNotNull(PtrTraits::exchange(m_ptr, nullptr)); }
 
-    T* get() const { return m_ptr; }
+    T* get() const { return PtrTraits::unwrap(m_ptr); }
 
     Ref<T> releaseNonNull() { ASSERT(m_ptr); Ref<T> tmp(adoptRef(*m_ptr)); m_ptr = nullptr; return tmp; }
     Ref<const T> releaseConstNonNull() { ASSERT(m_ptr); Ref<const T> tmp(adoptRef(*m_ptr)); m_ptr = nullptr; return tmp; }
 
     T* leakRef() WARN_UNUSED_RETURN;
 
-    T& operator*() const { ASSERT(m_ptr); return *m_ptr; }
-    ALWAYS_INLINE T* operator->() const { return m_ptr; }
+    T& operator*() const { ASSERT(m_ptr); return *PtrTraits::unwrap(m_ptr); }
+    ALWAYS_INLINE T* operator->() const { return PtrTraits::unwrap(m_ptr); }
 
     bool operator!() const { return !m_ptr; }
 
@@ -89,12 +90,12 @@ public:
     RefPtr& operator=(const RefPtr&);
     RefPtr& operator=(T*);
     RefPtr& operator=(std::nullptr_t);
-    template<typename U> RefPtr& operator=(const RefPtr<U>&);
+    template<typename X, typename Y> RefPtr& operator=(const RefPtr<X, Y>&);
     RefPtr& operator=(RefPtr&&);
-    template<typename U> RefPtr& operator=(RefPtr<U>&&);
-    template<typename U> RefPtr& operator=(Ref<U>&&);
+    template<typename X, typename Y> RefPtr& operator=(RefPtr<X, Y>&&);
+    template<typename X> RefPtr& operator=(Ref<X>&&);
 
-    void swap(RefPtr&);
+    template<typename X, typename Y> void swap(RefPtr<X, Y>&);
 
     static T* hashTableDeletedValue() { return reinterpret_cast<T*>(-1); }
 
@@ -106,126 +107,151 @@ public:
 #endif
 
 private:
-    friend RefPtr adoptRef<T>(T*);
+    friend RefPtr adoptRef<T, PtrTraits>(T*);
+    template<typename X, typename Y> friend class RefPtr;
 
     enum AdoptTag { Adopt };
     RefPtr(T* ptr, AdoptTag) : m_ptr(ptr) { }
 
-    T* m_ptr;
+    typename PtrTraits::StorageType m_ptr;
 };
 
-template<typename T> template<typename U> inline RefPtr<T>::RefPtr(Ref<U>&& reference)
+template<typename T, typename U>
+template<typename X, typename Y>
+inline RefPtr<T, U>::RefPtr(Ref<X, Y>&& reference)
     : m_ptr(&reference.leakRef())
 {
 }
 
-template<typename T>
-inline T* RefPtr<T>::leakRef()
+template<typename T, typename U>
+inline T* RefPtr<T, U>::leakRef()
 {
-    return std::exchange(m_ptr, nullptr);
+    return U::exchange(m_ptr, nullptr);
 }
 
-template<typename T> inline RefPtr<T>& RefPtr<T>::operator=(const RefPtr& o)
-{
-    RefPtr ptr = o;
-    swap(ptr);
-    return *this;
-}
-
-template<typename T> template<typename U> inline RefPtr<T>& RefPtr<T>::operator=(const RefPtr<U>& o)
+template<typename T, typename U>
+inline RefPtr<T, U>& RefPtr<T, U>::operator=(const RefPtr& o)
 {
     RefPtr ptr = o;
     swap(ptr);
     return *this;
 }
 
-template<typename T> inline RefPtr<T>& RefPtr<T>::operator=(T* optr)
+template<typename T, typename U>
+template<typename X, typename Y>
+inline RefPtr<T, U>& RefPtr<T, U>::operator=(const RefPtr<X, Y>& o)
+{
+    RefPtr ptr = o;
+    swap(ptr);
+    return *this;
+}
+
+template<typename T, typename U>
+inline RefPtr<T, U>& RefPtr<T, U>::operator=(T* optr)
 {
     RefPtr ptr = optr;
     swap(ptr);
     return *this;
 }
 
-template<typename T> inline RefPtr<T>& RefPtr<T>::operator=(std::nullptr_t)
+template<typename T, typename U>
+inline RefPtr<T, U>& RefPtr<T, U>::operator=(std::nullptr_t)
 {
-    derefIfNotNull(std::exchange(m_ptr, nullptr));
+    derefIfNotNull(U::exchange(m_ptr, nullptr));
     return *this;
 }
 
-template<typename T> inline RefPtr<T>& RefPtr<T>::operator=(RefPtr&& o)
-{
-    RefPtr ptr = WTFMove(o);
-    swap(ptr);
-    return *this;
-}
-
-template<typename T> template<typename U> inline RefPtr<T>& RefPtr<T>::operator=(RefPtr<U>&& o)
+template<typename T, typename U>
+inline RefPtr<T, U>& RefPtr<T, U>::operator=(RefPtr&& o)
 {
     RefPtr ptr = WTFMove(o);
     swap(ptr);
     return *this;
 }
 
-template<typename T> template<typename U> inline RefPtr<T>& RefPtr<T>::operator=(Ref<U>&& reference)
+template<typename T, typename U>
+template<typename X, typename Y>
+inline RefPtr<T, U>& RefPtr<T, U>::operator=(RefPtr<X, Y>&& o)
+{
+    RefPtr ptr = WTFMove(o);
+    swap(ptr);
+    return *this;
+}
+
+template<typename T, typename V>
+template<typename U>
+inline RefPtr<T, V>& RefPtr<T, V>::operator=(Ref<U>&& reference)
 {
     RefPtr ptr = WTFMove(reference);
     swap(ptr);
     return *this;
 }
 
-template<class T> inline void RefPtr<T>::swap(RefPtr& o)
+template<class T, typename U>
+template<typename X, typename Y>
+inline void RefPtr<T, U>::swap(RefPtr<X, Y>& o)
 {
-    std::swap(m_ptr, o.m_ptr);
+    U::swap(m_ptr, o.m_ptr);
 }
 
-template<class T> inline void swap(RefPtr<T>& a, RefPtr<T>& b)
+template<typename T, typename U, typename X, typename Y, typename = std::enable_if_t<!std::is_same<U, DumbPtrTraits<T>>::value || !std::is_same<Y, DumbPtrTraits<X>>::value>>
+inline void swap(RefPtr<T, U>& a, RefPtr<X, Y>& b)
 {
     a.swap(b);
 }
 
-template<typename T, typename U> inline bool operator==(const RefPtr<T>& a, const RefPtr<U>& b)
+template<typename T, typename U, typename X, typename Y>
+inline bool operator==(const RefPtr<T, U>& a, const RefPtr<X, Y>& b)
 { 
-    return a.get() == b.get(); 
+    return a.get() == b.get();
 }
 
-template<typename T, typename U> inline bool operator==(const RefPtr<T>& a, U* b)
+template<typename T, typename U, typename X>
+inline bool operator==(const RefPtr<T, U>& a, X* b)
 { 
     return a.get() == b; 
 }
 
-template<typename T, typename U> inline bool operator==(T* a, const RefPtr<U>& b) 
+template<typename T, typename X, typename Y>
+inline bool operator==(T* a, const RefPtr<X, Y>& b)
 {
     return a == b.get(); 
 }
 
-template<typename T, typename U> inline bool operator!=(const RefPtr<T>& a, const RefPtr<U>& b)
+template<typename T, typename U, typename X, typename Y>
+inline bool operator!=(const RefPtr<T, U>& a, const RefPtr<X, Y>& b)
 { 
     return a.get() != b.get(); 
 }
 
-template<typename T, typename U> inline bool operator!=(const RefPtr<T>& a, U* b)
+template<typename T, typename U, typename X>
+inline bool operator!=(const RefPtr<T, U>& a, X* b)
 {
     return a.get() != b; 
 }
 
-template<typename T, typename U> inline bool operator!=(T* a, const RefPtr<U>& b)
+template<typename T, typename X, typename Y>
+inline bool operator!=(T* a, const RefPtr<X, Y>& b)
 { 
     return a != b.get(); 
 }
 
-template<typename T, typename U> inline RefPtr<T> static_pointer_cast(const RefPtr<U>& p)
+template<typename T, typename U = DumbPtrTraits<T>, typename X, typename Y>
+inline RefPtr<T, U> static_pointer_cast(const RefPtr<X, Y>& p)
 { 
-    return RefPtr<T>(static_cast<T*>(p.get())); 
+    return RefPtr<T, U>(static_cast<T*>(p.get()));
 }
 
-template <typename T> struct IsSmartPtr<RefPtr<T>> {
+template <typename T, typename U>
+struct IsSmartPtr<RefPtr<T, U>> {
     static const bool value = true;
 };
 
-template<typename T> inline RefPtr<T> adoptRef(T* p)
+template<typename T, typename U>
+inline RefPtr<T, U> adoptRef(T* p)
 {
     adopted(p);
-    return RefPtr<T>(p, RefPtr<T>::Adopt);
+    return RefPtr<T, U>(p, RefPtr<T, U>::Adopt);
 }
 
 template<typename T> inline RefPtr<T> makeRefPtr(T* pointer)
@@ -238,18 +264,26 @@ template<typename T> inline RefPtr<T> makeRefPtr(T& reference)
     return &reference;
 }
 
-template<typename ExpectedType, typename ArgType> inline bool is(RefPtr<ArgType>& source)
+template<typename ExpectedType, typename ArgType, typename PtrTraits>
+inline bool is(RefPtr<ArgType, PtrTraits>& source)
 {
     return is<ExpectedType>(source.get());
 }
 
-template<typename ExpectedType, typename ArgType> inline bool is(const RefPtr<ArgType>& source)
+template<typename ExpectedType, typename ArgType, typename PtrTraits>
+inline bool is(const RefPtr<ArgType, PtrTraits>& source)
 {
     return is<ExpectedType>(source.get());
 }
+
+template<uint32_t key, typename T> struct ConstExprPoisonedPtrTraits;
+
+template<uint32_t key, typename T>
+using PoisonedRefPtr = RefPtr<T, ConstExprPoisonedPtrTraits<key, T>>;
 
 } // namespace WTF
 
+using WTF::PoisonedRefPtr;
 using WTF::RefPtr;
 using WTF::adoptRef;
 using WTF::makeRefPtr;

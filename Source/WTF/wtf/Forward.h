@@ -48,12 +48,13 @@ class TextStream;
 struct FastMalloc;
 
 template<typename> class CompletionHandler;
+template<typename T> struct DumbPtrTraits;
 template<typename> class Function;
 template<typename> class LazyNeverDestroyed;
 template<typename> class NeverDestroyed;
 template<typename> class OptionSet;
-template<typename> class Ref;
-template<typename> class RefPtr;
+template<typename T, typename = DumbPtrTraits<T>> class Ref;
+template<typename T, typename = DumbPtrTraits<T>> class RefPtr;
 template<typename> class StringBuffer;
 template<typename, typename = void> class StringTypeAdapter;
 
