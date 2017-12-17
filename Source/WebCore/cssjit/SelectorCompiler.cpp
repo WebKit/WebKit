@@ -390,9 +390,9 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
 
 static void computeBacktrackingInformation(SelectorFragmentList& selectorFragments, unsigned level = 0);
 
-SelectorCompilationStatus compileSelector(const CSSSelector* lastSelector, JSC::VM* vm, SelectorContext selectorContext, JSC::MacroAssemblerCodeRef& codeRef)
+SelectorCompilationStatus compileSelector(const CSSSelector* lastSelector, SelectorContext selectorContext, JSC::MacroAssemblerCodeRef& codeRef)
 {
-    if (!vm->canUseJIT())
+    if (!JSC::VM::canUseJIT())
         return SelectorCompilationStatus::CannotCompile;
     SelectorCodeGenerator codeGenerator(lastSelector, selectorContext);
     return codeGenerator.compile(codeRef);

@@ -175,6 +175,48 @@ static bool enableAssembler(ExecutableAllocator& executableAllocator)
 }
 #endif // ENABLE(!ASSEMBLER)
 
+bool VM::canUseAssembler()
+{
+#if ENABLE(ASSEMBLER)
+    static std::once_flag onceKey;
+    static bool enabled = false;
+    std::call_once(onceKey, [] {
+        enabled = enableAssembler(ExecutableAllocator::singleton());
+    });
+    return enabled;
+#else
+    return false; // interpreter only
+#endif
+}
+
+bool VM::canUseJIT()
+{
+#if ENABLE(JIT)
+    static std::once_flag onceKey;
+    static bool enabled = false;
+    std::call_once(onceKey, [] {
+        enabled = VM::canUseAssembler() && Options::useJIT();
+    });
+    return enabled;
+#else
+    return false; // interpreter only
+#endif
+}
+
+bool VM::canUseRegExpJIT()
+{
+#if ENABLE(YARR_JIT)
+    static std::once_flag onceKey;
+    static bool enabled = false;
+    std::call_once(onceKey, [] {
+        enabled = VM::canUseAssembler() && Options::useRegExpJIT();
+    });
+    return enabled;
+#else
+    return false; // interpreter only
+#endif
+}
+
 VM::VM(VMType vmType, HeapType heapType)
     : m_apiLock(adoptRef(new JSLock(this)))
 #if USE(CF)
@@ -236,15 +278,6 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_regExpCache(new RegExpCache(this))
 #if ENABLE(REGEXP_TRACING)
     , m_rtTraceList(new RTTraceList())
-#endif
-#if ENABLE(ASSEMBLER)
-    , m_canUseAssembler(enableAssembler(ExecutableAllocator::singleton()))
-#endif
-#if ENABLE(JIT)
-    , m_canUseJIT(m_canUseAssembler && Options::useJIT())
-#endif
-#if ENABLE(YARR_JIT)
-    , m_canUseRegExpJIT(m_canUseAssembler && Options::useRegExpJIT())
 #endif
 #if ENABLE(GC_VALIDATION)
     , m_initializingObjectClass(0)

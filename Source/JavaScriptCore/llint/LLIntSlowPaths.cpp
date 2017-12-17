@@ -318,13 +318,13 @@ static FunctionWhitelist& ensureGlobalJITWhitelist()
     return baselineWhitelist;
 }
 
-inline bool shouldJIT(ExecState* exec, CodeBlock* codeBlock)
+inline bool shouldJIT(CodeBlock* codeBlock)
 {
     if (!Options::bytecodeRangeToJITCompile().isInRange(codeBlock->instructionCount())
         || !ensureGlobalJITWhitelist().contains(codeBlock))
         return false;
 
-    return exec->vm().canUseJIT() && Options::useBaselineJIT();
+    return VM::canUseJIT() && Options::useBaselineJIT();
 }
 
 // Returns true if we should try to OSR.
@@ -370,7 +370,7 @@ static SlowPathReturnType entryOSR(ExecState* exec, Instruction*, CodeBlock* cod
             codeBlock->llintExecuteCounter(), "\n");
     }
     
-    if (!shouldJIT(exec, codeBlock)) {
+    if (!shouldJIT(codeBlock)) {
         codeBlock->dontJITAnytimeSoon();
         LLINT_RETURN_TWO(0, 0);
     }
@@ -430,7 +430,7 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     
     unsigned loopOSREntryBytecodeOffset = pc - codeBlock->instructions().begin();
 
-    if (!shouldJIT(exec, codeBlock)) {
+    if (!shouldJIT(codeBlock)) {
         codeBlock->dontJITAnytimeSoon();
         LLINT_RETURN_TWO(0, 0);
     }
@@ -470,7 +470,7 @@ LLINT_SLOW_PATH_DECL(replace)
             codeBlock->llintExecuteCounter(), "\n");
     }
     
-    if (shouldJIT(exec, codeBlock))
+    if (shouldJIT(codeBlock))
         jitCompileAndSetHeuristics(codeBlock, exec);
     else
         codeBlock->dontJITAnytimeSoon();

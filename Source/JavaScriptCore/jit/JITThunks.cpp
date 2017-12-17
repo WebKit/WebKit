@@ -47,40 +47,40 @@ JITThunks::~JITThunks()
 
 MacroAssemblerCodePtr JITThunks::ctiNativeCall(VM* vm)
 {
-    if (!vm->canUseJIT())
+    if (!VM::canUseJIT())
         return MacroAssemblerCodePtr::createLLIntCodePtr(llint_native_call_trampoline);
     return ctiStub(vm, nativeCallGenerator).code();
 }
 
 MacroAssemblerCodePtr JITThunks::ctiNativeConstruct(VM* vm)
 {
-    if (!vm->canUseJIT())
+    if (!VM::canUseJIT())
         return MacroAssemblerCodePtr::createLLIntCodePtr(llint_native_construct_trampoline);
     return ctiStub(vm, nativeConstructGenerator).code();
 }
 
 MacroAssemblerCodePtr JITThunks::ctiNativeTailCall(VM* vm)
 {
-    ASSERT(vm->canUseJIT());
+    ASSERT(VM::canUseJIT());
     return ctiStub(vm, nativeTailCallGenerator).code();
 }
 
 MacroAssemblerCodePtr JITThunks::ctiNativeTailCallWithoutSavedTags(VM* vm)
 {
-    ASSERT(vm->canUseJIT());
+    ASSERT(VM::canUseJIT());
     return ctiStub(vm, nativeTailCallWithoutSavedTagsGenerator).code();
 }
 
 MacroAssemblerCodePtr JITThunks::ctiInternalFunctionCall(VM* vm)
 {
-    if (!vm->canUseJIT())
+    if (!VM::canUseJIT())
         return MacroAssemblerCodePtr::createLLIntCodePtr(llint_internal_function_call_trampoline);
     return ctiStub(vm, internalFunctionCallGenerator).code();
 }
 
 MacroAssemblerCodePtr JITThunks::ctiInternalFunctionConstruct(VM* vm)
 {
-    if (!vm->canUseJIT())
+    if (!VM::canUseJIT())
         return MacroAssemblerCodePtr::createLLIntCodePtr(llint_internal_function_construct_trampoline);
     return ctiStub(vm, internalFunctionConstructGenerator).code();
 }
@@ -120,7 +120,7 @@ NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, N
 NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, NativeFunction constructor, ThunkGenerator generator, Intrinsic intrinsic, const DOMJIT::Signature* signature, const String& name)
 {
     ASSERT(!isCompilationThread());    
-    ASSERT(vm->canUseJIT());
+    ASSERT(VM::canUseJIT());
 
     if (NativeExecutable* nativeExecutable = m_hostFunctionStubMap->get(std::make_tuple(function, constructor, name)))
         return nativeExecutable;

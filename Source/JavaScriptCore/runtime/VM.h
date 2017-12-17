@@ -478,17 +478,9 @@ public:
         DeletePropertyMode m_previousMode;
     };
 
-#if ENABLE(JIT)
-    bool canUseJIT() { return m_canUseJIT; }
-#else
-    bool canUseJIT() { return false; } // interpreter only
-#endif
-
-#if ENABLE(YARR_JIT)
-    bool canUseRegExpJIT() { return m_canUseRegExpJIT; }
-#else
-    bool canUseRegExpJIT() { return false; } // interpreter only
-#endif
+    static JS_EXPORT_PRIVATE bool canUseAssembler();
+    static JS_EXPORT_PRIVATE bool canUseJIT();
+    static JS_EXPORT_PRIVATE bool canUseRegExpJIT();
 
     SourceProviderCache* addSourceProviderCache(SourceProvider*);
     void clearSourceProviderCaches();
@@ -785,15 +777,6 @@ private:
     static void primitiveGigacageDisabledCallback(void*);
     void primitiveGigacageDisabled();
 
-#if ENABLE(ASSEMBLER)
-    bool m_canUseAssembler;
-#endif
-#if ENABLE(JIT)
-    bool m_canUseJIT;
-#endif
-#if ENABLE(YARR_JIT)
-    bool m_canUseRegExpJIT;
-#endif
 #if ENABLE(GC_VALIDATION)
     const ClassInfo* m_initializingObjectClass;
 #endif

@@ -43,7 +43,7 @@ static void setFunctionEntrypoint(VM& vm, CodeBlock* codeBlock)
     CodeSpecializationKind kind = codeBlock->specializationKind();
     
 #if ENABLE(JIT)
-    if (vm.canUseJIT()) {
+    if (VM::canUseJIT()) {
         if (kind == CodeForCall) {
             codeBlock->setJITCode(
                 adoptRef(*new DirectJITCode(vm.getCTIStub(functionForCallEntryThunkGenerator), vm.getCTIStub(functionForCallArityCheckThunkGenerator).code(), JITCode::InterpreterThunk)));
@@ -70,7 +70,7 @@ static void setFunctionEntrypoint(VM& vm, CodeBlock* codeBlock)
 static void setEvalEntrypoint(VM& vm, CodeBlock* codeBlock)
 {
 #if ENABLE(JIT)
-    if (vm.canUseJIT()) {
+    if (VM::canUseJIT()) {
         codeBlock->setJITCode(
             adoptRef(*new DirectJITCode(vm.getCTIStub(evalEntryThunkGenerator), MacroAssemblerCodePtr(), JITCode::InterpreterThunk)));
         return;
@@ -85,7 +85,7 @@ static void setEvalEntrypoint(VM& vm, CodeBlock* codeBlock)
 static void setProgramEntrypoint(VM& vm, CodeBlock* codeBlock)
 {
 #if ENABLE(JIT)
-    if (vm.canUseJIT()) {
+    if (VM::canUseJIT()) {
         codeBlock->setJITCode(
             adoptRef(*new DirectJITCode(vm.getCTIStub(programEntryThunkGenerator), MacroAssemblerCodePtr(), JITCode::InterpreterThunk)));
         return;
@@ -100,7 +100,7 @@ static void setProgramEntrypoint(VM& vm, CodeBlock* codeBlock)
 static void setModuleProgramEntrypoint(VM& vm, CodeBlock* codeBlock)
 {
 #if ENABLE(JIT)
-    if (vm.canUseJIT()) {
+    if (VM::canUseJIT()) {
         codeBlock->setJITCode(
             adoptRef(*new DirectJITCode(vm.getCTIStub(moduleProgramEntryThunkGenerator), MacroAssemblerCodePtr(), JITCode::InterpreterThunk)));
         return;

@@ -1,3 +1,44 @@
+2017-12-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC][WebCore][CSSJIT] Remove VM reference in CSSJIT
+        https://bugs.webkit.org/show_bug.cgi?id=180917
+
+        Reviewed by Sam Weinig.
+
+        We do not need to hold JIT flags in VM. We add
+        static VM::{canUseJIT,canUseAssembler,canUseRegExpJIT} functions.
+
+        * interpreter/AbstractPC.cpp:
+        (JSC::AbstractPC::AbstractPC):
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::ctiNativeCall):
+        (JSC::JITThunks::ctiNativeConstruct):
+        (JSC::JITThunks::ctiNativeTailCall):
+        (JSC::JITThunks::ctiNativeTailCallWithoutSavedTags):
+        (JSC::JITThunks::ctiInternalFunctionCall):
+        (JSC::JITThunks::ctiInternalFunctionConstruct):
+        (JSC::JITThunks::hostFunctionStub):
+        * llint/LLIntEntrypoint.cpp:
+        (JSC::LLInt::setFunctionEntrypoint):
+        (JSC::LLInt::setEvalEntrypoint):
+        (JSC::LLInt::setProgramEntrypoint):
+        (JSC::LLInt::setModuleProgramEntrypoint):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::shouldJIT):
+        (JSC::LLInt::entryOSR):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+        * runtime/VM.cpp:
+        (JSC::VM::canUseAssembler):
+        (JSC::VM::canUseJIT):
+        (JSC::VM::canUseRegExpJIT):
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::canUseJIT): Deleted.
+        (JSC::VM::canUseRegExpJIT): Deleted.
+
 2017-12-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Number of SlotVisitors can increase after setting up m_visitCounters
