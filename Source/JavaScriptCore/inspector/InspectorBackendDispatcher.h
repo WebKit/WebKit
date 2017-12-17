@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All Rights Reserved.
  * Copyright (C) 2011 The Chromium Authors. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,10 +37,6 @@
 namespace Inspector {
 
 class BackendDispatcher;
-
-#if PLATFORM(COCOA)
-class InspectorObject;
-#endif
 
 typedef String ErrorString;
 
@@ -93,11 +89,6 @@ public:
     // When <http://webkit.org/b/179847> is fixed or this class is renamed for the JSON::Object case,
     // then this alternate method with a dummy parameter can be removed in favor of the one without it.
     void sendResponse(long requestId, RefPtr<JSON::Object>&& result, bool unused);
-#if PLATFORM(COCOA)
-    // COMPATIBILITY: remove this when no longer needed by system WebInspector.framework.
-    void sendResponse(long requestId, RefPtr<InspectorObject>&& result);
-#endif
-
     void sendResponse(long requestId, RefPtr<JSON::Object>&& result);
     void sendPendingErrors();
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All Rights Reserved.
  * Copyright (C) 2011 The Chromium Authors. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,10 +32,6 @@
 #include <wtf/SetForScope.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
-
-#if PLATFORM(COCOA)
-#include "DeprecatedInspectorValues.h"
-#endif
 
 namespace Inspector {
 
@@ -188,21 +184,6 @@ void BackendDispatcher::dispatch(const String& message)
             sendPendingErrors();
     }
 }
-
-#if PLATFORM(COCOA)
-// COMPATIBILITY: remove this when no longer needed by system WebInspector.framework <http://webkit.org/b/179847>.
-void BackendDispatcher::sendResponse(long requestId, RefPtr<InspectorObject>&& result)
-{
-    ASSERT(!m_protocolErrors.size());
-
-    // The JSON-RPC 2.0 specification requires that the "error" member have the value 'null'
-    // if no error occurred during an invocation, but we do not include it at all.
-    Ref<InspectorObject> responseMessage = InspectorObject::create();
-    responseMessage->setObject(ASCIILiteral("result"), WTFMove(result));
-    responseMessage->setInteger(ASCIILiteral("id"), requestId);
-    m_frontendRouter->sendResponse(responseMessage->toJSONString());
-}
-#endif // PLATFORM(COCOA)
 
 // FIXME: remove this function when legacy InspectorObject symbols are no longer needed <http://webkit.org/b/179847>.
 void BackendDispatcher::sendResponse(long requestId, RefPtr<JSON::Object>&& result)

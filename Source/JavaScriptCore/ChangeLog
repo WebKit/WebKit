@@ -1,3 +1,67 @@
+2017-12-17  Mark Lam  <mark.lam@apple.com>
+
+        Hollow out stub implementation of InspectorBackendDispatcher::sendResponse().
+        https://bugs.webkit.org/show_bug.cgi?id=180901
+        <rdar://problem/36087649>
+
+        Reviewed by Darin Adler.
+
+        We only need to keep a deprecated implementation of InspectorValues,
+        InspectorObjects, and InspectorBackendDispatcher::sendResponse() around so that
+        older versions of Safari can link against and run with a build of the latest code
+        in WebKit trunk. Older versions of System Safari used InspectorValues (via
+        WebInspector.framework) for two things:
+
+        1. Augmented JSContexts SPIs (via WebInspector.framework).
+        2. maybe WebDriver.
+
+        Neither of these are used when running SafariForWebKitDevelopment.  Since neither
+        are used, we can stub out the symbols (InspectorValues, InspectorObjects,
+        InspectorBackendDispatcher::sendResponse) to do nothing, and
+        SafariForWebKitDevelopment will still continue to launch with trunk WebKit, and
+        run without any observable bad behavior.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * SourcesCocoa.txt:
+        * inspector/InspectorBackendDispatcher.cpp:
+        * inspector/InspectorBackendDispatcher.h:
+        * inspector/cocoa/DeprecatedInspectorValues.cpp:
+        (Inspector::InspectorValue::null):
+        (Inspector::InspectorValue::create):
+        (Inspector::InspectorValue::asValue):
+        (Inspector::InspectorValue::asObject):
+        (Inspector::InspectorValue::asArray):
+        (Inspector::InspectorValue::parseJSON):
+        (Inspector::InspectorValue::toJSONString const):
+        (Inspector::InspectorValue::asBoolean const):
+        (Inspector::InspectorValue::asDouble const):
+        (Inspector::InspectorValue::asInteger const):
+        (Inspector::InspectorValue::asString const):
+        (Inspector::InspectorValue::writeJSON const):
+        (Inspector::InspectorValue::memoryCost const):
+        (Inspector::InspectorObjectBase::openAccessors):
+        (Inspector::InspectorObjectBase::memoryCost const):
+        (Inspector::InspectorObjectBase::getBoolean const):
+        (Inspector::InspectorObjectBase::getString const):
+        (Inspector::InspectorObjectBase::getObject const):
+        (Inspector::InspectorObjectBase::getArray const):
+        (Inspector::InspectorObjectBase::getValue const):
+        (Inspector::InspectorObjectBase::remove):
+        (Inspector::InspectorObject::create):
+        (Inspector::InspectorArrayBase::get const):
+        (Inspector::InspectorArrayBase::memoryCost const):
+        (Inspector::InspectorArray::create):
+        (Inspector::BackendDispatcher::sendResponse):
+        (Inspector::InspectorObjectBase::~InspectorObjectBase): Deleted.
+        (Inspector::InspectorObjectBase::asObject): Deleted.
+        (Inspector::InspectorObjectBase::writeJSON const): Deleted.
+        (Inspector::InspectorObjectBase::InspectorObjectBase): Deleted.
+        (Inspector::InspectorArrayBase::~InspectorArrayBase): Deleted.
+        (Inspector::InspectorArrayBase::asArray): Deleted.
+        (Inspector::InspectorArrayBase::writeJSON const): Deleted.
+        (Inspector::InspectorArrayBase::InspectorArrayBase): Deleted.
+        * inspector/cocoa/DeprecatedInspectorValues.h: Removed.
+
 2017-12-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC][WebCore][CSSJIT] Remove VM reference in CSSJIT
