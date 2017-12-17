@@ -1,3 +1,81 @@
+2017-12-16  Youenn Fablet  <youenn@apple.com>
+
+        Add a script to automate W3c web-platform-tests pull request creations from WebKit commits
+        https://bugs.webkit.org/show_bug.cgi?id=169462
+
+        Reviewed by Darin Adler.
+
+        Adding some git helper routines used by WPT exporter.
+        Copying WPT github utility files from Chromium.
+        Updating web.py/web_mock.py to cope with these new files.
+
+        Implementing test exporter in test_exporter.py.
+        This script takes a WebKit commit as input and will create a WPT commit in a local WPT clone.
+        It will then push the commit to a public GitHub repository identified by a username parameter.
+        This parameter is passed through the command line or searched through git config/environment variables.
+
+        The script can optionally create a pull request to the official WPT GitHub repository.
+        User must provide a GitHub token to allow the script to make the PR on behalf of the user.
+        In that case, a comment is added to the corresponding bugzilla if a bug ID is given or can be found from the change log,
+        to easily link the pull request with the bugzilla bug.
+
+        * Scripts/export-w3c-test-changes: Added.
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.reset_hard):
+        (Git):
+        (Git.am):
+        (Git.commit):
+        (Git.format_patch):
+        (Git.request_pull):
+        (Git.remote):
+        (Git.push):
+        (Git.checkout_new_branch):
+        * Scripts/webkitpy/common/net/web.py:
+        (Web.request): Copied from Chromium.
+        * Scripts/webkitpy/common/net/web_mock.py: Copied needed code from Chromium.
+        * Scripts/webkitpy/w3c/test_exporter.py: Added.
+        (TestExporter):
+        (TestExporter.__init__):
+        (TestExporter._init_repository):
+        (TestExporter.download_and_commit_patch):
+        (TestExporter.clean):
+        (TestExporter.create_branch_with_patch):
+        (TestExporter.push_to_public_repository):
+        (TestExporter.make_pull_request):
+        (TestExporter.delete_local_branch):
+        (TestExporter.create_git_patch):
+        (TestExporter.create_upload_remote_if_needed):
+        (TestExporter.do_export):
+        (parse_args):
+        (configure_logging):
+        (configure_logging.LogHandler):
+        (configure_logging.LogHandler.format):
+        (main):
+        * Scripts/webkitpy/w3c/test_exporter_unittest.py: Added.
+        (TestExporterTest):
+        (TestExporterTest.MockBugzilla):
+        (TestExporterTest.MockBugzilla.__init__):
+        (TestExporterTest.MockBugzilla.fetch_bug_dictionary):
+        (TestExporterTest.MockBugzilla.post_comment_to_bug):
+        (TestExporterTest.MockGit):
+        (TestExporterTest.MockGit.clone):
+        (TestExporterTest.MockGit.__init__):
+        (TestExporterTest.MockGit.fetch):
+        (TestExporterTest.MockGit.checkout):
+        (TestExporterTest.MockGit.reset_hard):
+        (TestExporterTest.MockGit.push):
+        (TestExporterTest.MockGit.format_patch):
+        (TestExporterTest.MockGit.delete_branch):
+        (TestExporterTest.MockGit.checkout_new_branch):
+        (TestExporterTest.MockGit.am):
+        (TestExporterTest.MockGit.commit):
+        (TestExporterTest.MockGit.remote):
+        (TestExporterTest.test_export):
+        * Scripts/webkitpy/w3c/common.py: Copied from chromium.
+        * Scripts/webkitpy/w3c/wpt_github.py: Copied from chromium.
+        * Scripts/webkitpy/w3c/wpt_github_mock.py: Copied from chromium.
+        * Scripts/webkitpy/w3c/wpt_github_unittest.py: Copied from chromium.
+
 2017-12-16  Dan Bernstein  <mitz@apple.com>
 
         WKWebView has no equivalent of -[WebView setAlwaysShowVerticalScroller:]

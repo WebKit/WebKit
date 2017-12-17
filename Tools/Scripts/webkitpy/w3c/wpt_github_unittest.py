@@ -1,16 +1,16 @@
-# Copyright (C) 2011 Google Inc. All rights reserved.
+# Copyright 2017 The Chromium Authors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
 #
-#     * Redistributions of source code must retain the above copyright
+#    * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above
+#    * Redistributions in binary form must reproduce the above
 # copyright notice, this list of conditions and the following disclaimer
 # in the documentation and/or other materials provided with the
 # distribution.
-#     * Neither the name of Google Inc. nor the names of its
+#    * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
 #
@@ -26,21 +26,23 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import urllib2
+import base64
+import unittest
 
-from webkitpy.common.net.networktransaction import NetworkTransaction
+from webkitpy.common.host_mock import MockHost
+from webkitpy.w3c.wpt_github import WPTGitHub, MergeError
 
 
-class Web(object):
-    def get_binary(self, url, convert_404_to_None=False):
-        return NetworkTransaction(convert_404_to_None=convert_404_to_None).run(lambda: urllib2.urlopen(url).read())
+class WPTGitHubTest(unittest.TestCase):
 
-    def request(self, method, url, data, headers=None):
-        opener = urllib2.build_opener(urllib2.HTTPHandler)
-        request = urllib2.Request(url=url, data=data)
-        request.get_method = lambda: method
+    def setUp(self):
+        self.wpt_github = WPTGitHub(MockHost(), user='rutabaga', token='decafbad')
 
-        if headers:
-            for key, value in headers.items():
-                request.add_header(key, value)
-        return opener.open(request)
+    def test_init(self):
+        self.assertEqual(self.wpt_github.user, 'rutabaga')
+        self.assertEqual(self.wpt_github.token, 'decafbad')
+
+    def test_auth_token(self):
+        self.assertEqual(
+            self.wpt_github.auth_token(),
+            base64.encodestring('rutabaga:decafbad').strip())
