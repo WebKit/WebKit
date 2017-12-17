@@ -1844,7 +1844,6 @@ rendering/RenderTextFragment.cpp
 rendering/RenderTextLineBoxes.cpp
 rendering/RenderTheme.cpp
 rendering/RenderTreeAsText.cpp
-rendering/RenderTreeBuilder.cpp
 rendering/RenderVTTCue.cpp
 rendering/RenderVideo.cpp
 rendering/RenderView.cpp
@@ -1980,6 +1979,14 @@ rendering/svg/SVGTextMetrics.cpp
 rendering/svg/SVGTextMetricsBuilder.cpp
 rendering/svg/SVGTextQuery.cpp
 
+rendering/updating/RenderTreeBuilder.cpp
+rendering/updating/RenderTreePosition.cpp
+rendering/updating/RenderTreeUpdater.cpp
+rendering/updating/RenderTreeUpdaterFirstLetter.cpp
+rendering/updating/RenderTreeUpdaterGeneratedContent.cpp
+rendering/updating/RenderTreeUpdaterListItem.cpp
+rendering/updating/RenderTreeUpdaterMultiColumn.cpp
+
 replay/UserInputBridge.cpp
 
 storage/Storage.cpp
@@ -1992,12 +1999,6 @@ style/AttributeChangeInvalidation.cpp
 style/ClassChangeInvalidation.cpp
 style/IdChangeInvalidation.cpp
 style/InlineTextBoxStyle.cpp
-style/RenderTreePosition.cpp
-style/RenderTreeUpdater.cpp
-style/RenderTreeUpdaterFirstLetter.cpp
-style/RenderTreeUpdaterGeneratedContent.cpp
-style/RenderTreeUpdaterListItem.cpp
-style/RenderTreeUpdaterMultiColumn.cpp
 style/StyleChange.cpp
 style/StyleFontSizeFunctions.cpp
 style/StyleInvalidator.cpp

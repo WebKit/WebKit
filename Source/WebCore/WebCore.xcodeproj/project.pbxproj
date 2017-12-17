@@ -1683,7 +1683,6 @@
 		580371641A66F1D300BAF519 /* LayerFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = 580371631A66F1D300BAF519 /* LayerFragment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5824ABA31AE81116009074B7 /* RubyElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 5824ABA11AE81116009074B7 /* RubyElement.h */; };
 		5824ABA71AE81384009074B7 /* RubyTextElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 5824ABA51AE81384009074B7 /* RubyTextElement.h */; };
-		5824ABAB1AE849C8009074B7 /* RenderTreePosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 5824ABA91AE849C8009074B7 /* RenderTreePosition.h */; };
 		582CB0531A78A14B00AFFCC4 /* SimpleLineLayoutTextFragmentIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 582CB0521A78A14B00AFFCC4 /* SimpleLineLayoutTextFragmentIterator.h */; };
 		582DE3251C30C85400BE02A8 /* TextDecorationPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = 582DE3231C30C85400BE02A8 /* TextDecorationPainter.h */; };
 		585D6E041A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h in Headers */ = {isa = PBXBuildFile; fileRef = 585D6E021A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h */; };
@@ -4563,7 +4562,6 @@
 		E44B4BB4141650D7002B1D8B /* SelectorChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = E44B4BB2141650D7002B1D8B /* SelectorChecker.h */; };
 		E44FA1851BCA6B5A0091B6EF /* ComposedTreeIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E44FA1841BCA6B5A0091B6EF /* ComposedTreeIterator.h */; };
 		E45322AC140CE267005A0F92 /* SelectorQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = E45322AA140CE267005A0F92 /* SelectorQuery.h */; };
-		E46180291C8A06CD0026C02C /* RenderTreeUpdater.h in Headers */ = {isa = PBXBuildFile; fileRef = E46180281C8A06CD0026C02C /* RenderTreeUpdater.h */; };
 		E461802D1C8DD2900026C02C /* StyleRelations.h in Headers */ = {isa = PBXBuildFile; fileRef = E461802C1C8DD2900026C02C /* StyleRelations.h */; };
 		E461D65F1BB0C80D00CB5645 /* StyleScope.h in Headers */ = {isa = PBXBuildFile; fileRef = E461D65E1BB0C80D00CB5645 /* StyleScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E462A4A1113E71BE004A4220 /* IntPointHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E462A4A0113E71BE004A4220 /* IntPointHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4575,12 +4573,16 @@
 		E4778B80115A581A00B5D372 /* JSCustomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E4778B7E115A581A00B5D372 /* JSCustomEvent.h */; };
 		E47A3AC61C5EAC9D00CCBFA7 /* StyleSharingResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E47A3AC41C5EAC7900CCBFA7 /* StyleSharingResolver.h */; };
 		E47B4BE80E71241600038854 /* CachedResourceHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = E47B4BE60E71241600038854 /* CachedResourceHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E47C392D1FE6E0F300BBBC6B /* RenderTreeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = E47C392A1FE6E0DE00BBBC6B /* RenderTreeBuilder.h */; };
+		E47C392E1FE6E0F700BBBC6B /* RenderTreePosition.h in Headers */ = {isa = PBXBuildFile; fileRef = E47C39241FE6E0DB00BBBC6B /* RenderTreePosition.h */; };
+		E47C392F1FE6E0F900BBBC6B /* RenderTreeUpdater.h in Headers */ = {isa = PBXBuildFile; fileRef = E47C392C1FE6E0DF00BBBC6B /* RenderTreeUpdater.h */; };
+		E47C39301FE6E0FD00BBBC6B /* RenderTreeUpdaterFirstLetter.h in Headers */ = {isa = PBXBuildFile; fileRef = E47C39261FE6E0DC00BBBC6B /* RenderTreeUpdaterFirstLetter.h */; };
+		E47C39311FE6E10200BBBC6B /* RenderTreeUpdaterGeneratedContent.h in Headers */ = {isa = PBXBuildFile; fileRef = E47C39251FE6E0DB00BBBC6B /* RenderTreeUpdaterGeneratedContent.h */; };
+		E47C39321FE6E10500BBBC6B /* RenderTreeUpdaterListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E47C39281FE6E0DD00BBBC6B /* RenderTreeUpdaterListItem.h */; };
+		E47C39331FE6E10800BBBC6B /* RenderTreeUpdaterMultiColumn.h in Headers */ = {isa = PBXBuildFile; fileRef = E47C39271FE6E0DC00BBBC6B /* RenderTreeUpdaterMultiColumn.h */; };
 		E47E276516036ED200EE2AFB /* ExtensionStyleSheets.h in Headers */ = {isa = PBXBuildFile; fileRef = E47E276416036ED200EE2AFB /* ExtensionStyleSheets.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E48137B91DB3B526005C59BF /* StyleValidity.h in Headers */ = {isa = PBXBuildFile; fileRef = E48137B81DB3B526005C59BF /* StyleValidity.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E48944A3180B57D800F165D8 /* SimpleLineLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = E48944A1180B57D800F165D8 /* SimpleLineLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E48E332C1F47037C00BAB0EF /* RenderTreeUpdaterFirstLetter.h in Headers */ = {isa = PBXBuildFile; fileRef = E48284091F44595600863AC3 /* RenderTreeUpdaterFirstLetter.h */; };
-		E48E332E1F47038000BAB0EF /* RenderTreeUpdaterListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E48E33281F46C97F00BAB0EF /* RenderTreeUpdaterListItem.h */; };
-		E48E33321F47437300BAB0EF /* RenderTreeUpdaterGeneratedContent.h in Headers */ = {isa = PBXBuildFile; fileRef = E48E33301F47436700BAB0EF /* RenderTreeUpdaterGeneratedContent.h */; };
 		E4916FF7195DF6A0005AB349 /* LayerFlushThrottleState.h in Headers */ = {isa = PBXBuildFile; fileRef = E4916FF6195DF6A0005AB349 /* LayerFlushThrottleState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4946EAF156E64DD00D3297F /* StyleRuleImport.h in Headers */ = {isa = PBXBuildFile; fileRef = E4946EAD156E64DD00D3297F /* StyleRuleImport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49BD9FA131FD2ED003C56F0 /* CSSValuePool.h in Headers */ = {isa = PBXBuildFile; fileRef = E49BD9F9131FD2ED003C56F0 /* CSSValuePool.h */; };
@@ -4615,7 +4617,6 @@
 		E4E9B1191810916F003ACCDF /* SimpleLineLayoutResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E9B1181810916F003ACCDF /* SimpleLineLayoutResolver.h */; };
 		E4E9B11D1814569C003ACCDF /* SimpleLineLayoutFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E9B11C1814569C003ACCDF /* SimpleLineLayoutFunctions.h */; };
 		E4F9EEF3156DA00700D23E7E /* StyleSheetContents.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F9EEF1156D84C400D23E7E /* StyleSheetContents.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E4FC009B1FE00B90006A073E /* RenderTreeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = E4FC009A1FE00B8F006A073E /* RenderTreeBuilder.h */; };
 		E5BA7D63151437CA00FE1E3F /* LengthFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EBF5121C1696496C0056BD25 /* JSTypeConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBF5121A1696496C0056BD25 /* JSTypeConversions.cpp */; };
 		EBF5121D1696496C0056BD25 /* JSTypeConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = EBF5121B1696496C0056BD25 /* JSTypeConversions.h */; };
@@ -8239,8 +8240,6 @@
 		5824ABA11AE81116009074B7 /* RubyElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RubyElement.h; sourceTree = "<group>"; };
 		5824ABA41AE81384009074B7 /* RubyTextElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RubyTextElement.cpp; sourceTree = "<group>"; };
 		5824ABA51AE81384009074B7 /* RubyTextElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RubyTextElement.h; sourceTree = "<group>"; };
-		5824ABA81AE849C8009074B7 /* RenderTreePosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreePosition.cpp; sourceTree = "<group>"; };
-		5824ABA91AE849C8009074B7 /* RenderTreePosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreePosition.h; sourceTree = "<group>"; };
 		582CB0521A78A14B00AFFCC4 /* SimpleLineLayoutTextFragmentIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutTextFragmentIterator.h; sourceTree = "<group>"; };
 		582CB0541A78A2B200AFFCC4 /* SimpleLineLayoutTextFragmentIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutTextFragmentIterator.cpp; sourceTree = "<group>"; };
 		582DE3221C30C85400BE02A8 /* TextDecorationPainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextDecorationPainter.cpp; sourceTree = "<group>"; };
@@ -13834,8 +13833,6 @@
 		E419041E1CC6486B00C35F5D /* FontSelectorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontSelectorClient.h; sourceTree = "<group>"; };
 		E41EA038119836DB00710BC5 /* CSSPropertyNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPropertyNames.cpp; sourceTree = "<group>"; };
 		E41EA0391198374900710BC5 /* CSSValueKeywords.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueKeywords.cpp; sourceTree = "<group>"; };
-		E41FA9B71F5758FD0033858A /* RenderTreeUpdaterMultiColumn.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeUpdaterMultiColumn.cpp; sourceTree = "<group>"; };
-		E41FA9BA1F57590A0033858A /* RenderTreeUpdaterMultiColumn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdaterMultiColumn.h; sourceTree = "<group>"; };
 		E424A39D1330DF0100CF6DC9 /* LegacyTileGridTile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyTileGridTile.h; sourceTree = "<group>"; };
 		E424A39F1330DF1E00CF6DC9 /* LegacyTileGridTile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyTileGridTile.mm; sourceTree = "<group>"; };
 		E425A49918292B840020CFCF /* CollectionIndexCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionIndexCache.h; sourceTree = "<group>"; };
@@ -13887,8 +13884,6 @@
 		E45390340EAFD637003695C8 /* ScrollViewIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollViewIOS.mm; sourceTree = "<group>"; };
 		E453903C0EAFD637003695C8 /* WidgetIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WidgetIOS.mm; sourceTree = "<group>"; };
 		E45390AD0EAFF4B5003695C8 /* SystemMemoryIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemMemoryIOS.cpp; sourceTree = "<group>"; };
-		E46180281C8A06CD0026C02C /* RenderTreeUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdater.h; sourceTree = "<group>"; };
-		E461802A1C8A06D90026C02C /* RenderTreeUpdater.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeUpdater.cpp; sourceTree = "<group>"; };
 		E461802C1C8DD2900026C02C /* StyleRelations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleRelations.h; sourceTree = "<group>"; };
 		E461802E1C8DD4D20026C02C /* StyleRelations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleRelations.cpp; sourceTree = "<group>"; };
 		E461D65C1BB0C7F000CB5645 /* StyleScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleScope.cpp; sourceTree = "<group>"; };
@@ -13905,17 +13900,25 @@
 		E47A97CF163059FC005DCD99 /* StyleInvalidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleInvalidator.h; sourceTree = "<group>"; };
 		E47B4BE60E71241600038854 /* CachedResourceHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedResourceHandle.h; sourceTree = "<group>"; };
 		E47B4BE70E71241600038854 /* CachedResourceHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedResourceHandle.cpp; sourceTree = "<group>"; };
+		E47C391F1FE6E0D800BBBC6B /* RenderTreeUpdater.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeUpdater.cpp; sourceTree = "<group>"; };
+		E47C39201FE6E0D900BBBC6B /* RenderTreeBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilder.cpp; sourceTree = "<group>"; };
+		E47C39211FE6E0DA00BBBC6B /* RenderTreeUpdaterFirstLetter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeUpdaterFirstLetter.cpp; sourceTree = "<group>"; };
+		E47C39221FE6E0DA00BBBC6B /* RenderTreeUpdaterGeneratedContent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeUpdaterGeneratedContent.cpp; sourceTree = "<group>"; };
+		E47C39231FE6E0DA00BBBC6B /* RenderTreeUpdaterMultiColumn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeUpdaterMultiColumn.cpp; sourceTree = "<group>"; };
+		E47C39241FE6E0DB00BBBC6B /* RenderTreePosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreePosition.h; sourceTree = "<group>"; };
+		E47C39251FE6E0DB00BBBC6B /* RenderTreeUpdaterGeneratedContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdaterGeneratedContent.h; sourceTree = "<group>"; };
+		E47C39261FE6E0DC00BBBC6B /* RenderTreeUpdaterFirstLetter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdaterFirstLetter.h; sourceTree = "<group>"; };
+		E47C39271FE6E0DC00BBBC6B /* RenderTreeUpdaterMultiColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdaterMultiColumn.h; sourceTree = "<group>"; };
+		E47C39281FE6E0DD00BBBC6B /* RenderTreeUpdaterListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdaterListItem.h; sourceTree = "<group>"; };
+		E47C39291FE6E0DE00BBBC6B /* RenderTreePosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreePosition.cpp; sourceTree = "<group>"; };
+		E47C392A1FE6E0DE00BBBC6B /* RenderTreeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilder.h; sourceTree = "<group>"; };
+		E47C392B1FE6E0DF00BBBC6B /* RenderTreeUpdaterListItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeUpdaterListItem.cpp; sourceTree = "<group>"; };
+		E47C392C1FE6E0DF00BBBC6B /* RenderTreeUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdater.h; sourceTree = "<group>"; };
 		E47E276416036ED200EE2AFB /* ExtensionStyleSheets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionStyleSheets.h; sourceTree = "<group>"; };
 		E47E276716036EDC00EE2AFB /* ExtensionStyleSheets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtensionStyleSheets.cpp; sourceTree = "<group>"; };
 		E48137B81DB3B526005C59BF /* StyleValidity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleValidity.h; sourceTree = "<group>"; };
-		E48284061F44594B00863AC3 /* RenderTreeUpdaterFirstLetter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeUpdaterFirstLetter.cpp; sourceTree = "<group>"; };
-		E48284091F44595600863AC3 /* RenderTreeUpdaterFirstLetter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdaterFirstLetter.h; sourceTree = "<group>"; };
 		E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayout.cpp; sourceTree = "<group>"; };
 		E48944A1180B57D800F165D8 /* SimpleLineLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayout.h; sourceTree = "<group>"; };
-		E48E33281F46C97F00BAB0EF /* RenderTreeUpdaterListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdaterListItem.h; sourceTree = "<group>"; };
-		E48E332A1F46C98000BAB0EF /* RenderTreeUpdaterListItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeUpdaterListItem.cpp; sourceTree = "<group>"; };
-		E48E332F1F47436500BAB0EF /* RenderTreeUpdaterGeneratedContent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeUpdaterGeneratedContent.cpp; sourceTree = "<group>"; };
-		E48E33301F47436700BAB0EF /* RenderTreeUpdaterGeneratedContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdaterGeneratedContent.h; sourceTree = "<group>"; };
 		E4916FF6195DF6A0005AB349 /* LayerFlushThrottleState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerFlushThrottleState.h; sourceTree = "<group>"; };
 		E4946EAC156E64DD00D3297F /* StyleRuleImport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleRuleImport.cpp; sourceTree = "<group>"; };
 		E4946EAD156E64DD00D3297F /* StyleRuleImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleRuleImport.h; sourceTree = "<group>"; };
@@ -13994,8 +13997,6 @@
 		E4E9B11C1814569C003ACCDF /* SimpleLineLayoutFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutFunctions.h; sourceTree = "<group>"; };
 		E4F9EEF0156D84C400D23E7E /* StyleSheetContents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleSheetContents.cpp; sourceTree = "<group>"; };
 		E4F9EEF1156D84C400D23E7E /* StyleSheetContents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleSheetContents.h; sourceTree = "<group>"; };
-		E4FC00971FE00B83006A073E /* RenderTreeBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilder.cpp; sourceTree = "<group>"; };
-		E4FC009A1FE00B8F006A073E /* RenderTreeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilder.h; sourceTree = "<group>"; };
 		E51A81DE17298D7700BFCA61 /* JSPerformance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformance.cpp; sourceTree = "<group>"; };
 		E526AF3E1727F8F200E41781 /* Performance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Performance.cpp; sourceTree = "<group>"; };
 		E55F4979151B888000BB67DB /* LengthFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LengthFunctions.cpp; sourceTree = "<group>"; };
@@ -24477,18 +24478,6 @@
 				E4A814DF1C7338EB00BF85AC /* IdChangeInvalidation.h */,
 				1C0106FE192594DF008A4201 /* InlineTextBoxStyle.cpp */,
 				1C0106FF192594DF008A4201 /* InlineTextBoxStyle.h */,
-				5824ABA81AE849C8009074B7 /* RenderTreePosition.cpp */,
-				5824ABA91AE849C8009074B7 /* RenderTreePosition.h */,
-				E461802A1C8A06D90026C02C /* RenderTreeUpdater.cpp */,
-				E46180281C8A06CD0026C02C /* RenderTreeUpdater.h */,
-				E48284061F44594B00863AC3 /* RenderTreeUpdaterFirstLetter.cpp */,
-				E48284091F44595600863AC3 /* RenderTreeUpdaterFirstLetter.h */,
-				E48E332F1F47436500BAB0EF /* RenderTreeUpdaterGeneratedContent.cpp */,
-				E48E33301F47436700BAB0EF /* RenderTreeUpdaterGeneratedContent.h */,
-				E48E332A1F46C98000BAB0EF /* RenderTreeUpdaterListItem.cpp */,
-				E48E33281F46C97F00BAB0EF /* RenderTreeUpdaterListItem.h */,
-				E41FA9B71F5758FD0033858A /* RenderTreeUpdaterMultiColumn.cpp */,
-				E41FA9BA1F57590A0033858A /* RenderTreeUpdaterMultiColumn.h */,
 				E401E0A51C3C0CF700F34D10 /* StyleChange.cpp */,
 				E401E0A31C3C0B8300F34D10 /* StyleChange.h */,
 				E4D58EB617B4ED8900CBDCA8 /* StyleFontSizeFunctions.cpp */,
@@ -24513,6 +24502,27 @@
 				E48137B81DB3B526005C59BF /* StyleValidity.h */,
 			);
 			path = style;
+			sourceTree = "<group>";
+		};
+		E47C391E1FE6E08C00BBBC6B /* updating */ = {
+			isa = PBXGroup;
+			children = (
+				E47C39201FE6E0D900BBBC6B /* RenderTreeBuilder.cpp */,
+				E47C392A1FE6E0DE00BBBC6B /* RenderTreeBuilder.h */,
+				E47C39291FE6E0DE00BBBC6B /* RenderTreePosition.cpp */,
+				E47C39241FE6E0DB00BBBC6B /* RenderTreePosition.h */,
+				E47C391F1FE6E0D800BBBC6B /* RenderTreeUpdater.cpp */,
+				E47C392C1FE6E0DF00BBBC6B /* RenderTreeUpdater.h */,
+				E47C39211FE6E0DA00BBBC6B /* RenderTreeUpdaterFirstLetter.cpp */,
+				E47C39261FE6E0DC00BBBC6B /* RenderTreeUpdaterFirstLetter.h */,
+				E47C39221FE6E0DA00BBBC6B /* RenderTreeUpdaterGeneratedContent.cpp */,
+				E47C39251FE6E0DB00BBBC6B /* RenderTreeUpdaterGeneratedContent.h */,
+				E47C392B1FE6E0DF00BBBC6B /* RenderTreeUpdaterListItem.cpp */,
+				E47C39281FE6E0DD00BBBC6B /* RenderTreeUpdaterListItem.h */,
+				E47C39231FE6E0DA00BBBC6B /* RenderTreeUpdaterMultiColumn.cpp */,
+				E47C39271FE6E0DC00BBBC6B /* RenderTreeUpdaterMultiColumn.h */,
+			);
+			path = updating;
 			sourceTree = "<group>";
 		};
 		ED501DC90B249F3900AE18D9 /* mac */ = {
@@ -24864,6 +24874,7 @@
 				FD08A879175D3926002CD360 /* shapes */,
 				BC8C8FAA0DDCD2F200B592F4 /* style */,
 				088C2F7412390080003D65CE /* svg */,
+				E47C391E1FE6E08C00BBBC6B /* updating */,
 				A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */,
 				A8CFF0490A154F09000A4234 /* AutoTableLayout.h */,
 				BCE7898A1120E8020060ECE5 /* BidiRun.cpp */,
@@ -25099,8 +25110,6 @@
 				BCEA4849097D93020094C9E4 /* RenderThemeMac.mm */,
 				93955A4203D72932008635CE /* RenderTreeAsText.cpp */,
 				93955A4103D72932008635CE /* RenderTreeAsText.h */,
-				E4FC00971FE00B83006A073E /* RenderTreeBuilder.cpp */,
-				E4FC009A1FE00B8F006A073E /* RenderTreeBuilder.h */,
 				E4B41E330CBFB60900AF2ECE /* RenderVideo.cpp */,
 				E4B41E340CBFB60900AF2ECE /* RenderVideo.h */,
 				BCEA4828097D93020094C9E4 /* RenderView.cpp */,
@@ -26362,6 +26371,7 @@
 				079D086B162F21F900DB8658 /* CaptionUserPreferencesMediaAF.h in Headers */,
 				07B7116D1D899E63009F0FFB /* CaptureDevice.h in Headers */,
 				07B7116F1D899E63009F0FFB /* CaptureDeviceManager.h in Headers */,
+				E47C392D1FE6E0F300BBBC6B /* RenderTreeBuilder.h in Headers */,
 				CDC734151977896D0046BFC5 /* CARingBuffer.h in Headers */,
 				6550B69E099DF0270090D781 /* CDATASection.h in Headers */,
 				CDF4B7161E00B7E500E235A2 /* CDM.h in Headers */,
@@ -26466,6 +26476,7 @@
 				9746AF2114F4DDE6003E7A71 /* Coordinates.h in Headers */,
 				3F8020351E9E47BF00DEC61D /* CoreAudioCaptureDevice.h in Headers */,
 				3F8020371E9E47C500DEC61D /* CoreAudioCaptureDeviceManager.h in Headers */,
+				E47C392E1FE6E0F700BBBC6B /* RenderTreePosition.h in Headers */,
 				07AFF4221EFB144900B545B3 /* CoreAudioCaptureSourceIOS.h in Headers */,
 				CD7D33481C7A16BF00041293 /* CoreVideoSoftLink.h in Headers */,
 				862F129E18C1576F005C54AF /* CountedUserActivity.h in Headers */,
@@ -26827,6 +26838,7 @@
 				A7CFB3D20B7ED10A0070C32D /* DragImage.h in Headers */,
 				1AF5E4D91E5677A9004A1F01 /* DragItem.h in Headers */,
 				81F65FF613788FAA00FF6F2D /* DragState.h in Headers */,
+				E47C39321FE6E10500BBBC6B /* RenderTreeUpdaterListItem.h in Headers */,
 				E1BA66F11742BD8600C20251 /* DynamicLinkerInterposing.h in Headers */,
 				FD6ED2C8136B8E66003CF072 /* DynamicsCompressor.h in Headers */,
 				FD537357137B653B00008DCE /* DynamicsCompressorKernel.h in Headers */,
@@ -27223,6 +27235,7 @@
 				977B3878122883E900B81FF8 /* HTMLTokenizer.h in Headers */,
 				0707568C142262D600414161 /* HTMLTrackElement.h in Headers */,
 				977B37261228721700B81FF8 /* HTMLTreeBuilder.h in Headers */,
+				E47C39301FE6E0FD00BBBC6B /* RenderTreeUpdaterFirstLetter.h in Headers */,
 				A8EA79F20A1916DF00A8EF5F /* HTMLUListElement.h in Headers */,
 				AD49914318F0815100BF0092 /* HTMLUnknownElement.h in Headers */,
 				E44613AB0CD6331000FADA75 /* HTMLVideoElement.h in Headers */,
@@ -28508,6 +28521,7 @@
 				1A569D0B0D7E2B82007C3983 /* NP_jsobject.h in Headers */,
 				1A927FD21416A15B003A83C8 /* npapi.h in Headers */,
 				1A219B3B0DCA87AB0040E3A0 /* npfunctions.h in Headers */,
+				E47C392F1FE6E0F900BBBC6B /* RenderTreeUpdater.h in Headers */,
 				1A927FD31416A15B003A83C8 /* npruntime.h in Headers */,
 				1A569D0F0D7E2B82007C3983 /* npruntime_impl.h in Headers */,
 				1A569D100D7E2B82007C3983 /* npruntime_internal.h in Headers */,
@@ -28661,6 +28675,7 @@
 				070E09191875EEFC003A1D3C /* PlatformMediaSession.h in Headers */,
 				07F944161864D046005D31CB /* PlatformMediaSessionManager.h in Headers */,
 				41BF70100FE86F61005E8DEC /* PlatformMessagePortChannel.h in Headers */,
+				E47C39331FE6E10800BBBC6B /* RenderTreeUpdaterMultiColumn.h in Headers */,
 				935C476909AC4D4300A6AAB4 /* PlatformMouseEvent.h in Headers */,
 				C598905814E9C29900E8D18B /* PlatformPasteboard.h in Headers */,
 				BCEC01D70C274EB4009F4EC9 /* PlatformScreen.h in Headers */,
@@ -28744,7 +28759,6 @@
 				416E6FE81BBD12DF000A6043 /* ReadableByteStreamInternalsBuiltins.h in Headers */,
 				416E6FE91BBD12E5000A6043 /* ReadableStreamBuiltins.h in Headers */,
 				4129C9A91F59C56B009D7403 /* ReadableStreamDefaultController.h in Headers */,
-				E4FC009B1FE00B90006A073E /* RenderTreeBuilder.h in Headers */,
 				416E6FE81BBD12DF000A3F64 /* ReadableStreamInternalsBuiltins.h in Headers */,
 				4129C9AF1F59CF5B009D7403 /* ReadableStreamSink.h in Headers */,
 				4129C9AB1F59C573009D7403 /* ReadableStreamSource.h in Headers */,
@@ -28909,11 +28923,6 @@
 				FED13D520CEA949700D89466 /* RenderThemeIOS.h in Headers */,
 				BCEA4887097D93020094C9E4 /* RenderThemeMac.h in Headers */,
 				93F1998C08245E59001E9ABC /* RenderTreeAsText.h in Headers */,
-				5824ABAB1AE849C8009074B7 /* RenderTreePosition.h in Headers */,
-				E46180291C8A06CD0026C02C /* RenderTreeUpdater.h in Headers */,
-				E48E332C1F47037C00BAB0EF /* RenderTreeUpdaterFirstLetter.h in Headers */,
-				E48E33321F47437300BAB0EF /* RenderTreeUpdaterGeneratedContent.h in Headers */,
-				E48E332E1F47038000BAB0EF /* RenderTreeUpdaterListItem.h in Headers */,
 				E44614520CD68A3500FADA75 /* RenderVideo.h in Headers */,
 				BCEA4868097D93020094C9E4 /* RenderView.h in Headers */,
 				BE20507E18A458C20080647E /* RenderVTTCue.h in Headers */,
@@ -29196,6 +29205,7 @@
 				97BC6A3C1505F081001B74AC /* SQLError.h in Headers */,
 				1A22464A0CC98DDB00C05240 /* SQLiteDatabase.h in Headers */,
 				7E474E1F12494DC900235364 /* SQLiteDatabaseTracker.h in Headers */,
+				E47C39311FE6E10200BBBC6B /* RenderTreeUpdaterGeneratedContent.h in Headers */,
 				7E474E1E12494DC900235364 /* SQLiteDatabaseTrackerClient.h in Headers */,
 				B5A684220FFABE9800D24689 /* SQLiteFileSystem.h in Headers */,
 				512BDB4B1C456FFA006494DF /* SQLiteIDBBackingStore.h in Headers */,
