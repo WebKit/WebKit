@@ -1,3 +1,26 @@
+2017-12-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Number of SlotVisitors can increase after setting up m_visitCounters
+        https://bugs.webkit.org/show_bug.cgi?id=180906
+
+        Reviewed by Filip Pizlo.
+
+        The number of SlotVisitors can increase after setting up m_visitCounters.
+        If it happens, our m_visitCounters misses the visit count of newly added
+        SlotVisitors. It accidentally decides that constraints are converged.
+        This leads to random assertion hits in Linux environment.
+
+        In this patch, we compare the number of SlotVisitors in didVisitSomething().
+        If the number of SlotVisitors is changed, we conservatively say we did
+        visit something.
+
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::numberOfSlotVisitors):
+        * heap/MarkingConstraintSet.h:
+        * heap/MarkingConstraintSolver.cpp:
+        (JSC::MarkingConstraintSolver::didVisitSomething const):
+
 2017-12-16  Keith Miller  <keith_miller@apple.com>
 
         Indexing should only be computed when the new structure has an indexing header.

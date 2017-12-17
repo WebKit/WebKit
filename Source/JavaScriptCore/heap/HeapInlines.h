@@ -269,4 +269,10 @@ void Heap::forEachSlotVisitor(const Func& func)
         func(*slotVisitor);
 }
 
+inline unsigned Heap::numberOfSlotVisitors()
+{
+    auto locker = holdLock(m_parallelSlotVisitorLock);
+    return m_parallelSlotVisitors.size() + 2; // m_collectorSlotVisitor and m_mutatorSlotVisitor
+}
+
 } // namespace JSC

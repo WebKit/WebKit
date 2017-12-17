@@ -67,8 +67,6 @@ private:
     
     bool executeConvergenceImpl(SlotVisitor&);
     
-    bool drain(SlotVisitor&, BitVector& unexecuted, BitVector& executed, bool& didVisitSomething);
-    
     Heap& m_heap;
     BitVector m_unexecutedRoots;
     BitVector m_unexecutedOutgrowths;

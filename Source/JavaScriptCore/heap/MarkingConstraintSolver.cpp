@@ -51,6 +51,10 @@ bool MarkingConstraintSolver::didVisitSomething() const
         if (visitCounter.visitCount())
             return true;
     }
+    // If the number of SlotVisitors increases after creating m_visitCounters,
+    // we conservatively say there could be something visited by added SlotVisitors.
+    if (m_heap.numberOfSlotVisitors() > m_visitCounters.size())
+        return true;
     return false;
 }
 
