@@ -50,6 +50,8 @@ SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registrat
     , m_data { identifier, scriptURL, ServiceWorkerState::Redundant, type, registration.identifier() }
     , m_script(script)
 {
+    m_data.scriptURL.removeFragmentIdentifier();
+
     auto result = allWorkers().add(identifier, this);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
