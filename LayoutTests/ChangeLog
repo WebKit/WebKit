@@ -1,5 +1,26 @@
 2017-12-18  Ms2ger  <Ms2ger@igalia.com>
 
+        Rebaseline fast/dom/Window/window-lookup-precedence.html
+        https://bugs.webkit.org/show_bug.cgi?id=163987
+
+        Unreviewed test gardening.
+
+        The platform-neutral baseline hasn't been anywhere close to matching the
+        output since r196392. However, the mac baseline seems to work for GTK as
+        well, so we now use it for all platforms.
+
+        The test is still marked as failing on iOS and Windows, but those
+        annotations can be removed as part of regularly scheduled gardening, if
+        needed.
+
+        * fast/dom/Window/window-lookup-precedence-expected.txt:
+          Renamed from platform/mac/fast/dom/Window/window-lookup-precedence-expected.txt.
+        * platform/gtk/TestExpectations: Removed expectation.
+        * platform/gtk/fast/dom/Window/window-lookup-precedence-expected.txt: Removed.
+        * platform/mac/fast/dom/Window/window-lookup-precedence-expected.txt: Removed.
+
+2017-12-18  Ms2ger  <Ms2ger@igalia.com>
+
         [WPE] Add some test expectations for fetch wpt tests
         https://bugs.webkit.org/show_bug.cgi?id=180927
 
