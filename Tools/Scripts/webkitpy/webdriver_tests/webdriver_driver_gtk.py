@@ -37,7 +37,7 @@ class WebDriverGtk(WebDriver):
     def capabilities(self):
         return {'webkitgtk:browserOptions': {
             'binary': self._port._build_path('bin', 'MiniBrowser'),
-            'args': ['--automation', '--javascript-can-open-windows-automatically=true']}}
+            'args': ['--automation', '--javascript-can-open-windows-automatically=true', '--enable-xss-auditor=false']}}
 
 
 register_driver('gtk', WebDriverGtk)
