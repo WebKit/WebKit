@@ -135,9 +135,6 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
     { HTTPMethod::Post, "/session/$sessionId/element/$elementId/clear", &WebDriverService::elementClear },
     { HTTPMethod::Post, "/session/$sessionId/element/$elementId/value", &WebDriverService::elementSendKeys },
 
-    // FIXME: Not in the spec, but still used by Selenium.
-    { HTTPMethod::Post, "/session/$sessionId/element/$elementId/submit", &WebDriverService::elementSubmit },
-
     { HTTPMethod::Post, "/session/$sessionId/execute/sync", &WebDriverService::executeScript },
     { HTTPMethod::Post, "/session/$sessionId/execute/async", &WebDriverService::executeAsyncScript },
 
@@ -1276,19 +1273,6 @@ void WebDriverService::elementSendKeys(RefPtr<JSON::Object>&& parameters, Functi
     }
 
     session->elementSendKeys(elementID.value(), WTFMove(value), WTFMove(completionHandler));
-}
-
-void WebDriverService::elementSubmit(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
-{
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
-        return;
-
-    auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
-    if (!elementID)
-        return;
-
-    session->elementSubmit(elementID.value(), WTFMove(completionHandler));
 }
 
 static bool findScriptAndArgumentsOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler, String& script, RefPtr<JSON::Array>& arguments)
