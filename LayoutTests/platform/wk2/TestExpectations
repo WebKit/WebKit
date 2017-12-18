@@ -687,7 +687,7 @@ http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-uni
 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store.html [ Pass ]
 http/tests/resourceLoadStatistics/grandfathering.html [ Pass ]
 http/tests/resourceLoadStatistics/telemetry-generation.html [ Pass ]
-http/tests/resourceLoadStatistics/prune-statistics.html [ Pass ]
+webkit.org/b/180703 http/tests/resourceLoadStatistics/prune-statistics.html [ Pass Failure ]
 http/tests/storageAccess/request-storage-access-top-frame.html [ Pass ]
 http/tests/resourceLoadStatistics [ Pass ]
 # Cookie partitioning is only supported in macOS High Sierra and iOS 11.

@@ -1,5 +1,14 @@
 2017-12-18  Matt Lewis  <jlewis3@apple.com>
 
+        Marked http/tests/resourceLoadStatistics/telemetry-generation.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=180703
+
+        Unreviewed test gardening.
+
+        * platform/wk2/TestExpectations:
+
+2017-12-18  Matt Lewis  <jlewis3@apple.com>
+
         Rebaselined fast/mediastream/MediaStream-MediaElement-setObject-null.html.
 
         Unreviewed test gardening
