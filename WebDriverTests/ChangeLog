@@ -1,5 +1,35 @@
 2017-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update W3C WebDriver imported tests.
+
+        * imported/w3c/importer.json:
+        * imported/w3c/tools/webdriver/webdriver/client.py:
+        * imported/w3c/tools/webdriver/webdriver/error.py:
+        * imported/w3c/tools/wptrunner/docs/conf.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/ie.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/base.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/pytestrunner/runner.py:
+        * imported/w3c/tools/wptrunner/wptrunner/stability.py:
+        * imported/w3c/tools/wptrunner/wptrunner/testdriver-vendor.js: Added.
+        * imported/w3c/tools/wptrunner/wptrunner/update/sync.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wptcommandline.py:
+        * imported/w3c/webdriver/interface/interface.html:
+        * imported/w3c/webdriver/tests/document_handling/page_source.py: Added.
+        * imported/w3c/webdriver/tests/element_click/bubbling.py: Added.
+        * imported/w3c/webdriver/tests/element_retrieval/get_active_element.py:
+        * imported/w3c/webdriver/tests/execute_async_script/user_prompts.py: Added.
+        * imported/w3c/webdriver/tests/execute_script/user_prompts.py: Added.
+        * imported/w3c/webdriver/tests/sessions/status.py: Added.
+        * imported/w3c/webdriver/tests/status.py: Removed.
+        * imported/w3c/webdriver/tests/support/fixtures.py:
+        * imported/w3c/webdriver/tests/support/wait.py:
+        * imported/w3c/webdriver/tests/user_prompts/accept_alert.py:
+        * imported/w3c/webdriver/tests/user_prompts/dismiss_alert.py:
+        * imported/w3c/webdriver/tests/user_prompts/get_alert_text.py:
+        * imported/w3c/webdriver/tests/user_prompts/send_alert_text.py:
+
+2017-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: add timeout option to run-webdriver-tests script
         https://bugs.webkit.org/show_bug.cgi?id=179940
 

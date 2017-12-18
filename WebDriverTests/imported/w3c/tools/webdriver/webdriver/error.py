@@ -11,14 +11,19 @@ class WebDriverException(Exception):
         self.stacktrace = stacktrace
 
     def __repr__(self):
-        return "<%s http_status=%d>" % (self.__class__.__name__, self.http_status)
+        return "<%s http_status=%s>" % (self.__class__.__name__, self.http_status)
 
     def __str__(self):
-        return ("%s (%d)\n"
+        return ("%s (%s)\n"
             "\n"
             "Remote-end stacktrace:\n"
             "\n"
             "%s" % (self.status_code, self.http_status, self.stacktrace))
+
+
+class ElementClickInterceptedException(WebDriverException):
+    http_status = 400
+    status_code = "element click intercepted"
 
 
 class ElementNotSelectableException(WebDriverException):
