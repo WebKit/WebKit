@@ -1,3 +1,18 @@
+2017-12-18  Devin Rousso  <webkit@devinrousso.com>
+
+        REGRESSION (r225569): Web Inspector: Commented out properties aren't properly highlighted
+        https://bugs.webkit.org/show_bug.cgi?id=180687
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .property:not(.disabled) .name):
+        (.spreadsheet-style-declaration-editor .property:not(.disabled) .value):
+        (.spreadsheet-style-declaration-editor .property.disabled):
+        (.spreadsheet-style-declaration-editor .name): Deleted.
+        (.spreadsheet-style-declaration-editor .value): Deleted.
+        (.spreadsheet-style-declaration-editor .property.disabled, .spreadsheet-style-declaration-editor .property.disabled > *): Deleted.
+
 2017-12-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Network Tab - waterfall graph can be mis-sized after closing detail view

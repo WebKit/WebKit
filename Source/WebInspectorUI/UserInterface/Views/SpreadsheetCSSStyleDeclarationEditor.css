@@ -33,11 +33,11 @@
     padding-left: calc(var(--css-declaration-horizontal-padding) + 17px);
 }
 
-.spreadsheet-style-declaration-editor .name {
+.spreadsheet-style-declaration-editor .property:not(.disabled) .name {
     color: var(--syntax-highlight-boolean-color);
 }
 
-.spreadsheet-style-declaration-editor .value {
+.spreadsheet-style-declaration-editor .property:not(.disabled) .value {
     color: black;
 }
 
@@ -71,8 +71,7 @@
     visibility: visible;
 }
 
-.spreadsheet-style-declaration-editor .property.disabled,
-.spreadsheet-style-declaration-editor .property.disabled > * {
+.spreadsheet-style-declaration-editor .property.disabled {
     color: var(--syntax-highlight-comment-color) !important;
 }
 
