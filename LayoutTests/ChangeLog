@@ -1,3 +1,14 @@
+2017-12-18  Zalan Bujtas  <zalan@apple.com>
+
+        [SVG] Detach list wrappers before resetting the base value.
+        https://bugs.webkit.org/show_bug.cgi?id=180912
+        <rdar://problem/36017970>
+
+        Reviewed by Simon Fraser.
+
+        * svg/animations/crash-when-animation-is-running-while-getting-value-expected.txt: Added.
+        * svg/animations/crash-when-animation-is-running-while-getting-value.html: Added.
+
 2017-12-18  Jer Noble  <jer.noble@apple.com>
 
         Playing media elements which call "pause(); play()" will have the play promise rejected.
