@@ -1,3 +1,17 @@
+2017-12-18  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: Command-S should save changes in matching CSS resource
+        https://bugs.webkit.org/show_bug.cgi?id=180900
+
+        Reviewed by Timothy Hatcher.
+
+        When focused on a CSS selector, property name or value, pressing Command-S should save
+        the CSS resource to the file system.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.initialLayout):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._save):
+
 2017-12-18  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Styles Redesign: add inline swatch for CSS variables

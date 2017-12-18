@@ -104,6 +104,9 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         if (this._style.editable) {
             this.element.addEventListener("click", this._handleClick.bind(this));
             this.element.addEventListener("mousedown", this._handleMouseDown.bind(this));
+
+            new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "S", this._save.bind(this), this._element);
+            new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "S", this._save.bind(this), this._element);
         }
     }
 
@@ -375,6 +378,42 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         });
 
         return mediaElement;
+    }
+
+    _save(event)
+    {
+        event.stop();
+
+        if (this._style.type !== WI.CSSStyleDeclaration.Type.Rule) {
+            // FIXME: Can't save CSS inside <style></style> <https://webkit.org/b/150357>
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        console.assert(this._style.ownerRule instanceof WI.CSSRule);
+        console.assert(this._style.ownerRule.sourceCodeLocation instanceof WI.SourceCodeLocation);
+
+        let sourceCode = this._style.ownerRule.sourceCodeLocation.sourceCode;
+        if (sourceCode.type !== WI.Resource.Type.Stylesheet) {
+            // FIXME: Can't save CSS inside style="" <https://webkit.org/b/150357>
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        let url;
+        if (sourceCode.urlComponents.scheme === "data") {
+            let mainResource = WI.frameResourceManager.mainFrame.mainResource;
+            if (mainResource.urlComponents.lastPathComponent.endsWith(".html"))
+                url = mainResource.url.replace(/\.html$/, "-data.css");
+            else {
+                let pathDirectory = mainResource.url.slice(0, -mainResource.urlComponents.lastPathComponent.length);
+                url = pathDirectory + "data.css";
+            }
+        } else
+            url = sourceCode.url;
+
+        const saveAs = event.shiftKey;
+        WI.saveDataToFile({url: url, content: sourceCode.content}, saveAs);
     }
 
     _handleMouseDown(event)
