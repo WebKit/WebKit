@@ -1,6 +1,6 @@
 {
     "repository": "https://github.com/w3c/web-platform-tests.git",
-    "revision": "09c7045152fc66f9ffe8328ba0ebda20a7e1fe90",
+    "revision": "448984b0e1c5bad4af20abeaf84eb8b5e8e81478",
     "paths_to_import": [
         "tools/pytest",
         "tools/webdriver",

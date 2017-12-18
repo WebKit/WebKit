@@ -14,12 +14,17 @@ from mozlog import structured
 
 manifest = None
 manifest_update = None
+download_from_github = None
+manifest_log = None
 
 def do_delayed_imports():
     # This relies on an already loaded module having set the sys.path correctly :(
-    global manifest, manifest_update
+    global manifest, manifest_update, download_from_github, manifest_log
     from manifest import manifest
     from manifest import update as manifest_update
+    from manifest.download import download_from_github
+    from manifest import log as manifest_log
+
 
 class TestChunker(object):
     def __init__(self, total_chunks, chunk_number):
@@ -372,10 +377,11 @@ class TagFilter(object):
                 yield test
 
 class ManifestLoader(object):
-    def __init__(self, test_paths, force_manifest_update=False):
+    def __init__(self, test_paths, force_manifest_update=False, manifest_download=False):
         do_delayed_imports()
         self.test_paths = test_paths
         self.force_manifest_update = force_manifest_update
+        self.manifest_download = manifest_download
         self.logger = structured.get_default_logger()
         if self.logger is None:
             self.logger = structured.structuredlog.StructuredLogger("ManifestLoader")
@@ -391,13 +397,19 @@ class ManifestLoader(object):
         return rv
 
     def create_manifest(self, manifest_path, tests_path, url_base="/"):
-        self.update_manifest(manifest_path, tests_path, url_base, recreate=True)
+        self.update_manifest(manifest_path, tests_path, url_base, recreate=True,
+                             download=self.manifest_download)
 
     def update_manifest(self, manifest_path, tests_path, url_base="/",
-                        recreate=False):
+                        recreate=False, download=False):
         self.logger.info("Updating test manifest %s" % manifest_path)
+        manifest_log.setup()
 
         json_data = None
+        if download:
+            # TODO: make this not github-specific
+            download_from_github(manifest_path, tests_path)
+
         if not recreate:
             try:
                 with open(manifest_path) as f:
@@ -422,7 +434,7 @@ class ManifestLoader(object):
         manifest_path = os.path.join(metadata_path, "MANIFEST.json")
         if (not os.path.exists(manifest_path) or
             self.force_manifest_update):
-            self.update_manifest(manifest_path, tests_path, url_base)
+            self.update_manifest(manifest_path, tests_path, url_base, download=self.manifest_download)
         manifest_file = manifest.load(tests_path, manifest_path)
         if manifest_file.url_base != url_base:
             self.logger.info("Updating url_base in manifest from %s to %s" % (manifest_file.url_base,
@@ -448,7 +460,8 @@ class TestLoader(object):
                  chunk_type="none",
                  total_chunks=1,
                  chunk_number=1,
-                 include_https=True):
+                 include_https=True,
+                 skip_timeout=False):
 
         self.test_types = test_types
         self.run_info = run_info
@@ -460,6 +473,7 @@ class TestLoader(object):
         self.tests = None
         self.disabled_tests = None
         self.include_https = include_https
+        self.skip_timeout = skip_timeout
 
         self.chunk_type = chunk_type
         self.total_chunks = total_chunks
@@ -544,6 +558,8 @@ class TestLoader(object):
         for test_path, test_type, test in self.iter_tests():
             enabled = not test.disabled()
             if not self.include_https and test.environment["protocol"] == "https":
+                enabled = False
+            if self.skip_timeout and test.expected() == "TIMEOUT":
                 enabled = False
             key = "enabled" if enabled else "disabled"
             tests[key][test_type].append(test)

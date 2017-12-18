@@ -57,8 +57,6 @@ def get_timeout_multiplier(test_type, run_info_data, **kwargs):
 
 def check_args(**kwargs):
     require_arg(kwargs, "binary")
-    if kwargs["ssl_type"] != "none":
-        require_arg(kwargs, "certutil_binary")
 
 
 def browser_kwargs(test_type, run_info_data, **kwargs):
@@ -78,7 +76,8 @@ def browser_kwargs(test_type, run_info_data, **kwargs):
                                                          run_info_data,
                                                          **kwargs),
             "leak_check": kwargs["leak_check"],
-            "stylo_threads": kwargs["stylo_threads"]}
+            "stylo_threads": kwargs["stylo_threads"],
+            "chaos_mode_flags": kwargs["chaos_mode_flags"]}
 
 
 def executor_kwargs(test_type, server_config, cache_manager, run_info_data,
@@ -89,6 +88,7 @@ def executor_kwargs(test_type, server_config, cache_manager, run_info_data,
     executor_kwargs["timeout_multiplier"] = get_timeout_multiplier(test_type,
                                                                    run_info_data,
                                                                    **kwargs)
+    capabilities = {}
     if test_type == "reftest":
         executor_kwargs["reftest_internal"] = kwargs["reftest_internal"]
         executor_kwargs["reftest_screenshot"] = kwargs["reftest_screenshot"]
@@ -101,7 +101,10 @@ def executor_kwargs(test_type, server_config, cache_manager, run_info_data,
         fxOptions["prefs"] = {
             "network.dns.localDomains": ",".join(hostnames)
         }
-        capabilities = {"moz:firefoxOptions": fxOptions}
+        capabilities["moz:firefoxOptions"] = fxOptions
+    if kwargs["certutil_binary"] is None:
+        capabilities["acceptInsecureCerts"] = True
+    if capabilities:
         executor_kwargs["capabilities"] = capabilities
     return executor_kwargs
 
@@ -136,7 +139,8 @@ class FirefoxBrowser(Browser):
     def __init__(self, logger, binary, prefs_root, test_type, extra_prefs=None, debug_info=None,
                  symbols_path=None, stackwalk_binary=None, certutil_binary=None,
                  ca_certificate_path=None, e10s=False, stackfix_dir=None,
-                 binary_args=None, timeout_multiplier=None, leak_check=False, stylo_threads=1):
+                 binary_args=None, timeout_multiplier=None, leak_check=False, stylo_threads=1,
+                 chaos_mode_flags=None):
         Browser.__init__(self, logger)
         self.binary = binary
         self.prefs_root = prefs_root
@@ -164,6 +168,7 @@ class FirefoxBrowser(Browser):
         self.leak_report_file = None
         self.leak_check = leak_check
         self.stylo_threads = stylo_threads
+        self.chaos_mode_flags = chaos_mode_flags
 
     def settings(self, test):
         return {"check_leaks": self.leak_check and not test.leaks}
@@ -178,6 +183,8 @@ class FirefoxBrowser(Browser):
         env["MOZ_CRASHREPORTER_SHUTDOWN"] = "1"
         env["MOZ_DISABLE_NONLOCAL_CONNECTIONS"] = "1"
         env["STYLO_THREADS"] = str(self.stylo_threads)
+        if self.chaos_mode_flags is not None:
+            env["MOZ_CHAOSMODE"] = str(self.chaos_mode_flags)
 
         locations = ServerLocations(filename=os.path.join(here, "server-locations.txt"))
 
@@ -333,6 +340,9 @@ class FirefoxBrowser(Browser):
         """Create a certificate database to use in the test profile. This is configured
         to trust the CA Certificate that has signed the web-platform.test server
         certificate."""
+        if self.certutil_binary is None:
+            self.logger.info("--certutil-binary not supplied; Firefox will not check certificates")
+            return
 
         self.logger.info("Setting up ssl")
 
