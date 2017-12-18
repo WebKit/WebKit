@@ -9,7 +9,7 @@
     <script>
     runWithKeyDown(() => {
         document.body.innerHTML = '<audio></audio>';
-        document.body.childNodes[0].play();
+        document.body.childNodes[0].play().catch(error => {});
         document.body.innerHTML = '';
         gc();
         setTimeout(endTest, 100);

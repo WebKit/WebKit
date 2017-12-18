@@ -1,3 +1,14 @@
+2017-12-18  Jer Noble  <jer.noble@apple.com>
+
+        Playing media elements which call "pause(); play()" will have the play promise rejected.
+        https://bugs.webkit.org/show_bug.cgi?id=180781
+
+        Reviewed by Eric Carlson.
+
+        * media/audio-dealloc-crash.html:
+        * media/video-pause-play-resolve-expected.txt: Added.
+        * media/video-pause-play-resolve.html: Added.
+
 2017-12-18  Daniel Bates  <dabates@apple.com>
 
         Add a test to ensure that matched text markers are not highlighted when highlight is disabled

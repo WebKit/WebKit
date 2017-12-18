@@ -183,10 +183,12 @@ public:
     using HTMLMediaElementEnums::DelayedActionType;
     void scheduleDelayedAction(DelayedActionType);
     void scheduleResolvePendingPlayPromises();
-    void rejectPendingPlayPromises(DOMException&);
-    void resolvePendingPlayPromises();
+    void scheduleRejectPendingPlayPromises(Ref<DOMException>&&);
+    using PlayPromiseVector = Vector<DOMPromiseDeferred<void>>;
+    void rejectPendingPlayPromises(PlayPromiseVector&&, Ref<DOMException>&&);
+    void resolvePendingPlayPromises(PlayPromiseVector&&);
     void scheduleNotifyAboutPlaying();
-    void notifyAboutPlaying();
+    void notifyAboutPlaying(PlayPromiseVector&&);
     
     MediaPlayerEnums::MovieLoadType movieLoadType() const;
     
@@ -770,7 +772,7 @@ private:
 #endif
 
     // These "internal" functions do not check user gesture restrictions.
-    bool playInternal();
+    void playInternal();
     void pauseInternal();
 
     void prepareForLoad();
@@ -926,7 +928,7 @@ private:
     RefPtr<TimeRanges> m_playedTimeRanges;
     GenericEventQueue m_asyncEventQueue;
 
-    Vector<DOMPromiseDeferred<void>> m_pendingPlayPromises;
+    PlayPromiseVector m_pendingPlayPromises;
 
     double m_requestedPlaybackRate { 1 };
     double m_reportedPlaybackRate { 1 };

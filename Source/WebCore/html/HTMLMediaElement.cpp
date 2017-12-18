@@ -1072,36 +1072,43 @@ void HTMLMediaElement::scheduleEvent(const AtomicString& eventName)
 
 void HTMLMediaElement::scheduleResolvePendingPlayPromises()
 {
-    m_promiseTaskQueue.enqueueTask(std::bind(&HTMLMediaElement::resolvePendingPlayPromises, this));
+    m_promiseTaskQueue.enqueueTask([this, pendingPlayPromises = WTFMove(m_pendingPlayPromises)] () mutable {
+        resolvePendingPlayPromises(WTFMove(pendingPlayPromises));
+    });
 }
 
-void HTMLMediaElement::rejectPendingPlayPromises(DOMException& error)
+void HTMLMediaElement::scheduleRejectPendingPlayPromises(Ref<DOMException>&& error)
 {
-    Vector<DOMPromiseDeferred<void>> pendingPlayPromises = WTFMove(m_pendingPlayPromises);
+    m_promiseTaskQueue.enqueueTask([this, error = WTFMove(error), pendingPlayPromises = WTFMove(m_pendingPlayPromises)] () mutable {
+        rejectPendingPlayPromises(WTFMove(pendingPlayPromises), WTFMove(error));
+    });
+}
 
+void HTMLMediaElement::rejectPendingPlayPromises(PlayPromiseVector&& pendingPlayPromises, Ref<DOMException>&& error)
+{
     for (auto& promise : pendingPlayPromises)
         promise.rejectType<IDLInterface<DOMException>>(error);
 }
 
-void HTMLMediaElement::resolvePendingPlayPromises()
+void HTMLMediaElement::resolvePendingPlayPromises(PlayPromiseVector&& pendingPlayPromises)
 {
-    Vector<DOMPromiseDeferred<void>> pendingPlayPromises = WTFMove(m_pendingPlayPromises);
-
     for (auto& promise : pendingPlayPromises)
         promise.resolve();
 }
 
 void HTMLMediaElement::scheduleNotifyAboutPlaying()
 {
-    m_promiseTaskQueue.enqueueTask(std::bind(&HTMLMediaElement::notifyAboutPlaying, this));
+    m_promiseTaskQueue.enqueueTask([this, pendingPlayPromises = WTFMove(m_pendingPlayPromises)] () mutable {
+        notifyAboutPlaying(WTFMove(pendingPlayPromises));
+    });
 }
 
-void HTMLMediaElement::notifyAboutPlaying()
+void HTMLMediaElement::notifyAboutPlaying(PlayPromiseVector&& pendingPlayPromises)
 {
     Ref<HTMLMediaElement> protectedThis(*this); // The 'playing' event can make arbitrary DOM mutations.
     m_playbackStartedTime = currentMediaTime().toDouble();
     dispatchEvent(Event::create(eventNames().playingEvent, false, true));
-    resolvePendingPlayPromises();
+    resolvePendingPlayPromises(WTFMove(pendingPlayPromises));
 
     m_hasEverNotifiedAboutPlaying = true;
     scheduleUpdatePlaybackControlsManager();
@@ -2168,7 +2175,7 @@ void HTMLMediaElement::noneSupported()
     // 7 - Queue a task to fire a simple event named error at the media element.
     scheduleEvent(eventNames().errorEvent);
 
-    rejectPendingPlayPromises(DOMException::create(NotSupportedError));
+    rejectPendingPlayPromises(WTFMove(m_pendingPlayPromises), DOMException::create(NotSupportedError));
 
 #if ENABLE(MEDIA_SOURCE)
     detachMediaSource();
@@ -2231,7 +2238,7 @@ void HTMLMediaElement::cancelPendingEventsAndCallbacks()
     for (auto& source : childrenOfType<HTMLSourceElement>(*this))
         source.cancelPendingErrorEvent();
 
-    rejectPendingPlayPromises(DOMException::create(AbortError));
+    rejectPendingPlayPromises(WTFMove(m_pendingPlayPromises), DOMException::create(AbortError));
 }
 
 void HTMLMediaElement::mediaPlayerNetworkStateChanged(MediaPlayer*)
@@ -3418,12 +3425,8 @@ void HTMLMediaElement::play(DOMPromiseDeferred<void>&& promise)
     if (processingUserGestureForMedia())
         removeBehaviorsRestrictionsAfterFirstUserGesture();
 
-    if (!playInternal()) {
-        promise.reject(NotAllowedError);
-        return;
-    }
-
     m_pendingPlayPromises.append(WTFMove(promise));
+    playInternal();
 }
 
 void HTMLMediaElement::play()
@@ -3442,18 +3445,18 @@ void HTMLMediaElement::play()
     playInternal();
 }
 
-bool HTMLMediaElement::playInternal()
+void HTMLMediaElement::playInternal()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
     if (!m_mediaSession->clientWillBeginPlayback()) {
         ALWAYS_LOG(LOGIDENTIFIER, "  returning because of interruption");
-        return true; // Treat as success because we will begin playback on cessation of the interruption.
+        return; // Treat as success because we will begin playback on cessation of the interruption.
     }
 
     // 4.8.10.9. Playing the media resource
     if (!m_player || m_networkState == NETWORK_EMPTY)
-        prepareForLoad();
+        selectMediaResource();
 
     if (endedPlayback())
         seekInternal(MediaTime::zeroTime());
@@ -3466,11 +3469,6 @@ bool HTMLMediaElement::playInternal()
         invalidateCachedTime();
         m_playbackStartedTime = currentMediaTime().toDouble();
         scheduleEvent(eventNames().playEvent);
-
-        if (m_readyState <= HAVE_CURRENT_DATA)
-            scheduleEvent(eventNames().waitingEvent);
-        else if (m_readyState >= HAVE_FUTURE_DATA)
-            scheduleNotifyAboutPlaying();
 
 #if ENABLE(MEDIA_SESSION)
         // 6.3 Activating a media session from a media element
@@ -3492,11 +3490,15 @@ bool HTMLMediaElement::playInternal()
 
                 if (!m_session->invoke()) {
                     pause();
-                    return false;
+                    return;
                 }
             }
         }
 #endif
+        if (m_readyState <= HAVE_CURRENT_DATA)
+            scheduleEvent(eventNames().waitingEvent);
+        else if (m_readyState >= HAVE_FUTURE_DATA)
+            scheduleNotifyAboutPlaying();
     } else if (m_readyState >= HAVE_FUTURE_DATA)
         scheduleResolvePendingPlayPromises();
 
@@ -3510,8 +3512,6 @@ bool HTMLMediaElement::playInternal()
 
     m_autoplaying = false;
     updatePlayState();
-
-    return true;
 }
 
 void HTMLMediaElement::pause()
@@ -3545,7 +3545,7 @@ void HTMLMediaElement::pauseInternal()
         // don't trigger loading if a script calls pause().
         if (!m_mediaSession->playbackPermitted(*this))
             return;
-        prepareForLoad();
+        selectMediaResource();
     }
 
     m_autoplaying = false;
@@ -3559,9 +3559,7 @@ void HTMLMediaElement::pauseInternal()
         m_paused = true;
         scheduleTimeupdateEvent(false);
         scheduleEvent(eventNames().pauseEvent);
-        m_promiseTaskQueue.enqueueTask([this]() {
-            rejectPendingPlayPromises(DOMException::create(AbortError));
-        });
+        scheduleRejectPendingPlayPromises(DOMException::create(AbortError));
         if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
             purgeBufferedDataIfPossible();
     }
@@ -5531,6 +5529,7 @@ void HTMLMediaElement::stop()
     m_asyncEventQueue.close();
     m_promiseTaskQueue.close();
     m_updatePlaybackControlsManagerQueue.close();
+    m_resourceSelectionTaskQueue.close();
 
     // Once an active DOM object has been stopped it can not be restarted, so we can deallocate
     // the media player now. Note that userCancelledLoad will already called clearMediaPlayer
