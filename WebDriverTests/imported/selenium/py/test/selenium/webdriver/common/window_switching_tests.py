@@ -24,7 +24,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 
-@pytest.yield_fixture(autouse=True)
+@pytest.fixture(autouse=True)
 def close_windows(driver):
     main_windows_handle = driver.current_window_handle
     yield

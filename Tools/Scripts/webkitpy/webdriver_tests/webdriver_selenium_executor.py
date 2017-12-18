@@ -27,6 +27,9 @@ import sys
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
 import webkitpy.thirdparty.autoinstalled.mozlog
+import webkitpy.thirdparty.autoinstalled.pytest
+import webkitpy.thirdparty.autoinstalled.pytest_timeout
+import pytest
 
 # Since W3C tests also use pytest, we use pytest and some other tools for selenium too.
 w3c_tools_dir = WebKitFinder(FileSystem()).path_from_webkit_base('WebDriverTests', 'imported', 'w3c', 'tools')
@@ -35,11 +38,8 @@ w3c_tools_dir = WebKitFinder(FileSystem()).path_from_webkit_base('WebDriverTests
 def _ensure_directory_in_path(directory):
     if not directory in sys.path:
         sys.path.insert(0, directory)
-_ensure_directory_in_path(os.path.join(w3c_tools_dir, 'pytest'))
 _ensure_directory_in_path(os.path.join(w3c_tools_dir, 'wptrunner'))
 
-import pytest
-import webkitpy.thirdparty.autoinstalled.pytest_timeout
 from wptrunner.executors.pytestrunner.runner import HarnessResultRecorder, SubtestResultRecorder, TemporaryDirectory
 
 _log = logging.getLogger(__name__)

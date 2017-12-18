@@ -30,7 +30,7 @@ def driver_kwargs():
     return {}
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def driver(driver_class, driver_kwargs):
     driver = driver_class(**driver_kwargs)
     yield driver

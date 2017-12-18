@@ -38,7 +38,7 @@ from selenium.webdriver.support import expected_conditions as EC
 # ----------------------------------------------------------------------------------------------
 
 
-@pytest.yield_fixture(autouse=True)
+@pytest.fixture(autouse=True)
 def restore_default_context(driver):
     yield
     driver.switch_to.default_content()

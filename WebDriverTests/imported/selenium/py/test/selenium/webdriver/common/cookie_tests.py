@@ -33,7 +33,7 @@ def cookie(webserver):
     return cookie
 
 
-@pytest.yield_fixture(autouse=True)
+@pytest.fixture(autouse=True)
 def pages(request, driver, pages):
     pages.load('simpleTest.html')
     yield pages
