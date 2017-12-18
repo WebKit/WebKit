@@ -8,17 +8,20 @@ class WebDriverException(Exception):
 
     def __init__(self, message, stacktrace=None):
         super(WebDriverException, self)
+        self.message = message
         self.stacktrace = stacktrace
 
     def __repr__(self):
         return "<%s http_status=%s>" % (self.__class__.__name__, self.http_status)
 
     def __str__(self):
-        return ("%s (%s)\n"
-            "\n"
+        message = "%s (%s): %s\n" % (self.status_code, self.http_status, self.message)
+        if self.stacktrace:
+            message += ("\n"
             "Remote-end stacktrace:\n"
             "\n"
-            "%s" % (self.status_code, self.http_status, self.stacktrace))
+            "%s" % self.stacktrace)
+        return message
 
 
 class ElementClickInterceptedException(WebDriverException):

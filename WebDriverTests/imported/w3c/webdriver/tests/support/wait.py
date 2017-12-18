@@ -35,5 +35,4 @@ def wait(session, condition, message,
             continue
         return success
 
-    print "Last exception encountered was {}".format(last_exc)
     raise TimeoutException("Timed out after %d seconds: %s" % (timeout, message))
