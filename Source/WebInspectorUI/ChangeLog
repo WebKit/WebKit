@@ -1,5 +1,18 @@
 2017-12-18  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: Styles Redesign: add inline swatch for CSS variables
+        https://bugs.webkit.org/show_bug.cgi?id=180798
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty):
+        (WI.SpreadsheetStyleProperty.prototype.updateStatus):
+        (WI.SpreadsheetStyleProperty.prototype._renderValue):
+        (WI.SpreadsheetStyleProperty.prototype._addVariableTokens):
+
+2017-12-18  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: recording view and slider have jumbled layout at narrow widths
         https://bugs.webkit.org/show_bug.cgi?id=180597
         <rdar://problem/35939904>
