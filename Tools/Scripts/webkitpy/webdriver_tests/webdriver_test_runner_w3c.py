@@ -96,10 +96,14 @@ class WebDriverTestRunnerW3C(object):
             for test in tests:
                 test_name = os.path.relpath(test, self._tests_dir())
                 harness_result, test_results = executor.run(test)
-                if harness_result[0] != 'OK':
-                    _log.error("Failed to run test %s: %s" % (test_name, harness_result[1]))
+                result = WebDriverTestResult(test_name, *harness_result)
+                if harness_result[0] == 'OK':
+                    for test_result in test_results:
+                        result.add_subtest_results(*test_result)
                 else:
-                    self._add_results(os.path.dirname(test_name), test_results)
+                    # FIXME: handle other results.
+                    pass
+                self._results.append(result)
         finally:
             executor.teardown()
             self._server.stop()

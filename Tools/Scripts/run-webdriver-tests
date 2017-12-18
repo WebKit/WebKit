@@ -47,6 +47,8 @@ option_parser.add_option('--debug', action='store_const', const='Debug', dest="c
                          help='Set the configuration to Debug')
 option_parser.add_option('--timeout', action='store', type='int', dest='timeout', default=10,
                          help='Time in seconds until a test times out (use 0 to disable)')
+option_parser.add_option('--json-output', action='store', metavar="FILE",
+                         help='Write results to JSON file at the given path')
 option_parser.add_option('--display-server', choices=['xvfb', 'xorg', 'weston', 'wayland'], default='xvfb',
                          help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
                               '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.')
@@ -65,6 +67,9 @@ port._display_server = options.display_server
 runner = WebDriverTestRunner(port)
 retval = runner.run(args)
 runner.print_results()
+
+if options.json_output is not None:
+    runner.dump_results_to_json_file(options.json_output)
 
 sys.exit(retval)
 

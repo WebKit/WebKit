@@ -20,7 +20,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import logging
+import os
 
 from webkitpy.webdriver_tests.webdriver_test_runner_w3c import WebDriverTestRunnerW3C
 
@@ -54,11 +56,16 @@ class WebDriverTestRunner(object):
         passed_count = 0
         failures_count = 0
         for result in self._runner.results():
-            if result.status == 'PASS':
-                passed_count += 1
-            elif result.status == 'FAIL':
-                results.setdefault(result.status, []).append(result.test)
-                failures_count += 1
+            if result.status == 'OK':
+                for subtest, status, _, _ in result.subtest_results:
+                    if status == 'PASS':
+                        passed_count += 1
+                    elif status == 'FAIL':
+                        results.setdefault(status, []).append(os.path.join(os.path.dirname(result.test), subtest))
+                        failures_count += 1
+            else:
+                # FIXME: handle other results.
+                pass
 
         _log.info('')
 
@@ -73,3 +80,27 @@ class WebDriverTestRunner(object):
             _log.info('Unexpected failures (%d)' % len(failed))
             for test in failed:
                 _log.info('  %s' % test)
+
+    def dump_results_to_json_file(self, output_path):
+        json_results = {}
+        json_results['results'] = []
+        for result in self._runner.results():
+            results = {}
+            results['test'] = result.test
+            results['status'] = result.status
+            results['message'] = result.message
+            results['subtests'] = []
+            for name, status, message, _ in result.subtest_results:
+                subtest = {}
+                subtest['name'] = name
+                subtest['status'] = status
+                subtest['message'] = message
+                results['subtests'].append(subtest)
+            json_results['results'].append(results)
+
+        directory = os.path.dirname(output_path)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        with open(output_path, 'wb') as fp:
+            json.dump(json_results, fp)
