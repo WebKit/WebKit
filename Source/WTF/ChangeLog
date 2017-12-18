@@ -1,3 +1,10 @@
+2017-12-18  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK][Darwin] Do not define mach exceptions for GTK+
+
+        Rubber-stamped by Michael Catanzaro.
+        * wtf/Platform.h:
+
 2017-12-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [FTL] NewArrayBuffer should be sinked if it is only used for spreading
