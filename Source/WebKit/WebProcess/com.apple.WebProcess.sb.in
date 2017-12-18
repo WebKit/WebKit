@@ -727,6 +727,8 @@
     (global-name "com.apple.coremedia.endpointplaybacksession.xpc")
     ; "com.apple.coremedia.endpointpicker.xpc" can be removed when <rdar://problem/30081582> is resolved.
     (global-name "com.apple.coremedia.endpointpicker.xpc")
+    ; <rdar://problem/35509194>
+    (global-name "com.apple.coremedia.endpointremotecontrolsession.xpc")
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     (global-name "com.apple.coremedia.routediscoverer.xpc")
     (global-name "com.apple.coremedia.routingcontext.xpc")

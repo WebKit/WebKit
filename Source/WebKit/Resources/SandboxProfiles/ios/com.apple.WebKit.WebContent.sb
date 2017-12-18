@@ -295,6 +295,10 @@
 (allow mach-lookup
     (global-name "com.apple.coremedia.endpointplaybacksession.xpc"))
 
+;; <rdar://problem/35509194>
+(allow mach-lookup
+    (global-name "com.apple.coremedia.endpointremotecontrolsession.xpc"))
+
 ;;;
 ;;; End UIKit-apps.sb content
 ;;;

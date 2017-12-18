@@ -1,3 +1,18 @@
+2017-12-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS, iOS] Add new mach lookup port for CoreMedia remote control
+        https://bugs.webkit.org/show_bug.cgi?id=180938
+        <rdar://problem/35447664>
+
+        Reviewed by Eric Carlson.
+
+        Update the app sandbox to support a new XPC endpoint for CoreMedia. This endpoint exposes
+        existing functions through a new, more-focused interface. This will (hopefully) allow us
+        to remove the more generic endpoints in a future update.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-12-18  Megan Gardner  <megan_gardner@apple.com>
 
         Support Autoscrolling in contenteditable for WK2
