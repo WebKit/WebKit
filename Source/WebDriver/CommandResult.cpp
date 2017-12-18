@@ -106,6 +106,8 @@ CommandResult::CommandResult(RefPtr<JSON::Value>&& result, std::optional<ErrorCo
             m_errorCode = ErrorCode::ElementNotSelectable;
         else if (errorName == "ScreenshotError")
             m_errorCode = ErrorCode::UnableToCaptureScreen;
+        else if (errorName == "UnexpectedAlertOpen")
+            m_errorCode = ErrorCode::UnexpectedAlertOpen;
 
         break;
     }

@@ -184,31 +184,36 @@ void Session::handleUserPrompts(Function<void (CommandResult&&)>&& completionHan
             return;
         }
 
-        if (!capabilities().unhandledPromptBehavior) {
-            reportUnexpectedAlertOpen([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
-                dismissAlert([this, errorResult = WTFMove(result), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
-                    if (result.isError()) {
-                        completionHandler(WTFMove(result));
-                        return;
-                    }
-                    completionHandler(WTFMove(errorResult));
-                });
-            });
-            return;
-        }
-
-        switch (capabilities().unhandledPromptBehavior.value()) {
-        case UnhandledPromptBehavior::Dismiss:
-            dismissAlert(WTFMove(completionHandler));
-            break;
-        case UnhandledPromptBehavior::Accept:
-            acceptAlert(WTFMove(completionHandler));
-            break;
-        case UnhandledPromptBehavior::Ignore:
-            reportUnexpectedAlertOpen(WTFMove(completionHandler));
-            break;
-        }
+        handleUnexpectedAlertOpen(WTFMove(completionHandler));
     });
+}
+
+void Session::handleUnexpectedAlertOpen(Function<void (CommandResult&&)>&& completionHandler)
+{
+    if (!capabilities().unhandledPromptBehavior) {
+        reportUnexpectedAlertOpen([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+            dismissAlert([this, errorResult = WTFMove(result), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+                if (result.isError()) {
+                    completionHandler(WTFMove(result));
+                    return;
+                }
+                completionHandler(WTFMove(errorResult));
+            });
+        });
+        return;
+    }
+
+    switch (capabilities().unhandledPromptBehavior.value()) {
+    case UnhandledPromptBehavior::Dismiss:
+        dismissAlert(WTFMove(completionHandler));
+        break;
+    case UnhandledPromptBehavior::Accept:
+        acceptAlert(WTFMove(completionHandler));
+        break;
+    case UnhandledPromptBehavior::Ignore:
+        reportUnexpectedAlertOpen(WTFMove(completionHandler));
+        break;
+    }
 }
 
 void Session::reportUnexpectedAlertOpen(Function<void (CommandResult&&)>&& completionHandler)
@@ -1663,9 +1668,13 @@ void Session::executeScript(const String& script, RefPtr<JSON::Array>&& argument
             if (m_timeouts.script)
                 parameters->setInteger(ASCIILiteral("callbackTimeout"), m_timeouts.script.value().millisecondsAs<int>());
         }
-        m_host->sendCommandToBackend(ASCIILiteral("evaluateJavaScriptFunction"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend(ASCIILiteral("evaluateJavaScriptFunction"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
             if (response.isError || !response.responseObject) {
-                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+                auto result = CommandResult::fail(WTFMove(response.responseObject));
+                if (result.errorCode() == CommandResult::ErrorCode::UnexpectedAlertOpen)
+                    handleUnexpectedAlertOpen(WTFMove(completionHandler));
+                else
+                    completionHandler(WTFMove(result));
                 return;
             }
             String valueString;
