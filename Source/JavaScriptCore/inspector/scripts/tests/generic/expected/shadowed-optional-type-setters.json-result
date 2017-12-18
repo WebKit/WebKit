@@ -335,7 +335,7 @@ template<typename T> String getEnumConstantValue(T enumValue)
 
 namespace Runtime {
 /* Key path. */
-class KeyPath : public Inspector::InspectorObjectBase {
+class KeyPath : public JSON::ObjectBase {
 public:
     // Named after property name 'type' while generating KeyPath.
     enum class Type {
@@ -352,14 +352,14 @@ public:
     template<int STATE>
     class Builder {
     private:
-        RefPtr<InspectorObject> m_result;
+        RefPtr<JSON::Object> m_result;
 
         template<int STEP> Builder<STATE | STEP>& castState()
         {
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(Ref</*KeyPath*/InspectorObject>&& object)
+        Builder(Ref</*KeyPath*/JSON::Object>&& object)
             : m_result(WTFMove(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
@@ -377,9 +377,9 @@ public:
         Ref<KeyPath> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(KeyPath) == sizeof(InspectorObject), cannot_cast);
+            COMPILE_ASSERT(sizeof(KeyPath) == sizeof(JSON::Object), cannot_cast);
 
-            Ref<InspectorObject> result = m_result.releaseNonNull();
+            Ref<JSON::Object> result = m_result.releaseNonNull();
             return WTFMove(*reinterpret_cast<Ref<KeyPath>*>(&result));
         }
     };
@@ -392,7 +392,7 @@ public:
      */
     static Builder<NoFieldsSet> create()
     {
-        return Builder<NoFieldsSet>(InspectorObject::create());
+        return Builder<NoFieldsSet>(JSON::Object::create());
     }
 
     void setString(const String& value)

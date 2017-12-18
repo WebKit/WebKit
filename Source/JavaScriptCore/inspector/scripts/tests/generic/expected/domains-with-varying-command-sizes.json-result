@@ -185,7 +185,7 @@ protected:
 class Network1BackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<Network1BackendDispatcher> create(BackendDispatcher&, Network1BackendDispatcherHandler*);
-    void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
+    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
 private:
     void loadResource1(long requestId, RefPtr<InspectorObject>&& parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -202,7 +202,7 @@ private:
 class Network3BackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<Network3BackendDispatcher> create(BackendDispatcher&, Network3BackendDispatcherHandler*);
-    void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
+    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
 private:
     void loadResource1(long requestId, RefPtr<InspectorObject>&& parameters);
     void loadResource2(long requestId, RefPtr<InspectorObject>&& parameters);
@@ -285,11 +285,11 @@ Network1BackendDispatcher::Network1BackendDispatcher(BackendDispatcher& backendD
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("Network1"), this);
 }
 
-void Network1BackendDispatcher::dispatch(long requestId, const String& method, Ref<InspectorObject>&& message)
+void Network1BackendDispatcher::dispatch(long requestId, const String& method, Ref<JSON::Object>&& message)
 {
     Ref<Network1BackendDispatcher> protect(*this);
 
-    RefPtr<InspectorObject> parameters;
+    RefPtr<JSON::Object> parameters;
     message->getObject(ASCIILiteral("params"), parameters);
 
     if (method == "loadResource1")
@@ -329,14 +329,14 @@ Network3BackendDispatcher::Network3BackendDispatcher(BackendDispatcher& backendD
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("Network3"), this);
 }
 
-void Network3BackendDispatcher::dispatch(long requestId, const String& method, Ref<InspectorObject>&& message)
+void Network3BackendDispatcher::dispatch(long requestId, const String& method, Ref<JSON::Object>&& message)
 {
     Ref<Network3BackendDispatcher> protect(*this);
 
-    RefPtr<InspectorObject> parameters;
+    RefPtr<JSON::Object> parameters;
     message->getObject(ASCIILiteral("params"), parameters);
 
-    typedef void (Network3BackendDispatcher::*CallHandler)(long requestId, RefPtr<InspectorObject>&& message);
+    typedef void (Network3BackendDispatcher::*CallHandler)(long requestId, RefPtr<JSON::Object>&& message);
     typedef HashMap<String, CallHandler> DispatchMap;
     static NeverDestroyed<DispatchMap> dispatchMap;
     if (dispatchMap.get().isEmpty()) {

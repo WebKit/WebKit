@@ -95,7 +95,7 @@ protected:
     """${classAndExportMacro} ${domainName}BackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<${domainName}BackendDispatcher> create(BackendDispatcher&, ${domainName}BackendDispatcherHandler*);
-    void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
+    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
 ${commandDeclarations}
 private:
     ${domainName}BackendDispatcher(BackendDispatcher&, ${domainName}BackendDispatcherHandler*);
@@ -119,11 +119,11 @@ private:
     virtual void ${commandName}(${inParameters}) = 0;""")
 
     BackendDispatcherImplementationSmallSwitch = (
-    """void ${domainName}BackendDispatcher::dispatch(long requestId, const String& method, Ref<InspectorObject>&& message)
+    """void ${domainName}BackendDispatcher::dispatch(long requestId, const String& method, Ref<JSON::Object>&& message)
 {
     Ref<${domainName}BackendDispatcher> protect(*this);
 
-    RefPtr<InspectorObject> parameters;
+    RefPtr<JSON::Object> parameters;
     message->getObject(ASCIILiteral("params"), parameters);
 
 ${dispatchCases}
@@ -132,14 +132,14 @@ ${dispatchCases}
 }""")
 
     BackendDispatcherImplementationLargeSwitch = (
-"""void ${domainName}BackendDispatcher::dispatch(long requestId, const String& method, Ref<InspectorObject>&& message)
+"""void ${domainName}BackendDispatcher::dispatch(long requestId, const String& method, Ref<JSON::Object>&& message)
 {
     Ref<${domainName}BackendDispatcher> protect(*this);
 
-    RefPtr<InspectorObject> parameters;
+    RefPtr<JSON::Object> parameters;
     message->getObject(ASCIILiteral("params"), parameters);
 
-    typedef void (${domainName}BackendDispatcher::*CallHandler)(long requestId, RefPtr<InspectorObject>&& message);
+    typedef void (${domainName}BackendDispatcher::*CallHandler)(long requestId, RefPtr<JSON::Object>&& message);
     typedef HashMap<String, CallHandler> DispatchMap;
     static NeverDestroyed<DispatchMap> dispatchMap;
     if (dispatchMap.get().isEmpty()) {
@@ -189,7 +189,7 @@ ${domainName}BackendDispatcher::${domainName}BackendDispatcher(BackendDispatcher
 
 void ${domainName}BackendDispatcherHandler::${callbackName}::sendSuccess(${formalParameters})
 {
-    Ref<InspectorObject> jsonMessage = InspectorObject::create();
+    Ref<JSON::Object> jsonMessage = JSON::Object::create();
 ${outParameterAssignments}
     CallbackBase::sendSuccess(WTFMove(jsonMessage));
 }""")
@@ -207,14 +207,14 @@ private:
 """    template<int STATE>
     class Builder {
     private:
-        RefPtr<InspectorObject> m_result;
+        RefPtr<JSON::Object> m_result;
 
         template<int STEP> Builder<STATE | STEP>& castState()
         {
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(Ref</*${objectType}*/InspectorObject>&& object)
+        Builder(Ref</*${objectType}*/JSON::Object>&& object)
             : m_result(WTFMove(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
@@ -227,9 +227,9 @@ private:
         Ref<${objectType}> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(${objectType}) == sizeof(InspectorObject), cannot_cast);
+            COMPILE_ASSERT(sizeof(${objectType}) == sizeof(JSON::Object), cannot_cast);
 
-            Ref<InspectorObject> result = m_result.releaseNonNull();
+            Ref<JSON::Object> result = m_result.releaseNonNull();
             return WTFMove(*reinterpret_cast<Ref<${objectType}>*>(&result));
         }
     };
@@ -240,19 +240,19 @@ ${constructorExample}
      */
     static Builder<NoFieldsSet> create()
     {
-        return Builder<NoFieldsSet>(InspectorObject::create());
+        return Builder<NoFieldsSet>(JSON::Object::create());
     }""")
 
     ProtocolObjectRuntimeCast = (
-"""RefPtr<${objectType}> BindingTraits<${objectType}>::runtimeCast(RefPtr<InspectorValue>&& value)
+"""RefPtr<${objectType}> BindingTraits<${objectType}>::runtimeCast(RefPtr<JSON::Value>&& value)
 {
-    RefPtr<InspectorObject> result;
+    RefPtr<JSON::Object> result;
     bool castSucceeded = value->asObject(result);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 #if !ASSERT_DISABLED
     BindingTraits<${objectType}>::assertValueHasExpectedType(result.get());
 #endif  // !ASSERT_DISABLED
-    COMPILE_ASSERT(sizeof(${objectType}) == sizeof(InspectorObjectBase), type_cast_problem);
-    return static_cast<${objectType}*>(static_cast<InspectorObjectBase*>(result.get()));
+    COMPILE_ASSERT(sizeof(${objectType}) == sizeof(JSON::ObjectBase), type_cast_problem);
+    return static_cast<${objectType}*>(static_cast<JSON::ObjectBase*>(result.get()));
 }
 """)

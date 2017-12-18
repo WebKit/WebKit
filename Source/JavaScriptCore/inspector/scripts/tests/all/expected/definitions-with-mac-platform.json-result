@@ -152,7 +152,7 @@ protected:
 class NetworkBackendDispatcher final : public SupplementalBackendDispatcher {
 public:
     static Ref<NetworkBackendDispatcher> create(BackendDispatcher&, NetworkBackendDispatcherHandler*);
-    void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
+    void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
 private:
     void loadResource(long requestId, RefPtr<InspectorObject>&& parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -228,11 +228,11 @@ NetworkBackendDispatcher::NetworkBackendDispatcher(BackendDispatcher& backendDis
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("Network"), this);
 }
 
-void NetworkBackendDispatcher::dispatch(long requestId, const String& method, Ref<InspectorObject>&& message)
+void NetworkBackendDispatcher::dispatch(long requestId, const String& method, Ref<JSON::Object>&& message)
 {
     Ref<NetworkBackendDispatcher> protect(*this);
 
-    RefPtr<InspectorObject> parameters;
+    RefPtr<JSON::Object> parameters;
     message->getObject(ASCIILiteral("params"), parameters);
 
     if (method == "loadResource")
@@ -419,7 +419,7 @@ class NetworkError;
 
 
 namespace Network {
-class NetworkError : public Inspector::InspectorObjectBase {
+class NetworkError : public JSON::ObjectBase {
 public:
     enum {
         NoFieldsSet = 0,
@@ -431,14 +431,14 @@ public:
     template<int STATE>
     class Builder {
     private:
-        RefPtr<InspectorObject> m_result;
+        RefPtr<JSON::Object> m_result;
 
         template<int STEP> Builder<STATE | STEP>& castState()
         {
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(Ref</*NetworkError*/InspectorObject>&& object)
+        Builder(Ref</*NetworkError*/JSON::Object>&& object)
             : m_result(WTFMove(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
@@ -463,9 +463,9 @@ public:
         Ref<NetworkError> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(NetworkError) == sizeof(InspectorObject), cannot_cast);
+            COMPILE_ASSERT(sizeof(NetworkError) == sizeof(JSON::Object), cannot_cast);
 
-            Ref<InspectorObject> result = m_result.releaseNonNull();
+            Ref<JSON::Object> result = m_result.releaseNonNull();
             return WTFMove(*reinterpret_cast<Ref<NetworkError>*>(&result));
         }
     };
@@ -479,7 +479,7 @@ public:
      */
     static Builder<NoFieldsSet> create()
     {
-        return Builder<NoFieldsSet>(InspectorObject::create());
+        return Builder<NoFieldsSet>(JSON::Object::create());
     }
 };
 
