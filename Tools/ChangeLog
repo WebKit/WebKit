@@ -1,3 +1,17 @@
+2017-12-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Move the destination of WinCairoRequirements.zip into WebKitLibraries and register it and related files as git ignore files.
+        https://bugs.webkit.org/show_bug.cgi?id=180875
+        <rdar://problem/36091434>
+
+        Reviewed by Darin Adler.
+
+        update-webkit-wincairo-libs.py gets broken by r226002. Downloaded
+        WinCairoRequirements.zip can not be found to unzip because the
+        destination was changed.
+
+        * Scripts/update-webkit-wincairo-libs.py: Specify the correct zip path to unzip.
+
 2017-12-18  Alexey Proskuryakov  <ap@apple.com>
 
         BitVector::OutOfLineBits is always reported as a leak
