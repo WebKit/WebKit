@@ -190,30 +190,49 @@ void Session::handleUserPrompts(Function<void (CommandResult&&)>&& completionHan
 
 void Session::handleUnexpectedAlertOpen(Function<void (CommandResult&&)>&& completionHandler)
 {
-    if (!capabilities().unhandledPromptBehavior) {
-        reportUnexpectedAlertOpen([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
-            dismissAlert([this, errorResult = WTFMove(result), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
-                if (result.isError()) {
-                    completionHandler(WTFMove(result));
-                    return;
-                }
-                completionHandler(WTFMove(errorResult));
-            });
-        });
-        return;
-    }
-
-    switch (capabilities().unhandledPromptBehavior.value()) {
+    switch (capabilities().unhandledPromptBehavior.value_or(UnhandledPromptBehavior::DismissAndNotify)) {
     case UnhandledPromptBehavior::Dismiss:
         dismissAlert(WTFMove(completionHandler));
         break;
     case UnhandledPromptBehavior::Accept:
         acceptAlert(WTFMove(completionHandler));
         break;
+    case UnhandledPromptBehavior::DismissAndNotify:
+        dismissAndNotifyAlert(WTFMove(completionHandler));
+        break;
+    case UnhandledPromptBehavior::AcceptAndNotify:
+        acceptAndNotifyAlert(WTFMove(completionHandler));
+        break;
     case UnhandledPromptBehavior::Ignore:
         reportUnexpectedAlertOpen(WTFMove(completionHandler));
         break;
     }
+}
+
+void Session::dismissAndNotifyAlert(Function<void (CommandResult&&)>&& completionHandler)
+{
+    reportUnexpectedAlertOpen([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        dismissAlert([this, errorResult = WTFMove(result), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+            if (result.isError()) {
+                completionHandler(WTFMove(result));
+                return;
+            }
+            completionHandler(WTFMove(errorResult));
+        });
+    });
+}
+
+void Session::acceptAndNotifyAlert(Function<void (CommandResult&&)>&& completionHandler)
+{
+    reportUnexpectedAlertOpen([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        acceptAlert([this, errorResult = WTFMove(result), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+            if (result.isError()) {
+                completionHandler(WTFMove(result));
+                return;
+            }
+            completionHandler(WTFMove(errorResult));
+        });
+    });
 }
 
 void Session::reportUnexpectedAlertOpen(Function<void (CommandResult&&)>&& completionHandler)

@@ -313,6 +313,10 @@ static std::optional<UnhandledPromptBehavior> deserializeUnhandledPromptBehavior
         return UnhandledPromptBehavior::Dismiss;
     if (unhandledPromptBehavior == "accept")
         return UnhandledPromptBehavior::Accept;
+    if (unhandledPromptBehavior == "dismiss and notify")
+        return UnhandledPromptBehavior::DismissAndNotify;
+    if (unhandledPromptBehavior == "accept and notify")
+        return UnhandledPromptBehavior::AcceptAndNotify;
     if (unhandledPromptBehavior == "ignore")
         return UnhandledPromptBehavior::Ignore;
     return std::nullopt;
@@ -650,6 +654,12 @@ void WebDriverService::newSession(RefPtr<JSON::Object>&& parameters, Function<vo
                     break;
                 case UnhandledPromptBehavior::Accept:
                     capabilitiesObject->setString(ASCIILiteral("unhandledPromptBehavior"), "accept");
+                    break;
+                case UnhandledPromptBehavior::DismissAndNotify:
+                    capabilitiesObject->setString(ASCIILiteral("unhandledPromptBehavior"), "dismiss and notify");
+                    break;
+                case UnhandledPromptBehavior::AcceptAndNotify:
+                    capabilitiesObject->setString(ASCIILiteral("unhandledPromptBehavior"), "accept and notify");
                     break;
                 case UnhandledPromptBehavior::Ignore:
                     capabilitiesObject->setString(ASCIILiteral("unhandledPromptBehavior"), "ignore");
