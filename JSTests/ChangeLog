@@ -1,3 +1,17 @@
+2017-12-18  Guillaume Emont  <guijemont@igalia.com>
+
+        Skip stress/call-apply-exponential-bytecode-size.js unless x86-64 or arm64
+        https://bugs.webkit.org/show_bug.cgi?id=180712
+
+        Reviewed by Michael Catanzaro.
+
+        stress/call-apply-exponential-bytecode-size.js crashes if the
+        ExecutableAllocator's fixedExecutableMemoryPoolSize is less than 64
+        MB. Currently it is 64 MB or more only on x86-64 and arm64, so we
+        should skip the test on other platforms.
+
+        * stress/call-apply-exponential-bytecode-size.js:
+
 2017-12-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [FTL] NewArrayBuffer should be sinked if it is only used for spreading
