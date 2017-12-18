@@ -35,12 +35,12 @@
 #include "Completion.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptSource.h"
-#include "InspectorValues.h"
 #include "JSCInlines.h"
 #include "JSInjectedScriptHost.h"
 #include "JSLock.h"
 #include "ScriptObject.h"
 #include "SourceCode.h"
+#include <wtf/JSONValues.h>
 
 using namespace JSC;
 
@@ -101,11 +101,11 @@ int InjectedScriptManager::injectedScriptIdFor(ExecState* scriptState)
 
 InjectedScript InjectedScriptManager::injectedScriptForObjectId(const String& objectId)
 {
-    RefPtr<InspectorValue> parsedObjectId;
-    if (!InspectorValue::parseJSON(objectId, parsedObjectId))
+    RefPtr<JSON::Value> parsedObjectId;
+    if (!JSON::Value::parseJSON(objectId, parsedObjectId))
         return InjectedScript();
 
-    RefPtr<InspectorObject> resultObject;
+    RefPtr<JSON::Object> resultObject;
     if (!parsedObjectId->asObject(resultObject))
         return InjectedScript();
 

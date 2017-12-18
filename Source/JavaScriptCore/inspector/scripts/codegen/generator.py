@@ -47,7 +47,7 @@ _ENUM_IDENTIFIER_RENAME_MAP = {
     'webgpu': 'WebGPU',  # Canvas.ContextType.webgpu
 }
 
-# These objects are built manually by creating and setting InspectorValues.
+# These objects are built manually by creating and setting JSON::Value instances.
 # Before sending these over the protocol, their shapes are checked against the specification.
 # So, any types referenced by these types require debug-only assertions that check values.
 # Calculating necessary assertions is annoying, and adds a lot of complexity to the generator.

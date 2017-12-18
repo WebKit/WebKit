@@ -26,7 +26,6 @@
 #include "config.h"
 #include "AsyncStackTrace.h"
 
-#include "InspectorValues.h"
 #include "ScriptCallStack.h"
 
 namespace Inspector {

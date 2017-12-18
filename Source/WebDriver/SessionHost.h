@@ -27,6 +27,7 @@
 
 #include "Capabilities.h"
 #include <wtf/HashMap.h>
+#include <wtf/JSONValues.h>
 
 #if USE(GLIB)
 #include <wtf/glib/GRefPtr.h>
@@ -34,10 +35,6 @@ typedef struct _GDBusConnection GDBusConnection;
 typedef struct _GDBusInterfaceVTable GDBusInterfaceVTable;
 typedef struct _GSubprocess GSubprocess;
 #endif
-
-namespace Inspector {
-class InspectorObject;
-}
 
 namespace WebDriver {
 
@@ -61,10 +58,10 @@ public:
     void startAutomationSession(const String& sessionID, Function<void (std::optional<String>)>&&);
 
     struct CommandResponse {
-        RefPtr<Inspector::InspectorObject> responseObject;
+        RefPtr<JSON::Object> responseObject;
         bool isError { false };
     };
-    long sendCommandToBackend(const String&, RefPtr<Inspector::InspectorObject>&& parameters, Function<void (CommandResponse&&)>&&);
+    long sendCommandToBackend(const String&, RefPtr<JSON::Object>&& parameters, Function<void (CommandResponse&&)>&&);
 
 private:
     struct Target {

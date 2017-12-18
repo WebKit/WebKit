@@ -32,8 +32,6 @@
 #include "config.h"
 #include "ScriptCallStack.h"
 
-#include "InspectorValues.h"
-
 namespace Inspector {
 
 Ref<ScriptCallStack> ScriptCallStack::create()

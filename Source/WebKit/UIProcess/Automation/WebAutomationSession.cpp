@@ -302,7 +302,7 @@ void WebAutomationSession::switchToBrowsingContext(Inspector::ErrorString& error
     page->process().send(Messages::WebAutomationSessionProxy::FocusFrame(page->pageID(), frameID.value()), 0);
 }
 
-void WebAutomationSession::resizeWindowOfBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const Inspector::InspectorObject& sizeObject)
+void WebAutomationSession::resizeWindowOfBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const JSON::Object& sizeObject)
 {
 #if PLATFORM(IOS)
     FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
@@ -345,7 +345,7 @@ void WebAutomationSession::resizeWindowOfBrowsingContext(Inspector::ErrorString&
 #endif
 }
 
-void WebAutomationSession::moveWindowOfBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const Inspector::InspectorObject& positionObject)
+void WebAutomationSession::moveWindowOfBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const JSON::Object& positionObject)
 {
 #if PLATFORM(IOS)
     FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
@@ -446,7 +446,7 @@ void WebAutomationSession::waitForNavigationToCompleteOnPage(WebPageProxy& page,
 {
     ASSERT(!m_loadTimer.isActive());
     if (loadStrategy == Inspector::Protocol::Automation::PageLoadStrategy::None || !page.pageLoadState().isLoading()) {
-        callback->sendSuccess(InspectorObject::create());
+        callback->sendSuccess(JSON::Object::create());
         return;
     }
 
@@ -467,7 +467,7 @@ void WebAutomationSession::waitForNavigationToCompleteOnFrame(WebFrameProxy& fra
 {
     ASSERT(!m_loadTimer.isActive());
     if (loadStrategy == Inspector::Protocol::Automation::PageLoadStrategy::None || frame.frameLoadState().state() == FrameLoadState::State::Finished) {
-        callback->sendSuccess(InspectorObject::create());
+        callback->sendSuccess(JSON::Object::create());
         return;
     }
 
@@ -491,7 +491,7 @@ void WebAutomationSession::respondToPendingPageNavigationCallbacksWithTimeout(Ha
         auto page = WebProcessProxy::webPage(id);
         auto callback = map.take(id);
         if (page && m_client->isShowingJavaScriptDialogOnPage(*this, *page))
-            callback->sendSuccess(InspectorObject::create());
+            callback->sendSuccess(JSON::Object::create());
         else
             callback->sendFailure(timeoutError);
     }
@@ -513,7 +513,7 @@ void WebAutomationSession::respondToPendingFrameNavigationCallbacksWithTimeout(H
         auto* page = findPageForFrameID(*m_processPool, id);
         auto callback = map.take(id);
         if (page && m_client->isShowingJavaScriptDialogOnPage(*this, *page))
-            callback->sendSuccess(InspectorObject::create());
+            callback->sendSuccess(JSON::Object::create());
         else
             callback->sendFailure(timeoutError);
     }
@@ -609,13 +609,13 @@ void WebAutomationSession::navigationOccurredForFrame(const WebFrameProxy& frame
         m_webFrameHandleMap.clear();
         if (auto callback = m_pendingNormalNavigationInBrowsingContextCallbacksPerPage.take(frame.page()->pageID())) {
             m_loadTimer.stop();
-            callback->sendSuccess(InspectorObject::create());
+            callback->sendSuccess(JSON::Object::create());
         }
         m_domainNotifier->browsingContextCleared(handleForWebPageProxy(*frame.page()));
     } else {
         if (auto callback = m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame.take(frame.frameID())) {
             m_loadTimer.stop();
-            callback->sendSuccess(InspectorObject::create());
+            callback->sendSuccess(JSON::Object::create());
         }
     }
 }
@@ -625,12 +625,12 @@ void WebAutomationSession::documentLoadedForFrame(const WebFrameProxy& frame)
     if (frame.isMainFrame()) {
         if (auto callback = m_pendingEagerNavigationInBrowsingContextCallbacksPerPage.take(frame.page()->pageID())) {
             m_loadTimer.stop();
-            callback->sendSuccess(InspectorObject::create());
+            callback->sendSuccess(JSON::Object::create());
         }
     } else {
         if (auto callback = m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame.take(frame.frameID())) {
             m_loadTimer.stop();
-            callback->sendSuccess(InspectorObject::create());
+            callback->sendSuccess(JSON::Object::create());
         }
     }
 }
@@ -638,13 +638,13 @@ void WebAutomationSession::documentLoadedForFrame(const WebFrameProxy& frame)
 void WebAutomationSession::inspectorFrontendLoaded(const WebPageProxy& page)
 {
     if (auto callback = m_pendingInspectorCallbacksPerPage.take(page.pageID()))
-        callback->sendSuccess(InspectorObject::create());
+        callback->sendSuccess(JSON::Object::create());
 }
 
 void WebAutomationSession::keyboardEventsFlushedForPage(const WebPageProxy& page)
 {
     if (auto callback = m_pendingKeyboardEventsFlushedCallbacksPerPage.take(page.pageID()))
-        callback->sendSuccess(InspectorObject::create());
+        callback->sendSuccess(JSON::Object::create());
 }
 
 void WebAutomationSession::willClosePage(const WebPageProxy& page)
@@ -735,7 +735,7 @@ void WebAutomationSession::handleRunOpenPanel(const WebPageProxy& page, const We
     m_domainNotifier->fileChooserDismissed(m_activeBrowsingContextHandle, false);
 }
 
-void WebAutomationSession::evaluateJavaScriptFunction(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const Inspector::InspectorArray& arguments, const bool* optionalExpectsImplicitCallbackArgument, const int* optionalCallbackTimeout, Ref<EvaluateJavaScriptFunctionCallback>&& callback)
+void WebAutomationSession::evaluateJavaScriptFunction(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const JSON::Array& arguments, const bool* optionalExpectsImplicitCallbackArgument, const int* optionalCallbackTimeout, Ref<EvaluateJavaScriptFunctionCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
     if (!page)
@@ -1046,7 +1046,7 @@ void WebAutomationSession::setUserInputForCurrentJavaScriptPrompt(Inspector::Err
     m_client->setUserInputForCurrentJavaScriptPromptOnPage(*this, *page, promptValue);
 }
 
-void WebAutomationSession::setFilesToSelectForFileUpload(ErrorString& errorString, const String& browsingContextHandle, const Inspector::InspectorArray& filenames)
+void WebAutomationSession::setFilesToSelectForFileUpload(ErrorString& errorString, const String& browsingContextHandle, const JSON::Array& filenames)
 {
     Vector<String> newFileList;
     newFileList.reserveInitialCapacity(filenames.length());
@@ -1145,7 +1145,7 @@ void WebAutomationSession::didDeleteCookie(uint64_t callbackID, const String& er
     callback->sendSuccess();
 }
 
-void WebAutomationSession::addSingleCookie(ErrorString& errorString, const String& browsingContextHandle, const Inspector::InspectorObject& cookieObject, Ref<AddSingleCookieCallback>&& callback)
+void WebAutomationSession::addSingleCookie(ErrorString& errorString, const String& browsingContextHandle, const JSON::Object& cookieObject, Ref<AddSingleCookieCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
     if (!page)
@@ -1235,7 +1235,7 @@ static WebEvent::Modifiers protocolModifierToWebEventModifier(Inspector::Protoco
 }
 #endif // USE(APPKIT)
 
-void WebAutomationSession::performMouseInteraction(Inspector::ErrorString& errorString, const String& handle, const Inspector::InspectorObject& requestedPositionObject, const String& mouseButtonString, const String& mouseInteractionString, const Inspector::InspectorArray& keyModifierStrings, RefPtr<Inspector::Protocol::Automation::Point>& updatedPositionObject)
+void WebAutomationSession::performMouseInteraction(Inspector::ErrorString& errorString, const String& handle, const JSON::Object& requestedPositionObject, const String& mouseButtonString, const String& mouseInteractionString, const JSON::Array& keyModifierStrings, RefPtr<Inspector::Protocol::Automation::Point>& updatedPositionObject)
 {
 #if !USE(APPKIT) && !PLATFORM(GTK)
     FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
@@ -1290,7 +1290,7 @@ void WebAutomationSession::performMouseInteraction(Inspector::ErrorString& error
 #endif // USE(APPKIT)
 }
 
-void WebAutomationSession::performKeyboardInteractions(ErrorString& errorString, const String& handle, const Inspector::InspectorArray& interactions, Ref<PerformKeyboardInteractionsCallback>&& callback)
+void WebAutomationSession::performKeyboardInteractions(ErrorString& errorString, const String& handle, const JSON::Array& interactions, Ref<PerformKeyboardInteractionsCallback>&& callback)
 {
 #if !PLATFORM(COCOA) && !PLATFORM(GTK)
     FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
@@ -1307,7 +1307,7 @@ void WebAutomationSession::performKeyboardInteractions(ErrorString& errorString,
     actionsToPerform.reserveCapacity(interactions.length());
 
     for (auto interaction : interactions) {
-        RefPtr<InspectorObject> interactionObject;
+        RefPtr<JSON::Object> interactionObject;
         if (!interaction->asObject(interactionObject))
             FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter was invalid.");
 

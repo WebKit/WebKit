@@ -41,8 +41,6 @@ class JSValue;
 namespace Inspector {
 class InspectorAgent;
 class InspectorConsoleAgent;
-class InspectorObject;
-class InspectorValue;
 }
 
 namespace WebCore {

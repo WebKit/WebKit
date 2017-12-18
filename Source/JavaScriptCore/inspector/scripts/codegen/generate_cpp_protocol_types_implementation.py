@@ -201,7 +201,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         lines.append('void BindingTraits<%s>::assertValueHasExpectedType(JSON::Value* value)' % (CppGenerator.cpp_protocol_type_for_type(object_declaration.type)))
         lines.append("""{
     ASSERT_ARG(value, value);
-    RefPtr<InspectorObject> object;
+    RefPtr<JSON::Object> object;
     bool castSucceeded = value->asObject(object);
     ASSERT_UNUSED(castSucceeded, castSucceeded);""")
         for type_member in required_members:
@@ -211,7 +211,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
             }
 
             lines.append("""    {
-        InspectorObject::iterator %(memberName)sPos = object->find(ASCIILiteral("%(memberName)s"));
+        JSON::Object::iterator %(memberName)sPos = object->find(ASCIILiteral("%(memberName)s"));
         ASSERT(%(memberName)sPos != object->end());
         %(assertMethod)s(%(memberName)sPos->value.get());
     }""" % args)
@@ -227,7 +227,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
             }
 
             lines.append("""    {
-        InspectorObject::iterator %(memberName)sPos = object->find(ASCIILiteral("%(memberName)s"));
+        JSON::Object::iterator %(memberName)sPos = object->find(ASCIILiteral("%(memberName)s"));
         if (%(memberName)sPos != object->end()) {
             %(assertMethod)s(%(memberName)sPos->value.get());""" % args)
 

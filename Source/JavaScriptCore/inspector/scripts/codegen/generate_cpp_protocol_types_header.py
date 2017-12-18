@@ -326,11 +326,11 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         lines.append('    void set%(camelName)s(%(parameterType)s value)' % setter_args)
         lines.append('    {')
         if isinstance(type_member.type, EnumType):
-            lines.append('        InspectorObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), Inspector::Protocol::%(helpersNamespace)s::getEnumConstantValue(value));' % setter_args)
+            lines.append('        JSON::ObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), Inspector::Protocol::%(helpersNamespace)s::getEnumConstantValue(value));' % setter_args)
         elif CppGenerator.should_use_references_for_type(type_member.type):
-            lines.append('        InspectorObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), WTFMove(value));' % setter_args)
+            lines.append('        JSON::ObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), WTFMove(value));' % setter_args)
         else:
-            lines.append('        InspectorObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), value);' % setter_args)
+            lines.append('        JSON::ObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), value);' % setter_args)
         lines.append('    }')
         return '\n'.join(lines)
 

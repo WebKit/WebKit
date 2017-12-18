@@ -173,7 +173,7 @@ typedef String ErrorString;
 #include "TestBackendDispatchers.h"
 
 #include <inspector/InspectorFrontendRouter.h>
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
@@ -223,7 +223,7 @@ namespace Inspector {
 #pragma once
 
 #include "TestProtocolObjects.h"
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -476,47 +476,47 @@ public:
 
     void setColumnNames(RefPtr<Inspector::Protocol::Array<String>> value)
     {
-        InspectorObjectBase::setArray(ASCIILiteral("columnNames"), WTFMove(value));
+        JSON::ObjectBase::setArray(ASCIILiteral("columnNames"), WTFMove(value));
     }
 
     void setButtons(RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Database::MouseButton>> value)
     {
-        InspectorObjectBase::setArray(ASCIILiteral("buttons"), WTFMove(value));
+        JSON::ObjectBase::setArray(ASCIILiteral("buttons"), WTFMove(value));
     }
 
     void setDirectionality(Directionality value)
     {
-        InspectorObjectBase::setString(ASCIILiteral("directionality"), Inspector::Protocol::TestHelpers::getEnumConstantValue(value));
+        JSON::ObjectBase::setString(ASCIILiteral("directionality"), Inspector::Protocol::TestHelpers::getEnumConstantValue(value));
     }
 
     void setNotes(const String& value)
     {
-        InspectorObjectBase::setString(ASCIILiteral("notes"), value);
+        JSON::ObjectBase::setString(ASCIILiteral("notes"), value);
     }
 
     void setTimestamp(double value)
     {
-        InspectorObjectBase::setDouble(ASCIILiteral("timestamp"), value);
+        JSON::ObjectBase::setDouble(ASCIILiteral("timestamp"), value);
     }
 
     void setValues(RefPtr<JSON::Object> value)
     {
-        InspectorObjectBase::setObject(ASCIILiteral("values"), WTFMove(value));
+        JSON::ObjectBase::setObject(ASCIILiteral("values"), WTFMove(value));
     }
 
     void setPayload(RefPtr<JSON::Value> value)
     {
-        InspectorObjectBase::setValue(ASCIILiteral("payload"), WTFMove(value));
+        JSON::ObjectBase::setValue(ASCIILiteral("payload"), WTFMove(value));
     }
 
     void setError(RefPtr<Inspector::Protocol::Database::Error> value)
     {
-        InspectorObjectBase::setObject(ASCIILiteral("error"), WTFMove(value));
+        JSON::ObjectBase::setObject(ASCIILiteral("error"), WTFMove(value));
     }
 
     void setErrorList(RefPtr<Inspector::Protocol::Database::ErrorList> value)
     {
-        InspectorObjectBase::setArray(ASCIILiteral("errorList"), WTFMove(value));
+        JSON::ObjectBase::setArray(ASCIILiteral("errorList"), WTFMove(value));
     }
 };
 
@@ -1105,7 +1105,7 @@ namespace Inspector {
 
 #include "TestProtocolInternal.h"
 #include "TestProtocolTypeConversions.h"
-#include <JavaScriptCore/InspectorValues.h>
+#include <wtf/JSONValues.h>
 
 namespace Inspector {
 
@@ -1254,7 +1254,7 @@ using namespace Inspector;
 #import "TestProtocolInternal.h"
 
 #import "TestProtocolTypeConversions.h"
-#import <JavaScriptCore/InspectorValues.h>
+#import <wtf/JSONValues.h>
 
 using namespace Inspector;
 
@@ -1449,7 +1449,7 @@ __attribute__((visibility ("default")))
 #import "TestProtocol.h"
 #import "TestProtocolJSONObjectPrivate.h"
 #import <JavaScriptCore/AugmentableInspectorController.h>
-#import <JavaScriptCore/InspectorValues.h>
+#import <wtf/JSONValues.h>
 
 
 
@@ -1768,8 +1768,8 @@ using namespace Inspector;
 
 #import "TestProtocolTypeConversions.h"
 #import <WebInspector/RWIProtocolJSONObjectPrivate.h>
-#import <JavaScriptCore/InspectorValues.h>
 #import <wtf/Assertions.h>
+#import <wtf/JSONValues.h>
 
 using namespace Inspector;
 

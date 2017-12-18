@@ -214,4 +214,4 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
         return self.wrap_with_guard_for_domain(domain, Template(CppTemplates.BackendDispatcherHeaderDomainDispatcherDeclaration).substitute(None, **handler_args))
 
     def _generate_dispatcher_declaration_for_command(self, command):
-        return "    void %s(long requestId, RefPtr<InspectorObject>&& parameters);" % command.command_name
+        return "    void %s(long requestId, RefPtr<JSON::Object>&& parameters);" % command.command_name

@@ -32,10 +32,10 @@
 #include "config.h"
 #include "InjectedScript.h"
 
-#include "InspectorValues.h"
 #include "JSCInlines.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
+#include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
 using Inspector::Protocol::Array;
@@ -98,9 +98,9 @@ void InjectedScript::getFunctionDetails(ErrorString& errorString, const String& 
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("getFunctionDetails"), inspectorEnvironment()->functionCallHandler());
     function.appendArgument(functionId);
 
-    RefPtr<InspectorValue> resultValue;
+    RefPtr<JSON::Value> resultValue;
     makeCall(function, &resultValue);
-    if (!resultValue || resultValue->type() != InspectorValue::Type::Object) {
+    if (!resultValue || resultValue->type() != JSON::Value::Type::Object) {
         if (!resultValue->asString(errorString))
             errorString = ASCIILiteral("Internal error");
         return;
@@ -114,9 +114,9 @@ void InjectedScript::functionDetails(ErrorString& errorString, JSC::JSValue valu
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("functionDetails"), inspectorEnvironment()->functionCallHandler());
     function.appendArgument(value);
 
-    RefPtr<InspectorValue> resultValue;
+    RefPtr<JSON::Value> resultValue;
     makeCall(function, &resultValue);
-    if (!resultValue || resultValue->type() != InspectorValue::Type::Object) {
+    if (!resultValue || resultValue->type() != JSON::Value::Type::Object) {
         if (!resultValue->asString(errorString))
             errorString = ASCIILiteral("Internal error");
         return;
@@ -130,9 +130,9 @@ void InjectedScript::getPreview(ErrorString& errorString, const String& objectId
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("getPreview"), inspectorEnvironment()->functionCallHandler());
     function.appendArgument(objectId);
 
-    RefPtr<InspectorValue> resultValue;
+    RefPtr<JSON::Value> resultValue;
     makeCall(function, &resultValue);
-    if (!resultValue || resultValue->type() != InspectorValue::Type::Object) {
+    if (!resultValue || resultValue->type() != JSON::Value::Type::Object) {
         if (!resultValue->asString(errorString))
             errorString = ASCIILiteral("Internal error");
         return;
@@ -148,9 +148,9 @@ void InjectedScript::getProperties(ErrorString& errorString, const String& objec
     function.appendArgument(ownProperties);
     function.appendArgument(generatePreview);
 
-    RefPtr<InspectorValue> result;
+    RefPtr<JSON::Value> result;
     makeCall(function, &result);
-    if (!result || result->type() != InspectorValue::Type::Array) {
+    if (!result || result->type() != JSON::Value::Type::Array) {
         errorString = ASCIILiteral("Internal error");
         return;
     }
@@ -164,9 +164,9 @@ void InjectedScript::getDisplayableProperties(ErrorString& errorString, const St
     function.appendArgument(objectId);
     function.appendArgument(generatePreview);
 
-    RefPtr<InspectorValue> result;
+    RefPtr<JSON::Value> result;
     makeCall(function, &result);
-    if (!result || result->type() != InspectorValue::Type::Array) {
+    if (!result || result->type() != JSON::Value::Type::Array) {
         errorString = ASCIILiteral("Internal error");
         return;
     }
@@ -180,9 +180,9 @@ void InjectedScript::getInternalProperties(ErrorString& errorString, const Strin
     function.appendArgument(objectId);
     function.appendArgument(generatePreview);
 
-    RefPtr<InspectorValue> result;
+    RefPtr<JSON::Value> result;
     makeCall(function, &result);
-    if (!result || result->type() != InspectorValue::Type::Array) {
+    if (!result || result->type() != JSON::Value::Type::Array) {
         errorString = ASCIILiteral("Internal error");
         return;
     }
@@ -199,9 +199,9 @@ void InjectedScript::getCollectionEntries(ErrorString& errorString, const String
     function.appendArgument(startIndex);
     function.appendArgument(numberToFetch);
 
-    RefPtr<InspectorValue> result;
+    RefPtr<JSON::Value> result;
     makeCall(function, &result);
-    if (!result || result->type() != InspectorValue::Type::Array) {
+    if (!result || result->type() != JSON::Value::Type::Array) {
         errorString = ASCIILiteral("Internal error");
         return;
     }
@@ -214,9 +214,9 @@ void InjectedScript::saveResult(ErrorString& errorString, const String& callArgu
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("saveResult"), inspectorEnvironment()->functionCallHandler());
     function.appendArgument(callArgumentJSON);
 
-    RefPtr<InspectorValue> result;
+    RefPtr<JSON::Value> result;
     makeCall(function, &result);
-    if (!result || result->type() != InspectorValue::Type::Integer) {
+    if (!result || result->type() != JSON::Value::Type::Integer) {
         errorString = ASCIILiteral("Internal error");
         return;
     }
@@ -237,8 +237,8 @@ Ref<Array<Inspector::Protocol::Debugger::CallFrame>> InjectedScript::wrapCallFra
     if (!callFramesValue)
         return Array<Inspector::Protocol::Debugger::CallFrame>::create();
     ASSERT(!hadException);
-    RefPtr<InspectorValue> result = toInspectorValue(*scriptState(), callFramesValue);
-    if (result->type() == InspectorValue::Type::Array)
+    RefPtr<JSON::Value> result = toInspectorValue(*scriptState(), callFramesValue);
+    if (result->type() == JSON::Value::Type::Array)
         return BindingTraits<Array<Inspector::Protocol::Debugger::CallFrame>>::runtimeCast(WTFMove(result)).releaseNonNull();
 
     return Array<Inspector::Protocol::Debugger::CallFrame>::create();
@@ -258,7 +258,7 @@ RefPtr<Inspector::Protocol::Runtime::RemoteObject> InjectedScript::wrapObject(JS
     if (hadException)
         return nullptr;
 
-    RefPtr<InspectorObject> resultObject;
+    RefPtr<JSON::Object> resultObject;
     bool castSucceeded = toInspectorValue(*scriptState(), r)->asObject(resultObject);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 
@@ -281,7 +281,7 @@ RefPtr<Inspector::Protocol::Runtime::RemoteObject> InjectedScript::wrapTable(JSC
     if (hadException)
         return nullptr;
 
-    RefPtr<InspectorObject> resultObject;
+    RefPtr<JSON::Object> resultObject;
     bool castSucceeded = toInspectorValue(*scriptState(), r)->asObject(resultObject);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 
@@ -299,7 +299,7 @@ RefPtr<Inspector::Protocol::Runtime::ObjectPreview> InjectedScript::previewValue
     if (hadException)
         return nullptr;
 
-    RefPtr<InspectorObject> resultObject;
+    RefPtr<JSON::Object> resultObject;
     bool castSucceeded = toInspectorValue(*scriptState(), r)->asObject(resultObject);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 
@@ -311,7 +311,7 @@ void InjectedScript::setExceptionValue(JSC::JSValue value)
     ASSERT(!hasNoValue());
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("setExceptionValue"), inspectorEnvironment()->functionCallHandler());
     function.appendArgument(value);
-    RefPtr<InspectorValue> result;
+    RefPtr<JSON::Value> result;
     makeCall(function, &result);
 }
 
@@ -319,7 +319,7 @@ void InjectedScript::clearExceptionValue()
 {
     ASSERT(!hasNoValue());
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("clearExceptionValue"), inspectorEnvironment()->functionCallHandler());
-    RefPtr<InspectorValue> result;
+    RefPtr<JSON::Value> result;
     makeCall(function, &result);
 }
 
@@ -341,7 +341,7 @@ void InjectedScript::inspectObject(JSC::JSValue value)
     ASSERT(!hasNoValue());
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("inspectObject"), inspectorEnvironment()->functionCallHandler());
     function.appendArgument(value);
-    RefPtr<InspectorValue> result;
+    RefPtr<JSON::Value> result;
     makeCall(function, &result);
 }
 
@@ -349,7 +349,7 @@ void InjectedScript::releaseObject(const String& objectId)
 {
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("releaseObject"), inspectorEnvironment()->functionCallHandler());
     function.appendArgument(objectId);
-    RefPtr<InspectorValue> result;
+    RefPtr<JSON::Value> result;
     makeCall(function, &result);
 }
 

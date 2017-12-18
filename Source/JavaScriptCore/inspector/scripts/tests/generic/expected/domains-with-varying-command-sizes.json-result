@@ -187,7 +187,7 @@ public:
     static Ref<Network1BackendDispatcher> create(BackendDispatcher&, Network1BackendDispatcherHandler*);
     void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
 private:
-    void loadResource1(long requestId, RefPtr<InspectorObject>&& parameters);
+    void loadResource1(long requestId, RefPtr<JSON::Object>&& parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
     void setAlternateDispatcher(AlternateNetwork1BackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
@@ -204,13 +204,13 @@ public:
     static Ref<Network3BackendDispatcher> create(BackendDispatcher&, Network3BackendDispatcherHandler*);
     void dispatch(long requestId, const String& method, Ref<JSON::Object>&& message) override;
 private:
-    void loadResource1(long requestId, RefPtr<InspectorObject>&& parameters);
-    void loadResource2(long requestId, RefPtr<InspectorObject>&& parameters);
-    void loadResource3(long requestId, RefPtr<InspectorObject>&& parameters);
-    void loadResource4(long requestId, RefPtr<InspectorObject>&& parameters);
-    void loadResource5(long requestId, RefPtr<InspectorObject>&& parameters);
-    void loadResource6(long requestId, RefPtr<InspectorObject>&& parameters);
-    void loadResource7(long requestId, RefPtr<InspectorObject>&& parameters);
+    void loadResource1(long requestId, RefPtr<JSON::Object>&& parameters);
+    void loadResource2(long requestId, RefPtr<JSON::Object>&& parameters);
+    void loadResource3(long requestId, RefPtr<JSON::Object>&& parameters);
+    void loadResource4(long requestId, RefPtr<JSON::Object>&& parameters);
+    void loadResource5(long requestId, RefPtr<JSON::Object>&& parameters);
+    void loadResource6(long requestId, RefPtr<JSON::Object>&& parameters);
+    void loadResource7(long requestId, RefPtr<JSON::Object>&& parameters);
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
     void setAlternateDispatcher(AlternateNetwork3BackendDispatcher* alternateDispatcher) { m_alternateDispatcher = alternateDispatcher; }
@@ -260,7 +260,7 @@ private:
 #include "TestBackendDispatchers.h"
 
 #include <inspector/InspectorFrontendRouter.h>
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
@@ -298,7 +298,7 @@ void Network1BackendDispatcher::dispatch(long requestId, const String& method, R
         m_backendDispatcher->reportProtocolError(BackendDispatcher::MethodNotFound, makeString('\'', "Network1", '.', method, "' was not found"));
 }
 
-void Network1BackendDispatcher::loadResource1(long requestId, RefPtr<InspectorObject>&&)
+void Network1BackendDispatcher::loadResource1(long requestId, RefPtr<JSON::Object>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -308,11 +308,11 @@ void Network1BackendDispatcher::loadResource1(long requestId, RefPtr<InspectorOb
 #endif
 
     ErrorString error;
-    Ref<InspectorObject> result = InspectorObject::create();
+    Ref<JSON::Object> result = JSON::Object::create();
     m_agent->loadResource1(error);
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result), false);
     else
         m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
@@ -366,7 +366,7 @@ void Network3BackendDispatcher::dispatch(long requestId, const String& method, R
     ((*this).*findResult->value)(requestId, WTFMove(parameters));
 }
 
-void Network3BackendDispatcher::loadResource1(long requestId, RefPtr<InspectorObject>&&)
+void Network3BackendDispatcher::loadResource1(long requestId, RefPtr<JSON::Object>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -376,16 +376,16 @@ void Network3BackendDispatcher::loadResource1(long requestId, RefPtr<InspectorOb
 #endif
 
     ErrorString error;
-    Ref<InspectorObject> result = InspectorObject::create();
+    Ref<JSON::Object> result = JSON::Object::create();
     m_agent->loadResource1(error);
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result), false);
     else
         m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
 
-void Network3BackendDispatcher::loadResource2(long requestId, RefPtr<InspectorObject>&&)
+void Network3BackendDispatcher::loadResource2(long requestId, RefPtr<JSON::Object>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -395,16 +395,16 @@ void Network3BackendDispatcher::loadResource2(long requestId, RefPtr<InspectorOb
 #endif
 
     ErrorString error;
-    Ref<InspectorObject> result = InspectorObject::create();
+    Ref<JSON::Object> result = JSON::Object::create();
     m_agent->loadResource2(error);
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result), false);
     else
         m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
 
-void Network3BackendDispatcher::loadResource3(long requestId, RefPtr<InspectorObject>&&)
+void Network3BackendDispatcher::loadResource3(long requestId, RefPtr<JSON::Object>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -414,16 +414,16 @@ void Network3BackendDispatcher::loadResource3(long requestId, RefPtr<InspectorOb
 #endif
 
     ErrorString error;
-    Ref<InspectorObject> result = InspectorObject::create();
+    Ref<JSON::Object> result = JSON::Object::create();
     m_agent->loadResource3(error);
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result), false);
     else
         m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
 
-void Network3BackendDispatcher::loadResource4(long requestId, RefPtr<InspectorObject>&&)
+void Network3BackendDispatcher::loadResource4(long requestId, RefPtr<JSON::Object>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -433,16 +433,16 @@ void Network3BackendDispatcher::loadResource4(long requestId, RefPtr<InspectorOb
 #endif
 
     ErrorString error;
-    Ref<InspectorObject> result = InspectorObject::create();
+    Ref<JSON::Object> result = JSON::Object::create();
     m_agent->loadResource4(error);
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result), false);
     else
         m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
 
-void Network3BackendDispatcher::loadResource5(long requestId, RefPtr<InspectorObject>&&)
+void Network3BackendDispatcher::loadResource5(long requestId, RefPtr<JSON::Object>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -452,16 +452,16 @@ void Network3BackendDispatcher::loadResource5(long requestId, RefPtr<InspectorOb
 #endif
 
     ErrorString error;
-    Ref<InspectorObject> result = InspectorObject::create();
+    Ref<JSON::Object> result = JSON::Object::create();
     m_agent->loadResource5(error);
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result), false);
     else
         m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
 
-void Network3BackendDispatcher::loadResource6(long requestId, RefPtr<InspectorObject>&&)
+void Network3BackendDispatcher::loadResource6(long requestId, RefPtr<JSON::Object>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -471,16 +471,16 @@ void Network3BackendDispatcher::loadResource6(long requestId, RefPtr<InspectorOb
 #endif
 
     ErrorString error;
-    Ref<InspectorObject> result = InspectorObject::create();
+    Ref<JSON::Object> result = JSON::Object::create();
     m_agent->loadResource6(error);
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result), false);
     else
         m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
 
-void Network3BackendDispatcher::loadResource7(long requestId, RefPtr<InspectorObject>&&)
+void Network3BackendDispatcher::loadResource7(long requestId, RefPtr<JSON::Object>&&)
 {
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_alternateDispatcher) {
@@ -490,11 +490,11 @@ void Network3BackendDispatcher::loadResource7(long requestId, RefPtr<InspectorOb
 #endif
 
     ErrorString error;
-    Ref<InspectorObject> result = InspectorObject::create();
+    Ref<JSON::Object> result = JSON::Object::create();
     m_agent->loadResource7(error);
 
     if (!error.length())
-        m_backendDispatcher->sendResponse(requestId, WTFMove(result));
+        m_backendDispatcher->sendResponse(requestId, WTFMove(result), false);
     else
         m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTFMove(error));
 }
@@ -537,7 +537,7 @@ void Network3BackendDispatcher::loadResource7(long requestId, RefPtr<InspectorOb
 #pragma once
 
 #include "TestProtocolObjects.h"
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -799,7 +799,7 @@ private:
 
 #include "TestProtocolInternal.h"
 #include "TestProtocolTypeConversions.h"
-#include <JavaScriptCore/InspectorValues.h>
+#include <wtf/JSONValues.h>
 
 namespace Inspector {
 
@@ -811,7 +811,7 @@ void ObjCInspectorNetwork1BackendDispatcher::loadResource1(long requestId)
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
+        backendDispatcher()->sendResponse(requestId, JSON::Object::create(), false);
     };
 
     [m_delegate loadResource1WithErrorCallback:errorCallback successCallback:successCallback];
@@ -826,7 +826,7 @@ void ObjCInspectorNetwork3BackendDispatcher::loadResource1(long requestId)
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
+        backendDispatcher()->sendResponse(requestId, JSON::Object::create(), false);
     };
 
     [m_delegate loadResource1WithErrorCallback:errorCallback successCallback:successCallback];
@@ -840,7 +840,7 @@ void ObjCInspectorNetwork3BackendDispatcher::loadResource2(long requestId)
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
+        backendDispatcher()->sendResponse(requestId, JSON::Object::create(), false);
     };
 
     [m_delegate loadResource2WithErrorCallback:errorCallback successCallback:successCallback];
@@ -854,7 +854,7 @@ void ObjCInspectorNetwork3BackendDispatcher::loadResource3(long requestId)
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
+        backendDispatcher()->sendResponse(requestId, JSON::Object::create(), false);
     };
 
     [m_delegate loadResource3WithErrorCallback:errorCallback successCallback:successCallback];
@@ -868,7 +868,7 @@ void ObjCInspectorNetwork3BackendDispatcher::loadResource4(long requestId)
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
+        backendDispatcher()->sendResponse(requestId, JSON::Object::create(), false);
     };
 
     [m_delegate loadResource4WithErrorCallback:errorCallback successCallback:successCallback];
@@ -882,7 +882,7 @@ void ObjCInspectorNetwork3BackendDispatcher::loadResource5(long requestId)
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
+        backendDispatcher()->sendResponse(requestId, JSON::Object::create(), false);
     };
 
     [m_delegate loadResource5WithErrorCallback:errorCallback successCallback:successCallback];
@@ -896,7 +896,7 @@ void ObjCInspectorNetwork3BackendDispatcher::loadResource6(long requestId)
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
+        backendDispatcher()->sendResponse(requestId, JSON::Object::create(), false);
     };
 
     [m_delegate loadResource6WithErrorCallback:errorCallback successCallback:successCallback];
@@ -910,7 +910,7 @@ void ObjCInspectorNetwork3BackendDispatcher::loadResource7(long requestId)
     };
 
     id successCallback = ^{
-        backendDispatcher()->sendResponse(requestId, InspectorObject::create());
+        backendDispatcher()->sendResponse(requestId, JSON::Object::create(), false);
     };
 
     [m_delegate loadResource7WithErrorCallback:errorCallback successCallback:successCallback];
@@ -1104,7 +1104,7 @@ using namespace Inspector;
 #import "TestProtocolInternal.h"
 
 #import "TestProtocolTypeConversions.h"
-#import <JavaScriptCore/InspectorValues.h>
+#import <wtf/JSONValues.h>
 
 using namespace Inspector;
 
@@ -1215,7 +1215,7 @@ typedef NS_ENUM(NSInteger, TestProtocolPlatform) {
 #import "TestProtocol.h"
 #import "TestProtocolJSONObjectPrivate.h"
 #import <JavaScriptCore/AugmentableInspectorController.h>
-#import <JavaScriptCore/InspectorValues.h>
+#import <wtf/JSONValues.h>
 
 
 
@@ -1388,8 +1388,8 @@ using namespace Inspector;
 
 #import "TestProtocolTypeConversions.h"
 #import <WebInspector/RWIProtocolJSONObjectPrivate.h>
-#import <JavaScriptCore/InspectorValues.h>
 #import <wtf/Assertions.h>
+#import <wtf/JSONValues.h>
 
 using namespace Inspector;
 

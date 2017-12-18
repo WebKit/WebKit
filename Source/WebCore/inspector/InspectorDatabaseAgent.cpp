@@ -44,7 +44,7 @@
 #include "SQLValue.h"
 #include "VoidCallback.h"
 #include <inspector/InspectorFrontendRouter.h>
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 #include <wtf/Vector.h>
 
 using namespace Inspector;
@@ -86,12 +86,12 @@ private:
         for (auto& column : rowList.columnNames())
             columnNames->addItem(column);
 
-        auto values = Inspector::Protocol::Array<InspectorValue>::create();
+        auto values = Inspector::Protocol::Array<JSON::Value>::create();
         for (auto& value : rowList.values()) {
             auto inspectorValue = WTF::switchOn(value,
-                [] (const std::nullptr_t&) { return InspectorValue::null(); },
-                [] (const String& string) { return InspectorValue::create(string); },
-                [] (double number) { return InspectorValue::create(number); }
+                [] (const std::nullptr_t&) { return JSON::Value::null(); },
+                [] (const String& string) { return JSON::Value::create(string); },
+                [] (double number) { return JSON::Value::create(number); }
             );
             values->addItem(WTFMove(inspectorValue));
         }

@@ -60,7 +60,7 @@
 #include "SocketProvider.h"
 #include "StyledElement.h"
 #include <inspector/InspectorProtocolObjects.h>
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 
 using namespace Inspector;
 using namespace std::literals::chrono_literals;
@@ -925,14 +925,14 @@ void InspectorOverlay::reset(const IntSize& viewportSize, const IntSize& frameVi
     evaluateInOverlay("reset", WTFMove(configObject));
 }
 
-static void evaluateCommandInOverlay(Page* page, Ref<InspectorArray>&& command)
+static void evaluateCommandInOverlay(Page* page, Ref<JSON::Array>&& command)
 {
     page->mainFrame().script().evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ')')));
 }
 
 void InspectorOverlay::evaluateInOverlay(const String& method)
 {
-    Ref<InspectorArray> command = InspectorArray::create();
+    Ref<JSON::Array> command = JSON::Array::create();
     command->pushString(method);
 
     evaluateCommandInOverlay(overlayPage(), WTFMove(command));
@@ -940,16 +940,16 @@ void InspectorOverlay::evaluateInOverlay(const String& method)
 
 void InspectorOverlay::evaluateInOverlay(const String& method, const String& argument)
 {
-    Ref<InspectorArray> command = InspectorArray::create();
+    Ref<JSON::Array> command = JSON::Array::create();
     command->pushString(method);
     command->pushString(argument);
 
     evaluateCommandInOverlay(overlayPage(), WTFMove(command));
 }
 
-void InspectorOverlay::evaluateInOverlay(const String& method, RefPtr<InspectorValue>&& argument)
+void InspectorOverlay::evaluateInOverlay(const String& method, RefPtr<JSON::Value>&& argument)
 {
-    Ref<InspectorArray> command = InspectorArray::create();
+    Ref<JSON::Array> command = JSON::Array::create();
     command->pushString(method);
     command->pushValue(WTFMove(argument));
 

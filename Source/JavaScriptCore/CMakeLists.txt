@@ -553,7 +553,6 @@ set(JavaScriptCore_SOURCES
     inspector/InspectorAgentRegistry.cpp
     inspector/InspectorFrontendRouter.cpp
     inspector/InspectorBackendDispatcher.cpp
-    inspector/InspectorValues.cpp
     inspector/JSGlobalObjectConsoleClient.cpp
     inspector/JSGlobalObjectInspectorController.cpp
     inspector/JSGlobalObjectScriptDebugServer.cpp

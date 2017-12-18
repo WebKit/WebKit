@@ -28,9 +28,7 @@
 
 #include "Capabilities.h"
 #include "CommandResult.h"
-#include <inspector/InspectorValues.h>
-
-using namespace Inspector;
+#include <wtf/JSONValues.h>
 
 namespace WebDriver {
 
@@ -42,12 +40,12 @@ Capabilities WebDriverService::platformCapabilities()
     return capabilities;
 }
 
-bool WebDriverService::platformValidateCapability(const String& name, const RefPtr<InspectorValue>& value) const
+bool WebDriverService::platformValidateCapability(const String& name, const RefPtr<JSON::Value>& value) const
 {
     if (name != "wpe:browserOptions")
         return true;
 
-    RefPtr<InspectorObject> browserOptions;
+    RefPtr<JSON::Object> browserOptions;
     if (!value->asObject(browserOptions))
         return false;
 
@@ -59,14 +57,14 @@ bool WebDriverService::platformValidateCapability(const String& name, const RefP
     if (!browserOptions->getString(ASCIILiteral("binary"), binary))
         return false;
 
-    RefPtr<InspectorValue> browserArgumentsValue;
-    RefPtr<InspectorArray> browserArguments;
+    RefPtr<JSON::Value> browserArgumentsValue;
+    RefPtr<JSON::Array> browserArguments;
     if (browserOptions->getValue(ASCIILiteral("args"), browserArgumentsValue) && !browserArgumentsValue->asArray(browserArguments))
         return false;
 
     unsigned browserArgumentsLength = browserArguments->length();
     for (unsigned i = 0; i < browserArgumentsLength; ++i) {
-        RefPtr<InspectorValue> value = browserArguments->get(i);
+        RefPtr<JSON::Value> value = browserArguments->get(i);
         String argument;
         if (!value->asString(argument))
             return false;
@@ -75,14 +73,14 @@ bool WebDriverService::platformValidateCapability(const String& name, const RefP
     return true;
 }
 
-std::optional<String> WebDriverService::platformMatchCapability(const String&, const RefPtr<InspectorValue>&) const
+std::optional<String> WebDriverService::platformMatchCapability(const String&, const RefPtr<JSON::Value>&) const
 {
     return std::nullopt;
 }
 
-void WebDriverService::platformParseCapabilities(const InspectorObject& matchedCapabilities, Capabilities& capabilities) const
+void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapabilities, Capabilities& capabilities) const
 {
-    RefPtr<InspectorObject> browserOptions;
+    RefPtr<JSON::Object> browserOptions;
     if (!matchedCapabilities.getObject(ASCIILiteral("wpe:browserOptions"), browserOptions)) {
         capabilities.browserBinary = String("dyz");
         capabilities.browserArguments = Vector<String> { ASCIILiteral("--automation") };
@@ -95,12 +93,12 @@ void WebDriverService::platformParseCapabilities(const InspectorObject& matchedC
     capabilities.browserBinary = browserBinary;
 
     capabilities.browserArguments = Vector<String>();
-    RefPtr<InspectorArray> browserArguments;
+    RefPtr<JSON::Array> browserArguments;
     if (browserOptions->getArray(ASCIILiteral("args"), browserArguments)) {
         unsigned browserArgumentsLength = browserArguments->length();
         capabilities.browserArguments->reserveInitialCapacity(browserArgumentsLength);
         for (unsigned i = 0; i < browserArgumentsLength; ++i) {
-            RefPtr<InspectorValue> value = browserArguments->get(i);
+            RefPtr<JSON::Value> value = browserArguments->get(i);
             String argument;
             value->asString(argument);
             ASSERT(!argument.isNull());

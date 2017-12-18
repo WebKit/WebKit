@@ -65,7 +65,7 @@
 #include <inspector/InjectedScriptManager.h>
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorFrontendRouter.h>
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 
@@ -268,7 +268,7 @@ private:
     Ref<RequestDatabaseCallback> m_requestCallback;
 };
 
-static RefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
+static RefPtr<IDBKey> idbKeyFromInspectorObject(JSON::Object* key)
 {
     String type;
     if (!key->getString("type", type))
@@ -297,12 +297,12 @@ static RefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
         idbKey = IDBKey::createDate(date);
     } else if (type == arrayType) {
         Vector<RefPtr<IDBKey>> keyArray;
-        RefPtr<InspectorArray> array;
+        RefPtr<JSON::Array> array;
         if (!key->getArray("array", array))
             return nullptr;
         for (size_t i = 0; i < array->length(); ++i) {
-            RefPtr<InspectorValue> value = array->get(i);
-            RefPtr<InspectorObject> object;
+            RefPtr<JSON::Value> value = array->get(i);
+            RefPtr<JSON::Object> object;
             if (!value->asObject(object))
                 return nullptr;
             keyArray.append(idbKeyFromInspectorObject(object.get()));
@@ -314,10 +314,10 @@ static RefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
     return idbKey;
 }
 
-static RefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(const InspectorObject* keyRange)
+static RefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(const JSON::Object* keyRange)
 {
     RefPtr<IDBKey> idbLower;
-    RefPtr<InspectorObject> lower;
+    RefPtr<JSON::Object> lower;
     if (keyRange->getObject(ASCIILiteral("lower"), lower)) {
         idbLower = idbKeyFromInspectorObject(lower.get());
         if (!idbLower)
@@ -325,7 +325,7 @@ static RefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(const InspectorObject* keyRan
     }
 
     RefPtr<IDBKey> idbUpper;
-    RefPtr<InspectorObject> upper;
+    RefPtr<JSON::Object> upper;
     if (keyRange->getObject(ASCIILiteral("upper"), upper)) {
         idbUpper = idbKeyFromInspectorObject(upper.get());
         if (!idbUpper)
@@ -604,7 +604,7 @@ void InspectorIndexedDBAgent::requestDatabase(ErrorString& errorString, const St
     databaseLoader->start(idbFactory, &document->securityOrigin(), databaseName);
 }
 
-void InspectorIndexedDBAgent::requestData(ErrorString& errorString, const String& securityOrigin, const String& databaseName, const String& objectStoreName, const String& indexName, int skipCount, int pageSize, const InspectorObject* keyRange, Ref<RequestDataCallback>&& requestCallback)
+void InspectorIndexedDBAgent::requestData(ErrorString& errorString, const String& securityOrigin, const String& databaseName, const String& objectStoreName, const String& indexName, int skipCount, int pageSize, const JSON::Object* keyRange, Ref<RequestDataCallback>&& requestCallback)
 {
     Frame* frame = m_pageAgent->findFrameWithSecurityOrigin(securityOrigin);
     Document* document = assertDocument(errorString, frame);

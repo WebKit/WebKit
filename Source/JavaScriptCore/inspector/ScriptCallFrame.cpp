@@ -32,8 +32,6 @@
 #include "config.h"
 #include "ScriptCallFrame.h"
 
-#include "InspectorValues.h"
-
 namespace Inspector {
 
 ScriptCallFrame::ScriptCallFrame(const String& functionName, const String& scriptName, JSC::SourceID sourceID, unsigned lineNumber, unsigned column)

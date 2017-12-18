@@ -132,7 +132,7 @@ void InspectorTimelineAgent::setAutoCaptureEnabled(ErrorString&, bool enabled)
     m_autoCaptureEnabled = enabled;
 }
 
-void InspectorTimelineAgent::setInstruments(ErrorString& errorString, const InspectorArray& instruments)
+void InspectorTimelineAgent::setInstruments(ErrorString& errorString, const JSON::Array& instruments)
 {
     Vector<Protocol::Timeline::Instrument> newInstruments;
     newInstruments.reserveCapacity(instruments.length());
@@ -180,7 +180,7 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
             return;
 
         if (!m_runLoopNestingLevel)
-            pushCurrentRecord(InspectorObject::create(), TimelineRecordType::RenderingFrame, false, nullptr);
+            pushCurrentRecord(JSON::Object::create(), TimelineRecordType::RenderingFrame, false, nullptr);
         m_runLoopNestingLevel++;
     });
 
@@ -204,7 +204,7 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
 
     // Create a runloop record and increment the runloop nesting level, to capture the current turn of the main runloop
     // (which is the outer runloop if recording started while paused in the debugger).
-    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::RenderingFrame, false, nullptr);
+    pushCurrentRecord(JSON::Object::create(), TimelineRecordType::RenderingFrame, false, nullptr);
 
     m_runLoopNestingLevel = 1;
 #endif
@@ -318,12 +318,12 @@ void InspectorTimelineAgent::didDispatchEvent()
 
 void InspectorTimelineAgent::didInvalidateLayout(Frame& frame)
 {
-    appendRecord(InspectorObject::create(), TimelineRecordType::InvalidateLayout, true, &frame);
+    appendRecord(JSON::Object::create(), TimelineRecordType::InvalidateLayout, true, &frame);
 }
 
 void InspectorTimelineAgent::willLayout(Frame& frame)
 {
-    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Layout, true, &frame);
+    pushCurrentRecord(JSON::Object::create(), TimelineRecordType::Layout, true, &frame);
 }
 
 void InspectorTimelineAgent::didLayout(RenderObject& root)
@@ -343,12 +343,12 @@ void InspectorTimelineAgent::didLayout(RenderObject& root)
 
 void InspectorTimelineAgent::didScheduleStyleRecalculation(Frame* frame)
 {
-    appendRecord(InspectorObject::create(), TimelineRecordType::ScheduleStyleRecalculation, true, frame);
+    appendRecord(JSON::Object::create(), TimelineRecordType::ScheduleStyleRecalculation, true, frame);
 }
 
 void InspectorTimelineAgent::willRecalculateStyle(Frame* frame)
 {
-    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::RecalculateStyles, true, frame);
+    pushCurrentRecord(JSON::Object::create(), TimelineRecordType::RecalculateStyles, true, frame);
 }
 
 void InspectorTimelineAgent::didRecalculateStyle()
@@ -359,7 +359,7 @@ void InspectorTimelineAgent::didRecalculateStyle()
 void InspectorTimelineAgent::willComposite(Frame& frame)
 {
     ASSERT(!m_startedComposite);
-    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Composite, true, &frame);
+    pushCurrentRecord(JSON::Object::create(), TimelineRecordType::Composite, true, &frame);
     m_startedComposite = true;
 }
 
@@ -372,7 +372,7 @@ void InspectorTimelineAgent::didComposite()
 
 void InspectorTimelineAgent::willPaint(Frame& frame)
 {
-    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Paint, true, &frame);
+    pushCurrentRecord(JSON::Object::create(), TimelineRecordType::Paint, true, &frame);
 }
 
 void InspectorTimelineAgent::didPaint(RenderObject& renderer, const LayoutRect& clipRect)
@@ -662,7 +662,7 @@ static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType ty
     return Inspector::Protocol::Timeline::EventType::TimeStamp;
 }
 
-void InspectorTimelineAgent::addRecordToTimeline(RefPtr<InspectorObject>&& record, TimelineRecordType type)
+void InspectorTimelineAgent::addRecordToTimeline(RefPtr<JSON::Object>&& record, TimelineRecordType type)
 {
     ASSERT_ARG(record, record);
     record->setString("type", Inspector::Protocol::InspectorHelpers::getEnumConstantValue(toProtocol(type)));
@@ -680,7 +680,7 @@ void InspectorTimelineAgent::addRecordToTimeline(RefPtr<InspectorObject>&& recor
     }
 }
 
-void InspectorTimelineAgent::setFrameIdentifier(InspectorObject* record, Frame* frame)
+void InspectorTimelineAgent::setFrameIdentifier(JSON::Object* record, Frame* frame)
 {
     if (!frame || !m_pageAgent)
         return;
@@ -715,29 +715,29 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(TimelineRecordType type)
     }
 }
 
-void InspectorTimelineAgent::appendRecord(RefPtr<InspectorObject>&& data, TimelineRecordType type, bool captureCallStack, Frame* frame)
+void InspectorTimelineAgent::appendRecord(RefPtr<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, Frame* frame)
 {
-    Ref<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
+    Ref<JSON::Object> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
     record->setObject("data", WTFMove(data));
     setFrameIdentifier(&record.get(), frame);
     addRecordToTimeline(WTFMove(record), type);
 }
 
-void InspectorTimelineAgent::sendEvent(RefPtr<InspectorObject>&& event)
+void InspectorTimelineAgent::sendEvent(RefPtr<JSON::Object>&& event)
 {
     // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
     auto recordChecked = BindingTraits<Inspector::Protocol::Timeline::TimelineEvent>::runtimeCast(WTFMove(event));
     m_frontendDispatcher->eventRecorded(WTFMove(recordChecked));
 }
 
-InspectorTimelineAgent::TimelineRecordEntry InspectorTimelineAgent::createRecordEntry(RefPtr<InspectorObject>&& data, TimelineRecordType type, bool captureCallStack, Frame* frame)
+InspectorTimelineAgent::TimelineRecordEntry InspectorTimelineAgent::createRecordEntry(RefPtr<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, Frame* frame)
 {
-    Ref<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
+    Ref<JSON::Object> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
     setFrameIdentifier(&record.get(), frame);
-    return TimelineRecordEntry(WTFMove(record), WTFMove(data), InspectorArray::create(), type);
+    return TimelineRecordEntry(WTFMove(record), WTFMove(data), JSON::Array::create(), type);
 }
 
-void InspectorTimelineAgent::pushCurrentRecord(RefPtr<InspectorObject>&& data, TimelineRecordType type, bool captureCallStack, Frame* frame)
+void InspectorTimelineAgent::pushCurrentRecord(RefPtr<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, Frame* frame)
 {
     pushCurrentRecord(createRecordEntry(WTFMove(data), type, captureCallStack, frame));
 }

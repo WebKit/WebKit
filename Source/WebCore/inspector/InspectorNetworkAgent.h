@@ -39,7 +39,6 @@
 #include <yarr/RegularExpression.h>
 
 namespace Inspector {
-class InspectorObject;
 class InjectedScriptManager;
 }
 
@@ -106,7 +105,7 @@ public:
     // Called from frontend.
     void enable(ErrorString&) override;
     void disable(ErrorString&) override;
-    void setExtraHTTPHeaders(ErrorString&, const Inspector::InspectorObject& headers) override;
+    void setExtraHTTPHeaders(ErrorString&, const JSON::Object& headers) override;
     void getResponseBody(ErrorString&, const String& requestId, String* content, bool* base64Encoded) override;
     void setResourceCachingDisabled(ErrorString&, bool disabled) override;
     void loadResource(ErrorString&, const String& frameId, const String& url, Ref<LoadResourceCallback>&&) override;

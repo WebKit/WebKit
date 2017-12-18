@@ -172,7 +172,7 @@ typedef String ErrorString;
 #include "TestBackendDispatchers.h"
 
 #include <inspector/InspectorFrontendRouter.h>
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
@@ -222,7 +222,7 @@ namespace Inspector {
 #pragma once
 
 #include "TestProtocolObjects.h"
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -555,7 +555,7 @@ namespace Inspector {
 
 #include "TestProtocolInternal.h"
 #include "TestProtocolTypeConversions.h"
-#include <JavaScriptCore/InspectorValues.h>
+#include <wtf/JSONValues.h>
 
 namespace Inspector {
 
@@ -704,7 +704,7 @@ using namespace Inspector;
 #import "TestProtocolInternal.h"
 
 #import "TestProtocolTypeConversions.h"
-#import <JavaScriptCore/InspectorValues.h>
+#import <wtf/JSONValues.h>
 
 using namespace Inspector;
 
@@ -814,7 +814,7 @@ typedef NS_ENUM(NSInteger, TestProtocolRuntimeTwoLeggedAnimals) {
 #import "TestProtocol.h"
 #import "TestProtocolJSONObjectPrivate.h"
 #import <JavaScriptCore/AugmentableInspectorController.h>
-#import <JavaScriptCore/InspectorValues.h>
+#import <wtf/JSONValues.h>
 
 
 
@@ -1053,8 +1053,8 @@ using namespace Inspector;
 
 #import "TestProtocolTypeConversions.h"
 #import <WebInspector/RWIProtocolJSONObjectPrivate.h>
-#import <JavaScriptCore/InspectorValues.h>
 #import <wtf/Assertions.h>
+#import <wtf/JSONValues.h>
 
 using namespace Inspector;
 

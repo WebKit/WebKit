@@ -1,3 +1,136 @@
+2017-11-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Move JSONValues to WTF and convert uses of InspectorValues.h to JSONValues.h
+        https://bugs.webkit.org/show_bug.cgi?id=173793
+
+        Reviewed by Joseph Pecoraro.
+
+        Based on patch by Brian Burg.
+
+        * ForwardingHeaders/inspector/InspectorValues.h: Removed.
+        * Modules/encryptedmedia/InitDataRegistry.cpp:
+        (WebCore::extractKeyIDsKeyids):
+        (WebCore::sanitizeKeyids):
+        * html/parser/XSSAuditorDelegate.cpp:
+        (WebCore::XSSAuditorDelegate::generateViolationReport):
+        * inspector/CommandLineAPIHost.cpp:
+        (WebCore::CommandLineAPIHost::inspect):
+        * inspector/CommandLineAPIHost.h:
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::recordAction):
+        (WebCore::InspectorCanvas::releaseData):
+        (WebCore::InspectorCanvas::indexForData):
+        (WebCore::buildArrayForVector):
+        (WebCore::InspectorCanvas::buildInitialState):
+        (WebCore::InspectorCanvas::buildAction):
+        (WebCore::InspectorCanvas::buildArrayForCanvasGradient):
+        (WebCore::InspectorCanvas::buildArrayForCanvasPattern):
+        (WebCore::InspectorCanvas::buildArrayForImageData):
+        (WebCore::InspectorCanvas::buildArrayForImageBitmap):
+        * inspector/InspectorCanvas.h:
+        * inspector/InspectorDatabaseResource.cpp:
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::evaluateCommandInOverlay):
+        (WebCore::InspectorOverlay::evaluateInOverlay):
+        * inspector/InspectorOverlay.h:
+        * inspector/InspectorShaderProgram.h:
+        * inspector/InspectorStyleSheet.h:
+        (WebCore::InspectorCSSId::InspectorCSSId):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createGenericRecord):
+        (WebCore::TimelineRecordFactory::createFunctionCallData):
+        (WebCore::TimelineRecordFactory::createConsoleProfileData):
+        (WebCore::TimelineRecordFactory::createProbeSampleData):
+        (WebCore::TimelineRecordFactory::createEventDispatchData):
+        (WebCore::TimelineRecordFactory::createGenericTimerData):
+        (WebCore::TimelineRecordFactory::createTimerInstallData):
+        (WebCore::TimelineRecordFactory::createEvaluateScriptData):
+        (WebCore::TimelineRecordFactory::createTimeStampData):
+        (WebCore::TimelineRecordFactory::createAnimationFrameData):
+        (WebCore::createQuad):
+        (WebCore::TimelineRecordFactory::createPaintData):
+        (WebCore::TimelineRecordFactory::appendLayoutRoot):
+        * inspector/TimelineRecordFactory.h:
+        * inspector/agents/InspectorApplicationCacheAgent.cpp:
+        * inspector/agents/InspectorApplicationCacheAgent.h:
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::computePseudoClassMask):
+        (WebCore::InspectorCSSAgent::setStyleText):
+        (WebCore::InspectorCSSAgent::setRuleSelector):
+        (WebCore::InspectorCSSAgent::forcePseudoState):
+        * inspector/agents/InspectorCSSAgent.h:
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::parseColor):
+        (WebCore::parseConfigColor):
+        (WebCore::parseQuad):
+        (WebCore::InspectorDOMAgent::performSearch):
+        (WebCore::InspectorDOMAgent::setSearchingForNode):
+        (WebCore::InspectorDOMAgent::highlightConfigFromInspectorObject):
+        (WebCore::InspectorDOMAgent::setInspectModeEnabled):
+        (WebCore::InspectorDOMAgent::highlightRect):
+        (WebCore::InspectorDOMAgent::highlightQuad):
+        (WebCore::InspectorDOMAgent::innerHighlightQuad):
+        (WebCore::InspectorDOMAgent::highlightSelector):
+        (WebCore::InspectorDOMAgent::highlightNode):
+        (WebCore::InspectorDOMAgent::highlightNodeList):
+        (WebCore::InspectorDOMAgent::highlightFrame):
+        * inspector/agents/InspectorDOMAgent.h:
+        * inspector/agents/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::didInvalidateStyleAttr):
+        (WebCore::InspectorDOMDebuggerAgent::willInsertDOMNode):
+        (WebCore::InspectorDOMDebuggerAgent::willRemoveDOMNode):
+        (WebCore::InspectorDOMDebuggerAgent::willModifyDOMAttr):
+        (WebCore::InspectorDOMDebuggerAgent::descriptionForDOMEvent):
+        (WebCore::InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded):
+        (WebCore::InspectorDOMDebuggerAgent::willSendXMLHttpRequest):
+        * inspector/agents/InspectorDOMDebuggerAgent.h:
+        * inspector/agents/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::getDOMStorageItems):
+        (WebCore::InspectorDOMStorageAgent::setDOMStorageItem):
+        (WebCore::InspectorDOMStorageAgent::removeDOMStorageItem):
+        (WebCore::InspectorDOMStorageAgent::findStorageArea):
+        * inspector/agents/InspectorDOMStorageAgent.h:
+        * inspector/agents/InspectorDatabaseAgent.cpp:
+        * inspector/agents/InspectorIndexedDBAgent.cpp:
+        (WebCore::Inspector::idbKeyFromInspectorObject):
+        (WebCore::Inspector::idbKeyRangeFromKeyRange):
+        (WebCore::InspectorIndexedDBAgent::requestData):
+        * inspector/agents/InspectorIndexedDBAgent.h:
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::buildObjectForHeaders):
+        (WebCore::InspectorNetworkAgent::buildObjectForResourceResponse):
+        (WebCore::InspectorNetworkAgent::setExtraHTTPHeaders):
+        * inspector/agents/InspectorNetworkAgent.h:
+        * inspector/agents/InspectorPageAgent.cpp:
+        * inspector/agents/InspectorPageAgent.h:
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::setInstruments):
+        (WebCore::InspectorTimelineAgent::internalStart):
+        (WebCore::InspectorTimelineAgent::didInvalidateLayout):
+        (WebCore::InspectorTimelineAgent::willLayout):
+        (WebCore::InspectorTimelineAgent::didScheduleStyleRecalculation):
+        (WebCore::InspectorTimelineAgent::willRecalculateStyle):
+        (WebCore::InspectorTimelineAgent::willComposite):
+        (WebCore::InspectorTimelineAgent::willPaint):
+        (WebCore::InspectorTimelineAgent::addRecordToTimeline):
+        (WebCore::InspectorTimelineAgent::setFrameIdentifier):
+        (WebCore::InspectorTimelineAgent::appendRecord):
+        (WebCore::InspectorTimelineAgent::sendEvent):
+        (WebCore::InspectorTimelineAgent::createRecordEntry):
+        (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+        * inspector/agents/InspectorTimelineAgent.h:
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportViolation const):
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::parseJSONObject):
+        (WebCore::parseLicenseFormat):
+        (WebCore::parseLicenseReleaseAcknowledgementFormat):
+        (WebCore::CDMInstanceClearKey::updateLicense):
+        (WebCore::CDMInstanceClearKey::removeSessionData):
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.cpp:
+        (WebCore::extractSinfData):
+        * testing/Internals.cpp:
+
 2017-11-07  Brian Burg  <bburg@apple.com>
 
         Web Automation: inViewCenterPoint should not include topContentInset when computed in viewport coordinates

@@ -30,7 +30,7 @@
 
 #include "NotImplemented.h"
 #include "SharedBuffer.h"
-#include "inspector/InspectorValues.h"
+#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
 
@@ -46,15 +46,15 @@ static Vector<Ref<SharedBuffer>> extractKeyIDsKeyids(const SharedBuffer& buffer)
         return { };
     String json { buffer.data(), static_cast<unsigned>(buffer.size()) };
 
-    RefPtr<InspectorValue> value;
-    if (!InspectorValue::parseJSON(json, value))
+    RefPtr<JSON::Value> value;
+    if (!JSON::Value::parseJSON(json, value))
         return { };
 
-    RefPtr<InspectorObject> object;
+    RefPtr<JSON::Object> object;
     if (!value->asObject(object))
         return { };
 
-    RefPtr<InspectorArray> kidsArray;
+    RefPtr<JSON::Array> kidsArray;
     if (!object->getArray("kids", kidsArray))
         return { };
 
@@ -83,8 +83,8 @@ static RefPtr<SharedBuffer> sanitizeKeyids(const SharedBuffer& buffer)
     if (keyIDBuffer.isEmpty())
         return nullptr;
 
-    auto object = InspectorObject::create();
-    auto kidsArray = InspectorArray::create();
+    auto object = JSON::Object::create();
+    auto kidsArray = JSON::Array::create();
     for (auto& buffer : keyIDBuffer)
         kidsArray->pushString(WTF::base64URLEncode(buffer->data(), buffer->size()));
     object->setArray("kids", WTFMove(kidsArray));

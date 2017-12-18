@@ -26,12 +26,8 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
-
-namespace Inspector {
-class InspectorObject;
-class InspectorValue;
-}
 
 namespace WebDriver {
 
@@ -64,12 +60,12 @@ public:
         UnsupportedOperation,
     };
 
-    static CommandResult success(RefPtr<Inspector::InspectorValue>&& result = nullptr)
+    static CommandResult success(RefPtr<JSON::Value>&& result = nullptr)
     {
         return CommandResult(WTFMove(result));
     }
 
-    static CommandResult fail(RefPtr<Inspector::InspectorValue>&& result = nullptr)
+    static CommandResult fail(RefPtr<JSON::Value>&& result = nullptr)
     {
         return CommandResult(WTFMove(result), CommandResult::ErrorCode::UnknownError);
     }
@@ -80,22 +76,22 @@ public:
     }
 
     unsigned httpStatusCode() const;
-    const RefPtr<Inspector::InspectorValue>& result() const { return m_result; };
-    void setAdditionalErrorData(RefPtr<Inspector::InspectorObject>&& errorData) { m_errorAdditionalData = WTFMove(errorData); }
+    const RefPtr<JSON::Value>& result() const { return m_result; };
+    void setAdditionalErrorData(RefPtr<JSON::Object>&& errorData) { m_errorAdditionalData = WTFMove(errorData); }
     bool isError() const { return !!m_errorCode; }
     ErrorCode errorCode() const { ASSERT(isError()); return m_errorCode.value(); }
     String errorString() const;
     std::optional<String> errorMessage() const { ASSERT(isError()); return m_errorMessage; }
-    const RefPtr<Inspector::InspectorObject>& additionalErrorData() const { return m_errorAdditionalData; }
+    const RefPtr<JSON::Object>& additionalErrorData() const { return m_errorAdditionalData; }
 
 private:
-    explicit CommandResult(RefPtr<Inspector::InspectorValue>&&, std::optional<ErrorCode> = std::nullopt);
+    explicit CommandResult(RefPtr<JSON::Value>&&, std::optional<ErrorCode> = std::nullopt);
     explicit CommandResult(ErrorCode, std::optional<String> = std::nullopt);
 
-    RefPtr<Inspector::InspectorValue> m_result;
+    RefPtr<JSON::Value> m_result;
     std::optional<ErrorCode> m_errorCode;
     std::optional<String> m_errorMessage;
-    RefPtr<Inspector::InspectorObject> m_errorAdditionalData;
+    RefPtr<JSON::Object> m_errorAdditionalData;
 };
 
 } // namespace WebDriver

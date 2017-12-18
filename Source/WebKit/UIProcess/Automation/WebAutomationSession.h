@@ -120,16 +120,16 @@ public:
     void createBrowsingContext(Inspector::ErrorString&, String*) override;
     void closeBrowsingContext(Inspector::ErrorString&, const String&) override;
     void switchToBrowsingContext(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle) override;
-    void resizeWindowOfBrowsingContext(Inspector::ErrorString&, const String& handle, const Inspector::InspectorObject& size) override;
-    void moveWindowOfBrowsingContext(Inspector::ErrorString&, const String& handle, const Inspector::InspectorObject& position) override;
+    void resizeWindowOfBrowsingContext(Inspector::ErrorString&, const String& handle, const JSON::Object& size) final;
+    void moveWindowOfBrowsingContext(Inspector::ErrorString&, const String& handle, const JSON::Object& position) final;
     void navigateBrowsingContext(Inspector::ErrorString&, const String& handle, const String& url, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<NavigateBrowsingContextCallback>&&) override;
     void goBackInBrowsingContext(Inspector::ErrorString&, const String&, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<GoBackInBrowsingContextCallback>&&) override;
     void goForwardInBrowsingContext(Inspector::ErrorString&, const String&, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<GoForwardInBrowsingContextCallback>&&) override;
     void reloadBrowsingContext(Inspector::ErrorString&, const String&, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<ReloadBrowsingContextCallback>&&) override;
     void waitForNavigationToComplete(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<WaitForNavigationToCompleteCallback>&&) override;
-    void evaluateJavaScriptFunction(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const Inspector::InspectorArray& arguments, const bool* optionalExpectsImplicitCallbackArgument, const int* optionalCallbackTimeout, Ref<Inspector::AutomationBackendDispatcherHandler::EvaluateJavaScriptFunctionCallback>&&) override;
-    void performMouseInteraction(Inspector::ErrorString&, const String& handle, const Inspector::InspectorObject& requestedPosition, const String& mouseButton, const String& mouseInteraction, const Inspector::InspectorArray& keyModifiers, RefPtr<Inspector::Protocol::Automation::Point>& updatedPosition) override;
-    void performKeyboardInteractions(Inspector::ErrorString&, const String& handle, const Inspector::InspectorArray& interactions, Ref<PerformKeyboardInteractionsCallback>&&) override;
+    void evaluateJavaScriptFunction(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const JSON::Array& arguments, const bool* optionalExpectsImplicitCallbackArgument, const int* optionalCallbackTimeout, Ref<Inspector::AutomationBackendDispatcherHandler::EvaluateJavaScriptFunctionCallback>&&) override;
+    void performMouseInteraction(Inspector::ErrorString&, const String& handle, const JSON::Object& requestedPosition, const String& mouseButton, const String& mouseInteraction, const JSON::Array& keyModifiers, RefPtr<Inspector::Protocol::Automation::Point>& updatedPosition) final;
+    void performKeyboardInteractions(Inspector::ErrorString&, const String& handle, const JSON::Array& interactions, Ref<PerformKeyboardInteractionsCallback>&& callback) override;
     void takeScreenshot(Inspector::ErrorString&, const String& handle, const String* optionalFrameHandle, const String* optionalNodeHandle, const bool* optionalScrollIntoViewIfNeeded, Ref<TakeScreenshotCallback>&&) override;
     void resolveChildFrameHandle(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle, const int* optionalOrdinal, const String* optionalName, const String* optionalNodeHandle, Ref<ResolveChildFrameHandleCallback>&&) override;
     void resolveParentFrameHandle(Inspector::ErrorString&, const String& browsingContextHandle, const String& frameHandle, Ref<ResolveParentFrameHandleCallback>&&) override;
@@ -140,10 +140,10 @@ public:
     void acceptCurrentJavaScriptDialog(Inspector::ErrorString&, const String& browsingContextHandle) override;
     void messageOfCurrentJavaScriptDialog(Inspector::ErrorString&, const String& browsingContextHandle, String* text) override;
     void setUserInputForCurrentJavaScriptPrompt(Inspector::ErrorString&, const String& browsingContextHandle, const String& text) override;
-    void setFilesToSelectForFileUpload(Inspector::ErrorString&, const String& browsingContextHandle, const Inspector::InspectorArray& filenames) override;
+    void setFilesToSelectForFileUpload(Inspector::ErrorString&, const String& browsingContextHandle, const JSON::Array& filenames) override;
     void getAllCookies(Inspector::ErrorString&, const String& browsingContextHandle, Ref<GetAllCookiesCallback>&&) override;
     void deleteSingleCookie(Inspector::ErrorString&, const String& browsingContextHandle, const String& cookieName, Ref<DeleteSingleCookieCallback>&&) override;
-    void addSingleCookie(Inspector::ErrorString&, const String& browsingContextHandle, const Inspector::InspectorObject& cookie, Ref<AddSingleCookieCallback>&&) override;
+    void addSingleCookie(Inspector::ErrorString&, const String& browsingContextHandle, const JSON::Object& cookie, Ref<AddSingleCookieCallback>&&) override;
     void deleteAllCookies(Inspector::ErrorString&, const String& browsingContextHandle) override;
 
     // Platform: macOS

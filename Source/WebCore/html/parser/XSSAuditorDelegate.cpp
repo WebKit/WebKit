@@ -36,7 +36,7 @@
 #include "HTMLParserIdioms.h"
 #include "NavigationScheduler.h"
 #include "PingLoader.h"
-#include <inspector/InspectorValues.h>
+#include <wtf/JSONValues.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/CString.h>
 
@@ -80,11 +80,11 @@ Ref<FormData> XSSAuditorDelegate::generateViolationReport(const XSSInfo& xssInfo
             httpBody = formData->flattenToString();
     }
 
-    auto reportDetails = InspectorObject::create();
+    auto reportDetails = JSON::Object::create();
     reportDetails->setString("request-url", xssInfo.m_originalURL);
     reportDetails->setString("request-body", httpBody);
 
-    auto reportObject = InspectorObject::create();
+    auto reportObject = JSON::Object::create();
     reportObject->setObject("xss-report", WTFMove(reportDetails));
 
     return FormData::create(reportObject->toJSONString().utf8().data());

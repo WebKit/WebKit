@@ -63,7 +63,7 @@ protected:
 
     const Deprecated::ScriptObject& injectedScriptObject() const;
     JSC::JSValue callFunctionWithEvalEnabled(Deprecated::ScriptFunctionCall&, bool& hadException) const;
-    void makeCall(Deprecated::ScriptFunctionCall&, RefPtr<InspectorValue>* result);
+    void makeCall(Deprecated::ScriptFunctionCall&, RefPtr<JSON::Value>* result);
     void makeEvalCall(ErrorString&, Deprecated::ScriptFunctionCall&, RefPtr<Protocol::Runtime::RemoteObject>* result, Protocol::OptOutput<bool>* wasThrown, Protocol::OptOutput<int>* savedResult = nullptr);
 
 private:

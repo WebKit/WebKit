@@ -53,10 +53,10 @@
 #include "SecurityPolicyViolationEvent.h"
 #include "Settings.h"
 #include "TextEncoding.h"
-#include <inspector/InspectorValues.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
 #include <pal/crypto/CryptoDigest.h>
+#include <wtf/JSONValues.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextPosition.h>
@@ -679,7 +679,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     // sent explicitly. As for which directive was violated, that's pretty
     // harmless information.
 
-    auto cspReport = InspectorObject::create();
+    auto cspReport = JSON::Object::create();
     cspReport->setString(ASCIILiteral("document-uri"), documentURI);
     cspReport->setString(ASCIILiteral("referrer"), referrer);
     cspReport->setString(ASCIILiteral("violated-directive"), violatedDirectiveText);
@@ -693,7 +693,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
         cspReport->setInteger(ASCIILiteral("column-number"), columnNumber);
     }
 
-    auto reportObject = InspectorObject::create();
+    auto reportObject = JSON::Object::create();
     reportObject->setObject(ASCIILiteral("csp-report"), WTFMove(cspReport));
 
     auto report = FormData::create(reportObject->toJSONString().utf8());
