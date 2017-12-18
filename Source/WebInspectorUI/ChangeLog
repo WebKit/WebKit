@@ -1,3 +1,16 @@
+2017-12-18  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: recording view and slider have jumbled layout at narrow widths
+        https://bugs.webkit.org/show_bug.cgi?id=180597
+        <rdar://problem/35939904>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/RecordingContentView.css:
+        (.content-view:not(.tab).recording > header > .slider-container):
+        (.content-view:not(.tab).recording > header > .slider-container > *):
+        (.content-view:not(.tab).recording > header > .slider-container > input[type=range]):
+
 2017-12-18  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Canvas tab: placeholder/help text wrapping looks poor at narrow widths

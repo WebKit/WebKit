@@ -36,15 +36,20 @@
 
 .content-view:not(.tab).recording > header > .slider-container {
     display: flex;
-    padding: 8px;
+    flex-wrap: wrap;
+    padding: 4px 0;
     background-color: white;
     border: 1px solid var(--border-color);
     border-radius: 4px;
 }
 
+.content-view:not(.tab).recording > header > .slider-container > * {
+    margin: 4px 8px;
+}
+
 .content-view:not(.tab).recording > header > .slider-container > input[type=range] {
     flex: 1;
-    -webkit-margin-start: 10px;
+    width: 100%;
 }
 
 .content-view:not(.tab).recording > header > .slider-container > input[type=range]::-webkit-slider-runnable-track {
