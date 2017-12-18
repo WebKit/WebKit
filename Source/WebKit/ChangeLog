@@ -1,3 +1,19 @@
+2017-12-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Enable WebProcess memory monitor
+        https://bugs.webkit.org/show_bug.cgi?id=180861
+
+        Reviewed by Michael Catanzaro.
+
+        For some reason this is only enabled in mac. We want to enable it also in GTK and WPE ports. This runs every 30
+        seconds to release memory or even kill the process if necessary. Carlos López has realized that in some
+        applications using video tags, the memory grows a lot and it's never released. It seems it's not memory leaked,
+        but simply large memory allocations (I guess it's gst allocating video frames) that make the heap grow. The
+        memory pressure calls malloc_trim that releases all that memory keeping the web process footprint stable.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2017-12-17  John Wilander  <wilander@apple.com>
 
         Storage Access API: Make document.hasStorageAccess() retrieve current status from the network process
