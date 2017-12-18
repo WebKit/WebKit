@@ -1,3 +1,57 @@
+2017-12-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Vector index masking
+        https://bugs.webkit.org/show_bug.cgi?id=180909
+
+        Reviewed by Keith Miller.
+        
+        Adds index masking to StringImpl and Vector.
+        
+        Perf:
+        
+        - 0.4% slower on microbenchmarks.
+        - Octane totally even.
+        - Kraken may be 0.8% slower.
+        - Speedometer is 0.8% slower with p = 0.008.
+        - membuster is even:
+            - snap2pre: 0.7% bigger w/ p = 0.26,
+            - snap2post: 0.3% smaller w/ p = 0.81,
+            - snap3pre: 1.2% bigger w/ p = 0.63,
+            - snap3post: 0.4% smaller w/ p = 0.76.
+
+        * wtf/MathExtras.h:
+        (WTF::roundUpToPowerOfTwo):
+        (WTF::maskForSize):
+        * wtf/SizeLimits.cpp:
+        * wtf/Vector.h:
+        (WTF::VectorBufferBase::allocateBuffer):
+        (WTF::VectorBufferBase::tryAllocateBuffer):
+        (WTF::VectorBufferBase::reallocateBuffer):
+        (WTF::VectorBufferBase::deallocateBuffer):
+        (WTF::VectorBufferBase::releaseBuffer):
+        (WTF::VectorBufferBase::VectorBufferBase):
+        (WTF::VectorBufferBase::updateMask):
+        (WTF::VectorBuffer::allocateBuffer):
+        (WTF::VectorBuffer::tryAllocateBuffer):
+        (WTF::VectorBuffer::swap):
+        (WTF::VectorBuffer::restoreInlineBufferIfNeeded):
+        (WTF::Vector::at):
+        (WTF::Vector::at const):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::maskOffset):
+        (WTF::StringImpl::mask const):
+        (WTF::StringImplShape::StringImplShape):
+        (WTF::StringImpl::at const):
+        (WTF::StringImpl::tailOffset):
+        * wtf/text/StringView.h:
+        (WTF::StringView::StringView):
+        (WTF::StringView::operator=):
+        (WTF::StringView::initialize):
+        (WTF::StringView::clear):
+        (WTF::StringView::operator[] const):
+        * wtf/text/WTFString.h:
+        (WTF::String::mask const):
+
 2017-12-18  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK][Darwin] Do not define mach exceptions for GTK+

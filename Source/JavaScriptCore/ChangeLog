@@ -1,3 +1,22 @@
+2017-12-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Vector index masking
+        https://bugs.webkit.org/show_bug.cgi?id=180909
+
+        Reviewed by Keith Miller.
+        
+        Adopt index masking for strings.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetCharCodeAt):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAt):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharCodeAt):
+        * jit/ThunkGenerators.cpp:
+        (JSC::stringCharLoad):
+
 2017-12-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [FTL] NewArrayBuffer should be sinked if it is only used for spreading

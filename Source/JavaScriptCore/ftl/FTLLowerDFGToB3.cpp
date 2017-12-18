@@ -5903,6 +5903,7 @@ private:
         LBasicBlock lastNext = m_out.appendTo(fastPath, slowPath);
             
         LValue stringImpl = m_out.loadPtr(base, m_heaps.JSString_value);
+        LValue indexForAccess = m_out.bitAnd(index, m_out.load32(stringImpl, m_heaps.StringImpl_mask));
             
         LBasicBlock is8Bit = m_out.newBlock();
         LBasicBlock is16Bit = m_out.newBlock();
@@ -5921,7 +5922,7 @@ private:
         // https://bugs.webkit.org/show_bug.cgi?id=174924
         ValueFromBlock char8Bit = m_out.anchor(
             m_out.load8ZeroExt32(m_out.baseIndex(
-                m_heaps.characters8, storage, m_out.zeroExtPtr(index),
+                m_heaps.characters8, storage, m_out.zeroExtPtr(indexForAccess),
                 provenValue(m_node->child2()))));
         m_out.jump(bitsContinuation);
             
@@ -5929,7 +5930,7 @@ private:
 
         LValue char16BitValue = m_out.load16ZeroExt32(
             m_out.baseIndex(
-                m_heaps.characters16, storage, m_out.zeroExtPtr(index),
+                m_heaps.characters16, storage, m_out.zeroExtPtr(indexForAccess),
                 provenValue(m_node->child2())));
         ValueFromBlock char16Bit = m_out.anchor(char16BitValue);
         m_out.branch(
@@ -6011,6 +6012,7 @@ private:
                 index, m_out.load32NonNegative(base, m_heaps.JSString_length)));
         
         LValue stringImpl = m_out.loadPtr(base, m_heaps.JSString_value);
+        LValue indexForAccess = m_out.bitAnd(index, m_out.load32(stringImpl, m_heaps.StringImpl_mask));
         
         m_out.branch(
             m_out.testIsZero32(
@@ -6024,7 +6026,7 @@ private:
         // https://bugs.webkit.org/show_bug.cgi?id=174924
         ValueFromBlock char8Bit = m_out.anchor(
             m_out.load8ZeroExt32(m_out.baseIndex(
-                m_heaps.characters8, storage, m_out.zeroExtPtr(index),
+                m_heaps.characters8, storage, m_out.zeroExtPtr(indexForAccess),
                 provenValue(m_node->child2()))));
         m_out.jump(continuation);
             
@@ -6032,7 +6034,7 @@ private:
             
         ValueFromBlock char16Bit = m_out.anchor(
             m_out.load16ZeroExt32(m_out.baseIndex(
-                m_heaps.characters16, storage, m_out.zeroExtPtr(index),
+                m_heaps.characters16, storage, m_out.zeroExtPtr(indexForAccess),
                 provenValue(m_node->child2()))));
         m_out.jump(continuation);
         
