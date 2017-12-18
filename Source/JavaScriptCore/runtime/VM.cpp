@@ -88,6 +88,7 @@
 #include "JSStringHeapCellType.h"
 #include "JSTemplateRegistryKey.h"
 #include "JSWeakMap.h"
+#include "JSWeakSet.h"
 #include "JSWebAssembly.h"
 #include "JSWebAssemblyCodeBlockHeapCellType.h"
 #include "JSWithScope.h"
@@ -258,6 +259,8 @@ VM::VM(VMType vmType, HeapType heapType)
     , propertyTableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), PropertyTable)
     , structureRareDataSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), StructureRareData)
     , structureSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), Structure)
+    , weakSetSpace ISO_SUBSPACE_INIT(heap, destructibleObjectHeapCellType.get(), JSWeakSet)
+    , weakMapSpace ISO_SUBSPACE_INIT(heap, destructibleObjectHeapCellType.get(), JSWeakMap)
     , inferredTypesWithFinalizers(inferredTypeSpace)
     , inferredValuesWithFinalizers(inferredValueSpace)
     , vmType(vmType)

@@ -27,7 +27,9 @@
 #include "config.h"
 #include "WeakMapImpl.h"
 
+#include "IsoCellSetInlines.h"
 #include "JSCInlines.h"
+#include "WeakMapImplInlines.h"
 
 namespace JSC {
 
@@ -44,10 +46,8 @@ void WeakMapImpl<WeakMapBucket>::visitChildren(JSCell* cell, SlotVisitor& visito
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 
-    visitor.addUnconditionalFinalizer(&thisObject->m_deadKeyCleaner);
-    if (std::is_same<WeakMapBucket, JSC::WeakMapBucket<WeakMapBucketDataKeyValue>>::value)
+    if (isWeakMap())
         visitor.addWeakReferenceHarvester(&thisObject->m_deadKeyCleaner);
-
     visitor.reportExtraMemoryVisited(thisObject->m_capacity * sizeof(WeakMapBucket));
 }
 
@@ -76,28 +76,6 @@ void WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::visitWeakReferences(
             continue;
         bucket->visitAggregate(visitor);
     }
-}
-
-template <typename WeakMapBucket>
-void WeakMapImpl<WeakMapBucket>::finalizeUnconditionally()
-{
-    auto* buffer = this->buffer();
-    for (uint32_t index = 0; index < m_capacity; ++index) {
-        auto* bucket = buffer + index;
-        if (bucket->isEmpty() || bucket->isDeleted())
-            continue;
-
-        if (Heap::isMarked(bucket->key()))
-            continue;
-
-        bucket->makeDeleted();
-        ++m_deleteCount;
-        RELEASE_ASSERT(m_keyCount > 0);
-        --m_keyCount;
-    }
-
-    if (shouldShrink())
-        rehash(RehashMode::RemoveBatching);
 }
 
 template <typename WeakMapBucket>

@@ -288,6 +288,26 @@ public:
         return OBJECT_OFFSETOF(WeakMapImpl<WeakMapBucketType>, m_capacity);
     }
 
+    static constexpr bool isWeakMap()
+    {
+        return std::is_same<WeakMapBucketType, JSC::WeakMapBucket<WeakMapBucketDataKeyValue>>::value;
+    }
+
+    static constexpr bool isWeakSet()
+    {
+        return std::is_same<WeakMapBucketType, JSC::WeakMapBucket<WeakMapBucketDataKey>>::value;
+    }
+
+    template<typename CellType>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        if (isWeakMap())
+            return &vm.weakMapSpace;
+        return &vm.weakSetSpace;
+    }
+
+    void finalizeUnconditionally(VM&);
+
 private:
     ALWAYS_INLINE WeakMapBucketType* findBucket(JSObject* key)
     {
@@ -446,7 +466,7 @@ private:
     template<typename Appender>
     void takeSnapshotInternal(unsigned limit, Appender);
 
-    class DeadKeyCleaner : public UnconditionalFinalizer, public WeakReferenceHarvester {
+    class DeadKeyCleaner : public WeakReferenceHarvester {
     public:
         WeakMapImpl* target()
         {
@@ -458,15 +478,9 @@ private:
         {
             target()->visitWeakReferences(visitor);
         }
-
-        void finalizeUnconditionally() override
-        {
-            target()->finalizeUnconditionally();
-        }
     };
 
     void visitWeakReferences(SlotVisitor&);
-    void finalizeUnconditionally();
 
     MallocPtr<WeakMapBufferType, JSValueMalloc> m_buffer;
     uint32_t m_keyCount;

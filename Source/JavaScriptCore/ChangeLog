@@ -1,3 +1,35 @@
+2017-12-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use IsoSpace for JSWeakMap and JSWeakSet to use finalizeUnconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=180916
+
+        Reviewed by Darin Adler.
+
+        This patch drops UnconditionalFinalizer for JSWeakMap and JSWeakSetby using IsoSpace.
+        Since these cells always require calling finalizeUnconditionally, we do not need to
+        track cells by using IsoCellSet.
+
+        Currently we still have WeakReferenceHarvester in JSWeakMap and JSWeakSet. We should
+        avoid using a global linked-list for this in the future.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizersInIsoSubspace):
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        * heap/Heap.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * runtime/WeakMapImpl.cpp:
+        (JSC::WeakMapImpl<WeakMapBucket>::visitChildren):
+        (JSC::WeakMapImpl<WeakMapBucket>::finalizeUnconditionally): Deleted.
+        * runtime/WeakMapImpl.h:
+        (JSC::WeakMapImpl::isWeakMap):
+        (JSC::WeakMapImpl::isWeakSet):
+        (JSC::WeakMapImpl::subspaceFor):
+        * runtime/WeakMapImplInlines.h: Added.
+        (JSC::WeakMapImpl<WeakMapBucket>::finalizeUnconditionally):
+
 2017-12-17  Mark Lam  <mark.lam@apple.com>
 
         Hollow out stub implementation of InspectorBackendDispatcher::sendResponse().

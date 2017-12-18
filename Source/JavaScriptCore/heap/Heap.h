@@ -499,6 +499,9 @@ private:
 
     template<typename CellType, typename CellSet>
     void finalizeUnconditionalFinalizers(CellSet&);
+
+    template<typename CellType>
+    void finalizeUnconditionalFinalizersInIsoSubspace();
     
     void finalizeUnconditionalFinalizers();
     

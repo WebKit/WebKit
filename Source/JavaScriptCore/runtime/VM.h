@@ -349,6 +349,8 @@ public:
     IsoSubspace propertyTableSpace;
     IsoSubspace structureRareDataSpace;
     IsoSubspace structureSpace;
+    IsoSubspace weakSetSpace;
+    IsoSubspace weakMapSpace;
     
     IsoCellSet inferredTypesWithFinalizers;
     IsoCellSet inferredValuesWithFinalizers;
