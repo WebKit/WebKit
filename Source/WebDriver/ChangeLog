@@ -1,5 +1,22 @@
 2017-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: implement status command
+        https://bugs.webkit.org/show_bug.cgi?id=180133
+
+        Reviewed by Brian Burg.
+
+        8.3 Status
+        https://w3c.github.io/webdriver/webdriver-spec.html#status
+
+        Fixes: imported/w3c/webdriver/tests/sessions/status.py::test_get_status_no_session
+               imported/w3c/webdriver/tests/sessions/status.py::test_status_with_session_running_on_endpoint_node
+
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::status):
+        * WebDriverService.h:
+
+2017-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: end point nodes are only allowed to have one session
         https://bugs.webkit.org/show_bug.cgi?id=180131
 

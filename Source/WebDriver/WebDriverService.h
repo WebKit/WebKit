@@ -62,6 +62,7 @@ private:
 
     void newSession(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void deleteSession(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
+    void status(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void setTimeouts(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void go(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getCurrentURL(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);

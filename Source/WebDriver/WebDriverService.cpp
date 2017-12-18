@@ -100,6 +100,7 @@ int WebDriverService::run(int argc, char** argv)
 const WebDriverService::Command WebDriverService::s_commands[] = {
     { HTTPMethod::Post, "/session", &WebDriverService::newSession },
     { HTTPMethod::Delete, "/session/$sessionId", &WebDriverService::deleteSession },
+    { HTTPMethod::Get, "/status", &WebDriverService::status },
     { HTTPMethod::Post, "/session/$sessionId/timeouts", &WebDriverService::setTimeouts },
 
     { HTTPMethod::Post, "/session/$sessionId/url", &WebDriverService::go },
@@ -679,6 +680,16 @@ void WebDriverService::deleteSession(RefPtr<JSON::Object>&& parameters, Function
     session->close([this, session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         completionHandler(WTFMove(result));
     });
+}
+
+void WebDriverService::status(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §8.3 Status
+    // https://w3c.github.io/webdriver/webdriver-spec.html#status
+    auto body = JSON::Object::create();
+    body->setBoolean(ASCIILiteral("ready"), !m_session);
+    body->setString(ASCIILiteral("message"), m_session ? ASCIILiteral("A session already exists") : ASCIILiteral("No sessions"));
+    completionHandler(CommandResult::success(WTFMove(body)));
 }
 
 void WebDriverService::setTimeouts(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
