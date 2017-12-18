@@ -145,6 +145,7 @@ WebKitSaveMode
 WebKitInsecureContentEvent
 WebKitSnapshotOptions
 WebKitSnapshotRegion
+WebKitWebProcessTerminationReason
 
 <SUBSECTION Editing Commands>
 WEBKIT_EDITING_COMMAND_CUT

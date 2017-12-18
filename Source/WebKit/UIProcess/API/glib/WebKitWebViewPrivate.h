@@ -81,7 +81,7 @@ void webkitWebViewSubmitFormRequest(WebKitWebView*, WebKitFormSubmissionRequest*
 void webkitWebViewHandleAuthenticationChallenge(WebKitWebView*, WebKit::AuthenticationChallengeProxy*);
 void webkitWebViewInsecureContentDetected(WebKitWebView*, WebKitInsecureContentEvent);
 bool webkitWebViewEmitShowNotification(WebKitWebView*, WebKitNotification*);
-void webkitWebViewWebProcessCrashed(WebKitWebView*);
+void webkitWebViewWebProcessTerminated(WebKitWebView*, WebKitWebProcessTerminationReason);
 void webkitWebViewIsPlayingAudioChanged(WebKitWebView*);
 void webkitWebViewSelectionDidChange(WebKitWebView*);
 void webkitWebViewRequestInstallMissingMediaPlugins(WebKitWebView*, WebKit::InstallMissingMediaPluginsPermissionRequest&);

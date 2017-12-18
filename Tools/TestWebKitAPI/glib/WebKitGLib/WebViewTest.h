@@ -90,7 +90,7 @@ public:
     // in our constructor, before a derived class's vtable is ready.
     void initializeWebExtensions() final { Test::initializeWebExtensions(); }
 
-    static gboolean webProcessCrashed(WebKitWebView*, WebViewTest*);
+    static gboolean webProcessTerminated(WebKitWebView*, WebKitWebProcessTerminationReason, WebViewTest*);
 
     GRefPtr<WebKitUserContentManager> m_userContentManager;
     WebKitWebView* m_webView { nullptr };

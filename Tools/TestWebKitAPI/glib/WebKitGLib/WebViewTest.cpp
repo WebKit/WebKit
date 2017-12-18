@@ -58,10 +58,10 @@ void WebViewTest::initializeWebView()
     platformInitializeWebView();
     assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webView));
 
-    g_signal_connect(m_webView, "web-process-crashed", G_CALLBACK(WebViewTest::webProcessCrashed), this);
+    g_signal_connect(m_webView, "web-process-terminated", G_CALLBACK(WebViewTest::webProcessTerminated), this);
 }
 
-gboolean WebViewTest::webProcessCrashed(WebKitWebView*, WebViewTest* test)
+gboolean WebViewTest::webProcessTerminated(WebKitWebView*, WebKitWebProcessTerminationReason, WebViewTest* test)
 {
     if (test->m_expectedWebProcessCrash) {
         test->m_expectedWebProcessCrash = false;

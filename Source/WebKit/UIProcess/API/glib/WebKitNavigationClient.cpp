@@ -107,9 +107,17 @@ private:
 
     void processDidTerminate(WebPageProxy&, ProcessTerminationReason reason) override
     {
-        if (reason == ProcessTerminationReason::RequestedByClient)
-            return;
-        webkitWebViewWebProcessCrashed(m_webView);
+        switch (reason) {
+        case ProcessTerminationReason::Crash:
+            webkitWebViewWebProcessTerminated(m_webView, WEBKIT_WEB_PROCESS_CRASHED);
+            break;
+        case ProcessTerminationReason::ExceededMemoryLimit:
+            webkitWebViewWebProcessTerminated(m_webView, WEBKIT_WEB_PROCESS_EXCEEDED_MEMORY_LIMIT);
+            break;
+        case ProcessTerminationReason::ExceededCPULimit:
+        case ProcessTerminationReason::RequestedByClient:
+            break;
+        }
     }
 
     void decidePolicyForNavigationAction(WebPageProxy&, Ref<API::NavigationAction>&& navigationAction, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* /* userData */) override

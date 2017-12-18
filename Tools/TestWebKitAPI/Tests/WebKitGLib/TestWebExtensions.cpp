@@ -81,8 +81,9 @@ static void testDocumentLoadedSignal(WebViewTest* test, gconstpointer)
     g_dbus_connection_signal_unsubscribe(connection, id);
 }
 
-static gboolean webProcessCrashedCallback(WebKitWebView*, WebViewTest* test)
+static gboolean webProcessTerminatedCallback(WebKitWebView*, WebKitWebProcessTerminationReason reason, WebViewTest* test)
 {
+    g_assert_cmpuint(reason, ==, WEBKIT_WEB_PROCESS_CRASHED);
     test->quitMainLoop();
 
     return FALSE;
@@ -93,8 +94,8 @@ static void testWebKitWebViewProcessCrashed(WebViewTest* test, gconstpointer)
     test->loadHtml("<html></html>", 0);
     test->waitUntilLoadFinished();
 
-    g_signal_connect_after(test->m_webView, "web-process-crashed",
-        G_CALLBACK(webProcessCrashedCallback), test);
+    g_signal_connect_after(test->m_webView, "web-process-terminated",
+        G_CALLBACK(webProcessTerminatedCallback), test);
 
     test->m_expectedWebProcessCrash = true;
 

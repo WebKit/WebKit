@@ -1,3 +1,24 @@
+2017-12-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add WebKitWebView::web-process-terminated signal and deprecate web-process-crashed
+        https://bugs.webkit.org/show_bug.cgi?id=180862
+
+        Reviewed by Michael Catanzaro.
+
+        Use WebKitWebView::web-process-terminated instead of web-process-crashed in tests. I'm not adding a test for
+        WEBKIT_WEB_PROCESS_EXCEEDED_MEMORY_LIMIT because we would need to allocate more than 1GB in the test and wait
+        30 seconds, and we don't want to do either in unit tests.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp:
+        (webProcessTerminatedCallback):
+        (testWebKitWebViewProcessCrashed):
+        (webProcessCrashedCallback): Deleted.
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp:
+        (WebViewTest::initializeWebView):
+        (WebViewTest::webProcessTerminated):
+        (WebViewTest::webProcessCrashed): Deleted.
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.h:
+
 2017-12-17  Mark Lam  <mark.lam@apple.com>
 
         Enhance Ref and RefPtr to be able to work with smart pointers.

@@ -186,6 +186,20 @@ typedef enum {
   WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT,
 } WebKitSnapshotRegion;
 
+/**
+ * WebKitWebProcessTerminationReason:
+ * @WEBKIT_WEB_PROCESS_CRASHED: the web process crashed.
+ * @WEBKIT_WEB_PROCESS_EXCEEDED_MEMORY_LIMIT: the web process exceeded the memory limit.
+ *
+ * Enum values used to specify the reason why the web process terminated abnormally.
+ *
+ * Since: 2.20
+ */
+typedef enum {
+    WEBKIT_WEB_PROCESS_CRASHED,
+    WEBKIT_WEB_PROCESS_EXCEEDED_MEMORY_LIMIT
+} WebKitWebProcessTerminationReason;
+
 struct _WebKitWebView {
     WebKitWebViewBase parent;
 
@@ -253,10 +267,11 @@ struct _WebKitWebViewClass {
     gboolean   (* show_option_menu)            (WebKitWebView               *web_view,
                                                 GdkRectangle                *rectangle,
                                                 WebKitOptionMenu            *menu);
+    void       (* web_process_terminated)      (WebKitWebView               *web_view,
+                                                WebKitWebProcessTerminationReason reason);
 
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
-    void (*_webkit_reserved2) (void);
 };
 
 WEBKIT_API GType

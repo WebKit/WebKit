@@ -145,6 +145,7 @@ enum {
     INSECURE_CONTENT_DETECTED,
 
     WEB_PROCESS_CRASHED,
+    WEB_PROCESS_TERMINATED,
 
     AUTHENTICATE,
 
@@ -1806,6 +1807,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * Returns: %TRUE to stop other handlers from being invoked for the event.
      *    %FALSE to propagate the event further.
+     *
+     * Deprecated: 2.20: Use WebKitWebView::web-process-terminated instead.
      */
     signals[WEB_PROCESS_CRASHED] = g_signal_new(
         "web-process-crashed",
@@ -1815,6 +1818,26 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         g_signal_accumulator_true_handled, nullptr,
         g_cclosure_marshal_generic,
         G_TYPE_BOOLEAN, 0);
+
+    /**
+     * WebKitWebView::web-process-terminated:
+     * @web_view: the #WebKitWebView
+     * @reason: the a #WebKitWebProcessTerminationReason
+     *
+     * This signal is emitted when the web process terminates abnormally due
+     * to @reason.
+     *
+     * Since: 2.20
+     */
+    signals[WEB_PROCESS_TERMINATED] = g_signal_new(
+        "web-process-terminated",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, web_process_terminated),
+        0, 0,
+        g_cclosure_marshal_VOID__ENUM,
+        G_TYPE_NONE, 1,
+        WEBKIT_TYPE_WEB_PROCESS_TERMINATION_REASON);
 
     /**
      * WebKitWebView::authenticate:
@@ -3818,10 +3841,13 @@ cairo_surface_t* webkit_web_view_get_snapshot_finish(WebKitWebView* webView, GAs
 }
 #endif
 
-void webkitWebViewWebProcessCrashed(WebKitWebView* webView)
+void webkitWebViewWebProcessTerminated(WebKitWebView* webView, WebKitWebProcessTerminationReason reason)
 {
-    gboolean returnValue;
-    g_signal_emit(webView, signals[WEB_PROCESS_CRASHED], 0, &returnValue);
+    if (reason == WEBKIT_WEB_PROCESS_CRASHED) {
+        gboolean returnValue;
+        g_signal_emit(webView, signals[WEB_PROCESS_CRASHED], 0, &returnValue);
+    }
+    g_signal_emit(webView, signals[WEB_PROCESS_TERMINATED], 0, reason);
 }
 
 #if PLATFORM(GTK)

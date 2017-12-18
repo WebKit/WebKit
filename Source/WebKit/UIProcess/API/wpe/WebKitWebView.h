@@ -153,6 +153,20 @@ typedef enum {
     WEBKIT_INSECURE_CONTENT_DISPLAYED
 } WebKitInsecureContentEvent;
 
+/**
+ * WebKitWebProcessTerminationReason:
+ * @WEBKIT_WEB_PROCESS_CRASHED: the web process crashed.
+ * @WEBKIT_WEB_PROCESS_EXCEEDED_MEMORY_LIMIT: the web process exceeded the memory limit.
+ *
+ * Enum values used to specify the reason why the web process terminated abnormally.
+ *
+ * Since: 2.20
+ */
+typedef enum {
+    WEBKIT_WEB_PROCESS_CRASHED,
+    WEBKIT_WEB_PROCESS_EXCEEDED_MEMORY_LIMIT
+} WebKitWebProcessTerminationReason;
+
 struct _WebKitWebView {
     GObject parent;
 
@@ -213,6 +227,8 @@ struct _WebKitWebViewClass {
                                                     GTlsCertificateFlags         errors);
     gboolean       (* show_notification)           (WebKitWebView               *web_view,
                                                     WebKitNotification          *notification);
+    void           (* web_process_terminated)      (WebKitWebView               *web_view,
+                                                    WebKitWebProcessTerminationReason reason);
 
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
@@ -222,7 +238,6 @@ struct _WebKitWebViewClass {
     void (*_webkit_reserved5) (void);
     void (*_webkit_reserved6) (void);
     void (*_webkit_reserved7) (void);
-    void (*_webkit_reserved8) (void);
 };
 
 WEBKIT_API GType
