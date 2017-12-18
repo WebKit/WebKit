@@ -120,9 +120,16 @@ private:
                 m_read(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount));
         };
 
-        auto readSpreadOfPhantomCreateRest = [&] (Node* spread) {
+        auto readSpread = [&] (Node* spread) {
             ASSERT(spread->op() == Spread || spread->op() == PhantomSpread);
-            ASSERT(spread->child1()->op() == PhantomCreateRest);
+            if (!spread->child1()->isPhantomAllocation())
+                return;
+
+            ASSERT(spread->child1()->op() == PhantomCreateRest || spread->child1()->op() == PhantomNewArrayBuffer);
+            if (spread->child1()->op() == PhantomNewArrayBuffer) {
+                // This reads from a constant buffer.
+                return;
+            }
             InlineCallFrame* inlineCallFrame = spread->child1()->origin.semantic.inlineCallFrame;
             unsigned numberOfArgumentsToSkip = spread->child1()->numberOfArgumentsToSkip();
             readFrame(inlineCallFrame, numberOfArgumentsToSkip);
@@ -135,7 +142,7 @@ private:
                 if (bitVector->get(i)) {
                     Node* child = m_graph.varArgChild(arrayWithSpread, i).node();
                     if (child->op() == PhantomSpread)
-                        readSpreadOfPhantomCreateRest(child);
+                        readSpread(child);
                 }
             }
         };
@@ -181,7 +188,7 @@ private:
                 if (m_node->argumentsChild()->op() == PhantomNewArrayWithSpread)
                     readNewArrayWithSpreadNode(m_node->argumentsChild().node());
                 else
-                    readSpreadOfPhantomCreateRest(m_node->argumentsChild().node());
+                    readSpread(m_node->argumentsChild().node());
             } else {
                 InlineCallFrame* inlineCallFrame;
                 if (m_node->hasArgumentsChild() && m_node->argumentsChild())
@@ -204,8 +211,7 @@ private:
         }
         
         case Spread:
-            if (m_node->child1()->op() == PhantomCreateRest)
-                readSpreadOfPhantomCreateRest(m_node);
+            readSpread(m_node);
             break;
         
         case NewArrayWithSpread: {

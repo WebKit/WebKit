@@ -1,3 +1,10 @@
+2017-12-18  Saam Barati  <sbarati@apple.com>
+
+        Follow up to bug#179762. Fix PreciseLocalClobberize to handle Spread/PhantomSpread(PhantomNewArrayBuffer)
+
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+
 2017-12-16  Filip Pizlo  <fpizlo@apple.com>
 
         Vector index masking
