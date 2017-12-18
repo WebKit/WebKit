@@ -1,3 +1,20 @@
+2017-12-18  Ms2ger  <Ms2ger@igalia.com>
+
+        [WPE] Add some test expectations for fetch wpt tests
+        https://bugs.webkit.org/show_bug.cgi?id=180927
+
+        Unreviewed test gardening.
+
+        New expectations are copied from GTK; I had forgotten to add them when
+        enabling these tests.
+
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-worker-expected.txt: Added.
+
 2017-12-17  John Wilander  <wilander@apple.com>
 
         Storage Access API: Make document.hasStorageAccess() retrieve current status from the network process
