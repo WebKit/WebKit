@@ -39,12 +39,8 @@ class WebDriverTestRunnerW3C(object):
         self._port = port
         self._driver = driver
         self._display_driver = display_driver
-
-        timeout = self._port.get_option('timeout')
-        if timeout > 0:
-            os.environ['PYTEST_TIMEOUT'] = str(timeout)
-
         self._results = []
+
         self._server = WebDriverW3CWebServer(self._port)
 
     def _tests_dir(self):
@@ -72,7 +68,7 @@ class WebDriverTestRunnerW3C(object):
             return False
         if os.path.basename(test) in ['conftest.py', '__init__.py']:
             return False
-        if os.path.dirname(test) == 'support':
+        if os.path.basename(os.path.dirname(test)) == 'support':
             return False
         return True
 
@@ -88,10 +84,11 @@ class WebDriverTestRunnerW3C(object):
 
         executor = WebDriverW3CExecutor(self._driver, self._server, self._display_driver)
         executor.setup()
+        timeout = self._port.get_option('timeout')
         try:
             for test in tests:
                 test_name = os.path.relpath(test, self._tests_dir())
-                harness_result, test_results = executor.run(test)
+                harness_result, test_results = executor.run(test, timeout)
                 result = WebDriverTestResult(test_name, *harness_result)
                 if harness_result[0] == 'OK':
                     for subtest, status, message, backtrace in test_results:

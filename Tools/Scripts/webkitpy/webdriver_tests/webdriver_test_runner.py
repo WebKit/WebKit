@@ -67,19 +67,27 @@ class WebDriverTestRunner(object):
 
     def print_results(self):
         results = {}
+        expected_count = 0
         passed_count = 0
         failures_count = 0
+        timeout_count = 0
         test_results = []
         for runner in self._runners:
             test_results.extend(runner.results())
         for result in test_results:
             if result.status == 'OK':
                 for subtest, status, _, _ in result.subtest_results:
-                    if status == 'PASS':
-                        passed_count += 1
+                    if status in ['PASS', 'SKIP', 'XFAIL']:
+                        expected_count += 1
                     elif status in ['FAIL', 'ERROR']:
                         results.setdefault('FAIL', []).append(os.path.join(os.path.dirname(result.test), subtest))
                         failures_count += 1
+                    elif status == 'TIMEOUT':
+                        results.setdefault('TIMEOUT', []).append(os.path.join(os.path.dirname(result.test), subtest))
+                        timeout_count += 1
+                    elif status in ['XPASS', 'XPASS_TIMEOUT']:
+                        results.setdefault(status, []).append(os.path.join(os.path.dirname(result.test), subtest))
+                        passed_count += 1
             else:
                 # FIXME: handle other results.
                 pass
@@ -90,13 +98,25 @@ class WebDriverTestRunner(object):
             _log.info('All tests run as expected')
             return
 
-        _log.info('%d tests ran as expected, %d didn\'t\n' % (passed_count, failures_count))
+        _log.info('%d tests ran as expected, %d didn\'t\n' % (expected_count, failures_count + timeout_count + passed_count))
 
-        if 'FAIL' in results:
-            failed = results['FAIL']
-            _log.info('Unexpected failures (%d)' % len(failed))
-            for test in failed:
+        def report(status, actual, expected=None):
+            if status not in results:
+                return
+
+            tests = results[status]
+            if expected is None:
+                _log.info('Unexpected %s (%d)' % (actual, len(tests)))
+            else:
+                _log.info('Expected to %s, but %s (%d)' % (expected, actual, len(tests)))
+            for test in tests:
                 _log.info('  %s' % test)
+            _log.info('')
+
+        report('XPASS', 'passed', 'fail')
+        report('XPASS_TIMEOUT', 'passed', 'timeout')
+        report('FAIL', 'failures')
+        report('TIMEOUT', 'timeouts')
 
     def dump_results_to_json_file(self, output_path):
         json_results = {}
