@@ -100,7 +100,7 @@ void RegistrationStore::addRegistrationFromDatabase(ServiceWorkerContextData&& c
 
 void RegistrationStore::databaseFailedToOpen()
 {
-    m_server.registrationStoreImportComplete();
+    m_server.registrationStoreDatabaseFailedToOpen();
 }
 
 void RegistrationStore::databaseOpenedAndRecordsImported()

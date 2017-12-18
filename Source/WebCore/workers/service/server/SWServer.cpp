@@ -114,6 +114,12 @@ void SWServer::registrationStoreImportComplete()
     performGetOriginsWithRegistrationsCallbacks();
 }
 
+void SWServer::registrationStoreDatabaseFailedToOpen()
+{
+    if (!m_importCompleted)
+        registrationStoreImportComplete();
+}
+
 void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data)
 {
     // Pages should not have been able to make a new registration to this key while the import was still taking place.

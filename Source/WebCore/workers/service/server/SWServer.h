@@ -173,6 +173,7 @@ public:
 
     void addRegistrationFromStore(ServiceWorkerContextData&&);
     void registrationStoreImportComplete();
+    void registrationStoreDatabaseFailedToOpen();
 
     WEBCORE_EXPORT void getOriginsWithRegistrations(WTF::Function<void(const HashSet<SecurityOriginData>&)>);
 
