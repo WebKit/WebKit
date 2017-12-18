@@ -1663,18 +1663,46 @@ static AutoFillButtonType toAutoFillButtonType(Internals::AutoFillButtonType typ
         return AutoFillButtonType::Credentials;
     case Internals::AutoFillButtonType::Contacts:
         return AutoFillButtonType::Contacts;
-    case Internals::AutoFillButtonType::StrongPassword:
-        return AutoFillButtonType::StrongPassword;
     case Internals::AutoFillButtonType::StrongConfirmationPassword:
         return AutoFillButtonType::StrongConfirmationPassword;
+    case Internals::AutoFillButtonType::StrongPassword:
+        return AutoFillButtonType::StrongPassword;
     }
     ASSERT_NOT_REACHED();
     return AutoFillButtonType::None;
 }
 
+static Internals::AutoFillButtonType toInternalsAutoFillButtonType(AutoFillButtonType type)
+{
+    switch (type) {
+    case AutoFillButtonType::None:
+        return Internals::AutoFillButtonType::None;
+    case AutoFillButtonType::Credentials:
+        return Internals::AutoFillButtonType::Credentials;
+    case AutoFillButtonType::Contacts:
+        return Internals::AutoFillButtonType::Contacts;
+    case AutoFillButtonType::StrongConfirmationPassword:
+        return Internals::AutoFillButtonType::StrongConfirmationPassword;
+   case AutoFillButtonType::StrongPassword:
+        return Internals::AutoFillButtonType::StrongPassword;
+    }
+    ASSERT_NOT_REACHED();
+    return Internals::AutoFillButtonType::None;
+}
+
 void Internals::setShowAutoFillButton(HTMLInputElement& element, AutoFillButtonType type)
 {
     element.setShowAutoFillButton(toAutoFillButtonType(type));
+}
+
+auto Internals::autoFillButtonType(const HTMLInputElement& element) -> AutoFillButtonType
+{
+    return toInternalsAutoFillButtonType(element.autoFillButtonType());
+}
+
+auto Internals::lastAutoFillButtonType(const HTMLInputElement& element) -> AutoFillButtonType
+{
+    return toInternalsAutoFillButtonType(element.lastAutoFillButtonType());
 }
 
 ExceptionOr<void> Internals::scrollElementToRect(Element& element, int x, int y, int w, int h)

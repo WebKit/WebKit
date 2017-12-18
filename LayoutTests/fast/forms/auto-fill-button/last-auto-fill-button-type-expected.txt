@@ -1,0 +1,25 @@
+This tests that querying for the last auto fill button type works. This test must be run in WebKitTestRunner or DumpRenderTree.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.autoFillButtonType(inputElement) is "None"
+internals.setShowAutoFillButton(inputElement, 'Credentials')
+PASS internals.autoFillButtonType(inputElement) is "Credentials"
+PASS internals.lastAutoFillButtonType(inputElement) is "None"
+internals.setShowAutoFillButton(inputElement, 'Contacts')
+PASS internals.autoFillButtonType(inputElement) is "Contacts"
+PASS internals.lastAutoFillButtonType(inputElement) is "Credentials"
+internals.setShowAutoFillButton(inputElement, 'StrongPassword')
+PASS internals.autoFillButtonType(inputElement) is "StrongPassword"
+PASS internals.lastAutoFillButtonType(inputElement) is "Contacts"
+internals.setShowAutoFillButton(inputElement, 'StrongConfirmationPassword')
+PASS internals.autoFillButtonType(inputElement) is "StrongConfirmationPassword"
+PASS internals.lastAutoFillButtonType(inputElement) is "StrongPassword"
+internals.setShowAutoFillButton(inputElement, 'None')
+PASS internals.autoFillButtonType(inputElement) is "None"
+PASS internals.lastAutoFillButtonType(inputElement) is "StrongConfirmationPassword"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

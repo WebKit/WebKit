@@ -271,6 +271,20 @@ void InjectedBundleNodeHandle::setHTMLInputElementAutoFillButtonEnabled(AutoFill
     downcast<HTMLInputElement>(m_node.get()).setShowAutoFillButton(autoFillButtonType);
 }
 
+AutoFillButtonType InjectedBundleNodeHandle::htmlInputElementAutoFillButtonType() const
+{
+    if (!is<HTMLInputElement>(m_node))
+        return AutoFillButtonType::None;
+    return downcast<HTMLInputElement>(m_node.get()).autoFillButtonType();
+}
+
+AutoFillButtonType InjectedBundleNodeHandle::htmlInputElementLastAutoFillButtonType() const
+{
+    if (!is<HTMLInputElement>(m_node))
+        return AutoFillButtonType::None;
+    return downcast<HTMLInputElement>(m_node.get()).lastAutoFillButtonType();
+}
+
 bool InjectedBundleNodeHandle::isAutoFillAvailable() const
 {
     if (!is<HTMLInputElement>(m_node))

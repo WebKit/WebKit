@@ -254,19 +254,18 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 @protocol UISelectionInteractionAssistant;
 
 @interface WKFocusedElementInfo : NSObject <_WKFocusedElementInfo>
-- (instancetype)initWithAssistedNodeInformation:(const AssistedNodeInformation&)information isUserInitiated:(BOOL)isUserInitiated;
+- (instancetype)initWithAssistedNodeInformation:(const AssistedNodeInformation&)information isUserInitiated:(BOOL)isUserInitiated userObject:(NSObject <NSSecureCoding> *)userObject;
 @end
 
 @interface WKFormInputSession : NSObject <_WKFormInputSession>
 
-- (instancetype)initWithContentView:(WKContentView *)view focusedElementInfo:(WKFocusedElementInfo *)elementInfo userObject:(NSObject <NSSecureCoding> *)userObject;
+- (instancetype)initWithContentView:(WKContentView *)view focusedElementInfo:(WKFocusedElementInfo *)elementInfo;
 - (void)invalidate;
 
 @end
 
 @implementation WKFormInputSession {
     WKContentView *_contentView;
-    RetainPtr<NSObject <NSSecureCoding>> _userObject;
     RetainPtr<WKFocusedElementInfo> _focusedElementInfo;
     RetainPtr<UIView> _customInputView;
     RetainPtr<NSArray<UITextSuggestion *>> _suggestions;
@@ -274,14 +273,13 @@ const CGFloat minimumTapHighlightRadius = 2.0;
     BOOL _forceSecureTextEntry;
 }
 
-- (instancetype)initWithContentView:(WKContentView *)view focusedElementInfo:(WKFocusedElementInfo *)elementInfo userObject:(NSObject <NSSecureCoding> *)userObject
+- (instancetype)initWithContentView:(WKContentView *)view focusedElementInfo:(WKFocusedElementInfo *)elementInfo
 {
     if (!(self = [super init]))
         return nil;
 
     _contentView = view;
     _focusedElementInfo = elementInfo;
-    _userObject = userObject;
 
     return self;
 }
@@ -293,7 +291,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 
 - (NSObject <NSSecureCoding> *)userObject
 {
-    return _userObject.get();
+    return [_focusedElementInfo userObject];
 }
 
 - (BOOL)isValid
@@ -383,9 +381,10 @@ const CGFloat minimumTapHighlightRadius = 2.0;
     WKInputType _type;
     RetainPtr<NSString> _value;
     BOOL _isUserInitiated;
+    RetainPtr<NSObject <NSSecureCoding>> _userObject;
 }
 
-- (instancetype)initWithAssistedNodeInformation:(const AssistedNodeInformation&)information isUserInitiated:(BOOL)isUserInitiated
+- (instancetype)initWithAssistedNodeInformation:(const AssistedNodeInformation&)information isUserInitiated:(BOOL)isUserInitiated userObject:(NSObject <NSSecureCoding> *)userObject
 {
     if (!(self = [super init]))
         return nil;
@@ -448,6 +447,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
     }
     _value = information.value;
     _isUserInitiated = isUserInitiated;
+    _userObject = userObject;
     return self;
 }
 
@@ -464,6 +464,11 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 - (BOOL)isUserInitiated
 {
     return _isUserInitiated;
+}
+
+- (NSObject <NSSecureCoding> *)userObject
+{
+    return _userObject.get();
 }
 @end
 
@@ -3846,7 +3851,7 @@ static bool isAssistableInputType(InputType type)
     _inputViewUpdateDeferrer = nullptr;
 
     id <_WKInputDelegate> inputDelegate = [_webView _inputDelegate];
-    RetainPtr<WKFocusedElementInfo> focusedElementInfo = adoptNS([[WKFocusedElementInfo alloc] initWithAssistedNodeInformation:information isUserInitiated:userIsInteracting]);
+    RetainPtr<WKFocusedElementInfo> focusedElementInfo = adoptNS([[WKFocusedElementInfo alloc] initWithAssistedNodeInformation:information isUserInitiated:userIsInteracting userObject:userObject]);
     BOOL shouldShowKeyboard;
 
     if ([inputDelegate respondsToSelector:@selector(_webView:focusShouldStartInputSession:)])
@@ -3903,7 +3908,7 @@ static bool isAssistableInputType(InputType type)
     [_inputPeripheral beginEditing];
 
     if ([inputDelegate respondsToSelector:@selector(_webView:didStartInputSession:)]) {
-        _formInputSession = adoptNS([[WKFormInputSession alloc] initWithContentView:self focusedElementInfo:focusedElementInfo.get() userObject:userObject]);
+        _formInputSession = adoptNS([[WKFormInputSession alloc] initWithContentView:self focusedElementInfo:focusedElementInfo.get()]);
         [inputDelegate _webView:_webView didStartInputSession:_formInputSession.get()];
     }
     

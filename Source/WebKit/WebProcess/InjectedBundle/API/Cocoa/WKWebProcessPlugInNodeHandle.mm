@@ -144,9 +144,38 @@ static WebCore::AutoFillButtonType toAutoFillButtonType(_WKAutoFillButtonType au
     return WebCore::AutoFillButtonType::None;
 }
 
+static _WKAutoFillButtonType toWKAutoFillButtonType(WebCore::AutoFillButtonType autoFillButtonType)
+{
+    switch (autoFillButtonType) {
+    case WebCore::AutoFillButtonType::None:
+        return _WKAutoFillButtonTypeNone;
+    case WebCore::AutoFillButtonType::Contacts:
+        return _WKAutoFillButtonTypeContacts;
+    case WebCore::AutoFillButtonType::Credentials:
+        return _WKAutoFillButtonTypeCredentials;
+    case WebCore::AutoFillButtonType::StrongConfirmationPassword:
+        return _WKAutoFillButtonTypeStrongConfirmationPassword;
+    case WebCore::AutoFillButtonType::StrongPassword:
+        return _WKAutoFillButtonTypeStrongPassword;
+    }
+    ASSERT_NOT_REACHED();
+    return _WKAutoFillButtonTypeNone;
+
+}
+
 - (void)setHTMLInputElementAutoFillButtonEnabledWithButtonType:(_WKAutoFillButtonType)autoFillButtonType
 {
     _nodeHandle->setHTMLInputElementAutoFillButtonEnabled(toAutoFillButtonType(autoFillButtonType));
+}
+
+- (_WKAutoFillButtonType)htmlInputElementAutoFillButtonType
+{
+    return toWKAutoFillButtonType(_nodeHandle->htmlInputElementAutoFillButtonType());
+}
+
+- (_WKAutoFillButtonType)htmlInputElementLastAutoFillButtonType
+{
+    return toWKAutoFillButtonType(_nodeHandle->htmlInputElementLastAutoFillButtonType());
 }
 
 - (BOOL)HTMLInputElementIsUserEdited

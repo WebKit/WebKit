@@ -1,3 +1,17 @@
+2017-12-18  Daniel Bates  <dabates@apple.com>
+
+        Add SPI to query for the current and last auto fill button type and pass user data object to _webView:focusShouldStartInputSession:
+        https://bugs.webkit.org/show_bug.cgi?id=180774
+        <rdar://problem/36033832>
+
+        Reviewed by Tim Horton.
+
+        Adds a test to ensure that we can query for the current auto fill button type and last auto fill button
+        type of an HTML input element.
+
+        * fast/forms/auto-fill-button/last-auto-fill-button-type-expected.txt: Added.
+        * fast/forms/auto-fill-button/last-auto-fill-button-type.html: Added.
+
 2017-12-18  Ms2ger  <Ms2ger@igalia.com>
 
         Rebaseline fast/dom/Window/window-lookup-precedence.html

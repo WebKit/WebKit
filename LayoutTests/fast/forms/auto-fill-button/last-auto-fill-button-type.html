@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<input type="text" id="input">
+<script>
+description("This tests that querying for the last auto fill button type works. This test must be run in WebKitTestRunner or DumpRenderTree.");
+
+if (!window.internals)
+    testFailed("Must be run in WebKitTestRunner or DumpRenderTree");
+else {
+    var inputElement = document.getElementById("input");
+    shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "None");
+    evalAndLog("internals.setShowAutoFillButton(inputElement, 'Credentials')");
+    shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "Credentials");
+    shouldBeEqualToString("internals.lastAutoFillButtonType(inputElement)", "None");
+    evalAndLog("internals.setShowAutoFillButton(inputElement, 'Contacts')");
+    shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "Contacts");
+    shouldBeEqualToString("internals.lastAutoFillButtonType(inputElement)", "Credentials");
+    evalAndLog("internals.setShowAutoFillButton(inputElement, 'StrongPassword')");
+    shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "StrongPassword");
+    shouldBeEqualToString("internals.lastAutoFillButtonType(inputElement)", "Contacts");
+    evalAndLog("internals.setShowAutoFillButton(inputElement, 'StrongConfirmationPassword')");
+    shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "StrongConfirmationPassword");
+    shouldBeEqualToString("internals.lastAutoFillButtonType(inputElement)", "StrongPassword");
+    evalAndLog("internals.setShowAutoFillButton(inputElement, 'None')");
+    shouldBeEqualToString("internals.autoFillButtonType(inputElement)", "None");
+    shouldBeEqualToString("internals.lastAutoFillButtonType(inputElement)", "StrongConfirmationPassword");
+}
+</script>
+</body>
+</html>

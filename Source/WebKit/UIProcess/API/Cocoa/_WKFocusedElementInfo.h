@@ -75,6 +75,8 @@ typedef NS_ENUM(NSInteger, WKInputType) {
  */
 @property (nonatomic, readonly, getter=isUserInitiated) BOOL userInitiated;
 
+@property (nonatomic, readonly) NSObject <NSSecureCoding> *userObject WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end
 
 #endif // WK_API_ENABLED
