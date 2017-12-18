@@ -56,7 +56,13 @@ void HTTPCookieStore::cookies(Function<void (const Vector<WebCore::Cookie>&)>&& 
 {
     auto* pool = m_owningDataStore->processPoolForCookieStorageOperations();
     if (!pool) {
-        callOnMainThread([completionHandler = WTFMove(completionHandler), allCookies = m_owningDataStore->pendingCookies()]() {
+        Vector<WebCore::Cookie> allCookies;
+        if (m_owningDataStore->sessionID() == WebCore::SessionID::defaultSessionID())
+            allCookies = WebCore::NetworkStorageSession::defaultStorageSession().getAllCookies();
+        else
+            allCookies = m_owningDataStore->pendingCookies();
+
+        callOnMainThread([completionHandler = WTFMove(completionHandler), allCookies]() {
             completionHandler(allCookies);
         });
         return;
@@ -72,7 +78,11 @@ void HTTPCookieStore::setCookie(const WebCore::Cookie& cookie, Function<void ()>
 {
     auto* pool = m_owningDataStore->processPoolForCookieStorageOperations();
     if (!pool) {
-        m_owningDataStore->addPendingCookie(cookie);
+        if (m_owningDataStore->sessionID() == WebCore::SessionID::defaultSessionID())
+            WebCore::NetworkStorageSession::defaultStorageSession().setCookie(cookie);
+        else
+            m_owningDataStore->addPendingCookie(cookie);
+
         callOnMainThread([completionHandler = WTFMove(completionHandler)]() {
             completionHandler();
         });
@@ -89,7 +99,10 @@ void HTTPCookieStore::deleteCookie(const WebCore::Cookie& cookie, Function<void 
 {
     auto* pool = m_owningDataStore->processPoolForCookieStorageOperations();
     if (!pool) {
-        m_owningDataStore->removePendingCookie(cookie);
+        if (m_owningDataStore->sessionID() == WebCore::SessionID::defaultSessionID())
+            WebCore::NetworkStorageSession::defaultStorageSession().deleteCookie(cookie);
+        else
+            m_owningDataStore->removePendingCookie(cookie);
         callOnMainThread([completionHandler = WTFMove(completionHandler)]() {
             completionHandler();
         });

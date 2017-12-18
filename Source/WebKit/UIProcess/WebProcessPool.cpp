@@ -226,7 +226,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_shouldUseFontSmoothing(true)
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
-    , m_websiteDataStore(m_configuration->shouldHaveLegacyDataStore() ? API::WebsiteDataStore::createLegacy(legacyWebsiteDataStoreConfiguration(m_configuration)) : API::WebsiteDataStore::defaultDataStore())
 #if PLATFORM(MAC)
     , m_highPerformanceGraphicsUsageSampler(std::make_unique<HighPerformanceGraphicsUsageSampler>(*this))
     , m_perActivityStateCPUUsageSampler(std::make_unique<PerActivityStateCPUUsageSampler>(*this))
@@ -243,6 +242,12 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_hiddenPageThrottlingAutoIncreasesCounter([this](RefCounterEvent) { m_hiddenPageThrottlingTimer.startOneShot(0_s); })
     , m_hiddenPageThrottlingTimer(RunLoop::main(), this, &WebProcessPool::updateHiddenPageThrottlingAutoIncreaseLimit)
 {
+    if (m_configuration->shouldHaveLegacyDataStore())
+        m_websiteDataStore = API::WebsiteDataStore::createLegacy(legacyWebsiteDataStoreConfiguration(m_configuration));
+
+    if (!m_websiteDataStore && API::WebsiteDataStore::defaultDataStoreExists())
+        m_websiteDataStore = API::WebsiteDataStore::defaultDataStore();
+
     for (auto& scheme : m_configuration->alwaysRevalidatedURLSchemes())
         m_schemesToRegisterAsAlwaysRevalidated.add(scheme);
 
@@ -471,7 +476,8 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         m_didNetworkProcessCrash = false;
         for (auto& process : m_processes)
             process->reinstateNetworkProcessAssertionState(*m_networkProcess);
-        websiteDataStore().websiteDataStore().networkProcessDidCrash();
+        if (m_websiteDataStore)
+            m_websiteDataStore->websiteDataStore().networkProcessDidCrash();
     }
 
     if (withWebsiteDataStore)
@@ -521,22 +527,22 @@ void WebProcessPool::ensureStorageProcessAndWebsiteDataStore(WebsiteDataStore* r
     // *********
 
     if (!m_storageProcess) {
-        m_storageProcess = StorageProcessProxy::create(this);
+        auto parameters = m_websiteDataStore ? m_websiteDataStore->websiteDataStore().storageProcessParameters() : (relevantDataStore ? relevantDataStore->storageProcessParameters() : API::WebsiteDataStore::defaultDataStore()->websiteDataStore().storageProcessParameters());
 
-        StorageProcessCreationParameters parameters;
+        ASSERT(parameters.sessionID.isValid());
+
 #if ENABLE(INDEXED_DATABASE)
-        ASSERT(!m_configuration->indexedDBDatabaseDirectory().isEmpty());
-
-        parameters.sessionID = websiteDataStore().websiteDataStore().sessionID();
-        parameters.indexedDatabaseDirectory = m_configuration->indexedDBDatabaseDirectory();
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
+        if (parameters.indexedDatabaseDirectory.isEmpty()) {
+            parameters.indexedDatabaseDirectory = m_configuration->indexedDBDatabaseDirectory();
+            SandboxExtension::createHandleForReadWriteDirectory(parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
+        }
 #endif
 
-        ASSERT(!parameters.indexedDatabaseDirectory.isEmpty());
+        m_storageProcess = StorageProcessProxy::create(this);
         m_storageProcess->send(Messages::StorageProcess::InitializeWebsiteDataStore(parameters), 0);
     }
 
-    if (!relevantDataStore || relevantDataStore == &websiteDataStore().websiteDataStore())
+    if (!relevantDataStore || !m_websiteDataStore || relevantDataStore == &m_websiteDataStore->websiteDataStore())
         return;
 
     m_storageProcess->send(Messages::StorageProcess::InitializeWebsiteDataStore(relevantDataStore->storageProcessParameters()), 0);
@@ -801,7 +807,10 @@ void WebProcessPool::warmInitialProcess()
     if (m_processes.size() >= maximumNumberOfProcesses())
         return;
 
+    if (!m_websiteDataStore)
+        m_websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
     createNewWebProcess(m_websiteDataStore->websiteDataStore());
+
     m_haveInitialEmptyProcess = true;
 }
 
@@ -883,7 +892,7 @@ WebProcessProxy& WebProcessPool::createNewWebProcessRespectingProcessCountLimit(
     // Once WebsiteDataStores are truly per-view instead of per-process, remove this nonsense.
 
 #if PLATFORM(COCOA)
-    bool mustMatchDataStore = &websiteDataStore != &API::WebsiteDataStore::defaultDataStore()->websiteDataStore();
+    bool mustMatchDataStore = API::WebsiteDataStore::defaultDataStoreExists() && &websiteDataStore != &API::WebsiteDataStore::defaultDataStore()->websiteDataStore();
 #else
     bool mustMatchDataStore = false;
 #endif
@@ -924,8 +933,13 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         pageConfiguration->setVisitedLinkStore(m_visitedLinkStore.ptr());
 
     if (!pageConfiguration->websiteDataStore()) {
+        // We try to avoid creating the default data store as long as possible.
+        // But if there is an attempt to create a web page without any specified data store, then we have to create it.
+        if (!m_websiteDataStore)
+            m_websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
+
         ASSERT(!pageConfiguration->sessionID().isValid());
-        pageConfiguration->setWebsiteDataStore(m_websiteDataStore.ptr());
+        pageConfiguration->setWebsiteDataStore(m_websiteDataStore.get());
         pageConfiguration->setSessionID(pageConfiguration->preferences()->privateBrowsingEnabled() ? SessionID::legacyPrivateSessionID() : m_websiteDataStore->websiteDataStore().sessionID());
     }
 
@@ -959,9 +973,8 @@ void WebProcessPool::pageAddedToProcess(WebPageProxy& page)
         page.process().send(Messages::WebProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()), 0);
 
 #if ENABLE(INDEXED_DATABASE)
-        auto storageParameters = page.websiteDataStore().storageProcessParameters();
-        if (!storageParameters.indexedDatabaseDirectory.isEmpty())
-            sendToStorageProcessRelaunchingIfNecessary(Messages::StorageProcess::InitializeWebsiteDataStore(storageParameters));
+        if (!page.websiteDataStore().resolvedIndexedDatabaseDirectory().isEmpty())
+            ensureStorageProcessAndWebsiteDataStore(&page.websiteDataStore());
 #endif
     }
 }

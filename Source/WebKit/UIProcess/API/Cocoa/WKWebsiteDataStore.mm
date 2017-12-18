@@ -174,6 +174,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     return allWebsiteDataTypes;
 }
 
++ (BOOL)_defaultDataStoreExists
+{
+    return API::WebsiteDataStore::defaultDataStoreExists();
+}
+
 - (instancetype)_initWithConfiguration:(_WKWebsiteDataStoreConfiguration *)configuration
 {
     if (!(self = [super init]))

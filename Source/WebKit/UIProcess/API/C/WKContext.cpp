@@ -405,7 +405,14 @@ WKCookieManagerRef WKContextGetCookieManager(WKContextRef contextRef)
 
 WKWebsiteDataStoreRef WKContextGetWebsiteDataStore(WKContextRef context)
 {
-    return toAPI(&toImpl(context)->websiteDataStore());
+    auto* dataStore = toImpl(context)->websiteDataStore();
+    if (!dataStore) {
+        auto defaultDataStore = API::WebsiteDataStore::defaultDataStore();
+        toImpl(context)->setPrimaryDataStore(defaultDataStore.get());
+        dataStore = defaultDataStore.ptr();
+    }
+
+    return toAPI(dataStore);
 }
 
 WKApplicationCacheManagerRef WKContextGetApplicationCacheManager(WKContextRef context)

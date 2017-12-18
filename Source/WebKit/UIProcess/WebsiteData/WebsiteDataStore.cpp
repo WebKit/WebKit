@@ -1178,7 +1178,9 @@ void WebsiteDataStore::webProcessDidCloseConnection(WebProcessProxy& webProcessP
 
 bool WebsiteDataStore::isAssociatedProcessPool(WebProcessPool& processPool) const
 {
-    return &processPool.websiteDataStore().websiteDataStore() == this;
+    if (auto* processPoolDataStore = processPool.websiteDataStore())
+        return &processPoolDataStore->websiteDataStore() == this;
+    return false;
 }
 
 HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::processPools(size_t count, bool ensureAPoolExists) const

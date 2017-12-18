@@ -112,6 +112,8 @@ TEST(WebKit2, WebsiteDataStoreCustomPaths)
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"WebsiteDataStoreCustomPaths" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
 
+    EXPECT_FALSE([WKWebsiteDataStore _defaultDataStoreExists]);
+
     // We expect 4 messages, 1 each for WebSQL, IndexedDB, cookies, and localStorage.
     EXPECT_STREQ([getNextMessage().body UTF8String], "localstorage written");
     EXPECT_STREQ([getNextMessage().body UTF8String], "cookie written");
@@ -206,6 +208,8 @@ TEST(WebKit2, WebsiteDataStoreCustomPaths)
 
     receivedScriptMessage = false;
     TestWebKitAPI::Util::run(&receivedScriptMessage);
+
+    EXPECT_FALSE([WKWebsiteDataStore _defaultDataStoreExists]);
 }
 
 #endif

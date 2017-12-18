@@ -31,13 +31,21 @@
 
 namespace API {
 
+static WebsiteDataStore* globalDefaultDataStore;
+
 Ref<WebsiteDataStore> WebsiteDataStore::defaultDataStore()
 {
     WebKit::InitializeWebKit2();
 
-    static WebsiteDataStore* defaultDataStore = adoptRef(new WebsiteDataStore(defaultDataStoreConfiguration(), WebCore::SessionID::defaultSessionID())).leakRef();
+    if (!globalDefaultDataStore)
+        globalDefaultDataStore = adoptRef(new WebsiteDataStore(defaultDataStoreConfiguration(), WebCore::SessionID::defaultSessionID())).leakRef();
 
-    return *defaultDataStore;
+    return *globalDefaultDataStore;
+}
+
+bool WebsiteDataStore::defaultDataStoreExists()
+{
+    return globalDefaultDataStore;
 }
 
 Ref<WebsiteDataStore> WebsiteDataStore::createNonPersistentDataStore()
