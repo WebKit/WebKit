@@ -44,7 +44,7 @@ Capabilities WebDriverService::platformCapabilities()
 
 bool WebDriverService::platformValidateCapability(const String& name, const RefPtr<InspectorValue>& value) const
 {
-    if (name != "webkitgtk:browserOptions")
+    if (name != "wpe:browserOptions")
         return true;
 
     RefPtr<InspectorObject> browserOptions;
@@ -57,11 +57,6 @@ bool WebDriverService::platformValidateCapability(const String& name, const RefP
     // If browser options are provided, binary is required.
     String binary;
     if (!browserOptions->getString(ASCIILiteral("binary"), binary))
-        return false;
-
-    RefPtr<InspectorValue> useOverlayScrollbarsValue;
-    bool useOverlayScrollbars;
-    if (browserOptions->getValue(ASCIILiteral("useOverlayScrollbars"), useOverlayScrollbarsValue) && !useOverlayScrollbarsValue->asBoolean(useOverlayScrollbars))
         return false;
 
     RefPtr<InspectorValue> browserArgumentsValue;
@@ -88,10 +83,9 @@ std::optional<String> WebDriverService::platformMatchCapability(const String&, c
 void WebDriverService::platformParseCapabilities(const InspectorObject& matchedCapabilities, Capabilities& capabilities) const
 {
     RefPtr<InspectorObject> browserOptions;
-    if (!matchedCapabilities.getObject(ASCIILiteral("webkitgtk:browserOptions"), browserOptions)) {
-        capabilities.browserBinary = String(LIBEXECDIR "/webkit2gtk-" WEBKITGTK_API_VERSION_STRING "/MiniBrowser");
+    if (!matchedCapabilities.getObject(ASCIILiteral("wpe:browserOptions"), browserOptions)) {
+        capabilities.browserBinary = String("dyz");
         capabilities.browserArguments = Vector<String> { ASCIILiteral("--automation") };
-        capabilities.useOverlayScrollbars = true;
         return;
     }
 
@@ -113,12 +107,6 @@ void WebDriverService::platformParseCapabilities(const InspectorObject& matchedC
             capabilities.browserArguments->uncheckedAppend(WTFMove(argument));
         }
     }
-
-    bool useOverlayScrollbars;
-    if (browserOptions->getBoolean(ASCIILiteral("useOverlayScrollbars"), useOverlayScrollbars))
-        capabilities.useOverlayScrollbars = useOverlayScrollbars;
-    else
-        capabilities.useOverlayScrollbars = true;
 }
 
 } // namespace WebDriver

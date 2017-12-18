@@ -30,6 +30,7 @@ from webkitpy.common.memoized import memoized
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.base import Port
 from webkitpy.port.linux_get_crash_log import GDBCrashLogGenerator
+from webkitpy.port.waylanddriver import WaylandDriver
 
 
 class WPEPort(Port):
@@ -38,6 +39,7 @@ class WPEPort(Port):
     def __init__(self, *args, **kwargs):
         super(WPEPort, self).__init__(*args, **kwargs)
 
+        self._display_server = self.get_option("display_server")
         if self._should_use_jhbuild():
             self._jhbuild_wrapper = [self.path_from_webkit_base('Tools', 'jhbuild', 'jhbuild-wrapper'), '--wpe', 'run']
             self.set_option_default('wrapper', ' '.join(self._jhbuild_wrapper))
@@ -60,6 +62,12 @@ class WPEPort(Port):
 
     def _port_flag_for_scripts(self):
         return "--wpe"
+
+    @memoized
+    def _driver_class(self):
+        if self._display_server == "wayland":
+            return WaylandDriver
+        return super(WPEPort, self)._driver_class()
 
     def setup_environ_for_server(self, server_name=None):
         environment = super(WPEPort, self).setup_environ_for_server(server_name)

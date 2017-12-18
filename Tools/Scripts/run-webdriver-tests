@@ -39,6 +39,8 @@ option_parser.add_option('--platform', action='store',
                          help='Platform to use (e.g., "gtk")')
 option_parser.add_option('--gtk', action='store_const', dest='platform', const='gtk',
                          help='Alias for --platform=gtk')
+option_parser.add_option('--wpe', action='store_const', dest='platform', const='wpe',
+                         help='Alias for --platform=wpe')
 option_parser.add_option('--release', action='store_const', const='Release', dest="configuration",
                          help='Set the configuration to Release')
 option_parser.add_option('--debug', action='store_const', const='Debug', dest="configuration",
