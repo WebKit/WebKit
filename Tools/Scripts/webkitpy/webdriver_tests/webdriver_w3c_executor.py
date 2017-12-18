@@ -41,6 +41,7 @@ _ensure_directory_in_path(os.path.join(w3c_tools_dir, 'webdriver'))
 _ensure_directory_in_path(os.path.join(w3c_tools_dir, 'wptrunner'))
 _ensure_directory_in_path(os.path.join(w3c_tools_dir, "webdriver"))
 
+import webkitpy.thirdparty.autoinstalled.pytest_timeout
 from wptrunner.executors.base import WdspecExecutor, WebDriverProtocol
 from wptrunner.webdriver_server import WebDriverServer
 
@@ -136,4 +137,5 @@ class WebDriverW3CExecutor(WdspecExecutor):
         self.protocol.teardown()
 
     def run(self, path):
-        return self.do_wdspec(self.protocol.session_config, path, 25)
+        # Timeout here doesn't really matter because it's ignored, so we pass 0.
+        return self.do_wdspec(self.protocol.session_config, path, 0)

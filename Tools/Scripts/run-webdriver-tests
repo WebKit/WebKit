@@ -45,6 +45,8 @@ option_parser.add_option('--release', action='store_const', const='Release', des
                          help='Set the configuration to Release')
 option_parser.add_option('--debug', action='store_const', const='Debug', dest="configuration",
                          help='Set the configuration to Debug')
+option_parser.add_option('--timeout', action='store', type='int', dest='timeout', default=10,
+                         help='Time in seconds until a test times out (use 0 to disable)')
 option_parser.add_option('--display-server', choices=['xvfb', 'xorg', 'weston', 'wayland'], default='xvfb',
                          help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
                               '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.')

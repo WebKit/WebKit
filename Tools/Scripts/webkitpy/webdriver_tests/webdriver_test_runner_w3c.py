@@ -44,6 +44,10 @@ class WebDriverTestRunnerW3C(object):
         _log.info('Using driver at %s' % (self._driver.binary_path()))
         _log.info('Browser: %s' % (self._driver.browser_name()))
 
+        timeout = self._port.get_option('timeout')
+        if timeout > 0:
+            os.environ['PYTEST_TIMEOUT'] = str(timeout)
+
         self._results = []
         self._server = WebDriverW3CWebServer(self._port)
 
