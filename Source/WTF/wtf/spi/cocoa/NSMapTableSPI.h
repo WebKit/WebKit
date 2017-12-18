@@ -25,7 +25,9 @@
 
 #import <Foundation/NSMapTable.h>
 
-#if PLATFORM(IOS) && USE(APPLE_INTERNAL_SDK)
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED < 120000
+
+#if USE(APPLE_INTERNAL_SDK)
 #import <Foundation/NSMapTablePriv.h>
 #endif
 
@@ -36,3 +38,5 @@ void NSMapInsert(NSMapTable *, const void *key, const void *value);
 void NSMapRemove(NSMapTable *, const void *key);
 
 WTF_EXTERN_C_END
+
+#endif

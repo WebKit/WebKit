@@ -1,3 +1,13 @@
+2017-12-18  Daniel Bates  <dabates@apple.com>
+
+        Conditionally forward declare NSMapTable SPI
+        https://bugs.webkit.org/show_bug.cgi?id=180936
+        <rdar://problem/35037796>
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/spi/cocoa/NSMapTableSPI.h:
+
 2017-12-16  Filip Pizlo  <fpizlo@apple.com>
 
         Vector index masking
