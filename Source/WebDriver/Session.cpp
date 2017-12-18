@@ -996,7 +996,7 @@ void Session::getActiveElement(Function<void (CommandResult&&)>&& completionHand
             }
             RefPtr<JSON::Object> elementObject = createElement(WTFMove(resultValue));
             if (!elementObject) {
-                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchElement));
                 return;
             }
             completionHandler(CommandResult::success(WTFMove(elementObject)));
