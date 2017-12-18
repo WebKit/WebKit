@@ -1,3 +1,11 @@
+2017-12-18  Matt Lewis  <jlewis3@apple.com>
+
+        Rebaselined fast/mediastream/MediaStream-MediaElement-setObject-null.html.
+
+        Unreviewed test gardening
+
+        * fast/mediastream/MediaStream-MediaElement-setObject-null-expected.txt:
+
 2017-12-18  Zalan Bujtas  <zalan@apple.com>
 
         [SVG] Detach list wrappers before resetting the base value.
