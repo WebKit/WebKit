@@ -147,10 +147,11 @@ static Vector<OperatingDate> mergeOperatingDates(const Vector<OperatingDate>& ex
     return mergedDates;
 }
 
-WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory, Function<void(const String&)>&& testingCallback, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler, UpdateStorageAccessForPrevalentDomainsHandler&& updateStorageAccessForPrevalentDomainsHandler, RemovePrevalentDomainsHandler&& removeDomainsHandler)
+WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory, Function<void(const String&)>&& testingCallback, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler, HasStorageAccessForPrevalentDomainsHandler&& hasStorageAccessForPrevalentDomainsHandler, UpdateStorageAccessForPrevalentDomainsHandler&& updateStorageAccessForPrevalentDomainsHandler, RemovePrevalentDomainsHandler&& removeDomainsHandler)
     : m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility))
     , m_persistentStorage(*this, resourceLoadStatisticsDirectory)
     , m_updatePrevalentDomainsToPartitionOrBlockCookiesHandler(WTFMove(updatePrevalentDomainsToPartitionOrBlockCookiesHandler))
+    , m_hasStorageAccessForPrevalentDomainsHandler(WTFMove(hasStorageAccessForPrevalentDomainsHandler))
     , m_updateStorageAccessForPrevalentDomainsHandler(WTFMove(updateStorageAccessForPrevalentDomainsHandler))
     , m_removeDomainsHandler(WTFMove(removeDomainsHandler))
     , m_dailyTasksTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::performDailyTasks)
@@ -253,26 +254,25 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<WebCor
     processStatisticsAndDataRecords();
 }
 
-void WebResourceLoadStatisticsStore::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::CompletionHandler<void (bool)>&& callback)
+void WebResourceLoadStatisticsStore::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback)
 {
     ASSERT(subFrameHost != topFrameHost);
     ASSERT(RunLoop::isMain());
-    
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), subFramePrimaryDomain = isolatedPrimaryDomain(subFrameHost), topFramePrimaryDomain = isolatedPrimaryDomain(topFrameHost), callback = WTFMove(callback)] () mutable {
-        
-        auto& topFrameStatistic = ensureResourceStatisticsForPrimaryDomain(topFramePrimaryDomain);
-        if (topFrameStatistic.storageAccessUnderTopFrameOrigins.contains(subFramePrimaryDomain)) {
-            callback(true);
-            return;
-        }
+
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), subFramePrimaryDomain = isolatedPrimaryDomain(subFrameHost), topFramePrimaryDomain = isolatedPrimaryDomain(topFrameHost), frameID, pageID, callback = WTFMove(callback)] () mutable {
         
         auto& subFrameStatistic = ensureResourceStatisticsForPrimaryDomain(subFramePrimaryDomain);
         if (shouldBlockCookies(subFrameStatistic)) {
             callback(false);
             return;
         }
-        
-        callback(!shouldPartitionCookies(subFrameStatistic));
+
+        if (!shouldPartitionCookies(subFrameStatistic)) {
+            callback(true);
+            return;
+        }
+
+        m_hasStorageAccessForPrevalentDomainsHandler(subFramePrimaryDomain, topFramePrimaryDomain, frameID, pageID, WTFMove(callback));
     });
 }
 

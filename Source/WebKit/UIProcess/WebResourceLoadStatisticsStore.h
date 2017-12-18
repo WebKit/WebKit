@@ -62,11 +62,12 @@ enum class ShouldClearFirst;
 class WebResourceLoadStatisticsStore final : public IPC::Connection::WorkQueueMessageReceiver {
 public:
     using UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler = WTF::Function<void(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst)>;
+    using HasStorageAccessForPrevalentDomainsHandler = WTF::Function<void(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::Function<void(bool hasAccess)>&& callback)>;
     using UpdateStorageAccessForPrevalentDomainsHandler = WTF::Function<void(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, bool value, WTF::Function<void(bool wasGranted)>&& callback)>;
     using RemovePrevalentDomainsHandler = WTF::Function<void (const Vector<String>&)>;
-    static Ref<WebResourceLoadStatisticsStore> create(const String& resourceLoadStatisticsDirectory, Function<void (const String&)>&& testingCallback, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler = [](const Vector<String>&, const Vector<String>&, const Vector<String>&, ShouldClearFirst) { }, UpdateStorageAccessForPrevalentDomainsHandler&& updateStorageAccessForPrevalentDomainsHandler = [](const String&, const String&, uint64_t, uint64_t, bool, WTF::Function<void(bool)>&&) { }, RemovePrevalentDomainsHandler&& removeDomainsHandler = [] (const Vector<String>&) { })
+    static Ref<WebResourceLoadStatisticsStore> create(const String& resourceLoadStatisticsDirectory, Function<void (const String&)>&& testingCallback, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler = [](const Vector<String>&, const Vector<String>&, const Vector<String>&, ShouldClearFirst) { }, HasStorageAccessForPrevalentDomainsHandler&& hasStorageAccessForPrevalentDomainsHandler = [](const String&, const String&, uint64_t, uint64_t, WTF::Function<void(bool)>&&) { }, UpdateStorageAccessForPrevalentDomainsHandler&& updateStorageAccessForPrevalentDomainsHandler = [](const String&, const String&, uint64_t, uint64_t, bool, WTF::Function<void(bool)>&&) { }, RemovePrevalentDomainsHandler&& removeDomainsHandler = [] (const Vector<String>&) { })
     {
-        return adoptRef(*new WebResourceLoadStatisticsStore(resourceLoadStatisticsDirectory, WTFMove(testingCallback), WTFMove(updatePrevalentDomainsToPartitionOrBlockCookiesHandler), WTFMove(updateStorageAccessForPrevalentDomainsHandler), WTFMove(removeDomainsHandler)));
+        return adoptRef(*new WebResourceLoadStatisticsStore(resourceLoadStatisticsDirectory, WTFMove(testingCallback), WTFMove(updatePrevalentDomainsToPartitionOrBlockCookiesHandler), WTFMove(hasStorageAccessForPrevalentDomainsHandler), WTFMove(updateStorageAccessForPrevalentDomainsHandler), WTFMove(removeDomainsHandler)));
     }
 
     ~WebResourceLoadStatisticsStore();
@@ -82,7 +83,7 @@ public:
 
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&& origins);
 
-    void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::CompletionHandler<void (bool)>&& callback);
+    void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback);
     void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback);
     void requestStorageAccessCallback(bool wasGranted, uint64_t contextId);
 
@@ -142,7 +143,7 @@ public:
     void logTestingEvent(const String&);
 
 private:
-    WebResourceLoadStatisticsStore(const String&, Function<void(const String&)>&& testingCallback, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&&, UpdateStorageAccessForPrevalentDomainsHandler&&, RemovePrevalentDomainsHandler&&);
+    WebResourceLoadStatisticsStore(const String&, Function<void(const String&)>&& testingCallback, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&&, HasStorageAccessForPrevalentDomainsHandler&&, UpdateStorageAccessForPrevalentDomainsHandler&&, RemovePrevalentDomainsHandler&&);
 
     void removeDataRecords();
 
@@ -195,6 +196,7 @@ private:
     Vector<OperatingDate> m_operatingDates;
 
     UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler m_updatePrevalentDomainsToPartitionOrBlockCookiesHandler;
+    HasStorageAccessForPrevalentDomainsHandler m_hasStorageAccessForPrevalentDomainsHandler;
     UpdateStorageAccessForPrevalentDomainsHandler m_updateStorageAccessForPrevalentDomainsHandler;
     RemovePrevalentDomainsHandler m_removeDomainsHandler;
 

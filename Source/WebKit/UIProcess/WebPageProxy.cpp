@@ -7187,9 +7187,9 @@ void WebPageProxy::stopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskId
     iterator->value->stopTask(*this, taskIdentifier);
 }
 
-void WebPageProxy::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t webProcessContextId)
+void WebPageProxy::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, uint64_t webProcessContextId)
 {
-    m_websiteDataStore->hasStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), [this, webProcessContextId] (bool hasAccess) {
+    m_websiteDataStore->hasStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, [this, webProcessContextId] (bool hasAccess) {
         m_process->send(Messages::WebPage::StorageAccessResponse(hasAccess, webProcessContextId), m_pageID);
     });
 }

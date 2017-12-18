@@ -1,3 +1,26 @@
+2017-12-17  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Make document.hasStorageAccess() retrieve current status from the network process
+        https://bugs.webkit.org/show_bug.cgi?id=180681
+        <rdar://problem/35982161>
+
+        Reviewed by Alex Christensen.
+
+        This change makes an asynchronous request to the network process
+        to see if storage access has been granted for this frame, on this
+        page, for this domain.
+
+        * http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-non-recent-user-interaction-expected.txt: Added.
+        * http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-non-recent-user-interaction.html: Added.
+        * http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-recent-user-interaction-expected.txt: Added.
+        * http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-recent-user-interaction.html: Added.
+        * http/tests/storageAccess/resources/has-storage-access-iframe.html: Added.
+        * platform/mac-wk2/TestExpectations:
+            New tests marked as [ Pass ].
+            All http/tests/storageAccess/ tests marked [ HighSierra+ ] since
+            document.hasStorageAccess() now requires code that relies on cookie
+            partitioning.
+
 2017-12-16  Ms2ger  <Ms2ger@igalia.com>
 
         Enable wpt fetch tests on WPE.

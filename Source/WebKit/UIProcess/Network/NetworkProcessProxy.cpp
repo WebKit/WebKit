@@ -408,6 +408,14 @@ static uint64_t nextRequestStorageAccessContextId()
     return ++nextContextId;
 }
 
+void NetworkProcessProxy::hasStorageAccessForPrevalentDomains(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void(bool)>&& callback)
+{
+    auto contextId = nextRequestStorageAccessContextId();
+    auto addResult = m_storageAccessResponseCallbackMap.add(contextId, WTFMove(callback));
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    send(Messages::NetworkProcess::HasStorageAccessForPrevalentDomains(sessionID, resourceDomain, firstPartyDomain, frameID, pageID, contextId), 0);
+}
+
 void NetworkProcessProxy::updateStorageAccessForPrevalentDomains(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, bool value, WTF::CompletionHandler<void(bool)>&& callback)
 {
     auto contextId = nextRequestStorageAccessContextId();

@@ -1166,6 +1166,12 @@ void WebsiteDataStore::updatePrevalentDomainsToPartitionOrBlockCookies(const Vec
         processPool->sendToNetworkingProcess(Messages::NetworkProcess::UpdatePrevalentDomainsToPartitionOrBlockCookies(m_sessionID, domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst == ShouldClearFirst::Yes));
 }
 
+void WebsiteDataStore::hasStorageAccessForPrevalentDomainsHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void(bool hasAccess)>&& callback)
+{
+    for (auto& processPool : processPools())
+        processPool->networkProcess()->hasStorageAccessForPrevalentDomains(m_sessionID, resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
+}
+
 void WebsiteDataStore::updateStorageAccessForPrevalentDomainsHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, bool value, WTF::CompletionHandler<void(bool wasGranted)>&& callback)
 {
     for (auto& processPool : processPools())
@@ -1367,7 +1373,9 @@ void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Functio
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, WTFMove(callback), [this] (const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst shouldClearFirst) {
         updatePrevalentDomainsToPartitionOrBlockCookies(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst);
-    }, [this, protectedThis = makeRef(*this)] (const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, bool value, WTF::Function<void(bool wasGranted)>&& callback) {
+    }, [this, protectedThis = makeRef(*this)] (const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void(bool hasAccess)>&& callback) {
+        hasStorageAccessForPrevalentDomainsHandler(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
+    }, [this, protectedThis = makeRef(*this)] (const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, bool value, WTF::CompletionHandler<void(bool wasGranted)>&& callback) {
         updateStorageAccessForPrevalentDomainsHandler(resourceDomain, firstPartyDomain, frameID, pageID, value, WTFMove(callback));
     }, [this, protectedThis = makeRef(*this)] (const Vector<String>& domainsToRemove) {
         removePrevalentDomains(domainsToRemove);
@@ -1426,14 +1434,14 @@ void WebsiteDataStore::removePendingCookie(const WebCore::Cookie& cookie)
     m_pendingCookies.remove(cookie);
 }
 
-void WebsiteDataStore::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::CompletionHandler<void (bool)>&& callback)
+void WebsiteDataStore::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback)
 {
     if (!resourceLoadStatisticsEnabled()) {
         callback(false);
         return;
     }
     
-    m_resourceLoadStatistics->hasStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), WTFMove(callback));
+    m_resourceLoadStatistics->hasStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, WTFMove(callback));
 }
     
 void WebsiteDataStore::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback)

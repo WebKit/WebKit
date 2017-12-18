@@ -1244,7 +1244,7 @@ public:
     void touchBarMenuItemDataRemoved(const TouchBarMenuItemData&);
 #endif
 
-    void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t webProcessContextId);
+    void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, uint64_t webProcessContextId);
     void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, uint64_t webProcessContextId);
 
 #if ENABLE(ATTACHMENT_ELEMENT)

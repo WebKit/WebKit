@@ -1,0 +1,30 @@
+<html>
+<head>
+    <script>
+        const policyShouldGrantAccess = document.location.hash === "#policyShouldGrantAccess";
+
+        function checkHasStorageAccess() {
+            var promise = document.hasStorageAccess();
+            promise.then(
+                function (hasAccess) {
+                    if (hasAccess && policyShouldGrantAccess)
+                        top.postMessage("PASS Has storage access.", "http://127.0.0.1:8000");
+                    else if (!hasAccess && !policyShouldGrantAccess)
+                        top.postMessage("PASS No storage access.", "http://127.0.0.1:8000");
+                    else
+                        top.postMessage("FAIL " +
+                            (hasAccess ? "Storage " : "No storage ") +
+                            "access when there should " +
+                            (policyShouldGrantAccess ? "" : "not ") +
+                            "have been access.", "http://127.0.0.1:8000");
+                },
+                function (reason) {
+                    top.postMessage("FAIL document.hasStorageAccess() was rejected. Reason: " + reason, "http://127.0.0.1:8000");
+                }
+            );
+        }
+    </script>
+</head>
+<body onload="checkHasStorageAccess()">
+</body>
+</html>

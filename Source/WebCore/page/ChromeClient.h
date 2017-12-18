@@ -467,7 +467,7 @@ public:
     virtual void reportProcessCPUTime(Seconds, ActivityStateForCPUSampling) { }
     virtual RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) = 0;
 
-    virtual void hasStorageAccess(String&& /*subFrameHost*/, String&& /*topFrameHost*/, WTF::CompletionHandler<void (bool)>&& callback) { callback(false); }
+    virtual void hasStorageAccess(String&& /*subFrameHost*/, String&& /*topFrameHost*/, uint64_t /*frameID*/, uint64_t /*pageID*/, WTF::CompletionHandler<void (bool)>&& callback) { callback(false); }
     virtual void requestStorageAccess(String&& /*subFrameHost*/, String&& /*topFrameHost*/, uint64_t /*frameID*/, uint64_t /*pageID*/, WTF::CompletionHandler<void (bool)>&& callback) { callback(false); }
 
     virtual void didInsertMenuElement(HTMLMenuElement&) { }

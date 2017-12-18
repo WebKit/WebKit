@@ -7423,15 +7423,15 @@ Logger& Document::logger()
     return *m_logger;
 }
 
-void Document::hasStorageAccess(Ref<DeferredPromise>&& passedPromise)
+void Document::hasStorageAccess(Ref<DeferredPromise>&& promise)
 {
     ASSERT(settings().storageAccessAPIEnabled());
 
-    RefPtr<DeferredPromise> promise(WTFMove(passedPromise));
-
-    if (m_hasFrameSpecificStorageAccess)
+    if (m_hasFrameSpecificStorageAccess) {
         promise->resolve<IDLBoolean>(true);
-    
+        return;
+    }
+
     if (!m_frame || securityOrigin().isUnique()) {
         promise->resolve<IDLBoolean>(false);
         return;
@@ -7449,10 +7449,18 @@ void Document::hasStorageAccess(Ref<DeferredPromise>&& passedPromise)
         return;
     }
 
+    ASSERT(m_frame);
+    auto frameID = m_frame->loader().client().frameID();
+    auto pageID = m_frame->loader().client().pageID();
+    if (!frameID || !pageID) {
+        promise->reject();
+        return;
+    }
+
     if (Page* page = this->page()) {
         auto iframeHost = securityOrigin.host();
         auto topHost = topSecurityOrigin.host();
-        page->chrome().client().hasStorageAccess(WTFMove(iframeHost), WTFMove(topHost), [documentReference = m_weakFactory.createWeakPtr(*this), promise] (bool hasAccess) {
+        page->chrome().client().hasStorageAccess(WTFMove(iframeHost), WTFMove(topHost), frameID.value(), pageID.value(), [documentReference = m_weakFactory.createWeakPtr(*this), promise = WTFMove(promise)] (bool hasAccess) {
             Document* document = documentReference.get();
             if (!document)
                 return;
@@ -7465,11 +7473,9 @@ void Document::hasStorageAccess(Ref<DeferredPromise>&& passedPromise)
     promise->reject();
 }
 
-void Document::requestStorageAccess(Ref<DeferredPromise>&& passedPromise)
+void Document::requestStorageAccess(Ref<DeferredPromise>&& promise)
 {
     ASSERT(settings().storageAccessAPIEnabled());
-    
-    RefPtr<DeferredPromise> promise(WTFMove(passedPromise));
     
     if (m_hasFrameSpecificStorageAccess)
         promise->resolve();
@@ -7529,7 +7535,7 @@ void Document::requestStorageAccess(Ref<DeferredPromise>&& passedPromise)
 
     // FIXME: Don't use runJavaScriptConfirm because it responds synchronously.
     if ((page && page->chrome().runJavaScriptConfirm(*m_frame, builder.toString())) || m_grantStorageAccessOverride) {
-        page->chrome().client().requestStorageAccess(WTFMove(iframeHost), WTFMove(topHost), frameID.value(), pageID.value(), [documentReference = m_weakFactory.createWeakPtr(*this), promise] (bool wasGranted) {
+        page->chrome().client().requestStorageAccess(WTFMove(iframeHost), WTFMove(topHost), frameID.value(), pageID.value(), [documentReference = m_weakFactory.createWeakPtr(*this), promise = WTFMove(promise)] (bool wasGranted) {
             Document* document = documentReference.get();
             if (!document)
                 return;

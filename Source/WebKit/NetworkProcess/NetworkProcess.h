@@ -138,6 +138,7 @@ public:
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     void updatePrevalentDomainsToPartitionOrBlockCookies(PAL::SessionID, const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, bool shouldClearFirst);
+    void hasStorageAccessForPrevalentDomains(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId);
     void updateStorageAccessForPrevalentDomains(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, bool value, uint64_t contextId);
     void removePrevalentDomains(PAL::SessionID, const Vector<String>& domains);
 #endif

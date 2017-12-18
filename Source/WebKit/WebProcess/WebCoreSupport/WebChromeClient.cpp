@@ -1256,9 +1256,9 @@ void WebChromeClient::didInvalidateDocumentMarkerRects()
     m_page.findController().didInvalidateDocumentMarkerRects();
 }
 
-void WebChromeClient::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::CompletionHandler<void (bool)>&& callback)
+void WebChromeClient::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback)
 {
-    m_page.hasStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), WTFMove(callback));
+    m_page.hasStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, WTFMove(callback));
 }
 
 void WebChromeClient::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback)

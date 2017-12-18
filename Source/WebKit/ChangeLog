@@ -1,3 +1,43 @@
+2017-12-17  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Make document.hasStorageAccess() retrieve current status from the network process
+        https://bugs.webkit.org/show_bug.cgi?id=180681
+        <rdar://problem/35982161>
+
+        Reviewed by Alex Christensen.
+
+        This change makes an asynchronous request to the network process
+        to see if storage access has been granted for this frame, on this
+        page, for this domain.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::hasStorageAccessForPrevalentDomains):
+        (WebKit::NetworkProcess::updateStorageAccessForPrevalentDomains):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::hasStorageAccessForPrevalentDomains):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::hasStorageAccess):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::hasStorageAccess):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::hasStorageAccessForPrevalentDomainsHandler):
+        (WebKit::WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback):
+        (WebKit::WebsiteDataStore::hasStorageAccess):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::hasStorageAccess):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::hasStorageAccess):
+        * WebProcess/WebPage/WebPage.h:
+
 2017-12-16  Dan Bernstein  <mitz@apple.com>
 
         WKWebView has no equivalent of -[WebView setAlwaysShowVerticalScroller:]

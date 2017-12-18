@@ -1030,7 +1030,7 @@ public:
     void sendPartialEditorStateAndSchedulePostLayoutUpdate();
     void flushPendingEditorStateUpdate();
 
-    void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, WTF::CompletionHandler<void (bool)>&& callback);
+    void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback);
     void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback);
     void storageAccessResponse(bool wasGranted, uint64_t contextId);
 
