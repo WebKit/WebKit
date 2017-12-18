@@ -1,3 +1,15 @@
+2017-12-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network Tab - waterfall graph can be mis-sized after closing detail view
+        https://bugs.webkit.org/show_bug.cgi?id=180903
+        <rdar://problem/36087903>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._hideResourceDetailView):
+        Redraw waterfall column after hiding the detail view.
+
 2017-12-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r225941.
