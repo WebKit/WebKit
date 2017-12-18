@@ -1,3 +1,27 @@
+2017-12-18  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: Ignore NSWindow deprecation warnings from the mysterious future
+
+        Attempt to fix the following warnings:
+
+            AppKit instance variables are private, and the ability to access them will be removed in a future release. [-Werror,-Wdeprecated-declarations]
+
+        For the following instance variables:
+
+            _borderView
+            _contentView
+            _frame
+            _wFlags
+
+        * Carbon/CarbonWindowAdapter.mm:
+        (-[CarbonWindowAdapter initWithCarbonWindowRef:takingOwnership:disableOrdering:carbon:]):
+        (-[CarbonWindowAdapter reconcileToCarbonWindowBounds]):
+        (-[CarbonWindowAdapter _termWindowIfOwner]):
+        (-[CarbonWindowAdapter _windowMovedToRect:]):
+        (-[CarbonWindowAdapter setContentView:]):
+        (-[CarbonWindowAdapter _handleRootBoundsChanged]):
+        (-[CarbonWindowAdapter _handleContentBoundsChanged]):
+
 2017-12-16  Dan Bernstein  <mitz@apple.com>
 
         WKWebView has no equivalent of -[WebView setAlwaysShowVerticalScroller:]

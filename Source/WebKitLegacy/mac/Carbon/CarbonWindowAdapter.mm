@@ -205,7 +205,10 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     // Do some standard Cocoa initialization.  The defer argument's value is YES because we don't want -[NSWindow _commonAwake] to get called.  It doesn't appear that any relevant NSWindow code checks _wFlags.deferred, so we should be able to get away with the lie.
     self = (CarbonWindowAdapter*)[super _initContent:nullptr styleMask:styleMask backing:backingStoreType defer:YES contentView:carbonWindowContentView];
     if (!self) return nil;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     assert(_contentView);
+#pragma clang diagnostic pop
 
     // Record accurately whether or not this window has a shadow, in case someone asks.
  //   _auxiliaryStorage->_auxWFlags.hasShadow = (windowAttributes & kWindowNoShadowAttribute) ? NO : YES;
@@ -368,8 +371,11 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     // Initialize for safe returning.
     BOOL reconciliationWasNecessary = NO;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     // Precondition check.
     assert(_contentView);
+#pragma clang diagnostic pop
 
     // Get the Carbon window's bounds, which are expressed in global screen coordinates, with (0,0) at the top-left of the main screen.
     osStatus = GetWindowBounds(_windowRef, kWindowStructureRgn, &windowStructureBoundsRect);
@@ -384,22 +390,28 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     newWindowFrameRect.origin.y = NSMaxY([(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame]) - windowStructureBoundsRect.bottom;
     newWindowFrameRect.size.width = windowStructureBoundsRect.right - windowStructureBoundsRect.left;
     newWindowFrameRect.size.height = windowStructureBoundsRect.bottom - windowStructureBoundsRect.top;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (!NSEqualRects(newWindowFrameRect, _frame)) {
         [self _setFrame:newWindowFrameRect];
         [_borderView setFrameSize:newWindowFrameRect.size];
         reconciliationWasNecessary = YES;
     }
+#pragma clang diagnostic pop
 
     // Set the content view's frame rect from the Carbon window's content region bounds.
     newContentFrameRect.origin.x = windowContentBoundsRect.left - windowStructureBoundsRect.left;
     newContentFrameRect.origin.y = windowStructureBoundsRect.bottom - windowContentBoundsRect.bottom;
     newContentFrameRect.size.width = windowContentBoundsRect.right - windowContentBoundsRect.left;
     newContentFrameRect.size.height = windowContentBoundsRect.bottom - windowContentBoundsRect.top;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     oldContentFrameRect = [(NSView *)_contentView frame];
     if (!NSEqualRects(newContentFrameRect, oldContentFrameRect)) {
         [(NSView *)_contentView setFrame:newContentFrameRect];
         reconciliationWasNecessary = YES;
     }
+#pragma clang diagnostic pop
 
     // Done.
     return reconciliationWasNecessary;
@@ -580,6 +592,8 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 // This function is mostly cut-and-pasted from -[NSWindow _termWindowIfOwner].  M.P. Notice - 8/7/00
 - (void)_termWindowIfOwner
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [self _setWindowNumber:-1];
     _wFlags.isTerminating = YES;
     if (_windowRef && _windowRefIsOwned)
@@ -589,6 +603,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 //        [_borderView setShadowState:kFrameShadowNone];
 //    }
     _wFlags.isTerminating = NO;
+#pragma clang diagnostic pop
 }
 
 
@@ -608,7 +623,10 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     [super _windowMovedToRect:actualFrame];
 
     // Let Carbon know that the window has been moved, unless this method is being called "early."
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (_wFlags.visible) {
+#pragma clang diagnostic pop
         osStatus = _SyncWindowWithCGAfterMove(_windowRef);
         if (osStatus!=noErr) NSLog(@"A Carbon window's bounds couldn't be synchronized (%i).", (int)osStatus);
     }
@@ -735,10 +753,13 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     NSRect contentFrameRect;
     OSStatus osStatus;
     Rect windowContentBoundsRect;
-    
+
     // Precondition check.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     assert(_borderView);
     assert([_borderView isKindOfClass:[CarbonWindowFrame class]]);
+#pragma clang diagnostic pop
     assert(_windowRef);
 
     // Parameter check.
@@ -752,6 +773,8 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     contentFrameRect.size.width = windowContentBoundsRect.right - windowContentBoundsRect.left;
     contentFrameRect.size.height = windowContentBoundsRect.bottom - windowContentBoundsRect.top;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     // If the content view is still in some other view hierarchy, pry it free.
     [_contentView removeFromSuperview];
     assert(![_contentView superview]);
@@ -765,7 +788,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 
     // Tell the content view it's new place in the responder chain.
     [_contentView setNextResponder:self];
-
+#pragma clang diagnostic pop
 }
 
 
@@ -918,7 +941,10 @@ CleanUp:
     HIRect frame;
 
     HIViewGetFrame(root, &frame);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [_borderView setFrameSize:*(NSSize*)&frame.size];
+#pragma clang diagnostic pop
 }
 
 - (void)_handleContentBoundsChanged
@@ -935,10 +961,13 @@ CleanUp:
     // Set the content view's frame rect from the Carbon window's content region bounds.
     contentFrame.origin.y = rootBounds.size.height - CGRectGetMaxY(contentFrame);
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     oldContentFrameRect = [(NSView *)_contentView frame];
     if (!NSEqualRects(*(NSRect*)&contentFrame, oldContentFrameRect)) {
         [(NSView *)_contentView setFrame:*(NSRect*)&contentFrame];
     }
+#pragma clang diagnostic pop
 }
 
 - (OSStatus)_handleCarbonEvent:(EventRef)inEvent callRef:(EventHandlerCallRef)inCallRef
