@@ -54,9 +54,9 @@ bool WebDriverService::platformValidateCapability(const String& name, const RefP
     if (browserOptions->isNull())
         return true;
 
-    // If browser options are provided, binary is required.
+    RefPtr<InspectorValue> binaryValue;
     String binary;
-    if (!browserOptions->getString(ASCIILiteral("binary"), binary))
+    if (browserOptions->getValue(ASCIILiteral("binary"), binaryValue) && !binaryValue->asString(binary))
         return false;
 
     RefPtr<InspectorValue> useOverlayScrollbarsValue;
@@ -66,15 +66,17 @@ bool WebDriverService::platformValidateCapability(const String& name, const RefP
 
     RefPtr<InspectorValue> browserArgumentsValue;
     RefPtr<InspectorArray> browserArguments;
-    if (browserOptions->getValue(ASCIILiteral("args"), browserArgumentsValue) && !browserArgumentsValue->asArray(browserArguments))
-        return false;
-
-    unsigned browserArgumentsLength = browserArguments->length();
-    for (unsigned i = 0; i < browserArgumentsLength; ++i) {
-        RefPtr<InspectorValue> value = browserArguments->get(i);
-        String argument;
-        if (!value->asString(argument))
+    if (browserOptions->getValue(ASCIILiteral("args"), browserArgumentsValue)) {
+        if (!browserArgumentsValue->asArray(browserArguments))
             return false;
+
+        unsigned browserArgumentsLength = browserArguments->length();
+        for (unsigned i = 0; i < browserArgumentsLength; ++i) {
+            RefPtr<InspectorValue> value = browserArguments->get(i);
+            String argument;
+            if (!value->asString(argument))
+                return false;
+        }
     }
 
     return true;
@@ -87,23 +89,22 @@ std::optional<String> WebDriverService::platformMatchCapability(const String&, c
 
 void WebDriverService::platformParseCapabilities(const InspectorObject& matchedCapabilities, Capabilities& capabilities) const
 {
+    capabilities.browserBinary = String(LIBEXECDIR "/webkit2gtk-" WEBKITGTK_API_VERSION_STRING "/MiniBrowser");
+    capabilities.browserArguments = Vector<String> { ASCIILiteral("--automation") };
+    capabilities.useOverlayScrollbars = true;
+
     RefPtr<InspectorObject> browserOptions;
-    if (!matchedCapabilities.getObject(ASCIILiteral("webkitgtk:browserOptions"), browserOptions)) {
-        capabilities.browserBinary = String(LIBEXECDIR "/webkit2gtk-" WEBKITGTK_API_VERSION_STRING "/MiniBrowser");
-        capabilities.browserArguments = Vector<String> { ASCIILiteral("--automation") };
-        capabilities.useOverlayScrollbars = true;
+    if (!matchedCapabilities.getObject(ASCIILiteral("webkitgtk:browserOptions"), browserOptions))
         return;
-    }
 
     String browserBinary;
-    browserOptions->getString(ASCIILiteral("binary"), browserBinary);
-    ASSERT(!browserBinary.isNull());
-    capabilities.browserBinary = browserBinary;
+    if (browserOptions->getString(ASCIILiteral("binary"), browserBinary))
+        capabilities.browserBinary = browserBinary;
 
-    capabilities.browserArguments = Vector<String>();
     RefPtr<InspectorArray> browserArguments;
-    if (browserOptions->getArray(ASCIILiteral("args"), browserArguments)) {
+    if (browserOptions->getArray(ASCIILiteral("args"), browserArguments) && browserArguments->length()) {
         unsigned browserArgumentsLength = browserArguments->length();
+        capabilities.browserArguments = Vector<String>();
         capabilities.browserArguments->reserveInitialCapacity(browserArgumentsLength);
         for (unsigned i = 0; i < browserArgumentsLength; ++i) {
             RefPtr<InspectorValue> value = browserArguments->get(i);
