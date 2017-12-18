@@ -115,14 +115,13 @@ private:
     std::optional<String> platformMatchCapability(const String&, const RefPtr<JSON::Value>&) const;
     void parseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;
     void platformParseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;
-    RefPtr<Session> findSessionOrCompleteWithError(JSON::Object&, Function<void (CommandResult&&)>&);
+    bool findSessionOrCompleteWithError(JSON::Object&, Function<void (CommandResult&&)>&);
 
     void handleRequest(HTTPRequestHandler::Request&&, Function<void (HTTPRequestHandler::Response&&)>&& replyHandler) override;
     void sendResponse(Function<void (HTTPRequestHandler::Response&&)>&& replyHandler, CommandResult&&) const;
 
     HTTPServer m_server;
-    HashMap<String, RefPtr<Session>> m_sessions;
-    Session* m_activeSession { nullptr };
+    RefPtr<Session> m_session;
 };
 
 } // namespace WebDriver

@@ -1,3 +1,76 @@
+2017-12-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: end point nodes are only allowed to have one session
+        https://bugs.webkit.org/show_bug.cgi?id=180131
+
+        Reviewed by Brian Burg.
+
+        We are currently keeping a map of sessions, but our service is always and end point node, so only one session
+        can exist at a time. Make findSessionOrCompleteWithError() return a boolean instead, failing in case the sessionID
+        parameter is not found or it doesn't match the current session. Replace the session map and active session
+        pointer with a single session member and return SessionNotCreated error when new session command is received and
+        there's an active session.
+
+        8. Sessions
+        A remote end has an associated maximum active sessions (an integer) that defines the number of active sessions
+        that are supported. This may be “unlimited” for intermediary nodes, but must be exactly one for a remote end
+        that is an endpoint node.
+        https://w3c.github.io/webdriver/webdriver-spec.html#dfn-maximum-active-sessions
+
+        Fixes: imported/w3c/webdriver/tests/sessions/new_session/default_values.py::test_repeat_new_session
+
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::findSessionOrCompleteWithError):
+        (WebDriver::WebDriverService::newSession):
+        (WebDriver::WebDriverService::deleteSession):
+        (WebDriver::WebDriverService::status):
+        (WebDriver::WebDriverService::setTimeouts):
+        (WebDriver::WebDriverService::go):
+        (WebDriver::WebDriverService::getCurrentURL):
+        (WebDriver::WebDriverService::back):
+        (WebDriver::WebDriverService::forward):
+        (WebDriver::WebDriverService::refresh):
+        (WebDriver::WebDriverService::getTitle):
+        (WebDriver::WebDriverService::getWindowHandle):
+        (WebDriver::WebDriverService::setWindowRect):
+        (WebDriver::WebDriverService::closeWindow):
+        (WebDriver::WebDriverService::switchToWindow):
+        (WebDriver::WebDriverService::getWindowHandles):
+        (WebDriver::WebDriverService::switchToFrame):
+        (WebDriver::WebDriverService::switchToParentFrame):
+        (WebDriver::findStrategyAndSelectorOrCompleteWithError):
+        (WebDriver::WebDriverService::findElement):
+        (WebDriver::WebDriverService::findElements):
+        (WebDriver::WebDriverService::findElementFromElement):
+        (WebDriver::WebDriverService::findElementsFromElement):
+        (WebDriver::WebDriverService::getActiveElement):
+        (WebDriver::WebDriverService::isElementSelected):
+        (WebDriver::WebDriverService::getElementAttribute):
+        (WebDriver::WebDriverService::getElementText):
+        (WebDriver::WebDriverService::getElementTagName):
+        (WebDriver::WebDriverService::getElementRect):
+        (WebDriver::WebDriverService::isElementEnabled):
+        (WebDriver::WebDriverService::isElementDisplayed):
+        (WebDriver::WebDriverService::elementClick):
+        (WebDriver::WebDriverService::elementClear):
+        (WebDriver::WebDriverService::elementSendKeys):
+        (WebDriver::findScriptAndArgumentsOrCompleteWithError):
+        (WebDriver::WebDriverService::executeScript):
+        (WebDriver::WebDriverService::executeAsyncScript):
+        (WebDriver::WebDriverService::getAllCookies):
+        (WebDriver::WebDriverService::getNamedCookie):
+        (WebDriver::deserializeCookie):
+        (WebDriver::WebDriverService::addCookie):
+        (WebDriver::WebDriverService::deleteCookie):
+        (WebDriver::WebDriverService::deleteAllCookies):
+        (WebDriver::WebDriverService::dismissAlert):
+        (WebDriver::WebDriverService::acceptAlert):
+        (WebDriver::WebDriverService::getAlertText):
+        (WebDriver::WebDriverService::sendAlertText):
+        (WebDriver::WebDriverService::takeScreenshot):
+        (WebDriver::WebDriverService::takeElementScreenshot):
+        * WebDriverService.h:
+
 2017-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: locator strategy should be validated before trying to find elements

@@ -343,21 +343,20 @@ void WebDriverService::parseCapabilities(const JSON::Object& matchedCapabilities
     platformParseCapabilities(matchedCapabilities, capabilities);
 }
 
-RefPtr<Session> WebDriverService::findSessionOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler)
+bool WebDriverService::findSessionOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler)
 {
     String sessionID;
     if (!parameters.getString(ASCIILiteral("sessionId"), sessionID)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
-        return nullptr;
+        return false;
     }
 
-    auto session = m_sessions.get(sessionID);
-    if (!session) {
+    if (!m_session || m_session->id() != sessionID) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidSessionID));
-        return nullptr;
+        return false;
     }
 
-    return session;
+    return true;
 }
 
 RefPtr<JSON::Object> WebDriverService::validatedCapabilities(const JSON::Object& capabilities) const
@@ -576,6 +575,11 @@ void WebDriverService::newSession(RefPtr<JSON::Object>&& parameters, Function<vo
 {
     // §8.1 New Session.
     // https://www.w3.org/TR/webdriver/#new-session
+    if (m_session) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, String("Maximum number of active sessions")));
+        return;
+    }
+
     auto matchedCapabilities = processCapabilities(*parameters, completionHandler);
     if (!matchedCapabilities)
         return;
@@ -597,15 +601,14 @@ void WebDriverService::newSession(RefPtr<JSON::Object>&& parameters, Function<vo
                 return;
             }
 
-            m_activeSession = session.get();
-            m_sessions.add(session->id(), session);
+            m_session = WTFMove(session);
 
-            const auto& capabilities = session->capabilities();
+            const auto& capabilities = m_session->capabilities();
             if (capabilities.timeouts)
-                session->setTimeouts(capabilities.timeouts.value(), [](CommandResult&&) { });
+                m_session->setTimeouts(capabilities.timeouts.value(), [](CommandResult&&) { });
 
             RefPtr<JSON::Object> resultObject = JSON::Object::create();
-            resultObject->setString(ASCIILiteral("sessionId"), session->id());
+            resultObject->setString(ASCIILiteral("sessionId"), m_session->id());
             RefPtr<JSON::Object> capabilitiesObject = JSON::Object::create();
             if (capabilities.browserName)
                 capabilitiesObject->setString(ASCIILiteral("browserName"), capabilities.browserName.value());
@@ -667,15 +670,13 @@ void WebDriverService::deleteSession(RefPtr<JSON::Object>&& parameters, Function
         return;
     }
 
-    auto session = m_sessions.take(sessionID);
-    if (!session) {
+    if (!m_session || m_session->id() != sessionID) {
         completionHandler(CommandResult::success());
         return;
     }
 
+    auto session = std::exchange(m_session, nullptr);
     session->close([this, session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
-        if (m_activeSession == session.get())
-            m_activeSession = nullptr;
         completionHandler(WTFMove(result));
     });
 }
@@ -684,8 +685,7 @@ void WebDriverService::setTimeouts(RefPtr<JSON::Object>&& parameters, Function<v
 {
     // §8.5 Set Timeouts.
     // https://www.w3.org/TR/webdriver/#set-timeouts
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     auto timeouts = deserializeTimeouts(*parameters);
@@ -694,15 +694,14 @@ void WebDriverService::setTimeouts(RefPtr<JSON::Object>&& parameters, Function<v
         return;
     }
 
-    session->setTimeouts(timeouts.value(), WTFMove(completionHandler));
+    m_session->setTimeouts(timeouts.value(), WTFMove(completionHandler));
 }
 
 void WebDriverService::go(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §9.1 Go.
     // https://www.w3.org/TR/webdriver/#go
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     String url;
@@ -711,12 +710,12 @@ void WebDriverService::go(RefPtr<JSON::Object>&& parameters, Function<void (Comm
         return;
     }
 
-    session->waitForNavigationToComplete([session, url = WTFMove(url), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, url = WTFMove(url), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->go(url, WTFMove(completionHandler));
+        m_session->go(url, WTFMove(completionHandler));
     });
 }
 
@@ -724,16 +723,15 @@ void WebDriverService::getCurrentURL(RefPtr<JSON::Object>&& parameters, Function
 {
     // §9.2 Get Current URL.
     // https://www.w3.org/TR/webdriver/#get-current-url
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
-    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->getCurrentURL(WTFMove(completionHandler));
+        m_session->getCurrentURL(WTFMove(completionHandler));
     });
 }
 
@@ -741,16 +739,15 @@ void WebDriverService::back(RefPtr<JSON::Object>&& parameters, Function<void (Co
 {
     // §9.3 Back.
     // https://www.w3.org/TR/webdriver/#back
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
-    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->back(WTFMove(completionHandler));
+        m_session->back(WTFMove(completionHandler));
     });
 }
 
@@ -758,16 +755,15 @@ void WebDriverService::forward(RefPtr<JSON::Object>&& parameters, Function<void 
 {
     // §9.4 Forward.
     // https://www.w3.org/TR/webdriver/#forward
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
-    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->forward(WTFMove(completionHandler));
+        m_session->forward(WTFMove(completionHandler));
     });
 }
 
@@ -775,16 +771,15 @@ void WebDriverService::refresh(RefPtr<JSON::Object>&& parameters, Function<void 
 {
     // §9.5 Refresh.
     // https://www.w3.org/TR/webdriver/#refresh
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
-    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->refresh(WTFMove(completionHandler));
+        m_session->refresh(WTFMove(completionHandler));
     });
 }
 
@@ -792,16 +787,15 @@ void WebDriverService::getTitle(RefPtr<JSON::Object>&& parameters, Function<void
 {
     // §9.6 Get Title.
     // https://www.w3.org/TR/webdriver/#get-title
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
-    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->getTitle(WTFMove(completionHandler));
+        m_session->getTitle(WTFMove(completionHandler));
     });
 }
 
@@ -809,16 +803,16 @@ void WebDriverService::getWindowHandle(RefPtr<JSON::Object>&& parameters, Functi
 {
     // §10.1 Get Window Handle.
     // https://www.w3.org/TR/webdriver/#get-window-handle
-    if (auto session = findSessionOrCompleteWithError(*parameters, completionHandler))
-        session->getWindowHandle(WTFMove(completionHandler));
+    if (findSessionOrCompleteWithError(*parameters, completionHandler))
+        m_session->getWindowHandle(WTFMove(completionHandler));
 }
 
 void WebDriverService::getWindowRect(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §10.7.1 Get Window Rect.
     // https://w3c.github.io/webdriver/webdriver-spec.html#get-window-rect
-    if (auto session = findSessionOrCompleteWithError(*parameters, completionHandler))
-        session->getWindowRect(WTFMove(completionHandler));
+    if (findSessionOrCompleteWithError(*parameters, completionHandler))
+        m_session->getWindowRect(WTFMove(completionHandler));
 }
 
 static std::optional<double> valueAsNumberInRange(const JSON::Value& value, double minAllowed = 0, double maxAllowed = INT_MAX)
@@ -881,30 +875,27 @@ void WebDriverService::setWindowRect(RefPtr<JSON::Object>&& parameters, Function
     // FIXME: If the remote end does not support the Set Window Rect command for the current
     // top-level browsing context for any reason, return error with error code unsupported operation.
 
-    if (auto session = findSessionOrCompleteWithError(*parameters, completionHandler))
-        session->setWindowRect(x, y, width, height, WTFMove(completionHandler));
+    if (findSessionOrCompleteWithError(*parameters, completionHandler))
+        m_session->setWindowRect(x, y, width, height, WTFMove(completionHandler));
 }
 
 void WebDriverService::closeWindow(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §10.2 Close Window.
     // https://www.w3.org/TR/webdriver/#close-window
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
-    session->closeWindow([this, session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->closeWindow([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
 
         RefPtr<JSON::Array> handles;
-        if (result.result()->asArray(handles) && !handles->length()) {
-            m_sessions.remove(session->id());
-            if (m_activeSession == session.get())
-                m_activeSession = nullptr;
-        }
+        if (result.result()->asArray(handles) && !handles->length())
+            m_session = nullptr;
+
         completionHandler(WTFMove(result));
     });
 }
@@ -913,8 +904,7 @@ void WebDriverService::switchToWindow(RefPtr<JSON::Object>&& parameters, Functio
 {
     // §10.3 Switch To Window.
     // https://www.w3.org/TR/webdriver/#switch-to-window
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     String handle;
@@ -923,23 +913,22 @@ void WebDriverService::switchToWindow(RefPtr<JSON::Object>&& parameters, Functio
         return;
     }
 
-    session->switchToWindow(handle, WTFMove(completionHandler));
+    m_session->switchToWindow(handle, WTFMove(completionHandler));
 }
 
 void WebDriverService::getWindowHandles(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §10.4 Get Window Handles.
     // https://www.w3.org/TR/webdriver/#get-window-handles
-    if (auto session = findSessionOrCompleteWithError(*parameters, completionHandler))
-        session->getWindowHandles(WTFMove(completionHandler));
+    if (findSessionOrCompleteWithError(*parameters, completionHandler))
+        m_session->getWindowHandles(WTFMove(completionHandler));
 }
 
 void WebDriverService::switchToFrame(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §10.5 Switch To Frame.
     // https://www.w3.org/TR/webdriver/#switch-to-frame
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     RefPtr<JSON::Value> frameID;
@@ -948,12 +937,12 @@ void WebDriverService::switchToFrame(RefPtr<JSON::Object>&& parameters, Function
         return;
     }
 
-    session->waitForNavigationToComplete([session, frameID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, frameID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->switchToFrame(WTFMove(frameID), WTFMove(completionHandler));
+        m_session->switchToFrame(WTFMove(frameID), WTFMove(completionHandler));
     });
 }
 
@@ -961,16 +950,15 @@ void WebDriverService::switchToParentFrame(RefPtr<JSON::Object>&& parameters, Fu
 {
     // §10.6 Switch To Parent Frame.
     // https://www.w3.org/TR/webdriver/#switch-to-parent-frame
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
-    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->switchToParentFrame(WTFMove(completionHandler));
+        m_session->switchToParentFrame(WTFMove(completionHandler));
     });
 }
 
@@ -1012,20 +1000,19 @@ void WebDriverService::findElement(RefPtr<JSON::Object>&& parameters, Function<v
 {
     // §12.2 Find Element.
     // https://www.w3.org/TR/webdriver/#find-element
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     String strategy, selector;
     if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, strategy, selector))
         return;
 
-    session->waitForNavigationToComplete([session, strategy = WTFMove(strategy), selector = WTFMove(selector), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, strategy = WTFMove(strategy), selector = WTFMove(selector), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->findElements(strategy, selector, Session::FindElementsMode::Single, emptyString(), WTFMove(completionHandler));
+        m_session->findElements(strategy, selector, Session::FindElementsMode::Single, emptyString(), WTFMove(completionHandler));
     });
 }
 
@@ -1033,20 +1020,19 @@ void WebDriverService::findElements(RefPtr<JSON::Object>&& parameters, Function<
 {
     // §12.3 Find Elements.
     // https://www.w3.org/TR/webdriver/#find-elements
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     String strategy, selector;
     if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, strategy, selector))
         return;
 
-    session->waitForNavigationToComplete([session, strategy = WTFMove(strategy), selector = WTFMove(selector), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, strategy = WTFMove(strategy), selector = WTFMove(selector), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->findElements(strategy, selector, Session::FindElementsMode::Multiple, emptyString(), WTFMove(completionHandler));
+        m_session->findElements(strategy, selector, Session::FindElementsMode::Multiple, emptyString(), WTFMove(completionHandler));
     });
 }
 
@@ -1054,8 +1040,7 @@ void WebDriverService::findElementFromElement(RefPtr<JSON::Object>&& parameters,
 {
     // §12.4 Find Element From Element.
     // https://www.w3.org/TR/webdriver/#find-element-from-element
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
@@ -1066,15 +1051,14 @@ void WebDriverService::findElementFromElement(RefPtr<JSON::Object>&& parameters,
     if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, strategy, selector))
         return;
 
-    session->findElements(strategy, selector, Session::FindElementsMode::Single, elementID.value(), WTFMove(completionHandler));
+    m_session->findElements(strategy, selector, Session::FindElementsMode::Single, elementID.value(), WTFMove(completionHandler));
 }
 
 void WebDriverService::findElementsFromElement(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §12.5 Find Elements From Element.
     // https://www.w3.org/TR/webdriver/#find-elements-from-element
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
@@ -1085,23 +1069,22 @@ void WebDriverService::findElementsFromElement(RefPtr<JSON::Object>&& parameters
     if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, strategy, selector))
         return;
 
-    session->findElements(strategy, selector, Session::FindElementsMode::Multiple, elementID.value(), WTFMove(completionHandler));
+    m_session->findElements(strategy, selector, Session::FindElementsMode::Multiple, elementID.value(), WTFMove(completionHandler));
 }
 
 void WebDriverService::getActiveElement(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §12.6 Get Active Element.
     // https://w3c.github.io/webdriver/webdriver-spec.html#get-active-element
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
-    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->getActiveElement(WTFMove(completionHandler));
+        m_session->getActiveElement(WTFMove(completionHandler));
     });
 }
 
@@ -1109,23 +1092,21 @@ void WebDriverService::isElementSelected(RefPtr<JSON::Object>&& parameters, Func
 {
     // §13.1 Is Element Selected.
     // https://www.w3.org/TR/webdriver/#is-element-selected
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
     if (!elementID)
         return;
 
-    session->isElementSelected(elementID.value(), WTFMove(completionHandler));
+    m_session->isElementSelected(elementID.value(), WTFMove(completionHandler));
 }
 
 void WebDriverService::getElementAttribute(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §13.2 Get Element Attribute.
     // https://www.w3.org/TR/webdriver/#get-element-attribute
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
@@ -1138,120 +1119,112 @@ void WebDriverService::getElementAttribute(RefPtr<JSON::Object>&& parameters, Fu
         return;
     }
 
-    session->getElementAttribute(elementID.value(), attribute, WTFMove(completionHandler));
+    m_session->getElementAttribute(elementID.value(), attribute, WTFMove(completionHandler));
 }
 
 void WebDriverService::getElementText(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §13.5 Get Element Text.
     // https://www.w3.org/TR/webdriver/#get-element-text
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
     if (!elementID)
         return;
 
-    session->getElementText(elementID.value(), WTFMove(completionHandler));
+    m_session->getElementText(elementID.value(), WTFMove(completionHandler));
 }
 
 void WebDriverService::getElementTagName(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §13.6 Get Element Tag Name.
     // https://www.w3.org/TR/webdriver/#get-element-tag-name
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
     if (!elementID)
         return;
 
-    session->getElementTagName(elementID.value(), WTFMove(completionHandler));
+    m_session->getElementTagName(elementID.value(), WTFMove(completionHandler));
 }
 
 void WebDriverService::getElementRect(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §13.7 Get Element Rect.
     // https://www.w3.org/TR/webdriver/#get-element-rect
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
     if (!elementID)
         return;
 
-    session->getElementRect(elementID.value(), WTFMove(completionHandler));
+    m_session->getElementRect(elementID.value(), WTFMove(completionHandler));
 }
 
 void WebDriverService::isElementEnabled(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §13.8 Is Element Enabled.
     // https://www.w3.org/TR/webdriver/#is-element-enabled
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
     if (!elementID)
         return;
 
-    session->isElementEnabled(elementID.value(), WTFMove(completionHandler));
+    m_session->isElementEnabled(elementID.value(), WTFMove(completionHandler));
 }
 
 void WebDriverService::isElementDisplayed(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §C. Element Displayedness.
     // https://www.w3.org/TR/webdriver/#element-displayedness
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
     if (!elementID)
         return;
 
-    session->isElementDisplayed(elementID.value(), WTFMove(completionHandler));
+    m_session->isElementDisplayed(elementID.value(), WTFMove(completionHandler));
 }
 
 void WebDriverService::elementClick(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §14.1 Element Click.
     // https://www.w3.org/TR/webdriver/#element-click
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
     if (!elementID)
         return;
 
-    session->elementClick(elementID.value(), WTFMove(completionHandler));
+    m_session->elementClick(elementID.value(), WTFMove(completionHandler));
 }
 
 void WebDriverService::elementClear(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §14.2 Element Clear.
     // https://www.w3.org/TR/webdriver/#element-clear
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
     if (!elementID)
         return;
 
-    session->elementClear(elementID.value(), WTFMove(completionHandler));
+    m_session->elementClear(elementID.value(), WTFMove(completionHandler));
 }
 
 void WebDriverService::elementSendKeys(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §14.3 Element Send Keys.
     // https://www.w3.org/TR/webdriver/#element-send-keys
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
@@ -1283,7 +1256,7 @@ void WebDriverService::elementSendKeys(RefPtr<JSON::Object>&& parameters, Functi
         return;
     }
 
-    session->elementSendKeys(elementID.value(), WTFMove(value), WTFMove(completionHandler));
+    m_session->elementSendKeys(elementID.value(), WTFMove(value), WTFMove(completionHandler));
 }
 
 static bool findScriptAndArgumentsOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler, String& script, RefPtr<JSON::Array>& arguments)
@@ -1303,8 +1276,7 @@ void WebDriverService::executeScript(RefPtr<JSON::Object>&& parameters, Function
 {
     // §15.2.1 Execute Script.
     // https://www.w3.org/TR/webdriver/#execute-script
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     String script;
@@ -1312,12 +1284,12 @@ void WebDriverService::executeScript(RefPtr<JSON::Object>&& parameters, Function
     if (!findScriptAndArgumentsOrCompleteWithError(*parameters, completionHandler, script, arguments))
         return;
 
-    session->waitForNavigationToComplete([session, script = WTFMove(script), arguments = WTFMove(arguments), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, script = WTFMove(script), arguments = WTFMove(arguments), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->executeScript(script, WTFMove(arguments), Session::ExecuteScriptMode::Sync, WTFMove(completionHandler));
+        m_session->executeScript(script, WTFMove(arguments), Session::ExecuteScriptMode::Sync, WTFMove(completionHandler));
     });
 }
 
@@ -1325,8 +1297,7 @@ void WebDriverService::executeAsyncScript(RefPtr<JSON::Object>&& parameters, Fun
 {
     // §15.2.2 Execute Async Script.
     // https://www.w3.org/TR/webdriver/#execute-async-script
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     String script;
@@ -1334,12 +1305,12 @@ void WebDriverService::executeAsyncScript(RefPtr<JSON::Object>&& parameters, Fun
     if (!findScriptAndArgumentsOrCompleteWithError(*parameters, completionHandler, script, arguments))
         return;
 
-    session->waitForNavigationToComplete([session, script = WTFMove(script), arguments = WTFMove(arguments), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, script = WTFMove(script), arguments = WTFMove(arguments), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->executeScript(script, WTFMove(arguments), Session::ExecuteScriptMode::Async, WTFMove(completionHandler));
+        m_session->executeScript(script, WTFMove(arguments), Session::ExecuteScriptMode::Async, WTFMove(completionHandler));
     });
 }
 
@@ -1347,16 +1318,15 @@ void WebDriverService::getAllCookies(RefPtr<JSON::Object>&& parameters, Function
 {
     // §16.1 Get All Cookies.
     // https://w3c.github.io/webdriver/webdriver-spec.html#get-all-cookies
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
-    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->getAllCookies(WTFMove(completionHandler));
+        m_session->getAllCookies(WTFMove(completionHandler));
     });
 }
 
@@ -1364,8 +1334,7 @@ void WebDriverService::getNamedCookie(RefPtr<JSON::Object>&& parameters, Functio
 {
     // §16.2 Get Named Cookie.
     // https://w3c.github.io/webdriver/webdriver-spec.html#get-named-cookie
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     String name;
@@ -1374,12 +1343,12 @@ void WebDriverService::getNamedCookie(RefPtr<JSON::Object>&& parameters, Functio
         return;
     }
 
-    session->waitForNavigationToComplete([session, name = WTFMove(name), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, name = WTFMove(name), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->getNamedCookie(name, WTFMove(completionHandler));
+        m_session->getNamedCookie(name, WTFMove(completionHandler));
     });
 }
 
@@ -1431,8 +1400,7 @@ void WebDriverService::addCookie(RefPtr<JSON::Object>&& parameters, Function<voi
 {
     // §16.3 Add Cookie.
     // https://w3c.github.io/webdriver/webdriver-spec.html#add-cookie
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     RefPtr<JSON::Object> cookieObject;
@@ -1447,12 +1415,12 @@ void WebDriverService::addCookie(RefPtr<JSON::Object>&& parameters, Function<voi
         return;
     }
 
-    session->waitForNavigationToComplete([session, cookie = WTFMove(cookie), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, cookie = WTFMove(cookie), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->addCookie(cookie.value(), WTFMove(completionHandler));
+        m_session->addCookie(cookie.value(), WTFMove(completionHandler));
     });
 }
 
@@ -1460,8 +1428,7 @@ void WebDriverService::deleteCookie(RefPtr<JSON::Object>&& parameters, Function<
 {
     // §16.4 Delete Cookie.
     // https://w3c.github.io/webdriver/webdriver-spec.html#delete-cookie
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     String name;
@@ -1470,12 +1437,12 @@ void WebDriverService::deleteCookie(RefPtr<JSON::Object>&& parameters, Function<
         return;
     }
 
-    session->waitForNavigationToComplete([session, name = WTFMove(name), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, name = WTFMove(name), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->deleteCookie(name, WTFMove(completionHandler));
+        m_session->deleteCookie(name, WTFMove(completionHandler));
     });
 }
 
@@ -1483,16 +1450,15 @@ void WebDriverService::deleteAllCookies(RefPtr<JSON::Object>&& parameters, Funct
 {
     // §16.5 Delete All Cookies.
     // https://w3c.github.io/webdriver/webdriver-spec.html#delete-all-cookies
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
-    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->deleteAllCookies(WTFMove(completionHandler));
+        m_session->deleteAllCookies(WTFMove(completionHandler));
     });
 }
 
@@ -1500,16 +1466,15 @@ void WebDriverService::dismissAlert(RefPtr<JSON::Object>&& parameters, Function<
 {
     // §18.1 Dismiss Alert.
     // https://w3c.github.io/webdriver/webdriver-spec.html#dismiss-alert
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
-    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->dismissAlert(WTFMove(completionHandler));
+        m_session->dismissAlert(WTFMove(completionHandler));
     });
 }
 
@@ -1517,16 +1482,15 @@ void WebDriverService::acceptAlert(RefPtr<JSON::Object>&& parameters, Function<v
 {
     // §18.2 Accept Alert.
     // https://w3c.github.io/webdriver/webdriver-spec.html#accept-alert
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
-    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->acceptAlert(WTFMove(completionHandler));
+        m_session->acceptAlert(WTFMove(completionHandler));
     });
 }
 
@@ -1534,16 +1498,15 @@ void WebDriverService::getAlertText(RefPtr<JSON::Object>&& parameters, Function<
 {
     // §18.3 Get Alert Text.
     // https://w3c.github.io/webdriver/webdriver-spec.html#get-alert-text
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
-    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->getAlertText(WTFMove(completionHandler));
+        m_session->getAlertText(WTFMove(completionHandler));
     });
 }
 
@@ -1551,8 +1514,7 @@ void WebDriverService::sendAlertText(RefPtr<JSON::Object>&& parameters, Function
 {
     // §18.4 Send Alert Text.
     // https://w3c.github.io/webdriver/webdriver-spec.html#send-alert-text
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     String text;
@@ -1561,12 +1523,12 @@ void WebDriverService::sendAlertText(RefPtr<JSON::Object>&& parameters, Function
         return;
     }
 
-    session->waitForNavigationToComplete([session, text = WTFMove(text), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, text = WTFMove(text), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->sendAlertText(text, WTFMove(completionHandler));
+        m_session->sendAlertText(text, WTFMove(completionHandler));
     });
 }
 
@@ -1574,16 +1536,15 @@ void WebDriverService::takeScreenshot(RefPtr<JSON::Object>&& parameters, Functio
 {
     // §19.1 Take Screenshot.
     // https://w3c.github.io/webdriver/webdriver-spec.html#take-screenshot
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
-    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->takeScreenshot(std::nullopt, std::nullopt, WTFMove(completionHandler));
+        m_session->takeScreenshot(std::nullopt, std::nullopt, WTFMove(completionHandler));
     });
 }
 
@@ -1591,8 +1552,7 @@ void WebDriverService::takeElementScreenshot(RefPtr<JSON::Object>&& parameters, 
 {
     // §19.2 Take Element Screenshot.
     // https://w3c.github.io/webdriver/webdriver-spec.html#take-element-screenshot
-    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
-    if (!session)
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
     auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
@@ -1602,12 +1562,12 @@ void WebDriverService::takeElementScreenshot(RefPtr<JSON::Object>&& parameters, 
     bool scrollIntoView = true;
     parameters->getBoolean(ASCIILiteral("scroll"), scrollIntoView);
 
-    session->waitForNavigationToComplete([session, elementID, scrollIntoView, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    m_session->waitForNavigationToComplete([this, elementID, scrollIntoView, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
         }
-        session->takeScreenshot(elementID.value(), scrollIntoView, WTFMove(completionHandler));
+        m_session->takeScreenshot(elementID.value(), scrollIntoView, WTFMove(completionHandler));
     });
 }
 
