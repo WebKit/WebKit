@@ -1,3 +1,13 @@
+2017-12-18  Alexey Proskuryakov  <ap@apple.com>
+
+        BitVector::OutOfLineBits is always reported as a leak
+        https://bugs.webkit.org/show_bug.cgi?id=121662
+
+        Adding one more signature to ignore list.
+
+        * Scripts/webkitpy/port/leakdetector.py:
+        (LeakDetector._callstacks_to_exclude_from_leaks):
+
 2017-12-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add WebKitWebView::web-process-terminated signal and deprecate web-process-crashed
