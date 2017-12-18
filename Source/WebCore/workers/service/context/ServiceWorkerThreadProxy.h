@@ -41,6 +41,8 @@
 namespace WebCore {
 
 class CacheStorageProvider;
+class FetchLoader;
+class FetchLoaderClient;
 class PageConfiguration;
 class ServiceWorkerInspectorProxy;
 struct ServiceWorkerContextData;
@@ -58,6 +60,8 @@ public:
 
     bool isTerminatingOrTerminated() const { return m_isTerminatingOrTerminated; }
     void setTerminatingOrTerminated(bool terminating) { m_isTerminatingOrTerminated = terminating; }
+
+    WEBCORE_EXPORT std::unique_ptr<FetchLoader> createBlobLoader(FetchLoaderClient&, const URL&);
 
 private:
     WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, const ServiceWorkerContextData&, PAL::SessionID, String&& userAgent, CacheStorageProvider&);

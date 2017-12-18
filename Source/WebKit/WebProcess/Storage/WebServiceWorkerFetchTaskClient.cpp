@@ -33,6 +33,7 @@
 #include "StorageProcessMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/ResourceResponse.h>
+#include <WebCore/SWContextManager.h>
 #include <wtf/RunLoop.h>
 
 using namespace WebCore;
@@ -45,9 +46,10 @@ WebServiceWorkerFetchTaskClient::~WebServiceWorkerFetchTaskClient()
         RunLoop::main().dispatch([connection = WTFMove(m_connection)] { });
 }
 
-WebServiceWorkerFetchTaskClient::WebServiceWorkerFetchTaskClient(Ref<IPC::Connection>&& connection, WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchTaskIdentifier)
+WebServiceWorkerFetchTaskClient::WebServiceWorkerFetchTaskClient(Ref<IPC::Connection>&& connection, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchTaskIdentifier)
     : m_connection(WTFMove(connection))
     , m_serverConnectionIdentifier(serverConnectionIdentifier)
+    , m_serviceWorkerIdentifier(serviceWorkerIdentifier)
     , m_fetchTaskIdentifier(fetchTaskIdentifier)
 {
 }
@@ -67,12 +69,52 @@ void WebServiceWorkerFetchTaskClient::didReceiveData(Ref<SharedBuffer>&& buffer)
     m_connection->send(Messages::StorageProcess::DidReceiveFetchData { m_serverConnectionIdentifier, m_fetchTaskIdentifier, dataReference, static_cast<int64_t>(buffer->size()) }, 0);
 }
 
-void WebServiceWorkerFetchTaskClient::didReceiveFormData(Ref<FormData>&& formData)
+void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish(Ref<FormData>&& formData)
 {
     if (!m_connection)
         return;
 
-    m_connection->send(Messages::StorageProcess::DidReceiveFetchFormData { m_serverConnectionIdentifier, m_fetchTaskIdentifier, IPC::FormDataReference { WTFMove(formData) } }, 0);
+    // FIXME: We should send this form data to the other process and consume it there.
+    // For now and for the case of blobs, we read it there and send the data through IPC.
+    URL blobURL = formData->asBlobURL();
+    if (blobURL.isNull()) {
+        m_connection->send(Messages::StorageProcess::DidReceiveFetchFormData { m_serverConnectionIdentifier, m_fetchTaskIdentifier, IPC::FormDataReference { WTFMove(formData) } }, 0);
+        return;
+    }
+
+    callOnMainThread([this, protectedThis = makeRef(*this), blobURL = blobURL.isolatedCopy()] () {
+        auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(m_serviceWorkerIdentifier);
+        if (!serviceWorkerThreadProxy) {
+            didFail();
+            return;
+        }
+
+        m_blobLoader.emplace(*this);
+        auto loader = serviceWorkerThreadProxy->createBlobLoader(*m_blobLoader, blobURL);
+        if (!loader) {
+            m_blobLoader = std::nullopt;
+            didFail();
+            return;
+        }
+
+        m_blobLoader->loader = WTFMove(loader);
+    });
+}
+
+void WebServiceWorkerFetchTaskClient::didReceiveBlobChunk(const char* data, size_t size)
+{
+    if (!m_connection)
+        return;
+
+    IPC::DataReference dataReference { reinterpret_cast<const uint8_t*>(data), size };
+    m_connection->send(Messages::StorageProcess::DidReceiveFetchData { m_serverConnectionIdentifier, m_fetchTaskIdentifier, dataReference, static_cast<int64_t>(size) }, 0);
+}
+
+void WebServiceWorkerFetchTaskClient::didFinishBlobLoading()
+{
+    didFinish();
+
+    m_blobLoader = std::nullopt;
 }
 
 void WebServiceWorkerFetchTaskClient::didFail()
@@ -87,6 +129,7 @@ void WebServiceWorkerFetchTaskClient::didFinish()
 {
     if (!m_connection)
         return;
+
     m_connection->send(Messages::StorageProcess::DidFinishFetch { m_serverConnectionIdentifier, m_fetchTaskIdentifier }, 0);
     m_connection = nullptr;
 }

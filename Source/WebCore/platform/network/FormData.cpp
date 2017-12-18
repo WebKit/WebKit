@@ -440,4 +440,13 @@ RefPtr<SharedBuffer> FormData::asSharedBuffer() const
     return SharedBuffer::create(flatten());
 }
 
+URL FormData::asBlobURL() const
+{
+    if (m_elements.size() != 1)
+        return { };
+
+    ASSERT(m_elements.first().m_type == FormDataElement::Type::EncodedBlob || m_elements.first().m_url.isNull());
+    return m_elements.first().m_url;
+}
+
 } // namespace WebCore

@@ -1,4 +1,4 @@
 
 
-FAIL Service Worker responds to fetch event with the referrer policy assert_unreached: unexpected rejection: assert_equals: Service Worker should respond to fetch with the default referrer policy expected "ReferrerPolicy: no-referrer-when-downgrade" but got "" Reached unreachable code
+FAIL Service Worker responds to fetch event with the referrer policy assert_unreached: unexpected rejection: assert_equals: Service Worker should respond to fetch with the default referrer policy expected "ReferrerPolicy: no-referrer-when-downgrade" but got "ReferrerPolicy: " Reached unreachable code
 

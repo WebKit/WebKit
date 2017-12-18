@@ -1,3 +1,23 @@
+2017-12-18  Youenn Fablet  <youenn@apple.com>
+
+        Add support for response blob given to fetch events
+        https://bugs.webkit.org/show_bug.cgi?id=180894
+
+        Reviewed by Darin Adler.
+
+        In case of blob data, read it from Service Worker process and send it to WebProcess.
+        At some point, web process should be able to read it directly from NetworkProcess.
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::startFetch):
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        (WebKit::WebServiceWorkerFetchTaskClient::WebServiceWorkerFetchTaskClient):
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveFormData):
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveBlobChunk):
+        (WebKit::WebServiceWorkerFetchTaskClient::didFinishBlobLoading):
+        (WebKit::WebServiceWorkerFetchTaskClient::didFinish):
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.h:
+
 2017-12-18  Daniel Bates  <dabates@apple.com>
 
         Add SPI to query for the current and last auto fill button type and pass user data object to _webView:focusShouldStartInputSession:

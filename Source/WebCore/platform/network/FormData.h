@@ -257,6 +257,8 @@ public:
 
     uint64_t lengthInBytes() const;
 
+    WEBCORE_EXPORT URL asBlobURL() const;
+
 private:
     FormData();
     FormData(const FormData&);

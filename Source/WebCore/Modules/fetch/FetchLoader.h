@@ -31,6 +31,7 @@
 #include "FetchBodyConsumer.h"
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
+#include "URL.h"
 
 namespace WebCore {
 
@@ -48,6 +49,7 @@ public:
 
     void start(ScriptExecutionContext&, const FetchRequest&);
     void start(ScriptExecutionContext&, const Blob&);
+    void startLoadingBlobURL(ScriptExecutionContext&, const URL& blobURL);
     void stop();
 
     bool isStarted() const { return m_isStarted; }

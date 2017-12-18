@@ -1,3 +1,16 @@
+2017-12-18  Youenn Fablet  <youenn@apple.com>
+
+        Add support for response blob given to fetch events
+        https://bugs.webkit.org/show_bug.cgi?id=180894
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/service-workers/service-worker/fetch-event-after-navigation-within-page.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-referrer-policy.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-header-visibility.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-outscope.https-expected.txt:
+
 2017-12-17  Chris Dumez  <cdumez@apple.com>
 
         Strip fragment identifier from ServiceWorker's scriptURL

@@ -1,4 +1,4 @@
 
 
-FAIL Visibility of defaulted headers during interception assert_unreached: unexpected rejection: withUA FAIL - expected "custom_ua", got "" Reached unreachable code
+FAIL Visibility of defaulted headers during interception assert_unreached: unexpected rejection: withUA FAIL - expected "custom_ua", got "NO_UA" Reached unreachable code
 

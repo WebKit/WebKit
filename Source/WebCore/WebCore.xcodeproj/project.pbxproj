@@ -1001,6 +1001,7 @@
 		4157EBFB1E3AB67F00AC9FE9 /* MockLibWebRTCPeerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 4157EBF81E3AB06800AC9FE9 /* MockLibWebRTCPeerConnection.h */; };
 		415CDAF51E6B8F8B004F11EE /* CanvasCaptureMediaStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 41C7E1061E6A54360027B4DE /* CanvasCaptureMediaStreamTrack.h */; };
 		41614A791DA64241004AD06F /* HTTPHeaderValues.h in Headers */ = {isa = PBXBuildFile; fileRef = 41614A771DA64236004AD06F /* HTTPHeaderValues.h */; };
+		4161E2D51FE48DC500EC2E96 /* FetchLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4147E2B51C89912600A7E715 /* FetchLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4162A451101145AE00DFF3ED /* DedicatedWorkerGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 4162A44E101145AE00DFF3ED /* DedicatedWorkerGlobalScope.h */; };
 		4162A4581011464700DFF3ED /* JSDedicatedWorkerGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 4162A4561011464700DFF3ED /* JSDedicatedWorkerGlobalScope.h */; };
 		416E29A6102FA962007FC14E /* WorkerReportingProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 416E29A5102FA962007FC14E /* WorkerReportingProxy.h */; };
@@ -27387,6 +27388,7 @@
 				7A54858014E02D51006AE05A /* InspectorHistory.h in Headers */,
 				A5B81CAE1FAA44620037D1E6 /* InspectorIndexedDBAgent.h in Headers */,
 				20D629271253690B00081543 /* InspectorInstrumentation.h in Headers */,
+				4161E2D51FE48DC500EC2E96 /* FetchLoader.h in Headers */,
 				A5840E1D187B74D500843B10 /* InspectorInstrumentationCookie.h in Headers */,
 				A5B81CAF1FAA44620037D1E6 /* InspectorLayerTreeAgent.h in Headers */,
 				A5B81CB01FAA44620037D1E6 /* InspectorMemoryAgent.h in Headers */,

@@ -4,5 +4,5 @@ CONSOLE MESSAGE: line 42: The page at https://localhost:9443/service-workers/ser
 
 
 
-FAIL Verify Mixed content of fetch() in a Service Worker assert_equals: expected "finish" but got "FAIL(5)finish"
+PASS Verify Mixed content of fetch() in a Service Worker 
 

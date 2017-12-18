@@ -109,6 +109,15 @@ Ref<CacheStorageConnection> ServiceWorkerThreadProxy::createCacheStorageConnecti
     return *m_cacheStorageConnection;
 }
 
+std::unique_ptr<FetchLoader> ServiceWorkerThreadProxy::createBlobLoader(FetchLoaderClient& client, const URL& blobURL)
+{
+    auto loader = std::make_unique<FetchLoader>(client, nullptr);
+    loader->startLoadingBlobURL(m_document, blobURL);
+    if (!loader->isStarted())
+        return nullptr;
+    return loader;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

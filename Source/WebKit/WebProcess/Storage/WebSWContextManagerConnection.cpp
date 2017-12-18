@@ -163,7 +163,7 @@ void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serv
         return;
     }
 
-    auto client = WebServiceWorkerFetchTaskClient::create(m_connectionToStorageProcess.copyRef(), serverConnectionIdentifier, fetchIdentifier);
+    auto client = WebServiceWorkerFetchTaskClient::create(m_connectionToStorageProcess.copyRef(), serviceWorkerIdentifier, serverConnectionIdentifier, fetchIdentifier);
     std::optional<ServiceWorkerClientIdentifier> clientId;
     if (options.clientIdentifier)
         clientId = ServiceWorkerClientIdentifier { serverConnectionIdentifier, options.clientIdentifier.value() };

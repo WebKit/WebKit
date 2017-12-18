@@ -82,13 +82,13 @@ static void processResponse(Ref<Client>&& client, FetchResponse* response)
 
     auto body = response->consumeBody();
     WTF::switchOn(body, [&] (Ref<FormData>& formData) {
-        client->didReceiveFormData(WTFMove(formData));
+        client->didReceiveFormDataAndFinish(WTFMove(formData));
     }, [&] (Ref<SharedBuffer>& buffer) {
         client->didReceiveData(WTFMove(buffer));
-    }, [] (std::nullptr_t&) {
+        client->didFinish();
+    }, [&] (std::nullptr_t&) {
+        client->didFinish();
     });
-
-    client->didFinish();
 }
 
 Ref<FetchEvent> dispatchFetchEvent(Ref<Client>&& client, WorkerGlobalScope& globalScope, std::optional<ServiceWorkerClientIdentifier> clientId, ResourceRequest&& request, FetchOptions&& options)
