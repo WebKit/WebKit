@@ -242,6 +242,12 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     if (parameters.shouldUseTestingNetworkSession)
         NetworkStorageSession::switchToNewTestingSession();
 
+#if USE(NETWORK_SESSION)
+    // Ensure default session is created.
+    NetworkSession::defaultSession();
+#endif
+
+
     for (auto& supplement : m_supplements.values())
         supplement->initialize(parameters);
 }

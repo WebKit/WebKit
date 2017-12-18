@@ -339,6 +339,7 @@ static void webkitWebContextConstructed(GObject* object)
 
     if (!priv->websiteDataManager)
         priv->websiteDataManager = adoptGRef(webkitWebsiteDataManagerCreate(websiteDataStoreConfigurationForWebProcessPoolConfiguration(configuration)));
+    priv->processPool->setPrimaryDataStore(webkitWebsiteDataManagerGetDataStore(priv->websiteDataManager.get()));
 
     webkitWebsiteDataManagerAddProcessPool(priv->websiteDataManager.get(), *priv->processPool);
 
