@@ -1,3 +1,14 @@
+2017-12-18  Chris Dumez  <cdumez@apple.com>
+
+        ExtendableMessageEvent.data should return the value it was initialized to
+        https://bugs.webkit.org/show_bug.cgi?id=180868
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline WPT test now that one more subtest is passing.
+
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event-constructor.https-expected.txt:
+
 2017-12-18  Youenn Fablet  <youenn@apple.com>
 
         Add support for response blob given to fetch events

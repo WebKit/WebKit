@@ -28,9 +28,40 @@
 #if ENABLE(SERVICE_WORKER)
 #include "JSExtendableMessageEvent.h"
 
+#include "JSDOMConstructor.h"
+
 namespace WebCore {
 
 using namespace JSC;
+
+JSC::EncodedJSValue constructJSExtendableMessageEvent(JSC::ExecState& state)
+{
+    VM& vm = state.vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+
+    auto* jsConstructor = jsCast<JSDOMConstructorBase*>(state.jsCallee());
+    ASSERT(jsConstructor);
+    if (UNLIKELY(state.argumentCount() < 1))
+        return throwVMError(&state, throwScope, createNotEnoughArgumentsError(&state));
+    auto type = convert<IDLDOMString>(state, state.uncheckedArgument(0));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto eventInitDict = convert<IDLDictionary<ExtendableMessageEvent::Init>>(state, state.argument(1));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+
+    JSValue data = eventInitDict.data;
+    auto object = ExtendableMessageEvent::create(state, WTFMove(type), WTFMove(eventInitDict));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+
+    JSValue wrapper = toJSNewlyCreated<IDLInterface<ExtendableMessageEvent>>(state, *jsConstructor->globalObject(), WTFMove(object));
+
+    // Cache the JSValue passed in for data parameter in the wrapper so the getter returns the exact value
+    // it was initialized too. We do not store the JSValue in the implementation object to avoid leaks.
+    auto* jsMessageEvent = jsCast<JSExtendableMessageEvent*>(wrapper);
+    jsMessageEvent->m_data.set(state.vm(), jsMessageEvent, data);
+
+    return JSValue::encode(wrapper);
+}
 
 JSValue JSExtendableMessageEvent::data(ExecState& state) const
 {

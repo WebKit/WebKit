@@ -24,11 +24,11 @@
  */
 
 [
-    Constructor(DOMString type, optional ExtendableMessageEventInit eventInitDict),
-    ConstructorCallWith=ScriptState,
+    CustomConstructor(DOMString type, optional ExtendableMessageEventInit eventInitDict),
     Conditional=SERVICE_WORKER,
     EnabledAtRuntime=ServiceWorker,
     Exposed=ServiceWorker,
+    JSGenerateToJSObject,
 ] interface ExtendableMessageEvent : ExtendableEvent {
     [CachedAttribute, CustomGetter] readonly attribute any data;
     readonly attribute USVString origin;

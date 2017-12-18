@@ -39,7 +39,7 @@ Ref<ExtendableMessageEvent> ExtendableMessageEvent::create(Vector<RefPtr<Message
 
 ExtendableMessageEvent::ExtendableMessageEvent(JSC::ExecState& state, const AtomicString& type, const Init& init, IsTrusted isTrusted)
     : ExtendableEvent(type, init, isTrusted)
-    , m_data(SerializedScriptValue::create(state, init.data))
+    , m_data(SerializedScriptValue::create(state, init.data, SerializationErrorMode::NonThrowing))
     , m_origin(init.origin)
     , m_lastEventId(init.lastEventId)
     , m_ports(init.ports)
