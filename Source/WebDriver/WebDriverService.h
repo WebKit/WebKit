@@ -62,7 +62,7 @@ private:
     static const Command s_commands[];
 
     static std::optional<HTTPMethod> toCommandHTTPMethod(const String& method);
-    static bool findCommand(const String& method, const String& path, CommandHandler*, HashMap<String, String>& parameters);
+    static bool findCommand(HTTPMethod, const String& path, CommandHandler*, HashMap<String, String>& parameters);
 
     void newSession(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void deleteSession(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
