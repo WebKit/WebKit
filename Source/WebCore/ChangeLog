@@ -1,3 +1,19 @@
+2017-11-07  Brian Burg  <bburg@apple.com>
+
+        Web Automation: inViewCenterPoint should not include topContentInset when computed in viewport coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=179129
+        <rdar://problem/35297038>
+
+        Reviewed by Simon Fraser.
+
+        Add or export some helpers needed to compute element layout for WebDriver.
+
+        * dom/Element.h: Export the non-DOM version of getClientBounds().
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::clientToDocumentRect const):
+        Added. This does the same thing as clientToDocumentPoint. Export it, too.
+
 2017-09-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Bring back line height rounding when computing font metrics

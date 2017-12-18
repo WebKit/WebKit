@@ -825,7 +825,7 @@ void Session::computeElementLayout(const String& elementID, OptionSet<ElementLay
     parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
     parameters->setString(ASCIILiteral("nodeHandle"), elementID);
     parameters->setBoolean(ASCIILiteral("scrollIntoViewIfNeeded"), options.contains(ElementLayoutOption::ScrollIntoViewIfNeeded));
-    parameters->setBoolean(ASCIILiteral("useViewportCoordinates"), options.contains(ElementLayoutOption::UseViewportCoordinates));
+    parameters->setString(ASCIILiteral("coordinateSystem"), options.contains(ElementLayoutOption::UseViewportCoordinates) ? ASCIILiteral("LayoutViewport") : ASCIILiteral("Page"));
     m_host->sendCommandToBackend(ASCIILiteral("computeElementLayout"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
         if (response.isError || !response.responseObject) {
             completionHandler(std::nullopt, std::nullopt, false, WTFMove(response.responseObject));

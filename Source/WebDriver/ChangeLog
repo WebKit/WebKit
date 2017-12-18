@@ -1,3 +1,16 @@
+2017-11-07  Brian Burg  <bburg@apple.com>
+
+        Web Automation: inViewCenterPoint should not include topContentInset when computed in viewport coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=179129
+        <rdar://problem/35297038>
+
+        Reviewed by Simon Fraser.
+
+        Adjust code to use the proper coordinate system when requesting element layout.
+
+        * Session.cpp:
+        (WebDriver::Session::computeElementLayout):
+
 2017-11-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: WebDriverService::matchCapabilities should follow the spec
