@@ -1381,6 +1381,17 @@ void WebPage::moveSelectionByOffset(int32_t offset, CallbackID callbackID)
         frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).ptr(), position.affinity(), true, UserTriggered);
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
+    
+void WebPage::startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow)
+{
+    if (m_assistedNode && m_assistedNode->renderer())
+        m_page->mainFrame().eventHandler().startTextAutoscroll(m_assistedNode->renderer(), positionInWindow);
+}
+    
+void WebPage::cancelAutoscroll()
+{
+    m_page->mainFrame().eventHandler().cancelTextAutoscroll();
+}
 
 void WebPage::getRectsForGranularityWithSelectionOffset(uint32_t granularity, int32_t offset, CallbackID callbackID)
 {

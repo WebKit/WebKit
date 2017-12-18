@@ -1141,7 +1141,7 @@ static IntSize autoscrollAdjustmentFactorForScreenBoundaries(const IntPoint& scr
     return adjustmentFactor;
 }
 
-IntPoint EventHandler::effectiveMousePositionForSelectionAutoscroll() const
+IntPoint EventHandler::targetPositionInWindowForSelectionAutoscroll() const
 {
     Page* page = m_frame.page();
     if (!page)

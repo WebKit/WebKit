@@ -99,6 +99,8 @@ messages -> WebPage LegacyReceiver {
     GetRectsForGranularityWithSelectionOffset(uint32_t granularity, int32_t offset, WebKit::CallbackID callbackID)
     GetRectsAtSelectionOffsetWithText(int32_t offset, String text, WebKit::CallbackID callbackID)
     StoreSelectionForAccessibility(bool shouldStore)
+    StartAutoscrollAtPosition(WebCore::FloatPoint positionInWindow)
+    CancelAutoscroll()
 #endif
 
     SetControlledByAutomation(bool controlled)

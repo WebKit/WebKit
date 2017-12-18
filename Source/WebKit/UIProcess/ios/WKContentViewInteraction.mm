@@ -691,6 +691,24 @@ const CGFloat minimumTapHighlightRadius = 2.0;
     return _page->unobscuredContentRect();
 }
 
+
+#pragma mark - UITextAutoscrolling
+- (void)startAutoscroll:(CGPoint)point
+{
+    _page->startAutoscrollAtPosition(point);
+}
+
+- (void)cancelAutoscroll
+{
+    _page->cancelAutoscroll();
+}
+
+- (void)scrollSelectionToVisible:(BOOL)animated
+{
+    // Used to scroll selection on keyboard up; we already scroll to visible.
+}
+
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     ASSERT([keyPath isEqualToString:@"transform"]);

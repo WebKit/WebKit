@@ -31,6 +31,7 @@
 #include "HitTestRequest.h"
 #include "LayoutPoint.h"
 #include "PlatformMouseEvent.h"
+#include "RenderObject.h"
 #include "ScrollTypes.h"
 #include "TextEventInputType.h"
 #include "TextGranularity.h"
@@ -188,7 +189,8 @@ public:
     IntPoint lastKnownMouseGlobalPosition() const { return m_lastKnownMouseGlobalPosition; }
     Cursor currentMouseCursor() const { return m_currentMouseCursor; }
 
-    IntPoint effectiveMousePositionForSelectionAutoscroll() const;
+    IntPoint targetPositionInWindowForSelectionAutoscroll() const;
+    bool shouldUpdateAutoscroll();
 
     static Frame* subframeForTargetNode(Node*);
     static Frame* subframeForHitTestResult(const MouseEventWithHitTestResults&);
@@ -331,6 +333,13 @@ public:
 
 #if ENABLE(DATA_INTERACTION)
     WEBCORE_EXPORT bool tryToBeginDataInteractionAtPoint(const IntPoint& clientPosition, const IntPoint& globalPosition);
+#endif
+    
+#if PLATFORM(IOS)
+    WEBCORE_EXPORT void startTextAutoscroll(RenderObject* renderer, const FloatPoint& positionInWindow);
+    WEBCORE_EXPORT void cancelTextAutoscroll();
+    IntPoint m_targetAutoscrollPositionInWindow;
+    bool m_isAutoscrolling { false };
 #endif
 
 private:

@@ -1,3 +1,14 @@
+function didShowKeyboard()
+{
+	return `
+	(function() {
+        uiController.didShowKeyboardCallback = function() {
+            uiController.uiScriptComplete();
+		}
+    })();`
+}
+
+
 function longPressAtPoint(x, y)
 {
     return `
@@ -8,7 +19,17 @@ function longPressAtPoint(x, y)
     })();`
 }
 
-function longPressAndHoldAtPoint(X, Y)
+function liftUpAtPoint(x, y)
+{
+    return `
+    (function() {
+        uiController.liftUpAtPoint(${x}, ${y}, 1, function() {
+            uiController.uiScriptComplete();
+        });
+    })();`
+}
+
+function longPressAndHoldAtPoint(x, y)
 {
     return `
     (function() {
@@ -26,8 +47,8 @@ function longPressAndHoldAtPoint(X, Y)
                         inputType : "finger",
                         phase : "began",
                         id : 1,
-                        x : ${X},
-                        y : ${Y},
+                        x : ${x},
+                        y : ${y},
                         pressure : 0
                     }
                 ]
@@ -40,8 +61,8 @@ function longPressAndHoldAtPoint(X, Y)
                         inputType : "finger",
                         phase : "moved",
                         id : 1,
-                        x : ${X},
-                        y : ${Y},
+                        x : ${x},
+                        y : ${y},
                         pressure : 0
                     }
                 ]
@@ -97,6 +118,51 @@ function touchAndDragFromPointToPoint(startX, startY, endX, endY)
                         id : 1,
                         x : ${endX},
                         y : ${endY},
+                        pressure : 0
+                    }
+                ]
+            }
+    }]};
+    
+    uiController.sendEventStream(JSON.stringify(eventStream), function() {});
+        uiController.uiScriptComplete();
+    })();`
+}
+
+function holdAtPoint(x, y)
+{
+    return `
+    (function() {
+    var eventStream = {
+    events : [
+        {
+            interpolate : "linear",
+            timestep: 0.1,
+            coordinateSpace : "content",
+            startEvent : {
+                inputType : "hand",
+                timeOffset : 0,
+                touches : [
+                    {
+                        inputType : "finger",
+                        phase : "moved",
+                        id : 1,
+                        x : ${x},
+                        y : ${y},
+                        pressure : 0
+                    }
+                ]
+            },
+            endEvent : {
+                inputType : "hand",
+                timeOffset : 5.0,
+                touches : [
+                    {
+                        inputType : "finger",
+                        phase : "moved",
+                        id : 1,
+                        x : ${x},
+                        y : ${y},
                         pressure : 0
                     }
                 ]

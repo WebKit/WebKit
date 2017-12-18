@@ -2752,9 +2752,9 @@ LayoutRect RenderLayer::getRectToExpose(const LayoutRect &visibleRect, const Lay
     return LayoutRect(LayoutPoint(x, y), visibleRect.size());
 }
 
-void RenderLayer::autoscroll(const IntPoint& position)
+void RenderLayer::autoscroll(const IntPoint& positionInWindow)
 {
-    IntPoint currentDocumentPosition = renderer().view().frameView().windowToContents(position);
+    IntPoint currentDocumentPosition = renderer().view().frameView().windowToContents(positionInWindow);
     scrollRectToVisible(SelectionRevealMode::Reveal, LayoutRect(currentDocumentPosition, LayoutSize(1, 1)), false, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
 }
 

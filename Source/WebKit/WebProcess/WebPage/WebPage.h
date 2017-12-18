@@ -605,6 +605,8 @@ public:
     void getRectsForGranularityWithSelectionOffset(uint32_t, int32_t, CallbackID);
     void getRectsAtSelectionOffsetWithText(int32_t, const String&, CallbackID);
     void storeSelectionForAccessibility(bool);
+    void startAutoscrollAtPosition(const WebCore::FloatPoint&);
+    void cancelAutoscroll();
 
     void contentSizeCategoryDidChange(const String&);
 

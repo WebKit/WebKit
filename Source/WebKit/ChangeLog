@@ -1,3 +1,30 @@
+2017-12-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Support Autoscrolling in contenteditable for WK2
+        https://bugs.webkit.org/show_bug.cgi?id=180789
+
+        Reviewed by Simon Frasier and Wenson Hsieh.
+
+        Implements the UIKit protocol for autoscrolling and alerts the Web Process to start
+        (or stop) an autoscroll to the specified position. Allows for scrolling in contenteditable
+        in WebKit2.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView startAutoscroll:]):
+        (-[WKContentView cancelAutoscroll]):
+        (-[WKContentView scrollSelectionToVisible:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::startAutoscrollAtPosition):
+        (WebKit::WebPageProxy::cancelAutoscroll):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::startAutoscrollAtPosition):
+        (WebKit::WebPage::cancelAutoscroll):
+
 2017-12-18  Youenn Fablet  <youenn@apple.com>
 
         Add support for response blob given to fetch events

@@ -625,6 +625,13 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (CGRect)unobscuredContentRect;
 @end
 
+@protocol UITextAutoscrolling
+- (void)startAutoscroll:(CGPoint)point;
+- (void)cancelAutoscroll;
+- (void)scrollSelectionToVisible:(BOOL)animated;
+@end
+
+
 @protocol UIWebFormAccessoryDelegate;
 
 @interface UIWebFormAccessory : UIInputView

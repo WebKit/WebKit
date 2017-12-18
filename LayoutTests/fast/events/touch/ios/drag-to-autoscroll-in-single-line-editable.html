@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="resources/basic-gestures.js"></script>
+    <script src="resources/gesture-helpers.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+    
+        function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+        
+            var output = '';
+            var scrollBox = document.getElementById('textbox');
+            var targetRect = scrollBox.getBoundingClientRect();
+            
+            var tapPointX = targetRect.x + targetRect.width / 2;
+            var tapPointY = targetRect.y + targetRect.height / 2;
+            var dragX = targetRect.x + targetRect.width;
+            
+            var textLength = scrollBox.value.length;
+
+            if (testRunner.runUIScript) {
+                testRunner.runUIScript(tapAtPoint(tapPointX, tapPointY), function() {
+                    testRunner.runUIScript(didShowKeyboard(), function() {
+                        testRunner.runUIScript(longPressAndHoldAtPoint(tapPointX, tapPointY), function() {
+                            testRunner.runUIScript(continueTouchAndDragFromPointToPoint(tapPointX, tapPointY, dragX, tapPointY), function() {
+                                testRunner.runUIScript(holdAtPoint(dragX, tapPointY, 2.0), function() {
+                                    testRunner.runUIScript(continueTouchAndDragFromPointToPoint(dragX, tapPointY, dragX + 5, tapPointY), function() {
+                                        if (scrollBox.scrollLeft > 0)
+                                            output += 'PASS: Text Box has been scrolled.';
+                                        else
+                                            output += 'FAIL: Text Box has not been scrolled';
+                                        output += '<br>';
+                                                           
+                                        if ((scrollBox.selectionStart == scrollBox.selectionEnd) && (scrollBox.selectionStart == textLength))
+                                            output += 'PASS: Correct Cursor Location';
+                                        else
+                                            output += 'FAIL: cursor is at an unexpected position:' + scrollBox.selectionStart;
+                                        output += '<br>';
+                                   
+                                        document.getElementById('target').innerHTML = output;
+                                        testRunner.notifyDone();
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            }
+        }
+    
+        window.addEventListener('load', runTest, false);
+    </script>
+    <style>
+        #target {
+            height: 100px;
+            width: 300px;
+            background-color: silver;
+            font-family: monospace;
+            font-size: 18px;
+        }
+    </style>
+    <meta name="viewport" content="initial-scale=1">
+</head>
+<body>
+    <div id="target">
+        <input id="textbox" type="text" value="Lorem ipsum dolor sit amet, consectetur adipiscing elit" size="25"><br>
+        
+        This test requires UIScriptController to run.
+    </div>
+</body>
+</html>

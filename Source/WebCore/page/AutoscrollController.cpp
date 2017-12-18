@@ -243,14 +243,14 @@ void AutoscrollController::autoscrollTimerFired()
             m_autoscrollRenderer->autoscroll(m_dragAndDropAutoscrollReferencePosition);
         break;
     case AutoscrollForSelection: {
-        if (!frame.eventHandler().mousePressed()) {
+        if (!frame.eventHandler().shouldUpdateAutoscroll()) {
             stopAutoscrollTimer();
             return;
         }
 #if ENABLE(DRAG_SUPPORT)
         frame.eventHandler().updateSelectionForMouseDrag();
 #endif
-        m_autoscrollRenderer->autoscroll(frame.eventHandler().effectiveMousePositionForSelectionAutoscroll());
+        m_autoscrollRenderer->autoscroll(frame.eventHandler().targetPositionInWindowForSelectionAutoscroll());
         break;
     }
     case NoAutoscroll:

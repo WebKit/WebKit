@@ -185,7 +185,7 @@
 		0F5BF1721F23C5710029D91D /* BExport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BExport.h; path = bmalloc/BExport.h; sourceTree = "<group>"; };
 		0F74B93C1F89713E00B935D3 /* CryptoRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CryptoRandom.h; path = bmalloc/CryptoRandom.h; sourceTree = "<group>"; };
 		0F74B93D1F89713E00B935D3 /* CryptoRandom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoRandom.cpp; path = bmalloc/CryptoRandom.cpp; sourceTree = "<group>"; };
-		0F7EB7EF1F95285300F1ABCB /* libtestbmalloc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = libtestbmalloc; path = testbmalloc; sourceTree = BUILT_PRODUCTS_DIR; };
+		0F7EB7EF1F95285300F1ABCB /* testbmalloc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testbmalloc; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F7EB7F11F95285300F1ABCB /* testbmalloc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = testbmalloc.cpp; sourceTree = "<group>"; };
 		0F7EB7FC1F9541AD00F1ABCB /* EligibilityResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EligibilityResult.h; path = bmalloc/EligibilityResult.h; sourceTree = SOURCE_ROOT; };
 		0F7EB7FD1F9541AD00F1ABCB /* IsoHeapImplInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IsoHeapImplInlines.h; path = bmalloc/IsoHeapImplInlines.h; sourceTree = SOURCE_ROOT; };
@@ -416,7 +416,7 @@
 			children = (
 				14F271BE18EA3963008C152F /* libbmalloc.a */,
 				14CC394418EA8743004AFE34 /* libmbmalloc.dylib */,
-				0F7EB7EF1F95285300F1ABCB /* libtestbmalloc */,
+				0F7EB7EF1F95285300F1ABCB /* testbmalloc */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -659,7 +659,7 @@
 			);
 			name = testbmalloc;
 			productName = testbmalloc;
-			productReference = 0F7EB7EF1F95285300F1ABCB /* libtestbmalloc */;
+			productReference = 0F7EB7EF1F95285300F1ABCB /* testbmalloc */;
 			productType = "com.apple.product-type.tool";
 		};
 		14CC394318EA8743004AFE34 /* mbmalloc */ = {
