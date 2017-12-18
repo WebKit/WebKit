@@ -24,12 +24,16 @@ import json
 import logging
 import os
 
+from webkitpy.webdriver_tests.webdriver_driver import create_driver
+from webkitpy.webdriver_tests.webdriver_test_runner_selenium import WebDriverTestRunnerSelenium
 from webkitpy.webdriver_tests.webdriver_test_runner_w3c import WebDriverTestRunnerW3C
 
 _log = logging.getLogger(__name__)
 
 
 class WebDriverTestRunner(object):
+
+    RUNNER_CLASSES = (WebDriverTestRunnerSelenium, WebDriverTestRunnerW3C)
 
     def __init__(self, port):
         self._port = port
@@ -40,28 +44,41 @@ class WebDriverTestRunner(object):
         self._display_driver = self._port.create_driver(worker_number=0, no_timeout=True)._make_driver(pixel_tests=False)
         if not self._display_driver.check_driver(self._port):
             raise RuntimeError("Failed to check driver %s" % self._display_driver.__class__.__name__)
-        self._runner = WebDriverTestRunnerW3C(self._port, self._display_driver)
+
+        driver = create_driver(self._port)
+        _log.info('Using driver at %s' % (driver.binary_path()))
+        _log.info('Browser: %s' % (driver.browser_name()))
+
+        self._runners = [runner_cls(self._port, driver, self._display_driver) for runner_cls in self.RUNNER_CLASSES]
 
     def run(self, tests=[]):
-        runner_tests = self._runner.collect_tests(tests)
-        if runner_tests:
-            _log.info('Collected %d tests' % len(runner_tests))
-            return self._runner.run(runner_tests)
+        runner_tests = [runner.collect_tests(tests) for runner in self._runners]
+        collected_count = sum([len(tests) for tests in runner_tests])
+        if not collected_count:
+            _log.info('No tests found')
+            return 0
 
-        _log.info('No tests found')
-        return 0
+        _log.info('Collected %d test files' % collected_count)
+        results_count = 0
+        for i in range(len(self._runners)):
+            if runner_tests[i]:
+                results_count += self._runners[i].run(runner_tests[i])
+        return results_count
 
     def print_results(self):
         results = {}
         passed_count = 0
         failures_count = 0
-        for result in self._runner.results():
+        test_results = []
+        for runner in self._runners:
+            test_results.extend(runner.results())
+        for result in test_results:
             if result.status == 'OK':
                 for subtest, status, _, _ in result.subtest_results:
                     if status == 'PASS':
                         passed_count += 1
-                    elif status == 'FAIL':
-                        results.setdefault(status, []).append(os.path.join(os.path.dirname(result.test), subtest))
+                    elif status in ['FAIL', 'ERROR']:
+                        results.setdefault('FAIL', []).append(os.path.join(os.path.dirname(result.test), subtest))
                         failures_count += 1
             else:
                 # FIXME: handle other results.
@@ -84,7 +101,10 @@ class WebDriverTestRunner(object):
     def dump_results_to_json_file(self, output_path):
         json_results = {}
         json_results['results'] = []
-        for result in self._runner.results():
+        test_results = []
+        for runner in self._runners:
+            test_results.extend(runner.results())
+        for result in test_results:
             results = {}
             results['test'] = result.test
             results['status'] = result.status

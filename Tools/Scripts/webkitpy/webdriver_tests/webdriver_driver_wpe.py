@@ -35,10 +35,13 @@ class WebDriverWPE(WebDriver):
     def browser_name(self):
         return 'dyz'
 
+    def browser_args(self):
+        return ['--automation']
+
     def capabilities(self):
         return {'wpe:browserOptions': {
             'binary': self.browser_name(),
-            'args': ['--automation']}}
+            'args': self.browser_args()}}
 
     def browser_env(self):
         env = {}

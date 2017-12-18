@@ -23,12 +23,10 @@
 import logging
 import os
 import sys
-import time
 
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.webdriver_tests.webdriver_w3c_executor import WebDriverW3CExecutor
-from webkitpy.webdriver_tests.webdriver_driver import create_driver
 from webkitpy.webdriver_tests.webdriver_test_result import WebDriverTestResult
 from webkitpy.webdriver_tests.webdriver_w3c_web_server import WebDriverW3CWebServer
 
@@ -37,12 +35,10 @@ _log = logging.getLogger(__name__)
 
 class WebDriverTestRunnerW3C(object):
 
-    def __init__(self, port, display_driver):
+    def __init__(self, port, driver, display_driver):
         self._port = port
+        self._driver = driver
         self._display_driver = display_driver
-        self._driver = create_driver(self._port)
-        _log.info('Using driver at %s' % (self._driver.binary_path()))
-        _log.info('Browser: %s' % (self._driver.browser_name()))
 
         timeout = self._port.get_option('timeout')
         if timeout > 0:
@@ -109,9 +105,6 @@ class WebDriverTestRunnerW3C(object):
             self._server.stop()
 
         return len(self._results)
-
-    def _add_results(self, test_prefix, results):
-        self._results.extend([WebDriverTestResult(test_prefix, *result) for result in results])
 
     def results(self):
         return self._results

@@ -39,7 +39,6 @@ def _ensure_directory_in_path(directory):
 _ensure_directory_in_path(os.path.join(w3c_tools_dir, 'pytest'))
 _ensure_directory_in_path(os.path.join(w3c_tools_dir, 'webdriver'))
 _ensure_directory_in_path(os.path.join(w3c_tools_dir, 'wptrunner'))
-_ensure_directory_in_path(os.path.join(w3c_tools_dir, "webdriver"))
 
 import webkitpy.thirdparty.autoinstalled.pytest_timeout
 from wptrunner.executors.base import WdspecExecutor, WebDriverProtocol

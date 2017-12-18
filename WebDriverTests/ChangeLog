@@ -1,3 +1,14 @@
+2017-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: add support for importing and running selenium tests
+        https://bugs.webkit.org/show_bug.cgi?id=180145
+
+        Reviewed by Brian Burg.
+
+        * imported/selenium/importer.json: Added.
+        * imported/selenium/common/: Added.
+        * imported/selenium/py/: Added.
+
 2017-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update W3C WebDriver imported tests.
