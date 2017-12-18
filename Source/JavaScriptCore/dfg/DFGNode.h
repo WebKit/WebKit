@@ -1092,7 +1092,7 @@ public:
 
     bool hasNewArrayBufferData()
     {
-        return op() == NewArrayBuffer;
+        return op() == NewArrayBuffer || op() == PhantomNewArrayBuffer;
     }
     
     NewArrayBufferData newArrayBufferData()
@@ -1103,7 +1103,7 @@ public:
 
     unsigned hasVectorLengthHint()
     {
-        return op() == NewArrayBuffer;
+        return op() == NewArrayBuffer || op() == PhantomNewArrayBuffer;
     }
     
     unsigned vectorLengthHint()
@@ -1118,6 +1118,7 @@ public:
         case NewArray:
         case NewArrayWithSize:
         case NewArrayBuffer:
+        case PhantomNewArrayBuffer:
             return true;
         default:
             return false;
@@ -1141,7 +1142,7 @@ public:
     IndexingType indexingType()
     {
         ASSERT(hasIndexingType());
-        if (op() == NewArrayBuffer)
+        if (op() == NewArrayBuffer || op() == PhantomNewArrayBuffer)
             return static_cast<IndexingType>(newArrayBufferData().indexingType);
         return static_cast<IndexingType>(m_opInfo.as<uint32_t>());
     }
@@ -1641,6 +1642,7 @@ public:
         case MaterializeCreateActivation:
         case NewRegexp:
         case NewArrayBuffer:
+        case PhantomNewArrayBuffer:
         case CompareEqPtr:
         case CallObjectConstructor:
         case DirectCall:
@@ -1904,6 +1906,7 @@ public:
         case PhantomCreateRest:
         case PhantomSpread:
         case PhantomNewArrayWithSpread:
+        case PhantomNewArrayBuffer:
         case PhantomClonedArguments:
         case PhantomNewFunction:
         case PhantomNewGeneratorFunction:

@@ -604,6 +604,7 @@
 		E311FB151F0A568B003C08DE /* ThreadGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadGroup.cpp; sourceTree = "<group>"; };
 		E311FB161F0A568B003C08DE /* ThreadGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadGroup.h; sourceTree = "<group>"; };
 		E3200AB41E9A536D003B59D2 /* PlatformRegisters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformRegisters.h; sourceTree = "<group>"; };
+		E33D5F871FBED66700BF625E /* RecursableLambda.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecursableLambda.h; sourceTree = "<group>"; };
 		E38C41241EB4E04C0042957D /* CPUTimeCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CPUTimeCocoa.mm; sourceTree = "<group>"; };
 		E38C41261EB4E0680042957D /* CPUTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CPUTime.cpp; sourceTree = "<group>"; };
 		E38C41271EB4E0680042957D /* CPUTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPUTime.h; sourceTree = "<group>"; };
@@ -821,8 +822,8 @@
 				0F30CB591FCDF133004B5323 /* ConcurrentPtrHashSet.h */,
 				0FB467831FDE282C003FCB09 /* ConcurrentVector.h */,
 				0FDB698D1B7C643A000C1078 /* Condition.h */,
-				0FFBCBFA1FD37E0F0072AAF0 /* CountingLock.h */,
 				0F8E85DA1FD485B000691889 /* CountingLock.cpp */,
+				0FFBCBFA1FD37E0F0072AAF0 /* CountingLock.h */,
 				E38C41261EB4E0680042957D /* CPUTime.cpp */,
 				E38C41271EB4E0680042957D /* CPUTime.h */,
 				515F794B1CFC9F4A00CCED93 /* CrossThreadCopier.cpp */,
@@ -1000,6 +1001,7 @@
 				0F87105916643F190090B0AD /* RawPointer.h */,
 				0FEC3C5C1F368A9700F59B6C /* ReadWriteLock.cpp */,
 				0FEC3C5D1F368A9700F59B6C /* ReadWriteLock.h */,
+				E33D5F871FBED66700BF625E /* RecursableLambda.h */,
 				0FDE87F61DFD07CC0064C390 /* RecursiveLockAdapter.h */,
 				A8A472FE151A825B004123FF /* RedBlackTree.h */,
 				26299B6D17A9E5B800ADEBE5 /* Ref.h */,
@@ -1418,6 +1420,8 @@
 				A8A47463151A825B004123FF /* CollatorICU.cpp in Sources */,
 				FE05FAFF1FE5007500093230 /* RefPtr.cpp in Sources */,
 				0F8F2B92172E0103007DBDA5 /* CompilationThread.cpp in Sources */,
+				0F30CB5A1FCDF134004B5323 /* ConcurrentPtrHashSet.cpp in Sources */,
+				0F8E85DB1FD485B000691889 /* CountingLock.cpp in Sources */,
 				E38C41281EB4E0680042957D /* CPUTime.cpp in Sources */,
 				E38C41251EB4E04C0042957D /* CPUTimeCocoa.mm in Sources */,
 				515F794E1CFC9F4A00CCED93 /* CrossThreadCopier.cpp in Sources */,
@@ -1467,10 +1471,9 @@
 				0FFF19DC1BB334EB00886D91 /* ParallelHelperPool.cpp in Sources */,
 				0F824A681B7443A0002E345D /* ParkingLot.cpp in Sources */,
 				51F1752B1F3D486000C74950 /* PersistentCoders.cpp in Sources */,
-				0F8E85DB1FD485B000691889 /* CountingLock.cpp in Sources */,
 				51F1752C1F3D486000C74950 /* PersistentDecoder.cpp in Sources */,
-				0F30CB5A1FCDF134004B5323 /* ConcurrentPtrHashSet.cpp in Sources */,
 				51F1752D1F3D486000C74950 /* PersistentEncoder.cpp in Sources */,
+				FE85416E1FBE285D008DA5DA /* Poisoned.cpp in Sources */,
 				0F9D3362165DBA73005AD387 /* PrintStream.cpp in Sources */,
 				143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */,
 				A3B725EC987446AD93F1A440 /* RandomDevice.cpp in Sources */,
@@ -1482,7 +1485,6 @@
 				1469419316EAAF6D0024E146 /* RunLoopTimerCF.cpp in Sources */,
 				1469419916EAB0410024E146 /* SchedulePairCF.cpp in Sources */,
 				1469419716EAAFF80024E146 /* SchedulePairMac.mm in Sources */,
-				FE85416E1FBE285D008DA5DA /* Poisoned.cpp in Sources */,
 				0F66B28E1DC97BAB004A1D3F /* Seconds.cpp in Sources */,
 				A8A47421151A825B004123FF /* SHA1.cpp in Sources */,
 				5311BD531EA71CAD00525281 /* Signals.cpp in Sources */,

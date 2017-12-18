@@ -523,6 +523,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case PhantomSpread:
     case PhantomNewArrayWithSpread:
+    case PhantomNewArrayBuffer:
     case PhantomCreateRest:
         // Even though it's phantom, it still has the property that one can't be replaced with another.
         read(HeapObjectCount);

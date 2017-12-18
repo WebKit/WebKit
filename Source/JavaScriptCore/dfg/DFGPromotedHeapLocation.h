@@ -63,6 +63,7 @@ enum PromotedLocationKind {
     VectorLengthPLoc,
     SpreadPLoc,
     NewArrayWithSpreadArgumentPLoc,
+    NewArrayBufferPLoc,
 };
 
 class PromotedLocationDescriptor {

@@ -33,6 +33,7 @@
 #include "FTLJITCode.h"
 #include "FTLLazySlowPath.h"
 #include "InlineCallFrame.h"
+#include "Interpreter.h"
 #include "JSAsyncFunction.h"
 #include "JSAsyncGeneratorFunction.h"
 #include "JSCInlines.h"
@@ -90,6 +91,7 @@ extern "C" void JIT_OPERATION operationPopulateObjectInOSR(
     case PhantomCreateRest:
     case PhantomSpread:
     case PhantomNewArrayWithSpread:
+    case PhantomNewArrayBuffer:
         // Those are completely handled by operationMaterializeObjectInOSR
         break;
 
@@ -439,6 +441,25 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         JSFixedArray* fixedArray = JSFixedArray::createFromArray(exec, vm, array);
         RELEASE_ASSERT(fixedArray);
         return fixedArray;
+    }
+
+    case PhantomNewArrayBuffer: {
+        JSFixedArray* array = nullptr;
+        for (unsigned i = materialization->properties().size(); i--;) {
+            const ExitPropertyValue& property = materialization->properties()[i];
+            if (property.location().kind() == NewArrayBufferPLoc) {
+                array = jsCast<JSFixedArray*>(JSValue::decode(values[i]));
+                break;
+            }
+        }
+        RELEASE_ASSERT(array);
+
+        // For now, we use array allocation profile in the actual CodeBlock. It is OK since current NewArrayBuffer
+        // and PhantomNewArrayBuffer are always bound to a specific op_new_array_buffer.
+        CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(materialization->origin(), exec->codeBlock());
+        Instruction* currentInstruction = &codeBlock->instructions()[materialization->origin().bytecodeIndex];
+        RELEASE_ASSERT(Interpreter::getOpcodeID(currentInstruction[0].u.opcode) == op_new_array_buffer);
+        return constructArray(exec, currentInstruction[3].u.arrayAllocationProfile, array->values(), array->length());
     }
 
     case PhantomNewArrayWithSpread: {

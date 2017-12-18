@@ -1,5 +1,64 @@
 2017-12-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [FTL] NewArrayBuffer should be sinked if it is only used for spreading
+        https://bugs.webkit.org/show_bug.cgi?id=179762
+
+        Reviewed by Saam Barati.
+
+        This patch extends arguments elimination phase to accept NewArrayBuffer.
+        We can convert NewArrayBuffer to PhantomNewArrayBuffer if it is only
+        used by spreading nodes.
+
+        This improves SixSpeed spread.es6 by 3.5x.
+
+            spread.es6           79.1496+-3.5665     ^     23.6204+-1.8526        ^ definitely 3.3509x faster
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasNewArrayBufferData):
+        (JSC::DFG::Node::hasVectorLengthHint):
+        (JSC::DFG::Node::hasIndexingType):
+        (JSC::DFG::Node::indexingType):
+        (JSC::DFG::Node::hasCellOperand):
+        (JSC::DFG::Node::isPhantomAllocation):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::LocalOSRAvailabilityCalculator::executeNode):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGPromotedHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGPromotedHeapLocation.h:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileForwardVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileForwardVarargsWithSpread):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationPopulateObjectInOSR):
+        (JSC::FTL::operationMaterializeObjectInOSR):
+
+2017-12-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Use IsoSpace for JSWeakMap and JSWeakSet to use finalizeUnconditionally
         https://bugs.webkit.org/show_bug.cgi?id=180916
 

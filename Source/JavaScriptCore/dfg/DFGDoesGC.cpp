@@ -267,6 +267,7 @@ bool doesGC(Graph& graph, Node* node)
     case PhantomDirectArguments:
     case PhantomCreateRest:
     case PhantomNewArrayWithSpread:
+    case PhantomNewArrayBuffer:
     case PhantomSpread:
     case PhantomClonedArguments:
     case GetMyArgumentByVal:

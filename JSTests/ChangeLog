@@ -1,3 +1,64 @@
+2017-12-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [FTL] NewArrayBuffer should be sinked if it is only used for spreading
+        https://bugs.webkit.org/show_bug.cgi?id=179762
+
+        Reviewed by Saam Barati.
+
+        * stress/call-varargs-double-new-array-buffer.js: Added.
+        (assert):
+        (bar):
+        (foo):
+        * stress/call-varargs-spread-new-array-buffer.js: Added.
+        (assert):
+        (bar):
+        (foo):
+        * stress/call-varargs-spread-new-array-buffer2.js: Added.
+        (assert):
+        (bar):
+        (foo):
+        * stress/forward-varargs-double-new-array-buffer.js: Added.
+        (assert):
+        (test.baz):
+        (test.bar):
+        (test.foo):
+        (test):
+        * stress/new-array-buffer-sinking-osrexit.js: Added.
+        (target):
+        (test):
+        * stress/new-array-with-spread-double-new-array-buffer.js: Added.
+        (shouldBe):
+        (test):
+        * stress/new-array-with-spread-with-phantom-new-array-buffer.js: Added.
+        (shouldBe):
+        (target):
+        (test):
+        * stress/phantom-new-array-buffer-forward-varargs.js: Added.
+        (assert):
+        (test1.bar):
+        (test1.foo):
+        (test1):
+        (test2.bar):
+        (test2.foo):
+        (test3.baz):
+        (test3.bar):
+        (test3.foo):
+        (test4.baz):
+        (test4.bar):
+        (test4.foo):
+        * stress/phantom-new-array-buffer-forward-varargs2.js: Added.
+        (assert):
+        (test.baz):
+        (test.bar):
+        (test.foo):
+        (test):
+        * stress/phantom-new-array-buffer-osr-exit.js: Added.
+        (assert):
+        (baz):
+        (bar):
+        (effects):
+        (foo):
+
 2017-12-14  Saam Barati  <sbarati@apple.com>
 
         The CleanUp after LICM is erroneously removing a Check

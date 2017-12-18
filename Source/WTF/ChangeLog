@@ -1,3 +1,34 @@
+2017-12-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [FTL] NewArrayBuffer should be sinked if it is only used for spreading
+        https://bugs.webkit.org/show_bug.cgi?id=179762
+
+        Reviewed by Saam Barati.
+
+        We add RecursableLambda<>. This can take a lambda and offer a way
+        to call this lambda recursively without introducing additional allocations.
+
+        C++ lambda is super useful in particular when we need to capture many
+        variables as references. Passing many arguments to a usual function is not
+        a good way. But C++ lambda does not allow us to easily call itself recursively.
+
+        Our recursableLambda offers `self` function as a first argument of the
+        given lambda. We can call this `self` recursively.
+
+        auto targetFunction = recursableLambda([] (auto self, ...) -> resultType {
+            self(...);
+        });
+
+        While `std::function<> func = [&func] { ... }` allows recursion, it causes
+        heap allocation for std::function<>. `auto func = [&func] { ... }` causes
+        a compile error since we need to deduce an actual type when capturing `func`.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/RecursableLambda.h: Added.
+        (WTF::RecursableLambda::RecursableLambda):
+        (WTF::RecursableLambda::operator() const):
+        (WTF::recursableLambda):
+
 2017-12-17  Mark Lam  <mark.lam@apple.com>
 
         Enhance Ref and RefPtr to be able to work with smart pointers.

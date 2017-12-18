@@ -6137,6 +6137,7 @@ void SpeculativeJIT::compile(Node* node)
     case PhantomCreateRest:
     case PhantomSpread:
     case PhantomNewArrayWithSpread:
+    case PhantomNewArrayBuffer:
     case IdentityWithProfile:
     case CPUIntrinsic:
         DFG_CRASH(m_jit.graph(), node, "Unexpected node");
