@@ -1,3 +1,18 @@
+2017-12-18  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Canvas tab: placeholder/help text wrapping looks poor at narrow widths
+        https://bugs.webkit.org/show_bug.cgi?id=180943
+        <rdar://problem/36114431>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ContentView.css:
+        (.content-view > .message-text-view > .description):
+        * UserInterface/Views/Main.css:
+        (.message-text-view .navigation-item-help):
+        (.message-text-view .navigation-item-help .navigation-bar):
+        (.message-text-view .navigation-item-help .navigation-bar > .item):
+
 2017-12-18  Devin Rousso  <webkit@devinrousso.com>
 
         REGRESSION (r225569): Web Inspector: Commented out properties aren't properly highlighted

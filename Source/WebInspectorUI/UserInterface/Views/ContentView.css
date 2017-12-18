@@ -62,3 +62,7 @@
     font-weight: 600;
     letter-spacing: 0.02em;
 }
+
+.content-view > .message-text-view > .description {
+    line-height: 22px;
+}
