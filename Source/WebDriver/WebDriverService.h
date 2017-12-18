@@ -85,6 +85,7 @@ private:
     void findElements(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void findElementFromElement(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void findElementsFromElement(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void getActiveElement(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void isElementSelected(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void getElementText(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void getElementTagName(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);

@@ -1,3 +1,22 @@
+2017-11-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: Implement get active element command
+        https://bugs.webkit.org/show_bug.cgi?id=180001
+
+        Reviewed by Brian Burg.
+
+        12.6 Get Active Element
+        https://w3c.github.io/webdriver/webdriver-spec.html#get-active-element
+
+        Fixes imported/w3c/webdriver/tests/element_retrieval/get_active_element.py.
+
+        * Session.cpp:
+        (WebDriver::Session::getActiveElement):
+        * Session.h:
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::getActiveElement):
+        * WebDriverService.h:
+
 2017-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: do not try to parse http body if method is not POST

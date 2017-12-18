@@ -125,6 +125,7 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
     { HTTPMethod::Post, "/session/$sessionId/elements", &WebDriverService::findElements },
     { HTTPMethod::Post, "/session/$sessionId/element/$elementId/element", &WebDriverService::findElementFromElement },
     { HTTPMethod::Post, "/session/$sessionId/element/$elementId/elements", &WebDriverService::findElementsFromElement },
+    { HTTPMethod::Get, "/session/$sessionId/element/active", &WebDriverService::getActiveElement },
 
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/selected", &WebDriverService::isElementSelected },
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/attribute/$name", &WebDriverService::getElementAttribute },
@@ -1080,6 +1081,23 @@ void WebDriverService::findElementsFromElement(RefPtr<InspectorObject>&& paramet
         return;
 
     session->findElements(strategy, selector, Session::FindElementsMode::Multiple, elementID.value(), WTFMove(completionHandler));
+}
+
+void WebDriverService::getActiveElement(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §12.6 Get Active Element.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#get-active-element
+    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
+    if (!session)
+        return;
+
+    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        session->getActiveElement(WTFMove(completionHandler));
+    });
 }
 
 void WebDriverService::isElementSelected(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
