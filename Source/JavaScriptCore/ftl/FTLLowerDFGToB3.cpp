@@ -3638,9 +3638,11 @@ private:
             
             IndexedAbstractHeap& heap = m_node->arrayMode().type() == Array::Int32 ?
                 m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
-            
+
+            LValue base = lowCell(m_node->child1());
+
             if (m_node->arrayMode().isInBounds()) {
-                LValue result = m_out.load64(baseIndex(heap, storage, index, m_node->child2()));
+                LValue result = m_out.load64(maskedIndex(heap, storage, index, base, m_node->child2()));
                 LValue isHole = m_out.isZero64(result);
                 if (m_node->arrayMode().isSaneChain()) {
                     DFG_ASSERT(
@@ -3652,8 +3654,6 @@ private:
                 setJSValue(result);
                 return;
             }
-            
-            LValue base = lowCell(m_node->child1());
             
             LBasicBlock fastCase = m_out.newBlock();
             LBasicBlock slowCase = m_out.newBlock();
