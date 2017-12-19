@@ -180,6 +180,11 @@ void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, cons
         m_context.concatCTM(rotation(boxRect, Counterclockwise));
 }
 
+void TextPainter::paint(const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin)
+{
+    paintRange(textRun, boxRect, textOrigin, 0, textRun.length());
+}
+
 void TextPainter::paintRange(const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned start, unsigned end)
 {
     ASSERT(m_font);
@@ -188,39 +193,6 @@ void TextPainter::paintRange(const TextRun& textRun, const FloatRect& boxRect, c
     GraphicsContextStateSaver stateSaver(m_context, m_style.strokeWidth > 0);
     updateGraphicsContext(m_context, m_style);
     paintTextAndEmphasisMarksIfNeeded(textRun, boxRect, textOrigin, start, end, m_style, m_shadow);
-}
-    
-void TextPainter::paint(const TextRun& textRun, unsigned length, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned selectionStart, unsigned selectionEnd,
-    bool paintSelectedTextOnly, bool paintSelectedTextSeparately, bool paintNonSelectedTextOnly)
-{
-    ASSERT(m_font);
-    ASSERT(length <= textRun.length());
-    if (!paintSelectedTextOnly) {
-        // For stroked painting, we have to change the text drawing mode. It's probably dangerous to leave that mutated as a side
-        // effect, so only when we know we're stroking, do a save/restore.
-        GraphicsContextStateSaver stateSaver(m_context, m_style.strokeWidth > 0);
-        updateGraphicsContext(m_context, m_style);
-        bool fullPaint = !paintSelectedTextSeparately || selectionEnd <= selectionStart;
-        if (fullPaint)
-            paintTextAndEmphasisMarksIfNeeded(textRun, boxRect, textOrigin, 0, length, m_style, m_shadow);
-        else {
-            // Paint the before and after selection parts.
-            if (selectionStart > 0)
-                paintTextAndEmphasisMarksIfNeeded(textRun, boxRect, textOrigin, 0, selectionStart, m_style, m_shadow);
-            if (selectionEnd < length)
-                paintTextAndEmphasisMarksIfNeeded(textRun, boxRect, textOrigin, selectionEnd, length, m_style, m_shadow);
-        }
-    }
-
-    if (paintNonSelectedTextOnly)
-        return;
-
-    // Paint only the text that is selected.
-    if ((paintSelectedTextOnly || paintSelectedTextSeparately) && selectionStart < selectionEnd) {
-        GraphicsContextStateSaver stateSaver(m_context, m_selectionStyle.strokeWidth > 0);
-        updateGraphicsContext(m_context, m_selectionStyle);
-        paintTextAndEmphasisMarksIfNeeded(textRun, boxRect, textOrigin, selectionStart, selectionEnd, m_selectionStyle, m_selectionShadow);
-    }
 }
 
 } // namespace WebCore

@@ -42,7 +42,8 @@ class TextRun;
 class TextDecorationPainter {
 public:
     // FIXME: Make decorations an OptionSet<TextDecoration>. See <https://bugs.webkit.org/show_bug.cgi?id=176844>.
-    TextDecorationPainter(GraphicsContext&, unsigned decorations, const RenderText&, bool isFirstLine, PseudoId = NOPSEUDO);
+    struct Styles;
+    TextDecorationPainter(GraphicsContext&, unsigned decorations, const RenderText&, bool isFirstLine, std::optional<Styles> = std::nullopt);
     
     void setInlineTextBox(const InlineTextBox* inlineTextBox) { m_inlineTextBox = inlineTextBox; }
     void setFont(const FontCascade& font) { m_font = &font; }
@@ -54,6 +55,9 @@ public:
     void paintTextDecoration(const TextRun&, const FloatPoint& textOrigin, const FloatPoint& boxOrigin);
 
     struct Styles {
+        bool operator==(const Styles&) const;
+        bool operator!=(const Styles& other) const { return !(*this == other); }
+
         Color underlineColor;
         Color overlineColor;
         Color linethroughColor;
@@ -63,7 +67,7 @@ public:
     };
     // FIXME: Make requestedDecorations an OptionSet<TextDecoration>. See <https://bugs.webkit.org/show_bug.cgi?id=176844>.
     static Styles stylesForRenderer(const RenderObject&, unsigned requestedDecorations, bool firstLineStyle = false, PseudoId = NOPSEUDO);
-        
+
 private:
     GraphicsContext& m_context;
     OptionSet<TextDecoration> m_decorations;

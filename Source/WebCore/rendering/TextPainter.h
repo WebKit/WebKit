@@ -48,21 +48,15 @@ static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirecti
 class TextPainter {
 public:
     TextPainter(GraphicsContext&);
-    
+
     void setStyle(const TextPaintStyle& textPaintStyle) { m_style = textPaintStyle; }
-    void setSelectionStyle(const TextPaintStyle& selectionPaintStyle) { m_selectionStyle = selectionPaintStyle; }
-
     void setShadow(const ShadowData* shadow) { m_shadow = shadow; }
-    void setSelectionShadow(const ShadowData* selectionShadow) { m_selectionShadow = selectionShadow; }
-
     void setFont(const FontCascade& font) { m_font = &font; }
-
     void setIsHorizontal(bool isHorizontal) { m_textBoxIsHorizontal = isHorizontal; }
-
     void setEmphasisMark(const AtomicString& mark, float offset, const RenderCombineText*);
 
+    void paint(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin);
     void paintRange(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned start, unsigned end);
-    void paint(const TextRun&, unsigned length, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned selectionStart = 0, unsigned selectionEnd = 0, bool paintSelectedTextOnly = false, bool paintSelectedTextSeparately = false, bool paintNonSelectedTextOnly = false);
 
 private:
     void paintTextOrEmphasisMarks(const FontCascade&, const TextRun&, const AtomicString& emphasisMark, float emphasisMarkOffset,
@@ -75,9 +69,7 @@ private:
     GraphicsContext& m_context;
     const FontCascade* m_font { nullptr };
     TextPaintStyle m_style;
-    TextPaintStyle m_selectionStyle;
     const ShadowData* m_shadow { nullptr };
-    const ShadowData* m_selectionShadow { nullptr };
     AtomicString m_emphasisMark;
     const RenderCombineText* m_combinedText { nullptr };
     float m_emphasisMarkOffset { 0 };

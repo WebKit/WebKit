@@ -45,6 +45,8 @@ std::ostream& operator<<(std::ostream& os, MarkerSubrange::Type type)
     case MarkerSubrange::DictationPhraseWithAlternatives:
         return os << "DictationPhraseWithAlternatives";
 #endif
+    case MarkerSubrange::DraggedContent:
+        return os << "DraggedContent";
     case MarkerSubrange::GrammarError:
         return os << "GrammarError";
     case MarkerSubrange::Selection:
@@ -64,11 +66,6 @@ std::ostream& operator<<(std::ostream& os, const MarkerSubrange& subrange)
     if (subrange.marker)
         os << static_cast<const void*>(subrange.marker);
     return os << ")";
-}
-
-bool operator==(const MarkerSubrange& a, const MarkerSubrange& b)
-{
-    return a.startOffset == b.startOffset && a.endOffset == b.endOffset && a.type == b.type && a.marker == b.marker;
 }
 
 }

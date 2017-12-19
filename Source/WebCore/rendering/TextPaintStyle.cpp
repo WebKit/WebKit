@@ -45,6 +45,16 @@ TextPaintStyle::TextPaintStyle(const Color& color)
 {
 }
 
+bool TextPaintStyle::operator==(const TextPaintStyle& other) const
+{
+    return fillColor == other.fillColor && strokeColor == other.strokeColor && emphasisMarkColor == other.emphasisMarkColor
+        && strokeWidth == other.strokeWidth && paintOrder == other.paintOrder && lineJoin == other.lineJoin
+#if ENABLE(LETTERPRESS)
+        && useLetterpressEffect == other.useLetterpressEffect
+#endif
+        && lineCap == other.lineCap && miterLimit == other.miterLimit;
+}
+
 bool textColorIsLegibleAgainstBackgroundColor(const Color& textColor, const Color& backgroundColor)
 {
     // Semi-arbitrarily chose 65025 (255^2) value here after a few tests.
@@ -122,52 +132,34 @@ TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& line
     return paintStyle;
 }
 
-TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintStyle, const RenderText& renderer, const RenderStyle& lineStyle, const PaintInfo& paintInfo, bool& paintSelectedTextOnly, bool& paintSelectedTextSeparately, bool& paintNonSelectedTextOnly, const ShadowData*& selectionShadow)
+TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintStyle, const RenderText& renderer, const RenderStyle& lineStyle, const PaintInfo& paintInfo, const ShadowData*& selectionShadow)
 {
-    paintSelectedTextOnly = (paintInfo.phase == PaintPhaseSelection);
-    paintSelectedTextSeparately = paintInfo.paintBehavior & PaintBehaviorExcludeSelection;
-    paintNonSelectedTextOnly = paintInfo.paintBehavior & PaintBehaviorExcludeSelection;
     selectionShadow = (paintInfo.forceTextColor()) ? nullptr : lineStyle.textShadow();
 
     TextPaintStyle selectionPaintStyle = textPaintStyle;
 
 #if ENABLE(TEXT_SELECTION)
     Color foreground = paintInfo.forceTextColor() ? paintInfo.forcedTextColor() : renderer.selectionForegroundColor();
-    if (foreground.isValid() && foreground != selectionPaintStyle.fillColor) {
-        if (!paintSelectedTextOnly)
-            paintSelectedTextSeparately = true;
+    if (foreground.isValid() && foreground != selectionPaintStyle.fillColor)
         selectionPaintStyle.fillColor = foreground;
-    }
 
     Color emphasisMarkForeground = paintInfo.forceTextColor() ? paintInfo.forcedTextColor() : renderer.selectionEmphasisMarkColor();
-    if (emphasisMarkForeground.isValid() && emphasisMarkForeground != selectionPaintStyle.emphasisMarkColor) {
-        if (!paintSelectedTextOnly)
-            paintSelectedTextSeparately = true;
+    if (emphasisMarkForeground.isValid() && emphasisMarkForeground != selectionPaintStyle.emphasisMarkColor)
         selectionPaintStyle.emphasisMarkColor = emphasisMarkForeground;
-    }
 
     if (auto* pseudoStyle = renderer.getCachedPseudoStyle(SELECTION)) {
         const ShadowData* shadow = paintInfo.forceTextColor() ? nullptr : pseudoStyle->textShadow();
-        if (shadow != selectionShadow) {
-            if (!paintSelectedTextOnly)
-                paintSelectedTextSeparately = true;
+        if (shadow != selectionShadow)
             selectionShadow = shadow;
-        }
 
         auto viewportSize = renderer.frame().view() ? renderer.frame().view()->size() : IntSize();
         float strokeWidth = pseudoStyle->computedStrokeWidth(viewportSize);
-        if (strokeWidth != selectionPaintStyle.strokeWidth) {
-            if (!paintSelectedTextOnly)
-                paintSelectedTextSeparately = true;
+        if (strokeWidth != selectionPaintStyle.strokeWidth)
             selectionPaintStyle.strokeWidth = strokeWidth;
-        }
 
         Color stroke = paintInfo.forceTextColor() ? paintInfo.forcedTextColor() : pseudoStyle->computedStrokeColor();
-        if (stroke != selectionPaintStyle.strokeColor) {
-            if (!paintSelectedTextOnly)
-                paintSelectedTextSeparately = true;
+        if (stroke != selectionPaintStyle.strokeColor)
             selectionPaintStyle.strokeColor = stroke;
-        }
     }
 #else
     UNUSED_PARAM(renderer);
