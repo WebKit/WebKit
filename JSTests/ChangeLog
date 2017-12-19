@@ -1,3 +1,13 @@
+2017-10-19  Mark Lam  <mark.lam@apple.com>
+
+        Stringifier::appendStringifiedValue() is missing an exception check.
+        https://bugs.webkit.org/show_bug.cgi?id=178386
+        <rdar://problem/35027610>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-178386.js: Added.
+
 2017-10-18  Mark Lam  <mark.lam@apple.com>
 
         The compiler should always register a structure when it adds its transitionWatchPointSet.
