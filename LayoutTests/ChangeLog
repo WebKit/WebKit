@@ -1,3 +1,10 @@
+2017-12-19  Frederic Wang  <fwang@igalia.com>
+
+        Unreviewed test gardening.
+
+        * platform/gtk/mathml/opentype/opentype-stretchy-horizontal-expected.png:
+        * platform/gtk/mathml/opentype/opentype-stretchy-horizontal-expected.txt: Added.
+
 2017-12-18  Chris Dumez  <cdumez@apple.com>
 
         Default scope used when registering a service worker is wrong
