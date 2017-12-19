@@ -1,6 +1,8 @@
+CONSOLE MESSAGE: Cross-origin image load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://localhost:9443/service-workers/service-worker/resources/redirect.py?Redirect=%2Fservice-workers%2Fservice-worker%2Fresources%2Fsimple.txt. Response served by service worker is opaque redirect
 
 
-FAIL Verify redirect mode of Fetch API and ServiceWorker FetchEvent. promise_test: Unhandled rejection with value: object "Error: Normal audio resource should be loaded. - undefined"
+FAIL Verify redirect mode of Fetch API and ServiceWorker FetchEvent. promise_test: Unhandled rejection with value: object "Error: Redirected iframe loading with Request.redirect=follow should fail."
 FAIL Verify redirected of Response(Fetch API) and ServiceWorker FetchEvent. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
 FAIL Verify redirected of Response(Fetch API), Cache API and ServiceWorker FetchEvent. promise_test: Unhandled rejection with value: object "Error: wait_for_state must be passed a ServiceWorker"
 

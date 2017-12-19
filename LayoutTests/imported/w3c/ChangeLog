@@ -1,3 +1,14 @@
+2017-12-19  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline service workers flaky tests.
+
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/unregister-controller.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update-bytecheck.https-expected.txt:
+
 2017-12-18  Chris Dumez  <cdumez@apple.com>
 
         Default scope used when registering a service worker is wrong
