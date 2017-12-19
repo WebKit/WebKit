@@ -1306,7 +1306,7 @@ void webkitWebViewBaseEnterFullScreen(WebKitWebViewBase* webkitWebViewBase)
 {
 #if ENABLE(FULLSCREEN_API)
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
-    ASSERT(priv->fullScreenModeActive);
+    ASSERT(!priv->fullScreenModeActive);
 
     WebFullScreenManagerProxy* fullScreenManagerProxy = priv->pageProxy->fullScreenManager();
     fullScreenManagerProxy->willEnterFullScreen();
@@ -1324,7 +1324,7 @@ void webkitWebViewBaseExitFullScreen(WebKitWebViewBase* webkitWebViewBase)
 {
 #if ENABLE(FULLSCREEN_API)
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
-    ASSERT(!priv->fullScreenModeActive);
+    ASSERT(priv->fullScreenModeActive);
 
     WebFullScreenManagerProxy* fullScreenManagerProxy = priv->pageProxy->fullScreenManager();
     fullScreenManagerProxy->willExitFullScreen();
