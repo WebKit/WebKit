@@ -298,13 +298,14 @@ HTMLLabelElement* TreeScope::labelElementForId(const AtomicString& forAttributeV
 
 static std::optional<LayoutPoint> absolutePointIfNotClipped(Document& document, const LayoutPoint& clientPoint)
 {
-    auto* frame = document.frame();
-    auto* view = document.view();
-    if (!frame || !view)
+    if (!document.frame() || !document.view())
         return std::nullopt;
 
-    if (frame->settings().visualViewportEnabled()) {
+    if (document.frame()->settings().visualViewportEnabled()) {
         document.updateLayout();
+        if (!document.view() || !document.hasLivingRenderTree())
+            return std::nullopt;
+        auto* view = document.view();
         FloatPoint layoutViewportPoint = view->clientToLayoutViewportPoint(clientPoint);
         FloatRect layoutViewportBounds({ }, view->layoutViewportRect().size());
         if (!layoutViewportBounds.contains(layoutViewportPoint))
@@ -312,6 +313,8 @@ static std::optional<LayoutPoint> absolutePointIfNotClipped(Document& document, 
         return LayoutPoint(view->layoutViewportToAbsolutePoint(layoutViewportPoint));
     }
 
+    auto* frame = document.frame();
+    auto* view = document.view();
     float scaleFactor = frame->pageZoomFactor() * frame->frameScaleFactor();
 
     LayoutPoint absolutePoint = clientPoint;

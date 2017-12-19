@@ -1,3 +1,18 @@
+2017-12-08  Zalan Bujtas  <zalan@apple.com>
+
+        Document::updateLayout() could destroy current frame.
+        https://bugs.webkit.org/show_bug.cgi?id=180525
+        <rdar://problem/35906836>
+
+        Reviewed by Simon Fraser.
+
+        Early return when Document::updateLayout() triggers Frame destruction.
+
+        Test: fast/frames/crash-when-iframe-is-remove-in-eventhandler.html
+
+        * dom/TreeScope.cpp:
+        (WebCore::absolutePointIfNotClipped):
+
 2017-12-05  Alex Christensen  <achristensen@webkit.org>
 
         Fix non-unified build after r225381
