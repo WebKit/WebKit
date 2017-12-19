@@ -27,14 +27,17 @@
 #define WTF_DebugUtilities_h
 
 #include <wtf/Assertions.h>
+#include <wtf/CurrentTime.h>
+#include <wtf/ProcessID.h>
 
 #define SLEEP_THREAD_FOR_DEBUGGER() \
 do { \
     do { \
-        sleep(1); \
+        sleep(1.0); \
         if (WTFIsDebuggerAttached()) \
             break; \
     } while (1); \
+    WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, "Sleeping thread for debugger; attach to process (PID: %d) to unsleep the thread.", getCurrentProcessID()); \
     WTFBreakpointTrap(); \
 } while (0)
 

@@ -1,3 +1,15 @@
+2017-12-19  Brian Burg  <bburg@apple.com>
+
+        SLEEP_THREAD_FOR_DEBUGGER() macro should try to print out the PID of the affected process
+        https://bugs.webkit.org/show_bug.cgi?id=180947
+
+        Reviewed by Joseph Pecoraro.
+
+        * wtf/DebugUtilities.h:
+        - Use sleep() from CurrentTime.h as it is more cross-platform.
+        - Print a message with the process PID to simplify attaching to sleeping thread.
+        - Include source location in case multiple such macros are being used.
+
 2017-12-18  Daniel Bates  <dabates@apple.com>
 
         Conditionally forward declare NSMapTable SPI
