@@ -97,7 +97,7 @@ void ServiceWorkerJob::fetchScriptWithContext(ScriptExecutionContext& context, F
     request.setInitiatorIdentifier("serviceWorkerScriptLoad:");
     request.addHTTPHeaderField(ASCIILiteral("Service-Worker"), ASCIILiteral("script"));
 
-    m_scriptLoader->loadAsynchronously(context, WTFMove(request), FetchOptions::Mode::SameOrigin, cachePolicy, ContentSecurityPolicyEnforcement::DoNotEnforce, *this);
+    m_scriptLoader->loadAsynchronously(context, WTFMove(request), FetchOptions::Mode::SameOrigin, cachePolicy, FetchOptions::Redirect::Error, ContentSecurityPolicyEnforcement::DoNotEnforce, *this);
 }
 
 void ServiceWorkerJob::didReceiveResponse(unsigned long, const ResourceResponse& response)

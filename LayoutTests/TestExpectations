@@ -207,6 +207,8 @@ imported/w3c/web-platform-tests/workers/Worker_cross_origin_security_err.htm [ S
 imported/w3c/web-platform-tests/workers/constructors/SharedWorker [ Skip ]
 imported/w3c/web-platform-tests/workers/SharedWorker_blobUrl.html [ Skip ]
 
+imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode.html [ DumpJSConsoleLogInStdErr ]
+
 # textarea.animate is not supported
 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-018.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-019.html [ Skip ]

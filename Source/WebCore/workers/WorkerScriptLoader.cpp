@@ -73,7 +73,7 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
     WorkerThreadableLoader::loadResourceSynchronously(workerGlobalScope, WTFMove(*request), *this, options);
 }
 
-void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecutionContext, ResourceRequest&& scriptRequest, FetchOptions::Mode mode, FetchOptions::Cache cachePolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, WorkerScriptLoaderClient& client)
+void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecutionContext, ResourceRequest&& scriptRequest, FetchOptions::Mode mode, FetchOptions::Cache cachePolicy, FetchOptions::Redirect redirectPolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, WorkerScriptLoaderClient& client)
 {
     m_client = &client;
     m_url = scriptRequest.url();
@@ -92,6 +92,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
     options.credentials = FetchOptions::Credentials::SameOrigin;
     options.mode = mode;
     options.cache = cachePolicy;
+    options.redirect = redirectPolicy;
     options.sendLoadCallbacks = SendCallbacks;
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
 #if ENABLE(SERVICE_WORKER)

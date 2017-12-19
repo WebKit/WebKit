@@ -40,7 +40,7 @@ function registration_tests_security_error(register_method, check_error_types) {
 
   promise_test(function(t) {
       var script = 'resources/redirect.py?Redirect=' +
-                    encodeURIComponent('/resources/registration-worker.js');
+                    encodeURIComponent('/service-workers/service-worker/resources/registration-worker.js');
       var scope = 'resources/scope/redirect/';
       return promise_rejects(t,
           check_error_types ? 'SecurityError' : null,

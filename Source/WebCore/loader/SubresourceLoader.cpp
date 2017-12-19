@@ -206,7 +206,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
     if (!redirectResponse.isNull()) {
         if (options().redirect != FetchOptions::Redirect::Follow) {
             if (options().redirect == FetchOptions::Redirect::Error) {
-                cancel();
+                cancel(ResourceError { errorDomainWebKitInternal, 0, redirectResponse.url(), "Redirections are not allowed", ResourceError::Type::AccessControl });
                 return completionHandler(WTFMove(newRequest));
             }
 
