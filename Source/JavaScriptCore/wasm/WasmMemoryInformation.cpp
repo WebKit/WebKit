@@ -58,33 +58,36 @@ const PinnedRegisterInfo& PinnedRegisterInfo::get()
         Vector<PinnedSizeRegisterInfo> sizeRegisters;
         GPRReg baseMemoryPointer = InvalidGPRReg;
         GPRReg wasmContextPointer = InvalidGPRReg;
+        GPRReg indexingMask = InvalidGPRReg;
 
         // FIXME: We should support more than one memory size register, and we should allow different
         //        WebAssembly.Instance to have different pins. Right now we take a vector with only one entry.
         //        If we have more than one size register, we can have one for each load size class.
         //        see: https://bugs.webkit.org/show_bug.cgi?id=162952
         Vector<unsigned> pinnedSizes = { 0 };
-        unsigned numberOfPinnedRegisters = pinnedSizes.size() + 1;
+        unsigned numberOfPinnedRegisters = pinnedSizes.size() + 2;
         if (!useFastTLSForContext())
             ++numberOfPinnedRegisters;
         Vector<GPRReg> pinnedRegs = getPinnedRegisters(numberOfPinnedRegisters);
 
         baseMemoryPointer = pinnedRegs.takeLast();
+        indexingMask = pinnedRegs.takeLast();
         if (!useFastTLSForContext())
             wasmContextPointer = pinnedRegs.takeLast();
 
         ASSERT(pinnedSizes.size() == pinnedRegs.size());
         for (unsigned i = 0; i < pinnedSizes.size(); ++i)
             sizeRegisters.append({ pinnedRegs[i], pinnedSizes[i] });
-        staticPinnedRegisterInfo.construct(WTFMove(sizeRegisters), baseMemoryPointer, wasmContextPointer);
+        staticPinnedRegisterInfo.construct(WTFMove(sizeRegisters), baseMemoryPointer, indexingMask, wasmContextPointer);
     });
 
     return staticPinnedRegisterInfo.get();
 }
 
-PinnedRegisterInfo::PinnedRegisterInfo(Vector<PinnedSizeRegisterInfo>&& sizeRegisters, GPRReg baseMemoryPointer, GPRReg wasmContextPointer)
+PinnedRegisterInfo::PinnedRegisterInfo(Vector<PinnedSizeRegisterInfo>&& sizeRegisters, GPRReg baseMemoryPointer, GPRReg indexingMask, GPRReg wasmContextPointer)
     : sizeRegisters(WTFMove(sizeRegisters))
     , baseMemoryPointer(baseMemoryPointer)
+    , indexingMask(indexingMask)
     , wasmContextPointer(wasmContextPointer)
 {
 }

@@ -1440,6 +1440,14 @@ public:
     void emitRandomThunk(VM&, GPRReg scratch0, GPRReg scratch1, GPRReg scratch2, GPRReg scratch3, FPRReg result);
 #endif
 
+    void emitComputeButterflyIndexingMask(GPRReg vectorLengthGPR, GPRReg scratchGPR, GPRReg resultGPR)
+    {
+        // If vectorLength == 0 then clz will return 32 on both ARM and x86. On 64-bit systems, we can then do a 64-bit right shift on a 32-bit -1 to get a 0 mask for zero vectorLength. On 32-bit ARM, shift masks with 0xff, which means it will still create a 0 mask.
+        countLeadingZeros32(vectorLengthGPR, scratchGPR);
+        move(TrustedImm32(-1), resultGPR);
+        urshift64(scratchGPR, resultGPR);
+    }
+
     // Call this if you know that the value held in allocatorGPR is non-null. This DOES NOT mean
     // that allocator is non-null; allocator can be null as a signal that we don't know what the
     // value of allocatorGPR is.

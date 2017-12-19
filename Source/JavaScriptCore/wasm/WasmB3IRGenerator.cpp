@@ -233,7 +233,8 @@ private:
 
     void emitTierUpCheck(uint32_t decrementCount, Origin);
 
-    ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
+    enum class ShouldMask { Yes, No };
+    ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp, ShouldMask);
     B3::Kind memoryKind(B3::Opcode memoryOp);
     ExpressionType emitLoadOp(LoadOpType, ExpressionType pointer, uint32_t offset);
     void emitStoreOp(StoreOpType, ExpressionType pointer, ExpressionType value, uint32_t offset);
@@ -266,6 +267,7 @@ private:
     InsertionSet m_constantInsertionValues;
     GPRReg m_memoryBaseGPR;
     GPRReg m_memorySizeGPR { InvalidGPRReg };
+    GPRReg m_indexingMaskGPR { InvalidGPRReg };
     GPRReg m_wasmContextGPR;
     Value* m_instanceValue; // FIXME: make this lazy https://bugs.webkit.org/show_bug.cgi?id=169792
     bool m_makesCalls { false };
@@ -360,6 +362,8 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
 
     if (mode != MemoryMode::Signaling) {
         ASSERT(!pinnedRegs.sizeRegisters[0].sizeOffset);
+        m_indexingMaskGPR = pinnedRegs.indexingMask;
+        m_proc.pinRegister(pinnedRegs.indexingMask);
         m_memorySizeGPR = pinnedRegs.sizeRegisters[0].sizeRegister;
         for (const PinnedSizeRegisterInfo& regInfo : pinnedRegs.sizeRegisters)
             m_proc.pinRegister(regInfo.sizeRegister);
@@ -444,6 +448,7 @@ void B3IRGenerator::restoreWebAssemblyGlobalState(const MemoryInformation& memor
         const PinnedRegisterInfo* pinnedRegs = &PinnedRegisterInfo::get();
         RegisterSet clobbers;
         clobbers.set(pinnedRegs->baseMemoryPointer);
+        clobbers.set(pinnedRegs->indexingMask);
         for (auto info : pinnedRegs->sizeRegisters)
             clobbers.set(info.sizeRegister);
 
@@ -463,6 +468,7 @@ void B3IRGenerator::restoreWebAssemblyGlobalState(const MemoryInformation& memor
             ASSERT(sizeRegs.size() >= 1);
             ASSERT(!sizeRegs[0].sizeOffset); // The following code assumes we start at 0, and calculates subsequent size registers relative to 0.
             jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfSize()), sizeRegs[0].sizeRegister);
+            jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfIndexingMask()), pinnedRegs->indexingMask);
             jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfMemory()), baseMemory);
             for (unsigned i = 1; i < sizeRegs.size(); ++i)
                 jit.add64(CCallHelpers::TrustedImm32(-sizeRegs[i].sizeOffset), sizeRegs[0].sizeRegister, sizeRegs[i].sizeRegister);
@@ -609,19 +615,21 @@ auto B3IRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialRe
     return { };
 }
 
-inline Value* B3IRGenerator::emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOperation)
+inline Value* B3IRGenerator::emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOperation, ShouldMask shouldMask)
 {
     ASSERT(m_memoryBaseGPR);
 
     switch (m_mode) {
-    case MemoryMode::BoundsChecking:
+    case MemoryMode::BoundsChecking: {
         // We're not using signal handling at all, we must therefore check that no memory access exceeds the current memory size.
         ASSERT(m_memorySizeGPR);
         ASSERT(sizeOfOperation + offset > offset);
-        m_currentBlock->appendNew<WasmBoundsCheckValue>(m_proc, origin(), m_memorySizeGPR, pointer, sizeOfOperation + offset - 1);
+        GPRReg indexingMask = shouldMask == ShouldMask::Yes ? m_indexingMaskGPR : InvalidGPRReg;
+        m_currentBlock->appendNew<WasmBoundsCheckValue>(m_proc, origin(), m_memorySizeGPR, indexingMask, pointer, sizeOfOperation + offset - 1);
         break;
+    }
 
-    case MemoryMode::Signaling:
+    case MemoryMode::Signaling: {
         // We've virtually mapped 4GiB+redzone for this memory. Only the user-allocated pages are addressable, contiguously in range [0, current],
         // and everything above is mapped PROT_NONE. We don't need to perform any explicit bounds check in the 4GiB range because WebAssembly register
         // memory accesses are 32-bit. However WebAssembly register + offset accesses perform the addition in 64-bit which can push an access above
@@ -641,6 +649,8 @@ inline Value* B3IRGenerator::emitCheckAndPreparePointer(ExpressionType pointer, 
     case MemoryMode::NumberOfMemoryModes:
         RELEASE_ASSERT_NOT_REACHED();
     }
+    }
+
     pointer = m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), pointer);
     return m_currentBlock->appendNew<WasmAddressValue>(m_proc, origin(), pointer, m_memoryBaseGPR);
 }
@@ -790,7 +800,7 @@ auto B3IRGenerator::load(LoadOpType op, ExpressionType pointer, ExpressionType& 
         }
 
     } else
-        result = emitLoadOp(op, emitCheckAndPreparePointer(pointer, offset, sizeOfLoadOp(op)), offset);
+        result = emitLoadOp(op, emitCheckAndPreparePointer(pointer, offset, sizeOfLoadOp(op), ShouldMask::Yes), offset);
 
     return { };
 }
@@ -863,7 +873,7 @@ auto B3IRGenerator::store(StoreOpType op, ExpressionType pointer, ExpressionType
             this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
     } else
-        emitStoreOp(op, emitCheckAndPreparePointer(pointer, offset, sizeOfStoreOp(op)), value, offset);
+        emitStoreOp(op, emitCheckAndPreparePointer(pointer, offset, sizeOfStoreOp(op), ShouldMask::No), value, offset);
 
     return { };
 }
@@ -1264,6 +1274,7 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
             ASSERT(sizeRegs[0].sizeRegister != baseMemory);
             ASSERT(sizeRegs[0].sizeRegister != newContext);
             ASSERT(!sizeRegs[0].sizeOffset);
+            jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfIndexingMask()), pinnedRegs.indexingMask); // Indexing mask.
             jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfSize()), sizeRegs[0].sizeRegister); // Memory size.
             jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfMemory()), baseMemory); // WasmMemory::void*.
         });
