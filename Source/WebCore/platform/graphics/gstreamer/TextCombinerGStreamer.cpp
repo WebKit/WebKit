@@ -24,9 +24,11 @@
  */
 
 #include "config.h"
+#include "TextCombinerGStreamer.h"
+
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)
 
-#include "TextCombinerGStreamer.h"
+#include "GRefPtrGStreamer.h"
 
 static GstStaticPadTemplate sinkTemplate =
     GST_STATIC_PAD_TEMPLATE("sink_%u", GST_PAD_SINK, GST_PAD_REQUEST,
@@ -83,10 +85,10 @@ static void webkit_text_combiner_init(WebKitTextCombiner* combiner)
     UNUSED_PARAM(ret);
     ASSERT(ret);
 
-    GstPad* pad = gst_element_get_static_pad(combiner->funnel, "src");
+    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(combiner->funnel, "src"));
     ASSERT(pad);
 
-    ret = gst_element_add_pad(GST_ELEMENT(combiner), gst_ghost_pad_new("src", pad));
+    ret = gst_element_add_pad(GST_ELEMENT(combiner), gst_ghost_pad_new("src", pad.get()));
     ASSERT(ret);
 }
 

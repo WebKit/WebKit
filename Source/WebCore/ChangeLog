@@ -1,5 +1,18 @@
 2017-12-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GStreamer] GstPad leaked in WebKitTextCombiner
+        https://bugs.webkit.org/show_bug.cgi?id=180314
+
+        Reviewed by Michael Catanzaro.
+
+        gst_element_get_static_pad() returns a full reference that si never freed, because gst_ghost_pad_new doesn't
+        take the ownership of the given pad.
+
+        * platform/graphics/gstreamer/TextCombinerGStreamer.cpp:
+        (webkit_text_combiner_init):
+
+2017-12-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GStreamer] GstCaps leaked in MediaPlayerPrivateGStreamer::createGSTPlayBin
         https://bugs.webkit.org/show_bug.cgi?id=180311
 
