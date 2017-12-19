@@ -93,6 +93,11 @@ public:
         ASSERT(isAnimating());
     }
 
+    void synchronizeWrappersIfNeeded()
+    {
+        // no-op
+    }
+
 protected:
     SVGAnimatedStaticPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, PropertyType& property)
         : SVGAnimatedProperty(contextElement, attributeName, animatedPropertyType)
