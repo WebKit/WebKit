@@ -106,8 +106,14 @@ struct FragmentAndResources {
     Vector<Ref<ArchiveResource>> resources;
 };
 
-void replaceRichContentWithAttachmentsIfNecessary(DocumentFragment&, HashMap<AtomicString, RefPtr<Blob>>&& urlToBlobMap);
-RefPtr<DocumentFragment> createFragmentAndAddResources(Frame&, NSAttributedString*, HashMap<AtomicString, RefPtr<Blob>>& urlToBlobMap);
+struct BlobReplacementInfo {
+    HashMap<AtomicString, RefPtr<Blob>> blobURLToBlobMap;
+    HashMap<AtomicString, AtomicString> blobURLToReplacedURLMap;
+    bool isEmpty() const { return blobURLToBlobMap.isEmpty(); }
+};
+
+void replaceRichContentWithAttachmentsIfNecessary(DocumentFragment&, BlobReplacementInfo&&);
+RefPtr<DocumentFragment> createFragmentAndAddResources(Frame&, NSAttributedString*, BlobReplacementInfo&);
 #endif
 
 }

@@ -136,6 +136,12 @@ static RetainPtr<TestWKWebView> webViewForTestingAttachments()
     return webView;
 }
 
+static NSData *testZIPData()
+{
+    NSURL *zipFileURL = [[NSBundle mainBundle] URLForResource:@"compressed-files" withExtension:@"zip" subdirectory:@"TestWebKitAPI.resources"];
+    return [NSData dataWithContentsOfURL:zipFileURL];
+}
+
 static NSData *testHTMLData()
 {
     return [@"<a href='#'>This is some HTML data</a>" dataUsingEncoding:NSUTF8StringEncoding];
@@ -307,6 +313,28 @@ static _WKAttachmentDisplayOptions *displayOptionsWithMode(_WKAttachmentDisplayM
 @end
 
 #pragma mark - Platform testing helper functions
+
+void platformCopyRichTextWithMultipleAttachments()
+{
+    auto image = adoptNS([[NSTextAttachment alloc] initWithData:testImageData() ofType:(NSString *)kUTTypePNG]);
+    auto pdf = adoptNS([[NSTextAttachment alloc] initWithData:testPDFData() ofType:(NSString *)kUTTypePDF]);
+    auto zip = adoptNS([[NSTextAttachment alloc] initWithData:testZIPData() ofType:(NSString *)kUTTypeZipArchive]);
+
+    auto richText = adoptNS([[NSMutableAttributedString alloc] init]);
+    [richText appendAttributedString:[NSAttributedString attributedStringWithAttachment:image.get()]];
+    [richText appendAttributedString:[NSAttributedString attributedStringWithAttachment:pdf.get()]];
+    [richText appendAttributedString:[NSAttributedString attributedStringWithAttachment:zip.get()]];
+
+#if PLATFORM(MAC)
+    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+    [pasteboard clearContents];
+    [pasteboard writeObjects:@[ richText.get() ]];
+#elif PLATFORM(IOS)
+    auto item = adoptNS([[NSItemProvider alloc] init]);
+    [item registerObject:richText.get() visibility:NSItemProviderRepresentationVisibilityAll];
+    [UIPasteboard generalPasteboard].itemProviders = @[ item.get() ];
+#endif
+}
 
 void platformCopyRichTextWithImage()
 {
@@ -797,6 +825,48 @@ TEST(WKAttachmentTests, InsertPastedAttributedStringContainingImage)
         [webView _synchronouslyExecuteEditCommand:@"SelectAll" argument:nil];
         [webView _synchronouslyExecuteEditCommand:@"DeleteBackward" argument:nil];
         observer.expectAttachmentUpdates(@[attachment.get()], @[]);
+    }
+}
+
+TEST(WKAttachmentTests, InsertPastedAttributedStringContainingMultipleAttachments)
+{
+    platformCopyRichTextWithMultipleAttachments();
+
+    RetainPtr<_WKAttachment> imageAttachment;
+    RetainPtr<_WKAttachment> zipAttachment;
+    RetainPtr<_WKAttachment> pdfAttachment;
+    auto webView = webViewForTestingAttachments();
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+        EXPECT_EQ(0U, observer.observer().removed.count);
+        EXPECT_EQ(3U, observer.observer().inserted.count);
+        for (_WKAttachment *attachment in observer.observer().inserted) {
+            NSData *data = [attachment synchronouslyRequestData:nil];
+            if ([data isEqualToData:testZIPData()])
+                zipAttachment = attachment;
+            else if ([data isEqualToData:testPDFData()])
+                pdfAttachment = attachment;
+            else if ([data isEqualToData:testImageData()])
+                imageAttachment = attachment;
+        }
+    }
+
+    EXPECT_TRUE(zipAttachment && imageAttachment && pdfAttachment);
+    EXPECT_EQ(3, [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment').length"].integerValue);
+    EXPECT_WK_STREQ("image/png", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('type')"]);
+    EXPECT_WK_STREQ("application/pdf", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].getAttribute('type')"]);
+    EXPECT_WK_STREQ("application/zip", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[2].getAttribute('type')"]);
+
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [webView _synchronouslyExecuteEditCommand:@"SelectAll" argument:nil];
+        [webView _synchronouslyExecuteEditCommand:@"DeleteBackward" argument:nil];
+        NSArray<_WKAttachment *> *removedAttachments = [observer.observer() removed];
+        EXPECT_EQ(3U, removedAttachments.count);
+        EXPECT_TRUE([removedAttachments containsObject:zipAttachment.get()]);
+        EXPECT_TRUE([removedAttachments containsObject:imageAttachment.get()]);
+        EXPECT_TRUE([removedAttachments containsObject:pdfAttachment.get()]);
     }
 }
 

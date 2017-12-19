@@ -36,6 +36,7 @@ class ArchiveResource;
     RefPtr<WebCore::ArchiveResource> resource;
 }
 - (instancetype)initWithData:(NSData *)data URL:(NSURL *)URL MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)textEncodingName frameName:(NSString *)frameName;
+- (NSString *)MIMEType;
 - (NSURL *)URL;
 
 @end
