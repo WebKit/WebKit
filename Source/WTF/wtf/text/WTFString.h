@@ -176,6 +176,7 @@ public:
         ASSERT(!m_impl->is8Bit());
         return m_impl->characters16();
     }
+    unsigned mask() const { return m_impl ? m_impl->mask() : 0; }
 
     // Return characters8() or characters16() depending on CharacterType.
     template <typename CharacterType>
