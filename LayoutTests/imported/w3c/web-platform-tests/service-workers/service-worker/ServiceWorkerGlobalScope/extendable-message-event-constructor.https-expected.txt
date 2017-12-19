@@ -6,8 +6,8 @@ PASS `cancelable` is specified
 PASS `data` is specified 
 PASS `origin` is specified 
 PASS `lastEventId` is specified 
-FAIL `source` is specified assert_equals: expected object "[object MessagePort]" but got null
+PASS `source` is specified 
 FAIL `ports` is specified assert_throws: function "function () {
       createEvent({ get ports() { throw { name: 'Error' }; } }); }" threw object "TypeError: Value is not a sequence" ("TypeError") expected object "[object Object]" ("Error")
-FAIL all initial values are specified assert_equals: expected object "[object MessagePort]" but got null
+PASS all initial values are specified 
 

@@ -42,6 +42,7 @@ ExtendableMessageEvent::ExtendableMessageEvent(JSC::ExecState& state, const Atom
     , m_data(SerializedScriptValue::create(state, init.data, SerializationErrorMode::NonThrowing))
     , m_origin(init.origin)
     , m_lastEventId(init.lastEventId)
+    , m_source(init.source)
     , m_ports(init.ports)
 {
 }

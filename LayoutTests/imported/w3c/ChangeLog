@@ -1,3 +1,14 @@
+2017-12-18  Chris Dumez  <cdumez@apple.com>
+
+        ExtendableMessageEvent constructor fails to initialize the 'source' attribute
+        https://bugs.webkit.org/show_bug.cgi?id=180954
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline WPT test now that more checks are passing.
+
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event-constructor.https-expected.txt:
+
 2017-12-18  Youenn Fablet  <youenn@apple.com>
 
         SameOrigin and CORS fetch should fail on opaque responses served from ServiceWorker
