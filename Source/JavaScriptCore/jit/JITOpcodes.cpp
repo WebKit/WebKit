@@ -912,7 +912,9 @@ void JIT::emitSlow_op_check_traps(Instruction*, Vector<SlowCaseEntry>::iterator&
 
 void JIT::emit_op_new_regexp(Instruction* currentInstruction)
 {
-    callOperation(operationNewRegexp, currentInstruction[1].u.operand, m_codeBlock->regexp(currentInstruction[2].u.operand));
+    int dst = currentInstruction[1].u.operand;
+    callOperation(operationNewRegexp, m_codeBlock->regexp(currentInstruction[2].u.operand));
+    emitStoreCell(dst, returnValueGPR);
 }
 
 void JIT::emitNewFuncCommon(Instruction* currentInstruction)

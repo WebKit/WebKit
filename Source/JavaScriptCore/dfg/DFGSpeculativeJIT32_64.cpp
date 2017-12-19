@@ -4002,16 +4002,7 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case NewRegexp: {
-        flushRegisters();
-        GPRFlushedCallResult resultPayload(this);
-        GPRFlushedCallResult2 resultTag(this);
-        
-        RegExp* regexp = node->castOperand<RegExp*>();
-        callOperation(operationNewRegexp, JSValueRegs(resultTag.gpr(), resultPayload.gpr()), regexp);
-        m_jit.exceptionCheck();
-        
-        // FIXME: make the callOperation above explicitly return a cell result, or jitAssert the tag is a cell tag.
-        cellResult(resultPayload.gpr(), node);
+        compileNewRegexp(node);
         break;
     }
 

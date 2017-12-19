@@ -4220,14 +4220,7 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case NewRegexp: {
-        flushRegisters();
-        GPRFlushedCallResult result(this);
-        
-        RegExp* regexp = node->castOperand<RegExp*>();
-        callOperation(operationNewRegexp, result.gpr(), regexp);
-        m_jit.exceptionCheck();
-        
-        cellResult(result.gpr(), node);
+        compileNewRegexp(node);
         break;
     }
 

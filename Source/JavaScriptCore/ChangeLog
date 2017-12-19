@@ -1,5 +1,50 @@
 2017-12-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG][FTL] NewRegexp shoud be fast
+        https://bugs.webkit.org/show_bug.cgi?id=180960
+
+        Reviewed by Michael Saboff.
+
+        When we encounter RegExp literal like /AAA/g, we need to create a RegExp object.
+        Typical idiom like `string.match(/regexp/)` requires RegExp object creation
+        every time.
+
+        As a first step, this patch accelerates RegExp object creation by handling it
+        in DFG and FTL. In a subsequent patch, we would like to introduce PhantomNewRegexp
+        to remove unnecessary RegExp object creations.
+
+        This patch improves SixSpeed/regex-u.{es5,es6}.
+
+                                     baseline                  patched
+
+            regex-u.es5          69.6759+-3.1951     ^     53.1425+-2.0292        ^ definitely 1.3111x faster
+            regex-u.es6         129.5413+-5.4437     ^    107.2105+-7.7775        ^ definitely 1.2083x faster
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewRegexp):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewRegexp):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_regexp):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::offsetOfRegExp):
+        (JSC::RegExpObject::allocationSize):
+
+2017-12-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, include YarrErrorCode.h in Yarr.h
         https://bugs.webkit.org/show_bug.cgi?id=180966
 

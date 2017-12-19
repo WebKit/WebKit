@@ -253,6 +253,12 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(C_JITOperation_ESt operati
     return appendCallWithExceptionCheck(operation);
 }
 
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(C_JITOperation_EC operation, JSCell* cell)
+{
+    setupArgumentsWithExecState(TrustedImmPtr(cell));
+    return appendCallWithExceptionCheck(operation);
+}
+
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(C_JITOperation_EZ operation, int32_t arg)
 {
     setupArgumentsWithExecState(TrustedImm32(arg));

@@ -78,6 +78,7 @@
 #include "JSLexicalEnvironment.h"
 #include "JSMap.h"
 #include "OperandsInlines.h"
+#include "RegExpObject.h"
 #include "ScopedArguments.h"
 #include "ScopedArgumentsTable.h"
 #include "ScratchRegisterAllocator.h"
@@ -10267,12 +10268,47 @@ private:
     {
         FrozenValue* regexp = m_node->cellOperand();
         ASSERT(regexp->cell()->inherits(vm(), RegExp::info()));
-        LValue result = vmCall(
-            pointerType(),
-            m_out.operation(operationNewRegexp), m_callFrame,
-            frozenPointer(regexp));
-        
-        setJSValue(result);
+
+        // FIXME: If the RegExp is invalid, we should emit a different bytecode.
+        // https://bugs.webkit.org/show_bug.cgi?id=180970
+        if (!m_node->castOperand<RegExp*>()->isValid()) {
+            LValue result = vmCall(
+                pointerType(),
+                m_out.operation(operationNewRegexp), m_callFrame,
+                frozenPointer(regexp));
+
+            setJSValue(result);
+            return;
+        }
+
+        LBasicBlock slowCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowCase);
+
+        auto structure = m_graph.registerStructure(m_graph.globalObjectFor(m_node->origin.semantic)->regExpStructure());
+        LValue fastResultValue = allocateObject<RegExpObject>(structure, m_out.intPtrZero, m_out.int32Zero, slowCase);
+        m_out.storePtr(frozenPointer(regexp), fastResultValue, m_heaps.RegExpObject_regExp);
+        m_out.store64(m_out.constInt64(JSValue::encode(jsNumber(0))), fastResultValue, m_heaps.RegExpObject_lastIndex);
+        m_out.store32As8(m_out.constInt32(true), m_out.address(fastResultValue, m_heaps.RegExpObject_lastIndexIsWritable));
+        mutatorFence();
+        ValueFromBlock fastResult = m_out.anchor(fastResultValue);
+        m_out.jump(continuation);
+
+        m_out.appendTo(slowCase, continuation);
+        VM& vm = this->vm();
+        RegExp* regexpCell = regexp->cast<RegExp*>();
+        LValue slowResultValue = lazySlowPath(
+            [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                return createLazyCallGenerator(vm,
+                    operationNewRegexp, locations[0].directGPR(),
+                    CCallHelpers::TrustedImmPtr(regexpCell));
+            });
+        ValueFromBlock slowResult = m_out.anchor(slowResultValue);
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
     }
 
     void compileSetFunctionName()

@@ -1259,7 +1259,7 @@ JSCell* JIT_OPERATION operationNewObject(ExecState* exec, Structure* structure)
     return constructEmptyObject(exec, structure);
 }
 
-EncodedJSValue JIT_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr)
+JSCell* JIT_OPERATION operationNewRegexp(ExecState* exec, JSCell* regexpPtr)
 {
     SuperSamplerScope superSamplerScope(false);
     VM& vm = exec->vm();
@@ -1267,12 +1267,15 @@ EncodedJSValue JIT_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     RegExp* regexp = static_cast<RegExp*>(regexpPtr);
+
+    // FIXME: If the RegExp is invalid, we should emit a different bytecode.
+    // https://bugs.webkit.org/show_bug.cgi?id=180970
     if (!regexp->isValid()) {
         throwException(exec, scope, createSyntaxError(exec, regexp->errorMessage()));
-        return JSValue::encode(jsUndefined());
+        return nullptr;
     }
 
-    return JSValue::encode(RegExpObject::create(vm, exec->lexicalGlobalObject()->regExpStructure(), regexp));
+    return RegExpObject::create(vm, exec->lexicalGlobalObject()->regExpStructure(), regexp);
 }
 
 // The only reason for returning an UnusedPtr (instead of void) is so that we can reuse the

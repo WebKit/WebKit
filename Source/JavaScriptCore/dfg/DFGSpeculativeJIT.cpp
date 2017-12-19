@@ -9124,6 +9124,50 @@ void SpeculativeJIT::compileNewTypedArray(Node* node)
     cellResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileNewRegexp(Node* node)
+{
+    RegExp* regexp = node->castOperand<RegExp*>();
+
+    // FIXME: If the RegExp is invalid, we should emit a different bytecode.
+    // https://bugs.webkit.org/show_bug.cgi?id=180970
+    if (!regexp->isValid()) {
+        flushRegisters();
+        GPRFlushedCallResult result(this);
+
+        callOperation(operationNewRegexp, result.gpr(), regexp);
+        m_jit.exceptionCheck();
+
+        cellResult(result.gpr(), node);
+        return;
+    }
+
+    GPRTemporary result(this);
+    GPRTemporary scratch1(this);
+    GPRTemporary scratch2(this);
+
+    GPRReg resultGPR = result.gpr();
+    GPRReg scratch1GPR = scratch1.gpr();
+    GPRReg scratch2GPR = scratch2.gpr();
+
+    JITCompiler::JumpList slowPath;
+
+    auto structure = m_jit.graph().registerStructure(m_jit.graph().globalObjectFor(node->origin.semantic)->regExpStructure());
+    auto butterfly = TrustedImmPtr(nullptr);
+    auto mask = TrustedImm32(0);
+    emitAllocateJSObject<RegExpObject>(resultGPR, TrustedImmPtr(structure), butterfly, mask, scratch1GPR, scratch2GPR, slowPath);
+
+    m_jit.storePtr(
+        TrustedImmPtr(node->cellOperand()),
+        CCallHelpers::Address(resultGPR, RegExpObject::offsetOfRegExp()));
+    m_jit.storeTrustedValue(jsNumber(0), CCallHelpers::Address(resultGPR, RegExpObject::offsetOfLastIndex()));
+    m_jit.store8(TrustedImm32(true), CCallHelpers::Address(resultGPR, RegExpObject::offsetOfLastIndexIsWritable()));
+    m_jit.mutatorFence(*m_jit.vm());
+
+    addSlowPathGenerator(slowPathCall(slowPath, this, operationNewRegexp, resultGPR, regexp));
+
+    cellResult(resultGPR, node);
+}
+
 void SpeculativeJIT::speculateCellTypeWithoutTypeFiltering(
     Edge edge, GPRReg cellGPR, JSType jsType)
 {
