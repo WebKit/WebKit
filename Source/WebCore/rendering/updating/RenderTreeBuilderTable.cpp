@@ -82,4 +82,39 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTableR
     return cell;
 }
 
+RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTableSection& parent, const RenderObject& child, RenderObject*& beforeChild)
+{
+    if (is<RenderTableRow>(child))
+        return parent;
+
+    auto* lastChild = beforeChild ? beforeChild : parent.lastRow();
+    if (is<RenderTableRow>(lastChild) && lastChild->isAnonymous() && !lastChild->isBeforeOrAfterContent()) {
+        if (beforeChild == lastChild)
+            beforeChild = downcast<RenderTableRow>(*lastChild).firstCell();
+        return downcast<RenderElement>(*lastChild);
+    }
+
+    if (beforeChild && !beforeChild->isAnonymous() && beforeChild->parent() == &parent) {
+        auto* row = beforeChild->previousSibling();
+        if (is<RenderTableRow>(row) && row->isAnonymous()) {
+            beforeChild = nullptr;
+            return downcast<RenderElement>(*row);
+        }
+    }
+
+    // If beforeChild is inside an anonymous cell/row, insert into the cell or into
+    // the anonymous row containing it, if there is one.
+    auto* parentCandidate = lastChild;
+    while (parentCandidate && parentCandidate->parent()->isAnonymous() && !is<RenderTableRow>(*parentCandidate))
+        parentCandidate = parentCandidate->parent();
+    if (is<RenderTableRow>(parentCandidate) && parentCandidate->isAnonymous() && !parentCandidate->isBeforeOrAfterContent())
+        return downcast<RenderElement>(*parentCandidate);
+
+    auto newRow = RenderTableRow::createAnonymousWithParentRenderer(parent);
+    auto& row = *newRow;
+    m_builder.insertChild(parent, WTFMove(newRow), beforeChild);
+    beforeChild = nullptr;
+    return row;
+}
+
 }

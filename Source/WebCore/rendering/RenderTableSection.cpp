@@ -123,43 +123,6 @@ void RenderTableSection::willBeRemovedFromTree()
 
 void RenderTableSection::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    if (!is<RenderTableRow>(*child)) {
-        RenderObject* last = beforeChild;
-        if (!last)
-            last = lastRow();
-        if (is<RenderTableRow>(last) && last->isAnonymous() && !last->isBeforeOrAfterContent()) {
-            RenderTableRow& row = downcast<RenderTableRow>(*last);
-            if (beforeChild == &row)
-                beforeChild = row.firstCell();
-            builder.insertChild(row, WTFMove(child), beforeChild);
-            return;
-        }
-
-        if (beforeChild && !beforeChild->isAnonymous() && beforeChild->parent() == this) {
-            RenderObject* row = beforeChild->previousSibling();
-            if (is<RenderTableRow>(row) && row->isAnonymous()) {
-                builder.insertChild(downcast<RenderTableRow>(*row), WTFMove(child));
-                return;
-            }
-        }
-
-        // If beforeChild is inside an anonymous cell/row, insert into the cell or into
-        // the anonymous row containing it, if there is one.
-        RenderObject* lastBox = last;
-        while (lastBox && lastBox->parent()->isAnonymous() && !is<RenderTableRow>(*lastBox))
-            lastBox = lastBox->parent();
-        if (is<RenderTableRow>(lastBox) && lastBox->isAnonymous() && !lastBox->isBeforeOrAfterContent()) {
-            builder.insertChild(downcast<RenderTableRow>(*lastBox), WTFMove(child), beforeChild);
-            return;
-        }
-
-        auto newRow = RenderTableRow::createAnonymousWithParentRenderer(*this);
-        auto& row = *newRow;
-        builder.insertChild(*this, WTFMove(newRow), beforeChild);
-        builder.insertChild(row, WTFMove(child));
-        return;
-    }
-
     if (beforeChild)
         setNeedsCellRecalc();
 
